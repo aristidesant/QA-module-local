@@ -1,71 +1,104 @@
 /* NodeDetailPanel.module.css */
 .panel {
-  height: 100%;
-  overflow-y: auto;
-  /* background: var(--mantine-color-white); */
-  /* border: 1px solid var(--mantine-color-gray-3); */
+	--disposition-surface: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+	--disposition-surface-soft: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-8)
+	);
+	--disposition-surface-hover: light-dark(
+		var(--mantine-color-gray-1),
+		var(--mantine-color-dark-6)
+	);
+	--disposition-border: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
+	);
+	--disposition-border-strong: light-dark(
+		var(--mantine-color-gray-4),
+		var(--mantine-color-dark-3)
+	);
+	--disposition-text: light-dark(
+		var(--mantine-color-gray-9),
+		var(--mantine-color-gray-0)
+	);
+	--disposition-text-muted: light-dark(
+		var(--mantine-color-gray-6),
+		var(--mantine-color-gray-4)
+	);
+	height: 100%;
+	overflow-y: auto;
+	background: var(--disposition-surface);
 }
 
 .header {
-  margin-bottom: var(--mantine-spacing-md);
-  padding-bottom: var(--mantine-spacing-sm);
+	margin-bottom: var(--mantine-spacing-md);
+	padding-bottom: var(--mantine-spacing-sm);
 }
 
 .title {
-  color: var(--mantine-color-gray-8);
+	color: var(--disposition-text);
 }
 
 .nodeName {
-  color: var(--mantine-color-gray-9);
-  background: var(--mantine-color-gray-0);
-  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-  border-radius: var(--mantine-radius-sm);
-  border: 1px solid var(--mantine-color-gray-3);
+	color: var(--disposition-text);
+	background: var(--disposition-surface-soft);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-sm);
+	border: 1px solid var(--disposition-border);
 }
 
 .typeBadge {
-  font-weight: 500;
+	font-weight: 500;
 }
 
 .nodeId {
-  color: var(--mantine-color-gray-7);
-  background: var(--mantine-color-gray-0);
-  padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-  border-radius: var(--mantine-radius-sm);
-  border: 1px solid var(--mantine-color-gray-3);
+	color: var(--disposition-text-muted);
+	background: var(--disposition-surface-soft);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-sm);
+	border: 1px solid var(--disposition-border);
 }
 
 .parentCard {
-  background: var(--mantine-color-blue-0);
-  border-color: var(--mantine-color-blue-3);
-  padding: var(--mantine-spacing-sm);
+	background: light-dark(
+		var(--mantine-color-blue-0),
+		var(--mantine-color-dark-6)
+	);
+	border-color: light-dark(
+		var(--mantine-color-blue-3),
+		var(--mantine-color-blue-8)
+	);
+	padding: var(--mantine-spacing-sm);
 }
 
 .childCard {
-  background: var(--mantine-color-gray-0);
-  border-color: var(--mantine-color-gray-3);
-  padding: var(--mantine-spacing-sm);
-  transition: all 0.2s ease;
+	background: var(--disposition-surface-soft);
+	border-color: var(--disposition-border);
+	padding: var(--mantine-spacing-sm);
+	transition: all 0.2s ease;
 }
 
 .childCard:hover {
-  background: var(--mantine-color-gray-1);
-  border-color: var(--mantine-color-gray-4);
+	background: var(--disposition-surface-hover);
+	border-color: var(--disposition-border-strong);
 }
 
 .propertiesCard {
-  background: var(--mantine-color-gray-0);
-  border-color: var(--mantine-color-gray-3);
-  padding: var(--mantine-spacing-sm);
+	background: var(--disposition-surface-soft);
+	border-color: var(--disposition-border);
+	padding: var(--mantine-spacing-sm);
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .panel {
-    padding: var(--mantine-spacing-sm);
-  }
-  
-  .nodeName {
-    font-size: var(--mantine-font-size-sm);
-  }
+	.panel {
+		padding: var(--mantine-spacing-sm);
+	}
+
+	.nodeName {
+		font-size: var(--mantine-font-size-sm);
+	}
 }

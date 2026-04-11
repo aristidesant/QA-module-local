@@ -39,6 +39,12 @@
 	display: grid;
 	align-items: start;
 	gap: var(--mantine-spacing-sm);
+	padding-bottom: var(--mantine-spacing-xs);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .header {
+	border-bottom-color: var(--mantine-color-dark-5);
 }
 
 .header.withIcon.withRight {
@@ -70,13 +76,15 @@
 .titleCopy {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 4px;
 	flex: 1;
 }
 
 .title {
-	font-size: 14px;
-	font-weight: 600;
+	font-size: 12px;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	line-height: 1.2;
 	color: var(--mantine-color-gray-9);
 }
 

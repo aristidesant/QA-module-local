@@ -27,32 +27,64 @@
 .conversationSection {
 	display: flex;
 	flex-direction: column;
-	gap: 6px; /* compact vertical rhythm */
-	padding: var(--mantine-spacing-xs); /* reduced padding for compact layout */
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: 10px;
-	background: var(--mantine-color-white);
+	gap: var(--mantine-spacing-xs);
+	padding-top: var(--mantine-spacing-xs);
 }
 
 .conversationHeader {
-	padding-bottom: var(--mantine-spacing-xs);
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
 }
 
 .sectionLabel {
+	display: flex;
+	align-items: center;
+	line-height: 1;
 	font-weight: 600;
 	color: var(--mantine-color-gray-9);
+	min-width: 0;
+}
+
+.overrideToggle {
+	padding: 6px 10px;
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 999px;
+	background: var(--mantine-color-gray-0);
+	flex-shrink: 0;
+}
+
+.overrideLabel {
+	white-space: nowrap;
 }
 
 .inlineSwitch {
 	align-self: center;
 }
 
+.promptSurface {
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: 14px;
+	background: var(--mantine-color-gray-0);
+}
+
+.promptRoot {
+	min-height: 0;
+}
+
+.promptWrapper {
+	min-height: 0;
+}
+
 .promptInput {
+	min-height: 150px;
 	border: none;
 	padding: 0;
 	font-size: var(--mantine-font-size-xs);
-	min-height: 150px; /* lowered to reduce vertical footprint */
+	line-height: 1.55;
+	background: transparent;
 }
 
 .promptInput:focus {
@@ -343,5 +375,148 @@
 
 .edgeItemWarning:hover {
 	background: var(--mantine-color-yellow-0);
+	border-color: var(--mantine-color-yellow-4);
+}
+
+[data-mantine-color-scheme='dark'] .tabList {
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .tab {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .tab[data-active='true'] {
+	color: var(--mantine-color-dark-0);
+	border-bottom-color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .conversationSection {
+	border-top: 1px solid var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .knowledgeItem,
+[data-mantine-color-scheme='dark'] .toolRow,
+[data-mantine-color-scheme='dark'] .customToolCard,
+[data-mantine-color-scheme='dark'] .customToolRow,
+[data-mantine-color-scheme='dark'] .edgeItem {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .toolsDivider {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .overrideToggle,
+[data-mantine-color-scheme='dark'] .promptSurface {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .sectionLabel,
+[data-mantine-color-scheme='dark'] .fieldLabel,
+[data-mantine-color-scheme='dark'] .knowledgeLabel,
+[data-mantine-color-scheme='dark'] .toolLabel,
+[data-mantine-color-scheme='dark'] .customToolName,
+[data-mantine-color-scheme='dark'] .edgeCondition {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .helperText,
+[data-mantine-color-scheme='dark'] .description,
+[data-mantine-color-scheme='dark'] .edgeDragHandle,
+[data-mantine-color-scheme='dark'] .voiceIcon,
+[data-mantine-color-scheme='dark'] .knowledgeIcon,
+[data-mantine-color-scheme='dark'] .customToolIcon {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .overrideLabel {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .selectInput,
+[data-mantine-color-scheme='dark'] .inheritedFieldBox {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .promptInput {
+	color: var(--mantine-color-dark-0);
+	caret-color: var(--mantine-color-blue-4);
+}
+
+[data-mantine-color-scheme='dark'] .promptInput::placeholder {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .voiceIcon,
+[data-mantine-color-scheme='dark'] .knowledgeIcon,
+[data-mantine-color-scheme='dark'] .customToolIcon {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .emptyState,
+[data-mantine-color-scheme='dark'] .placeholderCard,
+[data-mantine-color-scheme='dark'] .customToolsEmpty {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .toolRow:hover,
+[data-mantine-color-scheme='dark'] .edgeItem:hover {
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .edgeItemDragging {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-blue-8) 14%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-blue-5);
+}
+
+[data-mantine-color-scheme='dark'] .edgeDragHandle:hover {
+	color: var(--mantine-color-dark-0);
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .edgeItemError {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-red-9) 12%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-red-5);
+}
+
+[data-mantine-color-scheme='dark'] .edgeItemError:hover {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-red-9) 12%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-red-4);
+}
+
+[data-mantine-color-scheme='dark'] .edgeItemWarning {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-yellow-9) 10%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-yellow-5);
+}
+
+[data-mantine-color-scheme='dark'] .edgeItemWarning:hover {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-yellow-9) 10%,
+		var(--mantine-color-dark-7)
+	);
 	border-color: var(--mantine-color-yellow-4);
 }

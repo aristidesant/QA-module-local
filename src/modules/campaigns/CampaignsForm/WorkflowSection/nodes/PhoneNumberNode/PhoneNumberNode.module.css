@@ -23,7 +23,7 @@
 		transparent
 	);
 	border-color: var(--mantine-color-red-4);
-	background-color: var(--mantine-color-white);
+	background-color: var(--workflow-node-panel-bg, var(--mantine-color-white));
 }
 
 .icon {
@@ -37,14 +37,16 @@
 	padding: 8px var(--mantine-spacing-sm);
 	font-family: var(--mantine-font-family-monospace);
 	font-size: 11px;
-	background-color: var(--mantine-color-white);
-	border-bottom: 1px solid var(--mantine-color-gray-2);
-	color: var(--mantine-color-gray-8);
+	background-color: var(--workflow-node-body-bg, var(--mantine-color-white));
+	border-bottom: 1px solid
+		var(--workflow-node-panel-border, var(--mantine-color-gray-2));
+	color: var(--workflow-shell-text, var(--mantine-color-gray-8));
 }
 
 .footer {
-	background-color: var(--mantine-color-gray-0);
-	border-top: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--workflow-node-panel-bg, var(--mantine-color-gray-0));
+	border-top: 1px solid
+		var(--workflow-node-panel-border, var(--mantine-color-gray-2));
 	padding: 6px var(--mantine-spacing-sm);
 	display: flex;
 	justify-content: flex-end;

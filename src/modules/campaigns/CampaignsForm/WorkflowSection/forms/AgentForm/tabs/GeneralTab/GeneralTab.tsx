@@ -291,16 +291,12 @@ const GeneralTab = () => {
 	return (
 		<Stack gap='xs'>
 			<div className={mainStyles.conversationSection}>
-				<Group
-					justify='space-between'
-					align='center'
-					className={mainStyles.conversationHeader}
-				>
-					<Text size='sm' className={mainStyles.sectionLabel}>
+				<div className={mainStyles.conversationHeader}>
+					<Text size='sm' component='div' className={mainStyles.sectionLabel}>
 						{t('form.workflow.forms.agent.general.prompt.label')}
 					</Text>
-					<Group gap='xs' align='center'>
-						<Text size='xs' c='dimmed'>
+					<Group gap='xs' align='center' className={mainStyles.overrideToggle}>
+						<Text size='xs' c='dimmed' className={mainStyles.overrideLabel}>
 							{t('form.workflow.forms.agent.general.overridePrompt.label')}
 						</Text>
 						<Switch
@@ -362,20 +358,24 @@ const GeneralTab = () => {
 							size='sm'
 						/>
 					</Group>
-				</Group>
-				<Textarea
-					placeholder={t(
-						'form.workflow.forms.agent.general.prompt.placeholder'
-					)}
-					value={currentPromptValue}
-					minRows={7}
-					onChange={(event) => {
-						handlePromptChange(event.currentTarget.value);
-					}}
-					classNames={{
-						input: mainStyles.promptInput,
-					}}
-				/>
+				</div>
+				<div className={mainStyles.promptSurface}>
+					<Textarea
+						placeholder={t(
+							'form.workflow.forms.agent.general.prompt.placeholder'
+						)}
+						value={currentPromptValue}
+						minRows={7}
+						onChange={(event) => {
+							handlePromptChange(event.currentTarget.value);
+						}}
+						classNames={{
+							root: mainStyles.promptRoot,
+							wrapper: mainStyles.promptWrapper,
+							input: mainStyles.promptInput,
+						}}
+					/>
+				</div>
 				<Group justify='flex-end'>
 					<Tooltip
 						label={t('form.workflow.forms.agent.general.prompt.expand')}

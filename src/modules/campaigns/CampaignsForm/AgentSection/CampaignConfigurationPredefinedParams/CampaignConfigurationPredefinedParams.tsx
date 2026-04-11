@@ -11,6 +11,7 @@ import type { ConversationConfigModel } from '~/models/AgentListObject';
 import { IconCheck } from '@tabler/icons-react';
 import CampaignPredefinedParamsModal from './CampaignPredefinedParamsModal';
 import { useTranslation } from 'react-i18next';
+import styles from './CampaignConfigurationPredefinedParams.module.css';
 
 const CampaignConfigurationPredefinedParams: React.FC = () => {
 	const { t } = useTranslation([
@@ -118,7 +119,7 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 				}}
 			>
 				{currentPredefinedParam ? (
-					<Paper withBorder p='md' radius='md' bg='var(--mantine-color-body)'>
+					<Paper withBorder p='md' radius='md' className={styles.activePaper}>
 						<Group align='center' gap='sm' wrap='nowrap'>
 							<ThemeIcon size='lg' radius='xl' color='teal' variant='light'>
 								<IconCheck size={20} />
@@ -127,22 +128,16 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 								<Text fw={600} size='sm'>
 									{currentPredefinedParam.name}
 								</Text>
-								<Text size='xs' c='dimmed'>
+								<Text size='xs' className={styles.statusText}>
 									{t('form.agent.behavior.active')}
 								</Text>
 							</div>
 						</Group>
 					</Paper>
 				) : (
-					<Paper
-						withBorder
-						p='lg'
-						radius='md'
-						bg='var(--mantine-color-gray-0)'
-						style={{ borderStyle: 'dashed' }}
-					>
+					<Paper withBorder p='lg' radius='md' className={styles.emptyPaper}>
 						<Stack align='center' gap='xs'>
-							<Text size='sm' c='dimmed'>
+							<Text size='sm' className={styles.statusText}>
 								{t('form.agent.behavior.noConfiguration')}
 							</Text>
 						</Stack>

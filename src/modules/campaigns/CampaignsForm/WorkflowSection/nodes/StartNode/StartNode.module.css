@@ -23,8 +23,9 @@
 }
 
 .footer {
-	background-color: var(--mantine-color-white);
-	border-top: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--workflow-node-panel-bg, var(--mantine-color-white));
+	border-top: 1px solid
+		var(--workflow-node-panel-border, var(--mantine-color-gray-3));
 	padding: 4px var(--mantine-spacing-sm);
 	display: flex;
 	justify-content: flex-end;

@@ -1,6 +1,30 @@
 .previewContainer {
-	background: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-3);
+	--disposition-surface: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+	--disposition-surface-soft: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-8)
+	);
+	--disposition-border: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
+	);
+	--disposition-border-strong: light-dark(
+		var(--mantine-color-gray-4),
+		var(--mantine-color-dark-3)
+	);
+	--disposition-text: light-dark(
+		var(--mantine-color-gray-9),
+		var(--mantine-color-gray-0)
+	);
+	--disposition-text-muted: light-dark(
+		var(--mantine-color-gray-6),
+		var(--mantine-color-gray-4)
+	);
+	background: var(--disposition-surface-soft);
+	border: 1px solid var(--disposition-border);
 	border-radius: var(--mantine-radius-lg);
 	padding: var(--mantine-spacing-md);
 }
@@ -12,11 +36,11 @@
 }
 
 .headerTitle {
-	color: var(--mantine-color-gray-9);
+	color: var(--disposition-text);
 }
 
 .headerDescription {
-	color: var(--mantine-color-gray-6);
+	color: var(--disposition-text-muted);
 }
 
 .statsGrid {
@@ -31,9 +55,9 @@
 	align-items: center;
 	gap: var(--mantine-spacing-xs);
 	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-	border: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid var(--disposition-border);
 	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-white);
+	background: var(--disposition-surface);
 	min-height: 48px;
 }
 
@@ -92,10 +116,10 @@
 	gap: var(--mantine-spacing-xs);
 	padding: var(--mantine-spacing-sm);
 	margin-left: calc(var(--indent-level) * 18px);
-	border: 1px solid var(--mantine-color-gray-3);
-	border-left: 3px solid var(--mantine-color-gray-4);
+	border: 1px solid var(--disposition-border);
+	border-left: 3px solid var(--disposition-border-strong);
 	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-white);
+	background: var(--disposition-surface);
 }
 
 .nodeCardRoot {
@@ -113,15 +137,15 @@
 }
 
 .nodeTitle {
-	color: var(--mantine-color-gray-9);
+	color: var(--disposition-text);
 }
 
 .nodeMeta {
-	color: var(--mantine-color-gray-6);
+	color: var(--disposition-text-muted);
 }
 
 .nodeDescription {
-	color: var(--mantine-color-gray-7);
+	color: var(--disposition-text-muted);
 }
 
 .nodeBadges {
@@ -138,21 +162,42 @@
 }
 
 .nodeCard.effective {
-	border-left-color: var(--mantine-color-green-6);
-	background: var(--mantine-color-green-0);
+	border-left-color: light-dark(
+		var(--mantine-color-green-6),
+		var(--mantine-color-green-7)
+	);
+	background: light-dark(
+		var(--mantine-color-green-0),
+		var(--mantine-color-green-9)
+	);
 }
 
 .nodeCard.noEffective {
-	border-left-color: var(--mantine-color-orange-6);
-	background: var(--mantine-color-orange-0);
+	border-left-color: light-dark(
+		var(--mantine-color-orange-6),
+		var(--mantine-color-orange-7)
+	);
+	background: light-dark(
+		var(--mantine-color-orange-0),
+		var(--mantine-color-orange-9)
+	);
 }
 
 .nodeCard.noContact {
-	border-left-color: var(--mantine-color-red-6);
-	background: var(--mantine-color-red-0);
+	border-left-color: light-dark(
+		var(--mantine-color-red-6),
+		var(--mantine-color-red-7)
+	);
+	background: light-dark(
+		var(--mantine-color-red-0),
+		var(--mantine-color-red-9)
+	);
 }
 
 .nodeCard.default {
-	border-left-color: var(--mantine-color-blue-4);
-	background: var(--mantine-color-gray-0);
+	border-left-color: light-dark(
+		var(--mantine-color-blue-4),
+		var(--mantine-color-blue-7)
+	);
+	background: var(--disposition-surface-soft);
 }

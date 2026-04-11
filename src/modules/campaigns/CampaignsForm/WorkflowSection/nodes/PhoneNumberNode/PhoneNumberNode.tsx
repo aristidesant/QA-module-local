@@ -11,9 +11,9 @@ import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
-import { getWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
 import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
 import { useNodeStyle } from '../../NodeStylesContext';
+import { useWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
 import styles from './PhoneNumberNode.module.css';
 
 const PhoneNumberNode = (props: NodeProps) => {
@@ -28,6 +28,7 @@ const PhoneNumberNode = (props: NodeProps) => {
 		defaultValue: 'Transfer',
 	});
 	const persistedStyle = useNodeStyle(props.id);
+	const toneStyle = useWorkflowNodeToneStyle(nodeTitle, persistedStyle);
 	const CustomIcon = resolveWorkflowIcon(persistedStyle?.iconName);
 	const nodeIcon = CustomIcon ? (
 		<CustomIcon size={18} className={styles.icon} />
@@ -46,15 +47,19 @@ const PhoneNumberNode = (props: NodeProps) => {
 	const hasError = !value || value.trim() === '';
 	const nodeSurfaceStyle = hasError
 		? {
+				...toneStyle,
 				'--workflow-node-accent': 'var(--mantine-color-red-7)',
 				'--workflow-node-selected-border': 'var(--mantine-color-red-4)',
 				'--workflow-node-selected-ring': 'rgba(239, 68, 68, 0.14)',
 				'--workflow-node-header-bg': 'var(--mantine-color-red-0)',
 				'--workflow-node-surface-selected': 'var(--mantine-color-red-0)',
+				'--workflow-node-surface': 'var(--mantine-color-red-0)',
+				'--workflow-node-panel-bg': 'var(--mantine-color-red-0)',
+				'--workflow-node-panel-border': 'var(--mantine-color-red-2)',
 				backgroundColor: 'var(--mantine-color-red-0)',
 				borderColor: 'var(--mantine-color-red-4)',
 			}
-		: getWorkflowNodeToneStyle(nodeTitle, persistedStyle);
+		: toneStyle;
 
 	return (
 		<>

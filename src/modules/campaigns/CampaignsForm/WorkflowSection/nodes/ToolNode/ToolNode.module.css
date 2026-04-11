@@ -29,8 +29,9 @@
 }
 
 .footer {
-	background-color: var(--mantine-color-gray-0);
-	border-top: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--workflow-node-panel-bg, var(--mantine-color-gray-0));
+	border-top: 1px solid
+		var(--workflow-node-panel-border, var(--mantine-color-gray-2));
 	padding: 8px var(--mantine-spacing-sm);
 	display: flex;
 	align-items: center;
@@ -56,10 +57,11 @@
 	display: inline-flex;
 	align-items: center;
 	padding: 3px 9px;
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--workflow-node-chip-bg, var(--mantine-color-white));
+	border: 1px solid
+		var(--workflow-node-chip-border, var(--mantine-color-gray-2));
 	border-radius: var(--mantine-radius-xl);
 	font-size: 11px;
-	color: var(--mantine-color-gray-8);
+	color: var(--workflow-node-chip-text, var(--mantine-color-gray-8));
 	white-space: nowrap;
 }

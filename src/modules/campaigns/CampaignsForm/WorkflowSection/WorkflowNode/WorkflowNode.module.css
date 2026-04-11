@@ -26,35 +26,95 @@
 :global(.react-flow__node.selected) .nodeContainer > .nodeSurface {
 	border-color: var(
 		--workflow-node-selected-border,
-		var(--mantine-color-gray-5)
+		var(--workflow-shell-border-strong, var(--mantine-color-gray-5))
 	);
 	background-color: var(
 		--workflow-node-surface-selected,
-		var(--mantine-color-white)
+		var(--workflow-node-surface, var(--mantine-color-white))
 	);
 	box-shadow:
 		0 0 0 2px
 			var(
 				--workflow-node-selected-ring,
-				color-mix(in srgb, var(--mantine-color-gray-5) 16%, transparent)
+				color-mix(
+					in srgb,
+					var(--workflow-shell-border-strong, var(--mantine-color-gray-5)) 16%,
+					transparent
+				)
 			),
-		0 18px 34px color-mix(in srgb, var(--mantine-color-black) 12%, transparent);
+		0 18px 34px color-mix(in srgb, var(--mantine-color-black) 18%, transparent);
 	transform: translateY(-1px);
 }
 
 .nodeSurface {
-	--workflow-node-accent: var(--mantine-color-gray-7);
-	--workflow-node-selected-border: var(--mantine-color-gray-5);
+	--workflow-node-accent: var(
+		--workflow-shell-control-text,
+		var(--mantine-color-gray-7)
+	);
+	--workflow-node-selected-border: var(
+		--workflow-shell-border-strong,
+		var(--mantine-color-gray-5)
+	);
 	--workflow-node-selected-ring: color-mix(
 		in srgb,
-		var(--mantine-color-gray-5) 16%,
+		var(--workflow-shell-border-strong, var(--mantine-color-gray-5)) 16%,
 		transparent
 	);
-	--workflow-node-header-bg: var(--mantine-color-gray-0);
-	--workflow-node-surface-selected: var(--mantine-color-white);
+	--workflow-node-header-bg: var(
+		--workflow-shell-panel-muted,
+		var(--mantine-color-gray-0)
+	);
+	--workflow-node-surface-selected: var(
+		--workflow-shell-panel-elevated,
+		var(--mantine-color-white)
+	);
+	--workflow-node-surface: var(
+		--workflow-shell-panel-elevated,
+		var(--mantine-color-white)
+	);
+	--workflow-node-body-bg: var(
+		--workflow-shell-panel,
+		var(--mantine-color-white)
+	);
+	--workflow-node-panel-bg: var(
+		--workflow-shell-panel,
+		var(--mantine-color-white)
+	);
+	--workflow-node-panel-border: var(
+		--workflow-shell-border-soft,
+		var(--mantine-color-gray-2)
+	);
+	--workflow-node-chip-bg: var(
+		--workflow-shell-panel,
+		var(--mantine-color-white)
+	);
+	--workflow-node-chip-border: var(
+		--workflow-shell-border-soft,
+		var(--mantine-color-gray-2)
+	);
+	--workflow-node-chip-text: var(
+		--workflow-shell-text,
+		var(--mantine-color-gray-8)
+	);
+	--workflow-node-icon-bg: var(
+		--workflow-shell-panel,
+		var(--mantine-color-white)
+	);
+	--workflow-node-icon-border: var(
+		--workflow-shell-border-soft,
+		var(--mantine-color-gray-2)
+	);
+	--workflow-node-header-text: var(
+		--workflow-shell-text,
+		var(--mantine-color-dark-9)
+	);
+	--workflow-node-header-subtext: var(
+		--workflow-shell-text-muted,
+		var(--mantine-color-gray-6)
+	);
 	position: relative;
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--workflow-node-surface, var(--mantine-color-white));
+	border: 1px solid var(--workflow-shell-border, var(--mantine-color-gray-3));
 	border-radius: calc(var(--mantine-radius-lg) + 2px);
 	min-width: 120px;
 	text-align: center;
@@ -75,20 +135,28 @@
 }
 
 .nodeSurface:hover {
-	border-color: var(--mantine-color-gray-4);
+	border-color: var(
+		--workflow-shell-border-strong,
+		var(--mantine-color-gray-4)
+	);
 	box-shadow:
-		0 14px 28px color-mix(in srgb, var(--mantine-color-black) 8%, transparent),
-		0 2px 4px color-mix(in srgb, var(--mantine-color-black) 8%, transparent);
+		0 14px 28px color-mix(in srgb, var(--mantine-color-black) 14%, transparent),
+		0 2px 4px color-mix(in srgb, var(--mantine-color-black) 10%, transparent);
 	transform: translateY(-1px);
 }
 
 .handle {
 	width: 10px;
 	height: 10px;
-	border: 1px solid var(--mantine-color-gray-4);
-	background-color: var(--mantine-color-white);
+	border: 1px solid
+		var(--workflow-shell-border-strong, var(--mantine-color-gray-4));
+	background-color: var(--workflow-node-panel-bg, var(--mantine-color-white));
 	box-shadow: 0 0 0 2px
-		color-mix(in srgb, var(--mantine-color-white) 90%, transparent);
+		color-mix(
+			in srgb,
+			var(--workflow-node-panel-bg, var(--mantine-color-white)) 90%,
+			transparent
+		);
 	transition:
 		opacity 120ms ease,
 		border-color 120ms ease,
@@ -114,20 +182,26 @@
 }
 
 .handleSource {
-	border-color: var(--mantine-color-gray-6);
-	background-color: var(--mantine-color-gray-6);
+	border-color: var(--workflow-node-accent, var(--mantine-color-gray-6));
+	background-color: var(--workflow-node-accent, var(--mantine-color-gray-6));
 }
 
 .handleTarget {
-	border-color: var(--mantine-color-gray-5);
-	background-color: var(--mantine-color-white);
+	border-color: var(
+		--workflow-shell-border-strong,
+		var(--mantine-color-gray-5)
+	);
+	background-color: var(--workflow-node-panel-bg, var(--mantine-color-white));
 }
 
 :global(.react-flow__node.selected) .handleSource {
-	border-color: var(--mantine-color-gray-7);
-	background-color: var(--mantine-color-gray-7);
+	border-color: var(--workflow-node-accent, var(--mantine-color-gray-7));
+	background-color: var(--workflow-node-accent, var(--mantine-color-gray-7));
 }
 
 :global(.react-flow__node.selected) .handleTarget {
-	border-color: var(--mantine-color-gray-6);
+	border-color: var(
+		--workflow-shell-border-strong,
+		var(--mantine-color-gray-6)
+	);
 }

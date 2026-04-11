@@ -1,9 +1,12 @@
 .canvas {
-	border: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid var(--workflow-shell-border, var(--mantine-color-gray-3));
 	border-radius: var(--mantine-radius-sm);
 	width: 100%;
 	overflow: auto;
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(
+		--workflow-shell-panel-muted,
+		var(--mantine-color-gray-0)
+	);
 }
 
 .canvasCompact {
@@ -43,26 +46,44 @@
 
 .miniMap {
 	border-radius: var(--mantine-radius-sm);
-	border: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid var(--workflow-shell-border, var(--mantine-color-gray-3));
+	background-color: var(
+		--workflow-shell-control-bg,
+		var(--mantine-color-white)
+	);
 }
 
 .controls {
 	border-radius: var(--mantine-radius-sm);
-	border: 1px solid var(--mantine-color-gray-3);
-	background-color: var(--mantine-color-white);
+	border: 1px solid
+		var(--workflow-shell-control-border, var(--mantine-color-gray-3));
+	background-color: var(
+		--workflow-shell-control-bg,
+		var(--mantine-color-white)
+	);
+	color: var(--workflow-shell-control-text, var(--mantine-color-gray-7));
 }
 
 .flow :global(.react-flow__controls-button) {
 	width: 24px;
 	height: 24px;
-	border-color: var(--mantine-color-gray-3);
-	background-color: var(--mantine-color-white);
-	color: var(--mantine-color-gray-7);
+	border-color: var(
+		--workflow-shell-control-border,
+		var(--mantine-color-gray-3)
+	);
+	background-color: var(
+		--workflow-shell-control-bg,
+		var(--mantine-color-white)
+	);
+	color: var(--workflow-shell-control-text, var(--mantine-color-gray-7));
 }
 
 .flow :global(.react-flow__controls-button:hover) {
-	background-color: var(--mantine-color-gray-0);
-	color: var(--mantine-color-gray-9);
+	background-color: var(
+		--workflow-shell-panel-muted,
+		var(--mantine-color-gray-0)
+	);
+	color: var(--workflow-shell-text, var(--mantine-color-gray-9));
 }
 
 @media (max-width: 48em) {

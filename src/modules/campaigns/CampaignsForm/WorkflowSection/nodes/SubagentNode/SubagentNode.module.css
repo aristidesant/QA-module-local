@@ -25,17 +25,18 @@
 }
 
 .title {
-	color: var(--mantine-color-gray-9);
+	color: var(--workflow-node-header-text, var(--mantine-color-gray-9));
 }
 
 .promptSection {
 	padding: 8px var(--mantine-spacing-sm);
-	border-bottom: 1px solid var(--mantine-color-cyan-1);
-	background-color: var(--mantine-color-white);
+	border-bottom: 1px solid
+		var(--workflow-node-panel-border, var(--mantine-color-cyan-1));
+	background-color: var(--workflow-node-body-bg, var(--mantine-color-white));
 }
 
 .promptText {
-	color: var(--mantine-color-gray-7);
+	color: var(--workflow-shell-text-muted, var(--mantine-color-gray-7));
 	display: -webkit-box;
 	-webkit-line-clamp: 2;
 	-webkit-box-orient: vertical;
@@ -45,8 +46,9 @@
 }
 
 .footer {
-	background-color: var(--mantine-color-gray-0);
-	border-top: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--workflow-node-panel-bg, var(--mantine-color-gray-0));
+	border-top: 1px solid
+		var(--workflow-node-panel-border, var(--mantine-color-gray-2));
 	padding: 8px var(--mantine-spacing-sm);
 	display: flex;
 	align-items: center;
@@ -73,11 +75,12 @@
 	align-items: center;
 	gap: 4px;
 	padding: 3px 9px;
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--workflow-node-chip-bg, var(--mantine-color-white));
+	border: 1px solid
+		var(--workflow-node-chip-border, var(--mantine-color-gray-2));
 	border-radius: var(--mantine-radius-xl);
 	font-size: 11px;
-	color: var(--mantine-color-gray-8);
+	color: var(--workflow-node-chip-text, var(--mantine-color-gray-8));
 	white-space: nowrap;
 }
 

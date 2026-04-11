@@ -1,13 +1,41 @@
 .nodeRow {
+	--disposition-node-surface: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+	--disposition-node-surface-hover: light-dark(
+		var(--mantine-color-blue-0),
+		var(--mantine-color-dark-6)
+	);
+	--disposition-node-surface-selected: light-dark(
+		var(--mantine-color-blue-0),
+		var(--mantine-color-dark-6)
+	);
+	--disposition-node-border: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
+	);
+	--disposition-node-border-hover: light-dark(
+		var(--mantine-color-blue-4),
+		var(--mantine-color-blue-7)
+	);
+	--disposition-node-border-selected: light-dark(
+		var(--mantine-color-blue-5),
+		var(--mantine-color-blue-5)
+	);
+	--disposition-node-text: light-dark(
+		var(--mantine-color-gray-9),
+		var(--mantine-color-gray-0)
+	);
 	position: relative;
 	display: flex;
 	align-items: center;
 	gap: 4px;
 	padding: 4px 6px;
 	margin-bottom: 3px;
-	border: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid var(--disposition-node-border);
 	border-radius: var(--mantine-radius-sm);
-	background: var(--mantine-color-white);
+	background: var(--disposition-node-surface);
 	transition:
 		border-color 120ms ease,
 		background-color 120ms ease,
@@ -55,7 +83,7 @@
 }
 
 .nodeTitle {
-	color: var(--mantine-color-gray-9);
+	color: var(--disposition-node-text);
 }
 
 .icons {
@@ -81,26 +109,36 @@
 }
 
 .clickable:hover {
-	border-color: var(--mantine-color-blue-4);
-	background: var(--mantine-color-blue-0);
+	border-color: var(--disposition-node-border-hover);
+	background: var(--disposition-node-surface-hover);
 }
 
 .selected {
-	border-color: var(--mantine-color-blue-5);
-	background: var(--mantine-color-blue-0);
-	box-shadow: 0 0 0 1px var(--mantine-color-blue-2);
+	border-color: var(--disposition-node-border-selected);
+	background: var(--disposition-node-surface-selected);
+	box-shadow: 0 0 0 1px
+		light-dark(var(--mantine-color-blue-2), var(--mantine-color-blue-9));
 }
 
 .effective {
-	border-color: var(--mantine-color-green-5);
+	border-color: light-dark(
+		var(--mantine-color-green-5),
+		var(--mantine-color-green-7)
+	);
 }
 
 .noEffective {
-	border-color: var(--mantine-color-orange-5);
+	border-color: light-dark(
+		var(--mantine-color-orange-5),
+		var(--mantine-color-orange-7)
+	);
 }
 
 .noContact {
-	border-color: var(--mantine-color-red-5);
+	border-color: light-dark(
+		var(--mantine-color-red-5),
+		var(--mantine-color-red-7)
+	);
 }
 
 @media (max-width: 768px) {

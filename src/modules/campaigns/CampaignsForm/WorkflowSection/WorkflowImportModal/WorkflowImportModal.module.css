@@ -29,6 +29,23 @@
 	gap: var(--mantine-spacing-xs);
 }
 
+[data-mantine-color-scheme='dark'] .helperText {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .summaryCard {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .summaryValue {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .footer {
+	border-top: 1px solid var(--mantine-color-dark-5);
+}
+
 @media (max-width: 48em) {
 	.footer {
 		flex-direction: column-reverse;

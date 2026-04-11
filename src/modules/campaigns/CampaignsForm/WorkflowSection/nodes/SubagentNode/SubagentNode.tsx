@@ -16,9 +16,9 @@ import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
-import { getWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
 import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
 import { useNodeStyle } from '../../NodeStylesContext';
+import { useWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
 import styles from './SubagentNode.module.css';
 
 const SubagentNodeComponent = (props: NodeProps) => {
@@ -36,7 +36,7 @@ const SubagentNodeComponent = (props: NodeProps) => {
 	const fallbackLabel = t(`form.workflow.nodes.${nodeData.type}`, {
 		defaultValue: t('form.workflow.nodes.standalone_agent'),
 	});
-	const nodeSurfaceStyle = getWorkflowNodeToneStyle(
+	const nodeSurfaceStyle = useWorkflowNodeToneStyle(
 		nodeData.label || fallbackLabel,
 		persistedStyle
 	);

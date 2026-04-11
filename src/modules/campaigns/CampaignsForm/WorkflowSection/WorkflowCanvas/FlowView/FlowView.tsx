@@ -117,7 +117,7 @@ const FlowView = ({
 				variant={BackgroundVariant.Dots}
 				gap={16}
 				size={1}
-				color='var(--mantine-color-gray-4)'
+				color='var(--workflow-shell-grid-color, var(--mantine-color-gray-4))'
 			/>
 			<Controls className={controlsClassName} />
 		</ReactFlow>

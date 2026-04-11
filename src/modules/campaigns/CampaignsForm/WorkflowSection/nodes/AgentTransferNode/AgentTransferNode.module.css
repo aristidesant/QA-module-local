@@ -15,7 +15,7 @@
 }
 
 .title {
-	color: var(--mantine-color-gray-9);
+	color: var(--workflow-node-header-text, var(--mantine-color-gray-9));
 }
 
 .details {
@@ -23,8 +23,9 @@
 	display: flex;
 	flex-direction: column;
 	gap: 6px;
-	background-color: var(--mantine-color-white);
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--workflow-node-body-bg, var(--mantine-color-white));
+	border-bottom: 1px solid
+		var(--workflow-node-panel-border, var(--mantine-color-gray-2));
 }
 
 .detailRow {
@@ -36,13 +37,13 @@
 
 .metaLabel {
 	font-size: var(--mantine-font-size-xs);
-	color: var(--mantine-color-gray-6);
+	color: var(--workflow-shell-text-muted, var(--mantine-color-gray-6));
 	font-weight: 500;
 }
 
 .metaValue {
 	font-size: var(--mantine-font-size-xs);
-	color: var(--mantine-color-gray-9);
+	color: var(--workflow-shell-text, var(--mantine-color-gray-9));
 	text-align: right;
 	max-width: 160px;
 	white-space: nowrap;
@@ -51,8 +52,9 @@
 }
 
 .footer {
-	background-color: var(--mantine-color-gray-0);
-	border-top: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--workflow-node-panel-bg, var(--mantine-color-gray-0));
+	border-top: 1px solid
+		var(--workflow-node-panel-border, var(--mantine-color-gray-2));
 	padding: 8px var(--mantine-spacing-sm);
 	display: flex;
 	align-items: center;
@@ -61,7 +63,7 @@
 }
 
 .footerText {
-	color: var(--mantine-color-gray-8);
+	color: var(--workflow-shell-text, var(--mantine-color-gray-8));
 	flex: 1;
 	min-width: 0;
 	line-height: 1.35;

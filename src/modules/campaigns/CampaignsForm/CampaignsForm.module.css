@@ -11,6 +11,11 @@
 	backdrop-filter: blur(8px);
 }
 
+[data-mantine-color-scheme='dark'] .stickyActions {
+	background: color-mix(in srgb, var(--mantine-color-dark-7) 92%, transparent);
+	border-color: var(--mantine-color-dark-5);
+}
+
 .stickyActionsGroup {
 	display: flex;
 	justify-content: flex-end;

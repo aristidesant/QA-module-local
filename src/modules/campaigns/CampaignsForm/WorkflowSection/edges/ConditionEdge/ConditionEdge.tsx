@@ -292,7 +292,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 			case 'warning':
 				return 'var(--mantine-color-orange-5)';
 			default:
-				return 'var(--mantine-color-gray-6)';
+				return 'var(--workflow-shell-control-text, var(--mantine-color-gray-6))';
 		}
 	};
 

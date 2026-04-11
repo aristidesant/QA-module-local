@@ -6,23 +6,26 @@
 	flex-wrap: nowrap;
 	padding: 6px;
 	border-radius: calc(var(--mantine-radius-lg) + 2px);
-	background-color: color-mix(
-		in srgb,
-		var(--mantine-color-white) 96%,
-		transparent
+	background-color: var(
+		--workflow-shell-control-bg,
+		var(--mantine-color-white)
 	);
 	border: 1px solid
-		color-mix(in srgb, var(--mantine-color-gray-5) 26%, transparent);
+		var(--workflow-shell-control-border, var(--mantine-color-gray-5));
 	box-shadow:
-		0 14px 26px color-mix(in srgb, var(--mantine-color-black) 12%, transparent),
-		0 2px 6px color-mix(in srgb, var(--mantine-color-black) 8%, transparent);
+		0 14px 26px color-mix(in srgb, var(--mantine-color-black) 14%, transparent),
+		0 2px 6px color-mix(in srgb, var(--mantine-color-black) 10%, transparent);
 	backdrop-filter: blur(8px);
 }
 
 .actionButton {
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
-	color: var(--mantine-color-gray-7);
+	background-color: var(
+		--workflow-shell-control-bg,
+		var(--mantine-color-white)
+	);
+	border: 1px solid
+		var(--workflow-shell-control-border, var(--mantine-color-gray-2));
+	color: var(--workflow-shell-control-text, var(--mantine-color-gray-7));
 	width: 28px;
 	height: 28px;
 	box-shadow: 0 1px 2px
@@ -30,9 +33,15 @@
 }
 
 .actionButton:hover {
-	background-color: var(--mantine-color-gray-0);
-	border-color: var(--mantine-color-gray-4);
-	color: var(--mantine-color-gray-9);
+	background-color: var(
+		--workflow-shell-panel-muted,
+		var(--mantine-color-gray-0)
+	);
+	border-color: var(
+		--workflow-shell-border-strong,
+		var(--mantine-color-gray-4)
+	);
+	color: var(--workflow-shell-text, var(--mantine-color-gray-9));
 }
 
 .actionButtonPrimary {
@@ -69,5 +78,54 @@
 
 .menuDropdown {
 	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid
+		var(--workflow-shell-control-border, var(--mantine-color-gray-3));
+	background: var(--mantine-color-white);
+	color: var(--mantine-color-gray-9);
+}
+
+[data-mantine-color-scheme='dark'] .menuDropdown {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .actionButtonPrimary {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-7) 18%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-blue-5);
+	color: var(--mantine-color-blue-1);
+}
+
+[data-mantine-color-scheme='dark'] .actionButtonPrimary:hover {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-6) 22%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-blue-4);
+	color: var(--mantine-color-blue-0);
+}
+
+[data-mantine-color-scheme='dark'] .actionButtonDanger {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-red-7) 16%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-red-5);
+	color: var(--mantine-color-red-1);
+}
+
+[data-mantine-color-scheme='dark'] .actionButtonDanger:hover {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-red-6) 20%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-red-4);
+	color: var(--mantine-color-red-0);
 }
