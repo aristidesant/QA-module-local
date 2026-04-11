@@ -100,10 +100,15 @@ const DashboardListPanel = () => {
 
 					return (
 						<Stack gap={2}>
-							<Text size='sm' fw={600} c='gray.9' truncate>
+							<Text
+								size='sm'
+								fw={600}
+								className={styles.dashboardName}
+								truncate
+							>
 								{dashboard.name}
 							</Text>
-							<Text size='xs' c='dimmed' truncate>
+							<Text size='xs' className={styles.dashboardMeta} truncate>
 								{dashboard.isDefault
 									? t('dashboardBuilder.defaultBadge')
 									: t('dashboardBuilder.dashboard.standard')}
@@ -225,10 +230,14 @@ const DashboardListPanel = () => {
 						strokeWidth={1.75}
 					/>
 					<Stack gap={2} align='center'>
-						<Text size='sm' fw={600} c='gray.9'>
+						<Text size='sm' fw={600} className={styles.emptyStateTitle}>
 							{t('dashboardBuilder.emptyDashboardTitle')}
 						</Text>
-						<Text size='xs' c='dimmed' ta='center'>
+						<Text
+							size='xs'
+							className={styles.emptyStateDescription}
+							ta='center'
+						>
 							{t('dashboardBuilder.emptyDashboardDescription')}
 						</Text>
 					</Stack>

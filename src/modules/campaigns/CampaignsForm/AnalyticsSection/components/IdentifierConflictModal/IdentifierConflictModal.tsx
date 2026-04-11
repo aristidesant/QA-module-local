@@ -13,6 +13,7 @@ import {
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import styles from './IdentifierConflictModal.module.css';
 
 interface IdentifierConflictModalProps {
 	opened: boolean;
@@ -67,13 +68,7 @@ export default function IdentifierConflictModal({
 						<Paper
 							withBorder
 							p='md'
-							style={{
-								borderColor:
-									selected === 'replace'
-										? 'var(--mantine-color-red-6)'
-										: undefined,
-								cursor: 'pointer',
-							}}
+							className={`${styles.optionCard} ${selected === 'replace' ? styles.optionCardSelectedReplace : ''}`.trim()}
 						>
 							<Group align='flex-start' wrap='nowrap'>
 								<Radio
@@ -82,7 +77,7 @@ export default function IdentifierConflictModal({
 									color='red'
 									mt={2}
 								/>
-								<Stack gap={4} style={{ flex: 1 }}>
+								<Stack gap={4} className={styles.optionContent}>
 									<Group gap='xs'>
 										<Text size='sm' fw={600}>
 											{t('form.analytics.conflict.replaceTitle')}
@@ -96,10 +91,10 @@ export default function IdentifierConflictModal({
 											identifier,
 										})}
 									</Text>
-									<Group gap={4}>
+									<Group gap={4} className={styles.warningRow}>
 										<IconAlertTriangle
 											size={13}
-											color='var(--mantine-color-red-6)'
+											className={styles.warningIcon}
 										/>
 										<Text size='xs' c='red'>
 											{t('form.analytics.conflict.replaceWarning')}
@@ -114,13 +109,7 @@ export default function IdentifierConflictModal({
 						<Paper
 							withBorder
 							p='md'
-							style={{
-								borderColor:
-									selected === 'duplicate'
-										? 'var(--mantine-color-blue-6)'
-										: undefined,
-								cursor: 'pointer',
-							}}
+							className={`${styles.optionCard} ${selected === 'duplicate' ? styles.optionCardSelectedDuplicate : ''}`.trim()}
 						>
 							<Group align='flex-start' wrap='nowrap'>
 								<Radio
@@ -129,14 +118,16 @@ export default function IdentifierConflictModal({
 									color='blue'
 									mt={2}
 								/>
-								<Stack gap={4} style={{ flex: 1 }}>
+								<Stack gap={4} className={styles.optionContent}>
 									<Text size='sm' fw={600}>
 										{t('form.analytics.conflict.duplicateTitle')}
 									</Text>
 									<Text size='sm' c='dimmed'>
 										{t('form.analytics.conflict.duplicateDescription')}
 									</Text>
-									<Code>{duplicateIdentifier}</Code>
+									<Code className={styles.duplicateCode}>
+										{duplicateIdentifier}
+									</Code>
 								</Stack>
 							</Group>
 						</Paper>

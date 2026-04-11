@@ -3,20 +3,26 @@
 	flex-direction: column;
 	gap: 4px;
 	padding-bottom: 12px;
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.modalKicker {
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	line-height: 1.2;
 }
 
 .modalTitle {
 	font-size: 1rem;
 	font-weight: 600;
-	color: var(--mantine-color-gray-9);
+	color: var(--mantine-color-text);
 	letter-spacing: -0.02em;
 	line-height: 1.2;
 }
 
 .modalDescription {
 	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-gray-6);
+	color: var(--mantine-color-dimmed);
 	line-height: 1.4;
 	max-width: 44rem;
 }

@@ -100,36 +100,37 @@ const DashboardDefinitionForm = ({
 
 	return (
 		<form onSubmit={handleSubmit} className={styles.modalForm}>
-			<Stack gap={0}>
-				<div className={styles.formSection}>
-					<div className={styles.sectionLabel}>
-						<Text fw={600} size='sm'>
-							{t('dashboardBuilder.form.sections.dashboardTitle')}
-						</Text>
-						<Text size='xs' c='dimmed'>
-							{t('dashboardBuilder.form.sections.dashboardDescription')}
-						</Text>
-					</div>
-					<Stack gap='sm'>
-						<TextInput
-							label={t('dashboardBuilder.form.fields.dashboardName')}
-							{...form.getInputProps('name')}
-						/>
-						<Textarea
-							label={t('dashboardBuilder.form.fields.dashboardDescription')}
-							minRows={3}
-							{...form.getInputProps('description')}
-						/>
-						<Switch
-							label={t('dashboardBuilder.form.fields.isDefault')}
-							checked={form.values.isDefault}
-							onChange={(event) =>
-								form.setFieldValue('isDefault', event.currentTarget.checked)
-							}
-						/>
-					</Stack>
+			<div className={styles.formSectionCard}>
+				<div className={styles.formSectionCardHeader}>
+					<Text fw={600} size='sm' className={styles.formSectionCardTitle}>
+						{t('dashboardBuilder.form.sections.dashboardTitle')}
+					</Text>
+					<Text size='xs' className={styles.formSectionCardDescription}>
+						{t('dashboardBuilder.form.sections.dashboardDescription')}
+					</Text>
 				</div>
-			</Stack>
+				<Stack gap='sm'>
+					<TextInput
+						label={t('dashboardBuilder.form.fields.dashboardName')}
+						{...form.getInputProps('name')}
+					/>
+					<Textarea
+						label={t('dashboardBuilder.form.fields.dashboardDescription')}
+						minRows={3}
+						{...form.getInputProps('description')}
+					/>
+				</Stack>
+			</div>
+
+			<div className={styles.formSectionCard}>
+				<Switch
+					label={t('dashboardBuilder.form.fields.isDefault')}
+					checked={form.values.isDefault}
+					onChange={(event) =>
+						form.setFieldValue('isDefault', event.currentTarget.checked)
+					}
+				/>
+			</div>
 
 			<div className={styles.formFooter}>
 				<Group justify='flex-end'>

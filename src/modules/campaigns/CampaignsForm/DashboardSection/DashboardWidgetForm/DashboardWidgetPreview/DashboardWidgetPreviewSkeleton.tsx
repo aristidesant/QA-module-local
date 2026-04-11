@@ -1,5 +1,4 @@
 import { Card, Skeleton, Stack, Text } from '@mantine/core';
-import type { CSSProperties } from 'react';
 import type { WidgetPreviewModel } from '../../DashboardSection.types';
 import styles from './DashboardWidgetPreview.module.css';
 
@@ -22,12 +21,7 @@ const DashboardWidgetPreviewSkeleton = ({
 			data-size={preview.sizePreset}
 			data-loading
 		>
-			<Card
-				radius='lg'
-				padding='lg'
-				className={styles.loadingCard}
-				style={{ '--widget-accent': preview.accentColor } as CSSProperties}
-			>
+			<Card radius='lg' padding='lg' className={styles.loadingCard}>
 				<Stack gap='xs' className={styles.loadingStack}>
 					<Skeleton height={14} width='46%' radius='xl' />
 					<Skeleton height={10} width='32%' radius='xl' />

@@ -9,10 +9,20 @@
 	box-shadow: var(--mantine-shadow-sm);
 }
 
+[data-mantine-color-scheme='dark'] .progressCard {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+	box-shadow: none;
+}
+
 .sectionLabel {
 	color: var(--mantine-color-gray-5);
 	letter-spacing: 0.07em;
 	line-height: 1;
+}
+
+[data-mantine-color-scheme='dark'] .sectionLabel {
+	color: var(--mantine-color-dark-2);
 }
 
 .progressList {
@@ -45,6 +55,10 @@
 	flex-shrink: 0;
 }
 
+[data-mantine-color-scheme='dark'] .stepIcon {
+	background: var(--mantine-color-dark-6);
+}
+
 .stepIcon[data-status='current'] {
 	background: var(--mantine-color-blue-6);
 }
@@ -54,11 +68,20 @@
 	color: var(--mantine-color-green-7);
 }
 
+[data-mantine-color-scheme='dark'] .stepIcon[data-status='complete'] {
+	background: var(--mantine-color-green-9);
+	color: var(--mantine-color-green-3);
+}
+
 .stepDot {
 	width: 0.4375rem;
 	height: 0.4375rem;
 	border-radius: 9999px;
 	background: var(--mantine-color-gray-3);
+}
+
+[data-mantine-color-scheme='dark'] .stepDot {
+	background: var(--mantine-color-dark-4);
 }
 
 .stepDot[data-status='current'] {
@@ -72,17 +95,33 @@
 	color: var(--mantine-color-gray-4);
 }
 
+[data-mantine-color-scheme='dark'] .stepLabel {
+	color: var(--mantine-color-dark-2);
+}
+
 .stepLabel[data-status='current'] {
 	color: var(--mantine-color-blue-7);
+}
+
+[data-mantine-color-scheme='dark'] .stepLabel[data-status='current'] {
+	color: var(--mantine-color-blue-3);
 }
 
 .stepLabel[data-status='complete'] {
 	color: var(--mantine-color-gray-7);
 }
 
+[data-mantine-color-scheme='dark'] .stepLabel[data-status='complete'] {
+	color: var(--mantine-color-dark-0);
+}
+
 .stepLabel[data-status='pending'] {
 	font-weight: 500;
 	color: var(--mantine-color-gray-3);
+}
+
+[data-mantine-color-scheme='dark'] .stepLabel[data-status='pending'] {
+	color: var(--mantine-color-dark-4);
 }
 
 @media (max-width: 75rem) {

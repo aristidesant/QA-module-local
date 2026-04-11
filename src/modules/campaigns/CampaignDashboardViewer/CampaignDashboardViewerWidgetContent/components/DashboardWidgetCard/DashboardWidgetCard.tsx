@@ -1,4 +1,5 @@
 import { Box, Card, Text } from '@mantine/core';
+import { getAccentToken } from '~/modules/campaigns/CampaignDashboardViewer/CampaignDashboardViewer.helpers';
 import styles from '../../CampaignDashboardViewerWidgetContent.module.css';
 
 interface DashboardWidgetCardProps {
@@ -19,13 +20,13 @@ const DashboardWidgetCard = ({
 	<Card
 		radius={variant === 'builderPreview' ? 'md' : 'lg'}
 		padding={variant === 'builderPreview' ? 'md' : 'lg'}
+		data-accent={getAccentToken(accentColor)}
 		className={[
 			styles.widgetCard,
 			variant === 'builderPreview' ? styles.widgetCardBuilderPreview : '',
 		]
 			.filter(Boolean)
 			.join(' ')}
-		style={{ '--widget-accent': accentColor } as React.CSSProperties}
 	>
 		<div className={styles.widgetCardHeader}>
 			<Box className={styles.widgetHeaderCopy}>

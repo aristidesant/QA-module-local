@@ -4,6 +4,35 @@
 	gap: var(--mantine-spacing-md);
 }
 
+.formSectionCard {
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+[data-mantine-color-scheme='dark'] .formSectionCard {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+}
+
+.formSectionCardHeader {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.formSectionCardTitle {
+	color: var(--mantine-color-text);
+}
+
+.formSectionCardDescription {
+	color: var(--mantine-color-dimmed);
+}
+
 .formSection {
 	display: flex;
 	flex-direction: column;
@@ -17,11 +46,20 @@
 	gap: 2px;
 }
 
+.sectionLabelTitle {
+	color: var(--mantine-color-text);
+}
+
+.sectionLabelDescription {
+	color: var(--mantine-color-dimmed);
+}
+
 .formFooter {
 	position: sticky;
 	bottom: 0;
 	padding: var(--mantine-spacing-md) 0 0;
-	background: var(--mantine-color-white);
-	border-top: 1px solid var(--mantine-color-gray-2);
+	background: var(--mantine-color-body);
+	border-top: 1px solid var(--mantine-color-default-border);
 	margin-top: auto;
+	backdrop-filter: blur(4px);
 }

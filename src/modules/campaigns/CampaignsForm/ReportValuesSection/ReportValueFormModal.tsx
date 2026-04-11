@@ -33,6 +33,11 @@ import {
 } from '~/modules/campaigns/CampaignsForm/AnalyticsSection/analyticsFormContext';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { getErrorMessage } from '~/utils/httpClient';
+import {
+	validateWorksheetName,
+	validateSheetColumnUniqueness,
+	isSameSheetColumn,
+} from './reportValueUtils';
 import styles from './ReportValueFormModal.module.css';
 
 // ─── Utilities ────────────────────────────────────────────────
@@ -91,83 +96,6 @@ const normalizeSupportedDataType = (
 
 	return fallback;
 };
-
-const validateWorksheetName = (
-	sheetName: string,
-	sheet: number,
-	availableSheets: Array<{ sheet: number; sheetName: string }>,
-	reportValue: ReportValue | undefined,
-	t: (key: string, options?: Record<string, unknown>) => string
-) => {
-	const trimmed = sheetName.trim();
-	if (!trimmed) {
-		return t('reportValues.validation.sheetNameRequired');
-	}
-
-	if (trimmed.length > 31) {
-		return t('reportValues.validation.sheetNameTooLong');
-	}
-
-	if (/[:\\/?*\[\]]/.test(trimmed)) {
-		return t('reportValues.validation.sheetNameInvalidChars');
-	}
-
-	const currentSheetAssignment = availableSheets.find(
-		(item) => item.sheet === sheet
-	);
-	if (currentSheetAssignment && currentSheetAssignment.sheetName !== trimmed) {
-		return t('reportValues.validation.sheetNameMismatch', {
-			sheet,
-		});
-	}
-
-	const existingAssignment = availableSheets.find(
-		(item) =>
-			item.sheetName === trimmed &&
-			item.sheet !== sheet &&
-			item.sheet !== reportValue?.sheet
-	);
-
-	if (existingAssignment) {
-		return t('reportValues.validation.sheetNameAlreadyAssigned', {
-			sheetName: trimmed,
-			sheet: existingAssignment.sheet,
-		});
-	}
-
-	return null;
-};
-
-const validateSheetColumnUniqueness = (
-	sheet: number,
-	sourceColumn: ReportValue | undefined,
-	existingColumns: ReportValue[],
-	reportValue: ReportValue | undefined,
-	t: (key: string, options?: Record<string, unknown>) => string
-) => {
-	if (!sourceColumn) {
-		return null;
-	}
-
-	const existingMatch = existingColumns.find(
-		(item) =>
-			item.id !== reportValue?.id &&
-			item.sheet === sheet &&
-			isSameSheetColumn(item, sourceColumn)
-	);
-
-	if (!existingMatch) {
-		return null;
-	}
-
-	return t('reportValues.validation.duplicateColumnInSheet', {
-		label: sourceColumn.label,
-		sheet,
-	});
-};
-
-const isSameSheetColumn = (left: ReportValue, right: ReportValue) =>
-	left.originType === right.originType && left.key === right.key;
 
 // ─── Type-inference helpers ────────────────────────────────────
 

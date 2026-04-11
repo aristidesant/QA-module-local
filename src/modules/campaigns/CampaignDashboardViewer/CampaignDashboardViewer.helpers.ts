@@ -28,6 +28,18 @@ export const ACCENT_COLORS = [
 	'#8b5cf6',
 ];
 
+const ACCENT_COLOR_TOKENS: Record<string, string> = {
+	'#6366f1': 'indigo',
+	'#0ea5e9': 'blue',
+	'#10b981': 'green',
+	'#f59e0b': 'orange',
+	'#ec4899': 'pink',
+	'#8b5cf6': 'grape',
+};
+
+export const getAccentToken = (color: string): string =>
+	ACCENT_COLOR_TOKENS[color] ?? 'indigo';
+
 export const GRID_MARGIN: [number, number] = [16, 16];
 export const GRID_ROW_GAP = GRID_MARGIN[1];
 

@@ -540,9 +540,7 @@ const DashboardWidgetAdvancedSection = () => {
 											event.currentTarget.checked
 										)
 									}
-									styles={{
-										body: { justifyContent: 'space-between', width: '100%' },
-									}}
+									classNames={{ body: styles.switchBody }}
 								/>
 							</div>
 							<div
@@ -562,9 +560,7 @@ const DashboardWidgetAdvancedSection = () => {
 											event.currentTarget.checked
 										)
 									}
-									styles={{
-										body: { justifyContent: 'space-between', width: '100%' },
-									}}
+									classNames={{ body: styles.switchBody }}
 								/>
 							</div>
 							<div
@@ -582,9 +578,7 @@ const DashboardWidgetAdvancedSection = () => {
 											event.currentTarget.checked
 										)
 									}
-									styles={{
-										body: { justifyContent: 'space-between', width: '100%' },
-									}}
+									classNames={{ body: styles.switchBody }}
 								/>
 							</div>
 							{state.needsGroupedConfig ? (
@@ -605,9 +599,7 @@ const DashboardWidgetAdvancedSection = () => {
 												event.currentTarget.checked
 											)
 										}
-										styles={{
-											body: { justifyContent: 'space-between', width: '100%' },
-										}}
+										classNames={{ body: styles.switchBody }}
 									/>
 								</div>
 							) : null}
@@ -616,7 +608,7 @@ const DashboardWidgetAdvancedSection = () => {
 						<div className={styles.advancedFilters}>
 							<div className={styles.filterContainer}>
 								<div className={styles.filterContainerHeader}>
-									<Text size='xs' fw={600} c='gray.6'>
+									<Text size='xs' fw={600} className={styles.filterTitle}>
 										{t('dashboardBuilder.form.sections.filtersTitle')}
 									</Text>
 									<Button

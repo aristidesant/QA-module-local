@@ -85,6 +85,10 @@ Design quality is mandatory: clean, modern, production-ready, light mode first.
 
 - Use Mantine components by default.
 - Use CSS Modules (`*.module.css`) for component styles.
+- Treat color scheme support as mandatory: every new or updated component must work in light, dark, and auto mode.
+- Use theme tokens, semantic colors, and color-scheme-aware Mantine styling; do not hardcode colors that only work in one mode.
+- Check hover, focus, borders, surfaces, shadows, and overlays in both light and dark mode before considering a component complete.
+- Dark mode gaps may be fixed incrementally in legacy areas, but no new component should depend on light-only styling.
 - Do not create new inline styles in application code.
 - Prefer CSS Modules, Mantine props, shared classes, and component primitives over `style={...}`.
 - Allow inline styles only as rare exceptions when there is no practical alternative and the reason is documented in code with an `inline-style-allow:` comment.

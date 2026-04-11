@@ -23,17 +23,17 @@ const DashboardModals = () => {
 
 	return (
 		<>
-			{/* Create / edit dashboard definition */}
 			<Modal
 				opened={dashboardModalOpened}
 				onClose={closeDashboardModal}
 				centered
 				size='lg'
 				radius='md'
-				padding='xl'
+				padding='md'
 				overlayProps={{ backgroundOpacity: 0.35 }}
 				title={
 					<DashboardModalHeader
+						kicker={t('dashboardBuilder.drawer.dashboardKicker')}
 						title={dashboardModalTitle}
 						description={t('dashboardBuilder.drawer.dashboardDescription')}
 					/>
