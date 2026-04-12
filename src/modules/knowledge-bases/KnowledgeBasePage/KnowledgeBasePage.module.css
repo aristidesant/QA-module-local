@@ -32,6 +32,14 @@
 	color: var(--mantine-color-gray-6);
 }
 
+[data-mantine-color-scheme='dark'] .modalTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .modalDescription {
+	color: var(--mantine-color-dark-2);
+}
+
 .modalBody {
 	padding: 18px 24px 24px;
 }
