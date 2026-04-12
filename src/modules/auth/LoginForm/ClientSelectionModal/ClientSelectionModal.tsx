@@ -7,6 +7,7 @@ import { useSelectClient } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import ClientSelectionPanel from '~/components/ClientSelectionPanel';
 import OTPVerificationModal from '../OTPVerificationModal';
+import classes from './ClientSelectionModal.module.css';
 
 interface ClientSelectionModalProps {
 	opened: boolean;
@@ -106,6 +107,12 @@ export default function ClientSelectionModal({
 				withCloseButton={false}
 				closeOnClickOutside={!isLoading}
 				closeOnEscape={!isLoading}
+				radius='md'
+				classNames={{
+					header: classes.modalHeader,
+					body: classes.modalBody,
+					content: classes.modalContent,
+				}}
 			>
 				<Stack gap='md'>
 					<ClientSelectionPanel

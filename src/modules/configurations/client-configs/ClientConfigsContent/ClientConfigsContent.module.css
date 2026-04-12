@@ -42,11 +42,15 @@
 .value {
 	font-size: var(--mantine-font-size-md);
 	font-family: var(--mantine-font-family-monospace);
-	background-color: var(--mantine-color-gray-light-color);
+	background-color: var(--mantine-color-gray-1);
 	padding: 2px 8px;
 	border-radius: var(--mantine-radius-xs);
 	max-width: 200px;
 	color: var(--mantine-color-bright);
+}
+
+[data-mantine-color-scheme='dark'] .value {
+	background-color: var(--mantine-color-dark-7);
 }
 
 .dateText {

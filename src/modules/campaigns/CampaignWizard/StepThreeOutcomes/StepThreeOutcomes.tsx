@@ -11,9 +11,9 @@ import {
 	Modal,
 	Center,
 	Loader,
-	SegmentedControl,
 	ThemeIcon,
 } from '@mantine/core';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { notifications } from '@mantine/notifications';
 import { IconPlus, IconNetwork, IconCopy } from '@tabler/icons-react';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
@@ -342,7 +342,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 					) : (
 						// Show create/import flow interface
 						<Stack gap='md'>
-							<SegmentedControl
+							<AppSegmentedControl
 								value={flowMode}
 								onChange={(value) => setFlowMode(value as 'create' | 'import')}
 								data={[
@@ -367,7 +367,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 										value: 'import',
 									},
 								]}
-								classNames={{ root: styles.segmentedControl }}
+								className={styles.segmentedControl}
 							/>
 
 							{flowMode === 'create' ? (

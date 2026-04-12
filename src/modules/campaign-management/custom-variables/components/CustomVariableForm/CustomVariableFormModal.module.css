@@ -5,6 +5,12 @@
 	background: var(--mantine-color-body);
 }
 
+.modalTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	letter-spacing: -0.2px;
+}
+
 .modalBody {
 	padding: var(--mantine-spacing-md);
 	background: var(--mantine-color-body);

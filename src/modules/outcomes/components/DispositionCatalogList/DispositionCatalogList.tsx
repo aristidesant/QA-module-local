@@ -16,11 +16,11 @@ import {
 	Modal,
 	LoadingOverlay,
 	TextInput,
-	SegmentedControl,
 	Group,
 	Badge,
 	CloseButton,
 } from '@mantine/core';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
 	IconPlus,
@@ -338,7 +338,7 @@ const DispositionCatalogList = forwardRef<
 								className={styles.searchInput}
 							/>
 
-							<SegmentedControl
+							<AppSegmentedControl
 								value={statusFilter}
 								onChange={(value) => {
 									setStatusFilter(value);

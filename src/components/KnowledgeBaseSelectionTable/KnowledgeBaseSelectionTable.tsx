@@ -4,13 +4,13 @@ import {
 	Button,
 	Checkbox,
 	Group,
-	SegmentedControl,
 	Text,
 	TextInput,
 	Center,
 	Box,
 	Tooltip,
 } from '@mantine/core';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { useTranslation } from 'react-i18next';
 import { useDebouncedValue } from '@mantine/hooks';
 import {
@@ -294,7 +294,7 @@ const KnowledgeBaseSelectionTable: React.FC<
 						className={styles.searchInput}
 					/>
 					<div className={styles.filterSection}>
-						<SegmentedControl
+						<AppSegmentedControl
 							size='xs'
 							value={typeFilter}
 							onChange={(v) => setTypeFilter(v as TypeFilter)}
