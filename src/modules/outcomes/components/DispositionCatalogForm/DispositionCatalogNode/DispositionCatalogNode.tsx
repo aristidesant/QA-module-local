@@ -235,6 +235,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 		const isInactive = nodeData.isActive === false;
 		const isProtectedNode = isProtectedDefaultNode(nodeData, catalogType);
 		const isDoNotCall = Boolean(nodeData.doNotCall ?? nodeData.do_not_call);
+		const isAbandoned = Boolean(nodeData.isAbandoned);
 		const nodeTypeLabel = hasChildren
 			? t('catalog.nodeType.group')
 			: t('catalog.nodeType.outcome');
@@ -347,6 +348,11 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 											{t('catalog.labels.doNotCall')}
 										</Badge>
 									</Tooltip>
+								)}
+								{isAbandoned && (
+									<Badge size='xs' variant='light' color='orange' radius='sm'>
+										{t('catalog.labels.abandoned')}
+									</Badge>
 								)}
 							</div>
 						</div>

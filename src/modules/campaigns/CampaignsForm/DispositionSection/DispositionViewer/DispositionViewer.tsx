@@ -13,6 +13,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import {
 	IconClock,
+	IconPhonePause,
 	IconPhoneOff,
 	IconPhoneX,
 	IconChevronDown,
@@ -82,6 +83,7 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 	} as React.CSSProperties;
 
 	const isDoNotCall = Boolean(node.doNotCall ?? node.do_not_call);
+	const isAbandoned = Boolean(node.isAbandoned);
 
 	return (
 		<>
@@ -158,6 +160,11 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 								<Badge size='xs' variant='light' color='blue' radius='sm'>
 									{nodeTypeLabel}
 								</Badge>
+								{isAbandoned && (
+									<Badge size='xs' variant='light' color='orange' radius='sm'>
+										{t('disposition.viewer.abandoned')}
+									</Badge>
+								)}
 							</div>
 						</div>
 						<Text className={styles.nodeMetaText} size='xs'>
@@ -178,6 +185,18 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 										size={16}
 										color='var(--mantine-color-red-6)'
 										aria-label={t('disposition.nodeEditor.doNotCall')}
+									/>
+								</Tooltip>
+							) : null}
+							{isAbandoned ? (
+								<Tooltip
+									withArrow
+									label={t('disposition.nodeEditor.abandoned')}
+								>
+									<IconPhonePause
+										size={16}
+										color='var(--mantine-color-orange-6)'
+										aria-label={t('disposition.nodeEditor.abandoned')}
 									/>
 								</Tooltip>
 							) : null}

@@ -1,6 +1,25 @@
 import axios from 'axios';
-import type { CallDispositionModel } from '../models/CallDispositionModel';
+import type {
+	CallDispositionFilters,
+	CallDispositionModel,
+} from '../models/CallDispositionModel';
 import { DEFAULT_API_URL } from './config';
+
+const serializeQueryParams = (params?: object) => {
+	if (!params) return undefined;
+
+	return Object.fromEntries(
+		Object.entries(params as Record<string, unknown>).flatMap(
+			([key, value]) => {
+				if (value === undefined || value === null || value === '') {
+					return [];
+				}
+
+				return [[key, typeof value === 'boolean' ? String(value) : value]];
+			}
+		)
+	);
+};
 
 /**
  * Call Disposition API client
@@ -31,7 +50,7 @@ const callDispositionApi = (_authHeader?: Record<string, string>) => {
 
 		// FIND call disposition by conversationId
 		findCallDispositionByConversationId: async (conversationId: number) => {
-			const response = await axios.get(
+			const response = await axios.get<CallDispositionModel>(
 				`${DEFAULT_API_URL}/call-dispositions/conversation/${conversationId}`
 			);
 			return response.data;
@@ -66,17 +85,11 @@ const callDispositionApi = (_authHeader?: Record<string, string>) => {
 		},
 
 		// GET call disposition report
-		getCallDispositionReport: async (params: {
-			dispositionName?: string;
-			dispositionDescription?: string;
-			notes?: string;
-			campaignId?: number;
-			agentId?: string;
-		}) => {
+		getCallDispositionReport: async (params: CallDispositionFilters) => {
 			const response = await axios.get(
 				`${DEFAULT_API_URL}/call-dispositions/report`,
 				{
-					params,
+					params: serializeQueryParams(params),
 				}
 			);
 			return response.data;

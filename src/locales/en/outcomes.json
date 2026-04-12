@@ -16,6 +16,7 @@
 		"labels": {
 			"doNotCall": "Do not call",
 			"doNotCallTooltip": "Do not call this client again after this outcome",
+			"abandoned": "Abandoned",
 			"inactive": "Inactive"
 		},
 		"actions": {
@@ -117,6 +118,8 @@
 			"invalidatesNumber": "Invalidates Number",
 			"doNotCall": "Do not call",
 			"doNotCallDescription": "If selected, this client should not be called again after this outcome.",
+			"isAbandoned": "Is abandoned",
+			"isAbandonedDescription": "Mark this outcome when the customer hangs up before completing the flow.",
 			"requiresReschedule": "Requires Reschedule",
 			"isFinal": "Is Final",
 			"isVoiceMail": "Is Voice Mail"

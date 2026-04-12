@@ -20,6 +20,7 @@ export type DispositionNodeFormValues = {
 	requiresReschedule: boolean;
 	isFinal: boolean;
 	isVoiceMail: boolean;
+	isAbandoned: boolean;
 };
 
 interface DispositionNodeFormProps {
@@ -47,6 +48,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 			requiresReschedule: false,
 			isFinal: false,
 			isVoiceMail: false,
+			isAbandoned: false,
 			...initialValues,
 		},
 	});
@@ -62,6 +64,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 			isFinal: initialValues?.isFinal || false,
 			isVoiceMail:
 				initialValues?.isVoiceMail ?? initialValues?.is_voice_mail ?? false,
+			isAbandoned: initialValues?.isAbandoned ?? false,
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [initialValues]);
@@ -93,6 +96,11 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 							label={t('form.fields.doNotCall')}
 							description={t('form.fields.doNotCallDescription')}
 							{...form.getInputProps('doNotCall', { type: 'checkbox' })}
+						/>
+						<Switch
+							label={t('form.fields.isAbandoned')}
+							description={t('form.fields.isAbandonedDescription')}
+							{...form.getInputProps('isAbandoned', { type: 'checkbox' })}
 						/>
 						<Switch
 							label={t('form.fields.invalidatesNumber')}
