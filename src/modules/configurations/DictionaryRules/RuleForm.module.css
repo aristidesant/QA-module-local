@@ -31,26 +31,35 @@
 .hintText {
 	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
 	border-radius: var(--mantine-radius-sm);
-	background-color: var(--mantine-color-gray-0);
-	border-left: 3px solid var(--mantine-color-blue-4);
+	background-color: var(--mantine-color-gray-1);
+	border-left: 3px solid var(--mantine-color-blue-5);
+}
+
+[data-mantine-color-scheme='dark'] .hintText {
+	background-color: var(--mantine-color-dark-7);
+	border-left-color: var(--mantine-color-blue-4);
 }
 
 .infoIcon {
-	color: var(--mantine-color-blue-6);
+	color: var(--mantine-color-blue-5);
 	cursor: pointer;
 	flex-shrink: 0;
 }
 
 .arpabetList {
-	color: var(--mantine-color-gray-7);
+	color: var(--mantine-color-dimmed);
 }
 
 .arpabetExample {
 	padding: var(--mantine-spacing-xs);
 	border-radius: var(--mantine-radius-sm);
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-gray-1);
 	font-family: var(--mantine-font-family-monospace);
 	white-space: pre-wrap;
+}
+
+[data-mantine-color-scheme='dark'] .arpabetExample {
+	background-color: var(--mantine-color-dark-7);
 }
 
 .actions {

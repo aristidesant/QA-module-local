@@ -6,6 +6,43 @@
 	min-height: 160px;
 }
 
+[data-mantine-color-scheme='dark'] .name {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .code {
+	color: var(--mantine-color-dark-1);
+	background-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .description {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .detailLabel {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .detailValue {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .link {
+	color: var(--mantine-color-blue-4);
+}
+
+[data-mantine-color-scheme='dark'] .modulePermission {
+	background-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .moduleName {
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .emptyPermissions {
+	color: var(--mantine-color-dark-3);
+}
+
 .cards {
 	display: flex;
 	flex-direction: column;

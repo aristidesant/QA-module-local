@@ -7,7 +7,6 @@ import {
 	Divider,
 	Group,
 	Loader,
-	Paper,
 	Stack,
 	Text,
 	ActionIcon,
@@ -42,7 +41,6 @@ import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';
 import ConversationNavigator from '~/modules/conversations/ConversationNavigator';
 import TranscriptPlayerBar from '~/modules/conversations/TranscriptViewer/TranscriptPlayerBar';
 import ConversationOverviewCard from '~/modules/conversations/ConversationOverviewCard';
-import ConversationDisposition from '~/modules/conversations/ConversationDisposition';
 import ConversationCapturedVariables from '~/modules/conversations/ConversationCapturedVariables';
 
 import styles from './ConversationDetailPage.module.css';
@@ -200,7 +198,7 @@ export function ConversationDetailPage({
 		conversation?.contact?.phoneNumber ||
 			conversation?.contactPhoneNumber ||
 			conversation?.externalPhoneNumber ||
-			t('overview.fallbacks.noPhone')
+			''
 	);
 
 	const agentName = conversation?.agent?.name
@@ -360,7 +358,7 @@ export function ConversationDetailPage({
 
 	const headerTitle = (
 		<Group gap='xs' align='center'>
-			<Text fw={600} size='sm' className={styles.identifierText}>
+			<Text fw={500} size='sm' className={styles.identifierText}>
 				{conversation.identifier || `#${conversation.id}`}
 			</Text>
 			<Badge size='sm' variant='light' color={statusBadge.color}>
@@ -370,7 +368,7 @@ export function ConversationDetailPage({
 	);
 
 	const headerDescription = [
-		contactPhone !== t('overview.fallbacks.noPhone') && contactPhone,
+		contactPhone,
 		dateValue,
 		durationStr,
 		agentName !== t('overview.fallbacks.unassigned') && agentName,
@@ -430,27 +428,23 @@ export function ConversationDetailPage({
 			mainScroll={false}
 		>
 			<div className={styles.contentGrid}>
-				{/* Transcript column — 5 */}
+				{/* Transcript column */}
 				<div className={styles.transcriptCol}>
-					<Paper
-						className={styles.mainLayout}
-						shadow='md'
-						radius='md'
-						withBorder
-					>
-						{/* Transcript Header — pinned top */}
-						<Group gap='xs' align='center' className={styles.transcriptHeader}>
-							<IconMessages size={16} color='var(--mantine-color-gray-6)' />
-							<Text size='sm' fw={600} c='gray.8'>
-								{t('detailPage.transcriptSection')}
-							</Text>
-							{turnCount > 0 && (
+					<RightSectionCard
+						title={t('detailPage.transcriptSection')}
+						icon={IconMessages}
+						iconColor='var(--mantine-color-gray-6)'
+						rightSection={
+							turnCount > 0 ? (
 								<Badge size='xs' variant='light' color='gray'>
 									{t('detailPage.turnCount', { count: turnCount })}
 								</Badge>
-							)}
-						</Group>
-
+							) : undefined
+						}
+						// inline-style-allow: flex grow + minHeight:0 required for nested scroll containers; cannot be expressed via a static CSS class
+						style={{ flex: 1, minHeight: 0 }}
+						contentClassName={styles.transcriptContent}
+					>
 						{/* Transcript Messages — scrollable middle */}
 						<div
 							ref={transcriptPanelRef}
@@ -490,7 +484,7 @@ export function ConversationDetailPage({
 								/>
 							</div>
 						)}
-					</Paper>
+					</RightSectionCard>
 				</div>
 
 				{/* Right column — 7: summary → player → overview → disposition → variables */}
@@ -503,14 +497,16 @@ export function ConversationDetailPage({
 								iconColor='blue'
 								description={t('overview.summary.description')}
 							>
-								<Text fz='xs' className={styles.summaryText}>
-									{(i18n.language === 'es'
-										? conversation.summary?.es
-										: conversation.summary?.en) ||
-										conversation.summary?.en ||
-										conversation.summary?.es ||
-										transcriptSummary}
-								</Text>
+								<div className={styles.summaryBlock}>
+									<Text className={styles.summaryText}>
+										{(i18n.language === 'es'
+											? conversation.summary?.es
+											: conversation.summary?.en) ||
+											conversation.summary?.en ||
+											conversation.summary?.es ||
+											transcriptSummary}
+									</Text>
+								</div>
 							</RightSectionCard>
 						)}
 						<ConversationOverviewCard
@@ -522,9 +518,6 @@ export function ConversationDetailPage({
 							agentName={agentName}
 							campaignName={campaignName}
 							terminationReasonLabel={terminationLabel}
-						/>
-						<ConversationDisposition
-							key={conversation.id}
 							conversationId={String(conversation.id)}
 						/>
 						<ConversationCapturedVariables variables={capturedVariables} />

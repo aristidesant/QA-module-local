@@ -139,6 +139,38 @@
 	padding: 0.25rem 0.5rem 0.4rem;
 }
 
+.themeRow {
+	display: flex;
+	gap: 2px;
+	padding: 0.25rem 0.5rem 0.4rem;
+	align-items: center;
+}
+
+.themeSegment {
+	display: flex;
+	gap: 2px;
+	padding: 3px;
+	border-radius: 8px;
+	background: var(--mantine-color-default-hover);
+}
+
+.themeBtn {
+	border-radius: 6px !important;
+	border: none !important;
+	box-shadow: none !important;
+	background: transparent !important;
+	color: var(--mantine-color-dimmed) !important;
+	transition:
+		background 120ms ease,
+		color 120ms ease;
+}
+
+.themeBtnActive {
+	background: var(--mantine-color-body) !important;
+	color: var(--mantine-color-text) !important;
+	box-shadow: var(--mantine-shadow-xs) !important;
+}
+
 .compactShell {
 	width: 100%;
 	min-width: 0;

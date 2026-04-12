@@ -1,15 +1,16 @@
-/* Two-column body: transcript (5) + right panel (7) */
+/* Two-column body: transcript (6) + right panel (6) */
 .contentGrid {
 	display: flex;
 	flex-direction: row;
 	height: 100%;
 	min-height: 0;
 	gap: var(--mantine-spacing-md);
-	align-items: flex-start;
+	align-items: stretch;
+	padding-top: 2px;
 }
 
 .transcriptCol {
-	flex: 5;
+	flex: 6;
 	min-height: 0;
 	max-height: 100%;
 	display: flex;
@@ -17,35 +18,30 @@
 }
 
 .rightCol {
-	flex: 7;
+	flex: 6;
 	min-height: 0;
+	max-height: 100%;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
-	padding-bottom: var(--mantine-spacing-sm);
+	padding-top: 2px;
+	padding-bottom: var(--mantine-spacing-md);
 }
 
-/* Content-sized flex column: header → scrollable transcript → player bar */
-.mainLayout {
+/* Transcript card content slot — overrides RightSectionCard's default padding */
+.transcriptContent {
+	padding: 0;
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	height: auto;
-	min-height: 0;
-	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-	background-color: var(--mantine-color-white);
-	overflow: hidden;
-}
-
-.transcriptHeader {
-	flex-shrink: 0;
-	padding: var(--mantine-spacing-xs) 0;
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	gap: 0;
 }
 
 .transcriptScroll {
-	height: auto;
+	flex: 1;
 	min-height: 0;
-	max-height: calc(100vh - 220px);
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	overscroll-behavior: contain;
@@ -58,23 +54,49 @@
 }
 
 .identifierText {
-	font-family: var(--mantine-font-family-monospace);
-	color: var(--mantine-color-gray-7);
+	font-size: 13px;
+	font-weight: 500;
 	letter-spacing: 0.01em;
+	color: var(--mantine-color-gray-7);
+}
+
+[data-mantine-color-scheme='dark'] .identifierText {
+	color: var(--mantine-color-dark-1);
+}
+
+.summaryBlock {
+	background: var(--mantine-color-blue-0);
+	border-left: 3px solid var(--mantine-color-blue-3);
+	border-radius: 0 6px 6px 0;
+	padding: 10px 12px;
+}
+
+[data-mantine-color-scheme='dark'] .summaryBlock {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-blue-9) 18%,
+		var(--mantine-color-dark-7)
+	);
+	border-left-color: var(--mantine-color-blue-5);
 }
 
 .summaryText {
 	font-size: 13px;
-	line-height: 1.45;
+	line-height: 1.6;
 	color: var(--mantine-color-gray-7);
 	font-weight: 400;
+	font-style: italic;
+}
+
+[data-mantine-color-scheme='dark'] .summaryText {
+	color: var(--mantine-color-dark-1);
 }
 
 .backToTop {
 	position: sticky;
 	bottom: var(--mantine-spacing-md);
 	float: right;
-	margin-right: var(--mantine-spacing-sm);
+	margin-right: var(--mantine-spacing-md);
 	z-index: 10;
 	opacity: 0;
 	transform: translateY(8px);
@@ -82,6 +104,7 @@
 		opacity 0.25s ease,
 		transform 0.25s ease;
 	pointer-events: none;
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
 
 .backToTopVisible {

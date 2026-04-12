@@ -428,7 +428,17 @@ const CampaignPredefinedParamsForm: React.FC<
 
 					<div className={styles.actions}>
 						<div className={styles.actionsLeft}>
-							<MantineText size='xs' c='dimmed'>
+							<Badge
+								size='sm'
+								variant='light'
+								color={isEditMode ? 'blue' : 'green'}
+								className={styles.footerBadge}
+							>
+								{isEditMode
+									? t('form.badge.editingPreset')
+									: t('form.badge.newPreset')}
+							</Badge>
+							<MantineText size='xs' c='dimmed' className={styles.footerHint}>
 								{isEditMode
 									? t('form.footer.editHint')
 									: t('form.footer.createHint')}

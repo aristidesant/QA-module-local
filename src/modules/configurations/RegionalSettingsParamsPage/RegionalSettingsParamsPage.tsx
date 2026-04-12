@@ -156,15 +156,15 @@ const RegionalSettingsParamsPage = () => {
 				styles={{
 					header: {
 						padding: 'var(--mantine-spacing-sm) var(--mantine-spacing-md)',
-						borderBottom: '1px solid var(--mantine-color-gray-2)',
+						borderBottom: '1px solid var(--mantine-color-default-border)',
 					},
 					title: {
 						fontSize: 'var(--mantine-font-size-md)',
 						fontWeight: 700,
+						color: 'var(--mantine-color-text)',
 					},
 					body: {
 						padding: 'var(--mantine-spacing-md)',
-						background: 'var(--mantine-color-gray-0)',
 					},
 				}}
 			>

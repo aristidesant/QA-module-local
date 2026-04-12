@@ -11,17 +11,16 @@
 }
 
 .actions {
-	padding: var(--mantine-spacing-sm);
-	border-top: 1px solid var(--mantine-color-gray-2);
-	background-color: var(--mantine-color-gray-0);
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+	border-top: 1px solid var(--mantine-color-default-border);
+	background: var(--mantine-color-default-hover);
 	margin-top: auto;
-	gap: var(--mantine-spacing-xs);
-	flex-wrap: wrap;
 	display: flex;
 	justify-content: flex-end;
+	gap: var(--mantine-spacing-xs);
+	flex-wrap: wrap;
 }
 
-/* On mobile, stack buttons vertically */
 @media (max-width: 480px) {
 	.actions {
 		flex-direction: column;
@@ -33,10 +32,7 @@
 		flex-direction: column;
 	}
 
-	.actionsRight :global(button) {
-		width: 100%;
-	}
-
+	.actionsRight :global(button),
 	.actions :global(button) {
 		width: 100%;
 	}
@@ -44,33 +40,49 @@
 
 .sectionHeading {
 	display: flex;
-	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
-	margin-bottom: var(--mantine-spacing-sm);
+	align-items: flex-start;
+	gap: var(--mantine-spacing-sm);
 	padding-bottom: var(--mantine-spacing-sm);
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	border-bottom: 1px solid var(--mantine-color-default-border);
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.sectionIcon {
+	width: 2rem;
+	height: 2rem;
+	border-radius: 8px;
+	background: var(--mantine-color-blue-light);
+	color: var(--mantine-color-blue-light-color);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.sectionText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
 }
 
 .sectionTitle {
-	font-size: var(--mantine-font-size-md);
+	font-size: var(--mantine-font-size-sm);
 	font-weight: 600;
-	color: var(--mantine-color-dark-7);
+	color: var(--mantine-color-text);
 	margin: 0;
+	line-height: 1.4;
 }
 
 .sectionDescription {
-	font-size: var(--mantine-font-size-sm);
+	font-size: var(--mantine-font-size-xs);
 	color: var(--mantine-color-dimmed);
 	margin: 0;
+	line-height: 1.4;
 }
 
-/* Optimize text sizes for mobile */
 @media (max-width: 480px) {
 	.sectionTitle {
-		font-size: calc(var(--mantine-font-size-sm) * 1.15);
-	}
-
-	.sectionDescription {
-		font-size: calc(var(--mantine-font-size-xs) * 1.1);
+		font-size: calc(var(--mantine-font-size-sm) * 1.05);
 	}
 }

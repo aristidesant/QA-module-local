@@ -1,3 +1,158 @@
+.root {
+	width: 100%;
+	overflow: auto;
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-body);
+	margin: 0;
+	padding: 0;
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 0;
+}
+
+.thead {
+	background: var(--mantine-color-body);
+}
+
+.th,
+.td {
+	padding: 8px 12px;
+	text-align: left;
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	font-size: 14px;
+	vertical-align: middle;
+}
+
+.compactTh,
+.compactTd {
+	font-size: var(--mantine-font-size-xs);
+	padding: 7px 10px;
+	line-height: 1.2;
+}
+
+.sortable {
+	cursor: pointer;
+}
+
+.headerContent {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 8px;
+}
+
+.sortIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-gray-5);
+	transition: color 0.2s ease;
+	opacity: 0.6;
+}
+
+.sortable:hover .sortIcon {
+	color: var(--mantine-color-gray-7);
+	opacity: 1;
+}
+
+.th[data-sorted] .sortIcon {
+	color: var(--mantine-color-gray-8);
+	opacity: 1;
+}
+
+.tbody tr td {
+	transition: background-color 0.15s ease;
+}
+
+.tbody tr:hover td {
+	background: var(--mantine-color-gray-1);
+}
+
+.reorderingRow td {
+	background: var(--mantine-color-gray-1) !important;
+}
+
+.selectedRow td {
+	background: var(--mantine-color-gray-2) !important;
+}
+
+.emptyRow {
+	text-align: center;
+	padding: 24px 12px;
+	color: var(--mantine-color-gray-6);
+	font-size: 14px;
+}
+
+.expandableRow {
+	cursor: pointer;
+}
+
+.expandCell {
+	width: 40px;
+	max-width: 40px;
+	min-width: 40px;
+	padding: 8px !important;
+	cursor: pointer;
+	text-align: center;
+	vertical-align: middle;
+}
+
+.expandIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	transition: transform 0.2s ease;
+	color: var(--mantine-color-gray-5);
+	margin: 0 auto;
+}
+
+.expandIconRotated {
+	transform: rotate(90deg);
+}
+
+.expandedRow {
+	background: var(--mantine-color-body);
+}
+
+.expandedContent {
+	padding: 16px !important;
+	background: var(--mantine-color-body);
+}
+
+.pagination {
+	padding: 12px;
+	border-top: 1px solid var(--mantine-color-gray-3);
+	display: flex;
+	justify-content: center;
+}
+
+.th {
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: -0.01em;
+	color: var(--mantine-color-gray-7);
+	background: var(--mantine-color-body);
+}
+
+.td {
+	color: var(--mantine-color-gray-8);
+}
+
+.droppableSpacer {
+	height: 0;
+}
+
+.droppableSpacerCell {
+	padding: 0 !important;
+	border: 0 !important;
+	height: 0;
+}
+
+/* Dark mode styles - must come after regular styles to override */
 [data-mantine-color-scheme='dark'] .root {
 	background: var(--mantine-color-dark-7);
 	border-color: var(--mantine-color-dark-5);
@@ -42,158 +197,22 @@
 	border-top-color: var(--mantine-color-dark-5);
 }
 
-.root {
-	width: 100%;
-	overflow: auto;
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-body);
-	margin: 0;
-	padding: 0;
+[data-mantine-color-scheme='dark'] .sortIcon {
+	color: var(--mantine-color-dark-3);
 }
 
-.table {
-	width: 100%;
-	border-collapse: collapse;
-	margin: 0;
+[data-mantine-color-scheme='dark'] .sortable:hover .sortIcon {
+	color: var(--mantine-color-dark-1);
 }
 
-.thead {
-	background: var(--mantine-color-body);
+[data-mantine-color-scheme='dark'] .th[data-sorted] .sortIcon {
+	color: var(--mantine-color-dark-1);
 }
 
-.th,
-.td {
-	padding: 8px 12px;
-	text-align: left;
-	border-bottom: 1px solid var(--mantine-color-gray-2);
-	font-size: 14px;
-	vertical-align: middle;
+[data-mantine-color-scheme='dark'] .expandIcon {
+	color: var(--mantine-color-dark-3);
 }
 
-.compactTh,
-.compactTd {
-	font-size: var(--mantine-font-size-xs);
-	padding: 7px 10px;
-	line-height: 1.2;
-}
-
-.sortable {
-	cursor: pointer;
-}
-
-/* Header Content and Sort Icons */
-.headerContent {
-	display: flex;
-	align-items: center;
-	justify-content: space-between;
-	gap: 8px;
-}
-
-.sortIcon {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var(--mantine-color-gray-5);
-	transition: color 0.2s ease;
-	opacity: 0.6;
-}
-
-.sortable:hover .sortIcon {
-	color: var(--mantine-color-gray-7);
-	opacity: 1;
-}
-
-.th[data-sorted] .sortIcon {
-	color: var(--mantine-color-gray-8);
-	opacity: 1;
-}
-
-.tbody tr td {
-	transition: background-color 0.15s ease;
-}
-
-.tbody tr:hover td {
-	background: var(--mantine-color-gray-0);
-}
-
-.reorderingRow td {
-	background: var(--mantine-color-gray-0) !important;
-}
-
-.selectedRow td {
-	background: var(--mantine-color-gray-1) !important;
-}
-
-.emptyRow {
-	text-align: center;
-	padding: 24px 12px;
-	color: var(--mantine-color-gray-6);
-	font-size: 14px;
-}
-
-/* Expandable Row Styles */
-.expandableRow {
-	cursor: pointer;
-}
-
-.expandCell {
-	width: 40px;
-	max-width: 40px;
-	min-width: 40px;
-	padding: 8px !important;
-	cursor: pointer;
-	text-align: center;
-	vertical-align: middle;
-}
-
-.expandIcon {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	transition: transform 0.2s ease;
-	color: var(--mantine-color-gray-6);
-	margin: 0 auto;
-}
-
-.expandIconRotated {
-	transform: rotate(90deg);
-}
-
-.expandedRow {
-	background: var(--mantine-color-body);
-}
-
-.expandedContent {
-	padding: 16px !important;
-	background: var(--mantine-color-body);
-}
-
-.pagination {
-	padding: 12px;
-	border-top: 1px solid var(--mantine-color-gray-2);
-	display: flex;
-	justify-content: center;
-}
-
-.th {
-	font-size: 12px;
-	font-weight: 600;
-	letter-spacing: -0.01em;
-	color: var(--mantine-color-gray-7);
-	background: var(--mantine-color-body);
-}
-
-.td {
-	color: var(--mantine-color-gray-8);
-}
-
-.droppableSpacer {
-	height: 0;
-}
-
-.droppableSpacerCell {
-	padding: 0 !important;
-	border: 0 !important;
-	height: 0;
+[data-mantine-color-scheme='dark'] .emptyRow {
+	color: var(--mantine-color-dark-3);
 }

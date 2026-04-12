@@ -4,6 +4,10 @@
 	border-top: 1px dashed var(--mantine-color-gray-3);
 }
 
+[data-mantine-color-scheme='dark'] .toolCallsSection {
+	border-top-color: var(--mantine-color-dark-4);
+}
+
 .toolCallItem {
 	border-radius: 6px;
 }
@@ -17,6 +21,10 @@
 
 .toolCallToggle:hover {
 	background-color: var(--mantine-color-gray-0);
+}
+
+[data-mantine-color-scheme='dark'] .toolCallToggle:hover {
+	background-color: var(--mantine-color-dark-6);
 }
 
 .toolBadge {
@@ -35,6 +43,10 @@
 	flex-shrink: 0;
 }
 
+[data-mantine-color-scheme='dark'] .chevron {
+	color: var(--mantine-color-dark-2);
+}
+
 .toolCallExpanded {
 	padding: var(--mantine-spacing-xs);
 	margin-top: 4px;
@@ -43,6 +55,11 @@
 	border: 1px solid var(--mantine-color-gray-2);
 	max-height: 300px;
 	overflow-y: auto;
+}
+
+[data-mantine-color-scheme='dark'] .toolCallExpanded {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
 }
 
 .toolResultBlock {
@@ -56,9 +73,27 @@
 	border: 1px solid var(--mantine-color-green-2);
 }
 
+[data-mantine-color-scheme='dark'] .toolResultBlockSuccess {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-green-9) 30%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-green-8);
+}
+
 .toolResultBlockError {
 	background-color: var(--mantine-color-red-0);
 	border: 1px solid var(--mantine-color-red-2);
+}
+
+[data-mantine-color-scheme='dark'] .toolResultBlockError {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-red-9) 30%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-red-8);
 }
 
 .resultIconSuccess {
@@ -66,9 +101,17 @@
 	flex-shrink: 0;
 }
 
+[data-mantine-color-scheme='dark'] .resultIconSuccess {
+	color: var(--mantine-color-green-4);
+}
+
 .resultIconError {
 	color: var(--mantine-color-red-6);
 	flex-shrink: 0;
+}
+
+[data-mantine-color-scheme='dark'] .resultIconError {
+	color: var(--mantine-color-red-4);
 }
 
 .toolDetailsCode {
@@ -83,6 +126,11 @@
 	padding: 8px 10px;
 	max-height: 200px;
 	overflow-y: auto;
+}
+
+[data-mantine-color-scheme='dark'] .toolDetailsCode {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
 }
 
 .monoText {

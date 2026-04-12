@@ -1,67 +1,57 @@
-.contentStack {
-	display: flex;
-	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
-}
-
-.modalDescription {
-	margin-bottom: var(--mantine-spacing-md);
-	font-size: var(--mantine-font-size-sm);
-}
-
 .modalFooter {
 	display: flex;
 	justify-content: flex-end;
-	gap: var(--mantine-spacing-xs);
 }
 
 .modalHeader {
 	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
 	border-bottom: 1px solid var(--mantine-color-gray-3);
 	margin-bottom: 0;
+	background: var(--mantine-color-body);
 }
 
 .modalTitle {
 	font-size: var(--mantine-font-size-md);
 	font-weight: 700;
+	letter-spacing: -0.2px;
 }
 
 .modalBody {
-	padding: 0;
+	padding: var(--mantine-spacing-md);
 	background: transparent;
-	height: 100%;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	min-height: 0;
 }
 
 .modalContent {
-	height: 90vh;
-	max-height: 90vh;
+	max-height: calc(100vh - 2rem);
 	display: flex;
 	flex-direction: column;
 	background: var(--mantine-color-body);
+	border: 1px solid var(--mantine-color-gray-3);
+	overflow: hidden;
 }
 
 [data-mantine-color-scheme='dark'] .modalHeader {
 	border-bottom-color: var(--mantine-color-dark-5);
 }
 
+[data-mantine-color-scheme='dark'] .modalContent {
+	border-color: var(--mantine-color-dark-5);
+}
+
 [data-mantine-color-scheme='dark'] .modalBody {
 	background: var(--mantine-color-dark-8);
 }
 
-[data-mantine-color-scheme='dark'] .modalContent {
-	background: var(--mantine-color-dark-7);
-}
-
 @media (max-width: 768px) {
 	.modalFooter {
-		flex-direction: column-reverse;
-		align-items: stretch;
+		width: 100%;
 	}
 
-	.modalFooter :global(button) {
-		width: 100%;
+	.modalContent {
+		max-height: calc(100vh - 1rem);
 	}
 }

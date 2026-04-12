@@ -172,6 +172,10 @@
 			"na": "N/A",
 			"noPhone": "No phone number",
 			"invalidDate": "Invalid date"
+		},
+		"previewContact": {
+			"label": "Preview conversation",
+			"description": "This conversation was initiated using the Preview feature and is not associated with a real contact."
 		}
 	},
 	"transcript": {

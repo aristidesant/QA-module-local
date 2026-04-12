@@ -5,8 +5,17 @@
 	border-radius: 999px;
 }
 
+[data-mantine-color-scheme='dark'] .systemBanner {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+}
+
 .systemBanner:hover {
 	background-color: var(--mantine-color-gray-1);
+}
+
+[data-mantine-color-scheme='dark'] .systemBanner:hover {
+	background-color: var(--mantine-color-dark-5);
 }
 
 .timestamp {

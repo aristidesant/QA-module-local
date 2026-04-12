@@ -280,7 +280,7 @@ const CampaignPredefinedParamsPage = () => {
 						? t('formModal.title.edit')
 						: t('formModal.title.create')
 				}
-				size='xl'
+				size='min(96vw, 96rem)'
 				radius='md'
 				centered
 				overlayProps={{ opacity: 0.3, blur: 2 }}

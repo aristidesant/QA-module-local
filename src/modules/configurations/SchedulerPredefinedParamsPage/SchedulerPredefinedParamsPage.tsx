@@ -26,6 +26,7 @@ import {
 } from '~/queries/useClientConfigs';
 import SchedulerPredefinedParamsForm from './SchedulerPredefinedParamsForm/SchedulerPredefinedParamsForm';
 import SchedulerPredefinedParamsList from './SchedulerPredefinedParamsList/SchedulerPredefinedParamsList';
+import classes from './SchedulerPredefinedParamsPage.module.css';
 
 const SchedulerPredefinedParamsPage = () => {
 	const { t } = useTranslation('scheduler-predefined-params');
@@ -252,9 +253,7 @@ const SchedulerPredefinedParamsPage = () => {
 						name: scheduleToDelete?.name ?? '',
 					})}
 				</Text>
-				<div
-					style={{ display: 'flex', gap: '8px', justifyContent: 'flex-end' }}
-				>
+				<Group gap='xs' justify='flex-end' className={classes.modalFooter}>
 					<Button
 						variant='default'
 						size='xs'
@@ -270,7 +269,7 @@ const SchedulerPredefinedParamsPage = () => {
 					>
 						{t('actions.delete', { ns: 'common' })}
 					</Button>
-				</div>
+				</Group>
 			</Modal>
 
 			<Modal
@@ -281,8 +280,17 @@ const SchedulerPredefinedParamsPage = () => {
 						? t('formModal.title.edit')
 						: t('formModal.title.create')
 				}
-				size='lg'
+				size='min(96vw, 96rem)'
+				radius='md'
 				centered
+				overlayProps={{ opacity: 0.3, blur: 2 }}
+				classNames={{
+					header: classes.modalHeader,
+					title: classes.modalTitle,
+					body: classes.modalBody,
+					content: classes.modalContent,
+				}}
+				keepMounted={false}
 			>
 				<SchedulerPredefinedParamsForm
 					schedule={selectedSchedule ?? undefined}

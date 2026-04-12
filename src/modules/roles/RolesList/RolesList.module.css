@@ -8,10 +8,6 @@
 	cursor: pointer;
 }
 
-.tableRow:hover {
-	background-color: var(--mantine-color-gray-0);
-}
-
 .statusBadge {
 	text-transform: capitalize;
 	font-weight: 500;

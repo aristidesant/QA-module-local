@@ -124,6 +124,23 @@ Rules:
 - do not use vague motivational copy
 - do not leave the user without a path forward
 
+## Card Standard
+
+`RightSectionCard` (`src/components/RightSectionCard`) is the canonical card shell for all right-column panels, form sections, and detail cards. It is implemented as plain divs (not Mantine `Card`) for full padding control.
+
+Established visual standard (do not deviate):
+- **Structure**: `div.card > div.header + div.content` — no Mantine Card/Card.Section
+- **Icon**: `<ThemeIcon variant='light' radius={12} size={40}>` with `<Icon size={20}>` — 40×40 rounded-square container
+- **Card border-radius**: `16px`, `overflow: hidden`
+- **Card shadow**: `0 1px 2px rgba(15,23,42,0.04), 0 6px 16px rgba(15,23,42,0.06)`
+- **Hover**: `translateY(-1px)` lift + slightly stronger shadow — do not skip this
+- **Header padding**: `20px 24px` (not via Mantine spacing tokens)
+- **Content padding**: `20px 24px 24px`
+- **Header divider**: `1px solid #F1F5F9` (light), `dark-6` (dark) — intentionally hairline
+- **Title**: `font-size: 16px`, `font-weight: 600`, `letter-spacing: -0.01em`
+- **Subtitle**: `font-size: 13px`, `color: gray-5`
+- **Mobile** (`≤520px`): header and content padding reduce to `16px`
+
 ## Design Rules
 
 - Start from composition and hierarchy, not component count.

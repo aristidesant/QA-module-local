@@ -14,7 +14,7 @@
 }
 
 .sectionCard {
-	background: var(--mantine-color-white);
+	background: var(--mantine-color-gray-0);
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-lg);
 	padding: var(--mantine-spacing-sm);
@@ -40,7 +40,7 @@
 .sectionTitle {
 	font-size: var(--mantine-font-size-md);
 	font-weight: 600;
-	color: var(--mantine-color-gray-9);
+	color: var(--mantine-color-gray-8);
 	margin: 0;
 }
 
@@ -85,13 +85,13 @@
 	padding: var(--mantine-spacing-xs);
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-gray-0);
+	background: var(--mantine-color-gray-1);
 }
 
 .promptTitle {
 	margin: 0;
 	font-weight: 600;
-	color: var(--mantine-color-gray-9);
+	color: var(--mantine-color-gray-8);
 	font-size: var(--mantine-font-size-sm);
 }
 
@@ -102,7 +102,7 @@
 }
 
 .promptTextarea {
-	background: var(--mantine-color-gray-0);
+	background: var(--mantine-color-gray-1);
 	border-color: var(--mantine-color-gray-3);
 	color: var(--mantine-color-gray-7);
 	font-size: var(--mantine-font-size-sm);
@@ -127,7 +127,7 @@
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-md);
 	padding: var(--mantine-spacing-md);
-	background: var(--mantine-color-gray-0);
+	background: var(--mantine-color-gray-1);
 }
 
 .promptModalBody {
@@ -141,7 +141,7 @@
 }
 
 .promptModalTextarea {
-	background: var(--mantine-color-gray-0);
+	background: var(--mantine-color-gray-1);
 	border-color: var(--mantine-color-gray-3);
 }
 

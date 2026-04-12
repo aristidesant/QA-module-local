@@ -6,6 +6,7 @@ import {
 	Stack,
 	Text as MantineText,
 } from '@mantine/core';
+import { IconClock, IconLanguage, IconSettings2 } from '@tabler/icons-react';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import {
@@ -104,14 +105,20 @@ const RegionalSettingsParamsForm: React.FC<RegionalSettingsParamsFormProps> = ({
 
 	return (
 		<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-			<Stack gap='sm'>
+			<Stack gap='md'>
 				<div className={styles.sectionHeading}>
-					<MantineText className={styles.sectionTitle}>
-						Regional Configuration
-					</MantineText>
-					<MantineText className={styles.sectionDescription}>
-						Timezone and locale used to format dates, currencies, and schedules.
-					</MantineText>
+					<div className={styles.sectionIcon}>
+						<IconSettings2 size={16} />
+					</div>
+					<div className={styles.sectionText}>
+						<MantineText className={styles.sectionTitle}>
+							Regional Configuration
+						</MantineText>
+						<MantineText className={styles.sectionDescription}>
+							Timezone and locale used to format dates, currencies, and
+							schedules.
+						</MantineText>
+					</div>
 				</div>
 
 				<TextInput
@@ -119,6 +126,7 @@ const RegionalSettingsParamsForm: React.FC<RegionalSettingsParamsFormProps> = ({
 					placeholder='e.g., America/Santo_Domingo'
 					required
 					size='sm'
+					leftSection={<IconClock size={15} />}
 					{...form.getInputProps('timezone')}
 					description='IANA timezone identifier'
 				/>
@@ -128,28 +136,25 @@ const RegionalSettingsParamsForm: React.FC<RegionalSettingsParamsFormProps> = ({
 					placeholder='e.g., es-DO'
 					required
 					size='sm'
+					leftSection={<IconLanguage size={15} />}
 					{...form.getInputProps('locale')}
 					description='BCP 47 language tag'
 				/>
 			</Stack>
 
-			<Group justify='space-between' mt='md' className={styles.actions}>
-				<Group justify='flex-end' className={styles.actionsRight}>
-					<Button variant='default' size='sm' onClick={onCancel}>
-						Cancel
+			<Group justify='flex-end' mt='lg' className={styles.actions}>
+				<Button variant='default' size='sm' onClick={onCancel}>
+					Cancel
+				</Button>
+				{canSubmit && (
+					<Button
+						type='submit'
+						size='sm'
+						loading={updateMutation.isPending || createMutation.isPending}
+					>
+						{saveStrategy === 'create' ? 'Create Settings' : 'Update Settings'}
 					</Button>
-					{canSubmit && (
-						<Button
-							type='submit'
-							size='sm'
-							loading={updateMutation.isPending || createMutation.isPending}
-						>
-							{saveStrategy === 'create'
-								? 'Create Settings'
-								: 'Update Settings'}
-						</Button>
-					)}
-				</Group>
+				)}
 			</Group>
 		</form>
 	);

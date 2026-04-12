@@ -247,7 +247,7 @@ export default function CsvUploadModal({
 						>
 							{form.values.file ? (
 								<div className={styles.selectedFile}>
-									<IconFile size={20} color='var(--mantine-color-blue-6)' />
+									<IconFile size={20} color='var(--mantine-color-blue-5)' />
 									<Text size='sm' fw={500}>
 										{form.values.file.name}
 									</Text>
@@ -266,9 +266,9 @@ export default function CsvUploadModal({
 									<IconUpload
 										size={32}
 										stroke={1.5}
-										color='var(--mantine-color-gray-6)'
+										color='var(--mantine-color-dimmed)'
 									/>
-									<Text size='sm' fw={600} c='dark'>
+									<Text size='sm' fw={600} c='dimmed'>
 										{t('upload.dropzoneTitle')}
 									</Text>
 									<Text size='xs' c='dimmed'>

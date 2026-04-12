@@ -17,6 +17,7 @@ interface ConversationMetadataListProps {
 	className?: string;
 	rowClassName?: string;
 	reserveLabelIconSpace?: boolean;
+	columns?: 1 | 2;
 }
 
 const ConversationMetadataList = ({
@@ -24,11 +25,13 @@ const ConversationMetadataList = ({
 	className,
 	rowClassName,
 	reserveLabelIconSpace = false,
+	columns = 1,
 }: ConversationMetadataListProps) => {
 	return (
 		<Box
 			className={className ? `${styles.list} ${className}` : styles.list}
 			role='table'
+			data-columns={columns}
 		>
 			{items.map(
 				({ key, label, value, icon: Icon, endSection, rowTooltip }) => {

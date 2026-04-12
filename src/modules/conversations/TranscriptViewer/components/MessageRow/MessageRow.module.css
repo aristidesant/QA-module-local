@@ -28,8 +28,8 @@
 }
 
 .activeEntry .messageBubble {
-	background-color: var(--mantine-color-primary-0);
-	box-shadow: inset 0 0 0 1px var(--mantine-color-primary-2);
+	background-color: var(--mantine-color-primary-1);
+	box-shadow: inset 0 0 0 1px var(--mantine-color-primary-3);
 	transition:
 		background-color 0.2s ease,
 		box-shadow 0.2s ease;
@@ -69,8 +69,21 @@
 	border-radius: 4px 14px 14px 14px;
 }
 
+[data-mantine-color-scheme='dark'] .agentBubble {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-9) 30%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-blue-8);
+}
+
 .agentBubble:hover {
 	border-color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] .agentBubble:hover {
+	border-color: var(--mantine-color-blue-6);
 }
 
 .userBubble {
@@ -79,8 +92,21 @@
 	border-radius: 14px 4px 14px 14px;
 }
 
+[data-mantine-color-scheme='dark'] .userBubble {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-green-9) 30%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-green-8);
+}
+
 .userBubble:hover {
 	border-color: var(--mantine-color-green-3);
+}
+
+[data-mantine-color-scheme='dark'] .userBubble:hover {
+	border-color: var(--mantine-color-green-6);
 }
 
 .meta {
@@ -92,6 +118,10 @@
 	word-break: break-word;
 	line-height: 1.5;
 	color: var(--mantine-color-gray-8);
+}
+
+[data-mantine-color-scheme='dark'] .message {
+	color: var(--mantine-color-dark-0);
 }
 
 .interrupted {

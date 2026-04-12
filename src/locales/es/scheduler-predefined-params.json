@@ -42,6 +42,11 @@
 			"label": "Nombre del preset de horario",
 			"placeholder": "Ejemplo: Horario comercial estándar"
 		},
+		"summary": {
+			"kicker": "Editor del preset",
+			"description": "Actualiza el nombre del horario y las ventanas semanales en un solo lugar.",
+			"activeDays": "{{count}} días activos"
+		},
 		"weeklyWindows": {
 			"title": "Ventanas semanales",
 			"description": "Activa los días para este preset y define su hora de inicio y fin. Todo queda en una sola línea para facilitar la lectura."

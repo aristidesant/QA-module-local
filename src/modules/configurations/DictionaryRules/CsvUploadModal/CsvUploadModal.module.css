@@ -13,10 +13,19 @@
 	outline: none;
 }
 
+[data-mantine-color-scheme='dark'] .dropzone {
+	border-color: var(--mantine-color-dark-3);
+}
+
 .dropzone:hover,
 .dropzoneDragOver {
-	background: var(--mantine-color-blue-0);
-	border-color: var(--mantine-color-blue-4);
+	background: var(--mantine-color-blue-2);
+	border-color: var(--mantine-color-blue-5);
+}
+
+[data-mantine-color-scheme='dark'] .dropzone:hover,
+[data-mantine-color-scheme='dark'] .dropzoneDragOver {
+	background: rgba(34, 139, 230, 0.08);
 }
 
 .dropzoneError {
@@ -44,5 +53,5 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	color: var(--mantine-color-blue-6);
+	color: var(--mantine-color-blue-5);
 }

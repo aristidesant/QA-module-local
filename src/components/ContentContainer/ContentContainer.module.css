@@ -54,10 +54,23 @@
 .contentContainerHeader {
 	padding: var(--mantine-spacing-md);
 	padding-bottom: 0;
+	margin-inline: calc(-1 * var(--mantine-spacing-lg));
+	transition: box-shadow 200ms ease;
+}
+
+.contentContainerHeaderScrolled {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+	clip-path: inset(0 0 -20px 0);
+}
+
+[data-mantine-color-scheme='dark'] .contentContainerHeaderScrolled {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
+	clip-path: inset(0 0 -20px 0);
 }
 
 .contentContainerDivider {
 	border-color: var(--mantine-color-gray-2);
+	margin-inline: calc(-1 * var(--mantine-spacing-md));
 }
 
 .contentContainerTitle {
@@ -103,13 +116,17 @@
 	}
 }
 
-.contentContainerNoMainScroll {
+.contentContainerContent.contentContainerNoMainScroll {
 	overflow: hidden;
 	/* constrain height so children can use flex to scroll independently */
 	height: 100%;
+	/* flush with the header shadow — no dead zone when inner containers scroll */
+	margin-top: 0 !important;
+	padding-left: 0;
+	padding-right: 0;
 }
 
-.contentContainerNoMainScroll > .contentContainerInner {
+.contentContainerContent.contentContainerNoMainScroll > .contentContainerInner {
 	height: 100%;
 }
 

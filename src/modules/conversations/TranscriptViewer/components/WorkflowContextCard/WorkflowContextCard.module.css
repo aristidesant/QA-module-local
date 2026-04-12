@@ -2,12 +2,16 @@
 	flex: 1;
 	min-width: 0;
 	padding: 6px 10px;
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--mantine-color-body);
+	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: 6px;
 	display: flex;
 	flex-direction: column;
 	gap: 2px;
+}
+
+[data-mantine-color-scheme='dark'] .workflowContextCard {
+	border-color: var(--mantine-color-dark-4);
 }
 
 .workflowCardTitle {
@@ -15,6 +19,10 @@
 	letter-spacing: 0.03em;
 	text-transform: uppercase;
 	color: var(--mantine-color-gray-5);
+}
+
+[data-mantine-color-scheme='dark'] .workflowCardTitle {
+	color: var(--mantine-color-dark-2);
 }
 
 .workflowNodeName {
@@ -30,6 +38,10 @@
 	padding-bottom: 4px;
 	border-bottom: 1px solid rgba(255, 255, 255, 0.15);
 	margin-bottom: 2px;
+}
+
+[data-mantine-color-scheme='dark'] .tooltipMission {
+	border-bottom-color: rgba(0, 0, 0, 0.3);
 }
 
 .tooltipMonoText {

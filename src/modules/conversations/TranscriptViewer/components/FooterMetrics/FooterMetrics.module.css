@@ -4,6 +4,10 @@
 	border-top: 1px dashed var(--mantine-color-gray-3);
 }
 
+[data-mantine-color-scheme='dark'] .messageFooterMetrics {
+	border-top-color: var(--mantine-color-dark-4);
+}
+
 .metricChip {
 	cursor: default;
 	font-variant-numeric: tabular-nums;
@@ -15,15 +19,23 @@
 
 .metricHoverCard {
 	max-width: 300px;
-	background: rgba(255, 255, 255, 0.97);
+	background: var(--mantine-color-body);
 	backdrop-filter: blur(16px);
 	-webkit-backdrop-filter: blur(16px);
 	box-shadow:
-		0 2px 4px rgba(0, 0, 0, 0.04),
-		0 8px 20px rgba(0, 0, 0, 0.09),
-		0 0 0 1px rgba(0, 0, 0, 0.05);
+		0 2px 4px rgba(15, 23, 42, 0.04),
+		0 8px 20px rgba(15, 23, 42, 0.09),
+		0 0 0 1px rgba(15, 23, 42, 0.05);
 	border: none !important;
 	padding: 14px 16px;
+}
+
+[data-mantine-color-scheme='dark'] .metricHoverCard {
+	background: var(--mantine-color-dark-7);
+	box-shadow:
+		0 2px 4px rgba(0, 0, 0, 0.18),
+		0 8px 20px rgba(0, 0, 0, 0.24),
+		0 0 0 1px rgba(0, 0, 0, 0.12);
 }
 
 .hoverCardHeader {
@@ -59,6 +71,10 @@
 	margin-left: auto;
 }
 
+[data-mantine-color-scheme='dark'] .hoverCardLatency {
+	color: var(--mantine-color-dark-2);
+}
+
 .footerMetricName {
 	word-break: break-word;
 }
@@ -72,12 +88,16 @@
 .detailLabel {
 	flex-shrink: 0;
 	min-width: 72px;
-	font-size: 9px;
-	letter-spacing: 0.06em;
+	font-size: 11px;
+	letter-spacing: 0.04em;
 	text-transform: uppercase;
 	color: var(--mantine-color-gray-5);
 	font-weight: 600;
 	padding-top: 2px;
+}
+
+[data-mantine-color-scheme='dark'] .detailLabel {
+	color: var(--mantine-color-dark-2);
 }
 
 .detailValue {
@@ -92,18 +112,26 @@
 	margin-top: 10px;
 }
 
+[data-mantine-color-scheme='dark'] .breakdownBlock {
+	background: var(--mantine-color-dark-6);
+}
+
 .breakdownLabel {
 	display: block;
-	font-size: 9px;
-	letter-spacing: 0.06em;
+	font-size: 11px;
+	letter-spacing: 0.04em;
 	text-transform: uppercase;
 	color: var(--mantine-color-gray-5);
 	font-weight: 600;
 	margin-bottom: 6px;
 }
 
+[data-mantine-color-scheme='dark'] .breakdownLabel {
+	color: var(--mantine-color-dark-2);
+}
+
 .monoText {
 	font-family: var(--mantine-font-family-monospace);
-	font-size: 10px;
+	font-size: 11px;
 	word-break: break-all;
 }

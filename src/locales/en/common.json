@@ -89,6 +89,7 @@
 			"menu": "Account menu"
 		},
 		"theme": {
+			"label": "Appearance",
 			"light": "Light mode",
 			"dark": "Dark mode",
 			"auto": "System mode"

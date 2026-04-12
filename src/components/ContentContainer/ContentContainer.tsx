@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { type ReactNode, useState, useRef, useEffect } from 'react';
 import { IconArrowLeft } from '@tabler/icons-react';
 import styles from './ContentContainer.module.css';
 import { Divider, Text, Title, ActionIcon, Tooltip, Flex } from '@mantine/core';
@@ -36,11 +36,30 @@ export const ContentContainer = ({
 			? styles.contentWidthFull
 			: styles.contentWidthCentered;
 
+	const [scrolled, setScrolled] = useState(false);
+	const sentinelRef = useRef<HTMLDivElement>(null);
+	const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+	useEffect(() => {
+		if (!mainScroll) return; // shadow always-on for mainScroll=false (handled via prop)
+		const sentinel = sentinelRef.current;
+		const root = scrollContainerRef.current;
+		if (!sentinel || !root) return;
+		const observer = new IntersectionObserver(
+			([entry]) => setScrolled(!entry.isIntersecting),
+			{ root, threshold: 0 }
+		);
+		observer.observe(sentinel);
+		return () => observer.disconnect();
+	}, [mainScroll]);
+
 	return (
 		<div className={styles.contentContainer}>
 			<div className={styles.contentContainerMain}>
 				{(title || description || showBackButton) && (
-					<div className={styles.contentContainerHeader}>
+					<div
+						className={`${styles.contentContainerHeader} ${scrolled || !mainScroll ? styles.contentContainerHeaderScrolled : ''}`}
+					>
 						<div
 							className={`${styles.contentContainerInner} ${widthClassName}`}
 						>
@@ -85,13 +104,16 @@ export const ContentContainer = ({
 								</Flex>
 								{titleRight && titleRight}
 							</Flex>
-							<Divider mt='xs' className={styles.contentContainerDivider} />
 						</div>
+						<Divider mt='xs' className={styles.contentContainerDivider} />
 					</div>
 				)}
 				<div
+					ref={scrollContainerRef}
 					className={`${styles.contentContainerContent} ${!mainScroll ? styles.contentContainerNoMainScroll : ''}`}
 				>
+					{/* inline-style-allow: sentinel element requires exact 1px height for IntersectionObserver; no CSS class alternative is reliable */}
+					<div ref={sentinelRef} style={{ height: 1 }} aria-hidden />
 					<div className={`${styles.contentContainerInner} ${widthClassName}`}>
 						{children}
 					</div>

@@ -9,6 +9,23 @@
 	background: var(--notice-surface);
 }
 
+[data-mantine-color-scheme='dark'] .root {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .iconWrapper {
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .title {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .description {
+	color: var(--mantine-color-dark-2);
+}
+
 .iconWrapper {
 	width: 28px;
 	height: 28px;
@@ -18,7 +35,7 @@
 	align-items: center;
 	justify-content: center;
 	color: var(--notice-icon);
-	background: white;
+	background: var(--mantine-color-white);
 }
 
 .contentText {

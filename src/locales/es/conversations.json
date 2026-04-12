@@ -172,6 +172,10 @@
 			"na": "N/A",
 			"noPhone": "Sin número de teléfono",
 			"invalidDate": "Fecha inválida"
+		},
+		"previewContact": {
+			"label": "Conversación de vista previa",
+			"description": "Esta conversación fue iniciada usando la función de Vista Previa y no está asociada a un contacto real."
 		}
 	},
 	"transcript": {

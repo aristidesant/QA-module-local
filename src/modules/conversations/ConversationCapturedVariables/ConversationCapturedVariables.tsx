@@ -139,7 +139,7 @@ const ConversationCapturedVariables: React.FC<
 					{t('overview.capturedVariables.empty')}
 				</Text>
 			) : (
-				<ConversationMetadataList items={items} />
+				<ConversationMetadataList items={items} columns={2} />
 			)}
 		</RightSectionCard>
 	);

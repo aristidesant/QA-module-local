@@ -8,7 +8,12 @@
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-md);
 	padding: var(--mantine-spacing-sm);
-	background: var(--mantine-color-white);
+	background: var(--mantine-color-body);
+}
+
+[data-mantine-color-scheme='dark'] .selectorCard {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-6);
 }
 
 .selectorRow {
@@ -30,7 +35,12 @@
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-md);
 	padding: var(--mantine-spacing-sm);
-	background: var(--mantine-color-white);
+	background: var(--mantine-color-body);
+}
+
+[data-mantine-color-scheme='dark'] .summaryCard {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-6);
 }
 
 .historyHeader {
@@ -56,10 +66,19 @@
 	background: var(--mantine-color-gray-0);
 }
 
+[data-mantine-color-scheme='dark'] .emptyState {
+	border-color: var(--mantine-color-dark-3);
+	background: var(--mantine-color-dark-6);
+}
+
 .tableWrap {
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-md);
 	overflow: hidden;
+}
+
+[data-mantine-color-scheme='dark'] .tableWrap {
+	border-color: var(--mantine-color-dark-4);
 }
 
 @media (max-width: 768px) {

@@ -459,7 +459,7 @@ export default function DictionaryRulesPage() {
 					<IconBook2
 						size={48}
 						stroke={1.2}
-						color='var(--mantine-color-gray-5)'
+						color='var(--mantine-color-dimmed)'
 					/>
 					<Text size='lg' fw={500} c='dimmed'>
 						{t('noDictionaries')}

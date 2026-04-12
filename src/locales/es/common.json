@@ -89,6 +89,7 @@
 			"menu": "Menú de cuenta"
 		},
 		"theme": {
+			"label": "Apariencia",
 			"light": "Modo claro",
 			"dark": "Modo oscuro",
 			"auto": "Modo del sistema"
