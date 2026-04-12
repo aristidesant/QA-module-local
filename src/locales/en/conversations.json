@@ -283,6 +283,7 @@
 		"neutral": "Neutral",
 		"finalized": "Finalized",
 		"voicemail": "Voicemail",
+		"abandoned": "Abandoned",
 		"callbackRequired": "Callback required",
 		"numberInvalidated": "Number invalidated",
 		"doNotRetry": "Do not retry this contact",

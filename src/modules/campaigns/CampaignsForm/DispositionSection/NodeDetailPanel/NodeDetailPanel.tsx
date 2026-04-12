@@ -11,6 +11,7 @@ import {
 } from '@mantine/core';
 import {
 	IconX,
+	IconPhonePause,
 	IconClock,
 	IconCheck,
 	IconAlertTriangle,
@@ -149,6 +150,20 @@ const NodeDetailPanel: React.FC<NodeDetailPanelProps> = ({
 						</Group>
 						<Text size='xs' c='dimmed'>
 							{t('disposition.detailPanel.invalidatesCardDesc')}
+						</Text>
+					</Card>
+				)}
+
+				{node.isAbandoned && (
+					<Card withBorder className={styles.rescheduleCard}>
+						<Group align='center' gap={8} mb={4}>
+							<IconPhonePause size={18} color='var(--mantine-color-orange-6)' />
+							<Text size='sm' fw={600}>
+								{t('disposition.detailPanel.abandonedCardTitle')}
+							</Text>
+						</Group>
+						<Text size='xs' c='dimmed'>
+							{t('disposition.detailPanel.abandonedCardDesc')}
 						</Text>
 					</Card>
 				)}

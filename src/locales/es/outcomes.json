@@ -16,6 +16,7 @@
 		"labels": {
 			"doNotCall": "No llamar",
 			"doNotCallTooltip": "No volver a llamar a este cliente después de este resultado",
+			"abandoned": "Abandono",
 			"inactive": "Inactivo"
 		},
 		"actions": {
@@ -117,6 +118,8 @@
 			"invalidatesNumber": "Invalida el número",
 			"doNotCall": "No llamar",
 			"doNotCallDescription": "Si se selecciona, no se debe volver a llamar a este cliente después de este resultado.",
+			"isAbandoned": "Es abandono",
+			"isAbandonedDescription": "Marca este outcome cuando el cliente cierra la llamada antes de concluir el flujo.",
 			"requiresReschedule": "Requiere re-programación",
 			"isFinal": "Es final",
 			"isVoiceMail": "Es buzón de voz"

@@ -1,7 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import callDispositionApi from '~/api/callDispositionApi';
 // Authorization is handled by a global Axios interceptor
-import type { CallDispositionModel } from '~/models/CallDispositionModel';
+import type {
+	CallDispositionFilters,
+	CallDispositionModel,
+} from '~/models/CallDispositionModel';
 
 // --- Queries ---
 export function useCallDispositions(conversationId?: number | string) {
@@ -45,13 +48,7 @@ export function useCallDisposition(id?: number | string) {
 	});
 }
 
-export function useCallDispositionReport(params?: {
-	dispositionName?: string;
-	dispositionDescription?: string;
-	notes?: string;
-	campaignId?: number;
-	agentId?: string;
-}) {
+export function useCallDispositionReport(params?: CallDispositionFilters) {
 	return useQuery<{
 		dispositions: { dispositionName: string; count: number }[];
 		totalCalls: number;

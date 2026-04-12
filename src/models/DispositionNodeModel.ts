@@ -5,6 +5,7 @@ export interface DispositionNode {
 	name: string;
 	description?: string;
 	isInvalidatesNumber: boolean;
+	isAbandoned?: boolean;
 	/**
 	 * When true, selecting this disposition means the client should not be called again.
 	 * Backend enforces behavior; frontend only allows editing.
@@ -26,4 +27,39 @@ export interface DispositionNode {
 	createdAt: string; // ISO date string
 	updatedAt: string; // ISO date string
 	deletedAt?: string; // ISO date string | undefined
+}
+
+export interface CreateDispositionNodePayload {
+	name: string;
+	description?: string;
+	isInvalidatesNumber?: boolean;
+	doNotCall?: boolean;
+	requiresReschedule?: boolean;
+	isFinal?: boolean;
+	isVoiceMail?: boolean;
+	isAbandoned?: boolean;
+	catalogId: number;
+	parentId?: number;
+}
+
+export interface UpdateDispositionNodePayload {
+	name?: string;
+	description?: string;
+	isInvalidatesNumber?: boolean;
+	doNotCall?: boolean;
+	requiresReschedule?: boolean;
+	isFinal?: boolean;
+	isVoiceMail?: boolean;
+	isAbandoned?: boolean;
+	parentId?: number | null;
+}
+
+export interface DispositionNodeFilters {
+	catalogId?: number;
+	parentId?: number | null;
+	isActive?: boolean;
+	isFinal?: boolean;
+	isAbandoned?: boolean;
+	search?: string;
+	[key: string]: unknown;
 }

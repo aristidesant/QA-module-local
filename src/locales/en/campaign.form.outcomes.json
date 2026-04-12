@@ -40,6 +40,7 @@
 			"expand": "Expand node",
 			"collapse": "Collapse node",
 			"doNotCall": "Do not call",
+			"abandoned": "Abandoned",
 			"invalidatesNumber": "Invalidates number",
 			"requiresReschedule": "Requires reschedule",
 			"addSiblings": "Add {{count}} missing sibling",
@@ -61,13 +62,16 @@
 			"invalidatesNumberDesc": "Prevent the dialer from retrying this phone number after the outcome is used.",
 			"doNotCallTitle": "Do not call",
 			"doNotCallDesc": "Mark this outcome as do not call so the contact is excluded from future dialing.",
+			"abandonedTitle": "Is abandoned",
+			"abandonedDesc": "Mark this outcome when the customer hangs up before completing the flow.",
 			"rescheduleTitle": "Requires reschedule",
 			"rescheduleDesc": "Flag this outcome so follow-up activities can be scheduled for the contact.",
 			"badges": {
 				"final": "Final outcome",
 				"reschedule": "Requires reschedule",
 				"noRetry": "Do not retry",
-				"doNotCall": "Do not call"
+				"doNotCall": "Do not call",
+				"abandoned": "Abandoned"
 			}
 		},
 		"groupPreview": {
@@ -88,6 +92,7 @@
 		"viewer": {
 			"group": "Group",
 			"outcome": "Outcome",
+			"abandoned": "Abandoned",
 			"nodeAria": "Outcome node: {{name}}",
 			"childOutcomes": "{{count}} child outcome",
 			"childOutcomes_plural": "{{count}} child outcomes",
@@ -110,7 +115,9 @@
 			"rescheduleCardTitle": "Requires Reschedule",
 			"rescheduleCardDesc": "This outcome requires the contact to be rescheduled for a future attempt.",
 			"invalidatesCardTitle": "Invalidates Number",
-			"invalidatesCardDesc": "This outcome marks the contact number as invalid and prevents future attempts."
+			"invalidatesCardDesc": "This outcome marks the contact number as invalid and prevents future attempts.",
+			"abandonedCardTitle": "Abandoned call",
+			"abandonedCardDesc": "This outcome marks the conversation as abandoned because the customer ended the call before the flow was completed."
 		}
 	}
 }

@@ -1,6 +1,25 @@
 import axios from 'axios';
-import type { DispositionNode } from '~/models/DispositionNodeModel';
+import type {
+	CreateDispositionNodePayload,
+	DispositionNode,
+	DispositionNodeFilters,
+	UpdateDispositionNodePayload,
+} from '~/models/DispositionNodeModel';
 import { DEFAULT_API_URL } from './config';
+
+const serializeQueryParams = (params?: Record<string, unknown>) => {
+	if (!params) return undefined;
+
+	return Object.fromEntries(
+		Object.entries(params).flatMap(([key, value]) => {
+			if (value === undefined || value === null || value === '') {
+				return [];
+			}
+
+			return [[key, typeof value === 'boolean' ? String(value) : value]];
+		})
+	);
+};
 
 /**
  * Disposition Nodes API client
@@ -9,7 +28,7 @@ import { DEFAULT_API_URL } from './config';
 const dispositionNodesApi = (_authHeader?: Record<string, string>) => {
 	return {
 		// Create new node
-		createNode: async (data: Partial<DispositionNode>) => {
+		createNode: async (data: CreateDispositionNodePayload) => {
 			const response = await axios.post<DispositionNode>(
 				`${DEFAULT_API_URL}/disposition-nodes`,
 				data
@@ -18,10 +37,10 @@ const dispositionNodesApi = (_authHeader?: Record<string, string>) => {
 		},
 
 		// Get all nodes (with filters)
-		getNodes: async (params?: Record<string, any>) => {
+		getNodes: async (params?: DispositionNodeFilters) => {
 			const response = await axios.get<DispositionNode[]>(
 				`${DEFAULT_API_URL}/disposition-nodes`,
-				{ params }
+				{ params: serializeQueryParams(params) }
 			);
 			return response.data;
 		},
@@ -35,7 +54,10 @@ const dispositionNodesApi = (_authHeader?: Record<string, string>) => {
 		},
 
 		// Update node
-		updateNode: async (id: number | string, data: Partial<DispositionNode>) => {
+		updateNode: async (
+			id: number | string,
+			data: UpdateDispositionNodePayload
+		) => {
 			const response = await axios.patch<DispositionNode>(
 				`${DEFAULT_API_URL}/disposition-nodes/${id}`,
 				data
