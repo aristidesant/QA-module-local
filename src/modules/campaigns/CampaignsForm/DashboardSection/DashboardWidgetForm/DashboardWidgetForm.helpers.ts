@@ -31,6 +31,7 @@ import {
 	getWidgetSizePreset,
 	normalizeWidgetLayout,
 } from '~/modules/campaigns/dashboardLayout';
+import { resolveMetricDisplayValue } from '~/modules/campaigns/CampaignDashboardViewer/CampaignDashboardViewer.helpers';
 import type {
 	MetricColumnConfigEntry,
 	MetricColumnsConfig,
@@ -80,6 +81,7 @@ const DISPOSITION_FIELDS_FALLBACK: MetricColumnConfigEntry[] = [
 		value: 'requiresReschedule',
 		type: 'boolean',
 	},
+	{ label: 'Is Abandoned', value: 'is_abandoned', type: 'boolean' },
 	{ label: 'Is Voice Mail', value: 'isVoiceMail', type: 'boolean' },
 	{ label: 'Do Not Call', value: 'doNotCall', type: 'boolean' },
 	{ label: 'Status Contact', value: 'statusContact', type: 'string' },
@@ -140,10 +142,40 @@ const FILTER_FIELD_ALIASES: Record<MetricSourceType, Record<string, string>> = {
 		created_at: 'createdAt',
 		disposition_name: 'dispositionName',
 		do_not_call: 'doNotCall',
+		is_abandoned: 'is_abandoned',
 		is_voice_mail: 'isVoiceMail',
 		requires_reschedule: 'requiresReschedule',
 		status_contact: 'statusContact',
 	},
+};
+
+export const ABANDONED_DISPOSITION_FIELD = 'is_abandoned';
+
+export const isAbandonedRateMetric = (
+	values: Pick<
+		WidgetFormValues,
+		'sourceType' | 'aggregationType' | 'fieldName' | 'resultType'
+	>
+) =>
+	values.sourceType === 'DISPOSITION' &&
+	values.aggregationType === 'AVG' &&
+	trimText(values.fieldName) === ABANDONED_DISPOSITION_FIELD &&
+	(values.resultType === 'PERCENT' || values.resultType === null);
+
+export const sanitizeAbandonedRateRuntimeFilters = (
+	values: WidgetFormValues
+): WidgetRuntimeFilterFormRow[] => {
+	if (!isAbandonedRateMetric(values)) {
+		return values.runtimeFilters;
+	}
+
+	return values.runtimeFilters.map((row) => {
+		if (trimText(row.field) !== ABANDONED_DISPOSITION_FIELD) {
+			return row;
+		}
+
+		return resetRuntimeFilterRow(row);
+	});
 };
 
 const RUNTIME_FILTER_FIELD_TYPES = {
@@ -606,6 +638,10 @@ export const inferResultType = (
 		return 'NUMBER';
 	}
 
+	if (isAbandonedRateMetric(values)) {
+		return 'PERCENT';
+	}
+
 	if (values.aggregationType === 'SUM' || values.aggregationType === 'AVG') {
 		return 'NUMBER';
 	}
@@ -936,6 +972,10 @@ export const getResultTypeOptions = (t: TFunction) =>
 		{
 			value: 'NUMBER',
 			label: t('dashboardBuilder.form.options.resultType.NUMBER'),
+		},
+		{
+			value: 'PERCENT',
+			label: t('dashboardBuilder.form.options.resultType.PERCENT'),
 		},
 		{
 			value: 'BOOLEAN',
@@ -2033,20 +2073,23 @@ export const buildPreviewModelFromResponse = (
 			return fallbackPreview;
 		}
 
-		const resultValue =
-			widget.result.valueFormat === null ||
-			widget.result.valueFormat === undefined ||
-			widget.result.valueFormat === ''
-				? widget.result.value
-				: widget.result.valueFormat;
-		const comparisonLabel =
-			fallbackPreview.kind === 'kpi'
-				? fallbackPreview.comparisonLabel
+		const resultValue = resolveMetricDisplayValue(
+			widget.result.value,
+			widget.result.valueFormat
+		);
+		const previousDisplayValue =
+			comparison?.previous?.kind === 'single_value'
+				? resolveMetricDisplayValue(
+						comparison.previous.value,
+						comparison.previous.valueFormat
+					)
 				: undefined;
-		const comparisonDetail =
-			fallbackPreview.kind === 'kpi'
-				? fallbackPreview.comparisonDetail
-				: undefined;
+		const comparisonCopy = buildWidgetComparisonCopy(
+			widget.result.meta.compareWith,
+			DEFAULT_PREVIEW_TIME_RANGE,
+			previousDisplayValue,
+			t
+		);
 
 		return {
 			kind: 'kpi',
@@ -2062,10 +2105,10 @@ export const buildPreviewModelFromResponse = (
 					: undefined,
 			sizePreset: fallbackPreview.sizePreset,
 			accentColor: fallbackPreview.accentColor,
-			value: resultValue,
+			value: resultValue ?? null,
 			comparison: comparison?.comparison,
-			comparisonLabel,
-			comparisonDetail,
+			comparisonLabel: comparisonCopy.label,
+			comparisonDetail: comparisonCopy.detail,
 		};
 	}
 

@@ -62,9 +62,11 @@ import {
 	sanitizeWidgetRuntimeFilters,
 	getResolvedGroupBy,
 	getSourceFieldEntries,
+	isAbandonedRateMetric,
 	normalizeWidgetFilterValueForType,
 	resetWidgetFilterRow,
 	resetRuntimeFilterRow,
+	sanitizeAbandonedRateRuntimeFilters,
 	supportsCompareWithWidget,
 	supportsGroupedWidget,
 	supportsTimeSeriesWidget,
@@ -788,6 +790,12 @@ const useDashboardWidgetFormController = ({
 			nextValues.valueField = null;
 		}
 
+		if (isAbandonedRateMetric(nextValues)) {
+			nextValues.resultType = 'PERCENT';
+		}
+
+		nextValues.runtimeFilters = sanitizeAbandonedRateRuntimeFilters(nextValues);
+
 		updateFormValues({
 			...nextValues,
 			defaultFilters: sanitizeWidgetDefaultFilters(
@@ -856,6 +864,12 @@ const useDashboardWidgetFormController = ({
 			nextValues.aggregationType = 'MIN';
 		}
 
+		if (isAbandonedRateMetric(nextValues)) {
+			nextValues.resultType = 'PERCENT';
+		}
+
+		nextValues.runtimeFilters = sanitizeAbandonedRateRuntimeFilters(nextValues);
+
 		updateFormValues({
 			...nextValues,
 			defaultFilters: sanitizeWidgetDefaultFilters(
@@ -894,6 +908,14 @@ const useDashboardWidgetFormController = ({
 	};
 
 	const handleResultTypeChange = (value: string | null) => {
+		if (isAbandonedRateMetric(form.getValues())) {
+			setManualCompatibility((current) => ({ ...current, resultType: true }));
+			updateFormValues({
+				resultType: 'PERCENT',
+			});
+			return;
+		}
+
 		if (!value) {
 			setManualCompatibility((current) => ({ ...current, resultType: false }));
 			updateFormValues({
@@ -1051,6 +1073,8 @@ const useDashboardWidgetFormController = ({
 			runtimeFilters: nextRuntimeFilters,
 		};
 
+		nextValues.runtimeFilters = sanitizeAbandonedRateRuntimeFilters(nextValues);
+
 		updateFormValues({
 			runtimeFilters: sanitizeWidgetRuntimeFilters(
 				nextValues,
@@ -1091,6 +1115,8 @@ const useDashboardWidgetFormController = ({
 			runtimeFilters: nextRuntimeFilters,
 		};
 
+		nextValues.runtimeFilters = sanitizeAbandonedRateRuntimeFilters(nextValues);
+
 		updateFormValues({
 			runtimeFilters: sanitizeWidgetRuntimeFilters(
 				nextValues,
@@ -1120,6 +1146,8 @@ const useDashboardWidgetFormController = ({
 			...form.getValues(),
 			runtimeFilters: nextRuntimeFilters,
 		};
+
+		nextValues.runtimeFilters = sanitizeAbandonedRateRuntimeFilters(nextValues);
 
 		updateFormValues({
 			runtimeFilters: sanitizeWidgetRuntimeFilters(

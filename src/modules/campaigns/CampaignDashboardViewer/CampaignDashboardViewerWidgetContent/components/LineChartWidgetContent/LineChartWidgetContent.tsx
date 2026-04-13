@@ -12,6 +12,7 @@ import {
 	buildWidgetComparisonCopy,
 	formatMetricValue,
 	getWidgetChartMetrics,
+	resolveMetricDisplayValue,
 } from '../../../CampaignDashboardViewer.helpers';
 import DashboardWidgetCard from '../DashboardWidgetCard';
 import type { TimeSeriesWidgetContentProps } from '../widgetContent.types';
@@ -21,7 +22,7 @@ import styles from './LineChartWidgetContent.module.css';
 type TimeSeriesChartDatum = {
 	label: string;
 	currentValue: number | null;
-	currentDisplayValue: number | null;
+	currentDisplayValue: string | number | boolean | null;
 	previousValue: number | null;
 };
 
@@ -50,8 +51,9 @@ const getDeltaTone = (delta: number) => {
 const isValueDefined = (value: number | null | undefined): value is number =>
 	value !== null && value !== undefined;
 
-const formatPointValue = (value: number | null | undefined) =>
-	isValueDefined(value) ? formatMetricValue(value) : '-';
+const formatPointValue = (
+	value: string | number | boolean | null | undefined
+) => (value !== null && value !== undefined ? formatMetricValue(value) : '-');
 
 const LineChartWidgetContent = ({
 	widget,
@@ -91,7 +93,10 @@ const LineChartWidgetContent = ({
 				label: currentPoint?.label ?? previousPoint?.label ?? String(index + 1),
 				currentValue: currentPoint?.value ?? null,
 				currentDisplayValue:
-					currentPoint?.valueFormat ?? currentPoint?.value ?? null,
+					resolveMetricDisplayValue(
+						currentPoint?.value,
+						currentPoint?.valueFormat
+					) ?? null,
 				previousValue: previousPoint?.value ?? null,
 			};
 		}
@@ -211,7 +216,10 @@ const LineChartWidgetContent = ({
 						<Group gap={8} wrap='nowrap' justify='flex-end'>
 							<Text fw={800} size='xl' className={styles.latestValue}>
 								{formatPointValue(
-									currentLatestPoint?.valueFormat ?? currentLatestPoint?.value
+									resolveMetricDisplayValue(
+										currentLatestPoint?.value,
+										currentLatestPoint?.valueFormat
+									)
 								)}
 							</Text>
 							{showDelta ? (

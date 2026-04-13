@@ -324,6 +324,7 @@
 				"resultType": {
 					"EMPTY": "Empty",
 					"NUMBER": "Number",
+					"PERCENT": "Percent",
 					"BOOLEAN": "Boolean",
 					"STRING": "String",
 					"TIME": "Time"
