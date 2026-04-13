@@ -1,6 +1,7 @@
 {
 	"page": {
 		"title": "Agent Preview",
+		"titleWithCampaign": "Agent Preview - {{campaignName}}",
 		"description": "Test the campaign agent and review the conversation log.",
 		"helper": "Interact with the agent preview below while you review conversations."
 	},

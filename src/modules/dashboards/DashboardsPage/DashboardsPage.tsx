@@ -4,7 +4,12 @@ import { ContentContainer } from '~/components/ContentContainer/ContentContainer
 const DashboardsPage = () => {
 	return (
 		<ContentContainer>
-			<DashboardSection campaignId={null} allowGlobal />
+			<DashboardSection
+				campaignId={null}
+				allowGlobal
+				fullHeight
+				overlayTopOffset={0}
+			/>
 		</ContentContainer>
 	);
 };

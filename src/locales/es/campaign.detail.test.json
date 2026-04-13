@@ -1,6 +1,7 @@
 {
 	"page": {
 		"title": "Vista previa del agente",
+		"titleWithCampaign": "Vista previa del agente - {{campaignName}}",
 		"description": "Prueba el agente de la campaña y revisa el historial de conversaciones.",
 		"helper": "Interactúa con la vista previa del agente mientras revisas las conversaciones."
 	},

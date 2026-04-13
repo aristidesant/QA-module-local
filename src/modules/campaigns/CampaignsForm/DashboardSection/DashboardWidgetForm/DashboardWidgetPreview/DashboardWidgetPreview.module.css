@@ -3,6 +3,8 @@
 	flex-direction: column;
 	gap: var(--mantine-spacing-xs);
 	min-height: 0;
+	min-width: 0;
+	overflow: hidden;
 }
 
 .previewFrame[data-loading] {
@@ -31,6 +33,8 @@
 
 .kpiWrapper {
 	min-height: 0;
+	min-width: 0;
+	overflow: hidden;
 }
 
 .loadingCard {

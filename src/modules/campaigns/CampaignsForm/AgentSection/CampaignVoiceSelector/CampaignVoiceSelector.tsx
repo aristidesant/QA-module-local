@@ -218,11 +218,7 @@ const CampaignVoiceSelector: React.FC = () => {
 							}}
 						/>
 						<Stack gap={2}>
-							<Text
-								fw={600}
-								size='md'
-								style={{ color: 'var(--mantine-color-dark-7)' }}
-							>
+							<Text fw={600} size='md'>
 								{selectedVoice.voice.name}
 							</Text>
 							<Group gap='xs'>
@@ -264,10 +260,7 @@ const CampaignVoiceSelector: React.FC = () => {
 				onClick={openVoiceModal}
 			>
 				<Group align='center' justify='center' gap='sm' p='lg'>
-					<IconPlus
-						size={24}
-						style={{ color: 'var(--mantine-color-gray-5)' }}
-					/>
+					<IconPlus size={24} className={classes.addIcon} />
 					<Text size='md' c='dimmed' fw={500}>
 						Select a voice for the campaign agent
 					</Text>
