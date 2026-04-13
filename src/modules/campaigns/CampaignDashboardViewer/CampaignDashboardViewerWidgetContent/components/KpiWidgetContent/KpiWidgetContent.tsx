@@ -1,6 +1,9 @@
 import { useTranslation } from 'react-i18next';
 import KpiCard from '~/components/KpiCard';
-import { buildWidgetComparisonCopy } from '~/modules/campaigns/CampaignDashboardViewer/CampaignDashboardViewer.helpers';
+import {
+	buildWidgetComparisonCopy,
+	resolveMetricDisplayValue,
+} from '~/modules/campaigns/CampaignDashboardViewer/CampaignDashboardViewer.helpers';
 import type { WidgetContentBaseProps } from '../widgetContent.types';
 import styles from '../../CampaignDashboardViewerWidgetContent.module.css';
 
@@ -14,11 +17,10 @@ const KpiWidgetContent = ({
 	const { t } = useTranslation('campaign.form.dashboards');
 	const currentValue =
 		widget.result?.kind === 'single_value'
-			? widget.result.valueFormat !== undefined &&
-				widget.result.valueFormat !== null &&
-				widget.result.valueFormat !== ''
-				? widget.result.valueFormat
-				: widget.result.value
+			? resolveMetricDisplayValue(
+					widget.result.value,
+					widget.result.valueFormat
+				)
 			: null;
 	const previousValue =
 		comparisonData?.previous?.kind === 'single_value'
@@ -26,11 +28,10 @@ const KpiWidgetContent = ({
 			: undefined;
 	const previousDisplayValue =
 		comparisonData?.previous?.kind === 'single_value'
-			? comparisonData.previous.valueFormat !== undefined &&
-				comparisonData.previous.valueFormat !== null &&
-				comparisonData.previous.valueFormat !== ''
-				? comparisonData.previous.valueFormat
-				: comparisonData.previous.value
+			? resolveMetricDisplayValue(
+					comparisonData.previous.value,
+					comparisonData.previous.valueFormat
+				)
 			: undefined;
 	const hasComparisonContent =
 		Boolean(comparisonData?.comparison) && previousValue !== undefined;

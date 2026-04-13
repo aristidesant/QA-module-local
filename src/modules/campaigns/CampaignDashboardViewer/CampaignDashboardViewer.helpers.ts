@@ -8,6 +8,7 @@ import type {
 	DashboardWidgetVisibilityScope,
 	GroupedMetricResult,
 	MetricCompareWith,
+	MetricResultType,
 	TimeSeriesMetricResult,
 } from '~/models/AnalyticsDashboard';
 import type { TFunction } from 'i18next';
@@ -100,6 +101,18 @@ export const formatMetricValue = (
 	if (value === null || value === undefined || value === '') return '-';
 	return String(value);
 };
+
+export const resolveMetricDisplayValue = (
+	value: string | number | boolean | null | undefined,
+	valueFormat?: string | number | boolean | null
+) =>
+	valueFormat !== undefined && valueFormat !== null && valueFormat !== ''
+		? valueFormat
+		: value;
+
+export const isPercentMetricResultType = (
+	resultType?: MetricResultType | null
+) => resultType === 'PERCENT';
 
 type ComparisonCopyKeys = {
 	label: string;

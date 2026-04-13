@@ -324,6 +324,7 @@
 				"resultType": {
 					"EMPTY": "Vacío",
 					"NUMBER": "Número",
+					"PERCENT": "Porcentaje",
 					"BOOLEAN": "Booleano",
 					"STRING": "Texto",
 					"TIME": "Tiempo"
