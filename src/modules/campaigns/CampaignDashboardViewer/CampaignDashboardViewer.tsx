@@ -47,11 +47,13 @@ const CampaignDashboardViewer = ({
 	contactGroupId,
 	initialDashboardId,
 	allowLayoutEditing = true,
+	onBackClick,
 }: {
 	campaignId?: number | null;
 	contactGroupId?: number | null;
 	initialDashboardId?: number;
 	allowLayoutEditing?: boolean;
+	onBackClick?: () => void;
 }) => {
 	const [isSavingLayoutTransition, setIsSavingLayoutTransition] =
 		useState(false);
@@ -485,6 +487,8 @@ const CampaignDashboardViewer = ({
 					comparisonPeriod={unifiedRenderResult?.comparisonPeriod}
 					comparisonEnabled={comparisonEnabled}
 					allowLayoutEditing={allowLayoutEditing}
+					showBackButton={Boolean(onBackClick)}
+					onBackClick={onBackClick}
 					onAutoOrganize={handleAutoOrganize}
 					onCancelEditing={handleCancelEditing}
 					onRefresh={() => void refetchRenderResult()}
@@ -497,33 +501,29 @@ const CampaignDashboardViewer = ({
 				/>
 			</div>
 
-			<div className={styles.canvasShell}>
-				<div className={styles.canvasViewport}>
-					<div className={styles.canvasMeasure} ref={editorContainerRef}>
-						<CampaignDashboardViewerContent
-							activeLayoutMap={activeLayoutMap}
-							editorWidth={editorWidth}
-							errorMessage={error instanceof Error ? error.message : undefined}
-							isError={isError}
-							isMobile={Boolean(isMobile)}
-							isSavingLayout={isSavingLayout}
-							renderLoading={renderLoading}
-							renderResult={
-								renderResult
-									? {
-											...renderResult,
-											widgets: sortedRenderWidgets,
-										}
-									: undefined
-							}
-							comparisonMap={widgetComparisonDataMap}
-							comparisonPeriodLabel={comparisonPeriodLabel}
-							selectedTimeRange={selectedTimeRange}
-							widgetsCount={visibleWidgets.length}
-							onLayoutChange={handleLayoutChange}
-						/>
-					</div>
-				</div>
+			<div className={styles.canvasShell} ref={editorContainerRef}>
+				<CampaignDashboardViewerContent
+					activeLayoutMap={activeLayoutMap}
+					editorWidth={editorWidth}
+					errorMessage={error instanceof Error ? error.message : undefined}
+					isError={isError}
+					isMobile={Boolean(isMobile)}
+					isSavingLayout={isSavingLayout}
+					renderLoading={renderLoading}
+					renderResult={
+						renderResult
+							? {
+									...renderResult,
+									widgets: sortedRenderWidgets,
+								}
+							: undefined
+					}
+					comparisonMap={widgetComparisonDataMap}
+					comparisonPeriodLabel={comparisonPeriodLabel}
+					selectedTimeRange={selectedTimeRange}
+					widgetsCount={visibleWidgets.length}
+					onLayoutChange={handleLayoutChange}
+				/>
 			</div>
 		</div>
 	);

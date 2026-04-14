@@ -1,41 +1,15 @@
-[data-mantine-color-scheme='dark'] .emptyStateCard {
-	background: color-mix(
-		in srgb,
-		var(--mantine-color-dark-7) 95%,
-		transparent
-	) !important;
-	border-color: var(--mantine-color-dark-5) !important;
-	box-shadow:
-		0 2px 12px color-mix(in srgb, var(--mantine-color-black) 25%, transparent),
-		0 1px 3px color-mix(in srgb, var(--mantine-color-black) 18%, transparent) !important;
-}
-
-[data-mantine-color-scheme='dark'] .emptyStateIcon {
-	background: var(--mantine-color-dark-7);
-	border-color: var(--mantine-color-dark-5);
-	color: var(--mantine-color-dark-3);
-}
-
-.emptyStateCard {
-	background: rgba(255, 255, 255, 0.72);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	border: 1px solid rgba(0, 0, 0, 0.06) !important;
-	box-shadow:
-		0 2px 12px rgba(0, 0, 0, 0.05),
-		0 1px 3px rgba(0, 0, 0, 0.04);
-	padding: var(--mantine-spacing-xl) var(--mantine-spacing-xl) !important;
-	text-align: center;
-}
-
-.emptyStateIcon {
-	width: 52px;
-	height: 52px;
-	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-2);
+.shell {
+	min-height: 0;
+	flex: 1;
+	overflow: hidden;
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var(--mantine-color-gray-5);
+	flex-direction: column;
+}
+
+.content {
+	min-height: 0;
+	flex: 1;
+	overflow-y: auto;
+	display: flex;
+	flex-direction: column;
 }

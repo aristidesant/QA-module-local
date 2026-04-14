@@ -67,7 +67,8 @@
 		},
 		"preview": {
 			"title": "Vista previa",
-			"description": "Revisa el dashboard seleccionado antes de volver al constructor."
+			"description": "Revisa el dashboard seleccionado antes de volver al constructor.",
+			"back": "Volver"
 		},
 		"breadcrumb": {
 			"root": "Dashboard Builder"

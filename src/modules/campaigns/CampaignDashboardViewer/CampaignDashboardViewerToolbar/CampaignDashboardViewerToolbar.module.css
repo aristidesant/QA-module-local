@@ -27,6 +27,12 @@
 	border-color: var(--mantine-color-dark-4);
 }
 
+[data-mantine-color-scheme='dark'] .backButton {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-1);
+}
+
 /* ── Base styles ────────────────────────────────────────── */
 .card {
 	width: 100%;
@@ -181,6 +187,19 @@
 }
 
 .refreshAction {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 60%,
+		transparent
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-white) 94%,
+		var(--mantine-color-gray-0)
+	);
+}
+
+.backButton {
 	border-color: color-mix(
 		in srgb,
 		var(--mantine-color-gray-3) 60%,

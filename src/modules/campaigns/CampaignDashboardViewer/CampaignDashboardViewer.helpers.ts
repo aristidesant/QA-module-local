@@ -281,7 +281,7 @@ export const getEditorCanvasMinHeight = (
 	);
 	const minimumRows = options?.minimumRows ?? 3;
 	const baseRows = Math.max(layoutBottomRow, minimumRows);
-	const extraRows = options?.extraRows ?? Math.max(baseRows, 6);
+	const extraRows = options?.extraRows ?? 2;
 	const totalRows = baseRows + extraRows;
 
 	return (

@@ -67,7 +67,8 @@
 		},
 		"preview": {
 			"title": "Preview",
-			"description": "Review the selected dashboard before returning to the builder."
+			"description": "Review the selected dashboard before returning to the builder.",
+			"back": "Back"
 		},
 		"breadcrumb": {
 			"root": "Dashboard Builder"
