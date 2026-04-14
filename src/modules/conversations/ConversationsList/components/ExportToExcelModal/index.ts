@@ -1,2 +1,2 @@
-export { default } from "./ExportToExcelModal";
-export type { ExportToExcelModalProps, Direction } from "./ExportToExcelModal";
+export { default } from './ExportToExcelModal';
+export type { ExportToExcelModalProps, Direction } from './ExportToExcelModal';

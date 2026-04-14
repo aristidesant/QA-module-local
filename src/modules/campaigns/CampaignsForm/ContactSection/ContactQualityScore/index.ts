@@ -1,1 +1,1 @@
-export { ContactQualityScore } from "./ContactQualityScore";
+export { ContactQualityScore } from './ContactQualityScore';

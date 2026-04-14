@@ -1,3 +1,3 @@
-import AddShedulerForm from "./AddShedulerForm";
+import AddShedulerForm from './AddShedulerForm';
 
 export default AddShedulerForm;

@@ -1,0 +1,22 @@
+.scheduleItem {
+	border: 1px solid;
+	border-color: var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background-color: transparent;
+	cursor: pointer;
+}
+
+.scheduleItemSelected {
+	border-color: var(--mantine-color-blue-6);
+	background-color: var(--mantine-color-blue-0);
+}
+
+.checkmark {
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background-color: var(--mantine-color-blue-6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

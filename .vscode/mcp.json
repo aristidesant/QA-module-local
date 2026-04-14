@@ -1,14 +1,14 @@
 {
-  "servers": {
-    "confirm": {
-      "type": "stdio",
-      "command": "npx",
-      "args": ["-y", "mcp-confirm"]
-    },
-    "context7": {
-      "type": "http",
-      "url": "https://mcp.context7.com/mcp"
-    }
-  },
-  "inputs": []
+	"servers": {
+		"confirm": {
+			"type": "stdio",
+			"command": "npx",
+			"args": ["-y", "mcp-confirm"]
+		},
+		"context7": {
+			"type": "http",
+			"url": "https://mcp.context7.com/mcp"
+		}
+	},
+	"inputs": []
 }

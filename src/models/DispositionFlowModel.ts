@@ -1,9 +1,9 @@
-import type { DispositionCatalogModel } from "./DispositionCatalogModels";
+import type { DispositionCatalogModel } from './DispositionCatalogModels';
 
 export interface DispositionFlowModel {
-  id: number;
-  clientId: number;
-  userId: number;
-  campaignId: number;
-  flowJson: DispositionCatalogModel;
+	id: number;
+	clientId: number;
+	userId: number;
+	campaignId: number;
+	flowJson: DispositionCatalogModel;
 }

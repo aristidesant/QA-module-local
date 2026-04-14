@@ -4,28 +4,28 @@
  * Used for enabling scroll-based CSS effects
  */
 export function setupScrollEffect(): void {
-  if (typeof window === "undefined") return;
+	if (typeof window === 'undefined') return;
 
-  let lastKnownScrollPosition = 0;
-  let ticking = false;
+	let lastKnownScrollPosition = 0;
+	let ticking = false;
 
-  function updateScrollAttribute(scrollPos: number) {
-    document.documentElement.setAttribute("data-scroll", scrollPos.toString());
-  }
+	function updateScrollAttribute(scrollPos: number) {
+		document.documentElement.setAttribute('data-scroll', scrollPos.toString());
+	}
 
-  // Set initial state
-  updateScrollAttribute(window.scrollY);
+	// Set initial state
+	updateScrollAttribute(window.scrollY);
 
-  document.addEventListener("scroll", () => {
-    lastKnownScrollPosition = window.scrollY;
+	document.addEventListener('scroll', () => {
+		lastKnownScrollPosition = window.scrollY;
 
-    if (!ticking) {
-      window.requestAnimationFrame(() => {
-        updateScrollAttribute(lastKnownScrollPosition);
-        ticking = false;
-      });
+		if (!ticking) {
+			window.requestAnimationFrame(() => {
+				updateScrollAttribute(lastKnownScrollPosition);
+				ticking = false;
+			});
 
-      ticking = true;
-    }
-  });
+			ticking = true;
+		}
+	});
 }

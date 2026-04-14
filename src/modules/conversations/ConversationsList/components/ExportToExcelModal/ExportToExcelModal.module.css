@@ -1,33 +1,33 @@
 .root {
-  padding-top: var(--mantine-spacing-sm);
+	padding-top: var(--mantine-spacing-sm);
 }
 
 .header {
-  margin-bottom: var(--mantine-spacing-md);
+	margin-bottom: var(--mantine-spacing-md);
 }
 
 .fieldGroup {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: var(--mantine-spacing-sm);
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--mantine-spacing-sm);
 }
 
 @media (min-width: 48em) {
-  .fieldGroup {
-    grid-template-columns: 1fr 1fr;
-  }
+	.fieldGroup {
+		grid-template-columns: 1fr 1fr;
+	}
 }
 
 .actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: var(--mantine-spacing-sm);
-  margin-top: var(--mantine-spacing-md);
-  padding-top: var(--mantine-spacing-sm);
-  border-top: 1px solid var(--mantine-color-gray-3);
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-sm);
+	margin-top: var(--mantine-spacing-md);
+	padding-top: var(--mantine-spacing-sm);
+	border-top: 1px solid var(--mantine-color-gray-3);
 }
 
 .hint {
-  color: var(--mantine-color-dimmed);
-  font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-dimmed);
+	font-size: var(--mantine-font-size-sm);
 }

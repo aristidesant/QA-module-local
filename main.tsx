@@ -1,19 +1,19 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
-import { createRouter, RouterProvider } from "@tanstack/react-router";
-import { routeTree } from "./app/routeTree.gen";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { createRouter, RouterProvider } from '@tanstack/react-router';
+import { routeTree } from './app/routeTree.gen';
 
 const router = createRouter({ routeTree });
 
-declare module "@tanstack/react-router" {
-  interface Register {
-    router: typeof router;
-  }
+declare module '@tanstack/react-router' {
+	interface Register {
+		router: typeof router;
+	}
 }
 
-const rootElement = document.getElementById("root")!;
+const rootElement = document.getElementById('root')!;
 ReactDOM.createRoot(rootElement).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
+	<React.StrictMode>
+		<RouterProvider router={router} />
+	</React.StrictMode>
 );

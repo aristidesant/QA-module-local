@@ -1,1 +1,1 @@
-export { default } from "./NodeDetailPanel";
+export { default } from './NodeDetailPanel';
