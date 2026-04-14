@@ -1,0 +1,138 @@
+.container {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 6px;
+}
+
+.metric {
+	display: flex;
+	align-items: center;
+	gap: 7px;
+	padding: 6px 10px 6px 8px;
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 8px;
+	transition: all 130ms ease;
+	min-width: 0;
+}
+
+.metric:hover {
+	background: var(--mantine-color-white);
+	border-color: var(--mantine-color-gray-3);
+	box-shadow: 0 1px 4px rgba(15, 23, 42, 0.06);
+}
+
+.iconWrapper {
+	width: 26px;
+	height: 26px;
+	border-radius: 6px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.iconBlue {
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-6);
+}
+
+.iconViolet {
+	background: var(--mantine-color-violet-0);
+	color: var(--mantine-color-violet-6);
+}
+
+.iconTeal {
+	background: var(--mantine-color-teal-0);
+	color: var(--mantine-color-teal-6);
+}
+
+.content {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+}
+
+.label {
+	font-size: 9px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-5);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	line-height: 1.1;
+}
+
+.value {
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--mantine-color-dark-7);
+	line-height: 1.15;
+	letter-spacing: -0.01em;
+}
+
+/* Dark mode */
+[data-mantine-color-scheme='dark'] .metric {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .metric:hover {
+	background: var(--mantine-color-dark-5);
+	border-color: var(--mantine-color-dark-4);
+	box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+[data-mantine-color-scheme='dark'] .iconBlue {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-blue-9) 70%,
+		var(--mantine-color-dark-6) 30%
+	);
+	color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] .iconViolet {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-violet-9) 70%,
+		var(--mantine-color-dark-6) 30%
+	);
+	color: var(--mantine-color-violet-3);
+}
+
+[data-mantine-color-scheme='dark'] .iconTeal {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-teal-9) 70%,
+		var(--mantine-color-dark-6) 30%
+	);
+	color: var(--mantine-color-teal-3);
+}
+
+[data-mantine-color-scheme='dark'] .value {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .label {
+	color: var(--mantine-color-dark-3);
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+	.metric {
+		padding: 5px 8px 5px 6px;
+	}
+
+	.iconWrapper {
+		width: 22px;
+		height: 22px;
+	}
+
+	.value {
+		font-size: 12px;
+	}
+
+	.label {
+		font-size: 8px;
+	}
+}

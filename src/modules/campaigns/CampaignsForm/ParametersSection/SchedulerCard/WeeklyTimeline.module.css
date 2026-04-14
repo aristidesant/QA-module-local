@@ -1,0 +1,546 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	padding-bottom: 6px;
+	border-bottom: 1.5px solid var(--mantine-color-gray-1);
+	margin-bottom: 0;
+}
+
+.title {
+	font-family: 'Space Grotesk', 'Inter', sans-serif;
+	font-size: 12px;
+	font-weight: 700;
+	color: var(--mantine-color-gray-7);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+}
+
+.activeBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	padding: 3px 10px;
+	background: var(--mantine-color-teal-0);
+	border: 1px solid var(--mantine-color-teal-2);
+	border-radius: 20px;
+}
+
+.activeDot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--mantine-color-teal-5);
+	animation: pulse 2s ease-in-out infinite;
+	flex-shrink: 0;
+}
+
+@keyframes pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.4;
+	}
+}
+
+.activeBadgeText {
+	font-size: 10px;
+	font-weight: 600;
+	color: var(--mantine-color-teal-7);
+}
+
+.timeline {
+	display: grid;
+	grid-template-columns: repeat(7, 1fr);
+	gap: 7px;
+}
+
+.dayContainer {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+.dayBlock {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 2px;
+	padding: 8px 5px 6px;
+	border-radius: 10px;
+	border: 1.5px solid var(--mantine-color-gray-2);
+	background: var(--mantine-color-white);
+	cursor: pointer;
+	transition: all 150ms ease;
+	min-height: 60px;
+	position: relative;
+	overflow: hidden;
+}
+
+.dayBlock:hover {
+	border-color: var(--mantine-color-gray-4);
+	box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
+}
+
+.dayBlockActive {
+	background: var(--mantine-color-white);
+	border-color: var(--mantine-color-blue-3);
+	box-shadow: 0 1px 4px rgba(15, 23, 42, 0.04);
+}
+
+.dayBlockActive:hover {
+	border-color: var(--mantine-color-blue-4);
+	box-shadow: 0 2px 8px rgba(59, 130, 246, 0.12);
+}
+
+.dayBlockInactive {
+	background: var(--mantine-color-gray-0);
+	border-color: var(--mantine-color-gray-2);
+	border-style: dashed;
+	cursor: pointer;
+	opacity: 0.7;
+}
+
+.dayBlockInactive:hover {
+	background: color-mix(in srgb, var(--mantine-color-teal-0) 80%, transparent);
+	border-color: var(--mantine-color-teal-3);
+	border-style: dashed;
+	opacity: 1;
+	box-shadow: 0 2px 8px rgba(20, 184, 166, 0.1);
+}
+
+.dayBlockInactive:hover .dayInitialInactive {
+	color: var(--mantine-color-teal-6);
+}
+
+.dayBlockInactive:hover .inactiveLabel {
+	color: var(--mantine-color-teal-5);
+}
+
+.dayBlockEmpty {
+	background: var(--mantine-color-gray-0);
+	border-color: var(--mantine-color-gray-1);
+	border-style: dashed;
+	cursor: default;
+	opacity: 0.45;
+}
+
+.dayInitial {
+	font-family: 'Space Grotesk', 'Inter', sans-serif;
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--mantine-color-gray-8);
+	line-height: 1;
+	z-index: 1;
+	position: relative;
+}
+
+.dayInitialInactive {
+	color: var(--mantine-color-gray-4);
+	font-weight: 600;
+}
+
+.timeRangeBar {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+	z-index: 1;
+	position: relative;
+}
+
+.timeRangeText {
+	font-size: 8px;
+	font-weight: 600;
+	color: var(--mantine-color-blue-6);
+	white-space: nowrap;
+	letter-spacing: -0.01em;
+}
+
+.inactiveLabel {
+	color: var(--mantine-color-gray-4);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.expandIcon {
+	color: var(--mantine-color-gray-5);
+	margin-top: 2px;
+	z-index: 1;
+	position: relative;
+}
+
+/* Deactivate × button — shown on hover of active day block */
+.dayToggleDeactivate {
+	position: absolute;
+	top: 4px;
+	right: 4px;
+	width: 16px;
+	height: 16px;
+	border-radius: 50%;
+	background: var(--mantine-color-gray-1);
+	border: 1px solid var(--mantine-color-gray-3);
+	color: var(--mantine-color-gray-5);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	opacity: 0;
+	transition:
+		opacity 150ms ease,
+		background 150ms ease,
+		color 150ms ease;
+	z-index: 2;
+	cursor: pointer;
+}
+
+.dayBlockActive:hover .dayToggleDeactivate {
+	opacity: 1;
+}
+
+.dayToggleDeactivate:hover {
+	background: var(--mantine-color-red-0) !important;
+	border-color: var(--mantine-color-red-3) !important;
+	color: var(--mantine-color-red-6) !important;
+}
+
+.expandedContent {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px 14px;
+	background: var(--mantine-color-gray-0);
+	border: 1.5px solid var(--mantine-color-blue-2);
+	border-radius: 10px;
+	margin-top: 4px;
+}
+
+/* Stacked time fields */
+.timeFields {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.timeFieldRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+}
+
+.timeFieldLabel {
+	font-size: 9px;
+	font-weight: 700;
+	color: var(--mantine-color-gray-5);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	width: 36px;
+	flex-shrink: 0;
+}
+
+.timeInputWrapper {
+	position: relative;
+	display: flex;
+	align-items: center;
+	flex: 1;
+}
+
+.timeInput {
+	width: 100%;
+	padding: 6px 30px 6px 10px;
+	font-size: 13px;
+	font-weight: 600;
+	border: 1.5px solid var(--mantine-color-gray-3);
+	border-radius: 8px;
+	background: var(--mantine-color-white);
+	color: var(--mantine-color-dark-7);
+	font-family: 'Space Grotesk', 'Inter', sans-serif;
+	transition:
+		border-color 150ms ease,
+		box-shadow 150ms ease;
+}
+
+.timeInput:focus {
+	outline: none;
+	border-color: var(--mantine-color-blue-4);
+	box-shadow: 0 0 0 2px
+		color-mix(in srgb, var(--mantine-color-blue-5) 20%, transparent);
+}
+
+.timeInputIcon {
+	position: absolute;
+	right: 8px;
+	color: var(--mantine-color-gray-4);
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+}
+
+.timeFieldArrow {
+	color: var(--mantine-color-gray-4);
+	display: flex;
+	align-items: center;
+	flex-shrink: 0;
+}
+
+/* Legacy — kept for unused classes */
+.timeInputs {
+	display: none;
+}
+.timeInputGroup {
+	display: none;
+}
+.timeInputLabel {
+	display: none;
+}
+.timeSeparator {
+	display: none;
+}
+
+.dayMetrics {
+	display: flex;
+	justify-content: flex-start;
+	align-items: center;
+	gap: 10px;
+	padding-top: 8px;
+	border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+.dayMetricItem {
+	display: inline-flex;
+	align-items: center;
+	gap: 3px;
+	font-size: 10px;
+	font-weight: 700;
+	color: var(--mantine-color-blue-6);
+}
+
+.emptyState {
+	text-align: center;
+	font-size: 12px;
+	color: var(--mantine-color-gray-5);
+	padding: var(--mantine-spacing-md);
+}
+
+/* Popover card for day time editing */
+.popoverContent {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 12px 14px;
+	min-width: 170px;
+}
+
+.popoverHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	padding-bottom: 8px;
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.popoverDayName {
+	font-family: 'Space Grotesk', 'Inter', sans-serif;
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--mantine-color-dark-7);
+	letter-spacing: -0.01em;
+}
+
+.popoverCloseBtn {
+	color: var(--mantine-color-gray-4);
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	padding: 2px;
+	border-radius: 4px;
+	transition:
+		color 150ms ease,
+		background 150ms ease;
+}
+
+.popoverCloseBtn:hover {
+	color: var(--mantine-color-gray-6);
+	background: var(--mantine-color-gray-1);
+}
+
+/* Dark mode */
+[data-mantine-color-scheme='dark'] .header {
+	border-bottom-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .title {
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .activeBadge {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-teal-9) 40%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-teal-8);
+}
+
+[data-mantine-color-scheme='dark'] .activeBadgeText {
+	color: var(--mantine-color-teal-3);
+}
+
+[data-mantine-color-scheme='dark'] .activeDot {
+	background: var(--mantine-color-teal-4);
+}
+
+[data-mantine-color-scheme='dark'] .dayBlock {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .dayBlock:hover {
+	border-color: var(--mantine-color-dark-4);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+[data-mantine-color-scheme='dark'] .dayBlockActive {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-blue-7);
+}
+
+[data-mantine-color-scheme='dark'] .dayBlockActive:hover {
+	border-color: var(--mantine-color-blue-6);
+	box-shadow: 0 2px 8px rgba(59, 130, 246, 0.15);
+}
+
+[data-mantine-color-scheme='dark'] .dayBlockInactive,
+[data-mantine-color-scheme='dark'] .dayBlockEmpty {
+	background: var(--mantine-color-dark-8);
+	border-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .dayBlockInactive:hover {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-teal-9) 40%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-teal-7);
+}
+
+[data-mantine-color-scheme='dark'] .dayToggleDeactivate {
+	background: var(--mantine-color-dark-5);
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .dayToggleDeactivate:hover {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-red-9) 50%,
+		var(--mantine-color-dark-6)
+	) !important;
+	border-color: var(--mantine-color-red-7) !important;
+	color: var(--mantine-color-red-3) !important;
+}
+
+[data-mantine-color-scheme='dark'] .dayInitial {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .dayInitialInactive {
+	color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .inactiveLabel {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .timeRangeText {
+	color: var(--mantine-color-blue-4);
+}
+
+[data-mantine-color-scheme='dark'] .expandIcon {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .expandedContent {
+	background: var(--mantine-color-dark-8);
+	border-color: var(--mantine-color-blue-8);
+}
+
+[data-mantine-color-scheme='dark'] .timeInput {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .timeInput:focus {
+	border-color: var(--mantine-color-blue-5);
+	box-shadow: 0 0 0 2px
+		color-mix(in srgb, var(--mantine-color-blue-6) 25%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .timeInputIcon {
+	color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .timeFieldLabel {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .timeFieldArrow {
+	color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .dayMetrics {
+	border-top-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .dayMetricItem {
+	color: var(--mantine-color-blue-4);
+}
+
+[data-mantine-color-scheme='dark'] .emptyState {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .popoverHeader {
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .popoverDayName {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .popoverCloseBtn:hover {
+	background: var(--mantine-color-dark-5);
+	color: var(--mantine-color-dark-1);
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+	.timeline {
+		gap: 4px;
+	}
+
+	.dayBlock {
+		padding: 8px 4px 6px;
+		min-height: 56px;
+	}
+
+	.timeRangeText {
+		font-size: 7px;
+	}
+
+	.timeInput {
+		width: 62px;
+		font-size: 10px;
+	}
+}

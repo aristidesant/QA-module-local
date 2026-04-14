@@ -242,6 +242,18 @@
 				"weekdays": "Weekdays",
 				"weekends": "Weekends"
 			}
+		},
+		"section": {
+			"title": "Schedules",
+			"description": "Configure campaign operating hours and capacity",
+			"empty": "No schedules configured yet"
+		},
+		"timeline": {
+			"title": "Weekly Schedule",
+			"daysActive": "days active",
+			"empty": "No active days configured",
+			"start": "Start",
+			"end": "End"
 		}
 	},
 	"workingHours": {

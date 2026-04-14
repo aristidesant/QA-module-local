@@ -369,30 +369,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		void i18n.loadNamespaces([paramsNamespace, paramsFallbackNamespace]);
 	}, [selectedTab]);
 
-	const workingHoursTitle = i18n.exists('workingHours.title', {
-		ns: paramsNamespace,
-	})
-		? t('workingHours.title', { ns: paramsNamespace })
-		: i18n.exists('wizard.steps.parameters.workingHoursTitle', {
-					ns: paramsFallbackNamespace,
-			  })
-			? t('wizard.steps.parameters.workingHoursTitle', {
-					ns: paramsFallbackNamespace,
-				})
-			: '';
-
-	const workingHoursDescription = i18n.exists('workingHours.description', {
-		ns: paramsNamespace,
-	})
-		? t('workingHours.description', { ns: paramsNamespace })
-		: i18n.exists('wizard.steps.parameters.workingHoursDesc', {
-					ns: paramsFallbackNamespace,
-			  })
-			? t('wizard.steps.parameters.workingHoursDesc', {
-					ns: paramsFallbackNamespace,
-				})
-			: '';
-
 	const settingsDrawerTitle = t('form.settingsDrawer.title');
 	const openSettingsDrawer = () => {
 		void i18n
@@ -680,9 +656,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 							<DoNotCallSection campaignId={campaign?.id} />
 						)}
 						{selectedTab === 'params' && (
-							<SectionCard
-								title={workingHoursTitle}
-								description={workingHoursDescription}
+							<ParametersSection
+								campaignId={campaign?.id}
 								onCalculate={() =>
 									modals.open({
 										title: t('form.schedulerCalculator.title'),
@@ -690,29 +665,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 										children: <SchedulerCalculator />,
 									})
 								}
-							>
-								<ParametersSection
-									workingHours={form.values.workingHours || {}}
-									onChange={(day, field, value) => {
-										const updatedHours = { ...form.values.workingHours };
-										updatedHours[day] = {
-											...updatedHours[day],
-											[field]: value,
-										};
-										form.setFieldValue('workingHours', updatedHours);
-									}}
-									onCopyToAll={(sourceDay) => {
-										const sourceHours = form.values.workingHours?.[sourceDay];
-										if (!sourceHours) return;
-
-										const updatedHours = { ...form.values.workingHours };
-										Object.keys(updatedHours).forEach((day) => {
-											updatedHours[day] = { ...sourceHours };
-										});
-										form.setFieldValue('workingHours', updatedHours);
-									}}
-								/>
-							</SectionCard>
+							/>
 						)}
 						{selectedTab === 'report-values' && <ReportValuesSection />}
 						{selectedTab === 'analytics' && (
