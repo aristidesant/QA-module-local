@@ -335,6 +335,13 @@
 					"copy": "Copiar workflow",
 					"paste": "Pegar workflow"
 				},
+				"copy": {
+					"title": "Copiar workflow al portapapeles",
+					"description": "Elige que incluir con el workflow. Los estilos personalizados y grupos se empaquetaran para restaurarse al pegar.",
+					"includeStyles": "Incluir estilos personalizados ({{count}})",
+					"includeGroups": "Incluir grupos de nodos ({{count}})",
+					"confirm": "Copiar al portapapeles"
+				},
 				"import": {
 					"title": "Reemplazar workflow desde JSON",
 					"description": "Pega un JSON completo de workflow para sustituir el flujo actual. Se soportan snake_case y camelCase.",
@@ -351,6 +358,8 @@
 					"summaryEdges": "{{count}} bordes",
 					"summaryPreventLoopsEnabled": "Evitar bucles de subagente: activado",
 					"summaryPreventLoopsDisabled": "Evitar bucles de subagente: desactivado",
+					"summaryNodeStyles": "{{count}} estilos personalizados",
+					"summaryNodeGroups": "{{count}} grupos de nodos",
 					"replace": "Reemplazar workflow"
 				},
 				"errors": {
@@ -381,7 +390,8 @@
 				"override_agent": "Transferencia de agente",
 				"phone_number": "Transferencia a numero",
 				"tool": "Despachar herramienta",
-				"end": "Fin"
+				"end": "Fin",
+				"group": "Grupo"
 			},
 			"transferNode": {
 				"to": "Transferir a",
@@ -395,6 +405,28 @@
 				"iconLabel": "Ícono",
 				"reset": "Restaurar valor por defecto",
 				"legend": "Nodos personalizados"
+			},
+			"search": {
+				"placeholder": "Buscar nodos…",
+				"empty": "No se encontraron nodos"
+			},
+			"group": {
+				"create": "Agrupar seleccionados",
+				"ungroup": "Desagrupar",
+				"defaultLabel": "Grupo",
+				"rename": "Renombrar grupo",
+				"renamePlaceholder": "Nombre del grupo",
+				"renameHint": "Doble clic para renombrar",
+				"addNode": "Agregar nodo",
+				"addNewNode": "Nuevo nodo",
+				"addExistingNode": "Agregar nodo existente",
+				"cloneGroup": "Clonar grupo",
+				"noAvailableNodes": "No hay nodos sin agrupar disponibles",
+				"searchNodes": "Buscar nodos..."
+			},
+			"selection": {
+				"count": "{{count}} nodo seleccionado",
+				"count_other": "{{count}} nodos seleccionados"
 			},
 			"nodeStatus": {
 				"destination": "Destino",

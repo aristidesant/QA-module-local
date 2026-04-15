@@ -4,8 +4,10 @@ import { notifications } from '@mantine/notifications';
 import { IconClipboard, IconCopy } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
+import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
 import WorkflowImportModal from '../WorkflowImportModal';
-import { serializeWorkflowForClipboard } from '../utils/workflowClipboard';
+import type { WorkflowImportReplacePayload } from '../WorkflowImportModal/WorkflowImportModal';
+import WorkflowCopyModal from '../WorkflowCopyModal';
 import styles from './WorkflowClipboardActions.module.css';
 
 interface WorkflowClipboardActionsProps {
@@ -13,6 +15,10 @@ interface WorkflowClipboardActionsProps {
 	onWorkflowChange: (workflow: AgentWorkflow) => void;
 	fallbackPreventSubagentLoops: boolean;
 	buttonSize?: 'xs' | 'sm' | 'md';
+	nodeStyles?: NodeStyles;
+	nodeGroups?: NodeGroups;
+	onNodeStylesChange?: (nodeStyles: NodeStyles) => void;
+	onNodeGroupsChange?: (nodeGroups: NodeGroups) => void;
 }
 
 const WorkflowClipboardActions = ({
@@ -20,37 +26,28 @@ const WorkflowClipboardActions = ({
 	onWorkflowChange,
 	fallbackPreventSubagentLoops,
 	buttonSize = 'xs',
+	nodeStyles,
+	nodeGroups,
+	onNodeStylesChange,
+	onNodeGroupsChange,
 }: WorkflowClipboardActionsProps) => {
 	const { t } = useTranslation(['campaign.form.workflow', 'common']);
 	const [isImportModalOpen, setIsImportModalOpen] = useState(false);
+	const [isCopyModalOpen, setIsCopyModalOpen] = useState(false);
 	const [autoReadClipboardRequestKey, setAutoReadClipboardRequestKey] =
 		useState(0);
 
-	const handleCopyWorkflow = async () => {
-		if (!workflow) {
-			return;
+	const handleReplaceWorkflow = (payload: WorkflowImportReplacePayload) => {
+		onWorkflowChange(payload.workflow);
+
+		if (payload.nodeStyles && onNodeStylesChange) {
+			onNodeStylesChange(payload.nodeStyles);
 		}
 
-		try {
-			await navigator.clipboard.writeText(
-				serializeWorkflowForClipboard(workflow)
-			);
-			notifications.show({
-				color: 'teal',
-				title: t('form.workflow.clipboard.notifications.copySuccessTitle'),
-				message: t('form.workflow.clipboard.notifications.copySuccessMessage'),
-			});
-		} catch {
-			notifications.show({
-				color: 'red',
-				title: t('form.workflow.clipboard.notifications.copyErrorTitle'),
-				message: t('form.workflow.clipboard.notifications.copyErrorMessage'),
-			});
+		if (payload.nodeGroups && onNodeGroupsChange) {
+			onNodeGroupsChange(payload.nodeGroups);
 		}
-	};
 
-	const handleReplaceWorkflow = (nextWorkflow: AgentWorkflow) => {
-		onWorkflowChange(nextWorkflow);
 		setIsImportModalOpen(false);
 		notifications.show({
 			color: 'teal',
@@ -66,7 +63,7 @@ const WorkflowClipboardActions = ({
 					size={buttonSize}
 					variant='default'
 					leftSection={<IconCopy size={14} />}
-					onClick={handleCopyWorkflow}
+					onClick={() => setIsCopyModalOpen(true)}
 					disabled={!workflow}
 					className={styles.button}
 				>
@@ -85,6 +82,15 @@ const WorkflowClipboardActions = ({
 					{t('form.workflow.clipboard.actions.paste')}
 				</Button>
 			</Group>
+			{workflow && (
+				<WorkflowCopyModal
+					opened={isCopyModalOpen}
+					onClose={() => setIsCopyModalOpen(false)}
+					workflow={workflow}
+					nodeStyles={nodeStyles}
+					nodeGroups={nodeGroups}
+				/>
+			)}
 			<WorkflowImportModal
 				opened={isImportModalOpen}
 				onClose={() => setIsImportModalOpen(false)}

@@ -3,6 +3,7 @@ import type {
 	WorkflowEdge,
 	WorkflowNode,
 } from '~/models/AgentWorkflowModel';
+import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
 import { sanitizeStartNodes } from '../WorkflowCanvas/WorkflowCanvas.helpers';
 import { snakeToCamel, toSnakeCase } from '~/utils/stringUtils';
 
@@ -21,11 +22,35 @@ export interface WorkflowImportSummary {
 	nodeCount: number;
 	edgeCount: number;
 	preventSubagentLoops: boolean;
+	/** Number of custom node styles included in the envelope (0 = none) */
+	nodeStyleCount: number;
+	/** Number of node groups included in the envelope (0 = none) */
+	nodeGroupCount: number;
 }
 
 export interface WorkflowImportResult {
 	summary: WorkflowImportSummary;
 	workflow: AgentWorkflow;
+	/** Custom node styles from the clipboard envelope (undefined = not present) */
+	nodeStyles?: NodeStyles;
+	/** Node groups from the clipboard envelope (undefined = not present) */
+	nodeGroups?: NodeGroups;
+}
+
+/**
+ * Clipboard envelope version marker.
+ * When present in the parsed JSON root, signals that the payload uses the
+ * enriched envelope format (workflow + optional nodeStyles + nodeGroups).
+ */
+const CLIPBOARD_ENVELOPE_MARKER = '_nai_clipboard';
+const CLIPBOARD_ENVELOPE_VERSION = 1;
+
+export interface SerializeEnvelopeOptions {
+	workflow: AgentWorkflow;
+	includeNodeStyles?: boolean;
+	includeNodeGroups?: boolean;
+	nodeStyles?: NodeStyles;
+	nodeGroups?: NodeGroups;
 }
 
 export class WorkflowImportError extends Error {
@@ -191,6 +216,85 @@ export const serializeWorkflowForClipboard = (
 	return JSON.stringify(toSnakeCase(sanitizedWorkflow), null, 2);
 };
 
+/**
+ * Serialize a workflow + optional node styles / node groups into an enriched
+ * clipboard envelope.  The envelope carries a `_nai_clipboard` marker so the
+ * import logic can distinguish it from a plain‑workflow JSON payload.
+ *
+ * When neither styles nor groups are included, falls back to the plain
+ * workflow format for maximum backward compatibility.
+ */
+export const serializeWorkflowEnvelope = ({
+	workflow,
+	includeNodeStyles,
+	includeNodeGroups,
+	nodeStyles,
+	nodeGroups,
+}: SerializeEnvelopeOptions): string => {
+	const hasStyles =
+		includeNodeStyles && nodeStyles && Object.keys(nodeStyles).length > 0;
+	const hasGroups =
+		includeNodeGroups && nodeGroups && Object.keys(nodeGroups).length > 0;
+
+	// If nothing extra is bundled, use the legacy plain‑workflow format.
+	if (!hasStyles && !hasGroups) {
+		return serializeWorkflowForClipboard(workflow);
+	}
+
+	const sanitizedWorkflow = stripWorkflowUiMeta(workflow);
+
+	const envelope: Record<string, unknown> = {
+		[CLIPBOARD_ENVELOPE_MARKER]: CLIPBOARD_ENVELOPE_VERSION,
+		workflow: toSnakeCase(sanitizedWorkflow),
+	};
+
+	if (hasStyles) {
+		envelope.node_styles = toSnakeCase(nodeStyles);
+	}
+
+	if (hasGroups) {
+		envelope.node_groups = toSnakeCase(nodeGroups);
+	}
+
+	return JSON.stringify(envelope, null, 2);
+};
+
+/**
+ * Strip nodeStyles entries whose keys don't exist in the imported workflow.
+ */
+const stripOrphanNodeStyles = (
+	nodeStyles: NodeStyles,
+	workflowNodeIds: Set<string>
+): NodeStyles => {
+	const cleaned: NodeStyles = {};
+	for (const [nodeId, style] of Object.entries(nodeStyles)) {
+		if (workflowNodeIds.has(nodeId)) {
+			cleaned[nodeId] = style;
+		}
+	}
+	return cleaned;
+};
+
+/**
+ * Strip nodeGroups entries whose childNodeIds don't exist in the imported
+ * workflow, and remove groups left with zero children.
+ */
+const stripOrphanNodeGroups = (
+	nodeGroups: NodeGroups,
+	workflowNodeIds: Set<string>
+): NodeGroups => {
+	const cleaned: NodeGroups = {};
+	for (const [groupId, group] of Object.entries(nodeGroups)) {
+		const validChildren = group.childNodeIds.filter((id) =>
+			workflowNodeIds.has(id)
+		);
+		if (validChildren.length > 0) {
+			cleaned[groupId] = { ...group, childNodeIds: validChildren };
+		}
+	}
+	return cleaned;
+};
+
 export const parseImportedWorkflow = (
 	rawText: string,
 	fallbackPreventSubagentLoops: boolean
@@ -207,7 +311,16 @@ export const parseImportedWorkflow = (
 		throw new WorkflowImportError('invalidRoot');
 	}
 
-	const normalizedValue = normalizeImportedWorkflowRoot(parsedValue);
+	// ── Envelope detection ──
+	// If the root object contains our marker key, it's an enriched envelope.
+	const isEnvelope =
+		CLIPBOARD_ENVELOPE_MARKER in parsedValue && isRecord(parsedValue.workflow);
+
+	const workflowRoot = isEnvelope
+		? (parsedValue.workflow as Record<string, unknown>)
+		: parsedValue;
+
+	const normalizedValue = normalizeImportedWorkflowRoot(workflowRoot);
 	const { nodes, edges } = normalizedValue;
 
 	if (!isRecord(nodes)) {
@@ -270,12 +383,45 @@ export const parseImportedWorkflow = (
 		edges: normalizedEdges,
 	});
 
+	// ── Extract optional envelope layers ──
+	const workflowNodeIds = new Set(Object.keys(normalizedWorkflow.nodes));
+	let importedNodeStyles: NodeStyles | undefined;
+	let importedNodeGroups: NodeGroups | undefined;
+
+	if (isEnvelope) {
+		const rawStyles = parsedValue.node_styles ?? parsedValue.nodeStyles;
+		if (isRecord(rawStyles)) {
+			const camelized = camelizeImportedKeys(rawStyles) as NodeStyles;
+			importedNodeStyles = stripOrphanNodeStyles(camelized, workflowNodeIds);
+			if (Object.keys(importedNodeStyles).length === 0) {
+				importedNodeStyles = undefined;
+			}
+		}
+
+		const rawGroups = parsedValue.node_groups ?? parsedValue.nodeGroups;
+		if (isRecord(rawGroups)) {
+			const camelized = camelizeImportedKeys(rawGroups) as NodeGroups;
+			importedNodeGroups = stripOrphanNodeGroups(camelized, workflowNodeIds);
+			if (Object.keys(importedNodeGroups).length === 0) {
+				importedNodeGroups = undefined;
+			}
+		}
+	}
+
 	return {
 		workflow: normalizedWorkflow,
+		nodeStyles: importedNodeStyles,
+		nodeGroups: importedNodeGroups,
 		summary: {
 			nodeCount: Object.keys(normalizedWorkflow.nodes).length,
 			edgeCount: Object.keys(normalizedWorkflow.edges).length,
 			preventSubagentLoops: normalizedWorkflow.preventSubagentLoops,
+			nodeStyleCount: importedNodeStyles
+				? Object.keys(importedNodeStyles).length
+				: 0,
+			nodeGroupCount: importedNodeGroups
+				? Object.keys(importedNodeGroups).length
+				: 0,
 		},
 	};
 };

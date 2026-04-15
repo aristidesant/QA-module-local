@@ -5,7 +5,7 @@ import WorkflowClipboardActions from '../WorkflowClipboardActions';
 import WorkflowCanvas from '../WorkflowCanvas';
 import WorkflowNodeLegend from '../WorkflowNodeLegend';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
-import type { NodeStyles } from '~/models/CampaignsModel';
+import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
 import styles from './WorkflowEditorFullscreen.module.css';
 
 interface WorkflowEditorFullscreenProps {
@@ -17,6 +17,9 @@ interface WorkflowEditorFullscreenProps {
 	allowDefaultInit: boolean;
 	onNodeSelect?: (nodeId: string | null) => void;
 	nodeStyles?: NodeStyles;
+	nodeGroups?: NodeGroups;
+	onNodeGroupsChange?: (nodeGroups: NodeGroups) => void;
+	onNodeStylesChange?: (nodeStyles: NodeStyles) => void;
 }
 
 const WorkflowEditorFullscreen = ({
@@ -28,6 +31,9 @@ const WorkflowEditorFullscreen = ({
 	allowDefaultInit,
 	onNodeSelect,
 	nodeStyles,
+	nodeGroups,
+	onNodeGroupsChange,
+	onNodeStylesChange,
 }: WorkflowEditorFullscreenProps) => {
 	const { t } = useTranslation([
 		'campaign.form.workflow',
@@ -67,6 +73,10 @@ const WorkflowEditorFullscreen = ({
 							onWorkflowChange={onWorkflowChange}
 							fallbackPreventSubagentLoops={preventSubagentLoops}
 							buttonSize='sm'
+							nodeStyles={nodeStyles}
+							nodeGroups={nodeGroups}
+							onNodeStylesChange={onNodeStylesChange}
+							onNodeGroupsChange={onNodeGroupsChange}
 						/>
 						<Group gap='xs' wrap='nowrap'>
 							<ActionIcon
@@ -92,18 +102,27 @@ const WorkflowEditorFullscreen = ({
 						</Group>
 					</div>
 				</div>
-				{nodeStyles &&
+				{((nodeStyles &&
 					Object.keys(nodeStyles).some(
 						(k) => nodeStyles[k]?.backgroundColor || nodeStyles[k]?.iconName
-					) && (
-						<div className={styles.legendBar}>
-							<WorkflowNodeLegend nodeStyles={nodeStyles} />
-						</div>
-					)}
+					)) ||
+					(nodeGroups &&
+						Object.keys(nodeGroups).some(
+							(k) => nodeGroups[k]?.color || nodeGroups[k]?.label
+						))) && (
+					<div className={styles.legendBar}>
+						<WorkflowNodeLegend
+							nodeStyles={nodeStyles}
+							nodeGroups={nodeGroups}
+						/>
+					</div>
+				)}
 				<div className={styles.canvasArea}>
 					<WorkflowCanvas
 						workflow={workflow}
 						onWorkflowChange={onWorkflowChange}
+						nodeGroups={nodeGroups}
+						onNodeGroupsChange={onNodeGroupsChange}
 						preventSubagentLoops={preventSubagentLoops}
 						allowDefaultInit={allowDefaultInit}
 						onNodeSelect={onNodeSelect}

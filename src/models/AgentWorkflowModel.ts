@@ -160,7 +160,7 @@ export interface LlmPromptExpr {
 	prompt: string;
 }
 
-/** All node variants observed on the page */
+/** All node variants stored in agentConfig.workflow.nodes (backend-validated) */
 export type WorkflowNode =
 	| StartNode
 	| EndNode
@@ -233,6 +233,11 @@ export interface PhoneNumberTransferNode extends WorkflowNodeBase {
 		| { type: 'phone_dynamic_variable'; phoneNumber: string }
 		| { type: 'sip_uri_dynamic_variable'; sipUri: string };
 	custom_sip_headers?: Array<{ name: string; value: string }>;
+}
+
+/** group node — a visual container for organizing related nodes */
+export interface GroupNode extends WorkflowNodeBase {
+	type: 'group';
 }
 
 /** standalone_agent transfer node */

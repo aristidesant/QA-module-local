@@ -334,6 +334,13 @@
 					"copy": "Copy workflow",
 					"paste": "Paste workflow"
 				},
+				"copy": {
+					"title": "Copy workflow to clipboard",
+					"description": "Choose what to include with the workflow. Custom styles and groups will be bundled so they can be restored on paste.",
+					"includeStyles": "Include custom node styles ({{count}})",
+					"includeGroups": "Include node groups ({{count}})",
+					"confirm": "Copy to clipboard"
+				},
 				"import": {
 					"title": "Replace workflow from JSON",
 					"description": "Paste a full workflow JSON payload to replace the current flow. Both snake_case and camelCase are supported.",
@@ -350,6 +357,8 @@
 					"summaryEdges": "{{count}} edges",
 					"summaryPreventLoopsEnabled": "Prevent subagent loops: enabled",
 					"summaryPreventLoopsDisabled": "Prevent subagent loops: disabled",
+					"summaryNodeStyles": "{{count}} custom styles",
+					"summaryNodeGroups": "{{count}} node groups",
 					"replace": "Replace workflow"
 				},
 				"errors": {
@@ -380,7 +389,8 @@
 				"override_agent": "Agent transfer",
 				"phone_number": "Phone number transfer",
 				"tool": "Dispatch tool",
-				"end": "End"
+				"end": "End",
+				"group": "Group"
 			},
 			"transferNode": {
 				"to": "Transfer to",
@@ -394,6 +404,28 @@
 				"iconLabel": "Icon",
 				"reset": "Reset to default",
 				"legend": "Customized nodes"
+			},
+			"search": {
+				"placeholder": "Search nodes…",
+				"empty": "No nodes found"
+			},
+			"group": {
+				"create": "Group selected",
+				"ungroup": "Ungroup",
+				"defaultLabel": "Group",
+				"rename": "Rename group",
+				"renamePlaceholder": "Group name",
+				"renameHint": "Double-click to rename",
+				"addNode": "Add node",
+				"addNewNode": "New node",
+				"addExistingNode": "Add existing node",
+				"cloneGroup": "Clone group",
+				"noAvailableNodes": "No ungrouped nodes available",
+				"searchNodes": "Search nodes..."
+			},
+			"selection": {
+				"count": "{{count}} node selected",
+				"count_other": "{{count}} nodes selected"
 			},
 			"nodeStatus": {
 				"destination": "Destination",

@@ -8,6 +8,7 @@ export const WORKFLOW_NODE_TYPES = {
 	OVERRIDE_AGENT: 'override_agent',
 	PHONE_NUMBER: 'phone_number',
 	STANDALONE_AGENT: 'standalone_agent',
+	GROUP: 'group',
 } as const;
 
 export type WorkflowNodeType =
@@ -63,6 +64,13 @@ export const NODE_TYPE_CONFIG: Record<WorkflowNodeType, NodeTypeConfig> = {
 		hasAddButton: true,
 		color: 'cyan',
 		icon: 'agent',
+	},
+	[WORKFLOW_NODE_TYPES.GROUP]: {
+		type: WORKFLOW_NODE_TYPES.GROUP,
+		label: 'Group',
+		hasAddButton: false,
+		color: 'gray',
+		icon: 'group',
 	},
 };
 

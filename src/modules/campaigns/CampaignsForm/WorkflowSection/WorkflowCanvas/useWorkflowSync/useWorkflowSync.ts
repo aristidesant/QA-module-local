@@ -1,4 +1,5 @@
 import {
+	useCallback,
 	useEffect,
 	useMemo,
 	useRef,
@@ -10,22 +11,31 @@ import type { Edge, Node, ReactFlowInstance } from '@xyflow/react';
 import { calculateHandlePositionsFromPoints } from '../../utils/handlePositionCalculator';
 import { HANDLE_ID_MAP, serializeWorkflow } from '../WorkflowCanvas.helpers';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
+import type { NodeGroups } from '~/models/CampaignsModel';
+import type { BuildWorkflowResult } from '../WorkflowCanvas.helpers';
 
 interface UseWorkflowSyncOptions {
 	workflow?: AgentWorkflow;
+	nodeGroups?: NodeGroups;
 	allowDefaultInit: boolean;
 	onWorkflowChange?: (workflow: AgentWorkflow) => void;
+	onNodeGroupsChange?: (nodeGroups: NodeGroups) => void;
 	reactFlowInstance: ReactFlowInstance | null;
+	/** Ref that is true while the user is actively dragging a node */
+	isDraggingRef: MutableRefObject<boolean>;
 	nodes: Node[];
 	edges: Edge[];
 	setNodes: Dispatch<SetStateAction<Node[]>>;
 	setEdges: Dispatch<SetStateAction<Edge[]>>;
 	buildDefaultWorkflow: () => AgentWorkflow;
-	mapWorkflowToNodes: (workflow: AgentWorkflow) => {
+	mapWorkflowToNodes: (
+		workflow: AgentWorkflow,
+		nodeGroups?: NodeGroups
+	) => {
 		nodes: Node[];
 		edges: Edge[];
 	};
-	buildWorkflowFromState: (nodes: Node[], edges: Edge[]) => AgentWorkflow;
+	buildWorkflowFromState: (nodes: Node[], edges: Edge[]) => BuildWorkflowResult;
 }
 
 interface WorkflowSyncRefs {
@@ -66,11 +76,30 @@ const getWorkflowHydrationMode = ({
 	return 'skip';
 };
 
+/**
+ * Build a combined signature for both workflow and nodeGroups.
+ * Used so that hydration & emission can compare the same format.
+ */
+const buildCombinedSignature = (
+	workflow: AgentWorkflow,
+	groups?: NodeGroups
+): string => {
+	const workflowSig = serializeWorkflow(workflow);
+	const safeGroups = groups ?? {};
+	const groupsSig = JSON.stringify(
+		Object.entries(safeGroups).sort(([a], [b]) => a.localeCompare(b))
+	);
+	return `${workflowSig}::groups::${groupsSig}`;
+};
+
 const buildCanvasSignature = (
-	buildWorkflowFromState: (nodes: Node[], edges: Edge[]) => AgentWorkflow,
+	buildWorkflowFromState: (nodes: Node[], edges: Edge[]) => BuildWorkflowResult,
 	nodes: Node[],
 	edges: Edge[]
-) => serializeWorkflow(buildWorkflowFromState(nodes, edges));
+) => {
+	const result = buildWorkflowFromState(nodes, edges);
+	return buildCombinedSignature(result.workflow, result.nodeGroups);
+};
 
 const getNodeMeasurements = (nodes: Node[]): NodeLayoutMeasurement[] =>
 	nodes.map((node) => ({
@@ -80,22 +109,6 @@ const getNodeMeasurements = (nodes: Node[]): NodeLayoutMeasurement[] =>
 		width: typeof node.width === 'number' ? node.width : 0,
 		height: typeof node.height === 'number' ? node.height : 0,
 	}));
-
-const buildLayoutSignature = (
-	nodeMeasurements: NodeLayoutMeasurement[],
-	edges: Edge[]
-) => {
-	const nodeSignature = nodeMeasurements
-		.map(({ id, x, y, width, height }) => `${id}:${x}:${y}:${width}:${height}`)
-		.sort()
-		.join('|');
-	const edgeSignature = edges
-		.map(({ id, source, target }) => `${id}:${source}:${target}`)
-		.sort()
-		.join('|');
-
-	return `${nodeSignature}::${edgeSignature}`;
-};
 
 const syncEdgeHandles = (
 	currentEdges: Edge[],
@@ -146,6 +159,7 @@ const syncEdgeHandles = (
 
 const useWorkflowHydration = ({
 	workflow,
+	nodeGroups,
 	allowDefaultInit,
 	onWorkflowChange,
 	setNodes,
@@ -155,15 +169,19 @@ const useWorkflowHydration = ({
 	refs,
 }: Omit<
 	UseWorkflowSyncOptions,
-	'nodes' | 'edges' | 'buildWorkflowFromState'
+	| 'nodes'
+	| 'edges'
+	| 'isDraggingRef'
+	| 'buildWorkflowFromState'
+	| 'onNodeGroupsChange'
 > & { refs: WorkflowSyncRefs }) => {
 	const workflowSignature = useMemo(() => {
 		if (!workflow) {
 			return null;
 		}
 
-		return serializeWorkflow(workflow);
-	}, [workflow]);
+		return buildCombinedSignature(workflow, nodeGroups);
+	}, [workflow, nodeGroups]);
 
 	useEffect(() => {
 		const hydrationMode = getWorkflowHydrationMode({
@@ -179,7 +197,10 @@ const useWorkflowHydration = ({
 			hydrationMode === 'external' && workflow
 				? workflow
 				: buildDefaultWorkflow();
-		const nextWorkflowSignature = serializeWorkflow(nextWorkflow);
+		const nextWorkflowSignature = buildCombinedSignature(
+			nextWorkflow,
+			nodeGroups
+		);
 		const pendingCanvasSignatures = refs.pendingCanvasSignaturesRef.current;
 		const pendingCanvasSignatureIndex = pendingCanvasSignatures.indexOf(
 			nextWorkflowSignature
@@ -201,8 +222,10 @@ const useWorkflowHydration = ({
 			return;
 		}
 
-		const { nodes: mappedNodes, edges: mappedEdges } =
-			mapWorkflowToNodes(nextWorkflow);
+		const { nodes: mappedNodes, edges: mappedEdges } = mapWorkflowToNodes(
+			nextWorkflow,
+			nodeGroups
+		);
 
 		refs.isHydratingRef.current = true;
 		refs.hasHydratedRef.current = true;
@@ -224,6 +247,7 @@ const useWorkflowHydration = ({
 		allowDefaultInit,
 		buildDefaultWorkflow,
 		mapWorkflowToNodes,
+		nodeGroups,
 		onWorkflowChange,
 		refs,
 		setEdges,
@@ -238,57 +262,77 @@ const useWorkflowEmission = ({
 	nodes,
 	edges,
 	onWorkflowChange,
+	onNodeGroupsChange,
 	buildWorkflowFromState,
+	isDraggingRef,
 	refs,
 }: Pick<
 	UseWorkflowSyncOptions,
-	'workflow' | 'nodes' | 'edges' | 'onWorkflowChange' | 'buildWorkflowFromState'
+	| 'workflow'
+	| 'nodes'
+	| 'edges'
+	| 'onWorkflowChange'
+	| 'onNodeGroupsChange'
+	| 'buildWorkflowFromState'
+	| 'isDraggingRef'
 > & { refs: WorkflowSyncRefs }) => {
-	const canvasSignature = useMemo(
-		() => buildCanvasSignature(buildWorkflowFromState, nodes, edges),
-		[buildWorkflowFromState, edges, nodes]
-	);
+	// Keep latest values in refs so the flush callback always reads fresh data
+	// without needing to be recreated on every render.
+	const latestRef = useRef({ nodes, edges, workflow });
+	latestRef.current = { nodes, edges, workflow };
+
+	const pendingFlushRef = useRef(false);
+
+	const flush = useCallback(() => {
+		pendingFlushRef.current = false;
+
+		if (!refs.hasHydratedRef.current || !onWorkflowChange) return;
+
+		const { nodes: n, edges: e, workflow: w } = latestRef.current;
+		const canvasSignature = buildCanvasSignature(buildWorkflowFromState, n, e);
+
+		if (refs.lastEmittedCanvasSignatureRef.current === canvasSignature) return;
+
+		const result = buildWorkflowFromState(n, e);
+		const workflowSignature = w ? serializeWorkflow(w) : null;
+
+		refs.lastEmittedCanvasSignatureRef.current = canvasSignature;
+		refs.lastAppliedWorkflowSignatureRef.current = canvasSignature;
+		refs.pendingCanvasSignaturesRef.current = [
+			...refs.pendingCanvasSignaturesRef.current.filter(
+				(sig) => sig !== canvasSignature
+			),
+			canvasSignature,
+		];
+
+		const nextWorkflowSignature = serializeWorkflow(result.workflow);
+		if (workflowSignature !== nextWorkflowSignature) {
+			onWorkflowChange(result.workflow);
+		}
+
+		onNodeGroupsChange?.(result.nodeGroups);
+	}, [buildWorkflowFromState, onNodeGroupsChange, onWorkflowChange, refs]);
 
 	useEffect(() => {
-		if (!refs.hasHydratedRef.current || !onWorkflowChange) {
-			return;
-		}
+		if (!refs.hasHydratedRef.current || !onWorkflowChange) return;
 
 		if (refs.isHydratingRef.current) {
 			refs.isHydratingRef.current = false;
 			return;
 		}
 
-		if (refs.lastEmittedCanvasSignatureRef.current === canvasSignature) {
+		// While dragging, mark that a flush is needed but don't do expensive work.
+		if (isDraggingRef.current) {
+			pendingFlushRef.current = true;
 			return;
 		}
 
-		const nextWorkflow = buildWorkflowFromState(nodes, edges);
-		const workflowSignature = workflow ? serializeWorkflow(workflow) : null;
+		// Not dragging — flush immediately.
+		flush();
+	}, [flush, isDraggingRef, nodes, edges, onWorkflowChange, refs]);
 
-		refs.lastEmittedCanvasSignatureRef.current = canvasSignature;
-		refs.lastAppliedWorkflowSignatureRef.current = canvasSignature;
-		refs.pendingCanvasSignaturesRef.current = [
-			...refs.pendingCanvasSignaturesRef.current.filter(
-				(signature) => signature !== canvasSignature
-			),
-			canvasSignature,
-		];
-
-		if (workflowSignature === canvasSignature) {
-			return;
-		}
-
-		onWorkflowChange(nextWorkflow);
-	}, [
-		buildWorkflowFromState,
-		canvasSignature,
-		edges,
-		nodes,
-		onWorkflowChange,
-		refs,
-		workflow,
-	]);
+	// Expose pendingFlushRef so the drag-stop handler can trigger it.
+	return { pendingFlushRef, flush };
 };
 
 const useWorkflowViewportFit = ({
@@ -337,31 +381,52 @@ const useEdgeHandleSync = ({
 	nodes,
 	edges,
 	setEdges,
-}: Pick<UseWorkflowSyncOptions, 'nodes' | 'edges' | 'setEdges'>) => {
-	const nodeMeasurements = useMemo(() => getNodeMeasurements(nodes), [nodes]);
-	const layoutSignature = useMemo(
-		() => buildLayoutSignature(nodeMeasurements, edges),
-		[edges, nodeMeasurements]
-	);
+	isDraggingRef,
+}: Pick<
+	UseWorkflowSyncOptions,
+	'nodes' | 'edges' | 'setEdges' | 'isDraggingRef'
+>) => {
+	const latestRef = useRef({ nodes, edges });
+	latestRef.current = { nodes, edges };
+
+	const pendingFlushRef = useRef(false);
+
+	const flush = useCallback(() => {
+		pendingFlushRef.current = false;
+		const { nodes: n, edges: e } = latestRef.current;
+		if (n.length === 0 || e.length === 0) return;
+
+		const measurements = getNodeMeasurements(n);
+		const nextEdges = syncEdgeHandles(e, measurements);
+		if (nextEdges !== e) {
+			setEdges(nextEdges);
+		}
+	}, [setEdges]);
 
 	useEffect(() => {
-		if (nodes.length === 0 || edges.length === 0) {
+		if (nodes.length === 0 || edges.length === 0) return;
+
+		// While dragging, mark dirty but skip expensive work.
+		if (isDraggingRef.current) {
+			pendingFlushRef.current = true;
 			return;
 		}
 
-		const nextEdges = syncEdgeHandles(edges, nodeMeasurements);
+		// Not dragging — sync immediately.
+		flush();
+	}, [edges, flush, isDraggingRef, nodes]);
 
-		if (nextEdges !== edges) {
-			setEdges(nextEdges);
-		}
-	}, [edges, layoutSignature, nodeMeasurements, nodes.length, setEdges]);
+	return { pendingFlushRef, flush };
 };
 
 const useWorkflowSync = ({
 	workflow,
+	nodeGroups,
 	allowDefaultInit,
 	onWorkflowChange,
+	onNodeGroupsChange,
 	reactFlowInstance,
+	isDraggingRef,
 	nodes,
 	edges,
 	setNodes,
@@ -382,6 +447,7 @@ const useWorkflowSync = ({
 
 	useWorkflowHydration({
 		workflow,
+		nodeGroups,
 		allowDefaultInit,
 		onWorkflowChange,
 		reactFlowInstance,
@@ -392,12 +458,14 @@ const useWorkflowSync = ({
 		refs,
 	});
 
-	useWorkflowEmission({
+	const emission = useWorkflowEmission({
 		workflow,
 		nodes,
 		edges,
 		onWorkflowChange,
+		onNodeGroupsChange,
 		buildWorkflowFromState,
+		isDraggingRef,
 		refs,
 	});
 
@@ -407,11 +475,27 @@ const useWorkflowSync = ({
 		refs,
 	});
 
-	useEdgeHandleSync({
+	const edgeSync = useEdgeHandleSync({
 		nodes,
 		edges,
 		setEdges,
+		isDraggingRef,
 	});
+
+	/**
+	 * Call this from the drag-stop handler to flush any work
+	 * that was deferred while the user was dragging.
+	 */
+	const flushOnDragStop = useCallback(() => {
+		if (edgeSync.pendingFlushRef.current) {
+			edgeSync.flush();
+		}
+		if (emission.pendingFlushRef.current) {
+			emission.flush();
+		}
+	}, [edgeSync, emission]);
+
+	return { flushOnDragStop };
 };
 
 export default useWorkflowSync;

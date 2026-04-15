@@ -1,0 +1,66 @@
+.triggerButton {
+	background-color: var(
+		--workflow-shell-control-bg,
+		var(--mantine-color-white)
+	);
+	border: 1px solid
+		var(--workflow-shell-control-border, var(--mantine-color-gray-2));
+	color: var(--workflow-shell-control-text, var(--mantine-color-gray-7));
+	width: 28px;
+	height: 28px;
+	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
+}
+
+.triggerButton:hover {
+	background-color: var(
+		--workflow-shell-panel-muted,
+		var(--mantine-color-gray-0)
+	);
+	border-color: var(
+		--workflow-shell-border-strong,
+		var(--mantine-color-gray-4)
+	);
+	color: var(--workflow-shell-text, var(--mantine-color-gray-9));
+}
+
+.dropdown {
+	border: 1px solid
+		var(--workflow-shell-control-border, var(--mantine-color-gray-3));
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-white);
+	color: var(--mantine-color-gray-9);
+}
+
+[data-mantine-color-scheme='dark'] .dropdown {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+	color: var(--mantine-color-dark-0);
+}
+
+.swatchButton {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--mantine-radius-sm);
+	padding: 2px;
+}
+
+.swatchButton:hover {
+	background-color: var(
+		--workflow-shell-panel-muted,
+		var(--mantine-color-gray-1)
+	);
+}
+
+.swatch {
+	border: 2px solid transparent;
+	border-radius: var(--mantine-radius-sm);
+	transition: border-color 120ms ease;
+}
+
+.swatchSelected {
+	border: 2px solid
+		var(--workflow-shell-border-strong, var(--mantine-color-dark-5));
+	border-radius: var(--mantine-radius-sm);
+	box-shadow: 0 0 0 1px var(--workflow-shell-panel, var(--mantine-color-white));
+}

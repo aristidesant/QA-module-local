@@ -11,6 +11,7 @@ import {
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
+import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
 import {
 	parseImportedWorkflow,
 	type WorkflowImportErrorCode,
@@ -19,10 +20,16 @@ import {
 } from '../utils/workflowClipboard';
 import styles from './WorkflowImportModal.module.css';
 
+export interface WorkflowImportReplacePayload {
+	workflow: AgentWorkflow;
+	nodeStyles?: NodeStyles;
+	nodeGroups?: NodeGroups;
+}
+
 interface WorkflowImportModalProps {
 	opened: boolean;
 	onClose: () => void;
-	onReplace: (workflow: AgentWorkflow) => void;
+	onReplace: (payload: WorkflowImportReplacePayload) => void;
 	fallbackPreventSubagentLoops: boolean;
 	autoReadClipboardRequestKey: number;
 }
@@ -178,7 +185,11 @@ const WorkflowImportModal = ({
 			return;
 		}
 
-		onReplace(importState.result.workflow);
+		onReplace({
+			workflow: importState.result.workflow,
+			nodeStyles: importState.result.nodeStyles,
+			nodeGroups: importState.result.nodeGroups,
+		});
 	};
 
 	const handleInputChange = (value: string) => {
@@ -272,6 +283,25 @@ const WorkflowImportModal = ({
 											)}
 								</Text>
 							</Group>
+							{(importState.result.summary.nodeStyleCount > 0 ||
+								importState.result.summary.nodeGroupCount > 0) && (
+								<Group gap='md'>
+									{importState.result.summary.nodeStyleCount > 0 && (
+										<Text size='sm' c='teal'>
+											{t('form.workflow.clipboard.import.summaryNodeStyles', {
+												count: importState.result.summary.nodeStyleCount,
+											})}
+										</Text>
+									)}
+									{importState.result.summary.nodeGroupCount > 0 && (
+										<Text size='sm' c='teal'>
+											{t('form.workflow.clipboard.import.summaryNodeGroups', {
+												count: importState.result.summary.nodeGroupCount,
+											})}
+										</Text>
+									)}
+								</Group>
+							)}
 						</Stack>
 					</div>
 				) : null}

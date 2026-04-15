@@ -28,7 +28,7 @@
 }
 
 .flow :global(.react-flow__edgelabel-renderer) {
-	z-index: 200;
+	z-index: 3;
 	pointer-events: none;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .flow :global(.react-flow__node.selected) {
-	z-index: 5;
+	z-index: 10 !important;
 }
 
 .miniMap {

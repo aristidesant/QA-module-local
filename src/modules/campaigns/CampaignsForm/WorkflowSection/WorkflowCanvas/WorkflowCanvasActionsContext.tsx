@@ -36,6 +36,16 @@ interface WorkflowCanvasActionsContextValue {
 	deleteEdge: (edgeId: string) => void;
 	toggleEdgeActions: (edgeId: string) => void;
 	clearEdgeActions: () => void;
+	groupSelectedNodes: () => void;
+	ungroupNodes: (groupNodeId: string) => void;
+	addNodeToGroup: (groupNodeId: string) => void;
+	cloneGroup: (groupNodeId: string) => void;
+	addNewNodeToGroup: (
+		groupNodeId: string,
+		nodeType: WorkflowNodeType,
+		variant?: 'transfer' | 'subagent'
+	) => void;
+	addExistingNodeToGroup: (groupNodeId: string, existingNodeId: string) => void;
 }
 
 interface WorkflowCanvasEdgeUiState {
