@@ -1,34 +1,34 @@
 .card {
-  background: var(--mantine-color-white);
-  border: 1px solid var(--mantine-color-gray-3);
-  border-radius: var(--mantine-radius-md);
-  padding: var(--mantine-spacing-md);
-  height: fit-content;
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+	height: fit-content;
 }
 
 .greenDot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: var(--mantine-color-green-6);
-  flex-shrink: 0;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background-color: var(--mantine-color-green-6);
+	flex-shrink: 0;
 }
 
 .title {
-  color: var(--mantine-color-gray-9);
-  font-size: var(--mantine-font-size-sm);
-  font-weight: 600;
+	color: var(--mantine-color-gray-9);
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
 }
 
 .subtitle {
-  color: var(--mantine-color-gray-6);
-  line-height: 1.3;
-  font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-gray-6);
+	line-height: 1.3;
+	font-size: var(--mantine-font-size-xs);
 }
 
 .score {
-  color: var(--mantine-color-green-6);
-  font-weight: 700;
-  line-height: 1;
-  font-size: var(--mantine-font-size-xl);
+	color: var(--mantine-color-green-6);
+	font-weight: 700;
+	line-height: 1;
+	font-size: var(--mantine-font-size-xl);
 }

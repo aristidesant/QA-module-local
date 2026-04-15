@@ -1,1 +1,1 @@
-export { default } from "./AddNewContactList";
+export { default } from './AddNewContactList';

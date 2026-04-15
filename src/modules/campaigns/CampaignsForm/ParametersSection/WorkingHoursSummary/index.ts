@@ -1,1 +1,1 @@
-export { WorkingHoursSummary } from "./WorkingHoursSummary";
+export { WorkingHoursSummary } from './WorkingHoursSummary';

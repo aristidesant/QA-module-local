@@ -3,7 +3,10 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-md);
+	flex: 1 1 auto;
+	height: 100%;
 	min-width: 0;
+	min-height: 0;
 	width: 100%;
 	scrollbar-gutter: stable;
 }
@@ -12,24 +15,26 @@
 	flex: 0 0 auto;
 	min-width: 0;
 	width: 100%;
+	position: sticky;
+	top: 0;
+	z-index: var(--mantine-z-index-app);
 }
 
 .canvasShell {
+	display: flex;
+	flex: 1 1 auto;
+	flex-direction: column;
 	width: 100%;
 	min-width: 0;
-	scrollbar-gutter: stable;
-}
-
-.canvasViewport {
-	width: 100%;
-	min-width: 0;
-	overflow-x: auto;
+	min-height: 0;
+	overflow: auto;
 	scrollbar-gutter: stable;
 	padding: var(--canvas-inset);
 	box-sizing: border-box;
 }
 
 .canvasMeasure {
+	flex: 0 0 auto;
 	width: 100%;
 	min-width: 960px;
 }

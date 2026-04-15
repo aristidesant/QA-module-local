@@ -1,1 +1,1 @@
-export { default } from "./ColumnMappingCard";
+export { default } from './ColumnMappingCard';

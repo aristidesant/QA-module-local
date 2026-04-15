@@ -1,32 +1,33 @@
 import React from 'react';
-import { Stack, LoadingOverlay } from '@mantine/core';
+import { Stack, LoadingOverlay, Text, Box } from '@mantine/core';
+import styles from './ParametersSection.module.css';
+import { IconCalendarTime } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { SchedulerCard } from './SchedulerCard';
 import { useCampaignSchedules } from '~/queries/schedulerQueries';
-import type { Scheduler } from '~/models/SchedulerModel';
-import AddScheduler from './AddScheduler';
+import AddShedulerForm from './AddScheduler/AddShedulerForm';
+import SectionCard from '~/components/SectionCard';
 import { useParams } from 'react-router';
-
-interface DaySchedule {
-	enabled: boolean;
-	from: string;
-	to: string;
-}
+import { modals } from '@mantine/modals';
+import { useCampaignsStore } from '~/stores/campaignsStore';
+import { useGetCampaign } from '~/queries/campaignsQueries';
 
 interface ParametersSectionProps {
-	workingHours: Record<string, DaySchedule>;
-	onChange: (day: string, field: keyof DaySchedule, value: any) => void;
-	onCopyToAll: (day: string) => void;
-	onSchedulerUpdate?: (scheduler: Scheduler) => void;
-	/** Campaign ID - can be passed directly (e.g., from wizard) or will fall back to URL param */
 	campaignId?: string | number;
+	onCalculate?: () => void;
 }
 
-export const ParametersSection: React.FC<ParametersSectionProps> = ({
+const ParametersSection: React.FC<ParametersSectionProps> = ({
 	campaignId: propCampaignId,
+	onCalculate,
 }) => {
+	const { t } = useTranslation(['campaign.form.params', 'common']);
 	const { campaignId: paramCampaignId } = useParams<{ campaignId: string }>();
-	// Use prop campaignId first (for wizard), then fall back to URL param (for edit page)
 	const campaignId = propCampaignId ?? paramCampaignId;
+	const { selectedCampaign } = useCampaignsStore((state) => state);
+	const { data: campaignData } = useGetCampaign(String(campaignId ?? ''));
+	const campaignType = campaignData?.type ?? selectedCampaign?.type;
+
 	const {
 		data: campaignSchedule,
 		refetch: reloadCampaignSchedule,
@@ -37,28 +38,73 @@ export const ParametersSection: React.FC<ParametersSectionProps> = ({
 	const handleReloading = () => {
 		reloadCampaignSchedule();
 	};
+
+	const handleAddSchedule = () => {
+		modals.open({
+			modalId: 'add-schedule-modal',
+			centered: true,
+			size: '60%',
+			title: t('scheduler.add.modalTitle'),
+			children: (
+				<AddShedulerForm
+					campaignId={campaignId}
+					campaignType={campaignType}
+					onSuccess={() => {
+						handleReloading();
+						modals.close('add-schedule-modal');
+					}}
+					onCancel={() => modals.close('add-schedule-modal')}
+				/>
+			),
+		});
+	};
+
 	return (
-		<Stack gap='md'>
-			<LoadingOverlay
-				visible={campaignScheduleLoading || campaignScheduleFetching}
-			/>
-			{/* Schedulers Section */}
-			{campaignSchedule && campaignSchedule.length > 0 && (
-				<>
-					<Stack gap='sm'>
-						{campaignSchedule.map((scheduler) => (
-							<SchedulerCard
-								key={JSON.stringify(scheduler)}
-								scheduler={scheduler}
-								campaignId={String(campaignId)}
-								handleReload={handleReloading}
-							/>
-						))}
-					</Stack>
-				</>
+		<SectionCard
+			icon={IconCalendarTime}
+			title={t('scheduler.section.title', 'Schedules')}
+			description={t(
+				'scheduler.section.description',
+				'Configure campaign operating hours and capacity'
 			)}
-			<AddScheduler campaignId={campaignId} handleReload={handleReloading} />
-		</Stack>
+			onAdd={campaignId ? handleAddSchedule : undefined}
+			onCalculate={onCalculate}
+		>
+			<Stack gap='md'>
+				<LoadingOverlay
+					visible={campaignScheduleLoading || campaignScheduleFetching}
+				/>
+
+				{campaignSchedule && campaignSchedule.length > 0 && (
+					<Box className={styles.cardsBox}>
+						<Stack gap='md'>
+							{campaignSchedule.map((schedule) => (
+								<SchedulerCard
+									key={JSON.stringify(schedule)}
+									scheduler={schedule}
+									campaignId={String(campaignId)}
+									handleReload={handleReloading}
+								/>
+							))}
+						</Stack>
+					</Box>
+				)}
+
+				{(!campaignSchedule || campaignSchedule.length === 0) &&
+					!campaignScheduleLoading && (
+						<Stack
+							gap='xs'
+							align='center'
+							py='xl'
+							className={styles.emptyState}
+						>
+							<Text size='sm' c='dimmed'>
+								{t('scheduler.section.empty', 'No schedules configured yet')}
+							</Text>
+						</Stack>
+					)}
+			</Stack>
+		</SectionCard>
 	);
 };
 

@@ -1,1 +1,1 @@
-export { default } from "./CampaignContactOutcomeSummary";
+export { default } from './CampaignContactOutcomeSummary';

@@ -1,1 +1,1 @@
-export { default } from "./RouteProtecter";
+export { default } from './RouteProtecter';

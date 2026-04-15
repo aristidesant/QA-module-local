@@ -33,7 +33,7 @@ const CampaignTestPage = () => {
 
 	return (
 		<ContentContainer
-			title={t('page.title')}
+			title={t('page.titleWithCampaign', { campaignName: campaign.name })}
 			description={t('page.description')}
 			showBackButton
 			onBackClick={() => navigate(`/campaign/${campaign.id}`)}

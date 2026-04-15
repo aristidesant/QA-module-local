@@ -5,18 +5,14 @@
 			"label": "Build SPA",
 			"type": "shell",
 			"command": "npm run build",
-			"problemMatcher": [
-				"$tsc"
-			],
+			"problemMatcher": ["$tsc"],
 			"group": "build"
 		},
 		{
 			"label": "Build SPA",
 			"type": "shell",
 			"command": "npm run build",
-			"problemMatcher": [
-				"$tsc"
-			],
+			"problemMatcher": ["$tsc"],
 			"group": "build"
 		},
 		{
@@ -30,9 +26,7 @@
 			"type": "shell",
 			"command": "npm run typecheck",
 			"isBackground": false,
-			"problemMatcher": [
-				"$tsc"
-			],
+			"problemMatcher": ["$tsc"],
 			"group": "build"
 		},
 		{

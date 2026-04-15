@@ -17,6 +17,7 @@ type DashboardSectionSelectionContextValue = {
 	attributeMetricKeys: string[];
 	selectedDashboardId: number | null;
 	setSelectedDashboardId: Dispatch<SetStateAction<number | null>>;
+	overlayTopOffset: number;
 };
 
 type DashboardSectionModalContextValue = {
@@ -43,10 +44,12 @@ const DashboardSectionModalContext =
 export const DashboardSectionProvider = ({
 	campaignId,
 	attributeMetricKeys = [],
+	overlayTopOffset = 70,
 	children,
 }: PropsWithChildren<{
 	campaignId: number | null;
 	attributeMetricKeys?: string[];
+	overlayTopOffset?: number;
 }>) => {
 	const [selectedDashboardId, setSelectedDashboardId] = useState<number | null>(
 		null
@@ -67,8 +70,9 @@ export const DashboardSectionProvider = ({
 			attributeMetricKeys,
 			selectedDashboardId,
 			setSelectedDashboardId,
+			overlayTopOffset,
 		}),
-		[attributeMetricKeys, campaignId, selectedDashboardId]
+		[attributeMetricKeys, campaignId, overlayTopOffset, selectedDashboardId]
 	);
 
 	const modalValue = useMemo(

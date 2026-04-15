@@ -1,1 +1,1 @@
-export { default } from "./CampaignParameters";
+export { default } from './CampaignParameters';

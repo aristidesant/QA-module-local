@@ -118,7 +118,9 @@ function main() {
 		);
 	}
 
-	console.error('\nBlocked because new inline styles must not be introduced in `src/`.');
+	console.error(
+		'\nBlocked because new inline styles must not be introduced in `src/`.'
+	);
 	return 1;
 }
 

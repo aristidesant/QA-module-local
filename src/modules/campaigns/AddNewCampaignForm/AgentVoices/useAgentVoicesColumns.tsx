@@ -83,12 +83,7 @@ export const useAgentVoicesColumns = ({
 										className={classes.voiceTextGroup}
 										style={{ flex: 1 }}
 									>
-										<Text
-											fw={700}
-											size='sm'
-											className={classes.voiceName}
-											style={{ color: 'var(--mantine-color-dark-7)' }}
-										>
+										<Text fw={700} size='sm' className={classes.voiceName}>
 											{voice.name}
 										</Text>
 										<Group gap={8} className={classes.voiceLanguage}>
@@ -106,13 +101,7 @@ export const useAgentVoicesColumns = ({
 										</Group>
 									</Stack>
 									{previewUrl && (
-										<IconVolume
-											size={16}
-											style={{
-												color: 'var(--mantine-color-gray-5)',
-												opacity: 0.7,
-											}}
-										/>
+										<IconVolume size={16} className={classes.volumeIcon} />
 									)}
 								</Group>
 							</HoverCard.Target>

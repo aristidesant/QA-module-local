@@ -152,6 +152,12 @@
 			"missingUserId": "Missing user identifier."
 		}
 	},
+	"details": {
+		"values": {
+			"enabled": "Enabled",
+			"disabled": "Disabled"
+		}
+	},
 	"notifications": {
 		"createdTitle": "User created",
 		"createdMessage": "{{email}} has been added",

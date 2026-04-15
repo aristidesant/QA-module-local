@@ -50,10 +50,14 @@ const DashboardSection = ({
 	campaignId,
 	attributeMetricKeys = [],
 	allowGlobal = false,
+	fullHeight = false,
+	overlayTopOffset = 70,
 }: {
 	campaignId?: number | null;
 	attributeMetricKeys?: string[];
 	allowGlobal?: boolean;
+	fullHeight?: boolean;
+	overlayTopOffset?: number;
 }) => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 
@@ -75,8 +79,11 @@ const DashboardSection = ({
 		<DashboardSectionProvider
 			campaignId={campaignId ?? null}
 			attributeMetricKeys={attributeMetricKeys}
+			overlayTopOffset={overlayTopOffset}
 		>
-			<DashboardSectionContent />
+			<div className={fullHeight ? styles.fullHeight : undefined}>
+				<DashboardSectionContent />
+			</div>
 		</DashboardSectionProvider>
 	);
 };

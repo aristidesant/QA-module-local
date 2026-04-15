@@ -117,10 +117,9 @@
 
 .daysHeader {
 	display: grid;
-	grid-template-columns: minmax(0, 1.5fr) minmax(112px, 0.7fr) minmax(
-			112px,
-			0.7fr
-		) auto;
+	grid-template-columns:
+		minmax(0, 1.5fr) minmax(112px, 0.7fr) minmax(112px, 0.7fr)
+		auto;
 	align-items: center;
 	padding: 0 var(--mantine-spacing-xs);
 	color: var(--mantine-color-gray-6);
@@ -138,10 +137,9 @@
 	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
 	background: var(--mantine-color-body);
 	display: grid;
-	grid-template-columns: minmax(0, 1.5fr) minmax(112px, 0.7fr) minmax(
-			112px,
-			0.7fr
-		) auto;
+	grid-template-columns:
+		minmax(0, 1.5fr) minmax(112px, 0.7fr) minmax(112px, 0.7fr)
+		auto;
 	align-items: center;
 	column-gap: var(--mantine-spacing-sm);
 	transition:

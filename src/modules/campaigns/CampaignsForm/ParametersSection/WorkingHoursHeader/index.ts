@@ -1,1 +1,1 @@
-export { WorkingHoursHeader } from "./WorkingHoursHeader";
+export { WorkingHoursHeader } from './WorkingHoursHeader';

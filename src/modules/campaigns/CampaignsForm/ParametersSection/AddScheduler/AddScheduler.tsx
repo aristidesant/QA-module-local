@@ -48,11 +48,11 @@ const AddScheduler: React.FC<AddSchedulerProps> = ({
 	};
 	return (
 		<Button
-			variant='outline'
+			variant='light'
 			onClick={handleClick}
-			size='xl'
-			className={`${styles.addButton}`}
-			leftSection={<IconPlus size={16} />}
+			size='sm'
+			className={styles.addButton}
+			leftSection={<IconPlus size={14} />}
 			disabled={!campaignId}
 		>
 			{t('scheduler.add.button')}

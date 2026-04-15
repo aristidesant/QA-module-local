@@ -9,8 +9,12 @@ import styles from './DashboardWidgetFormOverlay.module.css';
 
 const DashboardWidgetFormOverlay = () => {
 	const { collapsed } = useSidebarStore();
-	const { campaignId, attributeMetricKeys, selectedDashboardId } =
-		useDashboardSectionSelection();
+	const {
+		campaignId,
+		attributeMetricKeys,
+		selectedDashboardId,
+		overlayTopOffset,
+	} = useDashboardSectionSelection();
 	const { widgetModalOpened, editingWidget, closeWidgetModal } =
 		useDashboardSectionModals();
 
@@ -20,6 +24,8 @@ const DashboardWidgetFormOverlay = () => {
 				className={styles.overlay}
 				data-open={widgetModalOpened}
 				data-sidebar={collapsed ? 'collapsed' : 'expanded'}
+				/* inline-style-allow: Dynamically calculated based on sidebar width state */
+				style={{ top: overlayTopOffset }}
 			>
 				{widgetModalOpened && selectedDashboardId && (
 					<DashboardWidgetForm

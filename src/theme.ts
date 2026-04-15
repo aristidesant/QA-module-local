@@ -118,5 +118,25 @@ export const theme = createTheme({
 				radius: 'md',
 			},
 		},
+		Textarea: {
+			defaultProps: {
+				radius: 'md',
+			},
+		},
+		Input: {
+			defaultProps: {
+				radius: 'md',
+			},
+		},
+		Select: {
+			defaultProps: {
+				radius: 'md',
+			},
+		},
+		NativeSelect: {
+			defaultProps: {
+				radius: 'md',
+			},
+		},
 	},
 });

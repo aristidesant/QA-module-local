@@ -1,2 +1,2 @@
-export { VoiceMiniPlayer } from "./VoiceMiniPlayer";
-export type { VoiceMiniPlayerProps } from "./VoiceMiniPlayer";
+export { VoiceMiniPlayer } from './VoiceMiniPlayer';
+export type { VoiceMiniPlayerProps } from './VoiceMiniPlayer';

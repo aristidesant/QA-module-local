@@ -1,3 +1,3 @@
-import { ContactHeaderMapping } from "./ContactHeaderMapping";
+import { ContactHeaderMapping } from './ContactHeaderMapping';
 
 export default ContactHeaderMapping;

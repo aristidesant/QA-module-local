@@ -57,15 +57,15 @@
 }
 
 [data-mantine-color-scheme='dark'] .detailValue {
-	color: var(--mantine-color-dark-0);
+	color: var(--mantine-color-dark-1);
 }
 
 [data-mantine-color-scheme='dark'] .stateSecure {
-	color: var(--mantine-color-green-5);
+	color: var(--mantine-color-green-4);
 }
 
 [data-mantine-color-scheme='dark'] .stateMuted {
-	color: var(--mantine-color-dark-3);
+	color: var(--mantine-color-dark-2);
 }
 
 [data-mantine-color-scheme='dark'] .securityPanel {

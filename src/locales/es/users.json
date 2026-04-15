@@ -152,6 +152,12 @@
 			"missingUserId": "Falta el identificador del usuario."
 		}
 	},
+	"details": {
+		"values": {
+			"enabled": "Habilitado",
+			"disabled": "Deshabilitado"
+		}
+	},
 	"notifications": {
 		"createdTitle": "Usuario creado",
 		"createdMessage": "Se agregó {{email}}",

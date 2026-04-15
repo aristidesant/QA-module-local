@@ -1,22 +1,196 @@
-.typeColumn {
-	width: 180px;
-	min-width: 180px;
-	max-width: 180px;
+.typeColumnHeader {
+	width: 140px;
+	min-width: 120px;
+	max-width: 160px;
 }
 
-.descriptionPreview {
+.typeColumnCell {
+	width: 140px;
+	min-width: 120px;
+	max-width: 160px;
+}
+
+.identifier {
+	font-family:
+		'SF Mono', 'Fira Code', 'Fira Mono', ui-monospace, 'Cascadia Code',
+		'Roboto Mono', monospace;
+	font-size: 13px;
+	letter-spacing: -0.01em;
+	color: var(--mantine-color-blue-6);
+}
+
+[data-mantine-color-scheme='dark'] .identifier {
+	color: var(--mantine-color-blue-3);
+}
+
+.newBadge {
+	font-size: 9px;
+	padding: 0 4px;
+	height: 16px;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+
+.sourceBadge {
+	padding: 0 4px;
+	height: 18px;
+	min-width: 18px;
+}
+
+.sourceBadge svg {
+	margin: 0;
+}
+
+.typeBadge {
+	font-weight: 500;
+	transition:
+		transform 0.15s ease,
+		box-shadow 0.15s ease;
+}
+
+.typeBadge:hover {
+	transform: scale(1.02);
+	box-shadow: var(--mantine-shadow-xs);
+}
+
+.descriptionTarget {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
 	cursor: help;
+	padding: 4px 8px;
+	margin: -4px -8px;
+	border-radius: var(--mantine-radius-sm);
+	transition: background-color 0.15s ease;
+}
+
+.descriptionTarget:hover {
+	background-color: var(--mantine-color-blue-0);
+}
+
+[data-mantine-color-scheme='dark'] .descriptionTarget:hover {
+	background-color: var(--mantine-color-dark-6);
+}
+
+.descriptionText {
+	flex: 1;
+	min-width: 0;
+	color: var(--mantine-color-gray-7);
+	line-height: 1.4;
+}
+
+[data-mantine-color-scheme='dark'] .descriptionText {
+	color: var(--mantine-color-gray-2);
+}
+
+.descriptionTextEmpty {
+	flex: 1;
+	min-width: 0;
+	color: var(--mantine-color-dimmed);
+}
+
+.descriptionIcon {
+	color: var(--mantine-color-gray-5);
+	flex-shrink: 0;
+	transition: color 0.15s ease;
+}
+
+.descriptionTarget:hover .descriptionIcon {
+	color: var(--mantine-color-blue-5);
+}
+
+[data-mantine-color-scheme='dark'] .descriptionTarget:hover .descriptionIcon {
+	color: var(--mantine-color-blue-4);
+}
+
+.enumBadge {
+	flex-shrink: 0;
 }
 
 .descriptionDropdown {
 	padding: var(--mantine-spacing-sm);
-	max-height: 220px;
+	max-height: 240px;
 	overflow-y: auto;
-	max-width: min(420px, 75vw);
+	border: 1px solid var(--mantine-color-gray-3);
 }
 
-.descriptionDropdownText {
-	line-height: 1.45;
+[data-mantine-color-scheme='dark'] .descriptionDropdown {
+	border-color: var(--mantine-color-dark-4);
+}
+
+.tooltipContent {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.tooltipDescription {
+	line-height: 1.5;
 	white-space: pre-wrap;
 	word-break: break-word;
+	color: var(--mantine-color-body);
+}
+
+.tooltipEnum {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	padding-top: var(--mantine-spacing-xs);
+	border-top: 1px solid var(--mantine-color-gray-3);
+}
+
+[data-mantine-color-scheme='dark'] .tooltipEnum {
+	border-top-color: var(--mantine-color-dark-4);
+}
+
+.tooltipEnumLabel {
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	color: var(--mantine-color-dimmed);
+}
+
+.tooltipEnumValues {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-xs);
+}
+
+.emptyDescription {
+	font-style: italic;
+	color: var(--mantine-color-dimmed);
+}
+
+.systemBadge {
+	font-weight: 500;
+}
+
+.systemBadge[data-color='red'] {
+	background: linear-gradient(
+		135deg,
+		var(--mantine-color-red-6),
+		var(--mantine-color-red-8)
+	);
+}
+
+[data-mantine-color-scheme='dark'] .systemBadge[data-color='red'] {
+	background: linear-gradient(
+		135deg,
+		var(--mantine-color-red-7),
+		var(--mantine-color-red-9)
+	);
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+		transform: translateY(-2px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.typeBadge {
+	animation: fadeIn 0.2s ease-out;
 }

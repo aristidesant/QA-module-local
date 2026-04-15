@@ -92,7 +92,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 			onClose={closeMenu}
 			position='top-end'
 			withArrow
-			shadow='md'
+			shadow='sm'
 			width={220}
 		>
 			<Menu.Target>
@@ -127,7 +127,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 						{initials}
 						{isImpersonating && (
 							<div className={styles.impersonationIndicator}>
-								<IconShield size={10} />
+								<IconShield size={8} />
 							</div>
 						)}
 					</div>
@@ -140,10 +140,11 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 						</Text>
 					</div>
 				</div>
-				<Divider mb={4} />
+				<Divider className={styles.menuDivider} />
 				<Menu.Item
 					leftSection={<IconUserCircle size={16} />}
 					onClick={handleProfileClick}
+					className={styles.menuItem}
 				>
 					{t('sidebar.account.profile')}
 				</Menu.Item>
@@ -153,6 +154,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 						closeMenu();
 						openSwitcher();
 					}}
+					className={styles.menuItem}
 				>
 					{t('sidebar.account.switchClient')}
 				</Menu.Item>
@@ -195,11 +197,12 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 						)}
 					</div>
 				</div>
-				<Divider />
+				<Divider className={styles.menuDivider} />
 				<Menu.Item
 					color='red'
 					leftSection={<IconLogout size={16} />}
 					onClick={handleLogout}
+					className={[styles.menuItem, styles.logoutItem].join(' ')}
 				>
 					{t('sidebar.account.logout')}
 				</Menu.Item>
@@ -228,7 +231,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 							{initials}
 							{isImpersonating && (
 								<div className={styles.impersonationIndicator}>
-									<IconShield size={12} />
+									<IconShield size={10} />
 								</div>
 							)}
 						</div>
@@ -273,7 +276,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 							{initials}
 							{isImpersonating && (
 								<div className={styles.impersonationIndicator}>
-									<IconShield size={12} />
+									<IconShield size={10} />
 								</div>
 							)}
 						</div>

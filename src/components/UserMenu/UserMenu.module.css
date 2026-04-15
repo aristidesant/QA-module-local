@@ -1,12 +1,35 @@
 .shell {
+	--usermenu-surface: var(--mantine-color-gray-0);
+	--usermenu-border: transparent;
+	--usermenu-text: var(--mantine-color-text);
+	--usermenu-text-muted: var(--mantine-color-gray-6);
+	--usermenu-hover-bg: var(--mantine-color-gray-1);
+	--usermenu-active-bg: var(--mantine-color-gray-1);
+	--usermenu-avatar-bg: var(--mantine-color-blue-6);
+	--usermenu-impersonating-bg: var(--mantine-color-orange-6);
+	--usermenu-indicator-bg: var(--mantine-color-red-6);
+
 	display: flex;
 	flex-direction: column;
 	align-items: stretch;
-	border-radius: 16px;
-	background: var(--sidebar-footer-surface, var(--mantine-color-gray-0));
-	border: 1px solid var(--sidebar-footer-border, var(--mantine-color-gray-2));
-	box-shadow: var(--mantine-shadow-xs);
+	border-radius: 12px;
+	background: var(--usermenu-surface);
+	border: 1px solid transparent;
+	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 	padding: 0.5rem 0.625rem;
+	transition:
+		background 120ms ease,
+		border-color 120ms ease;
+}
+
+[data-mantine-color-scheme='dark'] .shell {
+	--usermenu-surface: var(--mantine-color-dark-6);
+	--usermenu-border: transparent;
+	--usermenu-text: var(--mantine-color-dark-1);
+	--usermenu-text-muted: var(--mantine-color-dark-2);
+	--usermenu-hover-bg: var(--mantine-color-dark-5);
+	--usermenu-active-bg: var(--mantine-color-dark-5);
+	--usermenu-indicator-bg: var(--mantine-color-red-5);
 }
 
 .shellExpanded {
@@ -24,80 +47,161 @@
 }
 
 .avatar {
-	width: 2.125rem;
-	height: 2.125rem;
+	width: 2.25rem;
+	height: 2.25rem;
 	border-radius: 9999px;
-	background: var(--mantine-color-blue-6);
+	background: var(--usermenu-avatar-bg);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	font-weight: 700;
+	font-weight: 600;
 	color: var(--mantine-color-white);
-	font-size: 0.8rem;
+	font-size: 0.75rem;
+	font-family: var(--mantine-font-family-monospace);
 	position: relative;
 	flex-shrink: 0;
+	letter-spacing: -0.02em;
+}
+
+[data-mantine-color-scheme='dark'] .avatar {
+	background: color-mix(in srgb, var(--usermenu-avatar-bg) 85%, white 15%);
 }
 
 .avatarCompact {
-	width: 2.375rem;
-	height: 2.375rem;
+	width: 2.5rem;
+	height: 2.5rem;
+	font-size: 0.8rem;
 }
 
 .avatarSmall {
-	width: 1.875rem;
-	height: 1.875rem;
+	width: 2rem;
+	height: 2rem;
 	font-size: 0.7rem;
-	flex-shrink: 0;
 }
 
 .avatarImpersonating {
-	background: var(--mantine-color-orange-6);
+	background: var(--usermenu-impersonating-bg);
+}
+
+[data-mantine-color-scheme='dark'] .avatarImpersonating {
+	background: color-mix(
+		in srgb,
+		var(--usermenu-impersonating-bg) 85%,
+		white 15%
+	);
 }
 
 .impersonationIndicator {
 	position: absolute;
 	bottom: -2px;
 	right: -2px;
-	width: 16px;
-	height: 16px;
+	width: 14px;
+	height: 14px;
 	border-radius: 9999px;
-	background: var(--mantine-color-red-6);
+	background: var(--usermenu-indicator-bg);
 	display: flex;
 	align-items: center;
 	justify-content: center;
 	color: var(--mantine-color-white);
-	border: 2px solid var(--mantine-color-white);
+	border: 2px solid var(--usermenu-surface);
 }
 
 .name {
-	color: var(--mantine-color-text);
+	color: var(--usermenu-text);
 	line-height: 1.25;
 	min-width: 0;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-size: 0.8125rem;
+	font-weight: 500;
 }
 
 .subtitle {
+	color: var(--usermenu-text-muted);
 	line-height: 1.2;
 	min-width: 0;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	font-size: 0.6875rem;
 }
 
 .menuDropdown {
-	padding: 0.25rem;
-	background: var(--sidebar-surface, var(--mantine-color-body));
-	border: 1px solid var(--sidebar-border, var(--mantine-color-gray-2));
-	box-shadow: var(--mantine-shadow-md);
+	/* Surface & chrome */
+	--usermenu-dropdown-surface: var(--mantine-color-body);
+	--usermenu-dropdown-border: color-mix(
+		in srgb,
+		var(--mantine-color-gray-4) 55%,
+		transparent
+	);
+	--usermenu-dropdown-shadow:
+		0 2px 6px rgba(15, 23, 42, 0.05), 0 12px 28px rgba(15, 23, 42, 0.09);
+	--usermenu-dropdown-header-bg: var(--mantine-color-gray-0);
+	/* Text — redeclared here so portal children can access them */
+	--usermenu-text: var(--mantine-color-gray-8);
+	--usermenu-text-muted: var(--mantine-color-gray-5);
+	/* Avatar — redeclared here for portal scope */
+	--usermenu-avatar-bg: var(--mantine-color-blue-6);
+	--usermenu-impersonating-bg: var(--mantine-color-orange-6);
+	/* Item states — neutral, not blue-tinted */
+	--usermenu-dropdown-item-hover: var(--mantine-color-gray-1);
+	--usermenu-dropdown-item-active: var(--mantine-color-gray-2);
+
+	padding: 0.5rem;
+	background: var(--usermenu-dropdown-surface);
+	border: 1px solid var(--usermenu-dropdown-border);
+	border-radius: 16px;
+	box-shadow: var(--usermenu-dropdown-shadow);
+}
+
+[data-mantine-color-scheme='dark'] .menuDropdown {
+	--usermenu-dropdown-surface: var(--mantine-color-dark-7);
+	--usermenu-dropdown-border: color-mix(
+		in srgb,
+		var(--mantine-color-dark-4) 60%,
+		transparent
+	);
+	--usermenu-dropdown-shadow:
+		0 2px 6px rgba(0, 0, 0, 0.18), 0 14px 32px rgba(0, 0, 0, 0.28);
+	--usermenu-dropdown-header-bg: var(--mantine-color-dark-6);
+	--usermenu-text: var(--mantine-color-dark-0);
+	--usermenu-text-muted: var(--mantine-color-dark-2);
+	--usermenu-avatar-bg: color-mix(
+		in srgb,
+		var(--mantine-color-blue-5) 85%,
+		white 15%
+	);
+	--usermenu-impersonating-bg: color-mix(
+		in srgb,
+		var(--mantine-color-orange-6) 85%,
+		white 15%
+	);
+	--usermenu-dropdown-item-hover: color-mix(
+		in srgb,
+		var(--mantine-color-dark-5) 80%,
+		transparent
+	);
+	--usermenu-dropdown-item-active: var(--mantine-color-dark-5);
 }
 
 .menuHeader {
 	display: flex;
 	align-items: center;
 	gap: 0.625rem;
-	padding: 0.5rem 0.625rem 0.625rem;
+	padding: 0.625rem 0.75rem 0.75rem;
+	border-radius: 12px;
+	background: var(--usermenu-dropdown-header-bg);
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-color-gray-3) 50%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .menuHeader {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-dark-4) 45%,
+		transparent
+	);
 }
 
 .menuHeaderText {
@@ -110,16 +214,20 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
-	color: var(--mantine-color-text);
+	color: var(--usermenu-text);
 	line-height: 1.25;
+	font-size: 0.8125rem;
+	font-weight: 600;
 }
 
 .menuHeaderSub {
+	color: var(--usermenu-text-muted);
 	min-width: 0;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	line-height: 1.2;
+	font-size: 0.6875rem;
 }
 
 .expandedShell {
@@ -129,46 +237,90 @@
 }
 
 .menuLabel {
-	font-size: 10px;
+	font-size: 0.6rem;
 	font-weight: 700;
-	letter-spacing: 0.06em;
-	color: var(--sidebar-text-muted, var(--mantine-color-gray-6));
+	letter-spacing: 0.07em;
+	text-transform: uppercase;
+	color: var(--usermenu-text-muted);
+	padding: 0.5rem 0.875rem 0.2rem;
+	opacity: 0.75;
 }
 
 .languageMenuRow {
-	padding: 0.25rem 0.5rem 0.4rem;
+	padding: 0.125rem 0.5rem 0.25rem;
 }
 
 .themeRow {
 	display: flex;
-	gap: 2px;
-	padding: 0.25rem 0.5rem 0.4rem;
+	padding: 0.125rem 0.5rem 0.25rem;
 	align-items: center;
+	width: 100%;
 }
 
 .themeSegment {
 	display: flex;
 	gap: 2px;
-	padding: 3px;
-	border-radius: 8px;
-	background: var(--mantine-color-default-hover);
+	padding: 4px;
+	border-radius: 10px;
+	background: var(--mantine-color-gray-1);
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-color-gray-3) 60%, transparent);
+	width: 100%;
+}
+
+[data-mantine-color-scheme='dark'] .themeSegment {
+	background: var(--mantine-color-dark-6);
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-dark-4) 50%,
+		transparent
+	);
 }
 
 .themeBtn {
-	border-radius: 6px !important;
+	flex: 1 !important;
+	width: auto !important;
+	min-width: 0 !important;
+	border-radius: 8px !important;
 	border: none !important;
 	box-shadow: none !important;
 	background: transparent !important;
-	color: var(--mantine-color-dimmed) !important;
+	color: var(--usermenu-text-muted) !important;
 	transition:
 		background 120ms ease,
-		color 120ms ease;
+		color 120ms ease,
+		box-shadow 120ms ease;
+}
+
+.themeBtn:hover {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 55%,
+		transparent
+	) !important;
+	color: var(--usermenu-text) !important;
+}
+
+[data-mantine-color-scheme='dark'] .themeBtn:hover {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-dark-4) 70%,
+		transparent
+	) !important;
 }
 
 .themeBtnActive {
-	background: var(--mantine-color-body) !important;
-	color: var(--mantine-color-text) !important;
-	box-shadow: var(--mantine-shadow-xs) !important;
+	background: var(--mantine-color-white) !important;
+	color: var(--mantine-color-gray-8) !important;
+	box-shadow:
+		0 1px 3px rgba(15, 23, 42, 0.1),
+		0 0 0 1px rgba(15, 23, 42, 0.06) !important;
+}
+
+[data-mantine-color-scheme='dark'] .themeBtnActive {
+	background: var(--mantine-color-dark-4) !important;
+	color: var(--mantine-color-dark-0) !important;
+	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35) !important;
 }
 
 .compactShell {
@@ -187,13 +339,66 @@
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
+	color: var(--usermenu-text);
+	font-size: 0.75rem;
+	font-weight: 500;
 }
 
 .compactSubtitle {
+	color: var(--usermenu-text-muted);
 	min-width: 0;
 	max-width: 100%;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	line-height: 1.2;
+	font-size: 0.625rem;
+}
+
+.menuItem {
+	border-radius: 10px;
+	font-size: 0.8125rem;
+	transition: background 120ms ease;
+	margin: 0 0.125rem;
+}
+
+.menuItem:hover {
+	background: var(--usermenu-dropdown-item-hover);
+}
+
+.menuItemIcon {
+	color: var(--usermenu-text-muted);
+}
+
+.menuItem:hover .menuItemIcon {
+	color: var(--usermenu-text);
+}
+
+.menuDivider {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-3) 45%,
+		transparent
+	);
+	margin: 0.375rem 0.5rem;
+}
+
+[data-mantine-color-scheme='dark'] .menuDivider {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-dark-4) 35%,
+		transparent
+	);
+}
+
+.logoutItem {
+	margin-top: 0.125rem;
+}
+
+.logoutItem:hover {
+	background: color-mix(in srgb, var(--mantine-color-red-6) 10%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .logoutItem:hover {
+	background: color-mix(in srgb, var(--mantine-color-red-5) 18%, transparent);
 }

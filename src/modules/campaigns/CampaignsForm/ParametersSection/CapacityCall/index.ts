@@ -1,1 +1,1 @@
-export { default } from "./CapacityCall";
+export { default } from './CapacityCall';

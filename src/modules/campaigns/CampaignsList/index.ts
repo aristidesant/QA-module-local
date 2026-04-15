@@ -1,1 +1,1 @@
-export { CampaignsList as default } from "./CampaignsList";
+export { CampaignsList as default } from './CampaignsList';

@@ -41,7 +41,12 @@ export type MetricValueField =
 	| 'VALUE_BOOLEAN'
 	| 'VALUE_JSON';
 
-export type MetricResultType = 'NUMBER' | 'BOOLEAN' | 'STRING' | 'TIME';
+export type MetricResultType =
+	| 'NUMBER'
+	| 'PERCENT'
+	| 'BOOLEAN'
+	| 'STRING'
+	| 'TIME';
 
 export type RuntimeFilterOperator =
 	| 'eq'
@@ -221,7 +226,7 @@ export interface TimeSeriesPoint {
 	bucketEnd: string;
 	label: string;
 	value: number;
-	valueFormat: number;
+	valueFormat?: string | number | null;
 }
 
 export interface TimeSeriesMetricResult {

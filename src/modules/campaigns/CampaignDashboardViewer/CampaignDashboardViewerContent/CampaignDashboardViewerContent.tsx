@@ -10,6 +10,7 @@ import CampaignDashboardViewerLayoutEditor from '../CampaignDashboardViewerLayou
 import CampaignDashboardViewerSkeleton from '../CampaignDashboardViewerSkeleton';
 import useCampaignDashboardViewerStore from '../store/useCampaignDashboardViewerStore';
 import type { ViewerWidgetLayout, WidgetComparisonData } from '../types';
+import styles from './CampaignDashboardViewerContent.module.css';
 
 interface CampaignDashboardViewerContentProps {
 	activeLayoutMap: Map<number, ViewerWidgetLayout>;
@@ -66,35 +67,36 @@ const CampaignDashboardViewerContent = ({
 				</Alert>
 			) : null}
 
-			<Box pos='relative'>
+			<Box pos='relative' className={styles.shell}>
 				<LoadingOverlay
 					visible={isSavingLayout}
 					zIndex={10}
 					loaderProps={{ size: 'sm' }}
 					overlayProps={{ radius: 'lg', blur: 1 }}
 				/>
-
-				{renderLoading ? (
-					<CampaignDashboardViewerSkeleton />
-				) : renderResult ? (
-					isEditingLayout ? (
-						<CampaignDashboardViewerLayoutEditor
-							widgets={renderResult.widgets}
-							activeLayoutMap={activeLayoutMap}
-							editorWidth={editorWidth}
-							isInteractionDisabled={isSavingLayout}
-							onLayoutChange={onLayoutChange}
-						/>
-					) : (
-						<CampaignDashboardViewerGrid
-							widgets={renderResult.widgets}
-							activeLayoutMap={activeLayoutMap}
-							comparisonMap={comparisonMap}
-							comparisonPeriodLabel={comparisonPeriodLabel}
-							selectedTimeRange={selectedTimeRange}
-						/>
-					)
-				) : null}
+				<div className={styles.content}>
+					{renderLoading ? (
+						<CampaignDashboardViewerSkeleton />
+					) : renderResult ? (
+						isEditingLayout ? (
+							<CampaignDashboardViewerLayoutEditor
+								widgets={renderResult.widgets}
+								activeLayoutMap={activeLayoutMap}
+								editorWidth={editorWidth}
+								isInteractionDisabled={isSavingLayout}
+								onLayoutChange={onLayoutChange}
+							/>
+						) : (
+							<CampaignDashboardViewerGrid
+								widgets={renderResult.widgets}
+								activeLayoutMap={activeLayoutMap}
+								comparisonMap={comparisonMap}
+								comparisonPeriodLabel={comparisonPeriodLabel}
+								selectedTimeRange={selectedTimeRange}
+							/>
+						)
+					) : null}
+				</div>
 			</Box>
 		</>
 	);

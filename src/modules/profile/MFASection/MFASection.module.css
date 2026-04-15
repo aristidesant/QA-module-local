@@ -52,6 +52,12 @@
 		color 140ms ease;
 }
 
+[data-mantine-color-scheme='dark'] .iconShell {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-6);
+	color: var(--mantine-color-dark-2);
+}
+
 .iconShellEnabled {
 	background: color-mix(
 		in srgb,
@@ -60,6 +66,16 @@
 	);
 	border-color: var(--mantine-color-green-3);
 	color: var(--mantine-color-green-7);
+}
+
+[data-mantine-color-scheme='dark'] .iconShellEnabled {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-green-9) 50%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-green-7);
+	color: var(--mantine-color-green-4);
 }
 
 .headerCopy {
@@ -76,12 +92,20 @@
 	color: var(--mantine-color-gray-6);
 }
 
+[data-mantine-color-scheme='dark'] .label {
+	color: var(--mantine-color-dark-2);
+}
+
 .message {
 	margin: 0;
 	font-size: var(--mantine-font-size-sm);
 	font-weight: 600;
 	line-height: 1.3;
 	color: var(--mantine-color-dark-9);
+}
+
+[data-mantine-color-scheme='dark'] .message {
+	color: var(--mantine-color-dark-0);
 }
 
 .statusBadge {
@@ -97,6 +121,10 @@
 	margin-top: 2px;
 }
 
+[data-mantine-color-scheme='dark'] .statusBadge {
+	border-color: var(--mantine-color-dark-4);
+}
+
 .statusEnabled {
 	background: color-mix(
 		in srgb,
@@ -107,9 +135,24 @@
 	color: var(--mantine-color-green-8);
 }
 
+[data-mantine-color-scheme='dark'] .statusEnabled {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-green-9) 40%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-green-8);
+	color: var(--mantine-color-green-3);
+}
+
 .statusDisabled {
 	background: var(--mantine-color-gray-0);
 	color: var(--mantine-color-gray-7);
+}
+
+[data-mantine-color-scheme='dark'] .statusDisabled {
+	background: var(--mantine-color-dark-6);
+	color: var(--mantine-color-dark-2);
 }
 
 .headerAction {
@@ -132,12 +175,30 @@
 	);
 }
 
+[data-mantine-color-scheme='dark'] .expandedPanel {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-7);
+}
+
 .warningPanel {
 	border-color: var(--mantine-color-orange-2);
 	background: color-mix(
 		in srgb,
 		var(--mantine-color-orange-0) 65%,
 		var(--mantine-color-white)
+	);
+}
+
+[data-mantine-color-scheme='dark'] .warningPanel {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-orange-8) 60%,
+		var(--mantine-color-dark-5)
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-orange-9) 25%,
+		var(--mantine-color-dark-7)
 	);
 }
 
@@ -154,11 +215,19 @@
 	color: var(--mantine-color-gray-9);
 }
 
+[data-mantine-color-scheme='dark'] .expandedTitle {
+	color: var(--mantine-color-dark-0);
+}
+
 .expandedMessage {
 	margin: 0;
 	font-size: 0.82rem;
 	line-height: 1.4;
 	color: var(--mantine-color-gray-7);
+}
+
+[data-mantine-color-scheme='dark'] .expandedMessage {
+	color: var(--mantine-color-dark-2);
 }
 
 .form {

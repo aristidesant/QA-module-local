@@ -151,6 +151,8 @@
 
 .cardBuilderPreview .value {
 	font-size: clamp(1.35rem, 3cqw, 2.15rem);
+	word-break: break-word;
+	overflow-wrap: break-word;
 }
 
 .card::after {
