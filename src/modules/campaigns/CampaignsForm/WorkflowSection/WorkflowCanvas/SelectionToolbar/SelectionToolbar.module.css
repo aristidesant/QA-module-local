@@ -1,0 +1,52 @@
+.toolbar {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	padding: 4px 8px;
+	border-radius: var(--mantine-radius-xl);
+	background-color: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	box-shadow:
+		0 4px 12px color-mix(in srgb, var(--mantine-color-black) 10%, transparent),
+		0 1px 3px color-mix(in srgb, var(--mantine-color-black) 6%, transparent);
+	animation: toolbar-enter 150ms ease-out;
+	pointer-events: auto;
+}
+
+@keyframes toolbar-enter {
+	from {
+		opacity: 0;
+		transform: translateY(-4px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.selectionBadge {
+	font-size: 11px;
+	font-weight: 600;
+	color: var(--mantine-color-dimmed);
+	padding: 0 6px;
+	white-space: nowrap;
+	user-select: none;
+}
+
+.divider {
+	width: 1px;
+	height: 16px;
+	background-color: var(--mantine-color-gray-3);
+	flex-shrink: 0;
+}
+
+/* Dark mode */
+[data-mantine-color-scheme='dark'] .toolbar {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .divider {
+	background-color: var(--mantine-color-dark-4);
+}

@@ -14,6 +14,7 @@ import {
 } from '../../campaignFormFunctions';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
+import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
 import '@xyflow/react/dist/style.css';
 import styles from './WorkflowSection.module.css';
 
@@ -31,6 +32,7 @@ const WorkflowSection = () => {
 	const workflow = form.values.agentConfig?.workflow;
 	const preventSubagentLoops = workflow?.preventSubagentLoops ?? false;
 	const nodeStyles = form.values.nodeStyles;
+	const nodeGroups = form.values.nodeGroups;
 
 	const agents = useMemo(
 		() =>
@@ -63,6 +65,22 @@ const WorkflowSection = () => {
 		});
 	};
 
+	const handleNodeGroupsChange = useCallback(
+		(updatedNodeGroups: NodeGroups) => {
+			form.setFieldValue('nodeGroups', updatedNodeGroups);
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
+
+	const handleNodeStylesChange = useCallback(
+		(updatedNodeStyles: NodeStyles) => {
+			form.setFieldValue('nodeStyles', updatedNodeStyles);
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
+
 	const handlePreventLoopsChange = (value: boolean) => {
 		const currentWorkflow = form.values.agentConfig?.workflow;
 		const nextWorkflow: AgentWorkflow = {
@@ -93,6 +111,9 @@ const WorkflowSection = () => {
 					allowDefaultInit={!campaignId}
 					onNodeSelect={handleNodeSelect}
 					nodeStyles={nodeStyles}
+					nodeGroups={nodeGroups}
+					onNodeGroupsChange={handleNodeGroupsChange}
+					onNodeStylesChange={handleNodeStylesChange}
 				/>
 				<div className={styles.root}>
 					<SectionCard
@@ -129,17 +150,32 @@ const WorkflowSection = () => {
 									workflow={workflow}
 									onWorkflowChange={handleWorkflowChange}
 									fallbackPreventSubagentLoops={preventSubagentLoops}
+									nodeStyles={nodeStyles}
+									nodeGroups={nodeGroups}
+									onNodeStylesChange={handleNodeStylesChange}
+									onNodeGroupsChange={handleNodeGroupsChange}
 								/>
 							</Group>
 						}
 					>
-						{nodeStyles &&
+						{(nodeStyles &&
 							Object.keys(nodeStyles).some(
 								(k) => nodeStyles[k]?.backgroundColor || nodeStyles[k]?.iconName
-							) && <WorkflowNodeLegend nodeStyles={nodeStyles} />}
+							)) ||
+						(nodeGroups &&
+							Object.keys(nodeGroups).some(
+								(k) => nodeGroups[k]?.color || nodeGroups[k]?.label
+							)) ? (
+							<WorkflowNodeLegend
+								nodeStyles={nodeStyles}
+								nodeGroups={nodeGroups}
+							/>
+						) : null}
 						<WorkflowCanvas
 							workflow={workflow}
 							onWorkflowChange={handleWorkflowChange}
+							nodeGroups={nodeGroups}
+							onNodeGroupsChange={handleNodeGroupsChange}
 							preventSubagentLoops={preventSubagentLoops}
 							allowDefaultInit={!campaignId}
 							onNodeSelect={handleNodeSelect}

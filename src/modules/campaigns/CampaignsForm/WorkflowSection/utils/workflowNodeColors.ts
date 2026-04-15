@@ -741,15 +741,62 @@ const darkenHex = (hex: string, amount: number): string => {
 };
 
 /**
- * Build CSS variables from a custom NodeStyle (user-chosen colour).
- * Derives border, ring, header bg, etc. from the background colour automatically.
+ * Mix a hex colour towards white by the given amount (0 = original, 1 = white).
  */
-const buildNodeStyleFromCustomColor = (nodeStyle: NodeStyle): CSSProperties => {
+const tintHex = (hex: string, amount: number): string => {
+	const clean = hex.replace('#', '');
+	const full =
+		clean.length === 3
+			? clean
+					.split('')
+					.map((c) => c + c)
+					.join('')
+			: clean;
+	const r = Math.min(
+		255,
+		Math.round(
+			parseInt(full.slice(0, 2), 16) +
+				(255 - parseInt(full.slice(0, 2), 16)) * amount
+		)
+	);
+	const g = Math.min(
+		255,
+		Math.round(
+			parseInt(full.slice(2, 4), 16) +
+				(255 - parseInt(full.slice(2, 4), 16)) * amount
+		)
+	);
+	const b = Math.min(
+		255,
+		Math.round(
+			parseInt(full.slice(4, 6), 16) +
+				(255 - parseInt(full.slice(4, 6), 16)) * amount
+		)
+	);
+	return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+};
+
+/**
+ * Build CSS variables from a custom NodeStyle (user-chosen colour).
+ *
+ * Design: the custom colour tints the **header** and accent while the body,
+ * panels, and chips stay light / white so inner text remains readable.
+ * This mirrors the pattern used by the label-based tone system.
+ */
+const buildNodeStyleFromCustomColor = (
+	nodeStyle: NodeStyle,
+	colorScheme: WorkflowColorScheme = 'light'
+): CSSProperties => {
 	const bg = nodeStyle.backgroundColor ?? '#adb5bd';
-	const border = nodeStyle.borderColor ?? darkenHex(bg, 0.25);
-	const accent = nodeStyle.textColor ?? darkenHex(bg, 0.5);
-	const isLight = getRelativeLuminance(bg) > 0.179;
+	const accent = nodeStyle.textColor ?? darkenHex(bg, 0.35);
+	const headerBg = bg;
+	const isDark = colorScheme === 'dark';
+	const surfaceTint = isDark ? darkenHex(bg, 0.7) : tintHex(bg, 0.88);
+	const borderColor = nodeStyle.borderColor ?? darkenHex(bg, 0.15);
+	const softBorder = isDark ? darkenHex(bg, 0.5) : tintHex(bg, 0.7);
+	const panelBg = isDark ? 'var(--mantine-color-dark-7)' : '#ffffff';
 	const headerText = getContrastTextColor(bg);
+	const isLight = getRelativeLuminance(bg) > 0.179;
 	const headerSubtext = isLight
 		? 'rgba(0, 0, 0, 0.55)'
 		: 'rgba(255, 255, 255, 0.72)';
@@ -758,21 +805,21 @@ const buildNodeStyleFromCustomColor = (nodeStyle: NodeStyle): CSSProperties => {
 		'--workflow-node-accent': accent,
 		'--workflow-node-header-text': headerText,
 		'--workflow-node-header-subtext': headerSubtext,
-		'--workflow-node-surface': bg,
-		'--workflow-node-surface-selected': bg,
-		'--workflow-node-selected-border': border,
+		'--workflow-node-surface': surfaceTint,
+		'--workflow-node-surface-selected': surfaceTint,
+		'--workflow-node-selected-border': borderColor,
 		'--workflow-node-selected-ring': hexToRgba(bg, 0.18),
-		'--workflow-node-header-bg': bg,
-		'--workflow-node-body-bg': bg,
-		'--workflow-node-panel-bg': bg,
-		'--workflow-node-panel-border': border,
-		'--workflow-node-chip-bg': bg,
-		'--workflow-node-chip-border': border,
-		'--workflow-node-chip-text': headerText,
-		'--workflow-node-icon-bg': bg,
-		'--workflow-node-icon-border': border,
-		backgroundColor: bg,
-		borderColor: border,
+		'--workflow-node-header-bg': headerBg,
+		'--workflow-node-body-bg': panelBg,
+		'--workflow-node-panel-bg': panelBg,
+		'--workflow-node-panel-border': softBorder,
+		'--workflow-node-chip-bg': panelBg,
+		'--workflow-node-chip-border': softBorder,
+		'--workflow-node-chip-text': accent,
+		'--workflow-node-icon-bg': panelBg,
+		'--workflow-node-icon-border': softBorder,
+		backgroundColor: surfaceTint,
+		borderColor: borderColor,
 	} as CSSProperties;
 };
 
@@ -783,7 +830,7 @@ export const getWorkflowNodeToneStyle = (
 ): CSSProperties => {
 	// When a persisted NodeStyle is provided, use it directly
 	if (nodeStyle?.backgroundColor) {
-		return buildNodeStyleFromCustomColor(nodeStyle);
+		return buildNodeStyleFromCustomColor(nodeStyle, colorScheme);
 	}
 
 	const parsed = parseWorkflowLabel(label);

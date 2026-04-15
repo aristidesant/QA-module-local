@@ -1,15 +1,4 @@
 .node {
-	--workflow-node-accent: var(--mantine-color-blue-7);
-	--workflow-node-selected-border: var(--mantine-color-blue-4);
-	--workflow-node-selected-ring: color-mix(
-		in srgb,
-		var(--mantine-color-blue-6) 14%,
-		transparent
-	);
-	--workflow-node-header-bg: var(--mantine-color-blue-0);
-	--workflow-node-surface-selected: var(--mantine-color-blue-0);
-	background-color: var(--mantine-color-blue-0);
-	border-color: var(--mantine-color-blue-2);
 	min-width: 200px;
 	max-width: 280px;
 	text-align: left;
@@ -20,12 +9,12 @@
 }
 
 .icon {
-	color: var(--mantine-color-blue-7);
+	color: var(--workflow-node-accent);
 	flex-shrink: 0;
 }
 
 .title {
-	color: var(--mantine-color-gray-9);
+	color: var(--workflow-node-header-text);
 }
 
 .footer {

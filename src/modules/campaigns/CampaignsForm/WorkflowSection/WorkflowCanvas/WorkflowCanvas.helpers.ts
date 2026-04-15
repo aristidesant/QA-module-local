@@ -14,6 +14,7 @@ import type {
 	WorkflowEdge,
 	WorkflowNode,
 } from '~/models/AgentWorkflowModel';
+import type { NodeGroups } from '~/models/CampaignsModel';
 
 export const createWorkflowEdgeMarker = (
 	orient: 'auto' | 'auto-start-reverse'
@@ -123,7 +124,8 @@ export const buildDefaultWorkflow = (
 
 export const mapWorkflowToNodes = (
 	workflowData: AgentWorkflow,
-	t: TFunction
+	t: TFunction,
+	nodeGroups?: NodeGroups
 ): { nodes: Node[]; edges: Edge[] } => {
 	const normalizeSubagent = (node: OverrideAgentNode | StandaloneAgentNode) => {
 		const legacyPrompt =
@@ -168,28 +170,68 @@ export const mapWorkflowToNodes = (
 		workflowData.edges
 	);
 
-	const mappedNodes = Object.entries(sanitizedNodes).map(([id, node]) => ({
-		id,
-		type: node.type,
-		position: node.position,
-		dragHandle: WORKFLOW_NODE_DRAG_HANDLE_SELECTOR,
-		selectable: !NON_SELECTABLE_TYPES.includes(node.type as any),
-		focusable: !NON_SELECTABLE_TYPES.includes(node.type as any),
-		data: {
-			...node,
+	// Build child→parent map from the campaign-level nodeGroups
+	const childToGroup = new Map<string, string>();
+	const safeNodeGroups = nodeGroups ?? {};
+	Object.entries(safeNodeGroups).forEach(([groupId, group]) => {
+		group.childNodeIds.forEach((childId) => childToGroup.set(childId, groupId));
+	});
+
+	// Build React Flow nodes for groups
+	const groupReactNodes: Node[] = Object.entries(safeNodeGroups).map(
+		([id, group]) => ({
+			id,
+			type: WORKFLOW_NODE_TYPES.GROUP,
+			position: group.position,
+			style: {
+				...(group.width ? { width: group.width } : {}),
+				...(group.height ? { height: group.height } : {}),
+			},
+			data: {
+				type: WORKFLOW_NODE_TYPES.GROUP,
+				position: group.position,
+				label: group.label ?? '',
+				color: group.color ?? '',
+				edgeOrder: [],
+			},
+			selectable: true,
+			focusable: true,
+			dragHandle: undefined,
+		})
+	);
+
+	const mappedNodes = Object.entries(sanitizedNodes).map(([id, node]) => {
+		const parentGroupId = childToGroup.get(id);
+
+		return {
+			id,
 			type: node.type,
 			position: node.position,
-			edgeOrder: node.edgeOrder ?? [],
-			...(node.type === WORKFLOW_NODE_TYPES.STANDALONE_AGENT ||
-			node.type === WORKFLOW_NODE_TYPES.OVERRIDE_AGENT
-				? {
-						subagent: normalizeSubagent(
-							node as OverrideAgentNode | StandaloneAgentNode
-						),
-					}
+			dragHandle: WORKFLOW_NODE_DRAG_HANDLE_SELECTOR,
+			selectable: !NON_SELECTABLE_TYPES.includes(node.type as any),
+			focusable: !NON_SELECTABLE_TYPES.includes(node.type as any),
+			...(parentGroupId
+				? { parentId: parentGroupId, extent: 'parent' as const }
 				: {}),
-		},
-	}));
+			data: {
+				...node,
+				type: node.type,
+				position: node.position,
+				edgeOrder: node.edgeOrder ?? [],
+				...(node.type === WORKFLOW_NODE_TYPES.STANDALONE_AGENT ||
+				node.type === WORKFLOW_NODE_TYPES.OVERRIDE_AGENT
+					? {
+							subagent: normalizeSubagent(
+								node as OverrideAgentNode | StandaloneAgentNode
+							),
+						}
+					: {}),
+			},
+		};
+	});
+
+	// Group nodes must appear before their children in the array
+	const sortedNodes = [...groupReactNodes, ...mappedNodes];
 
 	const getConditionLabel = (
 		condition?: WorkflowEdge['forwardCondition']
@@ -267,16 +309,22 @@ export const mapWorkflowToNodes = (
 			};
 		});
 
-	return { nodes: mappedNodes, edges: mappedEdges };
+	return { nodes: sortedNodes, edges: mappedEdges };
 };
+
+export interface BuildWorkflowResult {
+	workflow: AgentWorkflow;
+	nodeGroups: NodeGroups;
+}
 
 export const buildWorkflowFromState = (
 	currentNodes: Node[],
 	currentEdges: Edge[],
 	preventSubagentLoops: boolean
-): AgentWorkflow => {
+): BuildWorkflowResult => {
 	const workflowNodes: Record<string, WorkflowNode> = {};
 	const workflowEdges: Record<string, WorkflowEdge> = {};
+	const nodeGroups: NodeGroups = {};
 
 	const sortedNodes = [...currentNodes].sort((a, b) =>
 		a.id.localeCompare(b.id)
@@ -284,6 +332,19 @@ export const buildWorkflowFromState = (
 	const sortedEdges = [...currentEdges].sort((a, b) =>
 		a.id.localeCompare(b.id)
 	);
+
+	// Collect group node IDs → child IDs
+	const groupChildMap = new Map<string, string[]>();
+	sortedNodes.forEach((node) => {
+		if (node.type === WORKFLOW_NODE_TYPES.GROUP) {
+			groupChildMap.set(node.id, []);
+		}
+	});
+	sortedNodes.forEach((node) => {
+		if (node.parentId && groupChildMap.has(node.parentId)) {
+			groupChildMap.get(node.parentId)!.push(node.id);
+		}
+	});
 
 	sortedNodes.forEach((node) => {
 		const data = node.data as Partial<WorkflowNode>;
@@ -383,6 +444,24 @@ export const buildWorkflowFromState = (
 				workflowNodes[node.id] = standaloneNode;
 				break;
 			}
+			case WORKFLOW_NODE_TYPES.GROUP: {
+				const nodeData = node.data as { label?: string; color?: string };
+				nodeGroups[node.id] = {
+					label: nodeData.label,
+					position: node.position,
+					width:
+						typeof node.style?.width === 'number'
+							? node.style.width
+							: undefined,
+					height:
+						typeof node.style?.height === 'number'
+							? node.style.height
+							: undefined,
+					color: nodeData.color || undefined,
+					childNodeIds: groupChildMap.get(node.id) ?? [],
+				};
+				break;
+			}
 			case WORKFLOW_NODE_TYPES.END: {
 				const endNode: EndNode = {
 					...baseNode,
@@ -416,8 +495,11 @@ export const buildWorkflowFromState = (
 	});
 
 	return {
-		preventSubagentLoops,
-		nodes: workflowNodes,
-		edges: workflowEdges,
+		workflow: {
+			preventSubagentLoops,
+			nodes: workflowNodes,
+			edges: workflowEdges,
+		},
+		nodeGroups,
 	};
 };

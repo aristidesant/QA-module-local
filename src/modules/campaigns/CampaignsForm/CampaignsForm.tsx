@@ -215,6 +215,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			noiseCancellation: campaign?.noiseCancellation,
 			agentConfig: campaign?.agentConfig || {},
 			nodeStyles: campaign?.nodeStyles ?? {},
+			nodeGroups: campaign?.nodeGroups ?? {},
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign?.defaultWaveExecutionDelaySeconds ?? 0,
@@ -276,6 +277,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			noiseCancellation: campaign.noiseCancellation,
 			agentConfig: campaign.agentConfig || {},
 			nodeStyles: campaign.nodeStyles ?? {},
+			nodeGroups: campaign.nodeGroups ?? {},
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign.defaultWaveExecutionDelaySeconds ?? 0,

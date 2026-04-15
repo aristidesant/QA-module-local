@@ -1,0 +1,341 @@
+.groupNode {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	min-width: 200px;
+	min-height: 120px;
+	border-radius: var(--mantine-radius-lg);
+	border: 1.5px dashed var(--workflow-group-border, var(--mantine-color-gray-3));
+	background-color: var(--workflow-group-bg, rgba(0, 0, 0, 0.02));
+	transition:
+		border-color 140ms ease,
+		background-color 140ms ease,
+		box-shadow 140ms ease;
+}
+
+[data-mantine-color-scheme='dark'] .groupNode {
+	background-color: var(--workflow-group-bg, rgba(255, 255, 255, 0.03));
+	border-color: var(--workflow-group-border, var(--mantine-color-dark-4));
+}
+
+:global(.react-flow__node.selected) .groupNode {
+	border-style: solid;
+	border-color: var(
+		--workflow-group-border-selected,
+		var(--mantine-color-blue-4)
+	);
+	box-shadow: 0 0 0 2px var(--workflow-group-ring, rgba(59, 130, 246, 0.12));
+}
+
+.labelBadge {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	padding: 5px 12px;
+	border-radius: var(--mantine-radius-md);
+	background-color: var(--workflow-group-label-bg, var(--mantine-color-white));
+	border: 1px solid
+		var(--workflow-group-label-border, var(--mantine-color-gray-3));
+	box-shadow:
+		0 1px 3px rgba(0, 0, 0, 0.1),
+		0 1px 2px rgba(0, 0, 0, 0.06);
+	max-width: 220px;
+	z-index: 1;
+	cursor: default;
+	backdrop-filter: blur(12px);
+}
+
+[data-mantine-color-scheme='dark'] .labelBadge {
+	background-color: var(--workflow-group-label-bg, var(--mantine-color-dark-6));
+	border-color: var(--workflow-group-label-border, var(--mantine-color-dark-4));
+	box-shadow:
+		0 2px 6px rgba(0, 0, 0, 0.3),
+		0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.labelText {
+	color: var(--workflow-group-label-text, var(--mantine-color-gray-8));
+	font-weight: 600;
+	font-size: var(--mantine-font-size-sm);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: default;
+	letter-spacing: 0.01em;
+}
+
+[data-mantine-color-scheme='dark'] .labelText {
+	color: var(--workflow-group-label-text, var(--mantine-color-gray-0));
+}
+
+.labelInput {
+	min-width: 80px;
+	max-width: 160px;
+}
+
+.labelInputField {
+	color: var(--workflow-group-label-text, var(--mantine-color-gray-8));
+	font-weight: 600;
+	font-size: var(--mantine-font-size-xs);
+	height: auto;
+	min-height: 0;
+	padding: 0;
+	line-height: 1.4;
+	caret-color: var(--workflow-group-label-text, var(--mantine-color-gray-8));
+}
+
+[data-mantine-color-scheme='dark'] .labelInputField {
+	color: var(--workflow-group-label-text, var(--mantine-color-dark-0));
+	caret-color: var(--workflow-group-label-text, var(--mantine-color-dark-0));
+}
+
+.sideActions {
+	position: absolute;
+	right: -50px;
+	top: 8px;
+	z-index: 9999;
+	pointer-events: auto;
+	isolation: isolate;
+	display: flex;
+	flex-direction: column;
+	align-items: stretch;
+	gap: 4px;
+	padding: 5px;
+	border-radius: calc(var(--mantine-radius-lg) + 2px);
+	background-color: var(
+		--workflow-shell-control-bg,
+		var(--mantine-color-white)
+	);
+	border: 1px solid
+		var(--workflow-shell-control-border, var(--mantine-color-gray-3));
+	box-shadow:
+		0 10px 22px color-mix(in srgb, var(--mantine-color-black) 12%, transparent),
+		0 2px 6px color-mix(in srgb, var(--mantine-color-black) 8%, transparent);
+	backdrop-filter: blur(8px);
+}
+
+[data-mantine-color-scheme='dark'] .sideActions {
+	background-color: var(
+		--workflow-shell-control-bg,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(
+		--workflow-shell-control-border,
+		var(--mantine-color-dark-4)
+	);
+}
+
+.actionButton {
+	background-color: var(
+		--workflow-shell-control-bg,
+		var(--mantine-color-white)
+	);
+	border: 1px solid
+		var(--workflow-shell-control-border, var(--mantine-color-gray-2));
+	color: var(--workflow-shell-control-text, var(--mantine-color-gray-7));
+	width: 28px;
+	height: 28px;
+	box-shadow: 0 1px 2px
+		color-mix(in srgb, var(--mantine-color-black) 6%, transparent);
+}
+
+.actionButton:hover {
+	background-color: var(
+		--workflow-shell-panel-muted,
+		var(--mantine-color-gray-0)
+	);
+	border-color: var(
+		--workflow-shell-border-strong,
+		var(--mantine-color-gray-4)
+	);
+	color: var(--workflow-shell-text, var(--mantine-color-gray-9));
+}
+
+.actionButtonPrimary {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-0) 78%,
+		var(--mantine-color-white)
+	);
+	border-color: var(--mantine-color-blue-2);
+	color: var(--mantine-color-blue-7);
+}
+
+.actionButtonPrimary:hover {
+	background-color: var(--mantine-color-blue-0);
+	border-color: var(--mantine-color-blue-3);
+	color: var(--mantine-color-blue-8);
+}
+
+[data-mantine-color-scheme='dark'] .actionButtonPrimary {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-7) 18%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-blue-5);
+	color: var(--mantine-color-blue-1);
+}
+
+[data-mantine-color-scheme='dark'] .actionButtonPrimary:hover {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-6) 22%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-blue-4);
+	color: var(--mantine-color-blue-0);
+}
+
+.actionButtonTeal {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-teal-0) 78%,
+		var(--mantine-color-white)
+	);
+	border-color: var(--mantine-color-teal-2);
+	color: var(--mantine-color-teal-7);
+}
+
+.actionButtonTeal:hover {
+	background-color: var(--mantine-color-teal-0);
+	border-color: var(--mantine-color-teal-3);
+	color: var(--mantine-color-teal-8);
+}
+
+[data-mantine-color-scheme='dark'] .actionButtonTeal {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-teal-7) 18%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-teal-5);
+	color: var(--mantine-color-teal-1);
+}
+
+[data-mantine-color-scheme='dark'] .actionButtonTeal:hover {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-teal-6) 22%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-teal-4);
+	color: var(--mantine-color-teal-0);
+}
+
+.actionButtonDanger {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-red-0) 82%,
+		var(--mantine-color-white)
+	);
+	border-color: var(--mantine-color-red-2);
+	color: var(--mantine-color-red-7);
+}
+
+.actionButtonDanger:hover {
+	background-color: var(--mantine-color-red-0);
+	border-color: var(--mantine-color-red-3);
+	color: var(--mantine-color-red-8);
+}
+
+[data-mantine-color-scheme='dark'] .actionButtonDanger {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-red-7) 16%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-red-5);
+	color: var(--mantine-color-red-1);
+}
+
+[data-mantine-color-scheme='dark'] .actionButtonDanger:hover {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-red-6) 20%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-red-4);
+	color: var(--mantine-color-red-0);
+}
+
+.actionDivider {
+	height: 1px;
+	background-color: var(--mantine-color-gray-2);
+	margin: 1px 2px;
+}
+
+[data-mantine-color-scheme='dark'] .actionDivider {
+	background-color: var(--mantine-color-dark-4);
+}
+
+.menuDropdown {
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid
+		var(--workflow-shell-control-border, var(--mantine-color-gray-3));
+	background: var(--mantine-color-white);
+	color: var(--mantine-color-gray-9);
+}
+
+[data-mantine-color-scheme='dark'] .menuDropdown {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+	color: var(--mantine-color-dark-0);
+}
+
+.nodePickerItem {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+	width: 100%;
+	padding: 6px 8px;
+	border: none;
+	background: none;
+	border-radius: var(--mantine-radius-sm);
+	cursor: pointer;
+	text-align: left;
+	font-family: inherit;
+	transition: background-color 100ms ease;
+}
+
+.nodePickerItem:hover {
+	background-color: var(--mantine-color-teal-0);
+}
+
+[data-mantine-color-scheme='dark'] .nodePickerItem:hover {
+	background-color: var(--mantine-color-dark-5);
+}
+
+.resizeHandle {
+	/* Increase the visual click target for resizer corner handles */
+	pointer-events: auto;
+}
+
+/* NodeResizer override: make handles subtle by default */
+.groupNode :global(.react-flow__resize-control) {
+	border: none;
+	background: transparent;
+}
+
+.groupNode :global(.react-flow__resize-control.line) {
+	border: none;
+}
+
+.groupNode :global(.react-flow__resize-control.handle) {
+	width: 8px;
+	height: 8px;
+	border-radius: 2px;
+	background-color: var(--workflow-group-border, var(--mantine-color-gray-4));
+	opacity: 0;
+	transition: opacity 120ms ease;
+}
+
+:global(.react-flow__node.selected)
+	.groupNode:global(.react-flow__resize-control.handle) {
+	opacity: 1;
+}
+
+.groupNode:hover :global(.react-flow__resize-control.handle) {
+	opacity: 0.7;
+}
