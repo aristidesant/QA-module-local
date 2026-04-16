@@ -106,6 +106,10 @@
 	color: var(--mantine-color-gray-5);
 }
 
+.mainSlotBadge {
+	align-self: flex-start;
+}
+
 [data-mantine-color-scheme='dark'] .emptyStateIcon {
 	color: var(--mantine-color-dark-3);
 }

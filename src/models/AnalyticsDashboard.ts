@@ -10,6 +10,8 @@ export type MetricSourceType = 'CONVERSATION' | 'ATTRIBUTE' | 'DISPOSITION';
 
 export type DashboardWidgetVisibilityScope = 'GLOBAL' | 'TEAM' | 'PRIVATE';
 
+export type DashboardMainSlot = 'MAIN_1' | 'MAIN_2' | 'MAIN_3';
+
 export type DashboardWidgetJoinRelation = 'campaign';
 
 export type DashboardWidgetJoinType = 'inner' | 'left';
@@ -116,6 +118,7 @@ export interface DashboardDefinition {
 	userId: number;
 	name: string;
 	description: string | null;
+	mainSlot?: DashboardMainSlot | null;
 	isDefault: boolean;
 	layoutConfig: Record<string, unknown> | null;
 	createdAt: string;
@@ -135,6 +138,7 @@ export interface CreateDashboardDto {
 	contactGroupId?: number | null;
 	name: string;
 	description?: string;
+	mainSlot?: DashboardMainSlot | null;
 	isDefault?: boolean;
 	layoutConfig?: Record<string, unknown> | null;
 }

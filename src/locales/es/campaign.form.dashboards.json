@@ -8,6 +8,11 @@
 		"widgetsDescription": "Widgets configurados para {{dashboard}}.",
 		"widgetsPlaceholderDescription": "Selecciona un dashboard para administrar sus widgets.",
 		"defaultBadge": "Predeterminado",
+		"mainSlots": {
+			"MAIN_1": "MAIN-1",
+			"MAIN_2": "MAIN-2",
+			"MAIN_3": "MAIN-3"
+		},
 		"noDescription": "Sin descripción.",
 		"enabled": "Habilitado",
 		"disabled": "Deshabilitado",
@@ -141,6 +146,8 @@
 			"fields": {
 				"dashboardName": "Nombre del dashboard",
 				"dashboardDescription": "Descripción del dashboard",
+				"mainSlot": "Slot principal",
+				"mainSlotDescription": "Asigna este dashboard global a uno de los tres slots principales del cliente.",
 				"isDefault": "Usar como dashboard predeterminado",
 				"widgetTitle": "Título del widget",
 				"widgetDescription": "Descripción del widget",
@@ -222,6 +229,7 @@
 				"CUSTOM": "Personalizado"
 			},
 			"placeholders": {
+				"mainSlot": "Sin slot principal",
 				"widgetTitle": "ej. Total Llamadas este mes",
 				"widgetDescription": "Descripción opcional",
 				"metricKey": "Selecciona una clave de atributo",
