@@ -7,6 +7,7 @@ const DashboardsPage = () => {
 			<DashboardSection
 				campaignId={null}
 				allowGlobal
+				allowMainSlot
 				fullHeight
 				overlayTopOffset={0}
 			/>

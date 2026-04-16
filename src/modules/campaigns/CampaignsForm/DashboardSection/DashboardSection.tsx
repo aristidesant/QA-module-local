@@ -13,7 +13,11 @@ import DashboardWidgetFormOverlay from './DashboardWidgetFormOverlay';
 import WidgetListPanel from './WidgetListPanel';
 import styles from './DashboardSection.module.css';
 
-const DashboardSectionContent = () => {
+const DashboardSectionContent = ({
+	allowMainSlot = false,
+}: {
+	allowMainSlot?: boolean;
+}) => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 	const { previewDashboard } = useDashboardSectionModals();
 
@@ -31,7 +35,7 @@ const DashboardSectionContent = () => {
 				<div className={styles.builderShell}>
 					<div className={styles.manageLayout}>
 						<div className={styles.sidebar}>
-							<DashboardListPanel />
+							<DashboardListPanel allowMainSlot={allowMainSlot} />
 						</div>
 						<div className={styles.main}>
 							<WidgetListPanel />
@@ -40,7 +44,7 @@ const DashboardSectionContent = () => {
 				</div>
 			</SectionCard>
 
-			<DashboardModals />
+			<DashboardModals allowMainSlot={allowMainSlot} />
 			<DashboardWidgetFormOverlay />
 		</>
 	);
@@ -50,12 +54,14 @@ const DashboardSection = ({
 	campaignId,
 	attributeMetricKeys = [],
 	allowGlobal = false,
+	allowMainSlot = false,
 	fullHeight = false,
 	overlayTopOffset = 70,
 }: {
 	campaignId?: number | null;
 	attributeMetricKeys?: string[];
 	allowGlobal?: boolean;
+	allowMainSlot?: boolean;
 	fullHeight?: boolean;
 	overlayTopOffset?: number;
 }) => {
@@ -82,7 +88,7 @@ const DashboardSection = ({
 			overlayTopOffset={overlayTopOffset}
 		>
 			<div className={fullHeight ? styles.fullHeight : undefined}>
-				<DashboardSectionContent />
+				<DashboardSectionContent allowMainSlot={allowMainSlot} />
 			</div>
 		</DashboardSectionProvider>
 	);

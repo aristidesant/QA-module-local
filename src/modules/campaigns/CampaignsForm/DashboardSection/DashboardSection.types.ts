@@ -1,5 +1,6 @@
 import type {
 	DashboardDefinition,
+	DashboardMainSlot,
 	DashboardWidgetComparisonData,
 	DashboardWidgetPreviewResponse,
 	DashboardWidget,
@@ -21,6 +22,7 @@ import type { DashboardWidgetSizePreset } from '~/modules/campaigns/dashboardLay
 export type DashboardFormValues = {
 	name: string;
 	description: string;
+	mainSlot: DashboardMainSlot | null;
 	isDefault: boolean;
 };
 

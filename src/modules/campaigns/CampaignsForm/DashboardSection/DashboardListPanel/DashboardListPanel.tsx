@@ -22,9 +22,14 @@ import {
 	useDashboardSectionModals,
 	useDashboardSectionSelection,
 } from '../DashboardSection.context';
+import { getDashboardMainSlotLabel } from '../DashboardSection.helpers';
 import styles from './DashboardListPanel.module.css';
 
-const DashboardListPanel = () => {
+const DashboardListPanel = ({
+	allowMainSlot = false,
+}: {
+	allowMainSlot?: boolean;
+}) => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 	const { campaignId, selectedDashboardId, setSelectedDashboardId } =
 		useDashboardSectionSelection();
@@ -113,6 +118,19 @@ const DashboardListPanel = () => {
 									? t('dashboardBuilder.defaultBadge')
 									: t('dashboardBuilder.dashboard.standard')}
 							</Text>
+							{allowMainSlot && dashboard.mainSlot ? (
+								<Group gap={6} wrap='wrap'>
+									<Badge
+										variant='light'
+										color='teal'
+										size='xs'
+										radius='sm'
+										className={styles.mainSlotBadge}
+									>
+										{getDashboardMainSlotLabel(t, dashboard.mainSlot)}
+									</Badge>
+								</Group>
+							) : null}
 						</Stack>
 					);
 				},
@@ -188,7 +206,13 @@ const DashboardListPanel = () => {
 				),
 			},
 		],
-		[handleDeleteDashboard, openEditDashboard, openPreviewDashboard, t]
+		[
+			allowMainSlot,
+			handleDeleteDashboard,
+			openEditDashboard,
+			openPreviewDashboard,
+			t,
+		]
 	);
 
 	const getRowClassName = useCallback(

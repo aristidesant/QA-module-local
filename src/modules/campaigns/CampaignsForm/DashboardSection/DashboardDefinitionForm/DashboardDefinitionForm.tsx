@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import {
 	Button,
 	Group,
+	Select,
 	Stack,
 	Switch,
 	Text,
@@ -14,6 +15,7 @@ import { useTranslation } from 'react-i18next';
 import type {
 	CreateDashboardDto,
 	DashboardDefinition,
+	DashboardMainSlot,
 	UpdateDashboardDto,
 } from '~/models/AnalyticsDashboard';
 import {
@@ -21,12 +23,16 @@ import {
 	useUpdateDashboard,
 } from '~/queries/analyticsDashboardsQueries';
 import { getErrorMessage } from '~/utils/httpClient';
-import { dashboardFormValues } from '../DashboardSection.helpers';
+import {
+	dashboardFormValues,
+	getDashboardMainSlotLabel,
+} from '../DashboardSection.helpers';
 import type { DashboardFormValues } from '../DashboardSection.types';
 import styles from './DashboardDefinitionForm.module.css';
 
 type DashboardDefinitionFormProps = {
 	campaignId: number | null;
+	allowMainSlot?: boolean;
 	dashboard?: DashboardDefinition | null;
 	onCancel: () => void;
 	onSuccess: (dashboardId?: number) => void;
@@ -34,6 +40,7 @@ type DashboardDefinitionFormProps = {
 
 const DashboardDefinitionForm = ({
 	campaignId,
+	allowMainSlot = false,
 	dashboard,
 	onCancel,
 	onSuccess,
@@ -42,6 +49,12 @@ const DashboardDefinitionForm = ({
 	const createDashboard = useCreateDashboard();
 	const updateDashboard = useUpdateDashboard();
 	const isEditing = Boolean(dashboard?.id);
+	const mainSlotValues: DashboardMainSlot[] = ['MAIN_1', 'MAIN_2', 'MAIN_3'];
+	const mainSlotOptions: Array<{ value: DashboardMainSlot; label: string }> =
+		mainSlotValues.map((mainSlot) => ({
+			value: mainSlot,
+			label: getDashboardMainSlotLabel(t, mainSlot),
+		}));
 
 	const form = useForm<DashboardFormValues>({
 		initialValues: dashboardFormValues(dashboard),
@@ -66,6 +79,7 @@ const DashboardDefinitionForm = ({
 			campaignId,
 			name: values.name.trim(),
 			description: values.description.trim() || undefined,
+			...(allowMainSlot ? { mainSlot: values.mainSlot } : {}),
 			isDefault: values.isDefault,
 		};
 
@@ -119,6 +133,24 @@ const DashboardDefinitionForm = ({
 						minRows={3}
 						{...form.getInputProps('description')}
 					/>
+					{allowMainSlot ? (
+						<Select
+							clearable
+							label={t('dashboardBuilder.form.fields.mainSlot')}
+							description={t(
+								'dashboardBuilder.form.fields.mainSlotDescription'
+							)}
+							placeholder={t('dashboardBuilder.form.placeholders.mainSlot')}
+							data={mainSlotOptions}
+							value={form.values.mainSlot}
+							onChange={(value) =>
+								form.setFieldValue(
+									'mainSlot',
+									value as DashboardMainSlot | null
+								)
+							}
+						/>
+					) : null}
 				</Stack>
 			</div>
 

@@ -7,7 +7,11 @@ import {
 	useDashboardSectionSelection,
 } from '../DashboardSection.context';
 
-const DashboardModals = () => {
+const DashboardModals = ({
+	allowMainSlot = false,
+}: {
+	allowMainSlot?: boolean;
+}) => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 	const {
 		campaignId,
@@ -41,6 +45,7 @@ const DashboardModals = () => {
 			>
 				<DashboardDefinitionForm
 					campaignId={campaignId}
+					allowMainSlot={allowMainSlot}
 					dashboard={editingDashboard}
 					onCancel={closeDashboardModal}
 					onSuccess={(dashboardId) => {
