@@ -421,6 +421,7 @@
 				"addNewNode": "Nuevo nodo",
 				"addExistingNode": "Agregar nodo existente",
 				"cloneGroup": "Clonar grupo",
+				"copy": "Copia",
 				"noAvailableNodes": "No hay nodos sin agrupar disponibles",
 				"searchNodes": "Buscar nodos..."
 			},

@@ -420,6 +420,7 @@
 				"addNewNode": "New node",
 				"addExistingNode": "Add existing node",
 				"cloneGroup": "Clone group",
+				"copy": "Copy",
 				"noAvailableNodes": "No ungrouped nodes available",
 				"searchNodes": "Search nodes..."
 			},
