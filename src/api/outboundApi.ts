@@ -8,6 +8,7 @@ import type {
 	ReorderTasksResult,
 	BulkTaskActionPayload,
 	BulkTaskActionResult,
+	QueueProgressResponse,
 } from '~/models/ContactsModel';
 
 export interface CleanOutboundQueuePayload {
@@ -62,11 +63,23 @@ const outboundApi = (_authHeader: Record<string, string> = {}) => {
 		},
 
 		getSortFields: async (
-			campaignId: number
+			campaignId: number,
+			contactGroupId?: number
 		): Promise<OutboundTaskSortFieldsResponse> => {
 			const response = await axios.get(
 				`${DEFAULT_API_URL}/outbound-call-tasks/sort-fields`,
-				{ params: { campaignId } }
+				{ params: { campaignId, contactGroupId } }
+			);
+			return response.data;
+		},
+
+		getQueueProgress: async (
+			contactGroupId: number,
+			campaignId: number
+		): Promise<QueueProgressResponse> => {
+			const response = await axios.get(
+				`${DEFAULT_API_URL}/outbound-call-tasks/queue-progress`,
+				{ params: { contactGroupId, campaignId } }
 			);
 			return response.data;
 		},

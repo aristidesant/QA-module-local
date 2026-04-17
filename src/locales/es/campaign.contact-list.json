@@ -594,6 +594,12 @@
 		"wave": "Oleada {{number}}",
 		"waveTaskCount": "{{count}} tarea",
 		"waveTaskCount_other": "{{count}} tareas",
+		"progress": {
+			"title": "Progreso de la Cola",
+			"description": "Progreso general de contactos en todas las oleadas.",
+			"contacted": "{{contacted}} / {{total}} contactos",
+			"totalTasks": "{{count}} tareas totales"
+		},
 		"columns": {
 			"order": "#",
 			"contactName": "Contacto",
@@ -654,6 +660,7 @@
 			"success": "Tareas reordenadas con éxito ({{count}} actualizadas)",
 			"error": "Error al reordenar las tareas",
 			"noRules": "Agrega al menos una regla de ordenamiento para reordenar las tareas.",
+			"latestWaveNote": "Se aplica solo a la última oleada",
 			"staticFields": "Campos de Contacto",
 			"dynamicFields": "Campos Personalizados"
 		},

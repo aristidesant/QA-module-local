@@ -13,8 +13,15 @@ export const outboundTaskKeys = {
 	all: ['outbound-call-tasks'] as const,
 	list: (params: GetOutboundCallTasksParams) =>
 		['outbound-call-tasks', 'list', params] as const,
-	sortFields: (campaignId: number) =>
-		['outbound-call-tasks', 'sort-fields', campaignId] as const,
+	sortFields: (campaignId: number, contactGroupId?: number) =>
+		['outbound-call-tasks', 'sort-fields', campaignId, contactGroupId] as const,
+	queueProgress: (contactGroupId: number, campaignId: number) =>
+		[
+			'outbound-call-tasks',
+			'queue-progress',
+			contactGroupId,
+			campaignId,
+		] as const,
 };
 
 export const useGetOutboundCallTasks = (
@@ -30,12 +37,26 @@ export const useGetOutboundCallTasks = (
 
 export const useGetOutboundTaskSortFields = (
 	campaignId: number,
+	contactGroupId?: number,
 	enabled = true
 ) => {
 	return useQuery({
-		queryKey: outboundTaskKeys.sortFields(campaignId),
-		queryFn: () => outboundApi().getSortFields(campaignId),
+		queryKey: outboundTaskKeys.sortFields(campaignId, contactGroupId),
+		queryFn: () => outboundApi().getSortFields(campaignId, contactGroupId),
 		enabled: enabled && campaignId > 0,
+	});
+};
+
+export const useGetQueueProgress = (
+	contactGroupId: number,
+	campaignId: number,
+	enabled = true
+) => {
+	return useQuery({
+		queryKey: outboundTaskKeys.queueProgress(contactGroupId, campaignId),
+		queryFn: () => outboundApi().getQueueProgress(contactGroupId, campaignId),
+		enabled: enabled && contactGroupId > 0 && campaignId > 0,
+		refetchInterval: 30_000,
 	});
 };
 

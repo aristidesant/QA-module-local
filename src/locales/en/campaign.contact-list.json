@@ -594,6 +594,12 @@
 		"wave": "Wave {{number}}",
 		"waveTaskCount": "{{count}} task",
 		"waveTaskCount_other": "{{count}} tasks",
+		"progress": {
+			"title": "Queue Progress",
+			"description": "Overall contact progress across all waves.",
+			"contacted": "{{contacted}} / {{total}} contacts",
+			"totalTasks": "{{count}} total tasks"
+		},
 		"columns": {
 			"order": "#",
 			"contactName": "Contact",
@@ -654,6 +660,7 @@
 			"success": "Tasks reordered successfully ({{count}} updated)",
 			"error": "Failed to reorder tasks",
 			"noRules": "Add at least one sort rule to reorder tasks.",
+			"latestWaveNote": "Applies to the latest wave only",
 			"staticFields": "Contact Fields",
 			"dynamicFields": "Custom Fields"
 		},
