@@ -2093,8 +2093,7 @@ export const buildPreviewModelFromResponse = (
 
 		return {
 			kind: 'kpi',
-			title:
-				fallbackPreview.kind === 'empty' ? widget.title : fallbackPreview.title,
+			title: fallbackPreview.title,
 			subtitle:
 				fallbackPreview.kind === 'kpi' || fallbackPreview.kind === 'grouped'
 					? fallbackPreview.subtitle
@@ -2120,10 +2119,7 @@ export const buildPreviewModelFromResponse = (
 
 		return {
 			kind: 'line_chart',
-			title:
-				fallbackPreview.kind === 'line_chart'
-					? fallbackPreview.title
-					: widget.title,
+			title: fallbackPreview.title,
 			subtitle:
 				fallbackPreview.kind === 'line_chart'
 					? fallbackPreview.subtitle
@@ -2159,8 +2155,7 @@ export const buildPreviewModelFromResponse = (
 
 	return {
 		kind: 'grouped',
-		title:
-			fallbackPreview.kind === 'grouped' ? fallbackPreview.title : widget.title,
+		title: fallbackPreview.title,
 		subtitle:
 			fallbackPreview.kind === 'grouped' ? fallbackPreview.subtitle : undefined,
 		description:

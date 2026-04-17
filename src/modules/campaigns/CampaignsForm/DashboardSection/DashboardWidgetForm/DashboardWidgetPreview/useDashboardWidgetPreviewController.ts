@@ -17,6 +17,7 @@ import {
 	hasInvalidRuntimeFilterRows,
 	isWidgetPreviewReady,
 	supportsGroupedWidget,
+	supportsTimeSeriesWidget,
 } from '../DashboardWidgetForm.helpers';
 
 type UseDashboardWidgetPreviewControllerParams = {
@@ -91,7 +92,16 @@ const useDashboardWidgetPreviewController = ({
 			return widgetType !== 'KPI';
 		}
 
-		return !supportsGroupedWidget(widgetType);
+		if (widget.result.kind === 'time_series') {
+			return !supportsTimeSeriesWidget(widgetType);
+		}
+
+		if (widget.result.kind === 'grouped') {
+			return !supportsGroupedWidget(widgetType);
+		}
+
+		// Unknown result kind — treat as mismatch to avoid rendering garbage
+		return true;
 	}, [widgetType, widgetPreviewQuery.data]);
 	const preview = useMemo(() => {
 		if (!widgetPreviewQuery.data || previewShapeMismatch) {

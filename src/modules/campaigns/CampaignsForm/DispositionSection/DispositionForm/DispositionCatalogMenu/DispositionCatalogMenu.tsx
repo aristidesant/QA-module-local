@@ -1,15 +1,34 @@
 import { useMemo, useEffect, useCallback, useState } from 'react';
 import styles from './DispositionCatalogMenu.module.css';
 import { useDispositionBuilderStore } from '../../dispositionStore';
-import { Select, Divider, Stack, Text, Box } from '@mantine/core';
+import {
+	Select,
+	Divider,
+	Stack,
+	Text,
+	Box,
+	Button,
+	Center,
+	Modal,
+	Alert,
+	ThemeIcon,
+} from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { useDispositionCatalogs } from '~/queries/dispositionCatalogQueries';
+import {
+	useDispositionCatalogs,
+	useCreateDispositionCatalog,
+} from '~/queries/dispositionCatalogQueries';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import DispositionCatalogMenuItem from './DispositionCatalogMenuItem';
 import { useCampaignsStore } from '~/stores/campaignsStore';
+import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import { findNodeById, getDirectHierarchyTree } from '~/utils/dragDropUtils';
 import { handleAddGroupWithChildren } from './dispositionCatalogHelper';
 import { useAvailableDispositionNodes } from '~/hooks/useAvailableDispositionNodes';
+import DispositionCatalogForm from '~/modules/outcomes/components/DispositionCatalogForm/DispositionCatalogForm';
+import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
+import { IconPlus, IconInfoCircle, IconFolder } from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
 
 const DispositionCatalogMenu: React.FC = () => {
 	const { getMovedNodeIds, selectedCatalog, setSelectedCatalog } =
@@ -18,13 +37,22 @@ const DispositionCatalogMenu: React.FC = () => {
 		useDispositionBuilderStore((state) => state);
 	const movedNodeIds = getMovedNodeIds();
 	const campaign = useCampaignsStore((state) => state.selectedCampaign);
+	const wizardCampaignType = useCampaignWizardStore(
+		(state) => state.campaignType
+	);
 
 	// Track collapsed state for parent nodes (collapsed by default)
 	const [collapsedNodes, setCollapsedNodes] = useState<Set<number>>(new Set());
+	const [createCatalogModalOpened, setCreateCatalogModalOpened] =
+		useState(false);
+
+	const campaignType = campaign?.type ?? wizardCampaignType ?? 'OUTBOUND';
 
 	const { data: catalogs = [], isLoading } = useDispositionCatalogs({
-		type: campaign?.type ?? 'OUTBOUND',
+		type: campaignType,
 	});
+
+	const createCatalogMutation = useCreateDispositionCatalog();
 
 	// Filter to show only active catalogs
 	const activeCatalogs = useMemo(() => {
@@ -166,6 +194,83 @@ const DispositionCatalogMenu: React.FC = () => {
 	]);
 	const hasNodesInFlow = (flowJson?.dispositionNodes?.length ?? 0) > 0;
 
+	const handleCatalogCreated = (catalog: DispositionCatalogModel) => {
+		setSelectedCatalog(catalog);
+		setCreateCatalogModalOpened(false);
+		notifications.show({
+			title: t('disposition.catalog.createSuccess'),
+			message: t('disposition.catalog.createSuccessMessage', {
+				name: catalog.name,
+			}),
+			color: 'green',
+		});
+	};
+
+	const handleCatalogCreateError = () => {
+		notifications.show({
+			title: t('common:status.error'),
+			message: t('disposition.catalog.createError'),
+			color: 'red',
+		});
+	};
+
+	// Show empty state when no catalogs exist
+	if (!isLoading && activeCatalogs.length === 0) {
+		return (
+			<div className={styles.container}>
+				<Center py='lg'>
+					<Stack align='center' gap='sm'>
+						<ThemeIcon variant='light' color='blue' size='lg'>
+							<IconFolder size={22} />
+						</ThemeIcon>
+						<Text fw={500} size='sm' ta='center'>
+							{t('disposition.catalog.noCatalogsTitle')}
+						</Text>
+						<Alert
+							icon={<IconInfoCircle size={16} />}
+							variant='light'
+							color='blue'
+							p='xs'
+						>
+							<Text size='xs'>
+								{t('disposition.catalog.campaignTypeNotice', {
+									type:
+										campaignType === 'INBOUND'
+											? t('disposition.catalog.typeInbound')
+											: t('disposition.catalog.typeOutbound'),
+								})}
+							</Text>
+						</Alert>
+						<Button
+							leftSection={<IconPlus size={14} />}
+							size='xs'
+							onClick={() => setCreateCatalogModalOpened(true)}
+						>
+							{t('disposition.catalog.createCatalog')}
+						</Button>
+					</Stack>
+				</Center>
+
+				<Modal
+					opened={createCatalogModalOpened}
+					onClose={() => setCreateCatalogModalOpened(false)}
+					title={t('disposition.catalog.createCatalog')}
+					centered
+					size='md'
+				>
+					<DispositionCatalogForm
+						mode='create'
+						initialValues={{ type: campaignType }}
+						onSubmit={(values) => createCatalogMutation.mutateAsync(values)}
+						onSuccess={handleCatalogCreated}
+						onError={handleCatalogCreateError}
+						loading={createCatalogMutation.isPending}
+					/>
+				</Modal>
+			</div>
+		);
+	}
+
 	return (
 		<div className={styles.container}>
 			<Select
@@ -188,6 +293,18 @@ const DispositionCatalogMenu: React.FC = () => {
 				}
 				size='xs'
 			/>
+			{!hasNodesInFlow && (
+				<Button
+					variant='subtle'
+					size='xs'
+					leftSection={<IconPlus size={14} />}
+					onClick={() => setCreateCatalogModalOpened(true)}
+					mt='xs'
+					fullWidth
+				>
+					{t('disposition.catalog.createCatalog')}
+				</Button>
+			)}
 			<Divider my='xs' />
 			<Box className={styles.menuListWrapper}>
 				{visibleNodes.length === 0 ? (
@@ -222,6 +339,23 @@ const DispositionCatalogMenu: React.FC = () => {
 					</Stack>
 				)}
 			</Box>
+
+			<Modal
+				opened={createCatalogModalOpened}
+				onClose={() => setCreateCatalogModalOpened(false)}
+				title={t('disposition.catalog.createCatalog')}
+				centered
+				size='md'
+			>
+				<DispositionCatalogForm
+					mode='create'
+					initialValues={{ type: campaignType }}
+					onSubmit={(values) => createCatalogMutation.mutateAsync(values)}
+					onSuccess={handleCatalogCreated}
+					onError={handleCatalogCreateError}
+					loading={createCatalogMutation.isPending}
+				/>
+			</Modal>
 		</div>
 	);
 };
