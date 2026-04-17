@@ -605,9 +605,15 @@
 			"contactName": "Contact",
 			"phone": "Phone",
 			"status": "Status",
+			"contactResult": "Contact Result",
+			"dispositionName": "Disposition",
+			"callStatus": "Call Status",
+			"isAbandoned": "Abandoned",
+			"doNotCall": "DNC",
 			"wave": "Wave",
 			"scheduledAt": "Scheduled",
-			"actions": "Actions"
+			"actions": "Actions",
+			"toggleColumns": "Toggle Columns"
 		},
 		"status": {
 			"PENDING": "Pending",
@@ -669,6 +675,7 @@
 			"allStatuses": "All Statuses",
 			"wave": "Wave",
 			"allWaves": "All Waves"
-		}
+		},
+		"refresh": "Refresh queue data"
 	}
 }

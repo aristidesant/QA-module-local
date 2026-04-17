@@ -1,12 +1,15 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Accordion, Badge, Group, Select, Stack, Text } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import SectionCard from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
+import ReloadAction from '../ContactListActions/ReloadAction';
 import {
 	useGetOutboundCallTasks,
 	useGetQueueProgress,
+	outboundTaskKeys,
 } from '~/queries/outboundQueries';
 import {
 	OutboundCallTaskStatus,
@@ -27,6 +30,7 @@ const STATUS_OPTIONS = Object.values(OutboundCallTaskStatus);
 
 const QueueTab = ({ contactGroupId, campaignId }: QueueTabProps) => {
 	const { t } = useTranslation('campaign.contact-list');
+	const queryClient = useQueryClient();
 	const [statusFilter, setStatusFilter] = useState<string | null>(null);
 	const [waveFilter, setWaveFilter] = useState<string | null>(null);
 
@@ -92,6 +96,11 @@ const QueueTab = ({ contactGroupId, campaignId }: QueueTabProps) => {
 		],
 		[availableWaves, t]
 	);
+
+	const handleRefresh = useCallback(() => {
+		progressQuery.refetch();
+		queryClient.invalidateQueries({ queryKey: outboundTaskKeys.all });
+	}, [progressQuery, queryClient]);
 
 	// Determine which waves to display
 	const displayWaves = useMemo(() => {
@@ -163,6 +172,10 @@ const QueueTab = ({ contactGroupId, campaignId }: QueueTabProps) => {
 							value={waveFilter ?? ''}
 							onChange={(v) => setWaveFilter(v || null)}
 							w={180}
+						/>
+						<ReloadAction
+							tooltip={t('queue.refresh')}
+							onClick={handleRefresh}
 						/>
 					</Group>
 
