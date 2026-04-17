@@ -592,14 +592,25 @@ const WorkflowCanvasInner = ({
 					.filter((n) => n.id !== groupNodeId)
 					.map((node) => {
 						if (node.parentId !== groupNodeId) return node;
+						// Convert parent-relative position to absolute canvas position
+						const absolutePos = {
+							x: node.position.x + groupPos.x,
+							y: node.position.y + groupPos.y,
+						};
 						return {
 							...node,
 							parentId: undefined,
 							extent: undefined,
-							position: {
-								x: node.position.x + groupPos.x,
-								y: node.position.y + groupPos.y,
+							position: absolutePos,
+							// Also update data.position so emission doesn't revert to
+							// the old parent-relative coords on the next hydration cycle
+							data: {
+								...(node.data as Record<string, unknown>),
+								position: absolutePos,
 							},
+							// Clear cached measurements so React Flow re-computes layout
+							measured: undefined,
+							dragging: false,
 						};
 					});
 			});
@@ -842,25 +853,35 @@ const WorkflowCanvasInner = ({
 						? groupNode.style.width
 						: (groupNode.measured?.width ?? 400);
 
+				const clonedGroupPos = {
+					x: groupNode.position.x + groupWidth + CLONE_GAP,
+					y: groupNode.position.y,
+				};
+
+				// Differentiate the cloned group label
+				const originalData = groupNode.data as Record<string, unknown>;
+				const originalLabel =
+					typeof originalData.label === 'string' && originalData.label
+						? originalData.label
+						: t('form.workflow.group.defaultLabel');
+				const clonedLabel = `${originalLabel} (${t('form.workflow.group.copy', { defaultValue: 'Copy' })})`;
+
 				const clonedGroup: Node = {
 					...groupNode,
 					id: newGroupId,
-					position: {
-						x: groupNode.position.x + groupWidth + CLONE_GAP,
-						y: groupNode.position.y,
-					},
+					position: { ...clonedGroupPos },
 					data: {
-						...(groupNode.data as Record<string, unknown>),
-						position: {
-							x: groupNode.position.x + groupWidth + CLONE_GAP,
-							y: groupNode.position.y,
-						},
+						...originalData,
+						label: clonedLabel,
+						position: { ...clonedGroupPos },
 					},
 					selected: false,
 					style: groupNode.style ? { ...groupNode.style } : undefined,
+					// Clear measured so React Flow re-measures the clone independently
+					measured: undefined,
 				};
 
-				// Clone all children, re-mapping parentId to new group
+				// Clone all children with fully unique IDs and independent data
 				const children = currentNodes.filter((n) => n.parentId === groupNodeId);
 				const clonedChildren: Node[] = children.map((child) => {
 					const childCopyId = `${child.type ?? 'node'}-${generateUUIDv4()}`;
@@ -873,8 +894,11 @@ const WorkflowCanvasInner = ({
 						id: childCopyId,
 						parentId: newGroupId,
 						extent: 'parent' as const,
-						position: { ...child.position },
+						position: { x: child.position.x, y: child.position.y },
 						selected: false,
+						// Clear measured/dragging so React Flow treats clone as independent
+						measured: undefined,
+						dragging: false,
 						data: {
 							...childData,
 							edgeOrder: [],
@@ -891,7 +915,7 @@ const WorkflowCanvasInner = ({
 			// Do NOT call onNodeGroupsChange here — doing so with childNodeIds: []
 			// races with hydration and strips parentId from cloned children.
 		},
-		[setNodes]
+		[setNodes, t]
 	);
 
 	const actions = useMemo(
@@ -924,10 +948,42 @@ const WorkflowCanvasInner = ({
 				setModalOpened(false);
 				setSelectedEdgeId(null);
 
-				// When deleting a group, release children first so they aren't orphaned
+				// When deleting a group, batch-remove the group AND all its children
+				// in a single state update to avoid stale-ref issues.
 				const targetNode = nodesRef.current.find((n) => n.id === nodeId);
 				if (targetNode?.type === WORKFLOW_NODE_TYPES.GROUP) {
-					handleUngroupNodes(nodeId);
+					const idsToRemove = new Set<string>([nodeId]);
+					nodesRef.current
+						.filter((n) => n.parentId === nodeId)
+						.forEach((n) => idsToRemove.add(n.id));
+
+					const removedEdgeIds = new Set(
+						edgesRef.current
+							.filter(
+								(edge) =>
+									idsToRemove.has(edge.source) || idsToRemove.has(edge.target)
+							)
+							.map((edge) => edge.id)
+					);
+
+					setEdges((cur) => cur.filter((edge) => !removedEdgeIds.has(edge.id)));
+					setNodes((cur) =>
+						cur
+							.filter((n) => !idsToRemove.has(n.id))
+							.map((n) => {
+								const data = n.data as { edgeOrder?: string[] };
+								const edgeOrder = data.edgeOrder ?? [];
+								const cleaned = edgeOrder.filter(
+									(eid) => !removedEdgeIds.has(eid)
+								);
+								if (cleaned.length === edgeOrder.length) return n;
+								return {
+									...n,
+									data: { ...data, edgeOrder: cleaned },
+								};
+							})
+					);
+					return;
 				}
 
 				handleDeleteNode(nodeId);
@@ -962,6 +1018,7 @@ const WorkflowCanvasInner = ({
 		}),
 		[
 			closeEdgeActions,
+			edgesRef,
 			handleAddNode,
 			handleAddNodeWithType,
 			handleAddNodeWithVariant,
@@ -975,6 +1032,9 @@ const WorkflowCanvasInner = ({
 			handleCloneGroup,
 			handleAddNewNodeToGroup,
 			handleAddExistingNodeToGroup,
+			nodesRef,
+			setEdges,
+			setNodes,
 		]
 	);
 

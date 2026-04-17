@@ -58,6 +58,48 @@ const WorkflowSection = () => {
 
 	const handleWorkflowChange = (updatedWorkflow: AgentWorkflow) => {
 		const currentConfig = form.values.agentConfig ?? {};
+		const prevNodes = currentConfig.workflow?.nodes ?? {};
+		const nextNodes = updatedWorkflow.nodes ?? {};
+
+		// Sync nodeStyles / nodeGroups labels when a node is renamed
+		const currentNodeStyles = form.values.nodeStyles;
+		const currentNodeGroups = form.values.nodeGroups;
+		let stylesPatched = false;
+		let groupsPatched = false;
+		const patchedStyles = currentNodeStyles
+			? { ...currentNodeStyles }
+			: undefined;
+		const patchedGroups = currentNodeGroups
+			? { ...currentNodeGroups }
+			: undefined;
+
+		for (const nodeId of Object.keys(nextNodes)) {
+			const prevLabel = prevNodes[nodeId]?.label;
+			const nextLabel = nextNodes[nodeId]?.label;
+			if (prevLabel !== nextLabel && nextLabel !== undefined) {
+				if (patchedStyles?.[nodeId]) {
+					patchedStyles[nodeId] = {
+						...patchedStyles[nodeId],
+						nodeLabel: nextLabel,
+					};
+					stylesPatched = true;
+				}
+				if (patchedGroups?.[nodeId]) {
+					patchedGroups[nodeId] = {
+						...patchedGroups[nodeId],
+						label: nextLabel,
+					};
+					groupsPatched = true;
+				}
+			}
+		}
+
+		if (stylesPatched && patchedStyles) {
+			form.setFieldValue('nodeStyles', patchedStyles);
+		}
+		if (groupsPatched && patchedGroups) {
+			form.setFieldValue('nodeGroups', patchedGroups);
+		}
 
 		form.setFieldValue('agentConfig', {
 			...currentConfig,

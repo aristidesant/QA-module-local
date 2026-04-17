@@ -1,7 +1,7 @@
 .surface {
 	width: min(960px, 100%);
-	background: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-body);
+	border: 1px solid var(--mantine-color-default-border);
 	border-radius: var(--mantine-radius-lg);
 	padding: var(--mantine-spacing-xl);
 	display: flex;
@@ -19,12 +19,12 @@
 .title {
 	font-size: var(--mantine-font-size-xl);
 	font-weight: 600;
-	color: var(--mantine-color-gray-9);
+	color: var(--mantine-color-text);
 	margin-top: var(--mantine-spacing-sm);
 }
 
 .description {
-	color: var(--mantine-color-gray-6);
+	color: var(--mantine-color-dimmed);
 	max-width: 56ch;
 	line-height: 1.4;
 	margin-top: var(--mantine-spacing-xxs);
@@ -42,13 +42,13 @@
 
 .summaryCard,
 .nextCard {
-	background: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-default-hover);
+	border: 1px solid var(--mantine-color-default-border);
 }
 
 .cardTitle {
 	margin-bottom: var(--mantine-spacing-sm);
-	color: var(--mantine-color-gray-8);
+	color: var(--mantine-color-text);
 }
 
 .summaryList {
@@ -62,9 +62,9 @@
 	flex-direction: column;
 	gap: var(--mantine-spacing-xxs);
 	padding: var(--mantine-spacing-sm);
-	border: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid var(--mantine-color-default-border);
 	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-white);
+	background: var(--mantine-color-body);
 }
 
 .nextCard {
@@ -79,7 +79,7 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-xs);
-	color: var(--mantine-color-gray-7);
+	color: var(--mantine-color-text);
 }
 
 .nextList li {
