@@ -78,13 +78,41 @@ export interface SortRule {
 export interface ReorderTasksPayload {
 	contactGroupId: number;
 	campaignId: number;
-	waveNumber?: number;
 	sortRules: SortRule[];
 }
 
 export interface ReorderTasksResult {
 	updatedCount: number;
 	message: string;
+}
+
+// --- Queue Progress Types ---
+
+export interface StatusCount {
+	status: string;
+	count: number;
+}
+
+export interface WaveProgress {
+	waveNumber: number;
+	totalTasks: number;
+	tasksByStatus: StatusCount[];
+	totalContacts: number;
+	contactedContacts: number;
+	contactProgress: number;
+}
+
+export interface GlobalProgress {
+	totalTasks: number;
+	tasksByStatus: StatusCount[];
+	totalContacts: number;
+	contactedContacts: number;
+	contactProgress: number;
+}
+
+export interface QueueProgressResponse {
+	global: GlobalProgress;
+	waves: WaveProgress[];
 }
 
 export type BulkTaskAction = 'pause' | 'resume' | 'cancel' | 'retry';
