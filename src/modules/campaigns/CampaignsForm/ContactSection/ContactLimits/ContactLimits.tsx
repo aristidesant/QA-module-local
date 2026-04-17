@@ -286,7 +286,11 @@ export const ContactLimits = ({
 					groupMaxCallPerGroup: 1,
 					humanEquivalent: humanEquivalent,
 					schedulerId: activeSchedule?.id || 0,
-					schemaId: selectedSchemaId,
+					...(fieldMapping.dynamicColumns &&
+					Object.keys(fieldMapping.dynamicColumns).length > 0 &&
+					selectedSchemaId > 0
+						? { schemaId: selectedSchemaId }
+						: {}),
 					maxWaves,
 					waveExecutionDelaySeconds,
 				});
