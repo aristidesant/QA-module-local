@@ -29,7 +29,7 @@ export interface ProcessContactGroupFileRequest {
 	groupMaxCallPerGroup: number;
 	humanEquivalent: number;
 	schedulerId: number;
-	schemaId: number;
+	schemaId?: number;
 	maxWaves: number;
 	waveExecutionDelaySeconds: number;
 }
