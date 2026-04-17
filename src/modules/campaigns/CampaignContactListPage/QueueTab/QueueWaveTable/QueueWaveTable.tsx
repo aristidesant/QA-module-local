@@ -1,6 +1,16 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Button, Group, Text } from '@mantine/core';
 import {
+	ActionIcon,
+	Button,
+	Checkbox,
+	Group,
+	Popover,
+	Stack,
+	Text,
+	Tooltip,
+} from '@mantine/core';
+import {
+	IconColumns,
 	IconPlayerPause,
 	IconPlayerPlay,
 	IconX,
@@ -41,6 +51,30 @@ const QueueWaveTable = ({
 	const { t } = useTranslation('campaign.contact-list');
 	const pagination = usePagination({ initialItemsPerPage: 20 });
 	const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+	const [columnVisibility, setColumnVisibility] = useState<
+		Record<string, boolean>
+	>({
+		contactResult: true,
+		dispositionName: true,
+		callStatus: false,
+		isAbandoned: false,
+		doNotCall: false,
+	});
+
+	const toggleableColumns = useMemo(
+		() => [
+			{ id: 'contactResult', label: t('queue.columns.contactResult') },
+			{ id: 'dispositionName', label: t('queue.columns.dispositionName') },
+			{ id: 'callStatus', label: t('queue.columns.callStatus') },
+			{ id: 'isAbandoned', label: t('queue.columns.isAbandoned') },
+			{ id: 'doNotCall', label: t('queue.columns.doNotCall') },
+		],
+		[t]
+	);
+
+	const handleToggleColumn = useCallback((columnId: string) => {
+		setColumnVisibility((prev) => ({ ...prev, [columnId]: !prev[columnId] }));
+	}, []);
 
 	const pauseMutation = usePauseOutboundTask();
 	const resumeMutation = useResumeOutboundTask();
@@ -240,6 +274,18 @@ const QueueWaveTable = ({
 		allTaskIds,
 	});
 
+	const visibleColumns = useMemo(
+		() =>
+			columns.filter((col) => {
+				const colId = col.id ?? (col as { accessorKey?: string }).accessorKey;
+				if (colId && colId in columnVisibility) {
+					return columnVisibility[colId];
+				}
+				return true;
+			}),
+		[columns, columnVisibility]
+	);
+
 	const handleItemsPerPageChange = useCallback(
 		(value: string | null) => {
 			if (value) pagination.setItemsPerPage(parseInt(value, 10));
@@ -299,9 +345,34 @@ const QueueWaveTable = ({
 				</Group>
 			)}
 
+			<Group justify='flex-end' mb='xs'>
+				<Popover width={220} position='bottom-end' withArrow shadow='md'>
+					<Popover.Target>
+						<Tooltip label={t('queue.columns.toggleColumns')} withArrow>
+							<ActionIcon variant='light' color='gray' size='lg'>
+								<IconColumns size={16} />
+							</ActionIcon>
+						</Tooltip>
+					</Popover.Target>
+					<Popover.Dropdown>
+						<Stack gap='xs'>
+							{toggleableColumns.map((col) => (
+								<Checkbox
+									key={col.id}
+									label={col.label}
+									size='xs'
+									checked={columnVisibility[col.id] ?? true}
+									onChange={() => handleToggleColumn(col.id)}
+								/>
+							))}
+						</Stack>
+					</Popover.Dropdown>
+				</Popover>
+			</Group>
+
 			<BaseTable
 				data={tasks}
-				columns={columns}
+				columns={visibleColumns}
 				isLoading={tasksQuery.isLoading}
 				emptyMessage={t('queue.emptyState')}
 				density='compact'
