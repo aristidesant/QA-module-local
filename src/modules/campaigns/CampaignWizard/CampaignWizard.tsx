@@ -47,6 +47,7 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 				classNames={{
 					root: styles.stepperRoot,
 					steps: styles.stepperSteps,
+					stepWrapper: styles.stepWrapper,
 					stepBody: styles.stepBody,
 					stepLabel: styles.stepLabel,
 					stepDescription: styles.stepDescription,

@@ -19,8 +19,23 @@
 
 [data-mantine-color-scheme='dark'] .stepIcon {
 	background: var(--mantine-color-dark-6);
-	color: var(--mantine-color-blue-4);
+	color: var(--mantine-color-dark-2);
 	border-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .stepIcon[data-completed] {
+	background: var(--mantine-color-green-7);
+	color: var(--mantine-color-white);
+	border-color: var(--mantine-color-green-7);
+}
+
+[data-mantine-color-scheme='dark'] .stepIcon[data-progress],
+[data-mantine-color-scheme='dark'] .stepIcon[data-progress][data-completed] {
+	background: var(--mantine-color-blue-6);
+	color: var(--mantine-color-white);
+	border-color: var(--mantine-color-blue-6);
+	box-shadow: 0 0 0 3px
+		color-mix(in srgb, var(--mantine-color-blue-6) 30%, transparent);
 }
 
 [data-mantine-color-scheme='dark'] .stepLabel {
@@ -33,6 +48,10 @@
 
 [data-mantine-color-scheme='dark'] .stepSeparator {
 	background: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .stepSeparator[data-active] {
+	background: var(--mantine-color-green-8);
 }
 
 [data-mantine-color-scheme='dark'] .stepContent {
@@ -130,30 +149,70 @@
 }
 
 .stepperSteps {
-	gap: var(--mantine-spacing-md);
+	gap: var(--mantine-spacing-xs);
+}
+
+.stepWrapper {
+	position: relative;
 }
 
 /* Default (pending/future) step icon style */
 .stepIcon {
-	background: var(--mantine-color-blue-0);
-	color: var(--mantine-color-blue-7);
-	border: 1px solid var(--mantine-color-blue-2);
-	width: 32px;
-	height: 32px;
+	background: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-5);
+	border: 1.5px solid var(--mantine-color-gray-3);
+	width: 34px;
+	height: 34px;
+	min-width: 34px;
+	min-height: 34px;
+	position: relative;
+	transition: all 0.2s ease;
 }
 
-/* Active/in-progress step icon */
-.stepIcon[data-progress] {
-	background: var(--mantine-color-blue-6);
-	color: var(--mantine-color-white);
-	border-color: var(--mantine-color-blue-6);
+.stepIcon span {
+	display: flex;
 }
 
-/* Completed step icon — let Mantine's default filled style show */
+/* Hide the original icon when completed so only the CSS checkmark shows */
+.stepIcon[data-completed] > span {
+	opacity: 0;
+}
+
+/*
+ * Pure CSS checkmark: Mantine's Transition component can fail to render the
+ * completedIcon when React Query cache invalidation interrupts the rAF-based
+ * animation chain (the element gets fully unmounted). We bypass the Transition
+ * entirely by drawing the checkmark with a CSS ::after pseudo-element.
+ */
+.stepIcon[data-completed]::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 12l5 5l10 -10'/%3E%3C/svg%3E")
+		no-repeat center center;
+}
+
+/* Hide Mantine's Transition-based completed icon to avoid double rendering */
+.stepIcon :global(.mantine-Stepper-stepCompletedIcon) {
+	display: none !important;
+}
+
+/* Completed step icon — green checkmark for clear done feedback */
 .stepIcon[data-completed] {
+	background: var(--mantine-color-green-6);
+	color: var(--mantine-color-white);
+	border-color: var(--mantine-color-green-6);
+}
+
+/* Active/in-progress step icon — must come AFTER [data-completed] to win */
+.stepIcon[data-progress],
+.stepIcon[data-progress][data-completed] {
 	background: var(--mantine-color-blue-6);
 	color: var(--mantine-color-white);
 	border-color: var(--mantine-color-blue-6);
+	box-shadow: 0 0 0 3px
+		color-mix(in srgb, var(--mantine-color-blue-6) 25%, transparent);
 }
 
 .stepLabel {
@@ -172,7 +231,18 @@
 }
 
 .stepSeparator {
-	background: var(--mantine-color-gray-2);
+	background: var(--mantine-color-gray-3);
+	height: 2px;
+	transition: background 0.2s ease;
+	margin-left: var(--mantine-spacing-xs);
+	margin-right: var(--mantine-spacing-xs);
+	/* Pin the separator to the vertical center of the 34px icon */
+	align-self: flex-start;
+	margin-top: 16px;
+}
+
+.stepSeparator[data-active] {
+	background: var(--mantine-color-green-5);
 }
 
 .stepContent {
