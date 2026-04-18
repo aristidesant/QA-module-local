@@ -41,6 +41,7 @@
 
 .widgetDescription,
 .widgetType,
+.widgetAccessText,
 .emptyStateDescription {
 	color: var(--mantine-color-gray-6);
 }
@@ -48,6 +49,7 @@
 [data-mantine-color-scheme='dark'] .panelDescription,
 [data-mantine-color-scheme='dark'] .widgetDescription,
 [data-mantine-color-scheme='dark'] .widgetType,
+[data-mantine-color-scheme='dark'] .widgetAccessText,
 [data-mantine-color-scheme='dark'] .emptyStateDescription {
 	color: var(--mantine-color-dark-2);
 }

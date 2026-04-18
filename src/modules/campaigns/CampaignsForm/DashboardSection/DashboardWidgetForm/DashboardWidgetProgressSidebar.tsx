@@ -21,6 +21,7 @@ const STEP_ORDER: ProgressStep['key'][] = [
 	'widgetType',
 	'widgetDetails',
 	'visibilityScope',
+	'widgetRoles',
 	'advanced',
 ];
 
@@ -41,6 +42,7 @@ const DashboardWidgetProgressSidebar = () => {
 		widgetType: Boolean(values.widgetType),
 		widgetDetails: Boolean(values.title?.trim()),
 		visibilityScope: Boolean(values.visibilityScope),
+		widgetRoles: values.roleIds.length > 0,
 		advanced: advancedSettingsCount > 0,
 	};
 
@@ -51,6 +53,7 @@ const DashboardWidgetProgressSidebar = () => {
 		widgetType: t('dashboardBuilder.progress.widgetType'),
 		widgetDetails: t('dashboardBuilder.progress.widgetDetails'),
 		visibilityScope: t('dashboardBuilder.progress.visibilityScope'),
+		widgetRoles: t('dashboardBuilder.progress.widgetRoles'),
 		advanced: t('dashboardBuilder.progress.advanced'),
 	};
 

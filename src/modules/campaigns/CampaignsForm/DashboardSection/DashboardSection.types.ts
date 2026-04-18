@@ -45,6 +45,7 @@ export type WidgetFormValues = {
 	viewValueFormat: string | null;
 	viewLegend: boolean;
 	visibilityScope: DashboardWidgetVisibilityScope;
+	roleIds: number[];
 	width: number;
 	height: number;
 	enabled: boolean;
@@ -169,6 +170,7 @@ export type WidgetGuidedState = {
 	sourceLabel: string;
 	aggregationLabel: string;
 	visibilityScopeLabel: string;
+	rolesSummaryLabel: string;
 	compatibility: WidgetCompatibilityState;
 	preview: WidgetPreviewModel;
 	filterKeySuggestions: string[];
