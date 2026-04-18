@@ -237,6 +237,34 @@ const WidgetListPanel = () => {
 				),
 			},
 			{
+				id: 'access',
+				header: t('dashboardBuilder.widget.access'),
+				cell: ({ row }) => {
+					const roles = row.original.roles ?? [];
+
+					if (roles.length === 0) {
+						return (
+							<Badge variant='light' color='teal' size='xs' radius='sm'>
+								{t('dashboardBuilder.widget.publicBadge')}
+							</Badge>
+						);
+					}
+
+					return (
+						<Stack gap={2}>
+							<Badge variant='light' color='violet' size='xs' radius='sm'>
+								{t('dashboardBuilder.widget.restrictedRolesBadge', {
+									count: roles.length,
+								})}
+							</Badge>
+							<Text size='xs' className={styles.widgetAccessText} truncate>
+								{roles.map((role) => role.name).join(', ')}
+							</Text>
+						</Stack>
+					);
+				},
+			},
+			{
 				id: 'status',
 				header: t('dashboardBuilder.widget.status'),
 				meta: {

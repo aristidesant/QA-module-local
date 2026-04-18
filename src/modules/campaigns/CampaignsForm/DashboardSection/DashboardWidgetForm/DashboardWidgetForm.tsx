@@ -11,6 +11,7 @@ import DashboardWidgetTypeSection from './DashboardWidgetTypeSection';
 import DashboardWidgetVisibilityScopeSection from './DashboardWidgetVisibilityScopeSection';
 import DashboardWidgetPreviewPanel from './DashboardWidgetPreviewPanel';
 import DashboardWidgetProgressSidebar from './DashboardWidgetProgressSidebar';
+import DashboardWidgetRoleAccessSection from './DashboardWidgetRoleAccessSection';
 import {
 	DashboardWidgetFormProvider,
 	DashboardWidgetFormStateProvider,
@@ -91,6 +92,7 @@ const DashboardWidgetForm = (props: DashboardWidgetFormProps) => {
 								<DashboardWidgetTypeSection />
 								<DashboardWidgetBasicsSection />
 								<DashboardWidgetVisibilityScopeSection />
+								<DashboardWidgetRoleAccessSection />
 								<DashboardWidgetAdvancedSection />
 							</div>
 
