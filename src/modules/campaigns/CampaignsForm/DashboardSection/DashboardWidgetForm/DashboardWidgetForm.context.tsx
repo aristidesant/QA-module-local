@@ -48,6 +48,7 @@ export type DashboardWidgetFormState = {
 	parsedMetricColumns: MetricColumnsConfig;
 	isCampaignLoading: boolean;
 	isMetricColumnsLoading: boolean;
+	isRolesLoading: boolean;
 	conversationFieldOptions: WidgetMetricOption[];
 	dispositionFieldOptions: WidgetMetricOption[];
 	conversationFieldValues: string[];
@@ -62,6 +63,7 @@ export type DashboardWidgetFormState = {
 	filterValueTypeOptions: WidgetMetricOption[];
 	viewValueFormatOptions: WidgetMetricOption[];
 	compareWithOptions: WidgetMetricOption[];
+	roleOptions: WidgetMetricOption[];
 	sizePresetOptions: { value: string; label: string; disabled?: boolean }[];
 	widgetTypeControlOptions: {
 		value: string;
@@ -120,6 +122,7 @@ export type DashboardWidgetFormState = {
 		) => void;
 		handleSizePresetChange: (value: string | null) => void;
 		handleVisibilityScopeChange: (value: string | null) => void;
+		handleRoleIdsChange: (value: string[]) => void;
 		addDefaultFilterRow: () => void;
 		removeDefaultFilterRow: (index: number) => void;
 		addRuntimeFilterRow: () => void;
