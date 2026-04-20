@@ -22,7 +22,13 @@ export const campaignRouteNamespaces: Record<
 	string,
 	string | readonly string[]
 > = {
-	campaigns: 'campaigns.list',
+	campaigns: [
+		'campaigns.list',
+		'campaigns.wizard',
+		'campaign.form.shared',
+		'campaign.form.agents',
+		'knowledge-bases',
+	],
 	'campaign.detail': campaignDetailNamespaces,
 	'campaign.detail.index': campaignDetailNamespaces,
 	'campaign.detail.test': 'campaign.detail.test',

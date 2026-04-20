@@ -30,10 +30,9 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 		'campaign.form.shared',
 		'common',
 	]);
-	const { activeStep, nextStep, reset } = useCampaignWizardStore();
+	const { activeStep, nextStep } = useCampaignWizardStore();
 
 	const handleCancel = () => {
-		reset();
 		onCancel?.();
 	};
 

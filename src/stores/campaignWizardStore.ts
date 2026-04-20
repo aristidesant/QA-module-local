@@ -3,6 +3,7 @@ import type { Campaign } from '~/models/CampaignsModel';
 import { useCampaignsStore } from './campaignsStore';
 
 interface CampaignWizardState {
+	isWizardModalOpen: boolean;
 	activeStep: number;
 	campaignName: string;
 	description: string;
@@ -26,6 +27,7 @@ interface CampaignWizardState {
 
 	// Actions
 	setActiveStep: (step: number) => void;
+	setIsWizardModalOpen: (isWizardModalOpen: boolean) => void;
 	nextStep: () => void;
 	prevStep: () => void;
 	setCampaignName: (name: string) => void;
@@ -72,7 +74,9 @@ const initialState = {
 
 export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
 	...initialState,
+	isWizardModalOpen: false,
 
+	setIsWizardModalOpen: (isWizardModalOpen) => set({ isWizardModalOpen }),
 	setActiveStep: (step) => set({ activeStep: step }),
 	nextStep: () => set((state) => ({ activeStep: state.activeStep + 1 })),
 	prevStep: () =>
@@ -115,8 +119,6 @@ export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
 			isResumingDraft: true,
 			noiseCancellation: campaign.noiseCancellation ?? false,
 		});
-		// Sync with campaigns store
-		useCampaignsStore.getState().selectCampaign(campaign);
 	},
 	reset: () => set(initialState),
 }));
