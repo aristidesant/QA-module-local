@@ -126,6 +126,12 @@ export interface DashboardDefinition {
 	deletedAt: string | null;
 }
 
+export interface DashboardWidgetRole {
+	id: number;
+	name: string;
+	code: string;
+}
+
 export interface DashboardListParams {
 	campaignId?: number | string | null;
 	contactGroupId?: number | string | null;
@@ -161,6 +167,7 @@ export interface DashboardWidget {
 	viewConfig: DashboardWidgetViewConfig | null;
 	enabled: boolean;
 	visibilityScope?: DashboardWidgetVisibilityScope | null;
+	roles?: DashboardWidgetRole[];
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: string | null;
@@ -179,6 +186,7 @@ export interface CreateDashboardWidgetDto {
 	viewConfig?: DashboardWidgetViewConfig | null;
 	enabled?: boolean;
 	visibilityScope?: DashboardWidgetVisibilityScope | null;
+	roleIds?: number[];
 }
 
 export interface UpdateDashboardWidgetDto extends Partial<CreateDashboardWidgetDto> {}

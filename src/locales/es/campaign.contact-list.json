@@ -605,9 +605,15 @@
 			"contactName": "Contacto",
 			"phone": "Teléfono",
 			"status": "Estado",
+			"contactResult": "Resultado de Contacto",
+			"dispositionName": "Disposición",
+			"callStatus": "Estado de Llamada",
+			"isAbandoned": "Abandonada",
+			"doNotCall": "No Llamar",
 			"wave": "Oleada",
 			"scheduledAt": "Programada",
-			"actions": "Acciones"
+			"actions": "Acciones",
+			"toggleColumns": "Alternar Columnas"
 		},
 		"status": {
 			"PENDING": "Pendiente",
@@ -669,6 +675,7 @@
 			"allStatuses": "Todos los Estados",
 			"wave": "Oleada",
 			"allWaves": "Todas las Oleadas"
-		}
+		},
+		"refresh": "Actualizar datos de la cola"
 	}
 }

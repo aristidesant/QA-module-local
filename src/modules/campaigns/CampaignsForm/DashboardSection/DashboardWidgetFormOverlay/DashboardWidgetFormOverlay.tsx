@@ -1,4 +1,7 @@
+import { useEffect } from 'react';
 import { Portal } from '@mantine/core';
+import { useQueryClient } from '@tanstack/react-query';
+import rolesApi from '~/api/rolesApi';
 import { useSidebarStore } from '~/stores/sidebarStore';
 import DashboardWidgetForm from '../DashboardWidgetForm';
 import {
@@ -9,6 +12,7 @@ import styles from './DashboardWidgetFormOverlay.module.css';
 
 const DashboardWidgetFormOverlay = () => {
 	const { collapsed } = useSidebarStore();
+	const queryClient = useQueryClient();
 	const {
 		campaignId,
 		attributeMetricKeys,
@@ -17,6 +21,17 @@ const DashboardWidgetFormOverlay = () => {
 	} = useDashboardSectionSelection();
 	const { widgetModalOpened, editingWidget, closeWidgetModal } =
 		useDashboardSectionModals();
+
+	useEffect(() => {
+		if (!widgetModalOpened) {
+			return;
+		}
+
+		void queryClient.prefetchQuery({
+			queryKey: ['roles'],
+			queryFn: async () => rolesApi().getAllRoles(),
+		});
+	}, [queryClient, widgetModalOpened]);
 
 	return (
 		<Portal>
