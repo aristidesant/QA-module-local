@@ -23,7 +23,8 @@ export interface ReportValue {
 	order: number;
 	sheet: number;
 	sheetName: string;
-	campaignId: number;
+	campaignId?: number | null;
+	reportTemplateId?: number | null;
 	userId: number;
 	clientId: number;
 	createdAt: string;
@@ -74,4 +75,50 @@ export interface DuplicateReportValueDto {
 	sheetName: string;
 	order: number;
 	label: string;
+}
+
+export interface ReportTemplate {
+	id: number;
+	name: string;
+	description?: string | null;
+	schemaId?: number | null;
+	userId: number;
+	clientId: number;
+	createdAt: string;
+	updatedAt: string;
+	deletedAt: string | null;
+}
+
+export interface CreateReportTemplateDto {
+	name: string;
+	description?: string;
+	schemaId?: number;
+}
+
+export interface UpdateReportTemplateDto {
+	name?: string;
+	description?: string;
+	schemaId?: number;
+}
+
+export interface BulkUpdateReportTemplateColumnsDto {
+	reportValues: BulkUpdateReportValueItemDto[];
+}
+
+export interface ExportReportTemplateDto {
+	startDate: string;
+	endDate: string;
+	campaignIds: number[];
+	format?: 'csv' | 'xlsx';
+}
+
+export interface CreateReportValueWithTemplateDto {
+	originType: ReportValueOriginType;
+	key: string;
+	label: string;
+	dataType: ReportValueDataType;
+	order?: number;
+	sheet?: number;
+	sheetName?: string;
+	reportTemplateId: number;
 }

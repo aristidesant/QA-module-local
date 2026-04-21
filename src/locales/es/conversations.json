@@ -59,7 +59,9 @@
 	},
 	"export": {
 		"title": "Exportar conversaciones",
-		"hint": "Elige las fechas y el tipo para exportar.",
+		"hint": "Elige la campaña, las fechas y el tipo para exportar.",
+		"campaign": "Campaña",
+		"campaignPlaceholder": "Seleccionar campaña",
 		"from": "Desde",
 		"fromPlaceholder": "Selecciona fecha de inicio",
 		"to": "Hasta",

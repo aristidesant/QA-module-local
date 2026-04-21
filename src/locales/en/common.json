@@ -78,7 +78,8 @@
 			"tools": "Tools",
 			"users": "Users",
 			"roles": "Roles",
-			"clients": "Clients"
+			"clients": "Clients",
+			"reportTemplates": "Report Templates"
 		},
 		"account": {
 			"title": "Account",

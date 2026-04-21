@@ -465,3 +465,14 @@ export const useToggleCampaignStatus = () => {
 		},
 	});
 };
+
+export const useGetSimpleCampaigns = (enabled = true) => {
+	return useQuery({
+		queryKey: ['campaigns-simple'],
+		queryFn: async () => {
+			const api = campaignsApi();
+			return api.getSimpleCampaigns();
+		},
+		enabled,
+	});
+};

@@ -110,6 +110,15 @@ const CampaignViewPage = React.lazy(
 const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
 );
+const ReportTemplatesPage = React.lazy(
+	() => import('./modules/report-templates/ReportTemplatesPage')
+);
+const ReportTemplatesListPage = React.lazy(
+	() => import('./modules/report-templates/ReportTemplatesListPage')
+);
+const ReportTemplateDetailPage = React.lazy(
+	() => import('./modules/report-templates/ReportTemplateDetailPage')
+);
 
 /**
  * Automatically loads i18n namespaces based on the active route's ID.
@@ -485,6 +494,38 @@ const router = createBrowserRouter([
 								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
+					},
+					{
+						path: 'report-templates',
+						id: 'report-templates',
+						element: (
+							<ModuleGuard module={ModuleEnum.REPORTS}>
+								<I18nNamespaceLoader>
+									<Suspense fallback={<SuspenseFallback />}>
+										<ReportTemplatesPage />
+									</Suspense>
+								</I18nNamespaceLoader>
+							</ModuleGuard>
+						),
+						children: [
+							{
+								index: true,
+								id: 'report-templates.index',
+								element: <ReportTemplatesListPage />,
+							},
+							{
+								path: ':reportTemplateId',
+								id: 'report-templates.detail',
+								element: (
+									<ModuleGuard
+										module={ModuleEnum.REPORTS}
+										permission={PermissionEnum.UPDATE}
+									>
+										<ReportTemplateDetailPage />
+									</ModuleGuard>
+								),
+							},
+						],
 					},
 					{
 						path: 'profile',

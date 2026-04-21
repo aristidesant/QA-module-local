@@ -1,0 +1,67 @@
+.table {
+	overflow: hidden;
+}
+
+.searchInput {
+	width: 100%;
+	max-width: 520px;
+}
+
+.emptyStateCard {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-gray-0) 80%,
+		var(--mantine-color-body)
+	);
+	border-color: var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .emptyStateCard {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+.actionsHeader {
+	width: 180px;
+	text-align: right;
+	white-space: nowrap;
+}
+
+.actionsCell {
+	width: 180px;
+	text-align: right;
+}
+
+.nameCell {
+	min-width: 0;
+}
+
+.descriptionCell,
+.metaCell {
+	min-width: 0;
+}
+
+.countBadge {
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-primary-color-2) 60%, transparent);
+	background: color-mix(
+		in srgb,
+		var(--mantine-primary-color-0) 70%,
+		var(--mantine-color-body)
+	);
+	color: var(--mantine-primary-color-7);
+}
+
+[data-mantine-color-scheme='dark'] .countBadge {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-primary-color-5) 35%,
+		var(--mantine-color-dark-4)
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-primary-color-9) 30%,
+		var(--mantine-color-dark-7)
+	);
+	color: var(--mantine-primary-color-3);
+}
