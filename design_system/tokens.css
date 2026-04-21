@@ -1,0 +1,184 @@
+/* ============================================
+   NEWTECH DESIGN SYSTEM — TOKENS
+   ============================================ */
+
+:root {
+	/* ---------- BRAND COLORS ---------- */
+	/* Primary: green from the logo nodes */
+	--nt-green-50: #ecfdf2;
+	--nt-green-100: #d1fae0;
+	--nt-green-200: #a4f0c0;
+	--nt-green-300: #6ee29a;
+	--nt-green-400: #3ccd77;
+	--nt-green-500: #1bb54a; /* PRIMARY */
+	--nt-green-600: #11933b;
+	--nt-green-700: #0d7530;
+	--nt-green-800: #0c5d29;
+	--nt-green-900: #0a4a22;
+	--nt-green-950: #052a13;
+
+	/* Secondary: blue from the logo center nodes */
+	--nt-blue-50: #ecf8fd;
+	--nt-blue-100: #d0eefa;
+	--nt-blue-200: #a3ddf4;
+	--nt-blue-300: #6cc6eb;
+	--nt-blue-400: #33addf;
+	--nt-blue-500: #0098d4; /* ACCENT */
+	--nt-blue-600: #007aae;
+	--nt-blue-700: #00618b;
+	--nt-blue-800: #014e70;
+	--nt-blue-900: #04415d;
+	--nt-blue-950: #022a3d;
+
+	/* ---------- NEUTRALS (slate with a tiny cool cast) ---------- */
+	--nt-ink-0: #ffffff;
+	--nt-ink-50: #f7f8fa;
+	--nt-ink-100: #eef0f3;
+	--nt-ink-200: #dde2e8;
+	--nt-ink-300: #c3cad4;
+	--nt-ink-400: #9aa4b2;
+	--nt-ink-500: #6b7684;
+	--nt-ink-600: #4b5563;
+	--nt-ink-700: #333c48;
+	--nt-ink-800: #1f2731;
+	--nt-ink-900: #141a22;
+	--nt-ink-950: #0b0f14; /* footer dark */
+
+	/* ---------- SEMANTIC ---------- */
+	--nt-success: var(--nt-green-500);
+	--nt-success-bg: var(--nt-green-50);
+	--nt-info: var(--nt-blue-500);
+	--nt-info-bg: var(--nt-blue-50);
+	--nt-warn: #f59e0b;
+	--nt-warn-bg: #fef3c7;
+	--nt-danger: #e53935;
+	--nt-danger-bg: #fee2e2;
+
+	/* ---------- SURFACES (LIGHT) ---------- */
+	--surface-bg: var(--nt-ink-50);
+	--surface-card: var(--nt-ink-0);
+	--surface-sunken: var(--nt-ink-100);
+	--surface-border: var(--nt-ink-200);
+	--surface-border-strong: var(--nt-ink-300);
+
+	--text-primary: var(--nt-ink-900);
+	--text-secondary: var(--nt-ink-600);
+	--text-muted: var(--nt-ink-500);
+	--text-on-brand: #ffffff;
+
+	--brand: var(--nt-green-500);
+	--brand-hover: var(--nt-green-600);
+	--brand-active: var(--nt-green-700);
+	--brand-soft: var(--nt-green-50);
+
+	--accent: var(--nt-blue-500);
+	--accent-hover: var(--nt-blue-600);
+	--accent-soft: var(--nt-blue-50);
+
+	/* ---------- RADII ---------- */
+	--r-xs: 4px;
+	--r-sm: 6px;
+	--r-md: 8px; /* default */
+	--r-lg: 12px;
+	--r-xl: 16px;
+	--r-2xl: 20px;
+	--r-full: 999px;
+
+	/* ---------- SPACING (4px base) ---------- */
+	--s-1: 4px;
+	--s-2: 8px;
+	--s-3: 12px;
+	--s-4: 16px;
+	--s-5: 20px;
+	--s-6: 24px;
+	--s-8: 32px;
+	--s-10: 40px;
+	--s-12: 48px;
+	--s-16: 64px;
+	--s-20: 80px;
+
+	/* ---------- SHADOWS ---------- */
+	--sh-xs: 0 1px 2px rgba(15, 23, 42, 0.04);
+	--sh-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+	--sh-md: 0 4px 12px rgba(15, 23, 42, 0.06), 0 2px 4px rgba(15, 23, 42, 0.04);
+	--sh-lg: 0 12px 28px rgba(15, 23, 42, 0.08), 0 4px 8px rgba(15, 23, 42, 0.04);
+	--sh-xl:
+		0 24px 48px rgba(15, 23, 42, 0.12), 0 8px 16px rgba(15, 23, 42, 0.06);
+	--sh-focus: 0 0 0 4px rgba(27, 181, 74, 0.22);
+	--sh-focus-blue: 0 0 0 4px rgba(0, 152, 212, 0.22);
+
+	/* ---------- TYPOGRAPHY ---------- */
+	--font-sans: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+	--font-display: 'DM Sans', 'Segoe UI', system-ui, sans-serif;
+	--font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+
+	/* Type scale — modular, slightly tight line-heights on large sizes */
+	--fs-12: 12px;
+	--fs-13: 13px;
+	--fs-14: 14px;
+	--fs-15: 15px;
+	--fs-16: 16px;
+	--fs-18: 18px;
+	--fs-20: 20px;
+	--fs-24: 24px;
+	--fs-28: 28px;
+	--fs-32: 32px;
+	--fs-40: 40px;
+	--fs-48: 48px;
+	--fs-60: 60px;
+
+	/* ---------- MOTION ---------- */
+	--ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+	--ease-spring: cubic-bezier(0.34, 1.26, 0.64, 1);
+	--dur-fast: 120ms;
+	--dur-med: 220ms;
+	--dur-slow: 380ms;
+}
+
+/* ---------- DARK SURFACE (for sections / dark apps) ---------- */
+.nt-dark {
+	--surface-bg: var(--nt-ink-950);
+	--surface-card: var(--nt-ink-900);
+	--surface-sunken: #0f141b;
+	--surface-border: #232c38;
+	--surface-border-strong: #2f3a49;
+
+	--text-primary: #ffffff;
+	--text-secondary: #b8c0cc;
+	--text-muted: #8892a0;
+
+	--brand: var(--nt-green-400);
+	--brand-hover: var(--nt-green-300);
+	--brand-soft: rgba(27, 181, 74, 0.15);
+
+	--accent: var(--nt-blue-400);
+	--accent-hover: var(--nt-blue-300);
+	--accent-soft: rgba(0, 152, 212, 0.15);
+
+	--sh-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+	--sh-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+	--sh-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+	--sh-lg: 0 12px 28px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- RESET-ISH ---------- */
+* {
+	box-sizing: border-box;
+}
+html,
+body {
+	margin: 0;
+	padding: 0;
+	font-family: var(--font-sans);
+	font-size: var(--fs-15);
+	color: var(--text-primary);
+	background: var(--surface-bg);
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+a {
+	color: inherit;
+}
+button {
+	font-family: inherit;
+}

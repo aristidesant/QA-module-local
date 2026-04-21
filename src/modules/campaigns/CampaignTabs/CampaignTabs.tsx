@@ -7,7 +7,6 @@ import {
 	IconRoute,
 	IconUser,
 	IconList,
-	IconTable,
 	IconLayoutDashboard,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
@@ -50,9 +49,6 @@ const CampaignTabs = () => {
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconLayoutDashboard />} value='dashboards'>
 					{t('tabs.dashboards')}
-				</Tabs.Tab>
-				<Tabs.Tab leftSection={<IconTable />} value='report-values'>
-					{t('tabs.reportValues')}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconGalaxy />} value='general'>
 					{t('tabs.general')}

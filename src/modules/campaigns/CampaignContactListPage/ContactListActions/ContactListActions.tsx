@@ -560,87 +560,89 @@ const ContactListActions = ({
 
 	return (
 		<div className={classes.root}>
-			{showExecutionAction && (
-				<div className={classes.action}>
-					<ExecutionControlAction
-						tooltip={executionTooltip}
-						icon={executionIcon}
-						onClick={() => {
-							void handleExecutionAction();
-						}}
-						loading={
-							startMutation.isPending ||
-							pauseMutation.isPending ||
-							resumeMutation.isPending
-						}
-						disabled={
-							isActionLoading ||
-							((normalizedStatus === 'PENDING' ||
-								normalizedStatus === 'PAUSED') &&
-								!canStartOrResume)
-						}
-						color={
-							normalizedStatus === 'RUNNING' || normalizedStatus === 'WAITING'
-								? 'orange'
-								: 'blue'
-						}
-					/>
-				</div>
-			)}
+			<div className={classes.primaryActions}>
+				{showExecutionAction && (
+					<div className={classes.action}>
+						<ExecutionControlAction
+							tooltip={executionTooltip}
+							icon={executionIcon}
+							onClick={() => {
+								void handleExecutionAction();
+							}}
+							loading={
+								startMutation.isPending ||
+								pauseMutation.isPending ||
+								resumeMutation.isPending
+							}
+							disabled={
+								isActionLoading ||
+								((normalizedStatus === 'PENDING' ||
+									normalizedStatus === 'PAUSED') &&
+									!canStartOrResume)
+							}
+							color={
+								normalizedStatus === 'RUNNING' || normalizedStatus === 'WAITING'
+									? 'orange'
+									: 'blue'
+							}
+						/>
+					</div>
+				)}
 
-			{canExecuteCampaign && normalizedStatus === 'WAITING' && (
-				<div className={classes.action}>
-					<ResumeWaitingNowAction
-						tooltip={t('form.contacts.controls.resumeIgnoreDelay', {
-							ns: 'campaign.form.contacts',
-						})}
-						onClick={handleResumeWaitingNow}
-						loading={resumeMutation.isPending}
-						disabled={isActionLoading}
-					/>
-				</div>
-			)}
+				{canExecuteCampaign && normalizedStatus === 'WAITING' && (
+					<div className={classes.action}>
+						<ResumeWaitingNowAction
+							tooltip={t('form.contacts.controls.resumeIgnoreDelay', {
+								ns: 'campaign.form.contacts',
+							})}
+							onClick={handleResumeWaitingNow}
+							loading={resumeMutation.isPending}
+							disabled={isActionLoading}
+						/>
+					</div>
+				)}
 
-			{canExecuteCampaign && normalizedStatus === 'EXECUTED' && (
-				<div className={classes.action}>
-					<ExtendWavesAction
-						tooltip={t('contacts.details.actions.extendWaves', {
-							ns: 'campaign.contact-list',
-						})}
-						onClick={handleExtendWaves}
-						loading={extendMutation.isPending}
-						disabled={isActionLoading}
-					/>
-				</div>
-			)}
+				{canExecuteCampaign && normalizedStatus === 'EXECUTED' && (
+					<div className={classes.action}>
+						<ExtendWavesAction
+							tooltip={t('contacts.details.actions.extendWaves', {
+								ns: 'campaign.contact-list',
+							})}
+							onClick={handleExtendWaves}
+							loading={extendMutation.isPending}
+							disabled={isActionLoading}
+						/>
+					</div>
+				)}
 
-			{canExecuteCampaign && normalizedStatus === 'EXECUTED' && (
-				<div className={classes.action}>
-					<CompleteListAction
-						tooltip={t('contacts.details.actions.completeList', {
-							ns: 'campaign.contact-list',
-						})}
-						onClick={handleCompleteList}
-						loading={completeMutation.isPending}
-						disabled={isActionLoading}
-					/>
-				</div>
-			)}
-
-			<div className={classes.action}>
-				<ExportResultsAction
-					tooltip={t('contacts.details.actions.downloadResults', {
-						ns: 'campaign.contact-list',
-					})}
-					onExport={(format) => {
-						void handleExport(format);
-					}}
-					loading={isExporting}
-					disabled={isActionLoading}
-				/>
+				{canExecuteCampaign && normalizedStatus === 'EXECUTED' && (
+					<div className={classes.action}>
+						<CompleteListAction
+							tooltip={t('contacts.details.actions.completeList', {
+								ns: 'campaign.contact-list',
+							})}
+							onClick={handleCompleteList}
+							loading={completeMutation.isPending}
+							disabled={isActionLoading}
+						/>
+					</div>
+				)}
 			</div>
 
-			<div className={classes.action}>
+			<div className={classes.secondaryActions}>
+				<div className={classes.action}>
+					<ExportResultsAction
+						tooltip={t('contacts.details.actions.downloadResults', {
+							ns: 'campaign.contact-list',
+						})}
+						onExport={(format) => {
+							void handleExport(format);
+						}}
+						loading={isExporting}
+						disabled={isActionLoading}
+					/>
+				</div>
+
 				<ReloadAction
 					tooltip={t('contacts.tooltips.reload', {
 						ns: 'campaign.contact-list',

@@ -32,7 +32,6 @@ import { ModuleEnum } from '~/constants/ModuleEnum';
 import { getErrorMessage } from '~/utils/httpClient';
 import ContactGroupContactsTable from './ContactGroupContactsTable';
 import ContactListInformation from './ContactListInformation';
-import ContactListMetrics from './ContactListMetrics';
 import CampaignDashboardViewer from '~/modules/campaigns/CampaignDashboardViewer';
 import ConversationsList from '~/modules/conversations/ConversationsList';
 import ConversationDetailDrawer from '~/modules/conversations/ConversationDetailDrawer';
@@ -281,7 +280,6 @@ const CampaignContactListPage = () => {
 								onReload={() => contactGroupQuery.refetch()}
 							/>
 						</SectionCard>
-						<ContactListMetrics contactGroupId={contactGroupId} />
 						<CampaignDashboardViewer
 							campaignId={campaignId ? Number(campaignId) : null}
 							contactGroupId={contactGroupIdNumber}

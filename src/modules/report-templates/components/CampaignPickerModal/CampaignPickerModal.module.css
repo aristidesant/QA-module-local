@@ -1,0 +1,132 @@
+.modalBody {
+	padding-top: var(--mantine-spacing-md);
+	padding-bottom: var(--mantine-spacing-lg);
+}
+
+.modalStack {
+	gap: var(--mantine-spacing-md);
+}
+
+.sectionCard {
+	background: var(--mantine-color-body);
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	box-shadow: var(--mantine-shadow-sm);
+	padding: var(--mantine-spacing-md);
+}
+
+.sectionHeaderText {
+	min-width: 0;
+}
+
+.dateGrid {
+	align-items: flex-start;
+}
+
+.campaignList {
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-body);
+}
+
+.campaignCard {
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-body);
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	box-shadow: var(--mantine-shadow-xs);
+	transition:
+		transform 150ms ease,
+		box-shadow 150ms ease,
+		border-color 150ms ease;
+}
+
+.campaignCard:hover {
+	transform: translateY(-1px);
+	box-shadow: var(--mantine-shadow-sm);
+}
+
+.campaignHeaderMain {
+	min-width: 0;
+	flex: 1;
+}
+
+.campaignCheckbox {
+	margin-top: 2px;
+}
+
+.campaignHeaderText {
+	min-width: 0;
+	flex: 1;
+}
+
+.campaignTitleRow {
+	min-width: 0;
+	flex-wrap: nowrap;
+}
+
+.campaignName {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.campaignSummary {
+	margin-top: 2px;
+}
+
+.campaignBody {
+	padding-top: var(--mantine-spacing-xs);
+}
+
+.listSearch {
+	margin-top: 2px;
+}
+
+.listPanel {
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-body);
+}
+
+.inlineState {
+	min-height: 64px;
+}
+
+.listLabel {
+	min-width: 0;
+}
+
+.listItem {
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-sm);
+	transition: background-color 150ms ease;
+}
+
+.listItem:hover {
+	background-color: var(--mantine-color-default-hover);
+}
+
+.footerSummary {
+	padding-top: var(--mantine-spacing-xs);
+}
+
+.actions {
+	padding-top: var(--mantine-spacing-xs);
+}
+
+@media (max-width: 640px) {
+	.sectionCard {
+		padding: var(--mantine-spacing-sm);
+	}
+
+	.campaignCard {
+		padding: var(--mantine-spacing-xs);
+	}
+
+	.campaignTitleRow {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+}

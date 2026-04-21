@@ -1,4 +1,8 @@
 import axios from 'axios';
+import type {
+	CampaignContactList,
+	CampaignContactListsParams,
+} from '~/models/ContactGroup';
 import type ContactGroup from '~/models/ContactGroup';
 import type { PaginatedResponse } from '~/models/CampaignsModel';
 import { DEFAULT_API_URL } from './config';
@@ -25,6 +29,20 @@ const contactGroupApi = (_authHeader?: Record<string, string>) => {
 				{
 					params,
 					timeout: 5000,
+				}
+			);
+			return response.data;
+		},
+
+		// FIND campaign contact lists
+		findCampaignContactLists: async (
+			campaignId: number,
+			params?: CampaignContactListsParams
+		) => {
+			const response = await axios.get<CampaignContactList[]>(
+				`${DEFAULT_API_URL}/contact-groups/campaigns/${campaignId}/lists`,
+				{
+					params,
 				}
 			);
 			return response.data;
