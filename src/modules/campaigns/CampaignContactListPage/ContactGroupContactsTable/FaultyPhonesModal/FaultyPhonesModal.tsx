@@ -5,14 +5,12 @@ import {
 	Badge,
 	Group,
 	Stack,
-	Button,
 	TextInput,
 	ActionIcon,
 	Tooltip,
 } from '@mantine/core';
 import {
 	IconAlertCircle,
-	IconDownload,
 	IconPencil,
 	IconX,
 	IconCheck,
@@ -23,7 +21,6 @@ import { notifications } from '@mantine/notifications';
 import type { Contact } from '~/models/ContactsModel';
 import BaseTable from '~/components/BaseTable';
 import type { ColumnDef } from '@tanstack/react-table';
-import { useExportContactGroupContactsWithPhoneValidationErrors } from '~/queries/contactsQueries';
 import { useUpdateContactPhoneNumber } from '~/queries/contactsQueries';
 import { useQueryClient } from '@tanstack/react-query';
 import styles from './FaultyPhonesModal.module.css';
@@ -57,16 +54,10 @@ const FaultyPhonesModal = ({
 }: FaultyPhonesModalProps) => {
 	const { t } = useTranslation('campaign.contact-list');
 	const { canPerformAction } = usePermissions();
-	const canExportContacts = canPerformAction(
-		ModuleEnum.CONTACTS,
-		PermissionEnum.EXPORT
-	);
 	const canUpdateContacts = canPerformAction(
 		ModuleEnum.CONTACTS,
 		PermissionEnum.UPDATE
 	);
-	const exportQuery =
-		useExportContactGroupContactsWithPhoneValidationErrors(contactGroupId);
 	const updatePhoneMutation = useUpdateContactPhoneNumber();
 	const queryClient = useQueryClient();
 
@@ -214,46 +205,6 @@ const FaultyPhonesModal = ({
 		);
 	};
 
-	const handleExport = async () => {
-		if (!canExportContacts) return;
-		try {
-			const result = await exportQuery.refetch();
-			if (result.data) {
-				// Create a Blob from the CSV content
-				const blob = new Blob([result.data], {
-					type: 'text/csv;charset=utf-8;',
-				});
-				const url = URL.createObjectURL(blob);
-
-				// Create a temporary link and trigger download
-				const link = document.createElement('a');
-				link.href = url;
-				link.download = `faulty-contacts-${contactGroupId}.csv`;
-				document.body.appendChild(link);
-				link.click();
-				document.body.removeChild(link);
-
-				// Clean up the URL object
-				URL.revokeObjectURL(url);
-
-				notifications.show({
-					title: t('faultyPhones.modal.notifications.exportSuccess'),
-					message: t('faultyPhones.modal.notifications.exportSuccess'),
-					color: 'green',
-				});
-			}
-		} catch (error) {
-			notifications.show({
-				title: t('faultyPhones.modal.notifications.exportFailed'),
-				message:
-					error instanceof Error
-						? error.message
-						: t('faultyPhones.modal.notifications.exportFailed'),
-				color: 'red',
-			});
-		}
-	};
-
 	const columns = useMemo<ColumnDef<FaultyPhoneRow>[]>(() => {
 		const baseColumns: ColumnDef<FaultyPhoneRow>[] = [
 			{
@@ -383,21 +334,6 @@ const FaultyPhonesModal = ({
 				<Text size='sm' c='dimmed'>
 					{t('faultyPhones.modal.description')}
 				</Text>
-
-				{canExportContacts && (
-					<Group justify='flex-end'>
-						<Button
-							variant='light'
-							color='blue'
-							size='sm'
-							leftSection={<IconDownload size={16} />}
-							onClick={handleExport}
-							loading={exportQuery.isFetching}
-						>
-							{t('faultyPhones.modal.export')}
-						</Button>
-					</Group>
-				)}
 
 				<BaseTable data={rows} columns={columns} enablePagination={false} />
 

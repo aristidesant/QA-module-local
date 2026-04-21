@@ -17,7 +17,6 @@ import { modals } from '@mantine/modals';
 import ContactListSkeleton from './ContactListSkeleton';
 import { useGetContactGroupContacts } from '~/queries/contactsQueries';
 import {
-	useExportContactGroupFileOriginal,
 	useAppendContactGroupFile,
 	useUploadContactGroupFile,
 } from '~/queries/contactGroupFilesQueries';
@@ -70,9 +69,6 @@ export const ContactGroupContactsTable: React.FC<
 	const contactFilters = useContactFilters({
 		debounceMs: 500,
 	});
-
-	// Export query
-	const exportQuery = useExportContactGroupFileOriginal(contactGroupId);
 
 	// Removed: latest file prefetch is not needed for append flow
 
@@ -259,44 +255,6 @@ export const ContactGroupContactsTable: React.FC<
 		return styles.contactRow;
 	}, []);
 
-	// Handle export
-	const handleExport = useCallback(async () => {
-		if (!canExportContacts) return;
-		try {
-			const result = await exportQuery.refetch();
-			if (result.data) {
-				// Create a Blob from the CSV content
-				const blob = new Blob([result.data], {
-					type: 'text/csv;charset=utf-8;',
-				});
-				const url = URL.createObjectURL(blob);
-
-				// Create a temporary link and trigger download
-				const link = document.createElement('a');
-				link.href = url;
-				link.download = `contacts-${contactGroupId}.csv`;
-				document.body.appendChild(link);
-				link.click();
-				document.body.removeChild(link);
-
-				// Clean up the URL object
-				URL.revokeObjectURL(url);
-
-				notifications.show({
-					title: t('contactsTable.notifications.exportSuccess'),
-					message: t('contactsTable.notifications.exportSuccessMessage'),
-					color: 'green',
-				});
-			}
-		} catch (error) {
-			notifications.show({
-				title: t('common:status.error'),
-				message: getErrorMessage(error),
-				color: 'red',
-			});
-		}
-	}, [exportQuery, contactGroupId, canExportContacts, t]);
-
 	const handleReloadContacts = useCallback(() => {
 		void groupContactsQuery.refetch();
 	}, [groupContactsQuery]);
@@ -311,8 +269,6 @@ export const ContactGroupContactsTable: React.FC<
 				hasActiveFilters={contactFilters.hasActiveFilters}
 				onReload={handleReloadContacts}
 				isReloading={groupContactsQuery.isFetching}
-				onExport={canExportContacts ? handleExport : undefined}
-				isExporting={canExportContacts ? exportQuery.isFetching : false}
 				onAppend={canExportContacts ? handleOpenAppendModal : undefined}
 				isAppending={
 					canExportContacts

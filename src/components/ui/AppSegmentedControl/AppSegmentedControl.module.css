@@ -1,55 +1,59 @@
 .root {
-	--app-segmented-bg: color-mix(
-		in srgb,
-		var(--mantine-color-white) 70%,
-		transparent
-	);
+	--app-segmented-bg: color-mix(in srgb, var(--nt-ink-0) 70%, transparent);
 	--app-segmented-border: color-mix(
 		in srgb,
-		var(--mantine-color-blue-6) 20%,
+		var(--nt-green-500) 20%,
 		transparent
 	);
-	--app-segmented-control-color: var(--mantine-color-gray-7);
-	--app-segmented-hover-bg: var(--mantine-color-gray-0);
-	--app-segmented-hover-color: var(--mantine-color-dark-8);
+	--app-segmented-control-color: var(--nt-ink-600);
+	--app-segmented-hover-bg: var(--nt-ink-50);
+	--app-segmented-hover-color: var(--nt-ink-900);
 	--app-segmented-active-bg: color-mix(
 		in srgb,
-		var(--mantine-color-blue-5) 22%,
+		var(--nt-green-500) 12%,
 		transparent
 	);
 	--app-segmented-active-border: color-mix(
 		in srgb,
-		var(--mantine-color-blue-6) 30%,
+		var(--nt-green-500) 28%,
 		transparent
 	);
-	--app-segmented-active-color: var(--mantine-color-dark-7);
-	--app-segmented-focus-color: var(--mantine-color-blue-5);
+	--app-segmented-active-color: var(--nt-green-700);
+	--app-segmented-focus-color: var(--nt-green-500);
 
 	display: flex;
 	padding: 3px;
-	border-radius: 14px;
+	border-radius: var(--r-xl, 14px);
 	border: 1px solid var(--app-segmented-border);
 	background-color: var(--app-segmented-bg);
 }
 
 [data-mantine-color-scheme='dark'] .root {
-	--app-segmented-bg: var(--mantine-color-dark-7);
-	--app-segmented-border: var(--mantine-color-dark-4);
-	--app-segmented-control-color: var(--mantine-color-dark-2);
-	--app-segmented-hover-bg: var(--mantine-color-dark-6);
-	--app-segmented-hover-color: var(--mantine-color-white);
+	--app-segmented-bg: color-mix(
+		in srgb,
+		var(--nt-ink-800) 50%,
+		var(--nt-ink-900)
+	);
+	--app-segmented-border: color-mix(
+		in srgb,
+		var(--nt-ink-700) 60%,
+		transparent
+	);
+	--app-segmented-control-color: var(--nt-ink-300);
+	--app-segmented-hover-bg: var(--nt-ink-800);
+	--app-segmented-hover-color: #ffffff;
 	--app-segmented-active-bg: color-mix(
 		in srgb,
-		var(--mantine-color-blue-9) 56%,
-		var(--mantine-color-dark-6)
+		var(--nt-green-500) 18%,
+		transparent
 	);
 	--app-segmented-active-border: color-mix(
 		in srgb,
-		var(--mantine-color-blue-4) 28%,
-		var(--mantine-color-dark-4)
+		var(--nt-green-400) 30%,
+		transparent
 	);
-	--app-segmented-active-color: var(--mantine-color-white);
-	--app-segmented-focus-color: var(--mantine-color-blue-4);
+	--app-segmented-active-color: var(--nt-green-300);
+	--app-segmented-focus-color: var(--nt-green-400);
 }
 
 .fullWidth {
@@ -67,19 +71,19 @@
 	min-height: 34px;
 	padding: 6px 12px;
 	border: 1px solid transparent;
-	border-radius: 10px;
+	border-radius: var(--r-lg, 10px);
 	background: transparent;
 	font: inherit;
 	color: var(--app-segmented-control-color);
 	font-weight: 600;
-	font-size: 0.9rem;
+	font-size: var(--fs-14, 14px);
 	line-height: 1;
 	cursor: pointer;
 	transition:
-		background-color 0.18s ease,
-		color 0.18s ease,
-		box-shadow 0.18s ease,
-		transform 0.18s ease;
+		background-color var(--dur-fast, 120ms) var(--ease-out, ease-out),
+		color var(--dur-fast, 120ms) var(--ease-out, ease-out),
+		box-shadow var(--dur-fast, 120ms) var(--ease-out, ease-out),
+		transform var(--dur-fast, 120ms) var(--ease-out, ease-out);
 }
 
 .controlFullWidth {
@@ -108,24 +112,25 @@
 	align-items: center;
 	justify-content: center;
 	white-space: nowrap;
+	gap: 6px;
 }
 
 .xs .control {
 	min-height: 30px;
 	padding: 5px 10px;
-	font-size: 0.8rem;
+	font-size: var(--fs-12, 12px);
 }
 
 .sm .control {
 	min-height: 34px;
 	padding: 6px 12px;
-	font-size: 0.88rem;
+	font-size: var(--fs-13, 13px);
 }
 
 .md .control {
 	min-height: 38px;
 	padding: 7px 14px;
-	font-size: 0.94rem;
+	font-size: var(--fs-15, 15px);
 }
 
 .disabled {
