@@ -56,6 +56,17 @@ export interface OutboundCallTask {
 	// Nested relations loaded by the queue endpoint
 	contact?: Pick<Contact, 'id' | 'firstName' | 'lastName'>;
 	contactPhoneNumber?: Pick<ContactPhoneNumber, 'id' | 'phoneNumber'>;
+	conversation?: {
+		id: number;
+		callDisposition?: {
+			id: number;
+			statusContact: string | null;
+			dispositionName: string;
+			callStatus: string | null;
+			isAbandoned: boolean;
+			doNotCall: boolean;
+		};
+	};
 }
 
 export interface OutboundTaskSortField {

@@ -5,5 +5,6 @@ export const DASHBOARD_WIDGET_FORM_SECTION_IDS = {
 	aggregation: 'dashboard-widget-form-aggregation',
 	widgetDetails: 'dashboard-widget-form-widget-details',
 	visibilityScope: 'dashboard-widget-form-visibility-scope',
+	widgetRoles: 'dashboard-widget-form-widget-roles',
 	advanced: 'dashboard-widget-form-advanced',
 } as const;

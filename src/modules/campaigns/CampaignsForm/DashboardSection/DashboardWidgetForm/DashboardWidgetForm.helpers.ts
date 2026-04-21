@@ -1089,6 +1089,16 @@ export const getVisibilityScopeLabel = (
 	return t(`dashboardBuilder.form.options.visibilityScope.${scope}.label`);
 };
 
+export const getWidgetRolesSummaryLabel = (t: TFunction, roleIds: number[]) => {
+	if (roleIds.length === 0) {
+		return t('dashboardBuilder.form.roleAccess.publicSummary');
+	}
+
+	return t('dashboardBuilder.form.roleAccess.restrictedSummary', {
+		count: roleIds.length,
+	});
+};
+
 export const buildFieldOptions = (entries: MetricColumnConfigEntry[]) =>
 	entries.map((entry) => ({
 		value: entry.value,
@@ -1956,6 +1966,7 @@ export const buildGuidedState = (
 			options.t,
 			values.visibilityScope
 		),
+		rolesSummaryLabel: getWidgetRolesSummaryLabel(options.t, values.roleIds),
 		compatibility,
 		preview: buildPreviewModel(
 			values,
@@ -2339,6 +2350,7 @@ export const widgetFormValues = (
 		viewLegend:
 			typeof viewConfig?.legend === 'boolean' ? viewConfig.legend : true,
 		visibilityScope: widget?.visibilityScope ?? 'TEAM',
+		roleIds: widget?.roles?.map((role) => role.id) ?? [],
 		width: normalizedLayout.width,
 		height: normalizedLayout.height,
 		enabled: widget?.enabled ?? true,

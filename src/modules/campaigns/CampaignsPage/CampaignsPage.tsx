@@ -9,8 +9,10 @@ import { useTranslation } from 'react-i18next';
 export default function CampaignsPage() {
 	useTranslation(['campaigns.list', 'campaign.detail']);
 
-	const { selectedCampaign, editCampaign, resetView, selectCampaign } =
-		useCampaignsStore((state) => state);
+	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
+	const editCampaign = useCampaignsStore((state) => state.editCampaign);
+	const resetView = useCampaignsStore((state) => state.resetView);
+	const selectCampaign = useCampaignsStore((state) => state.selectCampaign);
 
 	const { data: campaign } = useGetCampaign(
 		selectedCampaign?.id ? `${selectedCampaign.id}` : ''
