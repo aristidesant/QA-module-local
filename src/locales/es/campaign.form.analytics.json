@@ -253,6 +253,14 @@
 					"error": "Error al guardar el data collection",
 					"resultSummary": "Creadas: {{createdCount}}, Actualizadas: {{updatedCount}}, Duplicadas: {{duplicatedCount}}, Omitidas: {{skippedCount}}, Inválidas: {{invalidCount}}."
 				}
+			},
+			"dialogs": {
+				"systemDefault": {
+					"title": "Propiedad del sistema",
+					"body": "\"{{name}}\" es una variable predeterminada del sistema. ¿Estás seguro de que deseas eliminarla?",
+					"cancel": "Cancelar",
+					"confirm": "Eliminar de todas formas"
+				}
 			}
 		}
 	}

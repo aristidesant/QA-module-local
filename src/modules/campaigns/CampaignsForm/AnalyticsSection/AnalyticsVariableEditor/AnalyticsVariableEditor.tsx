@@ -28,9 +28,13 @@ import styles from './AnalyticsVariableEditor.module.css';
 
 interface AnalyticsVariableEditorProps {
 	onClose: () => void;
+	onDeleteRequest: (rowId: string, identifier: string) => void;
 }
 
-const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
+const AnalyticsVariableEditor = ({
+	onClose,
+	onDeleteRequest,
+}: AnalyticsVariableEditorProps) => {
 	const { t } = useTranslation(['campaign.form.analytics', 'common']);
 	const form = useAnalyticsFormContext();
 	const { canPerformAction } = usePermissions();
@@ -153,6 +157,13 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 	};
 
 	const handleDelete = () => {
+		const row = form.values.rows[selectedIndex];
+
+		if (row?.isSystemDefault) {
+			onDeleteRequest(row.id, row.identifier);
+			return;
+		}
+
 		form.removeListItem('rows', selectedIndex);
 		form.setFieldValue('selectedRowId', null);
 	};
@@ -377,7 +388,7 @@ const AnalyticsVariableEditor = ({ onClose }: AnalyticsVariableEditorProps) => {
 								onClick={handleSave}
 								disabled={hasIdentifierError || !isDraftDirty}
 							>
-								{t('form.actions.save', { ns: 'campaign.form.analytics' })}
+								{t('actions.save', { ns: 'common' })}
 							</Button>
 						</Group>
 					</Group>

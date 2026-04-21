@@ -119,6 +119,10 @@
 	font: inherit;
 }
 
+[data-mantine-color-scheme='dark'] .wordHighlight {
+	background: rgba(218, 54, 51, 0.45);
+}
+
 .separatorRow {
 	border-bottom: 1px solid var(--mantine-color-gray-2);
 	background: var(--mantine-color-gray-1);
