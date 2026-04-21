@@ -253,6 +253,14 @@
 					"error": "Failed to save data collection",
 					"resultSummary": "Created: {{createdCount}}, Updated: {{updatedCount}}, Duplicated: {{duplicatedCount}}, Skipped: {{skippedCount}}, Invalid: {{invalidCount}}."
 				}
+			},
+			"dialogs": {
+				"systemDefault": {
+					"title": "System property",
+					"body": "\"{{name}}\" is a system default variable. Are you sure you want to delete it?",
+					"cancel": "Cancel",
+					"confirm": "Delete anyway"
+				}
 			}
 		}
 	}
