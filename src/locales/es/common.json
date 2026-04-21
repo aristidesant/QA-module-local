@@ -78,7 +78,8 @@
 			"tools": "Herramientas",
 			"users": "Usuarios",
 			"roles": "Roles",
-			"clients": "Clientes"
+			"clients": "Clientes",
+			"reportTemplates": "Plantillas de Reportes"
 		},
 		"account": {
 			"title": "Cuenta",

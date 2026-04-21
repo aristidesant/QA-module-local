@@ -1,0 +1,23 @@
+.campaignList {
+	max-height: 300px;
+	overflow-y: auto;
+	padding: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+}
+
+.campaignItem {
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-md);
+	cursor: pointer;
+	transition: background-color 150ms ease;
+
+	&:hover {
+		background-color: var(--mantine-color-default-hover);
+	}
+}
+
+.campaignContent {
+	flex: 1;
+	min-width: 0;
+}

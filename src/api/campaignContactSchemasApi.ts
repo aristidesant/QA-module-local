@@ -7,6 +7,7 @@ import type {
 	UpdateCampaignContactSchemaRequest,
 	SchemaContactDataCheck,
 } from '../models/CampaignContactSchemaModel';
+import type { Campaign } from '../models/CampaignsModel';
 import { DEFAULT_API_URL } from './config';
 
 /**
@@ -119,6 +120,16 @@ const campaignContactSchemasApi = (
 		): Promise<CampaignContactSchema> => {
 			const response = await axios.get<CampaignContactSchema>(
 				`${DEFAULT_API_URL}/campaign-contact-schemas/campaign/${campaignId}/latest`
+			);
+			return response.data;
+		},
+
+		/**
+		 * Get campaigns by schema ID
+		 */
+		getCampaignsBySchemaId: async (schemaId: number): Promise<Campaign[]> => {
+			const response = await axios.get<Campaign[]>(
+				`${DEFAULT_API_URL}/campaign-contact-schemas/${schemaId}/campaigns`
 			);
 			return response.data;
 		},

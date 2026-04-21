@@ -25,6 +25,7 @@ import {
 	IconLayoutDashboard,
 	IconListDetails,
 	IconSettings,
+	IconTableExport,
 	IconUsers,
 } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router';
@@ -256,6 +257,14 @@ const sidebarSections: SidebarSection[] = [
 				module: ModuleEnum.CAMPAIGNS,
 				permission: PermissionEnum.UPDATE,
 				i18nNamespace: 'agent-tests',
+			},
+			{
+				key: 'report-templates',
+				label: 'sidebar.items.reportTemplates',
+				icon: <IconTableExport size={18} className={styles.menuIcon} />,
+				to: '/report-templates',
+				module: ModuleEnum.REPORTS,
+				i18nNamespace: 'report-templates',
 			},
 		],
 	},

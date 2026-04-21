@@ -42,7 +42,6 @@ import AgentSection from './AgentSection';
 import AgentSaveReviewModal from './AgentSaveReviewModal';
 import DispositionSection from './DispositionSection';
 import DoNotCallSection from './DoNotCallSection';
-import ReportValuesSection from './ReportValuesSection/ReportValuesSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
@@ -74,7 +73,6 @@ const campaignFormTabNamespaces: Record<string, string> = {
 	params: 'campaign.form.params',
 	analytics: 'campaign.form.analytics',
 	dashboards: 'campaign.form.dashboards',
-	'report-values': 'campaign.form.report-values',
 	versioning: 'campaign.form.versioning',
 };
 
@@ -669,7 +667,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 								}
 							/>
 						)}
-						{selectedTab === 'report-values' && <ReportValuesSection />}
 						{selectedTab === 'analytics' && (
 							<form
 								onSubmit={form.onSubmit((values) => {
