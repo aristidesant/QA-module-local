@@ -5,6 +5,10 @@ import {
 	type UseQueryOptions,
 } from '@tanstack/react-query';
 import contactGroupApi from '~/api/contactGroupApi';
+import type {
+	CampaignContactList,
+	CampaignContactListsParams,
+} from '~/models/ContactGroup';
 import type ContactGroup from '~/models/ContactGroup';
 import type { PaginatedResponse } from '~/models/CampaignsModel';
 
@@ -51,6 +55,24 @@ export const useGetContactGroup = (id: number) => {
 		},
 		enabled: !!id,
 		retry: false,
+	});
+};
+
+// Get campaign contact lists
+export const useGetCampaignContactLists = (
+	campaignId: number | undefined,
+	params?: CampaignContactListsParams,
+	options?: Partial<UseQueryOptions<CampaignContactList[]>>
+) => {
+	return useQuery<CampaignContactList[]>({
+		queryKey: ['campaignContactLists', campaignId, params],
+		queryFn: async () => {
+			const api = contactGroupApi();
+			return api.findCampaignContactLists(campaignId!, params);
+		},
+		enabled: !!campaignId,
+		retry: false,
+		...options,
 	});
 };
 

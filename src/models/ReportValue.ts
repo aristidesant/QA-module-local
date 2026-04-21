@@ -105,11 +105,19 @@ export interface BulkUpdateReportTemplateColumnsDto {
 	reportValues: BulkUpdateReportValueItemDto[];
 }
 
+export type CampaignSelectionScope = 'all' | 'lists';
+
+export interface ExportCampaignSelection {
+	campaignId: number;
+	scope: CampaignSelectionScope;
+	contactListIds?: number[];
+}
+
 export interface ExportReportTemplateDto {
 	startDate: string;
 	endDate: string;
-	campaignIds: number[];
-	format?: 'csv' | 'xlsx';
+	format: 'csv' | 'xlsx';
+	campaignSelections: ExportCampaignSelection[];
 }
 
 export interface CreateReportValueWithTemplateDto {
