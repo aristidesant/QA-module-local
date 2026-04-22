@@ -1,7 +1,7 @@
 .root {
 	width: 100%;
 	overflow: auto;
-	border: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid var(--surface-border);
 	border-radius: var(--mantine-radius-md);
 	background: var(--mantine-color-body);
 	margin: 0;
@@ -22,7 +22,7 @@
 .td {
 	padding: 8px 12px;
 	text-align: left;
-	border-bottom: 1px solid var(--mantine-color-gray-3);
+	border-bottom: 1px solid var(--surface-border);
 	font-size: 14px;
 	vertical-align: middle;
 }
@@ -69,15 +69,19 @@
 }
 
 .tbody tr:hover td {
-	background: var(--mantine-color-gray-1);
+	background: var(--surface-sunken);
 }
 
 .reorderingRow td {
-	background: var(--mantine-color-gray-1) !important;
+	background: var(--surface-sunken) !important;
 }
 
 .selectedRow td {
-	background: var(--mantine-color-gray-2) !important;
+	background: color-mix(
+		in srgb,
+		var(--brand-soft) 35%,
+		var(--surface-sunken)
+	) !important;
 }
 
 .emptyRow {
@@ -125,7 +129,7 @@
 
 .pagination {
 	padding: 12px;
-	border-top: 1px solid var(--mantine-color-gray-3);
+	border-top: 1px solid var(--surface-border);
 	display: flex;
 	justify-content: center;
 }
@@ -155,7 +159,7 @@
 /* Dark mode styles - must come after regular styles to override */
 [data-mantine-color-scheme='dark'] .root {
 	background: var(--mantine-color-dark-7);
-	border-color: var(--mantine-color-dark-5);
+	border-color: var(--surface-border);
 }
 
 [data-mantine-color-scheme='dark'] .thead {
@@ -164,7 +168,7 @@
 
 [data-mantine-color-scheme='dark'] .th,
 [data-mantine-color-scheme='dark'] .td {
-	border-bottom-color: var(--mantine-color-dark-5);
+	border-bottom-color: var(--surface-border);
 }
 
 [data-mantine-color-scheme='dark'] .th {
@@ -181,7 +185,11 @@
 }
 
 [data-mantine-color-scheme='dark'] .selectedRow td {
-	background: var(--mantine-color-dark-6) !important;
+	background: color-mix(
+		in srgb,
+		var(--brand-soft) 25%,
+		var(--mantine-color-dark-6)
+	) !important;
 }
 
 [data-mantine-color-scheme='dark'] .reorderingRow td {
@@ -194,7 +202,7 @@
 }
 
 [data-mantine-color-scheme='dark'] .pagination {
-	border-top-color: var(--mantine-color-dark-5);
+	border-top-color: var(--surface-border);
 }
 
 [data-mantine-color-scheme='dark'] .sortIcon {

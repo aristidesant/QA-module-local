@@ -352,7 +352,12 @@ const ReportValuesSection = () => {
 					);
 				})}
 
-				<Paper withBorder p='sm' radius='md' className={styles.saveBar}>
+				<Paper
+					withBorder
+					p='sm'
+					radius='md'
+					className={`${styles.sheetCard} ${styles.saveBar}`}
+				>
 					<Group justify='space-between' align='center' gap='sm'>
 						<Text size='sm' c={hasPendingChanges ? 'dimmed' : 'gray'}>
 							{hasPendingChanges

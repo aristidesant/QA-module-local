@@ -5,15 +5,19 @@ import {
 	IconTrendingUp,
 } from '@tabler/icons-react';
 import { Text, Tooltip } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import type {
 	MetricComparison,
 	MetricTrend,
 } from '~/models/AnalyticsDashboard';
 import styles from './KpiCard.module.css';
 
-const formatValue = (value: string | number | boolean | null | undefined) => {
+const formatValue = (
+	value: string | number | boolean | null | undefined,
+	t: (key: string) => string
+) => {
 	if (typeof value === 'number') return value.toLocaleString();
-	if (typeof value === 'boolean') return value ? 'True' : 'False';
+	if (typeof value === 'boolean') return value ? t('kpi.true') : t('kpi.false');
 	if (value === null || value === undefined || value === '') return '-';
 	return String(value);
 };
@@ -27,8 +31,8 @@ const formatPct = (pct: number | null): string => {
 const sanitizeColorToken = (value?: string) =>
 	(value ?? 'default').replace(/[^a-zA-Z0-9_-]/g, '');
 
-const SPARKLINE_GREEN = '#10b981';
-const SPARKLINE_RED = '#ef4444';
+const SPARKLINE_GREEN = 'var(--mantine-color-green-6)';
+const SPARKLINE_RED = 'var(--mantine-color-red-6)';
 
 const UP_PATH =
 	'M0 50 Q 15 45 30 48 T 60 38 T 90 40 T 120 28 T 150 20 T 180 12 Q 190 8 200 5';
@@ -85,6 +89,7 @@ export const KpiCard = ({
 	comparisonDetail,
 	showCompactComparisonTooltip = false,
 }: KpiCardProps) => {
+	const { t } = useTranslation('common');
 	const trendConfig =
 		comparison && comparison.trend !== 'UNAVAILABLE'
 			? TREND_CONFIG[comparison.trend]
@@ -185,7 +190,7 @@ export const KpiCard = ({
 					</Text>
 				) : (
 					<>
-						<p className={styles.value}>{formatValue(value)}</p>
+						<p className={styles.value}>{formatValue(value, t)}</p>
 						{isComparisonHero ? (
 							<>
 								<div className={styles.divider} />

@@ -8,9 +8,9 @@
 }
 
 .sectionCard {
-	background: var(--mantine-color-body);
-	border: 1px solid var(--mantine-color-default-border);
-	border-radius: var(--mantine-radius-md);
+	background: var(--surface-card);
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-lg);
 	box-shadow: var(--mantine-shadow-sm);
 	padding: var(--mantine-spacing-md);
 }
@@ -24,16 +24,16 @@
 }
 
 .campaignList {
-	border: 1px solid var(--mantine-color-default-border);
-	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-body);
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--surface-card);
 }
 
 .campaignCard {
 	padding: var(--mantine-spacing-sm);
-	background: var(--mantine-color-body);
-	border: 1px solid var(--mantine-color-default-border);
-	border-radius: var(--mantine-radius-md);
+	background: var(--surface-card);
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-lg);
 	box-shadow: var(--mantine-shadow-xs);
 	transition:
 		transform 150ms ease,
@@ -44,6 +44,7 @@
 .campaignCard:hover {
 	transform: translateY(-1px);
 	box-shadow: var(--mantine-shadow-sm);
+	border-color: var(--surface-border-strong);
 }
 
 .campaignHeaderMain {
@@ -85,9 +86,9 @@
 }
 
 .listPanel {
-	border: 1px solid var(--mantine-color-default-border);
-	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-body);
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-lg);
+	background: var(--surface-card);
 }
 
 .inlineState {

@@ -50,7 +50,8 @@ const PhoneNumberNode = (props: NodeProps) => {
 				...toneStyle,
 				'--workflow-node-accent': 'var(--mantine-color-red-7)',
 				'--workflow-node-selected-border': 'var(--mantine-color-red-4)',
-				'--workflow-node-selected-ring': 'rgba(239, 68, 68, 0.14)',
+				'--workflow-node-selected-ring':
+					'color-mix(in srgb, var(--mantine-color-red-6) 14%, transparent)',
 				'--workflow-node-header-bg': 'var(--mantine-color-red-0)',
 				'--workflow-node-surface-selected': 'var(--mantine-color-red-0)',
 				'--workflow-node-surface': 'var(--mantine-color-red-0)',

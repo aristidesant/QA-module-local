@@ -5,7 +5,7 @@
 	background: var(--mantine-color-white);
 	border-radius: 16px;
 	transition: all 0.2s ease-out;
-	border: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid var(--surface-border);
 	box-shadow:
 		0 1px 3px color-mix(in srgb, var(--mantine-color-black) 5%, transparent),
 		0 1px 2px color-mix(in srgb, var(--mantine-color-black) 10%, transparent);
@@ -16,7 +16,7 @@
 	box-shadow:
 		0 4px 12px color-mix(in srgb, var(--mantine-color-black) 10%, transparent),
 		0 2px 4px color-mix(in srgb, var(--mantine-color-black) 8%, transparent);
-	border-color: var(--mantine-color-gray-4);
+	border-color: var(--surface-border-strong);
 }
 
 /* Variant styles */
@@ -26,24 +26,24 @@
 		var(--mantine-color-gray-0) 0%,
 		var(--mantine-color-gray-3) 100%
 	);
-	border: 1px solid var(--mantine-color-gray-4);
+	border: 1px solid var(--surface-border-strong);
 }
 
 .glass {
 	background: color-mix(in srgb, var(--mantine-color-gray-0) 80%, transparent);
 	backdrop-filter: blur(8px);
 	border: 1px solid
-		color-mix(in srgb, var(--mantine-color-gray-4) 60%, transparent);
+		color-mix(in srgb, var(--surface-border-strong) 60%, transparent);
 }
 
 .minimal {
 	background: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--surface-border);
 	box-shadow: none;
 }
 
 .minimal:hover {
-	border-color: var(--mantine-color-gray-3);
+	border-color: var(--surface-border-strong);
 	box-shadow: 0 2px 8px
 		color-mix(in srgb, var(--mantine-color-black) 6%, transparent);
 }
@@ -140,7 +140,7 @@
 	flex-shrink: 0;
 	margin-left: auto;
 	padding-left: 16px;
-	border-left: 1px solid var(--mantine-color-gray-2);
+	border-left: 1px solid var(--surface-border);
 }
 
 /* Content styles with clear section definition */
@@ -148,7 +148,7 @@
 	position: relative;
 	border-radius: 8px;
 	padding: 16px;
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--surface-border);
 	min-height: 40px;
 }
 
@@ -190,7 +190,7 @@
 		padding-left: 0;
 		border-left: none;
 		padding-top: 12px;
-		border-top: 1px solid var(--mantine-color-gray-2);
+		border-top: 1px solid var(--surface-border);
 		width: 100%;
 	}
 

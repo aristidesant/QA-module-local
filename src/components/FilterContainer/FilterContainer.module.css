@@ -1,6 +1,6 @@
 [data-mantine-color-scheme='dark'] .filtersWrapper {
-	background-color: var(--mantine-color-dark-7);
-	border-color: var(--mantine-color-dark-5);
+	background-color: var(--surface-card);
+	border-color: var(--surface-border);
 }
 
 /* Filters Wrapper */
@@ -10,9 +10,10 @@
 	justify-content: space-between;
 	gap: var(--mantine-spacing-sm);
 	flex-wrap: wrap;
-	background-color: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--surface-card);
+	border: 1px solid var(--surface-border);
 	border-radius: var(--mantine-radius-md);
+	box-shadow: var(--mantine-shadow-sm);
 	padding: var(--mantine-spacing-sm);
 }
 

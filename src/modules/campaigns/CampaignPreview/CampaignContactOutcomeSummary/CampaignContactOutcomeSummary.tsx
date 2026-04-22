@@ -48,25 +48,25 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 
 	const isCompleted = campaign?.status?.toLowerCase() === 'completed';
 
-	const greenColor = '#66d266ff';
-	const orangeColor = '#ec8022ff';
-	const redColor = '#d8463eff';
+	const greenColor = 'var(--mantine-color-green-6)';
+	const orangeColor = 'var(--mantine-color-orange-6)';
+	const redColor = 'var(--mantine-color-red-6)';
 
-	// Generate distinct colors for child dispositions
+	// Generate distinct colors for child dispositions using Mantine tokens for dark-mode safety
 	const generateChildColors = (count: number) => {
 		const colors = [
-			'#3b82f6', // blue
-			'#8b5cf6', // purple
-			'#ec4899', // pink
-			'#f59e0b', // amber
-			'#10b981', // emerald
-			'#06b6d4', // cyan
-			'#f97316', // orange
-			'#6366f1', // indigo
-			'#14b8a6', // teal
-			'#a855f7', // violet
-			'#84cc16', // lime
-			'#f43f5e', // rose
+			'var(--mantine-color-blue-6)',
+			'var(--mantine-color-violet-6)',
+			'var(--mantine-color-pink-6)',
+			'var(--mantine-color-yellow-6)',
+			'var(--mantine-color-cyan-6)',
+			'var(--mantine-color-indigo-6)',
+			'var(--mantine-color-teal-6)',
+			'var(--mantine-color-grape-6)',
+			'var(--mantine-color-lime-6)',
+			'var(--mantine-color-red-6)',
+			'var(--mantine-color-orange-6)',
+			'var(--mantine-color-green-6)',
 		];
 		return colors.slice(0, count);
 	};
@@ -222,7 +222,7 @@ const CampaignContactOutcomeSummary: React.FC<CCOSummaryProps> = ({
 								}`}
 								key={`${item.label}-${index}`}
 							>
-								<Group gap={6} style={{ flex: 1, minWidth: 0 }}>
+								<Group gap={6} className={classes.legendItemGroup}>
 									<div
 										className={classes.legendDot}
 										style={{ backgroundColor: item.color }}

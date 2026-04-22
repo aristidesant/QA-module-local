@@ -159,7 +159,30 @@
 		"of": "of",
 		"filteredBy": "(filtered by \"{{term}}\")",
 		"show": "Show:",
-		"page": "Page"
+		"page": "Page",
+		"itemsPerPage": "{{count}} per page",
+		"items": "items"
+	},
+	"sipTrunk": {
+		"title": "SIP Trunk",
+		"subtitle": "Monitor SIP connectivity and review every active call handled by the agent service.",
+		"badge": "SIP Monitor",
+		"loading": "Loading SIP monitor...",
+		"error": "Error loading SIP monitor URL",
+		"invalidConfig": "Invalid SIP monitor configuration",
+		"invalidConfigDesc": "The configured SIP monitor URL is not allowed for this environment. Expected origin: {{origin}}"
+	},
+	"fallbackRight": {
+		"title": "Nothing selected",
+		"description": "No item selected. Pick an entry from the list or create a new one to see details and actions.",
+		"actionText": "Choose or create an item to get started"
+	},
+	"voicePlayer": {
+		"agentVoice": "Agent voice"
+	},
+	"kpi": {
+		"true": "True",
+		"false": "False"
 	},
 	"outboundCallForm": {
 		"agentCallTitle": "Agent Call",

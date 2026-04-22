@@ -4,6 +4,7 @@ import {
 	IconPlayerPlay,
 	IconPlayerPause,
 } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { useState, useRef, useEffect } from 'react';
 import styles from './VoicePlayer.module.css';
 
@@ -13,6 +14,7 @@ type VoicePlayerProps = {
 };
 
 const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceName, previewUrl }) => {
+	const { t } = useTranslation('common');
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -105,9 +107,9 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceName, previewUrl }) => {
 				justify='space-between'
 				align='center'
 				wrap='nowrap'
-				style={{ width: '100%' }}
+				className={styles.groupRow}
 			>
-				<Group gap='sm' align='center' style={{ flex: 1, minWidth: 0 }}>
+				<Group gap='sm' align='center' className={styles.groupContent}>
 					<Box className={styles.iconWrapper}>
 						<IconWaveSquare
 							size={16}
@@ -117,7 +119,7 @@ const VoicePlayer: React.FC<VoicePlayerProps> = ({ voiceName, previewUrl }) => {
 					</Box>
 					<Stack gap={1} style={{ minWidth: 0 }}>
 						<Text size='xs' fw={500} className={styles.voiceLabel} truncate>
-							Agent voice
+							{t('voicePlayer.agentVoice')}
 						</Text>
 						<Text size='xs' className={styles.voiceName} truncate>
 							{voiceName}

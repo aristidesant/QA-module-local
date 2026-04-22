@@ -38,7 +38,7 @@
 .sliderTrack {
 	height: 6px;
 	border-radius: 3px;
-	background: var(--mantine-color-gray-2);
+	background: var(--surface-sunken);
 }
 
 .sliderBar {
@@ -89,14 +89,14 @@
 	gap: 8px;
 	padding: 8px 10px;
 	background: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--surface-border);
 	border-radius: var(--mantine-radius-md);
 	transition: all 150ms ease;
 }
 
 .metricCard:hover {
-	border-color: var(--metric-accent);
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+	border-color: var(--surface-border-strong);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .metricIconTeal {
@@ -178,12 +178,12 @@
 
 [data-mantine-color-scheme='dark'] .metricCard {
 	background: var(--mantine-color-dark-7);
-	border-color: var(--mantine-color-dark-5);
+	border-color: var(--surface-border);
 }
 
 [data-mantine-color-scheme='dark'] .metricCard:hover {
-	border-color: var(--metric-accent);
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+	border-color: var(--surface-border-strong);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
 }
 
 [data-mantine-color-scheme='dark'] .metricIconWrapper {

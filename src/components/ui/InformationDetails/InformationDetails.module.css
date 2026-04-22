@@ -48,7 +48,7 @@
 
 .detailLabel {
 	font-weight: 700;
-	color: var(--mantine-color-dark-2);
+	color: var(--mantine-color-gray-6);
 	font-size: 0.8rem;
 	letter-spacing: 0.2px;
 	margin-bottom: 4px;
@@ -67,7 +67,7 @@
 .detailValue {
 	font-size: 1rem;
 	font-weight: 600;
-	color: var(--mantine-color-dark-8);
+	color: var(--mantine-color-gray-9);
 	word-break: break-word;
 	text-align: left;
 	margin-top: 2px;

@@ -6,13 +6,24 @@ body,
 	min-height: 100dvh;
 }
 
+/* Light mode: soften default borders to match design-system --surface-border */
+[data-mantine-color-scheme='light'] {
+	--mantine-color-default-border: var(--mantine-color-gray-2);
+
+	--surface-bg: var(--nt-ink-50);
+	--surface-card: var(--nt-ink-0);
+	--surface-sunken: var(--nt-ink-100);
+	--surface-border: var(--nt-ink-100);
+	--surface-border-strong: var(--nt-ink-200);
+}
+
 /* Sync Mantine dark mode with design-system tokens */
 [data-mantine-color-scheme='dark'] {
 	--surface-bg: var(--nt-ink-950);
 	--surface-card: var(--nt-ink-900);
 	--surface-sunken: #0f141b;
-	--surface-border: #232c38;
-	--surface-border-strong: #2f3a49;
+	--surface-border: #1f2731;
+	--surface-border-strong: #232c38;
 
 	--text-primary: #ffffff;
 	--text-secondary: #b8c0cc;

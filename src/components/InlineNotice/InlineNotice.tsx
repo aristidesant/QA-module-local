@@ -1,5 +1,5 @@
 import { MantineColor, Text, BoxProps, Box } from '@mantine/core';
-import { CSSProperties, ReactNode, useMemo } from 'react';
+import { ReactNode } from 'react';
 import classes from './InlineNotice.module.css';
 
 interface InlineNoticeProps extends BoxProps {
@@ -16,30 +16,8 @@ const InlineNotice = ({
 	color = 'blue',
 	...others
 }: InlineNoticeProps) => {
-	const colorVariables = useMemo(
-		() =>
-			({
-				'--notice-frame': `var(--mantine-color-${color}-2)`,
-				'--notice-icon': `var(--mantine-color-${color}-7)`,
-				'--notice-title': `var(--mantine-color-${color}-9)`,
-				'--notice-description': `var(--mantine-color-${color}-8)`,
-				'--notice-surface': `var(--mantine-color-${color}-0)`,
-			}) as CSSProperties,
-		[color]
-	);
-
 	return (
-		<Box
-			flex={1}
-			className={classes.root}
-			style={{
-				display: 'flex',
-				flexDirection: 'row',
-				alignItems: 'center',
-				...colorVariables,
-			}}
-			{...others}
-		>
+		<Box flex={1} className={classes.root} data-color={color} {...others}>
 			<div className={classes.iconWrapper}>{icon}</div>
 			<div className={classes.contentText}>
 				<Text size='sm' fw={600} className={classes.title}>

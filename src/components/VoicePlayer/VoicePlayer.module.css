@@ -7,6 +7,15 @@
 	box-sizing: border-box;
 }
 
+.groupRow {
+	width: 100%;
+}
+
+.groupContent {
+	flex: 1;
+	min-width: 0;
+}
+
 [data-mantine-color-scheme='dark'] .voicePlayer {
 	background: var(--mantine-color-dark-7);
 	border-color: var(--mantine-color-dark-5);

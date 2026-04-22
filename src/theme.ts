@@ -1,5 +1,68 @@
 import { createTheme } from '@mantine/core';
 
+const modernInputStyles = {
+	input: {
+		backgroundColor:
+			'color-mix(in srgb, var(--surface-card) 94%, var(--surface-sunken))',
+		border: '1px solid var(--surface-border)',
+		boxShadow: 'var(--sh-xs)',
+		transition:
+			'border-color 140ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 140ms cubic-bezier(0.22, 1, 0.36, 1), background-color 140ms cubic-bezier(0.22, 1, 0.36, 1)',
+		'&:hover': {
+			borderColor: 'var(--surface-border-strong)',
+			backgroundColor: 'var(--surface-card)',
+		},
+		'&:focus, &:focus-visible': {
+			borderColor: 'var(--brand)',
+			boxShadow: 'var(--sh-focus)',
+			backgroundColor: 'var(--surface-card)',
+		},
+		'&:disabled, &[data-disabled]': {
+			opacity: 0.65,
+			cursor: 'not-allowed',
+		},
+	},
+};
+
+const modernButtonStyles = {
+	root: {
+		fontWeight: 600,
+		letterSpacing: '-0.01em',
+		transition:
+			'border-color 140ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 140ms cubic-bezier(0.22, 1, 0.36, 1), background-color 140ms cubic-bezier(0.22, 1, 0.36, 1), transform 140ms cubic-bezier(0.22, 1, 0.36, 1)',
+		'&[data-variant="filled"], &[data-variant="gradient"]': {
+			boxShadow: 'var(--sh-xs)',
+		},
+		'&[data-variant="filled"]:hover:not(:disabled), &[data-variant="gradient"]:hover:not(:disabled)':
+			{
+				boxShadow: 'var(--sh-sm)',
+				transform: 'translateY(-1px)',
+			},
+		'&[data-variant="filled"]:active:not(:disabled), &[data-variant="gradient"]:active:not(:disabled)':
+			{
+				transform: 'translateY(0)',
+			},
+		'&:disabled, &[data-disabled]': {
+			boxShadow: 'none',
+		},
+	},
+	label: {
+		fontWeight: 600,
+	},
+};
+
+const modernCardStyles = {
+	root: {
+		backgroundColor: 'var(--surface-card)',
+		transition:
+			'border-color 140ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 140ms cubic-bezier(0.22, 1, 0.36, 1), background-color 140ms cubic-bezier(0.22, 1, 0.36, 1)',
+		'&:hover': {
+			borderColor: 'var(--surface-border-strong)',
+			boxShadow: 'var(--sh-md)',
+		},
+	},
+};
+
 export const theme = createTheme({
 	/* Brand */
 	primaryColor: 'green',
@@ -117,6 +180,12 @@ export const theme = createTheme({
 			defaultProps: {
 				zIndex: 400,
 			},
+			styles: {
+				dropdown: {
+					border: '1px solid var(--surface-border)',
+					boxShadow: 'var(--sh-md)',
+				},
+			},
 		},
 		Popover: {
 			defaultProps: {
@@ -127,11 +196,23 @@ export const theme = createTheme({
 			defaultProps: {
 				radius: 'md',
 			},
+			styles: modernButtonStyles,
 		},
 		Tabs: {
 			defaultProps: {
 				variant: 'default',
 				radius: 'md',
+			},
+			styles: {
+				list: {
+					borderBottom: '1px solid var(--surface-border)',
+				},
+				tab: {
+					color: 'var(--text-secondary)',
+					'&[data-active]': {
+						color: 'var(--brand)',
+					},
+				},
 			},
 		},
 		ActionIcon: {
@@ -191,27 +272,48 @@ export const theme = createTheme({
 		Card: {
 			defaultProps: {
 				radius: 'lg',
+				shadow: 'sm',
 			},
+			styles: modernCardStyles,
 		},
 		Textarea: {
 			defaultProps: {
 				radius: 'md',
 			},
+			styles: modernInputStyles,
 		},
 		Input: {
 			defaultProps: {
 				radius: 'md',
 			},
+			styles: modernInputStyles,
 		},
 		Select: {
 			defaultProps: {
 				radius: 'md',
+			},
+			styles: {
+				...modernInputStyles,
+				input: {
+					...modernInputStyles.input,
+					'&:focus, &:focus-visible, &[data-focus="true"]': {
+						borderColor: 'var(--brand)',
+						boxShadow: 'var(--sh-focus)',
+						backgroundColor: 'var(--surface-card)',
+					},
+				},
+				dropdown: {
+					backgroundColor: 'var(--surface-card)',
+					border: '1px solid var(--surface-border)',
+					boxShadow: 'var(--sh-md)',
+				},
 			},
 		},
 		NativeSelect: {
 			defaultProps: {
 				radius: 'md',
 			},
+			styles: modernInputStyles,
 		},
 	},
 });

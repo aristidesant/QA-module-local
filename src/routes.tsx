@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import RouteProtecter, {
 	clientLoader as routeProtecterLoader,
 } from './components/RouteProtecter/RouteProtecter';
-import ModuleGuard from './components/RouteGuards/ModuleGuard';
+import ModuleGuard from './components/ModuleGuard';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { campaignRouteNamespaces } from '~/modules/campaigns/campaignNamespaces';
 import SuspenseFallback from './components/SuspenseFallback';

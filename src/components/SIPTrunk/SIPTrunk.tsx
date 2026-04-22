@@ -1,5 +1,6 @@
 import { Alert, Badge, Text, Title } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import { useClientConfigByName } from '~/queries/useClientConfigs';
 import classes from './SIPTrunk.module.css';
 
@@ -27,6 +28,7 @@ const resolveMonitorUrl = (value: string) => {
 };
 
 const SIPTrunk = () => {
+	const { t } = useTranslation('common');
 	const { data, isLoading, error } = useClientConfigByName('sip_monitor_url');
 	const allowedOrigin = getAllowedOrigin();
 	const monitorUrl = data?.value ? resolveMonitorUrl(data.value) : null;
@@ -37,38 +39,31 @@ const SIPTrunk = () => {
 		<div className={classes.root}>
 			<header className={classes.header}>
 				<div>
-					<Title order={2}>SIP Trunk</Title>
-					<Text className={classes.subtitle}>
-						Monitor SIP connectivity and review every active call handled by the
-						agent service.
-					</Text>
+					<Title order={2}>{t('sipTrunk.title')}</Title>
+					<Text className={classes.subtitle}>{t('sipTrunk.subtitle')}</Text>
 				</div>
 				<Badge color='blue' size='lg'>
-					SIP Monitor
+					{t('sipTrunk.badge')}
 				</Badge>
 			</header>
 
 			<section>
-				{isLoading && <Text>Loading SIP monitor...</Text>}
-				{error && <Text c='red'>Error loading SIP monitor URL</Text>}
+				{isLoading && <Text>{t('sipTrunk.loading')}</Text>}
+				{error && <Text c='red'>{t('sipTrunk.error')}</Text>}
 				{monitorUrl && !isAllowedOrigin && (
 					<Alert
 						color='red'
-						title='Invalid SIP monitor configuration'
+						title={t('sipTrunk.invalidConfig')}
 						icon={<IconAlertTriangle size={16} />}
 					>
-						The configured SIP monitor URL is not allowed for this environment.
-						Expected origin:{' '}
-						<Text component='span' fw={600}>
-							{allowedOrigin}
-						</Text>
+						{t('sipTrunk.invalidConfigDesc', { origin: allowedOrigin })}
 					</Alert>
 				)}
 				{monitorUrl && isAllowedOrigin && (
 					<iframe
 						src={monitorUrl.href}
-						style={{ width: '100%', height: '600px', border: 'none' }}
-						title='SIP Monitor'
+						className={classes.monitorFrame}
+						title={t('sipTrunk.badge')}
 					/>
 				)}
 			</section>

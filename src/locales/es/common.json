@@ -159,7 +159,30 @@
 		"of": "de",
 		"filteredBy": "(filtrado por \"{{term}}\")",
 		"show": "Mostrar:",
-		"page": "Página"
+		"page": "Página",
+		"itemsPerPage": "{{count}} por página",
+		"items": "elementos"
+	},
+	"sipTrunk": {
+		"title": "SIP Trunk",
+		"subtitle": "Monitorea la conectividad SIP y revisa cada llamada activa manejada por el servicio de agente.",
+		"badge": "Monitor SIP",
+		"loading": "Cargando monitor SIP...",
+		"error": "Error al cargar la URL del monitor SIP",
+		"invalidConfig": "Configuración de monitor SIP inválida",
+		"invalidConfigDesc": "La URL del monitor SIP configurada no está permitida para este entorno. Origen esperado: {{origin}}"
+	},
+	"fallbackRight": {
+		"title": "Nada seleccionado",
+		"description": "Ningún elemento seleccionado. Elige una entrada de la lista o crea una nueva para ver detalles y acciones.",
+		"actionText": "Elige o crea un elemento para comenzar"
+	},
+	"voicePlayer": {
+		"agentVoice": "Voz del agente"
+	},
+	"kpi": {
+		"true": "Verdadero",
+		"false": "Falso"
 	},
 	"outboundCallForm": {
 		"agentCallTitle": "Llamada del agente",

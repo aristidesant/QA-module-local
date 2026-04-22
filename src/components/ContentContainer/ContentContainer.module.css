@@ -4,11 +4,11 @@
 }
 
 [data-mantine-color-scheme='dark'] .contentContainerDivider {
-	border-color: var(--mantine-color-dark-5);
+	border-color: var(--surface-border);
 }
 
 [data-mantine-color-scheme='dark'] .contentContainerRightSection {
-	border-left-color: var(--mantine-color-dark-5);
+	border-left-color: var(--surface-border);
 }
 
 [data-mantine-color-scheme='dark'] .contentContainerTitle {
@@ -69,7 +69,7 @@
 }
 
 .contentContainerDivider {
-	border-color: var(--mantine-color-gray-2);
+	border-color: var(--surface-border);
 	margin-inline: calc(-1 * var(--mantine-spacing-md));
 }
 
@@ -138,7 +138,7 @@
 .contentContainerRightSection {
 	width: var(--content-right-section-width, 380px);
 	background: var(--content-panel-bg);
-	border-left: 1px solid var(--mantine-color-gray-3);
+	border-left: 1px solid var(--surface-border);
 	padding: 0 var(--mantine-spacing-xs);
 	height: 100%;
 	min-height: 0;
@@ -153,7 +153,7 @@
 	padding: 16px 16px;
 	flex-shrink: 0;
 	background: var(--content-panel-bg);
-	border-bottom: 1px solid var(--mantine-color-gray-3);
+	border-bottom: 1px solid var(--surface-border);
 }
 
 .contentContainerRightSection > :last-child {
