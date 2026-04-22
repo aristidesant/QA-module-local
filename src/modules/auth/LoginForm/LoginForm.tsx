@@ -36,6 +36,7 @@ import { ClientSelectOption, MFALoginResponse } from '~/api/authApi';
 import { APP_VERSION } from '~/version';
 import OTPVerificationModal from './OTPVerificationModal';
 import ClientSelectionModal from './ClientSelectionModal';
+import ForgotPasswordModal from './ForgotPasswordModal';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useColorSchemeStore } from '~/stores/colorSchemeStore';
@@ -71,6 +72,8 @@ export function LoginForm() {
 		ClientSelectOption[]
 	>([]);
 	const [preAuthToken, setPreAuthToken] = useState<string | null>(null);
+	const [forgotPasswordModalOpened, setForgotPasswordModalOpened] =
+		useState(false);
 
 	const isSubmitting = loginMutation.isPending;
 	const isRedirecting = false;
@@ -418,6 +421,7 @@ export function LoginForm() {
 										type='button'
 										size='sm'
 										className={classes.forgotPasswordLink}
+										onClick={() => setForgotPasswordModalOpened(true)}
 									>
 										{t('forgotPassword')}
 									</Anchor>
@@ -494,6 +498,12 @@ export function LoginForm() {
 				availableClients={availableClients}
 				preAuthToken={preAuthToken || ''}
 				onSuccess={handleClientSelectionSuccess}
+			/>
+
+			{/* Forgot Password Modal */}
+			<ForgotPasswordModal
+				opened={forgotPasswordModalOpened}
+				onClose={() => setForgotPasswordModalOpened(false)}
 			/>
 		</div>
 	);
