@@ -116,6 +116,23 @@
 	}
 }
 
+@media (max-width: 768px) {
+	.contentContainerMain {
+		padding: 0;
+	}
+
+	.contentContainerContent {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.contentContainerHeader {
+		margin-inline: 0;
+		padding: var(--mantine-spacing-sm);
+		padding-bottom: 0;
+	}
+}
+
 .contentContainerContent.contentContainerNoMainScroll {
 	overflow: hidden;
 	/* constrain height so children can use flex to scroll independently */

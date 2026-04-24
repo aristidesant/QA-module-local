@@ -7,9 +7,10 @@ interface LogoProps {
 	compact?: boolean;
 	size?: 'sm' | 'md' | 'lg';
 	variant?: 'default' | 'compact';
+	textOnly?: boolean;
 }
 
-const Logo: React.FC<LogoProps> = ({ compact = false }) => {
+const Logo: React.FC<LogoProps> = ({ compact = false, textOnly = false }) => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('common');
 	return (
@@ -20,14 +21,16 @@ const Logo: React.FC<LogoProps> = ({ compact = false }) => {
 			onClick={() => navigate('/')}
 			aria-label={t('common.goToHome')}
 		>
-			<img
-				className={`${styles.logoImage} ${compact ? styles.logoImageCompact : ''}`}
-				src={
-					compact ? '/images/logoonblack-small-nt.png' : '/images/logo-2.png'
-				}
-				alt='Logo'
-			/>
-			{!compact && (
+			{!textOnly && (
+				<img
+					className={`${styles.logoImage} ${compact ? styles.logoImageCompact : ''}`}
+					src={
+						compact ? '/images/logoonblack-small-nt.png' : '/images/logo-2.png'
+					}
+					alt='Logo'
+				/>
+			)}
+			{(!compact || textOnly) && (
 				<span className={styles.logoText}>
 					Unified <span className={styles.logoAccent}>CXM</span>
 				</span>

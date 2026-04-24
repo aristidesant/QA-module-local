@@ -556,6 +556,7 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 }) => {
 	const location = useLocation();
 	const { t } = useTranslation('common');
+	const { closeMobile } = useSidebarStore();
 
 	const isSelected = isLinkActive(item, location.pathname);
 
@@ -569,6 +570,7 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 			].join(' ')}
 			aria-current={isSelected ? 'page' : undefined}
 			data-sidebar-active={isActive ? 'true' : undefined}
+			onClick={closeMobile}
 			onMouseEnter={() =>
 				item.i18nNamespace && prefetchNamespace(item.i18nNamespace)
 			}

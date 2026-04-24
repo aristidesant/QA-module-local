@@ -10,14 +10,17 @@
 	align-items: center;
 	gap: 8px;
 	padding: 7px 10px;
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--surface-card);
+	border: 1px solid var(--surface-border);
 	border-radius: 6px;
-	transition: background-color 0.15s ease;
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease;
 }
 
 .item:hover {
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--surface-sunken);
+	border-color: var(--surface-border-strong);
 }
 
 .itemInfo {
@@ -28,7 +31,7 @@
 .itemName {
 	font-size: 12px;
 	font-weight: 500;
-	color: var(--mantine-color-gray-8);
+	color: var(--mantine-color-text);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -64,18 +67,21 @@
 	padding: 6px 10px;
 	margin-top: 2px;
 	background-color: transparent;
-	border: 1px dashed var(--mantine-color-gray-3);
+	border: 1px dashed var(--surface-border-strong);
 	border-radius: 6px;
-	color: var(--mantine-color-gray-5);
+	color: var(--mantine-color-dimmed);
 	font-size: 12px;
 	cursor: pointer;
-	transition: all 0.15s ease;
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease,
+		color 0.15s ease;
 }
 
 .addButton:hover {
-	background-color: var(--mantine-color-gray-0);
-	border-color: var(--mantine-color-gray-5);
-	color: var(--mantine-color-gray-7);
+	background-color: var(--surface-sunken);
+	border-color: var(--surface-border);
+	color: var(--mantine-color-text);
 }
 
 .plusIcon {

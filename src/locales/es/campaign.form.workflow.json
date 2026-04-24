@@ -39,6 +39,70 @@
 					"failure": "Fallo"
 				},
 				"expressionNote": "Constructor de expresiones próximamente",
+				"expression": {
+					"title": "Expresión",
+					"description": "Construye la regla que controla cuando se usa esta conexión.",
+					"reset": "Restablecer",
+					"validationSummary": "Completa los campos resaltados de la expresión para guardar.",
+					"labelPlaceholder": "Etiqueta opcional para esta expresión",
+					"branchType": "Tipo de rama",
+					"branchTypes": {
+						"comparison": "Comparación",
+						"group": "Grupo",
+						"llm": "Prompt LLM"
+					},
+					"wrapAnd": "Agrupar AND",
+					"wrapOr": "Agrupar OR",
+					"removeBranch": "Eliminar rama",
+					"addBranch": "Agregar rama",
+					"llmPrompt": "Prompt LLM",
+					"llmPromptPlaceholder": "Pide al modelo evaluar esta rama...",
+					"leftValue": "Valor izquierdo",
+					"rightValue": "Valor derecho",
+					"comparisonOperator": "Operador de comparación",
+					"valueType": "Tipo de valor",
+					"dynamicVariablePlaceholder": "Selecciona variable",
+					"noVariables": "No se encontraron variables",
+					"numberPlaceholder": "Ingresa un número",
+					"stringPlaceholder": "Ingresa texto",
+					"llmValuePlaceholder": "Escribe el prompt del modelo...",
+					"operators": {
+						"or": "OR",
+						"and": "AND"
+					},
+					"comparisons": {
+						"eq": "Igual a",
+						"neq": "No es igual a",
+						"gt": "Mayor que",
+						"gte": "Mayor o igual",
+						"lt": "Menor que",
+						"lte": "Menor o igual"
+					},
+					"valueTypes": {
+						"variable": "Variable",
+						"text": "Texto",
+						"number": "Número",
+						"boolean": "Booleano",
+						"llm": "LLM"
+					},
+					"variables": {
+						"system": "Variables del sistema",
+						"custom": "Variables personalizadas"
+					},
+					"boolean": {
+						"true": "Verdadero",
+						"false": "Falso"
+					},
+					"errors": {
+						"emptyDynamicVariable": "Selecciona una variable.",
+						"emptyStringLiteral": "Ingresa un valor de texto.",
+						"invalidNumberLiteral": "Ingresa un número válido.",
+						"emptyLlmPrompt": "Ingresa un prompt LLM.",
+						"missingComparisonValue": "Completa este valor de comparación.",
+						"emptyGroup": "Agrega al menos una rama.",
+						"unsupportedExpression": "Esta rama de expresión no es compatible."
+					}
+				},
 				"forward": "Adelante",
 				"backward": "Atrás"
 			},

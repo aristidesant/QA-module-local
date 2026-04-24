@@ -16,6 +16,8 @@ import {
 	ConditionType,
 	useEdgeConditionModal,
 } from './EdgeConditionModalContext';
+import ExpressionBuilder from './ExpressionBuilder';
+import { createDefaultExpression } from './ExpressionBuilder/ExpressionBuilder.helpers';
 
 interface ConditionFieldsProps {
 	direction: ConditionDirection;
@@ -135,6 +137,10 @@ const ConditionFields = ({ direction }: ConditionFieldsProps) => {
 						setState((prev) => ({
 							...prev,
 							type: (value as ConditionType) || 'none',
+							expression:
+								value === 'expression'
+									? (prev.expression ?? createDefaultExpression())
+									: prev.expression,
 						}))
 					}
 					searchable
@@ -261,12 +267,12 @@ const ConditionFields = ({ direction }: ConditionFieldsProps) => {
 			)}
 
 			{state.type === 'expression' && (
-				<div>
+				<Stack gap='sm'>
 					<Text size='sm' fw={600} mb='xs'>
 						{t('form.workflow.edge.label', { defaultValue: 'Label' })}
 					</Text>
 					<TextInput
-						placeholder={t('form.workflow.edge.labelPlaceholder', {
+						placeholder={t('form.workflow.edge.expression.labelPlaceholder', {
 							defaultValue: 'Optional label for this expression',
 						})}
 						value={state.label || ''}
@@ -277,12 +283,13 @@ const ConditionFields = ({ direction }: ConditionFieldsProps) => {
 						}}
 						size='sm'
 					/>
-					<Text size='xs' c='dimmed' mt='xs'>
-						{t('form.workflow.edge.expressionNote', {
-							defaultValue: 'Expression builder coming soon',
-						})}
-					</Text>
-				</div>
+					<ExpressionBuilder
+						value={state.expression}
+						onChange={(expression) =>
+							setState((prev) => ({ ...prev, expression }))
+						}
+					/>
+				</Stack>
 			)}
 		</Stack>
 	);

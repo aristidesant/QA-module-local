@@ -9,6 +9,7 @@ import { getErrorMessage } from '~/utils/httpClient';
 import { useSessionStore } from '~/stores/sessionStore';
 import ClientSelectionPanel from '~/components/ClientSelectionPanel';
 import OTPVerificationModal from '~/modules/auth/LoginForm/OTPVerificationModal';
+import classes from './ClientSwitcherModal.module.css';
 
 interface ClientSwitcherModalProps {
 	opened: boolean;
@@ -110,6 +111,11 @@ export default function ClientSwitcherModal({
 				withCloseButton={false}
 				closeOnClickOutside={!isMutating}
 				closeOnEscape={!isMutating}
+				classNames={{
+					header: classes.modalHeader,
+					body: classes.modalBody,
+					content: classes.modalContent,
+				}}
 			>
 				<Stack gap='md'>
 					<ClientSelectionPanel

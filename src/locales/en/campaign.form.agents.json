@@ -346,6 +346,25 @@
 	"configuration": {
 		"editPrompt": "Edit prompt"
 	},
+	"dynamicVariables": {
+		"title": "Dynamic Variables",
+		"description": "Key-value pairs injected into the agent prompt at runtime.",
+		"empty": "No variables configured.",
+		"count": "{{count}} variable",
+		"count_other": "{{count}} variables",
+		"preview": {
+			"title": "Preview",
+			"readOnly": "Read only",
+			"emptyValue": "Empty value"
+		},
+		"addVariable": "Add variable",
+		"removeVariable": "Remove variable",
+		"keyPlaceholder": "Variable name",
+		"valuePlaceholder": "Default value",
+		"apply": "Apply",
+		"errorEmptyKey": "Key cannot be empty",
+		"errorDuplicateKey": "Duplicate key"
+	},
 	"saveReview": {
 		"title": "Review Changes",
 		"publishedLabel": "Published version",

@@ -48,6 +48,7 @@
 		"ariaLabel": "Main navigation",
 		"expand": "Expand sidebar",
 		"collapse": "Collapse sidebar",
+		"mobileMenuToggle": "Toggle navigation menu",
 		"menu": "MENU",
 		"noModules": "No modules available",
 		"requestAccess": "Request access to see navigation options.",

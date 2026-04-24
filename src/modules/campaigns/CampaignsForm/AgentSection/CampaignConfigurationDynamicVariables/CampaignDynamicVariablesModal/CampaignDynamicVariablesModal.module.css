@@ -1,0 +1,86 @@
+.modalContent {
+	max-height: calc(100dvh - var(--mantine-spacing-xl) * 2);
+	overflow: hidden;
+}
+
+.modalHeader {
+	padding-bottom: var(--mantine-spacing-xs);
+}
+
+.modalTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 600;
+}
+
+.modalBody {
+	display: flex;
+	flex-direction: column;
+	padding-top: 0;
+}
+
+.contentStack {
+	min-height: 0;
+}
+
+.toolbar {
+	padding-bottom: var(--mantine-spacing-xs);
+	border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.tableShell {
+	min-height: 0;
+}
+
+.headerRow,
+.entryRow {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 2rem;
+	align-items: start;
+	gap: var(--mantine-spacing-xs);
+}
+
+.headerRow {
+	padding: 0 var(--mantine-spacing-xs) 0 var(--mantine-spacing-xs);
+}
+
+.rowsScrollArea {
+	min-width: 0;
+}
+
+.rowsStack {
+	padding-right: var(--mantine-spacing-xs);
+}
+
+.actionCol {
+	width: 2rem;
+}
+
+.removeButton {
+	align-self: center;
+	justify-self: center;
+}
+
+.footer {
+	padding-top: var(--mantine-spacing-sm);
+	border-top: 1px solid var(--mantine-color-default-border);
+}
+
+@media (max-width: 48em) {
+	.headerRow {
+		display: none;
+	}
+
+	.entryRow {
+		grid-template-columns: minmax(0, 1fr) 2rem;
+	}
+
+	.entryRow > :nth-child(2) {
+		grid-column: 1 / -1;
+		grid-row: 2;
+	}
+
+	.removeButton {
+		grid-column: 2;
+		grid-row: 1;
+	}
+}

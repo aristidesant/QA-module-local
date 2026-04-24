@@ -142,13 +142,15 @@
 }
 
 .statusUnknown {
-	background-color: var(--mantine-color-gray-1);
-	color: var(--mantine-color-gray-7);
+	background-color: var(--surface-sunken);
+	border: 1px solid var(--surface-border);
+	color: var(--mantine-color-text);
 }
 
 [data-mantine-color-scheme='dark'] .statusUnknown {
 	background-color: var(--mantine-color-dark-6);
-	color: var(--mantine-color-dark-1);
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-0);
 }
 
 .dateCell {

@@ -254,7 +254,11 @@ export const useConversationsColumns = (
 								? 'green'
 								: 'gray';
 					return (
-						<Badge color={color} size='xs'>
+						<Badge
+							color={color}
+							size='xs'
+							className={color === 'gray' ? styles.statusUnknown : undefined}
+						>
 							{isAbandoned
 								? `${row.original?.dispositions?.dispositionName ?? t('overview.fallbacks.na')} • ${t('disposition.abandoned')}`
 								: (row.original?.dispositions?.dispositionName ??

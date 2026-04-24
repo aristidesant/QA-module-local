@@ -1,17 +1,30 @@
-import { useState } from 'react';
-import { useSearchParams } from 'react-router';
+import { useEffect, useMemo, useState } from 'react';
+import { useLocation } from 'react-router';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import ConversationsList from '~/modules/conversations/ConversationsList';
 import { ConversationDetailPage } from '~/modules/conversations/ConversationDetailPage/ConversationDetailPage';
 
+type ConversationLocationState = {
+	selectedConversationId?: number;
+};
+
 const ConversationsPage = () => {
-	const [searchParams, setSearchParams] = useSearchParams();
-	const paramId = searchParams.get('id');
+	const location = useLocation();
+	const routeState = useMemo(
+		() => (location.state as ConversationLocationState | null) ?? null,
+		[location.state]
+	);
 
 	const [selectedId, setSelectedId] = useState<number | null>(
-		paramId ? Number(paramId) : null
+		routeState?.selectedConversationId ?? null
 	);
 	const [conversationIds, setConversationIds] = useState<number[]>([]);
+
+	useEffect(() => {
+		if (routeState?.selectedConversationId) {
+			setSelectedId(routeState.selectedConversationId);
+		}
+	}, [routeState?.selectedConversationId]);
 
 	const handleSelectConversation = (conversation: { id: number }) => {
 		setSelectedId(conversation.id);
@@ -23,10 +36,6 @@ const ConversationsPage = () => {
 
 	const handleBack = () => {
 		setSelectedId(null);
-		if (searchParams.has('id')) {
-			searchParams.delete('id');
-			setSearchParams(searchParams, { replace: true });
-		}
 	};
 
 	if (selectedId !== null) {

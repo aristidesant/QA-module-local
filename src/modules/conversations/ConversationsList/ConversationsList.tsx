@@ -126,7 +126,11 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 			if (onRowClickProp) {
 				onRowClickProp(conversation);
 			} else {
-				navigate(`/conversations/${conversation.id}`);
+				navigate('/conversations', {
+					state: {
+						selectedConversationId: conversation.id,
+					},
+				});
 			}
 		},
 		[navigate, onRowClickProp]
