@@ -1,8 +1,15 @@
 /* Card Container */
 .card {
-	background: var(--mantine-color-white);
+	background: var(--mantine-color-body);
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
+}
+
+[data-mantine-color-scheme='dark'] .card,
+[data-mantine-color-scheme='dark'] .tableContainer,
+[data-mantine-color-scheme='dark'] .table {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
 }
 
 /* Table Container */
@@ -10,12 +17,51 @@
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
 	overflow: hidden;
-	background: var(--mantine-color-white);
+	background: var(--mantine-color-body);
+}
+
+[data-mantine-color-scheme='dark'] .tableContainer {
+	border-color: var(--mantine-color-dark-5);
 }
 
 /* Table Base Styles */
 .table {
-	background: var(--mantine-color-white);
+	background: var(--mantine-color-body);
+}
+
+[data-mantine-color-scheme='dark'] .table thead tr {
+	background-color: var(--mantine-color-dark-8);
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .table th {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .table td {
+	border-bottom-color: var(--mantine-color-dark-5);
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .table tbody tr:hover {
+	background-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .contactRowError {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-red-9) 30%,
+		var(--mantine-color-dark-7)
+	) !important;
+	border-left-color: var(--mantine-color-red-4);
+}
+
+[data-mantine-color-scheme='dark'] .contactRowError:hover {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-red-9) 36%,
+		var(--mantine-color-dark-6)
+	) !important;
 }
 
 .table thead tr {
@@ -91,6 +137,12 @@
 	border-color: var(--mantine-color-gray-2);
 }
 
+[data-mantine-color-scheme='dark'] .metaBadge {
+	background-color: var(--mantine-color-dark-6);
+	color: var(--mantine-color-dark-1);
+	border-color: var(--mantine-color-dark-4);
+}
+
 .nameText {
 	color: var(--mantine-color-gray-9);
 	font-weight: 500;
@@ -100,6 +152,10 @@
 	text-overflow: ellipsis;
 }
 
+[data-mantine-color-scheme='dark'] .nameText {
+	color: var(--mantine-color-dark-0);
+}
+
 /* Phone Column */
 .phoneText {
 	color: var(--mantine-color-gray-8);
@@ -107,6 +163,10 @@
 	font-size: 12px;
 	line-height: 1.4;
 	white-space: nowrap;
+}
+
+[data-mantine-color-scheme='dark'] .phoneText {
+	color: var(--mantine-color-dark-2);
 }
 
 .phoneTooltip {
@@ -122,6 +182,10 @@
 .columnIcon {
 	color: var(--mantine-color-gray-5);
 	flex-shrink: 0;
+}
+
+[data-mantine-color-scheme='dark'] .columnIcon {
+	color: var(--mantine-color-dark-3);
 }
 
 /* Email Column */
@@ -140,6 +204,14 @@
 	color: var(--mantine-color-blue-8);
 }
 
+[data-mantine-color-scheme='dark'] .emailText {
+	color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] .emailText:hover {
+	color: var(--mantine-color-blue-2);
+}
+
 /* Count Badges */
 .countBadge {
 	font-size: 10px;
@@ -154,6 +226,12 @@
 	background-color: var(--mantine-color-gray-0);
 }
 
+[data-mantine-color-scheme='dark'] .countBadge {
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-1);
+	background-color: var(--mantine-color-dark-6);
+}
+
 .errorBadge {
 	font-size: 10px;
 	font-weight: 600;
@@ -166,6 +244,11 @@
 	color: var(--mantine-color-white);
 }
 
+[data-mantine-color-scheme='dark'] .errorBadge {
+	background-color: var(--mantine-color-red-8);
+	color: var(--mantine-color-red-0);
+}
+
 .completenessWrapper {
 	width: 72px;
 }
@@ -175,7 +258,15 @@
 	background-color: var(--mantine-color-gray-1);
 }
 
+[data-mantine-color-scheme='dark'] .completenessRoot {
+	background-color: var(--mantine-color-dark-5);
+}
+
 .completenessSection {
+	background-color: var(--mantine-color-teal-4);
+}
+
+[data-mantine-color-scheme='dark'] .completenessSection {
 	background-color: var(--mantine-color-teal-4);
 }
 
@@ -187,10 +278,18 @@
 	white-space: nowrap;
 }
 
+[data-mantine-color-scheme='dark'] .statusBadge {
+	color: var(--mantine-color-dark-0);
+}
+
 /* Empty State */
 .emptyState {
 	color: var(--mantine-color-gray-4);
 	font-style: normal;
+}
+
+[data-mantine-color-scheme='dark'] .emptyState {
+	color: var(--mantine-color-dark-3);
 }
 
 /* Responsive Design */

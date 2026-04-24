@@ -31,6 +31,10 @@
 	background-color: var(--mantine-color-blue-0);
 }
 
+[data-mantine-color-scheme='dark'] .selectedRow {
+	background-color: var(--mantine-color-dark-6);
+}
+
 .tableRow {
 	cursor: pointer;
 	transition: background-color 0.15s ease;
@@ -40,8 +44,16 @@
 	background-color: var(--mantine-color-gray-1);
 }
 
+[data-mantine-color-scheme='dark'] .tableRow:hover {
+	background-color: var(--mantine-color-dark-6);
+}
+
 .tableRow.selectedRow:hover {
 	background-color: var(--mantine-color-blue-1);
+}
+
+[data-mantine-color-scheme='dark'] .tableRow.selectedRow:hover {
+	background-color: var(--mantine-color-dark-5);
 }
 
 .contactCell {
@@ -72,6 +84,10 @@
 	letter-spacing: 0.01em;
 }
 
+[data-mantine-color-scheme='dark'] .identifierValue {
+	color: var(--mantine-color-dark-2);
+}
+
 .identifierCopyButton {
 	flex-shrink: 0;
 }
@@ -90,9 +106,19 @@
 	color: var(--mantine-color-green-7);
 }
 
+[data-mantine-color-scheme='dark'] .statusCompleted {
+	background-color: var(--mantine-color-green-9);
+	color: var(--mantine-color-green-1);
+}
+
 .statusInProgress {
 	background-color: var(--mantine-color-blue-1);
 	color: var(--mantine-color-blue-7);
+}
+
+[data-mantine-color-scheme='dark'] .statusInProgress {
+	background-color: var(--mantine-color-blue-9);
+	color: var(--mantine-color-blue-1);
 }
 
 .statusFailed {
@@ -100,14 +126,31 @@
 	color: var(--mantine-color-red-7);
 }
 
+[data-mantine-color-scheme='dark'] .statusFailed {
+	background-color: var(--mantine-color-red-9);
+	color: var(--mantine-color-red-1);
+}
+
 .statusPending {
 	background-color: var(--mantine-color-yellow-1);
 	color: var(--mantine-color-yellow-7);
 }
 
+[data-mantine-color-scheme='dark'] .statusPending {
+	background-color: var(--mantine-color-yellow-9);
+	color: var(--mantine-color-yellow-1);
+}
+
 .statusUnknown {
-	background-color: var(--mantine-color-gray-1);
-	color: var(--mantine-color-gray-7);
+	background-color: var(--surface-sunken);
+	border: 1px solid var(--surface-border);
+	color: var(--mantine-color-text);
+}
+
+[data-mantine-color-scheme='dark'] .statusUnknown {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-0);
 }
 
 .dateCell {
@@ -119,6 +162,10 @@
 .dateRelative {
 	color: var(--mantine-color-blue-7);
 	text-transform: capitalize;
+}
+
+[data-mantine-color-scheme='dark'] .dateRelative {
+	color: var(--mantine-color-blue-3);
 }
 
 .dateAbsolute {
@@ -135,8 +182,16 @@
 	color: var(--mantine-color-gray-8);
 }
 
+[data-mantine-color-scheme='dark'] .duration {
+	color: var(--mantine-color-dark-1);
+}
+
 .durationActive {
 	color: var(--mantine-color-blue-7);
+}
+
+[data-mantine-color-scheme='dark'] .durationActive {
+	color: var(--mantine-color-blue-3);
 }
 
 .durationContext {

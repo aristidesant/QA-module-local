@@ -6,6 +6,8 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { useTranslation } from 'react-i18next';
+import { useGetAllCampaigns } from '~/queries/campaignsQueries';
+import type { Campaign } from '~/models/CampaignsModel';
 
 dayjs.extend(utc);
 dayjs.extend(localizedFormat);
@@ -17,7 +19,12 @@ export type Direction = 'inbound' | 'outbound';
 export interface ExportToExcelModalProps {
 	opened: boolean;
 	onClose: () => void;
-	onSubmit?: (params: { from: Date; to: Date; direction: Direction }) => void;
+	onSubmit?: (params: {
+		from: Date;
+		to: Date;
+		direction: Direction;
+		campaignId?: number;
+	}) => void;
 }
 
 export default function ExportToExcelModal({
@@ -27,6 +34,17 @@ export default function ExportToExcelModal({
 }: ExportToExcelModalProps) {
 	const { t } = useTranslation(['conversations', 'common']);
 	const [loading, setLoading] = useState(false);
+
+	const { data: campaigns = [] } = useGetAllCampaigns({ limit: 1000 });
+
+	const campaignOptions = useMemo(
+		() =>
+			campaigns.map((campaign: Campaign) => ({
+				value: String(campaign.id),
+				label: campaign.name,
+			})),
+		[campaigns]
+	);
 
 	const directionOptions = useMemo(
 		() => [
@@ -40,12 +58,14 @@ export default function ExportToExcelModal({
 		from: Date | null;
 		to: Date | null;
 		direction: Direction | null;
+		campaignId: number | null;
 	}>({
-		initialValues: { from: null, to: null, direction: null },
+		initialValues: { from: null, to: null, direction: null, campaignId: null },
 		validate: {
 			from: (v) => (v ? null : t('export.errors.required')),
 			to: (v) => (v ? null : t('export.errors.required')),
 			direction: (v) => (v ? null : t('export.errors.selectType')),
+			campaignId: (v) => (v ? null : t('export.errors.required')),
 		},
 	});
 
@@ -55,14 +75,15 @@ export default function ExportToExcelModal({
 	};
 
 	const handleSubmit = () => {
-		const { from, to, direction } = form.values;
+		const { from, to, direction, campaignId } = form.values;
 		void from;
 		void to;
 		void direction;
-		if (!from || !to || !direction) return;
+		void campaignId;
+		if (!from || !to || !direction || !campaignId) return;
 		// If parent provided a handler, delegate to it
 		if (onSubmit) {
-			onSubmit({ from, to, direction });
+			onSubmit({ from, to, direction, campaignId });
 			handleClose();
 			return;
 		}
@@ -82,6 +103,7 @@ export default function ExportToExcelModal({
 				startDate,
 				endDate,
 				campaingType: direction,
+				campaignId,
 			})
 			.then(({ blob, filename }) => {
 				const url = window.URL.createObjectURL(blob);
@@ -123,6 +145,19 @@ export default function ExportToExcelModal({
 			</div>
 
 			<div className={classes.fieldGroup}>
+				<Select
+					label={t('export.campaign')}
+					placeholder={t('export.campaignPlaceholder')}
+					data={campaignOptions}
+					value={form.values.campaignId ? String(form.values.campaignId) : null}
+					onChange={(val) =>
+						form.setFieldValue('campaignId', val ? Number(val) : null)
+					}
+					comboboxProps={{ withinPortal: true }}
+					error={form.errors.campaignId}
+					data-testid='export-campaign-select'
+				/>
+
 				<DatePickerInput
 					label={t('export.from')}
 					placeholder={t('export.fromPlaceholder')}
@@ -173,7 +208,10 @@ export default function ExportToExcelModal({
 					onClick={handleSubmit}
 					loading={loading}
 					disabled={
-						!form.values.direction || !form.values.from || !form.values.to
+						!form.values.direction ||
+						!form.values.from ||
+						!form.values.to ||
+						!form.values.campaignId
 					}
 				>
 					{t('actions.export', { ns: 'common' })}

@@ -170,8 +170,6 @@ const useVersionHistoryColumns = ({
 							maw={320}
 							withArrow
 							position='top-start'
-							color='white'
-							c='dark'
 						>
 							<Text
 								size='sm'

@@ -5,6 +5,51 @@ import { CampaignAgent } from './CampaignAgentModel';
 import { CampaignObjective } from './CampaignObjectiveModel';
 import { CampaignStatus } from './CampaignStatus';
 
+/**
+ * Persisted style for a single workflow node.
+ * Stored as a top-level `node_styles` JSON column on the campaign record.
+ */
+export interface NodeStyle {
+	/** Human-readable node label snapshot (informational, not authoritative) */
+	nodeLabel?: string;
+	/** CSS hex color for the node background (omit to keep automatic label-based tone) */
+	backgroundColor?: string;
+	/** CSS hex color for the node border */
+	borderColor?: string;
+	/** CSS hex color for the node label text */
+	textColor?: string;
+	/** Icon key from the allowed workflow icon registry (e.g. "telephone") */
+	iconName?: string;
+}
+
+/**
+ * Map of node ID → persisted node style.
+ * Absent / empty = UI falls back to automatic label-based colors.
+ */
+export type NodeStyles = Record<string, NodeStyle>;
+
+/**
+ * Persisted group-node definition.
+ * Stored as a top-level `node_groups` JSON column on the campaign record,
+ * separate from `agentConfig.workflow.nodes` (which the backend validates
+ * against its own node-type enum and rejects `type: "group"`).
+ */
+export interface NodeGroup {
+	label?: string;
+	position: { x: number; y: number };
+	width?: number;
+	height?: number;
+	/** CSS hex color for the group border/background tint */
+	color?: string;
+	/** IDs of workflow nodes that belong to this group */
+	childNodeIds: string[];
+}
+
+/**
+ * Map of group-node ID → persisted group definition.
+ */
+export type NodeGroups = Record<string, NodeGroup>;
+
 export interface WorkingHours {
 	[key: string]: {
 		enabled: boolean;
@@ -102,6 +147,10 @@ export interface Campaign {
 
 	noiseCancellation?: boolean;
 	agentConfig?: Partial<AgentConfigModel>;
+	/** Persisted node styles for the workflow editor (top-level campaign field) */
+	nodeStyles?: NodeStyles;
+	/** Persisted node groups for the workflow editor (top-level campaign field) */
+	nodeGroups?: NodeGroups;
 	versionDescription?: string;
 	// Stats and performance
 	stats?: {

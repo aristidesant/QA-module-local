@@ -10,16 +10,16 @@ const versionFileContent = fs.readFileSync(versionFilePath, 'utf8');
 const versionMatch = versionFileContent.match(/APP_VERSION = '(\d+)'/);
 
 if (!versionMatch) {
-  console.error('Could not find APP_VERSION in version.ts');
-  process.exit(1);
+	console.error('Could not find APP_VERSION in version.ts');
+	process.exit(1);
 }
 
 const currentVersion = versionMatch[1];
 
 // Parse current version (YYMMDDBN format)
 if (currentVersion.length !== 8) {
-  console.error('Invalid version format. Expected YYMMDDBN (8 digits)');
-  process.exit(1);
+	console.error('Invalid version format. Expected YYMMDDBN (8 digits)');
+	process.exit(1);
 }
 
 const currentYYMMDD = currentVersion.substring(0, 6);
@@ -35,12 +35,12 @@ const todayYYMMDD = `${year}${month}${day}`;
 // Determine new version
 let newVersion;
 if (todayYYMMDD === currentYYMMDD) {
-  // Same day, increment build number
-  const newBuildNumber = String(currentBuildNumber + 1).padStart(2, '0');
-  newVersion = `${currentYYMMDD}${newBuildNumber}`;
+	// Same day, increment build number
+	const newBuildNumber = String(currentBuildNumber + 1).padStart(2, '0');
+	newVersion = `${currentYYMMDD}${newBuildNumber}`;
 } else {
-  // Different day, start with build 01
-  newVersion = `${todayYYMMDD}01`;
+	// Different day, start with build 01
+	newVersion = `${todayYYMMDD}01`;
 }
 
 // Update version file

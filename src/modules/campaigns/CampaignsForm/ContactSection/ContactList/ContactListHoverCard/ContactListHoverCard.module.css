@@ -3,6 +3,13 @@
 	border: 1px solid var(--mantine-color-gray-3);
 	padding: var(--mantine-spacing-xs);
 	min-width: 260px;
+	color: var(--mantine-color-gray-9);
+}
+
+[data-mantine-color-scheme='dark'] .dropdown {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+	color: var(--mantine-color-dark-0);
 }
 
 .iconTarget {
@@ -12,4 +19,8 @@
 .statItem {
 	display: grid;
 	gap: 2px;
+}
+
+[data-mantine-color-scheme='dark'] .statItem {
+	color: var(--mantine-color-dark-0);
 }

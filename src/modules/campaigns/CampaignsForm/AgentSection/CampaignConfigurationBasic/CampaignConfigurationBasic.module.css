@@ -2,7 +2,16 @@
 	transition: all 0.2s ease;
 	border: 1px solid var(--mantine-color-gray-2);
 }
+
+[data-mantine-color-scheme='dark'] .sectionCard {
+	border-color: var(--mantine-color-dark-5);
+}
+
 .sectionCard:hover {
 	border-color: var(--mantine-color-blue-3);
 	transform: translateY(-1px);
+}
+
+[data-mantine-color-scheme='dark'] .sectionCard:hover {
+	border-color: var(--mantine-color-blue-4);
 }

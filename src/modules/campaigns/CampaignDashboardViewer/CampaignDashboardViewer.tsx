@@ -47,11 +47,13 @@ const CampaignDashboardViewer = ({
 	contactGroupId,
 	initialDashboardId,
 	allowLayoutEditing = true,
+	onBackClick,
 }: {
 	campaignId?: number | null;
 	contactGroupId?: number | null;
 	initialDashboardId?: number;
 	allowLayoutEditing?: boolean;
+	onBackClick?: () => void;
 }) => {
 	const [isSavingLayoutTransition, setIsSavingLayoutTransition] =
 		useState(false);
@@ -205,14 +207,22 @@ const CampaignDashboardViewer = ({
 	const { data: widgetsData, refetch: refetchWidgets } =
 		useDashboardWidgets(numericDashboardId);
 	const widgets = widgetsData ?? EMPTY_WIDGETS;
-	const visibleWidgets = useMemo(
-		() => getVisibleDashboardWidgets(widgets, visibilityContext),
-		[visibilityContext, widgets]
+	const renderedWidgetIdSet = useMemo(
+		() => new Set(renderResult?.widgets.map((widget) => widget.widgetId) ?? []),
+		[renderResult]
+	);
+	const visibleRenderedWidgets = useMemo(
+		() =>
+			getVisibleDashboardWidgets(
+				widgets.filter((widget) => renderedWidgetIdSet.has(widget.id)),
+				visibilityContext
+			),
+		[renderedWidgetIdSet, visibilityContext, widgets]
 	);
 	const widgetComparisonDataMap = useMemo<Map<number, WidgetComparisonData>>(
 		() =>
 			new Map(
-				visibleWidgets.map((widget) => [
+				visibleRenderedWidgets.map((widget) => [
 					widget.id,
 					{
 						...(comparisonMap.get(widget.id) ?? {}),
@@ -220,25 +230,27 @@ const CampaignDashboardViewer = ({
 					},
 				])
 			),
-		[comparisonMap, visibleWidgets]
+		[comparisonMap, visibleRenderedWidgets]
 	);
 
 	const widgetTypeMap = useMemo(
-		() => createWidgetTypeMap(visibleWidgets),
-		[visibleWidgets]
+		() => createWidgetTypeMap(visibleRenderedWidgets),
+		[visibleRenderedWidgets]
 	);
 	const persistedLayouts = useMemo(
 		() =>
-			[...visibleWidgets].sort(compareWidgetLayouts).map(getWidgetRenderLayout),
-		[visibleWidgets]
+			[...visibleRenderedWidgets]
+				.sort(compareWidgetLayouts)
+				.map(getWidgetRenderLayout),
+		[visibleRenderedWidgets]
 	);
 	const persistedLayoutMap = useMemo(
 		() => createLayoutMap(persistedLayouts),
 		[persistedLayouts]
 	);
 	const visibleWidgetIdSet = useMemo(
-		() => new Set(visibleWidgets.map((widget) => widget.id)),
-		[visibleWidgets]
+		() => new Set(visibleRenderedWidgets.map((widget) => widget.id)),
+		[visibleRenderedWidgets]
 	);
 
 	useEffect(() => {
@@ -301,7 +313,7 @@ const CampaignDashboardViewer = ({
 	const isSavingLayout =
 		updateDashboardWidgetLayouts.isPending || isSavingLayoutTransition;
 	const isLayoutEditingAvailable =
-		allowLayoutEditing && !isMobile && visibleWidgets.length > 0;
+		allowLayoutEditing && !isMobile && visibleRenderedWidgets.length > 0;
 
 	const handleStartEditing = () => {
 		if (!allowLayoutEditing) {
@@ -386,7 +398,9 @@ const CampaignDashboardViewer = ({
 			for (let attempt = 0; attempt < 5; attempt += 1) {
 				const widgetsResponse = await refetchWidgets();
 				refreshedLayouts = getVisibleDashboardWidgets(
-					widgetsResponse.data ?? EMPTY_WIDGETS,
+					(widgetsResponse.data ?? EMPTY_WIDGETS).filter((widget) =>
+						renderedWidgetIdSet.has(widget.id)
+					),
 					visibilityContext
 				)
 					.sort(compareWidgetLayouts)
@@ -424,7 +438,9 @@ const CampaignDashboardViewer = ({
 			await refetchRenderResult();
 			syncDraftLayouts(
 				getVisibleDashboardWidgets(
-					widgetsResponse.data ?? EMPTY_WIDGETS,
+					(widgetsResponse.data ?? EMPTY_WIDGETS).filter((widget) =>
+						renderedWidgetIdSet.has(widget.id)
+					),
 					visibilityContext
 				)
 					.sort(compareWidgetLayouts)
@@ -485,6 +501,8 @@ const CampaignDashboardViewer = ({
 					comparisonPeriod={unifiedRenderResult?.comparisonPeriod}
 					comparisonEnabled={comparisonEnabled}
 					allowLayoutEditing={allowLayoutEditing}
+					showBackButton={Boolean(onBackClick)}
+					onBackClick={onBackClick}
 					onAutoOrganize={handleAutoOrganize}
 					onCancelEditing={handleCancelEditing}
 					onRefresh={() => void refetchRenderResult()}
@@ -497,33 +515,29 @@ const CampaignDashboardViewer = ({
 				/>
 			</div>
 
-			<div className={styles.canvasShell}>
-				<div className={styles.canvasViewport}>
-					<div className={styles.canvasMeasure} ref={editorContainerRef}>
-						<CampaignDashboardViewerContent
-							activeLayoutMap={activeLayoutMap}
-							editorWidth={editorWidth}
-							errorMessage={error instanceof Error ? error.message : undefined}
-							isError={isError}
-							isMobile={Boolean(isMobile)}
-							isSavingLayout={isSavingLayout}
-							renderLoading={renderLoading}
-							renderResult={
-								renderResult
-									? {
-											...renderResult,
-											widgets: sortedRenderWidgets,
-										}
-									: undefined
-							}
-							comparisonMap={widgetComparisonDataMap}
-							comparisonPeriodLabel={comparisonPeriodLabel}
-							selectedTimeRange={selectedTimeRange}
-							widgetsCount={visibleWidgets.length}
-							onLayoutChange={handleLayoutChange}
-						/>
-					</div>
-				</div>
+			<div className={styles.canvasShell} ref={editorContainerRef}>
+				<CampaignDashboardViewerContent
+					activeLayoutMap={activeLayoutMap}
+					editorWidth={editorWidth}
+					errorMessage={error instanceof Error ? error.message : undefined}
+					isError={isError}
+					isMobile={Boolean(isMobile)}
+					isSavingLayout={isSavingLayout}
+					renderLoading={renderLoading}
+					renderResult={
+						renderResult
+							? {
+									...renderResult,
+									widgets: sortedRenderWidgets,
+								}
+							: undefined
+					}
+					comparisonMap={widgetComparisonDataMap}
+					comparisonPeriodLabel={comparisonPeriodLabel}
+					selectedTimeRange={selectedTimeRange}
+					widgetsCount={visibleRenderedWidgets.length}
+					onLayoutChange={handleLayoutChange}
+				/>
 			</div>
 		</div>
 	);

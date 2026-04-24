@@ -1,14 +1,53 @@
 .catalogPanel {
-  min-height: 400px;
-  overflow: hidden;
+	min-height: 400px;
+	overflow: hidden;
 }
 
 .builderPanel {
-  min-height: 400px;
-  overflow: hidden;
+	min-height: 400px;
+	overflow: hidden;
 }
 
 .viewerPanel {
-  min-height: 400px;
-  overflow: hidden;
+	min-height: 400px;
+	overflow: hidden;
+}
+
+.loadingState,
+.errorState,
+.emptyState {
+	border-style: dashed;
+}
+
+.loadingState {
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-7)
+	);
+	border-color: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
+	);
+}
+
+.errorState {
+	background: light-dark(
+		var(--mantine-color-red-0),
+		var(--mantine-color-dark-7)
+	);
+	border-color: light-dark(
+		var(--mantine-color-red-3),
+		var(--mantine-color-red-8)
+	);
+}
+
+.emptyState {
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-7)
+	);
+	border-color: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
+	);
 }

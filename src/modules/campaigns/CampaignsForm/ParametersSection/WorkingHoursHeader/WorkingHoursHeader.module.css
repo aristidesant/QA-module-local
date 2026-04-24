@@ -1,16 +1,28 @@
 .header {
-  margin-bottom: var(--mantine-spacing-md);
+	margin-bottom: var(--mantine-spacing-md);
 }
 
 .icon {
-  color: var(--mantine-color-blue-6);
+	color: var(--mantine-color-blue-6);
 }
 
 .title {
-  color: var(--mantine-color-text);
+	color: var(--mantine-color-text);
 }
 
 .description {
-  line-height: 1.5;
-  max-width: 600px;
+	line-height: 1.5;
+	max-width: 600px;
+}
+
+[data-mantine-color-scheme='dark'] .icon {
+	color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] .title {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .description {
+	color: var(--mantine-color-dark-2);
 }

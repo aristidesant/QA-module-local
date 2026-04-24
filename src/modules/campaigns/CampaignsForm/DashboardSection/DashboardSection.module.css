@@ -4,6 +4,10 @@
 	width: 100%;
 }
 
+.fullHeight .builderShell {
+	height: 100%;
+}
+
 .manageLayout {
 	display: grid;
 	grid-template-columns: minmax(0, 24rem) minmax(0, 1fr);
@@ -11,6 +15,11 @@
 	width: 100%;
 	min-height: 27rem;
 	align-items: start;
+}
+
+.fullHeight .manageLayout {
+	min-height: unset;
+	height: 100%;
 }
 
 .sidebar {

@@ -1,1 +1,1 @@
-export { default } from "./OTPVerificationModal";
+export { default } from './OTPVerificationModal';

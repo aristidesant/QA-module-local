@@ -16,7 +16,9 @@ import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
-import { getWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
+import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
+import { useNodeStyle } from '../../NodeStylesContext';
+import { useWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
 import styles from './SubagentNode.module.css';
 
 const SubagentNodeComponent = (props: NodeProps) => {
@@ -30,11 +32,27 @@ const SubagentNodeComponent = (props: NodeProps) => {
 		'campaign.form.agents',
 		'common',
 	]);
+	const persistedStyle = useNodeStyle(props.id);
 	const fallbackLabel = t(`form.workflow.nodes.${nodeData.type}`, {
 		defaultValue: t('form.workflow.nodes.standalone_agent'),
 	});
-	const nodeSurfaceStyle = getWorkflowNodeToneStyle(
-		nodeData.label || fallbackLabel
+	const nodeSurfaceStyle = useWorkflowNodeToneStyle(
+		nodeData.label || fallbackLabel,
+		persistedStyle
+	);
+
+	// Resolve custom icon from persisted style, falling back to defaults
+	const CustomIcon = resolveWorkflowIcon(persistedStyle?.iconName);
+	const defaultIcon =
+		isOverride || isTransfer ? (
+			<IconPlugConnected size={18} className={styles.icon} />
+		) : (
+			<IconUserCircle size={18} className={styles.icon} />
+		);
+	const nodeIcon = CustomIcon ? (
+		<CustomIcon size={18} className={styles.icon} />
+	) : (
+		defaultIcon
 	);
 	const toolCount =
 		nodeData.subagent?.toolIds?.length ??
@@ -89,13 +107,7 @@ const SubagentNodeComponent = (props: NodeProps) => {
 				>
 					<WorkflowNodeHeader
 						className={styles.header}
-						icon={
-							isOverride || isTransfer ? (
-								<IconPlugConnected size={18} className={styles.icon} />
-							) : (
-								<IconUserCircle size={18} className={styles.icon} />
-							)
-						}
+						icon={nodeIcon}
 						title={nodeData.label || fallbackLabel}
 						subtitle={subtitle}
 						titleClassName={styles.title}

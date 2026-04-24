@@ -1,3 +1,40 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	--workflow-shell-surface: var(--mantine-color-white);
+	--workflow-shell-panel: var(--mantine-color-white);
+	--workflow-shell-panel-muted: var(--mantine-color-gray-0);
+	--workflow-shell-panel-elevated: var(--mantine-color-white);
+	--workflow-shell-border: var(--mantine-color-gray-3);
+	--workflow-shell-border-strong: var(--mantine-color-gray-4);
+	--workflow-shell-border-soft: var(--mantine-color-gray-2);
+	--workflow-shell-text: var(--mantine-color-gray-9);
+	--workflow-shell-text-muted: var(--mantine-color-gray-6);
+	--workflow-shell-control-bg: var(--mantine-color-white);
+	--workflow-shell-control-border: var(--mantine-color-gray-3);
+	--workflow-shell-control-text: var(--mantine-color-gray-7);
+	--workflow-shell-grid-color: var(--mantine-color-gray-4);
+	background: var(--workflow-shell-surface);
+	border-radius: var(--mantine-radius-lg);
+}
+
+[data-mantine-color-scheme='dark'] .root {
+	--workflow-shell-surface: var(--mantine-color-dark-8);
+	--workflow-shell-panel: var(--mantine-color-dark-7);
+	--workflow-shell-panel-muted: var(--mantine-color-dark-6);
+	--workflow-shell-panel-elevated: var(--mantine-color-dark-6);
+	--workflow-shell-border: var(--mantine-color-dark-5);
+	--workflow-shell-border-strong: var(--mantine-color-dark-4);
+	--workflow-shell-border-soft: var(--mantine-color-dark-6);
+	--workflow-shell-text: var(--mantine-color-dark-0);
+	--workflow-shell-text-muted: var(--mantine-color-dark-2);
+	--workflow-shell-control-bg: var(--mantine-color-dark-6);
+	--workflow-shell-control-border: var(--mantine-color-dark-5);
+	--workflow-shell-control-text: var(--mantine-color-dark-1);
+	--workflow-shell-grid-color: var(--mantine-color-dark-4);
+}
+
 .headerControls {
 	display: flex;
 	align-items: center;

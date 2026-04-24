@@ -3,16 +3,16 @@
 }
 
 .title {
-	font-size: 1.02rem;
+	font-size: 1.05rem;
 	font-weight: 700;
-	line-height: 1.2;
-	letter-spacing: -0.02em;
-	color: var(--mantine-color-dark-8);
+	line-height: 1.18;
+	letter-spacing: -0.03em;
+	color: var(--mantine-color-gray-9);
 }
 
 .description {
-	max-width: 44ch;
-	line-height: 1.4;
+	max-width: 46ch;
+	line-height: 1.45;
 	color: var(--mantine-color-gray-6);
 }
 
@@ -21,11 +21,22 @@
 	text-transform: none;
 	font-weight: 700;
 	letter-spacing: -0.01em;
-	padding-inline: 8px;
+	padding-inline: 10px;
 }
 
 .searchInput {
-	border-width: 1px;
+	border-color: var(--surface-border);
+	background-color: var(--surface-card);
+	transition:
+		border-color 150ms ease,
+		box-shadow 150ms ease,
+		background-color 150ms ease;
+}
+
+.searchInput:focus,
+.searchInput:focus-visible {
+	border-color: var(--brand);
+	box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 18%, transparent);
 }
 
 .gridShell {
@@ -35,8 +46,8 @@
 
 .cardsGrid {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-	gap: var(--mantine-spacing-sm);
+	grid-template-columns: repeat(auto-fit, minmax(248px, 1fr));
+	gap: var(--mantine-spacing-xs);
 	align-items: start;
 }
 
@@ -49,67 +60,91 @@
 .clientCard {
 	cursor: pointer;
 	position: relative;
-	border-color: var(--mantine-color-gray-2);
-	background-color: var(--mantine-color-white);
+	border-color: var(--surface-border);
+	background-color: var(--surface-card);
+	box-shadow: var(--mantine-shadow-sm);
 	transition:
-		border-color 0.16s ease,
-		background-color 0.16s ease,
-		transform 0.16s ease,
-		box-shadow 0.16s ease;
+		border-color 160ms ease,
+		background-color 160ms ease,
+		transform 160ms ease,
+		box-shadow 160ms ease;
 }
 
 .clientCard:hover:not([data-disabled='true']) {
-	border-color: color-mix(in srgb, var(--mantine-color-blue-6) 35%, white);
-	background-color: var(--mantine-color-blue-0);
-	box-shadow: 0 8px 18px -14px
-		color-mix(in srgb, var(--mantine-color-blue-7) 32%, transparent);
+	border-color: color-mix(in srgb, var(--brand) 32%, var(--surface-border));
+	background-color: var(--mantine-color-green-0);
+	box-shadow: 0 12px 20px -18px
+		color-mix(in srgb, var(--brand) 38%, transparent);
 }
 
 .clientCard:focus-visible {
-	outline: 2px solid color-mix(in srgb, var(--mantine-color-blue-6) 38%, white);
+	outline: 2px solid color-mix(in srgb, var(--brand) 55%, white);
 	outline-offset: 2px;
 }
 
 .clientCard[data-selected='true'] {
-	border-color: var(--mantine-color-blue-5);
-	background-color: color-mix(in srgb, var(--mantine-color-blue-0) 65%, white);
-	box-shadow: 0 0 0 1px
-		color-mix(in srgb, var(--mantine-color-blue-5) 12%, transparent);
+	border-color: var(--brand);
+	background-color: var(--mantine-color-green-0);
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand) 18%, transparent);
 }
 
 .clientCard[data-current='true'] {
-	border-color: var(--mantine-color-gray-3);
-	background-color: var(--mantine-color-gray-0);
+	border-color: var(--surface-border-strong);
+	background-color: var(--surface-sunken);
 }
 
 .clientCard[data-current='true']:hover {
 	transform: none;
-	border-color: var(--mantine-color-gray-3);
-	background-color: var(--mantine-color-gray-0);
+	border-color: var(--surface-border-strong);
+	background-color: var(--surface-sunken);
+	box-shadow: var(--mantine-shadow-sm);
 }
 
 .clientCard[data-disabled='true'] {
 	cursor: not-allowed;
+	opacity: 0.74;
+}
+
+.clientCard:active:not([data-disabled='true']) {
+	transform: translateY(1px);
+}
+
+.cardContent {
+	min-width: 0;
 }
 
 .iconShell {
-	width: 34px;
-	height: 34px;
+	width: 36px;
+	height: 36px;
 	border-radius: var(--mantine-radius-md);
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: var(--mantine-color-gray-1);
+	background-color: var(--surface-sunken);
 	color: var(--mantine-color-gray-7);
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--surface-border);
 	flex-shrink: 0;
+	transition:
+		background-color 160ms ease,
+		border-color 160ms ease,
+		color 160ms ease;
 }
 
 .clientCard:hover:not([data-disabled='true']) .iconShell,
 .clientCard[data-selected='true'] .iconShell {
-	background-color: var(--mantine-color-blue-0);
-	color: var(--mantine-color-blue-7);
-	border-color: color-mix(in srgb, var(--mantine-color-blue-6) 22%, white);
+	background-color: var(--mantine-color-green-1);
+	color: var(--mantine-color-green-7);
+	border-color: color-mix(in srgb, var(--brand) 22%, var(--surface-border));
+}
+
+.clientCard[data-selected='true'] .iconShell {
+	background-color: var(--brand);
+	color: var(--mantine-color-white);
+}
+
+.clientCard[data-current='true'] .iconShell {
+	background-color: var(--surface-card);
+	color: var(--mantine-color-gray-6);
 }
 
 .clientMeta {
@@ -117,10 +152,10 @@
 }
 
 .clientName {
-	font-size: 0.92rem;
+	font-size: 0.96rem;
 	font-weight: 700;
 	line-height: 1.25;
-	color: var(--mantine-color-dark-8);
+	color: var(--mantine-color-gray-9);
 }
 
 .clientSubtitle {
@@ -134,6 +169,92 @@
 	flex-shrink: 0;
 }
 
+.loadingLabel {
+	padding-inline: 2px;
+}
+
 .emptyState {
 	padding-inline: 0;
+}
+
+[data-mantine-color-scheme='dark'] .title {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .description {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .searchInput {
+	background-color: var(--surface-card);
+	border-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark'] .searchInput:focus,
+[data-mantine-color-scheme='dark'] .searchInput:focus-visible {
+	border-color: var(--brand);
+	box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 24%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .clientCard {
+	border-color: var(--surface-border);
+	background-color: var(--surface-card);
+}
+
+[data-mantine-color-scheme='dark']
+	.clientCard:hover:not([data-disabled='true']) {
+	border-color: color-mix(in srgb, var(--brand) 38%, var(--surface-border));
+	background-color: color-mix(in srgb, var(--brand) 10%, var(--surface-card));
+	box-shadow: 0 14px 24px -20px
+		color-mix(in srgb, var(--brand) 48%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .clientCard:focus-visible {
+	outline-color: color-mix(in srgb, var(--brand) 60%, white);
+}
+
+[data-mantine-color-scheme='dark'] .clientCard[data-selected='true'] {
+	border-color: var(--brand);
+	background-color: color-mix(in srgb, var(--brand) 12%, var(--surface-card));
+	box-shadow: 0 0 0 1px color-mix(in srgb, var(--brand) 24%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .clientCard[data-current='true'] {
+	border-color: var(--surface-border-strong);
+	background-color: var(--surface-sunken);
+}
+
+[data-mantine-color-scheme='dark'] .iconShell {
+	background-color: var(--surface-sunken);
+	color: var(--mantine-color-dark-1);
+	border-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark']
+	.clientCard:hover:not([data-disabled='true'])
+	.iconShell {
+	background-color: color-mix(in srgb, var(--brand) 12%, var(--surface-sunken));
+	color: var(--mantine-color-green-2);
+	border-color: color-mix(in srgb, var(--brand) 24%, var(--surface-border));
+}
+
+[data-mantine-color-scheme='dark']
+	.clientCard[data-selected='true']
+	.iconShell {
+	background-color: var(--brand);
+	color: var(--mantine-color-white);
+	border-color: var(--brand);
+}
+
+[data-mantine-color-scheme='dark'] .clientCard[data-current='true'] .iconShell {
+	background-color: var(--surface-sunken);
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .clientName {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .clientSubtitle {
+	color: var(--mantine-color-dark-2);
 }

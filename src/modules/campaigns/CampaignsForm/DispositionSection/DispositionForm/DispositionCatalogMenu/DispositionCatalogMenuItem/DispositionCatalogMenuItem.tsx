@@ -82,7 +82,7 @@ const DispositionCatalogMenuItem: React.FC<Props> = ({
 							/>
 						)}
 					</Box>
-					<Box className={styles.textContent} style={{ minWidth: 0, flex: 1 }}>
+					<Box className={styles.textContent}>
 						<Tooltip
 							label={
 								node.description ? (

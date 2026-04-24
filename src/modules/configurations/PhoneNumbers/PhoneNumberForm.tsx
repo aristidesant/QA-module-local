@@ -13,7 +13,6 @@ import {
 	Group,
 	LoadingOverlay,
 	PasswordInput,
-	SegmentedControl,
 	Select,
 	SimpleGrid,
 	Stack,
@@ -23,6 +22,7 @@ import {
 	Textarea,
 	TextInput,
 } from '@mantine/core';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { useForm, type UseFormReturnType } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
@@ -900,7 +900,7 @@ export function PhoneNumberForm({
 							title={t('form.sections.provider.title')}
 							description={t('form.sections.provider.description')}
 							aside={
-								<SegmentedControl
+								<AppSegmentedControl
 									data={providerOptions}
 									value={provider}
 									onChange={handleProviderChange}

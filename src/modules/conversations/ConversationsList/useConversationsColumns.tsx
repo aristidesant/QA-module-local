@@ -245,16 +245,24 @@ export const useConversationsColumns = (
 				accessorFn: (row) => row?.dispositions?.dispositionName ?? '',
 				enableSorting: true,
 				cell: ({ row }) => {
-					const color =
-						row?.original?.dispositions?.callStatus === 'NEGATIVE'
+					const isAbandoned = Boolean(row.original?.dispositions?.isAbandoned);
+					const color = isAbandoned
+						? 'orange'
+						: row?.original?.dispositions?.callStatus === 'NEGATIVE'
 							? 'red'
 							: row?.original?.dispositions?.callStatus === 'POSITIVE'
 								? 'green'
 								: 'gray';
 					return (
-						<Badge color={color} size='xs'>
-							{row.original?.dispositions?.dispositionName ??
-								t('overview.fallbacks.na')}
+						<Badge
+							color={color}
+							size='xs'
+							className={color === 'gray' ? styles.statusUnknown : undefined}
+						>
+							{isAbandoned
+								? `${row.original?.dispositions?.dispositionName ?? t('overview.fallbacks.na')} • ${t('disposition.abandoned')}`
+								: (row.original?.dispositions?.dispositionName ??
+									t('overview.fallbacks.na'))}
 						</Badge>
 					);
 				},

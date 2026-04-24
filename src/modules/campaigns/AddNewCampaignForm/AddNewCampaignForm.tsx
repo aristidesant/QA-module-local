@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react';
 import {
 	Button,
 	Group,
-	SegmentedControl,
 	TextInput,
 	Textarea,
 	Box,
@@ -11,6 +10,7 @@ import {
 	Select,
 	NumberInput,
 } from '@mantine/core';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { useForm } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
 import { useCreateCampaignWithAgent } from '~/queries/campaignsQueries';
@@ -232,7 +232,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 							{t('addNewCampaign.form.campaignType')}{' '}
 							<span style={{ color: 'var(--mantine-color-red-6)' }}>*</span>
 						</Text>
-						<SegmentedControl
+						<AppSegmentedControl
 							data={[
 								{ value: 'INBOUND', label: t('columns.inbound') },
 								{ value: 'OUTBOUND', label: t('columns.outbound') },

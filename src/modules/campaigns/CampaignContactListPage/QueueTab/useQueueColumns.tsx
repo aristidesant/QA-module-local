@@ -167,6 +167,125 @@ export const useQueueColumns = ({
 				size: 120,
 			},
 			{
+				id: 'contactResult',
+				header: t('queue.columns.contactResult'),
+				enableSorting: false,
+				cell: ({ row }) => {
+					const result =
+						row.original.conversation?.callDisposition?.statusContact;
+					if (!result) {
+						return (
+							<Text size='xs' c='dimmed'>
+								—
+							</Text>
+						);
+					}
+					const color = result === 'COMPLETED' ? 'green' : 'blue';
+					return (
+						<Badge variant='light' color={color} size='sm' radius='sm'>
+							{result}
+						</Badge>
+					);
+				},
+				size: 130,
+			},
+			{
+				id: 'dispositionName',
+				header: t('queue.columns.dispositionName'),
+				enableSorting: false,
+				cell: ({ row }) => {
+					const name =
+						row.original.conversation?.callDisposition?.dispositionName;
+					return (
+						<Text size='xs' truncate>
+							{name || '—'}
+						</Text>
+					);
+				},
+				size: 150,
+			},
+			{
+				id: 'callStatus',
+				header: t('queue.columns.callStatus'),
+				enableSorting: false,
+				cell: ({ row }) => {
+					const callStatus =
+						row.original.conversation?.callDisposition?.callStatus;
+					if (!callStatus) {
+						return (
+							<Text size='xs' c='dimmed'>
+								—
+							</Text>
+						);
+					}
+					const colorMap: Record<string, string> = {
+						POSITIVE: 'green',
+						NEGATIVE: 'red',
+					};
+					const color = colorMap[callStatus] ?? 'gray';
+					return (
+						<Badge variant='light' color={color} size='sm' radius='sm'>
+							{callStatus}
+						</Badge>
+					);
+				},
+				size: 120,
+			},
+			{
+				id: 'isAbandoned',
+				header: t('queue.columns.isAbandoned'),
+				enableSorting: false,
+				cell: ({ row }) => {
+					const isAbandoned =
+						row.original.conversation?.callDisposition?.isAbandoned;
+					if (isAbandoned == null) {
+						return (
+							<Text size='xs' c='dimmed'>
+								—
+							</Text>
+						);
+					}
+					return (
+						<Badge
+							variant='light'
+							color={isAbandoned ? 'red' : 'green'}
+							size='sm'
+							radius='sm'
+						>
+							{isAbandoned ? 'Yes' : 'No'}
+						</Badge>
+					);
+				},
+				size: 100,
+			},
+			{
+				id: 'doNotCall',
+				header: t('queue.columns.doNotCall'),
+				enableSorting: false,
+				cell: ({ row }) => {
+					const doNotCall =
+						row.original.conversation?.callDisposition?.doNotCall;
+					if (doNotCall == null) {
+						return (
+							<Text size='xs' c='dimmed'>
+								—
+							</Text>
+						);
+					}
+					return (
+						<Badge
+							variant='light'
+							color={doNotCall ? 'red' : 'green'}
+							size='sm'
+							radius='sm'
+						>
+							{doNotCall ? 'Yes' : 'No'}
+						</Badge>
+					);
+				},
+				size: 100,
+			},
+			{
 				accessorKey: 'waveNumber',
 				header: t('queue.columns.wave'),
 				enableSorting: false,

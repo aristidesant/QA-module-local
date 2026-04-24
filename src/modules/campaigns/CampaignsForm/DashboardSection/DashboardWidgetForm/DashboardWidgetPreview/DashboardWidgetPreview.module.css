@@ -3,6 +3,8 @@
 	flex-direction: column;
 	gap: var(--mantine-spacing-xs);
 	min-height: 0;
+	min-width: 0;
+	overflow: hidden;
 }
 
 .previewFrame[data-loading] {
@@ -30,13 +32,22 @@
 }
 
 .kpiWrapper {
+	flex: 1;
 	min-height: 0;
+	min-width: 0;
+	overflow: hidden;
 }
 
 .loadingCard {
 	min-height: 100%;
 	border: 1px solid var(--mantine-color-gray-2);
 	box-shadow: var(--mantine-shadow-md);
+}
+
+[data-mantine-color-scheme='dark'] .loadingCard {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+	box-shadow: none;
 }
 
 .loadingStack {

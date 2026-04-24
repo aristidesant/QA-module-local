@@ -802,7 +802,6 @@ const ConversationPlayer: React.FC<ConversationPlayerProps> = ({
 							<Select
 								value={playbackRate.toString()}
 								onChange={handlePlaybackRateChange}
-								flex={1}
 								data={[
 									{ value: '0.5', label: t('playbackSpeed', { rate: '0.5' }) },
 									{

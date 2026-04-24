@@ -31,3 +31,18 @@
 	background: var(--mantine-color-white);
 	padding: var(--mantine-spacing-xs);
 }
+
+[data-mantine-color-scheme='dark'] .panel {
+	background: var(--mantine-color-dark-8);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .tableWrap {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .inlineForm {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}

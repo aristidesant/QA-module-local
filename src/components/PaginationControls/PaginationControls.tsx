@@ -15,10 +15,10 @@ interface PaginationControlsProps {
 }
 
 const ITEMS_PER_PAGE_OPTIONS = [
-	{ value: '5', label: '5 per page' },
-	{ value: '10', label: '10 per page' },
-	{ value: '20', label: '20 per page' },
-	{ value: '50', label: '50 per page' },
+	{ value: '5', labelKey: 5 },
+	{ value: '10', labelKey: 10 },
+	{ value: '20', labelKey: 20 },
+	{ value: '50', labelKey: 50 },
 ];
 
 export const PaginationControls: React.FC<PaginationControlsProps> = ({
@@ -30,7 +30,7 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 	onItemsPerPageChange,
 	searchTerm,
 	isLoading = false,
-	itemLabel = 'items',
+	itemLabel,
 }) => {
 	const { t } = useTranslation();
 	if (totalItems === 0 && !isLoading) {
@@ -53,7 +53,8 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 					) : (
 						<>
 							{t('pagination.showing')} {startItem}-{endItem}{' '}
-							{t('pagination.of')} {totalItems.toLocaleString()} {itemLabel}
+							{t('pagination.of')} {totalItems.toLocaleString()}{' '}
+							{itemLabel ?? t('pagination.items')}
 							{searchTerm && (
 								<Text component='span' size='sm' c='blue' fw={500}>
 									{' '}
@@ -76,7 +77,10 @@ export const PaginationControls: React.FC<PaginationControlsProps> = ({
 						<Select
 							value={itemsPerPage.toString()}
 							onChange={onItemsPerPageChange}
-							data={ITEMS_PER_PAGE_OPTIONS}
+							data={ITEMS_PER_PAGE_OPTIONS.map((opt) => ({
+								value: opt.value,
+								label: t('pagination.itemsPerPage', { count: opt.labelKey }),
+							}))}
 							size='xs'
 							className={styles.itemsSelect}
 							withCheckIcon={false}

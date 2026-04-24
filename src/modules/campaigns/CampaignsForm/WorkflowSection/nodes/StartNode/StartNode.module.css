@@ -1,7 +1,11 @@
 .node {
 	--workflow-node-accent: var(--mantine-color-green-7);
 	--workflow-node-selected-border: var(--mantine-color-green-4);
-	--workflow-node-selected-ring: rgba(34, 197, 94, 0.14);
+	--workflow-node-selected-ring: color-mix(
+		in srgb,
+		var(--mantine-color-green-5) 14%,
+		transparent
+	);
 	--workflow-node-header-bg: var(--mantine-color-green-0);
 	--workflow-node-surface-selected: var(--mantine-color-green-0);
 	background-color: var(--mantine-color-green-0);
@@ -19,8 +23,9 @@
 }
 
 .footer {
-	background-color: var(--mantine-color-white);
-	border-top: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--workflow-node-panel-bg, var(--mantine-color-white));
+	border-top: 1px solid
+		var(--workflow-node-panel-border, var(--mantine-color-gray-3));
 	padding: 4px var(--mantine-spacing-sm);
 	display: flex;
 	justify-content: flex-end;

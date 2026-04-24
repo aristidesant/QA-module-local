@@ -1,10 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, {
+	Suspense,
+	useState,
+	useEffect,
+	useCallback,
+	useMemo,
+} from 'react';
 import {
 	Text,
 	Button,
 	Modal,
 	ActionIcon,
 	Group,
+	Loader,
+	Center,
 	LoadingOverlay,
 } from '@mantine/core';
 import {
@@ -23,8 +31,6 @@ import {
 import styles from './CampaignsList.module.css';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { useCampaignsStore } from '~/stores/campaignsStore';
-import CampaignPreview from '../CampaignPreview';
 import type { Campaign } from '~/models/CampaignsModel';
 import { CampaignWizard } from '../CampaignWizard';
 import CampaignFilters from './CampaignFilters';
@@ -44,7 +50,6 @@ import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
-import AppDrawer from '~/components/AppDrawer';
 import SectionCard from '~/components/SectionCard';
 
 interface CampaignFiltersType {
@@ -65,24 +70,16 @@ export const CampaignsList: React.FC = () => {
 		'campaign.form.agents',
 		'common',
 	]);
-	const { selectCampaign, selectedCampaign } = useCampaignsStore(
-		(state) => state
-	);
 	const navigate = useNavigate();
 	const { canPerformAction } = usePermissions();
 
-	// Get wizard store functions
-	const {
-		reset: resetWizard,
-		initializeFromDraft,
-		activeStep,
-		createdCampaign,
-		isResumingDraft,
-	} = useCampaignWizardStore();
-
-	// Draft mutation
-	const { mutateAsync: setDraft, isPending: isDraftSaving } =
-		useSetCampaignDraft();
+	const resetWizard = useCampaignWizardStore((state) => state.reset);
+	const initializeFromDraft = useCampaignWizardStore(
+		(state) => state.initializeFromDraft
+	);
+	const setIsWizardModalOpen = useCampaignWizardStore(
+		(state) => state.setIsWizardModalOpen
+	);
 
 	// Use the pagination hook for all pagination logic
 	const pagination = usePagination({
@@ -97,9 +94,6 @@ export const CampaignsList: React.FC = () => {
 	>(null);
 	const [campaignNoiseCancellation, setCampaignNoiseCancellation] =
 		useState(false);
-
-	const [addNewModalOpened, setAddNewModalOpened] = useState(false);
-	const [isDetailsDrawerOpen, setIsDetailsDrawerOpen] = useState(false);
 	const [campaignTestCallId, setCampaignTestCallId] = useState<number | null>(
 		null
 	);
@@ -119,19 +113,29 @@ export const CampaignsList: React.FC = () => {
 		pagination.setCurrentPage(1);
 	}, [filters]);
 
+	const campaignsQueryParams = useMemo(
+		() => ({
+			...pagination.getApiParams(),
+			...filters,
+			sortBy,
+		}),
+		[
+			filters,
+			pagination.currentPage,
+			pagination.debouncedSearch,
+			pagination.itemsPerPage,
+			sortBy,
+		]
+	);
+
 	// Fetch data with server-side pagination
 	const {
 		data: campaignsResponse,
 		isLoading,
-		isFetching,
 		isError,
 		error,
 		refetch: reloadCampaigns,
-	} = useGetAllCampaignsPaginated({
-		...pagination.getApiParams(),
-		...filters,
-		sortBy,
-	});
+	} = useGetAllCampaignsPaginated(campaignsQueryParams);
 	const { mutateAsync: deleteCampaign } = useDeleteCampaign();
 	const { mutateAsync: toggleCampaignStatus } = useToggleCampaignStatus();
 
@@ -223,72 +227,10 @@ export const CampaignsList: React.FC = () => {
 			if (!campaign.isDraft) return;
 
 			initializeFromDraft(campaign);
-			setAddNewModalOpened(true);
+			setIsWizardModalOpen(true);
 		},
-		[initializeFromDraft]
+		[initializeFromDraft, setIsWizardModalOpen]
 	);
-
-	// Step names for display (0-indexed)
-	const STEP_NAMES = [
-		t('list.stepGeneral'),
-		t('list.stepAgent'),
-		t('list.stepOutcomes'),
-		t('list.stepParameters'),
-		t('list.stepComplete'),
-	];
-
-	// Step constants
-	const FIRST_STEP = 0;
-	const AGENT_STEP = 1;
-
-	// Handle wizard close (no draft save / no campaign deletion)
-	const handleWizardClose = useCallback(() => {
-		// Only acknowledge potential loss on early steps (General + Agent)
-		const shouldConfirmDiscard =
-			activeStep === FIRST_STEP || activeStep === AGENT_STEP;
-
-		if (shouldConfirmDiscard) {
-			modals.openConfirmModal({
-				title: t('list.discardChanges'),
-				children: (
-					<Text size='sm'>
-						{t('list.discardMessage', { step: STEP_NAMES[activeStep] })}
-					</Text>
-				),
-				labels: {
-					confirm: t('list.discardConfirm'),
-					cancel: t('list.keepEditing'),
-				},
-				confirmProps: { color: 'red' },
-				onConfirm: () => {
-					resetWizard();
-					setAddNewModalOpened(false);
-				},
-			});
-			return;
-		}
-
-		resetWizard();
-		setAddNewModalOpened(false);
-	}, [activeStep, resetWizard]);
-
-	// Handle Escape key for wizard modal
-	useEffect(() => {
-		const handleKeyDown = (event: KeyboardEvent) => {
-			if (event.key === 'Escape' && addNewModalOpened) {
-				// Check if there are multiple open modals (outer wizard + inner modal)
-				const openModals = document.querySelectorAll('.mantine-Modal-content');
-				if (openModals.length > 1) {
-					return; // Let the inner modal handle it
-				}
-				event.preventDefault();
-				handleWizardClose();
-			}
-		};
-
-		document.addEventListener('keydown', handleKeyDown);
-		return () => document.removeEventListener('keydown', handleKeyDown);
-	}, [addNewModalOpened, handleWizardClose]);
 
 	// Calculate total pages from server response
 	const totalPages = campaignsResponse?.total
@@ -298,13 +240,6 @@ export const CampaignsList: React.FC = () => {
 	const columns = useCampaignsColumns({
 		onEdit: (campaign) => {
 			navigate(`/campaign/${campaign.id}`);
-		},
-		onView: (campaign) => {
-			if (campaign.type === 'INBOUND') {
-				navigate(`/campaign/${campaign.id}/conversations`);
-			} else {
-				navigate(`/campaign/view/${campaign.id}`);
-			}
 		},
 		onTestCall: handleTestCall,
 		onDelete: (campaign) => {
@@ -320,7 +255,6 @@ export const CampaignsList: React.FC = () => {
 					try {
 						await deleteCampaign(`${campaign.id}`);
 						reloadCampaigns();
-						selectCampaign(null);
 						notifications.show({
 							title: t('deleteModal.success'),
 							message: t('deleteModal.successMessage'),
@@ -345,7 +279,6 @@ export const CampaignsList: React.FC = () => {
 						campaign={campaign}
 						onComplete={() => {
 							reloadCampaigns();
-							selectCampaign(null);
 							modals.close('clone-campaign');
 						}}
 					/>
@@ -368,12 +301,11 @@ export const CampaignsList: React.FC = () => {
 	const handleShowAddNewCampaignModal = () => {
 		// Reset wizard to ensure fresh start
 		resetWizard();
-		setAddNewModalOpened(true);
+		setIsWizardModalOpen(true);
 	};
 
 	const handleCampaignClick = (campaign: Campaign) => {
-		selectCampaign(campaign);
-		setIsDetailsDrawerOpen(true);
+		navigate(`/campaign/view/${campaign.id}`);
 	};
 
 	return (
@@ -411,7 +343,7 @@ export const CampaignsList: React.FC = () => {
 						onFiltersChange={setFilters}
 					/>
 
-					{isLoading || isFetching ? (
+					{isLoading ? (
 						<CampaignsListSkeleton />
 					) : isError ? (
 						<div className={styles.errorContainer}>
@@ -450,7 +382,6 @@ export const CampaignsList: React.FC = () => {
 								data={campaignsResponse?.data || []}
 								columns={columns}
 								onRowClick={handleCampaignClick}
-								selectedRowId={selectedCampaign?.id?.toString()}
 								density='compact'
 							/>
 
@@ -469,19 +400,6 @@ export const CampaignsList: React.FC = () => {
 					)}
 				</SectionCard>
 			</ContentContainer>
-			<AppDrawer
-				opened={isDetailsDrawerOpen && Boolean(selectedCampaign)}
-				onClose={() => setIsDetailsDrawerOpen(false)}
-				title={t('detailsDrawer.title')}
-				size='xl'
-			>
-				{selectedCampaign && <CampaignPreview campaign={selectedCampaign} />}
-				{!selectedCampaign && (
-					<Text size='sm' c='dimmed'>
-						{t('detailsDrawer.empty')}
-					</Text>
-				)}
-			</AppDrawer>
 
 			{/* Test Call Modal */}
 			<Modal
@@ -502,46 +420,136 @@ export const CampaignsList: React.FC = () => {
 				)}
 			</Modal>
 
-			{/* Add New Campaign Modal */}
-			<Modal
-				opened={addNewModalOpened}
-				onClose={handleWizardClose}
-				title={
-					isResumingDraft
-						? t('list.continueCampaignSetup')
-						: t('list.createCampaign')
-				}
-				size='1200px'
-				centered
-				closeOnEscape={false}
-			>
-				<LoadingOverlay
-					visible={isDraftSaving}
-					overlayProps={{ blur: 2 }}
-					loaderProps={{ children: t('list.savingDraft') }}
-				/>
-				<CampaignWizard
-					onComplete={async () => {
-						// Clear draft status if it's a draft (whether new or resumed)
-						if (createdCampaign?.id && createdCampaign.isDraft) {
-							try {
-								await setDraft({
-									campaignId: String(createdCampaign.id),
-									data: { isDraft: false, draftStep: 0 },
-								});
-							} catch (error) {
-								void error;
-							}
-						}
-						reloadCampaigns();
-						selectCampaign(null);
-						resetWizard();
-						setAddNewModalOpened(false);
-					}}
-					onCancel={handleWizardClose}
-				/>
-			</Modal>
+			<CampaignWizardModalHost reloadCampaigns={reloadCampaigns} />
 		</>
+	);
+};
+
+interface CampaignWizardModalHostProps {
+	reloadCampaigns: () => Promise<unknown>;
+}
+
+const CampaignWizardModalHost: React.FC<CampaignWizardModalHostProps> = ({
+	reloadCampaigns,
+}) => {
+	const { t } = useTranslation([
+		'campaigns.list',
+		'campaign.form.agents',
+		'common',
+	]);
+	const isWizardModalOpen = useCampaignWizardStore(
+		(state) => state.isWizardModalOpen
+	);
+	const isResumingDraft = useCampaignWizardStore(
+		(state) => state.isResumingDraft
+	);
+	const resetWizard = useCampaignWizardStore((state) => state.reset);
+	const setIsWizardModalOpen = useCampaignWizardStore(
+		(state) => state.setIsWizardModalOpen
+	);
+	const { mutateAsync: setDraft, isPending: isDraftSaving } =
+		useSetCampaignDraft();
+	const [shouldResetWizardOnClose, setShouldResetWizardOnClose] =
+		useState(false);
+
+	const stepNames = useMemo(
+		() => [
+			t('list.stepGeneral'),
+			t('list.stepAgent'),
+			t('list.stepOutcomes'),
+			t('list.stepParameters'),
+			t('list.stepComplete'),
+		],
+		[t]
+	);
+
+	const closeWizardModal = useCallback(() => {
+		setShouldResetWizardOnClose(true);
+		setIsWizardModalOpen(false);
+	}, [setIsWizardModalOpen]);
+
+	const handleWizardClose = useCallback(() => {
+		const currentStep = useCampaignWizardStore.getState().activeStep;
+		const shouldConfirmDiscard = currentStep === 0 || currentStep === 1;
+
+		if (shouldConfirmDiscard) {
+			modals.openConfirmModal({
+				title: t('list.discardChanges'),
+				children: (
+					<Text size='sm'>
+						{t('list.discardMessage', { step: stepNames[currentStep] })}
+					</Text>
+				),
+				labels: {
+					confirm: t('list.discardConfirm'),
+					cancel: t('list.keepEditing'),
+				},
+				confirmProps: { color: 'red' },
+				onConfirm: closeWizardModal,
+			});
+			return;
+		}
+
+		closeWizardModal();
+	}, [closeWizardModal, stepNames, t]);
+
+	return (
+		<Modal
+			opened={isWizardModalOpen}
+			onClose={handleWizardClose}
+			onExitTransitionEnd={() => {
+				if (!shouldResetWizardOnClose) return;
+				resetWizard();
+				setShouldResetWizardOnClose(false);
+			}}
+			title={
+				isResumingDraft
+					? t('list.continueCampaignSetup')
+					: t('list.createCampaign')
+			}
+			size='1200px'
+			centered
+			closeOnEscape
+			closeOnClickOutside={false}
+		>
+			{isWizardModalOpen && (
+				<>
+					<LoadingOverlay
+						visible={isDraftSaving}
+						overlayProps={{ blur: 2 }}
+						loaderProps={{ children: t('list.savingDraft') }}
+					/>
+					<Suspense
+						fallback={
+							<Center py='xl'>
+								<Loader size='sm' />
+							</Center>
+						}
+					>
+						<CampaignWizard
+							onComplete={async () => {
+								const { createdCampaign } = useCampaignWizardStore.getState();
+
+								if (createdCampaign?.id && createdCampaign.isDraft) {
+									try {
+										await setDraft({
+											campaignId: String(createdCampaign.id),
+											data: { isDraft: false, draftStep: 0 },
+										});
+									} catch (error) {
+										void error;
+									}
+								}
+
+								await reloadCampaigns();
+								closeWizardModal();
+							}}
+							onCancel={handleWizardClose}
+						/>
+					</Suspense>
+				</>
+			)}
+		</Modal>
 	);
 };
 

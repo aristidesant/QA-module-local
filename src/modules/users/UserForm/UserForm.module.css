@@ -1,3 +1,70 @@
+[data-mantine-color-scheme='dark'] .form {
+	background-color: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .subtitle {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .metaHeader {
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .metaHint {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .section {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .sectionTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .sectionHeader {
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .sectionDescription {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .helper {
+	border-left-color: var(--mantine-color-blue-6);
+}
+
+[data-mantine-color-scheme='dark'] .securityCard {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .actions {
+	background-color: var(--mantine-color-dark-8);
+	border-top-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .passwordCard {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .passwordHint {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .rolesSection {
+	background-color: transparent;
+}
+
+@media (max-width: 62rem) {
+	[data-mantine-color-scheme='dark'] .rolesSection {
+		background-color: var(--mantine-color-dark-7);
+		border-color: var(--mantine-color-dark-5);
+	}
+}
+
 .form {
 	display: flex;
 	flex-direction: column;
@@ -7,7 +74,7 @@
 	width: 100%;
 	height: 100%;
 	min-height: 100%;
-	overflow: hidden; /* Prevent outer scroll */
+	overflow: hidden;
 }
 
 .subtitle {
@@ -42,11 +109,10 @@
 	flex-direction: column;
 	flex: 1;
 	min-height: 0;
-	overflow: hidden; /* Prevent body scroll, content scrolls internally */
+	overflow: hidden;
 	padding-bottom: 0;
 }
 
-/* Make section transparent for roles wrapper */
 .section {
 	display: flex;
 	flex-direction: column;
@@ -190,7 +256,7 @@
 
 .contentGrid {
 	display: grid;
-	grid-template-columns: 3fr 7fr; /* 30/70 split */
+	grid-template-columns: 3fr 7fr;
 	gap: var(--mantine-spacing-md);
 	flex: 1;
 	min-height: 0;
@@ -201,12 +267,11 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-sm);
-	overflow-y: auto; /* Independent scroll for form */
-	padding-right: var(--mantine-spacing-xs); /* Space for scrollbar */
+	overflow-y: auto;
+	padding-right: var(--mantine-spacing-xs);
 	max-height: 100%;
 }
 
-/* Reset section styles for the roles wrapper so it fits UserClientRoles container */
 .rolesSection {
 	border: none;
 	background-color: transparent;
@@ -215,12 +280,11 @@
 	flex-direction: column;
 	height: 100%;
 	min-height: 0;
-	overflow: hidden; /* Roles component handles its own scroll */
+	overflow: hidden;
 }
 
-/* Adjust nested header in roles section */
 .rolesSection .sectionHeader {
-	min-height: 40px; /* Preserve header space if needed */
+	min-height: 40px;
 	justify-content: center;
 	margin-bottom: var(--mantine-spacing-xs);
 	padding-bottom: 0;
@@ -230,7 +294,7 @@
 @media (max-width: 62rem) {
 	.contentGrid {
 		grid-template-columns: 1fr;
-		overflow-y: auto; /* Allow full scroll on mobile */
+		overflow-y: auto;
 	}
 
 	.formColumn {

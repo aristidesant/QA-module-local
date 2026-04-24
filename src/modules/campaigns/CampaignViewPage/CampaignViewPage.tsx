@@ -25,7 +25,6 @@ import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { ContactSection } from '../CampaignsForm/ContactSection';
 import CampaignHealth from '../CampaignHealth';
-import CampaignReportExport from './CampaignReportExport';
 import ContactListDetails from '../CampaignsForm/ContactSection/ContactListDetails';
 import styles from './CampaignViewPage.module.css';
 import AppDrawer from '~/components/AppDrawer';
@@ -134,7 +133,6 @@ const CampaignViewPage = () => {
 				onBackClick={() => navigate('/campaigns')}
 				titleRight={
 					<Group gap='xs'>
-						<CampaignReportExport campaignId={campaign.id} />
 						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) ? (
 							<Tooltip label={t('index.actions.edit')} withArrow>
 								<ActionIcon

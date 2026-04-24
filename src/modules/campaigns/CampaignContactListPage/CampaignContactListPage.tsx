@@ -32,16 +32,28 @@ import { ModuleEnum } from '~/constants/ModuleEnum';
 import { getErrorMessage } from '~/utils/httpClient';
 import ContactGroupContactsTable from './ContactGroupContactsTable';
 import ContactListInformation from './ContactListInformation';
-import ContactListMetrics from './ContactListMetrics';
 import CampaignDashboardViewer from '~/modules/campaigns/CampaignDashboardViewer';
 import ConversationsList from '~/modules/conversations/ConversationsList';
+import ConversationDetailDrawer from '~/modules/conversations/ConversationDetailDrawer';
+import { useConversationDrawer } from '~/modules/conversations/ConversationDetailDrawer/useConversationDrawer';
 import FaultyPhonesAlert from './ContactGroupContactsTable/FaultyPhonesAlert';
 import { getTranslatedQueueStatus } from '~/modules/campaigns/CampaignsForm/ContactSection/ContactList/queueStatusConfig';
 import { timeAgo } from '~/utils/dateUtils';
 import QueueTab from './QueueTab';
 
-const ConversationsTab = ({ contactGroupId }: { contactGroupId?: string }) => {
-	return <ConversationsList contactGroupId={contactGroupId} />;
+const ConversationsTab = ({
+	contactGroupId,
+	onRowClick,
+}: {
+	contactGroupId?: string;
+	onRowClick: (conversation: { id: number }) => void;
+}) => {
+	return (
+		<ConversationsList
+			contactGroupId={contactGroupId}
+			onRowClick={onRowClick}
+		/>
+	);
 };
 
 const ContactsTab = ({
@@ -90,6 +102,13 @@ const CampaignContactListPage = () => {
 
 	const canViewConversations = canAccessModule(ModuleEnum.CONVERSATIONS);
 	const canViewContacts = canAccessModule(ModuleEnum.CONTACTS);
+
+	const {
+		selectedConversationId,
+		drawerOpened,
+		openConversation,
+		closeDrawer,
+	} = useConversationDrawer();
 
 	const queueStatusConfig = contactGroupQuery.data
 		? getTranslatedQueueStatus(t, contactGroupQuery.data.queueStatus)
@@ -261,7 +280,6 @@ const CampaignContactListPage = () => {
 								onReload={() => contactGroupQuery.refetch()}
 							/>
 						</SectionCard>
-						<ContactListMetrics contactGroupId={contactGroupId} />
 						<CampaignDashboardViewer
 							campaignId={campaignId ? Number(campaignId) : null}
 							contactGroupId={contactGroupIdNumber}
@@ -272,7 +290,10 @@ const CampaignContactListPage = () => {
 
 				{canViewConversations && (
 					<Tabs.Panel value='conversations' mb='md'>
-						<ConversationsTab contactGroupId={contactGroupId} />
+						<ConversationsTab
+							contactGroupId={contactGroupId}
+							onRowClick={openConversation}
+						/>
 					</Tabs.Panel>
 				)}
 
@@ -294,6 +315,12 @@ const CampaignContactListPage = () => {
 					/>
 				</Tabs.Panel>
 			</Tabs>
+
+			<ConversationDetailDrawer
+				conversationId={selectedConversationId}
+				opened={drawerOpened}
+				onClose={closeDrawer}
+			/>
 		</ContentContainer>
 	);
 };

@@ -2,6 +2,13 @@
 	--sidebar-width: 304px;
 	--sidebar-width-collapsed: 88px;
 	--sidebar-width-mobile: 180px;
+	--layout-sidebar-surface: var(--mantine-color-body);
+	--layout-sidebar-border: var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] {
+	--layout-sidebar-surface: var(--mantine-color-dark-7);
+	--layout-sidebar-border: var(--mantine-color-dark-5);
 }
 
 .container {
@@ -21,8 +28,8 @@
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
-	background: var(--mantine-color-body, rgba(255, 255, 255, 0.95));
-	border-right: 1px solid var(--mantine-color-gray-2);
+	background: var(--layout-sidebar-surface);
+	border-right: 1px solid var(--layout-sidebar-border);
 	z-index: 100;
 }
 
@@ -32,17 +39,30 @@
 	max-width: var(--sidebar-width-collapsed);
 }
 
+.mobileHeader {
+	display: none;
+	align-items: center;
+	gap: 0.75rem;
+	height: 56px;
+	padding: 0 1rem;
+	background: var(--layout-sidebar-surface);
+	border-bottom: 1px solid var(--layout-sidebar-border);
+	flex-shrink: 0;
+	z-index: 200;
+}
+
 @media (max-width: 768px) {
-	.navbar {
-		width: 184px;
-		min-width: 184px;
-		max-width: 184px;
+	.mobileHeader {
+		display: flex;
 	}
 
-	.navbarCollapsed {
-		width: 88px;
-		min-width: 88px;
-		max-width: 88px;
+	.navbar {
+		display: none;
+	}
+
+	.content {
+		width: 100%;
+		min-width: 0;
 	}
 }
 
@@ -63,10 +83,7 @@
 
 .layout {
 	min-height: 100vh;
-	background: white;
-	font-family:
-		-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu,
-		Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+	background: var(--mantine-color-body);
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
@@ -93,12 +110,12 @@
 
 .appFooter {
 	height: 36px;
-	border-top: 1px solid var(--mantine-color-gray-2);
+	border-top: 1px solid var(--layout-sidebar-border);
 	display: flex;
 	align-items: center;
 	justify-content: flex-end;
 	padding: 0 1rem;
-	background: var(--mantine-color-white, #fff);
+	background: var(--mantine-color-body);
 }
 
 .footerInner {
@@ -116,7 +133,7 @@
 }
 
 .contentContainer {
-	background: white;
+	background: var(--mantine-color-white);
 	border-radius: 12px;
 	padding: 0;
 	margin-bottom: 0;
@@ -125,42 +142,15 @@
 /* Mobile responsive adjustments */
 @media (max-width: 768px) {
 	.main {
-		padding: 1rem;
+		padding: 0;
 		width: 100%;
 		max-width: 100vw;
 		min-width: 0;
 	}
 
-	:global(.mantine-AppShell-main) {
-		padding: 1rem !important;
-		margin-left: 0 !important;
-		width: 100% !important;
-		max-width: 100vw !important;
-	}
-
-	/* Ensure content containers use full width on mobile */
 	.main > div {
 		max-width: 100vw;
-		width: 100vw;
-	}
-
-	.container {
-		flex-direction: column;
-		width: 100vw;
-		height: 100vh;
-	}
-
-	.navbar {
-		width: 100vw;
-		min-width: 0;
-		max-width: 100vw;
-		height: auto;
-		position: relative;
-	}
-
-	.content {
-		width: 100vw;
-		min-width: 0;
+		width: 100%;
 	}
 
 	.contentContainer {
@@ -178,7 +168,7 @@
 }
 
 .navbar::-webkit-scrollbar-thumb {
-	background-color: var(--mantine-color-gray-3);
+	background-color: var(--layout-sidebar-border);
 	border-radius: 2px;
 }
 
@@ -209,7 +199,7 @@
 }
 
 .notificationIcon:hover {
-	background-color: rgba(241, 245, 249, 0.9);
+	background-color: var(--mantine-color-gray-1);
 	color: var(--mantine-color-blue-6);
 	transform: translateY(-2px);
 }
@@ -219,7 +209,7 @@
 	top: 0;
 	right: 0;
 	background-color: var(--mantine-color-red-6);
-	color: white;
+	color: var(--mantine-color-white);
 	font-size: 0.6rem;
 	font-weight: 700;
 	height: 16px;
@@ -229,7 +219,7 @@
 	justify-content: center;
 	border-radius: 50%;
 	padding: 0 4px;
-	border: 2px solid white;
+	border: 2px solid var(--mantine-color-white);
 	transform: translate(30%, -30%);
 }
 

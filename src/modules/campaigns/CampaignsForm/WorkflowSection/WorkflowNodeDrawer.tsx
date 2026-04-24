@@ -10,6 +10,7 @@ import {
 	ToolNodeForm,
 } from './forms';
 import { useWorkflowNodeEditor } from './WorkflowNodeEditorContext';
+import styles from './WorkflowNodeDrawer.module.css';
 
 interface WorkflowNodeDrawerProps {
 	nodeId: string;
@@ -82,7 +83,7 @@ const WorkflowNodeDrawer = ({ nodeId }: WorkflowNodeDrawerProps) => {
 				timingFunction: 'cubic-bezier(0.4, 0, 0.2, 1)',
 			}}
 		>
-			{opened ? drawerContent : null}
+			<div className={styles.surface}>{opened ? drawerContent : null}</div>
 		</AppDrawer>
 	);
 };

@@ -51,3 +51,21 @@
 	gap: var(--mantine-spacing-xs);
 	min-height: 300px;
 }
+
+[data-mantine-color-scheme='dark'] .table {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .schemaName {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .objectiveName {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .noResultsContainer {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-5);
+}

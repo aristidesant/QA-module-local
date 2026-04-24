@@ -559,7 +559,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			<Modal
 				opened={promptEditorOpened}
 				onClose={() => setPromptEditorOpened(false)}
-				size='xl'
+				size='80%'
 				centered
 				classNames={{ body: styles.promptModalBody }}
 			>

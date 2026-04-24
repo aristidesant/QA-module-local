@@ -7,10 +7,16 @@ import React, {
 	useState,
 } from 'react';
 import type {
+	BoolExpr,
 	ForwardCondition,
 	WorkflowEdge,
 } from '~/models/AgentWorkflowModel';
 import { WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '../../nodeTypes';
+import {
+	createDefaultExpression,
+	normalizeExpressionForSave,
+	validateExpression,
+} from './ExpressionBuilder/ExpressionBuilder.helpers';
 
 export type ConditionType =
 	| 'none'
@@ -25,6 +31,7 @@ export interface ConditionFormState {
 	label?: string;
 	llmCondition?: string;
 	resultSuccessful?: boolean;
+	expression?: BoolExpr;
 }
 
 interface EdgeConditionModalContextValue {
@@ -47,6 +54,7 @@ interface EdgeConditionModalContextValue {
 		direction: ConditionDirection
 	) => boolean;
 	buildCondition: (state: ConditionFormState) => ForwardCondition | undefined;
+	canSave: boolean;
 	handleSave: () => void;
 	onClose: () => void;
 }
@@ -75,7 +83,8 @@ const statesEqual = (a: ConditionFormState, b: ConditionFormState) =>
 	a.type === b.type &&
 	a.label === b.label &&
 	a.llmCondition === b.llmCondition &&
-	a.resultSuccessful === b.resultSuccessful;
+	a.resultSuccessful === b.resultSuccessful &&
+	JSON.stringify(a.expression) === JSON.stringify(b.expression);
 
 export const EdgeConditionModalProvider = ({
 	opened,
@@ -131,7 +140,11 @@ export const EdgeConditionModalProvider = ({
 						: { type: 'none' };
 				case 'expression':
 					return isConditionAllowed('expression', direction)
-						? { type: 'expression', label: condition.label }
+						? {
+								type: 'expression',
+								label: condition.label,
+								expression: condition.expression,
+							}
 						: { type: 'none' };
 				default:
 					return { type: 'none' };
@@ -202,10 +215,9 @@ export const EdgeConditionModalProvider = ({
 				case 'expression':
 					return {
 						type: 'expression',
-						expression: {
-							type: 'or_operator',
-							children: [],
-						},
+						expression: normalizeExpressionForSave(
+							state.expression ?? createDefaultExpression()
+						),
 						label: state.label,
 					};
 				default:
@@ -215,14 +227,33 @@ export const EdgeConditionModalProvider = ({
 		[]
 	);
 
+	const canSave = useMemo(() => {
+		const states = [forwardState, backwardState];
+		return states.every(
+			(state) =>
+				state.type !== 'expression' ||
+				validateExpression(state.expression ?? createDefaultExpression())
+					.length === 0
+		);
+	}, [forwardState, backwardState]);
+
 	const handleSave = useCallback(() => {
 		if (!edgeId) return;
+		if (!canSave) return;
 
 		const forwardCondition = buildCondition(forwardState);
 		const backwardCondition = buildCondition(backwardState);
 		onSave(edgeId, forwardCondition, backwardCondition);
 		onClose();
-	}, [edgeId, forwardState, backwardState, buildCondition, onSave, onClose]);
+	}, [
+		edgeId,
+		canSave,
+		forwardState,
+		backwardState,
+		buildCondition,
+		onSave,
+		onClose,
+	]);
 
 	const value = useMemo<EdgeConditionModalContextValue>(
 		() => ({
@@ -242,6 +273,7 @@ export const EdgeConditionModalProvider = ({
 			isToolEdge,
 			isConditionAllowed,
 			buildCondition,
+			canSave,
 			handleSave,
 			onClose,
 		}),
@@ -259,6 +291,7 @@ export const EdgeConditionModalProvider = ({
 			isToolEdge,
 			isConditionAllowed,
 			buildCondition,
+			canSave,
 			handleSave,
 			onClose,
 		]

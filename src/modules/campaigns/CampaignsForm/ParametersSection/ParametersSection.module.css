@@ -1,10 +1,26 @@
 .workingHoursContainer {
-  display: flex;
-  flex-direction: column;
-  gap: var(--mantine-spacing-md);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
 }
 
 .sectionTitle {
-  color: var(--mantine-color-text);
-  margin-bottom: var(--mantine-spacing-xs);
+	color: var(--mantine-color-text);
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.cardsBox {
+	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-1);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+}
+
+[data-mantine-color-scheme='dark'] .cardsBox {
+	background-color: var(--mantine-color-dark-6);
+	border: 1px solid var(--mantine-color-dark-5);
+}
+
+.emptyState {
+	text-align: center;
 }

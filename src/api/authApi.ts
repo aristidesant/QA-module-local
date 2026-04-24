@@ -287,3 +287,36 @@ export async function refreshAccessToken(
 	);
 	return response.data;
 }
+
+// Password Reset via OTP
+export interface ForgotPasswordRequest {
+	email: string;
+}
+
+export interface ResetPasswordRequest {
+	email: string;
+	otp: string;
+	newPassword: string;
+}
+
+export async function forgotPassword(
+	payload: ForgotPasswordRequest,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<{ message: string }> {
+	const response = await axios.post<{ message: string }>(
+		`${apiUrl}/auth/forgot-password`,
+		payload
+	);
+	return response.data;
+}
+
+export async function resetPassword(
+	payload: ResetPasswordRequest,
+	apiUrl: string = DEFAULT_API_URL
+): Promise<{ message: string }> {
+	const response = await axios.post<{ message: string }>(
+		`${apiUrl}/auth/reset-password`,
+		payload
+	);
+	return response.data;
+}

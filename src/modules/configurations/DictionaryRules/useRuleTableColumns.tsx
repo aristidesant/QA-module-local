@@ -39,7 +39,7 @@ export function useRuleTableColumns({
 				accessorKey: 'grapheme',
 				header: t('columns.grapheme'),
 				cell: ({ row }) => (
-					<Text size='sm' fw={600} c='dark.8'>
+					<Text size='sm' fw={600} c='dimmed'>
 						{row.original.grapheme}
 					</Text>
 				),
@@ -93,7 +93,7 @@ export function useRuleTableColumns({
 				cell: ({ row }) => {
 					const { ruleType, alias, phoneme } = row.original;
 					return (
-						<Text size='sm' c='dark.6' ff='monospace'>
+						<Text size='sm' c='dimmed' ff='monospace'>
 							{ruleType === 'ALIAS' ? alias : phoneme}
 						</Text>
 					);

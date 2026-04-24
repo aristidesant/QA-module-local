@@ -1,1 +1,1 @@
-export { AddNewCampaignForm } from "./AddNewCampaignForm";
+export { AddNewCampaignForm } from './AddNewCampaignForm';

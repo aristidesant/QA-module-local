@@ -1,16 +1,21 @@
 import { useMemo } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
-import { Text, Progress } from '@mantine/core';
+import { Text, Progress, useComputedColorScheme } from '@mantine/core';
 import type { WaveRow } from './types';
+import styles from './SchedulerResults.module.css';
 
 export const useWaveColumns = () => {
+	const colorScheme = useComputedColorScheme('light');
+	const titleColor = colorScheme === 'dark' ? 'dark.0' : 'gray.9';
+	const mutedColor = colorScheme === 'dark' ? 'dimmed' : 'gray.7';
+
 	return useMemo<ColumnDef<WaveRow>[]>(
 		() => [
 			{
 				accessorKey: 'wave',
 				header: 'Wave',
 				cell: (info) => (
-					<Text size='sm' fw={600} c='gray.9'>
+					<Text size='sm' fw={600} c={titleColor}>
 						{info.getValue() as string}
 					</Text>
 				),
@@ -21,14 +26,19 @@ export const useWaveColumns = () => {
 				cell: (info) => {
 					const row = info.row.original;
 					return (
-						<div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-							<Text size='xs' fw={500} c='gray.7' style={{ minWidth: '45px' }}>
+						<div className={styles.projectedCell}>
+							<Text
+								size='xs'
+								fw={500}
+								c={mutedColor}
+								className={styles.projectedLabel}
+							>
 								{info.getValue() as string}
 							</Text>
 							<Progress
 								value={row.progressValue}
 								size='xs'
-								style={{ flex: 1, minWidth: '80px' }}
+								className={styles.projectedProgress}
 							/>
 						</div>
 					);
@@ -38,7 +48,7 @@ export const useWaveColumns = () => {
 				accessorKey: 'totalContacted',
 				header: 'Contacted',
 				cell: (info) => (
-					<Text size='xs' c='gray.7'>
+					<Text size='xs' c={mutedColor}>
 						{info.getValue() as string}
 					</Text>
 				),
@@ -47,7 +57,7 @@ export const useWaveColumns = () => {
 				accessorKey: 'effectiveContact',
 				header: 'Effective',
 				cell: (info) => (
-					<Text size='xs' c='gray.7'>
+					<Text size='xs' c={mutedColor}>
 						{info.getValue() as string}
 					</Text>
 				),
@@ -56,7 +66,7 @@ export const useWaveColumns = () => {
 				accessorKey: 'noEffectiveContact',
 				header: 'No Effective',
 				cell: (info) => (
-					<Text size='xs' c='gray.7'>
+					<Text size='xs' c={mutedColor}>
 						{info.getValue() as string}
 					</Text>
 				),
@@ -65,7 +75,7 @@ export const useWaveColumns = () => {
 				accessorKey: 'noContact',
 				header: 'No Contact',
 				cell: (info) => (
-					<Text size='xs' c='gray.7'>
+					<Text size='xs' c={mutedColor}>
 						{info.getValue() as string}
 					</Text>
 				),
@@ -74,7 +84,7 @@ export const useWaveColumns = () => {
 				accessorKey: 'triesOverNoContact',
 				header: 'Tries/No Contact',
 				cell: (info) => (
-					<Text size='xs' c='gray.7'>
+					<Text size='xs' c={mutedColor}>
 						{info.getValue() as string}
 					</Text>
 				),
@@ -83,12 +93,12 @@ export const useWaveColumns = () => {
 				accessorKey: 'totalTime',
 				header: 'Total Time',
 				cell: (info) => (
-					<Text size='xs' c='gray.7'>
+					<Text size='xs' c={mutedColor}>
 						{info.getValue() as string}
 					</Text>
 				),
 			},
 		],
-		[]
+		[mutedColor, titleColor]
 	);
 };

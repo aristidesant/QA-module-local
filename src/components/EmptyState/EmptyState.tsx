@@ -19,20 +19,13 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
 	return (
 		<div className={`${styles.wrapper} ${className || ''}`.trim()}>
-			<Stack
-				align='center'
-				justify='center'
-				gap='xs'
-				className={styles.container}
-			>
-				{icon && (
-					<div className={styles.iconWrapper}>
-						<div className={styles.icon}>{icon}</div>
-					</div>
-				)}
+			<Stack align='center' justify='center' gap='xs'>
+				{icon && <div className={styles.icon}>{icon}</div>}
 				<Text className={styles.message}>{message}</Text>
-				{description && <div className={styles.description}>{description}</div>}
-				{action && <div className={styles.action}>{action}</div>}
+				{description && (
+					<Text className={styles.description}>{description}</Text>
+				)}
+				{action}
 			</Stack>
 		</div>
 	);

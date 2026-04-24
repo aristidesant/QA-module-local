@@ -7,7 +7,11 @@ import {
 	useDashboardSectionSelection,
 } from '../DashboardSection.context';
 
-const DashboardModals = () => {
+const DashboardModals = ({
+	allowMainSlot = false,
+}: {
+	allowMainSlot?: boolean;
+}) => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 	const {
 		campaignId,
@@ -23,17 +27,17 @@ const DashboardModals = () => {
 
 	return (
 		<>
-			{/* Create / edit dashboard definition */}
 			<Modal
 				opened={dashboardModalOpened}
 				onClose={closeDashboardModal}
 				centered
 				size='lg'
 				radius='md'
-				padding='xl'
+				padding='md'
 				overlayProps={{ backgroundOpacity: 0.35 }}
 				title={
 					<DashboardModalHeader
+						kicker={t('dashboardBuilder.drawer.dashboardKicker')}
 						title={dashboardModalTitle}
 						description={t('dashboardBuilder.drawer.dashboardDescription')}
 					/>
@@ -41,6 +45,7 @@ const DashboardModals = () => {
 			>
 				<DashboardDefinitionForm
 					campaignId={campaignId}
+					allowMainSlot={allowMainSlot}
 					dashboard={editingDashboard}
 					onCancel={closeDashboardModal}
 					onSuccess={(dashboardId) => {

@@ -9,6 +9,16 @@ export type ContactGroupQueueStatus =
 	| 'EXECUTED'
 	| 'COMPLETED';
 
+export interface CampaignContactList {
+	id: number;
+	name: string;
+	createAt: string;
+}
+
+export interface CampaignContactListsParams {
+	isActive?: boolean | 0 | 1 | 'true' | 'false' | '1' | '0';
+}
+
 /**
  * Represents a contact group in the system
  */

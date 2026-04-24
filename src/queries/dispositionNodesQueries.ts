@@ -1,15 +1,20 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import dispositionNodesApi from '~/api/dispositionNodesApi';
-import type { DispositionNode } from '~/models/DispositionNodeModel';
+import type {
+	CreateDispositionNodePayload,
+	DispositionNode,
+	DispositionNodeFilters,
+	UpdateDispositionNodePayload,
+} from '~/models/DispositionNodeModel';
 
 // --- Types ---
 export interface CreateNodeParams {
-	data: Partial<DispositionNode>;
+	data: CreateDispositionNodePayload;
 }
 
 export interface UpdateNodeParams {
 	id: number | string;
-	data: Partial<DispositionNode>;
+	data: UpdateDispositionNodePayload;
 }
 
 export interface MoveNodeParams {
@@ -22,7 +27,7 @@ export interface BulkOrderParams {
 }
 
 // --- Queries ---
-export function useDispositionNodes(filters?: Record<string, any>) {
+export function useDispositionNodes(filters?: DispositionNodeFilters) {
 	return useQuery<DispositionNode[], Error>({
 		queryKey: ['dispositionNodes', filters],
 		queryFn: async () => {

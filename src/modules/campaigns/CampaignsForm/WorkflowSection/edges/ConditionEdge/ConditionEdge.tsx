@@ -1,9 +1,18 @@
-import type { FC, MouseEvent as ReactMouseEvent } from 'react';
-import { ActionIcon, Group } from '@mantine/core';
+import type { FC, MouseEvent as ReactMouseEvent, ReactNode } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import {
+	ActionIcon,
+	Group,
+	Paper,
+	Portal,
+	ScrollArea,
+	Text,
+} from '@mantine/core';
 import { BaseEdge, EdgeLabelRenderer, type EdgeProps } from '@xyflow/react';
 import {
 	IconArrowLeft,
 	IconArrowRight,
+	IconMaximize,
 	IconPencil,
 	IconTrash,
 } from '@tabler/icons-react';
@@ -22,6 +31,133 @@ import styles from './ConditionEdge.module.css';
 const truncateEdgePrompt = (value: string, maxLength = 12): string => {
 	if (value.length <= maxLength) return value;
 	return `${value.slice(0, maxLength).trimEnd()}...`;
+};
+
+const FULL_TEXT_THRESHOLD = 20;
+
+interface ChipWithPopoverProps {
+	fullText: string;
+	children: ReactNode;
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	onChipClick?: (e: ReactMouseEvent<any>) => void;
+	/** When true, prevents the hover popover from opening (e.g. while edge actions are visible). */
+	suppressPopover?: boolean;
+}
+
+/**
+ * Wraps a chip with a hover-to-reveal dropdown showing the full text.
+ * Click always delegates to `onChipClick` so edge actions (edit / delete)
+ * are reachable. A small expand icon is rendered inside the chip for
+ * touch-device users who cannot hover.
+ */
+const ChipWithPopover: FC<ChipWithPopoverProps> = ({
+	fullText,
+	children,
+	onChipClick,
+	suppressPopover = false,
+}) => {
+	const [opened, setOpened] = useState(false);
+	const triggerRef = useRef<HTMLDivElement>(null);
+	const dropdownRef = useRef<HTMLDivElement>(null);
+	const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+	const needsPopover = fullText.length > FULL_TEXT_THRESHOLD;
+
+	const openPopover = () => {
+		if (suppressPopover) return;
+		if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+		setOpened(true);
+	};
+
+	const closePopover = () => {
+		// Small delay so the user can move the mouse from chip → dropdown
+		hoverTimeoutRef.current = setTimeout(() => setOpened(false), 150);
+	};
+
+	// Clean up timeout on unmount
+	useEffect(() => {
+		return () => {
+			if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
+		};
+	}, []);
+
+	// Close the popover immediately when suppressed (e.g. edge actions just opened)
+	useEffect(() => {
+		if (suppressPopover) setOpened(false);
+	}, [suppressPopover]);
+
+	if (!needsPopover) {
+		return (
+			<div onClick={onChipClick} className={styles.chipTriggerSimple}>
+				{children}
+			</div>
+		);
+	}
+
+	// Compute fixed-position coordinates from the trigger element's bounding rect
+	// so the dropdown stays correctly placed regardless of canvas transforms.
+	const getDropdownStyle = (): React.CSSProperties => {
+		const rect = triggerRef.current?.getBoundingClientRect();
+		if (!rect) return { position: 'fixed', top: 0, left: 0 };
+		return {
+			position: 'fixed',
+			// Place above the chip with an 8px gap
+			bottom: window.innerHeight - rect.top + 8,
+			left: rect.left + rect.width / 2,
+			transform: 'translateX(-50%)',
+			zIndex: 9999,
+			minWidth: 220,
+			maxWidth: 300,
+		};
+	};
+
+	return (
+		<>
+			<div
+				ref={triggerRef}
+				onClick={(e) => {
+					e.stopPropagation();
+					onChipClick?.(e);
+				}}
+				onMouseEnter={openPopover}
+				onMouseLeave={closePopover}
+				className={styles.chipTrigger}
+			>
+				{children}
+				{/* Small expand icon for touch users who cannot hover */}
+				<span
+					className={styles.expandIcon}
+					onClick={(e) => {
+						e.stopPropagation();
+						setOpened((prev) => !prev);
+					}}
+				>
+					<IconMaximize size={10} />
+				</span>
+			</div>
+			{opened && (
+				<Portal>
+					<Paper
+						ref={dropdownRef}
+						shadow='md'
+						radius='sm'
+						p='xs'
+						withBorder
+						// inline-style-allow: dropdown position is computed at runtime from getBoundingClientRect — cannot be expressed in static CSS
+						style={getDropdownStyle()}
+						onClick={(e) => e.stopPropagation()}
+						onMouseEnter={openPopover}
+						onMouseLeave={closePopover}
+					>
+						<ScrollArea.Autosize mah={180} scrollbarSize={6}>
+							<Text size='xs' className={styles.popoverText}>
+								{fullText}
+							</Text>
+						</ScrollArea.Autosize>
+					</Paper>
+				</Portal>
+			)}
+		</>
+	);
 };
 
 const ConditionEdge: FC<EdgeProps> = ({
@@ -152,11 +288,11 @@ const ConditionEdge: FC<EdgeProps> = ({
 	const getStrokeColor = (): string => {
 		switch (warningLevel) {
 			case 'error':
-				return '#d9480f'; // Mantine red-6
+				return 'var(--mantine-color-orange-7)';
 			case 'warning':
-				return '#ff922b'; // Mantine orange-6
+				return 'var(--mantine-color-orange-5)';
 			default:
-				return '#868e96'; // Default gray
+				return 'var(--workflow-shell-control-text, var(--mantine-color-gray-6))';
 		}
 	};
 
@@ -277,39 +413,62 @@ const ConditionEdge: FC<EdgeProps> = ({
 							// transformed context which can push the label off the path.
 							transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, -50%)`,
 						}}
-						onClick={isInteractive ? handleEdgeClick : undefined}
 					>
 						{hasStructuredLabel ? (
 							<div className={styles.labelStack}>
-								<div className={styles.labelChip}>
-									<ForwardIcon className={styles.labelIcon} size={12} />
-									<span className={styles.labelText}>
-										{structuredLabel?.forwardLabel}
-									</span>
-								</div>
-								<div className={styles.labelChip}>
-									<BackwardIcon className={styles.labelIcon} size={12} />
-									<span className={styles.labelText}>
-										{structuredLabel?.backwardLabel}
-									</span>
-								</div>
+								<ChipWithPopover
+									fullText={structuredLabel?.forwardLabel ?? ''}
+									onChipClick={isInteractive ? handleEdgeClick : undefined}
+									suppressPopover={isActionsOpen}
+								>
+									<div className={styles.labelChip}>
+										<ForwardIcon className={styles.labelIcon} size={12} />
+										<span className={styles.labelText}>
+											{structuredLabel?.forwardLabel}
+										</span>
+									</div>
+								</ChipWithPopover>
+								<ChipWithPopover
+									fullText={structuredLabel?.backwardLabel ?? ''}
+									onChipClick={isInteractive ? handleEdgeClick : undefined}
+									suppressPopover={isActionsOpen}
+								>
+									<div className={styles.labelChip}>
+										<BackwardIcon className={styles.labelIcon} size={12} />
+										<span className={styles.labelText}>
+											{structuredLabel?.backwardLabel}
+										</span>
+									</div>
+								</ChipWithPopover>
 							</div>
 						) : shouldUseDirectionalLabel ? (
-							<div className={styles.labelChip}>
-								{singleConditionDirection === 'backward' ? (
-									<BackwardIcon className={styles.labelIcon} size={12} />
-								) : (
-									<ForwardIcon className={styles.labelIcon} size={12} />
-								)}
-								<span className={styles.labelText}>
-									{displayLabel ??
-										t('form.workflow.edge.notConfigured', {
-											defaultValue: 'Not configured',
-										})}
-								</span>
-							</div>
+							<ChipWithPopover
+								fullText={promptLabel || displayLabel || ''}
+								onChipClick={isInteractive ? handleEdgeClick : undefined}
+								suppressPopover={isActionsOpen}
+							>
+								<div className={styles.labelChip}>
+									{singleConditionDirection === 'backward' ? (
+										<BackwardIcon className={styles.labelIcon} size={12} />
+									) : (
+										<ForwardIcon className={styles.labelIcon} size={12} />
+									)}
+									<span className={styles.labelText}>
+										{displayLabel ??
+											t('form.workflow.edge.notConfigured', {
+												defaultValue: 'Not configured',
+											})}
+									</span>
+								</div>
+							</ChipWithPopover>
 						) : (
-							<>{displayLabel}</>
+							<ChipWithPopover
+								fullText={promptLabel || displayLabel || ''}
+								onChipClick={isInteractive ? handleEdgeClick : undefined}
+								suppressPopover={isActionsOpen}
+							>
+								<span>{displayLabel}</span>
+							</ChipWithPopover>
 						)}
 					</div>
 				</EdgeLabelRenderer>

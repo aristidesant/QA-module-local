@@ -1,12 +1,23 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Accordion, Badge, Group, Select, Stack, Text } from '@mantine/core';
 import { IconRefresh } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import { useQueryClient } from '@tanstack/react-query';
 import SectionCard from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
-import { useGetOutboundCallTasks } from '~/queries/outboundQueries';
-import { OutboundCallTaskStatus } from '~/models/ContactsModel';
+import ReloadAction from '../ContactListActions/ReloadAction';
+import {
+	useGetOutboundCallTasks,
+	useGetQueueProgress,
+	outboundTaskKeys,
+} from '~/queries/outboundQueries';
+import {
+	OutboundCallTaskStatus,
+	type WaveProgress,
+} from '~/models/ContactsModel';
 import QueueWaveTable from './QueueWaveTable';
+import QueueProgressBar from './QueueProgressBar';
+import WaveProgressHeader from './WaveProgressHeader';
 import ReorderControls from './ReorderControls';
 import styles from './QueueTab.module.css';
 
@@ -19,6 +30,7 @@ const STATUS_OPTIONS = Object.values(OutboundCallTaskStatus);
 
 const QueueTab = ({ contactGroupId, campaignId }: QueueTabProps) => {
 	const { t } = useTranslation('campaign.contact-list');
+	const queryClient = useQueryClient();
 	const [statusFilter, setStatusFilter] = useState<string | null>(null);
 	const [waveFilter, setWaveFilter] = useState<string | null>(null);
 
@@ -39,6 +51,9 @@ const QueueTab = ({ contactGroupId, campaignId }: QueueTabProps) => {
 		offset: 0,
 	});
 
+	// Queue progress data (global + per-wave)
+	const progressQuery = useGetQueueProgress(contactGroupId, campaignId);
+
 	const availableWaves = useMemo(() => {
 		const tasks = waveDiscoveryQuery.data?.data ?? [];
 		const waves = [...new Set(tasks.map((t) => t.waveNumber))].sort(
@@ -46,6 +61,17 @@ const QueueTab = ({ contactGroupId, campaignId }: QueueTabProps) => {
 		);
 		return waves;
 	}, [waveDiscoveryQuery.data]);
+
+	// Map wave progress data by waveNumber for quick lookup
+	const waveProgressMap = useMemo(() => {
+		const map = new Map<number, WaveProgress>();
+		if (progressQuery.data?.waves) {
+			for (const w of progressQuery.data.waves) {
+				map.set(w.waveNumber, w);
+			}
+		}
+		return map;
+	}, [progressQuery.data]);
 
 	const totalTasks = allTasksQuery.data?.total ?? 0;
 
@@ -70,6 +96,11 @@ const QueueTab = ({ contactGroupId, campaignId }: QueueTabProps) => {
 		],
 		[availableWaves, t]
 	);
+
+	const handleRefresh = useCallback(() => {
+		progressQuery.refetch();
+		queryClient.invalidateQueries({ queryKey: outboundTaskKeys.all });
+	}, [progressQuery, queryClient]);
 
 	// Determine which waves to display
 	const displayWaves = useMemo(() => {
@@ -111,10 +142,13 @@ const QueueTab = ({ contactGroupId, campaignId }: QueueTabProps) => {
 
 	return (
 		<Stack gap='md'>
+			{progressQuery.data?.global && (
+				<QueueProgressBar progress={progressQuery.data.global} />
+			)}
+
 			<ReorderControls
 				campaignId={campaignId}
 				contactGroupId={contactGroupId}
-				availableWaves={availableWaves}
 			/>
 
 			<SectionCard
@@ -139,6 +173,10 @@ const QueueTab = ({ contactGroupId, campaignId }: QueueTabProps) => {
 							onChange={(v) => setWaveFilter(v || null)}
 							w={180}
 						/>
+						<ReloadAction
+							tooltip={t('queue.refresh')}
+							onClick={handleRefresh}
+						/>
 					</Group>
 
 					{displayWaves.length === 1 ? (
@@ -157,14 +195,18 @@ const QueueTab = ({ contactGroupId, campaignId }: QueueTabProps) => {
 							{displayWaves.map((wave) => (
 								<Accordion.Item key={wave} value={String(wave)}>
 									<Accordion.Control>
-										<Group gap='sm'>
-											<Text size='sm' className={styles.waveHeader}>
-												{t('queue.wave', { number: wave })}
-											</Text>
-											<Badge variant='light' size='sm' color='blue'>
-												{t('queue.wave', { number: wave })}
-											</Badge>
-										</Group>
+										{waveProgressMap.has(wave) ? (
+											<WaveProgressHeader wave={waveProgressMap.get(wave)!} />
+										) : (
+											<Group gap='sm'>
+												<Text size='sm' className={styles.waveHeader}>
+													{t('queue.wave', { number: wave })}
+												</Text>
+												<Badge variant='light' size='sm' color='blue'>
+													{t('queue.wave', { number: wave })}
+												</Badge>
+											</Group>
+										)}
 									</Accordion.Control>
 									<Accordion.Panel>
 										<QueueWaveTable

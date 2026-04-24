@@ -29,6 +29,12 @@
 			"edit": "Editando Campaña: {{name}}"
 		},
 		"description": "Administra la configuración y ajustes de tu campaña.",
+		"actions": {
+			"save": "Guardar cambios",
+			"saving": "Guardando...",
+			"viewCampaign": "Ver campaña",
+			"testConvai": "Probar Convai"
+		},
 		"notifications": {
 			"warningTitle": "Advertencia",
 			"objectiveAssignmentFailed": "Campaña guardada pero falló la asignación del objetivo.",
@@ -120,6 +126,20 @@
 				}
 			}
 		}
+	},
+	"convaiWidget": {
+		"loading": {
+			"title": "Cargando asistente",
+			"description": "Preparando el widget de voz de ElevenLabs para esta campaña."
+		},
+		"error": {
+			"title": "Asistente no disponible",
+			"description": "No se pudo cargar el widget de ElevenLabs. Verifica el acceso de red, el allowlist del agente y la configuración de CSP."
+		},
+		"retry": "Reintentar",
+		"minimize": "Minimizar asistente",
+		"restore": "Restaurar asistente",
+		"label": "Asistente"
 	},
 	"preview": {
 		"overview": {

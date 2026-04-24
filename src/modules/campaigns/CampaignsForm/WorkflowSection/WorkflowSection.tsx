@@ -6,12 +6,15 @@ import WorkflowClipboardActions from './WorkflowClipboardActions';
 import WorkflowCanvas from './WorkflowCanvas';
 import WorkflowEditorFullscreen from './WorkflowEditorFullscreen';
 import { WorkflowNodeEditorProvider } from './WorkflowNodeEditorContext';
+import { NodeStylesProvider } from './NodeStylesContext';
+import WorkflowNodeLegend from './WorkflowNodeLegend';
 import {
 	useCampaignFormContext,
 	useCampaignId,
 } from '../../campaignFormFunctions';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
+import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
 import '@xyflow/react/dist/style.css';
 import styles from './WorkflowSection.module.css';
 
@@ -28,6 +31,8 @@ const WorkflowSection = () => {
 	const [isEditorExpanded, setIsEditorExpanded] = useState(false);
 	const workflow = form.values.agentConfig?.workflow;
 	const preventSubagentLoops = workflow?.preventSubagentLoops ?? false;
+	const nodeStyles = form.values.nodeStyles;
+	const nodeGroups = form.values.nodeGroups;
 
 	const agents = useMemo(
 		() =>
@@ -53,12 +58,70 @@ const WorkflowSection = () => {
 
 	const handleWorkflowChange = (updatedWorkflow: AgentWorkflow) => {
 		const currentConfig = form.values.agentConfig ?? {};
+		const prevNodes = currentConfig.workflow?.nodes ?? {};
+		const nextNodes = updatedWorkflow.nodes ?? {};
+
+		// Sync nodeStyles / nodeGroups labels when a node is renamed
+		const currentNodeStyles = form.values.nodeStyles;
+		const currentNodeGroups = form.values.nodeGroups;
+		let stylesPatched = false;
+		let groupsPatched = false;
+		const patchedStyles = currentNodeStyles
+			? { ...currentNodeStyles }
+			: undefined;
+		const patchedGroups = currentNodeGroups
+			? { ...currentNodeGroups }
+			: undefined;
+
+		for (const nodeId of Object.keys(nextNodes)) {
+			const prevLabel = prevNodes[nodeId]?.label;
+			const nextLabel = nextNodes[nodeId]?.label;
+			if (prevLabel !== nextLabel && nextLabel !== undefined) {
+				if (patchedStyles?.[nodeId]) {
+					patchedStyles[nodeId] = {
+						...patchedStyles[nodeId],
+						nodeLabel: nextLabel,
+					};
+					stylesPatched = true;
+				}
+				if (patchedGroups?.[nodeId]) {
+					patchedGroups[nodeId] = {
+						...patchedGroups[nodeId],
+						label: nextLabel,
+					};
+					groupsPatched = true;
+				}
+			}
+		}
+
+		if (stylesPatched && patchedStyles) {
+			form.setFieldValue('nodeStyles', patchedStyles);
+		}
+		if (groupsPatched && patchedGroups) {
+			form.setFieldValue('nodeGroups', patchedGroups);
+		}
 
 		form.setFieldValue('agentConfig', {
 			...currentConfig,
 			workflow: updatedWorkflow,
 		});
 	};
+
+	const handleNodeGroupsChange = useCallback(
+		(updatedNodeGroups: NodeGroups) => {
+			form.setFieldValue('nodeGroups', updatedNodeGroups);
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
+
+	const handleNodeStylesChange = useCallback(
+		(updatedNodeStyles: NodeStyles) => {
+			form.setFieldValue('nodeStyles', updatedNodeStyles);
+		},
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[]
+	);
 
 	const handlePreventLoopsChange = (value: boolean) => {
 		const currentWorkflow = form.values.agentConfig?.workflow;
@@ -75,67 +138,94 @@ const WorkflowSection = () => {
 	}, []);
 
 	return (
-		<WorkflowNodeEditorProvider
-			workflow={workflow}
-			onWorkflowChange={handleWorkflowChange}
-			campaignAgentConfig={form.values.agentConfig}
-		>
-			<WorkflowEditorFullscreen
-				opened={isEditorExpanded}
-				onClose={() => setIsEditorExpanded(false)}
+		<NodeStylesProvider value={nodeStyles}>
+			<WorkflowNodeEditorProvider
 				workflow={workflow}
 				onWorkflowChange={handleWorkflowChange}
-				preventSubagentLoops={preventSubagentLoops}
-				allowDefaultInit={!campaignId}
-				onNodeSelect={handleNodeSelect}
-			/>
-			<SectionCard
-				title={t('form.workflow.section.title')}
-				description={t('form.workflow.section.description')}
-				contentSpacing='xs'
-				padding='sm'
-				onExpand={() => setIsEditorExpanded(true)}
-				headerExtras={
-					<Group gap='xs' align='center' className={styles.headerControls}>
-						{agents.length > 1 && (
-							<Select
-								data={agents.map((agent) => ({
-									value: agent.agentId,
-									label: agent.agentName,
-								}))}
-								value={selectedAgentId}
-								onChange={setSelectedAgentId}
-								placeholder={t('form.workflow.header.agentPlaceholder')}
-								aria-label={t('form.workflow.header.agentLabel')}
-								size='sm'
-								w={200}
-							/>
-						)}
-						<Checkbox
-							size='sm'
-							label={t('form.workflow.header.preventLoops')}
-							checked={preventSubagentLoops}
-							onChange={(event) =>
-								handlePreventLoopsChange(event.currentTarget.checked)
-							}
-						/>
-						<WorkflowClipboardActions
-							workflow={workflow}
-							onWorkflowChange={handleWorkflowChange}
-							fallbackPreventSubagentLoops={preventSubagentLoops}
-						/>
-					</Group>
-				}
+				campaignAgentConfig={form.values.agentConfig}
 			>
-				<WorkflowCanvas
+				<WorkflowEditorFullscreen
+					opened={isEditorExpanded}
+					onClose={() => setIsEditorExpanded(false)}
 					workflow={workflow}
 					onWorkflowChange={handleWorkflowChange}
 					preventSubagentLoops={preventSubagentLoops}
 					allowDefaultInit={!campaignId}
 					onNodeSelect={handleNodeSelect}
+					nodeStyles={nodeStyles}
+					nodeGroups={nodeGroups}
+					onNodeGroupsChange={handleNodeGroupsChange}
+					onNodeStylesChange={handleNodeStylesChange}
 				/>
-			</SectionCard>
-		</WorkflowNodeEditorProvider>
+				<div className={styles.root}>
+					<SectionCard
+						title={t('form.workflow.section.title')}
+						description={t('form.workflow.section.description')}
+						contentSpacing='xs'
+						padding='sm'
+						onExpand={() => setIsEditorExpanded(true)}
+						headerExtras={
+							<Group gap='xs' align='center' className={styles.headerControls}>
+								{agents.length > 1 && (
+									<Select
+										data={agents.map((agent) => ({
+											value: agent.agentId,
+											label: agent.agentName,
+										}))}
+										value={selectedAgentId}
+										onChange={setSelectedAgentId}
+										placeholder={t('form.workflow.header.agentPlaceholder')}
+										aria-label={t('form.workflow.header.agentLabel')}
+										size='sm'
+										w={200}
+									/>
+								)}
+								<Checkbox
+									size='sm'
+									label={t('form.workflow.header.preventLoops')}
+									checked={preventSubagentLoops}
+									onChange={(event) =>
+										handlePreventLoopsChange(event.currentTarget.checked)
+									}
+								/>
+								<WorkflowClipboardActions
+									workflow={workflow}
+									onWorkflowChange={handleWorkflowChange}
+									fallbackPreventSubagentLoops={preventSubagentLoops}
+									nodeStyles={nodeStyles}
+									nodeGroups={nodeGroups}
+									onNodeStylesChange={handleNodeStylesChange}
+									onNodeGroupsChange={handleNodeGroupsChange}
+								/>
+							</Group>
+						}
+					>
+						{(nodeStyles &&
+							Object.keys(nodeStyles).some(
+								(k) => nodeStyles[k]?.backgroundColor || nodeStyles[k]?.iconName
+							)) ||
+						(nodeGroups &&
+							Object.keys(nodeGroups).some(
+								(k) => nodeGroups[k]?.color || nodeGroups[k]?.label
+							)) ? (
+							<WorkflowNodeLegend
+								nodeStyles={nodeStyles}
+								nodeGroups={nodeGroups}
+							/>
+						) : null}
+						<WorkflowCanvas
+							workflow={workflow}
+							onWorkflowChange={handleWorkflowChange}
+							nodeGroups={nodeGroups}
+							onNodeGroupsChange={handleNodeGroupsChange}
+							preventSubagentLoops={preventSubagentLoops}
+							allowDefaultInit={!campaignId}
+							onNodeSelect={handleNodeSelect}
+						/>
+					</SectionCard>
+				</div>
+			</WorkflowNodeEditorProvider>
+		</NodeStylesProvider>
 	);
 };
 

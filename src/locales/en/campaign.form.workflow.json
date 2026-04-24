@@ -39,6 +39,70 @@
 					"failure": "Failure"
 				},
 				"expressionNote": "Expression builder coming soon",
+				"expression": {
+					"title": "Expression",
+					"description": "Build the rule that controls when this edge is used.",
+					"reset": "Reset",
+					"validationSummary": "Complete the highlighted expression fields to save.",
+					"labelPlaceholder": "Optional label for this expression",
+					"branchType": "Branch type",
+					"branchTypes": {
+						"comparison": "Comparison",
+						"group": "Group",
+						"llm": "LLM prompt"
+					},
+					"wrapAnd": "Wrap AND",
+					"wrapOr": "Wrap OR",
+					"removeBranch": "Remove branch",
+					"addBranch": "Add branch",
+					"llmPrompt": "LLM prompt",
+					"llmPromptPlaceholder": "Ask the model to evaluate this branch...",
+					"leftValue": "Left value",
+					"rightValue": "Right value",
+					"comparisonOperator": "Comparison operator",
+					"valueType": "Value type",
+					"dynamicVariablePlaceholder": "Select variable",
+					"noVariables": "No variables found",
+					"numberPlaceholder": "Enter number",
+					"stringPlaceholder": "Enter text",
+					"llmValuePlaceholder": "Prompt the model...",
+					"operators": {
+						"or": "OR",
+						"and": "AND"
+					},
+					"comparisons": {
+						"eq": "Equals",
+						"neq": "Does not equal",
+						"gt": "Greater than",
+						"gte": "Greater or equal",
+						"lt": "Less than",
+						"lte": "Less or equal"
+					},
+					"valueTypes": {
+						"variable": "Variable",
+						"text": "Text",
+						"number": "Number",
+						"boolean": "Boolean",
+						"llm": "LLM"
+					},
+					"variables": {
+						"system": "System Variables",
+						"custom": "Custom Variables"
+					},
+					"boolean": {
+						"true": "True",
+						"false": "False"
+					},
+					"errors": {
+						"emptyDynamicVariable": "Select a variable.",
+						"emptyStringLiteral": "Enter a text value.",
+						"invalidNumberLiteral": "Enter a valid number.",
+						"emptyLlmPrompt": "Enter an LLM prompt.",
+						"missingComparisonValue": "Complete this comparison value.",
+						"emptyGroup": "Add at least one branch.",
+						"unsupportedExpression": "This expression branch is not supported."
+					}
+				},
 				"forward": "Forward",
 				"backward": "Backward"
 			},
@@ -334,6 +398,13 @@
 					"copy": "Copy workflow",
 					"paste": "Paste workflow"
 				},
+				"copy": {
+					"title": "Copy workflow to clipboard",
+					"description": "Choose what to include with the workflow. Custom styles and groups will be bundled so they can be restored on paste.",
+					"includeStyles": "Include custom node styles ({{count}})",
+					"includeGroups": "Include node groups ({{count}})",
+					"confirm": "Copy to clipboard"
+				},
 				"import": {
 					"title": "Replace workflow from JSON",
 					"description": "Paste a full workflow JSON payload to replace the current flow. Both snake_case and camelCase are supported.",
@@ -350,6 +421,8 @@
 					"summaryEdges": "{{count}} edges",
 					"summaryPreventLoopsEnabled": "Prevent subagent loops: enabled",
 					"summaryPreventLoopsDisabled": "Prevent subagent loops: disabled",
+					"summaryNodeStyles": "{{count}} custom styles",
+					"summaryNodeGroups": "{{count}} node groups",
 					"replace": "Replace workflow"
 				},
 				"errors": {
@@ -380,13 +453,44 @@
 				"override_agent": "Agent transfer",
 				"phone_number": "Phone number transfer",
 				"tool": "Dispatch tool",
-				"end": "End"
+				"end": "End",
+				"group": "Group"
 			},
 			"transferNode": {
 				"to": "Transfer to",
 				"delay": "Delay",
 				"delayValue": "{{value}} ms",
 				"emptyAgent": "Not set"
+			},
+			"nodeStyle": {
+				"customize": "Customize style",
+				"colorLabel": "Color",
+				"iconLabel": "Icon",
+				"reset": "Reset to default",
+				"legend": "Customized nodes"
+			},
+			"search": {
+				"placeholder": "Search nodes…",
+				"empty": "No nodes found"
+			},
+			"group": {
+				"create": "Group selected",
+				"ungroup": "Ungroup",
+				"defaultLabel": "Group",
+				"rename": "Rename group",
+				"renamePlaceholder": "Group name",
+				"renameHint": "Double-click to rename",
+				"addNode": "Add node",
+				"addNewNode": "New node",
+				"addExistingNode": "Add existing node",
+				"cloneGroup": "Clone group",
+				"copy": "Copy",
+				"noAvailableNodes": "No ungrouped nodes available",
+				"searchNodes": "Search nodes..."
+			},
+			"selection": {
+				"count": "{{count}} node selected",
+				"count_other": "{{count}} nodes selected"
 			},
 			"nodeStatus": {
 				"destination": "Destination",

@@ -1,10 +1,11 @@
-import { useEffect, useState } from 'react';
-import { Badge, Button, Group, Text as MantineText } from '@mantine/core';
+import { useEffect, useMemo, useState } from 'react';
+import { Badge, Button, Text as MantineText } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
 import {
 	useCreateClientConfig,
+	useClientConfigByName,
 	useUpdateClientConfig,
 } from '~/queries/useClientConfigs';
 import type { CampaignPredefinedParam } from '~/modules/campaigns/CampaignsForm/useCampaignsPredefinedParams';
@@ -22,7 +23,7 @@ import {
 	CampaignPredefinedFormProvider,
 	type FormValues,
 } from './CampaignPredefinedFormProvider';
-import { DEFAULT_AGENT_LLM } from './formConfig';
+import { DEFAULT_AGENT_LLM, LLM_MODELS } from './formConfig';
 
 import styles from './CampaignPredefinedParamsForm.module.css';
 import GeneralSection from './components/GeneralSection';
@@ -41,6 +42,14 @@ interface CampaignPredefinedParamsFormProps {
 	canSubmit?: boolean;
 }
 
+interface LlmClientConfigValue {
+	llms?: Array<{
+		llm?: string;
+		is_checkpoint?: boolean;
+		available_reasoning_efforts?: string[] | null;
+	}>;
+}
+
 const CampaignPredefinedParamsForm: React.FC<
 	CampaignPredefinedParamsFormProps
 > = ({
@@ -57,7 +66,61 @@ const CampaignPredefinedParamsForm: React.FC<
 	const isEditMode = mode === 'edit' && !!param;
 	const createMutation = useCreateClientConfig();
 	const updateMutation = useUpdateClientConfig();
+	const { data: llmConfig } = useClientConfigByName('llm');
 	const [activeTab, setActiveTab] = useState<string>('general');
+
+	const { hasResolvedReasoningAvailability, reasoningEffortsByModel } =
+		useMemo(() => {
+			if (!llmConfig?.value) {
+				return {
+					hasResolvedReasoningAvailability: false,
+					reasoningEffortsByModel: {} as Record<string, string[] | null>,
+				};
+			}
+
+			try {
+				const parsed = JSON.parse(llmConfig.value) as LlmClientConfigValue;
+				if (!Array.isArray(parsed.llms)) {
+					return {
+						hasResolvedReasoningAvailability: false,
+						reasoningEffortsByModel: {} as Record<string, string[] | null>,
+					};
+				}
+
+				const supportedModelCodes = new Set(
+					LLM_MODELS.map(({ modelCode }) => modelCode)
+				);
+				const nextReasoningEffortsByModel = parsed.llms.reduce<
+					Record<string, string[] | null>
+				>((acc, model) => {
+					if (
+						!model.llm ||
+						model.is_checkpoint ||
+						!supportedModelCodes.has(model.llm)
+					) {
+						return acc;
+					}
+
+					acc[model.llm] = Array.isArray(model.available_reasoning_efforts)
+						? model.available_reasoning_efforts.filter(
+								(effort): effort is string => typeof effort === 'string'
+							)
+						: null;
+
+					return acc;
+				}, {});
+
+				return {
+					hasResolvedReasoningAvailability: true,
+					reasoningEffortsByModel: nextReasoningEffortsByModel,
+				};
+			} catch {
+				return {
+					hasResolvedReasoningAvailability: false,
+					reasoningEffortsByModel: {} as Record<string, string[] | null>,
+				};
+			}
+		}, [llmConfig?.value]);
 
 	const menuItems = [
 		{
@@ -128,6 +191,8 @@ const CampaignPredefinedParamsForm: React.FC<
 			// Agent
 			agentPromptLlm:
 				conversationConfig?.agent?.prompt?.llm || DEFAULT_AGENT_LLM,
+			agentPromptReasoningEffort:
+				conversationConfig?.agent?.prompt?.reasoningEffort || null,
 			agentPromptTemperature:
 				conversationConfig?.agent?.prompt?.temperature || 1.0,
 		},
@@ -195,6 +260,7 @@ const CampaignPredefinedParamsForm: React.FC<
 					cfg?.tts?.agentOutputAudioFormat || 'pcm_16000',
 				// Agent
 				agentPromptLlm: cfg?.agent?.prompt?.llm || DEFAULT_AGENT_LLM,
+				agentPromptReasoningEffort: cfg?.agent?.prompt?.reasoningEffort || null,
 				agentPromptTemperature: cfg?.agent?.prompt?.temperature || 1.0,
 			});
 		}
@@ -220,6 +286,7 @@ const CampaignPredefinedParamsForm: React.FC<
 		agent: {
 			prompt: {
 				llm: values.agentPromptLlm,
+				reasoningEffort: values.agentPromptReasoningEffort ?? undefined,
 				temperature: values.agentPromptTemperature,
 			},
 		},
@@ -305,7 +372,12 @@ const CampaignPredefinedParamsForm: React.FC<
 			case 'tts':
 				return <TTSSection />;
 			case 'agent':
-				return <AgentSection />;
+				return (
+					<AgentSection
+						hasResolvedReasoningAvailability={hasResolvedReasoningAvailability}
+						reasoningEffortsByModel={reasoningEffortsByModel}
+					/>
+				);
 			default:
 				return <GeneralSection />;
 		}
@@ -356,13 +428,23 @@ const CampaignPredefinedParamsForm: React.FC<
 
 					<div className={styles.actions}>
 						<div className={styles.actionsLeft}>
-							<MantineText size='xs' c='dimmed'>
+							<Badge
+								size='sm'
+								variant='light'
+								color={isEditMode ? 'blue' : 'green'}
+								className={styles.footerBadge}
+							>
+								{isEditMode
+									? t('form.badge.editingPreset')
+									: t('form.badge.newPreset')}
+							</Badge>
+							<MantineText size='xs' c='dimmed' className={styles.footerHint}>
 								{isEditMode
 									? t('form.footer.editHint')
 									: t('form.footer.createHint')}
 							</MantineText>
 						</div>
-						<Group justify='flex-end' gap='xs' className={styles.actionsRight}>
+						<div className={styles.actionsRight}>
 							<Button variant='subtle' size='sm' onClick={onCancel}>
 								{t('actions.cancel', { ns: 'common' })}
 							</Button>
@@ -377,7 +459,7 @@ const CampaignPredefinedParamsForm: React.FC<
 										: t('form.actions.create')}
 								</Button>
 							)}
-						</Group>
+						</div>
 					</div>
 				</div>
 			</CampaignPredefinedFormProvider>

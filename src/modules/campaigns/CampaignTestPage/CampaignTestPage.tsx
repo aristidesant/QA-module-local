@@ -1,0 +1,77 @@
+import { useState } from 'react';
+import { useNavigate, useOutletContext } from 'react-router';
+import { Alert, Button, Stack, Text } from '@mantine/core';
+import { IconAlertCircle, IconArrowLeft } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
+import ContentContainer from '~/components/ContentContainer';
+import ConversationsList from '~/modules/conversations/ConversationsList';
+import { ConversationDetailPage } from '~/modules/conversations/ConversationDetailPage/ConversationDetailPage';
+import CampaignConvaiWidget from '../CampaignConvaiWidget';
+import type { Campaign } from '~/models/CampaignsModel';
+
+const HIDDEN_COLUMNS = ['contactName', 'phoneNumber'];
+
+const CampaignTestPage = () => {
+	const { t } = useTranslation('campaign.detail.test');
+	const navigate = useNavigate();
+	const campaign = useOutletContext<Campaign>();
+
+	const [selectedConversationId, setSelectedConversationId] = useState<
+		number | null
+	>(null);
+
+	const agentId = campaign.agentConfig?.agentId;
+
+	if (selectedConversationId !== null) {
+		return (
+			<ConversationDetailPage
+				conversationId={String(selectedConversationId)}
+				onBack={() => setSelectedConversationId(null)}
+			/>
+		);
+	}
+
+	return (
+		<ContentContainer
+			title={t('page.titleWithCampaign', { campaignName: campaign.name })}
+			description={t('page.description')}
+			showBackButton
+			onBackClick={() => navigate(`/campaign/${campaign.id}`)}
+		>
+			<Stack gap='sm'>
+				{!agentId && (
+					<Alert
+						icon={<IconAlertCircle size={16} />}
+						title={t('agent.empty.title')}
+						color='yellow'
+						variant='light'
+					>
+						<Stack gap='xs'>
+							<Text size='sm'>{t('agent.empty.description')}</Text>
+							<div>
+								<Button
+									size='xs'
+									variant='light'
+									leftSection={<IconArrowLeft size={16} />}
+									onClick={() => navigate(`/campaign/${campaign.id}`)}
+								>
+									{t('agent.empty.backToEditor')}
+								</Button>
+							</div>
+						</Stack>
+					</Alert>
+				)}
+
+				<CampaignConvaiWidget agentId={agentId} />
+
+				<ConversationsList
+					campaignId={campaign.id}
+					hiddenColumns={HIDDEN_COLUMNS}
+					onRowClick={(c) => setSelectedConversationId(c.id)}
+				/>
+			</Stack>
+		</ContentContainer>
+	);
+};
+
+export default CampaignTestPage;

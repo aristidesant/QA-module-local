@@ -10,6 +10,10 @@
 	line-height: 1.5;
 }
 
+[data-mantine-color-scheme='dark'] .subtitle {
+	color: var(--mantine-color-dark-2);
+}
+
 .emptyMessage {
 	padding: 16px 0;
 	text-align: center;
@@ -24,20 +28,31 @@
 .toolRow {
 	display: block;
 	padding: 8px 10px;
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--surface-card);
+	border: 1px solid var(--surface-border);
 	border-radius: 6px;
 	cursor: pointer;
-	transition: background-color 0.15s ease;
+	transition:
+		background-color 0.15s ease,
+		border-color 0.15s ease;
 }
 
 .toolRow:hover {
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--surface-sunken);
+	border-color: var(--surface-border-strong);
 }
 
 .toolRowChecked {
-	border-color: var(--mantine-color-cyan-4);
-	background-color: var(--mantine-color-cyan-0);
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-cyan-6) 42%,
+		var(--surface-border)
+	);
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-cyan-6) 10%,
+		var(--surface-card)
+	);
 }
 
 .toolInfo {
@@ -48,7 +63,7 @@
 .toolName {
 	font-size: 12px;
 	font-weight: 500;
-	color: var(--mantine-color-gray-8);
+	color: var(--mantine-color-text);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -67,7 +82,7 @@
 	align-items: center;
 	justify-content: space-between;
 	gap: var(--mantine-spacing-sm);
-	border-top: 1px solid var(--mantine-color-gray-2);
+	border-top: 1px solid var(--surface-border);
 	padding-top: var(--mantine-spacing-xs);
 	margin-top: 2px;
 }

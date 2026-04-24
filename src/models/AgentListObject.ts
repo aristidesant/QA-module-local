@@ -131,6 +131,7 @@ export interface ConversationConfigModel {
 	agent: {
 		prompt: {
 			llm: string;
+			reasoningEffort?: string;
 			rag: {
 				enabled: boolean;
 				embeddingModel: string;

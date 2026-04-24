@@ -42,6 +42,11 @@
 			"label": "Scheduler preset name",
 			"placeholder": "Example: Standard business hours"
 		},
+		"summary": {
+			"kicker": "Preset editor",
+			"description": "Update the schedule name and weekly windows in one place.",
+			"activeDays": "{{count}} active days"
+		},
 		"weeklyWindows": {
 			"title": "Weekly windows",
 			"description": "Activate days for this scheduler preset and set their start and end time. Everything stays on one line to scan quickly."

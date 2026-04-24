@@ -12,5 +12,8 @@ export const downloadBlob = (blob: Blob, filename: string) => {
 	document.body.appendChild(a);
 	a.click();
 	a.remove();
-	window.URL.revokeObjectURL(url);
+	// Defer revocation so the browser has time to start the download.
+	window.setTimeout(() => {
+		window.URL.revokeObjectURL(url);
+	}, 1000);
 };

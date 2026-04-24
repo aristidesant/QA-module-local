@@ -1,25 +1,47 @@
 .item {
 	padding: 4px 8px;
-	background: var(--mantine-color-white);
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+	border-color: light-dark(
+		var(--mantine-color-gray-2),
+		var(--mantine-color-dark-4)
+	);
 	transition:
 		background-color 120ms ease,
 		border-color 120ms ease;
 }
 
 .item:hover {
-	background: var(--mantine-color-gray-0);
-	border-color: var(--mantine-color-blue-3);
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+	border-color: light-dark(
+		var(--mantine-color-blue-3),
+		var(--mantine-color-blue-8)
+	);
 }
 
 .itemDisabled {
 	opacity: 0.6;
 	cursor: not-allowed;
-	border-color: var(--mantine-color-gray-3);
+	border-color: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
+	);
 }
 
 .itemDisabled:hover {
-	background: var(--mantine-color-white);
-	border-color: var(--mantine-color-gray-3);
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+	border-color: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
+	);
 }
 
 .statusDot {
@@ -49,7 +71,10 @@
 	width: 16px;
 	height: 16px;
 	border-radius: var(--mantine-radius-sm);
-	background-color: var(--mantine-color-gray-0);
+	background-color: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
 }
 
 .iconFolder {
@@ -57,19 +82,20 @@
 }
 
 .iconLeaf {
-	color: var(--mantine-color-gray-6);
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
 }
 
 .textContent {
 	display: flex;
 	flex-direction: column;
 	min-width: 0;
+	flex: 1;
 	max-width: 100%;
 	width: 100%;
 }
 
 .nodeName {
-	color: var(--mantine-color-gray-9);
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
 	line-height: 1.2;
 	font-size: var(--mantine-font-size-xs);
 	overflow: hidden;

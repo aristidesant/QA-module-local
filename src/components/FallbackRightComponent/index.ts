@@ -1,2 +1,2 @@
-export { default } from "./FallbackRightComponent";
-export * from "./FallbackRightComponent";
+export { default } from './FallbackRightComponent';
+export * from './FallbackRightComponent';

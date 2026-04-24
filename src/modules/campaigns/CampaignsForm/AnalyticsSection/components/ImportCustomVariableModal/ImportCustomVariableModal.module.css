@@ -1,3 +1,23 @@
+[data-mantine-color-scheme='dark'] .toolbar,
+[data-mantine-color-scheme='dark'] .selectionBar {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .tableWrap {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .footer {
+	border-top-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-body);
+}
+
+[data-mantine-color-scheme='dark'] .descriptionDropdown {
+	background: var(--mantine-color-dark-7);
+}
+
 .form {
 	width: 100%;
 	display: flex;
@@ -47,6 +67,7 @@
 .tableWrap {
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-body);
 	overflow: hidden;
 	min-height: 260px;
 }

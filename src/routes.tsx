@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import RouteProtecter, {
 	clientLoader as routeProtecterLoader,
 } from './components/RouteProtecter/RouteProtecter';
-import ModuleGuard from './components/RouteGuards/ModuleGuard';
+import ModuleGuard from './components/ModuleGuard';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { campaignRouteNamespaces } from '~/modules/campaigns/campaignNamespaces';
 import SuspenseFallback from './components/SuspenseFallback';
@@ -97,12 +97,27 @@ const CampaignManagementPage = React.lazy(
 const CampaignPage = React.lazy(
 	() => import('./modules/campaigns/CampaignPage/CampaignPage')
 );
+const CampaignEditorPage = React.lazy(
+	() => import('./modules/campaigns/CampaignEditorPage/CampaignEditorPage')
+);
+const CampaignTestPage = React.lazy(
+	() => import('./modules/campaigns/CampaignTestPage/CampaignTestPage')
+);
 const CampaignViewPage = React.lazy(
 	() => import('./modules/campaigns/CampaignViewPage/CampaignViewPage')
 );
 
 const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
+);
+const ReportTemplatesPage = React.lazy(
+	() => import('./modules/report-templates/ReportTemplatesPage')
+);
+const ReportTemplatesListPage = React.lazy(
+	() => import('./modules/report-templates/ReportTemplatesListPage')
+);
+const ReportTemplateDetailPage = React.lazy(
+	() => import('./modules/report-templates/ReportTemplateDetailPage')
 );
 
 /**
@@ -206,13 +221,35 @@ const router = createBrowserRouter([
 								module={ModuleEnum.CAMPAIGNS}
 								permission={PermissionEnum.UPDATE}
 							>
-								<I18nNamespaceLoader>
-									<Suspense fallback={<SuspenseFallback />}>
-										<CampaignPage />
-									</Suspense>
-								</I18nNamespaceLoader>
+								<Suspense fallback={<SuspenseFallback />}>
+									<CampaignPage />
+								</Suspense>
 							</ModuleGuard>
 						),
+						children: [
+							{
+								index: true,
+								id: 'campaign.detail.index',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense fallback={<SuspenseFallback />}>
+											<CampaignEditorPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
+							},
+							{
+								path: 'test',
+								id: 'campaign.detail.test',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense fallback={<SuspenseFallback />}>
+											<CampaignTestPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
+							},
+						],
 					},
 					{
 						path: 'campaign/view/:campaignId',
@@ -305,6 +342,7 @@ const router = createBrowserRouter([
 							</ModuleGuard>
 						),
 					},
+
 					{
 						path: 'outcomes',
 						id: 'outcomes',
@@ -393,11 +431,13 @@ const router = createBrowserRouter([
 								path: 'dictionary-rules',
 								id: 'dictionary-rules',
 								element: (
-									<I18nNamespaceLoader>
-										<Suspense fallback={<SuspenseFallback />}>
-											<DictionaryRulesPage />
-										</Suspense>
-									</I18nNamespaceLoader>
+									<ModuleGuard module={ModuleEnum.SETTINGS} masterOnly>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<DictionaryRulesPage />
+											</Suspense>
+										</I18nNamespaceLoader>
+									</ModuleGuard>
 								),
 							},
 						],
@@ -454,6 +494,38 @@ const router = createBrowserRouter([
 								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
+					},
+					{
+						path: 'report-templates',
+						id: 'report-templates',
+						element: (
+							<ModuleGuard module={ModuleEnum.REPORTS}>
+								<I18nNamespaceLoader>
+									<Suspense fallback={<SuspenseFallback />}>
+										<ReportTemplatesPage />
+									</Suspense>
+								</I18nNamespaceLoader>
+							</ModuleGuard>
+						),
+						children: [
+							{
+								index: true,
+								id: 'report-templates.index',
+								element: <ReportTemplatesListPage />,
+							},
+							{
+								path: ':reportTemplateId',
+								id: 'report-templates.detail',
+								element: (
+									<ModuleGuard
+										module={ModuleEnum.REPORTS}
+										permission={PermissionEnum.UPDATE}
+									>
+										<ReportTemplateDetailPage />
+									</ModuleGuard>
+								),
+							},
+						],
 					},
 					{
 						path: 'profile',

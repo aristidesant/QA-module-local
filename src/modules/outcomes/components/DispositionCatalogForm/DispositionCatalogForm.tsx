@@ -4,7 +4,6 @@ import {
 	TextInput,
 	Textarea,
 	Switch,
-	SegmentedControl,
 	Button,
 	Stack,
 	Group,
@@ -12,6 +11,7 @@ import {
 	Alert,
 	Text,
 } from '@mantine/core';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { useTranslation } from 'react-i18next';
 import type {
 	CreateDispositionCatalog,
@@ -106,7 +106,7 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 						<Text size='sm' fw={500} mb={6}>
 							{t('formCatalog.type')}
 						</Text>
-						<SegmentedControl
+						<AppSegmentedControl
 							fullWidth
 							data={[
 								{ value: 'INBOUND', label: t('formCatalog.typeInbound') },

@@ -6,6 +6,7 @@ import {
 	IconChevronRight,
 	IconClock,
 	IconHierarchy3,
+	IconPhonePause,
 	IconPhoneOff,
 	IconPhoneX,
 	IconTrash,
@@ -102,6 +103,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 	const nodeStyle = getNodeStyle(node, level);
 	const isSelected = selectedNodeId === node.id;
 	const isDoNotCall = Boolean(node.doNotCall ?? node.do_not_call);
+	const isAbandoned = Boolean(node.isAbandoned);
 
 	const handleToggleCollapse = useCallback((event: React.MouseEvent) => {
 		event.stopPropagation();
@@ -198,6 +200,18 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 											size={12}
 											color='var(--mantine-color-red-6)'
 											aria-label={t('disposition.nodeEditor.doNotCall')}
+										/>
+									</Tooltip>
+								) : null}
+								{isAbandoned ? (
+									<Tooltip
+										label={t('disposition.nodeEditor.abandoned')}
+										withArrow
+									>
+										<IconPhonePause
+											size={12}
+											color='var(--mantine-color-orange-6)'
+											aria-label={t('disposition.nodeEditor.abandoned')}
 										/>
 									</Tooltip>
 								) : null}

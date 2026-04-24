@@ -1,1 +1,1 @@
-export { MostUsedContactChannels } from "./MostUsedContactChannels";
+export { MostUsedContactChannels } from './MostUsedContactChannels';

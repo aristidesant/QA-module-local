@@ -6,5 +6,5 @@
 
 .metaLabel {
 	font-size: var(--mantine-font-size-xs);
-	color: var(--mantine-color-gray-6);
+	color: var(--workflow-drawer-text-muted, var(--mantine-color-gray-6));
 }

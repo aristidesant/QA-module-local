@@ -1,9 +1,8 @@
 import {
-	ActionIcon,
 	Avatar,
 	Badge,
 	CopyButton,
-	Group,
+	Divider,
 	Text,
 	Tooltip,
 } from '@mantine/core';
@@ -11,14 +10,24 @@ import {
 	IconCalendar,
 	IconCheck,
 	IconCopy,
+	IconEye,
 	IconInfoCircle,
 	IconPhoneCall,
 	IconRobot,
 	IconUser,
 } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import RightSectionCard from '~/components/RightSectionCard';
+import {
+	useCallDispositionByConversationId,
+	useCallDispositionWithAi,
+} from '~/queries/callDispositionQueries';
+import ConversationDispositionContent, {
+	getDispositionStatusPresentation,
+	normalizeDispositionStatus,
+} from '../ConversationDisposition/ConversationDispositionContent';
+import type { CallDispositionModel } from '~/models/CallDispositionModel';
 import ConversationMetadataList, {
 	type ConversationMetadataListItem,
 } from '../ConversationMetadataList';
@@ -34,6 +43,7 @@ interface ConversationOverviewCardProps {
 	agentName: string;
 	campaignName: string;
 	terminationReasonLabel?: string;
+	conversationId?: string | number;
 }
 
 const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
@@ -45,8 +55,27 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 	agentName,
 	campaignName,
 	terminationReasonLabel,
+	conversationId,
 }) => {
-	const { t } = useTranslation('conversations');
+	const { t, i18n } = useTranslation(['conversations', 'common']);
+	const [isCallingAi, setIsCallingAi] = useState(false);
+
+	const { data, isLoading, isError, refetch } =
+		useCallDispositionByConversationId(conversationId);
+
+	const withAiMutation = useCallDispositionWithAi();
+
+	const handleRetry = async () => {
+		setIsCallingAi(true);
+		try {
+			await withAiMutation.mutateAsync(Number(conversationId));
+			await refetch();
+		} catch {
+			// error state handled by isError
+		} finally {
+			setIsCallingAi(false);
+		}
+	};
 
 	const StatValueWithHover = ({ value }: { value: string }) => (
 		<Tooltip label={value} position='top-start' withArrow openDelay={100}>
@@ -88,6 +117,29 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 		return baseItems;
 	}, [agentName, campaignName, dateDisplay, t, terminationReasonLabel]);
 
+	const disposition = data as CallDispositionModel | undefined;
+	const status = normalizeDispositionStatus(
+		disposition?.callStatus || disposition?.dispositionName
+	);
+	const statusView = getDispositionStatusPresentation(status, t);
+
+	const updatedAt = disposition?.updatedAt || disposition?.createdAt;
+	const timestampLabel =
+		updatedAt && !isLoading && !isError
+			? new Date(updatedAt).toLocaleDateString(
+					i18n.language === 'es' ? 'es-ES' : 'en-US',
+					{
+						month: 'short',
+						day: 'numeric',
+						hour: 'numeric',
+						minute: '2-digit',
+					}
+				)
+			: undefined;
+
+	const hasPhone = Boolean(contactPhone.trim());
+	const showOutcome = conversationId != null;
+
 	return (
 		<RightSectionCard
 			title={t('overview.title')}
@@ -95,17 +147,12 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 			iconColor='var(--mantine-color-gray-7)'
 		>
 			<div className={classes.content}>
-				<div className={classes.contactBlock}>
-					<Avatar radius='xl' size={36} className={classes.avatar}>
-						<IconUser size={16} />
-					</Avatar>
-					<div className={classes.contactCopy}>
-						<Group
-							gap={8}
-							align='center'
-							wrap='nowrap'
-							className={classes.nameRow}
-						>
+				{hasPhone ? (
+					<>
+						<div className={classes.contactBlock}>
+							<Avatar radius='xl' size={38} className={classes.avatar}>
+								<IconUser size={17} />
+							</Avatar>
 							<Text className={classes.contactName} title={contactName}>
 								{contactName}
 							</Text>
@@ -117,17 +164,6 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 							>
 								{statusLabel}
 							</Badge>
-						</Group>
-						<Group
-							gap={6}
-							align='center'
-							wrap='nowrap'
-							className={classes.phoneRow}
-						>
-							<IconPhoneCall size={13} className={classes.phoneIcon} />
-							<Text className={classes.contactPhone} title={contactPhone}>
-								{contactPhone}
-							</Text>
 							<CopyButton value={contactPhone} timeout={1200}>
 								{({ copied, copy }) => (
 									<Tooltip
@@ -135,28 +171,87 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 											copied ? t('overview.copied') : t('overview.copyPhone')
 										}
 										withArrow
+										position='bottom-start'
 									>
-										<ActionIcon
-											size='xs'
-											variant='subtle'
-											aria-label={t('overview.copyPhone')}
+										<button
+											type='button'
 											onClick={copy}
-											className={classes.copyButton}
+											className={classes.phoneChip}
+											aria-label={t('overview.copyPhone')}
 										>
+											<IconPhoneCall
+												size={12}
+												className={classes.phoneChipIcon}
+											/>
+											<span className={classes.phoneChipText}>
+												{contactPhone}
+											</span>
 											{copied ? (
-												<IconCheck size={12} />
+												<IconCheck
+													size={11}
+													className={classes.phoneChipCopyIcon}
+												/>
 											) : (
-												<IconCopy size={12} />
+												<IconCopy
+													size={11}
+													className={classes.phoneChipCopyIcon}
+												/>
 											)}
-										</ActionIcon>
+										</button>
 									</Tooltip>
 								)}
 							</CopyButton>
-						</Group>
-					</div>
-				</div>
+						</div>
+						<Divider className={classes.contactDivider} />
+					</>
+				) : (
+					<>
+						<div className={classes.previewNotice}>
+							<div className={classes.previewNoticeIcon}>
+								<IconEye size={15} />
+							</div>
+							<div className={classes.previewNoticeBody}>
+								<Text className={classes.previewNoticeLabel}>
+									{t('overview.previewContact.label')}
+								</Text>
+								<Text className={classes.previewNoticeDescription}>
+									{t('overview.previewContact.description')}
+								</Text>
+							</div>
+						</div>
+						<Divider className={classes.contactDivider} />
+					</>
+				)}
 
-				<ConversationMetadataList items={items} />
+				<ConversationMetadataList items={items} columns={2} />
+
+				{showOutcome && (
+					<>
+						<Divider className={classes.outcomeDivider} />
+						<div
+							className={classes.outcomeSection}
+							data-status={!isLoading && !isError ? status : undefined}
+							// inline-style-allow: dynamic CSS variable value for status border color cannot be applied via a static CSS class
+							style={
+								!isLoading && !isError
+									? {
+											borderLeftColor: statusView.borderColorVar,
+										}
+									: undefined
+							}
+						>
+							<ConversationDispositionContent
+								disposition={disposition}
+								isLoading={isLoading}
+								isError={isError}
+								isRetrying={isCallingAi}
+								onRetry={handleRetry}
+								timestampLabel={timestampLabel}
+								emptyLabel={t('disposition.noOutcome')}
+							/>
+						</div>
+					</>
+				)}
 			</div>
 		</RightSectionCard>
 	);

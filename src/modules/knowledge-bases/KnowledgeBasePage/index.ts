@@ -1,1 +1,1 @@
-export {default} from "./KnowledgeBasePage";
+export { default } from './KnowledgeBasePage';

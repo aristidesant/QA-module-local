@@ -200,7 +200,12 @@ const WidgetListPanel = () => {
 					return (
 						<Stack gap={2}>
 							<Group gap={6} align='center' wrap='nowrap'>
-								<Text size='sm' fw={600} c='gray.9' truncate>
+								<Text
+									size='sm'
+									fw={600}
+									className={styles.widgetTitle}
+									truncate
+								>
 									{row.original.title}
 								</Text>
 								<Badge
@@ -214,7 +219,7 @@ const WidgetListPanel = () => {
 										: t('dashboardBuilder.widget.defaultBadge')}
 								</Badge>
 							</Group>
-							<Text size='xs' c='dimmed' truncate>
+							<Text size='xs' className={styles.widgetDescription} truncate>
 								{row.original.description ||
 									t('dashboardBuilder.noDescription')}
 							</Text>
@@ -226,10 +231,38 @@ const WidgetListPanel = () => {
 				id: 'type',
 				header: t('dashboardBuilder.widget.type'),
 				cell: ({ row }) => (
-					<Text size='sm' c='gray.8'>
+					<Text size='sm' className={styles.widgetType}>
 						{getWidgetTypeLabel(t, row.original.widgetType)}
 					</Text>
 				),
+			},
+			{
+				id: 'access',
+				header: t('dashboardBuilder.widget.access'),
+				cell: ({ row }) => {
+					const roles = row.original.roles ?? [];
+
+					if (roles.length === 0) {
+						return (
+							<Badge variant='light' color='teal' size='xs' radius='sm'>
+								{t('dashboardBuilder.widget.publicBadge')}
+							</Badge>
+						);
+					}
+
+					return (
+						<Stack gap={2}>
+							<Badge variant='light' color='violet' size='xs' radius='sm'>
+								{t('dashboardBuilder.widget.restrictedRolesBadge', {
+									count: roles.length,
+								})}
+							</Badge>
+							<Text size='xs' className={styles.widgetAccessText} truncate>
+								{roles.map((role) => role.name).join(', ')}
+							</Text>
+						</Stack>
+					);
+				},
 			},
 			{
 				id: 'status',
@@ -366,10 +399,14 @@ const WidgetListPanel = () => {
 						<div className={styles.emptyState}>
 							<Loader size='sm' />
 							<Stack gap={2} align='center'>
-								<Text size='sm' fw={600} c='gray.9'>
+								<Text size='sm' fw={600} className={styles.emptyStateTitle}>
 									{t('dashboardBuilder.loadingWidgetTitle')}
 								</Text>
-								<Text size='xs' c='dimmed' ta='center'>
+								<Text
+									size='xs'
+									className={styles.emptyStateDescription}
+									ta='center'
+								>
 									{t('dashboardBuilder.loadingWidgetDescription')}
 								</Text>
 							</Stack>
@@ -382,10 +419,14 @@ const WidgetListPanel = () => {
 								strokeWidth={1.75}
 							/>
 							<Stack gap={2} align='center'>
-								<Text size='sm' fw={600} c='gray.9'>
+								<Text size='sm' fw={600} className={styles.emptyStateTitle}>
 									{t('dashboardBuilder.emptyWidgetTitle')}
 								</Text>
-								<Text size='xs' c='dimmed' ta='center'>
+								<Text
+									size='xs'
+									className={styles.emptyStateDescription}
+									ta='center'
+								>
 									{t('dashboardBuilder.emptyWidgetDescription')}
 								</Text>
 							</Stack>
@@ -420,10 +461,14 @@ const WidgetListPanel = () => {
 						strokeWidth={1.75}
 					/>
 					<Stack gap={2} align='center'>
-						<Text size='sm' fw={600} c='gray.9'>
+						<Text size='sm' fw={600} className={styles.emptyStateTitle}>
 							{t('dashboardBuilder.selectDashboardTitle')}
 						</Text>
-						<Text size='xs' c='dimmed' ta='center'>
+						<Text
+							size='xs'
+							className={styles.emptyStateDescription}
+							ta='center'
+						>
 							{t('dashboardBuilder.selectDashboardDescription')}
 						</Text>
 					</Stack>

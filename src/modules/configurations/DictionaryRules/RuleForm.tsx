@@ -7,7 +7,6 @@ import {
 	List,
 	LoadingOverlay,
 	Popover,
-	SegmentedControl,
 	Select,
 	SimpleGrid,
 	Stack,
@@ -16,6 +15,7 @@ import {
 	Textarea,
 	Tooltip,
 } from '@mantine/core';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import {
 	IconInfoCircle,
 	IconPlayerPlay,
@@ -267,7 +267,7 @@ export function RuleForm({
 						</div>
 					</div>
 
-					<SegmentedControl
+					<AppSegmentedControl
 						data={ruleTypeOptions}
 						value={form.values.ruleType}
 						onChange={(value) =>

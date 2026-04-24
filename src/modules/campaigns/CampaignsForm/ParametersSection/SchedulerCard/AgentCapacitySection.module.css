@@ -1,0 +1,219 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+}
+
+.infoButton {
+	color: var(--mantine-color-gray-4);
+	transition: color 0.15s ease;
+	flex-shrink: 0;
+}
+
+.infoButton:hover {
+	color: var(--mantine-color-blue-5);
+}
+
+.sliderRow {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+
+.sliderTitle {
+	font-family: 'Space Grotesk', 'Inter', sans-serif;
+	font-size: 11px;
+	font-weight: 700;
+	color: var(--mantine-color-gray-5);
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	white-space: nowrap;
+	flex-shrink: 0;
+}
+
+.sliderRoot {
+	flex: 1;
+}
+
+.sliderTrack {
+	height: 6px;
+	border-radius: 3px;
+	background: var(--surface-sunken);
+}
+
+.sliderBar {
+	background: var(--mantine-color-blue-5);
+	border-radius: 3px;
+}
+
+.sliderThumb {
+	height: 18px;
+	width: 18px;
+	border: 2px solid var(--mantine-color-white);
+	background: var(--mantine-color-blue-6);
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+	transition: transform 0.15s ease;
+}
+
+.sliderThumb:hover {
+	box-shadow: 0 0 0 4px
+		color-mix(in srgb, var(--mantine-color-blue-5) 20%, transparent);
+}
+
+.sliderValue {
+	min-width: 38px;
+	padding: 4px 10px;
+	background: var(--mantine-color-blue-0);
+	border: 1px solid var(--mantine-color-blue-2);
+	border-radius: 8px;
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--mantine-color-blue-7);
+	text-align: center;
+	font-family: 'Space Grotesk', 'Inter', sans-serif;
+	letter-spacing: -0.01em;
+}
+
+.metricsGrid {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	gap: 6px;
+}
+
+.metricCard {
+	--metric-accent: var(--mantine-color-violet-6);
+	--metric-accent-soft: var(--mantine-color-violet-0);
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	gap: 8px;
+	padding: 8px 10px;
+	background: var(--mantine-color-white);
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	transition: all 150ms ease;
+}
+
+.metricCard:hover {
+	border-color: var(--surface-border-strong);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.metricIconTeal {
+	--metric-accent: var(--mantine-color-teal-6);
+	--metric-accent-soft: var(--mantine-color-teal-0);
+}
+
+.metricIconOrange {
+	--metric-accent: var(--mantine-color-orange-6);
+	--metric-accent-soft: var(--mantine-color-orange-0);
+}
+
+.metricIconWrapper {
+	width: 30px;
+	height: 30px;
+	border-radius: calc(var(--mantine-radius-md) - 2px);
+	background: var(--metric-accent-soft);
+	color: var(--metric-accent);
+	border: 1px solid var(--metric-accent);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.metricContent {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.metricValue {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	color: var(--mantine-color-dark-7);
+	line-height: 1.1;
+	letter-spacing: -0.01em;
+}
+
+.metricLabel {
+	font-size: 9px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-5);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	line-height: 1.1;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Dark mode */
+[data-mantine-color-scheme='dark'] .sliderTitle {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .infoButton {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .infoButton:hover {
+	color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] .sliderTrack {
+	background: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .sliderValue {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-blue-9) 50%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: var(--mantine-color-blue-7);
+	color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] .metricCard {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark'] .metricCard:hover {
+	border-color: var(--surface-border-strong);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+[data-mantine-color-scheme='dark'] .metricIconWrapper {
+	background: color-mix(
+		in srgb,
+		var(--metric-accent) 18%,
+		var(--mantine-color-dark-6)
+	);
+	border-color: color-mix(in srgb, var(--metric-accent) 40%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .metricValue {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .metricLabel {
+	color: var(--mantine-color-dark-3);
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+	.metricsGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.sliderRow {
+		flex-wrap: wrap;
+	}
+
+	.sliderLabel {
+		width: 100%;
+	}
+}

@@ -168,13 +168,13 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 							scrollbar: {
 								backgroundColor: 'transparent',
 								'&:hover': {
-									backgroundColor: 'var(--mantine-color-gray-1)',
+									backgroundColor: 'var(--disposition-surface-muted)',
 								},
 							},
 							thumb: {
-								backgroundColor: 'var(--mantine-color-gray-4)',
+								backgroundColor: 'var(--disposition-scrollbar-thumb)',
 								'&:hover': {
-									backgroundColor: 'var(--mantine-color-gray-6)',
+									backgroundColor: 'var(--disposition-scrollbar-thumb-hover)',
 								},
 							},
 						}}
@@ -209,10 +209,10 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 									</Box>
 								) : (
 									<Box className={styles.emptyState}>
-										<Text fw={600} c='var(--mantine-color-gray-6)' size='xs'>
+										<Text fw={600} c='dimmed' size='xs'>
 											{t('disposition.builder.emptyTitle')}
 										</Text>
-										<Text size='xs' c='var(--mantine-color-gray-5)'>
+										<Text size='xs' c='dimmed'>
 											{t('disposition.builder.emptyDescription')}
 										</Text>
 									</Box>
@@ -230,13 +230,13 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 							scrollbar: {
 								backgroundColor: 'transparent',
 								'&:hover': {
-									backgroundColor: 'var(--mantine-color-gray-1)',
+									backgroundColor: 'var(--disposition-surface-muted)',
 								},
 							},
 							thumb: {
-								backgroundColor: 'var(--mantine-color-gray-4)',
+								backgroundColor: 'var(--disposition-scrollbar-thumb)',
 								'&:hover': {
-									backgroundColor: 'var(--mantine-color-gray-6)',
+									backgroundColor: 'var(--disposition-scrollbar-thumb-hover)',
 								},
 							},
 						}}

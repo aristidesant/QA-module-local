@@ -10,6 +10,8 @@ export type MetricSourceType = 'CONVERSATION' | 'ATTRIBUTE' | 'DISPOSITION';
 
 export type DashboardWidgetVisibilityScope = 'GLOBAL' | 'TEAM' | 'PRIVATE';
 
+export type DashboardMainSlot = 'MAIN_1' | 'MAIN_2' | 'MAIN_3';
+
 export type DashboardWidgetJoinRelation = 'campaign';
 
 export type DashboardWidgetJoinType = 'inner' | 'left';
@@ -41,7 +43,12 @@ export type MetricValueField =
 	| 'VALUE_BOOLEAN'
 	| 'VALUE_JSON';
 
-export type MetricResultType = 'NUMBER' | 'BOOLEAN' | 'STRING' | 'TIME';
+export type MetricResultType =
+	| 'NUMBER'
+	| 'PERCENT'
+	| 'BOOLEAN'
+	| 'STRING'
+	| 'TIME';
 
 export type RuntimeFilterOperator =
 	| 'eq'
@@ -111,11 +118,18 @@ export interface DashboardDefinition {
 	userId: number;
 	name: string;
 	description: string | null;
+	mainSlot?: DashboardMainSlot | null;
 	isDefault: boolean;
 	layoutConfig: Record<string, unknown> | null;
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: string | null;
+}
+
+export interface DashboardWidgetRole {
+	id: number;
+	name: string;
+	code: string;
 }
 
 export interface DashboardListParams {
@@ -130,6 +144,7 @@ export interface CreateDashboardDto {
 	contactGroupId?: number | null;
 	name: string;
 	description?: string;
+	mainSlot?: DashboardMainSlot | null;
 	isDefault?: boolean;
 	layoutConfig?: Record<string, unknown> | null;
 }
@@ -152,6 +167,7 @@ export interface DashboardWidget {
 	viewConfig: DashboardWidgetViewConfig | null;
 	enabled: boolean;
 	visibilityScope?: DashboardWidgetVisibilityScope | null;
+	roles?: DashboardWidgetRole[];
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: string | null;
@@ -170,6 +186,7 @@ export interface CreateDashboardWidgetDto {
 	viewConfig?: DashboardWidgetViewConfig | null;
 	enabled?: boolean;
 	visibilityScope?: DashboardWidgetVisibilityScope | null;
+	roleIds?: number[];
 }
 
 export interface UpdateDashboardWidgetDto extends Partial<CreateDashboardWidgetDto> {}
@@ -221,7 +238,7 @@ export interface TimeSeriesPoint {
 	bucketEnd: string;
 	label: string;
 	value: number;
-	valueFormat: number;
+	valueFormat?: string | number | null;
 }
 
 export interface TimeSeriesMetricResult {

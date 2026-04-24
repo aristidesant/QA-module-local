@@ -96,6 +96,11 @@
 	opacity: 1;
 }
 
+.legendItemGroup {
+	flex: 1;
+	min-width: 0;
+}
+
 .statsCard {
 	background: linear-gradient(
 		135deg,

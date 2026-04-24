@@ -8,6 +8,11 @@
 	gap: var(--mantine-spacing-md);
 }
 
+[data-mantine-color-scheme='dark'] .summaryPanel {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
 .performanceGrid {
 	margin-top: var(--mantine-spacing-xs);
 	gap: var(--mantine-spacing-sm);
@@ -32,22 +37,44 @@
 	border-top: 3px solid var(--accent-color, var(--mantine-color-blue-5));
 }
 
+[data-mantine-color-scheme='dark'] .performanceCard {
+	background-color: var(--mantine-color-dark-8);
+	border-color: var(--mantine-color-dark-5);
+}
+
 .performanceCard:hover {
 	border-color: var(--mantine-color-gray-4);
+}
+
+[data-mantine-color-scheme='dark'] .performanceCard:hover {
+	border-color: var(--mantine-color-dark-4);
 }
 
 .performanceValue {
 	font-size: 1.25rem;
 	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+[data-mantine-color-scheme='dark'] .performanceValue {
+	color: var(--mantine-color-dark-0);
 }
 
 .performanceHint {
 	color: var(--mantine-color-gray-6);
 }
 
+[data-mantine-color-scheme='dark'] .performanceHint {
+	color: var(--mantine-color-dark-2);
+}
+
 .quickStats {
 	border-top: 1px solid var(--mantine-color-gray-3);
 	padding-top: var(--mantine-spacing-sm);
+}
+
+[data-mantine-color-scheme='dark'] .quickStats {
+	border-top-color: var(--mantine-color-dark-5);
 }
 
 .quickStat {
@@ -61,10 +88,27 @@
 	min-width: 0;
 }
 
+[data-mantine-color-scheme='dark'] .quickStat {
+	background-color: var(--mantine-color-dark-8);
+	border-color: var(--mantine-color-dark-5);
+}
+
 .quickStatLabel {
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 	font-size: 0.75rem;
+}
+
+[data-mantine-color-scheme='dark'] .quickStatLabel {
+	color: var(--mantine-color-dark-0);
+}
+
+.quickStatLabelText {
+	color: var(--mantine-color-gray-9);
+}
+
+[data-mantine-color-scheme='dark'] .quickStatLabelText {
+	color: var(--mantine-color-dark-0);
 }
 
 .quickStatDot {
@@ -74,6 +118,10 @@
 	background-color: var(--stat-color, var(--mantine-color-blue-6));
 }
 
+[data-mantine-color-scheme='dark'] .quickStatDot {
+	background-color: var(--mantine-color-blue-4);
+}
+
 .quickStatValue {
 	font-size: 1.125rem;
 	font-weight: 700;
@@ -81,6 +129,14 @@
 	color: var(--stat-color, var(--mantine-color-blue-6));
 }
 
+[data-mantine-color-scheme='dark'] .quickStatValue {
+	color: var(--mantine-color-dark-0);
+}
+
 .quickStatHint {
 	color: var(--mantine-color-gray-6);
+}
+
+[data-mantine-color-scheme='dark'] .quickStatHint {
+	color: var(--mantine-color-dark-2);
 }

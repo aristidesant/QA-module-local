@@ -3,12 +3,12 @@ import {
 	Box,
 	Button,
 	Group,
-	SegmentedControl,
 	Stack,
 	Text,
 	TextInput,
 	Select,
 } from '@mantine/core';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { IconPhone, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -187,7 +187,7 @@ const PhoneNumberForm = ({
 					<Text className={styles.label} size='sm'>
 						{t('form.workflow.forms.phone.transferType')}
 					</Text>
-					<SegmentedControl
+					<AppSegmentedControl
 						fullWidth
 						value={currentTransferType}
 						onChange={(value) => handleUpdate({ transferType: value })}
@@ -211,12 +211,7 @@ const PhoneNumberForm = ({
 							},
 						]}
 						size='sm'
-						radius='md'
-						classNames={{
-							root: styles.segmentedRoot,
-							indicator: styles.segmentedIndicator,
-							label: styles.segmentedLabel,
-						}}
+						className={styles.segmentedRoot}
 					/>
 				</Box>
 

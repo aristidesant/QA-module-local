@@ -1,1 +1,1 @@
-export { default } from "./ConversationPlayer";
+export { default } from './ConversationPlayer';

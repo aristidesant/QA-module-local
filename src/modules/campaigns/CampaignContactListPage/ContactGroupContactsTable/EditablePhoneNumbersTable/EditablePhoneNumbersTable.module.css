@@ -1,18 +1,21 @@
-/* Override BaseTable root for nested context */
-/* Remove internal border; keep lighter base */
+[data-mantine-color-scheme='dark'] .subTableRoot {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .subTableRoot :global(thead) {
+	background: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .subTableRoot :global(tbody tr:hover) {
+	background: var(--mantine-color-dark-6);
+}
+
 .subTableRoot {
 	border: 1px solid var(--mantine-color-gray-2);
-	background: var(--mantine-color-gray-1);
-}
-
-/* Make header slightly stronger for contrast */
-.subTableRoot :global(thead) {
-	background: var(--mantine-color-gray-2);
-}
-
-/* Reduce row hover intensity to differentiate from main table */
-.subTableRoot :global(tbody tr:hover) {
-	background: var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-gray-0);
+	overflow: hidden;
 }
 
 .editInput {
@@ -24,9 +27,21 @@
 	justify-content: flex-end;
 	padding: var(--mantine-spacing-xs);
 	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-sm);
+	border-radius: var(--mantine-radius-md);
 	background: var(--mantine-color-gray-0);
 	margin-bottom: var(--mantine-spacing-xs);
+}
+
+[data-mantine-color-scheme='dark'] .addBar {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-7);
+}
+
+.actions {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 4px;
 }
 
 .phoneNumber {
@@ -39,9 +54,4 @@
 
 .addInput {
 	width: 180px;
-}
-
-.addActions {
-	display: flex;
-	align-items: center;
 }

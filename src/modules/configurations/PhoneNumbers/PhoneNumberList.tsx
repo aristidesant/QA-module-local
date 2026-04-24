@@ -132,21 +132,21 @@ export function PhoneNumberList({ onEdit }: PhoneNumberListProps) {
 					/>
 				</div>
 				<div className={styles.toolbarMeta}>
-					<Badge
-						leftSection={<IconFilter size={12} />}
-						variant='light'
-						color={hasActiveFilters ? 'blue' : 'gray'}
-						radius='sm'
-						className={styles.badge}
-					>
-						{hasActiveFilters
-							? t('list.activeFilters', { count: activeFiltersCount })
-							: t('list.noActiveFilters')}
-					</Badge>
-					<Badge variant='dot' color='gray' radius='sm'>
+					{hasActiveFilters && (
+						<Badge
+							leftSection={<IconFilter size={12} />}
+							variant='light'
+							color='blue'
+							radius='sm'
+							className={styles.badge}
+						>
+							{t('list.activeFilters', { count: activeFiltersCount })}
+						</Badge>
+					)}
+					<Badge variant='light' color='gray' radius='sm'>
 						{t('list.totalItems', { count: totalCount })}
 					</Badge>
-					{hasActiveFilters ? (
+					{hasActiveFilters && (
 						<Button
 							variant='subtle'
 							size='compact-sm'
@@ -159,7 +159,7 @@ export function PhoneNumberList({ onEdit }: PhoneNumberListProps) {
 						>
 							{t('list.clearFilters')}
 						</Button>
-					) : null}
+					)}
 				</div>
 			</div>
 
@@ -168,14 +168,15 @@ export function PhoneNumberList({ onEdit }: PhoneNumberListProps) {
 					data={tableData}
 					columns={columns}
 					isLoading={isLoading}
-					pageIndex={page - 1} // BaseTable uses 0-indexed pageIndex
-					pageSize={limit} // BaseTable uses pageSize
+					density='compact'
+					pageIndex={page - 1}
+					pageSize={limit}
 					onPaginationChange={(idx, size) => {
 						setPage(idx + 1);
 						setLimit(size);
 					}}
 					pageCount={data?.totalPages || 0}
-					filterMode='server' // Explicitly set filterMode to server since we manage pagination manually
+					filterMode='server'
 					enablePagination
 					showPaginationControls
 				/>

@@ -57,3 +57,37 @@
 	color: var(--mantine-color-gray-6);
 	font-weight: 700;
 }
+
+[data-mantine-color-scheme='dark'] .panel {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .preview {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .dropdown {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .previewTable {
+	border-color: var(--mantine-color-dark-5);
+	background-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .previewTable thead {
+	background-color: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .previewTable th,
+[data-mantine-color-scheme='dark'] .previewTable td {
+	color: var(--mantine-color-dark-1);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .previewHeaderCell {
+	color: var(--mantine-color-dark-2);
+}

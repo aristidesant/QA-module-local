@@ -1,5 +1,6 @@
 import React from 'react';
 import { Stack, Text } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
 import classes from './FallbackRightComponent.module.css';
 import { IconInfoCircle } from '@tabler/icons-react';
 import EmptyState from '../EmptyState/EmptyState';
@@ -18,32 +19,36 @@ export interface FallbackRightComponentProps {
 
 export const FallbackRightComponent: React.FC<FallbackRightComponentProps> = ({
 	Icon = IconInfoCircle,
-	title = 'Nothing selected',
-	description = 'No item selected. Pick an entry from the list or create a new one to see details and actions.',
-	actionText = 'Choose or create an item to get started',
+	title,
+	description,
+	actionText,
 	className = '',
 }) => {
+	const { t } = useTranslation('common');
 	const IconComponent = Icon;
+	const resolvedTitle = title ?? t('fallbackRight.title');
+	const resolvedDescription = description ?? t('fallbackRight.description');
+	const resolvedActionText = actionText ?? t('fallbackRight.actionText');
 
 	return (
 		<EmptyState
 			icon={<IconComponent size={56} stroke={1.5} />}
-			message={title}
+			message={resolvedTitle}
 			description={
 				<Stack gap='xs' align='center' className={classes.contentGroup}>
-					{typeof description === 'string' ? (
+					{typeof resolvedDescription === 'string' ? (
 						<Text size='sm' c='dimmed' className={classes.descriptionText}>
-							{description}
+							{resolvedDescription}
 						</Text>
 					) : (
-						description
+						resolvedDescription
 					)}
 				</Stack>
 			}
 			action={
-				actionText && (
+				resolvedActionText && (
 					<Text size='sm' c='blue.7' className={classes.actionText}>
-						{actionText}
+						{resolvedActionText}
 					</Text>
 				)
 			}

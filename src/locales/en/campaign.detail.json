@@ -29,6 +29,12 @@
 			"edit": "Editing Campaign: {{name}}"
 		},
 		"description": "Manage your campaign configuration and settings.",
+		"actions": {
+			"save": "Save changes",
+			"saving": "Saving...",
+			"viewCampaign": "View campaign",
+			"testConvai": "Test Convai"
+		},
 		"notifications": {
 			"warningTitle": "Warning",
 			"objectiveAssignmentFailed": "Campaign saved but objective assignment failed.",
@@ -120,6 +126,20 @@
 				}
 			}
 		}
+	},
+	"convaiWidget": {
+		"loading": {
+			"title": "Loading assistant",
+			"description": "Preparing the ElevenLabs voice widget for this campaign."
+		},
+		"error": {
+			"title": "Assistant unavailable",
+			"description": "The ElevenLabs widget could not be loaded. Check network access, the agent allowlist, and CSP settings."
+		},
+		"retry": "Retry",
+		"minimize": "Minimize assistant",
+		"restore": "Restore assistant",
+		"label": "Assistant"
 	},
 	"preview": {
 		"overview": {

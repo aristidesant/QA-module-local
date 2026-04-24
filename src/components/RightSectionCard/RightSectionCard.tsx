@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import { Card, Text, ThemeIcon } from '@mantine/core';
+import { Text, ThemeIcon } from '@mantine/core';
 import type { TablerIcon } from '@tabler/icons-react';
 import styles from './RightSectionCard.module.css';
 import CardHeaderActions from '~/components/CardHeaderActions';
@@ -13,6 +13,7 @@ export type RightSectionCardProps = CardActionProps & {
 	rightSection?: ReactNode;
 	children: ReactNode;
 	style?: React.CSSProperties;
+	contentClassName?: string;
 	onClick?: () => void;
 };
 
@@ -37,6 +38,7 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 	onRefresh,
 	children,
 	style,
+	contentClassName,
 	onClick,
 }) => {
 	const hasRightHeaderContent =
@@ -56,19 +58,24 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 		Boolean(onRefresh);
 
 	return (
-		<Card className={styles.card} style={style} onClick={onClick}>
-			<Card.Section
-				inheritPadding
-				py={'sm'}
+		<div
+			className={styles.card}
+			// inline-style-allow: caller-provided style prop for dynamic sizing/positioning that cannot be statically expressed in CSS
+			style={style}
+			onClick={onClick}
+			role={onClick ? 'button' : undefined}
+			tabIndex={onClick ? 0 : undefined}
+		>
+			<div
 				className={`${styles.header} ${Icon ? styles.withIcon : ''} ${hasRightHeaderContent ? styles.withRight : ''}`}
 			>
 				{Icon && (
-					<ThemeIcon variant='light' color={iconColor}>
-						<Icon size={18} className={styles.icon} />
+					<ThemeIcon variant='light' color={iconColor} radius={12} size={40}>
+						<Icon size={20} className={styles.icon} />
 					</ThemeIcon>
 				)}
 				<div className={styles.titleCopy}>
-					<Text fz='xs' tt='uppercase' className={styles.title}>
+					<Text component='div' className={styles.title}>
 						{title}
 					</Text>
 					{description && (
@@ -97,9 +104,17 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 						{rightSection}
 					</div>
 				)}
-			</Card.Section>
-			<div className={styles.content}>{children}</div>
-		</Card>
+			</div>
+			<div
+				className={
+					contentClassName
+						? `${styles.content} ${contentClassName}`
+						: styles.content
+				}
+			>
+				{children}
+			</div>
+		</div>
 	);
 };
 

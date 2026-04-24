@@ -1,11 +1,45 @@
 .modalContent {
-	background: var(--mantine-color-gray-0);
+	--workflow-shell-surface: var(--mantine-color-white);
+	--workflow-shell-panel: var(--mantine-color-white);
+	--workflow-shell-panel-muted: var(--mantine-color-gray-0);
+	--workflow-shell-panel-elevated: var(--mantine-color-white);
+	--workflow-shell-border: var(--mantine-color-gray-3);
+	--workflow-shell-border-strong: var(--mantine-color-gray-4);
+	--workflow-shell-border-soft: var(--mantine-color-gray-2);
+	--workflow-shell-text: var(--mantine-color-gray-9);
+	--workflow-shell-text-muted: var(--mantine-color-gray-6);
+	--workflow-shell-control-bg: var(--mantine-color-white);
+	--workflow-shell-control-border: var(--mantine-color-gray-3);
+	--workflow-shell-control-text: var(--mantine-color-gray-7);
+	--workflow-shell-grid-color: var(--mantine-color-gray-4);
+	background: var(--workflow-shell-surface);
 }
 
 .modalBody {
 	padding: var(--mantine-spacing-md);
 	height: 100dvh;
 	overflow: hidden;
+	background: var(--workflow-shell-surface);
+}
+
+[data-mantine-color-scheme='dark'] .modalContent {
+	--workflow-shell-surface: var(--mantine-color-dark-8);
+	--workflow-shell-panel: var(--mantine-color-dark-7);
+	--workflow-shell-panel-muted: var(--mantine-color-dark-6);
+	--workflow-shell-panel-elevated: var(--mantine-color-dark-6);
+	--workflow-shell-border: var(--mantine-color-dark-5);
+	--workflow-shell-border-strong: var(--mantine-color-dark-4);
+	--workflow-shell-border-soft: var(--mantine-color-dark-6);
+	--workflow-shell-text: var(--mantine-color-dark-0);
+	--workflow-shell-text-muted: var(--mantine-color-dark-2);
+	--workflow-shell-control-bg: var(--mantine-color-dark-6);
+	--workflow-shell-control-border: var(--mantine-color-dark-5);
+	--workflow-shell-control-text: var(--mantine-color-dark-1);
+	--workflow-shell-grid-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .modalBody {
+	background: var(--workflow-shell-surface);
 }
 
 .shell {
@@ -22,9 +56,9 @@
 	align-items: flex-start;
 	gap: var(--mantine-spacing-md);
 	padding: var(--mantine-spacing-md);
-	border: 1px solid var(--mantine-color-gray-3);
+	border: 1px solid var(--workflow-shell-border, var(--mantine-color-gray-3));
 	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-white);
+	background: var(--workflow-shell-panel, var(--mantine-color-white));
 	flex-shrink: 0;
 }
 
@@ -42,13 +76,25 @@
 }
 
 .title {
-	color: var(--mantine-color-gray-9);
+	color: var(--workflow-shell-text, var(--mantine-color-gray-9));
 	line-height: 1.2;
 }
 
 .description {
-	color: var(--mantine-color-gray-6);
+	color: var(--workflow-shell-text-muted, var(--mantine-color-gray-6));
 	max-width: 720px;
+}
+
+.legendBar {
+	flex-shrink: 0;
+	border: 1px solid var(--workflow-shell-border, var(--mantine-color-gray-3));
+	border-radius: var(--mantine-radius-md);
+	background: var(--workflow-shell-panel, var(--mantine-color-white));
+	overflow: hidden;
+}
+
+.legendBar > * {
+	border-bottom: none;
 }
 
 .canvasArea {

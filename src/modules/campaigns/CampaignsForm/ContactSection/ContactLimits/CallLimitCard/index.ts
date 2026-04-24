@@ -1,1 +1,1 @@
-export { default } from "./CallLimitCard";
+export { default } from './CallLimitCard';

@@ -1,3 +1,24 @@
+[data-mantine-color-scheme='dark'] .contentContainer {
+	--content-canvas: var(--mantine-color-dark-8);
+	--content-panel-bg: var(--mantine-color-dark-9);
+}
+
+[data-mantine-color-scheme='dark'] .contentContainerDivider {
+	border-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark'] .contentContainerRightSection {
+	border-left-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark'] .contentContainerTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .contentContainerDescription {
+	color: var(--mantine-color-dark-2);
+}
+
 .contentContainer {
 	display: flex;
 	flex-direction: row;
@@ -33,10 +54,31 @@
 .contentContainerHeader {
 	padding: var(--mantine-spacing-md);
 	padding-bottom: 0;
+	margin-inline: calc(-1 * var(--mantine-spacing-lg));
+	transition: box-shadow 200ms ease;
+}
+
+.contentContainerHeaderScrolled {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+	clip-path: inset(0 0 -20px 0);
+}
+
+[data-mantine-color-scheme='dark'] .contentContainerHeaderScrolled {
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
+	clip-path: inset(0 0 -20px 0);
 }
 
 .contentContainerDivider {
-	border-color: var(--mantine-color-gray-2);
+	border-color: var(--surface-border);
+	margin-inline: calc(-1 * var(--mantine-spacing-md));
+}
+
+.contentContainerTitle {
+	color: var(--mantine-color-gray-9);
+}
+
+.contentContainerDescription {
+	color: var(--mantine-color-gray-6);
 }
 
 .contentContainerContent {
@@ -74,10 +116,35 @@
 	}
 }
 
-.contentContainerNoMainScroll {
+@media (max-width: 768px) {
+	.contentContainerMain {
+		padding: 0;
+	}
+
+	.contentContainerContent {
+		padding-left: 0;
+		padding-right: 0;
+	}
+
+	.contentContainerHeader {
+		margin-inline: 0;
+		padding: var(--mantine-spacing-sm);
+		padding-bottom: 0;
+	}
+}
+
+.contentContainerContent.contentContainerNoMainScroll {
 	overflow: hidden;
-	/* disable scroll when we only want right section scrolling */
-	height: auto;
+	/* constrain height so children can use flex to scroll independently */
+	height: 100%;
+	/* flush with the header shadow — no dead zone when inner containers scroll */
+	margin-top: 0 !important;
+	padding-left: 0;
+	padding-right: 0;
+}
+
+.contentContainerContent.contentContainerNoMainScroll > .contentContainerInner {
+	height: 100%;
 }
 
 .contentContainerContent [role='tabpanel'] {
@@ -86,9 +153,9 @@
 }
 
 .contentContainerRightSection {
-	width: 380px;
+	width: var(--content-right-section-width, 380px);
 	background: var(--content-panel-bg);
-	border-left: 1px solid var(--mantine-color-gray-3);
+	border-left: 1px solid var(--surface-border);
 	padding: 0 var(--mantine-spacing-xs);
 	height: 100%;
 	min-height: 0;
@@ -103,7 +170,7 @@
 	padding: 16px 16px;
 	flex-shrink: 0;
 	background: var(--content-panel-bg);
-	border-bottom: 1px solid var(--mantine-color-gray-3);
+	border-bottom: 1px solid var(--surface-border);
 }
 
 .contentContainerRightSection > :last-child {

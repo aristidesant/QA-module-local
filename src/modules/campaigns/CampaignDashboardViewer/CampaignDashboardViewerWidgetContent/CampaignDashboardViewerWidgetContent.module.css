@@ -1,3 +1,91 @@
+/* ── Dark mode ──────────────────────────────────────────── */
+[data-mantine-color-scheme='dark'] .widgetCard {
+	background: var(--surface-card);
+	border-color: var(--surface-border);
+	box-shadow: var(--mantine-shadow-sm);
+}
+
+[data-mantine-color-scheme='dark'] .widgetCardBuilderPreview {
+	background: var(--surface-card);
+	border-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark'] .widgetCardBuilderPreview:hover {
+	border-color: var(--surface-border-strong);
+}
+
+[data-mantine-color-scheme='dark'] .widgetCardBuilderPreview .widgetCardHeader {
+	border-bottom-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark'] .widgetCardHeader {
+	border-bottom-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark'] .widgetTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .groupByLabel {
+	color: var(--mantine-color-dark-3);
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .donutStatValue {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .donutStatLabel {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .legendRow:hover {
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .legendName {
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .legendValue {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .legendBar {
+	background: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .tableShell {
+	background: color-mix(in srgb, var(--mantine-color-dark-7) 95%, transparent);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .tableWrapper :global(thead th) {
+	color: var(--mantine-color-dark-3);
+	background: var(--mantine-color-dark-8);
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .tableWrapper :global(tbody td) {
+	color: var(--mantine-color-dark-2);
+	border-bottom-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .tableWrapper :global(tbody td:last-child) {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .tableWrapper :global(tbody tr:hover td) {
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .emptyWidgetState {
+	background: var(--mantine-color-dark-8);
+	border-color: var(--mantine-color-dark-5);
+}
+
+/* ── Base styles ────────────────────────────────────────── */
 .widgetCard {
 	position: relative;
 	height: 100%;
@@ -6,24 +94,45 @@
 	flex-direction: column;
 	overflow: hidden;
 	padding: 12px !important;
-	background: rgba(255, 255, 255, 0.72);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	border: 1px solid rgba(255, 255, 255, 0.6);
-	box-shadow:
-		0 2px 12px rgba(0, 0, 0, 0.06),
-		0 1px 3px rgba(0, 0, 0, 0.04),
-		inset 0 1px 0 rgba(255, 255, 255, 0.8);
-	transition: border-color 0.18s ease;
+	--widget-accent: var(--mantine-color-indigo-5);
+	background: var(--surface-card);
+	border: 1px solid var(--surface-border);
+	box-shadow: var(--mantine-shadow-sm);
+	transition:
+		border-color 0.18s ease,
+		box-shadow 0.18s ease,
+		transform 0.18s ease;
+}
+
+.widgetCard[data-accent='indigo'] {
+	--widget-accent: var(--mantine-color-indigo-5);
+}
+
+.widgetCard[data-accent='blue'] {
+	--widget-accent: var(--mantine-color-blue-5);
+}
+
+.widgetCard[data-accent='green'] {
+	--widget-accent: var(--mantine-color-green-5);
+}
+
+.widgetCard[data-accent='orange'] {
+	--widget-accent: var(--mantine-color-orange-5);
+}
+
+.widgetCard[data-accent='pink'] {
+	--widget-accent: var(--mantine-color-pink-5);
+}
+
+.widgetCard[data-accent='grape'] {
+	--widget-accent: var(--mantine-color-grape-5);
 }
 
 .widgetCardBuilderPreview {
 	padding: 12px !important;
-	background: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-2);
-	box-shadow: none;
-	backdrop-filter: none;
-	-webkit-backdrop-filter: none;
+	background: var(--surface-card);
+	border: 1px solid var(--surface-border);
+	box-shadow: var(--mantine-shadow-sm);
 }
 
 .widgetCardBuilderPreview::after {
@@ -31,7 +140,7 @@
 }
 
 .widgetCardBuilderPreview:hover {
-	border-color: var(--mantine-color-gray-3);
+	border-color: var(--surface-border-strong);
 }
 
 .widgetCardBuilderPreview .widgetCardHeader {
@@ -48,7 +157,7 @@
 	width: 160px;
 	height: 160px;
 	border-radius: 50%;
-	background: var(--widget-accent, #6366f1);
+	background: var(--widget-accent, var(--mantine-color-indigo-5));
 	opacity: 0.04;
 	filter: blur(32px);
 	pointer-events: none;
@@ -56,11 +165,7 @@
 }
 
 .widgetCard:hover {
-	border-color: color-mix(
-		in srgb,
-		var(--widget-accent, #6366f1) 28%,
-		rgba(255, 255, 255, 0.6)
-	);
+	border-color: var(--surface-border-strong);
 }
 
 /* ── Header ───────────────────────────────────────── */
@@ -70,7 +175,7 @@
 	align-items: center;
 	gap: var(--mantine-spacing-sm);
 	padding-bottom: 8px;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+	border-bottom: 1px solid var(--surface-border);
 	margin-bottom: 8px;
 	flex-shrink: 0;
 }
@@ -81,7 +186,7 @@
 }
 
 .widgetTitle {
-	color: #1e293b;
+	color: var(--mantine-color-dark-7);
 	letter-spacing: -0.015em;
 	line-height: 1.4;
 }
@@ -173,7 +278,7 @@
 	font-size: 1.25rem;
 	font-weight: 800;
 	line-height: 1.1;
-	color: #1e293b;
+	color: var(--mantine-color-dark-7);
 	letter-spacing: -0.03em;
 }
 
@@ -182,7 +287,7 @@
 	font-weight: 500;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
-	color: #94a3b8;
+	color: var(--mantine-color-gray-4);
 }
 
 /* ── Legend ───────────────────────────────────────── */
@@ -216,7 +321,7 @@
 }
 
 .legendRow:hover {
-	background: rgba(0, 0, 0, 0.03);
+	background: var(--mantine-color-gray-0);
 }
 
 .legendRowTop {
@@ -236,7 +341,7 @@
 }
 
 .legendName {
-	color: #374151;
+	color: var(--mantine-color-dark-6);
 	min-width: 0;
 }
 
@@ -255,21 +360,50 @@
 .legendValue {
 	min-width: 36px;
 	text-align: right;
-	color: #1e293b;
+	color: var(--mantine-color-dark-7);
 }
 
 .legendBar {
 	height: 3px;
-	background: rgba(0, 0, 0, 0.06);
+	background: var(--mantine-color-gray-2);
 	border-radius: 999px;
 	overflow: hidden;
 }
 
 .legendBarFill {
+	display: block;
+	width: 100%;
 	height: 100%;
 	border-radius: 999px;
 	opacity: 0.9;
+}
+
+.legendBarFill rect {
 	transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.legendBarFill rect[data-accent='indigo'] {
+	fill: var(--mantine-color-indigo-5);
+}
+
+.legendBarFill rect[data-accent='blue'] {
+	fill: var(--mantine-color-blue-5);
+}
+
+.legendBarFill rect[data-accent='green'] {
+	fill: var(--mantine-color-green-5);
+}
+
+.legendBarFill rect[data-accent='orange'] {
+	fill: var(--mantine-color-orange-5);
+}
+
+.legendBarFill rect[data-accent='pink'] {
+	fill: var(--mantine-color-pink-5);
+}
+
+.legendBarFill rect[data-accent='grape'] {
+	fill: var(--mantine-color-grape-5);
 }
 
 .legendDot {
@@ -278,6 +412,30 @@
 	border-radius: 3px;
 	flex-shrink: 0;
 	display: inline-block;
+}
+
+.legendDot[data-accent='indigo'] {
+	background: var(--mantine-color-indigo-5);
+}
+
+.legendDot[data-accent='blue'] {
+	background: var(--mantine-color-blue-5);
+}
+
+.legendDot[data-accent='green'] {
+	background: var(--mantine-color-green-5);
+}
+
+.legendDot[data-accent='orange'] {
+	background: var(--mantine-color-orange-5);
+}
+
+.legendDot[data-accent='pink'] {
+	background: var(--mantine-color-pink-5);
+}
+
+.legendDot[data-accent='grape'] {
+	background: var(--mantine-color-grape-5);
 }
 
 /* ── Table ────────────────────────────────────────── */
@@ -291,10 +449,10 @@
 }
 
 .tableShell {
-	border: 1px solid rgba(15, 23, 42, 0.08);
+	border: 1px solid var(--surface-border);
 	border-radius: 14px;
 	overflow: hidden;
-	background: rgba(255, 255, 255, 0.72);
+	background: var(--surface-card);
 }
 
 .table {
@@ -314,15 +472,11 @@
 	font-weight: 600;
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
-	color: #64748b;
-	background: linear-gradient(
-		180deg,
-		rgba(248, 250, 252, 0.96) 0%,
-		rgba(241, 245, 249, 0.94) 100%
-	);
+	color: var(--mantine-color-gray-5);
+	background: var(--mantine-color-body);
 	padding-top: 10px;
 	padding-bottom: 10px;
-	border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+	border-bottom: 1px solid var(--surface-border);
 }
 
 .tableWrapper :global(thead th:last-child) {
@@ -332,15 +486,15 @@
 .tableWrapper :global(tbody td) {
 	padding-top: 9px;
 	padding-bottom: 9px;
-	color: #475569;
+	color: var(--mantine-color-gray-7);
 	font-size: 12px;
-	border-bottom: 1px solid rgba(15, 23, 42, 0.05);
+	border-bottom: 1px solid var(--surface-border);
 }
 
 .tableWrapper :global(tbody td:last-child) {
 	font-size: 13px;
 	font-weight: 700;
-	color: #0f172a;
+	color: var(--mantine-color-dark-9);
 	text-align: right;
 }
 
@@ -349,7 +503,11 @@
 }
 
 .tableWrapper :global(tbody tr:hover td) {
-	background: rgba(59, 130, 246, 0.03);
+	background: color-mix(
+		in srgb,
+		var(--mantine-primary-color-0) 60%,
+		var(--mantine-color-body)
+	);
 }
 
 /* ── Empty state ──────────────────────────────────── */
@@ -359,9 +517,9 @@
 	align-items: center;
 	justify-content: center;
 	padding: var(--mantine-spacing-sm);
-	border: 1px dashed var(--mantine-color-gray-3);
+	border: 1px dashed var(--surface-border);
 	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-gray-0);
+	background: var(--surface-card);
 	flex: 1;
 }
 
@@ -384,11 +542,11 @@
 	padding: 16px 8px;
 }
 
-.lineChartGhost {
+lineChartGhost {
 	width: 100%;
 	max-width: 240px;
 	height: 52px;
-	color: var(--widget-accent, #6366f1);
+	color: var(--widget-accent, var(--mantine-color-indigo-5));
 	opacity: 0.18;
 	flex-shrink: 0;
 }

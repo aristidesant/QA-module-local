@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useState } from 'react';
-import { Button, Group, Select, Stack, ActionIcon } from '@mantine/core';
+import { Button, Group, Select, Stack, Text, ActionIcon } from '@mantine/core';
 import { IconPlus, IconTrash, IconArrowsSort } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
@@ -15,19 +15,19 @@ import styles from './ReorderControls.module.css';
 interface ReorderControlsProps {
 	campaignId: number;
 	contactGroupId: number;
-	availableWaves: number[];
 }
 
 const ReorderControls = ({
 	campaignId,
 	contactGroupId,
-	availableWaves,
 }: ReorderControlsProps) => {
 	const { t } = useTranslation('campaign.contact-list');
 	const [sortRules, setSortRules] = useState<SortRule[]>([]);
-	const [scopeWave, setScopeWave] = useState<string | null>(null);
 
-	const sortFieldsQuery = useGetOutboundTaskSortFields(campaignId);
+	const sortFieldsQuery = useGetOutboundTaskSortFields(
+		campaignId,
+		contactGroupId
+	);
 	const reorderMutation = useReorderOutboundTasks();
 
 	const fieldOptions = useMemo(() => {
@@ -78,17 +78,6 @@ const ReorderControls = ({
 		],
 		[t]
 	);
-
-	const waveOptions = useMemo(() => {
-		const opts = [{ value: '', label: t('queue.reorder.allWaves') }];
-		availableWaves.forEach((w) => {
-			opts.push({
-				value: String(w),
-				label: t('queue.reorder.specificWave', { number: w }),
-			});
-		});
-		return opts;
-	}, [availableWaves, t]);
 
 	const handleAddRule = useCallback(() => {
 		setSortRules((prev) => [
@@ -145,7 +134,6 @@ const ReorderControls = ({
 			{
 				campaignId,
 				contactGroupId,
-				...(scopeWave ? { waveNumber: Number(scopeWave) } : {}),
 				sortRules: validRules,
 			},
 			{
@@ -168,7 +156,7 @@ const ReorderControls = ({
 				},
 			}
 		);
-	}, [sortRules, scopeWave, campaignId, contactGroupId, reorderMutation, t]);
+	}, [sortRules, campaignId, contactGroupId, reorderMutation, t]);
 
 	return (
 		<SectionCard
@@ -221,16 +209,9 @@ const ReorderControls = ({
 					</Button>
 
 					<Group gap='xs'>
-						{availableWaves.length > 1 && (
-							<Select
-								size='sm'
-								label={t('queue.reorder.scope')}
-								data={waveOptions}
-								value={scopeWave ?? ''}
-								onChange={setScopeWave}
-								w={180}
-							/>
-						)}
+						<Text size='xs' c='dimmed'>
+							{t('queue.reorder.latestWaveNote')}
+						</Text>
 						<Button
 							size='xs'
 							leftSection={<IconArrowsSort size={14} />}

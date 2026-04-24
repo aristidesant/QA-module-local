@@ -16,9 +16,23 @@
 	cursor: default;
 }
 
+[data-mantine-color-scheme='dark'] .metricCard {
+	--metric-accent-soft: color-mix(
+		in srgb,
+		var(--metric-accent) 18%,
+		var(--mantine-color-dark-6)
+	);
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
 .metricCard:hover {
 	border-color: var(--metric-accent);
 	background-color: var(--mantine-color-gray-0);
+}
+
+[data-mantine-color-scheme='dark'] .metricCard:hover {
+	background-color: var(--mantine-color-dark-6);
 }
 
 .metricIcon {
@@ -31,6 +45,11 @@
 	background: var(--metric-accent-soft);
 	color: var(--metric-accent);
 	border: 1px solid var(--metric-accent);
+}
+
+[data-mantine-color-scheme='dark'] .metricIcon {
+	color: var(--metric-accent);
+	border-color: var(--metric-accent);
 }
 
 .metricBody {
@@ -48,6 +67,10 @@
 	line-height: 1.2;
 }
 
+[data-mantine-color-scheme='dark'] .metricValue {
+	color: var(--mantine-color-dark-0);
+}
+
 .metricLabel {
 	font-size: var(--mantine-font-size-xs);
 	font-weight: 600;
@@ -60,12 +83,20 @@
 	text-overflow: ellipsis;
 }
 
+[data-mantine-color-scheme='dark'] .metricLabel {
+	color: var(--mantine-color-dark-2);
+}
+
 .metricInfo {
 	color: var(--mantine-color-gray-5);
 	opacity: 0;
 	transition:
 		opacity 120ms ease,
 		color 120ms ease;
+}
+
+[data-mantine-color-scheme='dark'] .metricInfo {
+	color: var(--mantine-color-dark-3);
 }
 
 .metricCard:hover .metricInfo {
@@ -121,6 +152,23 @@
 .metricCard--gray {
 	--metric-accent: var(--mantine-color-gray-6);
 	--metric-accent-soft: var(--mantine-color-gray-0);
+}
+
+[data-mantine-color-scheme='dark'] .metricCard--violet,
+[data-mantine-color-scheme='dark'] .metricCard--teal,
+[data-mantine-color-scheme='dark'] .metricCard--orange,
+[data-mantine-color-scheme='dark'] .metricCard--blue,
+[data-mantine-color-scheme='dark'] .metricCard--green,
+[data-mantine-color-scheme='dark'] .metricCard--red,
+[data-mantine-color-scheme='dark'] .metricCard--pink,
+[data-mantine-color-scheme='dark'] .metricCard--cyan,
+[data-mantine-color-scheme='dark'] .metricCard--yellow,
+[data-mantine-color-scheme='dark'] .metricCard--gray {
+	--metric-accent-soft: color-mix(
+		in srgb,
+		var(--metric-accent) 18%,
+		var(--mantine-color-dark-6)
+	);
 }
 
 @media (max-width: 48em) {

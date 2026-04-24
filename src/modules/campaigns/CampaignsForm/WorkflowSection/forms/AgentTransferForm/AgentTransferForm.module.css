@@ -7,12 +7,12 @@
 .label {
 	font-size: var(--mantine-font-size-sm);
 	font-weight: 600;
-	color: var(--mantine-color-gray-9);
+	color: var(--workflow-drawer-text, var(--mantine-color-gray-9));
 }
 
 .description {
 	font-size: var(--mantine-font-size-xs);
-	color: var(--mantine-color-gray-6);
+	color: var(--workflow-drawer-text-muted, var(--mantine-color-gray-6));
 }
 
 .switchRoot {

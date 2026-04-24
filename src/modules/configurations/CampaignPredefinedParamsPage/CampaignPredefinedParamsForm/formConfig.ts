@@ -48,6 +48,11 @@ export const LLM_MODELS = [
 		provider: 'Google',
 	},
 	{
+		modelName: 'Gemini 3.1 Flash Lite Preview',
+		modelCode: 'gemini-3.1-flash-lite-preview',
+		provider: 'Google',
+	},
+	{
 		modelName: 'Gemini 2.0 Flash Lite',
 		modelCode: 'gemini-2.0-flash-lite',
 		provider: 'Google',
@@ -121,7 +126,10 @@ export const TTS_MODELS = [
 	{ value: 'eleven_multilingual_v2', label: 'Eleven Multilingual v2' },
 ];
 
-export const ASR_PROVIDERS = [{ value: 'elevenlabs', label: 'ElevenLabs' }];
+export const ASR_PROVIDERS = [
+	{ value: 'scribe_realtime', label: 'Scribe Realtime' },
+	{ value: 'elevenlabs', label: 'ElevenLabs' },
+];
 
 export const getAsrQualityOptions = (t: TFunction) => [
 	{ value: 'high', label: t('form.asr.quality.options.high') },

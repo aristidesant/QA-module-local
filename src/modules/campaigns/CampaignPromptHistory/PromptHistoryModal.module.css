@@ -57,9 +57,7 @@
 
 .diffWrapper :global(.diff) {
 	font-size: 13px;
-	font-family:
-		ui-monospace, 'Cascadia Code', 'Source Code Pro', 'Menlo', 'Monaco',
-		'Consolas', monospace;
+	font-family: var(--mantine-font-family-monospace);
 	border-radius: var(--mantine-radius-sm);
 	overflow: hidden;
 }
@@ -100,9 +98,7 @@
 
 .textContent {
 	font-size: 13px;
-	font-family:
-		ui-monospace, 'Cascadia Code', 'Source Code Pro', 'Menlo', 'Monaco',
-		'Consolas', monospace;
+	font-family: var(--mantine-font-family-monospace);
 	line-height: 1.7;
 	color: var(--mantine-color-gray-8);
 }

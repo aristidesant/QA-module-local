@@ -37,13 +37,19 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 		initialValues: {
 			...node,
 			doNotCall: node.doNotCall ?? node.do_not_call ?? false,
+			isAbandoned: node.isAbandoned ?? false,
 		},
 	});
 
 	const updateNode = useDispositionBuilderStore((state) => state.updateNode);
 
-	const { doNotCall, isInvalidatesNumber, requiresReschedule, isFinal } =
-		form.values;
+	const {
+		doNotCall,
+		isAbandoned,
+		isInvalidatesNumber,
+		requiresReschedule,
+		isFinal,
+	} = form.values;
 
 	const statusBadges = useMemo(
 		() =>
@@ -72,8 +78,21 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 							color: 'red',
 						}
 					: null,
+				isAbandoned
+					? {
+							label: t('disposition.nodeForm.badges.abandoned'),
+							color: 'orange',
+						}
+					: null,
 			].filter(Boolean) as Array<{ label: string; color: string }>,
-		[doNotCall, isFinal, isInvalidatesNumber, requiresReschedule, t]
+		[
+			doNotCall,
+			isAbandoned,
+			isFinal,
+			isInvalidatesNumber,
+			requiresReschedule,
+			t,
+		]
 	);
 
 	const parentLabel = parentNode?.name ?? t('disposition.nodeForm.rootLevel');
@@ -175,6 +194,26 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 										type: 'checkbox',
 									})}
 									aria-label={t('disposition.nodeForm.doNotCallTitle')}
+									size='sm'
+									color='blue'
+								/>
+							</div>
+
+							<div className={styles.toggleCard}>
+								<div className={styles.toggleContent}>
+									<Text className={styles.toggleTitle}>
+										{t('disposition.nodeForm.abandonedTitle')}
+									</Text>
+									<Text className={styles.toggleDescription} size='xs'>
+										{t('disposition.nodeForm.abandonedDesc')}
+									</Text>
+								</div>
+								<Switch
+									key={form.key('isAbandoned')}
+									{...form.getInputProps('isAbandoned', {
+										type: 'checkbox',
+									})}
+									aria-label={t('disposition.nodeForm.abandonedTitle')}
 									size='sm'
 									color='blue'
 								/>

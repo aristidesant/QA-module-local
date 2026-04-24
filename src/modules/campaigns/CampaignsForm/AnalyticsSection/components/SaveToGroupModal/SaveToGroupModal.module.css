@@ -1,3 +1,13 @@
+[data-mantine-color-scheme='dark'] .identifierValue {
+	border-color: var(--mantine-color-dark-5);
+	background-color: var(--mantine-color-dark-7);
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .identifierEmpty {
+	color: var(--mantine-color-dark-3);
+}
+
 .form {
 	width: 100%;
 }
@@ -30,9 +40,7 @@
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-sm);
 	background-color: var(--mantine-color-gray-0);
-	font-family:
-		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-		'Courier New', monospace;
+	font-family: var(--mantine-font-family-monospace);
 	overflow-wrap: anywhere;
 }
 

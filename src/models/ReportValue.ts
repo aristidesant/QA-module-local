@@ -21,7 +21,10 @@ export interface ReportValue {
 	dataType: ReportValueDataType;
 	format?: string | null;
 	order: number;
-	campaignId: number;
+	sheet: number;
+	sheetName: string;
+	campaignId?: number | null;
+	reportTemplateId?: number | null;
 	userId: number;
 	clientId: number;
 	createdAt: string;
@@ -35,6 +38,8 @@ export interface CreateReportValueDto {
 	label: string;
 	dataType: ReportValueDataType;
 	order?: number;
+	sheet?: number;
+	sheetName?: string;
 	campaignId: number;
 }
 
@@ -45,6 +50,8 @@ export interface UpdateReportValueDto {
 	dataType?: ReportValueDataType;
 	format?: string | null;
 	order?: number;
+	sheet?: number;
+	sheetName?: string;
 }
 
 export interface BulkUpdateReportValueItemDto {
@@ -55,8 +62,71 @@ export interface BulkUpdateReportValueItemDto {
 	dataType?: ReportValueDataType;
 	format?: string | null;
 	order?: number;
+	sheet?: number;
+	sheetName?: string;
 }
 
 export interface BulkUpdateReportValuesDto {
 	reportValues: BulkUpdateReportValueItemDto[];
+}
+
+export interface DuplicateReportValueDto {
+	sheet: number;
+	sheetName: string;
+	order: number;
+	label: string;
+}
+
+export interface ReportTemplate {
+	id: number;
+	name: string;
+	description?: string | null;
+	schemaId?: number | null;
+	userId: number;
+	clientId: number;
+	createdAt: string;
+	updatedAt: string;
+	deletedAt: string | null;
+}
+
+export interface CreateReportTemplateDto {
+	name: string;
+	description?: string;
+	schemaId?: number;
+}
+
+export interface UpdateReportTemplateDto {
+	name?: string;
+	description?: string;
+	schemaId?: number;
+}
+
+export interface BulkUpdateReportTemplateColumnsDto {
+	reportValues: BulkUpdateReportValueItemDto[];
+}
+
+export type CampaignSelectionScope = 'all' | 'lists';
+
+export interface ExportCampaignSelection {
+	campaignId: number;
+	scope: CampaignSelectionScope;
+	contactListIds?: number[];
+}
+
+export interface ExportReportTemplateDto {
+	startDate: string;
+	endDate: string;
+	format: 'csv' | 'xlsx';
+	campaignSelections: ExportCampaignSelection[];
+}
+
+export interface CreateReportValueWithTemplateDto {
+	originType: ReportValueOriginType;
+	key: string;
+	label: string;
+	dataType: ReportValueDataType;
+	order?: number;
+	sheet?: number;
+	sheetName?: string;
+	reportTemplateId: number;
 }

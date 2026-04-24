@@ -59,7 +59,9 @@
 	},
 	"export": {
 		"title": "Exportar conversaciones",
-		"hint": "Elige las fechas y el tipo para exportar.",
+		"hint": "Elige la campaña, las fechas y el tipo para exportar.",
+		"campaign": "Campaña",
+		"campaignPlaceholder": "Seleccionar campaña",
 		"from": "Desde",
 		"fromPlaceholder": "Selecciona fecha de inicio",
 		"to": "Hasta",
@@ -82,6 +84,16 @@
 			"overview": "Resumen",
 			"transcript": "Transcripción"
 		}
+	},
+	"drawer": {
+		"title": "Detalles de la Conversación"
+	},
+	"detailPage": {
+		"title": "Conversación",
+		"notFound": "Conversación no encontrada.",
+		"transcriptSection": "Transcripción",
+		"turnCount_one": "{{count}} turno",
+		"turnCount_other": "{{count}} turnos"
 	},
 	"actions": {
 		"title": "Acciones",
@@ -141,6 +153,7 @@
 			"count_one": "{{count}} variable",
 			"count_other": "{{count}} variables"
 		},
+		"downloadAudio": "Audio",
 		"downloadTranscript": "Descargar transcripción",
 		"notifications": {
 			"exportSuccess": "Exportación exitosa",
@@ -161,6 +174,10 @@
 			"na": "N/A",
 			"noPhone": "Sin número de teléfono",
 			"invalidDate": "Fecha inválida"
+		},
+		"previewContact": {
+			"label": "Conversación de vista previa",
+			"description": "Esta conversación fue iniciada usando la función de Vista Previa y no está asociada a un contacto real."
 		}
 	},
 	"transcript": {
@@ -268,6 +285,7 @@
 		"neutral": "Neutral",
 		"finalized": "Finalizado",
 		"voicemail": "Buzón de voz",
+		"abandoned": "Abandonada",
 		"callbackRequired": "Llamada de vuelta requerida",
 		"numberInvalidated": "Número invalidado",
 		"doNotRetry": "No reintentar este contacto",
@@ -283,5 +301,10 @@
 			"lessThanMinute": "menos de un minuto",
 			"and": "y"
 		}
+	},
+	"navigation": {
+		"previous": "Conversación anterior",
+		"next": "Conversación siguiente",
+		"counter": "{{current}} de {{total}}"
 	}
 }

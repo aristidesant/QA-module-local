@@ -1,21 +1,21 @@
-import type { DispositionNode } from "~/models/DispositionNodeModel";
+import type { DispositionNode } from '~/models/DispositionNodeModel';
 
 /**
  * Sorts disposition nodes by their order property in ascending order
  */
 export const sortDispositionNodes = (
-  nodes: DispositionNode[]
+	nodes: DispositionNode[]
 ): DispositionNode[] => {
-  return [...nodes]
-    .sort((a, b) => {
-      const orderA = a.order ?? 0;
-      const orderB = b.order ?? 0;
-      return orderA - orderB;
-    })
-    .map((node) => ({
-      ...node,
-      children: node.children ? sortDispositionNodes(node.children) : undefined,
-    }));
+	return [...nodes]
+		.sort((a, b) => {
+			const orderA = a.order ?? 0;
+			const orderB = b.order ?? 0;
+			return orderA - orderB;
+		})
+		.map((node) => ({
+			...node,
+			children: node.children ? sortDispositionNodes(node.children) : undefined,
+		}));
 };
 
 /**
@@ -23,9 +23,9 @@ export const sortDispositionNodes = (
  * Returns a new array of sorted nodes
  */
 export const sortDispositionTree = (
-  nodes: DispositionNode[]
+	nodes: DispositionNode[]
 ): DispositionNode[] => {
-  return sortDispositionNodes(nodes);
+	return sortDispositionNodes(nodes);
 };
 
 /**
@@ -33,13 +33,13 @@ export const sortDispositionTree = (
  * Recursively normalizes order for all children
  */
 export const normalizeDispositionNodeOrder = (
-  nodes: DispositionNode[]
+	nodes: DispositionNode[]
 ): DispositionNode[] => {
-  return nodes.map((node, index) => ({
-    ...node,
-    order: node.order ?? index + 1,
-    children: node.children
-      ? normalizeDispositionNodeOrder(node.children)
-      : undefined,
-  }));
+	return nodes.map((node, index) => ({
+		...node,
+		order: node.order ?? index + 1,
+		children: node.children
+			? normalizeDispositionNodeOrder(node.children)
+			: undefined,
+	}));
 };

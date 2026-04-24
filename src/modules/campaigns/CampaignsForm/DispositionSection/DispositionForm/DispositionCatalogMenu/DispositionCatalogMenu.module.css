@@ -1,4 +1,28 @@
 .container {
+	--disposition-surface: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+	--disposition-surface-soft: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-8)
+	);
+	--disposition-border: light-dark(
+		var(--mantine-color-gray-2),
+		var(--mantine-color-dark-4)
+	);
+	--disposition-text-muted: light-dark(
+		var(--mantine-color-gray-6),
+		var(--mantine-color-gray-4)
+	);
+	--disposition-scrollbar-thumb: light-dark(
+		var(--mantine-color-gray-4),
+		var(--mantine-color-dark-3)
+	);
+	--disposition-scrollbar-thumb-hover: light-dark(
+		var(--mantine-color-gray-6),
+		var(--mantine-color-dark-2)
+	);
 	height: 100%;
 	display: flex;
 	flex-direction: column;
@@ -24,12 +48,12 @@
 }
 
 .menuListWrapper::-webkit-scrollbar-thumb {
-	background: var(--mantine-color-gray-4);
+	background: var(--disposition-scrollbar-thumb);
 	border-radius: 3px;
 }
 
 .menuListWrapper::-webkit-scrollbar-thumb:hover {
-	background: var(--mantine-color-gray-6);
+	background: var(--disposition-scrollbar-thumb-hover);
 }
 
 .menuListWrapper ul {

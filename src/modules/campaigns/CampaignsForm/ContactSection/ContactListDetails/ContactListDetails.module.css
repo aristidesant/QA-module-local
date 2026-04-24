@@ -2,6 +2,66 @@
 	width: 100%;
 }
 
+[data-mantine-color-scheme='dark'] .listName {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .sectionTitle {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .statCard {
+	border-color: var(--mantine-color-dark-5);
+	background-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .iconBlue {
+	background-color: var(--mantine-color-blue-9);
+	color: var(--mantine-color-blue-1);
+}
+
+[data-mantine-color-scheme='dark'] .iconGrape {
+	background-color: var(--mantine-color-grape-9);
+	color: var(--mantine-color-grape-1);
+}
+
+[data-mantine-color-scheme='dark'] .iconTeal {
+	background-color: var(--mantine-color-teal-9);
+	color: var(--mantine-color-teal-1);
+}
+
+[data-mantine-color-scheme='dark'] .iconOrange {
+	background-color: var(--mantine-color-orange-9);
+	color: var(--mantine-color-orange-1);
+}
+
+[data-mantine-color-scheme='dark'] .statLabel {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .statValue {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .metaItem {
+	border-color: var(--mantine-color-dark-5);
+	background-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .metaLabel {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .metaValue {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .actionButton {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-1);
+}
+
 .overlay {
 	border-radius: 12px;
 }

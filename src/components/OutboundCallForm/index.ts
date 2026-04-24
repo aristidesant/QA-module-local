@@ -1,5 +1,5 @@
-export { OutboundCallForm } from "./OutboundCallForm";
+export { OutboundCallForm } from './OutboundCallForm';
 export type {
-  OutboundCallFormProps,
-  OutboundCallFormValues,
-} from "./OutboundCallForm";
+	OutboundCallFormProps,
+	OutboundCallFormValues,
+} from './OutboundCallForm';

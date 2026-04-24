@@ -223,6 +223,12 @@
 }
 
 .durationText {
-	font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+	font-family: var(--mantine-font-family-monospace);
 	font-weight: 600;
+}
+
+.monitorFrame {
+	width: 100%;
+	height: 600px;
+	border: none;
 }

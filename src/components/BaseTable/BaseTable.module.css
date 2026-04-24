@@ -1,9 +1,9 @@
 .root {
 	width: 100%;
 	overflow: auto;
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--surface-border);
 	border-radius: var(--mantine-radius-md);
-	background: color-mix(in srgb, var(--mantine-color-white) 94%, #f8f5ee);
+	background: var(--mantine-color-body);
 	margin: 0;
 	padding: 0;
 }
@@ -15,14 +15,14 @@
 }
 
 .thead {
-	background: color-mix(in srgb, var(--mantine-color-gray-0) 84%, #f1ece2);
+	background: var(--mantine-color-body);
 }
 
 .th,
 .td {
 	padding: 8px 12px;
 	text-align: left;
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	border-bottom: 1px solid var(--surface-border);
 	font-size: 14px;
 	vertical-align: middle;
 }
@@ -38,7 +38,6 @@
 	cursor: pointer;
 }
 
-/* Header Content and Sort Icons */
 .headerContent {
 	display: flex;
 	align-items: center;
@@ -70,18 +69,18 @@
 }
 
 .tbody tr:hover td {
-	background: color-mix(in srgb, var(--mantine-color-gray-0) 74%, #f3eee4);
+	background: var(--surface-sunken);
 }
 
 .reorderingRow td {
-	background: var(--mantine-color-gray-0) !important;
+	background: var(--surface-sunken) !important;
 }
 
 .selectedRow td {
 	background: color-mix(
 		in srgb,
-		var(--mantine-color-white) 72%,
-		#efe6da
+		var(--brand-soft) 35%,
+		var(--surface-sunken)
 	) !important;
 }
 
@@ -92,7 +91,6 @@
 	font-size: 14px;
 }
 
-/* Expandable Row Styles */
 .expandableRow {
 	cursor: pointer;
 }
@@ -112,7 +110,7 @@
 	align-items: center;
 	justify-content: center;
 	transition: transform 0.2s ease;
-	color: var(--mantine-color-gray-6);
+	color: var(--mantine-color-gray-5);
 	margin: 0 auto;
 }
 
@@ -121,17 +119,17 @@
 }
 
 .expandedRow {
-	background: var(--mantine-color-gray-0);
+	background: var(--mantine-color-body);
 }
 
 .expandedContent {
 	padding: 16px !important;
-	background: var(--mantine-color-gray-0);
+	background: var(--mantine-color-body);
 }
 
 .pagination {
 	padding: 12px;
-	border-top: 1px solid var(--mantine-color-gray-2);
+	border-top: 1px solid var(--surface-border);
 	display: flex;
 	justify-content: center;
 }
@@ -141,7 +139,7 @@
 	font-weight: 600;
 	letter-spacing: -0.01em;
 	color: var(--mantine-color-gray-7);
-	background: color-mix(in srgb, var(--mantine-color-gray-0) 84%, #f1ece2);
+	background: var(--mantine-color-body);
 }
 
 .td {
@@ -156,4 +154,73 @@
 	padding: 0 !important;
 	border: 0 !important;
 	height: 0;
+}
+
+/* Dark mode styles - must come after regular styles to override */
+[data-mantine-color-scheme='dark'] .root {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark'] .thead {
+	background: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .th,
+[data-mantine-color-scheme='dark'] .td {
+	border-bottom-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark'] .th {
+	color: var(--mantine-color-dark-2);
+	background: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .td {
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .tbody tr:hover td {
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .selectedRow td {
+	background: color-mix(
+		in srgb,
+		var(--brand-soft) 25%,
+		var(--mantine-color-dark-6)
+	) !important;
+}
+
+[data-mantine-color-scheme='dark'] .reorderingRow td {
+	background: var(--mantine-color-dark-6) !important;
+}
+
+[data-mantine-color-scheme='dark'] .expandedRow,
+[data-mantine-color-scheme='dark'] .expandedContent {
+	background: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .pagination {
+	border-top-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark'] .sortIcon {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .sortable:hover .sortIcon {
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .th[data-sorted] .sortIcon {
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .expandIcon {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .emptyRow {
+	color: var(--mantine-color-dark-3);
 }

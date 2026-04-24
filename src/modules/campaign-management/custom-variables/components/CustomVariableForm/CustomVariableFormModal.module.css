@@ -1,0 +1,36 @@
+.modalHeader {
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	margin-bottom: 0;
+	background: var(--mantine-color-body);
+}
+
+.modalTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	letter-spacing: -0.2px;
+}
+
+.modalBody {
+	padding: var(--mantine-spacing-md);
+	background: var(--mantine-color-body);
+}
+
+.modalContent {
+	border: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-body);
+}
+
+[data-mantine-color-scheme='dark'] .modalHeader {
+	border-bottom-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .modalBody {
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .modalContent {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-7);
+}

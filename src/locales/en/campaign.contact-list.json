@@ -343,6 +343,21 @@
 			"dataType": "Data Type",
 			"actions": "Actions"
 		},
+		"validation": {
+			"sheetRequired": "Select a valid worksheet number.",
+			"sheetNameRequired": "Worksheet name is required.",
+			"sheetNameTooLong": "Worksheet name must be 31 characters or less.",
+			"sheetNameInvalidChars": "Worksheet name contains invalid Excel characters (:, \\, /, ?, *, [, ]).",
+			"sheetNameMismatch": "Sheet {{sheet}} must use a single worksheet name across the campaign.",
+			"sheetNameAlreadyAssigned": "Worksheet name \"{{sheetName}}\" is already assigned to sheet {{sheet}}.",
+			"duplicateColumnInSheet": "Column \"{{label}}\" already exists in sheet {{sheet}}.",
+			"targetSheetMustBeDifferent": "Select a different worksheet to move this column.",
+			"duplicateTargetSheetMustBeDifferent": "Select a different worksheet to duplicate this column."
+		},
+		"actions": {
+			"moveToSheet": "Move to another worksheet",
+			"duplicateToSheet": "Duplicate to another worksheet"
+		},
 		"originType": {
 			"SQL": "System column",
 			"DYNAMIC": "Dynamic field",
@@ -368,7 +383,15 @@
 		"form": {
 			"createTitle": "Add Report Column",
 			"editTitle": "Edit Report Column",
+			"moveTitle": "Move Report Column",
+			"duplicateTitle": "Duplicate Report Column",
 			"originTypeLabel": "Origin type",
+			"sheetSelectLabel": "Worksheet",
+			"sheetSelectPlaceholder": "Select an existing worksheet",
+			"sheetNumberLabel": "Sheet number",
+			"sheetNumber": "Sheet {{sheet}}",
+			"sheetNameLabel": "Worksheet name",
+			"sheetNamePlaceholder": "e.g. General data",
 			"keyLabel": "Key / Field",
 			"keyPlaceholderDynamic": "e.g. balance_deuda",
 			"keyPlaceholderObject": "e.g. city",
@@ -399,7 +422,8 @@
 			},
 			"sections": {
 				"dataSource": "Data source",
-				"displaySettings": "Display settings"
+				"displaySettings": "Display settings",
+				"worksheet": "Worksheet"
 			},
 			"originSub": {
 				"SQL": "Contact fields",
@@ -415,7 +439,9 @@
 			},
 			"headerEyebrow": {
 				"new": "New column",
-				"edit": "Edit column"
+				"edit": "Edit column",
+				"move": "Move column",
+				"duplicate": "Duplicate column"
 			},
 			"aria": {
 				"close": "Close"
@@ -425,6 +451,7 @@
 		},
 		"notifications": {
 			"created": "Column created successfully",
+			"duplicated": "Column duplicated successfully",
 			"updated": "Column updated successfully",
 			"deleted": "Column deleted successfully",
 			"reorderError": "Error saving new order"
@@ -567,14 +594,26 @@
 		"wave": "Wave {{number}}",
 		"waveTaskCount": "{{count}} task",
 		"waveTaskCount_other": "{{count}} tasks",
+		"progress": {
+			"title": "Queue Progress",
+			"description": "Overall contact progress across all waves.",
+			"contacted": "{{contacted}} / {{total}} contacts",
+			"totalTasks": "{{count}} total tasks"
+		},
 		"columns": {
 			"order": "#",
 			"contactName": "Contact",
 			"phone": "Phone",
 			"status": "Status",
+			"contactResult": "Contact Result",
+			"dispositionName": "Disposition",
+			"callStatus": "Call Status",
+			"isAbandoned": "Abandoned",
+			"doNotCall": "DNC",
 			"wave": "Wave",
 			"scheduledAt": "Scheduled",
-			"actions": "Actions"
+			"actions": "Actions",
+			"toggleColumns": "Toggle Columns"
 		},
 		"status": {
 			"PENDING": "Pending",
@@ -627,6 +666,7 @@
 			"success": "Tasks reordered successfully ({{count}} updated)",
 			"error": "Failed to reorder tasks",
 			"noRules": "Add at least one sort rule to reorder tasks.",
+			"latestWaveNote": "Applies to the latest wave only",
 			"staticFields": "Contact Fields",
 			"dynamicFields": "Custom Fields"
 		},
@@ -635,6 +675,7 @@
 			"allStatuses": "All Statuses",
 			"wave": "Wave",
 			"allWaves": "All Waves"
-		}
+		},
+		"refresh": "Refresh queue data"
 	}
 }

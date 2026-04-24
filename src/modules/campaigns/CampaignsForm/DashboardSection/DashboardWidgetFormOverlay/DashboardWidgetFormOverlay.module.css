@@ -1,11 +1,36 @@
 .overlay {
 	position: fixed;
+	top: 70px;
 	right: 0;
 	bottom: 0;
 	z-index: 150;
-	background: var(--mantine-color-gray-0);
+	left: var(--sidebar-width);
+	background: var(--mantine-color-white);
 	border-left: 1px solid var(--mantine-color-gray-2);
 	overflow: hidden;
 	display: flex;
 	flex-direction: column;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateX(8px);
+	transition:
+		opacity 150ms ease,
+		transform 150ms ease,
+		border-color 150ms ease,
+		background-color 150ms ease;
+}
+
+.overlay[data-sidebar='collapsed'] {
+	left: var(--sidebar-width-collapsed);
+}
+
+.overlay[data-open='true'] {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateX(0);
+}
+
+[data-mantine-color-scheme='dark'] .overlay {
+	background: var(--mantine-color-dark-8);
+	border-left-color: var(--mantine-color-dark-5);
 }

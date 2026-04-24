@@ -137,6 +137,18 @@
 				"label": "LLM Model",
 				"placeholder": "Select LLM model"
 			},
+			"reasoningEffort": {
+				"label": "Reasoning Effort",
+				"placeholder": "Select reasoning effort",
+				"helper": "Controls how much deliberate reasoning the model applies when supported.",
+				"options": {
+					"none": "None",
+					"minimal": "Minimal",
+					"low": "Low",
+					"medium": "Medium",
+					"high": "High"
+				}
+			},
 			"temperature": {
 				"label": "Temperature",
 				"helper": "Controls randomness (0–2)"

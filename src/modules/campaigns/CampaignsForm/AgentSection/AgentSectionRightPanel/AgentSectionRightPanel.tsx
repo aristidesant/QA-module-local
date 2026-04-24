@@ -7,6 +7,7 @@ import CampaignConfigurationAsrKeywords from '../CampaignConfigurationAsrKeyword
 import CampaignConfigurationSystemTools from '../CampaignConfigurationSystemTools';
 import CampaignConfigurationTools from '../CampaignConfigurationTools';
 import CampaignConfigurationKnowledgeBase from '../CampaignConfigurationKnowledgeBase';
+import CampaignConfigurationDynamicVariables from '../CampaignConfigurationDynamicVariables';
 import RightSectionCard from '~/components/RightSectionCard';
 import {
 	useCampaignFormContext,
@@ -46,6 +47,7 @@ const AgentSectionRightPanel: React.FC = () => {
 			<CampaignConfigurationTools />
 			<CampaignConfigurationKnowledgeBase />
 			<CampaignConfigurationAsrKeywords />
+			<CampaignConfigurationDynamicVariables />
 		</Stack>
 	);
 };

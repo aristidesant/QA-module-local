@@ -19,7 +19,6 @@ import {
 	IconCopy,
 	IconPhone,
 	IconInfoCircle,
-	IconEye,
 	IconPencil,
 	IconFileDescription,
 	IconSettings,
@@ -64,7 +63,6 @@ export const getCampaignStatusInfo = (
 
 interface UseCampaignsColumnsProps {
 	onEdit: (campaign: Campaign) => void;
-	onView: (campaign: Campaign) => void;
 	onTestCall: (campaign: Campaign) => void;
 	onDelete: (campaign: Campaign) => void;
 	onClone: (campaign: Campaign) => void;
@@ -74,7 +72,6 @@ interface UseCampaignsColumnsProps {
 
 export const useCampaignsColumns = ({
 	onEdit,
-	onView,
 	onTestCall,
 	onDelete,
 	onClone,
@@ -267,8 +264,6 @@ export const useCampaignsColumns = ({
 				const isActive = campaign.status === CampaignStatus.ACTIVE;
 
 				const canContinueDraft = isDraft && Boolean(onContinueDraft);
-				const canViewCampaign =
-					canAccessModule(ModuleEnum.CAMPAIGNS) && !isDraft;
 				const canEditCampaign =
 					canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) &&
 					!isDraft;
@@ -309,24 +304,6 @@ export const useCampaignsColumns = ({
 									}}
 								>
 									<IconSettings size={14} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{canViewCampaign && (
-							<Tooltip label={t('columns.viewCampaign')}>
-								<ActionIcon
-									variant='subtle'
-									color='gray'
-									radius='xl'
-									size='sm'
-									aria-label={t('columns.viewCampaign')}
-									visibleFrom='sm'
-									onClick={(e) => {
-										e.stopPropagation();
-										onView(campaign);
-									}}
-								>
-									<IconEye size={14} />
 								</ActionIcon>
 							</Tooltip>
 						)}

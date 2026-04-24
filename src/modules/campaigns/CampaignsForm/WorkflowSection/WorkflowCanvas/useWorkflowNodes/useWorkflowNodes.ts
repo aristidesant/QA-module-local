@@ -68,6 +68,68 @@ const removeNodeEdgesFromOrder = (
 	};
 };
 
+/**
+ * Pure factory for building default node data by type.
+ * Exported so that WorkflowCanvas handlers can create nodes inside groups
+ * without duplicating the switch-case.
+ */
+export const createNodeDataByType = (
+	nodeType: string,
+	position: { x: number; y: number }
+) => {
+	switch (nodeType) {
+		case WORKFLOW_NODE_TYPES.END:
+			return {
+				type: WORKFLOW_NODE_TYPES.END,
+				position,
+				edgeOrder: [],
+				label: 'End',
+			};
+		case WORKFLOW_NODE_TYPES.TOOL:
+			return {
+				type: WORKFLOW_NODE_TYPES.TOOL,
+				position,
+				edgeOrder: [],
+				label: 'Tool',
+				tools: [],
+			};
+		case WORKFLOW_NODE_TYPES.OVERRIDE_AGENT:
+			return {
+				type: WORKFLOW_NODE_TYPES.OVERRIDE_AGENT,
+				position,
+				edgeOrder: [],
+				label: 'Agent transfer',
+				additionalPrompt: '',
+				additionalToolIds: [],
+				additionalKnowledgeBase: [],
+				conversationConfig: {},
+			};
+		case WORKFLOW_NODE_TYPES.PHONE_NUMBER:
+			return {
+				type: WORKFLOW_NODE_TYPES.PHONE_NUMBER,
+				position,
+				edgeOrder: [],
+				label: 'Phone number transfer',
+				transferType: 'conference',
+				transferDestination: {
+					type: 'phone',
+					phoneNumber: '',
+				},
+			};
+		case WORKFLOW_NODE_TYPES.STANDALONE_AGENT:
+		default:
+			return {
+				type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
+				position,
+				edgeOrder: [],
+				label: 'Subagent',
+				agentId: '',
+				delayMs: 0,
+				enableTransferredAgentFirstMessage: false,
+			};
+	}
+};
+
 const useWorkflowNodes = ({
 	nodesRef,
 	edgesRef,
@@ -86,63 +148,6 @@ const useWorkflowNodes = ({
 
 		return JSON.parse(JSON.stringify(value)) as T;
 	};
-
-	const createNodeDataByType = useCallback(
-		(nodeType: string, position: { x: number; y: number }) => {
-			switch (nodeType) {
-				case WORKFLOW_NODE_TYPES.END:
-					return {
-						type: WORKFLOW_NODE_TYPES.END,
-						position,
-						edgeOrder: [],
-						label: 'End',
-					};
-				case WORKFLOW_NODE_TYPES.TOOL:
-					return {
-						type: WORKFLOW_NODE_TYPES.TOOL,
-						position,
-						edgeOrder: [],
-						label: 'Tool',
-						tools: [],
-					};
-				case WORKFLOW_NODE_TYPES.OVERRIDE_AGENT:
-					return {
-						type: WORKFLOW_NODE_TYPES.OVERRIDE_AGENT,
-						position,
-						edgeOrder: [],
-						label: 'Agent transfer',
-						additionalPrompt: '',
-						additionalToolIds: [],
-						additionalKnowledgeBase: [],
-						conversationConfig: {},
-					};
-				case WORKFLOW_NODE_TYPES.PHONE_NUMBER:
-					return {
-						type: WORKFLOW_NODE_TYPES.PHONE_NUMBER,
-						position,
-						edgeOrder: [],
-						label: 'Phone number transfer',
-						transferType: 'conference',
-						transferDestination: {
-							type: 'phone',
-							phoneNumber: '',
-						},
-					};
-				case WORKFLOW_NODE_TYPES.STANDALONE_AGENT:
-				default:
-					return {
-						type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
-						position,
-						edgeOrder: [],
-						label: 'Subagent',
-						agentId: '',
-						delayMs: 0,
-						enableTransferredAgentFirstMessage: false,
-					};
-			}
-		},
-		[]
-	);
 
 	const appendNodeAndEdge = useCallback(
 		(
@@ -198,6 +203,7 @@ const useWorkflowNodes = ({
 							? null
 							: buildEdgeLabel(t),
 					sourceNodeType: parentNode?.type,
+					forwardCondition: { type: 'unconditional' as const },
 				},
 			};
 
@@ -209,7 +215,7 @@ const useWorkflowNodes = ({
 			]);
 			setEdges((currentEdges) => [...currentEdges, newEdge]);
 		},
-		[createNodeDataByType, nodesRef, setEdges, setNodes, t]
+		[nodesRef, setEdges, setNodes, t]
 	);
 
 	const handleAddNode = useCallback(

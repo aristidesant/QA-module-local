@@ -136,6 +136,7 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 			endDate: string; // ISO string e.g., 2025-08-13T23:59:59Z
 			// NOTE: Backend expects the misspelled key "campaingType" per API docs screenshot
 			campaingType: 'inbound' | 'outbound';
+			campaignId: number;
 		}) => {
 			const response = await axios.get<Blob>(
 				`${DEFAULT_API_URL}/conversations/export/csv`,

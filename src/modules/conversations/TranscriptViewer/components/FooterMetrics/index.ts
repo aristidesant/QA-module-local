@@ -1,0 +1,1 @@
+export { MessageFooterMetrics } from './FooterMetrics';

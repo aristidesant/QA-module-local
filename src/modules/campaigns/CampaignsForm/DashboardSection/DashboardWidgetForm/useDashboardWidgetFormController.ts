@@ -16,6 +16,7 @@ import {
 import { getDataCollectionFromAgentConfig } from '~/modules/campaigns/CampaignsForm/AnalyticsSection/analyticsFormContext';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
+import { useGetAllRoles } from '~/queries/roleQueries';
 import {
 	useCreateDashboardWidget,
 	useDashboardWidgets,
@@ -62,9 +63,11 @@ import {
 	sanitizeWidgetRuntimeFilters,
 	getResolvedGroupBy,
 	getSourceFieldEntries,
+	isAbandonedRateMetric,
 	normalizeWidgetFilterValueForType,
 	resetWidgetFilterRow,
 	resetRuntimeFilterRow,
+	sanitizeAbandonedRateRuntimeFilters,
 	supportsCompareWithWidget,
 	supportsGroupedWidget,
 	supportsTimeSeriesWidget,
@@ -96,6 +99,7 @@ const useDashboardWidgetFormController = ({
 	const { data: existingWidgets = [] } = useDashboardWidgets(dashboardId);
 	const { data: metricColumnsConfig, isLoading: isMetricColumnsLoading } =
 		useGetClientConfig(METRIC_COLUMNS_CONFIG_KEY);
+	const { data: roles = [], isLoading: isRolesLoading } = useGetAllRoles();
 	const isEditing = Boolean(widget?.id);
 	const isGlobalDashboard = campaignId === null;
 	const initialValues = widgetFormValues(widget);
@@ -233,6 +237,25 @@ const useDashboardWidgetFormController = ({
 			},
 		],
 		[t]
+	);
+	const roleOptions = useMemo(
+		() => [
+			...roles
+				.filter((role) => role.isActive)
+				.map((role) => ({
+					value: String(role.id),
+					label: role.name,
+				})),
+			...((widget?.roles ?? [])
+				.filter(
+					(role) => !roles.some((loadedRole) => loadedRole.id === role.id)
+				)
+				.map((role) => ({
+					value: String(role.id),
+					label: role.name,
+				})) ?? []),
+		],
+		[roles, widget?.roles]
 	);
 	const sizePresetOptions = useMemo(
 		() => getSizePresetOptions(t, sizePreset),
@@ -666,6 +689,7 @@ const useDashboardWidgetFormController = ({
 			return;
 		}
 
+		const trimmedRoleIds = Array.from(new Set(submitValues.roleIds));
 		const payload: CreateDashboardWidgetDto | UpdateDashboardWidgetDto = {
 			...normalizeWidgetLayout({
 				positionX: placementLayout.positionX,
@@ -685,6 +709,9 @@ const useDashboardWidgetFormController = ({
 				dispositionFields: parsedMetricColumns.disposition,
 			}),
 			viewConfig: buildViewConfigPayload(submitValues),
+			...(isEditing || trimmedRoleIds.length > 0
+				? { roleIds: trimmedRoleIds }
+				: {}),
 		};
 
 		try {
@@ -788,6 +815,12 @@ const useDashboardWidgetFormController = ({
 			nextValues.valueField = null;
 		}
 
+		if (isAbandonedRateMetric(nextValues)) {
+			nextValues.resultType = 'PERCENT';
+		}
+
+		nextValues.runtimeFilters = sanitizeAbandonedRateRuntimeFilters(nextValues);
+
 		updateFormValues({
 			...nextValues,
 			defaultFilters: sanitizeWidgetDefaultFilters(
@@ -856,6 +889,12 @@ const useDashboardWidgetFormController = ({
 			nextValues.aggregationType = 'MIN';
 		}
 
+		if (isAbandonedRateMetric(nextValues)) {
+			nextValues.resultType = 'PERCENT';
+		}
+
+		nextValues.runtimeFilters = sanitizeAbandonedRateRuntimeFilters(nextValues);
+
 		updateFormValues({
 			...nextValues,
 			defaultFilters: sanitizeWidgetDefaultFilters(
@@ -894,6 +933,14 @@ const useDashboardWidgetFormController = ({
 	};
 
 	const handleResultTypeChange = (value: string | null) => {
+		if (isAbandonedRateMetric(form.getValues())) {
+			setManualCompatibility((current) => ({ ...current, resultType: true }));
+			updateFormValues({
+				resultType: 'PERCENT',
+			});
+			return;
+		}
+
 		if (!value) {
 			setManualCompatibility((current) => ({ ...current, resultType: false }));
 			updateFormValues({
@@ -1051,6 +1098,8 @@ const useDashboardWidgetFormController = ({
 			runtimeFilters: nextRuntimeFilters,
 		};
 
+		nextValues.runtimeFilters = sanitizeAbandonedRateRuntimeFilters(nextValues);
+
 		updateFormValues({
 			runtimeFilters: sanitizeWidgetRuntimeFilters(
 				nextValues,
@@ -1091,6 +1140,8 @@ const useDashboardWidgetFormController = ({
 			runtimeFilters: nextRuntimeFilters,
 		};
 
+		nextValues.runtimeFilters = sanitizeAbandonedRateRuntimeFilters(nextValues);
+
 		updateFormValues({
 			runtimeFilters: sanitizeWidgetRuntimeFilters(
 				nextValues,
@@ -1120,6 +1171,8 @@ const useDashboardWidgetFormController = ({
 			...form.getValues(),
 			runtimeFilters: nextRuntimeFilters,
 		};
+
+		nextValues.runtimeFilters = sanitizeAbandonedRateRuntimeFilters(nextValues);
 
 		updateFormValues({
 			runtimeFilters: sanitizeWidgetRuntimeFilters(
@@ -1186,6 +1239,13 @@ const useDashboardWidgetFormController = ({
 		);
 	};
 
+	const handleRoleIdsChange = (value: string[]) => {
+		form.setFieldValue(
+			'roleIds',
+			value.map((item) => Number(item)).filter(Number.isFinite)
+		);
+	};
+
 	const handleSupportsGroupByChange = (checked: boolean) => {
 		setManualCompatibility((current) => ({
 			...current,
@@ -1233,6 +1293,7 @@ const useDashboardWidgetFormController = ({
 			parsedMetricColumns,
 			isCampaignLoading,
 			isMetricColumnsLoading,
+			isRolesLoading,
 			conversationFieldOptions,
 			dispositionFieldOptions,
 			conversationFieldValues,
@@ -1247,6 +1308,7 @@ const useDashboardWidgetFormController = ({
 			filterValueTypeOptions,
 			viewValueFormatOptions,
 			compareWithOptions,
+			roleOptions,
 			sizePresetOptions,
 			widgetTypeControlOptions,
 			sourceTypeControlOptions,
@@ -1276,6 +1338,7 @@ const useDashboardWidgetFormController = ({
 				handleRuntimeFilterOperatorChange,
 				handleRuntimeFilterValueChange,
 				handleSizePresetChange,
+				handleRoleIdsChange,
 				addDefaultFilterRow: () => {
 					form.insertListItem('defaultFilters', createEmptyFilterRow());
 				},
@@ -1347,6 +1410,7 @@ const useDashboardWidgetFormController = ({
 			isEditing,
 			isGlobalDashboard,
 			isMetricColumnsLoading,
+			isRolesLoading,
 			groupByIsDerived,
 			groupBySuggestions,
 			manualCompatibility,
@@ -1357,6 +1421,7 @@ const useDashboardWidgetFormController = ({
 			needsValueField,
 			parsedMetricColumns,
 			placementLayout,
+			roleOptions,
 			resultTypeOptions,
 			sizePreset,
 			sizePresetOptions,

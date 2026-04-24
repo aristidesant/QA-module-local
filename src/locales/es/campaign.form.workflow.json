@@ -39,6 +39,70 @@
 					"failure": "Fallo"
 				},
 				"expressionNote": "Constructor de expresiones próximamente",
+				"expression": {
+					"title": "Expresión",
+					"description": "Construye la regla que controla cuando se usa esta conexión.",
+					"reset": "Restablecer",
+					"validationSummary": "Completa los campos resaltados de la expresión para guardar.",
+					"labelPlaceholder": "Etiqueta opcional para esta expresión",
+					"branchType": "Tipo de rama",
+					"branchTypes": {
+						"comparison": "Comparación",
+						"group": "Grupo",
+						"llm": "Prompt LLM"
+					},
+					"wrapAnd": "Agrupar AND",
+					"wrapOr": "Agrupar OR",
+					"removeBranch": "Eliminar rama",
+					"addBranch": "Agregar rama",
+					"llmPrompt": "Prompt LLM",
+					"llmPromptPlaceholder": "Pide al modelo evaluar esta rama...",
+					"leftValue": "Valor izquierdo",
+					"rightValue": "Valor derecho",
+					"comparisonOperator": "Operador de comparación",
+					"valueType": "Tipo de valor",
+					"dynamicVariablePlaceholder": "Selecciona variable",
+					"noVariables": "No se encontraron variables",
+					"numberPlaceholder": "Ingresa un número",
+					"stringPlaceholder": "Ingresa texto",
+					"llmValuePlaceholder": "Escribe el prompt del modelo...",
+					"operators": {
+						"or": "OR",
+						"and": "AND"
+					},
+					"comparisons": {
+						"eq": "Igual a",
+						"neq": "No es igual a",
+						"gt": "Mayor que",
+						"gte": "Mayor o igual",
+						"lt": "Menor que",
+						"lte": "Menor o igual"
+					},
+					"valueTypes": {
+						"variable": "Variable",
+						"text": "Texto",
+						"number": "Número",
+						"boolean": "Booleano",
+						"llm": "LLM"
+					},
+					"variables": {
+						"system": "Variables del sistema",
+						"custom": "Variables personalizadas"
+					},
+					"boolean": {
+						"true": "Verdadero",
+						"false": "Falso"
+					},
+					"errors": {
+						"emptyDynamicVariable": "Selecciona una variable.",
+						"emptyStringLiteral": "Ingresa un valor de texto.",
+						"invalidNumberLiteral": "Ingresa un número válido.",
+						"emptyLlmPrompt": "Ingresa un prompt LLM.",
+						"missingComparisonValue": "Completa este valor de comparación.",
+						"emptyGroup": "Agrega al menos una rama.",
+						"unsupportedExpression": "Esta rama de expresión no es compatible."
+					}
+				},
 				"forward": "Adelante",
 				"backward": "Atrás"
 			},
@@ -335,6 +399,13 @@
 					"copy": "Copiar workflow",
 					"paste": "Pegar workflow"
 				},
+				"copy": {
+					"title": "Copiar workflow al portapapeles",
+					"description": "Elige que incluir con el workflow. Los estilos personalizados y grupos se empaquetaran para restaurarse al pegar.",
+					"includeStyles": "Incluir estilos personalizados ({{count}})",
+					"includeGroups": "Incluir grupos de nodos ({{count}})",
+					"confirm": "Copiar al portapapeles"
+				},
 				"import": {
 					"title": "Reemplazar workflow desde JSON",
 					"description": "Pega un JSON completo de workflow para sustituir el flujo actual. Se soportan snake_case y camelCase.",
@@ -351,6 +422,8 @@
 					"summaryEdges": "{{count}} bordes",
 					"summaryPreventLoopsEnabled": "Evitar bucles de subagente: activado",
 					"summaryPreventLoopsDisabled": "Evitar bucles de subagente: desactivado",
+					"summaryNodeStyles": "{{count}} estilos personalizados",
+					"summaryNodeGroups": "{{count}} grupos de nodos",
 					"replace": "Reemplazar workflow"
 				},
 				"errors": {
@@ -381,13 +454,44 @@
 				"override_agent": "Transferencia de agente",
 				"phone_number": "Transferencia a numero",
 				"tool": "Despachar herramienta",
-				"end": "Fin"
+				"end": "Fin",
+				"group": "Grupo"
 			},
 			"transferNode": {
 				"to": "Transferir a",
 				"delay": "Retraso",
 				"delayValue": "{{value}} ms",
 				"emptyAgent": "Sin configurar"
+			},
+			"nodeStyle": {
+				"customize": "Personalizar estilo",
+				"colorLabel": "Color",
+				"iconLabel": "Ícono",
+				"reset": "Restaurar valor por defecto",
+				"legend": "Nodos personalizados"
+			},
+			"search": {
+				"placeholder": "Buscar nodos…",
+				"empty": "No se encontraron nodos"
+			},
+			"group": {
+				"create": "Agrupar seleccionados",
+				"ungroup": "Desagrupar",
+				"defaultLabel": "Grupo",
+				"rename": "Renombrar grupo",
+				"renamePlaceholder": "Nombre del grupo",
+				"renameHint": "Doble clic para renombrar",
+				"addNode": "Agregar nodo",
+				"addNewNode": "Nuevo nodo",
+				"addExistingNode": "Agregar nodo existente",
+				"cloneGroup": "Clonar grupo",
+				"copy": "Copia",
+				"noAvailableNodes": "No hay nodos sin agrupar disponibles",
+				"searchNodes": "Buscar nodos..."
+			},
+			"selection": {
+				"count": "{{count}} nodo seleccionado",
+				"count_other": "{{count}} nodos seleccionados"
 			},
 			"nodeStatus": {
 				"destination": "Destino",

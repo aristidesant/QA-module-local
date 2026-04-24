@@ -1,6 +1,11 @@
 .summary {
-  padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-  background-color: var(--mantine-color-gray-0);
-  border-radius: var(--mantine-radius-md);
-  border: 1px solid var(--mantine-color-gray-2);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .summary {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-5);
 }

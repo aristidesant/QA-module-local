@@ -5,7 +5,6 @@ import {
 	IconMail,
 	IconPhone,
 	IconFilterOff,
-	IconDownload,
 	IconUpload,
 	IconRefresh,
 } from '@tabler/icons-react';
@@ -18,8 +17,6 @@ interface ContactGroupContactsTableFiltersProps {
 	onFilterChange: (key: keyof ContactFilters, value: string) => void;
 	onClearFilters: () => void;
 	hasActiveFilters: boolean;
-	onExport?: () => void;
-	isExporting?: boolean;
 	onAppend?: () => void;
 	isAppending?: boolean;
 	onReload?: () => void;
@@ -33,8 +30,6 @@ export const ContactGroupContactsTableFilters: React.FC<
 	onFilterChange,
 	onClearFilters,
 	hasActiveFilters,
-	onExport,
-	isExporting,
 	onAppend,
 	isAppending,
 	onReload,
@@ -111,19 +106,6 @@ export const ContactGroupContactsTableFilters: React.FC<
 								loading={isAppending}
 							>
 								<IconUpload size={16} />
-							</ActionIcon>
-						</Tooltip>
-					)}
-					{onExport && (
-						<Tooltip label={t('contactsTable.tooltips.export')} withArrow>
-							<ActionIcon
-								variant='light'
-								color='blue'
-								size='lg'
-								onClick={onExport}
-								loading={isExporting}
-							>
-								<IconDownload size={16} />
 							</ActionIcon>
 						</Tooltip>
 					)}

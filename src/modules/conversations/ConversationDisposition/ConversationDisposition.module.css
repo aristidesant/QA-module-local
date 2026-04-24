@@ -24,6 +24,10 @@
 	color: var(--mantine-color-gray-6);
 }
 
+[data-mantine-color-scheme='dark'] .timestamp {
+	color: var(--mantine-color-dark-1);
+}
+
 .timestamp svg {
 	color: inherit;
 }
@@ -42,11 +46,19 @@
 	margin: 0;
 }
 
+[data-mantine-color-scheme='dark'] .dispositionName {
+	color: var(--mantine-color-dark-0);
+}
+
 .description {
 	font-size: 12px;
 	color: var(--mantine-color-gray-6);
 	line-height: 1.4;
 	margin: 0;
+}
+
+[data-mantine-color-scheme='dark'] .description {
+	color: var(--mantine-color-dark-1);
 }
 
 .traits {
@@ -64,8 +76,18 @@
 	color: var(--mantine-color-gray-7);
 }
 
+[data-mantine-color-scheme='dark'] .trait {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-0);
+}
+
 .trait svg {
 	color: var(--mantine-color-gray-6);
+}
+
+[data-mantine-color-scheme='dark'] .trait svg {
+	color: var(--mantine-color-dark-2);
 }
 
 .actions {
@@ -85,6 +107,16 @@
 	color: var(--mantine-color-blue-9);
 }
 
+[data-mantine-color-scheme='dark'] .action {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-blue-9) 30%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-blue-7);
+	color: var(--mantine-color-blue-1);
+}
+
 .action svg {
 	flex-shrink: 0;
 	color: currentColor;
@@ -96,6 +128,16 @@
 	color: var(--mantine-color-red-8);
 }
 
+[data-mantine-color-scheme='dark'] .actionCritical {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-red-9) 30%,
+		var(--mantine-color-dark-7)
+	);
+	border-color: var(--mantine-color-red-7);
+	color: var(--mantine-color-red-1);
+}
+
 .actionLabel {
 	font-weight: 600;
 	color: currentColor;
@@ -104,6 +146,10 @@
 .notesDivider {
 	margin: 0;
 	border-color: var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .notesDivider {
+	border-color: var(--mantine-color-dark-4);
 }
 
 .notes {
@@ -120,11 +166,19 @@
 	color: var(--mantine-color-gray-5);
 }
 
+[data-mantine-color-scheme='dark'] .notesLabel {
+	color: var(--mantine-color-dark-2);
+}
+
 .notesText {
 	font-size: 12px;
 	color: var(--mantine-color-gray-7);
 	line-height: 1.5;
 	overflow-wrap: anywhere;
+}
+
+[data-mantine-color-scheme='dark'] .notesText {
+	color: var(--mantine-color-dark-0);
 }
 
 .loadingState {

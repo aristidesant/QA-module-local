@@ -1,12 +1,111 @@
 .countBadge {
 	border: 1px solid
-		color-mix(in srgb, var(--mantine-color-blue-4) 30%, transparent);
-	background: var(--mantine-color-white);
+		color-mix(in srgb, var(--mantine-primary-color-2) 60%, transparent);
+	background: color-mix(
+		in srgb,
+		var(--mantine-primary-color-0) 70%,
+		var(--mantine-color-body)
+	);
+	color: var(--mantine-primary-color-7);
+}
+
+[data-mantine-color-scheme='dark'] .countBadge {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-primary-color-5) 35%,
+		var(--mantine-color-dark-4)
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-primary-color-9) 30%,
+		var(--mantine-color-dark-7)
+	);
+	color: var(--mantine-primary-color-3);
+}
+
+.sheetBadge {
+	width: fit-content;
+	border: 1px solid
+		color-mix(in srgb, var(--mantine-primary-color-2) 60%, transparent);
+	background: color-mix(
+		in srgb,
+		var(--mantine-primary-color-0) 60%,
+		var(--mantine-color-body)
+	);
+	color: var(--mantine-primary-color-7);
+}
+
+[data-mantine-color-scheme='dark'] .sheetBadge {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-primary-color-5) 30%,
+		var(--mantine-color-dark-4)
+	);
+	background: color-mix(
+		in srgb,
+		var(--mantine-primary-color-9) 42%,
+		var(--mantine-color-dark-6)
+	);
+	color: var(--mantine-primary-color-2);
 }
 
 .table {
 	overflow: hidden;
 	border-radius: var(--mantine-radius-md);
+}
+
+.emptyStateCard {
+	background: color-mix(
+		in srgb,
+		var(--mantine-color-gray-0) 80%,
+		var(--mantine-color-body)
+	);
+	border-color: var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .emptyStateCard {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+.emptyStateIcon {
+	color: var(--mantine-color-gray-5);
+}
+
+[data-mantine-color-scheme='dark'] .emptyStateIcon {
+	color: var(--mantine-color-dark-2);
+}
+
+.sheetCard {
+	background: var(--mantine-color-body);
+	box-shadow: var(--mantine-shadow-sm);
+	border-color: var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .sheetCard {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-4);
+	box-shadow: none;
+}
+
+.sheetHeaderMain {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	min-width: 0;
+}
+
+.sheetTitle {
+	line-height: 1.2;
+	word-break: break-word;
+}
+
+.renameRow {
+	flex-wrap: wrap;
+}
+
+.renameInput {
+	min-width: min(320px, 100%);
 }
 
 .labelHeader {
@@ -24,7 +123,7 @@
 }
 
 .actionsHeader {
-	width: 96px;
+	width: 48px;
 	text-align: right;
 }
 
@@ -43,7 +142,7 @@
 }
 
 .actionsColumn {
-	width: 96px;
+	width: 48px;
 	text-align: right;
 }
 
@@ -56,6 +155,10 @@
 	flex-shrink: 0;
 	margin-top: 2px;
 	color: var(--mantine-color-gray-4);
+}
+
+[data-mantine-color-scheme='dark'] .gripIcon {
+	color: var(--mantine-color-dark-3);
 }
 
 .labelContent {
@@ -86,6 +189,13 @@
 	border-radius: 999px;
 	background: var(--mantine-color-gray-0);
 	border: 1px solid var(--mantine-color-gray-2);
+	color: var(--mantine-color-gray-7);
+}
+
+[data-mantine-color-scheme='dark'] .orderPill {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-1);
 }
 
 .actionsGroup {
@@ -93,11 +203,25 @@
 	justify-content: flex-end;
 }
 
+.menuTarget {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
 .saveBar {
-	background: color-mix(in srgb, var(--mantine-color-gray-0) 70%, white);
+	/* Intentionally reuse the same card surface as .sheetCard. */
 }
 
 @media (max-width: 48em) {
+	.sheetCard {
+		padding: var(--mantine-spacing-xs);
+	}
+
+	.renameInput {
+		min-width: 100%;
+	}
+
 	.labelColumn {
 		min-width: 280px;
 	}

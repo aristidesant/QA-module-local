@@ -3,6 +3,7 @@ import reportValuesApi from '~/api/reportValuesApi';
 import type {
 	BulkUpdateReportValuesDto,
 	CreateReportValueDto,
+	DuplicateReportValueDto,
 	UpdateReportValueDto,
 } from '~/models/ReportValue';
 
@@ -55,6 +56,32 @@ export const useUpdateReportValue = (campaignId: number) => {
 			return api.update(id, dto);
 		},
 		onSuccess: () => {
+			void queryClient.invalidateQueries({
+				queryKey: ['reportColumns', 'campaign', campaignId],
+			});
+		},
+	});
+};
+
+export const useDuplicateReportValue = (
+	campaignId: number,
+	options: ReportValueMutationOptions = {}
+) => {
+	const queryClient = useQueryClient();
+	const { invalidateOnSuccess = true } = options;
+	return useMutation({
+		mutationFn: async ({
+			id,
+			dto,
+		}: {
+			id: number;
+			dto: DuplicateReportValueDto;
+		}) => {
+			const api = reportValuesApi();
+			return api.duplicate(id, dto);
+		},
+		onSuccess: () => {
+			if (!invalidateOnSuccess) return;
 			void queryClient.invalidateQueries({
 				queryKey: ['reportColumns', 'campaign', campaignId],
 			});

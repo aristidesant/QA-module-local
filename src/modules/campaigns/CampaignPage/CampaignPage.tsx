@@ -1,28 +1,29 @@
 import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router';
+import { Outlet, useNavigate, useParams } from 'react-router';
 import { Alert, Flex, Loader } from '@mantine/core';
 import { IconAlertCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { CampaignsForm } from '../CampaignsForm/CampaignsForm';
+import AccessDenied from '~/components/AccessDenied';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import usePermissions from '~/hooks/usePermissions';
-import { PermissionEnum } from '~/constants/PermissionEnum';
 import { ModuleEnum } from '~/constants/ModuleEnum';
-import AccessDenied from '~/components/AccessDenied';
+import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useCampaignsStore } from '~/stores/campaignsStore';
-import { campaignDetailNamespaces } from '../campaignNamespaces';
 
 const CampaignPage = () => {
-	const { t } = useTranslation(campaignDetailNamespaces);
+	const { t } = useTranslation('campaign.detail');
 	const { campaignId } = useParams<{ campaignId: string }>();
 	const navigate = useNavigate();
 
 	const selectCampaign = useCampaignsStore((state) => state.selectCampaign);
 	const resetView = useCampaignsStore((state) => state.resetView);
-	const setEditCampaign = useCampaignsStore((state) => state.setEditCampaign);
-	const setSelectedTab = useCampaignsStore((state) => state.setSelectedTab);
-	const selectedCampaign = useCampaignsStore((state) => state.selectedCampaign);
+
+	const { canPerformAction } = usePermissions();
+	const canEditCampaign = canPerformAction(
+		ModuleEnum.CAMPAIGNS,
+		PermissionEnum.UPDATE
+	);
 
 	const {
 		data: campaign,
@@ -31,50 +32,49 @@ const CampaignPage = () => {
 		error,
 	} = useGetCampaign(campaignId ?? '');
 
-	const { canPerformAction } = usePermissions();
-
-	// If a user doesn't have edit access to campaigns, show a generic access denied.
-	if (!canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE)) {
-		return <AccessDenied onBackClick={() => navigate('/campaigns')} />;
-	}
+	useEffect(() => {
+		if (campaign) {
+			selectCampaign(campaign);
+		}
+	}, [campaign, selectCampaign]);
 
 	useEffect(() => {
-		setEditCampaign(true);
-		setSelectedTab('agents');
-
 		return () => {
 			resetView();
 		};
-		// We deliberately run this effect only on mount/unmount to avoid resetting state during tab activity.
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, []);
+	}, [resetView]);
 
-	useEffect(() => {
-		// When we receive the campaign from the API, always make sure the
-		// full campaign object is selected in the store. This helps avoid
-		// placeholder state where only an ID is selected and prevents UI
-		// flicker when data finishes loading.
-		if (
-			campaign &&
-			(!selectedCampaign ||
-				selectedCampaign.id !== campaign.id ||
-				// If the store holds a partial/stub campaign (no name), prefer
-				// the freshly fetched complete campaign object.
-				(selectedCampaign as any).name !== campaign.name ||
-				// If the store has not been refreshed after an update (no updatedAt or stale),
-				// replace it with the freshly fetched version to keep state in sync.
-				!(selectedCampaign as any).updatedAt ||
-				(selectedCampaign as any).updatedAt !== (campaign as any).updatedAt)
-		) {
-			selectCampaign(campaign);
-		}
-	}, [campaign, selectedCampaign, selectCampaign]);
+	if (!canEditCampaign) {
+		return <AccessDenied onBackClick={() => navigate('/campaigns')} />;
+	}
+
+	if (!campaignId) {
+		return (
+			<ContentContainer
+				title={t('page.errorTitle')}
+				description={t('page.errorDescription')}
+				showBackButton
+				onBackClick={() => navigate('/campaigns')}
+			>
+				<Alert
+					icon={<IconAlertCircle size={16} />}
+					title={t('status.error', { ns: 'common' })}
+					color='red'
+					variant='light'
+				>
+					{t('page.notFound')}
+				</Alert>
+			</ContentContainer>
+		);
+	}
 
 	if (isLoading) {
 		return (
 			<ContentContainer
 				title={t('page.loadingTitle')}
 				description={t('page.loadingDescription')}
+				showBackButton
+				onBackClick={() => navigate('/campaigns')}
 			>
 				<Flex justify='center' align='center' style={{ minHeight: '400px' }}>
 					<Loader size='lg' />
@@ -103,14 +103,7 @@ const CampaignPage = () => {
 		);
 	}
 
-	return (
-		<CampaignsForm
-			campaign={campaign}
-			onBack={() => {
-				navigate('/campaigns');
-			}}
-		/>
-	);
+	return <Outlet context={campaign} />;
 };
 
 export default CampaignPage;

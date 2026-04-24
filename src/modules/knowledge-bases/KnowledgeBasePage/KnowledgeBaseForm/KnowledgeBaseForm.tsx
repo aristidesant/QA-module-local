@@ -20,6 +20,9 @@ import {
 	IconWorldWww,
 	IconInfoCircle,
 	IconFileText,
+	IconLink,
+	IconWriting,
+	IconFilePencil,
 } from '@tabler/icons-react';
 import {
 	useCreateKnowledgeBase,
@@ -237,23 +240,22 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 	// Type indicator for visual feedback
 	const typeIndicator = useMemo(() => {
 		if (isEditMode && kb?.type) {
-			// Show existing type in edit mode
 			const typeLabels: Record<
 				KnowledgeBaseType,
-				{ icon: string; label: string; color: string }
+				{ icon: React.ReactNode; label: string; color: string }
 			> = {
 				[KnowledgeBaseType.FILE]: {
-					icon: '📄',
+					icon: <IconFilePencil size={14} />,
 					label: t('form.typeIndicator.file'),
 					color: 'blue',
 				},
 				[KnowledgeBaseType.URL]: {
-					icon: '🔗',
+					icon: <IconLink size={14} />,
 					label: t('form.typeIndicator.url'),
 					color: 'green',
 				},
 				[KnowledgeBaseType.TEXT]: {
-					icon: '📝',
+					icon: <IconWriting size={14} />,
 					label: t('form.typeIndicator.text'),
 					color: 'gray',
 				},
@@ -263,20 +265,20 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 		if (!detectedType) return null;
 		const typeLabels: Record<
 			KnowledgeBaseType,
-			{ icon: string; label: string; color: string }
+			{ icon: React.ReactNode; label: string; color: string }
 		> = {
 			[KnowledgeBaseType.FILE]: {
-				icon: '📄',
+				icon: <IconFilePencil size={14} />,
 				label: t('form.typeIndicator.fileDetected'),
 				color: 'blue',
 			},
 			[KnowledgeBaseType.URL]: {
-				icon: '🔗',
+				icon: <IconLink size={14} />,
 				label: t('form.typeIndicator.urlDetected'),
 				color: 'green',
 			},
 			[KnowledgeBaseType.TEXT]: {
-				icon: '📝',
+				icon: <IconWriting size={14} />,
 				label: t('form.typeIndicator.textDetected'),
 				color: 'gray',
 			},
@@ -359,7 +361,7 @@ const KnowledgeBaseForm = ({ id }: Props = {}) => {
 								size='sm'
 								variant='light'
 								color={typeIndicator.color}
-								leftSection={<span>{typeIndicator.icon}</span>}
+								leftSection={typeIndicator.icon}
 							>
 								{typeIndicator.label}
 							</Badge>

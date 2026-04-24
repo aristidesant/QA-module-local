@@ -22,8 +22,17 @@
 	transition: border-color 0.2s ease;
 }
 
+[data-mantine-color-scheme='dark'] .metaItem {
+	background-color: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
 .metaItem:hover {
 	border-color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] .metaItem:hover {
+	border-color: var(--mantine-color-dark-4);
 }
 
 .metaHeader {
@@ -46,6 +55,11 @@
 	border-radius: var(--mantine-radius-md);
 }
 
+[data-mantine-color-scheme='dark'] .metaIcon {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+}
+
 .metaLabel {
 	font-size: 11px;
 	font-weight: 600;
@@ -55,9 +69,17 @@
 	line-height: 1.2;
 }
 
+[data-mantine-color-scheme='dark'] .metaLabel {
+	color: var(--mantine-color-dark-2);
+}
+
 .metaValue {
 	font-size: 18px;
 	font-weight: 700;
 	color: var(--mantine-color-gray-9);
 	line-height: 1.2;
+}
+
+[data-mantine-color-scheme='dark'] .metaValue {
+	color: var(--mantine-color-dark-0);
 }

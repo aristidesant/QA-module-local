@@ -1,1 +1,1 @@
-export { default } from "./DispositionCatalogMenuItem";
+export { default } from './DispositionCatalogMenuItem';

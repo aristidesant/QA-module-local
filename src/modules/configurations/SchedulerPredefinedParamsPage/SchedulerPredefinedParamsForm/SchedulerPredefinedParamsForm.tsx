@@ -1,4 +1,5 @@
-import { Button, Group, Stack, Switch, Text, TextInput } from '@mantine/core';
+import { Button, Group, Switch, Text, TextInput } from '@mantine/core';
+import { Badge, Paper } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
@@ -111,6 +112,9 @@ const SchedulerPredefinedParamsForm: React.FC<
 			},
 		},
 	});
+	const activeDaysCount = form.values.dayConfigs.filter(
+		(day) => day.isActive
+	).length;
 
 	const updateDayField = <K extends keyof FormDayConfig>(
 		index: number,
@@ -250,101 +254,147 @@ const SchedulerPredefinedParamsForm: React.FC<
 
 	return (
 		<form onSubmit={form.onSubmit(handleSubmit)} className={classes.form}>
-			<Stack gap='sm'>
-				<TextInput
-					label={t('form.name.label')}
-					placeholder={t('form.name.placeholder')}
-					required
-					size='sm'
-					{...form.getInputProps('name')}
-				/>
-
-				<div className={classes.sectionHeader}>
-					<Text className={classes.sectionTitle}>
-						{t('form.weeklyWindows.title')}
-					</Text>
-					<Text className={classes.sectionDescription}>
-						{t('form.weeklyWindows.description')}
-					</Text>
-				</div>
-
-				<div className={classes.daysHeader}>
-					<Text size='xs' fw={600}>
-						{t('form.daysHeader.day')}
-					</Text>
-					<Text size='xs' fw={600}>
-						{t('form.daysHeader.start')}
-					</Text>
-					<Text size='xs' fw={600}>
-						{t('form.daysHeader.end')}
-					</Text>
-					<Text size='xs' fw={600}>
-						{t('form.daysHeader.status')}
-					</Text>
-				</div>
-
-				<div className={classes.daysGrid}>
-					{form.values.dayConfigs.map((day, index) => (
-						<div
-							key={day.dayOfWeek}
-							className={`${classes.dayCard} ${
-								day.isActive ? classes.dayCardActive : ''
-							}`}
+			<div className={classes.content}>
+				<Paper withBorder radius='lg' className={classes.summaryCard}>
+					<div className={classes.summaryHeader}>
+						<div className={classes.summaryText}>
+							<Text
+								size='xs'
+								fw={700}
+								tt='uppercase'
+								className={classes.summaryKicker}
+							>
+								{t('form.summary.kicker')}
+							</Text>
+							<Text size='sm' className={classes.summaryDescription}>
+								{t('form.summary.description')}
+							</Text>
+						</div>
+						<Badge
+							variant='light'
+							color={activeDaysCount ? 'blue' : 'gray'}
+							radius='xl'
 						>
-							<div className={classes.dayCell}>
-								<Switch
+							{t('form.summary.activeDays', { count: activeDaysCount })}
+						</Badge>
+					</div>
+				</Paper>
+
+				<Paper withBorder radius='lg' className={classes.sectionCard}>
+					<div className={classes.sectionHeader}>
+						<Text className={classes.sectionTitle}>
+							{t('form.weeklyWindows.title')}
+						</Text>
+						<Text className={classes.sectionDescription}>
+							{t('form.weeklyWindows.description')}
+						</Text>
+						<Text size='xs' c='dimmed'>
+							{t('form.helper.use24h')}
+						</Text>
+					</div>
+
+					<div className={classes.nameField}>
+						<TextInput
+							label={t('form.name.label')}
+							placeholder={t('form.name.placeholder')}
+							required
+							size='sm'
+							radius='md'
+							{...form.getInputProps('name')}
+						/>
+					</div>
+
+					<div className={classes.daysHeader}>
+						<Text size='xs' fw={600}>
+							{t('form.daysHeader.day')}
+						</Text>
+						<Text size='xs' fw={600}>
+							{t('form.daysHeader.start')}
+						</Text>
+						<Text size='xs' fw={600}>
+							{t('form.daysHeader.end')}
+						</Text>
+						<Text size='xs' fw={600}>
+							{t('form.daysHeader.status')}
+						</Text>
+					</div>
+
+					<div className={classes.daysGrid}>
+						{form.values.dayConfigs.map((day, index) => (
+							<div
+								key={day.dayOfWeek}
+								className={`${classes.dayCard} ${
+									day.isActive ? classes.dayCardActive : ''
+								}`}
+							>
+								<div className={classes.dayCell}>
+									<Switch
+										size='sm'
+										checked={day.isActive}
+										onChange={(event) =>
+											updateDayField(
+												index,
+												'isActive',
+												event.currentTarget.checked
+											)
+										}
+									/>
+									<div className={classes.dayTitleGroup}>
+										<Text fw={700} size='sm'>
+											{t(`days.full.${day.dayOfWeek}`, {
+												lng: i18n.language,
+											})}
+										</Text>
+										<Text size='xs' className={classes.dayStatus}>
+											{day.isActive
+												? t('form.status.enabled')
+												: t('form.status.disabled')}
+										</Text>
+									</div>
+								</div>
+								<TextInput
+									placeholder='08:00'
 									size='sm'
-									checked={day.isActive}
+									variant='default'
+									radius='md'
+									value={day.startHour}
 									onChange={(event) =>
 										updateDayField(
 											index,
-											'isActive',
-											event.currentTarget.checked
+											'startHour',
+											event.currentTarget.value
 										)
 									}
+									onBlur={() => handleTimeBlur(index, 'startHour')}
+									className={classes.inlineInput}
 								/>
-								<div className={classes.dayTitleGroup}>
-									<Text fw={700} size='sm'>
-										{t(`days.full.${day.dayOfWeek}`, {
-											lng: i18n.language,
-										})}
-									</Text>
-									<Text size='xs' className={classes.dayStatus}>
-										{day.isActive
-											? t('form.status.enabled')
-											: t('form.status.disabled')}
-									</Text>
-								</div>
+								<TextInput
+									placeholder='17:00'
+									size='sm'
+									variant='default'
+									radius='md'
+									value={day.endHour}
+									onChange={(event) =>
+										updateDayField(index, 'endHour', event.currentTarget.value)
+									}
+									onBlur={() => handleTimeBlur(index, 'endHour')}
+									className={classes.inlineInput}
+								/>
+								<Badge
+									variant='light'
+									color={day.isActive ? 'blue' : 'gray'}
+									radius='xl'
+									className={classes.statusBadge}
+								>
+									{day.isActive
+										? t('form.status.enabled')
+										: t('form.status.disabled')}
+								</Badge>
 							</div>
-							<TextInput
-								placeholder='08:00'
-								size='xs'
-								variant='filled'
-								value={day.startHour}
-								onChange={(event) =>
-									updateDayField(index, 'startHour', event.currentTarget.value)
-								}
-								onBlur={() => handleTimeBlur(index, 'startHour')}
-								className={classes.inlineInput}
-							/>
-							<TextInput
-								placeholder='17:00'
-								size='xs'
-								variant='filled'
-								value={day.endHour}
-								onChange={(event) =>
-									updateDayField(index, 'endHour', event.currentTarget.value)
-								}
-								onBlur={() => handleTimeBlur(index, 'endHour')}
-								className={classes.inlineInput}
-							/>
-							<Text size='xs' className={classes.helperText}>
-								{t('form.helper.use24h')}
-							</Text>
-						</div>
-					))}
-				</div>
-			</Stack>
+						))}
+					</div>
+				</Paper>
+			</div>
 
 			<Group justify='flex-end' className={classes.actions}>
 				<Button variant='light' size='sm' onClick={onClose}>

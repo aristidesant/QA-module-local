@@ -95,12 +95,7 @@ export const StepFourParameters: React.FC<StepFourParametersProps> = ({
 						</ActionIcon>
 					}
 				>
-					<ParametersSection
-						workingHours={createdCampaign.workingHours || {}}
-						onChange={() => {}}
-						onCopyToAll={() => {}}
-						campaignId={createdCampaign.id}
-					/>
+					<ParametersSection campaignId={createdCampaign.id} />
 				</SectionCard>
 			</Stack>
 

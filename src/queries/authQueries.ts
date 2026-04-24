@@ -19,6 +19,10 @@ import {
 	changeClient,
 	ChangeClientRequest,
 	ChangeClientResponse,
+	forgotPassword,
+	ForgotPasswordRequest,
+	resetPassword,
+	ResetPasswordRequest,
 } from '~/api/authApi';
 import userApi from '~/api/userApi';
 import { useSessionStore } from '~/stores/sessionStore';
@@ -310,6 +314,25 @@ export function useChangeClient() {
 			void error;
 			setLoading(false);
 		},
+	});
+}
+
+/**
+ * Mutation to request a password reset OTP.
+ * Always returns a neutral response to prevent user enumeration.
+ */
+export function useRequestPasswordReset() {
+	return useMutation<{ message: string }, Error, ForgotPasswordRequest>({
+		mutationFn: (payload: ForgotPasswordRequest) => forgotPassword(payload),
+	});
+}
+
+/**
+ * Mutation to reset the password using a valid OTP.
+ */
+export function useResetPassword() {
+	return useMutation<{ message: string }, Error, ResetPasswordRequest>({
+		mutationFn: (payload: ResetPasswordRequest) => resetPassword(payload),
 	});
 }
 

@@ -1,73 +1,27 @@
-import { useState, useContext, useMemo, useEffect, useRef } from 'react';
+import { useState, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQueryClient } from '@tanstack/react-query';
 import {
-	ActionIcon,
 	Badge,
-	Box,
 	Button,
 	Group,
 	Paper,
 	Stack,
 	Text,
+	TextInput,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
-import { modals } from '@mantine/modals';
-import { notifications } from '@mantine/notifications';
-import { IconEdit, IconGripVertical, IconTrash } from '@tabler/icons-react';
-import {
-	useCreateReportValue,
-	useBulkUpdateReportValues,
-	useGetReportColumns,
-	useDeleteReportValue,
-} from '~/queries/reportValuesQueries';
-import type {
-	BulkUpdateReportValueItemDto,
-	ReportValue,
-} from '~/models/ReportValue';
-import { getErrorMessage } from '~/utils/httpClient';
+import { IconLayoutGrid, IconPlus } from '@tabler/icons-react';
 import { CampaignIdContext } from '~/modules/campaigns/campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
-import BaseTable from '~/components/BaseTable';
-import type { BaseTableColumnDef } from '~/components/BaseTable/BaseTable';
-import ReportValueFormModal, {
-	type FormValues as ReportValueFormValues,
-} from './ReportValueFormModal';
+import BaseTable from '~/components/BaseTable/BaseTable';
+import type { ReportValue } from '~/models/ReportValue';
+import { getDefaultSheetName, getNextSheetNumber } from './reportValueUtils';
+import { useReportValueDraft } from './useReportValueDraft';
+import { useReportValueColumns } from './useReportValueColumns';
+import ReportValueFormModal from './ReportValueFormModal';
 import styles from './ReportValuesSection.module.css';
 
-const ORIGIN_TYPE_COLORS: Record<string, string> = {
-	SQL: 'blue',
-	DYNAMIC: 'violet',
-	OBJECT: 'teal',
-	METADATA: 'orange',
-};
-
-const DATA_TYPE_COLORS: Record<string, string> = {
-	STRING: 'gray',
-	NUMBER: 'orange',
-	BOOLEAN: 'pink',
-	DATE: 'cyan',
-	DATETIME: 'indigo',
-};
-
-const normalizeColumns = (items: ReportValue[]): ReportValue[] =>
-	[...items]
-		.sort((a, b) => a.order - b.order)
-		.map((item, index) => ({
-			...item,
-			format: item.format ?? null,
-			order: index,
-		}));
-
-const toComparableColumn = (item: ReportValue) => ({
-	id: item.id,
-	originType: item.originType,
-	key: item.key,
-	label: item.label,
-	dataType: item.dataType,
-	format: item.format ?? null,
-	order: item.order,
-});
+type ReportValueModalMode = 'create' | 'edit' | 'move' | 'duplicate';
 
 const ReportValuesSection = () => {
 	const { t } = useTranslation([
@@ -76,401 +30,143 @@ const ReportValuesSection = () => {
 		'common',
 	]);
 	const campaignId = useContext(CampaignIdContext);
-	const queryClient = useQueryClient();
 
 	const [modalOpened, { open: openModal, close: closeModal }] =
 		useDisclosure(false);
 	const [editTarget, setEditTarget] = useState<ReportValue | undefined>(
 		undefined
 	);
-	const [initialColumns, setInitialColumns] = useState<ReportValue[]>([]);
-	const [draftColumns, setDraftColumns] = useState<ReportValue[]>([]);
-	const [pendingDeleteIds, setPendingDeleteIds] = useState<number[]>([]);
-	const [isSavingDraft, setIsSavingDraft] = useState(false);
-	const nextTempIdRef = useRef(-1);
-	const shouldSyncFromServerRef = useRef(false);
-
-	const { data: columns = [], isLoading } = useGetReportColumns(
-		campaignId ?? 0
+	const [templateTarget, setTemplateTarget] = useState<ReportValue | undefined>(
+		undefined
 	);
-	const createMutation = useCreateReportValue(campaignId ?? 0, {
-		invalidateOnSuccess: false,
-	});
-	const bulkUpdateMutation = useBulkUpdateReportValues(campaignId ?? 0, {
-		invalidateOnSuccess: false,
-	});
-	const deleteMutation = useDeleteReportValue(campaignId ?? 0, {
-		invalidateOnSuccess: false,
-	});
+	const [modalMode, setModalMode] = useState<ReportValueModalMode>('create');
+	const [activeSheet, setActiveSheet] = useState<{
+		sheet: number;
+		sheetName: string;
+	} | null>(null);
 
-	const hasPendingChanges = useMemo(() => {
-		const initialComparable = JSON.stringify(
-			initialColumns.filter((item) => item.id > 0).map(toComparableColumn)
-		);
-		const draftComparable = JSON.stringify(
-			draftColumns.filter((item) => item.id > 0).map(toComparableColumn)
-		);
+	const {
+		draftColumns,
+		pendingDeleteIds,
+		isSavingDraft,
+		hasPendingChanges,
+		isLoading,
+		sheetDrafts,
+		groupedSheets,
+		sheetOptions,
+		duplicateMutation,
+		resolvedCampaignId,
+		getValidTargetSheets,
+		handleAddSheet,
+		handleDeleteClick,
+		handleRowReorder,
+		handleStartRenameSheet,
+		handleRenameSheetChange,
+		handleRenameSheetCancel,
+		handleRenameSheetSubmit,
+		handleSubmitDraft,
+		handleDuplicateSubmit,
+		handleDiscardChanges,
+		handleSaveChanges,
+	} = useReportValueDraft(campaignId ?? null);
 
-		return (
-			pendingDeleteIds.length > 0 ||
-			draftColumns.some((item) => item.id < 0) ||
-			initialComparable !== draftComparable
-		);
-	}, [draftColumns, initialColumns, pendingDeleteIds]);
-
-	useEffect(() => {
-		if (isSavingDraft) {
-			return;
-		}
-
-		const normalized = normalizeColumns(columns);
-
-		if (shouldSyncFromServerRef.current || !hasPendingChanges) {
-			setInitialColumns(normalized);
-			setDraftColumns(normalized);
-			setPendingDeleteIds([]);
-			shouldSyncFromServerRef.current = false;
-		}
-	}, [columns, hasPendingChanges, isSavingDraft]);
-
-	const handleAddClick = () => {
-		setEditTarget(undefined);
-		openModal();
-	};
-
-	const handleEditClick = (reportValue: ReportValue) => {
-		setEditTarget(reportValue);
-		openModal();
-	};
-
-	const handleDeleteClick = (reportValue: ReportValue) => {
-		modals.openConfirmModal({
-			title: t('reportValues.deleteConfirm.title', {
-				ns: 'campaign.contact-list',
-			}),
-			children: t('reportValues.deleteConfirm.message', {
-				ns: 'campaign.contact-list',
-				label: reportValue.label,
-			}),
-			labels: {
-				confirm: t('reportValues.deleteConfirm.confirm', {
-					ns: 'campaign.contact-list',
-				}),
-				cancel: t('reportValues.deleteConfirm.cancel', {
-					ns: 'campaign.contact-list',
-				}),
+	const tableColumns = useReportValueColumns(
+		{
+			onMoveClick: (reportValue) => {
+				const validTargetSheets = getValidTargetSheets(reportValue);
+				const nextSheetNumber = getNextSheetNumber(groupedSheets);
+				const targetSheet = validTargetSheets[0] ?? {
+					sheet: nextSheetNumber,
+					sheetName: getDefaultSheetName(nextSheetNumber),
+				};
+				setModalMode('move');
+				setTemplateTarget(undefined);
+				setActiveSheet({
+					sheet: targetSheet.sheet,
+					sheetName: targetSheet.sheetName,
+				});
+				setEditTarget(reportValue);
+				openModal();
 			},
-			confirmProps: { color: 'red' },
-			onConfirm: () => {
-				setDraftColumns((prev) =>
-					prev
-						.filter((item) => item.id !== reportValue.id)
-						.map((item, index) => ({ ...item, order: index }))
-				);
-				if (reportValue.id > 0) {
-					setPendingDeleteIds((prev) =>
-						prev.includes(reportValue.id) ? prev : [...prev, reportValue.id]
-					);
-				}
+			onDuplicateClick: (reportValue) => {
+				const validTargetSheets = getValidTargetSheets(reportValue);
+				const nextSheetNumber = getNextSheetNumber(groupedSheets);
+				const targetSheet = validTargetSheets[0] ?? {
+					sheet: nextSheetNumber,
+					sheetName: getDefaultSheetName(nextSheetNumber),
+				};
+				setModalMode('duplicate');
+				setEditTarget(undefined);
+				setActiveSheet({
+					sheet: targetSheet.sheet,
+					sheetName: targetSheet.sheetName,
+				});
+				setTemplateTarget(reportValue);
+				openModal();
 			},
-		});
-	};
-
-	const handleRowReorder = async (
-		sourceIndex: number,
-		destinationIndex: number
-	) => {
-		if (sourceIndex === destinationIndex) return;
-		const reordered = Array.from(draftColumns);
-		const [moved] = reordered.splice(sourceIndex, 1);
-		reordered.splice(destinationIndex, 0, moved);
-		setDraftColumns(
-			reordered.map((item, index) => ({ ...item, order: index }))
-		);
-	};
-
-	const handleSubmitDraft = (
-		values: ReportValueFormValues,
-		reportValue?: ReportValue
-	) => {
-		const normalizedDataType = values.dataType;
-		if (!values.originType || !normalizedDataType) return;
-		const originType = values.originType;
-
-		setDraftColumns((prev) => {
-			if (reportValue) {
-				return prev.map((item) =>
-					item.id === reportValue.id
-						? {
-								...item,
-								originType,
-								key: values.key,
-								label: values.label,
-								dataType: normalizedDataType,
-							}
-						: item
-				);
-			}
-
-			const timestamp = new Date().toISOString();
-			return [
-				...prev,
-				{
-					id: nextTempIdRef.current--,
-					originType,
-					key: values.key,
-					label: values.label,
-					dataType: normalizedDataType,
-					format: null,
-					order: prev.length,
-					campaignId: resolvedCampaignId,
-					userId: 0,
-					clientId: 0,
-					createdAt: timestamp,
-					updatedAt: timestamp,
-					deletedAt: null,
-				},
-			];
-		});
-	};
-
-	const handleDiscardChanges = () => {
-		setDraftColumns(initialColumns);
-		setPendingDeleteIds([]);
-	};
-
-	const handleSaveChanges = async () => {
-		if (!hasPendingChanges) return;
-
-		setIsSavingDraft(true);
-		const createdItemsMap = new Map<number, ReportValue>();
-		const deletedSucceededIds: number[] = [];
-
-		try {
-			const newItems = draftColumns.filter((item) => item.id < 0);
-
-			for (const item of newItems) {
-				const created = await createMutation.mutateAsync({
-					originType: item.originType,
-					key: item.key,
-					label: item.label,
-					dataType: item.dataType,
-					order: item.order,
-					campaignId: resolvedCampaignId,
+			onEditClick: (reportValue) => {
+				setModalMode('edit');
+				setTemplateTarget(undefined);
+				setActiveSheet({
+					sheet: reportValue.sheet,
+					sheetName: reportValue.sheetName,
 				});
-				createdItemsMap.set(item.id, {
-					...created,
-					format: created.format ?? item.format ?? null,
-				});
-			}
-
-			const persistedColumns = draftColumns
-				.map((item) => createdItemsMap.get(item.id) ?? item)
-				.map((item, index) => ({
-					...item,
-					order: index,
-				}));
-
-			setDraftColumns(persistedColumns);
-
-			const bulkItems: BulkUpdateReportValueItemDto[] = persistedColumns
-				.filter((item) => item.id > 0)
-				.map((item) => ({
-					id: item.id,
-					originType: item.originType,
-					key: item.key,
-					label: item.label,
-					dataType: item.dataType,
-					format: item.format ?? null,
-					order: item.order,
-				}));
-
-			if (bulkItems.length > 0) {
-				await bulkUpdateMutation.mutateAsync({
-					reportValues: bulkItems,
-				});
-			}
-
-			for (const id of pendingDeleteIds) {
-				await deleteMutation.mutateAsync(id);
-				deletedSucceededIds.push(id);
-			}
-
-			notifications.show({
-				message: t('form.reportValues.notifications.saved'),
-				color: 'green',
-			});
-			const syncedColumns = persistedColumns.filter((item) => item.id > 0);
-			setInitialColumns(syncedColumns);
-			setDraftColumns(syncedColumns);
-			setPendingDeleteIds([]);
-			shouldSyncFromServerRef.current = true;
-			queryClient.setQueryData(
-				['reportColumns', 'campaign', resolvedCampaignId],
-				syncedColumns
-			);
-			void queryClient.invalidateQueries({
-				queryKey: ['reportColumns', 'campaign', resolvedCampaignId],
-			});
-		} catch (error) {
-			if (createdItemsMap.size > 0) {
-				setDraftColumns((prev) =>
-					prev
-						.map((item) => createdItemsMap.get(item.id) ?? item)
-						.map((item, index) => ({ ...item, order: index }))
-				);
-			}
-
-			if (deletedSucceededIds.length > 0) {
-				setPendingDeleteIds((prev) =>
-					prev.filter((id) => !deletedSucceededIds.includes(id))
-				);
-			}
-
-			notifications.show({
-				message: getErrorMessage(error),
-				color: 'red',
-			});
-		} finally {
-			setIsSavingDraft(false);
-		}
-	};
+				setEditTarget(reportValue);
+				openModal();
+			},
+			onDeleteClick: handleDeleteClick,
+			isDeleting: (id: number) =>
+				isSavingDraft && id > 0 && pendingDeleteIds.includes(id),
+		},
+		styles
+	);
 
 	if (!campaignId) {
 		return null;
 	}
 
-	const resolvedCampaignId = campaignId;
-
 	const columnCountLabel = t('form.reportValues.count', {
 		count: draftColumns.length,
 	});
+	const sheetCountLabel = t('form.reportValues.sheetCount', {
+		count: groupedSheets.length,
+	});
 
-	const tableColumns = useMemo<BaseTableColumnDef<ReportValue>[]>(
-		() => [
-			{
-				id: 'label',
-				header: t('reportValues.columns.label', {
-					ns: 'campaign.contact-list',
-				}),
-				meta: {
-					headerClassName: styles.labelHeader,
-					cellClassName: styles.labelColumn,
-				},
-				cell: ({ row }) => (
-					<Group gap='sm' wrap='nowrap' className={styles.labelCell}>
-						<Box className={styles.gripIcon}>
-							<IconGripVertical size={16} />
-						</Box>
-						<Text size='xs' fw={700} c='dimmed' className={styles.orderPill}>
-							{row.index + 1}
-						</Text>
-						<Box className={styles.labelContent}>
-							<Text size='sm' fw={600} className={styles.labelValue}>
-								{row.original.label}
-							</Text>
-							<Text
-								size='xs'
-								c='dimmed'
-								ff='monospace'
-								className={styles.keyValue}
-							>
-								{row.original.key}
-							</Text>
-						</Box>
-					</Group>
-				),
-			},
-			{
-				id: 'originType',
-				header: t('reportValues.columns.originType', {
-					ns: 'campaign.contact-list',
-				}),
-				meta: {
-					headerClassName: styles.originHeader,
-					cellClassName: styles.originColumn,
-				},
-				cell: ({ row }) => (
-					<Badge
-						color={ORIGIN_TYPE_COLORS[row.original.originType] ?? 'gray'}
-						variant='light'
-						size='xs'
-					>
-						{t(`reportValues.originType.${row.original.originType}`, {
-							ns: 'campaign.contact-list',
-						})}
-					</Badge>
-				),
-			},
-			{
-				id: 'dataType',
-				header: t('reportValues.columns.dataType', {
-					ns: 'campaign.contact-list',
-				}),
-				meta: {
-					headerClassName: styles.dataTypeHeader,
-					cellClassName: styles.dataTypeColumn,
-				},
-				cell: ({ row }) => (
-					<Badge
-						color={DATA_TYPE_COLORS[row.original.dataType] ?? 'gray'}
-						variant='dot'
-						size='xs'
-					>
-						{t(`reportValues.dataType.${row.original.dataType}`, {
-							ns: 'campaign.contact-list',
-						})}
-					</Badge>
-				),
-			},
-			{
-				id: 'actions',
-				header: t('reportValues.columns.actions', {
-					ns: 'campaign.contact-list',
-				}),
-				meta: {
-					headerClassName: styles.actionsHeader,
-					cellClassName: styles.actionsColumn,
-				},
-				cell: ({ row }) => (
-					<Group
-						gap={4}
-						justify='flex-end'
-						wrap='nowrap'
-						className={styles.actionsGroup}
-					>
-						<ActionIcon
-							variant='subtle'
-							size='sm'
-							onClick={(event) => {
-								event.stopPropagation();
-								handleEditClick(row.original);
-							}}
-						>
-							<IconEdit size={14} />
-						</ActionIcon>
-						<ActionIcon
-							variant='subtle'
-							color='red'
-							size='sm'
-							onClick={(event) => {
-								event.stopPropagation();
-								handleDeleteClick(row.original);
-							}}
-							loading={
-								isSavingDraft &&
-								row.original.id > 0 &&
-								pendingDeleteIds.includes(row.original.id)
-							}
-						>
-							<IconTrash size={14} />
-						</ActionIcon>
-					</Group>
-				),
-			},
-		],
-		[t, isSavingDraft, pendingDeleteIds]
-	);
+	const handleAddClick = () => {
+		const defaultSheet = groupedSheets[0] ?? {
+			sheet: 1,
+			sheetName: getDefaultSheetName(1),
+		};
+		setModalMode('create');
+		setTemplateTarget(undefined);
+		setActiveSheet(defaultSheet);
+		setEditTarget(undefined);
+		openModal();
+	};
+
+	const handleAddColumnToSheet = (sheet: number, sheetName: string) => {
+		setModalMode('create');
+		setTemplateTarget(undefined);
+		setActiveSheet({ sheet, sheetName });
+		setEditTarget(undefined);
+		openModal();
+	};
+
+	const handleOpenAddSheet = () => {
+		const newSheet = handleAddSheet();
+		setModalMode('create');
+		setEditTarget(undefined);
+		setActiveSheet(newSheet);
+		openModal();
+	};
+
+	const handleCloseModal = () => {
+		setModalMode('create');
+		setActiveSheet(null);
+		setEditTarget(undefined);
+		setTemplateTarget(undefined);
+		closeModal();
+	};
 
 	return (
 		<SectionCard
@@ -486,28 +182,182 @@ const ReportValuesSection = () => {
 				},
 			}}
 			headerExtras={
-				<Badge variant='light' size='sm' className={styles.countBadge}>
-					{columnCountLabel}
-				</Badge>
+				<Group gap='xs'>
+					<Badge variant='light' size='sm' className={styles.countBadge}>
+						{sheetCountLabel}
+					</Badge>
+					<Badge variant='light' size='sm' className={styles.countBadge}>
+						{columnCountLabel}
+					</Badge>
+				</Group>
 			}
 		>
 			<Stack gap='md'>
-				<BaseTable<ReportValue>
-					className={styles.table}
-					data={draftColumns}
-					columns={tableColumns}
-					density='compact'
-					isLoading={isLoading}
-					emptyMessage={t('reportValues.noColumns', {
-						ns: 'campaign.contact-list',
-					})}
-					enableRowReordering
-					onRowReorder={(sourceIndex, destinationIndex) =>
-						void handleRowReorder(sourceIndex, destinationIndex)
-					}
-					getRowId={(row) => row.id}
-				/>
-				<Paper withBorder p='sm' radius='md' className={styles.saveBar}>
+				<Group justify='flex-end'>
+					<Button
+						variant='default'
+						size='xs'
+						leftSection={<IconPlus size={14} />}
+						onClick={handleOpenAddSheet}
+					>
+						{t('form.reportValues.addSheet')}
+					</Button>
+				</Group>
+
+				{groupedSheets.length === 0 && !isLoading ? (
+					<Paper
+						withBorder
+						p='lg'
+						radius='md'
+						className={styles.emptyStateCard}
+					>
+						<Stack gap='xs' align='center'>
+							<IconLayoutGrid size={20} className={styles.emptyStateIcon} />
+							<Text size='sm' fw={600} ta='center'>
+								{t('form.reportValues.noSheetsTitle')}
+							</Text>
+							<Text size='sm' c='dimmed' ta='center'>
+								{t('form.reportValues.noSheetsDescription')}
+							</Text>
+							<Group gap='xs'>
+								<Button size='sm' onClick={handleOpenAddSheet}>
+									{t('form.reportValues.addSheet')}
+								</Button>
+								<Button size='sm' variant='default' onClick={handleAddClick}>
+									{t('reportValues.addColumn', {
+										ns: 'campaign.contact-list',
+									})}
+								</Button>
+							</Group>
+						</Stack>
+					</Paper>
+				) : null}
+
+				{groupedSheets.map((group) => {
+					const renameDraft = sheetDrafts[group.sheet];
+					const isEditingName = typeof renameDraft === 'string';
+
+					return (
+						<Paper
+							key={group.sheet}
+							withBorder
+							p='sm'
+							radius='md'
+							className={styles.sheetCard}
+						>
+							<Stack gap='sm'>
+								<Group justify='space-between' align='flex-start' gap='sm'>
+									<div className={styles.sheetHeaderMain}>
+										<Badge
+											variant='light'
+											size='sm'
+											className={styles.sheetBadge}
+										>
+											{t('form.reportValues.sheetLabel', {
+												sheet: group.sheet,
+											})}
+										</Badge>
+										{isEditingName ? (
+											<Group
+												gap='xs'
+												align='flex-start'
+												className={styles.renameRow}
+											>
+												<TextInput
+													size='sm'
+													value={renameDraft}
+													onChange={(event) =>
+														handleRenameSheetChange(
+															group.sheet,
+															event.currentTarget.value
+														)
+													}
+													className={styles.renameInput}
+												/>
+												<Group gap='xs'>
+													<Button
+														size='xs'
+														onClick={() =>
+															handleRenameSheetSubmit(
+																group.sheet,
+																group.sheetName
+															)
+														}
+													>
+														{t('actions.save', { ns: 'common' })}
+													</Button>
+													<Button
+														size='xs'
+														variant='default'
+														onClick={() => handleRenameSheetCancel(group.sheet)}
+													>
+														{t('actions.cancel', { ns: 'common' })}
+													</Button>
+												</Group>
+											</Group>
+										) : (
+											<>
+												<Text size='md' fw={700} className={styles.sheetTitle}>
+													{group.sheetName}
+												</Text>
+												<Text size='sm' c='dimmed'>
+													{t('form.reportValues.sheetColumnCount', {
+														count: group.columns.length,
+													})}
+												</Text>
+											</>
+										)}
+									</div>
+									<Group gap='xs'>
+										<Button
+											variant='default'
+											size='sm'
+											onClick={() =>
+												handleAddColumnToSheet(group.sheet, group.sheetName)
+											}
+										>
+											{t('form.reportValues.addColumnToSheet')}
+										</Button>
+										{!isEditingName ? (
+											<Button
+												variant='subtle'
+												size='sm'
+												onClick={() =>
+													handleStartRenameSheet(group.sheet, group.sheetName)
+												}
+											>
+												{t('form.reportValues.renameSheet')}
+											</Button>
+										) : null}
+									</Group>
+								</Group>
+
+								<BaseTable<ReportValue>
+									className={styles.table}
+									data={group.columns}
+									columns={tableColumns}
+									density='compact'
+									isLoading={isLoading}
+									emptyMessage={t('reportValues.noColumns', {
+										ns: 'campaign.contact-list',
+									})}
+									enableRowReordering
+									onRowReorder={(sourceIndex, destinationIndex) =>
+										handleRowReorder(group.sheet, sourceIndex, destinationIndex)
+									}
+									getRowId={(row) => row.id}
+								/>
+							</Stack>
+						</Paper>
+					);
+				})}
+
+				<Paper
+					withBorder
+					p='sm'
+					radius='md'
+					className={`${styles.sheetCard} ${styles.saveBar}`}
+				>
 					<Group justify='space-between' align='center' gap='sm'>
 						<Text size='sm' c={hasPendingChanges ? 'dimmed' : 'gray'}>
 							{hasPendingChanges
@@ -538,12 +388,18 @@ const ReportValuesSection = () => {
 
 			<ReportValueFormModal
 				opened={modalOpened}
-				onClose={closeModal}
+				onClose={handleCloseModal}
 				campaignId={resolvedCampaignId}
 				reportValue={editTarget}
+				templateColumn={templateTarget}
+				mode={modalMode}
 				existingColumns={draftColumns}
 				onSubmitDraft={handleSubmitDraft}
+				onSubmitDuplicate={handleDuplicateSubmit}
 				isSubmittingDraft={isSavingDraft}
+				isSubmittingDuplicate={duplicateMutation.isPending}
+				availableSheets={sheetOptions}
+				defaultSheet={activeSheet ?? undefined}
 			/>
 		</SectionCard>
 	);

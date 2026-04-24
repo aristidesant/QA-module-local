@@ -1,0 +1,66 @@
+.fallback {
+	position: fixed;
+	right: var(--mantine-spacing-lg);
+	bottom: var(--mantine-spacing-lg);
+	width: min(22rem, calc(100vw - (var(--mantine-spacing-lg) * 2)));
+	z-index: 9000;
+}
+
+.embeddedRoot {
+	width: 100%;
+	overflow: hidden;
+}
+
+.embeddedStatus {
+	width: 100%;
+	min-height: 180px;
+}
+
+.embeddedContent {
+	width: 100%;
+	min-height: 680px;
+}
+
+.embeddedHostShell {
+	width: 100%;
+	min-height: 680px;
+	display: block;
+}
+
+.embeddedHost {
+	z-index: 1 !important;
+	display: block;
+	width: 100%;
+	min-height: 680px;
+}
+
+.widgetExpanded {
+	position: fixed;
+	right: var(--mantine-spacing-lg);
+	bottom: var(--mantine-spacing-lg);
+	z-index: 9000;
+}
+
+.widgetContent {
+	display: block;
+	overflow: hidden;
+}
+
+.widgetHost {
+	z-index: 9000 !important;
+	display: block;
+}
+
+@media (max-width: 48em) {
+	.fallback {
+		right: var(--mantine-spacing-sm);
+		left: auto;
+		bottom: var(--mantine-spacing-sm);
+		width: auto;
+	}
+
+	.widgetExpanded {
+		right: var(--mantine-spacing-sm);
+		bottom: var(--mantine-spacing-sm);
+	}
+}

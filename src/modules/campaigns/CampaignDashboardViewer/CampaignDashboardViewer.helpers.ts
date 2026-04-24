@@ -8,6 +8,7 @@ import type {
 	DashboardWidgetVisibilityScope,
 	GroupedMetricResult,
 	MetricCompareWith,
+	MetricResultType,
 	TimeSeriesMetricResult,
 } from '~/models/AnalyticsDashboard';
 import type { TFunction } from 'i18next';
@@ -27,6 +28,18 @@ export const ACCENT_COLORS = [
 	'#ec4899',
 	'#8b5cf6',
 ];
+
+const ACCENT_COLOR_TOKENS: Record<string, string> = {
+	'#6366f1': 'indigo',
+	'#0ea5e9': 'blue',
+	'#10b981': 'green',
+	'#f59e0b': 'orange',
+	'#ec4899': 'pink',
+	'#8b5cf6': 'grape',
+};
+
+export const getAccentToken = (color: string): string =>
+	ACCENT_COLOR_TOKENS[color] ?? 'indigo';
 
 export const GRID_MARGIN: [number, number] = [16, 16];
 export const GRID_ROW_GAP = GRID_MARGIN[1];
@@ -88,6 +101,18 @@ export const formatMetricValue = (
 	if (value === null || value === undefined || value === '') return '-';
 	return String(value);
 };
+
+export const resolveMetricDisplayValue = (
+	value: string | number | boolean | null | undefined,
+	valueFormat?: string | number | boolean | null
+) =>
+	valueFormat !== undefined && valueFormat !== null && valueFormat !== ''
+		? valueFormat
+		: value;
+
+export const isPercentMetricResultType = (
+	resultType?: MetricResultType | null
+) => resultType === 'PERCENT';
 
 type ComparisonCopyKeys = {
 	label: string;
@@ -256,7 +281,7 @@ export const getEditorCanvasMinHeight = (
 	);
 	const minimumRows = options?.minimumRows ?? 3;
 	const baseRows = Math.max(layoutBottomRow, minimumRows);
-	const extraRows = options?.extraRows ?? Math.max(baseRows, 6);
+	const extraRows = options?.extraRows ?? 2;
 	const totalRows = baseRows + extraRows;
 
 	return (

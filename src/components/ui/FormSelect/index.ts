@@ -1,2 +1,2 @@
-export { default } from "./FormSelect";
-export { FormSelect } from "./FormSelect";
+export { default } from './FormSelect';
+export { FormSelect } from './FormSelect';

@@ -30,10 +30,9 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 		'campaign.form.shared',
 		'common',
 	]);
-	const { activeStep, nextStep, reset } = useCampaignWizardStore();
+	const { activeStep, nextStep } = useCampaignWizardStore();
 
 	const handleCancel = () => {
-		reset();
 		onCancel?.();
 	};
 
@@ -47,6 +46,7 @@ export const CampaignWizard: React.FC<CampaignWizardProps> = ({
 				classNames={{
 					root: styles.stepperRoot,
 					steps: styles.stepperSteps,
+					stepWrapper: styles.stepWrapper,
 					stepBody: styles.stepBody,
 					stepLabel: styles.stepLabel,
 					stepDescription: styles.stepDescription,

@@ -1,3 +1,58 @@
+/* ── Dark mode ──────────────────────────────────────────── */
+[data-mantine-color-scheme='dark'] .rangePill {
+	border-color: color-mix(
+		in srgb,
+		var(--widget-accent, var(--mantine-color-indigo-4)) 25%,
+		var(--mantine-color-dark-5)
+	);
+	background: color-mix(
+		in srgb,
+		var(--widget-accent, var(--mantine-color-indigo-5)) 12%,
+		var(--mantine-color-dark-7)
+	);
+	color: color-mix(
+		in srgb,
+		var(--widget-accent, var(--mantine-color-indigo-3)) 70%,
+		var(--mantine-color-dark-1)
+	);
+}
+
+[data-mantine-color-scheme='dark'] .latestValue {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .tooltip {
+	background: color-mix(in srgb, var(--mantine-color-dark-7) 96%, transparent);
+	border-color: var(--mantine-color-dark-5);
+	box-shadow:
+		0 8px 24px color-mix(in srgb, var(--mantine-color-black) 32%, transparent),
+		0 2px 8px color-mix(in srgb, var(--mantine-color-black) 22%, transparent),
+		inset 0 1px 0
+			color-mix(in srgb, var(--mantine-color-dark-4) 30%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .tooltipSeriesName {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .tooltipValue {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .emptyState {
+	background: var(--mantine-color-dark-8);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .emptyIcon {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .emptyText {
+	color: var(--mantine-color-dark-2);
+}
+
+/* ── Base styles ────────────────────────────────────────── */
 .lineChartContent {
 	display: flex;
 	flex-direction: column;
@@ -22,7 +77,11 @@
 	min-width: 0;
 	padding-left: 10px;
 	border-left: 2px solid
-		color-mix(in srgb, var(--widget-accent, #6366f1) 35%, transparent);
+		color-mix(
+			in srgb,
+			var(--widget-accent, var(--mantine-color-indigo-5)) 35%,
+			transparent
+		);
 }
 
 .comparisonCaption {
@@ -41,18 +100,18 @@
 	border: 1px solid
 		color-mix(
 			in srgb,
-			var(--widget-accent, #6366f1) 18%,
+			var(--widget-accent, var(--mantine-color-indigo-5)) 18%,
 			var(--mantine-color-gray-2)
 		);
 	border-radius: 999px;
 	background: color-mix(
 		in srgb,
-		var(--widget-accent, #6366f1) 8%,
+		var(--widget-accent, var(--mantine-color-indigo-5)) 8%,
 		var(--mantine-color-gray-0)
 	);
 	color: color-mix(
 		in srgb,
-		var(--widget-accent, #6366f1) 60%,
+		var(--widget-accent, var(--mantine-color-indigo-5)) 60%,
 		var(--mantine-color-gray-7)
 	);
 	font-size: 0.6875rem;
@@ -81,21 +140,29 @@
 }
 
 .deltaChip--up {
-	color: #0d9488;
-	background: rgba(13, 148, 136, 0.09);
-	border-color: rgba(13, 148, 136, 0.22);
+	color: var(--mantine-color-teal-6);
+	background: color-mix(in srgb, var(--mantine-color-teal-6) 9%, transparent);
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-teal-6) 22%,
+		transparent
+	);
 }
 
 .deltaChip--down {
-	color: #b91c1c;
-	background: rgba(239, 68, 68, 0.08);
-	border-color: rgba(239, 68, 68, 0.18);
+	color: var(--mantine-color-red-7);
+	background: color-mix(in srgb, var(--mantine-color-red-6) 8%, transparent);
+	border-color: color-mix(in srgb, var(--mantine-color-red-6) 18%, transparent);
 }
 
 .deltaChip--flat {
-	color: #475569;
-	background: rgba(148, 163, 184, 0.08);
-	border-color: rgba(148, 163, 184, 0.18);
+	color: var(--mantine-color-gray-7);
+	background: color-mix(in srgb, var(--mantine-color-gray-4) 8%, transparent);
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-gray-4) 18%,
+		transparent
+	);
 }
 
 .tooltip {
@@ -104,15 +171,16 @@
 	gap: 4px;
 	min-width: 120px;
 	padding: 10px 14px;
-	border: 1px solid rgba(255, 255, 255, 0.7);
+	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-lg);
-	background: rgba(255, 255, 255, 0.92);
+	background: color-mix(in srgb, var(--mantine-color-white) 92%, transparent);
 	backdrop-filter: blur(10px);
 	-webkit-backdrop-filter: blur(10px);
 	box-shadow:
-		0 8px 24px rgba(0, 0, 0, 0.1),
-		0 2px 8px rgba(0, 0, 0, 0.06),
-		inset 0 1px 0 rgba(255, 255, 255, 0.9);
+		0 8px 24px color-mix(in srgb, var(--mantine-color-black) 10%, transparent),
+		0 2px 8px color-mix(in srgb, var(--mantine-color-black) 6%, transparent),
+		inset 0 1px 0
+			color-mix(in srgb, var(--mantine-color-white) 90%, transparent);
 }
 
 .tooltipSeriesList {
@@ -152,7 +220,8 @@
 	height: 9px;
 	border-radius: 999px;
 	flex-shrink: 0;
-	box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.06);
+	box-shadow: 0 0 0 2px
+		color-mix(in srgb, var(--mantine-color-black) 6%, transparent);
 }
 
 .lineChartChartWrapper {

@@ -7,6 +7,10 @@ import {
 	Alert,
 	Loader,
 	Title,
+	Checkbox,
+	Anchor,
+	Group,
+	ThemeIcon,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
@@ -16,6 +20,10 @@ import {
 	IconEye,
 	IconEyeOff,
 	IconArrowRight,
+	IconShieldCheck,
+	IconSun,
+	IconMoon,
+	IconDeviceDesktop,
 } from '@tabler/icons-react';
 import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router';
@@ -28,8 +36,10 @@ import { ClientSelectOption, MFALoginResponse } from '~/api/authApi';
 import { APP_VERSION } from '~/version';
 import OTPVerificationModal from './OTPVerificationModal';
 import ClientSelectionModal from './ClientSelectionModal';
+import ForgotPasswordModal from './ForgotPasswordModal';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { useSessionStore } from '~/stores/sessionStore';
+import { useColorSchemeStore } from '~/stores/colorSchemeStore';
 import LanguagePicker from '~/components/LanguagePicker';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 
@@ -49,6 +59,7 @@ export function LoginForm() {
 	const { setToken, setUser, setTargetClient } = useSessionStore();
 	const { setPendingCredentials, clearPendingCredentials } =
 		usePasswordResetStore();
+	const { preference, setPreference } = useColorSchemeStore();
 	const [formError, setFormError] = useState<string | null>(null);
 	const [otpModalOpened, setOtpModalOpened] = useState(false);
 	const [pendingLoginData, setPendingLoginData] =
@@ -61,6 +72,8 @@ export function LoginForm() {
 		ClientSelectOption[]
 	>([]);
 	const [preAuthToken, setPreAuthToken] = useState<string | null>(null);
+	const [forgotPasswordModalOpened, setForgotPasswordModalOpened] =
+		useState(false);
 
 	const isSubmitting = loginMutation.isPending;
 	const isRedirecting = false;
@@ -192,8 +205,31 @@ export function LoginForm() {
 	};
 
 	const loginTypeOptions = [
-		{ label: t('loginType.credentials'), value: 'USER_PASS' as const },
-		{ label: t('loginType.ldap'), value: 'LDAP' as const },
+		{
+			label: t('loginType.credentials'),
+			value: 'USER_PASS' as const,
+			leftSection: <IconUser size={16} stroke={1.5} />,
+		},
+		{
+			label: t('loginType.ldap'),
+			value: 'LDAP' as const,
+			leftSection: <IconShieldCheck size={16} stroke={1.5} />,
+		},
+	];
+
+	const themeOptions = [
+		{
+			label: <IconSun size={16} stroke={1.5} />,
+			value: 'light',
+		},
+		{
+			label: <IconMoon size={16} stroke={1.5} />,
+			value: 'dark',
+		},
+		{
+			label: <IconDeviceDesktop size={16} stroke={1.5} />,
+			value: 'auto',
+		},
 	];
 
 	const handleOTPSuccess = () => {
@@ -222,7 +258,7 @@ export function LoginForm() {
 
 	return (
 		<div className={classes.wrapper}>
-			<Paper className={classes.paper}>
+			<Paper className={classes.paper} shadow='md'>
 				<form
 					className={classes.formContainer}
 					onSubmit={form.onSubmit(handleSubmit, handleValidationFailure)}
@@ -240,23 +276,45 @@ export function LoginForm() {
 					)}
 
 					<div className={classes.contentGrid}>
-						<section className={classes.header}>
-							<div className={classes.logoContainer}>
-								<Logo />
-							</div>
-							<div className={classes.headerText}>
-								<Title order={2} className={classes.title}>
-									{t('welcome')}
-								</Title>
-								<Text className={classes.subtitle}>{t('subtitle')}</Text>
-							</div>
-
-							<div className={classes.languagePicker}>
-								<LanguagePicker variant='subtle' size='sm' />
+						{/* Left Panel - Branding */}
+						<section className={classes.brandingPanel}>
+							<div className={classes.brandingContent}>
+								<div className={classes.logoContainer}>
+									<Logo />
+								</div>
+								<div className={classes.brandingText}>
+									<Title order={1} className={classes.brandTitle}>
+										<span className={classes.brandTitlePrefix}>
+											{t('welcomePrefix')}
+										</span>
+										<span className={classes.brandTitleAccent}>
+											{t('welcomeSuffix')}
+										</span>
+									</Title>
+									<div className={classes.brandRule} />
+									<Title order={2} className={classes.brandHeading}>
+										{t('welcomeBack')}
+									</Title>
+									<Text className={classes.subtitle}>{t('subtitle')}</Text>
+								</div>
+								<div className={classes.waveDecoration} />
+								<div className={classes.settingsRow}>
+									<LanguagePicker variant='default' size='sm' />
+									<AppSegmentedControl
+										aria-label={t('theme.label')}
+										value={preference}
+										onChange={(value) =>
+											setPreference(value as 'light' | 'dark' | 'auto')
+										}
+										data={themeOptions}
+										size='sm'
+									/>
+								</div>
 							</div>
 						</section>
 
-						<section className={classes.formColumn}>
+						{/* Right Panel - Form */}
+						<section className={classes.formPanel}>
 							<div className={classes.formStack}>
 								{logoutReason === 'expired' && (
 									<Alert
@@ -275,7 +333,7 @@ export function LoginForm() {
 									value={form.values.loginType}
 									onChange={handleLoginTypeChange}
 									data={loginTypeOptions}
-									size='sm'
+									size='md'
 									fullWidth
 								/>
 
@@ -350,6 +408,25 @@ export function LoginForm() {
 									/>
 								</div>
 
+								<Group justify='space-between' align='center' gap='xs'>
+									<Checkbox
+										label={t('rememberMe')}
+										className={classes.rememberMe}
+										classNames={{
+											label: classes.checkboxLabel,
+										}}
+									/>
+									<Anchor
+										component='button'
+										type='button'
+										size='sm'
+										className={classes.forgotPasswordLink}
+										onClick={() => setForgotPasswordModalOpened(true)}
+									>
+										{t('forgotPassword')}
+									</Anchor>
+								</Group>
+
 								{formError && (
 									<Alert
 										id='login-form-error'
@@ -389,6 +466,18 @@ export function LoginForm() {
 			</Paper>
 
 			<div className={classes.footer}>
+				<Group gap='xs' justify='center'>
+					<ThemeIcon
+						variant='transparent'
+						size='sm'
+						className={classes.footerIcon}
+					>
+						<IconShieldCheck size={16} stroke={1.5} />
+					</ThemeIcon>
+					<Text size='xs' className={classes.secureConnection}>
+						{t('secureConnection')}
+					</Text>
+				</Group>
 				<Text size='xs' className={classes.version}>
 					v{APP_VERSION}
 				</Text>
@@ -409,6 +498,12 @@ export function LoginForm() {
 				availableClients={availableClients}
 				preAuthToken={preAuthToken || ''}
 				onSuccess={handleClientSelectionSuccess}
+			/>
+
+			{/* Forgot Password Modal */}
+			<ForgotPasswordModal
+				opened={forgotPasswordModalOpened}
+				onClose={() => setForgotPasswordModalOpened(false)}
 			/>
 		</div>
 	);

@@ -6,6 +6,7 @@ import {
 	Loader,
 	Modal,
 	Select,
+	NumberInput,
 	Text,
 	TextInput,
 } from '@mantine/core';
@@ -32,6 +33,11 @@ import {
 } from '~/modules/campaigns/CampaignsForm/AnalyticsSection/analyticsFormContext';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { getErrorMessage } from '~/utils/httpClient';
+import {
+	validateWorksheetName,
+	validateSheetColumnUniqueness,
+	isSameSheetColumn,
+} from './reportValueUtils';
 import styles from './ReportValueFormModal.module.css';
 
 // ─── Utilities ────────────────────────────────────────────────
@@ -224,12 +230,27 @@ interface ReportValueFormModalProps {
 	onClose: () => void;
 	campaignId: number;
 	reportValue?: ReportValue;
+	templateColumn?: ReportValue;
+	mode?: 'create' | 'edit' | 'move' | 'duplicate';
 	existingColumns?: ReportValue[];
+	availableSheets?: Array<{
+		sheet: number;
+		sheetName: string;
+	}>;
+	defaultSheet?: {
+		sheet: number;
+		sheetName: string;
+	};
 	onSubmitDraft: (
 		values: FormValues,
 		reportValue?: ReportValue
 	) => Promise<void> | void;
+	onSubmitDuplicate?: (
+		values: FormValues,
+		sourceReportValue: ReportValue
+	) => Promise<void> | void;
 	isSubmittingDraft?: boolean;
+	isSubmittingDuplicate?: boolean;
 }
 
 export interface FormValues {
@@ -237,6 +258,8 @@ export interface FormValues {
 	key: string;
 	label: string;
 	dataType: ReportValueDataType | null;
+	sheet: number;
+	sheetName: string;
 }
 
 // ─── Component ────────────────────────────────────────────────
@@ -246,14 +269,23 @@ const ReportValueFormModal = ({
 	onClose,
 	campaignId,
 	reportValue,
+	templateColumn,
+	mode = 'create',
 	existingColumns = [],
+	availableSheets = [],
+	defaultSheet,
 	onSubmitDraft,
+	onSubmitDuplicate,
 	isSubmittingDraft = false,
+	isSubmittingDuplicate = false,
 }: ReportValueFormModalProps) => {
 	const { t } = useTranslation('campaign.contact-list');
-	const isEdit = !!reportValue;
+	const isEdit = mode === 'edit' || mode === 'move';
+	const isWorksheetOnly = mode === 'move';
+	const sourceColumn = reportValue ?? templateColumn;
 
-	const isPending = isSubmittingDraft;
+	const isPending =
+		mode === 'duplicate' ? isSubmittingDuplicate : isSubmittingDraft;
 
 	// Fetch campaign for OBJECT keys (agentConfig.dataCollection)
 	const { data: campaign, isLoading: isCampaignLoading } = useGetCampaign(
@@ -276,35 +308,6 @@ const ReportValueFormModal = ({
 		[latestSchema?.schemaFields]
 	);
 
-	/** Returns a Set of already-used keys for a given origin, excluding the record being edited */
-	const usedKeysFor = (origin: ReportValueOriginType): Set<string> =>
-		new Set(
-			existingColumns
-				.filter((c) => c.originType === origin && c.id !== reportValue?.id)
-				.map((c) => c.key)
-		);
-
-	const dynamicKeyOptions = useMemo(() => {
-		const used = usedKeysFor(ReportValueOriginType.DYNAMIC);
-		return mergedDynamicFields
-			.filter((f) => !used.has(f.name))
-			.map((f) => ({
-				value: f.name,
-				label: `${f.label} (${f.name})`,
-			}));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [mergedDynamicFields, existingColumns, reportValue?.id]);
-
-	const objectKeyOptions = useMemo(() => {
-		if (!campaign?.agentConfig) return [];
-		const dc = getDataCollectionFromAgentConfig(campaign.agentConfig);
-		const used = usedKeysFor(ReportValueOriginType.OBJECT);
-		return Object.keys(dc)
-			.filter((key) => !used.has(key))
-			.map((key) => ({ value: key, label: key }));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [campaign?.agentConfig, existingColumns, reportValue?.id]);
-
 	/** Conversation metadata fields — parsed from config with fallback to defaults */
 	const conversationMetadataFields = useMemo<
 		ConversationMetadataField[]
@@ -322,16 +325,23 @@ const ReportValueFormModal = ({
 		}
 	}, [metadataConfig]);
 
-	const metadataKeyOptions = useMemo(() => {
-		const used = usedKeysFor(ReportValueOriginType.METADATA);
-		return conversationMetadataFields
-			.filter((f) => !used.has(f.name))
-			.map((f) => ({
-				value: f.name,
-				label: `${f.label} (${f.name})`,
-			}));
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [conversationMetadataFields, existingColumns, reportValue?.id]);
+	const filteredAvailableSheets = useMemo(() => {
+		if (!sourceColumn || (mode !== 'move' && mode !== 'duplicate')) {
+			return availableSheets;
+		}
+
+		return availableSheets.filter((sheetOption) => {
+			if (sheetOption.sheet === sourceColumn.sheet) {
+				return false;
+			}
+
+			return !existingColumns.some(
+				(item) =>
+					item.sheet === sheetOption.sheet &&
+					isSameSheetColumn(item, sourceColumn)
+			);
+		});
+	}, [availableSheets, existingColumns, mode, sourceColumn]);
 
 	// ── Form ─────────────────────────────────────────────────
 
@@ -341,6 +351,8 @@ const ReportValueFormModal = ({
 			key: '',
 			label: '',
 			dataType: null,
+			sheet: defaultSheet?.sheet ?? 1,
+			sheetName: defaultSheet?.sheetName ?? 'Report 1',
 		},
 		validate: {
 			originType: (v) =>
@@ -351,8 +363,90 @@ const ReportValueFormModal = ({
 				!v.trim() ? t('reportValues.form.validation.labelRequired') : null,
 			dataType: (v) =>
 				v === null ? t('reportValues.form.validation.dataTypeRequired') : null,
+			sheet: (v) => {
+				if (!Number.isInteger(v) || v < 1) {
+					return t('reportValues.validation.sheetRequired');
+				}
+
+				return validateSheetColumnUniqueness(
+					v,
+					sourceColumn,
+					existingColumns,
+					reportValue,
+					t
+				);
+			},
+			sheetName: (v, values) =>
+				validateWorksheetName(
+					v,
+					values.sheet,
+					filteredAvailableSheets,
+					reportValue,
+					t
+				),
 		},
 	});
+
+	/** Returns used keys within the current sheet, excluding the record being edited */
+	const usedKeysFor = (origin: ReportValueOriginType): Set<string> =>
+		new Set(
+			existingColumns
+				.filter(
+					(c) =>
+						c.sheet === form.values.sheet &&
+						c.originType === origin &&
+						c.id !== reportValue?.id &&
+						c.id !== templateColumn?.id
+				)
+				.map((c) => c.key)
+		);
+
+	const dynamicKeyOptions = useMemo(() => {
+		const used = usedKeysFor(ReportValueOriginType.DYNAMIC);
+		return mergedDynamicFields
+			.filter((f) => !used.has(f.name))
+			.map((f) => ({
+				value: f.name,
+				label: `${f.label} (${f.name})`,
+			}));
+	}, [
+		mergedDynamicFields,
+		existingColumns,
+		reportValue?.id,
+		templateColumn?.id,
+		form.values.sheet,
+	]);
+
+	const objectKeyOptions = useMemo(() => {
+		if (!campaign?.agentConfig) return [];
+		const dc = getDataCollectionFromAgentConfig(campaign.agentConfig);
+		const used = usedKeysFor(ReportValueOriginType.OBJECT);
+		return Object.keys(dc)
+			.filter((key) => !used.has(key))
+			.map((key) => ({ value: key, label: key }));
+	}, [
+		campaign?.agentConfig,
+		existingColumns,
+		reportValue?.id,
+		templateColumn?.id,
+		form.values.sheet,
+	]);
+
+	const metadataKeyOptions = useMemo(() => {
+		const used = usedKeysFor(ReportValueOriginType.METADATA);
+		return conversationMetadataFields
+			.filter((f) => !used.has(f.name))
+			.map((f) => ({
+				value: f.name,
+				label: `${f.label} (${f.name})`,
+			}));
+	}, [
+		conversationMetadataFields,
+		existingColumns,
+		reportValue?.id,
+		templateColumn?.id,
+		form.values.sheet,
+	]);
 
 	useEffect(() => {
 		if (opened) {
@@ -362,13 +456,42 @@ const ReportValueFormModal = ({
 					key: reportValue.key,
 					label: reportValue.label,
 					dataType: normalizeSupportedDataType(reportValue.dataType),
+					sheet: reportValue.sheet,
+					sheetName: reportValue.sheetName,
+				});
+			} else if (templateColumn) {
+				form.setValues({
+					originType: templateColumn.originType,
+					key: templateColumn.key,
+					label: templateColumn.label,
+					dataType: normalizeSupportedDataType(templateColumn.dataType),
+					sheet: defaultSheet?.sheet ?? templateColumn.sheet,
+					sheetName:
+						defaultSheet?.sheetName ?? templateColumn.sheetName ?? 'Report 1',
 				});
 			} else {
-				form.reset();
+				form.setValues({
+					originType: '',
+					key: '',
+					label: '',
+					dataType: null,
+					sheet: defaultSheet?.sheet ?? filteredAvailableSheets[0]?.sheet ?? 1,
+					sheetName:
+						defaultSheet?.sheetName ??
+						filteredAvailableSheets[0]?.sheetName ??
+						'Report 1',
+				});
+				form.resetDirty();
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [opened, reportValue]);
+	}, [
+		opened,
+		reportValue,
+		templateColumn,
+		defaultSheet,
+		filteredAvailableSheets,
+	]);
 
 	const dataTypeOptions = SUPPORTED_DATA_TYPES.map((dataType) => ({
 		value: dataType,
@@ -383,6 +506,12 @@ const ReportValueFormModal = ({
 	}));
 
 	const selectedOrigin = form.values.originType as ReportValueOriginType | '';
+	const sheetSelectOptions = filteredAvailableSheets.map((item) => ({
+		value: String(item.sheet),
+		label: `${item.sheetName} (${t('reportValues.form.sheetNumber', {
+			sheet: item.sheet,
+		})})`,
+	}));
 
 	// ── Handlers ─────────────────────────────────────────────
 
@@ -446,6 +575,32 @@ const ReportValueFormModal = ({
 	const handleSubmit = async (values: FormValues) => {
 		if (!values.originType) return;
 
+		if (
+			mode === 'move' &&
+			sourceColumn &&
+			values.sheet === sourceColumn.sheet
+		) {
+			notifications.show({
+				message: t('reportValues.validation.targetSheetMustBeDifferent'),
+				color: 'red',
+			});
+			return;
+		}
+
+		if (
+			mode === 'duplicate' &&
+			sourceColumn &&
+			values.sheet === sourceColumn.sheet
+		) {
+			notifications.show({
+				message: t(
+					'reportValues.validation.duplicateTargetSheetMustBeDifferent'
+				),
+				color: 'red',
+			});
+			return;
+		}
+
 		const normalizedDataType = normalizeSupportedDataType(
 			values.dataType,
 			ReportValueDataType.STRING
@@ -453,20 +608,88 @@ const ReportValueFormModal = ({
 
 		if (!normalizedDataType) return;
 
+		const uniquenessError = validateSheetColumnUniqueness(
+			values.sheet,
+			sourceColumn,
+			existingColumns,
+			reportValue,
+			t
+		);
+		if (uniquenessError) {
+			notifications.show({
+				message: uniquenessError,
+				color: 'red',
+			});
+			return;
+		}
+
 		try {
-			await onSubmitDraft(
-				{
-					...values,
-					dataType: normalizedDataType,
-				},
-				reportValue
-			);
+			const payload = {
+				...values,
+				dataType: normalizedDataType,
+				sheetName: values.sheetName.trim(),
+			};
+
+			if (mode === 'duplicate' && sourceColumn && onSubmitDuplicate) {
+				await onSubmitDuplicate(payload, sourceColumn);
+			} else {
+				await onSubmitDraft(payload, reportValue);
+			}
 			onClose();
 		} catch (error) {
 			notifications.show({
 				message: getErrorMessage(error),
 				color: 'red',
 			});
+		}
+	};
+
+	const headerEyebrowKey =
+		mode === 'move'
+			? 'reportValues.form.headerEyebrow.move'
+			: mode === 'duplicate'
+				? 'reportValues.form.headerEyebrow.duplicate'
+				: isEdit
+					? 'reportValues.form.headerEyebrow.edit'
+					: 'reportValues.form.headerEyebrow.new';
+
+	const headerTitleKey =
+		mode === 'move'
+			? 'reportValues.form.moveTitle'
+			: mode === 'duplicate'
+				? 'reportValues.form.duplicateTitle'
+				: isEdit
+					? 'reportValues.form.editTitle'
+					: 'reportValues.form.createTitle';
+
+	const handleSheetSelect = (value: string | null) => {
+		const nextSheet = Number(value);
+		if (!Number.isInteger(nextSheet) || nextSheet < 1) {
+			return;
+		}
+
+		const selectedSheet = filteredAvailableSheets.find(
+			(item) => item.sheet === nextSheet
+		);
+		form.setFieldValue('sheet', nextSheet);
+		if (selectedSheet) {
+			form.setFieldValue('sheetName', selectedSheet.sheetName);
+		}
+	};
+
+	const handleSheetNumberChange = (value: string | number) => {
+		const nextSheet = Number(value);
+		if (!Number.isInteger(nextSheet) || nextSheet < 1) {
+			form.setFieldValue('sheet', 1);
+			return;
+		}
+
+		form.setFieldValue('sheet', nextSheet);
+		const selectedSheet = filteredAvailableSheets.find(
+			(item) => item.sheet === nextSheet
+		);
+		if (selectedSheet) {
+			form.setFieldValue('sheetName', selectedSheet.sheetName);
 		}
 	};
 
@@ -671,16 +894,8 @@ const ReportValueFormModal = ({
 			{/* ── Custom header ── */}
 			<div className={styles.header}>
 				<div className={styles.headerMeta}>
-					<span className={styles.headerEyebrow}>
-						{isEdit
-							? t('reportValues.form.headerEyebrow.edit')
-							: t('reportValues.form.headerEyebrow.new')}
-					</span>
-					<h2 className={styles.headerTitle}>
-						{isEdit
-							? t('reportValues.form.editTitle')
-							: t('reportValues.form.createTitle')}
-					</h2>
+					<span className={styles.headerEyebrow}>{t(headerEyebrowKey)}</span>
+					<h2 className={styles.headerTitle}>{t(headerTitleKey)}</h2>
 				</div>
 				<CloseButton
 					className={styles.closeBtn}
@@ -691,69 +906,126 @@ const ReportValueFormModal = ({
 			</div>
 
 			{/* ── Form body ── */}
-			<form onSubmit={form.onSubmit((v) => void handleSubmit(v))}>
+			<form onSubmit={form.onSubmit((v: FormValues) => void handleSubmit(v))}>
 				<div className={styles.body}>
 					{/* Section 1: Data source */}
-					<div className={styles.section}>
-						<Text className={styles.sectionLabel}>
-							{t('reportValues.form.sections.dataSource')}
-						</Text>
+					{!isWorksheetOnly ? (
+						<>
+							<div className={styles.section}>
+								<Text className={styles.sectionLabel}>
+									{t('reportValues.form.sections.dataSource')}
+								</Text>
 
-						{/* Origin type card picker */}
-						<div className={styles.originCards}>
-							{ORIGIN_OPTIONS.map((opt) => (
-								<button
-									key={opt.value}
-									type='button'
-									className={styles.originCard}
-									data-selected={
-										selectedOrigin === opt.value ? 'true' : undefined
-									}
-									onClick={() => handleOriginSelect(opt.value)}
-								>
-									<span className={styles.originCardIcon}>{opt.icon}</span>
-									<span className={styles.originCardLabel}>
-										{t(`reportValues.originType.${opt.nameKey}`)}
-									</span>
-									<span className={styles.originCardSub}>
-										{t(`reportValues.form.originSub.${opt.nameKey}`)}
-									</span>
-								</button>
-							))}
-						</div>
+								<div className={styles.originCards}>
+									{ORIGIN_OPTIONS.map((opt) => (
+										<button
+											key={opt.value}
+											type='button'
+											className={styles.originCard}
+											data-selected={
+												selectedOrigin === opt.value ? 'true' : undefined
+											}
+											onClick={() => handleOriginSelect(opt.value)}
+										>
+											<span className={styles.originCardIcon}>{opt.icon}</span>
+											<span className={styles.originCardLabel}>
+												{t(`reportValues.originType.${opt.nameKey}`)}
+											</span>
+											<span className={styles.originCardSub}>
+												{t(`reportValues.form.originSub.${opt.nameKey}`)}
+											</span>
+										</button>
+									))}
+								</div>
 
-						{form.errors.originType && (
-							<Text className={styles.originCardsError}>
-								{form.errors.originType}
-							</Text>
-						)}
+								{form.errors.originType && (
+									<Text className={styles.originCardsError}>
+										{form.errors.originType}
+									</Text>
+								)}
 
-						{renderKeyField()}
-					</div>
+								{renderKeyField()}
+							</div>
 
-					<div className={styles.sectionDivider} />
+							<div className={styles.sectionDivider} />
+						</>
+					) : null}
 
 					{/* Section 2: Display settings */}
 					<div className={styles.section}>
 						<Text className={styles.sectionLabel}>
-							{t('reportValues.form.sections.displaySettings')}
+							{t(
+								isWorksheetOnly
+									? 'reportValues.form.sections.worksheet'
+									: 'reportValues.form.sections.displaySettings'
+							)}
 						</Text>
 
+						<div className={styles.fieldRow}>
+							<Select
+								label={t('reportValues.form.sheetSelectLabel')}
+								data={sheetSelectOptions}
+								size='sm'
+								value={
+									filteredAvailableSheets.some(
+										(item) => item.sheet === form.values.sheet
+									)
+										? String(form.values.sheet)
+										: null
+								}
+								onChange={handleSheetSelect}
+								placeholder={t('reportValues.form.sheetSelectPlaceholder')}
+								clearable={false}
+							/>
+
+							<NumberInput
+								label={t('reportValues.form.sheetNumberLabel')}
+								size='sm'
+								min={1}
+								allowDecimal={false}
+								allowNegative={false}
+								value={form.values.sheet}
+								onChange={handleSheetNumberChange}
+								error={form.errors.sheet}
+							/>
+						</div>
+
 						<TextInput
-							label={t('reportValues.form.labelLabel')}
-							placeholder={t('reportValues.form.labelPlaceholder')}
+							label={t('reportValues.form.sheetNameLabel')}
+							placeholder={t('reportValues.form.sheetNamePlaceholder')}
 							required
 							size='sm'
-							{...form.getInputProps('label')}
+							{...form.getInputProps('sheetName')}
 						/>
 
-						<Select
-							label={t('reportValues.form.dataTypeLabel')}
-							data={dataTypeOptions}
-							required
-							size='sm'
-							{...form.getInputProps('dataType')}
-						/>
+						{!isWorksheetOnly ? (
+							<>
+								<TextInput
+									label={t('reportValues.form.labelLabel')}
+									placeholder={t('reportValues.form.labelPlaceholder')}
+									required
+									size='sm'
+									{...form.getInputProps('label')}
+								/>
+
+								<Select
+									label={t('reportValues.form.dataTypeLabel')}
+									data={dataTypeOptions}
+									required
+									size='sm'
+									{...form.getInputProps('dataType')}
+								/>
+							</>
+						) : (
+							<div className={styles.summaryFieldBlock}>
+								<Text size='sm' fw={600}>
+									{sourceColumn?.label ?? form.values.label}
+								</Text>
+								<Text size='xs' c='dimmed' ff='monospace'>
+									{sourceColumn?.key ?? form.values.key}
+								</Text>
+							</div>
+						)}
 					</div>
 
 					{/* ── Footer ── */}

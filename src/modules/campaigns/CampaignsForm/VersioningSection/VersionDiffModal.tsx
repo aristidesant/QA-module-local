@@ -239,7 +239,7 @@ const VersionDiffModal = ({
 						{t('actions.close')}
 					</Button>
 					<Button
-						color='dark'
+						color='blue'
 						onClick={onRevert}
 						loading={isReverting}
 						disabled={!selectedVersion}

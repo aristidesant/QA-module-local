@@ -13,6 +13,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useVerifyOTP } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
+import classes from './OTPVerificationModal.module.css';
 
 interface OTPVerificationModalProps {
 	opened: boolean;
@@ -96,6 +97,14 @@ export default function OTPVerificationModal({
 			withCloseButton={!isLoading}
 			closeOnClickOutside={!isLoading}
 			closeOnEscape={!isLoading}
+			radius='md'
+			overlayProps={{ opacity: 0.45, blur: 2 }}
+			classNames={{
+				header: classes.modalHeader,
+				title: classes.modalTitle,
+				body: classes.modalBody,
+				content: classes.modalContent,
+			}}
 		>
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<Stack gap='md'>

@@ -36,7 +36,7 @@ export function useDictionaryTableColumns({
 				header: t('dictionaryColumns.name'),
 				cell: ({ row }) => (
 					<Stack gap={2}>
-						<Text size='sm' fw={600} c='dark.8'>
+						<Text size='sm' fw={600}>
 							{row.original.name}
 						</Text>
 						{row.original.description ? (

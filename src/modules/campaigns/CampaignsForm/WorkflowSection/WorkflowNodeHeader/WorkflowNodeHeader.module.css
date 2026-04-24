@@ -4,7 +4,8 @@
 	justify-content: space-between;
 	gap: var(--mantine-spacing-xs);
 	background-color: var(--workflow-node-header-bg, var(--mantine-color-gray-0));
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	border-bottom: 1px solid
+		var(--workflow-node-panel-border, var(--mantine-color-gray-2));
 	padding: 9px var(--mantine-spacing-sm);
 	width: 100%;
 }
@@ -40,20 +41,22 @@
 	width: 28px;
 	height: 28px;
 	border-radius: var(--mantine-radius-lg);
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
+	background-color: var(--workflow-node-icon-bg, var(--mantine-color-white));
+	border: 1px solid
+		var(--workflow-node-icon-border, var(--mantine-color-gray-2));
 	color: var(--workflow-node-accent, var(--mantine-color-gray-8));
-	box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05);
+	box-shadow: 0 1px 2px
+		color-mix(in srgb, var(--mantine-color-black) 8%, transparent);
 	flex-shrink: 0;
 }
 
 .title {
-	color: var(--mantine-color-dark-9);
+	color: var(--workflow-node-header-text, var(--mantine-color-dark-9));
 	font-weight: 600;
 }
 
 .subtitle {
-	color: var(--mantine-color-gray-6);
+	color: var(--workflow-node-header-subtext, var(--mantine-color-gray-6));
 	line-height: 1.1;
 }
 

@@ -11,14 +11,15 @@
 	justify-content: space-between;
 	gap: var(--mantine-spacing-sm);
 	padding: var(--mantine-spacing-sm);
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-lg);
-	background: linear-gradient(
-		180deg,
-		rgba(255, 255, 255, 0.98) 0%,
-		rgba(248, 249, 250, 0.95) 100%
-	);
+	background: var(--mantine-color-gray-1);
 	box-shadow: var(--mantine-shadow-xs);
+}
+
+[data-mantine-color-scheme='dark'] .toolbar {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-7);
 }
 
 .toolbarMain {

@@ -22,9 +22,14 @@ import {
 	useDashboardSectionModals,
 	useDashboardSectionSelection,
 } from '../DashboardSection.context';
+import { getDashboardMainSlotLabel } from '../DashboardSection.helpers';
 import styles from './DashboardListPanel.module.css';
 
-const DashboardListPanel = () => {
+const DashboardListPanel = ({
+	allowMainSlot = false,
+}: {
+	allowMainSlot?: boolean;
+}) => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 	const { campaignId, selectedDashboardId, setSelectedDashboardId } =
 		useDashboardSectionSelection();
@@ -100,14 +105,32 @@ const DashboardListPanel = () => {
 
 					return (
 						<Stack gap={2}>
-							<Text size='sm' fw={600} c='gray.9' truncate>
+							<Text
+								size='sm'
+								fw={600}
+								className={styles.dashboardName}
+								truncate
+							>
 								{dashboard.name}
 							</Text>
-							<Text size='xs' c='dimmed' truncate>
+							<Text size='xs' className={styles.dashboardMeta} truncate>
 								{dashboard.isDefault
 									? t('dashboardBuilder.defaultBadge')
 									: t('dashboardBuilder.dashboard.standard')}
 							</Text>
+							{allowMainSlot && dashboard.mainSlot ? (
+								<Group gap={6} wrap='wrap'>
+									<Badge
+										variant='light'
+										color='teal'
+										size='xs'
+										radius='sm'
+										className={styles.mainSlotBadge}
+									>
+										{getDashboardMainSlotLabel(t, dashboard.mainSlot)}
+									</Badge>
+								</Group>
+							) : null}
 						</Stack>
 					);
 				},
@@ -183,7 +206,13 @@ const DashboardListPanel = () => {
 				),
 			},
 		],
-		[handleDeleteDashboard, openEditDashboard, openPreviewDashboard, t]
+		[
+			allowMainSlot,
+			handleDeleteDashboard,
+			openEditDashboard,
+			openPreviewDashboard,
+			t,
+		]
 	);
 
 	const getRowClassName = useCallback(
@@ -225,10 +254,14 @@ const DashboardListPanel = () => {
 						strokeWidth={1.75}
 					/>
 					<Stack gap={2} align='center'>
-						<Text size='sm' fw={600} c='gray.9'>
+						<Text size='sm' fw={600} className={styles.emptyStateTitle}>
 							{t('dashboardBuilder.emptyDashboardTitle')}
 						</Text>
-						<Text size='xs' c='dimmed' ta='center'>
+						<Text
+							size='xs'
+							className={styles.emptyStateDescription}
+							ta='center'
+						>
 							{t('dashboardBuilder.emptyDashboardDescription')}
 						</Text>
 					</Stack>

@@ -1,0 +1,67 @@
+.contentStack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.modalDescription {
+	margin-bottom: var(--mantine-spacing-md);
+	font-size: var(--mantine-font-size-sm);
+}
+
+.modalFooter {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-xs);
+}
+
+.modalHeader {
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	margin-bottom: 0;
+}
+
+.modalTitle {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+}
+
+.modalBody {
+	padding: 0;
+	background: transparent;
+	height: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+}
+
+.modalContent {
+	height: 90vh;
+	max-height: 90vh;
+	display: flex;
+	flex-direction: column;
+	background: var(--mantine-color-body);
+}
+
+[data-mantine-color-scheme='dark'] .modalHeader {
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .modalBody {
+	background: var(--mantine-color-dark-8);
+}
+
+[data-mantine-color-scheme='dark'] .modalContent {
+	background: var(--mantine-color-dark-7);
+}
+
+@media (max-width: 768px) {
+	.modalFooter {
+		flex-direction: column-reverse;
+		align-items: stretch;
+	}
+
+	.modalFooter :global(button) {
+		width: 100%;
+	}
+}

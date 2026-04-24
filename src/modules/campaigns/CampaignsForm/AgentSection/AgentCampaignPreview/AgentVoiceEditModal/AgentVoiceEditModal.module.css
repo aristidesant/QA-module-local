@@ -5,6 +5,10 @@
 	border-radius: var(--mantine-radius-md);
 }
 
+[data-mantine-color-scheme='dark'] .tableContainer {
+	border-color: var(--mantine-color-dark-5);
+}
+
 .selectedRow {
 	background-color: var(--mantine-color-blue-0);
 	border-left: 3px solid var(--mantine-color-blue-6);
@@ -12,4 +16,13 @@
 
 .selectedRow:hover {
 	background-color: var(--mantine-color-blue-1);
+}
+
+[data-mantine-color-scheme='dark'] .selectedRow {
+	background-color: var(--mantine-color-dark-6);
+	border-left-color: var(--mantine-color-blue-5);
+}
+
+[data-mantine-color-scheme='dark'] .selectedRow:hover {
+	background-color: var(--mantine-color-dark-5);
 }

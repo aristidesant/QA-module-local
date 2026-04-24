@@ -25,6 +25,7 @@ import {
 	IconLayoutDashboard,
 	IconListDetails,
 	IconSettings,
+	IconTableExport,
 	IconUsers,
 } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router';
@@ -178,6 +179,7 @@ const sidebarSections: SidebarSection[] = [
 				to: '/configurations/dictionary-rules',
 				module: ModuleEnum.SETTINGS,
 				permission: PermissionEnum.MANAGE,
+				masterOnly: true,
 				i18nNamespace: 'dictionary-rules',
 			},
 		],
@@ -255,6 +257,14 @@ const sidebarSections: SidebarSection[] = [
 				module: ModuleEnum.CAMPAIGNS,
 				permission: PermissionEnum.UPDATE,
 				i18nNamespace: 'agent-tests',
+			},
+			{
+				key: 'report-templates',
+				label: 'sidebar.items.reportTemplates',
+				icon: <IconTableExport size={18} className={styles.menuIcon} />,
+				to: '/report-templates',
+				module: ModuleEnum.REPORTS,
+				i18nNamespace: 'report-templates',
 			},
 		],
 	},
@@ -546,6 +556,7 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 }) => {
 	const location = useLocation();
 	const { t } = useTranslation('common');
+	const { closeMobile } = useSidebarStore();
 
 	const isSelected = isLinkActive(item, location.pathname);
 
@@ -559,6 +570,7 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 			].join(' ')}
 			aria-current={isSelected ? 'page' : undefined}
 			data-sidebar-active={isActive ? 'true' : undefined}
+			onClick={closeMobile}
 			onMouseEnter={() =>
 				item.i18nNamespace && prefetchNamespace(item.i18nNamespace)
 			}

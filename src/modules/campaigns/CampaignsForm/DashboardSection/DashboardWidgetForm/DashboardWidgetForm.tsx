@@ -11,6 +11,7 @@ import DashboardWidgetTypeSection from './DashboardWidgetTypeSection';
 import DashboardWidgetVisibilityScopeSection from './DashboardWidgetVisibilityScopeSection';
 import DashboardWidgetPreviewPanel from './DashboardWidgetPreviewPanel';
 import DashboardWidgetProgressSidebar from './DashboardWidgetProgressSidebar';
+import DashboardWidgetRoleAccessSection from './DashboardWidgetRoleAccessSection';
 import {
 	DashboardWidgetFormProvider,
 	DashboardWidgetFormStateProvider,
@@ -63,17 +64,12 @@ const DashboardWidgetForm = (props: DashboardWidgetFormProps) => {
 							<Breadcrumbs
 								separator='›'
 								separatorMargin={6}
-								styles={{
-									separator: {
-										color: 'var(--mantine-color-gray-4)',
-										fontSize: '0.9rem',
-									},
-								}}
+								classNames={{ separator: styles.breadcrumbSeparator }}
 							>
-								<Text size='xs' c='gray.5' fw={500}>
+								<Text size='xs' fw={500} className={styles.breadcrumbCrumb}>
 									{t('dashboardBuilder.breadcrumb.root')}
 								</Text>
-								<Text size='xs' c='gray.8' fw={600}>
+								<Text size='xs' fw={600} className={styles.breadcrumbCurrent}>
 									{pageTitle}
 								</Text>
 							</Breadcrumbs>
@@ -96,6 +92,7 @@ const DashboardWidgetForm = (props: DashboardWidgetFormProps) => {
 								<DashboardWidgetTypeSection />
 								<DashboardWidgetBasicsSection />
 								<DashboardWidgetVisibilityScopeSection />
+								<DashboardWidgetRoleAccessSection />
 								<DashboardWidgetAdvancedSection />
 							</div>
 
@@ -115,12 +112,12 @@ const DashboardWidgetForm = (props: DashboardWidgetFormProps) => {
 
 					<div className={styles.pageFooter}>
 						<div>
-							<Text size='sm' fw={700}>
+							<Text size='sm' fw={700} className={styles.footerTitle}>
 								{isEditing
 									? t('dashboardBuilder.form.footerTitleEdit')
 									: t('dashboardBuilder.form.footerTitle')}
 							</Text>
-							<Text size='xs' c='dimmed'>
+							<Text size='xs' className={styles.footerHint}>
 								{t('dashboardBuilder.form.footerHint')}
 							</Text>
 						</div>

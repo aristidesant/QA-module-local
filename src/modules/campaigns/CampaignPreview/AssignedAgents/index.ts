@@ -1,1 +1,1 @@
-export { default } from "./AssignedAgents";
+export { default } from './AssignedAgents';

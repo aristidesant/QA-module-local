@@ -1,0 +1,9 @@
+.counter {
+	font-variant-numeric: tabular-nums;
+	user-select: none;
+	cursor: default;
+	pointer-events: none;
+	color: var(--mantine-color-dimmed);
+	min-width: 52px;
+	text-align: center;
+}

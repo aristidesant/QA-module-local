@@ -5,6 +5,7 @@ import {
 	IconInfoCircle,
 	IconLoader,
 	IconPhone,
+	IconPhonePause,
 	IconPhoneOff,
 	IconRecordMail,
 	IconRefresh,
@@ -182,6 +183,7 @@ export default function ConversationDispositionContent({
 	const isInvalidatesNumber = Boolean(disposition?.isInvalidatesNumber);
 	const isFinal = Boolean(disposition?.isFinal);
 	const isVoiceMail = Boolean(disposition?.isVoiceMail);
+	const isAbandoned = Boolean(disposition?.isAbandoned);
 
 	const traitBadges = [
 		isFinal && {
@@ -193,6 +195,11 @@ export default function ConversationDispositionContent({
 			key: 'voicemail',
 			label: t('disposition.voicemail'),
 			icon: <IconRecordMail size={12} />,
+		},
+		isAbandoned && {
+			key: 'abandoned',
+			label: t('disposition.abandoned'),
+			icon: <IconPhonePause size={12} />,
 		},
 	].filter(Boolean) as Array<{
 		key: string;

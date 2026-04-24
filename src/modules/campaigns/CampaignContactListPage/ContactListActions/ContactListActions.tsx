@@ -1,7 +1,6 @@
 import { Button, Group, Stack, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	IconCircleCheck,
@@ -25,7 +24,6 @@ import {
 	useCompleteContactGroup,
 	useExtendContactGroupWaves,
 } from '~/queries/contactGroupQueries';
-import reportValuesApi from '~/api/reportValuesApi';
 import { getErrorMessage } from '~/utils/httpClient';
 import { formatWaveDateTime } from '~/utils/waveUtils';
 import classes from './ContactListActions.module.css';
@@ -33,10 +31,7 @@ import ExecutionControlAction from './ExecutionControlAction';
 import ResumeWaitingNowAction from './ResumeWaitingNowAction';
 import ExtendWavesAction from './ExtendWavesAction';
 import CompleteListAction from './CompleteListAction';
-import ExportResultsAction from './ExportResultsAction';
 import ReloadAction from './ReloadAction';
-
-type ReportExportFormat = 'csv' | 'xlsx';
 type StatusKey = ContactGroupQueueStatus | 'UNKNOWN';
 
 interface ContactListActionsProps {
@@ -61,7 +56,6 @@ const ContactListActions = ({
 	const resumeMutation = useResumeOutboundCampaign();
 	const extendMutation = useExtendContactGroupWaves();
 	const completeMutation = useCompleteContactGroup();
-	const [isExporting, setIsExporting] = useState(false);
 
 	const resolvedCampaignId =
 		contactGroup.schedule?.campaignId ?? contactGroup.campaignId ?? campaignId;
@@ -81,8 +75,7 @@ const ContactListActions = ({
 		pauseMutation.isPending ||
 		resumeMutation.isPending ||
 		extendMutation.isPending ||
-		completeMutation.isPending ||
-		isExporting;
+		completeMutation.isPending;
 
 	const canStartOrResume = Boolean(
 		requirements?.hasDispositionFlow && requirements?.hasActiveSchedule
@@ -471,55 +464,6 @@ const ContactListActions = ({
 		});
 	};
 
-	const handleExport = async (format: ReportExportFormat) => {
-		setIsExporting(true);
-		try {
-			const api = reportValuesApi();
-			const response = await api.exportReport(contactGroup.id, format);
-
-			if (response.status === 204) {
-				notifications.show({
-					message: t('reportValues.noDataToExport', {
-						ns: 'campaign.contact-list',
-					}),
-					color: 'yellow',
-				});
-				return;
-			}
-
-			if (response.status !== 200) {
-				notifications.show({
-					message: t('reportValues.exportError', {
-						ns: 'campaign.contact-list',
-					}),
-					color: 'red',
-				});
-				return;
-			}
-
-			const mimeType =
-				format === 'xlsx'
-					? 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-					: 'text/csv';
-			const blob = new Blob([response.data as BlobPart], { type: mimeType });
-			const url = window.URL.createObjectURL(blob);
-			const anchor = document.createElement('a');
-			anchor.href = url;
-			anchor.download = `report-${contactGroup.id}.${format}`;
-			document.body.appendChild(anchor);
-			anchor.click();
-			anchor.remove();
-			window.URL.revokeObjectURL(url);
-		} catch (error) {
-			notifications.show({
-				message: getErrorMessage(error),
-				color: 'red',
-			});
-		} finally {
-			setIsExporting(false);
-		}
-	};
-
 	const executionTooltip = (() => {
 		if (normalizedStatus === 'PAUSED') {
 			return canStartOrResume
@@ -560,87 +504,76 @@ const ContactListActions = ({
 
 	return (
 		<div className={classes.root}>
-			{showExecutionAction && (
-				<div className={classes.action}>
-					<ExecutionControlAction
-						tooltip={executionTooltip}
-						icon={executionIcon}
-						onClick={() => {
-							void handleExecutionAction();
-						}}
-						loading={
-							startMutation.isPending ||
-							pauseMutation.isPending ||
-							resumeMutation.isPending
-						}
-						disabled={
-							isActionLoading ||
-							((normalizedStatus === 'PENDING' ||
-								normalizedStatus === 'PAUSED') &&
-								!canStartOrResume)
-						}
-						color={
-							normalizedStatus === 'RUNNING' || normalizedStatus === 'WAITING'
-								? 'orange'
-								: 'blue'
-						}
-					/>
-				</div>
-			)}
+			<div className={classes.primaryActions}>
+				{showExecutionAction && (
+					<div className={classes.action}>
+						<ExecutionControlAction
+							tooltip={executionTooltip}
+							icon={executionIcon}
+							onClick={() => {
+								void handleExecutionAction();
+							}}
+							loading={
+								startMutation.isPending ||
+								pauseMutation.isPending ||
+								resumeMutation.isPending
+							}
+							disabled={
+								isActionLoading ||
+								((normalizedStatus === 'PENDING' ||
+									normalizedStatus === 'PAUSED') &&
+									!canStartOrResume)
+							}
+							color={
+								normalizedStatus === 'RUNNING' || normalizedStatus === 'WAITING'
+									? 'orange'
+									: 'blue'
+							}
+						/>
+					</div>
+				)}
 
-			{canExecuteCampaign && normalizedStatus === 'WAITING' && (
-				<div className={classes.action}>
-					<ResumeWaitingNowAction
-						tooltip={t('form.contacts.controls.resumeIgnoreDelay', {
-							ns: 'campaign.form.contacts',
-						})}
-						onClick={handleResumeWaitingNow}
-						loading={resumeMutation.isPending}
-						disabled={isActionLoading}
-					/>
-				</div>
-			)}
+				{canExecuteCampaign && normalizedStatus === 'WAITING' && (
+					<div className={classes.action}>
+						<ResumeWaitingNowAction
+							tooltip={t('form.contacts.controls.resumeIgnoreDelay', {
+								ns: 'campaign.form.contacts',
+							})}
+							onClick={handleResumeWaitingNow}
+							loading={resumeMutation.isPending}
+							disabled={isActionLoading}
+						/>
+					</div>
+				)}
 
-			{canExecuteCampaign && normalizedStatus === 'EXECUTED' && (
-				<div className={classes.action}>
-					<ExtendWavesAction
-						tooltip={t('contacts.details.actions.extendWaves', {
-							ns: 'campaign.contact-list',
-						})}
-						onClick={handleExtendWaves}
-						loading={extendMutation.isPending}
-						disabled={isActionLoading}
-					/>
-				</div>
-			)}
+				{canExecuteCampaign && normalizedStatus === 'EXECUTED' && (
+					<div className={classes.action}>
+						<ExtendWavesAction
+							tooltip={t('contacts.details.actions.extendWaves', {
+								ns: 'campaign.contact-list',
+							})}
+							onClick={handleExtendWaves}
+							loading={extendMutation.isPending}
+							disabled={isActionLoading}
+						/>
+					</div>
+				)}
 
-			{canExecuteCampaign && normalizedStatus === 'EXECUTED' && (
-				<div className={classes.action}>
-					<CompleteListAction
-						tooltip={t('contacts.details.actions.completeList', {
-							ns: 'campaign.contact-list',
-						})}
-						onClick={handleCompleteList}
-						loading={completeMutation.isPending}
-						disabled={isActionLoading}
-					/>
-				</div>
-			)}
-
-			<div className={classes.action}>
-				<ExportResultsAction
-					tooltip={t('contacts.details.actions.downloadResults', {
-						ns: 'campaign.contact-list',
-					})}
-					onExport={(format) => {
-						void handleExport(format);
-					}}
-					loading={isExporting}
-					disabled={isActionLoading}
-				/>
+				{canExecuteCampaign && normalizedStatus === 'EXECUTED' && (
+					<div className={classes.action}>
+						<CompleteListAction
+							tooltip={t('contacts.details.actions.completeList', {
+								ns: 'campaign.contact-list',
+							})}
+							onClick={handleCompleteList}
+							loading={completeMutation.isPending}
+							disabled={isActionLoading}
+						/>
+					</div>
+				)}
 			</div>
 
-			<div className={classes.action}>
+			<div className={classes.secondaryActions}>
 				<ReloadAction
 					tooltip={t('contacts.tooltips.reload', {
 						ns: 'campaign.contact-list',

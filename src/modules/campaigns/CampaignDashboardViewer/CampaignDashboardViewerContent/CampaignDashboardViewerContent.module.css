@@ -1,23 +1,15 @@
-.emptyStateCard {
-	background: rgba(255, 255, 255, 0.72);
-	backdrop-filter: blur(12px);
-	-webkit-backdrop-filter: blur(12px);
-	border: 1px solid rgba(0, 0, 0, 0.06) !important;
-	box-shadow:
-		0 2px 12px rgba(0, 0, 0, 0.05),
-		0 1px 3px rgba(0, 0, 0, 0.04);
-	padding: var(--mantine-spacing-xl) var(--mantine-spacing-xl) !important;
-	text-align: center;
+.shell {
+	min-height: 0;
+	flex: 1;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
 }
 
-.emptyStateIcon {
-	width: 52px;
-	height: 52px;
-	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-2);
+.content {
+	min-height: 0;
+	flex: 1;
+	overflow-y: auto;
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var(--mantine-color-gray-5);
+	flex-direction: column;
 }

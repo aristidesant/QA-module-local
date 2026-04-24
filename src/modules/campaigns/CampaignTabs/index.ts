@@ -1,1 +1,1 @@
-export { default } from "./CampaignTabs";
+export { default } from './CampaignTabs';

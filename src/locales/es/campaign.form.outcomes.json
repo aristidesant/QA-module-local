@@ -11,6 +11,14 @@
 			"selectCatalog": "Seleccionar Catálogo",
 			"catalogChangeDisabled": "No se puede cambiar el catálogo cuando ya hay resultados agregados",
 			"noDispositions": "No hay disposiciones disponibles en este catálogo.",
+			"createCatalog": "Crear Catálogo",
+			"noCatalogsTitle": "No hay catálogos disponibles",
+			"campaignTypeNotice": "Esta campaña está configurada como {{type}}. El nuevo catálogo se creará para este tipo.",
+			"typeInbound": "Entrante",
+			"typeOutbound": "Saliente",
+			"createSuccess": "Catálogo creado",
+			"createSuccessMessage": "\"{{name}}\" ha sido creado y seleccionado.",
+			"createError": "No se pudo crear el catálogo. Inténtalo de nuevo.",
 			"expand": "Expandir",
 			"collapse": "Contraer",
 			"addAll": "Agregar todo",
@@ -40,6 +48,7 @@
 			"expand": "Expandir nodo",
 			"collapse": "Contraer nodo",
 			"doNotCall": "No llamar",
+			"abandoned": "Abandono",
 			"invalidatesNumber": "Invalida número",
 			"requiresReschedule": "Requiere reprogramación",
 			"addSiblings": "Agregar {{count}} hermano faltante",
@@ -61,13 +70,16 @@
 			"invalidatesNumberDesc": "Evita que el marcador vuelva a intentar este número de teléfono después de que se use el resultado.",
 			"doNotCallTitle": "No llamar",
 			"doNotCallDesc": "Marca este resultado como no llamar para que el contacto sea excluido de futuras marcaciones.",
+			"abandonedTitle": "Es abandono",
+			"abandonedDesc": "Marca este resultado cuando el cliente cuelga antes de completar el flujo.",
 			"rescheduleTitle": "Requiere reprogramación",
 			"rescheduleDesc": "Marca este resultado para que se puedan programar actividades de seguimiento para el contacto.",
 			"badges": {
 				"final": "Resultado final",
 				"reschedule": "Requiere reprogramación",
 				"noRetry": "No reintentar",
-				"doNotCall": "No llamar"
+				"doNotCall": "No llamar",
+				"abandoned": "Abandono"
 			}
 		},
 		"groupPreview": {
@@ -88,6 +100,7 @@
 		"viewer": {
 			"group": "Grupo",
 			"outcome": "Resultado",
+			"abandoned": "Abandono",
 			"nodeAria": "Nodo de resultado: {{name}}",
 			"childOutcomes": "{{count}} resultado hijo",
 			"childOutcomes_plural": "{{count}} resultados hijos",
@@ -110,7 +123,9 @@
 			"rescheduleCardTitle": "Requiere Reprogramación",
 			"rescheduleCardDesc": "Este resultado requiere que el contacto sea reprogramado para un intento futuro.",
 			"invalidatesCardTitle": "Invalida Número",
-			"invalidatesCardDesc": "Este resultado marca el número de contacto como inválido y evita futuros intentos."
+			"invalidatesCardDesc": "Este resultado marca el número de contacto como inválido y evita futuros intentos.",
+			"abandonedCardTitle": "Llamada abandonada",
+			"abandonedCardDesc": "Este resultado marca la conversación como abandonada porque el cliente terminó la llamada antes de completar el flujo."
 		}
 	}
 }

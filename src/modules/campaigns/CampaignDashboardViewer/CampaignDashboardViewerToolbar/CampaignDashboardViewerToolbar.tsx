@@ -19,6 +19,7 @@ import {
 	IconTimeline,
 	IconX,
 } from '@tabler/icons-react';
+import { IconChevronLeft } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import useCampaignDashboardViewerStore from '../store/useCampaignDashboardViewerStore';
@@ -41,6 +42,8 @@ interface CampaignDashboardViewerToolbarProps {
 	comparisonPeriod?: { current: DashboardPeriod; previous: DashboardPeriod };
 	comparisonEnabled: boolean;
 	allowLayoutEditing: boolean;
+	showBackButton?: boolean;
+	onBackClick?: () => void;
 	onAutoOrganize: () => void;
 	onCancelEditing: () => void;
 	onRefresh: () => void;
@@ -92,6 +95,8 @@ const CampaignDashboardViewerToolbar = ({
 	comparisonPeriod,
 	comparisonEnabled,
 	allowLayoutEditing,
+	showBackButton,
+	onBackClick,
 	onAutoOrganize,
 	onCancelEditing,
 	onRefresh,
@@ -147,6 +152,18 @@ const CampaignDashboardViewerToolbar = ({
 			<div className={styles.toolbar}>
 				<div className={styles.controlsSlot}>
 					<Group gap='xs' wrap='wrap'>
+						{showBackButton && onBackClick ? (
+							<Tooltip label={t('dashboardBuilder.preview.back')}>
+								<ActionIcon
+									variant='default'
+									className={styles.backButton}
+									onClick={onBackClick}
+									size='lg'
+								>
+									<IconChevronLeft size={18} />
+								</ActionIcon>
+							</Tooltip>
+						) : null}
 						<Menu
 							position='bottom-start'
 							withArrow
@@ -185,7 +202,6 @@ const CampaignDashboardViewerToolbar = ({
 								))}
 							</Menu.Dropdown>
 						</Menu>
-
 						<Menu
 							position='bottom-start'
 							withArrow
@@ -248,7 +264,6 @@ const CampaignDashboardViewerToolbar = ({
 								})}
 							</Menu.Dropdown>
 						</Menu>
-
 						{selectedTimeRange ? (
 							<Tooltip label={t('dashboard.comparison.toggle')}>
 								<Button

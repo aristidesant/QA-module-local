@@ -23,17 +23,19 @@ const CampaignDashboardViewerGrid = ({
 }: CampaignDashboardViewerGridProps) => {
 	return (
 		<div className={styles.grid}>
-			{widgets.map((widget, index) => (
-				<CampaignDashboardViewerWidget
-					key={widget.widgetId}
-					widget={widget}
-					index={index}
-					layout={activeLayoutMap.get(widget.widgetId)}
-					comparisonData={comparisonMap?.get(widget.widgetId)}
-					comparisonPeriodLabel={comparisonPeriodLabel}
-					selectedTimeRange={selectedTimeRange}
-				/>
-			))}
+			<div className={styles.gridInner}>
+				{widgets.map((widget, index) => (
+					<CampaignDashboardViewerWidget
+						key={widget.widgetId}
+						widget={widget}
+						index={index}
+						layout={activeLayoutMap.get(widget.widgetId)}
+						comparisonData={comparisonMap?.get(widget.widgetId)}
+						comparisonPeriodLabel={comparisonPeriodLabel}
+						selectedTimeRange={selectedTimeRange}
+					/>
+				))}
+			</div>
 		</div>
 	);
 };

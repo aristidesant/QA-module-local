@@ -14,6 +14,11 @@
 	background-color: var(--mantine-color-gray-1);
 }
 
+[data-mantine-color-scheme='dark'] .avatar {
+	border-color: var(--mantine-color-dark-4);
+	background-color: var(--mantine-color-dark-6);
+}
+
 .statusDot {
 	position: absolute;
 	right: 4px;
@@ -22,6 +27,10 @@
 	height: 16px;
 	border-radius: 50%;
 	border: 2px solid var(--mantine-color-gray-0);
+}
+
+[data-mantine-color-scheme='dark'] .statusDot {
+	border-color: var(--mantine-color-dark-7);
 }
 
 .statusOnline {
@@ -40,6 +49,10 @@
 	letter-spacing: -0.01em;
 }
 
+[data-mantine-color-scheme='dark'] .name {
+	color: var(--mantine-color-dark-0);
+}
+
 .languageChip {
 	display: inline-flex;
 	align-items: center;
@@ -48,6 +61,11 @@
 	border-radius: 999px;
 	border: 1px solid var(--mantine-color-gray-3);
 	background-color: var(--mantine-color-gray-1);
+}
+
+[data-mantine-color-scheme='dark'] .languageChip {
+	border-color: var(--mantine-color-dark-4);
+	background-color: var(--mantine-color-dark-6);
 }
 
 .flagIcon {
@@ -61,6 +79,10 @@
 	letter-spacing: 0.4px;
 	text-transform: uppercase;
 	color: var(--mantine-color-gray-7);
+}
+
+[data-mantine-color-scheme='dark'] .languageText {
+	color: var(--mantine-color-dark-2);
 }
 
 .traitsList {
@@ -83,4 +105,10 @@
 	color: var(--mantine-color-gray-7);
 	text-transform: uppercase;
 	letter-spacing: 0.3px;
+}
+
+[data-mantine-color-scheme='dark'] .trait {
+	border-color: var(--mantine-color-dark-4);
+	background-color: var(--mantine-color-dark-6);
+	color: var(--mantine-color-dark-2);
 }

@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+	keepPreviousData,
+	useMutation,
+	useQuery,
+	useQueryClient,
+} from '@tanstack/react-query';
 import type { UseQueryOptions } from '@tanstack/react-query';
 import campaignsApi, {
 	type CreateCampaignWithAgentDTO,
@@ -47,6 +52,7 @@ export const useGetAllCampaignsPaginated = (params?: Record<string, any>) => {
 			const api = campaignsApi();
 			return api.findAllCampaignsPaginated(params);
 		},
+		placeholderData: keepPreviousData,
 		retry: false,
 	});
 };
@@ -457,5 +463,16 @@ export const useToggleCampaignStatus = () => {
 		onError: (error) => {
 			void error;
 		},
+	});
+};
+
+export const useGetSimpleCampaigns = (enabled = true) => {
+	return useQuery({
+		queryKey: ['campaigns-simple'],
+		queryFn: async () => {
+			const api = campaignsApi();
+			return api.getSimpleCampaigns();
+		},
+		enabled,
 	});
 };

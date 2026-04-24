@@ -1,5 +1,5 @@
 .phoneNumber {
-	font-family: 'Courier New', monospace;
+	font-family: var(--mantine-font-family-monospace);
 	letter-spacing: 0.5px;
 	white-space: nowrap;
 }

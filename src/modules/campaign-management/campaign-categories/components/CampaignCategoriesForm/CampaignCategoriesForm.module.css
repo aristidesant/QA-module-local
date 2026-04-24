@@ -18,3 +18,7 @@
 .submitButton:hover {
 	background-color: var(--mantine-color-blue-7);
 }
+
+[data-mantine-color-scheme='dark'] .actions {
+	border-top-color: var(--mantine-color-dark-5);
+}

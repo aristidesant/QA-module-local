@@ -1,6 +1,30 @@
 .formContainer {
-	background: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
+	--disposition-surface: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+	--disposition-surface-soft: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-8)
+	);
+	--disposition-border: light-dark(
+		var(--mantine-color-gray-2),
+		var(--mantine-color-dark-4)
+	);
+	--disposition-border-strong: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-3)
+	);
+	--disposition-text: light-dark(
+		var(--mantine-color-gray-9),
+		var(--mantine-color-gray-0)
+	);
+	--disposition-text-muted: light-dark(
+		var(--mantine-color-gray-6),
+		var(--mantine-color-gray-4)
+	);
+	background: var(--disposition-surface);
+	border: 1px solid var(--disposition-border);
 	border-radius: var(--mantine-radius-lg);
 	padding: var(--mantine-spacing-md);
 	display: flex;
@@ -37,7 +61,7 @@
 
 .headerEyebrow {
 	font-size: 11px;
-	color: var(--mantine-color-gray-6);
+	color: var(--disposition-text-muted);
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
 }
@@ -45,14 +69,14 @@
 .headerTitle {
 	font-size: var(--mantine-font-size-md);
 	font-weight: 600;
-	color: var(--mantine-color-gray-9);
+	color: var(--disposition-text);
 	line-height: 1.4;
 }
 
 .parentBadge {
-	background: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-3);
-	color: var(--mantine-color-gray-7);
+	background: var(--disposition-surface-soft);
+	border: 1px solid var(--disposition-border-strong);
+	color: var(--disposition-text-muted);
 }
 
 .statusGroup {
@@ -71,19 +95,19 @@
 	gap: 4px;
 	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
 	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--mantine-color-gray-3);
-	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--disposition-border-strong);
+	background: var(--disposition-surface-soft);
 }
 
 .infoLabel {
 	font-size: 11px;
-	color: var(--mantine-color-gray-6);
+	color: var(--disposition-text-muted);
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
 }
 
 .infoValue {
-	color: var(--mantine-color-gray-8);
+	color: var(--disposition-text);
 	line-height: 1.5;
 }
 
@@ -95,7 +119,7 @@
 
 .sectionLabel {
 	font-size: 11px;
-	color: var(--mantine-color-gray-6);
+	color: var(--disposition-text-muted);
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
 }
@@ -119,8 +143,8 @@
 	gap: var(--mantine-spacing-sm);
 	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
 	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--mantine-color-gray-3);
-	background: var(--mantine-color-white);
+	border: 1px solid var(--disposition-border);
+	background: var(--disposition-surface);
 }
 
 .toggleContent {
@@ -133,11 +157,11 @@
 .toggleTitle {
 	font-size: var(--mantine-font-size-sm);
 	font-weight: 500;
-	color: var(--mantine-color-gray-9);
+	color: var(--disposition-text);
 }
 
 .toggleDescription {
-	color: var(--mantine-color-gray-6);
+	color: var(--disposition-text-muted);
 	line-height: 1.4;
 }
 
@@ -150,5 +174,5 @@
 	justify-content: flex-end;
 	gap: var(--mantine-spacing-xs);
 	padding-top: var(--mantine-spacing-xs);
-	border-top: 1px solid var(--mantine-color-gray-2);
+	border-top: 1px solid var(--disposition-border);
 }

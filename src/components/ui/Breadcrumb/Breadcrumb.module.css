@@ -1,35 +1,35 @@
 .container {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
 }
 
 .item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: var(--mantine-color-gray-6);
-  font-size: 1rem;
-  font-weight: 500;
-  transition: color 0.2s ease;
-  border-radius: 6px;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	color: var(--mantine-color-gray-6);
+	font-size: 1rem;
+	font-weight: 500;
+	transition: color 0.2s ease;
+	border-radius: 6px;
 }
 
 .item:hover {
-  color: var(--mantine-color-blue-6);
+	color: var(--mantine-color-blue-6);
 }
 
 .active {
-  color: var(--mantine-color-gray-8);
-  font-weight: 500;
+	color: var(--mantine-color-gray-8);
+	font-weight: 500;
 }
 
 .active:hover {
-  color: var(--mantine-color-gray-9);
+	color: var(--mantine-color-gray-9);
 }
 
 .separator {
-  color: var(--mantine-color-gray-5);
-  display: flex;
-  align-items: center;
+	color: var(--mantine-color-gray-5);
+	display: flex;
+	align-items: center;
 }

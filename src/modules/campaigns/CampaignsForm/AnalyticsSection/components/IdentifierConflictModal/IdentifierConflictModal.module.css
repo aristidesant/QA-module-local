@@ -1,1 +1,67 @@
-/* Intentionally minimal; modal uses Mantine primitives */
+[data-mantine-color-scheme='dark'] .optionCard {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .optionCard:hover {
+	border-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .optionCardSelectedReplace {
+	border-color: var(--mantine-color-red-6);
+}
+
+[data-mantine-color-scheme='dark'] .optionCardSelectedDuplicate {
+	border-color: var(--mantine-color-blue-6);
+}
+
+[data-mantine-color-scheme='dark'] .warningRow {
+	color: var(--mantine-color-red-3);
+}
+
+[data-mantine-color-scheme='dark'] .warningIcon {
+	color: var(--mantine-color-red-4);
+}
+
+[data-mantine-color-scheme='dark'] .duplicateCode {
+	background: var(--mantine-color-dark-6);
+	color: var(--mantine-color-dark-0);
+}
+
+.optionCard {
+	cursor: pointer;
+	background: var(--mantine-color-body);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	transition:
+		border-color 140ms ease,
+		background-color 140ms ease;
+}
+
+.optionContent {
+	flex: 1;
+}
+
+.optionCard:hover {
+	border-color: var(--mantine-color-gray-4);
+}
+
+.optionCardSelectedReplace {
+	border-color: var(--mantine-color-red-6);
+}
+
+.optionCardSelectedDuplicate {
+	border-color: var(--mantine-color-blue-6);
+}
+
+.warningRow {
+	color: var(--mantine-color-red-7);
+}
+
+.warningIcon {
+	color: var(--mantine-color-red-6);
+}
+
+.duplicateCode {
+	background: var(--mantine-color-gray-1);
+}

@@ -5,33 +5,35 @@
 .label {
 	font-weight: 500;
 	margin-bottom: 4px;
-	color: var(--mantine-color-gray-7);
+	color: var(--workflow-drawer-text, var(--mantine-color-gray-7));
 }
 
 .input {
-	border-color: var(--mantine-color-gray-2);
+	border-color: var(--workflow-drawer-border-soft, var(--mantine-color-gray-2));
 }
 
 .segmentedRoot {
 	background-color: transparent;
 	padding: 0;
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid
+		var(--workflow-drawer-border-soft, var(--mantine-color-gray-2));
 }
 
 .segmentedIndicator {
-	border: 1.5px solid var(--mantine-color-black);
+	border: 1.5px solid
+		var(--workflow-drawer-border-strong, var(--mantine-color-black));
 	background-color: transparent;
 	box-shadow: none;
 }
 
 .segmentedLabel {
 	font-weight: 500;
-	color: var(--mantine-color-gray-6);
+	color: var(--workflow-drawer-text-muted, var(--mantine-color-gray-6));
 	transition: color 0.2s ease;
 }
 
 .segmentedLabel[data-active] {
-	color: var(--mantine-color-black);
+	color: var(--workflow-drawer-text, var(--mantine-color-black));
 }
 
 .inlineBadge {
@@ -46,12 +48,15 @@
 
 .addHeaderBtn {
 	border-style: dashed;
-	background-color: var(--mantine-color-gray-0);
-	color: var(--mantine-color-gray-7);
+	background-color: var(
+		--workflow-drawer-panel-muted,
+		var(--mantine-color-gray-0)
+	);
+	color: var(--workflow-drawer-text-muted, var(--mantine-color-gray-7));
 }
 
 .description {
 	font-size: var(--mantine-font-size-xs);
-	color: var(--mantine-color-gray-6);
+	color: var(--workflow-drawer-text-muted, var(--mantine-color-gray-6));
 	margin-top: 2px;
 }

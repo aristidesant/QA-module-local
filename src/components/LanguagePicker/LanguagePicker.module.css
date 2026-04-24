@@ -30,6 +30,25 @@
 	background-color: var(--mantine-color-gray-0);
 }
 
+[data-mantine-color-scheme='dark'] .trigger {
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .trigger:hover {
+	background-color: var(--mantine-color-dark-6);
+	color: var(--mantine-color-white);
+}
+
+[data-mantine-color-scheme='dark'] .default {
+	border-color: var(--mantine-color-dark-4);
+	background-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .default:hover {
+	border-color: var(--mantine-color-dark-3);
+	background-color: var(--mantine-color-dark-6);
+}
+
 .subtle {
 	background-color: transparent;
 }
@@ -87,12 +106,22 @@
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
+[data-mantine-color-scheme='dark'] .dropdown {
+	border-color: var(--mantine-color-dark-4);
+	box-shadow: 0 6px 16px rgba(0, 0, 0, 0.28);
+	background-color: var(--mantine-color-dark-7);
+}
+
 .menuLabel {
 	font-size: 10px;
 	font-weight: 700;
 	letter-spacing: 1px;
 	color: var(--mantine-color-gray-5);
 	padding-bottom: 4px;
+}
+
+[data-mantine-color-scheme='dark'] .menuLabel {
+	color: var(--mantine-color-dark-2);
 }
 
 .menuItem {
@@ -110,6 +139,10 @@
 	font-weight: 600;
 }
 
+[data-mantine-color-scheme='dark'] .menuItem {
+	color: var(--mantine-color-dark-1);
+}
+
 .activeItem {
 	background-color: var(--mantine-color-blue-0) !important;
 	color: var(--mantine-color-blue-7);
@@ -117,4 +150,21 @@
 
 .activeItem:hover {
 	background-color: var(--mantine-color-blue-1) !important;
+}
+
+[data-mantine-color-scheme='dark'] .activeItem {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-8) 60%,
+		var(--mantine-color-dark-7)
+	) !important;
+	color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] .activeItem:hover {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-7) 58%,
+		var(--mantine-color-dark-6)
+	) !important;
 }

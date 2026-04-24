@@ -16,15 +16,27 @@ import {
 	IconShield,
 	IconSwitchHorizontal,
 	IconUserCircle,
+	IconSun,
+	IconMoon,
+	IconDeviceDesktop,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
+import { useColorSchemeStore } from '~/stores/colorSchemeStore';
 import logout from '~/utils/logout';
 import LanguagePicker from '../LanguagePicker';
 import ClientSwitcherModal from '../ClientSwitcherModal';
 import styles from './UserMenu.module.css';
+
+type ColorSchemePreference = 'light' | 'dark' | 'auto';
+
+const themeIconMap: Record<ColorSchemePreference, typeof IconSun> = {
+	light: IconSun,
+	dark: IconMoon,
+	auto: IconDeviceDesktop,
+};
 
 interface UserMenuProps {
 	collapsed?: boolean;
@@ -34,6 +46,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 	const { t } = useTranslation('common');
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
+	const preference = useColorSchemeStore((s) => s.preference);
+	const setPreference = useColorSchemeStore((s) => s.setPreference);
 	const navigate = useNavigate();
 	const [switcherOpened, { open: openSwitcher, close: closeSwitcher }] =
 		useDisclosure(false);
@@ -78,7 +92,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 			onClose={closeMenu}
 			position='top-end'
 			withArrow
-			shadow='md'
+			shadow='sm'
 			width={220}
 		>
 			<Menu.Target>
@@ -113,7 +127,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 						{initials}
 						{isImpersonating && (
 							<div className={styles.impersonationIndicator}>
-								<IconShield size={10} />
+								<IconShield size={8} />
 							</div>
 						)}
 					</div>
@@ -126,10 +140,11 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 						</Text>
 					</div>
 				</div>
-				<Divider mb={4} />
+				<Divider className={styles.menuDivider} />
 				<Menu.Item
 					leftSection={<IconUserCircle size={16} />}
 					onClick={handleProfileClick}
+					className={styles.menuItem}
 				>
 					{t('sidebar.account.profile')}
 				</Menu.Item>
@@ -139,6 +154,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 						closeMenu();
 						openSwitcher();
 					}}
+					className={styles.menuItem}
 				>
 					{t('sidebar.account.switchClient')}
 				</Menu.Item>
@@ -148,11 +164,45 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 				<div className={styles.languageMenuRow}>
 					<LanguagePicker size='xs' variant='subtle' withLabel />
 				</div>
-				<Divider />
+				<Menu.Label className={styles.menuLabel}>
+					{t('sidebar.theme.label')}
+				</Menu.Label>
+				<div className={styles.themeRow}>
+					<div className={styles.themeSegment}>
+						{(['light', 'dark', 'auto'] as ColorSchemePreference[]).map(
+							(scheme) => {
+								const Icon = themeIconMap[scheme];
+								const isActive = preference === scheme;
+								return (
+									<Tooltip
+										key={scheme}
+										label={t(`sidebar.theme.${scheme}`)}
+										withArrow
+									>
+										<ActionIcon
+											variant='transparent'
+											size='sm'
+											onClick={() => setPreference(scheme)}
+											aria-label={t(`sidebar.theme.${scheme}`)}
+											className={[
+												styles.themeBtn,
+												isActive ? styles.themeBtnActive : '',
+											].join(' ')}
+										>
+											<Icon size={14} />
+										</ActionIcon>
+									</Tooltip>
+								);
+							}
+						)}
+					</div>
+				</div>
+				<Divider className={styles.menuDivider} />
 				<Menu.Item
 					color='red'
 					leftSection={<IconLogout size={16} />}
 					onClick={handleLogout}
+					className={[styles.menuItem, styles.logoutItem].join(' ')}
 				>
 					{t('sidebar.account.logout')}
 				</Menu.Item>
@@ -181,7 +231,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 							{initials}
 							{isImpersonating && (
 								<div className={styles.impersonationIndicator}>
-									<IconShield size={12} />
+									<IconShield size={10} />
 								</div>
 							)}
 						</div>
@@ -226,7 +276,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 							{initials}
 							{isImpersonating && (
 								<div className={styles.impersonationIndicator}>
-									<IconShield size={12} />
+									<IconShield size={10} />
 								</div>
 							)}
 						</div>

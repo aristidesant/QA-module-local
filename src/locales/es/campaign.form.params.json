@@ -242,6 +242,18 @@
 				"weekdays": "Días laborables",
 				"weekends": "Fines de semana"
 			}
+		},
+		"section": {
+			"title": "Horarios",
+			"description": "Configura las horas de operación y la capacidad de la campaña",
+			"empty": "Aún no hay horarios configurados"
+		},
+		"timeline": {
+			"title": "Horario Semanal",
+			"daysActive": "días activos",
+			"empty": "No hay días activos configurados",
+			"start": "Inicio",
+			"end": "Fin"
 		}
 	},
 	"workingHours": {

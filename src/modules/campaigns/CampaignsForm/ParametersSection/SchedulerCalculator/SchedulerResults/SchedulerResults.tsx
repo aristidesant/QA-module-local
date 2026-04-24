@@ -138,7 +138,7 @@ const SchedulerResults: React.FC = () => {
 					</div>
 
 					<div style={{ marginBottom: '12px' }}>
-						<Text size='xs' fw={600} c='gray.7' mb={6}>
+						<Text size='xs' fw={600} c='dimmed' mb={6}>
 							{t('scheduler.calculator.results.waveBreakdown')}
 						</Text>
 						<BaseTable<WaveRow>

@@ -11,7 +11,9 @@ import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
-import { getWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
+import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
+import { useNodeStyle } from '../../NodeStylesContext';
+import { useWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
 import styles from './ToolNode.module.css';
 
 const ToolNodeComponent = (props: NodeProps) => {
@@ -23,8 +25,16 @@ const ToolNodeComponent = (props: NodeProps) => {
 		'common',
 	]);
 	const fallbackLabel = t('form.workflow.nodes.tool');
-	const nodeSurfaceStyle = getWorkflowNodeToneStyle(
-		nodeData.label || fallbackLabel
+	const persistedStyle = useNodeStyle(props.id);
+	const nodeSurfaceStyle = useWorkflowNodeToneStyle(
+		nodeData.label || fallbackLabel,
+		persistedStyle
+	);
+	const CustomIcon = resolveWorkflowIcon(persistedStyle?.iconName);
+	const nodeIcon = CustomIcon ? (
+		<CustomIcon size={18} className={styles.icon} />
+	) : (
+		<IconTool size={18} className={styles.icon} />
 	);
 	const toolCount = nodeData.tools?.length ?? 0;
 	const { data: tools } = useTools();
@@ -57,7 +67,7 @@ const ToolNodeComponent = (props: NodeProps) => {
 				>
 					<WorkflowNodeHeader
 						className={styles.header}
-						icon={<IconTool size={18} className={styles.icon} />}
+						icon={nodeIcon}
 						title={nodeData.label || fallbackLabel}
 						subtitle={t('form.workflow.nodeStatus.toolsAttached', {
 							count: toolCount,

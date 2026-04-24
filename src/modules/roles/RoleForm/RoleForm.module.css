@@ -7,6 +7,109 @@
 	width: 100%;
 }
 
+[data-mantine-color-scheme='dark'] .subtitle {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .sectionCard {
+	border-color: var(--mantine-color-dark-5);
+	background-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .sectionTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .sectionHeader {
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .sectionDescription {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .hint {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .moduleSidebar {
+	background-color: var(--mantine-color-dark-8);
+	border-right-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .moduleTab:hover:not(:disabled) {
+	background-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .moduleTabActive {
+	background-color: var(--mantine-color-dark-6);
+	border-left-color: var(--mantine-color-blue-5);
+}
+
+[data-mantine-color-scheme='dark'] .moduleTabActive:hover:not(:disabled) {
+	background-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .moduleTabLabelText {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .moduleTabActive .moduleTabLabelText {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .masterClientOnlyIcon {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .moduleTabActive .masterClientOnlyIcon {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .permissionsContainer {
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .permissionsPanel {
+	background-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .permissionsPanelHeader {
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .permissionsPanelTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .permissionsPanelCount {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .permissionItem {
+	border-color: var(--mantine-color-dark-5);
+	background-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .permissionItem:hover {
+	border-color: var(--mantine-color-dark-4);
+	background-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .permissionItemActive {
+	border-color: var(--mantine-color-blue-6);
+	background-color: var(--mantine-color-blue-9);
+}
+
+[data-mantine-color-scheme='dark'] .permissionItemActive:hover {
+	border-color: var(--mantine-color-blue-5);
+	background-color: var(--mantine-color-blue-9);
+}
+
+[data-mantine-color-scheme='dark'] .helperText {
+	color: var(--mantine-color-dark-2);
+}
+
 .subtitle {
 	color: var(--mantine-color-gray-6);
 	font-size: var(--mantine-font-size-sm);

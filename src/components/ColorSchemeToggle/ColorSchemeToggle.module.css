@@ -1,0 +1,7 @@
+.toggle {
+	cursor: pointer;
+	width: 38px;
+	height: 38px;
+	border-radius: 12px;
+	color: var(--sidebar-text-muted, var(--mantine-color-gray-6));
+}

@@ -8,6 +8,11 @@
 		"widgetsDescription": "Widgets configured for {{dashboard}}.",
 		"widgetsPlaceholderDescription": "Select a dashboard to manage its widgets.",
 		"defaultBadge": "Default",
+		"mainSlots": {
+			"MAIN_1": "MAIN-1",
+			"MAIN_2": "MAIN-2",
+			"MAIN_3": "MAIN-3"
+		},
 		"noDescription": "No description yet.",
 		"enabled": "Enabled",
 		"disabled": "Disabled",
@@ -32,8 +37,22 @@
 			"position": "Position",
 			"positionValue": "Column {{column}}, row {{row}}",
 			"status": "Status",
+			"access": "Access",
 			"groupBy": "Group by",
 			"limit": "Limit"
+		},
+		"widget": {
+			"name": "Name",
+			"type": "Type",
+			"status": "Status",
+			"access": "Access",
+			"publicBadge": "Public",
+			"restrictedRolesBadge_one": "1 role",
+			"restrictedRolesBadge_other": "{{count}} roles",
+			"activeBadge": "Active",
+			"inactiveBadge": "Inactive",
+			"customBadge": "Custom",
+			"defaultBadge": "Default"
 		},
 		"widgetTypes": {
 			"KPI": "KPI",
@@ -67,7 +86,8 @@
 		},
 		"preview": {
 			"title": "Preview",
-			"description": "Review the selected dashboard before returning to the builder."
+			"description": "Review the selected dashboard before returning to the builder.",
+			"back": "Back"
 		},
 		"breadcrumb": {
 			"root": "Dashboard Builder"
@@ -80,6 +100,7 @@
 			"aggregation": "Aggregation",
 			"widgetDetails": "Widget Details",
 			"visibilityScope": "Scope",
+			"widgetRoles": "Role Access",
 			"subtitle": "Jump between the steps to review or edit them.",
 			"advanced": "Adv. Options"
 		},
@@ -120,6 +141,8 @@
 				"aggregationDescription": "How should the values be combined?",
 				"visibilityScopeTitle": "Visibility Scope",
 				"visibilityScopeDescription": "Who can see this widget on the dashboard?",
+				"widgetRolesTitle": "Role Access",
+				"widgetRolesDescription": "Optionally restrict rendering to users with at least one selected role.",
 				"widgetDetailsTitle": "Widget Details",
 				"widgetDetailsDescription": "Name and configure the widget presentation.",
 				"sourceTypeTitle": "Source Type",
@@ -140,6 +163,8 @@
 			"fields": {
 				"dashboardName": "Dashboard name",
 				"dashboardDescription": "Dashboard description",
+				"mainSlot": "Main slot",
+				"mainSlotDescription": "Assign this global dashboard to one of the three main client slots.",
 				"isDefault": "Use as default dashboard",
 				"widgetTitle": "Widget title",
 				"widgetDescription": "Widget description",
@@ -172,12 +197,20 @@
 				"viewLegend": "Show legend",
 				"widgetSize": "Widget size",
 				"widgetSizeDescription": "Use standardized spans to keep the dashboard organized.",
+				"widgetRoles": "Allowed roles",
 				"width": "Width",
 				"height": "Height",
 				"enabled": "Widget enabled"
 			},
 			"aggregationHint": "Aggregation defines the math applied to the selected source field.",
 			"visibilityScopeHint": "Internal is the default. Switch to Global or Private only when you need a different audience.",
+			"roleAccess": {
+				"hint": "If no roles are selected, the widget stays public. If roles are selected, render only includes users with at least one of them.",
+				"publicSummary": "Public widget",
+				"restrictedSummary_one": "Restricted to 1 role",
+				"restrictedSummary_other": "Restricted to {{count}} roles",
+				"noRolesFound": "No roles found"
+			},
 			"sourceTypeDescriptions": {
 				"CONVERSATION": "Call & interaction data",
 				"ATTRIBUTE": "Names, types & categories",
@@ -221,6 +254,7 @@
 				"CUSTOM": "Custom"
 			},
 			"placeholders": {
+				"mainSlot": "No main slot",
 				"widgetTitle": "e.g. Total Calls this month",
 				"widgetDescription": "Optional description",
 				"metricKey": "Select an attribute key",
@@ -237,6 +271,7 @@
 				"runtimeFilterValueDisabled": "Select an operator first",
 				"viewColor": "#2563eb",
 				"viewValueFormat": "Select a format",
+				"widgetRoles": "Select one or more roles",
 				"groupBy": "e.g. call_status",
 				"groupByAttribute": "e.g. province or value_string",
 				"limit": "Optional"
@@ -324,6 +359,7 @@
 				"resultType": {
 					"EMPTY": "Empty",
 					"NUMBER": "Number",
+					"PERCENT": "Percent",
 					"BOOLEAN": "Boolean",
 					"STRING": "String",
 					"TIME": "Time"
@@ -434,11 +470,15 @@
 		"widget": {
 			"name": "Name",
 			"type": "Type",
+			"access": "Access",
 			"metric": "Metric",
 			"size": "Size",
 			"status": "Status",
 			"defaultBadge": "Default",
 			"customBadge": "Custom",
+			"publicBadge": "Public",
+			"restrictedRolesBadge_one": "1 role",
+			"restrictedRolesBadge_other": "{{count}} roles",
 			"activeBadge": "Active",
 			"inactiveBadge": "Inactive"
 		},

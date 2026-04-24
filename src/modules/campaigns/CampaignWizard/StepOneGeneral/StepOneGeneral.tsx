@@ -7,7 +7,6 @@ import {
 	Box,
 	Text,
 	Stack,
-	SegmentedControl,
 	Select,
 	Button,
 	Group,
@@ -18,6 +17,7 @@ import {
 	Input,
 	Alert,
 } from '@mantine/core';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
@@ -288,7 +288,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 									{t('wizard.steps.general.campaignTypeDesc')}
 								</Text>
 							</div>
-							<SegmentedControl
+							<AppSegmentedControl
 								data={[
 									{
 										value: 'OUTBOUND',

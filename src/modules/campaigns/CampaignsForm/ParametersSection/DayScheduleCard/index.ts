@@ -1,1 +1,1 @@
-export { DayScheduleCard } from "./DayScheduleCard";
+export { DayScheduleCard } from './DayScheduleCard';

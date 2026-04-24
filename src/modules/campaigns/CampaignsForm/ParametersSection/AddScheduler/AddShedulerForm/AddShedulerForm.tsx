@@ -11,7 +11,6 @@ import {
 	Badge,
 	ThemeIcon,
 	Table,
-	SegmentedControl,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -25,6 +24,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
 import type { DayConfig } from '~/api/campaignsApi';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { useCreateCampaignSchedule } from '~/queries/campaignsQueries';
 import classes from './AddShedulerForm.module.css';
@@ -378,8 +378,9 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 							<Text size='sm' fw={600}>
 								{t('scheduler.schedulerBuilder.scheduleType')}
 							</Text>
-							<SegmentedControl
+							<AppSegmentedControl
 								size='sm'
+								fullWidth
 								data={[
 									{
 										value: ScheduleType.CUSTOM,
@@ -393,7 +394,10 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 										disabled: isOutbound,
 									},
 								]}
-								{...form.getInputProps('scheduleType')}
+								value={form.values.scheduleType}
+								onChange={(value) =>
+									form.setFieldValue('scheduleType', value as ScheduleType)
+								}
 							/>
 							{isOutbound && (
 								<Text size='xs' c='orange'>
@@ -407,8 +411,9 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 							<Text size='sm' fw={600}>
 								{t('scheduler.schedulerBuilder.directionLabel')}
 							</Text>
-							<SegmentedControl
+							<AppSegmentedControl
 								size='sm'
+								fullWidth
 								data={[
 									{
 										value: ScheduleDirection.INBOUND,
@@ -423,7 +428,10 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 										label: t('scheduler.schedulerBuilder.directions.both'),
 									},
 								]}
-								{...form.getInputProps('direction')}
+								value={form.values.direction}
+								onChange={(value) =>
+									form.setFieldValue('direction', value as ScheduleDirection)
+								}
 							/>
 						</Stack>
 					</Stack>
@@ -458,6 +466,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 									'scheduler.schedulerBuilder.predefinedNoData'
 								)}
 								className={classes.field}
+								classNames={{ dropdown: classes.dropdown }}
 								{...form.getInputProps('predefinedScheduleId')}
 							/>
 							<div className={classes.preview}>
@@ -504,11 +513,7 @@ const AddShedulerForm: React.FC<AddShedulerFormProps> = ({
 															<Text
 																size='xs'
 																fw={600}
-																c={
-																	isOff
-																		? 'var(--mantine-color-gray-5)'
-																		: undefined
-																}
+																c={isOff ? 'dimmed' : undefined}
 															>
 																{value}
 															</Text>

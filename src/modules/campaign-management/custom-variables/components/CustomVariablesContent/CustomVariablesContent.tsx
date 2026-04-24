@@ -20,6 +20,7 @@ import {
 	useGetTemplateVariables,
 } from '~/queries/customVariableTemplatesQueries';
 import CustomVariableForm from '../CustomVariableForm';
+import modalStyles from '../CustomVariableForm/CustomVariableFormModal.module.css';
 import { useCustomVariablesColumns } from './useCustomVariablesColumns';
 import styles from './CustomVariablesContent.module.css';
 
@@ -167,6 +168,14 @@ export default function CustomVariablesContent({
 				onClose={() => setCreateModalOpened(false)}
 				title={t('customVariables.variables.create')}
 				size='lg'
+				radius='md'
+				overlayProps={{ opacity: 0.35, blur: 2 }}
+				classNames={{
+					header: modalStyles.modalHeader,
+					title: modalStyles.modalTitle,
+					body: modalStyles.modalBody,
+					content: modalStyles.modalContent,
+				}}
 			>
 				{selectedTemplateId && (
 					<CustomVariableForm
@@ -185,6 +194,14 @@ export default function CustomVariablesContent({
 				}}
 				title={t('customVariables.variables.edit')}
 				size='lg'
+				radius='md'
+				overlayProps={{ opacity: 0.35, blur: 2 }}
+				classNames={{
+					header: modalStyles.modalHeader,
+					title: modalStyles.modalTitle,
+					body: modalStyles.modalBody,
+					content: modalStyles.modalContent,
+				}}
 			>
 				{selectedTemplateId && selectedVariable && (
 					<CustomVariableForm

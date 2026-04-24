@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { ActionIcon, Center, Group, Text, Tooltip } from '@mantine/core';
 import SectionCard from '~/components/SectionCard';
-import AppDrawer from '~/components/AppDrawer';
 import { modals } from '@mantine/modals';
 import { IconMessages as IconMessagesTabler } from '@tabler/icons-react';
 import {
@@ -18,7 +18,6 @@ import {
 	useFetchAndProcessConversation,
 	useGetConversations,
 } from '~/queries/conversationsQueries';
-import ConversationDetails from '~/modules/conversations/ConversationDetails';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -42,6 +41,8 @@ type ConversationsListProps = {
 	contactGroupId?: number | string;
 	className?: string;
 	hiddenColumns?: string[];
+	onRowClick?: (conversation: { id: number }) => void;
+	onListChange?: (ids: number[]) => void;
 };
 
 const ConversationsList: React.FC<ConversationsListProps> = ({
@@ -49,8 +50,11 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	contactGroupId,
 	className,
 	hiddenColumns,
+	onRowClick: onRowClickProp,
+	onListChange,
 }) => {
 	const { t } = useTranslation(['conversations', 'common']);
+	const navigate = useNavigate();
 	const pagination = usePagination({
 		initialItemsPerPage: 10,
 	});
@@ -74,10 +78,6 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	const sortOrder = sorting?.[0]?.desc ? 'DESC' : 'ASC';
 
 	const [filters, setFilters] = useState<ConversationFiltersType>({});
-	const [selectedConversationId, setSelectedConversationId] = useState<
-		number | null
-	>(null);
-	const [drawerOpened, setDrawerOpened] = useState(false);
 	const [exportModalOpened, setExportModalOpened] = useState(false);
 	const [pendingAction, setPendingAction] = useState<{
 		id: number;
@@ -90,11 +90,6 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	useEffect(() => {
 		pagination.setCurrentPage(1);
 	}, [filters]);
-
-	useEffect(() => {
-		setSelectedConversationId(null);
-		setDrawerOpened(false);
-	}, [campaignId, contactGroupId]);
 
 	const { data, isLoading, isFetching, isError, error, refetch } =
 		useGetConversations({
@@ -110,6 +105,12 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	const conversations = data?.data ?? [];
 	const totalItems = data?.total ?? 0;
 
+	useEffect(() => {
+		if (onListChange) {
+			onListChange((data?.data ?? []).map((c) => c.id));
+		}
+	}, [data, onListChange]);
+
 	const totalPages = useMemo(() => {
 		return pagination.calculateTotalPages(totalItems);
 	}, [pagination, totalItems]);
@@ -120,15 +121,20 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 		return 'America/Puerto_Rico';
 	}, []);
 
-	const handleRowClick = useCallback((conversation: { id: number }) => {
-		setSelectedConversationId(conversation.id);
-		setDrawerOpened(true);
-	}, []);
-
-	const handleCloseDrawer = useCallback(() => {
-		setDrawerOpened(false);
-		setSelectedConversationId(null);
-	}, []);
+	const handleRowClick = useCallback(
+		(conversation: { id: number }) => {
+			if (onRowClickProp) {
+				onRowClickProp(conversation);
+			} else {
+				navigate('/conversations', {
+					state: {
+						selectedConversationId: conversation.id,
+					},
+				});
+			}
+		},
+		[navigate, onRowClickProp]
+	);
 
 	const runConversationAction = useCallback(
 		(conversation: ConversationsModel) => {
@@ -283,32 +289,11 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 								setSorting(newSorting);
 								pagination.setCurrentPage(1);
 							}}
-							getRowClassName={(row) => {
-								const classes = [styles.tableRow];
-								if (row.original.id === selectedConversationId) {
-									classes.push(styles.selectedRow);
-								}
-								return classes.join(' ');
-							}}
+							getRowClassName={() => styles.tableRow}
 						/>
 					</div>
 				)}
 			</SectionCard>
-
-			<AppDrawer
-				opened={drawerOpened && selectedConversationId !== null}
-				onClose={handleCloseDrawer}
-				title={t('details.title')}
-				size='lg'
-				classNames={{
-					content: styles.detailsDrawerContent,
-					body: styles.detailsDrawerBody,
-				}}
-			>
-				{selectedConversationId !== null ? (
-					<ConversationDetails id={selectedConversationId} />
-				) : null}
-			</AppDrawer>
 
 			{canExportConversations && (
 				<ExportToExcelModal

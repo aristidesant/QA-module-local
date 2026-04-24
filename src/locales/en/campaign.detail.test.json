@@ -1,0 +1,15 @@
+{
+	"page": {
+		"title": "Agent Preview",
+		"titleWithCampaign": "Agent Preview - {{campaignName}}",
+		"description": "Test the campaign agent and review the conversation log.",
+		"helper": "Interact with the agent preview below while you review conversations."
+	},
+	"agent": {
+		"empty": {
+			"title": "No agent configured",
+			"description": "This campaign does not have an agent configured yet. Return to the editor to connect one before testing.",
+			"backToEditor": "Back to editor"
+		}
+	}
+}

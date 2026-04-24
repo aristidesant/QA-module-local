@@ -139,6 +139,10 @@
 	text-align: center;
 }
 
+.numberInputWidth {
+	width: 50px;
+}
+
 .listNameSection {
 	display: flex;
 	flex-direction: column;

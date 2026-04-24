@@ -15,6 +15,7 @@ export interface AnalyticsDataCollectionRow extends DataCollectionItem {
 	id: string;
 	identifier: string;
 	isNew: boolean;
+	isSystemDefault?: boolean;
 	source?: 'manual' | 'custom-variable';
 	linkedCustomVariableId?: number;
 	linkedTemplateId?: number;
@@ -40,6 +41,7 @@ export const createEmptyAnalyticsRow = (): AnalyticsDataCollectionRow => ({
 	constantValue: '',
 	dynamicVariable: '',
 	isSystemProvided: false,
+	isSystemDefault: false,
 	isNew: true,
 	source: 'manual',
 });
@@ -52,26 +54,31 @@ export const getDataCollectionFromAgentConfig = (
 	}
 
 	const normalizedAgentConfig = agentConfig as Record<string, unknown>;
-	const directDataCollection = normalizedAgentConfig.dataCollection;
 
+	// Prefer platformSettings.dataCollection because the backend enriches it
+	// with read-only fields like isSystemDefault that the top-level
+	// (ElevenLabs-native) dataCollection does not include.
+	const platformSettings = normalizedAgentConfig.platformSettings;
+	if (platformSettings && typeof platformSettings === 'object') {
+		const platformDataCollection = (platformSettings as Record<string, unknown>)
+			.dataCollection;
+
+		if (
+			platformDataCollection &&
+			typeof platformDataCollection === 'object' &&
+			Object.keys(platformDataCollection as Record<string, unknown>).length > 0
+		) {
+			return platformDataCollection as Record<string, unknown>;
+		}
+	}
+
+	const directDataCollection = normalizedAgentConfig.dataCollection;
 	if (
 		directDataCollection &&
 		typeof directDataCollection === 'object' &&
 		Object.keys(directDataCollection as Record<string, unknown>).length > 0
 	) {
 		return directDataCollection as Record<string, unknown>;
-	}
-
-	const platformSettings = normalizedAgentConfig.platformSettings;
-	if (!platformSettings || typeof platformSettings !== 'object') {
-		return (directDataCollection as Record<string, unknown>) ?? {};
-	}
-
-	const platformDataCollection = (platformSettings as Record<string, unknown>)
-		.dataCollection;
-
-	if (platformDataCollection && typeof platformDataCollection === 'object') {
-		return platformDataCollection as Record<string, unknown>;
 	}
 
 	return (directDataCollection as Record<string, unknown>) ?? {};
@@ -122,6 +129,11 @@ export const normalizeDataCollectionRows = (
 						? item.is_system_provided
 						: false;
 
+			const isSystemDefault =
+				typeof item.isSystemDefault === 'boolean'
+					? item.isSystemDefault
+					: false;
+
 			return {
 				id: crypto.randomUUID(),
 				identifier,
@@ -136,6 +148,7 @@ export const normalizeDataCollectionRows = (
 				constantValue,
 				dynamicVariable,
 				isSystemProvided,
+				isSystemDefault,
 				isNew: false,
 				source: 'manual',
 			};

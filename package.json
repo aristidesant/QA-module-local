@@ -8,6 +8,7 @@
 		"build": "tsc && vite build",
 		"preview": "vite preview",
 		"typecheck": "tsc --noEmit",
+		"check:inline-styles": "node scripts/check-inline-styles.cjs",
 		"format": "prettier --write .",
 		"format:check": "prettier --check .",
 		"lint:fix": "prettier --write . && npm run typecheck",

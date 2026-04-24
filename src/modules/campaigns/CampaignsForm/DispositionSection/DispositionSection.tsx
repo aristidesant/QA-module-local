@@ -11,6 +11,7 @@ import { useDispositionFlowsByCampaignPath } from '~/queries/dispositionFlowQuer
 import { notifications } from '@mantine/notifications';
 import DispositionViewer from './DispositionViewer';
 import { useCampaignId } from '~/modules/campaigns/campaignFormFunctions';
+import styles from './DispositionSection.module.css';
 
 const DispositionSection: React.FC = () => {
 	const { t } = useTranslation([
@@ -66,7 +67,7 @@ const DispositionSection: React.FC = () => {
 						refetchCurrentFlow();
 						modals.close('disposition-form');
 						notifications.show({
-							title: 'Success',
+							title: t('success', { ns: 'common' }),
 							message: t('disposition.saveSuccess'),
 							color: 'green',
 						});
@@ -96,13 +97,7 @@ const DispositionSection: React.FC = () => {
 			description={t('disposition.description')}
 		>
 			{isLoadingCurrentFlow ? (
-				<Paper
-					withBorder
-					p='xl'
-					radius='md'
-					bg='var(--mantine-color-gray-0)'
-					style={{ borderStyle: 'dashed' }}
-				>
+				<Paper withBorder className={styles.loadingState} p='xl' radius='md'>
 					<Stack gap='md'>
 						<Group justify='space-between' align='center'>
 							<Stack gap={6} style={{ flex: 1 }}>
@@ -119,13 +114,7 @@ const DispositionSection: React.FC = () => {
 					</Stack>
 				</Paper>
 			) : isCurrentFlowError ? (
-				<Paper
-					withBorder
-					p='xl'
-					radius='md'
-					bg='var(--mantine-color-red-0)'
-					style={{ borderStyle: 'dashed' }}
-				>
+				<Paper withBorder className={styles.errorState} p='xl' radius='md'>
 					<Stack align='center' gap='xs'>
 						<Text size='sm' fw={500} c='red'>
 							{t('status.error', { ns: 'common', defaultValue: 'Error' })}
@@ -138,13 +127,7 @@ const DispositionSection: React.FC = () => {
 			) : currentDispositionFlow ? (
 				<DispositionViewer flow={currentDispositionFlow} />
 			) : (
-				<Paper
-					withBorder
-					p='xl'
-					radius='md'
-					bg='var(--mantine-color-gray-0)'
-					style={{ borderStyle: 'dashed' }}
-				>
+				<Paper withBorder className={styles.emptyState} p='xl' radius='md'>
 					<Stack align='center' gap='xs'>
 						<ThemeIcon size={48} radius='xl' color='gray' variant='light'>
 							<IconSitemap size={24} />

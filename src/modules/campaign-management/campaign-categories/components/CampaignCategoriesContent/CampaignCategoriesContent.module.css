@@ -78,3 +78,30 @@
 	gap: var(--mantine-spacing-xs);
 	min-height: 200px;
 }
+
+[data-mantine-color-scheme='dark'] .header {
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .table {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .categoryName {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .categoryCode {
+	background-color: var(--mantine-color-dark-6);
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .categoryDescription {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .noResultsContainer {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-5);
+}

@@ -40,12 +40,7 @@ const DashboardWidgetPreviewPanel = ({
 				align='center'
 				className={styles.previewHeader}
 			>
-				<Text
-					className={styles.previewWidgetType}
-					size='xs'
-					fw={600}
-					c='gray.6'
-				>
+				<Text className={styles.previewWidgetType} size='xs' fw={600}>
 					{t(`dashboardBuilder.widgetTypes.${values.widgetType}`)}
 				</Text>
 				<Badge variant='light' color='gray' size='sm' tt='uppercase'>

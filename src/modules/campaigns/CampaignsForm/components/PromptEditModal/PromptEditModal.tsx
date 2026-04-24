@@ -15,6 +15,7 @@ import {
 	Stack,
 	Text,
 	UnstyledButton,
+	useComputedColorScheme,
 } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import MDEditor from '@uiw/react-md-editor';
@@ -96,6 +97,7 @@ const PromptEditModal: React.FC<PromptEditModalProps> = ({
 	const modalPlaceholder =
 		placeholder ?? t('form.agent.prompt.simpleModal.placeholder');
 	const modalHelper = helperText ?? t('form.agent.prompt.simpleModal.helper');
+	const editorColorMode = useComputedColorScheme('light');
 
 	const statusLabel = useMemo(() => {
 		return hasDraft
@@ -311,7 +313,10 @@ const PromptEditModal: React.FC<PromptEditModalProps> = ({
 					</Badge>
 				</div>
 				<div className={styles.editorArea}>
-					<div data-color-mode='light' className={styles.editorWrapper}>
+					<div
+						data-color-mode={editorColorMode}
+						className={styles.editorWrapper}
+					>
 						<Text c='dimmed' className={styles.editorHint}>
 							{t('form.agent.prompt.editor.variables.hint')}
 						</Text>

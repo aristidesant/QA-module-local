@@ -42,11 +42,10 @@ import AgentSection from './AgentSection';
 import AgentSaveReviewModal from './AgentSaveReviewModal';
 import DispositionSection from './DispositionSection';
 import DoNotCallSection from './DoNotCallSection';
-import ReportValuesSection from './ReportValuesSection/ReportValuesSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
-import { IconEye } from '@tabler/icons-react';
+import { IconEye, IconFlask } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 import FormSaveButton from '~/components/FormSaveButton';
 import CampaignSyncButton from './components/CampaignSyncButton';
@@ -74,9 +73,11 @@ const campaignFormTabNamespaces: Record<string, string> = {
 	params: 'campaign.form.params',
 	analytics: 'campaign.form.analytics',
 	dashboards: 'campaign.form.dashboards',
-	'report-values': 'campaign.form.report-values',
 	versioning: 'campaign.form.versioning',
 };
+
+const paramsNamespace = 'campaign.form.params';
+const paramsFallbackNamespace = 'campaigns.wizard';
 
 const getWorkflowCounts = (
 	workflow?: Partial<Campaign>['agentConfig'] extends infer T
@@ -211,6 +212,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			workingHours: campaign?.workingHours || defaultWorkingHours,
 			noiseCancellation: campaign?.noiseCancellation,
 			agentConfig: campaign?.agentConfig || {},
+			nodeStyles: campaign?.nodeStyles ?? {},
+			nodeGroups: campaign?.nodeGroups ?? {},
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign?.defaultWaveExecutionDelaySeconds ?? 0,
@@ -271,6 +274,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			workingHours: campaign.workingHours || defaultWorkingHours,
 			noiseCancellation: campaign.noiseCancellation,
 			agentConfig: campaign.agentConfig || {},
+			nodeStyles: campaign.nodeStyles ?? {},
+			nodeGroups: campaign.nodeGroups ?? {},
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign.defaultWaveExecutionDelaySeconds ?? 0,
@@ -358,6 +363,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		});
 	}, [campaign?.id, queryClient, selectedTab]);
 
+	useEffect(() => {
+		if (selectedTab !== 'params') return;
+
+		void i18n.loadNamespaces([paramsNamespace, paramsFallbackNamespace]);
+	}, [selectedTab]);
+
 	const settingsDrawerTitle = t('form.settingsDrawer.title');
 	const openSettingsDrawer = () => {
 		void i18n
@@ -410,6 +421,19 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		}
 
 		try {
+			// Clean up orphan nodeStyles entries (keys whose node no longer exists)
+			const workflowNodes = value.agentConfig?.workflow?.nodes;
+			if (value.nodeStyles && workflowNodes) {
+				const validNodeIds = new Set(Object.keys(workflowNodes));
+				const cleaned: Record<string, unknown> = {};
+				for (const [nodeId, style] of Object.entries(value.nodeStyles)) {
+					if (validNodeIds.has(nodeId)) {
+						cleaned[nodeId] = style;
+					}
+				}
+				value.nodeStyles = cleaned as typeof value.nodeStyles;
+			}
+
 			// Clean up toolIds from agentConfig before sending
 			const cleanedValue = { ...value };
 			if (cleanedValue.agentConfig?.conversationConfig?.agent?.prompt) {
@@ -524,9 +548,28 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 									<ActionIcon
 										variant='light'
 										size='lg'
+										aria-label={t('form.actions.viewCampaign')}
 										onClick={() => navigate(`/campaign/view/${campaign.id}`)}
 									>
 										<IconEye size={20} />
+									</ActionIcon>
+								</Tooltip>
+								<Tooltip
+									label={t('form.actions.testConvai', {
+										ns: 'campaign.detail',
+									})}
+									withArrow
+								>
+									<ActionIcon
+										variant='light'
+										color='blue'
+										size='lg'
+										aria-label={t('form.actions.testConvai', {
+											ns: 'campaign.detail',
+										})}
+										onClick={() => navigate(`/campaign/${campaign.id}/test`)}
+									>
+										<IconFlask size={20} />
 									</ActionIcon>
 								</Tooltip>
 							</Group>
@@ -613,9 +656,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 							<DoNotCallSection campaignId={campaign?.id} />
 						)}
 						{selectedTab === 'params' && (
-							<SectionCard
-								title={t('workingHours.title')}
-								description={t('workingHours.description')}
+							<ParametersSection
+								campaignId={campaign?.id}
 								onCalculate={() =>
 									modals.open({
 										title: t('form.schedulerCalculator.title'),
@@ -623,31 +665,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 										children: <SchedulerCalculator />,
 									})
 								}
-							>
-								<ParametersSection
-									workingHours={form.values.workingHours || {}}
-									onChange={(day, field, value) => {
-										const updatedHours = { ...form.values.workingHours };
-										updatedHours[day] = {
-											...updatedHours[day],
-											[field]: value,
-										};
-										form.setFieldValue('workingHours', updatedHours);
-									}}
-									onCopyToAll={(sourceDay) => {
-										const sourceHours = form.values.workingHours?.[sourceDay];
-										if (!sourceHours) return;
-
-										const updatedHours = { ...form.values.workingHours };
-										Object.keys(updatedHours).forEach((day) => {
-											updatedHours[day] = { ...sourceHours };
-										});
-										form.setFieldValue('workingHours', updatedHours);
-									}}
-								/>
-							</SectionCard>
+							/>
 						)}
-						{selectedTab === 'report-values' && <ReportValuesSection />}
 						{selectedTab === 'analytics' && (
 							<form
 								onSubmit={form.onSubmit((values) => {

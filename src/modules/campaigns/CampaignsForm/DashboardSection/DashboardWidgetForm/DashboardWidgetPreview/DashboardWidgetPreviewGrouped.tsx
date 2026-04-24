@@ -3,6 +3,7 @@ import { Table, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import DashboardWidgetCard from '~/modules/campaigns/CampaignDashboardViewer/CampaignDashboardViewerWidgetContent/components/DashboardWidgetCard';
 import {
+	getAccentToken,
 	formatMetricValue,
 	resolveLabel,
 } from '~/modules/campaigns/CampaignDashboardViewer/CampaignDashboardViewer.helpers';
@@ -157,6 +158,7 @@ const DashboardWidgetPreviewGrouped = ({
 						<div className={legendClass}>
 							{chartData.map((item) => {
 								const pct = total > 0 ? (item.value / total) * 100 : 0;
+								const accentToken = getAccentToken(item.color);
 
 								return (
 									<div key={item.name} className={viewerStyles.legendRow}>
@@ -164,7 +166,7 @@ const DashboardWidgetPreviewGrouped = ({
 											<div className={viewerStyles.legendRowLeft}>
 												<span
 													className={viewerStyles.legendDot}
-													style={{ backgroundColor: item.color }}
+													data-accent={accentToken}
 												/>
 												<Text
 													size='xs'
@@ -192,13 +194,19 @@ const DashboardWidgetPreviewGrouped = ({
 											</div>
 										</div>
 										<div className={viewerStyles.legendBar}>
-											<div
+											<svg
 												className={viewerStyles.legendBarFill}
-												style={{
-													width: `${pct}%`,
-													backgroundColor: item.color,
-												}}
-											/>
+												viewBox='0 0 100 3'
+												preserveAspectRatio='none'
+												aria-hidden='true'
+											>
+												<rect
+													data-accent={accentToken}
+													width={pct}
+													height='3'
+													rx='1.5'
+												/>
+											</svg>
 										</div>
 									</div>
 								);

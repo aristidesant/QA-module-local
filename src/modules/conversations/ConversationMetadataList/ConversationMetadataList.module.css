@@ -6,7 +6,7 @@
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: 8px;
 	overflow: hidden;
-	background: var(--mantine-color-white);
+	background: var(--mantine-color-body);
 }
 
 .row {
@@ -48,7 +48,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	font-size: 10px;
+	font-size: 12px;
 	font-weight: 500;
 	line-height: 1.2;
 	color: var(--mantine-color-gray-6);
@@ -73,7 +73,7 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	font-size: 10px;
+	font-size: 12px;
 	font-weight: 600;
 	line-height: 1.2;
 	color: var(--mantine-color-gray-9);
@@ -82,10 +82,40 @@
 
 .valueMissing {
 	display: block;
-	font-size: 10px;
+	font-size: 12px;
 	font-style: italic;
 	line-height: 1.2;
 	color: var(--mantine-color-gray-5);
+}
+
+[data-mantine-color-scheme='dark'] .list {
+	border-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .row {
+	border-bottom-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .labelCell {
+	background: var(--mantine-color-dark-7);
+	border-right-color: var(--mantine-color-dark-4);
+	border-bottom-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .labelIcon {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .labelText {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .valueText {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .valueMissing {
+	color: var(--mantine-color-dark-3);
 }
 
 .endSection {
@@ -114,5 +144,60 @@
 	.valueMissing {
 		white-space: normal;
 		word-break: break-word;
+	}
+}
+
+@media (max-width: 520px) {
+	[data-mantine-color-scheme='dark'] .labelCell {
+		border-bottom-color: var(--mantine-color-dark-4);
+	}
+}
+
+/* ── 2-column property grid variant ── */
+
+.list[data-columns='2'] {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: 1px;
+	background: var(--mantine-color-gray-2);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 8px;
+	overflow: hidden;
+}
+
+.list[data-columns='2'] .row {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	padding: 8px 10px;
+	background: var(--mantine-color-body);
+	border-bottom: none;
+	grid-template-columns: unset;
+	min-height: 48px;
+}
+
+.list[data-columns='2'] .labelCell {
+	background: transparent;
+	border-right: none;
+	padding: 0 0 3px 0;
+}
+
+.list[data-columns='2'] .valueCell {
+	padding: 0;
+	width: 100%;
+}
+
+[data-mantine-color-scheme='dark'] .list[data-columns='2'] {
+	background: var(--mantine-color-dark-4);
+	border-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .list[data-columns='2'] .row {
+	background: var(--mantine-color-dark-6);
+}
+
+@media (max-width: 520px) {
+	.list[data-columns='2'] {
+		grid-template-columns: 1fr;
 	}
 }

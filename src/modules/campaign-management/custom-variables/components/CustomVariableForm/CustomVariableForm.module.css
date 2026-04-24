@@ -1,12 +1,18 @@
 .form {
 	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
 }
 
 .section {
 	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
-	padding: var(--mantine-spacing-sm);
-	background: var(--mantine-color-white);
+	border-radius: var(--mantine-radius-lg);
+	padding: var(--mantine-spacing-md);
+	background: var(--mantine-color-body);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
 }
 
 .sectionTitle {
@@ -42,15 +48,49 @@
 	color: var(--mantine-color-gray-8);
 	padding: 4px 10px;
 	line-height: 1.35;
-	font-family:
-		ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono',
-		'Courier New', monospace;
+	font-family: var(--mantine-font-family-monospace);
 }
 
 .identifierEmpty {
 	color: var(--mantine-color-gray-6);
 }
 
+.actions :global(button) {
+	min-width: 116px;
+}
+
+[data-mantine-color-scheme='dark'] .section {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .sectionTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .sectionHint {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .identifierValue {
+	background-color: var(--mantine-color-dark-6);
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .identifierEmpty {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .actions {
+	border-top-color: var(--mantine-color-dark-5);
+}
+
 .actions {
 	padding-top: var(--mantine-spacing-xs);
+}
+
+@media (max-width: 48em) {
+	.actions :global(button) {
+		width: 100%;
+	}
 }
