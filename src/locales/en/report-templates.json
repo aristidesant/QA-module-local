@@ -50,7 +50,6 @@
 			"DYNAMIC": "Dynamic Field",
 			"OBJECT": "Conversation Field",
 			"METADATA": "Metadata Field",
-			"CUSTOM_VARIABLES": "Custom Variable",
 			"default": "Field Key"
 		},
 		"label": "Label",
@@ -208,8 +207,7 @@
 		"SQL": "SQL",
 		"DYNAMIC": "Dynamic",
 		"OBJECT": "Object",
-		"METADATA": "Metadata",
-		"CUSTOM_VARIABLES": "Custom Variables"
+		"METADATA": "Metadata"
 	},
 	"dataType": {
 		"STRING": "String",

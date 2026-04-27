@@ -50,7 +50,6 @@
 			"DYNAMIC": "Campo Dinámico",
 			"OBJECT": "Campo de Conversación",
 			"METADATA": "Campo de Metadatos",
-			"CUSTOM_VARIABLES": "Variable Personalizada",
 			"default": "Clave del Campo"
 		},
 		"label": "Etiqueta",
@@ -208,8 +207,7 @@
 		"SQL": "SQL",
 		"DYNAMIC": "Dinámico",
 		"OBJECT": "Objeto",
-		"METADATA": "Metadatos",
-		"CUSTOM_VARIABLES": "Variables Personalizadas"
+		"METADATA": "Metadatos"
 	},
 	"dataType": {
 		"STRING": "Texto",

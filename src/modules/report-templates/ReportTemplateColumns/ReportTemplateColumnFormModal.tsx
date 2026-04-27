@@ -174,9 +174,9 @@ const ORIGIN_OPTIONS: {
 		nameKey: 'METADATA',
 	},
 	{
-		value: ReportValueOriginType.CUSTOM_VARIABLES,
+		value: ReportValueOriginType.OBJECT,
 		icon: <IconCategory size={20} strokeWidth={1.5} />,
-		nameKey: 'CUSTOM_VARIABLES',
+		nameKey: 'OBJECT',
 	},
 ];
 
@@ -345,7 +345,7 @@ const ReportTemplateColumnFormModal = ({
 
 	const selectedCustomVariableTemplate =
 		useMemo<CustomVariableTemplate | null>(() => {
-			if (selectedOrigin !== ReportValueOriginType.CUSTOM_VARIABLES) {
+			if (selectedOrigin !== ReportValueOriginType.OBJECT) {
 				return null;
 			}
 
@@ -381,7 +381,7 @@ const ReportTemplateColumnFormModal = ({
 
 	const shouldLoadTemplateVariables =
 		opened &&
-		selectedOrigin === ReportValueOriginType.CUSTOM_VARIABLES &&
+		selectedOrigin === ReportValueOriginType.OBJECT &&
 		(activeCustomVariableTemplateId !== null ||
 			selectedCustomVariableTemplate !== null);
 	const {
@@ -445,7 +445,7 @@ const ReportTemplateColumnFormModal = ({
 	useEffect(() => {
 		if (
 			opened &&
-			selectedOrigin === ReportValueOriginType.CUSTOM_VARIABLES &&
+			selectedOrigin === ReportValueOriginType.OBJECT &&
 			selectedCustomVariableTemplateId === null &&
 			selectedCustomVariableTemplate
 		) {
@@ -653,7 +653,7 @@ const ReportTemplateColumnFormModal = ({
 			);
 		}
 
-		if (selectedOrigin === ReportValueOriginType.CUSTOM_VARIABLES) {
+		if (selectedOrigin === ReportValueOriginType.OBJECT) {
 			return (
 				<Stack gap='xs'>
 					<Select
