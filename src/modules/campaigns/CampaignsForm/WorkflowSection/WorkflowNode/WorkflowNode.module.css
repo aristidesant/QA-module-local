@@ -6,15 +6,6 @@
 	isolation: isolate;
 }
 
-.sideActions {
-	position: absolute;
-	right: -46px;
-	top: 50%;
-	transform: translateY(-50%);
-	z-index: 250;
-	padding-left: 4px;
-}
-
 .nodeContainer > :not(.sideActions):not(:global(.react-flow__handle)) {
 	transition:
 		border-color 140ms ease,

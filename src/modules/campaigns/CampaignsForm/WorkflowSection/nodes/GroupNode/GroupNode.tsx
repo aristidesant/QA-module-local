@@ -6,6 +6,7 @@ import {
 	useRef,
 	useState,
 	type CSSProperties,
+	type RefObject,
 } from 'react';
 import {
 	NodeResizer,
@@ -39,6 +40,7 @@ import {
 } from '@tabler/icons-react';
 import { useWorkflowCanvasActions } from '../../WorkflowCanvas/WorkflowCanvasActionsContext';
 import { WORKFLOW_NODE_TYPES } from '../../nodeTypes';
+import SideActionsPortal from '../../WorkflowNode/SideActionsPortal';
 import GroupColorPopover from './GroupColorPopover';
 import styles from './GroupNode.module.css';
 
@@ -105,6 +107,9 @@ const buildGroupColorVars = (bgColor?: string): CSSProperties | undefined => {
 
 const GroupNode = (props: NodeProps) => {
 	const { t } = useTranslation(['campaign.form.workflow', 'common']);
+	const groupRef = useRef<HTMLDivElement>(
+		null
+	) as RefObject<HTMLDivElement | null>;
 	const {
 		deleteNode,
 		ungroupNodes,
@@ -245,6 +250,7 @@ const GroupNode = (props: NodeProps) => {
 				handleClassName={styles.resizeHandle}
 			/>
 			<div
+				ref={groupRef}
 				className={styles.groupNode}
 				// inline-style-allow: group color vars must be set inline from persisted NodeStyle
 				style={colorVars}
@@ -281,7 +287,12 @@ const GroupNode = (props: NodeProps) => {
 					)}
 				</Panel>
 
-				{props.selected && (
+				<SideActionsPortal
+					anchorRef={groupRef}
+					visible={!!props.selected}
+					verticalAlign='top'
+					offsetY={8}
+				>
 					<div className={`${styles.sideActions} nodrag nopan`}>
 						{/* ── New Node (submenu) ── */}
 						<Menu position='right-start' withinPortal>
@@ -407,6 +418,7 @@ const GroupNode = (props: NodeProps) => {
 							label={t('form.workflow.group.cloneGroup')}
 							withArrow
 							position='left'
+							withinPortal
 						>
 							<ActionIcon
 								size='sm'
@@ -425,6 +437,7 @@ const GroupNode = (props: NodeProps) => {
 							label={t('form.workflow.group.rename')}
 							withArrow
 							position='left'
+							withinPortal
 						>
 							<ActionIcon
 								size='sm'
@@ -443,6 +456,7 @@ const GroupNode = (props: NodeProps) => {
 							label={t('form.workflow.group.ungroup')}
 							withArrow
 							position='left'
+							withinPortal
 						>
 							<ActionIcon
 								size='sm'
@@ -463,6 +477,7 @@ const GroupNode = (props: NodeProps) => {
 							label={t('form.workflow.actions.delete')}
 							withArrow
 							position='left'
+							withinPortal
 						>
 							<ActionIcon
 								size='sm'
@@ -476,7 +491,7 @@ const GroupNode = (props: NodeProps) => {
 							</ActionIcon>
 						</Tooltip>
 					</div>
-				)}
+				</SideActionsPortal>
 			</div>
 		</>
 	);
