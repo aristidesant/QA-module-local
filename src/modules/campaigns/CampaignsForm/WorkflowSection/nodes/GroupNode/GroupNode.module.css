@@ -90,10 +90,6 @@
 }
 
 .sideActions {
-	position: absolute;
-	right: -50px;
-	top: 8px;
-	z-index: 9999;
 	pointer-events: auto;
 	isolation: isolate;
 	display: flex;

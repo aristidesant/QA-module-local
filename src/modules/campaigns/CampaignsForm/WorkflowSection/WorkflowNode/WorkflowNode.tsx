@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Handle, Position, type NodeProps } from '@xyflow/react';
 import { Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import type { WorkflowNodeData } from './WorkflowNodeTypes';
+import SideActionsPortal from './SideActionsPortal';
 import styles from './WorkflowNode.module.css';
 
 interface WorkflowNodeWrapperProps extends NodeProps {
@@ -29,18 +30,19 @@ export const WorkflowNodeWrapper: React.FC<WorkflowNodeWrapperProps> = ({
 			defaultValue: nodeData.type as string,
 		});
 
+	const containerRef = useRef<HTMLDivElement>(null);
+
 	const edgeOrder = (nodeData.edgeOrder as string[] | undefined) ?? [];
 	const isStartWithNoEdges =
 		nodeData.type === 'start' && edgeOrder.length === 0;
 	const isSourceConnectable = true;
+	const showSideActions = !!(selected || isStartWithNoEdges) && !!sideActions;
 
 	return (
-		<div className={styles.nodeContainer}>
-			{(selected || isStartWithNoEdges) && sideActions && (
-				<div className={`${styles.sideActions} nodrag nopan`}>
-					{sideActions}
-				</div>
-			)}
+		<div ref={containerRef} className={styles.nodeContainer}>
+			<SideActionsPortal anchorRef={containerRef} visible={showSideActions}>
+				{sideActions}
+			</SideActionsPortal>
 			<Handle
 				type='target'
 				position={Position.Top}

@@ -146,7 +146,11 @@ const WorkflowNodeActions = ({
 					onClose={() => setIsMenuOpen(false)}
 				>
 					<Menu.Target>
-						<Tooltip label={t('form.workflow.actions.add')} withArrow>
+						<Tooltip
+							label={t('form.workflow.actions.add')}
+							withArrow
+							withinPortal
+						>
 							<ActionIcon
 								size='sm'
 								variant='light'
@@ -181,7 +185,7 @@ const WorkflowNodeActions = ({
 				</Menu>
 			)}
 			{showAddButton && canShowSingleAdd && (
-				<Tooltip label={t('form.workflow.actions.add')} withArrow>
+				<Tooltip label={t('form.workflow.actions.add')} withArrow withinPortal>
 					<ActionIcon
 						size='sm'
 						variant='light'
@@ -204,7 +208,7 @@ const WorkflowNodeActions = ({
 				<NodeStylePopover nodeId={nodeId} nodeLabel={nodeData.label ?? ''} />
 			)}
 			{canEdit && (
-				<Tooltip label={t('form.workflow.actions.edit')} withArrow>
+				<Tooltip label={t('form.workflow.actions.edit')} withArrow withinPortal>
 					<ActionIcon
 						size='sm'
 						variant='light'
@@ -221,7 +225,11 @@ const WorkflowNodeActions = ({
 				</Tooltip>
 			)}
 			{showActions && (
-				<Tooltip label={t('form.workflow.actions.clone')} withArrow>
+				<Tooltip
+					label={t('form.workflow.actions.clone')}
+					withArrow
+					withinPortal
+				>
 					<ActionIcon
 						size='sm'
 						variant='light'
@@ -235,7 +243,11 @@ const WorkflowNodeActions = ({
 				</Tooltip>
 			)}
 			{showActions && (
-				<Tooltip label={t('form.workflow.actions.delete')} withArrow>
+				<Tooltip
+					label={t('form.workflow.actions.delete')}
+					withArrow
+					withinPortal
+				>
 					<ActionIcon
 						size='sm'
 						variant='light'

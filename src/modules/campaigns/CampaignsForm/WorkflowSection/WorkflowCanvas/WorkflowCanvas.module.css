@@ -44,6 +44,14 @@
 	z-index: 10 !important;
 }
 
+/* Elevate the parent group node above the edge-label renderer (z-index: 3)
+ * whenever one of its child nodes is selected, so the node surface is never
+ * covered by edge lines. Uses the CSS :has() selector (broad modern-browser
+ * support: Chrome 105+, Safari 15.4+, Firefox 121+). */
+.flow :global(.react-flow__node:has(.react-flow__node.selected)) {
+	z-index: 15 !important;
+}
+
 .miniMap {
 	border-radius: var(--mantine-radius-sm);
 	border: 1px solid var(--workflow-shell-border, var(--mantine-color-gray-3));
