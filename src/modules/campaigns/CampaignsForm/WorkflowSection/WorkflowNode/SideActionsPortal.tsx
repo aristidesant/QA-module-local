@@ -52,12 +52,40 @@ export const SideActionsPortal: React.FC<SideActionsPortalProps> = ({
 		if (!el) return;
 
 		const rect = el.getBoundingClientRect();
-		const top =
+
+		// Find the nearest React Flow wrapper to use as the clipping boundary.
+		// Walking up the DOM from the anchor node, we look for the element with
+		// the `.react-flow` class which is always the bounded canvas container.
+		const flowEl = el.closest('.react-flow') as HTMLElement | null;
+		const bounds = flowEl
+			? flowEl.getBoundingClientRect()
+			: { top: 0, bottom: window.innerHeight, right: window.innerWidth };
+
+		const PANEL_HEIGHT_ESTIMATE = 320;
+		const PANEL_WIDTH_ESTIMATE = 48; // width of a single-column button bar
+
+		const rawTop =
 			verticalAlign === 'center'
 				? rect.top + rect.height / 2 + offsetY
 				: rect.top + offsetY;
 
-		setPos({ top, left: rect.right + offsetX });
+		// Clamp vertically within the canvas bounds, with 8px padding each side.
+		const minTop = bounds.top + 8;
+		const maxTop =
+			verticalAlign === 'center'
+				? bounds.bottom - PANEL_HEIGHT_ESTIMATE / 2 - 8
+				: bounds.bottom - PANEL_HEIGHT_ESTIMATE - 8;
+		const clampedTop = Math.min(Math.max(rawTop, minTop), maxTop);
+
+		// Clamp horizontally: if placing to the right would overflow the canvas,
+		// flip to the left side of the node.
+		const preferredLeft = rect.right + offsetX;
+		const left =
+			preferredLeft + PANEL_WIDTH_ESTIMATE > bounds.right
+				? rect.left - PANEL_WIDTH_ESTIMATE - offsetX
+				: preferredLeft;
+
+		setPos({ top: clampedTop, left });
 	}, [visible, anchorRef, offsetX, verticalAlign, offsetY, transform]);
 
 	if (!visible || !pos) return null;
