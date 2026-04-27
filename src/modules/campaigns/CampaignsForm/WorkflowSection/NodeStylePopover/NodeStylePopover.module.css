@@ -23,6 +23,18 @@
 	color: var(--workflow-shell-text, var(--mantine-color-gray-9));
 }
 
+[data-mantine-color-scheme='dark'] .triggerButton {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .triggerButton:hover {
+	background-color: var(--mantine-color-dark-5);
+	border-color: var(--mantine-color-dark-3);
+	color: var(--mantine-color-dark-0);
+}
+
 .dropdown {
 	border: 1px solid
 		var(--workflow-shell-control-border, var(--mantine-color-gray-3));
@@ -95,6 +107,18 @@
 		var(--mantine-color-gray-4)
 	);
 	color: var(--workflow-shell-text, var(--mantine-color-gray-9));
+}
+
+[data-mantine-color-scheme='dark'] .iconButton {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .iconButton:hover {
+	background-color: var(--mantine-color-dark-5);
+	border-color: var(--mantine-color-dark-3);
+	color: var(--mantine-color-dark-0);
 }
 
 .iconButtonSelected {

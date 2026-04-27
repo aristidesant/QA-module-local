@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { Handle, Position, type NodeProps } from '@xyflow/react';
+import { Handle, Position, type NodeProps, useStore } from '@xyflow/react';
 import { Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import type { WorkflowNodeData } from './WorkflowNodeTypes';
@@ -32,11 +32,19 @@ export const WorkflowNodeWrapper: React.FC<WorkflowNodeWrapperProps> = ({
 
 	const containerRef = useRef<HTMLDivElement>(null);
 
+	// Count how many nodes are currently selected. When > 1 (multi-select),
+	// suppress individual side-action menus to avoid clutter and blocking the
+	// group button in the toolbar.
+	const selectedCount = useStore(
+		(s) => s.nodes.filter((n) => n.selected).length
+	);
+
 	const edgeOrder = (nodeData.edgeOrder as string[] | undefined) ?? [];
 	const isStartWithNoEdges =
 		nodeData.type === 'start' && edgeOrder.length === 0;
 	const isSourceConnectable = true;
-	const showSideActions = !!(selected || isStartWithNoEdges) && !!sideActions;
+	const showSideActions =
+		((selected && selectedCount === 1) || isStartWithNoEdges) && !!sideActions;
 
 	return (
 		<div ref={containerRef} className={styles.nodeContainer}>
