@@ -21,7 +21,8 @@
 .summaryText {
 	font-size: 13px;
 	line-height: 1.45;
-	color: var(--mantine-color-gray-7);
+	color: var(--mantine-color-text);
+	opacity: 0.8;
 	font-weight: 400;
 }
 

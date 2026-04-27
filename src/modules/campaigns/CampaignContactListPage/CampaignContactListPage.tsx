@@ -46,7 +46,7 @@ const ConversationsTab = ({
 	onRowClick,
 }: {
 	contactGroupId?: string;
-	onRowClick?: (conversation: { id: number }) => void;
+	onRowClick: (conversation: { id: number }) => void;
 }) => {
 	return (
 		<ConversationsList

@@ -4,9 +4,9 @@
 	margin: 0;
 	min-width: 0;
 	padding: var(--mantine-spacing-xs);
-	background-color: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: 8px;
+	background-color: var(--surface-card);
+	border: 1px solid var(--surface-border);
+	border-radius: 12px;
 }
 
 .playerRoot {
@@ -19,15 +19,15 @@
 	min-width: 32px;
 	min-height: 32px;
 	padding: 0;
-	border-color: var(--mantine-color-gray-2);
-	background-color: var(--mantine-color-gray-0);
-	color: var(--mantine-color-gray-8);
+	border-color: var(--surface-border);
+	background-color: var(--surface-sunken);
+	color: var(--mantine-color-text);
 	box-shadow: none;
 }
 
 .headerDownloadButton:hover {
-	background-color: var(--mantine-color-white);
-	border-color: var(--mantine-color-gray-4);
+	background-color: var(--surface-card);
+	border-color: var(--surface-border-strong);
 }
 
 .emptyState {
@@ -37,27 +37,27 @@
 	justify-content: center;
 	padding: calc(var(--mantine-spacing-xl) + var(--mantine-spacing-xs))
 		var(--mantine-spacing-xs);
-	border: 1px dashed var(--mantine-color-gray-3);
+	border: 1px dashed var(--surface-border);
 	border-radius: 8px;
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--surface-sunken);
 }
 
 .emptyIcon {
-	color: var(--mantine-color-gray-5);
+	color: var(--mantine-color-dimmed);
 }
 
 .noticeBanner {
 	padding: 8px 10px;
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--surface-border);
 	border-radius: 8px;
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--surface-sunken);
 }
 
 .retryArea {
 	padding: 8px 10px;
 	border-radius: 8px;
-	border: 1px solid var(--mantine-color-gray-2);
-	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--surface-border);
+	background-color: var(--surface-sunken);
 	gap: var(--mantine-spacing-sm);
 }
 
@@ -70,9 +70,9 @@
 	display: flex;
 	flex-direction: column;
 	gap: 0;
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--surface-border);
 	border-radius: 10px;
-	background-color: var(--mantine-color-white);
+	background-color: var(--surface-card);
 	overflow: hidden;
 }
 
@@ -80,7 +80,7 @@
 	width: 7px;
 	height: 7px;
 	border-radius: 999px;
-	background-color: var(--mantine-color-gray-5);
+	background-color: var(--mantine-color-dimmed);
 	opacity: 0.8;
 	transition:
 		background-color 140ms ease,
@@ -88,14 +88,14 @@
 }
 
 .playIndicator[data-playing='true'] {
-	background-color: var(--mantine-color-green-6);
+	background-color: var(--mantine-primary-color-filled);
 	opacity: 1;
 	animation: pulseIndicator 1.2s ease-in-out infinite;
 }
 
 .statusLabel {
 	line-height: 1;
-	color: var(--mantine-color-gray-8);
+	color: var(--mantine-color-text);
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
 }
@@ -114,7 +114,8 @@
 	font-size: 11px;
 	font-weight: 600;
 	line-height: 1;
-	color: var(--mantine-color-gray-7);
+	color: var(--mantine-color-text);
+	opacity: 0.8;
 }
 
 .headerDivider {
@@ -123,9 +124,9 @@
 
 .speedBadge {
 	font-variant-numeric: tabular-nums;
-	border: 1px solid var(--mantine-color-gray-2);
-	background-color: var(--mantine-color-white);
-	color: var(--mantine-color-gray-7);
+	border: 1px solid var(--surface-border);
+	background-color: var(--surface-sunken);
+	color: var(--mantine-color-text);
 }
 
 .playerStage {
@@ -133,8 +134,8 @@
 	padding: 8px 10px 10px;
 	background: linear-gradient(
 		180deg,
-		var(--mantine-color-gray-0) 0%,
-		var(--mantine-color-white) 100%
+		var(--surface-sunken) 0%,
+		var(--surface-card) 100%
 	);
 }
 
@@ -146,7 +147,7 @@
 	position: relative;
 	min-height: 88px;
 	padding: 8px 58px 10px 0;
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	border-bottom: 1px solid var(--surface-border);
 }
 
 .waveform {
@@ -198,16 +199,25 @@
 	width: 42px;
 	height: 42px;
 	min-width: 42px;
-	background-color: var(--mantine-color-dark-7);
-	border: 1px solid var(--mantine-color-dark-8);
+	background-color: var(--mantine-primary-color-filled);
+	border: 1px solid var(--mantine-primary-color-filled);
+	color: var(--mantine-color-white);
 	transition:
 		background-color 140ms ease,
 		border-color 140ms ease;
 }
 
 .stagePlayButton:hover {
-	background-color: var(--mantine-color-dark-8);
-	border-color: var(--mantine-color-dark-9);
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-primary-color-filled) 88%,
+		black
+	);
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-primary-color-filled) 88%,
+		black
+	);
 }
 
 .playIcon {
@@ -227,7 +237,7 @@
 	border-radius: 999px;
 	background-color: color-mix(
 		in srgb,
-		var(--mantine-color-dark-7) 16%,
+		var(--mantine-color-text) 16%,
 		transparent
 	);
 	pointer-events: none;
@@ -241,29 +251,29 @@
 
 .sliderTrack {
 	height: 5px;
-	background-color: var(--mantine-color-gray-2);
+	background-color: var(--surface-border);
 	border-radius: 999px;
 }
 
 .sliderBar {
 	height: 5px;
-	background-color: var(--mantine-color-dark-6);
+	background-color: var(--mantine-primary-color-filled);
 	border-radius: 999px;
 }
 
 .sliderThumb {
 	width: 14px;
 	height: 14px;
-	background-color: var(--mantine-color-white);
-	border: 2px solid var(--mantine-color-dark-6);
+	background-color: var(--surface-card);
+	border: 2px solid var(--mantine-primary-color-filled);
 	transition:
 		border-color 140ms ease,
 		background-color 140ms ease;
 }
 
 .sliderThumb:hover {
-	border-color: var(--mantine-color-dark-8);
-	background-color: var(--mantine-color-gray-0);
+	border-color: var(--mantine-primary-color-filled);
+	background-color: var(--surface-sunken);
 }
 
 .playerFooter {
@@ -271,8 +281,8 @@
 	flex-direction: row;
 	align-items: center;
 	gap: 10px;
-	border-top: 1px solid var(--mantine-color-gray-2);
-	background-color: var(--mantine-color-white);
+	border-top: 1px solid var(--surface-border);
+	background-color: var(--surface-card);
 	padding: 8px 10px;
 }
 
@@ -284,14 +294,15 @@
 .transportGroup {
 	min-height: 40px;
 	padding: 0 4px;
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--surface-border);
 	border-radius: 10px;
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--surface-sunken);
 	box-shadow: none;
 }
 
 .controlButton {
-	color: var(--mantine-color-gray-7);
+	color: var(--mantine-color-text);
+	opacity: 0.78;
 	border-color: transparent;
 	background-color: transparent;
 	transition:
@@ -301,9 +312,10 @@
 }
 
 .controlButton:hover {
-	color: var(--mantine-color-gray-9);
-	background-color: var(--mantine-color-white);
-	border-color: var(--mantine-color-gray-2);
+	color: var(--mantine-color-text);
+	opacity: 1;
+	background-color: var(--surface-card);
+	border-color: var(--surface-border);
 }
 
 .controlButton:disabled,
@@ -333,10 +345,15 @@
 	column-gap: 8px;
 	align-items: center;
 	border-radius: 10px;
-	border: 1px solid var(--mantine-color-gray-2);
-	background-color: var(--mantine-color-gray-0);
+	border: 1px solid var(--surface-border);
+	background-color: var(--surface-sunken);
 	box-shadow: none;
 	box-sizing: border-box;
+}
+
+[data-mantine-color-scheme='dark'] .volumeGroup {
+	background-color: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-4);
 }
 
 .muteButton {
@@ -347,12 +364,13 @@
 }
 
 .muteButton:hover {
-	background-color: var(--mantine-color-gray-0);
-	border-color: var(--mantine-color-gray-2);
+	background-color: var(--surface-card);
+	border-color: var(--surface-border);
 }
 
 .volumeIcon {
-	color: var(--mantine-color-gray-6);
+	color: var(--mantine-color-text);
+	opacity: 0.7;
 	flex-shrink: 0;
 }
 
@@ -365,8 +383,8 @@
 	min-width: 40px;
 	text-align: right;
 	font-family: var(--mantine-font-family-monospace);
-	font-weight: 600;
-	color: var(--mantine-color-gray-6);
+	font-weight: 700;
+	color: var(--mantine-color-dimmed);
 	font-variant-numeric: tabular-nums;
 	line-height: 1;
 	font-size: 11px;
@@ -381,10 +399,10 @@
 .speedSelectInput {
 	min-height: 40px;
 	height: 40px;
-	border-color: var(--mantine-color-gray-2);
+	border-color: var(--surface-border);
 	border-radius: 10px;
-	background-color: var(--mantine-color-gray-0);
-	color: var(--mantine-color-gray-8);
+	background-color: var(--surface-sunken);
+	color: var(--mantine-color-text);
 	font-size: 12px;
 	font-weight: 600;
 	padding-inline: 8px;
@@ -398,16 +416,17 @@
 
 .speedSelectInput:focus,
 .speedSelectInput:focus-within {
-	border-color: var(--mantine-color-gray-4);
-	background-color: var(--mantine-color-white);
+	border-color: var(--surface-border-strong);
+	background-color: var(--surface-card);
 	box-shadow: none;
 }
 
 .speedSelectDropdown {
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--surface-border);
 	border-radius: 10px;
 	padding: 6px;
 	box-shadow: var(--mantine-shadow-md);
+	background-color: var(--surface-card);
 }
 
 .speedSelectOption {
@@ -415,11 +434,16 @@
 	font-size: 12px;
 	font-weight: 600;
 	font-variant-numeric: tabular-nums;
+	color: var(--mantine-color-text);
 }
 
 .speedSelectOption[data-checked='true'] {
-	background-color: var(--mantine-color-gray-0);
-	color: var(--mantine-color-gray-9);
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-primary-color-filled) 10%,
+		var(--surface-sunken)
+	);
+	color: var(--mantine-color-text);
 }
 
 @keyframes activeWave {

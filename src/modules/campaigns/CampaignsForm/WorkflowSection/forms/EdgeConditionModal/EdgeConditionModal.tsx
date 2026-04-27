@@ -35,7 +35,7 @@ const ModalContent = () => {
 		'campaign.form.agents',
 		'common',
 	]);
-	const { handleSave, onClose } = useEdgeConditionModal();
+	const { canSave, handleSave, onClose } = useEdgeConditionModal();
 
 	return (
 		<Stack gap='md'>
@@ -44,7 +44,7 @@ const ModalContent = () => {
 				<Button variant='outline' onClick={onClose}>
 					{t('common:form.actions.cancel', { defaultValue: 'Cancel' })}
 				</Button>
-				<Button onClick={handleSave}>
+				<Button onClick={handleSave} disabled={!canSave}>
 					{t('common:form.actions.save', { defaultValue: 'Save' })}
 				</Button>
 			</Group>

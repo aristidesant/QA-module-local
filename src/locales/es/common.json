@@ -48,6 +48,7 @@
 		"ariaLabel": "Navegación principal",
 		"expand": "Expandir barra lateral",
 		"collapse": "Colapsar barra lateral",
+		"mobileMenuToggle": "Alternar menú de navegación",
 		"menu": "MENÚ",
 		"noModules": "No hay módulos disponibles",
 		"requestAccess": "Solicita acceso para ver las opciones de navegación.",

@@ -1,80 +1,32 @@
-.clientCard {
-	cursor: pointer;
-	transition: all 0.15s ease;
-	border-color: var(--mantine-color-gray-2);
-	background-color: var(--mantine-color-white);
-	position: relative;
+.modalHeader {
+	padding: var(--mantine-spacing-md) var(--mantine-spacing-lg)
+		var(--mantine-spacing-sm);
+	margin-bottom: 0;
+	background: var(--surface-card);
+	border-bottom: 1px solid var(--surface-border);
+}
+
+.modalBody {
+	padding: var(--mantine-spacing-lg);
+	background: var(--surface-card);
+}
+
+.modalContent {
+	border: 1px solid var(--surface-border);
+	background: var(--surface-card);
+	box-shadow: var(--mantine-shadow-md);
 	overflow: hidden;
 }
 
-.clientCard:hover:not([data-disabled='true']) {
-	border-color: var(--mantine-color-blue-3);
-	background-color: var(--mantine-color-blue-0);
+[data-mantine-color-scheme='dark'] .modalHeader {
+	background: var(--surface-card);
 }
 
-.clientCard[data-selected='true'] {
-	border-color: var(--mantine-color-blue-6);
-	background-color: var(--mantine-color-blue-0);
+[data-mantine-color-scheme='dark'] .modalBody {
+	background: var(--surface-card);
 }
 
-.clientCard[data-disabled='true'] {
-	cursor: not-allowed;
-	opacity: 0.7;
-}
-
-.clientCard[data-current='true'] {
-	border-color: var(--mantine-color-gray-4);
-	background-color: var(--mantine-color-gray-0);
-}
-
-.clientCard[data-current='true']:hover {
-	border-color: var(--mantine-color-gray-4);
-	background-color: var(--mantine-color-gray-0);
-}
-
-.clientCard[data-current='true'] .iconWrapper {
-	background-color: var(--mantine-color-gray-2);
-	color: var(--mantine-color-gray-5);
-}
-
-.cardContent {
-	transition: transform 0.15s ease;
-}
-
-.clientCard:active:not([data-disabled='true']) .cardContent {
-	transform: scale(0.98);
-}
-
-.iconWrapper {
-	width: 32px;
-	height: 32px;
-	border-radius: var(--mantine-radius-sm);
-	background-color: var(--mantine-color-gray-1);
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	color: var(--mantine-color-gray-6);
-	transition: all 0.15s ease;
-}
-
-.clientCard:hover .iconWrapper {
-	background-color: var(--mantine-color-blue-1);
-	color: var(--mantine-color-blue-6);
-}
-
-.clientCard[data-selected='true'] .iconWrapper {
-	background-color: var(--mantine-color-blue-6);
-	color: var(--mantine-color-white);
-}
-
-.checkIcon {
-	color: var(--mantine-color-blue-6);
-	opacity: 0;
-	transition: all 0.15s ease;
-	transform: scale(0.5);
-}
-
-.checkIcon[data-visible='true'] {
-	opacity: 1;
-	transform: scale(1);
+[data-mantine-color-scheme='dark'] .modalContent {
+	border-color: var(--surface-border);
+	background: var(--surface-card);
 }

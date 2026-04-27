@@ -1,30 +1,32 @@
 .modalHeader {
-	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-	border-bottom: 1px solid var(--mantine-color-gray-3);
+	padding: var(--mantine-spacing-md) var(--mantine-spacing-lg)
+		var(--mantine-spacing-sm);
 	margin-bottom: 0;
-	background: var(--mantine-color-body);
+	background: var(--surface-card);
+	border-bottom: 1px solid var(--surface-border);
 }
 
 .modalBody {
-	padding: var(--mantine-spacing-md);
-	background: var(--mantine-color-body);
+	padding: var(--mantine-spacing-lg);
+	background: var(--surface-card);
 }
 
 .modalContent {
-	border: 1px solid var(--mantine-color-gray-3);
-	background: var(--mantine-color-body);
+	border: 1px solid var(--surface-border);
+	background: var(--surface-card);
+	box-shadow: var(--mantine-shadow-md);
+	overflow: hidden;
 }
 
 [data-mantine-color-scheme='dark'] .modalHeader {
-	border-bottom-color: var(--mantine-color-dark-5);
-	background: var(--mantine-color-dark-7);
+	background: var(--surface-card);
 }
 
 [data-mantine-color-scheme='dark'] .modalBody {
-	background: var(--mantine-color-dark-7);
+	background: var(--surface-card);
 }
 
 [data-mantine-color-scheme='dark'] .modalContent {
-	border-color: var(--mantine-color-dark-5);
-	background: var(--mantine-color-dark-7);
+	border-color: var(--surface-border);
+	background: var(--surface-card);
 }

@@ -1,0 +1,87 @@
+.branchShell {
+	position: relative;
+	display: grid;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-xs);
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-body);
+}
+
+.branchShell[data-depth='0'] {
+	border-color: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
+	);
+}
+
+.branchShell:not([data-depth='0']) {
+	margin-left: var(--mantine-spacing-xs);
+}
+
+.branchShell:not([data-depth='0'])::before {
+	position: absolute;
+	top: calc(var(--mantine-spacing-xs) * -1);
+	bottom: calc(var(--mantine-spacing-xs) * -1);
+	left: calc(var(--mantine-spacing-xs) * -1);
+	width: 1px;
+	content: '';
+	background: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
+	);
+}
+
+.branchToolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+	min-width: 0;
+}
+
+.branchKindSelect {
+	width: 9.5rem;
+	flex: 0 0 auto;
+}
+
+.groupShell {
+	display: grid;
+	gap: var(--mantine-spacing-xs);
+}
+
+.groupChildren {
+	padding-left: var(--mantine-spacing-xs);
+}
+
+.comparisonGrid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(8rem, 0.7fr) minmax(0, 1fr);
+	gap: var(--mantine-spacing-xs);
+	align-items: start;
+}
+
+.valueEditor {
+	display: grid;
+	gap: 0.375rem;
+	min-width: 0;
+}
+
+@media (max-width: 48em) {
+	.branchToolbar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.branchKindSelect {
+		width: 100%;
+	}
+
+	.comparisonGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.groupChildren {
+		padding-left: 0;
+	}
+}

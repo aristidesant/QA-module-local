@@ -1,5 +1,5 @@
 import { useMemo, useState, useCallback, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router';
+import { useParams } from 'react-router';
 import {
 	Badge,
 	Button,
@@ -66,7 +66,6 @@ export function ConversationDetailPage({
 }: ConversationDetailPageProps = {}) {
 	const params = useParams<{ id: string }>();
 	const id = conversationIdProp ?? params.id;
-	const navigate = useNavigate();
 	const { t, i18n } = useTranslation(['conversations', 'common']);
 
 	const { canAccessModule, canPerformAction } = usePermissions();
@@ -106,10 +105,8 @@ export function ConversationDetailPage({
 	const handleBack = useCallback(() => {
 		if (onBackProp) {
 			onBackProp();
-		} else {
-			navigate('/conversations');
 		}
-	}, [navigate, onBackProp]);
+	}, [onBackProp]);
 
 	// --- Derived data ---
 

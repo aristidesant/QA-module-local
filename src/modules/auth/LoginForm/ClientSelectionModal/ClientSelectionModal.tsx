@@ -49,10 +49,8 @@ export default function ClientSelectionModal({
 			});
 
 			if (response.otpRequired) {
-				// Show OTP modal
 				setOtpModalOpened(true);
 			} else if (response.accessToken) {
-				// Login successful
 				handleClose();
 				onSuccess?.();
 			}
@@ -73,22 +71,17 @@ export default function ClientSelectionModal({
 			});
 
 			if (response.accessToken) {
-				// Close both modals
 				setOtpModalOpened(false);
 				handleClose();
 				onSuccess?.();
 			}
-		} catch (err: any) {
-			// Throwing the error so OTPVerificationModal can catch it and display the error
+		} catch (err) {
 			throw err;
 		}
 	};
 
 	const handleOtpModalClose = () => {
 		setOtpModalOpened(false);
-		// Do not clear selected client immediately so user can try selecting again if they want,
-		// but typically cancelling OTP means they might want to select another client or just cancelled the action.
-		// If we want to reset selection on cancel:
 		setSelectedClient(null);
 		setFormError(null);
 	};
@@ -125,6 +118,7 @@ export default function ClientSelectionModal({
 						selectedLabel={t('clientSelection.selectedLabel')}
 						emptyTitle={t('clientSelection.emptyState.title')}
 						emptyDescription={t('clientSelection.emptyState.description')}
+						loadingLabel={t('status.loading', { ns: 'common' })}
 						clients={availableClients}
 						selectedClientId={selectedClient?.clientId}
 						isMutating={isLoading}

@@ -5,6 +5,7 @@ import {
 	Group,
 	Loader,
 	ScrollArea,
+	Skeleton,
 	Stack,
 	Text,
 	TextInput,
@@ -12,8 +13,8 @@ import {
 } from '@mantine/core';
 import { IconBuilding, IconCheck, IconSearch } from '@tabler/icons-react';
 import { KeyboardEvent, useMemo, useState } from 'react';
-import EmptyState from '~/components/EmptyState';
 import type { ClientSelectOption } from '~/api/authApi';
+import EmptyState from '~/components/EmptyState';
 import classes from './ClientSelectionPanel.module.css';
 
 interface ClientSelectionPanelProps {
@@ -57,6 +58,7 @@ export default function ClientSelectionPanel({
 
 	const filteredClients = useMemo(() => {
 		if (!search.trim()) return clients;
+
 		const query = search.toLowerCase();
 		return clients.filter(
 			(client) =>
@@ -64,6 +66,8 @@ export default function ClientSelectionPanel({
 				client.clientIdentifier.toLowerCase().includes(query)
 		);
 	}, [clients, search]);
+
+	const loadingCards = Array.from({ length: 3 });
 
 	const handleCardKeyDown = (
 		event: KeyboardEvent<HTMLDivElement>,
@@ -80,7 +84,7 @@ export default function ClientSelectionPanel({
 		}
 	};
 
-	const getClientCard = (client: ClientSelectOption) => {
+	const renderClientCard = (client: ClientSelectOption) => {
 		const isSelected = selectedClientId === client.clientId;
 		const isCurrentClient = currentClientId === client.clientId;
 		const isDisabled = isMutating || isCurrentClient;
@@ -105,19 +109,28 @@ export default function ClientSelectionPanel({
 				}}
 				onKeyDown={(event) => handleCardKeyDown(event, client, isDisabled)}
 			>
-				<Stack gap='sm'>
-					<Group justify='space-between' align='flex-start' wrap='nowrap'>
+				<Stack gap={4} className={classes.cardContent}>
+					<Group
+						justify='space-between'
+						align='flex-start'
+						wrap='nowrap'
+						gap='sm'
+					>
 						<Group gap='sm' wrap='nowrap' align='flex-start'>
-							<Box className={classes.iconShell}>
-								<IconBuilding size={18} stroke={1.6} />
+							<Box className={classes.iconShell} aria-hidden='true'>
+								<IconBuilding size={18} stroke={1.7} />
 							</Box>
-							<Stack gap={2} className={classes.clientMeta}>
+
+							<Stack gap={3} className={classes.clientMeta}>
 								<Text className={classes.clientName} truncate>
 									{client.clientName}
 								</Text>
-								<Text size='xs' className={classes.clientSubtitle} truncate>
-									{client.roles.join(' • ')}
-								</Text>
+
+								{client.roles.length > 0 && (
+									<Text size='xs' className={classes.clientSubtitle} truncate>
+										{client.roles.join(' • ')}
+									</Text>
+								)}
 							</Stack>
 						</Group>
 
@@ -142,7 +155,7 @@ export default function ClientSelectionPanel({
 							<Badge
 								size='sm'
 								variant='light'
-								color='blue'
+								color='green'
 								leftSection={<IconCheck size={12} stroke={2.4} />}
 								className={classes.stateBadge}
 							>
@@ -156,7 +169,7 @@ export default function ClientSelectionPanel({
 	};
 
 	return (
-		<Stack gap='md'>
+		<Stack gap='sm'>
 			<Stack gap={6} className={classes.hero}>
 				<Group justify='space-between' align='flex-start' gap='sm'>
 					<Stack gap={4}>
@@ -165,10 +178,11 @@ export default function ClientSelectionPanel({
 							{description}
 						</Text>
 					</Stack>
+
 					<Badge
 						size='md'
 						variant='light'
-						color='blue'
+						color='green'
 						className={classes.countBadge}
 					>
 						{countLabel}
@@ -183,6 +197,7 @@ export default function ClientSelectionPanel({
 					placeholder={searchPlaceholder}
 					leftSection={<IconSearch size={15} stroke={1.8} />}
 					size='sm'
+					radius='md'
 					classNames={{
 						input: classes.searchInput,
 					}}
@@ -191,12 +206,45 @@ export default function ClientSelectionPanel({
 			)}
 
 			{isLoading ? (
-				<Group justify='center' py='xl'>
-					<Loader size='sm' />
-					<Text size='sm' c='dimmed'>
-						{loadingLabel}
-					</Text>
-				</Group>
+				<Stack gap='xs'>
+					{loadingLabel && (
+						<Group gap='xs' align='center' className={classes.loadingLabel}>
+							<Loader size='xs' />
+							<Text size='sm' c='dimmed'>
+								{loadingLabel}
+							</Text>
+						</Group>
+					)}
+
+					<Box className={classes.gridShell}>
+						<div className={classes.cardsGrid} aria-hidden='true'>
+							{loadingCards.map((_, index) => (
+								<Card
+									key={index}
+									withBorder
+									padding='md'
+									className={classes.clientCard}
+								>
+									<Group
+										justify='space-between'
+										align='flex-start'
+										wrap='nowrap'
+									>
+										<Group gap='sm' wrap='nowrap' align='flex-start'>
+											<Skeleton height={36} width={36} radius='md' />
+											<Stack gap={6} className={classes.clientMeta}>
+												<Skeleton height={14} width='62%' radius='xl' />
+												<Skeleton height={10} width='48%' radius='xl' />
+												<Skeleton height={10} width='72%' radius='xl' />
+											</Stack>
+										</Group>
+										<Skeleton height={22} width={74} radius='xl' />
+									</Group>
+								</Card>
+							))}
+						</div>
+					</Box>
+				</Stack>
 			) : (
 				<ScrollArea
 					h={filteredClients.length > 4 ? 428 : 'auto'}
@@ -206,7 +254,7 @@ export default function ClientSelectionPanel({
 					<Box className={classes.gridShell}>
 						{filteredClients.length > 0 ? (
 							<div className={classes.cardsGrid} role='listbox'>
-								{filteredClients.map(getClientCard)}
+								{filteredClients.map(renderClientCard)}
 							</div>
 						) : (
 							<EmptyState

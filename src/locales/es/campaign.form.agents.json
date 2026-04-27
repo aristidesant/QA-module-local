@@ -346,6 +346,25 @@
 	"configuration": {
 		"editPrompt": "Editar prompt"
 	},
+	"dynamicVariables": {
+		"title": "Variables Dinámicas",
+		"description": "Pares clave-valor inyectados en el prompt del agente en tiempo de ejecución.",
+		"empty": "No hay variables configuradas.",
+		"count": "{{count}} variable",
+		"count_other": "{{count}} variables",
+		"preview": {
+			"title": "Vista previa",
+			"readOnly": "Solo lectura",
+			"emptyValue": "Valor vacío"
+		},
+		"addVariable": "Agregar variable",
+		"removeVariable": "Eliminar variable",
+		"keyPlaceholder": "Nombre de variable",
+		"valuePlaceholder": "Valor por defecto",
+		"apply": "Aplicar",
+		"errorEmptyKey": "La clave no puede estar vacía",
+		"errorDuplicateKey": "Clave duplicada"
+	},
 	"saveReview": {
 		"title": "Revisar cambios",
 		"publishedLabel": "Versión publicada",

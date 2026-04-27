@@ -39,6 +39,70 @@
 					"failure": "Failure"
 				},
 				"expressionNote": "Expression builder coming soon",
+				"expression": {
+					"title": "Expression",
+					"description": "Build the rule that controls when this edge is used.",
+					"reset": "Reset",
+					"validationSummary": "Complete the highlighted expression fields to save.",
+					"labelPlaceholder": "Optional label for this expression",
+					"branchType": "Branch type",
+					"branchTypes": {
+						"comparison": "Comparison",
+						"group": "Group",
+						"llm": "LLM prompt"
+					},
+					"wrapAnd": "Wrap AND",
+					"wrapOr": "Wrap OR",
+					"removeBranch": "Remove branch",
+					"addBranch": "Add branch",
+					"llmPrompt": "LLM prompt",
+					"llmPromptPlaceholder": "Ask the model to evaluate this branch...",
+					"leftValue": "Left value",
+					"rightValue": "Right value",
+					"comparisonOperator": "Comparison operator",
+					"valueType": "Value type",
+					"dynamicVariablePlaceholder": "Select variable",
+					"noVariables": "No variables found",
+					"numberPlaceholder": "Enter number",
+					"stringPlaceholder": "Enter text",
+					"llmValuePlaceholder": "Prompt the model...",
+					"operators": {
+						"or": "OR",
+						"and": "AND"
+					},
+					"comparisons": {
+						"eq": "Equals",
+						"neq": "Does not equal",
+						"gt": "Greater than",
+						"gte": "Greater or equal",
+						"lt": "Less than",
+						"lte": "Less or equal"
+					},
+					"valueTypes": {
+						"variable": "Variable",
+						"text": "Text",
+						"number": "Number",
+						"boolean": "Boolean",
+						"llm": "LLM"
+					},
+					"variables": {
+						"system": "System Variables",
+						"custom": "Custom Variables"
+					},
+					"boolean": {
+						"true": "True",
+						"false": "False"
+					},
+					"errors": {
+						"emptyDynamicVariable": "Select a variable.",
+						"emptyStringLiteral": "Enter a text value.",
+						"invalidNumberLiteral": "Enter a valid number.",
+						"emptyLlmPrompt": "Enter an LLM prompt.",
+						"missingComparisonValue": "Complete this comparison value.",
+						"emptyGroup": "Add at least one branch.",
+						"unsupportedExpression": "This expression branch is not supported."
+					}
+				},
 				"forward": "Forward",
 				"backward": "Backward"
 			},
