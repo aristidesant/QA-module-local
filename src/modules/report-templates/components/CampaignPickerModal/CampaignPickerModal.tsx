@@ -97,6 +97,19 @@ const getLocalDateString = (date: Date) => {
 	return `${year}-${month}-${day}`;
 };
 
+const normalizeDateValue = (value: unknown): Date | null => {
+	if (value instanceof Date) {
+		return Number.isNaN(value.getTime()) ? null : value;
+	}
+
+	if (typeof value === 'string' || typeof value === 'number') {
+		const parsedDate = new Date(value);
+		return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+	}
+
+	return null;
+};
+
 const createDefaultFormValues = () => {
 	const endDate = new Date();
 	const startDate = new Date(endDate);
@@ -533,10 +546,15 @@ const CampaignPickerModal = ({
 		initialValues: createDefaultFormValues(),
 		validate: {
 			startDate: (value) =>
-				value ? null : t('export.validation.startDateRequired'),
+				normalizeDateValue(value)
+					? null
+					: t('export.validation.startDateRequired'),
 			endDate: (value, values) => {
-				if (!value) return t('export.validation.endDateRequired');
-				if (values.startDate && value.getTime() < values.startDate.getTime()) {
+				const startDate = normalizeDateValue(values.startDate);
+				const endDate = normalizeDateValue(value);
+
+				if (!endDate) return t('export.validation.endDateRequired');
+				if (startDate && endDate.getTime() < startDate.getTime()) {
 					return t('export.validation.endDateBeforeStartDate');
 				}
 				return null;
@@ -816,6 +834,17 @@ const CampaignPickerModal = ({
 			endDate: Date | null;
 			format: 'csv' | 'xlsx';
 		}) => {
+			const startDate = normalizeDateValue(values.startDate);
+			const endDate = normalizeDateValue(values.endDate);
+
+			if (!startDate || !endDate) {
+				notifications.show({
+					message: t('export.validation.fixDates'),
+					color: 'red',
+				});
+				return;
+			}
+
 			if (hasValidationBlockers) {
 				notifications.show({
 					message: validationMessage ?? t('export.validation.fixSelections'),
@@ -825,7 +854,14 @@ const CampaignPickerModal = ({
 			}
 
 			try {
-				const payload = buildPayload(values, campaignStates);
+				const payload = buildPayload(
+					{
+						...values,
+						startDate,
+						endDate,
+					},
+					campaignStates
+				);
 				await onSubmit(payload);
 				handleClose();
 			} catch (error) {
@@ -932,13 +968,12 @@ const CampaignPickerModal = ({
 									label={t('export.startDate')}
 									value={form.values.startDate}
 									onChange={(value) =>
-										form.setFieldValue(
-											'startDate',
-											(value as unknown as Date) ?? null
-										)
+										form.setFieldValue('startDate', normalizeDateValue(value))
 									}
 									error={form.errors.startDate}
-									maxDate={form.values.endDate ?? new Date()}
+									maxDate={
+										normalizeDateValue(form.values.endDate) ?? new Date()
+									}
 									valueFormat='MMM D, YYYY'
 									size='sm'
 								/>
@@ -946,13 +981,12 @@ const CampaignPickerModal = ({
 									label={t('export.endDate')}
 									value={form.values.endDate}
 									onChange={(value) =>
-										form.setFieldValue(
-											'endDate',
-											(value as unknown as Date) ?? null
-										)
+										form.setFieldValue('endDate', normalizeDateValue(value))
 									}
 									error={form.errors.endDate}
-									minDate={form.values.startDate ?? undefined}
+									minDate={
+										normalizeDateValue(form.values.startDate) ?? undefined
+									}
 									maxDate={new Date()}
 									valueFormat='MMM D, YYYY'
 									size='sm'

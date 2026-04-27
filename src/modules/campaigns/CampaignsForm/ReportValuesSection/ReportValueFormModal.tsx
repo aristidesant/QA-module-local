@@ -216,7 +216,7 @@ const ORIGIN_OPTIONS: {
 
 // ─── Contextual key field labels ───────────────────────────────
 
-const KEY_FIELD_LABELS: Record<ReportValueOriginType, string> = {
+const KEY_FIELD_LABELS: Partial<Record<ReportValueOriginType, string>> = {
 	[ReportValueOriginType.SQL]: 'reportValues.form.keyFieldLabels.SQL',
 	[ReportValueOriginType.DYNAMIC]: 'reportValues.form.keyFieldLabels.DYNAMIC',
 	[ReportValueOriginType.OBJECT]: 'reportValues.form.keyFieldLabels.OBJECT',

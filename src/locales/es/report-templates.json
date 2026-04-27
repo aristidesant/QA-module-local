@@ -50,10 +50,26 @@
 			"DYNAMIC": "Campo Dinámico",
 			"OBJECT": "Campo de Conversación",
 			"METADATA": "Campo de Metadatos",
+			"CUSTOM_VARIABLES": "Variable Personalizada",
 			"default": "Clave del Campo"
 		},
 		"label": "Etiqueta",
 		"dataType": "Tipo de Dato",
+		"customVariables": {
+			"templateLabel": "Plantilla de variables personalizadas",
+			"templatePlaceholder": "Selecciona una plantilla de variables personalizadas",
+			"templateHint": "Elige una plantilla para cargar sus variables.",
+			"loadingTemplates": "Cargando plantillas de variables personalizadas...",
+			"templateLoadError": "No se pudieron cargar las plantillas de variables personalizadas.",
+			"noTemplates": "No se encontraron plantillas de variables personalizadas.",
+			"variableLabel": "Variable",
+			"variablePlaceholder": "Selecciona una variable",
+			"loadingVariables": "Cargando variables...",
+			"loadError": "No se pudieron cargar las variables.",
+			"retry": "Reintentar",
+			"emptyTemplate": "Esta plantilla no tiene variables.",
+			"noVariablesMatch": "No se encontraron variables para esta plantilla."
+		},
 		"sheet": "Hoja",
 		"sheetName": "Nombre de Hoja",
 		"sheetNumber": "Hoja {{sheet}}",
@@ -179,6 +195,7 @@
 			"startDateRequired": "La fecha de inicio es requerida",
 			"endDateRequired": "La fecha de fin es requerida",
 			"endDateBeforeStartDate": "La fecha de fin no puede ser anterior a la fecha de inicio",
+			"fixDates": "Selecciona fechas de inicio y fin válidas antes de exportar.",
 			"campaignIdsRequired": "Por favor selecciona al menos una campaña",
 			"campaignRequired": "Selecciona al menos una campaña",
 			"contactListsRequired": "Selecciona al menos una lista de contacto para cada campaña con alcance por listas.",
@@ -191,7 +208,8 @@
 		"SQL": "SQL",
 		"DYNAMIC": "Dinámico",
 		"OBJECT": "Objeto",
-		"METADATA": "Metadatos"
+		"METADATA": "Metadatos",
+		"CUSTOM_VARIABLES": "Variables Personalizadas"
 	},
 	"dataType": {
 		"STRING": "Texto",

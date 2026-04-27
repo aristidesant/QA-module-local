@@ -3,6 +3,7 @@ export enum ReportValueOriginType {
 	DYNAMIC = 'DYNAMIC',
 	OBJECT = 'OBJECT',
 	METADATA = 'METADATA',
+	CUSTOM_VARIABLES = 'CUSTOM_VARIABLES',
 }
 
 export enum ReportValueDataType {

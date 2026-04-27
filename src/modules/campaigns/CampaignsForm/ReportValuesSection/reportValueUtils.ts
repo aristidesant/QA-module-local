@@ -10,6 +10,7 @@ export const ORIGIN_TYPE_COLORS: Record<string, string> = {
 	DYNAMIC: 'violet',
 	OBJECT: 'teal',
 	METADATA: 'orange',
+	CUSTOM_VARIABLES: 'green',
 };
 
 export const DATA_TYPE_COLORS: Record<string, string> = {

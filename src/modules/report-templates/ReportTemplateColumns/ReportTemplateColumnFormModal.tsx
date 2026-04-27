@@ -1,19 +1,26 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+	Alert,
 	ActionIcon,
 	Button,
+	Center,
+	Loader,
 	Modal,
 	Select,
+	Stack,
 	Text,
 	TextInput,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
 import {
+	IconAlertCircle,
 	IconBraces,
+	IconCategory,
 	IconDatabase,
 	IconFileAnalytics,
+	IconRefresh,
 	IconX,
 } from '@tabler/icons-react';
 import {
@@ -21,7 +28,12 @@ import {
 	ReportValueOriginType,
 	type ReportValue,
 } from '~/models/ReportValue';
+import type { CustomVariableTemplate } from '~/models/CustomVariableModel';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
+import {
+	useGetCustomVariableTemplates,
+	useGetTemplateVariables,
+} from '~/queries/customVariableTemplatesQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import {
 	validateSheetColumnUniqueness,
@@ -66,6 +78,19 @@ const SUPPORTED_DATA_TYPES: ReportValueDataType[] = [
 const SUPPORTED_DATA_TYPE_SET = new Set<ReportValueDataType>(
 	SUPPORTED_DATA_TYPES
 );
+
+const CUSTOM_VARIABLE_TYPE_TO_DATA_TYPE: Record<
+	string,
+	ReportValueDataType | null
+> = {
+	string: ReportValueDataType.STRING,
+	integer: ReportValueDataType.NUMBER,
+	number: ReportValueDataType.NUMBER,
+	boolean: ReportValueDataType.BOOLEAN,
+	date: ReportValueDataType.DATE,
+	datetime: ReportValueDataType.DATETIME,
+	timestamp: ReportValueDataType.DATETIME,
+};
 
 const normalizeSupportedDataType = (
 	dataType: ReportValueDataType | string | null | undefined,
@@ -117,6 +142,17 @@ const metadataTypeToDataType = (type: string): ReportValueDataType | null => {
 	}
 };
 
+const customVariableTypeToDataType = (
+	type: string | null | undefined
+): ReportValueDataType | null => {
+	if (!type) {
+		return null;
+	}
+
+	const normalizedType = String(type).toLowerCase();
+	return CUSTOM_VARIABLE_TYPE_TO_DATA_TYPE[normalizedType] ?? null;
+};
+
 const ORIGIN_OPTIONS: {
 	value: ReportValueOriginType;
 	icon: React.ReactNode;
@@ -136,6 +172,11 @@ const ORIGIN_OPTIONS: {
 		value: ReportValueOriginType.METADATA,
 		icon: <IconFileAnalytics size={20} strokeWidth={1.5} />,
 		nameKey: 'METADATA',
+	},
+	{
+		value: ReportValueOriginType.CUSTOM_VARIABLES,
+		icon: <IconCategory size={20} strokeWidth={1.5} />,
+		nameKey: 'CUSTOM_VARIABLES',
 	},
 ];
 
@@ -265,6 +306,19 @@ const ReportTemplateColumnFormModal = ({
 		},
 	});
 
+	const selectedOrigin = form.values.originType as ReportValueOriginType | '';
+	const [
+		selectedCustomVariableTemplateId,
+		setSelectedCustomVariableTemplateId,
+	] = useState<number | null>(null);
+	const {
+		data: customVariableTemplatesResponse,
+		isLoading: isLoadingTemplates,
+		isError: isTemplatesError,
+		error: templatesError,
+		refetch: refetchTemplates,
+	} = useGetCustomVariableTemplates({ limit: 200, offset: 0 });
+
 	const usedKeysFor = (origin: ReportValueOriginType): Set<string> =>
 		new Set(
 			existingColumns
@@ -277,6 +331,69 @@ const ReportTemplateColumnFormModal = ({
 				)
 				.map((c) => c.key)
 		);
+
+	const customVariableTemplates =
+		customVariableTemplatesResponse?.templates ?? [];
+	const customVariableTemplateOptions = useMemo(
+		() =>
+			customVariableTemplates.map((template) => ({
+				value: String(template.id),
+				label: `${template.name} (#${template.id})`,
+			})),
+		[customVariableTemplates]
+	);
+
+	const selectedCustomVariableTemplate =
+		useMemo<CustomVariableTemplate | null>(() => {
+			if (selectedOrigin !== ReportValueOriginType.CUSTOM_VARIABLES) {
+				return null;
+			}
+
+			if (selectedCustomVariableTemplateId !== null) {
+				return (
+					customVariableTemplates.find(
+						(template) => template.id === selectedCustomVariableTemplateId
+					) ?? null
+				);
+			}
+
+			if (!form.values.key) {
+				return null;
+			}
+
+			return (
+				customVariableTemplates.find((template) =>
+					template.customVariables?.some(
+						(variable) => variable.name === form.values.key
+					)
+				) ?? null
+			);
+		}, [
+			customVariableTemplates,
+			form.values.key,
+			selectedCustomVariableTemplateId,
+			selectedOrigin,
+		]);
+	const activeCustomVariableTemplateId =
+		selectedCustomVariableTemplateId ??
+		selectedCustomVariableTemplate?.id ??
+		null;
+
+	const shouldLoadTemplateVariables =
+		opened &&
+		selectedOrigin === ReportValueOriginType.CUSTOM_VARIABLES &&
+		(activeCustomVariableTemplateId !== null ||
+			selectedCustomVariableTemplate !== null);
+	const {
+		data: customVariables = [],
+		isLoading: isLoadingCustomVariables,
+		isError: isCustomVariablesError,
+		error: customVariablesError,
+		refetch: refetchCustomVariables,
+	} = useGetTemplateVariables(
+		activeCustomVariableTemplateId ?? 0,
+		shouldLoadTemplateVariables
+	);
 
 	useEffect(() => {
 		if (opened) {
@@ -313,7 +430,9 @@ const ReportTemplateColumnFormModal = ({
 				});
 				form.resetDirty();
 			}
+			return;
 		}
+		setSelectedCustomVariableTemplateId(null);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [
 		opened,
@@ -321,6 +440,22 @@ const ReportTemplateColumnFormModal = ({
 		templateColumn,
 		defaultSheet,
 		filteredAvailableSheets,
+	]);
+
+	useEffect(() => {
+		if (
+			opened &&
+			selectedOrigin === ReportValueOriginType.CUSTOM_VARIABLES &&
+			selectedCustomVariableTemplateId === null &&
+			selectedCustomVariableTemplate
+		) {
+			setSelectedCustomVariableTemplateId(selectedCustomVariableTemplate.id);
+		}
+	}, [
+		opened,
+		selectedCustomVariableTemplate,
+		selectedCustomVariableTemplateId,
+		selectedOrigin,
 	]);
 
 	const dataTypeOptions = SUPPORTED_DATA_TYPES.map((dataType) => ({
@@ -335,8 +470,6 @@ const ReportTemplateColumnFormModal = ({
 		label: `${humanizeKey(k)} — ${k}`,
 	}));
 
-	const selectedOrigin = form.values.originType as ReportValueOriginType | '';
-
 	const handleOriginSelect = (value: ReportValueOriginType) => {
 		form.setValues({
 			originType: value,
@@ -344,7 +477,40 @@ const ReportTemplateColumnFormModal = ({
 			label: '',
 			dataType: null,
 		});
+		setSelectedCustomVariableTemplateId(null);
 		form.clearFieldError('originType');
+	};
+
+	const handleCustomVariableTemplateSelect = (value: string | null) => {
+		setSelectedCustomVariableTemplateId(value ? Number(value) : null);
+		form.setValues({
+			key: '',
+			label: '',
+			dataType: null,
+		});
+		form.clearFieldError('key');
+		form.clearFieldError('label');
+		form.clearFieldError('dataType');
+	};
+
+	const handleCustomVariableSelect = (value: string | null) => {
+		const nextKey = value ?? '';
+		const variable = customVariables.find((item) => item.name === nextKey);
+
+		form.setFieldValue('key', nextKey);
+
+		if (!variable) {
+			return;
+		}
+
+		form.setFieldValue('label', variable.label || humanizeKey(variable.name));
+		form.setFieldValue(
+			'dataType',
+			customVariableTypeToDataType(variable.value.type)
+		);
+		form.clearFieldError('key');
+		form.clearFieldError('label');
+		form.clearFieldError('dataType');
 	};
 
 	const handleKeySelect = (
@@ -484,6 +650,119 @@ const ReportTemplateColumnFormModal = ({
 					error={form.errors.key}
 					disabled={isWorksheetOnly}
 				/>
+			);
+		}
+
+		if (selectedOrigin === ReportValueOriginType.CUSTOM_VARIABLES) {
+			return (
+				<Stack gap='xs'>
+					<Select
+						label={t('form.customVariables.templateLabel')}
+						placeholder={t('form.customVariables.templatePlaceholder')}
+						data={customVariableTemplateOptions}
+						value={activeCustomVariableTemplateId?.toString() ?? null}
+						onChange={handleCustomVariableTemplateSelect}
+						error={isTemplatesError ? getErrorMessage(templatesError) : null}
+						disabled={isWorksheetOnly || isLoadingTemplates || isTemplatesError}
+						searchable
+						allowDeselect={false}
+						nothingFoundMessage={t('form.customVariables.noTemplates')}
+					/>
+
+					{isLoadingTemplates ? (
+						<Center py='xs'>
+							<Stack gap={4} align='center'>
+								<Loader size='sm' />
+								<Text size='xs' c='dimmed'>
+									{t('form.customVariables.loadingTemplates')}
+								</Text>
+							</Stack>
+						</Center>
+					) : isTemplatesError ? (
+						<Alert
+							variant='light'
+							color='red'
+							icon={<IconAlertCircle size={16} />}
+						>
+							<Stack gap={6}>
+								<Text size='sm'>
+									{getErrorMessage(templatesError) ||
+										t('form.customVariables.templateLoadError')}
+								</Text>
+								<Button
+									size='xs'
+									variant='light'
+									leftSection={<IconRefresh size={14} />}
+									onClick={() => void refetchTemplates()}
+								>
+									{t('form.customVariables.retry')}
+								</Button>
+							</Stack>
+						</Alert>
+					) : activeCustomVariableTemplateId ? (
+						isLoadingCustomVariables ? (
+							<Center py='xs'>
+								<Stack gap={4} align='center'>
+									<Loader size='sm' />
+									<Text size='xs' c='dimmed'>
+										{t('form.customVariables.loadingVariables')}
+									</Text>
+								</Stack>
+							</Center>
+						) : isCustomVariablesError ? (
+							<Alert
+								variant='light'
+								color='red'
+								icon={<IconAlertCircle size={16} />}
+							>
+								<Stack gap={6}>
+									<Text size='sm'>
+										{getErrorMessage(customVariablesError) ||
+											t('form.customVariables.loadError')}
+									</Text>
+									<Button
+										size='xs'
+										variant='light'
+										leftSection={<IconRefresh size={14} />}
+										onClick={() => void refetchCustomVariables()}
+									>
+										{t('form.customVariables.retry')}
+									</Button>
+								</Stack>
+							</Alert>
+						) : customVariables.length === 0 ? (
+							<Alert
+								variant='light'
+								color='gray'
+								icon={<IconAlertCircle size={16} />}
+							>
+								<Text size='sm'>{t('form.customVariables.emptyTemplate')}</Text>
+							</Alert>
+						) : (
+							<Select
+								label={t('form.customVariables.variableLabel')}
+								placeholder={t('form.customVariables.variablePlaceholder')}
+								data={customVariables.map((variable) => ({
+									value: variable.name,
+									label: variable.label
+										? `${variable.label} (${variable.name})`
+										: humanizeKey(variable.name),
+								}))}
+								value={form.values.key || null}
+								onChange={handleCustomVariableSelect}
+								error={form.errors.key}
+								disabled={isWorksheetOnly}
+								searchable
+								allowDeselect={false}
+								nothingFoundMessage={t('form.customVariables.noVariablesMatch')}
+							/>
+						)
+					) : (
+						<Text size='xs' c='dimmed'>
+							{t('form.customVariables.templateHint')}
+						</Text>
+					)}
+				</Stack>
 			);
 		}
 

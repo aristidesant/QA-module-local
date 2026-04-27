@@ -50,10 +50,26 @@
 			"DYNAMIC": "Dynamic Field",
 			"OBJECT": "Conversation Field",
 			"METADATA": "Metadata Field",
+			"CUSTOM_VARIABLES": "Custom Variable",
 			"default": "Field Key"
 		},
 		"label": "Label",
 		"dataType": "Data Type",
+		"customVariables": {
+			"templateLabel": "Custom variable template",
+			"templatePlaceholder": "Select a custom variable template",
+			"templateHint": "Pick a template to load its variables.",
+			"loadingTemplates": "Loading custom variable templates...",
+			"templateLoadError": "Could not load custom variable templates.",
+			"noTemplates": "No custom variable templates found.",
+			"variableLabel": "Variable",
+			"variablePlaceholder": "Select a variable",
+			"loadingVariables": "Loading variables...",
+			"loadError": "Could not load variables.",
+			"retry": "Retry",
+			"emptyTemplate": "This template does not have any variables.",
+			"noVariablesMatch": "No variables found for this template."
+		},
 		"sheet": "Sheet",
 		"sheetName": "Sheet Name",
 		"sheetNumber": "Sheet {{sheet}}",
@@ -179,6 +195,7 @@
 			"startDateRequired": "Start date is required",
 			"endDateRequired": "End date is required",
 			"endDateBeforeStartDate": "End date cannot be before start date",
+			"fixDates": "Please choose valid start and end dates before exporting.",
 			"campaignIdsRequired": "Please select at least one campaign",
 			"campaignRequired": "Select at least one campaign",
 			"contactListsRequired": "Select at least one contact list for each campaign using list scope.",
@@ -191,7 +208,8 @@
 		"SQL": "SQL",
 		"DYNAMIC": "Dynamic",
 		"OBJECT": "Object",
-		"METADATA": "Metadata"
+		"METADATA": "Metadata",
+		"CUSTOM_VARIABLES": "Custom Variables"
 	},
 	"dataType": {
 		"STRING": "String",
