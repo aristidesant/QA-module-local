@@ -90,11 +90,16 @@ interface CampaignSelectionCardProps {
 	onListsErrorChange: (campaignId: number, error: string | null) => void;
 }
 
-const getLocalDateString = (date: Date) => {
-	const year = date.getFullYear();
-	const month = String(date.getMonth() + 1).padStart(2, '0');
-	const day = String(date.getDate()).padStart(2, '0');
-	return `${year}-${month}-${day}`;
+const normalizeStartDateForBackend = (date: Date) => {
+	const nextDate = new Date(date);
+	nextDate.setHours(0, 0, 0, 0);
+	return nextDate.toISOString();
+};
+
+const normalizeEndDateForBackend = (date: Date) => {
+	const nextDate = new Date(date);
+	nextDate.setHours(23, 59, 29, 0);
+	return nextDate.toISOString();
 };
 
 const normalizeDateValue = (value: unknown): Date | null => {
@@ -103,6 +108,19 @@ const normalizeDateValue = (value: unknown): Date | null => {
 	}
 
 	if (typeof value === 'string' || typeof value === 'number') {
+		if (typeof value === 'string') {
+			const dateOnlyMatch = value.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+			if (dateOnlyMatch) {
+				const [, year, month, day] = dateOnlyMatch;
+				const parsedDate = new Date(
+					Number(year),
+					Number(month) - 1,
+					Number(day)
+				);
+				return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
+			}
+		}
+
 		const parsedDate = new Date(value);
 		return Number.isNaN(parsedDate.getTime()) ? null : parsedDate;
 	}
@@ -215,8 +233,8 @@ const buildPayload = (
 	}
 
 	return {
-		startDate: getLocalDateString(values.startDate),
-		endDate: getLocalDateString(values.endDate),
+		startDate: normalizeStartDateForBackend(values.startDate),
+		endDate: normalizeEndDateForBackend(values.endDate),
 		format: values.format,
 		campaignSelections: campaignStates
 			.filter((campaign) => campaign.selected)
