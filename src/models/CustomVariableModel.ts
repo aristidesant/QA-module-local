@@ -28,6 +28,8 @@ export interface CustomVariable {
 	updatedAt: string;
 }
 
+export type DataCollectionTemplateVariable = CustomVariable;
+
 export interface CustomVariableTemplate {
 	id: number;
 	name: string;
@@ -39,6 +41,8 @@ export interface CustomVariableTemplate {
 	updatedAt: string;
 	customVariables?: CustomVariable[];
 }
+
+export type DataCollectionTemplateGroup = CustomVariableTemplate;
 
 export interface CustomVariableTemplateListResponse {
 	total: number;

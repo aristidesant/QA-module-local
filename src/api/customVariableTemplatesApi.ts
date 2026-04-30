@@ -11,6 +11,8 @@ import type {
 	UpdateCustomVariableTemplateRequest,
 } from '~/models/CustomVariableModel';
 
+const DATA_COLLECTION_TEMPLATE_GROUPS_PATH = 'data-collection-template-groups';
+
 const customVariableTemplatesApi = (
 	_authHeader: Record<string, string> = {}
 ) => {
@@ -19,7 +21,7 @@ const customVariableTemplatesApi = (
 			params?: CustomVariableTemplateApiParams
 		): Promise<CustomVariableTemplateListResponse> => {
 			const response = await axios.get<CustomVariableTemplateListResponse>(
-				`${DEFAULT_API_URL}/custom-variable-templates`,
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}`,
 				{ params }
 			);
 			return response.data;
@@ -29,7 +31,7 @@ const customVariableTemplatesApi = (
 			id: number
 		): Promise<CustomVariableTemplate> => {
 			const response = await axios.get<CustomVariableTemplate>(
-				`${DEFAULT_API_URL}/custom-variable-templates/${id}`
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}/${id}`
 			);
 			return response.data;
 		},
@@ -38,7 +40,7 @@ const customVariableTemplatesApi = (
 			data: CreateCustomVariableTemplateRequest
 		): Promise<CustomVariableTemplate> => {
 			const response = await axios.post<CustomVariableTemplate>(
-				`${DEFAULT_API_URL}/custom-variable-templates`,
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}`,
 				data
 			);
 			return response.data;
@@ -49,21 +51,23 @@ const customVariableTemplatesApi = (
 			data: UpdateCustomVariableTemplateRequest
 		): Promise<CustomVariableTemplate> => {
 			const response = await axios.patch<CustomVariableTemplate>(
-				`${DEFAULT_API_URL}/custom-variable-templates/${id}`,
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}/${id}`,
 				data
 			);
 			return response.data;
 		},
 
 		deleteCustomVariableTemplate: async (id: number): Promise<void> => {
-			await axios.delete(`${DEFAULT_API_URL}/custom-variable-templates/${id}`);
+			await axios.delete(
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}/${id}`
+			);
 		},
 
 		cloneCustomVariableTemplate: async (
 			id: number
 		): Promise<CustomVariableTemplate> => {
 			const response = await axios.post<CustomVariableTemplate>(
-				`${DEFAULT_API_URL}/custom-variable-templates/${id}/clone`
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}/${id}/clone`
 			);
 			return response.data;
 		},
@@ -73,7 +77,7 @@ const customVariableTemplatesApi = (
 			campaignId: number
 		): Promise<CustomVariableTemplate> => {
 			const response = await axios.post<CustomVariableTemplate>(
-				`${DEFAULT_API_URL}/custom-variable-templates/${id}/assign-campaign/${campaignId}`
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}/${id}/assign-campaign/${campaignId}`
 			);
 			return response.data;
 		},
@@ -82,7 +86,7 @@ const customVariableTemplatesApi = (
 			templateId: number
 		): Promise<CustomVariable[]> => {
 			const response = await axios.get<CustomVariable[]>(
-				`${DEFAULT_API_URL}/custom-variable-templates/${templateId}/variables`
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}/${templateId}/variables`
 			);
 			return response.data;
 		},
@@ -92,7 +96,7 @@ const customVariableTemplatesApi = (
 			variableId: number
 		): Promise<CustomVariable> => {
 			const response = await axios.get<CustomVariable>(
-				`${DEFAULT_API_URL}/custom-variable-templates/${templateId}/variables/${variableId}`
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}/${templateId}/variables/${variableId}`
 			);
 			return response.data;
 		},
@@ -102,7 +106,7 @@ const customVariableTemplatesApi = (
 			data: CreateCustomVariableRequest
 		): Promise<CustomVariable> => {
 			const response = await axios.post<CustomVariable>(
-				`${DEFAULT_API_URL}/custom-variable-templates/${templateId}/variables`,
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}/${templateId}/variables`,
 				data
 			);
 			return response.data;
@@ -114,7 +118,7 @@ const customVariableTemplatesApi = (
 			data: UpdateCustomVariableRequest
 		): Promise<CustomVariable> => {
 			const response = await axios.patch<CustomVariable>(
-				`${DEFAULT_API_URL}/custom-variable-templates/${templateId}/variables/${variableId}`,
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}/${templateId}/variables/${variableId}`,
 				data
 			);
 			return response.data;
@@ -125,7 +129,7 @@ const customVariableTemplatesApi = (
 			variableId: number
 		): Promise<void> => {
 			await axios.delete(
-				`${DEFAULT_API_URL}/custom-variable-templates/${templateId}/variables/${variableId}`
+				`${DEFAULT_API_URL}/${DATA_COLLECTION_TEMPLATE_GROUPS_PATH}/${templateId}/variables/${variableId}`
 			);
 		},
 	};
