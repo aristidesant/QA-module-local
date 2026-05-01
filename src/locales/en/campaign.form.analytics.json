@@ -20,6 +20,7 @@
 			"fields": {
 				"identifier": "Identifier",
 				"type": "Data type",
+				"isActive": "Active",
 				"description": "Description",
 				"enumValues": "Enum values (optional)",
 				"enumValuesCount": "Enum values ({{count}})",
@@ -40,6 +41,7 @@
 				"constantValue": "Optional fixed value",
 				"dynamicVariable": "Optional source variable"
 			},
+			"activationHint": "Inactive variables stay stored at campaign level but are not sent to the agent runtime until they are reactivated.",
 			"descriptionHint": "This description is passed to the LLM and should explain how to extract the value from the transcript.",
 			"enumHint": "The LLM will only be able to select from these predefined values.",
 			"validation": {
@@ -49,6 +51,9 @@
 			"table": {
 				"identifier": "Identifier",
 				"type": "Data type",
+				"isActive": "Status",
+				"active": "Active",
+				"inactive": "Inactive",
 				"description": "Description",
 				"descriptionTooltipLabel": "Variable description",
 				"descriptionEmpty": "No description available",

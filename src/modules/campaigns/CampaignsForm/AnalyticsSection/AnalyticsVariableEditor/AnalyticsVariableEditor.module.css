@@ -19,6 +19,11 @@
 	flex: 1;
 }
 
+.activationCopy {
+	flex: 1;
+	min-width: 0;
+}
+
 .footerActions {
 	flex-wrap: wrap;
 	justify-content: flex-end;

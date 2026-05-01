@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, Group, Modal, Stack, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
@@ -10,7 +10,9 @@ import {
 	AnalyticsFormProvider,
 	createEmptyAnalyticsRow,
 	getDataCollectionFromAgentConfig,
+	mapRowsToCampaignDataCollectionVariables,
 	mapRowsToDataCollection,
+	normalizeCampaignDataCollectionRows,
 	normalizeDataCollectionRows,
 	useAnalyticsForm,
 } from '../analyticsFormContext';
@@ -21,9 +23,22 @@ const AnalyticsSection = () => {
 	const setRightComponent = useCampaignsStore(
 		(state) => state.setRightComponent
 	);
-	const initialRows = normalizeDataCollectionRows(
-		getDataCollectionFromAgentConfig(campaignForm.values.agentConfig)
-	);
+	const initialRows = useMemo(() => {
+		const runtimeRows = normalizeCampaignDataCollectionRows(
+			campaignForm.values.dataCollectionVariables
+		);
+
+		if (runtimeRows.length > 0) {
+			return runtimeRows;
+		}
+
+		return normalizeDataCollectionRows(
+			getDataCollectionFromAgentConfig(campaignForm.values.agentConfig)
+		);
+	}, [
+		campaignForm.values.agentConfig,
+		campaignForm.values.dataCollectionVariables,
+	]);
 
 	const form = useAnalyticsForm({
 		initialValues: {
@@ -34,25 +49,38 @@ const AnalyticsSection = () => {
 
 	useEffect(() => {
 		const mappedDataCollection = mapRowsToDataCollection(form.values.rows);
+		const mappedRuntimeVariables = mapRowsToCampaignDataCollectionVariables(
+			form.values.rows
+		);
 		const currentDataCollection = getDataCollectionFromAgentConfig(
 			campaignForm.values.agentConfig
 		);
+		const currentRuntimeVariables =
+			campaignForm.values.dataCollectionVariables ?? [];
 
 		if (
-			JSON.stringify(currentDataCollection) ===
-			JSON.stringify(mappedDataCollection)
+			JSON.stringify(currentRuntimeVariables) !==
+			JSON.stringify(mappedRuntimeVariables)
 		) {
-			return;
+			campaignForm.setFieldValue(
+				'dataCollectionVariables',
+				mappedRuntimeVariables
+			);
 		}
 
-		campaignForm.setFieldValue(
-			'agentConfig.dataCollection',
-			mappedDataCollection
-		);
-		campaignForm.setFieldValue(
-			'agentConfig.platformSettings.dataCollection',
-			mappedDataCollection
-		);
+		if (
+			JSON.stringify(currentDataCollection) !==
+			JSON.stringify(mappedDataCollection)
+		) {
+			campaignForm.setFieldValue(
+				'agentConfig.dataCollection',
+				mappedDataCollection
+			);
+			campaignForm.setFieldValue(
+				'agentConfig.platformSettings.dataCollection',
+				mappedDataCollection
+			);
+		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [form.values.rows]);
 

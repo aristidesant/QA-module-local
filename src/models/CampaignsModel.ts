@@ -87,6 +87,30 @@ export interface CampaignParameters {
 	answerMachineDetection?: boolean;
 }
 
+export interface CampaignDataCollectionVariableDefinition {
+	type?: 'boolean' | 'integer' | 'number' | 'string' | string;
+	description?: string;
+	enum?: string[];
+	constantValue?: string;
+	dynamicVariable?: string;
+	isSystemProvided?: boolean;
+	constant_value?: string;
+	dynamic_variable?: string;
+	is_system_provided?: boolean;
+}
+
+export interface CampaignDataCollectionVariable {
+	id?: number;
+	campaignId?: number;
+	agentId?: string | null;
+	key: string;
+	label?: string | null;
+	definition: CampaignDataCollectionVariableDefinition;
+	isActive: boolean;
+	createdAt?: string;
+	updatedAt?: string;
+}
+
 export interface Campaign {
 	id: number;
 	name: string;
@@ -151,6 +175,7 @@ export interface Campaign {
 	nodeStyles?: NodeStyles;
 	/** Persisted node groups for the workflow editor (top-level campaign field) */
 	nodeGroups?: NodeGroups;
+	dataCollectionVariables?: CampaignDataCollectionVariable[];
 	versionDescription?: string;
 	// Stats and performance
 	stats?: {

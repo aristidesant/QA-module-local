@@ -8,6 +8,7 @@ import {
 	Select,
 	SimpleGrid,
 	Stack,
+	Switch,
 	Text,
 	Textarea,
 	TextInput,
@@ -235,6 +236,48 @@ const AnalyticsVariableEditor = ({
 								}}
 							/>
 						</SimpleGrid>
+					</Paper>
+
+					<Paper withBorder radius='md' p='sm'>
+						<Group justify='space-between' align='center' gap='md'>
+							<div className={styles.activationCopy}>
+								<Text size='sm' fw={600}>
+									{t('form.analytics.fields.isActive', {
+										ns: 'campaign.form.analytics',
+									})}
+								</Text>
+								<Text size='xs' c='dimmed'>
+									{t('form.analytics.activationHint', {
+										ns: 'campaign.form.analytics',
+									})}
+								</Text>
+							</div>
+							<Stack gap={4} align='flex-end'>
+								<Badge
+									size='sm'
+									variant={draft.isActive ? 'light' : 'outline'}
+									color={draft.isActive ? 'teal' : 'gray'}
+								>
+									{draft.isActive
+										? t('form.analytics.table.active', {
+												ns: 'campaign.form.analytics',
+											})
+										: t('form.analytics.table.inactive', {
+												ns: 'campaign.form.analytics',
+											})}
+								</Badge>
+								<Switch
+									size='md'
+									checked={draft.isActive}
+									onChange={(event) => {
+										const checked = event.currentTarget.checked;
+										setDraft((current) =>
+											current ? { ...current, isActive: checked } : current
+										);
+									}}
+								/>
+							</Stack>
+						</Group>
 					</Paper>
 
 					<Paper withBorder radius='md' p='sm'>

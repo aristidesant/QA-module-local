@@ -212,6 +212,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			workingHours: campaign?.workingHours || defaultWorkingHours,
 			noiseCancellation: campaign?.noiseCancellation,
 			agentConfig: campaign?.agentConfig || {},
+			dataCollectionVariables: campaign?.dataCollectionVariables ?? [],
 			nodeStyles: campaign?.nodeStyles ?? {},
 			nodeGroups: campaign?.nodeGroups ?? {},
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
@@ -274,6 +275,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			workingHours: campaign.workingHours || defaultWorkingHours,
 			noiseCancellation: campaign.noiseCancellation,
 			agentConfig: campaign.agentConfig || {},
+			dataCollectionVariables: campaign.dataCollectionVariables ?? [],
 			nodeStyles: campaign.nodeStyles ?? {},
 			nodeGroups: campaign.nodeGroups ?? {},
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
@@ -457,9 +459,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 			// Prepare data for light update (excludes agentConfig and versionDescription)
 			const dataToSend = isLight
-				? (({ agentConfig, versionDescription: _vd, ...rest }) => rest)(
-						cleanedValue
-					)
+				? (({
+						agentConfig,
+						dataCollectionVariables,
+						versionDescription: _vd,
+						...rest
+					}) => rest)(cleanedValue)
 				: {
 						...cleanedValue,
 						...(versionDescription !== undefined ? { versionDescription } : {}),

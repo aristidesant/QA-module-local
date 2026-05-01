@@ -8,7 +8,7 @@ import {
 } from '@tabler/icons-react';
 import DispositionPage from '~/modules/outcomes/DispositionPage';
 import CampaignTaxonomySetupTab from './Setup/CampaignTaxonomySetupTab';
-import CustomVariablesSetupTab from './Setup/CustomVariablesSetupTab';
+import DataCollectionTemplatesSetupTab from './Setup/DataCollectionTemplatesSetupTab';
 import { useTranslation } from 'react-i18next';
 
 export default function CampaignManagementPage() {
@@ -25,7 +25,7 @@ export default function CampaignManagementPage() {
 						{t('tabs.setup')}
 					</Tabs.Tab>
 					<Tabs.Tab
-						value='custom-variables'
+						value='data-collection-templates'
 						leftSection={<IconDatabase size={16} />}
 					>
 						{t('tabs.customVariables')}
@@ -42,8 +42,8 @@ export default function CampaignManagementPage() {
 					<CampaignTaxonomySetupTab />
 				</Tabs.Panel>
 
-				<Tabs.Panel value='custom-variables' py='xs'>
-					<CustomVariablesSetupTab />
+				<Tabs.Panel value='data-collection-templates' py='xs'>
+					<DataCollectionTemplatesSetupTab />
 				</Tabs.Panel>
 
 				<Tabs.Panel value='outcomes' py='xs'>
