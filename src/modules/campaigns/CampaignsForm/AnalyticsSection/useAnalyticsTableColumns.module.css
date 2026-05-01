@@ -164,6 +164,11 @@
 	font-weight: 500;
 }
 
+.statusBadge {
+	font-weight: 600;
+	letter-spacing: 0.01em;
+}
+
 .systemBadge[data-color='red'] {
 	background: linear-gradient(
 		135deg,

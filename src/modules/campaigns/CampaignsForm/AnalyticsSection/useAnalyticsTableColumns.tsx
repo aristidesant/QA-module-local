@@ -118,6 +118,29 @@ const useAnalyticsTableColumns =
 					},
 				},
 				{
+					accessorKey: 'isActive',
+					header: t('form.analytics.table.isActive'),
+					size: 120,
+					minSize: 100,
+					maxSize: 140,
+					cell: ({ row }) => {
+						const isActive = row.original.isActive;
+
+						return (
+							<Badge
+								size='sm'
+								variant={isActive ? 'light' : 'outline'}
+								color={isActive ? 'teal' : 'gray'}
+								className={styles.statusBadge}
+							>
+								{isActive
+									? t('form.analytics.table.active')
+									: t('form.analytics.table.inactive')}
+							</Badge>
+						);
+					},
+				},
+				{
 					accessorKey: 'description',
 					header: t('form.analytics.table.description'),
 					size: 320,
