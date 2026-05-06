@@ -151,6 +151,10 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 				className={`${styles.nodeRow} ${styles[nodeStyle]} ${
 					isSelected ? styles.selected : ''
 				} ${onNodeSelect ? styles.clickable : ''}`}
+				data-tone={nodeStyle}
+				data-selected={isSelected ? 'true' : 'false'}
+				data-has-children={showGroupActions ? 'true' : 'false'}
+				data-collapsed={collapsed ? 'true' : 'false'}
 				style={{ marginLeft: level === 0 ? 0 : level * 12 }}
 				onClick={onNodeSelect ? handleSelect : undefined}
 			>

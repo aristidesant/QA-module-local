@@ -244,7 +244,20 @@
 								"sys": "System"
 							},
 							"empty": "No variables found"
-						}
+						},
+						"search": {
+							"placeholder": "Search variables...",
+							"empty": "No variables match your search",
+							"footer": "↑↓ navigate · ↵ insert · esc close",
+							"groups": {
+								"dynamic": "Dynamic",
+								"system": "System"
+							}
+						},
+						"contextMenu": {
+							"insert": "Insert variable"
+						},
+						"inUse": "Variables in use"
 					},
 					"diff": {
 						"modalTitle": "Review changes"
