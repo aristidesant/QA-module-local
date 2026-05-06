@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type {
 	Campaign,
+	CampaignPromptVariable,
 	PaginatedResponse,
 	SchedulerSummary,
 } from '~/models/CampaignsModel';
@@ -212,6 +213,14 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 				response.data?.agentConfig?.workflow as AgentConfigPayload['workflow']
 			);
 			void workflowCounts;
+
+			return response.data;
+		},
+
+		findCampaignPromptVariables: async (campaignId: string | number) => {
+			const response = await axios.get<CampaignPromptVariable[]>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/prompt-variables`
+			);
 
 			return response.data;
 		},

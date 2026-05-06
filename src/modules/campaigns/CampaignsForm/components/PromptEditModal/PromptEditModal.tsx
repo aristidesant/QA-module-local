@@ -108,11 +108,18 @@ const PromptEditModal: React.FC<PromptEditModalProps> = ({
 		() => filteredVariables.filter((v) => v.source === 'system'),
 		[filteredVariables]
 	);
+	const campaignVars = useMemo(
+		() => filteredVariables.filter((v) => v.source === 'campaign'),
+		[filteredVariables]
+	);
 
 	const usedVariables = useMemo(() => {
-		const matches = (draft || '').matchAll(/\{\{([a-zA-Z0-9_\-\.]+)\}\}/g);
+		const matches = (draft || '').matchAll(/\{\{([a-zA-Z0-9_\-.]+)\}\}/g);
 		const seen = new Set<string>();
-		const out: { name: string; status: 'schema' | 'system' | 'unknown' }[] = [];
+		const out: {
+			name: string;
+			status: 'schema' | 'system' | 'campaign' | 'unknown';
+		}[] = [];
 		for (const m of matches) {
 			const name = m[1];
 			if (seen.has(name)) continue;
@@ -328,13 +335,21 @@ const PromptEditModal: React.FC<PromptEditModalProps> = ({
 				<Badge
 					size='xs'
 					variant='dot'
-					color={variable.source === 'schema' ? 'blue' : 'gray'}
+					color={
+						variable.source === 'schema'
+							? 'blue'
+							: variable.source === 'campaign'
+								? 'green'
+								: 'gray'
+					}
 					radius='sm'
 					className={styles.variableSourceBadge}
 				>
 					{variable.source === 'schema'
 						? t('form.agent.prompt.editor.variables.popover.source.dyn')
-						: t('form.agent.prompt.editor.variables.popover.source.sys')}
+						: variable.source === 'campaign'
+							? t('form.agent.prompt.editor.variables.popover.source.campaign')
+							: t('form.agent.prompt.editor.variables.popover.source.sys')}
 				</Badge>
 			</Group>
 		</UnstyledButton>
@@ -429,9 +444,11 @@ const PromptEditModal: React.FC<PromptEditModalProps> = ({
 											color={
 												v.status === 'schema'
 													? 'blue'
-													: v.status === 'system'
-														? 'gray'
-														: 'red'
+													: v.status === 'campaign'
+														? 'green'
+														: v.status === 'system'
+															? 'gray'
+															: 'red'
 											}
 											radius='sm'
 											className={styles.variableBadge}
@@ -523,6 +540,18 @@ const PromptEditModal: React.FC<PromptEditModalProps> = ({
 													)}
 												</Text>
 												{schemaVars.map((v) =>
+													renderVariableRow(v, filteredVariables.indexOf(v))
+												)}
+											</>
+										)}
+										{campaignVars.length > 0 && (
+											<>
+												<Text className={styles.paletteGroupLabel}>
+													{t(
+														'form.agent.prompt.editor.variables.search.groups.campaign'
+													)}
+												</Text>
+												{campaignVars.map((v) =>
 													renderVariableRow(v, filteredVariables.indexOf(v))
 												)}
 											</>

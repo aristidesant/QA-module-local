@@ -12,7 +12,7 @@ import campaignsApi, {
 	type SetDraftDto,
 	type ToggleCampaignAction,
 } from '~/api/campaignsApi';
-import type { Campaign } from '~/models/CampaignsModel';
+import type { Campaign, CampaignPromptVariable } from '~/models/CampaignsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
 
 // Create campaign
@@ -73,6 +73,22 @@ export const useGetCampaign = (
 		},
 		enabled: options?.enabled ?? !!id,
 		...options,
+	});
+};
+
+export const useGetCampaignPromptVariables = (campaignId: number) => {
+	return useQuery<
+		CampaignPromptVariable[],
+		unknown,
+		CampaignPromptVariable[],
+		['campaign-prompt-variables', number]
+	>({
+		queryKey: ['campaign-prompt-variables', campaignId],
+		queryFn: async () => {
+			const api = campaignsApi();
+			return api.findCampaignPromptVariables(campaignId);
+		},
+		enabled: campaignId > 0,
 	});
 };
 

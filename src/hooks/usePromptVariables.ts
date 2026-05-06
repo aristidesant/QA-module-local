@@ -1,64 +1,30 @@
 import { useMemo } from 'react';
-import { useGetCampaign } from '~/queries/campaignsQueries';
-import { useGetSchemaByObjectiveId } from '~/queries/campaignContactSchemasQueries';
-import { useGetClientConfig } from '~/queries/clientConfigQueries';
+import type { CampaignPromptVariable } from '~/models/CampaignsModel';
+import { useGetCampaignPromptVariables } from '~/queries/campaignsQueries';
 
-export type PromptVariable = {
-	name: string;
-	description?: string;
-	source: 'schema' | 'system';
-};
+export type PromptVariable = CampaignPromptVariable;
 
 export const usePromptVariables = (campaignId: number) => {
-	const { data: campaign } = useGetCampaign(String(campaignId));
+	const { data: promptVariables } = useGetCampaignPromptVariables(campaignId);
 
-	const objectiveId = campaign?.objectiveId;
-
-	const { data: schemaResponse } = useGetSchemaByObjectiveId(
-		objectiveId!,
-		!!objectiveId
-	);
-
-	const { data: contactColumnsConfig } = useGetClientConfig('contact_columns');
-
-	const dynamicVariables = useMemo<PromptVariable[]>(() => {
-		if (!schemaResponse?.data || schemaResponse.data.length === 0) return [];
-
-		// Flatten fields from all schemas found for the objective
-		const fields = schemaResponse.data.flatMap(
-			(schema) => schema.schemaFields || []
-		);
-
-		return fields.map((field) => ({
-			name: field.name,
-			description: field.description || field.label,
-			source: 'schema' as const,
-		}));
-	}, [schemaResponse]);
-
-	const systemVariables = useMemo<PromptVariable[]>(() => {
-		if (!contactColumnsConfig?.value) return [];
-		try {
-			const parsed = JSON.parse(contactColumnsConfig.value) as Array<{
-				name: string;
-				label?: string;
-				description?: string;
-			}>;
-			return parsed.map((column) => ({
-				name: column.name,
-				description: column.label || column.description,
-				source: 'system' as const,
-			}));
-		} catch (error) {
-			void error;
+	const allVariables = useMemo<PromptVariable[]>(() => {
+		if (!promptVariables?.length) {
 			return [];
 		}
-	}, [contactColumnsConfig]);
 
-	const allVariables = useMemo(
-		() => [...systemVariables, ...dynamicVariables],
-		[dynamicVariables, systemVariables]
-	);
+		const seenVariableNames = new Set<string>();
+
+		return promptVariables.filter((variable) => {
+			const normalizedName = variable.name.trim().toLowerCase();
+
+			if (!normalizedName || seenVariableNames.has(normalizedName)) {
+				return false;
+			}
+
+			seenVariableNames.add(normalizedName);
+			return true;
+		});
+	}, [promptVariables]);
 
 	return allVariables;
 };

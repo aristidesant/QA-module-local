@@ -511,6 +511,12 @@ const ValueEditor = ({
 				value: variable.name,
 				label: variable.name,
 			}));
+		const campaignVariables = uniqueVariables
+			.filter((variable) => variable.source === 'campaign')
+			.map((variable) => ({
+				value: variable.name,
+				label: variable.name,
+			}));
 
 		return [
 			{
@@ -524,6 +530,12 @@ const ValueEditor = ({
 					defaultValue: 'Custom Variables',
 				}),
 				items: customVariables,
+			},
+			{
+				group: t('form.workflow.edge.expression.variables.campaign', {
+					defaultValue: 'Campaign Variables',
+				}),
+				items: campaignVariables,
 			},
 		].filter((group) => group.items.length > 0);
 	}, [t, variables]);

@@ -241,7 +241,8 @@
 							"navigationHint": "Usa las flechas para navegar y Enter para insertar",
 							"source": {
 								"dyn": "Dinámica",
-								"sys": "Sistema"
+								"sys": "Sistema",
+								"campaign": "Campaña"
 							},
 							"empty": "No se encontraron variables"
 						},
@@ -251,6 +252,7 @@
 							"footer": "↑↓ navegar · ↵ insertar · esc cerrar",
 							"groups": {
 								"dynamic": "Dinámicas",
+								"campaign": "Variables de campaña",
 								"system": "Sistema"
 							}
 						},
