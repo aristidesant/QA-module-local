@@ -111,6 +111,14 @@ export interface CampaignDataCollectionVariable {
 	updatedAt?: string;
 }
 
+export type CampaignPromptVariableSource = 'campaign' | 'schema' | 'system';
+
+export interface CampaignPromptVariable {
+	name: string;
+	description?: string;
+	source: CampaignPromptVariableSource;
+}
+
 export interface Campaign {
 	id: number;
 	name: string;

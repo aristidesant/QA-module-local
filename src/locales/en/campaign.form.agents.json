@@ -241,7 +241,8 @@
 							"navigationHint": "Use arrows to navigate and Enter to insert",
 							"source": {
 								"dyn": "Dynamic",
-								"sys": "System"
+								"sys": "System",
+								"campaign": "Campaign"
 							},
 							"empty": "No variables found"
 						}

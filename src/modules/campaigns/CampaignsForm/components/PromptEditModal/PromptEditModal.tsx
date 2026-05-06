@@ -402,7 +402,11 @@ const PromptEditModal: React.FC<PromptEditModalProps> = ({
 														size='xs'
 														variant='dot'
 														color={
-															variable.source === 'schema' ? 'blue' : 'gray'
+															variable.source === 'schema'
+																? 'blue'
+																: variable.source === 'campaign'
+																	? 'teal'
+																	: 'gray'
 														}
 														radius='sm'
 													>
@@ -410,9 +414,13 @@ const PromptEditModal: React.FC<PromptEditModalProps> = ({
 															? t(
 																	'form.agent.prompt.editor.variables.popover.source.dyn'
 																)
-															: t(
-																	'form.agent.prompt.editor.variables.popover.source.sys'
-																)}
+															: variable.source === 'campaign'
+																? t(
+																		'form.agent.prompt.editor.variables.popover.source.campaign'
+																	)
+																: t(
+																		'form.agent.prompt.editor.variables.popover.source.sys'
+																	)}
 													</Badge>
 												</Group>
 											</UnstyledButton>

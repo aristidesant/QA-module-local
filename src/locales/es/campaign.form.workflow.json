@@ -87,7 +87,8 @@
 					},
 					"variables": {
 						"system": "Variables del sistema",
-						"custom": "Variables personalizadas"
+						"custom": "Variables personalizadas",
+						"campaign": "Variables de campaña"
 					},
 					"boolean": {
 						"true": "Verdadero",
