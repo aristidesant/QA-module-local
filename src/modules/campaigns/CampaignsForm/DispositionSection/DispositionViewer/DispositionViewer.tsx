@@ -55,11 +55,11 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 	const hasChildren = !isLeaf;
 	const isClickable = isLeaf;
 	const childCount = node.children?.length || 0;
-	const levelIndent = level * 16;
-	const cardOffset = level > 0 ? Math.min(levelIndent, 80) : 0;
+	const cardOffset = level > 0 ? Math.min(level * 18, 72) : 0;
 	const nodeTypeLabel = hasChildren
 		? t('disposition.viewer.group')
 		: t('disposition.viewer.outcome');
+	const hasDescription = Boolean(node.description?.trim());
 
 	const handleNodeClick = (e: React.MouseEvent) => {
 		if (!isClickable) return;
@@ -78,20 +78,18 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 		? ({ '--node-offset': `${cardOffset}px` } as React.CSSProperties)
 		: {};
 
-	const innerStyle: React.CSSProperties = {
-		'--node-indent': `${Math.max(cardOffset - 12, 0)}px`,
-	} as React.CSSProperties;
-
 	const isDoNotCall = Boolean(node.doNotCall ?? node.do_not_call);
 	const isAbandoned = Boolean(node.isAbandoned);
 
 	return (
-		<>
+		<div className={styles.nodeShell} data-level={level}>
 			<div
 				className={`${styles.nodeCard} ${isClickable ? styles.clickable : styles.nonClickable}`}
 				tabIndex={isClickable ? 0 : -1}
 				aria-label={t('disposition.viewer.nodeAria', { name: node.name })}
 				data-level={level}
+				data-tone={nodeStyle}
+				data-has-description={hasDescription ? 'true' : 'false'}
 				style={cardStyle}
 				onClick={handleNodeClick}
 				onKeyDown={(e) => {
@@ -104,7 +102,7 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 					}
 				}}
 			>
-				<div className={styles.nodeInner} style={innerStyle}>
+				<div className={styles.nodeInner}>
 					<div className={styles.nodeLead}>
 						<span
 							className={styles.statusPill}
@@ -139,22 +137,29 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 					<div className={styles.nodeContent}>
 						<div className={styles.nodeHeader}>
 							<div className={styles.nodeTitle}>
-								<span className={styles.nodeIcon} aria-hidden='true'>
+								<span
+									className={styles.nodeIconShell}
+									data-tone={nodeStyle}
+									aria-hidden='true'
+								>
 									{isLeaf ? (
-										<IconFileDescription
-											size={18}
-											color='var(--mantine-color-blue-6)'
-										/>
+										<IconFileDescription size={15} stroke={1.9} />
 									) : (
-										<IconFolder
-											size={18}
-											color='var(--mantine-color-yellow-7)'
-										/>
+										<IconFolder size={15} stroke={1.9} />
 									)}
 								</span>
-								<Text className={styles.nodeName} size='sm' fw={600}>
-									{node.name}
-								</Text>
+								<div className={styles.nodeTitleCopy}>
+									<Text className={styles.nodeName} size='sm' fw={700}>
+										{node.name}
+									</Text>
+									<Text className={styles.nodeMetaText} size='xs'>
+										{hasChildren
+											? t('disposition.viewer.childOutcomes', {
+													count: childCount,
+												})
+											: t('disposition.viewer.terminalOutcome')}
+									</Text>
+								</div>
 							</div>
 							<div className={styles.nodeBadges}>
 								<Badge size='xs' variant='light' color='blue' radius='sm'>
@@ -167,10 +172,13 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 								)}
 							</div>
 						</div>
-						<Text className={styles.nodeMetaText} size='xs'>
-							{hasChildren
-								? t('disposition.viewer.childOutcomes', { count: childCount })
-								: t('disposition.viewer.terminalOutcome')}
+						<Text
+							className={styles.nodeDescription}
+							size='xs'
+							data-empty={hasDescription ? 'false' : 'true'}
+							aria-hidden={!hasDescription}
+						>
+							{hasDescription ? node.description : '\u00A0'}
 						</Text>
 					</div>
 
@@ -229,18 +237,19 @@ const NodeViewer: React.FC<NodeViewerProps> = ({
 				</div>
 			</div>
 
-			{isExpanded &&
-				node.children &&
-				node.children.length > 0 &&
-				node.children.map((child) => (
-					<NodeViewer
-						key={child.id}
-						node={child}
-						parentNode={node}
-						level={level + 1}
-					/>
-				))}
-		</>
+			{isExpanded && node.children && node.children.length > 0 && (
+				<div className={styles.nodeChildren}>
+					{node.children.map((child) => (
+						<NodeViewer
+							key={child.id}
+							node={child}
+							parentNode={node}
+							level={level + 1}
+						/>
+					))}
+				</div>
+			)}
+		</div>
 	);
 };
 
