@@ -73,6 +73,8 @@ export const NodeItem: React.FC<{
 				className={`${styles.nodeCard} ${styles[nodeStyle]} ${
 					level === 0 ? styles.nodeCardRoot : ''
 				}`}
+				data-tone={nodeStyle}
+				data-level={level}
 				style={{ '--indent-level': level } as React.CSSProperties}
 			>
 				<Group

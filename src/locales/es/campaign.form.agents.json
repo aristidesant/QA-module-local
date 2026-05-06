@@ -245,7 +245,21 @@
 								"campaign": "Campaña"
 							},
 							"empty": "No se encontraron variables"
-						}
+						},
+						"search": {
+							"placeholder": "Buscar variables...",
+							"empty": "No se encontraron variables",
+							"footer": "↑↓ navegar · ↵ insertar · esc cerrar",
+							"groups": {
+								"dynamic": "Dinámicas",
+								"campaign": "Variables de campaña",
+								"system": "Sistema"
+							}
+						},
+						"contextMenu": {
+							"insert": "Insertar variable"
+						},
+						"inUse": "Variables en uso"
 					},
 					"diff": {
 						"modalTitle": "Revisar cambios"
