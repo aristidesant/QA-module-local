@@ -20,7 +20,6 @@ const STEP_ORDER: ProgressStep['key'][] = [
 	'aggregation',
 	'widgetType',
 	'widgetDetails',
-	'visibilityScope',
 	'widgetRoles',
 	'advanced',
 ];
@@ -41,7 +40,6 @@ const DashboardWidgetProgressSidebar = () => {
 		aggregation: Boolean(values.aggregationType),
 		widgetType: Boolean(values.widgetType),
 		widgetDetails: Boolean(values.title?.trim()),
-		visibilityScope: Boolean(values.visibilityScope),
 		widgetRoles: values.roleIds.length > 0,
 		advanced: advancedSettingsCount > 0,
 	};
@@ -52,7 +50,6 @@ const DashboardWidgetProgressSidebar = () => {
 		aggregation: t('dashboardBuilder.progress.aggregation'),
 		widgetType: t('dashboardBuilder.progress.widgetType'),
 		widgetDetails: t('dashboardBuilder.progress.widgetDetails'),
-		visibilityScope: t('dashboardBuilder.progress.visibilityScope'),
 		widgetRoles: t('dashboardBuilder.progress.widgetRoles'),
 		advanced: t('dashboardBuilder.progress.advanced'),
 	};

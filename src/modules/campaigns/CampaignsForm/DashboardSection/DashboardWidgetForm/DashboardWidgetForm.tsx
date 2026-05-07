@@ -8,7 +8,6 @@ import DashboardWidgetAdvancedSection from './DashboardWidgetAdvancedSection';
 import DashboardWidgetBasicsSection from './DashboardWidgetBasicsSection';
 import DashboardWidgetMetricSourceSection from './DashboardWidgetMetricSourceSection';
 import DashboardWidgetTypeSection from './DashboardWidgetTypeSection';
-import DashboardWidgetVisibilityScopeSection from './DashboardWidgetVisibilityScopeSection';
 import DashboardWidgetPreviewPanel from './DashboardWidgetPreviewPanel';
 import DashboardWidgetProgressSidebar from './DashboardWidgetProgressSidebar';
 import DashboardWidgetRoleAccessSection from './DashboardWidgetRoleAccessSection';
@@ -91,7 +90,6 @@ const DashboardWidgetForm = (props: DashboardWidgetFormProps) => {
 								<DashboardWidgetAggregationSection />
 								<DashboardWidgetTypeSection />
 								<DashboardWidgetBasicsSection />
-								<DashboardWidgetVisibilityScopeSection />
 								<DashboardWidgetRoleAccessSection />
 								<DashboardWidgetAdvancedSection />
 							</div>
