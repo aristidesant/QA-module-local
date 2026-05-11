@@ -1,19 +1,17 @@
-import { useMemo } from 'react';
-import type { CampaignPredefinedParam } from '~/models/CampaignPredefinedParam';
-import { useClientConfigByName } from '~/queries/useClientConfigs';
+import { useAgentBehaviors } from '~/queries/useAgentBehaviors';
 export type { CampaignPredefinedParam } from '~/models/CampaignPredefinedParam';
 
+/**
+ * Note: The backend concept of 'Campaign Predefined Params' has been refactored
+ * into the 'Agent Behavior' module.
+ * This hook acts as a bridge for legacy wizard components to consume
+ * the new relational AgentBehavior data while maintaining their expected interface.
+ */
 const useCampaignsPredefinedParams = () => {
-	const { data } = useClientConfigByName('campaign_predefined_params');
+	const { data } = useAgentBehaviors();
 
-	const parsedParams = useMemo<CampaignPredefinedParam[]>(() => {
-		if (data?.value) {
-			return [...JSON.parse(data.value)];
-		}
-		return [];
-	}, [data]);
-
-	return parsedParams;
+	// data is an AgentBehaviorsResponse object, we need to return the data array
+	return data?.data || [];
 };
 
 export default useCampaignsPredefinedParams;

@@ -137,10 +137,10 @@ const sidebarSections: SidebarSection[] = [
 				i18nNamespace: 'client-configs',
 			},
 			{
-				key: 'campaign-predefined-params',
-				label: 'sidebar.items.campaignPredefinedParams',
+				key: 'agent-behaviors',
+				label: 'sidebar.items.agentBehaviors',
 				icon: <IconListDetails size={18} className={styles.menuIcon} />,
-				to: '/configurations/campaign-predefined-params',
+				to: '/configurations/agent-behaviors',
 				module: ModuleEnum.SETTINGS,
 				permission: PermissionEnum.MANAGE,
 				i18nNamespace: 'campaign-predefined-params',

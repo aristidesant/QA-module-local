@@ -70,9 +70,9 @@ const ProfilePage = React.lazy(() => import('./modules/profile/ProfilePage'));
 const DoNotCallPage = React.lazy(
 	() => import('./modules/do-not-call/DoNotCallPage/DoNotCallPage')
 );
-const CampaignPredefinedParamsPage = React.lazy(
-	() =>
-		import('./modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsPage')
+
+const AgentBehaviorsPage = React.lazy(
+	() => import('./modules/configurations/AgentBehaviorsPage/AgentBehaviorsPage')
 );
 const RegionalSettingsParamsPage = React.lazy(
 	() =>
@@ -387,12 +387,13 @@ const router = createBrowserRouter([
 									</Suspense>
 								),
 							},
+
 							{
-								path: 'campaign-predefined-params',
-								id: 'campaign-predefined-params',
+								path: 'agent-behaviors',
+								id: 'agent-behaviors',
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
-										<CampaignPredefinedParamsPage />
+										<AgentBehaviorsPage />
 									</Suspense>
 								),
 							},

@@ -33,17 +33,18 @@ export default function ConfigurationsPage() {
 			return 'scheduler-predefined-params';
 		if (location.pathname.includes('campaign-predefined-params'))
 			return 'campaign-predefined-params';
+		if (location.pathname.includes('agent-behaviors')) return 'agent-behaviors';
 		if (location.pathname.includes('regional-settings-params'))
 			return 'regional-settings-params';
 		if (location.pathname.includes('phone-numbers')) return 'phone-numbers';
 		if (location.pathname.includes('dictionary-rules'))
 			return 'dictionary-rules';
-		return isMasterClient ? 'client-configs' : 'campaign-predefined-params';
+		return isMasterClient ? 'client-configs' : 'agent-behaviors';
 	};
 
 	useEffect(() => {
 		if (!isMasterClient && location.pathname.includes('client-configs')) {
-			navigate('/configurations/campaign-predefined-params', { replace: true });
+			navigate('/configurations/agent-behaviors', { replace: true });
 		}
 		if (
 			!canManageSettings &&
@@ -71,13 +72,11 @@ export default function ConfigurationsPage() {
 						</Tabs.Tab>
 					)}
 					<Tabs.Tab
-						value='campaign-predefined-params'
+						value='agent-behaviors'
 						leftSection={<IconList size={16} />}
-						onClick={() =>
-							navigate('/configurations/campaign-predefined-params')
-						}
+						onClick={() => navigate('/configurations/agent-behaviors')}
 					>
-						{t('tabs.campaign')}
+						{t('tabs.campaign', 'Agent Behaviors')}
 					</Tabs.Tab>
 					<Tabs.Tab
 						value='regional-settings-params'
