@@ -115,6 +115,34 @@
 			"outputAudioFormat": {
 				"label": "Output Audio Format"
 			},
+			"expressiveMode": {
+				"label": "Expressive mode",
+				"helper": "Enabling this automatically switches the model to Eleven v3 Conversational."
+			},
+			"voiceSettingsLocked": {
+				"helper": "Speed, stability, and similarity boost are not customizable for Eleven v3 Conversational."
+			},
+			"suggestedAudioTags": {
+				"title": "Suggested audio tags",
+				"helper": "Add custom tags and descriptions for expressive delivery.",
+				"add": "Add",
+				"empty": "Add a suggested audio tag to guide expressive delivery.",
+				"untitled": "New tag",
+				"done": "Done",
+				"preview": "Tag preview",
+				"remove": "Remove tag",
+				"clickHint": "Click any chip to edit its description.",
+				"fields": {
+					"tag": {
+						"label": "Tag",
+						"placeholder": "e.g. Empathetically"
+					},
+					"description": {
+						"label": "Description",
+						"placeholder": "e.g. All the time"
+					}
+				}
+			},
 			"speed": {
 				"label": "Speed",
 				"helper": "Speech rate (0.25–4.0)"

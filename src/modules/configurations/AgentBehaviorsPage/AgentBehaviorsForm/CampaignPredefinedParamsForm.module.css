@@ -291,3 +291,73 @@
 	font-size: var(--mantine-font-size-xs);
 	margin-top: var(--mantine-spacing-xs);
 }
+
+.expressiveModeCard,
+.helperCard,
+.tagRow,
+.tagEmptyState {
+	border-color: var(--mantine-color-gray-3);
+}
+
+[data-mantine-color-scheme='dark'] .expressiveModeCard,
+[data-mantine-color-scheme='dark'] .helperCard,
+[data-mantine-color-scheme='dark'] .tagRow,
+[data-mantine-color-scheme='dark'] .tagEmptyState {
+	border-color: var(--mantine-color-dark-5);
+	background-color: var(--mantine-color-dark-6);
+}
+
+.expressiveModeText {
+	min-width: 0;
+}
+
+.helperCard {
+	background-color: var(--mantine-color-gray-0);
+}
+
+.helperIcon {
+	color: var(--mantine-color-blue-6);
+	flex-shrink: 0;
+	margin-top: 2px;
+}
+
+.tagsEditor {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.tagsEditorHeader {
+	min-width: 0;
+}
+
+.tagsList {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.tagChipGroup {
+	min-height: 32px;
+}
+
+.tagChip,
+.defaultTagChip {
+	flex-shrink: 0;
+}
+
+.tagChip {
+	box-shadow: none;
+}
+
+.tagPopover {
+	min-width: 320px;
+}
+
+.tagEmptyState {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-xs);
+	background-color: var(--mantine-color-gray-0);
+}

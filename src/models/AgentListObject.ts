@@ -1,5 +1,6 @@
 import type { Voice } from './AgentVoiceModel';
 import type { AgentWorkflow } from './AgentWorkflowModel';
+import type { SuggestedAudioTag } from './CampaignPredefinedParam';
 
 export default interface AgentListObject {
 	id: string;
@@ -115,13 +116,15 @@ export interface ConversationConfigModel {
 	tts: {
 		speed: number;
 		modelId: string;
-		voiceId: string;
+		voiceId?: string;
 		stability: number;
 		similarityBoost: number;
-		supportedVoices: any[];
+		supportedVoices?: Record<string, unknown>[];
+		expressiveMode?: boolean;
+		suggestedAudioTags?: SuggestedAudioTag[];
 		agentOutputAudioFormat: string;
 		optimizeStreamingLatency: number;
-		pronunciationDictionaryLocators: string[];
+		pronunciationDictionaryLocators?: string[];
 	};
 	turn: {
 		mode: string;

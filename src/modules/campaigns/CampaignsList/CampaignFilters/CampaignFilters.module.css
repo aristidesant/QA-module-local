@@ -1,23 +1,12 @@
-[data-mantine-color-scheme='dark'] .activeBadge {
-	background-color: var(--mantine-color-blue-9);
-	color: var(--mantine-color-blue-2);
-}
-
-[data-mantine-color-scheme='dark'] .searchInput input {
-	border-color: var(--mantine-color-dark-4);
-}
-
-[data-mantine-color-scheme='dark'] .advancedFilters {
-	background-color: var(--mantine-color-dark-8);
-	border-color: var(--mantine-color-dark-5);
-}
-
 .filtersContainer {
 	margin-bottom: var(--mantine-spacing-md);
 }
 
-.titleGroup {
-	flex-shrink: 0;
+.titleBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
 }
 
 .titleIcon {
@@ -30,25 +19,50 @@
 	font-weight: 600;
 }
 
+[data-mantine-color-scheme='dark'] .activeBadge {
+	background-color: var(--mantine-color-blue-9);
+	color: var(--mantine-color-blue-2);
+}
+
 .activeBadge {
 	background-color: var(--mantine-color-blue-1);
 	color: var(--mantine-color-blue-7);
 }
 
-.controlsWrapper {
+.headerRow {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
+	justify-content: space-between;
 	gap: var(--mantine-spacing-xs);
-	flex: 1;
-	min-width: 0;
-	justify-content: flex-end;
 	flex-wrap: wrap;
+	width: 100%;
+}
+
+.titleGroup {
+	flex-shrink: 0;
+}
+
+.subtitle {
+	max-width: 34rem;
+}
+
+.controlsGrid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.8fr) minmax(150px, 0.8fr) minmax(
+			160px,
+			0.9fr
+		) auto;
+	gap: var(--mantine-spacing-xs);
+	align-items: end;
+	width: 100%;
 }
 
 .searchInput {
-	min-width: 200px;
-	flex: 1;
-	max-width: 400px;
+	min-width: 0;
+}
+
+[data-mantine-color-scheme='dark'] .searchInput input {
+	border-color: var(--mantine-color-dark-4);
 }
 
 .searchInput input {
@@ -59,22 +73,17 @@
 	color: var(--mantine-color-gray-5);
 }
 
-.sortSelect {
-	min-width: 140px;
-	flex-shrink: 0;
+.typeSelect {
+	min-width: 0;
 }
 
-.filtersButton {
-	flex-shrink: 0;
+.statusSelect {
+	min-width: 0;
 }
 
-.advancedFilters {
-	padding: var(--mantine-spacing-md);
-	margin-top: var(--mantine-spacing-sm);
-	border-top: 1px solid var(--mantine-color-gray-2);
-	background-color: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--mantine-radius-md);
+.inactiveSwitch {
+	padding-bottom: 2px;
+	justify-self: start;
 }
 
 .resetButton:disabled {
@@ -84,22 +93,15 @@
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
-	.controlsWrapper {
-		width: 100%;
-		flex-direction: column;
-		align-items: stretch;
-	}
-
 	.searchInput,
-	.sortSelect,
-	.filtersButton {
+	.typeSelect,
+	.statusSelect,
+	.inactiveSwitch {
 		max-width: 100%;
 		width: 100%;
 	}
-}
 
-@media (max-width: 480px) {
-	.advancedFilters {
-		padding: var(--mantine-spacing-sm);
+	.controlsGrid {
+		grid-template-columns: 1fr;
 	}
 }

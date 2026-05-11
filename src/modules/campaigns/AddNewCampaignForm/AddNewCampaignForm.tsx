@@ -24,8 +24,10 @@ import type { AgentVoiceModel } from '~/models/AgentVoiceModel';
 import useCampaignsPredefinedParams, {
 	CampaignPredefinedParam,
 } from '../CampaignsForm/useCampaignsPredefinedParams';
-import { deepMergeConfig } from '~/utils/objectUtils';
-import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
+import {
+	applyCampaignBehaviorConversationConfig,
+	sanitizeCampaignBehaviorConversationConfig,
+} from '~/modules/campaigns/utils/campaignBehaviorConfig';
 // import ConfigurationSummary from '../CampaignsForm/AgentSection/CampaignConfigurationPredefinedParams/ConfigurationSummary';
 import {
 	CreateCampaignWithAgentDTO,
@@ -108,30 +110,13 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 		useState<CampaignPredefinedParam | null>(null);
 
 	const applyConversationConfig = (
-		config: CampaignPredefinedConversationConfig
+		config: CampaignPredefinedParam['params']['conversationConfig']
 	) => {
 		const currentAgentConfig = form.values.agent.conversationConfig || {};
-
-		const mergedConfig = deepMergeConfig(currentAgentConfig, {
-			...(config.tts
-				? {
-						tts: {
-							...config.tts,
-						},
-					}
-				: {}),
-			...(config.agent
-				? {
-						agent: {
-							...(currentAgentConfig.agent || {}),
-							prompt: {
-								...(currentAgentConfig.agent?.prompt || {}),
-								...config.agent.prompt,
-							},
-						},
-					}
-				: {}),
-		});
+		const mergedConfig = applyCampaignBehaviorConversationConfig(
+			currentAgentConfig as Record<string, unknown>,
+			config
+		);
 
 		form.setFieldValue('agent.conversationConfig', mergedConfig);
 	};
@@ -139,6 +124,13 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 	const handleSubmit = (values: typeof form.values) => {
 		// Sync the type between campaign and agent to ensure they match
 		const campaignType = values.campaign.type;
+		const selectedConversationConfig =
+			selectedParam?.params?.conversationConfig;
+		const normalizedConversationConfig =
+			applyCampaignBehaviorConversationConfig(
+				(values.agent.conversationConfig || {}) as Record<string, unknown>,
+				selectedConversationConfig
+			);
 
 		// Build the conversationConfig.agent object with the phone number
 		const agentConfig: ConversationAgentConfig = {
@@ -168,11 +160,16 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 				...values.agent,
 				type: campaignType, // Use campaign type to ensure they match
 				conversationConfig: {
-					...values.agent.conversationConfig,
+					...normalizedConversationConfig,
 					agent: agentConfig,
 				},
 			},
 		};
+
+		dto.agent.conversationConfig = sanitizeCampaignBehaviorConversationConfig(
+			dto.agent.conversationConfig as Record<string, unknown>,
+			selectedConversationConfig
+		);
 
 		createCampaignWithAgent.mutate(dto, {
 			onSuccess: () => {

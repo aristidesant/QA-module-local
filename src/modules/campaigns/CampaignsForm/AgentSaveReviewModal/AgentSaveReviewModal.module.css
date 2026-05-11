@@ -1,4 +1,14 @@
+.modalBody {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	min-height: 0;
+	overflow: hidden;
+}
+
 .diffShell {
+	flex: 1;
+	min-height: 0;
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-md);
 	overflow: hidden;
@@ -11,7 +21,8 @@
 }
 
 .diffScroll {
-	max-height: 55vh;
+	flex: 1;
+	min-height: 0;
 }
 
 .splitDiff {

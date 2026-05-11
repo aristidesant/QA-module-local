@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { Campaign } from '../../../models/CampaignsModel';
 import type { AgentVersionSnapshot } from '~/models/AgentVersioningModel';
+import type { ConversationConfigModel } from '~/models/AgentListObject';
 import campaignAgentsApi from '~/api/campaignAgentsApi';
 import knowledgeBaseApi from '~/api/knowledgeBaseApi';
 import {
@@ -33,6 +34,7 @@ import {
 } from '../campaignFormFunctions';
 import CampaignTabs from '../CampaignTabs';
 import { useCampaignsStore } from '~/stores/campaignsStore';
+import useCampaignsPredefinedParams from './useCampaignsPredefinedParams';
 import GeneralSection from './GeneralSection/GeneralSection';
 import SectionCard from '~/components/SectionCard';
 import ParametersSection from './ParametersSection';
@@ -57,6 +59,7 @@ import VersioningSection from './VersioningSection';
 import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
 import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
+import { sanitizeCampaignBehaviorConversationConfig } from '~/modules/campaigns/utils/campaignBehaviorConfig';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -143,6 +146,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		Campaign,
 		'id' | 'createdAt' | 'updatedAt'
 	> | null>(null);
+	const predefinedParams = useCampaignsPredefinedParams();
 
 	// Fetch campaign agents to check versioning status
 	const { data: campaignAgents = [] } = useGetCampaignAgents(campaign?.id ?? 0);
@@ -423,6 +427,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		}
 
 		try {
+			const selectedBehaviorConversationConfig = predefinedParams.find(
+				(param) => param.id === value.configId
+			)?.params?.conversationConfig;
+
 			// Clean up orphan nodeStyles entries (keys whose node no longer exists)
 			const workflowNodes = value.agentConfig?.workflow?.nodes;
 			if (value.nodeStyles && workflowNodes) {
@@ -438,6 +446,16 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 			// Clean up toolIds from agentConfig before sending
 			const cleanedValue = { ...value };
+			if (cleanedValue.agentConfig?.conversationConfig) {
+				cleanedValue.agentConfig = {
+					...cleanedValue.agentConfig,
+					conversationConfig: sanitizeCampaignBehaviorConversationConfig(
+						(cleanedValue.agentConfig.conversationConfig ||
+							{}) as unknown as Record<string, unknown>,
+						selectedBehaviorConversationConfig
+					) as unknown as ConversationConfigModel,
+				};
+			}
 			if (cleanedValue.agentConfig?.conversationConfig?.agent?.prompt) {
 				const { toolIds, ...restPrompt } =
 					cleanedValue.agentConfig.conversationConfig.agent.prompt;
