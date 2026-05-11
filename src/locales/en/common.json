@@ -70,6 +70,7 @@
 			"configurations": "Configurations",
 			"clientConfigs": "Client Configs",
 			"campaignPredefinedParams": "Campaign Predefined Params",
+			"agentBehaviors": "Agent Behaviors",
 			"schedulerPredefinedParams": "Scheduler Predefined Params",
 			"regionalSettingsParams": "Regional Settings",
 			"phoneNumbers": "Phone Numbers",

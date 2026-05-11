@@ -20,7 +20,7 @@ import { useTranslation } from 'react-i18next';
 import {
 	LLM_MODELS,
 	getGroupedLlmOptions,
-} from '~/modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsForm/formConfig';
+} from '~/modules/configurations/AgentBehaviorsPage/AgentBehaviorsForm/formConfig';
 import type { SelectOption } from '../../types';
 import {
 	updateWorkflowNodeSubagent,
