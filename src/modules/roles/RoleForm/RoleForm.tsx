@@ -36,6 +36,11 @@ import RoleFormSkeleton from './RoleFormSkeleton';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { getPermissionTooltip } from '../utils/getPermissionTooltip';
+import {
+	useGetRoleCampaigns,
+	useReplaceRoleCampaigns,
+} from '~/queries/roleCampaignsQueries';
+import RoleCampaignsSection from './RoleCampaignsSection';
 
 interface RoleFormProps {
 	mode: 'create' | 'edit';
@@ -51,6 +56,7 @@ interface RoleFormValues {
 	isSystem: boolean;
 	/** Maps module name to array of permissions with optional IDs */
 	modulePermissions: Record<string, ModulePermissionFormValue[]>;
+	campaignIds: string[];
 }
 
 const MODULES = Object.values(ModuleEnum).filter(
@@ -109,6 +115,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 			isActive: true,
 			isSystem: false,
 			modulePermissions: {},
+			campaignIds: [],
 		},
 		validate: {
 			name: (value) =>
@@ -130,6 +137,10 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 		isError: isRoleError,
 		error: roleError,
 	} = useGetRole(roleId ?? 0);
+
+	const { data: roleCampaigns, isLoading: isRoleCampaignsLoading } =
+		useGetRoleCampaigns(roleId ?? 0);
+	const replaceRoleCampaignsMutation = useReplaceRoleCampaigns();
 
 	useEffect(() => {
 		if (isEditMode && role) {
@@ -157,6 +168,16 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isEditMode, role]);
+
+	useEffect(() => {
+		if (isEditMode && roleCampaigns) {
+			form.setFieldValue(
+				'campaignIds',
+				roleCampaigns.map((c) => String(c.id))
+			);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isEditMode, roleCampaigns]);
 
 	const isSubmitting = useMemo(
 		() => createMutation.isPending || updateMutation.isPending,
@@ -225,6 +246,7 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 	const handleSubmit = form.onSubmit(async (values) => {
 		try {
 			const modulePermissions = buildModulePermissionsPayload();
+			let savedRoleId = roleId;
 
 			if (isEditMode) {
 				if (!roleId) {
@@ -252,7 +274,8 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 					isSystem: false,
 					modulePermissions,
 				};
-				await createMutation.mutateAsync(createPayload);
+				const createdRole = await createMutation.mutateAsync(createPayload);
+				savedRoleId = createdRole.id;
 				notifications.show({
 					title: t('notifications.createdTitle'),
 					message: t('notifications.createdMessage', { name: values.name }),
@@ -260,6 +283,16 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 				});
 				form.reset();
 			}
+
+			if (savedRoleId) {
+				await replaceRoleCampaignsMutation.mutateAsync({
+					roleId: savedRoleId,
+					payload: {
+						campaignIds: values.campaignIds.map(Number),
+					},
+				});
+			}
+
 			onSuccess();
 		} catch (error) {
 			notifications.show({
@@ -270,11 +303,11 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 		}
 	});
 
-	if (isEditMode && isRoleLoading) {
+	if (isEditMode && (isRoleLoading || isRoleCampaignsLoading)) {
 		return <RoleFormSkeleton />;
 	}
 
-	if (isLoading) {
+	if (isLoading || isRoleCampaignsLoading) {
 		return <RoleFormSkeleton />;
 	}
 
@@ -519,6 +552,12 @@ const RoleForm: React.FC<RoleFormProps> = ({ mode, roleId, onSuccess }) => {
 							</div>
 						</div>
 					</section>
+
+					<RoleCampaignsSection
+						campaignIds={form.values.campaignIds}
+						onChange={(val) => form.setFieldValue('campaignIds', val)}
+						disabled={isSystemRole}
+					/>
 				</div>
 
 				<Group justify='space-between' className={classes.actions}>

@@ -124,10 +124,15 @@ const CampaignDashboardViewer = ({
 		resetStore(initialDashboardId ? String(initialDashboardId) : null);
 	}, [campaignId, contactGroupId, initialDashboardId, resetStore]);
 
-	const { data: dashboardsData, isLoading: dashboardsLoading } = useDashboards({
+	const {
+		data: dashboardsData,
+		isLoading: dashboardsLoading,
+		error: dashboardsErrorObj,
+	} = useDashboards({
 		campaignId,
 	});
 	const dashboards = dashboardsData ?? EMPTY_DASHBOARDS;
+	const isForbidden = (dashboardsErrorObj as any)?.response?.status === 403;
 
 	const dashboardOptions = useMemo(
 		() =>
@@ -468,7 +473,16 @@ const CampaignDashboardViewer = ({
 		);
 	}
 
-	if (!dashboards.length) {
+	if (!dashboards.length || isForbidden) {
+		const emptyTitle = isForbidden
+			? campaignId
+				? t('dashboard.unauthorizedTitle')
+				: t('dashboard.unassignedTitle')
+			: t('dashboard.emptyTitle');
+		const emptyDescription = isForbidden
+			? null
+			: t('dashboard.emptyDescription');
+
 		return (
 			<Stack align='center' gap='sm' py='xl'>
 				<Box className={styles.emptyStateIcon}>
@@ -476,11 +490,13 @@ const CampaignDashboardViewer = ({
 				</Box>
 				<Stack gap={4} align='center'>
 					<Text fw={600} size='sm'>
-						{t('dashboard.emptyTitle')}
+						{emptyTitle}
 					</Text>
-					<Text size='sm' c='dimmed' ta='center' maw={320}>
-						{t('dashboard.emptyDescription')}
-					</Text>
+					{emptyDescription && (
+						<Text size='sm' c='dimmed' ta='center' maw={320}>
+							{emptyDescription}
+						</Text>
+					)}
 				</Stack>
 			</Stack>
 		);

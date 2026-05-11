@@ -116,7 +116,12 @@ export default function ClientSelectionPanel({
 						wrap='nowrap'
 						gap='sm'
 					>
-						<Group gap='sm' wrap='nowrap' align='flex-start'>
+						<Group
+							gap='sm'
+							wrap='nowrap'
+							align='flex-start'
+							className={classes.metaGroup}
+						>
 							<Box className={classes.iconShell} aria-hidden='true'>
 								<IconBuilding size={18} stroke={1.7} />
 							</Box>
@@ -127,9 +132,19 @@ export default function ClientSelectionPanel({
 								</Text>
 
 								{client.roles.length > 0 && (
-									<Text size='xs' className={classes.clientSubtitle} truncate>
-										{client.roles.join(' • ')}
-									</Text>
+									<Group gap={4} mt={2}>
+										{client.roles.map((role) => (
+											<Badge
+												key={role}
+												size='xs'
+												variant='light'
+												color='gray'
+												className={classes.roleBadge}
+											>
+												{role}
+											</Badge>
+										))}
+									</Group>
 								)}
 							</Stack>
 						</Group>

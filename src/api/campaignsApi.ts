@@ -403,6 +403,14 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			return response.data;
 		},
 
+		// GET my campaigns (authorized for current user)
+		getMyCampaigns: async () => {
+			const response = await axios.get<Campaign[]>(
+				`${DEFAULT_API_URL}/me/campaigns`
+			);
+			return response.data;
+		},
+
 		// GET simple campaign list (id + name only)
 		getSimpleCampaigns: async () => {
 			const response = await axios.get<{ id: number; name: string }[]>(

@@ -505,6 +505,8 @@
 		"refresh": "Actualizar dashboard",
 		"emptyTitle": "No hay dashboards configurados",
 		"emptyDescription": "Abre el modo edición de la campaña para crear el primer dashboard.",
+		"unauthorizedTitle": "No tienes acceso a esta campaña",
+		"unassignedTitle": "No tienes campañas asignadas",
 		"unsupportedBadge": "Próximamente",
 		"liveBadge": "Activo",
 		"unsupportedMessage": "Este tipo de widget aún no está soportado por el motor de métricas.",

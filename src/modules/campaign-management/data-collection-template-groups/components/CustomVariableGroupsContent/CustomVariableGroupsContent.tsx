@@ -22,7 +22,7 @@ import {
 	useDeleteCustomVariableTemplate,
 	useGetCustomVariableTemplates,
 } from '~/queries/customVariableTemplatesQueries';
-import { useGetAllCampaignsPaginated } from '~/queries/campaignsQueries';
+import { useGetMyCampaigns } from '~/queries/campaignsQueries';
 import CustomVariableGroupsFilters, {
 	type CustomVariableGroupFilters,
 } from '../CustomVariableGroupsFilters';
@@ -79,17 +79,14 @@ export default function CustomVariableGroupsContent({
 	const cloneTemplate = useCloneCustomVariableTemplate();
 	const assignTemplate = useAssignCustomVariableTemplateToCampaign();
 
-	const { data: campaignsResponse } = useGetAllCampaignsPaginated({
-		limit: 100,
-		offset: 0,
-	});
+	const { data: campaignsResponse } = useGetMyCampaigns();
 
 	const campaignOptions = useMemo(() => {
-		return (campaignsResponse?.data || []).map((campaign) => ({
+		return (campaignsResponse || []).map((campaign) => ({
 			value: String(campaign.id),
 			label: `${campaign.name} (#${campaign.id})`,
 		}));
-	}, [campaignsResponse?.data]);
+	}, [campaignsResponse]);
 
 	const handleDelete = async (template: CustomVariableTemplate) => {
 		try {
