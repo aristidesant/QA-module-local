@@ -54,15 +54,13 @@ import SectionCard from '~/components/SectionCard';
 
 interface CampaignFiltersType {
 	type?: string;
-	campaignExecutionType?: string;
 	status?: CampaignStatus;
-	budgetMin?: number;
-	budgetMax?: number;
-	spentMin?: number;
-	spentMax?: number;
-	userId?: number;
 	includeInactive?: boolean;
 }
+
+const INITIAL_CAMPAIGN_FILTERS: CampaignFiltersType = {
+	includeInactive: true,
+};
 
 export const CampaignsList: React.FC = () => {
 	const { t } = useTranslation([
@@ -103,10 +101,9 @@ export const CampaignsList: React.FC = () => {
 		selectedAgentIdForCall || ''
 	);
 
-	const [sortBy, setSortBy] = useState('updatedAt');
-	const [filters, setFilters] = useState<CampaignFiltersType>({
-		includeInactive: true,
-	});
+	const [filters, setFilters] = useState<CampaignFiltersType>(
+		INITIAL_CAMPAIGN_FILTERS
+	);
 
 	// Reset to first page when filters change
 	useEffect(() => {
@@ -117,16 +114,24 @@ export const CampaignsList: React.FC = () => {
 		() => ({
 			...pagination.getApiParams(),
 			...filters,
-			sortBy,
+			sortBy: 'updatedAt',
+			orderBy: 'DESC',
 		}),
 		[
-			filters,
+			filters.includeInactive,
+			filters.status,
+			filters.type,
 			pagination.currentPage,
 			pagination.debouncedSearch,
 			pagination.itemsPerPage,
-			sortBy,
 		]
 	);
+
+	const hasActiveFilters =
+		Boolean(pagination.searchValue.trim()) ||
+		Boolean(filters.type) ||
+		Boolean(filters.status) ||
+		filters.includeInactive === false;
 
 	// Fetch data with server-side pagination
 	const {
@@ -337,8 +342,6 @@ export const CampaignsList: React.FC = () => {
 					<CampaignFilters
 						searchValue={pagination.searchValue}
 						onSearchChange={pagination.setSearchValue}
-						sortBy={sortBy}
-						onSortChange={setSortBy}
 						filters={filters}
 						onFiltersChange={setFilters}
 					/>
@@ -349,13 +352,10 @@ export const CampaignsList: React.FC = () => {
 						<div className={styles.errorContainer}>
 							<IconAlertCircle size={32} color='red' />
 							<Text c='red' mt='sm'>
-								{error instanceof Error
-									? error.message
-									: 'Failed to load campaigns.'}
+								{error instanceof Error ? error.message : t('list.loadError')}
 							</Text>
 						</div>
-					) : campaignsResponse?.data?.length === 0 &&
-					  pagination.searchValue ? (
+					) : campaignsResponse?.data?.length === 0 && hasActiveFilters ? (
 						<EmptyState
 							icon={<IconRocket size={64} stroke={1.2} />}
 							message={t('list.noCampaignsFound')}

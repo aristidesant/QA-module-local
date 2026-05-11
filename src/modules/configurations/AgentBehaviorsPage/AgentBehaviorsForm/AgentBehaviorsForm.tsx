@@ -9,7 +9,10 @@ import {
 } from '~/queries/useAgentBehaviors';
 import { useClientConfigByName } from '~/queries/useClientConfigs';
 import type { AgentBehavior } from '~/models/AgentBehavior';
-import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
+import type {
+	CampaignPredefinedConversationConfig,
+	SuggestedAudioTag,
+} from '~/models/CampaignPredefinedParam';
 import { generateUUID } from '~/utils/stringUtils';
 import { ModalMenu, ModalBody } from '~/components/ModalMenu';
 import {
@@ -22,7 +25,14 @@ import {
 	CampaignPredefinedFormProvider,
 	type FormValues,
 } from './CampaignPredefinedFormProvider';
-import { DEFAULT_AGENT_LLM, LLM_MODELS } from './formConfig';
+import {
+	DEFAULT_AGENT_LLM,
+	DEFAULT_TTS_MODEL_ID,
+	EXPRESSIVE_TTS_MODEL_ID,
+	LLM_MODELS,
+	isExpressiveTtsModel,
+	normalizeSuggestedAudioTags,
+} from './formConfig';
 
 import styles from './CampaignPredefinedParamsForm.module.css';
 import GeneralSection from './components/GeneralSection';
@@ -178,7 +188,18 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 			asrUserInputAudioFormat:
 				conversationConfig?.asr?.userInputAudioFormat || 'pcm_16000',
 			// TTS
-			ttsModelId: conversationConfig?.tts?.modelId || 'eleven_turbo_v2_5',
+			ttsModelId: conversationConfig?.tts?.modelId || DEFAULT_TTS_MODEL_ID,
+			ttsVoiceId: conversationConfig?.tts?.voiceId || '',
+			ttsSupportedVoices: conversationConfig?.tts?.supportedVoices || [],
+			ttsExpressiveMode:
+				conversationConfig?.tts?.modelId === EXPRESSIVE_TTS_MODEL_ID ||
+				conversationConfig?.tts?.expressiveMode ||
+				false,
+			ttsSuggestedAudioTags: normalizeSuggestedAudioTags(
+				conversationConfig?.tts?.suggestedAudioTags as
+					| SuggestedAudioTag[]
+					| null
+			),
 			ttsStability: conversationConfig?.tts?.stability || 0.5,
 			ttsSpeed: conversationConfig?.tts?.speed || 1.0,
 			ttsSimilarityBoost: conversationConfig?.tts?.similarityBoost || 0.75,
@@ -265,7 +286,16 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 				asrProvider: cfg?.asr?.provider || 'elevenlabs',
 				asrUserInputAudioFormat: cfg?.asr?.userInputAudioFormat || 'pcm_16000',
 				// TTS
-				ttsModelId: cfg?.tts?.modelId || 'eleven_turbo_v2_5',
+				ttsModelId: cfg?.tts?.modelId || DEFAULT_TTS_MODEL_ID,
+				ttsVoiceId: cfg?.tts?.voiceId || '',
+				ttsSupportedVoices: cfg?.tts?.supportedVoices || [],
+				ttsExpressiveMode:
+					cfg?.tts?.modelId === EXPRESSIVE_TTS_MODEL_ID ||
+					cfg?.tts?.expressiveMode ||
+					false,
+				ttsSuggestedAudioTags: normalizeSuggestedAudioTags(
+					cfg?.tts?.suggestedAudioTags as SuggestedAudioTag[] | null
+				),
 				ttsStability: cfg?.tts?.stability || 0.5,
 				ttsSpeed: cfg?.tts?.speed || 1.0,
 				ttsSimilarityBoost: cfg?.tts?.similarityBoost || 0.75,
@@ -284,13 +314,25 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 		values: typeof form.values
 	): CampaignPredefinedConversationConfig => ({
 		asr: {
+			...conversationConfig?.asr,
 			quality: values.asrQuality,
 			keywords: values.asrKeywords,
 			provider: values.asrProvider,
 			userInputAudioFormat: values.asrUserInputAudioFormat,
 		},
 		tts: {
+			...conversationConfig?.tts,
 			modelId: values.ttsModelId,
+			voiceId:
+				values.ttsVoiceId || conversationConfig?.tts?.voiceId || undefined,
+			supportedVoices:
+				values.ttsSupportedVoices.length > 0
+					? values.ttsSupportedVoices
+					: conversationConfig?.tts?.supportedVoices || [],
+			expressiveMode: isExpressiveTtsModel(values.ttsModelId),
+			suggestedAudioTags: isExpressiveTtsModel(values.ttsModelId)
+				? normalizeSuggestedAudioTags(values.ttsSuggestedAudioTags)
+				: [],
 			stability: values.ttsStability,
 			speed: values.ttsSpeed,
 			similarityBoost: values.ttsSimilarityBoost,
@@ -298,7 +340,9 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 			agentOutputAudioFormat: values.ttsAgentOutputAudioFormat,
 		},
 		agent: {
+			...conversationConfig?.agent,
 			prompt: {
+				...conversationConfig?.agent?.prompt,
 				llm: values.agentPromptLlm,
 				reasoningEffort: values.agentPromptReasoningEffort ?? undefined,
 				temperature: values.agentPromptTemperature,

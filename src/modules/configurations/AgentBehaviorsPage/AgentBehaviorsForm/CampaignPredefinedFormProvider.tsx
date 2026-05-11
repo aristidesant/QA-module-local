@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import { UseFormReturnType } from '@mantine/form';
+import type { SuggestedAudioTag } from '~/models/CampaignPredefinedParam';
 
 export interface FormValues {
 	id: string;
@@ -9,6 +10,10 @@ export interface FormValues {
 	asrProvider: string;
 	asrUserInputAudioFormat: string;
 	ttsModelId: string;
+	ttsVoiceId: string;
+	ttsSupportedVoices: Record<string, unknown>[];
+	ttsExpressiveMode: boolean;
+	ttsSuggestedAudioTags: SuggestedAudioTag[];
 	ttsStability: number;
 	ttsSpeed: number;
 	ttsSimilarityBoost: number;

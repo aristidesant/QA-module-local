@@ -32,6 +32,7 @@ import styles from './StepTwoAgent.module.css';
 import sharedStyles from '../CampaignWizard.module.css';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useUpdateCampaign, useGetCampaign } from '~/queries/campaignsQueries';
+import { sanitizeCampaignBehaviorConversationConfig } from '~/modules/campaigns/utils/campaignBehaviorConfig';
 
 interface StepTwoAgentProps {
 	onNext: () => void;
@@ -271,6 +272,9 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		const currentCampaign = useCampaignWizardStore.getState().createdCampaign;
 		const currentKnowledgeBaseIds =
 			useCampaignWizardStore.getState().knowledgeBaseIds;
+		const selectedBehaviorConversationConfig = predefinedParams.find(
+			(param) => param.id && String(param.id) === String(values.agentBehaviorId)
+		)?.params?.conversationConfig;
 
 		if (
 			!currentCampaign ||
@@ -313,6 +317,17 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 					},
 				},
 			};
+
+			if (payload.agentConfig?.conversationConfig) {
+				payload.agentConfig.conversationConfig =
+					sanitizeCampaignBehaviorConversationConfig(
+						(payload.agentConfig.conversationConfig || {}) as Record<
+							string,
+							unknown
+						>,
+						selectedBehaviorConversationConfig
+					) as typeof payload.agentConfig.conversationConfig;
+			}
 
 			// Remove toolIds from prompt if present, as it can interfere with knowledge base functionality
 			if (payload.agentConfig?.conversationConfig?.agent?.prompt) {
