@@ -149,6 +149,18 @@
 
 .clientMeta {
 	min-width: 0;
+	flex: 1;
+}
+
+.metaGroup {
+	min-width: 0;
+	flex: 1;
+}
+
+.roleBadge {
+	text-transform: none;
+	letter-spacing: 0;
+	font-weight: 500;
 }
 
 .clientName {

@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
 import { useTranslation } from 'react-i18next';
-import { useGetAllCampaigns } from '~/queries/campaignsQueries';
+import { useGetMyCampaigns } from '~/queries/campaignsQueries';
 import type { Campaign } from '~/models/CampaignsModel';
 
 dayjs.extend(utc);
@@ -35,7 +35,7 @@ export default function ExportToExcelModal({
 	const { t } = useTranslation(['conversations', 'common']);
 	const [loading, setLoading] = useState(false);
 
-	const { data: campaigns = [] } = useGetAllCampaigns({ limit: 1000 });
+	const { data: campaigns = [] } = useGetMyCampaigns();
 
 	const campaignOptions = useMemo(
 		() =>

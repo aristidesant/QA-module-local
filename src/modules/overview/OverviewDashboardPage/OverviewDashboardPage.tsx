@@ -14,11 +14,23 @@ const OverviewDashboardPage = () => {
 		'common',
 	]);
 	const navigate = useNavigate();
-	const { data: dashboards = [], isLoading } = useDashboards({
+	const {
+		data: dashboards = [],
+		isLoading,
+		error: dashboardsErrorObj,
+	} = useDashboards({
 		campaignId: null,
 	});
 
-	if (!isLoading && dashboards.length === 0) {
+	const isForbidden = (dashboardsErrorObj as any)?.response?.status === 403;
+
+	if ((!isLoading && dashboards.length === 0) || isForbidden) {
+		const emptyTitle = isForbidden
+			? t('dashboard.unassignedTitle')
+			: t('dashboardOverview.emptyTitle');
+		const emptyDescription = isForbidden
+			? null
+			: t('dashboardOverview.emptyDescription');
 		return (
 			<ContentContainer>
 				<SectionCard
@@ -29,11 +41,13 @@ const OverviewDashboardPage = () => {
 					<Stack gap='sm' align='flex-start'>
 						<div>
 							<Text size='sm' fw={600}>
-								{t('dashboardOverview.emptyTitle')}
+								{emptyTitle}
 							</Text>
-							<Text size='sm' c='dimmed'>
-								{t('dashboardOverview.emptyDescription')}
-							</Text>
+							{emptyDescription && (
+								<Text size='sm' c='dimmed'>
+									{emptyDescription}
+								</Text>
+							)}
 						</div>
 						<Button size='sm' onClick={() => navigate('/dashboards')}>
 							{t('dashboardOverview.emptyAction')}

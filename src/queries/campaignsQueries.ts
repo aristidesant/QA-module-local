@@ -33,6 +33,18 @@ export const useCreateCampaign = () => {
 	});
 };
 
+// Get my campaigns
+export const useGetMyCampaigns = (enabled: boolean = true) => {
+	return useQuery({
+		queryKey: ['my-campaigns'],
+		queryFn: async () => {
+			const api = campaignsApi();
+			return api.getMyCampaigns();
+		},
+		enabled,
+	});
+};
+
 // Get all campaigns
 export const useGetAllCampaigns = (params?: Record<string, any>) => {
 	return useQuery({
