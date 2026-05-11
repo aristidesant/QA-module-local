@@ -78,6 +78,11 @@
 		"vite": "7.2.6",
 		"vitest": "^4.0.15"
 	},
+	"pnpm": {
+    		"onlyBuiltDependencies": [
+    		  "esbuild"
+		 ]
+	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx,json,css,md}": [
 			"prettier --write"
