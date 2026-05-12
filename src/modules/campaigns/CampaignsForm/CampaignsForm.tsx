@@ -25,6 +25,7 @@ import {
 } from '~/queries/campaignsQueries';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import { useGetAgentVersioningStatus } from '~/queries/agentVersioningQueries';
+import { useGetCampaignRoles } from '~/queries/roleCampaignsQueries';
 import { notifications } from '@mantine/notifications';
 import { validateWorkflow } from './WorkflowSection/utils/workflowValidation';
 import {
@@ -56,6 +57,7 @@ import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel'
 import AppDrawer from '~/components/AppDrawer';
 import DashboardSection from './DashboardSection';
 import VersioningSection from './VersioningSection';
+import CampaignRoleVisibilitySelector from '../components/CampaignRoleVisibilitySelector';
 import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
 import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
@@ -147,9 +149,16 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		'id' | 'createdAt' | 'updatedAt'
 	> | null>(null);
 	const predefinedParams = useCampaignsPredefinedParams();
+	const campaignId = campaign?.id ?? 0;
 
 	// Fetch campaign agents to check versioning status
-	const { data: campaignAgents = [] } = useGetCampaignAgents(campaign?.id ?? 0);
+	const { data: campaignAgents = [] } = useGetCampaignAgents(campaignId);
+	const {
+		data: campaignRoles,
+		isLoading: isCampaignRolesLoading,
+		isError: isCampaignRolesError,
+		isFetched: isCampaignRolesFetched,
+	} = useGetCampaignRoles(campaignId);
 	const firstAgentId = campaignAgents[0]?.agentId ?? '';
 	const { data: agentRecord } = useGetAgentVersioningStatus(firstAgentId);
 	const isVersioningEnabled = Boolean(agentRecord?.versioningEnabled);
@@ -196,6 +205,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		campaign?.agentConfig?.workflow?.nodes &&
 		Object.keys(campaign.agentConfig.workflow.nodes).length > 0;
 	const isDataReady = isNewCampaign || hasWorkflowData;
+	const campaignRoleIds = React.useMemo(
+		() => (campaignRoles ?? []).map((role) => role.id),
+		[campaignRoles]
+	);
+	const isGeneralRoleSaveBlocked =
+		campaignId > 0 && (isCampaignRolesLoading || isCampaignRolesError);
 
 	const form = useCampaignForm({
 		initialValues: {
@@ -222,6 +237,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign?.defaultWaveExecutionDelaySeconds ?? 0,
+			roleIds: campaign?.roleIds ?? [],
 		},
 		validate: {
 			name: (value) => (value ? null : t('form.validation.nameRequired')),
@@ -255,6 +271,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	// Update form values when campaign data changes
 	useEffect(() => {
 		if (!campaign?.id) return; // Only for existing campaigns
+		if (!isCampaignRolesFetched) return;
+		if (isCampaignRolesError) return;
 
 		const campaignWorkflowCounts = getWorkflowCounts(
 			campaign.agentConfig?.workflow
@@ -285,6 +303,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign.defaultWaveExecutionDelaySeconds ?? 0,
+			roleIds: campaignRoleIds,
 		});
 		// Sync the snapshot so dirty detection is always relative to the
 		// latest backend state, not a stale cached version.
@@ -298,7 +317,13 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		);
 		void stateWorkflowCounts;
 		void getterWorkflowCounts;
-	}, [campaign?.id, campaign?.agentConfig?.workflow]);
+	}, [
+		campaign?.id,
+		campaign?.agentConfig?.workflow,
+		campaignRoleIds,
+		isCampaignRolesError,
+		isCampaignRolesFetched,
+	]);
 
 	// Reset view only on component unmount
 	useEffect(() => {
@@ -406,6 +431,17 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			return;
 		}
 
+		if (isLight && isGeneralRoleSaveBlocked) {
+			notifications.show({
+				title: t('errors.unknown', { ns: 'common' }),
+				message: t('general.roleVisibility.loadErrorSaveBlocked', {
+					ns: 'campaign.form.general',
+				}),
+				color: 'red',
+			});
+			return;
+		}
+
 		// Validate workflow edge conditions before submitting
 		if (value.agentConfig?.workflow) {
 			const validationResult = validateWorkflow(value.agentConfig.workflow);
@@ -483,10 +519,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						versionDescription: _vd,
 						...rest
 					}) => rest)(cleanedValue)
-				: {
-						...cleanedValue,
+				: (({ roleIds: _roleIds, ...rest }) => ({
+						...rest,
 						...(versionDescription !== undefined ? { versionDescription } : {}),
-					};
+					}))(cleanedValue);
 
 			let savedCampaign: Campaign;
 
@@ -613,11 +649,39 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 								onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
 							>
 								<GeneralSection onOpenSettings={openSettingsDrawer} />
+								<SectionCard
+									title={t('general.roleVisibility.title', {
+										ns: 'campaign.form.general',
+									})}
+									description={t('general.roleVisibility.description', {
+										ns: 'campaign.form.general',
+									})}
+								>
+									<CampaignRoleVisibilitySelector
+										value={form.values.roleIds ?? []}
+										onChange={(roleIds) =>
+											form.setFieldValue('roleIds', roleIds)
+										}
+										label={t('general.roleVisibility.label', {
+											ns: 'campaign.form.general',
+										})}
+										description={t('general.roleVisibility.fieldDescription', {
+											ns: 'campaign.form.general',
+										})}
+										placeholder={t('general.roleVisibility.placeholder', {
+											ns: 'campaign.form.general',
+										})}
+										hint={t('general.roleVisibility.hint', {
+											ns: 'campaign.form.general',
+										})}
+										disabled={isCampaignRolesLoading || isCampaignRolesError}
+									/>
+								</SectionCard>
 								<StickySaveActions
 									label={saveLabel}
 									loadingLabel={savingLabel}
 									isLoading={isUpdatingLight}
-									disabled={!form.isDirty()}
+									disabled={!form.isDirty() || isGeneralRoleSaveBlocked}
 								/>
 							</form>
 						)}

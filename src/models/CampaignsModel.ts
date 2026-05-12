@@ -142,6 +142,7 @@ export interface Campaign {
 	progress?: number; // Campaign progress percentage
 	defaultMaxWaves?: number;
 	defaultWaveExecutionDelaySeconds?: number;
+	roleIds?: number[];
 	isDraft?: boolean; // Indicates if campaign is in draft state
 	draftStep?: number; // The wizard step where the draft was saved
 
