@@ -26,6 +26,18 @@
 		"noiseCancellationDesc": "Cuando está activado, aplica supresión de ruido y ajuste de detección de actividad de voz en las llamadas salientes.",
 		"createObjectiveTitle": "Crear Nuevo Objetivo",
 		"settingsTitle": "Configuracion de campana",
-		"settingsDescription": "Define el idioma y los limites de oleadas"
+		"settingsDescription": "Define el idioma y los limites de oleadas",
+		"roleVisibility": {
+			"title": "Visibilidad por roles",
+			"description": "Controla que roles pueden ver esta campana.",
+			"label": "Visible para roles",
+			"fieldDescription": "Selecciona todos los roles que deben tener visibilidad de la campana.",
+			"placeholder": "Selecciona roles",
+			"hint": "Si dejas esto vacio, la campana se guarda sin visibilidad asignada a roles.",
+			"noRolesFound": "No se encontraron roles activos",
+			"loadErrorTitle": "No se pudieron cargar los roles",
+			"loadErrorDescription": "Reintenta antes de guardar cambios de visibilidad.",
+			"loadErrorSaveBlocked": "No se pudieron cargar los roles de la campana. Reintenta antes de guardar cambios de visibilidad."
+		}
 	}
 }

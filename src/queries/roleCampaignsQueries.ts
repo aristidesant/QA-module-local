@@ -3,6 +3,7 @@ import roleCampaignsApi, {
 	type ReplaceRoleCampaignsPayload,
 } from '~/api/roleCampaignsApi';
 import type { Campaign } from '~/models/CampaignsModel';
+import type { RoleModel } from '~/models/RoleModel';
 
 // Get campaigns for a specific role
 export const useGetRoleCampaigns = (roleId: number) => {
@@ -13,6 +14,23 @@ export const useGetRoleCampaigns = (roleId: number) => {
 			return api.getRoleCampaigns(roleId);
 		},
 		enabled: !!roleId,
+	});
+};
+
+// Get roles assigned to a specific campaign
+export const useGetCampaignRoles = (campaignId: number) => {
+	return useQuery<
+		RoleModel[],
+		unknown,
+		RoleModel[],
+		['campaign-roles', number]
+	>({
+		queryKey: ['campaign-roles', campaignId],
+		queryFn: async () => {
+			const api = roleCampaignsApi();
+			return api.getCampaignRoles(campaignId);
+		},
+		enabled: campaignId > 0,
 	});
 };
 

@@ -1,0 +1,9 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.hint {
+	margin-top: calc(var(--mantine-spacing-xs) / 2);
+}

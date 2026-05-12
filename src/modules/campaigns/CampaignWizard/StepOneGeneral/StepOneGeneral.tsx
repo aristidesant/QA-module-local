@@ -40,6 +40,7 @@ import {
 	IconPhoneIncoming,
 } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
+import CampaignRoleVisibilitySelector from '~/modules/campaigns/components/CampaignRoleVisibilitySelector';
 
 interface StepOneGeneralProps {
 	onNext: () => void;
@@ -63,11 +64,13 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		campaignType,
 		phoneNumberId,
 		objectiveId,
+		roleIds,
 		setCampaignName,
 		setDescription,
 		setCampaignType,
 		setPhoneNumberId,
 		setObjectiveId,
+		setRoleIds,
 		defaultMaxWaves,
 		setDefaultMaxWaves,
 		defaultWaveExecutionDelaySeconds,
@@ -93,6 +96,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			campaignType,
 			phoneNumberId,
 			objectiveId,
+			roleIds,
 			defaultMaxWaves,
 			defaultWaveExecutionDelaySeconds,
 		},
@@ -167,6 +171,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				type: values.campaignType,
 				campaignExecutionType: 'TIME_BASED',
 				status: CampaignStatus.INACTIVE,
+				roleIds: values.roleIds,
 				...(isOutboundType && {
 					defaultMaxWaves: values.defaultMaxWaves || 3,
 					defaultWaveExecutionDelaySeconds:
@@ -196,6 +201,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				setCampaignType(values.campaignType);
 				setPhoneNumberId(values.phoneNumberId);
 				setObjectiveId(isOutboundType ? values.objectiveId : null);
+				setRoleIds(values.roleIds);
 				setDefaultMaxWaves(isOutboundType ? values.defaultMaxWaves || 3 : 3);
 				setDefaultWaveExecutionDelaySeconds(
 					isOutboundType ? values.defaultWaveExecutionDelaySeconds || 0 : 0
@@ -458,6 +464,29 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 									</>
 								)}
 							</Stack>
+						</Box>
+
+						<Box className={styles.wizardCard}>
+							<div className={styles.sectionHeading}>
+								<Text className={styles.sectionHeadingTitle}>
+									{t('wizard.steps.general.roleVisibilityTitle')}
+								</Text>
+								<Text className={styles.sectionHeadingDescription}>
+									{t('wizard.steps.general.roleVisibilityDesc')}
+								</Text>
+							</div>
+							<CampaignRoleVisibilitySelector
+								value={form.values.roleIds}
+								onChange={(nextRoleIds) =>
+									form.setFieldValue('roleIds', nextRoleIds)
+								}
+								label={t('wizard.steps.general.roleVisibilityLabel')}
+								description={t('wizard.steps.general.roleVisibilityFieldDesc')}
+								placeholder={t(
+									'wizard.steps.general.roleVisibilityPlaceholder'
+								)}
+								hint={t('wizard.steps.general.roleVisibilityHint')}
+							/>
 						</Box>
 					</div>
 

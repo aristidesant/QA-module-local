@@ -26,6 +26,7 @@ export const useCreateCampaign = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
+			queryClient.invalidateQueries({ queryKey: ['campaign-roles'] });
 		},
 		onError: (error) => {
 			void error;
@@ -205,6 +206,9 @@ export const useUpdateCampaign = () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
 			if (data?.id) {
 				queryClient.invalidateQueries({ queryKey: ['campaign', data.id] });
+				queryClient.invalidateQueries({
+					queryKey: ['campaign-roles', data.id],
+				});
 			}
 		},
 		onError: (error) => {
@@ -232,6 +236,9 @@ export const useUpdateCampaignLight = () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
 			if (data?.id) {
 				queryClient.invalidateQueries({ queryKey: ['campaign', data.id] });
+				queryClient.invalidateQueries({
+					queryKey: ['campaign-roles', data.id],
+				});
 			}
 		},
 		onError: (error) => {
@@ -363,6 +370,7 @@ export const useCloneCampaign = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
+			queryClient.invalidateQueries({ queryKey: ['campaign-roles'] });
 		},
 		onError: (error) => {
 			void error;

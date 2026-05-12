@@ -10,6 +10,7 @@ interface CampaignWizardState {
 	campaignType: 'INBOUND' | 'OUTBOUND';
 	phoneNumberId: number | null;
 	objectiveId: number | null;
+	roleIds: number[];
 	defaultMaxWaves: number;
 	defaultWaveExecutionDelaySeconds: number;
 	createdCampaign: Campaign | null;
@@ -35,6 +36,7 @@ interface CampaignWizardState {
 	setCampaignType: (type: 'INBOUND' | 'OUTBOUND') => void;
 	setPhoneNumberId: (id: number | null) => void;
 	setObjectiveId: (id: number | null) => void;
+	setRoleIds: (ids: number[]) => void;
 	setDefaultMaxWaves: (waves: number) => void;
 	setDefaultWaveExecutionDelaySeconds: (seconds: number) => void;
 	setCreatedCampaign: (campaign: Campaign | null) => void;
@@ -58,6 +60,7 @@ const initialState = {
 	campaignType: 'OUTBOUND' as const,
 	phoneNumberId: null,
 	objectiveId: null,
+	roleIds: [],
 	defaultMaxWaves: 3,
 	defaultWaveExecutionDelaySeconds: 0,
 	createdCampaign: null,
@@ -86,6 +89,7 @@ export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
 	setCampaignType: (type) => set({ campaignType: type, phoneNumberId: null }),
 	setPhoneNumberId: (id) => set({ phoneNumberId: id }),
 	setObjectiveId: (id) => set({ objectiveId: id }),
+	setRoleIds: (ids) => set({ roleIds: ids }),
 	setDefaultMaxWaves: (waves) => set({ defaultMaxWaves: waves }),
 	setDefaultWaveExecutionDelaySeconds: (seconds) =>
 		set({ defaultWaveExecutionDelaySeconds: seconds }),
@@ -112,6 +116,7 @@ export const useCampaignWizardStore = create<CampaignWizardState>((set) => ({
 			description: campaign.description,
 			campaignType: campaign.type,
 			objectiveId: campaign.objectiveId ?? null,
+			roleIds: campaign.roleIds ?? [],
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign.defaultWaveExecutionDelaySeconds ?? 0,
