@@ -200,20 +200,20 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 					| SuggestedAudioTag[]
 					| null
 			),
-			ttsStability: conversationConfig?.tts?.stability || 0.5,
-			ttsSpeed: conversationConfig?.tts?.speed || 1.0,
-			ttsSimilarityBoost: conversationConfig?.tts?.similarityBoost || 0.75,
+			ttsStability: conversationConfig?.tts?.stability ?? 0.5,
+			ttsSpeed: conversationConfig?.tts?.speed ?? 1.0,
+			ttsSimilarityBoost: conversationConfig?.tts?.similarityBoost ?? 0.75,
 			ttsOptimizeStreamingLatency:
-				conversationConfig?.tts?.optimizeStreamingLatency || 3,
+				conversationConfig?.tts?.optimizeStreamingLatency ?? 3,
 			ttsAgentOutputAudioFormat:
 				conversationConfig?.tts?.agentOutputAudioFormat || 'pcm_16000',
 			// Agent
 			agentPromptLlm:
 				conversationConfig?.agent?.prompt?.llm || DEFAULT_AGENT_LLM,
 			agentPromptReasoningEffort:
-				conversationConfig?.agent?.prompt?.reasoningEffort || null,
+				conversationConfig?.agent?.prompt?.reasoningEffort ?? null,
 			agentPromptTemperature:
-				conversationConfig?.agent?.prompt?.temperature || 1.0,
+				conversationConfig?.agent?.prompt?.temperature ?? 1.0,
 		},
 		validate: {
 			name: (value) => {
@@ -296,16 +296,16 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 				ttsSuggestedAudioTags: normalizeSuggestedAudioTags(
 					cfg?.tts?.suggestedAudioTags as SuggestedAudioTag[] | null
 				),
-				ttsStability: cfg?.tts?.stability || 0.5,
-				ttsSpeed: cfg?.tts?.speed || 1.0,
-				ttsSimilarityBoost: cfg?.tts?.similarityBoost || 0.75,
-				ttsOptimizeStreamingLatency: cfg?.tts?.optimizeStreamingLatency || 3,
+				ttsStability: cfg?.tts?.stability ?? 0.5,
+				ttsSpeed: cfg?.tts?.speed ?? 1.0,
+				ttsSimilarityBoost: cfg?.tts?.similarityBoost ?? 0.75,
+				ttsOptimizeStreamingLatency: cfg?.tts?.optimizeStreamingLatency ?? 3,
 				ttsAgentOutputAudioFormat:
 					cfg?.tts?.agentOutputAudioFormat || 'pcm_16000',
 				// Agent
 				agentPromptLlm: cfg?.agent?.prompt?.llm || DEFAULT_AGENT_LLM,
-				agentPromptReasoningEffort: cfg?.agent?.prompt?.reasoningEffort || null,
-				agentPromptTemperature: cfg?.agent?.prompt?.temperature || 1.0,
+				agentPromptReasoningEffort: cfg?.agent?.prompt?.reasoningEffort ?? null,
+				agentPromptTemperature: cfg?.agent?.prompt?.temperature ?? 1.0,
 			});
 		}
 	}, [behavior]);
