@@ -2,15 +2,12 @@ import {
 	TextInput,
 	PasswordInput,
 	Button,
-	Paper,
 	Text,
 	Alert,
 	Loader,
 	Title,
-	Checkbox,
 	Anchor,
 	Group,
-	ThemeIcon,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
@@ -31,7 +28,6 @@ import { useLogin } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import { useTranslation } from 'react-i18next';
 import classes from './LoginForm.module.css';
-import Logo from '~/components/Logo';
 import { ClientSelectOption, MFALoginResponse } from '~/api/authApi';
 import { APP_VERSION } from '~/version';
 import OTPVerificationModal from './OTPVerificationModal';
@@ -65,7 +61,6 @@ export function LoginForm() {
 	const [pendingLoginData, setPendingLoginData] =
 		useState<MFALoginResponse | null>(null);
 	const [passwordVisible, setPasswordVisible] = useState(false);
-	// Multi-client selection state
 	const [clientSelectionModalOpened, setClientSelectionModalOpened] =
 		useState(false);
 	const [availableClients, setAvailableClients] = useState<
@@ -75,14 +70,11 @@ export function LoginForm() {
 	const [forgotPasswordModalOpened, setForgotPasswordModalOpened] =
 		useState(false);
 
-	const isSubmitting = loginMutation.isPending;
-	const isRedirecting = false;
-	const isLoading = isSubmitting || isRedirecting;
+	const isLoading = loginMutation.isPending;
 	const logoutReason = new URLSearchParams(location.search).get('reason');
 	const formErrorRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
-		// Defensive: ensure no stale token remains when landing on /login.
 		try {
 			window.sessionStorage.removeItem('accessToken');
 		} catch {
@@ -94,13 +86,7 @@ export function LoginForm() {
 	}, [setTargetClient, setToken, setUser]);
 
 	const form = useForm<FormValues>({
-		initialValues: {
-			username: '',
-			password: '',
-			// default to USER_PASS so existing users keep normal behavior
-			loginType: 'USER_PASS',
-		},
-		// Ensure the form never performs native submission
+		initialValues: { username: '', password: '', loginType: 'USER_PASS' },
 		onSubmitPreventDefault: 'always',
 		validate: {
 			username: (value) => (!value.trim() ? t('username.required') : null),
@@ -118,7 +104,7 @@ export function LoginForm() {
 		errors: Partial<Record<keyof FormValues, string>>
 	) => {
 		const firstInvalidField = (['username', 'password'] as const).find(
-			(field) => errors[field]
+			(f) => errors[f]
 		);
 		if (firstInvalidField) {
 			form.getInputNode(firstInvalidField)?.focus();
@@ -126,10 +112,7 @@ export function LoginForm() {
 	};
 
 	const handleSubmit = async (values: FormValues) => {
-		if (isLoading) {
-			return;
-		}
-
+		if (isLoading) return;
 		setFormError(null);
 		try {
 			const result: MFALoginResponse = await loginMutation.mutateAsync({
@@ -138,7 +121,6 @@ export function LoginForm() {
 				loginType: values.loginType,
 			});
 
-			// Case: User has access to multiple clients
 			if (result?.requiresClientSelection && result?.availableClients) {
 				setAvailableClients(result.availableClients);
 				setPreAuthToken(result.preAuthToken || null);
@@ -148,7 +130,6 @@ export function LoginForm() {
 			}
 
 			if (result?.otpEnabled) {
-				// Show OTP modal
 				setPendingLoginData(result);
 				setOtpModalOpened(true);
 				clearPendingCredentials();
@@ -162,13 +143,9 @@ export function LoginForm() {
 					setPendingCredentials(values.username, values.loginType);
 					navigate('/force-password-change', {
 						replace: true,
-						state: {
-							username: values.username,
-							loginType: values.loginType,
-						},
+						state: { username: values.username, loginType: values.loginType },
 					});
 				} else {
-					// Direct login success, navigate to dashboard
 					clearPendingCredentials();
 					navigate('/');
 				}
@@ -179,16 +156,12 @@ export function LoginForm() {
 	};
 
 	const clearFormError = () => {
-		if (formError) {
-			setFormError(null);
-		}
+		if (formError) setFormError(null);
 	};
 
 	const handleFieldKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-		if (event.key !== 'Enter' || event.nativeEvent.isComposing || isLoading) {
+		if (event.key !== 'Enter' || event.nativeEvent.isComposing || isLoading)
 			return;
-		}
-
 		event.preventDefault();
 		event.currentTarget.form?.requestSubmit();
 	};
@@ -197,9 +170,7 @@ export function LoginForm() {
 	const passwordInputProps = form.getInputProps('password');
 
 	const handleLoginTypeChange = (value: string) => {
-		if (value !== 'USER_PASS' && value !== 'LDAP') {
-			return;
-		}
+		if (value !== 'USER_PASS' && value !== 'LDAP') return;
 		clearFormError();
 		form.setFieldValue('loginType', value);
 	};
@@ -218,18 +189,9 @@ export function LoginForm() {
 	];
 
 	const themeOptions = [
-		{
-			label: <IconSun size={16} stroke={1.5} />,
-			value: 'light',
-		},
-		{
-			label: <IconMoon size={16} stroke={1.5} />,
-			value: 'dark',
-		},
-		{
-			label: <IconDeviceDesktop size={16} stroke={1.5} />,
-			value: 'auto',
-		},
+		{ label: <IconSun size={15} stroke={1.5} />, value: 'light' },
+		{ label: <IconMoon size={15} stroke={1.5} />, value: 'dark' },
+		{ label: <IconDeviceDesktop size={15} stroke={1.5} />, value: 'auto' },
 	];
 
 	const handleOTPSuccess = () => {
@@ -237,19 +199,16 @@ export function LoginForm() {
 		setPendingLoginData(null);
 		navigate('/');
 	};
-
 	const handleOTPModalClose = () => {
 		setOtpModalOpened(false);
 		setPendingLoginData(null);
 	};
-
 	const handleClientSelectionSuccess = () => {
 		setClientSelectionModalOpened(false);
 		setAvailableClients([]);
 		setPreAuthToken(null);
 		navigate('/');
 	};
-
 	const handleClientSelectionModalClose = () => {
 		setClientSelectionModalOpened(false);
 		setAvailableClients([]);
@@ -258,63 +217,227 @@ export function LoginForm() {
 
 	return (
 		<div className={classes.wrapper}>
-			<Paper className={classes.paper} shadow='md'>
+			<div className={classes.card}>
 				<form
-					className={classes.formContainer}
+					className={classes.formRoot}
 					onSubmit={form.onSubmit(handleSubmit, handleValidationFailure)}
 					aria-busy={isLoading}
 				>
-					{(isSubmitting || isRedirecting) && (
-						<div className={classes.loadingOverlay}>
-							<div className={classes.loadingContent}>
-								<Loader size='md' type='dots' color='blue' />
-								<Text size='sm' fw={600} c='blue.7'>
-									{t('actions.signingIn')}
-								</Text>
-							</div>
-						</div>
-					)}
-
 					<div className={classes.contentGrid}>
-						{/* Left Panel - Branding */}
-						<section className={classes.brandingPanel}>
-							<div className={classes.brandingContent}>
-								<div className={classes.logoContainer}>
-									<Logo />
-								</div>
-								<div className={classes.brandingText}>
-									<Title order={1} className={classes.brandTitle}>
-										<span className={classes.brandTitlePrefix}>
+						{/* LEFT: Brand panel */}
+						<section
+							className={classes.brandPanel}
+							aria-label='Newtech Unified CXM'
+						>
+							<svg
+								className={classes.nodeMotif}
+								viewBox='0 0 300 720'
+								fill='none'
+								xmlns='http://www.w3.org/2000/svg'
+								aria-hidden='true'
+								preserveAspectRatio='xMidYMid slice'
+							>
+								<line
+									x1='40'
+									y1='110'
+									x2='160'
+									y2='200'
+									stroke='rgba(255,255,255,0.10)'
+									strokeWidth='1'
+								/>
+								<line
+									x1='160'
+									y1='200'
+									x2='255'
+									y2='130'
+									stroke='rgba(255,255,255,0.10)'
+									strokeWidth='1'
+								/>
+								<line
+									x1='160'
+									y1='200'
+									x2='120'
+									y2='340'
+									stroke='rgba(255,255,255,0.11)'
+									strokeWidth='1'
+								/>
+								<line
+									x1='120'
+									y1='340'
+									x2='230'
+									y2='420'
+									stroke='rgba(255,255,255,0.09)'
+									strokeWidth='1'
+								/>
+								<line
+									x1='255'
+									y1='130'
+									x2='280'
+									y2='280'
+									stroke='rgba(255,255,255,0.07)'
+									strokeWidth='1'
+								/>
+								<line
+									x1='280'
+									y1='280'
+									x2='230'
+									y2='420'
+									stroke='rgba(255,255,255,0.09)'
+									strokeWidth='1'
+								/>
+								<line
+									x1='28'
+									y1='390'
+									x2='120'
+									y2='340'
+									stroke='rgba(255,255,255,0.07)'
+									strokeWidth='1'
+								/>
+								<line
+									x1='28'
+									y1='390'
+									x2='75'
+									y2='520'
+									stroke='rgba(255,255,255,0.07)'
+									strokeWidth='1'
+								/>
+								<line
+									x1='230'
+									y1='420'
+									x2='255'
+									y2='555'
+									stroke='rgba(255,255,255,0.07)'
+									strokeWidth='1'
+								/>
+								<line
+									x1='18'
+									y1='210'
+									x2='40'
+									y2='110'
+									stroke='rgba(255,255,255,0.06)'
+									strokeWidth='1'
+								/>
+								<line
+									x1='75'
+									y1='520'
+									x2='140'
+									y2='630'
+									stroke='rgba(255,255,255,0.05)'
+									strokeWidth='1'
+								/>
+								<line
+									x1='255'
+									y1='555'
+									x2='195'
+									y2='645'
+									stroke='rgba(255,255,255,0.05)'
+									strokeWidth='1'
+								/>
+								<circle
+									cx='160'
+									cy='200'
+									r='7'
+									fill='rgba(255,255,255,0.16)'
+									stroke='rgba(255,255,255,0.28)'
+									strokeWidth='1.5'
+								/>
+								<circle
+									cx='230'
+									cy='420'
+									r='6'
+									fill='rgba(255,255,255,0.14)'
+									stroke='rgba(255,255,255,0.22)'
+									strokeWidth='1.5'
+								/>
+								<circle
+									cx='40'
+									cy='110'
+									r='4.5'
+									fill='rgba(255,255,255,0.13)'
+								/>
+								<circle cx='255' cy='130' r='4' fill='rgba(255,255,255,0.12)' />
+								<circle cx='120' cy='340' r='5' fill='rgba(255,255,255,0.13)' />
+								<circle
+									cx='280'
+									cy='280'
+									r='3.5'
+									fill='rgba(255,255,255,0.10)'
+								/>
+								<circle
+									cx='28'
+									cy='390'
+									r='3.5'
+									fill='rgba(255,255,255,0.10)'
+								/>
+								<circle cx='75' cy='520' r='4' fill='rgba(255,255,255,0.10)' />
+								<circle
+									cx='255'
+									cy='555'
+									r='3.5'
+									fill='rgba(255,255,255,0.08)'
+								/>
+								<circle cx='140' cy='630' r='3' fill='rgba(255,255,255,0.07)' />
+								<circle cx='195' cy='645' r='3' fill='rgba(255,255,255,0.06)' />
+								<circle cx='18' cy='210' r='3' fill='rgba(255,255,255,0.08)' />
+							</svg>
+
+							<div className={classes.brandContent}>
+								<div className={classes.brandIdentity}>
+									<img
+										src='/images/logo-2.png'
+										alt='Newtech'
+										className={classes.brandLogoImg}
+									/>
+									<div className={classes.brandWordmark}>
+										<span className={classes.brandWordmarkMain}>
 											{t('welcomePrefix')}
 										</span>
-										<span className={classes.brandTitleAccent}>
+										<span className={classes.brandWordmarkAccent}>
 											{t('welcomeSuffix')}
 										</span>
-									</Title>
+									</div>
+								</div>
+
+								<div className={classes.brandMessage}>
 									<div className={classes.brandRule} />
-									<Title order={2} className={classes.brandHeading}>
-										{t('welcomeBack')}
-									</Title>
-									<Text className={classes.subtitle}>{t('subtitle')}</Text>
+									<p className={classes.brandTagline}>{t('subtitle')}</p>
 								</div>
-								<div className={classes.waveDecoration} />
-								<div className={classes.settingsRow}>
-									<LanguagePicker variant='default' size='sm' />
-									<AppSegmentedControl
-										aria-label={t('theme.label')}
-										value={preference}
-										onChange={(value) =>
-											setPreference(value as 'light' | 'dark' | 'auto')
-										}
-										data={themeOptions}
-										size='sm'
-									/>
-								</div>
+							</div>
+
+							<div className={classes.brandFooter}>
+								<IconShieldCheck size={13} stroke={1.5} aria-hidden='true' />
+								<span className={classes.brandSecureText}>
+									{t('secureConnection')}
+								</span>
 							</div>
 						</section>
 
-						{/* Right Panel - Form */}
+						{/* RIGHT: Form panel */}
 						<section className={classes.formPanel}>
+							{isLoading && (
+								<div className={classes.loadingOverlay}>
+									<div className={classes.loadingContent}>
+										<Loader size='sm' type='dots' color='green' />
+										<Text size='xs' fw={600} c='green.7'>
+											{t('actions.signingIn')}
+										</Text>
+									</div>
+								</div>
+							)}
+
+							<div className={classes.formSettingsBar}>
+								<LanguagePicker variant='default' size='xs' />
+								<AppSegmentedControl
+									aria-label={t('theme.label')}
+									value={preference}
+									onChange={(value) =>
+										setPreference(value as 'light' | 'dark' | 'auto')
+									}
+									data={themeOptions}
+									size='xs'
+								/>
+							</div>
+
 							<div className={classes.formStack}>
 								{logoutReason === 'expired' && (
 									<Alert
@@ -328,12 +451,18 @@ export function LoginForm() {
 									</Alert>
 								)}
 
+								<div className={classes.formHeadingBlock}>
+									<Title order={2} className={classes.formHeading}>
+										{t('welcomeBack')}
+									</Title>
+								</div>
+
 								<AppSegmentedControl
 									aria-label={t('loginType.label')}
 									value={form.values.loginType}
 									onChange={handleLoginTypeChange}
 									data={loginTypeOptions}
-									size='md'
+									size='sm'
 									fullWidth
 								/>
 
@@ -408,14 +537,7 @@ export function LoginForm() {
 									/>
 								</div>
 
-								<Group justify='space-between' align='center' gap='xs'>
-									<Checkbox
-										label={t('rememberMe')}
-										className={classes.rememberMe}
-										classNames={{
-											label: classes.checkboxLabel,
-										}}
-									/>
+								<Group justify='flex-end'>
 									<Anchor
 										component='button'
 										type='button'
@@ -459,39 +581,20 @@ export function LoginForm() {
 								>
 									{t('actions.signIn')}
 								</Button>
+
+								<Text className={classes.versionText}>v{APP_VERSION}</Text>
 							</div>
 						</section>
 					</div>
 				</form>
-			</Paper>
-
-			<div className={classes.footer}>
-				<Group gap='xs' justify='center'>
-					<ThemeIcon
-						variant='transparent'
-						size='sm'
-						className={classes.footerIcon}
-					>
-						<IconShieldCheck size={16} stroke={1.5} />
-					</ThemeIcon>
-					<Text size='xs' className={classes.secureConnection}>
-						{t('secureConnection')}
-					</Text>
-				</Group>
-				<Text size='xs' className={classes.version}>
-					v{APP_VERSION}
-				</Text>
 			</div>
 
-			{/* OTP Verification Modal */}
 			<OTPVerificationModal
 				opened={otpModalOpened}
 				onClose={handleOTPModalClose}
 				userId={pendingLoginData?.userId || 0}
 				onSuccess={handleOTPSuccess}
 			/>
-
-			{/* Client Selection Modal */}
 			<ClientSelectionModal
 				opened={clientSelectionModalOpened}
 				onClose={handleClientSelectionModalClose}
@@ -499,8 +602,6 @@ export function LoginForm() {
 				preAuthToken={preAuthToken || ''}
 				onSuccess={handleClientSelectionSuccess}
 			/>
-
-			{/* Forgot Password Modal */}
 			<ForgotPasswordModal
 				opened={forgotPasswordModalOpened}
 				onClose={() => setForgotPasswordModalOpened(false)}
