@@ -376,7 +376,7 @@ const CampaignSelectionCard = ({
 			</Group>
 
 			<Collapse
-				in={campaign.selected && campaign.expanded}
+				expanded={campaign.selected && campaign.expanded}
 				transitionDuration={160}
 			>
 				<Divider my='sm' />

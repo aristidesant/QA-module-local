@@ -654,7 +654,7 @@ const SidebarSectionGroup: React.FC<SidebarSectionGroupProps> = ({
 				header
 			)}
 			<Collapse
-				in={!collapsed && open}
+				expanded={!collapsed && open}
 				onTransitionEnd={onCollapseTransitionEnd}
 			>
 				<Stack gap={4} className={styles.sectionItems}>

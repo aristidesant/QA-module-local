@@ -85,7 +85,6 @@ const BreakdownSection = ({ breakdownCards }: BreakdownSectionProps) => {
 										series={[{ name: 'count', color: card.color }]}
 										withLegend={false}
 										withTooltip
-										tooltipAnimationDuration={200}
 										orientation='horizontal'
 										gridAxis='none'
 										tickLine='none'

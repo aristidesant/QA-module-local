@@ -434,7 +434,7 @@ const DashboardWidgetAdvancedSection = () => {
 				</Group>
 			</div>
 
-			<Collapse in={state.advancedOpened}>
+			<Collapse expanded={state.advancedOpened}>
 				<div className={styles.advancedContent}>
 					{state.needsGroupedConfig ? (
 						<div className={styles.sectionInlinePanel}>

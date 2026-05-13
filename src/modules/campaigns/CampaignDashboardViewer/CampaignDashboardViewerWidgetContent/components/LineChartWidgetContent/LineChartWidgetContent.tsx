@@ -6,12 +6,13 @@ import {
 	IconTrendingDown,
 	IconTrendingUp,
 } from '@tabler/icons-react';
-import type { TooltipProps } from 'recharts';
+import type { ReactNode } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useChartReady } from '~/hooks/useChartReady';
 import {
 	buildWidgetComparisonCopy,
-	formatMetricValue,
 	getWidgetChartMetrics,
+	formatMetricValue,
 	resolveMetricDisplayValue,
 } from '../../../CampaignDashboardViewer.helpers';
 import DashboardWidgetCard from '../DashboardWidgetCard';
@@ -63,7 +64,8 @@ const LineChartWidgetContent = ({
 	selectedTimeRange,
 }: TimeSeriesWidgetContentProps) => {
 	const { t } = useTranslation('campaign.form.dashboards');
-	const metrics = getWidgetChartMetrics(layout);
+	const ready = useChartReady();
+	const { chartHeight } = getWidgetChartMetrics(layout);
 
 	const currentPoints = [...widget.result.points].sort(
 		(left, right) =>
@@ -116,16 +118,19 @@ const LineChartWidgetContent = ({
 	const rangeLabel = selectedTimeRange
 		? t(`dashboard.timeRange.${selectedTimeRange}`)
 		: null;
-	const chartHeight = Math.max(metrics.chartHeight - 8, 72);
 	const showDelta = currentPoints.length > 1;
 	const showDots = chartData.length <= 10;
 	const showAllTicks = chartData.length <= 8;
 
-	const renderTooltip: NonNullable<TooltipProps<number, string>['content']> = ({
+	const renderTooltip = ({
 		active,
 		payload,
 		label,
-	}) => {
+	}: {
+		active?: boolean;
+		payload?: readonly { payload?: TimeSeriesChartDatum }[];
+		label?: string | number;
+	}): ReactNode => {
 		if (!active || !payload?.length) return null;
 
 		const point = payload[0]?.payload as TimeSeriesChartDatum | undefined;
@@ -249,62 +254,64 @@ const LineChartWidgetContent = ({
 				<div
 					className={`${sharedStyles.chartWrapper} ${styles.lineChartChartWrapper}`}
 				>
-					<LineChart
-						data={chartData}
-						dataKey='label'
-						series={[
-							{ name: 'currentValue', color: accentColor },
-							...(hasComparisonSeries
-								? [
-										{
-											name: 'previousValue',
-											color: 'gray.5',
-											strokeDasharray: '6 4',
-										},
-									]
-								: []),
-						]}
-						type='default'
-						withLegend={false}
-						withTooltip
-						withDots={showDots}
-						dotProps={{ r: 3, strokeWidth: 2 }}
-						activeDotProps={{ r: 4.5, strokeWidth: 2 }}
-						curveType='monotone'
-						tickLine='none'
-						gridAxis='y'
-						strokeDasharray='4 4'
-						gridColor='gray.1'
-						textColor='gray.5'
-						strokeWidth={2}
-						tooltipAnimationDuration={80}
-						xAxisProps={{
-							axisLine: false,
-							tickMargin: 8,
-							minTickGap: showAllTicks ? 8 : 20,
-							interval: showAllTicks ? 0 : 'preserveStartEnd',
-							padding: { left: 4, right: 12 },
-						}}
-						yAxisProps={{
-							axisLine: false,
-							width: 36,
-							tickMargin: 6,
-						}}
-						tooltipProps={{
-							content: renderTooltip,
-							cursor: {
-								stroke: accentColor,
-								strokeDasharray: '3 3',
-								strokeOpacity: 0.12,
-							},
-						}}
-						h={chartHeight}
-						valueFormatter={(value) =>
-							typeof value === 'number' && Number.isFinite(value)
-								? formatMetricValue(value)
-								: '-'
-						}
-					/>
+					{ready ? (
+						<LineChart
+							h={chartHeight}
+							data={chartData}
+							dataKey='label'
+							series={[
+								{ name: 'currentValue', color: accentColor },
+								...(hasComparisonSeries
+									? [
+											{
+												name: 'previousValue',
+												color: 'gray.5',
+												strokeDasharray: '6 4',
+											},
+										]
+									: []),
+							]}
+							type='default'
+							withLegend={false}
+							withTooltip
+							withDots={showDots}
+							dotProps={{ r: 3, strokeWidth: 2 }}
+							activeDotProps={{ r: 4.5, strokeWidth: 2 }}
+							curveType='monotone'
+							tickLine='none'
+							gridAxis='y'
+							strokeDasharray='4 4'
+							gridColor='gray.1'
+							strokeWidth={2}
+							xAxisProps={{
+								axisLine: false,
+								tickMargin: 8,
+								minTickGap: showAllTicks ? 8 : 20,
+								interval: showAllTicks ? 0 : 'preserveStartEnd',
+								padding: { left: 4, right: 12 },
+							}}
+							yAxisProps={{
+								axisLine: false,
+								width: 36,
+								tickMargin: 6,
+							}}
+							tooltipProps={{
+								content: renderTooltip,
+								cursor: {
+									stroke: accentColor,
+									strokeDasharray: '3 3',
+									strokeOpacity: 0.12,
+								},
+							}}
+							valueFormatter={(value) =>
+								typeof value === 'number' && Number.isFinite(value)
+									? formatMetricValue(value)
+									: '-'
+							}
+						/>
+					) : (
+						<div className={styles.chartPlaceholder} />
+					)}
 				</div>
 			</div>
 		</DashboardWidgetCard>

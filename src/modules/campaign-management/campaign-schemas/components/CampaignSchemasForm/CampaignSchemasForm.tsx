@@ -457,7 +457,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 					onClick={() => setObjectivePickerOpen(true)}
 				/>
 
-				<Collapse in={objectivePickerOpen}>
+				<Collapse expanded={objectivePickerOpen}>
 					<ObjectivePickerPanel
 						selectedObjectiveId={
 							form.values.objectiveId
@@ -598,7 +598,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 										</div>
 									)}
 								</Group>
-								<Collapse in={expandedPatterns.has(index)}>
+								<Collapse expanded={expandedPatterns.has(index)}>
 									<MatchPatternsTextarea
 										key={`patterns-${index}`}
 										initialValue={field.matchPatterns ?? []}

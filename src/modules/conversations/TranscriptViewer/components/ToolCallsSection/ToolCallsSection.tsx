@@ -92,7 +92,7 @@ function ToolCallItem({ tool, result }: ToolCallItemProps) {
 				</Box>
 			</Group>
 
-			<Collapse in={expanded}>
+			<Collapse expanded={expanded}>
 				<Box className={styles.toolCallExpanded}>
 					<Stack gap='xs'>
 						<Group justify='space-between' align='flex-start'>

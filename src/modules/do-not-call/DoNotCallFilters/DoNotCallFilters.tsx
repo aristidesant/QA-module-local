@@ -121,7 +121,7 @@ export default function DoNotCallFilters({
 				</div>
 			</FilterContainer>
 
-			<Collapse in={opened}>
+			<Collapse expanded={opened}>
 				<div className={styles.advancedFilters}>
 					<Stack gap='sm'>
 						<Group gap='sm' grow>
