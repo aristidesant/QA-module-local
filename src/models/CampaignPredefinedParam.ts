@@ -3,6 +3,42 @@ export interface SuggestedAudioTag {
 	description: string;
 }
 
+export interface CampaignPredefinedPlatformSettings {
+	overrides: {
+		customLlmExtraBody: boolean;
+		conversationConfigOverride: {
+			tts: {
+				speed: boolean;
+				voiceId: boolean;
+				stability: boolean;
+				similarityBoost: boolean;
+			};
+			turn: {
+				softTimeoutConfig: {
+					message: boolean;
+				};
+			};
+			agent: {
+				prompt: {
+					llm: boolean;
+					prompt: boolean;
+					toolIds: boolean;
+					knowledgeBase: boolean;
+					nativeMcpServerIds: boolean;
+				};
+				language: boolean;
+				firstMessage: boolean;
+				maxConversationDurationMessage: boolean;
+			};
+			conversation: {
+				textOnly: boolean;
+			};
+		};
+		enableStartingWorkflowNodeIdFromClient: boolean;
+		enableConversationInitiationClientDataFromWebhook: boolean;
+	};
+}
+
 export interface CampaignPredefinedConversationConfig {
 	asr: {
 		quality: string;
@@ -37,5 +73,6 @@ export interface CampaignPredefinedParam {
 	name: string;
 	params: {
 		conversationConfig?: CampaignPredefinedConversationConfig;
+		platformSettings?: CampaignPredefinedPlatformSettings;
 	};
 }

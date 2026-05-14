@@ -62,7 +62,10 @@ import CampaignRoleVisibilitySelector from '../components/CampaignRoleVisibility
 import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
 import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
-import { sanitizeCampaignBehaviorConversationConfig } from '~/modules/campaigns/utils/campaignBehaviorConfig';
+import {
+	applyCampaignBehaviorPlatformSettings,
+	sanitizeCampaignBehaviorConversationConfig,
+} from '~/modules/campaigns/utils/campaignBehaviorConfig';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -477,6 +480,9 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			const selectedBehaviorConversationConfig = predefinedParams.find(
 				(param) => param.id === value.configId
 			)?.params?.conversationConfig;
+			const selectedBehaviorPlatformSettings = predefinedParams.find(
+				(param) => param.id === value.configId
+			)?.params?.platformSettings;
 
 			// Clean up orphan nodeStyles entries (keys whose node no longer exists)
 			const workflowNodes = value.agentConfig?.workflow?.nodes;
@@ -493,15 +499,29 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 			// Clean up toolIds from agentConfig before sending
 			const cleanedValue = { ...value };
-			if (cleanedValue.agentConfig?.conversationConfig) {
+			if (cleanedValue.agentConfig) {
+				const currentAgentConfig = cleanedValue.agentConfig;
 				cleanedValue.agentConfig = {
-					...cleanedValue.agentConfig,
-					conversationConfig: sanitizeCampaignBehaviorConversationConfig(
-						(cleanedValue.agentConfig.conversationConfig ||
-							{}) as unknown as Record<string, unknown>,
-						selectedBehaviorConversationConfig
-					) as unknown as ConversationConfigModel,
+					...currentAgentConfig,
+					platformSettings: applyCampaignBehaviorPlatformSettings(
+						(currentAgentConfig.platformSettings || {}) as Record<
+							string,
+							unknown
+						>,
+						selectedBehaviorPlatformSettings
+					) as typeof currentAgentConfig.platformSettings,
 				};
+
+				if (currentAgentConfig.conversationConfig) {
+					cleanedValue.agentConfig = {
+						...cleanedValue.agentConfig,
+						conversationConfig: sanitizeCampaignBehaviorConversationConfig(
+							(currentAgentConfig.conversationConfig ||
+								{}) as unknown as Record<string, unknown>,
+							selectedBehaviorConversationConfig
+						) as unknown as ConversationConfigModel,
+					};
+				}
 			}
 			if (cleanedValue.agentConfig?.conversationConfig?.agent?.prompt) {
 				const { toolIds, ...restPrompt } =

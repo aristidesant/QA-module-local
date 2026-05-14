@@ -39,7 +39,8 @@
 			"general": "General",
 			"asr": "Speech Recognition",
 			"tts": "Voice Output",
-			"agent": "Agent Personality"
+			"agent": "Agent Personality",
+			"platformSettings": "Platoform Settings"
 		},
 		"sections": {
 			"general": {
@@ -57,6 +58,132 @@
 			"agent": {
 				"title": "Agent Personality",
 				"description": "Pick the model and tone that will represent the brand."
+			},
+			"platformSettings": {
+				"title": "Platform Settings",
+				"description": "Toggle platform-level overrides exposed to the client."
+			}
+		},
+		"platformSettings": {
+			"summary": {
+				"badge": "Platform controls",
+				"title": "Client-facing override surface",
+				"description": "Group the booleans by behavior domain so the editor reads like a settings console, not a raw JSON dump.",
+				"stats": {
+					"groups": "Domains",
+					"toggles": "Toggles",
+					"enabled": "Enabled"
+				}
+			},
+			"groups": {
+				"global": {
+					"title": "Global overrides",
+					"description": "General switches that affect the platform-level payload."
+				},
+				"tts": {
+					"title": "TTS",
+					"description": "Speech output controls that can be exposed independently."
+				},
+				"turn": {
+					"title": "Turn",
+					"description": "Turn-handling rules for timeout behavior."
+				},
+				"agentPrompt": {
+					"title": "Agent Prompt",
+					"description": "Prompt, knowledge, and tool exposure controls."
+				},
+				"runtime": {
+					"title": "Agent Runtime",
+					"description": "Runtime-level behavior and first-message controls."
+				},
+				"conversation": {
+					"title": "Conversation",
+					"description": "Conversation-level text mode control."
+				}
+			},
+			"fields": {
+				"customLlmExtraBody": {
+					"label": "Custom LLM extra body",
+					"description": "Allow custom request body fields for the agent runtime."
+				},
+				"enableStartingWorkflowNodeIdFromClient": {
+					"label": "Starting workflow node from client",
+					"description": "Allow the client to set the workflow node that starts the session."
+				},
+				"enableConversationInitiationClientDataFromWebhook": {
+					"label": "Conversation initiation client data",
+					"description": "Allow webhook payloads to seed client data on conversation start."
+				},
+				"conversationConfigOverride": {
+					"tts": {
+						"speed": {
+							"label": "TTS speed",
+							"description": "Expose the text-to-speech speed override."
+						},
+						"voiceId": {
+							"label": "TTS voice ID",
+							"description": "Expose the text-to-speech voice selection override."
+						},
+						"stability": {
+							"label": "TTS stability",
+							"description": "Expose the text-to-speech stability override."
+						},
+						"similarityBoost": {
+							"label": "TTS similarity boost",
+							"description": "Expose the text-to-speech similarity boost override."
+						}
+					},
+					"turn": {
+						"softTimeoutConfig": {
+							"message": {
+								"label": "Soft timeout message",
+								"description": "Allow the soft timeout message to be overridden."
+							}
+						}
+					},
+					"agent": {
+						"prompt": {
+							"llm": {
+								"label": "Prompt LLM",
+								"description": "Allow the prompt LLM value to be overridden."
+							},
+							"prompt": {
+								"label": "Prompt text",
+								"description": "Allow the agent prompt text to be overridden."
+							},
+							"toolIds": {
+								"label": "Prompt tool IDs",
+								"description": "Allow the prompt tool IDs to be overridden."
+							},
+							"knowledgeBase": {
+								"label": "Prompt knowledge base",
+								"description": "Allow the prompt knowledge base to be overridden."
+							},
+							"nativeMcpServerIds": {
+								"label": "Prompt MCP servers",
+								"description": "Allow the native MCP server IDs to be overridden."
+							}
+						},
+						"language": {
+							"label": "Agent language",
+							"description": "Allow the agent language to be overridden."
+						},
+						"firstMessage": {
+							"label": "First message",
+							"description": "Allow the first message to be overridden."
+						},
+						"maxConversationDurationMessage": {
+							"label": "Max duration message",
+							"description": "Allow the max conversation duration message to be overridden."
+						}
+					},
+					"conversation": {
+						"textOnly": {
+							"label": "Conversation text only",
+							"description": "Allow text-only conversations to be overridden."
+						}
+					}
+				}
 			}
 		},
 		"badge": {

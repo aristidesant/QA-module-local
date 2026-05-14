@@ -39,7 +39,8 @@
 			"general": "General",
 			"asr": "Reconocimiento de voz",
 			"tts": "Salida de voz",
-			"agent": "Personalidad del agente"
+			"agent": "Personalidad del agente",
+			"platformSettings": "Platoform Settings"
 		},
 		"sections": {
 			"general": {
@@ -57,6 +58,132 @@
 			"agent": {
 				"title": "Personalidad del agente",
 				"description": "Elige el modelo y el tono que representarán la marca."
+			},
+			"platformSettings": {
+				"title": "Configuración de plataforma",
+				"description": "Activa o desactiva los sobrescritos de la plataforma expuestos al cliente."
+			}
+		},
+		"platformSettings": {
+			"summary": {
+				"badge": "Controles de plataforma",
+				"title": "Superficie de sobrescrituras para el cliente",
+				"description": "Agrupa los booleanos por dominio de comportamiento para que el editor se lea como una consola de ajustes y no como un volcado de JSON.",
+				"stats": {
+					"groups": "Dominios",
+					"toggles": "Interruptores",
+					"enabled": "Activos"
+				}
+			},
+			"groups": {
+				"global": {
+					"title": "Sobrescrituras globales",
+					"description": "Controles generales que afectan la carga útil de nivel de plataforma."
+				},
+				"tts": {
+					"title": "TTS",
+					"description": "Controles de salida de voz que pueden exponerse por separado."
+				},
+				"turn": {
+					"title": "Turno",
+					"description": "Reglas de manejo de turnos para el tiempo de espera."
+				},
+				"agentPrompt": {
+					"title": "Prompt del agente",
+					"description": "Controles de prompt, conocimiento y exposición de herramientas."
+				},
+				"runtime": {
+					"title": "Runtime del agente",
+					"description": "Comportamiento de ejecución y controles del primer mensaje."
+				},
+				"conversation": {
+					"title": "Conversación",
+					"description": "Control del modo solo texto a nivel de conversación."
+				}
+			},
+			"fields": {
+				"customLlmExtraBody": {
+					"label": "Cuerpo extra de LLM personalizado",
+					"description": "Permite campos personalizados en el cuerpo de la solicitud para el runtime del agente."
+				},
+				"enableStartingWorkflowNodeIdFromClient": {
+					"label": "Nodo inicial del flujo desde el cliente",
+					"description": "Permite que el cliente defina el nodo de flujo que inicia la sesión."
+				},
+				"enableConversationInitiationClientDataFromWebhook": {
+					"label": "Datos de inicio de conversación desde webhook",
+					"description": "Permite que la carga útil del webhook inicialice datos del cliente al comenzar la conversación."
+				},
+				"conversationConfigOverride": {
+					"tts": {
+						"speed": {
+							"label": "Velocidad de TTS",
+							"description": "Expone la sobrescritura de velocidad de texto a voz."
+						},
+						"voiceId": {
+							"label": "ID de voz de TTS",
+							"description": "Expone la sobrescritura de selección de voz de texto a voz."
+						},
+						"stability": {
+							"label": "Estabilidad de TTS",
+							"description": "Expone la sobrescritura de estabilidad de texto a voz."
+						},
+						"similarityBoost": {
+							"label": "Aumento de similitud de TTS",
+							"description": "Expone la sobrescritura de aumento de similitud de texto a voz."
+						}
+					},
+					"turn": {
+						"softTimeoutConfig": {
+							"message": {
+								"label": "Mensaje de tiempo de espera suave",
+								"description": "Permite sobrescribir el mensaje de tiempo de espera suave."
+							}
+						}
+					},
+					"agent": {
+						"prompt": {
+							"llm": {
+								"label": "LLM del prompt",
+								"description": "Permite sobrescribir el valor de LLM del prompt."
+							},
+							"prompt": {
+								"label": "Texto del prompt",
+								"description": "Permite sobrescribir el texto del prompt del agente."
+							},
+							"toolIds": {
+								"label": "IDs de herramientas del prompt",
+								"description": "Permite sobrescribir los IDs de herramientas del prompt."
+							},
+							"knowledgeBase": {
+								"label": "Base de conocimiento del prompt",
+								"description": "Permite sobrescribir la base de conocimiento del prompt."
+							},
+							"nativeMcpServerIds": {
+								"label": "Servidores MCP del prompt",
+								"description": "Permite sobrescribir los IDs nativos de servidores MCP."
+							}
+						},
+						"language": {
+							"label": "Idioma del agente",
+							"description": "Permite sobrescribir el idioma del agente."
+						},
+						"firstMessage": {
+							"label": "Primer mensaje",
+							"description": "Permite sobrescribir el primer mensaje."
+						},
+						"maxConversationDurationMessage": {
+							"label": "Mensaje de duración máxima",
+							"description": "Permite sobrescribir el mensaje de duración máxima de la conversación."
+						}
+					},
+					"conversation": {
+						"textOnly": {
+							"label": "Conversación solo texto",
+							"description": "Permite sobrescribir las conversaciones solo de texto."
+						}
+					}
+				}
 			}
 		},
 		"badge": {
