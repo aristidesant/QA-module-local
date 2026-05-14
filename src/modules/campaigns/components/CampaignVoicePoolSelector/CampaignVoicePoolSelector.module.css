@@ -1,0 +1,9 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.hint {
+	line-height: 1.4;
+}

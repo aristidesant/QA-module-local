@@ -38,6 +38,16 @@
 			"loadErrorTitle": "No se pudieron cargar los roles",
 			"loadErrorDescription": "Reintenta antes de guardar cambios de visibilidad.",
 			"loadErrorSaveBlocked": "No se pudieron cargar los roles de la campana. Reintenta antes de guardar cambios de visibilidad."
+		},
+		"voicePool": {
+			"label": "Voces de la campaña",
+			"description": "Elige qué voces puede distribuir esta campaña entre sus tareas.",
+			"placeholder": "Selecciona una o más voces",
+			"hint": "Déjalo vacío solo si quieres mantener el comportamiento actual de voces de la campaña.",
+			"noVoices": "No hay voces disponibles para este cliente.",
+			"noMatches": "Ninguna voz coincide con tu búsqueda",
+			"loadErrorTitle": "No se pudieron cargar las voces",
+			"loadErrorDescription": "Reintenta antes de guardar cambios en las voces de la campaña."
 		}
 	}
 }

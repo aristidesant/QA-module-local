@@ -1,6 +1,6 @@
 import { isAxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
 	TextInput,
 	Textarea,
@@ -41,6 +41,7 @@ import {
 } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import CampaignRoleVisibilitySelector from '~/modules/campaigns/components/CampaignRoleVisibilitySelector';
+import CampaignVoicePoolSelector from '~/modules/campaigns/components/CampaignVoicePoolSelector';
 
 interface StepOneGeneralProps {
 	onNext: () => void;
@@ -65,12 +66,14 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		phoneNumberId,
 		objectiveId,
 		roleIds,
+		selectedVoiceIds,
 		setCampaignName,
 		setDescription,
 		setCampaignType,
 		setPhoneNumberId,
 		setObjectiveId,
 		setRoleIds,
+		setSelectedVoiceIds,
 		defaultMaxWaves,
 		setDefaultMaxWaves,
 		defaultWaveExecutionDelaySeconds,
@@ -97,6 +100,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			phoneNumberId,
 			objectiveId,
 			roleIds,
+			selectedVoiceIds,
 			defaultMaxWaves,
 			defaultWaveExecutionDelaySeconds,
 		},
@@ -123,18 +127,40 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				values.campaignType === 'OUTBOUND' && !value
 					? t('wizard.steps.general.validation.objectiveRequired')
 					: null,
+			selectedVoiceIds: (value: string[]) =>
+				value.length === 0
+					? t('wizard.steps.general.validation.voiceRequired')
+					: null,
 		},
 		validateInputOnChange: true,
 	});
 
+	const availableVoiceIds = useMemo(
+		() => voicesResponse?.map((voice) => voice.voice.id) ?? [],
+		[voicesResponse]
+	);
+
+	useEffect(() => {
+		if (availableVoiceIds.length === 0) {
+			return;
+		}
+
+		if (
+			selectedVoiceIds.length > 0 ||
+			form.values.selectedVoiceIds.length > 0
+		) {
+			return;
+		}
+
+		form.setFieldValue('selectedVoiceIds', availableVoiceIds);
+		setSelectedVoiceIds(availableVoiceIds);
+	}, [availableVoiceIds, form, selectedVoiceIds.length, setSelectedVoiceIds]);
+
 	const handleSubmit = async (values: typeof form.values) => {
 		setIsSubmitting(true);
 
-		// Get default voice (first available voice)
-		const defaultVoiceId =
-			voicesResponse && voicesResponse.length > 0
-				? voicesResponse[0].voice.id
-				: '';
+		const selectedVoiceIds = values.selectedVoiceIds.filter(Boolean);
+		const defaultVoiceId = selectedVoiceIds[0] ?? '';
 
 		if (!defaultVoiceId) {
 			setIsSubmitting(false);
@@ -172,6 +198,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				campaignExecutionType: 'TIME_BASED',
 				status: CampaignStatus.INACTIVE,
 				roleIds: values.roleIds,
+				voiceIds: selectedVoiceIds,
 				...(isOutboundType && {
 					defaultMaxWaves: values.defaultMaxWaves || 3,
 					defaultWaveExecutionDelaySeconds:
@@ -202,6 +229,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				setPhoneNumberId(values.phoneNumberId);
 				setObjectiveId(isOutboundType ? values.objectiveId : null);
 				setRoleIds(values.roleIds);
+				setSelectedVoiceIds(selectedVoiceIds);
 				setDefaultMaxWaves(isOutboundType ? values.defaultMaxWaves || 3 : 3);
 				setDefaultWaveExecutionDelaySeconds(
 					isOutboundType ? values.defaultWaveExecutionDelaySeconds || 0 : 0
@@ -486,6 +514,37 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 									'wizard.steps.general.roleVisibilityPlaceholder'
 								)}
 								hint={t('wizard.steps.general.roleVisibilityHint')}
+							/>
+						</Box>
+
+						<Box className={styles.wizardCard}>
+							<div className={styles.sectionHeading}>
+								<Text className={styles.sectionHeadingTitle}>
+									{t('wizard.steps.general.voicePoolTitle')}
+								</Text>
+								<Text className={styles.sectionHeadingDescription}>
+									{t('wizard.steps.general.voicePoolDesc')}
+								</Text>
+							</div>
+							<CampaignVoicePoolSelector
+								value={form.values.selectedVoiceIds}
+								onChange={(nextVoiceIds) => {
+									form.setFieldValue('selectedVoiceIds', nextVoiceIds);
+									setSelectedVoiceIds(nextVoiceIds);
+								}}
+								label={t('wizard.steps.general.voicePoolLabel')}
+								description={t('wizard.steps.general.voicePoolFieldDesc')}
+								placeholder={t('wizard.steps.general.voicePoolPlaceholder')}
+								hint={t('wizard.steps.general.voicePoolHint')}
+								noVoicesMessage={t('wizard.steps.general.errorVoices')}
+								noMatchesMessage={t('wizard.steps.general.voicePoolNoMatches')}
+								loadErrorTitle={t(
+									'wizard.steps.general.voicePoolLoadErrorTitle'
+								)}
+								loadErrorDescription={t(
+									'wizard.steps.general.voicePoolLoadErrorDescription'
+								)}
+								required
 							/>
 						</Box>
 					</div>

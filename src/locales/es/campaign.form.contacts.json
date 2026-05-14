@@ -114,6 +114,15 @@
 				"dateInPast": "La fecha no puede ser anterior a hoy"
 			},
 			"limits": {
+				"voicePoolLabel": "Voces de la lista",
+				"voicePoolDescription": "Opcionalmente limita esta lista a un subconjunto de las voces de la campaña.",
+				"voicePoolPlaceholder": "Usa todas las voces de la campaña o selecciona un subconjunto",
+				"voicePoolHint": "Déjalo vacío para heredar las {{count}} voces de la campaña.",
+				"voicePoolNoVoices": "No hay voces de campaña disponibles para esta lista de contactos.",
+				"voicePoolNoCampaignVoices": "Esta campaña todavía no tiene voces asignadas.",
+				"voicePoolNoMatches": "Ninguna voz coincide con tu búsqueda",
+				"voicePoolLoadErrorTitle": "No se pudieron cargar las voces",
+				"voicePoolLoadErrorDescription": "Reintenta antes de guardar la selección de voces de esta lista.",
 				"maxWavesLabel": "Máx. oleadas",
 				"maxWavesDescription": "Número máximo de oleadas para esta lista de contactos.",
 				"maxWavesInherited": "Heredado del valor predeterminado de la campaña: {{value}}",

@@ -1,0 +1,16 @@
+{
+	"section": {
+		"title": "Voces de la campaña",
+		"description": "Elige qué voces puede distribuir esta campaña entre sus tareas."
+	},
+	"selector": {
+		"label": "Pool de voces",
+		"description": "Las voces seleccionadas quedan disponibles para la distribución de la campaña y de sus listas de contactos.",
+		"placeholder": "Selecciona una o más voces",
+		"hint": "Déjalo vacío solo si quieres mantener el comportamiento actual de voces de la campaña.",
+		"noVoices": "No hay voces disponibles para este cliente.",
+		"noMatches": "Ninguna voz coincide con tu búsqueda",
+		"loadErrorTitle": "No se pudieron cargar las voces",
+		"loadErrorDescription": "Reintenta antes de guardar cambios en las voces de la campaña."
+	}
+}

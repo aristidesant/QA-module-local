@@ -15,6 +15,15 @@
 				"roleVisibilityFieldDesc": "Select every role that should have campaign visibility.",
 				"roleVisibilityPlaceholder": "Select roles",
 				"roleVisibilityHint": "Leaving this empty creates the campaign with no assigned role visibility.",
+				"voicePoolTitle": "Voice pool",
+				"voicePoolDesc": "Choose the voices this campaign can distribute across tasks and conversations.",
+				"voicePoolLabel": "Campaign voices",
+				"voicePoolFieldDesc": "These voices will be distributed evenly across the campaign by default.",
+				"voicePoolPlaceholder": "Select one or more voices",
+				"voicePoolHint": "All available voices are preselected. Remove any voice you do not want to distribute.",
+				"voicePoolNoMatches": "No voices match your search",
+				"voicePoolLoadErrorTitle": "Unable to load voices",
+				"voicePoolLoadErrorDescription": "Retry before saving the campaign voice pool.",
 				"routingTitle": "Routing",
 				"routingDesc": "Match this campaign to the right number and objective.",
 				"routingDescInbound": "Assign the phone number that will receive inbound calls.",
@@ -52,7 +61,8 @@
 					"phoneIdRequired": "Phone number is required",
 					"wavesRequired": "Waves must be at least 1",
 					"waveDelayRequired": "Wave delay must be 0 or greater",
-					"objectiveRequired": "Campaign objective is required"
+					"objectiveRequired": "Campaign objective is required",
+					"voiceRequired": "Select at least one campaign voice"
 				}
 			},
 			"agent": {
