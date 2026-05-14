@@ -134,6 +134,7 @@ export interface Campaign {
 	promptId?: number;
 	objectiveId?: number;
 	voiceId?: string;
+	voiceIds?: string[];
 	createdAt: string; // ISO date string
 	updatedAt: string; // ISO date string
 	overAllScore?: number;

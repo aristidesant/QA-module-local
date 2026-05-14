@@ -43,4 +43,5 @@ export default interface ContactGroup {
 	maxCallsPerContact: number;
 	maxCallsPerList: number;
 	humanEquivalent: number;
+	voiceIds?: string[];
 }

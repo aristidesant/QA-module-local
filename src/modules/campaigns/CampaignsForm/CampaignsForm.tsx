@@ -57,6 +57,7 @@ import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel'
 import AppDrawer from '~/components/AppDrawer';
 import DashboardSection from './DashboardSection';
 import VersioningSection from './VersioningSection';
+import VoicesSection from './VoicesSection';
 import CampaignRoleVisibilitySelector from '../components/CampaignRoleVisibilitySelector';
 import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
@@ -78,6 +79,7 @@ const campaignFormTabNamespaces: Record<string, string> = {
 	params: 'campaign.form.params',
 	analytics: 'campaign.form.analytics',
 	dashboards: 'campaign.form.dashboards',
+	voices: 'campaign.form.voices',
 	versioning: 'campaign.form.versioning',
 };
 
@@ -139,9 +141,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 }) => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
-	const { selectedTab, rightComponent, resetView } = useCampaignsStore(
-		(state) => state
-	);
+	const { selectedTab, rightComponent, resetView, setSelectedTab } =
+		useCampaignsStore((state) => state);
 	const [isSettingsDrawerOpen, setIsSettingsDrawerOpen] = useState(false);
 	const [reviewModalOpen, setReviewModalOpen] = useState(false);
 	const [pendingAgentValues, setPendingAgentValues] = useState<Omit<
@@ -226,6 +227,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			promptId: campaign?.promptId ?? undefined,
 			objectiveId: campaign?.objectiveId ?? undefined,
 			voiceId: campaign?.voiceId ?? undefined,
+			voiceIds:
+				campaign?.voiceIds ?? (campaign?.voiceId ? [campaign.voiceId] : []),
 			clientId: campaign?.clientId ?? 0,
 			tags: campaign?.tags || [],
 			workingHours: campaign?.workingHours || defaultWorkingHours,
@@ -292,6 +295,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			promptId: campaign.promptId ?? undefined,
 			objectiveId: campaign.objectiveId ?? undefined,
 			voiceId: campaign.voiceId ?? undefined,
+			voiceIds:
+				campaign.voiceIds ?? (campaign.voiceId ? [campaign.voiceId] : []),
 			clientId: campaign.clientId ?? 0,
 			tags: campaign.tags || [],
 			workingHours: campaign.workingHours || defaultWorkingHours,
@@ -336,6 +341,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	useEffect(() => {
 		setIsSettingsDrawerOpen(false);
 	}, [selectedTab]);
+
+	useEffect(() => {
+		if (selectedTab === 'voices' && !campaign?.id) {
+			setSelectedTab('agents');
+		}
+	}, [campaign?.id, selectedTab, setSelectedTab]);
 
 	useEffect(() => {
 		if (selectedTab !== 'outcomes') return;
@@ -642,7 +653,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					/>
 					<Stack gap='xs'>
 						<Box p='xs'>
-							<CampaignTabs />
+							<CampaignTabs hasVoicesTab={Boolean(campaign?.id)} />
 						</Box>
 						{selectedTab === 'general' && (
 							<form
@@ -779,6 +790,19 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 								campaignId={campaign?.id}
 								attributeMetricKeys={attributeMetricKeys}
 							/>
+						)}
+						{selectedTab === 'voices' && campaign?.id && (
+							<form
+								onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
+							>
+								<VoicesSection />
+								<StickySaveActions
+									label={saveLabel}
+									loadingLabel={savingLabel}
+									isLoading={isUpdatingLight}
+									disabled={!form.isDirty()}
+								/>
+							</form>
 						)}
 						{selectedTab === 'versioning' && (
 							<VersioningSection campaign={campaign} />

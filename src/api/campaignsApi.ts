@@ -83,6 +83,7 @@ export interface CreateCampaignWithAgentDTO {
 		defaultMaxWaves?: number;
 		defaultWaveExecutionDelaySeconds?: number;
 		roleIds?: number[];
+		voiceIds?: string[];
 	};
 	agent: {
 		conversationConfig?: ConversationConfigPayload;

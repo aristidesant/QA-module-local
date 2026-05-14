@@ -15,6 +15,15 @@
 				"roleVisibilityFieldDesc": "Selecciona todos los roles que deben tener visibilidad de la campana.",
 				"roleVisibilityPlaceholder": "Selecciona roles",
 				"roleVisibilityHint": "Si dejas esto vacio, la campana se crea sin visibilidad asignada a roles.",
+				"voicePoolTitle": "Pool de voces",
+				"voicePoolDesc": "Elige las voces que esta campaña puede distribuir entre tareas y conversaciones.",
+				"voicePoolLabel": "Voces de la campaña",
+				"voicePoolFieldDesc": "Estas voces se distribuirán equitativamente por defecto dentro de la campaña.",
+				"voicePoolPlaceholder": "Selecciona una o más voces",
+				"voicePoolHint": "Todas las voces disponibles se seleccionan por defecto. Quita las que no quieras distribuir.",
+				"voicePoolNoMatches": "Ninguna voz coincide con tu búsqueda",
+				"voicePoolLoadErrorTitle": "No se pudieron cargar las voces",
+				"voicePoolLoadErrorDescription": "Reintenta antes de guardar el pool de voces de la campaña.",
 				"routingTitle": "Enrutamiento",
 				"routingDesc": "Asocia esta campaña con el número y objetivo correctos.",
 				"routingDescInbound": "Asigna el número de teléfono que recibirá las llamadas entrantes.",
@@ -52,7 +61,8 @@
 					"phoneIdRequired": "El número de teléfono es obligatorio",
 					"wavesRequired": "Las oleadas deben ser al menos 1",
 					"waveDelayRequired": "El retraso entre oleadas debe ser 0 o mayor",
-					"objectiveRequired": "El objetivo de la campaña es obligatorio"
+					"objectiveRequired": "El objetivo de la campaña es obligatorio",
+					"voiceRequired": "Selecciona al menos una voz para la campaña"
 				}
 			},
 			"agent": {
