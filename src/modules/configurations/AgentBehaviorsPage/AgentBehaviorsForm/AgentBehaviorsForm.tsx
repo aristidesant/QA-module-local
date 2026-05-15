@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Badge, Button, Text as MantineText } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -7,7 +7,6 @@ import {
 	useCreateAgentBehavior,
 	useUpdateAgentBehavior,
 } from '~/queries/useAgentBehaviors';
-import { useClientConfigByName } from '~/queries/useClientConfigs';
 import type { AgentBehavior } from '~/models/AgentBehavior';
 import type {
 	CampaignPredefinedConversationConfig,
@@ -30,7 +29,6 @@ import {
 	DEFAULT_AGENT_LLM,
 	DEFAULT_TTS_MODEL_ID,
 	EXPRESSIVE_TTS_MODEL_ID,
-	LLM_MODELS,
 	isExpressiveTtsModel,
 	normalizeSuggestedAudioTags,
 } from './formConfig';
@@ -53,14 +51,6 @@ interface AgentBehaviorsFormProps {
 	onSuccess: () => void;
 }
 
-interface LlmClientConfigValue {
-	llms?: Array<{
-		llm?: string;
-		is_checkpoint?: boolean;
-		available_reasoning_efforts?: string[] | null;
-	}>;
-}
-
 const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 	behavior,
 	mode,
@@ -71,61 +61,7 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 	const isEditMode = mode === 'edit' && !!behavior;
 	const createMutation = useCreateAgentBehavior();
 	const updateMutation = useUpdateAgentBehavior();
-	const { data: llmConfig } = useClientConfigByName('llm');
 	const [activeTab, setActiveTab] = useState<string>('general');
-
-	const { hasResolvedReasoningAvailability, reasoningEffortsByModel } =
-		useMemo(() => {
-			if (!llmConfig?.value) {
-				return {
-					hasResolvedReasoningAvailability: false,
-					reasoningEffortsByModel: {} as Record<string, string[] | null>,
-				};
-			}
-
-			try {
-				const parsed = JSON.parse(llmConfig.value) as LlmClientConfigValue;
-				if (!Array.isArray(parsed.llms)) {
-					return {
-						hasResolvedReasoningAvailability: false,
-						reasoningEffortsByModel: {} as Record<string, string[] | null>,
-					};
-				}
-
-				const supportedModelCodes = new Set(
-					LLM_MODELS.map(({ modelCode }) => modelCode)
-				);
-				const nextReasoningEffortsByModel = parsed.llms.reduce<
-					Record<string, string[] | null>
-				>((acc, model) => {
-					if (
-						!model.llm ||
-						model.is_checkpoint ||
-						!supportedModelCodes.has(model.llm)
-					) {
-						return acc;
-					}
-
-					acc[model.llm] = Array.isArray(model.available_reasoning_efforts)
-						? model.available_reasoning_efforts.filter(
-								(effort): effort is string => typeof effort === 'string'
-							)
-						: null;
-
-					return acc;
-				}, {});
-
-				return {
-					hasResolvedReasoningAvailability: true,
-					reasoningEffortsByModel: nextReasoningEffortsByModel,
-				};
-			} catch {
-				return {
-					hasResolvedReasoningAvailability: false,
-					reasoningEffortsByModel: {} as Record<string, string[] | null>,
-				};
-			}
-		}, [llmConfig?.value]);
 
 	const menuItems = [
 		{
@@ -429,12 +365,7 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 			case 'tts':
 				return <TTSSection />;
 			case 'agent':
-				return (
-					<AgentSection
-						hasResolvedReasoningAvailability={hasResolvedReasoningAvailability}
-						reasoningEffortsByModel={reasoningEffortsByModel}
-					/>
-				);
+				return <AgentSection />;
 			case 'platformSettings':
 				return <SecuritySection />;
 			default:

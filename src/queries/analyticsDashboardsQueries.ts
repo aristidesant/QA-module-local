@@ -5,6 +5,7 @@ import type {
 	CreateDashboardWidgetDto,
 	DashboardListParams,
 	DashboardDefinition,
+	DashboardPeriod,
 	DashboardRenderComparisonResponse,
 	DashboardRenderRequest,
 	DashboardRenderResponse,
@@ -15,6 +16,10 @@ import type {
 	UpdateDashboardDto,
 	UpdateDashboardWidgetDto,
 } from '~/models/AnalyticsDashboard';
+
+const isDashboardPeriod = (
+	period?: DashboardPeriod | null
+): period is DashboardPeriod => Boolean(period?.start && period?.end);
 
 const toUnifiedRenderResponse = (
 	response: DashboardRenderResponse
@@ -40,13 +45,23 @@ const toUnifiedComparisonResponse = (
 			])
 	);
 
+	const currentPeriod = response.period?.current;
+	const previousPeriod = response.period?.previous;
+	const comparisonPeriod =
+		isDashboardPeriod(currentPeriod) && isDashboardPeriod(previousPeriod)
+			? {
+					current: currentPeriod,
+					previous: previousPeriod,
+				}
+			: undefined;
+
 	return {
 		renderResult: {
 			dashboardId: response.dashboardId,
 			campaignId: response.campaignId,
 			name: response.name,
 			timeRange: response.timeRange,
-			period: response.period?.current,
+			period: comparisonPeriod?.current,
 			widgets: response.widgets.map((widget) => ({
 				widgetId: widget.widgetId,
 				widgetType: widget.widgetType,
@@ -57,7 +72,7 @@ const toUnifiedComparisonResponse = (
 			})),
 		},
 		comparisonMap: comparisonMap.size ? comparisonMap : undefined,
-		comparisonPeriod: response.period,
+		comparisonPeriod,
 	};
 };
 

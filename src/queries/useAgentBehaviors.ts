@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
 	getAgentBehaviors,
+	getAgentBehaviorById,
 	createAgentBehavior,
 	updateAgentBehavior,
 	deleteAgentBehavior,
@@ -32,6 +33,17 @@ export const useAgentBehaviors = (params?: GetAgentBehaviorsParams) => {
 	return useQuery({
 		queryKey: agentBehaviorsKeys.list(params || {}),
 		queryFn: () => getAgentBehaviors(params),
+	});
+};
+
+export const useGetAgentBehavior = (
+	id: string,
+	options?: { enabled?: boolean }
+) => {
+	return useQuery({
+		queryKey: agentBehaviorsKeys.detail(id),
+		queryFn: () => getAgentBehaviorById(id),
+		enabled: options?.enabled ?? !!id,
 	});
 };
 

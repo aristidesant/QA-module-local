@@ -208,7 +208,17 @@ export const isSameCalendarDay = (
 	);
 };
 
-export const formatDashboardPeriod = (period: DashboardPeriod): string => {
+export const isDashboardPeriod = (
+	period?: DashboardPeriod | null
+): period is DashboardPeriod => Boolean(period?.start && period?.end);
+
+export const formatDashboardPeriod = (
+	period?: DashboardPeriod | null
+): string | null => {
+	if (!isDashboardPeriod(period)) {
+		return null;
+	}
+
 	const startLabel = formatPeriodDate(period.start);
 
 	if (isSameCalendarDay(period.start, period.end)) {

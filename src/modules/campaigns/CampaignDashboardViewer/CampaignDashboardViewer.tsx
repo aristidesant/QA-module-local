@@ -200,13 +200,20 @@ const CampaignDashboardViewer = ({
 			return undefined;
 		}
 
+		const currentPeriod = formatDashboardPeriod(
+			unifiedRenderResult.comparisonPeriod.current
+		);
+		const previousPeriod = formatDashboardPeriod(
+			unifiedRenderResult.comparisonPeriod.previous
+		);
+
+		if (!currentPeriod || !previousPeriod) {
+			return undefined;
+		}
+
 		return t('dashboard.comparisonPeriod', {
-			currentPeriod: formatDashboardPeriod(
-				unifiedRenderResult.comparisonPeriod.current
-			),
-			previousPeriod: formatDashboardPeriod(
-				unifiedRenderResult.comparisonPeriod.previous
-			),
+			currentPeriod,
+			previousPeriod,
 		});
 	}, [t, unifiedRenderResult]);
 	const { data: widgetsData, refetch: refetchWidgets } =
