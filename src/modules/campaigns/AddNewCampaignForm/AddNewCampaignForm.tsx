@@ -26,6 +26,7 @@ import useCampaignsPredefinedParams, {
 } from '../CampaignsForm/useCampaignsPredefinedParams';
 import {
 	applyCampaignBehaviorConversationConfig,
+	applyCampaignBehaviorPlatformSettings,
 	sanitizeCampaignBehaviorConversationConfig,
 } from '~/modules/campaigns/utils/campaignBehaviorConfig';
 // import ConfigurationSummary from '../CampaignsForm/AgentSection/CampaignConfigurationPredefinedParams/ConfigurationSummary';
@@ -109,28 +110,38 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 	const [selectedParam, setSelectedParam] =
 		useState<CampaignPredefinedParam | null>(null);
 
-	const applyConversationConfig = (
-		config: CampaignPredefinedParam['params']['conversationConfig']
-	) => {
+	const applyBehaviorConfig = (param: CampaignPredefinedParam) => {
 		const currentAgentConfig = form.values.agent.conversationConfig || {};
+		const currentPlatformSettings = form.values.agent.platformSettings || {};
 		const mergedConfig = applyCampaignBehaviorConversationConfig(
 			currentAgentConfig as Record<string, unknown>,
-			config
+			param.params?.conversationConfig
+		);
+		const mergedPlatformSettings = applyCampaignBehaviorPlatformSettings(
+			currentPlatformSettings as Record<string, unknown>,
+			param.params?.platformSettings
 		);
 
 		form.setFieldValue('agent.conversationConfig', mergedConfig);
+		form.setFieldValue('agent.platformSettings', mergedPlatformSettings);
 	};
 
 	const handleSubmit = (values: typeof form.values) => {
 		// Sync the type between campaign and agent to ensure they match
 		const campaignType = values.campaign.type;
+		const selectedBehavior = selectedParam;
 		const selectedConversationConfig =
-			selectedParam?.params?.conversationConfig;
+			selectedBehavior?.params?.conversationConfig;
+		const selectedPlatformSettings = selectedBehavior?.params?.platformSettings;
 		const normalizedConversationConfig =
 			applyCampaignBehaviorConversationConfig(
 				(values.agent.conversationConfig || {}) as Record<string, unknown>,
 				selectedConversationConfig
 			);
+		const normalizedPlatformSettings = applyCampaignBehaviorPlatformSettings(
+			(values.agent.platformSettings || {}) as Record<string, unknown>,
+			selectedPlatformSettings
+		);
 
 		// Build the conversationConfig.agent object with the phone number
 		const agentConfig: ConversationAgentConfig = {
@@ -159,6 +170,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 			agent: {
 				...values.agent,
 				type: campaignType, // Use campaign type to ensure they match
+				platformSettings: normalizedPlatformSettings,
 				conversationConfig: {
 					...normalizedConversationConfig,
 					agent: agentConfig,
@@ -297,8 +309,12 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 						value={selectedParam?.name || null}
 						onChange={(value) => {
 							const param = predefinedParams.find((p) => p.name === value);
-							if (param && param.params?.conversationConfig) {
-								applyConversationConfig(param.params.conversationConfig);
+							if (
+								param &&
+								(param.params?.conversationConfig ||
+									param.params?.platformSettings)
+							) {
+								applyBehaviorConfig(param);
 								setSelectedParam(param);
 								form.setFieldValue('campaign.configId', param.id);
 							}

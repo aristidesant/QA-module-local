@@ -1,10 +1,18 @@
-import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
+import type {
+	CampaignPredefinedConversationConfig,
+	CampaignPredefinedPlatformSettings,
+} from '~/models/CampaignPredefinedParam';
 import type { ConversationConfigModel } from '~/models/AgentListObject';
 import { deepMergeConfig } from '~/utils/objectUtils';
 
 type BehaviorConversationConfig =
 	| CampaignPredefinedConversationConfig
 	| Partial<ConversationConfigModel>
+	| null
+	| undefined;
+
+type BehaviorPlatformSettings =
+	| CampaignPredefinedPlatformSettings
 	| null
 	| undefined;
 
@@ -96,6 +104,19 @@ export const applyCampaignBehaviorConversationConfig = (
 	return hasReasoningEffortSupport(selectedConversationConfig)
 		? mergedConfig
 		: clearReasoningEffort(mergedConfig);
+};
+
+export const applyCampaignBehaviorPlatformSettings = (
+	currentPlatformSettings: Record<string, unknown>,
+	selectedPlatformSettings?: BehaviorPlatformSettings
+): Record<string, unknown> => {
+	if (!selectedPlatformSettings?.overrides) {
+		return currentPlatformSettings;
+	}
+
+	return deepMergeConfig(currentPlatformSettings, {
+		overrides: selectedPlatformSettings.overrides,
+	});
 };
 
 export const sanitizeCampaignBehaviorConversationConfig = (

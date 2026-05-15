@@ -13,6 +13,7 @@ import {
 } from '@mantine/core';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { useTranslation } from 'react-i18next';
+import classes from './DispositionCatalogForm.module.css';
 import type {
 	CreateDispositionCatalog,
 	DispositionCatalogModel,
@@ -96,6 +97,15 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 		<form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
 			<Stack gap='md'>
 				<Stack gap='xs'>
+					<Text
+						size='xs'
+						fw={600}
+						tt='uppercase'
+						c='dimmed'
+						className={classes.sectionLabel}
+					>
+						{t('formCatalog.sectionIdentity', 'Identity')}
+					</Text>
 					<TextInput
 						label={t('formCatalog.name')}
 						placeholder={t('formCatalog.namePlaceholder')}
@@ -120,6 +130,14 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 							icon={<IconInfoCircle size={16} />}
 							variant='light'
 							color='blue'
+							styles={{
+								root: {
+									background: '#ecf8fd',
+									borderColor: 'rgba(0,152,212,0.25)',
+								},
+								icon: { color: '#0098d4' },
+								message: { color: '#007aae' },
+							}}
 						>
 							{t('formCatalog.outboundAlert')}
 						</Alert>
@@ -127,6 +145,15 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 				</Stack>
 				<Divider />
 				<Stack gap='xs'>
+					<Text
+						size='xs'
+						fw={600}
+						tt='uppercase'
+						c='dimmed'
+						className={classes.sectionLabel}
+					>
+						{t('formCatalog.sectionConfig', 'Configuration')}
+					</Text>
 					<Textarea
 						label={t('formCatalog.descriptionLabel')}
 						placeholder={t('formCatalog.descriptionPlaceholder')}

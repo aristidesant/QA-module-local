@@ -52,7 +52,7 @@
 }
 
 .nodeAccent[data-active='true'] {
-	background: var(--mantine-color-green-5);
+	background: #1bb54a;
 }
 
 /* Connector lines for non-root nodes */
@@ -82,6 +82,15 @@
 /* Inactive */
 .nodeRowInactive {
 	opacity: 0.5;
+}
+
+/* Protected root node — read-only, tinted */
+.nodeRowProtected {
+	background-color: #f7f8fa;
+}
+
+.nodeRowProtected:hover {
+	background-color: #eef0f3;
 }
 
 /* Toggle button area */
@@ -190,7 +199,7 @@
 
 /* Empty state */
 .emptyState {
-	padding: 28px 16px;
+	padding: 40px 24px;
 	text-align: center;
 	border: 1px dashed var(--mantine-color-gray-3);
 	border-radius: 8px;
@@ -493,6 +502,14 @@
 
 [data-mantine-color-scheme='dark'] .nodeAccent {
 	background: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .nodeRowProtected {
+	background-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .nodeRowProtected:hover {
+	background-color: var(--mantine-color-dark-6);
 }
 
 [data-mantine-color-scheme='dark'] .emptyState {

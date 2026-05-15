@@ -32,7 +32,10 @@ import styles from './StepTwoAgent.module.css';
 import sharedStyles from '../CampaignWizard.module.css';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useUpdateCampaign, useGetCampaign } from '~/queries/campaignsQueries';
-import { sanitizeCampaignBehaviorConversationConfig } from '~/modules/campaigns/utils/campaignBehaviorConfig';
+import {
+	applyCampaignBehaviorPlatformSettings,
+	sanitizeCampaignBehaviorConversationConfig,
+} from '~/modules/campaigns/utils/campaignBehaviorConfig';
 
 interface StepTwoAgentProps {
 	onNext: () => void;
@@ -275,6 +278,9 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		const selectedBehaviorConversationConfig = predefinedParams.find(
 			(param) => param.id && String(param.id) === String(values.agentBehaviorId)
 		)?.params?.conversationConfig;
+		const selectedBehaviorPlatformSettings = predefinedParams.find(
+			(param) => param.id && String(param.id) === String(values.agentBehaviorId)
+		)?.params?.platformSettings;
 
 		if (
 			!currentCampaign ||
@@ -302,6 +308,13 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 				agentConfig: {
 					...currentCampaign.agentConfig,
 					knowledgeBaseIds: currentKnowledgeBaseIds,
+					platformSettings: applyCampaignBehaviorPlatformSettings(
+						(currentCampaign.agentConfig?.platformSettings || {}) as Record<
+							string,
+							unknown
+						>,
+						selectedBehaviorPlatformSettings
+					),
 					conversationConfig: {
 						...currentCampaign.agentConfig?.conversationConfig,
 						agent: {

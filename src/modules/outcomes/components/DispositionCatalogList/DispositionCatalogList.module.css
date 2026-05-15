@@ -21,8 +21,8 @@
 }
 
 .activeBadge {
-	background-color: var(--mantine-color-blue-1);
-	color: var(--mantine-color-blue-7);
+	background-color: #ecfdf2;
+	color: #0d7530;
 }
 
 .controlsWrapper {
@@ -141,9 +141,97 @@
 	padding: var(--mantine-spacing-md);
 }
 
+/* Type badges */
+.typeBadgeInbound,
+.typeBadgeOutbound {
+	display: inline-flex;
+	align-items: center;
+	flex-shrink: 0;
+	white-space: nowrap;
+	border-radius: 999px;
+	padding: 1px 8px;
+	font-size: 11px;
+	font-weight: 600;
+	line-height: 18px;
+	letter-spacing: 0.01em;
+}
+
+.typeBadgeInbound {
+	background-color: #ecf8fd;
+	color: #007aae;
+}
+
+.typeBadgeOutbound {
+	background-color: #ecfdf2;
+	color: #0d7530;
+}
+
+/* Status badge pill */
+.statusBadgeActive,
+.statusBadgeInactive {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	border-radius: 999px;
+	padding: 2px 8px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 18px;
+	white-space: nowrap;
+}
+
+.statusBadgeActive {
+	background-color: #ecfdf2;
+	color: #0d7530;
+}
+
+.statusBadgeInactive {
+	background-color: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-6);
+}
+
+.statusDot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background-color: currentColor;
+	flex-shrink: 0;
+}
+
+/* Actions group */
+.actionsGroup {
+	opacity: 0.45;
+	transition: opacity 120ms ease;
+}
+
+tr:hover .actionsGroup,
+tr:focus-within .actionsGroup {
+	opacity: 1;
+}
+
 [data-mantine-color-scheme='dark'] .activeBadge {
+	background-color: rgba(27, 181, 74, 0.15);
+	color: #4ade80;
+}
+
+[data-mantine-color-scheme='dark'] .typeBadgeInbound {
+	background-color: rgba(0, 152, 212, 0.15);
+	color: #38bdf8;
+}
+
+[data-mantine-color-scheme='dark'] .typeBadgeOutbound {
+	background-color: rgba(27, 181, 74, 0.15);
+	color: #4ade80;
+}
+
+[data-mantine-color-scheme='dark'] .statusBadgeActive {
+	background-color: rgba(27, 181, 74, 0.15);
+	color: #4ade80;
+}
+
+[data-mantine-color-scheme='dark'] .statusBadgeInactive {
 	background-color: var(--mantine-color-dark-5);
-	color: var(--mantine-color-blue-4);
+	color: var(--mantine-color-dark-2);
 }
 
 [data-mantine-color-scheme='dark'] .searchInput input {

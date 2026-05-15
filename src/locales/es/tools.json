@@ -34,7 +34,8 @@
 		"status": "Estado",
 		"createdBy": "Creado por",
 		"created": "Creado",
-		"unknownCreator": "Desconocido"
+		"unknownCreator": "Desconocido",
+		"noDescription": "Sin descripción"
 	},
 	"status": {
 		"active": "Activo",

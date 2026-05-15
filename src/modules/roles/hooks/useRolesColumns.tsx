@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
 	ActionIcon,
-	Badge,
 	Group,
 	HoverCard,
 	Stack,
@@ -56,11 +55,11 @@ const useRolesColumns = ({
 					const role = row.original;
 
 					return (
-						<Group gap='xs' align='center'>
-							<HoverCard width={280} shadow='md'>
+						<Group gap='xs' align='flex-start' wrap='nowrap'>
+							<HoverCard width={280} shadow='md' openDelay={200}>
 								<HoverCard.Target>
-									<ActionIcon variant='subtle' size='sm'>
-										<IconInfoCircle size={14} />
+									<ActionIcon variant='subtle' color='gray' size='xs' mt={2}>
+										<IconInfoCircle size={13} />
 									</ActionIcon>
 								</HoverCard.Target>
 								<HoverCard.Dropdown>
@@ -81,22 +80,27 @@ const useRolesColumns = ({
 									</Stack>
 								</HoverCard.Dropdown>
 							</HoverCard>
-							<Group gap='xs'>
-								<Text fz='sm' fw={500}>
-									{role.name}
+							<div className={classes.nameCell}>
+								<div className={classes.nameRow}>
+									<Text fz='sm' fw={600} className={classes.nameText}>
+										{role.name}
+									</Text>
+									{role.isSystem && (
+										<span className={classes.systemBadge}>
+											<IconShield size={10} />
+											{t('table.role.systemBadge')}
+										</span>
+									)}
+								</div>
+								<Text
+									fz='xs'
+									c='dimmed'
+									className={classes.nameDescription}
+									fs={role.description ? undefined : 'italic'}
+								>
+									{role.description || t('table.role.noDescription')}
 								</Text>
-								{role.isSystem && (
-									<Badge
-										variant='light'
-										color='grape'
-										size='xs'
-										leftSection={<IconShield size={10} />}
-										className={classes.systemBadge}
-									>
-										{t('table.role.systemBadge')}
-									</Badge>
-								)}
-							</Group>
+							</div>
 						</Group>
 					);
 				},
@@ -119,14 +123,14 @@ const useRolesColumns = ({
 				cell: ({ row }) => {
 					const role = row.original;
 					return (
-						<Badge
-							variant='light'
-							color={role.isActive ? 'green' : 'gray'}
-							size='sm'
-							className={classes.statusBadge}
+						<span
+							className={
+								role.isActive ? classes.statusActive : classes.statusInactive
+							}
 						>
+							<span className={classes.statusDot} />
 							{role.isActive ? t('status.active') : t('status.inactive')}
-						</Badge>
+						</span>
 					);
 				},
 			},
@@ -145,10 +149,11 @@ const useRolesColumns = ({
 					const role = row.original;
 
 					return (
-						<Group gap='xs' wrap='nowrap'>
+						<Group gap={4} wrap='nowrap' className={classes.actionsGroup}>
 							<Tooltip label={t('table.actions.view')} withArrow>
 								<ActionIcon
-									variant='light'
+									variant='subtle'
+									color='gray'
 									size='sm'
 									onClick={(event) => {
 										event.stopPropagation();
@@ -156,12 +161,13 @@ const useRolesColumns = ({
 									}}
 									aria-label={t('table.actions.view')}
 								>
-									<IconEye size={16} />
+									<IconEye size={15} />
 								</ActionIcon>
 							</Tooltip>
 							<Tooltip label={t('table.actions.edit')} withArrow>
 								<ActionIcon
-									variant='light'
+									variant='subtle'
+									color='gray'
 									size='sm'
 									onClick={(event) => {
 										event.stopPropagation();
@@ -169,7 +175,7 @@ const useRolesColumns = ({
 									}}
 									aria-label={t('table.actions.edit')}
 								>
-									<IconPencil size={16} />
+									<IconPencil size={15} />
 								</ActionIcon>
 							</Tooltip>
 							<Tooltip
@@ -181,9 +187,9 @@ const useRolesColumns = ({
 								withArrow
 							>
 								<ActionIcon
-									variant='light'
-									size='sm'
+									variant='subtle'
 									color='red'
+									size='sm'
 									onClick={(event) => {
 										event.stopPropagation();
 										onDelete(role);
@@ -191,7 +197,7 @@ const useRolesColumns = ({
 									aria-label={t('table.actions.delete')}
 									disabled={role.isSystem}
 								>
-									<IconTrash size={16} />
+									<IconTrash size={15} />
 								</ActionIcon>
 							</Tooltip>
 						</Group>

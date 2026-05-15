@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { ActionIcon, Badge, Text, Tooltip, Flex } from '@mantine/core';
+import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
 import { openConfirmModal } from '@mantine/modals';
 import {
 	IconTrash,
@@ -23,23 +23,32 @@ import styles from './KnowledgeBaseList.module.css';
 import type { UseMutationResult } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 
-const truncate = (s: string | undefined, n = 80) =>
-	s && s.length > n ? s.slice(0, n - 1) + '…' : s || '';
-
-const statusConfig = {
-	PENDING: { color: 'orange', icon: IconAlertTriangle },
-	UPLOADING: { color: 'blue', icon: IconRefresh },
-	ACTIVE: { color: 'green', icon: IconFileText },
-	FAILED: { color: 'red', icon: IconAlertTriangle },
-	INACTIVE: { color: 'gray', icon: IconFileText },
-} as const;
-
 const formatDate = (iso?: string | null) =>
 	iso ? dayjs(iso).format('YYYY-MM-DD HH:mm') : '-';
 
 type PermissionFlags = {
 	canUpdate: boolean;
 	canDelete: boolean;
+};
+
+const typeIconMap = {
+	[KnowledgeBaseType.FILE]: IconFileText,
+	[KnowledgeBaseType.URL]: IconLink,
+	[KnowledgeBaseType.TEXT]: IconArticle,
+} as const;
+
+const typeClassMap = {
+	[KnowledgeBaseType.FILE]: styles.typeBadgeFile,
+	[KnowledgeBaseType.URL]: styles.typeBadgeUrl,
+	[KnowledgeBaseType.TEXT]: styles.typeBadgeText,
+} as const;
+
+const statusClassMap: Record<string, string> = {
+	ACTIVE: styles.statusActive,
+	INACTIVE: styles.statusInactive,
+	PENDING: styles.statusPending,
+	UPLOADING: styles.statusUploading,
+	FAILED: styles.statusFailed,
 };
 
 export const useKnowledgeBaseColumns = (
@@ -59,17 +68,20 @@ export const useKnowledgeBaseColumns = (
 				header: t('columns.name'),
 				cell: ({ row }) => {
 					const item = row.original;
-					const nameText = (
-						<Text fw={600} title={item.name}>
-							{truncate(item.name, 50)}
-						</Text>
-					);
-					return item.description ? (
-						<Tooltip label={item.description} multiline maw={400}>
-							{nameText}
-						</Tooltip>
-					) : (
-						nameText
+					return (
+						<div className={styles.nameCell}>
+							<Text fz='sm' fw={600} className={styles.nameText}>
+								{item.name}
+							</Text>
+							<Text
+								fz='xs'
+								c='dimmed'
+								className={styles.nameDescription}
+								fs={item.description ? undefined : 'italic'}
+							>
+								{item.description || t('list.noDescription')}
+							</Text>
+						</div>
 					);
 				},
 				size: 200,
@@ -79,29 +91,13 @@ export const useKnowledgeBaseColumns = (
 				header: t('columns.type'),
 				cell: ({ getValue }) => {
 					const type = getValue() as KnowledgeBaseType;
+					const Icon = typeIconMap[type] ?? IconFileText;
+					const cls = typeClassMap[type] ?? styles.typeBadgeFile;
 					return (
-						<Badge
-							variant='light'
-							size='sm'
-							color={
-								type === KnowledgeBaseType.FILE
-									? 'blue'
-									: type === KnowledgeBaseType.URL
-										? 'green'
-										: 'orange'
-							}
-							leftSection={
-								type === KnowledgeBaseType.FILE ? (
-									<IconFileText size={10} />
-								) : type === KnowledgeBaseType.URL ? (
-									<IconLink size={10} />
-								) : (
-									<IconArticle size={10} />
-								)
-							}
-						>
+						<span className={cls}>
+							<Icon size={11} />
 							{t(`type.${type}`)}
-						</Badge>
+						</span>
 					);
 				},
 				size: 100,
@@ -112,18 +108,13 @@ export const useKnowledgeBaseColumns = (
 				cell: ({ row }) => {
 					const item = row.original;
 					const status = item.status;
-					const config = statusConfig[status] || statusConfig.INACTIVE;
-					const StatusIcon = config.icon;
+					const cls = statusClassMap[status] ?? styles.statusInactive;
 					return (
 						<div className={styles.statusSection}>
-							<Badge
-								variant='light'
-								color={config.color}
-								size='sm'
-								leftSection={<StatusIcon size={12} />}
-							>
+							<span className={cls}>
+								<span className={styles.statusDot} />
 								{t(`status.${status}`)}
-							</Badge>
+							</span>
 							{item.uploadError && (
 								<Tooltip
 									label={
@@ -154,7 +145,7 @@ export const useKnowledgeBaseColumns = (
 				id: 'createdAt',
 				header: t('columns.createdAt'),
 				cell: ({ getValue }) => (
-					<Text size='sm' c='dimmed'>
+					<Text fz='xs' c='dimmed'>
 						{formatDate(getValue())}
 					</Text>
 				),
@@ -166,9 +157,11 @@ export const useKnowledgeBaseColumns = (
 				cell: ({ row }) => {
 					const item = row.original;
 					return (
-						<Flex
-							gap={'xs'}
-							justify={'end'}
+						<Group
+							gap={4}
+							justify='flex-end'
+							wrap='nowrap'
+							className={styles.actionsGroup}
 							onClick={(e) => e.stopPropagation()}
 						>
 							{item.file?.repositoryRoute || item.sourceUrl ? (
@@ -179,9 +172,11 @@ export const useKnowledgeBaseColumns = (
 											: t('table.actions.downloadFile')
 									}
 									position='top'
+									withArrow
 								>
 									<ActionIcon
-										variant='light'
+										variant='subtle'
+										color='gray'
 										component='a'
 										aria-label={
 											item.type === KnowledgeBaseType.URL
@@ -197,9 +192,9 @@ export const useKnowledgeBaseColumns = (
 										size='sm'
 									>
 										{item.type === KnowledgeBaseType.URL ? (
-											<IconExternalLink size={16} />
+											<IconExternalLink size={15} />
 										) : (
-											<IconDownload size={16} />
+											<IconDownload size={15} />
 										)}
 									</ActionIcon>
 								</Tooltip>
@@ -211,9 +206,11 @@ export const useKnowledgeBaseColumns = (
 									<Tooltip
 										label={t('table.actions.retryUpload')}
 										position='top'
+										withArrow
 									>
 										<ActionIcon
-											variant='light'
+											variant='subtle'
+											color='gray'
 											size='sm'
 											aria-label={t('table.actions.retryUpload')}
 											onClick={async () => {
@@ -226,28 +223,37 @@ export const useKnowledgeBaseColumns = (
 											disabled={retryMutation?.status === 'pending'}
 											loading={retryMutation?.status === 'pending'}
 										>
-											<IconRefresh size={16} />
+											<IconRefresh size={15} />
 										</ActionIcon>
 									</Tooltip>
 								)}
 
 							{canUpdate && (
-								<Tooltip label={t('table.actions.edit')} position='top'>
+								<Tooltip
+									label={t('table.actions.edit')}
+									position='top'
+									withArrow
+								>
 									<ActionIcon
-										variant='light'
+										variant='subtle'
+										color='gray'
 										onClick={() => openEdit(Number(item.id))}
 										size='sm'
 										aria-label={t('table.actions.edit')}
 									>
-										<IconEdit size={16} />
+										<IconEdit size={15} />
 									</ActionIcon>
 								</Tooltip>
 							)}
 
 							{canDelete && (
-								<Tooltip label={t('table.actions.delete')} position='top'>
+								<Tooltip
+									label={t('table.actions.delete')}
+									position='top'
+									withArrow
+								>
 									<ActionIcon
-										variant='light'
+										variant='subtle'
 										color='red'
 										aria-label={t('table.actions.delete')}
 										onClick={() =>
@@ -264,11 +270,11 @@ export const useKnowledgeBaseColumns = (
 										}
 										size='sm'
 									>
-										<IconTrash size={16} />
+										<IconTrash size={15} />
 									</ActionIcon>
 								</Tooltip>
 							)}
-						</Flex>
+						</Group>
 					);
 				},
 				size: 120,

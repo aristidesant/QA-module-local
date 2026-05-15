@@ -47,7 +47,7 @@ export default function CampaignManagementPage() {
 				</Tabs.Panel>
 
 				<Tabs.Panel value='outcomes' py='xs'>
-					<DispositionPage embedded />
+					<DispositionPage />
 				</Tabs.Panel>
 			</Tabs>
 		</ContentContainer>

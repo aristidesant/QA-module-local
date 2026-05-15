@@ -2,9 +2,9 @@ import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
 import {
 	ActionIcon,
-	Badge,
 	Group,
 	HoverCard,
+	Stack,
 	Text,
 	Tooltip,
 } from '@mantine/core';
@@ -18,13 +18,6 @@ interface UseUsersColumnsParams {
 	onEdit: (userId: number) => void;
 	onDelete: (user: UserModel) => void;
 }
-
-const statusColors: Record<string, string> = {
-	active: 'green',
-	inactive: 'gray',
-	pending: 'yellow',
-	suspended: 'red',
-};
 
 const formatDateTime = (value: string | Date | null | undefined) => {
 	if (!value) {
@@ -57,27 +50,38 @@ const useUsersColumns = ({
 					const name = `${firstName} ${lastName}`.trim() || '—';
 
 					return (
-						<Group gap='xs' align='center'>
-							<HoverCard width={280} shadow='none'>
+						<Group gap='xs' align='flex-start' wrap='nowrap'>
+							<HoverCard width={280} shadow='md' openDelay={200}>
 								<HoverCard.Target>
-									<ActionIcon variant='subtle' size='sm'>
-										<IconInfoCircle size={14} />
+									<ActionIcon variant='subtle' color='gray' size='xs' mt={2}>
+										<IconInfoCircle size={13} />
 									</ActionIcon>
 								</HoverCard.Target>
 								<HoverCard.Dropdown>
-									<Text fz='xs'>
-										{t('table.user.usernameLabel')}: {user.username}
-									</Text>
-									<Text fz='xs'>
-										{t('table.user.emailLabel')}: {user.email}
-									</Text>
-									<Text fz='xs'>
-										{t('table.user.createdLabel')}:{' '}
-										{formatDateTime(user.createdAt)}
-									</Text>
+									<Stack gap='xs'>
+										<Text fz='xs'>
+											<strong>{t('table.user.usernameLabel')}:</strong>{' '}
+											{user.username}
+										</Text>
+										<Text fz='xs'>
+											<strong>{t('table.user.emailLabel')}:</strong>{' '}
+											{user.email}
+										</Text>
+										<Text fz='xs'>
+											<strong>{t('table.user.createdLabel')}:</strong>{' '}
+											{formatDateTime(user.createdAt)}
+										</Text>
+									</Stack>
 								</HoverCard.Dropdown>
 							</HoverCard>
-							<Text fz='xs'>{name}</Text>
+							<div className={classes.nameCell}>
+								<Text fz='sm' fw={600} className={classes.nameText}>
+									{name}
+								</Text>
+								<Text fz='xs' c='dimmed' className={classes.nameEmail}>
+									{user.email}
+								</Text>
+							</div>
 						</Group>
 					);
 				},
@@ -88,15 +92,17 @@ const useUsersColumns = ({
 				cell: ({ getValue }) => {
 					const value = getValue<string | null | undefined>();
 					const statusKey = value?.toLowerCase?.() ?? '';
-					const color = statusColors[statusKey] ?? 'gray';
 					const label = statusKey
-						? t(`status.${statusKey}`, { defaultValue: value })
+						? t(`status.${statusKey}`, { defaultValue: value ?? '—' })
 						: '—';
+					const statusClass =
+						classes[`status_${statusKey}`] ?? classes.status_inactive;
 
 					return (
-						<Badge variant='light' color={color} size='xs'>
+						<span className={statusClass}>
+							<span className={classes.statusDot} />
 							{label}
-						</Badge>
+						</span>
 					);
 				},
 			},
@@ -128,10 +134,16 @@ const useUsersColumns = ({
 					const user = row.original;
 
 					return (
-						<Group gap={4} justify='flex-end' wrap='nowrap'>
+						<Group
+							gap={4}
+							justify='flex-end'
+							wrap='nowrap'
+							className={classes.actionsGroup}
+						>
 							<Tooltip label={t('table.actions.edit')} withArrow>
 								<ActionIcon
-									variant='light'
+									variant='subtle'
+									color='gray'
 									size='sm'
 									onClick={(event) => {
 										event.stopPropagation();
@@ -139,12 +151,12 @@ const useUsersColumns = ({
 									}}
 									aria-label={t('table.actions.edit')}
 								>
-									<IconPencil size={16} />
+									<IconPencil size={15} />
 								</ActionIcon>
 							</Tooltip>
 							<Tooltip label={t('table.actions.delete')} withArrow>
 								<ActionIcon
-									variant='light'
+									variant='subtle'
 									color='red'
 									size='sm'
 									onClick={(event) => {
@@ -153,7 +165,7 @@ const useUsersColumns = ({
 									}}
 									aria-label={t('table.actions.delete')}
 								>
-									<IconTrash size={16} />
+									<IconTrash size={15} />
 								</ActionIcon>
 							</Tooltip>
 						</Group>

@@ -19,6 +19,7 @@ import {
 	IconMicrophone,
 	IconVolume,
 	IconRobot,
+	IconShieldLock,
 } from '@tabler/icons-react';
 import {
 	CampaignPredefinedFormProvider,
@@ -31,12 +32,17 @@ import {
 	isExpressiveTtsModel,
 	normalizeSuggestedAudioTags,
 } from './formConfig';
+import {
+	clonePlatformSettingsOverrides,
+	DEFAULT_PLATFORM_SETTINGS_OVERRIDES,
+} from './platformSettingsConfig';
 
 import styles from './CampaignPredefinedParamsForm.module.css';
 import GeneralSection from './components/GeneralSection';
 import ASRSection from './components/ASRSection';
 import TTSSection from './components/TTSSection';
 import AgentSection from './components/AgentSection';
+import SecuritySection from './components/SecuritySection';
 
 interface AgentBehaviorsFormProps {
 	behavior?: AgentBehavior;
@@ -78,10 +84,15 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 			label: t('form.menu.agent', 'Agent'),
 			icon: IconRobot,
 		},
+		{
+			id: 'platformSettings',
+			label: t('form.menu.platformSettings', 'Platoform Settings'),
+			icon: IconShieldLock,
+		},
 	];
 
 	const sectionCopy: Record<
-		'general' | 'asr' | 'tts' | 'agent',
+		'general' | 'asr' | 'tts' | 'agent' | 'platformSettings',
 		{ title: string; description: string }
 	> = {
 		general: {
@@ -109,9 +120,19 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 				'Agent prompt and LLM settings'
 			),
 		},
+		platformSettings: {
+			title: t('form.sections.platformSettings.title', 'Platform Settings'),
+			description: t(
+				'form.sections.platformSettings.description',
+				'Toggle platform-level overrides exposed to the client.'
+			),
+		},
 	};
 
 	const conversationConfig = behavior?.params?.conversationConfig;
+	const platformSettingsOverrides =
+		behavior?.params?.platformSettings?.overrides ??
+		DEFAULT_PLATFORM_SETTINGS_OVERRIDES;
 
 	const form = useForm<FormValues>({
 		initialValues: {
@@ -150,6 +171,9 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 				conversationConfig?.agent?.prompt?.reasoningEffort ?? null,
 			agentPromptTemperature:
 				conversationConfig?.agent?.prompt?.temperature ?? 1.0,
+			platformSettingsOverrides: clonePlatformSettingsOverrides(
+				platformSettingsOverrides
+			),
 		},
 		validate: {
 			name: (value) => {
@@ -242,6 +266,10 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 				agentPromptLlm: cfg?.agent?.prompt?.llm || DEFAULT_AGENT_LLM,
 				agentPromptReasoningEffort: cfg?.agent?.prompt?.reasoningEffort ?? null,
 				agentPromptTemperature: cfg?.agent?.prompt?.temperature ?? 1.0,
+				platformSettingsOverrides: clonePlatformSettingsOverrides(
+					behavior?.params?.platformSettings?.overrides ??
+						DEFAULT_PLATFORM_SETTINGS_OVERRIDES
+				),
 			});
 		}
 	}, [behavior]);
@@ -292,6 +320,12 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 				name: values.name,
 				params: {
 					conversationConfig: buildConversationConfig(values),
+					platformSettings: {
+						...(behavior?.params?.platformSettings ?? {}),
+						overrides: clonePlatformSettingsOverrides(
+							values.platformSettingsOverrides
+						),
+					},
 				},
 			};
 
@@ -332,6 +366,8 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 				return <TTSSection />;
 			case 'agent':
 				return <AgentSection />;
+			case 'platformSettings':
+				return <SecuritySection />;
 			default:
 				return <GeneralSection />;
 		}

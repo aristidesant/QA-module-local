@@ -8,10 +8,9 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-	Loader,
+	Skeleton,
 	Center,
 	Text,
-	ActionIcon,
 	Button,
 	Modal,
 	LoadingOverlay,
@@ -19,6 +18,7 @@ import {
 	Group,
 	Badge,
 	CloseButton,
+	Stack,
 } from '@mantine/core';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -258,9 +258,11 @@ const DispositionCatalogList = forwardRef<
 
 	if (isLoading) {
 		return (
-			<Center>
-				<Loader />
-			</Center>
+			<Stack gap='xs' px='md' py='sm'>
+				{Array.from({ length: 6 }).map((_, i) => (
+					<Skeleton key={i} height={44} radius='sm' animate />
+				))}
+			</Stack>
 		);
 	}
 
@@ -279,18 +281,7 @@ const DispositionCatalogList = forwardRef<
 				title={t('list.title')}
 				description={t('list.description')}
 				padding='md'
-				headerActions={
-					canCreate && (
-						<ActionIcon
-							variant='light'
-							color='blue'
-							onClick={handleCreate}
-							aria-label={t('list.addCatalog')}
-						>
-							<IconPlus size={18} />
-						</ActionIcon>
-					)
-				}
+				onAdd={canCreate ? handleCreate : undefined}
 			>
 				<LoadingOverlay
 					visible={isFetching && !isLoading}

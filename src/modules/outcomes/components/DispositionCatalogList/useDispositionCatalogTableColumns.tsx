@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, Badge, Group, Tooltip, ActionIcon } from '@mantine/core';
+import { Text, Group, Tooltip, ActionIcon } from '@mantine/core';
 import {
 	IconListDetails,
 	IconPencil,
@@ -62,21 +62,19 @@ export const useDispositionCatalogTableColumns = ({
 									{name}
 								</Text>
 								{type && (
-									<div className={styles.typeBadge}>
-										<Badge
-											size='xs'
-											variant='light'
-											color={type === 'INBOUND' ? 'blue' : 'green'}
-										>
-											{type}
-										</Badge>
-									</div>
+									<span
+										className={
+											type === 'INBOUND'
+												? styles.typeBadgeInbound
+												: styles.typeBadgeOutbound
+										}
+									>
+										{type === 'INBOUND' ? 'Inbound' : 'Outbound'}
+									</span>
 								)}
 							</div>
 							{description && (
-								<Text size='sm' c='dimmed' className={styles.descriptionText}>
-									{description}
-								</Text>
+								<Text className={styles.descriptionText}>{description}</Text>
 							)}
 						</div>
 					);
@@ -88,15 +86,18 @@ export const useDispositionCatalogTableColumns = ({
 				accessorKey: 'isActive',
 				enableSorting: false,
 				cell: ({ row }) => (
-					<Badge
-						size='sm'
-						variant='dot'
-						color={row.original.isActive ? 'green' : 'gray'}
+					<span
+						className={
+							row.original.isActive
+								? styles.statusBadgeActive
+								: styles.statusBadgeInactive
+						}
 					>
+						<span className={styles.statusDot} />
 						{row.original.isActive
 							? t('status.active', { ns: 'common' })
 							: t('status.inactive', { ns: 'common' })}
-					</Badge>
+					</span>
 				),
 			},
 			{
@@ -114,10 +115,11 @@ export const useDispositionCatalogTableColumns = ({
 				id: 'actions',
 				header: t('columns.actions'),
 				cell: ({ row }) => (
-					<Group gap='xs'>
+					<Group gap={4} className={styles.actionsGroup}>
 						<Tooltip label={t('columns.editNodes')} withArrow>
 							<ActionIcon
-								variant='light'
+								variant='subtle'
+								color='gray'
 								size='sm'
 								onClick={(e) => {
 									e.stopPropagation();
@@ -125,13 +127,14 @@ export const useDispositionCatalogTableColumns = ({
 								}}
 								aria-label={t('columns.editNodes')}
 							>
-								<IconListDetails size={16} />
+								<IconListDetails size={15} />
 							</ActionIcon>
 						</Tooltip>
 						{canUpdate && (
 							<Tooltip label={t('columns.editDetails')} withArrow>
 								<ActionIcon
-									variant='light'
+									variant='subtle'
+									color='gray'
 									size='sm'
 									onClick={(e) => {
 										e.stopPropagation();
@@ -139,7 +142,7 @@ export const useDispositionCatalogTableColumns = ({
 									}}
 									aria-label={t('columns.editDetails')}
 								>
-									<IconPencil size={16} />
+									<IconPencil size={15} />
 								</ActionIcon>
 							</Tooltip>
 						)}
@@ -159,15 +162,15 @@ export const useDispositionCatalogTableColumns = ({
 									}
 									aria-label={t('columns.reactivate')}
 								>
-									<IconRefresh size={16} />
+									<IconRefresh size={15} />
 								</ActionIcon>
 							</Tooltip>
 						)}
 						{canUpdate && row.original.isActive && (
 							<Tooltip label={t('columns.deactivate')} withArrow>
 								<ActionIcon
-									color='orange'
-									variant='light'
+									color='red'
+									variant='subtle'
 									size='sm'
 									onClick={(e) => {
 										e.stopPropagation();
@@ -179,7 +182,7 @@ export const useDispositionCatalogTableColumns = ({
 									}
 									aria-label={t('columns.deactivate')}
 								>
-									<IconBan size={16} />
+									<IconBan size={15} />
 								</ActionIcon>
 							</Tooltip>
 						)}

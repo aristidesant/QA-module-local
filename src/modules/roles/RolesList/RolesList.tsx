@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Alert, Center, Loader, Text } from '@mantine/core';
+import { Alert, Center, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
@@ -42,9 +42,11 @@ const RolesList: React.FC<RolesListProps> = ({
 
 	if (isLoading) {
 		return (
-			<Center>
-				<Loader size='sm' />
-			</Center>
+			<Stack gap='xs' px='xs'>
+				{Array.from({ length: 5 }).map((_, i) => (
+					<Skeleton key={i} height={44} radius='sm' animate />
+				))}
+			</Stack>
 		);
 	}
 
@@ -62,10 +64,17 @@ const RolesList: React.FC<RolesListProps> = ({
 
 	if (!filteredRoles.length) {
 		return (
-			<Center>
-				<Text size='sm' c='dimmed'>
-					{t('list.empty')}
-				</Text>
+			<Center py='xl'>
+				<Stack align='center' gap='xs'>
+					<Text size='sm' fw={600} c='dimmed'>
+						{t('list.empty')}
+					</Text>
+					<Text size='xs' c='dimmed'>
+						{search
+							? t('list.emptySearch', 'No roles match your search.')
+							: t('list.emptyHint', 'Create a role to get started.')}
+					</Text>
+				</Stack>
 			</Center>
 		);
 	}

@@ -9,7 +9,10 @@ import { IconCheck } from '@tabler/icons-react';
 import CampaignPredefinedParamsModal from './CampaignPredefinedParamsModal';
 import { useTranslation } from 'react-i18next';
 import type { ConversationConfigModel } from '~/models/AgentListObject';
-import { applyCampaignBehaviorConversationConfig } from '~/modules/campaigns/utils/campaignBehaviorConfig';
+import {
+	applyCampaignBehaviorConversationConfig,
+	applyCampaignBehaviorPlatformSettings,
+} from '~/modules/campaigns/utils/campaignBehaviorConfig';
 import styles from './CampaignConfigurationPredefinedParams.module.css';
 
 const CampaignConfigurationPredefinedParams: React.FC = () => {
@@ -26,7 +29,7 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const applyConversationConfig = (
-		config: CampaignPredefinedParam['params']['conversationConfig']
+		params: CampaignPredefinedParam['params']
 	) => {
 		const currentAgentConfig = form.values.agentConfig || {};
 		const mergedConfig = applyCampaignBehaviorConversationConfig(
@@ -34,13 +37,19 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 				string,
 				unknown
 			>,
-			config
+			params.conversationConfig
 		) as unknown as ConversationConfigModel;
+		const mergedPlatformSettings = applyCampaignBehaviorPlatformSettings(
+			(currentAgentConfig.platformSettings || {}) as Record<string, unknown>,
+			params.platformSettings
+		);
 
 		form.setValues({
 			agentConfig: {
 				...currentAgentConfig,
 				conversationConfig: mergedConfig,
+				platformSettings:
+					mergedPlatformSettings as typeof currentAgentConfig.platformSettings,
 			},
 		});
 	};
@@ -50,8 +59,8 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 	};
 
 	const handleApplyFromModal = (param: CampaignPredefinedParam) => {
-		if (param.params?.conversationConfig) {
-			applyConversationConfig(param.params.conversationConfig);
+		if (param.params?.conversationConfig || param.params?.platformSettings) {
+			applyConversationConfig(param.params);
 			setAppliedParam(param);
 			setIsModalOpen(false);
 			form.setFieldValue('configId', param.id);

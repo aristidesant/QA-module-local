@@ -40,11 +40,18 @@ const CampaignPredefinedParamsModal: React.FC<
 	}, [selectionName, predefinedParams]);
 
 	const previewConfig = useMemo(() => {
-		return selectedParam?.params?.conversationConfig ?? null;
+		return (
+			selectedParam?.params?.conversationConfig ??
+			selectedParam?.params?.platformSettings ??
+			null
+		);
 	}, [selectedParam]);
 
 	const handleApply = () => {
-		if (selectedParam?.params?.conversationConfig) {
+		if (
+			selectedParam?.params?.conversationConfig ||
+			selectedParam?.params?.platformSettings
+		) {
 			onApply(selectedParam);
 		}
 	};

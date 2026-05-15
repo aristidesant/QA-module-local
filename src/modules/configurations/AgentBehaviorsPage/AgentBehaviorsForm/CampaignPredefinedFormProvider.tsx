@@ -1,6 +1,7 @@
 import React, { createContext, useContext } from 'react';
 import { UseFormReturnType } from '@mantine/form';
 import type { SuggestedAudioTag } from '~/models/CampaignPredefinedParam';
+import type { PlatformSettingsOverrides } from './platformSettingsConfig';
 
 export interface FormValues {
 	id: string;
@@ -22,6 +23,7 @@ export interface FormValues {
 	agentPromptLlm: string;
 	agentPromptReasoningEffort: string | null;
 	agentPromptTemperature: number;
+	platformSettingsOverrides: PlatformSettingsOverrides;
 }
 
 interface FormContextType {

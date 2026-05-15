@@ -17,17 +17,21 @@
 		"inactive": "Inactivo"
 	},
 	"list": {
-		"title": "Lista de roles",
+		"title": "Roles",
+		"description": "Controla lo que los usuarios pueden ver y hacer asignando roles con permisos en toda la plataforma.",
 		"errorTitle": "No se pudieron cargar los roles",
 		"unknownError": "Error desconocido",
-		"empty": "No se encontraron roles."
+		"empty": "No se encontraron roles.",
+		"emptySearch": "Ningún rol coincide con tu búsqueda.",
+		"emptyHint": "Crea un rol para comenzar."
 	},
 	"table": {
 		"role": {
 			"codeLabel": "Código",
 			"descriptionLabel": "Descripción",
 			"createdLabel": "Creado",
-			"systemBadge": "Sistema"
+			"systemBadge": "Sistema",
+			"noDescription": "Sin descripción"
 		},
 		"actions": {
 			"view": "Ver rol",
