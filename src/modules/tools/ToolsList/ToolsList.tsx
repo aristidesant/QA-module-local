@@ -1,4 +1,4 @@
-import { Text, Loader, Center, Stack } from '@mantine/core';
+import { Text, Skeleton, Center, Stack } from '@mantine/core';
 import { IconTool } from '@tabler/icons-react';
 import useToolsStore from '~/stores/toolsStore';
 import { useToolsByCategory } from '~/queries/toolQueries';
@@ -47,14 +47,11 @@ function ToolsList({ onEdit }: ToolsListProps) {
 
 		if (isLoading) {
 			return (
-				<Center className={styles.loadingState}>
-					<Stack align='center' gap='md'>
-						<Loader size='lg' />
-						<Text size='sm' c='dimmed'>
-							{t('state.loadingTools')}
-						</Text>
-					</Stack>
-				</Center>
+				<Stack gap='xs' px='md' py='sm'>
+					{Array.from({ length: 6 }).map((_, i) => (
+						<Skeleton key={i} height={44} radius='sm' animate />
+					))}
+				</Stack>
 			);
 		}
 

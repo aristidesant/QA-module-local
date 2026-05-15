@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import type { SortingState } from '@tanstack/react-table';
-import { Alert, Center, Loader, Text } from '@mantine/core';
+import { Alert, Center, Skeleton, Stack, Text } from '@mantine/core';
 import { IconInfoCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
@@ -81,9 +81,11 @@ const UsersList: React.FC<UsersListProps> = ({ search, onEdit, onDelete }) => {
 
 	if (isLoading) {
 		return (
-			<Center>
-				<Loader size='sm' />
-			</Center>
+			<Stack gap='xs' px='md' py='sm'>
+				{Array.from({ length: 6 }).map((_, i) => (
+					<Skeleton key={i} height={44} radius='sm' animate />
+				))}
+			</Stack>
 		);
 	}
 
@@ -101,10 +103,17 @@ const UsersList: React.FC<UsersListProps> = ({ search, onEdit, onDelete }) => {
 
 	if (!filteredUsers.length) {
 		return (
-			<Center>
-				<Text size='sm' c='dimmed'>
-					{t('list.empty')}
-				</Text>
+			<Center py='xl'>
+				<Stack align='center' gap='xs'>
+					<Text fz='sm' fw={600}>
+						{search.trim() ? t('list.emptySearch') : t('list.empty')}
+					</Text>
+					{!search.trim() && (
+						<Text fz='xs' c='dimmed'>
+							{t('list.emptyHint')}
+						</Text>
+					)}
+				</Stack>
 			</Center>
 		);
 	}

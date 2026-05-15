@@ -17,17 +17,21 @@
 		"inactive": "Inactive"
 	},
 	"list": {
-		"title": "Role list",
+		"title": "Roles",
+		"description": "Control what users can see and do by assigning permission-based roles across your platform.",
 		"errorTitle": "Unable to load roles",
 		"unknownError": "Unknown error",
-		"empty": "No roles found."
+		"empty": "No roles found.",
+		"emptySearch": "No roles match your search.",
+		"emptyHint": "Create a role to get started."
 	},
 	"table": {
 		"role": {
 			"codeLabel": "Code",
 			"descriptionLabel": "Description",
 			"createdLabel": "Created",
-			"systemBadge": "System"
+			"systemBadge": "System",
+			"noDescription": "No description provided"
 		},
 		"actions": {
 			"view": "View role",

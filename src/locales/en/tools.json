@@ -34,7 +34,8 @@
 		"status": "Status",
 		"createdBy": "Created by",
 		"created": "Created",
-		"unknownCreator": "Unknown"
+		"unknownCreator": "Unknown",
+		"noDescription": "No description provided"
 	},
 	"status": {
 		"active": "Active",

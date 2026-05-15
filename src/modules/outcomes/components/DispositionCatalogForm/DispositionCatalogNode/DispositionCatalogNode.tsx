@@ -15,6 +15,7 @@ import {
 	Menu,
 	Alert,
 	Tooltip,
+	Center,
 } from '@mantine/core';
 import { Tree } from 'react-arborist';
 import {
@@ -252,7 +253,13 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 		return (
 			<div style={style}>
 				<div
-					className={`${styles.nodeRow}${isInactive ? ` ${styles.nodeRowInactive}` : ''}`}
+					className={[
+						styles.nodeRow,
+						isInactive ? styles.nodeRowInactive : '',
+						isProtectedNode ? styles.nodeRowProtected : '',
+					]
+						.filter(Boolean)
+						.join(' ')}
 					data-level={node.level}
 					data-is-last={isLastChild ? 'true' : 'false'}
 					style={rowStyle}
@@ -331,11 +338,11 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 								</Tooltip>
 							)}
 							<div className={styles.nodeBadges}>
-								<Badge size='xs' variant='light' color='blue' radius='sm'>
+								<Badge size='xs' variant='light' color='blue' radius='xl'>
 									{nodeTypeLabel}
 								</Badge>
 								{isInactive && (
-									<Badge size='xs' variant='light' color='gray' radius='sm'>
+									<Badge size='xs' variant='light' color='gray' radius='xl'>
 										{t('catalog.labels.inactive')}
 									</Badge>
 								)}
@@ -344,13 +351,13 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 										label={t('catalog.labels.doNotCallTooltip')}
 										withArrow
 									>
-										<Badge size='xs' variant='light' color='red' radius='sm'>
+										<Badge size='xs' variant='light' color='red' radius='xl'>
 											{t('catalog.labels.doNotCall')}
 										</Badge>
 									</Tooltip>
 								)}
 								{isAbandoned && (
-									<Badge size='xs' variant='light' color='orange' radius='sm'>
+									<Badge size='xs' variant='light' color='orange' radius='xl'>
 										{t('catalog.labels.abandoned')}
 									</Badge>
 								)}
@@ -550,8 +557,17 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 					</div>
 				) : (
 					<div className={styles.emptyState}>
-						<Text size='sm' c='dimmed'>
+						<Center>
+							<IconFolder size={48} color='#c3cad4' />
+						</Center>
+						<Text size='sm' fw={600} c='dimmed' mt='xs' ta='center'>
 							{t('catalog.emptyState')}
+						</Text>
+						<Text size='xs' c='dimmed' ta='center' mt={4}>
+							{t(
+								'catalog.emptyStateHint',
+								'Add a root outcome node to get started.'
+							)}
 						</Text>
 					</div>
 				)}

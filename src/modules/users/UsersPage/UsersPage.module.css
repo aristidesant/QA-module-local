@@ -4,14 +4,6 @@
 	gap: var(--mantine-spacing-lg);
 }
 
-.header {
-	display: flex;
-	flex-wrap: wrap;
-	gap: var(--mantine-spacing-sm);
-	justify-content: space-between;
-	align-items: center;
-}
-
 .searchInput {
 	flex: 1;
 	min-width: 16rem;

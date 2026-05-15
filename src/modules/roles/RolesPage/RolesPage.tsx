@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { TextInput, Group, Text } from '@mantine/core';
+import { TextInput, Text } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
@@ -148,19 +148,21 @@ const RolesPage: React.FC = () => {
 	);
 
 	return (
-		<ContentContainer title={t('title')} description={t('description')}>
+		<ContentContainer>
 			<div className={classes.root}>
-				<SectionCard title={t('list.title')} onAdd={openCreateModal}>
-					<Group className={classes.header} gap='sm'>
-						<TextInput
-							placeholder={t('searchPlaceholder')}
-							leftSection={<IconSearch size={18} />}
-							value={search}
-							onChange={handleSearchChange}
-							className={classes.searchInput}
-							size='sm'
-						/>
-					</Group>
+				<SectionCard
+					title={t('list.title')}
+					description={t('list.description')}
+					onAdd={openCreateModal}
+				>
+					<TextInput
+						placeholder={t('searchPlaceholder')}
+						leftSection={<IconSearch size={16} />}
+						value={search}
+						onChange={handleSearchChange}
+						className={classes.searchInput}
+						size='sm'
+					/>
 					<RolesList
 						key={refreshKey}
 						search={search}
