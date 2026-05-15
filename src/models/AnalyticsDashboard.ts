@@ -324,8 +324,8 @@ export interface DashboardRenderComparisonResponse {
 	timeRange?: AnalyticsTimeRange;
 	comparisonMode?: AnalyticsComparisonMode;
 	period?: {
-		current: DashboardPeriod;
-		previous: DashboardPeriod;
+		current: DashboardPeriod | null;
+		previous: DashboardPeriod | null;
 	};
 	widgets: DashboardComparisonWidget[];
 }
@@ -340,8 +340,8 @@ export interface DashboardWidgetPreviewResponse {
 	widget: DashboardRenderWidget;
 	comparison?: DashboardWidgetComparisonData;
 	period?: {
-		current: DashboardPeriod;
-		previous: DashboardPeriod;
+		current: DashboardPeriod | null;
+		previous: DashboardPeriod | null;
 	};
 }
 

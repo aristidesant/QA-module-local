@@ -3,6 +3,7 @@ import {
 	useAgentBehaviors,
 	useDeleteAgentBehavior,
 	useCheckDeleteAgentBehavior,
+	useGetAgentBehavior,
 } from '~/queries/useAgentBehaviors';
 import type { AgentBehavior } from '~/models/AgentBehavior';
 import {
@@ -14,6 +15,7 @@ import {
 	List,
 	Group,
 	Box,
+	Center,
 } from '@mantine/core';
 import { IconAlertCircle, IconPlus } from '@tabler/icons-react';
 import AgentBehaviorsForm from './AgentBehaviorsForm/AgentBehaviorsForm';
@@ -28,8 +30,9 @@ const AgentBehaviorsPage = () => {
 	const { data: behaviorsData, isLoading } = useAgentBehaviors();
 	const deleteMutation = useDeleteAgentBehavior();
 
-	const [selectedBehavior, setSelectedBehavior] =
-		useState<AgentBehavior | null>(null);
+	const [selectedBehaviorId, setSelectedBehaviorId] = useState<string | null>(
+		null
+	);
 	const [mode, setMode] = useState<'create' | 'edit'>('create');
 
 	const [deleteModalOpen, setDeleteModalOpen] = useState(false);
@@ -39,6 +42,11 @@ const AgentBehaviorsPage = () => {
 	const [behaviorToReplace, setBehaviorToReplace] =
 		useState<AgentBehavior | null>(null);
 
+	const { data: selectedBehavior, isLoading: isLoadingDetail } =
+		useGetAgentBehavior(selectedBehaviorId ?? '', {
+			enabled: !!selectedBehaviorId && formModalOpen && mode === 'edit',
+		});
+
 	const { data: checkDeleteData, isLoading: isCheckingDelete } =
 		useCheckDeleteAgentBehavior(behaviorToDelete?.id ?? '', {
 			enabled: !!behaviorToDelete,
@@ -47,13 +55,13 @@ const AgentBehaviorsPage = () => {
 	const list = behaviorsData?.data || [];
 
 	const handleRowClick = (behavior: AgentBehavior) => {
-		setSelectedBehavior(behavior);
+		setSelectedBehaviorId(behavior.id);
 		setMode('edit');
 		setFormModalOpen(true);
 	};
 
 	const handleAddNew = () => {
-		setSelectedBehavior(null);
+		setSelectedBehaviorId(null);
 		setMode('create');
 		setFormModalOpen(true);
 	};
@@ -73,9 +81,9 @@ const AgentBehaviorsPage = () => {
 			await deleteMutation.mutateAsync(behaviorToDelete.id);
 			setDeleteModalOpen(false);
 			setBehaviorToDelete(null);
-			if (selectedBehavior?.id === behaviorToDelete.id) {
+			if (selectedBehaviorId === behaviorToDelete.id) {
 				setFormModalOpen(false);
-				setSelectedBehavior(null);
+				setSelectedBehaviorId(null);
 			}
 		} catch (error) {
 			// error is handled globally or we can add local toast
@@ -84,7 +92,7 @@ const AgentBehaviorsPage = () => {
 
 	const handleCloseForm = () => {
 		setFormModalOpen(false);
-		setSelectedBehavior(null);
+		setSelectedBehaviorId(null);
 	};
 
 	const sectionActions: CardActionsConfig = {
@@ -227,12 +235,18 @@ const AgentBehaviorsPage = () => {
 				}}
 				keepMounted={false}
 			>
-				<AgentBehaviorsForm
-					behavior={selectedBehavior ?? undefined}
-					mode={mode}
-					onCancel={handleCloseForm}
-					onSuccess={handleCloseForm}
-				/>
+				{mode === 'edit' && isLoadingDetail ? (
+					<Center p='xl'>
+						<Loader size='sm' />
+					</Center>
+				) : (
+					<AgentBehaviorsForm
+						behavior={mode === 'edit' ? selectedBehavior : undefined}
+						mode={mode}
+						onCancel={handleCloseForm}
+						onSuccess={handleCloseForm}
+					/>
+				)}
 			</Modal>
 		</SectionCard>
 	);

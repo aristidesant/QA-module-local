@@ -35,6 +35,15 @@ export const getAgentBehaviors = async (
 	return response.data;
 };
 
+export const getAgentBehaviorById = async (
+	id: string
+): Promise<AgentBehavior> => {
+	const response = await axios.get<AgentBehavior>(
+		`${DEFAULT_API_URL}/agent-behaviors/${id}`
+	);
+	return response.data;
+};
+
 export const createAgentBehavior = async (data: {
 	name: string;
 	params: any;

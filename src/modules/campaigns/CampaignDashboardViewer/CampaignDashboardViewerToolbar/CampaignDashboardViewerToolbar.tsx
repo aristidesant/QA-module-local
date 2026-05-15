@@ -23,6 +23,7 @@ import { IconChevronLeft } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
 import useCampaignDashboardViewerStore from '../store/useCampaignDashboardViewerStore';
+import { formatDashboardPeriod } from '../CampaignDashboardViewer.helpers';
 import type { DashboardOption } from '../types';
 import type {
 	AnalyticsTimeRange,
@@ -54,34 +55,6 @@ interface CampaignDashboardViewerToolbarProps {
 }
 
 const TIME_RANGE_KEYS = ['all', 'TODAY', 'WEEK', 'MONTH', 'YEAR'] as const;
-
-const formatPeriodDate = (iso: string): string => {
-	return new Date(iso).toLocaleDateString(undefined, {
-		month: 'short',
-		day: 'numeric',
-	});
-};
-
-const isSameCalendarDay = (startIso: string, endIso: string): boolean => {
-	const start = new Date(startIso);
-	const end = new Date(endIso);
-
-	return (
-		start.getFullYear() === end.getFullYear() &&
-		start.getMonth() === end.getMonth() &&
-		start.getDate() === end.getDate()
-	);
-};
-
-const formatDashboardPeriod = (period: DashboardPeriod): string => {
-	const startLabel = formatPeriodDate(period.start);
-
-	if (isSameCalendarDay(period.start, period.end)) {
-		return startLabel;
-	}
-
-	return `${startLabel} – ${formatPeriodDate(period.end)}`;
-};
 
 const CampaignDashboardViewerToolbar = ({
 	dashboardOptions,
@@ -134,14 +107,27 @@ const CampaignDashboardViewerToolbar = ({
 
 	const periodLabel = (() => {
 		if (comparisonEnabled && comparisonPeriod) {
+			const currentPeriod = formatDashboardPeriod(comparisonPeriod.current);
+			const previousPeriod = formatDashboardPeriod(comparisonPeriod.previous);
+
+			if (!currentPeriod || !previousPeriod) {
+				return null;
+			}
+
 			return t('dashboard.comparisonPeriod', {
-				currentPeriod: formatDashboardPeriod(comparisonPeriod.current),
-				previousPeriod: formatDashboardPeriod(comparisonPeriod.previous),
+				currentPeriod,
+				previousPeriod,
 			});
 		}
 		if (period) {
+			const formattedPeriod = formatDashboardPeriod(period);
+
+			if (!formattedPeriod) {
+				return null;
+			}
+
 			return t('dashboard.period', {
-				period: formatDashboardPeriod(period),
+				period: formattedPeriod,
 			});
 		}
 		return null;
