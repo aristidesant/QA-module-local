@@ -6,7 +6,8 @@
 	"actions": {
 		"createTool": "Crear herramienta",
 		"createNewTool": "Crear nueva herramienta",
-		"saveChanges": "Guardar cambios"
+		"saveChanges": "Guardar cambios",
+		"delete": "Eliminar"
 	},
 	"state": {
 		"loadingTools": "Cargando herramientas...",
@@ -34,6 +35,7 @@
 		"status": "Estado",
 		"createdBy": "Creado por",
 		"created": "Creado",
+		"actions": "Acciones",
 		"unknownCreator": "Desconocido",
 		"noDescription": "Sin descripción"
 	},
@@ -44,11 +46,18 @@
 	"notifications": {
 		"created": "¡Herramienta creada correctamente!",
 		"updated": "¡Herramienta actualizada correctamente!",
+		"deleted": "¡Herramienta eliminada correctamente!",
+		"deleteFailed": "No se pudo eliminar la herramienta: {{message}}",
 		"failedGeneric": "No se pudo {{action}} la herramienta",
 		"actions": {
 			"create": "crear",
 			"update": "actualizar"
 		}
+	},
+	"deleteConfirm": {
+		"title": "Eliminar herramienta",
+		"message": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+		"confirm": "Eliminar"
 	},
 	"sectionStatus": {
 		"configured": "Configurado",

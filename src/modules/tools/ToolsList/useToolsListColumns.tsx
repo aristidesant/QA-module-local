@@ -1,9 +1,14 @@
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Text } from '@mantine/core';
+import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
 import type { ToolModel } from '~/models/ToolModel';
 import { useTranslation } from 'react-i18next';
+import { IconTrash } from '@tabler/icons-react';
 import styles from '../ToolsList/ToolsList.module.css';
+
+interface UseToolsListColumnsProps {
+	onDelete: (tool: ToolModel) => void;
+}
 
 const getDateLocale = (language: string) => {
 	const normalized = language?.toLowerCase?.() ?? 'en';
@@ -19,7 +24,9 @@ const formatDate = (dateString: string, language: string) =>
 		day: 'numeric',
 	});
 
-function useToolsListColumns(): ColumnDef<ToolModel>[] {
+function useToolsListColumns({
+	onDelete,
+}: UseToolsListColumnsProps): ColumnDef<ToolModel>[] {
 	const { t, i18n } = useTranslation('tools');
 
 	return useMemo<ColumnDef<ToolModel>[]>(() => {
@@ -82,8 +89,34 @@ function useToolsListColumns(): ColumnDef<ToolModel>[] {
 					</Text>
 				),
 			},
+			{
+				id: 'actions',
+				header: t('columns.actions'),
+				meta: {
+					headerClassName: styles.actionsHeader,
+					cellClassName: styles.actionsCell,
+				},
+				cell: ({ row }) => (
+					<Group gap='xs' wrap='nowrap' justify='flex-end'>
+						<Tooltip label={t('actions.delete')} withArrow>
+							<ActionIcon
+								size='sm'
+								variant='subtle'
+								color='red'
+								onClick={(event) => {
+									event.stopPropagation();
+									onDelete(row.original);
+								}}
+								aria-label={t('actions.delete')}
+							>
+								<IconTrash size={16} />
+							</ActionIcon>
+						</Tooltip>
+					</Group>
+				),
+			},
 		];
-	}, [i18n.language, t]);
+	}, [i18n.language, onDelete, t]);
 }
 
 export default useToolsListColumns;

@@ -6,7 +6,8 @@
 	"actions": {
 		"createTool": "Create Tool",
 		"createNewTool": "Create New Tool",
-		"saveChanges": "Save Changes"
+		"saveChanges": "Save Changes",
+		"delete": "Delete"
 	},
 	"state": {
 		"loadingTools": "Loading tools...",
@@ -34,6 +35,7 @@
 		"status": "Status",
 		"createdBy": "Created by",
 		"created": "Created",
+		"actions": "Actions",
 		"unknownCreator": "Unknown",
 		"noDescription": "No description provided"
 	},
@@ -44,11 +46,18 @@
 	"notifications": {
 		"created": "Tool created successfully!",
 		"updated": "Tool updated successfully!",
+		"deleted": "Tool deleted successfully!",
+		"deleteFailed": "Failed to delete tool: {{message}}",
 		"failedGeneric": "Failed to {{action}} tool",
 		"actions": {
 			"create": "create",
 			"update": "update"
 		}
+	},
+	"deleteConfirm": {
+		"title": "Delete tool",
+		"message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+		"confirm": "Delete"
 	},
 	"sectionStatus": {
 		"configured": "Configured",

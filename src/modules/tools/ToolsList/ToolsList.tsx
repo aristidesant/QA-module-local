@@ -1,13 +1,16 @@
 import { Text, Skeleton, Center, Stack } from '@mantine/core';
 import { IconTool } from '@tabler/icons-react';
+import { modals } from '@mantine/modals';
+import { notifications } from '@mantine/notifications';
 import useToolsStore from '~/stores/toolsStore';
-import { useToolsByCategory } from '~/queries/toolQueries';
+import { useDeleteTool, useToolsByCategory } from '~/queries/toolQueries';
 import type { ToolModel } from '~/models/ToolModel';
 import BaseTable from '~/components/BaseTable';
 import useToolsListColumns from './useToolsListColumns';
 import styles from './ToolsList.module.css';
 import EmptyState from '~/components/EmptyState';
 import { useTranslation } from 'react-i18next';
+import { getErrorMessage } from '~/utils/httpClient';
 
 interface ToolsListProps {
 	onEdit: (toolId: string | number) => void;
@@ -15,8 +18,43 @@ interface ToolsListProps {
 
 function ToolsList({ onEdit }: ToolsListProps) {
 	const { t } = useTranslation('tools');
+	const { t: tCommon } = useTranslation('common');
 	const { selectedToolCategory } = useToolsStore();
-	const columns = useToolsListColumns();
+	const deleteMutation = useDeleteTool();
+	const columns = useToolsListColumns({
+		onDelete: (tool) => {
+			modals.openConfirmModal({
+				title: t('deleteConfirm.title'),
+				centered: true,
+				labels: {
+					confirm: t('deleteConfirm.confirm'),
+					cancel: tCommon('actions.cancel'),
+				},
+				confirmProps: { color: 'red' },
+				children: (
+					<Text size='sm'>
+						{t('deleteConfirm.message', { name: tool.name })}
+					</Text>
+				),
+				onConfirm: async () => {
+					try {
+						await deleteMutation.mutateAsync(tool.id);
+						notifications.show({
+							message: t('notifications.deleted'),
+							color: 'green',
+						});
+					} catch (error) {
+						notifications.show({
+							message: t('notifications.deleteFailed', {
+								message: getErrorMessage(error),
+							}),
+							color: 'red',
+						});
+					}
+				},
+			});
+		},
+	});
 
 	const {
 		data: tools,
