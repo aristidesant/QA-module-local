@@ -5,9 +5,11 @@ import { WORKFLOW_NODE_TYPES } from '../nodeTypes';
 import { getEdgeWarningLevel } from '../utils/workflowValidation';
 import type {
 	AgentWorkflow,
+	BoolExpr,
 	EndNode,
 	OverrideAgentNode,
 	PhoneNumberTransferNode,
+	UpdateStateNode,
 	StandaloneAgentNode,
 	StartNode,
 	ToolNode,
@@ -15,6 +17,63 @@ import type {
 	WorkflowNode,
 } from '~/models/AgentWorkflowModel';
 import type { NodeGroups } from '~/models/CampaignsModel';
+
+const COMPARISON_OPERATOR_LABELS: Partial<Record<BoolExpr['type'], string>> = {
+	eq_operator: '==',
+	neq_operator: '!=',
+	gt_operator: '>',
+	gte_operator: '>=',
+	lt_operator: '<',
+	lte_operator: '<=',
+};
+
+const quoteExpressionString = (value: string) =>
+	`"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
+
+const formatExpressionValue = (expression: BoolExpr): string | null => {
+	switch (expression.type) {
+		case 'dynamic_variable':
+			return expression.name.trim() || null;
+		case 'string_literal':
+			return quoteExpressionString(expression.value);
+		case 'number_literal':
+			return Number.isFinite(expression.value)
+				? String(expression.value)
+				: null;
+		case 'boolean_literal':
+			return expression.value ? 'true' : 'false';
+		case 'llm': {
+			const prompt = expression.prompt.trim();
+			return prompt ? `llm(${quoteExpressionString(prompt)})` : null;
+		}
+		default:
+			return null;
+	}
+};
+
+const formatExpressionLabel = (expression: BoolExpr): string | null => {
+	if (expression.type === 'and_operator' || expression.type === 'or_operator') {
+		const operator = expression.type === 'and_operator' ? 'AND' : 'OR';
+		const children = expression.children
+			.map(formatExpressionLabel)
+			.filter((label): label is string => Boolean(label));
+
+		if (!children.length) return null;
+		return children.length === 1
+			? children[0]
+			: children.map((label) => `(${label})`).join(` ${operator} `);
+	}
+
+	const operator = COMPARISON_OPERATOR_LABELS[expression.type];
+
+	if (operator && 'left' in expression && 'right' in expression) {
+		const left = formatExpressionValue(expression.left);
+		const right = formatExpressionValue(expression.right);
+		return left && right ? `${left} ${operator} ${right}` : null;
+	}
+
+	return formatExpressionValue(expression);
+};
 
 export const createWorkflowEdgeMarker = (
 	orient: 'auto' | 'auto-start-reverse'
@@ -241,6 +300,9 @@ export const mapWorkflowToNodes = (
 		if (condition.type === 'llm') {
 			return condition.condition?.trim() || null;
 		}
+		if (condition.type === 'expression') {
+			return formatExpressionLabel(condition.expression);
+		}
 		if (condition.type === 'result') {
 			return condition.successful
 				? t('form.workflow.edge.results.success', {
@@ -394,6 +456,16 @@ export const buildWorkflowFromState = (
 						(data as OverrideAgentNode).conversationConfig ?? {},
 				};
 				workflowNodes[node.id] = overrideNode;
+				break;
+			}
+			case WORKFLOW_NODE_TYPES.UPDATE_STATE: {
+				const updateStateNode: UpdateStateNode = {
+					...baseNode,
+					type: WORKFLOW_NODE_TYPES.UPDATE_STATE,
+					label: baseNode.label ?? '',
+					updates: (data as UpdateStateNode).updates ?? [],
+				};
+				workflowNodes[node.id] = updateStateNode;
 				break;
 			}
 			case WORKFLOW_NODE_TYPES.PHONE_NUMBER: {

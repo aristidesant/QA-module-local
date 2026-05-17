@@ -39,6 +39,7 @@ import {
 	IconUserCog,
 } from '@tabler/icons-react';
 import { useWorkflowCanvasActions } from '../../WorkflowCanvas/WorkflowCanvasActionsContext';
+import { useWorkflowNodeEditor } from '../../WorkflowNodeEditorContext';
 import { WORKFLOW_NODE_TYPES } from '../../nodeTypes';
 import SideActionsPortal from '../../WorkflowNode/SideActionsPortal';
 import GroupColorPopover from './GroupColorPopover';
@@ -117,6 +118,7 @@ const GroupNode = (props: NodeProps) => {
 		addNewNodeToGroup,
 		addExistingNodeToGroup,
 	} = useWorkflowCanvasActions();
+	const { openNodeDrawer } = useWorkflowNodeEditor();
 	const { setNodes, getNodes } = useReactFlow();
 	const nodeData = props.data as {
 		label?: string;
@@ -174,6 +176,11 @@ const GroupNode = (props: NodeProps) => {
 				variant: 'transfer' as const,
 				label: t('form.workflow.nodeMenu.agentTransfer'),
 				icon: IconUserCog,
+			},
+			{
+				type: WORKFLOW_NODE_TYPES.UPDATE_STATE,
+				label: t('form.workflow.nodeMenu.updateState'),
+				icon: IconEdit,
 			},
 			{
 				type: WORKFLOW_NODE_TYPES.PHONE_NUMBER,
@@ -316,15 +323,25 @@ const GroupNode = (props: NodeProps) => {
 							<Menu.Dropdown className={styles.menuDropdown}>
 								<Menu.Label>{t('form.workflow.group.addNewNode')}</Menu.Label>
 								{newNodeMenuItems.map((item) => (
-									<Menu.Item
-										key={`${item.type}-${item.label}`}
-										leftSection={<item.icon size={16} />}
-										onClick={() =>
-											addNewNodeToGroup(props.id, item.type, item.variant)
+								<Menu.Item
+									key={`${item.type}-${item.label}`}
+									leftSection={<item.icon size={16} />}
+									onClick={() => {
+										const newNodeId = addNewNodeToGroup(
+											props.id,
+											item.type,
+											item.variant
+										);
+										if (
+											item.type === WORKFLOW_NODE_TYPES.UPDATE_STATE &&
+											newNodeId
+										) {
+											openNodeDrawer(newNodeId);
 										}
-									>
-										{item.label}
-									</Menu.Item>
+									}}
+								>
+									{item.label}
+								</Menu.Item>
 								))}
 							</Menu.Dropdown>
 						</Menu>

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import {
 	ActionIcon,
+	Autocomplete,
 	Button,
 	Group,
 	SegmentedControl,
@@ -552,28 +553,25 @@ const ValueEditor = ({
 		switch (value.type) {
 			case 'dynamic_variable':
 				return (
-					<Select
+					<Autocomplete
 						aria-label={ariaLabel}
 						placeholder={t(
 							'form.workflow.edge.expression.dynamicVariablePlaceholder',
-							{ defaultValue: 'Select variable' }
+							{ defaultValue: 'Select or type variable' }
 						)}
-						searchable
 						data={variableData}
-						value={value.name || null}
+						value={value.name}
 						onChange={(nextValue) =>
 							onChange({
 								type: 'dynamic_variable',
-								name: nextValue ?? '',
+								name: nextValue,
 							})
 						}
-						nothingFoundMessage={t(
-							'form.workflow.edge.expression.noVariables',
-							{ defaultValue: 'No variables found' }
-						)}
 						comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
 						error={error}
 						size='sm'
+						clearable
+						openOnFocus
 					/>
 				);
 			case 'number_literal':

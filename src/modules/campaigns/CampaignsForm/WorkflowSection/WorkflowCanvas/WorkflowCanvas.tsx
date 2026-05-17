@@ -13,6 +13,7 @@ import StartNodeComponent from '../nodes/StartNode';
 import EndNodeComponent from '../nodes/EndNode';
 import StandaloneAgentNodeComponent from '../nodes/StandaloneAgentNode';
 import SubagentNodeComponent from '../nodes/SubagentNode';
+import UpdateStateNodeComponent from '../nodes/UpdateStateNode';
 import ToolNodeComponent from '../nodes/ToolNode';
 import PhoneNumberNodeComponent from '../nodes/PhoneNumberNode/PhoneNumberNode';
 import GroupNodeComponent from '../nodes/GroupNode';
@@ -206,6 +207,7 @@ const WorkflowCanvasInner = ({
 				[WORKFLOW_NODE_TYPES.START]: StartNodeComponent,
 				[WORKFLOW_NODE_TYPES.END]: EndNodeComponent,
 				[WORKFLOW_NODE_TYPES.STANDALONE_AGENT]: StandaloneAgentNodeComponent,
+				[WORKFLOW_NODE_TYPES.UPDATE_STATE]: UpdateStateNodeComponent,
 				[WORKFLOW_NODE_TYPES.TOOL]: ToolNodeComponent,
 				[WORKFLOW_NODE_TYPES.OVERRIDE_AGENT]: SubagentNodeComponent,
 				[WORKFLOW_NODE_TYPES.PHONE_NUMBER]: PhoneNumberNodeComponent,
@@ -621,7 +623,7 @@ const WorkflowCanvasInner = ({
 	const handleAddNodeToGroup = useCallback(
 		(groupNodeId: string) => {
 			const groupNode = nodesRef.current.find((n) => n.id === groupNodeId);
-			if (!groupNode) return;
+			if (!groupNode) return undefined;
 
 			const groupWidth =
 				typeof groupNode.style?.width === 'number'
@@ -678,6 +680,7 @@ const WorkflowCanvasInner = ({
 			};
 
 			setNodes((currentNodes) => [...currentNodes, newNode]);
+			return nodeId;
 		},
 		[setNodes]
 	);
@@ -687,9 +690,9 @@ const WorkflowCanvasInner = ({
 			groupNodeId: string,
 			nodeType: WorkflowNodeType,
 			variant?: 'transfer' | 'subagent'
-		) => {
+		): string | undefined => {
 			const groupNode = nodesRef.current.find((n) => n.id === groupNodeId);
-			if (!groupNode) return;
+			if (!groupNode) return undefined;
 
 			const groupWidth =
 				typeof groupNode.style?.width === 'number'
@@ -742,6 +745,7 @@ const WorkflowCanvasInner = ({
 			};
 
 			setNodes((currentNodes) => [...currentNodes, newNode]);
+			return nodeId;
 		},
 		[setNodes]
 	);
@@ -925,7 +929,7 @@ const WorkflowCanvasInner = ({
 				parentPosition: { x: number; y: number }
 			) => {
 				closeEdgeActions();
-				handleAddNode(parentNodeId, parentPosition);
+				return handleAddNode(parentNodeId, parentPosition);
 			},
 			addNodeWithType: (
 				parentNodeId: string,
@@ -933,7 +937,7 @@ const WorkflowCanvasInner = ({
 				nodeType: WorkflowNodeType
 			) => {
 				closeEdgeActions();
-				handleAddNodeWithType(parentNodeId, parentPosition, nodeType);
+				return handleAddNodeWithType(parentNodeId, parentPosition, nodeType);
 			},
 			addNodeWithVariant: (
 				parentNodeId: string,
@@ -941,7 +945,7 @@ const WorkflowCanvasInner = ({
 				payload: AddNodeVariantPayload
 			) => {
 				closeEdgeActions();
-				handleAddNodeWithVariant(parentNodeId, parentPosition, payload);
+				return handleAddNodeWithVariant(parentNodeId, parentPosition, payload);
 			},
 			deleteNode: (nodeId: string) => {
 				closeEdgeActions();
@@ -1009,7 +1013,7 @@ const WorkflowCanvasInner = ({
 				variant?: 'transfer' | 'subagent'
 			) => {
 				closeEdgeActions();
-				handleAddNewNodeToGroup(groupNodeId, nodeType, variant);
+				return handleAddNewNodeToGroup(groupNodeId, nodeType, variant);
 			},
 			addExistingNodeToGroup: (groupNodeId: string, existingNodeId: string) => {
 				closeEdgeActions();

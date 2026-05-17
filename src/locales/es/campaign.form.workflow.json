@@ -61,8 +61,8 @@
 					"rightValue": "Valor derecho",
 					"comparisonOperator": "Operador de comparación",
 					"valueType": "Tipo de valor",
-					"dynamicVariablePlaceholder": "Selecciona variable",
-					"noVariables": "No se encontraron variables",
+					"dynamicVariablePlaceholder": "Selecciona o escribe una variable",
+					"noVariables": "No hay variables coincidentes",
 					"numberPlaceholder": "Ingresa un número",
 					"stringPlaceholder": "Ingresa texto",
 					"llmValuePlaceholder": "Escribe el prompt del modelo...",
@@ -95,7 +95,7 @@
 						"false": "Falso"
 					},
 					"errors": {
-						"emptyDynamicVariable": "Selecciona una variable.",
+						"emptyDynamicVariable": "Ingresa una variable.",
 						"emptyStringLiteral": "Ingresa un valor de texto.",
 						"invalidNumberLiteral": "Ingresa un número válido.",
 						"emptyLlmPrompt": "Ingresa un prompt LLM.",
@@ -210,6 +210,69 @@
 							"message": "{{count}} conexión(es) tienen enrutamiento incondicional predeterminado. Considere configurar condiciones específicas"
 						}
 					}
+				},
+				"updateState": {
+					"title": "Actualizar estado",
+					"description": "Configura las variables dinámicas que actualiza este nodo.",
+					"missingNode": "No se encontro el nodo de actualizacion de estado",
+					"missingNodeHint": "Selecciona un nodo de actualizacion de estado para editar su configuracion.",
+					"noTitle": "Sin titulo",
+					"updateCount_one": "{{count}} actualizacion",
+					"updateCount_other": "{{count}} actualizaciones",
+					"moreVariables": "+{{count}} mas",
+					"tabs": {
+						"general": "General",
+						"edges": "Bordes"
+					},
+					"updates": {
+						"title": "Actualizaciones",
+						"description": "Agrega una o mas asignaciones de variables dinamicas para este nodo."
+					},
+					"addUpdate": "Agregar actualizacion",
+					"empty": "No hay actualizaciones configuradas",
+					"variableName": {
+						"label": "Variable a actualizar",
+						"placeholder": "Variable dinamica que debe actualizarse"
+					},
+					"validation": {
+						"variableRequired": "El nombre de la variable es obligatorio",
+						"promptRequired": "El prompt de LLM es obligatorio",
+						"duplicateVariable": "Esta variable ya se esta actualizando"
+					},
+					"expressionType": {
+						"label": "Nuevo valor",
+						"options": {
+							"string": "Cadena",
+							"number": "Numero",
+							"true": "Verdadero",
+							"false": "Falso",
+							"null": "Nulo",
+							"dynamicVariable": "Variable dinamica",
+							"llm": "Evaluacion LLM"
+						}
+					},
+					"expressionSchema": {
+						"label": "Tipo de resultado",
+						"options": {
+							"string": "Cadena",
+							"boolean": "Booleano",
+							"integer": "Entero",
+							"number": "Numero"
+						}
+					},
+					"prompt": {
+						"label": "Prompt",
+						"placeholder": "Describe este valor para el LLM"
+					},
+					"value": {
+						"label": "Valor",
+						"placeholder": "Ingresa texto",
+						"dynamicPlaceholder": "Selecciona una variable",
+						"fixedValue": "Valor fijo seleccionado."
+					},
+					"wrapIn": "Envolver en",
+					"collapse": "Alternar actualizacion",
+					"remove": "Eliminar actualizacion"
 				},
 				"startEnd": {
 					"title": "Nodo inicio/fin",
@@ -384,6 +447,7 @@
 			"nodeMenu": {
 				"subagent": "Subagente",
 				"agentTransfer": "Transferencia de agente",
+				"updateState": "Actualizar estado",
 				"phoneNumber": "Transferencia a numero",
 				"tool": "Herramienta",
 				"end": "Fin"
@@ -453,6 +517,7 @@
 				"standalone_agent": "Subagente",
 				"agent_transfer": "Transferencia de agente",
 				"override_agent": "Transferencia de agente",
+				"update_state": "Actualizar estado",
 				"phone_number": "Transferencia a numero",
 				"tool": "Despachar herramienta",
 				"end": "Fin",

@@ -19,17 +19,17 @@ interface WorkflowCanvasActionsContextValue {
 	addNode: (
 		parentNodeId: string,
 		parentPosition: { x: number; y: number }
-	) => void;
+	) => string | undefined;
 	addNodeWithType: (
 		parentNodeId: string,
 		parentPosition: { x: number; y: number },
 		nodeType: WorkflowNodeType
-	) => void;
+	) => string | undefined;
 	addNodeWithVariant: (
 		parentNodeId: string,
 		parentPosition: { x: number; y: number },
 		payload: AddNodeVariantPayload
-	) => void;
+	) => string | undefined;
 	deleteNode: (nodeId: string) => void;
 	copyNode: (nodeId: string) => void;
 	openEdge: (edgeId: string) => void;
@@ -44,7 +44,7 @@ interface WorkflowCanvasActionsContextValue {
 		groupNodeId: string,
 		nodeType: WorkflowNodeType,
 		variant?: 'transfer' | 'subagent'
-	) => void;
+	) => string | undefined;
 	addExistingNodeToGroup: (groupNodeId: string, existingNodeId: string) => void;
 }
 

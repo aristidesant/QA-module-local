@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from 'react';
-import { Stack } from '@mantine/core';
+import { Button, CopyButton, Group, Stack, Tooltip } from '@mantine/core';
+import { IconCheck, IconCopy } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -7,6 +8,7 @@ import { usePermissions } from '~/hooks/usePermissions';
 import type { ToolResult, TranscriptEntry } from '~/models/ConversationsModels';
 import type { VisibleTranscriptEntry } from './helpers/types';
 import {
+	buildTranscriptClipboardText,
 	isAgentRole,
 	isUserRole,
 	findPreviousAgentMetadata,
@@ -98,6 +100,11 @@ export function TranscriptViewer({
 		return map;
 	}, [transcript]);
 
+	const transcriptClipboardText = useMemo(
+		() => buildTranscriptClipboardText(transcript, nodeLabels),
+		[transcript, nodeLabels]
+	);
+
 	const activeEntryIndex = useMemo(() => {
 		if (audioCurrentTime === undefined || audioCurrentTime < 0) return -1;
 		return findActiveEntryIndex(visibleEntries, audioCurrentTime);
@@ -120,6 +127,37 @@ export function TranscriptViewer({
 
 	return (
 		<Stack gap='xs' className={styles.transcriptContainer}>
+			<Group justify='flex-end' className={styles.toolbar}>
+				<CopyButton value={transcriptClipboardText} timeout={1200}>
+					{({ copied, copy }) => (
+						<Tooltip
+							label={
+								copied
+									? t('transcript.copiedTranscript')
+									: t('transcript.copyTranscript')
+							}
+							withArrow
+							position='top'
+							openDelay={100}
+							withinPortal
+						>
+							<Button
+								size='xs'
+								variant='light'
+								leftSection={
+									copied ? <IconCheck size={14} /> : <IconCopy size={14} />
+								}
+								onClick={copy}
+								aria-label={t('transcript.copyTranscript')}
+							>
+								{copied
+									? t('transcript.copiedTranscript')
+									: t('transcript.copyTranscript')}
+							</Button>
+						</Tooltip>
+					)}
+				</CopyButton>
+			</Group>
 			{visibleEntries.map(({ entry, workflowTransition }, index) => {
 				const isAgent = isAgentRole(entry.role);
 				const isUser = isUserRole(entry.role);

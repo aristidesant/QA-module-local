@@ -71,14 +71,16 @@ const WorkflowNodeActions = ({
 
 	const handleAddClick = () => {
 		if (position) {
-			addNode(nodeId, position);
+			return addNode(nodeId, position);
 		}
+		return undefined;
 	};
 
 	const handleAddNodeWithType = (type: WorkflowNodeType) => {
 		if (position) {
-			addNodeWithType(nodeId, position, type);
+			return addNodeWithType(nodeId, position, type);
 		}
+		return undefined;
 	};
 
 	const handleAddNodeWithVariant = (
@@ -86,8 +88,9 @@ const WorkflowNodeActions = ({
 		variant: 'transfer' | 'subagent'
 	) => {
 		if (position) {
-			addNodeWithVariant(nodeId, position, { type, variant });
+			return addNodeWithVariant(nodeId, position, { type, variant });
 		}
+		return undefined;
 	};
 
 	const menuItems = useMemo(() => {
@@ -102,6 +105,11 @@ const WorkflowNodeActions = ({
 				variant: 'transfer' as const,
 				label: t('form.workflow.nodeMenu.agentTransfer'),
 				icon: IconUserCog,
+			},
+			{
+				type: WORKFLOW_NODE_TYPES.UPDATE_STATE,
+				label: t('form.workflow.nodeMenu.updateState'),
+				icon: IconPencil,
 			},
 			{
 				type: WORKFLOW_NODE_TYPES.PHONE_NUMBER,
@@ -173,7 +181,10 @@ const WorkflowNodeActions = ({
 									if ('variant' in item && item.variant) {
 										handleAddNodeWithVariant(item.type, item.variant);
 									} else {
-										handleAddNodeWithType(item.type);
+										const newNodeId = handleAddNodeWithType(item.type);
+										if (item.type === WORKFLOW_NODE_TYPES.UPDATE_STATE && newNodeId) {
+											openNodeDrawer(newNodeId);
+										}
 									}
 									setIsMenuOpen(false);
 								}}

@@ -185,6 +185,8 @@
 			"message": "No transcript entries available",
 			"description": "Conversation data will appear here once available"
 		},
+		"copyTranscript": "Copy transcript",
+		"copiedTranscript": "Copied",
 		"roles": {
 			"agent": "Agent",
 			"user": "User"

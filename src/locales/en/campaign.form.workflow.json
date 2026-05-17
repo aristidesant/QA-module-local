@@ -61,8 +61,8 @@
 					"rightValue": "Right value",
 					"comparisonOperator": "Comparison operator",
 					"valueType": "Value type",
-					"dynamicVariablePlaceholder": "Select variable",
-					"noVariables": "No variables found",
+					"dynamicVariablePlaceholder": "Select or type variable",
+					"noVariables": "No matching variables",
 					"numberPlaceholder": "Enter number",
 					"stringPlaceholder": "Enter text",
 					"llmValuePlaceholder": "Prompt the model...",
@@ -95,7 +95,7 @@
 						"false": "False"
 					},
 					"errors": {
-						"emptyDynamicVariable": "Select a variable.",
+						"emptyDynamicVariable": "Enter a variable.",
 						"emptyStringLiteral": "Enter a text value.",
 						"invalidNumberLiteral": "Enter a valid number.",
 						"emptyLlmPrompt": "Enter an LLM prompt.",
@@ -209,6 +209,69 @@
 							"message": "{{count}} edge(s) have default unconditional routing. Consider configuring specific conditions"
 						}
 					}
+				},
+				"updateState": {
+					"title": "Update state",
+					"description": "Configure dynamic variables updated by this node.",
+					"missingNode": "Update state node not found",
+					"missingNodeHint": "Select an update state node to edit its configuration.",
+					"noTitle": "No title",
+					"updateCount_one": "{{count}} update",
+					"updateCount_other": "{{count}} updates",
+					"moreVariables": "+{{count}} more",
+					"tabs": {
+						"general": "General",
+						"edges": "Edges"
+					},
+					"updates": {
+						"title": "Updates",
+						"description": "Add one or more dynamic variable assignments for this node."
+					},
+					"addUpdate": "Add update",
+					"empty": "No updates configured",
+					"variableName": {
+						"label": "Variable to update",
+						"placeholder": "Dynamic variable that should be updated"
+					},
+					"validation": {
+						"variableRequired": "Variable name is required",
+						"promptRequired": "LLM prompt is required",
+						"duplicateVariable": "This variable is already being updated"
+					},
+					"expressionType": {
+						"label": "New value",
+						"options": {
+							"string": "String",
+							"number": "Number",
+							"true": "True",
+							"false": "False",
+							"null": "Null",
+							"dynamicVariable": "Dynamic Variable",
+							"llm": "LLM Evaluation"
+						}
+					},
+					"expressionSchema": {
+						"label": "Result type",
+						"options": {
+							"string": "String",
+							"boolean": "Boolean",
+							"integer": "Integer",
+							"number": "Number"
+						}
+					},
+					"prompt": {
+						"label": "Prompt",
+						"placeholder": "Describe this value to the LLM"
+					},
+					"value": {
+						"label": "Value",
+						"placeholder": "Enter text",
+						"dynamicPlaceholder": "Select variable",
+						"fixedValue": "Fixed value selected."
+					},
+					"wrapIn": "Wrap in",
+					"collapse": "Toggle update",
+					"remove": "Remove update"
 				},
 				"startEnd": {
 					"title": "Start/End node",
@@ -383,6 +446,7 @@
 			"nodeMenu": {
 				"subagent": "Subagent",
 				"agentTransfer": "Agent transfer",
+				"updateState": "Update state",
 				"phoneNumber": "Phone number transfer",
 				"tool": "Tool",
 				"end": "End"
@@ -452,6 +516,7 @@
 				"standalone_agent": "Subagent",
 				"agent_transfer": "Agent transfer",
 				"override_agent": "Agent transfer",
+				"update_state": "Update state",
 				"phone_number": "Phone number transfer",
 				"tool": "Dispatch tool",
 				"end": "End",

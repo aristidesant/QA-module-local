@@ -2,3 +2,11 @@
 	width: 100%;
 	padding: var(--mantine-spacing-xs);
 }
+
+.toolbar {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	padding-bottom: var(--mantine-spacing-xs);
+	background: var(--surface-card);
+}

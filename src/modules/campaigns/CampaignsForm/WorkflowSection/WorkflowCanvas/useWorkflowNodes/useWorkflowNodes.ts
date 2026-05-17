@@ -93,6 +93,14 @@ export const createNodeDataByType = (
 				label: 'Tool',
 				tools: [],
 			};
+		case WORKFLOW_NODE_TYPES.UPDATE_STATE:
+			return {
+				type: WORKFLOW_NODE_TYPES.UPDATE_STATE,
+				position,
+				edgeOrder: [],
+				label: '',
+				updates: [],
+			};
 		case WORKFLOW_NODE_TYPES.OVERRIDE_AGENT:
 			return {
 				type: WORKFLOW_NODE_TYPES.OVERRIDE_AGENT,
@@ -155,7 +163,7 @@ const useWorkflowNodes = ({
 			parentPosition: { x: number; y: number },
 			nodeType: string,
 			payload?: AddNodeVariantPayload
-		) => {
+		): string => {
 			const parentNode = nodesRef.current.find(
 				(node) => node.id === parentNodeId
 			);
@@ -214,13 +222,14 @@ const useWorkflowNodes = ({
 				newNode,
 			]);
 			setEdges((currentEdges) => [...currentEdges, newEdge]);
+			return newNodeId;
 		},
 		[nodesRef, setEdges, setNodes, t]
 	);
 
 	const handleAddNode = useCallback(
 		(parentNodeId: string, parentPosition: { x: number; y: number }) => {
-			appendNodeAndEdge(
+			return appendNodeAndEdge(
 				parentNodeId,
 				parentPosition,
 				WORKFLOW_NODE_TYPES.STANDALONE_AGENT
@@ -235,7 +244,7 @@ const useWorkflowNodes = ({
 			parentPosition: { x: number; y: number },
 			nodeType: string
 		) => {
-			appendNodeAndEdge(parentNodeId, parentPosition, nodeType);
+			return appendNodeAndEdge(parentNodeId, parentPosition, nodeType);
 		},
 		[appendNodeAndEdge]
 	);
@@ -246,7 +255,7 @@ const useWorkflowNodes = ({
 			parentPosition: { x: number; y: number },
 			payload: AddNodeVariantPayload
 		) => {
-			appendNodeAndEdge(parentNodeId, parentPosition, payload.type, payload);
+			return appendNodeAndEdge(parentNodeId, parentPosition, payload.type, payload);
 		},
 		[appendNodeAndEdge]
 	);
