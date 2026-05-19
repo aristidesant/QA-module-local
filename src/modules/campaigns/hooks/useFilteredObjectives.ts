@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
-import { useGetCampaignCategories } from '~/queries/campaignCategoriesQueries';
 import { CampaignObjectiveWithCategoryName } from '~/models/CampaignObjectiveModel';
 import type { ObjectiveFilters } from '~/modules/campaign-management/campaign-objectives/components/CampaignObjectivesFilters';
 import type { PaginationState } from '~/modules/campaign-management/campaign-categories/components/CampaignCategoriesPagination';
@@ -74,21 +73,15 @@ export const useCampaignObjectivesWithFilters =
 		const { data: response, isLoading } =
 			useGetCampaignObjectives(serverParams);
 
-		// Get categories for enriching objective data
-		const { data: categoriesResponse } = useGetCampaignCategories();
-		const categories = categoriesResponse?.data || [];
-
 		// Extract objectives from API response and enrich with category data
 		const rawObjectives = useMemo(() => {
 			if (!response?.data) return [];
 
 			return response.data.map((objective) => ({
 				...objective,
-				categoryName:
-					categories.find((cat) => cat.id === objective.categoryId)?.name ||
-					'Unknown Category',
+				categoryName: objective.category?.name || 'Unknown Category',
 			}));
-		}, [response?.data, categories]);
+		}, [response?.data]);
 
 		// Update pagination with server response
 		const updatedPagination = useMemo(() => {
