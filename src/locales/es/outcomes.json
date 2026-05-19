@@ -74,12 +74,18 @@
 			"createError": "Error al crear el catálogo de resultados.",
 			"updateSuccess": "El catálogo de resultados se actualizó con éxito.",
 			"updateError": "Error al actualizar el catálogo de resultados.",
+			"reactivateSuccess": "El catálogo de resultados se reactivó con éxito.",
+			"reactivateError": "Error al reactivar el catálogo de resultados.",
+			"deactivateSuccess": "El catálogo de resultados se desactivó con éxito.",
+			"deactivateError": "Error al desactivar el catálogo de resultados.",
 			"catalogCreated": "Catálogo creado",
 			"catalogUpdated": "Catálogo actualizado",
 			"catalogReactivated": "Catálogo reactivado",
 			"catalogDeactivated": "Catálogo desactivado",
 			"createFailed": "Error en la creación",
-			"updateFailed": "Error en la actualización"
+			"updateFailed": "Error en la actualización",
+			"reactivationFailed": "Error en la reactivación",
+			"deactivationFailed": "Error en la desactivación"
 		},
 		"modals": {
 			"reactivate": {
@@ -139,7 +145,7 @@
 		"defaultCatalog": "Catálogo por defecto",
 		"submitCreate": "Crear catálogo",
 		"submitEdit": "Actualizar catálogo",
-		"outboundAlert": "Los resultados por defecto se crearán automáticamente: Contacto efectivo, Contacto no efectivo y Sin contacto."
+		"outboundAlert": "Los catálogos outbound incluyen resultados por defecto protegidos: Contacto efectivo, Contacto no efectivo y Sin contacto."
 	},
 	"filters": {
 		"title": "Filtros",

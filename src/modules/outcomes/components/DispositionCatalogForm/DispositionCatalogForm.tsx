@@ -19,8 +19,6 @@ import type {
 	DispositionCatalogModel,
 } from '~/models/DispositionCatalogModels';
 import { IconInfoCircle } from '@tabler/icons-react';
-import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
-import { OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS } from '../../constants';
 
 type DispositionCatalogFormCoreProps = {
 	onSubmit: (
@@ -66,27 +64,10 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 			name: (value) => (!value ? t('formCatalog.nameRequired') : null),
 		},
 	});
-	const createNode = useCreateDispositionNode();
 
 	const handleSubmit = async (values: CreateDispositionCatalog) => {
 		try {
 			const catalog = await onSubmit(values);
-
-			// If we're creating an outbound catalog, create the protected default root nodes
-			if (mode === 'create' && catalog.type === 'OUTBOUND') {
-				await Promise.all(
-					OUTBOUND_PROTECTED_ROOT_NODE_DEFAULTS.map((node) =>
-						createNode.mutateAsync({
-							data: {
-								...node,
-								catalogId: catalog.id,
-								parentId: undefined,
-							},
-						})
-					)
-				);
-			}
-
 			onSuccess?.(catalog);
 		} catch (error) {
 			onError?.(error);
@@ -168,7 +149,7 @@ const DispositionCatalogForm: FC<DispositionCatalogFormProps> = ({
 				</Stack>
 				<Divider />
 				<Group justify='flex-end'>
-					<Button type='submit' loading={loading || createNode.isPending}>
+					<Button type='submit' loading={loading}>
 						{mode === 'edit'
 							? t('formCatalog.submitEdit')
 							: t('formCatalog.submitCreate')}

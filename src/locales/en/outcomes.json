@@ -74,12 +74,18 @@
 			"createError": "Failed to create outcome catalog.",
 			"updateSuccess": "Outcome catalog was updated successfully.",
 			"updateError": "Failed to update outcome catalog.",
+			"reactivateSuccess": "Outcome catalog was reactivated successfully.",
+			"reactivateError": "Failed to reactivate outcome catalog.",
+			"deactivateSuccess": "Outcome catalog was deactivated successfully.",
+			"deactivateError": "Failed to deactivate outcome catalog.",
 			"catalogCreated": "Catalog created",
 			"catalogUpdated": "Catalog updated",
 			"catalogReactivated": "Catalog reactivated",
 			"catalogDeactivated": "Catalog deactivated",
 			"createFailed": "Create failed",
-			"updateFailed": "Update failed"
+			"updateFailed": "Update failed",
+			"reactivationFailed": "Reactivation failed",
+			"deactivationFailed": "Deactivation failed"
 		},
 		"modals": {
 			"reactivate": {
@@ -139,7 +145,7 @@
 		"defaultCatalog": "Default catalog",
 		"submitCreate": "Create Catalog",
 		"submitEdit": "Update Catalog",
-		"outboundAlert": "Default outcomes will be created automatically: Effective Contact, No Effective Contact, and No Contact."
+		"outboundAlert": "Outbound catalogs include protected default outcomes: Effective Contact, No Effective Contact, and No Contact."
 	},
 	"filters": {
 		"title": "Filters",
