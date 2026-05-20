@@ -68,7 +68,7 @@ const GeneralSectionRightPanel: React.FC = () => {
 		data: paginatedResp,
 		isLoading: objectivesLoading,
 		error: loadError,
-	} = useGetCampaignObjectives({ active: true });
+	} = useGetCampaignObjectives({ active: true, limit: 9999 });
 
 	const objectiveId = form.values.objectiveId;
 	const { data: selectedObjective } = useGetCampaignObjectiveById(

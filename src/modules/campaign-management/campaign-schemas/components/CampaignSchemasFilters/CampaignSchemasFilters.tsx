@@ -30,7 +30,9 @@ const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 }) => {
 	const { t } = useTranslation('campaign-management');
 	// Get objectives for the filter
-	const { data: objectivesResponse } = useGetCampaignObjectives();
+	const { data: objectivesResponse } = useGetCampaignObjectives({
+		limit: 9999,
+	});
 	const objectives = objectivesResponse?.data || [];
 
 	const hasActiveFilters =

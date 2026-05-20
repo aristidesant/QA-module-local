@@ -130,7 +130,9 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 	const isAllowed = isEditing ? canEdit : canCreate;
 
 	// Get objectives for the select
-	const { data: objectivesResponse } = useGetCampaignObjectives();
+	const { data: objectivesResponse } = useGetCampaignObjectives({
+		limit: 9999,
+	});
 	const objectives = objectivesResponse?.data || [];
 
 	// State for version creation modal

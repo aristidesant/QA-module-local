@@ -89,6 +89,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 	const { mutateAsync: setDraft } = useSetCampaignDraft();
 	const { data: objectivesResponse } = useGetCampaignObjectives({
 		active: true,
+		limit: 9999,
 	});
 	const { data: voicesResponse } = useGetAllAgentVoices();
 
