@@ -16,6 +16,7 @@ import { IconAlertCircle } from '@tabler/icons-react';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import type { AgentBehavior } from '~/models/AgentBehavior';
+import type { AgentBehaviorCampaign } from '~/models/AgentBehavior';
 import {
 	useCampaignsForBehavior,
 	useProcessReplaceJob,
@@ -29,6 +30,31 @@ interface ReplaceWithBackupModalProps {
 	sourceBehavior: AgentBehavior | null;
 	allBehaviors: AgentBehavior[];
 }
+
+type CampaignsForBehaviorQueryResult =
+	| AgentBehaviorCampaign[]
+	| {
+			data?: AgentBehaviorCampaign[];
+			campaigns?: AgentBehaviorCampaign[];
+	  };
+
+const normalizeCampaigns = (
+	campaigns: CampaignsForBehaviorQueryResult | undefined
+): AgentBehaviorCampaign[] => {
+	if (Array.isArray(campaigns)) {
+		return campaigns;
+	}
+
+	if (Array.isArray(campaigns?.data)) {
+		return campaigns.data;
+	}
+
+	if (Array.isArray(campaigns?.campaigns)) {
+		return campaigns.campaigns;
+	}
+
+	return [];
+};
 
 const ReplaceWithBackupModal: React.FC<ReplaceWithBackupModalProps> = ({
 	opened,
@@ -44,10 +70,11 @@ const ReplaceWithBackupModal: React.FC<ReplaceWithBackupModalProps> = ({
 		(behavior) => behavior.id === sourceBehavior?.backupBehaviorId
 	);
 
-	const { data: campaigns = [], isLoading: isLoadingCampaigns } =
+	const { data: campaignsRaw, isLoading: isLoadingCampaigns } =
 		useCampaignsForBehavior(sourceBehavior?.id ?? '', {
 			enabled: !!sourceBehavior && opened,
 		});
+	const campaigns = normalizeCampaigns(campaignsRaw);
 
 	const replaceMutation = useReplaceAgentBehaviorWithBackup();
 	const processMutation = useProcessReplaceJob();

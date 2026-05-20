@@ -28,6 +28,31 @@ export interface AgentBehaviorsResponse {
 	total: number;
 }
 
+type AgentBehaviorCampaignsResponse =
+	| AgentBehaviorCampaign[]
+	| {
+			data?: AgentBehaviorCampaign[];
+			campaigns?: AgentBehaviorCampaign[];
+	  };
+
+const normalizeAgentBehaviorCampaigns = (
+	response: AgentBehaviorCampaignsResponse
+): AgentBehaviorCampaign[] => {
+	if (Array.isArray(response)) {
+		return response;
+	}
+
+	if (Array.isArray(response.data)) {
+		return response.data;
+	}
+
+	if (Array.isArray(response.campaigns)) {
+		return response.campaigns;
+	}
+
+	return [];
+};
+
 export const getAgentBehaviors = async (
 	params?: GetAgentBehaviorsParams
 ): Promise<AgentBehaviorsResponse> => {
@@ -95,11 +120,10 @@ export const deleteAgentBehavior = async (id: string): Promise<void> => {
 export const getCampaignsForBehavior = async (
 	configId: string
 ): Promise<AgentBehaviorCampaign[]> => {
-	const response = await axios.get<AgentBehaviorCampaign[]>(
+	const response = await axios.get<AgentBehaviorCampaignsResponse>(
 		`${DEFAULT_API_URL}/agent-behaviors/${configId}/campaigns`
 	);
-	// Return data directly if it is an array
-	return response.data;
+	return normalizeAgentBehaviorCampaigns(response.data);
 };
 
 export const replaceAgentBehavior = async (
