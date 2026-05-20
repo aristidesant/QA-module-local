@@ -55,3 +55,11 @@ export interface CampaignObjectiveApiParams {
 	limit?: number;
 	offset?: number;
 }
+
+/** Lightweight dropdown option returned by GET /campaign-objectives/all */
+export interface CampaignObjectiveDropdownOption {
+	id: number;
+	name: string;
+	categoryId: number;
+	categoryName: string;
+}

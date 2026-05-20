@@ -20,7 +20,7 @@ import RightSectionCard from '~/components/RightSectionCard';
 import { CampaignObjectivesForm } from '~/modules/campaign-management/campaign-objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
 import {
 	useGetCampaignObjectiveById,
-	useGetCampaignObjectives,
+	useGetCampaignObjectivesAll,
 } from '~/queries/campaignObjectivesQueries';
 import { useCampaignFormContext } from '../../../campaignFormFunctions';
 import CampaignConfigurationPhoneNumber from '../../AgentSection/CampaignConfigurationPhoneNumber/CampaignConfigurationPhoneNumber';
@@ -65,10 +65,10 @@ const GeneralSectionRightPanel: React.FC = () => {
 	};
 
 	const {
-		data: paginatedResp,
+		data: objectives = [],
 		isLoading: objectivesLoading,
 		error: loadError,
-	} = useGetCampaignObjectives({ active: true });
+	} = useGetCampaignObjectivesAll();
 
 	const objectiveId = form.values.objectiveId;
 	const { data: selectedObjective } = useGetCampaignObjectiveById(
@@ -76,20 +76,21 @@ const GeneralSectionRightPanel: React.FC = () => {
 		!!objectiveId
 	);
 
-	const objectives = Array.isArray(paginatedResp?.data)
-		? [...paginatedResp.data]
-		: [];
-
 	if (
 		selectedObjective &&
 		!objectives.find((objective) => objective.id === selectedObjective.id)
 	) {
-		objectives.push(selectedObjective);
+		objectives.push({
+			id: selectedObjective.id,
+			name: selectedObjective.name,
+			categoryId: selectedObjective.categoryId,
+			categoryName: selectedObjective.category?.name || 'Uncategorized',
+		});
 	}
 
 	const grouped: Record<string, { value: string; label: string }[]> = {};
 	objectives.forEach((objective) => {
-		const groupName = objective.category?.name || 'Uncategorized';
+		const groupName = objective.categoryName || 'Uncategorized';
 		if (!grouped[groupName]) {
 			grouped[groupName] = [];
 		}
