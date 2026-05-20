@@ -345,6 +345,7 @@
 					"title": "Vista previa de la configuración",
 					"label": "Seleccione un conjunto de parámetros predefinido",
 					"placeholder": "Seleccionar configuración",
+					"backupSuffix": "Respaldo",
 					"actions": {
 						"cancel": "Cancelar",
 						"apply": "Aplicar"

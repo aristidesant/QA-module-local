@@ -75,4 +75,6 @@ export interface CampaignPredefinedParam {
 		conversationConfig?: CampaignPredefinedConversationConfig;
 		platformSettings?: CampaignPredefinedPlatformSettings;
 	};
+	isBackup?: boolean;
+	backupBehaviorId?: string | null;
 }

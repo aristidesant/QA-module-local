@@ -6,12 +6,31 @@
 	"list": {
 		"columns": {
 			"name": "Name",
+			"type": "Type",
+			"backup": "Backup",
 			"llmModel": "LLM Model",
 			"audioFormat": "Audio Format",
 			"actions": "Actions"
 		},
 		"actions": {
+			"clone": "Clone",
+			"cloneAria": "Clone behavior",
+			"replace": "Sync / Replace",
+			"replaceAria": "Replace behavior",
+			"replaceWithBackup": "Replace with backup",
+			"replaceWithBackupAria": "Replace campaigns with backup",
+			"replaceWithBackupBackupDisabled": "Backup behaviors cannot be replaced with another backup",
+			"replaceWithBackupMissingDisabled": "Assign a backup behavior before replacing",
+			"delete": "Delete",
 			"deleteAria": "Delete parameter"
+		},
+		"type": {
+			"primary": "Primary",
+			"backup": "Backup"
+		},
+		"backup": {
+			"none": "None",
+			"notApplicable": "N/A"
 		}
 	},
 	"actions": {
@@ -33,6 +52,57 @@
 	"deleteOverride": {
 		"title": "Delete configuration",
 		"description": "Delete this client override to use the global campaign parameters?"
+	},
+	"clone": {
+		"title": "Clone Behavior",
+		"description": "Create a new behavior from \"{{name}}\". Leave the name empty to let the backend generate the copy name.",
+		"name": {
+			"label": "Clone name",
+			"description": "Optional. Duplicate names are not allowed.",
+			"placeholder": "Copy of {{name}}"
+		},
+		"actions": {
+			"submit": "Clone"
+		},
+		"validation": {
+			"nameConflict": "A behavior with this name already exists."
+		},
+		"notifications": {
+			"success": "Behavior cloned",
+			"error": "The behavior could not be cloned."
+		}
+	},
+	"backupReplace": {
+		"title": "Replace With Backup: {{name}}",
+		"steps": {
+			"review": {
+				"label": "Review",
+				"description": "Campaigns"
+			},
+			"progress": {
+				"label": "Progress",
+				"description": "Job status"
+			}
+		},
+		"sourceLabel": "Source:",
+		"backupLabel": "Backup:",
+		"missingBackup": "Missing backup",
+		"noCampaigns": "There are no active campaigns currently using this behavior.",
+		"campaignSummary": "{{count}} campaigns will be switched to the configured backup.",
+		"statusLabel": "Status:",
+		"progressCount": "({{succeeded}} / {{total}} completed)",
+		"pending": {
+			"title": "Job Queued",
+			"description": "This job has been scheduled to run automatically at midnight. You can also trigger it manually now."
+		},
+		"actions": {
+			"start": "Start Replacement",
+			"processNow": "Process Now"
+		},
+		"errors": {
+			"badRequest": "The backup replacement could not be scheduled. Check that the source has a valid backup and at least one campaign uses it.",
+			"default": "The backup replacement could not be scheduled."
+		}
 	},
 	"form": {
 		"menu": {
@@ -208,6 +278,19 @@
 				"description": {
 					"edit": "Changing the name will create a new parameter",
 					"create": "Unique identifier for this configuration"
+				}
+			},
+			"backup": {
+				"isBackup": {
+					"label": "Reusable backup behavior",
+					"description": "Mark this behavior as a backup option that primary behaviors can reuse."
+				},
+				"backupModeNotice": "Backup behaviors can be assigned to primary behaviors and do not point to another backup.",
+				"selector": {
+					"label": "Backup behavior",
+					"description": "Choose the backup behavior used when campaigns are moved from this primary behavior.",
+					"placeholder": "Select a backup behavior",
+					"empty": "No reusable backup behaviors found"
 				}
 			}
 		},

@@ -20,6 +20,7 @@
 			"agentBehavior": "Agent Behavior",
 			"agentBehaviorDesc": "Select a predefined agent behavior configuration",
 			"agentBehaviorPlaceholder": "Choose an agent behavior",
+			"agentBehaviorBackupSuffix": "Backup",
 			"createButton": "Create Campaign",
 			"cancelButton": "Cancel",
 			"successMessage": "Campaign created successfully",

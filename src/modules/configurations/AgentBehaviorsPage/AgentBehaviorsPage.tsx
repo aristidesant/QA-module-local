@@ -21,6 +21,8 @@ import { IconAlertCircle, IconPlus } from '@tabler/icons-react';
 import AgentBehaviorsForm from './AgentBehaviorsForm/AgentBehaviorsForm';
 import AgentBehaviorsList from './AgentBehaviorsList/AgentBehaviorsList';
 import BatchReplaceModal from './BatchReplaceModal/BatchReplaceModal';
+import CloneBehaviorModal from './CloneBehaviorModal';
+import ReplaceWithBackupModal from './ReplaceWithBackupModal';
 import SectionCard, { type CardActionsConfig } from '~/components/SectionCard';
 import { useTranslation } from 'react-i18next';
 import styles from './AgentBehaviorsPage.module.css';
@@ -40,6 +42,11 @@ const AgentBehaviorsPage = () => {
 		useState<AgentBehavior | null>(null);
 	const [formModalOpen, setFormModalOpen] = useState(false);
 	const [behaviorToReplace, setBehaviorToReplace] =
+		useState<AgentBehavior | null>(null);
+	const [behaviorToClone, setBehaviorToClone] = useState<AgentBehavior | null>(
+		null
+	);
+	const [behaviorToReplaceWithBackup, setBehaviorToReplaceWithBackup] =
 		useState<AgentBehavior | null>(null);
 
 	const { data: selectedBehavior, isLoading: isLoadingDetail } =
@@ -73,6 +80,14 @@ const AgentBehaviorsPage = () => {
 
 	const handleReplaceClick = (behavior: AgentBehavior) => {
 		setBehaviorToReplace(behavior);
+	};
+
+	const handleCloneClick = (behavior: AgentBehavior) => {
+		setBehaviorToClone(behavior);
+	};
+
+	const handleReplaceWithBackupClick = (behavior: AgentBehavior) => {
+		setBehaviorToReplaceWithBackup(behavior);
 	};
 
 	const handleConfirmDelete = async () => {
@@ -120,15 +135,30 @@ const AgentBehaviorsPage = () => {
 					data={list}
 					isLoading={isLoading}
 					onRowClick={handleRowClick}
+					onClone={handleCloneClick}
 					onDelete={handleDeleteClick}
 					onReplace={handleReplaceClick}
+					onReplaceWithBackup={handleReplaceWithBackupClick}
 				/>
 			</div>
+
+			<CloneBehaviorModal
+				opened={!!behaviorToClone}
+				onClose={() => setBehaviorToClone(null)}
+				sourceBehavior={behaviorToClone}
+			/>
 
 			<BatchReplaceModal
 				opened={!!behaviorToReplace}
 				onClose={() => setBehaviorToReplace(null)}
 				sourceBehavior={behaviorToReplace}
+				allBehaviors={list}
+			/>
+
+			<ReplaceWithBackupModal
+				opened={!!behaviorToReplaceWithBackup}
+				onClose={() => setBehaviorToReplaceWithBackup(null)}
+				sourceBehavior={behaviorToReplaceWithBackup}
 				allBehaviors={list}
 			/>
 
@@ -242,6 +272,7 @@ const AgentBehaviorsPage = () => {
 				) : (
 					<AgentBehaviorsForm
 						behavior={mode === 'edit' ? selectedBehavior : undefined}
+						allBehaviors={list}
 						mode={mode}
 						onCancel={handleCloseForm}
 						onSuccess={handleCloseForm}

@@ -6,12 +6,31 @@
 	"list": {
 		"columns": {
 			"name": "Nombre",
+			"type": "Tipo",
+			"backup": "Respaldo",
 			"llmModel": "Modelo LLM",
 			"audioFormat": "Formato de audio",
 			"actions": "Acciones"
 		},
 		"actions": {
+			"clone": "Clonar",
+			"cloneAria": "Clonar comportamiento",
+			"replace": "Sincronizar / Reemplazar",
+			"replaceAria": "Reemplazar comportamiento",
+			"replaceWithBackup": "Reemplazar con respaldo",
+			"replaceWithBackupAria": "Reemplazar campañas con respaldo",
+			"replaceWithBackupBackupDisabled": "Los comportamientos de respaldo no se pueden reemplazar con otro respaldo",
+			"replaceWithBackupMissingDisabled": "Asigna un comportamiento de respaldo antes de reemplazar",
+			"delete": "Eliminar",
 			"deleteAria": "Eliminar parámetro"
+		},
+		"type": {
+			"primary": "Primario",
+			"backup": "Respaldo"
+		},
+		"backup": {
+			"none": "Ninguno",
+			"notApplicable": "N/D"
 		}
 	},
 	"actions": {
@@ -33,6 +52,57 @@
 	"deleteOverride": {
 		"title": "Eliminar configuración",
 		"description": "¿Eliminar esta sobrescritura del cliente para usar los parámetros globales de campaña?"
+	},
+	"clone": {
+		"title": "Clonar comportamiento",
+		"description": "Crea un nuevo comportamiento desde \"{{name}}\". Deja el nombre vacío para que el backend genere el nombre de la copia.",
+		"name": {
+			"label": "Nombre del clon",
+			"description": "Opcional. No se permiten nombres duplicados.",
+			"placeholder": "Copia de {{name}}"
+		},
+		"actions": {
+			"submit": "Clonar"
+		},
+		"validation": {
+			"nameConflict": "Ya existe un comportamiento con este nombre."
+		},
+		"notifications": {
+			"success": "Comportamiento clonado",
+			"error": "No se pudo clonar el comportamiento."
+		}
+	},
+	"backupReplace": {
+		"title": "Reemplazar con respaldo: {{name}}",
+		"steps": {
+			"review": {
+				"label": "Revisar",
+				"description": "Campañas"
+			},
+			"progress": {
+				"label": "Progreso",
+				"description": "Estado del job"
+			}
+		},
+		"sourceLabel": "Origen:",
+		"backupLabel": "Respaldo:",
+		"missingBackup": "Respaldo faltante",
+		"noCampaigns": "No hay campañas activas usando este comportamiento.",
+		"campaignSummary": "{{count}} campañas se cambiarán al respaldo configurado.",
+		"statusLabel": "Estado:",
+		"progressCount": "({{succeeded}} / {{total}} completadas)",
+		"pending": {
+			"title": "Job en cola",
+			"description": "Este job está programado para ejecutarse automáticamente a medianoche. También puedes ejecutarlo manualmente ahora."
+		},
+		"actions": {
+			"start": "Iniciar reemplazo",
+			"processNow": "Procesar ahora"
+		},
+		"errors": {
+			"badRequest": "No se pudo programar el reemplazo con respaldo. Verifica que el origen tenga un respaldo válido y que al menos una campaña lo use.",
+			"default": "No se pudo programar el reemplazo con respaldo."
+		}
 	},
 	"form": {
 		"menu": {
@@ -208,6 +278,19 @@
 				"description": {
 					"edit": "Cambiar el nombre creará un nuevo parámetro",
 					"create": "Identificador único para esta configuración"
+				}
+			},
+			"backup": {
+				"isBackup": {
+					"label": "Comportamiento de respaldo reutilizable",
+					"description": "Marca este comportamiento como una opción de respaldo que los comportamientos primarios pueden reutilizar."
+				},
+				"backupModeNotice": "Los comportamientos de respaldo se pueden asignar a comportamientos primarios y no apuntan a otro respaldo.",
+				"selector": {
+					"label": "Comportamiento de respaldo",
+					"description": "Elige el comportamiento de respaldo usado cuando las campañas se mueven desde este comportamiento primario.",
+					"placeholder": "Selecciona un comportamiento de respaldo",
+					"empty": "No se encontraron comportamientos de respaldo reutilizables"
 				}
 			}
 		},

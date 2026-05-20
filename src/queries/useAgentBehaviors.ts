@@ -4,17 +4,23 @@ import {
 	getAgentBehaviorById,
 	createAgentBehavior,
 	updateAgentBehavior,
+	cloneAgentBehavior,
 	deleteAgentBehavior,
 	checkDeleteAgentBehavior,
 	getCampaignsForBehavior,
 	replaceAgentBehavior,
+	replaceAgentBehaviorWithBackup,
 	getReplaceJob,
 	processReplaceJob,
 	processPendingReplaceJobs,
 	cleanupContinuity,
 	type GetAgentBehaviorsParams,
 } from '~/api/agentBehaviorsApi';
-import type { AgentBehaviorContinuityCleanupRequest } from '~/models/AgentBehavior';
+import type {
+	AgentBehaviorCloneRequest,
+	AgentBehaviorContinuityCleanupRequest,
+	AgentBehaviorUpdateRequest,
+} from '~/models/AgentBehavior';
 
 export const agentBehaviorsKeys = {
 	all: ['agentBehaviors'] as const,
@@ -69,7 +75,7 @@ export const useUpdateAgentBehavior = () => {
 			data,
 		}: {
 			id: string;
-			data: { name?: string; params?: any };
+			data: AgentBehaviorUpdateRequest;
 		}) => updateAgentBehavior(id, data),
 		onSuccess: (_, variables) => {
 			void queryClient.invalidateQueries({
@@ -77,6 +83,25 @@ export const useUpdateAgentBehavior = () => {
 			});
 			void queryClient.invalidateQueries({
 				queryKey: agentBehaviorsKeys.detail(variables.id),
+			});
+		},
+	});
+};
+
+export const useCloneAgentBehavior = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: ({
+			id,
+			data,
+		}: {
+			id: string;
+			data: AgentBehaviorCloneRequest;
+		}) => cloneAgentBehavior(id, data),
+		onSuccess: () => {
+			void queryClient.invalidateQueries({
+				queryKey: agentBehaviorsKeys.lists(),
 			});
 		},
 	});
@@ -121,6 +146,20 @@ export const useCampaignsForBehavior = (
 export const useReplaceAgentBehavior = () => {
 	return useMutation({
 		mutationFn: replaceAgentBehavior,
+	});
+};
+
+export const useReplaceAgentBehaviorWithBackup = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: replaceAgentBehaviorWithBackup,
+		onSuccess: (data) => {
+			void queryClient.setQueryData(agentBehaviorsKeys.job(data.jobId), data);
+			void queryClient.invalidateQueries({
+				queryKey: agentBehaviorsKeys.jobs(),
+			});
+		},
 	});
 };
 

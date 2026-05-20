@@ -10,6 +10,7 @@
 		"catalog": {
 			"selectCatalog": "Seleccionar Catálogo",
 			"catalogChangeDisabled": "No se puede cambiar el catálogo cuando ya hay resultados agregados",
+			"catalogChangeDisabledWhileCalling": "Los cambios de catálogo están deshabilitados mientras una lista de contactos está llamando activamente a personas.",
 			"noDispositions": "No hay disposiciones disponibles en este catálogo.",
 			"createCatalog": "Crear Catálogo",
 			"noCatalogsTitle": "No hay catálogos disponibles",

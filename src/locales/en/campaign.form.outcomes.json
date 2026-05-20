@@ -10,6 +10,7 @@
 		"catalog": {
 			"selectCatalog": "Select Catalog",
 			"catalogChangeDisabled": "Cannot change catalog when outcomes are already added",
+			"catalogChangeDisabledWhileCalling": "Catalog changes are disabled while a contact list is actively calling people.",
 			"noDispositions": "No dispositions available in this catalog.",
 			"createCatalog": "Create Catalog",
 			"noCatalogsTitle": "No catalogs available",

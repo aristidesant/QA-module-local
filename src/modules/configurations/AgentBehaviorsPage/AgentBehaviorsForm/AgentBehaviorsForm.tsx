@@ -46,6 +46,7 @@ import SecuritySection from './components/SecuritySection';
 
 interface AgentBehaviorsFormProps {
 	behavior?: AgentBehavior;
+	allBehaviors?: AgentBehavior[];
 	mode: 'create' | 'edit';
 	onCancel: () => void;
 	onSuccess: () => void;
@@ -53,6 +54,7 @@ interface AgentBehaviorsFormProps {
 
 const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 	behavior,
+	allBehaviors = [],
 	mode,
 	onCancel,
 	onSuccess,
@@ -174,6 +176,8 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 			platformSettingsOverrides: clonePlatformSettingsOverrides(
 				platformSettingsOverrides
 			),
+			isBackup: behavior?.isBackup ?? false,
+			backupBehaviorId: behavior?.backupBehaviorId ?? null,
 		},
 		validate: {
 			name: (value) => {
@@ -270,6 +274,8 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 					behavior?.params?.platformSettings?.overrides ??
 						DEFAULT_PLATFORM_SETTINGS_OVERRIDES
 				),
+				isBackup: behavior.isBackup ?? false,
+				backupBehaviorId: behavior.backupBehaviorId ?? null,
 			});
 		}
 	}, [behavior]);
@@ -327,6 +333,8 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 						),
 					},
 				},
+				isBackup: values.isBackup,
+				backupBehaviorId: values.isBackup ? null : values.backupBehaviorId,
 			};
 
 			if (isEditMode && behavior) {
@@ -378,7 +386,12 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 
 	return (
 		<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-			<CampaignPredefinedFormProvider form={form} isEditMode={isEditMode}>
+			<CampaignPredefinedFormProvider
+				form={form}
+				isEditMode={isEditMode}
+				currentBehaviorId={behavior?.id}
+				allBehaviors={allBehaviors}
+			>
 				<div className={styles.mainContainer}>
 					<ModalBody
 						menu={

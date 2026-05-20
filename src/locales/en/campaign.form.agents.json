@@ -345,6 +345,7 @@
 					"title": "Configuration Preview",
 					"label": "Select a predefined parameter set",
 					"placeholder": "Select configuration",
+					"backupSuffix": "Backup",
 					"actions": {
 						"cancel": "Cancel",
 						"apply": "Apply"

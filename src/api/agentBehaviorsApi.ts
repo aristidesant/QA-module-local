@@ -8,6 +8,9 @@ import type {
 	AgentBehaviorReplaceJob,
 	AgentBehaviorProcessPendingResponse,
 	AgentBehaviorContinuityCleanupRequest,
+	AgentBehaviorSaveRequest,
+	AgentBehaviorUpdateRequest,
+	AgentBehaviorCloneRequest,
 } from '~/models/AgentBehavior';
 
 export interface GetAgentBehaviorsParams {
@@ -24,6 +27,31 @@ export interface AgentBehaviorsResponse {
 	data: AgentBehavior[];
 	total: number;
 }
+
+type AgentBehaviorCampaignsResponse =
+	| AgentBehaviorCampaign[]
+	| {
+			data?: AgentBehaviorCampaign[];
+			campaigns?: AgentBehaviorCampaign[];
+	  };
+
+const normalizeAgentBehaviorCampaigns = (
+	response: AgentBehaviorCampaignsResponse
+): AgentBehaviorCampaign[] => {
+	if (Array.isArray(response)) {
+		return response;
+	}
+
+	if (Array.isArray(response.data)) {
+		return response.data;
+	}
+
+	if (Array.isArray(response.campaigns)) {
+		return response.campaigns;
+	}
+
+	return [];
+};
 
 export const getAgentBehaviors = async (
 	params?: GetAgentBehaviorsParams
@@ -44,10 +72,9 @@ export const getAgentBehaviorById = async (
 	return response.data;
 };
 
-export const createAgentBehavior = async (data: {
-	name: string;
-	params: any;
-}): Promise<AgentBehavior> => {
+export const createAgentBehavior = async (
+	data: AgentBehaviorSaveRequest
+): Promise<AgentBehavior> => {
 	const response = await axios.post<AgentBehavior>(
 		`${DEFAULT_API_URL}/agent-behaviors`,
 		data
@@ -57,10 +84,21 @@ export const createAgentBehavior = async (data: {
 
 export const updateAgentBehavior = async (
 	id: string,
-	data: { name?: string; params?: any }
+	data: AgentBehaviorUpdateRequest
 ): Promise<AgentBehavior> => {
 	const response = await axios.patch<AgentBehavior>(
 		`${DEFAULT_API_URL}/agent-behaviors/${id}`,
+		data
+	);
+	return response.data;
+};
+
+export const cloneAgentBehavior = async (
+	id: string,
+	data: AgentBehaviorCloneRequest
+): Promise<AgentBehavior> => {
+	const response = await axios.post<AgentBehavior>(
+		`${DEFAULT_API_URL}/agent-behaviors/${id}/clone`,
 		data
 	);
 	return response.data;
@@ -82,11 +120,10 @@ export const deleteAgentBehavior = async (id: string): Promise<void> => {
 export const getCampaignsForBehavior = async (
 	configId: string
 ): Promise<AgentBehaviorCampaign[]> => {
-	const response = await axios.get<AgentBehaviorCampaign[]>(
+	const response = await axios.get<AgentBehaviorCampaignsResponse>(
 		`${DEFAULT_API_URL}/agent-behaviors/${configId}/campaigns`
 	);
-	// Return data directly if it is an array
-	return response.data;
+	return normalizeAgentBehaviorCampaigns(response.data);
 };
 
 export const replaceAgentBehavior = async (
@@ -95,6 +132,15 @@ export const replaceAgentBehavior = async (
 	const response = await axios.post<AgentBehaviorReplaceJob>(
 		`${DEFAULT_API_URL}/agent-behaviors/replace`,
 		data
+	);
+	return response.data;
+};
+
+export const replaceAgentBehaviorWithBackup = async (
+	id: string
+): Promise<AgentBehaviorReplaceJob> => {
+	const response = await axios.post<AgentBehaviorReplaceJob>(
+		`${DEFAULT_API_URL}/agent-behaviors/${id}/replace-with-backup`
 	);
 	return response.data;
 };
@@ -128,7 +174,7 @@ export const processPendingReplaceJobs =
 export const cleanupContinuity = async (
 	jobId: string,
 	data: AgentBehaviorContinuityCleanupRequest
-): Promise<any> => {
+): Promise<unknown> => {
 	const response = await axios.post(
 		`${DEFAULT_API_URL}/agent-behaviors/replace/${jobId}/continuity-cleanup`,
 		data

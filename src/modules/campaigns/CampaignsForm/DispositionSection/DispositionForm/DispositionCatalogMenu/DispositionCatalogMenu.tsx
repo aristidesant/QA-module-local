@@ -12,6 +12,7 @@ import {
 	Modal,
 	Alert,
 	ThemeIcon,
+	Tooltip,
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import {
@@ -29,6 +30,7 @@ import DispositionCatalogForm from '~/modules/outcomes/components/DispositionCat
 import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
 import { IconPlus, IconInfoCircle, IconFolder } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
+import { useGetContactGroups } from '~/queries/contactGroupQueries';
 
 const DispositionCatalogMenu: React.FC = () => {
 	const { getMovedNodeIds, selectedCatalog, setSelectedCatalog } =
@@ -51,6 +53,15 @@ const DispositionCatalogMenu: React.FC = () => {
 	const { data: catalogs = [], isLoading } = useDispositionCatalogs({
 		type: campaignType,
 	});
+	const { data: contactGroups } = useGetContactGroups(
+		{
+			campaignId: campaign?.id,
+			isActive: true,
+		},
+		{
+			enabled: !!campaign?.id,
+		}
+	);
 
 	const createCatalogMutation = useCreateDispositionCatalog();
 
@@ -192,7 +203,15 @@ const DispositionCatalogMenu: React.FC = () => {
 		'campaign.detail',
 		'common',
 	]);
-	const hasNodesInFlow = (flowJson?.dispositionNodes?.length ?? 0) > 0;
+	const isCampaignCalling = (contactGroups?.data ?? []).some(
+		(contactGroup) =>
+			contactGroup.isActive &&
+			(contactGroup.queueStatus ?? '').toUpperCase() === 'RUNNING'
+	);
+	const catalogControlsDisabled = isCampaignCalling;
+	const catalogControlsDisabledReason = isCampaignCalling
+		? t('disposition.catalog.catalogChangeDisabledWhileCalling')
+		: undefined;
 
 	const handleCatalogCreated = (catalog: DispositionCatalogModel) => {
 		setSelectedCatalog(catalog);
@@ -241,13 +260,22 @@ const DispositionCatalogMenu: React.FC = () => {
 								})}
 							</Text>
 						</Alert>
-						<Button
-							leftSection={<IconPlus size={14} />}
-							size='xs'
-							onClick={() => setCreateCatalogModalOpened(true)}
+						<Tooltip
+							label={catalogControlsDisabledReason}
+							disabled={!catalogControlsDisabledReason}
+							withArrow
 						>
-							{t('disposition.catalog.createCatalog')}
-						</Button>
+							<Box>
+								<Button
+									leftSection={<IconPlus size={14} />}
+									size='xs'
+									onClick={() => setCreateCatalogModalOpened(true)}
+									disabled={isCampaignCalling}
+								>
+									{t('disposition.catalog.createCatalog')}
+								</Button>
+							</Box>
+						</Tooltip>
 					</Stack>
 				</Center>
 
@@ -273,38 +301,48 @@ const DispositionCatalogMenu: React.FC = () => {
 
 	return (
 		<div className={styles.container}>
-			<Select
-				label={t('disposition.catalog.selectCatalog')}
-				data={activeCatalogs.map((cat) => ({
-					value: String(cat.id),
-					label: cat.name,
-				}))}
-				value={selectedCatalog ? String(selectedCatalog.id) : null}
-				onChange={(id) => {
-					const catalog =
-						activeCatalogs.find((cat) => String(cat.id) === id) || null;
-					setSelectedCatalog(catalog);
-				}}
-				disabled={isLoading || activeCatalogs.length === 0 || hasNodesInFlow}
-				description={
-					hasNodesInFlow
-						? t('disposition.catalog.catalogChangeDisabled')
-						: undefined
-				}
-				size='xs'
-			/>
-			{!hasNodesInFlow && (
-				<Button
-					variant='subtle'
-					size='xs'
-					leftSection={<IconPlus size={14} />}
-					onClick={() => setCreateCatalogModalOpened(true)}
-					mt='xs'
-					fullWidth
-				>
-					{t('disposition.catalog.createCatalog')}
-				</Button>
-			)}
+			<Tooltip
+				label={catalogControlsDisabledReason}
+				disabled={!catalogControlsDisabledReason}
+				withArrow
+			>
+				<Box>
+					<Select
+						label={t('disposition.catalog.selectCatalog')}
+						data={activeCatalogs.map((cat) => ({
+							value: String(cat.id),
+							label: cat.name,
+						}))}
+						value={selectedCatalog ? String(selectedCatalog.id) : null}
+						onChange={(id) => {
+							const catalog =
+								activeCatalogs.find((cat) => String(cat.id) === id) || null;
+							setSelectedCatalog(catalog);
+						}}
+						disabled={catalogControlsDisabled}
+						description={catalogControlsDisabledReason}
+						size='xs'
+					/>
+				</Box>
+			</Tooltip>
+			<Tooltip
+				label={catalogControlsDisabledReason}
+				disabled={!catalogControlsDisabledReason}
+				withArrow
+			>
+				<Box mt='xs'>
+					<Button
+						variant='subtle'
+						size='xs'
+						leftSection={<IconPlus size={14} />}
+						onClick={() => setCreateCatalogModalOpened(true)}
+						disabled={isCampaignCalling}
+						fullWidth
+					>
+						{t('disposition.catalog.createCatalog')}
+					</Button>
+				</Box>
+			</Tooltip>
 			<Divider my='xs' />
 			<Box className={styles.menuListWrapper}>
 				{visibleNodes.length === 0 ? (
