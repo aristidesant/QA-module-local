@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import axios from 'axios';
+import { notifications } from '@mantine/notifications';
 import {
 	useAgentBehaviors,
 	useDeleteAgentBehavior,
@@ -16,6 +18,8 @@ import {
 	Group,
 	Box,
 	Center,
+	Badge,
+	Stack,
 } from '@mantine/core';
 import { IconAlertCircle, IconPlus } from '@tabler/icons-react';
 import AgentBehaviorsForm from './AgentBehaviorsForm/AgentBehaviorsForm';
@@ -23,6 +27,7 @@ import AgentBehaviorsList from './AgentBehaviorsList/AgentBehaviorsList';
 import BatchReplaceModal from './BatchReplaceModal/BatchReplaceModal';
 import CloneBehaviorModal from './CloneBehaviorModal';
 import ReplaceWithBackupModal from './ReplaceWithBackupModal';
+import RestoreFromBackupModal from './RestoreFromBackupModal';
 import SectionCard, { type CardActionsConfig } from '~/components/SectionCard';
 import { useTranslation } from 'react-i18next';
 import styles from './AgentBehaviorsPage.module.css';
@@ -47,6 +52,8 @@ const AgentBehaviorsPage = () => {
 		null
 	);
 	const [behaviorToReplaceWithBackup, setBehaviorToReplaceWithBackup] =
+		useState<AgentBehavior | null>(null);
+	const [behaviorToRestoreFromBackup, setBehaviorToRestoreFromBackup] =
 		useState<AgentBehavior | null>(null);
 
 	const { data: selectedBehavior, isLoading: isLoadingDetail } =
@@ -90,6 +97,10 @@ const AgentBehaviorsPage = () => {
 		setBehaviorToReplaceWithBackup(behavior);
 	};
 
+	const handleRestoreFromBackupClick = (behavior: AgentBehavior) => {
+		setBehaviorToRestoreFromBackup(behavior);
+	};
+
 	const handleConfirmDelete = async () => {
 		if (!behaviorToDelete) return;
 		try {
@@ -101,7 +112,15 @@ const AgentBehaviorsPage = () => {
 				setSelectedBehaviorId(null);
 			}
 		} catch (error) {
-			// error is handled globally or we can add local toast
+			if (axios.isAxiosError(error) && error.response?.status === 403) {
+				notifications.show({
+					title: t('deleteParameter.protected.title'),
+					message: t('deleteParameter.protected.message'),
+					color: 'red',
+				});
+				setDeleteModalOpen(false);
+				setBehaviorToDelete(null);
+			}
 		}
 	};
 
@@ -121,6 +140,54 @@ const AgentBehaviorsPage = () => {
 
 	const canDelete = checkDeleteData?.canDelete ?? false;
 
+	const renderDeleteRuleDetails = (rule: {
+		rule: string;
+		details?: unknown;
+	}) => {
+		const details = rule.details as
+			| {
+					taskCount?: number;
+					campaigns?: Array<{
+						id: number;
+						name: string;
+						referenceType?: 'CURRENT_CONFIG' | 'BACKUP_RESTORE_SOURCE';
+					}>;
+					primaries?: Array<{ id: string; name: string }>;
+			  }
+			| undefined;
+
+		if (!details) return null;
+
+		return (
+			<Stack gap={4} mt='xs'>
+				{typeof details.taskCount === 'number' && (
+					<Text size='xs' c='dimmed'>
+						{t('deleteParameter.details.pendingTasks', {
+							count: details.taskCount,
+						})}
+					</Text>
+				)}
+				{details.campaigns?.map((campaign) => (
+					<Group key={campaign.id} gap='xs'>
+						<Text size='xs'>
+							{campaign.name} (ID: {campaign.id})
+						</Text>
+						{campaign.referenceType && (
+							<Badge size='xs' variant='light' color='red'>
+								{t(`deleteParameter.referenceType.${campaign.referenceType}`)}
+							</Badge>
+						)}
+					</Group>
+				))}
+				{details.primaries?.map((primary) => (
+					<Text key={primary.id} size='xs' c='dimmed'>
+						{primary.name} (ID: {primary.id})
+					</Text>
+				))}
+			</Stack>
+		);
+	};
+
 	return (
 		<SectionCard
 			title={t('page.title', 'Agent Behaviors')}
@@ -139,6 +206,7 @@ const AgentBehaviorsPage = () => {
 					onDelete={handleDeleteClick}
 					onReplace={handleReplaceClick}
 					onReplaceWithBackup={handleReplaceWithBackupClick}
+					onRestoreFromBackup={handleRestoreFromBackupClick}
 				/>
 			</div>
 
@@ -160,6 +228,12 @@ const AgentBehaviorsPage = () => {
 				onClose={() => setBehaviorToReplaceWithBackup(null)}
 				sourceBehavior={behaviorToReplaceWithBackup}
 				allBehaviors={list}
+			/>
+
+			<RestoreFromBackupModal
+				opened={!!behaviorToRestoreFromBackup}
+				onClose={() => setBehaviorToRestoreFromBackup(null)}
+				sourceBehavior={behaviorToRestoreFromBackup}
 			/>
 
 			<Modal
@@ -192,9 +266,10 @@ const AgentBehaviorsPage = () => {
 								{checkDeleteData.rules
 									.filter((r) => !r.passed)
 									.map((rule, idx) => (
-										<Text key={idx} size='xs' mt='xs'>
-											• {rule.message}
-										</Text>
+										<Box key={idx} mt='xs'>
+											<Text size='xs'>• {rule.message}</Text>
+											{renderDeleteRuleDetails(rule)}
+										</Box>
 									))}
 								{checkDeleteData.blockingCampaigns &&
 									checkDeleteData.blockingCampaigns.length > 0 && (

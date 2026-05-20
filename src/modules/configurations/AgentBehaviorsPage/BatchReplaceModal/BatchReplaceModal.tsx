@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Modal,
 	Button,
@@ -9,12 +10,9 @@ import {
 	Alert,
 	List,
 	Group,
-	Badge,
-	Accordion,
 	Box,
 	ScrollArea,
 } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
 import {
 	useCampaignsForBehavior,
 	useReplaceAgentBehavior,
@@ -22,7 +20,12 @@ import {
 	useProcessReplaceJob,
 	useCleanupContinuity,
 } from '~/queries/useAgentBehaviors';
-import type { AgentBehavior } from '~/models/AgentBehavior';
+import type {
+	AgentBehavior,
+	AgentBehaviorCampaign,
+} from '~/models/AgentBehavior';
+import ReplaceJobProgress from '../ReplaceJobProgress';
+import { isBackupBehavior } from '../utils/agentBehaviorHelpers';
 
 interface BatchReplaceModalProps {
 	opened: boolean;
@@ -37,6 +40,7 @@ const BatchReplaceModal: React.FC<BatchReplaceModalProps> = ({
 	sourceBehavior,
 	allBehaviors,
 }) => {
+	const { t } = useTranslation('campaign-predefined-params');
 	const [activeStep, setActiveStep] = useState(0);
 	const [targetConfigId, setTargetConfigId] = useState<string | null>(null);
 	const [jobId, setJobId] = useState<string | null>(null);
@@ -45,11 +49,7 @@ const BatchReplaceModal: React.FC<BatchReplaceModalProps> = ({
 		useCampaignsForBehavior(sourceBehavior?.id ?? '', {
 			enabled: !!sourceBehavior && opened,
 		});
-	const campaigns = (
-		Array.isArray(campaignsRaw)
-			? campaignsRaw
-			: (campaignsRaw as any)?.data || (campaignsRaw as any)?.campaigns || []
-	) as any[];
+	const campaigns = campaignsRaw ?? [];
 
 	const replaceMutation = useReplaceAgentBehavior();
 	const processMutation = useProcessReplaceJob();
@@ -58,7 +58,7 @@ const BatchReplaceModal: React.FC<BatchReplaceModalProps> = ({
 	// Poll job if we have a job ID and it's not completed/failed
 	const { data: jobStatus, refetch } = useReplaceJob(jobId ?? '', {
 		enabled: !!jobId,
-		refetchInterval: (data: any) => {
+		refetchInterval: (data) => {
 			if (data?.status === 'COMPLETED' || data?.status === 'FAILED')
 				return false;
 			return 3000;
@@ -67,7 +67,7 @@ const BatchReplaceModal: React.FC<BatchReplaceModalProps> = ({
 
 	const handleStartReplace = async () => {
 		if (!sourceBehavior || !targetConfigId || !campaigns) return;
-		const campaignIds = campaigns.map((c: any) => c.id);
+		const campaignIds = campaigns.map((campaign) => campaign.id);
 
 		try {
 			const res = await replaceMutation.mutateAsync({
@@ -101,8 +101,21 @@ const BatchReplaceModal: React.FC<BatchReplaceModalProps> = ({
 	};
 
 	const availableTargets = allBehaviors
-		.filter((b) => b.id !== sourceBehavior?.id)
+		.filter((b) => b.id !== sourceBehavior?.id && !isBackupBehavior(b))
 		.map((b) => ({ value: b.id, label: b.name }));
+
+	const renderCampaignItem = (campaign: AgentBehaviorCampaign) => (
+		<List.Item key={campaign.id}>
+			<Group gap='xs'>
+				<Text size='xs'>{campaign.name}</Text>
+				{campaign.isUsingBackupBehavior && (
+					<Text size='xs' c='dimmed'>
+						{t('replace.campaignState.onBackup')}
+					</Text>
+				)}
+			</Group>
+		</List.Item>
+	);
 
 	return (
 		<Modal
@@ -144,9 +157,7 @@ const BatchReplaceModal: React.FC<BatchReplaceModalProps> = ({
 								</Text>
 								<ScrollArea h={200} type='auto'>
 									<List size='xs' spacing='xs'>
-										{campaigns.map((c: any) => (
-											<List.Item key={c.id}>{c.name}</List.Item>
-										))}
+										{campaigns.map(renderCampaignItem)}
 									</List>
 								</ScrollArea>
 								<Group justify='right' mt='md'>
@@ -190,106 +201,13 @@ const BatchReplaceModal: React.FC<BatchReplaceModalProps> = ({
 							<Loader size='sm' />
 						) : (
 							<div>
-								<Group mb='md'>
-									<Text fw={600}>Status:</Text>
-									<Badge
-										color={
-											jobStatus.status === 'COMPLETED'
-												? 'green'
-												: jobStatus.status === 'FAILED'
-													? 'red'
-													: jobStatus.status === 'IN_PROGRESS'
-														? 'blue'
-														: 'yellow'
-										}
-									>
-										{jobStatus.status}
-									</Badge>
-									<Text size='xs' c='dimmed'>
-										({jobStatus.succeededCount ?? 0} / {jobStatus.totalCount}{' '}
-										completed)
-									</Text>
-								</Group>
-
-								{jobStatus.status === 'PENDING' && (
-									<Alert
-										icon={<IconAlertCircle size='1rem' />}
-										title='Job Queued'
-										mb='md'
-									>
-										This job has been scheduled to run automatically at
-										midnight. You can also trigger it manually now.
-										<Group mt='sm'>
-											<Button
-												size='xs'
-												variant='light'
-												onClick={handleProcessNow}
-												loading={processMutation.isPending}
-											>
-												Process Now
-											</Button>
-										</Group>
-									</Alert>
-								)}
-
-								{(jobStatus.status === 'COMPLETED' ||
-									jobStatus.status === 'FAILED') &&
-									jobStatus.report && (
-										<Accordion variant='contained' mt='md'>
-											{jobStatus.report.failed.length > 0 && (
-												<Accordion.Item value='failed'>
-													<Accordion.Control>
-														<Group>
-															<Text c='red' fw={500}>
-																Failed ({jobStatus.report.failed.length})
-															</Text>
-														</Group>
-													</Accordion.Control>
-													<Accordion.Panel>
-														<List size='xs' spacing='xs'>
-															{jobStatus.report.failed.map((f) => (
-																<List.Item key={f.campaignId}>
-																	<Text>Campaign ID: {f.campaignId}</Text>
-																	<Text c='dimmed'>{f.error}</Text>
-																	{f.cleanupRequired && (
-																		<Button
-																			size='compact-xs'
-																			color='red'
-																			mt='xs'
-																			onClick={() =>
-																				handleCleanup(f.campaignId)
-																			}
-																			loading={cleanupMutation.isPending}
-																		>
-																			Run Continuity Cleanup
-																		</Button>
-																	)}
-																</List.Item>
-															))}
-														</List>
-													</Accordion.Panel>
-												</Accordion.Item>
-											)}
-											{jobStatus.report.succeeded.length > 0 && (
-												<Accordion.Item value='succeeded'>
-													<Accordion.Control>
-														<Text c='green' fw={500}>
-															Succeeded ({jobStatus.report.succeeded.length})
-														</Text>
-													</Accordion.Control>
-													<Accordion.Panel>
-														<List size='xs' spacing='xs'>
-															{jobStatus.report.succeeded.map((s) => (
-																<List.Item key={s.campaignId}>
-																	Campaign ID: {s.campaignId}
-																</List.Item>
-															))}
-														</List>
-													</Accordion.Panel>
-												</Accordion.Item>
-											)}
-										</Accordion>
-									)}
+								<ReplaceJobProgress
+									jobStatus={jobStatus}
+									isProcessing={processMutation.isPending}
+									isCleaningUp={cleanupMutation.isPending}
+									onProcessNow={handleProcessNow}
+									onCleanup={handleCleanup}
+								/>
 
 								<Group justify='right' mt='xl'>
 									<Button

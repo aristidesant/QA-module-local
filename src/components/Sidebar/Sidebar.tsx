@@ -36,6 +36,7 @@ import Logo from '../Logo';
 import { APP_VERSION } from '~/version';
 import { usePermissions } from '~/hooks/usePermissions';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
+import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
 import { useSidebarStore } from '~/stores/sidebarStore';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -49,6 +50,7 @@ type SidebarNavItem = {
 	module: ModuleEnum;
 	permission?: PermissionEnum;
 	masterOnly?: boolean;
+	superAdminOnly?: boolean;
 	exact?: boolean;
 	i18nNamespace?: string;
 };
@@ -143,6 +145,7 @@ const sidebarSections: SidebarSection[] = [
 				to: '/configurations/agent-behaviors',
 				module: ModuleEnum.SETTINGS,
 				permission: PermissionEnum.MANAGE,
+				superAdminOnly: true,
 				i18nNamespace: 'campaign-predefined-params',
 			},
 			{
@@ -275,6 +278,7 @@ export const Sidebar: React.FC = () => {
 	const { t } = useTranslation('common');
 	const location = useLocation();
 	const isMasterClient = useIsMasterClient();
+	const isSuperAdmin = useIsSuperAdmin();
 	const { collapsed, toggleCollapsed } = useSidebarStore();
 	const [openSection, setOpenSection] = useState<string>('');
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -290,13 +294,17 @@ export const Sidebar: React.FC = () => {
 					return false;
 				}
 
+				if (item.superAdminOnly && !isSuperAdmin) {
+					return false;
+				}
+
 				if (item.permission) {
 					return canPerformAction(item.module, item.permission);
 				}
 
 				return canAccessModule(item.module);
 			}),
-		[canAccessModule, canPerformAction, isMasterClient]
+		[canAccessModule, canPerformAction, isMasterClient, isSuperAdmin]
 	);
 
 	const visibleSections = useMemo(
@@ -309,6 +317,10 @@ export const Sidebar: React.FC = () => {
 							return false;
 						}
 
+						if (item.superAdminOnly && !isSuperAdmin) {
+							return false;
+						}
+
 						if (item.permission) {
 							return canPerformAction(item.module, item.permission);
 						}
@@ -317,7 +329,7 @@ export const Sidebar: React.FC = () => {
 					}),
 				}))
 				.filter((section) => section.items.length > 0),
-		[canAccessModule, canPerformAction, isMasterClient]
+		[canAccessModule, canPerformAction, isMasterClient, isSuperAdmin]
 	);
 
 	const activeSection = useMemo(

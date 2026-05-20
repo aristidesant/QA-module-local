@@ -76,5 +76,6 @@ export interface CampaignPredefinedParam {
 		platformSettings?: CampaignPredefinedPlatformSettings;
 	};
 	isBackup?: boolean;
+	behaviorType?: 'PRIMARY' | 'BACKUP';
 	backupBehaviorId?: string | null;
 }

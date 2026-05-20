@@ -44,6 +44,15 @@ import TTSSection from './components/TTSSection';
 import AgentSection from './components/AgentSection';
 import SecuritySection from './components/SecuritySection';
 
+const TTS_SPEED_MIN = 0.25;
+const TTS_SPEED_MAX = 1.2;
+
+const clampTtsSpeed = (value: number | null | undefined) => {
+	const nextValue = value ?? 1.0;
+
+	return Math.min(TTS_SPEED_MAX, Math.max(TTS_SPEED_MIN, nextValue));
+};
+
 interface AgentBehaviorsFormProps {
 	behavior?: AgentBehavior;
 	allBehaviors?: AgentBehavior[];
@@ -160,7 +169,7 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 					| null
 			),
 			ttsStability: conversationConfig?.tts?.stability ?? 0.5,
-			ttsSpeed: conversationConfig?.tts?.speed ?? 1.0,
+			ttsSpeed: clampTtsSpeed(conversationConfig?.tts?.speed),
 			ttsSimilarityBoost: conversationConfig?.tts?.similarityBoost ?? 0.75,
 			ttsOptimizeStreamingLatency:
 				conversationConfig?.tts?.optimizeStreamingLatency ?? 3,
@@ -211,8 +220,8 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 					? t('form.validation.ttsStabilityRange', 'Stability must be 0-1')
 					: null,
 			ttsSpeed: (value) =>
-				value < 0.25 || value > 4.0
-					? t('form.validation.ttsSpeedRange', 'Speed must be 0.25-4.0')
+				value < TTS_SPEED_MIN || value > TTS_SPEED_MAX
+					? t('form.validation.ttsSpeedRange', 'Speed must be 0.25-1.2')
 					: null,
 			ttsSimilarityBoost: (value) =>
 				value < 0 || value > 1
@@ -261,7 +270,7 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 					cfg?.tts?.suggestedAudioTags as SuggestedAudioTag[] | null
 				),
 				ttsStability: cfg?.tts?.stability ?? 0.5,
-				ttsSpeed: cfg?.tts?.speed ?? 1.0,
+				ttsSpeed: clampTtsSpeed(cfg?.tts?.speed),
 				ttsSimilarityBoost: cfg?.tts?.similarityBoost ?? 0.75,
 				ttsOptimizeStreamingLatency: cfg?.tts?.optimizeStreamingLatency ?? 3,
 				ttsAgentOutputAudioFormat:
@@ -304,7 +313,7 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 				? normalizeSuggestedAudioTags(values.ttsSuggestedAudioTags)
 				: [],
 			stability: values.ttsStability,
-			speed: values.ttsSpeed,
+			speed: clampTtsSpeed(values.ttsSpeed),
 			similarityBoost: values.ttsSimilarityBoost,
 			optimizeStreamingLatency: values.ttsOptimizeStreamingLatency,
 			agentOutputAudioFormat: values.ttsAgentOutputAudioFormat,

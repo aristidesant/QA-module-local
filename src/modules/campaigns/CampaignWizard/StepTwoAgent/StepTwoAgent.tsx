@@ -454,9 +454,10 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 													param.name || t('wizard.steps.agent.unnamedBehavior');
 												return {
 													value: String(param.id),
-													label: param.isBackup
-														? `${label} (${t('wizard.steps.agent.backupOptionSuffix')})`
-														: label,
+													label:
+														param.behaviorType === 'BACKUP' || param.isBackup
+															? `${label} (${t('wizard.steps.agent.backupOptionSuffix')})`
+															: label,
 												};
 											})}
 										value={

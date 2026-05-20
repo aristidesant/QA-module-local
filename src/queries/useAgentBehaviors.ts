@@ -10,6 +10,8 @@ import {
 	getCampaignsForBehavior,
 	replaceAgentBehavior,
 	replaceAgentBehaviorWithBackup,
+	checkRestoreFromBackup,
+	restoreAgentBehaviorFromBackup,
 	getReplaceJob,
 	processReplaceJob,
 	processPendingReplaceJobs,
@@ -31,6 +33,8 @@ export const agentBehaviorsKeys = {
 	detail: (id: string) => [...agentBehaviorsKeys.details(), id] as const,
 	campaigns: (id: string) =>
 		[...agentBehaviorsKeys.detail(id), 'campaigns'] as const,
+	restoreCheck: (id: string) =>
+		[...agentBehaviorsKeys.detail(id), 'restore-from-backup-check'] as const,
 	jobs: () => [...agentBehaviorsKeys.all, 'jobs'] as const,
 	job: (id: string) => [...agentBehaviorsKeys.jobs(), id] as const,
 };
@@ -158,6 +162,38 @@ export const useReplaceAgentBehaviorWithBackup = () => {
 			void queryClient.setQueryData(agentBehaviorsKeys.job(data.jobId), data);
 			void queryClient.invalidateQueries({
 				queryKey: agentBehaviorsKeys.jobs(),
+			});
+		},
+	});
+};
+
+export const useRestoreFromBackupCheck = (
+	id: string,
+	options?: { enabled?: boolean }
+) => {
+	return useQuery({
+		queryKey: agentBehaviorsKeys.restoreCheck(id),
+		queryFn: () => checkRestoreFromBackup(id),
+		enabled: options?.enabled && !!id,
+		retry: false,
+	});
+};
+
+export const useRestoreAgentBehaviorFromBackup = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: restoreAgentBehaviorFromBackup,
+		onSuccess: (data, id) => {
+			void queryClient.setQueryData(agentBehaviorsKeys.job(data.jobId), data);
+			void queryClient.invalidateQueries({
+				queryKey: agentBehaviorsKeys.restoreCheck(id),
+			});
+			void queryClient.invalidateQueries({
+				queryKey: agentBehaviorsKeys.jobs(),
+			});
+			void queryClient.invalidateQueries({
+				queryKey: agentBehaviorsKeys.lists(),
 			});
 		},
 	});

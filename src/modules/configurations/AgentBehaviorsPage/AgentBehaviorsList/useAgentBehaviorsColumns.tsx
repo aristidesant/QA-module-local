@@ -4,10 +4,17 @@ import {
 	IconCopy,
 	IconLifebuoy,
 	IconRefresh,
+	IconRestore,
 	IconTrash,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { AgentBehavior } from '~/models/AgentBehavior';
+import {
+	getAgentBehaviorType,
+	isBackupBehavior,
+	isPrimaryBehavior,
+} from '../utils/agentBehaviorHelpers';
+import styles from './AgentBehaviorsList.module.css';
 
 interface UseAgentBehaviorsColumnsProps {
 	allBehaviors?: AgentBehavior[];
@@ -15,6 +22,7 @@ interface UseAgentBehaviorsColumnsProps {
 	onDelete?: (param: AgentBehavior) => void;
 	onReplace?: (param: AgentBehavior) => void;
 	onReplaceWithBackup?: (param: AgentBehavior) => void;
+	onRestoreFromBackup?: (param: AgentBehavior) => void;
 }
 
 const useAgentBehaviorsColumns = ({
@@ -23,6 +31,7 @@ const useAgentBehaviorsColumns = ({
 	onDelete,
 	onReplace,
 	onReplaceWithBackup,
+	onRestoreFromBackup,
 }: UseAgentBehaviorsColumnsProps = {}) => {
 	const { t } = useTranslation('campaign-predefined-params');
 	const getBackupName = (backupBehaviorId?: string | null) =>
@@ -36,23 +45,27 @@ const useAgentBehaviorsColumns = ({
 		{
 			accessorKey: 'isBackup',
 			header: t('list.columns.type', 'Type'),
-			cell: ({ row }) => (
-				<Badge
-					size='sm'
-					variant='light'
-					color={row.original.isBackup ? 'blue' : 'gray'}
-				>
-					{row.original.isBackup
-						? t('list.type.backup', 'Backup')
-						: t('list.type.primary', 'Primary')}
-				</Badge>
-			),
+			cell: ({ row }) => {
+				const behaviorType = getAgentBehaviorType(row.original);
+
+				return (
+					<Badge
+						size='sm'
+						variant='light'
+						color={behaviorType === 'BACKUP' ? 'blue' : 'gray'}
+					>
+						{behaviorType === 'BACKUP'
+							? t('list.type.backup', 'Backup')
+							: t('list.type.primary', 'Primary')}
+					</Badge>
+				);
+			},
 		},
 		{
 			accessorKey: 'backupBehaviorId',
 			header: t('list.columns.backup', 'Backup'),
 			cell: ({ row }) => {
-				if (row.original.isBackup) {
+				if (isBackupBehavior(row.original)) {
 					return (
 						<Text size='sm' c='dimmed'>
 							{t('list.backup.notApplicable', 'N/A')}
@@ -84,23 +97,17 @@ const useAgentBehaviorsColumns = ({
 		{
 			id: 'actions',
 			header: t('list.columns.actions', 'Actions'),
+			meta: {
+				headerClassName: styles.actionsHeader,
+				cellClassName: styles.actionsCell,
+			},
 			cell: ({ row }) => {
+				const isPrimary = isPrimaryBehavior(row.original);
 				const canReplaceWithBackup =
-					!row.original.isBackup && !!row.original.backupBehaviorId;
-				const replaceBackupLabel = canReplaceWithBackup
-					? t('list.actions.replaceWithBackup', 'Replace with backup')
-					: row.original.isBackup
-						? t(
-								'list.actions.replaceWithBackupBackupDisabled',
-								'Backup behaviors cannot be replaced with another backup'
-							)
-						: t(
-								'list.actions.replaceWithBackupMissingDisabled',
-								'Assign a backup behavior before replacing'
-							);
+					isPrimary && !!row.original.backupBehaviorId && !!onReplaceWithBackup;
 
 				return (
-					<Group gap={8} wrap='nowrap'>
+					<Group gap={8} wrap='nowrap' justify='flex-end'>
 						<Tooltip label={t('list.actions.clone', 'Clone')} withArrow>
 							<ActionIcon
 								variant='light'
@@ -117,25 +124,58 @@ const useAgentBehaviorsColumns = ({
 								<IconCopy size={14} />
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip label={replaceBackupLabel} withArrow>
-							<ActionIcon
-								variant='light'
-								color='teal'
-								aria-label={t(
-									'list.actions.replaceWithBackupAria',
-									'Replace campaigns with backup'
+						{canReplaceWithBackup && (
+							<Tooltip
+								label={t(
+									'list.actions.replaceWithBackup',
+									'Replace with backup'
 								)}
-								onClick={(e) => {
-									e.stopPropagation();
-									onReplaceWithBackup?.(row.original);
-								}}
-								size='sm'
-								radius='md'
-								disabled={!onReplaceWithBackup || !canReplaceWithBackup}
+								withArrow
 							>
-								<IconLifebuoy size={14} />
-							</ActionIcon>
-						</Tooltip>
+								<ActionIcon
+									variant='light'
+									color='teal'
+									aria-label={t(
+										'list.actions.replaceWithBackupAria',
+										'Replace campaigns with backup'
+									)}
+									onClick={(e) => {
+										e.stopPropagation();
+										onReplaceWithBackup?.(row.original);
+									}}
+									size='sm'
+									radius='md'
+								>
+									<IconLifebuoy size={14} />
+								</ActionIcon>
+							</Tooltip>
+						)}
+						{isPrimary && onRestoreFromBackup && (
+							<Tooltip
+								label={t(
+									'list.actions.restoreFromBackup',
+									'Restore from backup'
+								)}
+								withArrow
+							>
+								<ActionIcon
+									variant='light'
+									color='green'
+									aria-label={t(
+										'list.actions.restoreFromBackupAria',
+										'Restore campaigns from backup'
+									)}
+									onClick={(e) => {
+										e.stopPropagation();
+										onRestoreFromBackup?.(row.original);
+									}}
+									size='sm'
+									radius='md'
+								>
+									<IconRestore size={14} />
+								</ActionIcon>
+							</Tooltip>
+						)}
 						<Tooltip
 							label={t('list.actions.replace', 'Sync / Replace')}
 							withArrow

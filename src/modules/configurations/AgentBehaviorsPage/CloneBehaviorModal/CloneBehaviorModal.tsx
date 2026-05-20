@@ -5,6 +5,7 @@ import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import type { AgentBehavior } from '~/models/AgentBehavior';
 import { useCloneAgentBehavior } from '~/queries/useAgentBehaviors';
+import { isBackupBehavior } from '../utils/agentBehaviorHelpers';
 
 interface CloneBehaviorModalProps {
 	opened: boolean;
@@ -69,7 +70,17 @@ const CloneBehaviorModal: React.FC<CloneBehaviorModalProps> = ({
 			<form onSubmit={form.onSubmit(handleSubmit)}>
 				<Stack gap='sm'>
 					<Text size='sm' c='dimmed'>
-						{t('clone.description', {
+						{t(
+							isBackupBehavior(sourceBehavior)
+								? 'clone.descriptionBackup'
+								: 'clone.descriptionPrimary',
+							{
+								name: sourceBehavior?.name ?? '',
+							}
+						)}
+					</Text>
+					<Text size='xs' c='dimmed'>
+						{t('clone.generatedNameHint', {
 							name: sourceBehavior?.name ?? '',
 						})}
 					</Text>
