@@ -70,9 +70,10 @@ const CampaignPredefinedParamsModal: React.FC<
 					placeholder={t('form.agent.behavior.modal.placeholder')}
 					data={predefinedParams.map((param) => ({
 						value: param.name,
-						label: param.isBackup
-							? `${param.name} (${t('form.agent.behavior.modal.backupSuffix')})`
-							: param.name,
+						label:
+							param.behaviorType === 'BACKUP' || param.isBackup
+								? `${param.name} (${t('form.agent.behavior.modal.backupSuffix')})`
+								: param.name,
 					}))}
 					value={selectionName}
 					onChange={setSelectionName}

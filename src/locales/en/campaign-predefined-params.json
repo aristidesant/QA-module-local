@@ -21,6 +21,9 @@
 			"replaceWithBackupAria": "Replace campaigns with backup",
 			"replaceWithBackupBackupDisabled": "Backup behaviors cannot be replaced with another backup",
 			"replaceWithBackupMissingDisabled": "Assign a backup behavior before replacing",
+			"restoreFromBackup": "Restore from backup",
+			"restoreFromBackupAria": "Restore campaigns from backup",
+			"restoreFromBackupDisabled": "Only primary behaviors can restore campaigns from backup",
 			"delete": "Delete",
 			"deleteAria": "Delete parameter"
 		},
@@ -47,7 +50,18 @@
 	},
 	"deleteParameter": {
 		"title": "Delete Parameter",
-		"description": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
+		"description": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+		"protected": {
+			"title": "Protected behavior",
+			"message": "This behavior belongs to a protected global or master tenant configuration and cannot be deleted."
+		},
+		"details": {
+			"pendingTasks": "{{count}} pending or in-progress outbound tasks block deletion."
+		},
+		"referenceType": {
+			"CURRENT_CONFIG": "Current config",
+			"BACKUP_RESTORE_SOURCE": "Backup restore source"
+		}
 	},
 	"deleteOverride": {
 		"title": "Delete configuration",
@@ -56,6 +70,9 @@
 	"clone": {
 		"title": "Clone Behavior",
 		"description": "Create a new behavior from \"{{name}}\". Leave the name empty to let the backend generate the copy name.",
+		"descriptionPrimary": "Create a new primary behavior from \"{{name}}\". The clone preserves the configured backup behavior.",
+		"descriptionBackup": "Create a new backup behavior from \"{{name}}\". Backup behavior clones remain marked as backups.",
+		"generatedNameHint": "Leave the name empty to let the backend generate a copy name.",
 		"name": {
 			"label": "Clone name",
 			"description": "Optional. Duplicate names are not allowed.",
@@ -70,6 +87,74 @@
 		"notifications": {
 			"success": "Behavior cloned",
 			"error": "The behavior could not be cloned."
+		}
+	},
+	"replaceJob": {
+		"statusLabel": "Status:",
+		"progressCount": "({{succeeded}} / {{total}} updated)",
+		"status": {
+			"PENDING": "Queued",
+			"IN_PROGRESS": "In progress",
+			"COMPLETED": "Completed",
+			"FAILED": "Failed",
+			"completedWithIssues": "Completed with issues"
+		},
+		"operation": {
+			"REPLACE": "Replace",
+			"REPLACE_WITH_BACKUP": "Backup failover",
+			"RESTORE_FROM_BACKUP": "Restore"
+		},
+		"pending": {
+			"title": "Job Queued",
+			"description": "This job has been scheduled to run automatically at midnight. You can also trigger it manually now."
+		},
+		"failed": {
+			"title": "Job Failed",
+			"description": "This job failed before finishing. You can retry processing it now."
+		},
+		"actions": {
+			"processNow": "Process Now",
+			"cleanup": "Run Continuity Cleanup"
+		},
+		"report": {
+			"failed": "Needs attention ({{count}})",
+			"succeeded": "Updated ({{count}})",
+			"campaignNeedsAttention": "Campaign {{index}} could not be updated",
+			"succeededDescription": "Updated campaigns: {{count}}.",
+			"errors": {
+				"ttsSpeed": "The voice speed is above the provider limit. Set TTS speed to 1.20 or lower on the behavior, then try again.",
+				"invalidConfig": "The voice provider rejected one of the behavior settings. Review the behavior configuration and try again.",
+				"default": "The campaign could not be updated. Please try again or contact support if it keeps failing."
+			}
+		}
+	},
+	"replace": {
+		"campaignState": {
+			"onBackup": "On backup"
+		}
+	},
+	"restore": {
+		"title": "Restore From Backup: {{name}}",
+		"steps": {
+			"review": {
+				"label": "Review",
+				"description": "Campaigns"
+			},
+			"progress": {
+				"label": "Progress",
+				"description": "Job status"
+			}
+		},
+		"primaryLabel": "Primary:",
+		"noCampaigns": "No campaigns are currently restorable for this primary behavior.",
+		"campaignSummary": "{{count}} campaigns will be restored to this primary behavior.",
+		"currentConfig": "Current config: {{id}}",
+		"actions": {
+			"start": "Start Restore"
+		},
+		"errors": {
+			"badRequest": "The restore could not be scheduled because no campaigns are restorable for this primary behavior.",
+			"default": "The restore could not be scheduled."
 		}
 	},
 	"backupReplace": {
@@ -355,7 +440,7 @@
 			},
 			"speed": {
 				"label": "Speed",
-				"helper": "Speech rate (0.25–4.0)"
+				"helper": "Speech rate (0.25–1.2)"
 			},
 			"streamingLatency": {
 				"label": "Streaming Latency",
@@ -400,7 +485,7 @@
 			"asrInputAudioFormatRequired": "User input audio format is required",
 			"ttsModelRequired": "TTS model ID is required",
 			"ttsStabilityRange": "Stability must be between 0 and 1",
-			"ttsSpeedRange": "Speed must be between 0.25 and 4.0",
+			"ttsSpeedRange": "Speed must be between 0.25 and 1.2",
 			"ttsSimilarityBoostRange": "Similarity boost must be between 0 and 1",
 			"ttsStreamingLatencyRange": "Optimize streaming latency must be between 0 and 4",
 			"ttsOutputAudioFormatRequired": "Agent output audio format is required",

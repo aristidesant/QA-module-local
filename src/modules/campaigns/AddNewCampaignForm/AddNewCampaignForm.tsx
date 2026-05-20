@@ -304,9 +304,10 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 						placeholder={t('addNewCampaign.form.agentBehaviorPlaceholder')}
 						data={predefinedParams.map((param) => ({
 							value: param.name,
-							label: param.isBackup
-								? `${param.name} (${t('addNewCampaign.form.agentBehaviorBackupSuffix')})`
-								: param.name,
+							label:
+								param.behaviorType === 'BACKUP' || param.isBackup
+									? `${param.name} (${t('addNewCampaign.form.agentBehaviorBackupSuffix')})`
+									: param.name,
 						}))}
 						value={selectedParam?.name || null}
 						onChange={(value) => {

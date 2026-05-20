@@ -15,72 +15,38 @@ import {
 import { IconAlertCircle } from '@tabler/icons-react';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
-import type {
-	AgentBehavior,
-	AgentBehaviorCampaign,
-} from '~/models/AgentBehavior';
+import type { AgentBehavior } from '~/models/AgentBehavior';
 import {
 	useCleanupContinuity,
-	useCampaignsForBehavior,
 	useProcessReplaceJob,
-	useReplaceAgentBehaviorWithBackup,
 	useReplaceJob,
+	useRestoreAgentBehaviorFromBackup,
+	useRestoreFromBackupCheck,
 } from '~/queries/useAgentBehaviors';
 import ReplaceJobProgress from '../ReplaceJobProgress';
 
-interface ReplaceWithBackupModalProps {
+interface RestoreFromBackupModalProps {
 	opened: boolean;
 	onClose: () => void;
 	sourceBehavior: AgentBehavior | null;
-	allBehaviors: AgentBehavior[];
 }
 
-type CampaignsForBehaviorQueryResult =
-	| AgentBehaviorCampaign[]
-	| {
-			data?: AgentBehaviorCampaign[];
-			campaigns?: AgentBehaviorCampaign[];
-	  };
-
-const normalizeCampaigns = (
-	campaigns: CampaignsForBehaviorQueryResult | undefined
-): AgentBehaviorCampaign[] => {
-	if (Array.isArray(campaigns)) {
-		return campaigns;
-	}
-
-	if (Array.isArray(campaigns?.data)) {
-		return campaigns.data;
-	}
-
-	if (Array.isArray(campaigns?.campaigns)) {
-		return campaigns.campaigns;
-	}
-
-	return [];
-};
-
-const ReplaceWithBackupModal: React.FC<ReplaceWithBackupModalProps> = ({
+const RestoreFromBackupModal: React.FC<RestoreFromBackupModalProps> = ({
 	opened,
 	onClose,
 	sourceBehavior,
-	allBehaviors,
 }) => {
 	const { t } = useTranslation('campaign-predefined-params');
 	const [activeStep, setActiveStep] = useState(0);
 	const [jobId, setJobId] = useState<string | null>(null);
 	const [submitError, setSubmitError] = useState<string | null>(null);
-	const backupBehavior = allBehaviors.find(
-		(behavior) => behavior.id === sourceBehavior?.backupBehaviorId
-	);
 
-	const { data: campaignsRaw, isLoading: isLoadingCampaigns } =
-		useCampaignsForBehavior(sourceBehavior?.id ?? '', {
-			enabled: !!sourceBehavior && opened,
+	const { data: restoreCheck, isLoading: isLoadingRestoreCheck } =
+		useRestoreFromBackupCheck(sourceBehavior?.id ?? '', {
+			enabled: opened && !!sourceBehavior?.id,
 		});
-	const campaigns = normalizeCampaigns(campaignsRaw);
 
-	const replaceMutation = useReplaceAgentBehaviorWithBackup();
+	const restoreMutation = useRestoreAgentBehaviorFromBackup();
 	const processMutation = useProcessReplaceJob();
 	const cleanupMutation = useCleanupContinuity();
 
@@ -94,19 +60,19 @@ const ReplaceWithBackupModal: React.FC<ReplaceWithBackupModalProps> = ({
 		},
 	});
 
-	const handleStartReplace = async () => {
+	const handleStartRestore = async () => {
 		if (!sourceBehavior) return;
 
 		try {
 			setSubmitError(null);
-			const response = await replaceMutation.mutateAsync(sourceBehavior.id);
+			const response = await restoreMutation.mutateAsync(sourceBehavior.id);
 			setJobId(response.jobId);
 			setActiveStep(1);
 		} catch (error) {
 			const message =
 				axios.isAxiosError(error) && error.response?.status === 400
-					? t('backupReplace.errors.badRequest')
-					: t('backupReplace.errors.default');
+					? t('restore.errors.badRequest')
+					: t('restore.errors.default');
 			setSubmitError(message);
 		}
 	};
@@ -132,12 +98,13 @@ const ReplaceWithBackupModal: React.FC<ReplaceWithBackupModalProps> = ({
 
 	const isJobLocked =
 		jobStatus?.status === 'PENDING' || jobStatus?.status === 'IN_PROGRESS';
+	const canRestore = restoreCheck?.canRestore && restoreCheck.campaignCount > 0;
 
 	return (
 		<Modal
 			opened={opened}
 			onClose={isJobLocked ? () => {} : resetAndClose}
-			title={t('backupReplace.title', { name: sourceBehavior?.name ?? '' })}
+			title={t('restore.title', { name: sourceBehavior?.name ?? '' })}
 			size='lg'
 			centered
 			closeOnClickOutside={false}
@@ -149,24 +116,16 @@ const ReplaceWithBackupModal: React.FC<ReplaceWithBackupModalProps> = ({
 				allowNextStepsSelect={false}
 			>
 				<Stepper.Step
-					label={t('backupReplace.steps.review.label')}
-					description={t('backupReplace.steps.review.description')}
+					label={t('restore.steps.review.label')}
+					description={t('restore.steps.review.description')}
 				>
 					<Box py='md'>
-						<Group gap='xs' mb='sm'>
+						<Group gap='xs' mb='md'>
 							<Text size='sm' fw={600}>
-								{t('backupReplace.sourceLabel')}
+								{t('restore.primaryLabel')}
 							</Text>
 							<Badge variant='light' color='gray'>
 								{sourceBehavior?.name}
-							</Badge>
-						</Group>
-						<Group gap='xs' mb='md'>
-							<Text size='sm' fw={600}>
-								{t('backupReplace.backupLabel')}
-							</Text>
-							<Badge variant='light' color='teal'>
-								{backupBehavior?.name ?? t('backupReplace.missingBackup')}
 							</Badge>
 						</Group>
 
@@ -181,23 +140,34 @@ const ReplaceWithBackupModal: React.FC<ReplaceWithBackupModalProps> = ({
 							</Alert>
 						)}
 
-						{isLoadingCampaigns ? (
+						{isLoadingRestoreCheck ? (
 							<Loader size='sm' />
-						) : campaigns.length === 0 ? (
+						) : !canRestore ? (
 							<Alert color='blue' variant='light'>
-								{t('backupReplace.noCampaigns')}
+								{t('restore.noCampaigns')}
 							</Alert>
 						) : (
 							<>
 								<Text size='sm' mb='sm'>
-									{t('backupReplace.campaignSummary', {
-										count: campaigns.length,
+									{t('restore.campaignSummary', {
+										count: restoreCheck.campaignCount,
 									})}
 								</Text>
 								<ScrollArea h={200} type='auto'>
 									<List size='xs' spacing='xs'>
-										{campaigns.map((campaign) => (
-											<List.Item key={campaign.id}>{campaign.name}</List.Item>
+										{restoreCheck.campaigns.map((campaign) => (
+											<List.Item key={campaign.id}>
+												<Group gap='xs'>
+													<Text size='xs'>{campaign.name}</Text>
+													{campaign.currentConfigId && (
+														<Text size='xs' c='dimmed'>
+															{t('restore.currentConfig', {
+																id: campaign.currentConfigId,
+															})}
+														</Text>
+													)}
+												</Group>
+											</List.Item>
 										))}
 									</List>
 								</ScrollArea>
@@ -210,19 +180,19 @@ const ReplaceWithBackupModal: React.FC<ReplaceWithBackupModalProps> = ({
 							</Button>
 							<Button
 								color='teal'
-								loading={replaceMutation.isPending}
-								disabled={!backupBehavior || campaigns.length === 0}
-								onClick={handleStartReplace}
+								loading={restoreMutation.isPending}
+								disabled={!canRestore}
+								onClick={handleStartRestore}
 							>
-								{t('backupReplace.actions.start')}
+								{t('restore.actions.start')}
 							</Button>
 						</Group>
 					</Box>
 				</Stepper.Step>
 
 				<Stepper.Step
-					label={t('backupReplace.steps.progress.label')}
-					description={t('backupReplace.steps.progress.description')}
+					label={t('restore.steps.progress.label')}
+					description={t('restore.steps.progress.description')}
 				>
 					<Box py='md'>
 						{!jobStatus ? (
@@ -236,7 +206,6 @@ const ReplaceWithBackupModal: React.FC<ReplaceWithBackupModalProps> = ({
 									onProcessNow={handleProcessNow}
 									onCleanup={handleCleanup}
 								/>
-
 								<Group justify='flex-end' mt='xl'>
 									<Button
 										variant='default'
@@ -255,4 +224,4 @@ const ReplaceWithBackupModal: React.FC<ReplaceWithBackupModalProps> = ({
 	);
 };
 
-export default ReplaceWithBackupModal;
+export default RestoreFromBackupModal;

@@ -10,6 +10,7 @@ interface AgentBehaviorsListProps {
 	onDelete?: (param: AgentBehavior) => void;
 	onReplace?: (param: AgentBehavior) => void;
 	onReplaceWithBackup?: (param: AgentBehavior) => void;
+	onRestoreFromBackup?: (param: AgentBehavior) => void;
 }
 
 const AgentBehaviorsList: React.FC<AgentBehaviorsListProps> = ({
@@ -20,6 +21,7 @@ const AgentBehaviorsList: React.FC<AgentBehaviorsListProps> = ({
 	onDelete,
 	onReplace,
 	onReplaceWithBackup,
+	onRestoreFromBackup,
 }) => {
 	const columns = useAgentBehaviorsColumns({
 		allBehaviors: data,
@@ -27,6 +29,7 @@ const AgentBehaviorsList: React.FC<AgentBehaviorsListProps> = ({
 		onDelete,
 		onReplace,
 		onReplaceWithBackup,
+		onRestoreFromBackup,
 	});
 
 	return (
@@ -35,6 +38,8 @@ const AgentBehaviorsList: React.FC<AgentBehaviorsListProps> = ({
 			columns={columns}
 			isLoading={isLoading}
 			onRowClick={onRowClick}
+			enablePagination
+			showPaginationControls
 		/>
 	);
 };

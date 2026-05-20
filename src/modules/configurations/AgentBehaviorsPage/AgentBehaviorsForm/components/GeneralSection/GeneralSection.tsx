@@ -2,6 +2,7 @@ import { Alert, Select, Stack, Switch, TextInput } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useFormContext } from '../../CampaignPredefinedFormProvider';
 import styles from '../../CampaignPredefinedParamsForm.module.css';
+import { isBackupBehavior } from '../../../utils/agentBehaviorHelpers';
 
 export const GeneralSection: React.FC = () => {
 	const { form, isEditMode, currentBehaviorId, allBehaviors } =
@@ -9,7 +10,8 @@ export const GeneralSection: React.FC = () => {
 	const { t } = useTranslation('campaign-predefined-params');
 	const backupOptions = allBehaviors
 		.filter(
-			(behavior) => behavior.isBackup && behavior.id !== currentBehaviorId
+			(behavior) =>
+				isBackupBehavior(behavior) && behavior.id !== currentBehaviorId
 		)
 		.map((behavior) => ({
 			value: behavior.id,

@@ -377,15 +377,15 @@ export const TTSSection: React.FC = () => {
 				</div>
 				<Slider
 					min={0.25}
-					max={4.0}
+					max={1.2}
 					step={0.01}
 					value={form.values.ttsSpeed}
 					onChange={(value) => form.setFieldValue('ttsSpeed', value)}
 					disabled={isExpressiveModel}
 					marks={[
 						{ value: 0.25, label: '0.25' },
-						{ value: 2.0, label: '2.0' },
-						{ value: 4.0, label: '4.0' },
+						{ value: 1.0, label: '1.0' },
+						{ value: 1.2, label: '1.2' },
 					]}
 				/>
 				<Text size='xs' c='dimmed'>

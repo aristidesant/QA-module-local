@@ -21,6 +21,9 @@
 			"replaceWithBackupAria": "Reemplazar campañas con respaldo",
 			"replaceWithBackupBackupDisabled": "Los comportamientos de respaldo no se pueden reemplazar con otro respaldo",
 			"replaceWithBackupMissingDisabled": "Asigna un comportamiento de respaldo antes de reemplazar",
+			"restoreFromBackup": "Restaurar desde respaldo",
+			"restoreFromBackupAria": "Restaurar campañas desde respaldo",
+			"restoreFromBackupDisabled": "Solo los comportamientos primarios pueden restaurar campañas desde respaldo",
 			"delete": "Eliminar",
 			"deleteAria": "Eliminar parámetro"
 		},
@@ -47,7 +50,18 @@
 	},
 	"deleteParameter": {
 		"title": "Eliminar parámetro",
-		"description": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer."
+		"description": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+		"protected": {
+			"title": "Comportamiento protegido",
+			"message": "Este comportamiento pertenece a una configuración global o del tenant maestro protegida y no se puede eliminar."
+		},
+		"details": {
+			"pendingTasks": "{{count}} tareas salientes pendientes o en progreso bloquean la eliminación."
+		},
+		"referenceType": {
+			"CURRENT_CONFIG": "Configuración actual",
+			"BACKUP_RESTORE_SOURCE": "Origen de restauración"
+		}
 	},
 	"deleteOverride": {
 		"title": "Eliminar configuración",
@@ -56,6 +70,9 @@
 	"clone": {
 		"title": "Clonar comportamiento",
 		"description": "Crea un nuevo comportamiento desde \"{{name}}\". Deja el nombre vacío para que el backend genere el nombre de la copia.",
+		"descriptionPrimary": "Crea un nuevo comportamiento primario desde \"{{name}}\". El clon conserva el respaldo configurado.",
+		"descriptionBackup": "Crea un nuevo comportamiento de respaldo desde \"{{name}}\". Los clones de respaldo permanecen marcados como respaldos.",
+		"generatedNameHint": "Deja el nombre vacío para que el backend genere el nombre de la copia.",
 		"name": {
 			"label": "Nombre del clon",
 			"description": "Opcional. No se permiten nombres duplicados.",
@@ -70,6 +87,74 @@
 		"notifications": {
 			"success": "Comportamiento clonado",
 			"error": "No se pudo clonar el comportamiento."
+		}
+	},
+	"replaceJob": {
+		"statusLabel": "Estado:",
+		"progressCount": "({{succeeded}} / {{total}} actualizadas)",
+		"status": {
+			"PENDING": "En cola",
+			"IN_PROGRESS": "En progreso",
+			"COMPLETED": "Completado",
+			"FAILED": "Fallido",
+			"completedWithIssues": "Completado con alertas"
+		},
+		"operation": {
+			"REPLACE": "Reemplazo",
+			"REPLACE_WITH_BACKUP": "Cambio a respaldo",
+			"RESTORE_FROM_BACKUP": "Restauración"
+		},
+		"pending": {
+			"title": "Job en cola",
+			"description": "Este job está programado para ejecutarse automáticamente a medianoche. También puedes ejecutarlo manualmente ahora."
+		},
+		"failed": {
+			"title": "Job fallido",
+			"description": "Este job falló antes de terminar. Puedes reintentar procesarlo ahora."
+		},
+		"actions": {
+			"processNow": "Procesar ahora",
+			"cleanup": "Ejecutar limpieza de continuidad"
+		},
+		"report": {
+			"failed": "Requieren atención ({{count}})",
+			"succeeded": "Actualizadas ({{count}})",
+			"campaignNeedsAttention": "No se pudo actualizar la campaña {{index}}",
+			"succeededDescription": "Campañas actualizadas: {{count}}.",
+			"errors": {
+				"ttsSpeed": "La velocidad de voz supera el límite del proveedor. Configura la velocidad TTS en 1.20 o menos en el comportamiento y vuelve a intentar.",
+				"invalidConfig": "El proveedor de voz rechazó una configuración del comportamiento. Revisa la configuración y vuelve a intentar.",
+				"default": "No se pudo actualizar la campaña. Intenta de nuevo o contacta soporte si continúa fallando."
+			}
+		}
+	},
+	"replace": {
+		"campaignState": {
+			"onBackup": "En respaldo"
+		}
+	},
+	"restore": {
+		"title": "Restaurar desde respaldo: {{name}}",
+		"steps": {
+			"review": {
+				"label": "Revisar",
+				"description": "Campañas"
+			},
+			"progress": {
+				"label": "Progreso",
+				"description": "Estado del job"
+			}
+		},
+		"primaryLabel": "Primario:",
+		"noCampaigns": "No hay campañas restaurables para este comportamiento primario.",
+		"campaignSummary": "{{count}} campañas se restaurarán a este comportamiento primario.",
+		"currentConfig": "Configuración actual: {{id}}",
+		"actions": {
+			"start": "Iniciar restauración"
+		},
+		"errors": {
+			"badRequest": "No se pudo programar la restauración porque no hay campañas restaurables para este comportamiento primario.",
+			"default": "No se pudo programar la restauración."
 		}
 	},
 	"backupReplace": {
@@ -355,7 +440,7 @@
 			},
 			"speed": {
 				"label": "Velocidad",
-				"helper": "Velocidad del habla (0.25–4.0)"
+				"helper": "Velocidad del habla (0.25–1.2)"
 			},
 			"streamingLatency": {
 				"label": "Latencia de streaming",
@@ -400,7 +485,7 @@
 			"asrInputAudioFormatRequired": "El formato de audio de entrada es obligatorio",
 			"ttsModelRequired": "El modelo de TTS es obligatorio",
 			"ttsStabilityRange": "La estabilidad debe estar entre 0 y 1",
-			"ttsSpeedRange": "La velocidad debe estar entre 0.25 y 4.0",
+			"ttsSpeedRange": "La velocidad debe estar entre 0.25 y 1.2",
 			"ttsSimilarityBoostRange": "El aumento de similitud debe estar entre 0 y 1",
 			"ttsStreamingLatencyRange": "La latencia de streaming debe estar entre 0 y 4",
 			"ttsOutputAudioFormatRequired": "El formato de audio de salida del agente es obligatorio",

@@ -392,9 +392,15 @@ const router = createBrowserRouter([
 								path: 'agent-behaviors',
 								id: 'agent-behaviors',
 								element: (
-									<Suspense fallback={<SuspenseFallback />}>
-										<AgentBehaviorsPage />
-									</Suspense>
+									<ModuleGuard
+										module={ModuleEnum.SETTINGS}
+										permission={PermissionEnum.MANAGE}
+										superAdminOnly
+									>
+										<Suspense fallback={<SuspenseFallback />}>
+											<AgentBehaviorsPage />
+										</Suspense>
+									</ModuleGuard>
 								),
 							},
 							{

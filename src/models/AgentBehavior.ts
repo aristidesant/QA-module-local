@@ -44,6 +44,7 @@ export interface AgentBehavior {
 		platformSettings?: AgentBehaviorPlatformSettings;
 	};
 	isBackup: boolean;
+	behaviorType?: 'PRIMARY' | 'BACKUP';
 	backupBehaviorId?: string | null;
 	createdAt: string;
 	updatedAt: string;
@@ -60,6 +61,7 @@ export interface AgentBehaviorVersion {
 		platformSettings?: AgentBehaviorPlatformSettings;
 	};
 	isBackup: boolean;
+	behaviorType?: 'PRIMARY' | 'BACKUP';
 	backupBehaviorId?: string | null;
 	createdAt: string;
 }
@@ -67,13 +69,25 @@ export interface AgentBehaviorVersion {
 export interface AgentBehaviorCampaign {
 	id: number;
 	name: string;
+	isUsingBackupBehavior?: boolean;
+	backupSourceConfigId?: string | null;
+	currentConfigId?: string | null;
+	referenceType?: 'CURRENT_CONFIG' | 'BACKUP_RESTORE_SOURCE';
 }
 
 export interface AgentBehaviorDeleteCheckRule {
 	rule: string;
 	passed: boolean;
 	message: string;
-	details?: unknown;
+	details?: {
+		campaignCount?: number;
+		campaignIds?: number[];
+		campaigns?: AgentBehaviorCampaign[];
+		taskCount?: number;
+		primaryCount?: number;
+		primaryIds?: string[];
+		primaries?: { id: string; name: string }[];
+	};
 }
 
 export interface AgentBehaviorDeleteCheckResponse {
@@ -103,11 +117,14 @@ export interface AgentBehaviorReplaceJobReport {
 export interface AgentBehaviorReplaceJob {
 	jobId: string;
 	status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
+	operation?: 'REPLACE' | 'REPLACE_WITH_BACKUP' | 'RESTORE_FROM_BACKUP';
+	sourceConfigId?: string | null;
 	targetConfigId?: string;
 	totalCount: number;
 	succeededCount?: number;
 	failedCount?: number;
 	report?: AgentBehaviorReplaceJobReport;
+	errorMessage?: string | null;
 }
 
 export interface AgentBehaviorProcessPendingResponse {
@@ -141,4 +158,12 @@ export interface AgentBehaviorUpdateRequest {
 
 export interface AgentBehaviorCloneRequest {
 	name?: string;
+}
+
+export interface AgentBehaviorRestoreFromBackupCheckResponse {
+	canRestore: boolean;
+	primaryBehaviorId: string;
+	campaignCount: number;
+	campaignIds: number[];
+	campaigns: AgentBehaviorCampaign[];
 }

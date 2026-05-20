@@ -11,6 +11,7 @@ import type {
 	AgentBehaviorSaveRequest,
 	AgentBehaviorUpdateRequest,
 	AgentBehaviorCloneRequest,
+	AgentBehaviorRestoreFromBackupCheckResponse,
 } from '~/models/AgentBehavior';
 
 export interface GetAgentBehaviorsParams {
@@ -141,6 +142,24 @@ export const replaceAgentBehaviorWithBackup = async (
 ): Promise<AgentBehaviorReplaceJob> => {
 	const response = await axios.post<AgentBehaviorReplaceJob>(
 		`${DEFAULT_API_URL}/agent-behaviors/${id}/replace-with-backup`
+	);
+	return response.data;
+};
+
+export const checkRestoreFromBackup = async (
+	id: string
+): Promise<AgentBehaviorRestoreFromBackupCheckResponse> => {
+	const response = await axios.get<AgentBehaviorRestoreFromBackupCheckResponse>(
+		`${DEFAULT_API_URL}/agent-behaviors/${id}/restore-from-backup-check`
+	);
+	return response.data;
+};
+
+export const restoreAgentBehaviorFromBackup = async (
+	id: string
+): Promise<AgentBehaviorReplaceJob> => {
+	const response = await axios.post<AgentBehaviorReplaceJob>(
+		`${DEFAULT_API_URL}/agent-behaviors/${id}/restore-from-backup`
 	);
 	return response.data;
 };
