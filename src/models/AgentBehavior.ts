@@ -43,6 +43,8 @@ export interface AgentBehavior {
 		conversationConfig?: CampaignPredefinedConversationConfig;
 		platformSettings?: AgentBehaviorPlatformSettings;
 	};
+	isBackup: boolean;
+	backupBehaviorId?: string | null;
 	createdAt: string;
 	updatedAt: string;
 	deletedAt?: string | null;
@@ -57,6 +59,8 @@ export interface AgentBehaviorVersion {
 		conversationConfig?: CampaignPredefinedConversationConfig;
 		platformSettings?: AgentBehaviorPlatformSettings;
 	};
+	isBackup: boolean;
+	backupBehaviorId?: string | null;
 	createdAt: string;
 }
 
@@ -69,7 +73,7 @@ export interface AgentBehaviorDeleteCheckRule {
 	rule: string;
 	passed: boolean;
 	message: string;
-	details?: any;
+	details?: unknown;
 }
 
 export interface AgentBehaviorDeleteCheckResponse {
@@ -99,7 +103,7 @@ export interface AgentBehaviorReplaceJobReport {
 export interface AgentBehaviorReplaceJob {
 	jobId: string;
 	status: 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'FAILED';
-	targetConfigId: string;
+	targetConfigId?: string;
 	totalCount: number;
 	succeededCount?: number;
 	failedCount?: number;
@@ -114,4 +118,27 @@ export interface AgentBehaviorProcessPendingResponse {
 
 export interface AgentBehaviorContinuityCleanupRequest {
 	campaignId: number;
+}
+
+export interface AgentBehaviorParams {
+	conversationConfig?: CampaignPredefinedConversationConfig;
+	platformSettings?: AgentBehaviorPlatformSettings;
+}
+
+export interface AgentBehaviorSaveRequest {
+	name: string;
+	params: AgentBehaviorParams;
+	isBackup?: boolean;
+	backupBehaviorId?: string | null;
+}
+
+export interface AgentBehaviorUpdateRequest {
+	name?: string;
+	params?: AgentBehaviorParams;
+	isBackup?: boolean;
+	backupBehaviorId?: string | null;
+}
+
+export interface AgentBehaviorCloneRequest {
+	name?: string;
 }

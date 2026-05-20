@@ -1,5 +1,6 @@
 import React, { createContext, useContext } from 'react';
 import { UseFormReturnType } from '@mantine/form';
+import type { AgentBehavior } from '~/models/AgentBehavior';
 import type { SuggestedAudioTag } from '~/models/CampaignPredefinedParam';
 import type { PlatformSettingsOverrides } from './platformSettingsConfig';
 
@@ -24,11 +25,15 @@ export interface FormValues {
 	agentPromptReasoningEffort: string | null;
 	agentPromptTemperature: number;
 	platformSettingsOverrides: PlatformSettingsOverrides;
+	isBackup: boolean;
+	backupBehaviorId: string | null;
 }
 
 interface FormContextType {
 	form: UseFormReturnType<FormValues>;
 	isEditMode: boolean;
+	currentBehaviorId?: string;
+	allBehaviors: AgentBehavior[];
 }
 
 const FormContext = createContext<FormContextType | undefined>(undefined);
@@ -36,10 +41,14 @@ const FormContext = createContext<FormContextType | undefined>(undefined);
 export const CampaignPredefinedFormProvider: React.FC<{
 	form: UseFormReturnType<FormValues>;
 	isEditMode: boolean;
+	currentBehaviorId?: string;
+	allBehaviors?: AgentBehavior[];
 	children: React.ReactNode;
-}> = ({ form, isEditMode, children }) => {
+}> = ({ form, isEditMode, currentBehaviorId, allBehaviors = [], children }) => {
 	return (
-		<FormContext.Provider value={{ form, isEditMode }}>
+		<FormContext.Provider
+			value={{ form, isEditMode, currentBehaviorId, allBehaviors }}
+		>
 			{children}
 		</FormContext.Provider>
 	);

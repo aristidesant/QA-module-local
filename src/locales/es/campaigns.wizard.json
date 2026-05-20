@@ -76,6 +76,8 @@
 				"behaviorLabel": "Comportamiento del Agente",
 				"behaviorDesc": "Configuración base",
 				"behaviorPlaceholder": "Elegir comportamiento",
+				"backupOptionSuffix": "Respaldo",
+				"unnamedBehavior": "Comportamiento sin nombre",
 				"languageLabel": "Idioma",
 				"languageDesc": "Idioma de respuesta",
 				"languagePlaceholder": "Seleccionar idioma",

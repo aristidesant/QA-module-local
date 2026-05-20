@@ -76,6 +76,8 @@
 				"behaviorLabel": "Agent Behavior",
 				"behaviorDesc": "Baseline configuration",
 				"behaviorPlaceholder": "Choose behavior",
+				"backupOptionSuffix": "Backup",
+				"unnamedBehavior": "Unnamed behavior",
 				"languageLabel": "Language",
 				"languageDesc": "Response language",
 				"languagePlaceholder": "Select language",
