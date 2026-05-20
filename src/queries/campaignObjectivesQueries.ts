@@ -19,6 +19,9 @@ export const useCreateCampaignObjective = () => {
 			queryClient.invalidateQueries({
 				queryKey: ['campaign-objectives-active'],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ['campaign-objectives-all'],
+			});
 			// Invalidate category-specific queries if categoryId exists
 			if (data.categoryId) {
 				queryClient.invalidateQueries({
@@ -81,6 +84,9 @@ export const useUpdateCampaignObjective = () => {
 				queryKey: ['campaign-objectives-active'],
 			});
 			queryClient.invalidateQueries({
+				queryKey: ['campaign-objectives-all'],
+			});
+			queryClient.invalidateQueries({
 				queryKey: ['campaign-objective', variables.id],
 			});
 			// Invalidate category-specific queries if categoryId exists
@@ -112,6 +118,9 @@ export const useDeleteCampaignObjective = () => {
 			queryClient.invalidateQueries({ queryKey: ['campaign-objectives'] });
 			queryClient.invalidateQueries({
 				queryKey: ['campaign-objectives-active'],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['campaign-objectives-all'],
 			});
 			queryClient.removeQueries({ queryKey: ['campaign-objective', id] });
 			// Invalidate all category-specific queries since we don't know which category this belonged to
@@ -166,5 +175,17 @@ export const useGetActiveObjectivesByCategory = (
 			return api.getActiveObjectivesByCategory(categoryId);
 		},
 		enabled: enabled && !!categoryId,
+	});
+};
+
+// Get all active campaign objectives for dropdown usage (lightweight, no pagination).
+// Supports optional categoryId filter.
+export const useGetCampaignObjectivesAll = (categoryId?: number) => {
+	return useQuery({
+		queryKey: ['campaign-objectives-all', categoryId],
+		queryFn: async () => {
+			const api = campaignObjectivesApi();
+			return api.getCampaignObjectivesAll(categoryId);
+		},
 	});
 };
