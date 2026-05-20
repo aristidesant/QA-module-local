@@ -30,7 +30,7 @@ import { CampaignStatus } from '~/models/CampaignStatus';
 import type { CampaignObjective } from '~/models/CampaignObjectiveModel';
 import type { CreateCampaignWithAgentDTO } from '~/api/campaignsApi';
 import styles from '../CampaignWizard.module.css';
-import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
+import { useGetCampaignObjectivesAll } from '~/queries/campaignObjectivesQueries';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
 import { CampaignObjectivesForm } from '~/modules/campaign-management/campaign-objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
 import {
@@ -87,9 +87,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 
 	const createCampaignWithAgent = useCreateCampaignWithAgent();
 	const { mutateAsync: setDraft } = useSetCampaignDraft();
-	const { data: objectivesResponse } = useGetCampaignObjectives({
-		active: true,
-	});
+	const { data: objectivesResponse } = useGetCampaignObjectivesAll();
 	const { data: voicesResponse } = useGetAllAgentVoices();
 
 	const form = useForm({
@@ -428,12 +426,10 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 													placeholder={t(
 														'wizard.steps.general.objectivePlaceholder'
 													)}
-													data={
-														objectivesResponse?.data?.map((obj) => ({
-															value: obj.id.toString(),
-															label: obj.name,
-														})) || []
-													}
+													data={(objectivesResponse ?? []).map((obj) => ({
+														value: obj.id.toString(),
+														label: obj.name,
+													}))}
 													value={form.values.objectiveId?.toString() || null}
 													onChange={(value) =>
 														form.setFieldValue(

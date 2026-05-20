@@ -9,7 +9,7 @@ import {
 } from '@mantine/core';
 import { IconSearch, IconFilter, IconFilterOff } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
+import { useGetCampaignObjectivesAll } from '~/queries/campaignObjectivesQueries';
 import styles from './CampaignSchemasFilters.module.css';
 
 export interface SchemaFilters {
@@ -30,8 +30,7 @@ const CampaignSchemasFilters: React.FC<CampaignSchemasFiltersProps> = ({
 }) => {
 	const { t } = useTranslation('campaign-management');
 	// Get objectives for the filter
-	const { data: objectivesResponse } = useGetCampaignObjectives();
-	const objectives = objectivesResponse?.data || [];
+	const { data: objectives = [] } = useGetCampaignObjectivesAll();
 
 	const hasActiveFilters =
 		filters.search !== '' ||
