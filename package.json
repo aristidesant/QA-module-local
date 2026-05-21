@@ -21,6 +21,7 @@
 		"coverage": "VALID_COVERAGE_ONLY=true vitest run --coverage --coverage.reporter=text"
 	},
 	"dependencies": {
+		"@elevenlabs/react": "1.6.2",
 		"@hello-pangea/dnd": "18.0.1",
 		"@mantine/carousel": "9.2.0",
 		"@mantine/charts": "9.2.0",

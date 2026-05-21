@@ -11,5 +11,64 @@
 			"description": "Esta campaña todavía no tiene un agente configurado. Regresa al editor para conectarlo antes de realizar la prueba.",
 			"backToEditor": "Volver al editor"
 		}
+	},
+	"widget": {
+		"title": "Vista previa de conversación",
+		"description": "Inicia una conversación en vivo con el agente configurado y supervisa su estado de conexión aquí.",
+		"helper": "Habla con el agente por voz o envía un mensaje escrito.",
+		"voice": {
+			"title": "Agente de voz",
+			"callTooltip": "Iniciar llamada de voz",
+			"hangupTooltip": "Finalizar llamada"
+		},
+		"meta": {
+			"speaking": "Hablando",
+			"listening": "Escuchando",
+			"mic": "Micrófono",
+			"muted": "Silenciado",
+			"unmuted": "Activo",
+			"mode": "Modo"
+		},
+		"mode": {
+			"speaking": "Hablando",
+			"listening": "Escuchando"
+		},
+		"status": {
+			"disconnected": "Listo",
+			"connecting": "Conectando",
+			"connected": "Conectado",
+			"error": "Error de conexión"
+		},
+		"statusDescription": {
+			"disconnected": "Aún no hay una sesión activa.",
+			"connecting": "Abriendo una sesión con el agente.",
+			"connected": "La sesión está activa y lista para recibir entradas.",
+			"error": "La sesión no pudo iniciarse o se interrumpió."
+		},
+		"actions": {
+			"start": "Iniciar conversación",
+			"end": "Finalizar conversación",
+			"mute": "Silenciar micrófono",
+			"unmute": "Activar micrófono"
+		},
+		"session": {
+			"label": "ID de sesión"
+		},
+		"transcript": {
+			"title": "Transcripción",
+			"empty": "Todavía no hay transcripción. Inicia la conversación para verla aquí.",
+			"user": "Usuario",
+			"agent": "Agente",
+			"copyTranscript": "Copiar transcripción",
+			"copiedTranscript": "Transcripción copiada",
+			"inputLabel": "Enviar un mensaje",
+			"inputPlaceholder": "Escribe un mensaje para el agente",
+			"send": "Enviar"
+		},
+		"error": {
+			"title": "Error de conversación",
+			"microphonePermission": "El acceso al micrófono está bloqueado. Permite el acceso al micrófono en el navegador antes de iniciar la llamada de voz.",
+			"microphoneUnavailable": "Este navegador no puede acceder a un micrófono para la llamada de voz."
+		}
 	}
 }

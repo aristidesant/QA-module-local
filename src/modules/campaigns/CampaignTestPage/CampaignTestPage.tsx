@@ -1,12 +1,16 @@
 import { useState } from 'react';
 import { useNavigate, useOutletContext } from 'react-router';
-import { Alert, Button, Stack, Text } from '@mantine/core';
-import { IconAlertCircle, IconArrowLeft } from '@tabler/icons-react';
+import { Alert, Button, Group, Stack, Text } from '@mantine/core';
+import { IconAlertCircle, IconArrowLeft, IconWaveSine } from '@tabler/icons-react';
+import { useMediaQuery } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
 import ConversationsList from '~/modules/conversations/ConversationsList';
 import { ConversationDetailPage } from '~/modules/conversations/ConversationDetailPage/ConversationDetailPage';
-import CampaignConvaiWidget from '../CampaignConvaiWidget';
+import {
+	CampaignConvaiProvider,
+	ConvaiVoicePanel,
+} from '../CampaignConvaiWidget';
 import type { Campaign } from '~/models/CampaignsModel';
 
 const HIDDEN_COLUMNS = ['contactName', 'phoneNumber'];
@@ -15,6 +19,7 @@ const CampaignTestPage = () => {
 	const { t } = useTranslation('campaign.detail.test');
 	const navigate = useNavigate();
 	const campaign = useOutletContext<Campaign>();
+	const isMobile = useMediaQuery('(max-width: 768px)', false);
 
 	const [selectedConversationId, setSelectedConversationId] = useState<
 		number | null
@@ -31,15 +36,23 @@ const CampaignTestPage = () => {
 		);
 	}
 
-	return (
-		<ContentContainer
-			title={t('page.titleWithCampaign', { campaignName: campaign.name })}
-			description={t('page.description')}
-			showBackButton
-			onBackClick={() => navigate(`/campaign/${campaign.id}`)}
-		>
-			<Stack gap='sm'>
-				{!agentId && (
+	const conversationsList = (
+		<ConversationsList
+			campaignId={campaign.id}
+			hiddenColumns={HIDDEN_COLUMNS}
+			onRowClick={(c) => setSelectedConversationId(c.id)}
+		/>
+	);
+
+	if (!agentId) {
+		return (
+			<ContentContainer
+				title={t('page.titleWithCampaign', { campaignName: campaign.name })}
+				description={t('page.description')}
+				showBackButton
+				onBackClick={() => navigate(`/campaign/${campaign.id}`)}
+			>
+				<Stack gap='sm'>
 					<Alert
 						icon={<IconAlertCircle size={16} />}
 						title={t('agent.empty.title')}
@@ -60,17 +73,38 @@ const CampaignTestPage = () => {
 							</div>
 						</Stack>
 					</Alert>
-				)}
 
-				<CampaignConvaiWidget agentId={agentId} />
+					{conversationsList}
+				</Stack>
+			</ContentContainer>
+		);
+	}
 
-				<ConversationsList
-					campaignId={campaign.id}
-					hiddenColumns={HIDDEN_COLUMNS}
-					onRowClick={(c) => setSelectedConversationId(c.id)}
-				/>
-			</Stack>
-		</ContentContainer>
+	return (
+		<CampaignConvaiProvider agentId={agentId}>
+			<ContentContainer
+				title={t('page.titleWithCampaign', { campaignName: campaign.name })}
+				description={t('page.description')}
+				showBackButton
+				onBackClick={() => navigate(`/campaign/${campaign.id}`)}
+				rightSection={isMobile ? undefined : <ConvaiVoicePanel />}
+				rightSectionTitle={
+					isMobile ? undefined : (
+						<Group gap='xs' align='center' wrap='nowrap'>
+							<IconWaveSine size={16} />
+							<Text fz='sm' fw={600}>
+								{t('widget.voice.title')}
+							</Text>
+						</Group>
+					)
+				}
+			>
+				<Stack gap='sm'>
+					{isMobile && <ConvaiVoicePanel />}
+					{conversationsList}
+				</Stack>
+			</ContentContainer>
+		</CampaignConvaiProvider>
 	);
 };
 
