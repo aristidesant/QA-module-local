@@ -212,7 +212,7 @@
 			},
 			"agent": {
 				"title": "Personalidad del agente",
-				"description": "Elige el modelo y el tono que representarán la marca."
+				"description": "Elige el modelo, la configuración de respaldo y el tono que representarán la marca."
 			},
 			"platformSettings": {
 				"title": "Configuración de plataforma",
@@ -475,6 +475,22 @@
 			"temperature": {
 				"label": "Temperatura",
 				"helper": "Controla la aleatoriedad (0–2)"
+			},
+			"backupLlm": {
+				"title": "LLM de respaldo",
+				"description": "Configura los modelos de respaldo que se intentarán si falla el LLM principal.",
+				"preference": {
+					"label": "Preferencia",
+					"placeholder": "Selecciona una preferencia de respaldo",
+					"options": {
+						"override": "Sobrescribir"
+					}
+				},
+				"order": {
+					"label": "Orden de respaldo",
+					"placeholder": "Selecciona los modelos de respaldo",
+					"helper": "Los modelos se intentan en el orden que selecciones."
+				}
 			}
 		},
 		"validation": {

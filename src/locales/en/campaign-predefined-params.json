@@ -212,7 +212,7 @@
 			},
 			"agent": {
 				"title": "Agent Personality",
-				"description": "Pick the model and tone that will represent the brand."
+				"description": "Pick the model, fallback settings, and tone that will represent the brand."
 			},
 			"platformSettings": {
 				"title": "Platform Settings",
@@ -475,6 +475,22 @@
 			"temperature": {
 				"label": "Temperature",
 				"helper": "Controls randomness (0–2)"
+			},
+			"backupLlm": {
+				"title": "Backup LLM",
+				"description": "Configure the fallback models that will be tried if the primary LLM fails.",
+				"preference": {
+					"label": "Preference",
+					"placeholder": "Select a backup preference",
+					"options": {
+						"override": "Override"
+					}
+				},
+				"order": {
+					"label": "Fallback order",
+					"placeholder": "Select fallback models",
+					"helper": "Models are tried in the order you select them."
+				}
 			}
 		},
 		"validation": {

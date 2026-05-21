@@ -19,38 +19,35 @@ type BehaviorPlatformSettings =
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	Boolean(value) && typeof value === 'object' && !Array.isArray(value);
 
-const hasReasoningEffortSupport = (
-	conversationConfig?: BehaviorConversationConfig
-): boolean => {
-	const prompt = conversationConfig?.agent?.prompt;
+const isMergeablePrimitive = (value: unknown): boolean =>
+	value !== null &&
+	value !== undefined &&
+	(typeof value !== 'string' || value.length > 0) &&
+	(typeof value !== 'number' || !Number.isNaN(value));
 
-	return Boolean(
-		prompt && Object.prototype.hasOwnProperty.call(prompt, 'reasoningEffort')
-	);
-};
+const pruneNullishValues = (value: unknown): unknown => {
+	if (Array.isArray(value)) {
+		const nextValue = value
+			.map((item) => pruneNullishValues(item))
+			.filter((item): item is unknown => item !== undefined && item !== null);
 
-const clearReasoningEffort = (
-	conversationConfig: Record<string, unknown>
-): Record<string, unknown> => {
-	const nextConversationConfig = { ...conversationConfig };
-	const agent = nextConversationConfig.agent;
-
-	if (!isRecord(agent)) {
-		return nextConversationConfig;
+		return nextValue.length > 0 ? nextValue : undefined;
 	}
 
-	const nextAgent = { ...agent };
-	if (!isRecord(nextAgent.prompt)) {
-		return nextConversationConfig;
+	if (!isRecord(value)) {
+		return isMergeablePrimitive(value) ? value : undefined;
 	}
 
-	const nextPrompt = { ...nextAgent.prompt };
-	nextPrompt.reasoningEffort = null;
+	const nextValue: Record<string, unknown> = {};
 
-	nextAgent.prompt = nextPrompt;
-	nextConversationConfig.agent = nextAgent;
+	for (const [key, nestedValue] of Object.entries(value)) {
+		const sanitizedValue = pruneNullishValues(nestedValue);
+		if (sanitizedValue !== undefined && sanitizedValue !== null) {
+			nextValue[key] = sanitizedValue;
+		}
+	}
 
-	return nextConversationConfig;
+	return Object.keys(nextValue).length > 0 ? nextValue : undefined;
 };
 
 export const applyCampaignBehaviorConversationConfig = (
@@ -61,49 +58,15 @@ export const applyCampaignBehaviorConversationConfig = (
 		return currentConversationConfig;
 	}
 
-	const currentAgent = isRecord(currentConversationConfig.agent)
-		? currentConversationConfig.agent
-		: {};
-	const currentPrompt = isRecord(currentAgent.prompt)
-		? currentAgent.prompt
-		: {};
-	const selectedPrompt = isRecord(selectedConversationConfig.agent?.prompt)
-		? selectedConversationConfig.agent.prompt
-		: null;
+	const sanitizedSelectedConfig = pruneNullishValues(
+		selectedConversationConfig
+	);
 
-	const mergedConfig = deepMergeConfig(currentConversationConfig, {
-		...(selectedConversationConfig.asr
-			? {
-					asr: {
-						...selectedConversationConfig.asr,
-					},
-				}
-			: {}),
-		...(selectedConversationConfig.tts
-			? {
-					tts: {
-						...selectedConversationConfig.tts,
-					},
-				}
-			: {}),
-		...(selectedConversationConfig.agent
-			? {
-					agent: {
-						...currentAgent,
-						prompt: selectedPrompt
-							? {
-									...currentPrompt,
-									...selectedPrompt,
-								}
-							: currentPrompt,
-					},
-				}
-			: {}),
-	});
+	if (!isRecord(sanitizedSelectedConfig)) {
+		return currentConversationConfig;
+	}
 
-	return hasReasoningEffortSupport(selectedConversationConfig)
-		? mergedConfig
-		: clearReasoningEffort(mergedConfig);
+	return deepMergeConfig(currentConversationConfig, sanitizedSelectedConfig);
 };
 
 export const applyCampaignBehaviorPlatformSettings = (
@@ -120,16 +83,7 @@ export const applyCampaignBehaviorPlatformSettings = (
 };
 
 export const sanitizeCampaignBehaviorConversationConfig = (
-	conversationConfig: Record<string, unknown>,
-	selectedConversationConfig?: BehaviorConversationConfig
+	conversationConfig: Record<string, unknown>
 ): Record<string, unknown> => {
-	if (!selectedConversationConfig) {
-		return conversationConfig;
-	}
-
-	if (hasReasoningEffortSupport(selectedConversationConfig)) {
-		return conversationConfig;
-	}
-
-	return clearReasoningEffort(conversationConfig);
+	return conversationConfig;
 };

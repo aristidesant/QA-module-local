@@ -23,6 +23,8 @@ export interface FormValues {
 	ttsAgentOutputAudioFormat: string;
 	agentPromptLlm: string;
 	agentPromptReasoningEffort: string | null;
+	agentPromptBackupLlmPreference: string;
+	agentPromptBackupLlmOrder: string[];
 	agentPromptTemperature: number;
 	platformSettingsOverrides: PlatformSettingsOverrides;
 	isBackup: boolean;

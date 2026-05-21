@@ -27,6 +27,7 @@ import {
 } from './CampaignPredefinedFormProvider';
 import {
 	DEFAULT_AGENT_LLM,
+	DEFAULT_BACKUP_LLM_PREFERENCE,
 	DEFAULT_TTS_MODEL_ID,
 	EXPRESSIVE_TTS_MODEL_ID,
 	isExpressiveTtsModel,
@@ -51,6 +52,24 @@ const clampTtsSpeed = (value: number | null | undefined) => {
 	const nextValue = value ?? 1.0;
 
 	return Math.min(TTS_SPEED_MAX, Math.max(TTS_SPEED_MIN, nextValue));
+};
+
+type BackupLlmPromptConfig = {
+	preference?: string;
+	order?: string[];
+};
+
+const getBackupLlmConfig = (
+	prompt?: {
+		backupLlmConfig?: BackupLlmPromptConfig;
+	}
+) => {
+	const config = prompt?.backupLlmConfig;
+
+	return {
+		preference: config?.preference ?? DEFAULT_BACKUP_LLM_PREFERENCE,
+		order: config?.order ?? [],
+	};
 };
 
 interface AgentBehaviorsFormProps {
@@ -144,6 +163,9 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 	const platformSettingsOverrides =
 		behavior?.params?.platformSettings?.overrides ??
 		DEFAULT_PLATFORM_SETTINGS_OVERRIDES;
+	const initialBackupLlmConfig = getBackupLlmConfig(
+		conversationConfig?.agent?.prompt
+	);
 
 	const form = useForm<FormValues>({
 		initialValues: {
@@ -180,6 +202,8 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 				conversationConfig?.agent?.prompt?.llm || DEFAULT_AGENT_LLM,
 			agentPromptReasoningEffort:
 				conversationConfig?.agent?.prompt?.reasoningEffort ?? null,
+			agentPromptBackupLlmPreference: initialBackupLlmConfig.preference,
+			agentPromptBackupLlmOrder: initialBackupLlmConfig.order,
 			agentPromptTemperature:
 				conversationConfig?.agent?.prompt?.temperature ?? 1.0,
 			platformSettingsOverrides: clonePlatformSettingsOverrides(
@@ -251,6 +275,7 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 	useEffect(() => {
 		if (behavior) {
 			const cfg = behavior.params.conversationConfig;
+			const backupLlmConfig = getBackupLlmConfig(cfg?.agent?.prompt);
 			form.setValues({
 				name: behavior.name,
 				// ASR
@@ -278,6 +303,8 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 				// Agent
 				agentPromptLlm: cfg?.agent?.prompt?.llm || DEFAULT_AGENT_LLM,
 				agentPromptReasoningEffort: cfg?.agent?.prompt?.reasoningEffort ?? null,
+				agentPromptBackupLlmPreference: backupLlmConfig.preference,
+				agentPromptBackupLlmOrder: backupLlmConfig.order,
 				agentPromptTemperature: cfg?.agent?.prompt?.temperature ?? 1.0,
 				platformSettingsOverrides: clonePlatformSettingsOverrides(
 					behavior?.params?.platformSettings?.overrides ??
@@ -324,6 +351,10 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 				...conversationConfig?.agent?.prompt,
 				llm: values.agentPromptLlm,
 				reasoningEffort: values.agentPromptReasoningEffort ?? undefined,
+				backupLlmConfig: {
+					preference: values.agentPromptBackupLlmPreference,
+					order: values.agentPromptBackupLlmOrder,
+				},
 				temperature: values.agentPromptTemperature,
 			},
 		},

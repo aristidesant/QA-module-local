@@ -10,6 +10,7 @@ import type { AgentWorkflowApi } from '~/models/AgentWorkflowApiModel';
 import type { CampaignRequirements } from '~/models/CampaignRequirementsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
 import { ScheduleType, ScheduleDirection } from '~/models/SchedulerModel';
+import { sanitizeAgentPayload } from '~/utils/agentPayloadSanitizer';
 import { DEFAULT_API_URL } from './config';
 
 export type ToggleCampaignAction = 'activate' | 'inactive';
@@ -166,9 +167,10 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 	return {
 		// CREATE campaign
 		createCampaign: async (campaign: Partial<Campaign>) => {
+			const payload = sanitizeAgentPayload(campaign);
 			const response = await axios.post(
 				`${DEFAULT_API_URL}/campaigns`,
-				campaign
+				payload
 			);
 			return response.data;
 		},
@@ -274,11 +276,11 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 
 		// UPDATE campaign (PATCH)
 		updateCampaign: async (campaignId: string, data: Partial<Campaign>) => {
-			stripWorkflowUiMeta(data.agentConfig);
+			const payload = sanitizeAgentPayload(data);
 
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}`,
-				data
+				payload
 			);
 			return response.data;
 		},
@@ -287,12 +289,13 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			campaignId: string,
 			data: Partial<Campaign>
 		) => {
-			removePromptText(data.agentConfig);
-			stripWorkflowUiMeta(data.agentConfig);
+			const payload = sanitizeAgentPayload(data);
+			removePromptText(payload.agentConfig);
+			stripWorkflowUiMeta(payload.agentConfig);
 
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/details`,
-				data
+				payload
 			);
 			return response.data;
 		},
@@ -369,9 +372,10 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 
 		// CREATE campaign with agent
 		createCampaignWithAgent: async (data: CreateCampaignWithAgentDTO) => {
+			const payload = sanitizeAgentPayload(data);
 			const response = await axios.post<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/with-agent`,
-				data
+				payload
 			);
 			return response.data;
 		},

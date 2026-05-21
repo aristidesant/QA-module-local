@@ -1,6 +1,9 @@
 import type { Voice } from './AgentVoiceModel';
 import type { AgentWorkflow } from './AgentWorkflowModel';
-import type { SuggestedAudioTag } from './CampaignPredefinedParam';
+import type {
+	BackupLlmConfig,
+	SuggestedAudioTag,
+} from './CampaignPredefinedParam';
 
 export default interface AgentListObject {
 	id: string;
@@ -135,6 +138,7 @@ export interface ConversationConfigModel {
 		prompt: {
 			llm: string;
 			reasoningEffort?: string;
+			backupLlmConfig?: BackupLlmConfig;
 			rag: {
 				enabled: boolean;
 				embeddingModel: string;

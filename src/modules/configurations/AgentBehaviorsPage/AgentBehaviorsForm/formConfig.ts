@@ -150,6 +150,7 @@ export const LLM_MODELS = [
 ];
 
 export const DEFAULT_AGENT_LLM = 'gpt-4o-mini';
+export const DEFAULT_BACKUP_LLM_PREFERENCE = 'override';
 
 export const getGroupedLlmOptions = () =>
 	LLM_MODELS.reduce<

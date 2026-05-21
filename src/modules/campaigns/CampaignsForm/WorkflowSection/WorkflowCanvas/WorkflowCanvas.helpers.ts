@@ -27,6 +27,9 @@ const COMPARISON_OPERATOR_LABELS: Partial<Record<BoolExpr['type'], string>> = {
 	lte_operator: '<=',
 };
 
+const normalizeWorkflowNodeType = (type: string) =>
+	type === 'updateState' ? WORKFLOW_NODE_TYPES.UPDATE_STATE : type;
+
 const quoteExpressionString = (value: string) =>
 	`"${value.replace(/\\/g, '\\\\').replace(/"/g, '\\"')}"`;
 
@@ -260,25 +263,26 @@ export const mapWorkflowToNodes = (
 	);
 
 	const mappedNodes = Object.entries(sanitizedNodes).map(([id, node]) => {
+		const normalizedNodeType = normalizeWorkflowNodeType(node.type);
 		const parentGroupId = childToGroup.get(id);
 
 		return {
 			id,
-			type: node.type,
+			type: normalizedNodeType,
 			position: node.position,
 			dragHandle: WORKFLOW_NODE_DRAG_HANDLE_SELECTOR,
-			selectable: !NON_SELECTABLE_TYPES.includes(node.type as any),
-			focusable: !NON_SELECTABLE_TYPES.includes(node.type as any),
+			selectable: !NON_SELECTABLE_TYPES.includes(normalizedNodeType as any),
+			focusable: !NON_SELECTABLE_TYPES.includes(normalizedNodeType as any),
 			...(parentGroupId
 				? { parentId: parentGroupId, extent: 'parent' as const }
 				: {}),
 			data: {
 				...node,
-				type: node.type,
+				type: normalizedNodeType,
 				position: node.position,
 				edgeOrder: node.edgeOrder ?? [],
-				...(node.type === WORKFLOW_NODE_TYPES.STANDALONE_AGENT ||
-				node.type === WORKFLOW_NODE_TYPES.OVERRIDE_AGENT
+				...(normalizedNodeType === WORKFLOW_NODE_TYPES.STANDALONE_AGENT ||
+				normalizedNodeType === WORKFLOW_NODE_TYPES.OVERRIDE_AGENT
 					? {
 							subagent: normalizeSubagent(
 								node as OverrideAgentNode | StandaloneAgentNode
@@ -410,17 +414,18 @@ export const buildWorkflowFromState = (
 
 	sortedNodes.forEach((node) => {
 		const data = node.data as Partial<WorkflowNode>;
+		const normalizedNodeType = normalizeWorkflowNodeType(
+			(node.type || data.type || WORKFLOW_NODE_TYPES.START) as string
+		);
 		const baseNode = {
-			type: (node.type ||
-				data.type ||
-				WORKFLOW_NODE_TYPES.START) as WorkflowNode['type'],
+			type: normalizedNodeType as WorkflowNode['type'],
 			position: node.position,
 			edgeOrder: data.edgeOrder ?? [],
 			label: data.label,
 			uiMeta: data.uiMeta,
 		};
 
-		switch (node.type) {
+		switch (normalizedNodeType) {
 			case WORKFLOW_NODE_TYPES.TOOL: {
 				const toolNode: ToolNode = {
 					...baseNode,

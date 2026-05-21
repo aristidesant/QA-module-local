@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { DEFAULT_API_URL } from './config';
+import { sanitizeAgentPayload } from '~/utils/agentPayloadSanitizer';
 import type {
 	AgentBehavior,
 	AgentBehaviorCampaign,
@@ -76,9 +77,10 @@ export const getAgentBehaviorById = async (
 export const createAgentBehavior = async (
 	data: AgentBehaviorSaveRequest
 ): Promise<AgentBehavior> => {
+	const payload = sanitizeAgentPayload(data);
 	const response = await axios.post<AgentBehavior>(
 		`${DEFAULT_API_URL}/agent-behaviors`,
-		data
+		payload
 	);
 	return response.data;
 };
@@ -87,9 +89,10 @@ export const updateAgentBehavior = async (
 	id: string,
 	data: AgentBehaviorUpdateRequest
 ): Promise<AgentBehavior> => {
+	const payload = sanitizeAgentPayload(data);
 	const response = await axios.patch<AgentBehavior>(
 		`${DEFAULT_API_URL}/agent-behaviors/${id}`,
-		data
+		payload
 	);
 	return response.data;
 };

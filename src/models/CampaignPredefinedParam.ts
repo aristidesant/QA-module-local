@@ -3,6 +3,11 @@ export interface SuggestedAudioTag {
 	description: string;
 }
 
+export interface BackupLlmConfig {
+	preference: string;
+	order: string[];
+}
+
 export interface CampaignPredefinedPlatformSettings {
 	overrides: {
 		customLlmExtraBody: boolean;
@@ -63,6 +68,7 @@ export interface CampaignPredefinedConversationConfig {
 		prompt: {
 			llm: string;
 			reasoningEffort?: string;
+			backupLlmConfig?: BackupLlmConfig;
 			temperature: number;
 		};
 	};

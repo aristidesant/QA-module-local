@@ -63,6 +63,7 @@ import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
 import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
 import {
+	applyCampaignBehaviorConversationConfig,
 	applyCampaignBehaviorPlatformSettings,
 	sanitizeCampaignBehaviorConversationConfig,
 } from '~/modules/campaigns/utils/campaignBehaviorConfig';
@@ -501,6 +502,13 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			const cleanedValue = { ...value };
 			if (cleanedValue.agentConfig) {
 				const currentAgentConfig = cleanedValue.agentConfig;
+				const mergedConversationConfig = applyCampaignBehaviorConversationConfig(
+					(currentAgentConfig.conversationConfig || {}) as Record<
+						string,
+						unknown
+					>,
+					selectedBehaviorConversationConfig
+				);
 				cleanedValue.agentConfig = {
 					...currentAgentConfig,
 					platformSettings: applyCampaignBehaviorPlatformSettings(
@@ -510,18 +518,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						>,
 						selectedBehaviorPlatformSettings
 					) as typeof currentAgentConfig.platformSettings,
+					conversationConfig: sanitizeCampaignBehaviorConversationConfig(
+						mergedConversationConfig
+					) as unknown as ConversationConfigModel,
 				};
-
-				if (currentAgentConfig.conversationConfig) {
-					cleanedValue.agentConfig = {
-						...cleanedValue.agentConfig,
-						conversationConfig: sanitizeCampaignBehaviorConversationConfig(
-							(currentAgentConfig.conversationConfig ||
-								{}) as unknown as Record<string, unknown>,
-							selectedBehaviorConversationConfig
-						) as unknown as ConversationConfigModel,
-					};
-				}
 			}
 			if (cleanedValue.agentConfig?.conversationConfig?.agent?.prompt) {
 				const { toolIds, ...restPrompt } =

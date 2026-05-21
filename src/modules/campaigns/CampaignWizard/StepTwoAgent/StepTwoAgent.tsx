@@ -33,6 +33,7 @@ import sharedStyles from '../CampaignWizard.module.css';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useUpdateCampaign, useGetCampaign } from '~/queries/campaignsQueries';
 import {
+	applyCampaignBehaviorConversationConfig,
 	applyCampaignBehaviorPlatformSettings,
 	sanitizeCampaignBehaviorConversationConfig,
 } from '~/modules/campaigns/utils/campaignBehaviorConfig';
@@ -70,6 +71,12 @@ const extractKnowledgeBaseIds = (
 	// Only consider KB data "present" if there are actual IDs.
 	// An empty array means no KB was saved, so we should preserve local selections.
 	return { ids, isPresent: ids.length > 0 };
+};
+
+type WizardConversationConfig = Record<string, unknown> & {
+	agent?: Record<string, unknown> & {
+		prompt?: Record<string, unknown>;
+	};
 };
 
 export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
@@ -298,8 +305,20 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		setIsSubmitting(true);
 		try {
 			// Prepare updated prompt structure
+			const mergedConversationConfig = applyCampaignBehaviorConversationConfig(
+				(currentCampaign.agentConfig?.conversationConfig || {}) as Record<
+					string,
+					unknown
+				>,
+				selectedBehaviorConversationConfig
+			) as WizardConversationConfig;
+			const currentAgent = mergedConversationConfig.agent ?? {};
 			const currentPrompt =
-				currentCampaign.agentConfig?.conversationConfig?.agent?.prompt || {};
+				mergedConversationConfig.agent?.prompt ||
+				(currentCampaign.agentConfig?.conversationConfig?.agent?.prompt as
+					| Record<string, unknown>
+					| undefined) ||
+				{};
 
 			const payload = {
 				...currentCampaign,
@@ -316,13 +335,13 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 						selectedBehaviorPlatformSettings
 					),
 					conversationConfig: {
-						...currentCampaign.agentConfig?.conversationConfig,
+						...mergedConversationConfig,
 						agent: {
-							...currentCampaign.agentConfig?.conversationConfig?.agent,
+							...currentAgent,
 							language: values.language,
 							firstMessage: values.firstMessage,
 							prompt: {
-								...currentPrompt,
+								...(currentPrompt as Record<string, unknown>),
 								prompt: values.agentPrompt,
 								knowledgeBase: currentKnowledgeBaseIds,
 							},
@@ -334,11 +353,7 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			if (payload.agentConfig?.conversationConfig) {
 				payload.agentConfig.conversationConfig =
 					sanitizeCampaignBehaviorConversationConfig(
-						(payload.agentConfig.conversationConfig || {}) as Record<
-							string,
-							unknown
-						>,
-						selectedBehaviorConversationConfig
+						(payload.agentConfig.conversationConfig || {}) as Record<string, unknown>
 					) as typeof payload.agentConfig.conversationConfig;
 			}
 

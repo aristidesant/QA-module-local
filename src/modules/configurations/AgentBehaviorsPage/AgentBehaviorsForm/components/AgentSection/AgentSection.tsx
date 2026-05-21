@@ -1,7 +1,16 @@
-import { Select, Slider, Stack, Text as MantineText } from '@mantine/core';
+import {
+	MultiSelect,
+	Select,
+	Slider,
+	Stack,
+	Text as MantineText,
+} from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useFormContext } from '../../CampaignPredefinedFormProvider';
-import { getGroupedLlmOptions } from '../../formConfig';
+import {
+	DEFAULT_BACKUP_LLM_PREFERENCE,
+	getGroupedLlmOptions,
+} from '../../formConfig';
 import styles from '../../CampaignPredefinedParamsForm.module.css';
 
 export const AgentSection: React.FC = () => {
@@ -43,6 +52,36 @@ export const AgentSection: React.FC = () => {
 					{t('form.agent.temperature.helper')}
 				</MantineText>
 			</div>
+			<Stack gap='xs'>
+				<MantineText fw={600} size='sm'>
+					{t('form.agent.backupLlm.title')}
+				</MantineText>
+				<MantineText size='xs' c='dimmed'>
+					{t('form.agent.backupLlm.description')}
+				</MantineText>
+				<Select
+					label={t('form.agent.backupLlm.preference.label')}
+					placeholder={t('form.agent.backupLlm.preference.placeholder')}
+					data={[
+						{
+							value: DEFAULT_BACKUP_LLM_PREFERENCE,
+							label: t('form.agent.backupLlm.preference.options.override'),
+						},
+					]}
+					{...form.getInputProps('agentPromptBackupLlmPreference')}
+					searchable={false}
+					clearable={false}
+				/>
+				<MultiSelect
+					label={t('form.agent.backupLlm.order.label')}
+					placeholder={t('form.agent.backupLlm.order.placeholder')}
+					description={t('form.agent.backupLlm.order.helper')}
+					data={getGroupedLlmOptions()}
+					{...form.getInputProps('agentPromptBackupLlmOrder')}
+					searchable
+					clearable
+				/>
+			</Stack>
 		</Stack>
 	);
 };

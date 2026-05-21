@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { toSnakeCase, toCamelCase } from '~/utils/stringUtils';
+import { sanitizeAgentPayload } from '~/utils/agentPayloadSanitizer';
 import type AgentListObject from '~/models/AgentListObject';
 import type {
 	AgentWithCampaignListItem,
@@ -86,7 +87,7 @@ const agentApi = (_authHeader: Record<string, string> = {}) => {
 		// UPDATE agent (PATCH)
 		updateAgent: async (agentId: string, data: Partial<AgentListObject>) => {
 			// Convert camelCase payload to snake_case for API compatibility
-			const payload = toSnakeCase(data);
+			const payload = toSnakeCase(sanitizeAgentPayload(data));
 			const response = await axios.patch(
 				`${DEFAULT_API_URL}/agents/${agentId}`,
 				payload

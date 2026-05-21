@@ -179,8 +179,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 		};
 
 		dto.agent.conversationConfig = sanitizeCampaignBehaviorConversationConfig(
-			dto.agent.conversationConfig as Record<string, unknown>,
-			selectedConversationConfig
+			dto.agent.conversationConfig as Record<string, unknown>
 		);
 
 		createCampaignWithAgent.mutate(dto, {
