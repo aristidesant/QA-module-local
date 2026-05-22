@@ -1,11 +1,21 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Text, Group, Tooltip, ActionIcon } from '@mantine/core';
 import {
+	Badge,
+	ActionIcon,
+	Loader,
+	Menu,
+	Text,
+	Tooltip,
+} from '@mantine/core';
+import {
+	IconCopy,
+	IconInfoCircle,
 	IconListDetails,
 	IconPencil,
 	IconRefresh,
 	IconBan,
+	IconDotsVertical,
 } from '@tabler/icons-react';
 import { type ColumnDef } from '@tanstack/react-table';
 import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
@@ -17,8 +27,13 @@ import styles from './DispositionCatalogList.module.css';
 type UseDispositionCatalogTableColumnsProps = {
 	onEditNodes: (catalog: DispositionCatalogModel) => void;
 	onEditDetails: (catalog: DispositionCatalogModel) => void;
+	onCopyJson: (catalog: DispositionCatalogModel) => void;
 	onReactivate: (catalog: DispositionCatalogModel) => void;
 	onDeactivate: (catalog: DispositionCatalogModel) => void;
+	copyState: {
+		isPending: boolean;
+		variables: { catalogId: number | string } | undefined;
+	};
 	reactivateState: {
 		isPending: boolean;
 		variables: { catalogId: number } | undefined;
@@ -32,8 +47,10 @@ type UseDispositionCatalogTableColumnsProps = {
 export const useDispositionCatalogTableColumns = ({
 	onEditNodes,
 	onEditDetails,
+	onCopyJson,
 	onReactivate,
 	onDeactivate,
+	copyState,
 	reactivateState,
 	deactivateState,
 }: UseDispositionCatalogTableColumnsProps) => {
@@ -45,45 +62,76 @@ export const useDispositionCatalogTableColumns = ({
 		[canPerformAction]
 	);
 
+	const renderTypeBadge = (type?: DispositionCatalogModel['type']) =>
+		type ? (
+			<Badge
+				size='xs'
+				variant='light'
+				color={type === 'INBOUND' ? 'blue' : 'green'}
+			>
+				{type === 'INBOUND'
+					? t('columns.typeInbound')
+					: t('columns.typeOutbound')}
+			</Badge>
+		) : null;
+
 	return useMemo<ColumnDef<DispositionCatalogModel>[]>(
 		() => [
 			{
 				id: 'name',
 				accessorKey: 'name',
+				size: 320,
 				header: t('columns.name'),
 				cell: ({ row }) => {
 					const name = row.original.name;
 					const description = row.original.description;
-					const type = row.original.type;
 					return (
 						<div className={styles.nameCell}>
 							<div className={styles.nameRow}>
 								<Text size='sm' fw={600} className={styles.nameText}>
 									{name}
 								</Text>
-								{type && (
-									<span
-										className={
-											type === 'INBOUND'
-												? styles.typeBadgeInbound
-												: styles.typeBadgeOutbound
-										}
+								{description ? (
+									<Tooltip
+										label={description}
+										withArrow
+										multiline
+										withinPortal
+										openDelay={150}
+										events={{ hover: true, focus: true, touch: true }}
 									>
-										{type === 'INBOUND' ? 'Inbound' : 'Outbound'}
-									</span>
-								)}
+										<ActionIcon
+											variant='subtle'
+											color='gray'
+											size='xs'
+											aria-label={t('columns.descriptionInfo')}
+										>
+											<IconInfoCircle size={13} />
+										</ActionIcon>
+									</Tooltip>
+								) : null}
 							</div>
-							{description && (
-								<Text className={styles.descriptionText}>{description}</Text>
-							)}
 						</div>
 					);
 				},
 			},
 			{
+				id: 'type',
+				header: t('columns.type'),
+				accessorKey: 'type',
+				size: 120,
+				enableSorting: false,
+				cell: ({ row }) => (
+					<div className={styles.typeCell}>
+						{renderTypeBadge(row.original.type)}
+					</div>
+				),
+			},
+			{
 				id: 'status',
 				header: t('columns.status'),
 				accessorKey: 'isActive',
+				size: 120,
 				enableSorting: false,
 				cell: ({ row }) => (
 					<span
@@ -101,92 +149,99 @@ export const useDispositionCatalogTableColumns = ({
 				),
 			},
 			{
-				accessorKey: 'createdAt',
-				header: t('columns.createdAt'),
-				cell: (info) => (
-					<Text size='sm'>
-						{info.getValue()
-							? new Date(info.getValue() as string).toLocaleString()
-							: '-'}
-					</Text>
-				),
-			},
-			{
 				id: 'actions',
 				header: t('columns.actions'),
+				size: 88,
+				meta: {
+					headerClassName: styles.actionsHeader,
+					cellClassName: styles.actionsCell,
+				},
 				cell: ({ row }) => (
-					<Group gap={4} className={styles.actionsGroup}>
-						<Tooltip label={t('columns.editNodes')} withArrow>
+					<Menu shadow='sm' position='bottom-end' withArrow withinPortal>
+						<Menu.Target>
 							<ActionIcon
 								variant='subtle'
 								color='gray'
 								size='sm'
-								onClick={(e) => {
-									e.stopPropagation();
-									onEditNodes(row.original);
-								}}
-								aria-label={t('columns.editNodes')}
+								onClick={(event) => event.stopPropagation()}
+								aria-label={t('columns.actions')}
 							>
-								<IconListDetails size={15} />
+								<IconDotsVertical size={15} />
 							</ActionIcon>
-						</Tooltip>
-						{canUpdate && (
-							<Tooltip label={t('columns.editDetails')} withArrow>
-								<ActionIcon
-									variant='subtle'
-									color='gray'
-									size='sm'
-									onClick={(e) => {
-										e.stopPropagation();
-										onEditDetails(row.original);
-									}}
-									aria-label={t('columns.editDetails')}
-								>
-									<IconPencil size={15} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{canUpdate && !row.original.isActive && (
-							<Tooltip label={t('columns.reactivate')} withArrow>
-								<ActionIcon
-									color='green'
-									variant='light'
-									size='sm'
-									onClick={(e) => {
-										e.stopPropagation();
-										onReactivate(row.original);
-									}}
-									loading={
-										reactivateState.isPending &&
-										reactivateState.variables?.catalogId === row.original.id
-									}
-									aria-label={t('columns.reactivate')}
-								>
-									<IconRefresh size={15} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{canUpdate && row.original.isActive && (
-							<Tooltip label={t('columns.deactivate')} withArrow>
-								<ActionIcon
-									color='red'
-									variant='subtle'
-									size='sm'
-									onClick={(e) => {
-										e.stopPropagation();
-										onDeactivate(row.original);
-									}}
-									loading={
-										deactivateState.isPending &&
-										deactivateState.variables?.catalogId === row.original.id
-									}
-									aria-label={t('columns.deactivate')}
-								>
-									<IconBan size={15} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-					</Group>
+						</Menu.Target>
+						<Menu.Dropdown onClick={(event) => event.stopPropagation()}>
+							<Menu.Item
+								leftSection={<IconListDetails size={14} />}
+								onClick={() => onEditNodes(row.original)}
+							>
+								{t('columns.editNodes')}
+							</Menu.Item>
+							<Menu.Item
+								leftSection={
+									copyState.isPending &&
+									copyState.variables?.catalogId === row.original.id ? (
+										<Loader size={12} />
+									) : (
+										<IconCopy size={14} />
+									)
+								}
+								onClick={() => onCopyJson(row.original)}
+								disabled={!row.original.isActive}
+							>
+								{t('columns.copyJson')}
+							</Menu.Item>
+							{canUpdate && (
+								<>
+									<Menu.Divider />
+									<Menu.Item
+										leftSection={<IconPencil size={14} />}
+										onClick={() => onEditDetails(row.original)}
+									>
+										{t('columns.editDetails')}
+									</Menu.Item>
+									{row.original.isActive ? (
+										<Menu.Item
+											color='red'
+											leftSection={
+												deactivateState.isPending &&
+												deactivateState.variables?.catalogId === row.original.id ? (
+													<Loader size={12} />
+												) : (
+													<IconBan size={14} />
+												)
+											}
+											onClick={() => onDeactivate(row.original)}
+											disabled={
+												deactivateState.isPending &&
+												deactivateState.variables?.catalogId === row.original.id
+											}
+										>
+											{t('columns.deactivate')}
+										</Menu.Item>
+									) : (
+										<Menu.Item
+											color='green'
+											leftSection={
+												reactivateState.isPending &&
+												reactivateState.variables?.catalogId === row.original.id ? (
+													<Loader size={12} />
+												) : (
+													<IconRefresh size={14} />
+												)
+											}
+											onClick={() => onReactivate(row.original)}
+											disabled={
+												reactivateState.isPending &&
+												reactivateState.variables?.catalogId === row.original.id
+											}
+										>
+											{t('columns.reactivate')}
+										</Menu.Item>
+									)}
+								</>
+							)}
+						</Menu.Dropdown>
+					</Menu>
 				),
 				enableSorting: false,
 			},
@@ -194,8 +249,10 @@ export const useDispositionCatalogTableColumns = ({
 		[
 			onEditNodes,
 			onEditDetails,
+			onCopyJson,
 			onReactivate,
 			onDeactivate,
+			copyState,
 			reactivateState,
 			deactivateState,
 			canUpdate,

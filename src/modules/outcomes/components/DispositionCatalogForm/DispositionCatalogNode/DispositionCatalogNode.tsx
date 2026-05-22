@@ -1,8 +1,11 @@
-import { useUpdateDispositionNode } from '~/queries/dispositionNodesQueries';
-import { useDeleteDispositionNode } from '~/queries/dispositionNodesQueries';
-import { useCreateDispositionNode } from '~/queries/dispositionNodesQueries';
-import { useReactivateDispositionNode } from '~/queries/dispositionNodesQueries';
-import { useDeactivateDispositionNode } from '~/queries/dispositionNodesQueries';
+import {
+	useUpdateDispositionNode,
+	useDeleteDispositionNode,
+	useCreateDispositionNode,
+	useReactivateDispositionNode,
+	useDeactivateDispositionNode,
+	useDispositionTreeByCatalog,
+} from '~/queries/dispositionNodesQueries';
 import { useTranslation } from 'react-i18next';
 
 import {
@@ -38,15 +41,8 @@ import { useState, type CSSProperties } from 'react';
 import styles from './DispositionCatalogNode.module.css';
 import DispositionNodeForm from './DispositionNodeForm';
 import { notifications } from '@mantine/notifications';
-// Types for modal state
-type ModalState = {
-	open: boolean;
-	parentId?: number;
-	editNode?: DispositionNode;
-};
-import type { DispositionNode } from '~/models/DispositionNodeModel';
-import { useDispositionTreeByCatalog } from '~/queries/dispositionNodesQueries';
 import { modals } from '@mantine/modals';
+import type { DispositionNode } from '~/models/DispositionNodeModel';
 import {
 	OUTBOUND_PROTECTED_ROOT_NODE_NAMES,
 	OutboundProtectedRootNodeName,
@@ -55,6 +51,12 @@ import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useDispositionStore } from '../../../dispositionRightComponentStore';
+// Types for modal state
+type ModalState = {
+	open: boolean;
+	parentId?: number;
+	editNode?: DispositionNode;
+};
 
 type DispositionCatalogFormProps = {
 	catalogId: number;

@@ -22,6 +22,9 @@ export type AgentsWithCampaignsResponse = Paginator<AgentWithCampaignListItem>;
 export interface DuplicateAgentDto {
 	name: string;
 }
+
+type SignedUrlResponse = string | { signedUrl?: string; url?: string; href?: string };
+
 const agentApi = (_authHeader: Record<string, string> = {}) => {
 	return {
 		// CREATE agent
@@ -66,6 +69,27 @@ const agentApi = (_authHeader: Record<string, string> = {}) => {
 				`${DEFAULT_API_URL}/agents/${agentId}`
 			);
 			return response.data;
+		},
+
+		getAgentSignedUrl: async (agentId: string) => {
+			const response = await axios.get<SignedUrlResponse>(
+				`${DEFAULT_API_URL}/agents/${agentId}/signed-url`
+			);
+
+			const data = response.data;
+
+			if (typeof data === 'string') {
+				return data;
+			}
+
+			if (data && typeof data === 'object') {
+				const signedUrl = data.signedUrl ?? data.url ?? data.href;
+				if (typeof signedUrl === 'string' && signedUrl.trim()) {
+					return signedUrl;
+				}
+			}
+
+			throw new Error('Unexpected response when requesting agent signed URL');
 		},
 
 		// FIND agents with campaigns

@@ -1,0 +1,171 @@
+.modalContent {
+	width: min(95vw, 1600px);
+	max-height: min(94dvh, 980px);
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	background-color: var(--mantine-color-body);
+}
+
+.modalHeader {
+	padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+	border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.modalTitle {
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
+.modalBody {
+	flex: 1;
+	min-height: 0;
+	overflow: hidden;
+	padding: var(--mantine-spacing-lg);
+}
+
+.modalRoot {
+	height: 100%;
+	min-height: 0;
+}
+
+.intro {
+	max-width: 72ch;
+}
+
+.workspace {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+	gap: var(--mantine-spacing-md);
+	flex: 1;
+	min-height: 0;
+}
+
+.panel {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+	background-color: var(--mantine-color-body);
+	box-shadow: var(--mantine-shadow-xs);
+}
+
+.panelStack {
+	flex: 1;
+	min-height: 0;
+}
+
+.fieldMeta {
+	max-width: 44rem;
+}
+
+.textareaRoot,
+.textareaWrapper {
+	flex: 1;
+	min-height: 0;
+}
+
+.textareaInput {
+	height: 100%;
+	min-height: clamp(18rem, 48dvh, 34rem);
+	resize: none;
+	overflow: auto;
+	font-family: var(--mantine-font-family-monospace);
+	line-height: 1.5;
+}
+
+.previewContent {
+	min-height: 0;
+	max-height: clamp(18rem, 48dvh, 34rem);
+	overflow: auto;
+	padding-right: 0.25rem;
+}
+
+.previewRail {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 0;
+}
+
+.previewRailInner {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	height: 100%;
+}
+
+.previewButton {
+	min-width: 9rem;
+	box-shadow: var(--mantine-shadow-xs);
+}
+
+.previewNode {
+	font-family: var(--mantine-font-family-monospace);
+	line-height: 1.35;
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.footer {
+	padding-top: var(--mantine-spacing-xs);
+}
+
+.actions {
+	margin-left: auto;
+}
+
+@media (max-width: 48em) {
+	.modalContent {
+		width: 100vw;
+		max-height: 100dvh;
+		border-radius: 0;
+	}
+
+	.modalHeader {
+		padding: var(--mantine-spacing-md);
+	}
+
+	.modalBody {
+		padding: var(--mantine-spacing-md);
+	}
+
+	.textareaInput {
+		min-height: 16rem;
+	}
+
+	.workspace {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.previewRail {
+		padding: 0;
+	}
+
+	.previewRailInner {
+		width: 100%;
+	}
+
+	.previewButton {
+		width: 100%;
+		min-width: 0;
+	}
+
+	.previewContent {
+		max-height: none;
+	}
+
+	.actions {
+		width: 100%;
+		margin-left: 0;
+	}
+
+	.footer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.footer > :first-child,
+	.actions > * {
+		width: 100%;
+	}
+}

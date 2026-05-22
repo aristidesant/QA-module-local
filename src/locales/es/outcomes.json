@@ -60,6 +60,71 @@
 	"list": {
 		"title": "Catálogos de resultados",
 		"description": "Crea y gestiona catálogos de resultados para agrupar nodos de tipificación para las campañas.",
+		"toolbar": {
+			"copyJson": "Copiar JSON",
+			"importJson": "Importar JSON",
+			"importTooltip": "Importar JSON del catálogo",
+			"exportTooltip": "Copia el catálogo activo seleccionado como JSON.",
+			"exportDisabled": "Selecciona un catálogo activo para copiar su JSON.",
+			"exportNotifications": {
+				"successTitle": "JSON copiado",
+				"successMessage": "El JSON del catálogo de resultados se copió al portapapeles.",
+				"errorTitle": "Error al copiar",
+				"errorMessage": "No se pudo copiar el JSON del catálogo de resultados."
+			}
+		},
+		"importModal": {
+			"title": "Importar JSON",
+			"intro": "Pega un export del catálogo o cárgalo desde el portapapeles.",
+			"textareaLabel": "Payload JSON",
+			"helper": "La vista previa valida el payload antes de importar.",
+			"placeholder": "Pega aquí el JSON exportado del catálogo.",
+			"clipboardAction": "Pegar desde el portapapeles",
+			"validate": "Vista previa",
+			"import": "Importar",
+			"notifications": {
+				"successTitle": "Catálogo importado",
+				"successMessage": "Se creó un nuevo catálogo de resultados con {{totalCreated}} nodos.",
+				"errorTitle": "Error al importar",
+				"clipboardUnavailableTitle": "Portapapeles no disponible",
+				"clipboardUnavailableMessage": "El navegador bloqueó el acceso al portapapeles. Pega el JSON manualmente.",
+				"clipboardEmptyTitle": "El portapapeles está vacío",
+				"clipboardEmptyMessage": "No se encontró JSON en el portapapeles."
+			},
+			"preview": {
+				"idleTitle": "Vista previa",
+				"idleDescription": "Ejecuta la vista previa para validar el payload.",
+				"validTitle": "Vista previa aprobada",
+				"invalidTitle": "Vista previa fallida",
+				"validDescription": "Se crearán {{totalNodes}} nodos.",
+				"invalidDescription": "Corrige los errores de abajo y vuelve a ejecutar la vista previa.",
+				"nodesCount": "{{totalNodes}} nodos totales",
+				"rootNodesCount": "{{rootNodes}} nodos raíz",
+				"rootNodesLabel": "Nodos raíz",
+				"nodeNamesLabel": "Vista del árbol"
+			},
+			"clipboard": {
+				"idle": "Listo",
+				"loading": "Leyendo portapapeles",
+				"loaded": "Portapapeles cargado",
+				"empty": "Portapapeles vacío",
+				"blocked": "Portapapeles bloqueado",
+				"error": "Error de portapapeles"
+			},
+			"validation": {
+				"required": "Pega primero el payload JSON.",
+				"invalidJson": "El contenido pegado no es un JSON válido.",
+				"missingName": "El JSON debe incluir un nombre de catálogo.",
+				"missingType": "El JSON debe incluir un tipo de catálogo.",
+				"missingNodes": "El JSON debe incluir un arreglo dispositionNodes.",
+				"missingNodeName": "Cada nodo debe tener un nombre.",
+				"invalidOrder": "El orden del nodo debe ser un número no negativo.",
+				"nameTooLong": "Los nombres no pueden superar 100 caracteres.",
+				"descriptionTooLong": "Las descripciones no pueden superar 500 caracteres.",
+				"tooManyNodes": "El payload excede el límite de 1,000 nodos.",
+				"tooDeep": "El árbol excede la profundidad máxima de 20 niveles."
+			}
+		},
 		"addCatalog": "Crear catálogo",
 		"searchPlaceholder": "Buscar por nombre o descripción...",
 		"noMatchingCatalogs": "No se encontraron catálogos coincidentes",
@@ -104,13 +169,18 @@
 		"name": "Nombre",
 		"description": "Descripción",
 		"type": "Tipo",
+		"typeInbound": "Entrante",
+		"typeOutbound": "Saliente",
 		"status": "Estado",
 		"createdAt": "Creado el",
 		"updatedAt": "Actualizado el",
 		"actions": "Acciones",
 		"isDefault": "Por defecto",
 		"editNodes": "Editar resultados",
+		"copyJson": "Copiar JSON",
+		"copyJsonDisabled": "Solo se pueden exportar catálogos activos",
 		"editDetails": "Editar detalles",
+		"descriptionInfo": "Ver descripción",
 		"reactivate": "Reactivar",
 		"deactivate": "Desactivar"
 	},

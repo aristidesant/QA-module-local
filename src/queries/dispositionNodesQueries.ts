@@ -6,6 +6,10 @@ import type {
 	DispositionNodeFilters,
 	UpdateDispositionNodePayload,
 } from '~/models/DispositionNodeModel';
+import type {
+	DispositionCatalogImportRequest,
+	DispositionCatalogImportResponse,
+} from '~/models/DispositionCatalogModels';
 
 // --- Types ---
 export interface CreateNodeParams {
@@ -24,6 +28,10 @@ export interface MoveNodeParams {
 
 export interface BulkOrderParams {
 	orders: Array<{ id: number; order: number }>;
+}
+
+export interface ImportDispositionNodesParams {
+	data: DispositionCatalogImportRequest;
 }
 
 // --- Queries ---
@@ -226,6 +234,31 @@ export function useDeactivateDispositionNode() {
 			queryClient.invalidateQueries({ queryKey: ['dispositionNode', id] });
 			queryClient.invalidateQueries({ queryKey: ['dispositionNodes'] });
 			queryClient.invalidateQueries({ queryKey: ['dispositionTree'] });
+		},
+	});
+}
+
+export function useImportDispositionNodes() {
+	const queryClient = useQueryClient();
+	return useMutation<
+		DispositionCatalogImportResponse,
+		Error,
+		DispositionCatalogImportRequest
+	>({
+		mutationFn: async (data) => {
+			const api = dispositionNodesApi();
+			return api.importDispositionNodes(data);
+		},
+		onSuccess: (_, variables) => {
+			if (variables.dryRun) {
+				return;
+			}
+
+			queryClient.invalidateQueries({ queryKey: ['dispositionCatalogs'] });
+			queryClient.invalidateQueries({ queryKey: ['dispositionNodes'] });
+			queryClient.invalidateQueries({ queryKey: ['dispositionNode'] });
+			queryClient.invalidateQueries({ queryKey: ['dispositionTree'] });
+			queryClient.invalidateQueries({ queryKey: ['dispositionRoots'] });
 		},
 	});
 }

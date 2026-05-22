@@ -4,14 +4,18 @@ import {
 	useContext,
 	useMemo,
 	useState,
+	useCallback,
+	useEffect,
+	type MutableRefObject,
 	type ReactNode,
 } from 'react';
 import { ConversationProvider, useConversation } from '@elevenlabs/react';
 import { useTranslation } from 'react-i18next';
-import {
-	type ConvaiMode,
-	type ConvaiStatus,
-	type TranscriptItem,
+import { useGetAgentSignedUrl } from '~/queries/agentQueries';
+import type {
+	ConvaiMode,
+	ConvaiStatus,
+	TranscriptItem,
 } from './CampaignConvaiWidget.types';
 
 interface CampaignConvaiContextValue {
@@ -31,6 +35,34 @@ interface CampaignConvaiContextValue {
 	sendMessage: () => void;
 }
 
+type ConversationControls = {
+	startSession: (options: {
+		signedUrl: string;
+		connectionType?: 'websocket';
+	}) => void;
+	endSession: () => void;
+	sendUserMessage: (message: string) => void;
+	setMuted: (value: boolean) => void;
+};
+
+type ConversationSnapshot = {
+	status: ConvaiStatus;
+	mode: ConvaiMode;
+	message: string | undefined;
+	isSpeaking: boolean;
+	isListening: boolean;
+	isMuted: boolean;
+};
+
+const DEFAULT_CONVERSATION_SNAPSHOT: ConversationSnapshot = {
+	status: 'disconnected',
+	mode: 'listening',
+	message: undefined,
+	isSpeaking: false,
+	isListening: false,
+	isMuted: false,
+};
+
 const CampaignConvaiContext = createContext<CampaignConvaiContextValue | null>(
 	null
 );
@@ -45,74 +77,30 @@ export const useCampaignConvai = () => {
 	return ctx;
 };
 
-interface ConvaiStateProviderProps {
-	children: ReactNode;
-}
-
-const ConvaiStateProvider = ({ children }: ConvaiStateProviderProps) => {
-	const { t } = useTranslation('campaign.detail.test');
-	const [conversationId, setConversationId] = useState<string | null>(null);
-	const [transcript, setTranscript] = useState<TranscriptItem[]>([]);
-	const [draftMessage, setDraftMessage] = useState('');
-	const [localErrorMessage, setLocalErrorMessage] = useState<string>();
-	const pendingUserMessageRef = useRef<string | null>(null);
-
-	const appendTranscriptMessage = (
+interface ConversationBridgeProps {
+	onControlsReady: (controls: ConversationControls) => void;
+	onSnapshotChange: (snapshot: ConversationSnapshot) => void;
+	onConnect: (conversationId: string) => void;
+	onDisconnect: () => void;
+	onError: () => void;
+	pendingUserMessageRef: MutableRefObject<string | null>;
+	appendTranscriptMessage: (
 		role: TranscriptItem['role'],
 		message: string,
 		key: string
-	) => {
-		setTranscript((current) => {
-			if (current.some((item) => item.id === key)) {
-				return current;
-			}
+	) => void;
+}
 
-			return [...current, { id: key, role, message }];
-		});
-	};
-
-	const resetConversationState = () => {
-		setConversationId(null);
-		setDraftMessage('');
-		setLocalErrorMessage(undefined);
-		pendingUserMessageRef.current = null;
-	};
-
-	const requestMicrophoneAccess = async () => {
-		if (
-			typeof navigator === 'undefined' ||
-			!navigator.mediaDevices?.getUserMedia
-		) {
-			throw new Error(t('widget.error.microphoneUnavailable'));
-		}
-
-		const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-		stream.getTracks().forEach((track) => track.stop());
-	};
-
-	const handleStartSession = async () => {
-		try {
-			setTranscript([]);
-			setDraftMessage('');
-			setLocalErrorMessage(undefined);
-			pendingUserMessageRef.current = null;
-			await requestMicrophoneAccess();
-			startSession();
-		} catch (error) {
-			const isPermissionError =
-				error instanceof DOMException &&
-				(error.name === 'NotAllowedError' || error.name === 'SecurityError');
-
-			setLocalErrorMessage(
-				isPermissionError
-					? t('widget.error.microphonePermission')
-					: error instanceof Error
-						? error.message
-						: t('widget.error.microphoneUnavailable')
-			);
-		}
-	};
-
+const ConversationBridge = ({
+	onControlsReady,
+	onSnapshotChange,
+	onConnect,
+	onDisconnect,
+	onError,
+	pendingUserMessageRef,
+	appendTranscriptMessage,
+}: ConversationBridgeProps) => {
+	const hasRegisteredControlsRef = useRef(false);
 	const {
 		startSession,
 		endSession,
@@ -125,16 +113,15 @@ const ConvaiStateProvider = ({ children }: ConvaiStateProviderProps) => {
 		isMuted,
 		setMuted,
 	} = useConversation({
-		onConnect: ({ conversationId: connectedId }) => {
-			setConversationId(connectedId);
+		onConnect: ({ conversationId }) => {
+			onConnect(conversationId);
 			pendingUserMessageRef.current = null;
 		},
 		onDisconnect: () => {
-			resetConversationState();
+			onDisconnect();
 		},
 		onError: () => {
-			resetConversationState();
-			endSession();
+			onError();
 		},
 		onMessage: ({ message: transcriptMessage, role, event_id }) => {
 			if (!transcriptMessage.trim()) return;
@@ -147,59 +134,245 @@ const ConvaiStateProvider = ({ children }: ConvaiStateProviderProps) => {
 				return;
 			}
 
-			const key = `${role}-${event_id ?? transcriptMessage.trim()}`;
-			appendTranscriptMessage(role, transcriptMessage, key);
+			appendTranscriptMessage(
+				role,
+				transcriptMessage,
+				`${role}-${event_id ?? transcriptMessage.trim()}`
+			);
 		},
 	});
 
-	const value = useMemo<CampaignConvaiContextValue>(
-		() => ({
-			status: localErrorMessage ? 'error' : status,
+	useEffect(() => {
+		if (hasRegisteredControlsRef.current) return;
+		hasRegisteredControlsRef.current = true;
+
+		onControlsReady({
+			startSession,
+			endSession,
+			sendUserMessage,
+			setMuted,
+		});
+	}, [endSession, onControlsReady, sendUserMessage, setMuted, startSession]);
+
+	useEffect(() => {
+		onSnapshotChange({
+			status,
+			message,
 			mode,
-			message: localErrorMessage ?? message,
 			isSpeaking,
 			isListening,
 			isMuted,
+		});
+	}, [
+		isListening,
+		isMuted,
+		isSpeaking,
+		message,
+		mode,
+		onSnapshotChange,
+		status,
+	]);
+
+	return null;
+};
+
+interface ConvaiStateProviderProps {
+	agentId: string;
+	children: ReactNode;
+}
+
+const ConvaiStateProvider = ({ agentId, children }: ConvaiStateProviderProps) => {
+	const { t } = useTranslation('campaign.detail.test');
+	const fetchAgentSignedUrl = useGetAgentSignedUrl();
+	const [conversationId, setConversationId] = useState<string | null>(null);
+	const [transcript, setTranscript] = useState<TranscriptItem[]>([]);
+	const [draftMessage, setDraftMessage] = useState('');
+	const [localErrorMessage, setLocalErrorMessage] = useState<string>();
+	const [conversationSnapshot, setConversationSnapshot] =
+		useState<ConversationSnapshot>(DEFAULT_CONVERSATION_SNAPSHOT);
+	const pendingUserMessageRef = useRef<string | null>(null);
+	const pendingStartRef = useRef(false);
+	const pendingSignedUrlRef = useRef<string | null>(null);
+	const conversationControlsRef = useRef<ConversationControls | null>(null);
+
+	const appendTranscriptMessage = useCallback(
+		(role: TranscriptItem['role'], message: string, key: string) => {
+			setTranscript((current) => {
+				if (current.some((item) => item.id === key)) {
+					return current;
+				}
+
+				return [...current, { id: key, role, message }];
+			});
+		},
+		[]
+	);
+
+	const resetConversationState = useCallback(() => {
+		setConversationId(null);
+		setDraftMessage('');
+		setLocalErrorMessage(undefined);
+		setConversationSnapshot(DEFAULT_CONVERSATION_SNAPSHOT);
+		pendingUserMessageRef.current = null;
+	}, []);
+
+	const requestMicrophoneAccess = useCallback(async () => {
+		if (
+			typeof navigator === 'undefined' ||
+			!navigator.mediaDevices?.getUserMedia
+		) {
+			throw new Error(t('widget.error.microphoneUnavailable'));
+		}
+
+		const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+		stream.getTracks().forEach((track) => track.stop());
+	}, [t]);
+
+	const handleStartSession = useCallback(async () => {
+		try {
+			if (pendingStartRef.current) {
+				return;
+			}
+
+			setTranscript([]);
+			resetConversationState();
+			pendingStartRef.current = true;
+			await requestMicrophoneAccess();
+
+			const signedUrl = await fetchAgentSignedUrl.mutateAsync(agentId);
+			pendingSignedUrlRef.current = signedUrl;
+
+			if (conversationControlsRef.current) {
+				pendingStartRef.current = false;
+				const nextSignedUrl = pendingSignedUrlRef.current;
+				pendingSignedUrlRef.current = null;
+				if (nextSignedUrl) {
+					await conversationControlsRef.current.startSession({
+						signedUrl: nextSignedUrl,
+						connectionType: 'websocket',
+					});
+				}
+			}
+		} catch (error) {
+			pendingStartRef.current = false;
+			pendingSignedUrlRef.current = null;
+
+			const isPermissionError =
+				error instanceof DOMException &&
+				(error.name === 'NotAllowedError' || error.name === 'SecurityError');
+
+			setLocalErrorMessage(
+				isPermissionError
+					? t('widget.error.microphonePermission')
+					: error instanceof Error
+						? error.message
+						: t('widget.error.microphoneUnavailable')
+			);
+		}
+	}, [agentId, fetchAgentSignedUrl, requestMicrophoneAccess, resetConversationState, t]);
+
+	const handleEndSession = useCallback(() => {
+		pendingStartRef.current = false;
+		pendingSignedUrlRef.current = null;
+		conversationControlsRef.current?.endSession();
+	}, []);
+
+	const handleToggleMute = useCallback(() => {
+		const currentMuted = conversationSnapshot.isMuted;
+		conversationControlsRef.current?.setMuted(!currentMuted);
+	}, [conversationSnapshot.isMuted]);
+
+	const handleSendMessage = useCallback(() => {
+		const trimmed = draftMessage.trim();
+		if (!trimmed) return;
+
+		pendingUserMessageRef.current = trimmed;
+		appendTranscriptMessage('user', trimmed, `user-local-${Date.now()}`);
+		conversationControlsRef.current?.sendUserMessage(trimmed);
+		setDraftMessage('');
+	}, [appendTranscriptMessage, draftMessage]);
+
+	const handleControlsReady = useCallback((controls: ConversationControls) => {
+		conversationControlsRef.current = controls;
+
+		if (!pendingStartRef.current || !pendingSignedUrlRef.current) {
+			return;
+		}
+
+		pendingStartRef.current = false;
+		const signedUrl = pendingSignedUrlRef.current;
+		pendingSignedUrlRef.current = null;
+
+		if (!signedUrl) {
+			return;
+		}
+
+		void controls.startSession({
+			signedUrl,
+			connectionType: 'websocket',
+		});
+	}, []);
+
+	const handleSnapshotChange = useCallback((snapshot: ConversationSnapshot) => {
+		setConversationSnapshot(snapshot);
+	}, []);
+
+	const value = useMemo<CampaignConvaiContextValue>(
+		() => ({
+			status: localErrorMessage ? 'error' : conversationSnapshot.status,
+			mode: conversationSnapshot.mode,
+			message: localErrorMessage ?? conversationSnapshot.message,
+			isSpeaking: conversationSnapshot.isSpeaking,
+			isListening: conversationSnapshot.isListening,
+			isMuted: conversationSnapshot.isMuted,
 			sessionId:
-				!localErrorMessage && conversationId && status === 'connected'
+				!localErrorMessage &&
+				conversationId &&
+				conversationSnapshot.status === 'connected'
 					? conversationId
 					: '',
 			transcript,
 			draftMessage,
 			setDraftMessage,
 			startSession: handleStartSession,
-			endSession: () => endSession(),
-			toggleMute: () => setMuted(!isMuted),
-			sendMessage: () => {
-				const trimmed = draftMessage.trim();
-				if (!trimmed) return;
-				pendingUserMessageRef.current = trimmed;
-				appendTranscriptMessage('user', trimmed, `user-local-${Date.now()}`);
-				sendUserMessage(trimmed);
-				setDraftMessage('');
-			},
+			endSession: handleEndSession,
+			toggleMute: handleToggleMute,
+			sendMessage: handleSendMessage,
 		}),
 		[
-			status,
-			mode,
-			message,
-			isSpeaking,
-			isListening,
-			isMuted,
 			conversationId,
+			conversationSnapshot.isListening,
+			conversationSnapshot.isMuted,
+			conversationSnapshot.isSpeaking,
+			conversationSnapshot.message,
+			conversationSnapshot.mode,
+			conversationSnapshot.status,
+			draftMessage,
+			handleEndSession,
+			handleSendMessage,
+			handleStartSession,
+			handleToggleMute,
 			localErrorMessage,
 			transcript,
-			draftMessage,
-			handleStartSession,
-			endSession,
-			setMuted,
-			sendUserMessage,
-			appendTranscriptMessage,
 		]
 	);
 
 	return (
 		<CampaignConvaiContext.Provider value={value}>
+			<ConversationProvider>
+				<ConversationBridge
+					onControlsReady={handleControlsReady}
+					onSnapshotChange={handleSnapshotChange}
+					onConnect={setConversationId}
+					onDisconnect={resetConversationState}
+					onError={() => {
+						resetConversationState();
+						conversationControlsRef.current?.endSession();
+					}}
+					pendingUserMessageRef={pendingUserMessageRef}
+					appendTranscriptMessage={appendTranscriptMessage}
+				/>
+			</ConversationProvider>
 			{children}
 		</CampaignConvaiContext.Provider>
 	);
@@ -215,8 +388,6 @@ export const CampaignConvaiProvider = ({
 	children,
 }: CampaignConvaiProviderProps) => {
 	return (
-		<ConversationProvider agentId={agentId}>
-			<ConvaiStateProvider>{children}</ConvaiStateProvider>
-		</ConversationProvider>
+		<ConvaiStateProvider agentId={agentId}>{children}</ConvaiStateProvider>
 	);
 };
