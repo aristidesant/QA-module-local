@@ -60,6 +60,71 @@
 	"list": {
 		"title": "Outcome Catalogs",
 		"description": "Create and manage outcome catalogs to group disposition nodes for campaigns.",
+		"toolbar": {
+			"copyJson": "Copy JSON",
+			"importJson": "Import JSON",
+			"importTooltip": "Import catalog JSON",
+			"exportTooltip": "Copy the selected active catalog as JSON.",
+			"exportDisabled": "Select an active catalog to copy its JSON.",
+			"exportNotifications": {
+				"successTitle": "JSON copied",
+				"successMessage": "The outcome catalog JSON was copied to your clipboard.",
+				"errorTitle": "Copy failed",
+				"errorMessage": "Could not copy the outcome catalog JSON."
+			}
+		},
+		"importModal": {
+			"title": "Import JSON",
+			"intro": "Paste a catalog export or load it from the clipboard.",
+			"textareaLabel": "JSON payload",
+			"helper": "Preview validates the payload before import.",
+			"placeholder": "Paste the exported catalog JSON here.",
+			"clipboardAction": "Paste from clipboard",
+			"validate": "Preview",
+			"import": "Import",
+			"notifications": {
+				"successTitle": "Catalog imported",
+				"successMessage": "A new outcome catalog was created with {{totalCreated}} nodes.",
+				"errorTitle": "Import failed",
+				"clipboardUnavailableTitle": "Clipboard unavailable",
+				"clipboardUnavailableMessage": "Your browser blocked clipboard access. Paste the JSON manually instead.",
+				"clipboardEmptyTitle": "Clipboard is empty",
+				"clipboardEmptyMessage": "No JSON was found in the clipboard."
+			},
+			"preview": {
+				"idleTitle": "Preview",
+				"idleDescription": "Run a preview to validate the payload.",
+				"validTitle": "Preview passed",
+				"invalidTitle": "Preview failed",
+				"validDescription": "{{totalNodes}} nodes will be created.",
+				"invalidDescription": "Fix the errors below and run preview again.",
+				"nodesCount": "{{totalNodes}} total nodes",
+				"rootNodesCount": "{{rootNodes}} root nodes",
+				"rootNodesLabel": "Root nodes",
+				"nodeNamesLabel": "Tree preview"
+			},
+			"clipboard": {
+				"idle": "Ready",
+				"loading": "Reading clipboard",
+				"loaded": "Clipboard loaded",
+				"empty": "Clipboard empty",
+				"blocked": "Clipboard blocked",
+				"error": "Clipboard error"
+			},
+			"validation": {
+				"required": "Paste the JSON payload first.",
+				"invalidJson": "The pasted content is not valid JSON.",
+				"missingName": "The JSON must include a catalog name.",
+				"missingType": "The JSON must include a catalog type.",
+				"missingNodes": "The JSON must include a dispositionNodes array.",
+				"missingNodeName": "Every node must have a name.",
+				"invalidOrder": "Node order must be a non-negative number.",
+				"nameTooLong": "Names cannot exceed 100 characters.",
+				"descriptionTooLong": "Descriptions cannot exceed 500 characters.",
+				"tooManyNodes": "The payload exceeds the 1,000 node limit.",
+				"tooDeep": "The tree exceeds the maximum depth of 20 levels."
+			}
+		},
 		"addCatalog": "Create Catalog",
 		"searchPlaceholder": "Search by name or description...",
 		"noMatchingCatalogs": "No matching catalogs found",
@@ -104,13 +169,18 @@
 		"name": "Name",
 		"description": "Description",
 		"type": "Type",
+		"typeInbound": "Inbound",
+		"typeOutbound": "Outbound",
 		"status": "Status",
 		"createdAt": "Created At",
 		"updatedAt": "Updated At",
 		"actions": "Actions",
 		"isDefault": "Default",
 		"editNodes": "Edit outcomes",
+		"copyJson": "Copy JSON",
+		"copyJsonDisabled": "Only active catalogs can be exported",
 		"editDetails": "Edit details",
+		"descriptionInfo": "View description",
 		"reactivate": "Reactivate",
 		"deactivate": "Deactivate"
 	},

@@ -10,6 +10,7 @@ import {
 	Collapse,
 	Divider,
 	Group,
+	Menu,
 	Stack,
 	Text,
 	Tooltip,
@@ -445,12 +446,6 @@ export const Sidebar: React.FC = () => {
 	]);
 
 	const handleSectionToggle = (sectionKey: string) => {
-		if (collapsed) {
-			toggleCollapsed();
-			setOpenSection(sectionKey);
-			return;
-		}
-
 		setOpenSection((current) => (current === sectionKey ? '' : sectionKey));
 	};
 
@@ -559,12 +554,14 @@ interface SidebarLinkItemProps {
 	item: SidebarNavItem;
 	collapsed: boolean;
 	isActive?: boolean;
+	onNavigate?: () => void;
 }
 
 const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 	item,
 	collapsed,
 	isActive = false,
+	onNavigate,
 }) => {
 	const location = useLocation();
 	const { t } = useTranslation('common');
@@ -582,7 +579,10 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 			].join(' ')}
 			aria-current={isSelected ? 'page' : undefined}
 			data-sidebar-active={isActive ? 'true' : undefined}
-			onClick={closeMobile}
+			onClick={() => {
+				closeMobile();
+				onNavigate?.();
+			}}
 			onMouseEnter={() =>
 				item.i18nNamespace && prefetchNamespace(item.i18nNamespace)
 			}
@@ -621,18 +621,70 @@ const SidebarSectionGroup: React.FC<SidebarSectionGroupProps> = ({
 	onToggle,
 }) => {
 	const { t } = useTranslation('common');
+	const location = useLocation();
+	const { closeMobile } = useSidebarStore();
 
-	const header = (
-		<UnstyledButton
-			className={[
-				styles.sectionHeader,
-				collapsed ? styles.sectionHeaderCollapsed : '',
-			].join(' ')}
-			onClick={onToggle}
-		>
-			<Group gap='xs' wrap='nowrap' className={styles.sectionHeaderInner}>
-				{section.icon}
-				{!collapsed && (
+	if (collapsed) {
+		return (
+			<div className={styles.sectionGroup}>
+				<Menu
+					position='right-start'
+					offset={10}
+					withinPortal
+					shadow='md'
+					trigger='click'
+					closeOnItemClick
+				>
+					<Menu.Target>
+						<UnstyledButton
+							className={[
+								styles.sectionHeader,
+								styles.sectionHeaderCollapsed,
+							].join(' ')}
+							aria-label={t(section.label)}
+						>
+							{section.icon}
+						</UnstyledButton>
+					</Menu.Target>
+					<Menu.Dropdown className={styles.compactSectionPanel}>
+						<Menu.Label className={styles.compactSectionPanelHeader}>
+							{t(section.label)}
+						</Menu.Label>
+						{section.items.map((item) => (
+							<Menu.Item
+								key={item.key}
+								component={Link}
+								to={item.to}
+								leftSection={item.icon}
+								className={[
+									styles.compactMenuItem,
+									isLinkActive(item, location.pathname)
+										? styles.compactMenuItemActive
+										: '',
+								].join(' ')}
+								onClick={() => closeMobile()}
+								onMouseEnter={() =>
+									item.i18nNamespace && prefetchNamespace(item.i18nNamespace)
+								}
+							>
+								{t(item.label)}
+							</Menu.Item>
+						))}
+					</Menu.Dropdown>
+				</Menu>
+			</div>
+		);
+	}
+
+	return (
+		<div className={styles.sectionGroup}>
+			<UnstyledButton
+				className={styles.sectionHeader}
+				onClick={onToggle}
+				aria-expanded={open}
+			>
+				<Group gap='xs' wrap='nowrap' className={styles.sectionHeaderInner}>
+					{section.icon}
 					<Text
 						size='xs'
 						fw={700}
@@ -642,9 +694,7 @@ const SidebarSectionGroup: React.FC<SidebarSectionGroupProps> = ({
 					>
 						{t(section.label)}
 					</Text>
-				)}
-			</Group>
-			{!collapsed && (
+				</Group>
 				<IconChevronDown
 					size={14}
 					className={[
@@ -652,29 +702,14 @@ const SidebarSectionGroup: React.FC<SidebarSectionGroupProps> = ({
 						open ? styles.sectionChevronOpen : '',
 					].join(' ')}
 				/>
-			)}
-		</UnstyledButton>
-	);
-
-	return (
-		<div className={styles.sectionGroup}>
-			{collapsed ? (
-				<Tooltip label={t(section.label)} position='right' withArrow>
-					{header}
-				</Tooltip>
-			) : (
-				header
-			)}
-			<Collapse
-				expanded={!collapsed && open}
-				onTransitionEnd={onCollapseTransitionEnd}
-			>
+			</UnstyledButton>
+			<Collapse expanded={open} onTransitionEnd={onCollapseTransitionEnd}>
 				<Stack gap={4} className={styles.sectionItems}>
 					{section.items.map((item) => (
 						<SidebarLinkItem
 							key={item.key}
 							item={item}
-							collapsed={collapsed}
+							collapsed={false}
 							isActive={activeItem?.key === item.key}
 						/>
 					))}

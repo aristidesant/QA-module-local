@@ -15,15 +15,18 @@
 
 /* Logo image styling */
 .logoImage {
+	display: block;
 	width: 160px;
 	height: 60px;
 	object-fit: contain;
+	object-position: center;
 	border-radius: 12px;
 }
 
 .logoImageCompact {
 	width: 32px;
 	height: 32px;
+	border-radius: 6px;
 }
 
 /* Logo text styling */

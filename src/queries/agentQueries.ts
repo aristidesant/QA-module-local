@@ -71,6 +71,15 @@ export const useGetAgent = (id: string) => {
 	});
 };
 
+export const useGetAgentSignedUrl = () => {
+	return useMutation({
+		mutationFn: async (agentId: string) => {
+			const api = agentApi();
+			return api.getAgentSignedUrl(agentId);
+		},
+	});
+};
+
 // Get agent campaigns
 export const useGetAgentCampaigns = (agentId: string) => {
 	return useQuery<Campaign[]>({
