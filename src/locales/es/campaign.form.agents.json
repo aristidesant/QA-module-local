@@ -28,6 +28,34 @@
 				"noAgents": "No hay agentes asignados",
 				"noAgentsDesc": "Esta campaña no tiene agentes asignados."
 			},
+			"selector": {
+				"label": "Agente asignado",
+				"principal": "Principal",
+				"subagent": "Subagente",
+				"save": "Guardar agente",
+				"saving": "Guardando...",
+				"saved": "Agente guardado",
+				"saveError": "Error al guardar el agente"
+			},
+			"templates": {
+				"add": "Agregar subagente desde template",
+				"save": "Guardar como template",
+				"modalTitle": "Agregar subagente desde template",
+				"modalDescription": "Los templates se filtran por el objetivo de esta campana.",
+				"templateLabel": "Template",
+				"templatePlaceholder": "Selecciona un template",
+				"nameLabel": "Nombre del subagente",
+				"namePlaceholder": "Dejalo vacio para usar el nombre del template",
+				"descriptionLabel": "Descripcion",
+				"descriptionPlaceholder": "Describe este subagente reutilizable",
+				"empty": "No hay templates para este objetivo.",
+				"create": "Agregar subagente",
+				"saveModalTitle": "Guardar subagente como template",
+				"templateNameLabel": "Nombre del template",
+				"templateNamePlaceholder": "Ingresa un nombre de template",
+				"created": "Subagente creado",
+				"templateSaved": "Template guardado"
+			},
 			"columns": {
 				"name": "Agente",
 				"type": "Tipo",

@@ -1,8 +1,8 @@
 // src/models/CampaignsModel.ts
 
 import type { AgentConfigModel } from './AgentListObject';
-import { CampaignAgent } from './CampaignAgentModel';
-import { CampaignObjective } from './CampaignObjectiveModel';
+import type { CampaignAgent } from './CampaignAgentModel';
+import type { CampaignObjective } from './CampaignObjectiveModel';
 import { CampaignStatus } from './CampaignStatus';
 
 /**
@@ -127,7 +127,7 @@ export interface Campaign {
 	budget: number;
 	configId: string;
 	spent: number;
-	type: 'OUTBOUND' | 'INBOUND';
+	type: 'OUTBOUND' | 'INBOUND' | 'HYBRID';
 	status: CampaignStatus;
 	userId: number;
 	clientId: number;
@@ -164,20 +164,7 @@ export interface Campaign {
 	objective?: CampaignObjective;
 
 	// Agents assigned to campaign
-	agents?: Array<{
-		id: number;
-		campaignId: number;
-		agentId: string;
-		agent: {
-			name: string;
-			status: string;
-			language: string;
-		};
-		userId: number;
-		clientId: number;
-		createdAt: string;
-		updatedAt: string;
-	}>;
+	agents?: CampaignAgent[];
 
 	noiseCancellation?: boolean;
 	agentConfig?: Partial<AgentConfigModel>;

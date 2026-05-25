@@ -36,6 +36,7 @@
 				"campaignTypeDesc": "Choose how calls will be routed.",
 				"campaignTypeOutbound": "Outbound",
 				"campaignTypeInbound": "Inbound",
+				"campaignTypeHybrid": "Hybrid",
 				"defaultWaves": "Default Waves",
 				"defaultWavesDesc": "How many waves each new contact list should run before stopping",
 				"defaultWaveDelay": "Default delay between waves (seconds)",

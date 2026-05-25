@@ -5,7 +5,7 @@ import { useSimplePhoneNumberList } from '~/queries/phoneNumberQueries';
 import type { SimplePhoneNumberListParams } from '~/api/phoneNumberApi';
 
 interface PhoneNumberSelectorProps {
-	campaignType: 'INBOUND' | 'OUTBOUND';
+	campaignType: 'INBOUND' | 'OUTBOUND' | 'HYBRID';
 	value: number | null;
 	onChange: (value: number | null) => void;
 	label?: string;

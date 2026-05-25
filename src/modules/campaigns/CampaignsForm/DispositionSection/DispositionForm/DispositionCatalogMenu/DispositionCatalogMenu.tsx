@@ -49,9 +49,11 @@ const DispositionCatalogMenu: React.FC = () => {
 		useState(false);
 
 	const campaignType = campaign?.type ?? wizardCampaignType ?? 'OUTBOUND';
+	const dispositionCatalogType =
+		campaignType === 'HYBRID' ? 'OUTBOUND' : campaignType;
 
 	const { data: catalogs = [], isLoading } = useDispositionCatalogs({
-		type: campaignType,
+		type: dispositionCatalogType,
 	});
 	const { data: contactGroups } = useGetContactGroups(
 		{
@@ -288,7 +290,7 @@ const DispositionCatalogMenu: React.FC = () => {
 				>
 					<DispositionCatalogForm
 						mode='create'
-						initialValues={{ type: campaignType }}
+						initialValues={{ type: dispositionCatalogType }}
 						onSubmit={(values) => createCatalogMutation.mutateAsync(values)}
 						onSuccess={handleCatalogCreated}
 						onError={handleCatalogCreateError}
@@ -387,7 +389,7 @@ const DispositionCatalogMenu: React.FC = () => {
 			>
 				<DispositionCatalogForm
 					mode='create'
-					initialValues={{ type: campaignType }}
+					initialValues={{ type: dispositionCatalogType }}
 					onSubmit={(values) => createCatalogMutation.mutateAsync(values)}
 					onSuccess={handleCatalogCreated}
 					onError={handleCatalogCreateError}

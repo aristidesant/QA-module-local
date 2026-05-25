@@ -52,6 +52,7 @@
 		"draft": "Borrador",
 		"outbound": "Outbound",
 		"inbound": "Inbound",
+		"hybrid": "Hibrida",
 		"continueSetup": "Continuar configuración",
 		"moreActions": "Más acciones",
 		"actionsGroupManage": "Gestionar",

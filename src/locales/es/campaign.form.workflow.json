@@ -385,7 +385,11 @@
 				"description": "Inicio conecta con un subagente. Desde alli, agrega los siguientes pasos en el flujo.",
 				"preventLoops": "Evitar bucles de subagente",
 				"agentLabel": "Agente",
-				"agentPlaceholder": "Seleccionar agente"
+				"agentPlaceholder": "Seleccionar agente",
+				"save": "Guardar workflow",
+				"saving": "Guardando...",
+				"saved": "Workflow guardado",
+				"saveError": "Error al guardar el workflow"
 			},
 			"layout": {
 				"label": "Diseno",

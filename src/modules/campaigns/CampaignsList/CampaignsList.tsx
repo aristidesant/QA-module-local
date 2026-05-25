@@ -202,8 +202,15 @@ export const CampaignsList: React.FC = () => {
 			return;
 		}
 
-		// If campaign has multiple agents, use the first one
-		const agentId = campaign.agents[0].agentId;
+		const preferredAgentType =
+			campaign.type === 'INBOUND' ? 'INBOUND' : 'OUTBOUND';
+		const primaryAgent =
+			campaign.agents.find(
+				(agent) => agent.isPrincipal && agent.agentType === preferredAgentType
+			) ??
+			campaign.agents.find((agent) => agent.isPrincipal) ??
+			campaign.agents[0];
+		const agentId = primaryAgent.agentId;
 		setSelectedAgentIdForCall(agentId);
 		setTestCallModalOpened(true);
 		setCampaignTestCallId(campaign.id);
