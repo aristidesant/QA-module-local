@@ -4,6 +4,7 @@ import type {
 	SectionId,
 	SectionMetaMap,
 } from './toolForm.types';
+import type { ToolConfigRequest, ToolConfigType } from '~/models/ToolModel';
 
 export const HTTP_METHODS = [
 	{ value: 'GET', label: 'GET' },
@@ -13,13 +14,45 @@ export const HTTP_METHODS = [
 	{ value: 'DELETE', label: 'DELETE' },
 ];
 
+export const CONFIG_TYPE_OPTIONS: {
+	value: ToolConfigType;
+	label: string;
+}[] = [
+	{ value: 'webhook', label: 'Webhook' },
+	{ value: 'client', label: 'Client' },
+	{ value: 'system', label: 'System' },
+	{ value: 'mcp', label: 'MCP' },
+];
+
 export const getMethodSupportsBody = (method: string) =>
 	['POST', 'PUT', 'PATCH'].includes(method);
 
-export const getVisibleSections = (sections: Section[], method: string) =>
-	sections.filter(
-		(section) => section.id !== 'body' || getMethodSupportsBody(method)
-	);
+const WEBHOOK_SECTIONS: SectionId[] = [
+	'basic',
+	'api',
+	'auth',
+	'headers',
+	'parameters',
+	'body',
+];
+
+export const isWebhookType = (configType: ToolConfigType) =>
+	configType === 'webhook';
+
+export const getVisibleSections = (
+	sections: Section[],
+	method: string,
+	configType: ToolConfigType = 'webhook'
+) =>
+	sections.filter((section) => {
+		if (!isWebhookType(configType) && !WEBHOOK_SECTIONS.includes(section.id)) {
+			return false;
+		}
+		if (!isWebhookType(configType)) {
+			return section.id === 'basic';
+		}
+		return section.id !== 'body' || getMethodSupportsBody(method);
+	});
 
 export const getSectionProgress = (
 	sections: Section[],
@@ -96,6 +129,56 @@ export const getToolPayload = (values: FormValues) => {
 		requiredFields,
 		supportsRequestBody,
 	};
+};
+
+export const buildToolConfig = (values: FormValues): ToolConfigRequest => {
+	const identifier =
+		values.identifier || values.name.toLowerCase().replace(/\s+/g, '_');
+
+	switch (values.configType) {
+		case 'webhook': {
+			const payload = getToolPayload(values);
+			return {
+				type: 'webhook',
+				name: identifier,
+				description: values.description,
+				responseTimeoutSecs: values.responseTimeoutSecs,
+				apiSchema: {
+					url: values.url,
+					method: values.method,
+					requestHeaders: payload.requestHeaders,
+					pathParamsSchema: payload.pathParamsSchema,
+					...(payload.supportsRequestBody && {
+						requestBodySchema: {
+							type: 'object',
+							required: payload.requiredFields,
+							properties: payload.requestBodyProperties,
+						},
+					}),
+				},
+			};
+		}
+		case 'client':
+			return {
+				type: 'client',
+				name: identifier,
+				description: values.description,
+			};
+		case 'system':
+			return {
+				type: 'system',
+				name: identifier,
+				params: {
+					systemToolType: identifier,
+				},
+			};
+		case 'mcp':
+			return {
+				type: 'mcp',
+				name: identifier,
+				description: values.description,
+			};
+	}
 };
 
 export const getNextSection = (

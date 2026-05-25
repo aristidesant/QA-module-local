@@ -10,6 +10,7 @@ import type {
 	AssignedToolModel,
 	CreateToolDto,
 	UpdateToolDto,
+	DependentAgentsResponse,
 } from '~/models/ToolModel';
 
 /**
@@ -99,15 +100,34 @@ export function useDeleteTool() {
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (id: string | number) => {
+		mutationFn: async ({
+			id,
+			force,
+		}: {
+			id: string | number;
+			force?: boolean;
+		}) => {
 			const api = toolApi();
-			return api.deleteTool(id);
+			return api.deleteTool(id, force);
 		},
-		onSuccess: (_, id) => {
+		onSuccess: (_, variables) => {
 			queryClient.invalidateQueries({ queryKey: ['tools'] });
 			queryClient.invalidateQueries({ queryKey: ['toolsByCategory'] });
-			queryClient.invalidateQueries({ queryKey: ['tool', id] });
+			queryClient.invalidateQueries({ queryKey: ['tool', variables.id] });
+			queryClient.invalidateQueries({ queryKey: ['toolDependentAgents'] });
 		},
+	});
+}
+
+export function useDependentAgents(id: string | number | undefined) {
+	return useQuery<DependentAgentsResponse, Error>({
+		queryKey: ['toolDependentAgents', id],
+		queryFn: async () => {
+			if (!id) throw new Error('Tool ID is required');
+			const api = toolApi();
+			return api.getDependentAgents(id);
+		},
+		enabled: !!id,
 	});
 }
 

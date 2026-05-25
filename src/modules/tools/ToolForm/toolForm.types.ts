@@ -1,4 +1,5 @@
 import type React from 'react';
+import type { ToolConfigType } from '~/models/ToolModel';
 
 export interface HeaderField {
 	key: string;
@@ -31,6 +32,7 @@ export interface FormValues {
 	identifier: string;
 	categoryId: string;
 	status: string;
+	configType: ToolConfigType;
 	url: string;
 	method: string;
 	responseTimeoutSecs: number;

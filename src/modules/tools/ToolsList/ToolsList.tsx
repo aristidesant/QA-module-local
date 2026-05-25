@@ -1,9 +1,26 @@
-import { Text, Skeleton, Center, Stack } from '@mantine/core';
-import { IconTool } from '@tabler/icons-react';
+import { useState } from 'react';
+import {
+	Text,
+	Skeleton,
+	Center,
+	Stack,
+	Checkbox,
+	Loader,
+	Alert,
+	Group,
+	Button,
+	ScrollArea,
+	ThemeIcon,
+} from '@mantine/core';
+import { IconTool, IconAlertCircle, IconRobot } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import useToolsStore from '~/stores/toolsStore';
-import { useDeleteTool, useToolsByCategory } from '~/queries/toolQueries';
+import {
+	useDeleteTool,
+	useToolsByCategory,
+	useDependentAgents,
+} from '~/queries/toolQueries';
 import type { ToolModel } from '~/models/ToolModel';
 import BaseTable from '~/components/BaseTable';
 import useToolsListColumns from './useToolsListColumns';
@@ -11,6 +28,99 @@ import styles from './ToolsList.module.css';
 import EmptyState from '~/components/EmptyState';
 import { useTranslation } from 'react-i18next';
 import { getErrorMessage } from '~/utils/httpClient';
+
+interface DeleteModalContentProps {
+	tool: ToolModel;
+	onConfirm: (id: string | number, force: boolean) => void;
+	onClose: () => void;
+	t: (key: string, options?: Record<string, unknown>) => string;
+	tCommon: (key: string, options?: Record<string, unknown>) => string;
+}
+
+function DeleteModalContent({
+	tool,
+	onConfirm,
+	onClose,
+	t,
+	tCommon,
+}: DeleteModalContentProps) {
+	const [force, setForce] = useState(false);
+	const { data: dependentAgents, isLoading: isLoadingAgents } =
+		useDependentAgents(tool.id);
+	const hasDependents = dependentAgents && dependentAgents.agents.length > 0;
+
+	return (
+		<Stack gap='sm'>
+			<Text size='sm'>{t('deleteConfirm.message', { name: tool.name })}</Text>
+
+			{isLoadingAgents && (
+				<Center py='sm'>
+					<Loader size='xs' />
+				</Center>
+			)}
+
+			{hasDependents && (
+				<>
+					<Alert
+						icon={<IconAlertCircle size={16} />}
+						color='orange'
+						variant='light'
+					>
+						<Text size='sm' fw={500}>
+							{t('deleteConfirm.hasDependents')}
+						</Text>
+					</Alert>
+					<ScrollArea.Autosize mah={200}>
+						<Stack gap={4}>
+							{dependentAgents.agents.map((agent) => (
+								<Group key={agent.id} gap='xs' wrap='nowrap'>
+									<ThemeIcon size='xs' variant='light' radius='xl'>
+										<IconRobot size={10} />
+									</ThemeIcon>
+									<Text size='sm' c='dimmed' truncate>
+										{agent.name}
+									</Text>
+								</Group>
+							))}
+						</Stack>
+					</ScrollArea.Autosize>
+					<Checkbox
+						label={t('deleteConfirm.forceLabel')}
+						checked={force}
+						onChange={(e) => setForce(e.currentTarget.checked)}
+						size='sm'
+					/>
+					{force && (
+						<Alert
+							color='red'
+							variant='light'
+							icon={<IconAlertCircle size={16} />}
+						>
+							<Text size='xs'>{t('deleteConfirm.forceWarning')}</Text>
+						</Alert>
+					)}
+				</>
+			)}
+
+			<Group justify='flex-end' gap='xs' mt='sm'>
+				<Button size='sm' variant='subtle' onClick={onClose}>
+					{tCommon('actions.cancel')}
+				</Button>
+				<Button
+					size='sm'
+					color={hasDependents && !force ? 'gray' : 'red'}
+					disabled={hasDependents && !force}
+					onClick={() => {
+						onConfirm(tool.id, force);
+						onClose();
+					}}
+				>
+					{t('deleteConfirm.confirm')}
+				</Button>
+			</Group>
+		</Stack>
+	);
+}
 
 interface ToolsListProps {
 	onEdit: (toolId: string | number) => void;
@@ -23,35 +133,36 @@ function ToolsList({ onEdit }: ToolsListProps) {
 	const deleteMutation = useDeleteTool();
 	const columns = useToolsListColumns({
 		onDelete: (tool) => {
-			modals.openConfirmModal({
+			modals.open({
 				title: t('deleteConfirm.title'),
 				centered: true,
-				labels: {
-					confirm: t('deleteConfirm.confirm'),
-					cancel: tCommon('actions.cancel'),
-				},
-				confirmProps: { color: 'red' },
+				size: 'md',
 				children: (
-					<Text size='sm'>
-						{t('deleteConfirm.message', { name: tool.name })}
-					</Text>
+					<DeleteModalContent
+						tool={tool}
+						onConfirm={async (id, force) => {
+							try {
+								await deleteMutation.mutateAsync({ id, force });
+								notifications.show({
+									message: force
+										? t('notifications.forceDeleted')
+										: t('notifications.deleted'),
+									color: 'green',
+								});
+							} catch (error) {
+								notifications.show({
+									message: t('notifications.deleteFailed', {
+										message: getErrorMessage(error),
+									}),
+									color: 'red',
+								});
+							}
+						}}
+						onClose={() => modals.closeAll()}
+						t={t}
+						tCommon={tCommon}
+					/>
 				),
-				onConfirm: async () => {
-					try {
-						await deleteMutation.mutateAsync(tool.id);
-						notifications.show({
-							message: t('notifications.deleted'),
-							color: 'green',
-						});
-					} catch (error) {
-						notifications.show({
-							message: t('notifications.deleteFailed', {
-								message: getErrorMessage(error),
-							}),
-							color: 'red',
-						});
-					}
-				},
 			});
 		},
 	});
