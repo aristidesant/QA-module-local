@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Loader, LoadingOverlay, Text } from '@mantine/core';
+import { Loader, LoadingOverlay, Text, Center, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
 	IconAlertCircle,
@@ -8,6 +8,7 @@ import {
 	IconKey,
 	IconRoute,
 	IconSettings,
+	IconTool,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
@@ -34,10 +35,11 @@ import ToolFormHeadersSection from './ToolFormHeadersSection/ToolFormHeadersSect
 import ToolFormParametersSection from './ToolFormParametersSection/ToolFormParametersSection';
 import ToolFormSectionsNav from './ToolFormSectionsNav/ToolFormSectionsNav';
 import {
+	buildToolConfig,
 	getFirstPendingSection,
 	getMethodSupportsBody,
-	getToolPayload,
 	getVisibleSections,
+	isWebhookType,
 } from './toolForm.utils';
 import type {
 	FormValues,
@@ -129,6 +131,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 			identifier: '',
 			categoryId: categoryId ? categoryId.toString() : '',
 			status: 'active',
+			configType: 'webhook',
 			url: '',
 			method: 'GET',
 			responseTimeoutSecs: 30,
@@ -147,7 +150,8 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 				value.trim() ? null : t('form.validation.promptRequired'),
 			categoryId: (value) =>
 				value ? null : t('form.validation.categoryRequired'),
-			url: (value) => {
+			url: (value, values) => {
+				if (!isWebhookType(values.configType)) return null;
 				if (!value.trim()) return t('form.validation.urlRequired');
 				try {
 					new URL(value);
@@ -158,6 +162,8 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 			},
 		},
 	});
+
+	const webhookType = isWebhookType(form.values.configType);
 
 	useEffect(() => {
 		if (toolId) {
@@ -196,6 +202,10 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 					) || false,
 			}));
 
+			const configType =
+				(tool.config?.toolConfig?.type as FormValues['configType']) ||
+				'webhook';
+
 			form.setValues({
 				name: tool.name,
 				description: tool.description,
@@ -203,6 +213,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 				identifier: tool.identifier,
 				categoryId: tool.categoryId.toString(),
 				status: tool.status,
+				configType,
 				url: tool.config?.toolConfig?.apiSchema?.url || '',
 				method: tool.config?.toolConfig?.apiSchema?.method || 'GET',
 				responseTimeoutSecs: tool.config?.toolConfig?.responseTimeoutSecs || 30,
@@ -218,33 +229,14 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 
 	const handleSubmit = async (values: FormValues) => {
 		try {
-			const payload = getToolPayload(values);
+			const config = buildToolConfig(values);
 			const toolData: CreateToolDto = {
 				name: values.name,
 				description: values.description,
 				prompt: values.prompt,
 				categoryId: parseInt(values.categoryId),
 				status: values.status,
-				config: {
-					name:
-						values.identifier || values.name.toLowerCase().replace(/\s+/g, '_'),
-					description: values.description,
-					responseTimeoutSecs: values.responseTimeoutSecs,
-					type: 'webhook',
-					apiSchema: {
-						url: values.url,
-						method: values.method,
-						requestHeaders: payload.requestHeaders,
-						pathParamsSchema: payload.pathParamsSchema,
-						...(payload.supportsRequestBody && {
-							requestBodySchema: {
-								type: 'object',
-								required: payload.requiredFields,
-								properties: payload.requestBodyProperties,
-							},
-						}),
-					},
-				},
+				config,
 			};
 
 			if (isEdit && toolId) {
@@ -299,7 +291,11 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 		} as Record<SectionId, boolean>;
 	}, [form.values]);
 
-	const visibleSections = getVisibleSections(sections, form.values.method);
+	const visibleSections = getVisibleSections(
+		sections,
+		form.values.method,
+		form.values.configType
+	);
 	const methodSupportsBody = getMethodSupportsBody(form.values.method);
 
 	const sectionErrors = useMemo(() => {
@@ -331,37 +327,53 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 						: 'empty',
 			},
 			api: {
-				required: true,
-				applicable: true,
-				state: sectionErrors.api
-					? 'error'
-					: sectionStatus.api
-						? 'complete'
-						: 'empty',
+				required: webhookType,
+				applicable: webhookType,
+				state: !webhookType
+					? 'inactive'
+					: sectionErrors.api
+						? 'error'
+						: sectionStatus.api
+							? 'complete'
+							: 'empty',
 			},
 			auth: {
 				required: false,
-				applicable: true,
-				state: sectionStatus.auth ? 'complete' : 'optional',
+				applicable: webhookType,
+				state: !webhookType
+					? 'inactive'
+					: sectionStatus.auth
+						? 'complete'
+						: 'optional',
 			},
 			headers: {
 				required: false,
-				applicable: true,
-				state: sectionStatus.headers ? 'complete' : 'optional',
+				applicable: webhookType,
+				state: !webhookType
+					? 'inactive'
+					: sectionStatus.headers
+						? 'complete'
+						: 'optional',
 			},
 			parameters: {
 				required: false,
-				applicable: true,
-				state: sectionStatus.parameters ? 'complete' : 'optional',
+				applicable: webhookType,
+				state: !webhookType
+					? 'inactive'
+					: sectionStatus.parameters
+						? 'complete'
+						: 'optional',
 			},
 			body: {
 				required: false,
-				applicable: methodSupportsBody,
-				state: !methodSupportsBody
+				applicable: webhookType && methodSupportsBody,
+				state: !webhookType
 					? 'inactive'
-					: sectionStatus.body
-						? 'complete'
-						: 'optional',
+					: !methodSupportsBody
+						? 'inactive'
+						: sectionStatus.body
+							? 'complete'
+							: 'optional',
 			},
 		};
 
@@ -377,7 +389,13 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 		}
 
 		return meta;
-	}, [activeSection, methodSupportsBody, sectionErrors, sectionStatus]);
+	}, [
+		activeSection,
+		methodSupportsBody,
+		sectionErrors,
+		sectionStatus,
+		webhookType,
+	]);
 
 	const firstPendingSection = useMemo(
 		() => getFirstPendingSection(visibleSections, sectionMeta),
@@ -408,6 +426,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 			description: 'basic',
 			prompt: 'basic',
 			categoryId: 'basic',
+			configType: 'basic',
 			url: 'api',
 			method: 'api',
 			responseTimeoutSecs: 'api',
@@ -536,7 +555,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 											}
 										/>
 									)}
-									{activeSection === 'api' && (
+									{activeSection === 'api' && webhookType && (
 										<ToolFormApiSection
 											form={form}
 											t={
@@ -547,7 +566,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 											}
 										/>
 									)}
-									{activeSection === 'auth' && (
+									{activeSection === 'auth' && webhookType && (
 										<ToolFormAuthSection
 											form={form}
 											t={
@@ -558,7 +577,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 											}
 										/>
 									)}
-									{activeSection === 'headers' && (
+									{activeSection === 'headers' && webhookType && (
 										<ToolFormHeadersSection
 											form={form}
 											t={
@@ -569,7 +588,7 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 											}
 										/>
 									)}
-									{activeSection === 'parameters' && (
+									{activeSection === 'parameters' && webhookType && (
 										<ToolFormParametersSection
 											form={form}
 											t={
@@ -580,17 +599,34 @@ function ToolForm({ toolId, categoryId, onSuccess, onCancel }: ToolFormProps) {
 											}
 										/>
 									)}
-									{activeSection === 'body' && methodSupportsBody && (
-										<ToolFormBodySection
-											form={form}
-											propertyTypeOptions={propertyTypeOptions}
-											t={
-												t as unknown as (
-													key: string,
-													options?: Record<string, unknown>
-												) => string
-											}
-										/>
+									{activeSection === 'body' &&
+										webhookType &&
+										methodSupportsBody && (
+											<ToolFormBodySection
+												form={form}
+												propertyTypeOptions={propertyTypeOptions}
+												t={
+													t as unknown as (
+														key: string,
+														options?: Record<string, unknown>
+													) => string
+												}
+											/>
+										)}
+									{!webhookType && activeSection !== 'basic' && (
+										<Center py='xl'>
+											<Stack align='center' gap='sm'>
+												<IconTool
+													size={40}
+													color='var(--mantine-color-gray-5)'
+												/>
+												<Text size='sm' c='dimmed' ta='center'>
+													{t('form.configTypeComingSoon', {
+														type: form.values.configType,
+													})}
+												</Text>
+											</Stack>
+										</Center>
 									)}
 								</div>
 							</div>
