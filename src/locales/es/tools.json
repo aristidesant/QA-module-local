@@ -47,6 +47,7 @@
 		"created": "¡Herramienta creada correctamente!",
 		"updated": "¡Herramienta actualizada correctamente!",
 		"deleted": "¡Herramienta eliminada correctamente!",
+		"forceDeleted": "Herramienta eliminada forzosamente y desvinculada de todos los agentes.",
 		"deleteFailed": "No se pudo eliminar la herramienta: {{message}}",
 		"failedGeneric": "No se pudo {{action}} la herramienta",
 		"actions": {
@@ -57,7 +58,10 @@
 	"deleteConfirm": {
 		"title": "Eliminar herramienta",
 		"message": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
-		"confirm": "Eliminar"
+		"confirm": "Eliminar",
+		"hasDependents": "Esta herramienta está siendo usada por los siguientes agentes:",
+		"forceLabel": "Forzar eliminación (desvincular de todos los agentes)",
+		"forceWarning": "La herramienta será removida de todos los agentes que dependen de ella."
 	},
 	"sectionStatus": {
 		"configured": "Configurado",
@@ -128,6 +132,9 @@
 			"dynamicPlaceholder": "Variable dinámica"
 		}
 	},
+	"detailTabs": {
+		"config": "Configuración"
+	},
 	"form": {
 		"overview": {
 			"title": "Sigue el orden de configuración",
@@ -148,6 +155,13 @@
 			"edit": "Editar herramienta"
 		},
 		"description": "Configura los ajustes de tu herramienta y los detalles de la API",
+		"configTypeComingSoon": "La configuración para herramientas de tipo {{type}} estará disponible próximamente.",
+		"configTypes": {
+			"webhook": "Webhook",
+			"client": "Cliente",
+			"system": "Sistema",
+			"mcp": "MCP"
+		},
 		"menu": {
 			"sections": "Secciones",
 			"optional": "Opcional"
@@ -215,6 +229,10 @@
 			"prompt": {
 				"label": "Instrucción del prompt",
 				"placeholder": "Instrucciones para el agente sobre cómo/cuándo usar esta herramienta"
+			},
+			"configType": {
+				"label": "Tipo de herramienta",
+				"placeholder": "Selecciona el tipo de herramienta"
 			},
 			"category": {
 				"label": "Categoría",

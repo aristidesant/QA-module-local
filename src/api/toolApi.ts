@@ -4,22 +4,17 @@ import type {
 	AssignedToolModel,
 	CreateToolDto,
 	UpdateToolDto,
+	DependentAgentsResponse,
 } from '~/models/ToolModel';
 import { DEFAULT_API_URL } from './config';
 
-/**
- * Tool API client
- * Note: Authorization handled by global Axios interceptor.
- */
 const toolApi = (_authHeader?: Record<string, string>) => {
 	return {
-		// GET all tools
 		getAllTools: async () => {
 			const response = await axios.get<ToolModel[]>(`${DEFAULT_API_URL}/tools`);
 			return response.data;
 		},
 
-		// GET tool by ID
 		getToolById: async (id: string | number) => {
 			const response = await axios.get<ToolModel>(
 				`${DEFAULT_API_URL}/tools/${id}`
@@ -27,7 +22,6 @@ const toolApi = (_authHeader?: Record<string, string>) => {
 			return response.data;
 		},
 
-		// POST create tool
 		createTool: async (data: CreateToolDto) => {
 			const response = await axios.post<ToolModel>(
 				`${DEFAULT_API_URL}/tools`,
@@ -36,7 +30,6 @@ const toolApi = (_authHeader?: Record<string, string>) => {
 			return response.data;
 		},
 
-		// PUT update tool
 		updateTool: async (id: string | number, data: UpdateToolDto) => {
 			const response = await axios.put<ToolModel>(
 				`${DEFAULT_API_URL}/tools/${id}`,
@@ -45,13 +38,21 @@ const toolApi = (_authHeader?: Record<string, string>) => {
 			return response.data;
 		},
 
-		// DELETE tool
-		deleteTool: async (id: string | number) => {
-			const response = await axios.delete(`${DEFAULT_API_URL}/tools/${id}`);
+		deleteTool: async (id: string | number, force?: boolean) => {
+			const params = force ? { force: 'true' } : undefined;
+			const response = await axios.delete(`${DEFAULT_API_URL}/tools/${id}`, {
+				params,
+			});
 			return response.data;
 		},
 
-		// POST create tool bulk
+		getDependentAgents: async (id: string | number) => {
+			const response = await axios.get<DependentAgentsResponse>(
+				`${DEFAULT_API_URL}/tools/${id}/dependent-agents`
+			);
+			return response.data;
+		},
+
 		createToolBulk: async (data: Partial<ToolModel>[]) => {
 			const response = await axios.post<ToolModel[]>(
 				`${DEFAULT_API_URL}/tools/bulk`,
@@ -60,7 +61,6 @@ const toolApi = (_authHeader?: Record<string, string>) => {
 			return response.data;
 		},
 
-		// GET tools by category
 		getToolsByCategory: async (categoryId: string | number) => {
 			const response = await axios.get<ToolModel[]>(
 				`${DEFAULT_API_URL}/tools/categories/${categoryId}/tools`
@@ -68,7 +68,6 @@ const toolApi = (_authHeader?: Record<string, string>) => {
 			return response.data;
 		},
 
-		// PATCH assign tools to agent
 		assignToolsToAgent: async (agentId: string, toolIds: string[]) => {
 			const response = await axios.patch(
 				`${DEFAULT_API_URL}/agent-tools/${agentId}/tools/assign`,
@@ -77,7 +76,6 @@ const toolApi = (_authHeader?: Record<string, string>) => {
 			return response.data;
 		},
 
-		// PATCH unassign tools from agent
 		unassignToolsFromAgent: async (agentId: string, toolIds: string[]) => {
 			const response = await axios.patch(
 				`${DEFAULT_API_URL}/agent-tools/${agentId}/tools/unassign`,
@@ -86,7 +84,6 @@ const toolApi = (_authHeader?: Record<string, string>) => {
 			return response.data;
 		},
 
-		// GET assigned tools for agent
 		getAssignedTools: async (agentId: string) => {
 			const response = await axios.get<AssignedToolModel[]>(
 				`${DEFAULT_API_URL}/agent-tools/agents/${agentId}/assignments`

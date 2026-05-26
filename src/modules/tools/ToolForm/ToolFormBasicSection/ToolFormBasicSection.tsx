@@ -2,6 +2,7 @@ import { Select, SimpleGrid, Stack, Textarea, TextInput } from '@mantine/core';
 import type { UseFormReturnType } from '@mantine/form';
 import type { FormValues } from '../toolForm.types';
 import ToolFormSectionHeader from '../ToolFormSectionHeader/ToolFormSectionHeader';
+import { CONFIG_TYPE_OPTIONS } from '../toolForm.utils';
 import styles from '../ToolForm.module.css';
 
 interface ToolFormBasicSectionProps {
@@ -58,7 +59,21 @@ export default function ToolFormBasicSection({
 				classNames={{ input: styles.premiumTextarea }}
 				{...form.getInputProps('prompt')}
 			/>
-			<SimpleGrid cols={{ base: 1, md: 2 }} spacing='sm'>
+			<SimpleGrid cols={{ base: 1, md: 3 }} spacing='sm'>
+				<Select
+					label={t('form.fields.configType.label')}
+					placeholder={t('form.fields.configType.placeholder')}
+					required
+					size='sm'
+					data={CONFIG_TYPE_OPTIONS.map((opt) => ({
+						...opt,
+						label: t(`form.configTypes.${opt.value}`, {
+							defaultValue: opt.label,
+						}),
+					}))}
+					classNames={{ input: styles.premiumInput }}
+					{...form.getInputProps('configType')}
+				/>
 				<Select
 					label={t('form.fields.category.label')}
 					placeholder={t('form.fields.category.placeholder')}

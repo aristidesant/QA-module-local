@@ -47,6 +47,7 @@
 		"created": "Tool created successfully!",
 		"updated": "Tool updated successfully!",
 		"deleted": "Tool deleted successfully!",
+		"forceDeleted": "Tool force-deleted and unlinked from all agents.",
 		"deleteFailed": "Failed to delete tool: {{message}}",
 		"failedGeneric": "Failed to {{action}} tool",
 		"actions": {
@@ -57,7 +58,10 @@
 	"deleteConfirm": {
 		"title": "Delete tool",
 		"message": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
-		"confirm": "Delete"
+		"confirm": "Delete",
+		"hasDependents": "This tool is being used by the following agents:",
+		"forceLabel": "Force delete (unlink from all agents)",
+		"forceWarning": "The tool will be removed from all agents that depend on it."
 	},
 	"sectionStatus": {
 		"configured": "Configured",
@@ -128,6 +132,9 @@
 			"dynamicPlaceholder": "Dynamic variable"
 		}
 	},
+	"detailTabs": {
+		"config": "Configuration"
+	},
 	"form": {
 		"overview": {
 			"title": "Follow the setup order",
@@ -148,6 +155,13 @@
 			"edit": "Edit Tool"
 		},
 		"description": "Configure your tool settings and API details",
+		"configTypeComingSoon": "Configuration for {{type}} tools is coming soon.",
+		"configTypes": {
+			"webhook": "Webhook",
+			"client": "Client",
+			"system": "System",
+			"mcp": "MCP"
+		},
 		"menu": {
 			"sections": "Sections",
 			"optional": "Optional"
@@ -215,6 +229,10 @@
 			"prompt": {
 				"label": "Prompt Instruction",
 				"placeholder": "Instructions for the agent on how/when to use this tool"
+			},
+			"configType": {
+				"label": "Tool Type",
+				"placeholder": "Select tool type"
 			},
 			"category": {
 				"label": "Category",
