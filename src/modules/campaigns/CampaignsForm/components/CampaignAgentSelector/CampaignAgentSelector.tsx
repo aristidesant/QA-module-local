@@ -1,4 +1,4 @@
-import { Badge, Group, Text, UnstyledButton } from '@mantine/core';
+import { Badge, Box, Group, Stack, Text, UnstyledButton } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import type { CampaignAgent } from '~/models/CampaignAgentModel';
 import styles from './CampaignAgentSelector.module.css';
@@ -23,15 +23,16 @@ const CampaignAgentSelector = ({
 	}
 
 	return (
-		<div className={styles.root}>
+		<Box className={styles.root}>
 			{label && (
-				<Text size='xs' fw={600} c='dimmed'>
+				<Text size='xs' fw={600} c='dimmed' tt='uppercase'>
 					{label}
 				</Text>
 			)}
 			<div className={styles.list}>
 				{agents.map((campaignAgent) => {
 					const active = campaignAgent.id === value;
+
 					return (
 						<UnstyledButton
 							key={campaignAgent.id}
@@ -40,28 +41,37 @@ const CampaignAgentSelector = ({
 							onClick={() => onChange(campaignAgent.id)}
 							aria-pressed={active}
 						>
-							<Text size='sm' fw={600} className={styles.name}>
-								{campaignAgent.agent?.name || campaignAgent.agentId}
-							</Text>
-							<Group gap={4} mt={4} className={styles.badges}>
-								<Badge
-									size='xs'
-									variant='light'
-									color={campaignAgent.isPrincipal ? 'blue' : 'gray'}
-								>
-									{campaignAgent.isPrincipal
-										? t('form.agent.selector.principal')
-										: t('form.agent.selector.subagent')}
-								</Badge>
-								<Badge size='xs' variant='outline' color='dark'>
-									{campaignAgent.agentType}
-								</Badge>
-							</Group>
+							<Stack gap={6} className={styles.content}>
+								<Group justify='space-between' align='flex-start' gap='xs'>
+									<Text size='sm' fw={700} className={styles.name}>
+										{campaignAgent.agent?.name || campaignAgent.agentId}
+									</Text>
+									{active && (
+										<Badge size='xs' variant='light' color='green'>
+											{t('form.agent.selector.selected')}
+										</Badge>
+									)}
+								</Group>
+								<Group gap={6} className={styles.badges}>
+									<Badge
+										size='xs'
+										variant='light'
+										color={campaignAgent.isPrincipal ? 'green' : 'gray'}
+									>
+										{campaignAgent.isPrincipal
+											? t('form.agent.selector.principal')
+											: t('form.agent.selector.subagent')}
+									</Badge>
+									<Badge size='xs' variant='light' color='blue'>
+										{campaignAgent.agentType}
+									</Badge>
+								</Group>
+							</Stack>
 						</UnstyledButton>
 					);
 				})}
 			</div>
-		</div>
+		</Box>
 	);
 };
 

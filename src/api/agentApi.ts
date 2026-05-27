@@ -23,7 +23,19 @@ export interface DuplicateAgentDto {
 	name: string;
 }
 
-type SignedUrlResponse = string | { signedUrl?: string; url?: string; href?: string };
+export interface CreateAgentDto {
+	conversationConfig: Record<string, unknown>;
+	platformSettings?: Record<string, unknown>;
+	name?: string;
+	type: 'INBOUND' | 'OUTBOUND';
+	voiceId?: string;
+	outboundPhoneNumberId?: number;
+	inboundPhoneNumberId?: number;
+}
+
+type SignedUrlResponse =
+	| string
+	| { signedUrl?: string; url?: string; href?: string };
 
 const agentApi = (_authHeader: Record<string, string> = {}) => {
 	return {
@@ -35,6 +47,11 @@ const agentApi = (_authHeader: Record<string, string> = {}) => {
 				`${DEFAULT_API_URL}/agents/${agentId}/duplicate`,
 				data
 			);
+			return response.data;
+		},
+
+		createAgent: async (data: CreateAgentDto) => {
+			const response = await axios.post(`${DEFAULT_API_URL}/agents`, data);
 			return response.data;
 		},
 

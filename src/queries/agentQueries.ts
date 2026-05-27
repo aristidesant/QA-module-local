@@ -3,6 +3,7 @@ import agentApi, {
 	FindAllAgentsResponse,
 	DuplicateAgentDto,
 	AgentsWithCampaignsResponse,
+	CreateAgentDto,
 } from '~/api/agentApi';
 import type {
 	AgentUpdateModel,
@@ -29,6 +30,19 @@ export const useDuplicateAgent = () => {
 		},
 		onError: (error) => {
 			void error;
+		},
+	});
+};
+
+export const useCreateAgent = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (data: CreateAgentDto) => {
+			const api = agentApi();
+			return api.createAgent(data);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['agents'] });
 		},
 	});
 };
