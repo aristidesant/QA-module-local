@@ -39,6 +39,8 @@
 			"updateFlow": "Actualizar Flujo",
 			"createFlow": "Crear Flujo",
 			"previewTitle": "Vista previa del grupo de resultados",
+			"collapseAll": "Contraer todo",
+			"expandAll": "Expandir todo",
 			"errors": {
 				"minNodes": "Por favor, agrega al menos un nodo de resultado.",
 				"nameRequired": "El nombre del resultado es obligatorio.",
@@ -59,7 +61,10 @@
 			"addChildren_plural": "Agregar {{count}} hijos faltantes",
 			"addMissingChildrenAria": "Agregar hijos faltantes",
 			"remove": "Eliminar",
-			"removeAria": "Eliminar nodo"
+			"removeAria": "Eliminar nodo",
+			"confirmDeleteTitle": "Eliminar resultado",
+			"confirmDeleteMessage": "Esto también eliminará {{count}} resultado hijo. ¿Estás seguro?",
+			"confirmDeleteMessage_plural": "Esto también eliminará {{count}} resultados hijos. ¿Estás seguro?"
 		},
 		"nodeForm": {
 			"editingTitle": "Editando resultado",

@@ -39,6 +39,8 @@
 			"updateFlow": "Update Flow",
 			"createFlow": "Create Flow",
 			"previewTitle": "Outcome group preview",
+			"collapseAll": "Collapse all",
+			"expandAll": "Expand all",
 			"errors": {
 				"minNodes": "Please add at least one outcome node.",
 				"nameRequired": "Outcome name is required.",
@@ -59,7 +61,10 @@
 			"addChildren_plural": "Add {{count}} missing children",
 			"addMissingChildrenAria": "Add missing children",
 			"remove": "Remove",
-			"removeAria": "Remove node"
+			"removeAria": "Remove node",
+			"confirmDeleteTitle": "Remove outcome",
+			"confirmDeleteMessage": "This will also remove {{count}} child outcome. Are you sure?",
+			"confirmDeleteMessage_plural": "This will also remove {{count}} child outcomes. Are you sure?"
 		},
 		"nodeForm": {
 			"editingTitle": "Editing outcome",

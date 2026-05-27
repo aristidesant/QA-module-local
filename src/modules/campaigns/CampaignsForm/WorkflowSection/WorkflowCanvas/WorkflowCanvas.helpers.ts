@@ -343,13 +343,7 @@ export const mapWorkflowToNodes = (
 			};
 		}
 
-		return (
-			forwardLabel ||
-			backwardLabel ||
-			t('form.workflow.edge.notConfigured', {
-				defaultValue: 'Not configured',
-			})
-		);
+		return forwardLabel || backwardLabel || null;
 	};
 
 	const mappedEdges = Object.entries(workflowData.edges)

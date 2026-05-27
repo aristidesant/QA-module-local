@@ -5,12 +5,9 @@ import { Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { IconPencil } from '@tabler/icons-react';
 import type { UpdateStateNode as UpdateStateNodeModel } from '~/models/AgentWorkflowModel';
-import { type WorkflowNodeType } from '../../nodeTypes';
-import WorkflowNodeActions from '../../WorkflowNodeActions';
 import WorkflowNodeDrawer from '../../WorkflowNodeDrawer';
 import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
-import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
 import { useNodeStyle } from '../../NodeStylesContext';
@@ -26,7 +23,6 @@ const getTrimmedString = (value: unknown): string =>
 
 const UpdateStateNodeComponent = (props: NodeProps) => {
 	const nodeData = props.data as unknown as UpdateStateNodeModel;
-	const nodeType = (props.type ?? nodeData.type) as WorkflowNodeType;
 	const { t } = useTranslation([
 		'campaign.form.workflow',
 		'campaign.form.agents',
@@ -101,16 +97,7 @@ const UpdateStateNodeComponent = (props: NodeProps) => {
 
 	return (
 		<>
-			<WorkflowNodeWrapper
-				{...props}
-				sideActions={
-					<WorkflowNodeActions
-						nodeId={props.id}
-						nodeData={props.data as WorkflowNodeData}
-						nodeType={nodeType}
-					/>
-				}
-			>
+			<WorkflowNodeWrapper {...props}>
 				{/* inline-style-allow: per-node CSS variables are derived dynamically from persisted node tones. */}
 				<div
 					className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}

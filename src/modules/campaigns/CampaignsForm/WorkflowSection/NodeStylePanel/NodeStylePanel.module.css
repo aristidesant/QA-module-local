@@ -1,0 +1,52 @@
+.panel {
+	position: fixed;
+	z-index: 9998;
+	width: 280px;
+	border-radius: 10px;
+	background: var(--mantine-color-body);
+	border: 1px solid var(--mantine-color-default-border);
+	box-shadow: var(--mantine-shadow-md);
+	padding: var(--mantine-spacing-sm);
+}
+
+.swatch {
+	cursor: pointer;
+	border-radius: 4px;
+	outline: 2px solid transparent;
+	outline-offset: 1px;
+	transition: outline-color 100ms ease;
+}
+
+.swatchSelected {
+	cursor: pointer;
+	border-radius: 4px;
+	outline: 2px solid var(--mantine-color-blue-5);
+	outline-offset: 1px;
+}
+
+.swatchButton {
+	border-radius: 4px;
+	padding: 1px;
+}
+
+.iconButton {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 5px;
+	color: var(--mantine-color-text);
+	background: transparent;
+	cursor: pointer;
+	transition: background 80ms ease;
+}
+
+.iconButton:hover {
+	background: var(--mantine-color-default-hover);
+}
+
+.iconButtonSelected {
+	background: var(--mantine-color-blue-light);
+	color: var(--mantine-color-blue-text);
+}

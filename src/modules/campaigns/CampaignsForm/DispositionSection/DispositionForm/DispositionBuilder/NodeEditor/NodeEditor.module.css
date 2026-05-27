@@ -4,11 +4,11 @@
 		var(--mantine-color-dark-7)
 	);
 	--disposition-node-surface-hover: light-dark(
-		var(--mantine-color-blue-0),
+		var(--mantine-color-green-0),
 		var(--mantine-color-dark-6)
 	);
 	--disposition-node-surface-selected: light-dark(
-		var(--mantine-color-blue-0),
+		var(--mantine-color-green-0),
 		var(--mantine-color-dark-6)
 	);
 	--disposition-node-border: light-dark(
@@ -16,12 +16,12 @@
 		var(--mantine-color-dark-4)
 	);
 	--disposition-node-border-hover: light-dark(
-		var(--mantine-color-blue-4),
-		var(--mantine-color-blue-7)
+		var(--mantine-color-green-4),
+		var(--mantine-color-green-7)
 	);
 	--disposition-node-border-selected: light-dark(
-		var(--mantine-color-blue-5),
-		var(--mantine-color-blue-5)
+		var(--mantine-color-green-5),
+		var(--mantine-color-green-5)
 	);
 	--disposition-node-text: light-dark(
 		var(--mantine-color-gray-9),
@@ -39,16 +39,7 @@
 	margin-bottom: 6px;
 	border: 1px solid var(--disposition-node-border);
 	border-radius: var(--mantine-radius-md);
-	background: linear-gradient(
-		180deg,
-		var(--disposition-node-surface) 0%,
-		color-mix(
-				in srgb,
-				var(--disposition-node-surface) 84%,
-				var(--disposition-node-surface-hover)
-			)
-			100%
-	);
+	background: var(--disposition-node-surface);
 	box-shadow: var(--disposition-node-shadow);
 	overflow: hidden;
 	transition:
@@ -58,31 +49,67 @@
 		box-shadow 120ms ease;
 }
 
-.nodeRow::before {
-	content: '';
-	position: absolute;
-	left: 0;
-	top: 10px;
-	bottom: 10px;
-	width: 4px;
-	border-radius: 999px;
-	background: var(--node-rail, var(--mantine-color-blue-5));
-}
-
+/* Tone-specific backgrounds + borders (no side-stripe) */
 .nodeRow[data-tone='effective'] {
-	--node-rail: var(--mantine-color-green-5);
+	background: light-dark(
+		color-mix(
+			in srgb,
+			var(--mantine-color-green-1) 30%,
+			var(--disposition-node-surface)
+		),
+		color-mix(
+			in srgb,
+			var(--mantine-color-green-9) 12%,
+			var(--disposition-node-surface)
+		)
+	);
+	border-color: light-dark(
+		var(--mantine-color-green-3),
+		var(--mantine-color-green-8)
+	);
 }
 
 .nodeRow[data-tone='noEffective'] {
-	--node-rail: var(--mantine-color-orange-5);
+	background: light-dark(
+		color-mix(
+			in srgb,
+			var(--mantine-color-orange-1) 28%,
+			var(--disposition-node-surface)
+		),
+		color-mix(
+			in srgb,
+			var(--mantine-color-orange-9) 12%,
+			var(--disposition-node-surface)
+		)
+	);
+	border-color: light-dark(
+		var(--mantine-color-orange-3),
+		var(--mantine-color-orange-8)
+	);
 }
 
 .nodeRow[data-tone='noContact'] {
-	--node-rail: var(--mantine-color-red-5);
+	background: light-dark(
+		color-mix(
+			in srgb,
+			var(--mantine-color-red-1) 28%,
+			var(--disposition-node-surface)
+		),
+		color-mix(
+			in srgb,
+			var(--mantine-color-red-9) 12%,
+			var(--disposition-node-surface)
+		)
+	);
+	border-color: light-dark(
+		var(--mantine-color-red-3),
+		var(--mantine-color-red-8)
+	);
 }
 
 .nodeRow[data-tone='default'] {
-	--node-rail: var(--mantine-color-blue-5);
+	background: var(--disposition-node-surface);
+	border-color: var(--disposition-node-border);
 }
 
 .rowContent {
@@ -101,7 +128,7 @@
 
 .statusDot {
 	width: 8px;
-	height: 32px;
+	height: 8px;
 	border-radius: 999px;
 	flex-shrink: 0;
 	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
@@ -165,59 +192,34 @@
 
 .clickable:hover {
 	border-color: var(--disposition-node-border-hover);
-	background: linear-gradient(
-		180deg,
-		var(--disposition-node-surface-hover) 0%,
+	background: light-dark(
 		color-mix(
-				in srgb,
-				var(--disposition-node-surface-hover) 80%,
-				var(--disposition-node-surface)
-			)
-			100%
+			in srgb,
+			var(--mantine-color-green-0) 60%,
+			var(--disposition-node-surface)
+		),
+		var(--disposition-node-surface-hover)
 	);
 	transform: translateY(-1px);
 	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--mantine-color-blue-3) 38%, transparent),
-		0 18px 26px rgba(0, 0, 0, 0.12);
+		0 0 0 1px color-mix(in srgb, var(--mantine-color-green-3) 38%, transparent),
+		0 18px 26px rgba(0, 0, 0, 0.1);
 }
 
 .selected {
 	border-color: var(--disposition-node-border-selected);
-	background: linear-gradient(
-		180deg,
-		var(--disposition-node-surface-selected) 0%,
+	background: light-dark(
+		var(--mantine-color-green-0),
 		color-mix(
-				in srgb,
-				var(--disposition-node-surface-selected) 78%,
-				var(--disposition-node-surface)
-			)
-			100%
+			in srgb,
+			var(--mantine-color-green-9) 18%,
+			var(--disposition-node-surface)
+		)
 	);
 	box-shadow:
 		0 0 0 1px
-			light-dark(var(--mantine-color-blue-2), var(--mantine-color-blue-9)),
+			light-dark(var(--mantine-color-green-2), var(--mantine-color-green-9)),
 		var(--disposition-node-shadow);
-}
-
-.effective {
-	border-color: light-dark(
-		var(--mantine-color-green-5),
-		var(--mantine-color-green-7)
-	);
-}
-
-.noEffective {
-	border-color: light-dark(
-		var(--mantine-color-orange-5),
-		var(--mantine-color-orange-7)
-	);
-}
-
-.noContact {
-	border-color: light-dark(
-		var(--mantine-color-red-5),
-		var(--mantine-color-red-7)
-	);
 }
 
 @media (max-width: 768px) {

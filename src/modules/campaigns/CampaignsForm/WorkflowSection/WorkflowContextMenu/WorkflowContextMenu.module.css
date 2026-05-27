@@ -1,0 +1,105 @@
+.menu {
+	position: fixed;
+	z-index: 9999;
+	min-width: 192px;
+	padding: 5px;
+	border-radius: 10px;
+	background: var(--mantine-color-body);
+	border: 1px solid var(--mantine-color-default-border);
+	box-shadow: var(--mantine-shadow-md);
+}
+
+.section {
+	padding: 4px 12px 2px;
+	font-size: 10px;
+	font-weight: 700;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--mantine-color-dimmed);
+	user-select: none;
+}
+
+.item {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	padding: 8px 12px;
+	border-radius: 7px;
+	cursor: pointer;
+	font-size: 13px;
+	color: var(--mantine-color-text);
+	transition: background 80ms ease;
+	user-select: none;
+}
+
+.item:hover {
+	background: var(--mantine-color-default-hover);
+}
+
+.itemPrimary {
+	background: var(--mantine-color-blue-light);
+	color: var(--mantine-color-blue-text);
+	font-weight: 500;
+}
+
+.itemPrimary:hover {
+	background: var(--mantine-color-blue-light-hover);
+}
+
+.itemDanger {
+	background: var(--mantine-color-red-light);
+	color: var(--mantine-color-red-text);
+}
+
+.itemDanger:hover {
+	background: var(--mantine-color-red-light-hover);
+}
+
+.itemDisabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+	pointer-events: none;
+}
+
+.itemIcon {
+	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+}
+
+.itemLabel {
+	flex: 1;
+}
+
+.itemChevron {
+	flex-shrink: 0;
+	opacity: 0.5;
+}
+
+.divider {
+	height: 1px;
+	background: var(--mantine-color-default-border);
+	margin: 4px 8px;
+}
+
+/* Submenu accordion */
+.submenuList {
+	margin: 2px 0 2px 28px;
+	padding: 0;
+}
+
+.submenuItem {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 10px;
+	border-radius: 6px;
+	cursor: pointer;
+	font-size: 12px;
+	color: var(--mantine-color-text);
+	transition: background 80ms ease;
+}
+
+.submenuItem:hover {
+	background: var(--mantine-color-default-hover);
+}

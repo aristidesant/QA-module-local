@@ -16,3 +16,8 @@ export interface ConditionEdgeData {
 	backwardCondition?: WorkflowEdge['backwardCondition'];
 	sourceNodeType?: string;
 }
+
+export interface ContextMenuPosition {
+	x: number;
+	y: number;
+}

@@ -159,7 +159,11 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 							{t('disposition.nodeForm.behaviorControls')}
 						</Text>
 						<div className={styles.toggleGrid}>
-							<div className={styles.toggleCard}>
+							<div
+								className={styles.toggleCard}
+								data-active={isInvalidatesNumber ? 'true' : 'false'}
+								data-variant='danger'
+							>
 								<div className={styles.toggleContent}>
 									<Text className={styles.toggleTitle}>
 										{t('disposition.nodeForm.invalidatesNumberTitle')}
@@ -175,11 +179,15 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 									})}
 									aria-label={t('disposition.nodeForm.invalidatesNumberTitle')}
 									size='sm'
-									color='blue'
+									color='red'
 								/>
 							</div>
 
-							<div className={styles.toggleCard}>
+							<div
+								className={styles.toggleCard}
+								data-active={doNotCall ? 'true' : 'false'}
+								data-variant='danger'
+							>
 								<div className={styles.toggleContent}>
 									<Text className={styles.toggleTitle}>
 										{t('disposition.nodeForm.doNotCallTitle')}
@@ -195,11 +203,15 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 									})}
 									aria-label={t('disposition.nodeForm.doNotCallTitle')}
 									size='sm'
-									color='blue'
+									color='red'
 								/>
 							</div>
 
-							<div className={styles.toggleCard}>
+							<div
+								className={styles.toggleCard}
+								data-active={isAbandoned ? 'true' : 'false'}
+								data-variant='warning'
+							>
 								<div className={styles.toggleContent}>
 									<Text className={styles.toggleTitle}>
 										{t('disposition.nodeForm.abandonedTitle')}
@@ -215,11 +227,15 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 									})}
 									aria-label={t('disposition.nodeForm.abandonedTitle')}
 									size='sm'
-									color='blue'
+									color='orange'
 								/>
 							</div>
 
-							<div className={styles.toggleCard}>
+							<div
+								className={styles.toggleCard}
+								data-active={requiresReschedule ? 'true' : 'false'}
+								data-variant='warning'
+							>
 								<div className={styles.toggleContent}>
 									<Text className={styles.toggleTitle}>
 										{t('disposition.nodeForm.rescheduleTitle')}
@@ -235,7 +251,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 									})}
 									aria-label={t('disposition.nodeForm.rescheduleTitle')}
 									size='sm'
-									color='blue'
+									color='orange'
 								/>
 							</div>
 						</div>
@@ -248,7 +264,7 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 					<Button variant='default' onClick={onCancel} type='button' size='xs'>
 						{t('actions.cancel', { ns: 'common' })}
 					</Button>
-					<Button type='submit' variant='filled' color='blue' size='xs'>
+					<Button type='submit' variant='filled' color='green' size='xs'>
 						{t('actions.save', { ns: 'common' })}
 					</Button>
 				</Group>

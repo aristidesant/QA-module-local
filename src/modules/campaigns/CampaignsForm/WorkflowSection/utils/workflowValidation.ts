@@ -1,4 +1,4 @@
-import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
+import type { AgentWorkflow, WorkflowEdge } from '~/models/AgentWorkflowModel';
 
 /**
  * Warning level for an edge
@@ -102,11 +102,26 @@ export const hasEdgeCondition = (
 	);
 };
 
+const isConditionIncomplete = (
+	condition: NonNullable<WorkflowEdge['forwardCondition']>
+): boolean => {
+	if (condition.type === 'llm') {
+		return !condition.condition?.trim();
+	}
+	if (condition.type === 'expression') {
+		const expr = condition.expression;
+		if (!expr) return true;
+		if (expr.type === 'boolean_literal') return true;
+		return false;
+	}
+	return false;
+};
+
 /**
  * Determines the warning level for an edge
- * - 'error': Edge has no conditions at all (both forward and backward are undefined)
- * - 'warning': Edge has conditions but they might need configuration
- * - 'none': Edge is properly configured
+ * - 'none': No condition set (type "none") — valid default state
+ * - 'error': Condition type selected but required data missing (e.g. LLM with empty prompt)
+ * - 'warning': (reserved for future use)
  *
  * @param edgeId - The edge ID to check
  * @param workflow - The workflow containing the edge
@@ -125,15 +140,22 @@ export const getEdgeWarningLevel = (
 	const sourceNode = workflow.nodes[edge.source];
 	if (sourceNode && sourceNode.type === 'start') return 'none';
 
-	// Check if edge has ANY condition
 	const hasForwardCondition = edge.forwardCondition !== undefined;
 	const hasBackwardCondition = edge.backwardCondition !== undefined;
 
-	// ERROR: No conditions at all
+	// No conditions at all → valid (type "none"), no warning
 	if (!hasForwardCondition && !hasBackwardCondition) {
-		return 'error';
+		return 'none';
 	}
 
-	// NONE: Has proper condition configuration
+	// Check if any condition has incomplete data
+	if (hasForwardCondition && edge.forwardCondition) {
+		if (isConditionIncomplete(edge.forwardCondition)) return 'error';
+	}
+	if (hasBackwardCondition && edge.backwardCondition) {
+		if (isConditionIncomplete(edge.backwardCondition)) return 'error';
+	}
+
+	// Has proper condition configuration
 	return 'none';
 };

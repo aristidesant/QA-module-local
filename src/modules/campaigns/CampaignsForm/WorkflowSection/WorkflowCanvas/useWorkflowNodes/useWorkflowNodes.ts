@@ -23,10 +23,7 @@ interface AddNodeVariantPayload {
 	variant?: 'transfer' | 'subagent';
 }
 
-const buildEdgeLabel = (t: TFunction) =>
-	t('form.workflow.edge.notConfigured', {
-		defaultValue: 'Not configured',
-	});
+const buildEdgeLabel = (_t: TFunction) => null;
 
 const appendEdgeOrder = (node: Node, edgeId: string): Node => {
 	const data = node.data as { edgeOrder?: string[] };
@@ -255,7 +252,12 @@ const useWorkflowNodes = ({
 			parentPosition: { x: number; y: number },
 			payload: AddNodeVariantPayload
 		) => {
-			return appendNodeAndEdge(parentNodeId, parentPosition, payload.type, payload);
+			return appendNodeAndEdge(
+				parentNodeId,
+				parentPosition,
+				payload.type,
+				payload
+			);
 		},
 		[appendNodeAndEdge]
 	);

@@ -1,13 +1,9 @@
 import {
 	createContext,
-	useEffect,
 	useContext,
 	useMemo,
-	useRef,
 	type PropsWithChildren,
 } from 'react';
-import { useStore } from 'zustand';
-import { createStore, type StoreApi } from 'zustand/vanilla';
 import type { WorkflowNodeType } from '../nodeTypes';
 
 interface AddNodeVariantPayload {
@@ -34,8 +30,8 @@ interface WorkflowCanvasActionsContextValue {
 	copyNode: (nodeId: string) => void;
 	openEdge: (edgeId: string) => void;
 	deleteEdge: (edgeId: string) => void;
-	toggleEdgeActions: (edgeId: string) => void;
-	clearEdgeActions: () => void;
+	/** Open the edge context menu at the given screen coordinates. */
+	openEdgeContextMenu: (edgeId: string, pos: { x: number; y: number }) => void;
 	groupSelectedNodes: () => void;
 	ungroupNodes: (groupNodeId: string) => void;
 	addNodeToGroup: (groupNodeId: string) => void;
@@ -46,57 +42,26 @@ interface WorkflowCanvasActionsContextValue {
 		variant?: 'transfer' | 'subagent'
 	) => string | undefined;
 	addExistingNodeToGroup: (groupNodeId: string, existingNodeId: string) => void;
+	/** @deprecated No-op kept for compatibility. Edge actions are no longer shown. */
+	clearEdgeActions: () => void;
 }
-
-interface WorkflowCanvasEdgeUiState {
-	selectedEdgeActionId: string | null;
-	setSelectedEdgeActionId: (edgeId: string | null) => void;
-}
-
-type WorkflowCanvasEdgeUiStore = StoreApi<WorkflowCanvasEdgeUiState>;
 
 const WorkflowCanvasActionsContext =
 	createContext<WorkflowCanvasActionsContextValue | null>(null);
 
-const WorkflowCanvasEdgeUiContext =
-	createContext<WorkflowCanvasEdgeUiStore | null>(null);
-
 interface WorkflowCanvasActionsProviderProps extends PropsWithChildren {
 	actions: WorkflowCanvasActionsContextValue;
-	selectedEdgeActionId: string | null;
-	onSelectedEdgeActionChange: (edgeId: string | null) => void;
 }
 
 export const WorkflowCanvasActionsProvider = ({
 	actions,
-	selectedEdgeActionId,
-	onSelectedEdgeActionChange,
 	children,
 }: WorkflowCanvasActionsProviderProps) => {
-	const edgeUiStoreRef = useRef<WorkflowCanvasEdgeUiStore | null>(null);
-
-	if (!edgeUiStoreRef.current) {
-		edgeUiStoreRef.current = createStore<WorkflowCanvasEdgeUiState>((set) => ({
-			selectedEdgeActionId: null,
-			setSelectedEdgeActionId: (edgeId) =>
-				set({ selectedEdgeActionId: edgeId }),
-		}));
-	}
-
-	useEffect(() => {
-		edgeUiStoreRef.current?.setState({
-			selectedEdgeActionId,
-			setSelectedEdgeActionId: onSelectedEdgeActionChange,
-		});
-	}, [onSelectedEdgeActionChange, selectedEdgeActionId]);
-
 	const contextValue = useMemo(() => actions, [actions]);
 
 	return (
 		<WorkflowCanvasActionsContext.Provider value={contextValue}>
-			<WorkflowCanvasEdgeUiContext.Provider value={edgeUiStoreRef.current}>
-				{children}
-			</WorkflowCanvasEdgeUiContext.Provider>
+			{children}
 		</WorkflowCanvasActionsContext.Provider>
 	);
 };
@@ -112,25 +77,3 @@ export const useWorkflowCanvasActions = () => {
 
 	return context;
 };
-
-const useWorkflowCanvasEdgeUiStore = <T,>(
-	selector: (state: WorkflowCanvasEdgeUiState) => T
-) => {
-	const store = useContext(WorkflowCanvasEdgeUiContext);
-
-	if (!store) {
-		throw new Error(
-			'useWorkflowCanvasEdgeUiStore must be used within WorkflowCanvasActionsProvider'
-		);
-	}
-
-	return useStore(store, selector);
-};
-
-export const useIsEdgeActionsOpen = (edgeId: string) =>
-	useWorkflowCanvasEdgeUiStore(
-		(state) => state.selectedEdgeActionId === edgeId
-	);
-
-export const useWorkflowCanvasEdgeUiActions = () =>
-	useWorkflowCanvasEdgeUiStore((state) => state.setSelectedEdgeActionId);

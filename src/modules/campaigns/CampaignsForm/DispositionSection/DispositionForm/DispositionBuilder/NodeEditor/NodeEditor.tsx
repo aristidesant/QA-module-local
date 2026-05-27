@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo, useState } from 'react';
-import { ActionIcon, Box, Group, Text, Tooltip } from '@mantine/core';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { ActionIcon, Badge, Box, Group, Text, Tooltip } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import { useTranslation } from 'react-i18next';
 import {
 	IconChevronDown,
@@ -30,6 +31,8 @@ interface NodeEditorProps {
 	onPopulateChildren?: (nodeId: number) => void;
 	onAddMissingSiblings?: (nodeId: number) => void;
 	catalogNodes?: DispositionNode[] | undefined;
+	collapseAllKey?: number;
+	expandAllKey?: number;
 }
 
 const NodeEditor: React.FC<NodeEditorProps> = ({
@@ -42,6 +45,8 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 	onPopulateChildren,
 	onAddMissingSiblings,
 	catalogNodes,
+	collapseAllKey,
+	expandAllKey,
 }) => {
 	const { t } = useTranslation([
 		'campaign.form.outcomes',
@@ -50,6 +55,14 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 	]);
 	const [collapsed, setCollapsed] = useState(false);
 	const { flowJson } = useDispositionBuilderStore();
+
+	useEffect(() => {
+		if (collapseAllKey) setCollapsed(true);
+	}, [collapseAllKey]);
+
+	useEffect(() => {
+		if (expandAllKey) setCollapsed(false);
+	}, [expandAllKey]);
 
 	const catalogNode = useMemo(() => {
 		if (!catalogNodes || catalogNodes.length === 0) return null;
@@ -81,7 +94,6 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 		const flowNodes = flowJson?.dispositionNodes || [];
 		const parentInFlow = findNodeById(flowNodes, catalogNode.parentId);
 
-		// If parent is not in flow, we can't add siblings to it
 		if (!parentInFlow) return 0;
 
 		const existingSiblingIds = new Set(
@@ -122,9 +134,28 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 	const handleRemove = useCallback(
 		(event: React.MouseEvent) => {
 			event.stopPropagation();
-			removeNode(node.id);
+			if (hasChildren) {
+				modals.openConfirmModal({
+					title: t('disposition.nodeEditor.confirmDeleteTitle'),
+					children: (
+						<Text size='sm'>
+							{t('disposition.nodeEditor.confirmDeleteMessage', {
+								count: existingChildren.length,
+							})}
+						</Text>
+					),
+					labels: {
+						confirm: t('actions.delete', { ns: 'common' }),
+						cancel: t('actions.cancel', { ns: 'common' }),
+					},
+					confirmProps: { color: 'red' },
+					onConfirm: () => removeNode(node.id),
+				});
+			} else {
+				removeNode(node.id);
+			}
 		},
-		[node.id, removeNode]
+		[node.id, removeNode, hasChildren, existingChildren.length, t]
 	);
 
 	const handlePopulateChildren = useCallback(
@@ -186,14 +217,32 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 
 					<Box className={styles.nodeDetails}>
 						<Group justify='space-between' gap={4} wrap='nowrap'>
-							<Text
-								className={styles.nodeTitle}
-								fw={level === 0 ? 600 : 500}
-								size={level === 0 ? 'sm' : 'xs'}
-								lineClamp={1}
+							<Group
+								gap={4}
+								wrap='nowrap'
+								// inline-style-allow: flex layout values needed on Mantine Group to prevent text overflow in constrained row
+								style={{ minWidth: 0, flex: 1 }}
 							>
-								{node.name}
-							</Text>
+								<Text
+									className={styles.nodeTitle}
+									fw={level === 0 ? 600 : 500}
+									size={level === 0 ? 'sm' : 'xs'}
+									lineClamp={1}
+								>
+									{node.name}
+								</Text>
+								{hasChildren && (
+									<Badge
+										size='xs'
+										variant='light'
+										color='gray'
+										// inline-style-allow: prevents Badge from shrinking in a tight flex row; no Mantine prop equivalent
+										style={{ flexShrink: 0 }}
+									>
+										{existingChildren.length}
+									</Badge>
+								)}
+							</Group>
 							<Group gap={2} className={styles.icons} wrap='nowrap'>
 								{isDoNotCall ? (
 									<Tooltip
@@ -257,17 +306,41 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 									count: missingSiblingsCount,
 								})}
 							>
-								<ActionIcon
-									size='xs'
-									variant='subtle'
-									color='violet'
-									onClick={handleAddMissingSiblings}
-									aria-label={t(
-										'disposition.nodeEditor.addMissingSiblingsAria'
-									)}
+								<Box
+									pos='relative'
+									// inline-style-allow: inline-flex needed on Box to size it to the ActionIcon for absolute badge positioning
+									style={{ display: 'inline-flex' }}
 								>
-									<IconHierarchy3 size={12} />
-								</ActionIcon>
+									<ActionIcon
+										size='xs'
+										variant='subtle'
+										color='green'
+										onClick={handleAddMissingSiblings}
+										aria-label={t(
+											'disposition.nodeEditor.addMissingSiblingsAria'
+										)}
+									>
+										<IconHierarchy3 size={12} />
+									</ActionIcon>
+									<Badge
+										size='xs'
+										variant='filled'
+										color='green'
+										// inline-style-allow: absolute badge overlay with pixel offsets; no Mantine prop covers this positioning pattern
+										style={{
+											position: 'absolute',
+											top: -5,
+											right: -5,
+											minWidth: 14,
+											padding: '0 2px',
+											fontSize: 9,
+											lineHeight: '14px',
+											pointerEvents: 'none',
+										}}
+									>
+										{missingSiblingsCount}
+									</Badge>
+								</Box>
 							</Tooltip>
 						) : null}
 
@@ -278,17 +351,41 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 									count: missingChildrenCount,
 								})}
 							>
-								<ActionIcon
-									size='xs'
-									variant='subtle'
-									color='teal'
-									onClick={handlePopulateChildren}
-									aria-label={t(
-										'disposition.nodeEditor.addMissingChildrenAria'
-									)}
+								<Box
+									pos='relative'
+									// inline-style-allow: inline-flex needed on Box to size it to the ActionIcon for absolute badge positioning
+									style={{ display: 'inline-flex' }}
 								>
-									<IconHierarchy3 size={12} />
-								</ActionIcon>
+									<ActionIcon
+										size='xs'
+										variant='subtle'
+										color='blue'
+										onClick={handlePopulateChildren}
+										aria-label={t(
+											'disposition.nodeEditor.addMissingChildrenAria'
+										)}
+									>
+										<IconHierarchy3 size={12} />
+									</ActionIcon>
+									<Badge
+										size='xs'
+										variant='filled'
+										color='blue'
+										// inline-style-allow: absolute badge overlay with pixel offsets; no Mantine prop covers this positioning pattern
+										style={{
+											position: 'absolute',
+											top: -5,
+											right: -5,
+											minWidth: 14,
+											padding: '0 2px',
+											fontSize: 9,
+											lineHeight: '14px',
+											pointerEvents: 'none',
+										}}
+									>
+										{missingChildrenCount}
+									</Badge>
+								</Box>
 							</Tooltip>
 						) : null}
 
@@ -320,6 +417,8 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 							onPopulateChildren={onPopulateChildren}
 							onAddMissingSiblings={onAddMissingSiblings}
 							catalogNodes={catalogNodes}
+							collapseAllKey={collapseAllKey}
+							expandAllKey={expandAllKey}
 						/>
 					))
 				: null}

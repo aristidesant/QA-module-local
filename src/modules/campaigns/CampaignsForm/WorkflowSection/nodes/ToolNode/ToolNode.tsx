@@ -1,15 +1,12 @@
 import { memo, useMemo } from 'react';
 import type { NodeProps } from '@xyflow/react';
-import type { WorkflowNodeType } from '../../nodeTypes';
 import { useTranslation } from 'react-i18next';
 import { IconTool } from '@tabler/icons-react';
 import type { ToolNode as ToolNodeModel } from '~/models/AgentWorkflowModel';
 import { useTools } from '~/queries/toolQueries';
-import WorkflowNodeActions from '../../WorkflowNodeActions';
 import WorkflowNodeDrawer from '../../WorkflowNodeDrawer';
 import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
-import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
 import { useNodeStyle } from '../../NodeStylesContext';
@@ -18,7 +15,6 @@ import styles from './ToolNode.module.css';
 
 const ToolNodeComponent = (props: NodeProps) => {
 	const nodeData = props.data as unknown as ToolNodeModel;
-	const nodeType = (props.type ?? nodeData.type) as WorkflowNodeType;
 	const { t } = useTranslation([
 		'campaign.form.workflow',
 		'campaign.form.agents',
@@ -51,16 +47,7 @@ const ToolNodeComponent = (props: NodeProps) => {
 
 	return (
 		<>
-			<WorkflowNodeWrapper
-				{...props}
-				sideActions={
-					<WorkflowNodeActions
-						nodeId={props.id}
-						nodeData={props.data as WorkflowNodeData}
-						nodeType={nodeType}
-					/>
-				}
-			>
+			<WorkflowNodeWrapper {...props}>
 				<div
 					className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}
 					style={nodeSurfaceStyle}

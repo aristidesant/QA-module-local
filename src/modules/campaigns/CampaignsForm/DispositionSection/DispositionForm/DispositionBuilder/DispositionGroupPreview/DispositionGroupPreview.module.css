@@ -96,8 +96,8 @@
 }
 
 .statIconPrimary {
-	background: var(--mantine-color-blue-0);
-	color: var(--mantine-color-blue-6);
+	background: var(--mantine-color-green-0);
+	color: var(--mantine-color-green-6);
 }
 
 .statIconSuccess {
@@ -136,7 +136,6 @@
 	padding: var(--mantine-spacing-md);
 	margin-left: calc(var(--indent-level) * 16px);
 	border: 1px solid var(--disposition-border);
-	border-left: 4px solid var(--disposition-border-strong);
 	border-radius: var(--mantine-radius-lg);
 	background: linear-gradient(
 		180deg,
@@ -150,55 +149,6 @@
 	);
 	box-shadow: var(--mantine-shadow-sm);
 	overflow: hidden;
-}
-
-.nodeCard::before {
-	content: '';
-	position: absolute;
-	inset: 12px auto 12px 12px;
-	width: 4px;
-	border-radius: 999px;
-	background: var(--node-rail, var(--mantine-color-blue-4));
-}
-
-.nodeCard::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-	background: linear-gradient(
-		135deg,
-		color-mix(in srgb, var(--node-tint, transparent) 26%, transparent) 0%,
-		transparent 42%
-	);
-	pointer-events: none;
-}
-
-.nodeCard[data-tone='effective'] {
-	--node-rail: var(--mantine-color-green-6);
-	--node-tint: color-mix(
-		in srgb,
-		var(--mantine-color-green-4) 14%,
-		transparent
-	);
-}
-
-.nodeCard[data-tone='noEffective'] {
-	--node-rail: var(--mantine-color-orange-6);
-	--node-tint: color-mix(
-		in srgb,
-		var(--mantine-color-orange-4) 14%,
-		transparent
-	);
-}
-
-.nodeCard[data-tone='noContact'] {
-	--node-rail: var(--mantine-color-red-6);
-	--node-tint: color-mix(in srgb, var(--mantine-color-red-4) 14%, transparent);
-}
-
-.nodeCard[data-tone='default'] {
-	--node-rail: var(--mantine-color-blue-5);
-	--node-tint: color-mix(in srgb, var(--mantine-color-blue-4) 12%, transparent);
 }
 
 .nodeCardRoot {
@@ -243,84 +193,73 @@
 }
 
 .nodeCard.effective {
-	border-left-color: light-dark(
-		var(--mantine-color-green-6),
+	border-color: light-dark(
+		var(--mantine-color-green-3),
 		var(--mantine-color-green-7)
 	);
-	background: linear-gradient(
-		180deg,
+	background: light-dark(
 		color-mix(
-				in srgb,
-				var(--mantine-color-green-0) 72%,
-				var(--disposition-surface)
-			)
-			0%,
+			in srgb,
+			var(--mantine-color-green-0) 60%,
+			var(--disposition-surface)
+		),
 		color-mix(
-				in srgb,
-				var(--disposition-surface) 78%,
-				var(--mantine-color-green-9)
-			)
-			100%
+			in srgb,
+			var(--mantine-color-green-9) 10%,
+			var(--disposition-surface)
+		)
 	);
 }
 
 .nodeCard.noEffective {
-	border-left-color: light-dark(
-		var(--mantine-color-orange-6),
+	border-color: light-dark(
+		var(--mantine-color-orange-3),
 		var(--mantine-color-orange-7)
 	);
-	background: linear-gradient(
-		180deg,
+	background: light-dark(
 		color-mix(
-				in srgb,
-				var(--mantine-color-orange-0) 72%,
-				var(--disposition-surface)
-			)
-			0%,
+			in srgb,
+			var(--mantine-color-orange-0) 60%,
+			var(--disposition-surface)
+		),
 		color-mix(
-				in srgb,
-				var(--disposition-surface) 78%,
-				var(--mantine-color-orange-9)
-			)
-			100%
+			in srgb,
+			var(--mantine-color-orange-9) 10%,
+			var(--disposition-surface)
+		)
 	);
 }
 
 .nodeCard.noContact {
-	border-left-color: light-dark(
-		var(--mantine-color-red-6),
+	border-color: light-dark(
+		var(--mantine-color-red-3),
 		var(--mantine-color-red-7)
 	);
-	background: linear-gradient(
-		180deg,
+	background: light-dark(
 		color-mix(
-				in srgb,
-				var(--mantine-color-red-0) 72%,
-				var(--disposition-surface)
-			)
-			0%,
+			in srgb,
+			var(--mantine-color-red-0) 60%,
+			var(--disposition-surface)
+		),
 		color-mix(
-				in srgb,
-				var(--disposition-surface) 78%,
-				var(--mantine-color-red-9)
-			)
-			100%
+			in srgb,
+			var(--mantine-color-red-9) 10%,
+			var(--disposition-surface)
+		)
 	);
 }
 
 .nodeCard.default {
-	border-left-color: light-dark(
-		var(--mantine-color-blue-4),
-		var(--mantine-color-blue-7)
+	border-color: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
 	);
-	background: linear-gradient(
-		180deg,
-		var(--disposition-surface-soft) 0%,
+	background: light-dark(
+		var(--disposition-surface-soft),
 		color-mix(
-				in srgb,
-				var(--disposition-surface-soft) 84%,
-				var(--disposition-surface)
-			)
-			100%
+			in srgb,
+			var(--disposition-surface-soft) 84%,
+			var(--disposition-surface)
+		)
 	);
 }

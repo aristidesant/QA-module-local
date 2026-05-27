@@ -4,6 +4,7 @@ import {
 	useContext,
 	useEffect,
 	useMemo,
+	useRef,
 	useState,
 	type PropsWithChildren,
 } from 'react';
@@ -36,6 +37,10 @@ export const WorkflowNodeEditorProvider = ({
 	children,
 }: WorkflowNodeEditorProviderProps) => {
 	const [openedNodeId, setOpenedNodeId] = useState<string | null>(null);
+	// Ghost-click guard: Mantine's overlay fires onClose on mousedown, but the
+	// click event arrives a tick later and can land on a node surface beneath the
+	// overlay, re-opening the drawer. Block openNodeDrawer for 200 ms after close.
+	const closedAtRef = useRef<number>(0);
 
 	useEffect(() => {
 		if (openedNodeId && !workflow?.nodes?.[openedNodeId]) {
@@ -44,10 +49,12 @@ export const WorkflowNodeEditorProvider = ({
 	}, [openedNodeId, workflow?.nodes]);
 
 	const openNodeDrawer = useCallback((nodeId: string) => {
+		if (Date.now() - closedAtRef.current < 200) return;
 		setOpenedNodeId(nodeId);
 	}, []);
 
 	const closeNodeDrawer = useCallback(() => {
+		closedAtRef.current = Date.now();
 		setOpenedNodeId(null);
 	}, []);
 

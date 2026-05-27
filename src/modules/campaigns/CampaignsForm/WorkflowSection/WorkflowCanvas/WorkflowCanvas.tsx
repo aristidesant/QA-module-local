@@ -41,6 +41,9 @@ import {
 import type { BuildWorkflowResult } from './WorkflowCanvas.helpers';
 import type { NodeGroups } from '~/models/CampaignsModel';
 import { generateUUIDv4 } from '~/utils/uuidUtils';
+import WorkflowContextMenu from '../WorkflowContextMenu';
+import NodeStylePanel from '../NodeStylePanel';
+import { useWorkflowNodeEditor } from '../WorkflowNodeEditorContext';
 import styles from './WorkflowCanvas.module.css';
 
 interface WorkflowCanvasProps {
@@ -85,19 +88,27 @@ const WorkflowCanvasInner = ({
 		useState<ReactFlowInstance | null>(null);
 	const [modalOpened, setModalOpened] = useState(false);
 	const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
-	const [selectedEdgeActionId, setSelectedEdgeActionId] = useState<
-		string | null
-	>(null);
+	const [contextMenu, setContextMenu] = useState<{
+		x: number;
+		y: number;
+		nodeId?: string;
+		edgeId?: string;
+	} | null>(null);
+	const [stylePanel, setStylePanel] = useState<{
+		nodeId: string;
+		nodeLabel: string;
+		x: number;
+		y: number;
+	} | null>(null);
 	const nodesRef = useRef<Node[]>(nodes);
 	const edgesRef = useRef<Edge[]>(edges);
 	const isDraggingRef = useRef(false);
+	const { openNodeDrawer } = useWorkflowNodeEditor();
 
 	nodesRef.current = nodes;
 	edgesRef.current = edges;
 
-	const closeEdgeActions = useCallback(() => {
-		setSelectedEdgeActionId(null);
-	}, []);
+	const noop = useCallback(() => {}, []);
 
 	const removeEdgeFromSourceNode = useCallback(
 		(currentNodes: Node[], edgeToRemove: Pick<Edge, 'id' | 'source'>): Node[] =>
@@ -125,18 +136,59 @@ const WorkflowCanvasInner = ({
 		[]
 	);
 
-	const handleOpenEdgeModal = useCallback(
-		(edgeId: string) => {
-			closeEdgeActions();
-			setSelectedEdgeId(edgeId);
-			setModalOpened(true);
-		},
-		[closeEdgeActions]
-	);
+	const handleOpenEdgeModal = useCallback((edgeId: string) => {
+		setSelectedEdgeId(edgeId);
+		setModalOpened(true);
+	}, []);
 
 	const handleCloseModal = useCallback(() => {
 		setModalOpened(false);
 		setSelectedEdgeId(null);
+	}, []);
+
+	const handleNodeOpen = useCallback(
+		(nodeId: string) => {
+			setContextMenu(null);
+			openNodeDrawer(nodeId);
+			onNodeSelect?.(nodeId);
+		},
+		[openNodeDrawer, onNodeSelect]
+	);
+
+	const handleNodeContextMenu = useCallback(
+		(event: React.MouseEvent, node: Node) => {
+			event.preventDefault();
+			setContextMenu({ x: event.clientX, y: event.clientY, nodeId: node.id });
+		},
+		[]
+	);
+
+	const handleEdgeContextMenu = useCallback(
+		(edgeId: string, pos: { x: number; y: number }) => {
+			setContextMenu({ x: pos.x, y: pos.y, edgeId });
+		},
+		[]
+	);
+
+	const handleCloseContextMenu = useCallback(() => {
+		setContextMenu(null);
+	}, []);
+
+	const handleStyleClick = useCallback(
+		(nodeId: string, nodeLabel: string) => {
+			setContextMenu(null);
+			setStylePanel({
+				nodeId,
+				nodeLabel,
+				x: contextMenu?.x ?? 100,
+				y: contextMenu?.y ?? 100,
+			});
+		},
+		[contextMenu]
+	);
+
+	const handleCloseStylePanel = useCallback(() => {
+		setStylePanel(null);
 	}, []);
 
 	const validateConnection = useCallback(
@@ -301,7 +353,7 @@ const WorkflowCanvasInner = ({
 
 			edgeReconnectSuccessful.current = true;
 
-			closeEdgeActions();
+			noop();
 			setNodes((currentNodes) => {
 				if (oldEdge.source === newConnection.source) {
 					return currentNodes;
@@ -339,13 +391,7 @@ const WorkflowCanvasInner = ({
 				})
 			);
 		},
-		[
-			closeEdgeActions,
-			removeEdgeFromSourceNode,
-			setEdges,
-			setNodes,
-			validateConnection,
-		]
+		[noop, removeEdgeFromSourceNode, setEdges, setNodes, validateConnection]
 	);
 
 	const handleReconnectEnd = useCallback(
@@ -364,7 +410,7 @@ const WorkflowCanvasInner = ({
 			);
 
 			if (removedEdgeIds.size > 0) {
-				closeEdgeActions();
+				noop();
 				setNodes((currentNodes) =>
 					currentNodes.map((node) => {
 						const data = node.data as { edgeOrder?: string[] };
@@ -390,12 +436,12 @@ const WorkflowCanvasInner = ({
 
 			setEdges((currentEdges) => applyEdgeChanges(changes, currentEdges));
 		},
-		[closeEdgeActions, setEdges, setNodes]
+		[noop, setEdges, setNodes]
 	);
 
 	const handleDeleteEdge = useCallback(
 		(edgeId: string) => {
-			closeEdgeActions();
+			noop();
 			setModalOpened(false);
 			setSelectedEdgeId((currentEdgeId) =>
 				currentEdgeId === edgeId ? null : currentEdgeId
@@ -411,7 +457,7 @@ const WorkflowCanvasInner = ({
 				currentEdges.filter((edge) => edge.id !== edgeId)
 			);
 		},
-		[closeEdgeActions, removeEdgeFromSourceNode, setEdges, setNodes]
+		[noop, removeEdgeFromSourceNode, setEdges, setNodes]
 	);
 
 	const handleConnect = useCallback(
@@ -424,7 +470,7 @@ const WorkflowCanvasInner = ({
 			)
 				return;
 
-			closeEdgeActions();
+			noop();
 
 			const sourceNode = nodesRef.current.find(
 				(node) => node.id === connection.source
@@ -440,9 +486,7 @@ const WorkflowCanvasInner = ({
 						sourceNodeType: WORKFLOW_NODE_TYPES.START,
 					}
 				: {
-						label: t('form.workflow.edge.notConfigured', {
-							defaultValue: 'Not configured',
-						}),
+						label: null,
 						sourceNodeType: sourceNode?.type,
 					};
 			const nextEdge: Edge = {
@@ -511,7 +555,7 @@ const WorkflowCanvasInner = ({
 				return [...currentEdges, nextEdge];
 			});
 		},
-		[closeEdgeActions, setEdges, setNodes, t, validateConnection]
+		[noop, setEdges, setNodes, t, validateConnection]
 	);
 
 	const handleGroupSelectedNodes = useCallback(() => {
@@ -928,7 +972,7 @@ const WorkflowCanvasInner = ({
 				parentNodeId: string,
 				parentPosition: { x: number; y: number }
 			) => {
-				closeEdgeActions();
+				noop();
 				return handleAddNode(parentNodeId, parentPosition);
 			},
 			addNodeWithType: (
@@ -936,7 +980,7 @@ const WorkflowCanvasInner = ({
 				parentPosition: { x: number; y: number },
 				nodeType: WorkflowNodeType
 			) => {
-				closeEdgeActions();
+				noop();
 				return handleAddNodeWithType(parentNodeId, parentPosition, nodeType);
 			},
 			addNodeWithVariant: (
@@ -944,11 +988,11 @@ const WorkflowCanvasInner = ({
 				parentPosition: { x: number; y: number },
 				payload: AddNodeVariantPayload
 			) => {
-				closeEdgeActions();
+				noop();
 				return handleAddNodeWithVariant(parentNodeId, parentPosition, payload);
 			},
 			deleteNode: (nodeId: string) => {
-				closeEdgeActions();
+				noop();
 				setModalOpened(false);
 				setSelectedEdgeId(null);
 
@@ -993,16 +1037,13 @@ const WorkflowCanvasInner = ({
 				handleDeleteNode(nodeId);
 			},
 			copyNode: (nodeId: string) => {
-				closeEdgeActions();
+				noop();
 				handleCopyNode(nodeId);
 			},
 			openEdge: handleOpenEdgeModal,
 			deleteEdge: handleDeleteEdge,
-			toggleEdgeActions: (edgeId: string) =>
-				setSelectedEdgeActionId((currentEdgeId) =>
-					currentEdgeId === edgeId ? null : edgeId
-				),
-			clearEdgeActions: closeEdgeActions,
+			openEdgeContextMenu: handleEdgeContextMenu,
+			clearEdgeActions: noop,
 			groupSelectedNodes: handleGroupSelectedNodes,
 			ungroupNodes: handleUngroupNodes,
 			addNodeToGroup: handleAddNodeToGroup,
@@ -1012,16 +1053,16 @@ const WorkflowCanvasInner = ({
 				nodeType: WorkflowNodeType,
 				variant?: 'transfer' | 'subagent'
 			) => {
-				closeEdgeActions();
+				noop();
 				return handleAddNewNodeToGroup(groupNodeId, nodeType, variant);
 			},
 			addExistingNodeToGroup: (groupNodeId: string, existingNodeId: string) => {
-				closeEdgeActions();
+				noop();
 				handleAddExistingNodeToGroup(groupNodeId, existingNodeId);
 			},
 		}),
 		[
-			closeEdgeActions,
+			noop,
 			edgesRef,
 			handleAddNode,
 			handleAddNodeWithType,
@@ -1029,6 +1070,7 @@ const WorkflowCanvasInner = ({
 			handleCopyNode,
 			handleDeleteEdge,
 			handleDeleteNode,
+			handleEdgeContextMenu,
 			handleGroupSelectedNodes,
 			handleOpenEdgeModal,
 			handleUngroupNodes,
@@ -1043,11 +1085,7 @@ const WorkflowCanvasInner = ({
 	);
 
 	return (
-		<WorkflowCanvasActionsProvider
-			actions={actions}
-			selectedEdgeActionId={selectedEdgeActionId}
-			onSelectedEdgeActionChange={setSelectedEdgeActionId}
-		>
+		<WorkflowCanvasActionsProvider actions={actions}>
 			<div
 				className={`${styles.canvas} ${
 					layoutMode === 'fullscreen'
@@ -1066,8 +1104,9 @@ const WorkflowCanvasInner = ({
 					onReconnect={handleReconnect}
 					onReconnectStart={handleReconnectStart}
 					onReconnectEnd={handleReconnectEnd}
-					onNodeSelect={onNodeSelect}
-					onCanvasClick={closeEdgeActions}
+					onNodeOpen={handleNodeOpen}
+					onNodeContextMenu={handleNodeContextMenu}
+					onCanvasClick={handleCloseContextMenu}
 					onNodeDragStart={handleNodeDragStart}
 					onNodeDragStop={handleNodeDragStop}
 					onInit={setReactFlowInstance}
@@ -1085,6 +1124,25 @@ const WorkflowCanvasInner = ({
 				onClose={handleCloseModal}
 				onSave={handleSaveEdgeCondition}
 			/>
+			{contextMenu && (
+				<WorkflowContextMenu
+					x={contextMenu.x}
+					y={contextMenu.y}
+					nodeId={contextMenu.nodeId}
+					edgeId={contextMenu.edgeId}
+					onClose={handleCloseContextMenu}
+					onStyleClick={handleStyleClick}
+				/>
+			)}
+			{stylePanel && (
+				<NodeStylePanel
+					nodeId={stylePanel.nodeId}
+					nodeLabel={stylePanel.nodeLabel}
+					x={stylePanel.x}
+					y={stylePanel.y}
+					onClose={handleCloseStylePanel}
+				/>
+			)}
 		</WorkflowCanvasActionsProvider>
 	);
 };
