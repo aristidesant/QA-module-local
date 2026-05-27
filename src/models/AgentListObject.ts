@@ -1,5 +1,6 @@
 import type { Voice } from './AgentVoiceModel';
 import type { AgentWorkflow } from './AgentWorkflowModel';
+import type { CampaignAgentWorkflowUi } from './CampaignAgentModel';
 import type {
 	BackupLlmConfig,
 	SuggestedAudioTag,
@@ -15,6 +16,7 @@ export default interface AgentListObject {
 	clientId: number;
 	userId: number;
 	language: string;
+	workflowUi?: CampaignAgentWorkflowUi | null;
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: string | null;

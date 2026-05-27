@@ -103,11 +103,11 @@ const WorkflowSection = () => {
 
 		setLocalWorkflow(selectedAgent?.config?.workflow);
 		setLocalNodeStyles(
-			selectedCampaignAgent.workflowUi?.nodeStyles ??
+			selectedAgent?.workflowUi?.nodeStyles ??
 				(selectedCampaignAgent.isPrincipal ? form.values.nodeStyles : undefined)
 		);
 		setLocalNodeGroups(
-			selectedCampaignAgent.workflowUi?.nodeGroups ??
+			selectedAgent?.workflowUi?.nodeGroups ??
 				(selectedCampaignAgent.isPrincipal ? form.values.nodeGroups : undefined)
 		);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
