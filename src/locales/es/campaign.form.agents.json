@@ -1,4 +1,29 @@
 {
+	"agentDetail": {
+		"page": {
+			"title": "Detalle del agente",
+			"description": "Revisa y actualiza el prompt, la configuración, el workflow y los ajustes avanzados del agente asignado."
+		},
+		"tabs": {
+			"setup": "Configuración",
+			"workflow": "Workflow",
+			"advanced": "Avanzado"
+		},
+		"save": "Guardar agente",
+		"saving": "Guardando...",
+		"breadcrumb": {
+			"back": "Volver a la campaña"
+		},
+		"advanced": {
+			"tools": "Herramientas",
+			"systemTools": "Herramientas del sistema",
+			"knowledgeBase": "Base de conocimiento",
+			"asrKeywords": "Keywords ASR",
+			"dynamicVariables": "Variables dinámicas",
+			"dictionary": "Diccionario",
+			"noiseCancellation": "Cancelación de ruido"
+		}
+	},
 	"form": {
 		"agent": {
 			"add": {
@@ -23,10 +48,29 @@
 				"cloneAction": "Clonar"
 			},
 			"list": {
+				"title": "Agentes de la campana",
+				"description": "Selecciona un agente para editar su prompt o workflow.",
+				"loading": "Cargando agentes...",
 				"addAgent": "Agregar Agente",
 				"addAgentTitle": "Agregar Agente a la Campaña",
+				"openAgentAria": "Abrir agente {{name}}",
+				"selected": "Seleccionado",
+				"language": "Idioma: {{language}}",
+				"noLanguage": "Idioma no disponible",
+				"loadError": "Error al cargar los agentes de la campana",
+				"loadErrorDesc": "Hubo un error al cargar la lista de agentes. Por favor, inténtalo de nuevo.",
+				"tryAgain": "Intentar de nuevo",
 				"noAgents": "No hay agentes asignados",
 				"noAgentsDesc": "Esta campaña no tiene agentes asignados."
+			},
+			"detail": {
+				"back": "Volver a agentes",
+				"loading": "Cargando datos del agente...",
+				"missingAgent": "El agente seleccionado ya no esta disponible.",
+				"tabs": {
+					"agents": "Agentes",
+					"workflow": "Workflow"
+				}
 			},
 			"selector": {
 				"label": "Agente asignado",

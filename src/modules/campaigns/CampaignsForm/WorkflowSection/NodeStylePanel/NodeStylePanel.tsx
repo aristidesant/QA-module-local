@@ -13,8 +13,8 @@ import {
 import { IconRefresh } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { NodeStyle } from '~/models/CampaignsModel';
-import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import { useWorkflowNodeIcons } from '~/queries/workflowNodeIconsQuery';
+import { useNodeStylesController } from '../NodeStylesContext';
 import {
 	NODE_COLOR_PALETTE,
 	WORKFLOW_ICON_REGISTRY,
@@ -38,7 +38,7 @@ const NodeStylePanel = ({
 }: NodeStylePanelProps) => {
 	const { t } = useTranslation(['campaign.form.workflow', 'common']);
 	const panelRef = useRef<HTMLDivElement>(null);
-	const form = useCampaignFormContext();
+	const { nodeStyles, onNodeStylesChange } = useNodeStylesController();
 
 	useEffect(() => {
 		let active = false;
@@ -64,7 +64,7 @@ const NodeStylePanel = ({
 	}, [onClose]);
 	const { data: allowedIconKeys = [] } = useWorkflowNodeIcons();
 
-	const currentStyles: NodeStyle | undefined = form.values.nodeStyles?.[nodeId];
+	const currentStyles: NodeStyle | undefined = nodeStyles?.[nodeId];
 
 	// Clamp to viewport
 	const PANEL_W = 280;
@@ -76,44 +76,44 @@ const NodeStylePanel = ({
 
 	const handleColorSelect = useCallback(
 		(color: string) => {
-			const prev = form.values.nodeStyles ?? {};
+			const prev = nodeStyles ?? {};
 			const nodeStyle: NodeStyle = {
 				...(prev[nodeId] ?? { backgroundColor: color }),
 				nodeLabel,
 				backgroundColor: color,
 			};
-			form.setFieldValue('nodeStyles', { ...prev, [nodeId]: nodeStyle });
+			onNodeStylesChange?.({ ...prev, [nodeId]: nodeStyle });
 		},
-		[form, nodeId, nodeLabel]
+		[nodeStyles, nodeId, nodeLabel, onNodeStylesChange]
 	);
 
 	const handleIconSelect = useCallback(
 		(iconKey: string) => {
-			const prev = form.values.nodeStyles ?? {};
+			const prev = nodeStyles ?? {};
 			const existing = prev[nodeId];
 			const nodeStyle: NodeStyle = existing?.backgroundColor
 				? { ...existing, nodeLabel, iconName: iconKey }
 				: { ...existing, nodeLabel, iconName: iconKey, backgroundColor: '' };
 			if (!nodeStyle.backgroundColor) {
 				const { backgroundColor: _bg, ...rest } = nodeStyle;
-				form.setFieldValue('nodeStyles', {
+				onNodeStylesChange?.({
 					...prev,
 					[nodeId]: rest as NodeStyle,
 				});
 				return;
 			}
-			form.setFieldValue('nodeStyles', { ...prev, [nodeId]: nodeStyle });
+			onNodeStylesChange?.({ ...prev, [nodeId]: nodeStyle });
 		},
-		[form, nodeId, nodeLabel]
+		[nodeStyles, nodeId, nodeLabel, onNodeStylesChange]
 	);
 
 	const handleReset = useCallback(() => {
-		const prev = form.values.nodeStyles ?? {};
+		const prev = nodeStyles ?? {};
 		const next = { ...prev };
 		delete next[nodeId];
-		form.setFieldValue('nodeStyles', next);
+		onNodeStylesChange?.(next);
 		onClose();
-	}, [form, nodeId, onClose]);
+	}, [nodeStyles, nodeId, onNodeStylesChange, onClose]);
 
 	const iconItems = useMemo(
 		() =>

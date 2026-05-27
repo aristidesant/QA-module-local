@@ -21,6 +21,7 @@ import type {
 	ReactFlowInstance,
 } from '@xyflow/react';
 import WorkflowNodeSearch from '../../WorkflowNodeSearch';
+import { isWorkflowMultiSelectClick } from '../../utils/workflowSelectionUtils';
 import SelectionToolbar from '../SelectionToolbar';
 
 const NON_EDITABLE_NODE_TYPES = ['start', 'end'];
@@ -105,12 +106,16 @@ const FlowView = ({
 			onNodeDragStop={() => {
 				onNodeDragStop?.();
 			}}
-			onNodeClick={(_, node) => {
+			onNodeClick={(event, node) => {
 				onCanvasClick?.();
 				if (wasDraggedRef.current) {
 					wasDraggedRef.current = false;
 					return;
 				}
+				if (isWorkflowMultiSelectClick(event)) {
+					return;
+				}
+				if (node.type === 'group') return;
 				if (NON_EDITABLE_NODE_TYPES.includes(node.type ?? '')) return;
 				onNodeOpen?.(node.id);
 			}}
@@ -133,6 +138,7 @@ const FlowView = ({
 			panOnDrag={[0]}
 			selectionOnDrag={false}
 			selectionMode={SelectionMode.Partial}
+			multiSelectionKeyCode={['Meta', 'Control']}
 			className={flowClassName}
 		>
 			<Background

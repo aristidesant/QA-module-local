@@ -279,6 +279,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 	const getLabelClassName = (): string => {
 		const classes = [
 			styles.label,
+			styles.labelClickable,
 			shouldUseDirectionalLabel ? styles.labelStructured : '',
 		];
 		return classes.filter(Boolean).join(' ');
@@ -304,17 +305,14 @@ const ConditionEdge: FC<EdgeProps> = ({
 				markerEnd={endMarker}
 				className={styles.visibleEdge}
 			/>
-			{/* Interaction path rendered last (higher SVG z-order) so it reliably
-			    catches all clicks and right-clicks across the full 20px hit area,
-			    including on the visible stroke below. */}
+			{/* Transparent wide path kept for hover cursor only — clicks are
+			    handled by the EdgeLabelRenderer label divs below. */}
 			<path
 				d={edgePath}
 				fill='none'
 				stroke='transparent'
 				strokeWidth={20}
-				className={styles.edgeInteraction}
-				onClick={handleEdgeClick}
-				onContextMenu={handleEdgeContextMenu}
+				className={`${styles.edgeInteraction} ${styles.edgeInteractionDisabled}`}
 			/>
 			{/* Warning icon for incomplete edges */}
 			{isIncomplete && !suppressLabel && (
@@ -325,6 +323,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 							transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, -50%)`,
 						}}
 						onClick={handleEdgeClick}
+						onContextMenu={handleEdgeContextMenu}
 					>
 						<IconAlertTriangle size={16} stroke={1.5} />
 					</div>
@@ -335,18 +334,20 @@ const ConditionEdge: FC<EdgeProps> = ({
 			{hasNoCondition && !suppressLabel && (
 				<EdgeLabelRenderer>
 					<div
-						className={styles.noneLabel}
+						className={`${styles.noneLabel} ${styles.labelClickable}`}
 						// inline-style-allow: EdgeLabelRenderer requires runtime transform coordinates derived from edge geometry
 						style={{
 							transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, -50%)`,
 						}}
+						onClick={handleEdgeClick}
+						onContextMenu={handleEdgeContextMenu}
 					>
 						{t('form.workflow.edge.noneLabel', { defaultValue: 'None' })}
 					</div>
 				</EdgeLabelRenderer>
 			)}
-			{/* Label for configured edges — labels are display-only; the line's
-			    interaction path is the click target */}
+			{/* Label for configured edges — click/right-click on the label
+			    opens the drawer / context menu respectively. */}
 			{!suppressLabel &&
 				!hasNoCondition &&
 				!isIncomplete &&
@@ -358,6 +359,8 @@ const ConditionEdge: FC<EdgeProps> = ({
 								zIndex: 160,
 								transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, -50%)`,
 							}}
+							onClick={handleEdgeClick}
+							onContextMenu={handleEdgeContextMenu}
 						>
 							{hasStructuredLabel ? (
 								<div className={styles.labelStack}>

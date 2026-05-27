@@ -1,5 +1,4 @@
-import { memo, useMemo } from 'react';
-import type { CSSProperties } from 'react';
+import { memo } from 'react';
 import type { NodeProps } from '@xyflow/react';
 import { Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +12,7 @@ import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
 import { useNodeStyle } from '../../NodeStylesContext';
 import { useWorkflowNodeEditor } from '../../WorkflowNodeEditorContext';
 import { useWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
+import { isWorkflowMultiSelectClick } from '../../utils/workflowSelectionUtils';
 import { normalizeUpdateStateUpdates } from '../../utils/updateStateUtils';
 import styles from './UpdateStateNode.module.css';
 
@@ -36,29 +36,6 @@ const UpdateStateNodeComponent = (props: NodeProps) => {
 	const baseStyle = useWorkflowNodeToneStyle(
 		nodeData.label || fallbackLabel,
 		persistedStyle
-	);
-
-	const nodeSurfaceStyle = useMemo<CSSProperties>(
-		() => ({
-			...baseStyle,
-			'--workflow-node-accent': 'var(--mantine-color-cyan-4)',
-			'--workflow-node-selected-border': 'var(--mantine-color-cyan-4)',
-			'--workflow-node-selected-ring': 'rgba(34, 211, 238, 0.18)',
-			'--workflow-node-header-bg': 'rgba(8, 47, 73, 0.82)',
-			'--workflow-node-surface': 'rgba(8, 15, 23, 0.96)',
-			'--workflow-node-surface-selected': 'rgba(15, 23, 42, 0.98)',
-			'--workflow-node-body-bg': 'rgba(8, 15, 23, 0.96)',
-			'--workflow-node-panel-bg': 'rgba(8, 15, 23, 0.96)',
-			'--workflow-node-panel-border': 'rgba(34, 211, 238, 0.18)',
-			'--workflow-node-chip-bg': 'rgba(15, 23, 42, 0.8)',
-			'--workflow-node-chip-border': 'rgba(34, 211, 238, 0.18)',
-			'--workflow-node-chip-text': 'var(--mantine-color-cyan-1)',
-			'--workflow-node-icon-bg': 'rgba(15, 23, 42, 0.88)',
-			'--workflow-node-icon-border': 'rgba(34, 211, 238, 0.22)',
-			'--workflow-node-header-text': 'var(--mantine-color-gray-0)',
-			'--workflow-node-header-subtext': 'var(--mantine-color-cyan-2)',
-		}),
-		[baseStyle]
 	);
 
 	const updates = normalizeUpdateStateUpdates(nodeData.updates);
@@ -98,11 +75,14 @@ const UpdateStateNodeComponent = (props: NodeProps) => {
 	return (
 		<>
 			<WorkflowNodeWrapper {...props}>
-				{/* inline-style-allow: per-node CSS variables are derived dynamically from persisted node tones. */}
 				<div
 					className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}
-					style={nodeSurfaceStyle}
-					onClick={handleOpenDrawer}
+					// inline-style-allow: per-node CSS variables are derived dynamically from persisted node tones.
+					style={baseStyle}
+					onClick={(event) => {
+						if (isWorkflowMultiSelectClick(event)) return;
+						handleOpenDrawer();
+					}}
 					role='button'
 					tabIndex={0}
 					onKeyDown={(event) => {

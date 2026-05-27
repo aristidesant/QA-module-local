@@ -1,0 +1,20 @@
+{
+	"id": "a12f1233",
+	"phase": "variants_ready",
+	"pageUrl": "/login",
+	"sourceFile": "index.html",
+	"expectedVariants": 2,
+	"arrivedVariants": 0,
+	"visibleVariant": 0,
+	"paramValues": {},
+	"pendingEventSeq": null,
+	"pendingEvent": null,
+	"deliveryLease": null,
+	"checkpointRevision": 1,
+	"activeOwner": "057027f4",
+	"sourceMarkers": {},
+	"fallbackMode": null,
+	"annotationArtifacts": [],
+	"diagnostics": [],
+	"updatedAt": "2026-05-27T15:22:23.359Z"
+}

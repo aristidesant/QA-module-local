@@ -19,13 +19,18 @@ import {
 	useUpdateCampaignAgentConfig,
 } from '~/queries/campaignAgentsQueries';
 import CampaignAgentSelector from '../components/CampaignAgentSelector';
-import WorkflowSubagentActions from './WorkflowSubagentActions';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
 import '@xyflow/react/dist/style.css';
 import styles from './WorkflowSection.module.css';
 
-const WorkflowSection = () => {
+interface WorkflowSectionProps {
+	showAgentSelector?: boolean;
+}
+
+const WorkflowSection = ({
+	showAgentSelector = true,
+}: WorkflowSectionProps) => {
 	const { t } = useTranslation([
 		'campaign.form.workflow',
 		'campaign.form.agents',
@@ -100,14 +105,8 @@ const WorkflowSection = () => {
 		}
 
 		setLocalWorkflow(selectedAgent?.config?.workflow);
-		setLocalNodeStyles(
-			selectedAgent?.workflowUi?.nodeStyles ??
-				(selectedCampaignAgent.isPrincipal ? form.values.nodeStyles : undefined)
-		);
-		setLocalNodeGroups(
-			selectedAgent?.workflowUi?.nodeGroups ??
-				(selectedCampaignAgent.isPrincipal ? form.values.nodeGroups : undefined)
-		);
+		setLocalNodeStyles(selectedAgent?.workflowUi?.nodeStyles ?? {});
+		setLocalNodeGroups(selectedAgent?.workflowUi?.nodeGroups ?? {});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [selectedAgent?.id, selectedCampaignAgent?.id, usesCampaignAgentConfig]);
 
@@ -216,6 +215,7 @@ const WorkflowSection = () => {
 				updateData: {
 					workflow,
 					workflowUi: {
+						...(selectedAgent?.workflowUi ?? {}),
 						nodeStyles: nodeStyles ?? {},
 						nodeGroups: nodeGroups ?? {},
 					},
@@ -237,8 +237,16 @@ const WorkflowSection = () => {
 		void nodeId;
 	}, []);
 
+	const nodeStylesController = useMemo(
+		() => ({
+			nodeStyles,
+			onNodeStylesChange: handleNodeStylesChange,
+		}),
+		[nodeStyles, handleNodeStylesChange]
+	);
+
 	return (
-		<NodeStylesProvider value={nodeStyles}>
+		<NodeStylesProvider value={nodeStylesController}>
 			<WorkflowNodeEditorProvider
 				workflow={workflow}
 				onWorkflowChange={handleWorkflowChange}
@@ -265,43 +273,56 @@ const WorkflowSection = () => {
 						padding='sm'
 						onExpand={() => setIsEditorExpanded(true)}
 						headerExtras={
-							<Group gap='xs' align='center' className={styles.headerControls}>
-								<WorkflowSubagentActions
-									selectedCampaignAgentId={selectedCampaignAgentId}
-								/>
+							<div className={styles.headerControls}>
+								<Group
+									gap='xs'
+									align='center'
+									className={styles.headerActionGroup}
+								>
+									<WorkflowClipboardActions
+										workflow={workflow}
+										onWorkflowChange={handleWorkflowChange}
+										fallbackPreventSubagentLoops={preventSubagentLoops}
+										nodeStyles={nodeStyles}
+										nodeGroups={nodeGroups}
+										onNodeStylesChange={handleNodeStylesChange}
+										onNodeGroupsChange={handleNodeGroupsChange}
+									/>
+									<Checkbox
+										size='sm'
+										label={t('form.workflow.header.preventLoops')}
+										checked={preventSubagentLoops}
+										onChange={(event) =>
+											handlePreventLoopsChange(event.currentTarget.checked)
+										}
+									/>
+								</Group>
+
 								{usesCampaignAgentConfig && (
-									<Button
-										size='xs'
-										variant='light'
-										onClick={handleSaveWorkflow}
-										loading={updateCampaignAgentConfig.isPending}
-									>
-										{updateCampaignAgentConfig.isPending
-											? t('form.workflow.header.saving')
-											: t('form.workflow.header.save')}
-									</Button>
+									<>
+										<div className={styles.headerDivider} />
+										<Group
+											gap='xs'
+											align='center'
+											className={styles.headerActionGroup}
+										>
+											<Button
+												size='xs'
+												variant='light'
+												onClick={handleSaveWorkflow}
+												loading={updateCampaignAgentConfig.isPending}
+											>
+												{updateCampaignAgentConfig.isPending
+													? t('form.workflow.header.saving')
+													: t('form.workflow.header.save')}
+											</Button>
+										</Group>
+									</>
 								)}
-								<Checkbox
-									size='sm'
-									label={t('form.workflow.header.preventLoops')}
-									checked={preventSubagentLoops}
-									onChange={(event) =>
-										handlePreventLoopsChange(event.currentTarget.checked)
-									}
-								/>
-								<WorkflowClipboardActions
-									workflow={workflow}
-									onWorkflowChange={handleWorkflowChange}
-									fallbackPreventSubagentLoops={preventSubagentLoops}
-									nodeStyles={nodeStyles}
-									nodeGroups={nodeGroups}
-									onNodeStylesChange={handleNodeStylesChange}
-									onNodeGroupsChange={handleNodeGroupsChange}
-								/>
-							</Group>
+							</div>
 						}
 					>
-						{sortedCampaignAgents.length > 1 && (
+						{showAgentSelector && sortedCampaignAgents.length > 1 && (
 							<CampaignAgentSelector
 								agents={sortedCampaignAgents}
 								value={selectedCampaignAgentId}

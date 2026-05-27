@@ -42,7 +42,6 @@ import GeneralSection from './GeneralSection/GeneralSection';
 import SectionCard from '~/components/SectionCard';
 import ParametersSection from './ParametersSection';
 import AnalyticsSection from './AnalyticsSection';
-import WorkflowSection from './WorkflowSection/WorkflowSection';
 import AgentSection from './AgentSection';
 import AgentSaveReviewModal from './AgentSaveReviewModal';
 import DispositionSection from './DispositionSection';
@@ -54,7 +53,6 @@ import { IconEye, IconFlask } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 import FormSaveButton from '~/components/FormSaveButton';
 import CampaignSyncButton from './components/CampaignSyncButton';
-import AgentSectionRightPanel from './AgentSection/AgentSectionRightPanel';
 import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
 import AppDrawer from '~/components/AppDrawer';
 import DashboardSection from './DashboardSection';
@@ -80,7 +78,6 @@ interface CampaignsFormProps {
 const campaignFormTabNamespaces: Record<string, string> = {
 	general: 'campaign.form.general',
 	agents: 'campaign.form.agents',
-	workflow: 'campaign.form.workflow',
 	outcomes: 'campaign.form.outcomes',
 	'do-not-call': 'campaign.form.do-not-call',
 	params: 'campaign.form.params',
@@ -284,12 +281,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		defaultValue: 'Saving...',
 	});
 
-	// Check if we have the workflow data ready for existing campaigns
-	const isNewCampaign = !campaign?.id;
-	const hasWorkflowData =
-		Boolean(selectedAgent?.config?.workflow?.nodes) &&
-		Object.keys(selectedAgent?.config?.workflow?.nodes ?? {}).length > 0;
-	const isDataReady = isNewCampaign || hasWorkflowData;
 	const campaignRoleIds = React.useMemo(
 		() => (campaignRoles ?? []).map((role) => role.id),
 		[campaignRoles]
@@ -514,8 +505,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	const settingsDrawerContent =
 		selectedTab === 'general' ? (
 			<GeneralSectionRightPanel />
-		) : selectedTab === 'agents' ? (
-			<AgentSectionRightPanel />
 		) : selectedTab === 'outcomes' ? (
 			rightComponent
 		) : null;
@@ -715,7 +704,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			>
 				<CampaignFormProvider form={form}>
 					<ContentContainer
-						contentWidth={selectedTab === 'workflow' ? 'full' : 'centered'}
+						contentWidth='centered'
 						onBackClick={() => {
 							resetView();
 							onBack?.();
@@ -816,59 +805,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 									/>
 								</form>
 							)}
-							{selectedTab === 'agents' && (
-								<form
-									onSubmit={form.onSubmit((values) => {
-										if (isVersioningEnabled) {
-											setPendingAgentValues(values);
-											setReviewModalOpen(true);
-										} else {
-											void handleSubmit(values);
-										}
-									})}
-								>
-									<AgentSection onOpenSettings={openSettingsDrawer} />
-									<StickySaveActions
-										label={saveLabel}
-										loadingLabel={savingLabel}
-										isLoading={isUpdating}
-										disabled={!form.isDirty()}
-									/>
-								</form>
-							)}
-							{selectedTab === 'workflow' && (
-								<>
-									{!isDataReady && campaign?.id ? (
-										<SectionCard
-											title={t('form.workflow.section.title')}
-											description={t('form.workflow.loadingDescription', {
-												defaultValue: 'Loading workflow data...',
-											})}
-										>
-											<LoadingOverlay visible />
-										</SectionCard>
-									) : (
-										<form
-											onSubmit={form.onSubmit((values) => {
-												if (isVersioningEnabled) {
-													setPendingAgentValues(values);
-													setReviewModalOpen(true);
-												} else {
-													void handleSubmit(values);
-												}
-											})}
-										>
-											<WorkflowSection />
-											<StickySaveActions
-												label={saveLabel}
-												loadingLabel={savingLabel}
-												isLoading={isUpdating}
-												disabled={!form.isDirty()}
-											/>
-										</form>
-									)}
-								</>
-							)}
+							{selectedTab === 'agents' && <AgentSection />}
 							{selectedTab === 'outcomes' && <DispositionSection />}
 							{selectedTab === 'do-not-call' && (
 								<DoNotCallSection campaignId={campaign?.id} />

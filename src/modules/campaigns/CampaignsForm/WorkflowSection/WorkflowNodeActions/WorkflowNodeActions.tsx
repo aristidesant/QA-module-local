@@ -21,6 +21,7 @@ import { useWorkflowNodeEditor } from '../WorkflowNodeEditorContext';
 import { useWorkflowCanvasActions } from '../WorkflowCanvas/WorkflowCanvasActionsContext';
 import type { WorkflowNodeData } from '../WorkflowNode/WorkflowNodeTypes';
 import NodeStylePopover from '../NodeStylePopover';
+import { isWorkflowMultiSelectClick } from '../utils/workflowSelectionUtils';
 import styles from './WorkflowNodeActions.module.css';
 
 interface WorkflowNodeActionsProps {
@@ -182,7 +183,10 @@ const WorkflowNodeActions = ({
 										handleAddNodeWithVariant(item.type, item.variant);
 									} else {
 										const newNodeId = handleAddNodeWithType(item.type);
-										if (item.type === WORKFLOW_NODE_TYPES.UPDATE_STATE && newNodeId) {
+										if (
+											item.type === WORKFLOW_NODE_TYPES.UPDATE_STATE &&
+											newNodeId
+										) {
 											openNodeDrawer(newNodeId);
 										}
 									}
@@ -205,9 +209,14 @@ const WorkflowNodeActions = ({
 						title={t('form.workflow.actions.add')}
 						onClick={
 							isStartNode
-								? () =>
-										handleAddNodeWithType(WORKFLOW_NODE_TYPES.STANDALONE_AGENT)
-								: handleAddClick
+								? (event) => {
+										if (isWorkflowMultiSelectClick(event)) return;
+										handleAddNodeWithType(WORKFLOW_NODE_TYPES.STANDALONE_AGENT);
+									}
+								: (event) => {
+										if (isWorkflowMultiSelectClick(event)) return;
+										handleAddClick();
+									}
 						}
 						className={`${styles.actionButton} ${styles.actionButtonPrimary}`}
 					>
@@ -225,7 +234,8 @@ const WorkflowNodeActions = ({
 						variant='light'
 						color='gray'
 						radius='sm'
-						onClick={() => {
+						onClick={(event) => {
+							if (isWorkflowMultiSelectClick(event)) return;
 							clearEdgeActions();
 							openNodeDrawer(nodeId);
 						}}
@@ -246,7 +256,10 @@ const WorkflowNodeActions = ({
 						variant='light'
 						color='gray'
 						radius='sm'
-						onClick={() => copyNode(nodeId)}
+						onClick={(event) => {
+							if (isWorkflowMultiSelectClick(event)) return;
+							copyNode(nodeId);
+						}}
 						className={styles.actionButton}
 					>
 						<IconCopy size={13} />
@@ -264,7 +277,10 @@ const WorkflowNodeActions = ({
 						variant='light'
 						color='red'
 						radius='sm'
-						onClick={() => deleteNode(nodeId)}
+						onClick={(event) => {
+							if (isWorkflowMultiSelectClick(event)) return;
+							deleteNode(nodeId);
+						}}
 						className={`${styles.actionButton} ${styles.actionButtonDanger}`}
 					>
 						<IconTrash size={13} />

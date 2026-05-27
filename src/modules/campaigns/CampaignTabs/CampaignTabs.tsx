@@ -5,7 +5,6 @@ import {
 	IconGalaxy,
 	IconGitBranch,
 	IconMicrophone,
-	IconRoute,
 	IconUser,
 	IconList,
 	IconLayoutDashboard,
@@ -39,9 +38,6 @@ const CampaignTabs = ({ hasVoicesTab = false }: CampaignTabsProps) => {
 			<Tabs.List>
 				<Tabs.Tab leftSection={<IconUser />} value='agents'>
 					{t('tabs.agents')}
-				</Tabs.Tab>
-				<Tabs.Tab leftSection={<IconRoute />} value='workflow'>
-					{t('tabs.workflow')}
 				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconList />} value='outcomes'>
 					{dispositionLabel(t('tabs.outcomes'))}

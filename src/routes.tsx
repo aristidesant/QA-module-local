@@ -106,6 +106,9 @@ const CampaignTestPage = React.lazy(
 const CampaignViewPage = React.lazy(
 	() => import('./modules/campaigns/CampaignViewPage/CampaignViewPage')
 );
+const AgentDetailPage = React.lazy(
+	() => import('./modules/campaigns/AgentDetailPage/AgentDetailPage')
+);
 
 const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
@@ -234,6 +237,17 @@ const router = createBrowserRouter([
 									<I18nNamespaceLoader>
 										<Suspense fallback={<SuspenseFallback />}>
 											<CampaignEditorPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
+							},
+							{
+								path: 'agent/:campaignAgentId',
+								id: 'campaign.detail.agent',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense fallback={<SuspenseFallback />}>
+											<AgentDetailPage />
 										</Suspense>
 									</I18nNamespaceLoader>
 								),

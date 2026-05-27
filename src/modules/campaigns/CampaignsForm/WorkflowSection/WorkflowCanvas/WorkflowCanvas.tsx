@@ -601,7 +601,7 @@ const WorkflowCanvasInner = ({
 				label: '',
 				edgeOrder: [],
 			},
-			selectable: true,
+			selectable: false,
 			focusable: true,
 			dragHandle: undefined,
 		};

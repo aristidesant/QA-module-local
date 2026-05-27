@@ -1,4 +1,29 @@
 {
+	"agentDetail": {
+		"page": {
+			"title": "Agent detail",
+			"description": "Review and update the assigned agent prompt, configuration, workflow, and advanced settings."
+		},
+		"tabs": {
+			"setup": "Setup",
+			"workflow": "Workflow",
+			"advanced": "Advanced"
+		},
+		"save": "Save agent",
+		"saving": "Saving...",
+		"breadcrumb": {
+			"back": "Back to campaign"
+		},
+		"advanced": {
+			"tools": "Tools",
+			"systemTools": "System Tools",
+			"knowledgeBase": "Knowledge Base",
+			"asrKeywords": "ASR Keywords",
+			"dynamicVariables": "Dynamic Variables",
+			"dictionary": "Dictionary",
+			"noiseCancellation": "Noise Cancellation"
+		}
+	},
 	"form": {
 		"agent": {
 			"add": {
@@ -23,10 +48,29 @@
 				"cloneAction": "Clone"
 			},
 			"list": {
+				"title": "Campaign agents",
+				"description": "Select an agent to edit its prompt or workflow.",
+				"loading": "Loading agents...",
 				"addAgent": "Add Agent",
 				"addAgentTitle": "Add Agent to Campaign",
+				"openAgentAria": "Open agent {{name}}",
+				"selected": "Selected",
+				"language": "Language: {{language}}",
+				"noLanguage": "Language not available",
+				"loadError": "Failed to load campaign agents",
+				"loadErrorDesc": "There was an error loading the agents list. Please try again.",
+				"tryAgain": "Try again",
 				"noAgents": "No Agents Assigned",
 				"noAgentsDesc": "This campaign has no agents assigned."
+			},
+			"detail": {
+				"back": "Back to agents",
+				"loading": "Loading agent data...",
+				"missingAgent": "The selected agent is no longer available.",
+				"tabs": {
+					"agents": "Agents",
+					"workflow": "Workflow"
+				}
 			},
 			"selector": {
 				"label": "Assigned agent",

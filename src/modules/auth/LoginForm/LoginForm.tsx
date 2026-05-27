@@ -17,7 +17,6 @@ import {
 	IconEye,
 	IconEyeOff,
 	IconArrowRight,
-	IconShieldCheck,
 	IconSun,
 	IconMoon,
 	IconDeviceDesktop,
@@ -36,7 +35,6 @@ import ForgotPasswordModal from './ForgotPasswordModal';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useColorSchemeStore } from '~/stores/colorSchemeStore';
-import LanguagePicker from '~/components/LanguagePicker';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 
 type LoginType = 'USER_PASS' | 'LDAP';
@@ -51,7 +49,7 @@ export function LoginForm() {
 	const loginMutation = useLogin();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { t } = useTranslation('auth');
+	const { t, i18n } = useTranslation('auth');
 	const { setToken, setUser, setTargetClient } = useSessionStore();
 	const { setPendingCredentials, clearPendingCredentials } =
 		usePasswordResetStore();
@@ -179,19 +177,17 @@ export function LoginForm() {
 		{
 			label: t('loginType.credentials'),
 			value: 'USER_PASS' as const,
-			leftSection: <IconUser size={16} stroke={1.5} />,
 		},
 		{
 			label: t('loginType.ldap'),
 			value: 'LDAP' as const,
-			leftSection: <IconShieldCheck size={16} stroke={1.5} />,
 		},
 	];
 
 	const themeOptions = [
-		{ label: <IconSun size={15} stroke={1.5} />, value: 'light' },
-		{ label: <IconMoon size={15} stroke={1.5} />, value: 'dark' },
-		{ label: <IconDeviceDesktop size={15} stroke={1.5} />, value: 'auto' },
+		{ label: <IconSun size={15} />, value: 'light' },
+		{ label: <IconMoon size={15} />, value: 'dark' },
+		{ label: <IconDeviceDesktop size={15} />, value: 'auto' },
 	];
 
 	const handleOTPSuccess = () => {
@@ -222,165 +218,11 @@ export function LoginForm() {
 					className={classes.formRoot}
 					onSubmit={form.onSubmit(handleSubmit, handleValidationFailure)}
 					aria-busy={isLoading}
+					aria-label={t('actions.signIn')}
 				>
 					<div className={classes.contentGrid}>
 						{/* LEFT: Brand panel */}
-						<section
-							className={classes.brandPanel}
-							aria-label='Newtech Unified CXM'
-						>
-							<svg
-								className={classes.nodeMotif}
-								viewBox='0 0 300 720'
-								fill='none'
-								xmlns='http://www.w3.org/2000/svg'
-								aria-hidden='true'
-								preserveAspectRatio='xMidYMid slice'
-							>
-								<line
-									x1='40'
-									y1='110'
-									x2='160'
-									y2='200'
-									stroke='rgba(255,255,255,0.10)'
-									strokeWidth='1'
-								/>
-								<line
-									x1='160'
-									y1='200'
-									x2='255'
-									y2='130'
-									stroke='rgba(255,255,255,0.10)'
-									strokeWidth='1'
-								/>
-								<line
-									x1='160'
-									y1='200'
-									x2='120'
-									y2='340'
-									stroke='rgba(255,255,255,0.11)'
-									strokeWidth='1'
-								/>
-								<line
-									x1='120'
-									y1='340'
-									x2='230'
-									y2='420'
-									stroke='rgba(255,255,255,0.09)'
-									strokeWidth='1'
-								/>
-								<line
-									x1='255'
-									y1='130'
-									x2='280'
-									y2='280'
-									stroke='rgba(255,255,255,0.07)'
-									strokeWidth='1'
-								/>
-								<line
-									x1='280'
-									y1='280'
-									x2='230'
-									y2='420'
-									stroke='rgba(255,255,255,0.09)'
-									strokeWidth='1'
-								/>
-								<line
-									x1='28'
-									y1='390'
-									x2='120'
-									y2='340'
-									stroke='rgba(255,255,255,0.07)'
-									strokeWidth='1'
-								/>
-								<line
-									x1='28'
-									y1='390'
-									x2='75'
-									y2='520'
-									stroke='rgba(255,255,255,0.07)'
-									strokeWidth='1'
-								/>
-								<line
-									x1='230'
-									y1='420'
-									x2='255'
-									y2='555'
-									stroke='rgba(255,255,255,0.07)'
-									strokeWidth='1'
-								/>
-								<line
-									x1='18'
-									y1='210'
-									x2='40'
-									y2='110'
-									stroke='rgba(255,255,255,0.06)'
-									strokeWidth='1'
-								/>
-								<line
-									x1='75'
-									y1='520'
-									x2='140'
-									y2='630'
-									stroke='rgba(255,255,255,0.05)'
-									strokeWidth='1'
-								/>
-								<line
-									x1='255'
-									y1='555'
-									x2='195'
-									y2='645'
-									stroke='rgba(255,255,255,0.05)'
-									strokeWidth='1'
-								/>
-								<circle
-									cx='160'
-									cy='200'
-									r='7'
-									fill='rgba(255,255,255,0.16)'
-									stroke='rgba(255,255,255,0.28)'
-									strokeWidth='1.5'
-								/>
-								<circle
-									cx='230'
-									cy='420'
-									r='6'
-									fill='rgba(255,255,255,0.14)'
-									stroke='rgba(255,255,255,0.22)'
-									strokeWidth='1.5'
-								/>
-								<circle
-									cx='40'
-									cy='110'
-									r='4.5'
-									fill='rgba(255,255,255,0.13)'
-								/>
-								<circle cx='255' cy='130' r='4' fill='rgba(255,255,255,0.12)' />
-								<circle cx='120' cy='340' r='5' fill='rgba(255,255,255,0.13)' />
-								<circle
-									cx='280'
-									cy='280'
-									r='3.5'
-									fill='rgba(255,255,255,0.10)'
-								/>
-								<circle
-									cx='28'
-									cy='390'
-									r='3.5'
-									fill='rgba(255,255,255,0.10)'
-								/>
-								<circle cx='75' cy='520' r='4' fill='rgba(255,255,255,0.10)' />
-								<circle
-									cx='255'
-									cy='555'
-									r='3.5'
-									fill='rgba(255,255,255,0.08)'
-								/>
-								<circle cx='140' cy='630' r='3' fill='rgba(255,255,255,0.07)' />
-								<circle cx='195' cy='645' r='3' fill='rgba(255,255,255,0.06)' />
-								<circle cx='18' cy='210' r='3' fill='rgba(255,255,255,0.08)' />
-							</svg>
-
+						<section className={classes.brandPanel}>
 							<div className={classes.brandContent}>
 								<div className={classes.brandIdentity}>
 									<img
@@ -399,17 +241,11 @@ export function LoginForm() {
 								</div>
 
 								<div className={classes.brandMessage}>
-									<div className={classes.brandRule} />
 									<p className={classes.brandTagline}>{t('subtitle')}</p>
 								</div>
 							</div>
 
-							<div className={classes.brandFooter}>
-								<IconShieldCheck size={13} stroke={1.5} aria-hidden='true' />
-								<span className={classes.brandSecureText}>
-									{t('secureConnection')}
-								</span>
-							</div>
+							<Text className={classes.brandVersion}>v{APP_VERSION}</Text>
 						</section>
 
 						{/* RIGHT: Form panel */}
@@ -425,19 +261,6 @@ export function LoginForm() {
 								</div>
 							)}
 
-							<div className={classes.formSettingsBar}>
-								<LanguagePicker variant='default' size='xs' />
-								<AppSegmentedControl
-									aria-label={t('theme.label')}
-									value={preference}
-									onChange={(value) =>
-										setPreference(value as 'light' | 'dark' | 'auto')
-									}
-									data={themeOptions}
-									size='xs'
-								/>
-							</div>
-
 							<div className={classes.formStack}>
 								{logoutReason === 'expired' && (
 									<Alert
@@ -451,103 +274,101 @@ export function LoginForm() {
 									</Alert>
 								)}
 
-								<div className={classes.formHeadingBlock}>
+								<div className={classes.formHeadingGroup}>
 									<Title order={2} className={classes.formHeading}>
 										{t('welcomeBack')}
 									</Title>
-								</div>
 
-								<AppSegmentedControl
-									aria-label={t('loginType.label')}
-									value={form.values.loginType}
-									onChange={handleLoginTypeChange}
-									data={loginTypeOptions}
-									size='sm'
-									fullWidth
-								/>
-
-								<div className={classes.fields}>
-									<TextInput
-										required
-										label={t('username.label')}
-										placeholder={
-											form.values.loginType === 'USER_PASS'
-												? t('username.placeholder')
-												: t('username.ldapPlaceholder')
-										}
-										leftSection={
-											<IconUser className={classes.inputIcon} stroke={1.5} />
-										}
-										leftSectionPointerEvents='none'
-										classNames={{
-											input: classes.input,
-											root: classes.inputRoot,
-											label: classes.inputLabel,
-										}}
-										{...usernameInputProps}
-										onChange={(event) => {
-											clearFormError();
-											usernameInputProps.onChange(event);
-										}}
-										onKeyDown={handleFieldKeyDown}
-										name='username'
-										autoComplete='username'
-										autoFocus
-									/>
-
-									<PasswordInput
-										required
-										label={t('password.label')}
-										placeholder={t('password.placeholder')}
-										leftSection={
-											<IconLock className={classes.inputIcon} stroke={1.5} />
-										}
-										leftSectionPointerEvents='none'
-										visibilityToggleIcon={({ reveal }) =>
-											reveal ? (
-												<IconEyeOff size={18} stroke={1.5} />
-											) : (
-												<IconEye size={18} stroke={1.5} />
-											)
-										}
-										classNames={{
-											input: classes.input,
-											root: classes.inputRoot,
-											label: classes.inputLabel,
-											visibilityToggle: classes.visibilityToggle,
-										}}
-										{...passwordInputProps}
-										onChange={(event) => {
-											clearFormError();
-											passwordInputProps.onChange(event);
-										}}
-										onKeyDown={handleFieldKeyDown}
-										visibilityToggleButtonProps={{
-											'aria-label': passwordVisible
-												? t('password.visibility.hide')
-												: t('password.visibility.show'),
-										}}
-										visible={passwordVisible}
-										onVisibilityChange={setPasswordVisible}
-										name='password'
-										autoComplete='current-password'
-										aria-describedby={
-											formError ? 'login-form-error' : undefined
-										}
-									/>
-								</div>
-
-								<Group justify='flex-end'>
-									<Anchor
-										component='button'
-										type='button'
+									<AppSegmentedControl
+										aria-label={t('loginType.label')}
+										value={form.values.loginType}
+										onChange={handleLoginTypeChange}
+										data={loginTypeOptions}
 										size='sm'
-										className={classes.forgotPasswordLink}
-										onClick={() => setForgotPasswordModalOpened(true)}
-									>
-										{t('forgotPassword')}
-									</Anchor>
-								</Group>
+										fullWidth
+									/>
+								</div>
+
+								<div className={classes.formSection}>
+									<div className={classes.fields}>
+										<TextInput
+											required
+											label={t('username.label')}
+											placeholder={
+												form.values.loginType === 'USER_PASS'
+													? t('username.placeholder')
+													: t('username.ldapPlaceholder')
+											}
+											leftSection={<IconUser size={18} />}
+											leftSectionPointerEvents='none'
+											classNames={{
+												input: classes.input,
+												root: classes.inputRoot,
+												label: classes.inputLabel,
+											}}
+											{...usernameInputProps}
+											onChange={(event) => {
+												clearFormError();
+												usernameInputProps.onChange(event);
+											}}
+											onKeyDown={handleFieldKeyDown}
+											name='username'
+											autoComplete='username'
+											autoFocus
+										/>
+
+										<PasswordInput
+											required
+											label={t('password.label')}
+											placeholder={t('password.placeholder')}
+											leftSection={<IconLock size={18} />}
+											leftSectionPointerEvents='none'
+											visibilityToggleIcon={({ reveal }) =>
+												reveal ? (
+													<IconEyeOff size={16} />
+												) : (
+													<IconEye size={16} />
+												)
+											}
+											classNames={{
+												input: classes.input,
+												root: classes.inputRoot,
+												label: classes.inputLabel,
+												visibilityToggle: classes.visibilityToggle,
+											}}
+											{...passwordInputProps}
+											onChange={(event) => {
+												clearFormError();
+												passwordInputProps.onChange(event);
+											}}
+											onKeyDown={handleFieldKeyDown}
+											visibilityToggleButtonProps={{
+												'aria-label': passwordVisible
+													? t('password.visibility.hide')
+													: t('password.visibility.show'),
+											}}
+											visible={passwordVisible}
+											onVisibilityChange={setPasswordVisible}
+											name='password'
+											autoComplete='current-password'
+											aria-describedby={
+												formError ? 'login-form-error' : undefined
+											}
+										/>
+									</div>
+
+									<Group justify='flex-end'>
+										<Anchor
+											component='button'
+											type='button'
+											size='sm'
+											className={classes.forgotPasswordLink}
+											onClick={() => setForgotPasswordModalOpened(true)}
+										>
+											{t('forgotPassword')}
+										</Anchor>
+									</Group>
+								</div>
 
 								{formError && (
 									<Alert
@@ -562,7 +383,7 @@ export function LoginForm() {
 										tabIndex={-1}
 										ref={formErrorRef}
 									>
-										{formError === 'Unable to sign in'
+										{formError?.trim().toLowerCase() === 'unable to sign in'
 											? t('errors.unableToSignIn')
 											: formError}
 									</Alert>
@@ -582,7 +403,32 @@ export function LoginForm() {
 									{t('actions.signIn')}
 								</Button>
 
-								<Text className={classes.versionText}>v{APP_VERSION}</Text>
+								<div className={classes.formSettingsRow}>
+									<div className={classes.settingsControl}>
+										<AppSegmentedControl
+											aria-label='Language'
+											value={i18n.language?.split('-')[0] || 'en'}
+											onChange={(value: string) => i18n.changeLanguage(value)}
+											data={[
+												{ label: 'EN', value: 'en' },
+												{ label: 'ES', value: 'es' },
+											]}
+											size='xs'
+										/>
+									</div>
+									<div className={classes.settingsDivider} />
+									<div className={classes.settingsControl}>
+										<AppSegmentedControl
+											aria-label={t('theme.label')}
+											value={preference}
+											onChange={(value) =>
+												setPreference(value as 'light' | 'dark' | 'auto')
+											}
+											data={themeOptions}
+											size='xs'
+										/>
+									</div>
+								</div>
 							</div>
 						</section>
 					</div>

@@ -142,6 +142,10 @@
 	pointer-events: stroke;
 }
 
+.edgeInteractionDisabled {
+	pointer-events: none;
+}
+
 .noneLabel {
 	position: absolute;
 	display: inline-flex;
@@ -156,7 +160,8 @@
 	font-weight: 500;
 	letter-spacing: 0.03em;
 	text-transform: uppercase;
-	pointer-events: none;
+	pointer-events: auto;
+	cursor: pointer;
 	user-select: none;
 	opacity: 0.75;
 	z-index: 160;

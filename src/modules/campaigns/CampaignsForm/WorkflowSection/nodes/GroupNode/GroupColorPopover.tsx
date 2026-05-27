@@ -1,4 +1,9 @@
-import { useCallback } from 'react';
+import {
+	cloneElement,
+	isValidElement,
+	useCallback,
+	type ReactElement,
+} from 'react';
 import {
 	ActionIcon,
 	ColorSwatch,
@@ -20,6 +25,7 @@ import styles from './GroupColorPopover.module.css';
 interface GroupColorPopoverProps {
 	nodeId: string;
 	currentColor?: string;
+	trigger?: ReactElement;
 }
 
 /**
@@ -30,6 +36,7 @@ interface GroupColorPopoverProps {
 const GroupColorPopover = ({
 	nodeId,
 	currentColor,
+	trigger,
 }: GroupColorPopoverProps) => {
 	const [opened, { toggle, close }] = useDisclosure(false);
 	const { t } = useTranslation(['campaign.form.workflow', 'common']);
@@ -66,21 +73,36 @@ const GroupColorPopover = ({
 			width={240}
 		>
 			<Popover.Target>
-				<Tooltip label={t('form.workflow.nodeStyle.customize')} withArrow>
-					<ActionIcon
-						size='sm'
-						variant='light'
-						color='gray'
-						radius='sm'
-						onClick={(e) => {
+				{trigger && isValidElement(trigger) ? (
+					cloneElement(trigger as ReactElement<any>, {
+						onClick: (e: React.MouseEvent) => {
 							e.stopPropagation();
 							toggle();
-						}}
-						className={styles.triggerButton}
-					>
-						<IconPalette size={13} />
-					</ActionIcon>
-				</Tooltip>
+							const originalOnClick = (
+								trigger as ReactElement<{
+									onClick?: (event: React.MouseEvent) => void;
+								}>
+							).props.onClick;
+							originalOnClick?.(e);
+						},
+					})
+				) : (
+					<Tooltip label={t('form.workflow.nodeStyle.customize')} withArrow>
+						<ActionIcon
+							size='sm'
+							variant='light'
+							color='gray'
+							radius='sm'
+							onClick={(e) => {
+								e.stopPropagation();
+								toggle();
+							}}
+							className={styles.triggerButton}
+						>
+							<IconPalette size={13} />
+						</ActionIcon>
+					</Tooltip>
+				)}
 			</Popover.Target>
 
 			<Popover.Dropdown
