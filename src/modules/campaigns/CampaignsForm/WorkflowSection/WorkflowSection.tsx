@@ -10,6 +10,7 @@ import { WorkflowNodeEditorProvider } from './WorkflowNodeEditorContext';
 import { NodeStylesProvider } from './NodeStylesContext';
 import WorkflowNodeLegend from './WorkflowNodeLegend';
 import {
+	useCampaignAgentEditor,
 	useCampaignFormContext,
 	useCampaignId,
 } from '../../campaignFormFunctions';
@@ -17,8 +18,8 @@ import {
 	useGetCampaignAgents,
 	useUpdateCampaignAgentConfig,
 } from '~/queries/campaignAgentsQueries';
-import { useGetAgent } from '~/queries/agentQueries';
 import CampaignAgentSelector from '../components/CampaignAgentSelector';
+import WorkflowSubagentActions from './WorkflowSubagentActions';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
 import '@xyflow/react/dist/style.css';
@@ -32,11 +33,14 @@ const WorkflowSection = () => {
 	]);
 	const form = useCampaignFormContext();
 	const campaignId = useCampaignId();
+	const {
+		selectedCampaignAgentId,
+		setSelectedCampaignAgentId,
+		selectedCampaignAgent,
+		selectedAgent,
+	} = useCampaignAgentEditor();
 	const { data: campaignAgents } = useGetCampaignAgents(campaignId || 0);
 	const updateCampaignAgentConfig = useUpdateCampaignAgentConfig();
-	const [selectedCampaignAgentId, setSelectedCampaignAgentId] = useState<
-		number | null
-	>(null);
 	const [isEditorExpanded, setIsEditorExpanded] = useState(false);
 	const [localWorkflow, setLocalWorkflow] = useState<
 		AgentWorkflow | undefined
@@ -55,12 +59,6 @@ const WorkflowSection = () => {
 				return a.agentType.localeCompare(b.agentType);
 			}),
 		[campaignAgents]
-	);
-	const selectedCampaignAgent = sortedCampaignAgents.find(
-		(agent) => agent.id === selectedCampaignAgentId
-	);
-	const { data: selectedAgent } = useGetAgent(
-		selectedCampaignAgent?.agentId ?? ''
 	);
 	const usesCampaignAgentConfig = Boolean(campaignId && selectedCampaignAgent);
 	const workflow = usesCampaignAgentConfig
@@ -268,6 +266,9 @@ const WorkflowSection = () => {
 						onExpand={() => setIsEditorExpanded(true)}
 						headerExtras={
 							<Group gap='xs' align='center' className={styles.headerControls}>
+								<WorkflowSubagentActions
+									selectedCampaignAgentId={selectedCampaignAgentId}
+								/>
 								{usesCampaignAgentConfig && (
 									<Button
 										size='xs'

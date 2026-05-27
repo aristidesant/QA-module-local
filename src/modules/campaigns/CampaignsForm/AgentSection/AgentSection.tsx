@@ -1,16 +1,16 @@
 import { Button, Group, Stack } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import CampaignAgentSelector from '../components/CampaignAgentSelector';
 import CampaignConfigurationBasic from './CampaignConfigurationBasic/CampaignConfigurationBasic';
 import CampaignConfigurationPrompt from './CampaignConfigurationPrompt/CampaignConfigurationPrompt';
 import CampaignConfigurationPredefinedParams from './CampaignConfigurationPredefinedParams';
 import {
+	useCampaignAgentEditor,
 	useCampaignFormContext,
 	useCampaignId,
 } from '../../campaignFormFunctions';
-import { useGetAgent } from '~/queries/agentQueries';
 import {
 	useGetCampaignAgents,
 	useUpdateCampaignAgentConfig,
@@ -24,11 +24,13 @@ const AgentSection: React.FC<AgentSectionProps> = ({ onOpenSettings }) => {
 	const { t } = useTranslation(['campaign.form.agents', 'common']);
 	const form = useCampaignFormContext();
 	const campaignId = useCampaignId();
+	const {
+		selectedCampaignAgentId,
+		setSelectedCampaignAgentId,
+		selectedCampaignAgent,
+	} = useCampaignAgentEditor();
 	const { data: campaignAgents } = useGetCampaignAgents(campaignId || 0);
 	const updateCampaignAgentConfig = useUpdateCampaignAgentConfig();
-	const [selectedCampaignAgentId, setSelectedCampaignAgentId] = useState<
-		number | null
-	>(null);
 
 	const sortedCampaignAgents = useMemo(
 		() =>
@@ -38,38 +40,7 @@ const AgentSection: React.FC<AgentSectionProps> = ({ onOpenSettings }) => {
 			}),
 		[campaignAgents]
 	);
-	const selectedCampaignAgent = sortedCampaignAgents.find(
-		(agent) => agent.id === selectedCampaignAgentId
-	);
-	const { data: selectedAgent } = useGetAgent(
-		selectedCampaignAgent?.agentId ?? ''
-	);
 	const usesCampaignAgentConfig = Boolean(campaignId && selectedCampaignAgent);
-
-	useEffect(() => {
-		if (sortedCampaignAgents.length === 0) {
-			setSelectedCampaignAgentId(null);
-			return;
-		}
-
-		const hasSelection = selectedCampaignAgentId
-			? sortedCampaignAgents.some(
-					(agent) => agent.id === selectedCampaignAgentId
-				)
-			: false;
-		if (!hasSelection) {
-			setSelectedCampaignAgentId(sortedCampaignAgents[0].id);
-		}
-	}, [selectedCampaignAgentId, sortedCampaignAgents]);
-
-	useEffect(() => {
-		if (!usesCampaignAgentConfig || !selectedAgent?.config) {
-			return;
-		}
-
-		form.setFieldValue('agentConfig', selectedAgent.config);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedAgent?.id, usesCampaignAgentConfig]);
 
 	const handleSaveAgent = async () => {
 		if (!campaignId || !selectedCampaignAgent) return;
