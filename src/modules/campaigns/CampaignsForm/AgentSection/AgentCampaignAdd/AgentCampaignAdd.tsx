@@ -53,10 +53,12 @@ export const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 		}),
 		[page, limit, debouncedSearch]
 	);
+	const agentTypeFilter =
+		selectedCampaign?.type === 'HYBRID' ? undefined : selectedCampaign?.type;
 
 	const { data, isLoading, isError, refetch } = useAgentsWithCampaigns({
 		...queryParams,
-		agentType: selectedCampaign?.type,
+		agentType: agentTypeFilter,
 	});
 
 	const tableData = useMemo(

@@ -384,7 +384,11 @@
 				"description": "Start connects to a Subagent. From there, add the next steps in the flow.",
 				"preventLoops": "Prevent subagent loops",
 				"agentLabel": "Agent",
-				"agentPlaceholder": "Select agent"
+				"agentPlaceholder": "Select agent",
+				"save": "Save workflow",
+				"saving": "Saving...",
+				"saved": "Workflow saved",
+				"saveError": "Failed to save workflow"
 			},
 			"layout": {
 				"label": "Layout",

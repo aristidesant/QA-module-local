@@ -38,6 +38,7 @@ import {
 	IconAlertCircle,
 	IconPhoneOutgoing,
 	IconPhoneIncoming,
+	IconArrowsExchange,
 } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import CampaignRoleVisibilitySelector from '~/modules/campaigns/components/CampaignRoleVisibilitySelector';
@@ -57,7 +58,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		'campaign.form.shared',
 		'common',
 	]);
-	type CampaignTypeValue = 'INBOUND' | 'OUTBOUND';
+	type CampaignTypeValue = 'INBOUND' | 'OUTBOUND' | 'HYBRID';
 
 	const {
 		campaignName,
@@ -114,15 +115,21 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			phoneNumberId: (value: number | null) =>
 				!value ? t('wizard.steps.general.validation.phoneIdRequired') : null,
 			defaultMaxWaves: (value: number, values) =>
-				values.campaignType === 'OUTBOUND' && (!value || value < 1)
+				(values.campaignType === 'OUTBOUND' ||
+					values.campaignType === 'HYBRID') &&
+				(!value || value < 1)
 					? t('wizard.steps.general.validation.wavesRequired')
 					: null,
 			defaultWaveExecutionDelaySeconds: (value: number, values) =>
-				values.campaignType === 'OUTBOUND' && value < 0
+				(values.campaignType === 'OUTBOUND' ||
+					values.campaignType === 'HYBRID') &&
+				value < 0
 					? t('wizard.steps.general.validation.waveDelayRequired')
 					: null,
 			objectiveId: (value: number | null, values) =>
-				values.campaignType === 'OUTBOUND' && !value
+				(values.campaignType === 'OUTBOUND' ||
+					values.campaignType === 'HYBRID') &&
+				!value
 					? t('wizard.steps.general.validation.objectiveRequired')
 					: null,
 			selectedVoiceIds: (value: string[]) =>
@@ -177,14 +184,18 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		const agentConfig: Record<string, unknown> = {};
 
 		if (values.phoneNumberId) {
-			if (values.campaignType === 'OUTBOUND') {
+			if (
+				values.campaignType === 'OUTBOUND' ||
+				values.campaignType === 'HYBRID'
+			) {
 				agentConfig.outboundPhoneNumberId = values.phoneNumberId;
 			} else if (values.campaignType === 'INBOUND') {
 				agentConfig.inboundPhoneNumberId = values.phoneNumberId;
 			}
 		}
 
-		const isOutboundType = values.campaignType === 'OUTBOUND';
+		const isOutboundType =
+			values.campaignType === 'OUTBOUND' || values.campaignType === 'HYBRID';
 
 		const dto: CreateCampaignWithAgentDTO = {
 			campaign: {
@@ -210,7 +221,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				},
 				platformSettings: {},
 				name: agentName,
-				type: values.campaignType,
+				type: values.campaignType === 'INBOUND' ? 'INBOUND' : 'OUTBOUND',
 				voiceId: defaultVoiceId,
 			},
 		};
@@ -278,7 +289,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 	};
 
 	const handleCampaignTypeChange = (value: string) => {
-		if (value !== 'INBOUND' && value !== 'OUTBOUND') return;
+		if (value !== 'INBOUND' && value !== 'OUTBOUND' && value !== 'HYBRID')
+			return;
 		const nextValue: CampaignTypeValue = value;
 		form.setFieldValue('campaignType', nextValue);
 		form.setFieldValue('phoneNumberId', null);
@@ -291,7 +303,9 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		setCampaignType(nextValue);
 	};
 
-	const isFormOutbound = form.values.campaignType === 'OUTBOUND';
+	const isFormOutbound =
+		form.values.campaignType === 'OUTBOUND' ||
+		form.values.campaignType === 'HYBRID';
 
 	return (
 		<>
@@ -340,6 +354,17 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 												<IconPhoneIncoming size={16} />
 												<span>
 													{t('wizard.steps.general.campaignTypeInbound')}
+												</span>
+											</Group>
+										),
+									},
+									{
+										value: 'HYBRID',
+										label: (
+											<Group gap={6} justify='center'>
+												<IconArrowsExchange size={16} />
+												<span>
+													{t('wizard.steps.general.campaignTypeHybrid')}
 												</span>
 											</Group>
 										),

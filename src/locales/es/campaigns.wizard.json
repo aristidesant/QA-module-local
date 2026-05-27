@@ -36,6 +36,7 @@
 				"campaignTypeDesc": "Elige cómo se enrutarán las llamadas.",
 				"campaignTypeOutbound": "Saliente",
 				"campaignTypeInbound": "Entrante",
+				"campaignTypeHybrid": "Hibrida",
 				"defaultWaves": "Oleadas Predeterminadas",
 				"defaultWavesDesc": "Cuántas oleadas debe ejecutar cada lista de contactos antes de detenerse",
 				"defaultWaveDelay": "Retraso predeterminado entre oleadas (segundos)",

@@ -150,7 +150,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 
 		// Add the appropriate phone number ID based on campaign type
 		if (selectedPhoneNumberId) {
-			if (campaignType === 'OUTBOUND') {
+			if (campaignType === 'OUTBOUND' || campaignType === 'HYBRID') {
 				agentConfig.outboundPhoneNumberId = selectedPhoneNumberId;
 			} else if (campaignType === 'INBOUND') {
 				agentConfig.inboundPhoneNumberId = selectedPhoneNumberId;
@@ -169,7 +169,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 			},
 			agent: {
 				...values.agent,
-				type: campaignType, // Use campaign type to ensure they match
+				type: campaignType === 'INBOUND' ? 'INBOUND' : 'OUTBOUND',
 				platformSettings: normalizedPlatformSettings,
 				conversationConfig: {
 					...normalizedConversationConfig,
@@ -244,6 +244,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 							data={[
 								{ value: 'INBOUND', label: t('columns.inbound') },
 								{ value: 'OUTBOUND', label: t('columns.outbound') },
+								{ value: 'HYBRID', label: t('columns.hybrid') },
 							]}
 							{...form.getInputProps('campaign.type')}
 							fullWidth
@@ -251,11 +252,11 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 								// Update both campaign and agent type to keep them in sync
 								form.setFieldValue(
 									'campaign.type',
-									value as 'INBOUND' | 'OUTBOUND'
+									value as 'INBOUND' | 'OUTBOUND' | 'HYBRID'
 								);
 								form.setFieldValue(
 									'agent.type',
-									value as 'INBOUND' | 'OUTBOUND'
+									value === 'INBOUND' ? 'INBOUND' : 'OUTBOUND'
 								);
 								// Reset phone number selection when type changes
 								setSelectedPhoneNumberId(null);

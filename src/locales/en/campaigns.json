@@ -52,6 +52,7 @@
 		"draft": "Draft",
 		"outbound": "Outbound",
 		"inbound": "Inbound",
+		"hybrid": "Hybrid",
 		"continueSetup": "Continue setup",
 		"moreActions": "More actions",
 		"actionsGroupManage": "Manage",

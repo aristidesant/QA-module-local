@@ -28,6 +28,34 @@
 				"noAgents": "No Agents Assigned",
 				"noAgentsDesc": "This campaign has no agents assigned."
 			},
+			"selector": {
+				"label": "Assigned agent",
+				"principal": "Principal",
+				"subagent": "Subagent",
+				"save": "Save agent",
+				"saving": "Saving...",
+				"saved": "Agent saved",
+				"saveError": "Failed to save agent"
+			},
+			"templates": {
+				"add": "Add subagent from template",
+				"save": "Save as template",
+				"modalTitle": "Add subagent from template",
+				"modalDescription": "Templates are filtered by this campaign objective.",
+				"templateLabel": "Template",
+				"templatePlaceholder": "Select a template",
+				"nameLabel": "Subagent name",
+				"namePlaceholder": "Leave blank to use template name",
+				"descriptionLabel": "Description",
+				"descriptionPlaceholder": "Describe this reusable subagent",
+				"empty": "No templates found for this objective.",
+				"create": "Add subagent",
+				"saveModalTitle": "Save subagent as template",
+				"templateNameLabel": "Template name",
+				"templateNamePlaceholder": "Enter a template name",
+				"created": "Subagent created",
+				"templateSaved": "Template saved"
+			},
 			"columns": {
 				"name": "Agent",
 				"type": "Type",

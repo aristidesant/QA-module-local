@@ -1,5 +1,12 @@
 import axios from 'axios';
-import type { CampaignAgent } from '../models/CampaignAgentModel';
+import type {
+	CampaignAgent,
+	CampaignAgentTransferTarget,
+	CreateCampaignAgentFromTemplatePayload,
+	CreateSubagentTemplateFromAgentPayload,
+	UpdateCampaignAgentConfigPayload,
+} from '../models/CampaignAgentModel';
+import type { SubagentTemplate } from '~/models/SubagentTemplateModel';
 import { DEFAULT_API_URL } from './config';
 
 /**
@@ -11,11 +18,12 @@ const campaignAgentsApi = (_authHeader?: Record<string, string>) => {
 		// ASSIGN agent to campaign
 		assignAgentToCampaign: async (
 			campaignId: number,
-			agentId: string
+			agentId: string,
+			isPrincipal?: boolean
 		): Promise<CampaignAgent> => {
 			const { data } = await axios.post<CampaignAgent>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/agents`,
-				{ agentId, campaignId }
+				{ agentId, campaignId, isPrincipal }
 			);
 			return data;
 		},
@@ -50,6 +58,52 @@ const campaignAgentsApi = (_authHeader?: Record<string, string>) => {
 			const { data } = await axios.patch<CampaignAgent>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/agents/${id}`,
 				updateData
+			);
+			return data;
+		},
+
+		updateCampaignAgentConfig: async (
+			campaignId: number,
+			id: number,
+			updateData: UpdateCampaignAgentConfigPayload
+		): Promise<CampaignAgent> => {
+			const { data } = await axios.patch<CampaignAgent>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/agents/${id}/config`,
+				updateData
+			);
+			return data;
+		},
+
+		getTransferTargets: async (
+			campaignId: number,
+			currentAgentId?: string
+		): Promise<CampaignAgentTransferTarget[]> => {
+			const { data } = await axios.get<CampaignAgentTransferTarget[]>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/agents/transfer-targets`,
+				{ params: { currentAgentId } }
+			);
+			return data;
+		},
+
+		createFromTemplate: async (
+			campaignId: number,
+			payload: CreateCampaignAgentFromTemplatePayload
+		): Promise<CampaignAgent> => {
+			const { data } = await axios.post<CampaignAgent>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/agents/from-template`,
+				payload
+			);
+			return data;
+		},
+
+		saveAsTemplate: async (
+			campaignId: number,
+			id: number,
+			payload: CreateSubagentTemplateFromAgentPayload
+		): Promise<SubagentTemplate> => {
+			const { data } = await axios.post<SubagentTemplate>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/agents/${id}/template`,
+				payload
 			);
 			return data;
 		},

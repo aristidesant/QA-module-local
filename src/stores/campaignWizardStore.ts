@@ -2,12 +2,14 @@ import { create } from 'zustand';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useCampaignsStore } from './campaignsStore';
 
+type CampaignWizardType = 'INBOUND' | 'OUTBOUND' | 'HYBRID';
+
 interface CampaignWizardState {
 	isWizardModalOpen: boolean;
 	activeStep: number;
 	campaignName: string;
 	description: string;
-	campaignType: 'INBOUND' | 'OUTBOUND';
+	campaignType: CampaignWizardType;
 	phoneNumberId: number | null;
 	objectiveId: number | null;
 	roleIds: number[];
@@ -34,7 +36,7 @@ interface CampaignWizardState {
 	prevStep: () => void;
 	setCampaignName: (name: string) => void;
 	setDescription: (description: string) => void;
-	setCampaignType: (type: 'INBOUND' | 'OUTBOUND') => void;
+	setCampaignType: (type: CampaignWizardType) => void;
 	setPhoneNumberId: (id: number | null) => void;
 	setObjectiveId: (id: number | null) => void;
 	setRoleIds: (ids: number[]) => void;

@@ -76,7 +76,7 @@ export interface CreateCampaignWithAgentDTO {
 		description: string;
 		budget?: number;
 		spent?: number;
-		type: 'OUTBOUND' | 'INBOUND';
+		type: 'OUTBOUND' | 'INBOUND' | 'HYBRID';
 		campaignExecutionType?: 'TIME_BASED' | 'CONTACT_BASED';
 		status?: string;
 		promptId?: number;
