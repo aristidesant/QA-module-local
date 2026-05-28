@@ -69,7 +69,7 @@ const WorkflowSection = ({
 	const workflow = usesCampaignAgentConfig
 		? localWorkflow
 		: form.values.agentConfig?.workflow;
-	const preventSubagentLoops = workflow?.preventSubagentLoops ?? false;
+	const prevent_subagent_loops = workflow?.prevent_subagent_loops ?? false;
 	const nodeStyles = usesCampaignAgentConfig
 		? localNodeStyles
 		: form.values.nodeStyles;
@@ -202,7 +202,7 @@ const WorkflowSection = ({
 	const handlePreventLoopsChange = (value: boolean) => {
 		const currentWorkflow = workflow;
 		const nextWorkflow: AgentWorkflow = {
-			preventSubagentLoops: value,
+			prevent_subagent_loops: value,
 			nodes: currentWorkflow?.nodes ?? {},
 			edges: currentWorkflow?.edges ?? {},
 		};
@@ -261,7 +261,7 @@ const WorkflowSection = ({
 					onClose={() => setIsEditorExpanded(false)}
 					workflow={workflow}
 					onWorkflowChange={handleWorkflowChange}
-					preventSubagentLoops={preventSubagentLoops}
+					prevent_subagent_loops={prevent_subagent_loops}
 					allowDefaultInit={!campaignId || !workflow}
 					onNodeSelect={handleNodeSelect}
 					nodeStyles={nodeStyles}
@@ -286,7 +286,7 @@ const WorkflowSection = ({
 									<WorkflowClipboardActions
 										workflow={workflow}
 										onWorkflowChange={handleWorkflowChange}
-										fallbackPreventSubagentLoops={preventSubagentLoops}
+										fallbackPreventSubagentLoops={prevent_subagent_loops}
 										nodeStyles={nodeStyles}
 										nodeGroups={nodeGroups}
 										onNodeStylesChange={handleNodeStylesChange}
@@ -295,7 +295,7 @@ const WorkflowSection = ({
 									<Checkbox
 										size='sm'
 										label={t('form.workflow.header.preventLoops')}
-										checked={preventSubagentLoops}
+										checked={prevent_subagent_loops}
 										onChange={(event) =>
 											handlePreventLoopsChange(event.currentTarget.checked)
 										}
@@ -352,7 +352,7 @@ const WorkflowSection = ({
 							onWorkflowChange={handleWorkflowChange}
 							nodeGroups={nodeGroups}
 							onNodeGroupsChange={handleNodeGroupsChange}
-							preventSubagentLoops={preventSubagentLoops}
+							prevent_subagent_loops={prevent_subagent_loops}
 							allowDefaultInit={!campaignId || !workflow}
 							onNodeSelect={handleNodeSelect}
 						/>

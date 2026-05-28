@@ -24,8 +24,8 @@ interface EdgeConditionModalProps {
 	onClose: () => void;
 	onSave: (
 		edgeId: string,
-		forwardCondition?: ForwardCondition,
-		backwardCondition?: ForwardCondition
+		forward_condition?: ForwardCondition,
+		backward_condition?: ForwardCondition
 	) => void;
 }
 

@@ -38,16 +38,16 @@ const KnowledgeBaseTab = () => {
 		currentNode && 'subagent' in currentNode ? currentNode.subagent : undefined;
 
 	const legacyKnowledgeBaseIds =
-		currentNode && 'additionalKnowledgeBase' in currentNode
-			? (currentNode.additionalKnowledgeBase ?? [])
+		currentNode && 'additional_knowledge_base' in currentNode
+			? (currentNode.additional_knowledge_base ?? [])
 			: [];
 
 	const mergedKnowledgeBaseItems = [
 		...legacyKnowledgeBaseIds,
-		...(subagent?.knowledgeBaseIds ?? []),
+		...(subagent?.knowledge_base_ids ?? []),
 	];
 
-	const inheritsKnowledgeBase = subagent?.inheritKnowledgeBase ?? false;
+	const inheritsKnowledgeBase = subagent?.inherit_knowledge_base ?? false;
 
 	const {
 		mergedKnowledgeBaseRefs,
@@ -102,22 +102,22 @@ const KnowledgeBaseTab = () => {
 		<Stack gap='xs'>
 			<Group justify='space-between' align='center'>
 				<Text size='sm' className={mainStyles.fieldLabel}>
-					{t('form.workflow.subagent.inheritKnowledgeBase')}
+					{t('form.workflow.subagent.inherit_knowledge_base')}
 				</Text>
 				<Switch
 					checked={inheritsKnowledgeBase}
 					onChange={(event) =>
 						handleSubagentChange({
-							inheritKnowledgeBase: event.currentTarget.checked,
+							inherit_knowledge_base: event.currentTarget.checked,
 						})
 					}
 					size='sm'
-					aria-label={t('form.workflow.subagent.inheritKnowledgeBase')}
+					aria-label={t('form.workflow.subagent.inherit_knowledge_base')}
 				/>
 			</Group>
 			<Group justify='space-between' align='center'>
 				<Text size='sm' className={mainStyles.fieldLabel}>
-					{t('form.workflow.subagent.additionalKnowledgeBase')}
+					{t('form.workflow.subagent.additional_knowledge_base')}
 				</Text>
 				<Menu width={260} position='bottom-end' withinPortal closeOnItemClick>
 					<Menu.Target>
@@ -163,7 +163,7 @@ const KnowledgeBaseTab = () => {
 									knowledgeBaseSignatureRef.current =
 										buildRefSignature(nextRefs);
 									handleSubagentChange({
-										knowledgeBaseIds: nextKnowledgeBaseIds,
+										knowledge_base_ids: nextKnowledgeBaseIds,
 									});
 								}}
 							>
@@ -211,7 +211,7 @@ const KnowledgeBaseTab = () => {
 										knowledgeBaseSignatureRef.current =
 											buildRefSignature(nextRefs);
 										handleSubagentChange({
-											knowledgeBaseIds: nextKnowledgeBaseIds,
+											knowledge_base_ids: nextKnowledgeBaseIds,
 										});
 									}}
 									aria-label={t('form.workflow.subagent.removeKnowledgeBase', {

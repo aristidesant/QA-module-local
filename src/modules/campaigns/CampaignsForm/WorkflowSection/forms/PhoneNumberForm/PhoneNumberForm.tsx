@@ -83,59 +83,59 @@ const PhoneNumberForm = ({
 
 	// Filter options based on transfer type
 	const filteredDestTypeOptions =
-		node.transferType === 'sip_refer'
+		node.transfer_type === 'sip_refer'
 			? destinationTypeOptions
 			: destinationTypeOptions.slice(0, 2);
 
 	const handleDestinationTypeChange = (value: string | null) => {
 		if (!value) return;
 
-		const currentDest = node.transferDestination || {
+		const currentDest = node.transfer_destination || {
 			type: 'phone',
-			phoneNumber: '',
+			phone_number: '',
 		};
 		const nextType =
-			value as PhoneNumberTransferNode['transferDestination']['type'];
+			value as PhoneNumberTransferNode['transfer_destination']['type'];
 
 		// Map current value to new structure if possible
-		let nextDest: PhoneNumberTransferNode['transferDestination'];
+		let nextDest: PhoneNumberTransferNode['transfer_destination'];
 
 		const currentValue =
-			'phoneNumber' in currentDest
-				? currentDest.phoneNumber
-				: 'sipUri' in currentDest
-					? currentDest.sipUri
+			'phone_number' in currentDest
+				? currentDest.phone_number
+				: 'sip_uri' in currentDest
+					? currentDest.sip_uri
 					: '';
 
 		if (nextType === 'phone' || nextType === 'phone_dynamic_variable') {
-			nextDest = { type: nextType, phoneNumber: currentValue };
+			nextDest = { type: nextType, phone_number: currentValue };
 		} else {
-			nextDest = { type: nextType, sipUri: currentValue };
+			nextDest = { type: nextType, sip_uri: currentValue };
 		}
 
-		handleUpdate({ transferDestination: nextDest });
+		handleUpdate({ transfer_destination: nextDest });
 	};
 
 	const handleDestinationValueChange = (
 		event: React.ChangeEvent<HTMLInputElement>
 	) => {
 		const value = event.currentTarget.value;
-		const currentDest = node.transferDestination || {
+		const currentDest = node.transfer_destination || {
 			type: 'phone',
-			phoneNumber: '',
+			phone_number: '',
 		};
 
-		let nextDest: PhoneNumberTransferNode['transferDestination'];
+		let nextDest: PhoneNumberTransferNode['transfer_destination'];
 		if (
 			currentDest.type === 'phone' ||
 			currentDest.type === 'phone_dynamic_variable'
 		) {
-			nextDest = { ...currentDest, phoneNumber: value };
+			nextDest = { ...currentDest, phone_number: value };
 		} else {
-			nextDest = { ...currentDest, sipUri: value };
+			nextDest = { ...currentDest, sip_uri: value };
 		}
 
-		handleUpdate({ transferDestination: nextDest });
+		handleUpdate({ transfer_destination: nextDest });
 	};
 
 	const handleAddSipHeader = () => {
@@ -162,17 +162,17 @@ const PhoneNumberForm = ({
 	};
 
 	const isPhoneType =
-		node.transferDestination?.type === 'phone' ||
-		node.transferDestination?.type === 'phone_dynamic_variable';
-	const destinationValue = node.transferDestination
-		? 'phoneNumber' in node.transferDestination
-			? node.transferDestination.phoneNumber
-			: 'sipUri' in node.transferDestination
-				? node.transferDestination.sipUri
+		node.transfer_destination?.type === 'phone' ||
+		node.transfer_destination?.type === 'phone_dynamic_variable';
+	const destinationValue = node.transfer_destination
+		? 'phone_number' in node.transfer_destination
+			? node.transfer_destination.phone_number
+			: 'sip_uri' in node.transfer_destination
+				? node.transfer_destination.sip_uri
 				: ''
 		: '';
 
-	const currentTransferType = node.transferType || 'conference';
+	const currentTransferType = node.transfer_type || 'conference';
 
 	return (
 		<WorkflowNodeForm
@@ -185,12 +185,12 @@ const PhoneNumberForm = ({
 				{/* Transfer Type Selector */}
 				<Box>
 					<Text className={styles.label} size='sm'>
-						{t('form.workflow.forms.phone.transferType')}
+						{t('form.workflow.forms.phone.transfer_type')}
 					</Text>
 					<AppSegmentedControl
 						fullWidth
 						value={currentTransferType}
-						onChange={(value) => handleUpdate({ transferType: value })}
+						onChange={(value) => handleUpdate({ transfer_type: value })}
 						data={[
 							{
 								label: t('form.workflow.forms.phone.typeOptions.conference'),
@@ -219,7 +219,7 @@ const PhoneNumberForm = ({
 					label={t('form.workflow.forms.phone.destType.label')}
 					data={filteredDestTypeOptions}
 					comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
-					value={node.transferDestination?.type || 'phone'}
+					value={node.transfer_destination?.type || 'phone'}
 					onChange={handleDestinationTypeChange}
 					size='sm'
 					classNames={{ label: styles.label, input: styles.input }}
@@ -228,17 +228,17 @@ const PhoneNumberForm = ({
 				<TextInput
 					label={
 						isPhoneType
-							? t('form.workflow.forms.phone.phoneNumber.label')
-							: t('form.workflow.forms.phone.sipUri.label')
+							? t('form.workflow.forms.phone.phone_number.label')
+							: t('form.workflow.forms.phone.sip_uri.label')
 					}
 					placeholder={
 						isPhoneType
-							? node.transferDestination?.type === 'phone_dynamic_variable'
-								? t('form.workflow.forms.phone.phoneNumber.dynamicPlaceholder')
-								: t('form.workflow.forms.phone.phoneNumber.placeholder')
-							: node.transferDestination?.type === 'sip_uri_dynamic_variable'
-								? t('form.workflow.forms.phone.sipUri.dynamicPlaceholder')
-								: t('form.workflow.forms.phone.sipUri.placeholder')
+							? node.transfer_destination?.type === 'phone_dynamic_variable'
+								? t('form.workflow.forms.phone.phone_number.dynamicPlaceholder')
+								: t('form.workflow.forms.phone.phone_number.placeholder')
+							: node.transfer_destination?.type === 'sip_uri_dynamic_variable'
+								? t('form.workflow.forms.phone.sip_uri.dynamicPlaceholder')
+								: t('form.workflow.forms.phone.sip_uri.placeholder')
 					}
 					value={destinationValue}
 					onChange={handleDestinationValueChange}

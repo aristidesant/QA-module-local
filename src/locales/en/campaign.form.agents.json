@@ -96,15 +96,15 @@
 				"openAgentAria": "Open agent {{name}}",
 				"actions": {
 					"menu": "Agent actions",
-					"removeFromCampaign": "Remove from campaign",
-					"principalProtected": "The principal agent cannot be removed from the campaign."
+					"deleteAgent": "Delete agent",
+					"principalProtected": "The principal agent cannot be deleted."
 				},
-				"removeRelation": {
-					"title": "Remove agent from campaign?",
-					"description": "This will remove {{name}} from this campaign only. The agent will remain available in UCXM.",
-					"confirm": "Remove from campaign",
-					"success": "{{name}} was removed from the campaign",
-					"error": "Failed to remove agent from campaign"
+				"deleteAgent": {
+					"title": "Delete agent?",
+					"description": "This will permanently delete {{name}}. This action cannot be undone.",
+					"confirm": "Delete agent",
+					"success": "{{name}} was deleted",
+					"error": "Failed to delete agent"
 				},
 				"selected": "Selected",
 				"language": "Language: {{language}}",

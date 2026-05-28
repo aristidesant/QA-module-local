@@ -8,8 +8,8 @@ interface EdgeConditionModalWrapperProps {
 	onClose: () => void;
 	onSave: (
 		edgeId: string,
-		forwardCondition?: WorkflowEdge['forwardCondition'],
-		backwardCondition?: WorkflowEdge['backwardCondition']
+		forward_condition?: WorkflowEdge['forward_condition'],
+		backward_condition?: WorkflowEdge['backward_condition']
 	) => void;
 }
 

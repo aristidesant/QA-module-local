@@ -94,12 +94,12 @@ const NodeEdgesTab = ({
 
 	const handleSaveEdgeCondition = (
 		edgeId: string,
-		forwardCondition?: WorkflowEdge['forwardCondition'],
-		backwardCondition?: WorkflowEdge['backwardCondition']
+		forward_condition?: WorkflowEdge['forward_condition'],
+		backward_condition?: WorkflowEdge['backward_condition']
 	) => {
 		const nextWorkflow = updateWorkflowEdge(workflow, edgeId, {
-			forwardCondition,
-			backwardCondition,
+			forward_condition,
+			backward_condition,
 		});
 
 		if (nextWorkflow) {

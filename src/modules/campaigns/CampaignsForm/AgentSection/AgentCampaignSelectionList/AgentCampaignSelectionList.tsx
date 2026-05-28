@@ -32,10 +32,8 @@ import AgentCampaignAdd from '../AgentCampaignAdd';
 import SyncElevenLabsAgentModal, {
 	SYNC_ELEVENLABS_AGENT_MODAL_ID,
 } from '../SyncElevenLabsAgentModal';
-import {
-	useDeleteCampaignAgent,
-	useGetCampaignAgents,
-} from '~/queries/campaignAgentsQueries';
+import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
+import { useDeleteAgent } from '~/queries/agentQueries';
 import type { CampaignAgent } from '~/models/CampaignAgentModel';
 import classes from './AgentCampaignSelectionList.module.css';
 
@@ -88,7 +86,7 @@ const AgentCampaignSelectionList = () => {
 	]);
 	const campaignId = useCampaignId();
 	const navigate = useNavigate();
-	const deleteCampaignAgentMutation = useDeleteCampaignAgent();
+	const deleteAgentMutation = useDeleteAgent();
 	const {
 		data: campaignAgents,
 		isLoading,
@@ -161,7 +159,7 @@ const AgentCampaignSelectionList = () => {
 		navigate(`/campaign/${campaignId}/agent/${campaignAgentId}`);
 	};
 
-	const getRemoveAgentErrorMessage = (error: unknown) => {
+	const getDeleteAgentErrorMessage = (error: unknown) => {
 		if (isAxiosError(error)) {
 			const responseData = error.response?.data;
 			const responseMessage =
@@ -171,50 +169,46 @@ const AgentCampaignSelectionList = () => {
 					? (responseData as { message: string }).message
 					: null;
 
-			return responseMessage || t('form.agent.list.removeRelation.error');
+			return responseMessage || t('form.agent.list.deleteAgent.error');
 		}
 
 		if (error instanceof Error && error.message.trim().length > 0) {
 			return error.message;
 		}
 
-		return t('form.agent.list.removeRelation.error');
+		return t('form.agent.list.deleteAgent.error');
 	};
 
-	const handleRemoveAgentFromCampaign = (campaignAgent: CampaignAgent) => {
-		if (campaignId == null || campaignAgent.isPrincipal) {
+	const handleDeleteAgent = (campaignAgent: CampaignAgent) => {
+		const agentId = campaignAgent.agent?.id;
+		if (campaignAgent.isPrincipal || !agentId) {
 			return;
 		}
 
 		const agentName = getAgentName(campaignAgent);
-		const confirmModalId = `remove-campaign-agent-${campaignAgent.id}`;
+		const confirmModalId = `delete-agent-${campaignAgent.id}`;
 
 		modals.openConfirmModal({
 			modalId: confirmModalId,
-			title: t('form.agent.list.removeRelation.title'),
+			title: t('form.agent.list.deleteAgent.title'),
 			centered: true,
 			labels: {
-				confirm: t('form.agent.list.removeRelation.confirm'),
+				confirm: t('form.agent.list.deleteAgent.confirm'),
 				cancel: t('actions.cancel', { ns: 'common' }),
 			},
 			confirmProps: { color: 'red' },
 			children: (
 				<Text size='sm'>
-					{t('form.agent.list.removeRelation.description', {
-						name: agentName,
-					})}
+					{t('form.agent.list.deleteAgent.description', { name: agentName })}
 				</Text>
 			),
 			onConfirm: async () => {
 				try {
-					await deleteCampaignAgentMutation.mutateAsync({
-						campaignId,
-						id: campaignAgent.id,
-					});
+					await deleteAgentMutation.mutateAsync(agentId);
 					await refetch();
 					notifications.show({
 						title: t('status.success', { ns: 'common' }),
-						message: t('form.agent.list.removeRelation.success', {
+						message: t('form.agent.list.deleteAgent.success', {
 							name: agentName,
 						}),
 						color: 'green',
@@ -222,7 +216,7 @@ const AgentCampaignSelectionList = () => {
 				} catch (error) {
 					notifications.show({
 						title: t('status.error', { ns: 'common' }),
-						message: getRemoveAgentErrorMessage(error),
+						message: getDeleteAgentErrorMessage(error),
 						color: 'red',
 					});
 				}
@@ -292,9 +286,9 @@ const AgentCampaignSelectionList = () => {
 						<Menu.Item
 							color='red'
 							leftSection={<IconTrash size={14} />}
-							onClick={() => handleRemoveAgentFromCampaign(campaignAgent)}
+							onClick={() => handleDeleteAgent(campaignAgent)}
 						>
-							{t('form.agent.list.actions.removeFromCampaign')}
+							{t('form.agent.list.actions.deleteAgent')}
 						</Menu.Item>
 					</Menu.Dropdown>
 				</Menu>

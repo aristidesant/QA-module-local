@@ -45,8 +45,8 @@ export const validateWorkflowEdgeConditions = (
 			if (sourceNode && sourceNode.type === 'start') return false;
 
 			// An edge must have at least one condition (forward or backward)
-			const hasForwardCondition = edge.forwardCondition !== undefined;
-			const hasBackwardCondition = edge.backwardCondition !== undefined;
+			const hasForwardCondition = edge.forward_condition !== undefined;
+			const hasBackwardCondition = edge.backward_condition !== undefined;
 			return !hasForwardCondition && !hasBackwardCondition;
 		})
 		.map(([edgeId, edge]) => ({
@@ -98,12 +98,12 @@ export const hasEdgeCondition = (
 	const edge = workflow.edges[edgeId];
 	if (!edge) return false;
 	return (
-		edge.forwardCondition !== undefined || edge.backwardCondition !== undefined
+		edge.forward_condition !== undefined || edge.backward_condition !== undefined
 	);
 };
 
 const isConditionIncomplete = (
-	condition: NonNullable<WorkflowEdge['forwardCondition']>
+	condition: NonNullable<WorkflowEdge['forward_condition']>
 ): boolean => {
 	if (condition.type === 'llm') {
 		return !condition.condition?.trim();
@@ -140,8 +140,8 @@ export const getEdgeWarningLevel = (
 	const sourceNode = workflow.nodes[edge.source];
 	if (sourceNode && sourceNode.type === 'start') return 'none';
 
-	const hasForwardCondition = edge.forwardCondition !== undefined;
-	const hasBackwardCondition = edge.backwardCondition !== undefined;
+	const hasForwardCondition = edge.forward_condition !== undefined;
+	const hasBackwardCondition = edge.backward_condition !== undefined;
 
 	// No conditions at all → valid (type "none"), no warning
 	if (!hasForwardCondition && !hasBackwardCondition) {
@@ -149,11 +149,11 @@ export const getEdgeWarningLevel = (
 	}
 
 	// Check if any condition has incomplete data
-	if (hasForwardCondition && edge.forwardCondition) {
-		if (isConditionIncomplete(edge.forwardCondition)) return 'error';
+	if (hasForwardCondition && edge.forward_condition) {
+		if (isConditionIncomplete(edge.forward_condition)) return 'error';
 	}
-	if (hasBackwardCondition && edge.backwardCondition) {
-		if (isConditionIncomplete(edge.backwardCondition)) return 'error';
+	if (hasBackwardCondition && edge.backward_condition) {
+		if (isConditionIncomplete(edge.backward_condition)) return 'error';
 	}
 
 	// Has proper condition configuration

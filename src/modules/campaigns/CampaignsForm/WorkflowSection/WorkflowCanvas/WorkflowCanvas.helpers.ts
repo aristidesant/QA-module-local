@@ -134,7 +134,7 @@ export const serializeWorkflow = (workflow: AgentWorkflow): string => {
 		.sort(([leftId], [rightId]) => leftId.localeCompare(rightId))
 		.map(([id, edge]) => [id, edge]);
 	return JSON.stringify({
-		preventSubagentLoops: workflow.preventSubagentLoops,
+		prevent_subagent_loops: workflow.prevent_subagent_loops,
 		nodes: sortedNodes,
 		edges: sortedEdges,
 	});
@@ -170,15 +170,15 @@ export const sanitizeStartNodes = (
 };
 
 export const buildDefaultWorkflow = (
-	preventSubagentLoops: boolean
+	prevent_subagent_loops: boolean
 ): AgentWorkflow => {
 	const startNode: StartNode = {
 		type: WORKFLOW_NODE_TYPES.START,
 		position: { x: 250, y: 50 },
-		edgeOrder: [],
+		edge_order: [],
 	};
 	return {
-		preventSubagentLoops,
+		prevent_subagent_loops,
 		nodes: { start_node: startNode },
 		edges: {},
 	};
@@ -191,30 +191,30 @@ export const mapWorkflowToNodes = (
 ): { nodes: Node[]; edges: Edge[] } => {
 	const normalizeSubagent = (node: OverrideAgentNode | StandaloneAgentNode) => {
 		const legacyPrompt =
-			'additionalPrompt' in node ? node.additionalPrompt : undefined;
+			'additional_prompt' in node ? node.additional_prompt : undefined;
 		const legacyToolIds =
-			'additionalToolIds' in node ? node.additionalToolIds : undefined;
+			'additional_tool_ids' in node ? node.additional_tool_ids : undefined;
 		const legacyKnowledgeBaseIds =
-			'additionalKnowledgeBase' in node
-				? node.additionalKnowledgeBase
+			'additional_knowledge_base' in node
+				? node.additional_knowledge_base
 				: undefined;
 		const legacyTransferMessage =
-			'transferMessage' in node ? node.transferMessage : undefined;
+			'transfer_message' in node ? node.transfer_message : undefined;
 		const existing = node.subagent;
 
 		const nextSubagent = {
 			...existing,
 			prompt:
 				existing?.prompt ?? legacyPrompt ?? legacyTransferMessage ?? undefined,
-			toolIds: existing?.toolIds ?? legacyToolIds ?? [],
-			knowledgeBaseIds:
-				existing?.knowledgeBaseIds ?? legacyKnowledgeBaseIds ?? [],
+			tool_ids: existing?.tool_ids ?? legacyToolIds ?? [],
+			knowledge_base_ids:
+				existing?.knowledge_base_ids ?? legacyKnowledgeBaseIds ?? [],
 		};
 
 		if (
 			nextSubagent.prompt ||
-			nextSubagent.toolIds.length > 0 ||
-			nextSubagent.knowledgeBaseIds.length > 0
+			nextSubagent.tool_ids.length > 0 ||
+			nextSubagent.knowledge_base_ids.length > 0
 		) {
 			return nextSubagent;
 		}
@@ -254,7 +254,7 @@ export const mapWorkflowToNodes = (
 				position: group.position,
 				label: group.label ?? '',
 				color: group.color ?? '',
-				edgeOrder: [],
+				edge_order: [],
 			},
 			selectable: true,
 			focusable: true,
@@ -264,10 +264,12 @@ export const mapWorkflowToNodes = (
 
 	const mappedNodes = Object.entries(sanitizedNodes).map(([id, node]) => {
 		const normalizedNodeType = normalizeWorkflowNodeType(node.type);
+		const nodeId =
+			normalizedNodeType === WORKFLOW_NODE_TYPES.START ? 'start_node' : id;
 		const parentGroupId = childToGroup.get(id);
 
 		return {
-			id,
+			id: nodeId,
 			type: normalizedNodeType,
 			position: node.position,
 			dragHandle: WORKFLOW_NODE_DRAG_HANDLE_SELECTOR,
@@ -280,7 +282,7 @@ export const mapWorkflowToNodes = (
 				...node,
 				type: normalizedNodeType,
 				position: node.position,
-				edgeOrder: node.edgeOrder ?? [],
+				edge_order: node.edge_order ?? [],
 				...(normalizedNodeType === WORKFLOW_NODE_TYPES.STANDALONE_AGENT ||
 				normalizedNodeType === WORKFLOW_NODE_TYPES.OVERRIDE_AGENT
 					? {
@@ -297,7 +299,7 @@ export const mapWorkflowToNodes = (
 	const sortedNodes = [...groupReactNodes, ...mappedNodes];
 
 	const getConditionLabel = (
-		condition?: WorkflowEdge['forwardCondition']
+		condition?: WorkflowEdge['forward_condition']
 	): string | null => {
 		if (!condition) return null;
 		if ('label' in condition && condition.label) return condition.label;
@@ -333,8 +335,8 @@ export const mapWorkflowToNodes = (
 			return null;
 		}
 
-		const forwardLabel = getConditionLabel(edge.forwardCondition);
-		const backwardLabel = getConditionLabel(edge.backwardCondition);
+		const forwardLabel = getConditionLabel(edge.forward_condition);
+		const backwardLabel = getConditionLabel(edge.backward_condition);
 
 		if (forwardLabel && backwardLabel) {
 			return {
@@ -362,8 +364,8 @@ export const mapWorkflowToNodes = (
 				data: {
 					label,
 					sourceNodeType: sourceNode?.type,
-					forwardCondition: edge.forwardCondition,
-					backwardCondition: edge.backwardCondition,
+					forward_condition: edge.forward_condition,
+					backward_condition: edge.backward_condition,
 					warningLevel: getEdgeWarningLevel(id, workflowData),
 				},
 			};
@@ -380,7 +382,7 @@ export interface BuildWorkflowResult {
 export const buildWorkflowFromState = (
 	currentNodes: Node[],
 	currentEdges: Edge[],
-	preventSubagentLoops: boolean
+	prevent_subagent_loops: boolean
 ): BuildWorkflowResult => {
 	const workflowNodes: Record<string, WorkflowNode> = {};
 	const workflowEdges: Record<string, WorkflowEdge> = {};
@@ -414,7 +416,7 @@ export const buildWorkflowFromState = (
 		const baseNode = {
 			type: normalizedNodeType as WorkflowNode['type'],
 			position: node.position,
-			edgeOrder: data.edgeOrder ?? [],
+			edge_order: data.edge_order ?? [],
 			label: data.label,
 			uiMeta: data.uiMeta,
 		};
@@ -431,28 +433,28 @@ export const buildWorkflowFromState = (
 			}
 			case WORKFLOW_NODE_TYPES.OVERRIDE_AGENT: {
 				const subagent = (data as OverrideAgentNode).subagent;
-				const additionalPrompt =
-					(data as OverrideAgentNode).additionalPrompt ??
+				const additional_prompt =
+					(data as OverrideAgentNode).additional_prompt ??
 					subagent?.prompt ??
 					'';
-				const additionalToolIds =
-					(data as OverrideAgentNode).additionalToolIds ??
-					subagent?.toolIds ??
+				const additional_tool_ids =
+					(data as OverrideAgentNode).additional_tool_ids ??
+					subagent?.tool_ids ??
 					[];
-				const additionalKnowledgeBase =
-					(data as OverrideAgentNode).additionalKnowledgeBase ??
-					subagent?.knowledgeBaseIds ??
+				const additional_knowledge_base =
+					(data as OverrideAgentNode).additional_knowledge_base ??
+					subagent?.knowledge_base_ids ??
 					[];
 				const overrideNode: OverrideAgentNode = {
 					...baseNode,
 					type: WORKFLOW_NODE_TYPES.OVERRIDE_AGENT,
 					label: baseNode.label || '',
-					additionalPrompt,
-					additionalToolIds,
-					additionalKnowledgeBase,
+					additional_prompt,
+					additional_tool_ids,
+					additional_knowledge_base,
 					subagent,
-					conversationConfig:
-						(data as OverrideAgentNode).conversationConfig ?? {},
+					conversation_config:
+						(data as OverrideAgentNode).conversation_config ?? {},
 				};
 				workflowNodes[node.id] = overrideNode;
 				break;
@@ -471,10 +473,10 @@ export const buildWorkflowFromState = (
 				const phoneNode: PhoneNumberTransferNode = {
 					...baseNode,
 					type: WORKFLOW_NODE_TYPES.PHONE_NUMBER,
-					transferType:
-						(data as PhoneNumberTransferNode).transferType ?? 'conference',
-					transferDestination: (data as PhoneNumberTransferNode)
-						.transferDestination ?? {
+					transfer_type:
+						(data as PhoneNumberTransferNode).transfer_type ?? 'conference',
+					transfer_destination: (data as PhoneNumberTransferNode)
+						.transfer_destination ?? {
 						type: 'phone',
 						phoneNumber: '',
 					},
@@ -484,33 +486,33 @@ export const buildWorkflowFromState = (
 			}
 			case WORKFLOW_NODE_TYPES.STANDALONE_AGENT: {
 				const subagent = (data as StandaloneAgentNode).subagent;
-				const additionalPrompt =
-					(data as StandaloneAgentNode).additionalPrompt ??
+				const additional_prompt =
+					(data as StandaloneAgentNode).additional_prompt ??
 					subagent?.prompt ??
 					undefined;
-				const additionalToolIds =
-					(data as StandaloneAgentNode).additionalToolIds ??
-					subagent?.toolIds ??
+				const additional_tool_ids =
+					(data as StandaloneAgentNode).additional_tool_ids ??
+					subagent?.tool_ids ??
 					[];
-				const additionalKnowledgeBase =
-					(data as StandaloneAgentNode).additionalKnowledgeBase ??
-					subagent?.knowledgeBaseIds ??
+				const additional_knowledge_base =
+					(data as StandaloneAgentNode).additional_knowledge_base ??
+					subagent?.knowledge_base_ids ??
 					[];
 				const standaloneNode: StandaloneAgentNode = {
 					...baseNode,
 					type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
-					agentId: (data as StandaloneAgentNode).agentId ?? '',
-					delayMs: (data as StandaloneAgentNode).delayMs ?? 0,
-					enableTransferredAgentFirstMessage:
-						(data as StandaloneAgentNode).enableTransferredAgentFirstMessage ??
+					agent_id: (data as StandaloneAgentNode).agent_id ?? '',
+					delay_ms: (data as StandaloneAgentNode).delay_ms ?? 0,
+					enable_transferred_agent_first_message:
+						(data as StandaloneAgentNode).enable_transferred_agent_first_message ??
 						false,
-					transferMessage: (data as StandaloneAgentNode).transferMessage,
-					additionalPrompt,
-					additionalToolIds,
-					additionalKnowledgeBase,
+					transfer_message: (data as StandaloneAgentNode).transfer_message,
+					additional_prompt,
+					additional_tool_ids,
+					additional_knowledge_base,
 					subagent,
-					conversationConfig:
-						(data as StandaloneAgentNode).conversationConfig ?? {},
+					conversation_config:
+						(data as StandaloneAgentNode).conversation_config ?? {},
 				};
 				workflowNodes[node.id] = standaloneNode;
 				break;
@@ -558,16 +560,16 @@ export const buildWorkflowFromState = (
 		workflowEdges[edge.id] = {
 			source: edge.source,
 			target: edge.target,
-			forwardCondition: data?.forwardCondition ?? {
+			forward_condition: data?.forward_condition ?? {
 				type: 'unconditional' as const,
 			},
-			backwardCondition: data?.backwardCondition,
+			backward_condition: data?.backward_condition,
 		};
 	});
 
 	return {
 		workflow: {
-			preventSubagentLoops,
+			prevent_subagent_loops,
 			nodes: workflowNodes,
 			edges: workflowEdges,
 		},

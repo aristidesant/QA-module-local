@@ -24,7 +24,7 @@ const SubagentNodeComponent = (props: NodeProps) => {
 	const nodeType = nodeData.type as WorkflowNodeType;
 	const isOverride = nodeType === WORKFLOW_NODE_TYPES.OVERRIDE_AGENT;
 	const isTransfer =
-		nodeType === WORKFLOW_NODE_TYPES.STANDALONE_AGENT && !!nodeData.agentId;
+		nodeType === WORKFLOW_NODE_TYPES.STANDALONE_AGENT && !!nodeData.agent_id;
 	const { t } = useTranslation([
 		'campaign.form.workflow',
 		'campaign.form.agents',
@@ -53,25 +53,25 @@ const SubagentNodeComponent = (props: NodeProps) => {
 		defaultIcon
 	);
 	const toolCount =
-		nodeData.subagent?.toolIds?.length ??
-		nodeData.additionalToolIds?.length ??
+		nodeData.subagent?.tool_ids?.length ??
+		nodeData.additional_tool_ids?.length ??
 		0;
 	const knowledgeBaseCount =
-		nodeData.subagent?.knowledgeBaseIds?.length ??
-		nodeData.additionalKnowledgeBase?.length ??
+		nodeData.subagent?.knowledge_base_ids?.length ??
+		nodeData.additional_knowledge_base?.length ??
 		0;
 	const hasMetadata = toolCount > 0 || knowledgeBaseCount > 0;
-	const conversationConfig = (nodeData as any).conversationConfig ?? {};
-	const agentConfig = conversationConfig?.agent ?? {};
+	const conversation_config = (nodeData as any).conversation_config ?? {};
+	const agentConfig = conversation_config?.agent ?? {};
 	const promptConfig = agentConfig?.prompt ?? {};
 	const overridePromptValue = (promptConfig.prompt as string | null) ?? '';
-	const additionalPrompt = nodeData.additionalPrompt ?? '';
-	const hasAdditionalPrompt = additionalPrompt.trim().length > 0;
+	const additional_prompt = nodeData.additional_prompt ?? '';
+	const hasAdditionalPrompt = additional_prompt.trim().length > 0;
 	const hasOverridePrompt = (overridePromptValue ?? '').trim().length > 0;
 	const hasDefinedOverridePrompt =
-		typeof nodeData.subagent?.overridePrompt === 'boolean';
+		typeof nodeData.subagent?.override_prompt === 'boolean';
 	const effectiveOverridePrompt = hasDefinedOverridePrompt
-		? (nodeData.subagent?.overridePrompt as boolean)
+		? (nodeData.subagent?.override_prompt as boolean)
 		: hasAdditionalPrompt
 			? false
 			: hasOverridePrompt
@@ -80,7 +80,7 @@ const SubagentNodeComponent = (props: NodeProps) => {
 
 	const promptPreview = effectiveOverridePrompt
 		? (overridePromptValue ?? '').trim()
-		: (additionalPrompt ?? '').trim();
+		: (additional_prompt ?? '').trim();
 	const subtitle = isTransfer
 		? t('form.workflow.nodeStatus.transferStyle')
 		: isOverride

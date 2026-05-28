@@ -33,7 +33,7 @@ describe('workflowClipboard', () => {
 
 		const result = parseImportedWorkflow(rawWorkflow, false);
 
-		expect(result.workflow.preventSubagentLoops).toBe(true);
+		expect(result.workflow.prevent_subagent_loops).toBe(true);
 		expect(Object.keys(result.workflow.nodes)).toEqual([
 			'start_node',
 			'node_alpha_beta',
@@ -41,35 +41,35 @@ describe('workflowClipboard', () => {
 		expect(Object.keys(result.workflow.edges)).toEqual(['edge_primary']);
 		expect(result.workflow.edges.edge_primary.source).toBe('start_node');
 		expect(result.workflow.edges.edge_primary.target).toBe('node_alpha_beta');
-		expect(result.workflow.nodes.start_node.edgeOrder).toEqual([
+		expect(result.workflow.nodes.start_node.edge_order).toEqual([
 			'edge_primary',
 		]);
 	});
 
 	it('imports internal camelCase workflows unchanged in semantics', () => {
 		const rawWorkflow = JSON.stringify({
-			preventSubagentLoops: false,
+			prevent_subagent_loops: false,
 			nodes: {
 				start_node: {
 					type: 'start',
 					position: { x: 0, y: 0 },
-					edgeOrder: ['edge_one'],
+					edge_order: ['edge_one'],
 				},
 				node_two: {
 					type: 'standalone_agent',
 					position: { x: 100, y: 100 },
-					edgeOrder: [],
+					edge_order: [],
 					label: 'Subagent',
-					agentId: 'agent-1',
-					delayMs: 0,
-					enableTransferredAgentFirstMessage: false,
+					agent_id: 'agent-1',
+					delay_ms: 0,
+					enable_transferred_agent_first_message: false,
 				},
 			},
 			edges: {
 				edge_one: {
 					source: 'start_node',
 					target: 'node_two',
-					forwardCondition: {
+					forward_condition: {
 						type: 'unconditional',
 					},
 				},
@@ -78,14 +78,14 @@ describe('workflowClipboard', () => {
 
 		const result = parseImportedWorkflow(rawWorkflow, true);
 
-		expect(result.workflow.preventSubagentLoops).toBe(false);
-		expect(result.workflow.nodes.start_node.edgeOrder).toEqual(['edge_one']);
-		expect(result.workflow.edges.edge_one.forwardCondition).toEqual({
+		expect(result.workflow.prevent_subagent_loops).toBe(false);
+		expect(result.workflow.nodes.start_node.edge_order).toEqual(['edge_one']);
+		expect(result.workflow.edges.edge_one.forward_condition).toEqual({
 			type: 'unconditional',
 		});
 	});
 
-	it('repairs edgeOrder without changing ids', () => {
+	it('repairs edge_order without changing ids', () => {
 		const rawWorkflow = JSON.stringify({
 			prevent_subagent_loops: true,
 			nodes: {
@@ -119,7 +119,7 @@ describe('workflowClipboard', () => {
 
 		const result = parseImportedWorkflow(rawWorkflow, false);
 
-		expect(result.workflow.nodes.start_node.edgeOrder).toEqual([
+		expect(result.workflow.nodes.start_node.edge_order).toEqual([
 			'edge_first',
 			'edge_second',
 		]);

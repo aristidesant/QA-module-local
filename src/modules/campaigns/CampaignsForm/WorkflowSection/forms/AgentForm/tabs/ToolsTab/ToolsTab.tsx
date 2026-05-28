@@ -61,16 +61,16 @@ const BuiltInTools = () => {
 	const subagent =
 		currentNode && 'subagent' in currentNode ? currentNode.subagent : undefined;
 	const legacyToolIds =
-		currentNode && 'additionalToolIds' in currentNode
-			? (currentNode.additionalToolIds ?? [])
+		currentNode && 'additional_tool_ids' in currentNode
+			? (currentNode.additional_tool_ids ?? [])
 			: [];
-	const toolIds = subagent?.toolIds ?? legacyToolIds;
+	const tool_ids = subagent?.tool_ids ?? legacyToolIds;
 	const endConversationIdentifier = 'end_conversation';
-	const conversationConfig =
-		(currentNode as { conversationConfig?: Record<string, unknown> })
-			?.conversationConfig ?? {};
+	const conversation_config =
+		(currentNode as { conversation_config?: Record<string, unknown> })
+			?.conversation_config ?? {};
 	const agentConfig =
-		(conversationConfig as Record<string, unknown>).agent ?? {};
+		(conversation_config as Record<string, unknown>).agent ?? {};
 	const promptConfig = (agentConfig as Record<string, unknown>).prompt ?? {};
 	const builtInToolsConfig = ((promptConfig as Record<string, unknown>)
 		.builtInTools ?? {}) as Record<string, SystemToolModel | null>;
@@ -131,8 +131,8 @@ const BuiltInTools = () => {
 	const handleConversationConfigChange = useCallback(
 		(updates: Partial<Record<string, unknown>>) => {
 			const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
-				conversationConfig: {
-					...conversationConfig,
+				conversation_config: {
+					...conversation_config,
 					...updates,
 				},
 			} as Record<string, unknown>);
@@ -140,7 +140,7 @@ const BuiltInTools = () => {
 				onWorkflowChange(nextWorkflow);
 			}
 		},
-		[conversationConfig, nodeId, onWorkflowChange, workflow]
+		[conversation_config, nodeId, onWorkflowChange, workflow]
 	);
 
 	const handleBuiltInToolsChange = useCallback(
@@ -159,21 +159,21 @@ const BuiltInTools = () => {
 	);
 
 	const resolveToolConfig = useCallback(
-		(toolId: string) => {
-			const storedConfig = builtInToolsConfig[toolId];
+		(tool_id: string) => {
+			const storedConfig = builtInToolsConfig[tool_id];
 			if (storedConfig && isRecord(storedConfig)) {
 				return storedConfig as SystemToolModel;
 			}
-			const fallbackConfig = systemToolsMap.get(toolId)?.value;
+			const fallbackConfig = systemToolsMap.get(tool_id)?.value;
 			return fallbackConfig ?? null;
 		},
 		[builtInToolsConfig, systemToolsMap]
 	);
 
 	const handleOpenConfig = useCallback(
-		(toolId: string, label: string) => {
-			const toolDefinition = systemToolsMap.get(toolId);
-			const resolvedConfig = resolveToolConfig(toolId);
+		(tool_id: string, label: string) => {
+			const toolDefinition = systemToolsMap.get(tool_id);
+			const resolvedConfig = resolveToolConfig(tool_id);
 			if (!resolvedConfig) return;
 			const normalizedConfig = toolDefinition?.value?.name
 				? {
@@ -182,7 +182,7 @@ const BuiltInTools = () => {
 					}
 				: resolvedConfig;
 			setEditingTool({
-				id: toolId,
+				id: tool_id,
 				label,
 				config: normalizedConfig,
 			});
@@ -223,10 +223,10 @@ const BuiltInTools = () => {
 	);
 
 	const handleBuiltInToggle = useCallback(
-		(toolId: string, checked: boolean) => {
+		(tool_id: string, checked: boolean) => {
 			setBuiltInToolsState((current) => ({
 				...current,
-				[toolId as keyof typeof current]: checked,
+				[tool_id as keyof typeof current]: checked,
 			}));
 
 			const nextBuiltInTools = {
@@ -234,14 +234,14 @@ const BuiltInTools = () => {
 			};
 
 			if (!checked) {
-				nextBuiltInTools[toolId] = null;
+				nextBuiltInTools[tool_id] = null;
 				handleBuiltInToolsChange(nextBuiltInTools);
 				return;
 			}
 
-			const resolvedConfig = resolveToolConfig(toolId);
+			const resolvedConfig = resolveToolConfig(tool_id);
 			if (!resolvedConfig) return;
-			nextBuiltInTools[toolId] = resolvedConfig;
+			nextBuiltInTools[tool_id] = resolvedConfig;
 			handleBuiltInToolsChange(nextBuiltInTools);
 		},
 		[
@@ -255,10 +255,10 @@ const BuiltInTools = () => {
 	const handleEndConversationToggle = useCallback(
 		(checked: boolean) => {
 			const nextToolIds = checked
-				? Array.from(new Set([...toolIds, endConversationIdentifier]))
-				: toolIds.filter((id) => id !== endConversationIdentifier);
+				? Array.from(new Set([...tool_ids, endConversationIdentifier]))
+				: tool_ids.filter((id) => id !== endConversationIdentifier);
 			const nextWorkflow = updateWorkflowNodeSubagent(workflow, nodeId, {
-				toolIds: nextToolIds,
+				tool_ids: nextToolIds,
 			});
 			if (nextWorkflow) {
 				onWorkflowChange(nextWorkflow);
@@ -273,7 +273,7 @@ const BuiltInTools = () => {
 			nodeId,
 			onWorkflowChange,
 			setBuiltInToolsState,
-			toolIds,
+			tool_ids,
 			workflow,
 		]
 	);
@@ -293,7 +293,7 @@ const BuiltInTools = () => {
 						);
 						const storedConfig = builtInToolsConfig[tool.id];
 						const isEnabled = isEndConversation
-							? toolIds.includes(endConversationIdentifier)
+							? tool_ids.includes(endConversationIdentifier)
 							: hasStoredConfig
 								? storedConfig !== null && storedConfig !== undefined
 								: builtInToolsState[tool.id as keyof typeof builtInToolsState];
@@ -391,10 +391,10 @@ const CustomTools = () => {
 	const subagent =
 		currentNode && 'subagent' in currentNode ? currentNode.subagent : undefined;
 	const legacyToolIds =
-		currentNode && 'additionalToolIds' in currentNode
-			? (currentNode.additionalToolIds ?? [])
+		currentNode && 'additional_tool_ids' in currentNode
+			? (currentNode.additional_tool_ids ?? [])
 			: [];
-	const toolIds = subagent?.toolIds ?? legacyToolIds;
+	const tool_ids = subagent?.tool_ids ?? legacyToolIds;
 
 	const {
 		data: tools,
@@ -404,19 +404,19 @@ const CustomTools = () => {
 	} = useTools({ enabled: false });
 
 	const selectedTools = useMemo(() => {
-		return toolIds.map((toolId) => {
-			const matched = (tools ?? []).find((tool) => tool.identifier === toolId);
+		return tool_ids.map((tool_id) => {
+			const matched = (tools ?? []).find((tool) => tool.identifier === tool_id);
 			return {
-				id: toolId,
+				id: tool_id,
 				name: matched?.name,
 			};
 		});
-	}, [toolIds, tools]);
+	}, [tool_ids, tools]);
 
 	const availableTools = useMemo(() => {
-		const selectedSet = new Set(toolIds);
+		const selectedSet = new Set(tool_ids);
 		return (tools ?? []).filter((tool) => !selectedSet.has(tool.identifier));
-	}, [toolIds, tools]);
+	}, [tool_ids, tools]);
 
 	const handleSubagentChange = (updates: Record<string, unknown>) => {
 		const nextWorkflow = updateWorkflowNodeSubagent(workflow, nodeId, updates);
@@ -431,14 +431,14 @@ const CustomTools = () => {
 	};
 
 	const handleSelectTool = (tool: ToolModel) => {
-		const nextToolIds = Array.from(new Set([...toolIds, tool.identifier]));
-		handleSubagentChange({ toolIds: nextToolIds });
+		const nextToolIds = Array.from(new Set([...tool_ids, tool.identifier]));
+		handleSubagentChange({ tool_ids: nextToolIds });
 		setIsToolMenuOpen(false);
 	};
 
-	const handleRemoveTool = (toolId: string) => {
-		const nextToolIds = toolIds.filter((id) => id !== toolId);
-		handleSubagentChange({ toolIds: nextToolIds });
+	const handleRemoveTool = (tool_id: string) => {
+		const nextToolIds = tool_ids.filter((id) => id !== tool_id);
+		handleSubagentChange({ tool_ids: nextToolIds });
 	};
 
 	return (

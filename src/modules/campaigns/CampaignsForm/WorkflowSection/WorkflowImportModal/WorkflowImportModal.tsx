@@ -274,7 +274,7 @@ const WorkflowImportModal = ({
 									})}
 								</Text>
 								<Text size='sm'>
-									{importState.result.summary.preventSubagentLoops
+									{importState.result.summary.prevent_subagent_loops
 										? t(
 												'form.workflow.clipboard.import.summaryPreventLoopsEnabled'
 											)

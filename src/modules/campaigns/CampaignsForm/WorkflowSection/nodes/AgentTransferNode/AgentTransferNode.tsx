@@ -34,10 +34,10 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 	) : (
 		<IconUserCog size={18} className={styles.icon} />
 	);
-	const agentId = nodeData.agentId?.trim();
-	const delayMs = nodeData.delayMs ?? 0;
-	const transferMessage = nodeData.transferMessage?.trim();
-	const targetLabel = agentId || t('form.workflow.transferNode.emptyAgent');
+	const agent_id = nodeData.agent_id?.trim();
+	const delay_ms = nodeData.delay_ms ?? 0;
+	const transfer_message = nodeData.transfer_message?.trim();
+	const targetLabel = agent_id || t('form.workflow.transferNode.emptyAgent');
 
 	return (
 		<>
@@ -75,15 +75,15 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 							</Text>
 							<Text size='xs' fw={500} className={styles.metaValue}>
 								{t('form.workflow.transferNode.delayValue', {
-									value: delayMs,
+									value: delay_ms,
 								})}
 							</Text>
 						</div>
 					</div>
-					{transferMessage && (
+					{transfer_message && (
 						<div className={styles.footer}>
 							<Text size='xs' lineClamp={2} className={styles.footerText}>
-								{transferMessage}
+								{transfer_message}
 							</Text>
 						</div>
 					)}

@@ -96,15 +96,15 @@
 				"openAgentAria": "Abrir agente {{name}}",
 				"actions": {
 					"menu": "Acciones del agente",
-					"removeFromCampaign": "Eliminar de la campaña",
-					"principalProtected": "El agente principal no se puede eliminar de la campaña."
+					"deleteAgent": "Eliminar agente",
+					"principalProtected": "El agente principal no se puede eliminar."
 				},
-				"removeRelation": {
-					"title": "¿Eliminar el agente de la campaña?",
-					"description": "Esto quitará a {{name}} de esta campaña solamente. El agente seguirá disponible en UCXM.",
-					"confirm": "Eliminar de la campaña",
-					"success": "{{name}} fue eliminado de la campaña",
-					"error": "No se pudo eliminar el agente de la campaña"
+				"deleteAgent": {
+					"title": "¿Eliminar agente?",
+					"description": "Esto eliminará permanentemente a {{name}}. Esta acción no se puede deshacer.",
+					"confirm": "Eliminar agente",
+					"success": "{{name}} fue eliminado",
+					"error": "No se pudo eliminar el agente"
 				},
 				"selected": "Seleccionado",
 				"language": "Idioma: {{language}}",

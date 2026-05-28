@@ -53,32 +53,32 @@ const GeneralTab = () => {
 	const subagent =
 		currentNode && 'subagent' in currentNode ? currentNode.subagent : undefined;
 
-	// Current conversationConfig (personalized)
-	const conversationConfig =
-		(currentNode as { conversationConfig?: unknown })?.conversationConfig ?? {};
-	const ttsConfig = (conversationConfig as Record<string, unknown>).tts ?? {};
-	const turnConfig = (conversationConfig as Record<string, unknown>).turn ?? {};
+	// Current conversation_config (personalized)
+	const conversation_config =
+		(currentNode as { conversation_config?: unknown })?.conversation_config ?? {};
+	const ttsConfig = (conversation_config as Record<string, unknown>).tts ?? {};
+	const turnConfig = (conversation_config as Record<string, unknown>).turn ?? {};
 	const agentConfig =
-		(conversationConfig as Record<string, unknown>).agent ?? {};
+		(conversation_config as Record<string, unknown>).agent ?? {};
 	const promptConfig = (agentConfig as Record<string, unknown>).prompt ?? {};
-	const additionalPrompt = (currentNode as { additionalPrompt?: string | null })
-		?.additionalPrompt;
-	const subagentLlmModel = subagent?.llmModel;
+	const additional_prompt = (currentNode as { additional_prompt?: string | null })
+		?.additional_prompt;
+	const subagentLlmModel = subagent?.llm_model;
 	const overridePromptValue =
 		((promptConfig as Record<string, unknown>).prompt as string | null) ?? '';
-	const hasAdditionalPrompt = (additionalPrompt ?? '').trim().length > 0;
+	const hasAdditionalPrompt = (additional_prompt ?? '').trim().length > 0;
 	const hasOverridePrompt = (overridePromptValue ?? '').trim().length > 0;
 	const hasDefinedOverridePrompt =
-		typeof subagent?.overridePrompt === 'boolean';
+		typeof subagent?.override_prompt === 'boolean';
 	const effectiveOverridePrompt = hasDefinedOverridePrompt
-		? (subagent?.overridePrompt as boolean)
+		? (subagent?.override_prompt as boolean)
 		: hasAdditionalPrompt
 			? false
 			: hasOverridePrompt
 				? true
 				: false;
 
-	// Inherited conversationConfig (from campaign agent)
+	// Inherited conversation_config (from campaign agent)
 	const inheritedConversationConfig =
 		(campaignAgentConfig?.conversationConfig as unknown) ?? {};
 	const inheritedTtsConfig =
@@ -91,23 +91,23 @@ const GeneralTab = () => {
 		(inheritedAgentConfig as Record<string, unknown>).prompt ?? {};
 
 	// Current values
-	const voiceId = (ttsConfig as Record<string, unknown>).voiceId as
+	const voice_id = (ttsConfig as Record<string, unknown>).voice_id as
 		| string
 		| undefined;
-	const llmModel =
+	const llm_model =
 		((promptConfig as Record<string, unknown>).llm as string | undefined) ||
 		subagentLlmModel;
 	const eagerness = (turnConfig as Record<string, unknown>).turnEagerness as
 		| string
 		| undefined;
-	const spellingPatience = (turnConfig as Record<string, unknown>)
+	const spelling_patience = (turnConfig as Record<string, unknown>)
 		.spelling_patience as string | undefined;
 	const speculativeTurn = (turnConfig as Record<string, unknown>)
 		.speculative_turn as boolean | undefined;
 
 	// Inherited values
 	const inheritedVoiceId = (inheritedTtsConfig as Record<string, unknown>)
-		.voiceId as string | undefined;
+		.voice_id as string | undefined;
 	const inheritedLlmModel = (inheritedPromptConfig as Record<string, unknown>)
 		.llm as string | undefined;
 	const inheritedEagerness = (inheritedTurnConfig as Record<string, unknown>)
@@ -123,28 +123,28 @@ const GeneralTab = () => {
 
 	// State for which fields are in edit mode
 	const [editingFields, setEditingFields] = useState<Record<string, boolean>>({
-		voice: !!voiceId,
-		llm: !!llmModel,
+		voice: !!voice_id,
+		llm: !!llm_model,
 		eagerness: !!eagerness,
-		spellingPatience: !!spellingPatience,
+		spelling_patience: !!spelling_patience,
 		speculativeTurn: speculativeTurn !== undefined,
 	});
 
 	// Sync editing fields when values change
 	useEffect(() => {
 		setEditingFields({
-			voice: !!voiceId,
-			llm: !!llmModel,
+			voice: !!voice_id,
+			llm: !!llm_model,
 			eagerness: !!eagerness,
-			spellingPatience: !!spellingPatience,
+			spelling_patience: !!spelling_patience,
 			speculativeTurn: speculativeTurn !== undefined,
 		});
-	}, [voiceId, llmModel, eagerness, spellingPatience, speculativeTurn]);
+	}, [voice_id, llm_model, eagerness, spelling_patience, speculativeTurn]);
 
 	useEffect(() => {
 		if (!currentNode || hasDefinedOverridePrompt) return;
 		const nextWorkflow = updateWorkflowNodeSubagent(workflow, nodeId, {
-			overridePrompt: effectiveOverridePrompt,
+			override_prompt: effectiveOverridePrompt,
 		});
 		if (nextWorkflow) {
 			onWorkflowChange(nextWorkflow);
@@ -162,8 +162,8 @@ const GeneralTab = () => {
 		updates: Partial<Record<string, unknown>>
 	) => {
 		const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
-			conversationConfig: {
-				...conversationConfig,
+			conversation_config: {
+				...conversation_config,
 				...updates,
 			},
 		} as Record<string, unknown>);
@@ -174,7 +174,7 @@ const GeneralTab = () => {
 
 	const currentPromptValue = effectiveOverridePrompt
 		? overridePromptValue
-		: ((currentNode as any)?.additionalPrompt ?? '');
+		: ((currentNode as any)?.additional_prompt ?? '');
 
 	const handlePromptChange = useCallback(
 		(value: string) => {
@@ -190,7 +190,7 @@ const GeneralTab = () => {
 				});
 			} else {
 				const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
-					additionalPrompt: value,
+					additional_prompt: value,
 				} as any);
 				if (nextWorkflow) {
 					onWorkflowChange(nextWorkflow);
@@ -266,7 +266,7 @@ const GeneralTab = () => {
 		const updates: Record<string, unknown> = {};
 
 		if (field === 'voice') {
-			updates.tts = { ...ttsConfig, voiceId: undefined };
+			updates.tts = { ...ttsConfig, voice_id: undefined };
 		} else if (field === 'llm') {
 			updates.agent = {
 				...agentConfig,
@@ -274,11 +274,11 @@ const GeneralTab = () => {
 			};
 			updates.subagent = {
 				...subagent,
-				llmModel: undefined,
+				llm_model: undefined,
 			};
 		} else if (field === 'eagerness') {
 			updates.turn = { ...turnConfig, turnEagerness: undefined };
-		} else if (field === 'spellingPatience') {
+		} else if (field === 'spelling_patience') {
 			updates.turn = { ...turnConfig, spelling_patience: undefined };
 		} else if (field === 'speculativeTurn') {
 			updates.turn = { ...turnConfig, speculative_turn: undefined };
@@ -297,28 +297,28 @@ const GeneralTab = () => {
 					</Text>
 					<Group gap='xs' align='center' className={mainStyles.overrideToggle}>
 						<Text size='xs' c='dimmed' className={mainStyles.overrideLabel}>
-							{t('form.workflow.forms.agent.general.overridePrompt.label')}
+							{t('form.workflow.forms.agent.general.override_prompt.label')}
 						</Text>
 						<Switch
 							checked={effectiveOverridePrompt}
 							onChange={(event) => {
 								const isChecked = event.currentTarget.checked;
 								const currentAdditionalPrompt =
-									(currentNode as any)?.additionalPrompt ?? '';
+									(currentNode as any)?.additional_prompt ?? '';
 								const currentOverridePrompt = overridePromptValue ?? '';
 
 								const nodeUpdates: any = {
 									subagent: {
 										...subagent,
-										overridePrompt: isChecked,
+										override_prompt: isChecked,
 									},
 								};
 
 								if (isChecked) {
-									// Turning Override ON: Move additionalPrompt to conversationConfig
-									nodeUpdates.additionalPrompt = null;
-									nodeUpdates.conversationConfig = {
-										...(conversationConfig as Record<string, unknown>),
+									// Turning Override ON: Move additional_prompt to conversation_config
+									nodeUpdates.additional_prompt = null;
+									nodeUpdates.conversation_config = {
+										...(conversation_config as Record<string, unknown>),
 										agent: {
 											...(agentConfig as Record<string, unknown>),
 											prompt: {
@@ -328,10 +328,10 @@ const GeneralTab = () => {
 										},
 									};
 								} else {
-									// Turning Override OFF: Move conversationConfig prompt to additionalPrompt
-									nodeUpdates.additionalPrompt = currentOverridePrompt;
-									nodeUpdates.conversationConfig = {
-										...(conversationConfig as Record<string, unknown>),
+									// Turning Override OFF: Move conversation_config prompt to additional_prompt
+									nodeUpdates.additional_prompt = currentOverridePrompt;
+									nodeUpdates.conversation_config = {
+										...(conversation_config as Record<string, unknown>),
 										agent: {
 											...(agentConfig as Record<string, unknown>),
 											prompt: {
@@ -352,7 +352,7 @@ const GeneralTab = () => {
 								}
 							}}
 							aria-label={t(
-								'form.workflow.forms.agent.general.overridePrompt.label'
+								'form.workflow.forms.agent.general.override_prompt.label'
 							)}
 							className={mainStyles.inlineSwitch}
 							size='sm'
@@ -430,19 +430,19 @@ const GeneralTab = () => {
 						)}
 						data={voiceOptions}
 						comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
-						value={voiceId || null}
+						value={voice_id || null}
 						onChange={(value) =>
 							handleConversationConfigChange({
 								tts: {
 									...(ttsConfig as Record<string, unknown>),
-									voiceId: value || undefined,
+									voice_id: value || undefined,
 								},
 							})
 						}
 						searchable
 						size='sm'
 						leftSection={
-							voiceId ? (
+							voice_id ? (
 								<div className={mainStyles.voiceIcon}>
 									<IconMicrophone size={12} />
 								</div>
@@ -481,11 +481,11 @@ const GeneralTab = () => {
 						placeholder={t('form.workflow.forms.agent.general.llm.placeholder')}
 						data={llmOptions}
 						comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
-						value={llmModel || null}
+						value={llm_model || null}
 						onChange={(value) => {
 							const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
-								conversationConfig: {
-									...(conversationConfig as Record<string, unknown>),
+								conversation_config: {
+									...(conversation_config as Record<string, unknown>),
 									agent: {
 										...(agentConfig as Record<string, unknown>),
 										prompt: {
@@ -496,7 +496,7 @@ const GeneralTab = () => {
 								},
 								subagent: {
 									...subagent,
-									llmModel: value || undefined,
+									llm_model: value || undefined,
 								},
 							} as any);
 							if (nextWorkflow) {
@@ -565,16 +565,16 @@ const GeneralTab = () => {
 			)}
 
 			{/* Spelling Patience Field */}
-			{editingFields.spellingPatience ? (
+			{editingFields.spelling_patience ? (
 				<div className={mainStyles.fieldRow}>
 					<Group justify='space-between' align='center'>
 						<Text size='sm' className={mainStyles.fieldLabel}>
-							{t('form.workflow.forms.agent.general.spellingPatience.label')}
+							{t('form.workflow.forms.agent.general.spelling_patience.label')}
 						</Text>
 						<ActionIcon
 							size='sm'
 							variant='subtle'
-							onClick={() => handleResetField('spellingPatience')}
+							onClick={() => handleResetField('spelling_patience')}
 							title={t('form.workflow.forms.agent.general.resetToDefault')}
 						>
 							<IconRotateClockwise size={16} />
@@ -582,11 +582,11 @@ const GeneralTab = () => {
 					</Group>
 					<Select
 						placeholder={t(
-							'form.workflow.forms.agent.general.spellingPatience.placeholder'
+							'form.workflow.forms.agent.general.spelling_patience.placeholder'
 						)}
 						data={spellingPatienceOptions}
 						comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
-						value={spellingPatience || null}
+						value={spelling_patience || null}
 						onChange={(value) =>
 							handleConversationConfigChange({
 								turn: {
@@ -603,10 +603,10 @@ const GeneralTab = () => {
 				</div>
 			) : (
 				renderInheritedField(
-					t('form.workflow.forms.agent.general.spellingPatience.label'),
+					t('form.workflow.forms.agent.general.spelling_patience.label'),
 					inheritedSpellingPatience &&
 						getValueLabel(inheritedSpellingPatience, spellingPatienceOptions),
-					() => toggleEditMode('spellingPatience')
+					() => toggleEditMode('spelling_patience')
 				)
 			)}
 

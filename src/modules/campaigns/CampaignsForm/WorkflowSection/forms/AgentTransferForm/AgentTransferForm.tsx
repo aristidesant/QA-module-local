@@ -57,7 +57,7 @@ const AgentTransferForm = ({
 	);
 
 	const selectedTransferAgentId =
-		node?.agentId && node.agentId !== currentAgentId ? node.agentId : null;
+		node?.agent_id && node.agent_id !== currentAgentId ? node.agent_id : null;
 
 	if (!node) {
 		return (
@@ -82,7 +82,7 @@ const AgentTransferForm = ({
 	const handleDelayChange = (value: number | string) => {
 		const nextDelay =
 			typeof value === 'number' && !Number.isNaN(value) ? value : 0;
-		handleUpdate({ delayMs: nextDelay });
+		handleUpdate({ delay_ms: nextDelay });
 	};
 
 	return (
@@ -99,7 +99,7 @@ const AgentTransferForm = ({
 					data={agentOptions}
 					comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
 					value={selectedTransferAgentId}
-					onChange={(value) => handleUpdate({ agentId: value || '' })}
+					onChange={(value) => handleUpdate({ agent_id: value || '' })}
 					searchable
 					disabled={isLoading || agentOptions.length === 0}
 					size='sm'
@@ -112,7 +112,7 @@ const AgentTransferForm = ({
 				<NumberInput
 					label={t('form.workflow.forms.transfer.delayLabel')}
 					placeholder={t('form.workflow.forms.transfer.delayPlaceholder')}
-					value={node.delayMs ?? 0}
+					value={node.delay_ms ?? 0}
 					min={0}
 					allowNegative={false}
 					allowDecimal={false}
@@ -127,10 +127,10 @@ const AgentTransferForm = ({
 				<Textarea
 					label={t('form.workflow.forms.transfer.messageLabel')}
 					placeholder={t('form.workflow.forms.transfer.messagePlaceholder')}
-					value={node.transferMessage ?? ''}
+					value={node.transfer_message ?? ''}
 					minRows={3}
 					onChange={(event) =>
-						handleUpdate({ transferMessage: event.currentTarget.value })
+						handleUpdate({ transfer_message: event.currentTarget.value })
 					}
 					size='sm'
 					classNames={{
@@ -140,11 +140,11 @@ const AgentTransferForm = ({
 				/>
 				<Switch
 					label={t('form.workflow.forms.transfer.firstMessageLabel')}
-					checked={node.enableTransferredAgentFirstMessage ?? false}
+					checked={node.enable_transferred_agent_first_message ?? false}
 					labelPosition='left'
 					onChange={(event) =>
 						handleUpdate({
-							enableTransferredAgentFirstMessage: event.currentTarget.checked,
+							enable_transferred_agent_first_message: event.currentTarget.checked,
 						})
 					}
 					size='sm'

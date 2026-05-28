@@ -13,7 +13,7 @@ interface WorkflowEditorFullscreenProps {
 	onClose: () => void;
 	workflow?: AgentWorkflow;
 	onWorkflowChange: (workflow: AgentWorkflow) => void;
-	preventSubagentLoops: boolean;
+	prevent_subagent_loops: boolean;
 	allowDefaultInit: boolean;
 	onNodeSelect?: (nodeId: string | null) => void;
 	nodeStyles?: NodeStyles;
@@ -27,7 +27,7 @@ const WorkflowEditorFullscreen = ({
 	onClose,
 	workflow,
 	onWorkflowChange,
-	preventSubagentLoops,
+	prevent_subagent_loops,
 	allowDefaultInit,
 	onNodeSelect,
 	nodeStyles,
@@ -71,7 +71,7 @@ const WorkflowEditorFullscreen = ({
 						<WorkflowClipboardActions
 							workflow={workflow}
 							onWorkflowChange={onWorkflowChange}
-							fallbackPreventSubagentLoops={preventSubagentLoops}
+							fallbackPreventSubagentLoops={prevent_subagent_loops}
 							buttonSize='sm'
 							nodeStyles={nodeStyles}
 							nodeGroups={nodeGroups}
@@ -123,7 +123,7 @@ const WorkflowEditorFullscreen = ({
 						onWorkflowChange={onWorkflowChange}
 						nodeGroups={nodeGroups}
 						onNodeGroupsChange={onNodeGroupsChange}
-						preventSubagentLoops={preventSubagentLoops}
+						prevent_subagent_loops={prevent_subagent_loops}
 						allowDefaultInit={allowDefaultInit}
 						onNodeSelect={onNodeSelect}
 						layoutMode='fullscreen'

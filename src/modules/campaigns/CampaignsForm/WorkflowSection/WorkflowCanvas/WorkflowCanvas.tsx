@@ -51,7 +51,7 @@ interface WorkflowCanvasProps {
 	onWorkflowChange?: (workflow: AgentWorkflow) => void;
 	nodeGroups?: NodeGroups;
 	onNodeGroupsChange?: (nodeGroups: NodeGroups) => void;
-	preventSubagentLoops?: boolean;
+	prevent_subagent_loops?: boolean;
 	allowDefaultInit?: boolean;
 	onNodeSelect?: (nodeId: string | null) => void;
 	layoutMode?: 'compact' | 'fullscreen';
@@ -72,7 +72,7 @@ const WorkflowCanvasInner = ({
 	onWorkflowChange,
 	nodeGroups,
 	onNodeGroupsChange,
-	preventSubagentLoops = false,
+	prevent_subagent_loops = false,
 	allowDefaultInit = true,
 	onNodeSelect,
 	layoutMode = 'compact',
@@ -117,11 +117,11 @@ const WorkflowCanvasInner = ({
 					return node;
 				}
 
-				const data = node.data as { edgeOrder?: string[] };
-				const edgeOrder = data.edgeOrder ?? [];
-				const nextEdgeOrder = edgeOrder.filter((id) => id !== edgeToRemove.id);
+				const data = node.data as { edge_order?: string[] };
+				const edge_order = data.edge_order ?? [];
+				const nextEdgeOrder = edge_order.filter((id) => id !== edgeToRemove.id);
 
-				if (nextEdgeOrder.length === edgeOrder.length) {
+				if (nextEdgeOrder.length === edge_order.length) {
 					return node;
 				}
 
@@ -129,7 +129,7 @@ const WorkflowCanvasInner = ({
 					...node,
 					data: {
 						...data,
-						edgeOrder: nextEdgeOrder,
+						edge_order: nextEdgeOrder,
 					},
 				};
 			}),
@@ -229,14 +229,14 @@ const WorkflowCanvasInner = ({
 	const handleSaveEdgeCondition = useCallback(
 		(
 			edgeId: string,
-			forwardCondition?: WorkflowEdge['forwardCondition'],
-			backwardCondition?: WorkflowEdge['backwardCondition']
+			forward_condition?: WorkflowEdge['forward_condition'],
+			backward_condition?: WorkflowEdge['backward_condition']
 		) => {
 			if (!workflow) return;
 
 			const nextWorkflow = updateWorkflowEdge(workflow, edgeId, {
-				forwardCondition,
-				backwardCondition,
+				forward_condition,
+				backward_condition,
 			});
 
 			if (nextWorkflow) {
@@ -285,8 +285,8 @@ const WorkflowCanvasInner = ({
 	const { resolveNodeCollisions } = useNodeCollisions({ setNodes });
 
 	const buildDefaultWorkflowCallback = useCallback(
-		() => buildDefaultWorkflow(preventSubagentLoops),
-		[preventSubagentLoops]
+		() => buildDefaultWorkflow(prevent_subagent_loops),
+		[prevent_subagent_loops]
 	);
 
 	const mapWorkflowToNodesCallback = useCallback(
@@ -297,8 +297,8 @@ const WorkflowCanvasInner = ({
 
 	const buildWorkflowFromStateCallback = useCallback(
 		(currentNodes: Node[], currentEdges: Edge[]): BuildWorkflowResult =>
-			buildWorkflowFromState(currentNodes, currentEdges, preventSubagentLoops),
-		[preventSubagentLoops]
+			buildWorkflowFromState(currentNodes, currentEdges, prevent_subagent_loops),
+		[prevent_subagent_loops]
 	);
 
 	const { flushOnDragStop } = useWorkflowSync({
@@ -369,10 +369,10 @@ const WorkflowCanvasInner = ({
 						return node;
 					}
 
-					const data = node.data as { edgeOrder?: string[] };
-					const edgeOrder = data.edgeOrder ?? [];
+					const data = node.data as { edge_order?: string[] };
+					const edge_order = data.edge_order ?? [];
 
-					if (edgeOrder.includes(oldEdge.id)) {
+					if (edge_order.includes(oldEdge.id)) {
 						return node;
 					}
 
@@ -380,7 +380,7 @@ const WorkflowCanvasInner = ({
 						...node,
 						data: {
 							...data,
-							edgeOrder: [...edgeOrder, oldEdge.id],
+							edge_order: [...edge_order, oldEdge.id],
 						},
 					};
 				});
@@ -413,13 +413,13 @@ const WorkflowCanvasInner = ({
 				noop();
 				setNodes((currentNodes) =>
 					currentNodes.map((node) => {
-						const data = node.data as { edgeOrder?: string[] };
-						const edgeOrder = data.edgeOrder ?? [];
-						const nextEdgeOrder = edgeOrder.filter(
+						const data = node.data as { edge_order?: string[] };
+						const edge_order = data.edge_order ?? [];
+						const nextEdgeOrder = edge_order.filter(
 							(edgeId) => !removedEdgeIds.has(edgeId)
 						);
 
-						if (nextEdgeOrder.length === edgeOrder.length) {
+						if (nextEdgeOrder.length === edge_order.length) {
 							return node;
 						}
 
@@ -427,7 +427,7 @@ const WorkflowCanvasInner = ({
 							...node,
 							data: {
 								...data,
-								edgeOrder: nextEdgeOrder,
+								edge_order: nextEdgeOrder,
 							},
 						};
 					})
@@ -476,8 +476,9 @@ const WorkflowCanvasInner = ({
 				(node) => node.id === connection.source
 			);
 			const isStartSource = sourceNode?.type === WORKFLOW_NODE_TYPES.START;
+			const sourceId = isStartSource ? 'start_node' : connection.source;
 			const existingStartEdge = isStartSource
-				? edgesRef.current.find((edge) => edge.source === connection.source)
+				? edgesRef.current.find((edge) => edge.source === 'start_node')
 				: undefined;
 			const edgeId = existingStartEdge?.id ?? `edge-${generateUUIDv4()}`;
 			const defaultEdgeData = isStartSource
@@ -492,7 +493,7 @@ const WorkflowCanvasInner = ({
 			const nextEdge: Edge = {
 				...(existingStartEdge ?? {}),
 				id: edgeId,
-				source: connection.source,
+				source: sourceId,
 				target: connection.target,
 				sourceHandle: connection.sourceHandle,
 				targetHandle: connection.targetHandle,
@@ -501,8 +502,8 @@ const WorkflowCanvasInner = ({
 					? {
 							...(existingStartEdge?.data ?? {}),
 							...defaultEdgeData,
-							...(!existingStartEdge?.data?.forwardCondition
-								? { forwardCondition: { type: 'unconditional' as const } }
+							...(!existingStartEdge?.data?.forward_condition
+								? { forward_condition: { type: 'unconditional' as const } }
 								: {}),
 						}
 					: (existingStartEdge?.data ?? defaultEdgeData),
@@ -510,18 +511,18 @@ const WorkflowCanvasInner = ({
 
 			setNodes((currentNodes) =>
 				currentNodes.map((node) => {
-					if (node.id !== connection.source) return node;
+					if (node.id !== sourceId) return node;
 
-					const data = node.data as { edgeOrder?: string[] };
-					const edgeOrder = data.edgeOrder ?? [];
+					const data = node.data as { edge_order?: string[] };
+					const edge_order = data.edge_order ?? [];
 
-					if (edgeOrder.includes(edgeId)) return node;
+					if (edge_order.includes(edgeId)) return node;
 
 					return {
 						...node,
 						data: {
 							...data,
-							edgeOrder: [...edgeOrder, edgeId],
+							edge_order: [...edge_order, edgeId],
 						},
 					};
 				})
@@ -599,7 +600,7 @@ const WorkflowCanvasInner = ({
 				type: WORKFLOW_NODE_TYPES.GROUP,
 				position: { x: groupX, y: groupY },
 				label: '',
-				edgeOrder: [],
+				edge_order: [],
 			},
 			selectable: false,
 			focusable: true,
@@ -714,11 +715,11 @@ const WorkflowCanvasInner = ({
 					type: WORKFLOW_NODE_TYPES.OVERRIDE_AGENT,
 					position: { x: newX, y: newY },
 					label: '',
-					edgeOrder: [],
-					additionalPrompt: '',
-					additionalToolIds: [],
-					additionalKnowledgeBase: [],
-					conversationConfig: {},
+					edge_order: [],
+					additional_prompt: '',
+					additional_tool_ids: [],
+					additional_knowledge_base: [],
+					conversation_config: {},
 					uiMeta: { createdByUi: true },
 				},
 			};
@@ -949,7 +950,7 @@ const WorkflowCanvasInner = ({
 						dragging: false,
 						data: {
 							...childData,
-							edgeOrder: [],
+							edge_order: [],
 						},
 					};
 				});
@@ -1019,15 +1020,15 @@ const WorkflowCanvasInner = ({
 						cur
 							.filter((n) => !idsToRemove.has(n.id))
 							.map((n) => {
-								const data = n.data as { edgeOrder?: string[] };
-								const edgeOrder = data.edgeOrder ?? [];
-								const cleaned = edgeOrder.filter(
+								const data = n.data as { edge_order?: string[] };
+								const edge_order = data.edge_order ?? [];
+								const cleaned = edge_order.filter(
 									(eid) => !removedEdgeIds.has(eid)
 								);
-								if (cleaned.length === edgeOrder.length) return n;
+								if (cleaned.length === edge_order.length) return n;
 								return {
 									...n,
-									data: { ...data, edgeOrder: cleaned },
+									data: { ...data, edge_order: cleaned },
 								};
 							})
 					);

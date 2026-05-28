@@ -66,10 +66,10 @@ const ToolNodeComponent = (props: NodeProps) => {
 							<div className={styles.toolsList}>
 								{nodeData.tools.map((tool, index) => (
 									<span
-										key={`${tool.toolId}-${index}`}
+										key={`${tool.tool_id}-${index}`}
 										className={styles.toolBadge}
 									>
-										{toolNameMap.get(tool.toolId) || tool.toolId}
+										{toolNameMap.get(tool.tool_id) || tool.tool_id}
 									</span>
 								))}
 							</div>

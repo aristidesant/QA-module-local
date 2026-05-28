@@ -70,8 +70,8 @@ interface EdgeConditionModalProviderProps {
 	onClose: () => void;
 	onSave: (
 		edgeId: string,
-		forwardCondition?: ForwardCondition,
-		backwardCondition?: ForwardCondition
+		forward_condition?: ForwardCondition,
+		backward_condition?: ForwardCondition
 	) => void;
 	children: React.ReactNode;
 }
@@ -124,7 +124,7 @@ export const EdgeConditionModalProvider = ({
 				case 'llm':
 					return {
 						type: 'llm',
-						label: condition.label,
+						label: condition.label ?? undefined,
 						llmCondition: condition.condition,
 					};
 				case 'result':
@@ -142,7 +142,7 @@ export const EdgeConditionModalProvider = ({
 					return isConditionAllowed('expression', direction)
 						? {
 								type: 'expression',
-								label: condition.label,
+								label: condition.label ?? undefined,
 								expression: condition.expression,
 							}
 						: { type: 'none' };
@@ -157,21 +157,21 @@ export const EdgeConditionModalProvider = ({
 		'forward'
 	);
 	const [forwardState, setForwardState] = useState<ConditionFormState>(() =>
-		deriveStateFromCondition(edge?.forwardCondition, 'forward')
+		deriveStateFromCondition(edge?.forward_condition, 'forward')
 	);
 	const [backwardState, setBackwardState] = useState<ConditionFormState>(() =>
-		deriveStateFromCondition(edge?.backwardCondition, 'backward')
+		deriveStateFromCondition(edge?.backward_condition, 'backward')
 	);
 
 	useEffect(() => {
 		if (!opened) return;
 
 		const nextForward = deriveStateFromCondition(
-			edge?.forwardCondition,
+			edge?.forward_condition,
 			'forward'
 		);
 		const nextBackward = deriveStateFromCondition(
-			edge?.backwardCondition,
+			edge?.backward_condition,
 			'backward'
 		);
 
@@ -184,8 +184,8 @@ export const EdgeConditionModalProvider = ({
 	}, [
 		opened,
 		edgeId,
-		edge?.forwardCondition,
-		edge?.backwardCondition,
+		edge?.forward_condition,
+		edge?.backward_condition,
 		deriveStateFromCondition,
 	]);
 
@@ -241,9 +241,9 @@ export const EdgeConditionModalProvider = ({
 		if (!edgeId) return;
 		if (!canSave) return;
 
-		const forwardCondition = buildCondition(forwardState);
-		const backwardCondition = buildCondition(backwardState);
-		onSave(edgeId, forwardCondition, backwardCondition);
+		const forward_condition = buildCondition(forwardState);
+		const backward_condition = buildCondition(backwardState);
+		onSave(edgeId, forward_condition, backward_condition);
 		onClose();
 	}, [
 		edgeId,
