@@ -10,9 +10,9 @@
 }
 
 .canvasCompact {
-	height: calc(100dvh - 450px);
-	max-height: calc(100dvh - 450px);
-	min-height: 350px;
+	height: clamp(420px, calc(100dvh - 260px), 980px);
+	max-height: clamp(420px, calc(100dvh - 260px), 980px);
+	min-height: 420px;
 }
 
 .canvasFullscreen {

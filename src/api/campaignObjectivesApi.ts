@@ -3,6 +3,7 @@ import type {
 	CampaignObjective,
 	CampaignObjectiveResponse,
 	CampaignObjectiveApiParams,
+	CampaignObjectiveDropdownOption,
 	CreateCampaignObjectiveRequest,
 	UpdateCampaignObjectiveRequest,
 } from '../models/CampaignObjectiveModel';
@@ -22,6 +23,20 @@ const campaignObjectivesApi = (_authHeader: Record<string, string> = {}) => {
 			const response = await axios.post<CampaignObjective>(
 				`${DEFAULT_API_URL}/campaign-objectives`,
 				data
+			);
+			return response.data;
+		},
+
+		/**
+		 * Get all active campaign objectives for dropdown usage (lightweight, no pagination).
+		 * Supports optional categoryId query parameter.
+		 */
+		getCampaignObjectivesAll: async (
+			categoryId?: number
+		): Promise<CampaignObjectiveDropdownOption[]> => {
+			const response = await axios.get<CampaignObjectiveDropdownOption[]>(
+				`${DEFAULT_API_URL}/campaign-objectives/all`,
+				{ params: categoryId !== undefined ? { categoryId } : undefined }
 			);
 			return response.data;
 		},

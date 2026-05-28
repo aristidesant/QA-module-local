@@ -7,7 +7,7 @@ import React, {
 	useEffect,
 } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { useForm } from '@mantine/form';
+import { useForm, UseFormReturnType } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
@@ -99,7 +99,7 @@ interface AgentTestsPageContextType {
 	closeTestStatusModal: () => void;
 
 	// Form State
-	form: ReturnType<typeof useForm<AgentTestFormValues>>;
+	form: UseFormReturnType<AgentTestFormValues>;
 	showSuccessExamples: boolean;
 	setShowSuccessExamples: (show: boolean) => void;
 	showFailureExamples: boolean;

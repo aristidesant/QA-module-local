@@ -114,7 +114,9 @@ const FilterTableRow = memo(({ index, row }: FilterTableRowProps) => {
 	const operatorOptions = getRuntimeFilterOperatorOptions(t, fieldType);
 
 	useEffect(() => {
-		setDraftValue(row.value);
+		setDraftValue((prev) =>
+			areRuntimeFilterValuesEqual(prev, row.value) ? prev : row.value
+		);
 	}, [row.field, row.operator, row.value]);
 
 	useEffect(() => {
@@ -126,9 +128,16 @@ const FilterTableRow = memo(({ index, row }: FilterTableRowProps) => {
 			return;
 		}
 
+		// debouncedDraftValue is stale by 350ms after operator/field changes reset draftValue.
+		// If draftValue already matches row.value, the debounce is just catching up — skip.
+		if (areRuntimeFilterValuesEqual(draftValue, row.value)) {
+			return;
+		}
+
 		state.handlers.handleRuntimeFilterValueChange(index, debouncedDraftValue);
 	}, [
 		debouncedDraftValue,
+		draftValue,
 		index,
 		row.field,
 		row.operator,
@@ -425,7 +434,7 @@ const DashboardWidgetAdvancedSection = () => {
 				</Group>
 			</div>
 
-			<Collapse in={state.advancedOpened}>
+			<Collapse expanded={state.advancedOpened}>
 				<div className={styles.advancedContent}>
 					{state.needsGroupedConfig ? (
 						<div className={styles.sectionInlinePanel}>

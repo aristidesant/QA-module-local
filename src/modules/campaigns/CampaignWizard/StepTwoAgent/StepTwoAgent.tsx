@@ -32,6 +32,11 @@ import styles from './StepTwoAgent.module.css';
 import sharedStyles from '../CampaignWizard.module.css';
 import type { Campaign } from '~/models/CampaignsModel';
 import { useUpdateCampaign, useGetCampaign } from '~/queries/campaignsQueries';
+import {
+	applyCampaignBehaviorConversationConfig,
+	applyCampaignBehaviorPlatformSettings,
+	sanitizeCampaignBehaviorConversationConfig,
+} from '~/modules/campaigns/utils/campaignBehaviorConfig';
 
 interface StepTwoAgentProps {
 	onNext: () => void;
@@ -66,6 +71,12 @@ const extractKnowledgeBaseIds = (
 	// Only consider KB data "present" if there are actual IDs.
 	// An empty array means no KB was saved, so we should preserve local selections.
 	return { ids, isPresent: ids.length > 0 };
+};
+
+type WizardConversationConfig = Record<string, unknown> & {
+	agent?: Record<string, unknown> & {
+		prompt?: Record<string, unknown>;
+	};
 };
 
 export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
@@ -271,6 +282,12 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		const currentCampaign = useCampaignWizardStore.getState().createdCampaign;
 		const currentKnowledgeBaseIds =
 			useCampaignWizardStore.getState().knowledgeBaseIds;
+		const selectedBehaviorConversationConfig = predefinedParams.find(
+			(param) => param.id && String(param.id) === String(values.agentBehaviorId)
+		)?.params?.conversationConfig;
+		const selectedBehaviorPlatformSettings = predefinedParams.find(
+			(param) => param.id && String(param.id) === String(values.agentBehaviorId)
+		)?.params?.platformSettings;
 
 		if (
 			!currentCampaign ||
@@ -288,8 +305,20 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		setIsSubmitting(true);
 		try {
 			// Prepare updated prompt structure
+			const mergedConversationConfig = applyCampaignBehaviorConversationConfig(
+				(currentCampaign.agentConfig?.conversationConfig || {}) as Record<
+					string,
+					unknown
+				>,
+				selectedBehaviorConversationConfig
+			) as WizardConversationConfig;
+			const currentAgent = mergedConversationConfig.agent ?? {};
 			const currentPrompt =
-				currentCampaign.agentConfig?.conversationConfig?.agent?.prompt || {};
+				mergedConversationConfig.agent?.prompt ||
+				(currentCampaign.agentConfig?.conversationConfig?.agent?.prompt as
+					| Record<string, unknown>
+					| undefined) ||
+				{};
 
 			const payload = {
 				...currentCampaign,
@@ -298,14 +327,21 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 				agentConfig: {
 					...currentCampaign.agentConfig,
 					knowledgeBaseIds: currentKnowledgeBaseIds,
+					platformSettings: applyCampaignBehaviorPlatformSettings(
+						(currentCampaign.agentConfig?.platformSettings || {}) as Record<
+							string,
+							unknown
+						>,
+						selectedBehaviorPlatformSettings
+					),
 					conversationConfig: {
-						...currentCampaign.agentConfig?.conversationConfig,
+						...mergedConversationConfig,
 						agent: {
-							...currentCampaign.agentConfig?.conversationConfig?.agent,
+							...currentAgent,
 							language: values.language,
 							firstMessage: values.firstMessage,
 							prompt: {
-								...currentPrompt,
+								...(currentPrompt as Record<string, unknown>),
 								prompt: values.agentPrompt,
 								knowledgeBase: currentKnowledgeBaseIds,
 							},
@@ -313,6 +349,13 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 					},
 				},
 			};
+
+			if (payload.agentConfig?.conversationConfig) {
+				payload.agentConfig.conversationConfig =
+					sanitizeCampaignBehaviorConversationConfig(
+						(payload.agentConfig.conversationConfig || {}) as Record<string, unknown>
+					) as typeof payload.agentConfig.conversationConfig;
+			}
 
 			// Remove toolIds from prompt if present, as it can interfere with knowledge base functionality
 			if (payload.agentConfig?.conversationConfig?.agent?.prompt) {
@@ -421,10 +464,17 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 										size='sm'
 										data={predefinedParams
 											.filter((param) => param.id)
-											.map((param) => ({
-												value: String(param.id),
-												label: param.name || 'Unnamed',
-											}))}
+											.map((param) => {
+												const label =
+													param.name || t('wizard.steps.agent.unnamedBehavior');
+												return {
+													value: String(param.id),
+													label:
+														param.behaviorType === 'BACKUP' || param.isBackup
+															? `${label} (${t('wizard.steps.agent.backupOptionSuffix')})`
+															: label,
+												};
+											})}
 										value={
 											form.values.agentBehaviorId
 												? String(form.values.agentBehaviorId)

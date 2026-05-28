@@ -58,6 +58,10 @@
 	transition: box-shadow 200ms ease;
 }
 
+.contentContainerHeaderBottom {
+	margin-top: var(--mantine-spacing-xs);
+}
+
 .contentContainerHeaderScrolled {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
 	clip-path: inset(0 0 -20px 0);

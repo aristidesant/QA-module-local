@@ -9,6 +9,7 @@ import {
 	getMetricLatency,
 	getTotalLlmCost,
 	calculateModelCost,
+	formatWorkflowNodeName,
 } from './formatUtils';
 
 export function isAgentRole(role: string): boolean {
@@ -52,6 +53,40 @@ export function sanitizeAgentMetadata(
 		normalized.workflow_node_id
 		? normalized
 		: null;
+}
+
+export function buildTranscriptClipboardText(
+	entries: TranscriptEntry[],
+	nodeLabels?: Record<string, string>
+): string {
+	const lines: string[] = [];
+
+	for (const entry of entries) {
+		const message = entry.message?.trim();
+		if (!message) continue;
+
+		if (isAgentRole(entry.role)) {
+			const metadata = sanitizeAgentMetadata(entry.agent_metadata);
+			const nodeId = metadata?.workflow_node_id ?? null;
+			const nodeName =
+				(nodeId && nodeLabels?.[nodeId]) ?? formatWorkflowNodeName(nodeId);
+			const agentId = metadata?.agent_id ?? '—';
+
+			lines.push(`agent>${nodeName}>${agentId}:`);
+			lines.push(message);
+			lines.push('');
+			continue;
+		}
+
+		if (isUserRole(entry.role)) {
+			lines.push('Customer:');
+			lines.push(message);
+			lines.push('');
+			continue;
+		}
+	}
+
+	return lines.join('\n').trimEnd();
 }
 
 export function hasAgentContextChanged(

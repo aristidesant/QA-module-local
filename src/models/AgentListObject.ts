@@ -1,5 +1,10 @@
 import type { Voice } from './AgentVoiceModel';
 import type { AgentWorkflow } from './AgentWorkflowModel';
+import type { CampaignAgentWorkflowUi } from './CampaignAgentModel';
+import type {
+	BackupLlmConfig,
+	SuggestedAudioTag,
+} from './CampaignPredefinedParam';
 
 export default interface AgentListObject {
 	id: string;
@@ -11,6 +16,7 @@ export default interface AgentListObject {
 	clientId: number;
 	userId: number;
 	language: string;
+	workflowUi?: CampaignAgentWorkflowUi | null;
 	createdAt: string;
 	updatedAt: string;
 	deletedAt: string | null;
@@ -115,13 +121,15 @@ export interface ConversationConfigModel {
 	tts: {
 		speed: number;
 		modelId: string;
-		voiceId: string;
+		voiceId?: string;
 		stability: number;
 		similarityBoost: number;
-		supportedVoices: any[];
+		supportedVoices?: Record<string, unknown>[];
+		expressiveMode?: boolean;
+		suggestedAudioTags?: SuggestedAudioTag[];
 		agentOutputAudioFormat: string;
 		optimizeStreamingLatency: number;
-		pronunciationDictionaryLocators: string[];
+		pronunciationDictionaryLocators?: string[];
 	};
 	turn: {
 		mode: string;
@@ -132,6 +140,7 @@ export interface ConversationConfigModel {
 		prompt: {
 			llm: string;
 			reasoningEffort?: string;
+			backupLlmConfig?: BackupLlmConfig;
 			rag: {
 				enabled: boolean;
 				embeddingModel: string;
@@ -199,6 +208,7 @@ export type AgentWithCampaignListItem = Pick<
 
 export type AgentWithCampaignsQueryParams = {
 	name?: string;
+	campaignId?: number;
 	agentId?: string;
 	agentType?: AgentWithCampaignListItem['type'];
 	status?: AgentWithCampaignListItem['status'];

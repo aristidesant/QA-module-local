@@ -1,22 +1,14 @@
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { Text, Group, ThemeIcon, Tooltip, Badge } from '@mantine/core';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
 import type { ToolModel } from '~/models/ToolModel';
 import { useTranslation } from 'react-i18next';
+import { IconTrash } from '@tabler/icons-react';
+import styles from '../ToolsList/ToolsList.module.css';
 
-type StatusColor = 'green' | 'red' | 'gray';
-
-const getStatusColor = (status: string): StatusColor => {
-	switch (status.toLowerCase()) {
-		case 'active':
-			return 'green';
-		case 'inactive':
-			return 'red';
-		default:
-			return 'gray';
-	}
-};
+interface UseToolsListColumnsProps {
+	onDelete: (tool: ToolModel) => void;
+}
 
 const getDateLocale = (language: string) => {
 	const normalized = language?.toLowerCase?.() ?? 'en';
@@ -32,7 +24,9 @@ const formatDate = (dateString: string, language: string) =>
 		day: 'numeric',
 	});
 
-function useToolsListColumns(): ColumnDef<ToolModel>[] {
+function useToolsListColumns({
+	onDelete,
+}: UseToolsListColumnsProps): ColumnDef<ToolModel>[] {
 	const { t, i18n } = useTranslation('tools');
 
 	return useMemo<ColumnDef<ToolModel>[]>(() => {
@@ -42,48 +36,45 @@ function useToolsListColumns(): ColumnDef<ToolModel>[] {
 				header: t('columns.name'),
 				cell: ({ row }) => {
 					const tool = row.original;
-
 					return (
-						<Group gap='xs'>
-							<Text fw={500} size='sm'>
+						<div className={styles.nameCell}>
+							<Text fz='sm' fw={600} className={styles.nameText}>
 								{tool.name}
 							</Text>
-							{tool.description ? (
-								<Tooltip
-									label={tool.description}
-									withinPortal
-									multiline
-									w={280}
-								>
-									<ThemeIcon size='sm' radius='xl' variant='light' color='gray'>
-										<IconInfoCircle size={14} />
-									</ThemeIcon>
-								</Tooltip>
-							) : null}
-						</Group>
+							<Text
+								fz='xs'
+								c='dimmed'
+								className={styles.nameDescription}
+								fs={tool.description ? undefined : 'italic'}
+							>
+								{tool.description || t('columns.noDescription')}
+							</Text>
+						</div>
 					);
 				},
 			},
 			{
 				accessorKey: 'status',
 				header: t('columns.status'),
-				cell: ({ row }) => (
-					<Badge
-						color={getStatusColor(row.original.status)}
-						variant='light'
-						size='sm'
-					>
-						{t(`status.${row.original.status.toLowerCase()}`, {
-							defaultValue: row.original.status,
-						})}
-					</Badge>
-				),
+				cell: ({ row }) => {
+					const statusKey = row.original.status.toLowerCase();
+					const cls =
+						statusKey === 'active'
+							? styles.statusActive
+							: styles.statusInactive;
+					return (
+						<span className={cls}>
+							<span className={styles.statusDot} />
+							{t(`status.${statusKey}`, { defaultValue: row.original.status })}
+						</span>
+					);
+				},
 			},
 			{
 				id: 'creator',
 				header: t('columns.createdBy'),
 				cell: ({ row }) => (
-					<Text size='sm'>
+					<Text fz='sm' c='dimmed'>
 						{row.original.config?.accessInfo?.creatorName ||
 							t('columns.unknownCreator')}
 					</Text>
@@ -93,13 +84,39 @@ function useToolsListColumns(): ColumnDef<ToolModel>[] {
 				accessorKey: 'createdAt',
 				header: t('columns.created'),
 				cell: ({ row }) => (
-					<Text size='sm' c='dimmed'>
+					<Text fz='xs' c='dimmed'>
 						{formatDate(row.original.createdAt, i18n.language)}
 					</Text>
 				),
 			},
+			{
+				id: 'actions',
+				header: t('columns.actions'),
+				meta: {
+					headerClassName: styles.actionsHeader,
+					cellClassName: styles.actionsCell,
+				},
+				cell: ({ row }) => (
+					<Group gap='xs' wrap='nowrap' justify='flex-end'>
+						<Tooltip label={t('actions.delete')} withArrow>
+							<ActionIcon
+								size='sm'
+								variant='subtle'
+								color='red'
+								onClick={(event) => {
+									event.stopPropagation();
+									onDelete(row.original);
+								}}
+								aria-label={t('actions.delete')}
+							>
+								<IconTrash size={16} />
+							</ActionIcon>
+						</Tooltip>
+					</Group>
+				),
+			},
 		];
-	}, [i18n.language, t]);
+	}, [i18n.language, onDelete, t]);
 }
 
 export default useToolsListColumns;

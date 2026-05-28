@@ -12,7 +12,7 @@ import campaignsApi, {
 	type SetDraftDto,
 	type ToggleCampaignAction,
 } from '~/api/campaignsApi';
-import type { Campaign } from '~/models/CampaignsModel';
+import type { Campaign, CampaignPromptVariable } from '~/models/CampaignsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
 
 // Create campaign
@@ -26,10 +26,23 @@ export const useCreateCampaign = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
+			queryClient.invalidateQueries({ queryKey: ['campaign-roles'] });
 		},
 		onError: (error) => {
 			void error;
 		},
+	});
+};
+
+// Get my campaigns
+export const useGetMyCampaigns = (enabled: boolean = true) => {
+	return useQuery({
+		queryKey: ['my-campaigns'],
+		queryFn: async () => {
+			const api = campaignsApi();
+			return api.getMyCampaigns();
+		},
+		enabled,
 	});
 };
 
@@ -73,6 +86,22 @@ export const useGetCampaign = (
 		},
 		enabled: options?.enabled ?? !!id,
 		...options,
+	});
+};
+
+export const useGetCampaignPromptVariables = (campaignId: number) => {
+	return useQuery<
+		CampaignPromptVariable[],
+		unknown,
+		CampaignPromptVariable[],
+		['campaign-prompt-variables', number]
+	>({
+		queryKey: ['campaign-prompt-variables', campaignId],
+		queryFn: async () => {
+			const api = campaignsApi();
+			return api.findCampaignPromptVariables(campaignId);
+		},
+		enabled: campaignId > 0,
 	});
 };
 
@@ -177,6 +206,9 @@ export const useUpdateCampaign = () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
 			if (data?.id) {
 				queryClient.invalidateQueries({ queryKey: ['campaign', data.id] });
+				queryClient.invalidateQueries({
+					queryKey: ['campaign-roles', data.id],
+				});
 			}
 		},
 		onError: (error) => {
@@ -204,6 +236,9 @@ export const useUpdateCampaignLight = () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
 			if (data?.id) {
 				queryClient.invalidateQueries({ queryKey: ['campaign', data.id] });
+				queryClient.invalidateQueries({
+					queryKey: ['campaign-roles', data.id],
+				});
 			}
 		},
 		onError: (error) => {
@@ -335,6 +370,7 @@ export const useCloneCampaign = () => {
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['campaigns'] });
 			queryClient.invalidateQueries({ queryKey: ['campaigns-paginated'] });
+			queryClient.invalidateQueries({ queryKey: ['campaign-roles'] });
 		},
 		onError: (error) => {
 			void error;

@@ -40,11 +40,18 @@ const CampaignPredefinedParamsModal: React.FC<
 	}, [selectionName, predefinedParams]);
 
 	const previewConfig = useMemo(() => {
-		return selectedParam?.params?.conversationConfig ?? null;
+		return (
+			selectedParam?.params?.conversationConfig ??
+			selectedParam?.params?.platformSettings ??
+			null
+		);
 	}, [selectedParam]);
 
 	const handleApply = () => {
-		if (selectedParam?.params?.conversationConfig) {
+		if (
+			selectedParam?.params?.conversationConfig ||
+			selectedParam?.params?.platformSettings
+		) {
 			onApply(selectedParam);
 		}
 	};
@@ -63,7 +70,10 @@ const CampaignPredefinedParamsModal: React.FC<
 					placeholder={t('form.agent.behavior.modal.placeholder')}
 					data={predefinedParams.map((param) => ({
 						value: param.name,
-						label: param.name,
+						label:
+							param.behaviorType === 'BACKUP' || param.isBackup
+								? `${param.name} (${t('form.agent.behavior.modal.backupSuffix')})`
+								: param.name,
 					}))}
 					value={selectionName}
 					onChange={setSelectionName}

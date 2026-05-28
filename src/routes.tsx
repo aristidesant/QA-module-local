@@ -70,9 +70,9 @@ const ProfilePage = React.lazy(() => import('./modules/profile/ProfilePage'));
 const DoNotCallPage = React.lazy(
 	() => import('./modules/do-not-call/DoNotCallPage/DoNotCallPage')
 );
-const CampaignPredefinedParamsPage = React.lazy(
-	() =>
-		import('./modules/configurations/CampaignPredefinedParamsPage/CampaignPredefinedParamsPage')
+
+const AgentBehaviorsPage = React.lazy(
+	() => import('./modules/configurations/AgentBehaviorsPage/AgentBehaviorsPage')
 );
 const RegionalSettingsParamsPage = React.lazy(
 	() =>
@@ -105,6 +105,9 @@ const CampaignTestPage = React.lazy(
 );
 const CampaignViewPage = React.lazy(
 	() => import('./modules/campaigns/CampaignViewPage/CampaignViewPage')
+);
+const AgentDetailPage = React.lazy(
+	() => import('./modules/campaigns/AgentDetailPage/AgentDetailPage')
 );
 
 const CampaignsPage = React.lazy(
@@ -239,8 +242,32 @@ const router = createBrowserRouter([
 								),
 							},
 							{
+								path: 'agent/:campaignAgentId',
+								id: 'campaign.detail.agent',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense fallback={<SuspenseFallback />}>
+											<AgentDetailPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
+								children: [
+									{
+										path: 'test/:agentId',
+										id: 'campaign.detail.test',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CampaignTestPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+								],
+							},
+							{
 								path: 'test',
-								id: 'campaign.detail.test',
+								id: 'campaign.detail.test.legacy',
 								element: (
 									<I18nNamespaceLoader>
 										<Suspense fallback={<SuspenseFallback />}>
@@ -387,13 +414,20 @@ const router = createBrowserRouter([
 									</Suspense>
 								),
 							},
+
 							{
-								path: 'campaign-predefined-params',
-								id: 'campaign-predefined-params',
+								path: 'agent-behaviors',
+								id: 'agent-behaviors',
 								element: (
-									<Suspense fallback={<SuspenseFallback />}>
-										<CampaignPredefinedParamsPage />
-									</Suspense>
+									<ModuleGuard
+										module={ModuleEnum.SETTINGS}
+										permission={PermissionEnum.MANAGE}
+										superAdminOnly
+									>
+										<Suspense fallback={<SuspenseFallback />}>
+											<AgentBehaviorsPage />
+										</Suspense>
+									</ModuleGuard>
 								),
 							},
 							{

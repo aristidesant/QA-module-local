@@ -20,6 +20,7 @@
 			"fields": {
 				"identifier": "Identificador",
 				"type": "Tipo de dato",
+				"isActive": "Activa",
 				"description": "Descripción",
 				"enumValues": "Valores enum (opcional)",
 				"enumValuesCount": "Valores enum ({{count}})",
@@ -40,6 +41,7 @@
 				"constantValue": "Valor fijo opcional",
 				"dynamicVariable": "Variable de origen opcional"
 			},
+			"activationHint": "Las variables inactivas se mantienen guardadas a nivel de campaña, pero no se envían al runtime del agente hasta reactivarlas.",
 			"descriptionHint": "Esta descripción se envía al LLM y debe explicar cómo extraer el valor desde la transcripción.",
 			"enumHint": "El LLM solo podrá seleccionar entre estos valores predefinidos.",
 			"validation": {
@@ -49,6 +51,9 @@
 			"table": {
 				"identifier": "Identificador",
 				"type": "Tipo de dato",
+				"isActive": "Estado",
+				"active": "Activa",
+				"inactive": "Inactiva",
 				"description": "Descripción",
 				"descriptionTooltipLabel": "Descripción de la variable",
 				"descriptionEmpty": "No hay descripción disponible",

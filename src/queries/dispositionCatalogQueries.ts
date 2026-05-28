@@ -13,6 +13,7 @@ import type { PaginatedResponse } from '~/models/CampaignsModel';
 import type {
 	DispositionCatalogModel,
 	CreateDispositionCatalog,
+	DispositionCatalogExportPayload,
 } from '~/models/DispositionCatalogModels';
 import type { DispositionFlowModel } from '~/models/DispositionFlowModel';
 
@@ -243,6 +244,22 @@ export function useDeactivateDispositionCatalog() {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['dispositionCatalogs'] });
+		},
+	});
+}
+
+/**
+ * Mutation hook to export a disposition catalog in import-compatible format
+ */
+export function useExportDispositionCatalog() {
+	return useMutation<
+		DispositionCatalogExportPayload,
+		Error,
+		{ catalogId: number | string }
+	>({
+		mutationFn: async ({ catalogId }) => {
+			const api = dispositionCatalogApi();
+			return api.exportDispositionCatalog(catalogId);
 		},
 	});
 }

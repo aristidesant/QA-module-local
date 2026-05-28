@@ -28,12 +28,12 @@ import {
 	ReportValueOriginType,
 	type ReportValue,
 } from '~/models/ReportValue';
-import type { CustomVariableTemplate } from '~/models/CustomVariableModel';
+import type { DataCollectionTemplateGroup } from '~/models/DataCollectionTemplateModel';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import {
 	useGetCustomVariableTemplates,
 	useGetTemplateVariables,
-} from '~/queries/customVariableTemplatesQueries';
+} from '~/queries/dataCollectionTemplateGroupsQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import {
 	validateSheetColumnUniqueness,
@@ -344,7 +344,7 @@ const ReportTemplateColumnFormModal = ({
 	);
 
 	const selectedCustomVariableTemplate =
-		useMemo<CustomVariableTemplate | null>(() => {
+		useMemo<DataCollectionTemplateGroup | null>(() => {
 			if (selectedOrigin !== ReportValueOriginType.OBJECT) {
 				return null;
 			}

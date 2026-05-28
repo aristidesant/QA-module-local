@@ -18,11 +18,9 @@ export const AgentCampaignList: React.FC = () => {
 		'common',
 	]);
 	const campaignId = useCampaignId();
-	const {
-		data: campaignAgents,
-		refetch,
-		isLoading,
-	} = useGetCampaignAgents(campaignId || 0);
+	const { data: campaignAgents, isLoading } = useGetCampaignAgents(
+		campaignId || 0
+	);
 
 	// Get assigned agent IDs for exclusion when opening the selector
 	const assignedAgentIds = Array.isArray(campaignAgents)
@@ -40,15 +38,11 @@ export const AgentCampaignList: React.FC = () => {
 			modalId: 'add-campaign-agent',
 			title: t('form.agent.list.addAgentTitle'),
 			centered: true,
-			size: 'xl',
+			size: 1160,
 			children: (
 				<AgentCampaignAdd
 					campaignId={campaignId}
 					excludedAgents={assignedAgentIds}
-					onComplete={() => {
-						refetch();
-						modals.close('add-campaign-agent');
-					}}
 				/>
 			),
 		});

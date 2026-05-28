@@ -1,8 +1,40 @@
 {
+	"agentDetail": {
+		"page": {
+			"title": "Agent detail",
+			"description": "Review and update the assigned agent prompt, configuration, workflow, and advanced settings."
+		},
+		"tabs": {
+			"setup": "Setup",
+			"workflow": "Workflow",
+			"advanced": "Advanced",
+			"versioning": "Versioning"
+		},
+		"save": "Save agent",
+		"saving": "Saving...",
+		"breadcrumb": {
+			"back": "Back to campaign"
+		},
+		"advanced": {
+			"tools": "Tools",
+			"systemTools": "System Tools",
+			"knowledgeBase": "Knowledge Base",
+			"asrKeywords": "ASR Keywords",
+			"dynamicVariables": "Dynamic Variables",
+			"dictionary": "Dictionary",
+			"noiseCancellation": "Noise Cancellation"
+		}
+	},
 	"form": {
 		"agent": {
 			"add": {
+				"searchLabel": "Agent name",
 				"searchPlaceholder": "Search agents by name",
+				"campaignNameLabel": "Campaign name",
+				"campaignNamePlaceholder": "Search and select a campaign",
+				"loadingCampaigns": "Loading campaigns...",
+				"loadCampaignsError": "Failed to load campaigns",
+				"noCampaignsFound": "No campaigns found",
 				"loadError": "Failed to load agents",
 				"loadErrorDesc": "There was an error loading the agents list. Please try again.",
 				"tryAgain": "Try again",
@@ -22,14 +54,102 @@
 				"cancel": "Cancel",
 				"cloneAction": "Clone"
 			},
+			"sync": {
+				"title": "Sync External Agent",
+				"description": "Register an agent from an external service in UCXM so it can be used in campaigns.",
+				"agentId": {
+					"label": "Agent ID",
+					"placeholder": "agent_3701k3ttaq12ewp8b7qv5rfyszkz",
+					"description": "Paste the agent ID from the external service."
+				},
+				"type": {
+					"label": "Agent Type",
+					"description": "Choose how this agent will be used in UCXM.",
+					"inbound": "INBOUND",
+					"outbound": "OUTBOUND"
+				},
+				"submit": "Sync agent",
+				"successMessage": "Agent synchronized successfully",
+				"validation": {
+					"agentIdRequired": "Agent ID is required",
+					"typeRequired": "Agent type is required"
+				},
+				"errors": {
+					"nameExists": "An agent with that name already exists. Try another agent.",
+					"alreadySynced": "This agent was already synced before.",
+					"externalService": "Error connecting to the external service. Verify that the Agent ID is correct.",
+					"generic": "Failed to sync agent"
+				}
+			},
 			"list": {
+				"title": "Campaign agents",
+				"description": "Select an agent to edit its prompt or workflow.",
+				"loading": "Loading agents...",
 				"addAgent": "Add Agent",
+				"syncAgent": "Sync External Agent",
 				"addAgentTitle": "Add Agent to Campaign",
+				"openAgentAria": "Open agent {{name}}",
+				"actions": {
+					"menu": "Agent actions",
+					"removeFromCampaign": "Remove from campaign",
+					"principalProtected": "The principal agent cannot be removed from the campaign."
+				},
+				"removeRelation": {
+					"title": "Remove agent from campaign?",
+					"description": "This will remove {{name}} from this campaign only. The agent will remain available in UCXM.",
+					"confirm": "Remove from campaign",
+					"success": "{{name}} was removed from the campaign",
+					"error": "Failed to remove agent from campaign"
+				},
+				"selected": "Selected",
+				"language": "Language: {{language}}",
+				"noLanguage": "Language not available",
+				"loadError": "Failed to load campaign agents",
+				"loadErrorDesc": "There was an error loading the agents list. Please try again.",
+				"tryAgain": "Try again",
 				"noAgents": "No Agents Assigned",
 				"noAgentsDesc": "This campaign has no agents assigned."
 			},
+			"detail": {
+				"back": "Back to agents",
+				"loading": "Loading agent data...",
+				"missingAgent": "The selected agent is no longer available.",
+				"tabs": {
+					"agents": "Agents",
+					"workflow": "Workflow"
+				}
+			},
+			"selector": {
+				"label": "Assigned agent",
+				"principal": "Principal",
+				"subagent": "Subagent",
+				"save": "Save agent",
+				"saving": "Saving...",
+				"saved": "Agent saved",
+				"saveError": "Failed to save agent"
+			},
+			"templates": {
+				"add": "Add subagent from template",
+				"save": "Save as template",
+				"modalTitle": "Add subagent from template",
+				"modalDescription": "Templates are filtered by this campaign objective.",
+				"templateLabel": "Template",
+				"templatePlaceholder": "Select a template",
+				"nameLabel": "Subagent name",
+				"namePlaceholder": "Leave blank to use template name",
+				"descriptionLabel": "Description",
+				"descriptionPlaceholder": "Describe this reusable subagent",
+				"empty": "No templates found for this objective.",
+				"create": "Add subagent",
+				"saveModalTitle": "Save subagent as template",
+				"templateNameLabel": "Template name",
+				"templateNamePlaceholder": "Enter a template name",
+				"created": "Subagent created",
+				"templateSaved": "Template saved"
+			},
 			"columns": {
 				"name": "Agent",
+				"campaign": "Campaign",
 				"type": "Type",
 				"voice": "Voice",
 				"actions": "Actions",
@@ -241,10 +361,25 @@
 							"navigationHint": "Use arrows to navigate and Enter to insert",
 							"source": {
 								"dyn": "Dynamic",
-								"sys": "System"
+								"sys": "System",
+								"campaign": "Campaign"
 							},
 							"empty": "No variables found"
-						}
+						},
+						"search": {
+							"placeholder": "Search variables...",
+							"empty": "No variables match your search",
+							"footer": "↑↓ navigate · ↵ insert · esc close",
+							"groups": {
+								"dynamic": "Dynamic",
+								"campaign": "Campaign Variables",
+								"system": "System"
+							}
+						},
+						"contextMenu": {
+							"insert": "Insert variable"
+						},
+						"inUse": "Variables in use"
 					},
 					"diff": {
 						"modalTitle": "Review changes"
@@ -330,6 +465,7 @@
 					"title": "Configuration Preview",
 					"label": "Select a predefined parameter set",
 					"placeholder": "Select configuration",
+					"backupSuffix": "Backup",
 					"actions": {
 						"cancel": "Cancel",
 						"apply": "Apply"

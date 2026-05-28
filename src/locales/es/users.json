@@ -10,10 +10,13 @@
 		"body": "Esta acción no se puede deshacer. ¿Seguro que deseas eliminar a <strong>{{email}}</strong>?"
 	},
 	"list": {
-		"title": "Lista de Usuarios",
+		"title": "Usuarios",
+		"description": "Gestiona quién tiene acceso a la plataforma creando y asignando cuentas de usuario.",
 		"errorTitle": "No se pudieron cargar los usuarios",
 		"unknownError": "Error desconocido",
 		"empty": "No se encontraron usuarios.",
+		"emptySearch": "Ningún usuario coincide con tu búsqueda.",
+		"emptyHint": "Crea un usuario para comenzar.",
 		"itemLabel": "usuarios"
 	},
 	"status": {

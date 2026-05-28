@@ -88,6 +88,7 @@ const KnowledgeBaseList = () => {
 	return (
 		<SectionCard
 			title={t('list.title')}
+			description={t('list.description')}
 			contentSpacing='sm'
 			onAdd={canCreate ? openCreate : undefined}
 			onRefresh={() => {

@@ -1,0 +1,15 @@
+.root {
+	min-width: 0;
+}
+
+.description {
+	line-height: 1.5;
+}
+
+.radioGroup {
+	padding-top: var(--mantine-spacing-xs);
+}
+
+.actions {
+	padding-top: var(--mantine-spacing-xs);
+}

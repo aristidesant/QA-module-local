@@ -1,31 +1,27 @@
-import type { FC, MouseEvent as ReactMouseEvent, ReactNode } from 'react';
-import { useEffect, useRef, useState } from 'react';
 import {
-	ActionIcon,
-	Group,
-	Paper,
-	Portal,
-	ScrollArea,
-	Text,
-} from '@mantine/core';
+	type FC,
+	type MouseEvent as ReactMouseEvent,
+	type ReactNode,
+	useCallback,
+	useRef,
+	useState,
+} from 'react';
+import { useEffect } from 'react';
+import { Paper, Portal, ScrollArea, Text } from '@mantine/core';
 import { BaseEdge, EdgeLabelRenderer, type EdgeProps } from '@xyflow/react';
+import { useTranslation } from 'react-i18next';
 import {
+	IconAlertTriangle,
 	IconArrowLeft,
 	IconArrowRight,
 	IconMaximize,
-	IconPencil,
-	IconTrash,
 } from '@tabler/icons-react';
-import { useTranslation } from 'react-i18next';
 import type {
 	ConditionEdgeData,
 	StructuredConditionEdgeLabel,
 	WarningLevel,
 } from './ConditionEdge.types';
-import {
-	useIsEdgeActionsOpen,
-	useWorkflowCanvasActions,
-} from '../../WorkflowCanvas/WorkflowCanvasActionsContext';
+import { useWorkflowCanvasActions } from '../../WorkflowCanvas/WorkflowCanvasActionsContext';
 import styles from './ConditionEdge.module.css';
 
 const truncateEdgePrompt = (value: string, maxLength = 12): string => {
@@ -38,24 +34,9 @@ const FULL_TEXT_THRESHOLD = 20;
 interface ChipWithPopoverProps {
 	fullText: string;
 	children: ReactNode;
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	onChipClick?: (e: ReactMouseEvent<any>) => void;
-	/** When true, prevents the hover popover from opening (e.g. while edge actions are visible). */
-	suppressPopover?: boolean;
 }
 
-/**
- * Wraps a chip with a hover-to-reveal dropdown showing the full text.
- * Click always delegates to `onChipClick` so edge actions (edit / delete)
- * are reachable. A small expand icon is rendered inside the chip for
- * touch-device users who cannot hover.
- */
-const ChipWithPopover: FC<ChipWithPopoverProps> = ({
-	fullText,
-	children,
-	onChipClick,
-	suppressPopover = false,
-}) => {
+const ChipWithPopover: FC<ChipWithPopoverProps> = ({ fullText, children }) => {
 	const [opened, setOpened] = useState(false);
 	const triggerRef = useRef<HTMLDivElement>(null);
 	const dropdownRef = useRef<HTMLDivElement>(null);
@@ -63,44 +44,29 @@ const ChipWithPopover: FC<ChipWithPopoverProps> = ({
 	const needsPopover = fullText.length > FULL_TEXT_THRESHOLD;
 
 	const openPopover = () => {
-		if (suppressPopover) return;
 		if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
 		setOpened(true);
 	};
 
 	const closePopover = () => {
-		// Small delay so the user can move the mouse from chip → dropdown
 		hoverTimeoutRef.current = setTimeout(() => setOpened(false), 150);
 	};
 
-	// Clean up timeout on unmount
 	useEffect(() => {
 		return () => {
 			if (hoverTimeoutRef.current) clearTimeout(hoverTimeoutRef.current);
 		};
 	}, []);
 
-	// Close the popover immediately when suppressed (e.g. edge actions just opened)
-	useEffect(() => {
-		if (suppressPopover) setOpened(false);
-	}, [suppressPopover]);
-
 	if (!needsPopover) {
-		return (
-			<div onClick={onChipClick} className={styles.chipTriggerSimple}>
-				{children}
-			</div>
-		);
+		return <div className={styles.chipTriggerSimple}>{children}</div>;
 	}
 
-	// Compute fixed-position coordinates from the trigger element's bounding rect
-	// so the dropdown stays correctly placed regardless of canvas transforms.
 	const getDropdownStyle = (): React.CSSProperties => {
 		const rect = triggerRef.current?.getBoundingClientRect();
 		if (!rect) return { position: 'fixed', top: 0, left: 0 };
 		return {
 			position: 'fixed',
-			// Place above the chip with an 8px gap
 			bottom: window.innerHeight - rect.top + 8,
 			left: rect.left + rect.width / 2,
 			transform: 'translateX(-50%)',
@@ -114,20 +80,15 @@ const ChipWithPopover: FC<ChipWithPopoverProps> = ({
 		<>
 			<div
 				ref={triggerRef}
-				onClick={(e) => {
-					e.stopPropagation();
-					onChipClick?.(e);
-				}}
 				onMouseEnter={openPopover}
 				onMouseLeave={closePopover}
 				className={styles.chipTrigger}
 			>
 				{children}
-				{/* Small expand icon for touch users who cannot hover */}
 				<span
 					className={styles.expandIcon}
 					onClick={(e) => {
-						e.stopPropagation();
+						e.stopPropagation(); // keep stopPropagation so expand doesn't trigger edge interaction path
 						setOpened((prev) => !prev);
 					}}
 				>
@@ -142,7 +103,6 @@ const ChipWithPopover: FC<ChipWithPopoverProps> = ({
 						radius='sm'
 						p='xs'
 						withBorder
-						// inline-style-allow: dropdown position is computed at runtime from getBoundingClientRect — cannot be expressed in static CSS
 						style={getDropdownStyle()}
 						onClick={(e) => e.stopPropagation()}
 						onMouseEnter={openPopover}
@@ -171,21 +131,12 @@ const ConditionEdge: FC<EdgeProps> = ({
 	data,
 	markerEnd,
 }) => {
-	const { t } = useTranslation([
-		'campaign.form.workflow',
-		'campaign.form.agents',
-		'common',
-	]);
-	const { openEdge, deleteEdge, toggleEdgeActions } =
-		useWorkflowCanvasActions();
-	const isActionsOpen = useIsEdgeActionsOpen(id);
-	// Build a smooth cubic Bezier path between source and target.
-	// This keeps the edge visually smooth and lets us compute exact
-	// positions along the curve using the SVG path API.
-	const curvature = 0.5; // fraction of dx used for control points
+	const { t } = useTranslation(['campaign.form.workflow']);
+	const { openEdge, openEdgeContextMenu } = useWorkflowCanvasActions();
+
+	const curvature = 0.5;
 	const dx = targetX - sourceX;
 	const dy = targetY - sourceY;
-	// reference positions to satisfy linter (they may be useful later)
 	void sourcePosition;
 	void targetPosition;
 
@@ -196,18 +147,13 @@ const ConditionEdge: FC<EdgeProps> = ({
 
 	const edgePath = `M ${sourceX},${sourceY} C ${cx1},${cy1} ${cx2},${cy2} ${targetX},${targetY}`;
 
-	// Default label position is the midpoint between source and target.
-	// We'll try to compute a better position using the path midpoint below.
 	let labelX = sourceX + dx * 0.5;
 	let labelY = sourceY + dy * 0.5;
 
-	// Compute midpoint and tangent directly from cubic Bezier control points.
-	// This avoids any DOM/SVG coordinate mismatches and is deterministic.
 	try {
 		const t = 0.5;
 		const mt = 1 - t;
 
-		// Cubic Bezier point at t: B(t) = (1-t)^3 * P0 + 3(1-t)^2 t * P1 + 3(1-t)t^2 * P2 + t^3 * P3
 		const midX =
 			mt * mt * mt * sourceX +
 			3 * mt * mt * t * cx1 +
@@ -219,7 +165,6 @@ const ConditionEdge: FC<EdgeProps> = ({
 			3 * mt * t * t * cy2 +
 			t * t * t * targetY;
 
-		// Derivative B'(t) gives tangent vector: B'(t) = 3(1-t)^2 (P1-P0) + 6(1-t)t (P2-P1) + 3 t^2 (P3-P2)
 		const tx =
 			3 * mt * mt * (cx1 - sourceX) +
 			6 * mt * t * (cx2 - cx1) +
@@ -232,11 +177,10 @@ const ConditionEdge: FC<EdgeProps> = ({
 		const nx = -ty / mag;
 		const ny = tx / mag;
 
-		const offset = 0; // keep label exactly on the path midpoint
-		labelX = midX + nx * offset;
-		labelY = midY + ny * offset;
+		labelX = midX + nx * 0;
+		labelY = midY + ny * 0;
 	} catch (err) {
-		// fallback to linear midpoint already set above
+		// fallback to linear midpoint
 	}
 
 	const edgeData = (data ?? {}) as ConditionEdgeData;
@@ -251,6 +195,7 @@ const ConditionEdge: FC<EdgeProps> = ({
 	const backwardCondition = edgeData.backwardCondition;
 	const hasForwardCondition = edgeData.forwardCondition !== undefined;
 	const hasBackwardCondition = edgeData.backwardCondition !== undefined;
+	const hasNoCondition = !hasForwardCondition && !hasBackwardCondition;
 	const hasSingleCondition = hasForwardCondition !== hasBackwardCondition;
 	const singleConditionDirection = hasSingleCondition
 		? hasForwardCondition
@@ -259,7 +204,8 @@ const ConditionEdge: FC<EdgeProps> = ({
 		: null;
 	const warningLevel = (edgeData.warningLevel ?? 'none') as WarningLevel;
 	const suppressLabel = edgeData.sourceNodeType === 'start';
-	const isInteractive = true;
+	const isIncomplete = warningLevel === 'error';
+
 	const promptLabel =
 		forwardCondition?.type === 'llm' &&
 		typeof forwardCondition.condition === 'string' &&
@@ -271,29 +217,42 @@ const ConditionEdge: FC<EdgeProps> = ({
 				? backwardCondition.condition.trim()
 				: null;
 	const displayLabel =
-		hasStructuredLabel || suppressLabel
+		hasStructuredLabel || suppressLabel || hasNoCondition || isIncomplete
 			? null
 			: promptLabel
 				? truncateEdgePrompt(promptLabel)
 				: label;
 
-	const handleEdgeClick = (
-		event: ReactMouseEvent<SVGPathElement | HTMLDivElement>
-	) => {
-		event.stopPropagation();
-		toggleEdgeActions(id);
+	const handleEdgeClick = useCallback(
+		(_event: ReactMouseEvent<SVGPathElement | HTMLDivElement>) => {
+			openEdge(id);
+		},
+		[id, openEdge]
+	);
+
+	const handleEdgeContextMenu = useCallback(
+		(event: ReactMouseEvent<SVGPathElement | HTMLDivElement>) => {
+			event.preventDefault();
+			openEdgeContextMenu(id, { x: event.clientX, y: event.clientY });
+		},
+		[id, openEdgeContextMenu]
+	);
+
+	const getStrokeColor = (): string => {
+		if (isIncomplete) {
+			return 'var(--mantine-color-orange-7)';
+		}
+		return 'var(--workflow-shell-control-text, var(--mantine-color-gray-6))';
 	};
 
-	// Get stroke color based on warning level
-	const getStrokeColor = (): string => {
-		switch (warningLevel) {
-			case 'error':
-				return 'var(--mantine-color-orange-7)';
-			case 'warning':
-				return 'var(--mantine-color-orange-5)';
-			default:
-				return 'var(--workflow-shell-control-text, var(--mantine-color-gray-6))';
-		}
+	const getStrokeDasharray = (): string | undefined => {
+		if (hasNoCondition) return '4 4';
+		return undefined;
+	};
+
+	const getStrokeWidth = (): number => {
+		if (hasNoCondition) return 1.5;
+		return 2;
 	};
 
 	const strokeColor = getStrokeColor();
@@ -317,162 +276,134 @@ const ConditionEdge: FC<EdgeProps> = ({
 				? forwardMarker
 				: undefined;
 
-	// Get label style class based on warning level
 	const getLabelClassName = (): string => {
-		const baseClasses = [
+		const classes = [
 			styles.label,
+			styles.labelClickable,
 			shouldUseDirectionalLabel ? styles.labelStructured : '',
 		];
-		const warningClasses =
-			warningLevel === 'error'
-				? styles.labelError
-				: warningLevel === 'warning'
-					? styles.labelWarning
-					: '';
-		const clickableClasses = isInteractive ? styles.labelClickable : '';
-		return [...baseClasses, warningClasses, clickableClasses]
-			.filter(Boolean)
-			.join(' ');
+		return classes.filter(Boolean).join(' ');
 	};
 
 	return (
 		<>
-			{isInteractive && (
-				<path
-					d={edgePath}
-					fill='none'
-					stroke='transparent'
-					strokeWidth={16}
-					className={styles.edgeInteraction}
-					onClick={handleEdgeClick}
-				/>
-			)}
+			{/* Visible edge path rendered first (lower SVG z-order) so it never
+			    captures pointer events over the interaction path above it. */}
 			<BaseEdge
 				id={id}
 				path={edgePath}
+				interactionWidth={0}
 				style={{
 					stroke: strokeColor,
-					strokeWidth: 2,
+					strokeWidth: getStrokeWidth(),
 					strokeLinecap: 'round',
 					strokeLinejoin: 'round',
+					strokeDasharray: getStrokeDasharray(),
+					transition: 'stroke 120ms ease, stroke-width 120ms ease',
 				}}
 				markerStart={startMarker}
 				markerEnd={endMarker}
+				className={styles.visibleEdge}
 			/>
-			{isActionsOpen && (
-				<EdgeLabelRenderer>
-					<Group
-						gap={4}
-						wrap='nowrap'
-						className={styles.actions}
-						style={{
-							zIndex: 220,
-							transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, calc(-100% - 8px))`,
-						}}
-						onClick={(event) => event.stopPropagation()}
-					>
-						<ActionIcon
-							size='sm'
-							variant='light'
-							color='gray'
-							radius='sm'
-							title={t('common:actions.edit', { defaultValue: 'Edit' })}
-							className={styles.actionButton}
-							onClick={(event) => {
-								event.stopPropagation();
-								openEdge(id);
-							}}
-						>
-							<IconPencil size={13} />
-						</ActionIcon>
-						<ActionIcon
-							size='sm'
-							variant='light'
-							color='red'
-							radius='sm'
-							title={t('common:actions.delete', { defaultValue: 'Delete' })}
-							className={styles.actionButton}
-							onClick={(event) => {
-								event.stopPropagation();
-								deleteEdge(id);
-							}}
-						>
-							<IconTrash size={13} />
-						</ActionIcon>
-					</Group>
-				</EdgeLabelRenderer>
-			)}
-			{!suppressLabel && (displayLabel || shouldUseDirectionalLabel) && (
+			{/* Transparent wide path kept for hover cursor only — clicks are
+			    handled by the EdgeLabelRenderer label divs below. */}
+			<path
+				d={edgePath}
+				fill='none'
+				stroke='transparent'
+				strokeWidth={20}
+				className={`${styles.edgeInteraction} ${styles.edgeInteractionDisabled}`}
+			/>
+			{/* Warning icon for incomplete edges */}
+			{isIncomplete && !suppressLabel && (
 				<EdgeLabelRenderer>
 					<div
-						className={getLabelClassName()}
+						className={styles.warningIcon}
 						style={{
-							zIndex: 160,
-							// Apply translation to coordinates first, then center the label element.
-							// Swapping the order avoids centering being applied in a different
-							// transformed context which can push the label off the path.
 							transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, -50%)`,
 						}}
+						onClick={handleEdgeClick}
+						onContextMenu={handleEdgeContextMenu}
 					>
-						{hasStructuredLabel ? (
-							<div className={styles.labelStack}>
-								<ChipWithPopover
-									fullText={structuredLabel?.forwardLabel ?? ''}
-									onChipClick={isInteractive ? handleEdgeClick : undefined}
-									suppressPopover={isActionsOpen}
-								>
-									<div className={styles.labelChip}>
-										<ForwardIcon className={styles.labelIcon} size={12} />
-										<span className={styles.labelText}>
-											{structuredLabel?.forwardLabel}
-										</span>
-									</div>
-								</ChipWithPopover>
-								<ChipWithPopover
-									fullText={structuredLabel?.backwardLabel ?? ''}
-									onChipClick={isInteractive ? handleEdgeClick : undefined}
-									suppressPopover={isActionsOpen}
-								>
-									<div className={styles.labelChip}>
-										<BackwardIcon className={styles.labelIcon} size={12} />
-										<span className={styles.labelText}>
-											{structuredLabel?.backwardLabel}
-										</span>
-									</div>
-								</ChipWithPopover>
-							</div>
-						) : shouldUseDirectionalLabel ? (
-							<ChipWithPopover
-								fullText={promptLabel || displayLabel || ''}
-								onChipClick={isInteractive ? handleEdgeClick : undefined}
-								suppressPopover={isActionsOpen}
-							>
-								<div className={styles.labelChip}>
-									{singleConditionDirection === 'backward' ? (
-										<BackwardIcon className={styles.labelIcon} size={12} />
-									) : (
-										<ForwardIcon className={styles.labelIcon} size={12} />
-									)}
-									<span className={styles.labelText}>
-										{displayLabel ??
-											t('form.workflow.edge.notConfigured', {
-												defaultValue: 'Not configured',
-											})}
-									</span>
-								</div>
-							</ChipWithPopover>
-						) : (
-							<ChipWithPopover
-								fullText={promptLabel || displayLabel || ''}
-								onChipClick={isInteractive ? handleEdgeClick : undefined}
-								suppressPopover={isActionsOpen}
-							>
-								<span>{displayLabel}</span>
-							</ChipWithPopover>
-						)}
+						<IconAlertTriangle size={16} stroke={1.5} />
 					</div>
 				</EdgeLabelRenderer>
 			)}
+			{/* "None" badge for unconfigured edges — pointer-events:none so
+			    clicks fall through to the interaction path above */}
+			{hasNoCondition && !suppressLabel && (
+				<EdgeLabelRenderer>
+					<div
+						className={`${styles.noneLabel} ${styles.labelClickable}`}
+						// inline-style-allow: EdgeLabelRenderer requires runtime transform coordinates derived from edge geometry
+						style={{
+							transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, -50%)`,
+						}}
+						onClick={handleEdgeClick}
+						onContextMenu={handleEdgeContextMenu}
+					>
+						{t('form.workflow.edge.noneLabel', { defaultValue: 'None' })}
+					</div>
+				</EdgeLabelRenderer>
+			)}
+			{/* Label for configured edges — click/right-click on the label
+			    opens the drawer / context menu respectively. */}
+			{!suppressLabel &&
+				!hasNoCondition &&
+				!isIncomplete &&
+				(displayLabel || shouldUseDirectionalLabel) && (
+					<EdgeLabelRenderer>
+						<div
+							className={getLabelClassName()}
+							style={{
+								zIndex: 160,
+								transform: `translate3d(${Math.round(labelX)}px, ${Math.round(labelY)}px, 0) translate(-50%, -50%)`,
+							}}
+							onClick={handleEdgeClick}
+							onContextMenu={handleEdgeContextMenu}
+						>
+							{hasStructuredLabel ? (
+								<div className={styles.labelStack}>
+									<ChipWithPopover
+										fullText={structuredLabel?.forwardLabel ?? ''}
+									>
+										<div className={styles.labelChip}>
+											<ForwardIcon className={styles.labelIcon} size={12} />
+											<span className={styles.labelText}>
+												{structuredLabel?.forwardLabel}
+											</span>
+										</div>
+									</ChipWithPopover>
+									<ChipWithPopover
+										fullText={structuredLabel?.backwardLabel ?? ''}
+									>
+										<div className={styles.labelChip}>
+											<BackwardIcon className={styles.labelIcon} size={12} />
+											<span className={styles.labelText}>
+												{structuredLabel?.backwardLabel}
+											</span>
+										</div>
+									</ChipWithPopover>
+								</div>
+							) : shouldUseDirectionalLabel ? (
+								<ChipWithPopover fullText={promptLabel || displayLabel || ''}>
+									<div className={styles.labelChip}>
+										{singleConditionDirection === 'backward' ? (
+											<BackwardIcon className={styles.labelIcon} size={12} />
+										) : (
+											<ForwardIcon className={styles.labelIcon} size={12} />
+										)}
+										<span className={styles.labelText}>{displayLabel}</span>
+									</div>
+								</ChipWithPopover>
+							) : (
+								<ChipWithPopover fullText={promptLabel || displayLabel || ''}>
+									<span>{displayLabel}</span>
+								</ChipWithPopover>
+							)}
+						</div>
+					</EdgeLabelRenderer>
+				)}
 		</>
 	);
 };

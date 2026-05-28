@@ -20,6 +20,7 @@
 			"agentBehavior": "Comportamiento del Agente",
 			"agentBehaviorDesc": "Selecciona una configuración de comportamiento de agente predefinida",
 			"agentBehaviorPlaceholder": "Elige un comportamiento de agente",
+			"agentBehaviorBackupSuffix": "Respaldo",
 			"createButton": "Crear Campaña",
 			"cancelButton": "Cancelar",
 			"successMessage": "Campaña creada con éxito",

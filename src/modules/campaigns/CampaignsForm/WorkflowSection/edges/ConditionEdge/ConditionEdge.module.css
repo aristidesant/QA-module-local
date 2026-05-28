@@ -1,6 +1,5 @@
 .label {
 	position: absolute;
-	/* allow translate3d positioning to be exact */
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
@@ -35,42 +34,6 @@
 	white-space: normal;
 }
 
-.labelError {
-	border-color: color-mix(in srgb, var(--mantine-color-red-5) 45%, transparent);
-	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--mantine-color-red-5) 18%, transparent),
-		0 8px 18px color-mix(in srgb, var(--mantine-color-black) 12%, transparent);
-}
-
-.labelError .labelChip {
-	border-color: color-mix(in srgb, var(--mantine-color-red-5) 45%, transparent);
-	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--mantine-color-red-5) 18%, transparent),
-		0 8px 18px color-mix(in srgb, var(--mantine-color-black) 12%, transparent);
-}
-
-.labelWarning {
-	border-color: color-mix(
-		in srgb,
-		var(--mantine-color-yellow-5) 45%,
-		transparent
-	);
-	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--mantine-color-yellow-5) 18%, transparent),
-		0 8px 18px color-mix(in srgb, var(--mantine-color-black) 12%, transparent);
-}
-
-.labelWarning .labelChip {
-	border-color: color-mix(
-		in srgb,
-		var(--mantine-color-yellow-5) 45%,
-		transparent
-	);
-	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--mantine-color-yellow-5) 18%, transparent),
-		0 8px 18px color-mix(in srgb, var(--mantine-color-black) 12%, transparent);
-}
-
 .labelClickable {
 	pointer-events: auto;
 	cursor: pointer;
@@ -92,11 +55,6 @@
 .labelStructured.labelClickable:hover .labelChip {
 	background-color: var(--mantine-color-dark-8);
 	border-color: color-mix(in srgb, var(--mantine-color-white) 14%, transparent);
-}
-
-.labelPrefix {
-	margin-right: 6px;
-	opacity: 0.8;
 }
 
 .labelStack {
@@ -168,7 +126,6 @@
 	opacity: 1;
 }
 
-/* Show the expand icon on touch devices that lack hover */
 @media (hover: none) {
 	.expandIcon {
 		display: inline-flex;
@@ -185,12 +142,66 @@
 	pointer-events: stroke;
 }
 
-.actions {
+.edgeInteractionDisabled {
+	pointer-events: none;
+}
+
+.noneLabel {
 	position: absolute;
 	display: inline-flex;
 	align-items: center;
-	gap: 4px;
-	padding: 5px;
+	justify-content: center;
+	padding: 3px 8px;
+	border-radius: 999px;
+	border: 1px dashed var(--mantine-color-default-border);
+	background-color: var(--mantine-color-body);
+	color: var(--mantine-color-dimmed);
+	font-size: 10px;
+	font-weight: 500;
+	letter-spacing: 0.03em;
+	text-transform: uppercase;
+	pointer-events: auto;
+	cursor: pointer;
+	user-select: none;
+	opacity: 0.75;
+	z-index: 160;
+}
+
+.visibleEdge {
+	transition:
+		stroke 120ms ease,
+		stroke-width 120ms ease;
+}
+
+.warningIcon {
+	position: absolute;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	background-color: var(--mantine-color-orange-9);
+	border: 1px solid var(--mantine-color-orange-7);
+	color: var(--mantine-color-orange-2);
+	z-index: 160;
+	cursor: pointer;
+	pointer-events: auto;
+	transition:
+		transform 120ms ease,
+		box-shadow 120ms ease;
+	box-shadow: 0 2px 6px
+		color-mix(in srgb, var(--mantine-color-black) 20%, transparent);
+}
+
+.warningIcon:hover {
+	transform: scale(1.15);
+	box-shadow: 0 4px 12px
+		color-mix(in srgb, var(--mantine-color-black) 25%, transparent);
+}
+
+.contextMenu {
+	padding: 4px;
 	background-color: var(
 		--workflow-shell-control-bg,
 		color-mix(in srgb, var(--mantine-color-white) 98%, transparent)
@@ -204,21 +215,12 @@
 	box-shadow:
 		0 16px 32px color-mix(in srgb, var(--mantine-color-black) 14%, transparent),
 		0 2px 6px color-mix(in srgb, var(--mantine-color-black) 8%, transparent);
-	pointer-events: auto;
 	backdrop-filter: blur(8px);
-	z-index: 220;
 }
 
-.actionButton {
+.contextMenu:hover {
 	background-color: var(
-		--workflow-shell-control-bg,
-		var(--mantine-color-white)
+		--workflow-shell-control-bg-hover,
+		color-mix(in srgb, var(--mantine-color-white) 96%, transparent)
 	);
-	border-color: var(
-		--workflow-shell-control-border,
-		var(--mantine-color-gray-2)
-	);
-	color: var(--workflow-shell-control-text, var(--mantine-color-gray-7));
-	box-shadow: 0 1px 2px
-		color-mix(in srgb, var(--mantine-color-black) 6%, transparent);
 }

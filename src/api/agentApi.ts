@@ -1,10 +1,15 @@
 import axios from 'axios';
 import { toSnakeCase, toCamelCase } from '~/utils/stringUtils';
+import { sanitizeAgentPayload } from '~/utils/agentPayloadSanitizer';
 import type AgentListObject from '~/models/AgentListObject';
 import type {
 	AgentWithCampaignListItem,
 	AgentWithCampaignsQueryParams,
 } from '~/models/AgentListObject';
+import type {
+	SyncAgentRequest,
+	SyncAgentResponse,
+} from '~/models/SyncAgentModel';
 import type { Paginator } from '~/models/Paginator';
 import { DEFAULT_API_URL } from './config';
 
@@ -20,7 +25,23 @@ export type AgentsWithCampaignsResponse = Paginator<AgentWithCampaignListItem>;
 
 export interface DuplicateAgentDto {
 	name: string;
+	campaignId: number;
 }
+
+export interface CreateAgentDto {
+	conversationConfig: Record<string, unknown>;
+	platformSettings?: Record<string, unknown>;
+	name?: string;
+	type: 'INBOUND' | 'OUTBOUND';
+	voiceId?: string;
+	outboundPhoneNumberId?: number;
+	inboundPhoneNumberId?: number;
+}
+
+type SignedUrlResponse =
+	| string
+	| { signedUrl?: string; url?: string; href?: string };
+
 const agentApi = (_authHeader: Record<string, string> = {}) => {
 	return {
 		// CREATE agent
@@ -30,6 +51,26 @@ const agentApi = (_authHeader: Record<string, string> = {}) => {
 			const response = await axios.post(
 				`${DEFAULT_API_URL}/agents/${agentId}/duplicate`,
 				data
+			);
+			return response.data;
+		},
+
+		createAgent: async (data: CreateAgentDto) => {
+			const response = await axios.post(`${DEFAULT_API_URL}/agents`, data);
+			return response.data;
+		},
+
+		syncAgent: async (request: SyncAgentRequest) => {
+			const response = await axios.post<SyncAgentResponse>(
+				`${DEFAULT_API_URL}/agents/sync`,
+				request
+			);
+			return response.data;
+		},
+
+		syncAgentConfig: async (agentId: string) => {
+			const response = await axios.post<AgentListObject>(
+				`${DEFAULT_API_URL}/agents/${agentId}/sync-config`
 			);
 			return response.data;
 		},
@@ -67,6 +108,27 @@ const agentApi = (_authHeader: Record<string, string> = {}) => {
 			return response.data;
 		},
 
+		getAgentSignedUrl: async (agentId: string) => {
+			const response = await axios.get<SignedUrlResponse>(
+				`${DEFAULT_API_URL}/agents/${agentId}/signed-url`
+			);
+
+			const data = response.data;
+
+			if (typeof data === 'string') {
+				return data;
+			}
+
+			if (data && typeof data === 'object') {
+				const signedUrl = data.signedUrl ?? data.url ?? data.href;
+				if (typeof signedUrl === 'string' && signedUrl.trim()) {
+					return signedUrl;
+				}
+			}
+
+			throw new Error('Unexpected response when requesting agent signed URL');
+		},
+
 		// FIND agents with campaigns
 		findAgentsWithCampaigns: async (
 			params?: AgentWithCampaignsQueryParams,
@@ -86,7 +148,7 @@ const agentApi = (_authHeader: Record<string, string> = {}) => {
 		// UPDATE agent (PATCH)
 		updateAgent: async (agentId: string, data: Partial<AgentListObject>) => {
 			// Convert camelCase payload to snake_case for API compatibility
-			const payload = toSnakeCase(data);
+			const payload = toSnakeCase(sanitizeAgentPayload(data));
 			const response = await axios.patch(
 				`${DEFAULT_API_URL}/agents/${agentId}`,
 				payload

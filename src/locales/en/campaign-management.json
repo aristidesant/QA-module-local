@@ -4,7 +4,7 @@
 	"tabs": {
 		"setup": "Campaign Setup",
 		"outcomes": "Outcomes",
-		"customVariables": "Custom Variables"
+		"customVariables": "Data Collection Templates"
 	},
 	"setup": {
 		"catalog": "Catalog",
@@ -334,11 +334,11 @@
 		}
 	},
 	"customVariables": {
-		"catalog": "Custom Variables Catalog",
+		"catalog": "Data Collection Template Catalog",
 		"groups": {
 			"label": "Groups",
-			"title": "Variable Groups",
-			"description": "Manage custom variable templates and their ownership scope.",
+			"title": "Template Groups",
+			"description": "Manage reusable data collection template groups and their ownership scope.",
 			"create": "Create Group",
 			"edit": "Edit Group",
 			"sectionCardDescription": "Templates can be global, client-owned, or campaign-bound clones.",
@@ -370,8 +370,8 @@
 				"selected": "Selected"
 			},
 			"empty": {
-				"title": "No variable groups found",
-				"description": "Get started by creating your first variable group."
+				"title": "No template groups found",
+				"description": "Get started by creating your first data collection template group."
 			},
 			"noResults": "No groups match your search",
 			"noResultsDescription": "Try a different term or clear the filters.",

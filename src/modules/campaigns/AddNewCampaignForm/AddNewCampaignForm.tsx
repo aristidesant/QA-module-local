@@ -24,8 +24,11 @@ import type { AgentVoiceModel } from '~/models/AgentVoiceModel';
 import useCampaignsPredefinedParams, {
 	CampaignPredefinedParam,
 } from '../CampaignsForm/useCampaignsPredefinedParams';
-import { deepMergeConfig } from '~/utils/objectUtils';
-import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
+import {
+	applyCampaignBehaviorConversationConfig,
+	applyCampaignBehaviorPlatformSettings,
+	sanitizeCampaignBehaviorConversationConfig,
+} from '~/modules/campaigns/utils/campaignBehaviorConfig';
 // import ConfigurationSummary from '../CampaignsForm/AgentSection/CampaignConfigurationPredefinedParams/ConfigurationSummary';
 import {
 	CreateCampaignWithAgentDTO,
@@ -107,38 +110,38 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 	const [selectedParam, setSelectedParam] =
 		useState<CampaignPredefinedParam | null>(null);
 
-	const applyConversationConfig = (
-		config: CampaignPredefinedConversationConfig
-	) => {
+	const applyBehaviorConfig = (param: CampaignPredefinedParam) => {
 		const currentAgentConfig = form.values.agent.conversationConfig || {};
-
-		const mergedConfig = deepMergeConfig(currentAgentConfig, {
-			...(config.tts
-				? {
-						tts: {
-							...config.tts,
-						},
-					}
-				: {}),
-			...(config.agent
-				? {
-						agent: {
-							...(currentAgentConfig.agent || {}),
-							prompt: {
-								...(currentAgentConfig.agent?.prompt || {}),
-								...config.agent.prompt,
-							},
-						},
-					}
-				: {}),
-		});
+		const currentPlatformSettings = form.values.agent.platformSettings || {};
+		const mergedConfig = applyCampaignBehaviorConversationConfig(
+			currentAgentConfig as Record<string, unknown>,
+			param.params?.conversationConfig
+		);
+		const mergedPlatformSettings = applyCampaignBehaviorPlatformSettings(
+			currentPlatformSettings as Record<string, unknown>,
+			param.params?.platformSettings
+		);
 
 		form.setFieldValue('agent.conversationConfig', mergedConfig);
+		form.setFieldValue('agent.platformSettings', mergedPlatformSettings);
 	};
 
 	const handleSubmit = (values: typeof form.values) => {
 		// Sync the type between campaign and agent to ensure they match
 		const campaignType = values.campaign.type;
+		const selectedBehavior = selectedParam;
+		const selectedConversationConfig =
+			selectedBehavior?.params?.conversationConfig;
+		const selectedPlatformSettings = selectedBehavior?.params?.platformSettings;
+		const normalizedConversationConfig =
+			applyCampaignBehaviorConversationConfig(
+				(values.agent.conversationConfig || {}) as Record<string, unknown>,
+				selectedConversationConfig
+			);
+		const normalizedPlatformSettings = applyCampaignBehaviorPlatformSettings(
+			(values.agent.platformSettings || {}) as Record<string, unknown>,
+			selectedPlatformSettings
+		);
 
 		// Build the conversationConfig.agent object with the phone number
 		const agentConfig: ConversationAgentConfig = {
@@ -147,7 +150,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 
 		// Add the appropriate phone number ID based on campaign type
 		if (selectedPhoneNumberId) {
-			if (campaignType === 'OUTBOUND') {
+			if (campaignType === 'OUTBOUND' || campaignType === 'HYBRID') {
 				agentConfig.outboundPhoneNumberId = selectedPhoneNumberId;
 			} else if (campaignType === 'INBOUND') {
 				agentConfig.inboundPhoneNumberId = selectedPhoneNumberId;
@@ -166,13 +169,18 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 			},
 			agent: {
 				...values.agent,
-				type: campaignType, // Use campaign type to ensure they match
+				type: campaignType === 'INBOUND' ? 'INBOUND' : 'OUTBOUND',
+				platformSettings: normalizedPlatformSettings,
 				conversationConfig: {
-					...values.agent.conversationConfig,
+					...normalizedConversationConfig,
 					agent: agentConfig,
 				},
 			},
 		};
+
+		dto.agent.conversationConfig = sanitizeCampaignBehaviorConversationConfig(
+			dto.agent.conversationConfig as Record<string, unknown>
+		);
 
 		createCampaignWithAgent.mutate(dto, {
 			onSuccess: () => {
@@ -236,6 +244,7 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 							data={[
 								{ value: 'INBOUND', label: t('columns.inbound') },
 								{ value: 'OUTBOUND', label: t('columns.outbound') },
+								{ value: 'HYBRID', label: t('columns.hybrid') },
 							]}
 							{...form.getInputProps('campaign.type')}
 							fullWidth
@@ -243,11 +252,11 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 								// Update both campaign and agent type to keep them in sync
 								form.setFieldValue(
 									'campaign.type',
-									value as 'INBOUND' | 'OUTBOUND'
+									value as 'INBOUND' | 'OUTBOUND' | 'HYBRID'
 								);
 								form.setFieldValue(
 									'agent.type',
-									value as 'INBOUND' | 'OUTBOUND'
+									value === 'INBOUND' ? 'INBOUND' : 'OUTBOUND'
 								);
 								// Reset phone number selection when type changes
 								setSelectedPhoneNumberId(null);
@@ -295,13 +304,20 @@ export const AddNewCampaignForm: React.FC<AddNewCampaignFormProps> = ({
 						placeholder={t('addNewCampaign.form.agentBehaviorPlaceholder')}
 						data={predefinedParams.map((param) => ({
 							value: param.name,
-							label: param.name,
+							label:
+								param.behaviorType === 'BACKUP' || param.isBackup
+									? `${param.name} (${t('addNewCampaign.form.agentBehaviorBackupSuffix')})`
+									: param.name,
 						}))}
 						value={selectedParam?.name || null}
 						onChange={(value) => {
 							const param = predefinedParams.find((p) => p.name === value);
-							if (param && param.params?.conversationConfig) {
-								applyConversationConfig(param.params.conversationConfig);
+							if (
+								param &&
+								(param.params?.conversationConfig ||
+									param.params?.platformSettings)
+							) {
+								applyBehaviorConfig(param);
 								setSelectedParam(param);
 								form.setFieldValue('campaign.configId', param.id);
 							}

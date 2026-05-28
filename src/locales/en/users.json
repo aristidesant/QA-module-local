@@ -10,10 +10,13 @@
 		"body": "This action cannot be undone. Are you sure you want to delete <strong>{{email}}</strong>?"
 	},
 	"list": {
-		"title": "User List",
+		"title": "Users",
+		"description": "Manage who has access to the platform by creating and assigning user accounts.",
 		"errorTitle": "Unable to load users",
 		"unknownError": "Unknown error",
 		"empty": "No users found.",
+		"emptySearch": "No users match your search.",
+		"emptyHint": "Create a user to get started.",
 		"itemLabel": "users"
 	},
 	"status": {

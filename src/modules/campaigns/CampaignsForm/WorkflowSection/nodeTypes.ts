@@ -6,6 +6,7 @@ export const WORKFLOW_NODE_TYPES = {
 	END: 'end',
 	TOOL: 'tool',
 	OVERRIDE_AGENT: 'override_agent',
+	UPDATE_STATE: 'update_state',
 	PHONE_NUMBER: 'phone_number',
 	STANDALONE_AGENT: 'standalone_agent',
 	GROUP: 'group',
@@ -50,6 +51,13 @@ export const NODE_TYPE_CONFIG: Record<WorkflowNodeType, NodeTypeConfig> = {
 		hasAddButton: true,
 		color: 'orange',
 		icon: 'user',
+	},
+	[WORKFLOW_NODE_TYPES.UPDATE_STATE]: {
+		type: WORKFLOW_NODE_TYPES.UPDATE_STATE,
+		label: 'Update state',
+		hasAddButton: true,
+		color: 'teal',
+		icon: 'pencil',
 	},
 	[WORKFLOW_NODE_TYPES.PHONE_NUMBER]: {
 		type: WORKFLOW_NODE_TYPES.PHONE_NUMBER,

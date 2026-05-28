@@ -505,6 +505,8 @@
 		"refresh": "Refresh dashboard",
 		"emptyTitle": "No dashboards configured",
 		"emptyDescription": "Open campaign edit mode to create the first dashboard for this campaign.",
+		"unauthorizedTitle": "You do not have access to this campaign",
+		"unassignedTitle": "You have no campaigns assigned",
 		"unsupportedBadge": "Coming soon",
 		"liveBadge": "Live",
 		"unsupportedMessage": "This widget type is not supported by the metric engine yet.",

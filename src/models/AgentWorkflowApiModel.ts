@@ -1,4 +1,8 @@
-import type { ForwardCondition, WorkflowNode } from './AgentWorkflowModel';
+import type {
+	ForwardCondition,
+	UpdateStateValueSchema,
+	WorkflowNode,
+} from './AgentWorkflowModel';
 
 export interface AgentWorkflowApi {
 	edges: Record<string, WorkflowEdgeApi>;
@@ -18,6 +22,7 @@ export type WorkflowNodeApi =
 	| EndNodeApi
 	| ToolNodeApi
 	| OverrideAgentNodeApi
+	| UpdateStateNodeApi
 	| PhoneNumberTransferNodeApi
 	| StandaloneAgentNodeApi;
 
@@ -39,6 +44,49 @@ export interface EndNodeApi extends WorkflowNodeBaseApi {
 export interface ToolNodeApi extends WorkflowNodeBaseApi {
 	type: 'tool';
 	tools: Array<{ tool_id: string }>;
+}
+
+export interface UpdateStateValueSchemaApi
+	extends Omit<UpdateStateValueSchema, 'type'> {
+	type: UpdateStateValueSchema['type'];
+}
+
+export type UpdateStateExpressionApi =
+	| {
+			type: 'llm';
+			value_schema: UpdateStateValueSchemaApi;
+			prompt: string;
+	  }
+	| {
+			type: 'string';
+			value: string;
+	  }
+	| {
+			type: 'number';
+			value: number;
+	  }
+	| {
+			type: 'boolean';
+			value: boolean;
+	  }
+	| {
+			type: 'null';
+	  }
+	| {
+			type: 'dynamic_variable';
+			variable_name: string;
+	  };
+
+export interface UpdateStateUpdateApi {
+	type: 'dynamic_variable';
+	variable_name: string;
+	expression: UpdateStateExpressionApi;
+}
+
+export interface UpdateStateNodeApi extends WorkflowNodeBaseApi {
+	type: 'update_state';
+	label: string;
+	updates: UpdateStateUpdateApi[];
 }
 
 export interface OverrideAgentNodeApi extends WorkflowNodeBaseApi {

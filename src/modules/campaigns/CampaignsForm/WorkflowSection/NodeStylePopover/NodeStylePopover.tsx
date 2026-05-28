@@ -14,12 +14,13 @@ import { useDisclosure } from '@mantine/hooks';
 import { IconPalette, IconRefresh } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { NodeStyle } from '~/models/CampaignsModel';
-import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import { useWorkflowNodeIcons } from '~/queries/workflowNodeIconsQuery';
+import { useNodeStylesController } from '../NodeStylesContext';
 import {
 	NODE_COLOR_PALETTE,
 	WORKFLOW_ICON_REGISTRY,
 } from '../utils/workflowIconRegistry';
+import { isWorkflowMultiSelectClick } from '../utils/workflowSelectionUtils';
 import styles from './NodeStylePopover.module.css';
 
 interface NodeStylePopoverProps {
@@ -30,27 +31,27 @@ interface NodeStylePopoverProps {
 const NodeStylePopover = ({ nodeId, nodeLabel }: NodeStylePopoverProps) => {
 	const [opened, { toggle, close }] = useDisclosure(false);
 	const { t } = useTranslation(['campaign.form.workflow', 'common']);
-	const form = useCampaignFormContext();
+	const { nodeStyles, onNodeStylesChange } = useNodeStylesController();
 	const { data: allowedIconKeys = [] } = useWorkflowNodeIcons();
 
-	const currentStyles: NodeStyle | undefined = form.values.nodeStyles?.[nodeId];
+	const currentStyles: NodeStyle | undefined = nodeStyles?.[nodeId];
 
 	const handleColorSelect = useCallback(
 		(color: string) => {
-			const prev = form.values.nodeStyles ?? {};
+			const prev = nodeStyles ?? {};
 			const nodeStyle: NodeStyle = {
 				...(prev[nodeId] ?? { backgroundColor: color }),
 				nodeLabel,
 				backgroundColor: color,
 			};
-			form.setFieldValue('nodeStyles', { ...prev, [nodeId]: nodeStyle });
+			onNodeStylesChange?.({ ...prev, [nodeId]: nodeStyle });
 		},
-		[form, nodeId, nodeLabel]
+		[nodeStyles, nodeId, nodeLabel, onNodeStylesChange]
 	);
 
 	const handleIconSelect = useCallback(
 		(iconKey: string) => {
-			const prev = form.values.nodeStyles ?? {};
+			const prev = nodeStyles ?? {};
 			const existing = prev[nodeId];
 			// Only write iconName (+ preserve existing backgroundColor if already set).
 			// Do NOT force a default backgroundColor — if the user hasn't picked a
@@ -62,24 +63,24 @@ const NodeStylePopover = ({ nodeId, nodeLabel }: NodeStylePopoverProps) => {
 			// to label-based coloring
 			if (!nodeStyle.backgroundColor) {
 				const { backgroundColor: _bg, ...rest } = nodeStyle;
-				form.setFieldValue('nodeStyles', {
+				onNodeStylesChange?.({
 					...prev,
 					[nodeId]: rest as NodeStyle,
 				});
 				return;
 			}
-			form.setFieldValue('nodeStyles', { ...prev, [nodeId]: nodeStyle });
+			onNodeStylesChange?.({ ...prev, [nodeId]: nodeStyle });
 		},
-		[form, nodeId, nodeLabel]
+		[nodeStyles, nodeId, nodeLabel, onNodeStylesChange]
 	);
 
 	const handleReset = useCallback(() => {
-		const prev = form.values.nodeStyles ?? {};
+		const prev = nodeStyles ?? {};
 		const next = { ...prev };
 		delete next[nodeId];
-		form.setFieldValue('nodeStyles', next);
+		onNodeStylesChange?.(next);
 		close();
-	}, [form, nodeId, close]);
+	}, [nodeStyles, nodeId, onNodeStylesChange, close]);
 
 	const iconItems = useMemo(
 		() =>
@@ -110,6 +111,7 @@ const NodeStylePopover = ({ nodeId, nodeLabel }: NodeStylePopoverProps) => {
 						color='gray'
 						radius='sm'
 						onClick={(e) => {
+							if (isWorkflowMultiSelectClick(e)) return;
 							e.stopPropagation();
 							toggle();
 						}}

@@ -6,6 +6,7 @@ import {
 	AgentForm,
 	AgentTransferForm,
 	PhoneNumberForm,
+	UpdateStateForm,
 	StartEndForm,
 	ToolNodeForm,
 } from './forms';
@@ -61,6 +62,8 @@ const WorkflowNodeDrawer = ({ nodeId }: WorkflowNodeDrawerProps) => {
 				return <PhoneNumberForm {...commonProps} />;
 			case WORKFLOW_NODE_TYPES.TOOL:
 				return <ToolNodeForm {...commonProps} />;
+			case WORKFLOW_NODE_TYPES.UPDATE_STATE:
+				return <UpdateStateForm {...commonProps} />;
 			case WORKFLOW_NODE_TYPES.START:
 			case WORKFLOW_NODE_TYPES.END:
 				return <StartEndForm nodeId={nodeId} workflow={workflow} />;

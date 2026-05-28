@@ -6,6 +6,8 @@ import {
 	useRef,
 	useState,
 	type CSSProperties,
+	type KeyboardEvent as ReactKeyboardEvent,
+	type MouseEvent as ReactMouseEvent,
 	type RefObject,
 } from 'react';
 import {
@@ -14,22 +16,17 @@ import {
 	useReactFlow,
 	type NodeProps,
 } from '@xyflow/react';
-import {
-	ActionIcon,
-	Menu,
-	Popover,
-	ScrollArea,
-	Text,
-	TextInput,
-	Tooltip,
-} from '@mantine/core';
+import { Popover, Portal, ScrollArea, Text, TextInput } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import {
 	IconCopy,
+	IconChevronDown,
+	IconChevronUp,
 	IconEdit,
 	IconPackageImport,
 	IconPhone,
 	IconPlus,
+	IconPalette,
 	IconSearch,
 	IconSquareRoundedCheck,
 	IconTool,
@@ -39,8 +36,8 @@ import {
 	IconUserCog,
 } from '@tabler/icons-react';
 import { useWorkflowCanvasActions } from '../../WorkflowCanvas/WorkflowCanvasActionsContext';
-import { WORKFLOW_NODE_TYPES } from '../../nodeTypes';
-import SideActionsPortal from '../../WorkflowNode/SideActionsPortal';
+import { useWorkflowNodeEditor } from '../../WorkflowNodeEditorContext';
+import { WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '../../nodeTypes';
 import GroupColorPopover from './GroupColorPopover';
 import styles from './GroupNode.module.css';
 
@@ -107,9 +104,6 @@ const buildGroupColorVars = (bgColor?: string): CSSProperties | undefined => {
 
 const GroupNode = (props: NodeProps) => {
 	const { t } = useTranslation(['campaign.form.workflow', 'common']);
-	const groupRef = useRef<HTMLDivElement>(
-		null
-	) as RefObject<HTMLDivElement | null>;
 	const {
 		deleteNode,
 		ungroupNodes,
@@ -117,6 +111,7 @@ const GroupNode = (props: NodeProps) => {
 		addNewNodeToGroup,
 		addExistingNodeToGroup,
 	} = useWorkflowCanvasActions();
+	const { openNodeDrawer } = useWorkflowNodeEditor();
 	const { setNodes, getNodes } = useReactFlow();
 	const nodeData = props.data as {
 		label?: string;
@@ -126,11 +121,34 @@ const GroupNode = (props: NodeProps) => {
 	};
 	const colorVars = buildGroupColorVars(nodeData.color || undefined);
 	const label = nodeData.label || t('form.workflow.group.defaultLabel');
+	type NewNodeMenuItemTone = 'blue' | 'teal' | 'orange' | 'gray' | 'green';
+	type NewNodeMenuItem = {
+		type: WorkflowNodeType;
+		label: string;
+		tone: NewNodeMenuItemTone;
+		icon: typeof IconUserCircle;
+		variant?: 'transfer' | 'subagent';
+	};
 
 	// ── Inline rename ──
 	const [isEditing, setIsEditing] = useState(false);
 	const [editValue, setEditValue] = useState(label);
 	const inputRef = useRef<HTMLInputElement>(null);
+
+	// ── Right-click action menu ──
+	const [contextMenuPosition, setContextMenuPosition] = useState<{
+		x: number;
+		y: number;
+	} | null>(null);
+	const contextMenuRef = useRef<HTMLDivElement>(
+		null
+	) as RefObject<HTMLDivElement | null>;
+
+	// ── Add-existing searchable picker state ──
+	const [addSubmenuOpen, setAddSubmenuOpen] = useState(false);
+	const [addExistingOpened, setAddExistingOpened] = useState(false);
+	const [addExistingSearch, setAddExistingSearch] = useState('');
+	const searchInputRef = useRef<HTMLInputElement>(null);
 
 	// Sync editValue when external label changes (e.g. undo)
 	useEffect(() => {
@@ -144,6 +162,54 @@ const GroupNode = (props: NodeProps) => {
 			requestAnimationFrame(() => inputRef.current?.select());
 		}
 	}, [isEditing]);
+
+	useEffect(() => {
+		if (!contextMenuPosition) {
+			setAddExistingOpened(false);
+			setAddExistingSearch('');
+			return;
+		}
+
+		let active = false;
+		const timer = window.setTimeout(() => {
+			active = true;
+		}, 0);
+
+		const handler = (event: PointerEvent) => {
+			if (!active) return;
+			const target = event.target as HTMLElement | null;
+			if (
+				target?.closest(
+					'[data-group-node-context-menu], .mantine-Menu-dropdown, .mantine-Popover-dropdown'
+				)
+			) {
+				return;
+			}
+			if (
+				contextMenuRef.current &&
+				!contextMenuRef.current.contains(event.target as globalThis.Node)
+			) {
+				setContextMenuPosition(null);
+			}
+		};
+
+		document.addEventListener('pointerdown', handler, true);
+		return () => {
+			window.clearTimeout(timer);
+			document.removeEventListener('pointerdown', handler, true);
+		};
+	}, [contextMenuPosition]);
+
+	useEffect(() => {
+		const handler = (event: KeyboardEvent) => {
+			if (event.key === 'Escape') {
+				setContextMenuPosition(null);
+			}
+		};
+
+		window.addEventListener('keydown', handler);
+		return () => window.removeEventListener('keydown', handler);
+	}, []);
 
 	const commitRename = useCallback(() => {
 		const trimmed = editValue.trim();
@@ -162,32 +228,43 @@ const GroupNode = (props: NodeProps) => {
 	}, [label]);
 
 	// ── New-node submenu items (same pattern as WorkflowNodeActions) ──
-	const newNodeMenuItems = useMemo(
+	const newNodeMenuItems = useMemo<NewNodeMenuItem[]>(
 		() => [
 			{
 				type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
 				label: t('form.workflow.nodeMenu.subagent'),
+				tone: 'blue' as const,
 				icon: IconUserCircle,
 			},
 			{
 				type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
 				variant: 'transfer' as const,
 				label: t('form.workflow.nodeMenu.agentTransfer'),
+				tone: 'teal' as const,
 				icon: IconUserCog,
+			},
+			{
+				type: WORKFLOW_NODE_TYPES.UPDATE_STATE,
+				label: t('form.workflow.nodeMenu.updateState'),
+				tone: 'blue' as const,
+				icon: IconEdit,
 			},
 			{
 				type: WORKFLOW_NODE_TYPES.PHONE_NUMBER,
 				label: t('form.workflow.nodeMenu.phoneNumber'),
+				tone: 'orange' as const,
 				icon: IconPhone,
 			},
 			{
 				type: WORKFLOW_NODE_TYPES.TOOL,
 				label: t('form.workflow.nodeMenu.tool'),
+				tone: 'gray' as const,
 				icon: IconTool,
 			},
 			{
 				type: WORKFLOW_NODE_TYPES.END,
 				label: t('form.workflow.nodeMenu.end'),
+				tone: 'green' as const,
 				icon: IconSquareRoundedCheck,
 			},
 		],
@@ -205,11 +282,6 @@ const GroupNode = (props: NodeProps) => {
 		return allNodes.filter((n) => !n.parentId && !EXCLUDED.has(n.type ?? ''));
 	}, [getNodes]);
 
-	// ── Add-existing searchable picker state ──
-	const [addExistingOpened, setAddExistingOpened] = useState(false);
-	const [addExistingSearch, setAddExistingSearch] = useState('');
-	const searchInputRef = useRef<HTMLInputElement>(null);
-
 	const filteredNodes = useMemo(() => {
 		const query = addExistingSearch.toLowerCase().trim();
 		if (!query) return availableNodes;
@@ -219,7 +291,6 @@ const GroupNode = (props: NodeProps) => {
 		});
 	}, [availableNodes, addExistingSearch]);
 
-	// Auto-focus search input when the popover opens
 	useEffect(() => {
 		if (addExistingOpened) {
 			requestAnimationFrame(() => searchInputRef.current?.focus());
@@ -229,7 +300,7 @@ const GroupNode = (props: NodeProps) => {
 	}, [addExistingOpened]);
 
 	const handleLabelKeyDown = useCallback(
-		(e: React.KeyboardEvent) => {
+		(e: ReactKeyboardEvent<HTMLInputElement>) => {
 			if (e.key === 'Enter') {
 				e.preventDefault();
 				commitRename();
@@ -241,6 +312,52 @@ const GroupNode = (props: NodeProps) => {
 		[commitRename, cancelRename]
 	);
 
+	const closeContextMenu = useCallback(() => {
+		setContextMenuPosition(null);
+		setAddExistingOpened(false);
+		setAddSubmenuOpen(false);
+	}, []);
+
+	const handleContextMenu = useCallback((event: ReactMouseEvent) => {
+		event.preventDefault();
+		event.stopPropagation();
+		setContextMenuPosition({ x: event.clientX, y: event.clientY });
+	}, []);
+
+	const contextMenuStyle = useMemo(() => {
+		if (!contextMenuPosition) return undefined;
+		const width = 280;
+		const height = 320;
+		const left = Math.min(
+			contextMenuPosition.x,
+			window.innerWidth - width - 12
+		);
+		const top = Math.min(
+			contextMenuPosition.y,
+			window.innerHeight - height - 12
+		);
+		return {
+			left: Math.max(12, left),
+			top: Math.max(12, top),
+		};
+	}, [contextMenuPosition]);
+
+	const getToneClass = (tone: NewNodeMenuItemTone) => {
+		switch (tone) {
+			case 'blue':
+				return styles.submenuItemBlue;
+			case 'teal':
+				return styles.submenuItemTeal;
+			case 'orange':
+				return styles.submenuItemOrange;
+			case 'green':
+				return styles.submenuItemGreen;
+			case 'gray':
+			default:
+				return styles.submenuItemGray;
+		}
+	};
+
 	return (
 		<>
 			<NodeResizer
@@ -250,8 +367,8 @@ const GroupNode = (props: NodeProps) => {
 				handleClassName={styles.resizeHandle}
 			/>
 			<div
-				ref={groupRef}
 				className={styles.groupNode}
+				onContextMenu={handleContextMenu}
 				// inline-style-allow: group color vars must be set inline from persisted NodeStyle
 				style={colorVars}
 			>
@@ -270,66 +387,88 @@ const GroupNode = (props: NodeProps) => {
 							classNames={{ input: styles.labelInputField }}
 						/>
 					) : (
-						<Tooltip
-							label={t('form.workflow.group.renameHint')}
-							withArrow
-							openDelay={500}
-						>
-							<Text
-								size='xs'
-								className={styles.labelText}
-								lineClamp={1}
-								onDoubleClick={() => setIsEditing(true)}
-							>
-								{label}
-							</Text>
-						</Tooltip>
+						<Text size='xs' className={styles.labelText} lineClamp={1}>
+							{label}
+						</Text>
 					)}
 				</Panel>
+			</div>
 
-				<SideActionsPortal
-					anchorRef={groupRef}
-					visible={!!props.selected}
-					verticalAlign='top'
-					offsetY={8}
-				>
-					<div className={`${styles.sideActions} nodrag nopan`}>
-						{/* ── New Node (submenu) ── */}
-						<Menu position='right-start' withinPortal>
-							<Menu.Target>
-								<Tooltip
-									label={t('form.workflow.group.addNewNode')}
-									withArrow
-									position='left'
-								>
-									<ActionIcon
-										size='sm'
-										variant='light'
-										color='blue'
-										radius='sm'
-										className={`${styles.actionButton} ${styles.actionButtonPrimary}`}
-									>
-										<IconPlus size={13} />
-									</ActionIcon>
-								</Tooltip>
-							</Menu.Target>
-							<Menu.Dropdown className={styles.menuDropdown}>
-								<Menu.Label>{t('form.workflow.group.addNewNode')}</Menu.Label>
-								{newNodeMenuItems.map((item) => (
-									<Menu.Item
-										key={`${item.type}-${item.label}`}
-										leftSection={<item.icon size={16} />}
-										onClick={() =>
-											addNewNodeToGroup(props.id, item.type, item.variant)
-										}
-									>
-										{item.label}
-									</Menu.Item>
-								))}
-							</Menu.Dropdown>
-						</Menu>
+			{contextMenuPosition && (
+				<Portal>
+					<div
+						ref={contextMenuRef}
+						data-group-node-context-menu
+						className={`${styles.menu} nodrag nopan`}
+						// inline-style-allow: positioned at the cursor and clamped in runtime
+						style={contextMenuStyle}
+						onContextMenu={(event) => event.preventDefault()}
+					>
+						<div className={styles.section}>
+							{t('form.workflow.contextMenu.actions', {
+								defaultValue: 'Actions',
+							})}
+						</div>
 
-						{/* ── Add Existing Node (searchable picker) ── */}
+						<button
+							type='button'
+							className={`${styles.item} ${styles.itemPrimary}`}
+							onClick={() => setAddSubmenuOpen((value) => !value)}
+						>
+							<span className={styles.itemIcon}>
+								<IconPlus size={14} />
+							</span>
+							<span className={styles.itemLabel}>
+								{t('form.workflow.group.addNewNode')}
+							</span>
+							<span className={styles.itemChevron}>
+								{addSubmenuOpen ? (
+									<IconChevronUp size={12} />
+								) : (
+									<IconChevronDown size={12} />
+								)}
+							</span>
+						</button>
+
+						{addSubmenuOpen && (
+							<div className={styles.submenuPanel}>
+								<div className={styles.submenuGrid}>
+									{newNodeMenuItems.map((item) => {
+										const toneClass = getToneClass(item.tone);
+
+										return (
+											<button
+												key={`${item.type}-${item.label}`}
+												type='button'
+												className={`${styles.submenuItem} ${toneClass}`}
+												onClick={() => {
+													const newNodeId = addNewNodeToGroup(
+														props.id,
+														item.type,
+														item.variant
+													);
+													if (
+														item.type === WORKFLOW_NODE_TYPES.UPDATE_STATE &&
+														newNodeId
+													) {
+														openNodeDrawer(newNodeId);
+													}
+													closeContextMenu();
+												}}
+											>
+												<span className={styles.submenuItemIcon}>
+													<item.icon size={14} />
+												</span>
+												<span className={styles.submenuItemLabel}>
+													{item.label}
+												</span>
+											</button>
+										);
+									})}
+								</div>
+							</div>
+						)}
+
 						<Popover
 							opened={addExistingOpened}
 							onChange={setAddExistingOpened}
@@ -342,22 +481,18 @@ const GroupNode = (props: NodeProps) => {
 							trapFocus
 						>
 							<Popover.Target>
-								<Tooltip
-									label={t('form.workflow.group.addExistingNode')}
-									withArrow
-									position='left'
+								<button
+									type='button'
+									className={styles.item}
+									onClick={() => setAddExistingOpened((o) => !o)}
 								>
-									<ActionIcon
-										size='sm'
-										variant='light'
-										color='teal'
-										radius='sm'
-										onClick={() => setAddExistingOpened((o) => !o)}
-										className={`${styles.actionButton} ${styles.actionButtonTeal}`}
-									>
-										<IconPackageImport size={13} />
-									</ActionIcon>
-								</Tooltip>
+									<span className={styles.itemIcon}>
+										<IconPackageImport size={14} />
+									</span>
+									<span className={styles.itemLabel}>
+										{t('form.workflow.group.addExistingNode')}
+									</span>
+								</button>
 							</Popover.Target>
 							<Popover.Dropdown
 								className={styles.menuDropdown}
@@ -388,6 +523,7 @@ const GroupNode = (props: NodeProps) => {
 												onClick={() => {
 													addExistingNodeToGroup(props.id, node.id);
 													setAddExistingOpened(false);
+													closeContextMenu();
 												}}
 											>
 												<Text size='xs' fw={500} truncate>
@@ -405,94 +541,93 @@ const GroupNode = (props: NodeProps) => {
 							</Popover.Dropdown>
 						</Popover>
 
-						{/* ── Color ── */}
 						<GroupColorPopover
 							nodeId={props.id}
 							currentColor={nodeData.color || undefined}
+							trigger={
+								<button type='button' className={styles.item}>
+									<span className={styles.itemIcon}>
+										<IconPalette size={14} />
+									</span>
+									<span className={styles.itemLabel}>
+										{t('form.workflow.contextMenu.changeStyle', {
+											defaultValue: 'Change color',
+										})}
+									</span>
+								</button>
+							}
 						/>
 
-						<div className={styles.actionDivider} />
+						<div className={styles.divider} />
 
-						{/* ── Clone ── */}
-						<Tooltip
-							label={t('form.workflow.group.cloneGroup')}
-							withArrow
-							position='left'
-							withinPortal
+						<button
+							type='button'
+							className={styles.item}
+							onClick={() => {
+								cloneGroup(props.id);
+								closeContextMenu();
+							}}
 						>
-							<ActionIcon
-								size='sm'
-								variant='light'
-								color='gray'
-								radius='sm'
-								onClick={() => cloneGroup(props.id)}
-								className={styles.actionButton}
-							>
-								<IconCopy size={13} />
-							</ActionIcon>
-						</Tooltip>
+							<span className={styles.itemIcon}>
+								<IconCopy size={14} />
+							</span>
+							<span className={styles.itemLabel}>
+								{t('form.workflow.group.cloneGroup')}
+							</span>
+						</button>
 
-						{/* ── Rename ── */}
-						<Tooltip
-							label={t('form.workflow.group.rename')}
-							withArrow
-							position='left'
-							withinPortal
+						<button
+							type='button'
+							className={styles.item}
+							onClick={() => {
+								setIsEditing(true);
+								closeContextMenu();
+							}}
 						>
-							<ActionIcon
-								size='sm'
-								variant='light'
-								color='gray'
-								radius='sm'
-								onClick={() => setIsEditing(true)}
-								className={styles.actionButton}
-							>
-								<IconEdit size={13} />
-							</ActionIcon>
-						</Tooltip>
+							<span className={styles.itemIcon}>
+								<IconEdit size={14} />
+							</span>
+							<span className={styles.itemLabel}>
+								{t('form.workflow.group.rename')}
+							</span>
+						</button>
 
-						{/* ── Ungroup ── */}
-						<Tooltip
-							label={t('form.workflow.group.ungroup')}
-							withArrow
-							position='left'
-							withinPortal
+						<button
+							type='button'
+							className={styles.item}
+							onClick={() => {
+								ungroupNodes(props.id);
+								closeContextMenu();
+							}}
 						>
-							<ActionIcon
-								size='sm'
-								variant='light'
-								color='gray'
-								radius='sm'
-								onClick={() => ungroupNodes(props.id)}
-								className={styles.actionButton}
-							>
-								<IconUnlink size={13} />
-							</ActionIcon>
-						</Tooltip>
+							<span className={styles.itemIcon}>
+								<IconUnlink size={14} />
+							</span>
+							<span className={styles.itemLabel}>
+								{t('form.workflow.group.ungroup')}
+							</span>
+						</button>
 
-						<div className={styles.actionDivider} />
+						<div className={styles.divider} />
 
-						{/* ── Delete ── */}
-						<Tooltip
-							label={t('form.workflow.actions.delete')}
-							withArrow
-							position='left'
-							withinPortal
+						<button
+							type='button'
+							className={`${styles.item} ${styles.itemDanger}`}
+							onClick={() => {
+								deleteNode(props.id);
+								closeContextMenu();
+							}}
 						>
-							<ActionIcon
-								size='sm'
-								variant='light'
-								color='red'
-								radius='sm'
-								onClick={() => deleteNode(props.id)}
-								className={`${styles.actionButton} ${styles.actionButtonDanger}`}
-							>
-								<IconTrash size={13} />
-							</ActionIcon>
-						</Tooltip>
+							<span className={styles.itemIcon}>
+								<IconTrash size={14} />
+							</span>
+							<span className={styles.itemLabel}>
+								{t('form.workflow.actions.delete')}
+							</span>
+						</button>
 					</div>
-				</SideActionsPortal>
-			</div>
+				</Portal>
+			)}
 		</>
 	);
 };

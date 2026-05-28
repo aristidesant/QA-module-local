@@ -10,7 +10,7 @@ export const campaignDetailNamespaces = [
 	'campaign.form.analytics',
 	'campaign.form.dashboards',
 	'campaign.form.report-values',
-	'campaign.form.versioning',
+	'campaign.form.voices',
 	'campaign.form.contacts',
 	'campaign.form.do-not-call',
 	'campaign.contact-list',
@@ -31,7 +31,9 @@ export const campaignRouteNamespaces: Record<
 	],
 	'campaign.detail': campaignDetailNamespaces,
 	'campaign.detail.index': campaignDetailNamespaces,
+	'campaign.detail.agent': campaignDetailNamespaces,
 	'campaign.detail.test': 'campaign.detail.test',
+	'campaign.detail.test.legacy': 'campaign.detail.test',
 	dashboards: 'dashboards',
 	'conversations.detail': 'conversations',
 };

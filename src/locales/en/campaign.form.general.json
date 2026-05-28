@@ -26,6 +26,28 @@
 		"noiseCancellationDesc": "When enabled, applies noise suppression and voice activity detection tuning to outbound calls.",
 		"createObjectiveTitle": "Create New Objective",
 		"settingsTitle": "Campaign settings",
-		"settingsDescription": "Define language and wave limits"
+		"settingsDescription": "Define language and wave limits",
+		"roleVisibility": {
+			"title": "Role visibility",
+			"description": "Control which roles can see this campaign.",
+			"label": "Visible to roles",
+			"fieldDescription": "Select every role that should have campaign visibility.",
+			"placeholder": "Select roles",
+			"hint": "Leaving this empty saves the campaign with no assigned role visibility.",
+			"noRolesFound": "No active roles found",
+			"loadErrorTitle": "Unable to load roles",
+			"loadErrorDescription": "Retry before saving campaign visibility changes.",
+			"loadErrorSaveBlocked": "Campaign roles could not be loaded. Retry before saving visibility changes."
+		},
+		"voicePool": {
+			"label": "Campaign voices",
+			"description": "Choose which voices this campaign can distribute across tasks.",
+			"placeholder": "Select one or more voices",
+			"hint": "Leave this empty only if you want the campaign to keep its existing voice behavior.",
+			"noVoices": "No voices are available for this client.",
+			"noMatches": "No voices match your search",
+			"loadErrorTitle": "Unable to load voices",
+			"loadErrorDescription": "Retry before saving campaign voice changes."
+		}
 	}
 }

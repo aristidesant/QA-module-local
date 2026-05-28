@@ -166,6 +166,7 @@ export type WorkflowNode =
 	| EndNode
 	| ToolNode
 	| OverrideAgentNode
+	| UpdateStateNode
 	| PhoneNumberTransferNode
 	| StandaloneAgentNode;
 
@@ -196,6 +197,62 @@ export interface EndNode extends WorkflowNodeBase {
 export interface ToolNode extends WorkflowNodeBase {
 	type: 'tool';
 	tools: Array<{ toolId: string }>;
+}
+
+export interface UpdateStateValueSchema {
+	type: 'string' | 'boolean' | 'integer' | 'number';
+	description: string;
+	enum: string[] | null;
+}
+
+export interface UpdateStateLlmExpression {
+	type: 'llm';
+	valueSchema: UpdateStateValueSchema;
+	prompt: string;
+}
+
+export interface UpdateStateStringExpression {
+	type: 'string';
+	value: string;
+}
+
+export interface UpdateStateNumberExpression {
+	type: 'number';
+	value: number;
+}
+
+export interface UpdateStateBooleanExpression {
+	type: 'boolean';
+	value: boolean;
+}
+
+export interface UpdateStateNullExpression {
+	type: 'null';
+}
+
+export interface UpdateStateDynamicVariableExpression {
+	type: 'dynamic_variable';
+	variableName: string;
+}
+
+export type UpdateStateExpression =
+	| UpdateStateLlmExpression
+	| UpdateStateStringExpression
+	| UpdateStateNumberExpression
+	| UpdateStateBooleanExpression
+	| UpdateStateNullExpression
+	| UpdateStateDynamicVariableExpression;
+
+export interface UpdateStateUpdate {
+	type: 'dynamic_variable';
+	variableName: string;
+	expression: UpdateStateExpression;
+}
+
+export interface UpdateStateNode extends WorkflowNodeBase {
+	type: 'update_state';
+	label: string;
+	updates: UpdateStateUpdate[];
 }
 
 /**

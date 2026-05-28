@@ -15,7 +15,7 @@ const DispositionForm: React.FC<DispositionFormProps> = ({
 }) => {
 	return (
 		<div className={styles.wrapper}>
-			<Grid gutter='md' h='100%'>
+			<Grid gap='md' h='100%'>
 				<Grid.Col span={3}>
 					<Paper className={styles.leftSection} withBorder p={'xs'}>
 						<ScrollArea h={'100%'}>

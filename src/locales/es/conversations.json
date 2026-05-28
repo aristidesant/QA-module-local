@@ -185,6 +185,8 @@
 			"message": "No hay entradas de transcripción disponibles",
 			"description": "Los datos de la conversación aparecerán aquí una vez que estén disponibles"
 		},
+		"copyTranscript": "Copiar transcripción",
+		"copiedTranscript": "Copiado",
 		"roles": {
 			"agent": "Agente",
 			"user": "Usuario"

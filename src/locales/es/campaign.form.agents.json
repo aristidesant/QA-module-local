@@ -1,8 +1,40 @@
 {
+	"agentDetail": {
+		"page": {
+			"title": "Detalle del agente",
+			"description": "Revisa y actualiza el prompt, la configuración, el workflow y los ajustes avanzados del agente asignado."
+		},
+		"tabs": {
+			"setup": "Configuración",
+			"workflow": "Workflow",
+			"advanced": "Avanzado",
+			"versioning": "Versionado"
+		},
+		"save": "Guardar agente",
+		"saving": "Guardando...",
+		"breadcrumb": {
+			"back": "Volver a la campaña"
+		},
+		"advanced": {
+			"tools": "Herramientas",
+			"systemTools": "Herramientas del sistema",
+			"knowledgeBase": "Base de conocimiento",
+			"asrKeywords": "Keywords ASR",
+			"dynamicVariables": "Variables dinámicas",
+			"dictionary": "Diccionario",
+			"noiseCancellation": "Cancelación de ruido"
+		}
+	},
 	"form": {
 		"agent": {
 			"add": {
+				"searchLabel": "Nombre del agente",
 				"searchPlaceholder": "Buscar agentes por nombre",
+				"campaignNameLabel": "Nombre de la campaña",
+				"campaignNamePlaceholder": "Buscar y seleccionar una campaña",
+				"loadingCampaigns": "Cargando campañas...",
+				"loadCampaignsError": "Error al cargar campañas",
+				"noCampaignsFound": "No se encontraron campañas",
 				"loadError": "Error al cargar agentes",
 				"loadErrorDesc": "Hubo un error al cargar la lista de agentes. Por favor, inténtalo de nuevo.",
 				"tryAgain": "Intentar de nuevo",
@@ -22,14 +54,102 @@
 				"cancel": "Cancelar",
 				"cloneAction": "Clonar"
 			},
+			"sync": {
+				"title": "Sincronizar agente externo",
+				"description": "Registra un agente de un servicio externo en UCXM para poder usarlo en campañas.",
+				"agentId": {
+					"label": "ID del agente",
+					"placeholder": "agent_3701k3ttaq12ewp8b7qv5rfyszkz",
+					"description": "Pega el ID del agente del servicio externo."
+				},
+				"type": {
+					"label": "Tipo de agente",
+					"description": "Elige cómo se usará este agente en UCXM.",
+					"inbound": "INBOUND",
+					"outbound": "OUTBOUND"
+				},
+				"submit": "Sincronizar agente",
+				"successMessage": "Agente sincronizado exitosamente",
+				"validation": {
+					"agentIdRequired": "El ID del agente es obligatorio",
+					"typeRequired": "El tipo del agente es obligatorio"
+				},
+				"errors": {
+					"nameExists": "Ya existe un agente con ese nombre. Intenta con otro agente.",
+					"alreadySynced": "Este agente ya fue sincronizado previamente.",
+					"externalService": "Error al conectar con el servicio externo. Verifica que el Agent ID sea correcto.",
+					"generic": "Error al sincronizar el agente"
+				}
+			},
 			"list": {
+				"title": "Agentes de la campana",
+				"description": "Selecciona un agente para editar su prompt o workflow.",
+				"loading": "Cargando agentes...",
 				"addAgent": "Agregar Agente",
+				"syncAgent": "Sincronizar agente externo",
 				"addAgentTitle": "Agregar Agente a la Campaña",
+				"openAgentAria": "Abrir agente {{name}}",
+				"actions": {
+					"menu": "Acciones del agente",
+					"removeFromCampaign": "Eliminar de la campaña",
+					"principalProtected": "El agente principal no se puede eliminar de la campaña."
+				},
+				"removeRelation": {
+					"title": "¿Eliminar el agente de la campaña?",
+					"description": "Esto quitará a {{name}} de esta campaña solamente. El agente seguirá disponible en UCXM.",
+					"confirm": "Eliminar de la campaña",
+					"success": "{{name}} fue eliminado de la campaña",
+					"error": "No se pudo eliminar el agente de la campaña"
+				},
+				"selected": "Seleccionado",
+				"language": "Idioma: {{language}}",
+				"noLanguage": "Idioma no disponible",
+				"loadError": "Error al cargar los agentes de la campana",
+				"loadErrorDesc": "Hubo un error al cargar la lista de agentes. Por favor, inténtalo de nuevo.",
+				"tryAgain": "Intentar de nuevo",
 				"noAgents": "No hay agentes asignados",
 				"noAgentsDesc": "Esta campaña no tiene agentes asignados."
 			},
+			"detail": {
+				"back": "Volver a agentes",
+				"loading": "Cargando datos del agente...",
+				"missingAgent": "El agente seleccionado ya no esta disponible.",
+				"tabs": {
+					"agents": "Agentes",
+					"workflow": "Workflow"
+				}
+			},
+			"selector": {
+				"label": "Agente asignado",
+				"principal": "Principal",
+				"subagent": "Subagente",
+				"save": "Guardar agente",
+				"saving": "Guardando...",
+				"saved": "Agente guardado",
+				"saveError": "Error al guardar el agente"
+			},
+			"templates": {
+				"add": "Agregar subagente desde template",
+				"save": "Guardar como template",
+				"modalTitle": "Agregar subagente desde template",
+				"modalDescription": "Los templates se filtran por el objetivo de esta campana.",
+				"templateLabel": "Template",
+				"templatePlaceholder": "Selecciona un template",
+				"nameLabel": "Nombre del subagente",
+				"namePlaceholder": "Dejalo vacio para usar el nombre del template",
+				"descriptionLabel": "Descripcion",
+				"descriptionPlaceholder": "Describe este subagente reutilizable",
+				"empty": "No hay templates para este objetivo.",
+				"create": "Agregar subagente",
+				"saveModalTitle": "Guardar subagente como template",
+				"templateNameLabel": "Nombre del template",
+				"templateNamePlaceholder": "Ingresa un nombre de template",
+				"created": "Subagente creado",
+				"templateSaved": "Template guardado"
+			},
 			"columns": {
 				"name": "Agente",
+				"campaign": "Campaña",
 				"type": "Tipo",
 				"voice": "Voz",
 				"actions": "Acciones",
@@ -241,10 +361,25 @@
 							"navigationHint": "Usa las flechas para navegar y Enter para insertar",
 							"source": {
 								"dyn": "Dinámica",
-								"sys": "Sistema"
+								"sys": "Sistema",
+								"campaign": "Campaña"
 							},
 							"empty": "No se encontraron variables"
-						}
+						},
+						"search": {
+							"placeholder": "Buscar variables...",
+							"empty": "No se encontraron variables",
+							"footer": "↑↓ navegar · ↵ insertar · esc cerrar",
+							"groups": {
+								"dynamic": "Dinámicas",
+								"campaign": "Variables de campaña",
+								"system": "Sistema"
+							}
+						},
+						"contextMenu": {
+							"insert": "Insertar variable"
+						},
+						"inUse": "Variables en uso"
 					},
 					"diff": {
 						"modalTitle": "Revisar cambios"
@@ -330,6 +465,7 @@
 					"title": "Vista previa de la configuración",
 					"label": "Seleccione un conjunto de parámetros predefinido",
 					"placeholder": "Seleccionar configuración",
+					"backupSuffix": "Respaldo",
 					"actions": {
 						"cancel": "Cancelar",
 						"apply": "Aplicar"

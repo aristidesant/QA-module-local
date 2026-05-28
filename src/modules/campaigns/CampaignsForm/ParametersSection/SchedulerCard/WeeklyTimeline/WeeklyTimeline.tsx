@@ -125,7 +125,7 @@ const WeeklyTimeline: React.FC<WeeklyTimelineProps> = ({
 					)}
 				</Box>
 
-				<Collapse in={isExpanded && isActive}>
+				<Collapse expanded={isExpanded && isActive}>
 					<Box className={styles.expandedContent}>
 						<Group gap='xs' className={styles.timeInputs}>
 							<Box className={styles.timeInputGroup}>

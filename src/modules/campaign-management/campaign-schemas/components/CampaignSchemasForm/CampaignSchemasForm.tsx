@@ -27,7 +27,7 @@ import {
 	useCreateCampaignContactSchema,
 	useUpdateCampaignContactSchema,
 } from '~/queries/campaignContactSchemasQueries';
-import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
+import { useGetCampaignObjectivesAll } from '~/queries/campaignObjectivesQueries';
 import {
 	CampaignContactSchema,
 	CreateCampaignContactSchemaRequest,
@@ -130,8 +130,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 	const isAllowed = isEditing ? canEdit : canCreate;
 
 	// Get objectives for the select
-	const { data: objectivesResponse } = useGetCampaignObjectives();
-	const objectives = objectivesResponse?.data || [];
+	const { data: objectives = [] } = useGetCampaignObjectivesAll();
 
 	// State for version creation modal
 	const [showVersionModal, setShowVersionModal] = useState(false);
@@ -457,7 +456,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 					onClick={() => setObjectivePickerOpen(true)}
 				/>
 
-				<Collapse in={objectivePickerOpen}>
+				<Collapse expanded={objectivePickerOpen}>
 					<ObjectivePickerPanel
 						selectedObjectiveId={
 							form.values.objectiveId
@@ -598,7 +597,7 @@ const CampaignSchemasForm: React.FC<CampaignSchemasFormProps> = ({
 										</div>
 									)}
 								</Group>
-								<Collapse in={expandedPatterns.has(index)}>
+								<Collapse expanded={expandedPatterns.has(index)}>
 									<MatchPatternsTextarea
 										key={`patterns-${index}`}
 										initialValue={field.matchPatterns ?? []}

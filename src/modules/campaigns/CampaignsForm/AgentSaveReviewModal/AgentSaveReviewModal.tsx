@@ -102,10 +102,16 @@ const AgentSaveReviewModal = ({
 			size='90%'
 			centered
 			padding='lg'
+			classNames={{ body: classes.modalBody }}
 		>
 			<Stack gap='md'>
 				<div className={classes.diffShell}>
-					<ScrollArea className={classes.diffScroll}>
+					<ScrollArea.Autosize
+						className={classes.diffScroll}
+						mah='55vh'
+						type='auto'
+						offsetScrollbars='y'
+					>
 						{hasChanges ? (
 							<div className={classes.splitDiff}>
 								<div className={classes.diffHeaderRow}>
@@ -203,7 +209,7 @@ const AgentSaveReviewModal = ({
 								</Text>
 							</div>
 						)}
-					</ScrollArea>
+					</ScrollArea.Autosize>
 				</div>
 
 				{warningMessage && (

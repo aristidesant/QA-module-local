@@ -1,21 +1,7 @@
-import { Stack } from '@mantine/core';
-import CampaignConfigurationBasic from './CampaignConfigurationBasic/CampaignConfigurationBasic';
-import CampaignConfigurationPrompt from './CampaignConfigurationPrompt/CampaignConfigurationPrompt';
-import CampaignConfigurationPredefinedParams from './CampaignConfigurationPredefinedParams';
+import AgentCampaignSelectionList from './AgentCampaignSelectionList';
 
-interface AgentSectionProps {
-	onOpenSettings?: () => void;
-}
-
-const AgentSection: React.FC<AgentSectionProps> = ({ onOpenSettings }) => {
-	return (
-		<Stack>
-			<CampaignConfigurationPrompt onOpenSettings={onOpenSettings} />
-			<CampaignConfigurationBasic />
-			<CampaignConfigurationPredefinedParams />
-			{/* <CampaignConfigurationTemperatureControl /> */}
-		</Stack>
-	);
+const AgentSection: React.FC = () => {
+	return <AgentCampaignSelectionList />;
 };
 
 export default AgentSection;

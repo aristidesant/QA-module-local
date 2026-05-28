@@ -139,7 +139,7 @@ const MetricsSkeleton = () => (
 				</SimpleGrid>
 			</Stack>
 		</Card>
-		<Grid gutter='md' className={styles.detailGrid}>
+		<Grid gap='md' className={styles.detailGrid}>
 			<Grid.Col span={{ base: 12, lg: 8 }}>
 				<SimpleGrid
 					cols={{ base: 1, sm: 2 }}
@@ -431,7 +431,7 @@ const ContactListMetrics = ({ contactGroupId }: ContactListMetricsProps) => {
 					overviewHighlights={overviewHighlights}
 					quickStats={quickStats}
 				/>
-				{/* <Grid gutter='md' className={styles.detailGrid}> */}
+				{/* <Grid gap='md' className={styles.detailGrid}> */}
 				{/* <Grid.Col span={{ base: 12, lg: hasSpecifics ? 8 : 12 }}>
 						<BreakdownSection breakdownCards={breakdownCards} />
 					</Grid.Col>

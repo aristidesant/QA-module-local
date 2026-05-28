@@ -1,6 +1,5 @@
 import { Modal, Text } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { IconBook } from '@tabler/icons-react';
 import KnowledgeBaseList from './KnowledgeBaseList/KnowledgeBaseList';
 import KnowledgeBaseForm from './KnowledgeBaseForm/KnowledgeBaseForm';
 import useKnowledgeBaseStore from './store/knowledgeBaseStore';
@@ -18,11 +17,7 @@ const KnowledgeBasePage = () => {
 
 	return (
 		<>
-			<ContentContainer
-				title={t('page.title')}
-				description={t('page.description')}
-				titleIcon={<IconBook size={20} />}
-			>
+			<ContentContainer>
 				<KnowledgeBaseList />
 			</ContentContainer>
 			<Modal

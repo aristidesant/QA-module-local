@@ -1,17 +1,26 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
+	ActionIcon,
+	Badge,
 	Box,
 	Button,
 	Flex,
 	Group,
-	Modal,
 	Paper,
 	ScrollArea,
 	Stack,
 	Text,
 	TextInput,
+	Tooltip,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import {
+	IconCursorText,
+	IconHierarchy3,
+	IconLayoutList,
+	IconLayoutRows,
+	IconSitemap,
+} from '@tabler/icons-react';
 import styles from './DispositionBuilder.module.css';
 import { useTranslation } from 'react-i18next';
 import {
@@ -20,6 +29,7 @@ import {
 } from '~/queries/dispositionFlowQueries';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import { useDispositionBuilderStore } from '../../dispositionStore';
+import { findNodeById } from '~/utils/dragDropUtils';
 import NodeEditor from './NodeEditor';
 import DispositionNodeForm from './DispositionNodeForm';
 import DispositionGroupPreview from './DispositionGroupPreview';
@@ -28,6 +38,13 @@ type DispositionBuilderProps = {
 	onComplete?: () => void;
 	onCancel?: () => void;
 };
+
+function countAllNodes(nodes: DispositionNode[]): number {
+	return nodes.reduce(
+		(acc, node) => acc + 1 + (node.children ? countAllNodes(node.children) : 0),
+		0
+	);
+}
 
 const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 	onComplete,
@@ -46,8 +63,6 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 		dispositionFlow,
 		removeNode,
 		setFlowJson,
-		previewNode,
-		setPreviewNode,
 		populateNodeWithChildren,
 		addMissingSiblingsToParent,
 		selectedCatalog,
@@ -57,6 +72,8 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 		null
 	);
 	const [parentNode, setParentNode] = useState<DispositionNode | null>(null);
+	const [collapseAllKey, setCollapseAllKey] = useState(0);
+	const [expandAllKey, setExpandAllKey] = useState(0);
 
 	const handleNodeSelect = (
 		node: DispositionNode,
@@ -69,10 +86,6 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 	const handleNodeFormCancel = () => {
 		setSelectedNode(null);
 		setParentNode(null);
-	};
-
-	const handleClosePreview = () => {
-		setPreviewNode(null);
 	};
 
 	const handleSave = async () => {
@@ -138,9 +151,46 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 		selectedNode &&
 		(!selectedNode.children || selectedNode.children.length === 0);
 
+	const totalNodeCount = useMemo(
+		() =>
+			flowJson?.dispositionNodes ? countAllNodes(flowJson.dispositionNodes) : 0,
+		[flowJson?.dispositionNodes]
+	);
+
+	const missingChildrenForSelected = useMemo(() => {
+		if (!selectedNode || !selectedCatalog?.dispositionNodes) return 0;
+		const catalogNode = findNodeById(
+			selectedCatalog.dispositionNodes,
+			selectedNode.id
+		);
+		const catalogChildren = (catalogNode?.children ?? []).filter(
+			(c) => c.isActive
+		);
+		const existingIds = new Set((selectedNode.children ?? []).map((c) => c.id));
+		return catalogChildren.filter((c) => !existingIds.has(c.id)).length;
+	}, [selectedNode, selectedCatalog]);
+
+	const missingSiblingsForSelected = useMemo(() => {
+		if (!selectedNode || !selectedCatalog?.dispositionNodes || !parentNode)
+			return 0;
+		const catalogNode = findNodeById(
+			selectedCatalog.dispositionNodes,
+			selectedNode.id
+		);
+		if (!catalogNode?.parentId) return 0;
+		const parentCatalog = findNodeById(
+			selectedCatalog.dispositionNodes,
+			catalogNode.parentId
+		);
+		const activeSiblings = (parentCatalog?.children ?? []).filter(
+			(c) => c.isActive
+		);
+		const existingIds = new Set((parentNode.children ?? []).map((c) => c.id));
+		return activeSiblings.filter((s) => !existingIds.has(s.id)).length;
+	}, [selectedNode, selectedCatalog, parentNode]);
+
 	return (
 		<Box className={styles.builderContainer}>
-			{null}
 			<Flex mb={4}>
 				<TextInput
 					label={t('disposition.builder.nameLabel')}
@@ -181,14 +231,53 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 					>
 						<Box className={styles.leftPanelContent}>
 							<Stack gap={4}>
-								<Box className={styles.leftPanelHeader}>
-									<Text fw={600} size='sm'>
-										{t('disposition.builder.header')}
-									</Text>
-									<Text size='xs' c='dimmed'>
-										{t('disposition.builder.headerDescription')}
-									</Text>
-								</Box>
+								<Group
+									justify='space-between'
+									align='center'
+									className={styles.leftPanelHeader}
+								>
+									<Box>
+										<Text fw={600} size='sm'>
+											{t('disposition.builder.header')}
+										</Text>
+										<Text size='xs' c='dimmed'>
+											{t('disposition.builder.headerDescription')}
+										</Text>
+									</Box>
+									{totalNodeCount > 0 && (
+										<Group gap={4} wrap='nowrap'>
+											<Badge size='xs' variant='light' color='green'>
+												{totalNodeCount}
+											</Badge>
+											<Tooltip
+												label={t('disposition.builder.collapseAll')}
+												withArrow
+											>
+												<ActionIcon
+													size='xs'
+													variant='subtle'
+													onClick={() => setCollapseAllKey((k) => k + 1)}
+													aria-label={t('disposition.builder.collapseAll')}
+												>
+													<IconLayoutList size={13} />
+												</ActionIcon>
+											</Tooltip>
+											<Tooltip
+												label={t('disposition.builder.expandAll')}
+												withArrow
+											>
+												<ActionIcon
+													size='xs'
+													variant='subtle'
+													onClick={() => setExpandAllKey((k) => k + 1)}
+													aria-label={t('disposition.builder.expandAll')}
+												>
+													<IconLayoutRows size={13} />
+												</ActionIcon>
+											</Tooltip>
+										</Group>
+									)}
+								</Group>
 								{flowJson?.dispositionNodes &&
 								flowJson.dispositionNodes.length > 0 ? (
 									<Box className={styles.treeContainer}>
@@ -203,12 +292,19 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 													onPopulateChildren={populateNodeWithChildren}
 													onAddMissingSiblings={addMissingSiblingsToParent}
 													catalogNodes={selectedCatalog?.dispositionNodes}
+													collapseAllKey={collapseAllKey}
+													expandAllKey={expandAllKey}
 												/>
 											))}
 										</Stack>
 									</Box>
 								) : (
 									<Box className={styles.emptyState}>
+										<IconSitemap
+											size={40}
+											// inline-style-allow: CSS variable applied to icon element which does not support className-based color overrides
+											style={{ color: 'var(--disposition-text-muted)' }}
+										/>
 										<Text fw={600} c='dimmed' size='xs'>
 											{t('disposition.builder.emptyTitle')}
 										</Text>
@@ -255,13 +351,57 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 										onCancel={handleNodeFormCancel}
 									/>
 								) : (
-									<DispositionGroupPreview node={selectedNode} />
+									<Stack gap={0}>
+										{(missingChildrenForSelected > 0 ||
+											missingSiblingsForSelected > 0) && (
+											<Group gap='xs' className={styles.parentActions}>
+												{missingChildrenForSelected > 0 && (
+													<Button
+														size='xs'
+														variant='light'
+														color='blue'
+														leftSection={<IconHierarchy3 size={13} />}
+														onClick={() =>
+															populateNodeWithChildren(selectedNode.id)
+														}
+													>
+														{t('disposition.nodeEditor.addChildren', {
+															count: missingChildrenForSelected,
+														})}
+													</Button>
+												)}
+												{missingSiblingsForSelected > 0 && (
+													<Button
+														size='xs'
+														variant='light'
+														color='green'
+														leftSection={<IconHierarchy3 size={13} />}
+														onClick={() =>
+															addMissingSiblingsToParent(selectedNode.id)
+														}
+													>
+														{t('disposition.nodeEditor.addSiblings', {
+															count: missingSiblingsForSelected,
+														})}
+													</Button>
+												)}
+											</Group>
+										)}
+										<DispositionGroupPreview node={selectedNode} />
+									</Stack>
 								)
 							) : (
 								<Box className={styles.emptyRightPanel}>
-									<div className={styles.emptyPanelText}>
-										{t('disposition.builder.emptyRightPanel')}
-									</div>
+									<Stack align='center' gap={6}>
+										<IconCursorText
+											size={36}
+											// inline-style-allow: CSS variable applied to icon element which does not support className-based color overrides
+											style={{ color: 'var(--disposition-text-muted)' }}
+										/>
+										<div className={styles.emptyPanelText}>
+											{t('disposition.builder.emptyRightPanel')}
+										</div>
+									</Stack>
 								</Box>
 							)}
 						</Box>
@@ -280,6 +420,7 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 						loading={createMutation.isPending || updateMutation.isPending}
 						size='sm'
 						variant='filled'
+						color='green'
 					>
 						{dispositionFlow?.id
 							? t('disposition.builder.updateFlow')
@@ -287,15 +428,6 @@ const DispositionBuilder: React.FC<DispositionBuilderProps> = ({
 					</Button>
 				</Group>
 			</Paper>
-			<Modal
-				opened={Boolean(previewNode)}
-				onClose={handleClosePreview}
-				size='lg'
-				title={t('disposition.builder.previewTitle')}
-				withinPortal={false}
-			>
-				{previewNode ? <DispositionGroupPreview node={previewNode} /> : null}
-			</Modal>
 		</Box>
 	);
 };

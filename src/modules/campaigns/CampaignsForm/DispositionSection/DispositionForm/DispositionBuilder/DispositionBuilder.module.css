@@ -96,15 +96,24 @@
 
 .leftPanelHeader {
 	display: flex;
-	flex-direction: column;
-	gap: 4px;
+	flex-direction: row;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+}
+
+.parentActions {
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border-bottom: 1px solid var(--disposition-border);
 }
 
 .emptyState {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
-	padding: var(--mantine-spacing-md) var(--mantine-spacing-sm);
+	align-items: center;
+	text-align: center;
+	gap: 6px;
+	padding: var(--mantine-spacing-xl) var(--mantine-spacing-sm);
 	border: 1px dashed var(--disposition-border-strong);
 	border-radius: var(--mantine-radius-md);
 	background: var(--disposition-surface);

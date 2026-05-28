@@ -15,11 +15,13 @@ import { usePermissions } from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
+import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
 export default function ConfigurationsPage() {
 	const { t } = useTranslation('configurations');
 	const location = useLocation();
 	const navigate = useNavigate();
 	const isMasterClient = useIsMasterClient();
+	const isSuperAdmin = useIsSuperAdmin();
 	const { canPerformAction } = usePermissions();
 	const canManageSettings = canPerformAction(
 		ModuleEnum.SETTINGS,
@@ -33,17 +35,24 @@ export default function ConfigurationsPage() {
 			return 'scheduler-predefined-params';
 		if (location.pathname.includes('campaign-predefined-params'))
 			return 'campaign-predefined-params';
+		if (isSuperAdmin && location.pathname.includes('agent-behaviors'))
+			return 'agent-behaviors';
 		if (location.pathname.includes('regional-settings-params'))
 			return 'regional-settings-params';
 		if (location.pathname.includes('phone-numbers')) return 'phone-numbers';
 		if (location.pathname.includes('dictionary-rules'))
 			return 'dictionary-rules';
-		return isMasterClient ? 'client-configs' : 'campaign-predefined-params';
+		return isMasterClient ? 'client-configs' : 'regional-settings-params';
 	};
 
 	useEffect(() => {
 		if (!isMasterClient && location.pathname.includes('client-configs')) {
-			navigate('/configurations/campaign-predefined-params', { replace: true });
+			navigate(
+				isSuperAdmin
+					? '/configurations/agent-behaviors'
+					: '/configurations/regional-settings-params',
+				{ replace: true }
+			);
 		}
 		if (
 			!canManageSettings &&
@@ -51,7 +60,13 @@ export default function ConfigurationsPage() {
 		) {
 			navigate('/configurations/client-configs', { replace: true });
 		}
-	}, [canManageSettings, isMasterClient, location.pathname, navigate]);
+	}, [
+		canManageSettings,
+		isMasterClient,
+		isSuperAdmin,
+		location.pathname,
+		navigate,
+	]);
 
 	return (
 		<ContentContainer
@@ -70,15 +85,15 @@ export default function ConfigurationsPage() {
 							{t('tabs.global')}
 						</Tabs.Tab>
 					)}
-					<Tabs.Tab
-						value='campaign-predefined-params'
-						leftSection={<IconList size={16} />}
-						onClick={() =>
-							navigate('/configurations/campaign-predefined-params')
-						}
-					>
-						{t('tabs.campaign')}
-					</Tabs.Tab>
+					{isSuperAdmin && (
+						<Tabs.Tab
+							value='agent-behaviors'
+							leftSection={<IconList size={16} />}
+							onClick={() => navigate('/configurations/agent-behaviors')}
+						>
+							{t('tabs.campaign', 'Agent Behaviors')}
+						</Tabs.Tab>
+					)}
 					<Tabs.Tab
 						value='regional-settings-params'
 						leftSection={<IconGlobe size={16} />}

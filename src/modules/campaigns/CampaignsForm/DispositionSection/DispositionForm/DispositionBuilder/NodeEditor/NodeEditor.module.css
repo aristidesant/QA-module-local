@@ -4,11 +4,11 @@
 		var(--mantine-color-dark-7)
 	);
 	--disposition-node-surface-hover: light-dark(
-		var(--mantine-color-blue-0),
+		var(--mantine-color-green-0),
 		var(--mantine-color-dark-6)
 	);
 	--disposition-node-surface-selected: light-dark(
-		var(--mantine-color-blue-0),
+		var(--mantine-color-green-0),
 		var(--mantine-color-dark-6)
 	);
 	--disposition-node-border: light-dark(
@@ -16,49 +16,122 @@
 		var(--mantine-color-dark-4)
 	);
 	--disposition-node-border-hover: light-dark(
-		var(--mantine-color-blue-4),
-		var(--mantine-color-blue-7)
+		var(--mantine-color-green-4),
+		var(--mantine-color-green-7)
 	);
 	--disposition-node-border-selected: light-dark(
-		var(--mantine-color-blue-5),
-		var(--mantine-color-blue-5)
+		var(--mantine-color-green-5),
+		var(--mantine-color-green-5)
 	);
 	--disposition-node-text: light-dark(
 		var(--mantine-color-gray-9),
 		var(--mantine-color-gray-0)
 	);
+	--disposition-node-shadow: light-dark(
+		var(--mantine-shadow-sm),
+		0 14px 28px rgba(0, 0, 0, 0.22)
+	);
 	position: relative;
 	display: flex;
-	align-items: center;
-	gap: 4px;
-	padding: 4px 6px;
-	margin-bottom: 3px;
+	align-items: stretch;
+	gap: var(--mantine-spacing-xs);
+	padding: 10px 12px 10px 14px;
+	margin-bottom: 6px;
 	border: 1px solid var(--disposition-node-border);
-	border-radius: var(--mantine-radius-sm);
+	border-radius: var(--mantine-radius-md);
 	background: var(--disposition-node-surface);
+	box-shadow: var(--disposition-node-shadow);
+	overflow: hidden;
 	transition:
+		transform 120ms ease,
 		border-color 120ms ease,
 		background-color 120ms ease,
 		box-shadow 120ms ease;
+}
+
+/* Tone-specific backgrounds + borders (no side-stripe) */
+.nodeRow[data-tone='effective'] {
+	background: light-dark(
+		color-mix(
+			in srgb,
+			var(--mantine-color-green-1) 30%,
+			var(--disposition-node-surface)
+		),
+		color-mix(
+			in srgb,
+			var(--mantine-color-green-9) 12%,
+			var(--disposition-node-surface)
+		)
+	);
+	border-color: light-dark(
+		var(--mantine-color-green-3),
+		var(--mantine-color-green-8)
+	);
+}
+
+.nodeRow[data-tone='noEffective'] {
+	background: light-dark(
+		color-mix(
+			in srgb,
+			var(--mantine-color-orange-1) 28%,
+			var(--disposition-node-surface)
+		),
+		color-mix(
+			in srgb,
+			var(--mantine-color-orange-9) 12%,
+			var(--disposition-node-surface)
+		)
+	);
+	border-color: light-dark(
+		var(--mantine-color-orange-3),
+		var(--mantine-color-orange-8)
+	);
+}
+
+.nodeRow[data-tone='noContact'] {
+	background: light-dark(
+		color-mix(
+			in srgb,
+			var(--mantine-color-red-1) 28%,
+			var(--disposition-node-surface)
+		),
+		color-mix(
+			in srgb,
+			var(--mantine-color-red-9) 12%,
+			var(--disposition-node-surface)
+		)
+	);
+	border-color: light-dark(
+		var(--mantine-color-red-3),
+		var(--mantine-color-red-8)
+	);
+}
+
+.nodeRow[data-tone='default'] {
+	background: var(--disposition-node-surface);
+	border-color: var(--disposition-node-border);
 }
 
 .rowContent {
 	flex: 1;
 	min-width: 0;
 	align-items: center;
+	gap: 10px;
 }
 
 .togglePlaceholder {
-	width: 22px;
-	height: 22px;
+	width: 24px;
+	height: 24px;
 	display: inline-flex;
+	flex-shrink: 0;
 }
 
 .statusDot {
-	width: 5px;
-	height: 5px;
-	border-radius: 50%;
+	width: 8px;
+	height: 8px;
+	border-radius: 999px;
 	flex-shrink: 0;
+	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .effectiveDot {
@@ -84,10 +157,15 @@
 
 .nodeTitle {
 	color: var(--disposition-node-text);
+	line-height: 1.2;
+	letter-spacing: -0.01em;
 }
 
 .icons {
 	flex-shrink: 0;
+	display: flex;
+	align-items: center;
+	gap: 4px;
 }
 
 .badges {
@@ -96,6 +174,10 @@
 
 .actions {
 	opacity: 0;
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	padding-left: 2px;
 	transition: opacity 120ms ease;
 }
 
@@ -110,40 +192,39 @@
 
 .clickable:hover {
 	border-color: var(--disposition-node-border-hover);
-	background: var(--disposition-node-surface-hover);
+	background: light-dark(
+		color-mix(
+			in srgb,
+			var(--mantine-color-green-0) 60%,
+			var(--disposition-node-surface)
+		),
+		var(--disposition-node-surface-hover)
+	);
+	transform: translateY(-1px);
+	box-shadow:
+		0 0 0 1px color-mix(in srgb, var(--mantine-color-green-3) 38%, transparent),
+		0 18px 26px rgba(0, 0, 0, 0.1);
 }
 
 .selected {
 	border-color: var(--disposition-node-border-selected);
-	background: var(--disposition-node-surface-selected);
-	box-shadow: 0 0 0 1px
-		light-dark(var(--mantine-color-blue-2), var(--mantine-color-blue-9));
-}
-
-.effective {
-	border-color: light-dark(
-		var(--mantine-color-green-5),
-		var(--mantine-color-green-7)
+	background: light-dark(
+		var(--mantine-color-green-0),
+		color-mix(
+			in srgb,
+			var(--mantine-color-green-9) 18%,
+			var(--disposition-node-surface)
+		)
 	);
-}
-
-.noEffective {
-	border-color: light-dark(
-		var(--mantine-color-orange-5),
-		var(--mantine-color-orange-7)
-	);
-}
-
-.noContact {
-	border-color: light-dark(
-		var(--mantine-color-red-5),
-		var(--mantine-color-red-7)
-	);
+	box-shadow:
+		0 0 0 1px
+			light-dark(var(--mantine-color-green-2), var(--mantine-color-green-9)),
+		var(--disposition-node-shadow);
 }
 
 @media (max-width: 768px) {
 	.nodeRow {
-		padding: var(--mantine-spacing-2xs) var(--mantine-spacing-xs);
+		padding: var(--mantine-spacing-xs);
 	}
 
 	.togglePlaceholder {

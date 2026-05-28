@@ -10,11 +10,9 @@ import {
 } from '@tabler/icons-react';
 import type { StandaloneAgentNode } from '~/models/AgentWorkflowModel';
 import { WORKFLOW_NODE_TYPES, type WorkflowNodeType } from '../../nodeTypes';
-import WorkflowNodeActions from '../../WorkflowNodeActions';
 import WorkflowNodeDrawer from '../../WorkflowNodeDrawer';
 import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
-import type { WorkflowNodeData } from '../../WorkflowNode/WorkflowNodeTypes';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
 import { useNodeStyle } from '../../NodeStylesContext';
@@ -91,16 +89,7 @@ const SubagentNodeComponent = (props: NodeProps) => {
 
 	return (
 		<>
-			<WorkflowNodeWrapper
-				{...props}
-				sideActions={
-					<WorkflowNodeActions
-						nodeId={props.id}
-						nodeData={props.data as WorkflowNodeData}
-						nodeType={nodeType}
-					/>
-				}
-			>
+			<WorkflowNodeWrapper {...props}>
 				<div
 					className={`${workflowNodeStyles.nodeSurface} ${styles.node}`}
 					style={nodeSurfaceStyle}

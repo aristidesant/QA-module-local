@@ -137,7 +137,8 @@
 .th {
 	font-size: 12px;
 	font-weight: 600;
-	letter-spacing: -0.01em;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 	color: var(--mantine-color-gray-7);
 	background: var(--mantine-color-body);
 }

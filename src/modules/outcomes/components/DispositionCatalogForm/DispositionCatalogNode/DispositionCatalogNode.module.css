@@ -1,4 +1,34 @@
 /* Tree container */
+.toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-body);
+}
+
+.toolbarCopy {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.toolbarTitle {
+	color: var(--mantine-color-gray-9);
+}
+
+.toolbarDescription {
+	line-height: 1.4;
+}
+
+.toolbarActions {
+	flex-shrink: 0;
+}
+
 .treeWrapper {
 	width: 100%;
 }
@@ -52,7 +82,7 @@
 }
 
 .nodeAccent[data-active='true'] {
-	background: var(--mantine-color-green-5);
+	background: #1bb54a;
 }
 
 /* Connector lines for non-root nodes */
@@ -82,6 +112,15 @@
 /* Inactive */
 .nodeRowInactive {
 	opacity: 0.5;
+}
+
+/* Protected root node — read-only, tinted */
+.nodeRowProtected {
+	background-color: #f7f8fa;
+}
+
+.nodeRowProtected:hover {
+	background-color: #eef0f3;
 }
 
 /* Toggle button area */
@@ -190,7 +229,7 @@
 
 /* Empty state */
 .emptyState {
-	padding: 28px 16px;
+	padding: 40px 24px;
 	text-align: center;
 	border: 1px dashed var(--mantine-color-gray-3);
 	border-radius: 8px;
@@ -444,6 +483,16 @@
 }
 
 @media (max-width: 768px) {
+	.toolbar {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.toolbarActions {
+		justify-content: flex-start;
+		flex-wrap: wrap;
+	}
+
 	.treeWrapper {
 		padding: var(--mantine-spacing-xs);
 	}
@@ -482,6 +531,15 @@
 	background-color: var(--mantine-color-dark-6);
 }
 
+[data-mantine-color-scheme='dark'] .toolbar {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .toolbarTitle {
+	color: var(--mantine-color-dark-0);
+}
+
 [data-mantine-color-scheme='dark'] .nodeRow:not([data-level='0'])::before {
 	border-color: var(--mantine-color-dark-4);
 }
@@ -493,6 +551,14 @@
 
 [data-mantine-color-scheme='dark'] .nodeAccent {
 	background: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .nodeRowProtected {
+	background-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .nodeRowProtected:hover {
+	background-color: var(--mantine-color-dark-6);
 }
 
 [data-mantine-color-scheme='dark'] .emptyState {

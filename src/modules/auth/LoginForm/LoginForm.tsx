@@ -2,15 +2,12 @@ import {
 	TextInput,
 	PasswordInput,
 	Button,
-	Paper,
 	Text,
 	Alert,
 	Loader,
 	Title,
-	Checkbox,
 	Anchor,
 	Group,
-	ThemeIcon,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import {
@@ -20,7 +17,6 @@ import {
 	IconEye,
 	IconEyeOff,
 	IconArrowRight,
-	IconShieldCheck,
 	IconSun,
 	IconMoon,
 	IconDeviceDesktop,
@@ -31,7 +27,6 @@ import { useLogin } from '~/queries/authQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import { useTranslation } from 'react-i18next';
 import classes from './LoginForm.module.css';
-import Logo from '~/components/Logo';
 import { ClientSelectOption, MFALoginResponse } from '~/api/authApi';
 import { APP_VERSION } from '~/version';
 import OTPVerificationModal from './OTPVerificationModal';
@@ -40,7 +35,6 @@ import ForgotPasswordModal from './ForgotPasswordModal';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useColorSchemeStore } from '~/stores/colorSchemeStore';
-import LanguagePicker from '~/components/LanguagePicker';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 
 type LoginType = 'USER_PASS' | 'LDAP';
@@ -55,7 +49,7 @@ export function LoginForm() {
 	const loginMutation = useLogin();
 	const navigate = useNavigate();
 	const location = useLocation();
-	const { t } = useTranslation('auth');
+	const { t, i18n } = useTranslation('auth');
 	const { setToken, setUser, setTargetClient } = useSessionStore();
 	const { setPendingCredentials, clearPendingCredentials } =
 		usePasswordResetStore();
@@ -65,7 +59,6 @@ export function LoginForm() {
 	const [pendingLoginData, setPendingLoginData] =
 		useState<MFALoginResponse | null>(null);
 	const [passwordVisible, setPasswordVisible] = useState(false);
-	// Multi-client selection state
 	const [clientSelectionModalOpened, setClientSelectionModalOpened] =
 		useState(false);
 	const [availableClients, setAvailableClients] = useState<
@@ -75,14 +68,11 @@ export function LoginForm() {
 	const [forgotPasswordModalOpened, setForgotPasswordModalOpened] =
 		useState(false);
 
-	const isSubmitting = loginMutation.isPending;
-	const isRedirecting = false;
-	const isLoading = isSubmitting || isRedirecting;
+	const isLoading = loginMutation.isPending;
 	const logoutReason = new URLSearchParams(location.search).get('reason');
 	const formErrorRef = useRef<HTMLDivElement | null>(null);
 
 	useEffect(() => {
-		// Defensive: ensure no stale token remains when landing on /login.
 		try {
 			window.sessionStorage.removeItem('accessToken');
 		} catch {
@@ -94,13 +84,7 @@ export function LoginForm() {
 	}, [setTargetClient, setToken, setUser]);
 
 	const form = useForm<FormValues>({
-		initialValues: {
-			username: '',
-			password: '',
-			// default to USER_PASS so existing users keep normal behavior
-			loginType: 'USER_PASS',
-		},
-		// Ensure the form never performs native submission
+		initialValues: { username: '', password: '', loginType: 'USER_PASS' },
 		onSubmitPreventDefault: 'always',
 		validate: {
 			username: (value) => (!value.trim() ? t('username.required') : null),
@@ -118,7 +102,7 @@ export function LoginForm() {
 		errors: Partial<Record<keyof FormValues, string>>
 	) => {
 		const firstInvalidField = (['username', 'password'] as const).find(
-			(field) => errors[field]
+			(f) => errors[f]
 		);
 		if (firstInvalidField) {
 			form.getInputNode(firstInvalidField)?.focus();
@@ -126,10 +110,7 @@ export function LoginForm() {
 	};
 
 	const handleSubmit = async (values: FormValues) => {
-		if (isLoading) {
-			return;
-		}
-
+		if (isLoading) return;
 		setFormError(null);
 		try {
 			const result: MFALoginResponse = await loginMutation.mutateAsync({
@@ -138,7 +119,6 @@ export function LoginForm() {
 				loginType: values.loginType,
 			});
 
-			// Case: User has access to multiple clients
 			if (result?.requiresClientSelection && result?.availableClients) {
 				setAvailableClients(result.availableClients);
 				setPreAuthToken(result.preAuthToken || null);
@@ -148,7 +128,6 @@ export function LoginForm() {
 			}
 
 			if (result?.otpEnabled) {
-				// Show OTP modal
 				setPendingLoginData(result);
 				setOtpModalOpened(true);
 				clearPendingCredentials();
@@ -162,13 +141,9 @@ export function LoginForm() {
 					setPendingCredentials(values.username, values.loginType);
 					navigate('/force-password-change', {
 						replace: true,
-						state: {
-							username: values.username,
-							loginType: values.loginType,
-						},
+						state: { username: values.username, loginType: values.loginType },
 					});
 				} else {
-					// Direct login success, navigate to dashboard
 					clearPendingCredentials();
 					navigate('/');
 				}
@@ -179,16 +154,12 @@ export function LoginForm() {
 	};
 
 	const clearFormError = () => {
-		if (formError) {
-			setFormError(null);
-		}
+		if (formError) setFormError(null);
 	};
 
 	const handleFieldKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
-		if (event.key !== 'Enter' || event.nativeEvent.isComposing || isLoading) {
+		if (event.key !== 'Enter' || event.nativeEvent.isComposing || isLoading)
 			return;
-		}
-
 		event.preventDefault();
 		event.currentTarget.form?.requestSubmit();
 	};
@@ -197,9 +168,7 @@ export function LoginForm() {
 	const passwordInputProps = form.getInputProps('password');
 
 	const handleLoginTypeChange = (value: string) => {
-		if (value !== 'USER_PASS' && value !== 'LDAP') {
-			return;
-		}
+		if (value !== 'USER_PASS' && value !== 'LDAP') return;
 		clearFormError();
 		form.setFieldValue('loginType', value);
 	};
@@ -208,28 +177,17 @@ export function LoginForm() {
 		{
 			label: t('loginType.credentials'),
 			value: 'USER_PASS' as const,
-			leftSection: <IconUser size={16} stroke={1.5} />,
 		},
 		{
 			label: t('loginType.ldap'),
 			value: 'LDAP' as const,
-			leftSection: <IconShieldCheck size={16} stroke={1.5} />,
 		},
 	];
 
 	const themeOptions = [
-		{
-			label: <IconSun size={16} stroke={1.5} />,
-			value: 'light',
-		},
-		{
-			label: <IconMoon size={16} stroke={1.5} />,
-			value: 'dark',
-		},
-		{
-			label: <IconDeviceDesktop size={16} stroke={1.5} />,
-			value: 'auto',
-		},
+		{ label: <IconSun size={15} />, value: 'light' },
+		{ label: <IconMoon size={15} />, value: 'dark' },
+		{ label: <IconDeviceDesktop size={15} />, value: 'auto' },
 	];
 
 	const handleOTPSuccess = () => {
@@ -237,19 +195,16 @@ export function LoginForm() {
 		setPendingLoginData(null);
 		navigate('/');
 	};
-
 	const handleOTPModalClose = () => {
 		setOtpModalOpened(false);
 		setPendingLoginData(null);
 	};
-
 	const handleClientSelectionSuccess = () => {
 		setClientSelectionModalOpened(false);
 		setAvailableClients([]);
 		setPreAuthToken(null);
 		navigate('/');
 	};
-
 	const handleClientSelectionModalClose = () => {
 		setClientSelectionModalOpened(false);
 		setAvailableClients([]);
@@ -258,63 +213,54 @@ export function LoginForm() {
 
 	return (
 		<div className={classes.wrapper}>
-			<Paper className={classes.paper} shadow='md'>
+			<div className={classes.card}>
 				<form
-					className={classes.formContainer}
+					className={classes.formRoot}
 					onSubmit={form.onSubmit(handleSubmit, handleValidationFailure)}
 					aria-busy={isLoading}
+					aria-label={t('actions.signIn')}
 				>
-					{(isSubmitting || isRedirecting) && (
-						<div className={classes.loadingOverlay}>
-							<div className={classes.loadingContent}>
-								<Loader size='md' type='dots' color='blue' />
-								<Text size='sm' fw={600} c='blue.7'>
-									{t('actions.signingIn')}
-								</Text>
-							</div>
-						</div>
-					)}
-
 					<div className={classes.contentGrid}>
-						{/* Left Panel - Branding */}
-						<section className={classes.brandingPanel}>
-							<div className={classes.brandingContent}>
-								<div className={classes.logoContainer}>
-									<Logo />
-								</div>
-								<div className={classes.brandingText}>
-									<Title order={1} className={classes.brandTitle}>
-										<span className={classes.brandTitlePrefix}>
+						{/* LEFT: Brand panel */}
+						<section className={classes.brandPanel}>
+							<div className={classes.brandContent}>
+								<div className={classes.brandIdentity}>
+									<img
+										src='/images/logo-2.png'
+										alt='Newtech'
+										className={classes.brandLogoImg}
+									/>
+									<div className={classes.brandWordmark}>
+										<span className={classes.brandWordmarkMain}>
 											{t('welcomePrefix')}
 										</span>
-										<span className={classes.brandTitleAccent}>
+										<span className={classes.brandWordmarkAccent}>
 											{t('welcomeSuffix')}
 										</span>
-									</Title>
-									<div className={classes.brandRule} />
-									<Title order={2} className={classes.brandHeading}>
-										{t('welcomeBack')}
-									</Title>
-									<Text className={classes.subtitle}>{t('subtitle')}</Text>
+									</div>
 								</div>
-								<div className={classes.waveDecoration} />
-								<div className={classes.settingsRow}>
-									<LanguagePicker variant='default' size='sm' />
-									<AppSegmentedControl
-										aria-label={t('theme.label')}
-										value={preference}
-										onChange={(value) =>
-											setPreference(value as 'light' | 'dark' | 'auto')
-										}
-										data={themeOptions}
-										size='sm'
-									/>
+
+								<div className={classes.brandMessage}>
+									<p className={classes.brandTagline}>{t('subtitle')}</p>
 								</div>
 							</div>
+
+							<Text className={classes.brandVersion}>v{APP_VERSION}</Text>
 						</section>
 
-						{/* Right Panel - Form */}
+						{/* RIGHT: Form panel */}
 						<section className={classes.formPanel}>
+							{isLoading && (
+								<div className={classes.loadingOverlay}>
+									<div className={classes.loadingContent}>
+										<Loader size='sm' type='dots' color='green' />
+										<Text size='xs' fw={600} c='green.7'>
+											{t('actions.signingIn')}
+										</Text>
+									</div>
+								</div>
+							)}
+
 							<div className={classes.formStack}>
 								{logoutReason === 'expired' && (
 									<Alert
@@ -328,104 +274,101 @@ export function LoginForm() {
 									</Alert>
 								)}
 
-								<AppSegmentedControl
-									aria-label={t('loginType.label')}
-									value={form.values.loginType}
-									onChange={handleLoginTypeChange}
-									data={loginTypeOptions}
-									size='md'
-									fullWidth
-								/>
+								<div className={classes.formHeadingGroup}>
+									<Title order={2} className={classes.formHeading}>
+										{t('welcomeBack')}
+									</Title>
 
-								<div className={classes.fields}>
-									<TextInput
-										required
-										label={t('username.label')}
-										placeholder={
-											form.values.loginType === 'USER_PASS'
-												? t('username.placeholder')
-												: t('username.ldapPlaceholder')
-										}
-										leftSection={
-											<IconUser className={classes.inputIcon} stroke={1.5} />
-										}
-										leftSectionPointerEvents='none'
-										classNames={{
-											input: classes.input,
-											root: classes.inputRoot,
-											label: classes.inputLabel,
-										}}
-										{...usernameInputProps}
-										onChange={(event) => {
-											clearFormError();
-											usernameInputProps.onChange(event);
-										}}
-										onKeyDown={handleFieldKeyDown}
-										name='username'
-										autoComplete='username'
-										autoFocus
-									/>
-
-									<PasswordInput
-										required
-										label={t('password.label')}
-										placeholder={t('password.placeholder')}
-										leftSection={
-											<IconLock className={classes.inputIcon} stroke={1.5} />
-										}
-										leftSectionPointerEvents='none'
-										visibilityToggleIcon={({ reveal }) =>
-											reveal ? (
-												<IconEyeOff size={18} stroke={1.5} />
-											) : (
-												<IconEye size={18} stroke={1.5} />
-											)
-										}
-										classNames={{
-											input: classes.input,
-											root: classes.inputRoot,
-											label: classes.inputLabel,
-											visibilityToggle: classes.visibilityToggle,
-										}}
-										{...passwordInputProps}
-										onChange={(event) => {
-											clearFormError();
-											passwordInputProps.onChange(event);
-										}}
-										onKeyDown={handleFieldKeyDown}
-										visibilityToggleButtonProps={{
-											'aria-label': passwordVisible
-												? t('password.visibility.hide')
-												: t('password.visibility.show'),
-										}}
-										visible={passwordVisible}
-										onVisibilityChange={setPasswordVisible}
-										name='password'
-										autoComplete='current-password'
-										aria-describedby={
-											formError ? 'login-form-error' : undefined
-										}
+									<AppSegmentedControl
+										aria-label={t('loginType.label')}
+										value={form.values.loginType}
+										onChange={handleLoginTypeChange}
+										data={loginTypeOptions}
+										size='sm'
+										fullWidth
 									/>
 								</div>
 
-								<Group justify='space-between' align='center' gap='xs'>
-									<Checkbox
-										label={t('rememberMe')}
-										className={classes.rememberMe}
-										classNames={{
-											label: classes.checkboxLabel,
-										}}
-									/>
-									<Anchor
-										component='button'
-										type='button'
-										size='sm'
-										className={classes.forgotPasswordLink}
-										onClick={() => setForgotPasswordModalOpened(true)}
-									>
-										{t('forgotPassword')}
-									</Anchor>
-								</Group>
+								<div className={classes.formSection}>
+									<div className={classes.fields}>
+										<TextInput
+											required
+											label={t('username.label')}
+											placeholder={
+												form.values.loginType === 'USER_PASS'
+													? t('username.placeholder')
+													: t('username.ldapPlaceholder')
+											}
+											leftSection={<IconUser size={18} />}
+											leftSectionPointerEvents='none'
+											classNames={{
+												input: classes.input,
+												root: classes.inputRoot,
+												label: classes.inputLabel,
+											}}
+											{...usernameInputProps}
+											onChange={(event) => {
+												clearFormError();
+												usernameInputProps.onChange(event);
+											}}
+											onKeyDown={handleFieldKeyDown}
+											name='username'
+											autoComplete='username'
+											autoFocus
+										/>
+
+										<PasswordInput
+											required
+											label={t('password.label')}
+											placeholder={t('password.placeholder')}
+											leftSection={<IconLock size={18} />}
+											leftSectionPointerEvents='none'
+											visibilityToggleIcon={({ reveal }) =>
+												reveal ? (
+													<IconEyeOff size={16} />
+												) : (
+													<IconEye size={16} />
+												)
+											}
+											classNames={{
+												input: classes.input,
+												root: classes.inputRoot,
+												label: classes.inputLabel,
+												visibilityToggle: classes.visibilityToggle,
+											}}
+											{...passwordInputProps}
+											onChange={(event) => {
+												clearFormError();
+												passwordInputProps.onChange(event);
+											}}
+											onKeyDown={handleFieldKeyDown}
+											visibilityToggleButtonProps={{
+												'aria-label': passwordVisible
+													? t('password.visibility.hide')
+													: t('password.visibility.show'),
+											}}
+											visible={passwordVisible}
+											onVisibilityChange={setPasswordVisible}
+											name='password'
+											autoComplete='current-password'
+											aria-describedby={
+												formError ? 'login-form-error' : undefined
+											}
+										/>
+									</div>
+
+									<Group justify='flex-end'>
+										<Anchor
+											component='button'
+											type='button'
+											size='sm'
+											className={classes.forgotPasswordLink}
+											onClick={() => setForgotPasswordModalOpened(true)}
+										>
+											{t('forgotPassword')}
+										</Anchor>
+									</Group>
+								</div>
 
 								{formError && (
 									<Alert
@@ -440,7 +383,7 @@ export function LoginForm() {
 										tabIndex={-1}
 										ref={formErrorRef}
 									>
-										{formError === 'Unable to sign in'
+										{formError?.trim().toLowerCase() === 'unable to sign in'
 											? t('errors.unableToSignIn')
 											: formError}
 									</Alert>
@@ -459,39 +402,45 @@ export function LoginForm() {
 								>
 									{t('actions.signIn')}
 								</Button>
+
+								<div className={classes.formSettingsRow}>
+									<div className={classes.settingsControl}>
+										<AppSegmentedControl
+											aria-label='Language'
+											value={i18n.language?.split('-')[0] || 'en'}
+											onChange={(value: string) => i18n.changeLanguage(value)}
+											data={[
+												{ label: 'EN', value: 'en' },
+												{ label: 'ES', value: 'es' },
+											]}
+											size='xs'
+										/>
+									</div>
+									<div className={classes.settingsDivider} />
+									<div className={classes.settingsControl}>
+										<AppSegmentedControl
+											aria-label={t('theme.label')}
+											value={preference}
+											onChange={(value) =>
+												setPreference(value as 'light' | 'dark' | 'auto')
+											}
+											data={themeOptions}
+											size='xs'
+										/>
+									</div>
+								</div>
 							</div>
 						</section>
 					</div>
 				</form>
-			</Paper>
-
-			<div className={classes.footer}>
-				<Group gap='xs' justify='center'>
-					<ThemeIcon
-						variant='transparent'
-						size='sm'
-						className={classes.footerIcon}
-					>
-						<IconShieldCheck size={16} stroke={1.5} />
-					</ThemeIcon>
-					<Text size='xs' className={classes.secureConnection}>
-						{t('secureConnection')}
-					</Text>
-				</Group>
-				<Text size='xs' className={classes.version}>
-					v{APP_VERSION}
-				</Text>
 			</div>
 
-			{/* OTP Verification Modal */}
 			<OTPVerificationModal
 				opened={otpModalOpened}
 				onClose={handleOTPModalClose}
 				userId={pendingLoginData?.userId || 0}
 				onSuccess={handleOTPSuccess}
 			/>
-
-			{/* Client Selection Modal */}
 			<ClientSelectionModal
 				opened={clientSelectionModalOpened}
 				onClose={handleClientSelectionModalClose}
@@ -499,8 +448,6 @@ export function LoginForm() {
 				preAuthToken={preAuthToken || ''}
 				onSuccess={handleClientSelectionSuccess}
 			/>
-
-			{/* Forgot Password Modal */}
 			<ForgotPasswordModal
 				opened={forgotPasswordModalOpened}
 				onClose={() => setForgotPasswordModalOpened(false)}

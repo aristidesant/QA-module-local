@@ -145,6 +145,39 @@
 	border-radius: var(--mantine-radius-md);
 	border: 1px solid var(--disposition-border);
 	background: var(--disposition-surface);
+	transition:
+		background 150ms ease,
+		border-color 150ms ease;
+}
+
+.toggleCard[data-active='true'][data-variant='danger'] {
+	background: light-dark(
+		var(--mantine-color-red-0),
+		color-mix(
+			in srgb,
+			var(--mantine-color-red-9) 18%,
+			var(--disposition-surface)
+		)
+	);
+	border-color: light-dark(
+		var(--mantine-color-red-3),
+		var(--mantine-color-red-7)
+	);
+}
+
+.toggleCard[data-active='true'][data-variant='warning'] {
+	background: light-dark(
+		var(--mantine-color-orange-0),
+		color-mix(
+			in srgb,
+			var(--mantine-color-orange-9) 18%,
+			var(--disposition-surface)
+		)
+	);
+	border-color: light-dark(
+		var(--mantine-color-orange-3),
+		var(--mantine-color-orange-7)
+	);
 }
 
 .toggleContent {

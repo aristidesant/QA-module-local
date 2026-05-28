@@ -173,7 +173,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 					<Skeleton height={10} radius='xl' />
 				</Stack>
 				<Divider />
-				<Grid gutter='xs'>
+				<Grid gap='xs'>
 					{Array.from({ length: 3 }).map((_, index) => (
 						<Grid.Col span={{ base: 12, md: 6, lg: 4 }} key={index}>
 							<Stack gap='xs'>
@@ -221,7 +221,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 
 			<div className={classes.body}>
 				<Stack gap='xs'>
-					<Grid gutter='sm'>
+					<Grid gap='sm'>
 						<Grid.Col span={{ base: 12, md: 6 }}>
 							<SectionCard
 								title={t('form.sections.profile.title')}

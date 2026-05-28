@@ -3,8 +3,7 @@ import {
 	IconChecklist,
 	IconChartBar,
 	IconGalaxy,
-	IconGitBranch,
-	IconRoute,
+	IconMicrophone,
 	IconUser,
 	IconList,
 	IconLayoutDashboard,
@@ -13,7 +12,11 @@ import { useTranslation } from 'react-i18next';
 import { useDispositionLabel } from '~/hooks/useDispositionLabel';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 
-const CampaignTabs = () => {
+interface CampaignTabsProps {
+	hasVoicesTab?: boolean;
+}
+
+const CampaignTabs = ({ hasVoicesTab = false }: CampaignTabsProps) => {
 	const { selectedTab, setSelectedTab, setRightComponent } = useCampaignsStore(
 		(state) => state
 	);
@@ -35,9 +38,6 @@ const CampaignTabs = () => {
 				<Tabs.Tab leftSection={<IconUser />} value='agents'>
 					{t('tabs.agents')}
 				</Tabs.Tab>
-				<Tabs.Tab leftSection={<IconRoute />} value='workflow'>
-					{t('tabs.workflow')}
-				</Tabs.Tab>
 				<Tabs.Tab leftSection={<IconList />} value='outcomes'>
 					{dispositionLabel(t('tabs.outcomes'))}
 				</Tabs.Tab>
@@ -53,9 +53,11 @@ const CampaignTabs = () => {
 				<Tabs.Tab leftSection={<IconGalaxy />} value='general'>
 					{t('tabs.general')}
 				</Tabs.Tab>
-				<Tabs.Tab leftSection={<IconGitBranch />} value='versioning'>
-					{t('tabs.versioning')}
-				</Tabs.Tab>
+				{hasVoicesTab && (
+					<Tabs.Tab leftSection={<IconMicrophone />} value='voices'>
+						{t('tabs.voices')}
+					</Tabs.Tab>
+				)}
 			</Tabs.List>
 		</Tabs>
 	);

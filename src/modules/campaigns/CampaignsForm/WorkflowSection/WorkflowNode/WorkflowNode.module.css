@@ -15,29 +15,41 @@
 }
 
 :global(.react-flow__node.selected) .nodeContainer > .nodeSurface {
-	border-color: var(
-		--workflow-node-selected-border,
-		var(--workflow-shell-border-strong, var(--mantine-color-gray-5))
-	);
+	border-color: var(--workflow-selection-border, var(--mantine-color-green-5));
 	background-color: var(
 		--workflow-node-surface-selected,
 		var(--workflow-node-surface, var(--mantine-color-white))
 	);
 	box-shadow:
-		0 0 0 2px
-			var(
-				--workflow-node-selected-ring,
-				color-mix(
-					in srgb,
-					var(--workflow-shell-border-strong, var(--mantine-color-gray-5)) 16%,
-					transparent
-				)
-			),
-		0 18px 34px color-mix(in srgb, var(--mantine-color-black) 18%, transparent);
+		0 0 0 2px var(--workflow-selection-ring, rgba(27, 181, 74, 0.18)),
+		0 18px 34px var(--workflow-selection-shadow, rgba(27, 181, 74, 0.16)),
+		0 2px 6px color-mix(in srgb, var(--mantine-color-black) 10%, transparent);
 	transform: translateY(-1px);
 }
 
+:global([data-mantine-color-scheme='dark'])
+	:global(.react-flow__node.selected)
+	.nodeContainer
+	> .nodeSurface {
+	border-color: var(--workflow-selection-border, var(--mantine-color-green-4));
+	box-shadow:
+		0 0 0 2px var(--workflow-selection-ring, rgba(27, 181, 74, 0.26)),
+		0 18px 34px var(--workflow-selection-shadow, rgba(27, 181, 74, 0.18)),
+		0 2px 6px color-mix(in srgb, var(--mantine-color-black) 22%, transparent);
+}
+
 .nodeSurface {
+	--workflow-selection-border: var(--mantine-color-green-5);
+	--workflow-selection-ring: color-mix(
+		in srgb,
+		var(--mantine-color-green-5) 22%,
+		transparent
+	);
+	--workflow-selection-shadow: color-mix(
+		in srgb,
+		var(--mantine-color-green-6) 16%,
+		transparent
+	);
 	--workflow-node-accent: var(
 		--workflow-shell-control-text,
 		var(--mantine-color-gray-7)
@@ -117,6 +129,20 @@
 	box-shadow:
 		0 6px 16px color-mix(in srgb, var(--mantine-color-black) 6%, transparent),
 		0 1px 2px color-mix(in srgb, var(--mantine-color-black) 8%, transparent);
+}
+
+:global([data-mantine-color-scheme='dark']) .nodeSurface {
+	--workflow-selection-border: var(--mantine-color-green-4);
+	--workflow-selection-ring: color-mix(
+		in srgb,
+		var(--mantine-color-green-4) 30%,
+		transparent
+	);
+	--workflow-selection-shadow: color-mix(
+		in srgb,
+		var(--mantine-color-green-5) 18%,
+		transparent
+	);
 }
 
 .defaultNode {

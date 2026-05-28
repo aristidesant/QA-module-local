@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { Checkbox, Group, Select } from '@mantine/core';
+import { Button, Checkbox, Group } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 import WorkflowClipboardActions from './WorkflowClipboardActions';
@@ -9,16 +10,27 @@ import { WorkflowNodeEditorProvider } from './WorkflowNodeEditorContext';
 import { NodeStylesProvider } from './NodeStylesContext';
 import WorkflowNodeLegend from './WorkflowNodeLegend';
 import {
+	useCampaignAgentEditor,
 	useCampaignFormContext,
 	useCampaignId,
 } from '../../campaignFormFunctions';
-import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
+import {
+	useGetCampaignAgents,
+	useUpdateCampaignAgentConfig,
+} from '~/queries/campaignAgentsQueries';
+import CampaignAgentSelector from '../components/CampaignAgentSelector';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
 import '@xyflow/react/dist/style.css';
 import styles from './WorkflowSection.module.css';
 
-const WorkflowSection = () => {
+interface WorkflowSectionProps {
+	showAgentSelector?: boolean;
+}
+
+const WorkflowSection = ({
+	showAgentSelector = true,
+}: WorkflowSectionProps) => {
 	const { t } = useTranslation([
 		'campaign.form.workflow',
 		'campaign.form.agents',
@@ -26,44 +38,89 @@ const WorkflowSection = () => {
 	]);
 	const form = useCampaignFormContext();
 	const campaignId = useCampaignId();
+	const {
+		selectedCampaignAgentId,
+		setSelectedCampaignAgentId,
+		selectedCampaignAgent,
+		selectedAgent,
+	} = useCampaignAgentEditor();
 	const { data: campaignAgents } = useGetCampaignAgents(campaignId || 0);
-	const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
+	const updateCampaignAgentConfig = useUpdateCampaignAgentConfig();
 	const [isEditorExpanded, setIsEditorExpanded] = useState(false);
-	const workflow = form.values.agentConfig?.workflow;
-	const preventSubagentLoops = workflow?.preventSubagentLoops ?? false;
-	const nodeStyles = form.values.nodeStyles;
-	const nodeGroups = form.values.nodeGroups;
+	const [localWorkflow, setLocalWorkflow] = useState<
+		AgentWorkflow | undefined
+	>();
+	const [localNodeStyles, setLocalNodeStyles] = useState<
+		NodeStyles | undefined
+	>();
+	const [localNodeGroups, setLocalNodeGroups] = useState<
+		NodeGroups | undefined
+	>();
 
-	const agents = useMemo(
+	const sortedCampaignAgents = useMemo(
 		() =>
-			campaignAgents?.map((agent) => ({
-				agentId: agent.agentId,
-				agentName: agent.agent?.name || agent.agentId,
-			})) || [],
+			[...(campaignAgents ?? [])].sort((a, b) => {
+				if (a.isPrincipal !== b.isPrincipal) return a.isPrincipal ? -1 : 1;
+				return a.agentType.localeCompare(b.agentType);
+			}),
 		[campaignAgents]
 	);
+	const usesCampaignAgentConfig = Boolean(campaignId && selectedCampaignAgent);
+	const workflow = usesCampaignAgentConfig
+		? localWorkflow
+		: form.values.agentConfig?.workflow;
+	const preventSubagentLoops = workflow?.preventSubagentLoops ?? false;
+	const nodeStyles = usesCampaignAgentConfig
+		? localNodeStyles
+		: form.values.nodeStyles;
+	const nodeGroups = usesCampaignAgentConfig
+		? localNodeGroups
+		: form.values.nodeGroups;
+	const campaignAgentConfig = usesCampaignAgentConfig
+		? {
+				...(selectedAgent?.config ?? {}),
+				agentId: selectedCampaignAgent?.agentId,
+			}
+		: form.values.agentConfig;
 
 	useEffect(() => {
-		if (agents.length === 0) {
-			setSelectedAgentId(null);
+		if (sortedCampaignAgents.length === 0) {
+			setSelectedCampaignAgentId(null);
 			return;
 		}
-		const hasSelection = selectedAgentId
-			? agents.some((agent) => agent.agentId === selectedAgentId)
+
+		const hasSelection = selectedCampaignAgentId
+			? sortedCampaignAgents.some(
+					(agent) => agent.id === selectedCampaignAgentId
+				)
 			: false;
 		if (!hasSelection) {
-			setSelectedAgentId(agents[0].agentId);
+			setSelectedCampaignAgentId(sortedCampaignAgents[0].id);
 		}
-	}, [agents, selectedAgentId]);
+	}, [selectedCampaignAgentId, sortedCampaignAgents]);
+
+	useEffect(() => {
+		if (!usesCampaignAgentConfig || !selectedCampaignAgent) {
+			return;
+		}
+
+		setLocalWorkflow(selectedAgent?.config?.workflow);
+		setLocalNodeStyles(selectedAgent?.workflowUi?.nodeStyles ?? {});
+		setLocalNodeGroups(selectedAgent?.workflowUi?.nodeGroups ?? {});
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [
+		selectedAgent?.updatedAt,
+		selectedCampaignAgent?.id,
+		usesCampaignAgentConfig,
+	]);
 
 	const handleWorkflowChange = (updatedWorkflow: AgentWorkflow) => {
 		const currentConfig = form.values.agentConfig ?? {};
-		const prevNodes = currentConfig.workflow?.nodes ?? {};
+		const prevNodes = workflow?.nodes ?? {};
 		const nextNodes = updatedWorkflow.nodes ?? {};
 
-		// Sync nodeStyles / nodeGroups labels when a node is renamed
-		const currentNodeStyles = form.values.nodeStyles;
-		const currentNodeGroups = form.values.nodeGroups;
+		const currentNodeStyles = nodeStyles;
+		const currentNodeGroups = nodeGroups;
 		let stylesPatched = false;
 		let groupsPatched = false;
 		const patchedStyles = currentNodeStyles
@@ -95,10 +152,23 @@ const WorkflowSection = () => {
 		}
 
 		if (stylesPatched && patchedStyles) {
-			form.setFieldValue('nodeStyles', patchedStyles);
+			if (usesCampaignAgentConfig) {
+				setLocalNodeStyles(patchedStyles);
+			} else {
+				form.setFieldValue('nodeStyles', patchedStyles);
+			}
 		}
 		if (groupsPatched && patchedGroups) {
-			form.setFieldValue('nodeGroups', patchedGroups);
+			if (usesCampaignAgentConfig) {
+				setLocalNodeGroups(patchedGroups);
+			} else {
+				form.setFieldValue('nodeGroups', patchedGroups);
+			}
+		}
+
+		if (usesCampaignAgentConfig) {
+			setLocalWorkflow(updatedWorkflow);
+			return;
 		}
 
 		form.setFieldValue('agentConfig', {
@@ -109,22 +179,28 @@ const WorkflowSection = () => {
 
 	const handleNodeGroupsChange = useCallback(
 		(updatedNodeGroups: NodeGroups) => {
-			form.setFieldValue('nodeGroups', updatedNodeGroups);
+			if (usesCampaignAgentConfig) {
+				setLocalNodeGroups(updatedNodeGroups);
+			} else {
+				form.setFieldValue('nodeGroups', updatedNodeGroups);
+			}
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
+		[form, usesCampaignAgentConfig]
 	);
 
 	const handleNodeStylesChange = useCallback(
 		(updatedNodeStyles: NodeStyles) => {
-			form.setFieldValue('nodeStyles', updatedNodeStyles);
+			if (usesCampaignAgentConfig) {
+				setLocalNodeStyles(updatedNodeStyles);
+			} else {
+				form.setFieldValue('nodeStyles', updatedNodeStyles);
+			}
 		},
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[]
+		[form, usesCampaignAgentConfig]
 	);
 
 	const handlePreventLoopsChange = (value: boolean) => {
-		const currentWorkflow = form.values.agentConfig?.workflow;
+		const currentWorkflow = workflow;
 		const nextWorkflow: AgentWorkflow = {
 			preventSubagentLoops: value,
 			nodes: currentWorkflow?.nodes ?? {},
@@ -133,16 +209,52 @@ const WorkflowSection = () => {
 		handleWorkflowChange(nextWorkflow);
 	};
 
+	const handleSaveWorkflow = async () => {
+		if (!campaignId || !selectedCampaignAgent || !workflow) return;
+
+		try {
+			await updateCampaignAgentConfig.mutateAsync({
+				campaignId,
+				id: selectedCampaignAgent.id,
+				updateData: {
+					workflow,
+					workflowUi: {
+						...(selectedAgent?.workflowUi ?? {}),
+						nodeStyles: nodeStyles ?? {},
+						nodeGroups: nodeGroups ?? {},
+					},
+				},
+			});
+			notifications.show({
+				color: 'green',
+				message: t('form.workflow.header.saved'),
+			});
+		} catch {
+			notifications.show({
+				color: 'red',
+				message: t('form.workflow.header.saveError'),
+			});
+		}
+	};
+
 	const handleNodeSelect = useCallback((nodeId: string | null) => {
 		void nodeId;
 	}, []);
 
+	const nodeStylesController = useMemo(
+		() => ({
+			nodeStyles,
+			onNodeStylesChange: handleNodeStylesChange,
+		}),
+		[nodeStyles, handleNodeStylesChange]
+	);
+
 	return (
-		<NodeStylesProvider value={nodeStyles}>
+		<NodeStylesProvider value={nodeStylesController}>
 			<WorkflowNodeEditorProvider
 				workflow={workflow}
 				onWorkflowChange={handleWorkflowChange}
-				campaignAgentConfig={form.values.agentConfig}
+				campaignAgentConfig={campaignAgentConfig}
 			>
 				<WorkflowEditorFullscreen
 					opened={isEditorExpanded}
@@ -150,7 +262,7 @@ const WorkflowSection = () => {
 					workflow={workflow}
 					onWorkflowChange={handleWorkflowChange}
 					preventSubagentLoops={preventSubagentLoops}
-					allowDefaultInit={!campaignId}
+					allowDefaultInit={!campaignId || !workflow}
 					onNodeSelect={handleNodeSelect}
 					nodeStyles={nodeStyles}
 					nodeGroups={nodeGroups}
@@ -165,41 +277,63 @@ const WorkflowSection = () => {
 						padding='sm'
 						onExpand={() => setIsEditorExpanded(true)}
 						headerExtras={
-							<Group gap='xs' align='center' className={styles.headerControls}>
-								{agents.length > 1 && (
-									<Select
-										data={agents.map((agent) => ({
-											value: agent.agentId,
-											label: agent.agentName,
-										}))}
-										value={selectedAgentId}
-										onChange={setSelectedAgentId}
-										placeholder={t('form.workflow.header.agentPlaceholder')}
-										aria-label={t('form.workflow.header.agentLabel')}
-										size='sm'
-										w={200}
+							<div className={styles.headerControls}>
+								<Group
+									gap='xs'
+									align='center'
+									className={styles.headerActionGroup}
+								>
+									<WorkflowClipboardActions
+										workflow={workflow}
+										onWorkflowChange={handleWorkflowChange}
+										fallbackPreventSubagentLoops={preventSubagentLoops}
+										nodeStyles={nodeStyles}
+										nodeGroups={nodeGroups}
+										onNodeStylesChange={handleNodeStylesChange}
+										onNodeGroupsChange={handleNodeGroupsChange}
 									/>
+									<Checkbox
+										size='sm'
+										label={t('form.workflow.header.preventLoops')}
+										checked={preventSubagentLoops}
+										onChange={(event) =>
+											handlePreventLoopsChange(event.currentTarget.checked)
+										}
+									/>
+								</Group>
+
+								{usesCampaignAgentConfig && (
+									<>
+										<div className={styles.headerDivider} />
+										<Group
+											gap='xs'
+											align='center'
+											className={styles.headerActionGroup}
+										>
+											<Button
+												size='xs'
+												variant='light'
+												onClick={handleSaveWorkflow}
+												loading={updateCampaignAgentConfig.isPending}
+											>
+												{updateCampaignAgentConfig.isPending
+													? t('form.workflow.header.saving')
+													: t('form.workflow.header.save')}
+											</Button>
+										</Group>
+									</>
 								)}
-								<Checkbox
-									size='sm'
-									label={t('form.workflow.header.preventLoops')}
-									checked={preventSubagentLoops}
-									onChange={(event) =>
-										handlePreventLoopsChange(event.currentTarget.checked)
-									}
-								/>
-								<WorkflowClipboardActions
-									workflow={workflow}
-									onWorkflowChange={handleWorkflowChange}
-									fallbackPreventSubagentLoops={preventSubagentLoops}
-									nodeStyles={nodeStyles}
-									nodeGroups={nodeGroups}
-									onNodeStylesChange={handleNodeStylesChange}
-									onNodeGroupsChange={handleNodeGroupsChange}
-								/>
-							</Group>
+							</div>
 						}
 					>
+						{showAgentSelector && sortedCampaignAgents.length > 1 && (
+							<CampaignAgentSelector
+								agents={sortedCampaignAgents}
+								value={selectedCampaignAgentId}
+								onChange={setSelectedCampaignAgentId}
+								label={t('form.workflow.header.agentLabel')}
+							/>
+						)}
 						{(nodeStyles &&
 							Object.keys(nodeStyles).some(
 								(k) => nodeStyles[k]?.backgroundColor || nodeStyles[k]?.iconName
@@ -219,7 +353,7 @@ const WorkflowSection = () => {
 							nodeGroups={nodeGroups}
 							onNodeGroupsChange={handleNodeGroupsChange}
 							preventSubagentLoops={preventSubagentLoops}
-							allowDefaultInit={!campaignId}
+							allowDefaultInit={!campaignId || !workflow}
 							onNodeSelect={handleNodeSelect}
 						/>
 					</SectionCard>

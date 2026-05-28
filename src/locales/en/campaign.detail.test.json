@@ -11,5 +11,65 @@
 			"description": "This campaign does not have an agent configured yet. Return to the editor to connect one before testing.",
 			"backToEditor": "Back to editor"
 		}
+	},
+	"widget": {
+		"title": "Conversation preview",
+		"description": "Start a live conversation with the configured agent and monitor its connection state here.",
+		"helper": "Talk to the agent by voice or send a written message.",
+		"voice": {
+			"title": "Voice agent",
+			"callTooltip": "Start voice call",
+			"hangupTooltip": "End call"
+		},
+		"meta": {
+			"speaking": "Speaking",
+			"listening": "Listening",
+			"mic": "Mic",
+			"muted": "Muted",
+			"unmuted": "Live",
+			"mode": "Mode"
+		},
+		"mode": {
+			"speaking": "Speaking",
+			"listening": "Listening"
+		},
+		"status": {
+			"disconnected": "Ready",
+			"connecting": "Connecting",
+			"connected": "Connected",
+			"error": "Connection error"
+		},
+		"statusDescription": {
+			"disconnected": "No active session is running yet.",
+			"connecting": "Opening a session with the agent.",
+			"connected": "The session is live and ready to receive input.",
+			"error": "The session could not be started or was interrupted."
+		},
+		"actions": {
+			"start": "Start conversation",
+			"end": "End conversation",
+			"mute": "Mute mic",
+			"unmute": "Unmute mic"
+		},
+		"session": {
+			"label": "Session ID"
+		},
+		"transcript": {
+			"title": "Transcript",
+			"empty": "No transcript yet. Start the conversation to see messages here.",
+			"user": "User",
+			"agent": "Agent",
+			"copyTranscript": "Copy transcript",
+			"copiedTranscript": "Transcript copied",
+			"inputLabel": "Send a message",
+			"inputPlaceholder": "Type a message to the agent",
+			"send": "Send"
+		},
+		"error": {
+			"title": "Conversation error",
+			"retry": "Retry",
+			"microphonePermission": "Microphone access is blocked. Allow microphone access in the browser before starting the voice call.",
+			"microphoneUnavailable": "This browser cannot access a microphone for the voice call."
+		}
 	}
 }

@@ -6,12 +6,34 @@
 	"list": {
 		"columns": {
 			"name": "Nombre",
+			"type": "Tipo",
+			"backup": "Respaldo",
 			"llmModel": "Modelo LLM",
 			"audioFormat": "Formato de audio",
 			"actions": "Acciones"
 		},
 		"actions": {
+			"clone": "Clonar",
+			"cloneAria": "Clonar comportamiento",
+			"replace": "Sincronizar / Reemplazar",
+			"replaceAria": "Reemplazar comportamiento",
+			"replaceWithBackup": "Reemplazar con respaldo",
+			"replaceWithBackupAria": "Reemplazar campañas con respaldo",
+			"replaceWithBackupBackupDisabled": "Los comportamientos de respaldo no se pueden reemplazar con otro respaldo",
+			"replaceWithBackupMissingDisabled": "Asigna un comportamiento de respaldo antes de reemplazar",
+			"restoreFromBackup": "Restaurar desde respaldo",
+			"restoreFromBackupAria": "Restaurar campañas desde respaldo",
+			"restoreFromBackupDisabled": "Solo los comportamientos primarios pueden restaurar campañas desde respaldo",
+			"delete": "Eliminar",
 			"deleteAria": "Eliminar parámetro"
+		},
+		"type": {
+			"primary": "Primario",
+			"backup": "Respaldo"
+		},
+		"backup": {
+			"none": "Ninguno",
+			"notApplicable": "N/D"
 		}
 	},
 	"actions": {
@@ -28,18 +50,152 @@
 	},
 	"deleteParameter": {
 		"title": "Eliminar parámetro",
-		"description": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer."
+		"description": "¿Seguro que deseas eliminar \"{{name}}\"? Esta acción no se puede deshacer.",
+		"protected": {
+			"title": "Comportamiento protegido",
+			"message": "Este comportamiento pertenece a una configuración global o del tenant maestro protegida y no se puede eliminar."
+		},
+		"details": {
+			"pendingTasks": "{{count}} tareas salientes pendientes o en progreso bloquean la eliminación."
+		},
+		"referenceType": {
+			"CURRENT_CONFIG": "Configuración actual",
+			"BACKUP_RESTORE_SOURCE": "Origen de restauración"
+		}
 	},
 	"deleteOverride": {
 		"title": "Eliminar configuración",
 		"description": "¿Eliminar esta sobrescritura del cliente para usar los parámetros globales de campaña?"
+	},
+	"clone": {
+		"title": "Clonar comportamiento",
+		"description": "Crea un nuevo comportamiento desde \"{{name}}\". Deja el nombre vacío para que el backend genere el nombre de la copia.",
+		"descriptionPrimary": "Crea un nuevo comportamiento primario desde \"{{name}}\". El clon conserva el respaldo configurado.",
+		"descriptionBackup": "Crea un nuevo comportamiento de respaldo desde \"{{name}}\". Los clones de respaldo permanecen marcados como respaldos.",
+		"generatedNameHint": "Deja el nombre vacío para que el backend genere el nombre de la copia.",
+		"name": {
+			"label": "Nombre del clon",
+			"description": "Opcional. No se permiten nombres duplicados.",
+			"placeholder": "Copia de {{name}}"
+		},
+		"actions": {
+			"submit": "Clonar"
+		},
+		"validation": {
+			"nameConflict": "Ya existe un comportamiento con este nombre."
+		},
+		"notifications": {
+			"success": "Comportamiento clonado",
+			"error": "No se pudo clonar el comportamiento."
+		}
+	},
+	"replaceJob": {
+		"statusLabel": "Estado:",
+		"progressCount": "({{succeeded}} / {{total}} actualizadas)",
+		"status": {
+			"PENDING": "En cola",
+			"IN_PROGRESS": "En progreso",
+			"COMPLETED": "Completado",
+			"FAILED": "Fallido",
+			"completedWithIssues": "Completado con alertas"
+		},
+		"operation": {
+			"REPLACE": "Reemplazo",
+			"REPLACE_WITH_BACKUP": "Cambio a respaldo",
+			"RESTORE_FROM_BACKUP": "Restauración"
+		},
+		"pending": {
+			"title": "Job en cola",
+			"description": "Este job está programado para ejecutarse automáticamente a medianoche. También puedes ejecutarlo manualmente ahora."
+		},
+		"failed": {
+			"title": "Job fallido",
+			"description": "Este job falló antes de terminar. Puedes reintentar procesarlo ahora."
+		},
+		"actions": {
+			"processNow": "Procesar ahora",
+			"cleanup": "Ejecutar limpieza de continuidad"
+		},
+		"report": {
+			"failed": "Requieren atención ({{count}})",
+			"succeeded": "Actualizadas ({{count}})",
+			"campaignNeedsAttention": "No se pudo actualizar la campaña {{index}}",
+			"succeededDescription": "Campañas actualizadas: {{count}}.",
+			"errors": {
+				"ttsSpeed": "La velocidad de voz supera el límite del proveedor. Configura la velocidad TTS en 1.20 o menos en el comportamiento y vuelve a intentar.",
+				"invalidConfig": "El proveedor de voz rechazó una configuración del comportamiento. Revisa la configuración y vuelve a intentar.",
+				"default": "No se pudo actualizar la campaña. Intenta de nuevo o contacta soporte si continúa fallando."
+			}
+		}
+	},
+	"replace": {
+		"campaignState": {
+			"onBackup": "En respaldo"
+		}
+	},
+	"restore": {
+		"title": "Restaurar desde respaldo: {{name}}",
+		"steps": {
+			"review": {
+				"label": "Revisar",
+				"description": "Campañas"
+			},
+			"progress": {
+				"label": "Progreso",
+				"description": "Estado del job"
+			}
+		},
+		"primaryLabel": "Primario:",
+		"noCampaigns": "No hay campañas restaurables para este comportamiento primario.",
+		"campaignSummary": "{{count}} campañas se restaurarán a este comportamiento primario.",
+		"currentConfig": "Configuración actual: {{id}}",
+		"actions": {
+			"start": "Iniciar restauración"
+		},
+		"errors": {
+			"badRequest": "No se pudo programar la restauración porque no hay campañas restaurables para este comportamiento primario.",
+			"default": "No se pudo programar la restauración."
+		}
+	},
+	"backupReplace": {
+		"title": "Reemplazar con respaldo: {{name}}",
+		"steps": {
+			"review": {
+				"label": "Revisar",
+				"description": "Campañas"
+			},
+			"progress": {
+				"label": "Progreso",
+				"description": "Estado del job"
+			}
+		},
+		"sourceLabel": "Origen:",
+		"backupLabel": "Respaldo:",
+		"missingBackup": "Respaldo faltante",
+		"noCampaigns": "No hay campañas activas usando este comportamiento.",
+		"campaignSummary": "{{count}} campañas se cambiarán al respaldo configurado.",
+		"statusLabel": "Estado:",
+		"progressCount": "({{succeeded}} / {{total}} completadas)",
+		"pending": {
+			"title": "Job en cola",
+			"description": "Este job está programado para ejecutarse automáticamente a medianoche. También puedes ejecutarlo manualmente ahora."
+		},
+		"actions": {
+			"start": "Iniciar reemplazo",
+			"processNow": "Procesar ahora"
+		},
+		"errors": {
+			"badRequest": "No se pudo programar el reemplazo con respaldo. Verifica que el origen tenga un respaldo válido y que al menos una campaña lo use.",
+			"default": "No se pudo programar el reemplazo con respaldo."
+		}
 	},
 	"form": {
 		"menu": {
 			"general": "General",
 			"asr": "Reconocimiento de voz",
 			"tts": "Salida de voz",
-			"agent": "Personalidad del agente"
+			"agent": "Personalidad del agente",
+			"platformSettings": "Platoform Settings"
 		},
 		"sections": {
 			"general": {
@@ -56,7 +212,133 @@
 			},
 			"agent": {
 				"title": "Personalidad del agente",
-				"description": "Elige el modelo y el tono que representarán la marca."
+				"description": "Elige el modelo, la configuración de respaldo y el tono que representarán la marca."
+			},
+			"platformSettings": {
+				"title": "Configuración de plataforma",
+				"description": "Activa o desactiva los sobrescritos de la plataforma expuestos al cliente."
+			}
+		},
+		"platformSettings": {
+			"summary": {
+				"badge": "Controles de plataforma",
+				"title": "Superficie de sobrescrituras para el cliente",
+				"description": "Agrupa los booleanos por dominio de comportamiento para que el editor se lea como una consola de ajustes y no como un volcado de JSON.",
+				"stats": {
+					"groups": "Dominios",
+					"toggles": "Interruptores",
+					"enabled": "Activos"
+				}
+			},
+			"groups": {
+				"global": {
+					"title": "Sobrescrituras globales",
+					"description": "Controles generales que afectan la carga útil de nivel de plataforma."
+				},
+				"tts": {
+					"title": "TTS",
+					"description": "Controles de salida de voz que pueden exponerse por separado."
+				},
+				"turn": {
+					"title": "Turno",
+					"description": "Reglas de manejo de turnos para el tiempo de espera."
+				},
+				"agentPrompt": {
+					"title": "Prompt del agente",
+					"description": "Controles de prompt, conocimiento y exposición de herramientas."
+				},
+				"runtime": {
+					"title": "Runtime del agente",
+					"description": "Comportamiento de ejecución y controles del primer mensaje."
+				},
+				"conversation": {
+					"title": "Conversación",
+					"description": "Control del modo solo texto a nivel de conversación."
+				}
+			},
+			"fields": {
+				"customLlmExtraBody": {
+					"label": "Cuerpo extra de LLM personalizado",
+					"description": "Permite campos personalizados en el cuerpo de la solicitud para el runtime del agente."
+				},
+				"enableStartingWorkflowNodeIdFromClient": {
+					"label": "Nodo inicial del flujo desde el cliente",
+					"description": "Permite que el cliente defina el nodo de flujo que inicia la sesión."
+				},
+				"enableConversationInitiationClientDataFromWebhook": {
+					"label": "Datos de inicio de conversación desde webhook",
+					"description": "Permite que la carga útil del webhook inicialice datos del cliente al comenzar la conversación."
+				},
+				"conversationConfigOverride": {
+					"tts": {
+						"speed": {
+							"label": "Velocidad de TTS",
+							"description": "Expone la sobrescritura de velocidad de texto a voz."
+						},
+						"voiceId": {
+							"label": "ID de voz de TTS",
+							"description": "Expone la sobrescritura de selección de voz de texto a voz."
+						},
+						"stability": {
+							"label": "Estabilidad de TTS",
+							"description": "Expone la sobrescritura de estabilidad de texto a voz."
+						},
+						"similarityBoost": {
+							"label": "Aumento de similitud de TTS",
+							"description": "Expone la sobrescritura de aumento de similitud de texto a voz."
+						}
+					},
+					"turn": {
+						"softTimeoutConfig": {
+							"message": {
+								"label": "Mensaje de tiempo de espera suave",
+								"description": "Permite sobrescribir el mensaje de tiempo de espera suave."
+							}
+						}
+					},
+					"agent": {
+						"prompt": {
+							"llm": {
+								"label": "LLM del prompt",
+								"description": "Permite sobrescribir el valor de LLM del prompt."
+							},
+							"prompt": {
+								"label": "Texto del prompt",
+								"description": "Permite sobrescribir el texto del prompt del agente."
+							},
+							"toolIds": {
+								"label": "IDs de herramientas del prompt",
+								"description": "Permite sobrescribir los IDs de herramientas del prompt."
+							},
+							"knowledgeBase": {
+								"label": "Base de conocimiento del prompt",
+								"description": "Permite sobrescribir la base de conocimiento del prompt."
+							},
+							"nativeMcpServerIds": {
+								"label": "Servidores MCP del prompt",
+								"description": "Permite sobrescribir los IDs nativos de servidores MCP."
+							}
+						},
+						"language": {
+							"label": "Idioma del agente",
+							"description": "Permite sobrescribir el idioma del agente."
+						},
+						"firstMessage": {
+							"label": "Primer mensaje",
+							"description": "Permite sobrescribir el primer mensaje."
+						},
+						"maxConversationDurationMessage": {
+							"label": "Mensaje de duración máxima",
+							"description": "Permite sobrescribir el mensaje de duración máxima de la conversación."
+						}
+					},
+					"conversation": {
+						"textOnly": {
+							"label": "Conversación solo texto",
+							"description": "Permite sobrescribir las conversaciones solo de texto."
+						}
+					}
+				}
 			}
 		},
 		"badge": {
@@ -81,6 +363,19 @@
 				"description": {
 					"edit": "Cambiar el nombre creará un nuevo parámetro",
 					"create": "Identificador único para esta configuración"
+				}
+			},
+			"backup": {
+				"isBackup": {
+					"label": "Comportamiento de respaldo reutilizable",
+					"description": "Marca este comportamiento como una opción de respaldo que los comportamientos primarios pueden reutilizar."
+				},
+				"backupModeNotice": "Los comportamientos de respaldo se pueden asignar a comportamientos primarios y no apuntan a otro respaldo.",
+				"selector": {
+					"label": "Comportamiento de respaldo",
+					"description": "Elige el comportamiento de respaldo usado cuando las campañas se mueven desde este comportamiento primario.",
+					"placeholder": "Selecciona un comportamiento de respaldo",
+					"empty": "No se encontraron comportamientos de respaldo reutilizables"
 				}
 			}
 		},
@@ -115,9 +410,37 @@
 			"outputAudioFormat": {
 				"label": "Formato de audio de salida"
 			},
+			"expressiveMode": {
+				"label": "Modo expresivo",
+				"helper": "Al activarlo, el modelo cambia automáticamente a Eleven v3 Conversational."
+			},
+			"voiceSettingsLocked": {
+				"helper": "La velocidad, estabilidad y aumento de similitud no se pueden personalizar para Eleven v3 Conversational."
+			},
+			"suggestedAudioTags": {
+				"title": "Etiquetas de audio sugeridas",
+				"helper": "Agrega etiquetas personalizadas y descripciones para una entrega expresiva.",
+				"add": "Agregar",
+				"empty": "Agrega una etiqueta de audio sugerida para guiar la entrega expresiva.",
+				"untitled": "Nueva etiqueta",
+				"done": "Listo",
+				"preview": "Vista previa de etiqueta",
+				"remove": "Eliminar etiqueta",
+				"clickHint": "Haz clic en cualquier chip para editar su descripción.",
+				"fields": {
+					"tag": {
+						"label": "Etiqueta",
+						"placeholder": "p. ej., Empáticamente"
+					},
+					"description": {
+						"label": "Descripción",
+						"placeholder": "p. ej., Todo el tiempo"
+					}
+				}
+			},
 			"speed": {
 				"label": "Velocidad",
-				"helper": "Velocidad del habla (0.25–4.0)"
+				"helper": "Velocidad del habla (0.25–1.2)"
 			},
 			"streamingLatency": {
 				"label": "Latencia de streaming",
@@ -152,6 +475,22 @@
 			"temperature": {
 				"label": "Temperatura",
 				"helper": "Controla la aleatoriedad (0–2)"
+			},
+			"backupLlm": {
+				"title": "LLM de respaldo",
+				"description": "Configura los modelos de respaldo que se intentarán si falla el LLM principal.",
+				"preference": {
+					"label": "Preferencia",
+					"placeholder": "Selecciona una preferencia de respaldo",
+					"options": {
+						"override": "Sobrescribir"
+					}
+				},
+				"order": {
+					"label": "Orden de respaldo",
+					"placeholder": "Selecciona los modelos de respaldo",
+					"helper": "Los modelos se intentan en el orden que selecciones."
+				}
 			}
 		},
 		"validation": {
@@ -162,7 +501,7 @@
 			"asrInputAudioFormatRequired": "El formato de audio de entrada es obligatorio",
 			"ttsModelRequired": "El modelo de TTS es obligatorio",
 			"ttsStabilityRange": "La estabilidad debe estar entre 0 y 1",
-			"ttsSpeedRange": "La velocidad debe estar entre 0.25 y 4.0",
+			"ttsSpeedRange": "La velocidad debe estar entre 0.25 y 1.2",
 			"ttsSimilarityBoostRange": "El aumento de similitud debe estar entre 0 y 1",
 			"ttsStreamingLatencyRange": "La latencia de streaming debe estar entre 0 y 4",
 			"ttsOutputAudioFormatRequired": "El formato de audio de salida del agente es obligatorio",

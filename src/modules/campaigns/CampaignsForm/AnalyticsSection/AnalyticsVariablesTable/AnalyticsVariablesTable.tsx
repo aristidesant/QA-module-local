@@ -87,6 +87,7 @@ const AnalyticsVariablesTable = ({
 		return {
 			id: crypto.randomUUID(),
 			identifier,
+			isActive: true,
 			type: normalizeType(variable.value.type) as
 				| 'boolean'
 				| 'integer'

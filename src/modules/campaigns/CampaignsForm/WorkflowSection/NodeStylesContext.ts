@@ -1,11 +1,18 @@
 import { createContext, useContext } from 'react';
 import type { NodeStyles } from '~/models/CampaignsModel';
 
+interface NodeStylesContextValue {
+	nodeStyles?: NodeStyles;
+	onNodeStylesChange?: (nodeStyles: NodeStyles) => void;
+}
+
 /**
- * Provides the current campaign `nodeStyles` to every workflow node component
- * without prop-drilling through React Flow node data.
+ * Provides current workflow node styles and their write target without
+ * prop-drilling through React Flow node data.
  */
-const NodeStylesContext = createContext<NodeStyles | undefined>(undefined);
+const NodeStylesContext = createContext<NodeStylesContextValue>({
+	nodeStyles: undefined,
+});
 
 export const NodeStylesProvider = NodeStylesContext.Provider;
 
@@ -13,11 +20,13 @@ export const NodeStylesProvider = NodeStylesContext.Provider;
  * Returns persisted styles for the given nodeId, or `undefined` if none set.
  */
 export const useNodeStyle = (nodeId: string) => {
-	const styles = useContext(NodeStylesContext);
-	return styles?.[nodeId];
+	const { nodeStyles } = useContext(NodeStylesContext);
+	return nodeStyles?.[nodeId];
 };
 
 /**
- * Returns the full nodeStyles map (used by the popover to read/write).
+ * Returns the full nodeStyles map.
  */
-export const useNodeStyles = () => useContext(NodeStylesContext);
+export const useNodeStyles = () => useContext(NodeStylesContext).nodeStyles;
+
+export const useNodeStylesController = () => useContext(NodeStylesContext);

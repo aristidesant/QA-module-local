@@ -6,12 +6,34 @@
 	"list": {
 		"columns": {
 			"name": "Name",
+			"type": "Type",
+			"backup": "Backup",
 			"llmModel": "LLM Model",
 			"audioFormat": "Audio Format",
 			"actions": "Actions"
 		},
 		"actions": {
+			"clone": "Clone",
+			"cloneAria": "Clone behavior",
+			"replace": "Sync / Replace",
+			"replaceAria": "Replace behavior",
+			"replaceWithBackup": "Replace with backup",
+			"replaceWithBackupAria": "Replace campaigns with backup",
+			"replaceWithBackupBackupDisabled": "Backup behaviors cannot be replaced with another backup",
+			"replaceWithBackupMissingDisabled": "Assign a backup behavior before replacing",
+			"restoreFromBackup": "Restore from backup",
+			"restoreFromBackupAria": "Restore campaigns from backup",
+			"restoreFromBackupDisabled": "Only primary behaviors can restore campaigns from backup",
+			"delete": "Delete",
 			"deleteAria": "Delete parameter"
+		},
+		"type": {
+			"primary": "Primary",
+			"backup": "Backup"
+		},
+		"backup": {
+			"none": "None",
+			"notApplicable": "N/A"
 		}
 	},
 	"actions": {
@@ -28,18 +50,152 @@
 	},
 	"deleteParameter": {
 		"title": "Delete Parameter",
-		"description": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone."
+		"description": "Are you sure you want to delete \"{{name}}\"? This action cannot be undone.",
+		"protected": {
+			"title": "Protected behavior",
+			"message": "This behavior belongs to a protected global or master tenant configuration and cannot be deleted."
+		},
+		"details": {
+			"pendingTasks": "{{count}} pending or in-progress outbound tasks block deletion."
+		},
+		"referenceType": {
+			"CURRENT_CONFIG": "Current config",
+			"BACKUP_RESTORE_SOURCE": "Backup restore source"
+		}
 	},
 	"deleteOverride": {
 		"title": "Delete configuration",
 		"description": "Delete this client override to use the global campaign parameters?"
+	},
+	"clone": {
+		"title": "Clone Behavior",
+		"description": "Create a new behavior from \"{{name}}\". Leave the name empty to let the backend generate the copy name.",
+		"descriptionPrimary": "Create a new primary behavior from \"{{name}}\". The clone preserves the configured backup behavior.",
+		"descriptionBackup": "Create a new backup behavior from \"{{name}}\". Backup behavior clones remain marked as backups.",
+		"generatedNameHint": "Leave the name empty to let the backend generate a copy name.",
+		"name": {
+			"label": "Clone name",
+			"description": "Optional. Duplicate names are not allowed.",
+			"placeholder": "Copy of {{name}}"
+		},
+		"actions": {
+			"submit": "Clone"
+		},
+		"validation": {
+			"nameConflict": "A behavior with this name already exists."
+		},
+		"notifications": {
+			"success": "Behavior cloned",
+			"error": "The behavior could not be cloned."
+		}
+	},
+	"replaceJob": {
+		"statusLabel": "Status:",
+		"progressCount": "({{succeeded}} / {{total}} updated)",
+		"status": {
+			"PENDING": "Queued",
+			"IN_PROGRESS": "In progress",
+			"COMPLETED": "Completed",
+			"FAILED": "Failed",
+			"completedWithIssues": "Completed with issues"
+		},
+		"operation": {
+			"REPLACE": "Replace",
+			"REPLACE_WITH_BACKUP": "Backup failover",
+			"RESTORE_FROM_BACKUP": "Restore"
+		},
+		"pending": {
+			"title": "Job Queued",
+			"description": "This job has been scheduled to run automatically at midnight. You can also trigger it manually now."
+		},
+		"failed": {
+			"title": "Job Failed",
+			"description": "This job failed before finishing. You can retry processing it now."
+		},
+		"actions": {
+			"processNow": "Process Now",
+			"cleanup": "Run Continuity Cleanup"
+		},
+		"report": {
+			"failed": "Needs attention ({{count}})",
+			"succeeded": "Updated ({{count}})",
+			"campaignNeedsAttention": "Campaign {{index}} could not be updated",
+			"succeededDescription": "Updated campaigns: {{count}}.",
+			"errors": {
+				"ttsSpeed": "The voice speed is above the provider limit. Set TTS speed to 1.20 or lower on the behavior, then try again.",
+				"invalidConfig": "The voice provider rejected one of the behavior settings. Review the behavior configuration and try again.",
+				"default": "The campaign could not be updated. Please try again or contact support if it keeps failing."
+			}
+		}
+	},
+	"replace": {
+		"campaignState": {
+			"onBackup": "On backup"
+		}
+	},
+	"restore": {
+		"title": "Restore From Backup: {{name}}",
+		"steps": {
+			"review": {
+				"label": "Review",
+				"description": "Campaigns"
+			},
+			"progress": {
+				"label": "Progress",
+				"description": "Job status"
+			}
+		},
+		"primaryLabel": "Primary:",
+		"noCampaigns": "No campaigns are currently restorable for this primary behavior.",
+		"campaignSummary": "{{count}} campaigns will be restored to this primary behavior.",
+		"currentConfig": "Current config: {{id}}",
+		"actions": {
+			"start": "Start Restore"
+		},
+		"errors": {
+			"badRequest": "The restore could not be scheduled because no campaigns are restorable for this primary behavior.",
+			"default": "The restore could not be scheduled."
+		}
+	},
+	"backupReplace": {
+		"title": "Replace With Backup: {{name}}",
+		"steps": {
+			"review": {
+				"label": "Review",
+				"description": "Campaigns"
+			},
+			"progress": {
+				"label": "Progress",
+				"description": "Job status"
+			}
+		},
+		"sourceLabel": "Source:",
+		"backupLabel": "Backup:",
+		"missingBackup": "Missing backup",
+		"noCampaigns": "There are no active campaigns currently using this behavior.",
+		"campaignSummary": "{{count}} campaigns will be switched to the configured backup.",
+		"statusLabel": "Status:",
+		"progressCount": "({{succeeded}} / {{total}} completed)",
+		"pending": {
+			"title": "Job Queued",
+			"description": "This job has been scheduled to run automatically at midnight. You can also trigger it manually now."
+		},
+		"actions": {
+			"start": "Start Replacement",
+			"processNow": "Process Now"
+		},
+		"errors": {
+			"badRequest": "The backup replacement could not be scheduled. Check that the source has a valid backup and at least one campaign uses it.",
+			"default": "The backup replacement could not be scheduled."
+		}
 	},
 	"form": {
 		"menu": {
 			"general": "General",
 			"asr": "Speech Recognition",
 			"tts": "Voice Output",
-			"agent": "Agent Personality"
+			"agent": "Agent Personality",
+			"platformSettings": "Platoform Settings"
 		},
 		"sections": {
 			"general": {
@@ -56,7 +212,133 @@
 			},
 			"agent": {
 				"title": "Agent Personality",
-				"description": "Pick the model and tone that will represent the brand."
+				"description": "Pick the model, fallback settings, and tone that will represent the brand."
+			},
+			"platformSettings": {
+				"title": "Platform Settings",
+				"description": "Toggle platform-level overrides exposed to the client."
+			}
+		},
+		"platformSettings": {
+			"summary": {
+				"badge": "Platform controls",
+				"title": "Client-facing override surface",
+				"description": "Group the booleans by behavior domain so the editor reads like a settings console, not a raw JSON dump.",
+				"stats": {
+					"groups": "Domains",
+					"toggles": "Toggles",
+					"enabled": "Enabled"
+				}
+			},
+			"groups": {
+				"global": {
+					"title": "Global overrides",
+					"description": "General switches that affect the platform-level payload."
+				},
+				"tts": {
+					"title": "TTS",
+					"description": "Speech output controls that can be exposed independently."
+				},
+				"turn": {
+					"title": "Turn",
+					"description": "Turn-handling rules for timeout behavior."
+				},
+				"agentPrompt": {
+					"title": "Agent Prompt",
+					"description": "Prompt, knowledge, and tool exposure controls."
+				},
+				"runtime": {
+					"title": "Agent Runtime",
+					"description": "Runtime-level behavior and first-message controls."
+				},
+				"conversation": {
+					"title": "Conversation",
+					"description": "Conversation-level text mode control."
+				}
+			},
+			"fields": {
+				"customLlmExtraBody": {
+					"label": "Custom LLM extra body",
+					"description": "Allow custom request body fields for the agent runtime."
+				},
+				"enableStartingWorkflowNodeIdFromClient": {
+					"label": "Starting workflow node from client",
+					"description": "Allow the client to set the workflow node that starts the session."
+				},
+				"enableConversationInitiationClientDataFromWebhook": {
+					"label": "Conversation initiation client data",
+					"description": "Allow webhook payloads to seed client data on conversation start."
+				},
+				"conversationConfigOverride": {
+					"tts": {
+						"speed": {
+							"label": "TTS speed",
+							"description": "Expose the text-to-speech speed override."
+						},
+						"voiceId": {
+							"label": "TTS voice ID",
+							"description": "Expose the text-to-speech voice selection override."
+						},
+						"stability": {
+							"label": "TTS stability",
+							"description": "Expose the text-to-speech stability override."
+						},
+						"similarityBoost": {
+							"label": "TTS similarity boost",
+							"description": "Expose the text-to-speech similarity boost override."
+						}
+					},
+					"turn": {
+						"softTimeoutConfig": {
+							"message": {
+								"label": "Soft timeout message",
+								"description": "Allow the soft timeout message to be overridden."
+							}
+						}
+					},
+					"agent": {
+						"prompt": {
+							"llm": {
+								"label": "Prompt LLM",
+								"description": "Allow the prompt LLM value to be overridden."
+							},
+							"prompt": {
+								"label": "Prompt text",
+								"description": "Allow the agent prompt text to be overridden."
+							},
+							"toolIds": {
+								"label": "Prompt tool IDs",
+								"description": "Allow the prompt tool IDs to be overridden."
+							},
+							"knowledgeBase": {
+								"label": "Prompt knowledge base",
+								"description": "Allow the prompt knowledge base to be overridden."
+							},
+							"nativeMcpServerIds": {
+								"label": "Prompt MCP servers",
+								"description": "Allow the native MCP server IDs to be overridden."
+							}
+						},
+						"language": {
+							"label": "Agent language",
+							"description": "Allow the agent language to be overridden."
+						},
+						"firstMessage": {
+							"label": "First message",
+							"description": "Allow the first message to be overridden."
+						},
+						"maxConversationDurationMessage": {
+							"label": "Max duration message",
+							"description": "Allow the max conversation duration message to be overridden."
+						}
+					},
+					"conversation": {
+						"textOnly": {
+							"label": "Conversation text only",
+							"description": "Allow text-only conversations to be overridden."
+						}
+					}
+				}
 			}
 		},
 		"badge": {
@@ -81,6 +363,19 @@
 				"description": {
 					"edit": "Changing the name will create a new parameter",
 					"create": "Unique identifier for this configuration"
+				}
+			},
+			"backup": {
+				"isBackup": {
+					"label": "Reusable backup behavior",
+					"description": "Mark this behavior as a backup option that primary behaviors can reuse."
+				},
+				"backupModeNotice": "Backup behaviors can be assigned to primary behaviors and do not point to another backup.",
+				"selector": {
+					"label": "Backup behavior",
+					"description": "Choose the backup behavior used when campaigns are moved from this primary behavior.",
+					"placeholder": "Select a backup behavior",
+					"empty": "No reusable backup behaviors found"
 				}
 			}
 		},
@@ -115,9 +410,37 @@
 			"outputAudioFormat": {
 				"label": "Output Audio Format"
 			},
+			"expressiveMode": {
+				"label": "Expressive mode",
+				"helper": "Enabling this automatically switches the model to Eleven v3 Conversational."
+			},
+			"voiceSettingsLocked": {
+				"helper": "Speed, stability, and similarity boost are not customizable for Eleven v3 Conversational."
+			},
+			"suggestedAudioTags": {
+				"title": "Suggested audio tags",
+				"helper": "Add custom tags and descriptions for expressive delivery.",
+				"add": "Add",
+				"empty": "Add a suggested audio tag to guide expressive delivery.",
+				"untitled": "New tag",
+				"done": "Done",
+				"preview": "Tag preview",
+				"remove": "Remove tag",
+				"clickHint": "Click any chip to edit its description.",
+				"fields": {
+					"tag": {
+						"label": "Tag",
+						"placeholder": "e.g. Empathetically"
+					},
+					"description": {
+						"label": "Description",
+						"placeholder": "e.g. All the time"
+					}
+				}
+			},
 			"speed": {
 				"label": "Speed",
-				"helper": "Speech rate (0.25–4.0)"
+				"helper": "Speech rate (0.25–1.2)"
 			},
 			"streamingLatency": {
 				"label": "Streaming Latency",
@@ -152,6 +475,22 @@
 			"temperature": {
 				"label": "Temperature",
 				"helper": "Controls randomness (0–2)"
+			},
+			"backupLlm": {
+				"title": "Backup LLM",
+				"description": "Configure the fallback models that will be tried if the primary LLM fails.",
+				"preference": {
+					"label": "Preference",
+					"placeholder": "Select a backup preference",
+					"options": {
+						"override": "Override"
+					}
+				},
+				"order": {
+					"label": "Fallback order",
+					"placeholder": "Select fallback models",
+					"helper": "Models are tried in the order you select them."
+				}
 			}
 		},
 		"validation": {
@@ -162,7 +501,7 @@
 			"asrInputAudioFormatRequired": "User input audio format is required",
 			"ttsModelRequired": "TTS model ID is required",
 			"ttsStabilityRange": "Stability must be between 0 and 1",
-			"ttsSpeedRange": "Speed must be between 0.25 and 4.0",
+			"ttsSpeedRange": "Speed must be between 0.25 and 1.2",
 			"ttsSimilarityBoostRange": "Similarity boost must be between 0 and 1",
 			"ttsStreamingLatencyRange": "Optimize streaming latency must be between 0 and 4",
 			"ttsOutputAudioFormatRequired": "Agent output audio format is required",

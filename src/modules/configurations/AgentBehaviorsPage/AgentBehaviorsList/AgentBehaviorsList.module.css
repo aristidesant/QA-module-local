@@ -1,0 +1,11 @@
+.actionsHeader {
+	text-align: right;
+}
+
+.actionsHeader > div {
+	justify-content: flex-end;
+}
+
+.actionsCell {
+	text-align: right;
+}

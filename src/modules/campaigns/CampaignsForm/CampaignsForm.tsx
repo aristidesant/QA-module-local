@@ -14,6 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import type { Campaign } from '../../../models/CampaignsModel';
 import type { AgentVersionSnapshot } from '~/models/AgentVersioningModel';
+import type { ConversationConfigModel } from '~/models/AgentListObject';
 import campaignAgentsApi from '~/api/campaignAgentsApi';
 import knowledgeBaseApi from '~/api/knowledgeBaseApi';
 import {
@@ -24,20 +25,23 @@ import {
 } from '~/queries/campaignsQueries';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import { useGetAgentVersioningStatus } from '~/queries/agentVersioningQueries';
+import { useGetCampaignRoles } from '~/queries/roleCampaignsQueries';
 import { notifications } from '@mantine/notifications';
 import { validateWorkflow } from './WorkflowSection/utils/workflowValidation';
 import {
 	CampaignFormProvider,
 	CampaignIdContext,
+	CampaignAgentEditorContext,
+	type SelectedAgentDraft,
 	useCampaignForm,
 } from '../campaignFormFunctions';
 import CampaignTabs from '../CampaignTabs';
 import { useCampaignsStore } from '~/stores/campaignsStore';
+import useCampaignsPredefinedParams from './useCampaignsPredefinedParams';
 import GeneralSection from './GeneralSection/GeneralSection';
 import SectionCard from '~/components/SectionCard';
 import ParametersSection from './ParametersSection';
 import AnalyticsSection from './AnalyticsSection';
-import WorkflowSection from './WorkflowSection/WorkflowSection';
 import AgentSection from './AgentSection';
 import AgentSaveReviewModal from './AgentSaveReviewModal';
 import DispositionSection from './DispositionSection';
@@ -49,14 +53,20 @@ import { IconEye, IconFlask } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 import FormSaveButton from '~/components/FormSaveButton';
 import CampaignSyncButton from './components/CampaignSyncButton';
-import AgentSectionRightPanel from './AgentSection/AgentSectionRightPanel';
 import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
 import AppDrawer from '~/components/AppDrawer';
 import DashboardSection from './DashboardSection';
-import VersioningSection from './VersioningSection';
+import VoicesSection from './VoicesSection';
+import CampaignRoleVisibilitySelector from '../components/CampaignRoleVisibilitySelector';
 import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
 import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
+import {
+	applyCampaignBehaviorConversationConfig,
+	applyCampaignBehaviorPlatformSettings,
+	sanitizeCampaignBehaviorConversationConfig,
+} from '~/modules/campaigns/utils/campaignBehaviorConfig';
+import { useGetAgent } from '~/queries/agentQueries';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -67,13 +77,12 @@ interface CampaignsFormProps {
 const campaignFormTabNamespaces: Record<string, string> = {
 	general: 'campaign.form.general',
 	agents: 'campaign.form.agents',
-	workflow: 'campaign.form.workflow',
 	outcomes: 'campaign.form.outcomes',
 	'do-not-call': 'campaign.form.do-not-call',
 	params: 'campaign.form.params',
 	analytics: 'campaign.form.analytics',
 	dashboards: 'campaign.form.dashboards',
-	versioning: 'campaign.form.versioning',
+	voices: 'campaign.form.voices',
 };
 
 const paramsNamespace = 'campaign.form.params';
@@ -134,21 +143,118 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 }) => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
-	const { selectedTab, rightComponent, resetView } = useCampaignsStore(
-		(state) => state
-	);
+	const { selectedTab, rightComponent, resetView, setSelectedTab } =
+		useCampaignsStore((state) => state);
 	const [isSettingsDrawerOpen, setIsSettingsDrawerOpen] = useState(false);
 	const [reviewModalOpen, setReviewModalOpen] = useState(false);
 	const [pendingAgentValues, setPendingAgentValues] = useState<Omit<
 		Campaign,
 		'id' | 'createdAt' | 'updatedAt'
 	> | null>(null);
+	const predefinedParams = useCampaignsPredefinedParams();
+	const campaignId = campaign?.id ?? 0;
+	const [selectedCampaignAgentId, setSelectedCampaignAgentId] = useState<
+		number | null
+	>(null);
+	const [selectedAgentDraft, setSelectedAgentDraft] =
+		useState<SelectedAgentDraft | null>(null);
 
 	// Fetch campaign agents to check versioning status
-	const { data: campaignAgents = [] } = useGetCampaignAgents(campaign?.id ?? 0);
+	const {
+		data: campaignAgents = [],
+		dataUpdatedAt: campaignAgentsUpdatedAt,
+	} = useGetCampaignAgents(campaignId);
+	const sortedCampaignAgents = React.useMemo(
+		() =>
+			[...(campaignAgents ?? [])].sort((a, b) => {
+				if (a.isPrincipal !== b.isPrincipal) return a.isPrincipal ? -1 : 1;
+				return a.agentType.localeCompare(b.agentType);
+			}),
+		[campaignAgents]
+	);
+	const selectedCampaignAgent = sortedCampaignAgents.find(
+		(agent) => agent.id === selectedCampaignAgentId
+	);
+	const {
+		data: selectedAgent,
+		dataUpdatedAt: selectedAgentUpdatedAt,
+	} = useGetAgent(
+		selectedCampaignAgent?.agentId ?? ''
+	);
+	const {
+		data: campaignRoles,
+		isLoading: isCampaignRolesLoading,
+		isError: isCampaignRolesError,
+		isFetched: isCampaignRolesFetched,
+	} = useGetCampaignRoles(campaignId);
 	const firstAgentId = campaignAgents[0]?.agentId ?? '';
 	const { data: agentRecord } = useGetAgentVersioningStatus(firstAgentId);
 	const isVersioningEnabled = Boolean(agentRecord?.versioningEnabled);
+
+	useEffect(() => {
+		if (sortedCampaignAgents.length === 0) {
+			setSelectedCampaignAgentId(null);
+			return;
+		}
+
+		const hasSelection = selectedCampaignAgentId
+			? sortedCampaignAgents.some(
+					(agent) => agent.id === selectedCampaignAgentId
+				)
+			: false;
+
+		if (!hasSelection) {
+			setSelectedCampaignAgentId(sortedCampaignAgents[0].id);
+		}
+	}, [selectedCampaignAgentId, sortedCampaignAgents]);
+
+	useEffect(() => {
+		if (!selectedCampaignAgent || !selectedAgent) {
+			setSelectedAgentDraft(null);
+			return;
+		}
+
+		setSelectedAgentDraft({
+			campaignAgentId: selectedCampaignAgent.id,
+			agentId: selectedCampaignAgent.agentId,
+			config: selectedAgent.config ?? {},
+			workflowUi: selectedAgent.workflowUi ?? null,
+			agentType: selectedCampaignAgent.agentType,
+			isPrincipal: selectedCampaignAgent.isPrincipal,
+		});
+	}, [
+		campaignAgentsUpdatedAt,
+		selectedAgentUpdatedAt,
+		selectedCampaignAgent?.id,
+		selectedCampaignAgent?.agentId,
+	]);
+
+	useEffect(() => {
+		if (!campaign?.id || !selectedCampaignAgent || !selectedAgent) {
+			return;
+		}
+
+		form.setValues((current) => ({
+			...current,
+			agentConfig: selectedAgent.config ?? {},
+			nodeStyles: selectedAgent.workflowUi?.nodeStyles ?? {},
+			nodeGroups: selectedAgent.workflowUi?.nodeGroups ?? {},
+		}));
+		form.resetDirty();
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [
+		selectedCampaignAgent?.id,
+		selectedAgentUpdatedAt,
+		selectedAgent?.config?.workflow,
+		selectedAgent?.workflowUi?.nodeStyles,
+		selectedAgent?.workflowUi?.nodeGroups,
+	]);
+
+	const updateSelectedAgentDraft = (patch: Partial<SelectedAgentDraft>) => {
+		setSelectedAgentDraft((current) =>
+			current ? { ...current, ...patch } : current
+		);
+	};
 	const { mutateAsync: createCampaign, isPending: isCreating } =
 		useCreateCampaign();
 	const { mutateAsync: updateCampaign, isPending: isUpdating } =
@@ -186,12 +292,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		defaultValue: 'Saving...',
 	});
 
-	// Check if we have the workflow data ready for existing campaigns
-	const isNewCampaign = !campaign?.id;
-	const hasWorkflowData =
-		campaign?.agentConfig?.workflow?.nodes &&
-		Object.keys(campaign.agentConfig.workflow.nodes).length > 0;
-	const isDataReady = isNewCampaign || hasWorkflowData;
+	const campaignRoleIds = React.useMemo(
+		() => (campaignRoles ?? []).map((role) => role.id),
+		[campaignRoles]
+	);
+	const isGeneralRoleSaveBlocked =
+		campaignId > 0 && (isCampaignRolesLoading || isCampaignRolesError);
 
 	const form = useCampaignForm({
 		initialValues: {
@@ -207,16 +313,20 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			promptId: campaign?.promptId ?? undefined,
 			objectiveId: campaign?.objectiveId ?? undefined,
 			voiceId: campaign?.voiceId ?? undefined,
+			voiceIds:
+				campaign?.voiceIds ?? (campaign?.voiceId ? [campaign.voiceId] : []),
 			clientId: campaign?.clientId ?? 0,
 			tags: campaign?.tags || [],
 			workingHours: campaign?.workingHours || defaultWorkingHours,
 			noiseCancellation: campaign?.noiseCancellation,
-			agentConfig: campaign?.agentConfig || {},
-			nodeStyles: campaign?.nodeStyles ?? {},
-			nodeGroups: campaign?.nodeGroups ?? {},
+			agentConfig: selectedAgent?.config ?? {},
+			dataCollectionVariables: campaign?.dataCollectionVariables ?? [],
+			nodeStyles: selectedAgent?.workflowUi?.nodeStyles ?? {},
+			nodeGroups: selectedAgent?.workflowUi?.nodeGroups ?? {},
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign?.defaultWaveExecutionDelaySeconds ?? 0,
+			roleIds: campaign?.roleIds ?? [],
 		},
 		validate: {
 			name: (value) => (value ? null : t('form.validation.nameRequired')),
@@ -250,9 +360,11 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	// Update form values when campaign data changes
 	useEffect(() => {
 		if (!campaign?.id) return; // Only for existing campaigns
+		if (!isCampaignRolesFetched) return;
+		if (isCampaignRolesError) return;
 
 		const campaignWorkflowCounts = getWorkflowCounts(
-			campaign.agentConfig?.workflow
+			selectedAgent?.config?.workflow
 		);
 		void campaignWorkflowCounts;
 
@@ -269,16 +381,20 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			promptId: campaign.promptId ?? undefined,
 			objectiveId: campaign.objectiveId ?? undefined,
 			voiceId: campaign.voiceId ?? undefined,
+			voiceIds:
+				campaign.voiceIds ?? (campaign.voiceId ? [campaign.voiceId] : []),
 			clientId: campaign.clientId ?? 0,
 			tags: campaign.tags || [],
 			workingHours: campaign.workingHours || defaultWorkingHours,
 			noiseCancellation: campaign.noiseCancellation,
-			agentConfig: campaign.agentConfig || {},
-			nodeStyles: campaign.nodeStyles ?? {},
-			nodeGroups: campaign.nodeGroups ?? {},
+			agentConfig: selectedAgent?.config ?? {},
+			dataCollectionVariables: campaign.dataCollectionVariables ?? [],
+			nodeStyles: selectedAgent?.workflowUi?.nodeStyles ?? {},
+			nodeGroups: selectedAgent?.workflowUi?.nodeGroups ?? {},
 			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
 				campaign.defaultWaveExecutionDelaySeconds ?? 0,
+			roleIds: campaignRoleIds,
 		});
 		// Sync the snapshot so dirty detection is always relative to the
 		// latest backend state, not a stale cached version.
@@ -292,7 +408,16 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		);
 		void stateWorkflowCounts;
 		void getterWorkflowCounts;
-	}, [campaign?.id, campaign?.agentConfig?.workflow]);
+	}, [
+		campaign?.id,
+		selectedAgent?.id,
+		campaignRoleIds,
+		isCampaignRolesError,
+		isCampaignRolesFetched,
+		selectedAgent?.config?.workflow,
+		selectedAgent?.workflowUi?.nodeStyles,
+		selectedAgent?.workflowUi?.nodeGroups,
+	]);
 
 	// Reset view only on component unmount
 	useEffect(() => {
@@ -305,6 +430,12 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	useEffect(() => {
 		setIsSettingsDrawerOpen(false);
 	}, [selectedTab]);
+
+	useEffect(() => {
+		if (selectedTab === 'voices' && !campaign?.id) {
+			setSelectedTab('agents');
+		}
+	}, [campaign?.id, selectedTab, setSelectedTab]);
 
 	useEffect(() => {
 		if (selectedTab !== 'outcomes') return;
@@ -385,8 +516,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	const settingsDrawerContent =
 		selectedTab === 'general' ? (
 			<GeneralSectionRightPanel />
-		) : selectedTab === 'agents' ? (
-			<AgentSectionRightPanel />
 		) : selectedTab === 'outcomes' ? (
 			rightComponent
 		) : null;
@@ -397,6 +526,17 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		versionDescription?: string
 	) => {
 		if (form.validate().hasErrors) {
+			return;
+		}
+
+		if (isLight && isGeneralRoleSaveBlocked) {
+			notifications.show({
+				title: t('errors.unknown', { ns: 'common' }),
+				message: t('general.roleVisibility.loadErrorSaveBlocked', {
+					ns: 'campaign.form.general',
+				}),
+				color: 'red',
+			});
 			return;
 		}
 
@@ -421,6 +561,13 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		}
 
 		try {
+			const selectedBehaviorConversationConfig = predefinedParams.find(
+				(param) => param.id === value.configId
+			)?.params?.conversationConfig;
+			const selectedBehaviorPlatformSettings = predefinedParams.find(
+				(param) => param.id === value.configId
+			)?.params?.platformSettings;
+
 			// Clean up orphan nodeStyles entries (keys whose node no longer exists)
 			const workflowNodes = value.agentConfig?.workflow?.nodes;
 			if (value.nodeStyles && workflowNodes) {
@@ -436,6 +583,30 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 			// Clean up toolIds from agentConfig before sending
 			const cleanedValue = { ...value };
+			if (cleanedValue.agentConfig) {
+				const currentAgentConfig = cleanedValue.agentConfig;
+				const mergedConversationConfig =
+					applyCampaignBehaviorConversationConfig(
+						(currentAgentConfig.conversationConfig || {}) as Record<
+							string,
+							unknown
+						>,
+						selectedBehaviorConversationConfig
+					);
+				cleanedValue.agentConfig = {
+					...currentAgentConfig,
+					platformSettings: applyCampaignBehaviorPlatformSettings(
+						(currentAgentConfig.platformSettings || {}) as Record<
+							string,
+							unknown
+						>,
+						selectedBehaviorPlatformSettings
+					) as typeof currentAgentConfig.platformSettings,
+					conversationConfig: sanitizeCampaignBehaviorConversationConfig(
+						mergedConversationConfig
+					) as unknown as ConversationConfigModel,
+				};
+			}
 			if (cleanedValue.agentConfig?.conversationConfig?.agent?.prompt) {
 				const { toolIds, ...restPrompt } =
 					cleanedValue.agentConfig.conversationConfig.agent.prompt;
@@ -457,13 +628,16 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 			// Prepare data for light update (excludes agentConfig and versionDescription)
 			const dataToSend = isLight
-				? (({ agentConfig, versionDescription: _vd, ...rest }) => rest)(
-						cleanedValue
-					)
-				: {
-						...cleanedValue,
+				? (({
+						agentConfig,
+						dataCollectionVariables,
+						versionDescription: _vd,
+						...rest
+					}) => rest)(cleanedValue)
+				: (({ roleIds: _roleIds, ...rest }) => ({
+						...rest,
 						...(versionDescription !== undefined ? { versionDescription } : {}),
-					};
+					}))(cleanedValue);
 
 			let savedCampaign: Campaign;
 
@@ -528,203 +702,217 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 
 	return (
 		<CampaignIdContext.Provider value={campaign?.id}>
-			<CampaignFormProvider form={form}>
-				<ContentContainer
-					contentWidth={selectedTab === 'workflow' ? 'full' : 'centered'}
-					onBackClick={() => {
-						resetView();
-						onBack?.();
-					}}
-					title={
-						campaign?.id
-							? t('form.title.edit', { name: campaign.name })
-							: t('form.title.create')
-					}
-					titleRight={
-						campaign?.id && (
-							<Group gap='xs'>
-								<CampaignSyncButton />
-								<Tooltip label={t('form.actions.viewCampaign')} withArrow>
-									<ActionIcon
-										variant='light'
-										size='lg'
-										aria-label={t('form.actions.viewCampaign')}
-										onClick={() => navigate(`/campaign/view/${campaign.id}`)}
-									>
-										<IconEye size={20} />
-									</ActionIcon>
-								</Tooltip>
-								<Tooltip
-									label={t('form.actions.testConvai', {
-										ns: 'campaign.detail',
-									})}
-									withArrow
-								>
-									<ActionIcon
-										variant='light'
-										color='blue'
-										size='lg'
-										aria-label={t('form.actions.testConvai', {
+			<CampaignAgentEditorContext.Provider
+				value={{
+					selectedCampaignAgentId,
+					setSelectedCampaignAgentId,
+					selectedCampaignAgent,
+					selectedAgent,
+					selectedAgentDraft,
+					setSelectedAgentDraft,
+					updateSelectedAgentDraft,
+				}}
+			>
+				<CampaignFormProvider form={form}>
+					<ContentContainer
+						contentWidth='centered'
+						onBackClick={() => {
+							resetView();
+							onBack?.();
+						}}
+						title={
+							campaign?.id
+								? t('form.title.edit', { name: campaign.name })
+								: t('form.title.create')
+						}
+						titleRight={
+							campaign?.id && (
+								<Group gap='xs'>
+									<CampaignSyncButton />
+									<Tooltip label={t('form.actions.viewCampaign')} withArrow>
+										<ActionIcon
+											variant='light'
+											size='lg'
+											aria-label={t('form.actions.viewCampaign')}
+											onClick={() => navigate(`/campaign/view/${campaign.id}`)}
+										>
+											<IconEye size={20} />
+										</ActionIcon>
+									</Tooltip>
+									<Tooltip
+										label={t('form.actions.testConvai', {
 											ns: 'campaign.detail',
 										})}
-										onClick={() => navigate(`/campaign/${campaign.id}/test`)}
+										withArrow
 									>
-										<IconFlask size={20} />
-									</ActionIcon>
-								</Tooltip>
-							</Group>
-						)
-					}
-					description={t('form.description')}
-					showBackButton
-				>
-					<LoadingOverlay
-						visible={isCreating || isUpdating || isUpdatingLight}
-					/>
-					<Stack gap='xs'>
-						<Box p='xs'>
-							<CampaignTabs />
-						</Box>
-						{selectedTab === 'general' && (
-							<form
-								onSubmit={form.onSubmit((values) => handleSubmit(values, true))}
-							>
-								<GeneralSection onOpenSettings={openSettingsDrawer} />
-								<StickySaveActions
-									label={saveLabel}
-									loadingLabel={savingLabel}
-									isLoading={isUpdatingLight}
-									disabled={!form.isDirty()}
-								/>
-							</form>
-						)}
-						{selectedTab === 'agents' && (
-							<form
-								onSubmit={form.onSubmit((values) => {
-									if (isVersioningEnabled) {
-										setPendingAgentValues(values);
-										setReviewModalOpen(true);
-									} else {
-										void handleSubmit(values);
-									}
-								})}
-							>
-								<AgentSection onOpenSettings={openSettingsDrawer} />
-								<StickySaveActions
-									label={saveLabel}
-									loadingLabel={savingLabel}
-									isLoading={isUpdating}
-									disabled={!form.isDirty()}
-								/>
-							</form>
-						)}
-						{selectedTab === 'workflow' && (
-							<>
-								{!isDataReady && campaign?.id ? (
-									<SectionCard
-										title={t('form.workflow.section.title')}
-										description={t('form.workflow.loadingDescription', {
-											defaultValue: 'Loading workflow data...',
-										})}
-									>
-										<LoadingOverlay visible />
-									</SectionCard>
-								) : (
-									<form
-										onSubmit={form.onSubmit((values) => {
-											if (isVersioningEnabled) {
-												setPendingAgentValues(values);
-												setReviewModalOpen(true);
-											} else {
-												void handleSubmit(values);
+										<ActionIcon
+											variant='light'
+											color='blue'
+											size='lg'
+											aria-label={t('form.actions.testConvai', {
+												ns: 'campaign.detail',
+											})}
+											onClick={() =>
+												selectedCampaignAgent?.id &&
+												selectedCampaignAgent?.agentId
+													? navigate(
+															`/campaign/${campaign.id}/agent/${selectedCampaignAgent.id}/test/${selectedCampaignAgent.agentId}`
+														)
+													: navigate(`/campaign/${campaign.id}/test`)
 											}
+										>
+											<IconFlask size={20} />
+										</ActionIcon>
+									</Tooltip>
+								</Group>
+							)
+						}
+						description={t('form.description')}
+						showBackButton
+					>
+						<LoadingOverlay
+							visible={isCreating || isUpdating || isUpdatingLight}
+						/>
+						<Stack gap='xs'>
+							<Box p='xs'>
+								<CampaignTabs hasVoicesTab={Boolean(campaign?.id)} />
+							</Box>
+							{selectedTab === 'general' && (
+								<form
+									onSubmit={form.onSubmit((values) =>
+										handleSubmit(values, true)
+									)}
+								>
+									<GeneralSection onOpenSettings={openSettingsDrawer} />
+									<SectionCard
+										title={t('general.roleVisibility.title', {
+											ns: 'campaign.form.general',
+										})}
+										description={t('general.roleVisibility.description', {
+											ns: 'campaign.form.general',
 										})}
 									>
-										<WorkflowSection />
-										<StickySaveActions
-											label={saveLabel}
-											loadingLabel={savingLabel}
-											isLoading={isUpdating}
-											disabled={!form.isDirty()}
+										<CampaignRoleVisibilitySelector
+											value={form.values.roleIds ?? []}
+											onChange={(roleIds) =>
+												form.setFieldValue('roleIds', roleIds)
+											}
+											label={t('general.roleVisibility.label', {
+												ns: 'campaign.form.general',
+											})}
+											description={t(
+												'general.roleVisibility.fieldDescription',
+												{
+													ns: 'campaign.form.general',
+												}
+											)}
+											placeholder={t('general.roleVisibility.placeholder', {
+												ns: 'campaign.form.general',
+											})}
+											hint={t('general.roleVisibility.hint', {
+												ns: 'campaign.form.general',
+											})}
+											disabled={isCampaignRolesLoading || isCampaignRolesError}
 										/>
-									</form>
-								)}
-							</>
-						)}
-						{selectedTab === 'outcomes' && <DispositionSection />}
-						{selectedTab === 'do-not-call' && (
-							<DoNotCallSection campaignId={campaign?.id} />
-						)}
-						{selectedTab === 'params' && (
-							<ParametersSection
-								campaignId={campaign?.id}
-								onCalculate={() =>
-									modals.open({
-										title: t('form.schedulerCalculator.title'),
-										fullScreen: true,
-										children: <SchedulerCalculator />,
-									})
-								}
-							/>
-						)}
-						{selectedTab === 'analytics' && (
-							<form
-								onSubmit={form.onSubmit((values) => {
-									if (isVersioningEnabled) {
-										setPendingAgentValues(values);
-										setReviewModalOpen(true);
-									} else {
-										void handleSubmit(values);
+									</SectionCard>
+									<StickySaveActions
+										label={saveLabel}
+										loadingLabel={savingLabel}
+										isLoading={isUpdatingLight}
+										disabled={!form.isDirty() || isGeneralRoleSaveBlocked}
+									/>
+								</form>
+							)}
+							{selectedTab === 'agents' && <AgentSection />}
+							{selectedTab === 'outcomes' && <DispositionSection />}
+							{selectedTab === 'do-not-call' && (
+								<DoNotCallSection campaignId={campaign?.id} />
+							)}
+							{selectedTab === 'params' && (
+								<ParametersSection
+									campaignId={campaign?.id}
+									onCalculate={() =>
+										modals.open({
+											title: t('form.schedulerCalculator.title'),
+											fullScreen: true,
+											children: <SchedulerCalculator />,
+										})
 									}
-								})}
-							>
-								<AnalyticsSection />
-								<StickySaveActions
-									label={saveLabel}
-									loadingLabel={savingLabel}
-									isLoading={isUpdating}
-									disabled={!form.isDirty()}
 								/>
-							</form>
-						)}
-						{selectedTab === 'dashboards' && (
-							<DashboardSection
-								campaignId={campaign?.id}
-								attributeMetricKeys={attributeMetricKeys}
-							/>
-						)}
-						{selectedTab === 'versioning' && (
-							<VersioningSection campaign={campaign} />
-						)}
-					</Stack>
-				</ContentContainer>
-				<AgentSaveReviewModal
-					opened={reviewModalOpen}
-					onClose={() => setReviewModalOpen(false)}
-					publishedSnapshot={
-						campaign?.agentConfig as AgentVersionSnapshot | undefined
-					}
-					currentSnapshot={
-						pendingAgentValues?.agentConfig as AgentVersionSnapshot | undefined
-					}
-					onPublish={(desc) => {
-						setReviewModalOpen(false);
-						if (pendingAgentValues) {
-							void handleSubmit(pendingAgentValues, false, desc);
+							)}
+							{selectedTab === 'analytics' && (
+								<form
+									onSubmit={form.onSubmit((values) => {
+										if (isVersioningEnabled) {
+											setPendingAgentValues(values);
+											setReviewModalOpen(true);
+										} else {
+											void handleSubmit(values);
+										}
+									})}
+								>
+									<AnalyticsSection />
+									<StickySaveActions
+										label={saveLabel}
+										loadingLabel={savingLabel}
+										isLoading={isUpdating}
+										disabled={!form.isDirty()}
+									/>
+								</form>
+							)}
+							{selectedTab === 'dashboards' && (
+								<DashboardSection
+									campaignId={campaign?.id}
+									attributeMetricKeys={attributeMetricKeys}
+								/>
+							)}
+							{selectedTab === 'voices' && campaign?.id && (
+								<form
+									onSubmit={form.onSubmit((values) =>
+										handleSubmit(values, true)
+									)}
+								>
+									<VoicesSection />
+									<StickySaveActions
+										label={saveLabel}
+										loadingLabel={savingLabel}
+										isLoading={isUpdatingLight}
+										disabled={!form.isDirty()}
+									/>
+								</form>
+							)}
+						</Stack>
+					</ContentContainer>
+					<AgentSaveReviewModal
+						opened={reviewModalOpen}
+						onClose={() => setReviewModalOpen(false)}
+						publishedSnapshot={
+							campaign?.agentConfig as AgentVersionSnapshot | undefined
 						}
-					}}
-					isPublishing={isUpdating || isCreating}
-				/>
-				<AppDrawer
-					opened={isSettingsDrawerOpen && Boolean(settingsDrawerContent)}
-					onClose={() => setIsSettingsDrawerOpen(false)}
-					title={settingsDrawerTitle}
-					size='lg'
-					keepMounted
-				>
-					{settingsDrawerContent}
-				</AppDrawer>
-			</CampaignFormProvider>
+						currentSnapshot={
+							pendingAgentValues?.agentConfig as
+								| AgentVersionSnapshot
+								| undefined
+						}
+						onPublish={(desc) => {
+							setReviewModalOpen(false);
+							if (pendingAgentValues) {
+								void handleSubmit(pendingAgentValues, false, desc);
+							}
+						}}
+						isPublishing={isUpdating || isCreating}
+					/>
+					<AppDrawer
+						opened={isSettingsDrawerOpen && Boolean(settingsDrawerContent)}
+						onClose={() => setIsSettingsDrawerOpen(false)}
+						title={settingsDrawerTitle}
+						size='lg'
+						keepMounted
+					>
+						{settingsDrawerContent}
+					</AppDrawer>
+				</CampaignFormProvider>
+			</CampaignAgentEditorContext.Provider>
 		</CampaignIdContext.Provider>
 	);
 };

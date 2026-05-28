@@ -21,9 +21,10 @@ import type {
 	ReactFlowInstance,
 } from '@xyflow/react';
 import WorkflowNodeSearch from '../../WorkflowNodeSearch';
+import { isWorkflowMultiSelectClick } from '../../utils/workflowSelectionUtils';
 import SelectionToolbar from '../SelectionToolbar';
 
-const NON_SELECTABLE_NODE_TYPES = ['start', 'end'];
+const NON_EDITABLE_NODE_TYPES = ['start', 'end'];
 
 interface FlowViewProps {
 	nodes: Node[];
@@ -44,7 +45,10 @@ interface FlowViewProps {
 		edge: Edge,
 		handleType: 'source' | 'target'
 	) => void;
-	onNodeSelect?: (nodeId: string | null) => void;
+	/** Called when a node is left-clicked (non-drag). Opens the node editor. */
+	onNodeOpen?: (nodeId: string) => void;
+	/** Called when a node is right-clicked. Opens the context menu. */
+	onNodeContextMenu?: (event: React.MouseEvent, node: Node) => void;
 	onCanvasClick?: () => void;
 	onNodeDragStart?: () => void;
 	onNodeDragStop?: () => void;
@@ -66,7 +70,8 @@ const FlowView = ({
 	onReconnect,
 	onReconnectStart,
 	onReconnectEnd,
-	onNodeSelect,
+	onNodeOpen,
+	onNodeContextMenu,
 	onCanvasClick,
 	onNodeDragStart,
 	onNodeDragStop,
@@ -101,18 +106,25 @@ const FlowView = ({
 			onNodeDragStop={() => {
 				onNodeDragStop?.();
 			}}
-			onNodeClick={(_, node) => {
+			onNodeClick={(event, node) => {
 				onCanvasClick?.();
 				if (wasDraggedRef.current) {
 					wasDraggedRef.current = false;
 					return;
 				}
-				if (NON_SELECTABLE_NODE_TYPES.includes(node.type ?? '')) return;
-				onNodeSelect?.(node.id);
+				if (isWorkflowMultiSelectClick(event)) {
+					return;
+				}
+				if (node.type === 'group') return;
+				if (NON_EDITABLE_NODE_TYPES.includes(node.type ?? '')) return;
+				onNodeOpen?.(node.id);
+			}}
+			onNodeContextMenu={(event, node) => {
+				event.preventDefault();
+				onNodeContextMenu?.(event, node);
 			}}
 			onPaneClick={() => {
 				onCanvasClick?.();
-				onNodeSelect?.(null);
 			}}
 			onInit={onInit}
 			isValidConnection={isValidConnection}
@@ -126,6 +138,7 @@ const FlowView = ({
 			panOnDrag={[0]}
 			selectionOnDrag={false}
 			selectionMode={SelectionMode.Partial}
+			multiSelectionKeyCode={['Meta', 'Control']}
 			className={flowClassName}
 		>
 			<Background

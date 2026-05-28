@@ -5,6 +5,10 @@ import type {
 	DispositionNodeFilters,
 	UpdateDispositionNodePayload,
 } from '~/models/DispositionNodeModel';
+import type {
+	DispositionCatalogImportRequest,
+	DispositionCatalogImportResponse,
+} from '~/models/DispositionCatalogModels';
 import { DEFAULT_API_URL } from './config';
 
 const serializeQueryParams = (params?: Record<string, unknown>) => {
@@ -152,6 +156,15 @@ const dispositionNodesApi = (_authHeader?: Record<string, string>) => {
 		deactivateNode: async (id: number | string) => {
 			const response = await axios.patch<DispositionNode>(
 				`${DEFAULT_API_URL}/disposition-nodes/${id}/deactivate`
+			);
+			return response.data;
+		},
+
+		// Import a complete disposition catalog structure
+		importDispositionNodes: async (data: DispositionCatalogImportRequest) => {
+			const response = await axios.post<DispositionCatalogImportResponse>(
+				`${DEFAULT_API_URL}/disposition-nodes/import`,
+				data
 			);
 			return response.data;
 		},

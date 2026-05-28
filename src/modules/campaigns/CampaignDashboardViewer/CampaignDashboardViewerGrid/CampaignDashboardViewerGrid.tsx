@@ -1,3 +1,6 @@
+import { Stack, Text } from '@mantine/core';
+import { IconSquarePlus } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import type {
 	AnalyticsTimeRange,
 	DashboardRenderWidget,
@@ -21,6 +24,28 @@ const CampaignDashboardViewerGrid = ({
 	comparisonPeriodLabel,
 	selectedTimeRange,
 }: CampaignDashboardViewerGridProps) => {
+	const { t } = useTranslation('campaign.form.dashboards');
+
+	if (widgets.length === 0) {
+		return (
+			<div className={styles.emptyState}>
+				<IconSquarePlus
+					size={22}
+					className={styles.emptyStateIcon}
+					strokeWidth={1.75}
+				/>
+				<Stack gap={2} align='center'>
+					<Text size='sm' fw={600} className={styles.emptyStateTitle}>
+						{t('dashboardBuilder.emptyWidgetTitle')}
+					</Text>
+					<Text size='xs' className={styles.emptyStateDescription} ta='center'>
+						{t('dashboardBuilder.emptyWidgetDescription')}
+					</Text>
+				</Stack>
+			</div>
+		);
+	}
+
 	return (
 		<div className={styles.grid}>
 			<div className={styles.gridInner}>

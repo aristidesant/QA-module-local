@@ -2,6 +2,7 @@ import axios from 'axios';
 import type {
 	DispositionCatalogModel,
 	CreateDispositionCatalog,
+	DispositionCatalogExportPayload,
 } from '~/models/DispositionCatalogModels';
 import type { PaginatedResponse } from '~/models/CampaignsModel';
 import type { DispositionFlowModel } from '~/models/DispositionFlowModel';
@@ -223,6 +224,14 @@ const dispositionCatalogApi = (_authHeader?: Record<string, string>) => {
 			const response = await axios.post<CopiedDispositionCatalogResponse>(
 				`${DEFAULT_API_URL}/disposition-catalogs/copy-to-campaign`,
 				data
+			);
+			return response.data;
+		},
+
+		// GET export disposition catalog in import-compatible format
+		exportDispositionCatalog: async (catalogId: number | string) => {
+			const response = await axios.get<DispositionCatalogExportPayload>(
+				`${DEFAULT_API_URL}/disposition-catalogs/${catalogId}/export`
 			);
 			return response.data;
 		},

@@ -1,8 +1,8 @@
 // src/models/CampaignsModel.ts
 
 import type { AgentConfigModel } from './AgentListObject';
-import { CampaignAgent } from './CampaignAgentModel';
-import { CampaignObjective } from './CampaignObjectiveModel';
+import type { CampaignAgent } from './CampaignAgentModel';
+import type { CampaignObjective } from './CampaignObjectiveModel';
 import { CampaignStatus } from './CampaignStatus';
 
 /**
@@ -87,6 +87,38 @@ export interface CampaignParameters {
 	answerMachineDetection?: boolean;
 }
 
+export interface CampaignDataCollectionVariableDefinition {
+	type?: 'boolean' | 'integer' | 'number' | 'string' | string;
+	description?: string;
+	enum?: string[];
+	constantValue?: string;
+	dynamicVariable?: string;
+	isSystemProvided?: boolean;
+	constant_value?: string;
+	dynamic_variable?: string;
+	is_system_provided?: boolean;
+}
+
+export interface CampaignDataCollectionVariable {
+	id?: number;
+	campaignId?: number;
+	agentId?: string | null;
+	key: string;
+	label?: string | null;
+	definition: CampaignDataCollectionVariableDefinition;
+	isActive: boolean;
+	createdAt?: string;
+	updatedAt?: string;
+}
+
+export type CampaignPromptVariableSource = 'campaign' | 'schema' | 'system';
+
+export interface CampaignPromptVariable {
+	name: string;
+	description?: string;
+	source: CampaignPromptVariableSource;
+}
+
 export interface Campaign {
 	id: number;
 	name: string;
@@ -95,13 +127,14 @@ export interface Campaign {
 	budget: number;
 	configId: string;
 	spent: number;
-	type: 'OUTBOUND' | 'INBOUND';
+	type: 'OUTBOUND' | 'INBOUND' | 'HYBRID';
 	status: CampaignStatus;
 	userId: number;
 	clientId: number;
 	promptId?: number;
 	objectiveId?: number;
 	voiceId?: string;
+	voiceIds?: string[];
 	createdAt: string; // ISO date string
 	updatedAt: string; // ISO date string
 	overAllScore?: number;
@@ -110,6 +143,7 @@ export interface Campaign {
 	progress?: number; // Campaign progress percentage
 	defaultMaxWaves?: number;
 	defaultWaveExecutionDelaySeconds?: number;
+	roleIds?: number[];
 	isDraft?: boolean; // Indicates if campaign is in draft state
 	draftStep?: number; // The wizard step where the draft was saved
 
@@ -130,20 +164,7 @@ export interface Campaign {
 	objective?: CampaignObjective;
 
 	// Agents assigned to campaign
-	agents?: Array<{
-		id: number;
-		campaignId: number;
-		agentId: string;
-		agent: {
-			name: string;
-			status: string;
-			language: string;
-		};
-		userId: number;
-		clientId: number;
-		createdAt: string;
-		updatedAt: string;
-	}>;
+	agents?: CampaignAgent[];
 
 	noiseCancellation?: boolean;
 	agentConfig?: Partial<AgentConfigModel>;
@@ -151,6 +172,7 @@ export interface Campaign {
 	nodeStyles?: NodeStyles;
 	/** Persisted node groups for the workflow editor (top-level campaign field) */
 	nodeGroups?: NodeGroups;
+	dataCollectionVariables?: CampaignDataCollectionVariable[];
 	versionDescription?: string;
 	// Stats and performance
 	stats?: {

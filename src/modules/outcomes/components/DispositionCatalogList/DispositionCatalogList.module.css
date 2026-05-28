@@ -21,8 +21,8 @@
 }
 
 .activeBadge {
-	background-color: var(--mantine-color-blue-1);
-	color: var(--mantine-color-blue-7);
+	background-color: #ecfdf2;
+	color: #0d7530;
 }
 
 .controlsWrapper {
@@ -107,7 +107,7 @@
 .nameCell {
 	display: flex;
 	flex-direction: column;
-	gap: 4px;
+	gap: 6px;
 }
 
 .nameText {
@@ -120,19 +120,13 @@
 	display: flex;
 	align-items: center;
 	gap: 8px;
+	min-width: 0;
 }
 
-.typeBadge {
-	display: inline-flex;
+.typeCell {
+	display: flex;
 	align-items: center;
-	margin-left: 4px;
-}
-
-.descriptionText {
-	font-weight: 400;
-	color: var(--mantine-color-gray-7);
-	font-size: 12.5px;
-	line-height: 1.3;
+	min-height: 100%;
 }
 
 .emptyStateContainer {
@@ -141,9 +135,60 @@
 	padding: var(--mantine-spacing-md);
 }
 
+/* Status badge pill */
+.statusBadgeActive,
+.statusBadgeInactive {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	border-radius: 999px;
+	padding: 2px 8px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 18px;
+	white-space: nowrap;
+}
+
+.statusBadgeActive {
+	background-color: #ecfdf2;
+	color: #0d7530;
+}
+
+.statusBadgeInactive {
+	background-color: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-6);
+}
+
+.statusDot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background-color: currentColor;
+	flex-shrink: 0;
+}
+
+.actionsHeader {
+	text-align: right;
+}
+
+.actionsCell {
+	text-align: right;
+	padding-right: 8px;
+}
+
 [data-mantine-color-scheme='dark'] .activeBadge {
+	background-color: rgba(27, 181, 74, 0.15);
+	color: #4ade80;
+}
+
+[data-mantine-color-scheme='dark'] .statusBadgeActive {
+	background-color: rgba(27, 181, 74, 0.15);
+	color: #4ade80;
+}
+
+[data-mantine-color-scheme='dark'] .statusBadgeInactive {
 	background-color: var(--mantine-color-dark-5);
-	color: var(--mantine-color-blue-4);
+	color: var(--mantine-color-dark-2);
 }
 
 [data-mantine-color-scheme='dark'] .searchInput input {

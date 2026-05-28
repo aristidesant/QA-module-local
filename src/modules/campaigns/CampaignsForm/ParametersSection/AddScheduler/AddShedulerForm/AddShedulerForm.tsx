@@ -36,7 +36,7 @@ interface AddShedulerFormProps {
 	onCancel?: () => void;
 	campaignId?: string | number | null;
 	/** Campaign type used to determine the default schedule direction */
-	campaignType?: 'OUTBOUND' | 'INBOUND';
+	campaignType?: 'OUTBOUND' | 'INBOUND' | 'HYBRID';
 }
 
 interface PredefinedScheduleFormValues {

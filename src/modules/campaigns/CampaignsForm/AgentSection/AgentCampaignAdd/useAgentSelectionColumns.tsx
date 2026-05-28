@@ -4,34 +4,27 @@ import {
 	Badge,
 	Group,
 	Text,
-	ThemeIcon,
 	Tooltip,
 	ActionIcon,
 } from '@mantine/core';
 import type { AgentWithCampaignListItem } from '~/models/AgentListObject';
 import {
-	IconInfoCircle,
 	IconPlayerPlay,
 	IconPlayerPause,
-	IconPlus,
 	IconCopy,
 } from '@tabler/icons-react';
 import classes from './AgentCampaignAdd.module.css';
 import { useTranslation } from 'react-i18next';
 
 interface UseAgentSelectionColumnsOptions {
-	onAdd: (agent: AgentWithCampaignListItem) => void;
 	onPlay: (agent: AgentWithCampaignListItem) => void;
 	onClone: (agent: AgentWithCampaignListItem) => void;
-	isDisabled: (agent: AgentWithCampaignListItem) => boolean;
 	isPlaying: (agent: AgentWithCampaignListItem) => boolean;
 }
 
 const useAgentSelectionColumns = ({
-	onAdd,
 	onPlay,
 	onClone,
-	isDisabled,
 	isPlaying,
 }: UseAgentSelectionColumnsOptions): ColumnDef<AgentWithCampaignListItem>[] => {
 	const { t } = useTranslation([
@@ -46,28 +39,46 @@ const useAgentSelectionColumns = ({
 				accessorKey: 'name',
 				header: t('form.agent.columns.name'),
 				cell: ({ row }) => {
-					const agent = row.original;
-
 					return (
-						<Group gap='sm' className={classes.agentCellContent}>
-							<Tooltip
-								label={agent.campaignName || t('form.agent.columns.noCampaign')}
-								withArrow
-							>
-								<ThemeIcon variant='subtle' size={20} radius='xl'>
-									<IconInfoCircle size={16} />
-								</ThemeIcon>
-							</Tooltip>
-							<div className={classes.agentDetails}>
-								<Text component='span' className={classes.agentName}>
-									{agent.name}
-								</Text>
-							</div>
+						<Group gap='xs' className={classes.agentCellContent} wrap='nowrap'>
+							<Text component='span' className={classes.agentName} truncate>
+								{row.original.name}
+							</Text>
 						</Group>
 					);
 				},
 				meta: {
 					cellClassName: classes.agentCell,
+					headerClassName: classes.alignLeft,
+				},
+			},
+			{
+				accessorKey: 'campaignName',
+				header: t('form.agent.columns.campaign'),
+				cell: ({ row }) => {
+					const campaignName =
+						row.original.campaignName || t('form.agent.columns.noCampaign');
+					const isMissingCampaign = !row.original.campaignName;
+
+					return (
+						<Tooltip label={campaignName} withArrow disabled={!campaignName}>
+							<Badge
+								variant={isMissingCampaign ? 'outline' : 'light'}
+								className={
+									isMissingCampaign
+										? classes.campaignBadgeEmpty
+										: classes.campaignBadge
+								}
+								radius='xl'
+								size='sm'
+							>
+								<span className={classes.campaignBadgeLabel}>{campaignName}</span>
+							</Badge>
+						</Tooltip>
+					);
+				},
+				meta: {
+					cellClassName: classes.alignLeft,
 					headerClassName: classes.alignLeft,
 				},
 			},
@@ -77,7 +88,7 @@ const useAgentSelectionColumns = ({
 				header: t('form.agent.columns.type'),
 				cell: ({ row }) => (
 					<Badge
-						size='sm'
+						size='xs'
 						className={
 							row.original.type === 'OUTBOUND'
 								? classes.typeBadgeOutbound
@@ -101,7 +112,7 @@ const useAgentSelectionColumns = ({
 					const voiceLanguage = row.original.voiceLanguage;
 
 					return (
-						<Text className={classes.inlineText}>
+						<Text className={classes.inlineText} truncate>
 							{voiceName}
 							{voiceLanguage ? (
 								<Text component='span' className={classes.subText}>
@@ -151,16 +162,6 @@ const useAgentSelectionColumns = ({
 								<IconCopy size={16} />
 							</ActionIcon>
 						</Tooltip>
-						<Tooltip label={t('form.agent.columns.add')} withArrow>
-							<ActionIcon
-								variant='subtle'
-								color='blue'
-								onClick={() => onAdd(row.original)}
-								disabled={isDisabled(row.original)}
-							>
-								<IconPlus size={16} />
-							</ActionIcon>
-						</Tooltip>
 					</Group>
 				),
 				meta: {
@@ -169,7 +170,7 @@ const useAgentSelectionColumns = ({
 				},
 			},
 		],
-		[onAdd, onPlay, onClone, isDisabled, isPlaying, t]
+		[onPlay, onClone, isPlaying, t]
 	);
 };
 

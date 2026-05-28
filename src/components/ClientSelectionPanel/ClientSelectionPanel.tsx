@@ -1,7 +1,5 @@
 import {
 	Badge,
-	Box,
-	Card,
 	Group,
 	Loader,
 	ScrollArea,
@@ -15,6 +13,7 @@ import { IconBuilding, IconCheck, IconSearch } from '@tabler/icons-react';
 import { KeyboardEvent, useMemo, useState } from 'react';
 import type { ClientSelectOption } from '~/api/authApi';
 import EmptyState from '~/components/EmptyState';
+import { generateClientAvatar } from '~/utils/clientAvatar';
 import classes from './ClientSelectionPanel.module.css';
 
 interface ClientSelectionPanelProps {
@@ -36,6 +35,10 @@ interface ClientSelectionPanelProps {
 	onSelect: (client: ClientSelectOption) => void;
 }
 
+const COMPACT_THRESHOLD = 5;
+
+type ViewMode = 'spacious' | 'compact';
+
 export default function ClientSelectionPanel({
 	title,
 	description,
@@ -56,6 +59,10 @@ export default function ClientSelectionPanel({
 }: ClientSelectionPanelProps) {
 	const [search, setSearch] = useState('');
 
+	const viewMode: ViewMode = useMemo(() => {
+		return clients.length >= COMPACT_THRESHOLD ? 'compact' : 'spacious';
+	}, [clients.length]);
+
 	const filteredClients = useMemo(() => {
 		if (!search.trim()) return clients;
 
@@ -67,7 +74,11 @@ export default function ClientSelectionPanel({
 		);
 	}, [clients, search]);
 
-	const loadingCards = Array.from({ length: 3 });
+	const loadingCards = Array.from({
+		length: viewMode === 'spacious' ? 3 : 6,
+	});
+
+	const showSearch = viewMode === 'compact' || clients.length > 1;
 
 	const handleCardKeyDown = (
 		event: KeyboardEvent<HTMLDivElement>,
@@ -84,17 +95,16 @@ export default function ClientSelectionPanel({
 		}
 	};
 
-	const renderClientCard = (client: ClientSelectOption) => {
+	const renderAvatarItem = (client: ClientSelectOption) => {
 		const isSelected = selectedClientId === client.clientId;
 		const isCurrentClient = currentClientId === client.clientId;
 		const isDisabled = isMutating || isCurrentClient;
+		const avatar = generateClientAvatar(client.clientName);
 
 		return (
-			<Card
+			<div
 				key={client.clientId}
-				withBorder
-				padding='md'
-				className={classes.clientCard}
+				className={classes.avatarItem}
 				data-selected={isSelected}
 				data-current={isCurrentClient}
 				data-disabled={isDisabled}
@@ -109,62 +119,87 @@ export default function ClientSelectionPanel({
 				}}
 				onKeyDown={(event) => handleCardKeyDown(event, client, isDisabled)}
 			>
-				<Stack gap={4} className={classes.cardContent}>
-					<Group
-						justify='space-between'
-						align='flex-start'
-						wrap='nowrap'
-						gap='sm'
+				<div
+					className={classes.avatarCircle}
+					// inline-style-allow: gradient is a dynamic per-avatar value with no CSS-variable alternative
+					style={{ background: avatar.gradient }}
+					aria-hidden='true'
+				>
+					<span className={classes.avatarInitials}>{avatar.initials}</span>
+				</div>
+
+				<div className={classes.avatarMeta}>
+					<Text className={classes.clientName} truncate='end'>
+						{client.clientName}
+					</Text>
+					{viewMode === 'spacious' && (
+						<>
+							{client.roles.length > 0 && (
+								<Group gap={3} mt={4} justify='center'>
+									{client.roles.map((role) => (
+										<Badge
+											key={role}
+											size='xs'
+											variant='light'
+											color='gray'
+											className={classes.roleBadge}
+										>
+											{role}
+										</Badge>
+									))}
+								</Group>
+							)}
+						</>
+					)}
+				</div>
+
+				{isSelected && isMutating ? (
+					<Loader size='xs' />
+				) : isCurrentClient ? (
+					<Tooltip
+						label={currentClientTooltip}
+						disabled={!currentClientTooltip}
+						withArrow
 					>
-						<Group gap='sm' wrap='nowrap' align='flex-start'>
-							<Box className={classes.iconShell} aria-hidden='true'>
-								<IconBuilding size={18} stroke={1.7} />
-							</Box>
+						<Badge
+							size='sm'
+							variant='light'
+							color='gray'
+							className={classes.stateBadge}
+						>
+							{currentClientLabel}
+						</Badge>
+					</Tooltip>
+				) : isSelected ? (
+					<Badge
+						size='sm'
+						variant='light'
+						color='green'
+						leftSection={<IconCheck size={12} stroke={2.4} />}
+						className={classes.stateBadge}
+					>
+						{selectedLabel}
+					</Badge>
+				) : null}
+			</div>
+		);
+	};
 
-							<Stack gap={3} className={classes.clientMeta}>
-								<Text className={classes.clientName} truncate>
-									{client.clientName}
-								</Text>
+	const renderLoadingSkeleton = () => {
+		const avatarSize = viewMode === 'spacious' ? 72 : 48;
 
-								{client.roles.length > 0 && (
-									<Text size='xs' className={classes.clientSubtitle} truncate>
-										{client.roles.join(' • ')}
-									</Text>
-								)}
-							</Stack>
-						</Group>
-
-						{isSelected && isMutating ? (
-							<Loader size='xs' />
-						) : isCurrentClient ? (
-							<Tooltip
-								label={currentClientTooltip}
-								disabled={!currentClientTooltip}
-								withArrow
-							>
-								<Badge
-									size='sm'
-									variant='light'
-									color='gray'
-									className={classes.stateBadge}
-								>
-									{currentClientLabel}
-								</Badge>
-							</Tooltip>
-						) : isSelected ? (
-							<Badge
-								size='sm'
-								variant='light'
-								color='green'
-								leftSection={<IconCheck size={12} stroke={2.4} />}
-								className={classes.stateBadge}
-							>
-								{selectedLabel}
-							</Badge>
-						) : null}
-					</Group>
-				</Stack>
-			</Card>
+		return (
+			<div className={classes.avatarGrid}>
+				{loadingCards.map((_, index) => (
+					<div key={index} className={classes.avatarItem} aria-hidden='true'>
+						<Skeleton height={avatarSize} width={avatarSize} radius='50%' />
+						<Stack gap={4} align='center' mt={8}>
+							<Skeleton height={12} width='70%' radius='xl' />
+							<Skeleton height={8} width='50%' radius='xl' />
+						</Stack>
+					</div>
+				))}
+			</div>
 		);
 	};
 
@@ -190,7 +225,7 @@ export default function ClientSelectionPanel({
 				</Group>
 			</Stack>
 
-			{clients.length > 1 && (
+			{showSearch && (
 				<TextInput
 					value={search}
 					onChange={(event) => setSearch(event.currentTarget.value)}
@@ -215,56 +250,34 @@ export default function ClientSelectionPanel({
 							</Text>
 						</Group>
 					)}
-
-					<Box className={classes.gridShell}>
-						<div className={classes.cardsGrid} aria-hidden='true'>
-							{loadingCards.map((_, index) => (
-								<Card
-									key={index}
-									withBorder
-									padding='md'
-									className={classes.clientCard}
-								>
-									<Group
-										justify='space-between'
-										align='flex-start'
-										wrap='nowrap'
-									>
-										<Group gap='sm' wrap='nowrap' align='flex-start'>
-											<Skeleton height={36} width={36} radius='md' />
-											<Stack gap={6} className={classes.clientMeta}>
-												<Skeleton height={14} width='62%' radius='xl' />
-												<Skeleton height={10} width='48%' radius='xl' />
-												<Skeleton height={10} width='72%' radius='xl' />
-											</Stack>
-										</Group>
-										<Skeleton height={22} width={74} radius='xl' />
-									</Group>
-								</Card>
-							))}
-						</div>
-					</Box>
+					{renderLoadingSkeleton()}
 				</Stack>
 			) : (
 				<ScrollArea
-					h={filteredClients.length > 4 ? 428 : 'auto'}
+					h={
+						filteredClients.length > (viewMode === 'spacious' ? 4 : 8)
+							? 428
+							: 'auto'
+					}
 					type='auto'
 					offsetScrollbars
 				>
-					<Box className={classes.gridShell}>
-						{filteredClients.length > 0 ? (
-							<div className={classes.cardsGrid} role='listbox'>
-								{filteredClients.map(renderClientCard)}
-							</div>
-						) : (
-							<EmptyState
-								icon={<IconBuilding size={30} />}
-								message={emptyTitle}
-								description={emptyDescription}
-								className={classes.emptyState}
-							/>
-						)}
-					</Box>
+					{filteredClients.length > 0 ? (
+						<div
+							className={classes.avatarGrid}
+							role='listbox'
+							data-mode={viewMode}
+						>
+							{filteredClients.map(renderAvatarItem)}
+						</div>
+					) : (
+						<EmptyState
+							icon={<IconBuilding size={30} />}
+							message={emptyTitle}
+							description={emptyDescription}
+							className={classes.emptyState}
+						/>
+					)}
 				</ScrollArea>
 			)}
 		</Stack>

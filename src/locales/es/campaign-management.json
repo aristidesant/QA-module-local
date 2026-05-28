@@ -4,7 +4,7 @@
 	"tabs": {
 		"setup": "Configuración de Campaña",
 		"outcomes": "Resultados",
-		"customVariables": "Variables Personalizadas"
+		"customVariables": "Plantillas de Recolección de Datos"
 	},
 	"setup": {
 		"catalog": "Catálogo",
@@ -334,11 +334,11 @@
 		}
 	},
 	"customVariables": {
-		"catalog": "Catálogo de Variables Personalizadas",
+		"catalog": "Catálogo de Plantillas de Recolección de Datos",
 		"groups": {
 			"label": "Grupos",
-			"title": "Grupos de Variables",
-			"description": "Administre plantillas de variables personalizadas y su alcance.",
+			"title": "Grupos de Plantillas",
+			"description": "Administre grupos reutilizables de plantillas de recolección de datos y su alcance.",
 			"create": "Crear Grupo",
 			"edit": "Editar Grupo",
 			"sectionCardDescription": "Las plantillas pueden ser globales, del cliente o clones asociados a campañas.",
@@ -370,8 +370,8 @@
 				"selected": "Seleccionado"
 			},
 			"empty": {
-				"title": "No se encontraron grupos de variables",
-				"description": "Comience creando su primer grupo de variables."
+				"title": "No se encontraron grupos de plantillas",
+				"description": "Comience creando su primer grupo de plantillas de recolección de datos."
 			},
 			"noResults": "No hay grupos que coincidan con su búsqueda",
 			"noResultsDescription": "Intente otro término o limpie los filtros.",

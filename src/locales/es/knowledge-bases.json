@@ -10,7 +10,9 @@
 		}
 	},
 	"list": {
-		"title": "Entradas",
+		"title": "Bases de conocimiento",
+		"description": "Gestiona las colecciones de documentos que usan tus agentes para responder preguntas.",
+		"noDescription": "Sin descripción",
 		"empty": {
 			"title": "No se encontraron bases de conocimiento",
 			"description": "Crea tu primera base de conocimiento para que los agentes puedan consultar documentos.",

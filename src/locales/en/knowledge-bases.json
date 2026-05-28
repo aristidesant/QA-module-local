@@ -10,7 +10,9 @@
 		}
 	},
 	"list": {
-		"title": "Entries",
+		"title": "Knowledge Bases",
+		"description": "Manage document collections that your agents use to answer questions.",
+		"noDescription": "No description provided",
 		"empty": {
 			"title": "No knowledge bases found",
 			"description": "Create your first knowledge base to surface documents to agents.",

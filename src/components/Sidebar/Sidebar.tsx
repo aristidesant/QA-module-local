@@ -10,6 +10,7 @@ import {
 	Collapse,
 	Divider,
 	Group,
+	Menu,
 	Stack,
 	Text,
 	Tooltip,
@@ -36,6 +37,7 @@ import Logo from '../Logo';
 import { APP_VERSION } from '~/version';
 import { usePermissions } from '~/hooks/usePermissions';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
+import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
 import { useSidebarStore } from '~/stores/sidebarStore';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -49,6 +51,7 @@ type SidebarNavItem = {
 	module: ModuleEnum;
 	permission?: PermissionEnum;
 	masterOnly?: boolean;
+	superAdminOnly?: boolean;
 	exact?: boolean;
 	i18nNamespace?: string;
 };
@@ -137,12 +140,13 @@ const sidebarSections: SidebarSection[] = [
 				i18nNamespace: 'client-configs',
 			},
 			{
-				key: 'campaign-predefined-params',
-				label: 'sidebar.items.campaignPredefinedParams',
+				key: 'agent-behaviors',
+				label: 'sidebar.items.agentBehaviors',
 				icon: <IconListDetails size={18} className={styles.menuIcon} />,
-				to: '/configurations/campaign-predefined-params',
+				to: '/configurations/agent-behaviors',
 				module: ModuleEnum.SETTINGS,
 				permission: PermissionEnum.MANAGE,
+				superAdminOnly: true,
 				i18nNamespace: 'campaign-predefined-params',
 			},
 			{
@@ -275,6 +279,7 @@ export const Sidebar: React.FC = () => {
 	const { t } = useTranslation('common');
 	const location = useLocation();
 	const isMasterClient = useIsMasterClient();
+	const isSuperAdmin = useIsSuperAdmin();
 	const { collapsed, toggleCollapsed } = useSidebarStore();
 	const [openSection, setOpenSection] = useState<string>('');
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -290,13 +295,17 @@ export const Sidebar: React.FC = () => {
 					return false;
 				}
 
+				if (item.superAdminOnly && !isSuperAdmin) {
+					return false;
+				}
+
 				if (item.permission) {
 					return canPerformAction(item.module, item.permission);
 				}
 
 				return canAccessModule(item.module);
 			}),
-		[canAccessModule, canPerformAction, isMasterClient]
+		[canAccessModule, canPerformAction, isMasterClient, isSuperAdmin]
 	);
 
 	const visibleSections = useMemo(
@@ -309,6 +318,10 @@ export const Sidebar: React.FC = () => {
 							return false;
 						}
 
+						if (item.superAdminOnly && !isSuperAdmin) {
+							return false;
+						}
+
 						if (item.permission) {
 							return canPerformAction(item.module, item.permission);
 						}
@@ -317,7 +330,7 @@ export const Sidebar: React.FC = () => {
 					}),
 				}))
 				.filter((section) => section.items.length > 0),
-		[canAccessModule, canPerformAction, isMasterClient]
+		[canAccessModule, canPerformAction, isMasterClient, isSuperAdmin]
 	);
 
 	const activeSection = useMemo(
@@ -433,12 +446,6 @@ export const Sidebar: React.FC = () => {
 	]);
 
 	const handleSectionToggle = (sectionKey: string) => {
-		if (collapsed) {
-			toggleCollapsed();
-			setOpenSection(sectionKey);
-			return;
-		}
-
 		setOpenSection((current) => (current === sectionKey ? '' : sectionKey));
 	};
 
@@ -547,12 +554,14 @@ interface SidebarLinkItemProps {
 	item: SidebarNavItem;
 	collapsed: boolean;
 	isActive?: boolean;
+	onNavigate?: () => void;
 }
 
 const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 	item,
 	collapsed,
 	isActive = false,
+	onNavigate,
 }) => {
 	const location = useLocation();
 	const { t } = useTranslation('common');
@@ -570,7 +579,10 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 			].join(' ')}
 			aria-current={isSelected ? 'page' : undefined}
 			data-sidebar-active={isActive ? 'true' : undefined}
-			onClick={closeMobile}
+			onClick={() => {
+				closeMobile();
+				onNavigate?.();
+			}}
 			onMouseEnter={() =>
 				item.i18nNamespace && prefetchNamespace(item.i18nNamespace)
 			}
@@ -609,18 +621,70 @@ const SidebarSectionGroup: React.FC<SidebarSectionGroupProps> = ({
 	onToggle,
 }) => {
 	const { t } = useTranslation('common');
+	const location = useLocation();
+	const { closeMobile } = useSidebarStore();
 
-	const header = (
-		<UnstyledButton
-			className={[
-				styles.sectionHeader,
-				collapsed ? styles.sectionHeaderCollapsed : '',
-			].join(' ')}
-			onClick={onToggle}
-		>
-			<Group gap='xs' wrap='nowrap' className={styles.sectionHeaderInner}>
-				{section.icon}
-				{!collapsed && (
+	if (collapsed) {
+		return (
+			<div className={styles.sectionGroup}>
+				<Menu
+					position='right-start'
+					offset={10}
+					withinPortal
+					shadow='md'
+					trigger='click'
+					closeOnItemClick
+				>
+					<Menu.Target>
+						<UnstyledButton
+							className={[
+								styles.sectionHeader,
+								styles.sectionHeaderCollapsed,
+							].join(' ')}
+							aria-label={t(section.label)}
+						>
+							{section.icon}
+						</UnstyledButton>
+					</Menu.Target>
+					<Menu.Dropdown className={styles.compactSectionPanel}>
+						<Menu.Label className={styles.compactSectionPanelHeader}>
+							{t(section.label)}
+						</Menu.Label>
+						{section.items.map((item) => (
+							<Menu.Item
+								key={item.key}
+								component={Link}
+								to={item.to}
+								leftSection={item.icon}
+								className={[
+									styles.compactMenuItem,
+									isLinkActive(item, location.pathname)
+										? styles.compactMenuItemActive
+										: '',
+								].join(' ')}
+								onClick={() => closeMobile()}
+								onMouseEnter={() =>
+									item.i18nNamespace && prefetchNamespace(item.i18nNamespace)
+								}
+							>
+								{t(item.label)}
+							</Menu.Item>
+						))}
+					</Menu.Dropdown>
+				</Menu>
+			</div>
+		);
+	}
+
+	return (
+		<div className={styles.sectionGroup}>
+			<UnstyledButton
+				className={styles.sectionHeader}
+				onClick={onToggle}
+				aria-expanded={open}
+			>
+				<Group gap='xs' wrap='nowrap' className={styles.sectionHeaderInner}>
+					{section.icon}
 					<Text
 						size='xs'
 						fw={700}
@@ -630,9 +694,7 @@ const SidebarSectionGroup: React.FC<SidebarSectionGroupProps> = ({
 					>
 						{t(section.label)}
 					</Text>
-				)}
-			</Group>
-			{!collapsed && (
+				</Group>
 				<IconChevronDown
 					size={14}
 					className={[
@@ -640,29 +702,14 @@ const SidebarSectionGroup: React.FC<SidebarSectionGroupProps> = ({
 						open ? styles.sectionChevronOpen : '',
 					].join(' ')}
 				/>
-			)}
-		</UnstyledButton>
-	);
-
-	return (
-		<div className={styles.sectionGroup}>
-			{collapsed ? (
-				<Tooltip label={t(section.label)} position='right' withArrow>
-					{header}
-				</Tooltip>
-			) : (
-				header
-			)}
-			<Collapse
-				in={!collapsed && open}
-				onTransitionEnd={onCollapseTransitionEnd}
-			>
+			</UnstyledButton>
+			<Collapse expanded={open} onTransitionEnd={onCollapseTransitionEnd}>
 				<Stack gap={4} className={styles.sectionItems}>
 					{section.items.map((item) => (
 						<SidebarLinkItem
 							key={item.key}
 							item={item}
-							collapsed={collapsed}
+							collapsed={false}
 							isActive={activeItem?.key === item.key}
 						/>
 					))}

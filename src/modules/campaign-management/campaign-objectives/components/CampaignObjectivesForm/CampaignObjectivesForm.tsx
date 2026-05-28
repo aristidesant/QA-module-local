@@ -185,7 +185,7 @@ export const CampaignObjectivesForm: React.FC<CampaignObjectivesFormProps> = ({
 				onClick={() => setCategoryPickerOpen(true)}
 			/>
 
-			<Collapse in={categoryPickerOpen}>
+			<Collapse expanded={categoryPickerOpen}>
 				<CategoryPickerPanel
 					selectedCategoryId={
 						form.values.categoryId ? parseInt(form.values.categoryId, 10) : null

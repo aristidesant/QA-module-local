@@ -38,11 +38,32 @@
 .headerControls {
 	display: flex;
 	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	flex-wrap: wrap;
+	justify-content: flex-end;
+}
+
+.headerActionGroup {
+	display: flex;
+	align-items: center;
 	gap: var(--mantine-spacing-xs);
+	flex-wrap: wrap;
+}
+
+.headerDivider {
+	width: 1px;
+	height: 24px;
+	background: var(--workflow-shell-border-soft, var(--mantine-color-gray-2));
+	flex-shrink: 0;
 }
 
 @media (max-width: 48em) {
 	.headerControls {
-		flex-wrap: wrap;
+		width: 100%;
+		justify-content: flex-start;
+	}
+
+	.headerDivider {
+		display: none;
 	}
 }

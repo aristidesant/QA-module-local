@@ -1,0 +1,21 @@
+.loadingState {
+	min-height: 320px;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.tabList {
+	border-bottom: 1px solid var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark'] .tabList {
+	border-bottom-color: var(--surface-border);
+}
+
+.tab {
+	font-weight: 600;
+}
+
+.tabPanel {
+	padding-top: var(--mantine-spacing-xs);
+}

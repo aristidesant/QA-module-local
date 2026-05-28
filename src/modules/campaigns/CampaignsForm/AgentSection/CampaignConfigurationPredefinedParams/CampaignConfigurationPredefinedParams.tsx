@@ -5,12 +5,14 @@ import useCampaignsPredefinedParams, {
 } from '../../useCampaignsPredefinedParams';
 import { Stack, Text, Group, Paper, ThemeIcon } from '@mantine/core';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
-import { deepMergeConfig } from '~/utils/objectUtils';
-import type { CampaignPredefinedConversationConfig } from '~/models/CampaignPredefinedParam';
-import type { ConversationConfigModel } from '~/models/AgentListObject';
 import { IconCheck } from '@tabler/icons-react';
 import CampaignPredefinedParamsModal from './CampaignPredefinedParamsModal';
 import { useTranslation } from 'react-i18next';
+import type { ConversationConfigModel } from '~/models/AgentListObject';
+import {
+	applyCampaignBehaviorConversationConfig,
+	applyCampaignBehaviorPlatformSettings,
+} from '~/modules/campaigns/utils/campaignBehaviorConfig';
 import styles from './CampaignConfigurationPredefinedParams.module.css';
 
 const CampaignConfigurationPredefinedParams: React.FC = () => {
@@ -27,56 +29,27 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const applyConversationConfig = (
-		config: CampaignPredefinedConversationConfig
+		params: CampaignPredefinedParam['params']
 	) => {
 		const currentAgentConfig = form.values.agentConfig || {};
-		const baseConversationConfig: Record<string, any> = {
-			...(currentAgentConfig.conversationConfig || {}),
-		};
-		const nextPromptConfig = {
-			...(baseConversationConfig.agent?.prompt || {}),
-			...config.agent?.prompt,
-		};
-
-		if (
-			config.agent?.prompt &&
-			!Object.prototype.hasOwnProperty.call(
-				config.agent.prompt,
-				'reasoningEffort'
-			)
-		) {
-			nextPromptConfig.reasoningEffort = undefined;
-		}
-
-		const mergedConfig = deepMergeConfig(baseConversationConfig, {
-			...(config.tts
-				? {
-						tts: {
-							...config.tts,
-						},
-					}
-				: {}),
-			...(config.asr
-				? {
-						asr: {
-							...config.asr,
-						},
-					}
-				: {}),
-			...(config.agent
-				? {
-						agent: {
-							...(baseConversationConfig.agent || {}),
-							prompt: nextPromptConfig,
-						},
-					}
-				: {}),
-		}) as ConversationConfigModel;
+		const mergedConfig = applyCampaignBehaviorConversationConfig(
+			(currentAgentConfig.conversationConfig || {}) as unknown as Record<
+				string,
+				unknown
+			>,
+			params.conversationConfig
+		) as unknown as ConversationConfigModel;
+		const mergedPlatformSettings = applyCampaignBehaviorPlatformSettings(
+			(currentAgentConfig.platformSettings || {}) as Record<string, unknown>,
+			params.platformSettings
+		);
 
 		form.setValues({
 			agentConfig: {
 				...currentAgentConfig,
 				conversationConfig: mergedConfig,
+				platformSettings:
+					mergedPlatformSettings as typeof currentAgentConfig.platformSettings,
 			},
 		});
 	};
@@ -86,8 +59,8 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 	};
 
 	const handleApplyFromModal = (param: CampaignPredefinedParam) => {
-		if (param.params?.conversationConfig) {
-			applyConversationConfig(param.params.conversationConfig);
+		if (param.params?.conversationConfig || param.params?.platformSettings) {
+			applyConversationConfig(param.params);
 			setAppliedParam(param);
 			setIsModalOpen(false);
 			form.setFieldValue('configId', param.id);

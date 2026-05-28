@@ -1,6 +1,6 @@
 import { isAxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
 	TextInput,
 	Textarea,
@@ -30,7 +30,7 @@ import { CampaignStatus } from '~/models/CampaignStatus';
 import type { CampaignObjective } from '~/models/CampaignObjectiveModel';
 import type { CreateCampaignWithAgentDTO } from '~/api/campaignsApi';
 import styles from '../CampaignWizard.module.css';
-import { useGetCampaignObjectives } from '~/queries/campaignObjectivesQueries';
+import { useGetCampaignObjectivesAll } from '~/queries/campaignObjectivesQueries';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
 import { CampaignObjectivesForm } from '~/modules/campaign-management/campaign-objectives/components/CampaignObjectivesForm/CampaignObjectivesForm';
 import {
@@ -38,8 +38,11 @@ import {
 	IconAlertCircle,
 	IconPhoneOutgoing,
 	IconPhoneIncoming,
+	IconArrowsExchange,
 } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
+import CampaignRoleVisibilitySelector from '~/modules/campaigns/components/CampaignRoleVisibilitySelector';
+import CampaignVoicePoolSelector from '~/modules/campaigns/components/CampaignVoicePoolSelector';
 
 interface StepOneGeneralProps {
 	onNext: () => void;
@@ -55,7 +58,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		'campaign.form.shared',
 		'common',
 	]);
-	type CampaignTypeValue = 'INBOUND' | 'OUTBOUND';
+	type CampaignTypeValue = 'INBOUND' | 'OUTBOUND' | 'HYBRID';
 
 	const {
 		campaignName,
@@ -63,11 +66,15 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		campaignType,
 		phoneNumberId,
 		objectiveId,
+		roleIds,
+		selectedVoiceIds,
 		setCampaignName,
 		setDescription,
 		setCampaignType,
 		setPhoneNumberId,
 		setObjectiveId,
+		setRoleIds,
+		setSelectedVoiceIds,
 		defaultMaxWaves,
 		setDefaultMaxWaves,
 		defaultWaveExecutionDelaySeconds,
@@ -81,9 +88,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 
 	const createCampaignWithAgent = useCreateCampaignWithAgent();
 	const { mutateAsync: setDraft } = useSetCampaignDraft();
-	const { data: objectivesResponse } = useGetCampaignObjectives({
-		active: true,
-	});
+	const { data: objectivesResponse } = useGetCampaignObjectivesAll();
 	const { data: voicesResponse } = useGetAllAgentVoices();
 
 	const form = useForm({
@@ -93,6 +98,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			campaignType,
 			phoneNumberId,
 			objectiveId,
+			roleIds,
+			selectedVoiceIds,
 			defaultMaxWaves,
 			defaultWaveExecutionDelaySeconds,
 		},
@@ -108,29 +115,57 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 			phoneNumberId: (value: number | null) =>
 				!value ? t('wizard.steps.general.validation.phoneIdRequired') : null,
 			defaultMaxWaves: (value: number, values) =>
-				values.campaignType === 'OUTBOUND' && (!value || value < 1)
+				(values.campaignType === 'OUTBOUND' ||
+					values.campaignType === 'HYBRID') &&
+				(!value || value < 1)
 					? t('wizard.steps.general.validation.wavesRequired')
 					: null,
 			defaultWaveExecutionDelaySeconds: (value: number, values) =>
-				values.campaignType === 'OUTBOUND' && value < 0
+				(values.campaignType === 'OUTBOUND' ||
+					values.campaignType === 'HYBRID') &&
+				value < 0
 					? t('wizard.steps.general.validation.waveDelayRequired')
 					: null,
 			objectiveId: (value: number | null, values) =>
-				values.campaignType === 'OUTBOUND' && !value
+				(values.campaignType === 'OUTBOUND' ||
+					values.campaignType === 'HYBRID') &&
+				!value
 					? t('wizard.steps.general.validation.objectiveRequired')
+					: null,
+			selectedVoiceIds: (value: string[]) =>
+				value.length === 0
+					? t('wizard.steps.general.validation.voiceRequired')
 					: null,
 		},
 		validateInputOnChange: true,
 	});
 
+	const availableVoiceIds = useMemo(
+		() => voicesResponse?.map((voice) => voice.voice.id) ?? [],
+		[voicesResponse]
+	);
+
+	useEffect(() => {
+		if (availableVoiceIds.length === 0) {
+			return;
+		}
+
+		if (
+			selectedVoiceIds.length > 0 ||
+			form.values.selectedVoiceIds.length > 0
+		) {
+			return;
+		}
+
+		form.setFieldValue('selectedVoiceIds', availableVoiceIds);
+		setSelectedVoiceIds(availableVoiceIds);
+	}, [availableVoiceIds, form, selectedVoiceIds.length, setSelectedVoiceIds]);
+
 	const handleSubmit = async (values: typeof form.values) => {
 		setIsSubmitting(true);
 
-		// Get default voice (first available voice)
-		const defaultVoiceId =
-			voicesResponse && voicesResponse.length > 0
-				? voicesResponse[0].voice.id
-				: '';
+		const selectedVoiceIds = values.selectedVoiceIds.filter(Boolean);
+		const defaultVoiceId = selectedVoiceIds[0] ?? '';
 
 		if (!defaultVoiceId) {
 			setIsSubmitting(false);
@@ -149,14 +184,18 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		const agentConfig: Record<string, unknown> = {};
 
 		if (values.phoneNumberId) {
-			if (values.campaignType === 'OUTBOUND') {
+			if (
+				values.campaignType === 'OUTBOUND' ||
+				values.campaignType === 'HYBRID'
+			) {
 				agentConfig.outboundPhoneNumberId = values.phoneNumberId;
 			} else if (values.campaignType === 'INBOUND') {
 				agentConfig.inboundPhoneNumberId = values.phoneNumberId;
 			}
 		}
 
-		const isOutboundType = values.campaignType === 'OUTBOUND';
+		const isOutboundType =
+			values.campaignType === 'OUTBOUND' || values.campaignType === 'HYBRID';
 
 		const dto: CreateCampaignWithAgentDTO = {
 			campaign: {
@@ -167,6 +206,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				type: values.campaignType,
 				campaignExecutionType: 'TIME_BASED',
 				status: CampaignStatus.INACTIVE,
+				roleIds: values.roleIds,
+				voiceIds: selectedVoiceIds,
 				...(isOutboundType && {
 					defaultMaxWaves: values.defaultMaxWaves || 3,
 					defaultWaveExecutionDelaySeconds:
@@ -180,7 +221,7 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				},
 				platformSettings: {},
 				name: agentName,
-				type: values.campaignType,
+				type: values.campaignType === 'INBOUND' ? 'INBOUND' : 'OUTBOUND',
 				voiceId: defaultVoiceId,
 			},
 		};
@@ -196,6 +237,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				setCampaignType(values.campaignType);
 				setPhoneNumberId(values.phoneNumberId);
 				setObjectiveId(isOutboundType ? values.objectiveId : null);
+				setRoleIds(values.roleIds);
+				setSelectedVoiceIds(selectedVoiceIds);
 				setDefaultMaxWaves(isOutboundType ? values.defaultMaxWaves || 3 : 3);
 				setDefaultWaveExecutionDelaySeconds(
 					isOutboundType ? values.defaultWaveExecutionDelaySeconds || 0 : 0
@@ -246,7 +289,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 	};
 
 	const handleCampaignTypeChange = (value: string) => {
-		if (value !== 'INBOUND' && value !== 'OUTBOUND') return;
+		if (value !== 'INBOUND' && value !== 'OUTBOUND' && value !== 'HYBRID')
+			return;
 		const nextValue: CampaignTypeValue = value;
 		form.setFieldValue('campaignType', nextValue);
 		form.setFieldValue('phoneNumberId', null);
@@ -259,7 +303,9 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 		setCampaignType(nextValue);
 	};
 
-	const isFormOutbound = form.values.campaignType === 'OUTBOUND';
+	const isFormOutbound =
+		form.values.campaignType === 'OUTBOUND' ||
+		form.values.campaignType === 'HYBRID';
 
 	return (
 		<>
@@ -308,6 +354,17 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 												<IconPhoneIncoming size={16} />
 												<span>
 													{t('wizard.steps.general.campaignTypeInbound')}
+												</span>
+											</Group>
+										),
+									},
+									{
+										value: 'HYBRID',
+										label: (
+											<Group gap={6} justify='center'>
+												<IconArrowsExchange size={16} />
+												<span>
+													{t('wizard.steps.general.campaignTypeHybrid')}
 												</span>
 											</Group>
 										),
@@ -394,12 +451,10 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 													placeholder={t(
 														'wizard.steps.general.objectivePlaceholder'
 													)}
-													data={
-														objectivesResponse?.data?.map((obj) => ({
-															value: obj.id.toString(),
-															label: obj.name,
-														})) || []
-													}
+													data={(objectivesResponse ?? []).map((obj) => ({
+														value: obj.id.toString(),
+														label: obj.name,
+													}))}
 													value={form.values.objectiveId?.toString() || null}
 													onChange={(value) =>
 														form.setFieldValue(
@@ -458,6 +513,60 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 									</>
 								)}
 							</Stack>
+						</Box>
+
+						<Box className={styles.wizardCard}>
+							<div className={styles.sectionHeading}>
+								<Text className={styles.sectionHeadingTitle}>
+									{t('wizard.steps.general.roleVisibilityTitle')}
+								</Text>
+								<Text className={styles.sectionHeadingDescription}>
+									{t('wizard.steps.general.roleVisibilityDesc')}
+								</Text>
+							</div>
+							<CampaignRoleVisibilitySelector
+								value={form.values.roleIds}
+								onChange={(nextRoleIds) =>
+									form.setFieldValue('roleIds', nextRoleIds)
+								}
+								label={t('wizard.steps.general.roleVisibilityLabel')}
+								description={t('wizard.steps.general.roleVisibilityFieldDesc')}
+								placeholder={t(
+									'wizard.steps.general.roleVisibilityPlaceholder'
+								)}
+								hint={t('wizard.steps.general.roleVisibilityHint')}
+							/>
+						</Box>
+
+						<Box className={styles.wizardCard}>
+							<div className={styles.sectionHeading}>
+								<Text className={styles.sectionHeadingTitle}>
+									{t('wizard.steps.general.voicePoolTitle')}
+								</Text>
+								<Text className={styles.sectionHeadingDescription}>
+									{t('wizard.steps.general.voicePoolDesc')}
+								</Text>
+							</div>
+							<CampaignVoicePoolSelector
+								value={form.values.selectedVoiceIds}
+								onChange={(nextVoiceIds) => {
+									form.setFieldValue('selectedVoiceIds', nextVoiceIds);
+									setSelectedVoiceIds(nextVoiceIds);
+								}}
+								label={t('wizard.steps.general.voicePoolLabel')}
+								description={t('wizard.steps.general.voicePoolFieldDesc')}
+								placeholder={t('wizard.steps.general.voicePoolPlaceholder')}
+								hint={t('wizard.steps.general.voicePoolHint')}
+								noVoicesMessage={t('wizard.steps.general.errorVoices')}
+								noMatchesMessage={t('wizard.steps.general.voicePoolNoMatches')}
+								loadErrorTitle={t(
+									'wizard.steps.general.voicePoolLoadErrorTitle'
+								)}
+								loadErrorDescription={t(
+									'wizard.steps.general.voicePoolLoadErrorDescription'
+								)}
+								required
+							/>
 						</Box>
 					</div>
 

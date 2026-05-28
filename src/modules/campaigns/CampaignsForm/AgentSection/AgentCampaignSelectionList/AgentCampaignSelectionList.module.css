@@ -1,0 +1,153 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.headerText {
+	min-width: 0;
+}
+
+.list {
+	gap: var(--mantine-spacing-sm);
+}
+
+.secondaryList {
+	gap: var(--mantine-spacing-xs);
+}
+
+.loadingCard,
+.emptyCard,
+.featuredCard,
+.agentRow {
+	background: var(--mantine-color-body);
+	border-color: var(--mantine-color-gray-3);
+}
+
+.loadingCard,
+.emptyCard,
+.featuredCard {
+	box-shadow: var(--mantine-shadow-sm);
+}
+
+[data-mantine-color-scheme='dark'] .loadingCard,
+[data-mantine-color-scheme='dark'] .emptyCard,
+[data-mantine-color-scheme='dark'] .featuredCard,
+[data-mantine-color-scheme='dark'] .agentRow {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-7);
+}
+
+.loadingCard,
+.emptyCard {
+	padding: var(--mantine-spacing-md);
+}
+
+.featuredCard {
+	padding: var(--mantine-spacing-lg);
+	transition:
+		border-color 160ms ease,
+		background-color 160ms ease,
+		box-shadow 160ms ease,
+		transform 160ms ease;
+}
+
+.featuredCard:hover {
+	border-color: var(--mantine-color-green-4);
+	background: var(--mantine-color-gray-0);
+	box-shadow: var(--mantine-shadow-md);
+	transform: translateY(-1px);
+}
+
+[data-mantine-color-scheme='dark'] .featuredCard:hover {
+	border-color: var(--mantine-color-green-6);
+	background: var(--mantine-color-dark-6);
+}
+
+.featuredCard:focus-visible,
+.agentRow:focus-visible {
+	outline: 2px solid var(--mantine-color-green-5);
+	outline-offset: 2px;
+}
+
+.agentRow {
+	display: block;
+	width: 100%;
+	padding: var(--mantine-spacing-md);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	cursor: pointer;
+	text-align: left;
+	transition:
+		border-color 160ms ease,
+		background-color 160ms ease,
+		box-shadow 160ms ease,
+		transform 160ms ease;
+}
+
+.agentRow:hover {
+	border-color: var(--mantine-color-green-4);
+	background: var(--mantine-color-gray-0);
+	box-shadow: var(--mantine-shadow-sm);
+	transform: translateY(-1px);
+}
+
+[data-mantine-color-scheme='dark'] .agentRow:hover {
+	border-color: var(--mantine-color-green-6);
+	background: var(--mantine-color-dark-6);
+}
+
+.agentRow:active,
+.featuredCard:active {
+	transform: translateY(0);
+}
+
+.cardContent {
+	min-width: 0;
+	flex: 1;
+}
+
+.featuredCopy,
+.rowCopy {
+	min-width: 0;
+}
+
+.featuredCopy {
+	padding-top: 2px;
+}
+
+.rowCopy {
+	min-width: 0;
+}
+
+.agentName {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.agentAvatar {
+	flex-shrink: 0;
+	font-weight: 700;
+	letter-spacing: -0.04em;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+[data-mantine-color-scheme='dark'] .agentAvatar {
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+}
+
+.badgeGroup {
+	flex-wrap: wrap;
+}
+
+.actionWrapper {
+	display: inline-flex;
+	align-items: flex-start;
+	flex-shrink: 0;
+}
+
+.featuredActionIcon {
+	margin-top: 2px;
+}

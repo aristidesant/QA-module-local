@@ -191,9 +191,9 @@
 
 .title {
 	color: var(--mantine-color-dark-7);
-	letter-spacing: -0.03em;
-	line-height: 1.08;
-	font-size: 1.1rem;
+	letter-spacing: -0.015em;
+	line-height: 1.4;
+	font-size: var(--mantine-font-size-sm);
 	overflow: hidden;
 	display: -webkit-box;
 	-webkit-line-clamp: 2;

@@ -1,6 +1,11 @@
 import { createFormContext } from '@mantine/form';
+import type { CampaignDataCollectionVariable } from '~/models/CampaignsModel';
 
 export type DataCollectionType = 'boolean' | 'integer' | 'number' | 'string';
+export type AnalyticsDataCollectionSource =
+	| 'manual'
+	| 'custom-variable'
+	| 'template-variable';
 
 export interface DataCollectionItem {
 	type: DataCollectionType;
@@ -13,10 +18,13 @@ export interface DataCollectionItem {
 
 export interface AnalyticsDataCollectionRow extends DataCollectionItem {
 	id: string;
+	campaignVariableId?: number;
+	agentId?: string | null;
 	identifier: string;
+	isActive: boolean;
 	isNew: boolean;
 	isSystemDefault?: boolean;
-	source?: 'manual' | 'custom-variable';
+	source?: AnalyticsDataCollectionSource;
 	linkedCustomVariableId?: number;
 	linkedTemplateId?: number;
 }
@@ -42,9 +50,68 @@ export const createEmptyAnalyticsRow = (): AnalyticsDataCollectionRow => ({
 	dynamicVariable: '',
 	isSystemProvided: false,
 	isSystemDefault: false,
+	isActive: true,
 	isNew: true,
 	source: 'manual',
 });
+
+const normalizeItem = (
+	item: Record<string, unknown>
+): Pick<
+	AnalyticsDataCollectionRow,
+	| 'type'
+	| 'description'
+	| 'enum'
+	| 'constantValue'
+	| 'dynamicVariable'
+	| 'isSystemProvided'
+	| 'isSystemDefault'
+> => {
+	const type = item.type;
+	const normalizedType: DataCollectionType =
+		type === 'boolean' ||
+		type === 'integer' ||
+		type === 'number' ||
+		type === 'string'
+			? type
+			: 'string';
+
+	const constantValue =
+		typeof item.constantValue === 'string'
+			? item.constantValue
+			: typeof item.constant_value === 'string'
+				? item.constant_value
+				: '';
+
+	const dynamicVariable =
+		typeof item.dynamicVariable === 'string'
+			? item.dynamicVariable
+			: typeof item.dynamic_variable === 'string'
+				? item.dynamic_variable
+				: '';
+
+	const isSystemProvided =
+		typeof item.isSystemProvided === 'boolean'
+			? item.isSystemProvided
+			: typeof item.is_system_provided === 'boolean'
+				? item.is_system_provided
+				: false;
+
+	const isSystemDefault =
+		typeof item.isSystemDefault === 'boolean' ? item.isSystemDefault : false;
+
+	return {
+		type: normalizedType,
+		description: typeof item.description === 'string' ? item.description : '',
+		enum: Array.isArray(item.enum)
+			? item.enum.filter((entry): entry is string => typeof entry === 'string')
+			: [],
+		constantValue,
+		dynamicVariable,
+		isSystemProvided,
+		isSystemDefault,
+	};
+};
 
 export const getDataCollectionFromAgentConfig = (
 	agentConfig: unknown
@@ -97,58 +164,13 @@ export const normalizeDataCollectionRows = (
 				value && typeof value === 'object'
 					? (value as Record<string, unknown>)
 					: {};
-
-			const type = item.type;
-			const normalizedType: DataCollectionType =
-				type === 'boolean' ||
-				type === 'integer' ||
-				type === 'number' ||
-				type === 'string'
-					? type
-					: 'string';
-
-			// Support both camelCase (new backend) and snake_case (legacy backend data)
-			const constantValue =
-				typeof item.constantValue === 'string'
-					? item.constantValue
-					: typeof item.constant_value === 'string'
-						? item.constant_value
-						: '';
-
-			const dynamicVariable =
-				typeof item.dynamicVariable === 'string'
-					? item.dynamicVariable
-					: typeof item.dynamic_variable === 'string'
-						? item.dynamic_variable
-						: '';
-
-			const isSystemProvided =
-				typeof item.isSystemProvided === 'boolean'
-					? item.isSystemProvided
-					: typeof item.is_system_provided === 'boolean'
-						? item.is_system_provided
-						: false;
-
-			const isSystemDefault =
-				typeof item.isSystemDefault === 'boolean'
-					? item.isSystemDefault
-					: false;
+			const normalizedItem = normalizeItem(item);
 
 			return {
 				id: crypto.randomUUID(),
 				identifier,
-				type: normalizedType,
-				description:
-					typeof item.description === 'string' ? item.description : '',
-				enum: Array.isArray(item.enum)
-					? item.enum.filter(
-							(entry): entry is string => typeof entry === 'string'
-						)
-					: [],
-				constantValue,
-				dynamicVariable,
-				isSystemProvided,
-				isSystemDefault,
+				...normalizedItem,
+				isActive: true,
 				isNew: false,
 				source: 'manual',
 			};
@@ -156,32 +178,88 @@ export const normalizeDataCollectionRows = (
 	);
 };
 
+export const normalizeCampaignDataCollectionRows = (
+	variables: CampaignDataCollectionVariable[] | null | undefined
+): AnalyticsDataCollectionRow[] => {
+	if (!Array.isArray(variables) || variables.length === 0) {
+		return [];
+	}
+
+	return [...variables]
+		.sort((left, right) => left.key.localeCompare(right.key))
+		.map((variable) => {
+			const item =
+				variable.definition && typeof variable.definition === 'object'
+					? (variable.definition as Record<string, unknown>)
+					: {};
+			const normalizedItem = normalizeItem(item);
+
+			return {
+				id: crypto.randomUUID(),
+				campaignVariableId: variable.id,
+				agentId: variable.agentId ?? null,
+				identifier: variable.key,
+				...normalizedItem,
+				isActive: variable.isActive !== false,
+				isNew: false,
+				source: 'manual',
+			};
+		});
+};
+
+const mapRowToDataCollectionItem = (
+	row: AnalyticsDataCollectionRow
+): DataCollectionItem => {
+	const item: DataCollectionItem = {
+		type: row.type,
+		description: row.description,
+		constantValue: row.constantValue ?? '',
+		dynamicVariable: row.dynamicVariable ?? '',
+		isSystemProvided: row.isSystemProvided ?? false,
+	};
+
+	if (row.type === 'string') {
+		item.enum = Array.isArray(row.enum)
+			? row.enum.filter((entry) => entry.trim().length > 0)
+			: [];
+	}
+
+	return item;
+};
+
 export const mapRowsToDataCollection = (
 	rows: AnalyticsDataCollectionRow[]
 ): Record<string, DataCollectionItem> => {
 	return rows.reduce<Record<string, DataCollectionItem>>((acc, row) => {
 		const trimmedIdentifier = row.identifier.trim();
-		if (!trimmedIdentifier) {
+		if (!trimmedIdentifier || row.isActive === false) {
 			return acc;
 		}
 
-		const item: DataCollectionItem = {
-			type: row.type,
-			description: row.description,
-			constantValue: row.constantValue ?? '',
-			dynamicVariable: row.dynamicVariable ?? '',
-			isSystemProvided: row.isSystemProvided ?? false,
-		};
-
-		// Only include enum for string type; ElevenLabs returns 400 for other types
-		if (row.type === 'string') {
-			item.enum = Array.isArray(row.enum)
-				? row.enum.filter((entry) => entry.trim().length > 0)
-				: [];
-		}
-
-		acc[trimmedIdentifier] = item;
+		acc[trimmedIdentifier] = mapRowToDataCollectionItem(row);
 
 		return acc;
 	}, {});
+};
+
+export const mapRowsToCampaignDataCollectionVariables = (
+	rows: AnalyticsDataCollectionRow[]
+): CampaignDataCollectionVariable[] => {
+	return rows.reduce<CampaignDataCollectionVariable[]>((accumulator, row) => {
+		const trimmedIdentifier = row.identifier.trim();
+		if (!trimmedIdentifier) {
+			return accumulator;
+		}
+
+		accumulator.push({
+			id: row.campaignVariableId,
+			agentId: row.agentId ?? null,
+			key: trimmedIdentifier,
+			label: trimmedIdentifier,
+			definition: mapRowToDataCollectionItem(row),
+			isActive: row.isActive !== false,
+		});
+
+		return accumulator;
+	}, []);
 };

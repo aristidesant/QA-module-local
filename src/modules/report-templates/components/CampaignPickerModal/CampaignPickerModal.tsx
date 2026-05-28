@@ -41,7 +41,7 @@ import type {
 	ExportReportTemplateDto,
 } from '~/models/ReportValue';
 import { useGetCampaignsBySchemaId } from '~/queries/campaignContactSchemasQueries';
-import { useGetSimpleCampaigns } from '~/queries/campaignsQueries';
+import { useGetMyCampaigns } from '~/queries/campaignsQueries';
 import { useGetCampaignContactLists } from '~/queries/contactGroupQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import styles from './CampaignPickerModal.module.css';
@@ -376,7 +376,7 @@ const CampaignSelectionCard = ({
 			</Group>
 
 			<Collapse
-				in={campaign.selected && campaign.expanded}
+				expanded={campaign.selected && campaign.expanded}
 				transitionDuration={160}
 			>
 				<Divider my='sm' />
@@ -542,7 +542,7 @@ const CampaignPickerModal = ({
 			!!templateSchemaId
 		);
 	const { data: simpleCampaigns = [], isLoading: isLoadingSimpleCampaigns } =
-		useGetSimpleCampaigns(!templateSchemaId);
+		useGetMyCampaigns(!templateSchemaId);
 
 	const campaigns = useMemo<CampaignOption[]>(() => {
 		const source = templateSchemaId ? schemaCampaigns : simpleCampaigns;

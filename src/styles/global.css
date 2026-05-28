@@ -52,3 +52,81 @@ body {
 	-moz-osx-font-smoothing: grayscale;
 	text-rendering: optimizeLegibility;
 }
+
+/* ──────────────── Theme overrides for Mantine components ────────────────
+ * These rules replace pseudo-selector keys previously in src/theme.ts styles API.
+ * The styles API only supports valid CSS property keys (camelCase),
+ * not pseudo-classes like :hover, :focus, or attribute selectors.
+ * React 19+ validates style keys strictly, so these must live in CSS.
+ * ──────────────────────────────────────────────────────────────────────── */
+
+/* Input / Textarea — hover */
+.mantine-Input-input:hover {
+	border-color: var(--surface-border-strong);
+	background-color: var(--surface-card);
+}
+
+/* Input / Textarea — focus */
+.mantine-Input-input:focus,
+.mantine-Input-input:focus-visible {
+	border-color: var(--brand);
+	box-shadow: var(--sh-focus);
+	background-color: var(--surface-card);
+}
+
+/* Input / Textarea — disabled */
+.mantine-Input-input:disabled,
+.mantine-Input-input[data-disabled] {
+	opacity: 0.65;
+	cursor: not-allowed;
+}
+
+/* Button — filled/gradient shadow */
+.mantine-Button-root[data-variant='filled'],
+.mantine-Button-root[data-variant='gradient'] {
+	box-shadow: var(--sh-xs);
+}
+
+.mantine-Button-root[data-variant='filled']:hover:not(:disabled),
+.mantine-Button-root[data-variant='gradient']:hover:not(:disabled) {
+	box-shadow: var(--sh-sm);
+	transform: translateY(-1px);
+}
+
+.mantine-Button-root[data-variant='filled']:active:not(:disabled),
+.mantine-Button-root[data-variant='gradient']:active:not(:disabled) {
+	transform: translateY(0);
+}
+
+/* Button — disabled */
+.mantine-Button-root:disabled,
+.mantine-Button-root[data-disabled] {
+	box-shadow: none;
+}
+
+/* Tabs — active tab */
+.mantine-Tabs-tab[data-active] {
+	color: var(--brand);
+}
+
+/* ActionIcon — disabled */
+.mantine-ActionIcon-root:disabled,
+.mantine-ActionIcon-root[data-disabled] {
+	opacity: 0.6;
+	cursor: not-allowed;
+}
+
+/* Card — hover */
+.mantine-Card-root:hover {
+	border-color: var(--surface-border-strong);
+	box-shadow: var(--sh-md);
+}
+
+/* Select — focus (extends Input styles) */
+.mantine-Select-input:focus,
+.mantine-Select-input:focus-visible,
+.mantine-Select-input[data-focus='true'] {
+	border-color: var(--brand);
+	box-shadow: var(--sh-focus);
+	background-color: var(--surface-card);
+}

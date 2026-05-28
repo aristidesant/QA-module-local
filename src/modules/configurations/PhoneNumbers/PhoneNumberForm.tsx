@@ -230,7 +230,7 @@ const TwilioSection = memo(function TwilioSection({
 				/>
 			</Group>
 
-			<Collapse in={regionConfigOpen}>
+			<Collapse expanded={regionConfigOpen}>
 				<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='xs'>
 					<Select
 						label={t('form.fields.regionConfig.regionId')}
@@ -309,7 +309,7 @@ const SipInboundSection = memo(function SipInboundSection({
 					/>
 				}
 			/>
-			<Collapse in={inboundEnabled}>
+			<Collapse expanded={inboundEnabled}>
 				<Stack gap='xs'>
 					<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='xs'>
 						<TagsInput
@@ -410,7 +410,7 @@ const SipOutboundSection = memo(function SipOutboundSection({
 					/>
 				}
 			/>
-			<Collapse in={outboundEnabled}>
+			<Collapse expanded={outboundEnabled}>
 				<Stack gap='xs'>
 					<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='xs'>
 						<TextInput

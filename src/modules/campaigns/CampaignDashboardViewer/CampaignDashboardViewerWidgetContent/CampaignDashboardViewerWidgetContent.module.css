@@ -40,22 +40,6 @@
 	color: var(--mantine-color-dark-3);
 }
 
-[data-mantine-color-scheme='dark'] .legendRow:hover {
-	background: var(--mantine-color-dark-6);
-}
-
-[data-mantine-color-scheme='dark'] .legendName {
-	color: var(--mantine-color-dark-1);
-}
-
-[data-mantine-color-scheme='dark'] .legendValue {
-	color: var(--mantine-color-dark-0);
-}
-
-[data-mantine-color-scheme='dark'] .legendBar {
-	background: var(--mantine-color-dark-5);
-}
-
 [data-mantine-color-scheme='dark'] .tableShell {
 	background: color-mix(in srgb, var(--mantine-color-dark-7) 95%, transparent);
 	border-color: var(--mantine-color-dark-5);
@@ -227,10 +211,17 @@
 .chartWrapper {
 	flex: 1;
 	min-height: 0;
+	min-width: 0;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
 	overflow: hidden;
+}
+
+.chartPlaceholder {
+	flex: 1;
+	min-height: 72px;
+	width: 100%;
 }
 
 /* ── Pie / Donut layout ───────────────────────────── */
@@ -255,6 +246,15 @@
 	align-items: center;
 	min-width: 0;
 	min-height: 0;
+}
+
+.donutChartWrapper {
+	flex: 1;
+	min-height: 0;
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 }
 
 .donutCenterWrapper {
@@ -378,34 +378,6 @@
 	opacity: 0.9;
 }
 
-.legendBarFill rect {
-	transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.legendBarFill rect[data-accent='indigo'] {
-	fill: var(--mantine-color-indigo-5);
-}
-
-.legendBarFill rect[data-accent='blue'] {
-	fill: var(--mantine-color-blue-5);
-}
-
-.legendBarFill rect[data-accent='green'] {
-	fill: var(--mantine-color-green-5);
-}
-
-.legendBarFill rect[data-accent='orange'] {
-	fill: var(--mantine-color-orange-5);
-}
-
-.legendBarFill rect[data-accent='pink'] {
-	fill: var(--mantine-color-pink-5);
-}
-
-.legendBarFill rect[data-accent='grape'] {
-	fill: var(--mantine-color-grape-5);
-}
-
 .legendDot {
 	width: 9px;
 	height: 9px;
@@ -436,6 +408,22 @@
 
 .legendDot[data-accent='grape'] {
 	background: var(--mantine-color-grape-5);
+}
+
+[data-mantine-color-scheme='dark'] .legendRow:hover {
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .legendName {
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .legendValue {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .legendBar {
+	background: var(--mantine-color-dark-5);
 }
 
 /* ── Table ────────────────────────────────────────── */
@@ -542,7 +530,7 @@
 	padding: 16px 8px;
 }
 
-lineChartGhost {
+.lineChartGhost {
 	width: 100%;
 	max-width: 240px;
 	height: 52px;

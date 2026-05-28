@@ -21,6 +21,7 @@ import { useWorkflowNodeEditor } from '../WorkflowNodeEditorContext';
 import { useWorkflowCanvasActions } from '../WorkflowCanvas/WorkflowCanvasActionsContext';
 import type { WorkflowNodeData } from '../WorkflowNode/WorkflowNodeTypes';
 import NodeStylePopover from '../NodeStylePopover';
+import { isWorkflowMultiSelectClick } from '../utils/workflowSelectionUtils';
 import styles from './WorkflowNodeActions.module.css';
 
 interface WorkflowNodeActionsProps {
@@ -71,14 +72,16 @@ const WorkflowNodeActions = ({
 
 	const handleAddClick = () => {
 		if (position) {
-			addNode(nodeId, position);
+			return addNode(nodeId, position);
 		}
+		return undefined;
 	};
 
 	const handleAddNodeWithType = (type: WorkflowNodeType) => {
 		if (position) {
-			addNodeWithType(nodeId, position, type);
+			return addNodeWithType(nodeId, position, type);
 		}
+		return undefined;
 	};
 
 	const handleAddNodeWithVariant = (
@@ -86,8 +89,9 @@ const WorkflowNodeActions = ({
 		variant: 'transfer' | 'subagent'
 	) => {
 		if (position) {
-			addNodeWithVariant(nodeId, position, { type, variant });
+			return addNodeWithVariant(nodeId, position, { type, variant });
 		}
+		return undefined;
 	};
 
 	const menuItems = useMemo(() => {
@@ -102,6 +106,11 @@ const WorkflowNodeActions = ({
 				variant: 'transfer' as const,
 				label: t('form.workflow.nodeMenu.agentTransfer'),
 				icon: IconUserCog,
+			},
+			{
+				type: WORKFLOW_NODE_TYPES.UPDATE_STATE,
+				label: t('form.workflow.nodeMenu.updateState'),
+				icon: IconPencil,
 			},
 			{
 				type: WORKFLOW_NODE_TYPES.PHONE_NUMBER,
@@ -173,7 +182,13 @@ const WorkflowNodeActions = ({
 									if ('variant' in item && item.variant) {
 										handleAddNodeWithVariant(item.type, item.variant);
 									} else {
-										handleAddNodeWithType(item.type);
+										const newNodeId = handleAddNodeWithType(item.type);
+										if (
+											item.type === WORKFLOW_NODE_TYPES.UPDATE_STATE &&
+											newNodeId
+										) {
+											openNodeDrawer(newNodeId);
+										}
 									}
 									setIsMenuOpen(false);
 								}}
@@ -194,9 +209,14 @@ const WorkflowNodeActions = ({
 						title={t('form.workflow.actions.add')}
 						onClick={
 							isStartNode
-								? () =>
-										handleAddNodeWithType(WORKFLOW_NODE_TYPES.STANDALONE_AGENT)
-								: handleAddClick
+								? (event) => {
+										if (isWorkflowMultiSelectClick(event)) return;
+										handleAddNodeWithType(WORKFLOW_NODE_TYPES.STANDALONE_AGENT);
+									}
+								: (event) => {
+										if (isWorkflowMultiSelectClick(event)) return;
+										handleAddClick();
+									}
 						}
 						className={`${styles.actionButton} ${styles.actionButtonPrimary}`}
 					>
@@ -214,7 +234,8 @@ const WorkflowNodeActions = ({
 						variant='light'
 						color='gray'
 						radius='sm'
-						onClick={() => {
+						onClick={(event) => {
+							if (isWorkflowMultiSelectClick(event)) return;
 							clearEdgeActions();
 							openNodeDrawer(nodeId);
 						}}
@@ -235,7 +256,10 @@ const WorkflowNodeActions = ({
 						variant='light'
 						color='gray'
 						radius='sm'
-						onClick={() => copyNode(nodeId)}
+						onClick={(event) => {
+							if (isWorkflowMultiSelectClick(event)) return;
+							copyNode(nodeId);
+						}}
 						className={styles.actionButton}
 					>
 						<IconCopy size={13} />
@@ -253,7 +277,10 @@ const WorkflowNodeActions = ({
 						variant='light'
 						color='red'
 						radius='sm'
-						onClick={() => deleteNode(nodeId)}
+						onClick={(event) => {
+							if (isWorkflowMultiSelectClick(event)) return;
+							deleteNode(nodeId);
+						}}
 						className={`${styles.actionButton} ${styles.actionButtonDanger}`}
 					>
 						<IconTrash size={13} />

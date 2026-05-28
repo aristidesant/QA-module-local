@@ -65,6 +65,80 @@ export interface UpdateDispositionStatus {
 	isActive?: boolean;
 }
 
+export interface DispositionCatalogImportNodePayload {
+	name: string;
+	description?: string;
+	order?: number;
+	isFinal?: boolean;
+	isVoiceMail?: boolean;
+	doNotCall?: boolean;
+	isAbandoned?: boolean;
+	requiresReschedule?: boolean;
+	isInvalidatesNumber?: boolean;
+	isActive?: boolean;
+	children: DispositionCatalogImportNodePayload[];
+}
+
+export interface DispositionCatalogImportRequest {
+	dryRun?: boolean;
+	name: string;
+	type: 'INBOUND' | 'OUTBOUND';
+	isDefault?: boolean;
+	description?: string;
+	dispositionNodes: DispositionCatalogImportNodePayload[];
+}
+
+export interface DispositionCatalogImportValidationError {
+	path: string;
+	message: string;
+}
+
+export interface DispositionCatalogImportDryRunResponse {
+	dryRun: true;
+	valid: boolean;
+	totalNodes: number;
+	nodes?: DispositionCatalogImportNodePayload[];
+	errors?: DispositionCatalogImportValidationError[];
+}
+
+export interface DispositionCatalogImportedNode {
+	id: number;
+	name: string;
+	description?: string;
+	order?: number;
+	isFinal?: boolean;
+	isVoiceMail?: boolean;
+	doNotCall?: boolean;
+	isAbandoned?: boolean;
+	requiresReschedule?: boolean;
+	isInvalidatesNumber?: boolean;
+	isActive?: boolean;
+	children: DispositionCatalogImportedNode[];
+}
+
+export interface DispositionCatalogImportSuccessResponse {
+	dryRun: false;
+	catalogId: number;
+	totalCreated: number;
+	nodes: DispositionCatalogImportedNode[];
+}
+
+export type DispositionCatalogImportResponse =
+	| DispositionCatalogImportDryRunResponse
+	| DispositionCatalogImportSuccessResponse;
+
+export type DispositionCatalogExportPayload = Omit<
+	DispositionCatalogImportRequest,
+	'dryRun'
+>;
+
+/**
+ * Backwards-compatible aliases for the previous temporary implementation.
+ * Prefer the spec-aligned names above in new code.
+ */
+export type DispositionNodeImportPayload = DispositionCatalogImportNodePayload;
+export type DispositionCatalogImportPayload = DispositionCatalogImportRequest;
+
 // Response DTOs
 export interface DispositionStatusModel {
 	id: number;

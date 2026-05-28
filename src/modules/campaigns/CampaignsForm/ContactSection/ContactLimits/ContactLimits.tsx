@@ -36,6 +36,7 @@ import {
 import CapacityProgress from '../ContactList/CapacityProgress';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { formatWaveDelaySeconds } from '~/utils/waveUtils';
+import CampaignVoicePoolSelector from '~/modules/campaigns/components/CampaignVoicePoolSelector';
 
 type ContactLimitsProps = {
 	fileSummary?: ContactFileSummary;
@@ -82,6 +83,9 @@ export const ContactLimits = ({
 	const [humanEquivalent, setHumanEquivalent] = useState<number>(
 		contactGroup.humanEquivalent || 1
 	);
+	const [selectedVoiceIds, setSelectedVoiceIds] = useState<string[]>(
+		contactGroup.voiceIds ?? []
+	);
 	const defaultWaves = useMemo(() => {
 		return (
 			contactGroup.maxWaves ??
@@ -114,6 +118,10 @@ export const ContactLimits = ({
 
 	// Track whether mapping validation has failed (to show error styling)
 	const [showMappingError, setShowMappingError] = useState(false);
+	const campaignVoiceIds = useMemo(
+		() => campaign?.voiceIds ?? selectedCampaign?.voiceIds ?? [],
+		[campaign?.voiceIds, selectedCampaign?.voiceIds]
+	);
 
 	// Fetch system columns from client config for validation
 	const { data: systemConfig } = useGetClientConfig('contact_columns');
@@ -150,6 +158,10 @@ export const ContactLimits = ({
 	useEffect(() => {
 		setHumanEquivalent(contactGroup.humanEquivalent || 1);
 	}, [contactGroup.humanEquivalent]);
+
+	useEffect(() => {
+		setSelectedVoiceIds(contactGroup.voiceIds ?? []);
+	}, [contactGroup.voiceIds]);
 
 	useEffect(() => {
 		setMaxWaves(defaultWaves);
@@ -286,6 +298,7 @@ export const ContactLimits = ({
 					groupMaxCallPerGroup: 1,
 					humanEquivalent: humanEquivalent,
 					schedulerId: activeSchedule?.id || 0,
+					voiceIds: selectedVoiceIds,
 					...(fieldMapping.dynamicColumns &&
 					Object.keys(fieldMapping.dynamicColumns).length > 0 &&
 					selectedSchemaId > 0
@@ -308,6 +321,7 @@ export const ContactLimits = ({
 						name: data.name,
 						description: data.description,
 						humanEquivalent,
+						voiceIds: selectedVoiceIds,
 						maxWaves,
 						waveExecutionDelaySeconds,
 					},
@@ -365,6 +379,31 @@ export const ContactLimits = ({
 					onNameChange={(name) => {
 						handleChange('name', name);
 					}}
+				/>
+				<CampaignVoicePoolSelector
+					value={selectedVoiceIds}
+					onChange={setSelectedVoiceIds}
+					allowedVoiceIds={campaignVoiceIds}
+					label={t('form.contacts.limits.voicePoolLabel')}
+					description={t('form.contacts.limits.voicePoolDescription')}
+					placeholder={t('form.contacts.limits.voicePoolPlaceholder')}
+					hint={
+						campaignVoiceIds.length > 0
+							? t('form.contacts.limits.voicePoolHint', {
+									count: campaignVoiceIds.length,
+								})
+							: undefined
+					}
+					noVoicesMessage={
+						campaignVoiceIds.length > 0
+							? t('form.contacts.limits.voicePoolNoVoices')
+							: t('form.contacts.limits.voicePoolNoCampaignVoices')
+					}
+					noMatchesMessage={t('form.contacts.limits.voicePoolNoMatches')}
+					loadErrorTitle={t('form.contacts.limits.voicePoolLoadErrorTitle')}
+					loadErrorDescription={t(
+						'form.contacts.limits.voicePoolLoadErrorDescription'
+					)}
 				/>
 				<NumberInput
 					label={t('form.contacts.limits.maxWavesLabel')}

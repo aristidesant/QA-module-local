@@ -114,6 +114,15 @@
 				"dateInPast": "Date cannot be in the past"
 			},
 			"limits": {
+				"voicePoolLabel": "List voice overrides",
+				"voicePoolDescription": "Optionally narrow this list to a subset of the campaign voices.",
+				"voicePoolPlaceholder": "Use all campaign voices or select a subset",
+				"voicePoolHint": "Leave this empty to inherit all {{count}} campaign voices.",
+				"voicePoolNoVoices": "No campaign voices are available for this contact list.",
+				"voicePoolNoCampaignVoices": "This campaign does not have any assigned voices yet.",
+				"voicePoolNoMatches": "No voices match your search",
+				"voicePoolLoadErrorTitle": "Unable to load voices",
+				"voicePoolLoadErrorDescription": "Retry before saving this contact list voice selection.",
 				"maxWavesLabel": "Max waves",
 				"maxWavesDescription": "Maximum number of waves for this contact list.",
 				"maxWavesInherited": "Inherited from campaign default: {{value}}",

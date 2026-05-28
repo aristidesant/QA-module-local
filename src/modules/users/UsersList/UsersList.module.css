@@ -4,16 +4,117 @@
 	gap: var(--mantine-spacing-sm);
 }
 
+.tableRow {
+	cursor: pointer;
+}
+
+/* Name cell */
+.nameCell {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.nameText {
+	line-height: 1.35;
+}
+
+.nameEmail {
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	line-height: 1.3;
+	max-width: 28ch;
+}
+
+/* Status dot-pill */
+.status_active,
+.status_inactive,
+.status_pending,
+.status_suspended {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	border-radius: 999px;
+	padding: 2px 8px;
+	font-size: 12px;
+	font-weight: 600;
+	line-height: 18px;
+	white-space: nowrap;
+}
+
+.status_active {
+	background-color: #ecfdf2;
+	color: #0d7530;
+}
+
+.status_inactive {
+	background-color: var(--mantine-color-gray-1);
+	color: var(--mantine-color-gray-6);
+}
+
+.status_pending {
+	background-color: #fffbeb;
+	color: #b45309;
+}
+
+.status_suspended {
+	background-color: #fef2f2;
+	color: #b91c1c;
+}
+
+.statusDot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background-color: currentColor;
+	flex-shrink: 0;
+}
+
+/* Actions — dim at rest, full on hover */
+.actionsGroup {
+	opacity: 0.45;
+	transition: opacity 120ms ease;
+}
+
+tr:hover .actionsGroup,
+tr:focus-within .actionsGroup {
+	opacity: 1;
+}
+
 .actionsCell {
-	width: 96px;
-	min-width: 96px;
+	width: 80px;
+	min-width: 80px;
 	white-space: nowrap;
 	text-align: right;
 }
 
 .actionsHeader {
-	width: 96px;
-	min-width: 96px;
+	width: 80px;
+	min-width: 80px;
 	white-space: nowrap;
 	text-align: right;
+}
+
+/* ── Dark mode ── */
+
+[data-mantine-color-scheme='dark'] .status_active {
+	background-color: rgba(27, 181, 74, 0.15);
+	color: #4ade80;
+}
+
+[data-mantine-color-scheme='dark'] .status_inactive {
+	background-color: var(--mantine-color-dark-5);
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .status_pending {
+	background-color: rgba(245, 158, 11, 0.15);
+	color: #fbbf24;
+}
+
+[data-mantine-color-scheme='dark'] .status_suspended {
+	background-color: rgba(239, 68, 68, 0.15);
+	color: #f87171;
 }

@@ -8,10 +8,10 @@ import {
 } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-	Loader,
+	ActionIcon,
+	Skeleton,
 	Center,
 	Text,
-	ActionIcon,
 	Button,
 	Modal,
 	LoadingOverlay,
@@ -19,6 +19,8 @@ import {
 	Group,
 	Badge,
 	CloseButton,
+	Stack,
+	Tooltip,
 } from '@mantine/core';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { useDebouncedValue } from '@mantine/hooks';
@@ -27,6 +29,7 @@ import {
 	IconDatabase,
 	IconSearch,
 	IconFilter,
+	IconFileImport,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { modals } from '@mantine/modals';
@@ -37,8 +40,10 @@ import {
 	useUpdateDispositionCatalog,
 	useReactivateDispositionCatalog,
 	useDeactivateDispositionCatalog,
+	useExportDispositionCatalog,
 } from '~/queries/dispositionCatalogQueries';
 import DispositionCatalogForm from '../DispositionCatalogForm';
+import DispositionImportModal from '../DispositionImportModal';
 import EmptyState from '~/components/EmptyState';
 import { FilterContainer } from '~/components/FilterContainer';
 import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
@@ -50,6 +55,9 @@ import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useDispositionStore } from '../../dispositionRightComponentStore';
 import { useDispositionCatalogTableColumns } from './useDispositionCatalogTableColumns';
+import useIsSuperAdmin from '~/hooks/useIsSuperAdmin';
+import { getErrorMessage } from '~/utils/httpClient';
+import type { DispositionCatalogImportSuccessResponse } from '~/models/DispositionCatalogModels';
 
 export interface DispositionCatalogListHandles {
 	openCreateForm: () => void;
@@ -71,6 +79,7 @@ const DispositionCatalogList = forwardRef<
 
 	const { t } = useTranslation('outcomes');
 	const { canPerformAction } = usePermissions();
+	const isSuperAdmin = useIsSuperAdmin();
 	const canCreate = canPerformAction(
 		ModuleEnum.SETTINGS,
 		PermissionEnum.CREATE
@@ -107,22 +116,19 @@ const DispositionCatalogList = forwardRef<
 	const total = paginatedResponse?.total ?? 0;
 	const pageCount = total > 0 ? Math.ceil(total / pageSize) : 0;
 	const setCatalog = useDispositionStore((state) => state.setCatalog);
-	const selectedCatalogId = useDispositionStore(
-		(state) => state.catalog?.id ?? null
-	);
 	const createMutation = useCreateDispositionCatalog();
 	const updateMutation = useUpdateDispositionCatalog();
 	const reactivateMutation = useReactivateDispositionCatalog();
 	const deactivateMutation = useDeactivateDispositionCatalog();
+	const exportMutation = useExportDispositionCatalog();
 
 	const [isModalOpen, setIsModalOpen] = useState(false);
-	const [selectedCatalog, setSelectedCatalog] =
+	const [editingCatalog, setEditingCatalog] =
 		useState<DispositionCatalogModel | null>(null);
-
-	const selectedCatalogIdRef = useRef<number | null>(selectedCatalogId);
-	useEffect(() => {
-		selectedCatalogIdRef.current = selectedCatalogId;
-	}, [selectedCatalogId]);
+	const [importModalOpen, setImportModalOpen] = useState(false);
+	const [pendingImportedCatalogId, setPendingImportedCatalogId] = useState<
+		number | null
+	>(null);
 
 	type CatalogIdVariables = { catalogId: number } | undefined;
 
@@ -153,9 +159,63 @@ const DispositionCatalogList = forwardRef<
 	);
 
 	const handleEditDetails = useCallback((catalog: DispositionCatalogModel) => {
-		setSelectedCatalog(catalog);
+		setEditingCatalog(catalog);
 		setIsModalOpen(true);
 	}, []);
+
+	useEffect(() => {
+		if (!pendingImportedCatalogId || data.length === 0) {
+			return;
+		}
+
+		const importedCatalog = data.find(
+			(catalog) => catalog.id === pendingImportedCatalogId
+		);
+
+		if (importedCatalog) {
+			setCatalog(importedCatalog);
+			setPendingImportedCatalogId(null);
+		}
+	}, [data, pendingImportedCatalogId, setCatalog]);
+
+	const handleCopyCatalogJson = useCallback(
+		async (catalog: DispositionCatalogModel) => {
+			if (!catalog.isActive) {
+				return;
+			}
+
+			try {
+				const exportPayload = await exportMutation.mutateAsync({
+					catalogId: catalog.id,
+				});
+
+				await navigator.clipboard.writeText(
+					JSON.stringify(exportPayload, null, 2)
+				);
+				notifications.show({
+					title: t('list.toolbar.exportNotifications.successTitle'),
+					message: t('list.toolbar.exportNotifications.successMessage'),
+					color: 'green',
+				});
+			} catch (error) {
+				notifications.show({
+					title: t('list.toolbar.exportNotifications.errorTitle'),
+					message:
+						getErrorMessage(error) ||
+						t('list.toolbar.exportNotifications.errorMessage'),
+					color: 'red',
+				});
+			}
+		},
+		[exportMutation, t]
+	);
+
+	const handleImportedCatalog = useCallback(
+		(response: DispositionCatalogImportSuccessResponse) => {
+			setPendingImportedCatalogId(response.catalogId);
+		},
+		[]
+	);
 
 	const handleReactivate = useCallback(
 		(catalog: DispositionCatalogModel) => {
@@ -235,15 +295,22 @@ const DispositionCatalogList = forwardRef<
 	const columns = useDispositionCatalogTableColumns({
 		onEditNodes: handleSelectCatalog,
 		onEditDetails: handleEditDetails,
+		onCopyJson: handleCopyCatalogJson,
 		onReactivate: handleReactivate,
 		onDeactivate: handleDeactivate,
+		copyState: {
+			isPending: exportMutation.isPending,
+			variables: exportMutation.variables as
+				| { catalogId: number | string }
+				| undefined,
+		},
 		reactivateState: reactivateStateRef.current,
 		deactivateState: deactivateStateRef.current,
 	});
 
 	// Handler for create - wrapped in useCallback so it can be used by useImperativeHandle
 	const handleCreate = useCallback(() => {
-		setSelectedCatalog(null);
+		setEditingCatalog(null);
 		setIsModalOpen(true);
 	}, []);
 
@@ -258,9 +325,11 @@ const DispositionCatalogList = forwardRef<
 
 	if (isLoading) {
 		return (
-			<Center>
-				<Loader />
-			</Center>
+			<Stack gap='xs' px='md' py='sm'>
+				{Array.from({ length: 6 }).map((_, i) => (
+					<Skeleton key={i} height={44} radius='sm' animate />
+				))}
+			</Stack>
 		);
 	}
 
@@ -279,17 +348,22 @@ const DispositionCatalogList = forwardRef<
 				title={t('list.title')}
 				description={t('list.description')}
 				padding='md'
+				onAdd={canCreate ? handleCreate : undefined}
 				headerActions={
-					canCreate && (
-						<ActionIcon
-							variant='light'
-							color='blue'
-							onClick={handleCreate}
-							aria-label={t('list.addCatalog')}
-						>
-							<IconPlus size={18} />
-						</ActionIcon>
-					)
+					isSuperAdmin ? (
+						<Tooltip label={t('list.toolbar.importTooltip')} withArrow>
+							<ActionIcon
+								variant='light'
+								color='blue'
+								size='lg'
+								radius='md'
+								onClick={() => setImportModalOpen(true)}
+								aria-label={t('list.toolbar.importTooltip')}
+							>
+								<IconFileImport size={16} />
+							</ActionIcon>
+						</Tooltip>
+					) : null
 				}
 			>
 				<LoadingOverlay
@@ -437,22 +511,22 @@ const DispositionCatalogList = forwardRef<
 				opened={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
 				title={
-					selectedCatalog
+					editingCatalog
 						? t('list.modalEditTitle')
 						: t('list.modalCreateTitle')
 				}
 				size='lg'
 			>
 				{isModalOpen &&
-					(selectedCatalog ? (
+					(editingCatalog ? (
 						<DispositionCatalogForm
-							key={selectedCatalog.id}
+							key={editingCatalog.id}
 							mode={'edit' as const}
-							initialValues={selectedCatalog}
+							initialValues={editingCatalog}
 							loading={updateMutation.isPending}
 							onSubmit={(values) =>
 								updateMutation.mutateAsync({
-									id: selectedCatalog.id,
+									id: editingCatalog.id,
 									data: { ...values, isDefault: !!values.isDefault },
 								})
 							}
@@ -505,6 +579,12 @@ const DispositionCatalogList = forwardRef<
 						/>
 					))}
 			</Modal>
+
+			<DispositionImportModal
+				opened={importModalOpen}
+				onClose={() => setImportModalOpen(false)}
+				onImported={handleImportedCatalog}
+			/>
 		</div>
 	);
 });
