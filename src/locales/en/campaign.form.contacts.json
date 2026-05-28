@@ -114,27 +114,62 @@
 				"dateInPast": "Date cannot be in the past"
 			},
 			"limits": {
-				"voicePoolLabel": "List voice overrides",
+				"voicePoolLabel": "Voice overrides",
 				"voicePoolDescription": "Optionally narrow this list to a subset of the campaign voices.",
-				"voicePoolPlaceholder": "Use all campaign voices or select a subset",
-				"voicePoolHint": "Leave this empty to inherit all {{count}} campaign voices.",
-				"voicePoolNoVoices": "No campaign voices are available for this contact list.",
-				"voicePoolNoCampaignVoices": "This campaign does not have any assigned voices yet.",
+				"voicePoolPlaceholder": "Inherit all campaign voices",
+				"voicePoolHint": "Leave empty to use all {{count}} campaign voices.",
+				"voicePoolNoVoices": "No campaign voices available for this list.",
+				"voicePoolNoCampaignVoices": "No voices assigned to this campaign yet.",
 				"voicePoolNoMatches": "No voices match your search",
 				"voicePoolLoadErrorTitle": "Unable to load voices",
 				"voicePoolLoadErrorDescription": "Retry before saving this contact list voice selection.",
-				"maxWavesLabel": "Max waves",
+				"maxWavesLabel": "Waves",
 				"maxWavesDescription": "Maximum number of waves for this contact list.",
 				"maxWavesInherited": "Inherited from campaign default: {{value}}",
-				"waveDelayLabel": "Delay between waves (seconds)",
+				"waveDelayLabel": "Between waves",
 				"waveDelayDescription": "Delay between waves for this contact list. Current: {{value}}.",
 				"waveDelayInherited": "Inherited from campaign default: {{value}}",
 				"noWaveDelay": "No delay between waves",
-				"humanEquivalentLabel": "Human equivalent",
-				"availableLabel": "Available",
+				"humanEquivalentLabel": "Capacity",
+				"availableLabel": "available",
+				"form": {
+					"nameLabel": "List name",
+					"namePlaceholder": "e.g. Leads Q2 — June batch"
+				},
+				"sections": {
+					"calling": "Calling",
+					"capacity": "Capacity",
+					"mapping": "Column mapping",
+					"allocated": "allocated"
+				},
 				"capacityFull": {
 					"title": "Scheduler capacity is full",
 					"message": "Reduce capacity or adjust schedules to continue."
+				},
+				"stepper": {
+					"steps": {
+						"identity": {
+							"label": "Identity",
+							"description": "Name and voice assignment"
+						},
+						"configuration": {
+							"label": "Configuration",
+							"description": "Waves and capacity"
+						},
+						"mapping": {
+							"label": "Mapping",
+							"description": "Column mapping"
+						}
+					},
+					"next": "Next",
+					"back": "Back"
+				},
+				"edit": {
+					"sections": {
+						"basicInfo": "Basic Info",
+						"voiceAndExecution": "Voice & Execution",
+						"capacity": "Capacity"
+					}
 				},
 				"actions": {
 					"save": "Save",

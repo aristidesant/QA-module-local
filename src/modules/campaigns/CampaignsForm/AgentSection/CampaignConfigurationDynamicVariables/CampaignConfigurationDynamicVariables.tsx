@@ -1,8 +1,8 @@
 import React, { useMemo, useState } from 'react';
-import { Badge, Group, ScrollArea, Stack, Text } from '@mantine/core';
-import { IconVariable } from '@tabler/icons-react';
+import { Badge, Button, Group, ScrollArea, Stack, Text } from '@mantine/core';
+import { IconVariable, IconSettings } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import RightSectionCard from '~/components/RightSectionCard';
+import SectionCard from '~/components/SectionCard';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import { deepMergeConfig } from '~/utils/objectUtils';
 import CampaignDynamicVariablesModal from './CampaignDynamicVariablesModal';
@@ -49,14 +49,25 @@ const CampaignConfigurationDynamicVariables: React.FC = () => {
 		});
 	};
 
+	const configureButton = (
+		<Button
+			size='compact-sm'
+			variant='light'
+			leftSection={<IconSettings size={14} />}
+			onClick={() => setIsModalOpen(true)}
+		>
+			{t('dynamicVariables.configure')}
+		</Button>
+	);
+
 	return (
 		<>
-			<RightSectionCard
+			<SectionCard
 				title={t('dynamicVariables.title')}
 				description={t('dynamicVariables.description')}
 				icon={IconVariable}
-				iconColor='teal'
-				onConfigure={() => setIsModalOpen(true)}
+				headerActions={configureButton}
+				contentSpacing='xs'
 			>
 				<Stack gap='xs'>
 					<Group justify='space-between' align='center' wrap='wrap' gap='xs'>
@@ -90,7 +101,7 @@ const CampaignConfigurationDynamicVariables: React.FC = () => {
 						</div>
 					)}
 				</Stack>
-			</RightSectionCard>
+			</SectionCard>
 
 			<CampaignDynamicVariablesModal
 				opened={isModalOpen}

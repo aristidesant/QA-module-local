@@ -22,7 +22,12 @@
 			"asrKeywords": "Keywords ASR",
 			"dynamicVariables": "Variables dinámicas",
 			"dictionary": "Diccionario",
-			"noiseCancellation": "Cancelación de ruido"
+			"noiseCancellation": "Cancelación de ruido",
+			"groups": {
+				"toolsAndKnowledge": "Herramientas y conocimiento",
+				"speechAndLanguage": "Voz y lenguaje",
+				"runtime": "Tiempo de ejecución"
+			}
 		}
 	},
 	"form": {
@@ -499,7 +504,8 @@
 		"valuePlaceholder": "Valor por defecto",
 		"apply": "Aplicar",
 		"errorEmptyKey": "La clave no puede estar vacía",
-		"errorDuplicateKey": "Clave duplicada"
+		"errorDuplicateKey": "Clave duplicada",
+		"configure": "Configurar"
 	},
 	"saveReview": {
 		"title": "Revisar cambios",

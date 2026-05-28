@@ -3,7 +3,7 @@ import { Button, Group, MultiSelect, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { IconBook2 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import RightSectionCard from '~/components/RightSectionCard';
+import SectionCard from '~/components/SectionCard';
 import { useGetAgent } from '~/queries/agentQueries';
 import {
 	usePronunciationDictionaries,
@@ -127,11 +127,11 @@ const CampaignDictionarySelector: React.FC<CampaignDictionarySelectorProps> = ({
 	]);
 
 	return (
-		<RightSectionCard
+		<SectionCard
 			title={t('general.pronunciationDictionary.title')}
 			description={t('general.pronunciationDictionary.description')}
 			icon={IconBook2}
-			iconColor='var(--mantine-color-violet-6)'
+			contentSpacing='xs'
 		>
 			<MultiSelect
 				data={selectData}
@@ -157,7 +157,7 @@ const CampaignDictionarySelector: React.FC<CampaignDictionarySelectorProps> = ({
 					</Button>
 				</Group>
 			)}
-		</RightSectionCard>
+		</SectionCard>
 	);
 };
 

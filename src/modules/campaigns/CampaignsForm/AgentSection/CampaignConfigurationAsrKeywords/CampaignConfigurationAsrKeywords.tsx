@@ -1,4 +1,5 @@
 import { TagsInput } from '@mantine/core';
+import { IconTag } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
@@ -40,8 +41,10 @@ const CampaignConfigurationAsrKeywords: React.FC = () => {
 
 	return (
 		<SectionCard
+			icon={IconTag}
 			title={t('general.asrKeywords')}
 			description={t('general.asrKeywordsDesc')}
+			contentSpacing='xs'
 		>
 			<TagsInput
 				label={t('general.asrKeywords')}

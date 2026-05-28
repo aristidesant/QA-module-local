@@ -1,10 +1,12 @@
 [data-mantine-color-scheme='dark'] .sectionCard {
 	background: var(--mantine-color-dark-7);
 	border-color: var(--surface-border);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 [data-mantine-color-scheme='dark'] .sectionCard:hover {
 	border-color: var(--surface-border-strong);
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
 }
 
 [data-mantine-color-scheme='dark'] .sectionHeader {
@@ -33,7 +35,7 @@
 	background: var(--mantine-color-white);
 	border: 1px solid var(--surface-border);
 	border-radius: var(--mantine-radius-lg);
-	box-shadow: var(--mantine-shadow-sm);
+	box-shadow: var(--mantine-shadow-md);
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
@@ -41,6 +43,11 @@
 		border-color 140ms ease,
 		background-color 140ms ease,
 		box-shadow 140ms ease;
+}
+
+.sectionCard:hover {
+	border-color: var(--surface-border-strong);
+	box-shadow: var(--mantine-shadow-lg);
 }
 
 .sectionShell {
@@ -151,10 +158,6 @@
 	gap: var(--mantine-spacing-xs);
 	flex-wrap: wrap;
 	padding-top: 2px;
-}
-
-.sectionCard:hover {
-	border-color: var(--surface-border-strong);
 }
 
 @media (max-width: 48em) {

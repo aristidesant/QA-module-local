@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { Modal, Stack } from '@mantine/core';
+import { Modal, Stack, Group, Text, ThemeIcon } from '@mantine/core';
+import { IconList, IconUsers } from '@tabler/icons-react';
 import { useDisclosure } from '@mantine/hooks';
 import { useNavigate } from 'react-router';
 import usePermissions from '~/hooks/usePermissions';
@@ -7,7 +8,6 @@ import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import AddNewContactList from '../AddNewContactList';
 import SelectActiveContactList from './SelectActiveContactList';
-import SectionTitle from '~/components/SectionTitle';
 import { SectionCard } from '~/components/SectionCard';
 import type ContactGroup from '~/models/ContactGroup';
 import BaseTable from '~/components/BaseTable';
@@ -23,7 +23,6 @@ export interface ContactListViewProps {
 	objectiveId?: number;
 	isActive: boolean;
 	isLoading?: boolean;
-	isRefetching?: boolean;
 }
 
 export const ContactListView = ({
@@ -37,8 +36,6 @@ export const ContactListView = ({
 	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	const navigate = useNavigate();
 	const [opened, { open, close }] = useDisclosure(false);
-	const [inactiveExpanded, { toggle: toggleInactiveExpanded }] =
-		useDisclosure(true);
 	const { openContactListDrawer, selectedContactList } = useCampaignsStore(
 		(state) => state
 	);
@@ -50,57 +47,43 @@ export const ContactListView = ({
 		isActive,
 		campaignId,
 		onNavigateToContactList: (contactGroup) => {
-			const targetCampaignId = campaignId;
-			navigate(`/campaign/${targetCampaignId}/contact-list/${contactGroup.id}`);
+			navigate(`/campaign/${campaignId}/contact-list/${contactGroup.id}`);
 		},
 	});
 
-	const handleClose = () => {
-		close();
-	};
-
-	const handleRowClick = (contactList: ContactGroup) => {
-		openContactListDrawer(contactList);
-	};
-
-	const contactListsArray = Array.isArray(contactGroups)
+	const data = Array.isArray(contactGroups)
 		? contactGroups
-		: contactGroups?.data || [];
+		: (contactGroups?.data ?? []);
+	const count = data.length;
 
-	const activeCount = contactListsArray.length;
-
-	const title = (
-		<>
-			{isActive
-				? t('form.contacts.list.activeTitle')
-				: t('form.contacts.list.inactiveTitle')}{' '}
-			({activeCount}){' '}
-		</>
-	);
-	const description = isActive
-		? t('form.contacts.list.activeDescription')
-		: t('form.contacts.list.inactiveDescription');
-	const tooltipLabel = isActive
-		? t('form.contacts.list.addNewContactList')
-		: t('form.contacts.list.addInactiveContactList');
-	const modalTitle = isActive
-		? t('form.contacts.list.configuration')
-		: t('form.contacts.list.selectActive');
-	const modalDescription = isActive
-		? t('form.contacts.list.configurationDescription')
-		: t('form.contacts.list.selectActiveDescription');
-	const emptyMessage = isActive
-		? t('form.contacts.list.emptyMessage')
-		: t('form.contacts.list.emptyInactiveMessage');
-
-	const isCollapsed = !isActive && !inactiveExpanded;
+	const labels = isActive
+		? {
+				title: t('form.contacts.list.activeTitle'),
+				description: t('form.contacts.list.activeDescription'),
+				addLabel: t('form.contacts.list.addNewContactList'),
+				modalTitle: t('form.contacts.list.configuration'),
+				modalIcon: IconList,
+				emptyMessage: t('form.contacts.list.emptyMessage'),
+			}
+		: {
+				title: t('form.contacts.list.inactiveTitle'),
+				description: t('form.contacts.list.inactiveDescription'),
+				addLabel: t('form.contacts.list.addInactiveContactList'),
+				modalTitle: t('form.contacts.list.selectActive'),
+				modalIcon: IconUsers,
+				emptyMessage: t('form.contacts.list.emptyInactiveMessage'),
+			};
 
 	return (
 		<Stack>
 			{isActive && <CapacityProgress campaignId={campaignId} />}
 			<SectionCard
-				title={title}
-				description={description}
+				title={
+					<>
+						{labels.title} ({count}){' '}
+					</>
+				}
+				description={labels.description}
 				padding='md'
 				contentSpacing='sm'
 				actions={{
@@ -109,10 +92,9 @@ export const ContactListView = ({
 						canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE)
 							? {
 									kind: 'add',
-									label: tooltipLabel,
-									onClick: () =>
-										isCollapsed ? toggleInactiveExpanded() : open(),
-									ariaLabel: tooltipLabel,
+									label: labels.addLabel,
+									onClick: open,
+									ariaLabel: labels.addLabel,
 								}
 							: undefined,
 					secondary: [
@@ -121,60 +103,57 @@ export const ContactListView = ({
 							label: t('form.contacts.list.reload'),
 							onClick: onUpdateComplete,
 							ariaLabel: t('form.contacts.list.reload'),
-							disabled: isCollapsed,
 						},
 					],
 				}}
 			>
-				{!isCollapsed && (
-					<>
-						<BaseTable
-							data={contactListsArray}
-							columns={columns}
-							emptyMessage={emptyMessage}
-							onRowClick={handleRowClick}
-							isLoading={isLoading}
-							selectedRowId={
-								selectedContactList?.isActive === isActive
-									? selectedContactList.id
-									: undefined
-							}
-							getRowId={(row) => row.id}
+				<BaseTable
+					data={data}
+					columns={columns}
+					emptyMessage={labels.emptyMessage}
+					onRowClick={openContactListDrawer}
+					isLoading={isLoading}
+					selectedRowId={
+						selectedContactList?.isActive === isActive
+							? selectedContactList.id
+							: undefined
+					}
+					getRowId={(row) => row.id}
+				/>
+				<Modal
+					opened={opened}
+					onClose={close}
+					title={
+						<Group gap='xs' align='center'>
+							<ThemeIcon variant='light' color='blue' size={28} radius='md'>
+								<labels.modalIcon size={15} />
+							</ThemeIcon>
+							<Text fw={600} size='sm'>
+								{labels.modalTitle}
+							</Text>
+						</Group>
+					}
+					size='xl'
+					centered
+					withCloseButton
+					closeOnClickOutside={false}
+				>
+					{isActive ? (
+						<AddNewContactList
+							campaignId={campaignId}
+							onClose={close}
+							onRefresh={onUpdateComplete}
+							objectiveId={objectiveId}
 						/>
-						<Modal
-							opened={opened}
-							onClose={handleClose}
-							title={
-								<>
-									<SectionTitle
-										title={modalTitle}
-										description={modalDescription}
-									/>
-								</>
-							}
-							size='xl'
-							centered
-							withCloseButton
-							closeOnClickOutside={false}
-						>
-							{isActive ? (
-								<AddNewContactList
-									campaignId={campaignId}
-									onClose={handleClose}
-									onRefresh={onUpdateComplete}
-									objectiveId={objectiveId}
-								/>
-							) : (
-								<SelectActiveContactList
-									campaignId={campaignId}
-									onClose={handleClose}
-									onRefresh={onUpdateComplete}
-									objectiveId={objectiveId}
-								/>
-							)}
-						</Modal>
-					</>
-				)}
+					) : (
+						<SelectActiveContactList
+							campaignId={campaignId}
+							onClose={close}
+							onRefresh={onUpdateComplete}
+							objectiveId={objectiveId}
+						/>
+					)}
+				</Modal>
 			</SectionCard>
 		</Stack>
 	);

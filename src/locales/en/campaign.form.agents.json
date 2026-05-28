@@ -22,7 +22,12 @@
 			"asrKeywords": "ASR Keywords",
 			"dynamicVariables": "Dynamic Variables",
 			"dictionary": "Dictionary",
-			"noiseCancellation": "Noise Cancellation"
+			"noiseCancellation": "Noise Cancellation",
+			"groups": {
+				"toolsAndKnowledge": "Tools & Knowledge",
+				"speechAndLanguage": "Speech & Language",
+				"runtime": "Runtime"
+			}
 		}
 	},
 	"form": {
@@ -499,7 +504,8 @@
 		"valuePlaceholder": "Default value",
 		"apply": "Apply",
 		"errorEmptyKey": "Key cannot be empty",
-		"errorDuplicateKey": "Duplicate key"
+		"errorDuplicateKey": "Duplicate key",
+		"configure": "Configure"
 	},
 	"saveReview": {
 		"title": "Review Changes",

@@ -1,0 +1,37 @@
+.panel {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+.waveGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--mantine-spacing-md);
+}
+
+.sliderHeader {
+	display: flex;
+	justify-content: space-between;
+	align-items: baseline;
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.capacitySection {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-sm);
+	padding-top: var(--mantine-spacing-sm);
+}
+
+@media (max-width: 768px) {
+	.waveGrid {
+		grid-template-columns: 1fr;
+	}
+}
