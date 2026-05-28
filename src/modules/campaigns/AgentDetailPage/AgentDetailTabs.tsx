@@ -1,6 +1,12 @@
 import { Stack, Tabs } from '@mantine/core';
-import { IconBrain, IconRoute, IconSettings } from '@tabler/icons-react';
+import {
+	IconBrain,
+	IconGitBranch,
+	IconRoute,
+	IconSettings,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import VersioningSection from '../CampaignsForm/VersioningSection';
 import CampaignConfigurationBasic from '../CampaignsForm/AgentSection/CampaignConfigurationBasic/CampaignConfigurationBasic';
 import CampaignConfigurationPredefinedParams from '../CampaignsForm/AgentSection/CampaignConfigurationPredefinedParams';
 import CampaignConfigurationPrompt from '../CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPrompt';
@@ -8,7 +14,7 @@ import WorkflowSection from '../CampaignsForm/WorkflowSection/WorkflowSection';
 import AdvancedTab from './AdvancedTab';
 import styles from './AgentDetailPage.module.css';
 
-export type AgentTabValue = 'setup' | 'workflow' | 'advanced';
+export type AgentTabValue = 'setup' | 'workflow' | 'advanced' | 'versioning';
 
 interface AgentDetailTabsProps {
 	agentId: string;
@@ -46,6 +52,9 @@ const AgentDetailTabs = ({
 				<Tabs.Tab value='advanced' leftSection={<IconSettings size={16} />}>
 					{t('agentDetail.tabs.advanced')}
 				</Tabs.Tab>
+				<Tabs.Tab value='versioning' leftSection={<IconGitBranch size={16} />}>
+					{t('agentDetail.tabs.versioning')}
+				</Tabs.Tab>
 			</Tabs.List>
 
 			<Tabs.Panel value='setup'>
@@ -62,6 +71,10 @@ const AgentDetailTabs = ({
 
 			<Tabs.Panel value='advanced'>
 				<AdvancedTab agentId={agentId} />
+			</Tabs.Panel>
+
+			<Tabs.Panel value='versioning'>
+				<VersioningSection agentId={agentId} />
 			</Tabs.Panel>
 		</Tabs>
 	);

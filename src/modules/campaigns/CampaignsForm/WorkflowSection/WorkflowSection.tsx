@@ -108,7 +108,11 @@ const WorkflowSection = ({
 		setLocalNodeStyles(selectedAgent?.workflowUi?.nodeStyles ?? {});
 		setLocalNodeGroups(selectedAgent?.workflowUi?.nodeGroups ?? {});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedAgent?.id, selectedCampaignAgent?.id, usesCampaignAgentConfig]);
+	}, [
+		selectedAgent?.updatedAt,
+		selectedCampaignAgent?.id,
+		usesCampaignAgentConfig,
+	]);
 
 	const handleWorkflowChange = (updatedWorkflow: AgentWorkflow) => {
 		const currentConfig = form.values.agentConfig ?? {};

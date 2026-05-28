@@ -1,4 +1,4 @@
-import { Button, TextInput } from '@mantine/core';
+import { ActionIcon, TextInput } from '@mantine/core';
 import { IconSend } from '@tabler/icons-react';
 import styles from './CampaignConvaiWidget.module.css';
 
@@ -28,27 +28,29 @@ const ConvaiMessageInput = ({
 			<TextInput
 				className={styles.messageInput}
 				size='sm'
-				label={labels.inputLabel}
 				placeholder={labels.inputPlaceholder}
 				value={value}
 				onChange={(event) => onChange(event.currentTarget.value)}
 				onKeyDown={(event) => {
-					if (event.key === 'Enter') {
+					if (event.key === 'Enter' && !event.shiftKey) {
 						event.preventDefault();
 						onSend();
 					}
 				}}
 				disabled={disabled}
+				aria-label={labels.inputLabel}
 			/>
-			<Button
-				size='sm'
+			<ActionIcon
+				size='lg'
+				radius='xl'
 				color='green'
-				leftSection={<IconSend size={15} />}
+				variant='filled'
 				onClick={onSend}
 				disabled={disabled || !value.trim()}
+				aria-label={labels.send}
 			>
-				{labels.send}
-			</Button>
+				<IconSend size={18} />
+			</ActionIcon>
 		</div>
 	);
 };

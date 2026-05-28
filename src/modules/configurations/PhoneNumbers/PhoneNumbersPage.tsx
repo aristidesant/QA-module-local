@@ -42,7 +42,7 @@ export default function PhoneNumbersPage() {
 			}}
 		>
 			<Stack gap='xs'>
-				<PhoneNumberList onEdit={handleEdit} />
+				<PhoneNumberList onEdit={handleEdit} onCreate={handleCreate} />
 			</Stack>
 			<Modal
 				opened={opened}

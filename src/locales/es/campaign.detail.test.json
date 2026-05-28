@@ -67,6 +67,7 @@
 		},
 		"error": {
 			"title": "Error de conversación",
+			"retry": "Reintentar",
 			"microphonePermission": "El acceso al micrófono está bloqueado. Permite el acceso al micrófono en el navegador antes de iniciar la llamada de voz.",
 			"microphoneUnavailable": "Este navegador no puede acceder a un micrófono para la llamada de voz."
 		}

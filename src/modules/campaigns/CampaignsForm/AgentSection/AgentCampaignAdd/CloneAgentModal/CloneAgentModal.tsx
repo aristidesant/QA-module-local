@@ -10,11 +10,13 @@ import { useTranslation } from 'react-i18next';
 
 interface CloneAgentModalProps {
 	agent: AgentWithCampaignListItem;
+	campaignId: number;
 	onSuccess: () => void;
 }
 
 const CloneAgentModal: React.FC<CloneAgentModalProps> = ({
 	agent,
+	campaignId,
 	onSuccess,
 }) => {
 	const { t } = useTranslation([
@@ -47,7 +49,10 @@ const CloneAgentModal: React.FC<CloneAgentModalProps> = ({
 		try {
 			await duplicateMutation.mutateAsync({
 				agentId: agent.id,
-				data: { name: values.name.trim() },
+				data: {
+					name: values.name.trim(),
+					campaignId,
+				},
 			});
 			modals.close('clone-agent-modal');
 			notifications.show({

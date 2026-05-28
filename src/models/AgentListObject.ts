@@ -208,6 +208,7 @@ export type AgentWithCampaignListItem = Pick<
 
 export type AgentWithCampaignsQueryParams = {
 	name?: string;
+	campaignId?: number;
 	agentId?: string;
 	agentType?: AgentWithCampaignListItem['type'];
 	status?: AgentWithCampaignListItem['status'];

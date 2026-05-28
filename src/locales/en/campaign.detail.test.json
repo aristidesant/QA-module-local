@@ -67,6 +67,7 @@
 		},
 		"error": {
 			"title": "Conversation error",
+			"retry": "Retry",
 			"microphonePermission": "Microphone access is blocked. Allow microphone access in the browser before starting the voice call.",
 			"microphoneUnavailable": "This browser cannot access a microphone for the voice call."
 		}

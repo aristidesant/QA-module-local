@@ -12,6 +12,7 @@ import {
 	type SimplePhoneNumberListParams,
 	type SimplePhoneNumber,
 	deletePhoneNumber,
+	bulkDeletePhoneNumbers,
 	createTwilioPhoneNumber,
 	createSipTrunkPhoneNumber,
 	updateTwilioPhoneNumber,
@@ -142,6 +143,20 @@ export const useUpdateSipTrunkPhoneNumber = () => {
 			id: number;
 			params: SipTrunkPhoneNumberParams;
 		}) => updateSipTrunkPhoneNumber(id, params),
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: phoneNumberKeys.all });
+		},
+	});
+};
+
+/**
+ * Hook to bulk delete phone numbers
+ */
+export const useBulkDeletePhoneNumbers = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: (ids: number[]) => bulkDeletePhoneNumbers(ids),
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: phoneNumberKeys.all });
 		},

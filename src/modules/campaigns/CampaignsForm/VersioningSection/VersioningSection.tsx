@@ -17,8 +17,6 @@ import BaseTable from '~/components/BaseTable/BaseTable';
 import PaginationControls from '~/components/PaginationControls';
 import SectionCard from '~/components/SectionCard';
 import { usePagination } from '~/hooks/usePagination';
-import { useCampaignsStore } from '~/stores/campaignsStore';
-import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import { useSyncCampaignByAgent } from '~/queries/campaignsQueries';
 import {
 	useDeleteVersionCommits,
@@ -32,8 +30,6 @@ import {
 	useSyncAgentVersionCommits,
 } from '~/queries/agentVersioningQueries';
 import agentVersioningApi from '~/api/agentVersioningApi';
-import type { CampaignAgent } from '~/models/CampaignAgentModel';
-import type { Campaign } from '~/models/CampaignsModel';
 import type {
 	AgentVersionCommit,
 	AgentVersionSummary,
@@ -48,17 +44,13 @@ import {
 import classes from './VersioningSection.module.css';
 
 interface VersioningSectionProps {
-	campaign?: Partial<Campaign>;
+	agentId: string;
 }
 
-const VersioningSection = ({ campaign }: VersioningSectionProps) => {
-	const { t } = useTranslation(['campaign.form.versioning', 'common']);
-	const { setSelectedTab } = useCampaignsStore((state) => state);
+const VersioningSection = ({ agentId }: VersioningSectionProps) => {
+	const { t } = useTranslation('campaign.form.versioning');
 	const [selectedVersion, setSelectedVersion] =
 		useState<AgentVersionSummary | null>(null);
-	const [selectedCampaignAgentId, setSelectedCampaignAgentId] = useState<
-		string | null
-	>(null);
 	const [selectedVersionIds, setSelectedVersionIds] = useState<Set<string>>(
 		new Set()
 	);
@@ -66,31 +58,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 		new Set()
 	);
 	const versionPagination = usePagination({ initialItemsPerPage: 10 });
-
-	const campaignId = campaign?.id ?? 0;
-	const {
-		data: campaignAgents = [],
-		isLoading: isLoadingCampaignAgents,
-		isError: isCampaignAgentsError,
-		refetch: refetchCampaignAgents,
-	} = useGetCampaignAgents(campaignId);
-
-	const effectiveSelectedCampaignAgentId =
-		selectedCampaignAgentId ??
-		(campaignAgents.length === 1 ? campaignAgents[0].agentId : null);
-
-	const selectedCampaignAgent = useMemo(
-		() =>
-			campaignAgents.find(
-				(campaignAgent: CampaignAgent) =>
-					campaignAgent.agentId === effectiveSelectedCampaignAgentId
-			) ?? null,
-		[campaignAgents, effectiveSelectedCampaignAgentId]
-	);
-	const agentId = selectedCampaignAgent?.agentId ?? '';
-	const isMultiAgentCampaign = campaignAgents.length > 1;
-	const requiresAgentSelection =
-		isMultiAgentCampaign && !effectiveSelectedCampaignAgentId;
 
 	const { data: agentRecord, isLoading: isLoadingAgentRecord } =
 		useGetAgentVersioningStatus(agentId);
@@ -195,8 +162,8 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	}, [latestCurrentVersion, t]);
 
 	const isBusy =
-		isLoadingCampaignAgents ||
-		(!requiresAgentSelection && isLoadingAgentRecord) ||
+		!agentId ||
+		isLoadingAgentRecord ||
 		isLoadingBranches ||
 		(isVersioningEnabled && isLoadingSummaryBranch);
 
@@ -212,27 +179,15 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 	};
 
 	useEffect(() => {
-		if (
-			selectedCampaignAgentId &&
-			!campaignAgents.some(
-				(campaignAgent: CampaignAgent) =>
-					campaignAgent.agentId === selectedCampaignAgentId
-			)
-		) {
-			setSelectedCampaignAgentId(null);
-		}
-	}, [campaignAgents, selectedCampaignAgentId]);
-
-	useEffect(() => {
 		setSelectedVersion(null);
-	}, [effectiveSelectedCampaignAgentId]);
+	}, [agentId]);
 
 	useEffect(() => {
 		versionPagination.setCurrentPage(1);
 		setSelectedVersionIds(new Set());
 		setDeletedVersionIds(new Set());
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [agentId, selectedCampaignAgentId]);
+	}, [agentId]);
 
 	// Clear selection when page changes
 	useEffect(() => {
@@ -346,7 +301,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 			});
 			await syncCampaignByAgent(agentId);
 			setSelectedVersion(null);
-			setSelectedTab('agents');
 			notifications.show({
 				title: t('revert.successTitle'),
 				message: t('revert.successMessage'),
@@ -498,7 +452,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 					return next;
 				});
 				setSelectedVersion(null);
-				setSelectedTab('agents');
 				notifications.show({
 					title: t('revertAndDelete.successTitle', {
 						version: targetVersion.seqNoInBranch,
@@ -525,7 +478,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 			revertVersion,
 			syncCampaignByAgent,
 			t,
-			setSelectedTab,
 		]
 	);
 
@@ -576,7 +528,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 					return next;
 				});
 				setSelectedVersion(null);
-				setSelectedTab('agents');
 				notifications.show({
 					title: t('revertAndDeletePrevious.successTitle', {
 						version: targetVersion.seqNoInBranch,
@@ -606,7 +557,6 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 			revertVersion,
 			syncCampaignByAgent,
 			t,
-			setSelectedTab,
 		]
 	);
 
@@ -636,14 +586,14 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 		someSelected: someVersionsSelected,
 	});
 
-	if (!campaign?.id) {
+	if (!agentId) {
 		return (
 			<SectionCard
 				title={t('section.title')}
 				description={t('section.description')}
 			>
 				<div className={classes.emptyState}>
-					<Text size='sm'>{t('empty.unsavedCampaign')}</Text>
+					<Text size='sm'>{t('empty.noAgent')}</Text>
 				</div>
 			</SectionCard>
 		);
@@ -656,39 +606,10 @@ const VersioningSection = ({ campaign }: VersioningSectionProps) => {
 				description={t('section.description')}
 			>
 				<Stack gap='sm' className={classes.panel}>
-					{isCampaignAgentsError ? (
-						<Alert
-							icon={<IconAlertCircle size={16} />}
-							color='red'
-							variant='light'
-						>
-							<Stack gap='xs'>
-								<Text size='sm'>{t('errors.agentLoadFailed')}</Text>
-								<Group justify='flex-start'>
-									<Button
-										size='xs'
-										variant='light'
-										onClick={() => refetchCampaignAgents()}
-									>
-										{t('actions.retry')}
-									</Button>
-								</Group>
-							</Stack>
-						</Alert>
-					) : null}
-
 					{isBusy ? (
 						<Group justify='center' py='xl'>
 							<Loader size='sm' />
 						</Group>
-					) : campaignAgents.length === 0 ? (
-						<div className={classes.emptyState}>
-							<Text size='sm'>{t('empty.noAssignedAgents')}</Text>
-						</div>
-					) : requiresAgentSelection ? (
-						<div className={classes.emptyState}>
-							<Text size='sm'>{t('empty.selectAgent')}</Text>
-						</div>
 					) : !isVersioningEnabled ? (
 						<div className={classes.emptyState}>
 							<Stack gap='xs'>

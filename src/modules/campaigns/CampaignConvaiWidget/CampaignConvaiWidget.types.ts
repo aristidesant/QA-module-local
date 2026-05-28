@@ -5,6 +5,7 @@ export type TranscriptItem = {
 	id: string;
 	role: 'user' | 'agent';
 	message: string;
+	timestamp: number;
 };
 
 export const STATUS_COLOR_MAP: Record<ConvaiStatus, string> = {

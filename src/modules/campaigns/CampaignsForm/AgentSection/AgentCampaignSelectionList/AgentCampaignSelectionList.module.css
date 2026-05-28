@@ -8,76 +8,146 @@
 	min-width: 0;
 }
 
-.loadingCard {
-	background: var(--mantine-color-body);
+.list {
+	gap: var(--mantine-spacing-sm);
 }
 
+.secondaryList {
+	gap: var(--mantine-spacing-xs);
+}
+
+.loadingCard,
+.emptyCard,
+.featuredCard,
+.agentRow {
+	background: var(--mantine-color-body);
+	border-color: var(--mantine-color-gray-3);
+}
+
+.loadingCard,
+.emptyCard,
+.featuredCard {
+	box-shadow: var(--mantine-shadow-sm);
+}
+
+[data-mantine-color-scheme='dark'] .loadingCard,
+[data-mantine-color-scheme='dark'] .emptyCard,
+[data-mantine-color-scheme='dark'] .featuredCard,
+[data-mantine-color-scheme='dark'] .agentRow {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-7);
+}
+
+.loadingCard,
 .emptyCard {
-	background: var(--mantine-color-body);
+	padding: var(--mantine-spacing-md);
 }
 
-.agentCard {
+.featuredCard {
+	padding: var(--mantine-spacing-lg);
+	transition:
+		border-color 160ms ease,
+		background-color 160ms ease,
+		box-shadow 160ms ease,
+		transform 160ms ease;
+}
+
+.featuredCard:hover {
+	border-color: var(--mantine-color-green-4);
+	background: var(--mantine-color-gray-0);
+	box-shadow: var(--mantine-shadow-md);
+	transform: translateY(-1px);
+}
+
+[data-mantine-color-scheme='dark'] .featuredCard:hover {
+	border-color: var(--mantine-color-green-6);
+	background: var(--mantine-color-dark-6);
+}
+
+.featuredCard:focus-visible,
+.agentRow:focus-visible {
+	outline: 2px solid var(--mantine-color-green-5);
+	outline-offset: 2px;
+}
+
+.agentRow {
 	display: block;
 	width: 100%;
 	padding: var(--mantine-spacing-md);
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: var(--mantine-radius-md);
-	background: var(--mantine-color-body);
-	transition:
-		border-color 140ms ease,
-		background-color 140ms ease,
-		box-shadow 140ms ease,
-		transform 140ms ease;
+	cursor: pointer;
 	text-align: left;
+	transition:
+		border-color 160ms ease,
+		background-color 160ms ease,
+		box-shadow 160ms ease,
+		transform 160ms ease;
 }
 
-.agentCard:hover {
-	border-color: var(--mantine-color-blue-5);
+.agentRow:hover {
+	border-color: var(--mantine-color-green-4);
 	background: var(--mantine-color-gray-0);
-	transform: translateY(-1px);
 	box-shadow: var(--mantine-shadow-sm);
+	transform: translateY(-1px);
 }
 
-[data-mantine-color-scheme='dark'] .agentCard {
-	border-color: var(--mantine-color-dark-4);
-	background: var(--mantine-color-dark-7);
-}
-
-[data-mantine-color-scheme='dark'] .agentCard:hover {
-	border-color: var(--mantine-color-blue-6);
+[data-mantine-color-scheme='dark'] .agentRow:hover {
+	border-color: var(--mantine-color-green-6);
 	background: var(--mantine-color-dark-6);
 }
 
-.agentCard[data-active='true'] {
-	border-color: var(--mantine-color-blue-5);
-	background: var(--mantine-color-blue-0);
+.agentRow:active,
+.featuredCard:active {
+	transform: translateY(0);
 }
 
-[data-mantine-color-scheme='dark'] .agentCard[data-active='true'] {
-	border-color: var(--mantine-color-blue-6);
-	background: var(--mantine-color-dark-6);
-}
-
-.agentCardContent {
+.cardContent {
 	min-width: 0;
 	flex: 1;
 }
 
-.agentName {
+.featuredCopy,
+.rowCopy {
 	min-width: 0;
-	word-break: break-word;
 }
 
-.agentSubtitle {
-	color: var(--mantine-color-dimmed);
+.featuredCopy {
+	padding-top: 2px;
+}
+
+.rowCopy {
+	min-width: 0;
+}
+
+.agentName {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.agentAvatar {
+	flex-shrink: 0;
+	font-weight: 700;
+	letter-spacing: -0.04em;
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08) inset;
+}
+
+[data-mantine-color-scheme='dark'] .agentAvatar {
+	box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
 }
 
 .badgeGroup {
 	flex-wrap: wrap;
 }
 
-.chevron {
-	color: var(--mantine-color-dimmed);
+.actionWrapper {
+	display: inline-flex;
+	align-items: flex-start;
 	flex-shrink: 0;
+}
+
+.featuredActionIcon {
 	margin-top: 2px;
 }

@@ -224,3 +224,25 @@ export const deletePhoneNumber = async (
 ): Promise<void> => {
 	await axios.delete(`${apiUrl}/phone-numbers/${id}`);
 };
+
+/**
+ * Deletes multiple phone numbers by their IDs (soft delete)
+ */
+export const bulkDeletePhoneNumbers = async (
+	ids: number[],
+	apiUrl: string = DEFAULT_API_URL
+): Promise<{ success: number[]; failed: number[] }> => {
+	const results: { success: number[]; failed: number[] } = {
+		success: [],
+		failed: [],
+	};
+	for (const id of ids) {
+		try {
+			await axios.delete(`${apiUrl}/phone-numbers/${id}`);
+			results.success.push(id);
+		} catch {
+			results.failed.push(id);
+		}
+	}
+	return results;
+};

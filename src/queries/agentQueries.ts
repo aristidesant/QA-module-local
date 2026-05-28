@@ -9,6 +9,10 @@ import type {
 	AgentUpdateModel,
 	AgentWithCampaignsQueryParams,
 } from '~/models/AgentListObject';
+import type {
+	SyncAgentRequest,
+	SyncAgentResponse,
+} from '~/models/SyncAgentModel';
 import type { Campaign } from '~/models/CampaignsModel';
 
 // Duplicate agent
@@ -25,8 +29,11 @@ export const useDuplicateAgent = () => {
 			const api = agentApi();
 			return api.duplicateAgent(agentId, data);
 		},
-		onSuccess: (_data) => {
+		onSuccess: (_data, variables) => {
 			queryClient.invalidateQueries({ queryKey: ['agents'] });
+			queryClient.invalidateQueries({
+				queryKey: ['campaignAgents', variables.data.campaignId],
+			});
 		},
 		onError: (error) => {
 			void error;
@@ -42,6 +49,33 @@ export const useCreateAgent = () => {
 			return api.createAgent(data);
 		},
 		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['agents'] });
+		},
+	});
+};
+
+export const useSyncAgent = () => {
+	const queryClient = useQueryClient();
+	return useMutation<SyncAgentResponse, Error, SyncAgentRequest>({
+		mutationFn: async (request: SyncAgentRequest) => {
+			const api = agentApi();
+			return api.syncAgent(request);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ['agents'] });
+		},
+	});
+};
+
+export const useSyncAgentConfig = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (agentId: string) => {
+			const api = agentApi();
+			return api.syncAgentConfig(agentId);
+		},
+		onSuccess: (_data, agentId) => {
+			queryClient.invalidateQueries({ queryKey: ['agent', agentId] });
 			queryClient.invalidateQueries({ queryKey: ['agents'] });
 		},
 	});

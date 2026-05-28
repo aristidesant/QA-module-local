@@ -1,9 +1,18 @@
-import { Alert, Button, Flex, Loader, Stack, Text } from '@mantine/core';
+import { Alert, Button, Flex, Group, Loader, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import { IconAlertCircle, IconDeviceFloppy } from '@tabler/icons-react';
-import { useEffect, useState } from 'react';
+import {
+	IconAlertCircle,
+	IconDeviceFloppy,
+	IconFlask,
+} from '@tabler/icons-react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate, useOutletContext, useParams } from 'react-router';
+import {
+	useNavigate,
+	useOutlet,
+	useOutletContext,
+	useParams,
+} from 'react-router';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import type { Campaign } from '~/models/CampaignsModel';
 import type { AgentVersionSnapshot } from '~/models/AgentVersioningModel';
@@ -17,11 +26,11 @@ import {
 import { useGetAgent } from '~/queries/agentQueries';
 import {
 	useGetCampaignAgent,
-	useGetCampaignAgents,
 	useUpdateCampaignAgentConfig,
 } from '~/queries/campaignAgentsQueries';
 import { useGetAgentVersioningStatus } from '~/queries/agentVersioningQueries';
 import AgentSaveReviewModal from '../CampaignsForm/AgentSaveReviewModal';
+import CampaignSyncButton from '../CampaignsForm/components/CampaignSyncButton';
 import AgentDetailTabs, { type AgentTabValue } from './AgentDetailTabs';
 import styles from './AgentDetailPage.module.css';
 
@@ -33,16 +42,23 @@ const AgentDetailPage = () => {
 	]);
 	const navigate = useNavigate();
 	const campaign = useOutletContext<Campaign>();
+	const childOutlet = useOutlet();
 	const { campaignAgentId } = useParams<{ campaignAgentId: string }>();
 	const campaignId = campaign?.id;
 	const parsedCampaignAgentId = campaignAgentId ? Number(campaignAgentId) : 0;
 
-	const { data: campaignAgent, isLoading: isAgentLoading } =
-		useGetCampaignAgent(campaignId ?? 0, parsedCampaignAgentId);
-	const { data: selectedAgent } = useGetAgent(campaignAgent?.agentId ?? '');
-	const { data: campaignAgents = [] } = useGetCampaignAgents(campaignId ?? 0);
-	const firstAgentId = campaignAgents[0]?.agentId ?? '';
-	const { data: agentRecord } = useGetAgentVersioningStatus(firstAgentId);
+	const {
+		data: campaignAgent,
+		dataUpdatedAt: campaignAgentUpdatedAt,
+		isLoading: isAgentLoading,
+		refetch: refetchCampaignAgent,
+	} = useGetCampaignAgent(campaignId ?? 0, parsedCampaignAgentId);
+	const {
+		data: selectedAgent,
+		dataUpdatedAt: selectedAgentUpdatedAt,
+	} = useGetAgent(campaignAgent?.agentId ?? '');
+	const activeAgentId = campaignAgent?.agentId ?? '';
+	const { data: agentRecord } = useGetAgentVersioningStatus(activeAgentId);
 	const isVersioningEnabled = Boolean(agentRecord?.versioningEnabled);
 	const campaignDetailPath = campaignId
 		? `/campaign/${campaignId}`
@@ -59,6 +75,7 @@ const AgentDetailPage = () => {
 		agentConfig: Record<string, unknown>;
 		versionDescription?: string;
 	} | null>(null);
+	const hydratedAgentConfigAtRef = useRef<number | null>(null);
 
 	const selectedCampaignAgent = campaignAgent ?? null;
 
@@ -83,7 +100,8 @@ const AgentDetailPage = () => {
 			isPrincipal: selectedCampaignAgent.isPrincipal,
 		});
 	}, [
-		selectedAgent?.id,
+		campaignAgentUpdatedAt,
+		selectedAgentUpdatedAt,
 		selectedCampaignAgent?.id,
 		selectedCampaignAgent?.agentId,
 	]);
@@ -120,14 +138,16 @@ const AgentDetailPage = () => {
 
 	useEffect(() => {
 		if (!selectedAgent) return;
+		if (hydratedAgentConfigAtRef.current === selectedAgentUpdatedAt) return;
+
+		hydratedAgentConfigAtRef.current = selectedAgentUpdatedAt;
 
 		form.setValues((current) => ({
 			...current,
 			agentConfig: selectedAgent.config ?? {},
 		}));
 		form.resetDirty();
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedAgent?.id]);
+	}, [selectedAgentUpdatedAt, form, selectedAgent]);
 
 	const updateCampaignAgentConfig = useUpdateCampaignAgentConfig();
 
@@ -201,6 +221,14 @@ const AgentDetailPage = () => {
 		}
 	};
 
+	const handleOpenTestConvai = () => {
+		if (!campaignId || !selectedCampaignAgent) return;
+
+		navigate(
+			`/campaign/${campaignId}/agent/${selectedCampaignAgent.id}/test/${selectedCampaignAgent.agentId}`
+		);
+	};
+
 	if (isAgentLoading) {
 		return (
 			<ContentContainer
@@ -241,9 +269,53 @@ const AgentDetailPage = () => {
 		);
 	}
 
-	const selectedAgentBadgeLabel = selectedCampaignAgent.isPrincipal
-		? t('form.agent.selector.principal')
-		: t('form.agent.selector.subagent');
+	if (childOutlet) {
+		return <>{childOutlet}</>;
+	}
+
+	const headerActions = (
+		<Group gap='xs' wrap='wrap' justify='flex-end'>
+			<CampaignSyncButton
+				agents={[
+					{
+						agentId: selectedCampaignAgent.agentId,
+						agentName:
+							selectedCampaignAgent.agent?.name || selectedCampaignAgent.agentId,
+					},
+				]}
+				selectedAgentId={selectedCampaignAgent.agentId}
+				onSynced={async () => {
+					await refetchCampaignAgent();
+				}}
+			/>
+		</Group>
+	);
+
+	const saveButton = (
+		<Button
+			leftSection={<IconDeviceFloppy size={16} />}
+			size='sm'
+			variant='light'
+			onClick={handleSaveClick}
+			loading={updateCampaignAgentConfig.isPending}
+			disabled={!form.isDirty()}
+		>
+			{updateCampaignAgentConfig.isPending
+				? t('form.agent.selector.saving')
+				: t('form.agent.selector.save')}
+		</Button>
+	);
+
+	const testButton = (
+		<Button
+			leftSection={<IconFlask size={16} />}
+			size='sm'
+			variant='light'
+			onClick={handleOpenTestConvai}
+		>
+			{t('form.actions.testConvai', { ns: 'campaign.detail' })}
+		</Button>
+	);
 
 	return (
 		<CampaignIdContext.Provider value={campaignId}>
@@ -265,26 +337,16 @@ const AgentDetailPage = () => {
 						showBackButton
 						onBackClick={() => navigate(campaignDetailPath)}
 						titleRight={
-							activeTab === 'workflow' ? null : (
-								<Button
-									leftSection={<IconDeviceFloppy size={16} />}
-									size='sm'
-									variant='light'
-									onClick={handleSaveClick}
-									loading={updateCampaignAgentConfig.isPending}
-									disabled={!form.isDirty()}
-								>
-									{updateCampaignAgentConfig.isPending
-										? t('form.agent.selector.saving')
-										: t('form.agent.selector.save')}
-								</Button>
+							(
+								<Group gap='xs' wrap='wrap' justify='flex-end'>
+									{headerActions}
+									{testButton}
+									{activeTab !== 'workflow' ? saveButton : null}
+								</Group>
 							)
 						}
 					>
 						<Stack gap='sm'>
-							<Text size='xs' c='dimmed' className={styles.metaText}>
-								{selectedAgentBadgeLabel} · {selectedCampaignAgent.agentType}
-							</Text>
 							<AgentDetailTabs
 								agentId={selectedCampaignAgent.agentId}
 								value={activeTab}

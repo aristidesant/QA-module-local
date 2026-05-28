@@ -51,14 +51,17 @@ export const useGetCampaignAgentTransferTargets = (
 };
 
 // Get all agents for a campaign
-export const useGetCampaignAgents = (campaignId: number) => {
+export const useGetCampaignAgents = (
+	campaignId: number,
+	enabled = true
+) => {
 	return useQuery({
 		queryKey: ['campaignAgents', campaignId],
 		queryFn: async () => {
 			const api = campaignAgentsApi();
 			return api.getCampaignAgents(campaignId);
 		},
-		enabled: !!campaignId,
+		enabled: !!campaignId && enabled,
 	});
 };
 

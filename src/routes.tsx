@@ -251,10 +251,23 @@ const router = createBrowserRouter([
 										</Suspense>
 									</I18nNamespaceLoader>
 								),
+								children: [
+									{
+										path: 'test/:agentId',
+										id: 'campaign.detail.test',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CampaignTestPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+								],
 							},
 							{
 								path: 'test',
-								id: 'campaign.detail.test',
+								id: 'campaign.detail.test.legacy',
 								element: (
 									<I18nNamespaceLoader>
 										<Suspense fallback={<SuspenseFallback />}>

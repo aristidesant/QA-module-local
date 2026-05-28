@@ -63,6 +63,20 @@ const DEFAULT_CONVERSATION_SNAPSHOT: ConversationSnapshot = {
 	isMuted: false,
 };
 
+const areConversationSnapshotsEqual = (
+	current: ConversationSnapshot,
+	next: ConversationSnapshot
+) => {
+	return (
+		current.status === next.status &&
+		current.mode === next.mode &&
+		current.message === next.message &&
+		current.isSpeaking === next.isSpeaking &&
+		current.isListening === next.isListening &&
+		current.isMuted === next.isMuted
+	);
+};
+
 const CampaignConvaiContext = createContext<CampaignConvaiContextValue | null>(
 	null
 );
@@ -202,7 +216,7 @@ const ConvaiStateProvider = ({ agentId, children }: ConvaiStateProviderProps) =>
 					return current;
 				}
 
-				return [...current, { id: key, role, message }];
+				return [...current, { id: key, role, message, timestamp: Date.now() }];
 			});
 		},
 		[]
@@ -314,7 +328,9 @@ const ConvaiStateProvider = ({ agentId, children }: ConvaiStateProviderProps) =>
 	}, []);
 
 	const handleSnapshotChange = useCallback((snapshot: ConversationSnapshot) => {
-		setConversationSnapshot(snapshot);
+		setConversationSnapshot((current) =>
+			areConversationSnapshotsEqual(current, snapshot) ? current : snapshot
+		);
 	}, []);
 
 	const value = useMemo<CampaignConvaiContextValue>(

@@ -1,14 +1,16 @@
-import { ActionIcon, Alert, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Alert, Button, Text, Tooltip } from '@mantine/core';
+import { useHotkeys } from '@mantine/hooks';
 import {
 	IconAlertCircle,
 	IconMicrophone,
 	IconMicrophoneOff,
 	IconPhone,
 	IconPhoneOff,
+	IconRefresh,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useCampaignConvai } from './CampaignConvaiContext';
-import ConvaiVoiceOrb from './ConvaiVoiceOrb';
+import ConvaiAgentAvatar from './ConvaiAgentAvatar';
 import ConvaiTranscript from './ConvaiTranscript';
 import ConvaiMessageInput from './ConvaiMessageInput';
 import styles from './CampaignConvaiWidget.module.css';
@@ -21,7 +23,6 @@ const ConvaiVoicePanel = () => {
 		isSpeaking,
 		isListening,
 		isMuted,
-		sessionId,
 		transcript,
 		draftMessage,
 		setDraftMessage,
@@ -32,6 +33,12 @@ const ConvaiVoicePanel = () => {
 	} = useCampaignConvai();
 
 	const isConnected = status === 'connected';
+	const isConnecting = status === 'connecting';
+
+	useHotkeys([
+		['m', () => { if (isConnected) toggleMute(); }],
+		['Escape', () => { if (isConnected) endSession(); }],
+	]);
 
 	const caption = (() => {
 		if (status === 'connected') {
@@ -42,38 +49,71 @@ const ConvaiVoicePanel = () => {
 		return t(`widget.status.${status}`);
 	})();
 
+	const callButtonLabel = isConnected
+		? t('widget.voice.hangupTooltip')
+		: t('widget.voice.callTooltip');
+
+	const callButtonClassName = `${styles.callButton}${isConnecting ? ` ${styles.callButtonConnecting}` : ''}`;
+
 	return (
 		<div className={styles.voicePanel}>
-			<div className={styles.orbCluster}>
-				<ConvaiVoiceOrb
+			<div className={styles.agentHeader}>
+				<ConvaiAgentAvatar
 					status={status}
 					isSpeaking={isSpeaking}
 					isListening={isListening}
+					isMuted={isMuted}
 				/>
-				<Tooltip
-					label={isConnected ? t('widget.voice.hangupTooltip') : t('widget.voice.callTooltip')}
-					position='bottom'
-					withArrow
-				>
-					<ActionIcon
-						className={styles.callButton}
-						size={52}
-						radius='xl'
-						color={isConnected ? 'red' : 'green'}
-						variant='filled'
-						aria-label={
-							isConnected
-								? t('widget.voice.hangupTooltip')
-								: t('widget.voice.callTooltip')
-						}
-						onClick={isConnected ? endSession : startSession}
-					>
-						{isConnected ? <IconPhoneOff size={22} /> : <IconPhone size={22} />}
-					</ActionIcon>
-				</Tooltip>
-			</div>
 
-			<Text className={styles.voiceCaption}>{caption}</Text>
+				<div className={styles.agentHeaderInfo}>
+					<Text className={styles.agentName}>
+						{t('widget.voice.title')}
+					</Text>
+					<Text className={styles.agentStatus}>{caption}</Text>
+				</div>
+
+				<div className={styles.agentHeaderControls}>
+					{isConnected && (
+						<Tooltip
+							label={`${isMuted ? t('widget.actions.unmute') : t('widget.actions.mute')} (M)`}
+							position='bottom'
+							withArrow
+						>
+							<ActionIcon
+								size='lg'
+								radius='xl'
+								variant='light'
+								color={isMuted ? 'red' : 'gray'}
+								aria-label={
+									isMuted ? t('widget.actions.unmute') : t('widget.actions.mute')
+								}
+								onClick={toggleMute}
+							>
+								{isMuted ? (
+									<IconMicrophoneOff size={18} />
+								) : (
+									<IconMicrophone size={18} />
+								)}
+							</ActionIcon>
+						</Tooltip>
+					)}
+
+					<Tooltip label={callButtonLabel} position='bottom' withArrow>
+						<ActionIcon
+							className={callButtonClassName}
+							size='lg'
+							radius='xl'
+							color={isConnected ? 'red' : 'green'}
+							variant='filled'
+							aria-label={callButtonLabel}
+							onClick={isConnected ? endSession : startSession}
+							disabled={isConnecting}
+						>
+							{isConnected ? <IconPhoneOff size={20} /> : <IconPhone size={20} />}
+						</ActionIcon>
+					</Tooltip>
+				</div>
+			</div>
 
 			{status === 'error' && message && (
 				<Alert
@@ -83,67 +123,44 @@ const ConvaiVoicePanel = () => {
 					title={t('widget.error.title')}
 					className={styles.voiceErrorAlert}
 				>
-					{message}
+					<Text size='sm'>{message}</Text>
+					<Button
+						size='xs'
+						variant='light'
+						color='red'
+						leftSection={<IconRefresh size={14} />}
+						onClick={startSession}
+						className={styles.errorRetryButton}
+					>
+						{t('widget.error.retry')}
+					</Button>
 				</Alert>
 			)}
 
-			{isConnected && (
-				<Tooltip
-					label={isMuted ? t('widget.actions.unmute') : t('widget.actions.mute')}
-					position='bottom'
-					withArrow
-				>
-					<ActionIcon
-						size='lg'
-						radius='xl'
-						variant='light'
-						color={isMuted ? 'red' : 'gray'}
-						aria-label={
-							isMuted ? t('widget.actions.unmute') : t('widget.actions.mute')
-						}
-						onClick={toggleMute}
-					>
-						{isMuted ? (
-							<IconMicrophoneOff size={18} />
-						) : (
-							<IconMicrophone size={18} />
-						)}
-					</ActionIcon>
-				</Tooltip>
-			)}
+			<ConvaiTranscript
+				transcript={transcript}
+				canCopyTranscript={transcript.length > 0}
+				labels={{
+					title: t('widget.transcript.title'),
+					empty: t('widget.transcript.empty'),
+					agent: t('widget.transcript.agent'),
+					user: t('widget.transcript.user'),
+					copyTranscript: t('widget.transcript.copyTranscript'),
+					copiedTranscript: t('widget.transcript.copiedTranscript'),
+				}}
+			/>
 
-			{sessionId && (
-				<Text className={styles.voiceSessionId} title={sessionId}>
-					{sessionId}
-				</Text>
-			)}
-
-			<div className={styles.voiceTranscriptShell}>
-				<ConvaiTranscript
-					transcript={transcript}
-					canCopyTranscript={status !== 'connected'}
-					labels={{
-						title: t('widget.transcript.title'),
-						empty: t('widget.transcript.empty'),
-						agent: t('widget.transcript.agent'),
-						user: t('widget.transcript.user'),
-						copyTranscript: t('widget.transcript.copyTranscript'),
-						copiedTranscript: t('widget.transcript.copiedTranscript'),
-					}}
-				/>
-
-				<ConvaiMessageInput
-					value={draftMessage}
-					onChange={setDraftMessage}
-					onSend={sendMessage}
-					disabled={!isConnected}
-					labels={{
-						inputLabel: t('widget.transcript.inputLabel'),
-						inputPlaceholder: t('widget.transcript.inputPlaceholder'),
-						send: t('widget.transcript.send'),
-					}}
-				/>
-			</div>
+			<ConvaiMessageInput
+				value={draftMessage}
+				onChange={setDraftMessage}
+				onSend={sendMessage}
+				disabled={!isConnected}
+				labels={{
+					inputLabel: t('widget.transcript.inputLabel'),
+					inputPlaceholder: t('widget.transcript.inputPlaceholder'),
+					send: t('widget.transcript.send'),
+				}}
+			/>
 		</div>
 	);
 };

@@ -7,7 +7,8 @@
 		"tabs": {
 			"setup": "Configuración",
 			"workflow": "Workflow",
-			"advanced": "Avanzado"
+			"advanced": "Avanzado",
+			"versioning": "Versionado"
 		},
 		"save": "Guardar agente",
 		"saving": "Guardando...",
@@ -27,7 +28,13 @@
 	"form": {
 		"agent": {
 			"add": {
+				"searchLabel": "Nombre del agente",
 				"searchPlaceholder": "Buscar agentes por nombre",
+				"campaignNameLabel": "Nombre de la campaña",
+				"campaignNamePlaceholder": "Buscar y seleccionar una campaña",
+				"loadingCampaigns": "Cargando campañas...",
+				"loadCampaignsError": "Error al cargar campañas",
+				"noCampaignsFound": "No se encontraron campañas",
 				"loadError": "Error al cargar agentes",
 				"loadErrorDesc": "Hubo un error al cargar la lista de agentes. Por favor, inténtalo de nuevo.",
 				"tryAgain": "Intentar de nuevo",
@@ -47,13 +54,53 @@
 				"cancel": "Cancelar",
 				"cloneAction": "Clonar"
 			},
+			"sync": {
+				"title": "Sincronizar agente externo",
+				"description": "Registra un agente de un servicio externo en UCXM para poder usarlo en campañas.",
+				"agentId": {
+					"label": "ID del agente",
+					"placeholder": "agent_3701k3ttaq12ewp8b7qv5rfyszkz",
+					"description": "Pega el ID del agente del servicio externo."
+				},
+				"type": {
+					"label": "Tipo de agente",
+					"description": "Elige cómo se usará este agente en UCXM.",
+					"inbound": "INBOUND",
+					"outbound": "OUTBOUND"
+				},
+				"submit": "Sincronizar agente",
+				"successMessage": "Agente sincronizado exitosamente",
+				"validation": {
+					"agentIdRequired": "El ID del agente es obligatorio",
+					"typeRequired": "El tipo del agente es obligatorio"
+				},
+				"errors": {
+					"nameExists": "Ya existe un agente con ese nombre. Intenta con otro agente.",
+					"alreadySynced": "Este agente ya fue sincronizado previamente.",
+					"externalService": "Error al conectar con el servicio externo. Verifica que el Agent ID sea correcto.",
+					"generic": "Error al sincronizar el agente"
+				}
+			},
 			"list": {
 				"title": "Agentes de la campana",
 				"description": "Selecciona un agente para editar su prompt o workflow.",
 				"loading": "Cargando agentes...",
 				"addAgent": "Agregar Agente",
+				"syncAgent": "Sincronizar agente externo",
 				"addAgentTitle": "Agregar Agente a la Campaña",
 				"openAgentAria": "Abrir agente {{name}}",
+				"actions": {
+					"menu": "Acciones del agente",
+					"removeFromCampaign": "Eliminar de la campaña",
+					"principalProtected": "El agente principal no se puede eliminar de la campaña."
+				},
+				"removeRelation": {
+					"title": "¿Eliminar el agente de la campaña?",
+					"description": "Esto quitará a {{name}} de esta campaña solamente. El agente seguirá disponible en UCXM.",
+					"confirm": "Eliminar de la campaña",
+					"success": "{{name}} fue eliminado de la campaña",
+					"error": "No se pudo eliminar el agente de la campaña"
+				},
 				"selected": "Seleccionado",
 				"language": "Idioma: {{language}}",
 				"noLanguage": "Idioma no disponible",
@@ -102,6 +149,7 @@
 			},
 			"columns": {
 				"name": "Agente",
+				"campaign": "Campaña",
 				"type": "Tipo",
 				"voice": "Voz",
 				"actions": "Acciones",

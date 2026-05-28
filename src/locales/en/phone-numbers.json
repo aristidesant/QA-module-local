@@ -6,6 +6,23 @@
 		"addPhoneNumber": "Add Phone Number",
 		"clearSearch": "Clear search",
 		"clearFilters": "Clear filters",
+		"empty": {
+			"title": "No phone numbers yet",
+			"description": "Add your first phone number to start managing calls and messages."
+		},
+		"bulkDelete": {
+			"selected": "{{count}} selected",
+			"selected_plural": "{{count}} selected",
+			"deleteButton": "Delete selected ({{count}})",
+			"modalTitle": "Delete {{count}} phone number?",
+			"modalTitle_plural": "Delete {{count}} phone numbers?",
+			"modalMessage": "Are you sure you want to delete the selected phone numbers? This action cannot be undone.",
+			"confirm": "Delete ({{count}})",
+			"success": "Deleted {{count}} phone number",
+			"success_plural": "Deleted {{count}} phone numbers",
+			"partial": "Deleted {{success}}, failed to delete {{failed}}",
+			"error": "Failed to delete phone numbers"
+		},
 		"noActiveFilters": "No active filters",
 		"activeFilters_one": "{{count}} active filter",
 		"activeFilters_other": "{{count}} active filters",

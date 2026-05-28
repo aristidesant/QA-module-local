@@ -1,0 +1,9 @@
+.content {
+	flex: 1;
+	min-width: 0;
+}
+
+.rowContent {
+	flex: 1;
+	min-width: 0;
+}

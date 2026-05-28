@@ -8,11 +8,13 @@ export interface ContentContainerProps {
 	rightSection?: ReactNode;
 	title?: ReactNode;
 	titleRight?: ReactNode;
+	titleBottom?: ReactNode;
 	titleIcon?: ReactNode;
 	description?: string;
 	showBackButton?: boolean;
 	rightSectionTitle?: ReactNode;
 	mainScroll?: boolean; // new prop to control left/main scroll
+	contentClassName?: string;
 	contentWidth?: 'centered' | 'full';
 
 	onBackClick?: () => void;
@@ -26,8 +28,10 @@ export const ContentContainer = ({
 	showBackButton = false,
 	rightSectionTitle,
 	titleRight,
+	titleBottom,
 	mainScroll = true,
 	contentWidth = 'centered',
+	contentClassName,
 	titleIcon,
 	onBackClick,
 }: ContentContainerProps) => {
@@ -104,13 +108,18 @@ export const ContentContainer = ({
 								</Flex>
 								{titleRight && titleRight}
 							</Flex>
+							{titleBottom ? (
+								<div className={styles.contentContainerHeaderBottom}>
+									{titleBottom}
+								</div>
+							) : null}
 						</div>
 						<Divider mt='xs' className={styles.contentContainerDivider} />
 					</div>
 				)}
 				<div
 					ref={scrollContainerRef}
-					className={`${styles.contentContainerContent} ${!mainScroll ? styles.contentContainerNoMainScroll : ''}`}
+					className={`${styles.contentContainerContent} ${!mainScroll ? styles.contentContainerNoMainScroll : ''} ${contentClassName ?? ''}`}
 				>
 					{/* inline-style-allow: sentinel element requires exact 1px height for IntersectionObserver; no CSS class alternative is reliable */}
 					<div ref={sentinelRef} style={{ height: 1 }} aria-hidden />

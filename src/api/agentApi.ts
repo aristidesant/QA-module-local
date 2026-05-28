@@ -6,6 +6,10 @@ import type {
 	AgentWithCampaignListItem,
 	AgentWithCampaignsQueryParams,
 } from '~/models/AgentListObject';
+import type {
+	SyncAgentRequest,
+	SyncAgentResponse,
+} from '~/models/SyncAgentModel';
 import type { Paginator } from '~/models/Paginator';
 import { DEFAULT_API_URL } from './config';
 
@@ -21,6 +25,7 @@ export type AgentsWithCampaignsResponse = Paginator<AgentWithCampaignListItem>;
 
 export interface DuplicateAgentDto {
 	name: string;
+	campaignId: number;
 }
 
 export interface CreateAgentDto {
@@ -52,6 +57,21 @@ const agentApi = (_authHeader: Record<string, string> = {}) => {
 
 		createAgent: async (data: CreateAgentDto) => {
 			const response = await axios.post(`${DEFAULT_API_URL}/agents`, data);
+			return response.data;
+		},
+
+		syncAgent: async (request: SyncAgentRequest) => {
+			const response = await axios.post<SyncAgentResponse>(
+				`${DEFAULT_API_URL}/agents/sync`,
+				request
+			);
+			return response.data;
+		},
+
+		syncAgentConfig: async (agentId: string) => {
+			const response = await axios.post<AgentListObject>(
+				`${DEFAULT_API_URL}/agents/${agentId}/sync-config`
+			);
 			return response.data;
 		},
 

@@ -4,12 +4,6 @@
 	gap: var(--mantine-spacing-xs);
 }
 
-.metaText {
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
-	font-weight: 600;
-}
-
 .tabList {
 	border-bottom: 1px solid var(--surface-border);
 }

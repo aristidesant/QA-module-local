@@ -56,7 +56,6 @@ import CampaignSyncButton from './components/CampaignSyncButton';
 import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
 import AppDrawer from '~/components/AppDrawer';
 import DashboardSection from './DashboardSection';
-import VersioningSection from './VersioningSection';
 import VoicesSection from './VoicesSection';
 import CampaignRoleVisibilitySelector from '../components/CampaignRoleVisibilitySelector';
 import i18n from '~/locales/i18n';
@@ -84,7 +83,6 @@ const campaignFormTabNamespaces: Record<string, string> = {
 	analytics: 'campaign.form.analytics',
 	dashboards: 'campaign.form.dashboards',
 	voices: 'campaign.form.voices',
-	versioning: 'campaign.form.versioning',
 };
 
 const paramsNamespace = 'campaign.form.params';
@@ -162,7 +160,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		useState<SelectedAgentDraft | null>(null);
 
 	// Fetch campaign agents to check versioning status
-	const { data: campaignAgents = [] } = useGetCampaignAgents(campaignId);
+	const {
+		data: campaignAgents = [],
+		dataUpdatedAt: campaignAgentsUpdatedAt,
+	} = useGetCampaignAgents(campaignId);
 	const sortedCampaignAgents = React.useMemo(
 		() =>
 			[...(campaignAgents ?? [])].sort((a, b) => {
@@ -174,7 +175,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	const selectedCampaignAgent = sortedCampaignAgents.find(
 		(agent) => agent.id === selectedCampaignAgentId
 	);
-	const { data: selectedAgent } = useGetAgent(
+	const {
+		data: selectedAgent,
+		dataUpdatedAt: selectedAgentUpdatedAt,
+	} = useGetAgent(
 		selectedCampaignAgent?.agentId ?? ''
 	);
 	const {
@@ -219,7 +223,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			isPrincipal: selectedCampaignAgent.isPrincipal,
 		});
 	}, [
-		selectedAgent?.id,
+		campaignAgentsUpdatedAt,
+		selectedAgentUpdatedAt,
 		selectedCampaignAgent?.id,
 		selectedCampaignAgent?.agentId,
 	]);
@@ -237,7 +242,13 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		}));
 		form.resetDirty();
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [selectedCampaignAgent?.id, selectedAgent?.id]);
+	}, [
+		selectedCampaignAgent?.id,
+		selectedAgentUpdatedAt,
+		selectedAgent?.config?.workflow,
+		selectedAgent?.workflowUi?.nodeStyles,
+		selectedAgent?.workflowUi?.nodeGroups,
+	]);
 
 	const updateSelectedAgentDraft = (patch: Partial<SelectedAgentDraft>) => {
 		setSelectedAgentDraft((current) =>
@@ -741,7 +752,14 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 											aria-label={t('form.actions.testConvai', {
 												ns: 'campaign.detail',
 											})}
-											onClick={() => navigate(`/campaign/${campaign.id}/test`)}
+											onClick={() =>
+												selectedCampaignAgent?.id &&
+												selectedCampaignAgent?.agentId
+													? navigate(
+															`/campaign/${campaign.id}/agent/${selectedCampaignAgent.id}/test/${selectedCampaignAgent.agentId}`
+														)
+													: navigate(`/campaign/${campaign.id}/test`)
+											}
 										>
 											<IconFlask size={20} />
 										</ActionIcon>
@@ -862,9 +880,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 										disabled={!form.isDirty()}
 									/>
 								</form>
-							)}
-							{selectedTab === 'versioning' && (
-								<VersioningSection campaign={campaign} />
 							)}
 						</Stack>
 					</ContentContainer>

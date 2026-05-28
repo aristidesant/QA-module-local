@@ -13,6 +13,7 @@ import { notifications } from '@mantine/notifications';
 import { IconReload } from '@tabler/icons-react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
+import { useSyncAgentConfig } from '~/queries/agentQueries';
 import { useSyncCampaignByAgent } from '~/queries/campaignsQueries';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
@@ -26,12 +27,14 @@ interface CampaignSyncButtonProps {
 	agents?: AgentInfo[];
 	isLoading?: boolean;
 	selectedAgentId?: string | null;
+	onSynced?: () => void | Promise<void>;
 }
 
 export const CampaignSyncButton = ({
 	agents: agentsProp,
 	isLoading: isLoadingProp,
 	selectedAgentId: selectedAgentIdProp,
+	onSynced,
 }: CampaignSyncButtonProps) => {
 	const { t } = useTranslation(['campaign.form.sync', 'common']);
 	const queryClient = useQueryClient();
@@ -44,6 +47,8 @@ export const CampaignSyncButton = ({
 	);
 	const { mutateAsync: syncCampaign, isPending: isSyncing } =
 		useSyncCampaignByAgent();
+	const { mutateAsync: syncAgentConfig, isPending: isSyncingAgentConfig } =
+		useSyncAgentConfig();
 	const [selectedAgentId, setSelectedAgentId] = useState<string | null>(null);
 
 	const agents: AgentInfo[] = useMemo(
@@ -71,7 +76,7 @@ export const CampaignSyncButton = ({
 			if (!agentId) return;
 			const agent = agents.find((item) => item.agentId === agentId);
 			if (!agent) return;
-			showConfirmModal(agent.agentId, agent.agentName);
+			showSyncConfigConfirm(agent.agentId, agent.agentName);
 			return;
 		}
 
@@ -136,6 +141,54 @@ export const CampaignSyncButton = ({
 		}
 	};
 
+	const showSyncConfigConfirm = (agentId: string, agentName: string) => {
+		const confirmModalId = 'confirm-sync-agent-config';
+		modals.open({
+			modalId: confirmModalId,
+			title: t('form.campaignSync.confirmTitle'),
+			children: (
+				<Stack>
+					<Text size='sm'>
+						{t('form.campaignSync.confirmMessage', { agentName })}
+					</Text>
+					<Group justify='flex-end' mt='md'>
+						<Button
+							variant='default'
+							onClick={() => modals.close(confirmModalId)}
+							disabled={isSyncingAgentConfig}
+						>
+							{t('form.campaignSync.cancelButton')}
+						</Button>
+						<Button
+							color='orange'
+							loading={isSyncingAgentConfig}
+							onClick={async () => {
+								try {
+									await syncAgentConfig(agentId);
+									await onSynced?.();
+									modals.close(confirmModalId);
+									notifications.show({
+										title: t('form.campaignSync.successTitle'),
+										message: t('form.campaignSync.successMessage'),
+										color: 'green',
+									});
+								} catch {
+									notifications.show({
+										title: t('form.campaignSync.errorTitle'),
+										message: t('form.campaignSync.errorMessage'),
+										color: 'red',
+									});
+								}
+							}}
+						>
+							{t('form.campaignSync.confirmButton')}
+						</Button>
+					</Group>
+				</Stack>
+			),
+		});
+	};
+
 	const showConfirmModal = (agentId: string, agentName: string) => {
 		const confirmModalId = 'confirm-sync-campaign';
 		modals.open({
@@ -165,6 +218,7 @@ export const CampaignSyncButton = ({
 											queryKey: ['campaign', String(campaignId)],
 										});
 									}
+									await onSynced?.();
 									modals.close(confirmModalId);
 									notifications.show({
 										title: t('form.campaignSync.successTitle'),
@@ -191,6 +245,7 @@ export const CampaignSyncButton = ({
 	const isDisabled =
 		agents.length === 0 ||
 		isSyncing ||
+		isSyncingAgentConfig ||
 		resolvedLoading ||
 		(isExternalSelection && agents.length > 1 && !resolvedSelectedAgentId);
 	const tooltipLabel =
@@ -207,7 +262,7 @@ export const CampaignSyncButton = ({
 				variant='subtle'
 				onClick={handleSync}
 				disabled={isDisabled}
-				loading={isSyncing}
+				loading={isSyncing || isSyncingAgentConfig}
 			>
 				<IconReload size={18} />
 			</ActionIcon>

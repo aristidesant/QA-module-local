@@ -3,7 +3,6 @@ import {
 	IconChecklist,
 	IconChartBar,
 	IconGalaxy,
-	IconGitBranch,
 	IconMicrophone,
 	IconUser,
 	IconList,
@@ -59,9 +58,6 @@ const CampaignTabs = ({ hasVoicesTab = false }: CampaignTabsProps) => {
 						{t('tabs.voices')}
 					</Tabs.Tab>
 				)}
-				<Tabs.Tab leftSection={<IconGitBranch />} value='versioning'>
-					{t('tabs.versioning')}
-				</Tabs.Tab>
 			</Tabs.List>
 		</Tabs>
 	);

@@ -1,637 +1,279 @@
-/* ── Root & Card ──────────────────────────────────────────────────────────── */
-
-.root {
-	width: 100%;
-}
-
-.widgetCard {
-	width: 100%;
-}
-
-/* ── Header ───────────────────────────────────────────────────────────────── */
-
-.header {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: var(--mantine-spacing-sm);
-}
-
-.headerCopy {
-	display: flex;
-	flex: 1;
-	flex-direction: column;
-	gap: 0.35rem;
-	min-width: 0;
-}
-
-.iconBadge {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 1.7rem;
-	height: 1.7rem;
-	border-radius: var(--r-md);
-	background: var(--mantine-color-gray-1);
-	color: var(--mantine-color-gray-7);
-	border: 1px solid var(--surface-border);
-	flex-shrink: 0;
-}
-
-.title {
-	margin: 0;
-	font-size: 0.95rem;
-	font-weight: 600;
-	line-height: 1.15;
-	letter-spacing: -0.02em;
-}
-
-.description {
-	margin: 0;
-	max-width: 62ch;
-}
-
-.statusBadge {
-	flex-shrink: 0;
-	margin-top: 1px;
-}
-
-.spinningIcon {
-	animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-	from { transform: rotate(0deg); }
-	to   { transform: rotate(360deg); }
-}
-
-/* ── Voice Panel ──────────────────────────────────────────────────────────── */
+/* ── Voice Panel Layout ───────────────────────────────────────────────────── */
 
 .voicePanel {
 	display: flex;
 	flex-direction: column;
-	align-items: center;
-	gap: var(--s-4);
-	padding: var(--s-6) var(--s-4) var(--s-4);
-	width: 100%;
 	height: 100%;
-	min-height: 0;
-	box-sizing: border-box;
+	width: 100%;
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--r-lg);
+	overflow: hidden;
 }
 
-.voiceTranscriptShell {
+/* ── Agent Header ─────────────────────────────────────────────────────────── */
+
+.agentHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--s-3);
+	padding: var(--s-4);
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	flex-shrink: 0;
+}
+
+.agentHeaderInfo {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
+	gap: 2px;
 	flex: 1;
-	justify-content: flex-end;
-	width: 100%;
-	min-height: 0;
-	margin-top: 0;
+	min-width: 0;
 }
 
-.orbCluster {
-	position: relative;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.callButton {
-	position: absolute;
-	bottom: -8px;
-	left: 50%;
-	transform: translateX(-50%);
-	border: 3px solid var(--mantine-color-white);
-	box-shadow: var(--sh-md);
-	transition:
-		box-shadow 140ms var(--ease-out),
-		background-color 140ms var(--ease-out),
-		border-color 140ms var(--ease-out),
-		color 140ms var(--ease-out);
-	will-change: auto;
-}
-
-.callButton:hover,
-.callButton:focus-visible,
-.callButton:active,
-.callButton[data-active='true'] {
-	transform: translateX(-50%) !important;
-}
-
-.voiceCaption {
+.agentName {
 	margin: 0;
 	font-size: var(--fs-14);
 	font-weight: 600;
-	letter-spacing: 0.01em;
-	color: var(--text-secondary);
-	text-align: center;
+	color: var(--text-primary);
+	line-height: 1.2;
 }
 
-.voiceSessionId {
+.agentStatus {
 	margin: 0;
-	max-width: 100%;
-	font-family: var(--font-mono);
-	font-size: 11px;
-	color: var(--text-muted);
-	text-align: center;
-	white-space: nowrap;
-	overflow: hidden;
-	text-overflow: ellipsis;
+	font-size: 12px;
+	color: var(--text-secondary);
+	line-height: 1.2;
 }
 
-.voiceErrorAlert {
-	width: 100%;
-	margin-top: calc(-1 * var(--s-1));
-}
-
-/* ── Voice Orb ────────────────────────────────────────────────────────────── */
-
-.orbStage {
-	position: relative;
+.agentHeaderControls {
 	display: flex;
+	gap: var(--s-2);
+	flex-shrink: 0;
+}
+
+/* ── Agent Avatar ─────────────────────────────────────────────────────────── */
+
+.agentAvatar {
+	position: relative;
+	width: 48px;
+	height: 48px;
+	border-radius: var(--r-xl);
+	background: linear-gradient(135deg, var(--nt-blue-400), var(--nt-green-500));
+	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	width: 140px;
-	height: 140px;
-	transform: scale(1);
-	isolation: isolate;
+	gap: 6px;
+	flex-shrink: 0;
+	transition: box-shadow 200ms var(--ease-out);
 }
 
-.orbField {
-	position: absolute;
-	inset: -12%;
+.avatarEyes {
+	display: flex;
+	gap: 8px;
+}
+
+.avatarEye {
+	width: 6px;
+	height: 6px;
 	border-radius: var(--r-full);
-	background:
-		radial-gradient(
-			circle at 50% 44%,
-			color-mix(in srgb, var(--nt-green-500) 22%, transparent),
-			transparent 60%
-		),
-		radial-gradient(
-			circle at 50% 50%,
-			color-mix(in srgb, var(--nt-blue-300) 12%, transparent),
-			transparent 72%
-		);
-	filter: blur(18px);
-	opacity: 0.6;
+	background: var(--mantine-color-white);
 }
 
-.orbOrbitOuter,
-.orbOrbitInner {
-	position: absolute;
-	width: 100%;
-	height: 100%;
-	border-radius: var(--r-full);
-	border: 1px solid color-mix(in srgb, var(--mantine-color-white) 10%, transparent);
-	box-sizing: border-box;
-}
-
-.orbOrbitOuter {
-	inset: 0;
-	border-color: color-mix(in srgb, var(--nt-green-500) 24%, transparent);
-	opacity: 0.9;
-}
-
-.orbOrbitInner {
-	inset: 14%;
-	border-color: color-mix(in srgb, var(--nt-blue-300) 28%, transparent);
-	opacity: 0.8;
-}
-
-.orbTrace {
-	position: absolute;
-	inset: 23% 18%;
-	border-radius: var(--r-full);
-	background:
-		conic-gradient(
-			from 210deg,
-			transparent 0 34%,
-			color-mix(in srgb, var(--nt-green-500) 40%, transparent) 34% 41%,
-			transparent 41% 62%,
-			color-mix(in srgb, var(--nt-blue-300) 32%, transparent) 62% 70%,
-			transparent 70% 100%
-		);
-	-webkit-mask: radial-gradient(
-		circle at center,
-		transparent 60%,
-		var(--mantine-color-dark-9) 61%,
-		var(--mantine-color-dark-9) 66%,
-		transparent 67%
-	);
-	mask: radial-gradient(
-		circle at center,
-		transparent 60%,
-		var(--mantine-color-dark-9) 61%,
-		var(--mantine-color-dark-9) 66%,
-		transparent 67%
-	);
-	will-change: transform, opacity;
-}
-
-.orbCore {
-	position: absolute;
-	inset: 18%;
-	border-radius: var(--r-full);
-	background:
-		radial-gradient(
-			circle at 34% 30%,
-			color-mix(in srgb, var(--mantine-color-white) 44%, transparent),
-			transparent 24%
-		),
-		radial-gradient(
-			circle at 50% 50%,
-			color-mix(in srgb, var(--nt-green-500) 58%, var(--nt-blue-300) 30%),
-			color-mix(in srgb, var(--nt-green-700) 90%, transparent) 72%
-		);
-	box-shadow:
-		inset 0 0 0 1px color-mix(in srgb, var(--mantine-color-white) 12%, transparent),
-		inset 0 -10px 18px color-mix(in srgb, #081019 44%, transparent),
-		0 0 0 1px color-mix(in srgb, var(--nt-green-500) 15%, transparent);
-	overflow: hidden;
-	will-change: transform, opacity;
-}
-
-.orbCore::before,
-.orbCore::after {
-	content: '';
-	position: absolute;
-	inset: 0;
-}
-
-.orbCore::before {
-	background:
-		linear-gradient(
-			135deg,
-			transparent 0 42%,
-			color-mix(in srgb, var(--mantine-color-white) 18%, transparent) 42% 45%,
-			transparent 45% 100%
-		),
-		radial-gradient(
-			circle at 30% 30%,
-			color-mix(in srgb, var(--mantine-color-white) 18%, transparent),
-			transparent 36%
-		);
-	opacity: 0.65;
-}
-
-.orbCore::after {
-	border-radius: var(--r-full);
-	background-image:
-		linear-gradient(
-			90deg,
-			transparent 0 46%,
-			color-mix(in srgb, var(--mantine-color-white) 10%, transparent) 46% 47%,
-			transparent 47% 100%
-		),
-		linear-gradient(
-			0deg,
-			transparent 0 50%,
-			color-mix(in srgb, var(--mantine-color-white) 8%, transparent) 50% 51%,
-			transparent 51% 100%
-		);
-	background-size: 100% 100%;
-	opacity: 0.5;
-	mix-blend-mode: screen;
-}
-
-.orbNode {
-	position: absolute;
+.avatarMouth {
 	width: 12px;
-	height: 12px;
-	border-radius: var(--r-full);
-	background:
-		radial-gradient(circle at 35% 30%, var(--mantine-color-white), transparent 35%),
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--nt-green-400) 88%, var(--mantine-color-white) 12%),
-			color-mix(in srgb, var(--nt-blue-300) 72%, var(--nt-green-500) 28%)
-		);
-	box-shadow:
-		0 0 0 3px color-mix(in srgb, var(--nt-green-500) 12%, transparent),
-		0 0 18px color-mix(in srgb, var(--nt-blue-300) 28%, transparent);
+	height: 3px;
+	border-radius: 2px;
+	background: var(--mantine-color-white);
+	transition: transform 150ms var(--ease-out);
 }
 
-.orbNode::before {
+/* Avatar States */
+
+.avatarIdle .avatarMouth {
+	animation: mouthIdle 4s var(--ease-out) infinite;
+}
+
+.avatarConnected .avatarMouth {
+	animation: mouthIdle 3s var(--ease-out) infinite;
+}
+
+.avatarSpeaking .avatarMouth {
+	animation: mouthSpeaking 0.35s var(--ease-out) infinite;
+}
+
+.avatarSpeaking {
+	box-shadow: 0 0 0 3px color-mix(in srgb, var(--nt-green-500) 20%, transparent);
+}
+
+.avatarListening .avatarMouth {
+	animation: mouthListening 3s var(--ease-out) infinite;
+}
+
+.avatarError {
+	filter: grayscale(0.6);
+	opacity: 0.7;
+}
+
+.avatarConnecting::before {
 	content: '';
 	position: absolute;
-	inset: -7px;
-	border-radius: var(--r-full);
-	border: 1px solid color-mix(in srgb, var(--nt-blue-300) 20%, transparent);
-	opacity: 0.65;
+	inset: -4px;
+	border-radius: var(--r-xl);
+	border: 2px solid var(--nt-green-500);
+	opacity: 0;
+	animation: connectingRing 2s var(--ease-out) infinite;
 }
 
-.orbNodeTop {
-	top: 18px;
-	right: 32px;
-	transform: translateZ(0);
+/* Avatar Animations */
+
+@keyframes mouthIdle {
+	0%, 100% { transform: scaleY(1); }
+	50% { transform: scaleY(0.85); }
 }
 
-.orbNodeRight {
-	right: 16px;
-	top: 50%;
-	transform: translateY(-50%);
+@keyframes mouthSpeaking {
+	0%, 100% { transform: scaleY(1) scaleX(1); }
+	25% { transform: scaleY(1.8) scaleX(1.1); }
+	50% { transform: scaleY(0.6) scaleX(0.9); }
+	75% { transform: scaleY(1.4) scaleX(1.05); }
 }
 
-.orbNodeBottom {
-	left: 24px;
-	bottom: 18px;
+@keyframes mouthListening {
+	0%, 100% { transform: scaleX(1); }
+	50% { transform: scaleX(1.15); }
 }
 
-@keyframes orbOrbit {
-	from { transform: rotate(0deg); }
-	to { transform: rotate(360deg); }
-}
-
-@keyframes orbCounterOrbit {
-	from { transform: rotate(360deg); }
-	to { transform: rotate(0deg); }
-}
-
-@keyframes orbPulse {
-	0%, 100% { opacity: 0.42; transform: scale(0.98); }
-	50% { opacity: 0.82; transform: scale(1.04); }
-}
-
-@keyframes orbTraceSweep {
-	0%, 100% { opacity: 0.38; }
-	50% { opacity: 0.78; }
-}
-
-@keyframes orbCoreBeat {
-	0%, 100% { transform: scale(1); }
-	50% { transform: scale(1.03); }
-}
-
-/* idle / disconnected */
-.orbStageIdle .orbField {
-	animation: orbPulse 5.6s var(--ease-out) infinite;
-}
-.orbStageIdle .orbOrbitOuter {
-	animation: orbOrbit 20s linear infinite;
-}
-.orbStageIdle .orbOrbitInner {
-	animation: orbCounterOrbit 28s linear infinite;
-}
-.orbStageIdle .orbTrace {
-	animation: orbTraceSweep 6.2s var(--ease-out) infinite;
-}
-.orbStageIdle .orbCore {
-	animation: orbCoreBeat 4.8s var(--ease-out) infinite;
-}
-
-/* connecting */
-.orbStageConnecting .orbField {
-	animation: orbPulse 2.8s var(--ease-out) infinite;
-}
-.orbStageConnecting .orbOrbitOuter {
-	animation: orbOrbit 9s linear infinite;
-}
-.orbStageConnecting .orbOrbitInner {
-	animation: orbCounterOrbit 12s linear infinite;
-}
-.orbStageConnecting .orbTrace {
-	animation: orbTraceSweep 2.2s var(--ease-out) infinite;
-}
-.orbStageConnecting .orbCore {
-	animation: orbCoreBeat 2s var(--ease-out) infinite;
-}
-
-/* connected idle */
-.orbStageConnected .orbField {
-	animation: orbPulse 6.8s var(--ease-out) infinite;
-}
-.orbStageConnected .orbOrbitOuter {
-	animation: orbOrbit 18s linear infinite;
-}
-.orbStageConnected .orbOrbitInner {
-	animation: orbCounterOrbit 24s linear infinite;
-}
-.orbStageConnected .orbTrace {
-	animation: orbTraceSweep 5.6s var(--ease-out) infinite;
-}
-.orbStageConnected .orbCore {
-	animation: orbCoreBeat 4.4s var(--ease-out) infinite;
-}
-
-/* connected + agent speaking */
-.orbStageSpeaking {
-	animation: orbCoreBeat 1.6s var(--ease-out) infinite;
-}
-.orbStageSpeaking .orbField {
-	animation: orbPulse 1.7s var(--ease-out) infinite;
-}
-.orbStageSpeaking .orbOrbitOuter {
-	animation: orbOrbit 7s linear infinite;
-}
-.orbStageSpeaking .orbOrbitInner {
-	animation: orbCounterOrbit 10s linear infinite;
-}
-.orbStageSpeaking .orbTrace {
-	animation: orbTraceSweep 1.4s var(--ease-out) infinite;
-}
-.orbStageSpeaking .orbCore {
-	animation: orbCoreBeat 1.2s var(--ease-out) infinite;
-	box-shadow:
-		inset 0 0 0 1px color-mix(in srgb, var(--mantine-color-white) 16%, transparent),
-		inset 0 -10px 18px color-mix(in srgb, #081019 38%, transparent),
-		0 0 0 1px color-mix(in srgb, var(--nt-green-500) 18%, transparent),
-		0 0 24px color-mix(in srgb, var(--nt-blue-300) 12%, transparent);
-}
-
-/* connected + user speaking */
-.orbStageListening {
-	animation: orbCoreBeat 2.8s var(--ease-out) infinite;
-}
-.orbStageListening .orbField {
-	animation: orbPulse 2.5s var(--ease-out) infinite;
-}
-.orbStageListening .orbOrbitOuter {
-	animation: orbOrbit 11s linear infinite;
-}
-.orbStageListening .orbOrbitInner {
-	animation: orbCounterOrbit 15s linear infinite;
-}
-.orbStageListening .orbTrace {
-	animation: orbTraceSweep 2.8s var(--ease-out) infinite;
-}
-.orbStageListening .orbCore {
-	animation: orbCoreBeat 2.2s var(--ease-out) infinite;
-}
-
-/* error */
-.orbStageError .orbField {
-	background:
-		radial-gradient(
-			circle at 50% 44%,
-			color-mix(in srgb, var(--mantine-color-red-5) 16%, transparent),
-			transparent 58%
-		),
-		radial-gradient(
-			circle at 50% 50%,
-			color-mix(in srgb, var(--mantine-color-gray-5) 16%, transparent),
-			transparent 72%
-		);
-	opacity: 0.45;
-}
-.orbStageError .orbOrbitOuter,
-.orbStageError .orbOrbitInner {
-	border-color: color-mix(in srgb, var(--mantine-color-gray-5) 24%, transparent);
-}
-.orbStageError .orbTrace {
-	background:
-		conic-gradient(
-			from 210deg,
-			transparent 0 35%,
-			color-mix(in srgb, var(--mantine-color-red-5) 42%, transparent) 35% 42%,
-			transparent 42% 100%
-		);
-	opacity: 0.45;
-}
-.orbStageError .orbCore {
-	background:
-		radial-gradient(
-			circle at 34% 30%,
-			color-mix(in srgb, var(--mantine-color-white) 28%, transparent),
-			transparent 24%
-		),
-		radial-gradient(
-			circle at 50% 50%,
-			color-mix(in srgb, var(--mantine-color-gray-5) 80%, var(--mantine-color-gray-7) 20%),
-			color-mix(in srgb, var(--mantine-color-gray-7) 90%, transparent) 72%
-		);
-	box-shadow:
-		inset 0 0 0 1px color-mix(in srgb, var(--mantine-color-white) 8%, transparent),
-		inset 0 -10px 18px color-mix(in srgb, #081019 48%, transparent),
-		0 0 0 1px color-mix(in srgb, var(--mantine-color-red-5) 8%, transparent);
-}
-.orbStageError .orbNode {
-	background:
-		radial-gradient(circle at 35% 30%, var(--mantine-color-white), transparent 35%),
-		linear-gradient(
-			180deg,
-			color-mix(in srgb, var(--mantine-color-gray-5) 70%, var(--mantine-color-white) 10%),
-			color-mix(in srgb, var(--mantine-color-gray-6) 72%, var(--mantine-color-red-5) 28%)
-		);
-	box-shadow:
-		0 0 0 3px color-mix(in srgb, var(--mantine-color-gray-5) 10%, transparent),
-		0 0 18px color-mix(in srgb, var(--mantine-color-red-5) 12%, transparent);
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.orbStage,
-	.orbStage .orbField,
-	.orbStage .orbOrbitOuter,
-	.orbStage .orbOrbitInner,
-	.orbStage .orbTrace,
-	.orbStage .orbCore,
-	.orbStage .orbNode {
-		animation: none !important;
+@keyframes connectingRing {
+	0% {
+		transform: scale(0.95);
+		opacity: 0;
+	}
+	50% {
+		opacity: 0.6;
+	}
+	100% {
+		transform: scale(1.1);
+		opacity: 0;
 	}
 }
 
-/* ── Transcript ───────────────────────────────────────────────────────────── */
+/* Mute Badge */
+
+.avatarMuteBadge {
+	position: absolute;
+	bottom: -2px;
+	right: -2px;
+	width: 16px;
+	height: 16px;
+	border-radius: var(--r-full);
+	background: var(--mantine-color-red-6);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-white);
+	border: 2px solid var(--mantine-color-white);
+}
+
+/* ── Call Button ──────────────────────────────────────────────────────────── */
+
+.callButton {
+	position: relative;
+	transition:
+		box-shadow 140ms var(--ease-out),
+		background-color 140ms var(--ease-out),
+		transform 140ms var(--ease-out);
+}
+
+.callButtonConnecting {
+	pointer-events: none;
+	opacity: 0.6;
+}
+
+/* ── Transcript / Chat Area ───────────────────────────────────────────────── */
 
 .transcriptShell {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
 	flex: 1;
 	min-height: 0;
+	overflow: hidden;
 }
 
 .transcriptHeader {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	gap: var(--mantine-spacing-xs);
+	padding: var(--s-3) var(--s-4);
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	flex-shrink: 0;
 }
 
 .transcriptTitle {
 	margin: 0;
-	font-size: 0.88rem;
+	font-size: 13px;
 	font-weight: 600;
-	letter-spacing: -0.01em;
-}
-
-.transcriptHeader :global(.mantine-Button-root) {
-	flex-shrink: 0;
+	color: var(--text-secondary);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
 }
 
 .transcriptScroll {
 	flex: 1;
-	min-height: 10rem;
-	border-radius: var(--r-md);
-	border: 1px solid var(--surface-border);
-	background: var(--mantine-color-white);
+	min-height: 0;
+	overflow-y: auto;
+	background: var(--surface-sunken);
 }
 
 .transcriptList {
 	display: flex;
 	flex-direction: column;
-	gap: var(--s-2);
-	padding: var(--s-3);
+	padding: var(--s-4);
+	gap: var(--s-3);
 }
 
 .transcriptEmpty {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
-	padding: var(--s-8) var(--s-4);
-	margin: 0;
+	padding: var(--s-12) var(--s-4);
+	text-align: center;
+	gap: var(--s-3);
 }
 
-/* ── Chat Bubbles ─────────────────────────────────────────────────────────── */
+.transcriptEmptyIcon {
+	color: var(--text-muted);
+	opacity: 0.5;
+}
 
-.message {
+/* ── Chat Messages ────────────────────────────────────────────────────────── */
+
+.messageGroup {
 	display: flex;
+	flex-direction: column;
+	gap: var(--s-1);
+}
+
+.messageGroupAgent {
+	align-items: flex-start;
+}
+
+.messageGroupUser {
 	align-items: flex-end;
-	gap: var(--s-2);
 }
 
-.messageUser {
-	flex-direction: row-reverse;
-}
-
-.messageAvatar {
+.messageGroupAvatar {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 26px;
-	height: 26px;
+	width: 24px;
+	height: 24px;
 	border-radius: var(--r-full);
-	flex-shrink: 0;
-}
-
-.messageAvatarAgent {
 	background: color-mix(in srgb, var(--nt-blue-500) 12%, transparent);
 	color: var(--nt-blue-600);
-}
-
-.messageAvatarUser {
-	background: color-mix(in srgb, var(--nt-green-500) 12%, transparent);
-	color: var(--nt-green-700);
-}
-
-.messageBody {
-	display: flex;
-	flex-direction: column;
-	gap: 3px;
-	max-width: 80%;
-	padding: var(--s-2) var(--s-3);
-	border-radius: var(--r-lg);
-}
-
-.messageBodyAgent {
-	background: var(--surface-sunken);
-	border: 1px solid var(--surface-border);
-	border-bottom-left-radius: var(--r-xs);
-}
-
-.messageBodyUser {
-	background: color-mix(in srgb, var(--nt-green-500) 9%, transparent);
-	border: 1px solid color-mix(in srgb, var(--nt-green-500) 22%, transparent);
-	border-bottom-right-radius: var(--r-xs);
+	flex-shrink: 0;
+	margin-bottom: 2px;
 }
 
 .messageRole {
@@ -639,6 +281,29 @@
 	font-weight: 700;
 	text-transform: uppercase;
 	letter-spacing: 0.07em;
+	color: var(--text-muted);
+	padding: 0 var(--s-3);
+}
+
+.messageBody {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	max-width: 85%;
+	padding: var(--s-2) var(--s-3);
+	border-radius: var(--r-lg);
+}
+
+.messageBodyAgent {
+	background: var(--mantine-color-white);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-bottom-left-radius: var(--r-xs);
+}
+
+.messageBodyUser {
+	background: color-mix(in srgb, var(--nt-green-500) 12%, transparent);
+	border: 1px solid color-mix(in srgb, var(--nt-green-500) 24%, transparent);
+	border-bottom-right-radius: var(--r-xs);
 }
 
 .messageText {
@@ -647,6 +312,25 @@
 	line-height: 1.5;
 	white-space: pre-wrap;
 	word-break: break-word;
+	color: var(--text-primary);
+}
+
+/* ── Timestamp Divider ────────────────────────────────────────────────────── */
+
+.timestampDivider {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	padding: var(--s-2) 0;
+}
+
+.timestampText {
+	font-size: 11px;
+	font-weight: 500;
+	color: var(--text-muted);
+	background: var(--surface-sunken);
+	padding: 2px var(--s-2);
+	border-radius: var(--r-sm);
 }
 
 /* ── Message Input ────────────────────────────────────────────────────────── */
@@ -655,8 +339,10 @@
 	display: flex;
 	align-items: flex-end;
 	gap: var(--s-2);
-	padding-top: var(--s-3);
-	border-top: 1px solid var(--surface-border);
+	padding: var(--s-3) var(--s-4);
+	border-top: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-white);
+	flex-shrink: 0;
 }
 
 .messageInput {
@@ -664,64 +350,78 @@
 	min-width: 0;
 }
 
+/* ── Error Alert ──────────────────────────────────────────────────────────── */
+
+.voiceErrorAlert {
+	margin: var(--s-3) var(--s-4);
+	flex-shrink: 0;
+}
+
+.errorRetryButton {
+	margin-top: var(--s-2);
+}
+
 /* ── Dark Mode ────────────────────────────────────────────────────────────── */
 
-[data-mantine-color-scheme='dark'] .widgetCard {
+[data-mantine-color-scheme='dark'] .voicePanel {
 	background: var(--mantine-color-dark-7);
-	border-color: var(--surface-border);
+	border-color: var(--mantine-color-dark-4);
 }
 
-[data-mantine-color-scheme='dark'] .iconBadge {
-	background: var(--mantine-color-dark-6);
-	color: var(--mantine-color-dark-1);
-	border-color: var(--surface-border);
+[data-mantine-color-scheme='dark'] .agentHeader {
+	border-bottom-color: var(--mantine-color-dark-4);
 }
 
-[data-mantine-color-scheme='dark'] .callButton {
-	border-color: var(--mantine-color-dark-7);
-}
-
-[data-mantine-color-scheme='dark'] .orbField {
-	opacity: 0.5;
+[data-mantine-color-scheme='dark'] .transcriptHeader {
+	border-bottom-color: var(--mantine-color-dark-4);
 }
 
 [data-mantine-color-scheme='dark'] .transcriptScroll {
 	background: var(--mantine-color-dark-6);
-	border-color: var(--surface-border);
 }
 
 [data-mantine-color-scheme='dark'] .messageBodyAgent {
 	background: var(--mantine-color-dark-5);
-	border-color: var(--surface-border);
+	border-color: var(--mantine-color-dark-4);
 }
 
 [data-mantine-color-scheme='dark'] .messageBodyUser {
-	background: color-mix(in srgb, var(--nt-green-400) 14%, transparent);
-	border-color: color-mix(in srgb, var(--nt-green-400) 25%, transparent);
+	background: color-mix(in srgb, var(--nt-green-400) 16%, transparent);
+	border-color: color-mix(in srgb, var(--nt-green-400) 28%, transparent);
 }
 
-[data-mantine-color-scheme='dark'] .messageAvatarAgent {
-	background: color-mix(in srgb, var(--nt-blue-400) 16%, transparent);
+[data-mantine-color-scheme='dark'] .messageGroupAvatar {
+	background: color-mix(in srgb, var(--nt-blue-400) 18%, transparent);
 	color: var(--mantine-color-blue-4);
 }
 
-[data-mantine-color-scheme='dark'] .messageAvatarUser {
-	background: color-mix(in srgb, var(--nt-green-400) 16%, transparent);
-	color: var(--mantine-color-green-4);
+[data-mantine-color-scheme='dark'] .inputArea {
+	background: var(--mantine-color-dark-7);
+	border-top-color: var(--mantine-color-dark-4);
 }
 
-[data-mantine-color-scheme='dark'] .inputArea {
-	border-top-color: var(--surface-border);
+[data-mantine-color-scheme='dark'] .avatarMuteBadge {
+	border-color: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .timestampText {
+	background: var(--mantine-color-dark-5);
 }
 
 /* ── Responsive ───────────────────────────────────────────────────────────── */
 
 @media (max-width: 48em) {
-	.header {
-		flex-direction: column;
+	.voicePanel {
+		min-height: 500px;
 	}
 
-	.statusBadge {
-		margin-top: 0;
+	.agentAvatar {
+		width: 44px;
+		height: 44px;
+		border-radius: var(--r-lg);
+	}
+
+	.messageBody {
+		max-width: 90%;
 	}
 }

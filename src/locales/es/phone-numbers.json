@@ -6,6 +6,23 @@
 		"addPhoneNumber": "Agregar Número",
 		"clearSearch": "Limpiar búsqueda",
 		"clearFilters": "Limpiar filtros",
+		"empty": {
+			"title": "Sin números de teléfono",
+			"description": "Agrega tu primer número para empezar a gestionar llamadas y mensajes."
+		},
+		"bulkDelete": {
+			"selected": "{{count}} seleccionado",
+			"selected_plural": "{{count}} seleccionados",
+			"deleteButton": "Eliminar seleccionados ({{count}})",
+			"modalTitle": "¿Eliminar {{count}} número de teléfono?",
+			"modalTitle_plural": "¿Eliminar {{count}} números de teléfono?",
+			"modalMessage": "¿Estás seguro de que deseas eliminar los números seleccionados? Esta acción no se puede deshacer.",
+			"confirm": "Eliminar ({{count}})",
+			"success": "{{count}} número eliminado",
+			"success_plural": "{{count}} números eliminados",
+			"partial": "{{success}} eliminados, {{failed}} fallaron",
+			"error": "Error al eliminar los números seleccionados"
+		},
 		"noActiveFilters": "Sin filtros activos",
 		"activeFilters_one": "{{count}} filtro activo",
 		"activeFilters_other": "{{count}} filtros activos",
