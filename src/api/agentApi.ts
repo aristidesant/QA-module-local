@@ -6,6 +6,8 @@ import type {
 	AgentWithCampaignListItem,
 	AgentWithCampaignsQueryParams,
 } from '~/models/AgentListObject';
+import type { CampaignAgent } from '~/models/CampaignAgentModel';
+import type { AgentType } from '~/models/SyncAgentModel';
 import type {
 	SyncAgentRequest,
 	SyncAgentResponse,
@@ -38,6 +40,23 @@ export interface CreateAgentDto {
 	inboundPhoneNumberId?: number;
 }
 
+export interface CreateAgentWithCampaignDto {
+	name: string;
+	type: AgentType;
+	campaignId: number;
+}
+
+export interface CreateAgentWithCampaignResponse {
+	id?: string;
+	name?: string;
+	type?: 'INBOUND' | 'OUTBOUND';
+	agentId?: string;
+	campaignId?: number;
+	campaignAgentId?: number;
+	agent?: Partial<AgentListObject> | null;
+	campaignAgent?: Partial<CampaignAgent> | null;
+}
+
 type SignedUrlResponse =
 	| string
 	| { signedUrl?: string; url?: string; href?: string };
@@ -57,6 +76,16 @@ const agentApi = (_authHeader: Record<string, string> = {}) => {
 
 		createAgent: async (data: CreateAgentDto) => {
 			const response = await axios.post(`${DEFAULT_API_URL}/agents`, data);
+			return response.data;
+		},
+
+		createAgentWithCampaign: async (
+			data: CreateAgentWithCampaignDto
+		): Promise<CreateAgentWithCampaignResponse> => {
+			const response = await axios.post<CreateAgentWithCampaignResponse>(
+				`${DEFAULT_API_URL}/agents/with-campaign`,
+				data
+			);
 			return response.data;
 		},
 

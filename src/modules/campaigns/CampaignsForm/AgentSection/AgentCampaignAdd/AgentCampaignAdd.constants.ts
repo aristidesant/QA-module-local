@@ -1,0 +1,4 @@
+export const ADD_CAMPAIGN_AGENT_MODAL_ID = 'add-campaign-agent';
+
+export const ADD_CAMPAIGN_AGENT_LIST_MODAL_SIZE = 1160;
+export const ADD_CAMPAIGN_AGENT_CREATE_MODAL_SIZE = 720;

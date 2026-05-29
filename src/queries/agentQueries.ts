@@ -4,6 +4,8 @@ import agentApi, {
 	DuplicateAgentDto,
 	AgentsWithCampaignsResponse,
 	CreateAgentDto,
+	CreateAgentWithCampaignDto,
+	CreateAgentWithCampaignResponse,
 } from '~/api/agentApi';
 import type {
 	AgentUpdateModel,
@@ -50,6 +52,22 @@ export const useCreateAgent = () => {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ['agents'] });
+		},
+	});
+};
+
+export const useCreateAgentWithCampaign = () => {
+	const queryClient = useQueryClient();
+	return useMutation<CreateAgentWithCampaignResponse, Error, CreateAgentWithCampaignDto>({
+		mutationFn: async (data: CreateAgentWithCampaignDto) => {
+			const api = agentApi();
+			return api.createAgentWithCampaign(data);
+		},
+		onSuccess: (_data, variables) => {
+			queryClient.invalidateQueries({ queryKey: ['agents'] });
+			queryClient.invalidateQueries({
+				queryKey: ['campaignAgents', variables.campaignId],
+			});
 		},
 	});
 };

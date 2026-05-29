@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Box, Text, Popover, Tooltip } from '@mantine/core';
 import {
@@ -35,6 +35,7 @@ const DAY_ORDER = [
 	'sunday',
 ];
 const DAY_INITIALS = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const POPOVER_INTERACTION_ATTR = 'data-weekly-timeline-popover';
 
 const formatTime12h = (time?: string | null): string => {
 	if (!time) return '--:--';
@@ -67,6 +68,27 @@ const WeeklyTimeline: React.FC<WeeklyTimelineProps> = ({
 	);
 
 	const activeDays = sortedDayConfigs.filter((d) => d.isActive);
+
+	useEffect(() => {
+		if (!expandedDay) return;
+
+		const handlePointerDown = (event: PointerEvent) => {
+			const target = event.target;
+			if (!(target instanceof Element)) return;
+
+			if (target.closest(`[${POPOVER_INTERACTION_ATTR}]`)) {
+				return;
+			}
+
+			setExpandedDay(null);
+		};
+
+		document.addEventListener('pointerdown', handlePointerDown);
+
+		return () => {
+			document.removeEventListener('pointerdown', handlePointerDown);
+		};
+	}, [expandedDay]);
 
 	const handleDayClick = (day: DayConfig) => {
 		if (!day.isActive) return;
@@ -117,6 +139,7 @@ const WeeklyTimeline: React.FC<WeeklyTimelineProps> = ({
 				<Popover.Target>
 					<Box
 						className={`${styles.dayBlock} ${isActive ? styles.dayBlockActive : styles.dayBlockInactive}`}
+						{...{ [POPOVER_INTERACTION_ATTR]: true }}
 						onClick={() =>
 							isActive ? handleDayClick(day) : handleActivate(day, dayIndex)
 						}
@@ -180,7 +203,7 @@ const WeeklyTimeline: React.FC<WeeklyTimelineProps> = ({
 				</Popover.Target>
 
 				{isActive && (
-					<Popover.Dropdown p={0}>
+					<Popover.Dropdown p={0} {...{ [POPOVER_INTERACTION_ATTR]: true }}>
 						<Box className={styles.popoverContent}>
 							<Box className={styles.popoverHeader}>
 								<Text className={styles.popoverDayName}>{dayName}</Text>
