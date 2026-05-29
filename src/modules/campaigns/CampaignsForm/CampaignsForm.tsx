@@ -49,10 +49,9 @@ import DoNotCallSection from './DoNotCallSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
-import { IconEye, IconFlask } from '@tabler/icons-react';
+import { IconEye } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 import FormSaveButton from '~/components/FormSaveButton';
-import CampaignSyncButton from './components/CampaignSyncButton';
 import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
 import AppDrawer from '~/components/AppDrawer';
 import DashboardSection from './DashboardSection';
@@ -727,44 +726,16 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						}
 						titleRight={
 							campaign?.id && (
-								<Group gap='xs'>
-									<CampaignSyncButton />
-									<Tooltip label={t('form.actions.viewCampaign')} withArrow>
-										<ActionIcon
-											variant='light'
-											size='lg'
-											aria-label={t('form.actions.viewCampaign')}
-											onClick={() => navigate(`/campaign/view/${campaign.id}`)}
-										>
-											<IconEye size={20} />
-										</ActionIcon>
-									</Tooltip>
-									<Tooltip
-										label={t('form.actions.testConvai', {
-											ns: 'campaign.detail',
-										})}
-										withArrow
+								<Tooltip label={t('form.actions.viewCampaign')} withArrow>
+									<ActionIcon
+										variant='light'
+										size='lg'
+										aria-label={t('form.actions.viewCampaign')}
+										onClick={() => navigate(`/campaign/view/${campaign.id}`)}
 									>
-										<ActionIcon
-											variant='light'
-											color='blue'
-											size='lg'
-											aria-label={t('form.actions.testConvai', {
-												ns: 'campaign.detail',
-											})}
-											onClick={() =>
-												selectedCampaignAgent?.id &&
-												selectedCampaignAgent?.agentId
-													? navigate(
-															`/campaign/${campaign.id}/agent/${selectedCampaignAgent.id}/test/${selectedCampaignAgent.agentId}`
-														)
-													: navigate(`/campaign/${campaign.id}/test`)
-											}
-										>
-											<IconFlask size={20} />
-										</ActionIcon>
-									</Tooltip>
-								</Group>
+										<IconEye size={20} />
+									</ActionIcon>
+								</Tooltip>
 							)
 						}
 						description={t('form.description')}

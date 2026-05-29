@@ -26,7 +26,8 @@
 			"groups": {
 				"toolsAndKnowledge": "Tools & Knowledge",
 				"speechAndLanguage": "Speech & Language",
-				"runtime": "Runtime"
+				"runtime": "Runtime",
+				"speechLanguageRuntime": "Speech, Language & Runtime"
 			}
 		}
 	},
@@ -94,6 +95,19 @@
 				"syncAgent": "Sync External Agent",
 				"addAgentTitle": "Add Agent to Campaign",
 				"openAgentAria": "Open agent {{name}}",
+				"columns": {
+					"agent": "Agent",
+					"role": "Role",
+					"direction": "Direction",
+					"status": "Status",
+					"language": "Language",
+					"updated": "Updated",
+					"actions": "Actions"
+				},
+				"status": {
+					"active": "Active",
+					"inactive": "Inactive"
+				},
 				"actions": {
 					"menu": "Agent actions",
 					"deleteAgent": "Delete agent",
@@ -505,7 +519,8 @@
 		"apply": "Apply",
 		"errorEmptyKey": "Key cannot be empty",
 		"errorDuplicateKey": "Duplicate key",
-		"configure": "Configure"
+		"configure": "Configure",
+		"infoHelp": "Keys must match the variable names in your agent configuration. Values are injected as defaults at runtime."
 	},
 	"saveReview": {
 		"title": "Review Changes",

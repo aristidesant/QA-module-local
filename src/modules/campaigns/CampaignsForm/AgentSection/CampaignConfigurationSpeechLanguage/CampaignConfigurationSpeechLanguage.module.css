@@ -1,0 +1,40 @@
+.subSection {
+	padding: var(--mantine-spacing-sm) 0;
+	border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.subSection:first-child {
+	padding-top: 0;
+}
+
+.subSection:last-child {
+	padding-bottom: 0;
+	border-bottom: none;
+}
+
+.subSectionHeader {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.subSectionIcon {
+	color: var(--mantine-color-dimmed);
+	flex-shrink: 0;
+	margin-top: 2px;
+}
+
+.subSectionTitle {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-text);
+	line-height: 1.3;
+}
+
+.subSectionDesc {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-dimmed);
+	line-height: 1.45;
+	margin-top: 1px;
+}

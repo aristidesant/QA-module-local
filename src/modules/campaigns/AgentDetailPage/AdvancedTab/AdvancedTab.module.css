@@ -39,6 +39,8 @@
 	background: var(--mantine-color-default-border);
 }
 
-.sectionCardWide {
-	grid-column: 1 / -1;
+.rightStack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
 }

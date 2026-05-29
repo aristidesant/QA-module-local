@@ -26,7 +26,8 @@
 			"groups": {
 				"toolsAndKnowledge": "Herramientas y conocimiento",
 				"speechAndLanguage": "Voz y lenguaje",
-				"runtime": "Tiempo de ejecución"
+				"runtime": "Tiempo de ejecución",
+				"speechLanguageRuntime": "Voz, lenguaje y tiempo de ejecución"
 			}
 		}
 	},
@@ -94,6 +95,19 @@
 				"syncAgent": "Sincronizar agente externo",
 				"addAgentTitle": "Agregar Agente a la Campaña",
 				"openAgentAria": "Abrir agente {{name}}",
+				"columns": {
+					"agent": "Agente",
+					"role": "Rol",
+					"direction": "Dirección",
+					"status": "Estado",
+					"language": "Idioma",
+					"updated": "Actualizado",
+					"actions": "Acciones"
+				},
+				"status": {
+					"active": "Activo",
+					"inactive": "Inactivo"
+				},
 				"actions": {
 					"menu": "Acciones del agente",
 					"deleteAgent": "Eliminar agente",
@@ -505,7 +519,8 @@
 		"apply": "Aplicar",
 		"errorEmptyKey": "La clave no puede estar vacía",
 		"errorDuplicateKey": "Clave duplicada",
-		"configure": "Configurar"
+		"configure": "Configurar",
+		"infoHelp": "Las claves deben coincidir con los nombres de variable en la configuración del agente. Los valores se inyectan como valores por defecto en tiempo de ejecución."
 	},
 	"saveReview": {
 		"title": "Revisar cambios",
