@@ -21,6 +21,10 @@ import {
 import CampaignAgentSelector from '../components/CampaignAgentSelector';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
+import { toSnakeCase } from '~/utils/stringUtils';
+
+const normalizeWorkflow = (raw: AgentWorkflow | undefined): AgentWorkflow | undefined =>
+	raw ? (toSnakeCase(raw) as AgentWorkflow) : undefined;
 import '@xyflow/react/dist/style.css';
 import styles from './WorkflowSection.module.css';
 
@@ -66,9 +70,14 @@ const WorkflowSection = ({
 		[campaignAgents]
 	);
 	const usesCampaignAgentConfig = Boolean(campaignId && selectedCampaignAgent);
-	const workflow = usesCampaignAgentConfig
-		? localWorkflow
-		: form.values.agentConfig?.workflow;
+	const workflow = useMemo(
+		() =>
+			normalizeWorkflow(
+				usesCampaignAgentConfig ? localWorkflow : form.values.agentConfig?.workflow
+			),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[usesCampaignAgentConfig, localWorkflow, form.values.agentConfig?.workflow]
+	);
 	const prevent_subagent_loops = workflow?.prevent_subagent_loops ?? false;
 	const nodeStyles = usesCampaignAgentConfig
 		? localNodeStyles
@@ -104,7 +113,7 @@ const WorkflowSection = ({
 			return;
 		}
 
-		setLocalWorkflow(selectedAgent?.config?.workflow);
+		setLocalWorkflow(normalizeWorkflow(selectedAgent?.config?.workflow));
 		setLocalNodeStyles(selectedAgent?.workflowUi?.nodeStyles ?? {});
 		setLocalNodeGroups(selectedAgent?.workflowUi?.nodeGroups ?? {});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
