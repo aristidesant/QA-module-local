@@ -205,6 +205,7 @@ const useAnalyticsTableColumns =
 								radius='md'
 								position='top-start'
 								withArrow
+								withinPortal
 							>
 								<HoverCard.Target>
 									<div className={styles.descriptionTarget}>

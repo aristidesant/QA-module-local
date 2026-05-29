@@ -284,7 +284,12 @@ const AnalyticsVariablesTable = ({
 			<Paper withBorder radius='md' p='xs'>
 				<Group justify='space-between' align='center' gap='xs' wrap='wrap'>
 					<Group gap='xs' align='center'>
-						<Badge size='sm' variant='light' color='blue'>
+						<Badge
+							size='sm'
+							variant='light'
+							color='green'
+							className={styles.variableCountBadge}
+						>
 							{t('form.analytics.totalVariables', {
 								count: form.values.rows.length,
 							})}
@@ -343,6 +348,7 @@ const AnalyticsVariablesTable = ({
 				columns={columns}
 				density='compact'
 				emptyMessage={t('form.analytics.empty')}
+				className={styles.analyticsTable}
 				selectedRowId={form.values.selectedRowId}
 				getRowId={(row) => row.id}
 				onRowClick={(row) => form.setFieldValue('selectedRowId', row.id)}

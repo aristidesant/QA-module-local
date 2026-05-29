@@ -14,13 +14,14 @@
 	font-family:
 		'SF Mono', 'Fira Code', 'Fira Mono', ui-monospace, 'Cascadia Code',
 		'Roboto Mono', monospace;
-	font-size: 13px;
-	letter-spacing: -0.01em;
-	color: var(--mantine-color-blue-6);
+	font-size: 0.8125rem;
+	font-weight: 600;
+	letter-spacing: 0;
+	color: var(--mantine-color-gray-9);
 }
 
 [data-mantine-color-scheme='dark'] .identifier {
-	color: var(--mantine-color-blue-3);
+	color: var(--mantine-color-dark-0);
 }
 
 .newBadge {
@@ -42,15 +43,8 @@
 }
 
 .typeBadge {
-	font-weight: 500;
-	transition:
-		transform 0.15s ease,
-		box-shadow 0.15s ease;
-}
-
-.typeBadge:hover {
-	transform: scale(1.02);
-	box-shadow: var(--mantine-shadow-xs);
+	font-weight: 600;
+	letter-spacing: 0.015em;
 }
 
 .descriptionTarget {
@@ -58,25 +52,15 @@
 	align-items: center;
 	gap: var(--mantine-spacing-xs);
 	cursor: help;
-	padding: 4px 8px;
-	margin: -4px -8px;
-	border-radius: var(--mantine-radius-sm);
-	transition: background-color 0.15s ease;
-}
-
-.descriptionTarget:hover {
-	background-color: var(--mantine-color-blue-0);
-}
-
-[data-mantine-color-scheme='dark'] .descriptionTarget:hover {
-	background-color: var(--mantine-color-dark-6);
+	padding: 0;
 }
 
 .descriptionText {
 	flex: 1;
 	min-width: 0;
 	color: var(--mantine-color-gray-7);
-	line-height: 1.4;
+	font-size: 0.8125rem;
+	line-height: 1.35;
 }
 
 [data-mantine-color-scheme='dark'] .descriptionText {
@@ -92,19 +76,11 @@
 .descriptionIcon {
 	color: var(--mantine-color-gray-5);
 	flex-shrink: 0;
-	transition: color 0.15s ease;
-}
-
-.descriptionTarget:hover .descriptionIcon {
-	color: var(--mantine-color-blue-5);
-}
-
-[data-mantine-color-scheme='dark'] .descriptionTarget:hover .descriptionIcon {
-	color: var(--mantine-color-blue-4);
 }
 
 .enumBadge {
 	flex-shrink: 0;
+	font-weight: 600;
 }
 
 .descriptionDropdown {
@@ -112,10 +88,14 @@
 	max-height: 240px;
 	overflow-y: auto;
 	border: 1px solid var(--mantine-color-gray-3);
+	background: var(--mantine-color-white);
+	color: var(--mantine-color-gray-8);
 }
 
 [data-mantine-color-scheme='dark'] .descriptionDropdown {
 	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-7);
+	color: var(--mantine-color-dark-0);
 }
 
 .tooltipContent {
@@ -128,7 +108,11 @@
 	line-height: 1.5;
 	white-space: pre-wrap;
 	word-break: break-word;
-	color: var(--mantine-color-body);
+	color: var(--mantine-color-gray-8);
+}
+
+[data-mantine-color-scheme='dark'] .tooltipDescription {
+	color: var(--mantine-color-dark-0);
 }
 
 .tooltipEnum {
@@ -161,41 +145,19 @@
 }
 
 .systemBadge {
-	font-weight: 500;
+	font-weight: 600;
+	letter-spacing: 0.015em;
 }
 
 .statusBadge {
-	font-weight: 600;
-	letter-spacing: 0.01em;
+	font-weight: 650;
+	letter-spacing: 0.02em;
 }
 
 .systemBadge[data-color='red'] {
-	background: linear-gradient(
-		135deg,
-		var(--mantine-color-red-6),
-		var(--mantine-color-red-8)
-	);
+	background: var(--mantine-color-red-6);
 }
 
 [data-mantine-color-scheme='dark'] .systemBadge[data-color='red'] {
-	background: linear-gradient(
-		135deg,
-		var(--mantine-color-red-7),
-		var(--mantine-color-red-9)
-	);
-}
-
-@keyframes fadeIn {
-	from {
-		opacity: 0;
-		transform: translateY(-2px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
-}
-
-.typeBadge {
-	animation: fadeIn 0.2s ease-out;
+	background: var(--mantine-color-red-7);
 }

@@ -105,18 +105,18 @@
 	margin: 0;
 	min-width: 0;
 	color: var(--mantine-color-gray-9);
-	font-size: 0.95rem;
-	font-weight: 600;
-	letter-spacing: -0.02em;
-	line-height: 1.15;
+	font-size: 1rem;
+	font-weight: 650;
+	letter-spacing: 0;
+	line-height: 1.2;
 }
 
 .sectionDescription {
 	margin: 0;
-	max-width: 72ch;
+	max-width: 64ch;
 	color: var(--mantine-color-gray-6);
-	font-size: 0.82rem;
-	line-height: 1.35;
+	font-size: 0.875rem;
+	line-height: 1.4;
 }
 
 .headerActions {
