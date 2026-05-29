@@ -45,7 +45,7 @@ const UpdateStateNodeComponent = (props: NodeProps) => {
 			defaultValue: 'No title',
 		});
 	const variableNames = updates
-		.map((update) => getTrimmedString(update.variableName))
+		.map((update) => getTrimmedString(update.variable_name))
 		.filter(Boolean);
 	const visibleVariables = variableNames.slice(0, MAX_VISIBLE_VARIABLES);
 	const hiddenVariablesCount = Math.max(
@@ -107,9 +107,9 @@ const UpdateStateNodeComponent = (props: NodeProps) => {
 						</div>
 						{visibleVariables.length > 0 ? (
 							<div className={styles.variableList}>
-								{visibleVariables.map((variableName) => (
-									<span key={variableName} className={styles.variablePill}>
-										{variableName}
+								{visibleVariables.map((variable_name) => (
+									<span key={variable_name} className={styles.variablePill}>
+										{variable_name}
 									</span>
 								))}
 								{hiddenVariablesCount > 0 ? (

@@ -87,7 +87,7 @@ const UpdateStateForm = ({
 	const duplicateCounts = useMemo(() => {
 		const counts = new Map<string, number>();
 		updates.forEach((update) => {
-			const name = getTrimmedString(update.variableName);
+			const name = getTrimmedString(update.variable_name);
 			if (!name) return;
 			counts.set(name, (counts.get(name) ?? 0) + 1);
 		});
@@ -223,8 +223,8 @@ const UpdateStateForm = ({
 						expression: {
 							...llmExpression,
 							prompt: value,
-							valueSchema: {
-								...llmExpression.valueSchema,
+							value_schema: {
+								...llmExpression.value_schema,
 								description: value,
 							},
 						},
@@ -250,8 +250,8 @@ const UpdateStateForm = ({
 						...update,
 						expression: {
 							...llmExpression,
-							valueSchema: {
-								...llmExpression.valueSchema,
+							value_schema: {
+								...llmExpression.value_schema,
 								type: value,
 							},
 						},
@@ -265,8 +265,8 @@ const UpdateStateForm = ({
 		const expression =
 			update.expression ?? createDefaultUpdateStateExpression('llm');
 		const expressionKind = getUpdateStateExpressionKind(expression);
-		const variableName = update.variableName ?? '';
-		const trimmedVariableName = getTrimmedString(variableName);
+		const variable_name = update.variable_name ?? '';
+		const trimmedVariableName = getTrimmedString(variable_name);
 		const isDuplicate =
 			trimmedVariableName.length > 0 &&
 			(duplicateCounts.get(trimmedVariableName) ?? 0) > 1;
@@ -286,21 +286,21 @@ const UpdateStateForm = ({
 			<div className={styles.editor}>
 				<Stack gap='xs'>
 					<Autocomplete
-						label={t('form.workflow.forms.updateState.variableName.label', {
+						label={t('form.workflow.forms.updateState.variable_name.label', {
 							defaultValue: 'Variable to update',
 						})}
 						placeholder={t(
-							'form.workflow.forms.updateState.variableName.placeholder',
+							'form.workflow.forms.updateState.variable_name.placeholder',
 							{
 								defaultValue: 'Dynamic variable that should be updated',
 							}
 						)}
 						data={variableOptions}
-						value={variableName}
+						value={variable_name}
 						onChange={(value) =>
 							handleUpdateChange(index, (current) => ({
 								...current,
-								variableName: value,
+								variable_name: value,
 							}))
 						}
 						size='sm'
@@ -445,7 +445,7 @@ const UpdateStateForm = ({
 										),
 									},
 								]}
-								value={expression.valueSchema.type}
+								value={expression.value_schema.type}
 								onChange={(value) =>
 									handleSchemaTypeChange(
 										index,
@@ -566,7 +566,7 @@ const UpdateStateForm = ({
 								}
 							)}
 							data={variableOptions}
-							value={expression.variableName}
+							value={expression.variable_name}
 							onChange={(value) => {
 								const nextUpdates = updates.map((current, itemIndex) => {
 									if (itemIndex !== index) return current;
@@ -574,7 +574,7 @@ const UpdateStateForm = ({
 										...current,
 										expression: {
 											type: 'dynamic_variable',
-											variableName: value,
+											variable_name: value,
 										},
 									};
 									return nextUpdate;
@@ -714,8 +714,8 @@ const UpdateStateForm = ({
 														createDefaultUpdateStateExpression('llm');
 													const preview =
 														formatUpdateStateExpressionPreview(safeExpression);
-													const variableName = getTrimmedString(
-														update.variableName
+													const variable_name = getTrimmedString(
+														update.variable_name
 													);
 
 													return (
@@ -755,9 +755,9 @@ const UpdateStateForm = ({
 																			</span>
 																			<span className={styles.updateCopy}>
 																				<Text size='sm' fw={600} lineClamp={1}>
-																					{variableName ||
+																					{variable_name ||
 																						t(
-																							'form.workflow.forms.updateState.variableName.placeholder',
+																							'form.workflow.forms.updateState.variable_name.placeholder',
 																							{
 																								defaultValue:
 																									'Dynamic variable that should be updated',

@@ -21,6 +21,10 @@ import {
 import CampaignAgentSelector from '../components/CampaignAgentSelector';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
+import { toSnakeCase } from '~/utils/stringUtils';
+
+const normalizeWorkflow = (raw: AgentWorkflow | undefined): AgentWorkflow | undefined =>
+	raw ? (toSnakeCase(raw) as AgentWorkflow) : undefined;
 import '@xyflow/react/dist/style.css';
 import styles from './WorkflowSection.module.css';
 
@@ -66,10 +70,15 @@ const WorkflowSection = ({
 		[campaignAgents]
 	);
 	const usesCampaignAgentConfig = Boolean(campaignId && selectedCampaignAgent);
-	const workflow = usesCampaignAgentConfig
-		? localWorkflow
-		: form.values.agentConfig?.workflow;
-	const preventSubagentLoops = workflow?.preventSubagentLoops ?? false;
+	const workflow = useMemo(
+		() =>
+			normalizeWorkflow(
+				usesCampaignAgentConfig ? localWorkflow : form.values.agentConfig?.workflow
+			),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[usesCampaignAgentConfig, localWorkflow, form.values.agentConfig?.workflow]
+	);
+	const prevent_subagent_loops = workflow?.prevent_subagent_loops ?? false;
 	const nodeStyles = usesCampaignAgentConfig
 		? localNodeStyles
 		: form.values.nodeStyles;
@@ -104,7 +113,7 @@ const WorkflowSection = ({
 			return;
 		}
 
-		setLocalWorkflow(selectedAgent?.config?.workflow);
+		setLocalWorkflow(normalizeWorkflow(selectedAgent?.config?.workflow));
 		setLocalNodeStyles(selectedAgent?.workflowUi?.nodeStyles ?? {});
 		setLocalNodeGroups(selectedAgent?.workflowUi?.nodeGroups ?? {});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
@@ -202,7 +211,7 @@ const WorkflowSection = ({
 	const handlePreventLoopsChange = (value: boolean) => {
 		const currentWorkflow = workflow;
 		const nextWorkflow: AgentWorkflow = {
-			preventSubagentLoops: value,
+			prevent_subagent_loops: value,
 			nodes: currentWorkflow?.nodes ?? {},
 			edges: currentWorkflow?.edges ?? {},
 		};
@@ -261,7 +270,7 @@ const WorkflowSection = ({
 					onClose={() => setIsEditorExpanded(false)}
 					workflow={workflow}
 					onWorkflowChange={handleWorkflowChange}
-					preventSubagentLoops={preventSubagentLoops}
+					prevent_subagent_loops={prevent_subagent_loops}
 					allowDefaultInit={!campaignId || !workflow}
 					onNodeSelect={handleNodeSelect}
 					nodeStyles={nodeStyles}
@@ -286,7 +295,7 @@ const WorkflowSection = ({
 									<WorkflowClipboardActions
 										workflow={workflow}
 										onWorkflowChange={handleWorkflowChange}
-										fallbackPreventSubagentLoops={preventSubagentLoops}
+										fallbackPreventSubagentLoops={prevent_subagent_loops}
 										nodeStyles={nodeStyles}
 										nodeGroups={nodeGroups}
 										onNodeStylesChange={handleNodeStylesChange}
@@ -295,7 +304,7 @@ const WorkflowSection = ({
 									<Checkbox
 										size='sm'
 										label={t('form.workflow.header.preventLoops')}
-										checked={preventSubagentLoops}
+										checked={prevent_subagent_loops}
 										onChange={(event) =>
 											handlePreventLoopsChange(event.currentTarget.checked)
 										}
@@ -352,7 +361,7 @@ const WorkflowSection = ({
 							onWorkflowChange={handleWorkflowChange}
 							nodeGroups={nodeGroups}
 							onNodeGroupsChange={handleNodeGroupsChange}
-							preventSubagentLoops={preventSubagentLoops}
+							prevent_subagent_loops={prevent_subagent_loops}
 							allowDefaultInit={!campaignId || !workflow}
 							onNodeSelect={handleNodeSelect}
 						/>

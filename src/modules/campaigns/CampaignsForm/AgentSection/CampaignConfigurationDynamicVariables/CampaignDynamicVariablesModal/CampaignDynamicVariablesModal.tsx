@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	ActionIcon,
+	Alert,
 	Button,
 	Group,
 	Modal,
@@ -10,7 +11,12 @@ import {
 	TextInput,
 	Tooltip,
 } from '@mantine/core';
-import { IconPlus, IconTrash } from '@tabler/icons-react';
+import {
+	IconInfoCircle,
+	IconPlus,
+	IconTrash,
+	IconVariable,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import styles from './CampaignDynamicVariablesModal.module.css';
 
@@ -41,10 +47,14 @@ const CampaignDynamicVariablesModal: React.FC<Props> = ({
 }) => {
 	const { t } = useTranslation(['campaign.form.agents', 'common']);
 	const [entries, setEntries] = useState<Entry[]>([]);
+	const [infoDismissed, setInfoDismissed] = useState(false);
+	const viewportRef = useRef<HTMLDivElement>(null);
 
+	// placeholders intentionally omitted from deps — snapshot semantics: captures state at open time only
 	useEffect(() => {
 		if (opened) {
 			setEntries(toEntries(placeholders));
+			setInfoDismissed(false);
 		}
 	}, [opened]);
 
@@ -59,28 +69,32 @@ const CampaignDynamicVariablesModal: React.FC<Props> = ({
 			...prev,
 			{ id: crypto.randomUUID(), key: '', value: '' },
 		]);
+		requestAnimationFrame(() => {
+			if (viewportRef.current) {
+				viewportRef.current.scrollTop = viewportRef.current.scrollHeight;
+			}
+		});
 	};
 
 	const removeEntry = (id: string) => {
 		setEntries((prev) => prev.filter((e) => e.id !== id));
 	};
 
-	const keyErrors = (): Record<string, string> => {
-		const errors: Record<string, string> = {};
+	const errors = useMemo(() => {
+		const errs: Record<string, string> = {};
 		const seen = new Set<string>();
 		for (const entry of entries) {
 			if (!entry.key.trim()) {
-				errors[entry.id] = t('dynamicVariables.errorEmptyKey');
+				errs[entry.id] = t('dynamicVariables.errorEmptyKey');
 			} else if (seen.has(entry.key.trim())) {
-				errors[entry.id] = t('dynamicVariables.errorDuplicateKey');
+				errs[entry.id] = t('dynamicVariables.errorDuplicateKey');
 			} else {
 				seen.add(entry.key.trim());
 			}
 		}
-		return errors;
-	};
+		return errs;
+	}, [entries, t]);
 
-	const errors = keyErrors();
 	const hasErrors = Object.keys(errors).length > 0;
 
 	const handleApply = () => {
@@ -104,28 +118,45 @@ const CampaignDynamicVariablesModal: React.FC<Props> = ({
 			}}
 		>
 			<Stack gap='sm' className={styles.contentStack}>
-				<Group justify='flex-end' className={styles.toolbar}>
-					<Button
-						size='xs'
+				{!infoDismissed && (
+					<Alert
 						variant='light'
-						leftSection={<IconPlus size={14} />}
-						onClick={addEntry}
+						color='blue'
+						icon={<IconInfoCircle size={18} />}
+						withCloseButton
+						onClose={() => setInfoDismissed(true)}
+						classNames={{ root: styles.infoBanner }}
 					>
-						{t('dynamicVariables.addVariable')}
-					</Button>
-				</Group>
+						{t('dynamicVariables.infoHelp')}
+					</Alert>
+				)}
 
 				{entries.length === 0 ? (
-					<Text size='sm' c='dimmed' ta='center' py='md'>
-						{t('dynamicVariables.empty')}
-					</Text>
+					<Stack align='center' gap='xs' py='lg'>
+						<IconVariable
+							size={40}
+							color='var(--mantine-color-gray-4)'
+							stroke={1.5}
+						/>
+						<Text size='sm' c='dimmed' ta='center'>
+							{t('dynamicVariables.empty')}
+						</Text>
+						<Button
+							size='xs'
+							variant='light'
+							leftSection={<IconPlus size={14} />}
+							onClick={addEntry}
+						>
+							{t('dynamicVariables.addVariable')}
+						</Button>
+					</Stack>
 				) : (
-					<Stack gap='xs' className={styles.tableShell}>
+					<Stack gap={0} className={styles.tableShell}>
 						<div className={styles.headerRow}>
-							<Text size='xs' fw={600} c='dimmed'>
+							<Text size='xs' fw={600} c='dimmed' tt='uppercase' lts='0.04em'>
 								{t('dynamicVariables.keyPlaceholder')}
 							</Text>
-							<Text size='xs' fw={600} c='dimmed'>
+							<Text size='xs' fw={600} c='dimmed' tt='uppercase' lts='0.04em'>
 								{t('dynamicVariables.valuePlaceholder')}
 							</Text>
 							<div className={styles.actionCol} />
@@ -136,12 +167,13 @@ const CampaignDynamicVariablesModal: React.FC<Props> = ({
 							type='auto'
 							offsetScrollbars='y'
 							className={styles.rowsScrollArea}
+							viewportRef={viewportRef}
 						>
 							<Stack gap='xs' className={styles.rowsStack}>
 								{entries.map((entry) => (
 									<div key={entry.id} className={styles.entryRow}>
 										<TextInput
-											placeholder={t('dynamicVariables.keyPlaceholder')}
+											placeholder='variable_name'
 											aria-label={t('dynamicVariables.keyPlaceholder')}
 											value={entry.key}
 											onChange={(e) =>
@@ -149,6 +181,7 @@ const CampaignDynamicVariablesModal: React.FC<Props> = ({
 											}
 											error={errors[entry.id]}
 											size='sm'
+											classNames={{ input: styles.keyInput }}
 										/>
 										<TextInput
 											placeholder={t('dynamicVariables.valuePlaceholder')}
@@ -157,6 +190,12 @@ const CampaignDynamicVariablesModal: React.FC<Props> = ({
 											onChange={(e) =>
 												updateEntry(entry.id, 'value', e.currentTarget.value)
 											}
+											onKeyDown={(e) => {
+												if (e.key === 'Enter') {
+													e.preventDefault();
+													addEntry();
+												}
+											}}
 											size='sm'
 										/>
 										<Tooltip
@@ -178,6 +217,17 @@ const CampaignDynamicVariablesModal: React.FC<Props> = ({
 								))}
 							</Stack>
 						</ScrollArea.Autosize>
+
+						<div className={styles.addRow}>
+							<Button
+								size='xs'
+								variant='subtle'
+								leftSection={<IconPlus size={14} />}
+								onClick={addEntry}
+							>
+								{t('dynamicVariables.addVariable')}
+							</Button>
+						</div>
 					</Stack>
 				)}
 

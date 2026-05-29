@@ -47,7 +47,7 @@ const WorkflowNodeDrawer = ({ nodeId }: WorkflowNodeDrawerProps) => {
 		};
 		const isTransferNode =
 			selectedNode.type === WORKFLOW_NODE_TYPES.STANDALONE_AGENT &&
-			(selectedNode.uiMeta?.variant === 'transfer' || !!selectedNode.agentId);
+			(selectedNode.uiMeta?.variant === 'transfer' || !!selectedNode.agent_id);
 
 		switch (selectedNode.type) {
 			case WORKFLOW_NODE_TYPES.STANDALONE_AGENT:

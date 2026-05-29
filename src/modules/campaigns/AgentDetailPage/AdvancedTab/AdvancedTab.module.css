@@ -1,0 +1,46 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--mantine-spacing-md);
+	align-items: start;
+}
+
+@media (min-width: 1024px) {
+	.grid {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+.groupLabel {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs) 0 0;
+}
+
+.groupLabelText {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.08em;
+	color: var(--mantine-color-dimmed);
+	white-space: nowrap;
+}
+
+.groupLine {
+	flex: 1;
+	height: 1px;
+	background: var(--mantine-color-default-border);
+}
+
+.rightStack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}

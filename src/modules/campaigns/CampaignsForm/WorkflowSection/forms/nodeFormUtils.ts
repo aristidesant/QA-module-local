@@ -67,11 +67,11 @@ export const updateWorkflowNodeConversationConfig = (
 	if (!currentNode) return null;
 
 	const currentConfig =
-		(currentNode as { conversationConfig?: Record<string, unknown> })
-			.conversationConfig ?? {};
+		(currentNode as { conversation_config?: Record<string, unknown> })
+			.conversation_config ?? {};
 
 	return updateWorkflowNode(workflow, nodeId, {
-		conversationConfig: {
+		conversation_config: {
 			...currentConfig,
 			...updates,
 		},
@@ -81,13 +81,13 @@ export const updateWorkflowNodeConversationConfig = (
 export const updateWorkflowEdgeOrder = (
 	workflow: AgentWorkflow | undefined,
 	nodeId: string,
-	edgeOrder: string[]
+	edge_order: string[]
 ): AgentWorkflow | null => {
 	if (!workflow) return null;
 	const currentNode = workflow.nodes[nodeId];
 	if (!currentNode) return null;
 	return updateWorkflowNode(workflow, nodeId, {
-		edgeOrder,
+		edge_order,
 	} as Partial<WorkflowNode>);
 };
 
@@ -100,14 +100,14 @@ export const removeWorkflowEdge = (
 	const edge = workflow.edges[edgeId];
 	if (!edge) return null;
 
-	// Remove edge from the source node's edgeOrder
+	// Remove edge from the source node's edge_order
 	const sourceNode = workflow.nodes[edge.source];
 	const nextNodes = { ...workflow.nodes };
 
 	if (sourceNode) {
 		nextNodes[edge.source] = {
 			...sourceNode,
-			edgeOrder: (sourceNode.edgeOrder ?? []).filter((id) => id !== edgeId),
+			edge_order: (sourceNode.edge_order ?? []).filter((id) => id !== edgeId),
 		} as WorkflowNode;
 	}
 
@@ -132,13 +132,13 @@ export const getOutgoingEdges = (
 		.filter(([, edge]) => edge.source === nodeId)
 		.map(([id, edge]) => ({ id, edge }));
 
-	// Sort by edgeOrder if available
+	// Sort by edge_order if available
 	const node = workflow.nodes[nodeId];
-	const edgeOrder = node?.edgeOrder ?? [];
+	const edge_order = node?.edge_order ?? [];
 
 	return edges.sort((a, b) => {
-		const indexA = edgeOrder.indexOf(a.id);
-		const indexB = edgeOrder.indexOf(b.id);
+		const indexA = edge_order.indexOf(a.id);
+		const indexB = edge_order.indexOf(b.id);
 		if (indexA === -1 && indexB === -1) return 0;
 		if (indexA === -1) return 1;
 		if (indexB === -1) return -1;
@@ -152,7 +152,7 @@ export const resolveNodeLabel = (value: unknown, fallback: string): string => {
 	}
 	if (!value || typeof value !== 'object') return fallback;
 	const record = value as Record<string, unknown>;
-	const candidates = ['toolId', 'id', 'name', 'label'] as const;
+	const candidates = ['tool_id', 'id', 'name', 'label'] as const;
 	for (const key of candidates) {
 		const candidate = record[key];
 		if (typeof candidate === 'string' || typeof candidate === 'number') {
@@ -166,19 +166,19 @@ export const getEdgeConditionLabel = (
 	edge: WorkflowEdge,
 	fallback: string
 ): string => {
-	if (edge.forwardCondition?.type === 'llm') {
+	if (edge.forward_condition?.type === 'llm') {
 		return (
-			edge.forwardCondition.condition || edge.forwardCondition.label || fallback
+			edge.forward_condition.condition || edge.forward_condition.label || fallback
 		);
 	}
-	if (edge.forwardCondition?.type === 'expression') {
-		return edge.forwardCondition.label || fallback;
+	if (edge.forward_condition?.type === 'expression') {
+		return edge.forward_condition.label || fallback;
 	}
-	if (edge.forwardCondition?.type === 'unconditional') {
+	if (edge.forward_condition?.type === 'unconditional') {
 		return 'Unconditional';
 	}
-	if (edge.forwardCondition?.type === 'result') {
-		return edge.forwardCondition.successful ? 'Success' : 'Failure';
+	if (edge.forward_condition?.type === 'result') {
+		return edge.forward_condition.successful ? 'Success' : 'Failure';
 	}
 	return fallback;
 };

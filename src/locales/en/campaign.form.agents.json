@@ -22,7 +22,13 @@
 			"asrKeywords": "ASR Keywords",
 			"dynamicVariables": "Dynamic Variables",
 			"dictionary": "Dictionary",
-			"noiseCancellation": "Noise Cancellation"
+			"noiseCancellation": "Noise Cancellation",
+			"groups": {
+				"toolsAndKnowledge": "Tools & Knowledge",
+				"speechAndLanguage": "Speech & Language",
+				"runtime": "Runtime",
+				"speechLanguageRuntime": "Speech, Language & Runtime"
+			}
 		}
 	},
 	"form": {
@@ -89,17 +95,30 @@
 				"syncAgent": "Sync External Agent",
 				"addAgentTitle": "Add Agent to Campaign",
 				"openAgentAria": "Open agent {{name}}",
+				"columns": {
+					"agent": "Agent",
+					"role": "Role",
+					"direction": "Direction",
+					"status": "Status",
+					"language": "Language",
+					"updated": "Updated",
+					"actions": "Actions"
+				},
+				"status": {
+					"active": "Active",
+					"inactive": "Inactive"
+				},
 				"actions": {
 					"menu": "Agent actions",
-					"removeFromCampaign": "Remove from campaign",
-					"principalProtected": "The principal agent cannot be removed from the campaign."
+					"deleteAgent": "Delete agent",
+					"principalProtected": "The principal agent cannot be deleted."
 				},
-				"removeRelation": {
-					"title": "Remove agent from campaign?",
-					"description": "This will remove {{name}} from this campaign only. The agent will remain available in UCXM.",
-					"confirm": "Remove from campaign",
-					"success": "{{name}} was removed from the campaign",
-					"error": "Failed to remove agent from campaign"
+				"deleteAgent": {
+					"title": "Delete agent?",
+					"description": "This will permanently delete {{name}}. This action cannot be undone.",
+					"confirm": "Delete agent",
+					"success": "{{name}} was deleted",
+					"error": "Failed to delete agent"
 				},
 				"selected": "Selected",
 				"language": "Language: {{language}}",
@@ -499,7 +518,9 @@
 		"valuePlaceholder": "Default value",
 		"apply": "Apply",
 		"errorEmptyKey": "Key cannot be empty",
-		"errorDuplicateKey": "Duplicate key"
+		"errorDuplicateKey": "Duplicate key",
+		"configure": "Configure",
+		"infoHelp": "Keys must match the variable names in your agent configuration. Values are injected as defaults at runtime."
 	},
 	"saveReview": {
 		"title": "Review Changes",

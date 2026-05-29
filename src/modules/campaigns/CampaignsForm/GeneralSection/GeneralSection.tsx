@@ -1,45 +1,35 @@
-import { useCampaignFormContext } from '../../campaignFormFunctions';
-import { Textarea, TextInput } from '@mantine/core';
-import { useTranslation } from 'react-i18next';
-import SectionCard from '~/components/SectionCard';
+import CampaignBasicsSection from './CampaignBasicsSection';
+import ExecutionDefaultsSection from './ExecutionDefaultsSection';
+import styles from './GeneralSection.module.css';
+import RoutingSection from './RoutingSection';
+import RoleVisibilitySection from './RoleVisibilitySection';
 
 interface GeneralSectionProps {
-	onOpenSettings?: () => void;
+	roleVisibilityValue: number[];
+	onRoleVisibilityChange: (roleIds: number[]) => void;
+	roleVisibilityDisabled?: boolean;
 }
 
-const GeneralSection: React.FC<GeneralSectionProps> = ({ onOpenSettings }) => {
-	const { t } = useTranslation([
-		'campaign.form.general',
-		'campaign.form.agents',
-		'campaign.detail',
-		'common',
-	]);
-	const form = useCampaignFormContext();
+const GeneralSection: React.FC<GeneralSectionProps> = ({
+	roleVisibilityValue,
+	onRoleVisibilityChange,
+	roleVisibilityDisabled,
+}) => (
+	<div className={styles.generalLayout}>
+		<div className={styles.column}>
+			<CampaignBasicsSection />
+			<RoutingSection />
+		</div>
 
-	return (
-		<SectionCard
-			title={t('general.title')}
-			description={t('general.description')}
-			onOpenSettings={onOpenSettings}
-		>
-			<TextInput
-				label={t('general.campaignName')}
-				placeholder={t('general.enterCampaignName')}
-				required
-				size='sm'
-				{...form.getInputProps('name')}
+		<div className={styles.column}>
+			<ExecutionDefaultsSection />
+			<RoleVisibilitySection
+				value={roleVisibilityValue}
+				onChange={onRoleVisibilityChange}
+				disabled={roleVisibilityDisabled}
 			/>
-
-			<Textarea
-				{...form.getInputProps('description')}
-				placeholder={t('general.describeYourCampaign')}
-				label={t('general.descriptionLabel')}
-				autosize
-				minRows={5}
-				size='sm'
-			/>
-		</SectionCard>
-	);
-};
+		</div>
+	</div>
+);
 
 export default GeneralSection;

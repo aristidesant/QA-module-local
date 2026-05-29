@@ -57,14 +57,14 @@ const ToolNodeForm = ({
 		);
 	}
 
-	const selectedToolIds = node.tools?.map((tool) => tool.toolId) ?? [];
+	const selectedToolIds = node.tools?.map((tool) => tool.tool_id) ?? [];
 	const availableTools = useMemo(() => tools ?? [], [tools]);
 
 	const selectedTools = useMemo(() => {
-		return selectedToolIds.map((toolId) => {
-			const matched = availableTools.find((tool) => tool.identifier === toolId);
+		return selectedToolIds.map((tool_id) => {
+			const matched = availableTools.find((tool) => tool.identifier === tool_id);
 			return {
-				id: toolId,
+				id: tool_id,
 				name: matched?.name,
 				description: matched?.description,
 			};
@@ -90,7 +90,7 @@ const ToolNodeForm = ({
 		});
 	}, [availableTools, searchValue, selectedToolIds]);
 
-	const handleUpdateTools = (nextTools: Array<{ toolId: string }>) => {
+	const handleUpdateTools = (nextTools: Array<{ tool_id: string }>) => {
 		const nextWorkflow = updateWorkflowNode(workflow, nodeId, {
 			tools: nextTools,
 		});
@@ -108,15 +108,15 @@ const ToolNodeForm = ({
 		const nextToolIds = Array.from(
 			new Set([...selectedToolIds, tool.identifier])
 		);
-		const nextTools = nextToolIds.map((toolId) => ({ toolId }));
+		const nextTools = nextToolIds.map((tool_id) => ({ tool_id }));
 		handleUpdateTools(nextTools);
 		setIsMenuOpen(false);
 	};
 
-	const handleRemoveTool = (toolId: string) => {
+	const handleRemoveTool = (tool_id: string) => {
 		const nextTools = selectedToolIds
-			.filter((id) => id !== toolId)
-			.map((id) => ({ toolId: id }));
+			.filter((id) => id !== tool_id)
+			.map((id) => ({ tool_id: id }));
 		handleUpdateTools(nextTools);
 	};
 

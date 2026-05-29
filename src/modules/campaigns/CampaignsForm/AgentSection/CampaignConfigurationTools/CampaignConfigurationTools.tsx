@@ -1,9 +1,16 @@
 // CampaignConfigurationTools.tsx
 import React, { useState, useCallback } from 'react';
-import { ThemeIcon, Text, ActionIcon, Tooltip, Loader } from '@mantine/core';
-import { IconPuzzle, IconTrash } from '@tabler/icons-react';
+import {
+	ThemeIcon,
+	Text,
+	ActionIcon,
+	Tooltip,
+	Loader,
+	Button,
+} from '@mantine/core';
+import { IconPuzzle, IconTrash, IconPlus } from '@tabler/icons-react';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
-import RightSectionCard from '~/components/RightSectionCard';
+import SectionCard from '~/components/SectionCard';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
 import { useToolsByCategory } from '~/queries/toolQueries';
 import type {
@@ -84,18 +91,25 @@ const CampaignConfigurationTools: React.FC = () => {
 		[updateToolIds]
 	);
 
+	const addButton = (
+		<Button
+			size='compact-sm'
+			variant='light'
+			color='green'
+			leftSection={<IconPlus size={14} />}
+			onClick={() => setIsModalOpen(true)}
+		>
+			{t('form.agent.tools.add')}
+		</Button>
+	);
+
 	return (
-		<RightSectionCard
+		<SectionCard
 			icon={IconPuzzle}
 			title={t('form.agent.tools.title')}
 			description={t('form.agent.tools.description')}
-			actions={{
-				primary: {
-					kind: 'add',
-					label: t('form.agent.tools.add'),
-					onClick: () => setIsModalOpen(true),
-				},
-			}}
+			headerActions={addButton}
+			contentSpacing='xs'
 		>
 			<div className={classes.container}>
 				{isLoading ? (
@@ -157,7 +171,7 @@ const CampaignConfigurationTools: React.FC = () => {
 				isLoading={isLoading}
 				onSave={handleSaveSelections}
 			/>
-		</RightSectionCard>
+		</SectionCard>
 	);
 };
 

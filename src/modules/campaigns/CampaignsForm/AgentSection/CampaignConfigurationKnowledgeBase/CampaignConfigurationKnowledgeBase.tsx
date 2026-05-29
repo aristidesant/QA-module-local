@@ -6,10 +6,18 @@ import {
 	IconTrash,
 	IconLink,
 	IconAlignLeft,
+	IconPlus,
 } from '@tabler/icons-react';
 import { useCampaignFormContext } from '../../../campaignFormFunctions';
-import RightSectionCard from '~/components/RightSectionCard';
-import { ThemeIcon, Loader, Text, ActionIcon, Tooltip } from '@mantine/core';
+import SectionCard from '~/components/SectionCard';
+import {
+	ThemeIcon,
+	Loader,
+	Text,
+	ActionIcon,
+	Tooltip,
+	Button,
+} from '@mantine/core';
 import {
 	useKnowledgeBases,
 	useKnowledgeBasesByIds,
@@ -168,18 +176,25 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 		setIsModalOpen(false);
 	};
 
+	const addButton = (
+		<Button
+			size='compact-sm'
+			variant='light'
+			color='green'
+			leftSection={<IconPlus size={14} />}
+			onClick={handleAddKnowledgeBase}
+		>
+			{t('form.agent.knowledgeBase.add')}
+		</Button>
+	);
+
 	return (
-		<RightSectionCard
+		<SectionCard
 			icon={IconFileText}
 			title={t('form.agent.knowledgeBase.title')}
 			description={t('form.agent.knowledgeBase.description')}
-			actions={{
-				primary: {
-					kind: 'add',
-					label: t('form.agent.knowledgeBase.add'),
-					onClick: handleAddKnowledgeBase,
-				},
-			}}
+			headerActions={addButton}
+			contentSpacing='xs'
 		>
 			<div className={styles.container}>
 				{isLoading ? (
@@ -263,7 +278,7 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 				selectedIds={selectedKbIds}
 				onSave={handleSaveSelections}
 			/>
-		</RightSectionCard>
+		</SectionCard>
 	);
 };
 

@@ -1,0 +1,81 @@
+.form {
+	padding: 0;
+}
+
+/* ── Section labels ──────────────────────────────────────────── */
+
+.sectionLabel {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--mantine-color-gray-5);
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+[data-mantine-color-scheme='dark'] .sectionLabel {
+	color: var(--mantine-color-dark-3);
+}
+
+/* ── Calling box ─────────────────────────────────────────────── */
+
+.callingBox {
+	background: var(--mantine-color-gray-0);
+	border: 1px solid rgba(221, 226, 232, 0.7);
+	border-radius: 10px;
+	padding: 14px;
+}
+
+[data-mantine-color-scheme='dark'] .callingBox {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+.wavesRow {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--mantine-spacing-md);
+	align-items: start;
+}
+
+/* ── Capacity box ────────────────────────────────────────────── */
+
+.capacityBox {
+	background: var(--mantine-color-gray-0);
+	border: 1px solid rgba(221, 226, 232, 0.7);
+	border-radius: 10px;
+	padding: 14px;
+}
+
+[data-mantine-color-scheme='dark'] .capacityBox {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+.capacityProgress {
+	margin-top: var(--mantine-spacing-sm);
+}
+
+/* ── Actions ─────────────────────────────────────────────────── */
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-xs);
+	padding-top: var(--mantine-spacing-sm);
+	border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .actions {
+	border-top-color: var(--mantine-color-dark-5);
+}
+
+@media (max-width: 480px) {
+	.wavesRow {
+		grid-template-columns: 1fr;
+	}
+
+	.actions {
+		flex-direction: column-reverse;
+	}
+}

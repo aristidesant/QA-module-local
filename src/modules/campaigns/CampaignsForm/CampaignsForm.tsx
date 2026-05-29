@@ -39,7 +39,6 @@ import CampaignTabs from '../CampaignTabs';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import useCampaignsPredefinedParams from './useCampaignsPredefinedParams';
 import GeneralSection from './GeneralSection/GeneralSection';
-import SectionCard from '~/components/SectionCard';
 import ParametersSection from './ParametersSection';
 import AnalyticsSection from './AnalyticsSection';
 import AgentSection from './AgentSection';
@@ -49,15 +48,12 @@ import DoNotCallSection from './DoNotCallSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { CampaignStatus } from '~/models/CampaignStatus';
 import { modals } from '@mantine/modals';
-import { IconEye, IconFlask } from '@tabler/icons-react';
+import { IconEye } from '@tabler/icons-react';
 import SchedulerCalculator from './ParametersSection/SchedulerCalculator';
 import FormSaveButton from '~/components/FormSaveButton';
-import CampaignSyncButton from './components/CampaignSyncButton';
-import GeneralSectionRightPanel from './GeneralSection/GeneralSectionRightPanel';
 import AppDrawer from '~/components/AppDrawer';
 import DashboardSection from './DashboardSection';
 import VoicesSection from './VoicesSection';
-import CampaignRoleVisibilitySelector from '../components/CampaignRoleVisibilitySelector';
 import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
 import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
@@ -160,10 +156,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		useState<SelectedAgentDraft | null>(null);
 
 	// Fetch campaign agents to check versioning status
-	const {
-		data: campaignAgents = [],
-		dataUpdatedAt: campaignAgentsUpdatedAt,
-	} = useGetCampaignAgents(campaignId);
+	const { data: campaignAgents = [], dataUpdatedAt: campaignAgentsUpdatedAt } =
+		useGetCampaignAgents(campaignId);
 	const sortedCampaignAgents = React.useMemo(
 		() =>
 			[...(campaignAgents ?? [])].sort((a, b) => {
@@ -175,12 +169,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 	const selectedCampaignAgent = sortedCampaignAgents.find(
 		(agent) => agent.id === selectedCampaignAgentId
 	);
-	const {
-		data: selectedAgent,
-		dataUpdatedAt: selectedAgentUpdatedAt,
-	} = useGetAgent(
-		selectedCampaignAgent?.agentId ?? ''
-	);
+	const { data: selectedAgent, dataUpdatedAt: selectedAgentUpdatedAt } =
+		useGetAgent(selectedCampaignAgent?.agentId ?? '');
 	const {
 		data: campaignRoles,
 		isLoading: isCampaignRolesLoading,
@@ -337,14 +327,18 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			userId: (value) => (value >= 0 ? null : t('form.validation.userIdMin')),
 			clientId: (value) =>
 				value >= 0 ? null : t('form.validation.clientIdMin'),
-			defaultMaxWaves: (value) =>
-				value && value >= 1 ? null : t('form.validation.defaultWavesMin'),
-			defaultWaveExecutionDelaySeconds: (value) =>
-				value !== undefined && value >= 0
+			defaultMaxWaves: (value, values) =>
+				values.type === 'INBOUND' || (value && value >= 1)
+					? null
+					: t('form.validation.defaultWavesMin'),
+			defaultWaveExecutionDelaySeconds: (value, values) =>
+				values.type === 'INBOUND' || (value !== undefined && value >= 0)
 					? null
 					: t('form.validation.defaultWaveDelayMin'),
-			objectiveId: (value) =>
-				value ? null : t('form.validation.objectiveRequired'),
+			objectiveId: (value, values) =>
+				values.type === 'INBOUND' || value
+					? null
+					: t('form.validation.objectiveRequired'),
 		},
 	});
 	const attributeMetricKeys = React.useMemo(() => {
@@ -500,25 +494,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		void i18n.loadNamespaces([paramsNamespace, paramsFallbackNamespace]);
 	}, [selectedTab]);
 
-	const settingsDrawerTitle = t('form.settingsDrawer.title');
-	const openSettingsDrawer = () => {
-		void i18n
-			.loadNamespaces([
-				'campaigns',
-				'knowledgeBaseSelection',
-				'campaigns.wizard',
-			])
-			.finally(() => {
-				setIsSettingsDrawerOpen(true);
-			});
-	};
-
 	const settingsDrawerContent =
-		selectedTab === 'general' ? (
-			<GeneralSectionRightPanel />
-		) : selectedTab === 'outcomes' ? (
-			rightComponent
-		) : null;
+		selectedTab === 'outcomes' ? rightComponent : null;
 
 	const handleSubmit = async (
 		value: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'>,
@@ -623,6 +600,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			}
 
 			if (cleanedValue.type === 'INBOUND') {
+				cleanedValue.objectiveId = undefined;
 				cleanedValue.defaultWaveExecutionDelaySeconds = undefined;
 			}
 
@@ -727,44 +705,16 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 						}
 						titleRight={
 							campaign?.id && (
-								<Group gap='xs'>
-									<CampaignSyncButton />
-									<Tooltip label={t('form.actions.viewCampaign')} withArrow>
-										<ActionIcon
-											variant='light'
-											size='lg'
-											aria-label={t('form.actions.viewCampaign')}
-											onClick={() => navigate(`/campaign/view/${campaign.id}`)}
-										>
-											<IconEye size={20} />
-										</ActionIcon>
-									</Tooltip>
-									<Tooltip
-										label={t('form.actions.testConvai', {
-											ns: 'campaign.detail',
-										})}
-										withArrow
+								<Tooltip label={t('form.actions.viewCampaign')} withArrow>
+									<ActionIcon
+										variant='light'
+										size='lg'
+										aria-label={t('form.actions.viewCampaign')}
+										onClick={() => navigate(`/campaign/view/${campaign.id}`)}
 									>
-										<ActionIcon
-											variant='light'
-											color='blue'
-											size='lg'
-											aria-label={t('form.actions.testConvai', {
-												ns: 'campaign.detail',
-											})}
-											onClick={() =>
-												selectedCampaignAgent?.id &&
-												selectedCampaignAgent?.agentId
-													? navigate(
-															`/campaign/${campaign.id}/agent/${selectedCampaignAgent.id}/test/${selectedCampaignAgent.agentId}`
-														)
-													: navigate(`/campaign/${campaign.id}/test`)
-											}
-										>
-											<IconFlask size={20} />
-										</ActionIcon>
-									</Tooltip>
-								</Group>
+										<IconEye size={20} />
+									</ActionIcon>
+								</Tooltip>
 							)
 						}
 						description={t('form.description')}
@@ -783,38 +733,15 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 										handleSubmit(values, true)
 									)}
 								>
-									<GeneralSection onOpenSettings={openSettingsDrawer} />
-									<SectionCard
-										title={t('general.roleVisibility.title', {
-											ns: 'campaign.form.general',
-										})}
-										description={t('general.roleVisibility.description', {
-											ns: 'campaign.form.general',
-										})}
-									>
-										<CampaignRoleVisibilitySelector
-											value={form.values.roleIds ?? []}
-											onChange={(roleIds) =>
-												form.setFieldValue('roleIds', roleIds)
-											}
-											label={t('general.roleVisibility.label', {
-												ns: 'campaign.form.general',
-											})}
-											description={t(
-												'general.roleVisibility.fieldDescription',
-												{
-													ns: 'campaign.form.general',
-												}
-											)}
-											placeholder={t('general.roleVisibility.placeholder', {
-												ns: 'campaign.form.general',
-											})}
-											hint={t('general.roleVisibility.hint', {
-												ns: 'campaign.form.general',
-											})}
-											disabled={isCampaignRolesLoading || isCampaignRolesError}
-										/>
-									</SectionCard>
+									<GeneralSection
+										roleVisibilityValue={form.values.roleIds ?? []}
+										onRoleVisibilityChange={(roleIds) =>
+											form.setFieldValue('roleIds', roleIds)
+										}
+										roleVisibilityDisabled={
+											isCampaignRolesLoading || isCampaignRolesError
+										}
+									/>
 									<StickySaveActions
 										label={saveLabel}
 										loadingLabel={savingLabel}
@@ -905,7 +832,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 					<AppDrawer
 						opened={isSettingsDrawerOpen && Boolean(settingsDrawerContent)}
 						onClose={() => setIsSettingsDrawerOpen(false)}
-						title={settingsDrawerTitle}
+						title={t('form.settingsDrawer.title')}
 						size='lg'
 						keepMounted
 					>

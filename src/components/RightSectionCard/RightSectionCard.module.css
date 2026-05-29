@@ -3,10 +3,8 @@
 	flex-direction: column;
 	background: var(--mantine-color-white);
 	border: 1px solid var(--surface-border);
-	border-radius: 16px;
-	box-shadow:
-		0 1px 2px rgba(15, 23, 42, 0.04),
-		0 6px 16px rgba(15, 23, 42, 0.06);
+	border-radius: var(--mantine-radius-lg);
+	box-shadow: var(--mantine-shadow-md);
 	width: 100%;
 	box-sizing: border-box;
 	overflow: hidden;
@@ -20,24 +18,18 @@
 [data-mantine-color-scheme='dark'] .card {
 	background: var(--mantine-color-dark-7);
 	border-color: var(--surface-border);
-	box-shadow:
-		0 1px 3px rgba(0, 0, 0, 0.2),
-		0 6px 16px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
 .card:hover {
 	border-color: var(--surface-border-strong);
-	box-shadow:
-		0 2px 4px rgba(15, 23, 42, 0.06),
-		0 12px 28px rgba(15, 23, 42, 0.08);
+	box-shadow: var(--mantine-shadow-lg);
 	transform: translateY(-1px);
 }
 
 [data-mantine-color-scheme='dark'] .card:hover {
 	border-color: var(--surface-border-strong);
-	box-shadow:
-		0 2px 8px rgba(0, 0, 0, 0.28),
-		0 12px 28px rgba(0, 0, 0, 0.18);
+	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
 	transform: translateY(-1px);
 }
 

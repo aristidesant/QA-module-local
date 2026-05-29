@@ -34,13 +34,13 @@ export interface SelectOption {
 export type Subagent = WorkflowNode & {
 	subagent?: {
 		prompt?: string;
-		overridePrompt?: boolean;
-		voiceId?: string;
-		llmModel?: string;
+		override_prompt?: boolean;
+		voice_id?: string;
+		llm_model?: string;
 		eagerness?: string;
-		spellingPatience?: string;
-		inheritKnowledgeBase?: boolean;
-		knowledgeBaseIds?: string[];
-		toolIds?: string[];
+		spelling_patience?: string;
+		inherit_knowledge_base?: boolean;
+		knowledge_base_ids?: string[];
+		tool_ids?: string[];
 	};
 };

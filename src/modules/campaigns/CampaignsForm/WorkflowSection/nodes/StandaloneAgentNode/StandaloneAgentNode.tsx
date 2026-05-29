@@ -7,7 +7,7 @@ import SubagentNode from '../SubagentNode';
 const StandaloneAgentNodeComponent = (props: NodeProps) => {
 	const nodeData = props.data as unknown as StandaloneAgentNodeModel;
 	const isTransfer =
-		nodeData.uiMeta?.variant === 'transfer' || !!nodeData.agentId;
+		nodeData.uiMeta?.variant === 'transfer' || !!nodeData.agent_id;
 
 	return isTransfer ? (
 		<AgentTransferNode {...props} />

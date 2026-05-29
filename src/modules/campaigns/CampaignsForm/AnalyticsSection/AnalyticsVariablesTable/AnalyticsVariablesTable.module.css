@@ -1,4 +1,58 @@
+.variableCountBadge {
+	font-weight: 700;
+	letter-spacing: 0.02em;
+	text-transform: uppercase;
+}
+
 .actionsGroup {
 	flex-wrap: wrap;
 	justify-content: flex-end;
+}
+
+.analyticsTable {
+	border-radius: var(--mantine-radius-lg);
+	background: var(--mantine-color-body);
+}
+
+.analyticsTable :global(table) {
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.analyticsTable :global(th) {
+	background: var(--surface-sunken);
+	color: var(--mantine-color-gray-8);
+	font-size: 0.75rem;
+	font-weight: 700;
+	letter-spacing: 0.055em;
+}
+
+.analyticsTable :global(td) {
+	height: 2.45rem;
+	border-bottom-color: color-mix(
+		in srgb,
+		var(--surface-border) 78%,
+		transparent
+	);
+}
+
+.analyticsTable :global(tbody tr) {
+	cursor: pointer;
+}
+
+.analyticsTable :global(tbody tr:hover td) {
+	background: var(--surface-sunken) !important;
+}
+
+[data-mantine-color-scheme='dark'] .analyticsTable {
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .analyticsTable :global(th) {
+	background: var(--mantine-color-dark-8);
+	color: var(--mantine-color-dark-1);
+}
+
+[data-mantine-color-scheme='dark'] .analyticsTable :global(tbody tr:hover td) {
+	background: var(--mantine-color-dark-6) !important;
 }

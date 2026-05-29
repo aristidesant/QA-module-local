@@ -7,9 +7,15 @@ import {
 	Tooltip,
 	Badge,
 	Group,
+	Button,
 } from '@mantine/core';
-import { IconCpu, IconTrash, IconSettings } from '@tabler/icons-react';
-import RightSectionCard from '~/components/RightSectionCard';
+import {
+	IconCpu,
+	IconTrash,
+	IconSettings,
+	IconPlus,
+} from '@tabler/icons-react';
+import SectionCard from '~/components/SectionCard';
 import { useClientConfigByName } from '~/queries/useClientConfigs';
 import type {
 	AgentConfigModel,
@@ -178,19 +184,26 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 		[form, updateBuiltInTools]
 	);
 
+	const addButton = (
+		<Button
+			size='compact-sm'
+			variant='light'
+			color='green'
+			leftSection={<IconPlus size={14} />}
+			onClick={() => setAddModalOpened(true)}
+		>
+			{t('form.agent.systemTools.add')}
+		</Button>
+	);
+
 	return (
 		<>
-			<RightSectionCard
+			<SectionCard
 				icon={IconCpu}
 				title={t('form.agent.systemTools.title')}
 				description={t('form.agent.systemTools.description')}
-				actions={{
-					primary: {
-						kind: 'add',
-						label: t('form.agent.systemTools.add'),
-						onClick: () => setAddModalOpened(true),
-					},
-				}}
+				headerActions={addButton}
+				contentSpacing='xs'
 			>
 				<div className={classes.container}>
 					{activeTools.length > 0 ? (
@@ -254,7 +267,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 						</Text>
 					)}
 				</div>
-			</RightSectionCard>
+			</SectionCard>
 
 			<CampaignConfigurationSystemToolsAddModal
 				opened={addModalOpened}

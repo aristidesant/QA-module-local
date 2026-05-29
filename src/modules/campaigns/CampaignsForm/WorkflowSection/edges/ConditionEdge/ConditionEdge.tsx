@@ -191,10 +191,10 @@ const ConditionEdge: FC<EdgeProps> = ({
 			: null;
 	const hasStructuredLabel =
 		!!structuredLabel?.forwardLabel && !!structuredLabel?.backwardLabel;
-	const forwardCondition = edgeData.forwardCondition;
-	const backwardCondition = edgeData.backwardCondition;
-	const hasForwardCondition = edgeData.forwardCondition !== undefined;
-	const hasBackwardCondition = edgeData.backwardCondition !== undefined;
+	const forward_condition = edgeData.forward_condition;
+	const backward_condition = edgeData.backward_condition;
+	const hasForwardCondition = edgeData.forward_condition !== undefined;
+	const hasBackwardCondition = edgeData.backward_condition !== undefined;
 	const hasNoCondition = !hasForwardCondition && !hasBackwardCondition;
 	const hasSingleCondition = hasForwardCondition !== hasBackwardCondition;
 	const singleConditionDirection = hasSingleCondition
@@ -207,14 +207,14 @@ const ConditionEdge: FC<EdgeProps> = ({
 	const isIncomplete = warningLevel === 'error';
 
 	const promptLabel =
-		forwardCondition?.type === 'llm' &&
-		typeof forwardCondition.condition === 'string' &&
-		!forwardCondition.label
-			? forwardCondition.condition.trim()
-			: backwardCondition?.type === 'llm' &&
-				  typeof backwardCondition.condition === 'string' &&
-				  !backwardCondition.label
-				? backwardCondition.condition.trim()
+		forward_condition?.type === 'llm' &&
+		typeof forward_condition.condition === 'string' &&
+		!forward_condition.label
+			? forward_condition.condition.trim()
+			: backward_condition?.type === 'llm' &&
+				  typeof backward_condition.condition === 'string' &&
+				  !backward_condition.label
+				? backward_condition.condition.trim()
 				: null;
 	const displayLabel =
 		hasStructuredLabel || suppressLabel || hasNoCondition || isIncomplete

@@ -21,7 +21,7 @@ export type WorkflowImportErrorCode =
 export interface WorkflowImportSummary {
 	nodeCount: number;
 	edgeCount: number;
-	preventSubagentLoops: boolean;
+	prevent_subagent_loops: boolean;
 	/** Number of custom node styles included in the envelope (0 = none) */
 	nodeStyleCount: number;
 	/** Number of node groups included in the envelope (0 = none) */
@@ -78,10 +78,21 @@ const cloneValue = <T>(value: T): T => {
 const isRecord = (value: unknown): value is Record<string, unknown> =>
 	typeof value === 'object' && value !== null && !Array.isArray(value);
 
-const PRESERVE_CHILD_KEYS_FOR_PARENTS = new Set([
-	'built_in_tools',
-	'builtInTools',
-]);
+const camelizeKeys = (value: unknown): unknown => {
+	if (value === null || value === undefined || typeof value !== 'object') {
+		return value;
+	}
+	if (Array.isArray(value)) {
+		return value.map(camelizeKeys);
+	}
+	return Object.entries(value).reduce<Record<string, unknown>>(
+		(result, [key, childValue]) => {
+			result[snakeToCamel(key)] = camelizeKeys(childValue);
+			return result;
+		},
+		{}
+	);
+};
 
 const isValidPosition = (
 	value: unknown
@@ -100,32 +111,9 @@ const normalizeEdgeOrderValue = (value: unknown): string[] =>
 		? value.filter((edgeId): edgeId is string => typeof edgeId === 'string')
 		: [];
 
-const camelizeImportedKeys = (value: unknown, parentKey?: string): unknown => {
-	if (value === null || value === undefined || typeof value !== 'object') {
-		return value;
-	}
-
-	if (Array.isArray(value)) {
-		return value.map((item) => camelizeImportedKeys(item, parentKey));
-	}
-
-	const preserveChildKeys = parentKey
-		? PRESERVE_CHILD_KEYS_FOR_PARENTS.has(parentKey)
-		: false;
-
-	return Object.entries(value).reduce<Record<string, unknown>>(
-		(result, [key, childValue]) => {
-			const nextKey = preserveChildKeys ? key : snakeToCamel(key);
-			result[nextKey] = camelizeImportedKeys(childValue, nextKey);
-			return result;
-		},
-		{}
-	);
-};
-
 const normalizeImportedWorkflowRoot = (value: Record<string, unknown>) => ({
-	preventSubagentLoops:
-		value.preventSubagentLoops ?? value.prevent_subagent_loops,
+	prevent_subagent_loops:
+		value.prevent_subagent_loops,
 	nodes: value.nodes,
 	edges: value.edges,
 });
@@ -133,20 +121,15 @@ const normalizeImportedWorkflowRoot = (value: Record<string, unknown>) => ({
 const normalizeImportedNode = (
 	nodeValue: Record<string, unknown>
 ): WorkflowNode => {
-	const normalizedNode = camelizeImportedKeys(nodeValue) as Record<
-		string,
-		unknown
-	>;
-
 	if (
-		typeof normalizedNode.type !== 'string' ||
-		!isValidPosition(normalizedNode.position)
+		typeof nodeValue.type !== 'string' ||
+		!isValidPosition(nodeValue.position)
 	) {
 		throw new WorkflowImportError('invalidNodeShape');
 	}
 
-	const nextNode = cloneValue(normalizedNode) as unknown as WorkflowNode;
-	nextNode.edgeOrder = normalizeEdgeOrderValue(normalizedNode.edgeOrder);
+	const nextNode = cloneValue(nodeValue) as unknown as WorkflowNode;
+	nextNode.edge_order = normalizeEdgeOrderValue(nodeValue.edge_order);
 
 	return nextNode;
 };
@@ -154,19 +137,14 @@ const normalizeImportedNode = (
 const normalizeImportedEdge = (
 	edgeValue: Record<string, unknown>
 ): WorkflowEdge => {
-	const normalizedEdge = camelizeImportedKeys(edgeValue) as Record<
-		string,
-		unknown
-	>;
-
 	if (
-		typeof normalizedEdge.source !== 'string' ||
-		typeof normalizedEdge.target !== 'string'
+		typeof edgeValue.source !== 'string' ||
+		typeof edgeValue.target !== 'string'
 	) {
 		throw new WorkflowImportError('invalidEdgeShape');
 	}
 
-	return cloneValue(normalizedEdge) as unknown as WorkflowEdge;
+	return cloneValue(edgeValue) as unknown as WorkflowEdge;
 };
 
 const stripWorkflowUiMeta = (workflow: AgentWorkflow): AgentWorkflow => {
@@ -194,7 +172,7 @@ export const normalizeWorkflowEdgeOrder = (
 	});
 
 	Object.entries(nextWorkflow.nodes).forEach(([nodeId, node]) => {
-		const configuredOrder = normalizeEdgeOrderValue(node.edgeOrder);
+		const configuredOrder = normalizeEdgeOrderValue(node.edge_order);
 		const validConfiguredOrder = configuredOrder.filter(
 			(edgeId) => nextWorkflow.edges[edgeId]?.source === nodeId
 		);
@@ -203,7 +181,7 @@ export const normalizeWorkflowEdgeOrder = (
 			(edgeId) => !validConfiguredOrder.includes(edgeId)
 		);
 
-		node.edgeOrder = [...validConfiguredOrder, ...missingOutgoingEdgeIds];
+		node.edge_order = [...validConfiguredOrder, ...missingOutgoingEdgeIds];
 	});
 
 	return nextWorkflow;
@@ -331,13 +309,13 @@ export const parseImportedWorkflow = (
 		throw new WorkflowImportError('invalidEdges');
 	}
 
-	let preventSubagentLoops = fallbackPreventSubagentLoops;
-	if (normalizedValue.preventSubagentLoops !== undefined) {
-		if (typeof normalizedValue.preventSubagentLoops !== 'boolean') {
+	let prevent_subagent_loops = fallbackPreventSubagentLoops;
+	if (normalizedValue.prevent_subagent_loops !== undefined) {
+		if (typeof normalizedValue.prevent_subagent_loops !== 'boolean') {
 			throw new WorkflowImportError('invalidPreventSubagentLoops');
 		}
 
-		preventSubagentLoops = normalizedValue.preventSubagentLoops;
+		prevent_subagent_loops = normalizedValue.prevent_subagent_loops;
 	}
 
 	const normalizedNodes: Record<string, WorkflowNode> = {};
@@ -378,7 +356,7 @@ export const parseImportedWorkflow = (
 	});
 
 	const normalizedWorkflow = normalizeWorkflowEdgeOrder({
-		preventSubagentLoops,
+		prevent_subagent_loops,
 		nodes: sanitizeStartNodes(normalizedNodes, normalizedEdges),
 		edges: normalizedEdges,
 	});
@@ -391,7 +369,7 @@ export const parseImportedWorkflow = (
 	if (isEnvelope) {
 		const rawStyles = parsedValue.node_styles ?? parsedValue.nodeStyles;
 		if (isRecord(rawStyles)) {
-			const camelized = camelizeImportedKeys(rawStyles) as NodeStyles;
+			const camelized = camelizeKeys(rawStyles) as NodeStyles;
 			importedNodeStyles = stripOrphanNodeStyles(camelized, workflowNodeIds);
 			if (Object.keys(importedNodeStyles).length === 0) {
 				importedNodeStyles = undefined;
@@ -400,7 +378,7 @@ export const parseImportedWorkflow = (
 
 		const rawGroups = parsedValue.node_groups ?? parsedValue.nodeGroups;
 		if (isRecord(rawGroups)) {
-			const camelized = camelizeImportedKeys(rawGroups) as NodeGroups;
+			const camelized = camelizeKeys(rawGroups) as NodeGroups;
 			importedNodeGroups = stripOrphanNodeGroups(camelized, workflowNodeIds);
 			if (Object.keys(importedNodeGroups).length === 0) {
 				importedNodeGroups = undefined;
@@ -415,7 +393,7 @@ export const parseImportedWorkflow = (
 		summary: {
 			nodeCount: Object.keys(normalizedWorkflow.nodes).length,
 			edgeCount: Object.keys(normalizedWorkflow.edges).length,
-			preventSubagentLoops: normalizedWorkflow.preventSubagentLoops,
+			prevent_subagent_loops: normalizedWorkflow.prevent_subagent_loops,
 			nodeStyleCount: importedNodeStyles
 				? Object.keys(importedNodeStyles).length
 				: 0,

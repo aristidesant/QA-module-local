@@ -114,27 +114,62 @@
 				"dateInPast": "La fecha no puede ser anterior a hoy"
 			},
 			"limits": {
-				"voicePoolLabel": "Voces de la lista",
+				"voicePoolLabel": "Voces asignadas",
 				"voicePoolDescription": "Opcionalmente limita esta lista a un subconjunto de las voces de la campaña.",
-				"voicePoolPlaceholder": "Usa todas las voces de la campaña o selecciona un subconjunto",
-				"voicePoolHint": "Déjalo vacío para heredar las {{count}} voces de la campaña.",
-				"voicePoolNoVoices": "No hay voces de campaña disponibles para esta lista de contactos.",
+				"voicePoolPlaceholder": "Heredar todas las voces de la campaña",
+				"voicePoolHint": "Déjalo vacío para usar las {{count}} voces de la campaña.",
+				"voicePoolNoVoices": "No hay voces de campaña disponibles para esta lista.",
 				"voicePoolNoCampaignVoices": "Esta campaña todavía no tiene voces asignadas.",
 				"voicePoolNoMatches": "Ninguna voz coincide con tu búsqueda",
 				"voicePoolLoadErrorTitle": "No se pudieron cargar las voces",
 				"voicePoolLoadErrorDescription": "Reintenta antes de guardar la selección de voces de esta lista.",
-				"maxWavesLabel": "Máx. oleadas",
+				"maxWavesLabel": "Oleadas",
 				"maxWavesDescription": "Número máximo de oleadas para esta lista de contactos.",
 				"maxWavesInherited": "Heredado del valor predeterminado de la campaña: {{value}}",
-				"waveDelayLabel": "Retraso entre oleadas (segundos)",
+				"waveDelayLabel": "Entre oleadas",
 				"waveDelayDescription": "Retraso entre oleadas para esta lista de contactos. Valor actual: {{value}}.",
 				"waveDelayInherited": "Heredado del valor predeterminado de la campaña: {{value}}",
 				"noWaveDelay": "Sin retraso entre oleadas",
-				"humanEquivalentLabel": "Equivalente humano",
-				"availableLabel": "Disponible",
+				"humanEquivalentLabel": "Capacidad",
+				"availableLabel": "disponible",
+				"form": {
+					"nameLabel": "Nombre de la lista",
+					"namePlaceholder": "Ej. Leads Q2 — lote junio"
+				},
+				"sections": {
+					"calling": "Llamadas",
+					"capacity": "Capacidad",
+					"mapping": "Mapeo de columnas",
+					"allocated": "asignado"
+				},
 				"capacityFull": {
 					"title": "La capacidad del programador está llena",
 					"message": "Reduce la capacidad o ajusta los horarios para continuar."
+				},
+				"stepper": {
+					"steps": {
+						"identity": {
+							"label": "Identidad",
+							"description": "Nombre y asignación de voces"
+						},
+						"configuration": {
+							"label": "Configuración",
+							"description": "Oleadas y capacidad"
+						},
+						"mapping": {
+							"label": "Mapeo",
+							"description": "Mapeo de columnas"
+						}
+					},
+					"next": "Siguiente",
+					"back": "Atrás"
+				},
+				"edit": {
+					"sections": {
+						"basicInfo": "Información básica",
+						"voiceAndExecution": "Voces y ejecución",
+						"capacity": "Capacidad"
+					}
 				},
 				"actions": {
 					"save": "Guardar",

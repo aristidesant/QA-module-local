@@ -1,25 +1,16 @@
-/**
- * Workflow model (camelCase) for building/validating an ElevenLabs “Agents workflow”
- * like the one shown in the Update Agent response.
- *
- * Notes:
- * - The API returns snake_case (e.g., prevent_subagent_loops, edge_order, turn_timeout).
- * - These types assume you transform to camelCase in your app layer.
- */
-
 /** Root workflow object */
 export interface AgentWorkflow {
 	edges: Record<string, WorkflowEdge>;
 	nodes: Record<string, WorkflowNode>;
-	preventSubagentLoops: boolean;
+	prevent_subagent_loops: boolean;
 }
 
 /** Edge between two nodes */
 export interface WorkflowEdge {
-	source: string; // node id
-	target: string; // node id
-	forwardCondition?: ForwardCondition;
-	backwardCondition?: ForwardCondition;
+	source: string;
+	target: string;
+	forward_condition?: ForwardCondition;
+	backward_condition?: ForwardCondition;
 }
 
 /** Conditions that decide whether an edge is taken */
@@ -31,31 +22,27 @@ export type ForwardCondition =
 
 export interface UnconditionalCondition {
 	type: 'unconditional';
+	label?: string | null;
 }
 
 export interface LlmCondition {
 	type: 'llm';
-	/** Natural-language condition prompt evaluated by the agent/LLM */
 	condition: string;
-	/** Optional label for the condition */
-	label?: string;
+	label?: string | null;
 }
 
 export interface ResultCondition {
 	type: 'result';
-	/** Whether the previous tool call must be successful to traverse this edge */
 	successful: boolean;
 }
 
 export interface ExpressionCondition {
 	type: 'expression';
-	/** Boolean expression tree */
 	expression: BoolExpr;
-	/** Optional label for the expression */
-	label?: string;
+	label?: string | null;
 }
 
-/** Boolean expression tree (matches the sample’s structure) */
+/** Boolean expression tree */
 export type BoolExpr =
 	| OrOperatorExpr
 	| AndOperatorExpr
@@ -156,11 +143,10 @@ export interface BooleanLiteralExpr {
 
 export interface LlmPromptExpr {
 	type: 'llm';
-	/** A prompt that should evaluate to boolean */
 	prompt: string;
 }
 
-/** All node variants stored in agentConfig.workflow.nodes (backend-validated) */
+/** All node variants stored in agentConfig.workflow.nodes */
 export type WorkflowNode =
 	| StartNode
 	| EndNode
@@ -170,33 +156,29 @@ export type WorkflowNode =
 	| PhoneNumberTransferNode
 	| StandaloneAgentNode;
 
-/** Base fields many nodes share */
+/** Base fields shared by all nodes */
 export interface WorkflowNodeBase {
 	type: string;
 	label?: string;
 	position: { x: number; y: number };
-	/** Ordering of outgoing edge keys (from workflow.edges) */
-	edgeOrder: string[];
+	edge_order: string[];
 	uiMeta?: {
 		variant?: 'transfer' | 'subagent';
-		createdByUi?: boolean;
+		created_by_ui?: boolean;
 	};
 }
 
-/** start node */
 export interface StartNode extends WorkflowNodeBase {
 	type: 'start';
 }
 
-/** end node */
 export interface EndNode extends WorkflowNodeBase {
 	type: 'end';
 }
 
-/** tool node */
 export interface ToolNode extends WorkflowNodeBase {
 	type: 'tool';
-	tools: Array<{ toolId: string }>;
+	tools: Array<{ tool_id: string }>;
 }
 
 export interface UpdateStateValueSchema {
@@ -207,7 +189,7 @@ export interface UpdateStateValueSchema {
 
 export interface UpdateStateLlmExpression {
 	type: 'llm';
-	valueSchema: UpdateStateValueSchema;
+	value_schema: UpdateStateValueSchema;
 	prompt: string;
 }
 
@@ -232,7 +214,7 @@ export interface UpdateStateNullExpression {
 
 export interface UpdateStateDynamicVariableExpression {
 	type: 'dynamic_variable';
-	variableName: string;
+	variable_name: string;
 }
 
 export type UpdateStateExpression =
@@ -245,7 +227,7 @@ export type UpdateStateExpression =
 
 export interface UpdateStateUpdate {
 	type: 'dynamic_variable';
-	variableName: string;
+	variable_name: string;
 	expression: UpdateStateExpression;
 }
 
@@ -255,70 +237,63 @@ export interface UpdateStateNode extends WorkflowNodeBase {
 	updates: UpdateStateUpdate[];
 }
 
-/**
- * override_agent node (Entry / Failure / Success A in sample)
- * Used to override agent settings for a branch.
- */
 export interface OverrideAgentNode extends WorkflowNodeBase {
 	type: 'override_agent';
 	label: string;
-	additionalPrompt: string | null;
-	additionalToolIds: string[];
-	additionalKnowledgeBase: string[];
+	additional_prompt: string | null;
+	additional_tool_ids: string[];
+	additional_knowledge_base: string[];
+	auto_advance_after_first_response?: boolean;
 	subagent?: {
 		prompt?: string;
-		overridePrompt?: boolean;
-		voiceId?: string;
-		llmModel?: string;
+		override_prompt?: boolean;
+		voice_id?: string;
+		llm_model?: string;
 		eagerness?: string;
-		spellingPatience?: string;
-		inheritKnowledgeBase?: boolean;
-		knowledgeBaseIds?: string[];
-		toolIds?: string[];
+		spelling_patience?: string;
+		inherit_knowledge_base?: boolean;
+		knowledge_base_ids?: string[];
+		tool_ids?: string[];
 	};
-	/** Node-level partial overrides; shape depends on your app */
-	conversationConfig: Record<string, unknown>;
+	conversation_config: Record<string, unknown>;
 }
 
-/** phone number transfer node (conference transfer in sample) */
 export interface PhoneNumberTransferNode extends WorkflowNodeBase {
 	type: 'phone_number';
-	transferType: 'conference' | 'blind' | 'sip_refer' | (string & {});
-	transferDestination:
-		| { type: 'phone'; phoneNumber: string }
-		| { type: 'sip_uri'; sipUri: string }
-		| { type: 'phone_dynamic_variable'; phoneNumber: string }
-		| { type: 'sip_uri_dynamic_variable'; sipUri: string };
+	transfer_type: 'conference' | 'blind' | 'sip_refer' | (string & {});
+	transfer_destination:
+		| { type: 'phone'; phone_number: string }
+		| { type: 'sip_uri'; sip_uri: string }
+		| { type: 'phone_dynamic_variable'; phone_number: string }
+		| { type: 'sip_uri_dynamic_variable'; sip_uri: string };
 	custom_sip_headers?: Array<{ name: string; value: string }>;
 }
 
-/** group node — a visual container for organizing related nodes */
+/** group node — visual container */
 export interface GroupNode extends WorkflowNodeBase {
 	type: 'group';
 }
 
-/** standalone_agent transfer node */
 export interface StandaloneAgentNode extends WorkflowNodeBase {
 	type: 'standalone_agent';
-	agentId: string;
-	delayMs: number;
-	transferMessage?: string;
-	enableTransferredAgentFirstMessage: boolean;
-	additionalPrompt?: string | null;
-	additionalToolIds?: string[];
-	additionalKnowledgeBase?: string[];
-	/** Custom subagent configuration */
+	node_id?: string | null;
+	agent_id: string;
+	delay_ms: number;
+	transfer_message?: string | null;
+	enable_transferred_agent_first_message: boolean;
+	additional_prompt?: string | null;
+	additional_tool_ids?: string[];
+	additional_knowledge_base?: string[];
 	subagent?: {
 		prompt?: string;
-		overridePrompt?: boolean;
-		voiceId?: string;
-		llmModel?: string;
+		override_prompt?: boolean;
+		voice_id?: string;
+		llm_model?: string;
 		eagerness?: string;
-		spellingPatience?: string;
-		inheritKnowledgeBase?: boolean;
-		knowledgeBaseIds?: string[];
-		toolIds?: string[];
+		spelling_patience?: string;
+		inherit_knowledge_base?: boolean;
+		knowledge_base_ids?: string[];
+		tool_ids?: string[];
 	};
-	/** Node-level partial overrides (built-in tools, etc.) */
-	conversationConfig?: Record<string, unknown>;
+	conversation_config?: Record<string, unknown>;
 }

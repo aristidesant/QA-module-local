@@ -31,12 +31,12 @@ const PhoneNumberNode = (props: NodeProps) => {
 	) : (
 		<IconPhoneCall size={18} className={styles.icon} />
 	);
-	const destination = nodeData.transferDestination;
+	const destination = nodeData.transfer_destination;
 	const value = destination
-		? 'phoneNumber' in destination
-			? destination.phoneNumber
-			: 'sipUri' in destination
-				? destination.sipUri
+		? 'phone_number' in destination
+			? destination.phone_number
+			: 'sip_uri' in destination
+				? destination.sip_uri
 				: ''
 		: '';
 

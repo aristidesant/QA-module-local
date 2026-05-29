@@ -22,7 +22,13 @@
 			"asrKeywords": "Keywords ASR",
 			"dynamicVariables": "Variables dinámicas",
 			"dictionary": "Diccionario",
-			"noiseCancellation": "Cancelación de ruido"
+			"noiseCancellation": "Cancelación de ruido",
+			"groups": {
+				"toolsAndKnowledge": "Herramientas y conocimiento",
+				"speechAndLanguage": "Voz y lenguaje",
+				"runtime": "Tiempo de ejecución",
+				"speechLanguageRuntime": "Voz, lenguaje y tiempo de ejecución"
+			}
 		}
 	},
 	"form": {
@@ -89,17 +95,30 @@
 				"syncAgent": "Sincronizar agente externo",
 				"addAgentTitle": "Agregar Agente a la Campaña",
 				"openAgentAria": "Abrir agente {{name}}",
+				"columns": {
+					"agent": "Agente",
+					"role": "Rol",
+					"direction": "Dirección",
+					"status": "Estado",
+					"language": "Idioma",
+					"updated": "Actualizado",
+					"actions": "Acciones"
+				},
+				"status": {
+					"active": "Activo",
+					"inactive": "Inactivo"
+				},
 				"actions": {
 					"menu": "Acciones del agente",
-					"removeFromCampaign": "Eliminar de la campaña",
-					"principalProtected": "El agente principal no se puede eliminar de la campaña."
+					"deleteAgent": "Eliminar agente",
+					"principalProtected": "El agente principal no se puede eliminar."
 				},
-				"removeRelation": {
-					"title": "¿Eliminar el agente de la campaña?",
-					"description": "Esto quitará a {{name}} de esta campaña solamente. El agente seguirá disponible en UCXM.",
-					"confirm": "Eliminar de la campaña",
-					"success": "{{name}} fue eliminado de la campaña",
-					"error": "No se pudo eliminar el agente de la campaña"
+				"deleteAgent": {
+					"title": "¿Eliminar agente?",
+					"description": "Esto eliminará permanentemente a {{name}}. Esta acción no se puede deshacer.",
+					"confirm": "Eliminar agente",
+					"success": "{{name}} fue eliminado",
+					"error": "No se pudo eliminar el agente"
 				},
 				"selected": "Seleccionado",
 				"language": "Idioma: {{language}}",
@@ -499,7 +518,9 @@
 		"valuePlaceholder": "Valor por defecto",
 		"apply": "Aplicar",
 		"errorEmptyKey": "La clave no puede estar vacía",
-		"errorDuplicateKey": "Clave duplicada"
+		"errorDuplicateKey": "Clave duplicada",
+		"configure": "Configurar",
+		"infoHelp": "Las claves deben coincidir con los nombres de variable en la configuración del agente. Los valores se inyectan como valores por defecto en tiempo de ejecución."
 	},
 	"saveReview": {
 		"title": "Revisar cambios",

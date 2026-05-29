@@ -110,10 +110,10 @@ const WorkflowContextMenu = ({
 	const isEndNode = nodeType === WORKFLOW_NODE_TYPES.END;
 	const isTransferAgent =
 		nodeData?.uiMeta?.variant === 'transfer' ||
-		!!(nodeData as { agentId?: string })?.agentId;
+		!!(nodeData as { agent_id?: string })?.agent_id;
 	const isPhoneTransfer = nodeType === WORKFLOW_NODE_TYPES.PHONE_NUMBER;
-	const edgeOrder = (nodeData?.edgeOrder as string[] | undefined) ?? [];
-	const isStartConnected = isStartNode && edgeOrder.length > 0;
+	const edge_order = (nodeData?.edge_order as string[] | undefined) ?? [];
+	const isStartConnected = isStartNode && edge_order.length > 0;
 	const config = nodeType ? NODE_TYPE_CONFIG[nodeType] : undefined;
 
 	const canEdit = !!nodeId && !isStartNode && !isEndNode;

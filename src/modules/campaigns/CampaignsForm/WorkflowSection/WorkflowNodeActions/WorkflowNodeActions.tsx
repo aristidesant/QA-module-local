@@ -52,7 +52,7 @@ const WorkflowNodeActions = ({
 	const { openNodeDrawer } = useWorkflowNodeEditor();
 	const config = NODE_TYPE_CONFIG[nodeType];
 	const isTransferAgent =
-		nodeData.uiMeta?.variant === 'transfer' || !!nodeData.agentId;
+		nodeData.uiMeta?.variant === 'transfer' || !!nodeData.agent_id;
 	const isPhoneTransfer = nodeType === WORKFLOW_NODE_TYPES.PHONE_NUMBER;
 	const showActions = nodeType !== WORKFLOW_NODE_TYPES.START;
 	const canEdit =
@@ -62,8 +62,8 @@ const WorkflowNodeActions = ({
 	const isStartNode = nodeType === WORKFLOW_NODE_TYPES.START;
 	const isEndNode = nodeType === WORKFLOW_NODE_TYPES.END;
 	const canCustomizeStyle = !isStartNode && !isEndNode;
-	const edgeOrder = (nodeData.edgeOrder as string[] | undefined) ?? [];
-	const isStartConnected = isStartNode && edgeOrder.length > 0;
+	const edge_order = (nodeData.edge_order as string[] | undefined) ?? [];
+	const isStartConnected = isStartNode && edge_order.length > 0;
 	const showAddButton =
 		(config?.hasAddButton ?? false) &&
 		!isTransferAgent &&

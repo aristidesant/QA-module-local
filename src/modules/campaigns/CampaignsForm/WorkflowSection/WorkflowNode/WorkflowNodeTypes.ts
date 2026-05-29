@@ -4,7 +4,7 @@ export interface WorkflowNodeData {
 	label?: string;
 	updates?: Array<{
 		type: 'dynamic_variable';
-		variableName: string;
+		variable_name: string;
 		expression: {
 			type: string;
 			[key: string]: unknown;
@@ -14,6 +14,6 @@ export interface WorkflowNodeData {
 		variant?: 'transfer' | 'subagent';
 		createdByUi?: boolean;
 	};
-	agentId?: string;
+	agent_id?: string;
 	[key: string]: unknown;
 }

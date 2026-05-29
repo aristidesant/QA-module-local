@@ -11,12 +11,12 @@ describe('Workflow Edge Condition Validation', () => {
 	describe('validateWorkflowEdgeConditions', () => {
 		it('should return valid for workflow with no edges', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {
 					start_node: {
 						type: 'start',
 						position: { x: 0, y: 0 },
-						edgeOrder: [],
+						edge_order: [],
 					},
 				},
 				edges: {},
@@ -30,28 +30,28 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return valid for edges with forward condition', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {
 					start_node: {
 						type: 'start',
 						position: { x: 0, y: 0 },
-						edgeOrder: ['edge-1'],
+						edge_order: ['edge-1'],
 					},
 					node1: {
 						type: 'standalone_agent',
 						position: { x: 100, y: 100 },
-						edgeOrder: [],
+						edge_order: [],
 						label: 'Agent 1',
-						agentId: 'agent-1',
-						delayMs: 0,
-						enableTransferredAgentFirstMessage: false,
+						agent_id: 'agent-1',
+						delay_ms: 0,
+						enable_transferred_agent_first_message: false,
 					},
 				},
 				edges: {
 					'edge-1': {
 						source: 'start_node',
 						target: 'node1',
-						forwardCondition: { type: 'unconditional' },
+						forward_condition: { type: 'unconditional' },
 					},
 				},
 			};
@@ -64,28 +64,28 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return valid for edges with backward condition', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {
 					start_node: {
 						type: 'start',
 						position: { x: 0, y: 0 },
-						edgeOrder: ['edge-1'],
+						edge_order: ['edge-1'],
 					},
 					node1: {
 						type: 'standalone_agent',
 						position: { x: 100, y: 100 },
-						edgeOrder: [],
+						edge_order: [],
 						label: 'Agent 1',
-						agentId: 'agent-1',
-						delayMs: 0,
-						enableTransferredAgentFirstMessage: false,
+						agent_id: 'agent-1',
+						delay_ms: 0,
+						enable_transferred_agent_first_message: false,
 					},
 				},
 				edges: {
 					'edge-1': {
 						source: 'start_node',
 						target: 'node1',
-						backwardCondition: { type: 'unconditional' },
+						backward_condition: { type: 'unconditional' },
 					},
 				},
 			};
@@ -98,21 +98,21 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return invalid for edges with no conditions', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {
 					start_node: {
 						type: 'start',
 						position: { x: 0, y: 0 },
-						edgeOrder: ['edge-1'],
+						edge_order: ['edge-1'],
 					},
 					node1: {
 						type: 'standalone_agent',
 						position: { x: 100, y: 100 },
-						edgeOrder: [],
+						edge_order: [],
 						label: 'Agent 1',
-						agentId: 'agent-1',
-						delayMs: 0,
-						enableTransferredAgentFirstMessage: false,
+						agent_id: 'agent-1',
+						delay_ms: 0,
+						enable_transferred_agent_first_message: false,
 					},
 				},
 				edges: {
@@ -133,30 +133,30 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should identify multiple edges with no conditions', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {
 					start_node: {
 						type: 'start',
 						position: { x: 0, y: 0 },
-						edgeOrder: ['edge-1', 'edge-2'],
+						edge_order: ['edge-1', 'edge-2'],
 					},
 					node1: {
 						type: 'standalone_agent',
 						position: { x: 100, y: 100 },
-						edgeOrder: [],
+						edge_order: [],
 						label: 'Agent 1',
-						agentId: 'agent-1',
-						delayMs: 0,
-						enableTransferredAgentFirstMessage: false,
+						agent_id: 'agent-1',
+						delay_ms: 0,
+						enable_transferred_agent_first_message: false,
 					},
 					node2: {
 						type: 'standalone_agent',
 						position: { x: 200, y: 200 },
-						edgeOrder: [],
+						edge_order: [],
 						label: 'Agent 2',
-						agentId: 'agent-2',
-						delayMs: 0,
-						enableTransferredAgentFirstMessage: false,
+						agent_id: 'agent-2',
+						delay_ms: 0,
+						enable_transferred_agent_first_message: false,
 					},
 				},
 				edges: {
@@ -190,28 +190,28 @@ describe('Workflow Edge Condition Validation', () => {
 	describe('validateWorkflow', () => {
 		it('should validate workflow using edge conditions check', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {
 					start_node: {
 						type: 'start',
 						position: { x: 0, y: 0 },
-						edgeOrder: ['edge-1'],
+						edge_order: ['edge-1'],
 					},
 					node1: {
 						type: 'standalone_agent',
 						position: { x: 100, y: 100 },
-						edgeOrder: [],
+						edge_order: [],
 						label: 'Agent 1',
-						agentId: 'agent-1',
-						delayMs: 0,
-						enableTransferredAgentFirstMessage: false,
+						agent_id: 'agent-1',
+						delay_ms: 0,
+						enable_transferred_agent_first_message: false,
 					},
 				},
 				edges: {
 					'edge-1': {
 						source: 'start_node',
 						target: 'node1',
-						forwardCondition: { type: 'unconditional' },
+						forward_condition: { type: 'unconditional' },
 					},
 				},
 			};
@@ -225,22 +225,22 @@ describe('Workflow Edge Condition Validation', () => {
 	describe('getEdgeWarningLevel', () => {
 		it('should return none for edge originating from START node even if no conditions', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {
 					start_node: {
 						type: 'start',
 						position: { x: 0, y: 0 },
-						edgeOrder: [],
+						edge_order: [],
 						label: 'Start',
 					},
 					node1: {
 						type: 'standalone_agent',
 						position: { x: 0, y: 0 },
-						edgeOrder: [],
+						edge_order: [],
 						label: 'A',
-						agentId: 'agent-1',
-						delayMs: 0,
-						enableTransferredAgentFirstMessage: false,
+						agent_id: 'agent-1',
+						delay_ms: 0,
+						enable_transferred_agent_first_message: false,
 					},
 				},
 				edges: {
@@ -257,7 +257,7 @@ describe('Workflow Edge Condition Validation', () => {
 		});
 		it('should return error for edge with no conditions', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {
 					'edge-1': {
@@ -274,13 +274,13 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return warning for edge with only unconditional forward condition', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {
 					'edge-1': {
 						source: 'node1',
 						target: 'node2',
-						forwardCondition: { type: 'unconditional' },
+						forward_condition: { type: 'unconditional' },
 					},
 				},
 			};
@@ -292,13 +292,13 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return warning for edge with only unconditional backward condition', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {
 					'edge-1': {
 						source: 'node1',
 						target: 'node2',
-						backwardCondition: { type: 'unconditional' },
+						backward_condition: { type: 'unconditional' },
 					},
 				},
 			};
@@ -310,13 +310,13 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return none for edge with proper LLM condition', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {
 					'edge-1': {
 						source: 'node1',
 						target: 'node2',
-						forwardCondition: {
+						forward_condition: {
 							type: 'llm',
 							condition: 'user wants to proceed',
 						},
@@ -331,13 +331,13 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return none for edge with expression condition', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {
 					'edge-1': {
 						source: 'node1',
 						target: 'node2',
-						forwardCondition: {
+						forward_condition: {
 							type: 'expression',
 							expression: {
 								type: 'eq_operator',
@@ -356,13 +356,13 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return none for edge with result condition', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {
 					'edge-1': {
 						source: 'node1',
 						target: 'node2',
-						forwardCondition: {
+						forward_condition: {
 							type: 'result',
 							successful: true,
 						},
@@ -377,7 +377,7 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return none for non-existent edge', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {},
 			};
@@ -395,17 +395,17 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return none for edge with both forward and backward conditions', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {
 					'edge-1': {
 						source: 'node1',
 						target: 'node2',
-						forwardCondition: {
+						forward_condition: {
 							type: 'llm',
 							condition: 'user wants to proceed',
 						},
-						backwardCondition: { type: 'unconditional' },
+						backward_condition: { type: 'unconditional' },
 					},
 				},
 			};
@@ -419,13 +419,13 @@ describe('Workflow Edge Condition Validation', () => {
 	describe('hasEdgeCondition', () => {
 		it('should return true for edge with forward condition', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {
 					'edge-1': {
 						source: 'node1',
 						target: 'node2',
-						forwardCondition: { type: 'unconditional' },
+						forward_condition: { type: 'unconditional' },
 					},
 				},
 			};
@@ -437,13 +437,13 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return true for edge with backward condition', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {
 					'edge-1': {
 						source: 'node1',
 						target: 'node2',
-						backwardCondition: { type: 'unconditional' },
+						backward_condition: { type: 'unconditional' },
 					},
 				},
 			};
@@ -455,7 +455,7 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return false for edge with no conditions', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {
 					'edge-1': {
@@ -472,7 +472,7 @@ describe('Workflow Edge Condition Validation', () => {
 
 		it('should return false for non-existent edge', () => {
 			const workflow: AgentWorkflow = {
-				preventSubagentLoops: false,
+				prevent_subagent_loops: false,
 				nodes: {},
 				edges: {},
 			};

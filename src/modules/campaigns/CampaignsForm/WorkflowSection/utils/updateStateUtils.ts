@@ -92,7 +92,7 @@ const collectValueExprVariableNames = (value: unknown, names: Set<string>) => {
 	if (record.type === 'dynamic_variable') {
 		const name = getRecordString(record, [
 			'name',
-			'variableName',
+			'variable_name',
 			'variable_name',
 		]);
 		if (name?.trim()) {
@@ -109,7 +109,7 @@ const getUpdateStateExpressionVariableNames = (
 
 	if (expression.type === 'dynamic_variable') {
 		const name = getTrimmedString(
-			expression.variableName ?? expression.variable_name
+			expression.variable_name ?? expression.variable_name
 		);
 		if (name) {
 			names.add(name);
@@ -132,11 +132,11 @@ export const extractWorkflowVariableNames = (
 		(node.updates ?? []).forEach((update) => {
 			if (!isRecord(update)) return;
 
-			const variableName = getTrimmedString(
-				update.variableName ?? update.variable_name
+			const variable_name = getTrimmedString(
+				update.variable_name ?? update.variable_name
 			);
-			if (variableName) {
-				names.add(variableName);
+			if (variable_name) {
+				names.add(variable_name);
 			}
 
 			getUpdateStateExpressionVariableNames(update.expression, names);
@@ -144,12 +144,12 @@ export const extractWorkflowVariableNames = (
 	});
 
 	Object.values(workflow.edges).forEach((edge) => {
-		if (edge.forwardCondition?.type === 'expression') {
-			collectBoolExprVariableNames(edge.forwardCondition.expression, names);
+		if (edge.forward_condition?.type === 'expression') {
+			collectBoolExprVariableNames(edge.forward_condition.expression, names);
 		}
 
-		if (edge.backwardCondition?.type === 'expression') {
-			collectBoolExprVariableNames(edge.backwardCondition.expression, names);
+		if (edge.backward_condition?.type === 'expression') {
+			collectBoolExprVariableNames(edge.backward_condition.expression, names);
 		}
 	});
 
@@ -171,12 +171,12 @@ export const createDefaultUpdateStateExpression = (
 		case 'null':
 			return { type: 'null' };
 		case 'dynamic_variable':
-			return { type: 'dynamic_variable', variableName: '' };
+			return { type: 'dynamic_variable', variable_name: '' };
 		case 'llm':
 		default:
 			return {
 				type: 'llm',
-				valueSchema: {
+				value_schema: {
 					type: 'string',
 					description: '',
 					enum: null,
@@ -199,7 +199,7 @@ const getStringFromExpression = (
 		case 'boolean':
 			return expression.value ? 'true' : 'false';
 		case 'dynamic_variable':
-			return expression.variableName;
+			return expression.variable_name;
 		case 'llm':
 		case 'null':
 		default:
@@ -250,7 +250,7 @@ export const buildUpdateStateExpression = (
 		case 'dynamic_variable':
 			return {
 				type: 'dynamic_variable',
-				variableName: getStringFromExpression(currentExpression),
+				variable_name: getStringFromExpression(currentExpression),
 			} satisfies UpdateStateDynamicVariableExpression;
 		case 'llm':
 		default: {
@@ -260,7 +260,7 @@ export const buildUpdateStateExpression = (
 					: getStringFromExpression(currentExpression);
 			return {
 				type: 'llm',
-				valueSchema: {
+				value_schema: {
 					type: 'string',
 					description: prompt,
 					enum: null,
@@ -272,11 +272,11 @@ export const buildUpdateStateExpression = (
 };
 
 export const createDefaultUpdateStateUpdate = (
-	variableName = '',
+	variable_name = '',
 	expressionType: UpdateStateExpressionKind = 'llm'
 ): UpdateStateUpdate => ({
 	type: 'dynamic_variable',
-	variableName,
+	variable_name,
 	expression: createDefaultUpdateStateExpression(expressionType),
 });
 
@@ -289,12 +289,12 @@ export const normalizeUpdateStateExpression = (
 
 	switch (expression.type) {
 		case 'llm': {
-			const valueSchema = isRecord(expression.valueSchema)
-				? expression.valueSchema
+			const value_schema = isRecord(expression.value_schema)
+				? expression.value_schema
 				: isRecord(expression.value_schema)
 					? expression.value_schema
 					: {};
-			const schemaType = valueSchema.type;
+			const schemaType = value_schema.type;
 			const normalizedSchemaType =
 				schemaType === 'boolean' ||
 				schemaType === 'integer' ||
@@ -305,14 +305,14 @@ export const normalizeUpdateStateExpression = (
 
 			return {
 				type: 'llm',
-				valueSchema: {
+				value_schema: {
 					type: normalizedSchemaType,
 					description:
-						typeof valueSchema.description === 'string'
-							? valueSchema.description
+						typeof value_schema.description === 'string'
+							? value_schema.description
 							: '',
-					enum: Array.isArray(valueSchema.enum)
-						? valueSchema.enum.filter(
+					enum: Array.isArray(value_schema.enum)
+						? value_schema.enum.filter(
 								(item): item is string => typeof item === 'string'
 							)
 						: null,
@@ -341,8 +341,8 @@ export const normalizeUpdateStateExpression = (
 		case 'dynamic_variable':
 			return {
 				type: 'dynamic_variable',
-				variableName: getTrimmedString(
-					expression.variableName ?? expression.variable_name
+				variable_name: getTrimmedString(
+					expression.variable_name ?? expression.variable_name
 				),
 			};
 		default:
@@ -359,7 +359,7 @@ export const normalizeUpdateStateUpdate = (
 
 	return {
 		type: 'dynamic_variable',
-		variableName: getTrimmedString(update.variableName ?? update.variable_name),
+		variable_name: getTrimmedString(update.variable_name ?? update.variable_name),
 		expression: normalizeUpdateStateExpression(update.expression),
 	};
 };
@@ -392,7 +392,7 @@ export const formatUpdateStateExpressionPreview = (
 		case 'null':
 			return '= null';
 		case 'dynamic_variable':
-			return `= ${normalizedExpression.variableName || 'variable'}`;
+			return `= ${normalizedExpression.variable_name || 'variable'}`;
 		default:
 			return '= ...';
 	}
@@ -400,6 +400,6 @@ export const formatUpdateStateExpressionPreview = (
 
 export const formatUpdateStateSummary = (updates: UpdateStateNode['updates']) =>
 	normalizeUpdateStateUpdates(updates)
-		.map((update) => getTrimmedString(update.variableName))
+		.map((update) => getTrimmedString(update.variable_name))
 		.filter(Boolean)
 		.join(', ');
