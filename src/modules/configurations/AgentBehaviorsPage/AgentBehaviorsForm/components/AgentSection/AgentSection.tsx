@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from 'react';
 import {
 	MultiSelect,
 	Select,
@@ -13,9 +14,71 @@ import {
 } from '../../formConfig';
 import styles from '../../CampaignPredefinedParamsForm.module.css';
 
-export const AgentSection: React.FC = () => {
+interface AgentSectionProps {
+	hasResolvedReasoningAvailability: boolean;
+	reasoningEffortsByModel: Record<string, string[] | null>;
+}
+
+export const AgentSection: React.FC<AgentSectionProps> = ({
+	hasResolvedReasoningAvailability,
+	reasoningEffortsByModel,
+}) => {
 	const { form } = useFormContext();
 	const { t } = useTranslation('campaign-predefined-params');
+	const selectedModel = form.values.agentPromptLlm;
+	const selectedReasoningEfforts =
+		reasoningEffortsByModel[selectedModel] ?? null;
+	const showReasoningEffortSelect =
+		Array.isArray(selectedReasoningEfforts) &&
+		selectedReasoningEfforts.length > 0;
+	const reasoningEffortOptions = useMemo(
+		() => [
+			{
+				value: '',
+				label: t('form.agent.reasoningEffort.options.default', 'Default'),
+			},
+			...(selectedReasoningEfforts ?? []).map((effort) => ({
+				value: effort,
+				label: t(`form.agent.reasoningEffort.options.${effort}`, {
+					defaultValue: effort,
+				}),
+			})),
+		],
+		[selectedReasoningEfforts, t]
+	);
+
+	useEffect(() => {
+		if (
+			!hasResolvedReasoningAvailability ||
+			!form.values.agentPromptReasoningEffort
+		) {
+			return;
+		}
+
+		const hasSelectedModelMetadata = Object.prototype.hasOwnProperty.call(
+			reasoningEffortsByModel,
+			selectedModel
+		);
+
+		if (!hasSelectedModelMetadata) {
+			form.setFieldValue('agentPromptReasoningEffort', null);
+			return;
+		}
+
+		if (
+			!selectedReasoningEfforts?.includes(
+				form.values.agentPromptReasoningEffort
+			)
+		) {
+			form.setFieldValue('agentPromptReasoningEffort', null);
+		}
+	}, [
+		form,
+		hasResolvedReasoningAvailability,
+		reasoningEffortsByModel,
+		selectedModel,
+		selectedReasoningEfforts,
+	]);
 
 	return (
 		<Stack className={styles.sectionStack}>
@@ -52,6 +115,20 @@ export const AgentSection: React.FC = () => {
 					{t('form.agent.temperature.helper')}
 				</MantineText>
 			</div>
+			{showReasoningEffortSelect && (
+				<Stack gap='xs'>
+					<Select
+						label={t('form.agent.reasoningEffort.label')}
+						placeholder={t('form.agent.reasoningEffort.placeholder')}
+						data={reasoningEffortOptions}
+						clearable
+						{...form.getInputProps('agentPromptReasoningEffort')}
+					/>
+					<MantineText size='xs' c='dimmed'>
+						{t('form.agent.reasoningEffort.helper')}
+					</MantineText>
+				</Stack>
+			)}
 			<Stack gap='xs'>
 				<MantineText fw={600} size='sm'>
 					{t('form.agent.backupLlm.title')}

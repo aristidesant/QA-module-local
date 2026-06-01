@@ -50,6 +50,11 @@ export const deepMergeConfig = (
 	const result = { ...target };
 
 	Object.entries(source).forEach(([key, value]) => {
+		if (value === null) {
+			result[key] = null;
+			return;
+		}
+
 		if (isValidValue(value)) {
 			if (isValidObject(value)) {
 				if (isValidObject(result[key])) {

@@ -26,6 +26,8 @@ const isMergeablePrimitive = (value: unknown): boolean =>
 	(typeof value !== 'number' || !Number.isNaN(value));
 
 const pruneNullishValues = (value: unknown): unknown => {
+	if (value === null) return null;
+
 	if (Array.isArray(value)) {
 		const nextValue = value
 			.map((item) => pruneNullishValues(item))
@@ -42,7 +44,7 @@ const pruneNullishValues = (value: unknown): unknown => {
 
 	for (const [key, nestedValue] of Object.entries(value)) {
 		const sanitizedValue = pruneNullishValues(nestedValue);
-		if (sanitizedValue !== undefined && sanitizedValue !== null) {
+		if (sanitizedValue !== undefined) {
 			nextValue[key] = sanitizedValue;
 		}
 	}

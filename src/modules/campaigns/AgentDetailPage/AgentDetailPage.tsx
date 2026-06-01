@@ -5,7 +5,7 @@ import {
 	IconDeviceFloppy,
 	IconFlask,
 } from '@tabler/icons-react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	useNavigate,
@@ -16,6 +16,7 @@ import {
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import type { Campaign } from '~/models/CampaignsModel';
 import type { AgentVersionSnapshot } from '~/models/AgentVersioningModel';
+import type { UpdateCampaignAgentConfigPayload } from '~/models/CampaignAgentModel';
 import {
 	CampaignAgentEditorContext,
 	CampaignFormProvider,
@@ -32,7 +33,16 @@ import { useGetAgentVersioningStatus } from '~/queries/agentVersioningQueries';
 import AgentSaveReviewModal from '../CampaignsForm/AgentSaveReviewModal';
 import CampaignSyncButton from '../CampaignsForm/components/CampaignSyncButton';
 import AgentDetailTabs, { type AgentTabValue } from './AgentDetailTabs';
+import type { WorkflowSaveRequest } from '../CampaignsForm/WorkflowSection/WorkflowSection';
 import styles from './AgentDetailPage.module.css';
+
+type AgentSaveSurface = 'setup' | 'workflow';
+
+interface PendingAgentSaveRequest {
+	source: AgentSaveSurface;
+	updateData: UpdateCampaignAgentConfigPayload;
+	reviewSnapshot: AgentVersionSnapshot;
+}
 
 const AgentDetailPage = () => {
 	const { t } = useTranslation([
@@ -58,8 +68,7 @@ const AgentDetailPage = () => {
 		dataUpdatedAt: selectedAgentUpdatedAt,
 	} = useGetAgent(campaignAgent?.agentId ?? '');
 	const activeAgentId = campaignAgent?.agentId ?? '';
-	const { data: agentRecord } = useGetAgentVersioningStatus(activeAgentId);
-	const isVersioningEnabled = Boolean(agentRecord?.versioningEnabled);
+	useGetAgentVersioningStatus(activeAgentId);
 	const campaignDetailPath = campaignId
 		? `/campaign/${campaignId}`
 		: '/campaigns';
@@ -71,10 +80,8 @@ const AgentDetailPage = () => {
 		useState<SelectedAgentDraft | null>(null);
 	const [reviewModalOpen, setReviewModalOpen] = useState(false);
 	const [activeTab, setActiveTab] = useState<AgentTabValue>('setup');
-	const [pendingAgentValues, setPendingAgentValues] = useState<{
-		agentConfig: Record<string, unknown>;
-		versionDescription?: string;
-	} | null>(null);
+	const [pendingSaveRequest, setPendingSaveRequest] =
+		useState<PendingAgentSaveRequest | null>(null);
 	const hydratedAgentConfigAtRef = useRef<number | null>(null);
 
 	const selectedCampaignAgent = campaignAgent ?? null;
@@ -112,11 +119,16 @@ const AgentDetailPage = () => {
 		);
 	};
 
+	const closeReviewModal = useCallback(() => {
+		setReviewModalOpen(false);
+		setPendingSaveRequest(null);
+	}, []);
+
 	const form = useCampaignForm({
 		initialValues: {
 			name: campaign?.name || '',
 			agentName: campaign?.agentName || '',
-			configId: campaign?.configId || '',
+			configId: selectedAgent?.configId || campaign?.configId || '',
 			description: campaign?.description || '',
 			budget: campaign?.budget ?? 0,
 			spent: campaign?.spent ?? 0,
@@ -144,6 +156,7 @@ const AgentDetailPage = () => {
 
 		form.setValues((current) => ({
 			...current,
+			configId: selectedAgent.configId || current.configId,
 			agentConfig: selectedAgent.config ?? {},
 		}));
 		form.resetDirty();
@@ -158,67 +171,80 @@ const AgentDetailPage = () => {
 		: agentName || t('agentDetail.page.title');
 	const pageDescription = t('agentDetail.page.description');
 
-	const handleSaveAgent = async () => {
-		if (!campaignId || !selectedCampaignAgent) return;
+	const submitSaveRequest = useCallback(
+		async (
+			request: PendingAgentSaveRequest,
+			versionDescription?: string
+		) => {
+			if (!campaignId || !selectedCampaignAgent) return;
 
-		try {
-			await updateCampaignAgentConfig.mutateAsync({
-				campaignId,
-				id: selectedCampaignAgent.id,
-				updateData: {
-					config: form.values.agentConfig,
-					versionDescription: form.values.versionDescription,
-				},
-			});
-			notifications.show({
-				color: 'green',
-				message: t('form.agent.selector.saved'),
-			});
-			form.resetDirty();
-		} catch {
-			notifications.show({
-				color: 'red',
-				message: t('form.agent.selector.saveError'),
-			});
-		}
-	};
+			const updateData =
+				versionDescription !== undefined
+					? {
+							...request.updateData,
+							versionDescription,
+						}
+					: request.updateData;
+
+			try {
+				await updateCampaignAgentConfig.mutateAsync({
+					campaignId,
+					id: selectedCampaignAgent.id,
+					updateData,
+				});
+				notifications.show({
+					color: 'green',
+					message: t('form.agent.selector.saved'),
+				});
+				if (request.source === 'setup') {
+					form.resetDirty();
+				}
+			} catch {
+				notifications.show({
+					color: 'red',
+					message: t('form.agent.selector.saveError'),
+				});
+			}
+		},
+		[campaignId, form, selectedCampaignAgent, t, updateCampaignAgentConfig]
+	);
+
+	const queueSaveRequest = useCallback(
+		(request: PendingAgentSaveRequest) => {
+			setPendingSaveRequest(request);
+			setReviewModalOpen(true);
+		},
+		[]
+	);
 
 	const handleSaveClick = () => {
-		if (isVersioningEnabled) {
-			setPendingAgentValues({
-				agentConfig: form.values.agentConfig as Record<string, unknown>,
+		queueSaveRequest({
+			source: 'setup',
+			updateData: {
+				config: form.values.agentConfig,
 				versionDescription: form.values.versionDescription,
-			});
-			setReviewModalOpen(true);
-		} else {
-			void handleSaveAgent();
-		}
+			},
+			reviewSnapshot: form.values.agentConfig as AgentVersionSnapshot,
+		});
 	};
 
-	const handlePublish = async (desc: string) => {
-		setReviewModalOpen(false);
-		if (!campaignId || !selectedCampaignAgent) return;
+	const handleWorkflowSaveRequest = useCallback(
+		(request: WorkflowSaveRequest) => {
+			queueSaveRequest({
+				source: 'workflow',
+				...request,
+			});
+		},
+		[queueSaveRequest]
+	);
 
-		try {
-			await updateCampaignAgentConfig.mutateAsync({
-				campaignId,
-				id: selectedCampaignAgent.id,
-				updateData: {
-					config: pendingAgentValues?.agentConfig as Record<string, unknown>,
-					versionDescription: desc,
-				},
-			});
-			notifications.show({
-				color: 'green',
-				message: t('form.agent.selector.saved'),
-			});
-			form.resetDirty();
-		} catch {
-			notifications.show({
-				color: 'red',
-				message: t('form.agent.selector.saveError'),
-			});
-		}
+	const handlePublish = async (desc: string) => {
+		const request = pendingSaveRequest;
+		closeReviewModal();
+
+		if (!request) return;
+
+		await submitSaveRequest(request, desc);
 	};
 
 	const handleOpenTestConvai = () => {
@@ -351,20 +377,18 @@ const AgentDetailPage = () => {
 								agentId={selectedCampaignAgent.agentId}
 								value={activeTab}
 								onChange={setActiveTab}
+								onWorkflowSaveRequest={handleWorkflowSaveRequest}
+								isWorkflowSavePending={updateCampaignAgentConfig.isPending}
 							/>
 						</Stack>
 					</ContentContainer>
 					<AgentSaveReviewModal
 						opened={reviewModalOpen}
-						onClose={() => setReviewModalOpen(false)}
-						publishedSnapshot={
-							campaign?.agentConfig as AgentVersionSnapshot | undefined
-						}
-						currentSnapshot={
-							pendingAgentValues?.agentConfig as
-								| AgentVersionSnapshot
-								| undefined
-						}
+						onClose={closeReviewModal}
+						publishedSnapshot={selectedAgent?.config as
+							| AgentVersionSnapshot
+							| undefined}
+						currentSnapshot={pendingSaveRequest?.reviewSnapshot}
 						onPublish={handlePublish}
 						isPublishing={updateCampaignAgentConfig.isPending}
 					/>

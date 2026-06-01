@@ -465,6 +465,7 @@
 				"placeholder": "Select reasoning effort",
 				"helper": "Controls how much deliberate reasoning the model applies when supported.",
 				"options": {
+					"default": "Default",
 					"none": "None",
 					"minimal": "Minimal",
 					"low": "Low",

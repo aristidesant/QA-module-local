@@ -19,25 +19,39 @@ import {
 	useUpdateCampaignAgentConfig,
 } from '~/queries/campaignAgentsQueries';
 import CampaignAgentSelector from '../components/CampaignAgentSelector';
+import type { AgentVersionSnapshot } from '~/models/AgentVersioningModel';
+import type { UpdateCampaignAgentConfigPayload } from '~/models/CampaignAgentModel';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import type { NodeGroups, NodeStyles } from '~/models/CampaignsModel';
 import { toSnakeCase } from '~/utils/stringUtils';
-
-const normalizeWorkflow = (raw: AgentWorkflow | undefined): AgentWorkflow | undefined =>
-	raw ? (toSnakeCase(raw) as AgentWorkflow) : undefined;
 import '@xyflow/react/dist/style.css';
 import styles from './WorkflowSection.module.css';
+import { validateWorkflow } from './utils/workflowValidation';
+
+const normalizeWorkflow = (
+	raw: AgentWorkflow | undefined
+): AgentWorkflow | undefined => (raw ? (toSnakeCase(raw) as AgentWorkflow) : undefined);
 
 interface WorkflowSectionProps {
 	showAgentSelector?: boolean;
+	onSaveRequest?: (request: WorkflowSaveRequest) => void;
+	isSaving?: boolean;
+}
+
+export interface WorkflowSaveRequest {
+	updateData: UpdateCampaignAgentConfigPayload;
+	reviewSnapshot: AgentVersionSnapshot;
 }
 
 const WorkflowSection = ({
 	showAgentSelector = true,
+	onSaveRequest,
+	isSaving,
 }: WorkflowSectionProps) => {
 	const { t } = useTranslation([
 		'campaign.form.workflow',
 		'campaign.form.agents',
+		'campaign.form.shared',
 		'common',
 	]);
 	const form = useCampaignFormContext();
@@ -91,6 +105,14 @@ const WorkflowSection = ({
 				agentId: selectedCampaignAgent?.agentId,
 			}
 		: form.values.agentConfig;
+	const isSavePending = isSaving ?? updateCampaignAgentConfig.isPending;
+	const workflowValidationMessage = t(
+		'form.validation.workflowInvalidMessage',
+		{
+			ns: 'campaign.form.shared',
+			defaultValue: 'All edges must have at least one condition configured',
+		}
+	);
 
 	useEffect(() => {
 		if (sortedCampaignAgents.length === 0) {
@@ -221,18 +243,42 @@ const WorkflowSection = ({
 	const handleSaveWorkflow = async () => {
 		if (!campaignId || !selectedCampaignAgent || !workflow) return;
 
+		const validationResult = validateWorkflow(workflow);
+		if (!validationResult.isValid) {
+			notifications.show({
+				title: t('errors.unknown', { ns: 'common' }),
+				message: validationResult.errorMessage || workflowValidationMessage,
+				color: 'red',
+			});
+			return;
+		}
+
+		const updateData: UpdateCampaignAgentConfigPayload = {
+			workflow,
+			workflowUi: {
+				...(selectedAgent?.workflowUi ?? {}),
+				nodeStyles: nodeStyles ?? {},
+				nodeGroups: nodeGroups ?? {},
+			},
+		};
+		const reviewSnapshot: AgentVersionSnapshot = {
+			...(selectedAgent?.config ?? {}),
+			workflow,
+		};
+
+		if (onSaveRequest) {
+			onSaveRequest({
+				updateData,
+				reviewSnapshot,
+			});
+			return;
+		}
+
 		try {
 			await updateCampaignAgentConfig.mutateAsync({
 				campaignId,
 				id: selectedCampaignAgent.id,
-				updateData: {
-					workflow,
-					workflowUi: {
-						...(selectedAgent?.workflowUi ?? {}),
-						nodeStyles: nodeStyles ?? {},
-						nodeGroups: nodeGroups ?? {},
-					},
-				},
+				updateData,
 			});
 			notifications.show({
 				color: 'green',
@@ -311,21 +357,21 @@ const WorkflowSection = ({
 									/>
 								</Group>
 
-								{usesCampaignAgentConfig && (
-									<>
-										<div className={styles.headerDivider} />
-										<Group
-											gap='xs'
-											align='center'
-											className={styles.headerActionGroup}
-										>
-											<Button
-												size='xs'
-												variant='light'
-												onClick={handleSaveWorkflow}
-												loading={updateCampaignAgentConfig.isPending}
+									{usesCampaignAgentConfig && (
+										<>
+											<div className={styles.headerDivider} />
+											<Group
+												gap='xs'
+												align='center'
+												className={styles.headerActionGroup}
 											>
-												{updateCampaignAgentConfig.isPending
+												<Button
+													size='xs'
+													variant='light'
+													onClick={handleSaveWorkflow}
+													loading={isSavePending}
+												>
+												{isSavePending
 													? t('form.workflow.header.saving')
 													: t('form.workflow.header.save')}
 											</Button>
