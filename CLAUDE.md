@@ -1,229 +1,59 @@
 # Project Instructions
 
-This document defines implementation rules for Claude Code working in this repository.
-If there is any conflict, use this precedence order:
+Precedence: 1) User request 2) This file 3) Repo patterns (`package.json`, `src/routes.tsx`)
 
-1. User request
-2. This `CLAUDE.md`
-3. Existing repository patterns (`package.json`, `src/routes.tsx`, current code)
+## Critical Rules
 
-## 1) Mandatory Global Rules
+- Check available skills before implementing any task.
+- Write code and comments in English.
+- Do not create tests unless explicitly requested.
+- Use interactive prompts for any user input — never plain open-ended questions.
 
-- Always check whether an available local skill applies before implementing.
-- For any task that improves, designs, or refactors an interface, read the project UI skill first: `.agents/skills/nai-agent-service-front-operational-frontend/SKILL.md`.
-- If another UI skill also applies, prefer the project-specific skill above generic frontend skills such as `frontend-skill` or `uncodixfy`.
-- If no relevant skill exists, proceed with these project conventions.
-- Always write code and code comments in English.
-- Do not create tests unless the user explicitly asks for tests.
-- Whenever user input is needed, ask using interactive prompts only. This is mandatory for both broad and highly specific questions; do not use plain open-ended questions when an interactive prompt can be used.
+## Plan Mode
 
-## 1.1) Plan Mode Behavior
+Ask concise interactive questions when input shapes the plan; skip only when context fully determines the path.
 
-- When operating in plan mode, ask concise interactive questions whenever user input can meaningfully shape the plan.
-- In plan mode, gather decisions through interactive prompts instead of open-ended questions.
-- Skip questions only when the task is fully clear, trivial, or the repository context already determines the best path.
+## Stack
 
-## 2) Stack And Source Of Truth
+| Layer         | Library                 |
+| ------------- | ----------------------- |
+| Routing       | React Router v7         |
+| Build         | Vite + TypeScript       |
+| UI            | Mantine v9              |
+| Data fetching | TanStack React Query v5 |
+| Tables        | TanStack React Table v8 |
+| State         | Zustand v5              |
+| HTTP          | Axios                   |
+| Icons         | @tabler/icons-react     |
+| i18n          | react-i18next           |
 
-- Routing: React Router v7 (`src/routes.tsx`)
-- Build: Vite + TypeScript
-- UI: Mantine v8
-- Data fetching: TanStack React Query
-- State: Zustand
-- HTTP: Axios
-- Icons: `@tabler/icons-react`
-- i18n: `react-i18next`
+Source of truth: `package.json`, `src/routes.tsx`.
 
-Use real repo configuration as source of truth (`package.json`, `src/`, route guards, modules).
+## Project Structure
 
-## 3) Project Structure
+All app code lives in `src/`: `api/`, `components/`, `modules/`, `queries/`, `routes/`, `routes.tsx`, `locales/`, `stores/`, `models/`, `hooks/`, `utils/`, `styles/`.
 
-All app code lives in `src/`:
+## Shared UI Primitives (always apply)
 
-- `api/`: Backend API calls
-- `components/`: Reusable UI components
-- `modules/`: Feature modules
-- `queries/`: React Query hooks
-- `routes/` and `routes.tsx`: Route components and router setup
-- `locales/`: i18n files (`en`, `es`)
-- `stores/`: Zustand stores
-- `models/`: Types and interfaces
-- `hooks/`: Custom hooks
-- `utils/`: Utilities
-- `styles/`: Global styles
+- `SectionCard` (`src/components/SectionCard`) — form/page sections
+- `AppDrawer` (`src/components/AppDrawer`) — drawers; do not use Mantine `Drawer` directly
+- `BaseTable` (`src/components/BaseTable/BaseTable`) — data tables
 
-## 4) Component Conventions
+## Dev Commands
 
-### File/Folder pattern (required)
+- `npm run dev` — start dev server
+- `npm run build` — TypeScript + production build
+- `npm run typecheck` — type check only
 
-Each reusable component must use folder colocation and barrel export:
+## Conventions
 
-```text
-ComponentName/
-  ComponentName.tsx
-  ComponentName.module.css
-  index.ts
-```
+Read the relevant doc before working in that area:
 
-`index.ts` must export:
-
-```ts
-export { default } from './ComponentName';
-```
-
-### Naming
-
-- Use PascalCase for component files: `UserCard.tsx`
-- Prefer colocated helper/type/constant files when needed:
-  - `ComponentName.helpers.ts`
-  - `ComponentName.types.ts`
-  - `ComponentName.constants.ts`
-
-## 5) UI And Styling Standards
-
-Design quality is mandatory: clean, modern, production-ready, light mode first.
-
-- Use Mantine components by default.
-- Use CSS Modules (`*.module.css`) for component styles.
-- Treat color scheme support as mandatory: every new or updated component must work in light, dark, and auto mode.
-- Use theme tokens, semantic colors, and color-scheme-aware Mantine styling; do not hardcode colors that only work in one mode.
-- Check hover, focus, borders, surfaces, shadows, and overlays in both light and dark mode before considering a component complete.
-- Dark mode gaps may be fixed incrementally in legacy areas, but no new component should depend on light-only styling.
-- Avoid inline styles unless there is a justified Mantine-specific need.
-- Keep layouts compact:
-  - Prefer `size="sm"` for controls and text
-  - Prefer `gap="xs"` in `Stack`/`Group`
-  - Use consistent spacing with Mantine CSS variables
-- Keep hover states stable (no layout shift).
-- Provide clear loading and error states.
-- Avoid heavy shadows, gradients, and 3D effects.
-- Subtle elevation with soft borders and ultra-light shadows is allowed when it improves hierarchy, especially for navigation and cards.
-- Use Mantine shadow tokens for elevation instead of custom `box-shadow` values whenever possible.
-- Standard default elevation for cards, forms, and section containers is Mantine `md` (`shadow="md"` in Mantine components or `var(--mantine-shadow-md)` in CSS Modules).
-- Only use a custom shadow when there is a documented, component-specific exception.
-- Avoid flat, boring forms: group related fields into clear visual sections
-  (e.g. Basic Info, Configuration, Advanced) with explicit hierarchy.
-
-### Shared UI primitives
-
-- Use `SectionCard` from `src/components/SectionCard` for form/page sections.
-- Use `AppDrawer` from `src/components/AppDrawer` for app drawers.
-- For data tables, use `BaseTable` from `src/components/BaseTable/BaseTable` by default.
-
-Do not use Mantine `Drawer` directly unless there is a justified exception that `AppDrawer` cannot cover.
-
-## 6) Data, Forms, State, API
-
-- Use React Query for server data.
-- Use Mantine Form for forms and validation.
-- Keep API functions in `src/api/`.
-- Keep global state in Zustand stores under `src/stores/`.
-
-## 7) Routing Rules (Project-Specific)
-
-`src/routes.tsx` is the source of truth.
-
-- Do not create custom routing outside React Router v7.
-- Every new route must define an explicit `id`.
-- Route `id` style is **hybrid current** (existing project style):
-  - Examples: `users`, `do-not-call`, `campaign.detail`
-- Use `ModuleGuard` for protected screens.
-- Use `permission` and/or `masterOnly` in `ModuleGuard` when required by access policy.
-- Keep route-level permission logic in guards, not inline in page components.
-- Use lazy loading for route pages (`React.lazy`) and wrap with `Suspense` + `SuspenseFallback`.
-- Use nested `children` routes and `Navigate` for default child redirects when needed.
-- Use `I18nNamespaceLoader` for routes that depend on route-based namespace loading.
-
-## 8) i18n Rules
-
-- Never hardcode user-facing strings in components.
-- Use `useTranslation('<namespace>')`.
-- `common` is the global namespace.
-- Route screens should use route-aligned namespaces.
-- When adding keys, update both:
-  - `src/locales/en/<namespace>.json`
-  - `src/locales/es/<namespace>.json`
-
-## 9) Permissions And Hooks Discipline
-
-### Permission architecture
-
-- Determine active client from impersonation target or current user client.
-- Build permissions only from roles that belong to the active client.
-- Merge permissions per module.
-- Treat `MANAGE` as elevated permission for that module.
-- Module mapping:
-  - `ModuleEnum.SETTINGS`: setup/configuration/taxonomy areas
-  - `ModuleEnum.CAMPAIGNS`: campaign operations and campaign screens
-
-### Permission usage
-
-Always use `usePermissions` helpers:
-
-- `canAccessModule(module)`
-- `canPerformAction(module, permission)`
-- `hasAnyPermission(module, permissions)`
-- `hasAllPermissions(module, permissions)`
-
-Do not bypass these helpers.
-
-### Hooks discipline
-
-- Call hooks unconditionally at the top of the component.
-- Do not place hooks inside branches, loops, or after early returns.
-
-## 10) TypeScript Rules
-
-- Keep strict typing.
-- Use `~/` imports for `src/` paths.
-- Put shared types in `src/models/`.
-- Do not use `any`.
-
-## 11) Testing Rules
-
-Only add tests when explicitly requested.
-
-- Use Vitest + React Testing Library.
-- Default execution should target one file or one test case.
-- Do not run full test suite by default while debugging.
-
-Examples:
-
-```bash
-npx vitest src/components/UserCard/UserCard.test.tsx
-npx vitest -t "renders submit button"
-```
-
-### Test setup conventions
-
-- Use `renderWithProviders` from `src/test-utils/renderWithProviders`.
-- Do not mock `react-i18next` in component tests.
-- Assert translated user-visible text (not translation keys).
-- If component uses `usePermissions`, mock it consistently.
-
-## 12) Commands (Validated)
-
-- `npm run dev`: Start dev server
-- `npm run build`: TypeScript + production build
-- `npm run preview`: Preview production build
-- `npm run typecheck`: Type check only
-- `npm run test`: Full test run with coverage
-- `npm run coverage`: Coverage-focused run
-
-For targeted test debugging, prefer `npx vitest <file>` instead of `npm run test`.
-
-## 13) Quick Do / Don't
-
-### Do
-
-- Keep UI clean, consistent, and production-ready.
-- Reuse shared components and route guards.
-- Keep i18n and permission logic consistent with project patterns.
-- Keep changes small, typed, and aligned with existing structure.
-
-### Don't
-
-- Introduce alternative routing/state/i18n patterns.
-- Hardcode visible strings.
-- Bypass permission helpers.
-- Add unnecessary tests or run global test suites when a focused run is enough.
+- [Component patterns](docs/conventions/component-conventions.md)
+- [UI & Styling](docs/conventions/ui-styling.md)
+- [Routing](docs/conventions/routing.md)
+- [i18n](docs/conventions/i18n.md)
+- [Permissions & Hooks](docs/conventions/permissions.md)
+- [Data, Forms & State](docs/conventions/data-forms-state.md)
+- [Testing](docs/conventions/testing.md)
+- [TypeScript](docs/conventions/typescript.md)
