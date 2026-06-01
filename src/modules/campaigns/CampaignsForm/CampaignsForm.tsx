@@ -27,7 +27,6 @@ import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import { useGetAgentVersioningStatus } from '~/queries/agentVersioningQueries';
 import { useGetCampaignRoles } from '~/queries/roleCampaignsQueries';
 import { notifications } from '@mantine/notifications';
-import { validateWorkflow } from './WorkflowSection/utils/workflowValidation';
 import {
 	CampaignFormProvider,
 	CampaignIdContext,
@@ -515,26 +514,6 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				color: 'red',
 			});
 			return;
-		}
-
-		// Validate workflow edge conditions before submitting
-		if (value.agentConfig?.workflow) {
-			const validationResult = validateWorkflow(value.agentConfig.workflow);
-			if (!validationResult.isValid) {
-				notifications.show({
-					title: t('form.validation.workflowInvalidTitle', {
-						defaultValue: 'Workflow Configuration Error',
-					}),
-					message:
-						validationResult.errorMessage ||
-						t('form.validation.workflowInvalidMessage', {
-							defaultValue:
-								'All edges must have at least one condition configured',
-						}),
-					color: 'red',
-				});
-				return;
-			}
 		}
 
 		try {

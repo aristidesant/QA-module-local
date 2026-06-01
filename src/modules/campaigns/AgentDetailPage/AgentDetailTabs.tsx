@@ -10,7 +10,9 @@ import VersioningSection from '../CampaignsForm/VersioningSection';
 import CampaignConfigurationBasic from '../CampaignsForm/AgentSection/CampaignConfigurationBasic/CampaignConfigurationBasic';
 import CampaignConfigurationPredefinedParams from '../CampaignsForm/AgentSection/CampaignConfigurationPredefinedParams';
 import CampaignConfigurationPrompt from '../CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPrompt';
-import WorkflowSection from '../CampaignsForm/WorkflowSection/WorkflowSection';
+import WorkflowSection, {
+	type WorkflowSaveRequest,
+} from '../CampaignsForm/WorkflowSection/WorkflowSection';
 import AdvancedTab from './AdvancedTab';
 import styles from './AgentDetailPage.module.css';
 
@@ -20,12 +22,16 @@ interface AgentDetailTabsProps {
 	agentId: string;
 	value: AgentTabValue;
 	onChange: (value: AgentTabValue) => void;
+	onWorkflowSaveRequest?: (request: WorkflowSaveRequest) => void;
+	isWorkflowSavePending?: boolean;
 }
 
 const AgentDetailTabs = ({
 	agentId,
 	value,
 	onChange,
+	onWorkflowSaveRequest,
+	isWorkflowSavePending,
 }: AgentDetailTabsProps) => {
 	const { t } = useTranslation(['campaign.form.agents']);
 
@@ -66,7 +72,11 @@ const AgentDetailTabs = ({
 			</Tabs.Panel>
 
 			<Tabs.Panel value='workflow'>
-				<WorkflowSection showAgentSelector={false} />
+				<WorkflowSection
+					showAgentSelector={false}
+					onSaveRequest={onWorkflowSaveRequest}
+					isSaving={isWorkflowSavePending}
+				/>
 			</Tabs.Panel>
 
 			<Tabs.Panel value='advanced'>

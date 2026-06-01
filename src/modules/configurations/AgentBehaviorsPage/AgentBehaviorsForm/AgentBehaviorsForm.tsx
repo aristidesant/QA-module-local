@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Badge, Button, Text as MantineText } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
@@ -7,6 +7,7 @@ import {
 	useCreateAgentBehavior,
 	useUpdateAgentBehavior,
 } from '~/queries/useAgentBehaviors';
+import { useClientConfigByName } from '~/queries/useClientConfigs';
 import type { AgentBehavior } from '~/models/AgentBehavior';
 import type {
 	CampaignPredefinedConversationConfig,
@@ -30,6 +31,7 @@ import {
 	DEFAULT_BACKUP_LLM_PREFERENCE,
 	DEFAULT_TTS_MODEL_ID,
 	EXPRESSIVE_TTS_MODEL_ID,
+	LLM_MODELS,
 	isExpressiveTtsModel,
 	normalizeSuggestedAudioTags,
 } from './formConfig';
@@ -72,6 +74,14 @@ const getBackupLlmConfig = (
 	};
 };
 
+interface LlmClientConfigValue {
+	llms: Array<{
+		llm: string;
+		available_reasoning_efforts?: string[] | null;
+		is_checkpoint?: boolean;
+	}>;
+}
+
 interface AgentBehaviorsFormProps {
 	behavior?: AgentBehavior;
 	allBehaviors?: AgentBehavior[];
@@ -91,7 +101,61 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 	const isEditMode = mode === 'edit' && !!behavior;
 	const createMutation = useCreateAgentBehavior();
 	const updateMutation = useUpdateAgentBehavior();
+	const { data: llmConfig } = useClientConfigByName('llm');
 	const [activeTab, setActiveTab] = useState<string>('general');
+
+	const { hasResolvedReasoningAvailability, reasoningEffortsByModel } =
+		useMemo(() => {
+			if (!llmConfig?.value) {
+				return {
+					hasResolvedReasoningAvailability: false,
+					reasoningEffortsByModel: {} as Record<string, string[] | null>,
+				};
+			}
+
+			try {
+				const parsed = JSON.parse(llmConfig.value) as LlmClientConfigValue;
+				if (!Array.isArray(parsed.llms)) {
+					return {
+						hasResolvedReasoningAvailability: false,
+						reasoningEffortsByModel: {} as Record<string, string[] | null>,
+					};
+				}
+
+				const supportedModelCodes = new Set(
+					LLM_MODELS.map(({ modelCode }) => modelCode)
+				);
+				const nextReasoningEffortsByModel = parsed.llms.reduce<
+					Record<string, string[] | null>
+				>((acc, model) => {
+					if (
+						!model.llm ||
+						model.is_checkpoint ||
+						!supportedModelCodes.has(model.llm)
+					) {
+						return acc;
+					}
+
+					acc[model.llm] = Array.isArray(model.available_reasoning_efforts)
+						? model.available_reasoning_efforts.filter(
+								(effort): effort is string => typeof effort === 'string'
+							)
+						: null;
+
+					return acc;
+				}, {});
+
+				return {
+					hasResolvedReasoningAvailability: true,
+					reasoningEffortsByModel: nextReasoningEffortsByModel,
+				};
+			} catch {
+				return {
+					hasResolvedReasoningAvailability: false,
+					reasoningEffortsByModel: {} as Record<string, string[] | null>,
+				};
+			}
+		}, [llmConfig?.value]);
 
 	const menuItems = [
 		{
@@ -200,8 +264,12 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 			// Agent
 			agentPromptLlm:
 				conversationConfig?.agent?.prompt?.llm || DEFAULT_AGENT_LLM,
-			agentPromptReasoningEffort:
-				conversationConfig?.agent?.prompt?.reasoningEffort ?? null,
+			agentPromptReasoningEffort: (() => {
+				const promptConfig = conversationConfig?.agent?.prompt;
+				return promptConfig && 'reasoningEffort' in promptConfig
+					? (promptConfig.reasoningEffort ?? '')
+					: null;
+			})(),
 			agentPromptBackupLlmPreference: initialBackupLlmConfig.preference,
 			agentPromptBackupLlmOrder: initialBackupLlmConfig.order,
 			agentPromptTemperature:
@@ -302,7 +370,12 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 					cfg?.tts?.agentOutputAudioFormat || 'pcm_16000',
 				// Agent
 				agentPromptLlm: cfg?.agent?.prompt?.llm || DEFAULT_AGENT_LLM,
-				agentPromptReasoningEffort: cfg?.agent?.prompt?.reasoningEffort ?? null,
+				agentPromptReasoningEffort: (() => {
+					const promptConfig = cfg?.agent?.prompt;
+					return promptConfig && 'reasoningEffort' in promptConfig
+						? (promptConfig.reasoningEffort ?? '')
+						: null;
+				})(),
 				agentPromptBackupLlmPreference: backupLlmConfig.preference,
 				agentPromptBackupLlmOrder: backupLlmConfig.order,
 				agentPromptTemperature: cfg?.agent?.prompt?.temperature ?? 1.0,
@@ -350,7 +423,10 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 			prompt: {
 				...conversationConfig?.agent?.prompt,
 				llm: values.agentPromptLlm,
-				reasoningEffort: values.agentPromptReasoningEffort ?? undefined,
+				reasoningEffort:
+					values.agentPromptReasoningEffort === ''
+						? null
+						: values.agentPromptReasoningEffort || undefined,
 				backupLlmConfig: {
 					preference: values.agentPromptBackupLlmPreference,
 					order: values.agentPromptBackupLlmOrder,
@@ -413,7 +489,14 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 			case 'tts':
 				return <TTSSection />;
 			case 'agent':
-				return <AgentSection />;
+				return (
+					<AgentSection
+						hasResolvedReasoningAvailability={
+							hasResolvedReasoningAvailability
+						}
+						reasoningEffortsByModel={reasoningEffortsByModel}
+					/>
+				);
 			case 'platformSettings':
 				return <SecuritySection />;
 			default:

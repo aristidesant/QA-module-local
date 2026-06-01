@@ -3,6 +3,11 @@ import { Card, Button } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { IconPlus, IconInfoCircle } from '@tabler/icons-react';
 import AgentCampaignAdd from '../AgentCampaignAdd';
+import {
+	ADD_CAMPAIGN_AGENT_LIST_MODAL_SIZE,
+	ADD_CAMPAIGN_AGENT_MODAL_ID,
+} from '../AgentCampaignAdd/AgentCampaignAdd.constants';
+import addAgentModalClasses from '../AgentCampaignAdd/AgentCampaignAdd.module.css';
 import classes from './AgentCampaignList.module.css';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import { useCampaignId } from '../../../campaignFormFunctions';
@@ -18,9 +23,11 @@ export const AgentCampaignList: React.FC = () => {
 		'common',
 	]);
 	const campaignId = useCampaignId();
-	const { data: campaignAgents, isLoading } = useGetCampaignAgents(
-		campaignId || 0
-	);
+	const {
+		data: campaignAgents,
+		isLoading,
+		refetch,
+	} = useGetCampaignAgents(campaignId || 0);
 
 	// Get assigned agent IDs for exclusion when opening the selector
 	const assignedAgentIds = Array.isArray(campaignAgents)
@@ -35,14 +42,18 @@ export const AgentCampaignList: React.FC = () => {
 		}
 
 		modals.open({
-			modalId: 'add-campaign-agent',
+			modalId: ADD_CAMPAIGN_AGENT_MODAL_ID,
 			title: t('form.agent.list.addAgentTitle'),
 			centered: true,
-			size: 1160,
+			size: ADD_CAMPAIGN_AGENT_LIST_MODAL_SIZE,
+			classNames: { content: addAgentModalClasses.modalShell },
 			children: (
 				<AgentCampaignAdd
 					campaignId={campaignId}
 					excludedAgents={assignedAgentIds}
+					onCreated={() => {
+						refetch();
+					}}
 				/>
 			),
 		});

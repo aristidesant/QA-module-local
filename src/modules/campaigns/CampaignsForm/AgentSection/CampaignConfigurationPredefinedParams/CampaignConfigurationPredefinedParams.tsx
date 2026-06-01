@@ -3,7 +3,7 @@ import SectionCard from '~/components/SectionCard';
 import useCampaignsPredefinedParams, {
 	CampaignPredefinedParam,
 } from '../../useCampaignsPredefinedParams';
-import { Stack, Text, Group, Paper, ThemeIcon } from '@mantine/core';
+import { Stack, Text, Group, Paper, ThemeIcon, Code } from '@mantine/core';
 import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import { IconCheck } from '@tabler/icons-react';
 import CampaignPredefinedParamsModal from './CampaignPredefinedParamsModal';
@@ -64,6 +64,7 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 			setAppliedParam(param);
 			setIsModalOpen(false);
 			form.setFieldValue('configId', param.id);
+			form.setFieldValue('agentConfig.configId', param.id);
 		}
 	};
 
@@ -71,12 +72,16 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 		if (!predefinedParams || predefinedParams.length === 0) {
 			return null;
 		}
-		return predefinedParams.find((param) => param.id === form.values.configId);
+		const currentConfigId = form.values.configId ?? '';
+		return predefinedParams.find(
+			(param) => String(param.id) === String(currentConfigId)
+		);
 	}, [predefinedParams, form.values.configId]);
 
 	const behaviorActionLabel = currentPredefinedParam
 		? t('form.agent.behavior.change')
 		: t('form.agent.behavior.select');
+	const currentConfigId = form.values.configId ?? '';
 
 	return (
 		<React.Fragment>
@@ -104,6 +109,9 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 								<Text size='xs' className={styles.statusText}>
 									{t('form.agent.behavior.active')}
 								</Text>
+								<Text size='xs' c='dimmed' mt={4}>
+									configId: <Code>{currentConfigId || 'No configId'}</Code>
+								</Text>
 							</div>
 						</Group>
 					</Paper>
@@ -112,6 +120,9 @@ const CampaignConfigurationPredefinedParams: React.FC = () => {
 						<Stack align='center' gap='xs'>
 							<Text size='sm' className={styles.statusText}>
 								{t('form.agent.behavior.noConfiguration')}
+							</Text>
+							<Text size='xs' c='dimmed'>
+								configId: <Code>{currentConfigId || 'No configId'}</Code>
 							</Text>
 						</Stack>
 					</Paper>

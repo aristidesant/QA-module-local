@@ -465,6 +465,7 @@
 				"placeholder": "Selecciona el esfuerzo de razonamiento",
 				"helper": "Controla cuánto razonamiento deliberado aplica el modelo cuando es compatible.",
 				"options": {
+					"default": "Predeterminado",
 					"none": "Ninguno",
 					"minimal": "Mínimo",
 					"low": "Bajo",

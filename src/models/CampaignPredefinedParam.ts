@@ -67,7 +67,7 @@ export interface CampaignPredefinedConversationConfig {
 	agent: {
 		prompt: {
 			llm: string;
-			reasoningEffort?: string;
+			reasoningEffort?: string | null;
 			backupLlmConfig?: BackupLlmConfig;
 			temperature: number;
 		};

@@ -24,6 +24,7 @@ export default interface AgentListObject {
 	voice: Voice | null;
 	outboundPhoneNumberId: number | null;
 	inboundPhoneNumberId: number | null;
+	configId?: string | null;
 }
 
 export type AgentUpdateModel = {
@@ -40,6 +41,7 @@ export interface AgentConfigModel {
 	name: string;
 	tags: string[];
 	agentId: string;
+	configId?: string | null;
 	metadata: {
 		createdAtUnixSecs: number;
 	};

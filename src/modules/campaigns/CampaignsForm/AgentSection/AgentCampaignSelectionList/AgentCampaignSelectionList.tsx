@@ -30,6 +30,11 @@ import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import { useCampaignId } from '../../../campaignFormFunctions';
 import AgentCampaignAdd from '../AgentCampaignAdd';
+import {
+	ADD_CAMPAIGN_AGENT_LIST_MODAL_SIZE,
+	ADD_CAMPAIGN_AGENT_MODAL_ID,
+} from '../AgentCampaignAdd/AgentCampaignAdd.constants';
+import addAgentModalClasses from '../AgentCampaignAdd/AgentCampaignAdd.module.css';
 import SyncElevenLabsAgentModal, {
 	SYNC_ELEVENLABS_AGENT_MODAL_ID,
 } from '../SyncElevenLabsAgentModal';
@@ -131,14 +136,18 @@ const AgentCampaignSelectionList = () => {
 		}
 
 		modals.open({
-			modalId: 'add-campaign-agent',
+			modalId: ADD_CAMPAIGN_AGENT_MODAL_ID,
 			title: t('form.agent.list.addAgentTitle'),
 			centered: true,
-			size: 1160,
+			size: ADD_CAMPAIGN_AGENT_LIST_MODAL_SIZE,
+			classNames: { content: addAgentModalClasses.modalShell },
 			children: (
 				<AgentCampaignAdd
 					campaignId={campaignId}
 					excludedAgents={assignedAgentIds}
+					onCreated={(campaignAgentId) => {
+						navigate(`/campaign/${campaignId}/agent/${campaignAgentId}`);
+					}}
 				/>
 			),
 		});
