@@ -6,7 +6,8 @@ Design quality is mandatory: clean, modern, production-ready, light mode first.
 
 - Use Mantine components by default.
 - Use CSS Modules (`*.module.css`) for component styles.
-- Avoid inline styles unless justified by a Mantine-specific need.
+- Do not create inline styles in application code. Use CSS Modules, Mantine props, or shared classes instead.
+- Allow inline styles only as rare exceptions when there is no practical alternative — document with an `inline-style-allow:` comment immediately above, kept as narrow as possible.
 - Avoid flat, boring forms: group related fields into clear visual sections (e.g. Basic Info, Configuration, Advanced).
 
 ## Color Scheme (mandatory)
