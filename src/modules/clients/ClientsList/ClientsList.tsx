@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable';
 import { useGetAllClients } from '~/queries/clientQueries';
 import type { ClientModel } from '~/models/ClientModel';
+import { getClientDisplayLabel } from '~/utils/clientDisplay';
 import useClientsColumns from '../hooks/useClientsColumns';
 import classes from './ClientsList.module.css';
 
@@ -30,6 +31,7 @@ const ClientsList: React.FC<ClientsListProps> = ({
 		const query = search.toLowerCase();
 		return clients.filter(
 			(client) =>
+				getClientDisplayLabel(client).toLowerCase().includes(query) ||
 				client.name.toLowerCase().includes(query) ||
 				client.identifier.toLowerCase().includes(query) ||
 				(client.email && client.email.toLowerCase().includes(query))

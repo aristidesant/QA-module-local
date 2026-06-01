@@ -196,7 +196,12 @@ const useDashboardWidgetFormController = ({
 	const metricKeyOptions = useMemo(() => {
 		const campaignMetricKeys = selectedCampaign
 			? Object.keys(
-					getDataCollectionFromAgentConfig(selectedCampaign.agentConfig)
+					getDataCollectionFromAgentConfig(
+						selectedCampaign.agents?.find((a) => a.isPrincipal)?.agent
+							?.config ??
+							selectedCampaign.agents?.[0]?.agent?.config ??
+							{}
+					)
 				)
 			: [];
 

@@ -21,6 +21,7 @@ import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
 import { useDashboards } from '~/queries/analyticsDashboardsQueries';
 import { useSessionStore } from '~/stores/sessionStore';
+import { getClientDisplayLabel } from '~/utils/clientDisplay';
 import classes from './WelcomeCard.module.css';
 
 export type WelcomeCardProps = {
@@ -85,7 +86,7 @@ export default function WelcomeCard({
 
 	if (impersonationState.isImpersonating && targetClient) {
 		heading = t('impersonationHeading', {
-			name: targetClient.name,
+			name: getClientDisplayLabel(targetClient),
 		});
 		subheading = t('impersonationSubheading');
 	} else if (displayName) {

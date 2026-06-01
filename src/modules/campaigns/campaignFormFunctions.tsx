@@ -11,6 +11,12 @@ import type { AgentConfigModel } from '~/models/AgentListObject';
 export const [CampaignFormProvider, useCampaignFormContext, useCampaignForm] =
 	createFormContext<Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'>>();
 
+export const [
+	AgentConfigFormProvider,
+	useAgentConfigFormContext,
+	useAgentConfigForm,
+] = createFormContext<Partial<AgentConfigModel>>();
+
 // Context for campaign ID (needed for components that need to fetch related data)
 export const CampaignIdContext = createContext<number | undefined>(undefined);
 

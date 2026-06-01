@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
-import { useCampaignFormContext } from '../../../../campaignFormFunctions';
+import { useAgentConfigFormContext } from '../../../../campaignFormFunctions';
 import PromptEditModal from '../../../components/PromptEditModal';
 
 interface CampaignAgentPromptEditModalProps {
@@ -12,20 +12,14 @@ const CampaignAgentPromptEditModal: React.FC<
 	CampaignAgentPromptEditModalProps
 > = ({ opened, onClose }) => {
 	const { campaignId: routeCampaignId } = useParams();
-	const form = useCampaignFormContext();
-	const campaignId =
-		Number(routeCampaignId) ||
-		(form.values as { id?: number } | undefined)?.id ||
-		0;
+	const form = useAgentConfigFormContext();
+	const campaignId = Number(routeCampaignId) || 0;
 	const currentPrompt =
-		form.values.agentConfig?.conversationConfig?.agent?.prompt?.prompt || '';
+		form.values.conversationConfig?.agent?.prompt?.prompt || '';
 
 	const handleSave = useCallback(
 		(value: string) => {
-			form.setFieldValue(
-				'agentConfig.conversationConfig.agent.prompt.prompt',
-				value
-			);
+			form.setFieldValue('conversationConfig.agent.prompt.prompt', value);
 		},
 		[form]
 	);

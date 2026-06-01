@@ -1,6 +1,6 @@
 :root {
 	--sidebar-width: 304px;
-	--sidebar-width-collapsed: 88px;
+	--sidebar-width-collapsed: 60px;
 	--sidebar-width-mobile: 180px;
 	--layout-sidebar-surface: var(--mantine-color-body);
 	--layout-sidebar-border: var(--mantine-color-gray-2);

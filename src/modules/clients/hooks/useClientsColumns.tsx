@@ -4,6 +4,10 @@ import type { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { ClientModel } from '~/models/ClientModel';
+import {
+	getClientDisplayLabel,
+	getClientSecondaryLabel,
+} from '~/utils/clientDisplay';
 
 interface UseClientsColumnsProps {
 	onEdit: (id: number) => void;
@@ -19,12 +23,24 @@ const useClientsColumns = ({
 		() => [
 			{
 				accessorKey: 'name',
-				header: t('table.columns.name'),
-				cell: ({ row }) => (
-					<Text size='sm' fw={500}>
-						{row.original.name}
-					</Text>
-				),
+				header: t('table.columns.client'),
+				cell: ({ row }) => {
+					const primaryLabel = getClientDisplayLabel(row.original);
+					const secondaryLabel = getClientSecondaryLabel(row.original);
+
+					return (
+						<>
+							<Text size='sm' fw={500}>
+								{primaryLabel}
+							</Text>
+							{secondaryLabel && (
+								<Text size='xs' c='dimmed'>
+									{secondaryLabel}
+								</Text>
+							)}
+						</>
+					);
+				},
 			},
 			{
 				accessorKey: 'email',

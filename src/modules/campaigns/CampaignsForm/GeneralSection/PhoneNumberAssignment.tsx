@@ -14,6 +14,7 @@ import { useGetAgent } from '~/queries/agentQueries';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import { useSimplePhoneNumberList } from '~/queries/phoneNumberQueries';
 import {
+	useAgentConfigFormContext,
 	useCampaignFormContext,
 	useCampaignId,
 } from '../../campaignFormFunctions';
@@ -27,6 +28,7 @@ const PhoneNumberAssignment = () => {
 		'common',
 	]);
 	const form = useCampaignFormContext();
+	const agentConfigForm = useAgentConfigFormContext();
 	const campaignId = useCampaignId();
 	const queryClient = useQueryClient();
 	const campaignType = normalizeCampaignType(form.values.type);
@@ -137,9 +139,7 @@ const PhoneNumberAssignment = () => {
 				await linkOutboundPhoneNumber(params);
 			}
 
-			form.setFieldValue('agentConfig.phoneNumbers', [
-				currentPhone.phoneNumber,
-			]);
+			agentConfigForm.setFieldValue('phoneNumbers', [currentPhone.phoneNumber]);
 			setCurrentLinkedId(Number(selectedId));
 			await queryClient.invalidateQueries({ queryKey: ['agent', agentId] });
 

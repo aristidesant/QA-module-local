@@ -3,7 +3,10 @@ import { Button, Group, Modal, Stack, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 import { useCampaignsStore } from '~/stores/campaignsStore';
-import { useCampaignFormContext } from '../../../campaignFormFunctions';
+import {
+	useAgentConfigFormContext,
+	useCampaignFormContext,
+} from '../../../campaignFormFunctions';
 import AnalyticsVariableEditor from '../AnalyticsVariableEditor';
 import AnalyticsVariablesTable from '../AnalyticsVariablesTable';
 import {
@@ -20,6 +23,7 @@ import {
 const AnalyticsSection = () => {
 	const { t } = useTranslation(['campaign.form.analytics', 'common']);
 	const campaignForm = useCampaignFormContext();
+	const agentConfigForm = useAgentConfigFormContext();
 	const setRightComponent = useCampaignsStore(
 		(state) => state.setRightComponent
 	);
@@ -33,12 +37,9 @@ const AnalyticsSection = () => {
 		}
 
 		return normalizeDataCollectionRows(
-			getDataCollectionFromAgentConfig(campaignForm.values.agentConfig)
+			getDataCollectionFromAgentConfig(agentConfigForm.values)
 		);
-	}, [
-		campaignForm.values.agentConfig,
-		campaignForm.values.dataCollectionVariables,
-	]);
+	}, [agentConfigForm.values, campaignForm.values.dataCollectionVariables]);
 
 	const form = useAnalyticsForm({
 		initialValues: {
@@ -53,7 +54,7 @@ const AnalyticsSection = () => {
 			form.values.rows
 		);
 		const currentDataCollection = getDataCollectionFromAgentConfig(
-			campaignForm.values.agentConfig
+			agentConfigForm.values
 		);
 		const currentRuntimeVariables =
 			campaignForm.values.dataCollectionVariables ?? [];
@@ -72,12 +73,9 @@ const AnalyticsSection = () => {
 			JSON.stringify(currentDataCollection) !==
 			JSON.stringify(mappedDataCollection)
 		) {
-			campaignForm.setFieldValue(
-				'agentConfig.dataCollection',
-				mappedDataCollection
-			);
-			campaignForm.setFieldValue(
-				'agentConfig.platformSettings.dataCollection',
+			agentConfigForm.setFieldValue('dataCollection', mappedDataCollection);
+			agentConfigForm.setFieldValue(
+				'platformSettings.dataCollection',
 				mappedDataCollection
 			);
 		}

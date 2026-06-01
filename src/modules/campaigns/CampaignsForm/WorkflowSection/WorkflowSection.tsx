@@ -10,6 +10,7 @@ import { WorkflowNodeEditorProvider } from './WorkflowNodeEditorContext';
 import { NodeStylesProvider } from './NodeStylesContext';
 import WorkflowNodeLegend from './WorkflowNodeLegend';
 import {
+	useAgentConfigFormContext,
 	useCampaignAgentEditor,
 	useCampaignFormContext,
 	useCampaignId,
@@ -30,7 +31,8 @@ import { validateWorkflow } from './utils/workflowValidation';
 
 const normalizeWorkflow = (
 	raw: AgentWorkflow | undefined
-): AgentWorkflow | undefined => (raw ? (toSnakeCase(raw) as AgentWorkflow) : undefined);
+): AgentWorkflow | undefined =>
+	raw ? (toSnakeCase(raw) as AgentWorkflow) : undefined;
 
 interface WorkflowSectionProps {
 	showAgentSelector?: boolean;
@@ -55,6 +57,7 @@ const WorkflowSection = ({
 		'common',
 	]);
 	const form = useCampaignFormContext();
+	const agentConfigForm = useAgentConfigFormContext();
 	const campaignId = useCampaignId();
 	const {
 		selectedCampaignAgentId,
@@ -87,10 +90,12 @@ const WorkflowSection = ({
 	const workflow = useMemo(
 		() =>
 			normalizeWorkflow(
-				usesCampaignAgentConfig ? localWorkflow : form.values.agentConfig?.workflow
+				usesCampaignAgentConfig
+					? localWorkflow
+					: agentConfigForm.values.workflow
 			),
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-		[usesCampaignAgentConfig, localWorkflow, form.values.agentConfig?.workflow]
+		[usesCampaignAgentConfig, localWorkflow, agentConfigForm.values.workflow]
 	);
 	const prevent_subagent_loops = workflow?.prevent_subagent_loops ?? false;
 	const nodeStyles = usesCampaignAgentConfig
@@ -104,7 +109,7 @@ const WorkflowSection = ({
 				...(selectedAgent?.config ?? {}),
 				agentId: selectedCampaignAgent?.agentId,
 			}
-		: form.values.agentConfig;
+		: agentConfigForm.values;
 	const isSavePending = isSaving ?? updateCampaignAgentConfig.isPending;
 	const workflowValidationMessage = t(
 		'form.validation.workflowInvalidMessage',
@@ -146,7 +151,7 @@ const WorkflowSection = ({
 	]);
 
 	const handleWorkflowChange = (updatedWorkflow: AgentWorkflow) => {
-		const currentConfig = form.values.agentConfig ?? {};
+		const currentConfig = agentConfigForm.values;
 		const prevNodes = workflow?.nodes ?? {};
 		const nextNodes = updatedWorkflow.nodes ?? {};
 
@@ -202,7 +207,7 @@ const WorkflowSection = ({
 			return;
 		}
 
-		form.setFieldValue('agentConfig', {
+		agentConfigForm.setValues({
 			...currentConfig,
 			workflow: updatedWorkflow,
 		});
@@ -357,20 +362,20 @@ const WorkflowSection = ({
 									/>
 								</Group>
 
-									{usesCampaignAgentConfig && (
-										<>
-											<div className={styles.headerDivider} />
-											<Group
-												gap='xs'
-												align='center'
-												className={styles.headerActionGroup}
+								{usesCampaignAgentConfig && (
+									<>
+										<div className={styles.headerDivider} />
+										<Group
+											gap='xs'
+											align='center'
+											className={styles.headerActionGroup}
+										>
+											<Button
+												size='xs'
+												variant='light'
+												onClick={handleSaveWorkflow}
+												loading={isSavePending}
 											>
-												<Button
-													size='xs'
-													variant='light'
-													onClick={handleSaveWorkflow}
-													loading={isSavePending}
-												>
 												{isSavePending
 													? t('form.workflow.header.saving')
 													: t('form.workflow.header.save')}

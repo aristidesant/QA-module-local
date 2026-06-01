@@ -70,16 +70,15 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 	const transcriptContent = conversation?.transcriptContent;
 
 	const nodeLabels = useMemo<Record<string, string>>(() => {
-		const nodes = conversation?.campaign?.agentConfig?.workflow?.nodes as
-			| Record<string, { label?: string }>
-			| undefined;
+		const nodes = conversation?.campaign?.agents?.[0]?.agent?.config?.workflow
+			?.nodes as Record<string, { label?: string }> | undefined;
 		if (!nodes) return {};
 		return Object.fromEntries(
 			Object.entries(nodes)
 				.filter(([, node]) => node?.label)
 				.map(([nodeId, node]) => [nodeId, node.label as string])
 		);
-	}, [conversation?.campaign?.agentConfig?.workflow?.nodes]);
+	}, [conversation?.campaign?.agents?.[0]?.agent?.config?.workflow?.nodes]);
 
 	const safeStatus = status || '';
 	const safeTranscriptContent: TranscriptContent = transcriptContent || {

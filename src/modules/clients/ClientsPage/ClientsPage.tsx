@@ -11,6 +11,7 @@ import { ContentContainer } from '~/components/ContentContainer/ContentContainer
 import SectionCard from '~/components/SectionCard';
 import { useDeleteClient } from '~/queries/clientQueries';
 import type { ClientModel } from '~/models/ClientModel';
+import { getClientDisplayLabel } from '~/utils/clientDisplay';
 
 const ClientsPage: React.FC = () => {
 	const { t } = useTranslation('clients');
@@ -83,7 +84,7 @@ const ClientsPage: React.FC = () => {
 				children: (
 					<Text size='sm'>
 						{t('page.modals.delete.descriptionPrefix')}{' '}
-						<strong>{client.name}</strong>
+						<strong>{getClientDisplayLabel(client)}</strong>
 						{t('page.modals.delete.descriptionSuffix')}
 					</Text>
 				),
@@ -93,7 +94,7 @@ const ClientsPage: React.FC = () => {
 						notifications.show({
 							title: t('notifications.deleted.title'),
 							message: t('notifications.deleted.message', {
-								name: client.name,
+								name: getClientDisplayLabel(client),
 							}),
 							color: 'green',
 						});

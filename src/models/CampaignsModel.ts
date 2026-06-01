@@ -1,6 +1,5 @@
 // src/models/CampaignsModel.ts
 
-import type { AgentConfigModel } from './AgentListObject';
 import type { CampaignAgent } from './CampaignAgentModel';
 import type { CampaignObjective } from './CampaignObjectiveModel';
 import { CampaignStatus } from './CampaignStatus';
@@ -167,7 +166,6 @@ export interface Campaign {
 	agents?: CampaignAgent[];
 
 	noiseCancellation?: boolean;
-	agentConfig?: Partial<AgentConfigModel>;
 	/** Persisted node styles for the workflow editor (top-level campaign field) */
 	nodeStyles?: NodeStyles;
 	/** Persisted node groups for the workflow editor (top-level campaign field) */

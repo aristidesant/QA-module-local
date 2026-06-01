@@ -2,6 +2,7 @@ import { z } from 'zod';
 
 export const ClientSchema = z.object({
 	name: z.string().min(1, 'Name is required'),
+	alias: z.string().optional(),
 	identifier: z.string().optional(),
 	description: z.string().optional(),
 	email: z.string().email('Invalid email').optional().or(z.literal('')),

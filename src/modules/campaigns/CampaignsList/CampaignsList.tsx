@@ -214,9 +214,7 @@ export const CampaignsList: React.FC = () => {
 		setSelectedAgentIdForCall(agentId);
 		setTestCallModalOpened(true);
 		setCampaignTestCallId(campaign.id);
-		setCampaignNoiseCancellation(
-			campaign.agentConfig?.conversationConfig?.noiseCancellation ?? false
-		);
+		setCampaignNoiseCancellation(campaign.noiseCancellation ?? false);
 	};
 
 	const handleTestCallSuccess = () => {

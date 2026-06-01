@@ -20,6 +20,7 @@ export type SignUpRequest = {
 export interface ClientSelectOption {
 	clientId: number;
 	clientName: string;
+	clientAlias?: string | null;
 	clientIdentifier: string;
 	roles: string[];
 }
@@ -88,6 +89,7 @@ export interface UserInfo {
 export interface TargetClient {
 	id: number;
 	name: string;
+	alias?: string | null;
 }
 
 export interface ImpersonateClientResponse {

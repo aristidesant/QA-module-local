@@ -31,6 +31,7 @@ import {
 	useGetUser,
 } from '~/queries/userQueries';
 import { useGetAllClients } from '~/queries/clientQueries';
+import { formatClientOptionLabel } from '~/utils/clientDisplay';
 import type {
 	CreateUserPayload,
 	UpdateUserPayload,
@@ -122,7 +123,7 @@ const UserForm: React.FC<UserFormProps> = ({ mode, userId, onSuccess }) => {
 		() =>
 			clients.map((client) => ({
 				value: String(client.id),
-				label: client.name,
+				label: formatClientOptionLabel(client),
 			})),
 		[clients]
 	);

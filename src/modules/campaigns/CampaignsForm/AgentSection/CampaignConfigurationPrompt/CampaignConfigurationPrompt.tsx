@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Badge, Group, Stack, Text } from '@mantine/core';
 import { IconBrain } from '@tabler/icons-react';
-import { useCampaignFormContext } from '../../../campaignFormFunctions';
+import { useAgentConfigFormContext } from '../../../campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
 import { useTranslation } from 'react-i18next';
 import styles from './CampaignConfigurationPrompt.module.css';
@@ -19,11 +19,10 @@ const CampaignConfigurationPrompt: React.FC<
 		'campaign.detail',
 		'common',
 	]);
-	const form = useCampaignFormContext();
+	const form = useAgentConfigFormContext();
 	const [editModalOpen, setEditModalOpen] = useState(false);
 
-	const prompt =
-		form.values.agentConfig?.conversationConfig?.agent?.prompt?.prompt || '';
+	const prompt = form.values.conversationConfig?.agent?.prompt?.prompt || '';
 
 	const handleEdit = useCallback(() => {
 		setEditModalOpen(true);

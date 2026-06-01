@@ -56,6 +56,10 @@
 	color: var(--mantine-color-dark-1);
 }
 
+[data-mantine-color-scheme='dark'] .clientTabSecondary {
+	color: var(--mantine-color-dark-3);
+}
+
 [data-mantine-color-scheme='dark'] .clientTabActive .clientTabLabel {
 	color: var(--mantine-color-blue-4);
 }
@@ -307,6 +311,14 @@
 	text-overflow: ellipsis;
 	flex: 1;
 	font-size: 13px;
+}
+
+.clientTabSecondary {
+	color: var(--mantine-color-gray-6);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	font-size: 11px;
 }
 
 .clientTabMeta {

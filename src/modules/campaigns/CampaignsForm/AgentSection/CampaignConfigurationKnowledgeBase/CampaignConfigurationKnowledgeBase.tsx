@@ -8,7 +8,7 @@ import {
 	IconAlignLeft,
 	IconPlus,
 } from '@tabler/icons-react';
-import { useCampaignFormContext } from '../../../campaignFormFunctions';
+import { useAgentConfigFormContext } from '../../../campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
 import {
 	ThemeIcon,
@@ -41,7 +41,7 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 		'campaign.detail',
 		'common',
 	]);
-	const form = useCampaignFormContext();
+	const form = useAgentConfigFormContext();
 	const queryClient = useQueryClient();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 	const {
@@ -65,13 +65,12 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 
 	// Extract IDs from deep path (Wizard/New structure)
 	const rawKbData =
-		(form.values.agentConfig as any)?.conversationConfig?.agent?.prompt
-			?.knowledgeBase || [];
+		(form.values as any)?.conversationConfig?.agent?.prompt?.knowledgeBase ||
+		[];
 	const deepKbIds = extractKnowledgeBaseIds(rawKbData);
 
 	// Extract IDs from root path (Backend/Legacy structure)
-	const rootKbIds: number[] =
-		(form.values.agentConfig as any)?.knowledgeBaseIds || [];
+	const rootKbIds: number[] = (form.values as any)?.knowledgeBaseIds || [];
 
 	// Merge both sources
 	const selectedKbIds = Array.from(new Set([...deepKbIds, ...rootKbIds]));
@@ -157,13 +156,8 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 	};
 
 	const updateKnowledgeBaseIds = (newIds: number[]) => {
-		// Update deep path
-		form.setFieldValue(
-			'agentConfig.conversationConfig.agent.prompt.knowledgeBase',
-			newIds
-		);
-		// Update root path
-		form.setFieldValue('agentConfig.knowledgeBaseIds', newIds);
+		form.setFieldValue('conversationConfig.agent.prompt.knowledgeBase', newIds);
+		form.setFieldValue('knowledgeBaseIds', newIds);
 	};
 
 	const handleUnassignKnowledgeBase = (knowledgeBaseId: number) => {

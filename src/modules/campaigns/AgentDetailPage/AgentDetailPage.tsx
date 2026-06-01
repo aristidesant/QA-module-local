@@ -18,17 +18,20 @@ import type { Campaign } from '~/models/CampaignsModel';
 import type { AgentVersionSnapshot } from '~/models/AgentVersioningModel';
 import type { UpdateCampaignAgentConfigPayload } from '~/models/CampaignAgentModel';
 import {
+	AgentConfigFormProvider,
 	CampaignAgentEditorContext,
 	CampaignFormProvider,
 	CampaignIdContext,
+	useAgentConfigForm,
 	useCampaignForm,
 	type SelectedAgentDraft,
 } from '../campaignFormFunctions';
-import { useGetAgent } from '~/queries/agentQueries';
+import { useGetAgent, useUpdateAgent } from '~/queries/agentQueries';
 import {
 	useGetCampaignAgent,
 	useUpdateCampaignAgentConfig,
 } from '~/queries/campaignAgentsQueries';
+import { EditableTitle } from '~/components/EditableTitle/EditableTitle';
 import { useGetAgentVersioningStatus } from '~/queries/agentVersioningQueries';
 import AgentSaveReviewModal from '../CampaignsForm/AgentSaveReviewModal';
 import CampaignSyncButton from '../CampaignsForm/components/CampaignSyncButton';
@@ -63,10 +66,8 @@ const AgentDetailPage = () => {
 		isLoading: isAgentLoading,
 		refetch: refetchCampaignAgent,
 	} = useGetCampaignAgent(campaignId ?? 0, parsedCampaignAgentId);
-	const {
-		data: selectedAgent,
-		dataUpdatedAt: selectedAgentUpdatedAt,
-	} = useGetAgent(campaignAgent?.agentId ?? '');
+	const { data: selectedAgent, dataUpdatedAt: selectedAgentUpdatedAt } =
+		useGetAgent(campaignAgent?.agentId ?? '');
 	const activeAgentId = campaignAgent?.agentId ?? '';
 	useGetAgentVersioningStatus(activeAgentId);
 	const campaignDetailPath = campaignId
@@ -124,6 +125,10 @@ const AgentDetailPage = () => {
 		setPendingSaveRequest(null);
 	}, []);
 
+	const agentConfigForm = useAgentConfigForm({
+		initialValues: selectedAgent?.config ?? {},
+	});
+
 	const form = useCampaignForm({
 		initialValues: {
 			name: campaign?.name || '',
@@ -139,7 +144,6 @@ const AgentDetailPage = () => {
 			tags: campaign?.tags || [],
 			workingHours: campaign?.workingHours || {},
 			noiseCancellation: campaign?.noiseCancellation,
-			agentConfig: selectedAgent?.config ?? {},
 			dataCollectionVariables: campaign?.dataCollectionVariables ?? [],
 			defaultMaxWaves: campaign?.defaultMaxWaves ?? 3,
 			defaultWaveExecutionDelaySeconds:
@@ -157,25 +161,40 @@ const AgentDetailPage = () => {
 		form.setValues((current) => ({
 			...current,
 			configId: selectedAgent.configId || current.configId,
-			agentConfig: selectedAgent.config ?? {},
 		}));
+		agentConfigForm.setValues(selectedAgent.config ?? {});
 		form.resetDirty();
-	}, [selectedAgentUpdatedAt, form, selectedAgent]);
+	}, [selectedAgentUpdatedAt, form, agentConfigForm, selectedAgent]);
 
 	const updateCampaignAgentConfig = useUpdateCampaignAgentConfig();
+	const updateAgent = useUpdateAgent();
+
+	const handleRenameAgent = useCallback(
+		async (newName: string) => {
+			if (!activeAgentId) return;
+			try {
+				await updateAgent.mutateAsync({
+					id: activeAgentId,
+					data: { name: newName },
+				});
+				await refetchCampaignAgent();
+			} catch {
+				notifications.show({
+					color: 'red',
+					message: t('form.agent.selector.saveError'),
+				});
+				throw new Error('rename failed');
+			}
+		},
+		[activeAgentId, updateAgent, refetchCampaignAgent, t]
+	);
 
 	const agentName =
 		selectedCampaignAgent?.agent?.name || selectedCampaignAgent?.agentId || '';
-	const pageTitle = campaign?.name
-		? `${campaign.name} - ${agentName || t('agentDetail.page.title')}`
-		: agentName || t('agentDetail.page.title');
 	const pageDescription = t('agentDetail.page.description');
 
 	const submitSaveRequest = useCallback(
-		async (
-			request: PendingAgentSaveRequest,
-			versionDescription?: string
-		) => {
+		async (request: PendingAgentSaveRequest, versionDescription?: string) => {
 			if (!campaignId || !selectedCampaignAgent) return;
 
 			const updateData =
@@ -209,22 +228,19 @@ const AgentDetailPage = () => {
 		[campaignId, form, selectedCampaignAgent, t, updateCampaignAgentConfig]
 	);
 
-	const queueSaveRequest = useCallback(
-		(request: PendingAgentSaveRequest) => {
-			setPendingSaveRequest(request);
-			setReviewModalOpen(true);
-		},
-		[]
-	);
+	const queueSaveRequest = useCallback((request: PendingAgentSaveRequest) => {
+		setPendingSaveRequest(request);
+		setReviewModalOpen(true);
+	}, []);
 
 	const handleSaveClick = () => {
 		queueSaveRequest({
 			source: 'setup',
 			updateData: {
-				config: form.values.agentConfig,
+				config: agentConfigForm.values,
 				versionDescription: form.values.versionDescription,
 			},
-			reviewSnapshot: form.values.agentConfig as AgentVersionSnapshot,
+			reviewSnapshot: agentConfigForm.values as AgentVersionSnapshot,
 		});
 	};
 
@@ -306,7 +322,8 @@ const AgentDetailPage = () => {
 					{
 						agentId: selectedCampaignAgent.agentId,
 						agentName:
-							selectedCampaignAgent.agent?.name || selectedCampaignAgent.agentId,
+							selectedCampaignAgent.agent?.name ||
+							selectedCampaignAgent.agentId,
 					},
 				]}
 				selectedAgentId={selectedCampaignAgent.agentId}
@@ -356,43 +373,65 @@ const AgentDetailPage = () => {
 					updateSelectedAgentDraft,
 				}}
 			>
-				<CampaignFormProvider form={form}>
-					<ContentContainer
-						title={pageTitle}
-						description={pageDescription}
-						showBackButton
-						onBackClick={() => navigate(campaignDetailPath)}
-						titleRight={
-							(
+				<AgentConfigFormProvider form={agentConfigForm}>
+					<CampaignFormProvider form={form}>
+						<ContentContainer
+							title={
+								<>
+									{campaign?.name && (
+										<Text
+											span
+											fz='h5'
+											fw={600}
+											c='dimmed'
+											// inline-style-allow: no Mantine prop for whiteSpace
+											style={{ whiteSpace: 'nowrap' }}
+										>
+											{campaign.name}
+											{' / '}
+										</Text>
+									)}
+									<EditableTitle
+										value={agentName}
+										onSave={handleRenameAgent}
+										placeholder={t('agentDetail.editableName.placeholder')}
+									/>
+								</>
+							}
+							description={pageDescription}
+							showBackButton
+							onBackClick={() => navigate(campaignDetailPath)}
+							titleRight={
 								<Group gap='xs' wrap='wrap' justify='flex-end'>
 									{headerActions}
 									{testButton}
 									{activeTab !== 'workflow' ? saveButton : null}
 								</Group>
-							)
-						}
-					>
-						<Stack gap='sm'>
-							<AgentDetailTabs
-								agentId={selectedCampaignAgent.agentId}
-								value={activeTab}
-								onChange={setActiveTab}
-								onWorkflowSaveRequest={handleWorkflowSaveRequest}
-								isWorkflowSavePending={updateCampaignAgentConfig.isPending}
-							/>
-						</Stack>
-					</ContentContainer>
-					<AgentSaveReviewModal
-						opened={reviewModalOpen}
-						onClose={closeReviewModal}
-						publishedSnapshot={selectedAgent?.config as
-							| AgentVersionSnapshot
-							| undefined}
-						currentSnapshot={pendingSaveRequest?.reviewSnapshot}
-						onPublish={handlePublish}
-						isPublishing={updateCampaignAgentConfig.isPending}
-					/>
-				</CampaignFormProvider>
+							}
+						>
+							<Stack gap='sm'>
+								<AgentDetailTabs
+									agentId={selectedCampaignAgent.agentId}
+									value={activeTab}
+									onChange={setActiveTab}
+									onWorkflowSaveRequest={handleWorkflowSaveRequest}
+									isWorkflowSavePending={updateCampaignAgentConfig.isPending}
+									showAnalyticsTab={selectedCampaignAgent?.isPrincipal ?? false}
+								/>
+							</Stack>
+						</ContentContainer>
+						<AgentSaveReviewModal
+							opened={reviewModalOpen}
+							onClose={closeReviewModal}
+							publishedSnapshot={
+								selectedAgent?.config as AgentVersionSnapshot | undefined
+							}
+							currentSnapshot={pendingSaveRequest?.reviewSnapshot}
+							onPublish={handlePublish}
+							isPublishing={updateCampaignAgentConfig.isPending}
+						/>
+					</CampaignFormProvider>
+				</AgentConfigFormProvider>
 			</CampaignAgentEditorContext.Provider>
 		</CampaignIdContext.Provider>
 	);

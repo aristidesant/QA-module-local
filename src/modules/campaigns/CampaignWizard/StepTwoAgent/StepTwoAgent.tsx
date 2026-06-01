@@ -171,7 +171,9 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 		if (!createdCampaign) return;
 
 		const conversationAgent =
-			createdCampaign.agentConfig?.conversationConfig?.agent;
+			createdCampaign.agents?.find((a) => a.isPrincipal)?.agent?.config
+				?.conversationConfig?.agent ??
+			createdCampaign.agents?.[0]?.agent?.config?.conversationConfig?.agent;
 		const promptFromCampaign = conversationAgent?.prompt?.prompt;
 		const { ids: knowledgeBaseIdsFromCampaign, isPresent: hasKbIds } =
 			extractKnowledgeBaseIds(conversationAgent?.prompt?.knowledgeBase);
@@ -304,9 +306,13 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 
 		setIsSubmitting(true);
 		try {
+			const principalAgentConfig =
+				currentCampaign.agents?.find((a) => a.isPrincipal)?.agent?.config ??
+				currentCampaign.agents?.[0]?.agent?.config;
+
 			// Prepare updated prompt structure
 			const mergedConversationConfig = applyCampaignBehaviorConversationConfig(
-				(currentCampaign.agentConfig?.conversationConfig || {}) as Record<
+				(principalAgentConfig?.conversationConfig || {}) as Record<
 					string,
 					unknown
 				>,
@@ -315,53 +321,60 @@ export const StepTwoAgent: React.FC<StepTwoAgentProps> = ({ onNext }) => {
 			const currentAgent = mergedConversationConfig.agent ?? {};
 			const currentPrompt =
 				mergedConversationConfig.agent?.prompt ||
-				(currentCampaign.agentConfig?.conversationConfig?.agent?.prompt as
+				(principalAgentConfig?.conversationConfig?.agent?.prompt as
 					| Record<string, unknown>
 					| undefined) ||
 				{};
 
-			const payload = {
-				...currentCampaign,
-				configId: values.agentBehaviorId,
-				noiseCancellation: values.noiseCancellation,
-				agentConfig: {
-					...currentCampaign.agentConfig,
-					knowledgeBaseIds: currentKnowledgeBaseIds,
-					platformSettings: applyCampaignBehaviorPlatformSettings(
-						(currentCampaign.agentConfig?.platformSettings || {}) as Record<
-							string,
-							unknown
-						>,
-						selectedBehaviorPlatformSettings
-					),
-					conversationConfig: {
-						...mergedConversationConfig,
-						agent: {
-							...currentAgent,
-							language: values.language,
-							firstMessage: values.firstMessage,
-							prompt: {
-								...(currentPrompt as Record<string, unknown>),
-								prompt: values.agentPrompt,
-								knowledgeBase: currentKnowledgeBaseIds,
-							},
+			const agentConfigPayload: Record<string, unknown> = {
+				...principalAgentConfig,
+				knowledgeBaseIds: currentKnowledgeBaseIds,
+				platformSettings: applyCampaignBehaviorPlatformSettings(
+					(principalAgentConfig?.platformSettings || {}) as Record<
+						string,
+						unknown
+					>,
+					selectedBehaviorPlatformSettings
+				),
+				conversationConfig: {
+					...mergedConversationConfig,
+					agent: {
+						...currentAgent,
+						language: values.language,
+						firstMessage: values.firstMessage,
+						prompt: {
+							...(currentPrompt as Record<string, unknown>),
+							prompt: values.agentPrompt,
+							knowledgeBase: currentKnowledgeBaseIds,
 						},
 					},
 				},
 			};
 
-			if (payload.agentConfig?.conversationConfig) {
-				payload.agentConfig.conversationConfig =
+			if (agentConfigPayload.conversationConfig) {
+				agentConfigPayload.conversationConfig =
 					sanitizeCampaignBehaviorConversationConfig(
-						(payload.agentConfig.conversationConfig || {}) as Record<string, unknown>
-					) as typeof payload.agentConfig.conversationConfig;
+						(agentConfigPayload.conversationConfig || {}) as Record<
+							string,
+							unknown
+						>
+					);
 			}
 
-			// Remove toolIds from prompt if present, as it can interfere with knowledge base functionality
-			if (payload.agentConfig?.conversationConfig?.agent?.prompt) {
-				delete (payload.agentConfig.conversationConfig.agent.prompt as any)
+			const conversationConfig = agentConfigPayload.conversationConfig as
+				| WizardConversationConfig
+				| undefined;
+			if (conversationConfig?.agent?.prompt) {
+				delete (conversationConfig.agent.prompt as Record<string, unknown>)
 					.toolIds;
 			}
+
+			const payload = {
+				...currentCampaign,
+				configId: values.agentBehaviorId,
+				noiseCancellation: values.noiseCancellation,
+				agentConfig: agentConfigPayload,
+			};
 
 			// Ensure configId is a string and convert id to string for API
 			const updatePayload = {

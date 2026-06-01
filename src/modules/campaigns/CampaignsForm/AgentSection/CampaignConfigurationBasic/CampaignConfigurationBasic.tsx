@@ -1,8 +1,8 @@
 // CampaignConfigurationBasic.tsx
 import React from 'react';
-import { Textarea } from '@mantine/core';
-import { IconMessageDots } from '@tabler/icons-react';
-import { useCampaignFormContext } from '../../../campaignFormFunctions';
+import { Select, Stack, Textarea } from '@mantine/core';
+import { IconLanguage, IconMessageDots } from '@tabler/icons-react';
+import { useAgentConfigFormContext } from '../../../campaignFormFunctions';
 import styles from './CampaignConfigurationBasic.module.css';
 import SectionCard from '~/components/SectionCard';
 import { useTranslation } from 'react-i18next';
@@ -13,7 +13,18 @@ const CampaignConfigurationBasic: React.FC = () => {
 		'campaign.detail',
 		'common',
 	]);
-	const form = useCampaignFormContext();
+	const form = useAgentConfigFormContext();
+
+	const languageOptions = [
+		{
+			value: 'en',
+			label: t('form.agent.basic.languages.en'),
+		},
+		{
+			value: 'es',
+			label: t('form.agent.basic.languages.es'),
+		},
+	];
 
 	return (
 		<SectionCard
@@ -23,19 +34,34 @@ const CampaignConfigurationBasic: React.FC = () => {
 			className={styles.sectionCard}
 			contentSpacing='lg'
 		>
-			<Textarea
-				placeholder={t('form.agent.basic.firstMessagePlaceholder')}
-				rows={4}
-				value={
-					form.values.agentConfig?.conversationConfig?.agent?.firstMessage ?? ''
-				}
-				onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-					form.setFieldValue(
-						'agentConfig.conversationConfig.agent.firstMessage',
-						e.target.value
-					)
-				}
-			/>
+			<Stack gap='sm'>
+				<Select
+					label={t('form.agent.basic.language')}
+					placeholder={t('form.agent.basic.languagePlaceholder')}
+					leftSection={<IconLanguage size={14} />}
+					value={form.values.conversationConfig?.agent?.language || ''}
+					onChange={(value) => {
+						if (value)
+							form.setFieldValue('conversationConfig.agent.language', value);
+					}}
+					data={languageOptions}
+					searchable
+					nothingFoundMessage={t('form.agent.basic.noLanguageFound')}
+					size='sm'
+				/>
+				<Textarea
+					label={t('form.agent.basic.firstMessage')}
+					placeholder={t('form.agent.basic.firstMessagePlaceholder')}
+					rows={4}
+					value={form.values.conversationConfig?.agent?.firstMessage ?? ''}
+					onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+						form.setFieldValue(
+							'conversationConfig.agent.firstMessage',
+							e.target.value
+						)
+					}
+				/>
+			</Stack>
 		</SectionCard>
 	);
 };

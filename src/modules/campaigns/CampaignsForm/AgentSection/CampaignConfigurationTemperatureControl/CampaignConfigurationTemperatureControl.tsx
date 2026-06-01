@@ -2,23 +2,19 @@
 import { Button, Group, Slider, Text } from '@mantine/core';
 import { useCallback } from 'react';
 import { IconAdjustments } from '@tabler/icons-react';
-import { useCampaignFormContext } from '../../../campaignFormFunctions';
+import { useAgentConfigFormContext } from '../../../campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
 import styles from './CampaignConfigurationTemperatureControl.module.css';
 
 const CampaignConfigurationTemperatureControl: React.FC = () => {
-	const form = useCampaignFormContext();
+	const form = useAgentConfigFormContext();
 
 	const currentTemperature =
-		form.values.agentConfig?.conversationConfig?.agent?.prompt?.temperature ??
-		0.5;
+		form.values.conversationConfig?.agent?.prompt?.temperature ?? 0.5;
 
 	const handleTemperatureChange = useCallback(
 		(value: number) => {
-			form.setFieldValue(
-				'agentConfig.conversationConfig.agent.prompt.temperature',
-				value
-			);
+			form.setFieldValue('conversationConfig.agent.prompt.temperature', value);
 		},
 		[form]
 	);
