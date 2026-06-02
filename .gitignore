@@ -50,3 +50,4 @@ package-lock.json
 /.agents/
 skills-lock.json
 install.cmd
+/doctor/

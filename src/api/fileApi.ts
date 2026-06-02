@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { DEFAULT_API_URL } from './config';
 import type FileModel from '~/models/FileModel';
+import type FileTypeModel from '~/models/FileTypeModel';
 
 /**
  * File API client
@@ -74,15 +75,24 @@ const fileApi = (_authHeader?: Record<string, string>) => {
 			throw new Error('Unexpected response when requesting presigned file URL');
 		},
 
+		getFileTypes: async (): Promise<FileTypeModel[]> => {
+			const response = await axios.get<FileTypeModel[]>(
+				`${DEFAULT_API_URL}/file-types`
+			);
+			return response.data;
+		},
+
 		uploadFile: async (
 			file: File,
 			codeType?: string,
-			description?: string
+			description?: string,
+			typeId?: number
 		): Promise<FileModel> => {
 			const formData = new FormData();
 			formData.append('file', file);
 			if (codeType) formData.append('codeType', codeType);
 			if (description) formData.append('description', description);
+			if (typeId != null) formData.append('typeId', String(typeId));
 			const response = await axios.post<FileModel>(
 				`${DEFAULT_API_URL}/files/upload`,
 				formData

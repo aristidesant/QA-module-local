@@ -28,7 +28,11 @@ import {
 	useGetClient,
 	useUpdateClient,
 } from '~/queries/clientQueries';
-import { useGetClientFiles, useUploadFile } from '~/queries/fileQueries';
+import {
+	useGetClientFiles,
+	useGetFileTypes,
+	useUploadFile,
+} from '~/queries/fileQueries';
 
 const InvoiceTemplateManager: React.FC = () => {
 	const { t } = useTranslation('billing');
@@ -42,8 +46,13 @@ const InvoiceTemplateManager: React.FC = () => {
 	const { data: clientFiles = [] } = useGetClientFiles(
 		selectedClientId ?? undefined
 	);
+	const { data: fileTypes = [] } = useGetFileTypes();
 	const uploadMutation = useUploadFile();
 	const updateMutation = useUpdateClient();
+
+	const templateTypeId = fileTypes.find(
+		(ft) => ft.code === 'billing-template'
+	)?.id;
 
 	const currentTemplateFileId = selectedClient?.invoiceTemplateFileId ?? null;
 	const currentTemplateFile = currentTemplateFileId
@@ -75,7 +84,7 @@ const InvoiceTemplateManager: React.FC = () => {
 		try {
 			const uploadedFile = await uploadMutation.mutateAsync({
 				file,
-				codeType: 'INVOICE_TEMPLATE',
+				typeId: templateTypeId,
 				description: `Invoice template for ${selectedClient?.name ?? 'client'}`,
 			});
 
