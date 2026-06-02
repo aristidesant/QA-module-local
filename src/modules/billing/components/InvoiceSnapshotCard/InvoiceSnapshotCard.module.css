@@ -1,0 +1,47 @@
+.grid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--mantine-spacing-md);
+}
+
+.infoBlock {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.label {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-dimmed);
+}
+
+.value {
+	font-size: var(--mantine-font-size-sm);
+}
+
+.totalsGrid {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: var(--mantine-spacing-xs) var(--mantine-spacing-xl);
+	max-width: 320px;
+	margin-left: auto;
+}
+
+.totalRow {
+	font-weight: 600;
+	font-size: var(--mantine-font-size-md);
+}
+
+.collapseButton {
+	width: 100%;
+}
+
+.divider {
+	grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+	.grid {
+		grid-template-columns: 1fr;
+	}
+}
