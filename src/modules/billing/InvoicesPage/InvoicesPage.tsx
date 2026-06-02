@@ -18,6 +18,7 @@ import { useGetAllClients } from '~/queries/clientQueries';
 import { usePagination } from '~/hooks/usePagination';
 import type { FilterInvoiceDto, InvoiceResponse } from '~/models/InvoiceModel';
 import InvoiceFilters from '../components/InvoiceFilters';
+import InvoiceTemplateManager from '../components/InvoiceTemplateManager';
 import { useInvoiceColumns } from '../hooks/useInvoiceColumns';
 import classes from './InvoicesPage.module.css';
 
@@ -206,6 +207,8 @@ const InvoicesPage: React.FC = () => {
 						onChange={handleFiltersChange}
 					/>
 				</SectionCard>
+
+				<InvoiceTemplateManager />
 
 				<SectionCard
 					title={t('page.title')}
