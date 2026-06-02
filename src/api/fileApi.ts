@@ -73,6 +73,22 @@ const fileApi = (_authHeader?: Record<string, string>) => {
 
 			throw new Error('Unexpected response when requesting presigned file URL');
 		},
+
+		uploadFile: async (
+			file: File,
+			codeType?: string,
+			description?: string
+		): Promise<FileModel> => {
+			const formData = new FormData();
+			formData.append('file', file);
+			if (codeType) formData.append('codeType', codeType);
+			if (description) formData.append('description', description);
+			const response = await axios.post<FileModel>(
+				`${DEFAULT_API_URL}/files/upload`,
+				formData
+			);
+			return response.data;
+		},
 	};
 };
 
