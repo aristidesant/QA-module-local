@@ -1,115 +1,59 @@
 .nodeRow {
-	--disposition-node-surface: light-dark(
-		var(--mantine-color-white),
-		var(--mantine-color-dark-7)
-	);
-	--disposition-node-surface-hover: light-dark(
-		var(--mantine-color-green-0),
-		var(--mantine-color-dark-6)
-	);
-	--disposition-node-surface-selected: light-dark(
-		var(--mantine-color-green-0),
-		var(--mantine-color-dark-6)
-	);
-	--disposition-node-border: light-dark(
-		var(--mantine-color-gray-3),
-		var(--mantine-color-dark-4)
-	);
-	--disposition-node-border-hover: light-dark(
-		var(--mantine-color-green-4),
-		var(--mantine-color-green-7)
-	);
-	--disposition-node-border-selected: light-dark(
-		var(--mantine-color-green-5),
-		var(--mantine-color-green-5)
-	);
 	--disposition-node-text: light-dark(
 		var(--mantine-color-gray-9),
 		var(--mantine-color-gray-0)
 	);
-	--disposition-node-shadow: light-dark(
-		var(--mantine-shadow-sm),
-		0 14px 28px rgba(0, 0, 0, 0.22)
+	--row-hover: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+	--row-selected: light-dark(
+		var(--mantine-color-green-0),
+		color-mix(in srgb, var(--mantine-color-green-9) 22%, transparent)
 	);
 	position: relative;
 	display: flex;
-	align-items: stretch;
+	align-items: center;
 	gap: var(--mantine-spacing-xs);
-	padding: 10px 12px 10px 14px;
-	margin-bottom: 6px;
-	border: 1px solid var(--disposition-node-border);
-	border-radius: var(--mantine-radius-md);
-	background: var(--disposition-node-surface);
-	box-shadow: var(--disposition-node-shadow);
-	overflow: hidden;
-	transition:
-		transform 120ms ease,
-		border-color 120ms ease,
-		background-color 120ms ease,
-		box-shadow 120ms ease;
+	min-height: 36px;
+	padding: 5px 8px;
+	border-radius: var(--mantine-radius-sm);
+	background: transparent;
+	transition: background-color 120ms ease-out;
+	outline: none;
 }
 
-/* Tone-specific backgrounds + borders (no side-stripe) */
+/* Branch tone drives the connector guides; the dot carries the row's own tone. */
 .nodeRow[data-tone='effective'] {
-	background: light-dark(
-		color-mix(
-			in srgb,
-			var(--mantine-color-green-1) 30%,
-			var(--disposition-node-surface)
-		),
-		color-mix(
-			in srgb,
-			var(--mantine-color-green-9) 12%,
-			var(--disposition-node-surface)
-		)
-	);
-	border-color: light-dark(
-		var(--mantine-color-green-3),
-		var(--mantine-color-green-8)
+	--branch-line: color-mix(
+		in srgb,
+		var(--mantine-color-green-5) 38%,
+		transparent
 	);
 }
 
 .nodeRow[data-tone='noEffective'] {
-	background: light-dark(
-		color-mix(
-			in srgb,
-			var(--mantine-color-orange-1) 28%,
-			var(--disposition-node-surface)
-		),
-		color-mix(
-			in srgb,
-			var(--mantine-color-orange-9) 12%,
-			var(--disposition-node-surface)
-		)
-	);
-	border-color: light-dark(
-		var(--mantine-color-orange-3),
-		var(--mantine-color-orange-8)
+	--branch-line: color-mix(
+		in srgb,
+		var(--mantine-color-orange-5) 38%,
+		transparent
 	);
 }
 
 .nodeRow[data-tone='noContact'] {
-	background: light-dark(
-		color-mix(
-			in srgb,
-			var(--mantine-color-red-1) 28%,
-			var(--disposition-node-surface)
-		),
-		color-mix(
-			in srgb,
-			var(--mantine-color-red-9) 12%,
-			var(--disposition-node-surface)
-		)
-	);
-	border-color: light-dark(
-		var(--mantine-color-red-3),
-		var(--mantine-color-red-8)
+	--branch-line: color-mix(
+		in srgb,
+		var(--mantine-color-red-5) 38%,
+		transparent
 	);
 }
 
 .nodeRow[data-tone='default'] {
-	background: var(--disposition-node-surface);
-	border-color: var(--disposition-node-border);
+	--branch-line: color-mix(
+		in srgb,
+		var(--mantine-color-blue-5) 32%,
+		transparent
+	);
 }
 
 .rowContent {
@@ -120,8 +64,8 @@
 }
 
 .togglePlaceholder {
-	width: 24px;
-	height: 24px;
+	width: 22px;
+	height: 22px;
 	display: inline-flex;
 	flex-shrink: 0;
 }
@@ -131,7 +75,6 @@
 	height: 8px;
 	border-radius: 999px;
 	flex-shrink: 0;
-	box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.08);
 }
 
 .effectiveDot {
@@ -168,17 +111,13 @@
 	gap: 4px;
 }
 
-.badges {
-	flex-wrap: wrap;
-}
-
 .actions {
 	opacity: 0;
 	display: flex;
 	align-items: center;
 	gap: 4px;
 	padding-left: 2px;
-	transition: opacity 120ms ease;
+	transition: opacity 120ms ease-out;
 }
 
 .nodeRow:hover .actions,
@@ -191,44 +130,61 @@
 }
 
 .clickable:hover {
-	border-color: var(--disposition-node-border-hover);
-	background: light-dark(
-		color-mix(
-			in srgb,
-			var(--mantine-color-green-0) 60%,
-			var(--disposition-node-surface)
-		),
-		var(--disposition-node-surface-hover)
-	);
-	transform: translateY(-1px);
-	box-shadow:
-		0 0 0 1px color-mix(in srgb, var(--mantine-color-green-3) 38%, transparent),
-		0 18px 26px rgba(0, 0, 0, 0.1);
+	background: var(--row-hover);
 }
 
-.selected {
-	border-color: var(--disposition-node-border-selected);
-	background: light-dark(
-		var(--mantine-color-green-0),
-		color-mix(
-			in srgb,
-			var(--mantine-color-green-9) 18%,
-			var(--disposition-node-surface)
-		)
-	);
-	box-shadow:
-		0 0 0 1px
-			light-dark(var(--mantine-color-green-2), var(--mantine-color-green-9)),
-		var(--disposition-node-shadow);
+.nodeRow:focus-visible {
+	background: var(--row-hover);
+}
+
+.selected,
+.selected:hover {
+	background: var(--row-selected);
+}
+
+/* ---- Connector guides (branch-tone colored) ---- */
+
+.nodeChildren {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	position: relative;
+	margin-top: 3px;
+	margin-left: 18px;
+	padding-left: 16px;
+	border-left: 1px solid var(--branch-line, var(--mantine-color-gray-4));
+}
+
+/* Horizontal elbow from the vertical guide to each direct child row.
+   NodeEditor renders a Fragment, so each child's .nodeRow is a direct
+   child of this container (no wrapper element). */
+.nodeChildren > .nodeRow::before {
+	content: '';
+	position: absolute;
+	left: -16px;
+	top: 18px;
+	width: 16px;
+	height: 1px;
+	background: var(--branch-line, var(--mantine-color-gray-4));
 }
 
 @media (max-width: 768px) {
 	.nodeRow {
-		padding: var(--mantine-spacing-xs);
+		padding: 5px 6px;
 	}
 
 	.togglePlaceholder {
-		width: 22px;
-		height: 22px;
+		width: 20px;
+		height: 20px;
+	}
+
+	.nodeChildren {
+		margin-left: 12px;
+		padding-left: 12px;
+	}
+
+	.nodeChildren > .nodeRow::before {
+		left: -12px;
+		width: 12px;
 	}
 }

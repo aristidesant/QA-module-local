@@ -1,6 +1,15 @@
 import React, { useEffect } from 'react';
-import { Group, Paper, Skeleton, Stack, Text, ThemeIcon } from '@mantine/core';
-import { IconSitemap } from '@tabler/icons-react';
+import {
+	Button,
+	Group,
+	Paper,
+	SimpleGrid,
+	Skeleton,
+	Stack,
+	Text,
+	ThemeIcon,
+} from '@mantine/core';
+import { IconPlus, IconSitemap } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
@@ -9,9 +18,72 @@ import { useCampaignsStore } from '~/stores/campaignsStore';
 import { useDispositionBuilderStore } from './dispositionStore';
 import { useDispositionFlowsByCampaignPath } from '~/queries/dispositionFlowQueries';
 import { notifications } from '@mantine/notifications';
-import DispositionViewer from './DispositionViewer';
+import DispositionSummaryCard from './DispositionSummaryCard';
 import { useCampaignId } from '~/modules/campaigns/campaignFormFunctions';
 import styles from './DispositionSection.module.css';
+
+interface DispositionEmptyStateProps {
+	onAdd: () => void;
+}
+
+const DispositionEmptyState: React.FC<DispositionEmptyStateProps> = ({
+	onAdd,
+}) => {
+	const { t } = useTranslation(['campaign.form.outcomes']);
+	const steps = [
+		t('disposition.emptyState.step1'),
+		t('disposition.emptyState.step2'),
+		t('disposition.emptyState.step3'),
+	];
+
+	return (
+		<Paper withBorder className={styles.emptyState} p='xl' radius='md'>
+			<div className={styles.emptyGrid}>
+				<Stack gap='md'>
+					<ThemeIcon size={48} radius='xl' color='gray' variant='light'>
+						<IconSitemap size={24} />
+					</ThemeIcon>
+					<Stack gap={4}>
+						<Text size='sm' fw={700}>
+							{t('disposition.emptyState.heading')}
+						</Text>
+						<Text size='sm' c='dimmed' lh={1.55}>
+							{t('disposition.emptyState.body')}
+						</Text>
+					</Stack>
+				</Stack>
+				<Stack gap='md' justify='space-between'>
+					<Stack gap='sm'>
+						{steps.map((step, i) => (
+							<Group key={i} gap='sm' align='flex-start' wrap='nowrap'>
+								<Text
+									component='span'
+									size='xs'
+									fw={700}
+									className={styles.stepNumber}
+								>
+									{i + 1}
+								</Text>
+								<Text size='xs' c='dimmed' lh={1.5}>
+									{step}
+								</Text>
+							</Group>
+						))}
+					</Stack>
+					<div>
+						<Button
+							leftSection={<IconPlus size={15} />}
+							onClick={onAdd}
+							size='sm'
+						>
+							{t('disposition.addOutcome')}
+						</Button>
+					</div>
+				</Stack>
+			</div>
+		</Paper>
+	);
+};
 
 const DispositionSection: React.FC = () => {
 	const { t } = useTranslation([
@@ -97,22 +169,19 @@ const DispositionSection: React.FC = () => {
 			description={t('disposition.description')}
 		>
 			{isLoadingCurrentFlow ? (
-				<Paper withBorder className={styles.loadingState} p='xl' radius='md'>
-					<Stack gap='md'>
-						<Group justify='space-between' align='center'>
-							<Stack gap={6} style={{ flex: 1 }}>
-								<Skeleton height={16} width='28%' radius='sm' />
-								<Skeleton height={10} width='52%' radius='sm' />
-							</Stack>
-							<Skeleton height={32} width={104} radius='sm' />
-						</Group>
-						<Skeleton height={220} radius='md' />
-						<Group grow>
-							<Skeleton height={68} radius='md' />
-							<Skeleton height={68} radius='md' />
-						</Group>
-					</Stack>
-				</Paper>
+				<Stack gap='md'>
+					<Paper withBorder className={styles.loadingState} p='md' radius='md'>
+						<SimpleGrid cols={{ base: 2, sm: 4 }}>
+							{Array.from({ length: 4 }).map((_, i) => (
+								<Stack key={i} gap={6} p='xs'>
+									<Skeleton height={26} width='45%' radius='sm' />
+									<Skeleton height={9} width='65%' radius='sm' />
+								</Stack>
+							))}
+						</SimpleGrid>
+					</Paper>
+					<Skeleton height={220} radius='md' />
+				</Stack>
 			) : isCurrentFlowError ? (
 				<Paper withBorder className={styles.errorState} p='xl' radius='md'>
 					<Stack align='center' gap='xs'>
@@ -124,22 +193,10 @@ const DispositionSection: React.FC = () => {
 						</Text>
 					</Stack>
 				</Paper>
-			) : currentDispositionFlow ? (
-				<DispositionViewer flow={currentDispositionFlow} />
+			) : hasFlow ? (
+				<DispositionSummaryCard flow={currentDispositionFlow!} />
 			) : (
-				<Paper withBorder className={styles.emptyState} p='xl' radius='md'>
-					<Stack align='center' gap='xs'>
-						<ThemeIcon size={48} radius='xl' color='gray' variant='light'>
-							<IconSitemap size={24} />
-						</ThemeIcon>
-						<Text size='sm' fw={500} c='dimmed'>
-							{t('disposition.noFlowConfigured')}
-						</Text>
-						<Text size='xs' c='dimmed' ta='center' maw={400}>
-							{t('disposition.noFlowDescription')}
-						</Text>
-					</Stack>
-				</Paper>
+				<DispositionEmptyState onAdd={() => handleOpenModal(false)} />
 			)}
 		</SectionCard>
 	);
