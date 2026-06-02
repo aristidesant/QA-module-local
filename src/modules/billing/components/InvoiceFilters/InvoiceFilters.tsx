@@ -11,18 +11,18 @@ interface InvoiceFiltersProps {
 	onChange: (filters: FilterInvoiceDto) => void;
 }
 
-const STATUS_OPTIONS: { value: InvoiceStatus; label: string }[] = [
-	{ value: 'DRAFT', label: 'Draft' },
-	{ value: 'ISSUED', label: 'Issued' },
-	{ value: 'VOIDED', label: 'Voided' },
-];
-
 const InvoiceFilters: React.FC<InvoiceFiltersProps> = ({
 	filters,
 	clients,
 	onChange,
 }) => {
 	const { t } = useTranslation('billing');
+
+	const statusOptions: { value: InvoiceStatus; label: string }[] = [
+		{ value: 'DRAFT', label: t('status.DRAFT') },
+		{ value: 'ISSUED', label: t('status.ISSUED') },
+		{ value: 'VOIDED', label: t('status.VOIDED') },
+	];
 
 	const clientOptions = clients.map((c) => ({
 		value: String(c.id),
@@ -41,7 +41,7 @@ const InvoiceFilters: React.FC<InvoiceFiltersProps> = ({
 			<Select
 				label={t('filters.status.label')}
 				placeholder={t('filters.status.placeholder')}
-				data={STATUS_OPTIONS}
+				data={statusOptions}
 				value={filters.status ?? null}
 				onChange={(v) =>
 					onChange({ ...filters, status: (v as InvoiceStatus) ?? undefined })

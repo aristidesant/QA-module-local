@@ -27,6 +27,7 @@ export function useGetAllUsers(params?: GetAllUsersParams) {
 			const api = userApi();
 			return api.getAllUsers(params);
 		},
+		enabled: params != null,
 	});
 }
 

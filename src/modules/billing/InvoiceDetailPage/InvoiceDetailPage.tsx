@@ -80,6 +80,7 @@ const InvoiceDetailPage: React.FC = () => {
 		modals.openConfirmModal({
 			title: t('detail.actions.voidTitle'),
 			centered: true,
+			closeOnConfirm: false,
 			children: (
 				<div>
 					<Text size='sm' mb='sm'>
@@ -114,6 +115,7 @@ const InvoiceDetailPage: React.FC = () => {
 						id: invoiceId,
 						dto: { reason },
 					});
+					modals.closeAll();
 					notifications.show({
 						title: t('notifications.voided.title'),
 						message: t('notifications.voided.message', {

@@ -67,7 +67,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 	const [isAliasManuallyEdited, setIsAliasManuallyEdited] = useState(false);
 	const isMasterClient = useIsMasterClient();
 	const { data: allUsers } = useGetAllUsers(
-		isEditMode && clientId ? { clientId } : undefined
+		isEditMode && isMasterClient && clientId ? { clientId } : undefined
 	);
 	const { data: clientFiles = [] } = useGetClientFiles(
 		isEditMode ? clientId : undefined
