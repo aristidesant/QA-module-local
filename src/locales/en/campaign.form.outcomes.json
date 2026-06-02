@@ -7,6 +7,20 @@
 		"noFlowConfigured": "No outcome flow configured",
 		"noFlowDescription": "Get started by adding a new outcome flow to track and manage call results effectively.",
 		"saveSuccess": "Outcome flow saved successfully.",
+		"emptyState": {
+			"heading": "Configure call outcomes",
+			"body": "Outcome flows define what happens after every call. Map answered, voicemail, busy, and do-not-call results so your team always knows the next action.",
+			"step1": "Pick a catalog — the source of available outcomes",
+			"step2": "Build the outcome tree — drag nodes into your flow",
+			"step3": "Set behaviors — reschedule, do-not-call, invalidate number"
+		},
+		"summary": {
+			"totalNodes": "Total nodes",
+			"groups": "Groups",
+			"outcomes": "Outcomes",
+			"flagged": "Flagged",
+			"warningBanner": "{{count}} outcome(s) have behavioral flags — review them before activating this campaign."
+		},
 		"catalog": {
 			"selectCatalog": "Select Catalog",
 			"catalogChangeDisabled": "Cannot change catalog when outcomes are already added",

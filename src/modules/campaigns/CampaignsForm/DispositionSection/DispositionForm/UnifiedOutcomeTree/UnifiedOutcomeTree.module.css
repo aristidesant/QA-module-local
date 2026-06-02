@@ -1,0 +1,243 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+	gap: var(--mantine-spacing-xs);
+	overflow: hidden;
+}
+
+.toolbar {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+	flex-shrink: 0;
+}
+
+.catalogSelect {
+	flex: 1;
+	min-width: 0;
+}
+
+.searchInput {
+	flex-shrink: 0;
+}
+
+.scrollArea {
+	flex: 1;
+	min-height: 0;
+}
+
+.tree {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	padding-bottom: var(--mantine-spacing-xs);
+}
+
+/* ---- Row ---- */
+
+.nodeShell {
+	display: flex;
+	flex-direction: column;
+}
+
+.row {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-height: 36px;
+	padding: 4px 8px;
+	border-radius: var(--mantine-radius-sm);
+	cursor: pointer;
+	outline: none;
+	transition: background-color 120ms ease-out;
+}
+
+.row[data-tone='effective'] {
+	--branch: var(--mantine-color-green-6);
+	--branch-line: color-mix(
+		in srgb,
+		var(--mantine-color-green-5) 38%,
+		transparent
+	);
+}
+
+.row[data-tone='noEffective'] {
+	--branch: var(--mantine-color-orange-6);
+	--branch-line: color-mix(
+		in srgb,
+		var(--mantine-color-orange-5) 38%,
+		transparent
+	);
+}
+
+.row[data-tone='noContact'] {
+	--branch: var(--mantine-color-red-6);
+	--branch-line: color-mix(
+		in srgb,
+		var(--mantine-color-red-5) 38%,
+		transparent
+	);
+}
+
+.row[data-tone='default'] {
+	--branch: var(--mantine-color-blue-6);
+	--branch-line: color-mix(
+		in srgb,
+		var(--mantine-color-blue-5) 32%,
+		transparent
+	);
+}
+
+.row:hover {
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+}
+
+.rowSelected {
+	background: light-dark(
+		var(--mantine-color-gray-1),
+		var(--mantine-color-dark-5)
+	) !important;
+}
+
+.toggle {
+	flex-shrink: 0;
+}
+
+.rowToggle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	flex-shrink: 0;
+}
+
+.chevron {
+	color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-2));
+}
+
+.chevronSpacer {
+	display: inline-block;
+	width: 18px;
+	height: 18px;
+}
+
+.icon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 18px;
+	height: 18px;
+	flex-shrink: 0;
+	color: var(--branch, var(--mantine-color-blue-6));
+}
+
+.name {
+	flex: 1;
+	min-width: 0;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+	transition: color 120ms ease-out;
+}
+
+.name[data-included='false'] {
+	color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-2));
+}
+
+.rowAside {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	flex-shrink: 0;
+}
+
+.flags {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+}
+
+.hoverMeta {
+	opacity: 0;
+	transition: opacity 120ms ease-out;
+}
+
+.row:hover .hoverMeta {
+	opacity: 1;
+}
+
+/* ---- Connector guides ---- */
+
+.nodeChildren {
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	margin-left: 20px;
+	padding-left: 16px;
+	border-left: 1px solid var(--branch-line, var(--mantine-color-gray-3));
+}
+
+.nodeChildren[data-tone='effective'] {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-green-5) 38%,
+		transparent
+	);
+}
+
+.nodeChildren[data-tone='noEffective'] {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-orange-5) 38%,
+		transparent
+	);
+}
+
+.nodeChildren[data-tone='noContact'] {
+	border-color: color-mix(in srgb, var(--mantine-color-red-5) 38%, transparent);
+}
+
+.nodeChildren[data-tone='default'] {
+	border-color: color-mix(
+		in srgb,
+		var(--mantine-color-blue-5) 32%,
+		transparent
+	);
+}
+
+.nodeChildren > .nodeShell {
+	position: relative;
+}
+
+.nodeChildren > .nodeShell::before {
+	content: '';
+	position: absolute;
+	left: -16px;
+	top: 18px;
+	width: 16px;
+	height: 1px;
+	background: inherit;
+	background: color-mix(in srgb, currentColor 20%, transparent);
+}
+
+@media (max-width: 768px) {
+	.nodeChildren {
+		margin-left: 12px;
+		padding-left: 12px;
+	}
+
+	.nodeChildren > .nodeShell::before {
+		left: -12px;
+		width: 12px;
+	}
+
+	.hoverMeta {
+		display: none;
+	}
+}

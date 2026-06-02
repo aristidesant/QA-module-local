@@ -33,6 +33,8 @@ interface NodeEditorProps {
 	catalogNodes?: DispositionNode[] | undefined;
 	collapseAllKey?: number;
 	expandAllKey?: number;
+	/** Tone inherited from the branch root; colors the connector guides + dot. */
+	branchTone?: string;
 }
 
 const NodeEditor: React.FC<NodeEditorProps> = ({
@@ -47,6 +49,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 	catalogNodes,
 	collapseAllKey,
 	expandAllKey,
+	branchTone,
 }) => {
 	const { t } = useTranslation([
 		'campaign.form.outcomes',
@@ -112,7 +115,8 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 	const hasChildren = existingChildren.length > 0;
 	const hasCatalogChildren = catalogChildren.length > 0;
 	const showGroupActions = hasChildren || hasCatalogChildren;
-	const nodeStyle = getNodeStyle(node, level);
+	// Branch root decides the tone; it flows down to every descendant guide + dot.
+	const tone = level === 0 ? getNodeStyle(node, 0) : (branchTone ?? 'default');
 	const isSelected = selectedNodeId === node.id;
 	const isDoNotCall = Boolean(node.doNotCall ?? node.do_not_call);
 	const isAbandoned = Boolean(node.isAbandoned);
@@ -179,14 +183,13 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 	return (
 		<>
 			<Box
-				className={`${styles.nodeRow} ${styles[nodeStyle]} ${
+				className={`${styles.nodeRow} ${
 					isSelected ? styles.selected : ''
 				} ${onNodeSelect ? styles.clickable : ''}`}
-				data-tone={nodeStyle}
+				data-tone={tone}
 				data-selected={isSelected ? 'true' : 'false'}
 				data-has-children={showGroupActions ? 'true' : 'false'}
 				data-collapsed={collapsed ? 'true' : 'false'}
-				style={{ marginLeft: level === 0 ? 0 : level * 12 }}
 				onClick={onNodeSelect ? handleSelect : undefined}
 			>
 				<Group gap={4} wrap='nowrap' className={styles.rowContent}>
@@ -211,9 +214,7 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 						<span className={styles.togglePlaceholder} />
 					)}
 
-					<span
-						className={`${styles.statusDot} ${styles[`${nodeStyle}Dot`]}`}
-					/>
+					<span className={`${styles.statusDot} ${styles[`${tone}Dot`]}`} />
 
 					<Box className={styles.nodeDetails}>
 						<Group justify='space-between' gap={4} wrap='nowrap'>
@@ -404,8 +405,9 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 				</Group>
 			</Box>
 
-			{!collapsed && hasChildren
-				? existingChildren.map((child) => (
+			{!collapsed && hasChildren ? (
+				<div className={styles.nodeChildren} data-tone={tone}>
+					{existingChildren.map((child) => (
 						<NodeEditor
 							key={child.id}
 							node={child}
@@ -419,9 +421,11 @@ const NodeEditor: React.FC<NodeEditorProps> = ({
 							catalogNodes={catalogNodes}
 							collapseAllKey={collapseAllKey}
 							expandAllKey={expandAllKey}
+							branchTone={tone}
 						/>
-					))
-				: null}
+					))}
+				</div>
+			) : null}
 		</>
 	);
 };
