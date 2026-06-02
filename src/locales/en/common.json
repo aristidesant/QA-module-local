@@ -82,6 +82,7 @@
 			"users": "Users",
 			"roles": "Roles",
 			"clients": "Clients",
+			"invoices": "Invoices",
 			"reportTemplates": "Report Templates"
 		},
 		"account": {

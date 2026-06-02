@@ -12,4 +12,5 @@ export enum ModuleEnum {
 	SETTINGS = 'SETTINGS',
 	REPORTS = 'REPORTS',
 	ROLES = 'ROLES',
+	BILLING = 'BILLING',
 }

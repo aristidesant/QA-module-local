@@ -122,6 +122,15 @@ const ReportTemplatesListPage = React.lazy(
 const ReportTemplateDetailPage = React.lazy(
 	() => import('./modules/report-templates/ReportTemplateDetailPage')
 );
+const InvoicesPage = React.lazy(
+	() => import('./modules/billing/InvoicesPage/InvoicesPage')
+);
+const InvoiceNewPage = React.lazy(
+	() => import('./modules/billing/InvoiceNewPage/InvoiceNewPage')
+);
+const InvoiceDetailPage = React.lazy(
+	() => import('./modules/billing/InvoiceDetailPage/InvoiceDetailPage')
+);
 
 /**
  * Automatically loads i18n namespaces based on the active route's ID.
@@ -357,6 +366,44 @@ const router = createBrowserRouter([
 								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
+					},
+					{
+						path: 'billing',
+						children: [
+							{
+								path: 'invoices',
+								id: 'invoices',
+								element: (
+									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
+										<Suspense fallback={<SuspenseFallback />}>
+											<InvoicesPage />
+										</Suspense>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'invoices/new',
+								id: 'invoices-new',
+								element: (
+									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
+										<Suspense fallback={<SuspenseFallback />}>
+											<InvoiceNewPage />
+										</Suspense>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'invoices/:id',
+								id: 'invoices-detail',
+								element: (
+									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
+										<Suspense fallback={<SuspenseFallback />}>
+											<InvoiceDetailPage />
+										</Suspense>
+									</ModuleGuard>
+								),
+							},
+						],
 					},
 					{
 						path: 'conversations',
