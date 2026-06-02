@@ -41,7 +41,7 @@ import { useCampaignsStore } from '~/stores/campaignsStore';
 import GeneralSection from './GeneralSection/GeneralSection';
 import ParametersSection from './ParametersSection';
 import AgentSection from './AgentSection';
-import AgentSaveReviewModal from './AgentSaveReviewModal';
+import AgentSaveReviewModal from '../../agent-details/AgentSaveReviewModal';
 import DispositionSection from './DispositionSection';
 import DoNotCallSection from './DoNotCallSection';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
@@ -55,7 +55,7 @@ import DashboardSection from './DashboardSection';
 import VoicesSection from './VoicesSection';
 import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
-import { getDataCollectionFromAgentConfig } from './AnalyticsSection/analyticsFormContext';
+import { getDataCollectionFromAgentConfig } from '../../agent-details/AnalyticsSection/analyticsFormContext';
 import { useGetAgent } from '~/queries/agentQueries';
 
 interface CampaignsFormProps {

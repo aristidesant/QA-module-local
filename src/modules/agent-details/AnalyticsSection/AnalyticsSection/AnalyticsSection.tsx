@@ -6,7 +6,7 @@ import { useCampaignsStore } from '~/stores/campaignsStore';
 import {
 	useAgentConfigFormContext,
 	useCampaignFormContext,
-} from '../../../campaignFormFunctions';
+} from '../../../campaigns/campaignFormFunctions';
 import AnalyticsVariableEditor from '../AnalyticsVariableEditor';
 import AnalyticsVariablesTable from '../AnalyticsVariablesTable';
 import {

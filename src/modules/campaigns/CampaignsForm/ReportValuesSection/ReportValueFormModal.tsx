@@ -30,7 +30,7 @@ import { useGetLatestSchemaByCampaignId } from '~/queries/campaignContactSchemas
 import {
 	getDataCollectionFromAgentConfig,
 	type DataCollectionItem,
-} from '~/modules/campaigns/CampaignsForm/AnalyticsSection/analyticsFormContext';
+} from '~/modules/agent-details/AnalyticsSection/analyticsFormContext';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import {

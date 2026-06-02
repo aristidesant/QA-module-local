@@ -7,14 +7,14 @@ import {
 	IconSettings,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import AnalyticsSection from '../CampaignsForm/AnalyticsSection';
-import VersioningSection from '../CampaignsForm/VersioningSection';
-import CampaignConfigurationBasic from '../CampaignsForm/AgentSection/CampaignConfigurationBasic/CampaignConfigurationBasic';
-import CampaignConfigurationPredefinedParams from '../CampaignsForm/AgentSection/CampaignConfigurationPredefinedParams';
-import CampaignConfigurationPrompt from '../CampaignsForm/AgentSection/CampaignConfigurationPrompt/CampaignConfigurationPrompt';
+import AnalyticsSection from './AnalyticsSection';
+import VersioningSection from './VersioningSection';
+import CampaignConfigurationBasic from './CampaignConfigurationBasic/CampaignConfigurationBasic';
+import CampaignConfigurationPredefinedParams from './CampaignConfigurationPredefinedParams';
+import CampaignConfigurationPrompt from './CampaignConfigurationPrompt/CampaignConfigurationPrompt';
 import WorkflowSection, {
 	type WorkflowSaveRequest,
-} from '../CampaignsForm/WorkflowSection/WorkflowSection';
+} from './WorkflowSection/WorkflowSection';
 import AdvancedTab from './AdvancedTab';
 import styles from './AgentDetailPage.module.css';
 

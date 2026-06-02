@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { Badge, Group, Stack, Text } from '@mantine/core';
 import { IconBrain } from '@tabler/icons-react';
-import { useAgentConfigFormContext } from '../../../campaignFormFunctions';
+import { useAgentConfigFormContext } from '../../campaigns/campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
 import { useTranslation } from 'react-i18next';
 import styles from './CampaignConfigurationPrompt.module.css';

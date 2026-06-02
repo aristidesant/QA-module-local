@@ -1,10 +1,10 @@
 import { Stack, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import CampaignConfigurationDynamicVariables from '../../CampaignsForm/AgentSection/CampaignConfigurationDynamicVariables';
-import CampaignConfigurationKnowledgeBase from '../../CampaignsForm/AgentSection/CampaignConfigurationKnowledgeBase';
-import CampaignConfigurationSpeechLanguage from '../../CampaignsForm/AgentSection/CampaignConfigurationSpeechLanguage';
-import CampaignConfigurationSystemTools from '../../CampaignsForm/AgentSection/CampaignConfigurationSystemTools';
-import CampaignConfigurationTools from '../../CampaignsForm/AgentSection/CampaignConfigurationTools';
+import CampaignConfigurationDynamicVariables from '../../campaigns/CampaignsForm/AgentSection/CampaignConfigurationDynamicVariables';
+import CampaignConfigurationKnowledgeBase from '../../campaigns/CampaignsForm/AgentSection/CampaignConfigurationKnowledgeBase';
+import CampaignConfigurationSpeechLanguage from '../../campaigns/CampaignsForm/AgentSection/CampaignConfigurationSpeechLanguage';
+import CampaignConfigurationSystemTools from '../../campaigns/CampaignsForm/AgentSection/CampaignConfigurationSystemTools';
+import CampaignConfigurationTools from '../../campaigns/CampaignsForm/AgentSection/CampaignConfigurationTools';
 import styles from './AdvancedTab.module.css';
 
 interface AdvancedTabProps {

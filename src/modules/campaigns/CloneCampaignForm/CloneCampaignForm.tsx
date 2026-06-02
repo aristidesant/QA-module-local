@@ -1,16 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import {
 	Button,
 	Group,
 	TextInput,
 	Textarea,
-	Paper,
 	Text,
-	Checkbox,
+	Switch,
 	Stack,
-	Avatar,
-	Badge,
-	Box,
+	Divider,
 	Alert,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
@@ -18,7 +15,7 @@ import { useCloneCampaign } from '~/queries/campaignsQueries';
 import { notifications } from '@mantine/notifications';
 import type { Campaign } from '~/models/CampaignsModel';
 import styles from './CloneCampaignForm.module.css';
-import { IconCopy, IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
 type CloneCampaignFormProps = {
@@ -40,6 +37,9 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 	const { t } = useTranslation('campaigns.clone-form', {
 		keyPrefix: 'cloneCampaignForm',
 	});
+	const { t: commonT } = useTranslation('common', {
+		keyPrefix: 'actions',
+	});
 	const cloneCampaign = useCloneCampaign();
 
 	const [agentsToDuplicate, setAgentsToDuplicate] = useState<
@@ -47,7 +47,6 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 	>([]);
 	const [validationError, setValidationError] = useState<string | null>(null);
 
-	// Initialize agents from campaign
 	useEffect(() => {
 		if (campaign.agents) {
 			const initialAgents = campaign.agents.map((campaignAgent) => ({
@@ -101,40 +100,23 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 		return null;
 	};
 
-	/**
-	 * Try to extract a human-friendly error message from different error shapes.
-	 * Supports Axios-like { response: { data: { message } } } and plain Error objects.
-	 */
 	const getApiErrorMessage = (error: unknown): string => {
-		// Axios-style response body: error.response?.data?.message
 		const asAny = error as any;
 		if (asAny?.response?.data) {
-			// If server returns { message } or { error, message }
 			const data = asAny.response.data;
 			if (typeof data === 'string') return data;
 			if (typeof data.message === 'string') return data.message;
 			if (typeof data.error === 'string') return data.error;
-			// fallback to JSON string of body
 			try {
 				return JSON.stringify(data);
 			} catch {
 				return String(data);
 			}
 		}
-
-		// Some libraries place body directly: error.data?.message
 		if (asAny?.data?.message) return String(asAny.data.message);
-
-		// Default Error instance
 		if (error instanceof Error) return error.message;
-
-		// Fallback to string conversion
 		return String(error ?? 'Unknown error');
 	};
-
-	const selectedAgentsCount = agentsToDuplicate.filter(
-		(agent) => agent.selected
-	).length;
 
 	const handleSubmit = (values: typeof form.values) => {
 		const agentValidationError = validateAgents();
@@ -184,136 +166,126 @@ const CloneCampaignForm: React.FC<CloneCampaignFormProps> = ({
 	};
 
 	return (
-		<Paper className={styles.formContainer} radius='md' withBorder>
-			<Group className={styles.header} gap='xs'>
-				<Box className={styles.headerIcon}>
-					<IconCopy size={18} stroke={1.7} />
-				</Box>
-				<div className={styles.headerContent}>
-					<Text className={styles.title} fw={600}>
-						{t('title')}
-					</Text>
-					<Text className={styles.subtitle}>{t('adjustDetails')}</Text>
-				</div>
-				<Badge className={styles.agentBadge} variant='light' size='sm'>
-					{selectedAgentsCount}
-					{` / ${agentsToDuplicate.length}`} {t('selectedCount')}
-				</Badge>
-			</Group>
-
-			<form onSubmit={form.onSubmit(handleSubmit)} className={styles.form}>
-				<Stack gap='md' className={styles.formFields}>
-					<TextInput
-						label={t('campaignName')}
-						placeholder={t('enterCampaignName')}
-						withAsterisk
-						className={styles.field}
-						key={form.key('name')}
-						{...form.getInputProps('name')}
-					/>
-					<Textarea
-						label={t('description')}
-						placeholder={t('describeYourCampaign')}
-						withAsterisk
-						className={styles.field}
-						key={form.key('description')}
-						minRows={3}
-						{...form.getInputProps('description')}
-					/>
-				</Stack>
+		<form onSubmit={form.onSubmit(handleSubmit)}>
+			<Stack gap='md'>
+				<TextInput
+					label={t('campaignName')}
+					placeholder={t('enterCampaignName')}
+					withAsterisk
+					key={form.key('name')}
+					{...form.getInputProps('name')}
+				/>
+				<Textarea
+					label={t('description')}
+					placeholder={t('describeYourCampaign')}
+					withAsterisk
+					minRows={3}
+					key={form.key('description')}
+					{...form.getInputProps('description')}
+				/>
 
 				{campaign.type === 'INBOUND' && (
 					<Alert
-						icon={<IconInfoCircle size={18} />}
+						icon={<IconInfoCircle size={16} />}
 						color='blue'
 						variant='light'
-						className={styles.alert}
 					>
 						{t('inboundPhoneNotice')}
 					</Alert>
 				)}
 
-				<section className={styles.agentSection}>
-					<Box className={styles.sectionHeader}>
-						<Text className={styles.sectionTitle}>{t('agentsToClone')}</Text>
-						<Text className={styles.sectionHint}>{t('turnOffAgents')}</Text>
-					</Box>
+				{agentsToDuplicate.length > 0 && (
+					<>
+						<Divider
+							label={t('agentsCount', { count: agentsToDuplicate.length })}
+							labelPosition='center'
+						/>
 
-					{agentsToDuplicate.length === 0 ? (
-						<Box className={styles.emptyAgents}>
-							<Text className={styles.emptyTitle}>{t('noAgentsLinked')}</Text>
-							<Text className={styles.emptyDescription}>
-								{t('noAgentsDescription')}
-							</Text>
-						</Box>
-					) : (
-						<Stack gap='sm'>
+						<div className={styles.agentTable}>
+							<div className={styles.agentTableHead}>
+								<div />
+								<Text className={styles.agentTableHeadLabel}>
+									{t('originalName')}
+								</Text>
+								<Text className={styles.agentTableHeadLabel}>
+									{t('newAgentName')}
+								</Text>
+							</div>
+
 							{agentsToDuplicate.map((agent, index) => (
-								<Group
+								<div
 									key={agent.agentId}
-									align='flex-start'
-									gap='sm'
-									wrap='nowrap'
-									className={styles.agentRow}
+									className={`${styles.agentRow} ${!agent.selected ? styles.agentRowOff : ''}`}
 								>
-									<Checkbox
+									<Switch
 										checked={agent.selected}
-										onChange={(event) =>
-											handleAgentToggle(index, event.currentTarget.checked)
+										onChange={(e) =>
+											handleAgentToggle(index, e.currentTarget.checked)
 										}
 										aria-label={t('toggleAgent', { name: agent.originalName })}
+										size='sm'
 									/>
-									<Avatar size={36} radius='xl' color='blue'>
-										{agent.originalName.charAt(0).toUpperCase()}
-									</Avatar>
-									<Box className={styles.agentDetails}>
-										<Text className={styles.agentName}>
-											{agent.originalName}
-										</Text>
-										<Text className={styles.agentMeta} c='dimmed' size='xs'>
-											{t('createDedicatedCopy')}
-										</Text>
-										<TextInput
-											placeholder={t('newAgentName')}
-											value={agent.newName}
-											onChange={(event) =>
-												handleAgentNameChange(index, event.currentTarget.value)
-											}
-											disabled={!agent.selected}
-											size='sm'
-											className={styles.agentInput}
-											error={
-												agent.selected && !agent.newName.trim()
-													? t('nameRequired')
-													: null
-											}
-										/>
-									</Box>
-								</Group>
+									<Text
+										size='sm'
+										fw={500}
+										className={
+											!agent.selected ? styles.agentNameOff : undefined
+										}
+										truncate
+									>
+										{agent.originalName}
+									</Text>
+									<TextInput
+										value={agent.newName}
+										onChange={(e) =>
+											handleAgentNameChange(index, e.currentTarget.value)
+										}
+										disabled={!agent.selected}
+										size='xs'
+										error={
+											agent.selected && !agent.newName.trim()
+												? t('nameRequired')
+												: null
+										}
+									/>
+								</div>
 							))}
-						</Stack>
-					)}
-				</section>
+						</div>
+					</>
+				)}
+
+				{agentsToDuplicate.length === 0 && (
+					<Stack gap='xs'>
+						<Text size='sm' fw={600} c='gray.7'>
+							{t('noAgentsLinked')}
+						</Text>
+						<Text size='sm' c='gray.6'>
+							{t('noAgentsDescription')}
+						</Text>
+					</Stack>
+				)}
 
 				{validationError && (
 					<Alert
-						icon={<IconInfoCircle size={18} />}
+						icon={<IconInfoCircle size={16} />}
 						title={t('validationRequired')}
 						color='yellow'
 						variant='light'
-						className={styles.alert}
 					>
 						{validationError}
 					</Alert>
 				)}
 
-				<Group className={styles.buttonGroup}>
-					<Button type='submit' loading={cloneCampaign.isPending} size='md'>
+				<Group justify='flex-end' gap='sm'>
+					<Button variant='default' onClick={onComplete}>
+						{commonT('cancel')}
+					</Button>
+					<Button type='submit' loading={cloneCampaign.isPending}>
 						{t('cloneButton')}
 					</Button>
 				</Group>
-			</form>
-		</Paper>
+			</Stack>
+		</form>
 	);
 };
 

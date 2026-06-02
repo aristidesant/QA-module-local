@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useParams } from 'react-router';
-import { useAgentConfigFormContext } from '../../../../campaignFormFunctions';
-import PromptEditModal from '../../../components/PromptEditModal';
+import { useAgentConfigFormContext } from '../../../campaigns/campaignFormFunctions';
+import PromptEditModal from '../../../campaigns/CampaignsForm/components/PromptEditModal';
 
 interface CampaignAgentPromptEditModalProps {
 	opened: boolean;

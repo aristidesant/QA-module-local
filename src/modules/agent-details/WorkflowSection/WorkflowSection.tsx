@@ -14,12 +14,12 @@ import {
 	useCampaignAgentEditor,
 	useCampaignFormContext,
 	useCampaignId,
-} from '../../campaignFormFunctions';
+} from '../../campaigns/campaignFormFunctions';
 import {
 	useGetCampaignAgents,
 	useUpdateCampaignAgentConfig,
 } from '~/queries/campaignAgentsQueries';
-import CampaignAgentSelector from '../components/CampaignAgentSelector';
+import CampaignAgentSelector from '../../campaigns/CampaignsForm/components/CampaignAgentSelector';
 import type { AgentVersionSnapshot } from '~/models/AgentVersioningModel';
 import type { UpdateCampaignAgentConfigPayload } from '~/models/CampaignAgentModel';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';

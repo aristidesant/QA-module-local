@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Modal, Stack, Select, Group, Button } from '@mantine/core';
-import { CampaignPredefinedParam } from '../../../useCampaignsPredefinedParams';
+import { CampaignPredefinedParam } from '../../../campaigns/CampaignsForm/useCampaignsPredefinedParams';
 import { useTranslation } from 'react-i18next';
 
 interface CampaignPredefinedParamsModalProps {

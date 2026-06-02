@@ -2,7 +2,7 @@
 import React from 'react';
 import { Select, Stack, Textarea } from '@mantine/core';
 import { IconLanguage, IconMessageDots } from '@tabler/icons-react';
-import { useAgentConfigFormContext } from '../../../campaignFormFunctions';
+import { useAgentConfigFormContext } from '../../campaigns/campaignFormFunctions';
 import styles from './CampaignConfigurationBasic.module.css';
 import SectionCard from '~/components/SectionCard';
 import { useTranslation } from 'react-i18next';

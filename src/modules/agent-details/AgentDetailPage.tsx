@@ -25,7 +25,7 @@ import {
 	useAgentConfigForm,
 	useCampaignForm,
 	type SelectedAgentDraft,
-} from '../campaignFormFunctions';
+} from '../campaigns/campaignFormFunctions';
 import { useGetAgent, useUpdateAgent } from '~/queries/agentQueries';
 import {
 	useGetCampaignAgent,
@@ -33,10 +33,10 @@ import {
 } from '~/queries/campaignAgentsQueries';
 import { EditableTitle } from '~/components/EditableTitle/EditableTitle';
 import { useGetAgentVersioningStatus } from '~/queries/agentVersioningQueries';
-import AgentSaveReviewModal from '../CampaignsForm/AgentSaveReviewModal';
-import CampaignSyncButton from '../CampaignsForm/components/CampaignSyncButton';
+import AgentSaveReviewModal from './AgentSaveReviewModal';
+import CampaignSyncButton from './CampaignSyncButton';
 import AgentDetailTabs, { type AgentTabValue } from './AgentDetailTabs';
-import type { WorkflowSaveRequest } from '../CampaignsForm/WorkflowSection/WorkflowSection';
+import type { WorkflowSaveRequest } from './WorkflowSection/WorkflowSection';
 import styles from './AgentDetailPage.module.css';
 
 type AgentSaveSurface = 'setup' | 'workflow';

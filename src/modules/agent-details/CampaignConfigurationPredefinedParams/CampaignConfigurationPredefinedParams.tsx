@@ -2,7 +2,7 @@ import React, { useMemo, useState } from 'react';
 import SectionCard from '~/components/SectionCard';
 import useCampaignsPredefinedParams, {
 	CampaignPredefinedParam,
-} from '../../useCampaignsPredefinedParams';
+} from '../../campaigns/CampaignsForm/useCampaignsPredefinedParams';
 import { Stack, Text, Group, Paper, ThemeIcon, Code } from '@mantine/core';
 import {
 	useAgentConfigFormContext,
