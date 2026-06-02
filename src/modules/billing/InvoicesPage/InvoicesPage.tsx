@@ -28,6 +28,14 @@ const InvoicesPage: React.FC = () => {
 	const { limit, offset } = pagination.getApiParams();
 	const [filters, setFilters] = useState<FilterInvoiceDto>({});
 
+	const handleFiltersChange = useCallback(
+		(newFilters: FilterInvoiceDto) => {
+			setFilters(newFilters);
+			pagination.setCurrentPage(1);
+		},
+		[pagination]
+	);
+
 	const {
 		data: invoicesData,
 		isLoading,
@@ -193,7 +201,7 @@ const InvoicesPage: React.FC = () => {
 					<InvoiceFilters
 						filters={filters}
 						clients={clients}
-						onChange={setFilters}
+						onChange={handleFiltersChange}
 					/>
 				</SectionCard>
 
