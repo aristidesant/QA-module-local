@@ -1,18 +1,8 @@
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import {
-	Badge,
-	Group,
-	Text,
-	Tooltip,
-	ActionIcon,
-} from '@mantine/core';
+import { Badge, Group, Text, Tooltip, ActionIcon } from '@mantine/core';
 import type { AgentWithCampaignListItem } from '~/models/AgentListObject';
-import {
-	IconPlayerPlay,
-	IconPlayerPause,
-	IconCopy,
-} from '@tabler/icons-react';
+import { IconPlayerPlay, IconPlayerPause, IconCopy } from '@tabler/icons-react';
 import classes from './AgentCampaignAdd.module.css';
 import { useTranslation } from 'react-i18next';
 
@@ -72,7 +62,9 @@ const useAgentSelectionColumns = ({
 								radius='xl'
 								size='sm'
 							>
-								<span className={classes.campaignBadgeLabel}>{campaignName}</span>
+								<span className={classes.campaignBadgeLabel}>
+									{campaignName}
+								</span>
 							</Badge>
 						</Tooltip>
 					);

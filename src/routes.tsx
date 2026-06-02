@@ -107,7 +107,7 @@ const CampaignViewPage = React.lazy(
 	() => import('./modules/campaigns/CampaignViewPage/CampaignViewPage')
 );
 const AgentDetailPage = React.lazy(
-	() => import('./modules/campaigns/AgentDetailPage/AgentDetailPage')
+	() => import('./modules/agent-details/AgentDetailPage')
 );
 
 const CampaignsPage = React.lazy(

@@ -30,7 +30,7 @@ import { useGetLatestSchemaByCampaignId } from '~/queries/campaignContactSchemas
 import {
 	getDataCollectionFromAgentConfig,
 	type DataCollectionItem,
-} from '~/modules/campaigns/CampaignsForm/AnalyticsSection/analyticsFormContext';
+} from '~/modules/agent-details/AnalyticsSection/analyticsFormContext';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { getErrorMessage } from '~/utils/httpClient';
 import {
@@ -418,14 +418,17 @@ const ReportValueFormModal = ({
 	]);
 
 	const objectKeyOptions = useMemo(() => {
-		if (!campaign?.agentConfig) return [];
-		const dc = getDataCollectionFromAgentConfig(campaign.agentConfig);
+		const agentConfig =
+			campaign?.agents?.find((a) => a.isPrincipal)?.agent?.config ??
+			campaign?.agents?.[0]?.agent?.config;
+		if (!agentConfig) return [];
+		const dc = getDataCollectionFromAgentConfig(agentConfig);
 		const used = usedKeysFor(ReportValueOriginType.OBJECT);
 		return Object.keys(dc)
 			.filter((key) => !used.has(key))
 			.map((key) => ({ value: key, label: key }));
 	}, [
-		campaign?.agentConfig,
+		campaign?.agents,
 		existingColumns,
 		reportValue?.id,
 		templateColumn?.id,
@@ -552,7 +555,11 @@ const ReportValueFormModal = ({
 			const field = mergedDynamicFields.find((f) => f.name === newKey);
 			inferred = field ? schemaTypeToDataType(field.type) : null;
 		} else if (origin === ReportValueOriginType.OBJECT) {
-			const dc = getDataCollectionFromAgentConfig(campaign?.agentConfig ?? {});
+			const dc = getDataCollectionFromAgentConfig(
+				campaign?.agents?.find((a) => a.isPrincipal)?.agent?.config ??
+					campaign?.agents?.[0]?.agent?.config ??
+					{}
+			);
 			const item = dc[newKey] as DataCollectionItem | undefined;
 			inferred = item ? dcTypeToDataType(item.type) : null;
 		} else if (origin === ReportValueOriginType.METADATA) {

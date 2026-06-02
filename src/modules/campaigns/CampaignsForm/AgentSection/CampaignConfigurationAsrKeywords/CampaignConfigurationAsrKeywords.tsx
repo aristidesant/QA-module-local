@@ -2,7 +2,7 @@ import { TagsInput } from '@mantine/core';
 import { IconTag } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
-import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
+import { useAgentConfigFormContext } from '~/modules/campaigns/campaignFormFunctions';
 
 const normalizeKeywords = (values: string[]) => {
 	const uniqueKeywords = new Set<string>();
@@ -27,14 +27,13 @@ const CampaignConfigurationAsrKeywords: React.FC = () => {
 		'campaign.detail',
 		'common',
 	]);
-	const form = useCampaignFormContext();
+	const form = useAgentConfigFormContext();
 
-	const currentKeywords =
-		form.values.agentConfig?.conversationConfig?.asr?.keywords ?? [];
+	const currentKeywords = form.values.conversationConfig?.asr?.keywords ?? [];
 
 	const handleKeywordsChange = (values: string[]) => {
 		form.setFieldValue(
-			'agentConfig.conversationConfig.asr.keywords',
+			'conversationConfig.asr.keywords',
 			normalizeKeywords(values)
 		);
 	};

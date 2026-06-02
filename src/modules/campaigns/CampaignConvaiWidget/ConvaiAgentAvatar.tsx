@@ -1,3 +1,4 @@
+import { IconMicrophoneOff } from '@tabler/icons-react';
 import { type ConvaiStatus } from './CampaignConvaiWidget.types';
 import styles from './CampaignConvaiWidget.module.css';
 
@@ -40,11 +41,7 @@ const ConvaiAgentAvatar = ({
 			<div className={styles.avatarMouth} />
 			{isMuted && status === 'connected' && (
 				<div className={styles.avatarMuteBadge}>
-					<svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-						<path d="M11 5L6 9H2v6h4l5 4V5z" />
-						<line x1="23" y1="9" x2="17" y2="15" />
-						<line x1="17" y1="9" x2="23" y2="15" />
-					</svg>
+					<IconMicrophoneOff size={10} stroke={2.5} />
 				</div>
 			)}
 		</div>

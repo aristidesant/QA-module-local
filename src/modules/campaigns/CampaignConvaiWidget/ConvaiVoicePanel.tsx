@@ -36,8 +36,18 @@ const ConvaiVoicePanel = () => {
 	const isConnecting = status === 'connecting';
 
 	useHotkeys([
-		['m', () => { if (isConnected) toggleMute(); }],
-		['Escape', () => { if (isConnected) endSession(); }],
+		[
+			'm',
+			() => {
+				if (isConnected) toggleMute();
+			},
+		],
+		[
+			'Escape',
+			() => {
+				if (isConnected) endSession();
+			},
+		],
 	]);
 
 	const caption = (() => {
@@ -66,9 +76,7 @@ const ConvaiVoicePanel = () => {
 				/>
 
 				<div className={styles.agentHeaderInfo}>
-					<Text className={styles.agentName}>
-						{t('widget.voice.title')}
-					</Text>
+					<Text className={styles.agentName}>{t('widget.voice.title')}</Text>
 					<Text className={styles.agentStatus}>{caption}</Text>
 				</div>
 
@@ -85,7 +93,9 @@ const ConvaiVoicePanel = () => {
 								variant='light'
 								color={isMuted ? 'red' : 'gray'}
 								aria-label={
-									isMuted ? t('widget.actions.unmute') : t('widget.actions.mute')
+									isMuted
+										? t('widget.actions.unmute')
+										: t('widget.actions.mute')
 								}
 								onClick={toggleMute}
 							>
@@ -109,7 +119,11 @@ const ConvaiVoicePanel = () => {
 							onClick={isConnected ? endSession : startSession}
 							disabled={isConnecting}
 						>
-							{isConnected ? <IconPhoneOff size={20} /> : <IconPhone size={20} />}
+							{isConnected ? (
+								<IconPhoneOff size={20} />
+							) : (
+								<IconPhone size={20} />
+							)}
 						</ActionIcon>
 					</Tooltip>
 				</div>
@@ -127,7 +141,7 @@ const ConvaiVoicePanel = () => {
 					<Button
 						size='xs'
 						variant='light'
-						color='red'
+						color='green'
 						leftSection={<IconRefresh size={14} />}
 						onClick={startSession}
 						className={styles.errorRetryButton}

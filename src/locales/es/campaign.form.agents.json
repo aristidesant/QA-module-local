@@ -4,11 +4,15 @@
 			"title": "Detalle del agente",
 			"description": "Revisa y actualiza el prompt, la configuración, el workflow y los ajustes avanzados del agente asignado."
 		},
+		"editableName": {
+			"placeholder": "Nombre del agente"
+		},
 		"tabs": {
 			"setup": "Configuración",
 			"workflow": "Workflow",
 			"advanced": "Avanzado",
-			"versioning": "Versionado"
+			"versioning": "Versionado",
+			"analytics": "Analytics"
 		},
 		"save": "Guardar agente",
 		"saving": "Guardando...",

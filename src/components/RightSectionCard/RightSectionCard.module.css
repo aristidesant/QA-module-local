@@ -21,13 +21,13 @@
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
 
-.card:hover {
+.card[data-interactive]:hover {
 	border-color: var(--surface-border-strong);
 	box-shadow: var(--mantine-shadow-lg);
 	transform: translateY(-1px);
 }
 
-[data-mantine-color-scheme='dark'] .card:hover {
+[data-mantine-color-scheme='dark'] .card[data-interactive]:hover {
 	border-color: var(--surface-border-strong);
 	box-shadow: 0 12px 28px rgba(0, 0, 0, 0.5);
 	transform: translateY(-1px);

@@ -54,7 +54,7 @@
 }
 
 .identifierText {
-	font-size: 13px;
+	font-size: var(--fs-13);
 	font-weight: 500;
 	letter-spacing: 0.01em;
 	color: var(--mantine-color-gray-7);
@@ -66,8 +66,8 @@
 
 .summaryBlock {
 	background: var(--mantine-color-blue-0);
-	border-left: 3px solid var(--mantine-color-blue-3);
-	border-radius: 0 6px 6px 0;
+	border: 1px solid var(--mantine-color-blue-2);
+	border-radius: 8px;
 	padding: 10px 12px;
 }
 
@@ -77,11 +77,11 @@
 		var(--mantine-color-blue-9) 18%,
 		var(--mantine-color-dark-7)
 	);
-	border-left-color: var(--mantine-color-blue-5);
+	border-color: var(--mantine-color-blue-7);
 }
 
 .summaryText {
-	font-size: 13px;
+	font-size: var(--fs-13);
 	line-height: 1.6;
 	color: var(--mantine-color-gray-7);
 	font-weight: 400;
@@ -101,8 +101,8 @@
 	opacity: 0;
 	transform: translateY(8px);
 	transition:
-		opacity 0.25s ease,
-		transform 0.25s ease;
+		opacity 0.25s var(--ease-out),
+		transform 0.25s var(--ease-out);
 	pointer-events: none;
 	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }

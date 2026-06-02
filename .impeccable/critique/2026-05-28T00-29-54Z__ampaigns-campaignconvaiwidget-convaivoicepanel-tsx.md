@@ -6,21 +6,22 @@ p1_count: 2
 timestamp: 2026-05-28T00-29-54Z
 slug: ampaigns-campaignconvaiwidget-convaivoicepanel-tsx
 ---
+
 ## Design Health Score
 
-| # | Heuristic | Score | Key Issue |
-|---|-----------|-------|-----------|
-| 1 | Visibility of System Status | 3 | Orb + caption communicate state well; connecting phase lacks explicit progress |
-| 2 | Match System / Real World | 3 | Phone metaphor is familiar; session ID is unnecessary technical jargon |
-| 3 | User Control and Freedom | 3 | Clear hangup; no undo for sent messages |
-| 4 | Consistency and Standards | 2 | Two parallel layouts (VoicePanel vs ConversationColumn) create visual inconsistency |
-| 5 | Error Prevention | 3 | Send disabled when empty/disconnected; no confirmation before ending a call |
-| 6 | Recognition Rather Than Recall | 3 | Tooltips on icon buttons; icons paired with labels in transcript |
-| 7 | Flexibility and Efficiency | 1 | No keyboard shortcuts for call, mute, or send; no accelerators at all |
-| 8 | Aesthetic and Minimalist Design | 3 | Orb is elaborate but purposeful; session ID is pure noise |
-| 9 | Error Recovery | 2 | Error messages shown; microphone permission handled; no retry button or actionable next steps |
-| 10 | Help and Documentation | 2 | Tooltips only; no contextual help for first-time voice interaction |
-| **Total** | | **25/40** | **Acceptable** |
+| #         | Heuristic                       | Score     | Key Issue                                                                                     |
+| --------- | ------------------------------- | --------- | --------------------------------------------------------------------------------------------- |
+| 1         | Visibility of System Status     | 3         | Orb + caption communicate state well; connecting phase lacks explicit progress                |
+| 2         | Match System / Real World       | 3         | Phone metaphor is familiar; session ID is unnecessary technical jargon                        |
+| 3         | User Control and Freedom        | 3         | Clear hangup; no undo for sent messages                                                       |
+| 4         | Consistency and Standards       | 2         | Two parallel layouts (VoicePanel vs ConversationColumn) create visual inconsistency           |
+| 5         | Error Prevention                | 3         | Send disabled when empty/disconnected; no confirmation before ending a call                   |
+| 6         | Recognition Rather Than Recall  | 3         | Tooltips on icon buttons; icons paired with labels in transcript                              |
+| 7         | Flexibility and Efficiency      | 1         | No keyboard shortcuts for call, mute, or send; no accelerators at all                         |
+| 8         | Aesthetic and Minimalist Design | 3         | Orb is elaborate but purposeful; session ID is pure noise                                     |
+| 9         | Error Recovery                  | 2         | Error messages shown; microphone permission handled; no retry button or actionable next steps |
+| 10        | Help and Documentation          | 2         | Tooltips only; no contextual help for first-time voice interaction                            |
+| **Total** |                                 | **25/40** | **Acceptable**                                                                                |
 
 ## Anti-Patterns Verdict
 

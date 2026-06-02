@@ -4,11 +4,15 @@
 			"title": "Agent detail",
 			"description": "Review and update the assigned agent prompt, configuration, workflow, and advanced settings."
 		},
+		"editableName": {
+			"placeholder": "Agent name"
+		},
 		"tabs": {
 			"setup": "Setup",
 			"workflow": "Workflow",
 			"advanced": "Advanced",
-			"versioning": "Versioning"
+			"versioning": "Versioning",
+			"analytics": "Analytics"
 		},
 		"save": "Save agent",
 		"saving": "Saving...",

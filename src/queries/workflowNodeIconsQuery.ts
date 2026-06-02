@@ -3,7 +3,7 @@ import { getClientConfigByName } from '~/api/clientConfigApi';
 import {
 	WORKFLOW_ICON_REGISTRY,
 	DEFAULT_NODE_ICON_KEY,
-} from '~/modules/campaigns/CampaignsForm/WorkflowSection/utils/workflowIconRegistry';
+} from '~/modules/agent-details/WorkflowSection/utils/workflowIconRegistry';
 
 const CONFIG_NAME = 'workflow_node_icons';
 

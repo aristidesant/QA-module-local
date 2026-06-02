@@ -1,0 +1,71 @@
+.toolbar {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.search {
+	flex: 1;
+	min-width: 220px;
+	max-width: 360px;
+}
+
+.count {
+	white-space: nowrap;
+}
+
+.clearSearchIcon {
+	cursor: pointer;
+	color: var(--mantine-color-dimmed);
+}
+
+.clearSearchIcon:hover {
+	color: var(--mantine-color-text);
+}
+
+.resetButton {
+	background: transparent;
+	border: none;
+	padding: 2px 4px;
+	margin: 0;
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-primary-color-filled);
+	cursor: pointer;
+	border-radius: var(--mantine-radius-sm);
+	transition: background-color 120ms ease;
+}
+
+.resetButton:hover {
+	background: var(--mantine-primary-color-light);
+}
+
+.resetButton:focus-visible {
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: 1px;
+}
+
+.filters {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.filterRow {
+	display: flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-xs);
+}
+
+.filterLabel {
+	min-width: 56px;
+	color: var(--mantine-color-dimmed);
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.chipContent {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+}

@@ -1,6 +1,11 @@
 import { useMemo } from 'react';
 import { Button, CopyButton, ScrollArea, Text, Tooltip } from '@mantine/core';
-import { IconCheck, IconCopy, IconMessageCircle, IconVolume } from '@tabler/icons-react';
+import {
+	IconCheck,
+	IconCopy,
+	IconMessageCircle,
+	IconVolume,
+} from '@tabler/icons-react';
 import { type TranscriptItem } from './CampaignConvaiWidget.types';
 import styles from './CampaignConvaiWidget.module.css';
 
@@ -75,7 +80,9 @@ const ConvaiTranscript = ({
 						<CopyButton value={transcriptClipboardText} timeout={1200}>
 							{({ copied, copy }) => (
 								<Tooltip
-									label={copied ? labels.copiedTranscript : labels.copyTranscript}
+									label={
+										copied ? labels.copiedTranscript : labels.copyTranscript
+									}
 									withArrow
 									position='top'
 									openDelay={100}
@@ -120,7 +127,7 @@ const ConvaiTranscript = ({
 											: styles.messageGroupUser
 									}`}
 								>
-									{group.role === 'agent' && groupIndex === 0 && (
+									{group.role === 'agent' && (
 										<span className={styles.messageGroupAvatar}>
 											<IconVolume size={12} />
 										</span>
@@ -148,7 +155,10 @@ const ConvaiTranscript = ({
 					</div>
 				) : (
 					<div className={styles.transcriptEmpty}>
-						<IconMessageCircle size={48} className={styles.transcriptEmptyIcon} />
+						<IconMessageCircle
+							size={48}
+							className={styles.transcriptEmptyIcon}
+						/>
 						<Text size='sm' c='dimmed'>
 							{labels.empty}
 						</Text>

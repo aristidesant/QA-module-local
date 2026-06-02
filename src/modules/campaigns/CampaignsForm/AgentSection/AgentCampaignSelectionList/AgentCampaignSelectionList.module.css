@@ -23,11 +23,7 @@
 }
 
 .agentTable thead th {
-	background: color-mix(
-		in srgb,
-		var(--brand-soft) 34%,
-		var(--surface-sunken)
-	);
+	background: color-mix(in srgb, var(--brand-soft) 34%, var(--surface-sunken));
 	color: var(--mantine-color-gray-7);
 }
 
@@ -178,11 +174,7 @@
 
 .loadingHeader {
 	padding: 10px 12px;
-	background: color-mix(
-		in srgb,
-		var(--brand-soft) 34%,
-		var(--surface-sunken)
-	);
+	background: color-mix(in srgb, var(--brand-soft) 34%, var(--surface-sunken));
 	border-bottom: 1px solid var(--surface-border);
 }
 

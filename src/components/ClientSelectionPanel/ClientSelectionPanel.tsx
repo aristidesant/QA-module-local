@@ -14,6 +14,10 @@ import { KeyboardEvent, useMemo, useState } from 'react';
 import type { ClientSelectOption } from '~/api/authApi';
 import EmptyState from '~/components/EmptyState';
 import { generateClientAvatar } from '~/utils/clientAvatar';
+import {
+	getClientDisplayLabel,
+	getClientSecondaryLabel,
+} from '~/utils/clientDisplay';
 import classes from './ClientSelectionPanel.module.css';
 
 interface ClientSelectionPanelProps {
@@ -69,7 +73,14 @@ export default function ClientSelectionPanel({
 		const query = search.toLowerCase();
 		return clients.filter(
 			(client) =>
+				getClientDisplayLabel({
+					name: client.clientName,
+					alias: client.clientAlias,
+				})
+					.toLowerCase()
+					.includes(query) ||
 				client.clientName.toLowerCase().includes(query) ||
+				client.clientAlias?.toLowerCase().includes(query) ||
 				client.clientIdentifier.toLowerCase().includes(query)
 		);
 	}, [clients, search]);
@@ -99,7 +110,44 @@ export default function ClientSelectionPanel({
 		const isSelected = selectedClientId === client.clientId;
 		const isCurrentClient = currentClientId === client.clientId;
 		const isDisabled = isMutating || isCurrentClient;
-		const avatar = generateClientAvatar(client.clientName);
+		const clientLabel = getClientDisplayLabel({
+			name: client.clientName,
+			alias: client.clientAlias,
+		});
+		const secondaryLabel = getClientSecondaryLabel({
+			name: client.clientName,
+			alias: client.clientAlias,
+		});
+		const avatar = generateClientAvatar(clientLabel);
+		const statusBadge =
+			isSelected && isMutating ? (
+				<Loader size='xs' />
+			) : isCurrentClient ? (
+				<Tooltip
+					label={currentClientTooltip}
+					disabled={!currentClientTooltip}
+					withArrow
+				>
+					<Badge
+						size='xs'
+						variant='light'
+						color='gray'
+						className={classes.stateBadge}
+					>
+						{currentClientLabel}
+					</Badge>
+				</Tooltip>
+			) : isSelected ? (
+				<Badge
+					size='xs'
+					variant='light'
+					color='green'
+					leftSection={<IconCheck size={11} stroke={2.4} />}
+					className={classes.stateBadge}
+				>
+					{selectedLabel}
+				</Badge>
+			) : null;
 
 		return (
 			<div
@@ -130,57 +178,37 @@ export default function ClientSelectionPanel({
 
 				<div className={classes.avatarMeta}>
 					<Text className={classes.clientName} truncate='end'>
-						{client.clientName}
+						{clientLabel}
 					</Text>
-					{viewMode === 'spacious' && (
-						<>
-							{client.roles.length > 0 && (
-								<Group gap={3} mt={4} justify='center'>
-									{client.roles.map((role) => (
-										<Badge
-											key={role}
-											size='xs'
-											variant='light'
-											color='gray'
-											className={classes.roleBadge}
-										>
-											{role}
-										</Badge>
-									))}
-								</Group>
-							)}
-						</>
+					{secondaryLabel && (
+						<Text size='xs' className={classes.clientSecondary} truncate='end'>
+							{secondaryLabel}
+						</Text>
+					)}
+					{(statusBadge ||
+						(viewMode === 'spacious' && client.roles.length > 0)) && (
+						<Group
+							gap={4}
+							mt={6}
+							justify='center'
+							className={classes.metaFooter}
+						>
+							{viewMode === 'spacious' &&
+								client.roles.map((role) => (
+									<Badge
+										key={role}
+										size='xs'
+										variant='light'
+										color='gray'
+										className={classes.roleBadge}
+									>
+										{role}
+									</Badge>
+								))}
+							{statusBadge}
+						</Group>
 					)}
 				</div>
-
-				{isSelected && isMutating ? (
-					<Loader size='xs' />
-				) : isCurrentClient ? (
-					<Tooltip
-						label={currentClientTooltip}
-						disabled={!currentClientTooltip}
-						withArrow
-					>
-						<Badge
-							size='sm'
-							variant='light'
-							color='gray'
-							className={classes.stateBadge}
-						>
-							{currentClientLabel}
-						</Badge>
-					</Tooltip>
-				) : isSelected ? (
-					<Badge
-						size='sm'
-						variant='light'
-						color='green'
-						leftSection={<IconCheck size={12} stroke={2.4} />}
-						className={classes.stateBadge}
-					>
-						{selectedLabel}
-					</Badge>
-				) : null}
 			</div>
 		);
 	};

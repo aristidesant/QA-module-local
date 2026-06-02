@@ -20,6 +20,10 @@ import { useTranslation } from 'react-i18next';
 import { useGetAllClients } from '~/queries/clientQueries';
 import { useGetAllRoles } from '~/queries/roleQueries';
 import type { UserRoleModel } from '~/models/UserModels';
+import {
+	getClientDisplayLabel,
+	getClientSecondaryLabel,
+} from '~/utils/clientDisplay';
 import classes from './UserClientRoles.module.css';
 
 interface ClientRoleEntry {
@@ -60,9 +64,13 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 	const filteredClients = useMemo(() => {
 		if (!search) return clients;
 		const query = search.toLowerCase();
-		return clients.filter((client) =>
-			client.name.toLowerCase().includes(query)
-		);
+		return clients.filter((client) => {
+			return (
+				getClientDisplayLabel(client).toLowerCase().includes(query) ||
+				client.name.toLowerCase().includes(query) ||
+				client.alias?.toLowerCase().includes(query)
+			);
+		});
 	}, [clients, search]);
 
 	// Group current roles by client for quick lookups
@@ -141,7 +149,8 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 		(clientId: number) => {
 			const client = clients.find((c) => c.id === clientId);
 			return (
-				client?.name ?? t('clientRoles.fallbackClientName', { id: clientId })
+				(client ? getClientDisplayLabel(client) : null) ??
+				t('clientRoles.fallbackClientName', { id: clientId })
 			);
 		},
 		[clients, t]
@@ -198,6 +207,7 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 						{filteredClients.map((client) => {
 							const count = getRoleCount(client.id);
 							const isActive = client.id === activeClientId;
+							const secondaryLabel = getClientSecondaryLabel(client);
 							return (
 								<UnstyledButton
 									key={client.id}
@@ -217,8 +227,13 @@ const UserClientRoles: React.FC<UserClientRolesProps> = ({
 										</Avatar>
 										<div className={classes.clientTabText}>
 											<Text size='sm' className={classes.clientTabLabel}>
-												{client.name}
+												{getClientDisplayLabel(client)}
 											</Text>
+											{secondaryLabel && (
+												<Text size='xs' className={classes.clientTabSecondary}>
+													{secondaryLabel}
+												</Text>
+											)}
 										</div>
 									</div>
 									{isActive && (

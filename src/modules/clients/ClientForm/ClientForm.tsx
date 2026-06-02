@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
 	Alert,
 	Button,
@@ -24,6 +24,7 @@ import {
 	useUpdateClient,
 	useGetClient,
 } from '~/queries/clientQueries';
+import { createClientAliasSuggestion } from '~/utils/clientDisplay';
 import type {
 	CreateClientRequest,
 	UpdateClientRequest,
@@ -38,6 +39,7 @@ interface ClientFormProps {
 
 interface ClientFormValues {
 	name: string;
+	alias: string;
 	description?: string;
 	email?: string;
 	phone?: string;
@@ -55,10 +57,12 @@ const ClientForm: React.FC<ClientFormProps> = ({
 }) => {
 	const { t } = useTranslation('clients');
 	const isEditMode = mode === 'edit';
+	const [isAliasManuallyEdited, setIsAliasManuallyEdited] = useState(false);
 
 	const form = useForm<ClientFormValues>({
 		initialValues: {
 			name: '',
+			alias: '',
 			description: '',
 			email: '',
 			phone: '',
@@ -72,6 +76,14 @@ const ClientForm: React.FC<ClientFormProps> = ({
 				!value || value.trim().length === 0
 					? t('form.validation.nameRequired')
 					: null,
+			alias: (value) => {
+				if (!value || value.trim().length === 0) {
+					return t('form.validation.aliasRequired');
+				}
+				return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(value)
+					? null
+					: t('form.validation.aliasInvalid');
+			},
 			email: (value) => {
 				if (!value || value.trim().length === 0) {
 					return null; // Email is optional
@@ -98,6 +110,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 		if (isEditMode && client) {
 			form.setValues({
 				name: client.name,
+				alias: client.alias || '',
 				description: client.description || '',
 				email: client.email || '',
 				phone: client.phone || '',
@@ -106,9 +119,19 @@ const ClientForm: React.FC<ClientFormProps> = ({
 				userId: client.userId,
 				countryId: client.countryId,
 			});
+			setIsAliasManuallyEdited(Boolean(client.alias));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isEditMode, client]);
+
+	useEffect(() => {
+		if (isEditMode || isAliasManuallyEdited) {
+			return;
+		}
+
+		form.setFieldValue('alias', createClientAliasSuggestion(form.values.name));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [form.values.name, isEditMode, isAliasManuallyEdited]);
 
 	const isSubmitting = useMemo(
 		() => createMutation.isPending || updateMutation.isPending,
@@ -121,6 +144,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 				if (!clientId) throw new Error(t('form.errors.missingClientId'));
 				const updatePayload: UpdateClientRequest = {
 					name: values.name,
+					alias: values.alias.trim(),
 					description: values.description,
 					email: values.email,
 					phone: values.phone,
@@ -138,6 +162,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 			} else {
 				const createPayload: CreateClientRequest = {
 					name: values.name,
+					alias: values.alias.trim(),
 					description: values.description,
 					email: values.email,
 					phone: values.phone,
@@ -235,6 +260,19 @@ const ClientForm: React.FC<ClientFormProps> = ({
 									placeholder={t('form.fields.name.placeholder')}
 									size='sm'
 									{...form.getInputProps('name')}
+								/>
+								<TextInput
+									required
+									label={t('form.fields.alias.label')}
+									placeholder={t('form.fields.alias.placeholder')}
+									description={t('form.fields.alias.description')}
+									size='sm'
+									value={form.values.alias}
+									onChange={(event) => {
+										setIsAliasManuallyEdited(true);
+										form.setFieldValue('alias', event.currentTarget.value);
+									}}
+									error={form.errors.alias}
 								/>
 								<Textarea
 									label={t('form.fields.description.label')}

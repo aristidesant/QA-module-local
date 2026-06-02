@@ -1,16 +1,45 @@
 {
 	"section": {
 		"title": "Voces de la campaña",
-		"description": "Elige qué voces puede distribuir esta campaña entre sus tareas."
+		"description": "Elige las voces que esta campaña podrá usar. Explora, escucha y agrega las que necesites."
 	},
-	"selector": {
-		"label": "Pool de voces",
-		"description": "Las voces seleccionadas quedan disponibles para la distribución de la campaña y de sus listas de contactos.",
-		"placeholder": "Selecciona una o más voces",
-		"hint": "Déjalo vacío solo si quieres mantener el comportamiento actual de voces de la campaña.",
-		"noVoices": "No hay voces disponibles para este cliente.",
-		"noMatches": "Ninguna voz coincide con tu búsqueda",
+	"selected": {
+		"title": "Voces seleccionadas",
+		"count_one": "{{count}} voz",
+		"count_other": "{{count}} voces",
+		"clearAll": "Quitar todas",
+		"empty": "Aún no has seleccionado voces — elige desde el catálogo de abajo.",
+		"remove": "Quitar del pool",
+		"play": "Escuchar voz"
+	},
+	"toolbar": {
+		"searchPlaceholder": "Buscar por nombre, acento o descripción",
+		"gender": "Género",
+		"language": "Idioma",
+		"reset": "Limpiar filtros",
+		"activeFilters_one": "{{count}} filtro activo",
+		"activeFilters_other": "{{count}} filtros activos"
+	},
+	"card": {
+		"play": "Escuchar voz",
+		"pause": "Detener",
+		"select": "Agregar al pool",
+		"deselect": "Quitar del pool",
+		"selectedBadge": "En el pool"
+	},
+	"gender": {
+		"female": "Femenina",
+		"male": "Masculina",
+		"other": "Otra"
+	},
+	"catalog": {
+		"loading": "Cargando voces…",
 		"loadErrorTitle": "No se pudieron cargar las voces",
-		"loadErrorDescription": "Reintenta antes de guardar cambios en las voces de la campaña."
+		"loadErrorDescription": "Recarga para intentarlo de nuevo.",
+		"empty": "No hay voces disponibles para este cliente.",
+		"emptyFiltered": "Ninguna voz coincide con los filtros.",
+		"emptyFilteredReset": "Limpiar filtros",
+		"resultsCount_one": "{{count}} voz",
+		"resultsCount_other": "{{count}} voces"
 	}
 }

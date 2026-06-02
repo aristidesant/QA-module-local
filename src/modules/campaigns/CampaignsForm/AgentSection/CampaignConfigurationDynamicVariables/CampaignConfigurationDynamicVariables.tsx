@@ -3,7 +3,7 @@ import { Badge, Button, Group, ScrollArea, Stack, Text } from '@mantine/core';
 import { IconVariable, IconSettings } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
-import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
+import { useAgentConfigFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import { deepMergeConfig } from '~/utils/objectUtils';
 import CampaignDynamicVariablesModal from './CampaignDynamicVariablesModal';
 import styles from './CampaignConfigurationDynamicVariables.module.css';
@@ -15,12 +15,12 @@ type DynamicVariableEntry = {
 
 const CampaignConfigurationDynamicVariables: React.FC = () => {
 	const { t } = useTranslation(['campaign.form.agents', 'common']);
-	const form = useCampaignFormContext();
+	const form = useAgentConfigFormContext();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const placeholders: Record<string, any> =
-		(form.values.agentConfig as any)?.conversationConfig?.agent
-			?.dynamicVariables?.dynamicVariablePlaceholders ?? {};
+		(form.values as any)?.conversationConfig?.agent?.dynamicVariables
+			?.dynamicVariablePlaceholders ?? {};
 
 	const count = Object.keys(placeholders).length;
 	const previewEntries = useMemo<DynamicVariableEntry[]>(
@@ -33,11 +33,10 @@ const CampaignConfigurationDynamicVariables: React.FC = () => {
 	);
 
 	const handleApply = (next: Record<string, string>) => {
-		const currentAgentConfig = form.values.agentConfig || {};
-		form.setFieldValue('agentConfig', {
-			...currentAgentConfig,
+		form.setValues({
+			...form.values,
 			conversationConfig: deepMergeConfig(
-				(currentAgentConfig as any).conversationConfig || {},
+				(form.values as any).conversationConfig || {},
 				{
 					agent: {
 						dynamicVariables: {
@@ -118,8 +117,7 @@ const CampaignConfigurationDynamicVariables: React.FC = () => {
 													: styles.previewValueEmpty
 											}
 										>
-											{entry.value ||
-												t('dynamicVariables.preview.emptyValue')}
+											{entry.value || t('dynamicVariables.preview.emptyValue')}
 										</div>
 									</div>
 								))}

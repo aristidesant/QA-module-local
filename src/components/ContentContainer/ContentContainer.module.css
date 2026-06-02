@@ -63,12 +63,12 @@
 }
 
 .contentContainerHeaderScrolled {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+	box-shadow: var(--sh-sm);
 	clip-path: inset(0 0 -20px 0);
 }
 
 [data-mantine-color-scheme='dark'] .contentContainerHeaderScrolled {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.35);
+	box-shadow: var(--sh-sm);
 	clip-path: inset(0 0 -20px 0);
 }
 
@@ -185,4 +185,17 @@
 	padding: 0;
 	margin-top: 12px;
 	min-height: 0;
+}
+
+/* When no rightSectionTitle is rendered, the single child must not inherit
+   the :first-child title-slot styles (border-bottom, padding, flex-shrink: 0). */
+.contentContainerRightSection > :only-child {
+	flex: 1;
+	overflow: hidden;
+	min-height: 0;
+	padding: 0;
+	margin-top: 0;
+	border-bottom: none;
+	background: transparent;
+	flex-shrink: 1;
 }

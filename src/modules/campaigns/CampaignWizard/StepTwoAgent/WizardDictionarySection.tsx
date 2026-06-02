@@ -16,10 +16,7 @@ const WizardDictionarySection: React.FC = () => {
 	const { t } = useTranslation(['campaigns.wizard', 'common']);
 	const { createdCampaign } = useCampaignWizardStore();
 
-	const agentId =
-		createdCampaign?.agentConfig?.agentId ??
-		createdCampaign?.agents?.[0]?.agentId ??
-		null;
+	const agentId = createdCampaign?.agents?.[0]?.agentId ?? null;
 
 	const { data: agent, refetch: refetchAgent } = useGetAgent(agentId ?? '');
 	const { data: dictionariesResponse, isLoading: isDictionariesLoading } =

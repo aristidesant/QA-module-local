@@ -1,4 +1,8 @@
-export type ConvaiStatus = 'disconnected' | 'connecting' | 'connected' | 'error';
+export type ConvaiStatus =
+	| 'disconnected'
+	| 'connecting'
+	| 'connected'
+	| 'error';
 export type ConvaiMode = 'speaking' | 'listening';
 
 export type TranscriptItem = {

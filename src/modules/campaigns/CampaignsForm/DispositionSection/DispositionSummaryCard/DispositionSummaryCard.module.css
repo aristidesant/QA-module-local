@@ -1,0 +1,48 @@
+.statsBar {
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-7)
+	);
+	border-color: light-dark(
+		var(--mantine-color-gray-2),
+		var(--mantine-color-dark-5)
+	);
+}
+
+.statChip {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+}
+
+.statValue {
+	font-size: 20px;
+	font-weight: 700;
+	line-height: 1.2;
+	letter-spacing: -0.02em;
+	color: light-dark(var(--mantine-color-dark-7), var(--mantine-color-gray-0));
+	transition: color 120ms ease;
+}
+
+.statValue[data-flagged='true'] {
+	color: var(--mantine-color-yellow-7);
+}
+
+.statLabel {
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	line-height: 1.35;
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+	transition: color 120ms ease;
+}
+
+.statLabel[data-flagged='true'] {
+	color: var(--mantine-color-yellow-7);
+}
+
+.warningBanner {
+	font-size: 13px;
+}

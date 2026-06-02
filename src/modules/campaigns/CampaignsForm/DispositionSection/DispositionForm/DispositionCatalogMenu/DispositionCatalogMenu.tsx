@@ -209,7 +209,6 @@ const DispositionCatalogMenu: React.FC = () => {
 						</Alert>
 					</Stack>
 				</Center>
-
 			</div>
 		);
 	}

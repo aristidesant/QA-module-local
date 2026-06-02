@@ -2,6 +2,7 @@ export interface ClientModel {
 	id: number;
 	identifier: string;
 	name: string;
+	alias?: string | null;
 	description?: string;
 	email?: string;
 	phone?: string;
@@ -16,6 +17,7 @@ export interface ClientModel {
 
 export interface CreateClientRequest {
 	name: string;
+	alias?: string;
 	description?: string;
 	email?: string;
 	phone?: string;
@@ -28,6 +30,7 @@ export interface CreateClientRequest {
 
 export interface UpdateClientRequest {
 	name?: string;
+	alias?: string;
 	description?: string;
 	email?: string;
 	phone?: string;

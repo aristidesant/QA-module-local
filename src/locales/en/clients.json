@@ -31,7 +31,7 @@
 	},
 	"table": {
 		"columns": {
-			"name": "Name",
+			"client": "Client",
 			"email": "Email",
 			"phone": "Phone",
 			"actions": "Actions"
@@ -52,6 +52,8 @@
 		},
 		"validation": {
 			"nameRequired": "Name is required",
+			"aliasRequired": "Alias is required",
+			"aliasInvalid": "Alias must use lowercase letters, numbers, and hyphens only",
 			"emailInvalid": "Invalid email format"
 		},
 		"sections": {
@@ -72,6 +74,11 @@
 			"name": {
 				"label": "Name",
 				"placeholder": "Acme Corporation"
+			},
+			"alias": {
+				"label": "Alias",
+				"placeholder": "acme-corporation",
+				"description": "Preferred display label and URL-friendly identifier."
 			},
 			"description": {
 				"label": "Description",

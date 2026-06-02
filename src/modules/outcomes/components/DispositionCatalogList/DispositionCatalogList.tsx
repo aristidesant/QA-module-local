@@ -511,9 +511,7 @@ const DispositionCatalogList = forwardRef<
 				opened={isModalOpen}
 				onClose={() => setIsModalOpen(false)}
 				title={
-					editingCatalog
-						? t('list.modalEditTitle')
-						: t('list.modalCreateTitle')
+					editingCatalog ? t('list.modalEditTitle') : t('list.modalCreateTitle')
 				}
 				size='lg'
 			>

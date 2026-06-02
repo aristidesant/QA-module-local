@@ -5,8 +5,6 @@ import type {
 	PaginatedResponse,
 	SchedulerSummary,
 } from '~/models/CampaignsModel';
-import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
-import type { AgentWorkflowApi } from '~/models/AgentWorkflowApiModel';
 import type { CampaignRequirements } from '~/models/CampaignRequirementsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
 import { ScheduleType, ScheduleDirection } from '~/models/SchedulerModel';
@@ -106,60 +104,6 @@ export interface ResumeOutboundCampaignPayload {
 	ignoreWaveDelay?: boolean;
 }
 
-type AgentConfigPayload = {
-	conversationConfig?: {
-		agent?: {
-			prompt?: Record<string, unknown> | string;
-		};
-	};
-	workflow?: AgentWorkflow | AgentWorkflowApi | Record<string, unknown>;
-};
-
-const getWorkflowCounts = (workflow?: AgentConfigPayload['workflow']) => {
-	const normalizedWorkflow = workflow as
-		| {
-				nodes?: Record<string, unknown>;
-				edges?: Record<string, unknown>;
-		  }
-		| undefined;
-
-	return {
-		nodes: normalizedWorkflow?.nodes
-			? Object.keys(normalizedWorkflow.nodes).length
-			: 0,
-		edges: normalizedWorkflow?.edges
-			? Object.keys(normalizedWorkflow.edges).length
-			: 0,
-	};
-};
-
-const removePromptText = (agentConfig?: AgentConfigPayload) => {
-	const agentConversation = agentConfig?.conversationConfig?.agent;
-
-	if (
-		agentConversation &&
-		agentConversation.prompt &&
-		typeof agentConversation.prompt === 'object'
-	) {
-		const { prompt: _rawPrompt, ...restPrompt } =
-			agentConversation.prompt as Record<string, unknown>;
-		agentConversation.prompt = restPrompt;
-	}
-};
-
-const stripWorkflowUiMeta = (agentConfig?: AgentConfigPayload) => {
-	const workflow = agentConfig?.workflow as
-		| { nodes?: Record<string, Record<string, unknown>> }
-		| undefined;
-	if (!workflow?.nodes) return;
-	Object.values(workflow.nodes).forEach((node) => {
-		if (!node || typeof node !== 'object') return;
-		if ('uiMeta' in node) {
-			delete node.uiMeta;
-		}
-	});
-};
-
 /**
  * Generic Campaigns API client (uses global axios interceptors for auth)
  */
@@ -212,11 +156,6 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			const response = await axios.get<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}`
 			);
-
-			const workflowCounts = getWorkflowCounts(
-				response.data?.agentConfig?.workflow as AgentConfigPayload['workflow']
-			);
-			void workflowCounts;
 
 			return response.data;
 		},
@@ -290,8 +229,6 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			data: Partial<Campaign>
 		) => {
 			const payload = sanitizeAgentPayload(data);
-			removePromptText(payload.agentConfig);
-			stripWorkflowUiMeta(payload.agentConfig);
 
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/details`,

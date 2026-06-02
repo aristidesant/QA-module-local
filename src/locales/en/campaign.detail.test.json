@@ -3,7 +3,10 @@
 		"title": "Agent Preview",
 		"titleWithCampaign": "Agent Preview - {{campaignName}}",
 		"description": "Test the campaign agent and review the conversation log.",
-		"helper": "Interact with the agent preview below while you review conversations."
+		"helper": "Interact with the agent preview below while you review conversations.",
+		"loadingTitle": "Loading agent preview",
+		"errorTitle": "Agent preview unavailable",
+		"notFound": "The campaign or agent could not be found. It may have been removed or you may not have access."
 	},
 	"agent": {
 		"empty": {

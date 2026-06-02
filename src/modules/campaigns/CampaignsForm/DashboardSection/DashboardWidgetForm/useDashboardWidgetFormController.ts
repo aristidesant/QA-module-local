@@ -13,7 +13,7 @@ import {
 	type DashboardWidgetSizePreset,
 	normalizeWidgetLayout,
 } from '~/modules/campaigns/dashboardLayout';
-import { getDataCollectionFromAgentConfig } from '~/modules/campaigns/CampaignsForm/AnalyticsSection/analyticsFormContext';
+import { getDataCollectionFromAgentConfig } from '~/modules/agent-details/AnalyticsSection/analyticsFormContext';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useGetClientConfig } from '~/queries/clientConfigQueries';
 import { useGetAllRoles } from '~/queries/roleQueries';
@@ -196,7 +196,12 @@ const useDashboardWidgetFormController = ({
 	const metricKeyOptions = useMemo(() => {
 		const campaignMetricKeys = selectedCampaign
 			? Object.keys(
-					getDataCollectionFromAgentConfig(selectedCampaign.agentConfig)
+					getDataCollectionFromAgentConfig(
+						selectedCampaign.agents?.find((a) => a.isPrincipal)?.agent
+							?.config ??
+							selectedCampaign.agents?.[0]?.agent?.config ??
+							{}
+					)
 				)
 			: [];
 

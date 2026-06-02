@@ -1,10 +1,7 @@
 import { useCallback, useMemo, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router';
 import { Alert, Button, Stack, Text } from '@mantine/core';
-import {
-	IconAlertCircle,
-	IconArrowLeft,
-} from '@tabler/icons-react';
+import { IconAlertCircle, IconArrowLeft } from '@tabler/icons-react';
 import { useMediaQuery } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
@@ -33,9 +30,14 @@ const CampaignTestPage = () => {
 	}>();
 	const isMobile = useMediaQuery('(max-width: 768px)', false);
 
-	const campaignBasePath = campaignId ? `/campaign/${campaignId}` : '/campaigns';
-	const { data: campaign, isLoading: isCampaignLoading, isError } =
-		useGetCampaign(campaignId);
+	const campaignBasePath = campaignId
+		? `/campaign/${campaignId}`
+		: '/campaigns';
+	const {
+		data: campaign,
+		isLoading: isCampaignLoading,
+		isError,
+	} = useGetCampaign(campaignId);
 	const campaignIdNumber = campaign?.id ?? Number(campaignId || 0);
 	const shouldLoadCampaignAgents = !routeAgentId;
 	const { data: campaignAgents = [], isLoading: isCampaignAgentsLoading } =
@@ -45,7 +47,7 @@ const CampaignTestPage = () => {
 		number | null
 	>(null);
 
-	const legacyAgentId = campaign?.agentConfig?.agentId;
+	const legacyAgentId = campaign?.agents?.[0]?.agentId;
 	const legacyCampaignAgent = campaignAgents.find(
 		(agent) => agent.agentId === legacyAgentId
 	);

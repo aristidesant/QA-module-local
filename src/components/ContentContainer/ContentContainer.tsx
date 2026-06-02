@@ -1,5 +1,6 @@
 import { type ReactNode, useState, useRef, useEffect } from 'react';
 import { IconArrowLeft } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 import styles from './ContentContainer.module.css';
 import { Divider, Text, Title, ActionIcon, Tooltip, Flex } from '@mantine/core';
 
@@ -41,6 +42,7 @@ export const ContentContainer = ({
 			: styles.contentWidthCentered;
 
 	const [scrolled, setScrolled] = useState(false);
+	const { t } = useTranslation('common');
 	const sentinelRef = useRef<HTMLDivElement>(null);
 	const scrollContainerRef = useRef<HTMLDivElement>(null);
 
@@ -70,11 +72,15 @@ export const ContentContainer = ({
 							<Flex gap={'xs'} align={'center'} justify={'space-between'}>
 								<Flex gap={'xs'} align={'center'}>
 									{showBackButton && (
-										<Tooltip label='Back' position='bottom' withArrow>
+										<Tooltip
+											label={t('action.back')}
+											position='bottom'
+											withArrow
+										>
 											<ActionIcon
 												variant='light'
 												color='gray'
-												aria-label='Back'
+												aria-label={t('action.back')}
 												onClick={onBackClick}
 												size='lg'
 											>

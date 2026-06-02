@@ -11,7 +11,10 @@ export interface UserModel {
 	employeeId?: string | null;
 	status: string;
 	clientId: number;
-	client?: Pick<ClientModel, 'id' | 'name' | 'identifier' | 'email'> | null;
+	client?: Pick<
+		ClientModel,
+		'id' | 'name' | 'alias' | 'identifier' | 'email'
+	> | null;
 	createdAt: string | Date;
 	updatedAt: string | Date;
 	deletedAt: string | Date | null;

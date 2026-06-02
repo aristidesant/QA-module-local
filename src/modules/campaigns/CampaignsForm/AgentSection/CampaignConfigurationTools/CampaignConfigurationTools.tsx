@@ -9,14 +9,11 @@ import {
 	Button,
 } from '@mantine/core';
 import { IconPuzzle, IconTrash, IconPlus } from '@tabler/icons-react';
-import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
+import { useAgentConfigFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import SectionCard from '~/components/SectionCard';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
 import { useToolsByCategory } from '~/queries/toolQueries';
-import type {
-	AgentConfigModel,
-	ConversationConfigModel,
-} from '~/models/AgentListObject';
+import type { ConversationConfigModel } from '~/models/AgentListObject';
 import CampaignConfigurationToolsAddModal from './CampaignConfigurationToolsAddModal';
 import classes from './CampaignConfigurationTools.module.css';
 import { useTranslation } from 'react-i18next';
@@ -33,7 +30,7 @@ const CampaignConfigurationTools: React.FC = () => {
 		'campaign.detail',
 		'common',
 	]);
-	const form = useCampaignFormContext();
+	const form = useAgentConfigFormContext();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const { data: toolCategories } = useToolCategories();
@@ -42,7 +39,7 @@ const CampaignConfigurationTools: React.FC = () => {
 	);
 
 	const selectedToolIds: string[] =
-		form.values.agentConfig?.conversationConfig?.agent?.prompt?.toolIds ?? [];
+		form.values.conversationConfig?.agent?.prompt?.toolIds ?? [];
 
 	const activeTools = (tools ?? []).filter((tool) =>
 		selectedToolIds.includes(tool.identifier)
@@ -50,13 +47,12 @@ const CampaignConfigurationTools: React.FC = () => {
 
 	const updateToolIds = useCallback(
 		(newIds: string[]) => {
-			const currentAgentConfig = form.values.agentConfig || {};
-			const currentConversationConfig = currentAgentConfig.conversationConfig;
+			const currentConversationConfig = form.values.conversationConfig;
 			const currentAgent = currentConversationConfig?.agent;
 			const currentPrompt = currentAgent?.prompt;
 
-			const updatedAgentConfig: Partial<AgentConfigModel> = {
-				...currentAgentConfig,
+			form.setValues({
+				...form.values,
 				conversationConfig: currentConversationConfig
 					? ({
 							...currentConversationConfig,
@@ -69,9 +65,7 @@ const CampaignConfigurationTools: React.FC = () => {
 							},
 						} as ConversationConfigModel)
 					: undefined,
-			};
-
-			form.setFieldValue('agentConfig', updatedAgentConfig);
+			});
 		},
 		[form]
 	);

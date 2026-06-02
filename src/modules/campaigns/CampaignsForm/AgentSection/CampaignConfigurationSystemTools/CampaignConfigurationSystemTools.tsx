@@ -18,11 +18,10 @@ import {
 import SectionCard from '~/components/SectionCard';
 import { useClientConfigByName } from '~/queries/useClientConfigs';
 import type {
-	AgentConfigModel,
 	ConversationConfigModel,
 	SystemToolModel,
 } from '~/models/AgentListObject';
-import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
+import { useAgentConfigFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import ToolConfigModal from './ToolConfigModal';
 import CampaignConfigurationSystemToolsAddModal from './CampaignConfigurationSystemToolsAddModal';
 import classes from './CampaignConfigurationSystemTools.module.css';
@@ -42,7 +41,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 		'campaign.detail',
 		'common',
 	]);
-	const form = useCampaignFormContext();
+	const form = useAgentConfigFormContext();
 	const { data: systemToolsConfig } = useClientConfigByName('system_tools');
 	const [editingTool, setEditingTool] = useState<ToolConfigModel | null>(null);
 	const [configModalOpened, setConfigModalOpened] = useState(false);
@@ -82,8 +81,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 	}, [systemToolsConfig]);
 
 	const selectedTools =
-		form.values.agentConfig?.conversationConfig?.agent?.prompt?.builtInTools ??
-		{};
+		form.values.conversationConfig?.agent?.prompt?.builtInTools ?? {};
 
 	const isToolSelected = useCallback(
 		(nameCodeToCheck: string) => {
@@ -104,13 +102,12 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 
 	const updateBuiltInTools = useCallback(
 		(updatedBuiltInTools: Record<string, SystemToolModel | null>) => {
-			const currentAgentConfig = form.values.agentConfig || {};
-			const currentConversationConfig = currentAgentConfig.conversationConfig;
+			const currentConversationConfig = form.values.conversationConfig;
 			const currentAgent = currentConversationConfig?.agent;
 			const currentPrompt = currentAgent?.prompt;
 
-			const updatedAgentConfig: Partial<AgentConfigModel> = {
-				...currentAgentConfig,
+			form.setValues({
+				...form.values,
 				conversationConfig: currentConversationConfig
 					? ({
 							...currentConversationConfig,
@@ -123,9 +120,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 							},
 						} as ConversationConfigModel)
 					: undefined,
-			};
-
-			form.setFieldValue('agentConfig', updatedAgentConfig);
+			});
 		},
 		[form]
 	);
@@ -133,8 +128,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 	const handleRemoveTool = useCallback(
 		(toolConfig: ToolConfigModel) => {
 			const currentBuiltInTools =
-				form.values.agentConfig?.conversationConfig?.agent?.prompt
-					?.builtInTools || {};
+				form.values.conversationConfig?.agent?.prompt?.builtInTools || {};
 			const updated = { ...currentBuiltInTools, [toolConfig.nameCode]: null };
 			updateBuiltInTools(updated);
 		},
@@ -144,8 +138,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 	const handleAddTools = useCallback(
 		(selectedNameCodes: string[]) => {
 			const currentBuiltInTools =
-				form.values.agentConfig?.conversationConfig?.agent?.prompt
-					?.builtInTools || {};
+				form.values.conversationConfig?.agent?.prompt?.builtInTools || {};
 
 			const newEntries = selectedNameCodes.reduce<
 				Record<string, SystemToolModel>
@@ -176,8 +169,7 @@ const CampaignConfigurationSystemTools: React.FC = () => {
 	const handleSaveToolConfig = useCallback(
 		(updatedConfig: SystemToolModel) => {
 			const currentBuiltInTools =
-				form.values.agentConfig?.conversationConfig?.agent?.prompt
-					?.builtInTools || {};
+				form.values.conversationConfig?.agent?.prompt?.builtInTools || {};
 			const nameCode = snakeToCamel(updatedConfig.name);
 			updateBuiltInTools({ ...currentBuiltInTools, [nameCode]: updatedConfig });
 		},

@@ -1,10 +1,4 @@
-import {
-	useCallback,
-	useEffect,
-	useMemo,
-	useRef,
-	useState,
-} from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
 	Button,
 	Group,
@@ -22,7 +16,10 @@ import {
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
-import { useCampaignFormContext } from '~/modules/campaigns/campaignFormFunctions';
+import {
+	useAgentConfigFormContext,
+	useCampaignFormContext,
+} from '~/modules/campaigns/campaignFormFunctions';
 import { useGetAgent } from '~/queries/agentQueries';
 import {
 	useBulkAttachDictionariesToAgent,
@@ -50,15 +47,15 @@ const CampaignConfigurationSpeechLanguage: React.FC<Props> = ({ agentId }) => {
 		'campaign.form.general',
 		'campaigns',
 	]);
-	const form = useCampaignFormContext();
+	const form = useAgentConfigFormContext();
+	const campaignForm = useCampaignFormContext();
 
 	// ── ASR Keywords ──────────────────────────────────────────────────────────
-	const currentKeywords =
-		form.values.agentConfig?.conversationConfig?.asr?.keywords ?? [];
+	const currentKeywords = form.values.conversationConfig?.asr?.keywords ?? [];
 
 	const handleKeywordsChange = (values: string[]) => {
 		form.setFieldValue(
-			'agentConfig.conversationConfig.asr.keywords',
+			'conversationConfig.asr.keywords',
 			normalizeKeywords(values)
 		);
 	};
@@ -81,7 +78,8 @@ const CampaignConfigurationSpeechLanguage: React.FC<Props> = ({ agentId }) => {
 				if (typeof locator === 'string') return locator;
 				if (typeof locator === 'object' && locator !== null) {
 					return (
-						(locator as Record<string, string>).pronunciationDictionaryId ?? null
+						(locator as Record<string, string>).pronunciationDictionaryId ??
+						null
 					);
 				}
 				return null;
@@ -135,10 +133,9 @@ const CampaignConfigurationSpeechLanguage: React.FC<Props> = ({ agentId }) => {
 				);
 			}
 			notifications.show({
-				title: t(
-					'general.pronunciationDictionary.notifications.saveSuccess',
-					{ ns: 'campaigns' }
-				),
+				title: t('general.pronunciationDictionary.notifications.saveSuccess', {
+					ns: 'campaigns',
+				}),
 				message: t(
 					'general.pronunciationDictionary.notifications.saveSuccess',
 					{ ns: 'campaigns' }
@@ -149,14 +146,12 @@ const CampaignConfigurationSpeechLanguage: React.FC<Props> = ({ agentId }) => {
 			refetchAgent();
 		} catch {
 			notifications.show({
-				title: t(
-					'general.pronunciationDictionary.notifications.saveError',
-					{ ns: 'campaigns' }
-				),
-				message: t(
-					'general.pronunciationDictionary.notifications.saveError',
-					{ ns: 'campaigns' }
-				),
+				title: t('general.pronunciationDictionary.notifications.saveError', {
+					ns: 'campaigns',
+				}),
+				message: t('general.pronunciationDictionary.notifications.saveError', {
+					ns: 'campaigns',
+				}),
 				color: 'red',
 			});
 		}
@@ -213,9 +208,12 @@ const CampaignConfigurationSpeechLanguage: React.FC<Props> = ({ agentId }) => {
 				<Switch
 					aria-label={t('general.noiseCancellationLabel', { ns: 'campaigns' })}
 					size='sm'
-					checked={form.values.noiseCancellation ?? false}
+					checked={campaignForm.values.noiseCancellation ?? false}
 					onChange={(e) =>
-						form.setFieldValue('noiseCancellation', e.currentTarget.checked)
+						campaignForm.setFieldValue(
+							'noiseCancellation',
+							e.currentTarget.checked
+						)
 					}
 				/>
 			</div>
