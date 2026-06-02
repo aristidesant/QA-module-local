@@ -227,7 +227,6 @@ const sidebarSections: SidebarSection[] = [
 				to: '/billing/invoices',
 				module: ModuleEnum.BILLING,
 				masterOnly: true,
-				i18nNamespace: 'billing',
 			},
 		],
 	},

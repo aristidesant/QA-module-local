@@ -375,9 +375,11 @@ const router = createBrowserRouter([
 								id: 'invoices',
 								element: (
 									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
-										<Suspense fallback={<SuspenseFallback />}>
-											<InvoicesPage />
-										</Suspense>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<InvoicesPage />
+											</Suspense>
+										</I18nNamespaceLoader>
 									</ModuleGuard>
 								),
 							},
@@ -386,9 +388,11 @@ const router = createBrowserRouter([
 								id: 'invoices-new',
 								element: (
 									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
-										<Suspense fallback={<SuspenseFallback />}>
-											<InvoiceNewPage />
-										</Suspense>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<InvoiceNewPage />
+											</Suspense>
+										</I18nNamespaceLoader>
 									</ModuleGuard>
 								),
 							},
@@ -397,9 +401,11 @@ const router = createBrowserRouter([
 								id: 'invoices-detail',
 								element: (
 									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
-										<Suspense fallback={<SuspenseFallback />}>
-											<InvoiceDetailPage />
-										</Suspense>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<InvoiceDetailPage />
+											</Suspense>
+										</I18nNamespaceLoader>
 									</ModuleGuard>
 								),
 							},
