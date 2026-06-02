@@ -1,0 +1,225 @@
+{
+	"page": {
+		"title": "Facturas",
+		"description": "Genera y gestiona facturas de clientes",
+		"actions": {
+			"newInvoice": "Nueva Factura"
+		}
+	},
+	"list": {
+		"empty": "No se encontraron facturas.",
+		"error": {
+			"title": "No se pudieron cargar las facturas"
+		},
+		"columns": {
+			"invoiceNumber": "Factura #",
+			"issuer": "Emisor",
+			"receiver": "Receptor",
+			"period": "Período",
+			"status": "Estado",
+			"currency": "Moneda",
+			"total": "Total",
+			"createdAt": "Creada",
+			"actions": "Acciones"
+		},
+		"actions": {
+			"view": "Ver",
+			"issue": "Emitir",
+			"void": "Anular",
+			"download": "Descargar DOCX"
+		}
+	},
+	"filters": {
+		"status": {
+			"label": "Estado",
+			"placeholder": "Todos los estados"
+		},
+		"issuerClient": {
+			"label": "Emisor",
+			"placeholder": "Todos los emisores"
+		},
+		"receiverClient": {
+			"label": "Receptor",
+			"placeholder": "Todos los receptores"
+		},
+		"periodStart": "Período desde",
+		"periodEnd": "Período hasta",
+		"clearFilters": "Limpiar filtros"
+	},
+	"status": {
+		"DRAFT": "Borrador",
+		"ISSUED": "Emitida",
+		"VOIDED": "Anulada"
+	},
+	"new": {
+		"title": "Nueva Factura",
+		"steps": {
+			"parameters": "Parámetros",
+			"preview": "Vista previa",
+			"confirm": "Confirmar"
+		},
+		"form": {
+			"issuerClient": {
+				"label": "Cliente Emisor",
+				"placeholder": "Seleccionar emisor"
+			},
+			"receiverClient": {
+				"label": "Cliente Receptor",
+				"placeholder": "Seleccionar receptor"
+			},
+			"periodStart": {
+				"label": "Inicio del Período"
+			},
+			"periodEnd": {
+				"label": "Fin del Período"
+			},
+			"invoiceNumber": {
+				"label": "Número de Factura",
+				"placeholder": "ej. INV-2026-0001"
+			},
+			"currency": {
+				"label": "Moneda"
+			},
+			"taxRate": {
+				"label": "Tasa de Impuesto (%)"
+			},
+			"hourlyRate": {
+				"label": "Tarifa por Hora"
+			}
+		},
+		"validation": {
+			"issuerRequired": "El emisor es obligatorio",
+			"receiverRequired": "El receptor es obligatorio",
+			"periodStartRequired": "La fecha de inicio es obligatoria",
+			"periodEndRequired": "La fecha de fin es obligatoria",
+			"invoiceNumberRequired": "El número de factura es obligatorio",
+			"hourlyRateMin": "La tarifa por hora debe ser 0 o mayor",
+			"taxRateRange": "La tasa de impuesto debe estar entre 0 y 100"
+		},
+		"actions": {
+			"preview": "Vista previa de Factura",
+			"back": "Atrás",
+			"continue": "Continuar",
+			"create": "Crear Factura",
+			"creating": "Creando..."
+		},
+		"conflict": {
+			"title": "Conflicto de factura activa",
+			"description": "Ya existe una factura activa para este emisor, receptor y período:",
+			"replaceLabel": "Reemplazar factura existente",
+			"replaceReasonLabel": "Motivo del reemplazo",
+			"replaceReasonPlaceholder": "Describe por qué se reemplaza esta factura",
+			"replaceReasonRequired": "El motivo es obligatorio al reemplazar"
+		},
+		"warnings": {
+			"title": "Advertencias de cálculo"
+		},
+		"statusLabel": "Estado de Factura",
+		"statusDraft": "Borrador",
+		"statusIssued": "Emitida",
+		"summary": {
+			"period": "Período",
+			"invoiceNumber": "Número de Factura",
+			"total": "Total"
+		}
+	},
+	"detail": {
+		"title": "Factura",
+		"actions": {
+			"issue": "Emitir Factura",
+			"issueConfirm": "¿Estás seguro de que deseas emitir esta factura? Esto cambiará su estado a Emitida.",
+			"void": "Anular Factura",
+			"voidTitle": "Anular Factura",
+			"voidDescription": "Esta acción no se puede deshacer. Proporciona un motivo para anular esta factura.",
+			"voidReasonLabel": "Motivo",
+			"voidReasonPlaceholder": "Describe por qué se anula esta factura",
+			"voidConfirm": "Anular Factura",
+			"download": "Descargar DOCX",
+			"back": "Volver a Facturas"
+		},
+		"metadata": {
+			"invoiceNumber": "Número de Factura",
+			"status": "Estado",
+			"createdAt": "Creada",
+			"period": "Período",
+			"currency": "Moneda",
+			"issuer": "Emisor",
+			"receiver": "Receptor"
+		}
+	},
+	"snapshot": {
+		"issuerInfo": "Emisor",
+		"receiverInfo": "Receptor",
+		"pocContacts": "Contactos",
+		"pocIssuer": "Contacto del Emisor",
+		"pocReceiver": "Contacto del Receptor",
+		"summaryLines": "Resumen",
+		"executionDetails": "Detalles de Ejecución",
+		"showExecutionDetails": "Mostrar detalles de ejecución",
+		"hideExecutionDetails": "Ocultar detalles de ejecución",
+		"totals": "Totales",
+		"columns": {
+			"campaign": "Campaña",
+			"agents": "Agentes",
+			"uptime": "Tiempo activo",
+			"calls": "Llamadas",
+			"hourlyRate": "Tarifa/hora",
+			"total": "Total",
+			"date": "Fecha",
+			"start": "Inicio",
+			"end": "Fin"
+		},
+		"noSummaryLines": "No se encontró actividad facturable para este período.",
+		"subtotal": "Subtotal",
+		"tax": "Impuesto",
+		"total": "Total"
+	},
+	"notifications": {
+		"created": {
+			"title": "Factura creada",
+			"message": "La factura {{number}} ha sido creada."
+		},
+		"issued": {
+			"title": "Factura emitida",
+			"message": "La factura {{number}} ha sido emitida."
+		},
+		"voided": {
+			"title": "Factura anulada",
+			"message": "La factura {{number}} ha sido anulada."
+		},
+		"downloadFailed": {
+			"invalidTemplate": "La plantilla de factura no es válida. Revisa la configuración de plantilla del emisor.",
+			"noTemplate": "No hay plantilla de factura configurada para el emisor. Agrega una plantilla .docx en la configuración de facturación del cliente.",
+			"generic": "No se pudo descargar la factura. Intenta de nuevo."
+		}
+	},
+	"templates": {
+		"card": {
+			"title": "Configuración de Plantilla de Factura",
+			"description": "Administra las plantillas DOCX para la generación de facturas"
+		},
+		"issuerClient": {
+			"label": "Cliente Emisor",
+			"placeholder": "Seleccionar cliente emisor"
+		},
+		"currentTemplate": "Plantilla Actual",
+		"lastUpdated": "Última actualización",
+		"status": {
+			"configured": "Configurada",
+			"none": "Sin configurar"
+		},
+		"actions": {
+			"upload": "Subir Plantilla",
+			"uploading": "Subiendo...",
+			"remove": "Eliminar Plantilla"
+		},
+		"info": "Cambiar la plantilla afecta las descargas futuras de facturas existentes.",
+		"count": "{count} configuradas",
+		"notifications": {
+			"uploaded": "Plantilla subida y asignada",
+			"removed": "Plantilla eliminada",
+			"uploadError": "No se pudo subir la plantilla. Verifica que el archivo sea un .docx válido.",
+			"assignError": "La plantilla seleccionada no pertenece a este cliente emisor o no es un archivo .docx."
+		}
+	}
+}

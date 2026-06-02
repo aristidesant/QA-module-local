@@ -192,5 +192,34 @@
 			"noTemplate": "No invoice template configured for issuer. Add a .docx template in the client's invoice settings.",
 			"generic": "Failed to download invoice. Please try again."
 		}
+	},
+	"templates": {
+		"card": {
+			"title": "Invoice Template Settings",
+			"description": "Manage DOCX templates used for invoice generation"
+		},
+		"issuerClient": {
+			"label": "Issuer Client",
+			"placeholder": "Select issuer client"
+		},
+		"currentTemplate": "Current Template",
+		"lastUpdated": "Last updated",
+		"status": {
+			"configured": "Configured",
+			"none": "Not configured"
+		},
+		"actions": {
+			"upload": "Upload Template",
+			"uploading": "Uploading...",
+			"remove": "Remove Template"
+		},
+		"info": "Changing the template affects future downloads of existing invoices.",
+		"count": "{count} configured",
+		"notifications": {
+			"uploaded": "Template uploaded and assigned",
+			"removed": "Template removed",
+			"uploadError": "Could not upload the invoice template. Please verify the file is a valid .docx.",
+			"assignError": "The selected template does not belong to this issuer client or is not a .docx file."
+		}
 	}
 }
