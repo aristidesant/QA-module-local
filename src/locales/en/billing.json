@@ -1,0 +1,196 @@
+{
+	"page": {
+		"title": "Invoices",
+		"description": "Generate and manage client invoices",
+		"actions": {
+			"newInvoice": "New Invoice"
+		}
+	},
+	"list": {
+		"empty": "No invoices found.",
+		"error": {
+			"title": "Unable to load invoices"
+		},
+		"columns": {
+			"invoiceNumber": "Invoice #",
+			"issuer": "Issuer",
+			"receiver": "Receiver",
+			"period": "Period",
+			"status": "Status",
+			"currency": "Currency",
+			"total": "Total",
+			"createdAt": "Created",
+			"actions": "Actions"
+		},
+		"actions": {
+			"view": "View",
+			"issue": "Issue",
+			"void": "Void",
+			"download": "Download DOCX"
+		}
+	},
+	"filters": {
+		"status": {
+			"label": "Status",
+			"placeholder": "All statuses"
+		},
+		"issuerClient": {
+			"label": "Issuer",
+			"placeholder": "All issuers"
+		},
+		"receiverClient": {
+			"label": "Receiver",
+			"placeholder": "All receivers"
+		},
+		"periodStart": "Period from",
+		"periodEnd": "Period to",
+		"clearFilters": "Clear filters"
+	},
+	"status": {
+		"DRAFT": "Draft",
+		"ISSUED": "Issued",
+		"VOIDED": "Voided"
+	},
+	"new": {
+		"title": "New Invoice",
+		"steps": {
+			"parameters": "Parameters",
+			"preview": "Preview",
+			"confirm": "Confirm"
+		},
+		"form": {
+			"issuerClient": {
+				"label": "Issuer Client",
+				"placeholder": "Select issuer"
+			},
+			"receiverClient": {
+				"label": "Receiver Client",
+				"placeholder": "Select receiver"
+			},
+			"periodStart": {
+				"label": "Period Start"
+			},
+			"periodEnd": {
+				"label": "Period End"
+			},
+			"invoiceNumber": {
+				"label": "Invoice Number",
+				"placeholder": "e.g. INV-2026-0001"
+			},
+			"currency": {
+				"label": "Currency"
+			},
+			"taxRate": {
+				"label": "Tax Rate (%)"
+			},
+			"hourlyRate": {
+				"label": "Hourly Rate"
+			}
+		},
+		"validation": {
+			"issuerRequired": "Issuer is required",
+			"receiverRequired": "Receiver is required",
+			"periodStartRequired": "Period start is required",
+			"periodEndRequired": "Period end is required",
+			"invoiceNumberRequired": "Invoice number is required",
+			"hourlyRateMin": "Hourly rate must be 0 or greater",
+			"taxRateRange": "Tax rate must be between 0 and 100"
+		},
+		"actions": {
+			"preview": "Preview Invoice",
+			"back": "Back",
+			"continue": "Continue",
+			"create": "Create Invoice",
+			"creating": "Creating..."
+		},
+		"conflict": {
+			"title": "Active invoice conflict",
+			"description": "An active invoice already exists for this issuer, receiver, and period:",
+			"replaceLabel": "Replace existing invoice",
+			"replaceReasonLabel": "Reason for replacement",
+			"replaceReasonPlaceholder": "Describe why this invoice is being replaced",
+			"replaceReasonRequired": "Reason is required when replacing"
+		},
+		"warnings": {
+			"title": "Calculation warnings"
+		},
+		"statusLabel": "Invoice Status",
+		"statusDraft": "Draft",
+		"statusIssued": "Issued",
+		"summary": {
+			"period": "Period",
+			"invoiceNumber": "Invoice Number",
+			"total": "Total"
+		}
+	},
+	"detail": {
+		"title": "Invoice",
+		"actions": {
+			"issue": "Issue Invoice",
+			"issueConfirm": "Are you sure you want to issue this invoice? This will change its status to Issued.",
+			"void": "Void Invoice",
+			"voidTitle": "Void Invoice",
+			"voidDescription": "This action cannot be undone. Please provide a reason for voiding this invoice.",
+			"voidReasonLabel": "Reason",
+			"voidReasonPlaceholder": "Describe why this invoice is being voided",
+			"voidConfirm": "Void Invoice",
+			"download": "Download DOCX",
+			"back": "Back to Invoices"
+		},
+		"metadata": {
+			"invoiceNumber": "Invoice Number",
+			"status": "Status",
+			"createdAt": "Created",
+			"period": "Period",
+			"currency": "Currency",
+			"issuer": "Issuer",
+			"receiver": "Receiver"
+		}
+	},
+	"snapshot": {
+		"issuerInfo": "Issuer",
+		"receiverInfo": "Receiver",
+		"pocContacts": "Points of Contact",
+		"pocIssuer": "Issuer POC",
+		"pocReceiver": "Receiver POC",
+		"summaryLines": "Summary",
+		"executionDetails": "Execution Details",
+		"showExecutionDetails": "Show execution details",
+		"hideExecutionDetails": "Hide execution details",
+		"totals": "Totals",
+		"columns": {
+			"campaign": "Campaign",
+			"agents": "Agents",
+			"uptime": "Uptime",
+			"calls": "Calls",
+			"hourlyRate": "Rate/hr",
+			"total": "Total",
+			"date": "Date",
+			"start": "Start",
+			"end": "End"
+		},
+		"noSummaryLines": "No billable activity found for this period.",
+		"subtotal": "Subtotal",
+		"tax": "Tax",
+		"total": "Total"
+	},
+	"notifications": {
+		"created": {
+			"title": "Invoice created",
+			"message": "Invoice {{number}} has been created."
+		},
+		"issued": {
+			"title": "Invoice issued",
+			"message": "Invoice {{number}} is now issued."
+		},
+		"voided": {
+			"title": "Invoice voided",
+			"message": "Invoice {{number}} has been voided."
+		},
+		"downloadFailed": {
+			"invalidTemplate": "Invoice template is invalid. Please review the issuer's template configuration.",
+			"noTemplate": "No invoice template configured for issuer. Add a .docx template in the client's invoice settings.",
+			"generic": "Failed to download invoice. Please try again."
+		}
+	}
+}
