@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { DEFAULT_API_URL } from './config';
+import type FileModel from '~/models/FileModel';
 
 /**
  * File API client
@@ -16,6 +17,21 @@ export type GetPresignedUrlOptions = {
 
 const fileApi = (_authHeader?: Record<string, string>) => {
 	return {
+		/**
+		 * Fetch a presigned URL for a file by ID.
+		 * Accepts both plain string response and object variants commonly used by APIs.
+		 */
+		/**
+		 * Fetch all files belonging to a client.
+		 */
+		getClientFiles: async (clientId: number): Promise<FileModel[]> => {
+			const response = await axios.get<FileModel[]>(
+				`${DEFAULT_API_URL}/files`,
+				{ params: { clientId } }
+			);
+			return response.data;
+		},
+
 		/**
 		 * Fetch a presigned URL for a file by ID.
 		 * Accepts both plain string response and object variants commonly used by APIs.

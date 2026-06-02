@@ -4,6 +4,7 @@ import {
 	Button,
 	Group,
 	Paper,
+	Select,
 	Stack,
 	Text,
 	TextInput,
@@ -29,6 +30,9 @@ import type {
 	CreateClientRequest,
 	UpdateClientRequest,
 } from '~/models/ClientModel';
+import { useIsMasterClient } from '~/hooks/useIsMasterClient';
+import { useGetAllUsers } from '~/queries/userQueries';
+import { useGetClientFiles } from '~/queries/fileQueries';
 
 interface ClientFormProps {
 	mode: 'create' | 'edit';
@@ -47,6 +51,9 @@ interface ClientFormValues {
 	rnc?: string;
 	userId?: number | null;
 	countryId?: number | null;
+	website?: string;
+	pocUserId?: number | null;
+	invoiceTemplateFileId?: number | null;
 }
 
 const ClientForm: React.FC<ClientFormProps> = ({
@@ -58,6 +65,13 @@ const ClientForm: React.FC<ClientFormProps> = ({
 	const { t } = useTranslation('clients');
 	const isEditMode = mode === 'edit';
 	const [isAliasManuallyEdited, setIsAliasManuallyEdited] = useState(false);
+	const isMasterClient = useIsMasterClient();
+	const { data: allUsers } = useGetAllUsers(
+		isEditMode && clientId ? { clientId } : undefined
+	);
+	const { data: clientFiles = [] } = useGetClientFiles(
+		isEditMode ? clientId : undefined
+	);
 
 	const form = useForm<ClientFormValues>({
 		initialValues: {
@@ -70,6 +84,9 @@ const ClientForm: React.FC<ClientFormProps> = ({
 			rnc: '',
 			userId: null,
 			countryId: null,
+			website: '',
+			pocUserId: null,
+			invoiceTemplateFileId: null,
 		},
 		validate: {
 			name: (value) =>
@@ -96,6 +113,15 @@ const ClientForm: React.FC<ClientFormProps> = ({
 		},
 	});
 
+	const userOptions = (allUsers?.data ?? []).map((u) => ({
+		value: String(u.id),
+		label: `${u.firstName ?? ''} ${u.lastName ?? ''} (${u.email})`.trim(),
+	}));
+
+	const docxFileOptions = clientFiles
+		.filter((f) => f.extension === 'docx')
+		.map((f) => ({ value: String(f.id), label: f.name }));
+
 	const createMutation = useCreateClient();
 	const updateMutation = useUpdateClient();
 
@@ -118,6 +144,9 @@ const ClientForm: React.FC<ClientFormProps> = ({
 				rnc: client.rnc || '',
 				userId: client.userId,
 				countryId: client.countryId,
+				website: client.website ?? '',
+				pocUserId: client.pocUserId ?? null,
+				invoiceTemplateFileId: client.invoiceTemplateFileId ?? null,
 			});
 			setIsAliasManuallyEdited(Boolean(client.alias));
 		}
@@ -152,6 +181,9 @@ const ClientForm: React.FC<ClientFormProps> = ({
 					rnc: values.rnc,
 					userId: values.userId,
 					countryId: values.countryId,
+					website: values.website || undefined,
+					pocUserId: values.pocUserId ?? null,
+					invoiceTemplateFileId: values.invoiceTemplateFileId ?? null,
 				};
 				await updateMutation.mutateAsync({ id: clientId, data: updatePayload });
 				notifications.show({
@@ -330,6 +362,57 @@ const ClientForm: React.FC<ClientFormProps> = ({
 							/>
 						</div>
 					</SectionCard>
+
+					{isMasterClient && isEditMode && (
+						<SectionCard
+							title={t('form.sections.invoiceSettings.title')}
+							description={t('form.sections.invoiceSettings.description')}
+							contentSpacing='sm'
+							padding='md'
+						>
+							<TextInput
+								label={t('form.fields.website.label')}
+								placeholder={t('form.fields.website.placeholder')}
+								size='sm'
+								{...form.getInputProps('website')}
+							/>
+							<Select
+								label={t('form.fields.pocUserId.label')}
+								placeholder={t('form.fields.pocUserId.placeholder')}
+								data={userOptions}
+								value={
+									form.values.pocUserId != null
+										? String(form.values.pocUserId)
+										: null
+								}
+								onChange={(v) =>
+									form.setFieldValue('pocUserId', v ? Number(v) : null)
+								}
+								clearable
+								searchable
+								size='sm'
+							/>
+							<Select
+								label={t('form.fields.invoiceTemplateFileId.label')}
+								placeholder={t('form.fields.invoiceTemplateFileId.placeholder')}
+								data={docxFileOptions}
+								value={
+									form.values.invoiceTemplateFileId != null
+										? String(form.values.invoiceTemplateFileId)
+										: null
+								}
+								onChange={(v) =>
+									form.setFieldValue(
+										'invoiceTemplateFileId',
+										v ? Number(v) : null
+									)
+								}
+								clearable
+								searchable
+								size='sm'
+							/>
+						</SectionCard>
+					)}
 				</Stack>
 			</div>
 

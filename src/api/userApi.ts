@@ -22,6 +22,7 @@ export interface GetAllUsersParams {
 		| 'createdAt'
 		| 'updatedAt';
 	sortOrder?: 'ASC' | 'DESC';
+	clientId?: number;
 }
 
 interface UserApiClient {

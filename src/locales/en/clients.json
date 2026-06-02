@@ -68,6 +68,10 @@
 			"locationTax": {
 				"title": "Location & Tax",
 				"description": "Where the client operates and how they bill."
+			},
+			"invoiceSettings": {
+				"title": "Invoice Settings",
+				"description": "Configure invoice template and contact for this client"
 			}
 		},
 		"fields": {
@@ -99,6 +103,18 @@
 			"rnc": {
 				"label": "RNC",
 				"placeholder": "Tax ID / RNC"
+			},
+			"website": {
+				"label": "Website",
+				"placeholder": "https://www.example.com"
+			},
+			"pocUserId": {
+				"label": "Point of Contact (POC)",
+				"placeholder": "Select a user"
+			},
+			"invoiceTemplateFileId": {
+				"label": "Invoice Template (.docx)",
+				"placeholder": "Select a .docx file"
 			}
 		}
 	},
