@@ -7,6 +7,12 @@ import type {
 import type { Paginator } from '~/models/Paginator';
 import { DEFAULT_API_URL } from './config';
 
+export interface SimpleUser {
+	id: number;
+	firstName: string | null;
+	lastName: string | null;
+}
+
 export interface GetAllUsersParams {
 	page?: number;
 	limit?: number;
@@ -41,6 +47,7 @@ interface UserApiClient {
 	deleteUser: (id: number) => Promise<void>;
 	createUser: (userData: CreateUserPayload) => Promise<UserModel>;
 	getAllUsers: (params?: GetAllUsersParams) => Promise<Paginator<UserModel>>;
+	getSimpleUsers: (clientId: number) => Promise<SimpleUser[]>;
 }
 
 // User API client (uses global axios interceptors for auth)
@@ -129,6 +136,18 @@ const userApi = (_authHeader: Record<string, string> = {}): UserApiClient => {
 				`${DEFAULT_API_URL}/users`,
 				{
 					params,
+					headers: { ..._authHeader },
+				}
+			);
+			return response.data;
+		},
+
+		// Get simple users list (id, firstName, lastName) by client
+		getSimpleUsers: async (clientId: number): Promise<SimpleUser[]> => {
+			const response = await axios.get<SimpleUser[]>(
+				`${DEFAULT_API_URL}/users/simple`,
+				{
+					params: { clientId },
 					headers: { ..._authHeader },
 				}
 			);

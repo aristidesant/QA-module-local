@@ -1,4 +1,4 @@
-import { Button, Select, Group } from '@mantine/core';
+import { Button, Group, Select, Skeleton, Stack } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useTranslation } from 'react-i18next';
 import type { FilterInvoiceDto, InvoiceStatus } from '~/models/InvoiceModel';
@@ -9,12 +9,14 @@ interface InvoiceFiltersProps {
 	filters: FilterInvoiceDto;
 	clients: ClientModel[];
 	onChange: (filters: FilterInvoiceDto) => void;
+	isLoading?: boolean;
 }
 
 const InvoiceFilters: React.FC<InvoiceFiltersProps> = ({
 	filters,
 	clients,
 	onChange,
+	isLoading = false,
 }) => {
 	const { t } = useTranslation('billing');
 
@@ -35,6 +37,34 @@ const InvoiceFilters: React.FC<InvoiceFiltersProps> = ({
 		!!filters.receiverClientId ||
 		!!filters.periodStart ||
 		!!filters.periodEnd;
+
+	if (isLoading) {
+		return (
+			<div className={styles.root} aria-busy='true' aria-live='polite'>
+				<Stack gap={6} className={styles.selectField}>
+					<Skeleton height={12} width='42%' radius='xl' />
+					<Skeleton height={36} radius='sm' />
+				</Stack>
+				<Stack gap={6} className={styles.selectField}>
+					<Skeleton height={12} width='52%' radius='xl' />
+					<Skeleton height={36} radius='sm' />
+				</Stack>
+				<Stack gap={6} className={styles.selectField}>
+					<Skeleton height={12} width='56%' radius='xl' />
+					<Skeleton height={36} radius='sm' />
+				</Stack>
+				<Stack gap={6} className={styles.dateField}>
+					<Skeleton height={12} width='48%' radius='xl' />
+					<Skeleton height={36} radius='sm' />
+				</Stack>
+				<Stack gap={6} className={styles.dateField}>
+					<Skeleton height={12} width='48%' radius='xl' />
+					<Skeleton height={36} radius='sm' />
+				</Stack>
+				<Skeleton height={34} width={96} radius='sm' />
+			</div>
+		);
+	}
 
 	return (
 		<div className={styles.root}>

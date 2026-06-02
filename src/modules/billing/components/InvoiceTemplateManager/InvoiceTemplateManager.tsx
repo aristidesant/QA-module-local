@@ -7,8 +7,10 @@ import {
 	Collapse,
 	Group,
 	Select,
+	Skeleton,
 	Stack,
 	Text,
+	UnstyledButton,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
@@ -41,12 +43,14 @@ const InvoiceTemplateManager: React.FC = () => {
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
 
-	const { data: clients = [] } = useGetAllClients();
-	const { data: selectedClient } = useGetClient(selectedClientId ?? 0);
-	const { data: clientFiles = [] } = useGetClientFiles(
-		selectedClientId ?? undefined
-	);
-	const { data: fileTypes = [] } = useGetFileTypes();
+	const { data: clients = [], isLoading: isClientsLoading } =
+		useGetAllClients();
+	const { data: selectedClient, isLoading: isSelectedClientLoading } =
+		useGetClient(selectedClientId ?? 0, isExpanded);
+	const { data: clientFiles = [], isLoading: isClientFilesLoading } =
+		useGetClientFiles(selectedClientId ?? undefined, isExpanded);
+	const { data: fileTypes = [], isLoading: isFileTypesLoading } =
+		useGetFileTypes(isExpanded);
 	const uploadMutation = useUploadFile();
 	const updateMutation = useUpdateClient();
 
@@ -58,6 +62,10 @@ const InvoiceTemplateManager: React.FC = () => {
 	const currentTemplateFile = currentTemplateFileId
 		? (clientFiles.find((f) => f.id === currentTemplateFileId) ?? null)
 		: null;
+	const isTemplateDataLoading =
+		isExpanded &&
+		selectedClientId != null &&
+		(isSelectedClientLoading || isClientFilesLoading || isFileTypesLoading);
 
 	const configuredCount = clients.filter(
 		(c) => c.invoiceTemplateFileId != null
@@ -71,6 +79,14 @@ const InvoiceTemplateManager: React.FC = () => {
 	const handleFileSelected = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
 		if (!file || !selectedClientId) return;
+		if (!templateTypeId) {
+			notifications.show({
+				title: t('templates.notifications.uploadError'),
+				message: '',
+				color: 'red',
+			});
+			return;
+		}
 
 		if (!file.name.toLowerCase().endsWith('.docx')) {
 			notifications.show({
@@ -145,38 +161,49 @@ const InvoiceTemplateManager: React.FC = () => {
 	return (
 		<SectionCard
 			title={
-				<Group
-					gap='xs'
+				<UnstyledButton
+					type='button'
+					aria-expanded={isExpanded}
+					aria-controls='invoice-template-settings'
 					onClick={() => setIsExpanded(!isExpanded)}
 					className={classes.clickableTitle}
 				>
-					{isExpanded ? (
-						<IconChevronDown size={16} />
-					) : (
-						<IconChevronRight size={16} />
-					)}
-					<Text>{t('templates.card.title')}</Text>
-					{configuredCount > 0 && (
-						<Badge size='sm' variant='light' color='green'>
-							{t('templates.count', { count: configuredCount })}
-						</Badge>
-					)}
-				</Group>
+					<Group gap='xs'>
+						{isExpanded ? (
+							<IconChevronDown size={16} />
+						) : (
+							<IconChevronRight size={16} />
+						)}
+						<Text>{t('templates.card.title')}</Text>
+						{configuredCount > 0 && (
+							<Badge size='sm' variant='light' color='green'>
+								{t('templates.count', { count: configuredCount })}
+							</Badge>
+						)}
+					</Group>
+				</UnstyledButton>
 			}
 			description={t('templates.card.description')}
 		>
-			<Collapse expanded={isExpanded}>
+			<Collapse expanded={isExpanded} id='invoice-template-settings'>
 				<Stack gap='sm'>
-					<Select
-						label={t('templates.issuerClient.label')}
-						placeholder={t('templates.issuerClient.placeholder')}
-						data={clientOptions}
-						value={selectedClientId != null ? String(selectedClientId) : null}
-						onChange={(v) => setSelectedClientId(v ? Number(v) : null)}
-						clearable
-						searchable
-						size='sm'
-					/>
+					{isClientsLoading && clients.length === 0 ? (
+						<Stack gap={6}>
+							<Skeleton height={12} width='34%' radius='xl' />
+							<Skeleton height={36} radius='sm' />
+						</Stack>
+					) : (
+						<Select
+							label={t('templates.issuerClient.label')}
+							placeholder={t('templates.issuerClient.placeholder')}
+							data={clientOptions}
+							value={selectedClientId != null ? String(selectedClientId) : null}
+							onChange={(v) => setSelectedClientId(v ? Number(v) : null)}
+							clearable
+							searchable
+							size='sm'
+						/>
+					)}
 
 					{selectedClientId && (
 						<>
@@ -184,7 +211,9 @@ const InvoiceTemplateManager: React.FC = () => {
 								<Text size='sm' fw={500}>
 									{t('templates.currentTemplate')}:
 								</Text>
-								{currentTemplateFile ? (
+								{isTemplateDataLoading ? (
+									<Skeleton height={20} width='42%' radius='xl' />
+								) : currentTemplateFile ? (
 									<Group gap={4}>
 										<Text size='sm'>{currentTemplateFile.name}</Text>
 										<Badge size='sm' color='green' variant='light'>
@@ -198,50 +227,62 @@ const InvoiceTemplateManager: React.FC = () => {
 								)}
 							</Group>
 
-							<Alert
-								icon={<IconInfoCircle size={16} />}
-								color='blue'
-								variant='light'
-								p='xs'
-							>
-								<Text size='xs'>{t('templates.info')}</Text>
-							</Alert>
-
-							<Group gap='xs'>
-								<Button
-									size='sm'
-									variant='light'
-									leftSection={<IconUpload size={16} />}
-									loading={isUploading}
-									disabled={!selectedClientId}
-									onClick={() => fileInputRef.current?.click()}
-								>
-									{isUploading
-										? t('templates.actions.uploading')
-										: t('templates.actions.upload')}
-								</Button>
-
-								{currentTemplateFile && (
-									<Button
-										size='sm'
-										variant='outline'
-										color='red'
-										leftSection={<IconTrash size={16} />}
-										loading={isUploading}
-										onClick={handleRemove}
+							{isTemplateDataLoading ? (
+								<Stack gap='xs'>
+									<Skeleton height={52} radius='md' />
+									<Group gap='xs'>
+										<Skeleton height={34} width={124} radius='sm' />
+										<Skeleton height={34} width={110} radius='sm' />
+									</Group>
+								</Stack>
+							) : (
+								<>
+									<Alert
+										icon={<IconInfoCircle size={16} />}
+										color='blue'
+										variant='light'
+										p='xs'
 									>
-										{t('templates.actions.remove')}
-									</Button>
-								)}
-							</Group>
+										<Text size='xs'>{t('templates.info')}</Text>
+									</Alert>
 
-							<input
-								ref={fileInputRef}
-								type='file'
-								accept='.docx'
-								className={classes.hiddenInput}
-								onChange={handleFileSelected}
-							/>
+									<Group gap='xs'>
+										<Button
+											size='sm'
+											variant='light'
+											leftSection={<IconUpload size={16} />}
+											loading={isUploading}
+											disabled={!selectedClientId || !templateTypeId}
+											onClick={() => fileInputRef.current?.click()}
+										>
+											{isUploading
+												? t('templates.actions.uploading')
+												: t('templates.actions.upload')}
+										</Button>
+
+										{currentTemplateFile && (
+											<Button
+												size='sm'
+												variant='outline'
+												color='red'
+												leftSection={<IconTrash size={16} />}
+												loading={isUploading}
+												onClick={handleRemove}
+											>
+												{t('templates.actions.remove')}
+											</Button>
+										)}
+									</Group>
+
+									<input
+										ref={fileInputRef}
+										type='file'
+										accept='.docx'
+										className={classes.hiddenInput}
+										onChange={handleFileSelected}
+									/>
+								</>
+							)}
 						</>
 					)}
 

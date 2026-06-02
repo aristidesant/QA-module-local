@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import { Alert, Center, Loader, Text, Textarea } from '@mantine/core';
+import { Alert, Text, Textarea } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { IconInfoCircle } from '@tabler/icons-react';
@@ -48,7 +48,8 @@ const InvoicesPage: React.FC = () => {
 		offset,
 	});
 
-	const { data: clients = [] } = useGetAllClients();
+	const { data: clients = [], isLoading: isClientsLoading } =
+		useGetAllClients();
 	const issueMutation = useIssueInvoice();
 	const voidMutation = useVoidInvoice();
 	const downloadMutation = useDownloadDocx();
@@ -204,6 +205,7 @@ const InvoicesPage: React.FC = () => {
 					<InvoiceFilters
 						filters={filters}
 						clients={clients}
+						isLoading={isClientsLoading && clients.length === 0}
 						onChange={handleFiltersChange}
 					/>
 				</SectionCard>
@@ -215,11 +217,6 @@ const InvoicesPage: React.FC = () => {
 					description={t('page.description')}
 					onAdd={() => void navigate('/billing/invoices/new')}
 				>
-					{isLoading && (
-						<Center>
-							<Loader size='sm' />
-						</Center>
-					)}
 					{isError && (
 						<Alert
 							icon={<IconInfoCircle size={18} />}
@@ -229,17 +226,12 @@ const InvoicesPage: React.FC = () => {
 							{error instanceof Error ? error.message : 'Unknown error'}
 						</Alert>
 					)}
-					{!isLoading && !isError && invoices.length === 0 && (
-						<Center>
-							<Text size='sm' c='dimmed'>
-								{t('list.empty')}
-							</Text>
-						</Center>
-					)}
-					{!isLoading && !isError && invoices.length > 0 && (
+					{!isError && (
 						<BaseTable<InvoiceResponse>
 							data={invoices}
 							columns={columns}
+							isLoading={isLoading}
+							emptyMessage={t('list.empty')}
 							onRowClick={handleView}
 							getRowClassName={() => classes.tableRow}
 							filterMode='server'

@@ -31,7 +31,7 @@ import type {
 	UpdateClientRequest,
 } from '~/models/ClientModel';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
-import { useGetAllUsers } from '~/queries/userQueries';
+import { useGetSimpleUsers } from '~/queries/userQueries';
 import { useGetClientFiles } from '~/queries/fileQueries';
 
 interface ClientFormProps {
@@ -66,8 +66,8 @@ const ClientForm: React.FC<ClientFormProps> = ({
 	const isEditMode = mode === 'edit';
 	const [isAliasManuallyEdited, setIsAliasManuallyEdited] = useState(false);
 	const isMasterClient = useIsMasterClient();
-	const { data: allUsers } = useGetAllUsers(
-		isEditMode && isMasterClient && clientId ? { clientId } : undefined
+	const { data: simpleUsers = [] } = useGetSimpleUsers(
+		isEditMode && isMasterClient ? clientId : undefined
 	);
 	const { data: clientFiles = [] } = useGetClientFiles(
 		isEditMode ? clientId : undefined
@@ -113,9 +113,9 @@ const ClientForm: React.FC<ClientFormProps> = ({
 		},
 	});
 
-	const userOptions = (allUsers?.data ?? []).map((u) => ({
+	const userOptions = simpleUsers.map((u) => ({
 		value: String(u.id),
-		label: `${u.firstName ?? ''} ${u.lastName ?? ''} (${u.email})`.trim(),
+		label: `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim() || 'Unknown',
 	}));
 
 	const docxFileOptions = clientFiles

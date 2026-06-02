@@ -6,24 +6,28 @@ import type FileTypeModel from '~/models/FileTypeModel';
 /**
  * Query to get all files belonging to a client.
  */
-export const useGetClientFiles = (clientId: number | undefined) => {
+export const useGetClientFiles = (
+	clientId: number | undefined,
+	enabled = true
+) => {
 	return useQuery<FileModel[]>({
 		queryKey: ['files', clientId],
 		queryFn: async () => {
 			const api = fileApi();
 			return api.getClientFiles(clientId!);
 		},
-		enabled: !!clientId,
+		enabled: !!clientId && enabled,
 	});
 };
 
-export const useGetFileTypes = () => {
+export const useGetFileTypes = (enabled = true) => {
 	return useQuery<FileTypeModel[]>({
 		queryKey: ['fileTypes'],
 		queryFn: async () => {
 			const api = fileApi();
 			return api.getFileTypes();
 		},
+		enabled,
 	});
 };
 
