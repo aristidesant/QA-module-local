@@ -79,7 +79,7 @@ const invoiceApi = (
 
 	downloadDocx: async (id, token) => {
 		const response = await fetch(`${DEFAULT_API_URL}/invoices/${id}/docx`, {
-			headers: { Authorization: `Bearer ${token}` },
+			headers: { ..._authHeader, Authorization: `Bearer ${token}` },
 		});
 		if (!response.ok) {
 			const status = response.status;
