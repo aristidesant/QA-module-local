@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import fileApi from '~/api/fileApi';
 import type FileModel from '~/models/FileModel';
 
@@ -13,5 +13,18 @@ export const useGetClientFiles = (clientId: number | undefined) => {
 			return api.getClientFiles(clientId!);
 		},
 		enabled: !!clientId,
+	});
+};
+
+export const useUploadFile = () => {
+	return useMutation({
+		mutationFn: async (params: {
+			file: File;
+			codeType?: string;
+			description?: string;
+		}): Promise<FileModel> => {
+			const api = fileApi();
+			return api.uploadFile(params.file, params.codeType, params.description);
+		},
 	});
 };
