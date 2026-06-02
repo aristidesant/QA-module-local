@@ -62,7 +62,9 @@ const ToolNodeForm = ({
 
 	const selectedTools = useMemo(() => {
 		return selectedToolIds.map((tool_id) => {
-			const matched = availableTools.find((tool) => tool.identifier === tool_id);
+			const matched = availableTools.find(
+				(tool) => tool.identifier === tool_id
+			);
 			return {
 				id: tool_id,
 				name: matched?.name,

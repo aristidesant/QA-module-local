@@ -3,7 +3,10 @@
 		"title": "Vista previa del agente",
 		"titleWithCampaign": "Vista previa del agente - {{campaignName}}",
 		"description": "Prueba el agente de la campaña y revisa el historial de conversaciones.",
-		"helper": "Interactúa con la vista previa del agente mientras revisas las conversaciones."
+		"helper": "Interactúa con la vista previa del agente mientras revisas las conversaciones.",
+		"loadingTitle": "Cargando vista previa del agente",
+		"errorTitle": "Vista previa del agente no disponible",
+		"notFound": "La campaña o el agente no se encontraron. Es posible que se haya eliminado o que no tengas acceso."
 	},
 	"agent": {
 		"empty": {

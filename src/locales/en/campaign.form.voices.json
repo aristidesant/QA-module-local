@@ -1,16 +1,45 @@
 {
 	"section": {
 		"title": "Campaign voices",
-		"description": "Choose which voices this campaign can distribute across tasks."
+		"description": "Pick the voices this campaign can use. Browse, preview and add as many as you need."
 	},
-	"selector": {
-		"label": "Voice pool",
-		"description": "Selected voices are available for campaign-level and contact-list distribution.",
-		"placeholder": "Select one or more voices",
-		"hint": "Leave this empty only if you want the campaign to keep its existing voice behavior.",
-		"noVoices": "No voices are available for this client.",
-		"noMatches": "No voices match your search",
+	"selected": {
+		"title": "Selected voices",
+		"count_one": "{{count}} voice",
+		"count_other": "{{count}} voices",
+		"clearAll": "Clear all",
+		"empty": "No voices selected yet — pick from the catalog below.",
+		"remove": "Remove from pool",
+		"play": "Preview voice"
+	},
+	"toolbar": {
+		"searchPlaceholder": "Search by name, accent or description",
+		"gender": "Gender",
+		"language": "Language",
+		"reset": "Reset filters",
+		"activeFilters_one": "{{count}} active filter",
+		"activeFilters_other": "{{count}} active filters"
+	},
+	"card": {
+		"play": "Preview voice",
+		"pause": "Stop preview",
+		"select": "Add to pool",
+		"deselect": "Remove from pool",
+		"selectedBadge": "In pool"
+	},
+	"gender": {
+		"female": "Female",
+		"male": "Male",
+		"other": "Other"
+	},
+	"catalog": {
+		"loading": "Loading voices…",
 		"loadErrorTitle": "Unable to load voices",
-		"loadErrorDescription": "Retry before saving campaign voice changes."
+		"loadErrorDescription": "Refresh to try again.",
+		"empty": "No voices are available for this client.",
+		"emptyFiltered": "No voices match your filters.",
+		"emptyFilteredReset": "Reset filters",
+		"resultsCount_one": "{{count}} voice",
+		"resultsCount_other": "{{count}} voices"
 	}
 }

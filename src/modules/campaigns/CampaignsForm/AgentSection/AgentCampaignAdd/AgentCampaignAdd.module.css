@@ -275,11 +275,12 @@
 }
 
 .errorAlert {
-	border: 1px solid color-mix(
-		in srgb,
-		var(--mantine-color-red-4) 75%,
-		var(--mantine-color-red-2)
-	);
+	border: 1px solid
+		color-mix(
+			in srgb,
+			var(--mantine-color-red-4) 75%,
+			var(--mantine-color-red-2)
+		);
 	border-radius: var(--mantine-radius-md);
 	background-color: color-mix(
 		in srgb,

@@ -62,7 +62,13 @@ type ValidationState =
 			response: DispositionCatalogImportDryRunResponse;
 	  };
 
-type ClipboardState = 'idle' | 'loading' | 'loaded' | 'empty' | 'blocked' | 'error';
+type ClipboardState =
+	| 'idle'
+	| 'loading'
+	| 'loaded'
+	| 'empty'
+	| 'blocked'
+	| 'error';
 
 const getLocalValidationMessage = (
 	error: unknown,
@@ -130,9 +136,9 @@ const DispositionImportModal: React.FC<DispositionImportModalProps> = ({
 	const [localErrorMessage, setLocalErrorMessage] = useState<string | null>(
 		null
 	);
-	const [activeAction, setActiveAction] = useState<'validate' | 'import' | null>(
-		null
-	);
+	const [activeAction, setActiveAction] = useState<
+		'validate' | 'import' | null
+	>(null);
 	const [clipboardState, setClipboardState] = useState<ClipboardState>('idle');
 
 	const readClipboardText = useCallback(async () => {
@@ -150,7 +156,10 @@ const DispositionImportModal: React.FC<DispositionImportModalProps> = ({
 			return { status: 'loaded' as const, text };
 		} catch (error) {
 			return {
-				status: error instanceof DOMException ? ('blocked' as const) : ('error' as const),
+				status:
+					error instanceof DOMException
+						? ('blocked' as const)
+						: ('error' as const),
 				text: null,
 			};
 		}
@@ -188,7 +197,9 @@ const DispositionImportModal: React.FC<DispositionImportModalProps> = ({
 
 				notifications.show({
 					title: t('list.importModal.notifications.clipboardUnavailableTitle'),
-					message: t('list.importModal.notifications.clipboardUnavailableMessage'),
+					message: t(
+						'list.importModal.notifications.clipboardUnavailableMessage'
+					),
 					color: 'yellow',
 				});
 			}
@@ -406,7 +417,10 @@ const DispositionImportModal: React.FC<DispositionImportModalProps> = ({
 										{clipboardBadgeLabel}
 									</Badge>
 
-									<Tooltip label={t('list.importModal.clipboardAction')} withArrow>
+									<Tooltip
+										label={t('list.importModal.clipboardAction')}
+										withArrow
+									>
 										<ActionIcon
 											variant='light'
 											color='blue'
@@ -425,7 +439,9 @@ const DispositionImportModal: React.FC<DispositionImportModalProps> = ({
 							<Textarea
 								placeholder={t('list.importModal.placeholder')}
 								value={jsonValue}
-								onChange={(event) => handleJsonChange(event.currentTarget.value)}
+								onChange={(event) =>
+									handleJsonChange(event.currentTarget.value)
+								}
 								spellCheck={false}
 								autosize={false}
 								classNames={{
@@ -437,7 +453,11 @@ const DispositionImportModal: React.FC<DispositionImportModalProps> = ({
 							/>
 
 							{localErrorMessage ? (
-								<Alert icon={<IconAlertCircle size={16} />} color='red' variant='light'>
+								<Alert
+									icon={<IconAlertCircle size={16} />}
+									color='red'
+									variant='light'
+								>
 									{localErrorMessage}
 								</Alert>
 							) : null}
@@ -507,7 +527,12 @@ const DispositionImportModal: React.FC<DispositionImportModalProps> = ({
 					</Paper>
 				</div>
 
-				<Group justify='space-between' align='center' wrap='wrap' className={styles.footer}>
+				<Group
+					justify='space-between'
+					align='center'
+					wrap='wrap'
+					className={styles.footer}
+				>
 					<Button variant='default' type='button' onClick={onClose}>
 						{t('actions.cancel', { ns: 'common' })}
 					</Button>

@@ -46,8 +46,10 @@ export interface ToolNodeApi extends WorkflowNodeBaseApi {
 	tools: Array<{ tool_id: string }>;
 }
 
-export interface UpdateStateValueSchemaApi
-	extends Omit<UpdateStateValueSchema, 'type'> {
+export interface UpdateStateValueSchemaApi extends Omit<
+	UpdateStateValueSchema,
+	'type'
+> {
 	type: UpdateStateValueSchema['type'];
 }
 

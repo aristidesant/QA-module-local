@@ -17,10 +17,7 @@ interface SyncElevenLabsAgentModalProps {
 	onSuccess: () => void;
 }
 
-const resolveSyncAgentErrorMessage = (
-	error: unknown,
-	t: TFunction
-) => {
+const resolveSyncAgentErrorMessage = (error: unknown, t: TFunction) => {
 	if (!isAxiosError(error)) {
 		return t('form.agent.sync.errors.generic');
 	}
@@ -28,7 +25,8 @@ const resolveSyncAgentErrorMessage = (
 	const responseMessage =
 		typeof error.response?.data === 'object' && error.response?.data !== null
 			? (() => {
-					const message = (error.response.data as { message?: unknown }).message;
+					const message = (error.response.data as { message?: unknown })
+						.message;
 					return typeof message === 'string' ? message : null;
 				})()
 			: null;
@@ -70,10 +68,7 @@ const SyncElevenLabsAgentModal: React.FC<SyncElevenLabsAgentModalProps> = ({
 		},
 	});
 
-	const handleSubmit = async (values: {
-		agentId: string;
-		type: AgentType;
-	}) => {
+	const handleSubmit = async (values: { agentId: string; type: AgentType }) => {
 		setIsSubmitting(true);
 		try {
 			await syncMutation.mutateAsync({

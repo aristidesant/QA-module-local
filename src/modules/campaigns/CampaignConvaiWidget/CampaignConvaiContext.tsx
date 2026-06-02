@@ -195,7 +195,10 @@ interface ConvaiStateProviderProps {
 	children: ReactNode;
 }
 
-const ConvaiStateProvider = ({ agentId, children }: ConvaiStateProviderProps) => {
+const ConvaiStateProvider = ({
+	agentId,
+	children,
+}: ConvaiStateProviderProps) => {
 	const { t } = useTranslation('campaign.detail.test');
 	const fetchAgentSignedUrl = useGetAgentSignedUrl();
 	const [conversationId, setConversationId] = useState<string | null>(null);
@@ -283,7 +286,13 @@ const ConvaiStateProvider = ({ agentId, children }: ConvaiStateProviderProps) =>
 						: t('widget.error.microphoneUnavailable')
 			);
 		}
-	}, [agentId, fetchAgentSignedUrl, requestMicrophoneAccess, resetConversationState, t]);
+	}, [
+		agentId,
+		fetchAgentSignedUrl,
+		requestMicrophoneAccess,
+		resetConversationState,
+		t,
+	]);
 
 	const handleEndSession = useCallback(() => {
 		pendingStartRef.current = false;

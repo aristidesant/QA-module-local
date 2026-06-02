@@ -504,8 +504,8 @@ export const buildWorkflowFromState = (
 					agent_id: (data as StandaloneAgentNode).agent_id ?? '',
 					delay_ms: (data as StandaloneAgentNode).delay_ms ?? 0,
 					enable_transferred_agent_first_message:
-						(data as StandaloneAgentNode).enable_transferred_agent_first_message ??
-						false,
+						(data as StandaloneAgentNode)
+							.enable_transferred_agent_first_message ?? false,
 					transfer_message: (data as StandaloneAgentNode).transfer_message,
 					additional_prompt,
 					additional_tool_ids,

@@ -58,7 +58,11 @@ export const useCreateAgent = () => {
 
 export const useCreateAgentWithCampaign = () => {
 	const queryClient = useQueryClient();
-	return useMutation<CreateAgentWithCampaignResponse, Error, CreateAgentWithCampaignDto>({
+	return useMutation<
+		CreateAgentWithCampaignResponse,
+		Error,
+		CreateAgentWithCampaignDto
+	>({
 		mutationFn: async (data: CreateAgentWithCampaignDto) => {
 			const api = agentApi();
 			return api.createAgentWithCampaign(data);

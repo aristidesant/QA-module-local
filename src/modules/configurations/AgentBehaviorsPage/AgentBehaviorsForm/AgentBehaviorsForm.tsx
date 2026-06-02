@@ -61,11 +61,9 @@ type BackupLlmPromptConfig = {
 	order?: string[];
 };
 
-const getBackupLlmConfig = (
-	prompt?: {
-		backupLlmConfig?: BackupLlmPromptConfig;
-	}
-) => {
+const getBackupLlmConfig = (prompt?: {
+	backupLlmConfig?: BackupLlmPromptConfig;
+}) => {
 	const config = prompt?.backupLlmConfig;
 
 	return {
@@ -491,9 +489,7 @@ const AgentBehaviorsForm: React.FC<AgentBehaviorsFormProps> = ({
 			case 'agent':
 				return (
 					<AgentSection
-						hasResolvedReasoningAvailability={
-							hasResolvedReasoningAvailability
-						}
+						hasResolvedReasoningAvailability={hasResolvedReasoningAvailability}
 						reasoningEffortsByModel={reasoningEffortsByModel}
 					/>
 				);

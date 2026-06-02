@@ -55,14 +55,17 @@ const GeneralTab = () => {
 
 	// Current conversation_config (personalized)
 	const conversation_config =
-		(currentNode as { conversation_config?: unknown })?.conversation_config ?? {};
+		(currentNode as { conversation_config?: unknown })?.conversation_config ??
+		{};
 	const ttsConfig = (conversation_config as Record<string, unknown>).tts ?? {};
-	const turnConfig = (conversation_config as Record<string, unknown>).turn ?? {};
+	const turnConfig =
+		(conversation_config as Record<string, unknown>).turn ?? {};
 	const agentConfig =
 		(conversation_config as Record<string, unknown>).agent ?? {};
 	const promptConfig = (agentConfig as Record<string, unknown>).prompt ?? {};
-	const additional_prompt = (currentNode as { additional_prompt?: string | null })
-		?.additional_prompt;
+	const additional_prompt = (
+		currentNode as { additional_prompt?: string | null }
+	)?.additional_prompt;
 	const subagentLlmModel = subagent?.llm_model;
 	const overridePromptValue =
 		((promptConfig as Record<string, unknown>).prompt as string | null) ?? '';

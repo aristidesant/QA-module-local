@@ -48,10 +48,9 @@
 
 .controlsGrid {
 	display: grid;
-	grid-template-columns: minmax(0, 1.8fr) minmax(150px, 0.8fr) minmax(
-			160px,
-			0.9fr
-		) auto;
+	grid-template-columns:
+		minmax(0, 1.8fr) minmax(150px, 0.8fr) minmax(160px, 0.9fr)
+		auto;
 	gap: var(--mantine-spacing-xs);
 	align-items: end;
 	width: 100%;

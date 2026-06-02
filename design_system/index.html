@@ -1,242 +1,330 @@
 <!doctype html>
 <html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Newtech · Design System</title>
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Newtech · Design System</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800&family=JetBrains+Mono:wght@400;500&display=swap"
+			rel="stylesheet"
+		/>
 
-  <link rel="stylesheet" href="tokens.css" />
-  <link rel="stylesheet" href="components.css" />
-  <link rel="stylesheet" href="site.css" />
+		<link rel="stylesheet" href="tokens.css" />
+		<link rel="stylesheet" href="components.css" />
+		<link rel="stylesheet" href="site.css" />
 
-  <!-- Tabler icons via @tabler/icons-webfont (name-based) -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css">
+		<!-- Tabler icons via @tabler/icons-webfont (name-based) -->
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.14.0/dist/tabler-icons.min.css"
+		/>
 
-  <template id="__bundler_thumbnail" data-bg-color="#f7f8fa">
-    <svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
-      <rect width="1200" height="800" fill="#f7f8fa"/>
-      <g transform="translate(420 280)">
-        <circle cx="60"  cy="180" r="36" fill="#1bb54a"/>
-        <circle cx="130" cy="110" r="30" fill="#1bb54a"/>
-        <circle cx="200" cy="160" r="36" fill="#0098d4"/>
-        <circle cx="220" cy="60"  r="30" fill="#1bb54a"/>
-        <circle cx="290" cy="110" r="36" fill="#0098d4"/>
-        <circle cx="360" cy="40"  r="30" fill="#1bb54a"/>
-        <circle cx="340" cy="180" r="30" fill="#1bb54a"/>
-      </g>
-      <text x="600" y="560" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif"
-            font-size="72" font-weight="800" letter-spacing="-3" fill="#141a22">newtech</text>
-      <text x="600" y="610" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif"
-            font-size="22" font-weight="500" fill="#6b7684">Design System</text>
-    </svg>
-  </template>
-</head>
-<body>
+		<template id="__bundler_thumbnail" data-bg-color="#f7f8fa">
+			<svg viewBox="0 0 1200 800" xmlns="http://www.w3.org/2000/svg">
+				<rect width="1200" height="800" fill="#f7f8fa" />
+				<g transform="translate(420 280)">
+					<circle cx="60" cy="180" r="36" fill="#1bb54a" />
+					<circle cx="130" cy="110" r="30" fill="#1bb54a" />
+					<circle cx="200" cy="160" r="36" fill="#0098d4" />
+					<circle cx="220" cy="60" r="30" fill="#1bb54a" />
+					<circle cx="290" cy="110" r="36" fill="#0098d4" />
+					<circle cx="360" cy="40" r="30" fill="#1bb54a" />
+					<circle cx="340" cy="180" r="30" fill="#1bb54a" />
+				</g>
+				<text
+					x="600"
+					y="560"
+					text-anchor="middle"
+					font-family="DM Sans, system-ui, sans-serif"
+					font-size="72"
+					font-weight="800"
+					letter-spacing="-3"
+					fill="#141a22"
+				>
+					newtech
+				</text>
+				<text
+					x="600"
+					y="610"
+					text-anchor="middle"
+					font-family="DM Sans, system-ui, sans-serif"
+					font-size="22"
+					font-weight="500"
+					fill="#6b7684"
+				>
+					Design System
+				</text>
+			</svg>
+		</template>
+	</head>
+	<body>
+		<!-- ======= TOP SHELL ======= -->
+		<header class="site-topbar">
+			<div class="site-topbar__inner">
+				<a href="#overview" class="site-logo">
+					<span class="nt-logo">
+						<span class="nt-logo__mark">
+							<svg viewBox="0 0 40 30" width="100%" height="100%">
+								<circle cx="8" cy="22" r="3" fill="#1bb54a" />
+								<circle cx="14" cy="14" r="2.5" fill="#1bb54a" />
+								<circle cx="20" cy="20" r="3" fill="#0098d4" />
+								<circle cx="22" cy="8" r="2.5" fill="#1bb54a" />
+								<circle cx="28" cy="14" r="3" fill="#0098d4" />
+								<circle cx="34" cy="6" r="2.5" fill="#1bb54a" />
+								<circle cx="32" cy="22" r="2.5" fill="#1bb54a" />
+							</svg> </span
+						>newtech
+					</span>
+					<span class="site-logo__sep"></span>
+					<span class="site-logo__label">Design System</span>
+				</a>
 
-  <!-- ======= TOP SHELL ======= -->
-  <header class="site-topbar">
-    <div class="site-topbar__inner">
-      <a href="#overview" class="site-logo">
-        <span class="nt-logo">
-          <span class="nt-logo__mark">
-            <svg viewBox="0 0 40 30" width="100%" height="100%">
-              <circle cx="8"  cy="22" r="3" fill="#1bb54a"/>
-              <circle cx="14" cy="14" r="2.5" fill="#1bb54a"/>
-              <circle cx="20" cy="20" r="3"   fill="#0098d4"/>
-              <circle cx="22" cy="8"  r="2.5" fill="#1bb54a"/>
-              <circle cx="28" cy="14" r="3"   fill="#0098d4"/>
-              <circle cx="34" cy="6"  r="2.5" fill="#1bb54a"/>
-              <circle cx="32" cy="22" r="2.5" fill="#1bb54a"/>
-            </svg>
-          </span>newtech
-        </span>
-        <span class="site-logo__sep"></span>
-        <span class="site-logo__label">Design System</span>
-      </a>
+				<nav class="site-nav">
+					<a href="#colors">Color</a>
+					<a href="#type">Tipografía</a>
+					<a href="#space">Espacio</a>
+					<a href="#components">Componentes</a>
+					<a href="#icons">Iconos</a>
+					<a href="#examples">Apps</a>
+				</nav>
 
-      <nav class="site-nav">
-        <a href="#colors">Color</a>
-        <a href="#type">Tipografía</a>
-        <a href="#space">Espacio</a>
-        <a href="#components">Componentes</a>
-        <a href="#icons">Iconos</a>
-        <a href="#examples">Apps</a>
-      </nav>
+				<div class="site-topbar__actions">
+					<span class="nt-badge nt-badge--accent">v1.0 · 2026</span>
+				</div>
+			</div>
+		</header>
 
-      <div class="site-topbar__actions">
-        <span class="nt-badge nt-badge--accent">v1.0 · 2026</span>
-      </div>
-    </div>
-  </header>
+		<!-- ======= HERO ======= -->
+		<section id="overview" class="hero">
+			<div class="hero__grid">
+				<div class="hero__copy">
+					<div class="hero__eyebrow">
+						<span class="dot dot--green"></span>
+						<span class="dot dot--blue"></span>
+						<span class="dot dot--green"></span>
+						Newtech · Sistema de diseño
+					</div>
+					<h1 class="hero__title">
+						Un lenguaje visual <em>consistente</em> para todas las apps de
+						Newtech.
+					</h1>
+					<p class="hero__lead">
+						Una paleta construida a partir del verde y azul del logo, tipografía
+						geométrica DM Sans, tokens de espaciado, elevación y componentes
+						listos para producción. Todo preparado para Software, Global y
+						Teleservices.
+					</p>
+					<div class="hero__cta">
+						<button class="nt-btn">
+							<i class="ti ti-download"></i> Descargar tokens
+						</button>
+						<button class="nt-btn nt-btn--outline">
+							<i class="ti ti-brand-github"></i> Repositorio
+						</button>
+					</div>
+					<dl class="hero__stats">
+						<div>
+							<dt>Colores</dt>
+							<dd>64</dd>
+						</div>
+						<div>
+							<dt>Componentes</dt>
+							<dd>28</dd>
+						</div>
+						<div>
+							<dt>Iconos</dt>
+							<dd>5 880</dd>
+						</div>
+						<div>
+							<dt>Apps</dt>
+							<dd>3</dd>
+						</div>
+					</dl>
+				</div>
 
-  <!-- ======= HERO ======= -->
-  <section id="overview" class="hero">
-    <div class="hero__grid">
-      <div class="hero__copy">
-        <div class="hero__eyebrow">
-          <span class="dot dot--green"></span>
-          <span class="dot dot--blue"></span>
-          <span class="dot dot--green"></span>
-          Newtech · Sistema de diseño
-        </div>
-        <h1 class="hero__title">Un lenguaje visual <em>consistente</em> para todas las apps de Newtech.</h1>
-        <p class="hero__lead">
-          Una paleta construida a partir del verde y azul del logo, tipografía geométrica DM Sans, tokens
-          de espaciado, elevación y componentes listos para producción. Todo preparado para Software,
-          Global y Teleservices.
-        </p>
-        <div class="hero__cta">
-          <button class="nt-btn"><i class="ti ti-download"></i> Descargar tokens</button>
-          <button class="nt-btn nt-btn--outline"><i class="ti ti-brand-github"></i> Repositorio</button>
-        </div>
-        <dl class="hero__stats">
-          <div><dt>Colores</dt><dd>64</dd></div>
-          <div><dt>Componentes</dt><dd>28</dd></div>
-          <div><dt>Iconos</dt><dd>5 880</dd></div>
-          <div><dt>Apps</dt><dd>3</dd></div>
-        </dl>
-      </div>
+				<div class="hero__preview">
+					<div class="preview-window">
+						<div class="preview-window__bar">
+							<span></span><span></span><span></span>
+							<div class="preview-window__url">app.newtech.com / dashboard</div>
+						</div>
+						<div class="preview-window__body">
+							<div class="mini-side">
+								<div class="mini-side__brand">
+									<span class="nt-logo" style="font-size: 16px">
+										<span
+											class="nt-logo__mark"
+											style="width: 1em; height: 0.75em"
+										>
+											<svg viewBox="0 0 40 30" width="100%" height="100%">
+												<circle cx="8" cy="22" r="3" fill="#1bb54a" />
+												<circle cx="20" cy="20" r="3" fill="#0098d4" />
+												<circle cx="28" cy="14" r="3" fill="#0098d4" />
+												<circle cx="34" cy="6" r="2.5" fill="#1bb54a" />
+											</svg> </span
+										>newtech
+									</span>
+								</div>
+								<div class="mini-side__item mini-side__item--active">
+									<i class="ti ti-layout-dashboard"></i> Inicio
+								</div>
+								<div class="mini-side__item">
+									<i class="ti ti-users"></i> Clientes
+								</div>
+								<div class="mini-side__item">
+									<i class="ti ti-file-invoice"></i> Facturación
+								</div>
+								<div class="mini-side__item">
+									<i class="ti ti-chart-bar"></i> Reportes
+								</div>
+								<div class="mini-side__item">
+									<i class="ti ti-settings"></i> Ajustes
+								</div>
+							</div>
+							<div class="mini-main">
+								<div class="mini-row">
+									<div class="mini-kpi">
+										<div class="mini-kpi__label">Ingresos</div>
+										<div class="mini-kpi__value">$284.3K</div>
+										<div class="mini-kpi__delta mini-kpi__delta--up">
+											<i class="ti ti-trending-up"></i> 12.4%
+										</div>
+									</div>
+									<div class="mini-kpi">
+										<div class="mini-kpi__label">Activos</div>
+										<div class="mini-kpi__value">3 204</div>
+										<div class="mini-kpi__delta mini-kpi__delta--up">
+											<i class="ti ti-trending-up"></i> 4.1%
+										</div>
+									</div>
+									<div class="mini-kpi">
+										<div class="mini-kpi__label">Tickets</div>
+										<div class="mini-kpi__value">48</div>
+										<div class="mini-kpi__delta mini-kpi__delta--down">
+											<i class="ti ti-trending-down"></i> 3.2%
+										</div>
+									</div>
+								</div>
+								<div class="mini-chart">
+									<svg
+										viewBox="0 0 400 130"
+										width="100%"
+										height="100%"
+										preserveAspectRatio="none"
+									>
+										<defs>
+											<linearGradient id="heroGrad" x1="0" y1="0" x2="0" y2="1">
+												<stop
+													offset="0%"
+													stop-color="#1bb54a"
+													stop-opacity="0.25"
+												/>
+												<stop
+													offset="100%"
+													stop-color="#1bb54a"
+													stop-opacity="0"
+												/>
+											</linearGradient>
+										</defs>
+										<path
+											d="M0,90 C40,80 60,60 100,55 C140,50 170,80 200,70 C240,56 270,30 310,28 C340,26 370,36 400,20 L400,130 L0,130 Z"
+											fill="url(#heroGrad)"
+										/>
+										<path
+											d="M0,90 C40,80 60,60 100,55 C140,50 170,80 200,70 C240,56 270,30 310,28 C340,26 370,36 400,20"
+											fill="none"
+											stroke="#1bb54a"
+											stroke-width="2.5"
+										/>
+										<path
+											d="M0,110 C40,106 60,96 100,92 C140,88 170,100 200,96 C240,90 270,78 310,76 C340,74 370,80 400,68"
+											fill="none"
+											stroke="#0098d4"
+											stroke-width="2"
+											stroke-dasharray="4 4"
+											opacity="0.7"
+										/>
+									</svg>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
 
-      <div class="hero__preview">
-        <div class="preview-window">
-          <div class="preview-window__bar">
-            <span></span><span></span><span></span>
-            <div class="preview-window__url">app.newtech.com / dashboard</div>
-          </div>
-          <div class="preview-window__body">
-            <div class="mini-side">
-              <div class="mini-side__brand">
-                <span class="nt-logo" style="font-size:16px">
-                  <span class="nt-logo__mark" style="width:1em;height:0.75em">
-                    <svg viewBox="0 0 40 30" width="100%" height="100%">
-                      <circle cx="8" cy="22" r="3" fill="#1bb54a"/>
-                      <circle cx="20" cy="20" r="3" fill="#0098d4"/>
-                      <circle cx="28" cy="14" r="3" fill="#0098d4"/>
-                      <circle cx="34" cy="6" r="2.5" fill="#1bb54a"/>
-                    </svg>
-                  </span>newtech
-                </span>
-              </div>
-              <div class="mini-side__item mini-side__item--active"><i class="ti ti-layout-dashboard"></i> Inicio</div>
-              <div class="mini-side__item"><i class="ti ti-users"></i> Clientes</div>
-              <div class="mini-side__item"><i class="ti ti-file-invoice"></i> Facturación</div>
-              <div class="mini-side__item"><i class="ti ti-chart-bar"></i> Reportes</div>
-              <div class="mini-side__item"><i class="ti ti-settings"></i> Ajustes</div>
-            </div>
-            <div class="mini-main">
-              <div class="mini-row">
-                <div class="mini-kpi">
-                  <div class="mini-kpi__label">Ingresos</div>
-                  <div class="mini-kpi__value">$284.3K</div>
-                  <div class="mini-kpi__delta mini-kpi__delta--up"><i class="ti ti-trending-up"></i> 12.4%</div>
-                </div>
-                <div class="mini-kpi">
-                  <div class="mini-kpi__label">Activos</div>
-                  <div class="mini-kpi__value">3 204</div>
-                  <div class="mini-kpi__delta mini-kpi__delta--up"><i class="ti ti-trending-up"></i> 4.1%</div>
-                </div>
-                <div class="mini-kpi">
-                  <div class="mini-kpi__label">Tickets</div>
-                  <div class="mini-kpi__value">48</div>
-                  <div class="mini-kpi__delta mini-kpi__delta--down"><i class="ti ti-trending-down"></i> 3.2%</div>
-                </div>
-              </div>
-              <div class="mini-chart">
-                <svg viewBox="0 0 400 130" width="100%" height="100%" preserveAspectRatio="none">
-                  <defs>
-                    <linearGradient id="heroGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%"   stop-color="#1bb54a" stop-opacity="0.25"/>
-                      <stop offset="100%" stop-color="#1bb54a" stop-opacity="0"/>
-                    </linearGradient>
-                  </defs>
-                  <path d="M0,90 C40,80 60,60 100,55 C140,50 170,80 200,70 C240,56 270,30 310,28 C340,26 370,36 400,20 L400,130 L0,130 Z"
-                        fill="url(#heroGrad)"/>
-                  <path d="M0,90 C40,80 60,60 100,55 C140,50 170,80 200,70 C240,56 270,30 310,28 C340,26 370,36 400,20"
-                        fill="none" stroke="#1bb54a" stroke-width="2.5"/>
-                  <path d="M0,110 C40,106 60,96 100,92 C140,88 170,100 200,96 C240,90 270,78 310,76 C340,74 370,80 400,68"
-                        fill="none" stroke="#0098d4" stroke-width="2" stroke-dasharray="4 4" opacity="0.7"/>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
+			<!-- Apps row -->
+			<div class="apps-row">
+				<div class="apps-row__item">
+					<div class="apps-row__dot apps-row__dot--green"></div>
+					<div>
+						<div class="apps-row__name">Newtech Software</div>
+						<div class="apps-row__kind">Plataforma interna · CRM</div>
+					</div>
+				</div>
+				<div class="apps-row__item">
+					<div class="apps-row__dot apps-row__dot--blue"></div>
+					<div>
+						<div class="apps-row__name">Newtech Global</div>
+						<div class="apps-row__kind">Portal corporativo</div>
+					</div>
+				</div>
+				<div class="apps-row__item">
+					<div class="apps-row__dot apps-row__dot--mix"></div>
+					<div>
+						<div class="apps-row__name">Newtech Teleservices</div>
+						<div class="apps-row__kind">Contact center · Dashboard</div>
+					</div>
+				</div>
+			</div>
+		</section>
 
-    <!-- Apps row -->
-    <div class="apps-row">
-      <div class="apps-row__item">
-        <div class="apps-row__dot apps-row__dot--green"></div>
-        <div>
-          <div class="apps-row__name">Newtech Software</div>
-          <div class="apps-row__kind">Plataforma interna · CRM</div>
-        </div>
-      </div>
-      <div class="apps-row__item">
-        <div class="apps-row__dot apps-row__dot--blue"></div>
-        <div>
-          <div class="apps-row__name">Newtech Global</div>
-          <div class="apps-row__kind">Portal corporativo</div>
-        </div>
-      </div>
-      <div class="apps-row__item">
-        <div class="apps-row__dot apps-row__dot--mix"></div>
-        <div>
-          <div class="apps-row__name">Newtech Teleservices</div>
-          <div class="apps-row__kind">Contact center · Dashboard</div>
-        </div>
-      </div>
-    </div>
-  </section>
+		<!-- Sections are loaded below -->
+		<main class="site-main">
+			<!-- include-marker: sections -->
+		</main>
 
-  <!-- Sections are loaded below -->
-  <main class="site-main">
-    <!-- include-marker: sections -->
-  </main>
+		<footer class="site-footer">
+			<div class="site-footer__inner">
+				<div class="site-footer__brand">
+					<span class="nt-logo" style="color: #fff">
+						<span class="nt-logo__mark">
+							<svg viewBox="0 0 40 30" width="100%" height="100%">
+								<circle cx="8" cy="22" r="3" fill="#1bb54a" />
+								<circle cx="14" cy="14" r="2.5" fill="#1bb54a" />
+								<circle cx="20" cy="20" r="3" fill="#0098d4" />
+								<circle cx="22" cy="8" r="2.5" fill="#1bb54a" />
+								<circle cx="28" cy="14" r="3" fill="#0098d4" />
+								<circle cx="34" cy="6" r="2.5" fill="#1bb54a" />
+								<circle cx="32" cy="22" r="2.5" fill="#1bb54a" />
+							</svg> </span
+						>newtech
+					</span>
+					<p>Sistema de diseño · v1.0</p>
+					<p class="muted">© 2026 Newtech. Todos los derechos reservados.</p>
+				</div>
+				<div>
+					<div class="site-footer__h">Contacto</div>
+					<p>design@newtechsa.com</p>
+					<p>+1 809 333 6600</p>
+				</div>
+				<div>
+					<div class="site-footer__h">Recursos</div>
+					<p>Figma library</p>
+					<p>Storybook</p>
+					<p>Changelog</p>
+				</div>
+				<div>
+					<div class="site-footer__h">Equipos</div>
+					<p>Software</p>
+					<p>Global</p>
+					<p>Teleservices</p>
+				</div>
+			</div>
+		</footer>
 
-  <footer class="site-footer">
-    <div class="site-footer__inner">
-      <div class="site-footer__brand">
-        <span class="nt-logo" style="color:#fff">
-          <span class="nt-logo__mark">
-            <svg viewBox="0 0 40 30" width="100%" height="100%">
-              <circle cx="8"  cy="22" r="3"   fill="#1bb54a"/>
-              <circle cx="14" cy="14" r="2.5" fill="#1bb54a"/>
-              <circle cx="20" cy="20" r="3"   fill="#0098d4"/>
-              <circle cx="22" cy="8"  r="2.5" fill="#1bb54a"/>
-              <circle cx="28" cy="14" r="3"   fill="#0098d4"/>
-              <circle cx="34" cy="6"  r="2.5" fill="#1bb54a"/>
-              <circle cx="32" cy="22" r="2.5" fill="#1bb54a"/>
-            </svg>
-          </span>newtech
-        </span>
-        <p>Sistema de diseño · v1.0</p>
-        <p class="muted">© 2026 Newtech. Todos los derechos reservados.</p>
-      </div>
-      <div>
-        <div class="site-footer__h">Contacto</div>
-        <p>design@newtechsa.com</p>
-        <p>+1 809 333 6600</p>
-      </div>
-      <div>
-        <div class="site-footer__h">Recursos</div>
-        <p>Figma library</p>
-        <p>Storybook</p>
-        <p>Changelog</p>
-      </div>
-      <div>
-        <div class="site-footer__h">Equipos</div>
-        <p>Software</p>
-        <p>Global</p>
-        <p>Teleservices</p>
-      </div>
-    </div>
-  </footer>
-
-  <script src="sections.js"></script>
-</body>
+		<script src="sections.js"></script>
+	</body>
 </html>

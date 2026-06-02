@@ -359,7 +359,9 @@ export const normalizeUpdateStateUpdate = (
 
 	return {
 		type: 'dynamic_variable',
-		variable_name: getTrimmedString(update.variable_name ?? update.variable_name),
+		variable_name: getTrimmedString(
+			update.variable_name ?? update.variable_name
+		),
 		expression: normalizeUpdateStateExpression(update.expression),
 	};
 };

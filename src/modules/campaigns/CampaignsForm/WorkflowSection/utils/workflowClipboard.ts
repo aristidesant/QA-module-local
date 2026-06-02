@@ -112,8 +112,7 @@ const normalizeEdgeOrderValue = (value: unknown): string[] =>
 		: [];
 
 const normalizeImportedWorkflowRoot = (value: Record<string, unknown>) => ({
-	prevent_subagent_loops:
-		value.prevent_subagent_loops,
+	prevent_subagent_loops: value.prevent_subagent_loops,
 	nodes: value.nodes,
 	edges: value.edges,
 });

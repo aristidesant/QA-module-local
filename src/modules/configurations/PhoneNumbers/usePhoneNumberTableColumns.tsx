@@ -1,6 +1,14 @@
 import { useMemo } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
-import { ActionIcon, Badge, Checkbox, Group, Stack, Text, Tooltip } from '@mantine/core';
+import {
+	ActionIcon,
+	Badge,
+	Checkbox,
+	Group,
+	Stack,
+	Text,
+	Tooltip,
+} from '@mantine/core';
 import styles from './PhoneNumberList.module.css';
 import { IconEdit, IconTrash } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
@@ -160,6 +168,15 @@ export function usePhoneNumberTableColumns({
 				),
 			},
 		],
-		[onEdit, onDelete, t, selectedIds, onToggleSelect, onSelectAll, allVisibleSelected, someVisibleSelected]
+		[
+			onEdit,
+			onDelete,
+			t,
+			selectedIds,
+			onToggleSelect,
+			onSelectAll,
+			allVisibleSelected,
+			someVisibleSelected,
+		]
 	);
 }

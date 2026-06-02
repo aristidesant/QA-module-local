@@ -1,13 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Badge,
-	ActionIcon,
-	Loader,
-	Menu,
-	Text,
-	Tooltip,
-} from '@mantine/core';
+import { Badge, ActionIcon, Loader, Menu, Text, Tooltip } from '@mantine/core';
 import {
 	IconCopy,
 	IconInfoCircle,
@@ -204,7 +197,8 @@ export const useDispositionCatalogTableColumns = ({
 											color='red'
 											leftSection={
 												deactivateState.isPending &&
-												deactivateState.variables?.catalogId === row.original.id ? (
+												deactivateState.variables?.catalogId ===
+													row.original.id ? (
 													<Loader size={12} />
 												) : (
 													<IconBan size={14} />
@@ -223,7 +217,8 @@ export const useDispositionCatalogTableColumns = ({
 											color='green'
 											leftSection={
 												reactivateState.isPending &&
-												reactivateState.variables?.catalogId === row.original.id ? (
+												reactivateState.variables?.catalogId ===
+													row.original.id ? (
 													<Loader size={12} />
 												) : (
 													<IconRefresh size={14} />

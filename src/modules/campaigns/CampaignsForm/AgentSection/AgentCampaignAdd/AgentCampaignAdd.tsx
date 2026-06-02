@@ -1,5 +1,13 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Alert, Button, Group, Select, Stack, Text, TextInput } from '@mantine/core';
+import {
+	Alert,
+	Button,
+	Group,
+	Select,
+	Stack,
+	Text,
+	TextInput,
+} from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useDebouncedValue } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
@@ -125,7 +133,10 @@ const resolveCreatedAgentId = (response: unknown) => {
 		} | null;
 	};
 
-	if (typeof typedResponse.agentId === 'string' && typedResponse.agentId.trim()) {
+	if (
+		typeof typedResponse.agentId === 'string' &&
+		typedResponse.agentId.trim()
+	) {
 		return typedResponse.agentId;
 	}
 
@@ -175,10 +186,8 @@ const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 	);
 	const audioRef = useRef<HTMLAudioElement | null>(null);
 	const createMutation = useCreateAgentWithCampaign();
-	const {
-		data: campaignAgents,
-		refetch: refetchCampaignAgents,
-	} = useGetCampaignAgents(campaignId || 0, false);
+	const { data: campaignAgents, refetch: refetchCampaignAgents } =
+		useGetCampaignAgents(campaignId || 0, false);
 
 	const createForm = useForm({
 		initialValues: {
@@ -342,7 +351,8 @@ const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 
 			if (!campaignAgentId) {
 				const refreshedCampaignAgents = await refetchCampaignAgents();
-				const refreshedAgents = refreshedCampaignAgents.data ?? campaignAgents ?? [];
+				const refreshedAgents =
+					refreshedCampaignAgents.data ?? campaignAgents ?? [];
 
 				if (createdAgentId) {
 					const matchingAgent = refreshedAgents.find(
@@ -397,202 +407,202 @@ const AgentCampaignAdd: React.FC<AgentCampaignAddProps> = ({
 	return (
 		<Stack className={classes.container} gap='lg'>
 			<div key={mode} className={classes.modePanel}>
-			{isCreateMode ? (
-				<Stack gap='md' className={classes.createMode}>
-					<Group justify='space-between' align='flex-start' wrap='nowrap'>
-						<Stack gap={4} className={classes.headerText}>
-							<Text fw={700} size='md' className={classes.createTitle}>
-								{t('form.agent.add.createTitle')}
-							</Text>
-							<Text size='sm' c='dimmed' className={classes.createLead}>
-								{t('form.agent.add.createDescription', {
-									type: createTypeLabel,
-								})}
-							</Text>
-						</Stack>
-						<Button
-							variant='subtle'
-							color='gray'
-							size='sm'
-							leftSection={<IconArrowLeft size={16} />}
-							onClick={returnToListMode}
-							disabled={isBusy}
-							className={classes.backButton}
-						>
-							{t('form.agent.add.backToList')}
-						</Button>
-					</Group>
+				{isCreateMode ? (
+					<Stack gap='md' className={classes.createMode}>
+						<Group justify='space-between' align='flex-start' wrap='nowrap'>
+							<Stack gap={4} className={classes.headerText}>
+								<Text fw={700} size='md' className={classes.createTitle}>
+									{t('form.agent.add.createTitle')}
+								</Text>
+								<Text size='sm' c='dimmed' className={classes.createLead}>
+									{t('form.agent.add.createDescription', {
+										type: createTypeLabel,
+									})}
+								</Text>
+							</Stack>
+							<Button
+								variant='subtle'
+								color='gray'
+								size='sm'
+								leftSection={<IconArrowLeft size={16} />}
+								onClick={returnToListMode}
+								disabled={isBusy}
+								className={classes.backButton}
+							>
+								{t('form.agent.add.backToList')}
+							</Button>
+						</Group>
 
-					<form onSubmit={createForm.onSubmit(handleCreateSubmit)}>
-						<Stack gap='md' className={classes.formBody}>
-							{createErrorMessage ? (
+						<form onSubmit={createForm.onSubmit(handleCreateSubmit)}>
+							<Stack gap='md' className={classes.formBody}>
+								{createErrorMessage ? (
+									<Alert
+										icon={<IconAlertCircle size={16} />}
+										color='red'
+										variant='light'
+										className={classes.errorAlert}
+										withCloseButton={false}
+									>
+										<Text size='sm'>{createErrorMessage}</Text>
+									</Alert>
+								) : null}
+
+								<TextInput
+									label={t('form.agent.add.createNameLabel')}
+									placeholder={t('form.agent.add.createNamePlaceholder')}
+									maxLength={100}
+									disabled={isBusy}
+									{...nameInputProps}
+									onChange={(event) => {
+										setCreateErrorMessage(null);
+										nameInputProps.onChange(event);
+									}}
+									size='sm'
+									className={classes.nameInput}
+									autoFocus
+								/>
+
+								<Group justify='flex-end' gap='sm' className={classes.actions}>
+									<Button
+										variant='default'
+										type='button'
+										onClick={returnToListMode}
+										disabled={isBusy}
+									>
+										{t('form.agent.add.cancel')}
+									</Button>
+									<Button type='submit' loading={isBusy}>
+										{t('form.agent.add.createAction')}
+									</Button>
+								</Group>
+							</Stack>
+						</form>
+					</Stack>
+				) : (
+					<>
+						<Group justify='space-between' align='flex-start' wrap='nowrap'>
+							<Stack gap={2} className={classes.headerText}>
+								<Text fw={600} size='sm'>
+									{t('form.agent.list.title')}
+								</Text>
+								<Text size='xs' c='dimmed'>
+									{t('form.agent.list.description')}
+								</Text>
+							</Stack>
+							<Button
+								variant='light'
+								size='xs'
+								leftSection={<IconPlus size={14} />}
+								onClick={openCreateMode}
+							>
+								{t('form.agent.add.createNewAgent')}
+							</Button>
+						</Group>
+
+						<FilterContainer>
+							<div className={classes.filterInputs}>
+								<TextInput
+									className={classes.searchInput}
+									label={t('form.agent.add.searchLabel')}
+									placeholder={t('form.agent.add.searchPlaceholder')}
+									value={searchTerm}
+									onChange={(event) => {
+										setSearchTerm(event.currentTarget.value);
+										setPage(1);
+									}}
+									aria-label={t('form.agent.add.searchLabel')}
+									size='sm'
+									leftSection={<IconSearch size={16} />}
+								/>
+								<Select
+									className={classes.searchInput}
+									label={t('form.agent.add.campaignNameLabel')}
+									placeholder={t('form.agent.add.campaignNamePlaceholder')}
+									data={campaignOptions}
+									searchable
+									loading={isCampaignsLoading}
+									value={selectedCampaignId}
+									onChange={handleCampaignChange}
+									aria-label={t('form.agent.add.campaignNameLabel')}
+									size='sm'
+									clearable
+									allowDeselect
+									nothingFoundMessage={
+										isCampaignsLoading
+											? t('form.agent.add.loadingCampaigns')
+											: isCampaignsError
+												? t('form.agent.add.loadCampaignsError')
+												: t('form.agent.add.noCampaignsFound')
+									}
+								/>
+							</div>
+						</FilterContainer>
+
+						<>
+							{isError ? (
 								<Alert
 									icon={<IconAlertCircle size={16} />}
 									color='red'
-									variant='light'
 									className={classes.errorAlert}
 									withCloseButton={false}
 								>
-									<Text size='sm'>{createErrorMessage}</Text>
+									<Stack gap='xs'>
+										<Text fw={600}>{t('form.agent.add.loadError')}</Text>
+										<Text className={classes.subText}>
+											{t('form.agent.add.loadErrorDesc')}
+										</Text>
+										<Button
+											variant='outline'
+											color='red'
+											size='xs'
+											onClick={() => refetch()}
+										>
+											{t('form.agent.add.tryAgain')}
+										</Button>
+									</Stack>
 								</Alert>
-							) : null}
-
-							<TextInput
-								label={t('form.agent.add.createNameLabel')}
-								placeholder={t('form.agent.add.createNamePlaceholder')}
-								maxLength={100}
-								disabled={isBusy}
-								{...nameInputProps}
-								onChange={(event) => {
-									setCreateErrorMessage(null);
-									nameInputProps.onChange(event);
-								}}
-								size='sm'
-								className={classes.nameInput}
-								autoFocus
-							/>
-
-							<Group justify='flex-end' gap='sm' className={classes.actions}>
-								<Button
-									variant='default'
-									type='button'
-									onClick={returnToListMode}
-									disabled={isBusy}
-								>
-									{t('form.agent.add.cancel')}
-								</Button>
-								<Button type='submit' loading={isBusy}>
-									{t('form.agent.add.createAction')}
-								</Button>
-							</Group>
-						</Stack>
-					</form>
-				</Stack>
-			) : (
-				<>
-					<Group justify='space-between' align='flex-start' wrap='nowrap'>
-						<Stack gap={2} className={classes.headerText}>
-							<Text fw={600} size='sm'>
-								{t('form.agent.list.title')}
-							</Text>
-							<Text size='xs' c='dimmed'>
-								{t('form.agent.list.description')}
-							</Text>
-						</Stack>
-						<Button
-							variant='light'
-							size='xs'
-							leftSection={<IconPlus size={14} />}
-							onClick={openCreateMode}
-						>
-							{t('form.agent.add.createNewAgent')}
-						</Button>
-					</Group>
-
-					<FilterContainer>
-						<div className={classes.filterInputs}>
-							<TextInput
-								className={classes.searchInput}
-								label={t('form.agent.add.searchLabel')}
-								placeholder={t('form.agent.add.searchPlaceholder')}
-								value={searchTerm}
-								onChange={(event) => {
-									setSearchTerm(event.currentTarget.value);
-									setPage(1);
-								}}
-								aria-label={t('form.agent.add.searchLabel')}
-								size='sm'
-								leftSection={<IconSearch size={16} />}
-							/>
-							<Select
-								className={classes.searchInput}
-								label={t('form.agent.add.campaignNameLabel')}
-								placeholder={t('form.agent.add.campaignNamePlaceholder')}
-								data={campaignOptions}
-								searchable
-								loading={isCampaignsLoading}
-								value={selectedCampaignId}
-								onChange={handleCampaignChange}
-								aria-label={t('form.agent.add.campaignNameLabel')}
-								size='sm'
-								clearable
-								allowDeselect
-								nothingFoundMessage={
-									isCampaignsLoading
-										? t('form.agent.add.loadingCampaigns')
-										: isCampaignsError
-											? t('form.agent.add.loadCampaignsError')
-											: t('form.agent.add.noCampaignsFound')
-								}
-							/>
-						</div>
-					</FilterContainer>
-
-					<>
-						{isError ? (
-							<Alert
-								icon={<IconAlertCircle size={16} />}
-								color='red'
-								className={classes.errorAlert}
-								withCloseButton={false}
-							>
-								<Stack gap='xs'>
-									<Text fw={600}>{t('form.agent.add.loadError')}</Text>
+							) : shouldShowTable ? (
+								<BaseTable<AgentWithCampaignListItem>
+									data={tableData}
+									columns={columns}
+									isLoading={isLoading}
+									density='compact'
+									getRowClassName={getRowClassName}
+								/>
+							) : (
+								<div className={classes.emptyState}>
+									<div className={classes.emptyIcon}>
+										<IconUsersGroup size={24} />
+									</div>
+									<Text fw={500}>{t('form.agent.add.noAgents')}</Text>
 									<Text className={classes.subText}>
-										{t('form.agent.add.loadErrorDesc')}
+										{t('form.agent.add.noAgentsDesc')}
 									</Text>
 									<Button
-										variant='outline'
-										color='red'
+										variant='light'
 										size='xs'
-										onClick={() => refetch()}
+										leftSection={<IconPlus size={14} />}
+										onClick={openCreateMode}
 									>
-										{t('form.agent.add.tryAgain')}
+										{t('form.agent.add.createNewAgent')}
 									</Button>
-								</Stack>
-							</Alert>
-						) : shouldShowTable ? (
-							<BaseTable<AgentWithCampaignListItem>
-								data={tableData}
-								columns={columns}
-								isLoading={isLoading}
-								density='compact'
-								getRowClassName={getRowClassName}
-							/>
-						) : (
-							<div className={classes.emptyState}>
-								<div className={classes.emptyIcon}>
-									<IconUsersGroup size={24} />
 								</div>
-								<Text fw={500}>{t('form.agent.add.noAgents')}</Text>
-								<Text className={classes.subText}>
-									{t('form.agent.add.noAgentsDesc')}
-								</Text>
-								<Button
-									variant='light'
-									size='xs'
-									leftSection={<IconPlus size={14} />}
-									onClick={openCreateMode}
-								>
-									{t('form.agent.add.createNewAgent')}
-								</Button>
-							</div>
-						)}
-					</>
+							)}
+						</>
 
-					<PaginationControls
-						currentPage={page}
-						totalPages={totalPages}
-						itemsPerPage={limit}
-						totalItems={totalItems}
-						onPageChange={setPage}
-						onItemsPerPageChange={handleItemsPerPageChange}
-						searchTerm={debouncedSearch}
-						isLoading={isLoading}
-						itemLabel='agents'
-					/>
-				</>
-			)}
+						<PaginationControls
+							currentPage={page}
+							totalPages={totalPages}
+							itemsPerPage={limit}
+							totalItems={totalItems}
+							onPageChange={setPage}
+							onItemsPerPageChange={handleItemsPerPageChange}
+							searchTerm={debouncedSearch}
+							isLoading={isLoading}
+							itemLabel='agents'
+						/>
+					</>
+				)}
 			</div>
 		</Stack>
 	);

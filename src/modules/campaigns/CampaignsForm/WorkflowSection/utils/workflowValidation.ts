@@ -98,7 +98,8 @@ export const hasEdgeCondition = (
 	const edge = workflow.edges[edgeId];
 	if (!edge) return false;
 	return (
-		edge.forward_condition !== undefined || edge.backward_condition !== undefined
+		edge.forward_condition !== undefined ||
+		edge.backward_condition !== undefined
 	);
 };
 

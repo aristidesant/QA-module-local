@@ -297,7 +297,11 @@ const WorkflowCanvasInner = ({
 
 	const buildWorkflowFromStateCallback = useCallback(
 		(currentNodes: Node[], currentEdges: Edge[]): BuildWorkflowResult =>
-			buildWorkflowFromState(currentNodes, currentEdges, prevent_subagent_loops),
+			buildWorkflowFromState(
+				currentNodes,
+				currentEdges,
+				prevent_subagent_loops
+			),
 		[prevent_subagent_loops]
 	);
 

@@ -5,9 +5,7 @@
 	flex-direction: column;
 	height: 100%;
 	width: 100%;
-	background: var(--mantine-color-white);
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: var(--r-lg);
+	background: transparent;
 	overflow: hidden;
 }
 
@@ -40,7 +38,7 @@
 
 .agentStatus {
 	margin: 0;
-	font-size: 12px;
+	font-size: var(--fs-12);
 	color: var(--text-secondary);
 	line-height: 1.2;
 }
@@ -128,20 +126,39 @@
 /* Avatar Animations */
 
 @keyframes mouthIdle {
-	0%, 100% { transform: scaleY(1); }
-	50% { transform: scaleY(0.85); }
+	0%,
+	100% {
+		transform: scaleY(1);
+	}
+	50% {
+		transform: scaleY(0.85);
+	}
 }
 
 @keyframes mouthSpeaking {
-	0%, 100% { transform: scaleY(1) scaleX(1); }
-	25% { transform: scaleY(1.8) scaleX(1.1); }
-	50% { transform: scaleY(0.6) scaleX(0.9); }
-	75% { transform: scaleY(1.4) scaleX(1.05); }
+	0%,
+	100% {
+		transform: scaleY(1) scaleX(1);
+	}
+	25% {
+		transform: scaleY(1.8) scaleX(1.1);
+	}
+	50% {
+		transform: scaleY(0.6) scaleX(0.9);
+	}
+	75% {
+		transform: scaleY(1.4) scaleX(1.05);
+	}
 }
 
 @keyframes mouthListening {
-	0%, 100% { transform: scaleX(1); }
-	50% { transform: scaleX(1.15); }
+	0%,
+	100% {
+		transform: scaleX(1);
+	}
+	50% {
+		transform: scaleX(1.15);
+	}
 }
 
 @keyframes connectingRing {
@@ -243,8 +260,7 @@
 }
 
 .transcriptEmptyIcon {
-	color: var(--text-muted);
-	opacity: 0.5;
+	color: var(--nt-ink-300);
 }
 
 /* ── Chat Messages ────────────────────────────────────────────────────────── */
@@ -273,14 +289,13 @@
 	background: color-mix(in srgb, var(--nt-blue-500) 12%, transparent);
 	color: var(--nt-blue-600);
 	flex-shrink: 0;
-	margin-bottom: 2px;
 }
 
 .messageRole {
-	font-size: 10px;
+	font-size: var(--fs-12);
 	font-weight: 700;
 	text-transform: uppercase;
-	letter-spacing: 0.07em;
+	letter-spacing: 0.06em;
 	color: var(--text-muted);
 	padding: 0 var(--s-3);
 }
@@ -362,11 +377,6 @@
 }
 
 /* ── Dark Mode ────────────────────────────────────────────────────────────── */
-
-[data-mantine-color-scheme='dark'] .voicePanel {
-	background: var(--mantine-color-dark-7);
-	border-color: var(--mantine-color-dark-4);
-}
 
 [data-mantine-color-scheme='dark'] .agentHeader {
 	border-bottom-color: var(--mantine-color-dark-4);

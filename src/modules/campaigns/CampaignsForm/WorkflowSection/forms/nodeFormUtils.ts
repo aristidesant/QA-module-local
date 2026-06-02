@@ -168,7 +168,9 @@ export const getEdgeConditionLabel = (
 ): string => {
 	if (edge.forward_condition?.type === 'llm') {
 		return (
-			edge.forward_condition.condition || edge.forward_condition.label || fallback
+			edge.forward_condition.condition ||
+			edge.forward_condition.label ||
+			fallback
 		);
 	}
 	if (edge.forward_condition?.type === 'expression') {

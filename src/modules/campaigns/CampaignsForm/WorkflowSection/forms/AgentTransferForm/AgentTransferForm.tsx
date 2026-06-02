@@ -144,7 +144,8 @@ const AgentTransferForm = ({
 					labelPosition='left'
 					onChange={(event) =>
 						handleUpdate({
-							enable_transferred_agent_first_message: event.currentTarget.checked,
+							enable_transferred_agent_first_message:
+								event.currentTarget.checked,
 						})
 					}
 					size='sm'

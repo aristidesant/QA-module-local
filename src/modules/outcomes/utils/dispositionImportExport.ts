@@ -109,13 +109,9 @@ const normalizeNode = (
 		...(description ? { description } : {}),
 		...(order !== undefined ? { order } : {}),
 		...(isFinal !== undefined ? { isFinal } : { isFinal: true }),
-		...(isVoiceMail !== undefined
-			? { isVoiceMail }
-			: { isVoiceMail: false }),
+		...(isVoiceMail !== undefined ? { isVoiceMail } : { isVoiceMail: false }),
 		...(doNotCall !== undefined ? { doNotCall } : { doNotCall: false }),
-		...(isAbandoned !== undefined
-			? { isAbandoned }
-			: { isAbandoned: false }),
+		...(isAbandoned !== undefined ? { isAbandoned } : { isAbandoned: false }),
 		...(requiresReschedule !== undefined
 			? { requiresReschedule }
 			: { requiresReschedule: false }),
@@ -123,7 +119,9 @@ const normalizeNode = (
 			? { isInvalidatesNumber }
 			: { isInvalidatesNumber: false }),
 		...(isActive !== undefined ? { isActive } : { isActive: true }),
-		children: childrenSource.map((child) => normalizeNode(child, depth + 1, state)),
+		children: childrenSource.map((child) =>
+			normalizeNode(child, depth + 1, state)
+		),
 	};
 };
 

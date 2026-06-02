@@ -65,6 +65,7 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 			onClick={onClick}
 			role={onClick ? 'button' : undefined}
 			tabIndex={onClick ? 0 : undefined}
+			data-interactive={onClick ? '' : undefined}
 		>
 			<div
 				className={`${styles.header} ${Icon ? styles.withIcon : ''} ${hasRightHeaderContent ? styles.withRight : ''}`}

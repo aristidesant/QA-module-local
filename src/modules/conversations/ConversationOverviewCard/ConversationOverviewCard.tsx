@@ -235,7 +235,7 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 							style={
 								!isLoading && !isError
 									? {
-											borderLeftColor: statusView.borderColorVar,
+											borderColor: statusView.borderColorVar,
 										}
 									: undefined
 							}

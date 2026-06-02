@@ -70,10 +70,8 @@ export function PhoneNumberList({ onEdit, onCreate }: PhoneNumberListProps) {
 	const [phoneToDelete, setPhoneToDelete] = useState<PhoneNumber | null>(null);
 
 	const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
-	const {
-		mutate: bulkDelete,
-		isPending: isBulkDeleting,
-	} = useBulkDeletePhoneNumbers();
+	const { mutate: bulkDelete, isPending: isBulkDeleting } =
+		useBulkDeletePhoneNumbers();
 	const [
 		bulkDeleteModalOpen,
 		{ open: openBulkDeleteModal, close: closeBulkDeleteModal },
@@ -81,9 +79,7 @@ export function PhoneNumberList({ onEdit, onCreate }: PhoneNumberListProps) {
 
 	const allVisibleSelected =
 		tableData.length > 0 && tableData.every((row) => selectedIds.has(row.id));
-	const someVisibleSelected = tableData.some((row) =>
-		selectedIds.has(row.id)
-	);
+	const someVisibleSelected = tableData.some((row) => selectedIds.has(row.id));
 
 	const handleToggleSelect = useCallback((id: number) => {
 		setSelectedIds((prev) => {
@@ -102,9 +98,7 @@ export function PhoneNumberList({ onEdit, onCreate }: PhoneNumberListProps) {
 			setSelectedIds(
 				(prev) =>
 					new Set(
-						[...prev].filter(
-							(id) => !tableData.some((row) => row.id === id)
-						)
+						[...prev].filter((id) => !tableData.some((row) => row.id === id))
 					)
 			);
 		} else {
@@ -152,7 +146,9 @@ export function PhoneNumberList({ onEdit, onCreate }: PhoneNumberListProps) {
 			onSuccess: (result) => {
 				if (result.failed.length === 0) {
 					notifications.show({
-						title: t('list.bulkDelete.success', { count: result.success.length }),
+						title: t('list.bulkDelete.success', {
+							count: result.success.length,
+						}),
 						message: '',
 						color: 'green',
 					});
@@ -200,7 +196,13 @@ export function PhoneNumberList({ onEdit, onCreate }: PhoneNumberListProps) {
 		};
 		window.addEventListener('keydown', handler);
 		return () => window.removeEventListener('keydown', handler);
-	}, [selectedCount, isBulkDeleting, deleteModalOpen, bulkDeleteModalOpen, openBulkDeleteModal]);
+	}, [
+		selectedCount,
+		isBulkDeleting,
+		deleteModalOpen,
+		bulkDeleteModalOpen,
+		openBulkDeleteModal,
+	]);
 
 	const columns = usePhoneNumberTableColumns({
 		onEdit,
@@ -212,7 +214,8 @@ export function PhoneNumberList({ onEdit, onCreate }: PhoneNumberListProps) {
 		someVisibleSelected,
 	});
 
-	const showEmptyState = !isLoading && tableData.length === 0 && !hasActiveFilters;
+	const showEmptyState =
+		!isLoading && tableData.length === 0 && !hasActiveFilters;
 
 	return (
 		<Stack className={styles.listRoot}>

@@ -6,21 +6,22 @@ p1_count: 1
 timestamp: 2026-05-29T01-46-09Z
 slug: agentsection-campaignconfigurationdynamicvariables
 ---
+
 ## Design Health Score
 
-| # | Heuristic | Score | Key Issue |
-|---|-----------|-------|-----------|
-| 1 | Visibility of System Status | 3 | Badge count updates; no feedback when Apply fires |
-| 2 | Match System / Real World | 3 | "Dynamic variables" is jargon, but audience-appropriate for IT admins |
-| 3 | User Control and Freedom | 3 | Modal Cancel exists; no undo for deleted rows inside modal |
-| 4 | Consistency and Standards | 2 | teal badge deviates from Newtech palette; modal header pattern slightly off |
-| 5 | Error Prevention | 3 | Duplicate-key detection + disabled Apply on errors — solid |
-| 6 | Recognition Rather Than Recall | 3 | Column headers in modal; preview shows current state |
-| 7 | Flexibility and Efficiency | 2 | No keyboard shortcut to add entries, no bulk delete, no paste-from-JSON |
-| 8 | Aesthetic and Minimalist Design | 2 | "Read only" label is redundant noise; both empty states are anemic |
-| 9 | Error Recovery | 3 | Inline key errors, disabled Apply — clear recovery path |
-| 10 | Help and Documentation | 1 | No contextual help explaining what dynamic variables are or how to use them |
-| **Total** | | **25/40** | **Acceptable — improvements needed** |
+| #         | Heuristic                       | Score     | Key Issue                                                                   |
+| --------- | ------------------------------- | --------- | --------------------------------------------------------------------------- |
+| 1         | Visibility of System Status     | 3         | Badge count updates; no feedback when Apply fires                           |
+| 2         | Match System / Real World       | 3         | "Dynamic variables" is jargon, but audience-appropriate for IT admins       |
+| 3         | User Control and Freedom        | 3         | Modal Cancel exists; no undo for deleted rows inside modal                  |
+| 4         | Consistency and Standards       | 2         | teal badge deviates from Newtech palette; modal header pattern slightly off |
+| 5         | Error Prevention                | 3         | Duplicate-key detection + disabled Apply on errors — solid                  |
+| 6         | Recognition Rather Than Recall  | 3         | Column headers in modal; preview shows current state                        |
+| 7         | Flexibility and Efficiency      | 2         | No keyboard shortcut to add entries, no bulk delete, no paste-from-JSON     |
+| 8         | Aesthetic and Minimalist Design | 2         | "Read only" label is redundant noise; both empty states are anemic          |
+| 9         | Error Recovery                  | 3         | Inline key errors, disabled Apply — clear recovery path                     |
+| 10        | Help and Documentation          | 1         | No contextual help explaining what dynamic variables are or how to use them |
+| **Total** |                                 | **25/40** | **Acceptable — improvements needed**                                        |
 
 ## Anti-Patterns Verdict
 
