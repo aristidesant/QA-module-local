@@ -4,10 +4,20 @@
 		"description": "Generate and manage client invoices",
 		"actions": {
 			"newInvoice": "New Invoice"
+		},
+		"summary": {
+			"loaded": "Loaded",
+			"draft": "Draft",
+			"issued": "Issued",
+			"voided": "Voided",
+			"visibleValue": "Visible value"
 		}
 	},
 	"list": {
 		"empty": "No invoices found.",
+		"emptyTitle": "No invoices to review",
+		"emptyDescription": "Create an invoice or adjust filters to show existing billing records.",
+		"relationship": "{{issuer}} to {{receiver}}",
 		"error": {
 			"title": "Unable to load invoices"
 		},
@@ -53,6 +63,15 @@
 	},
 	"new": {
 		"title": "New Invoice",
+		"sections": {
+			"parties": "Parties",
+			"period": "Billing period",
+			"identity": "Invoice identity",
+			"financials": "Financials",
+			"summary": "Summary",
+			"review": "Review",
+			"confirm": "Confirm"
+		},
 		"steps": {
 			"parameters": "Parameters",
 			"preview": "Preview",
@@ -120,7 +139,15 @@
 		"summary": {
 			"period": "Period",
 			"invoiceNumber": "Invoice Number",
-			"total": "Total"
+			"total": "Total",
+			"issuer": "Issuer",
+			"receiver": "Receiver",
+			"currency": "Currency",
+			"taxRate": "Tax rate",
+			"hourlyRate": "Hourly rate",
+			"status": "Status",
+			"draftDescription": "Create this invoice as a draft so it can be reviewed before issuing.",
+			"issuedDescription": "Issue this invoice immediately and make it ready for delivery."
 		}
 	},
 	"detail": {
@@ -145,9 +172,25 @@
 			"currency": "Currency",
 			"issuer": "Issuer",
 			"receiver": "Receiver"
+		},
+		"review": {
+			"title": "Invoice review",
+			"identity": "Identity",
+			"parties": "Parties",
+			"financials": "Financials",
+			"total": "Total",
+			"subtotal": "Subtotal",
+			"tax": "Tax",
+			"hourlyRate": "Hourly rate",
+			"taxRate": "Tax rate",
+			"voidedTitle": "Voided invoice",
+			"voidedAt": "Voided at",
+			"voidReason": "Void reason"
 		}
 	},
 	"snapshot": {
+		"invoiceBasics": "Invoice basics",
+		"emptyValue": "Not available",
 		"issuerInfo": "Issuer",
 		"receiverInfo": "Receiver",
 		"pocContacts": "Points of Contact",
@@ -187,7 +230,32 @@
 			"title": "Invoice voided",
 			"message": "Invoice {{number}} has been voided."
 		},
+		"previewFailed": {
+			"title": "Preview failed",
+			"message": "Could not generate the invoice preview. Review the inputs and try again."
+		},
+		"createFailed": {
+			"title": "Invoice not created",
+			"message": "Could not create the invoice. Please try again."
+		},
+		"createConflict": {
+			"title": "Active invoice conflict",
+			"message": "An active invoice already exists for this issuer, receiver, and period."
+		},
+		"issueFailed": {
+			"title": "Invoice not issued",
+			"message": "Could not issue the invoice. Please try again."
+		},
+		"voidFailed": {
+			"title": "Invoice not voided",
+			"message": "Could not void the invoice. Please try again."
+		},
+		"voidReasonRequired": {
+			"title": "Void reason required",
+			"message": "Enter a reason before voiding this invoice."
+		},
 		"downloadFailed": {
+			"title": "Download failed",
 			"invalidTemplate": "Invoice template is invalid. Please review the issuer's template configuration.",
 			"noTemplate": "No invoice template configured for issuer. Add a .docx template in the client's invoice settings.",
 			"generic": "Failed to download invoice. Please try again."

@@ -4,10 +4,20 @@
 		"description": "Genera y gestiona facturas de clientes",
 		"actions": {
 			"newInvoice": "Nueva Factura"
+		},
+		"summary": {
+			"loaded": "Cargadas",
+			"draft": "Borradores",
+			"issued": "Emitidas",
+			"voided": "Anuladas",
+			"visibleValue": "Valor visible"
 		}
 	},
 	"list": {
 		"empty": "No se encontraron facturas.",
+		"emptyTitle": "No hay facturas para revisar",
+		"emptyDescription": "Crea una factura o ajusta los filtros para mostrar registros de facturación existentes.",
+		"relationship": "{{issuer}} a {{receiver}}",
 		"error": {
 			"title": "No se pudieron cargar las facturas"
 		},
@@ -53,6 +63,15 @@
 	},
 	"new": {
 		"title": "Nueva Factura",
+		"sections": {
+			"parties": "Partes",
+			"period": "Período de facturación",
+			"identity": "Identidad de la factura",
+			"financials": "Finanzas",
+			"summary": "Resumen",
+			"review": "Revisión",
+			"confirm": "Confirmar"
+		},
 		"steps": {
 			"parameters": "Parámetros",
 			"preview": "Vista previa",
@@ -120,7 +139,15 @@
 		"summary": {
 			"period": "Período",
 			"invoiceNumber": "Número de Factura",
-			"total": "Total"
+			"total": "Total",
+			"issuer": "Emisor",
+			"receiver": "Receptor",
+			"currency": "Moneda",
+			"taxRate": "Tasa de impuesto",
+			"hourlyRate": "Tarifa por hora",
+			"status": "Estado",
+			"draftDescription": "Crea esta factura como borrador para revisarla antes de emitirla.",
+			"issuedDescription": "Emite esta factura de inmediato y déjala lista para entregar."
 		}
 	},
 	"detail": {
@@ -145,9 +172,25 @@
 			"currency": "Moneda",
 			"issuer": "Emisor",
 			"receiver": "Receptor"
+		},
+		"review": {
+			"title": "Revisión de factura",
+			"identity": "Identidad",
+			"parties": "Partes",
+			"financials": "Finanzas",
+			"total": "Total",
+			"subtotal": "Subtotal",
+			"tax": "Impuesto",
+			"hourlyRate": "Tarifa por hora",
+			"taxRate": "Tasa de impuesto",
+			"voidedTitle": "Factura anulada",
+			"voidedAt": "Anulada el",
+			"voidReason": "Motivo de anulación"
 		}
 	},
 	"snapshot": {
+		"invoiceBasics": "Datos básicos de la factura",
+		"emptyValue": "No disponible",
 		"issuerInfo": "Emisor",
 		"receiverInfo": "Receptor",
 		"pocContacts": "Contactos",
@@ -187,7 +230,32 @@
 			"title": "Factura anulada",
 			"message": "La factura {{number}} ha sido anulada."
 		},
+		"previewFailed": {
+			"title": "Falló la vista previa",
+			"message": "No se pudo generar la vista previa de la factura. Revisa los datos e intenta de nuevo."
+		},
+		"createFailed": {
+			"title": "Factura no creada",
+			"message": "No se pudo crear la factura. Intenta de nuevo."
+		},
+		"createConflict": {
+			"title": "Conflicto de factura activa",
+			"message": "Ya existe una factura activa para este emisor, receptor y período."
+		},
+		"issueFailed": {
+			"title": "Factura no emitida",
+			"message": "No se pudo emitir la factura. Intenta de nuevo."
+		},
+		"voidFailed": {
+			"title": "Factura no anulada",
+			"message": "No se pudo anular la factura. Intenta de nuevo."
+		},
+		"voidReasonRequired": {
+			"title": "Motivo de anulación obligatorio",
+			"message": "Ingresa un motivo antes de anular esta factura."
+		},
 		"downloadFailed": {
+			"title": "Falló la descarga",
 			"invalidTemplate": "La plantilla de factura no es válida. Revisa la configuración de plantilla del emisor.",
 			"noTemplate": "No hay plantilla de factura configurada para el emisor. Agrega una plantilla .docx en la configuración de facturación del cliente.",
 			"generic": "No se pudo descargar la factura. Intenta de nuevo."
