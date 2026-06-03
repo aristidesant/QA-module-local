@@ -29,6 +29,11 @@ import type {
 	InvoiceCurrency,
 	CreateInvoiceDto,
 } from '~/models/InvoiceModel';
+import {
+	EMPTY_VALUE,
+	formatInvoicePeriod,
+	getClientOptionLabel,
+} from '~/modules/billing/utils';
 import InvoiceSnapshotCard from '../components/InvoiceSnapshotCard';
 import classes from './InvoiceNewPage.module.css';
 
@@ -87,6 +92,73 @@ const InvoiceNewPage: React.FC = () => {
 		},
 	});
 
+	const selectedIssuerLabel = getClientOptionLabel(
+		clients,
+		form.values.issuerClientId
+	);
+	const selectedReceiverLabel = getClientOptionLabel(
+		clients,
+		form.values.receiverClientId
+	);
+
+	const setupSummary = (
+		<SectionCard title={t('new.sections.summary')} padding='sm'>
+			<Stack gap='xs'>
+				<Group justify='space-between'>
+					<Text size='sm' c='dimmed'>
+						{t('new.summary.issuer')}
+					</Text>
+					<Text size='sm' fw={500}>
+						{selectedIssuerLabel}
+					</Text>
+				</Group>
+				<Group justify='space-between'>
+					<Text size='sm' c='dimmed'>
+						{t('new.summary.receiver')}
+					</Text>
+					<Text size='sm' fw={500}>
+						{selectedReceiverLabel}
+					</Text>
+				</Group>
+				<Group justify='space-between'>
+					<Text size='sm' c='dimmed'>
+						{t('new.summary.period')}
+					</Text>
+					<Text size='sm' fw={500}>
+						{formatInvoicePeriod(
+							form.values.periodStart,
+							form.values.periodEnd
+						)}
+					</Text>
+				</Group>
+				<Group justify='space-between'>
+					<Text size='sm' c='dimmed'>
+						{t('new.summary.currency')}
+					</Text>
+					<Text size='sm' fw={500}>
+						{form.values.currency}
+					</Text>
+				</Group>
+				<Group justify='space-between'>
+					<Text size='sm' c='dimmed'>
+						{t('new.summary.taxRate')}
+					</Text>
+					<Text size='sm' fw={500}>
+						{form.values.taxRate}%
+					</Text>
+				</Group>
+				<Group justify='space-between'>
+					<Text size='sm' c='dimmed'>
+						{t('new.summary.hourlyRate')}
+					</Text>
+					<Text size='sm' fw={500}>
+						{form.values.hourlyRate}
+					</Text>
+				</Group>
+			</Stack>
+		</SectionCard>
+	);
+
 	const handlePreview = useCallback(async () => {
 		const result = form.validate();
 		if (result.hasErrors) return;
@@ -109,8 +181,8 @@ const InvoiceNewPage: React.FC = () => {
 			setActive(1);
 		} catch {
 			notifications.show({
-				title: 'Error',
-				message: 'Failed to preview invoice.',
+				title: t('notifications.previewFailed.title'),
+				message: t('notifications.previewFailed.message'),
 				color: 'red',
 			});
 		}
@@ -153,15 +225,15 @@ const InvoiceNewPage: React.FC = () => {
 				?.status;
 			if (status === 409) {
 				notifications.show({
-					title: 'Conflict',
-					message: 'A conflict was detected. Refreshing preview.',
+					title: t('notifications.createConflict.title'),
+					message: t('notifications.createConflict.message'),
 					color: 'yellow',
 				});
 				void handlePreview();
 			} else {
 				notifications.show({
-					title: 'Error',
-					message: 'Failed to create invoice.',
+					title: t('notifications.createFailed.title'),
+					message: t('notifications.createFailed.message'),
 					color: 'red',
 				});
 			}
@@ -186,67 +258,107 @@ const InvoiceNewPage: React.FC = () => {
 						<Stepper active={active} onStepClick={setActive}>
 							<Stepper.Step label={t('new.steps.parameters')}>
 								<Stack gap='md' mt='md'>
-									<div className={classes.formGrid}>
-										<Select
-											label={t('new.form.issuerClient.label')}
-											placeholder={t('new.form.issuerClient.placeholder')}
-											data={clientOptions}
-											searchable
-											size='sm'
-											{...form.getInputProps('issuerClientId')}
-										/>
-										<Select
-											label={t('new.form.receiverClient.label')}
-											placeholder={t('new.form.receiverClient.placeholder')}
-											data={clientOptions}
-											searchable
-											size='sm'
-											{...form.getInputProps('receiverClientId')}
-										/>
-										<DateInput
-											label={t('new.form.periodStart.label')}
-											size='sm'
-											clearable
-											{...form.getInputProps('periodStart')}
-										/>
-										<DateInput
-											label={t('new.form.periodEnd.label')}
-											size='sm'
-											clearable
-											{...form.getInputProps('periodEnd')}
-										/>
-										<TextInput
-											label={t('new.form.invoiceNumber.label')}
-											placeholder={t('new.form.invoiceNumber.placeholder')}
-											size='sm'
-											{...form.getInputProps('invoiceNumber')}
-										/>
-										<div>
-											<Text size='sm' fw={500} mb={4}>
-												{t('new.form.currency.label')}
-											</Text>
-											<SegmentedControl
-												data={['USD', 'DOP']}
-												value={form.values.currency}
-												onChange={(v) =>
-													form.setFieldValue('currency', v as InvoiceCurrency)
-												}
-												size='sm'
-											/>
-										</div>
-										<NumberInput
-											label={t('new.form.taxRate.label')}
-											min={0}
-											max={100}
-											size='sm'
-											{...form.getInputProps('taxRate')}
-										/>
-										<NumberInput
-											label={t('new.form.hourlyRate.label')}
-											min={0}
-											size='sm'
-											{...form.getInputProps('hourlyRate')}
-										/>
+									<div className={classes.createLayout}>
+										<Stack gap='md'>
+											<SectionCard
+												title={t('new.sections.parties')}
+												padding='sm'
+											>
+												<div className={classes.formGrid}>
+													<Select
+														label={t('new.form.issuerClient.label')}
+														placeholder={t('new.form.issuerClient.placeholder')}
+														data={clientOptions}
+														searchable
+														size='sm'
+														{...form.getInputProps('issuerClientId')}
+													/>
+													<Select
+														label={t('new.form.receiverClient.label')}
+														placeholder={t(
+															'new.form.receiverClient.placeholder'
+														)}
+														data={clientOptions}
+														searchable
+														size='sm'
+														{...form.getInputProps('receiverClientId')}
+													/>
+												</div>
+											</SectionCard>
+
+											<SectionCard
+												title={t('new.sections.period')}
+												padding='sm'
+											>
+												<div className={classes.formGrid}>
+													<DateInput
+														label={t('new.form.periodStart.label')}
+														size='sm'
+														clearable
+														{...form.getInputProps('periodStart')}
+													/>
+													<DateInput
+														label={t('new.form.periodEnd.label')}
+														size='sm'
+														clearable
+														{...form.getInputProps('periodEnd')}
+													/>
+												</div>
+											</SectionCard>
+
+											<SectionCard
+												title={t('new.sections.identity')}
+												padding='sm'
+											>
+												<TextInput
+													label={t('new.form.invoiceNumber.label')}
+													placeholder={t('new.form.invoiceNumber.placeholder')}
+													size='sm'
+													{...form.getInputProps('invoiceNumber')}
+												/>
+											</SectionCard>
+
+											<SectionCard
+												title={t('new.sections.financials')}
+												padding='sm'
+											>
+												<div className={classes.formGrid}>
+													<div>
+														<Text size='sm' fw={500} mb={4}>
+															{t('new.form.currency.label')}
+														</Text>
+														<SegmentedControl
+															data={['USD', 'DOP']}
+															value={form.values.currency}
+															onChange={(v) =>
+																form.setFieldValue(
+																	'currency',
+																	v as InvoiceCurrency
+																)
+															}
+															size='sm'
+														/>
+													</div>
+													<NumberInput
+														label={t('new.form.taxRate.label')}
+														min={0}
+														max={100}
+														size='sm'
+														{...form.getInputProps('taxRate')}
+													/>
+													<NumberInput
+														label={t('new.form.hourlyRate.label')}
+														min={0}
+														size='sm'
+														{...form.getInputProps('hourlyRate')}
+													/>
+												</div>
+											</SectionCard>
+										</Stack>
+
+										<aside className={classes.summaryAside}>
+											{setupSummary}
+										</aside>
 									</div>
 									<div className={classes.actions}>
 										<Button
@@ -261,67 +373,75 @@ const InvoiceNewPage: React.FC = () => {
 
 							<Stepper.Step label={t('new.steps.preview')}>
 								<Stack gap='md' mt='md'>
-									{preview?.snapshot.calculationWarnings &&
-										preview.snapshot.calculationWarnings.length > 0 && (
-											<Alert
-												icon={<IconAlertTriangle size={18} />}
-												color='yellow'
-												title={t('new.warnings.title')}
-											>
-												<Stack gap='xs'>
-													{preview.snapshot.calculationWarnings.map((w, i) => (
-														<Text key={i} size='sm'>
-															{w}
-														</Text>
-													))}
-												</Stack>
-											</Alert>
-										)}
-
-									{preview?.hasActiveInvoiceConflict &&
-										preview.activeInvoiceConflict && (
-											<Alert
-												icon={<IconInfoCircle size={18} />}
-												color='red'
-												title={t('new.conflict.title')}
-											>
-												<Stack gap='sm'>
-													<Text size='sm'>{t('new.conflict.description')}</Text>
-													<Text size='sm'>
-														<strong>
-															#{preview.activeInvoiceConflict.invoiceNumber}
-														</strong>{' '}
-														— {preview.activeInvoiceConflict.status} (
-														{preview.activeInvoiceConflict.periodStart} –{' '}
-														{preview.activeInvoiceConflict.periodEnd})
-													</Text>
-													<Checkbox
-														label={t('new.conflict.replaceLabel')}
-														checked={replaceExisting}
-														onChange={(e) =>
-															setReplaceExisting(e.currentTarget.checked)
-														}
-													/>
-													{replaceExisting && (
-														<Textarea
-															label={t('new.conflict.replaceReasonLabel')}
-															placeholder={t(
-																'new.conflict.replaceReasonPlaceholder'
+									<SectionCard title={t('new.sections.review')} padding='sm'>
+										<Stack gap='md'>
+											{preview?.snapshot.calculationWarnings &&
+												preview.snapshot.calculationWarnings.length > 0 && (
+													<Alert
+														icon={<IconAlertTriangle size={18} />}
+														color='yellow'
+														title={t('new.warnings.title')}
+													>
+														<Stack gap='xs'>
+															{preview.snapshot.calculationWarnings.map(
+																(w, i) => (
+																	<Text key={i} size='sm'>
+																		{w}
+																	</Text>
+																)
 															)}
-															value={replaceReason}
-															onChange={(e) =>
-																setReplaceReason(e.currentTarget.value)
-															}
-															minRows={2}
-														/>
-													)}
-												</Stack>
-											</Alert>
-										)}
+														</Stack>
+													</Alert>
+												)}
 
-									{preview?.snapshot && (
-										<InvoiceSnapshotCard snapshot={preview.snapshot} />
-									)}
+											{preview?.hasActiveInvoiceConflict &&
+												preview.activeInvoiceConflict && (
+													<Alert
+														icon={<IconInfoCircle size={18} />}
+														color='red'
+														title={t('new.conflict.title')}
+													>
+														<Stack gap='sm'>
+															<Text size='sm'>
+																{t('new.conflict.description')}
+															</Text>
+															<Text size='sm'>
+																<strong>
+																	#{preview.activeInvoiceConflict.invoiceNumber}
+																</strong>{' '}
+																- {preview.activeInvoiceConflict.status} (
+																{preview.activeInvoiceConflict.periodStart} -{' '}
+																{preview.activeInvoiceConflict.periodEnd})
+															</Text>
+															<Checkbox
+																label={t('new.conflict.replaceLabel')}
+																checked={replaceExisting}
+																onChange={(e) =>
+																	setReplaceExisting(e.currentTarget.checked)
+																}
+															/>
+															{replaceExisting && (
+																<Textarea
+																	label={t('new.conflict.replaceReasonLabel')}
+																	placeholder={t(
+																		'new.conflict.replaceReasonPlaceholder'
+																	)}
+																	value={replaceReason}
+																	onChange={(e) =>
+																		setReplaceReason(e.currentTarget.value)
+																	}
+																	minRows={2}
+																/>
+															)}
+														</Stack>
+													</Alert>
+												)}
+
+											{preview?.snapshot && (
+												<InvoiceSnapshotCard snapshot={preview.snapshot} />
+											)}
+										</Stack>
+									</SectionCard>
 
 									<div className={classes.actions}>
 										<Button variant='default' onClick={() => setActive(0)}>
@@ -344,14 +464,17 @@ const InvoiceNewPage: React.FC = () => {
 
 							<Stepper.Step label={t('new.steps.confirm')}>
 								<Stack gap='md' mt='md'>
-									<SectionCard padding='sm'>
+									<SectionCard title={t('new.sections.confirm')} padding='sm'>
 										<Stack gap='xs'>
 											<Group justify='space-between'>
 												<Text size='sm' c='dimmed'>
 													{t('new.summary.period')}
 												</Text>
 												<Text size='sm'>
-													{form.values.periodStart} – {form.values.periodEnd}
+													{formatInvoicePeriod(
+														form.values.periodStart,
+														form.values.periodEnd
+													)}
 												</Text>
 											</Group>
 											<Group justify='space-between'>
@@ -364,8 +487,9 @@ const InvoiceNewPage: React.FC = () => {
 												<Text size='sm' c='dimmed'>
 													{t('new.summary.total')}
 												</Text>
-												<Text size='sm' fw={600}>
-													{preview?.snapshot.totals.totalFormatted ?? '—'}
+												<Text size='md' fw={750}>
+													{preview?.snapshot.totals.totalFormatted ??
+														EMPTY_VALUE}
 												</Text>
 											</Group>
 										</Stack>
@@ -384,6 +508,11 @@ const InvoiceNewPage: React.FC = () => {
 											onChange={(v) => setInvoiceStatus(v as InvoiceStatus)}
 											size='sm'
 										/>
+										<Text size='sm' c='dimmed' mt='xs'>
+											{invoiceStatus === 'DRAFT'
+												? t('new.summary.draftDescription')
+												: t('new.summary.issuedDescription')}
+										</Text>
 									</div>
 
 									<div className={classes.actions}>
