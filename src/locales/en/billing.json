@@ -274,6 +274,7 @@
 		}
 	},
 	"templates": {
+		"toolbarTitle": "Invoice Templates",
 		"card": {
 			"title": "Invoice Template Settings",
 			"description": "Manage XLSX templates used for invoice generation"

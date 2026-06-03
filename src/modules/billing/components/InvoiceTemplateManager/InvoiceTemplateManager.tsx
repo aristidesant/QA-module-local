@@ -181,6 +181,7 @@ const InvoiceTemplateManager: React.FC = () => {
 			<div
 				role='button'
 				tabIndex={0}
+				aria-label={t('templates.toolbarTitle')}
 				aria-expanded={isExpanded}
 				aria-controls='invoice-template-settings'
 				onClick={() => setIsExpanded(!isExpanded)}
@@ -195,7 +196,7 @@ const InvoiceTemplateManager: React.FC = () => {
 				<div className={classes.toolbarLabel}>
 					<IconFileDescription size={14} stroke={1.5} />
 					<Text span size='sm' fw={500}>
-						Invoice Templates
+						{t('templates.toolbarTitle')}
 					</Text>
 					{configuredCount > 0 && (
 						<Badge size='sm' variant='light' color='green'>
@@ -225,7 +226,6 @@ const InvoiceTemplateManager: React.FC = () => {
 									variant='subtle'
 									leftSection={<IconVariable size={14} />}
 									onClick={openGuideModal}
-									p={4}
 								>
 									{t('templates.variablesGuide.action')}
 								</Button>
