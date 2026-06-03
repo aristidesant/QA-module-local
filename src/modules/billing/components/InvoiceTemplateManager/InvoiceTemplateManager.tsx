@@ -1,6 +1,5 @@
 import { useRef, useState } from 'react';
 import {
-	Alert,
 	Badge,
 	Button,
 	Center,
@@ -10,20 +9,20 @@ import {
 	Skeleton,
 	Stack,
 	Text,
-	UnstyledButton,
 } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import {
 	IconChevronDown,
-	IconChevronRight,
-	IconInfoCircle,
+	IconDownload,
+	IconFileDescription,
 	IconUpload,
 	IconTrash,
+	IconVariable,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import { getErrorMessage } from '~/utils/httpClient';
-import SectionCard from '~/components/SectionCard';
 import classes from './InvoiceTemplateManager.module.css';
 import {
 	useGetAllClients,
@@ -35,6 +34,8 @@ import {
 	useGetFileTypes,
 	useUploadFile,
 } from '~/queries/fileQueries';
+import { useDownloadInvoiceTemplate } from '~/queries/invoiceQueries';
+import PlaceholderGuideModal from '~/modules/billing/components/PlaceholderGuideModal';
 
 const InvoiceTemplateManager: React.FC = () => {
 	const { t } = useTranslation('billing');
@@ -42,6 +43,8 @@ const InvoiceTemplateManager: React.FC = () => {
 	const fileInputRef = useRef<HTMLInputElement>(null);
 	const [isExpanded, setIsExpanded] = useState(false);
 	const [selectedClientId, setSelectedClientId] = useState<number | null>(null);
+	const [guideModalOpened, { open: openGuideModal, close: closeGuideModal }] =
+		useDisclosure(false);
 
 	const { data: clients = [], isLoading: isClientsLoading } =
 		useGetAllClients();
@@ -53,6 +56,7 @@ const InvoiceTemplateManager: React.FC = () => {
 		useGetFileTypes(isExpanded);
 	const uploadMutation = useUploadFile();
 	const updateMutation = useUpdateClient();
+	const downloadTemplateMutation = useDownloadInvoiceTemplate();
 
 	const templateTypeId = fileTypes.find(
 		(ft) => ft.code === 'billing-template'
@@ -88,7 +92,8 @@ const InvoiceTemplateManager: React.FC = () => {
 			return;
 		}
 
-		if (!file.name.toLowerCase().endsWith('.docx')) {
+		const ext = file.name.toLowerCase().split('.').pop();
+		if (ext !== 'xlsx') {
 			notifications.show({
 				title: t('templates.notifications.uploadError'),
 				message: '',
@@ -156,146 +161,191 @@ const InvoiceTemplateManager: React.FC = () => {
 		}
 	};
 
+	const handleDownloadTemplate = async () => {
+		if (!selectedClientId) return;
+		try {
+			await downloadTemplateMutation.mutateAsync(selectedClientId);
+		} catch (error) {
+			notifications.show({
+				title: t('templates.notifications.downloadError'),
+				message: getErrorMessage(error),
+				color: 'red',
+			});
+		}
+	};
+
 	const isUploading = uploadMutation.isPending || updateMutation.isPending;
 
 	return (
-		<SectionCard
-			title={
-				<UnstyledButton
-					type='button'
-					aria-expanded={isExpanded}
-					aria-controls='invoice-template-settings'
-					onClick={() => setIsExpanded(!isExpanded)}
-					className={classes.clickableTitle}
-				>
-					<Group gap='xs'>
-						{isExpanded ? (
-							<IconChevronDown size={16} />
-						) : (
-							<IconChevronRight size={16} />
-						)}
-						<Text>{t('templates.card.title')}</Text>
-						{configuredCount > 0 && (
-							<Badge size='sm' variant='light' color='green'>
-								{t('templates.count', { count: configuredCount })}
-							</Badge>
-						)}
-					</Group>
-				</UnstyledButton>
-			}
-			description={t('templates.card.description')}
-		>
+		<>
+			<div
+				role='button'
+				tabIndex={0}
+				aria-expanded={isExpanded}
+				aria-controls='invoice-template-settings'
+				onClick={() => setIsExpanded(!isExpanded)}
+				onKeyDown={(e) => {
+					if (e.key === 'Enter' || e.key === ' ') {
+						e.preventDefault();
+						setIsExpanded(!isExpanded);
+					}
+				}}
+				className={`${classes.toolbarRow} ${isExpanded ? classes.toolbarRowExpanded : ''}`}
+			>
+				<div className={classes.toolbarLabel}>
+					<IconFileDescription size={14} stroke={1.5} />
+					<Text span size='sm' fw={500}>
+						Invoice Templates
+					</Text>
+					{configuredCount > 0 && (
+						<Badge size='sm' variant='light' color='green'>
+							{t('templates.count', { count: configuredCount })}
+						</Badge>
+					)}
+				</div>
+				<IconChevronDown
+					size={14}
+					stroke={1.5}
+					className={`${classes.chevronIcon} ${isExpanded ? classes.chevronIconExpanded : ''}`}
+				/>
+			</div>
+
 			<Collapse expanded={isExpanded} id='invoice-template-settings'>
-				<Stack gap='sm'>
-					{isClientsLoading && clients.length === 0 ? (
-						<Stack gap={6}>
-							<Skeleton height={12} width='34%' radius='xl' />
-							<Skeleton height={36} radius='sm' />
-						</Stack>
-					) : (
-						<Select
-							label={t('templates.issuerClient.label')}
-							placeholder={t('templates.issuerClient.placeholder')}
-							data={clientOptions}
-							value={selectedClientId != null ? String(selectedClientId) : null}
-							onChange={(v) => setSelectedClientId(v ? Number(v) : null)}
-							clearable
-							searchable
-							size='sm'
-						/>
-					)}
+				<div className={classes.expandedPanel}>
+					<Stack gap='sm'>
+						{isClientsLoading && clients.length === 0 ? (
+							<Stack gap={6}>
+								<Skeleton height={12} width='34%' radius='xl' />
+								<Skeleton height={36} radius='sm' />
+							</Stack>
+						) : (
+							<>
+								<Button
+									size='xs'
+									variant='subtle'
+									leftSection={<IconVariable size={14} />}
+									onClick={openGuideModal}
+									p={4}
+								>
+									{t('templates.variablesGuide.action')}
+								</Button>
+								<Select
+									label={t('templates.issuerClient.label')}
+									placeholder={t('templates.issuerClient.placeholder')}
+									data={clientOptions}
+									value={
+										selectedClientId != null ? String(selectedClientId) : null
+									}
+									onChange={(v) => setSelectedClientId(v ? Number(v) : null)}
+									clearable
+									searchable
+									size='xs'
+								/>
+							</>
+						)}
 
-					{selectedClientId && (
-						<>
-							<Group gap='xs'>
-								<Text size='sm' fw={500}>
-									{t('templates.currentTemplate')}:
-								</Text>
-								{isTemplateDataLoading ? (
-									<Skeleton height={20} width='42%' radius='xl' />
-								) : currentTemplateFile ? (
-									<Group gap={4}>
-										<Text size='sm'>{currentTemplateFile.name}</Text>
-										<Badge size='sm' color='green' variant='light'>
-											{t('templates.status.configured')}
+						{selectedClientId && (
+							<>
+								<Group gap='xs'>
+									<Text size='xs' fw={500}>
+										{t('templates.currentTemplate')}:
+									</Text>
+									{isTemplateDataLoading ? (
+										<Skeleton height={18} width='42%' radius='xl' />
+									) : currentTemplateFile ? (
+										<Group gap={4}>
+											<Text size='xs'>{currentTemplateFile.name}</Text>
+											<Badge size='sm' color='green' variant='light'>
+												{t('templates.status.configured')}
+											</Badge>
+										</Group>
+									) : (
+										<Badge size='sm' color='gray' variant='light'>
+											{t('templates.status.none')}
 										</Badge>
-									</Group>
+									)}
+								</Group>
+
+								{isTemplateDataLoading ? (
+									<Stack gap='xs'>
+										<Skeleton height={48} radius='md' />
+										<Group gap='xs'>
+											<Skeleton height={30} width={120} radius='sm' />
+											<Skeleton height={30} width={106} radius='sm' />
+										</Group>
+									</Stack>
 								) : (
-									<Badge size='sm' color='gray' variant='light'>
-										{t('templates.status.none')}
-									</Badge>
-								)}
-							</Group>
+									<>
+										<Text size='xs' c='dimmed'>
+											{t('templates.info')}
+										</Text>
 
-							{isTemplateDataLoading ? (
-								<Stack gap='xs'>
-									<Skeleton height={52} radius='md' />
-									<Group gap='xs'>
-										<Skeleton height={34} width={124} radius='sm' />
-										<Skeleton height={34} width={110} radius='sm' />
-									</Group>
-								</Stack>
-							) : (
-								<>
-									<Alert
-										icon={<IconInfoCircle size={16} />}
-										color='blue'
-										variant='light'
-										p='xs'
-									>
-										<Text size='xs'>{t('templates.info')}</Text>
-									</Alert>
-
-									<Group gap='xs'>
-										<Button
-											size='sm'
-											variant='light'
-											leftSection={<IconUpload size={16} />}
-											loading={isUploading}
-											disabled={!selectedClientId || !templateTypeId}
-											onClick={() => fileInputRef.current?.click()}
-										>
-											{isUploading
-												? t('templates.actions.uploading')
-												: t('templates.actions.upload')}
-										</Button>
-
-										{currentTemplateFile && (
+										<Group gap='xs'>
 											<Button
-												size='sm'
-												variant='outline'
-												color='red'
-												leftSection={<IconTrash size={16} />}
+												size='xs'
+												variant='light'
+												leftSection={<IconUpload size={14} />}
 												loading={isUploading}
-												onClick={handleRemove}
+												disabled={!selectedClientId || !templateTypeId}
+												onClick={() => fileInputRef.current?.click()}
 											>
-												{t('templates.actions.remove')}
+												{isUploading
+													? t('templates.actions.uploading')
+													: t('templates.actions.upload')}
 											</Button>
-										)}
-									</Group>
 
-									<input
-										ref={fileInputRef}
-										type='file'
-										accept='.docx'
-										className={classes.hiddenInput}
-										onChange={handleFileSelected}
-									/>
-								</>
-							)}
-						</>
-					)}
+											{currentTemplateFile && (
+												<>
+													<Button
+														size='xs'
+														variant='light'
+														leftSection={<IconDownload size={14} />}
+														loading={downloadTemplateMutation.isPending}
+														onClick={handleDownloadTemplate}
+													>
+														{t('templates.actions.download')}
+													</Button>
+													<Button
+														size='xs'
+														variant='outline'
+														color='red'
+														leftSection={<IconTrash size={14} />}
+														loading={isUploading}
+														onClick={handleRemove}
+													>
+														{t('templates.actions.remove')}
+													</Button>
+												</>
+											)}
+										</Group>
 
-					{!selectedClientId && (
-						<Center>
-							<Text size='sm' c='dimmed'>
-								{t('templates.issuerClient.placeholder')}
-							</Text>
-						</Center>
-					)}
-				</Stack>
+										<input
+											ref={fileInputRef}
+											type='file'
+											accept='.xlsx'
+											className={classes.hiddenInput}
+											onChange={handleFileSelected}
+										/>
+									</>
+								)}
+							</>
+						)}
+
+						{!selectedClientId && (
+							<Center py='xs'>
+								<Text size='xs' c='dimmed'>
+									{t('templates.issuerClient.placeholder')}
+								</Text>
+							</Center>
+						)}
+					</Stack>
+				</div>
 			</Collapse>
-		</SectionCard>
+			<PlaceholderGuideModal
+				opened={guideModalOpened}
+				onClose={closeGuideModal}
+			/>
+		</>
 	);
 };
 

@@ -36,6 +36,14 @@
 	border-radius: 0 0 6px 6px;
 }
 
+.chevronIcon {
+	transition: transform 0.15s ease;
+}
+
+.chevronIconExpanded {
+	transform: rotate(180deg);
+}
+
 .hiddenInput {
 	display: none;
 }
