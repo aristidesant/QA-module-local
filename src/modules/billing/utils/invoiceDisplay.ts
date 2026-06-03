@@ -12,10 +12,18 @@ export interface InvoiceWorkspaceStats {
 
 export const EMPTY_VALUE = '—';
 
+function parseDateOnly(value: string): Date | null {
+	const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+	if (!match) return null;
+
+	const [, year, month, day] = match;
+	return new Date(Number(year), Number(month) - 1, Number(day));
+}
+
 export function formatInvoiceDate(value?: string | null): string {
 	if (!value) return EMPTY_VALUE;
 
-	const date = new Date(value);
+	const date = parseDateOnly(value) ?? new Date(value);
 	if (Number.isNaN(date.getTime())) return value;
 
 	return date.toLocaleDateString();
@@ -87,10 +95,11 @@ export function formatVisibleInvoiceValue(
 export function buildInvoiceWorkspaceStats(
 	invoices: InvoiceResponse[]
 ): InvoiceWorkspaceStats {
-	const visibleTotal = invoices.reduce(
-		(sum, invoice) => sum + getInvoiceTotalValue(invoice),
-		0
-	);
+	const currencies = new Set(invoices.map((invoice) => invoice.currency));
+	const hasSingleCurrency = currencies.size <= 1;
+	const visibleTotal = hasSingleCurrency
+		? invoices.reduce((sum, invoice) => sum + getInvoiceTotalValue(invoice), 0)
+		: 0;
 	const fallbackCurrency = invoices[0]?.currency ?? 'USD';
 
 	return {
@@ -101,10 +110,9 @@ export function buildInvoiceWorkspaceStats(
 		voidedCount: invoices.filter((invoice) => invoice.status === 'VOIDED')
 			.length,
 		visibleTotal,
-		visibleTotalFormatted: formatVisibleInvoiceValue(
-			visibleTotal,
-			fallbackCurrency
-		),
+		visibleTotalFormatted: hasSingleCurrency
+			? formatVisibleInvoiceValue(visibleTotal, fallbackCurrency)
+			: EMPTY_VALUE,
 	};
 }
 
