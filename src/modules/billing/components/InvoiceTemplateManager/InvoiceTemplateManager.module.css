@@ -22,7 +22,7 @@
 .toolbarLabel {
 	display: flex;
 	align-items: center;
-	gap: 6px;
+	gap: var(--mantine-spacing-xs);
 	font-size: var(--mantine-font-size-sm);
 	font-weight: 500;
 	color: var(--mantine-color-gray-7);
