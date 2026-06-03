@@ -19,7 +19,8 @@
 		"emptyDescription": "Adjust filters or create a new invoice to start billing this client relationship.",
 		"relationship": "{{issuer}} to {{receiver}}",
 		"error": {
-			"title": "Unable to load invoices"
+			"title": "Unable to load invoices",
+			"unknown": "Unknown error"
 		},
 		"columns": {
 			"invoiceNumber": "Invoice #",

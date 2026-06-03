@@ -4,6 +4,33 @@
 	gap: var(--mantine-spacing-md);
 }
 
+.workspaceHeader {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-md);
+	flex-wrap: wrap;
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.metric {
+	min-width: 0;
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-default);
+}
+
 .tableRow {
 	cursor: pointer;
+}
+
+.tableRow:hover {
+	background: var(--mantine-color-default-hover);
+}
+
+@media (max-width: 640px) {
+	.workspaceHeader {
+		align-items: stretch;
+	}
 }

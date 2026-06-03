@@ -67,7 +67,7 @@ const InvoiceFilters: React.FC<InvoiceFiltersProps> = ({
 	}
 
 	return (
-		<div className={styles.root}>
+		<div className={styles.toolbar}>
 			<Select
 				label={t('filters.status.label')}
 				placeholder={t('filters.status.placeholder')}
@@ -151,7 +151,7 @@ const InvoiceFilters: React.FC<InvoiceFiltersProps> = ({
 				className={styles.dateField}
 			/>
 			{hasActiveFilters && (
-				<Group align='flex-end'>
+				<Group align='flex-end' className={styles.clearAction}>
 					<Button variant='subtle' size='sm' onClick={() => onChange({})}>
 						{t('filters.clearFilters')}
 					</Button>

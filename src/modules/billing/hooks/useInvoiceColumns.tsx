@@ -1,9 +1,14 @@
 import { useMemo } from 'react';
-import { ActionIcon, Group, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Stack, Text, Tooltip } from '@mantine/core';
 import { IconEye, IconCheck, IconBan, IconDownload } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { BaseTableColumnDef } from '~/components/BaseTable/BaseTable';
 import type { InvoiceResponse } from '~/models/InvoiceModel';
+import {
+	formatInvoiceDate,
+	formatInvoicePeriod,
+	getInvoiceTotalDisplay,
+} from '~/modules/billing/utils';
 import InvoiceStatusBadge from '../components/InvoiceStatusBadge';
 
 interface UseInvoiceColumnsOptions {
@@ -26,27 +31,40 @@ export function useInvoiceColumns({
 			{
 				accessorKey: 'invoiceNumber',
 				header: t('list.columns.invoiceNumber'),
-				cell: ({ getValue }) => getValue<string>(),
+				cell: ({ row }) => (
+					<Stack gap={2}>
+						<Text size='sm' fw={650}>
+							{row.original.invoiceNumber}
+						</Text>
+						<InvoiceStatusBadge status={row.original.status} />
+					</Stack>
+				),
 			},
 			{
 				id: 'issuer',
 				header: t('list.columns.issuer'),
-				cell: ({ row }) =>
-					row.original.snapshot?.issuer?.name ??
-					String(row.original.issuerClientId),
+				cell: ({ row }) => (
+					<Text size='sm' fw={500}>
+						{row.original.snapshot?.issuer?.name ??
+							String(row.original.issuerClientId)}
+					</Text>
+				),
 			},
 			{
 				id: 'receiver',
 				header: t('list.columns.receiver'),
-				cell: ({ row }) =>
-					row.original.snapshot?.receiver?.name ??
-					String(row.original.receiverClientId),
+				cell: ({ row }) => (
+					<Text size='sm'>
+						{row.original.snapshot?.receiver?.name ??
+							String(row.original.receiverClientId)}
+					</Text>
+				),
 			},
 			{
 				id: 'period',
 				header: t('list.columns.period'),
 				cell: ({ row }) =>
-					`${row.original.periodStart} – ${row.original.periodEnd}`,
+					formatInvoicePeriod(row.original.periodStart, row.original.periodEnd),
 			},
 			{
 				accessorKey: 'status',
@@ -63,14 +81,16 @@ export function useInvoiceColumns({
 			{
 				id: 'total',
 				header: t('list.columns.total'),
-				cell: ({ row }) =>
-					row.original.snapshot?.totals?.totalFormatted ?? row.original.total,
+				cell: ({ row }) => (
+					<Text size='sm' fw={700} ta='right'>
+						{getInvoiceTotalDisplay(row.original)}
+					</Text>
+				),
 			},
 			{
 				id: 'createdAt',
 				header: t('list.columns.createdAt'),
-				cell: ({ row }) =>
-					new Date(row.original.createdAt).toLocaleDateString(),
+				cell: ({ row }) => formatInvoiceDate(row.original.createdAt),
 			},
 			{
 				id: 'actions',

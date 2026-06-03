@@ -19,7 +19,8 @@
 		"emptyDescription": "Ajusta los filtros o crea una nueva factura para iniciar la facturación de esta relación de clientes.",
 		"relationship": "{{issuer}} a {{receiver}}",
 		"error": {
-			"title": "No se pudieron cargar las facturas"
+			"title": "No se pudieron cargar las facturas",
+			"unknown": "Error desconocido"
 		},
 		"columns": {
 			"invoiceNumber": "Factura #",

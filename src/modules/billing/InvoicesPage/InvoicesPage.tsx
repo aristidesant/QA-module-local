@@ -1,9 +1,18 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import { Alert, Text, Textarea } from '@mantine/core';
+import {
+	Alert,
+	Button,
+	Group,
+	SimpleGrid,
+	Stack,
+	Text,
+	Textarea,
+	Title,
+} from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { IconInfoCircle } from '@tabler/icons-react';
+import { IconFileInvoice, IconInfoCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import SectionCard from '~/components/SectionCard';
@@ -12,11 +21,12 @@ import {
 	useGetInvoices,
 	useIssueInvoice,
 	useVoidInvoice,
-	useDownloadDocx,
+	useDownloadInvoice,
 } from '~/queries/invoiceQueries';
 import { useGetAllClients } from '~/queries/clientQueries';
 import { usePagination } from '~/hooks/usePagination';
 import type { FilterInvoiceDto, InvoiceResponse } from '~/models/InvoiceModel';
+import { buildInvoiceWorkspaceStats } from '~/modules/billing/utils';
 import InvoiceFilters from '../components/InvoiceFilters';
 import InvoiceTemplateManager from '../components/InvoiceTemplateManager';
 import { useInvoiceColumns } from '../hooks/useInvoiceColumns';
@@ -52,11 +62,12 @@ const InvoicesPage: React.FC = () => {
 		useGetAllClients();
 	const issueMutation = useIssueInvoice();
 	const voidMutation = useVoidInvoice();
-	const downloadMutation = useDownloadDocx();
+	const downloadMutation = useDownloadInvoice();
 
 	const total = invoicesData?.total ?? 0;
 	const pageCount = pagination.calculateTotalPages(total);
 	const invoices = invoicesData?.data ?? [];
+	const workspaceStats = buildInvoiceWorkspaceStats(invoices);
 
 	const handleView = useCallback(
 		(invoice: InvoiceResponse) => {
@@ -88,8 +99,8 @@ const InvoicesPage: React.FC = () => {
 						});
 					} catch {
 						notifications.show({
-							title: 'Error',
-							message: 'Failed to issue invoice.',
+							title: t('notifications.issueFailed.title'),
+							message: t('notifications.issueFailed.message'),
 							color: 'red',
 						});
 					}
@@ -129,8 +140,8 @@ const InvoicesPage: React.FC = () => {
 				onConfirm: async () => {
 					if (!reason.trim()) {
 						notifications.show({
-							title: 'Error',
-							message: 'Reason is required.',
+							title: t('notifications.voidReasonRequired.title'),
+							message: t('notifications.voidReasonRequired.message'),
 							color: 'red',
 						});
 						return;
@@ -150,8 +161,8 @@ const InvoicesPage: React.FC = () => {
 						});
 					} catch {
 						notifications.show({
-							title: 'Error',
-							message: 'Failed to void invoice.',
+							title: t('notifications.voidFailed.title'),
+							message: t('notifications.voidFailed.message'),
 							color: 'red',
 						});
 					}
@@ -169,19 +180,19 @@ const InvoicesPage: React.FC = () => {
 				const status = (err as Error & { status?: number }).status;
 				if (status === 422) {
 					notifications.show({
-						title: 'Error',
+						title: t('notifications.downloadFailed.title'),
 						message: t('notifications.downloadFailed.invalidTemplate'),
 						color: 'red',
 					});
 				} else if (status === 404) {
 					notifications.show({
-						title: 'Error',
+						title: t('notifications.downloadFailed.title'),
 						message: t('notifications.downloadFailed.noTemplate'),
 						color: 'red',
 					});
 				} else {
 					notifications.show({
-						title: 'Error',
+						title: t('notifications.downloadFailed.title'),
 						message: t('notifications.downloadFailed.generic'),
 						color: 'red',
 					});
@@ -201,7 +212,56 @@ const InvoicesPage: React.FC = () => {
 	return (
 		<ContentContainer>
 			<div className={classes.root}>
-				<SectionCard>
+				<SectionCard padding='lg'>
+					<div className={classes.workspaceHeader}>
+						<Stack gap={4}>
+							<Group gap='xs'>
+								<IconFileInvoice size={20} />
+								<Title order={3}>{t('page.title')}</Title>
+							</Group>
+							<Text size='sm' c='dimmed'>
+								{t('page.description')}
+							</Text>
+						</Stack>
+						<Button onClick={() => void navigate('/billing/invoices/new')}>
+							{t('page.actions.newInvoice')}
+						</Button>
+					</div>
+					<SimpleGrid cols={{ base: 2, sm: 3, md: 5 }} spacing='sm'>
+						<div className={classes.metric}>
+							<Text size='xs' c='dimmed'>
+								{t('page.summary.loaded')}
+							</Text>
+							<Text fw={750}>{workspaceStats.loadedCount}</Text>
+						</div>
+						<div className={classes.metric}>
+							<Text size='xs' c='dimmed'>
+								{t('page.summary.draft')}
+							</Text>
+							<Text fw={750}>{workspaceStats.draftCount}</Text>
+						</div>
+						<div className={classes.metric}>
+							<Text size='xs' c='dimmed'>
+								{t('page.summary.issued')}
+							</Text>
+							<Text fw={750}>{workspaceStats.issuedCount}</Text>
+						</div>
+						<div className={classes.metric}>
+							<Text size='xs' c='dimmed'>
+								{t('page.summary.voided')}
+							</Text>
+							<Text fw={750}>{workspaceStats.voidedCount}</Text>
+						</div>
+						<div className={classes.metric}>
+							<Text size='xs' c='dimmed'>
+								{t('page.summary.visibleValue')}
+							</Text>
+							<Text fw={750}>{workspaceStats.visibleTotalFormatted}</Text>
+						</div>
+					</SimpleGrid>
+				</SectionCard>
+
+				<SectionCard padding='md'>
 					<InvoiceFilters
 						filters={filters}
 						clients={clients}
@@ -215,7 +275,6 @@ const InvoicesPage: React.FC = () => {
 				<SectionCard
 					title={t('page.title')}
 					description={t('page.description')}
-					onAdd={() => void navigate('/billing/invoices/new')}
 				>
 					{isError && (
 						<Alert
@@ -223,7 +282,7 @@ const InvoicesPage: React.FC = () => {
 							color='red'
 							title={t('list.error.title')}
 						>
-							{error instanceof Error ? error.message : 'Unknown error'}
+							{error instanceof Error ? error.message : t('list.error.unknown')}
 						</Alert>
 					)}
 					{!isError && (
@@ -231,7 +290,7 @@ const InvoicesPage: React.FC = () => {
 							data={invoices}
 							columns={columns}
 							isLoading={isLoading}
-							emptyMessage={t('list.empty')}
+							emptyMessage={t('list.emptyTitle')}
 							onRowClick={handleView}
 							getRowClassName={() => classes.tableRow}
 							filterMode='server'
