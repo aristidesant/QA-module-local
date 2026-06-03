@@ -48,23 +48,25 @@ interface PartyPanelProps {
 }
 
 function PartyPanel({ title, party }: PartyPanelProps) {
+	const { t } = useTranslation('billing');
+
 	return (
 		<SectionCard title={title} padding='sm' contentSpacing='xs'>
 			<Group className={styles.partyHeader} justify='space-between' gap='xs'>
 				<Text className={styles.partyName}>{party.name || EMPTY_VALUE}</Text>
 				{party.rnc && (
 					<Badge size='sm' variant='light' color='gray'>
-						RNC {party.rnc}
+						{t('snapshot.fields.rnc')} {party.rnc}
 					</Badge>
 				)}
 			</Group>
 			<div className={styles.infoGrid}>
-				<InfoField label='Name' value={party.name} />
-				<InfoField label='RNC' value={party.rnc} />
-				<InfoField label='Email' value={party.email} />
-				<InfoField label='Phone' value={party.phone} />
-				<InfoField label='Address' value={party.address} />
-				<InfoField label='Website' value={party.website} />
+				<InfoField label={t('snapshot.fields.name')} value={party.name} />
+				<InfoField label={t('snapshot.fields.rnc')} value={party.rnc} />
+				<InfoField label={t('snapshot.fields.email')} value={party.email} />
+				<InfoField label={t('snapshot.fields.phone')} value={party.phone} />
+				<InfoField label={t('snapshot.fields.address')} value={party.address} />
+				<InfoField label={t('snapshot.fields.website')} value={party.website} />
 			</div>
 		</SectionCard>
 	);
@@ -76,11 +78,13 @@ interface PocPanelProps {
 }
 
 function PocPanel({ title, poc }: PocPanelProps) {
+	const { t } = useTranslation('billing');
+
 	return (
 		<SectionCard title={title} padding='sm' contentSpacing='xs'>
 			<div className={styles.infoGrid}>
-				<InfoField label='Name' value={poc.name} />
-				<InfoField label='Email' value={poc.email} />
+				<InfoField label={t('snapshot.fields.name')} value={poc.name} />
+				<InfoField label={t('snapshot.fields.email')} value={poc.email} />
 			</div>
 		</SectionCard>
 	);
