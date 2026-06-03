@@ -2,10 +2,13 @@ import { useCallback, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import {
 	Alert,
+	Badge,
 	Button,
 	Center,
+	Divider,
 	Group,
 	Loader,
+	Stack,
 	Text,
 	Textarea,
 	Title,
@@ -26,8 +29,16 @@ import {
 	useGetInvoice,
 	useIssueInvoice,
 	useVoidInvoice,
-	useDownloadDocx,
+	useDownloadInvoice,
 } from '~/queries/invoiceQueries';
+import {
+	formatInvoiceDate,
+	formatInvoiceDateTime,
+	formatInvoicePeriod,
+	getInvoiceSubtotalDisplay,
+	getInvoiceTaxDisplay,
+	getInvoiceTotalDisplay,
+} from '~/modules/billing/utils';
 import InvoiceStatusBadge from '../components/InvoiceStatusBadge';
 import InvoiceSnapshotCard from '../components/InvoiceSnapshotCard';
 import classes from './InvoiceDetailPage.module.css';
@@ -41,7 +52,7 @@ const InvoiceDetailPage: React.FC = () => {
 	const { data: invoice, isLoading, isError, error } = useGetInvoice(invoiceId);
 	const issueMutation = useIssueInvoice();
 	const voidMutation = useVoidInvoice();
-	const downloadMutation = useDownloadDocx();
+	const downloadMutation = useDownloadInvoice();
 	const [isDownloading, setIsDownloading] = useState(false);
 
 	const handleIssue = useCallback(() => {
@@ -66,8 +77,8 @@ const InvoiceDetailPage: React.FC = () => {
 					});
 				} catch {
 					notifications.show({
-						title: 'Error',
-						message: 'Failed to issue invoice.',
+						title: t('notifications.issueFailed.title'),
+						message: t('notifications.issueFailed.message'),
 						color: 'red',
 					});
 				}
@@ -104,8 +115,8 @@ const InvoiceDetailPage: React.FC = () => {
 			onConfirm: async () => {
 				if (!reason.trim()) {
 					notifications.show({
-						title: 'Error',
-						message: 'Reason is required.',
+						title: t('notifications.voidReasonRequired.title'),
+						message: t('notifications.voidReasonRequired.message'),
 						color: 'red',
 					});
 					return;
@@ -125,8 +136,8 @@ const InvoiceDetailPage: React.FC = () => {
 					});
 				} catch {
 					notifications.show({
-						title: 'Error',
-						message: 'Failed to void invoice.',
+						title: t('notifications.voidFailed.title'),
+						message: t('notifications.voidFailed.message'),
 						color: 'red',
 					});
 				}
@@ -142,19 +153,19 @@ const InvoiceDetailPage: React.FC = () => {
 			const status = (err as Error & { status?: number }).status;
 			if (status === 422) {
 				notifications.show({
-					title: 'Error',
+					title: t('notifications.downloadFailed.title'),
 					message: t('notifications.downloadFailed.invalidTemplate'),
 					color: 'red',
 				});
 			} else if (status === 404) {
 				notifications.show({
-					title: 'Error',
+					title: t('notifications.downloadFailed.title'),
 					message: t('notifications.downloadFailed.noTemplate'),
 					color: 'red',
 				});
 			} else {
 				notifications.show({
-					title: 'Error',
+					title: t('notifications.downloadFailed.title'),
 					message: t('notifications.downloadFailed.generic'),
 					color: 'red',
 				});
@@ -178,7 +189,7 @@ const InvoiceDetailPage: React.FC = () => {
 		return (
 			<ContentContainer>
 				<Alert icon={<IconInfoCircle size={18} />} color='red'>
-					{error instanceof Error ? error.message : 'Invoice not found.'}
+					{error instanceof Error ? error.message : t('detail.error.notFound')}
 				</Alert>
 			</ContentContainer>
 		);
@@ -187,84 +198,164 @@ const InvoiceDetailPage: React.FC = () => {
 	return (
 		<ContentContainer>
 			<div className={classes.root}>
-				<SectionCard>
-					<div className={classes.header}>
-						<Group gap='sm'>
-							<Button
-								variant='subtle'
-								leftSection={<IconArrowLeft size={16} />}
-								onClick={() => void navigate('/billing/invoices')}
-								size='sm'
-							>
-								{t('detail.actions.back')}
-							</Button>
-							<Title order={4}>{invoice.invoiceNumber}</Title>
-							<InvoiceStatusBadge status={invoice.status} />
-						</Group>
-						<Group gap='xs'>
-							{invoice.status === 'DRAFT' && (
+				<SectionCard padding='lg'>
+					<div className={classes.reviewHeader}>
+						<Stack gap='xs'>
+							<Group gap='xs'>
 								<Button
-									leftSection={<IconCheck size={16} />}
-									color='green'
-									variant='light'
+									variant='subtle'
+									leftSection={<IconArrowLeft size={16} />}
+									onClick={() => void navigate('/billing/invoices')}
 									size='sm'
-									loading={issueMutation.isPending}
-									onClick={handleIssue}
 								>
-									{t('detail.actions.issue')}
+									{t('detail.actions.back')}
 								</Button>
-							)}
-							{invoice.status !== 'VOIDED' && (
+								<InvoiceStatusBadge status={invoice.status} />
+							</Group>
+							<Title order={2}>{invoice.invoiceNumber}</Title>
+							<Group gap='xs'>
+								<Badge variant='light'>
+									{formatInvoicePeriod(invoice.periodStart, invoice.periodEnd)}
+								</Badge>
+								<Badge variant='light' color='gray'>
+									{formatInvoiceDate(invoice.createdAt)}
+								</Badge>
+							</Group>
+						</Stack>
+						<Stack gap='xs' align='flex-end'>
+							<Text size='xs' c='dimmed'>
+								{t('detail.review.total')}
+							</Text>
+							<Text className={classes.headerTotal}>
+								{getInvoiceTotalDisplay(invoice)}
+							</Text>
+							<Group gap='xs'>
+								{invoice.status === 'DRAFT' && (
+									<Button
+										leftSection={<IconCheck size={16} />}
+										color='green'
+										size='sm'
+										loading={issueMutation.isPending}
+										onClick={handleIssue}
+									>
+										{t('detail.actions.issue')}
+									</Button>
+								)}
 								<Button
-									leftSection={<IconBan size={16} />}
-									color='red'
-									variant='light'
+									leftSection={<IconDownload size={16} />}
+									variant={invoice.status === 'ISSUED' ? 'filled' : 'light'}
 									size='sm'
-									loading={voidMutation.isPending}
-									onClick={handleVoid}
+									loading={isDownloading}
+									onClick={() => void handleDownload()}
 								>
-									{t('detail.actions.void')}
+									{t('detail.actions.download')}
 								</Button>
-							)}
-							<Button
-								leftSection={<IconDownload size={16} />}
-								variant='light'
-								size='sm'
-								loading={isDownloading}
-								onClick={() => void handleDownload()}
-							>
-								{t('detail.actions.download')}
-							</Button>
-						</Group>
+								{invoice.status !== 'VOIDED' && (
+									<Button
+										leftSection={<IconBan size={16} />}
+										color='red'
+										variant='light'
+										size='sm'
+										loading={voidMutation.isPending}
+										onClick={handleVoid}
+									>
+										{t('detail.actions.void')}
+									</Button>
+								)}
+							</Group>
+						</Stack>
 					</div>
 				</SectionCard>
 
-				<SectionCard padding='sm'>
-					<div className={classes.metaGrid}>
-						<div className={classes.metaItem}>
-							<Text size='xs' c='dimmed'>
-								{t('detail.metadata.period')}
+				{(invoice.voidedAt || invoice.voidReason) && (
+					<Alert
+						icon={<IconBan size={18} />}
+						color='red'
+						title={t('detail.review.voidedTitle')}
+					>
+						<Stack gap='xs'>
+							{invoice.voidedAt && (
+								<Group justify='space-between'>
+									<Text size='sm' c='dimmed'>
+										{t('detail.review.voidedAt')}
+									</Text>
+									<Text size='sm'>
+										{formatInvoiceDateTime(invoice.voidedAt)}
+									</Text>
+								</Group>
+							)}
+							{invoice.voidReason && (
+								<Group justify='space-between' align='flex-start'>
+									<Text size='sm' c='dimmed'>
+										{t('detail.review.voidReason')}
+									</Text>
+									<Text size='sm' ta='right'>
+										{invoice.voidReason}
+									</Text>
+								</Group>
+							)}
+						</Stack>
+					</Alert>
+				)}
+
+				<div className={classes.reviewGrid}>
+					<SectionCard title={t('detail.review.identity')} padding='sm'>
+						<div className={classes.metaGrid}>
+							<div className={classes.metaItem}>
+								<Text size='xs' c='dimmed'>
+									{t('detail.metadata.invoiceNumber')}
+								</Text>
+								<Text size='sm' fw={600}>
+									{invoice.invoiceNumber}
+								</Text>
+							</div>
+							<div className={classes.metaItem}>
+								<Text size='xs' c='dimmed'>
+									{t('detail.metadata.status')}
+								</Text>
+								<InvoiceStatusBadge status={invoice.status} />
+							</div>
+							<div className={classes.metaItem}>
+								<Text size='xs' c='dimmed'>
+									{t('detail.metadata.period')}
+								</Text>
+								<Text size='sm'>
+									{formatInvoicePeriod(invoice.periodStart, invoice.periodEnd)}
+								</Text>
+							</div>
+							<div className={classes.metaItem}>
+								<Text size='xs' c='dimmed'>
+									{t('detail.metadata.createdAt')}
+								</Text>
+								<Text size='sm'>{formatInvoiceDate(invoice.createdAt)}</Text>
+							</div>
+						</div>
+					</SectionCard>
+
+					<SectionCard title={t('detail.review.financials')} padding='sm'>
+						<div className={classes.totalsGrid}>
+							<Text size='sm'>{t('detail.review.subtotal')}</Text>
+							<Text size='sm' ta='right'>
+								{getInvoiceSubtotalDisplay(invoice)}
 							</Text>
-							<Text size='sm'>
-								{invoice.periodStart} – {invoice.periodEnd}
+							<Text size='sm'>{t('detail.review.tax')}</Text>
+							<Text size='sm' ta='right'>
+								{getInvoiceTaxDisplay(invoice)}
+							</Text>
+							<Text size='sm'>{t('detail.review.hourlyRate')}</Text>
+							<Text size='sm' ta='right'>
+								{invoice.snapshot.invoice.hourlyRateFormatted}
+							</Text>
+							<Divider className={classes.divider} />
+							<Text size='md' fw={750}>
+								{t('detail.review.total')}
+							</Text>
+							<Text size='md' fw={750} ta='right'>
+								{getInvoiceTotalDisplay(invoice)}
 							</Text>
 						</div>
-						<div className={classes.metaItem}>
-							<Text size='xs' c='dimmed'>
-								{t('detail.metadata.currency')}
-							</Text>
-							<Text size='sm'>{invoice.currency}</Text>
-						</div>
-						<div className={classes.metaItem}>
-							<Text size='xs' c='dimmed'>
-								{t('detail.metadata.createdAt')}
-							</Text>
-							<Text size='sm'>
-								{new Date(invoice.createdAt).toLocaleDateString()}
-							</Text>
-						</div>
-					</div>
-				</SectionCard>
+					</SectionCard>
+				</div>
 
 				<InvoiceSnapshotCard snapshot={invoice.snapshot} />
 			</div>

@@ -174,6 +174,9 @@
 			"issuer": "Issuer",
 			"receiver": "Receiver"
 		},
+		"error": {
+			"notFound": "Invoice not found."
+		},
 		"review": {
 			"title": "Invoice review",
 			"identity": "Invoice identity",
