@@ -2,12 +2,16 @@
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: 8px 12px;
-	border: 1px dashed #dee2e6;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border: 1px dashed var(--mantine-color-gray-3);
 	border-radius: 6px;
-	background: white;
+	background: var(--mantine-color-body);
 	cursor: pointer;
-	transition: border-radius 0.15s ease;
+	transition: all 0.15s ease;
+}
+
+.toolbarRow:hover {
+	background: var(--mantine-color-default-hover);
 }
 
 .toolbarRowExpanded {
@@ -19,16 +23,16 @@
 	display: flex;
 	align-items: center;
 	gap: 6px;
-	font-size: 13px;
+	font-size: var(--mantine-font-size-sm);
 	font-weight: 500;
-	color: #495057;
+	color: var(--mantine-color-gray-7);
 }
 
 .expandedPanel {
-	background: #fafbfc;
-	padding: 12px;
-	border: 1px dashed #dee2e6;
-	border-top: 1px solid #f1f3f5;
+	background: var(--mantine-color-gray-0);
+	padding: var(--mantine-spacing-sm);
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-top: 1px solid var(--mantine-color-gray-2);
 	border-radius: 0 0 6px 6px;
 }
 
