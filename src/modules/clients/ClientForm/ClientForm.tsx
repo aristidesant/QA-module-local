@@ -118,8 +118,8 @@ const ClientForm: React.FC<ClientFormProps> = ({
 		label: `${u.firstName ?? ''} ${u.lastName ?? ''}`.trim() || 'Unknown',
 	}));
 
-	const docxFileOptions = clientFiles
-		.filter((f) => f.extension === 'docx')
+	const xlsxFileOptions = clientFiles
+		.filter((f) => f.extension === 'xlsx')
 		.map((f) => ({ value: String(f.id), label: f.name }));
 
 	const createMutation = useCreateClient();
@@ -395,7 +395,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 							<Select
 								label={t('form.fields.invoiceTemplateFileId.label')}
 								placeholder={t('form.fields.invoiceTemplateFileId.placeholder')}
-								data={docxFileOptions}
+								data={xlsxFileOptions}
 								value={
 									form.values.invoiceTemplateFileId != null
 										? String(form.values.invoiceTemplateFileId)

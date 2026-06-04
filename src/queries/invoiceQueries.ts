@@ -79,12 +79,22 @@ export const useVoidInvoice = () => {
 	});
 };
 
-export const useDownloadDocx = () => {
+export const useDownloadInvoice = () => {
 	const { token } = useSessionStore();
 	return useMutation({
 		mutationFn: async (id: number) => {
 			const api = invoiceApi();
-			return api.downloadDocx(id, token ?? '');
+			return api.downloadInvoice(id, token ?? '');
+		},
+	});
+};
+
+export const useDownloadInvoiceTemplate = () => {
+	const { token } = useSessionStore();
+	return useMutation({
+		mutationFn: async (id: number) => {
+			const api = invoiceApi();
+			return api.downloadInvoiceTemplate(id, token ?? '');
 		},
 	});
 };

@@ -113,8 +113,8 @@
 				"placeholder": "Select a user"
 			},
 			"invoiceTemplateFileId": {
-				"label": "Invoice Template (.docx)",
-				"placeholder": "Select a .docx file"
+				"label": "Invoice Template (.xlsx)",
+				"placeholder": "Select an .xlsx file"
 			}
 		}
 	},

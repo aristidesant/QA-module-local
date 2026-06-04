@@ -296,7 +296,7 @@ const invoiceApi = (
 	},
 
 	downloadDocx: async (id, token) => {
-		const response = await fetch(`${DEFAULT_API_URL}/invoices/${id}/docx`, {
+		const response = await fetch(`${DEFAULT_API_URL}/invoices/${id}/download`, {
 			headers: { Authorization: `Bearer ${token}` },
 		});
 		if (!response.ok) {
@@ -310,7 +310,7 @@ const invoiceApi = (
 			response.headers.get('Content-Disposition') ?? '';
 		const filename =
 			contentDisposition.match(/filename="?([^";\s]+)"?/)?.[1] ??
-			'invoice.docx';
+			'invoice.xlsx';
 		const url = window.URL.createObjectURL(blob);
 		const a = document.createElement('a');
 		a.href = url;

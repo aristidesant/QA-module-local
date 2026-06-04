@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { DEFAULT_API_URL } from './config';
+import { downloadBlob } from '~/utils/fileUtils';
 import type {
 	InvoiceResponse,
 	InvoicePreviewResponse,
@@ -19,7 +20,8 @@ interface InvoiceApiClient {
 	getInvoice: (id: number) => Promise<InvoiceResponse>;
 	issueInvoice: (id: number) => Promise<InvoiceResponse>;
 	voidInvoice: (id: number, dto: VoidInvoiceDto) => Promise<InvoiceResponse>;
-	downloadDocx: (id: number, token: string) => Promise<void>;
+	downloadInvoice: (id: number, token: string) => Promise<void>;
+	downloadInvoiceTemplate: (id: number, token: string) => Promise<void>;
 }
 
 const invoiceApi = (
@@ -77,30 +79,54 @@ const invoiceApi = (
 		return response.data;
 	},
 
-	downloadDocx: async (id, token) => {
-		const response = await fetch(`${DEFAULT_API_URL}/invoices/${id}/docx`, {
-			headers: { ..._authHeader, Authorization: `Bearer ${token}` },
-		});
-		if (!response.ok) {
-			const status = response.status;
-			const error = new Error(`DOCX download failed: ${status}`);
-			(error as Error & { status: number }).status = status;
-			throw error;
+	downloadInvoice: async (id, token) => {
+		try {
+			const response = await axios.get(
+				`${DEFAULT_API_URL}/invoices/${id}/download`,
+				{
+					headers: { ..._authHeader, Authorization: `Bearer ${token}` },
+					responseType: import.meta.env.DEV ? 'blob' : undefined,
+				}
+			);
+			const blob = response.data as Blob;
+			const contentDisposition = response.headers['content-disposition'] ?? '';
+			const filename =
+				contentDisposition.match(/filename="?([^";\s]+)"?/)?.[1] ??
+				'invoice.xlsx';
+			const url = window.URL.createObjectURL(blob);
+			const a = document.createElement('a');
+			a.href = url;
+			a.download = filename;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			window.URL.revokeObjectURL(url);
+		} catch (err) {
+			if (axios.isAxiosError(err) && err.response) {
+				const error = new Error(
+					`Invoice download failed: ${err.response.status}`
+				);
+				(error as Error & { status: number }).status = err.response.status;
+				throw error;
+			}
+			throw err;
 		}
-		const blob = await response.blob();
-		const contentDisposition =
-			response.headers.get('Content-Disposition') ?? '';
+	},
+
+	downloadInvoiceTemplate: async (id, token) => {
+		const response = await axios.get(
+			`${DEFAULT_API_URL}/invoices/${id}/template/download`,
+			{
+				headers: { ..._authHeader, Authorization: `Bearer ${token}` },
+				responseType: import.meta.env.DEV ? 'blob' : undefined,
+			}
+		);
+		const blob = response.data as Blob;
+		const contentDisposition = response.headers['content-disposition'] ?? '';
 		const filename =
 			contentDisposition.match(/filename="?([^";\s]+)"?/)?.[1] ??
-			'invoice.docx';
-		const url = window.URL.createObjectURL(blob);
-		const a = document.createElement('a');
-		a.href = url;
-		a.download = filename;
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-		window.URL.revokeObjectURL(url);
+			'invoice_template.xlsx';
+		downloadBlob(blob, filename);
 	},
 });
 

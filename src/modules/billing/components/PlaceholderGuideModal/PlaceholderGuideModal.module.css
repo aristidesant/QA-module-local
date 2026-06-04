@@ -1,0 +1,12 @@
+.blockSyntax {
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-sm);
+	padding: var(--mantine-spacing-xs);
+	margin-bottom: var(--mantine-spacing-sm);
+	background: var(--mantine-color-default-hover);
+}
+
+.variableCode {
+	flex-shrink: 0;
+	min-width: 240px;
+}
