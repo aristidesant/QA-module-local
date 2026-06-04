@@ -3,9 +3,9 @@
 	align-items: center;
 	justify-content: space-between;
 	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-	border: 1px dashed var(--mantine-color-gray-3);
+	border: 1px dashed var(--surface-border);
 	border-radius: 6px;
-	background: var(--mantine-color-body);
+	background: var(--surface-card);
 	cursor: pointer;
 	transition: all 0.15s ease;
 }
@@ -25,14 +25,14 @@
 	gap: var(--mantine-spacing-xs);
 	font-size: var(--mantine-font-size-sm);
 	font-weight: 500;
-	color: var(--mantine-color-gray-7);
+	color: var(--text-secondary);
 }
 
 .expandedPanel {
-	background: var(--mantine-color-gray-0);
+	background: var(--surface-sunken);
 	padding: var(--mantine-spacing-sm);
-	border: 1px dashed var(--mantine-color-gray-3);
-	border-top: 1px solid var(--mantine-color-gray-2);
+	border: 1px dashed var(--surface-border);
+	border-top: 1px solid var(--surface-border);
 	border-radius: 0 0 6px 6px;
 }
 
