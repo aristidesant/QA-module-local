@@ -1,11 +1,11 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
 import {
-	Alert,
 	Button,
 	Checkbox,
 	Group,
 	NumberInput,
+	Radio,
 	SegmentedControl,
 	Select,
 	Stack,
@@ -17,10 +17,15 @@ import {
 import { useForm } from '@mantine/form';
 import { DateInput } from '@mantine/dates';
 import { notifications } from '@mantine/notifications';
-import { IconInfoCircle, IconAlertTriangle } from '@tabler/icons-react';
+import {
+	IconInfoCircle,
+	IconAlertTriangle,
+	IconCircleCheck,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import SectionCard from '~/components/SectionCard';
+import { MASTER_CLIENT_ID } from '~/constants/client';
 import { useGetAllClients } from '~/queries/clientQueries';
 import { usePreviewInvoice, useCreateInvoice } from '~/queries/invoiceQueries';
 import type {
@@ -69,7 +74,7 @@ const InvoiceNewPage: React.FC = () => {
 
 	const form = useForm<FormValues>({
 		initialValues: {
-			issuerClientId: '',
+			issuerClientId: String(MASTER_CLIENT_ID),
 			receiverClientId: '',
 			periodStart: null,
 			periodEnd: null,
@@ -79,7 +84,6 @@ const InvoiceNewPage: React.FC = () => {
 			hourlyRate: 0,
 		},
 		validate: {
-			issuerClientId: (v) => (!v ? t('new.validation.issuerRequired') : null),
 			receiverClientId: (v) =>
 				!v ? t('new.validation.receiverRequired') : null,
 			periodStart: (v) => (!v ? t('new.validation.periodStartRequired') : null),
@@ -253,286 +257,382 @@ const InvoiceNewPage: React.FC = () => {
 	return (
 		<ContentContainer>
 			<div className={classes.root}>
-				<SectionCard title={t('new.title')}>
-					<div className={classes.stepperWrapper}>
-						<Stepper active={active} onStepClick={setActive}>
-							<Stepper.Step label={t('new.steps.parameters')}>
-								<Stack gap='md' mt='md'>
-									<div className={classes.createLayout}>
-										<Stack gap='md'>
-											<SectionCard
-												title={t('new.sections.parties')}
-												padding='sm'
-											>
-												<div className={classes.formGrid}>
-													<Select
-														label={t('new.form.issuerClient.label')}
-														placeholder={t('new.form.issuerClient.placeholder')}
-														data={clientOptions}
-														searchable
-														size='sm'
-														{...form.getInputProps('issuerClientId')}
-													/>
-													<Select
-														label={t('new.form.receiverClient.label')}
-														placeholder={t(
-															'new.form.receiverClient.placeholder'
-														)}
-														data={clientOptions}
-														searchable
-														size='sm'
-														{...form.getInputProps('receiverClientId')}
-													/>
-												</div>
-											</SectionCard>
-
-											<SectionCard
-												title={t('new.sections.period')}
-												padding='sm'
-											>
-												<div className={classes.formGrid}>
-													<DateInput
-														label={t('new.form.periodStart.label')}
-														size='sm'
-														clearable
-														{...form.getInputProps('periodStart')}
-													/>
-													<DateInput
-														label={t('new.form.periodEnd.label')}
-														size='sm'
-														clearable
-														{...form.getInputProps('periodEnd')}
-													/>
-												</div>
-											</SectionCard>
-
-											<SectionCard
-												title={t('new.sections.identity')}
-												padding='sm'
-											>
-												<TextInput
-													label={t('new.form.invoiceNumber.label')}
-													placeholder={t('new.form.invoiceNumber.placeholder')}
-													size='sm'
-													{...form.getInputProps('invoiceNumber')}
-												/>
-											</SectionCard>
-
-											<SectionCard
-												title={t('new.sections.financials')}
-												padding='sm'
-											>
-												<div className={classes.formGrid}>
-													<div>
-														<Text size='sm' fw={500} mb={4}>
-															{t('new.form.currency.label')}
-														</Text>
-														<SegmentedControl
-															data={['USD', 'DOP']}
-															value={form.values.currency}
-															onChange={(v) =>
-																form.setFieldValue(
-																	'currency',
-																	v as InvoiceCurrency
-																)
-															}
-															size='sm'
-														/>
-													</div>
-													<NumberInput
-														label={t('new.form.taxRate.label')}
-														min={0}
-														max={100}
-														size='sm'
-														{...form.getInputProps('taxRate')}
-													/>
-													<NumberInput
-														label={t('new.form.hourlyRate.label')}
-														min={0}
-														size='sm'
-														{...form.getInputProps('hourlyRate')}
-													/>
-												</div>
-											</SectionCard>
-										</Stack>
-
-										<aside className={classes.summaryAside}>
-											{setupSummary}
-										</aside>
-									</div>
-									<div className={classes.actions}>
-										<Button
-											onClick={() => void handlePreview()}
-											loading={previewMutation.isPending}
-										>
-											{t('new.actions.preview')}
-										</Button>
-									</div>
-								</Stack>
-							</Stepper.Step>
-
-							<Stepper.Step label={t('new.steps.preview')}>
-								<Stack gap='md' mt='md'>
-									<SectionCard title={t('new.sections.review')} padding='sm'>
-										<Stack gap='md'>
-											{preview?.snapshot.calculationWarnings &&
-												preview.snapshot.calculationWarnings.length > 0 && (
-													<Alert
-														icon={<IconAlertTriangle size={18} />}
-														color='yellow'
-														title={t('new.warnings.title')}
-													>
-														<Stack gap='xs'>
-															{preview.snapshot.calculationWarnings.map(
-																(w, i) => (
-																	<Text key={i} size='sm'>
-																		{w}
-																	</Text>
-																)
-															)}
-														</Stack>
-													</Alert>
-												)}
-
-											{preview?.hasActiveInvoiceConflict &&
-												preview.activeInvoiceConflict && (
-													<Alert
-														icon={<IconInfoCircle size={18} />}
-														color='red'
-														title={t('new.conflict.title')}
-													>
-														<Stack gap='sm'>
-															<Text size='sm'>
-																{t('new.conflict.description')}
-															</Text>
-															<Text size='sm'>
-																<strong>
-																	#{preview.activeInvoiceConflict.invoiceNumber}
-																</strong>{' '}
-																- {preview.activeInvoiceConflict.status} (
-																{preview.activeInvoiceConflict.periodStart} -{' '}
-																{preview.activeInvoiceConflict.periodEnd})
-															</Text>
-															<Checkbox
-																label={t('new.conflict.replaceLabel')}
-																checked={replaceExisting}
-																onChange={(e) =>
-																	setReplaceExisting(e.currentTarget.checked)
-																}
-															/>
-															{replaceExisting && (
-																<Textarea
-																	label={t('new.conflict.replaceReasonLabel')}
-																	placeholder={t(
-																		'new.conflict.replaceReasonPlaceholder'
-																	)}
-																	value={replaceReason}
-																	onChange={(e) =>
-																		setReplaceReason(e.currentTarget.value)
-																	}
-																	minRows={2}
-																/>
-															)}
-														</Stack>
-													</Alert>
-												)}
-
-											{preview?.snapshot && (
-												<InvoiceSnapshotCard snapshot={preview.snapshot} />
-											)}
-										</Stack>
-									</SectionCard>
-
-									<div className={classes.actions}>
-										<Button variant='default' onClick={() => setActive(0)}>
-											{t('new.actions.back')}
-										</Button>
-										<Button
-											onClick={() => setActive(2)}
-											disabled={
-												!!(
-													preview?.hasActiveInvoiceConflict &&
-													(!replaceExisting || !replaceReason.trim())
-												)
-											}
-										>
-											{t('new.actions.continue')}
-										</Button>
-									</div>
-								</Stack>
-							</Stepper.Step>
-
-							<Stepper.Step label={t('new.steps.confirm')}>
-								<Stack gap='md' mt='md'>
-									<SectionCard title={t('new.sections.confirm')} padding='sm'>
-										<Stack gap='xs'>
-											<Group justify='space-between'>
-												<Text size='sm' c='dimmed'>
-													{t('new.summary.period')}
-												</Text>
-												<Text size='sm'>
-													{formatInvoicePeriod(
-														form.values.periodStart,
-														form.values.periodEnd
-													)}
-												</Text>
-											</Group>
-											<Group justify='space-between'>
-												<Text size='sm' c='dimmed'>
-													{t('new.summary.invoiceNumber')}
-												</Text>
-												<Text size='sm'>{form.values.invoiceNumber}</Text>
-											</Group>
-											<Group justify='space-between'>
-												<Text size='sm' c='dimmed'>
-													{t('new.summary.total')}
-												</Text>
-												<Text size='md' fw={750}>
-													{preview?.snapshot.totals.totalFormatted ??
-														EMPTY_VALUE}
-												</Text>
-											</Group>
-										</Stack>
-									</SectionCard>
-
-									<div>
-										<Text size='sm' fw={500} mb={4}>
-											{t('new.statusLabel')}
-										</Text>
-										<SegmentedControl
-											data={[
-												{ value: 'DRAFT', label: t('new.statusDraft') },
-												{ value: 'ISSUED', label: t('new.statusIssued') },
-											]}
-											value={invoiceStatus}
-											onChange={(v) => setInvoiceStatus(v as InvoiceStatus)}
-											size='sm'
-										/>
-										<Text size='sm' c='dimmed' mt='xs'>
-											{invoiceStatus === 'DRAFT'
-												? t('new.summary.draftDescription')
-												: t('new.summary.issuedDescription')}
-										</Text>
-									</div>
-
-									<div className={classes.actions}>
-										<Button variant='default' onClick={() => setActive(1)}>
-											{t('new.actions.back')}
-										</Button>
-										<Button
-											onClick={() => void handleCreate()}
-											loading={createMutation.isPending}
-										>
-											{createMutation.isPending
-												? t('new.actions.creating')
-												: t('new.actions.create')}
-										</Button>
-									</div>
-								</Stack>
-							</Stepper.Step>
-						</Stepper>
-					</div>
+				<SectionCard padding='sm'>
+					<Stepper active={active} onStepClick={setActive} size='sm'>
+						<Stepper.Step label={t('new.steps.parameters')} />
+						<Stepper.Step label={t('new.steps.preview')} />
+						<Stepper.Step label={t('new.steps.confirm')} />
+					</Stepper>
 				</SectionCard>
+
+				{active === 0 && (
+					<Stack gap='md'>
+						<div className={classes.createLayout}>
+							<Stack gap='md'>
+								<SectionCard title={t('new.sections.parties')} padding='sm'>
+									<div className={classes.formGrid}>
+										<Select
+											label={t('new.form.issuerClient.label')}
+											description={t('new.form.issuerClient.description')}
+											placeholder={t('new.form.issuerClient.placeholder')}
+											data={clientOptions}
+											searchable
+											disabled
+											size='sm'
+											{...form.getInputProps('issuerClientId')}
+										/>
+										<Select
+											label={t('new.form.receiverClient.label')}
+											description={t('new.form.receiverClient.description')}
+											placeholder={t('new.form.receiverClient.placeholder')}
+											data={clientOptions}
+											searchable
+											size='sm'
+											{...form.getInputProps('receiverClientId')}
+										/>
+									</div>
+								</SectionCard>
+
+								<SectionCard title={t('new.sections.period')} padding='sm'>
+									<div className={classes.formGrid}>
+										<DateInput
+											label={t('new.form.periodStart.label')}
+											size='sm'
+											clearable
+											{...form.getInputProps('periodStart')}
+										/>
+										<DateInput
+											label={t('new.form.periodEnd.label')}
+											size='sm'
+											clearable
+											{...form.getInputProps('periodEnd')}
+										/>
+									</div>
+								</SectionCard>
+
+								<SectionCard title={t('new.sections.identity')} padding='sm'>
+									<TextInput
+										label={t('new.form.invoiceNumber.label')}
+										placeholder={t('new.form.invoiceNumber.placeholder')}
+										size='sm'
+										{...form.getInputProps('invoiceNumber')}
+									/>
+								</SectionCard>
+
+								<SectionCard title={t('new.sections.financials')} padding='sm'>
+									<div className={classes.formGrid}>
+										<div>
+											<Text size='sm' fw={500} mb={4}>
+												{t('new.form.currency.label')}
+											</Text>
+											<SegmentedControl
+												data={['USD', 'DOP']}
+												value={form.values.currency}
+												onChange={(v) =>
+													form.setFieldValue('currency', v as InvoiceCurrency)
+												}
+												size='sm'
+											/>
+										</div>
+										<NumberInput
+											label={t('new.form.taxRate.label')}
+											min={0}
+											max={100}
+											size='sm'
+											{...form.getInputProps('taxRate')}
+										/>
+										<NumberInput
+											label={t('new.form.hourlyRate.label')}
+											min={0}
+											size='sm'
+											{...form.getInputProps('hourlyRate')}
+										/>
+									</div>
+								</SectionCard>
+							</Stack>
+
+							<aside className={classes.summaryAside}>{setupSummary}</aside>
+						</div>
+						<div className={classes.actions}>
+							<Button
+								variant='subtle'
+								onClick={() => navigate('/billing/invoices')}
+							>
+								{t('new.actions.cancel')}
+							</Button>
+							<Button
+								onClick={() => void handlePreview()}
+								loading={previewMutation.isPending}
+							>
+								{t('new.actions.preview')}
+							</Button>
+						</div>
+					</Stack>
+				)}
+
+				{active === 1 && (
+					<Stack gap='md'>
+						<div>
+							<Text size='lg' fw={600}>
+								{t('new.sections.review')}
+							</Text>
+							<Text size='sm' c='dimmed' mt={4}>
+								{t('new.sections.reviewDescription')}
+							</Text>
+						</div>
+
+						{preview?.snapshot.calculationWarnings &&
+							preview.snapshot.calculationWarnings.length > 0 && (
+								<SectionCard
+									icon={IconAlertTriangle}
+									title={t('new.warnings.title')}
+									headerAccent='yellow'
+									padding='sm'
+								>
+									<Stack gap='xs'>
+										{preview.snapshot.calculationWarnings.map((w, i) => (
+											<Text key={i} size='sm'>
+												{w}
+											</Text>
+										))}
+									</Stack>
+								</SectionCard>
+							)}
+
+						{preview?.hasActiveInvoiceConflict &&
+							preview.activeInvoiceConflict && (
+								<SectionCard
+									icon={IconInfoCircle}
+									title={t('new.conflict.title')}
+									headerAccent='red'
+									padding='sm'
+								>
+									<Stack gap='sm'>
+										<Text size='sm'>{t('new.conflict.description')}</Text>
+										<Text size='sm'>
+											<strong>
+												#{preview.activeInvoiceConflict.invoiceNumber}
+											</strong>{' '}
+											- {preview.activeInvoiceConflict.status} (
+											{preview.activeInvoiceConflict.periodStart} -{' '}
+											{preview.activeInvoiceConflict.periodEnd})
+										</Text>
+										<Checkbox
+											label={t('new.conflict.replaceLabel')}
+											checked={replaceExisting}
+											onChange={(e) =>
+												setReplaceExisting(e.currentTarget.checked)
+											}
+										/>
+										{replaceExisting && (
+											<Textarea
+												label={t('new.conflict.replaceReasonLabel')}
+												placeholder={t('new.conflict.replaceReasonPlaceholder')}
+												value={replaceReason}
+												onChange={(e) =>
+													setReplaceReason(e.currentTarget.value)
+												}
+												minRows={2}
+											/>
+										)}
+									</Stack>
+								</SectionCard>
+							)}
+
+						{preview?.snapshot && (
+							<InvoiceSnapshotCard snapshot={preview.snapshot} />
+						)}
+
+						<div className={classes.actions}>
+							<Button
+								variant='subtle'
+								onClick={() => navigate('/billing/invoices')}
+							>
+								{t('new.actions.cancel')}
+							</Button>
+							<Button variant='default' onClick={() => setActive(0)}>
+								{t('new.actions.back')}
+							</Button>
+							<Button
+								onClick={() => setActive(2)}
+								disabled={
+									!!(
+										preview?.hasActiveInvoiceConflict &&
+										(!replaceExisting || !replaceReason.trim())
+									)
+								}
+							>
+								{t('new.actions.continue')}
+							</Button>
+						</div>
+					</Stack>
+				)}
+
+				{active === 2 && (
+					<Stack gap='md'>
+						<div>
+							<div className={classes.confirmHeader}>
+								<div className={classes.confirmIcon}>
+									<IconCircleCheck size={20} />
+								</div>
+								<div>
+									<Text size='lg' fw={600}>
+										{t('new.sections.confirmTitle')}
+									</Text>
+									<Text size='sm' c='dimmed'>
+										{t('new.sections.confirmDescription')}
+									</Text>
+								</div>
+							</div>
+						</div>
+
+						<div className={classes.confirmLayout}>
+							<SectionCard
+								title={t('new.sections.invoiceDetails')}
+								padding='sm'
+							>
+								<div className={classes.detailGrid}>
+									<div className={classes.detailItem}>
+										<span className={classes.detailLabel}>
+											{t('new.summary.issuer')}
+										</span>
+										<span className={classes.detailValue}>
+											{selectedIssuerLabel}
+										</span>
+									</div>
+									<div className={classes.detailItem}>
+										<span className={classes.detailLabel}>
+											{t('new.summary.receiver')}
+										</span>
+										<span className={classes.detailValue}>
+											{selectedReceiverLabel}
+										</span>
+									</div>
+									<div className={classes.detailItem}>
+										<span className={classes.detailLabel}>
+											{t('new.summary.period')}
+										</span>
+										<span className={classes.detailValue}>
+											{formatInvoicePeriod(
+												form.values.periodStart,
+												form.values.periodEnd
+											)}
+										</span>
+									</div>
+									<div className={classes.detailItem}>
+										<span className={classes.detailLabel}>
+											{t('new.summary.invoiceNumber')}
+										</span>
+										<span className={classes.detailValue}>
+											{form.values.invoiceNumber}
+										</span>
+									</div>
+									<div className={classes.detailItem}>
+										<span className={classes.detailLabel}>
+											{t('new.summary.currency')}
+										</span>
+										<span className={classes.detailValue}>
+											{form.values.currency}
+										</span>
+									</div>
+									<div className={classes.detailItem}>
+										<span className={classes.detailLabel}>
+											{t('new.summary.taxRate')}
+										</span>
+										<span className={classes.detailValue}>
+											{form.values.taxRate}%
+										</span>
+									</div>
+									<div className={classes.detailItem}>
+										<span className={classes.detailLabel}>
+											{t('new.summary.hourlyRate')}
+										</span>
+										<span className={classes.detailValue}>
+											{preview?.snapshot.invoice.hourlyRateFormatted ??
+												`$${form.values.hourlyRate}`}
+										</span>
+									</div>
+									<div className={classes.detailItem}>
+										<span className={classes.detailLabel}>
+											{t('new.summary.subtotal')}
+										</span>
+										<span className={classes.detailValue}>
+											{preview?.snapshot.totals.subtotalFormatted ??
+												EMPTY_VALUE}
+										</span>
+									</div>
+								</div>
+								<div className={classes.totalRow}>
+									<span className={classes.totalLabel}>
+										{t('new.summary.total')}
+									</span>
+									<span className={classes.totalValue}>
+										{preview?.snapshot.totals.totalFormatted ?? EMPTY_VALUE}
+									</span>
+								</div>
+							</SectionCard>
+
+							<SectionCard title={t('new.statusLabel')} padding='sm'>
+								<Stack gap='sm'>
+									<div
+										className={`${classes.statusOption} ${invoiceStatus === 'DRAFT' ? classes.statusOptionChecked : ''}`}
+										onClick={() => setInvoiceStatus('DRAFT')}
+									>
+										<Radio
+											checked={invoiceStatus === 'DRAFT'}
+											onChange={() => setInvoiceStatus('DRAFT')}
+										/>
+										<div>
+											<Text size='sm' fw={600}>
+												{t('new.statusDraft')}
+											</Text>
+											<Text size='xs' c='dimmed' mt={2}>
+												{t('new.summary.draftDescription')}
+											</Text>
+										</div>
+									</div>
+									<div
+										className={`${classes.statusOption} ${invoiceStatus === 'ISSUED' ? classes.statusOptionChecked : ''}`}
+										onClick={() => setInvoiceStatus('ISSUED')}
+									>
+										<Radio
+											checked={invoiceStatus === 'ISSUED'}
+											onChange={() => setInvoiceStatus('ISSUED')}
+										/>
+										<div>
+											<Text size='sm' fw={600}>
+												{t('new.statusIssued')}
+											</Text>
+											<Text size='xs' c='dimmed' mt={2}>
+												{t('new.summary.issuedDescription')}
+											</Text>
+										</div>
+									</div>
+								</Stack>
+							</SectionCard>
+						</div>
+
+						<div className={classes.actions}>
+							<Button
+								variant='subtle'
+								onClick={() => navigate('/billing/invoices')}
+							>
+								{t('new.actions.cancel')}
+							</Button>
+							<Button variant='default' onClick={() => setActive(1)}>
+								{t('new.actions.back')}
+							</Button>
+							<Button
+								onClick={() => void handleCreate()}
+								loading={createMutation.isPending}
+							>
+								{createMutation.isPending
+									? t('new.actions.creating')
+									: t('new.actions.create')}
+							</Button>
+						</div>
+					</Stack>
+				)}
 			</div>
 		</ContentContainer>
 	);

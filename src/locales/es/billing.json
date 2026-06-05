@@ -71,7 +71,11 @@
 			"financials": "Configuración financiera",
 			"summary": "Configuración de factura",
 			"review": "Revisar factura",
-			"confirm": "Confirmar"
+			"reviewDescription": "Verifica los detalles antes de continuar",
+			"confirm": "Confirmar",
+			"confirmDescription": "Define el estado de la factura y créala",
+			"confirmTitle": "Confirmar Factura",
+			"invoiceDetails": "Detalles de la Factura"
 		},
 		"steps": {
 			"parameters": "Parámetros",
@@ -81,11 +85,13 @@
 		"form": {
 			"issuerClient": {
 				"label": "Cliente Emisor",
-				"placeholder": "Seleccionar emisor"
+				"placeholder": "Seleccionar emisor",
+				"description": "Siempre el tenant principal"
 			},
 			"receiverClient": {
 				"label": "Cliente Receptor",
-				"placeholder": "Seleccionar receptor"
+				"placeholder": "Seleccionar receptor",
+				"description": "El cliente a facturar"
 			},
 			"periodStart": {
 				"label": "Inicio del Período"
@@ -117,11 +123,12 @@
 			"taxRateRange": "La tasa de impuesto debe estar entre 0 y 100"
 		},
 		"actions": {
-			"preview": "Vista previa de Factura",
+			"preview": "Vista Previa",
 			"back": "Atrás",
 			"continue": "Continuar",
 			"create": "Crear Factura",
-			"creating": "Creando..."
+			"creating": "Creando...",
+			"cancel": "Cancelar"
 		},
 		"conflict": {
 			"title": "Conflicto de factura activa",
@@ -141,14 +148,15 @@
 			"period": "Período",
 			"invoiceNumber": "Número de Factura",
 			"total": "Total",
+			"subtotal": "Subtotal",
 			"issuer": "Emisor",
 			"receiver": "Receptor",
 			"currency": "Moneda",
-			"taxRate": "Impuesto",
+			"taxRate": "Tasa de impuesto",
 			"hourlyRate": "Tarifa por hora",
 			"status": "Crear como",
-			"draftDescription": "Guarda esta factura para revisarla y emitirla más tarde.",
-			"issuedDescription": "Crea la factura y márcala como emitida inmediatamente."
+			"draftDescription": "Guardar para revisión posterior. Se puede editar o emitir cuando esté listo.",
+			"issuedDescription": "Enviar inmediatamente. No se puede editar después de la emisión."
 		}
 	},
 	"detail": {
@@ -280,7 +288,8 @@
 		},
 		"issuerClient": {
 			"label": "Cliente Emisor",
-			"placeholder": "Seleccionar cliente emisor"
+			"placeholder": "Seleccionar cliente emisor",
+			"helper": "Elige un cliente para ver, subir o eliminar la plantilla de factura asignada."
 		},
 		"currentTemplate": "Plantilla Actual",
 		"lastUpdated": "Última actualización",
@@ -295,7 +304,7 @@
 			"remove": "Eliminar Plantilla"
 		},
 		"info": "Cambiar la plantilla afecta las descargas futuras de facturas existentes. Soporta archivos XLSX.",
-		"count": "{count} configuradas",
+		"count": "{{count}} configuradas",
 		"notifications": {
 			"uploaded": "Plantilla subida y asignada",
 			"removed": "Plantilla eliminada",

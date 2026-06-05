@@ -8,6 +8,7 @@ Precedence: 1) User request 2) This file 3) Repo patterns (`package.json`, `src/
 - Write code and comments in English.
 - Do not create tests unless explicitly requested.
 - Use interactive prompts for any user input — never plain open-ended questions.
+- **Dark/Light Mode:** Every component MUST correctly support both dark and light mode. Do not ship a component that looks broken or loses contrast in either theme. Use Mantine CSS variables (`var(--mantine-color-*)`, `var(--mantine-spacing-*)`) and `light-dark()` for manual overrides. Never hardcode color values without a dark-mode counterpart.
 
 ## Plan Mode
 

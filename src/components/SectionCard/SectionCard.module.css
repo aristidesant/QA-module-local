@@ -1,5 +1,5 @@
 [data-mantine-color-scheme='dark'] .sectionCard {
-	background: var(--mantine-color-dark-7);
+	background: var(--mantine-color-dark-6);
 	border-color: var(--surface-border);
 	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
 }
@@ -14,7 +14,7 @@
 }
 
 [data-mantine-color-scheme='dark'] .iconBadge {
-	background: var(--mantine-color-dark-6);
+	background: var(--mantine-color-dark-5);
 	border-color: var(--mantine-color-dark-4);
 	color: var(--mantine-color-dark-1);
 }
@@ -175,4 +175,86 @@
 		justify-content: flex-start;
 		padding-top: 0;
 	}
+}
+
+/* Accent colors for header */
+
+[data-accent='yellow'] .sectionHeader {
+	border-bottom-color: var(--mantine-color-yellow-3);
+}
+
+[data-accent='yellow'] .iconBadge {
+	background: var(--mantine-color-yellow-1);
+	color: var(--mantine-color-yellow-8);
+	border-color: var(--mantine-color-yellow-3);
+}
+
+[data-mantine-color-scheme='dark'] [data-accent='yellow'] .sectionHeader {
+	border-bottom-color: var(--mantine-color-yellow-8);
+}
+
+[data-mantine-color-scheme='dark'] [data-accent='yellow'] .iconBadge {
+	background: var(--mantine-color-yellow-9);
+	color: var(--mantine-color-yellow-3);
+	border-color: var(--mantine-color-yellow-8);
+}
+
+[data-accent='red'] .sectionHeader {
+	border-bottom-color: var(--mantine-color-red-3);
+}
+
+[data-accent='red'] .iconBadge {
+	background: var(--mantine-color-red-1);
+	color: var(--mantine-color-red-8);
+	border-color: var(--mantine-color-red-3);
+}
+
+[data-mantine-color-scheme='dark'] [data-accent='red'] .sectionHeader {
+	border-bottom-color: var(--mantine-color-red-8);
+}
+
+[data-mantine-color-scheme='dark'] [data-accent='red'] .iconBadge {
+	background: var(--mantine-color-red-9);
+	color: var(--mantine-color-red-3);
+	border-color: var(--mantine-color-red-8);
+}
+
+[data-accent='blue'] .sectionHeader {
+	border-bottom-color: var(--mantine-color-blue-3);
+}
+
+[data-accent='blue'] .iconBadge {
+	background: var(--mantine-color-blue-1);
+	color: var(--mantine-color-blue-8);
+	border-color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] [data-accent='blue'] .sectionHeader {
+	border-bottom-color: var(--mantine-color-blue-8);
+}
+
+[data-mantine-color-scheme='dark'] [data-accent='blue'] .iconBadge {
+	background: var(--mantine-color-blue-9);
+	color: var(--mantine-color-blue-3);
+	border-color: var(--mantine-color-blue-8);
+}
+
+[data-accent='green'] .sectionHeader {
+	border-bottom-color: var(--mantine-color-green-3);
+}
+
+[data-accent='green'] .iconBadge {
+	background: var(--mantine-color-green-1);
+	color: var(--mantine-color-green-8);
+	border-color: var(--mantine-color-green-3);
+}
+
+[data-mantine-color-scheme='dark'] [data-accent='green'] .sectionHeader {
+	border-bottom-color: var(--mantine-color-green-8);
+}
+
+[data-mantine-color-scheme='dark'] [data-accent='green'] .iconBadge {
+	background: var(--mantine-color-green-9);
+	color: var(--mantine-color-green-3);
+	border-color: var(--mantine-color-green-8);
 }

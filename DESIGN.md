@@ -67,6 +67,7 @@ La filosofía de diseño: **cada pixel justifica su presencia**. Iconos Tabler d
 
 - **Dark Canvas** (`#0B0F14`) — Fondo oscuro principal. Ink-950.
 - **Dark Card** (`#141A22`) — Cards sobre fondo oscuro. Ink-900.
+- **Dark Card Elevated** (`#1F2731`) — Cards con elevación visual (SectionCard, modals). Más claro que Dark Card para distinguir del fondo.
 - **Dark Border** (`#232C38`) — Bordes en tema oscuro.
 - **Dark Text Primary** (`#FFFFFF`) — Texto sobre oscuro.
 - **Dark Text Secondary** (`#B8C0CC`) — Texto secundario sobre oscuro.

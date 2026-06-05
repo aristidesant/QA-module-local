@@ -1,39 +1,96 @@
-.toolbarRow {
+.templateSectionCardCollapsed {
+	padding-top: calc(var(--mantine-spacing-xs) + 2px);
+	padding-bottom: calc(var(--mantine-spacing-xs) + 2px);
+}
+
+.templateSectionCardCollapsed > div {
+	gap: 0;
+}
+
+.templateSectionCardCollapsed > div > div:first-child {
+	padding-bottom: 0;
+	border-bottom: 0;
+}
+
+.templateSectionCardCollapsed > div > div:nth-child(2) {
+	display: none;
+}
+
+.headerToggle {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-	border: 1px dashed var(--surface-border);
-	border-radius: 6px;
-	background: var(--surface-card);
-	cursor: pointer;
-	transition: all 0.15s ease;
+	gap: var(--mantine-spacing-sm);
+	width: 100%;
+	color: var(--mantine-color-gray-8);
 }
 
-.toolbarRow:hover {
-	background: var(--mantine-color-default-hover);
+[data-mantine-color-scheme='dark'] .headerToggle {
+	color: var(--mantine-color-dark-0);
 }
 
-.toolbarRowExpanded {
-	border-radius: 6px 6px 0 0;
-	border-bottom: none;
+.fieldColumn {
+	min-width: 0;
 }
 
-.toolbarLabel {
+.sectionLabel {
+	color: var(--mantine-color-gray-8);
+}
+
+.helperText {
+	max-width: 38rem;
+	line-height: 1.45;
+}
+
+.templateCard {
 	display: flex;
-	align-items: center;
-	gap: var(--mantine-spacing-xs);
-	font-size: var(--mantine-font-size-sm);
-	font-weight: 500;
-	color: var(--text-secondary);
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-gray-0);
 }
 
-.expandedPanel {
-	background: var(--surface-sunken);
-	padding: var(--mantine-spacing-sm);
+[data-mantine-color-scheme='dark'] .templateCard {
+	background: var(--mantine-color-dark-6);
+}
+
+.templateMeta {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	min-width: 0;
+}
+
+.templateMetaText {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.templateName {
+	overflow-wrap: anywhere;
+}
+
+.actionsRow {
+	gap: var(--mantine-spacing-xs);
+}
+
+.emptyState {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: calc(var(--mantine-spacing-xs) + 2px) var(--mantine-spacing-sm);
 	border: 1px dashed var(--surface-border);
-	border-top: 1px solid var(--surface-border);
-	border-radius: 0 0 6px 6px;
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-gray-0);
+}
+
+[data-mantine-color-scheme='dark'] .emptyState {
+	background: var(--mantine-color-dark-6);
 }
 
 .chevronIcon {
@@ -46,4 +103,14 @@
 
 .hiddenInput {
 	display: none;
+}
+
+@media (max-width: 48em) {
+	.templateMeta {
+		flex-direction: column;
+	}
+
+	.actionsRow > button {
+		flex: 1 1 100%;
+	}
 }

@@ -19,6 +19,8 @@ export interface SectionCardProps extends CardActionProps {
 	backgroundColor?: string;
 	/** Optional ID for the section card */
 	id?: string;
+	/** Color accent for the header (icon badge + border) */
+	headerAccent?: 'yellow' | 'red' | 'blue' | 'green';
 
 	padding?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
 }
@@ -46,6 +48,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 	backgroundColor,
 	id,
 	className,
+	headerAccent,
 	padding = 'lg',
 }) => {
 	// Convert spacing to pixel value if it's a string preset
@@ -95,6 +98,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 			padding={padding}
 			style={backgroundColor ? { backgroundColor } : undefined}
 			data-testid='section-card'
+			data-accent={headerAccent || undefined}
 		>
 			<div className={styles.sectionShell}>
 				{(title || description || Icon || hasHeaderActions) && (

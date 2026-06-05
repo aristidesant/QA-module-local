@@ -71,7 +71,11 @@
 			"financials": "Financial settings",
 			"summary": "Invoice setup",
 			"review": "Review invoice",
-			"confirm": "Confirm"
+			"reviewDescription": "Check the details before continuing",
+			"confirm": "Confirm",
+			"confirmDescription": "Set the invoice status and create",
+			"confirmTitle": "Confirm Invoice",
+			"invoiceDetails": "Invoice Details"
 		},
 		"steps": {
 			"parameters": "Parameters",
@@ -81,11 +85,13 @@
 		"form": {
 			"issuerClient": {
 				"label": "Issuer Client",
-				"placeholder": "Select issuer"
+				"placeholder": "Select issuer",
+				"description": "Always the master tenant"
 			},
 			"receiverClient": {
 				"label": "Receiver Client",
-				"placeholder": "Select receiver"
+				"placeholder": "Select receiver",
+				"description": "The client being billed"
 			},
 			"periodStart": {
 				"label": "Period Start"
@@ -121,7 +127,8 @@
 			"back": "Back",
 			"continue": "Continue",
 			"create": "Create Invoice",
-			"creating": "Creating..."
+			"creating": "Creating...",
+			"cancel": "Cancel"
 		},
 		"conflict": {
 			"title": "Active invoice conflict",
@@ -141,14 +148,15 @@
 			"period": "Period",
 			"invoiceNumber": "Invoice Number",
 			"total": "Total",
+			"subtotal": "Subtotal",
 			"issuer": "Issuer",
 			"receiver": "Receiver",
 			"currency": "Currency",
 			"taxRate": "Tax rate",
 			"hourlyRate": "Hourly rate",
 			"status": "Create as",
-			"draftDescription": "Save this invoice so it can be reviewed and issued later.",
-			"issuedDescription": "Create the invoice and mark it issued immediately."
+			"draftDescription": "Save for later review. Can be edited or issued when ready.",
+			"issuedDescription": "Send immediately. Cannot be edited after issuance."
 		}
 	},
 	"detail": {
@@ -281,7 +289,8 @@
 		},
 		"issuerClient": {
 			"label": "Issuer Client",
-			"placeholder": "Select issuer client"
+			"placeholder": "Select issuer client",
+			"helper": "Choose a client to view, upload, or remove the assigned invoice template."
 		},
 		"currentTemplate": "Current Template",
 		"lastUpdated": "Last updated",
@@ -296,7 +305,7 @@
 			"remove": "Remove Template"
 		},
 		"info": "Changing the template affects future downloads of existing invoices. Supports XLSX files.",
-		"count": "{count} configured",
+		"count": "{{count}} configured",
 		"notifications": {
 			"uploaded": "Template uploaded and assigned",
 			"removed": "Template removed",
