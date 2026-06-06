@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-	Text as MantineText,
-	Badge,
-	ScrollArea,
-	Stack,
-	UnstyledButton,
-} from '@mantine/core';
+import { ScrollArea, Stack, Text, UnstyledButton } from '@mantine/core';
 import styles from './ModalMenu.module.css';
 
 export interface ModalMenuItem {
@@ -30,12 +24,8 @@ export const ModalMenu: React.FC<ModalMenuProps> = ({
 	return (
 		<div className={styles.menuColumn}>
 			<div className={styles.menuHeader}>
-				<MantineText size='xs' fw={500} c='dimmed'>
-					{title}
-				</MantineText>
-				<Badge size='xs' variant='light' color='gray' radius='sm'>
-					{items.length}
-				</Badge>
+				<span className={styles.menuHeaderLabel}>{title}</span>
+				<span className={styles.menuBadge}>{items.length}</span>
 			</div>
 			<ScrollArea className={styles.menuScroll} type='auto'>
 				<Stack gap={2}>
@@ -48,11 +38,7 @@ export const ModalMenu: React.FC<ModalMenuProps> = ({
 						>
 							<div className={styles.menuItemHeader}>
 								{item.icon && <item.icon size={16} />}
-								<div className={styles.menuText}>
-									<MantineText className={styles.menuTitle}>
-										{item.label}
-									</MantineText>
-								</div>
+								<Text className={styles.menuTitle}>{item.label}</Text>
 							</div>
 						</UnstyledButton>
 					))}

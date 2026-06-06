@@ -10,7 +10,7 @@
 	align-items: flex-start;
 	justify-content: space-between;
 	gap: var(--mantine-spacing-sm);
-	padding: 0 2px;
+	padding: 0 var(--mantine-spacing-xs);
 }
 
 .panelHeading {
@@ -41,9 +41,27 @@
 	color: var(--mantine-color-dark-2);
 }
 
+.dashboardName {
+	color: var(--mantine-color-gray-9);
+}
+
+[data-mantine-color-scheme='dark'] .dashboardName {
+	color: var(--mantine-color-dark-0);
+}
+
+.dashboardMeta {
+	color: var(--mantine-color-gray-5);
+}
+
+[data-mantine-color-scheme='dark'] .dashboardMeta {
+	color: var(--mantine-color-dark-2);
+}
+
 .table {
 	flex: 1;
 	min-height: 14rem;
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
 	background: color-mix(
 		in srgb,
 		var(--mantine-color-white) 88%,
@@ -56,28 +74,21 @@
 }
 
 .actionsHeader {
-	width: 7.5rem;
+	width: 3rem;
 }
 
 .actionsCell {
-	width: 7.5rem;
+	width: 3rem;
 }
 
 .selectedDashboardRow td {
 	font-weight: 500;
-	background: color-mix(
-		in srgb,
-		var(--mantine-color-white) 72%,
-		var(--mantine-color-gray-1)
-	) !important;
+	background: var(--mantine-color-green-0) !important;
 }
 
 [data-mantine-color-scheme='dark'] .selectedDashboardRow td {
-	background: color-mix(
-		in srgb,
-		var(--mantine-color-dark-6) 88%,
-		var(--mantine-color-dark-7)
-	) !important;
+	background: var(--mantine-color-green-9) !important;
+	color: var(--mantine-color-green-0);
 }
 
 .emptyState {
@@ -106,12 +117,24 @@
 	color: var(--mantine-color-gray-5);
 }
 
-.mainSlotBadge {
-	align-self: flex-start;
+.emptyStateTitle {
+	color: var(--mantine-color-gray-9);
 }
 
-[data-mantine-color-scheme='dark'] .emptyStateIcon {
-	color: var(--mantine-color-dark-3);
+[data-mantine-color-scheme='dark'] .emptyStateTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+.emptyStateDescription {
+	color: var(--mantine-color-gray-6);
+}
+
+[data-mantine-color-scheme='dark'] .emptyStateDescription {
+	color: var(--mantine-color-dark-2);
+}
+
+.mainSlotBadge {
+	align-self: flex-start;
 }
 
 @media (max-width: 48rem) {

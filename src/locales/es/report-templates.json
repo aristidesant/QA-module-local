@@ -233,6 +233,8 @@
 		"cancel": "Cancelar",
 		"edit": "Editar",
 		"delete": "Eliminar",
-		"duplicate": "Duplicar"
+		"duplicate": "Duplicar",
+		"view": "Ver",
+		"export": "Exportar"
 	}
 }

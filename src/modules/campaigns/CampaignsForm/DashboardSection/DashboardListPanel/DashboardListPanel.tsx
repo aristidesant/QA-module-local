@@ -1,8 +1,17 @@
 import { useCallback, useEffect, useMemo } from 'react';
-import { ActionIcon, Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
+import {
+	ActionIcon,
+	Badge,
+	Group,
+	Menu,
+	Stack,
+	Text,
+	Tooltip,
+} from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import {
+	IconDotsVertical,
 	IconEye,
 	IconLayoutDashboard,
 	IconPencil,
@@ -162,47 +171,40 @@ const DashboardListPanel = ({
 					cellClassName: styles.actionsCell,
 				},
 				cell: ({ row }) => (
-					<Group gap={4} justify='flex-end' wrap='nowrap'>
-						<Tooltip label={t('dashboardBuilder.actions.previewDashboard')}>
+					<Menu shadow='sm' position='bottom-end' withinPortal>
+						<Menu.Target>
 							<ActionIcon
 								variant='subtle'
 								size='sm'
 								color='gray'
-								onClick={(event) => {
-									event.stopPropagation();
-									openPreviewDashboard(row.original);
-								}}
+								onClick={(event) => event.stopPropagation()}
 							>
-								<IconEye size={14} />
+								<IconDotsVertical size={16} />
 							</ActionIcon>
-						</Tooltip>
-						<Tooltip label={t('dashboardBuilder.actions.editDashboard')}>
-							<ActionIcon
-								variant='subtle'
-								size='sm'
-								color='gray'
-								onClick={(event) => {
-									event.stopPropagation();
-									openEditDashboard(row.original);
-								}}
+						</Menu.Target>
+						<Menu.Dropdown onClick={(event) => event.stopPropagation()}>
+							<Menu.Item
+								leftSection={<IconEye size={15} stroke={1.5} />}
+								onClick={() => openPreviewDashboard(row.original)}
 							>
-								<IconPencil size={14} />
-							</ActionIcon>
-						</Tooltip>
-						<Tooltip label={t('dashboardBuilder.actions.deleteDashboard')}>
-							<ActionIcon
-								variant='subtle'
-								size='sm'
-								color='gray'
-								onClick={(event) => {
-									event.stopPropagation();
-									handleDeleteDashboard(row.original);
-								}}
+								{t('dashboardBuilder.actions.previewDashboard')}
+							</Menu.Item>
+							<Menu.Item
+								leftSection={<IconPencil size={15} stroke={1.5} />}
+								onClick={() => openEditDashboard(row.original)}
 							>
-								<IconTrash size={14} />
-							</ActionIcon>
-						</Tooltip>
-					</Group>
+								{t('dashboardBuilder.actions.editDashboard')}
+							</Menu.Item>
+							<Menu.Divider />
+							<Menu.Item
+								leftSection={<IconTrash size={15} stroke={1.5} />}
+								color='red'
+								onClick={() => handleDeleteDashboard(row.original)}
+							>
+								{t('dashboardBuilder.actions.deleteDashboard')}
+							</Menu.Item>
+						</Menu.Dropdown>
+					</Menu>
 				),
 			},
 		],
