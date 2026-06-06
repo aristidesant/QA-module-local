@@ -14,12 +14,17 @@ import {
 	Loader,
 	Center,
 	LoadingOverlay,
+	Badge,
 } from '@mantine/core';
 import {
 	IconAlertCircle,
 	IconRocket,
 	IconPlus,
 	IconRefresh,
+	IconFilter,
+	IconList,
+	IconChevronUp,
+	IconChevronDown,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import {
@@ -104,6 +109,7 @@ export const CampaignsList: React.FC = () => {
 	const [filters, setFilters] = useState<CampaignFiltersType>(
 		INITIAL_CAMPAIGN_FILTERS
 	);
+	const [filtersCollapsed, setFiltersCollapsed] = useState(false);
 
 	// Reset to first page when filters change
 	useEffect(() => {
@@ -132,6 +138,14 @@ export const CampaignsList: React.FC = () => {
 		Boolean(filters.type) ||
 		Boolean(filters.status) ||
 		filters.includeInactive === false;
+
+	const activeFiltersCount =
+		Object.entries(filters).filter(([key, value]) => {
+			if (key === 'includeInactive') {
+				return value === false;
+			}
+			return value !== undefined && value !== null;
+		}).length + (pagination.searchValue.trim() ? 1 : 0);
 
 	// Fetch data with server-side pagination
 	const {
@@ -318,92 +332,171 @@ export const CampaignsList: React.FC = () => {
 		navigate(`/campaign/view/${campaign.id}`);
 	};
 
+	const handleClearFilters = () => {
+		pagination.setSearchValue('');
+		setFilters({
+			type: undefined,
+			status: undefined,
+			includeInactive: true,
+		});
+	};
+
 	return (
 		<>
 			<ContentContainer
 				title={t('page.title')}
 				description={t('page.description')}
-				titleRight={
-					<Group gap='xs'>
-						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.CREATE) && (
-							<ActionIcon
-								onClick={handleShowAddNewCampaignModal}
-								data-testid='header-create-campaign-btn'
-								title={t('list.createCampaign')}
-							>
-								<IconPlus size={16} />
-							</ActionIcon>
-						)}
-						<ActionIcon
-							onClick={() => reloadCampaigns()}
-							data-testid='header-refresh-btn'
-						>
-							<IconRefresh size={16} />
-						</ActionIcon>
-					</Group>
-				}
 			>
-				<SectionCard>
-					<CampaignFilters
-						searchValue={pagination.searchValue}
-						onSearchChange={pagination.setSearchValue}
-						filters={filters}
-						onFiltersChange={setFilters}
-					/>
-
-					{isLoading ? (
-						<CampaignsListSkeleton />
-					) : isError ? (
-						<div className={styles.errorContainer}>
-							<IconAlertCircle size={32} color='red' />
-							<Text c='red' mt='sm'>
-								{error instanceof Error ? error.message : t('list.loadError')}
-							</Text>
-						</div>
-					) : campaignsResponse?.data?.length === 0 && hasActiveFilters ? (
-						<EmptyState
-							icon={<IconRocket size={64} stroke={1.2} />}
-							message={t('list.noCampaignsFound')}
-							description={t('list.noCampaignsFoundDesc')}
-						/>
-					) : !campaignsResponse?.data ||
-					  campaignsResponse.data.length === 0 ? (
-						<EmptyState
-							icon={<IconRocket size={64} stroke={1.2} />}
-							message={t('list.noCampaignsYet')}
-							description={t('list.noCampaignsYetDesc')}
-							action={
+				<div className={styles.cardsStack}>
+					<SectionCard
+						icon={IconFilter}
+						title={t('filters.title')}
+						description={t('filters.description')}
+						headerAccent='blue'
+						padding='md'
+						headerExtras={
+							<Group gap='xs'>
+								{activeFiltersCount > 0 && (
+									<Badge size='sm' variant='light' color='blue'>
+										{activeFiltersCount}
+									</Badge>
+								)}
+							</Group>
+						}
+						headerActions={
+							<Group gap='xs'>
 								<Button
-									leftSection={<IconPlus size={18} />}
-									onClick={handleShowAddNewCampaignModal}
+									variant='subtle'
+									size='xs'
+									onClick={handleClearFilters}
+									disabled={activeFiltersCount === 0}
 								>
-									{t('list.createButton')}
+									{t('filters.clearAllFilters')}
 								</Button>
-							}
-						/>
-					) : (
-						<>
-							<BaseTable
-								data={campaignsResponse?.data || []}
-								columns={columns}
-								onRowClick={handleCampaignClick}
-								density='compact'
+								<ActionIcon
+									variant='subtle'
+									size='sm'
+									onClick={() => setFiltersCollapsed(!filtersCollapsed)}
+									title={
+										filtersCollapsed
+											? t('filters.expand')
+											: t('filters.collapse')
+									}
+								>
+									{filtersCollapsed ? (
+										<IconChevronDown size={16} />
+									) : (
+										<IconChevronUp size={16} />
+									)}
+								</ActionIcon>
+							</Group>
+						}
+					>
+						{!filtersCollapsed && (
+							<CampaignFilters
+								searchValue={pagination.searchValue}
+								onSearchChange={pagination.setSearchValue}
+								filters={filters}
+								onFiltersChange={setFilters}
 							/>
+						)}
+					</SectionCard>
 
-							<PaginationControls
-								currentPage={pagination.currentPage}
-								totalPages={totalPages}
-								itemsPerPage={pagination.itemsPerPage}
-								totalItems={campaignsResponse?.total || 0}
-								onPageChange={pagination.setCurrentPage}
-								onItemsPerPageChange={handleItemsPerPageChange}
-								searchTerm={pagination.debouncedSearch}
-								isLoading={isLoading}
-								itemLabel={t('list.itemLabel')}
+					<SectionCard
+						icon={IconList}
+						title={t('page.title')}
+						description={t('filters.resultCount', {
+							count: campaignsResponse?.total || 0,
+						})}
+						headerAccent='green'
+						padding='md'
+						headerExtras={
+							<Group gap='xs'>
+								<Badge size='sm' variant='light' color='green'>
+									{campaignsResponse?.total || 0}
+								</Badge>
+							</Group>
+						}
+						headerActions={
+							<Group gap='xs'>
+								{canPerformAction(
+									ModuleEnum.CAMPAIGNS,
+									PermissionEnum.CREATE
+								) && (
+									<Button
+										leftSection={<IconPlus size={16} />}
+										onClick={handleShowAddNewCampaignModal}
+										data-testid='header-create-campaign-btn'
+									>
+										{t('list.createCampaign')}
+									</Button>
+								)}
+								<ActionIcon
+									variant='subtle'
+									size='sm'
+									onClick={() => reloadCampaigns()}
+									data-testid='header-refresh-btn'
+									title='Refresh'
+								>
+									<IconRefresh size={16} />
+								</ActionIcon>
+							</Group>
+						}
+					>
+						{isLoading ? (
+							<CampaignsListSkeleton />
+						) : isError ? (
+							<div className={styles.errorContainer}>
+								<IconAlertCircle size={32} color='red' />
+								<Text c='red' mt='sm'>
+									{error instanceof Error ? error.message : t('list.loadError')}
+								</Text>
+							</div>
+						) : campaignsResponse?.data?.length === 0 && hasActiveFilters ? (
+							<EmptyState
+								icon={<IconRocket size={64} stroke={1.2} />}
+								message={t('list.noCampaignsFound')}
+								description={t('list.noCampaignsFoundDesc')}
 							/>
-						</>
-					)}
-				</SectionCard>
+						) : !campaignsResponse?.data ||
+						  campaignsResponse.data.length === 0 ? (
+							<EmptyState
+								icon={<IconRocket size={64} stroke={1.2} />}
+								message={t('list.noCampaignsYet')}
+								description={t('list.noCampaignsYetDesc')}
+								action={
+									<Button
+										leftSection={<IconPlus size={18} />}
+										onClick={handleShowAddNewCampaignModal}
+									>
+										{t('list.createButton')}
+									</Button>
+								}
+							/>
+						) : (
+							<>
+								<BaseTable
+									data={campaignsResponse?.data || []}
+									columns={columns}
+									onRowClick={handleCampaignClick}
+									density='compact'
+								/>
+
+								<PaginationControls
+									currentPage={pagination.currentPage}
+									totalPages={totalPages}
+									itemsPerPage={pagination.itemsPerPage}
+									totalItems={campaignsResponse?.total || 0}
+									onPageChange={pagination.setCurrentPage}
+									onItemsPerPageChange={handleItemsPerPageChange}
+									searchTerm={pagination.debouncedSearch}
+									isLoading={isLoading}
+									itemLabel={t('list.itemLabel')}
+								/>
+							</>
+						)}
+					</SectionCard>
+				</div>
 			</ContentContainer>
 
 			{/* Test Call Modal */}

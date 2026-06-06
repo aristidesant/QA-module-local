@@ -45,8 +45,8 @@
 }
 
 .status_active {
-	background-color: #ecfdf2;
-	color: #0d7530;
+	background-color: var(--nt-success-bg);
+	color: var(--nt-green-700);
 }
 
 .status_inactive {
@@ -55,12 +55,12 @@
 }
 
 .status_pending {
-	background-color: #fffbeb;
+	background-color: var(--warn-soft);
 	color: #b45309;
 }
 
 .status_suspended {
-	background-color: #fef2f2;
+	background-color: var(--danger-soft);
 	color: #b91c1c;
 }
 
@@ -100,8 +100,8 @@ tr:focus-within .actionsGroup {
 /* ── Dark mode ── */
 
 [data-mantine-color-scheme='dark'] .status_active {
-	background-color: rgba(27, 181, 74, 0.15);
-	color: #4ade80;
+	background-color: var(--brand-soft);
+	color: var(--brand-hover);
 }
 
 [data-mantine-color-scheme='dark'] .status_inactive {
@@ -110,11 +110,11 @@ tr:focus-within .actionsGroup {
 }
 
 [data-mantine-color-scheme='dark'] .status_pending {
-	background-color: rgba(245, 158, 11, 0.15);
+	background-color: var(--warn-soft);
 	color: #fbbf24;
 }
 
 [data-mantine-color-scheme='dark'] .status_suspended {
-	background-color: rgba(239, 68, 68, 0.15);
+	background-color: var(--danger-soft);
 	color: #f87171;
 }

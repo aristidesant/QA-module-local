@@ -1,7 +1,8 @@
 import { useMemo } from 'react';
 import { type ColumnDef } from '@tanstack/react-table';
-import { ActionIcon, Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Badge, Menu, Stack, Text } from '@mantine/core';
 import {
+	IconDotsVertical,
 	IconEdit,
 	IconPlayerPlay,
 	IconPlayerStop,
@@ -134,62 +135,60 @@ export function useRuleTableColumns({
 					const textToSpeak = isAlias
 						? (rule.alias ?? rule.grapheme)
 						: rule.grapheme;
-					const tooltipLabel = isPlaying
-						? t('preview.stop')
-						: isAlias
-							? t('preview.playAlias')
-							: t('preview.phonemeFallback');
 
 					return (
-						<Group gap='xs'>
-							{isTtsSupported && onSpeak && onStop && (
-								<Tooltip
-									label={tooltipLabel}
-									multiline
-									w={isAlias ? undefined : 200}
+						<Menu shadow='sm' position='bottom-end' withinPortal>
+							<Menu.Target>
+								<ActionIcon
+									variant='subtle'
+									size='sm'
+									onClick={(e) => e.stopPropagation()}
 								>
-									<ActionIcon
-										variant='light'
-										color={isPlaying ? 'orange' : 'teal'}
-										radius='md'
-										size='sm'
-										onClick={() =>
+									<IconDotsVertical size={15} />
+								</ActionIcon>
+							</Menu.Target>
+							<Menu.Dropdown>
+								{isTtsSupported && onSpeak && onStop && (
+									<Menu.Item
+										leftSection={
+											isPlaying ? (
+												<IconPlayerStop size={15} stroke={1.5} />
+											) : (
+												<IconPlayerPlay size={15} stroke={1.5} />
+											)
+										}
+										onClick={(e) => {
+											e.stopPropagation();
 											isPlaying
 												? onStop()
-												: onSpeak(textToSpeak, rule.locale, rule.id)
-										}
+												: onSpeak(textToSpeak, rule.locale, rule.id);
+										}}
 									>
-										{isPlaying ? (
-											<IconPlayerStop size={16} />
-										) : (
-											<IconPlayerPlay size={16} />
-										)}
-									</ActionIcon>
-								</Tooltip>
-							)}
-							<Tooltip label={t('form.buttons.update')}>
-								<ActionIcon
-									variant='light'
-									color='blue'
-									radius='md'
-									size='sm'
-									onClick={() => onEdit(rule)}
+										{isPlaying ? t('preview.stop') : t('preview.play')}
+									</Menu.Item>
+								)}
+								<Menu.Item
+									leftSection={<IconEdit size={15} stroke={1.5} />}
+									onClick={(e) => {
+										e.stopPropagation();
+										onEdit(rule);
+									}}
 								>
-									<IconEdit size={16} />
-								</ActionIcon>
-							</Tooltip>
-							<Tooltip label={t('rules.deleteModal.confirm')}>
-								<ActionIcon
-									variant='light'
+									{t('form.buttons.update')}
+								</Menu.Item>
+								<Menu.Divider />
+								<Menu.Item
+									leftSection={<IconTrash size={15} stroke={1.5} />}
 									color='red'
-									radius='md'
-									size='sm'
-									onClick={() => onDelete(rule)}
+									onClick={(e) => {
+										e.stopPropagation();
+										onDelete(rule);
+									}}
 								>
-									<IconTrash size={16} />
-								</ActionIcon>
-							</Tooltip>
-						</Group>
+									{t('rules.deleteModal.confirm')}
+								</Menu.Item>
+							</Menu.Dropdown>
+						</Menu>
 					);
 				},
 			},

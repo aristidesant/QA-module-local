@@ -1,18 +1,9 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router';
-import {
-	Alert,
-	Button,
-	Group,
-	SimpleGrid,
-	Stack,
-	Text,
-	Textarea,
-	Title,
-} from '@mantine/core';
+import { Alert, Button, Text, Textarea } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
-import { IconFileInvoice, IconInfoCircle } from '@tabler/icons-react';
+import { IconInfoCircle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import SectionCard from '~/components/SectionCard';
@@ -210,55 +201,59 @@ const InvoicesPage: React.FC = () => {
 	});
 
 	return (
-		<ContentContainer>
+		<ContentContainer
+			title={t('page.title')}
+			description={t('page.description')}
+			titleRight={
+				<Button onClick={() => void navigate('/billing/invoices/new')}>
+					{t('page.actions.newInvoice')}
+				</Button>
+			}
+		>
 			<div className={classes.root}>
 				<SectionCard padding='lg'>
-					<div className={classes.workspaceHeader}>
-						<Stack gap={4}>
-							<Group gap='xs'>
-								<IconFileInvoice size={20} />
-								<Title order={3}>{t('page.title')}</Title>
-							</Group>
-							<Text size='sm' c='dimmed'>
-								{t('page.description')}
-							</Text>
-						</Stack>
-						<Button onClick={() => void navigate('/billing/invoices/new')}>
-							{t('page.actions.newInvoice')}
-						</Button>
-					</div>
-					<SimpleGrid cols={{ base: 2, sm: 3, md: 5 }} spacing='sm'>
+					<div className={classes.metricsGrid}>
 						<div className={classes.metric}>
-							<Text size='xs' c='dimmed'>
+							<Text className={classes.metricLabel}>
 								{t('page.summary.loaded')}
 							</Text>
-							<Text fw={750}>{workspaceStats.loadedCount}</Text>
+							<Text className={classes.metricValue}>
+								{workspaceStats.loadedCount}
+							</Text>
 						</div>
 						<div className={classes.metric}>
-							<Text size='xs' c='dimmed'>
+							<Text className={classes.metricLabel}>
 								{t('page.summary.draft')}
 							</Text>
-							<Text fw={750}>{workspaceStats.draftCount}</Text>
+							<Text className={classes.metricValue}>
+								{workspaceStats.draftCount}
+							</Text>
 						</div>
 						<div className={classes.metric}>
-							<Text size='xs' c='dimmed'>
+							<Text className={classes.metricLabel}>
 								{t('page.summary.issued')}
 							</Text>
-							<Text fw={750}>{workspaceStats.issuedCount}</Text>
+							<Text className={classes.metricValue}>
+								{workspaceStats.issuedCount}
+							</Text>
 						</div>
 						<div className={classes.metric}>
-							<Text size='xs' c='dimmed'>
+							<Text className={classes.metricLabel}>
 								{t('page.summary.voided')}
 							</Text>
-							<Text fw={750}>{workspaceStats.voidedCount}</Text>
+							<Text className={classes.metricValue}>
+								{workspaceStats.voidedCount}
+							</Text>
 						</div>
 						<div className={classes.metric}>
-							<Text size='xs' c='dimmed'>
+							<Text className={classes.metricLabel}>
 								{t('page.summary.visibleValue')}
 							</Text>
-							<Text fw={750}>{workspaceStats.visibleTotalFormatted}</Text>
+							<Text className={classes.metricValue}>
+								{workspaceStats.visibleTotalFormatted}
+							</Text>
 						</div>
-					</SimpleGrid>
+					</div>
 				</SectionCard>
 
 				<SectionCard padding='md'>
@@ -272,10 +267,7 @@ const InvoicesPage: React.FC = () => {
 
 				<InvoiceTemplateManager />
 
-				<SectionCard
-					title={t('page.title')}
-					description={t('page.description')}
-				>
+				<SectionCard padding='md'>
 					{isError && (
 						<Alert
 							icon={<IconInfoCircle size={18} />}
@@ -293,6 +285,7 @@ const InvoicesPage: React.FC = () => {
 							emptyMessage={t('list.emptyTitle')}
 							onRowClick={handleView}
 							getRowClassName={() => classes.tableRow}
+							density='compact'
 							filterMode='server'
 							pageIndex={pagination.currentPage - 1}
 							pageSize={pagination.itemsPerPage}

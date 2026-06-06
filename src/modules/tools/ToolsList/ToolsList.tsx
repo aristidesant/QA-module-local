@@ -23,6 +23,7 @@ import {
 } from '~/queries/toolQueries';
 import type { ToolModel } from '~/models/ToolModel';
 import BaseTable from '~/components/BaseTable';
+import SectionCard from '~/components/SectionCard/SectionCard';
 import useToolsListColumns from './useToolsListColumns';
 import styles from './ToolsList.module.css';
 import EmptyState from '~/components/EmptyState';
@@ -124,9 +125,10 @@ function DeleteModalContent({
 
 interface ToolsListProps {
 	onEdit: (toolId: string | number) => void;
+	onCreate: () => void;
 }
 
-function ToolsList({ onEdit }: ToolsListProps) {
+function ToolsList({ onEdit, onCreate }: ToolsListProps) {
 	const { t } = useTranslation('tools');
 	const { t: tCommon } = useTranslation('common');
 	const { selectedToolCategory } = useToolsStore();
@@ -165,6 +167,9 @@ function ToolsList({ onEdit }: ToolsListProps) {
 				),
 			});
 		},
+		onEdit: (tool) => {
+			onEdit(tool.id);
+		},
 	});
 
 	const {
@@ -182,7 +187,7 @@ function ToolsList({ onEdit }: ToolsListProps) {
 			return (
 				<Center className={styles.emptyState}>
 					<Stack align='center' gap='md'>
-						<IconTool size={48} color='var(--mantine-color-gray-5)' />
+						<IconTool size={48} color='var(--nt-ink-300)' />
 						<Text size='lg' fw={500} c='dimmed'>
 							{t('list.noCategory.title')}
 						</Text>
@@ -208,7 +213,7 @@ function ToolsList({ onEdit }: ToolsListProps) {
 			return (
 				<Center className={styles.emptyState}>
 					<Stack align='center' gap='md'>
-						<IconTool size={48} color='var(--mantine-color-red-5)' />
+						<IconTool size={48} color='var(--nt-danger)' />
 						<Text size='lg' fw={500} c='red'>
 							{t('state.errorLoadingTools')}
 						</Text>
@@ -222,22 +227,19 @@ function ToolsList({ onEdit }: ToolsListProps) {
 
 		if (!tools || tools.length === 0) {
 			return (
-				<div className={styles.container}>
-					<EmptyState
-						icon={<IconTool size={48} color='var(--mantine-color-gray-5)' />}
-						message={t('list.empty.message')}
-						description={
-							<>
-								{t('list.empty.descriptionLine1', {
-									categoryName: selectedToolCategory?.name,
-								})}
-								<br />
-								{t('list.empty.descriptionLine2')}
-							</>
-						}
-						className={styles.emptyState}
-					/>
-				</div>
+				<EmptyState
+					icon={<IconTool size={48} color='var(--nt-ink-300)' />}
+					message={t('list.empty.message')}
+					description={
+						<>
+							{t('list.empty.descriptionLine1', {
+								categoryName: selectedToolCategory?.name,
+							})}
+							<br />
+							{t('list.empty.descriptionLine2')}
+						</>
+					}
+				/>
 			);
 		}
 
@@ -251,7 +253,15 @@ function ToolsList({ onEdit }: ToolsListProps) {
 		);
 	};
 
-	return <>{renderContent()}</>;
+	return (
+		<SectionCard
+			description={t('page.description')}
+			onAdd={onCreate}
+			contentSpacing='sm'
+		>
+			{renderContent()}
+		</SectionCard>
+	);
 }
 
 export default ToolsList;

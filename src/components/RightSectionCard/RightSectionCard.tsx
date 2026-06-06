@@ -71,8 +71,8 @@ export const RightSectionCard: React.FC<RightSectionCardProps> = ({
 				className={`${styles.header} ${Icon ? styles.withIcon : ''} ${hasRightHeaderContent ? styles.withRight : ''}`}
 			>
 				{Icon && (
-					<ThemeIcon variant='light' color={iconColor} radius={12} size={40}>
-						<Icon size={20} className={styles.icon} />
+					<ThemeIcon variant='light' color={iconColor} radius='sm' size='lg'>
+						<Icon size={18} className={styles.icon} />
 					</ThemeIcon>
 				)}
 				<div className={styles.titleCopy}>

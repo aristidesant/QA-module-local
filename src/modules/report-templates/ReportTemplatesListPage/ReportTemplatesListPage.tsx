@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router';
 import {
 	ActionIcon,
 	Alert,
-	Badge,
 	Button,
 	Center,
 	Loader,
@@ -12,6 +11,7 @@ import {
 	Stack,
 	Text,
 	TextInput,
+	Tooltip,
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
@@ -43,12 +43,26 @@ import {
 	useExportReportTemplate,
 } from '~/queries/reportTemplatesQueries';
 import { getErrorMessage } from '~/utils/httpClient';
+import { timeAgo } from '~/utils/dateUtils';
 import ReportTemplateFormModal from '../components/ReportTemplateFormModal';
 import CampaignPickerModal, {
 	type ExportData,
 } from '../components/CampaignPickerModal';
 import { downloadReportTemplateExport } from '../reportTemplateExport';
 import styles from './ReportTemplatesListPage.module.css';
+
+function dateTooltip(iso?: string | Date | null) {
+	if (!iso) return '—';
+	const date = typeof iso === 'string' ? new Date(iso) : iso;
+	if (Number.isNaN(date.getTime())) return '—';
+	return date.toLocaleString(undefined, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+	});
+}
 
 const ReportTemplatesListPage = () => {
 	const { t } = useTranslation('report-templates');
@@ -204,11 +218,15 @@ const ReportTemplatesListPage = () => {
 			{
 				id: 'createdAt',
 				header: t('list.columns.createdAt'),
-				size: 120,
+				size: 100,
 				cell: ({ row }) => (
-					<Text size='sm' className={styles.metaCell}>
-						{new Date(row.original.createdAt).toLocaleDateString()}
-					</Text>
+					<Tooltip
+						label={dateTooltip(row.original.createdAt)}
+						withArrow
+						withinPortal
+					>
+						<Text size='sm'>{timeAgo(row.original.createdAt)}</Text>
+					</Tooltip>
 				),
 			},
 			{
@@ -278,23 +296,8 @@ const ReportTemplatesListPage = () => {
 		<>
 			<Stack gap='md'>
 				<SectionCard
-					icon={IconTemplate}
-					title={t('title')}
-					description={t('description')}
-					actions={{
-						primary: {
-							kind: 'add',
-							label: t('list.createNew'),
-							onClick: () => setCreateModalOpened(true),
-						},
-					}}
-					headerExtras={
-						templates.length > 0 ? (
-							<Badge variant='light' size='sm' className={styles.countBadge}>
-								{t('list.templateCount', { count: templates.length })}
-							</Badge>
-						) : undefined
-					}
+					onAdd={() => setCreateModalOpened(true)}
+					contentSpacing='md'
 				>
 					<Stack gap='md'>
 						<TextInput

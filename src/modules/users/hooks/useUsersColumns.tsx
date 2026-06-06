@@ -1,14 +1,12 @@
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
+import { ActionIcon, Group, HoverCard, Menu, Stack, Text } from '@mantine/core';
 import {
-	ActionIcon,
-	Group,
-	HoverCard,
-	Stack,
-	Text,
-	Tooltip,
-} from '@mantine/core';
-import { IconInfoCircle, IconPencil, IconTrash } from '@tabler/icons-react';
+	IconDotsVertical,
+	IconInfoCircle,
+	IconPencil,
+	IconTrash,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { timeAgo } from '~/utils/dateUtils';
 import type { UserModel } from '~/models/UserModels';
@@ -31,6 +29,19 @@ const formatDateTime = (value: string | Date | null | undefined) => {
 
 	return date.toLocaleString();
 };
+
+function dateTooltip(iso?: string | Date | null) {
+	if (!iso) return '—';
+	const date = typeof iso === 'string' ? new Date(iso) : iso;
+	if (Number.isNaN(date.getTime())) return '—';
+	return date.toLocaleString(undefined, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+	});
+}
 
 const useUsersColumns = ({
 	onEdit,
@@ -112,16 +123,26 @@ const useUsersColumns = ({
 				enableSorting: false,
 				cell: ({ getValue }) => {
 					const value = getValue<string | Date | null | undefined>();
-					return <Text fz='xs'>{value ? timeAgo(value) : '—'}</Text>;
+					return (
+						<Text fz='sm' title={dateTooltip(value)}>
+							{value ? timeAgo(value) : '—'}
+						</Text>
+					);
 				},
+				size: 100,
 			},
 			{
 				accessorKey: 'updatedAt',
 				header: t('columns.updated'),
 				cell: ({ getValue }) => {
 					const value = getValue<string | Date | null | undefined>();
-					return <Text fz='xs'>{value ? timeAgo(value) : '—'}</Text>;
+					return (
+						<Text fz='sm' title={dateTooltip(value)}>
+							{value ? timeAgo(value) : '—'}
+						</Text>
+					);
 				},
+				size: 100,
 			},
 			{
 				id: 'actions',
@@ -134,43 +155,38 @@ const useUsersColumns = ({
 					const user = row.original;
 
 					return (
-						<Group
-							gap={4}
-							justify='flex-end'
-							wrap='nowrap'
-							className={classes.actionsGroup}
-						>
-							<Tooltip label={t('table.actions.edit')} withArrow>
-								<ActionIcon
-									variant='subtle'
-									color='gray'
-									size='sm'
-									onClick={(event) => {
-										event.stopPropagation();
-										onEdit(user.id);
-									}}
-									aria-label={t('table.actions.edit')}
-								>
-									<IconPencil size={15} />
-								</ActionIcon>
-							</Tooltip>
-							<Tooltip label={t('table.actions.delete')} withArrow>
-								<ActionIcon
-									variant='subtle'
-									color='red'
-									size='sm'
-									onClick={(event) => {
-										event.stopPropagation();
-										onDelete(user);
-									}}
-									aria-label={t('table.actions.delete')}
-								>
-									<IconTrash size={15} />
-								</ActionIcon>
-							</Tooltip>
+						<Group justify='flex-end' onClick={(e) => e.stopPropagation()}>
+							<Menu shadow='sm' position='bottom-end' withinPortal>
+								<Menu.Target>
+									<ActionIcon
+										variant='subtle'
+										size='sm'
+										aria-label={t('columns.actions')}
+									>
+										<IconDotsVertical size={15} />
+									</ActionIcon>
+								</Menu.Target>
+								<Menu.Dropdown>
+									<Menu.Item
+										leftSection={<IconPencil size={15} stroke={1.5} />}
+										onClick={() => onEdit(user.id)}
+									>
+										{t('table.actions.edit')}
+									</Menu.Item>
+									<Menu.Divider />
+									<Menu.Item
+										leftSection={<IconTrash size={15} stroke={1.5} />}
+										color='red'
+										onClick={() => onDelete(user)}
+									>
+										{t('table.actions.delete')}
+									</Menu.Item>
+								</Menu.Dropdown>
+							</Menu>
 						</Group>
 					);
 				},
+				size: 60,
 			},
 		],
 		[onDelete, onEdit, t]

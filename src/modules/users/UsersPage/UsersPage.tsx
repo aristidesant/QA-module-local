@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { TextInput, Text } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { Button, TextInput, Text } from '@mantine/core';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { Trans, useTranslation } from 'react-i18next';
@@ -115,13 +115,17 @@ const UsersPage: React.FC = () => {
 	);
 
 	return (
-		<ContentContainer>
+		<ContentContainer
+			title={t('list.title')}
+			description={t('list.description')}
+			titleRight={
+				<Button onClick={openCreateModal} leftSection={<IconPlus size={16} />}>
+					{t('newUser')}
+				</Button>
+			}
+		>
 			<div className={classes.root}>
-				<SectionCard
-					title={t('list.title')}
-					description={t('list.description')}
-					onAdd={openCreateModal}
-				>
+				<SectionCard>
 					<TextInput
 						placeholder={t('searchPlaceholder')}
 						leftSection={<IconSearch size={16} />}

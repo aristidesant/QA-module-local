@@ -74,6 +74,9 @@
 		"advanced": "Advanced",
 		"clearFilters": "Clear filters",
 		"clearAllFilters": "Clear all filters",
+		"collapse": "Collapse filters",
+		"expand": "Expand filters",
+		"resultCount": "{{count}} campaigns found",
 		"sortOptions": {
 			"updatedAt": "Last updated",
 			"createdAt": "Creation date",

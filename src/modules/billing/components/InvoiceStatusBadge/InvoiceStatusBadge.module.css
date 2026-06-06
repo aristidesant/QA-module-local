@@ -1,0 +1,19 @@
+.dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	display: inline-block;
+	flex-shrink: 0;
+}
+
+.dotDraft {
+	background-color: var(--mantine-color-gray-5);
+}
+
+.dotIssued {
+	background-color: var(--mantine-color-green-6);
+}
+
+.dotVoided {
+	background-color: var(--mantine-color-red-6);
+}
