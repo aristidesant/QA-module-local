@@ -110,7 +110,7 @@ const KnowledgeBaseList = () => {
 				{isLoading ? (
 					<div className={styles.skeletonWrap}>
 						{Array.from({ length: 5 }).map((_, idx) => (
-							<Skeleton key={idx} height={64} mb={12} radius='md' />
+							<Skeleton key={idx} height={64} radius='md' />
 						))}
 					</div>
 				) : filtered.length === 0 ? (

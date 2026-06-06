@@ -34,17 +34,17 @@
 }
 
 .typeBadgeFile {
-	background-color: #ecf8fd;
-	color: #007aae;
+	background-color: var(--nt-info-bg);
+	color: var(--nt-blue-600);
 }
 
 .typeBadgeUrl {
-	background-color: #ecfdf2;
-	color: #0d7530;
+	background-color: var(--nt-success-bg);
+	color: var(--nt-green-700);
 }
 
 .typeBadgeText {
-	background-color: #fffbeb;
+	background-color: var(--warn-soft);
 	color: #b45309;
 }
 
@@ -66,8 +66,8 @@
 }
 
 .statusActive {
-	background-color: #ecfdf2;
-	color: #0d7530;
+	background-color: var(--nt-success-bg);
+	color: var(--nt-green-700);
 }
 
 .statusInactive {
@@ -76,17 +76,17 @@
 }
 
 .statusPending {
-	background-color: #fffbeb;
+	background-color: var(--warn-soft);
 	color: #b45309;
 }
 
 .statusUploading {
-	background-color: #ecf8fd;
-	color: #007aae;
+	background-color: var(--nt-info-bg);
+	color: var(--nt-blue-600);
 }
 
 .statusFailed {
-	background-color: #fef2f2;
+	background-color: var(--danger-soft);
 	color: #b91c1c;
 }
 
@@ -106,7 +106,7 @@
 }
 
 .errorIcon {
-	color: var(--mantine-color-red-6);
+	color: var(--nt-danger);
 }
 
 .errorTooltip {
@@ -141,7 +141,7 @@ tr:focus-within .actionsGroup {
 .skeletonWrap {
 	display: flex;
 	flex-direction: column;
-	gap: 8px;
+	gap: 12px;
 	padding: 4px 0;
 }
 
@@ -160,7 +160,7 @@ tr:focus-within .actionsGroup {
 }
 
 .emptyIcon {
-	color: #c3cad4;
+	color: var(--nt-ink-300);
 	margin-bottom: 16px;
 }
 
@@ -176,23 +176,23 @@ tr:focus-within .actionsGroup {
 /* ── Dark mode ── */
 
 [data-mantine-color-scheme='dark'] .typeBadgeFile {
-	background-color: rgba(0, 152, 212, 0.15);
-	color: #38bdf8;
+	background-color: var(--accent-soft);
+	color: var(--accent-hover);
 }
 
 [data-mantine-color-scheme='dark'] .typeBadgeUrl {
-	background-color: rgba(27, 181, 74, 0.15);
-	color: #4ade80;
+	background-color: var(--brand-soft);
+	color: var(--brand-hover);
 }
 
 [data-mantine-color-scheme='dark'] .typeBadgeText {
-	background-color: rgba(245, 158, 11, 0.15);
+	background-color: var(--warn-soft);
 	color: #fbbf24;
 }
 
 [data-mantine-color-scheme='dark'] .statusActive {
-	background-color: rgba(27, 181, 74, 0.15);
-	color: #4ade80;
+	background-color: var(--brand-soft);
+	color: var(--brand-hover);
 }
 
 [data-mantine-color-scheme='dark'] .statusInactive {
@@ -201,16 +201,20 @@ tr:focus-within .actionsGroup {
 }
 
 [data-mantine-color-scheme='dark'] .statusPending {
-	background-color: rgba(245, 158, 11, 0.15);
+	background-color: var(--warn-soft);
 	color: #fbbf24;
 }
 
 [data-mantine-color-scheme='dark'] .statusUploading {
-	background-color: rgba(0, 152, 212, 0.15);
-	color: #38bdf8;
+	background-color: var(--accent-soft);
+	color: var(--accent-hover);
 }
 
 [data-mantine-color-scheme='dark'] .statusFailed {
-	background-color: rgba(239, 68, 68, 0.15);
+	background-color: var(--danger-soft);
 	color: #f87171;
+}
+
+[data-mantine-color-scheme='dark'] .emptyIcon {
+	color: var(--mantine-color-dark-4);
 }

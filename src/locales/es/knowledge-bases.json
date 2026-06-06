@@ -64,6 +64,7 @@
 		"type": "Tipo",
 		"status": "Estado",
 		"createdAt": "Creado",
+		"updatedAt": "Actualizado",
 		"actions": "Acciones"
 	},
 	"table": {

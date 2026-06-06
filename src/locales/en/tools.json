@@ -35,6 +35,7 @@
 		"status": "Status",
 		"createdBy": "Created by",
 		"created": "Created",
+		"updated": "Updated",
 		"actions": "Actions",
 		"unknownCreator": "Unknown",
 		"noDescription": "No description provided"

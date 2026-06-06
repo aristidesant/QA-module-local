@@ -255,7 +255,10 @@ const InvoiceNewPage: React.FC = () => {
 	]);
 
 	return (
-		<ContentContainer>
+		<ContentContainer
+			title={t('new.title')}
+			description={t('new.sections.reviewDescription')}
+		>
 			<div className={classes.root}>
 				<SectionCard padding='sm'>
 					<Stepper active={active} onStepClick={setActive} size='sm'>

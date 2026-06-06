@@ -69,6 +69,7 @@ const ToolConfigModal: React.FC<ToolConfigModalProps> = ({
 			onClose={onClose}
 			title={t('form.agent.systemTools.modal.title')}
 			size='lg'
+			zIndex={350}
 			classNames={{
 				title: classes.modalTitle,
 			}}

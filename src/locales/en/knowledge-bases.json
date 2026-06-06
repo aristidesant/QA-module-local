@@ -63,7 +63,8 @@
 		"description": "Description",
 		"type": "Type",
 		"status": "Status",
-		"createdAt": "Created At",
+		"createdAt": "Created",
+		"updatedAt": "Updated",
 		"actions": "Actions"
 	},
 	"table": {

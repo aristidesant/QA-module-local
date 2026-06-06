@@ -19,7 +19,7 @@
 }
 
 .resultsCounter {
-	color: var(--mantine-color-gray-6);
+	color: var(--text-muted);
 	font-weight: 500;
 	white-space: nowrap;
 }

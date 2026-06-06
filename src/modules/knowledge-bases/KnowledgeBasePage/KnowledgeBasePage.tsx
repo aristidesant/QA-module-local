@@ -17,7 +17,10 @@ const KnowledgeBasePage = () => {
 
 	return (
 		<>
-			<ContentContainer>
+			<ContentContainer
+				title={t('list.title')}
+				description={t('list.description')}
+			>
 				<KnowledgeBaseList />
 			</ContentContainer>
 			<Modal

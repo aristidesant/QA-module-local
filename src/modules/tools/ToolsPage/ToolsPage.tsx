@@ -6,7 +6,6 @@ import { useState, useCallback, useEffect } from 'react';
 import { useToolCategories } from '~/queries/toolCategoryQueries';
 import { useTranslation } from 'react-i18next';
 import ToolForm from '../ToolForm';
-import SectionCard from '~/components/SectionCard/SectionCard';
 
 const ToolsPage = () => {
 	const { t } = useTranslation('tools');
@@ -15,14 +14,12 @@ const ToolsPage = () => {
 		string | number | undefined
 	>(undefined);
 
-	// We can assume we want to create tools in the currently selected category (or default)
 	const { selectedToolCategory, setToolsCategory } = useToolsStore(
 		(state) => state
 	);
 	const { data: categories = [], isLoading: isLoadingCategories } =
 		useToolCategories();
 
-	// Default to 'webhook' category
 	useEffect(() => {
 		if (!categories || categories.length === 0) return;
 		if (selectedToolCategory) return;
@@ -84,15 +81,11 @@ const ToolsPage = () => {
 	}
 
 	return (
-		<ContentContainer mainScroll={false}>
-			<SectionCard
-				title={t('page.title')}
-				description={t('page.description')}
-				onAdd={handleCreateTool}
-				padding='lg'
-			>
-				<ToolsList onEdit={handleEditTool} />
-			</SectionCard>
+		<ContentContainer
+			title={t('page.title')}
+			description={t('page.description')}
+		>
+			<ToolsList onCreate={handleCreateTool} onEdit={handleEditTool} />
 		</ContentContainer>
 	);
 };

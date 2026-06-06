@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
-import { Group, TextInput, Text } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import { Button, TextInput, Text } from '@mantine/core';
+import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
@@ -115,33 +115,30 @@ const ClientsPage: React.FC = () => {
 	);
 
 	return (
-		<ContentContainer>
-			<div className={classes.root}>
-				<SectionCard>
-					<Group className={classes.header} justify='flex-end'>
-						<TextInput
-							placeholder={t('page.search.placeholder')}
-							leftSection={<IconSearch size={18} />}
-							value={search}
-							onChange={handleSearchChange}
-							className={classes.searchInput}
-							size='sm'
-						/>
-					</Group>
-				</SectionCard>
-
-				<SectionCard
-					title={t('page.title')}
-					description={t('page.description')}
-					onAdd={openCreateModal}
-				>
-					<ClientsList
-						search={search}
-						onEdit={openEditModal}
-						onDelete={handleDelete}
-					/>
-				</SectionCard>
-			</div>
+		<ContentContainer
+			title={t('page.title')}
+			description={t('page.description')}
+			titleRight={
+				<Button onClick={openCreateModal} leftSection={<IconPlus size={16} />}>
+					{t('page.actions.newClient')}
+				</Button>
+			}
+		>
+			<SectionCard contentSpacing='sm'>
+				<TextInput
+					placeholder={t('page.search.placeholder')}
+					leftSection={<IconSearch size={18} />}
+					value={search}
+					onChange={handleSearchChange}
+					className={classes.searchInput}
+					size='sm'
+				/>
+				<ClientsList
+					search={search}
+					onEdit={openEditModal}
+					onDelete={handleDelete}
+				/>
+			</SectionCard>
 		</ContentContainer>
 	);
 };

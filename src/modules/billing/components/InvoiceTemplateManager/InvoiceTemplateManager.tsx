@@ -7,7 +7,6 @@ import {
 	Group,
 	Select,
 	Skeleton,
-	SimpleGrid,
 	Stack,
 	Text,
 	UnstyledButton,
@@ -18,6 +17,7 @@ import {
 	IconChevronDown,
 	IconDownload,
 	IconFileDescription,
+	IconFileOff,
 	IconTrash,
 	IconUpload,
 	IconVariable,
@@ -196,7 +196,12 @@ const InvoiceTemplateManager: React.FC = () => {
 								{t('templates.toolbarTitle')}
 							</Text>
 							{configuredCount > 0 && (
-								<Badge size='sm' variant='light' color='green'>
+								<Badge
+									size='sm'
+									variant='light'
+									color='green'
+									className={classes.invoiceCountBadge}
+								>
 									{t('templates.count', { count: configuredCount })}
 								</Badge>
 							)}
@@ -234,13 +239,9 @@ const InvoiceTemplateManager: React.FC = () => {
 								<Skeleton height={10} width='52%' radius='xl' />
 							</Stack>
 						) : (
-							<SimpleGrid
-								cols={{ base: 1, sm: 2 }}
-								spacing='md'
-								verticalSpacing='md'
-							>
-								<Stack gap='xs' className={classes.fieldColumn}>
-									<Text size='xs' fw={600} className={classes.sectionLabel}>
+							<div className={classes.animateInIndex0}>
+								<div className={classes.fieldColumn}>
+									<Text className={classes.sectionLabel}>
 										{t('templates.issuerClient.label')}
 									</Text>
 									<Select
@@ -253,25 +254,21 @@ const InvoiceTemplateManager: React.FC = () => {
 										clearable
 										searchable
 										size='sm'
+										mt={6}
 									/>
-									<Text size='xs' c='dimmed' className={classes.helperText}>
+									<Text className={classes.helperText} mt={4}>
 										{t('templates.issuerClient.helper')}
 									</Text>
-								</Stack>
+								</div>
+							</div>
+						)}
 
-								<Stack gap='xs' className={classes.fieldColumn}>
-									<Group justify='space-between' align='center' gap='xs'>
-										<Text size='xs' fw={600} className={classes.sectionLabel}>
-											{t('templates.currentTemplate')}
-										</Text>
-										{selectedClientId != null && (
-											<Badge size='sm' variant='light' color='gray'>
-												{currentTemplateFile
-													? t('templates.status.configured')
-													: t('templates.status.none')}
-											</Badge>
-										)}
-									</Group>
+						{selectedClientId != null && (
+							<div className={classes.animateInIndex1}>
+								<div className={classes.fieldColumn}>
+									<Text className={classes.sectionLabel} mb={6}>
+										{t('templates.currentTemplate')}
+									</Text>
 
 									{isTemplateDataLoading ? (
 										<Stack gap='xs'>
@@ -283,85 +280,87 @@ const InvoiceTemplateManager: React.FC = () => {
 											</Group>
 										</Stack>
 									) : currentTemplateFile ? (
-										<div className={classes.templateCard}>
-											<div className={classes.templateMeta}>
-												<div className={classes.templateMetaText}>
-													<Text
-														size='sm'
-														fw={500}
-														className={classes.templateName}
-													>
-														{currentTemplateFile.name}
-													</Text>
+										<div className={classes.templateCardWrapper}>
+											<div className={classes.templateCard}>
+												<div className={classes.templateCardIcon}>
+													<IconFileDescription size={20} stroke={1.5} />
 												</div>
-												<Badge size='sm' color='green' variant='light'>
-													{t('templates.status.configured')}
-												</Badge>
+												<div className={classes.templateCardContent}>
+													<div className={classes.templateMeta}>
+														<div className={classes.templateMetaText}>
+															<Text className={classes.templateName}>
+																{currentTemplateFile.name}
+															</Text>
+															<span
+																className={`${classes.templateStatus} ${classes.templateStatusConfigured}`}
+															>
+																<span className={classes.templateStatusDot} />
+																{t('templates.status.configured')}
+															</span>
+														</div>
+													</div>
+
+													<div className={classes.actionsRow}>
+														<Button
+															size='xs'
+															variant='light'
+															leftSection={<IconUpload size={14} />}
+															loading={isUploading}
+															disabled={!selectedClientId || !templateTypeId}
+															onClick={() => fileInputRef.current?.click()}
+														>
+															{isUploading
+																? t('templates.actions.uploading')
+																: t('templates.actions.upload')}
+														</Button>
+
+														<Button
+															size='xs'
+															variant='light'
+															leftSection={<IconDownload size={14} />}
+															loading={downloadTemplateMutation.isPending}
+															onClick={handleDownloadTemplate}
+														>
+															{t('templates.actions.download')}
+														</Button>
+
+														<Button
+															size='xs'
+															variant='outline'
+															color='red'
+															leftSection={<IconTrash size={14} />}
+															loading={isUploading}
+															onClick={handleRemove}
+														>
+															{t('templates.actions.remove')}
+														</Button>
+													</div>
+												</div>
 											</div>
-
-											<Group gap='xs' className={classes.actionsRow}>
-												<Button
-													size='xs'
-													variant='light'
-													leftSection={<IconUpload size={14} />}
-													loading={isUploading}
-													disabled={!selectedClientId || !templateTypeId}
-													onClick={() => fileInputRef.current?.click()}
-												>
-													{isUploading
-														? t('templates.actions.uploading')
-														: t('templates.actions.upload')}
-												</Button>
-
-												<Button
-													size='xs'
-													variant='light'
-													leftSection={<IconDownload size={14} />}
-													loading={downloadTemplateMutation.isPending}
-													onClick={handleDownloadTemplate}
-												>
-													{t('templates.actions.download')}
-												</Button>
-
-												<Button
-													size='xs'
-													variant='outline'
-													color='red'
-													leftSection={<IconTrash size={14} />}
-													loading={isUploading}
-													onClick={handleRemove}
-												>
-													{t('templates.actions.remove')}
-												</Button>
-											</Group>
-										</div>
-									) : selectedClientId ? (
-										<div className={classes.emptyState}>
-											<Text size='sm' fw={500}>
-												{t('templates.status.none')}
-											</Text>
-											<Text size='xs' c='dimmed' className={classes.helperText}>
-												{t('templates.issuerClient.helper')}
-											</Text>
 										</div>
 									) : (
 										<div className={classes.emptyState}>
-											<Text size='sm' fw={500}>
-												{t('templates.issuerClient.label')}
-											</Text>
-											<Text size='xs' c='dimmed' className={classes.helperText}>
-												{t('templates.issuerClient.helper')}
-											</Text>
+											<div className={classes.emptyStateIcon}>
+												<IconFileOff size={24} stroke={1.5} />
+											</div>
+											<div className={classes.emptyStateContent}>
+												<Text size='sm' fw={500}>
+													{t('templates.status.none')}
+												</Text>
+												<Text size='xs' className={classes.helperText}>
+													{t('templates.issuerClient.helper')}
+												</Text>
+											</div>
 										</div>
 									)}
-								</Stack>
-							</SimpleGrid>
+								</div>
+							</div>
 						)}
 
 						{selectedClientId && (
 							<>
 								<Divider my={0} />
-								<Text size='xs' c='dimmed'>
+								<Text size='xs' className={classes.helperText}>
 									{t('templates.info')}
 								</Text>
 							</>

@@ -196,7 +196,10 @@ const InvoiceDetailPage: React.FC = () => {
 	}
 
 	return (
-		<ContentContainer>
+		<ContentContainer
+			title={invoice.invoiceNumber}
+			description={formatInvoicePeriod(invoice.periodStart, invoice.periodEnd)}
+		>
 			<div className={classes.root}>
 				<SectionCard padding='lg'>
 					<div className={classes.reviewHeader}>
