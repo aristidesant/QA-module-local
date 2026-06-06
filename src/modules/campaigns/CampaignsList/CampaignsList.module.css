@@ -1,3 +1,9 @@
+.cardsStack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
 .avatarCell {
 	width: 48px;
 	padding: 12px 8px;
