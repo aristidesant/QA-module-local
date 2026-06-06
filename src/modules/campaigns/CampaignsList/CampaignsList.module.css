@@ -1,7 +1,92 @@
 .cardsStack {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-md);
+}
+
+.cardsStack [data-testid='section-card'] {
+	box-shadow:
+		0 1px 3px rgba(15, 23, 42, 0.04),
+		0 4px 12px rgba(15, 23, 42, 0.03);
+	border-color: rgba(221, 226, 232, 0.5);
+	transition:
+		box-shadow 150ms ease,
+		border-color 150ms ease;
+}
+
+.cardsStack [data-testid='section-card']:hover {
+	box-shadow:
+		0 1px 3px rgba(15, 23, 42, 0.04),
+		0 4px 12px rgba(15, 23, 42, 0.03);
+}
+
+.cardsStack [data-testid='section-card'] [class*='sectionHeader'] {
+	border-bottom-color: rgba(221, 226, 232, 0.4);
+}
+
+.cardsStack [data-accent='blue'] [class*='sectionHeader'] {
+	border-bottom-color: rgba(0, 152, 212, 0.15);
+}
+
+.cardsStack [data-accent='green'] [class*='sectionHeader'] {
+	border-bottom-color: rgba(27, 181, 74, 0.15);
+}
+
+.cardsStack [data-accent='blue'] [class*='iconBadge'] {
+	background: rgba(0, 152, 212, 0.08);
+	border-color: rgba(0, 152, 212, 0.12);
+	color: var(--mantine-color-blue-7);
+}
+
+.cardsStack [data-accent='green'] [class*='iconBadge'] {
+	background: rgba(27, 181, 74, 0.08);
+	border-color: rgba(27, 181, 74, 0.12);
+	color: #0d7530;
+}
+
+[data-mantine-color-scheme='dark'] .cardsStack [data-testid='section-card'] {
+	box-shadow:
+		0 1px 3px rgba(0, 0, 0, 0.2),
+		0 4px 12px rgba(0, 0, 0, 0.15);
+	border-color: var(--surface-border);
+}
+
+[data-mantine-color-scheme='dark']
+	.cardsStack
+	[data-accent='blue']
+	[class*='sectionHeader'] {
+	border-bottom-color: rgba(0, 152, 212, 0.25);
+}
+
+[data-mantine-color-scheme='dark']
+	.cardsStack
+	[data-accent='green']
+	[class*='sectionHeader'] {
+	border-bottom-color: rgba(27, 181, 74, 0.25);
+}
+
+[data-mantine-color-scheme='dark']
+	.cardsStack
+	[data-accent='blue']
+	[class*='iconBadge'] {
+	background: rgba(0, 152, 212, 0.15);
+	border-color: rgba(0, 152, 212, 0.2);
+	color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark']
+	.cardsStack
+	[data-accent='green']
+	[class*='iconBadge'] {
+	background: rgba(27, 181, 74, 0.15);
+	border-color: rgba(27, 181, 74, 0.2);
+	color: var(--mantine-color-green-3);
+}
+
+@media (max-width: 768px) {
+	.cardsStack {
+		gap: var(--mantine-spacing-sm);
+	}
 }
 
 .avatarCell {
