@@ -13,8 +13,6 @@ interface CampaignFiltersProps {
 		includeInactive?: boolean;
 	};
 	onFiltersChange: (filters: CampaignFiltersProps['filters']) => void;
-	isCollapsed: boolean;
-	onToggleCollapse: () => void;
 }
 
 export default function CampaignFilters({
@@ -22,12 +20,8 @@ export default function CampaignFilters({
 	onSearchChange,
 	filters,
 	onFiltersChange,
-	isCollapsed,
-	onToggleCollapse,
 }: CampaignFiltersProps) {
 	const { t } = useTranslation('campaigns.list');
-	void isCollapsed;
-	void onToggleCollapse;
 
 	const statusOptions = Object.values(CampaignStatus).map((status) => ({
 		value: status,

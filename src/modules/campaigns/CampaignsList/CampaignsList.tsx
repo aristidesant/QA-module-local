@@ -395,8 +395,6 @@ export const CampaignsList: React.FC = () => {
 							onSearchChange={pagination.setSearchValue}
 							filters={filters}
 							onFiltersChange={setFilters}
-							isCollapsed={filtersCollapsed}
-							onToggleCollapse={() => setFiltersCollapsed((v) => !v)}
 						/>
 					)}
 				</SectionCard>
