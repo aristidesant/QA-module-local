@@ -21,15 +21,15 @@
 }
 
 .cardsStack [data-testid='section-card'] [class*='sectionHeader'] {
-	border-bottom-color: rgba(221, 226, 232, 0.4);
+	border-bottom-color: rgba(221, 226, 232, 0.25);
 }
 
 .cardsStack [data-accent='blue'] [class*='sectionHeader'] {
-	border-bottom-color: rgba(0, 152, 212, 0.15);
+	border-bottom-color: rgba(0, 152, 212, 0.08);
 }
 
 .cardsStack [data-accent='green'] [class*='sectionHeader'] {
-	border-bottom-color: rgba(27, 181, 74, 0.15);
+	border-bottom-color: rgba(27, 181, 74, 0.08);
 }
 
 .cardsStack [data-accent='blue'] [class*='iconBadge'] {
@@ -53,16 +53,23 @@
 
 [data-mantine-color-scheme='dark']
 	.cardsStack
+	[data-testid='section-card']
+	[class*='sectionHeader'] {
+	border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+[data-mantine-color-scheme='dark']
+	.cardsStack
 	[data-accent='blue']
 	[class*='sectionHeader'] {
-	border-bottom-color: rgba(0, 152, 212, 0.25);
+	border-bottom-color: rgba(0, 152, 212, 0.15);
 }
 
 [data-mantine-color-scheme='dark']
 	.cardsStack
 	[data-accent='green']
 	[class*='sectionHeader'] {
-	border-bottom-color: rgba(27, 181, 74, 0.25);
+	border-bottom-color: rgba(27, 181, 74, 0.15);
 }
 
 [data-mantine-color-scheme='dark']
