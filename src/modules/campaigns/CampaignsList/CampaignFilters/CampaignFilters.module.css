@@ -1,51 +1,3 @@
-.filtersContainer {
-	margin-bottom: var(--mantine-spacing-md);
-}
-
-.titleBlock {
-	display: flex;
-	flex-direction: column;
-	gap: 2px;
-	min-width: 0;
-}
-
-.titleIcon {
-	color: var(--mantine-color-gray-6);
-}
-
-.title {
-	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-gray-7);
-	font-weight: 600;
-}
-
-[data-mantine-color-scheme='dark'] .activeBadge {
-	background-color: var(--mantine-color-blue-9);
-	color: var(--mantine-color-blue-2);
-}
-
-.activeBadge {
-	background-color: var(--mantine-color-blue-1);
-	color: var(--mantine-color-blue-7);
-}
-
-.headerRow {
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: var(--mantine-spacing-xs);
-	flex-wrap: wrap;
-	width: 100%;
-}
-
-.titleGroup {
-	flex-shrink: 0;
-}
-
-.subtitle {
-	max-width: 34rem;
-}
-
 .controlsGrid {
 	display: grid;
 	grid-template-columns:
@@ -83,11 +35,6 @@
 .inactiveSwitch {
 	padding-bottom: 2px;
 	justify-self: start;
-}
-
-.resetButton:disabled {
-	color: var(--mantine-color-gray-5);
-	opacity: 0.5;
 }
 
 /* Responsive adjustments */

@@ -104,6 +104,7 @@ export const CampaignsList: React.FC = () => {
 	const [filters, setFilters] = useState<CampaignFiltersType>(
 		INITIAL_CAMPAIGN_FILTERS
 	);
+	const [filtersCollapsed, setFiltersCollapsed] = useState(false);
 
 	// Reset to first page when filters change
 	useEffect(() => {
@@ -349,6 +350,8 @@ export const CampaignsList: React.FC = () => {
 						onSearchChange={pagination.setSearchValue}
 						filters={filters}
 						onFiltersChange={setFilters}
+						isCollapsed={filtersCollapsed}
+						onToggleCollapse={() => setFiltersCollapsed((v) => !v)}
 					/>
 
 					{isLoading ? (
