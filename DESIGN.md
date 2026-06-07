@@ -298,4 +298,4 @@ El patrón de nodos del logo (círculos verdes y azules en posiciones irregulare
 
 ---
 
-_Generado con el skill `stitch-design-taste` aplicado al sistema de diseño Newtech · v1.1_
+_Generado con el skill `stitch-design-taste` aplicado al sistema de diseño Newtech · v1.2_
