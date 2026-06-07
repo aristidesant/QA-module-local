@@ -296,7 +296,6 @@ El patrón de nodos del logo (círculos verdes y azules en posiciones irregulare
 - Área de respeto mínima equivalente a una 'n' del wordmark en todos los lados
 - Nunca colocar sobre fondos de bajo contraste sin probar accesibilidad
 
-
 ---
 
 _Generado con el skill `stitch-design-taste` aplicado al sistema de diseño Newtech · v1.0_
