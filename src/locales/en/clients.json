@@ -34,6 +34,8 @@
 			"client": "Client",
 			"email": "Email",
 			"phone": "Phone",
+			"created": "Created",
+			"updated": "Updated",
 			"actions": "Actions"
 		}
 	},
@@ -68,6 +70,10 @@
 			"locationTax": {
 				"title": "Location & Tax",
 				"description": "Where the client operates and how they bill."
+			},
+			"invoiceSettings": {
+				"title": "Invoice Settings",
+				"description": "Configure invoice template and contact for this client"
 			}
 		},
 		"fields": {
@@ -99,6 +105,18 @@
 			"rnc": {
 				"label": "RNC",
 				"placeholder": "Tax ID / RNC"
+			},
+			"website": {
+				"label": "Website",
+				"placeholder": "https://www.example.com"
+			},
+			"pocUserId": {
+				"label": "Point of Contact (POC)",
+				"placeholder": "Select a user"
+			},
+			"invoiceTemplateFileId": {
+				"label": "Invoice Template (.xlsx)",
+				"placeholder": "Select an .xlsx file"
 			}
 		}
 	},

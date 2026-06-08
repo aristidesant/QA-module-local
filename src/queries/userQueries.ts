@@ -1,5 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import userApi, { type GetAllUsersParams } from '~/api/userApi';
+import userApi, {
+	type GetAllUsersParams,
+	type SimpleUser,
+} from '~/api/userApi';
 import {
 	changePassword,
 	enableMFA,
@@ -27,6 +30,21 @@ export function useGetAllUsers(params?: GetAllUsersParams) {
 			const api = userApi();
 			return api.getAllUsers(params);
 		},
+		enabled: params != null,
+	});
+}
+
+/**
+ * Query to get simple users list (id, firstName, lastName) by client
+ */
+export function useGetSimpleUsers(clientId: number | undefined) {
+	return useQuery<SimpleUser[]>({
+		queryKey: ['usersSimple', clientId],
+		queryFn: async () => {
+			const api = userApi();
+			return api.getSimpleUsers(clientId!);
+		},
+		enabled: !!clientId,
 	});
 }
 

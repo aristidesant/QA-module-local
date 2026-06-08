@@ -1,10 +1,3 @@
-.container {
-	height: 100%;
-	overflow: auto;
-	display: flex;
-	flex-direction: column;
-}
-
 .tableRow {
 	cursor: pointer;
 }
@@ -44,8 +37,8 @@
 }
 
 .statusActive {
-	background-color: #ecfdf2;
-	color: #0d7530;
+	background-color: var(--nt-success-bg);
+	color: var(--nt-green-700);
 }
 
 .statusInactive {
@@ -67,16 +60,11 @@
 	min-height: 300px;
 }
 
-.loadingState {
-	height: 100%;
-	min-height: 200px;
-}
-
 /* ── Dark mode ── */
 
 [data-mantine-color-scheme='dark'] .statusActive {
-	background-color: rgba(27, 181, 74, 0.15);
-	color: #4ade80;
+	background-color: var(--brand-soft);
+	color: var(--brand-hover);
 }
 
 [data-mantine-color-scheme='dark'] .statusInactive {

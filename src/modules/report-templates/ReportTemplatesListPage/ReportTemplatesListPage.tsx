@@ -4,20 +4,20 @@ import { useNavigate } from 'react-router';
 import {
 	ActionIcon,
 	Alert,
-	Badge,
 	Button,
 	Center,
-	Group,
 	Loader,
-	Paper,
+	Menu,
 	Stack,
 	Text,
 	TextInput,
+	Tooltip,
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import {
 	IconAlertCircle,
+	IconDotsVertical,
 	IconEdit,
 	IconEye,
 	IconFileExport,
@@ -43,12 +43,26 @@ import {
 	useExportReportTemplate,
 } from '~/queries/reportTemplatesQueries';
 import { getErrorMessage } from '~/utils/httpClient';
+import { timeAgo } from '~/utils/dateUtils';
 import ReportTemplateFormModal from '../components/ReportTemplateFormModal';
 import CampaignPickerModal, {
 	type ExportData,
 } from '../components/CampaignPickerModal';
 import { downloadReportTemplateExport } from '../reportTemplateExport';
 import styles from './ReportTemplatesListPage.module.css';
+
+function dateTooltip(iso?: string | Date | null) {
+	if (!iso) return '—';
+	const date = typeof iso === 'string' ? new Date(iso) : iso;
+	if (Number.isNaN(date.getTime())) return '—';
+	return date.toLocaleString(undefined, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+	});
+}
 
 const ReportTemplatesListPage = () => {
 	const { t } = useTranslation('report-templates');
@@ -182,16 +196,11 @@ const ReportTemplatesListPage = () => {
 				size: 320,
 				cell: ({ row }) =>
 					row.original.description ? (
-						<Text
-							size='sm'
-							c='dimmed'
-							lineClamp={2}
-							className={styles.descriptionCell}
-						>
+						<Text size='sm' lineClamp={2} className={styles.descriptionCell}>
 							{row.original.description}
 						</Text>
 					) : (
-						<Text size='sm' c='dimmed'>
+						<Text size='sm' className={styles.metaCell}>
 							—
 						</Text>
 					),
@@ -201,7 +210,7 @@ const ReportTemplatesListPage = () => {
 				header: t('list.columns.schema'),
 				size: 100,
 				cell: ({ row }) => (
-					<Text size='sm' c='dimmed' className={styles.metaCell}>
+					<Text size='sm' className={styles.metaCell}>
 						{row.original.schemaId ? `#${row.original.schemaId}` : '—'}
 					</Text>
 				),
@@ -209,69 +218,66 @@ const ReportTemplatesListPage = () => {
 			{
 				id: 'createdAt',
 				header: t('list.columns.createdAt'),
-				size: 120,
+				size: 100,
 				cell: ({ row }) => (
-					<Text size='sm' c='dimmed' className={styles.metaCell}>
-						{new Date(row.original.createdAt).toLocaleDateString()}
-					</Text>
+					<Tooltip
+						label={dateTooltip(row.original.createdAt)}
+						withArrow
+						withinPortal
+					>
+						<Text size='sm'>{timeAgo(row.original.createdAt)}</Text>
+					</Tooltip>
 				),
 			},
 			{
 				id: 'actions',
-				header: t('list.columns.actions'),
-				size: 160,
+				header: '',
+				size: 48,
 				meta: {
 					headerClassName: styles.actionsHeader,
 					cellClassName: styles.actionsCell,
 				},
 				cell: ({ row }) => (
-					<Group gap='xs' justify='flex-end' wrap='nowrap'>
-						<ActionIcon
-							variant='default'
-							size='sm'
-							onClick={(event) => {
-								event.stopPropagation();
-								navigate(`/report-templates/${row.original.id}`);
-							}}
-							aria-label={t('list.actions.edit')}
-						>
-							<IconEye size={14} />
-						</ActionIcon>
-						<ActionIcon
-							variant='default'
-							size='sm'
-							onClick={(event) => {
-								event.stopPropagation();
-								handleEditClick(row.original);
-							}}
-							aria-label={t('list.actions.edit')}
-						>
-							<IconEdit size={14} />
-						</ActionIcon>
-						<ActionIcon
-							variant='default'
-							size='sm'
-							onClick={(event) => {
-								event.stopPropagation();
-								handleExportClick(row.original);
-							}}
-							aria-label={t('list.actions.export')}
-						>
-							<IconFileExport size={14} />
-						</ActionIcon>
-						<ActionIcon
-							variant='default'
-							size='sm'
-							color='red'
-							onClick={(event) => {
-								event.stopPropagation();
-								handleDelete(row.original);
-							}}
-							aria-label={t('list.actions.delete')}
-						>
-							<IconTrash size={14} />
-						</ActionIcon>
-					</Group>
+					<Menu shadow='sm' position='bottom-end' withinPortal>
+						<Menu.Target>
+							<ActionIcon
+								variant='subtle'
+								size='sm'
+								color='gray'
+								onClick={(event) => event.stopPropagation()}
+							>
+								<IconDotsVertical size={16} />
+							</ActionIcon>
+						</Menu.Target>
+						<Menu.Dropdown onClick={(event) => event.stopPropagation()}>
+							<Menu.Item
+								leftSection={<IconEye size={15} stroke={1.5} />}
+								onClick={() => navigate(`/report-templates/${row.original.id}`)}
+							>
+								{t('actions.view')}
+							</Menu.Item>
+							<Menu.Item
+								leftSection={<IconEdit size={15} stroke={1.5} />}
+								onClick={() => handleEditClick(row.original)}
+							>
+								{t('actions.edit')}
+							</Menu.Item>
+							<Menu.Item
+								leftSection={<IconFileExport size={15} stroke={1.5} />}
+								onClick={() => handleExportClick(row.original)}
+							>
+								{t('actions.export')}
+							</Menu.Item>
+							<Menu.Divider />
+							<Menu.Item
+								leftSection={<IconTrash size={15} stroke={1.5} />}
+								color='red'
+								onClick={() => handleDelete(row.original)}
+							>
+								{t('actions.delete')}
+							</Menu.Item>
+						</Menu.Dropdown>
+					</Menu>
 				),
 			},
 		],
@@ -290,23 +296,8 @@ const ReportTemplatesListPage = () => {
 		<>
 			<Stack gap='md'>
 				<SectionCard
-					icon={IconTemplate}
-					title={t('title')}
-					description={t('description')}
-					actions={{
-						primary: {
-							kind: 'add',
-							label: t('list.createNew'),
-							onClick: () => setCreateModalOpened(true),
-						},
-					}}
-					headerExtras={
-						templates.length > 0 ? (
-							<Badge variant='light' size='sm' className={styles.countBadge}>
-								{t('list.templateCount', { count: templates.length })}
-							</Badge>
-						) : undefined
-					}
+					onAdd={() => setCreateModalOpened(true)}
+					contentSpacing='md'
 				>
 					<Stack gap='md'>
 						<TextInput
@@ -329,18 +320,22 @@ const ReportTemplatesListPage = () => {
 									: t('list.errorDescription')}
 							</Alert>
 						) : !isLoading && templates.length === 0 ? (
-							<Paper
-								withBorder
-								p='lg'
-								radius='md'
-								className={styles.emptyStateCard}
-							>
+							<div className={styles.emptyStateCard}>
 								<Stack gap='xs' align='center'>
-									<IconTemplate size={32} color='var(--mantine-color-gray-5)' />
-									<Text size='sm' fw={600} ta='center'>
+									<IconTemplate size={32} className={styles.emptyStateIcon} />
+									<Text
+										size='sm'
+										fw={600}
+										ta='center'
+										className={styles.emptyStateTitle}
+									>
 										{t('list.noTemplates')}
 									</Text>
-									<Text size='sm' c='dimmed' ta='center'>
+									<Text
+										size='sm'
+										ta='center'
+										className={styles.emptyStateDescription}
+									>
 										{t('list.noTemplatesDescription')}
 									</Text>
 									<Button
@@ -351,7 +346,7 @@ const ReportTemplatesListPage = () => {
 										{t('list.createNew')}
 									</Button>
 								</Stack>
-							</Paper>
+							</div>
 						) : (
 							<BaseTable<ReportTemplate>
 								data={filteredTemplates}

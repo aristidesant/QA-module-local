@@ -1,5 +1,7 @@
 import axios from 'axios';
 import { DEFAULT_API_URL } from './config';
+import type FileModel from '~/models/FileModel';
+import type FileTypeModel from '~/models/FileTypeModel';
 
 /**
  * File API client
@@ -16,6 +18,21 @@ export type GetPresignedUrlOptions = {
 
 const fileApi = (_authHeader?: Record<string, string>) => {
 	return {
+		/**
+		 * Fetch a presigned URL for a file by ID.
+		 * Accepts both plain string response and object variants commonly used by APIs.
+		 */
+		/**
+		 * Fetch all files belonging to a client.
+		 */
+		getClientFiles: async (clientId: number): Promise<FileModel[]> => {
+			const response = await axios.get<FileModel[]>(
+				`${DEFAULT_API_URL}/files`,
+				{ params: { clientId } }
+			);
+			return response.data;
+		},
+
 		/**
 		 * Fetch a presigned URL for a file by ID.
 		 * Accepts both plain string response and object variants commonly used by APIs.
@@ -56,6 +73,31 @@ const fileApi = (_authHeader?: Record<string, string>) => {
 			}
 
 			throw new Error('Unexpected response when requesting presigned file URL');
+		},
+
+		getFileTypes: async (): Promise<FileTypeModel[]> => {
+			const response = await axios.get<FileTypeModel[]>(
+				`${DEFAULT_API_URL}/file-types`
+			);
+			return response.data;
+		},
+
+		uploadFile: async (
+			file: File,
+			codeType?: string,
+			description?: string,
+			typeId?: number
+		): Promise<FileModel> => {
+			const formData = new FormData();
+			formData.append('file', file);
+			if (codeType) formData.append('codeType', codeType);
+			if (description) formData.append('description', description);
+			if (typeId != null) formData.append('typeId', String(typeId));
+			const response = await axios.post<FileModel>(
+				`${DEFAULT_API_URL}/files/upload`,
+				formData
+			);
+			return response.data;
 		},
 	};
 };

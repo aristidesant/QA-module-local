@@ -20,6 +20,7 @@ interface WorkflowEditorFullscreenProps {
 	nodeGroups?: NodeGroups;
 	onNodeGroupsChange?: (nodeGroups: NodeGroups) => void;
 	onNodeStylesChange?: (nodeStyles: NodeStyles) => void;
+	currentAgentId?: string;
 }
 
 const WorkflowEditorFullscreen = ({
@@ -34,6 +35,7 @@ const WorkflowEditorFullscreen = ({
 	nodeGroups,
 	onNodeGroupsChange,
 	onNodeStylesChange,
+	currentAgentId,
 }: WorkflowEditorFullscreenProps) => {
 	const { t } = useTranslation([
 		'campaign.form.workflow',
@@ -127,6 +129,7 @@ const WorkflowEditorFullscreen = ({
 						allowDefaultInit={allowDefaultInit}
 						onNodeSelect={onNodeSelect}
 						layoutMode='fullscreen'
+						currentAgentId={currentAgentId}
 					/>
 				</div>
 			</div>

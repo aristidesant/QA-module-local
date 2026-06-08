@@ -36,4 +36,7 @@ export const campaignRouteNamespaces: Record<
 	'campaign.detail.test.legacy': 'campaign.detail.test',
 	dashboards: 'dashboards',
 	'conversations.detail': 'conversations',
+	invoices: 'billing',
+	'invoices-new': 'billing',
+	'invoices-detail': 'billing',
 };

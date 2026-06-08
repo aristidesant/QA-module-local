@@ -194,22 +194,22 @@ export interface UpdateStateLlmExpression {
 }
 
 export interface UpdateStateStringExpression {
-	type: 'string';
+	type: 'string_literal';
 	value: string;
 }
 
 export interface UpdateStateNumberExpression {
-	type: 'number';
+	type: 'number_literal';
 	value: number;
 }
 
 export interface UpdateStateBooleanExpression {
-	type: 'boolean';
+	type: 'boolean_literal';
 	value: boolean;
 }
 
 export interface UpdateStateNullExpression {
-	type: 'null';
+	type: 'null_literal';
 }
 
 export interface UpdateStateDynamicVariableExpression {

@@ -379,6 +379,47 @@ export interface BuildWorkflowResult {
 	nodeGroups: NodeGroups;
 }
 
+const normalizeEdgeOrderValue = (value: unknown): string[] =>
+	Array.isArray(value)
+		? value.filter((edgeId): edgeId is string => typeof edgeId === 'string')
+		: [];
+
+const normalizeBuiltWorkflowEdgeOrder = (
+	workflow: AgentWorkflow
+): AgentWorkflow => {
+	const outgoingEdgeIdsBySource = new Map<string, string[]>();
+
+	Object.entries(workflow.edges).forEach(([edgeId, edge]) => {
+		const outgoingEdgeIds = outgoingEdgeIdsBySource.get(edge.source) ?? [];
+		outgoingEdgeIds.push(edgeId);
+		outgoingEdgeIdsBySource.set(edge.source, outgoingEdgeIds);
+	});
+
+	const nodes = Object.entries(workflow.nodes).reduce<
+		Record<string, WorkflowNode>
+	>((result, [nodeId, node]) => {
+		const configuredOrder = normalizeEdgeOrderValue(node.edge_order);
+		const validConfiguredOrder = configuredOrder.filter(
+			(edgeId) => workflow.edges[edgeId]?.source === nodeId
+		);
+		const outgoingEdgeIds = outgoingEdgeIdsBySource.get(nodeId) ?? [];
+		const missingOutgoingEdgeIds = outgoingEdgeIds.filter(
+			(edgeId) => !validConfiguredOrder.includes(edgeId)
+		);
+
+		result[nodeId] = {
+			...node,
+			edge_order: [...validConfiguredOrder, ...missingOutgoingEdgeIds],
+		} as WorkflowNode;
+		return result;
+	}, {});
+
+	return {
+		...workflow,
+		nodes,
+	};
+};
+
 export const buildWorkflowFromState = (
 	currentNodes: Node[],
 	currentEdges: Edge[],
@@ -418,7 +459,6 @@ export const buildWorkflowFromState = (
 			position: node.position,
 			edge_order: data.edge_order ?? [],
 			label: data.label,
-			uiMeta: data.uiMeta,
 		};
 
 		switch (normalizedNodeType) {
@@ -478,7 +518,7 @@ export const buildWorkflowFromState = (
 					transfer_destination: (data as PhoneNumberTransferNode)
 						.transfer_destination ?? {
 						type: 'phone',
-						phoneNumber: '',
+						phone_number: '',
 					},
 				};
 				workflowNodes[node.id] = phoneNode;
@@ -567,12 +607,14 @@ export const buildWorkflowFromState = (
 		};
 	});
 
+	const workflow = normalizeBuiltWorkflowEdgeOrder({
+		prevent_subagent_loops,
+		nodes: workflowNodes,
+		edges: workflowEdges,
+	});
+
 	return {
-		workflow: {
-			prevent_subagent_loops,
-			nodes: workflowNodes,
-			edges: workflowEdges,
-		},
+		workflow,
 		nodeGroups,
 	};
 };

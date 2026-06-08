@@ -1,0 +1,391 @@
+{
+	"page": {
+		"title": "Facturas",
+		"description": "Genera y gestiona facturas de clientes",
+		"actions": {
+			"newInvoice": "Nueva Factura"
+		},
+		"summary": {
+			"loaded": "Cargadas",
+			"draft": "Borrador",
+			"issued": "Emitidas",
+			"voided": "Anuladas",
+			"visibleValue": "Valor visible"
+		}
+	},
+	"list": {
+		"empty": "No se encontraron facturas.",
+		"emptyTitle": "No hay facturas para esta vista",
+		"emptyDescription": "Ajusta los filtros o crea una nueva factura para iniciar la facturación de esta relación de clientes.",
+		"relationship": "{{issuer}} a {{receiver}}",
+		"error": {
+			"title": "No se pudieron cargar las facturas",
+			"unknown": "Error desconocido"
+		},
+		"columns": {
+			"invoiceNumber": "Factura #",
+			"issuer": "Emisor",
+			"receiver": "Receptor",
+			"period": "Período",
+			"status": "Estado",
+			"currency": "Moneda",
+			"total": "Total",
+			"createdAt": "Creada",
+			"actions": "Acciones"
+		},
+		"actions": {
+			"view": "Ver",
+			"issue": "Emitir",
+			"void": "Anular",
+			"download": "Descargar XLSX"
+		}
+	},
+	"filters": {
+		"status": {
+			"label": "Estado",
+			"placeholder": "Todos los estados"
+		},
+		"issuerClient": {
+			"label": "Emisor",
+			"placeholder": "Todos los emisores"
+		},
+		"receiverClient": {
+			"label": "Receptor",
+			"placeholder": "Todos los receptores"
+		},
+		"periodStart": "Período desde",
+		"periodEnd": "Período hasta",
+		"clearFilters": "Limpiar filtros"
+	},
+	"status": {
+		"DRAFT": "Borrador",
+		"ISSUED": "Emitida",
+		"VOIDED": "Anulada"
+	},
+	"new": {
+		"title": "Nueva Factura",
+		"sections": {
+			"parties": "Partes",
+			"period": "Período de facturación",
+			"identity": "Identidad de la factura",
+			"financials": "Configuración financiera",
+			"summary": "Configuración de factura",
+			"review": "Revisar factura",
+			"reviewDescription": "Verifica los detalles antes de continuar",
+			"confirm": "Confirmar",
+			"confirmDescription": "Define el estado de la factura y créala",
+			"confirmTitle": "Confirmar Factura",
+			"invoiceDetails": "Detalles de la Factura"
+		},
+		"steps": {
+			"parameters": "Parámetros",
+			"preview": "Vista previa",
+			"confirm": "Confirmar"
+		},
+		"form": {
+			"issuerClient": {
+				"label": "Cliente Emisor",
+				"placeholder": "Seleccionar emisor",
+				"description": "Siempre el tenant principal"
+			},
+			"receiverClient": {
+				"label": "Cliente Receptor",
+				"placeholder": "Seleccionar receptor",
+				"description": "El cliente a facturar"
+			},
+			"periodStart": {
+				"label": "Inicio del Período"
+			},
+			"periodEnd": {
+				"label": "Fin del Período"
+			},
+			"invoiceNumber": {
+				"label": "Número de Factura",
+				"placeholder": "ej. INV-2026-0001"
+			},
+			"currency": {
+				"label": "Moneda"
+			},
+			"taxRate": {
+				"label": "Tasa de Impuesto (%)"
+			},
+			"hourlyRate": {
+				"label": "Tarifa por Hora"
+			}
+		},
+		"validation": {
+			"issuerRequired": "El emisor es obligatorio",
+			"receiverRequired": "El receptor es obligatorio",
+			"periodStartRequired": "La fecha de inicio es obligatoria",
+			"periodEndRequired": "La fecha de fin es obligatoria",
+			"invoiceNumberRequired": "El número de factura es obligatorio",
+			"hourlyRateMin": "La tarifa por hora debe ser 0 o mayor",
+			"taxRateRange": "La tasa de impuesto debe estar entre 0 y 100"
+		},
+		"actions": {
+			"preview": "Vista Previa",
+			"back": "Atrás",
+			"continue": "Continuar",
+			"create": "Crear Factura",
+			"creating": "Creando...",
+			"cancel": "Cancelar"
+		},
+		"conflict": {
+			"title": "Conflicto de factura activa",
+			"description": "Ya existe una factura activa para este emisor, receptor y período:",
+			"replaceLabel": "Reemplazar factura existente",
+			"replaceReasonLabel": "Motivo del reemplazo",
+			"replaceReasonPlaceholder": "Describe por qué se reemplaza esta factura",
+			"replaceReasonRequired": "El motivo es obligatorio al reemplazar"
+		},
+		"warnings": {
+			"title": "Advertencias de cálculo"
+		},
+		"statusLabel": "Estado de Factura",
+		"statusDraft": "Borrador",
+		"statusIssued": "Emitida",
+		"summary": {
+			"period": "Período",
+			"invoiceNumber": "Número de Factura",
+			"total": "Total",
+			"subtotal": "Subtotal",
+			"issuer": "Emisor",
+			"receiver": "Receptor",
+			"currency": "Moneda",
+			"taxRate": "Tasa de impuesto",
+			"hourlyRate": "Tarifa por hora",
+			"status": "Crear como",
+			"draftDescription": "Guardar para revisión posterior. Se puede editar o emitir cuando esté listo.",
+			"issuedDescription": "Enviar inmediatamente. No se puede editar después de la emisión."
+		}
+	},
+	"detail": {
+		"title": "Factura",
+		"actions": {
+			"issue": "Emitir Factura",
+			"issueConfirm": "¿Estás seguro de que deseas emitir esta factura? Esto cambiará su estado a Emitida.",
+			"void": "Anular Factura",
+			"voidTitle": "Anular Factura",
+			"voidDescription": "Esta acción no se puede deshacer. Proporciona un motivo para anular esta factura.",
+			"voidReasonLabel": "Motivo",
+			"voidReasonPlaceholder": "Describe por qué se anula esta factura",
+			"voidConfirm": "Anular Factura",
+			"download": "Descargar XLSX",
+			"back": "Volver a Facturas"
+		},
+		"metadata": {
+			"invoiceNumber": "Número de Factura",
+			"status": "Estado",
+			"createdAt": "Creada",
+			"period": "Período",
+			"currency": "Moneda",
+			"issuer": "Emisor",
+			"receiver": "Receptor"
+		},
+		"error": {
+			"notFound": "Factura no encontrada."
+		},
+		"review": {
+			"title": "Revisión de factura",
+			"identity": "Identidad de la factura",
+			"parties": "Partes",
+			"financials": "Resumen financiero",
+			"total": "Total",
+			"subtotal": "Subtotal",
+			"tax": "Impuesto",
+			"hourlyRate": "Tarifa por hora",
+			"taxRate": "Tasa de impuesto",
+			"voidedTitle": "Factura anulada",
+			"voidedAt": "Anulada en",
+			"voidReason": "Motivo"
+		}
+	},
+	"snapshot": {
+		"invoiceBasics": "Datos de factura",
+		"emptyValue": "No indicado",
+		"fields": {
+			"name": "Nombre",
+			"rnc": "RNC",
+			"email": "Correo electrónico",
+			"phone": "Teléfono",
+			"address": "Dirección",
+			"website": "Sitio web"
+		},
+		"issuerInfo": "Emisor",
+		"receiverInfo": "Receptor",
+		"pocContacts": "Contactos",
+		"pocIssuer": "Contacto del Emisor",
+		"pocReceiver": "Contacto del Receptor",
+		"summaryLines": "Resumen",
+		"executionDetails": "Detalles de Ejecución",
+		"showExecutionDetails": "Mostrar detalles de ejecución",
+		"hideExecutionDetails": "Ocultar detalles de ejecución",
+		"totals": "Totales",
+		"columns": {
+			"campaign": "Campaña",
+			"agents": "Agentes",
+			"uptime": "Tiempo activo",
+			"calls": "Llamadas",
+			"hourlyRate": "Tarifa/hora",
+			"total": "Total",
+			"date": "Fecha",
+			"start": "Inicio",
+			"end": "Fin"
+		},
+		"noSummaryLines": "No se encontró actividad facturable para este período.",
+		"subtotal": "Subtotal",
+		"tax": "Impuesto",
+		"total": "Total"
+	},
+	"notifications": {
+		"created": {
+			"title": "Factura creada",
+			"message": "La factura {{number}} ha sido creada."
+		},
+		"issued": {
+			"title": "Factura emitida",
+			"message": "La factura {{number}} ha sido emitida."
+		},
+		"voided": {
+			"title": "Factura anulada",
+			"message": "La factura {{number}} ha sido anulada."
+		},
+		"previewFailed": {
+			"title": "No se pudo previsualizar",
+			"message": "No se pudo previsualizar esta factura. Revisa los parámetros e intenta de nuevo."
+		},
+		"createFailed": {
+			"title": "Factura no creada",
+			"message": "No se pudo crear esta factura. Intenta de nuevo."
+		},
+		"createConflict": {
+			"title": "Conflicto de factura",
+			"message": "Se detectó un conflicto. La vista previa fue actualizada."
+		},
+		"issueFailed": {
+			"title": "Factura no emitida",
+			"message": "No se pudo emitir esta factura. Intenta de nuevo."
+		},
+		"voidFailed": {
+			"title": "Factura no anulada",
+			"message": "No se pudo anular esta factura. Intenta de nuevo."
+		},
+		"voidReasonRequired": {
+			"title": "Motivo requerido",
+			"message": "Agrega un motivo antes de anular esta factura."
+		},
+		"downloadFailed": {
+			"title": "No se pudo descargar",
+			"invalidTemplate": "La plantilla de factura no es válida. Revisa la configuración de plantilla del emisor.",
+			"noTemplate": "No hay plantilla de factura configurada para el emisor. Agrega una plantilla .xlsx en la configuración de facturación del cliente.",
+			"generic": "No se pudo descargar la factura. Intenta de nuevo."
+		}
+	},
+	"templates": {
+		"card": {
+			"title": "Configuración de Plantilla de Factura",
+			"description": "Administra las plantillas XLSX para la generación de facturas"
+		},
+		"issuerClient": {
+			"label": "Cliente Emisor",
+			"placeholder": "Seleccionar cliente emisor",
+			"helper": "Elige un cliente para ver, subir o eliminar la plantilla de factura asignada."
+		},
+		"currentTemplate": "Plantilla Actual",
+		"lastUpdated": "Última actualización",
+		"status": {
+			"configured": "Configurada",
+			"none": "Sin configurar"
+		},
+		"actions": {
+			"upload": "Subir Plantilla",
+			"uploading": "Subiendo...",
+			"download": "Descargar Plantilla",
+			"remove": "Eliminar Plantilla"
+		},
+		"info": "Cambiar la plantilla afecta las descargas futuras de facturas existentes. Soporta archivos XLSX.",
+		"count": "{{count}} configuradas",
+		"notifications": {
+			"uploaded": "Plantilla subida y asignada",
+			"removed": "Plantilla eliminada",
+			"uploadError": "No se pudo subir la plantilla. Verifica que el archivo sea un .xlsx válido.",
+			"downloadError": "No se pudo descargar la plantilla de factura.",
+			"assignError": "La plantilla seleccionada no pertenece a este cliente emisor o no es un archivo .xlsx válido."
+		},
+		"variablesGuide": {
+			"action": "Ver Variables Disponibles",
+			"title": "Variables de la Plantilla de Factura",
+			"description": "Utiliza estos placeholders en tu plantilla XLSX. Al generar la factura, cada placeholder será reemplazado con el valor real del sistema.",
+			"sections": {
+				"invoice": {
+					"label": "Información de la Factura",
+					"desc": "Valores tomados del formulario de creación o vista previa de la factura.",
+					"number": "El número de factura asignado a esta factura. Se establece al crear o previsualizar la factura.",
+					"periodStart": "La fecha de inicio del período de facturación.",
+					"periodEnd": "La fecha de fin del período de facturación.",
+					"currency": "El código de moneda usado para los valores monetarios (ej. USD, DOP).",
+					"taxRate": "El porcentaje de impuesto aplicado al subtotal.",
+					"hourlyRateFormatted": "La tarifa por hora, formateada con el símbolo de la moneda."
+				},
+				"issuer": {
+					"label": "Cliente Emisor",
+					"desc": "Información del cliente seleccionado como emisor de la factura.",
+					"name": "El nombre legal completo del cliente emisor, según registrado en el sistema.",
+					"rnc": "El número de identificación fiscal (RNC) del cliente emisor.",
+					"email": "La dirección de correo electrónico del cliente emisor.",
+					"phone": "El número de teléfono del cliente emisor.",
+					"address": "La dirección física del cliente emisor.",
+					"website": "La URL del sitio web del cliente emisor."
+				},
+				"receiver": {
+					"label": "Cliente Receptor",
+					"desc": "Información del cliente seleccionado como receptor de la factura.",
+					"name": "El nombre legal completo del cliente receptor, según registrado en el sistema.",
+					"rnc": "El número de identificación fiscal (RNC) del cliente receptor.",
+					"email": "La dirección de correo electrónico del cliente receptor.",
+					"phone": "El número de teléfono del cliente receptor.",
+					"address": "La dirección física del cliente receptor.",
+					"website": "La URL del sitio web del cliente receptor."
+				},
+				"poc": {
+					"label": "Puntos de Contacto",
+					"desc": "Personas de contacto asignadas a los clientes emisor y receptor.",
+					"issuerName": "El nombre del punto de contacto en el cliente emisor.",
+					"issuerEmail": "El correo del punto de contacto en el cliente emisor.",
+					"receiverName": "El nombre del punto de contacto en el cliente receptor.",
+					"receiverEmail": "El correo del punto de contacto en el cliente receptor."
+				},
+				"totals": {
+					"label": "Totales",
+					"desc": "Valores resumidos calculados a partir de las líneas de factura y la configuración.",
+					"subtotal": "La suma de todos los totales por campaña antes de impuestos, formateada con la moneda.",
+					"taxRate": "El porcentaje de la tasa de impuesto aplicada.",
+					"taxTotal": "El monto total de impuesto (subtotal × tasa de impuesto), formateado con la moneda.",
+					"total": "El gran total (subtotal + impuesto), formateado con la moneda."
+				},
+				"summaryLines": {
+					"label": "Tabla de Líneas Resumen",
+					"desc": "Esta sección se repite una vez por campaña. Envuelve las filas de tu tabla con este bloque para generar una fila por campaña.",
+					"blockDesc": "Abre y cierra el bloque de repetición. Todo lo que esté entre estas etiquetas se genera una vez por campaña.",
+					"campaignName": "El nombre de la campaña.",
+					"activeAiAgents": "La cantidad de agentes de IA activos durante el período de facturación para esta campaña.",
+					"uptime": "El tiempo activo total para esta campaña, formateado como HH:mm:ss.",
+					"hourlyRate": "La tarifa por hora, formateada con el símbolo de la moneda.",
+					"total": "El costo total para esta campaña (horas activas × tarifa por hora), formateado con la moneda."
+				},
+				"executionDetails": {
+					"label": "Tabla de Detalles de Ejecución",
+					"desc": "Esta sección se repite una vez por campaña por día. Envuelve las filas de tu tabla con este bloque para generar una fila por cada día de ejecución.",
+					"blockDesc": "Abre y cierra el bloque de repetición. Todo lo que esté entre estas etiquetas se genera una vez por día de campaña.",
+					"campaignName": "El nombre de la campaña.",
+					"executionDate": "La fecha de ejecución para esta campaña.",
+					"activeAiAgents": "La cantidad de agentes de IA activos en esta fecha de ejecución.",
+					"uptime": "El tiempo activo total para esta fecha de ejecución, formateado como HH:mm:ss.",
+					"callsCount": "La cantidad de conversaciones facturables en esta fecha de ejecución.",
+					"startTimestamp": "La marca de tiempo de la primera conversación del día.",
+					"endTimestamp": "La marca de tiempo de la última conversación del día."
+				}
+			}
+		}
+	}
+}

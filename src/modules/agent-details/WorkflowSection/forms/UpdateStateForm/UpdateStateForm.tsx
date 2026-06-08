@@ -108,14 +108,7 @@ const UpdateStateForm = ({
 
 	if (!node) {
 		return (
-			<WorkflowNodeForm
-				title={t('form.workflow.forms.updateState.title', {
-					defaultValue: 'Update state',
-				})}
-				description={t('form.workflow.forms.updateState.missingNode', {
-					defaultValue: 'Update state node not found',
-				})}
-			>
+			<WorkflowNodeForm>
 				<Text size='sm' c='dimmed'>
 					{t('form.workflow.forms.updateState.missingNodeHint', {
 						defaultValue:
@@ -328,7 +321,7 @@ const UpdateStateForm = ({
 							})}
 							data={[
 								{
-									value: 'string',
+									value: 'string_literal',
 									label: t(
 										'form.workflow.forms.updateState.expressionType.options.string',
 										{
@@ -337,7 +330,7 @@ const UpdateStateForm = ({
 									),
 								},
 								{
-									value: 'number',
+									value: 'number_literal',
 									label: t(
 										'form.workflow.forms.updateState.expressionType.options.number',
 										{
@@ -364,7 +357,7 @@ const UpdateStateForm = ({
 									),
 								},
 								{
-									value: 'null',
+									value: 'null_literal',
 									label: t(
 										'form.workflow.forms.updateState.expressionType.options.null',
 										{
@@ -489,7 +482,7 @@ const UpdateStateForm = ({
 								input: styles.promptTextarea,
 							}}
 						/>
-					) : expression.type === 'string' ? (
+					) : expression.type === 'string_literal' ? (
 						<TextInput
 							label={t('form.workflow.forms.updateState.value.label', {
 								defaultValue: 'Value',
@@ -505,7 +498,7 @@ const UpdateStateForm = ({
 									const nextUpdate: UpdateStateUpdate = {
 										...current,
 										expression: {
-											type: 'string',
+											type: 'string_literal',
 											value: event.currentTarget.value,
 										},
 									};
@@ -519,7 +512,7 @@ const UpdateStateForm = ({
 								input: styles.input,
 							}}
 						/>
-					) : expression.type === 'number' ? (
+					) : expression.type === 'number_literal' ? (
 						<NumberInput
 							label={t('form.workflow.forms.updateState.value.label', {
 								defaultValue: 'Value',
@@ -535,7 +528,7 @@ const UpdateStateForm = ({
 									const nextUpdate: UpdateStateUpdate = {
 										...current,
 										expression: {
-											type: 'number',
+											type: 'number_literal',
 											value:
 												typeof value === 'number' && Number.isFinite(value)
 													? value
@@ -615,14 +608,7 @@ const UpdateStateForm = ({
 	};
 
 	return (
-		<WorkflowNodeForm
-			title={t('form.workflow.forms.updateState.title', {
-				defaultValue: 'Update state',
-			})}
-			description={t('form.workflow.forms.updateState.description', {
-				defaultValue: 'Configure dynamic variables updated by this node.',
-			})}
-		>
+		<WorkflowNodeForm>
 			<Stack gap='xs'>
 				<TextInput
 					label={t('form.workflow.forms.updateState.label.label', {
@@ -867,10 +853,6 @@ const UpdateStateForm = ({
 							nodeId={nodeId}
 							workflow={workflow}
 							onWorkflowChange={onWorkflowChange}
-							title={t('form.workflow.forms.updateState.tabs.edges', {
-								defaultValue: 'Edges',
-							})}
-							description={t('form.workflow.forms.agent.edgesTab.description')}
 							emptyMessage={t('form.workflow.forms.agent.edgesTab.empty')}
 						/>
 					</Tabs.Panel>

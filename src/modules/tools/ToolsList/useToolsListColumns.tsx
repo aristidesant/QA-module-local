@@ -1,33 +1,33 @@
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { ActionIcon, Group, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Menu, Text, Tooltip } from '@mantine/core';
 import type { ToolModel } from '~/models/ToolModel';
 import { useTranslation } from 'react-i18next';
-import { IconTrash } from '@tabler/icons-react';
+import { IconDotsVertical, IconEdit, IconTrash } from '@tabler/icons-react';
+import { timeAgo } from '~/utils/dateUtils';
 import styles from '../ToolsList/ToolsList.module.css';
 
 interface UseToolsListColumnsProps {
 	onDelete: (tool: ToolModel) => void;
+	onEdit: (tool: ToolModel) => void;
 }
 
-const getDateLocale = (language: string) => {
-	const normalized = language?.toLowerCase?.() ?? 'en';
-	if (normalized.startsWith('en')) return 'en-US';
-	if (normalized.startsWith('es')) return 'es-ES';
-	return 'en-US';
-};
-
-const formatDate = (dateString: string, language: string) =>
-	new Date(dateString).toLocaleDateString(getDateLocale(language), {
+function dateTooltip(iso?: string | null) {
+	if (!iso) return '-';
+	return new Date(iso).toLocaleString(undefined, {
 		year: 'numeric',
 		month: 'short',
 		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
 	});
+}
 
 function useToolsListColumns({
 	onDelete,
+	onEdit,
 }: UseToolsListColumnsProps): ColumnDef<ToolModel>[] {
-	const { t, i18n } = useTranslation('tools');
+	const { t } = useTranslation('tools');
 
 	return useMemo<ColumnDef<ToolModel>[]>(() => {
 		return [
@@ -83,11 +83,28 @@ function useToolsListColumns({
 			{
 				accessorKey: 'createdAt',
 				header: t('columns.created'),
-				cell: ({ row }) => (
-					<Text fz='xs' c='dimmed'>
-						{formatDate(row.original.createdAt, i18n.language)}
-					</Text>
-				),
+				cell: ({ getValue }) => {
+					const value = getValue() as string;
+					return (
+						<Tooltip label={dateTooltip(value)} withArrow withinPortal>
+							<Text fz='sm'>{timeAgo(value)}</Text>
+						</Tooltip>
+					);
+				},
+				size: 100,
+			},
+			{
+				accessorKey: 'updatedAt',
+				header: t('columns.updated'),
+				cell: ({ getValue }) => {
+					const value = getValue() as string;
+					return (
+						<Tooltip label={dateTooltip(value)} withArrow withinPortal>
+							<Text fz='sm'>{timeAgo(value)}</Text>
+						</Tooltip>
+					);
+				},
+				size: 100,
 			},
 			{
 				id: 'actions',
@@ -97,26 +114,40 @@ function useToolsListColumns({
 					cellClassName: styles.actionsCell,
 				},
 				cell: ({ row }) => (
-					<Group gap='xs' wrap='nowrap' justify='flex-end'>
-						<Tooltip label={t('actions.delete')} withArrow>
-							<ActionIcon
-								size='sm'
-								variant='subtle'
-								color='red'
-								onClick={(event) => {
-									event.stopPropagation();
-									onDelete(row.original);
-								}}
-								aria-label={t('actions.delete')}
-							>
-								<IconTrash size={16} />
-							</ActionIcon>
-						</Tooltip>
+					<Group justify='flex-end' onClick={(e) => e.stopPropagation()}>
+						<Menu shadow='sm' position='bottom-end' withinPortal>
+							<Menu.Target>
+								<ActionIcon
+									variant='subtle'
+									size='sm'
+									aria-label={t('columns.actions')}
+								>
+									<IconDotsVertical size={15} />
+								</ActionIcon>
+							</Menu.Target>
+							<Menu.Dropdown>
+								<Menu.Item
+									leftSection={<IconEdit size={15} stroke={1.5} />}
+									onClick={() => onEdit(row.original)}
+								>
+									{t('actions.saveChanges')}
+								</Menu.Item>
+								<Menu.Divider />
+								<Menu.Item
+									leftSection={<IconTrash size={15} stroke={1.5} />}
+									color='red'
+									onClick={() => onDelete(row.original)}
+								>
+									{t('actions.delete')}
+								</Menu.Item>
+							</Menu.Dropdown>
+						</Menu>
 					</Group>
 				),
+				size: 60,
 			},
 		];
-	}, [i18n.language, onDelete, t]);
+	}, [onDelete, onEdit, t]);
 }
 
 export default useToolsListColumns;

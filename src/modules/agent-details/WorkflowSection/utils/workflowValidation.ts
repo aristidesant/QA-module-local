@@ -80,6 +80,26 @@ export const validateWorkflowEdgeConditions = (
 export const validateWorkflow = (
 	workflow: AgentWorkflow | undefined
 ): EdgeConditionValidationResult => {
+	if (!workflow) {
+		return validateWorkflowEdgeConditions(workflow);
+	}
+
+	const invalidTransferNodes = Object.entries(workflow.nodes).filter(
+		([, node]) =>
+			node.type === 'standalone_agent' &&
+			(!('agent_id' in node) ||
+				typeof node.agent_id !== 'string' ||
+				node.agent_id.trim().length === 0)
+	);
+
+	if (invalidTransferNodes.length > 0) {
+		return {
+			isValid: false,
+			invalidEdges: [],
+			errorMessage: `${invalidTransferNodes.length} agent transfer node(s) are missing a target agent`,
+		};
+	}
+
 	return validateWorkflowEdgeConditions(workflow);
 };
 

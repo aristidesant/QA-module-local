@@ -1,0 +1,93 @@
+.reviewGrid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(280px, 0.7fr);
+	gap: var(--mantine-spacing-md);
+	align-items: stretch;
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-md);
+}
+
+.infoGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-sm);
+}
+
+.infoBlock {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.label {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-dimmed);
+}
+
+.value {
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 500;
+	overflow-wrap: anywhere;
+}
+
+.partyHeader {
+	flex-wrap: wrap;
+}
+
+.partyName {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 650;
+	line-height: 1.25;
+	overflow-wrap: anywhere;
+}
+
+.totalsPanel {
+	height: 100%;
+}
+
+.totalHero {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding-bottom: var(--mantine-spacing-xs);
+	border-bottom: 1px solid var(--surface-border);
+}
+
+.totalAmount {
+	font-size: 1.75rem;
+	font-weight: 750;
+	line-height: 1.1;
+	letter-spacing: 0;
+}
+
+.totalsGrid {
+	display: grid;
+	grid-template-columns: 1fr auto;
+	gap: var(--mantine-spacing-xs) var(--mantine-spacing-xl);
+}
+
+.collapseButton {
+	width: 100%;
+	padding: var(--mantine-spacing-xs) 0;
+}
+
+.divider {
+	grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+	.reviewGrid,
+	.grid,
+	.infoGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.totalAmount {
+		font-size: 1.4rem;
+	}
+}

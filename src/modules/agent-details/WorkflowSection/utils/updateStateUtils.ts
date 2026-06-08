@@ -13,11 +13,11 @@ import type {
 
 export type UpdateStateExpressionKind =
 	| 'llm'
-	| 'string'
-	| 'number'
+	| 'string_literal'
+	| 'number_literal'
 	| 'boolean_true'
 	| 'boolean_false'
-	| 'null'
+	| 'null_literal'
 	| 'dynamic_variable';
 
 export const DEFAULT_UPDATE_STATE_VARIABLE_NAMES = [
@@ -160,16 +160,16 @@ export const createDefaultUpdateStateExpression = (
 	type: UpdateStateExpressionKind = 'llm'
 ): UpdateStateExpression => {
 	switch (type) {
-		case 'string':
-			return { type: 'string', value: '' };
-		case 'number':
-			return { type: 'number', value: Number.NaN };
+		case 'string_literal':
+			return { type: 'string_literal', value: '' };
+		case 'number_literal':
+			return { type: 'number_literal', value: Number.NaN };
 		case 'boolean_true':
-			return { type: 'boolean', value: true };
+			return { type: 'boolean_literal', value: true };
 		case 'boolean_false':
-			return { type: 'boolean', value: false };
-		case 'null':
-			return { type: 'null' };
+			return { type: 'boolean_literal', value: false };
+		case 'null_literal':
+			return { type: 'null_literal' };
 		case 'dynamic_variable':
 			return { type: 'dynamic_variable', variable_name: '' };
 		case 'llm':
@@ -192,16 +192,16 @@ const getStringFromExpression = (
 	if (!expression) return '';
 
 	switch (expression.type) {
-		case 'string':
+		case 'string_literal':
 			return expression.value;
-		case 'number':
+		case 'number_literal':
 			return Number.isFinite(expression.value) ? String(expression.value) : '';
-		case 'boolean':
+		case 'boolean_literal':
 			return expression.value ? 'true' : 'false';
 		case 'dynamic_variable':
 			return expression.variable_name;
 		case 'llm':
-		case 'null':
+		case 'null_literal':
 		default:
 			return '';
 	}
@@ -211,7 +211,7 @@ export const getUpdateStateExpressionKind = (
 	expression?: UpdateStateExpression | null
 ): UpdateStateExpressionKind => {
 	if (!expression) return 'llm';
-	if (expression.type === 'boolean') {
+	if (expression.type === 'boolean_literal') {
 		return expression.value ? 'boolean_true' : 'boolean_false';
 	}
 	return expression.type;
@@ -222,31 +222,33 @@ export const buildUpdateStateExpression = (
 	currentExpression?: UpdateStateExpression
 ): UpdateStateExpression => {
 	switch (type) {
-		case 'string':
+		case 'string_literal':
 			return {
-				type: 'string',
+				type: 'string_literal',
 				value: getStringFromExpression(currentExpression),
 			} satisfies UpdateStateStringExpression;
-		case 'number': {
+		case 'number_literal': {
 			const currentValue =
-				currentExpression?.type === 'number' ? currentExpression.value : NaN;
+				currentExpression?.type === 'number_literal'
+					? currentExpression.value
+					: NaN;
 			return {
-				type: 'number',
+				type: 'number_literal',
 				value: currentValue,
 			} satisfies UpdateStateNumberExpression;
 		}
 		case 'boolean_false':
 			return {
-				type: 'boolean',
+				type: 'boolean_literal',
 				value: false,
 			} satisfies UpdateStateBooleanExpression;
 		case 'boolean_true':
 			return {
-				type: 'boolean',
+				type: 'boolean_literal',
 				value: true,
 			} satisfies UpdateStateBooleanExpression;
-		case 'null':
-			return { type: 'null' };
+		case 'null_literal':
+			return { type: 'null_literal' };
 		case 'dynamic_variable':
 			return {
 				type: 'dynamic_variable',
@@ -320,24 +322,24 @@ export const normalizeUpdateStateExpression = (
 				prompt: typeof expression.prompt === 'string' ? expression.prompt : '',
 			};
 		}
-		case 'string':
+		case 'string_literal':
 			return {
-				type: 'string',
+				type: 'string_literal',
 				value: typeof expression.value === 'string' ? expression.value : '',
 			};
-		case 'number':
+		case 'number_literal':
 			return {
-				type: 'number',
+				type: 'number_literal',
 				value:
 					typeof expression.value === 'number' ? expression.value : Number.NaN,
 			};
-		case 'boolean':
+		case 'boolean_literal':
 			return {
-				type: 'boolean',
+				type: 'boolean_literal',
 				value: expression.value === true,
 			};
-		case 'null':
-			return { type: 'null' };
+		case 'null_literal':
+			return { type: 'null_literal' };
 		case 'dynamic_variable':
 			return {
 				type: 'dynamic_variable',
@@ -381,17 +383,17 @@ export const formatUpdateStateExpressionPreview = (
 			const prompt = normalizedExpression.prompt.trim();
 			return prompt ? `= llm("${prompt}")` : '= llm("")';
 		}
-		case 'string':
+		case 'string_literal':
 			return `= "${normalizedExpression.value}"`;
-		case 'number':
+		case 'number_literal':
 			return `= ${
 				Number.isFinite(normalizedExpression.value)
 					? normalizedExpression.value
 					: 'NaN'
 			}`;
-		case 'boolean':
+		case 'boolean_literal':
 			return `= ${normalizedExpression.value ? 'true' : 'false'}`;
-		case 'null':
+		case 'null_literal':
 			return '= null';
 		case 'dynamic_variable':
 			return `= ${normalizedExpression.variable_name || 'variable'}`;

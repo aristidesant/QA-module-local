@@ -1,0 +1,392 @@
+{
+	"page": {
+		"title": "Invoices",
+		"description": "Generate and manage client invoices",
+		"actions": {
+			"newInvoice": "New Invoice"
+		},
+		"summary": {
+			"loaded": "Loaded",
+			"draft": "Draft",
+			"issued": "Issued",
+			"voided": "Voided",
+			"visibleValue": "Visible value"
+		}
+	},
+	"list": {
+		"empty": "No invoices found.",
+		"emptyTitle": "No invoices match this view",
+		"emptyDescription": "Adjust filters or create a new invoice to start billing this client relationship.",
+		"relationship": "{{issuer}} to {{receiver}}",
+		"error": {
+			"title": "Unable to load invoices",
+			"unknown": "Unknown error"
+		},
+		"columns": {
+			"invoiceNumber": "Invoice #",
+			"issuer": "Issuer",
+			"receiver": "Receiver",
+			"period": "Period",
+			"status": "Status",
+			"currency": "Currency",
+			"total": "Total",
+			"createdAt": "Created",
+			"actions": "Actions"
+		},
+		"actions": {
+			"view": "View",
+			"issue": "Issue",
+			"void": "Void",
+			"download": "Download XLSX"
+		}
+	},
+	"filters": {
+		"status": {
+			"label": "Status",
+			"placeholder": "All statuses"
+		},
+		"issuerClient": {
+			"label": "Issuer",
+			"placeholder": "All issuers"
+		},
+		"receiverClient": {
+			"label": "Receiver",
+			"placeholder": "All receivers"
+		},
+		"periodStart": "Period from",
+		"periodEnd": "Period to",
+		"clearFilters": "Clear filters"
+	},
+	"status": {
+		"DRAFT": "Draft",
+		"ISSUED": "Issued",
+		"VOIDED": "Voided"
+	},
+	"new": {
+		"title": "New Invoice",
+		"sections": {
+			"parties": "Parties",
+			"period": "Billing period",
+			"identity": "Invoice identity",
+			"financials": "Financial settings",
+			"summary": "Invoice setup",
+			"review": "Review invoice",
+			"reviewDescription": "Check the details before continuing",
+			"confirm": "Confirm",
+			"confirmDescription": "Set the invoice status and create",
+			"confirmTitle": "Confirm Invoice",
+			"invoiceDetails": "Invoice Details"
+		},
+		"steps": {
+			"parameters": "Parameters",
+			"preview": "Preview",
+			"confirm": "Confirm"
+		},
+		"form": {
+			"issuerClient": {
+				"label": "Issuer Client",
+				"placeholder": "Select issuer",
+				"description": "Always the master tenant"
+			},
+			"receiverClient": {
+				"label": "Receiver Client",
+				"placeholder": "Select receiver",
+				"description": "The client being billed"
+			},
+			"periodStart": {
+				"label": "Period Start"
+			},
+			"periodEnd": {
+				"label": "Period End"
+			},
+			"invoiceNumber": {
+				"label": "Invoice Number",
+				"placeholder": "e.g. INV-2026-0001"
+			},
+			"currency": {
+				"label": "Currency"
+			},
+			"taxRate": {
+				"label": "Tax Rate (%)"
+			},
+			"hourlyRate": {
+				"label": "Hourly Rate"
+			}
+		},
+		"validation": {
+			"issuerRequired": "Issuer is required",
+			"receiverRequired": "Receiver is required",
+			"periodStartRequired": "Period start is required",
+			"periodEndRequired": "Period end is required",
+			"invoiceNumberRequired": "Invoice number is required",
+			"hourlyRateMin": "Hourly rate must be 0 or greater",
+			"taxRateRange": "Tax rate must be between 0 and 100"
+		},
+		"actions": {
+			"preview": "Preview Invoice",
+			"back": "Back",
+			"continue": "Continue",
+			"create": "Create Invoice",
+			"creating": "Creating...",
+			"cancel": "Cancel"
+		},
+		"conflict": {
+			"title": "Active invoice conflict",
+			"description": "An active invoice already exists for this issuer, receiver, and period:",
+			"replaceLabel": "Replace existing invoice",
+			"replaceReasonLabel": "Reason for replacement",
+			"replaceReasonPlaceholder": "Describe why this invoice is being replaced",
+			"replaceReasonRequired": "Reason is required when replacing"
+		},
+		"warnings": {
+			"title": "Calculation warnings"
+		},
+		"statusLabel": "Invoice Status",
+		"statusDraft": "Draft",
+		"statusIssued": "Issued",
+		"summary": {
+			"period": "Period",
+			"invoiceNumber": "Invoice Number",
+			"total": "Total",
+			"subtotal": "Subtotal",
+			"issuer": "Issuer",
+			"receiver": "Receiver",
+			"currency": "Currency",
+			"taxRate": "Tax rate",
+			"hourlyRate": "Hourly rate",
+			"status": "Create as",
+			"draftDescription": "Save for later review. Can be edited or issued when ready.",
+			"issuedDescription": "Send immediately. Cannot be edited after issuance."
+		}
+	},
+	"detail": {
+		"title": "Invoice",
+		"actions": {
+			"issue": "Issue Invoice",
+			"issueConfirm": "Are you sure you want to issue this invoice? This will change its status to Issued.",
+			"void": "Void Invoice",
+			"voidTitle": "Void Invoice",
+			"voidDescription": "This action cannot be undone. Please provide a reason for voiding this invoice.",
+			"voidReasonLabel": "Reason",
+			"voidReasonPlaceholder": "Describe why this invoice is being voided",
+			"voidConfirm": "Void Invoice",
+			"download": "Download XLSX",
+			"back": "Back to Invoices"
+		},
+		"metadata": {
+			"invoiceNumber": "Invoice Number",
+			"status": "Status",
+			"createdAt": "Created",
+			"period": "Period",
+			"currency": "Currency",
+			"issuer": "Issuer",
+			"receiver": "Receiver"
+		},
+		"error": {
+			"notFound": "Invoice not found."
+		},
+		"review": {
+			"title": "Invoice review",
+			"identity": "Invoice identity",
+			"parties": "Parties",
+			"financials": "Financial summary",
+			"total": "Total",
+			"subtotal": "Subtotal",
+			"tax": "Tax",
+			"hourlyRate": "Hourly rate",
+			"taxRate": "Tax rate",
+			"voidedTitle": "Invoice voided",
+			"voidedAt": "Voided at",
+			"voidReason": "Reason"
+		}
+	},
+	"snapshot": {
+		"invoiceBasics": "Invoice basics",
+		"emptyValue": "Not provided",
+		"fields": {
+			"name": "Name",
+			"rnc": "RNC",
+			"email": "Email",
+			"phone": "Phone",
+			"address": "Address",
+			"website": "Website"
+		},
+		"issuerInfo": "Issuer",
+		"receiverInfo": "Receiver",
+		"pocContacts": "Points of Contact",
+		"pocIssuer": "Issuer POC",
+		"pocReceiver": "Receiver POC",
+		"summaryLines": "Summary",
+		"executionDetails": "Execution Details",
+		"showExecutionDetails": "Show execution details",
+		"hideExecutionDetails": "Hide execution details",
+		"totals": "Totals",
+		"columns": {
+			"campaign": "Campaign",
+			"agents": "Agents",
+			"uptime": "Uptime",
+			"calls": "Calls",
+			"hourlyRate": "Rate/hr",
+			"total": "Total",
+			"date": "Date",
+			"start": "Start",
+			"end": "End"
+		},
+		"noSummaryLines": "No billable activity found for this period.",
+		"subtotal": "Subtotal",
+		"tax": "Tax",
+		"total": "Total"
+	},
+	"notifications": {
+		"created": {
+			"title": "Invoice created",
+			"message": "Invoice {{number}} has been created."
+		},
+		"issued": {
+			"title": "Invoice issued",
+			"message": "Invoice {{number}} is now issued."
+		},
+		"voided": {
+			"title": "Invoice voided",
+			"message": "Invoice {{number}} has been voided."
+		},
+		"previewFailed": {
+			"title": "Preview failed",
+			"message": "Could not preview this invoice. Review the parameters and try again."
+		},
+		"createFailed": {
+			"title": "Invoice not created",
+			"message": "Could not create this invoice. Try again."
+		},
+		"createConflict": {
+			"title": "Invoice conflict",
+			"message": "A conflict was detected. The preview has been refreshed."
+		},
+		"issueFailed": {
+			"title": "Invoice not issued",
+			"message": "Could not issue this invoice. Try again."
+		},
+		"voidFailed": {
+			"title": "Invoice not voided",
+			"message": "Could not void this invoice. Try again."
+		},
+		"voidReasonRequired": {
+			"title": "Reason required",
+			"message": "Add a reason before voiding this invoice."
+		},
+		"downloadFailed": {
+			"title": "Download failed",
+			"invalidTemplate": "Invoice template is invalid. Please review the issuer's template configuration.",
+			"noTemplate": "No invoice template configured for issuer. Add an .xlsx template in the client's invoice settings.",
+			"generic": "Failed to download invoice. Please try again."
+		}
+	},
+	"templates": {
+		"toolbarTitle": "Invoice Templates",
+		"card": {
+			"title": "Invoice Template Settings",
+			"description": "Manage XLSX templates used for invoice generation"
+		},
+		"issuerClient": {
+			"label": "Issuer Client",
+			"placeholder": "Select issuer client",
+			"helper": "Choose a client to view, upload, or remove the assigned invoice template."
+		},
+		"currentTemplate": "Current Template",
+		"lastUpdated": "Last updated",
+		"status": {
+			"configured": "Configured",
+			"none": "Not configured"
+		},
+		"actions": {
+			"upload": "Upload Template",
+			"uploading": "Uploading...",
+			"download": "Download Template",
+			"remove": "Remove Template"
+		},
+		"info": "Changing the template affects future downloads of existing invoices. Supports XLSX files.",
+		"count": "{{count}} configured",
+		"notifications": {
+			"uploaded": "Template uploaded and assigned",
+			"removed": "Template removed",
+			"uploadError": "Could not upload the invoice template. Please verify the file is a valid .xlsx.",
+			"downloadError": "Could not download the invoice template.",
+			"assignError": "The selected template does not belong to this issuer client or is not a valid .xlsx file."
+		},
+		"variablesGuide": {
+			"action": "View Available Variables",
+			"title": "Invoice Template Variables",
+			"description": "Use these placeholders in your XLSX template. When the invoice is generated, each placeholder will be replaced with the actual value from the system.",
+			"sections": {
+				"invoice": {
+					"label": "Invoice Information",
+					"desc": "Values taken from the invoice creation or preview form.",
+					"number": "The invoice number assigned to this invoice. Set when the invoice is created or previewed.",
+					"periodStart": "The start date of the billing period.",
+					"periodEnd": "The end date of the billing period.",
+					"currency": "The currency code used for monetary values (e.g., USD, DOP).",
+					"taxRate": "The tax percentage applied to the subtotal.",
+					"hourlyRateFormatted": "The hourly rate, formatted with the currency symbol."
+				},
+				"issuer": {
+					"label": "Issuer Client",
+					"desc": "Information from the client selected as the invoice issuer.",
+					"name": "The full legal name of the issuer client as registered in the system.",
+					"rnc": "The tax identification number (RNC) of the issuer client.",
+					"email": "The email address of the issuer client.",
+					"phone": "The phone number of the issuer client.",
+					"address": "The physical address of the issuer client.",
+					"website": "The website URL of the issuer client."
+				},
+				"receiver": {
+					"label": "Receiver Client",
+					"desc": "Information from the client selected as the invoice receiver.",
+					"name": "The full legal name of the receiver client as registered in the system.",
+					"rnc": "The tax identification number (RNC) of the receiver client.",
+					"email": "The email address of the receiver client.",
+					"phone": "The phone number of the receiver client.",
+					"address": "The physical address of the receiver client.",
+					"website": "The website URL of the receiver client."
+				},
+				"poc": {
+					"label": "Points of Contact",
+					"desc": "Contact persons assigned to the issuer and receiver clients.",
+					"issuerName": "The name of the point of contact at the issuer client.",
+					"issuerEmail": "The email of the point of contact at the issuer client.",
+					"receiverName": "The name of the point of contact at the receiver client.",
+					"receiverEmail": "The email of the point of contact at the receiver client."
+				},
+				"totals": {
+					"label": "Totals",
+					"desc": "Calculated summary values based on the invoice line items and settings.",
+					"subtotal": "The sum of all campaign totals before tax, formatted with the currency.",
+					"taxRate": "The tax rate percentage applied.",
+					"taxTotal": "The total tax amount (subtotal × tax rate), formatted with the currency.",
+					"total": "The grand total (subtotal + tax), formatted with the currency."
+				},
+				"summaryLines": {
+					"label": "Summary Lines Table",
+					"desc": "This section repeats once per campaign. Wrap your table rows with this block to generate a row for each campaign.",
+					"blockDesc": "Opens and closes the repeat block. Everything between these tags is generated once per campaign.",
+					"campaignName": "The name of the campaign.",
+					"activeAiAgents": "The number of AI agents active during the billing period for this campaign.",
+					"uptime": "The total active time for this campaign, formatted as HH:mm:ss.",
+					"hourlyRate": "The hourly rate, formatted with the currency symbol.",
+					"total": "The total cost for this campaign (uptime hours × hourly rate), formatted with the currency."
+				},
+				"executionDetails": {
+					"label": "Execution Details Table",
+					"desc": "This section repeats once per campaign per day. Wrap your table rows with this block to generate a row for each execution day.",
+					"blockDesc": "Opens and closes the repeat block. Everything between these tags is generated once per campaign day.",
+					"campaignName": "The name of the campaign.",
+					"executionDate": "The date of execution for this campaign.",
+					"activeAiAgents": "The number of AI agents active on this execution date.",
+					"uptime": "The total active time for this execution date, formatted as HH:mm:ss.",
+					"callsCount": "The number of billable conversations on this execution date.",
+					"startTimestamp": "The timestamp of the first conversation of the day.",
+					"endTimestamp": "The timestamp of the last conversation of the day."
+				}
+			}
+		}
+	}
+}

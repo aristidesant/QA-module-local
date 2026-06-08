@@ -7,6 +7,9 @@ import { useSessionStore } from '~/stores/sessionStore';
 // Configure global axios defaults
 axios.defaults.baseURL = DEFAULT_API_URL;
 axios.defaults.headers.common['Accept'] = 'application/json';
+if (import.meta.env.DEV) {
+	axios.defaults.headers.common['ngrok-skip-browser-warning'] = 'true';
+}
 
 // Attach a request interceptor to inject the Bearer token and appropriate content-type
 axios.interceptors.request.use(

@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 // Route components (lazy-loaded where appropriate to split bundles)
 
+import SmartRootRedirect from './components/SmartRootRedirect/SmartRootRedirect';
 import RouteProtecter, {
 	clientLoader as routeProtecterLoader,
 } from './components/RouteProtecter/RouteProtecter';
@@ -122,6 +123,15 @@ const ReportTemplatesListPage = React.lazy(
 const ReportTemplateDetailPage = React.lazy(
 	() => import('./modules/report-templates/ReportTemplateDetailPage')
 );
+const InvoicesPage = React.lazy(
+	() => import('./modules/billing/InvoicesPage/InvoicesPage')
+);
+const InvoiceNewPage = React.lazy(
+	() => import('./modules/billing/InvoiceNewPage/InvoiceNewPage')
+);
+const InvoiceDetailPage = React.lazy(
+	() => import('./modules/billing/InvoiceDetailPage/InvoiceDetailPage')
+);
 
 /**
  * Automatically loads i18n namespaces based on the active route's ID.
@@ -172,11 +182,13 @@ const router = createBrowserRouter([
 						index: true,
 						id: 'overview',
 						element: (
-							<I18nNamespaceLoader>
-								<Suspense fallback={<SuspenseFallback />}>
-									<OverviewDashboardPage />
-								</Suspense>
-							</I18nNamespaceLoader>
+							<SmartRootRedirect>
+								<I18nNamespaceLoader>
+									<Suspense fallback={<SuspenseFallback />}>
+										<OverviewDashboardPage />
+									</Suspense>
+								</I18nNamespaceLoader>
+							</SmartRootRedirect>
 						),
 					},
 					{
@@ -357,6 +369,50 @@ const router = createBrowserRouter([
 								</I18nNamespaceLoader>
 							</ModuleGuard>
 						),
+					},
+					{
+						path: 'billing',
+						children: [
+							{
+								path: 'invoices',
+								id: 'invoices',
+								element: (
+									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<InvoicesPage />
+											</Suspense>
+										</I18nNamespaceLoader>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'invoices/new',
+								id: 'invoices-new',
+								element: (
+									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<InvoiceNewPage />
+											</Suspense>
+										</I18nNamespaceLoader>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'invoices/:id',
+								id: 'invoices-detail',
+								element: (
+									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<InvoiceDetailPage />
+											</Suspense>
+										</I18nNamespaceLoader>
+									</ModuleGuard>
+								),
+							},
+						],
 					},
 					{
 						path: 'conversations',

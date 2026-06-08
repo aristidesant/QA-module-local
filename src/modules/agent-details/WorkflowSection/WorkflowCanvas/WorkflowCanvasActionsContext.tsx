@@ -5,10 +5,12 @@ import {
 	type PropsWithChildren,
 } from 'react';
 import type { WorkflowNodeType } from '../nodeTypes';
+import type { WorkflowNode } from '~/models/AgentWorkflowModel';
 
 interface AddNodeVariantPayload {
 	type: WorkflowNodeType;
 	variant?: 'transfer' | 'subagent';
+	initialData?: Partial<WorkflowNode>;
 }
 
 interface WorkflowCanvasActionsContextValue {
@@ -39,7 +41,8 @@ interface WorkflowCanvasActionsContextValue {
 	addNewNodeToGroup: (
 		groupNodeId: string,
 		nodeType: WorkflowNodeType,
-		variant?: 'transfer' | 'subagent'
+		variant?: 'transfer' | 'subagent',
+		initialData?: Partial<WorkflowNode>
 	) => string | undefined;
 	addExistingNodeToGroup: (groupNodeId: string, existingNodeId: string) => void;
 	/** @deprecated No-op kept for compatibility. Edge actions are no longer shown. */

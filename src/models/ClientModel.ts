@@ -10,6 +10,9 @@ export interface ClientModel {
 	rnc?: string;
 	userId?: number | null;
 	countryId?: number | null;
+	website?: string | null;
+	pocUserId?: number | null;
+	invoiceTemplateFileId?: number | null;
 	createdAt: string | Date;
 	updatedAt: string | Date;
 	deletedAt: string | Date | null;
@@ -38,4 +41,7 @@ export interface UpdateClientRequest {
 	rnc?: string;
 	userId?: number | null;
 	countryId?: number | null;
+	website?: string | null;
+	pocUserId?: number | null;
+	invoiceTemplateFileId?: number | null;
 }

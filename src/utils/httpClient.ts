@@ -13,11 +13,17 @@ export function createHttpClient(
 	authToken?: string,
 	baseURL: string = DEFAULT_API_URL
 ): AxiosInstance {
+	const baseHeaders: Record<string, string> = {
+		'Content-Type': 'application/json',
+	};
+
+	if (import.meta.env.DEV) {
+		baseHeaders['ngrok-skip-browser-warning'] = 'true';
+	}
+
 	const client = axios.create({
 		baseURL,
-		headers: {
-			'Content-Type': 'application/json',
-		},
+		headers: baseHeaders,
 		// Set a reasonable timeout (30 seconds)
 		timeout: 30000,
 	});

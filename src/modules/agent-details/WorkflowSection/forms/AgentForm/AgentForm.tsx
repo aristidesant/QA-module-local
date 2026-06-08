@@ -2,6 +2,7 @@ import { Stack, Tabs, Text, TextInput } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import type { AgentWorkflow } from '~/models/AgentWorkflowModel';
 import type { AgentConfigModel } from '~/models/AgentListObject';
+import { WORKFLOW_NODE_TYPES } from '../../nodeTypes';
 import WorkflowNodeForm from '../WorkflowNodeForm';
 import { updateWorkflowNode } from '../nodeFormUtils';
 import { AgentFormProvider } from './context';
@@ -33,14 +34,13 @@ const AgentFormContent = ({
 	]);
 
 	const currentNode = workflow?.nodes[nodeId];
-	const isSubagentNode = currentNode && 'subagent' in currentNode;
+	const isAgentNode =
+		currentNode?.type === WORKFLOW_NODE_TYPES.OVERRIDE_AGENT ||
+		currentNode?.type === WORKFLOW_NODE_TYPES.STANDALONE_AGENT;
 
-	if (!currentNode || !isSubagentNode) {
+	if (!currentNode || !isAgentNode) {
 		return (
-			<WorkflowNodeForm
-				title={t('form.workflow.forms.agent.title')}
-				description={t('form.workflow.forms.agent.missingNode')}
-			>
+			<WorkflowNodeForm>
 				<Text size='sm' c='dimmed'>
 					{t('form.workflow.forms.agent.missingNodeHint')}
 				</Text>
@@ -49,10 +49,7 @@ const AgentFormContent = ({
 	}
 
 	return (
-		<WorkflowNodeForm
-			title={t('form.workflow.forms.agent.title')}
-			description={t('form.workflow.forms.agent.description')}
-		>
+		<WorkflowNodeForm>
 			<Stack gap='xs' mb='md'>
 				<TextInput
 					label={t('form.workflow.forms.agent.general.nodeName.label')}

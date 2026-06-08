@@ -1,0 +1,215 @@
+.root {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+.createLayout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(260px, 340px);
+	gap: var(--mantine-spacing-md);
+	align-items: start;
+}
+
+.summaryAside {
+	position: sticky;
+	top: var(--mantine-spacing-md);
+}
+
+.formGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-md);
+}
+
+.actions {
+	display: flex;
+	justify-content: flex-end;
+	gap: var(--mantine-spacing-sm);
+	padding-top: var(--mantine-spacing-md);
+}
+
+.confirmLayout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+	gap: var(--mantine-spacing-md);
+	align-items: start;
+}
+
+.confirmHeader {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.confirmIcon {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	background-color: light-dark(
+		var(--mantine-color-green-1),
+		var(--mantine-color-green-9)
+	);
+	color: light-dark(var(--mantine-color-green-9), var(--mantine-color-green-3));
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0;
+}
+
+.statusOption {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid
+		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+	border-radius: var(--mantine-radius-sm);
+	background-color: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-6)
+	);
+	cursor: pointer;
+	transition: border-color 120ms ease-out;
+}
+
+.statusOption:hover {
+	border-color: var(--mantine-color-green-4);
+}
+
+.statusOptionChecked {
+	border-color: var(--mantine-color-green-5);
+	background-color: light-dark(
+		var(--mantine-color-green-0),
+		var(--mantine-color-green-8)
+	);
+}
+
+.detailLabel {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+}
+
+.detailValue {
+	font-size: 14px;
+	font-weight: 500;
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
+}
+
+.totalRow {
+	margin-top: var(--mantine-spacing-md);
+	padding-top: var(--mantine-spacing-sm);
+	border-top: 2px solid
+		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.totalLabel {
+	font-size: 14px;
+	font-weight: 600;
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
+}
+
+.totalValue {
+	font-size: 24px;
+	font-weight: 700;
+	color: light-dark(var(--mantine-color-green-6), var(--mantine-color-green-4));
+}
+
+.statusOption {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--mantine-color-white);
+	cursor: pointer;
+	transition: border-color 120ms ease-out;
+}
+
+.statusOption:hover {
+	border-color: var(--mantine-color-green-4);
+}
+
+.statusOptionChecked {
+	border-color: var(--mantine-color-green-5);
+	background-color: var(--mantine-color-green-0);
+}
+
+.detailGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--mantine-spacing-md);
+}
+
+.detailItem {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+}
+
+.detailLabel {
+	font-size: 11px;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	color: var(--mantine-color-gray-6);
+}
+
+.detailValue {
+	font-size: 14px;
+	font-weight: 500;
+	color: var(--mantine-color-gray-9);
+}
+
+.totalRow {
+	margin-top: var(--mantine-spacing-md);
+	padding-top: var(--mantine-spacing-sm);
+	border-top: 2px solid var(--mantine-color-gray-3);
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+}
+
+.totalLabel {
+	font-size: 14px;
+	font-weight: 600;
+	color: var(--mantine-color-gray-9);
+}
+
+.totalValue {
+	font-size: 24px;
+	font-weight: 700;
+	color: var(--mantine-color-green-6);
+}
+
+@media (max-width: 900px) {
+	.createLayout {
+		grid-template-columns: 1fr;
+	}
+
+	.summaryAside {
+		position: static;
+	}
+
+	.confirmLayout {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 640px) {
+	.formGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.detailGrid {
+		grid-template-columns: 1fr;
+	}
+}

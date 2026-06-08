@@ -6,7 +6,6 @@ import {
 	Text,
 	Textarea,
 } from '@mantine/core';
-import { IconUserCog } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type {
@@ -19,6 +18,12 @@ import { useGetCampaignAgentTransferTargets } from '~/queries/campaignAgentsQuer
 import { WORKFLOW_DRAWER_COMBOBOX_PROPS } from '../workflowDrawerComboboxProps';
 import WorkflowNodeForm from '../WorkflowNodeForm';
 import { updateWorkflowNode } from '../nodeFormUtils';
+import {
+	getStandaloneAgentTransferAgentId,
+	getStandaloneAgentTransferDelayMs,
+	getStandaloneAgentTransferFirstMessageEnabled,
+	getStandaloneAgentTransferMessage,
+} from '../../utils/standaloneAgentNode';
 import styles from './AgentTransferForm.module.css';
 
 interface AgentTransferFormProps {
@@ -56,15 +61,13 @@ const AgentTransferForm = ({
 		[campaignAgents, currentAgentId]
 	);
 
+	const nodeAgentId = getStandaloneAgentTransferAgentId(node);
 	const selectedTransferAgentId =
-		node?.agent_id && node.agent_id !== currentAgentId ? node.agent_id : null;
+		nodeAgentId && nodeAgentId !== currentAgentId ? nodeAgentId : null;
 
 	if (!node) {
 		return (
-			<WorkflowNodeForm
-				title={t('form.workflow.forms.transfer.title')}
-				description={t('form.workflow.forms.transfer.missingNode')}
-			>
+			<WorkflowNodeForm>
 				<Text size='sm' c='dimmed'>
 					{t('form.workflow.forms.transfer.missingNodeHint')}
 				</Text>
@@ -86,12 +89,7 @@ const AgentTransferForm = ({
 	};
 
 	return (
-		<WorkflowNodeForm
-			title={t('form.workflow.forms.transfer.title')}
-			description={t('form.workflow.forms.transfer.description')}
-			icon={IconUserCog}
-			iconColor='var(--mantine-color-gray-7)'
-		>
+		<WorkflowNodeForm>
 			<Stack gap='xs' className={styles.form}>
 				<Select
 					label={t('form.workflow.forms.transfer.agentLabel')}
@@ -112,7 +110,7 @@ const AgentTransferForm = ({
 				<NumberInput
 					label={t('form.workflow.forms.transfer.delayLabel')}
 					placeholder={t('form.workflow.forms.transfer.delayPlaceholder')}
-					value={node.delay_ms ?? 0}
+					value={getStandaloneAgentTransferDelayMs(node)}
 					min={0}
 					allowNegative={false}
 					allowDecimal={false}
@@ -127,7 +125,7 @@ const AgentTransferForm = ({
 				<Textarea
 					label={t('form.workflow.forms.transfer.messageLabel')}
 					placeholder={t('form.workflow.forms.transfer.messagePlaceholder')}
-					value={node.transfer_message ?? ''}
+					value={getStandaloneAgentTransferMessage(node)}
 					minRows={3}
 					onChange={(event) =>
 						handleUpdate({ transfer_message: event.currentTarget.value })
@@ -140,7 +138,7 @@ const AgentTransferForm = ({
 				/>
 				<Switch
 					label={t('form.workflow.forms.transfer.firstMessageLabel')}
-					checked={node.enable_transferred_agent_first_message ?? false}
+					checked={getStandaloneAgentTransferFirstMessageEnabled(node)}
 					labelPosition='left'
 					onChange={(event) =>
 						handleUpdate({

@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { ActionIcon, Group, ThemeIcon, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Group, Menu, ThemeIcon, Text } from '@mantine/core';
 import {
+	IconDotsVertical,
 	IconMessageCircle,
 	IconPencil,
 	IconPlayerPlay,
@@ -9,6 +10,7 @@ import {
 } from '@tabler/icons-react';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
+import { timeAgo } from '~/utils/dateUtils';
 import type { AgentTest } from '~/models/AgentTestModel';
 import { useAgentTestsPage } from '../../context/AgentTestsPageContext';
 import styles from '../../AgentTestsPage.module.css';
@@ -20,6 +22,19 @@ interface UseAgentTestsColumnsProps {
 	canRun: boolean;
 	editingTestLoadingId: string | null;
 	runningTestIds: string[];
+}
+
+function dateTooltip(iso?: string | Date | null) {
+	if (!iso) return '—';
+	const date = typeof iso === 'string' ? new Date(iso) : iso;
+	if (Number.isNaN(date.getTime())) return '—';
+	return date.toLocaleString(undefined, {
+		year: 'numeric',
+		month: 'short',
+		day: 'numeric',
+		hour: '2-digit',
+		minute: '2-digit',
+	});
 }
 
 export const useAgentTestsColumns = ({
@@ -95,73 +110,77 @@ export const useAgentTestsColumns = ({
 						typeof unixSecs === 'number'
 							? new Date(unixSecs * 1000).toISOString()
 							: (row.original.updatedAt ?? row.original.createdAt);
-					const formatted = dateValue
-						? new Date(dateValue).toLocaleString()
-						: t('table.notAvailable');
 					return (
-						<Text size='xs' c='dimmed'>
-							{formatted}
+						<Text size='sm' title={dateTooltip(dateValue)}>
+							{dateValue ? timeAgo(dateValue) : t('table.notAvailable')}
 						</Text>
 					);
 				},
+				size: 100,
 			},
 			{
 				id: 'actions',
 				header: t('table.columns.actions'),
 				cell: ({ row }) => (
-					<Group gap='xs' wrap='nowrap'>
-						{canRun && (
-							<Tooltip label={t('table.actions.run')} withArrow>
+					<Group justify='flex-end' onClick={(e) => e.stopPropagation()}>
+						<Menu shadow='sm' position='bottom-end' withinPortal>
+							<Menu.Target>
 								<ActionIcon
-									size='sm'
 									variant='subtle'
-									color='green'
-									loading={runningTestIds.includes(row.original.id)}
-									disabled={runningTestIds.includes(row.original.id)}
-									onClick={() => {
-										const runTestId = row.original.testId || row.original.id;
-										const testAgentId = row.original.agentId;
-										if (!testAgentId) {
-											setPendingRunTests([runTestId]);
-											setAgentSelectSource('table');
-											setIsAgentSelectOpen(true);
-											return;
-										}
-										runTests([runTestId], testAgentId);
-									}}
-								>
-									<IconPlayerPlay size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-						{canUpdate && (
-							<Tooltip label={t('table.actions.edit')} withArrow>
-								<ActionIcon
 									size='sm'
-									variant='subtle'
-									color='blue'
-									loading={editingTestLoadingId === row.original.id}
-									disabled={editingTestLoadingId === row.original.id}
-									onClick={() => openEditModalWithReload(row.original.id)}
+									aria-label={t('table.columns.actions')}
 								>
-									<IconPencil size={16} />
+									<IconDotsVertical size={15} />
 								</ActionIcon>
-							</Tooltip>
-						)}
-						{canDelete && (
-							<Tooltip label={t('table.actions.delete')} withArrow>
-								<ActionIcon
-									size='sm'
-									variant='subtle'
-									color='red'
-									onClick={() => handleDelete(row.original)}
-								>
-									<IconTrash size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
+							</Menu.Target>
+							<Menu.Dropdown>
+								{canRun && (
+									<Menu.Item
+										leftSection={<IconPlayerPlay size={15} stroke={1.5} />}
+										disabled={runningTestIds.includes(row.original.id)}
+										onClick={() => {
+											const runTestId = row.original.testId || row.original.id;
+											const testAgentId = row.original.agentId;
+											if (!testAgentId) {
+												setPendingRunTests([runTestId]);
+												setAgentSelectSource('table');
+												setIsAgentSelectOpen(true);
+												return;
+											}
+											runTests([runTestId], testAgentId);
+										}}
+									>
+										{runningTestIds.includes(row.original.id)
+											? t('table.actions.running')
+											: t('table.actions.run')}
+									</Menu.Item>
+								)}
+								{canUpdate && (
+									<Menu.Item
+										leftSection={<IconPencil size={15} stroke={1.5} />}
+										disabled={editingTestLoadingId === row.original.id}
+										onClick={() => openEditModalWithReload(row.original.id)}
+									>
+										{t('table.actions.edit')}
+									</Menu.Item>
+								)}
+								{canDelete && (
+									<>
+										{(canRun || canUpdate) && <Menu.Divider />}
+										<Menu.Item
+											leftSection={<IconTrash size={15} stroke={1.5} />}
+											color='red'
+											onClick={() => handleDelete(row.original)}
+										>
+											{t('table.actions.delete')}
+										</Menu.Item>
+									</>
+								)}
+							</Menu.Dropdown>
+						</Menu>
 					</Group>
 				),
+				size: 60,
 			},
 		],
 		[

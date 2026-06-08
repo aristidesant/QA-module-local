@@ -17,14 +17,14 @@ export const useGetAllClients = () => {
 };
 
 // Get client by ID
-export const useGetClient = (id: number) => {
+export const useGetClient = (id: number, enabled = true) => {
 	return useQuery({
 		queryKey: ['client', id],
 		queryFn: async () => {
 			const api = clientApi();
 			return api.getClientById(id);
 		},
-		enabled: !!id,
+		enabled: !!id && enabled,
 	});
 };
 

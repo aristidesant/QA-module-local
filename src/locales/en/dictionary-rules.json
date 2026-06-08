@@ -155,6 +155,8 @@
 	"dictionaryColumns": {
 		"name": "Name",
 		"createdAt": "Created",
+		"updatedAt": "Updated",
+		"versionId": "Version",
 		"actions": "Actions"
 	},
 	"upload": {
