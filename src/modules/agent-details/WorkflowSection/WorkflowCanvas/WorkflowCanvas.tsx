@@ -40,10 +40,15 @@ import {
 } from './WorkflowCanvas.helpers';
 import type { BuildWorkflowResult } from './WorkflowCanvas.helpers';
 import type { NodeGroups } from '~/models/CampaignsModel';
+import type {
+	StandaloneAgentNode,
+	WorkflowNode,
+} from '~/models/AgentWorkflowModel';
 import { generateUUIDv4 } from '~/utils/uuidUtils';
 import WorkflowContextMenu from '../WorkflowContextMenu';
 import NodeStylePanel from '../NodeStylePanel';
 import { useWorkflowNodeEditor } from '../WorkflowNodeEditorContext';
+import AgentTransferTargetModal from './AgentTransferTargetModal';
 import styles from './WorkflowCanvas.module.css';
 
 interface WorkflowCanvasProps {
@@ -55,12 +60,33 @@ interface WorkflowCanvasProps {
 	allowDefaultInit?: boolean;
 	onNodeSelect?: (nodeId: string | null) => void;
 	layoutMode?: 'compact' | 'fullscreen';
+	currentAgentId?: string;
 }
 
 interface AddNodeVariantPayload {
 	type: WorkflowNodeType;
 	variant?: 'transfer' | 'subagent';
+	initialData?: Partial<WorkflowNode>;
 }
+
+type PendingTransferCreation =
+	| {
+			mode: 'node';
+			parentNodeId: string;
+			parentPosition: { x: number; y: number };
+	  }
+	| {
+			mode: 'group';
+			groupNodeId: string;
+	  };
+
+const hasInitialTransferAgentId = (
+	initialData?: Partial<WorkflowNode>
+): boolean =>
+	typeof (initialData as Partial<StandaloneAgentNode> | undefined)?.agent_id ===
+		'string' &&
+	((initialData as Partial<StandaloneAgentNode>).agent_id?.trim().length ?? 0) >
+		0;
 
 interface ValidateConnectionOptions {
 	ignoreEdgeId?: string;
@@ -76,6 +102,7 @@ const WorkflowCanvasInner = ({
 	allowDefaultInit = true,
 	onNodeSelect,
 	layoutMode = 'compact',
+	currentAgentId,
 }: WorkflowCanvasProps) => {
 	const { t } = useTranslation([
 		'campaign.form.workflow',
@@ -100,6 +127,8 @@ const WorkflowCanvasInner = ({
 		x: number;
 		y: number;
 	} | null>(null);
+	const [pendingTransferCreation, setPendingTransferCreation] =
+		useState<PendingTransferCreation | null>(null);
 	const nodesRef = useRef<Node[]>(nodes);
 	const edgesRef = useRef<Edge[]>(edges);
 	const isDraggingRef = useRef(false);
@@ -723,6 +752,10 @@ const WorkflowCanvasInner = ({
 					additional_prompt: '',
 					additional_tool_ids: [],
 					additional_knowledge_base: [],
+					subagent: {
+						tool_ids: [],
+						knowledge_base_ids: [],
+					},
 					conversation_config: {},
 					uiMeta: { createdByUi: true },
 				},
@@ -738,7 +771,8 @@ const WorkflowCanvasInner = ({
 		(
 			groupNodeId: string,
 			nodeType: WorkflowNodeType,
-			variant?: 'transfer' | 'subagent'
+			variant?: 'transfer' | 'subagent',
+			initialData?: Partial<WorkflowNode>
 		): string | undefined => {
 			const groupNode = nodesRef.current.find((n) => n.id === groupNodeId);
 			if (!groupNode) return undefined;
@@ -774,10 +808,17 @@ const WorkflowCanvasInner = ({
 			}
 
 			const position = { x: newX, y: newY };
-			const baseData = createNodeDataByType(nodeType, position);
+			const baseData = createNodeDataByType(nodeType, position, initialData);
+			const labelOverride =
+				variant === 'transfer'
+					? t('form.workflow.nodes.agent_transfer', {
+							defaultValue: 'Agent transfer',
+						})
+					: undefined;
 			const data = variant
 				? {
 						...baseData,
+						label: labelOverride ?? (baseData as { label?: string }).label,
 						uiMeta: { variant, createdByUi: true },
 					}
 				: { ...baseData, uiMeta: { createdByUi: true } };
@@ -797,6 +838,59 @@ const WorkflowCanvasInner = ({
 			return nodeId;
 		},
 		[setNodes]
+	);
+
+	const handleCloseTransferTargetModal = useCallback(() => {
+		setPendingTransferCreation(null);
+	}, []);
+
+	const createTransferInitialData = useCallback(
+		(agentId: string): Partial<StandaloneAgentNode> => ({
+			type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
+			agent_id: agentId,
+			delay_ms: 0,
+			transfer_message: null,
+			enable_transferred_agent_first_message: false,
+			additional_tool_ids: [],
+			additional_knowledge_base: [],
+			conversation_config: {},
+		}),
+		[]
+	);
+
+	const handleConfirmTransferTarget = useCallback(
+		(agentId: string) => {
+			if (!pendingTransferCreation) return;
+
+			const initialData = createTransferInitialData(agentId);
+
+			if (pendingTransferCreation.mode === 'node') {
+				handleAddNodeWithVariant(
+					pendingTransferCreation.parentNodeId,
+					pendingTransferCreation.parentPosition,
+					{
+						type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
+						variant: 'transfer',
+						initialData,
+					}
+				);
+			} else {
+				handleAddNewNodeToGroup(
+					pendingTransferCreation.groupNodeId,
+					WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
+					'transfer',
+					initialData
+				);
+			}
+
+			setPendingTransferCreation(null);
+		},
+		[
+			createTransferInitialData,
+			handleAddNewNodeToGroup,
+			handleAddNodeWithVariant,
+			pendingTransferCreation,
+		]
 	);
 
 	const handleAddExistingNodeToGroup = useCallback(
@@ -994,6 +1088,18 @@ const WorkflowCanvasInner = ({
 				payload: AddNodeVariantPayload
 			) => {
 				noop();
+				if (
+					payload.type === WORKFLOW_NODE_TYPES.STANDALONE_AGENT &&
+					payload.variant === 'transfer' &&
+					!hasInitialTransferAgentId(payload.initialData)
+				) {
+					setPendingTransferCreation({
+						mode: 'node',
+						parentNodeId,
+						parentPosition,
+					});
+					return undefined;
+				}
 				return handleAddNodeWithVariant(parentNodeId, parentPosition, payload);
 			},
 			deleteNode: (nodeId: string) => {
@@ -1056,10 +1162,27 @@ const WorkflowCanvasInner = ({
 			addNewNodeToGroup: (
 				groupNodeId: string,
 				nodeType: WorkflowNodeType,
-				variant?: 'transfer' | 'subagent'
+				variant?: 'transfer' | 'subagent',
+				initialData?: Partial<WorkflowNode>
 			) => {
 				noop();
-				return handleAddNewNodeToGroup(groupNodeId, nodeType, variant);
+				if (
+					nodeType === WORKFLOW_NODE_TYPES.STANDALONE_AGENT &&
+					variant === 'transfer' &&
+					!hasInitialTransferAgentId(initialData)
+				) {
+					setPendingTransferCreation({
+						mode: 'group',
+						groupNodeId,
+					});
+					return undefined;
+				}
+				return handleAddNewNodeToGroup(
+					groupNodeId,
+					nodeType,
+					variant,
+					initialData
+				);
 			},
 			addExistingNodeToGroup: (groupNodeId: string, existingNodeId: string) => {
 				noop();
@@ -1148,6 +1271,12 @@ const WorkflowCanvasInner = ({
 					onClose={handleCloseStylePanel}
 				/>
 			)}
+			<AgentTransferTargetModal
+				opened={Boolean(pendingTransferCreation)}
+				currentAgentId={currentAgentId}
+				onClose={handleCloseTransferTargetModal}
+				onConfirm={handleConfirmTransferTarget}
+			/>
 		</WorkflowCanvasActionsProvider>
 	);
 };

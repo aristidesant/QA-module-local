@@ -99,85 +99,113 @@ const KnowledgeBaseTab = () => {
 	};
 
 	return (
-		<Stack gap='xs'>
-			<Group justify='space-between' align='center'>
-				<Text size='sm' className={mainStyles.fieldLabel}>
-					{t('form.workflow.subagent.inherit_knowledge_base')}
-				</Text>
-				<Switch
-					checked={inheritsKnowledgeBase}
-					onChange={(event) =>
-						handleSubagentChange({
-							inherit_knowledge_base: event.currentTarget.checked,
-						})
-					}
-					size='sm'
-					aria-label={t('form.workflow.subagent.inherit_knowledge_base')}
-				/>
-			</Group>
-			<Group justify='space-between' align='center'>
-				<Text size='sm' className={mainStyles.fieldLabel}>
-					{t('form.workflow.subagent.additional_knowledge_base')}
-				</Text>
-				<Menu width={260} position='bottom-end' withinPortal closeOnItemClick>
-					<Menu.Target>
-						<Button size='xs' variant='default'>
-							{t('form.workflow.subagent.addDocument')}
-						</Button>
-					</Menu.Target>
-					<Menu.Dropdown>
-						{isKnowledgeBasesLoading && (
-							<Text size='xs' c='dimmed' px='sm' py='xs'>
-								{t('form.workflow.subagent.knowledgeBaseLoading')}
-							</Text>
-						)}
-						{isKnowledgeBasesError && (
-							<Text size='xs' c='dimmed' px='sm' py='xs'>
-								{t('form.workflow.subagent.knowledgeBaseError')}
-							</Text>
-						)}
-						{!isKnowledgeBasesLoading &&
-							!isKnowledgeBasesError &&
-							availableKnowledgeBases.length === 0 && (
+		<Stack gap='md'>
+			{/* Inherit Knowledge Base */}
+			<div className={mainStyles.fieldRow}>
+				<Group justify='space-between' align='center'>
+					<div>
+						<Text size='sm' className={mainStyles.fieldLabel}>
+							{t('form.workflow.subagent.inherit_knowledge_base')}
+						</Text>
+						<Text size='xs' c='dimmed' className={mainStyles.fieldDescription}>
+							{t('form.workflow.subagent.inherit_knowledge_base_description')}
+						</Text>
+					</div>
+					<Switch
+						checked={inheritsKnowledgeBase}
+						onChange={(event) =>
+							handleSubagentChange({
+								inherit_knowledge_base: event.currentTarget.checked,
+							})
+						}
+						size='sm'
+						aria-label={t('form.workflow.subagent.inherit_knowledge_base')}
+					/>
+				</Group>
+			</div>
+
+			{/* Additional Knowledge Base */}
+			<div className={mainStyles.fieldRow}>
+				<Group justify='space-between' align='center'>
+					<div>
+						<Text size='sm' className={mainStyles.fieldLabel}>
+							{t('form.workflow.subagent.additional_knowledge_base')}
+						</Text>
+						<Text size='xs' c='dimmed' className={mainStyles.fieldDescription}>
+							{t(
+								'form.workflow.subagent.additional_knowledge_base_description'
+							)}
+						</Text>
+					</div>
+					<Menu width={260} position='bottom-end' withinPortal closeOnItemClick>
+						<Menu.Target>
+							<Button
+								size='xs'
+								variant='light'
+								leftSection={<IconWorld size={14} />}
+							>
+								{t('form.workflow.subagent.addDocument')}
+							</Button>
+						</Menu.Target>
+						<Menu.Dropdown>
+							{isKnowledgeBasesLoading && (
 								<Text size='xs' c='dimmed' px='sm' py='xs'>
-									{t('form.workflow.subagent.knowledgeBaseEmpty')}
+									{t('form.workflow.subagent.knowledgeBaseLoading')}
 								</Text>
 							)}
-						{availableKnowledgeBases.map((kb) => (
-							<Menu.Item
-								key={kb.id}
-								onClick={() => {
-									const nextKnowledgeBaseIds = Array.from(
-										new Set([...draftKnowledgeBaseIds, String(kb.id)])
-									);
-									const nextRefs = nextKnowledgeBaseIds.map((id) => {
-										const matched = combinedKnowledgeBases.find(
-											(kb) => String(kb.id) === id
+							{isKnowledgeBasesError && (
+								<Text size='xs' c='red' px='sm' py='xs'>
+									{t('form.workflow.subagent.knowledgeBaseError')}
+								</Text>
+							)}
+							{!isKnowledgeBasesLoading &&
+								!isKnowledgeBasesError &&
+								availableKnowledgeBases.length === 0 && (
+									<Text size='xs' c='dimmed' px='sm' py='xs'>
+										{t('form.workflow.subagent.knowledgeBaseEmpty')}
+									</Text>
+								)}
+							{availableKnowledgeBases.map((kb) => (
+								<Menu.Item
+									key={kb.id}
+									onClick={() => {
+										const nextKnowledgeBaseIds = Array.from(
+											new Set([...draftKnowledgeBaseIds, String(kb.id)])
 										);
-										return {
-											id,
-											name: matched?.name,
-										};
-									});
-									setDraftKnowledgeBaseRefs(nextRefs);
-									knowledgeBaseSignatureRef.current =
-										buildRefSignature(nextRefs);
-									handleSubagentChange({
-										knowledge_base_ids: nextKnowledgeBaseIds,
-									});
-								}}
-							>
-								{kb.name}
-							</Menu.Item>
-						))}
-					</Menu.Dropdown>
-				</Menu>
-			</Group>
+										const nextRefs = nextKnowledgeBaseIds.map((id) => {
+											const matched = combinedKnowledgeBases.find(
+												(kb) => String(kb.id) === id
+											);
+											return {
+												id,
+												name: matched?.name,
+											};
+										});
+										setDraftKnowledgeBaseRefs(nextRefs);
+										knowledgeBaseSignatureRef.current =
+											buildRefSignature(nextRefs);
+										handleSubagentChange({
+											knowledge_base_ids: nextKnowledgeBaseIds,
+										});
+									}}
+								>
+									{kb.name}
+								</Menu.Item>
+							))}
+						</Menu.Dropdown>
+					</Menu>
+				</Group>
+			</div>
+
+			{/* Knowledge Base List */}
 			{draftKnowledgeBaseIds.length === 0 ? (
 				<div className={mainStyles.emptyState}>
-					<Text size='xs' c='dimmed'>
-						{t('form.workflow.subagent.knowledgeBaseEmpty')}
-					</Text>
+					<Group gap='xs' align='center'>
+						<IconWorld size={24} color='var(--mantine-color-gray-5)' />
+						<Text size='sm' c='dimmed'>
+							{t('form.workflow.subagent.knowledgeBaseEmpty')}
+						</Text>
+					</Group>
 				</div>
 			) : (
 				<div className={mainStyles.knowledgeList}>
@@ -191,7 +219,7 @@ const KnowledgeBaseTab = () => {
 						return (
 							<div key={knowledgeBase.id} className={mainStyles.knowledgeItem}>
 								<div className={mainStyles.knowledgeIcon}>
-									<IconWorld size={14} />
+									<IconWorld size={16} />
 								</div>
 								<Text size='sm' className={mainStyles.knowledgeLabel}>
 									{label}

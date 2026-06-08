@@ -62,13 +62,14 @@
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
-	padding: 3px 9px;
+	padding: 4px 10px;
 	background-color: var(--workflow-node-chip-bg, var(--mantine-color-white));
 	border: 1px solid
-		var(--workflow-node-chip-border, var(--mantine-color-gray-2));
+		var(--workflow-node-chip-border, var(--mantine-color-gray-3));
 	border-radius: var(--mantine-radius-xl);
 	font-size: 11px;
-	color: var(--workflow-node-chip-text, var(--mantine-color-gray-8));
+	font-weight: 500;
+	color: var(--workflow-node-chip-text, var(--mantine-color-gray-9));
 	white-space: nowrap;
 }
 

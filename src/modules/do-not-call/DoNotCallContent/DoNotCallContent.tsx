@@ -65,7 +65,8 @@ export const DoNotCallContent: React.FC = () => {
 		error,
 		refetch: reloadDoNotCall,
 	} = useDoNotCallList({
-		...pagination.getApiParams(),
+		page: pagination.currentPage,
+		limit: pagination.itemsPerPage,
 		phoneNumber: pagination.debouncedSearch || undefined,
 		...filters,
 	});

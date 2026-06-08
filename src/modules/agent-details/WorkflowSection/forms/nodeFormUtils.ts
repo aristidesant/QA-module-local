@@ -3,6 +3,7 @@ import type {
 	WorkflowEdge,
 	WorkflowNode,
 } from '~/models/AgentWorkflowModel';
+import { WORKFLOW_NODE_TYPES } from '../nodeTypes';
 
 export const updateWorkflowNode = (
 	workflow: AgentWorkflow | undefined,
@@ -47,8 +48,12 @@ export const updateWorkflowNodeSubagent = (
 ): AgentWorkflow | null => {
 	if (!workflow) return null;
 	const currentNode = workflow.nodes[nodeId];
-	if (!currentNode || !('subagent' in currentNode)) return null;
-	const currentSubagent = currentNode.subagent ?? {};
+	const canHaveSubagent =
+		currentNode?.type === WORKFLOW_NODE_TYPES.OVERRIDE_AGENT ||
+		currentNode?.type === WORKFLOW_NODE_TYPES.STANDALONE_AGENT;
+	if (!currentNode || !canHaveSubagent) return null;
+	const currentSubagent =
+		'subagent' in currentNode ? (currentNode.subagent ?? {}) : {};
 	return updateWorkflowNode(workflow, nodeId, {
 		subagent: {
 			...currentSubagent,

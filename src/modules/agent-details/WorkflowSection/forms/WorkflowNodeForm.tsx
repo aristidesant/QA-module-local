@@ -1,53 +1,9 @@
-import { ActionIcon } from '@mantine/core';
-import type { TablerIcon } from '@tabler/icons-react';
-import { IconX } from '@tabler/icons-react';
-import { useTranslation } from 'react-i18next';
-import RightSectionCard from '~/components/RightSectionCard';
-import { useWorkflowNodeEditor } from '../WorkflowNodeEditorContext';
-
 interface WorkflowNodeFormProps {
-	title: string;
-	description?: string;
-	icon?: TablerIcon;
-	iconColor?: string;
 	children: React.ReactNode;
 }
 
-const WorkflowNodeForm = ({
-	title,
-	description,
-	children,
-	icon,
-	iconColor,
-}: WorkflowNodeFormProps) => {
-	const { t } = useTranslation([
-		'campaign.form.workflow',
-		'campaign.form.agents',
-		'common',
-	]);
-	const { closeNodeDrawer } = useWorkflowNodeEditor();
-
-	return (
-		<RightSectionCard
-			title={title}
-			description={description}
-			icon={icon}
-			iconColor={iconColor}
-			rightSection={
-				<ActionIcon
-					variant='subtle'
-					color='gray'
-					size='sm'
-					onClick={closeNodeDrawer}
-					aria-label={t('form.workflow.sidePanel.close')}
-				>
-					<IconX size={16} />
-				</ActionIcon>
-			}
-		>
-			{children}
-		</RightSectionCard>
-	);
+const WorkflowNodeForm = ({ children }: WorkflowNodeFormProps) => {
+	return <>{children}</>;
 };
 
 export default WorkflowNodeForm;

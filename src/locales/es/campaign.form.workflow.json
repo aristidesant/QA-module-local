@@ -112,7 +112,7 @@
 					"title": "Configuracion del agente",
 					"description": "Configura el comportamiento del agente para este nodo.",
 					"missingNode": "No se encontro el nodo del agente",
-					"missingNodeHint": "Selecciona un nodo de agente para editar su configuracion.",
+					"missingNodeHint": "Selecciona un nodo de agente para editar su configuración.",
 					"tabs": {
 						"general": "General",
 						"knowledgeBase": "Knowledge Base",
@@ -123,6 +123,7 @@
 					"toolsTab": {
 						"builtIn": {
 							"title": "Herramientas integradas",
+							"description": "Herramientas del sistema disponibles para este agente",
 							"endConversation": "Finalizar conversacion",
 							"detectLanguage": "Detectar idioma",
 							"skipTurn": "Omitir turno",
@@ -132,7 +133,9 @@
 							"toggle": "Alternar {{name}}"
 						},
 						"inheritCustomTools": "Heredar herramientas personalizadas",
+						"inheritCustomTools_description": "Usa las herramientas personalizadas del agente padre",
 						"additionalCustomTools": "Herramientas personalizadas adicionales",
+						"additionalCustomTools_description": "Agrega herramientas personalizadas extra para este subagente",
 						"addTool": "Agregar herramienta",
 						"loading": "Cargando herramientas...",
 						"error": "No se pudieron cargar las herramientas.",
@@ -143,7 +146,7 @@
 						"customTool": {
 							"name": "capture_customer_address",
 							"type": "Webhook",
-							"description": "Usa esta herramienta cuando el agente necesite capturar una direccion del cliente.",
+							"description": "Usa esta herramienta cuando el agente necesite capturar una dirección del cliente.",
 							"remove": "Eliminar herramienta personalizada"
 						}
 					},
@@ -163,6 +166,10 @@
 						"overridePrompt": {
 							"label": "Sobrescribir prompt"
 						},
+						"override_prompt": {
+							"label": "Sobrescribir prompt",
+							"description": "Reemplaza el prompt heredado con uno personalizado"
+						},
 						"voice": {
 							"label": "Voz",
 							"placeholder": "Selecciona una voz"
@@ -178,6 +185,10 @@
 						"spellingPatience": {
 							"label": "Spelling patience",
 							"placeholder": "Selecciona paciencia"
+						},
+						"spelling_patience": {
+							"label": "Paciencia de deletreo",
+							"placeholder": "Selecciona el nivel de paciencia"
 						},
 						"speculativeTurn": {
 							"label": "Especulación de turno",
@@ -214,10 +225,10 @@
 				"updateState": {
 					"title": "Actualizar estado",
 					"description": "Configura las variables dinámicas que actualiza este nodo.",
-					"missingNode": "No se encontro el nodo de actualizacion de estado",
-					"missingNodeHint": "Selecciona un nodo de actualizacion de estado para editar su configuracion.",
+					"missingNode": "No se encontró el nodo de actualización de estado",
+					"missingNodeHint": "Selecciona un nodo de actualización de estado para editar su configuración.",
 					"noTitle": "Sin titulo",
-					"updateCount_one": "{{count}} actualizacion",
+					"updateCount_one": "{{count}} actualización",
 					"updateCount_other": "{{count}} actualizaciones",
 					"moreVariables": "+{{count}} mas",
 					"tabs": {
@@ -228,7 +239,7 @@
 						"title": "Actualizaciones",
 						"description": "Agrega una o mas asignaciones de variables dinamicas para este nodo."
 					},
-					"addUpdate": "Agregar actualizacion",
+					"addUpdate": "Agregar actualización",
 					"empty": "No hay actualizaciones configuradas",
 					"variableName": {
 						"label": "Variable a actualizar",
@@ -271,8 +282,8 @@
 						"fixedValue": "Valor fijo seleccionado."
 					},
 					"wrapIn": "Envolver en",
-					"collapse": "Alternar actualizacion",
-					"remove": "Eliminar actualizacion"
+					"collapse": "Alternar actualización",
+					"remove": "Eliminar actualización"
 				},
 				"startEnd": {
 					"title": "Nodo inicio/fin",
@@ -301,7 +312,7 @@
 				},
 				"phone": {
 					"title": "Transferencia telefonica",
-					"description": "Revisa la configuracion de transferencia para este nodo.",
+					"description": "Revisa la configuración de transferencia para este nodo.",
 					"missingNode": "No se encontro el nodo de telefono",
 					"missingNodeHint": "Selecciona un nodo de telefono para ver sus detalles.",
 					"transferType": "Tipo de transferencia",
@@ -342,7 +353,7 @@
 				},
 				"override": {
 					"title": "Sobrescritura de agente",
-					"description": "Revisa la configuracion de override para este nodo.",
+					"description": "Revisa la configuración de override para este nodo.",
 					"missingNode": "No se encontro el nodo de override",
 					"missingNodeHint": "Selecciona un nodo de override para ver sus detalles.",
 					"promptTitle": "Prompt adicional",
@@ -357,7 +368,7 @@
 					"title": "Transferencia de agente",
 					"description": "Configura como este nodo transfiere a otro agente.",
 					"missingNode": "No se encontro el nodo de transferencia",
-					"missingNodeHint": "Selecciona un nodo de transferencia para editar su configuracion.",
+					"missingNodeHint": "Selecciona un nodo de transferencia para editar su configuración.",
 					"agentLabel": "Transferir a",
 					"agentPlaceholder": "Selecciona un agente",
 					"agentLoading": "Cargando agentes...",
@@ -368,6 +379,18 @@
 					"messagePlaceholder": "Ingresa el mensaje que se dira durante la transferencia (opcional).",
 					"firstMessageLabel": "Habilitar primer mensaje"
 				}
+			},
+			"transferTargetModal": {
+				"title": "Seleccionar agente destino",
+				"description": "Elige el agente de la campaña que recibirá la llamada cuando se ejecute este nodo de transferencia.",
+				"agentLabel": "Agente destino",
+				"agentPlaceholder": "Selecciona un agente",
+				"loading": "Cargando agentes...",
+				"empty": "No hay agentes disponibles.",
+				"errorTitle": "No se pudieron cargar los agentes",
+				"errorDescription": "Cierra este modal e inténtalo de nuevo antes de crear la transferencia.",
+				"noSearchResults": "No hay agentes coincidentes",
+				"create": "Crear transferencia"
 			},
 			"section": {
 				"title": "Workflow",
@@ -423,7 +446,11 @@
 				"conversationGoal": "Objetivo de conversacion",
 				"overridePrompt": "Sobrescribir prompt",
 				"inheritKnowledgeBase": "Heredar base de conocimiento",
+				"inherit_knowledge_base": "Heredar base de conocimiento",
+				"inherit_knowledge_base_description": "Usa la base de conocimiento del agente padre",
 				"additionalKnowledgeBase": "Base de conocimiento adicional",
+				"additional_knowledge_base": "Base de conocimiento adicional",
+				"additional_knowledge_base_description": "Agrega bases de conocimiento extra para este subagente",
 				"addDocument": "Agregar documento",
 				"knowledgeBaseLoading": "Cargando base de conocimiento...",
 				"knowledgeBaseError": "No se pudo cargar la base de conocimiento.",
@@ -449,6 +476,7 @@
 				"error": "No se pudieron cargar las herramientas."
 			},
 			"nodeMenu": {
+				"agent": "Agente",
 				"subagent": "Subagente",
 				"agentTransfer": "Transferencia de agente",
 				"updateState": "Actualizar estado",
@@ -520,7 +548,7 @@
 				"start": "Inicio",
 				"standalone_agent": "Subagente",
 				"agent_transfer": "Transferencia de agente",
-				"override_agent": "Transferencia de agente",
+				"override_agent": "Agente",
 				"update_state": "Actualizar estado",
 				"phone_number": "Transferencia a numero",
 				"tool": "Despachar herramienta",
@@ -567,7 +595,8 @@
 				"destination": "Destino",
 				"transferTarget": "Agente destino",
 				"subagentStyle": "Subagente",
-				"overrideStyle": "Sobrescritura",
+				"subagentCustomStyle": "Subagente (Personalizado)",
+				"overrideStyle": "Agente",
 				"transferStyle": "Transferencia",
 				"toolsAttached": "{{count}} herramienta",
 				"toolsAttached_other": "{{count}} herramientas"

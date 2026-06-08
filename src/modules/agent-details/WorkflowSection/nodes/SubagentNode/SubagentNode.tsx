@@ -15,6 +15,7 @@ import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
+import { isStandaloneAgentTransferNode } from '../../utils/standaloneAgentNode';
 import { useNodeStyle } from '../../NodeStylesContext';
 import { useWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
 import styles from './SubagentNode.module.css';
@@ -24,7 +25,8 @@ const SubagentNodeComponent = (props: NodeProps) => {
 	const nodeType = nodeData.type as WorkflowNodeType;
 	const isOverride = nodeType === WORKFLOW_NODE_TYPES.OVERRIDE_AGENT;
 	const isTransfer =
-		nodeType === WORKFLOW_NODE_TYPES.STANDALONE_AGENT && !!nodeData.agent_id;
+		nodeType === WORKFLOW_NODE_TYPES.STANDALONE_AGENT &&
+		isStandaloneAgentTransferNode(nodeData);
 	const { t } = useTranslation([
 		'campaign.form.workflow',
 		'campaign.form.agents',
@@ -85,7 +87,9 @@ const SubagentNodeComponent = (props: NodeProps) => {
 		? t('form.workflow.nodeStatus.transferStyle')
 		: isOverride
 			? t('form.workflow.nodeStatus.overrideStyle')
-			: t('form.workflow.nodeStatus.subagentStyle');
+			: hasAdditionalPrompt || hasOverridePrompt
+				? t('form.workflow.nodeStatus.subagentCustomStyle')
+				: t('form.workflow.nodeStatus.subagentStyle');
 
 	return (
 		<>

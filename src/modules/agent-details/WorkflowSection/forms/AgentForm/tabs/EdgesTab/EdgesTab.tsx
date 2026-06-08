@@ -11,8 +11,6 @@ const EdgesTab = () => {
 			nodeId={nodeId}
 			workflow={workflow}
 			onWorkflowChange={onWorkflowChange}
-			title={t('form.workflow.forms.agent.tabs.edges')}
-			description={t('form.workflow.forms.agent.edgesTab.description')}
 			emptyMessage={t('form.workflow.forms.agent.edgesTab.empty')}
 		/>
 	);

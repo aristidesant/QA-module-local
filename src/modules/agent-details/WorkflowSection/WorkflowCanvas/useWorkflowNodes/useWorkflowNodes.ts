@@ -8,6 +8,7 @@ import type { Edge, Node } from '@xyflow/react';
 import type { TFunction } from 'i18next';
 import { WORKFLOW_NODE_TYPES } from '../../nodeTypes';
 import { WORKFLOW_NODE_DRAG_HANDLE_SELECTOR } from '../WorkflowCanvas.helpers';
+import type { WorkflowNode } from '~/models/AgentWorkflowModel';
 import { generateUUIDv4 } from '~/utils/uuidUtils';
 
 interface UseWorkflowNodesOptions {
@@ -21,13 +22,14 @@ interface UseWorkflowNodesOptions {
 interface AddNodeVariantPayload {
 	type: string;
 	variant?: 'transfer' | 'subagent';
+	initialData?: Partial<WorkflowNode>;
 }
 
 const buildEdgeLabel = (_t: TFunction) => null;
 
 const appendEdgeOrder = (node: Node, edgeId: string): Node => {
-	const data = node.data as { edgeOrder?: string[] };
-	const edgeOrder = data.edgeOrder ?? [];
+	const data = node.data as { edge_order?: string[] };
+	const edgeOrder = data.edge_order ?? [];
 
 	if (edgeOrder.includes(edgeId)) {
 		return node;
@@ -37,7 +39,7 @@ const appendEdgeOrder = (node: Node, edgeId: string): Node => {
 		...node,
 		data: {
 			...data,
-			edgeOrder: [...edgeOrder, edgeId],
+			edge_order: [...edgeOrder, edgeId],
 		},
 	};
 };
@@ -46,8 +48,8 @@ const removeNodeEdgesFromOrder = (
 	node: Node,
 	removedEdgeIds: Set<string>
 ): Node => {
-	const data = node.data as { edgeOrder?: string[] };
-	const edgeOrder = data.edgeOrder ?? [];
+	const data = node.data as { edge_order?: string[] };
+	const edgeOrder = data.edge_order ?? [];
 	const cleanedEdgeOrder = edgeOrder.filter(
 		(edgeId) => !removedEdgeIds.has(edgeId)
 	);
@@ -60,7 +62,7 @@ const removeNodeEdgesFromOrder = (
 		...node,
 		data: {
 			...data,
-			edgeOrder: cleanedEdgeOrder,
+			edge_order: cleanedEdgeOrder,
 		},
 	};
 };
@@ -72,66 +74,84 @@ const removeNodeEdgesFromOrder = (
  */
 export const createNodeDataByType = (
 	nodeType: string,
-	position: { x: number; y: number }
+	position: { x: number; y: number },
+	initialData?: Partial<WorkflowNode>
 ) => {
+	const withInitialData = <T extends Record<string, unknown>>(data: T) => ({
+		...data,
+		...initialData,
+		type: data.type,
+		position,
+		edge_order: initialData?.edge_order ?? data.edge_order,
+	});
+
 	switch (nodeType) {
 		case WORKFLOW_NODE_TYPES.END:
-			return {
+			return withInitialData({
 				type: WORKFLOW_NODE_TYPES.END,
 				position,
-				edgeOrder: [],
+				edge_order: [],
 				label: 'End',
-			};
+			});
 		case WORKFLOW_NODE_TYPES.TOOL:
-			return {
+			return withInitialData({
 				type: WORKFLOW_NODE_TYPES.TOOL,
 				position,
-				edgeOrder: [],
+				edge_order: [],
 				label: 'Tool',
 				tools: [],
-			};
+			});
 		case WORKFLOW_NODE_TYPES.UPDATE_STATE:
-			return {
+			return withInitialData({
 				type: WORKFLOW_NODE_TYPES.UPDATE_STATE,
 				position,
-				edgeOrder: [],
+				edge_order: [],
 				label: '',
 				updates: [],
-			};
+			});
 		case WORKFLOW_NODE_TYPES.OVERRIDE_AGENT:
-			return {
+			return withInitialData({
 				type: WORKFLOW_NODE_TYPES.OVERRIDE_AGENT,
 				position,
-				edgeOrder: [],
-				label: 'Agent transfer',
-				additionalPrompt: '',
-				additionalToolIds: [],
-				additionalKnowledgeBase: [],
-				conversationConfig: {},
-			};
+				edge_order: [],
+				label: 'Agent',
+				additional_prompt: '',
+				additional_tool_ids: [],
+				additional_knowledge_base: [],
+				subagent: {
+					tool_ids: [],
+					knowledge_base_ids: [],
+				},
+				conversation_config: {},
+			});
 		case WORKFLOW_NODE_TYPES.PHONE_NUMBER:
-			return {
+			return withInitialData({
 				type: WORKFLOW_NODE_TYPES.PHONE_NUMBER,
 				position,
-				edgeOrder: [],
+				edge_order: [],
 				label: 'Phone number transfer',
-				transferType: 'conference',
-				transferDestination: {
+				transfer_type: 'conference',
+				transfer_destination: {
 					type: 'phone',
-					phoneNumber: '',
+					phone_number: '',
 				},
-			};
+			});
 		case WORKFLOW_NODE_TYPES.STANDALONE_AGENT:
 		default:
-			return {
+			return withInitialData({
 				type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
 				position,
-				edgeOrder: [],
+				edge_order: [],
 				label: 'Subagent',
-				agentId: '',
-				delayMs: 0,
-				enableTransferredAgentFirstMessage: false,
-			};
+				agent_id: '',
+				delay_ms: 0,
+				transfer_message: null,
+				enable_transferred_agent_first_message: false,
+				additional_prompt: '',
+				additional_tool_ids: [],
+				additional_knowledge_base: [],
+				conversation_config: {},
+			});
 	}
 };
 
@@ -171,7 +191,11 @@ const useWorkflowNodes = ({
 				x: parentPosition.x,
 				y: parentPosition.y + 120,
 			};
-			const baseData = createNodeDataByType(nodeType, newNodePosition);
+			const baseData = createNodeDataByType(
+				nodeType,
+				newNodePosition,
+				payload?.initialData
+			);
 			const labelOverride =
 				payload?.variant === 'transfer'
 					? t('form.workflow.nodes.agent_transfer', {
@@ -229,7 +253,7 @@ const useWorkflowNodes = ({
 			return appendNodeAndEdge(
 				parentNodeId,
 				parentPosition,
-				WORKFLOW_NODE_TYPES.STANDALONE_AGENT
+				WORKFLOW_NODE_TYPES.OVERRIDE_AGENT
 			);
 		},
 		[appendNodeAndEdge]
@@ -306,7 +330,7 @@ const useWorkflowNodes = ({
 				data: {
 					...(data as Record<string, unknown>),
 					position: copyPosition,
-					edgeOrder: [],
+					edge_order: [],
 				},
 			};
 

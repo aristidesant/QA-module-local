@@ -47,7 +47,7 @@ export const NODE_TYPE_CONFIG: Record<WorkflowNodeType, NodeTypeConfig> = {
 	},
 	[WORKFLOW_NODE_TYPES.OVERRIDE_AGENT]: {
 		type: WORKFLOW_NODE_TYPES.OVERRIDE_AGENT,
-		label: 'Override',
+		label: 'Agent',
 		hasAddButton: true,
 		color: 'orange',
 		icon: 'user',

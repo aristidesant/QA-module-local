@@ -3,11 +3,11 @@ import type { NodeProps } from '@xyflow/react';
 import type { StandaloneAgentNode as StandaloneAgentNodeModel } from '~/models/AgentWorkflowModel';
 import AgentTransferNode from '../AgentTransferNode';
 import SubagentNode from '../SubagentNode';
+import { isStandaloneAgentTransferNode } from '../../utils/standaloneAgentNode';
 
 const StandaloneAgentNodeComponent = (props: NodeProps) => {
 	const nodeData = props.data as unknown as StandaloneAgentNodeModel;
-	const isTransfer =
-		nodeData.uiMeta?.variant === 'transfer' || !!nodeData.agent_id;
+	const isTransfer = isStandaloneAgentTransferNode(nodeData);
 
 	return isTransfer ? (
 		<AgentTransferNode {...props} />

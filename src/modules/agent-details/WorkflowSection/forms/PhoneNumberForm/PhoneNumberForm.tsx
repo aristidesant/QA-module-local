@@ -9,7 +9,7 @@ import {
 	Select,
 } from '@mantine/core';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
-import { IconPhone, IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconPlus, IconTrash } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type {
 	AgentWorkflow,
@@ -40,10 +40,7 @@ const PhoneNumberForm = ({
 
 	if (!node) {
 		return (
-			<WorkflowNodeForm
-				title={t('form.workflow.forms.phone.title')}
-				description={t('form.workflow.forms.phone.missingNode')}
-			>
+			<WorkflowNodeForm>
 				<Text size='sm' c='dimmed'>
 					{t('form.workflow.forms.phone.missingNodeHint')}
 				</Text>
@@ -175,12 +172,7 @@ const PhoneNumberForm = ({
 	const currentTransferType = node.transfer_type || 'conference';
 
 	return (
-		<WorkflowNodeForm
-			title={t('form.workflow.forms.phone.title')}
-			description={t('form.workflow.forms.phone.description')}
-			icon={IconPhone}
-			iconColor='var(--mantine-color-gray-7)'
-		>
+		<WorkflowNodeForm>
 			<Stack gap='md' className={styles.form}>
 				{/* Transfer Type Selector */}
 				<Box>

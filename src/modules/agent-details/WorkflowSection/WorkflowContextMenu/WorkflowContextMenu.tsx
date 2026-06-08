@@ -24,6 +24,7 @@ import {
 import { useWorkflowCanvasActions } from '../WorkflowCanvas/WorkflowCanvasActionsContext';
 import { useWorkflowNodeEditor } from '../WorkflowNodeEditorContext';
 import type { WorkflowNodeData } from '../WorkflowNode/WorkflowNodeTypes';
+import { isStandaloneAgentTransferNode } from '../utils/standaloneAgentNode';
 import type { WorkflowContextMenuProps } from './WorkflowContextMenu.types';
 import styles from './WorkflowContextMenu.module.css';
 
@@ -108,9 +109,7 @@ const WorkflowContextMenu = ({
 	// --- Node menu logic ---
 	const isStartNode = nodeType === WORKFLOW_NODE_TYPES.START;
 	const isEndNode = nodeType === WORKFLOW_NODE_TYPES.END;
-	const isTransferAgent =
-		nodeData?.uiMeta?.variant === 'transfer' ||
-		!!(nodeData as { agent_id?: string })?.agent_id;
+	const isTransferAgent = isStandaloneAgentTransferNode(nodeData);
 	const isPhoneTransfer = nodeType === WORKFLOW_NODE_TYPES.PHONE_NUMBER;
 	const edge_order = (nodeData?.edge_order as string[] | undefined) ?? [];
 	const isStartConnected = isStartNode && edge_order.length > 0;
@@ -134,8 +133,8 @@ const WorkflowContextMenu = ({
 	const addMenuItems = useMemo(() => {
 		const items = [
 			{
-				type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
-				label: t('form.workflow.nodeMenu.subagent'),
+				type: WORKFLOW_NODE_TYPES.OVERRIDE_AGENT,
+				label: t('form.workflow.nodeMenu.agent'),
 				icon: IconUserCircle,
 			},
 			{
