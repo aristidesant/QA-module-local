@@ -21,6 +21,7 @@ import { useWorkflowNodeEditor } from '../WorkflowNodeEditorContext';
 import { useWorkflowCanvasActions } from '../WorkflowCanvas/WorkflowCanvasActionsContext';
 import type { WorkflowNodeData } from '../WorkflowNode/WorkflowNodeTypes';
 import NodeStylePopover from '../NodeStylePopover';
+import { isStandaloneAgentTransferNode } from '../utils/standaloneAgentNode';
 import { isWorkflowMultiSelectClick } from '../utils/workflowSelectionUtils';
 import styles from './WorkflowNodeActions.module.css';
 
@@ -51,8 +52,7 @@ const WorkflowNodeActions = ({
 	} = useWorkflowCanvasActions();
 	const { openNodeDrawer } = useWorkflowNodeEditor();
 	const config = NODE_TYPE_CONFIG[nodeType];
-	const isTransferAgent =
-		nodeData.uiMeta?.variant === 'transfer' || !!nodeData.agent_id;
+	const isTransferAgent = isStandaloneAgentTransferNode(nodeData);
 	const isPhoneTransfer = nodeType === WORKFLOW_NODE_TYPES.PHONE_NUMBER;
 	const showActions = nodeType !== WORKFLOW_NODE_TYPES.START;
 	const canEdit =
@@ -97,8 +97,8 @@ const WorkflowNodeActions = ({
 	const menuItems = useMemo(() => {
 		const items = [
 			{
-				type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
-				label: t('form.workflow.nodeMenu.subagent'),
+				type: WORKFLOW_NODE_TYPES.OVERRIDE_AGENT,
+				label: t('form.workflow.nodeMenu.agent'),
 				icon: IconUserCircle,
 			},
 			{
@@ -211,7 +211,7 @@ const WorkflowNodeActions = ({
 							isStartNode
 								? (event) => {
 										if (isWorkflowMultiSelectClick(event)) return;
-										handleAddNodeWithType(WORKFLOW_NODE_TYPES.STANDALONE_AGENT);
+										handleAddNodeWithType(WORKFLOW_NODE_TYPES.OVERRIDE_AGENT);
 									}
 								: (event) => {
 										if (isWorkflowMultiSelectClick(event)) return;

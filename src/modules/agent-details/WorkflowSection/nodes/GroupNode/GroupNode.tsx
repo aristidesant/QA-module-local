@@ -231,8 +231,8 @@ const GroupNode = (props: NodeProps) => {
 	const newNodeMenuItems = useMemo<NewNodeMenuItem[]>(
 		() => [
 			{
-				type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
-				label: t('form.workflow.nodeMenu.subagent'),
+				type: WORKFLOW_NODE_TYPES.OVERRIDE_AGENT,
+				label: t('form.workflow.nodeMenu.agent'),
 				tone: 'blue' as const,
 				icon: IconUserCircle,
 			},

@@ -31,8 +31,6 @@ interface NodeEdgesTabProps {
 	nodeId: string;
 	workflow?: AgentWorkflow;
 	onWorkflowChange: (workflow: AgentWorkflow) => void;
-	title: string;
-	description: string;
 	emptyMessage: string;
 }
 
@@ -40,8 +38,6 @@ const NodeEdgesTab = ({
 	nodeId,
 	workflow,
 	onWorkflowChange,
-	title,
-	description,
 	emptyMessage,
 }: NodeEdgesTabProps) => {
 	const { t } = useTranslation([
@@ -150,7 +146,7 @@ const NodeEdgesTab = ({
 
 	return (
 		<>
-			<WorkflowNodeForm title={title} description={description}>
+			<WorkflowNodeForm>
 				<Stack gap='sm'>
 					{edgesByWarningLevel.errors.length > 0 && (
 						<Alert

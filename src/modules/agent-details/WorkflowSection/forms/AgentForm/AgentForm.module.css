@@ -27,36 +27,49 @@
 .conversationSection {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
-	padding-top: var(--mantine-spacing-xs);
+	gap: var(--mantine-spacing-sm);
+	padding-top: var(--mantine-spacing-sm);
+	padding-bottom: var(--mantine-spacing-md);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	margin-bottom: var(--mantine-spacing-md);
 }
 
 .conversationHeader {
 	display: flex;
-	align-items: center;
+	align-items: flex-start;
 	justify-content: space-between;
-	gap: var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-md);
 }
 
 .sectionLabel {
 	display: flex;
 	align-items: center;
-	line-height: 1;
+	line-height: 1.2;
 	font-weight: 600;
 	color: var(--mantine-color-gray-9);
 	min-width: 0;
+	font-size: 0.9375rem;
+}
+
+.overrideDescription {
+	margin-top: 6px;
+	line-height: 1.4;
+	color: var(--mantine-color-gray-6);
+	font-size: 0.8125rem;
 }
 
 .overrideToggle {
-	padding: 6px 10px;
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: 999px;
-	background: var(--mantine-color-gray-0);
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
 	flex-shrink: 0;
+	padding-top: 2px;
 }
 
 .overrideLabel {
 	white-space: nowrap;
+	font-size: 0.8125rem;
+	color: var(--mantine-color-gray-7);
 }
 
 .inlineSwitch {
@@ -64,10 +77,33 @@
 }
 
 .promptSurface {
-	padding: var(--mantine-spacing-sm);
+	position: relative;
+	padding: 4px;
 	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: 14px;
-	background: var(--mantine-color-gray-0);
+	border-radius: 12px;
+	background: var(--mantine-color-white);
+	transition:
+		border-color 150ms ease,
+		box-shadow 150ms ease;
+}
+
+.promptSurface:focus-within {
+	border-color: var(--mantine-color-blue-4);
+	box-shadow: 0 0 0 3px
+		color-mix(in srgb, var(--mantine-color-blue-4) 15%, transparent);
+}
+
+.promptActions {
+	position: absolute;
+	bottom: 12px;
+	right: 12px;
+	opacity: 0;
+	transition: opacity 150ms ease;
+}
+
+.promptSurface:hover .promptActions,
+.promptSurface:focus-within .promptActions {
+	opacity: 1;
 }
 
 .promptRoot {
@@ -81,7 +117,7 @@
 .promptInput {
 	min-height: 150px;
 	border: none;
-	padding: 0;
+	padding: 12px 14px;
 	font-size: var(--mantine-font-size-xs);
 	line-height: 1.55;
 	background: transparent;
@@ -95,12 +131,20 @@
 .fieldRow {
 	display: flex;
 	flex-direction: column;
-	gap: 6px; /* slightly tighter than default */
+	gap: 8px;
+	padding: var(--mantine-spacing-xs) 0;
 }
 
 .fieldLabel {
 	font-weight: 600;
 	color: var(--mantine-color-gray-9);
+	font-size: 0.875rem;
+}
+
+.fieldDescription {
+	color: var(--mantine-color-gray-6);
+	font-size: 0.8125rem;
+	line-height: 1.4;
 }
 
 .helperText {
@@ -108,29 +152,73 @@
 }
 
 .selectInput {
-	border-radius: 8px;
+	border-radius: 10px;
 	border: 1px solid var(--mantine-color-gray-3);
 	background: var(--mantine-color-white);
-	min-height: 32px; /* smaller control height for compact layout */
+	min-height: 36px;
+	transition:
+		border-color 150ms ease,
+		box-shadow 150ms ease;
 }
 
-/* Reusable box for inherited/default value display (replaces inline styles) */
-.inheritedFieldBox {
-	padding: 6px 8px;
-	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: 8px;
-	background-color: var(--mantine-color-gray-0);
+.selectInput:focus {
+	border-color: var(--mantine-color-blue-4);
+	box-shadow: 0 0 0 3px
+		color-mix(in srgb, var(--mantine-color-blue-4) 15%, transparent);
+}
+
+.inheritedField {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	padding: 10px 12px;
+	border: 1px dashed var(--mantine-color-gray-3);
+	border-radius: 10px;
+	background: var(--mantine-color-gray-0);
+	transition:
+		border-color 150ms ease,
+		background-color 150ms ease;
+}
+
+.inheritedField:hover {
+	border-color: var(--mantine-color-gray-4);
+	background: var(--mantine-color-gray-1);
+}
+
+.inheritedFieldValue {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1;
+	min-width: 0;
+}
+
+.inheritedFieldLabel {
+	font-size: 0.8125rem;
+	color: var(--mantine-color-gray-6);
+	line-height: 1.3;
+}
+
+.inheritedFieldAction {
+	flex-shrink: 0;
+	opacity: 0.7;
+	transition: opacity 150ms ease;
+}
+
+.inheritedField:hover .inheritedFieldAction {
+	opacity: 1;
 }
 
 .voiceIcon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 20px;
-	height: 20px;
+	width: 22px;
+	height: 22px;
 	border-radius: 999px;
-	background: var(--mantine-color-gray-1);
-	color: var(--mantine-color-gray-7);
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-7);
 }
 
 .knowledgeList {
@@ -145,30 +233,49 @@
 	align-items: center;
 	gap: var(--mantine-spacing-sm);
 	border: 1px solid var(--mantine-color-gray-3);
-	border-radius: 12px;
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border-radius: 10px;
+	padding: var(--mantine-spacing-sm);
+	background: var(--mantine-color-white);
+	transition:
+		border-color 150ms ease,
+		background-color 150ms ease,
+		box-shadow 150ms ease;
+}
+
+.knowledgeItem:hover {
+	border-color: var(--mantine-color-gray-4);
+	background: var(--mantine-color-gray-0);
+	box-shadow: 0 2px 4px
+		color-mix(in srgb, var(--mantine-color-black) 4%, transparent);
 }
 
 .knowledgeIcon {
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 28px;
-	height: 28px;
-	border-radius: 10px;
-	background: var(--mantine-color-gray-1);
-	color: var(--mantine-color-gray-6);
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+	background: var(--mantine-color-blue-0);
+	color: var(--mantine-color-blue-7);
+	flex-shrink: 0;
 }
 
 .knowledgeLabel {
 	color: var(--mantine-color-gray-9);
+	font-weight: 500;
+	font-size: 0.875rem;
 }
 
 .emptyState {
 	border: 1px dashed var(--mantine-color-gray-3);
 	border-radius: 10px;
-	padding: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-lg);
 	background: var(--mantine-color-gray-0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 80px;
 }
 
 .placeholderCard {
@@ -194,15 +301,22 @@
 	display: grid;
 	grid-template-columns: 1fr auto auto;
 	align-items: center;
-	gap: var(--mantine-spacing-xs);
-	padding: 6px var(--mantine-spacing-sm);
-	border: 1px solid var(--mantine-color-gray-2);
+	gap: var(--mantine-spacing-sm);
+	padding: 10px var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: 10px;
 	background: var(--mantine-color-white);
+	transition:
+		border-color 150ms ease,
+		background-color 150ms ease,
+		box-shadow 150ms ease;
 }
 
 .toolRow:hover {
+	border-color: var(--mantine-color-gray-4);
 	background: var(--mantine-color-gray-0);
+	box-shadow: 0 2px 4px
+		color-mix(in srgb, var(--mantine-color-black) 4%, transparent);
 }
 
 .toolRowDisabled {
@@ -246,8 +360,12 @@
 .customToolsEmpty {
 	border: 1px dashed var(--mantine-color-gray-3);
 	border-radius: 10px;
-	padding: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-lg);
 	background: var(--mantine-color-gray-0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 80px;
 }
 
 .customToolIcon {
@@ -273,13 +391,37 @@
 }
 
 .customToolRow {
-	display: flex;
+	display: grid;
+	grid-template-columns: auto 1fr auto;
 	align-items: center;
-	justify-content: space-between;
-	gap: var(--mantine-spacing-xs);
-	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-sm);
+	padding: 10px var(--mantine-spacing-sm);
 	border: 1px solid var(--mantine-color-gray-3);
 	border-radius: 10px;
+	background: var(--mantine-color-white);
+	transition:
+		border-color 150ms ease,
+		background-color 150ms ease,
+		box-shadow 150ms ease;
+}
+
+.customToolRow:hover {
+	border-color: var(--mantine-color-gray-4);
+	background: var(--mantine-color-gray-0);
+	box-shadow: 0 2px 4px
+		color-mix(in srgb, var(--mantine-color-black) 4%, transparent);
+}
+
+.customToolIcon {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 32px;
+	height: 32px;
+	border-radius: 8px;
+	background: var(--mantine-color-violet-0);
+	color: var(--mantine-color-violet-7);
+	flex-shrink: 0;
 }
 
 .edgesList {
@@ -392,16 +534,69 @@
 }
 
 [data-mantine-color-scheme='dark'] .conversationSection {
-	border-top: 1px solid var(--mantine-color-dark-5);
+	border-bottom-color: var(--mantine-color-dark-5);
 }
 
-[data-mantine-color-scheme='dark'] .knowledgeItem,
-[data-mantine-color-scheme='dark'] .toolRow,
-[data-mantine-color-scheme='dark'] .customToolCard,
-[data-mantine-color-scheme='dark'] .customToolRow,
-[data-mantine-color-scheme='dark'] .edgeItem {
+[data-mantine-color-scheme='dark'] .knowledgeItem {
 	border-color: var(--mantine-color-dark-4);
 	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .knowledgeItem:hover {
+	border-color: var(--mantine-color-dark-3);
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .knowledgeIcon {
+	background: var(--mantine-color-blue-9);
+	color: var(--mantine-color-blue-3);
+}
+
+[data-mantine-color-scheme='dark'] .knowledgeLabel {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .toolRow {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .toolRow:hover {
+	border-color: var(--mantine-color-dark-3);
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .toolRowDisabled {
+	opacity: 0.72;
+}
+
+[data-mantine-color-scheme='dark'] .customToolRow {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .customToolRow:hover {
+	border-color: var(--mantine-color-dark-3);
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .customToolIcon {
+	background: var(--mantine-color-violet-9);
+	color: var(--mantine-color-violet-3);
+}
+
+[data-mantine-color-scheme='dark'] .customToolName {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .customToolsEmpty {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .emptyState {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-6);
 }
 
 [data-mantine-color-scheme='dark'] .toolsDivider {
@@ -409,10 +604,19 @@
 	background: var(--mantine-color-dark-5);
 }
 
-[data-mantine-color-scheme='dark'] .overrideToggle,
+[data-mantine-color-scheme='dark'] .overrideToggle {
+	gap: var(--mantine-spacing-xs);
+}
+
 [data-mantine-color-scheme='dark'] .promptSurface {
 	border-color: var(--mantine-color-dark-5);
-	background: var(--mantine-color-dark-6);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .promptSurface:focus-within {
+	border-color: var(--mantine-color-blue-5);
+	box-shadow: 0 0 0 3px
+		color-mix(in srgb, var(--mantine-color-blue-5) 20%, transparent);
 }
 
 [data-mantine-color-scheme='dark'] .sectionLabel,
@@ -424,23 +628,40 @@
 	color: var(--mantine-color-dark-0);
 }
 
+[data-mantine-color-scheme='dark'] .overrideDescription,
+[data-mantine-color-scheme='dark'] .fieldDescription,
+[data-mantine-color-scheme='dark'] .inheritedFieldLabel,
 [data-mantine-color-scheme='dark'] .helperText,
 [data-mantine-color-scheme='dark'] .description,
 [data-mantine-color-scheme='dark'] .edgeDragHandle,
-[data-mantine-color-scheme='dark'] .voiceIcon,
 [data-mantine-color-scheme='dark'] .knowledgeIcon,
 [data-mantine-color-scheme='dark'] .customToolIcon {
-	color: var(--mantine-color-dark-2);
+	color: var(--mantine-color-dark-3);
 }
 
 [data-mantine-color-scheme='dark'] .overrideLabel {
-	color: var(--mantine-color-dark-2);
+	color: var(--mantine-color-dark-3);
 }
 
-[data-mantine-color-scheme='dark'] .selectInput,
-[data-mantine-color-scheme='dark'] .inheritedFieldBox {
+[data-mantine-color-scheme='dark'] .selectInput {
+	border-color: var(--mantine-color-dark-5);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .selectInput:focus {
+	border-color: var(--mantine-color-blue-5);
+	box-shadow: 0 0 0 3px
+		color-mix(in srgb, var(--mantine-color-blue-5) 20%, transparent);
+}
+
+[data-mantine-color-scheme='dark'] .inheritedField {
 	border-color: var(--mantine-color-dark-5);
 	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .inheritedField:hover {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-5);
 }
 
 [data-mantine-color-scheme='dark'] .promptInput {
@@ -452,7 +673,11 @@
 	color: var(--mantine-color-dark-3);
 }
 
-[data-mantine-color-scheme='dark'] .voiceIcon,
+[data-mantine-color-scheme='dark'] .voiceIcon {
+	background: var(--mantine-color-blue-9);
+	color: var(--mantine-color-blue-3);
+}
+
 [data-mantine-color-scheme='dark'] .knowledgeIcon,
 [data-mantine-color-scheme='dark'] .customToolIcon {
 	background: var(--mantine-color-dark-6);

@@ -328,6 +328,7 @@ const WorkflowSection = ({
 					nodeGroups={nodeGroups}
 					onNodeGroupsChange={handleNodeGroupsChange}
 					onNodeStylesChange={handleNodeStylesChange}
+					currentAgentId={selectedCampaignAgent?.agentId}
 				/>
 				<div className={styles.root}>
 					<SectionCard
@@ -415,6 +416,7 @@ const WorkflowSection = ({
 							prevent_subagent_loops={prevent_subagent_loops}
 							allowDefaultInit={!campaignId || !workflow}
 							onNodeSelect={handleNodeSelect}
+							currentAgentId={selectedCampaignAgent?.agentId}
 						/>
 					</SectionCard>
 				</div>

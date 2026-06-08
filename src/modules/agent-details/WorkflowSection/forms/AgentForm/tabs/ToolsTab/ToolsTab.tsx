@@ -8,7 +8,7 @@ import {
 	Text,
 	Tooltip,
 } from '@mantine/core';
-import { IconSettings, IconTrash } from '@tabler/icons-react';
+import { IconSettings, IconTrash, IconTool } from '@tabler/icons-react';
 import { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useTools } from '~/queries/toolQueries';
@@ -281,9 +281,14 @@ const BuiltInTools = () => {
 	return (
 		<>
 			<div className={mainStyles.toolsSection}>
-				<Text size='sm' className={mainStyles.sectionLabel}>
-					{t('form.workflow.forms.agent.toolsTab.builtIn.title')}
-				</Text>
+				<div className={mainStyles.fieldRow}>
+					<Text size='sm' className={mainStyles.fieldLabel}>
+						{t('form.workflow.forms.agent.toolsTab.builtIn.title')}
+					</Text>
+					<Text size='xs' c='dimmed' className={mainStyles.fieldDescription}>
+						{t('form.workflow.forms.agent.toolsTab.builtIn.description')}
+					</Text>
+				</div>
 				<div className={mainStyles.toolList}>
 					{builtInTools.map((tool) => {
 						const isEndConversation = tool.id === 'endConversation';
@@ -444,90 +449,121 @@ const CustomTools = () => {
 	return (
 		<>
 			<div className={mainStyles.toolsDivider} />
-			<Group justify='space-between' align='center'>
-				<Text size='sm' className={mainStyles.sectionLabel}>
-					{t('form.workflow.forms.agent.toolsTab.inheritCustomTools')}
-				</Text>
-				<Switch
-					size='sm'
-					checked={inheritCustomTools}
-					onChange={(event) => {
-						const checked = event.currentTarget?.checked ?? false;
-						setInheritCustomTools(checked);
-					}}
-					aria-label={t(
-						'form.workflow.forms.agent.toolsTab.inheritCustomTools'
-					)}
-				/>
-			</Group>
-			<Group justify='space-between' align='center'>
-				<Text size='sm' className={mainStyles.sectionLabel}>
-					{t('form.workflow.forms.agent.toolsTab.additionalCustomTools')}
-				</Text>
-				<Menu
-					width={280}
-					position='bottom-end'
-					withinPortal
-					opened={isToolMenuOpen}
-					onChange={setIsToolMenuOpen}
-				>
-					<Menu.Target>
-						<Button size='xs' variant='default' onClick={handleAddToolClick}>
-							{t('form.workflow.forms.agent.toolsTab.addTool')}
-						</Button>
-					</Menu.Target>
-					<Menu.Dropdown>
-						{isToolsLoading && (
-							<Text size='xs' c='dimmed' px='sm' py='xs'>
-								{t('form.workflow.forms.agent.toolsTab.loading')}
-							</Text>
+			<div className={mainStyles.fieldRow}>
+				<Group justify='space-between' align='center'>
+					<div>
+						<Text size='sm' className={mainStyles.fieldLabel}>
+							{t('form.workflow.forms.agent.toolsTab.inheritCustomTools')}
+						</Text>
+						<Text size='xs' c='dimmed' className={mainStyles.fieldDescription}>
+							{t(
+								'form.workflow.forms.agent.toolsTab.inheritCustomTools_description'
+							)}
+						</Text>
+					</div>
+					<Switch
+						size='sm'
+						checked={inheritCustomTools}
+						onChange={(event) => {
+							const checked = event.currentTarget?.checked ?? false;
+							setInheritCustomTools(checked);
+						}}
+						aria-label={t(
+							'form.workflow.forms.agent.toolsTab.inheritCustomTools'
 						)}
-						{isToolsError && (
-							<Text size='xs' c='dimmed' px='sm' py='xs'>
-								{t('form.workflow.forms.agent.toolsTab.error')}
-							</Text>
-						)}
-						{!isToolsLoading &&
-							!isToolsError &&
-							(!tools || tools.length === 0) && (
+					/>
+				</Group>
+			</div>
+			<div className={mainStyles.fieldRow}>
+				<Group justify='space-between' align='center'>
+					<div>
+						<Text size='sm' className={mainStyles.fieldLabel}>
+							{t('form.workflow.forms.agent.toolsTab.additionalCustomTools')}
+						</Text>
+						<Text size='xs' c='dimmed' className={mainStyles.fieldDescription}>
+							{t(
+								'form.workflow.forms.agent.toolsTab.additionalCustomTools_description'
+							)}
+						</Text>
+					</div>
+					<Menu
+						width={280}
+						position='bottom-end'
+						withinPortal
+						opened={isToolMenuOpen}
+						onChange={setIsToolMenuOpen}
+					>
+						<Menu.Target>
+							<Button
+								size='xs'
+								variant='light'
+								leftSection={<IconTool size={14} />}
+								onClick={handleAddToolClick}
+							>
+								{t('form.workflow.forms.agent.toolsTab.addTool')}
+							</Button>
+						</Menu.Target>
+						<Menu.Dropdown>
+							{isToolsLoading && (
 								<Text size='xs' c='dimmed' px='sm' py='xs'>
-									{t('form.workflow.forms.agent.toolsTab.empty')}
+									{t('form.workflow.forms.agent.toolsTab.loading')}
 								</Text>
 							)}
-						{availableTools.map((tool) => (
-							<Menu.Item key={tool.id} onClick={() => handleSelectTool(tool)}>
-								{tool.name}
-							</Menu.Item>
-						))}
-					</Menu.Dropdown>
-				</Menu>
-			</Group>
+							{isToolsError && (
+								<Text size='xs' c='red' px='sm' py='xs'>
+									{t('form.workflow.forms.agent.toolsTab.error')}
+								</Text>
+							)}
+							{!isToolsLoading &&
+								!isToolsError &&
+								(!tools || tools.length === 0) && (
+									<Text size='xs' c='dimmed' px='sm' py='xs'>
+										{t('form.workflow.forms.agent.toolsTab.empty')}
+									</Text>
+								)}
+							{availableTools.map((tool) => (
+								<Menu.Item key={tool.id} onClick={() => handleSelectTool(tool)}>
+									{tool.name}
+								</Menu.Item>
+							))}
+						</Menu.Dropdown>
+					</Menu>
+				</Group>
+			</div>
 			{selectedTools.length === 0 ? (
 				<div className={mainStyles.customToolsEmpty}>
-					<Text size='xs' c='dimmed'>
-						{t('form.workflow.forms.agent.toolsTab.emptyCustomTools')}
-					</Text>
+					<Group gap='xs' align='center'>
+						<IconTool size={24} color='var(--mantine-color-gray-5)' />
+						<Text size='sm' c='dimmed'>
+							{t('form.workflow.forms.agent.toolsTab.emptyCustomTools')}
+						</Text>
+					</Group>
 				</div>
 			) : (
-				selectedTools.map((tool) => (
-					<div key={tool.id} className={mainStyles.customToolRow}>
-						<Text size='sm' className={mainStyles.customToolName}>
-							{tool.name || tool.id}
-						</Text>
-						<ActionIcon
-							variant='subtle'
-							color='gray'
-							size='sm'
-							onClick={() => handleRemoveTool(tool.id)}
-							aria-label={t(
-								'form.workflow.forms.agent.toolsTab.removeCustomTool',
-								{ name: tool.name || tool.id }
-							)}
-						>
-							<IconTrash size={14} />
-						</ActionIcon>
-					</div>
-				))
+				<div className={mainStyles.toolList}>
+					{selectedTools.map((tool) => (
+						<div key={tool.id} className={mainStyles.customToolRow}>
+							<div className={mainStyles.customToolIcon}>
+								<IconTool size={16} />
+							</div>
+							<Text size='sm' className={mainStyles.customToolName}>
+								{tool.name || tool.id}
+							</Text>
+							<ActionIcon
+								variant='subtle'
+								color='gray'
+								size='sm'
+								onClick={() => handleRemoveTool(tool.id)}
+								aria-label={t(
+									'form.workflow.forms.agent.toolsTab.removeCustomTool',
+									{ name: tool.name || tool.id }
+								)}
+							>
+								<IconTrash size={14} />
+							</ActionIcon>
+						</div>
+					))}
+				</div>
 			)}
 			<div className={mainStyles.toolsDivider} />
 		</>

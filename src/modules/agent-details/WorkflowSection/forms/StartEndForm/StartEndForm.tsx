@@ -19,10 +19,7 @@ const StartEndForm = ({ nodeId, workflow }: StartEndFormProps) => {
 
 	if (!node) {
 		return (
-			<WorkflowNodeForm
-				title={t('form.workflow.forms.startEnd.title')}
-				description={t('form.workflow.forms.startEnd.missingNode')}
-			>
+			<WorkflowNodeForm>
 				<Text size='sm' c='dimmed'>
 					{t('form.workflow.forms.startEnd.missingNodeHint')}
 				</Text>
@@ -31,10 +28,7 @@ const StartEndForm = ({ nodeId, workflow }: StartEndFormProps) => {
 	}
 
 	return (
-		<WorkflowNodeForm
-			title={t('form.workflow.forms.startEnd.title')}
-			description={t('form.workflow.forms.startEnd.description')}
-		>
+		<WorkflowNodeForm>
 			<Stack gap='xs'>
 				<div className={styles.metaRow}>
 					<Text size='xs' className={styles.metaLabel}>

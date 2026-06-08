@@ -123,6 +123,7 @@
 					"toolsTab": {
 						"builtIn": {
 							"title": "Built-in tools",
+							"description": "System tools available for this agent",
 							"endConversation": "End conversation",
 							"detectLanguage": "Detect language",
 							"skipTurn": "Skip turn",
@@ -132,7 +133,9 @@
 							"toggle": "Toggle {{name}}"
 						},
 						"inheritCustomTools": "Inherit custom tools",
+						"inheritCustomTools_description": "Use the parent agent's custom tools",
 						"additionalCustomTools": "Additional custom tools",
+						"additionalCustomTools_description": "Add extra custom tools for this subagent",
 						"addTool": "Add tool",
 						"loading": "Loading tools...",
 						"error": "Failed to load tools.",
@@ -163,6 +166,10 @@
 						"overridePrompt": {
 							"label": "Override prompt"
 						},
+						"override_prompt": {
+							"label": "Override prompt",
+							"description": "Replace the inherited prompt with a custom one"
+						},
 						"voice": {
 							"label": "Voice",
 							"placeholder": "Select a voice"
@@ -178,6 +185,10 @@
 						"spellingPatience": {
 							"label": "Spelling patience",
 							"placeholder": "Select patience"
+						},
+						"spelling_patience": {
+							"label": "Spelling patience",
+							"placeholder": "Select patience level"
 						},
 						"speculativeTurn": {
 							"label": "Speculative turn",
@@ -368,6 +379,18 @@
 					"firstMessageLabel": "Enable First Message"
 				}
 			},
+			"transferTargetModal": {
+				"title": "Select transfer target",
+				"description": "Choose the campaign agent that should receive the call when this transfer node runs.",
+				"agentLabel": "Target agent",
+				"agentPlaceholder": "Select an agent",
+				"loading": "Loading agents...",
+				"empty": "No agents available.",
+				"errorTitle": "Could not load agents",
+				"errorDescription": "Close this modal and try again before creating the transfer.",
+				"noSearchResults": "No matching agents",
+				"create": "Create transfer"
+			},
 			"section": {
 				"title": "Workflow",
 				"description": "Build the agent flow and connect nodes based on the workflow schema."
@@ -422,7 +445,11 @@
 				"conversationGoal": "Conversation goal",
 				"overridePrompt": "Override prompt",
 				"inheritKnowledgeBase": "Inherit knowledge base",
+				"inherit_knowledge_base": "Inherit knowledge base",
+				"inherit_knowledge_base_description": "Use the parent agent's knowledge base",
 				"additionalKnowledgeBase": "Additional knowledge base",
+				"additional_knowledge_base": "Additional knowledge base",
+				"additional_knowledge_base_description": "Add extra knowledge bases for this subagent",
 				"addDocument": "Add document",
 				"knowledgeBaseLoading": "Loading knowledge base...",
 				"knowledgeBaseError": "Failed to load knowledge base.",
@@ -448,6 +475,7 @@
 				"error": "Failed to load tools."
 			},
 			"nodeMenu": {
+				"agent": "Agent",
 				"subagent": "Subagent",
 				"agentTransfer": "Agent transfer",
 				"updateState": "Update state",
@@ -519,7 +547,7 @@
 				"start": "Start",
 				"standalone_agent": "Subagent",
 				"agent_transfer": "Agent transfer",
-				"override_agent": "Agent transfer",
+				"override_agent": "Agent",
 				"update_state": "Update state",
 				"phone_number": "Phone number transfer",
 				"tool": "Dispatch tool",
@@ -566,7 +594,8 @@
 				"destination": "Destination",
 				"transferTarget": "Target agent",
 				"subagentStyle": "Subagent",
-				"overrideStyle": "Override",
+				"subagentCustomStyle": "Subagent (Custom)",
+				"overrideStyle": "Agent",
 				"transferStyle": "Transfer",
 				"toolsAttached": "{{count}} tool",
 				"toolsAttached_other": "{{count}} tools"

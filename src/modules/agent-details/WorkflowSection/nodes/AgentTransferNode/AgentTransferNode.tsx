@@ -4,14 +4,27 @@ import { Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { IconUserCog } from '@tabler/icons-react';
 import type { StandaloneAgentNode } from '~/models/AgentWorkflowModel';
+import { useCampaignId } from '~/modules/campaigns/campaignFormFunctions';
+import { useGetCampaignAgentTransferTargets } from '~/queries/campaignAgentsQueries';
 import WorkflowNodeDrawer from '../../WorkflowNodeDrawer';
 import WorkflowNodeHeader from '../../WorkflowNodeHeader';
 import WorkflowNodeWrapper from '../../WorkflowNode';
 import workflowNodeStyles from '../../WorkflowNode/WorkflowNode.module.css';
 import { resolveWorkflowIcon } from '../../utils/workflowIconRegistry';
+import {
+	getStandaloneAgentTransferAgentId,
+	getStandaloneAgentTransferDelayMs,
+	getStandaloneAgentTransferMessage,
+} from '../../utils/standaloneAgentNode';
 import { useNodeStyle } from '../../NodeStylesContext';
 import { useWorkflowNodeToneStyle } from '../../utils/workflowNodeColors';
 import styles from './AgentTransferNode.module.css';
+
+const formatDelay = (ms: number): string => {
+	if (ms < 1000) return `${ms}ms`;
+	const seconds = ms / 1000;
+	return seconds % 1 === 0 ? `${seconds}s` : `${seconds.toFixed(1)}s`;
+};
 
 const AgentTransferNodeComponent = (props: NodeProps) => {
 	const nodeData = props.data as unknown as StandaloneAgentNode;
@@ -34,10 +47,19 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 	) : (
 		<IconUserCog size={18} className={styles.icon} />
 	);
-	const agent_id = nodeData.agent_id?.trim();
-	const delay_ms = nodeData.delay_ms ?? 0;
-	const transfer_message = nodeData.transfer_message?.trim();
-	const targetLabel = agent_id || t('form.workflow.transferNode.emptyAgent');
+	const agent_id = getStandaloneAgentTransferAgentId(nodeData);
+	const delay_ms = getStandaloneAgentTransferDelayMs(nodeData);
+	const transfer_message = getStandaloneAgentTransferMessage(nodeData);
+
+	const campaignId = useCampaignId();
+	const { data: campaignAgents } = useGetCampaignAgentTransferTargets(
+		agent_id && campaignId ? campaignId : 0,
+		undefined
+	);
+
+	const targetAgent = campaignAgents?.find((a) => a.agentId === agent_id);
+	const targetLabel =
+		targetAgent?.name || agent_id || t('form.workflow.transferNode.emptyAgent');
 
 	return (
 		<>
@@ -74,9 +96,7 @@ const AgentTransferNodeComponent = (props: NodeProps) => {
 								{t('form.workflow.transferNode.delay')}
 							</Text>
 							<Text size='xs' fw={500} className={styles.metaValue}>
-								{t('form.workflow.transferNode.delayValue', {
-									value: delay_ms,
-								})}
+								{formatDelay(delay_ms)}
 							</Text>
 						</div>
 					</div>

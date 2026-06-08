@@ -46,10 +46,7 @@ const ToolNodeForm = ({
 
 	if (!node) {
 		return (
-			<WorkflowNodeForm
-				title={t('form.workflow.forms.tool.title')}
-				description={t('form.workflow.forms.tool.missingNode')}
-			>
+			<WorkflowNodeForm>
 				<Text size='sm' c='dimmed'>
 					{t('form.workflow.forms.tool.missingNodeHint')}
 				</Text>
@@ -123,10 +120,7 @@ const ToolNodeForm = ({
 	};
 
 	return (
-		<WorkflowNodeForm
-			title={t('form.workflow.forms.tool.title')}
-			description={t('form.workflow.forms.tool.description')}
-		>
+		<WorkflowNodeForm>
 			<Stack gap='xs'>
 				<Menu
 					width={360}

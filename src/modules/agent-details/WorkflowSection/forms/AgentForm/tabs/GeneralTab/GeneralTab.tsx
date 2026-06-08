@@ -232,27 +232,28 @@ const GeneralTab = () => {
 
 		return (
 			<div className={mainStyles.fieldRow}>
-				<Group justify='space-between' align='center'>
-					<Text size='sm' className={mainStyles.fieldLabel}>
-						{fieldLabel}
-					</Text>
+				<div className={mainStyles.inheritedField}>
+					<div className={mainStyles.inheritedFieldValue}>
+						<Text size='xs' className={mainStyles.inheritedFieldLabel}>
+							{fieldLabel}
+						</Text>
+						<Text size='sm' fw={500}>
+							{hasValue
+								? t('form.workflow.forms.agent.general.usingDefaultValue', {
+										value: inheritedValue,
+									})
+								: t('form.workflow.forms.agent.general.usingDefault')}
+						</Text>
+					</div>
 					<ActionIcon
 						size='sm'
 						variant='subtle'
 						onClick={onEdit}
 						title={t('form.workflow.forms.agent.general.editOverride')}
+						className={mainStyles.inheritedFieldAction}
 					>
-						<IconEdit size={16} />
+						<IconEdit size={14} />
 					</ActionIcon>
-				</Group>
-				<div className={mainStyles.inheritedFieldBox}>
-					<Text size='sm' c='dimmed'>
-						{hasValue
-							? t('form.workflow.forms.agent.general.usingDefaultValue', {
-									value: inheritedValue,
-								})
-							: t('form.workflow.forms.agent.general.usingDefault')}
-					</Text>
 				</div>
 			</div>
 		);
@@ -295,13 +296,21 @@ const GeneralTab = () => {
 		<Stack gap='xs'>
 			<div className={mainStyles.conversationSection}>
 				<div className={mainStyles.conversationHeader}>
-					<Text size='sm' component='div' className={mainStyles.sectionLabel}>
-						{t('form.workflow.forms.agent.general.prompt.label')}
-					</Text>
-					<Group gap='xs' align='center' className={mainStyles.overrideToggle}>
-						<Text size='xs' c='dimmed' className={mainStyles.overrideLabel}>
-							{t('form.workflow.forms.agent.general.override_prompt.label')}
+					<div>
+						<Text size='sm' component='div' className={mainStyles.sectionLabel}>
+							{t('form.workflow.forms.agent.general.prompt.label')}
 						</Text>
+						<Text
+							size='xs'
+							c='dimmed'
+							className={mainStyles.overrideDescription}
+						>
+							{t(
+								'form.workflow.forms.agent.general.override_prompt.description'
+							)}
+						</Text>
+					</div>
+					<Group gap='xs' align='center' className={mainStyles.overrideToggle}>
 						<Switch
 							checked={effectiveOverridePrompt}
 							onChange={(event) => {
@@ -378,23 +387,25 @@ const GeneralTab = () => {
 							input: mainStyles.promptInput,
 						}}
 					/>
-				</div>
-				<Group justify='flex-end'>
-					<Tooltip
-						label={t('form.workflow.forms.agent.general.prompt.expand')}
-						position='left'
-						withArrow
-					>
-						<ActionIcon
-							size='sm'
-							variant='subtle'
-							onClick={() => setPromptModalOpen(true)}
-							aria-label={t('form.workflow.forms.agent.general.prompt.expand')}
+					<div className={mainStyles.promptActions}>
+						<Tooltip
+							label={t('form.workflow.forms.agent.general.prompt.expand')}
+							position='left'
+							withArrow
 						>
-							<IconArrowsMaximize size={14} />
-						</ActionIcon>
-					</Tooltip>
-				</Group>
+							<ActionIcon
+								size='sm'
+								variant='subtle'
+								onClick={() => setPromptModalOpen(true)}
+								aria-label={t(
+									'form.workflow.forms.agent.general.prompt.expand'
+								)}
+							>
+								<IconArrowsMaximize size={14} />
+							</ActionIcon>
+						</Tooltip>
+					</div>
+				</div>
 			</div>
 
 			<PromptEditModal
@@ -424,7 +435,7 @@ const GeneralTab = () => {
 							onClick={() => handleResetField('voice')}
 							title={t('form.workflow.forms.agent.general.resetToDefault')}
 						>
-							<IconRotateClockwise size={16} />
+							<IconRotateClockwise size={14} />
 						</ActionIcon>
 					</Group>
 					<Select
@@ -477,7 +488,7 @@ const GeneralTab = () => {
 							onClick={() => handleResetField('llm')}
 							title={t('form.workflow.forms.agent.general.resetToDefault')}
 						>
-							<IconRotateClockwise size={16} />
+							<IconRotateClockwise size={14} />
 						</ActionIcon>
 					</Group>
 					<Select
@@ -534,7 +545,7 @@ const GeneralTab = () => {
 							onClick={() => handleResetField('eagerness')}
 							title={t('form.workflow.forms.agent.general.resetToDefault')}
 						>
-							<IconRotateClockwise size={16} />
+							<IconRotateClockwise size={14} />
 						</ActionIcon>
 					</Group>
 					<Select
@@ -580,7 +591,7 @@ const GeneralTab = () => {
 							onClick={() => handleResetField('spelling_patience')}
 							title={t('form.workflow.forms.agent.general.resetToDefault')}
 						>
-							<IconRotateClockwise size={16} />
+							<IconRotateClockwise size={14} />
 						</ActionIcon>
 					</Group>
 					<Select
@@ -626,7 +637,7 @@ const GeneralTab = () => {
 							onClick={() => handleResetField('speculativeTurn')}
 							title={t('form.workflow.forms.agent.general.resetToDefault')}
 						>
-							<IconRotateClockwise size={16} />
+							<IconRotateClockwise size={14} />
 						</ActionIcon>
 					</Group>
 					<Switch
@@ -644,25 +655,26 @@ const GeneralTab = () => {
 				</div>
 			) : (
 				<div className={mainStyles.fieldRow}>
-					<Group justify='space-between' align='center'>
-						<Text size='sm' className={mainStyles.fieldLabel}>
-							{t('form.workflow.forms.agent.general.speculativeTurn.label')}
-						</Text>
+					<div className={mainStyles.inheritedField}>
+						<div className={mainStyles.inheritedFieldValue}>
+							<Text size='xs' className={mainStyles.inheritedFieldLabel}>
+								{t('form.workflow.forms.agent.general.speculativeTurn.label')}
+							</Text>
+							<Text size='sm' fw={500}>
+								{inheritedSpeculativeTurn !== undefined
+									? `${inheritedSpeculativeTurn ? t('form.workflow.forms.agent.general.speculativeTurn.enabled') : t('form.workflow.forms.agent.general.speculativeTurn.disabled')}`
+									: t('form.workflow.forms.agent.general.usingDefault')}
+							</Text>
+						</div>
 						<ActionIcon
 							size='sm'
 							variant='subtle'
 							onClick={() => toggleEditMode('speculativeTurn')}
 							title={t('form.workflow.forms.agent.general.editOverride')}
+							className={mainStyles.inheritedFieldAction}
 						>
-							<IconEdit size={16} />
+							<IconEdit size={14} />
 						</ActionIcon>
-					</Group>
-					<div className={mainStyles.inheritedFieldBox}>
-						<Text size='sm' c='dimmed'>
-							{inheritedSpeculativeTurn !== undefined
-								? `${inheritedSpeculativeTurn ? t('form.workflow.forms.agent.general.speculativeTurn.enabled') : t('form.workflow.forms.agent.general.speculativeTurn.disabled')}`
-								: t('form.workflow.forms.agent.general.usingDefault')}
-						</Text>
 					</div>
 				</div>
 			)}
