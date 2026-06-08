@@ -9,6 +9,7 @@ import { useTranslation } from 'react-i18next';
 
 // Route components (lazy-loaded where appropriate to split bundles)
 
+import SmartRootRedirect from './components/SmartRootRedirect/SmartRootRedirect';
 import RouteProtecter, {
 	clientLoader as routeProtecterLoader,
 } from './components/RouteProtecter/RouteProtecter';
@@ -181,11 +182,13 @@ const router = createBrowserRouter([
 						index: true,
 						id: 'overview',
 						element: (
-							<I18nNamespaceLoader>
-								<Suspense fallback={<SuspenseFallback />}>
-									<OverviewDashboardPage />
-								</Suspense>
-							</I18nNamespaceLoader>
+							<SmartRootRedirect>
+								<I18nNamespaceLoader>
+									<Suspense fallback={<SuspenseFallback />}>
+										<OverviewDashboardPage />
+									</Suspense>
+								</I18nNamespaceLoader>
+							</SmartRootRedirect>
 						),
 					},
 					{
