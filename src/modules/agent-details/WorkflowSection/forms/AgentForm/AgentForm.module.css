@@ -3,7 +3,7 @@
 }
 
 .tabList {
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	border-bottom: 1px solid var(--surface-border);
 	gap: var(--mantine-spacing-sm);
 }
 
@@ -11,13 +11,13 @@
 	font-size: var(--mantine-font-size-xs);
 	font-weight: 500;
 	padding: var(--mantine-spacing-xs) 0;
-	color: var(--mantine-color-gray-6);
+	color: var(--text-secondary);
 	border-bottom: 2px solid transparent;
 }
 
 .tab[data-active='true'] {
-	color: var(--mantine-color-gray-9);
-	border-bottom-color: var(--mantine-color-gray-9);
+	color: var(--text-primary);
+	border-bottom-color: var(--brand);
 }
 
 .tabPanel {
@@ -46,7 +46,7 @@
 	align-items: center;
 	line-height: 1.2;
 	font-weight: 600;
-	color: var(--mantine-color-gray-9);
+	color: var(--text-primary);
 	min-width: 0;
 	font-size: 0.9375rem;
 }
@@ -137,7 +137,7 @@
 
 .fieldLabel {
 	font-weight: 600;
-	color: var(--mantine-color-gray-9);
+	color: var(--text-primary);
 	font-size: 0.875rem;
 }
 
@@ -262,16 +262,16 @@
 }
 
 .knowledgeLabel {
-	color: var(--mantine-color-gray-9);
+	color: var(--text-primary);
 	font-weight: 500;
 	font-size: 0.875rem;
 }
 
 .emptyState {
-	border: 1px dashed var(--mantine-color-gray-3);
+	border: 1px dashed var(--surface-border);
 	border-radius: 10px;
 	padding: var(--mantine-spacing-lg);
-	background: var(--mantine-color-gray-0);
+	background: var(--surface-sunken);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -331,7 +331,7 @@
 
 .toolLabel {
 	font-weight: 500;
-	color: var(--mantine-color-gray-9);
+	color: var(--text-primary);
 	line-height: 1.2;
 }
 
@@ -387,7 +387,7 @@
 
 .customToolName {
 	font-weight: 600;
-	color: var(--mantine-color-gray-9);
+	color: var(--text-primary);
 }
 
 .customToolRow {
@@ -449,7 +449,7 @@
 .edgeItemDragging {
 	background: var(--mantine-color-blue-0);
 	border-color: var(--mantine-color-blue-3);
-	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+	box-shadow: var(--sh-md);
 }
 
 .edgeDragHandle {
@@ -459,7 +459,7 @@
 	width: 24px;
 	height: 24px;
 	cursor: grab;
-	color: var(--mantine-color-gray-5);
+	color: var(--text-muted);
 	border-radius: 4px;
 	transition:
 		color 0.15s ease,
@@ -488,7 +488,7 @@
 
 .edgeCondition {
 	font-weight: 500;
-	color: var(--mantine-color-gray-9);
+	color: var(--text-primary);
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
@@ -521,16 +521,16 @@
 }
 
 [data-mantine-color-scheme='dark'] .tabList {
-	border-bottom-color: var(--mantine-color-dark-5);
+	border-bottom-color: var(--surface-border);
 }
 
 [data-mantine-color-scheme='dark'] .tab {
-	color: var(--mantine-color-dark-2);
+	color: var(--text-secondary);
 }
 
 [data-mantine-color-scheme='dark'] .tab[data-active='true'] {
-	color: var(--mantine-color-dark-0);
-	border-bottom-color: var(--mantine-color-dark-0);
+	color: var(--text-primary);
+	border-bottom-color: var(--brand);
 }
 
 [data-mantine-color-scheme='dark'] .conversationSection {
@@ -595,8 +595,8 @@
 }
 
 [data-mantine-color-scheme='dark'] .emptyState {
-	border-color: var(--mantine-color-dark-5);
-	background: var(--mantine-color-dark-6);
+	border-color: var(--surface-border);
+	background: var(--surface-sunken);
 }
 
 [data-mantine-color-scheme='dark'] .toolsDivider {
@@ -619,28 +619,13 @@
 		color-mix(in srgb, var(--mantine-color-blue-5) 20%, transparent);
 }
 
-[data-mantine-color-scheme='dark'] .sectionLabel,
-[data-mantine-color-scheme='dark'] .fieldLabel,
-[data-mantine-color-scheme='dark'] .knowledgeLabel,
-[data-mantine-color-scheme='dark'] .toolLabel,
-[data-mantine-color-scheme='dark'] .customToolName,
-[data-mantine-color-scheme='dark'] .edgeCondition {
-	color: var(--mantine-color-dark-0);
-}
-
 [data-mantine-color-scheme='dark'] .overrideDescription,
 [data-mantine-color-scheme='dark'] .fieldDescription,
 [data-mantine-color-scheme='dark'] .inheritedFieldLabel,
 [data-mantine-color-scheme='dark'] .helperText,
 [data-mantine-color-scheme='dark'] .description,
-[data-mantine-color-scheme='dark'] .edgeDragHandle,
-[data-mantine-color-scheme='dark'] .knowledgeIcon,
-[data-mantine-color-scheme='dark'] .customToolIcon {
-	color: var(--mantine-color-dark-3);
-}
-
 [data-mantine-color-scheme='dark'] .overrideLabel {
-	color: var(--mantine-color-dark-3);
+	color: var(--text-muted);
 }
 
 [data-mantine-color-scheme='dark'] .selectInput {
@@ -684,11 +669,15 @@
 	border-color: var(--mantine-color-dark-5);
 }
 
-[data-mantine-color-scheme='dark'] .emptyState,
 [data-mantine-color-scheme='dark'] .placeholderCard,
 [data-mantine-color-scheme='dark'] .customToolsEmpty {
-	border-color: var(--mantine-color-dark-5);
-	background: var(--mantine-color-dark-6);
+	border-color: var(--surface-border);
+	background: var(--surface-sunken);
+}
+
+[data-mantine-color-scheme='dark'] .edgeItem {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-4);
 }
 
 [data-mantine-color-scheme='dark'] .toolRow:hover,
