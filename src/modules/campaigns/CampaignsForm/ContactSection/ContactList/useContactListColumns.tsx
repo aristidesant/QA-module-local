@@ -1,29 +1,20 @@
 import { useMemo } from 'react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { ActionIcon, Badge, Group, Stack, Text, Tooltip } from '@mantine/core';
-import { IconArrowUpRight } from '@tabler/icons-react';
+import { Badge, Stack, Text, Tooltip } from '@mantine/core';
 import type ContactGroup from '~/models/ContactGroup';
 import { timeAgo } from '~/utils/dateUtils';
 import ContactListHoverCard from './ContactListHoverCard';
 import ContactListControl from './ContactListControl';
 import { useTranslation } from 'react-i18next';
-import {
-	useToggleContactGroupStatus,
-	useUpdateContactGroup,
-	useGetContactGroups,
-	useDeleteContactGroup,
-} from '~/queries/contactGroupQueries';
-import { useCampaignActiveSchedule } from '~/queries/schedulerQueries';
 import { getTranslatedQueueStatus } from './queueStatusConfig';
-import { useSessionStore } from '~/stores/sessionStore';
 import { formatWaveDateTime } from '~/utils/waveUtils';
+import styles from './ContactListView.module.css';
 
 interface UseContactListColumnsParams {
 	onUpdateComplete: () => void;
 	objectiveId?: number;
 	isActive: boolean;
 	campaignId?: string | number;
-	onNavigateToContactList?: (contactGroup: ContactGroup) => void;
 }
 
 const useContactListColumns = ({
@@ -31,33 +22,12 @@ const useContactListColumns = ({
 	objectiveId,
 	isActive,
 	campaignId,
-	onNavigateToContactList,
 }: UseContactListColumnsParams): ColumnDef<ContactGroup>[] => {
 	const { t, i18n } = useTranslation([
 		'campaign.form.contacts',
 		'campaign.contact-list',
 		'common',
 	]);
-	const { user, targetClient } = useSessionStore();
-	const toggleMutation = useToggleContactGroupStatus();
-	const updateMutation = useUpdateContactGroup();
-	const deleteMutation = useDeleteContactGroup();
-	const { data: activeSchedule } = useCampaignActiveSchedule(campaignId);
-	const { data: contactGroups } = useGetContactGroups({
-		isActive: true,
-		campaignId,
-	});
-
-	const activeClientId =
-		targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
-	const isSuperAdmin =
-		activeClientId !== null &&
-		(user?.userRolesClient?.some(
-			(userRole) =>
-				userRole.clientId === activeClientId &&
-				userRole.role?.code === 'SUPER_ADMIN'
-		) ??
-			false);
 
 	return useMemo(
 		() => [
@@ -76,7 +46,7 @@ const useContactListColumns = ({
 						name.length > maxLength ? name.slice(0, maxLength) + '...' : name;
 					return (
 						<Tooltip label={name} disabled={name.length <= maxLength}>
-							<Text fz='sm' fw={500}>
+							<Text fz='sm' fw={500} className={styles.nameCell}>
 								{truncated}
 							</Text>
 						</Tooltip>
@@ -164,50 +134,18 @@ const useContactListColumns = ({
 				cell: ({ row }) => {
 					const contactGroup = row.original;
 
-					const isLoading =
-						toggleMutation.isPending || deleteMutation.isPending;
-
 					return (
-						<Group gap='xs' justify='flex-start' wrap='nowrap'>
-							{onNavigateToContactList && isSuperAdmin && (
-								<Tooltip
-									label={t('form.contacts.details.actions.openContactList')}
-									withArrow
-								>
-									<ActionIcon
-										variant='light'
-										onClick={(event) => {
-											event.stopPropagation();
-											onNavigateToContactList(contactGroup);
-										}}
-										aria-label={t(
-											'form.contacts.details.actions.openContactList'
-										)}
-										disabled={isLoading}
-									>
-										<IconArrowUpRight size={16} />
-									</ActionIcon>
-								</Tooltip>
-							)}
-							{isActive && <ContactListControl contactGroup={contactGroup} />}
-						</Group>
+						<ContactListControl
+							contactGroup={contactGroup}
+							campaignId={campaignId}
+							objectiveId={objectiveId}
+							onActionComplete={onUpdateComplete}
+						/>
 					);
 				},
 			},
 		],
-		[
-			onUpdateComplete,
-			objectiveId,
-			isActive,
-			toggleMutation,
-			updateMutation,
-			deleteMutation,
-			activeSchedule,
-			contactGroups,
-			onNavigateToContactList,
-			isSuperAdmin,
-			t,
-		]
+		[onUpdateComplete, objectiveId, isActive, campaignId, t]
 	);
 };
 
