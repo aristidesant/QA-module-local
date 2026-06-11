@@ -15,7 +15,6 @@ export const ContactListContainer = ({
 		data: contactList,
 		refetch: reloadCampaignSchedules,
 		isLoading,
-		isRefetching,
 	} = useGetContactGroups({
 		campaignId: selectedCampaign?.id,
 		isActive,
@@ -29,7 +28,7 @@ export const ContactListContainer = ({
 			onUpdateComplete={reloadCampaignSchedules}
 			objectiveId={selectedCampaign?.objectiveId}
 			isActive={isActive}
-			isLoading={isLoading || isRefetching}
+			isLoading={isLoading && !contactList}
 		/>
 	);
 };
