@@ -48,6 +48,7 @@ pnpm-debug.log*
 package-lock.json
 /.claude/
 /.agents/
+/.opencode/
 skills-lock.json
 install.cmd
 /doctor/
