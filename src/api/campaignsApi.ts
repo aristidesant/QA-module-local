@@ -215,7 +215,11 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 
 		// UPDATE campaign (PATCH)
 		updateCampaign: async (campaignId: string, data: Partial<Campaign>) => {
-			const payload = sanitizeAgentPayload(data);
+			const normalized = {
+				...data,
+				configId: data.configId ? data.configId : null,
+			};
+			const payload = sanitizeAgentPayload(normalized);
 
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}`,
@@ -228,7 +232,11 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 			campaignId: string,
 			data: Partial<Campaign>
 		) => {
-			const payload = sanitizeAgentPayload(data);
+			const normalized = {
+				...data,
+				configId: data.configId ? data.configId : null,
+			};
+			const payload = sanitizeAgentPayload(normalized);
 
 			const response = await axios.patch<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}/details`,
