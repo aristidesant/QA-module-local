@@ -125,6 +125,7 @@ export interface PhoneNumberTransferNodeApi extends WorkflowNodeBaseApi {
 export interface StandaloneAgentNodeApi extends WorkflowNodeBaseApi {
 	type: 'standalone_agent';
 	agent_id: string;
+	node_id?: string | null;
 	delay_ms: number;
 	transfer_message?: string | null;
 	enable_transferred_agent_first_message: boolean;

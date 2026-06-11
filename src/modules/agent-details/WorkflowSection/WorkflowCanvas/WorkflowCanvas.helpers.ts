@@ -542,6 +542,7 @@ export const buildWorkflowFromState = (
 					...baseNode,
 					type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
 					agent_id: (data as StandaloneAgentNode).agent_id ?? '',
+					node_id: (data as StandaloneAgentNode).node_id ?? null,
 					delay_ms: (data as StandaloneAgentNode).delay_ms ?? 0,
 					enable_transferred_agent_first_message:
 						(data as StandaloneAgentNode)

@@ -848,6 +848,7 @@ const WorkflowCanvasInner = ({
 		(agentId: string): Partial<StandaloneAgentNode> => ({
 			type: WORKFLOW_NODE_TYPES.STANDALONE_AGENT,
 			agent_id: agentId,
+			node_id: null,
 			delay_ms: 0,
 			transfer_message: null,
 			enable_transferred_agent_first_message: false,

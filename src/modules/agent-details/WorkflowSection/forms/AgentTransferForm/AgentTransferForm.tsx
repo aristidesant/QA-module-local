@@ -15,6 +15,7 @@ import type {
 import type { AgentConfigModel } from '~/models/AgentListObject';
 import { useCampaignId } from '~/modules/campaigns/campaignFormFunctions';
 import { useGetCampaignAgentTransferTargets } from '~/queries/campaignAgentsQueries';
+import { useGetAgent } from '~/queries/agentQueries';
 import { WORKFLOW_DRAWER_COMBOBOX_PROPS } from '../workflowDrawerComboboxProps';
 import WorkflowNodeForm from '../WorkflowNodeForm';
 import { updateWorkflowNode } from '../nodeFormUtils';
@@ -23,6 +24,7 @@ import {
 	getStandaloneAgentTransferDelayMs,
 	getStandaloneAgentTransferFirstMessageEnabled,
 	getStandaloneAgentTransferMessage,
+	getStandaloneAgentTransferNodeId,
 } from '../../utils/standaloneAgentNode';
 import styles from './AgentTransferForm.module.css';
 
@@ -62,8 +64,22 @@ const AgentTransferForm = ({
 	);
 
 	const nodeAgentId = getStandaloneAgentTransferAgentId(node);
+	const { data: targetAgent } = useGetAgent(nodeAgentId || '');
 	const selectedTransferAgentId =
 		nodeAgentId && nodeAgentId !== currentAgentId ? nodeAgentId : null;
+
+	const nodeOptions = useMemo(() => {
+		const workflow = targetAgent?.config?.workflow;
+		if (!workflow?.nodes) return [];
+		return Object.entries(workflow.nodes)
+			.filter(([, node]) => node.type !== 'start' && node.type !== 'end')
+			.map(([nodeId, node]) => ({
+				value: nodeId,
+				label: node.label || nodeId,
+			}));
+	}, [targetAgent]);
+
+	const currentNodeId = getStandaloneAgentTransferNodeId(node);
 
 	if (!node) {
 		return (
@@ -88,6 +104,10 @@ const AgentTransferForm = ({
 		handleUpdate({ delay_ms: nextDelay });
 	};
 
+	const handleAgentChange = (value: string | null) => {
+		handleUpdate({ agent_id: value || '', node_id: null });
+	};
+
 	return (
 		<WorkflowNodeForm>
 			<Stack gap='xs' className={styles.form}>
@@ -97,9 +117,27 @@ const AgentTransferForm = ({
 					data={agentOptions}
 					comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
 					value={selectedTransferAgentId}
-					onChange={(value) => handleUpdate({ agent_id: value || '' })}
+					onChange={handleAgentChange}
 					searchable
 					disabled={isLoading || agentOptions.length === 0}
+					size='sm'
+					classNames={{
+						label: styles.label,
+						input: styles.input,
+						description: styles.description,
+					}}
+				/>
+				<Select
+					label={t('form.workflow.forms.transfer.nodeLabel')}
+					placeholder={t('form.workflow.forms.transfer.nodePlaceholder')}
+					data={nodeOptions}
+					comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
+					value={currentNodeId}
+					onChange={(value) => handleUpdate({ node_id: value || null })}
+					searchable
+					clearable
+					disabled={!selectedTransferAgentId || nodeOptions.length === 0}
+					nothingFoundMessage={t('form.workflow.forms.transfer.nodeNoResults')}
 					size='sm'
 					classNames={{
 						label: styles.label,
