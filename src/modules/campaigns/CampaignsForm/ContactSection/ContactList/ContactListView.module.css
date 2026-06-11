@@ -1,1 +1,23 @@
-/* This file is kept for potential future use */
+.nameCell {
+	display: inline-flex;
+	align-items: center;
+	color: var(--mantine-color-blue-7);
+	transition:
+		color 0.15s ease,
+		text-decoration-color 0.15s ease;
+	text-decoration: none;
+}
+
+.nameCell:hover {
+	color: var(--mantine-color-blue-8);
+	text-decoration: underline;
+	text-decoration-color: currentColor;
+}
+
+[data-mantine-color-scheme='dark'] .nameCell {
+	color: var(--mantine-color-blue-4);
+}
+
+[data-mantine-color-scheme='dark'] .nameCell:hover {
+	color: var(--mantine-color-blue-3);
+}

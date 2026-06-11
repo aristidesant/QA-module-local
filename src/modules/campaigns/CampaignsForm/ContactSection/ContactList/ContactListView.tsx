@@ -12,7 +12,6 @@ import { SectionCard } from '~/components/SectionCard';
 import type ContactGroup from '~/models/ContactGroup';
 import BaseTable from '~/components/BaseTable';
 import useContactListColumns from './useContactListColumns';
-import { useCampaignsStore } from '~/stores/campaignsStore';
 import { PaginatedResponse } from '~/models/CampaignsModel';
 import CapacityProgress from './CapacityProgress';
 
@@ -36,9 +35,6 @@ export const ContactListView = ({
 	const { t } = useTranslation(['campaign.form.contacts', 'common']);
 	const navigate = useNavigate();
 	const [opened, { open, close }] = useDisclosure(false);
-	const { openContactListDrawer, selectedContactList } = useCampaignsStore(
-		(state) => state
-	);
 	const { canPerformAction } = usePermissions();
 
 	const columns = useContactListColumns({
@@ -46,9 +42,6 @@ export const ContactListView = ({
 		objectiveId,
 		isActive,
 		campaignId,
-		onNavigateToContactList: (contactGroup) => {
-			navigate(`/campaign/${campaignId}/contact-list/${contactGroup.id}`);
-		},
 	});
 
 	const data = Array.isArray(contactGroups)
@@ -111,13 +104,13 @@ export const ContactListView = ({
 					data={data}
 					columns={columns}
 					emptyMessage={labels.emptyMessage}
-					onRowClick={openContactListDrawer}
+					onRowClick={(contactGroup) => {
+						if (!campaignId) {
+							return;
+						}
+						navigate(`/campaign/${campaignId}/contact-list/${contactGroup.id}`);
+					}}
 					isLoading={isLoading}
-					selectedRowId={
-						selectedContactList?.isActive === isActive
-							? selectedContactList.id
-							: undefined
-					}
 					getRowId={(row) => row.id}
 				/>
 				<Modal

@@ -372,6 +372,9 @@
 					"agentPlaceholder": "Select an agent",
 					"agentLoading": "Loading agents...",
 					"agentEmpty": "No agents available.",
+					"nodeLabel": "Target node",
+					"nodePlaceholder": "Select a node",
+					"nodeNoResults": "No matching nodes",
 					"delayLabel": "Delay before transfer (milliseconds)",
 					"delayPlaceholder": "Enter delay in milliseconds",
 					"messageLabel": "Transfer Message",
@@ -556,6 +559,7 @@
 			},
 			"transferNode": {
 				"to": "Transfer to",
+				"nodeLabel": "Node",
 				"delay": "Delay",
 				"delayValue": "{{value}} ms",
 				"emptyAgent": "Not set"

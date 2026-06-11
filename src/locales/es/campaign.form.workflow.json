@@ -373,6 +373,9 @@
 					"agentPlaceholder": "Selecciona un agente",
 					"agentLoading": "Cargando agentes...",
 					"agentEmpty": "No hay agentes disponibles.",
+					"nodeLabel": "Nodo destino",
+					"nodePlaceholder": "Selecciona un nodo",
+					"nodeNoResults": "No hay nodos coincidentes",
 					"delayLabel": "Retraso antes de transferir (milisegundos)",
 					"delayPlaceholder": "Ingresa el retraso en milisegundos",
 					"messageLabel": "Mensaje de transferencia",
@@ -557,6 +560,7 @@
 			},
 			"transferNode": {
 				"to": "Transferir a",
+				"nodeLabel": "Nodo",
 				"delay": "Retraso",
 				"delayValue": "{{value}} ms",
 				"emptyAgent": "Sin configurar"

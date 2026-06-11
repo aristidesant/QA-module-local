@@ -110,7 +110,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 	]);
 	const navigate = useNavigate();
 	const { canAccessModule, canPerformAction } = usePermissions();
-	const { setRightComponent, closeContactListDrawer } = useCampaignsStore();
+	const { setRightComponent } = useCampaignsStore();
 	const toggleMutation = useToggleContactGroupStatus();
 	const updateMutation = useUpdateContactGroup();
 	const deleteMutation = useDeleteContactGroup();
@@ -402,7 +402,6 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 						});
 						onUpdateComplete();
 						setRightComponent(null);
-						closeContactListDrawer();
 					} catch (error) {
 						void error;
 					}
@@ -498,7 +497,6 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 									});
 									onUpdateComplete();
 									setRightComponent(null);
-									closeContactListDrawer();
 								} catch (error) {
 									void error;
 								} finally {
@@ -553,7 +551,6 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 						color: 'green',
 					});
 					onUpdateComplete();
-					closeContactListDrawer();
 				} catch (error: any) {
 					const errorMessage =
 						error?.response?.data?.message ||
