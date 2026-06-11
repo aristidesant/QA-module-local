@@ -3,30 +3,14 @@ import { Tabs } from '@mantine/core';
 import { IconUsers, IconUserOff } from '@tabler/icons-react';
 import { ContactListContainer } from './ContactList';
 import { useTranslation } from 'react-i18next';
-import { useCampaignsStore } from '~/stores/campaignsStore';
 import styles from './ContactSection.module.css';
 
 export const ContactSection = () => {
 	const { t } = useTranslation('campaign.view');
 	const [activeTab, setActiveTab] = useState<string | null>('active');
-	const { selectedContactList, closeContactListDrawer } = useCampaignsStore(
-		(state) => state
-	);
 
 	const handleTabChange = (value: string | null) => {
 		setActiveTab(value);
-
-		if (!value || !selectedContactList) {
-			return;
-		}
-
-		const shouldKeepSelection =
-			(value === 'active' && selectedContactList.isActive) ||
-			(value === 'inactive' && !selectedContactList.isActive);
-
-		if (!shouldKeepSelection) {
-			closeContactListDrawer();
-		}
 	};
 
 	return (

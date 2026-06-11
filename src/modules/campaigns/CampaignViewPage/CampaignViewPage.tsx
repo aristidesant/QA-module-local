@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { useQueryClient } from '@tanstack/react-query';
 import {
 	Alert,
 	Flex,
@@ -8,14 +7,9 @@ import {
 	Stack,
 	ActionIcon,
 	Tooltip,
-	Text,
 	Group,
 } from '@mantine/core';
-import {
-	IconAlertCircle,
-	IconEdit,
-	IconListDetails,
-} from '@tabler/icons-react';
+import { IconAlertCircle, IconEdit } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import usePermissions from '~/hooks/usePermissions';
@@ -24,10 +18,7 @@ import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { ContactSection } from '../CampaignsForm/ContactSection';
-import CampaignHealth from '../CampaignHealth';
-import ContactListDetails from '../CampaignsForm/ContactSection/ContactListDetails';
 import styles from './CampaignViewPage.module.css';
-import AppDrawer from '~/components/AppDrawer';
 
 const CampaignViewPage = () => {
 	const { t } = useTranslation([
@@ -37,16 +28,9 @@ const CampaignViewPage = () => {
 	]);
 	const { campaignId } = useParams<{ campaignId: string }>();
 	const navigate = useNavigate();
-	const queryClient = useQueryClient();
 	const { canPerformAction } = usePermissions();
 
-	const {
-		selectCampaign,
-		resetView,
-		selectedContactList,
-		isContactListDrawerOpen,
-		closeContactListDrawer,
-	} = useCampaignsStore((state) => state);
+	const { selectCampaign, resetView } = useCampaignsStore((state) => state);
 
 	const {
 		data: campaign,
@@ -125,65 +109,34 @@ const CampaignViewPage = () => {
 	}
 
 	return (
-		<>
-			<ContentContainer
-				title={campaign.name}
-				description={t('index.description')}
-				showBackButton
-				onBackClick={() => navigate('/campaigns')}
-				titleRight={
-					<Group gap='xs'>
-						{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) ? (
-							<Tooltip label={t('index.actions.edit')} withArrow>
-								<ActionIcon
-									variant='light'
-									size='lg'
-									aria-label={t('index.actions.edit')}
-									onClick={() => navigate(`/campaign/${campaign.id}`)}
-								>
-									<IconEdit size={20} />
-								</ActionIcon>
-							</Tooltip>
-						) : null}
-					</Group>
-				}
-			>
-				<Stack gap='sm' className={styles.contentStack}>
-					<div className={styles.contactsSection}>
-						<ContactSection />
-					</div>
-				</Stack>
-			</ContentContainer>
-			<AppDrawer
-				opened={isContactListDrawerOpen && Boolean(selectedContactList)}
-				onClose={closeContactListDrawer}
-				size='lg'
-				title={t('drawer.title')}
-				description={t('drawer.description')}
-				icon={<IconListDetails size={18} />}
-			>
-				{selectedContactList && (
-					<Stack gap='sm' className={styles.drawerContent}>
-						<CampaignHealth campaignId={`${campaign.id}`} />
-						<ContactListDetails
-							contactGroup={selectedContactList}
-							onUpdateComplete={() => {
-								void queryClient.invalidateQueries({
-									queryKey: ['contactGroups'],
-								});
-							}}
-							objectiveId={campaign.objectiveId}
-							campaignId={campaign.id}
-						/>
-					</Stack>
-				)}
-				{!selectedContactList && (
-					<Text size='sm' c='dimmed'>
-						{t('drawer.empty')}
-					</Text>
-				)}
-			</AppDrawer>
-		</>
+		<ContentContainer
+			title={campaign.name}
+			description={t('index.description')}
+			showBackButton
+			onBackClick={() => navigate('/campaigns')}
+			titleRight={
+				<Group gap='xs'>
+					{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) ? (
+						<Tooltip label={t('index.actions.edit')} withArrow>
+							<ActionIcon
+								variant='light'
+								size='lg'
+								aria-label={t('index.actions.edit')}
+								onClick={() => navigate(`/campaign/${campaign.id}`)}
+							>
+								<IconEdit size={20} />
+							</ActionIcon>
+						</Tooltip>
+					) : null}
+				</Group>
+			}
+		>
+			<Stack gap='sm' className={styles.contentStack}>
+				<div className={styles.contactsSection}>
+					<ContactSection />
+				</div>
+			</Stack>
+		</ContentContainer>
 	);
 };
 

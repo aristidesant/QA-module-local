@@ -6,6 +6,8 @@ type StandaloneAgentNodeLike = {
 	};
 	agent_id?: string;
 	agentId?: string;
+	node_id?: string | null;
+	nodeId?: string | null;
 	delay_ms?: number;
 	delayMs?: number;
 	transfer_message?: string | null;
@@ -78,6 +80,16 @@ export const getStandaloneAgentTransferMessage = (
 		readString(nodeData.transfer_message) ||
 		readString(nodeData.transferMessage)
 	);
+};
+
+export const getStandaloneAgentTransferNodeId = (
+	nodeData?: StandaloneAgentNodeLike | null
+): string | null => {
+	if (!nodeData) {
+		return null;
+	}
+
+	return nodeData.node_id ?? nodeData.nodeId ?? null;
 };
 
 export const getStandaloneAgentTransferFirstMessageEnabled = (

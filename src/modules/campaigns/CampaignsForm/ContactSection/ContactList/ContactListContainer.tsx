@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useCampaignsStore } from '~/stores/campaignsStore';
 import { ContactListView } from './ContactListView';
 import { useGetContactGroups } from '~/queries/contactGroupQueries';
@@ -10,12 +9,7 @@ interface ContactListContainerProps {
 export const ContactListContainer = ({
 	isActive,
 }: ContactListContainerProps) => {
-	const {
-		selectedCampaign,
-		selectedContactList,
-		setSelectedContactList,
-		closeContactListDrawer,
-	} = useCampaignsStore((state) => state);
+	const { selectedCampaign } = useCampaignsStore((state) => state);
 
 	const {
 		data: contactList,
@@ -26,32 +20,6 @@ export const ContactListContainer = ({
 		campaignId: selectedCampaign?.id,
 		isActive,
 	});
-
-	useEffect(() => {
-		if (!selectedContactList || selectedContactList.isActive !== isActive) {
-			return;
-		}
-
-		const contactListsArray = contactList?.data || [];
-		const refreshedContactList = contactListsArray.find(
-			(contactGroup) => contactGroup.id === selectedContactList.id
-		);
-
-		if (!refreshedContactList) {
-			closeContactListDrawer();
-			return;
-		}
-
-		if (refreshedContactList !== selectedContactList) {
-			setSelectedContactList(refreshedContactList);
-		}
-	}, [
-		closeContactListDrawer,
-		contactList?.data,
-		isActive,
-		selectedContactList,
-		setSelectedContactList,
-	]);
 
 	return (
 		<ContactListView

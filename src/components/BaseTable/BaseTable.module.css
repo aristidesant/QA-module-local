@@ -68,6 +68,15 @@
 	transition: background-color 0.15s ease;
 }
 
+.clickableRow {
+	cursor: pointer;
+}
+
+.clickableRow:focus-visible td {
+	outline: 2px solid var(--mantine-color-blue-5);
+	outline-offset: -2px;
+}
+
 .tbody tr:hover td {
 	background: var(--surface-sunken);
 }
@@ -183,6 +192,10 @@
 
 [data-mantine-color-scheme='dark'] .tbody tr:hover td {
 	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .clickableRow:focus-visible td {
+	outline-color: var(--mantine-color-blue-4);
 }
 
 [data-mantine-color-scheme='dark'] .selectedRow td {

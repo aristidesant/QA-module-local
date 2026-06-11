@@ -323,6 +323,21 @@ function BaseTable<TData>({
 					ref={options?.innerRef}
 					{...(options?.draggableProps ?? {})}
 					{...(options?.dragHandleProps ?? {})}
+					tabIndex={onRowClick ? 0 : undefined}
+					role={onRowClick ? 'button' : undefined}
+					onKeyDown={(event) => {
+						if (!onRowClick) {
+							return;
+						}
+
+						if (event.key === 'Enter' || event.key === ' ') {
+							event.preventDefault();
+							if (enableExpanding && renderExpandedRow) {
+								row.toggleExpanded();
+							}
+							onRowClick(row.original);
+						}
+					}}
 					onClick={() => {
 						if (enableExpanding && renderExpandedRow) {
 							row.toggleExpanded();
@@ -332,6 +347,7 @@ function BaseTable<TData>({
 					className={[
 						getRowClassName?.(row),
 						isSelected ? styles.selectedRow : '',
+						onRowClick ? styles.clickableRow : '',
 						enableExpanding && renderExpandedRow ? styles.expandableRow : '',
 						options?.isDragging ? styles.reorderingRow : '',
 					]
