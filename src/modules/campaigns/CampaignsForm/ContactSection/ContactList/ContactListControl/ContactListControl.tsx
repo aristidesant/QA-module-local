@@ -9,7 +9,6 @@ import {
 	Slider,
 	Stack,
 	Text,
-	Tooltip,
 } from '@mantine/core';
 import {
 	IconArrowUpRight,
@@ -67,12 +66,7 @@ export const ContactListControl = ({
 	objectiveId,
 	onActionComplete,
 }: ContactListControlProps) => {
-	const { t, i18n } = useTranslation([
-		'campaign.form.contacts',
-		'campaign.contact-list',
-		'campaigns',
-		'common',
-	]);
+	const { t, i18n } = useTranslation(['campaign.form.contacts', 'common']);
 	const navigate = useNavigate();
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const campaignTargetId = campaignId ?? contactGroup.campaignId;
@@ -717,7 +711,7 @@ export const ContactListControl = ({
 			return t('form.contacts.controls.allWavesDone');
 		}
 		if (normalizedStatus === 'UNKNOWN') {
-			return t('campaigns:status.UNKNOWN');
+			return t('form.contacts.controls.unknown');
 		}
 		return t('form.contacts.controls.start');
 	})();
@@ -737,22 +731,17 @@ export const ContactListControl = ({
 	return (
 		<Menu shadow='md' position='bottom-end' withinPortal>
 			<Menu.Target>
-				<Tooltip
-					label={t('columns.moreActions', { ns: 'campaigns' })}
-					withArrow
+				<ActionIcon
+					variant='subtle'
+					color='gray'
+					radius='xl'
+					size='sm'
+					aria-label={t('form.contacts.details.actions.moreActions')}
+					onClick={(event) => event.stopPropagation()}
+					disabled={!shouldRenderMenu || isLoading}
 				>
-					<ActionIcon
-						variant='subtle'
-						color='gray'
-						radius='xl'
-						size='sm'
-						aria-label={t('columns.moreActions', { ns: 'campaigns' })}
-						onClick={(event) => event.stopPropagation()}
-						disabled={!shouldRenderMenu || isLoading}
-					>
-						<IconDotsVertical size={15} />
-					</ActionIcon>
-				</Tooltip>
+					<IconDotsVertical size={15} />
+				</ActionIcon>
 			</Menu.Target>
 
 			<Menu.Dropdown onClick={(event) => event.stopPropagation()}>
@@ -761,7 +750,7 @@ export const ContactListControl = ({
 						{hasManageSection && (
 							<>
 								<Menu.Label>
-									{t('columns.actionsGroupManage', { ns: 'campaigns' })}
+									{t('form.contacts.details.actions.actionsGroupManage')}
 								</Menu.Label>
 								<Menu.Item
 									leftSection={<IconEdit size={14} />}
@@ -792,9 +781,7 @@ export const ContactListControl = ({
 							<>
 								{hasManageSection && <Menu.Divider />}
 								<Menu.Label>
-									{t('columns.actionsGroupOperations', {
-										ns: 'campaigns',
-									})}
+									{t('form.contacts.details.actions.actionsGroupOperations')}
 								</Menu.Label>
 								{canNavigateToContactList && (
 									<Menu.Item
@@ -821,7 +808,7 @@ export const ContactListControl = ({
 									<Menu.Divider />
 								) : null}
 								<Menu.Label>
-									{t('columns.actionsGroupStatus', { ns: 'campaigns' })}
+									{t('form.contacts.details.actions.actionsGroupStatus')}
 								</Menu.Label>
 								<Menu.Item
 									leftSection={
@@ -862,7 +849,7 @@ export const ContactListControl = ({
 									<Menu.Divider />
 								) : null}
 								<Menu.Label>
-									{t('columns.actionsGroupDanger', { ns: 'campaigns' })}
+									{t('form.contacts.details.actions.actionsGroupDanger')}
 								</Menu.Label>
 								<Menu.Item
 									color='red'

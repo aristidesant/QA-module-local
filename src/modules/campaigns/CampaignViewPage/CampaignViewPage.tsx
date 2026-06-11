@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import {
 	Alert,
@@ -17,7 +17,7 @@ import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useCampaignsStore } from '~/stores/campaignsStore';
-import { ContactSection } from '../CampaignsForm/ContactSection';
+import { ContactSection } from '../CampaignsForm/ContactSection/ContactSection';
 import styles from './CampaignViewPage.module.css';
 
 const CampaignViewPage = () => {
@@ -50,6 +50,25 @@ const CampaignViewPage = () => {
 			selectCampaign(campaign);
 		}
 	}, [campaign, selectCampaign]);
+
+	const titleRight = useMemo(() => {
+		return (
+			<Group gap='xs'>
+				{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) ? (
+					<Tooltip label={t('index.actions.edit')} withArrow>
+						<ActionIcon
+							variant='light'
+							size='lg'
+							aria-label={t('index.actions.edit')}
+							onClick={() => navigate(`/campaign/${campaign?.id}`)}
+						>
+							<IconEdit size={20} />
+						</ActionIcon>
+					</Tooltip>
+				) : null}
+			</Group>
+		);
+	}, [canPerformAction, navigate, campaign?.id, t]);
 
 	if (!campaignId) {
 		return (
@@ -114,22 +133,7 @@ const CampaignViewPage = () => {
 			description={t('index.description')}
 			showBackButton
 			onBackClick={() => navigate('/campaigns')}
-			titleRight={
-				<Group gap='xs'>
-					{canPerformAction(ModuleEnum.CAMPAIGNS, PermissionEnum.UPDATE) ? (
-						<Tooltip label={t('index.actions.edit')} withArrow>
-							<ActionIcon
-								variant='light'
-								size='lg'
-								aria-label={t('index.actions.edit')}
-								onClick={() => navigate(`/campaign/${campaign.id}`)}
-							>
-								<IconEdit size={20} />
-							</ActionIcon>
-						</Tooltip>
-					) : null}
-				</Group>
-			}
+			titleRight={titleRight}
 		>
 			<Stack gap='sm' className={styles.contentStack}>
 				<div className={styles.contactsSection}>
