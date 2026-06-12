@@ -118,6 +118,17 @@ export interface CampaignPromptVariable {
 	source: CampaignPromptVariableSource;
 }
 
+export interface CampaignVoiceInput {
+	voiceId: string;
+	voiceName: string;
+}
+
+export interface CampaignVoice extends CampaignVoiceInput {
+	condition?: string;
+	originalVoiceName?: string;
+	inherited?: boolean;
+}
+
 export interface Campaign {
 	id: number;
 	name: string;
@@ -134,6 +145,7 @@ export interface Campaign {
 	objectiveId?: number;
 	voiceId?: string;
 	voiceIds?: string[];
+	voices?: CampaignVoice[];
 	createdAt: string; // ISO date string
 	updatedAt: string; // ISO date string
 	overAllScore?: number;

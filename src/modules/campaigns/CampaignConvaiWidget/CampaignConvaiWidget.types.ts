@@ -12,6 +12,11 @@ export type TranscriptItem = {
 	timestamp: number;
 };
 
+export type VoiceOption = {
+	voiceId: string;
+	voiceName: string;
+};
+
 export const STATUS_COLOR_MAP: Record<ConvaiStatus, string> = {
 	disconnected: 'gray',
 	connecting: 'blue',

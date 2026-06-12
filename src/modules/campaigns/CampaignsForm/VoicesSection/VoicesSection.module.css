@@ -1,3 +1,31 @@
+.layout {
+	min-width: 0;
+}
+
+.note {
+	background: linear-gradient(
+		180deg,
+		light-dark(var(--mantine-color-blue-0), var(--mantine-color-dark-6)),
+		light-dark(var(--mantine-color-white), var(--mantine-color-dark-7))
+	);
+}
+
+.note[data-tone='yellow'] {
+	background: linear-gradient(
+		180deg,
+		light-dark(var(--mantine-color-yellow-0), var(--mantine-color-dark-6)),
+		light-dark(var(--mantine-color-white), var(--mantine-color-dark-7))
+	);
+}
+
+.alert {
+	background: transparent;
+}
+
+.noteText {
+	line-height: 1.4;
+}
+
 .hiddenAudio {
 	display: none;
 }

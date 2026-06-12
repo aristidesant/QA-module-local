@@ -1,0 +1,187 @@
+.wrapper {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+}
+
+.emptyState {
+	background: linear-gradient(
+		180deg,
+		light-dark(var(--mantine-color-white), var(--mantine-color-dark-7)),
+		light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))
+	);
+}
+
+.emptyDescription {
+	max-width: 58ch;
+}
+
+.headerCopy {
+	min-width: 0;
+}
+
+.title {
+	letter-spacing: -0.01em;
+}
+
+.description {
+	max-width: 64ch;
+}
+
+.reorderHint {
+	white-space: nowrap;
+}
+
+.table {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.tableHeader {
+	display: grid;
+	grid-template-columns: 2rem minmax(0, 1.5fr) minmax(0, 1.3fr) minmax(
+			0,
+			0.9fr
+		) auto;
+	gap: var(--mantine-spacing-sm);
+	align-items: center;
+	padding: 0 var(--mantine-spacing-xs);
+}
+
+.rows {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.row {
+	display: grid;
+	grid-template-columns: 2rem minmax(0, 1.5fr) minmax(0, 1.3fr) minmax(
+			0,
+			0.9fr
+		) auto;
+	gap: var(--mantine-spacing-sm);
+	align-items: center;
+	background: linear-gradient(
+		180deg,
+		light-dark(var(--mantine-color-white), var(--mantine-color-dark-6)),
+		light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7))
+	);
+	border-color: var(--mantine-color-default-border);
+}
+
+.indexCell {
+	display: inline-flex;
+	align-items: center;
+	justify-content: flex-start;
+	gap: 4px;
+	color: var(--mantine-color-dimmed);
+}
+
+.dragIcon {
+	color: var(--mantine-color-dimmed);
+}
+
+.voiceCell,
+.voiceCopy {
+	min-width: 0;
+}
+
+.voiceName {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	line-height: 1.2;
+}
+
+.voiceMeta {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.inputCell {
+	min-width: 0;
+}
+
+.input {
+	width: 100%;
+}
+
+.charCount {
+	font-variant-numeric: tabular-nums;
+}
+
+.profileCell {
+	min-width: 0;
+}
+
+.profileGroup {
+	justify-content: flex-start;
+}
+
+.actionCell {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.removeButton:hover {
+	color: var(--mantine-color-red-filled);
+	background: var(--mantine-color-red-light);
+}
+
+.issueRow {
+	grid-column: 2 / -1;
+	margin-top: calc(var(--mantine-spacing-xs) * -0.5);
+	padding-left: calc(var(--mantine-spacing-sm) + 2rem);
+}
+
+.footer {
+	padding-top: var(--mantine-spacing-xs);
+	border-top: 1px solid var(--mantine-color-default-border);
+}
+
+@media (max-width: 48rem) {
+	.tableHeader {
+		display: none;
+	}
+
+	.row {
+		grid-template-columns: 2rem minmax(0, 1fr) auto;
+		align-items: start;
+	}
+
+	.voiceCell {
+		grid-column: 2 / 3;
+	}
+
+	.inputCell {
+		grid-column: 1 / -1;
+	}
+
+	.profileCell {
+		grid-column: 1 / -1;
+	}
+
+	.actionCell {
+		grid-column: 3 / 4;
+	}
+
+	.issueRow {
+		grid-column: 1 / -1;
+		padding-left: 0;
+	}
+
+	.footer {
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	.reorderHint {
+		white-space: normal;
+	}
+}

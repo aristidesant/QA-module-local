@@ -36,6 +36,11 @@ import { useGetAgentVersioningStatus } from '~/queries/agentVersioningQueries';
 import AgentSaveReviewModal from './AgentSaveReviewModal';
 import CampaignSyncButton from './CampaignSyncButton';
 import AgentDetailTabs, { type AgentTabValue } from './AgentDetailTabs';
+import {
+	areDirtySnapshotsDifferent,
+	isAgentDetailDirty,
+	normalizeDirtySnapshot,
+} from './utils/agentDetailDirty';
 import type { WorkflowSaveRequest } from './WorkflowSection/WorkflowSection';
 import styles from './AgentDetailPage.module.css';
 
@@ -45,6 +50,8 @@ interface PendingAgentSaveRequest {
 	source: AgentSaveSurface;
 	updateData: UpdateCampaignAgentConfigPayload;
 	reviewSnapshot: AgentVersionSnapshot;
+	campaignValuesSnapshot?: Omit<Campaign, 'id' | 'createdAt' | 'updatedAt'>;
+	campaignSnapshot?: Record<string, unknown>;
 }
 
 const AgentDetailPage = () => {
@@ -83,7 +90,12 @@ const AgentDetailPage = () => {
 	const [activeTab, setActiveTab] = useState<AgentTabValue>('setup');
 	const [pendingSaveRequest, setPendingSaveRequest] =
 		useState<PendingAgentSaveRequest | null>(null);
+	const hydratedCampaignAtRef = useRef<string | null>(null);
 	const hydratedAgentConfigAtRef = useRef<number | null>(null);
+	const savedCampaignSnapshotRef = useRef<Record<string, unknown> | null>(null);
+	const savedAgentConfigSnapshotRef = useRef<Record<string, unknown> | null>(
+		null
+	);
 
 	const selectedCampaignAgent = campaignAgent ?? null;
 
@@ -153,18 +165,54 @@ const AgentDetailPage = () => {
 	});
 
 	useEffect(() => {
+		if (!campaign) return;
+
+		const hydrationKey = campaign.updatedAt;
+		if (hydratedCampaignAtRef.current === hydrationKey) return;
+
+		hydratedCampaignAtRef.current = hydrationKey;
+		const hydratedCampaignValues = {
+			name: campaign.name || '',
+			agentName: campaign.agentName || '',
+			configId: campaign.configId || '',
+			description: campaign.description || '',
+			budget: campaign.budget ?? 0,
+			spent: campaign.spent ?? 0,
+			type: campaign.type || 'OUTBOUND',
+			status: campaign.status || ('INACTIVE' as const),
+			userId: campaign.userId ?? 0,
+			clientId: campaign.clientId ?? 0,
+			tags: campaign.tags || [],
+			workingHours: campaign.workingHours || {},
+			noiseCancellation: campaign.noiseCancellation,
+			dataCollectionVariables: campaign.dataCollectionVariables ?? [],
+			defaultMaxWaves: campaign.defaultMaxWaves ?? 3,
+			defaultWaveExecutionDelaySeconds:
+				campaign.defaultWaveExecutionDelaySeconds ?? 0,
+			roleIds: campaign.roleIds ?? [],
+			versionDescription: campaign.versionDescription ?? '',
+		};
+
+		form.setValues(hydratedCampaignValues);
+		form.resetDirty(hydratedCampaignValues);
+		savedCampaignSnapshotRef.current = normalizeDirtySnapshot(
+			hydratedCampaignValues,
+			{ omitPaths: [['dataCollectionVariables']] }
+		);
+	}, [campaign, form]);
+
+	useEffect(() => {
 		if (!selectedAgent) return;
 		if (hydratedAgentConfigAtRef.current === selectedAgentUpdatedAt) return;
 
 		hydratedAgentConfigAtRef.current = selectedAgentUpdatedAt;
+		const hydratedAgentConfig = selectedAgent.config ?? {};
 
-		form.setValues((current) => ({
-			...current,
-			configId: selectedAgent.configId || current.configId,
-		}));
-		agentConfigForm.setValues(selectedAgent.config ?? {});
-		form.resetDirty();
-	}, [selectedAgentUpdatedAt, form, agentConfigForm, selectedAgent]);
+		agentConfigForm.setValues(hydratedAgentConfig);
+		agentConfigForm.resetDirty(hydratedAgentConfig);
+		savedAgentConfigSnapshotRef.current =
+			normalizeDirtySnapshot(hydratedAgentConfig);
+	}, [selectedAgentUpdatedAt, agentConfigForm, selectedAgent]);
 
 	const updateCampaignAgentConfig = useUpdateCampaignAgentConfig();
 	const updateAgent = useUpdateAgent();
@@ -216,7 +264,18 @@ const AgentDetailPage = () => {
 					message: t('form.agent.selector.saved'),
 				});
 				if (request.source === 'setup') {
-					form.resetDirty();
+					const savedCampaignValues =
+						request.campaignValuesSnapshot ?? structuredClone(form.values);
+					const savedAgentConfig = request.updateData.config ?? {};
+					form.resetDirty(savedCampaignValues);
+					agentConfigForm.resetDirty(savedAgentConfig);
+					savedCampaignSnapshotRef.current =
+						request.campaignSnapshot ??
+						normalizeDirtySnapshot(savedCampaignValues, {
+							omitPaths: [['dataCollectionVariables']],
+						});
+					savedAgentConfigSnapshotRef.current =
+						normalizeDirtySnapshot(savedAgentConfig);
 				}
 			} catch {
 				notifications.show({
@@ -234,13 +293,20 @@ const AgentDetailPage = () => {
 	}, []);
 
 	const handleSaveClick = () => {
+		const frozenCampaignValues = structuredClone(form.values);
+		const frozenAgentConfig = structuredClone(agentConfigForm.values);
+
 		queueSaveRequest({
 			source: 'setup',
+			campaignValuesSnapshot: frozenCampaignValues,
+			campaignSnapshot: normalizeDirtySnapshot(frozenCampaignValues, {
+				omitPaths: [['dataCollectionVariables']],
+			}),
 			updateData: {
-				config: agentConfigForm.values,
-				versionDescription: form.values.versionDescription,
+				config: frozenAgentConfig,
+				versionDescription: frozenCampaignValues.versionDescription,
 			},
-			reviewSnapshot: agentConfigForm.values as AgentVersionSnapshot,
+			reviewSnapshot: frozenAgentConfig as AgentVersionSnapshot,
 		});
 	};
 
@@ -270,6 +336,24 @@ const AgentDetailPage = () => {
 			`/campaign/${campaignId}/agent/${selectedCampaignAgent.id}/test/${selectedCampaignAgent.agentId}`
 		);
 	};
+
+	const isAgentConfigHydrated =
+		Boolean(selectedAgent) &&
+		hydratedAgentConfigAtRef.current === selectedAgentUpdatedAt;
+	const isCampaignDirty = isAgentConfigHydrated
+		? areDirtySnapshotsDifferent(
+				form.values,
+				savedCampaignSnapshotRef.current,
+				{ omitPaths: [['dataCollectionVariables']] }
+			)
+		: false;
+	const isAgentConfigDirty = isAgentConfigHydrated
+		? isAgentDetailDirty(
+				agentConfigForm.values,
+				savedAgentConfigSnapshotRef.current
+			)
+		: false;
+	const canSave = isCampaignDirty || isAgentConfigDirty;
 
 	if (isAgentLoading) {
 		return (
@@ -341,7 +425,7 @@ const AgentDetailPage = () => {
 			variant='light'
 			onClick={handleSaveClick}
 			loading={updateCampaignAgentConfig.isPending}
-			disabled={!form.isDirty()}
+			disabled={!canSave}
 		>
 			{updateCampaignAgentConfig.isPending
 				? t('form.agent.selector.saving')
