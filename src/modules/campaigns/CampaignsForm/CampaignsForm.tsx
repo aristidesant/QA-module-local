@@ -9,6 +9,7 @@ import {
 	Tooltip,
 	Group,
 } from '@mantine/core';
+import { isAxiosError } from 'axios';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -57,6 +58,10 @@ import i18n from '~/locales/i18n';
 import styles from './CampaignsForm.module.css';
 import { getDataCollectionFromAgentConfig } from '../../agent-details/AnalyticsSection/analyticsFormContext';
 import { useGetAgent } from '~/queries/agentQueries';
+import {
+	buildCampaignVoiceAssignments,
+	normalizeCampaignVoiceAssignments,
+} from '~/modules/campaigns/utils/campaignVoiceAssignments';
 
 interface CampaignsFormProps {
 	campaign?: Partial<Campaign>;
@@ -255,6 +260,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		() => (campaignRoles ?? []).map((role) => role.id),
 		[campaignRoles]
 	);
+	const campaignVoiceAssignments = React.useMemo(
+		() => buildCampaignVoiceAssignments(campaign),
+		[campaign]
+	);
 	const isGeneralRoleSaveBlocked =
 		campaignId > 0 && (isCampaignRolesLoading || isCampaignRolesError);
 
@@ -276,8 +285,8 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			promptId: campaign?.promptId ?? undefined,
 			objectiveId: campaign?.objectiveId ?? undefined,
 			voiceId: campaign?.voiceId ?? undefined,
-			voiceIds:
-				campaign?.voiceIds ?? (campaign?.voiceId ? [campaign.voiceId] : []),
+			voiceIds: campaignVoiceAssignments.map((voice) => voice.voiceId),
+			voices: campaignVoiceAssignments,
 			clientId: campaign?.clientId ?? 0,
 			tags: campaign?.tags || [],
 			workingHours: campaign?.workingHours || defaultWorkingHours,
@@ -341,9 +350,10 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			userId: campaign.userId ?? 0,
 			promptId: campaign.promptId ?? undefined,
 			objectiveId: campaign.objectiveId ?? undefined,
-			voiceId: campaign.voiceId ?? undefined,
-			voiceIds:
-				campaign.voiceIds ?? (campaign.voiceId ? [campaign.voiceId] : []),
+			voiceId:
+				campaign.voiceId ?? campaignVoiceAssignments[0]?.voiceId ?? undefined,
+			voiceIds: campaignVoiceAssignments.map((voice) => voice.voiceId),
+			voices: campaignVoiceAssignments,
 			clientId: campaign.clientId ?? 0,
 			tags: campaign.tags || [],
 			workingHours: campaign.workingHours || defaultWorkingHours,
@@ -364,6 +374,7 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 		campaign?.id,
 		selectedAgent?.id,
 		campaignRoleIds,
+		campaignVoiceAssignments,
 		isCampaignRolesError,
 		isCampaignRolesFetched,
 		selectedAgent?.config?.workflow,
@@ -498,6 +509,14 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 				cleanedValue.defaultWaveExecutionDelaySeconds = undefined;
 			}
 
+			const normalizedVoices = normalizeCampaignVoiceAssignments(
+				cleanedValue.voices
+			);
+			cleanedValue.voices = normalizedVoices;
+			cleanedValue.voiceIds = normalizedVoices.map((voice) => voice.voiceId);
+			cleanedValue.voiceId =
+				normalizedVoices[0]?.voiceId ?? cleanedValue.voiceId;
+
 			// Prepare data for light update (excludes dataCollectionVariables and versionDescription)
 			const dataToSend = isLight
 				? (({ dataCollectionVariables, versionDescription: _vd, ...rest }) =>
@@ -558,11 +577,18 @@ export const CampaignsForm: React.FC<CampaignsFormProps> = ({
 			});
 			form.resetDirty();
 		} catch (error) {
+			const message =
+				isAxiosError(error) && typeof error.response?.data?.message === 'string'
+					? error.response.data.message
+					: error instanceof Error
+						? error.message
+						: undefined;
+			const fallbackMessage = campaign?.id
+				? t('form.notifications.errorUpdate')
+				: t('form.notifications.errorCreate');
 			notifications.show({
 				title: t('errors.unknown', { ns: 'common' }),
-				message: campaign?.id
-					? t('form.notifications.errorUpdate')
-					: t('form.notifications.errorCreate'),
+				message: message ?? fallbackMessage,
 				color: 'red',
 			});
 		}

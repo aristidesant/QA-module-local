@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button, CopyButton, ScrollArea, Text, Tooltip } from '@mantine/core';
 import {
 	IconCheck,
@@ -8,6 +8,8 @@ import {
 } from '@tabler/icons-react';
 import { type TranscriptItem } from './CampaignConvaiWidget.types';
 import styles from './CampaignConvaiWidget.module.css';
+
+const SCROLL_BOTTOM_THRESHOLD = 40;
 
 export interface ConvaiTranscriptLabels {
 	title: string;
@@ -34,6 +36,34 @@ const ConvaiTranscript = ({
 	labels,
 	canCopyTranscript,
 }: ConvaiTranscriptProps) => {
+	const viewportRef = useRef<HTMLDivElement>(null);
+	const [isAtBottom, setIsAtBottom] = useState(true);
+
+	const handleScroll = useCallback(() => {
+		const viewport = viewportRef.current;
+		if (!viewport) return;
+		const { scrollTop, scrollHeight, clientHeight } = viewport;
+		setIsAtBottom(
+			scrollHeight - scrollTop - clientHeight < SCROLL_BOTTOM_THRESHOLD
+		);
+	}, []);
+
+	useEffect(() => {
+		const viewport = viewportRef.current;
+		if (!viewport) return;
+		viewport.addEventListener('scroll', handleScroll);
+		handleScroll();
+		return () => viewport.removeEventListener('scroll', handleScroll);
+	}, [handleScroll]);
+
+	useEffect(() => {
+		if (!isAtBottom || !viewportRef.current) return;
+		viewportRef.current.scrollTo({
+			top: viewportRef.current.scrollHeight,
+			behavior: 'smooth',
+		});
+	}, [transcript.length, isAtBottom]);
+
 	const transcriptClipboardText = useMemo(() => {
 		return transcript
 			.map((item) => {
@@ -107,7 +137,11 @@ const ConvaiTranscript = ({
 				</div>
 			)}
 
-			<ScrollArea className={styles.transcriptScroll} offsetScrollbars>
+			<ScrollArea
+				className={styles.transcriptScroll}
+				offsetScrollbars
+				viewportRef={viewportRef}
+			>
 				{transcript.length > 0 ? (
 					<div className={styles.transcriptList}>
 						{groupedMessages.map((group, groupIndex) => (

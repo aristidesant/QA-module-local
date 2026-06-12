@@ -29,6 +29,7 @@ import {
 import { CampaignStatus } from '~/models/CampaignStatus';
 import type { CampaignObjective } from '~/models/CampaignObjectiveModel';
 import type { CreateCampaignWithAgentDTO } from '~/api/campaignsApi';
+import { normalizeCampaignVoiceAssignments } from '~/modules/campaigns/utils/campaignVoiceAssignments';
 import styles from '../CampaignWizard.module.css';
 import { useGetCampaignObjectivesAll } from '~/queries/campaignObjectivesQueries';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
@@ -196,6 +197,12 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 
 		const isOutboundType =
 			values.campaignType === 'OUTBOUND' || values.campaignType === 'HYBRID';
+		const normalizedVoices = normalizeCampaignVoiceAssignments(
+			selectedVoiceIds.map((voiceId) => ({
+				voiceId,
+				voiceName: '',
+			}))
+		);
 
 		const dto: CreateCampaignWithAgentDTO = {
 			campaign: {
@@ -207,7 +214,8 @@ export const StepOneGeneral: React.FC<StepOneGeneralProps> = ({
 				campaignExecutionType: 'TIME_BASED',
 				status: CampaignStatus.INACTIVE,
 				roleIds: values.roleIds,
-				voiceIds: selectedVoiceIds,
+				voices: normalizedVoices,
+				voiceIds: normalizedVoices.map((voice) => voice.voiceId),
 				...(isOutboundType && {
 					defaultMaxWaves: values.defaultMaxWaves || 3,
 					defaultWaveExecutionDelaySeconds:

@@ -1,4 +1,11 @@
-import { ActionIcon, Alert, Button, Text, Tooltip } from '@mantine/core';
+import {
+	ActionIcon,
+	Alert,
+	Button,
+	Select,
+	Text,
+	Tooltip,
+} from '@mantine/core';
 import { useHotkeys } from '@mantine/hooks';
 import {
 	IconAlertCircle,
@@ -30,6 +37,9 @@ const ConvaiVoicePanel = () => {
 		startSession,
 		endSession,
 		toggleMute,
+		voices,
+		selectedVoiceId,
+		setSelectedVoiceId,
 	} = useCampaignConvai();
 
 	const isConnected = status === 'connected';
@@ -128,6 +138,23 @@ const ConvaiVoicePanel = () => {
 					</Tooltip>
 				</div>
 			</div>
+
+			{voices.length > 0 && (
+				<div className={styles.voiceSelector}>
+					<Select
+						data={voices.map((v) => ({
+							value: v.voiceId,
+							label: v.voiceName,
+						}))}
+						value={selectedVoiceId}
+						onChange={(value) => setSelectedVoiceId(value ?? null)}
+						disabled={isConnected}
+						clearable={false}
+						label={t('widget.voice.selectVoice')}
+						size='sm'
+					/>
+				</div>
+			)}
 
 			{status === 'error' && message && (
 				<Alert

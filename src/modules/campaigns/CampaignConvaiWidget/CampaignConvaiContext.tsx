@@ -16,6 +16,7 @@ import type {
 	ConvaiMode,
 	ConvaiStatus,
 	TranscriptItem,
+	VoiceOption,
 } from './CampaignConvaiWidget.types';
 
 interface CampaignConvaiContextValue {
@@ -33,12 +34,19 @@ interface CampaignConvaiContextValue {
 	endSession: () => void;
 	toggleMute: () => void;
 	sendMessage: () => void;
+	voices: VoiceOption[];
+	selectedVoiceId: string | null;
+	setSelectedVoiceId: (id: string | null) => void;
 }
 
 type ConversationControls = {
 	startSession: (options: {
 		signedUrl: string;
 		connectionType?: 'websocket';
+		overrides?: {
+			tts?: { voiceId?: string };
+		};
+		dynamicVariables?: Record<string, string | number | boolean>;
 	}) => void;
 	endSession: () => void;
 	sendUserMessage: (message: string) => void;
@@ -192,11 +200,13 @@ const ConversationBridge = ({
 
 interface ConvaiStateProviderProps {
 	agentId: string;
+	voices: VoiceOption[];
 	children: ReactNode;
 }
 
 const ConvaiStateProvider = ({
 	agentId,
+	voices,
 	children,
 }: ConvaiStateProviderProps) => {
 	const { t } = useTranslation('campaign.detail.test');
@@ -207,6 +217,9 @@ const ConvaiStateProvider = ({
 	const [localErrorMessage, setLocalErrorMessage] = useState<string>();
 	const [conversationSnapshot, setConversationSnapshot] =
 		useState<ConversationSnapshot>(DEFAULT_CONVERSATION_SNAPSHOT);
+	const [selectedVoiceId, setSelectedVoiceId] = useState<string | null>(
+		() => voices[0]?.voiceId ?? null
+	);
 	const pendingUserMessageRef = useRef<string | null>(null);
 	const pendingStartRef = useRef(false);
 	const pendingSignedUrlRef = useRef<string | null>(null);
@@ -263,10 +276,19 @@ const ConvaiStateProvider = ({
 				pendingStartRef.current = false;
 				const nextSignedUrl = pendingSignedUrlRef.current;
 				pendingSignedUrlRef.current = null;
+				const selectedVoiceName = voices.find(
+					(v) => v.voiceId === selectedVoiceId
+				)?.voiceName;
 				if (nextSignedUrl) {
 					await conversationControlsRef.current.startSession({
 						signedUrl: nextSignedUrl,
 						connectionType: 'websocket',
+						...(selectedVoiceId && {
+							overrides: { tts: { voiceId: selectedVoiceId } },
+						}),
+						...(selectedVoiceName && {
+							dynamicVariables: { agentName: selectedVoiceName },
+						}),
 					});
 				}
 			}
@@ -291,6 +313,8 @@ const ConvaiStateProvider = ({
 		fetchAgentSignedUrl,
 		requestMicrophoneAccess,
 		resetConversationState,
+		selectedVoiceId,
+		voices,
 		t,
 	]);
 
@@ -363,6 +387,9 @@ const ConvaiStateProvider = ({
 			endSession: handleEndSession,
 			toggleMute: handleToggleMute,
 			sendMessage: handleSendMessage,
+			voices,
+			selectedVoiceId,
+			setSelectedVoiceId,
 		}),
 		[
 			conversationId,
@@ -379,6 +406,9 @@ const ConvaiStateProvider = ({
 			handleToggleMute,
 			localErrorMessage,
 			transcript,
+			voices,
+			selectedVoiceId,
+			setSelectedVoiceId,
 		]
 	);
 
@@ -405,14 +435,18 @@ const ConvaiStateProvider = ({
 
 interface CampaignConvaiProviderProps {
 	agentId: string;
+	voices: VoiceOption[];
 	children: ReactNode;
 }
 
 export const CampaignConvaiProvider = ({
 	agentId,
+	voices,
 	children,
 }: CampaignConvaiProviderProps) => {
 	return (
-		<ConvaiStateProvider agentId={agentId}>{children}</ConvaiStateProvider>
+		<ConvaiStateProvider agentId={agentId} voices={voices}>
+			{children}
+		</ConvaiStateProvider>
 	);
 };

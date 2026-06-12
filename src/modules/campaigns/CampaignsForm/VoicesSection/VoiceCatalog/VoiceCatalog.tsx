@@ -1,4 +1,4 @@
-import { Alert, Center, Loader, Text } from '@mantine/core';
+import { Alert, Center, Loader, Paper, Text } from '@mantine/core';
 import { IconAlertCircle, IconMoodEmpty } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { AgentVoiceModel } from '~/models/AgentVoiceModel';
@@ -6,6 +6,7 @@ import VoiceCard from '../VoiceCard';
 import classes from './VoiceCatalog.module.css';
 
 export interface VoiceCatalogProps {
+	id?: string;
 	voices: AgentVoiceModel[];
 	totalAvailable: number;
 	isLoading: boolean;
@@ -19,6 +20,7 @@ export interface VoiceCatalogProps {
 }
 
 const VoiceCatalog: React.FC<VoiceCatalogProps> = ({
+	id,
 	voices,
 	totalAvailable,
 	isLoading,
@@ -58,18 +60,18 @@ const VoiceCatalog: React.FC<VoiceCatalogProps> = ({
 
 	if (totalAvailable === 0) {
 		return (
-			<div className={classes.emptyState}>
+			<Paper withBorder radius='lg' p='md' className={classes.emptyState}>
 				<IconMoodEmpty size={24} className={classes.emptyIcon} stroke={1.5} />
 				<Text size='sm' c='dimmed'>
 					{t('catalog.empty')}
 				</Text>
-			</div>
+			</Paper>
 		);
 	}
 
 	if (voices.length === 0) {
 		return (
-			<div className={classes.emptyState}>
+			<Paper withBorder radius='lg' p='md' className={classes.emptyState}>
 				<Text size='sm' c='dimmed'>
 					{t('catalog.emptyFiltered')}
 				</Text>
@@ -80,23 +82,25 @@ const VoiceCatalog: React.FC<VoiceCatalogProps> = ({
 				>
 					{t('catalog.emptyFilteredReset')}
 				</button>
-			</div>
+			</Paper>
 		);
 	}
 
 	return (
-		<div className={classes.grid}>
-			{voices.map((voice) => (
-				<VoiceCard
-					key={voice.voice.id}
-					voice={voice}
-					selected={selectedVoiceIds.has(voice.voice.id)}
-					playing={playingVoiceId === voice.voice.id}
-					progress={progress}
-					onToggle={onToggleVoice}
-					onPlay={onPlayVoice}
-				/>
-			))}
+		<div id={id} className={classes.catalog}>
+			<div className={classes.list}>
+				{voices.map((voice) => (
+					<VoiceCard
+						key={voice.voice.id}
+						voice={voice}
+						selected={selectedVoiceIds.has(voice.voice.id)}
+						playing={playingVoiceId === voice.voice.id}
+						progress={progress}
+						onToggle={onToggleVoice}
+						onPlay={onPlayVoice}
+					/>
+				))}
+			</div>
 		</div>
 	);
 };

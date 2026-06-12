@@ -2,6 +2,7 @@ import axios from 'axios';
 import type {
 	Campaign,
 	CampaignPromptVariable,
+	CampaignVoiceInput,
 	PaginatedResponse,
 	SchedulerSummary,
 } from '~/models/CampaignsModel';
@@ -83,6 +84,7 @@ export interface CreateCampaignWithAgentDTO {
 		defaultWaveExecutionDelaySeconds?: number;
 		roleIds?: number[];
 		voiceIds?: string[];
+		voices?: CampaignVoiceInput[];
 	};
 	agent: {
 		conversationConfig?: ConversationConfigPayload;

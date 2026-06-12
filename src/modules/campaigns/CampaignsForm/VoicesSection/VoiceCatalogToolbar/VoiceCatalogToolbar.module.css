@@ -1,13 +1,24 @@
 .toolbar {
 	display: flex;
 	flex-direction: column;
-	gap: var(--mantine-spacing-sm);
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-lg);
+	background: linear-gradient(
+		180deg,
+		light-dark(var(--mantine-color-white), var(--mantine-color-dark-6)),
+		light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7))
+	);
+}
+
+.searchGroup {
+	flex: 1;
+	min-width: min(100%, 320px);
 }
 
 .search {
-	flex: 1;
-	min-width: 220px;
-	max-width: 360px;
+	width: min(100%, 32rem);
 }
 
 .count {
@@ -32,7 +43,9 @@
 	color: var(--mantine-primary-color-filled);
 	cursor: pointer;
 	border-radius: var(--mantine-radius-sm);
-	transition: background-color 120ms ease;
+	transition:
+		color 120ms ease,
+		background-color 120ms ease;
 }
 
 .resetButton:hover {
@@ -58,14 +71,36 @@
 }
 
 .filterLabel {
-	min-width: 56px;
+	min-width: 64px;
 	color: var(--mantine-color-dimmed);
 	text-transform: uppercase;
 	letter-spacing: 0.04em;
+}
+
+.chip {
+	text-transform: none;
 }
 
 .chipContent {
 	display: inline-flex;
 	align-items: center;
 	gap: 4px;
+}
+
+.helper {
+	margin-top: 2px;
+}
+
+.filterBadge {
+	align-self: flex-start;
+}
+
+@media (max-width: 48rem) {
+	.toolbar {
+		padding: var(--mantine-spacing-sm);
+	}
+
+	.search {
+		width: 100%;
+	}
 }
