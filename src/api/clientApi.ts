@@ -4,6 +4,10 @@ import type {
 	CreateClientRequest,
 	UpdateClientRequest,
 } from '~/models/ClientModel';
+import type {
+	ClientThemeModel,
+	UpdateClientThemeRequest,
+} from '~/models/ClientTheme';
 import { DEFAULT_API_URL } from './config';
 
 interface ClientApiClient {
@@ -15,6 +19,11 @@ interface ClientApiClient {
 		clientData: UpdateClientRequest
 	) => Promise<ClientModel>;
 	deleteClient: (id: number) => Promise<void>;
+	getClientTheme: (id: number) => Promise<ClientThemeModel>;
+	patchClientTheme: (
+		id: number,
+		data: UpdateClientThemeRequest
+	) => Promise<ClientThemeModel>;
 }
 
 // Client API client (uses global axios interceptors for auth)
@@ -70,6 +79,28 @@ const clientApi = (
 			await axios.delete(`${DEFAULT_API_URL}/clients/${id}`, {
 				headers: { ..._authHeader },
 			});
+		},
+
+		// Get client theme
+		getClientTheme: async (id: number): Promise<ClientThemeModel> => {
+			const response = await axios.get<ClientThemeModel>(
+				`${DEFAULT_API_URL}/clients/${id}/theme`,
+				{ headers: { ..._authHeader } }
+			);
+			return response.data;
+		},
+
+		// Patch client theme (merge semantics)
+		patchClientTheme: async (
+			id: number,
+			data: UpdateClientThemeRequest
+		): Promise<ClientThemeModel> => {
+			const response = await axios.patch<ClientThemeModel>(
+				`${DEFAULT_API_URL}/clients/${id}/theme`,
+				data,
+				{ headers: { ..._authHeader } }
+			);
+			return response.data;
 		},
 	};
 };

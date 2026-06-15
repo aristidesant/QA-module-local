@@ -4,6 +4,12 @@ import type {
 	CreateClientRequest,
 	UpdateClientRequest,
 } from '~/models/ClientModel';
+import type {
+	ClientThemeModel,
+	UpdateClientThemeRequest,
+} from '~/models/ClientTheme';
+
+const ONE_DAY_MS = 24 * 60 * 60 * 1000;
 
 // Get all clients
 export const useGetAllClients = () => {
@@ -84,6 +90,48 @@ export const useDeleteClient = () => {
 		onSuccess: (_, id) => {
 			queryClient.invalidateQueries({ queryKey: ['clients'] });
 			queryClient.invalidateQueries({ queryKey: ['client', id] });
+			queryClient.invalidateQueries({ queryKey: ['clientTheme', id] });
+		},
+		onError: (error) => {
+			void error;
+		},
+	});
+};
+
+// Get client theme (logoUrl is presigned, valid for 24h, so cache for 24h)
+export const useGetClientTheme = (id: number | undefined, enabled = true) => {
+	return useQuery<ClientThemeModel>({
+		queryKey: ['clientTheme', id],
+		queryFn: async () => {
+			const api = clientApi();
+			return api.getClientTheme(id!);
+		},
+		enabled: !!id && enabled,
+		staleTime: ONE_DAY_MS,
+		gcTime: ONE_DAY_MS,
+	});
+};
+
+// Update client theme (merge semantics — only send changed keys)
+export const useUpdateClientTheme = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async ({
+			id,
+			data,
+		}: {
+			id: number;
+			data: UpdateClientThemeRequest;
+		}) => {
+			const api = clientApi();
+			return api.patchClientTheme(id, data);
+		},
+		onSuccess: (data, variables) => {
+			queryClient.invalidateQueries({
+				queryKey: ['clientTheme', variables.id],
+			});
+			queryClient.invalidateQueries({ queryKey: ['client', variables.id] });
+			void data;
 		},
 		onError: (error) => {
 			void error;

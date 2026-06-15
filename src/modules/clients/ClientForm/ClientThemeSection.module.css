@@ -1,0 +1,65 @@
+.logoBlock {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-md);
+}
+
+.logoPreview {
+	width: 96px;
+	height: 96px;
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-3);
+	background-color: var(--mantine-color-gray-0);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	flex-shrink: 0;
+}
+
+.logoImage {
+	width: 100%;
+	height: 100%;
+	object-fit: contain;
+}
+
+.logoPlaceholder {
+	color: var(--mantine-color-gray-5);
+}
+
+.logoActions {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	flex: 1;
+	min-width: 0;
+}
+
+.colorRow {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: var(--mantine-spacing-xs);
+}
+
+@media (min-width: 48em) {
+	.colorRow {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+.brandNameField {
+	margin-top: var(--mantine-spacing-xs);
+}
+
+.warningAlert {
+	margin-top: var(--mantine-spacing-xs);
+}
+
+[data-mantine-color-scheme='dark'] .logoPreview {
+	border-color: var(--mantine-color-dark-4);
+	background-color: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .logoPlaceholder {
+	color: var(--mantine-color-dark-3);
+}

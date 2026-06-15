@@ -86,13 +86,16 @@ const fileApi = (_authHeader?: Record<string, string>) => {
 			file: File,
 			codeType?: string,
 			description?: string,
-			typeId?: number
+			typeId?: number,
+			targetClientId?: number
 		): Promise<FileModel> => {
 			const formData = new FormData();
 			formData.append('file', file);
 			if (codeType) formData.append('codeType', codeType);
 			if (description) formData.append('description', description);
 			if (typeId != null) formData.append('typeId', String(typeId));
+			if (targetClientId != null)
+				formData.append('targetClientId', String(targetClientId));
 			const response = await axios.post<FileModel>(
 				`${DEFAULT_API_URL}/files/upload`,
 				formData
