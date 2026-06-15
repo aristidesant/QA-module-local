@@ -38,13 +38,15 @@ export const useUploadFile = () => {
 			codeType?: string;
 			description?: string;
 			typeId?: number;
+			targetClientId?: number;
 		}): Promise<FileModel> => {
 			const api = fileApi();
 			return api.uploadFile(
 				params.file,
 				params.codeType,
 				params.description,
-				params.typeId
+				params.typeId,
+				params.targetClientId
 			);
 		},
 	});

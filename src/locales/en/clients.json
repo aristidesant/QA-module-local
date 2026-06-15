@@ -56,7 +56,9 @@
 			"nameRequired": "Name is required",
 			"aliasRequired": "Alias is required",
 			"aliasInvalid": "Alias must use lowercase letters, numbers, and hyphens only",
-			"emailInvalid": "Invalid email format"
+			"emailInvalid": "Invalid email format",
+			"colorInvalid": "Color must be a valid hex value (#RGB, #RRGGBB or #RRGGBBAA)",
+			"brandNameTooLong": "Brand name is too long"
 		},
 		"sections": {
 			"profile": {
@@ -74,6 +76,10 @@
 			"invoiceSettings": {
 				"title": "Invoice Settings",
 				"description": "Configure invoice template and contact for this client"
+			},
+			"branding": {
+				"title": "Branding",
+				"description": "Logo, colors, and brand name shown across the client experience."
 			}
 		},
 		"fields": {
@@ -117,6 +123,47 @@
 			"invoiceTemplateFileId": {
 				"label": "Invoice Template (.xlsx)",
 				"placeholder": "Select an .xlsx file"
+			},
+			"brandName": {
+				"label": "Brand name",
+				"placeholder": "Acme Corp"
+			},
+			"primaryColor": {
+				"label": "Primary color",
+				"description": "Used for primary actions and accents."
+			},
+			"secondaryColor": {
+				"label": "Secondary color",
+				"description": "Used for secondary actions and accents."
+			},
+			"color": {
+				"invalid": "Invalid hex color"
+			},
+			"logo": {
+				"label": "Logo",
+				"placeholder": "Upload a logo (PNG, JPEG, SVG or WebP, max 2 MB)",
+				"replace": "Replace logo",
+				"remove": "Remove",
+				"uploading": "Uploading…",
+				"previewAlt": "Client logo",
+				"fileTypeMissingHint": "The 'logo' file type is not configured for this client. Ask an admin to seed it before uploading.",
+				"errors": {
+					"tooBig": {
+						"title": "Logo is too large",
+						"message": "Logo must be 2 MB or smaller."
+					},
+					"wrongType": {
+						"title": "Unsupported file type",
+						"message": "Use PNG, JPEG, SVG or WebP."
+					},
+					"uploadFailed": {
+						"title": "Logo upload failed"
+					},
+					"fileTypeMissing": {
+						"title": "Logo file type missing",
+						"message": "Contact an admin to configure the 'logo' file type for this client."
+					}
+				}
 			}
 		}
 	},
