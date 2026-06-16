@@ -31,7 +31,12 @@
 
 .node {
 	cursor: default;
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-1));
 	transition: color 0.15s ease;
+}
+
+.nodeTarget {
+	color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
 }
 
 .node:hover {
@@ -44,6 +49,7 @@
 
 .arrow {
 	flex-shrink: 0;
+	color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-2));
 	animation: pulse 2s ease-in-out infinite;
 }
 

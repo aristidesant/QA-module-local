@@ -27,6 +27,7 @@
 
 .workflowNodeName {
 	cursor: default;
+	color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
 	word-break: break-word;
 	line-height: 1.3;
 }

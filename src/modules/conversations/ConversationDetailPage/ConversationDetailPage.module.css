@@ -17,6 +17,17 @@
 	flex-direction: column;
 }
 
+.transcriptCard {
+	flex: 1;
+	min-height: 0;
+}
+
+.transcriptCardShell,
+.transcriptCardBody {
+	flex: 1;
+	min-height: 0;
+}
+
 .rightCol {
 	flex: 6;
 	min-height: 0;
@@ -28,9 +39,7 @@
 	padding-bottom: var(--mantine-spacing-md);
 }
 
-/* Transcript card content slot — overrides RightSectionCard's default padding */
 .transcriptContent {
-	padding: 0;
 	flex: 1;
 	min-height: 0;
 	overflow: hidden;

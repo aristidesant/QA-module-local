@@ -6,7 +6,11 @@ import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { usePermissions } from '~/hooks/usePermissions';
 import type { ToolResult, TranscriptEntry } from '~/models/ConversationsModels';
-import type { VisibleTranscriptEntry } from './helpers/types';
+import type {
+	VisibleTranscriptEntry,
+	WorkflowNodeLabels,
+	WorkflowNodeLabelsByAgent,
+} from './helpers/types';
 import {
 	buildTranscriptClipboardText,
 	isAgentRole,
@@ -17,9 +21,9 @@ import {
 	findActiveEntryIndex,
 	buildFooterMetrics,
 } from './helpers/transcriptHelpers';
-import { EmptyTranscript } from './components/EmptyTranscript';
-import { MessageRow } from './components/MessageRow';
-import { WorkflowChangeBanner } from './components/WorkflowChangeBanner';
+import { EmptyTranscript } from './components/EmptyTranscript/EmptyTranscript';
+import { MessageRow } from './components/MessageRow/MessageRow';
+import { WorkflowChangeBanner } from './components/WorkflowChangeBanner/WorkflowChangeBanner';
 import styles from './TranscriptViewer.module.css';
 
 export { extractMissionSummary } from './helpers/formatUtils';
@@ -29,7 +33,8 @@ interface TranscriptViewerProps {
 	audioCurrentTime?: number;
 	isAudioPlaying?: boolean;
 	onSeekToTime?: (time: number) => void;
-	nodeLabels?: Record<string, string>;
+	nodeLabels?: WorkflowNodeLabels;
+	nodeLabelsByAgent?: WorkflowNodeLabelsByAgent;
 	showMetrics?: boolean;
 }
 
@@ -39,6 +44,7 @@ export function TranscriptViewer({
 	isAudioPlaying,
 	onSeekToTime,
 	nodeLabels,
+	nodeLabelsByAgent,
 	showMetrics = true,
 }: TranscriptViewerProps) {
 	const { t } = useTranslation(['conversations', 'common']);
@@ -80,6 +86,7 @@ export function TranscriptViewer({
 					return {
 						entry,
 						workflowTransition,
+						sourceIndex: index,
 					};
 				})
 				.filter((item): item is VisibleTranscriptEntry => item !== null),
@@ -101,8 +108,9 @@ export function TranscriptViewer({
 	}, [transcript]);
 
 	const transcriptClipboardText = useMemo(
-		() => buildTranscriptClipboardText(transcript, nodeLabels),
-		[transcript, nodeLabels]
+		() =>
+			buildTranscriptClipboardText(transcript, nodeLabels, nodeLabelsByAgent),
+		[transcript, nodeLabels, nodeLabelsByAgent]
 	);
 
 	const activeEntryIndex = useMemo(() => {
@@ -158,62 +166,64 @@ export function TranscriptViewer({
 					)}
 				</CopyButton>
 			</Group>
-			{visibleEntries.map(({ entry, workflowTransition }, index) => {
-				const isAgent = isAgentRole(entry.role);
-				const isUser = isUserRole(entry.role);
-				const isSystem = !isAgent && !isUser;
-				const visibleToolCalls = isAgent
-					? (entry.tool_calls || []).filter((tool) => tool.type !== 'workflow')
-					: [];
-				const footerMetrics =
-					canViewTechnicalDetails && showMetrics
-						? buildFooterMetrics(entry, isAgent, t)
+			{visibleEntries.map(
+				({ entry, workflowTransition, sourceIndex }, index) => {
+					const isAgent = isAgentRole(entry.role);
+					const isUser = isUserRole(entry.role);
+					const isSystem = !isAgent && !isUser;
+					const visibleToolCalls = isAgent
+						? (entry.tool_calls || []).filter(
+								(tool) => tool.type !== 'workflow'
+							)
 						: [];
-				const hasMessage = Boolean(entry.message?.trim().length);
-				const shouldRenderMessageBubble =
-					isSystem ||
-					hasMessage ||
-					(canViewTechnicalDetails && visibleToolCalls.length > 0);
+					const footerMetrics =
+						canViewTechnicalDetails && showMetrics
+							? buildFooterMetrics(entry, isAgent, t)
+							: [];
+					const hasMessage = Boolean(entry.message?.trim().length);
+					const shouldRenderMessageBubble =
+						isSystem ||
+						hasMessage ||
+						(canViewTechnicalDetails && visibleToolCalls.length > 0);
 
-				if (!workflowTransition && !shouldRenderMessageBubble) {
-					return null;
+					if (!workflowTransition && !shouldRenderMessageBubble) {
+						return null;
+					}
+
+					const isActive = index === activeEntryIndex;
+					const isSeekable = !isSystem && Boolean(onSeekToTime);
+
+					return (
+						<Stack key={`transcript-${sourceIndex}`} gap='xs'>
+							{workflowTransition && (
+								<WorkflowChangeBanner
+									timeInCallSecs={entry.time_in_call_secs}
+									transition={workflowTransition}
+									nodeLabels={nodeLabels}
+									nodeLabelsByAgent={nodeLabelsByAgent}
+								/>
+							)}
+							{shouldRenderMessageBubble && (
+								<MessageRow
+									isAgent={isAgent}
+									isSystem={isSystem}
+									message={entry.message}
+									timeInCallSecs={entry.time_in_call_secs}
+									interrupted={entry.interrupted}
+									visibleToolCalls={visibleToolCalls}
+									toolResultsMap={globalToolResultsMap}
+									footerMetrics={footerMetrics}
+									canViewTechnicalDetails={canViewTechnicalDetails}
+									isActive={isActive}
+									isSeekable={isSeekable}
+									onSeekToTime={onSeekToTime}
+									activeEntryRef={isActive ? activeEntryRef : undefined}
+								/>
+							)}
+						</Stack>
+					);
 				}
-
-				const isActive = index === activeEntryIndex;
-				const isSeekable = !isSystem && Boolean(onSeekToTime);
-
-				return (
-					<Stack
-						key={`transcript-${entry.time_in_call_secs}-${entry.role}`}
-						gap='xs'
-					>
-						{workflowTransition && (
-							<WorkflowChangeBanner
-								timeInCallSecs={entry.time_in_call_secs}
-								transition={workflowTransition}
-								nodeLabels={nodeLabels}
-							/>
-						)}
-						{shouldRenderMessageBubble && (
-							<MessageRow
-								isAgent={isAgent}
-								isSystem={isSystem}
-								message={entry.message}
-								timeInCallSecs={entry.time_in_call_secs}
-								interrupted={entry.interrupted}
-								visibleToolCalls={visibleToolCalls}
-								toolResultsMap={globalToolResultsMap}
-								footerMetrics={footerMetrics}
-								canViewTechnicalDetails={canViewTechnicalDetails}
-								isActive={isActive}
-								isSeekable={isSeekable}
-								onSeekToTime={onSeekToTime}
-								activeEntryRef={isActive ? activeEntryRef : undefined}
-							/>
-						)}
-					</Stack>
-				);
-			})}
+			)}
 		</Stack>
 	);
 }

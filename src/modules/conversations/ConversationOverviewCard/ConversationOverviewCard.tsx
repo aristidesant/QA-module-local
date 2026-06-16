@@ -18,7 +18,7 @@ import {
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import RightSectionCard from '~/components/RightSectionCard';
+import SectionCard from '~/components/SectionCard/SectionCard';
 import {
 	useCallDispositionByConversationId,
 	useCallDispositionWithAi,
@@ -30,7 +30,7 @@ import ConversationDispositionContent, {
 import type { CallDispositionModel } from '~/models/CallDispositionModel';
 import ConversationMetadataList, {
 	type ConversationMetadataListItem,
-} from '../ConversationMetadataList';
+} from '../ConversationMetadataList/ConversationMetadataList';
 import metadataListStyles from '../ConversationMetadataList/ConversationMetadataList.module.css';
 import classes from './ConversationOverviewCard.module.css';
 
@@ -141,10 +141,11 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 	const showOutcome = conversationId != null;
 
 	return (
-		<RightSectionCard
+		<SectionCard
 			title={t('overview.title')}
 			icon={IconUser}
-			iconColor='var(--mantine-color-gray-7)'
+			padding='sm'
+			contentSpacing='sm'
 		>
 			<div className={classes.content}>
 				{hasPhone ? (
@@ -253,7 +254,7 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 					</>
 				)}
 			</div>
-		</RightSectionCard>
+		</SectionCard>
 	);
 };
 
