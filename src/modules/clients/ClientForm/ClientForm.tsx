@@ -24,15 +24,27 @@ import {
 	useCreateClient,
 	useUpdateClient,
 	useGetClient,
+	useGetClientTheme,
+	useUpdateClientTheme,
 } from '~/queries/clientQueries';
 import { createClientAliasSuggestion } from '~/utils/clientDisplay';
 import type {
 	CreateClientRequest,
 	UpdateClientRequest,
 } from '~/models/ClientModel';
+import {
+	DEFAULT_PRIMARY_COLOR,
+	DEFAULT_SECONDARY_COLOR,
+	MAX_BRAND_NAME_LENGTH,
+	isValidHexColor,
+} from '~/utils/clientTheme';
+import type { UpdateClientThemeRequest } from '~/models/ClientTheme';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useGetSimpleUsers } from '~/queries/userQueries';
 import { useGetClientFiles } from '~/queries/fileQueries';
+import ClientThemeSection, {
+	type ClientThemeFormValue,
+} from './ClientThemeSection';
 
 interface ClientFormProps {
 	mode: 'create' | 'edit';
@@ -54,6 +66,11 @@ interface ClientFormValues {
 	website?: string;
 	pocUserId?: number | null;
 	invoiceTemplateFileId?: number | null;
+	brandName: string;
+	primaryColor: string;
+	secondaryColor: string;
+	logoFileId: number | null;
+	logoUrl: string | null;
 }
 
 const ClientForm: React.FC<ClientFormProps> = ({
@@ -87,6 +104,11 @@ const ClientForm: React.FC<ClientFormProps> = ({
 			website: '',
 			pocUserId: null,
 			invoiceTemplateFileId: null,
+			brandName: '',
+			primaryColor: DEFAULT_PRIMARY_COLOR,
+			secondaryColor: DEFAULT_SECONDARY_COLOR,
+			logoFileId: null,
+			logoUrl: null,
 		},
 		validate: {
 			name: (value) =>
@@ -110,6 +132,18 @@ const ClientForm: React.FC<ClientFormProps> = ({
 				}
 				return null;
 			},
+			primaryColor: (value) =>
+				!value || isValidHexColor(value)
+					? null
+					: t('form.validation.colorInvalid'),
+			secondaryColor: (value) =>
+				!value || isValidHexColor(value)
+					? null
+					: t('form.validation.colorInvalid'),
+			brandName: (value) =>
+				value && value.length > MAX_BRAND_NAME_LENGTH
+					? t('form.validation.brandNameTooLong')
+					: null,
 		},
 	});
 
@@ -124,6 +158,7 @@ const ClientForm: React.FC<ClientFormProps> = ({
 
 	const createMutation = useCreateClient();
 	const updateMutation = useUpdateClient();
+	const updateThemeMutation = useUpdateClientTheme();
 
 	const {
 		data: client,
@@ -131,6 +166,11 @@ const ClientForm: React.FC<ClientFormProps> = ({
 		isError: isClientError,
 		error: clientError,
 	} = useGetClient(clientId || 0);
+
+	const { data: clientTheme } = useGetClientTheme(
+		isEditMode ? clientId : undefined,
+		isMasterClient
+	);
 
 	useEffect(() => {
 		if (isEditMode && client) {
@@ -147,11 +187,16 @@ const ClientForm: React.FC<ClientFormProps> = ({
 				website: client.website ?? '',
 				pocUserId: client.pocUserId ?? null,
 				invoiceTemplateFileId: client.invoiceTemplateFileId ?? null,
+				brandName: clientTheme?.brandName ?? '',
+				primaryColor: clientTheme?.primaryColor || DEFAULT_PRIMARY_COLOR,
+				secondaryColor: clientTheme?.secondaryColor || DEFAULT_SECONDARY_COLOR,
+				logoFileId: clientTheme?.logoFileId ?? null,
+				logoUrl: clientTheme?.logoUrl ?? null,
 			});
 			setIsAliasManuallyEdited(Boolean(client.alias));
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isEditMode, client]);
+	}, [isEditMode, client, clientTheme]);
 
 	useEffect(() => {
 		if (isEditMode || isAliasManuallyEdited) {
@@ -163,9 +208,64 @@ const ClientForm: React.FC<ClientFormProps> = ({
 	}, [form.values.name, isEditMode, isAliasManuallyEdited]);
 
 	const isSubmitting = useMemo(
-		() => createMutation.isPending || updateMutation.isPending,
-		[createMutation.isPending, updateMutation.isPending]
+		() =>
+			createMutation.isPending ||
+			updateMutation.isPending ||
+			updateThemeMutation.isPending,
+		[
+			createMutation.isPending,
+			updateMutation.isPending,
+			updateThemeMutation.isPending,
+		]
 	);
+
+	const handleThemeChange = (next: ClientThemeFormValue) => {
+		form.setValues({
+			brandName: next.brandName,
+			primaryColor: next.primaryColor,
+			secondaryColor: next.secondaryColor,
+			logoFileId: next.logoFileId,
+			logoUrl: next.logoUrl,
+		});
+	};
+
+	const buildThemePatch = (
+		values: ClientFormValues
+	): UpdateClientThemeRequest | null => {
+		const original = clientTheme;
+		const patch: UpdateClientThemeRequest = {};
+		let hasChanges = false;
+
+		const nextBrand = values.brandName?.trim() || null;
+		const prevBrand = original?.brandName ?? null;
+		if (nextBrand !== prevBrand) {
+			patch.brandName = nextBrand;
+			hasChanges = true;
+		}
+
+		const nextPrimary = values.primaryColor || null;
+		const prevPrimary = original?.primaryColor ?? null;
+		if (nextPrimary !== prevPrimary) {
+			patch.primaryColor = nextPrimary;
+			hasChanges = true;
+		}
+
+		const nextSecondary = values.secondaryColor || null;
+		const prevSecondary = original?.secondaryColor ?? null;
+		if (nextSecondary !== prevSecondary) {
+			patch.secondaryColor = nextSecondary;
+			hasChanges = true;
+		}
+
+		const nextLogo = values.logoFileId ?? null;
+		const prevLogo = original?.logoFileId ?? null;
+		if (nextLogo !== prevLogo) {
+			patch.logoFileId = nextLogo;
+			hasChanges = true;
+		}
+
+		return hasChanges ? patch : null;
+	};
 
 	const handleSubmit = form.onSubmit(async (values) => {
 		try {
@@ -186,6 +286,17 @@ const ClientForm: React.FC<ClientFormProps> = ({
 					invoiceTemplateFileId: values.invoiceTemplateFileId ?? null,
 				};
 				await updateMutation.mutateAsync({ id: clientId, data: updatePayload });
+
+				if (isMasterClient) {
+					const themePatch = buildThemePatch(values);
+					if (themePatch) {
+						await updateThemeMutation.mutateAsync({
+							id: clientId,
+							data: themePatch,
+						});
+					}
+				}
+
 				notifications.show({
 					title: t('notifications.updated.title'),
 					message: t('notifications.updated.message'),
@@ -412,6 +523,26 @@ const ClientForm: React.FC<ClientFormProps> = ({
 								size='sm'
 							/>
 						</SectionCard>
+					)}
+
+					{isMasterClient && isEditMode && clientId != null && (
+						<ClientThemeSection
+							clientId={clientId}
+							value={{
+								brandName: form.values.brandName,
+								primaryColor: form.values.primaryColor,
+								secondaryColor: form.values.secondaryColor,
+								logoFileId: form.values.logoFileId,
+								logoUrl: form.values.logoUrl,
+							}}
+							onChange={handleThemeChange}
+							errors={{
+								brandName: form.errors.brandName,
+								primaryColor: form.errors.primaryColor,
+								secondaryColor: form.errors.secondaryColor,
+							}}
+							disabled={isSubmitting}
+						/>
 					)}
 				</Stack>
 			</div>

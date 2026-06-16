@@ -1,7 +1,45 @@
 {
 	"section": {
 		"title": "Campaign voices",
-		"description": "Pick the voices this campaign can use. Browse, preview and add as many as you need."
+		"description": "Shape the campaign voice pool, assign runtime names, preview samples and keep the selection tight."
+	},
+	"summary": {
+		"title": "Selected voices",
+		"count_one": "{{selected}} selected · {{available}} available",
+		"count_other": "{{selected}} selected · {{available}} available",
+		"customNames_one": "{{count}} custom name",
+		"customNames_other": "{{count}} custom names",
+		"manageDefaults": "Manage defaults",
+		"statusEmpty": "No voices yet",
+		"statusGood": "Good balance",
+		"statusReview": "Needs review",
+		"infoTitle": "Heads up",
+		"infoText": "Campaign voice names are optional. Leave a field empty to use the catalog voice name.",
+		"issueTitle": "Check the names",
+		"issueText_one": "{{count}} selected voice has a naming issue.",
+		"issueText_other": "{{count}} selected voices have naming issues."
+	},
+	"assignments": {
+		"title": "Voice names",
+		"description": "Set the campaign-specific voice name for each selected voice. Leave the field empty to use the catalog name.",
+		"emptyTitle": "No voices selected",
+		"emptyDescription": "Add voices from the catalog below and give them campaign-specific names only when you need them.",
+		"addVoice": "Add voice",
+		"orderHint": "Ordered by campaign priority",
+		"voiceColumn": "Voice",
+		"nameColumn": "Campaign name (editable)",
+		"profileColumn": "Profile",
+		"actionColumn": "Action",
+		"fieldLabel": "Campaign voice name",
+		"fieldDescription": "Used as the runtime voice label for this campaign.",
+		"placeholder": "Use catalog name for {{voiceName}}",
+		"profileUnknown": "Unknown",
+		"countSummary_one": "{{count}} effective name · {{customCount}} custom",
+		"countSummary_other": "{{count}} effective names · {{customCount}} custom",
+		"singleQuoteWarning": "Avoid apostrophes in campaign voice names.",
+		"singleQuoteHint": "Apostrophes can break downstream parsing.",
+		"duplicateNameWarning": "This name is duplicated in the selected pool.",
+		"duplicateNameHint": "Give each selected voice a unique runtime name when possible."
 	},
 	"selected": {
 		"title": "Selected voices",
@@ -18,14 +56,18 @@
 		"language": "Language",
 		"reset": "Reset filters",
 		"activeFilters_one": "{{count}} active filter",
-		"activeFilters_other": "{{count}} active filters"
+		"activeFilters_other": "{{count}} active filters",
+		"activeFiltersLabel_one": "{{count}} active filter",
+		"activeFiltersLabel_other": "{{count}} active filters",
+		"noFilters": "No filters applied"
 	},
 	"card": {
 		"play": "Preview voice",
 		"pause": "Stop preview",
 		"select": "Add to pool",
 		"deselect": "Remove from pool",
-		"selectedBadge": "In pool"
+		"selectedBadge": "In pool",
+		"added": "Added"
 	},
 	"gender": {
 		"female": "Female",

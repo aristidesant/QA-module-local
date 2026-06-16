@@ -200,8 +200,17 @@ const CampaignTestPage = () => {
 		);
 	}
 
+	const voices = useMemo(
+		() =>
+			(campaign?.voices ?? []).map((v) => ({
+				voiceId: v.voiceId,
+				voiceName: v.voiceName,
+			})),
+		[campaign?.voices]
+	);
+
 	return (
-		<CampaignConvaiProvider agentId={testAgentId}>
+		<CampaignConvaiProvider agentId={testAgentId} voices={voices}>
 			<ContentContainer
 				title={t('page.titleWithCampaign', { campaignName: campaign.name })}
 				description={t('page.description')}

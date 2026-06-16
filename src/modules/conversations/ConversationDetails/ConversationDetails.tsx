@@ -18,10 +18,12 @@ import AccessDenied from '~/components/AccessDenied';
 import { useTranslation } from 'react-i18next';
 
 import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';
-import TranscriptPlayerBar from '~/modules/conversations/TranscriptViewer/TranscriptPlayerBar';
+import { TranscriptPlayerBar } from '~/modules/conversations/TranscriptViewer/TranscriptPlayerBar/TranscriptPlayerBar';
 import styles from './ConversationDetails.module.css';
-import ConversationOverview from '../ConversationOverview';
+import ConversationOverview from '../ConversationOverview/ConversationOverview';
 import { useGetConversation } from '~/queries/conversationsQueries';
+import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
+import { buildWorkflowNodeLabelMaps } from '~/modules/conversations/utils/workflowNodeLabels';
 dayjs.extend(relativeTime);
 
 interface ConversationDetailsProps {
@@ -35,6 +37,12 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 		isLoading,
 		isFetching,
 	} = useGetConversation(`${id}`);
+	const campaignId =
+		conversation?.campaignId ?? conversation?.campaign?.id ?? 0;
+	const { data: campaignAgents } = useGetCampaignAgents(
+		campaignId,
+		Boolean(campaignId)
+	);
 
 	const { canAccessModule } = usePermissions();
 	const canViewConversations = canAccessModule(ModuleEnum.CONVERSATIONS);
@@ -69,16 +77,15 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 	const status = conversation?.status;
 	const transcriptContent = conversation?.transcriptContent;
 
-	const nodeLabels = useMemo<Record<string, string>>(() => {
-		const nodes = conversation?.campaign?.agents?.[0]?.agent?.config?.workflow
-			?.nodes as Record<string, { label?: string }> | undefined;
-		if (!nodes) return {};
-		return Object.fromEntries(
-			Object.entries(nodes)
-				.filter(([, node]) => node?.label)
-				.map(([nodeId, node]) => [nodeId, node.label as string])
-		);
-	}, [conversation?.campaign?.agents?.[0]?.agent?.config?.workflow?.nodes]);
+	const { nodeLabels, nodeLabelsByAgent } = useMemo(
+		() =>
+			buildWorkflowNodeLabelMaps({
+				campaignAgents,
+				embeddedCampaignAgents: conversation?.campaign?.agents,
+				conversationAgent: conversation?.agent,
+			}),
+		[campaignAgents, conversation?.agent, conversation?.campaign?.agents]
+	);
 
 	const safeStatus = status || '';
 	const safeTranscriptContent: TranscriptContent = transcriptContent || {
@@ -172,6 +179,7 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 								isAudioPlaying={isAudioPlaying}
 								onSeekToTime={handleSeekToTime}
 								nodeLabels={nodeLabels}
+								nodeLabelsByAgent={nodeLabelsByAgent}
 							/>
 							{!isAudioPlaying && (
 								<Tooltip label={t('details.backToTop')} position='left'>

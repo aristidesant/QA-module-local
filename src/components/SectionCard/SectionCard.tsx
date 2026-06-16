@@ -8,9 +8,12 @@ import type { CardActionProps } from '~/components/CardHeaderActions';
 export interface SectionCardProps extends CardActionProps {
 	icon?: TablerIcon;
 	title?: string | ReactNode;
-	description?: string;
+	description?: ReactNode;
 	children?: ReactNode;
 	className?: string;
+	shellClassName?: string;
+	bodyClassName?: string;
+	contentClassName?: string;
 	footer?: ReactNode;
 	headerActions?: ReactNode;
 	/** Control the gap between child elements in the content area */
@@ -48,6 +51,9 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 	backgroundColor,
 	id,
 	className,
+	shellClassName,
+	bodyClassName,
+	contentClassName,
 	headerAccent,
 	padding = 'lg',
 }) => {
@@ -75,6 +81,15 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 	const cardClassName = [styles.sectionCard, className]
 		.filter(Boolean)
 		.join(' ');
+	const shellClassNames = [styles.sectionShell, shellClassName]
+		.filter(Boolean)
+		.join(' ');
+	const bodyClassNames = [styles.sectionBody, bodyClassName]
+		.filter(Boolean)
+		.join(' ');
+	const contentClassNames = [styles.content, contentClassName]
+		.filter(Boolean)
+		.join(' ');
 
 	const hasHeaderActions =
 		Boolean(headerActions) ||
@@ -100,7 +115,7 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 			data-testid='section-card'
 			data-accent={headerAccent || undefined}
 		>
-			<div className={styles.sectionShell}>
+			<div className={shellClassNames}>
 				{(title || description || Icon || hasHeaderActions) && (
 					<div className={styles.sectionHeader}>
 						<div className={styles.sectionHeaderMain}>
@@ -145,8 +160,9 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 						)}
 					</div>
 				)}
-				<div className={styles.sectionBody}>
-					<div className={styles.content} style={contentStyle}>
+				<div className={bodyClassNames}>
+					{/* inline-style-allow: SectionCard supports numeric contentSpacing values from callers. */}
+					<div className={contentClassNames} style={contentStyle}>
 						{children}
 					</div>
 					{footer && (

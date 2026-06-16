@@ -281,6 +281,7 @@ export interface StandaloneAgentNode extends WorkflowNodeBase {
 	delay_ms: number;
 	transfer_message?: string | null;
 	enable_transferred_agent_first_message: boolean;
+	preserve_client_tts_overrides?: boolean;
 	additional_prompt?: string | null;
 	additional_tool_ids?: string[];
 	additional_knowledge_base?: string[];

@@ -56,7 +56,9 @@
 			"nameRequired": "El nombre es obligatorio",
 			"aliasRequired": "El alias es obligatorio",
 			"aliasInvalid": "El alias solo puede usar letras minúsculas, números y guiones",
-			"emailInvalid": "Formato de correo inválido"
+			"emailInvalid": "Formato de correo inválido",
+			"colorInvalid": "El color debe ser un valor hex válido (#RGB, #RRGGBB o #RRGGBBAA)",
+			"brandNameTooLong": "El nombre de marca es demasiado largo"
 		},
 		"sections": {
 			"profile": {
@@ -70,6 +72,14 @@
 			"locationTax": {
 				"title": "Ubicación e impuestos",
 				"description": "Dónde opera el cliente y cómo factura."
+			},
+			"invoiceSettings": {
+				"title": "Configuración de facturación",
+				"description": "Configura la plantilla de factura y el contacto de este cliente"
+			},
+			"branding": {
+				"title": "Marca",
+				"description": "Logo, colores y nombre de marca que se muestran en la experiencia del cliente."
 			}
 		},
 		"fields": {
@@ -101,6 +111,59 @@
 			"rnc": {
 				"label": "RNC",
 				"placeholder": "ID fiscal / RNC"
+			},
+			"website": {
+				"label": "Sitio web",
+				"placeholder": "https://www.example.com"
+			},
+			"pocUserId": {
+				"label": "Persona de contacto (POC)",
+				"placeholder": "Selecciona un usuario"
+			},
+			"invoiceTemplateFileId": {
+				"label": "Plantilla de factura (.xlsx)",
+				"placeholder": "Selecciona un archivo .xlsx"
+			},
+			"brandName": {
+				"label": "Nombre de marca",
+				"placeholder": "Acme Corp"
+			},
+			"primaryColor": {
+				"label": "Color primario",
+				"description": "Se usa para acciones y acentos primarios."
+			},
+			"secondaryColor": {
+				"label": "Color secundario",
+				"description": "Se usa para acciones y acentos secundarios."
+			},
+			"color": {
+				"invalid": "Color hex inválido"
+			},
+			"logo": {
+				"label": "Logo",
+				"placeholder": "Sube un logo (PNG, JPEG, SVG o WebP, máx 2 MB)",
+				"replace": "Reemplazar logo",
+				"remove": "Quitar",
+				"uploading": "Subiendo…",
+				"previewAlt": "Logo del cliente",
+				"fileTypeMissingHint": "El tipo de archivo 'logo' no está configurado para este cliente. Pide a un admin que lo registre antes de subir.",
+				"errors": {
+					"tooBig": {
+						"title": "El logo es demasiado grande",
+						"message": "El logo debe pesar 2 MB o menos."
+					},
+					"wrongType": {
+						"title": "Tipo de archivo no admitido",
+						"message": "Usa PNG, JPEG, SVG o WebP."
+					},
+					"uploadFailed": {
+						"title": "La subida del logo falló"
+					},
+					"fileTypeMissing": {
+						"title": "Falta el tipo de archivo 'logo'",
+						"message": "Contacta a un admin para configurar el tipo de archivo 'logo' para este cliente."
+					}
+				}
 			}
 		}
 	},

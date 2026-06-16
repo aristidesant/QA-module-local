@@ -224,9 +224,11 @@ export function TranscriptPlayerBar({
 	if (isPresignedLoading) {
 		return (
 			<Box className={styles.playerBar}>
-				<Text size='xs' c='dimmed' ta='center'>
-					{t('player.loading')}
-				</Text>
+				<div className={`${styles.glassPlayer} ${styles.statusPlayer}`}>
+					<Text size='xs' ta='center' className={styles.statusText}>
+						{t('player.loading')}
+					</Text>
+				</div>
 			</Box>
 		);
 	}
@@ -234,9 +236,11 @@ export function TranscriptPlayerBar({
 	if (hasLoadError) {
 		return (
 			<Box className={styles.playerBar}>
-				<Text size='xs' c='dimmed' ta='center'>
-					{t('player.error')}
-				</Text>
+				<div className={`${styles.glassPlayer} ${styles.statusPlayer}`}>
+					<Text size='xs' ta='center' className={styles.statusText}>
+						{t('player.error')}
+					</Text>
+				</div>
 			</Box>
 		);
 	}
@@ -256,23 +260,29 @@ export function TranscriptPlayerBar({
 				hidden
 			/>
 
-			<Group gap='xs' align='center' wrap='nowrap' className={styles.controls}>
+			<Group
+				gap='xs'
+				align='center'
+				wrap='nowrap'
+				className={styles.glassPlayer}
+			>
 				<Tooltip label={t('player.rewindShort')} position='top'>
 					<ActionIcon
-						variant='subtle'
-						color='gray'
-						size='sm'
+						variant='transparent'
+						size='md'
+						radius='md'
 						onClick={() => seekRelative(-10)}
 						aria-label={t('player.rewind')}
+						className={styles.controlButton}
 					>
 						<IconPlayerSkipBack size={16} />
 					</ActionIcon>
 				</Tooltip>
 
 				<ActionIcon
-					variant='filled'
-					size='md'
-					radius='xl'
+					variant='transparent'
+					size='lg'
+					radius='md'
 					onClick={togglePlayPause}
 					aria-label={isPlaying ? t('player.pause') : t('player.play')}
 					className={styles.playButton}
@@ -280,23 +290,24 @@ export function TranscriptPlayerBar({
 					{isPlaying ? (
 						<IconPlayerPause size={16} />
 					) : (
-						<IconPlayerPlay size={16} style={{ marginLeft: 1 }} />
+						<IconPlayerPlay size={16} className={styles.playIcon} />
 					)}
 				</ActionIcon>
 
 				<Tooltip label={t('player.forwardShort')} position='top'>
 					<ActionIcon
-						variant='subtle'
-						color='gray'
-						size='sm'
+						variant='transparent'
+						size='md'
+						radius='md'
 						onClick={() => seekRelative(10)}
 						aria-label={t('player.forward')}
+						className={styles.controlButton}
 					>
 						<IconPlayerSkipForward size={16} />
 					</ActionIcon>
 				</Tooltip>
 
-				<Text size='xs' c='dimmed' className={styles.time}>
+				<Text size='xs' className={styles.time}>
 					{formatTime(currentTime)}
 				</Text>
 
@@ -313,7 +324,7 @@ export function TranscriptPlayerBar({
 					}}
 				/>
 
-				<Text size='xs' c='dimmed' className={styles.time}>
+				<Text size='xs' className={styles.time}>
 					{formatTime(duration)}
 				</Text>
 			</Group>

@@ -22,7 +22,8 @@
 		"voice": {
 			"title": "Voice agent",
 			"callTooltip": "Start voice call",
-			"hangupTooltip": "End call"
+			"hangupTooltip": "End call",
+			"selectVoice": "Voice"
 		},
 		"meta": {
 			"speaking": "Speaking",

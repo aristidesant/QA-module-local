@@ -3,7 +3,12 @@ import type {
 	AgentMetadata,
 	TranscriptEntry,
 } from '~/models/ConversationsModels';
-import type { FooterMetricItem, VisibleTranscriptEntry } from './types';
+import type {
+	FooterMetricItem,
+	VisibleTranscriptEntry,
+	WorkflowNodeLabels,
+	WorkflowNodeLabelsByAgent,
+} from './types';
 import {
 	formatCurrency,
 	getMetricLatency,
@@ -57,7 +62,8 @@ export function sanitizeAgentMetadata(
 
 export function buildTranscriptClipboardText(
 	entries: TranscriptEntry[],
-	nodeLabels?: Record<string, string>
+	nodeLabels?: WorkflowNodeLabels,
+	nodeLabelsByAgent?: WorkflowNodeLabelsByAgent
 ): string {
 	const lines: string[] = [];
 
@@ -67,9 +73,11 @@ export function buildTranscriptClipboardText(
 
 		if (isAgentRole(entry.role)) {
 			const metadata = sanitizeAgentMetadata(entry.agent_metadata);
-			const nodeId = metadata?.workflow_node_id ?? null;
-			const nodeName =
-				(nodeId && nodeLabels?.[nodeId]) ?? formatWorkflowNodeName(nodeId);
+			const nodeName = resolveWorkflowNodeName(
+				metadata,
+				nodeLabels,
+				nodeLabelsByAgent
+			);
 			const agentId = metadata?.agent_id ?? '—';
 
 			lines.push(`agent>${nodeName}>${agentId}:`);
@@ -87,6 +95,21 @@ export function buildTranscriptClipboardText(
 	}
 
 	return lines.join('\n').trimEnd();
+}
+
+export function resolveWorkflowNodeName(
+	metadata: AgentMetadata | null,
+	nodeLabels?: WorkflowNodeLabels,
+	nodeLabelsByAgent?: WorkflowNodeLabelsByAgent
+): string {
+	const nodeId = metadata?.workflow_node_id ?? null;
+	const agentId = metadata?.agent_id ?? null;
+
+	return (
+		(nodeId && agentId && nodeLabelsByAgent?.[agentId]?.[nodeId]) ||
+		(nodeId && nodeLabels?.[nodeId]) ||
+		formatWorkflowNodeName(nodeId)
+	);
 }
 
 export function hasAgentContextChanged(

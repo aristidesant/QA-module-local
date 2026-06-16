@@ -7,6 +7,7 @@ export interface AppDrawerProps extends Omit<DrawerProps, 'title'> {
 	title?: ReactNode;
 	description?: ReactNode;
 	icon?: ReactNode;
+	iconColor?: string;
 	headerActions?: ReactNode;
 }
 
@@ -14,6 +15,7 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({
 	title,
 	description,
 	icon,
+	iconColor,
 	headerActions,
 	position = 'right',
 	classNames,
@@ -24,7 +26,14 @@ export const AppDrawer: React.FC<AppDrawerProps> = ({
 
 	const headerTitle = title ? (
 		<div className={styles.titleRow}>
-			{icon ? <span className={styles.iconBadge}>{icon}</span> : null}
+			{icon ? (
+				<span
+					className={styles.iconBadge}
+					{...(iconColor ? { 'data-color': iconColor } : {})}
+				>
+					{icon}
+				</span>
+			) : null}
 			<Text component='div' className={styles.titleOnly}>
 				{title}
 			</Text>

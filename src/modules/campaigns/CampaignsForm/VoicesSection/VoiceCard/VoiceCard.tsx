@@ -1,9 +1,20 @@
 import { memo, useCallback } from 'react';
-import { ActionIcon, Avatar, Badge, Progress, Text } from '@mantine/core';
 import {
-	IconCheck,
+	ActionIcon,
+	Avatar,
+	Badge,
+	Button,
+	Group,
+	Paper,
+	Progress,
+	Stack,
+	Text,
+} from '@mantine/core';
+import {
 	IconPlayerPauseFilled,
 	IconPlayerPlayFilled,
+	IconPlus,
+	IconCheck,
 } from '@tabler/icons-react';
 import clsx from 'clsx';
 import { useTranslation } from 'react-i18next';
@@ -38,6 +49,8 @@ const VoiceCard: React.FC<VoiceCardProps> = ({
 	const flagEmoji = getLanguageFlagEmoji(voiceData.language || '');
 	const previewUrl = voiceData.previewUrl || '';
 	const hasPreview = Boolean(previewUrl);
+	const detailParts = [voiceData.accent, voiceData.age].filter(Boolean);
+	const description = voiceData.description || detailParts.join(' · ');
 
 	const handleToggle = useCallback(() => {
 		onToggle(voiceData.id);
@@ -61,15 +74,16 @@ const VoiceCard: React.FC<VoiceCardProps> = ({
 		[handleToggle]
 	);
 
-	const detailParts = [voiceData.accent, voiceData.age].filter(Boolean);
-	const description = voiceData.description || detailParts.join(' · ');
-
 	return (
-		<div
-			role='button'
-			tabIndex={0}
+		<Paper
+			withBorder
+			radius='md'
+			p='sm'
+			component='div'
 			onClick={handleToggle}
 			onKeyDown={handleCardKeyDown}
+			role='button'
+			tabIndex={0}
 			aria-pressed={selected}
 			aria-label={selected ? t('card.deselect') : t('card.select')}
 			className={clsx(classes.card, {
@@ -77,56 +91,9 @@ const VoiceCard: React.FC<VoiceCardProps> = ({
 				[classes.cardPlaying]: playing,
 			})}
 		>
-			{selected && (
-				<span className={classes.checkBadge} aria-hidden='true'>
-					<IconCheck size={12} stroke={3} />
-				</span>
-			)}
-
-			<div className={classes.header}>
-				<Avatar
-					src={
-						genderKey === 'female'
-							? '/images/avatar-f-do.png'
-							: '/images/avatar-m-do.png'
-					}
-					alt={voiceData.name}
-					radius='xl'
-					size={42}
-					className={clsx(classes.avatar, {
-						[classes.avatarFemale]: genderKey === 'female',
-						[classes.avatarMale]: genderKey === 'male',
-					})}
-				/>
-
-				<div className={classes.body}>
-					<Text size='sm' fw={600} className={classes.name}>
-						{voiceData.name}
-					</Text>
-					<div className={classes.meta}>
-						<Text size='xs' c='dimmed' className={classes.metaItem}>
-							<span className={classes.flag}>{flagEmoji}</span>
-							{voiceData.language}
-						</Text>
-						<Badge
-							size='xs'
-							variant='light'
-							color={
-								genderKey === 'female'
-									? 'pink'
-									: genderKey === 'male'
-										? 'blue'
-										: 'gray'
-							}
-							className={classes.genderBadge}
-						>
-							{genderLabel}
-						</Badge>
-					</div>
-				</div>
-
+			<Group gap='sm' wrap='nowrap' align='flex-start' className={classes.row}>
 				<ActionIcon
-					variant={playing ? 'filled' : 'light'}
+					variant={playing ? 'filled' : 'subtle'}
 					color={playing ? 'blue' : 'gray'}
 					size='md'
 					radius='xl'
@@ -141,26 +108,83 @@ const VoiceCard: React.FC<VoiceCardProps> = ({
 						<IconPlayerPlayFilled size={14} />
 					)}
 				</ActionIcon>
-			</div>
 
-			{description && (
-				<Text size='xs' c='dimmed' className={classes.description}>
-					{description}
-				</Text>
-			)}
+				<Avatar
+					src={
+						genderKey === 'female'
+							? '/images/avatar-f-do.png'
+							: '/images/avatar-m-do.png'
+					}
+					alt={voiceData.name}
+					radius='xl'
+					size={40}
+					className={clsx(classes.avatar, {
+						[classes.avatarFemale]: genderKey === 'female',
+						[classes.avatarMale]: genderKey === 'male',
+					})}
+				/>
 
-			<div className={classes.progressTrack}>
-				{playing && (
-					<Progress
-						value={progress}
+				<Stack gap={4} className={classes.body}>
+					<Group gap={6} wrap='nowrap'>
+						<Text size='sm' fw={700} className={classes.name}>
+							{voiceData.name}
+						</Text>
+						{selected && (
+							<Badge size='xs' variant='light' color='green'>
+								{t('card.selectedBadge')}
+							</Badge>
+						)}
+					</Group>
+
+					<Text size='xs' c='dimmed' className={classes.metaItem}>
+						<span className={classes.flag}>{flagEmoji}</span>
+						{voiceData.language}
+						<span className={classes.metaSeparator}>·</span>
+						{genderLabel}
+					</Text>
+
+					{description && (
+						<Text size='xs' c='dimmed' className={classes.description}>
+							{description}
+						</Text>
+					)}
+				</Stack>
+
+				<div className={classes.actions}>
+					{voiceData.status && (
+						<Text size='xs' c='dimmed' className={classes.status}>
+							{voiceData.status}
+						</Text>
+					)}
+					<Button
+						type='button'
+						variant={selected ? 'light' : 'filled'}
+						color={selected ? 'teal' : 'green'}
 						size='xs'
-						color='blue'
-						animated
-						className={classes.progress}
-					/>
-				)}
-			</div>
-		</div>
+						leftSection={
+							selected ? <IconCheck size={14} /> : <IconPlus size={14} />
+						}
+						onClick={(event) => {
+							event.stopPropagation();
+							handleToggle();
+						}}
+						className={classes.toggleButton}
+					>
+						{selected ? t('card.added') : t('card.select')}
+					</Button>
+				</div>
+			</Group>
+
+			{playing && (
+				<Progress
+					value={progress}
+					size='xs'
+					color='blue'
+					animated
+					className={classes.progress}
+				/>
+			)}
+		</Paper>
 	);
 };
 

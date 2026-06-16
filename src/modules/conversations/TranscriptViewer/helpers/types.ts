@@ -5,9 +5,13 @@ import type {
 	TranscriptEntry,
 } from '~/models/ConversationsModels';
 
+export type WorkflowNodeLabels = Record<string, string>;
+export type WorkflowNodeLabelsByAgent = Record<string, WorkflowNodeLabels>;
+
 export interface VisibleTranscriptEntry {
 	entry: TranscriptEntry;
 	workflowTransition: WorkflowTransition | null;
+	sourceIndex: number;
 }
 
 export interface WorkflowTransition {

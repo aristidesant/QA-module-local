@@ -26,7 +26,7 @@ import relativeTime from 'dayjs/plugin/relativeTime';
 
 import ContentContainer from '~/components/ContentContainer';
 import AccessDenied from '~/components/AccessDenied';
-import RightSectionCard from '~/components/RightSectionCard';
+import SectionCard from '~/components/SectionCard/SectionCard';
 import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -35,13 +35,15 @@ import {
 	useExportConversationPdf,
 	useExportConversationAudio,
 } from '~/queries/conversationsQueries';
+import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 import type { TranscriptContent } from '~/models/ConversationsModels';
 
 import { TranscriptViewer } from '~/modules/conversations/TranscriptViewer';
 import ConversationNavigator from '~/modules/conversations/ConversationNavigator';
-import TranscriptPlayerBar from '~/modules/conversations/TranscriptViewer/TranscriptPlayerBar';
+import { TranscriptPlayerBar } from '~/modules/conversations/TranscriptViewer/TranscriptPlayerBar/TranscriptPlayerBar';
 import ConversationOverviewCard from '~/modules/conversations/ConversationOverviewCard';
 import ConversationCapturedVariables from '~/modules/conversations/ConversationCapturedVariables';
+import { buildWorkflowNodeLabelMaps } from '~/modules/conversations/utils/workflowNodeLabels';
 
 import styles from './ConversationDetailPage.module.css';
 
@@ -80,6 +82,12 @@ export function ConversationDetailPage({
 		isLoading,
 		isFetching,
 	} = useGetConversation(id || '');
+	const campaignId =
+		conversation?.campaignId ?? conversation?.campaign?.id ?? 0;
+	const { data: campaignAgents } = useGetCampaignAgents(
+		campaignId,
+		Boolean(campaignId)
+	);
 
 	const exportConversationMutation = useExportConversationPdf();
 	const exportAudioMutation = useExportConversationAudio();
@@ -118,16 +126,15 @@ export function ConversationDetailPage({
 	const status = conversation?.status || '';
 	const transcriptContent = conversation?.transcriptContent;
 
-	const nodeLabels = useMemo<Record<string, string>>(() => {
-		const nodes = conversation?.campaign?.agents?.[0]?.agent?.config?.workflow
-			?.nodes as Record<string, { label?: string }> | undefined;
-		if (!nodes) return {};
-		return Object.fromEntries(
-			Object.entries(nodes)
-				.filter(([, node]) => node?.label)
-				.map(([nodeId, node]) => [nodeId, node.label as string])
-		);
-	}, [conversation?.campaign?.agents?.[0]?.agent?.config?.workflow?.nodes]);
+	const { nodeLabels, nodeLabelsByAgent } = useMemo(
+		() =>
+			buildWorkflowNodeLabelMaps({
+				campaignAgents,
+				embeddedCampaignAgents: conversation?.campaign?.agents,
+				conversationAgent: conversation?.agent,
+			}),
+		[campaignAgents, conversation?.agent, conversation?.campaign?.agents]
+	);
 
 	const safeTranscriptContent: TranscriptContent = transcriptContent || {
 		transcript: [],
@@ -426,19 +433,21 @@ export function ConversationDetailPage({
 			<div className={styles.contentGrid}>
 				{/* Transcript column */}
 				<div className={styles.transcriptCol}>
-					<RightSectionCard
+					<SectionCard
 						title={t('detailPage.transcriptSection')}
 						icon={IconMessages}
-						iconColor='var(--mantine-color-gray-6)'
-						rightSection={
+						headerActions={
 							turnCount > 0 ? (
 								<Badge size='xs' variant='light' color='gray'>
 									{t('detailPage.turnCount', { count: turnCount })}
 								</Badge>
 							) : undefined
 						}
-						// inline-style-allow: flex grow + minHeight:0 required for nested scroll containers; cannot be expressed via a static CSS class
-						style={{ flex: 1, minHeight: 0 }}
+						padding='sm'
+						contentSpacing={0}
+						className={styles.transcriptCard}
+						shellClassName={styles.transcriptCardShell}
+						bodyClassName={styles.transcriptCardBody}
 						contentClassName={styles.transcriptContent}
 					>
 						{/* Transcript Messages — scrollable middle */}
@@ -453,6 +462,7 @@ export function ConversationDetailPage({
 								isAudioPlaying={isAudioPlaying}
 								onSeekToTime={handleSeekToTime}
 								nodeLabels={nodeLabels}
+								nodeLabelsByAgent={nodeLabelsByAgent}
 								showMetrics={true}
 							/>
 							<Tooltip label={t('details.backToTop')} position='left'>
@@ -480,18 +490,19 @@ export function ConversationDetailPage({
 								/>
 							</div>
 						)}
-					</RightSectionCard>
+					</SectionCard>
 				</div>
 
 				{/* Right column — 7: summary → player → overview → disposition → variables */}
 				<div className={styles.rightCol}>
 					<Stack gap='xs'>
 						{transcriptSummary && (
-							<RightSectionCard
+							<SectionCard
 								title={t('overview.summary.title')}
 								icon={IconMessages}
-								iconColor='blue'
 								description={t('overview.summary.description')}
+								padding='sm'
+								contentSpacing='sm'
 							>
 								<div className={styles.summaryBlock}>
 									<Text className={styles.summaryText}>
@@ -503,7 +514,7 @@ export function ConversationDetailPage({
 											transcriptSummary}
 									</Text>
 								</div>
-							</RightSectionCard>
+							</SectionCard>
 						)}
 						<ConversationOverviewCard
 							contactName={contactName || t('overview.fallbacks.na')}

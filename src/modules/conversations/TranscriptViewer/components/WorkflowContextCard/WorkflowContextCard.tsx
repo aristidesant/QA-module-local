@@ -2,13 +2,18 @@ import { Box, Text, Tooltip } from '@mantine/core';
 import { Stack } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import type { AgentMetadata } from '~/models/ConversationsModels';
-import { formatWorkflowNodeName } from '../../helpers/formatUtils';
+import type {
+	WorkflowNodeLabels,
+	WorkflowNodeLabelsByAgent,
+} from '../../helpers/types';
+import { resolveWorkflowNodeName } from '../../helpers/transcriptHelpers';
 import styles from './WorkflowContextCard.module.css';
 
 interface WorkflowContextCardProps {
 	title: string;
 	metadata: AgentMetadata;
-	nodeLabels?: Record<string, string>;
+	nodeLabels?: WorkflowNodeLabels;
+	nodeLabelsByAgent?: WorkflowNodeLabelsByAgent;
 	nodeMissions?: Record<string, string>;
 }
 
@@ -16,12 +21,16 @@ export const WorkflowContextCard = ({
 	title,
 	metadata,
 	nodeLabels,
+	nodeLabelsByAgent,
 	nodeMissions,
 }: WorkflowContextCardProps) => {
 	const { t } = useTranslation(['conversations', 'common']);
 	const nodeId = metadata.workflow_node_id;
-	const nodeName =
-		(nodeId && nodeLabels?.[nodeId]) ?? formatWorkflowNodeName(nodeId);
+	const nodeName = resolveWorkflowNodeName(
+		metadata,
+		nodeLabels,
+		nodeLabelsByAgent
+	);
 	const mission = nodeId ? nodeMissions?.[nodeId] : undefined;
 
 	return (
@@ -54,13 +63,7 @@ export const WorkflowContextCard = ({
 				w={320}
 				openDelay={200}
 			>
-				<Text
-					size='xs'
-					fw={600}
-					c='gray.8'
-					className={styles.workflowNodeName}
-					span
-				>
+				<Text size='xs' fw={600} className={styles.workflowNodeName} span>
 					{nodeName}
 				</Text>
 			</Tooltip>

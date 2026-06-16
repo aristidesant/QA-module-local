@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Group, TextInput, Text, Chip } from '@mantine/core';
+import { Badge, Chip, Group, Stack, Text, TextInput } from '@mantine/core';
 import { IconSearch, IconX } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { getLanguageFlagEmoji } from '~/utils/agentUtils';
@@ -16,6 +16,7 @@ export interface VoiceCatalogToolbarProps {
 	selectedLanguages: string[];
 	onToggleLanguage: (value: string) => void;
 	hasActiveFilters: boolean;
+	activeFilterCount: number;
 	onReset: () => void;
 	resultsCount: number;
 }
@@ -30,6 +31,7 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 	selectedLanguages,
 	onToggleLanguage,
 	hasActiveFilters,
+	activeFilterCount,
 	onReset,
 	resultsCount,
 }) => {
@@ -51,29 +53,32 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 
 	return (
 		<div className={classes.toolbar}>
-			<Group gap='sm' wrap='wrap' align='center'>
-				<TextInput
-					value={search}
-					onChange={(event) => onSearchChange(event.currentTarget.value)}
-					placeholder={t('toolbar.searchPlaceholder')}
-					leftSection={<IconSearch size={14} />}
-					rightSection={
-						search ? (
-							<IconX
-								size={14}
-								className={classes.clearSearchIcon}
-								onClick={() => onSearchChange('')}
-								aria-label={t('toolbar.reset')}
-								role='button'
-							/>
-						) : undefined
-					}
-					size='sm'
-					className={classes.search}
-				/>
-				<Text size='xs' c='dimmed' className={classes.count}>
-					{t('catalog.resultsCount', { count: resultsCount })}
-				</Text>
+			<Group justify='space-between' align='flex-end' gap='sm' wrap='wrap'>
+				<Stack gap={4} className={classes.searchGroup}>
+					<TextInput
+						value={search}
+						onChange={(event) => onSearchChange(event.currentTarget.value)}
+						placeholder={t('toolbar.searchPlaceholder')}
+						leftSection={<IconSearch size={14} />}
+						rightSection={
+							search ? (
+								<IconX
+									size={14}
+									className={classes.clearSearchIcon}
+									onClick={() => onSearchChange('')}
+									aria-label={t('toolbar.reset')}
+									role='button'
+								/>
+							) : undefined
+						}
+						size='sm'
+						className={classes.search}
+					/>
+					<Text size='xs' c='dimmed' className={classes.count}>
+						{t('catalog.resultsCount', { count: resultsCount })}
+					</Text>
+				</Stack>
+
 				{hasActiveFilters && (
 					<button
 						type='button'
@@ -89,7 +94,7 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 				<div className={classes.filters}>
 					{genderOptions.length > 0 && (
 						<div className={classes.filterRow}>
-							<Text size='xs' fw={500} className={classes.filterLabel}>
+							<Text size='xs' fw={600} className={classes.filterLabel}>
 								{t('toolbar.gender')}
 							</Text>
 							<Chip.Group
@@ -113,6 +118,7 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 											value={option.value}
 											size='xs'
 											variant='outline'
+											className={classes.chip}
 										>
 											{genderLabelFor(option)}
 										</Chip>
@@ -124,7 +130,7 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 
 					{languageOptions.length > 0 && (
 						<div className={classes.filterRow}>
-							<Text size='xs' fw={500} className={classes.filterLabel}>
+							<Text size='xs' fw={600} className={classes.filterLabel}>
 								{t('toolbar.language')}
 							</Text>
 							<Chip.Group
@@ -148,6 +154,7 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 											value={option.value}
 											size='xs'
 											variant='outline'
+											className={classes.chip}
 										>
 											<span className={classes.chipContent}>
 												<span aria-hidden='true'>
@@ -161,7 +168,24 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 							</Chip.Group>
 						</div>
 					)}
+
+					<Text size='xs' c='dimmed' className={classes.helper}>
+						{hasActiveFilters
+							? t('toolbar.activeFilters', { count: activeFilterCount })
+							: t('toolbar.noFilters')}
+					</Text>
 				</div>
+			)}
+
+			{hasActiveFilters && (
+				<Badge
+					variant='light'
+					color='gray'
+					radius='xl'
+					className={classes.filterBadge}
+				>
+					{t('toolbar.activeFiltersLabel', { count: activeFilterCount })}
+				</Badge>
 			)}
 		</div>
 	);

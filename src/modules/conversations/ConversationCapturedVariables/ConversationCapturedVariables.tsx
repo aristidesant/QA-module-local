@@ -2,12 +2,11 @@ import { Badge, Text, Tooltip } from '@mantine/core';
 import { IconVariable } from '@tabler/icons-react';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import RightSectionCard from '~/components/RightSectionCard';
+import SectionCard from '~/components/SectionCard/SectionCard';
 import ConversationMetadataList, {
 	type ConversationMetadataListItem,
-} from '../ConversationMetadataList';
+} from '../ConversationMetadataList/ConversationMetadataList';
 import metadataListStyles from '../ConversationMetadataList/ConversationMetadataList.module.css';
-import styles from './ConversationCapturedVariables.module.css';
 
 export interface ConversationCapturedVariablesProps {
 	variables?: Record<string, unknown>;
@@ -119,20 +118,17 @@ const ConversationCapturedVariables: React.FC<
 	});
 
 	return (
-		<RightSectionCard
+		<SectionCard
 			title={t('overview.capturedVariables.title')}
-			description={
-				<Text size='xs' c='dimmed' className={styles.description}>
-					{t('overview.capturedVariables.description')}
-				</Text>
-			}
+			description={t('overview.capturedVariables.description')}
 			icon={IconVariable}
-			iconColor='teal'
-			rightSection={
+			headerActions={
 				<Badge size='xs' variant='light' color='teal'>
 					{countLabel}
 				</Badge>
 			}
+			padding='sm'
+			contentSpacing='sm'
 		>
 			{entries.length === 0 ? (
 				<Text size='xs' c='dimmed'>
@@ -141,7 +137,7 @@ const ConversationCapturedVariables: React.FC<
 			) : (
 				<ConversationMetadataList items={items} columns={2} />
 			)}
-		</RightSectionCard>
+		</SectionCard>
 	);
 };
 

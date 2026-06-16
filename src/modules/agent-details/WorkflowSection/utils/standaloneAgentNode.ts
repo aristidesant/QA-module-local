@@ -14,6 +14,8 @@ type StandaloneAgentNodeLike = {
 	transferMessage?: string | null;
 	enable_transferred_agent_first_message?: boolean;
 	enableTransferredAgentFirstMessage?: boolean;
+	preserve_client_tts_overrides?: boolean;
+	preserveClientTtsOverrides?: boolean;
 };
 
 const readString = (value: unknown): string => {
@@ -103,5 +105,19 @@ export const getStandaloneAgentTransferFirstMessageEnabled = (
 		nodeData.enable_transferred_agent_first_message ??
 		nodeData.enableTransferredAgentFirstMessage ??
 		false
+	);
+};
+
+export const getStandaloneAgentTransferPreserveClientTtsOverrides = (
+	nodeData?: StandaloneAgentNodeLike | null
+): boolean => {
+	if (!nodeData) {
+		return true;
+	}
+
+	return (
+		nodeData.preserve_client_tts_overrides ??
+		nodeData.preserveClientTtsOverrides ??
+		true
 	);
 };
