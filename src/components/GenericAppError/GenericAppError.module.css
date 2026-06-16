@@ -1,0 +1,156 @@
+.page {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 100dvh;
+	padding: var(--mantine-spacing-xl);
+	background: light-dark(var(--surface-bg), var(--mantine-color-dark-9));
+	color: var(--mantine-color-text);
+}
+
+.panel {
+	width: min(100%, 560px);
+	padding: var(--mantine-spacing-xl);
+	border: 1px solid
+		light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+	border-radius: var(--mantine-radius-lg);
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-8)
+	);
+	box-shadow: var(--mantine-shadow-md);
+}
+
+.logo {
+	display: block;
+	width: 140px;
+	height: auto;
+	object-fit: contain;
+}
+
+[data-mantine-color-scheme='dark'] .logo {
+	filter: brightness(0) invert(1);
+}
+
+/* Icon shell — default (error) */
+.iconShell {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	width: 64px;
+	height: 64px;
+	border-radius: var(--mantine-radius-lg);
+	border: 1px solid
+		light-dark(var(--mantine-color-red-2), var(--mantine-color-red-8));
+	background: light-dark(
+		color-mix(in srgb, var(--mantine-color-red-0) 74%, transparent),
+		color-mix(in srgb, var(--mantine-color-red-9) 32%, transparent)
+	);
+	color: light-dark(var(--mantine-color-red-7), var(--mantine-color-red-3));
+}
+
+/* Info variant — blue (notFound, update) */
+.iconShell[data-color='info'] {
+	border-color: light-dark(
+		var(--mantine-color-blue-2),
+		var(--mantine-color-blue-8)
+	);
+	background: light-dark(
+		color-mix(in srgb, var(--mantine-color-blue-0) 74%, transparent),
+		color-mix(in srgb, var(--mantine-color-blue-9) 32%, transparent)
+	);
+	color: light-dark(var(--mantine-color-blue-7), var(--mantine-color-blue-3));
+}
+
+/* Warning variant — amber (forbidden, unauthorized) */
+.iconShell[data-color='warning'] {
+	border-color: light-dark(
+		var(--mantine-color-yellow-3),
+		var(--mantine-color-yellow-8)
+	);
+	background: light-dark(
+		color-mix(in srgb, var(--mantine-color-yellow-0) 74%, transparent),
+		color-mix(in srgb, var(--mantine-color-yellow-9) 32%, transparent)
+	);
+	color: light-dark(
+		var(--mantine-color-yellow-8),
+		var(--mantine-color-yellow-3)
+	);
+}
+
+.copy {
+	max-width: 46ch;
+	text-align: center;
+}
+
+.title {
+	margin: 0;
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
+	font-size: 1.5rem;
+	line-height: 1.2;
+	letter-spacing: 0;
+}
+
+.description {
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+	font-size: var(--mantine-font-size-sm);
+	line-height: 1.5;
+}
+
+.hint {
+	color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	line-height: 1.45;
+}
+
+.context {
+	width: 100%;
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid
+		light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+	border-radius: var(--mantine-radius-md);
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-7)
+	);
+}
+
+.contextLabel {
+	flex-shrink: 0;
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 700;
+}
+
+.contextValue {
+	min-width: 0;
+	overflow-wrap: anywhere;
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
+	font-family: var(--mantine-font-family-monospace);
+	font-size: var(--mantine-font-size-xs);
+	text-align: right;
+}
+
+.statusBadge {
+	flex-shrink: 0;
+	text-transform: none;
+}
+
+.cta {
+	min-width: 132px;
+}
+
+@media (max-width: 48em) {
+	.page {
+		align-items: stretch;
+		padding: var(--mantine-spacing-md);
+	}
+
+	.panel {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: var(--mantine-spacing-lg);
+	}
+}
