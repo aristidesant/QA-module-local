@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Stack, Text } from '@mantine/core';
 import {
 	IconFlag,
 	IconPlayerStop,
@@ -102,14 +103,35 @@ const WorkflowNodeDrawer = ({ nodeId }: WorkflowNodeDrawerProps) => {
 		const config = NODE_DRAWER_CONFIG[selectedNode.type as WorkflowNodeType];
 		if (!config) return null;
 
-		const titleKey = isTransferNode
-			? 'form.workflow.forms.transfer.title'
-			: config.titleKey;
+		if (isTransferNode) {
+			return {
+				title: (
+					<Stack gap={1}>
+						<Text
+							size='xs'
+							fw={700}
+							tt='uppercase'
+							c='dimmed'
+							className={styles.drawerEyebrow}
+						>
+							{t('form.workflow.forms.transfer.drawerEyebrow')}
+						</Text>
+						<Text size='sm' fw={600} lh={1.25}>
+							{t('form.workflow.forms.transfer.drawerTitle')}
+						</Text>
+					</Stack>
+				),
+				description: t('form.workflow.forms.transfer.drawerDescription'),
+				icon: config.icon,
+				iconColor: 'green',
+			};
+		}
 
 		return {
-			title: t(titleKey),
+			title: t(config.titleKey),
+			description: null,
 			icon: config.icon,
-			iconColor: config.iconColor,
+			iconColor: undefined,
 		};
 	}, [selectedNode, t]);
 
@@ -156,7 +178,9 @@ const WorkflowNodeDrawer = ({ nodeId }: WorkflowNodeDrawerProps) => {
 			opened={opened}
 			onClose={closeNodeDrawer}
 			title={drawerConfig?.title}
+			description={drawerConfig?.description ?? undefined}
 			icon={drawerConfig ? <drawerConfig.icon size={16} /> : undefined}
+			iconColor={drawerConfig?.iconColor}
 			keepMounted
 			size='lg'
 			zIndex={340}

@@ -68,6 +68,18 @@
 	color: var(--mantine-color-dark-1);
 }
 
+.iconBadge[data-color='green'] {
+	background: #ecfdf2;
+	color: #0d7530;
+	border: 1px solid #bbf0ce;
+}
+
+[data-mantine-color-scheme='dark'] .iconBadge[data-color='green'] {
+	background: color-mix(in srgb, #1bb54a 12%, var(--mantine-color-dark-6));
+	color: #4cd878;
+	border: 1px solid color-mix(in srgb, #1bb54a 25%, var(--mantine-color-dark-5));
+}
+
 .titleOnly {
 	margin: 0;
 	color: var(--mantine-color-gray-9);

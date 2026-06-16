@@ -6,11 +6,6 @@ type NormalizeOptions = {
 	omitPaths?: string[][];
 };
 
-const defaultOmitPaths: string[][] = [
-	['dataCollection'],
-	['platformSettings', 'dataCollection'],
-];
-
 const matchesPath = (path: string[], omitPath: string[]) =>
 	path.length === omitPath.length &&
 	path.every((segment, index) => segment === omitPath[index]);
@@ -21,7 +16,7 @@ const shouldOmitPath = (path: string[], omitPaths: string[][]) =>
 const normalizeValue = (
 	value: unknown,
 	path: string[] = [],
-	omitPaths: string[][] = defaultOmitPaths
+	omitPaths: string[][] = []
 ): unknown | undefined => {
 	if (value === null) {
 		return null;
@@ -77,7 +72,7 @@ export const normalizeDirtySnapshot = (
 	snapshot: unknown,
 	options?: NormalizeOptions
 ): NormalizedSnapshot => {
-	const omitPaths = [...defaultOmitPaths, ...(options?.omitPaths ?? [])];
+	const omitPaths = options?.omitPaths ?? [];
 	const normalizedSnapshot = normalizeValue(snapshot, [], omitPaths);
 
 	if (!normalizedSnapshot || typeof normalizedSnapshot !== 'object') {

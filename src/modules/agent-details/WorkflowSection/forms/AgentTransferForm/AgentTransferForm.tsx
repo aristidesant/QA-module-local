@@ -1,7 +1,7 @@
 import {
+	Input,
 	NumberInput,
 	Select,
-	Stack,
 	Switch,
 	Text,
 	Textarea,
@@ -25,6 +25,7 @@ import {
 	getStandaloneAgentTransferFirstMessageEnabled,
 	getStandaloneAgentTransferMessage,
 	getStandaloneAgentTransferNodeId,
+	getStandaloneAgentTransferPreserveClientTtsOverrides,
 } from '../../utils/standaloneAgentNode';
 import styles from './AgentTransferForm.module.css';
 
@@ -110,87 +111,162 @@ const AgentTransferForm = ({
 
 	return (
 		<WorkflowNodeForm>
-			<Stack gap='xs' className={styles.form}>
-				<Select
-					label={t('form.workflow.forms.transfer.agentLabel')}
-					placeholder={t('form.workflow.forms.transfer.agentPlaceholder')}
-					data={agentOptions}
-					comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
-					value={selectedTransferAgentId}
-					onChange={handleAgentChange}
-					searchable
-					disabled={isLoading || agentOptions.length === 0}
-					size='sm'
-					classNames={{
-						label: styles.label,
-						input: styles.input,
-						description: styles.description,
-					}}
-				/>
-				<Select
-					label={t('form.workflow.forms.transfer.nodeLabel')}
-					placeholder={t('form.workflow.forms.transfer.nodePlaceholder')}
-					data={nodeOptions}
-					comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
-					value={currentNodeId}
-					onChange={(value) => handleUpdate({ node_id: value || null })}
-					searchable
-					clearable
-					disabled={!selectedTransferAgentId || nodeOptions.length === 0}
-					nothingFoundMessage={t('form.workflow.forms.transfer.nodeNoResults')}
-					size='sm'
-					classNames={{
-						label: styles.label,
-						input: styles.input,
-						description: styles.description,
-					}}
-				/>
-				<NumberInput
-					label={t('form.workflow.forms.transfer.delayLabel')}
-					placeholder={t('form.workflow.forms.transfer.delayPlaceholder')}
-					value={getStandaloneAgentTransferDelayMs(node)}
-					min={0}
-					allowNegative={false}
-					allowDecimal={false}
-					step={1}
-					onChange={handleDelayChange}
-					size='sm'
-					classNames={{
-						label: styles.label,
-						input: styles.input,
-					}}
-				/>
-				<Textarea
-					label={t('form.workflow.forms.transfer.messageLabel')}
-					placeholder={t('form.workflow.forms.transfer.messagePlaceholder')}
-					value={getStandaloneAgentTransferMessage(node)}
-					minRows={3}
-					onChange={(event) =>
-						handleUpdate({ transfer_message: event.currentTarget.value })
-					}
-					size='sm'
-					classNames={{
-						label: styles.label,
-						input: styles.textarea,
-					}}
-				/>
-				<Switch
-					label={t('form.workflow.forms.transfer.firstMessageLabel')}
-					checked={getStandaloneAgentTransferFirstMessageEnabled(node)}
-					labelPosition='left'
-					onChange={(event) =>
-						handleUpdate({
-							enable_transferred_agent_first_message:
-								event.currentTarget.checked,
-						})
-					}
-					size='sm'
-					classNames={{
-						root: styles.switchRoot,
-						body: styles.switchBody,
-						label: styles.label,
-					}}
-				/>
+			<div className={styles.form}>
+				{/* ── Section 1: Target ──────────────────────── */}
+				<div className={styles.section}>
+					<div className={styles.sectionLabel}>
+						{t('form.workflow.forms.transfer.sectionTarget')}
+					</div>
+					<div className={styles.sectionFields}>
+						<Select
+							label={t('form.workflow.forms.transfer.agentLabel')}
+							placeholder={t('form.workflow.forms.transfer.agentPlaceholder')}
+							data={agentOptions}
+							comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
+							value={selectedTransferAgentId}
+							onChange={handleAgentChange}
+							searchable
+							disabled={isLoading || agentOptions.length === 0}
+							size='sm'
+							classNames={{
+								label: styles.label,
+								input: styles.input,
+							}}
+						/>
+						<Select
+							label={
+								<span>
+									{t('form.workflow.forms.transfer.nodeLabel')}
+									<span className={styles.labelOptional}>
+										— {t('common.optional', 'optional')}
+									</span>
+								</span>
+							}
+							placeholder={t('form.workflow.forms.transfer.nodePlaceholder')}
+							data={nodeOptions}
+							comboboxProps={WORKFLOW_DRAWER_COMBOBOX_PROPS}
+							value={currentNodeId}
+							onChange={(value) => handleUpdate({ node_id: value || null })}
+							searchable
+							clearable
+							disabled={!selectedTransferAgentId || nodeOptions.length === 0}
+							nothingFoundMessage={t(
+								'form.workflow.forms.transfer.nodeNoResults'
+							)}
+							size='sm'
+							classNames={{
+								label: styles.label,
+								input: styles.input,
+							}}
+						/>
+					</div>
+				</div>
+
+				{/* ── Section 2: Behavior ────────────────────── */}
+				<div className={styles.section}>
+					<div className={styles.sectionLabel}>
+						{t('form.workflow.forms.transfer.sectionBehavior')}
+					</div>
+					<div className={styles.sectionFields}>
+						<Input.Wrapper
+							label={t('form.workflow.forms.transfer.delayLabel')}
+							classNames={{ label: styles.label }}
+						>
+							<div className={styles.delayRow}>
+								<NumberInput
+									placeholder={t(
+										'form.workflow.forms.transfer.delayPlaceholder'
+									)}
+									value={getStandaloneAgentTransferDelayMs(node)}
+									min={0}
+									allowNegative={false}
+									allowDecimal={false}
+									step={1}
+									hideControls
+									onChange={handleDelayChange}
+									size='sm'
+									classNames={{
+										root: styles.delayInputRoot,
+										input: styles.delayInput,
+									}}
+								/>
+								<span className={styles.delaySuffix}>ms</span>
+							</div>
+						</Input.Wrapper>
+
+						<Textarea
+							label={
+								<span>
+									{t('form.workflow.forms.transfer.messageLabel')}
+									<span className={styles.labelOptional}>
+										— {t('common.optional', 'optional')}
+									</span>
+								</span>
+							}
+							placeholder={t('form.workflow.forms.transfer.messagePlaceholder')}
+							value={getStandaloneAgentTransferMessage(node)}
+							minRows={3}
+							onChange={(event) =>
+								handleUpdate({ transfer_message: event.currentTarget.value })
+							}
+							size='sm'
+							classNames={{
+								label: styles.label,
+								input: styles.textarea,
+							}}
+						/>
+
+						<div className={styles.toggleGroup}>
+							<div className={styles.toggleRow}>
+								<div className={styles.toggleContent}>
+									<span className={styles.toggleName}>
+										{t('form.workflow.forms.transfer.firstMessageLabel')}
+									</span>
+									<span className={styles.toggleDesc}>
+										{t('form.workflow.forms.transfer.firstMessageDesc')}
+									</span>
+								</div>
+								<Switch
+									checked={getStandaloneAgentTransferFirstMessageEnabled(node)}
+									onChange={(event) =>
+										handleUpdate({
+											enable_transferred_agent_first_message:
+												event.currentTarget.checked,
+										})
+									}
+									size='sm'
+								/>
+							</div>
+							<div className={styles.toggleRow}>
+								<div className={styles.toggleContent}>
+									<span className={styles.toggleName}>
+										{t(
+											'form.workflow.forms.transfer.preserveClientTtsOverridesLabel'
+										)}
+									</span>
+									<span className={styles.toggleDesc}>
+										{t(
+											'form.workflow.forms.transfer.preserveClientTtsOverridesDesc'
+										)}
+									</span>
+								</div>
+								<Switch
+									checked={getStandaloneAgentTransferPreserveClientTtsOverrides(
+										node
+									)}
+									onChange={(event) =>
+										handleUpdate({
+											preserve_client_tts_overrides:
+												event.currentTarget.checked,
+										})
+									}
+									size='sm'
+								/>
+							</div>
+						</div>
+					</div>
+				</div>
+
 				{isLoading && (
 					<Text size='xs' className={styles.description}>
 						{t('form.workflow.forms.transfer.agentLoading')}
@@ -201,7 +277,7 @@ const AgentTransferForm = ({
 						{t('form.workflow.forms.transfer.agentEmpty')}
 					</Text>
 				)}
-			</Stack>
+			</div>
 		</WorkflowNodeForm>
 	);
 };
