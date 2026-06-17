@@ -41,6 +41,39 @@
 		"unknown": "An unexpected error occurred",
 		"retry": "Please try again later"
 	},
+	"appError": {
+		"title": "We could not load this page",
+		"description": "Something went wrong while rendering this screen. Your data is safe, and reloading usually fixes this after a new update.",
+		"updateHint": "If a new version was deployed, reload the page to get the latest app files.",
+		"retryButton": "Retry",
+		"reloadButton": "Reload page",
+		"goHomeButton": "Go to home",
+		"signInButton": "Sign in again",
+		"pageLabel": "Page",
+		"routeLabel": "Route",
+		"statusLabel": "Status",
+		"notFound": {
+			"title": "Page not found",
+			"description": "The page you're looking for doesn't exist or may have been moved."
+		},
+		"forbidden": {
+			"title": "Access denied",
+			"description": "You don't have permission to view this page. Contact your administrator if you think this is a mistake."
+		},
+		"unauthorized": {
+			"title": "Session expired",
+			"description": "Your session has expired. Sign in again to continue."
+		},
+		"serverError": {
+			"title": "Server error",
+			"description": "Something went wrong on our end. Try again in a moment."
+		},
+		"update": {
+			"title": "App updated",
+			"description": "A new version of the app was deployed. Reload to get the latest version.",
+			"hint": "This happens automatically after each release — your data is safe."
+		}
+	},
 	"loading": {
 		"configurations": "Loading configurations...",
 		"clientConfigs": "Loading client configs..."

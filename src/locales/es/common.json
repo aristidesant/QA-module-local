@@ -41,6 +41,39 @@
 		"unknown": "Ocurrió un error inesperado",
 		"retry": "Por favor, inténtalo de nuevo más tarde"
 	},
+	"appError": {
+		"title": "No pudimos cargar esta página",
+		"description": "Algo salió mal al renderizar esta pantalla. Tus datos están seguros y recargar suele resolverlo después de una actualización.",
+		"updateHint": "Si se publicó una nueva versión, recarga la página para obtener los archivos más recientes de la app.",
+		"retryButton": "Reintentar",
+		"reloadButton": "Recargar página",
+		"goHomeButton": "Ir al inicio",
+		"signInButton": "Iniciar sesión",
+		"pageLabel": "Página",
+		"routeLabel": "Ruta",
+		"statusLabel": "Estado",
+		"notFound": {
+			"title": "Página no encontrada",
+			"description": "La página que buscas no existe o puede haber sido movida."
+		},
+		"forbidden": {
+			"title": "Acceso denegado",
+			"description": "No tienes permiso para ver esta página. Contacta a tu administrador si crees que es un error."
+		},
+		"unauthorized": {
+			"title": "Sesión expirada",
+			"description": "Tu sesión ha expirado. Inicia sesión nuevamente para continuar."
+		},
+		"serverError": {
+			"title": "Error del servidor",
+			"description": "Algo salió mal de nuestro lado. Intenta de nuevo en un momento."
+		},
+		"update": {
+			"title": "App actualizada",
+			"description": "Se publicó una nueva versión de la app. Recarga para obtener la versión más reciente.",
+			"hint": "Esto ocurre automáticamente después de cada versión — tus datos están seguros."
+		}
+	},
 	"loading": {
 		"configurations": "Cargando configuraciones...",
 		"clientConfigs": "Cargando configuraciones del cliente..."

@@ -12,10 +12,11 @@ import '~/styles/global.css';
 import '~/utils/axiosInterceptor';
 import { applySiteMetadata } from '~/utils/siteMetadata';
 import { AppColorSchemeProvider } from '~/components/AppColorSchemeProvider';
+import AppErrorBoundary from '~/components/GenericAppError/AppErrorBoundary';
 
 import App from './App';
 import '~/locales/i18n';
-import SuspenseFallback from './components/SuspenseFallback';
+import SuspenseFallback from './components/SuspenseFallback/SuspenseFallback';
 
 const queryClient = new QueryClient({});
 
@@ -27,7 +28,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 			<AppColorSchemeProvider>
 				<ModalsProvider>
 					<Suspense fallback={<SuspenseFallback />}>
-						<App />
+						<AppErrorBoundary>
+							<App />
+						</AppErrorBoundary>
 					</Suspense>
 					<Notifications position='top-right' autoClose={4000} />
 				</ModalsProvider>

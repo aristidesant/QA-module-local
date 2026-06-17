@@ -3,6 +3,7 @@ import {
 	createBrowserRouter,
 	RouterProvider,
 	Navigate,
+	Outlet,
 	useMatches,
 } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -13,10 +14,11 @@ import SmartRootRedirect from './components/SmartRootRedirect/SmartRootRedirect'
 import RouteProtecter, {
 	clientLoader as routeProtecterLoader,
 } from './components/RouteProtecter/RouteProtecter';
-import ModuleGuard from './components/ModuleGuard';
+import ModuleGuard from './components/ModuleGuard/ModuleGuard';
+import RouteErrorBoundary from './components/GenericAppError/RouteErrorBoundary';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { campaignRouteNamespaces } from '~/modules/campaigns/campaignNamespaces';
-import SuspenseFallback from './components/SuspenseFallback';
+import SuspenseFallback from './components/SuspenseFallback/SuspenseFallback';
 const Layout = React.lazy(() => import('./components/Layout'));
 
 const CampaignContactListPage = React.lazy(
@@ -62,7 +64,7 @@ const OverviewDashboardPage = React.lazy(
 const DashboardsPage = React.lazy(
 	() => import('./modules/dashboards/DashboardsPage/DashboardsPage')
 );
-import { LoginForm } from './modules/auth/LoginForm';
+import { LoginForm } from './modules/auth/LoginForm/LoginForm';
 import { PermissionEnum } from './constants/PermissionEnum';
 const KnowledgeBasePage = React.lazy(
 	() => import('./modules/knowledge-bases/KnowledgeBasePage/KnowledgeBasePage')
@@ -154,119 +156,138 @@ const I18nNamespaceLoader = ({ children }: { children: React.ReactNode }) => {
 };
 
 const router = createBrowserRouter([
-	// Public routes
-	{ path: '/login', element: <LoginForm /> },
-
-	// Protected routes
 	{
-		element: <RouteProtecter />,
-		loader: routeProtecterLoader,
+		id: 'root',
+		path: '/',
+		element: <Outlet />,
+		errorElement: <RouteErrorBoundary />,
 		children: [
+			// Public routes
+			{ path: 'login', id: 'login', element: <LoginForm /> },
+
+			// Protected routes
 			{
-				path: 'force-password-change',
-				id: 'auth.force-password-change',
-				element: (
-					<Suspense fallback={<SuspenseFallback />}>
-						<ForcePasswordChangePage />
-					</Suspense>
-				),
-			},
-			{
-				element: (
-					<Suspense fallback={<SuspenseFallback />}>
-						<Layout />
-					</Suspense>
-				),
+				element: <RouteProtecter />,
+				loader: routeProtecterLoader,
 				children: [
 					{
-						index: true,
-						id: 'overview',
+						path: 'force-password-change',
+						id: 'auth.force-password-change',
 						element: (
-							<SmartRootRedirect>
-								<I18nNamespaceLoader>
-									<Suspense fallback={<SuspenseFallback />}>
-										<OverviewDashboardPage />
-									</Suspense>
-								</I18nNamespaceLoader>
-							</SmartRootRedirect>
+							<Suspense fallback={<SuspenseFallback />}>
+								<ForcePasswordChangePage />
+							</Suspense>
 						),
 					},
 					{
-						path: 'dashboards',
-						id: 'dashboards',
 						element: (
-							<ModuleGuard module={ModuleEnum.DASHBOARD}>
-								<I18nNamespaceLoader>
-									<Suspense fallback={<SuspenseFallback />}>
-										<DashboardsPage />
-									</Suspense>
-								</I18nNamespaceLoader>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'campaign-management',
-						id: 'campaign-management',
-						element: (
-							<ModuleGuard module={ModuleEnum.SETTINGS}>
-								<Suspense fallback={<SuspenseFallback />}>
-									<CampaignManagementPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'campaigns',
-						id: 'campaigns',
-						element: (
-							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
-								<I18nNamespaceLoader>
-									<Suspense fallback={<SuspenseFallback />}>
-										<CampaignsPage />
-									</Suspense>
-								</I18nNamespaceLoader>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'campaign/:campaignId',
-						id: 'campaign.detail',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.CAMPAIGNS}
-								permission={PermissionEnum.UPDATE}
-							>
-								<Suspense fallback={<SuspenseFallback />}>
-									<CampaignPage />
-								</Suspense>
-							</ModuleGuard>
+							<Suspense fallback={<SuspenseFallback />}>
+								<Layout />
+							</Suspense>
 						),
 						children: [
 							{
 								index: true,
-								id: 'campaign.detail.index',
+								id: 'overview',
 								element: (
-									<I18nNamespaceLoader>
-										<Suspense fallback={<SuspenseFallback />}>
-											<CampaignEditorPage />
-										</Suspense>
-									</I18nNamespaceLoader>
+									<SmartRootRedirect>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<OverviewDashboardPage />
+											</Suspense>
+										</I18nNamespaceLoader>
+									</SmartRootRedirect>
 								),
 							},
 							{
-								path: 'agent/:campaignAgentId',
-								id: 'campaign.detail.agent',
+								path: 'dashboards',
+								id: 'dashboards',
 								element: (
-									<I18nNamespaceLoader>
+									<ModuleGuard module={ModuleEnum.DASHBOARD}>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<DashboardsPage />
+											</Suspense>
+										</I18nNamespaceLoader>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'campaign-management',
+								id: 'campaign-management',
+								element: (
+									<ModuleGuard module={ModuleEnum.SETTINGS}>
 										<Suspense fallback={<SuspenseFallback />}>
-											<AgentDetailPage />
+											<CampaignManagementPage />
 										</Suspense>
-									</I18nNamespaceLoader>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'campaigns',
+								id: 'campaigns',
+								element: (
+									<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<CampaignsPage />
+											</Suspense>
+										</I18nNamespaceLoader>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'campaign/:campaignId',
+								id: 'campaign.detail',
+								element: (
+									<ModuleGuard
+										module={ModuleEnum.CAMPAIGNS}
+										permission={PermissionEnum.UPDATE}
+									>
+										<Suspense fallback={<SuspenseFallback />}>
+											<CampaignPage />
+										</Suspense>
+									</ModuleGuard>
 								),
 								children: [
 									{
-										path: 'test/:agentId',
-										id: 'campaign.detail.test',
+										index: true,
+										id: 'campaign.detail.index',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CampaignEditorPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'agent/:campaignAgentId',
+										id: 'campaign.detail.agent',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<AgentDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+										children: [
+											{
+												path: 'test/:agentId',
+												id: 'campaign.detail.test',
+												element: (
+													<I18nNamespaceLoader>
+														<Suspense fallback={<SuspenseFallback />}>
+															<CampaignTestPage />
+														</Suspense>
+													</I18nNamespaceLoader>
+												),
+											},
+										],
+									},
+									{
+										path: 'test',
+										id: 'campaign.detail.test.legacy',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
@@ -278,353 +299,342 @@ const router = createBrowserRouter([
 								],
 							},
 							{
-								path: 'test',
-								id: 'campaign.detail.test.legacy',
+								path: 'campaign/view/:campaignId',
+								id: 'campaign.view',
 								element: (
-									<I18nNamespaceLoader>
+									<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
 										<Suspense fallback={<SuspenseFallback />}>
-											<CampaignTestPage />
+											<CampaignViewPage />
 										</Suspense>
-									</I18nNamespaceLoader>
+									</ModuleGuard>
 								),
 							},
-						],
-					},
-					{
-						path: 'campaign/view/:campaignId',
-						id: 'campaign.view',
-						element: (
-							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
-								<Suspense fallback={<SuspenseFallback />}>
-									<CampaignViewPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'campaign/:campaignId/contact-list/:contactGroupId',
-						id: 'campaign.contact-list',
-						element: (
-							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
-								<I18nNamespaceLoader>
-									<Suspense fallback={<SuspenseFallback />}>
-										<CampaignContactListPage />
-									</Suspense>
-								</I18nNamespaceLoader>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'campaign/:campaignId/conversations',
-						id: 'campaign.conversations',
-						element: (
-							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
-								<I18nNamespaceLoader>
-									<Suspense fallback={<SuspenseFallback />}>
-										<CampaignConversationsPage />
-									</Suspense>
-								</I18nNamespaceLoader>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'users',
-						id: 'users',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.USERS}
-								permission={PermissionEnum.MANAGE}
-								masterOnly
-							>
-								<Suspense fallback={<SuspenseFallback />}>
-									<UsersPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'roles',
-						id: 'roles',
-						element: (
-							<ModuleGuard module={ModuleEnum.ROLES} masterOnly>
-								<Suspense fallback={<SuspenseFallback />}>
-									<RolesPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'clients',
-						id: 'clients',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.SETTINGS}
-								permission={PermissionEnum.MANAGE}
-								masterOnly
-							>
-								<I18nNamespaceLoader>
-									<Suspense fallback={<SuspenseFallback />}>
-										<ClientsPage />
-									</Suspense>
-								</I18nNamespaceLoader>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'billing',
-						children: [
 							{
-								path: 'invoices',
-								id: 'invoices',
+								path: 'campaign/:campaignId/contact-list/:contactGroupId',
+								id: 'campaign.contact-list',
 								element: (
-									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
+									<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
 										<I18nNamespaceLoader>
 											<Suspense fallback={<SuspenseFallback />}>
-												<InvoicesPage />
+												<CampaignContactListPage />
 											</Suspense>
 										</I18nNamespaceLoader>
 									</ModuleGuard>
 								),
 							},
 							{
-								path: 'invoices/new',
-								id: 'invoices-new',
+								path: 'campaign/:campaignId/conversations',
+								id: 'campaign.conversations',
 								element: (
-									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
+									<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
 										<I18nNamespaceLoader>
 											<Suspense fallback={<SuspenseFallback />}>
-												<InvoiceNewPage />
+												<CampaignConversationsPage />
 											</Suspense>
 										</I18nNamespaceLoader>
 									</ModuleGuard>
 								),
 							},
 							{
-								path: 'invoices/:id',
-								id: 'invoices-detail',
+								path: 'users',
+								id: 'users',
 								element: (
-									<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
-										<I18nNamespaceLoader>
-											<Suspense fallback={<SuspenseFallback />}>
-												<InvoiceDetailPage />
-											</Suspense>
-										</I18nNamespaceLoader>
+									<ModuleGuard
+										module={ModuleEnum.USERS}
+										permission={PermissionEnum.MANAGE}
+										masterOnly
+									>
+										<Suspense fallback={<SuspenseFallback />}>
+											<UsersPage />
+										</Suspense>
 									</ModuleGuard>
 								),
 							},
-						],
-					},
-					{
-						path: 'conversations',
-						id: 'conversations',
-						element: (
-							<ModuleGuard module={ModuleEnum.CONVERSATIONS}>
-								<Suspense fallback={<SuspenseFallback />}>
-									<ConversationPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-
-					{
-						path: 'outcomes',
-						id: 'outcomes',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.CAMPAIGNS}
-								permission={PermissionEnum.MANAGE}
-							>
-								<Suspense fallback={<SuspenseFallback />}>
-									<DispositionPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-
-					{
-						path: 'configurations',
-						id: 'configurations',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.SETTINGS}
-								permission={PermissionEnum.MANAGE}
-							>
-								<Suspense fallback={<SuspenseFallback />}>
-									<ConfigurationsPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-						children: [
 							{
-								index: true,
+								path: 'roles',
+								id: 'roles',
 								element: (
-									<Navigate to='/configurations/client-configs' replace />
+									<ModuleGuard module={ModuleEnum.ROLES} masterOnly>
+										<Suspense fallback={<SuspenseFallback />}>
+											<RolesPage />
+										</Suspense>
+									</ModuleGuard>
 								),
 							},
 							{
-								path: 'client-configs',
-								id: 'client-configs',
-								element: (
-									<Suspense fallback={<SuspenseFallback />}>
-										<ClientConfigsPage />
-									</Suspense>
-								),
-							},
-
-							{
-								path: 'agent-behaviors',
-								id: 'agent-behaviors',
+								path: 'clients',
+								id: 'clients',
 								element: (
 									<ModuleGuard
 										module={ModuleEnum.SETTINGS}
 										permission={PermissionEnum.MANAGE}
-										superAdminOnly
+										masterOnly
 									>
-										<Suspense fallback={<SuspenseFallback />}>
-											<AgentBehaviorsPage />
-										</Suspense>
-									</ModuleGuard>
-								),
-							},
-							{
-								path: 'scheduler-predefined-params',
-								id: 'scheduler-predefined-params',
-								element: (
-									<I18nNamespaceLoader>
-										<Suspense fallback={<SuspenseFallback />}>
-											<SchedulerPredefinedParamsPage />
-										</Suspense>
-									</I18nNamespaceLoader>
-								),
-							},
-							{
-								path: 'regional-settings-params',
-								id: 'regional-settings-params',
-								element: (
-									<Suspense fallback={<SuspenseFallback />}>
-										<RegionalSettingsParamsPage />
-									</Suspense>
-								),
-							},
-							{
-								path: 'phone-numbers',
-								id: 'phone-numbers',
-								element: (
-									<I18nNamespaceLoader>
-										<Suspense fallback={<SuspenseFallback />}>
-											<PhoneNumbersPage />
-										</Suspense>
-									</I18nNamespaceLoader>
-								),
-							},
-							{
-								path: 'dictionary-rules',
-								id: 'dictionary-rules',
-								element: (
-									<ModuleGuard module={ModuleEnum.SETTINGS} masterOnly>
 										<I18nNamespaceLoader>
 											<Suspense fallback={<SuspenseFallback />}>
-												<DictionaryRulesPage />
+												<ClientsPage />
 											</Suspense>
 										</I18nNamespaceLoader>
 									</ModuleGuard>
 								),
 							},
-						],
-					},
-					{
-						path: 'do-not-call',
-						id: 'do-not-call',
-						element: (
-							<ModuleGuard module={ModuleEnum.SETTINGS}>
-								<Suspense fallback={<SuspenseFallback />}>
-									<DoNotCallPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'knowledge-bases',
-						id: 'knowledge-bases',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.KNOWLEDGE_BASES}
-								permission={PermissionEnum.READ}
-							>
-								<Suspense fallback={<SuspenseFallback />}>
-									<KnowledgeBasePage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'tools',
-						id: 'tools',
-						element: (
-							<ModuleGuard
-								module={ModuleEnum.TOOLS}
-								permission={PermissionEnum.MANAGE}
-								masterOnly
-							>
-								<Suspense fallback={<SuspenseFallback />}>
-									<ToolsPage />
-								</Suspense>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'agent-tests',
-						id: 'agent-tests',
-						element: (
-							<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
-								<I18nNamespaceLoader>
-									<Suspense fallback={<SuspenseFallback />}>
-										<AgentTestsPage />
-									</Suspense>
-								</I18nNamespaceLoader>
-							</ModuleGuard>
-						),
-					},
-					{
-						path: 'report-templates',
-						id: 'report-templates',
-						element: (
-							<ModuleGuard module={ModuleEnum.REPORTS}>
-								<I18nNamespaceLoader>
-									<Suspense fallback={<SuspenseFallback />}>
-										<ReportTemplatesPage />
-									</Suspense>
-								</I18nNamespaceLoader>
-							</ModuleGuard>
-						),
-						children: [
 							{
-								index: true,
-								id: 'report-templates.index',
-								element: <ReportTemplatesListPage />,
+								path: 'billing',
+								children: [
+									{
+										path: 'invoices',
+										id: 'invoices',
+										element: (
+											<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
+												<I18nNamespaceLoader>
+													<Suspense fallback={<SuspenseFallback />}>
+														<InvoicesPage />
+													</Suspense>
+												</I18nNamespaceLoader>
+											</ModuleGuard>
+										),
+									},
+									{
+										path: 'invoices/new',
+										id: 'invoices-new',
+										element: (
+											<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
+												<I18nNamespaceLoader>
+													<Suspense fallback={<SuspenseFallback />}>
+														<InvoiceNewPage />
+													</Suspense>
+												</I18nNamespaceLoader>
+											</ModuleGuard>
+										),
+									},
+									{
+										path: 'invoices/:id',
+										id: 'invoices-detail',
+										element: (
+											<ModuleGuard module={ModuleEnum.BILLING} masterOnly>
+												<I18nNamespaceLoader>
+													<Suspense fallback={<SuspenseFallback />}>
+														<InvoiceDetailPage />
+													</Suspense>
+												</I18nNamespaceLoader>
+											</ModuleGuard>
+										),
+									},
+								],
 							},
 							{
-								path: ':reportTemplateId',
-								id: 'report-templates.detail',
+								path: 'conversations',
+								id: 'conversations',
 								element: (
-									<ModuleGuard
-										module={ModuleEnum.REPORTS}
-										permission={PermissionEnum.UPDATE}
-									>
-										<ReportTemplateDetailPage />
+									<ModuleGuard module={ModuleEnum.CONVERSATIONS}>
+										<Suspense fallback={<SuspenseFallback />}>
+											<ConversationPage />
+										</Suspense>
 									</ModuleGuard>
 								),
 							},
+
+							{
+								path: 'outcomes',
+								id: 'outcomes',
+								element: (
+									<ModuleGuard
+										module={ModuleEnum.CAMPAIGNS}
+										permission={PermissionEnum.MANAGE}
+									>
+										<Suspense fallback={<SuspenseFallback />}>
+											<DispositionPage />
+										</Suspense>
+									</ModuleGuard>
+								),
+							},
+
+							{
+								path: 'configurations',
+								id: 'configurations',
+								element: (
+									<ModuleGuard
+										module={ModuleEnum.SETTINGS}
+										permission={PermissionEnum.MANAGE}
+									>
+										<Suspense fallback={<SuspenseFallback />}>
+											<ConfigurationsPage />
+										</Suspense>
+									</ModuleGuard>
+								),
+								children: [
+									{
+										index: true,
+										element: (
+											<Navigate to='/configurations/client-configs' replace />
+										),
+									},
+									{
+										path: 'client-configs',
+										id: 'client-configs',
+										element: (
+											<Suspense fallback={<SuspenseFallback />}>
+												<ClientConfigsPage />
+											</Suspense>
+										),
+									},
+
+									{
+										path: 'agent-behaviors',
+										id: 'agent-behaviors',
+										element: (
+											<ModuleGuard
+												module={ModuleEnum.SETTINGS}
+												permission={PermissionEnum.MANAGE}
+												superAdminOnly
+											>
+												<Suspense fallback={<SuspenseFallback />}>
+													<AgentBehaviorsPage />
+												</Suspense>
+											</ModuleGuard>
+										),
+									},
+									{
+										path: 'scheduler-predefined-params',
+										id: 'scheduler-predefined-params',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<SchedulerPredefinedParamsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'regional-settings-params',
+										id: 'regional-settings-params',
+										element: (
+											<Suspense fallback={<SuspenseFallback />}>
+												<RegionalSettingsParamsPage />
+											</Suspense>
+										),
+									},
+									{
+										path: 'phone-numbers',
+										id: 'phone-numbers',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<PhoneNumbersPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'dictionary-rules',
+										id: 'dictionary-rules',
+										element: (
+											<ModuleGuard module={ModuleEnum.SETTINGS} masterOnly>
+												<I18nNamespaceLoader>
+													<Suspense fallback={<SuspenseFallback />}>
+														<DictionaryRulesPage />
+													</Suspense>
+												</I18nNamespaceLoader>
+											</ModuleGuard>
+										),
+									},
+								],
+							},
+							{
+								path: 'do-not-call',
+								id: 'do-not-call',
+								element: (
+									<ModuleGuard module={ModuleEnum.SETTINGS}>
+										<Suspense fallback={<SuspenseFallback />}>
+											<DoNotCallPage />
+										</Suspense>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'knowledge-bases',
+								id: 'knowledge-bases',
+								element: (
+									<ModuleGuard
+										module={ModuleEnum.KNOWLEDGE_BASES}
+										permission={PermissionEnum.READ}
+									>
+										<Suspense fallback={<SuspenseFallback />}>
+											<KnowledgeBasePage />
+										</Suspense>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'tools',
+								id: 'tools',
+								element: (
+									<ModuleGuard
+										module={ModuleEnum.TOOLS}
+										permission={PermissionEnum.MANAGE}
+										masterOnly
+									>
+										<Suspense fallback={<SuspenseFallback />}>
+											<ToolsPage />
+										</Suspense>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'agent-tests',
+								id: 'agent-tests',
+								element: (
+									<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<AgentTestsPage />
+											</Suspense>
+										</I18nNamespaceLoader>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'report-templates',
+								id: 'report-templates',
+								element: (
+									<ModuleGuard module={ModuleEnum.REPORTS}>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<ReportTemplatesPage />
+											</Suspense>
+										</I18nNamespaceLoader>
+									</ModuleGuard>
+								),
+								children: [
+									{
+										index: true,
+										id: 'report-templates.index',
+										element: <ReportTemplatesListPage />,
+									},
+									{
+										path: ':reportTemplateId',
+										id: 'report-templates.detail',
+										element: (
+											<ModuleGuard
+												module={ModuleEnum.REPORTS}
+												permission={PermissionEnum.UPDATE}
+											>
+												<ReportTemplateDetailPage />
+											</ModuleGuard>
+										),
+									},
+								],
+							},
+							{
+								path: 'profile',
+								id: 'profile',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<ProfilePage />
+									</Suspense>
+								),
+							},
 						],
-					},
-					{
-						path: 'profile',
-						id: 'profile',
-						element: (
-							<Suspense fallback={<SuspenseFallback />}>
-								<ProfilePage />
-							</Suspense>
-						),
 					},
 				],
 			},

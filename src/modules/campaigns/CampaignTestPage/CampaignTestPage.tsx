@@ -82,6 +82,15 @@ const CampaignTestPage = () => {
 		);
 	}, [campaign, handleConversationSelect]);
 
+	const voices = useMemo(
+		() =>
+			(campaign?.voices ?? []).map((v) => ({
+				voiceId: v.voiceId,
+				voiceName: v.voiceName,
+			})),
+		[campaign?.voices]
+	);
+
 	if (isCampaignLoading && !campaign) {
 		return (
 			<ContentContainer
@@ -199,15 +208,6 @@ const CampaignTestPage = () => {
 			</ContentContainer>
 		);
 	}
-
-	const voices = useMemo(
-		() =>
-			(campaign?.voices ?? []).map((v) => ({
-				voiceId: v.voiceId,
-				voiceName: v.voiceName,
-			})),
-		[campaign?.voices]
-	);
 
 	return (
 		<CampaignConvaiProvider agentId={testAgentId} voices={voices}>
