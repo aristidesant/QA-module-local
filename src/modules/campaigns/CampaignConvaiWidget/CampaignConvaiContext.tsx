@@ -18,6 +18,121 @@ import type {
 	TranscriptItem,
 	VoiceOption,
 } from './CampaignConvaiWidget.types';
+import type { AgentTestPrimitive } from '~/models/AgentTestModel';
+
+type DynamicVariableValue = AgentTestPrimitive;
+type DynamicVariablesMap = Record<string, DynamicVariableValue>;
+const VOICE_CONTROLLED_VARIABLE = 'agentName';
+
+const removeVoiceControlledVariable = (
+	variables: DynamicVariablesMap
+): DynamicVariablesMap => {
+	const editableVariables = { ...variables };
+	delete editableVariables[VOICE_CONTROLLED_VARIABLE];
+	return editableVariables;
+};
+
+const getBrowserStorage = () => {
+	if (typeof window === 'undefined') {
+		return null;
+	}
+
+	try {
+		return window.localStorage;
+	} catch {
+		return null;
+	}
+};
+
+const isPrimitiveValue = (value: unknown): value is DynamicVariableValue => {
+	return (
+		typeof value === 'string' ||
+		typeof value === 'number' ||
+		typeof value === 'boolean'
+	);
+};
+
+const normalizeDynamicVariableValue = (
+	value: unknown
+): DynamicVariableValue | null => {
+	if (typeof value === 'string') {
+		const trimmed = value.trim();
+		if (trimmed === 'true') return true;
+		if (trimmed === 'false') return false;
+		if (trimmed !== '' && !Number.isNaN(Number(trimmed))) {
+			return Number(trimmed);
+		}
+		return value;
+	}
+
+	if (isPrimitiveValue(value)) {
+		return value;
+	}
+
+	return null;
+};
+
+const serializeDynamicVariables = (variables: DynamicVariablesMap) => {
+	return JSON.stringify(removeVoiceControlledVariable(variables));
+};
+
+const parseDynamicVariables = (raw: string | null) => {
+	if (!raw) return null;
+
+	try {
+		const parsed = JSON.parse(raw) as Record<string, unknown>;
+		const entries = Object.entries(parsed).reduce<DynamicVariablesMap>(
+			(acc, [key, value]) => {
+				const normalized = normalizeDynamicVariableValue(value);
+				if (normalized !== null) {
+					acc[key] = normalized;
+				}
+				return acc;
+			},
+			{}
+		);
+
+		return removeVoiceControlledVariable(entries);
+	} catch {
+		return null;
+	}
+};
+
+const getAgentDynamicVariableDefaults = (
+	config: unknown
+): DynamicVariablesMap => {
+	const placeholders =
+		(
+			config as
+				| {
+						conversationConfig?: {
+							agent?: {
+								dynamicVariables?: {
+									dynamicVariablePlaceholders?: Record<string, unknown>;
+								};
+							};
+						};
+				  }
+				| null
+				| undefined
+		)?.conversationConfig?.agent?.dynamicVariables
+			?.dynamicVariablePlaceholders ?? {};
+
+	return Object.entries(placeholders).reduce<DynamicVariablesMap>(
+		(acc, [key, value]) => {
+			if (key === VOICE_CONTROLLED_VARIABLE) return acc;
+
+			const normalized = normalizeDynamicVariableValue(value);
+			if (normalized !== null) {
+				acc[key] = normalized;
+			} else if (value !== null && value !== undefined) {
+				acc[key] = String(value);
+			}
+			return acc;
+		},
+		{}
+	);
+};
 
 interface CampaignConvaiContextValue {
 	status: ConvaiStatus;
@@ -37,6 +152,10 @@ interface CampaignConvaiContextValue {
 	voices: VoiceOption[];
 	selectedVoiceId: string | null;
 	setSelectedVoiceId: (id: string | null) => void;
+	dynamicVariables: DynamicVariablesMap;
+	setDynamicVariables: (value: DynamicVariablesMap) => void;
+	resetDynamicVariables: () => void;
+	dynamicVariablesDefaults: DynamicVariablesMap;
 }
 
 type ConversationControls = {
@@ -201,12 +320,16 @@ const ConversationBridge = ({
 interface ConvaiStateProviderProps {
 	agentId: string;
 	voices: VoiceOption[];
+	agentConfig?: unknown;
+	storageKey: string;
 	children: ReactNode;
 }
 
 const ConvaiStateProvider = ({
 	agentId,
 	voices,
+	agentConfig,
+	storageKey,
 	children,
 }: ConvaiStateProviderProps) => {
 	const { t } = useTranslation('campaign.detail.test');
@@ -219,6 +342,13 @@ const ConvaiStateProvider = ({
 		useState<ConversationSnapshot>(DEFAULT_CONVERSATION_SNAPSHOT);
 	const [selectedVoiceId, setSelectedVoiceId] = useState<string | null>(
 		() => voices[0]?.voiceId ?? null
+	);
+	const dynamicVariablesDefaults = useMemo(
+		() => getAgentDynamicVariableDefaults(agentConfig),
+		[agentConfig]
+	);
+	const [dynamicVariables, setDynamicVariables] = useState<DynamicVariablesMap>(
+		() => dynamicVariablesDefaults
 	);
 	const pendingUserMessageRef = useRef<string | null>(null);
 	const pendingStartRef = useRef(false);
@@ -245,6 +375,46 @@ const ConvaiStateProvider = ({
 		setConversationSnapshot(DEFAULT_CONVERSATION_SNAPSHOT);
 		pendingUserMessageRef.current = null;
 	}, []);
+
+	const resetDynamicVariables = useCallback(() => {
+		setDynamicVariables(dynamicVariablesDefaults);
+		const storage = getBrowserStorage();
+		if (storage) {
+			storage.removeItem(storageKey);
+		}
+	}, [dynamicVariablesDefaults, storageKey]);
+
+	useEffect(() => {
+		setDynamicVariables((current) => {
+			const storage = getBrowserStorage();
+			const storedVariables = parseDynamicVariables(
+				storage?.getItem(storageKey) ?? null
+			);
+
+			if (storedVariables) {
+				return storedVariables;
+			}
+
+			return Object.keys(current).length > 0
+				? current
+				: dynamicVariablesDefaults;
+		});
+	}, [dynamicVariablesDefaults, storageKey]);
+
+	useEffect(() => {
+		const storage = getBrowserStorage();
+		if (!storage) return;
+
+		if (
+			Object.keys(dynamicVariables).length === 0 &&
+			Object.keys(dynamicVariablesDefaults).length === 0
+		) {
+			storage.removeItem(storageKey);
+			return;
+		}
+
+		storage.setItem(storageKey, serializeDynamicVariables(dynamicVariables));
+	}, [dynamicVariables, dynamicVariablesDefaults, storageKey]);
 
 	const requestMicrophoneAccess = useCallback(async () => {
 		if (
@@ -276,19 +446,21 @@ const ConvaiStateProvider = ({
 				pendingStartRef.current = false;
 				const nextSignedUrl = pendingSignedUrlRef.current;
 				pendingSignedUrlRef.current = null;
-				const selectedVoiceName = voices.find(
-					(v) => v.voiceId === selectedVoiceId
-				)?.voiceName;
+				const selectedVoice =
+					voices.find((voice) => voice.voiceId === selectedVoiceId) ??
+					voices[0];
 				if (nextSignedUrl) {
 					await conversationControlsRef.current.startSession({
 						signedUrl: nextSignedUrl,
 						connectionType: 'websocket',
-						...(selectedVoiceId && {
-							overrides: { tts: { voiceId: selectedVoiceId } },
+						...(selectedVoice && {
+							overrides: { tts: { voiceId: selectedVoice.voiceId } },
 						}),
-						...(selectedVoiceName && {
-							dynamicVariables: { agentName: selectedVoiceName },
-						}),
+						dynamicVariables: {
+							...dynamicVariablesDefaults,
+							...removeVoiceControlledVariable(dynamicVariables),
+							agentName: selectedVoice?.voiceName ?? '',
+						},
 					});
 				}
 			}
@@ -309,10 +481,12 @@ const ConvaiStateProvider = ({
 			);
 		}
 	}, [
-		agentId,
 		fetchAgentSignedUrl,
 		requestMicrophoneAccess,
 		resetConversationState,
+		dynamicVariables,
+		dynamicVariablesDefaults,
+		storageKey,
 		selectedVoiceId,
 		voices,
 		t,
@@ -390,6 +564,10 @@ const ConvaiStateProvider = ({
 			voices,
 			selectedVoiceId,
 			setSelectedVoiceId,
+			dynamicVariables,
+			setDynamicVariables,
+			resetDynamicVariables,
+			dynamicVariablesDefaults,
 		}),
 		[
 			conversationId,
@@ -409,6 +587,9 @@ const ConvaiStateProvider = ({
 			voices,
 			selectedVoiceId,
 			setSelectedVoiceId,
+			dynamicVariables,
+			resetDynamicVariables,
+			dynamicVariablesDefaults,
 		]
 	);
 
@@ -436,16 +617,25 @@ const ConvaiStateProvider = ({
 interface CampaignConvaiProviderProps {
 	agentId: string;
 	voices: VoiceOption[];
+	agentConfig?: unknown;
+	storageKey: string;
 	children: ReactNode;
 }
 
 export const CampaignConvaiProvider = ({
 	agentId,
 	voices,
+	agentConfig,
+	storageKey,
 	children,
 }: CampaignConvaiProviderProps) => {
 	return (
-		<ConvaiStateProvider agentId={agentId} voices={voices}>
+		<ConvaiStateProvider
+			agentId={agentId}
+			voices={voices}
+			agentConfig={agentConfig}
+			storageKey={storageKey}
+		>
 			{children}
 		</ConvaiStateProvider>
 	);

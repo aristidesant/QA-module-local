@@ -35,6 +35,13 @@ import utc from 'dayjs/plugin/utc';
 
 dayjs.extend(utc);
 
+type ElevenLabsKnowledgeBaseEntry = {
+	type: string;
+	id: string;
+	name: string;
+	usage_mode: 'auto';
+};
+
 const CampaignConfigurationKnowledgeBase: React.FC = () => {
 	const { t } = useTranslation([
 		'campaign.form.agents',
@@ -55,8 +62,53 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 		return rawKnowledgeBase
 			.map((item) => {
 				if (typeof item === 'number') return item;
+				if (typeof item === 'string') {
+					const matched = allKnowledgeBases?.find((kb) => {
+						if (kb.identifier === item) return true;
+						return kb.file?.id != null && String(kb.file.id) === item;
+					});
+					return matched?.id ?? null;
+				}
 				if (typeof item === 'object' && item && 'id' in item) {
-					return (item as any).id;
+					const candidate = item as Record<string, unknown>;
+					const candidateId = candidate.id;
+					if (typeof candidateId === 'string') {
+						const matched = allKnowledgeBases?.find(
+							(kb) => kb.identifier === candidateId
+						);
+						return matched?.id ?? null;
+					}
+					const candidateIdentifier = candidate.identifier;
+					if (typeof candidateIdentifier === 'string') {
+						const matched = allKnowledgeBases?.find(
+							(kb) => kb.identifier === candidateIdentifier
+						);
+						return matched?.id ?? null;
+					}
+				}
+				return null;
+			})
+			.filter((id): id is number => typeof id === 'number');
+	};
+
+	const resolveKnowledgeBaseIds = (rawKnowledgeBases: unknown): number[] => {
+		if (!Array.isArray(rawKnowledgeBases)) return [];
+		return rawKnowledgeBases
+			.map((item) => {
+				if (typeof item === 'string') {
+					const matched = allKnowledgeBases?.find(
+						(kb) => kb.identifier === item
+					);
+					return matched?.id ?? null;
+				}
+				if (typeof item === 'object' && item && 'identifier' in item) {
+					const candidate = item as Record<string, unknown>;
+					if (typeof candidate.identifier === 'string') {
+						const matched = allKnowledgeBases?.find(
+							(kb) => kb.identifier === candidate.identifier
+						);
+						return matched?.id ?? null;
+					}
 				}
 				return null;
 			})
@@ -70,10 +122,12 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 	const deepKbIds = extractKnowledgeBaseIds(rawKbData);
 
 	// Extract IDs from root path (Backend/Legacy structure)
-	const rootKbIds: number[] = (form.values as any)?.knowledgeBaseIds || [];
+	const rootKbIds: unknown[] = (form.values as any)?.knowledgeBaseIds || [];
 
 	// Merge both sources
-	const selectedKbIds = Array.from(new Set([...deepKbIds, ...rootKbIds]));
+	const selectedKbIds = Array.from(
+		new Set([...deepKbIds, ...resolveKnowledgeBaseIds(rootKbIds)])
+	);
 
 	// Identify missing IDs
 	const missingIds = selectedKbIds.filter(
@@ -155,9 +209,32 @@ const CampaignConfigurationKnowledgeBase: React.FC = () => {
 		setIsModalOpen(false);
 	};
 
+	const buildKnowledgeBaseEntry = (
+		knowledgeBaseId: number
+	): ElevenLabsKnowledgeBaseEntry | null => {
+		const matched = combinedKnowledgeBases.find(
+			(kb) => kb.id === knowledgeBaseId
+		);
+		if (!matched?.identifier) return null;
+
+		return {
+			type: matched.type.toLowerCase(),
+			id: matched.identifier,
+			name: matched.file?.name ?? matched.name,
+			usage_mode: 'auto',
+		};
+	};
+
 	const updateKnowledgeBaseIds = (newIds: number[]) => {
-		form.setFieldValue('conversationConfig.agent.prompt.knowledgeBase', newIds);
-		form.setFieldValue('knowledgeBaseIds', newIds);
+		const newKnowledgeBases = newIds
+			.map((id) => buildKnowledgeBaseEntry(id))
+			.filter((entry): entry is ElevenLabsKnowledgeBaseEntry => Boolean(entry));
+
+		form.setFieldValue(
+			'conversationConfig.agent.prompt.knowledgeBase',
+			newKnowledgeBases
+		);
+		form.setFieldValue('knowledgeBaseIds', newKnowledgeBases);
 	};
 
 	const handleUnassignKnowledgeBase = (knowledgeBaseId: number) => {

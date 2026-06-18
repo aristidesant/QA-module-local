@@ -11,6 +11,7 @@ import {
 	CampaignConvaiProvider,
 	ConvaiVoicePanel,
 } from '../CampaignConvaiWidget';
+import { useGetAgent } from '~/queries/agentQueries';
 import { useGetCampaign } from '~/queries/campaignsQueries';
 import { useGetCampaignAgents } from '~/queries/campaignAgentsQueries';
 
@@ -52,6 +53,7 @@ const CampaignTestPage = () => {
 		(agent) => agent.agentId === legacyAgentId
 	);
 	const testAgentId = routeAgentId ?? legacyAgentId ?? '';
+	const { data: routeAgent } = useGetAgent(testAgentId);
 	const returnTo = campaignAgentId
 		? `/campaign/${campaignId}/agent/${campaignAgentId}`
 		: campaignBasePath;
@@ -89,6 +91,16 @@ const CampaignTestPage = () => {
 				voiceName: v.voiceName,
 			})),
 		[campaign?.voices]
+	);
+	const dynamicVariablesStorageKey = useMemo(
+		() =>
+			[
+				'campaign-test-dynamic-variables',
+				campaignId || 'no-campaign',
+				campaignAgentId || 'no-campaign-agent',
+				testAgentId || 'no-agent',
+			].join(':'),
+		[campaignAgentId, campaignId, testAgentId]
 	);
 
 	if (isCampaignLoading && !campaign) {
@@ -210,7 +222,12 @@ const CampaignTestPage = () => {
 	}
 
 	return (
-		<CampaignConvaiProvider agentId={testAgentId} voices={voices}>
+		<CampaignConvaiProvider
+			agentId={testAgentId}
+			voices={voices}
+			agentConfig={routeAgent?.config}
+			storageKey={dynamicVariablesStorageKey}
+		>
 			<ContentContainer
 				title={t('page.titleWithCampaign', { campaignName: campaign.name })}
 				description={t('page.description')}
