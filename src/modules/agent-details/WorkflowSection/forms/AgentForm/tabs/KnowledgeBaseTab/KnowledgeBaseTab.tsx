@@ -56,8 +56,12 @@ const KnowledgeBaseTab = () => {
 		isKnowledgeBasesError,
 	} = useKnowledgeBasesLogic(mergedKnowledgeBaseItems);
 
-	const buildRefSignature = (refs: { id: string; name?: string }[]) =>
-		refs.map((ref) => `${ref.id}:${ref.name ?? ''}`).join('|');
+	const buildRefSignature = (
+		refs: { id: string; name?: string; identifier?: string }[]
+	) =>
+		refs
+			.map((ref) => `${ref.identifier ?? ref.id}:${ref.name ?? ''}`)
+			.join('|');
 
 	useEffect(() => {
 		const nextSignature = buildRefSignature(mergedKnowledgeBaseRefs);
@@ -72,24 +76,47 @@ const KnowledgeBaseTab = () => {
 		[draftKnowledgeBaseRefs]
 	);
 
+	const draftKnowledgeBaseIdentifiers = useMemo(
+		() => draftKnowledgeBaseRefs.map((ref) => ref.identifier ?? ref.id),
+		[draftKnowledgeBaseRefs]
+	);
+
 	const selectedKnowledgeBases = useMemo(() => {
 		return draftKnowledgeBaseRefs.map((ref) => {
-			const matched = combinedKnowledgeBases.find(
-				(kb) => String(kb.id) === ref.id
-			);
+			const matched = combinedKnowledgeBases.find((kb) => {
+				if (ref.identifier && kb.identifier === ref.identifier) return true;
+				return String(kb.id) === ref.id;
+			});
 			return {
 				id: ref.id,
 				name: matched?.name ?? ref.name,
+				identifier: matched?.identifier ?? ref.identifier,
 			};
 		});
 	}, [combinedKnowledgeBases, draftKnowledgeBaseRefs]);
 
 	const availableKnowledgeBases = useMemo(() => {
-		const selectedIds = new Set(draftKnowledgeBaseIds.map(String));
-		return combinedKnowledgeBases.filter(
-			(kb) => !selectedIds.has(String(kb.id))
+		const selectedIdentifiers = new Set(
+			draftKnowledgeBaseIdentifiers.map(String)
 		);
-	}, [combinedKnowledgeBases, draftKnowledgeBaseIds]);
+		return combinedKnowledgeBases.filter(
+			(kb) => !selectedIdentifiers.has(String(kb.identifier ?? kb.id))
+		);
+	}, [combinedKnowledgeBases, draftKnowledgeBaseIdentifiers]);
+
+	const buildElevenLabsKnowledgeBaseEntry = (knowledgeBaseId: string) => {
+		const matched = combinedKnowledgeBases.find(
+			(kb) => kb.identifier === knowledgeBaseId
+		);
+		if (!matched?.identifier) return null;
+
+		return {
+			type: matched.type.toLowerCase(),
+			id: matched.identifier,
+			name: matched.file?.name ?? matched.name,
+			usage_mode: 'auto' as const,
+		};
+	};
 
 	const handleSubagentChange = (updates: Record<string, unknown>) => {
 		const nextWorkflow = updateWorkflowNodeSubagent(workflow, nodeId, updates);
@@ -179,13 +206,22 @@ const KnowledgeBaseTab = () => {
 											return {
 												id,
 												name: matched?.name,
+												identifier: matched?.identifier ?? undefined,
 											};
 										});
 										setDraftKnowledgeBaseRefs(nextRefs);
 										knowledgeBaseSignatureRef.current =
 											buildRefSignature(nextRefs);
 										handleSubagentChange({
-											knowledge_base_ids: nextKnowledgeBaseIds,
+											knowledge_base_ids: nextRefs
+												.map((ref) => buildElevenLabsKnowledgeBaseEntry(ref.id))
+												.filter(
+													(
+														entry
+													): entry is NonNullable<
+														ReturnType<typeof buildElevenLabsKnowledgeBaseEntry>
+													> => Boolean(entry)
+												),
 										});
 									}}
 								>
@@ -229,9 +265,6 @@ const KnowledgeBaseTab = () => {
 									color='gray'
 									size='sm'
 									onClick={() => {
-										const nextKnowledgeBaseIds = draftKnowledgeBaseIds.filter(
-											(id) => String(id) !== String(knowledgeBase.id)
-										);
 										const nextRefs = draftKnowledgeBaseRefs.filter(
 											(ref) => ref.id !== String(knowledgeBase.id)
 										);
@@ -239,7 +272,15 @@ const KnowledgeBaseTab = () => {
 										knowledgeBaseSignatureRef.current =
 											buildRefSignature(nextRefs);
 										handleSubagentChange({
-											knowledge_base_ids: nextKnowledgeBaseIds,
+											knowledge_base_ids: nextRefs
+												.map((ref) => buildElevenLabsKnowledgeBaseEntry(ref.id))
+												.filter(
+													(
+														entry
+													): entry is NonNullable<
+														ReturnType<typeof buildElevenLabsKnowledgeBaseEntry>
+													> => Boolean(entry)
+												),
 										});
 									}}
 									aria-label={t('form.workflow.subagent.removeKnowledgeBase', {

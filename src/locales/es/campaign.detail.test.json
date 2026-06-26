@@ -73,6 +73,24 @@
 			"retry": "Reintentar",
 			"microphonePermission": "El acceso al micrófono está bloqueado. Permite el acceso al micrófono en el navegador antes de iniciar la llamada de voz.",
 			"microphoneUnavailable": "Este navegador no puede acceder a un micrófono para la llamada de voz."
+		},
+		"dynamicVariables": {
+			"title": "Variables dinámicas",
+			"popoverTitle": "Variables de prueba",
+			"configure": "Configurar",
+			"close": "Cerrar variables dinámicas",
+			"resetOneAriaLabel": "Restablecer {{variable}} a su valor predeterminado",
+			"defaultValue": "Valor predeterminado",
+			"valuePlaceholder": "Escribe un valor",
+			"enabled": "Activado",
+			"disabled": "Desactivado",
+			"scopeHint": "Los cambios se aplican de inmediato y se guardan en este navegador para esta prueba.",
+			"listCount_one": "{{count}} variable",
+			"listCount_other": "{{count}} variables",
+			"overridesActive_one": "{{count}} valor modificado",
+			"overridesActive_other": "{{count}} valores modificados",
+			"noOverrides": "Usando valores predeterminados",
+			"resetAll": "Restablecer todo"
 		}
 	}
 }

@@ -9,6 +9,7 @@ export interface AgentFormProps {
 export type KnowledgeBaseRef = {
 	id: string;
 	name?: string;
+	identifier?: string;
 };
 
 export interface BuiltInTool {

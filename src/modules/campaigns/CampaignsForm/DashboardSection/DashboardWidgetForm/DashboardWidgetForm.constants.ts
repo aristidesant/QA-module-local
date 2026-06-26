@@ -1,5 +1,6 @@
 export const DASHBOARD_WIDGET_FORM_SECTION_IDS = {
 	widgetType: 'dashboard-widget-form-widget-type',
+	preset: 'dashboard-widget-form-preset',
 	sourceType: 'dashboard-widget-form-source-type',
 	sourceField: 'dashboard-widget-form-source-field',
 	aggregation: 'dashboard-widget-form-aggregation',

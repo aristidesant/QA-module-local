@@ -415,6 +415,61 @@
 					"false": "False"
 				}
 			},
+			"preset": {
+				"sectionTitle": "Preset",
+				"sectionDescription": "Use a built-in template to configure the metric automatically.",
+				"toggleLabel": "Use preset",
+				"aliasLabel": "Preset type",
+				"customOption": "Custom",
+				"kindLabel": "Count type",
+				"sourceLabel": "Data source",
+				"fieldLabel": "Field",
+				"valuesLabel": "Filter values",
+				"displayLabelLabel": "Display label",
+				"aliases": {
+					"CONTACTABILITY_RATE": "Contactability rate",
+					"CONTACTABILITY_RATE_description": "Share of dispositions where contact outcome is EFFECTIVE"
+				},
+				"kind": {
+					"COUNT": "Count",
+					"RATE": "Rate (%)"
+				},
+				"fields": {
+					"callStatus": "Call status",
+					"contactOutcome": "Contact outcome",
+					"statusContact": "Contact status",
+					"isVoiceMail": "Voicemail",
+					"isAbandoned": "Abandoned",
+					"doNotCall": "Do not call",
+					"requiresReschedule": "Requires reschedule",
+					"dispositionName": "Disposition name",
+					"status": "Status",
+					"agentId": "Agent",
+					"campaignId": "Campaign",
+					"duration": "Duration"
+				},
+				"callStatus": {
+					"POSITIVE": "Positive",
+					"NEGATIVE": "Negative",
+					"NEUTRAL": "Neutral"
+				},
+				"contactStatus": {
+					"DO_NOT_RESPOND": "Do not respond",
+					"CONTACTED": "Contacted",
+					"VOICE_MAIL": "Voice mail",
+					"ON_CALL": "On call",
+					"DECEASED": "Deceased",
+					"INACTIVE": "Inactive",
+					"ACTIVE": "Active"
+				},
+				"contactOutcome": {
+					"EFFECTIVE": "Effective",
+					"NOT_EFFECTIVE": "Not effective",
+					"NO_CONTACT": "No contact"
+				},
+				"includeChildrenLabel": "Include child dispositions",
+				"includeChildrenDescription": "Count the selected disposition node and all of its descendants."
+			},
 			"validation": {
 				"dashboardName": "Dashboard name is required.",
 				"widgetTitle": "Widget title is required.",
@@ -427,7 +482,13 @@
 				"groupByRequired": "Group by is required for this widget type.",
 				"metricMustSupportGroupBy": "The selected metric does not support grouped output.",
 				"metricMustSupportTimeSeries": "The selected metric does not support time series output.",
-				"minSize": "Value must be at least 1."
+				"minSize": "Value must be at least 1.",
+				"preset": {
+					"kindRequired": "Select a count type.",
+					"sourceRequired": "Select a data source.",
+					"fieldRequired": "Select a field.",
+					"valuesRequired": "Add at least one value for COUNT preset."
+				}
 			}
 		},
 		"deleteDashboard": {
@@ -511,6 +572,7 @@
 		"liveBadge": "Live",
 		"unsupportedMessage": "This widget type is not supported by the metric engine yet.",
 		"comparisonUnavailableTooltip": "Comparison is not available for this widget. Showing only the selected period.",
+		"rateCaption": "{{matched}} of {{total}}",
 		"metricMeta": "Metric key: {{metricKey}}",
 		"layoutMeta": "Layout {{width}} x {{height}}",
 		"renderError": "Unable to render the selected dashboard.",

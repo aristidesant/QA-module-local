@@ -61,6 +61,7 @@ export interface OutboundCallTask {
 		callDisposition?: {
 			id: number;
 			statusContact: string | null;
+			contactOutcome?: string | null;
 			dispositionName: string;
 			callStatus: string | null;
 			isAbandoned: boolean;
@@ -191,6 +192,12 @@ export interface UpdateContactPayload {
 	emails?: string[];
 	phones?: string[];
 	status?: ContactStatus | string;
+}
+
+export enum ContactOutcome {
+	EFFECTIVE = 'EFFECTIVE',
+	NOT_EFFECTIVE = 'NOT_EFFECTIVE',
+	NO_CONTACT = 'NO_CONTACT',
 }
 
 export enum ContactStatus {

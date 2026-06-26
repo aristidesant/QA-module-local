@@ -415,6 +415,61 @@
 					"false": "Falso"
 				}
 			},
+			"preset": {
+				"sectionTitle": "Preset",
+				"sectionDescription": "Usa una plantilla predefinida para configurar la métrica automáticamente.",
+				"toggleLabel": "Usar preset",
+				"aliasLabel": "Tipo de preset",
+				"customOption": "Personalizado",
+				"kindLabel": "Tipo de conteo",
+				"sourceLabel": "Fuente de datos",
+				"fieldLabel": "Campo",
+				"valuesLabel": "Valores de filtro",
+				"displayLabelLabel": "Etiqueta de visualización",
+				"aliases": {
+					"CONTACTABILITY_RATE": "Tasa de contactabilidad",
+					"CONTACTABILITY_RATE_description": "Porcentaje de disposiciones donde el resultado de contacto es EFFECTIVE"
+				},
+				"kind": {
+					"COUNT": "Conteo",
+					"RATE": "Tasa (%)"
+				},
+				"fields": {
+					"callStatus": "Estado de llamada",
+					"contactOutcome": "Resultado de contacto",
+					"statusContact": "Estado de contacto",
+					"isVoiceMail": "Buzón de voz",
+					"isAbandoned": "Abandonado",
+					"doNotCall": "No llamar",
+					"requiresReschedule": "Requiere reagenda",
+					"dispositionName": "Nombre de disposición",
+					"status": "Estado",
+					"agentId": "Agente",
+					"campaignId": "Campaña",
+					"duration": "Duración"
+				},
+				"callStatus": {
+					"POSITIVE": "Positivo",
+					"NEGATIVE": "Negativo",
+					"NEUTRAL": "Neutral"
+				},
+				"contactStatus": {
+					"DO_NOT_RESPOND": "No responder",
+					"CONTACTED": "Contactado",
+					"VOICE_MAIL": "Buzón de voz",
+					"ON_CALL": "En llamada",
+					"DECEASED": "Fallecido",
+					"INACTIVE": "Inactivo",
+					"ACTIVE": "Activo"
+				},
+				"contactOutcome": {
+					"EFFECTIVE": "Efectivo",
+					"NOT_EFFECTIVE": "No efectivo",
+					"NO_CONTACT": "Sin contacto"
+				},
+				"includeChildrenLabel": "Incluir nodos hijos",
+				"includeChildrenDescription": "Cuenta el nodo de resultado seleccionado y todos sus descendientes."
+			},
 			"validation": {
 				"dashboardName": "El nombre del dashboard es obligatorio.",
 				"widgetTitle": "El título del widget es obligatorio.",
@@ -427,7 +482,13 @@
 				"groupByRequired": "Agrupar por es obligatorio para este tipo de widget.",
 				"metricMustSupportGroupBy": "La métrica seleccionada no soporta salida agrupada.",
 				"metricMustSupportTimeSeries": "La métrica seleccionada no soporta salida de serie temporal.",
-				"minSize": "El valor debe ser al menos 1."
+				"minSize": "El valor debe ser al menos 1.",
+				"preset": {
+					"kindRequired": "Selecciona un tipo de conteo.",
+					"sourceRequired": "Selecciona una fuente de datos.",
+					"fieldRequired": "Selecciona un campo.",
+					"valuesRequired": "Agrega al menos un valor para el preset COUNT."
+				}
 			}
 		},
 		"deleteDashboard": {
@@ -511,6 +572,7 @@
 		"liveBadge": "Activo",
 		"unsupportedMessage": "Este tipo de widget aún no está soportado por el motor de métricas.",
 		"comparisonUnavailableTooltip": "La comparación no está disponible para este widget. Se muestra solo el período seleccionado.",
+		"rateCaption": "{{matched}} de {{total}}",
 		"metricMeta": "Clave de métrica: {{metricKey}}",
 		"layoutMeta": "Layout {{width}} x {{height}}",
 		"renderError": "No fue posible renderizar el dashboard seleccionado.",

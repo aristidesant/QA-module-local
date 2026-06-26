@@ -23,6 +23,10 @@ import type {
 	RuntimeFilterOperator,
 	PreviewDashboardWidgetDto,
 	TimeSeriesPoint,
+	WidgetPresetConfigDto,
+	WidgetPresetCustomConfigDto,
+	WidgetPresetAlias,
+	WidgetPresetKind,
 } from '~/models/AnalyticsDashboard';
 import {
 	DEFAULT_WIDGET_LAYOUT,
@@ -76,6 +80,7 @@ const CONVERSATION_FIELDS_FALLBACK: MetricColumnConfigEntry[] = [
 const DISPOSITION_FIELDS_FALLBACK: MetricColumnConfigEntry[] = [
 	{ label: 'Outcome Name', value: 'dispositionName', type: 'string' },
 	{ label: 'Call Status', value: 'callStatus', type: 'string' },
+	{ label: 'Contact Outcome', value: 'contactOutcome', type: 'string' },
 	{
 		label: 'Requires Reschedule',
 		value: 'requiresReschedule',
@@ -87,6 +92,41 @@ const DISPOSITION_FIELDS_FALLBACK: MetricColumnConfigEntry[] = [
 	{ label: 'Status Contact', value: 'statusContact', type: 'string' },
 	{ label: 'Created At', value: 'createdAt', type: 'date' },
 ];
+
+export const PRESET_FIELDS_BY_SOURCE: Record<
+	'CONVERSATION' | 'DISPOSITION',
+	string[]
+> = {
+	CONVERSATION: ['status', 'agentId', 'campaignId', 'duration'],
+	DISPOSITION: [
+		'callStatus',
+		'contactOutcome',
+		'statusContact',
+		'isVoiceMail',
+		'isAbandoned',
+		'doNotCall',
+		'requiresReschedule',
+		'dispositionName',
+	],
+};
+
+export const PRESET_VALUES_BY_FIELD: Record<string, string[]> = {
+	callStatus: ['POSITIVE', 'NEGATIVE', 'NEUTRAL'],
+	contactOutcome: ['EFFECTIVE', 'NOT_EFFECTIVE', 'NO_CONTACT'],
+	statusContact: [
+		'DO_NOT_RESPOND',
+		'CONTACTED',
+		'VOICE_MAIL',
+		'ON_CALL',
+		'DECEASED',
+		'INACTIVE',
+		'ACTIVE',
+	],
+	isVoiceMail: ['true', 'false'],
+	isAbandoned: ['true', 'false'],
+	doNotCall: ['true', 'false'],
+	requiresReschedule: ['true', 'false'],
+};
 
 const ATTRIBUTE_TYPED_GROUP_BY_FIELDS = [
 	'value_string',
@@ -139,6 +179,7 @@ const FILTER_FIELD_ALIASES: Record<MetricSourceType, Record<string, string>> = {
 	},
 	DISPOSITION: {
 		call_status: 'callStatus',
+		contact_outcome: 'contactOutcome',
 		created_at: 'createdAt',
 		disposition_name: 'dispositionName',
 		do_not_call: 'doNotCall',
@@ -550,6 +591,13 @@ const getSampleRows = (t: TFunction): WidgetPreviewRow[] => [
 ];
 
 export const isMetricSelectionReady = (values: WidgetFormValues) => {
+	if (values.presetEnabled) {
+		if (values.presetAlias) return true;
+		return Boolean(
+			values.presetKind && values.presetSource && values.presetField
+		);
+	}
+
 	if (values.sourceType === 'ATTRIBUTE') {
 		if (!trimText(values.metricKey)) {
 			return false;
@@ -1830,6 +1878,93 @@ const collectWidgetJoins = (
 	return [...joins.values()];
 };
 
+const ALIAS_EXPANSIONS: Record<WidgetPresetAlias, WidgetPresetCustomConfigDto> =
+	{
+		CONTACTABILITY_RATE: {
+			kind: 'RATE',
+			source: 'DISPOSITION',
+			field: 'contactOutcome',
+			values: ['EFFECTIVE'],
+		},
+	};
+
+export const buildPresetIntentPayload = (
+	values: WidgetFormValues
+): WidgetPresetConfigDto | undefined => {
+	if (!values.presetEnabled) return undefined;
+	if (values.presetAlias) {
+		const payload: WidgetPresetConfigDto = {
+			alias: values.presetAlias,
+			...(trimText(values.presetDisplayLabel)
+				? { displayLabel: trimText(values.presetDisplayLabel) }
+				: {}),
+		};
+		return payload;
+	}
+	if (!values.presetKind || !values.presetSource || !values.presetField) {
+		return undefined;
+	}
+	return {
+		kind: values.presetKind,
+		source: values.presetSource,
+		field: values.presetField,
+		...(values.presetValues.length ? { values: values.presetValues } : {}),
+		...(values.presetField === 'dispositionName'
+			? { includeChildren: values.includeChildren }
+			: {}),
+		...(values.presetDisplayLabel.trim()
+			? { displayLabel: values.presetDisplayLabel.trim() }
+			: {}),
+	};
+};
+
+const buildPresetRequestPayload = (
+	values: WidgetFormValues
+): WidgetPresetConfigDto | undefined => {
+	if (!values.presetEnabled) return undefined;
+	if (values.presetAlias) {
+		const expansion = ALIAS_EXPANSIONS[values.presetAlias];
+		return {
+			...expansion,
+			...(trimText(values.presetDisplayLabel)
+				? { displayLabel: trimText(values.presetDisplayLabel) }
+				: {}),
+		};
+	}
+	return buildPresetIntentPayload(values);
+};
+
+const buildPresetMetricShell = (
+	values: WidgetFormValues
+): DashboardWidgetMetricConfig => {
+	if (values.presetAlias === 'CONTACTABILITY_RATE') {
+		const expansion = ALIAS_EXPANSIONS[values.presetAlias];
+		return {
+			sourceType: expansion.source,
+			aggregationType: 'COUNT',
+			fieldName: expansion.field,
+			resultType: 'PERCENT',
+		};
+	}
+	if (!values.presetKind || !values.presetSource || !values.presetField) {
+		return {
+			sourceType: 'DISPOSITION',
+			aggregationType: 'COUNT',
+			fieldName: undefined,
+			resultType: 'NUMBER',
+		};
+	}
+	const sourceType: MetricSourceType = values.presetSource ?? 'DISPOSITION';
+	const resultType: MetricResultType =
+		values.presetKind === 'RATE' ? 'PERCENT' : 'NUMBER';
+	return {
+		sourceType,
+		aggregationType: 'COUNT',
+		fieldName: values.presetField ?? undefined,
+		resultType,
+	};
+};
+
 export const buildWidgetDataConfig = (
 	values: WidgetFormValues,
 	options: {
@@ -1838,6 +1973,13 @@ export const buildWidgetDataConfig = (
 		dispositionFields?: MetricColumnConfigEntry[];
 	} = {}
 ): DashboardWidgetDataConfig => {
+	if (values.presetEnabled) {
+		return {
+			metric: buildPresetMetricShell(values),
+			preset: buildPresetRequestPayload(values),
+		};
+	}
+
 	const conversationFields = options.conversationFields ?? [];
 	const dispositionFields = options.dispositionFields ?? [];
 	const metricKeyOptions = options.metricKeyOptions ?? [];
@@ -1989,6 +2131,10 @@ export const isWidgetPreviewReady = (values: WidgetFormValues) => {
 		return false;
 	}
 
+	if (values.presetEnabled) {
+		return true;
+	}
+
 	if (hasInvalidDefaultFilterRows(values.defaultFilters)) {
 		return false;
 	}
@@ -2014,6 +2160,7 @@ export const buildPreviewRequestPayload = (
 	}
 
 	if (
+		!values.presetEnabled &&
 		hasInvalidRuntimeFilterRows(
 			values.runtimeFilters,
 			values,
@@ -2255,6 +2402,7 @@ export const buildQueryPayload = (
 export const buildViewConfigPayload = (
 	values: WidgetFormValues
 ): DashboardWidgetViewConfig | null => {
+	const preset = buildPresetIntentPayload(values);
 	const payload: DashboardWidgetViewConfig = {
 		...(trimText(values.viewColor)
 			? { color: trimText(values.viewColor) }
@@ -2265,6 +2413,7 @@ export const buildViewConfigPayload = (
 		...(supportsGroupedWidget(values.widgetType)
 			? { legend: values.viewLegend }
 			: {}),
+		...(preset ? { presetIntent: preset } : {}),
 	};
 
 	return Object.keys(payload).length ? payload : null;
@@ -2321,6 +2470,40 @@ export const widgetFormValues = (
 	const metric = dataConfig?.metric;
 	const query = dataConfig?.query;
 	const viewConfig = widget?.viewConfig;
+	const presetIntent =
+		viewConfig?.presetIntent &&
+		typeof viewConfig.presetIntent === 'object' &&
+		!Array.isArray(viewConfig.presetIntent)
+			? (viewConfig.presetIntent as WidgetPresetConfigDto)
+			: null;
+	const presetAlias =
+		presetIntent && 'alias' in presetIntent ? presetIntent.alias : null;
+	const presetKind =
+		presetIntent && 'kind' in presetIntent ? presetIntent.kind : null;
+	const presetSource =
+		presetIntent && 'source' in presetIntent ? presetIntent.source : null;
+	const presetField =
+		presetIntent && 'field' in presetIntent ? presetIntent.field : null;
+	const presetValues =
+		presetIntent &&
+		'values' in presetIntent &&
+		Array.isArray(presetIntent.values)
+			? presetIntent.values
+			: [];
+	const presetDisplayLabel =
+		presetIntent && 'displayLabel' in presetIntent
+			? typeof presetIntent.displayLabel === 'string'
+				? presetIntent.displayLabel
+				: ''
+			: '';
+	const includeChildren =
+		presetField === 'dispositionName' &&
+		presetIntent &&
+		'includeChildren' in presetIntent
+			? (presetIntent.includeChildren ?? true)
+			: presetField === 'dispositionName'
+				? true
+				: false;
 
 	return {
 		widgetType: widget?.widgetType ?? 'KPI',
@@ -2356,5 +2539,13 @@ export const widgetFormValues = (
 		enabled: widget?.enabled ?? true,
 		defaultFilters: mapDefaultFilters(metric?.defaultFilter),
 		runtimeFilters: mapRuntimeFilters(dataConfig?.runtimeFilters),
+		presetEnabled: Boolean(presetIntent),
+		presetAlias: presetAlias as WidgetPresetAlias | null,
+		presetKind: presetKind as WidgetPresetKind | null,
+		presetSource: presetSource as 'CONVERSATION' | 'DISPOSITION' | null,
+		presetField,
+		presetValues,
+		presetDisplayLabel,
+		includeChildren,
 	};
 };

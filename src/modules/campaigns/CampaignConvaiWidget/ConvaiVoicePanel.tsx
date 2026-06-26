@@ -20,6 +20,7 @@ import { useCampaignConvai } from './CampaignConvaiContext';
 import ConvaiAgentAvatar from './ConvaiAgentAvatar';
 import ConvaiTranscript from './ConvaiTranscript';
 import ConvaiMessageInput from './ConvaiMessageInput';
+import ConvaiDynamicVariablesPanel from './ConvaiDynamicVariablesPanel';
 import styles from './CampaignConvaiWidget.module.css';
 
 const ConvaiVoicePanel = () => {
@@ -155,6 +156,8 @@ const ConvaiVoicePanel = () => {
 					/>
 				</div>
 			)}
+
+			<ConvaiDynamicVariablesPanel />
 
 			{status === 'error' && message && (
 				<Alert

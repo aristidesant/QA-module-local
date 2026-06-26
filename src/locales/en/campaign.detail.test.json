@@ -74,6 +74,24 @@
 			"retry": "Retry",
 			"microphonePermission": "Microphone access is blocked. Allow microphone access in the browser before starting the voice call.",
 			"microphoneUnavailable": "This browser cannot access a microphone for the voice call."
+		},
+		"dynamicVariables": {
+			"title": "Dynamic variables",
+			"popoverTitle": "Test variables",
+			"configure": "Configure",
+			"close": "Close dynamic variables",
+			"resetOneAriaLabel": "Reset {{variable}} to its default value",
+			"defaultValue": "Default",
+			"valuePlaceholder": "Enter a value",
+			"enabled": "Enabled",
+			"disabled": "Disabled",
+			"scopeHint": "Changes apply immediately and are saved in this browser for this test.",
+			"listCount_one": "{{count}} variable",
+			"listCount_other": "{{count}} variables",
+			"overridesActive_one": "{{count}} override active",
+			"overridesActive_other": "{{count}} overrides active",
+			"noOverrides": "Using defaults",
+			"resetAll": "Reset all"
 		}
 	}
 }

@@ -198,7 +198,15 @@
 			"isAbandonedDescription": "Mark this outcome when the customer hangs up before completing the flow.",
 			"requiresReschedule": "Requires Reschedule",
 			"isFinal": "Is Final",
-			"isVoiceMail": "Is Voice Mail"
+			"isVoiceMail": "Is Voice Mail",
+			"contactOutcome": "Contact Outcome",
+			"contactOutcomePlaceholder": "Select contact outcome",
+			"contactOutcomeRequired": "Contact outcome is required for outbound catalogs",
+			"contactOutcomeEffective": "Effective",
+			"contactOutcomeNotEffective": "Not Effective",
+			"contactOutcomeNoContact": "No Contact",
+			"applyContactOutcomeToDescendants": "Apply to all descendants",
+			"applyContactOutcomeToDescendantsDescription": "Updates the contact outcome on all child nodes below this one."
 		}
 	},
 	"formCatalog": {

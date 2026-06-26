@@ -183,6 +183,10 @@
 	color: var(--mantine-color-green-7);
 }
 
+.sectionHeaderIconGlyph {
+	opacity: 0.7;
+}
+
 .sectionHeaderStep {
 	font-size: 0.72rem;
 	font-weight: 700;

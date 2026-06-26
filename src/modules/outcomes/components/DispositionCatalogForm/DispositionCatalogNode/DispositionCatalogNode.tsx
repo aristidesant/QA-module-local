@@ -56,6 +56,7 @@ type ModalState = {
 	open: boolean;
 	parentId?: number;
 	editNode?: DispositionNode;
+	isProtected?: boolean;
 };
 
 type DispositionCatalogFormProps = {
@@ -86,6 +87,30 @@ type ArboristNode = {
 };
 
 type NodeRowStyle = CSSProperties & { '--connector-x'?: string };
+
+function findNodeInTree(
+	nodes: ArboristNode[],
+	targetId: string
+): ArboristNode | null {
+	for (const node of nodes) {
+		if (node.id === targetId) return node;
+		const found = findNodeInTree(node.children, targetId);
+		if (found) return found;
+	}
+	return null;
+}
+
+function collectAllDescendantIds(node: ArboristNode): number[] {
+	const ids: number[] = [];
+	const walk = (children: ArboristNode[]) => {
+		for (const child of children) {
+			ids.push(Number(child.id));
+			walk(child.children);
+		}
+	};
+	walk(node.children);
+	return ids;
+}
 
 const isProtectedDefaultNode = (
 	node: DispositionNode,
@@ -203,10 +228,8 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 	};
 
 	const handleEditNode = (nodeData: DispositionNode) => {
-		if (isProtectedDefaultNode(nodeData, catalogType)) {
-			return;
-		}
-		setModal({ open: true, editNode: nodeData });
+		const isProtected = isProtectedDefaultNode(nodeData, catalogType);
+		setModal({ open: true, editNode: nodeData, isProtected });
 	};
 
 	const handleDeleteNode = (nodeData: DispositionNode) => {
@@ -239,6 +262,25 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 		const isProtectedNode = isProtectedDefaultNode(nodeData, catalogType);
 		const isDoNotCall = Boolean(nodeData.doNotCall ?? nodeData.do_not_call);
 		const isAbandoned = Boolean(nodeData.isAbandoned);
+		const contactOutcome = nodeData.contactOutcome ?? null;
+		const contactOutcomeBadge = contactOutcome
+			? ((
+					{
+						EFFECTIVE: {
+							color: 'green',
+							label: t('form.fields.contactOutcomeEffective'),
+						},
+						NOT_EFFECTIVE: {
+							color: 'red',
+							label: t('form.fields.contactOutcomeNotEffective'),
+						},
+						NO_CONTACT: {
+							color: 'gray',
+							label: t('form.fields.contactOutcomeNoContact'),
+						},
+					} as Record<string, { color: string; label: string }>
+				)[contactOutcome] ?? null)
+			: null;
 		const nodeTypeLabel = hasChildren
 			? t('catalog.nodeType.group')
 			: t('catalog.nodeType.outcome');
@@ -363,6 +405,16 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 										{t('catalog.labels.abandoned')}
 									</Badge>
 								)}
+								{contactOutcomeBadge && (
+									<Badge
+										size='xs'
+										variant='light'
+										color={contactOutcomeBadge.color}
+										radius='xl'
+									>
+										{contactOutcomeBadge.label}
+									</Badge>
+								)}
 							</div>
 						</div>
 						<Text className={styles.nodeMeta} size='xs'>
@@ -414,7 +466,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 											</ActionIcon>
 										</Tooltip>
 									)}
-							{!isProtectedNode && canUpdate && (
+							{canUpdate && (
 								<Tooltip label={t('catalog.actions.edit')} withArrow>
 									<ActionIcon
 										size='xs'
@@ -488,7 +540,7 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 												{t('catalog.actions.deactivate')}
 											</Menu.Item>
 										)}
-								{!isProtectedNode && canUpdate && (
+								{canUpdate && (
 									<Menu.Item
 										leftSection={<IconPencil size={14} />}
 										onClick={() => handleEditNode(nodeData)}
@@ -590,18 +642,47 @@ const DispositionCatalogForm: React.FC<DispositionCatalogFormProps> = ({
 				opened={modal.open}
 				onClose={() => setModal({ open: false })}
 				initialValues={modal.editNode}
+				catalogType={catalogType}
+				protectedMode={modal.isProtected}
+				hasChildren={
+					modal.editNode
+						? (findNodeInTree(treeData, modal.editNode.id.toString())?.children
+								.length ?? 0) > 0
+						: false
+				}
 				onSubmit={async (values) => {
 					if (!catalogId) return;
+					const { applyContactOutcomeToDescendants, ...apiValues } = values;
 					if (modal.editNode) {
+						const payload = modal.isProtected
+							? { contactOutcome: apiValues.contactOutcome }
+							: apiValues;
 						await updateNode.mutateAsync({
 							id: modal.editNode.id,
-							data: values,
+							data: payload,
 						});
+						if (applyContactOutcomeToDescendants && apiValues.contactOutcome) {
+							const targetNode = findNodeInTree(
+								treeData,
+								modal.editNode.id.toString()
+							);
+							if (targetNode) {
+								const descendantIds = collectAllDescendantIds(targetNode);
+								await Promise.all(
+									descendantIds.map((id) =>
+										updateNode.mutateAsync({
+											id,
+											data: { contactOutcome: apiValues.contactOutcome },
+										})
+									)
+								);
+							}
+						}
 						await reloadCatalogs();
 					} else {
 						await createNode.mutateAsync({
 							data: {
-								...values,
+								...apiValues,
 								catalogId: Number(catalogId),
 								parentId: modal.parentId,
 							},

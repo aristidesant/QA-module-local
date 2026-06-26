@@ -22,7 +22,7 @@ export const useKnowledgeBasesLogic = (
 		const refs: KnowledgeBaseRef[] = [];
 		items.forEach((item) => {
 			if (typeof item === 'string' || typeof item === 'number') {
-				refs.push({ id: String(item) });
+				refs.push({ id: String(item), identifier: String(item) });
 				return;
 			}
 			if (!item || typeof item !== 'object') return;
@@ -30,17 +30,24 @@ export const useKnowledgeBasesLogic = (
 			const idCandidate =
 				record.id ?? record.knowledgeBaseId ?? record.kbId ?? null;
 			const nameCandidate = record.name ?? record.label ?? null;
+			const identifierCandidate =
+				record.identifier ?? record.knowledgeBaseIdentifier ?? null;
 			if (typeof idCandidate === 'string' || typeof idCandidate === 'number') {
 				refs.push({
 					id: String(idCandidate),
 					name: typeof nameCandidate === 'string' ? nameCandidate : undefined,
+					identifier:
+						typeof identifierCandidate === 'string'
+							? identifierCandidate
+							: String(idCandidate),
 				});
 			}
 		});
 		const deduped = new Map<string, KnowledgeBaseRef>();
 		refs.forEach((ref) => {
-			const existing = deduped.get(ref.id);
-			deduped.set(ref.id, existing?.name ? existing : ref);
+			const key = ref.identifier ?? ref.id;
+			const existing = deduped.get(key);
+			deduped.set(key, existing?.name ? existing : ref);
 		});
 		return Array.from(deduped.values());
 	};
