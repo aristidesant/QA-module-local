@@ -198,7 +198,15 @@
 			"isAbandonedDescription": "Marca este outcome cuando el cliente cierra la llamada antes de concluir el flujo.",
 			"requiresReschedule": "Requiere re-programación",
 			"isFinal": "Es final",
-			"isVoiceMail": "Es buzón de voz"
+			"isVoiceMail": "Es buzón de voz",
+			"contactOutcome": "Resultado de contacto",
+			"contactOutcomePlaceholder": "Selecciona el resultado de contacto",
+			"contactOutcomeRequired": "El resultado de contacto es requerido para catálogos outbound",
+			"contactOutcomeEffective": "Efectivo",
+			"contactOutcomeNotEffective": "No efectivo",
+			"contactOutcomeNoContact": "Sin contacto",
+			"applyContactOutcomeToDescendants": "Aplicar a todos los descendientes",
+			"applyContactOutcomeToDescendantsDescription": "Actualiza el resultado de contacto en todos los nodos hijos debajo de este."
 		}
 	},
 	"formCatalog": {

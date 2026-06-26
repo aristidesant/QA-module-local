@@ -127,26 +127,52 @@ const useDashboardWidgetFormController = ({
 			title: (value) =>
 				value.trim() ? null : t('dashboardBuilder.form.validation.widgetTitle'),
 			fieldName: (value, currentValues) =>
+				!currentValues.presetEnabled &&
 				currentValues.sourceType !== 'ATTRIBUTE' &&
 				!(typeof value === 'string' ? value.trim() : '')
 					? t('dashboardBuilder.form.validation.fieldNameRequired')
 					: null,
 			metricKey: (value, currentValues) =>
+				!currentValues.presetEnabled &&
 				currentValues.sourceType === 'ATTRIBUTE' &&
 				!(typeof value === 'string' ? value.trim() : '')
 					? t('dashboardBuilder.form.validation.metricKeyRequired')
 					: null,
 			valueField: (value, currentValues) =>
+				!currentValues.presetEnabled &&
 				requiresValueField(
 					currentValues.sourceType,
 					currentValues.aggregationType
-				) && !value
+				) &&
+				!value
 					? t('dashboardBuilder.form.validation.valueFieldRequired')
 					: null,
 			groupBy: (value, currentValues) =>
+				!currentValues.presetEnabled &&
 				supportsGroupedWidget(currentValues.widgetType) &&
 				!getResolvedGroupBy({ ...currentValues, groupBy: value })
 					? t('dashboardBuilder.form.validation.groupByRequired')
+					: null,
+			presetKind: (value, currentValues) =>
+				currentValues.presetEnabled && !currentValues.presetAlias && !value
+					? t('dashboardBuilder.form.validation.preset.kindRequired')
+					: null,
+			presetSource: (value, currentValues) =>
+				currentValues.presetEnabled && !currentValues.presetAlias && !value
+					? t('dashboardBuilder.form.validation.preset.sourceRequired')
+					: null,
+			presetField: (value, currentValues) =>
+				currentValues.presetEnabled &&
+				!currentValues.presetAlias &&
+				!(typeof value === 'string' ? value.trim() : '')
+					? t('dashboardBuilder.form.validation.preset.fieldRequired')
+					: null,
+			presetValues: (value, currentValues) =>
+				currentValues.presetEnabled &&
+				!currentValues.presetAlias &&
+				currentValues.presetKind === 'COUNT' &&
+				(!Array.isArray(value) || value.length === 0)
+					? t('dashboardBuilder.form.validation.preset.valuesRequired')
 					: null,
 			limit: (value) =>
 				value === '' || value >= 1
@@ -644,54 +670,56 @@ const useDashboardWidgetFormController = ({
 	};
 
 	const handleSubmit = form.onSubmit(async (submitValues) => {
-		if (isGlobalDashboard && submitValues.sourceType === 'ATTRIBUTE') {
-			form.setFieldError(
-				'sourceType',
-				t('dashboardBuilder.form.validation.attributeNotAvailable')
-			);
-			return;
-		}
+		if (!submitValues.presetEnabled) {
+			if (isGlobalDashboard && submitValues.sourceType === 'ATTRIBUTE') {
+				form.setFieldError(
+					'sourceType',
+					t('dashboardBuilder.form.validation.attributeNotAvailable')
+				);
+				return;
+			}
 
-		if (needsGroupedConfig && !submitValues.supportsGroupBy) {
-			form.setFieldError(
-				'groupBy',
-				t('dashboardBuilder.form.validation.metricMustSupportGroupBy')
-			);
-			return;
-		}
+			if (needsGroupedConfig && !submitValues.supportsGroupBy) {
+				form.setFieldError(
+					'groupBy',
+					t('dashboardBuilder.form.validation.metricMustSupportGroupBy')
+				);
+				return;
+			}
 
-		if (needsTimeSeriesMetric && !submitValues.supportsTimeSeries) {
-			form.setFieldError(
-				'widgetType',
-				t('dashboardBuilder.form.validation.metricMustSupportTimeSeries')
-			);
-			return;
-		}
+			if (needsTimeSeriesMetric && !submitValues.supportsTimeSeries) {
+				form.setFieldError(
+					'widgetType',
+					t('dashboardBuilder.form.validation.metricMustSupportTimeSeries')
+				);
+				return;
+			}
 
-		if (hasInvalidDefaultFilterRows(submitValues.defaultFilters)) {
-			notifications.show({
-				title: t('dashboardBuilder.notifications.errorTitle'),
-				message: t('dashboardBuilder.form.validation.defaultFilterInvalid'),
-				color: 'red',
-			});
-			return;
-		}
+			if (hasInvalidDefaultFilterRows(submitValues.defaultFilters)) {
+				notifications.show({
+					title: t('dashboardBuilder.notifications.errorTitle'),
+					message: t('dashboardBuilder.form.validation.defaultFilterInvalid'),
+					color: 'red',
+				});
+				return;
+			}
 
-		if (
-			hasInvalidRuntimeFilterRows(
-				submitValues.runtimeFilters,
-				submitValues,
-				metricKeyOptions,
-				parsedMetricColumns.conversation,
-				parsedMetricColumns.disposition
-			)
-		) {
-			notifications.show({
-				title: t('dashboardBuilder.notifications.errorTitle'),
-				message: t('dashboardBuilder.form.validation.runtimeFilterInvalid'),
-				color: 'red',
-			});
-			return;
+			if (
+				hasInvalidRuntimeFilterRows(
+					submitValues.runtimeFilters,
+					submitValues,
+					metricKeyOptions,
+					parsedMetricColumns.conversation,
+					parsedMetricColumns.disposition
+				)
+			) {
+				notifications.show({
+					title: t('dashboardBuilder.notifications.errorTitle'),
+					message: t('dashboardBuilder.form.validation.runtimeFilterInvalid'),
+					color: 'red',
+				});
+				return;
+			}
 		}
 
 		const trimmedRoleIds = Array.from(new Set(submitValues.roleIds));
@@ -771,7 +799,101 @@ const useDashboardWidgetFormController = ({
 			nextValues.limit = '';
 		}
 
+		if (nextWidgetType !== 'KPI' && nextValues.presetEnabled) {
+			nextValues.presetEnabled = false;
+			nextValues.presetAlias = null;
+			nextValues.presetKind = null;
+			nextValues.presetSource = null;
+			nextValues.presetField = null;
+			nextValues.presetValues = [];
+			nextValues.presetDisplayLabel = '';
+			nextValues.includeChildren = false;
+		}
+
 		updateFormValues(nextValues);
+	};
+
+	const handlePresetEnabledChange = (enabled: boolean) => {
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			presetEnabled: enabled,
+		};
+		if (enabled) {
+			nextValues.fieldName = null;
+			nextValues.metricKey = null;
+			nextValues.valueField = null;
+			nextValues.resultType = null;
+			nextValues.defaultFilters = [createEmptyFilterRow()];
+			nextValues.runtimeFilters = [createEmptyRuntimeFilterRow()];
+			nextValues.includeChildren = true;
+		} else {
+			nextValues.presetAlias = null;
+			nextValues.presetKind = null;
+			nextValues.presetSource = null;
+			nextValues.presetField = null;
+			nextValues.presetValues = [];
+			nextValues.presetDisplayLabel = '';
+			nextValues.includeChildren = false;
+		}
+		updateFormValues(nextValues);
+		setManualCompatibility({
+			resultType: false,
+			supportsGroupBy: false,
+			supportsTimeSeries: false,
+		});
+	};
+
+	const handlePresetAliasChange = (value: string | null) => {
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			presetAlias: value as WidgetFormValues['presetAlias'],
+			presetKind: null,
+			presetSource: null,
+			presetField: null,
+			presetValues: [],
+			includeChildren: false,
+		};
+		updateFormValues(nextValues);
+	};
+
+	const handlePresetKindChange = (value: string | null) => {
+		form.setFieldValue(
+			'presetKind',
+			(value as WidgetFormValues['presetKind']) ?? null
+		);
+	};
+
+	const handlePresetSourceChange = (value: string | null) => {
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			presetSource: (value as WidgetFormValues['presetSource']) ?? null,
+			presetField: null,
+			presetValues: [],
+			includeChildren: false,
+		};
+		updateFormValues(nextValues);
+	};
+
+	const handlePresetFieldChange = (value: string | null) => {
+		const nextValues: WidgetFormValues = {
+			...form.getValues(),
+			presetField: value ?? null,
+			presetValues: [],
+			includeChildren: value === 'dispositionName',
+		};
+		updateFormValues(nextValues);
+	};
+
+	const handlePresetValuesChange = (values: string[]) => {
+		form.setFieldValue('presetValues', values);
+	};
+
+	const handlePresetDisplayLabelChange = (value: string) => {
+		form.setFieldValue('presetDisplayLabel', value);
+	};
+
+	const handlePresetIncludeChildrenChange = (checked: boolean) => {
+		form.setFieldValue('includeChildren', checked);
 	};
 
 	const handleSourceTypeChange = (value: string | null) => {
@@ -1367,6 +1489,14 @@ const useDashboardWidgetFormController = ({
 				handleSupportsTimeSeriesChange,
 				handleViewLegendChange,
 				handleTitleChange,
+				handlePresetEnabledChange,
+				handlePresetAliasChange,
+				handlePresetKindChange,
+				handlePresetSourceChange,
+				handlePresetFieldChange,
+				handlePresetValuesChange,
+				handlePresetDisplayLabelChange,
+				handlePresetIncludeChildrenChange,
 			},
 		}),
 		[
@@ -1410,6 +1540,14 @@ const useDashboardWidgetFormController = ({
 			handleViewLegendChange,
 			handleViewValueFormatChange,
 			handleWidgetTypeChange,
+			handlePresetEnabledChange,
+			handlePresetAliasChange,
+			handlePresetKindChange,
+			handlePresetSourceChange,
+			handlePresetFieldChange,
+			handlePresetValuesChange,
+			handlePresetDisplayLabelChange,
+			handlePresetIncludeChildrenChange,
 			isAttributeMetric,
 			isCampaignLoading,
 			isEditing,

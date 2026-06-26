@@ -6,6 +6,7 @@ export interface DispositionNode {
 	description?: string;
 	isInvalidatesNumber: boolean;
 	isAbandoned?: boolean;
+	contactOutcome?: string | null;
 	/**
 	 * When true, selecting this disposition means the client should not be called again.
 	 * Backend enforces behavior; frontend only allows editing.
@@ -38,6 +39,7 @@ export interface CreateDispositionNodePayload {
 	isFinal?: boolean;
 	isVoiceMail?: boolean;
 	isAbandoned?: boolean;
+	contactOutcome?: string | null;
 	catalogId: number;
 	parentId?: number;
 }
@@ -51,6 +53,7 @@ export interface UpdateDispositionNodePayload {
 	isFinal?: boolean;
 	isVoiceMail?: boolean;
 	isAbandoned?: boolean;
+	contactOutcome?: string | null;
 	parentId?: number | null;
 }
 

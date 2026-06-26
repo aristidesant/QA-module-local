@@ -132,6 +132,14 @@ export type DashboardWidgetFormState = {
 		handleSupportsTimeSeriesChange: (checked: boolean) => void;
 		handleViewLegendChange: (checked: boolean) => void;
 		handleTitleChange: (value: string) => void;
+		handlePresetEnabledChange: (enabled: boolean) => void;
+		handlePresetAliasChange: (value: string | null) => void;
+		handlePresetKindChange: (value: string | null) => void;
+		handlePresetSourceChange: (value: string | null) => void;
+		handlePresetFieldChange: (value: string | null) => void;
+		handlePresetValuesChange: (values: string[]) => void;
+		handlePresetDisplayLabelChange: (value: string) => void;
+		handlePresetIncludeChildrenChange: (checked: boolean) => void;
 	};
 };
 

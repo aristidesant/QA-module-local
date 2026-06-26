@@ -1,5 +1,29 @@
 export type AnalyticsTimeRange = 'TODAY' | 'WEEK' | 'MONTH' | 'YEAR' | 'ALL';
 
+export type WidgetPresetKind = 'COUNT' | 'RATE';
+
+export type WidgetPresetAlias = 'CONTACTABILITY_RATE';
+
+export type CallStatus = 'POSITIVE' | 'NEGATIVE' | 'NEUTRAL';
+
+export interface WidgetPresetAliasConfigDto {
+	alias: WidgetPresetAlias;
+	displayLabel?: string;
+}
+
+export interface WidgetPresetCustomConfigDto {
+	kind: WidgetPresetKind;
+	source: Exclude<MetricSourceType, 'ATTRIBUTE'>;
+	field: string;
+	values?: string[];
+	includeChildren?: boolean;
+	displayLabel?: string;
+}
+
+export type WidgetPresetConfigDto =
+	| WidgetPresetAliasConfigDto
+	| WidgetPresetCustomConfigDto;
+
 export type AnalyticsComparisonMode = 'PREVIOUS_PERIOD';
 
 export type MetricTrend = 'UP' | 'DOWN' | 'FLAT' | 'UNAVAILABLE';
@@ -101,6 +125,7 @@ export interface DashboardWidgetDataConfig {
 	query?: DashboardWidgetQueryConfig | null;
 	runtimeFilters?: RuntimeFilter[] | null;
 	joins?: DashboardWidgetJoinConfig[] | null;
+	preset?: WidgetPresetConfigDto;
 }
 
 export interface DashboardWidgetViewConfig {
@@ -212,6 +237,8 @@ export interface SingleValueMetricResult {
 		sourceType: MetricSourceType;
 		aggregationType: MetricAggregationType;
 		compareWith?: MetricCompareWith;
+		matched?: number;
+		total?: number;
 	};
 }
 

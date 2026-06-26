@@ -7,6 +7,7 @@ import DashboardWidgetAggregationSection from './DashboardWidgetAggregationSecti
 import DashboardWidgetAdvancedSection from './DashboardWidgetAdvancedSection';
 import DashboardWidgetBasicsSection from './DashboardWidgetBasicsSection';
 import DashboardWidgetMetricSourceSection from './DashboardWidgetMetricSourceSection';
+import DashboardWidgetPresetSection from './DashboardWidgetPresetSection';
 import DashboardWidgetTypeSection from './DashboardWidgetTypeSection';
 import DashboardWidgetPreviewPanel from './DashboardWidgetPreviewPanel';
 import DashboardWidgetProgressSidebar from './DashboardWidgetProgressSidebar';
@@ -34,6 +35,7 @@ const DashboardWidgetForm = (props: DashboardWidgetFormProps) => {
 	const { t } = useTranslation(['campaign.form.dashboards', 'common']);
 	const { form, state, handleSubmit, isSubmitting, isEditing, onCancel } =
 		useDashboardWidgetFormController(props);
+	const presetEnabled = state.values.presetEnabled;
 	const deferredValues = useDeferredValue(state.values);
 	const deferredPreview = useDeferredValue(state.guidedState.preview);
 
@@ -86,12 +88,17 @@ const DashboardWidgetForm = (props: DashboardWidgetFormProps) => {
 					>
 						<div className={styles.pageBodyInner}>
 							<div className={styles.formColumn}>
-								<DashboardWidgetMetricSourceSection />
-								<DashboardWidgetAggregationSection />
 								<DashboardWidgetTypeSection />
+								<DashboardWidgetPresetSection />
+								{!presetEnabled && (
+									<>
+										<DashboardWidgetMetricSourceSection />
+										<DashboardWidgetAggregationSection />
+									</>
+								)}
 								<DashboardWidgetBasicsSection />
 								<DashboardWidgetRoleAccessSection />
-								<DashboardWidgetAdvancedSection />
+								{!presetEnabled && <DashboardWidgetAdvancedSection />}
 							</div>
 
 							<aside className={styles.sidebarColumn}>

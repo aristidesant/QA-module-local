@@ -1,6 +1,7 @@
 import {
 	Modal,
 	TextInput,
+	Select,
 	Switch,
 	Button,
 	Group,
@@ -10,6 +11,7 @@ import {
 import { useForm } from '@mantine/form';
 import { useTranslation } from 'react-i18next';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
+import { ContactOutcome } from '~/models/ContactsModel';
 import { useEffect } from 'react';
 
 export type DispositionNodeFormValues = {
@@ -21,6 +23,8 @@ export type DispositionNodeFormValues = {
 	isFinal: boolean;
 	isVoiceMail: boolean;
 	isAbandoned: boolean;
+	contactOutcome: string | null;
+	applyContactOutcomeToDescendants: boolean;
 };
 
 interface DispositionNodeFormProps {
@@ -29,6 +33,10 @@ interface DispositionNodeFormProps {
 	onSubmit: (values: DispositionNodeFormValues) => void;
 	initialValues?: Partial<DispositionNode>;
 	title?: string;
+	catalogType?: 'INBOUND' | 'OUTBOUND';
+	hasChildren?: boolean;
+	/** When true only the contactOutcome field is shown (protected root nodes). */
+	protectedMode?: boolean;
 }
 
 const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
@@ -37,8 +45,28 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 	onSubmit,
 	initialValues,
 	title,
+	catalogType,
+	hasChildren,
+	protectedMode,
 }) => {
 	const { t } = useTranslation('outcomes');
+	const isOutbound = catalogType === 'OUTBOUND';
+
+	const contactOutcomeOptions = [
+		{
+			value: ContactOutcome.EFFECTIVE,
+			label: t('form.fields.contactOutcomeEffective'),
+		},
+		{
+			value: ContactOutcome.NOT_EFFECTIVE,
+			label: t('form.fields.contactOutcomeNotEffective'),
+		},
+		{
+			value: ContactOutcome.NO_CONTACT,
+			label: t('form.fields.contactOutcomeNoContact'),
+		},
+	];
+
 	const form = useForm<DispositionNodeFormValues>({
 		initialValues: {
 			name: '',
@@ -49,7 +77,12 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 			isFinal: false,
 			isVoiceMail: false,
 			isAbandoned: false,
-			...initialValues,
+			contactOutcome: null,
+			applyContactOutcomeToDescendants: false,
+		},
+		validate: {
+			contactOutcome: (value) =>
+				isOutbound && !value ? t('form.fields.contactOutcomeRequired') : null,
 		},
 	});
 
@@ -65,9 +98,14 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 			isVoiceMail:
 				initialValues?.isVoiceMail ?? initialValues?.is_voice_mail ?? false,
 			isAbandoned: initialValues?.isAbandoned ?? false,
+			contactOutcome: initialValues?.contactOutcome ?? null,
+			applyContactOutcomeToDescendants: false,
 		});
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [initialValues]);
+
+	const showApplyToDescendants =
+		hasChildren && form.values.contactOutcome !== null;
 
 	return (
 		<Modal
@@ -79,53 +117,80 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 		>
 			<form onSubmit={form.onSubmit(onSubmit)}>
 				<Stack gap='md'>
+					{!protectedMode && (
+						<Stack gap='xs'>
+							<TextInput
+								label={t('form.fields.name')}
+								required
+								{...form.getInputProps('name')}
+							/>
+							<TextInput
+								label={t('form.fields.description')}
+								{...form.getInputProps('description')}
+							/>
+						</Stack>
+					)}
 					<Stack gap='xs'>
-						<TextInput
-							label={t('form.fields.name')}
-							required
-							{...form.getInputProps('name')}
+						<Select
+							label={t('form.fields.contactOutcome')}
+							placeholder={t('form.fields.contactOutcomePlaceholder')}
+							data={contactOutcomeOptions}
+							clearable={!isOutbound && !protectedMode}
+							required={isOutbound || protectedMode}
+							{...form.getInputProps('contactOutcome')}
 						/>
-						<TextInput
-							label={t('form.fields.description')}
-							{...form.getInputProps('description')}
-						/>
+						{showApplyToDescendants && (
+							<Switch
+								label={t('form.fields.applyContactOutcomeToDescendants')}
+								description={t(
+									'form.fields.applyContactOutcomeToDescendantsDescription'
+								)}
+								{...form.getInputProps('applyContactOutcomeToDescendants', {
+									type: 'checkbox',
+								})}
+							/>
+						)}
 					</Stack>
-					<Divider />
-					<Stack gap='xs'>
-						<Switch
-							label={t('form.fields.doNotCall')}
-							description={t('form.fields.doNotCallDescription')}
-							{...form.getInputProps('doNotCall', { type: 'checkbox' })}
-						/>
-						<Switch
-							label={t('form.fields.isAbandoned')}
-							description={t('form.fields.isAbandonedDescription')}
-							{...form.getInputProps('isAbandoned', { type: 'checkbox' })}
-						/>
-						<Switch
-							label={t('form.fields.invalidatesNumber')}
-							{...form.getInputProps('isInvalidatesNumber', {
-								type: 'checkbox',
-							})}
-						/>
-						<Switch
-							label={t('form.fields.requiresReschedule')}
-							{...form.getInputProps('requiresReschedule', {
-								type: 'checkbox',
-							})}
-						/>
-					</Stack>
-					<Divider />
-					<Stack gap='xs'>
-						<Switch
-							label={t('form.fields.isFinal')}
-							{...form.getInputProps('isFinal', { type: 'checkbox' })}
-						/>
-						<Switch
-							label={t('form.fields.isVoiceMail')}
-							{...form.getInputProps('isVoiceMail', { type: 'checkbox' })}
-						/>
-					</Stack>
+					{!protectedMode && (
+						<>
+							<Divider />
+							<Stack gap='xs'>
+								<Switch
+									label={t('form.fields.doNotCall')}
+									description={t('form.fields.doNotCallDescription')}
+									{...form.getInputProps('doNotCall', { type: 'checkbox' })}
+								/>
+								<Switch
+									label={t('form.fields.isAbandoned')}
+									description={t('form.fields.isAbandonedDescription')}
+									{...form.getInputProps('isAbandoned', { type: 'checkbox' })}
+								/>
+								<Switch
+									label={t('form.fields.invalidatesNumber')}
+									{...form.getInputProps('isInvalidatesNumber', {
+										type: 'checkbox',
+									})}
+								/>
+								<Switch
+									label={t('form.fields.requiresReschedule')}
+									{...form.getInputProps('requiresReschedule', {
+										type: 'checkbox',
+									})}
+								/>
+							</Stack>
+							<Divider />
+							<Stack gap='xs'>
+								<Switch
+									label={t('form.fields.isFinal')}
+									{...form.getInputProps('isFinal', { type: 'checkbox' })}
+								/>
+								<Switch
+									label={t('form.fields.isVoiceMail')}
+									{...form.getInputProps('isVoiceMail', { type: 'checkbox' })}
+								/>
+							</Stack>
+						</>
+					)}
 					<Group justify='flex-end' gap='xs'>
 						<Button size='sm' variant='default' onClick={onClose} type='button'>
 							{t('actions.cancel', { ns: 'common' })}
