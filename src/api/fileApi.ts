@@ -18,6 +18,13 @@ export type GetPresignedUrlOptions = {
 
 const fileApi = (_authHeader?: Record<string, string>) => {
 	return {
+		getFile: async (fileId: number): Promise<FileModel> => {
+			const response = await axios.get<FileModel>(
+				`${DEFAULT_API_URL}/files/${fileId}`
+			);
+			return response.data;
+		},
+
 		/**
 		 * Fetch a presigned URL for a file by ID.
 		 * Accepts both plain string response and object variants commonly used by APIs.
