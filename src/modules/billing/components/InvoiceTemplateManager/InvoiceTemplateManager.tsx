@@ -33,7 +33,7 @@ import {
 	useUpdateClient,
 } from '~/queries/clientQueries';
 import {
-	useGetClientFiles,
+	useGetFile,
 	useGetFileTypes,
 	useUploadFile,
 } from '~/queries/fileQueries';
@@ -53,8 +53,6 @@ const InvoiceTemplateManager: React.FC = () => {
 		useGetAllClients();
 	const { data: selectedClient, isLoading: isSelectedClientLoading } =
 		useGetClient(selectedClientId ?? 0, isExpanded);
-	const { data: clientFiles = [], isLoading: isClientFilesLoading } =
-		useGetClientFiles(selectedClientId ?? undefined, isExpanded);
 	const { data: fileTypes = [], isLoading: isFileTypesLoading } =
 		useGetFileTypes(isExpanded);
 	const uploadMutation = useUploadFile();
@@ -66,13 +64,12 @@ const InvoiceTemplateManager: React.FC = () => {
 	)?.id;
 
 	const currentTemplateFileId = selectedClient?.invoiceTemplateFileId ?? null;
-	const currentTemplateFile = currentTemplateFileId
-		? (clientFiles.find((f) => f.id === currentTemplateFileId) ?? null)
-		: null;
+	const { data: currentTemplateFile = null, isLoading: isTemplateFileLoading } =
+		useGetFile(currentTemplateFileId, isExpanded);
 	const isTemplateDataLoading =
 		isExpanded &&
 		selectedClientId != null &&
-		(isSelectedClientLoading || isClientFilesLoading || isFileTypesLoading);
+		(isSelectedClientLoading || isTemplateFileLoading || isFileTypesLoading);
 
 	const configuredCount = clients.filter(
 		(c) => c.invoiceTemplateFileId != null
@@ -110,6 +107,7 @@ const InvoiceTemplateManager: React.FC = () => {
 				file,
 				typeId: templateTypeId,
 				description: `Invoice template for ${selectedClient?.name ?? 'client'}`,
+				targetClientId: selectedClientId,
 			});
 
 			await updateMutation.mutateAsync({
@@ -117,7 +115,7 @@ const InvoiceTemplateManager: React.FC = () => {
 				data: { invoiceTemplateFileId: uploadedFile.id },
 			});
 
-			queryClient.invalidateQueries({ queryKey: ['files', selectedClientId] });
+			queryClient.invalidateQueries({ queryKey: ['file', uploadedFile.id] });
 			queryClient.invalidateQueries({ queryKey: ['client', selectedClientId] });
 
 			notifications.show({
@@ -147,7 +145,11 @@ const InvoiceTemplateManager: React.FC = () => {
 				data: { invoiceTemplateFileId: null },
 			});
 
-			queryClient.invalidateQueries({ queryKey: ['files', selectedClientId] });
+			if (currentTemplateFileId != null) {
+				queryClient.removeQueries({
+					queryKey: ['file', currentTemplateFileId],
+				});
+			}
 			queryClient.invalidateQueries({ queryKey: ['client', selectedClientId] });
 
 			notifications.show({
@@ -350,6 +352,17 @@ const InvoiceTemplateManager: React.FC = () => {
 												<Text size='xs' className={classes.helperText}>
 													{t('templates.issuerClient.helper')}
 												</Text>
+												<Button
+													size='xs'
+													leftSection={<IconUpload size={14} />}
+													loading={isUploading}
+													disabled={!templateTypeId}
+													onClick={() => fileInputRef.current?.click()}
+												>
+													{isUploading
+														? t('templates.actions.uploading')
+														: t('templates.actions.upload')}
+												</Button>
 											</div>
 										</div>
 									)}
