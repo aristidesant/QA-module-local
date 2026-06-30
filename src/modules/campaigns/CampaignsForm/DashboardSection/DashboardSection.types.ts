@@ -16,6 +16,8 @@ import type {
 	MetricValueField,
 	RuntimeFilterOperator,
 	TimeSeriesPoint,
+	WidgetPresetAlias,
+	WidgetPresetKind,
 } from '~/models/AnalyticsDashboard';
 import type { DashboardWidgetSizePreset } from '~/modules/campaigns/dashboardLayout';
 
@@ -51,6 +53,14 @@ export type WidgetFormValues = {
 	enabled: boolean;
 	defaultFilters: WidgetFilterFormRow[];
 	runtimeFilters: WidgetRuntimeFilterFormRow[];
+	presetEnabled: boolean;
+	presetAlias: WidgetPresetAlias | null;
+	presetKind: WidgetPresetKind | null;
+	presetSource: 'CONVERSATION' | 'DISPOSITION' | null;
+	presetField: string | null;
+	presetValues: string[];
+	presetDisplayLabel: string;
+	includeChildren: boolean;
 };
 
 export type WidgetFilterValueType = 'string' | 'number' | 'boolean' | 'null';

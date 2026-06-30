@@ -206,6 +206,13 @@
 	min-height: 0;
 }
 
+.kpiRateCaption {
+	position: absolute;
+	bottom: 6px;
+	left: 0;
+	right: 0;
+}
+
 /* ── Bar chart ────────────────────────────────────── */
 
 .chartWrapper {

@@ -3,6 +3,14 @@ import fileApi from '~/api/fileApi';
 import type FileModel from '~/models/FileModel';
 import type FileTypeModel from '~/models/FileTypeModel';
 
+export const useGetFile = (fileId: number | null, enabled = true) => {
+	return useQuery<FileModel>({
+		queryKey: ['file', fileId],
+		queryFn: async () => fileApi().getFile(fileId!),
+		enabled: fileId != null && enabled,
+	});
+};
+
 /**
  * Query to get all files belonging to a client.
  */

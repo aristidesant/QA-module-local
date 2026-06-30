@@ -1,5 +1,5 @@
 # Stage 1: Build the SPA
-FROM node:20-alpine AS build
+FROM public.ecr.aws/docker/library/node:22.22.1-alpine AS build
 WORKDIR /app
 ARG VITE_APP_API_URL
 ARG VITE_APP_SIP_MONITOR_ORIGIN
@@ -11,7 +11,7 @@ COPY . .
 RUN pnpm build
 
 # Stage 2: Serve with Nginx
-FROM nginx:1.27-alpine
+FROM public.ecr.aws/nginx/nginx:1.30-alpine3.23
 ARG VITE_APP_API_URL
 ARG VITE_APP_SIP_MONITOR_ORIGIN
 ENV PORT=80

@@ -1,3 +1,4 @@
+import { Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import KpiCard from '~/components/KpiCard';
 import {
@@ -21,6 +22,15 @@ const KpiWidgetContent = ({
 					widget.result.value,
 					widget.result.valueFormat
 				)
+			: null;
+	const rateCaption =
+		widget.result?.kind === 'single_value' &&
+		typeof widget.result.meta.matched === 'number' &&
+		typeof widget.result.meta.total === 'number'
+			? t('dashboard.rateCaption', {
+					matched: widget.result.meta.matched,
+					total: widget.result.meta.total,
+				})
 			: null;
 	const previousValue =
 		comparisonData?.previous?.kind === 'single_value'
@@ -61,20 +71,32 @@ const KpiWidgetContent = ({
 		: undefined;
 
 	return (
-		<KpiCard
-			title={widget.title}
-			subtitle={subtitle}
-			value={currentValue}
-			accentColor={accentColor}
-			isUnsupported={widget.result?.kind !== 'single_value'}
-			unsupportedMessage={widget.message || t('dashboard.unsupportedMessage')}
-			className={styles.kpiCard}
-			comparison={comparisonData?.comparison}
-			variant={variant}
-			comparisonLabel={comparisonLabel}
-			comparisonDetail={comparisonDetail}
-			showCompactComparisonTooltip={showCompactComparisonTooltip}
-		/>
+		<>
+			<KpiCard
+				title={widget.title}
+				subtitle={subtitle}
+				value={currentValue}
+				accentColor={accentColor}
+				isUnsupported={widget.result?.kind !== 'single_value'}
+				unsupportedMessage={widget.message || t('dashboard.unsupportedMessage')}
+				className={styles.kpiCard}
+				comparison={comparisonData?.comparison}
+				variant={variant}
+				comparisonLabel={comparisonLabel}
+				comparisonDetail={comparisonDetail}
+				showCompactComparisonTooltip={showCompactComparisonTooltip}
+			/>
+			{rateCaption && (
+				<Text
+					size='xs'
+					c='dimmed'
+					ta='center'
+					className={styles.kpiRateCaption}
+				>
+					{rateCaption}
+				</Text>
+			)}
+		</>
 	);
 };
 

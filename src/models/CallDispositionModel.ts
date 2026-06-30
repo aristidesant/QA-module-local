@@ -12,6 +12,7 @@ export interface CallDispositionModel {
 	// Disposition details
 	dispositionName: string;
 	dispositionDescription: string;
+	contactOutcome?: string;
 	callStatus?: string; // e.g., "NEUTRAL" (keep string to allow backend variants)
 
 	// Scheduling/flags

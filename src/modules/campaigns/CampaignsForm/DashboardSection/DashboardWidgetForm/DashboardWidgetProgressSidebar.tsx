@@ -32,12 +32,17 @@ const DashboardWidgetProgressSidebar = () => {
 	const { values, advancedSettingsCount } = state;
 
 	const completionMap: Record<ProgressStep['key'], boolean> = {
-		sourceType: Boolean(values.sourceType),
-		sourceField: state.isAttributeMetric
-			? Boolean(values.metricKey) &&
-				(!state.needsValueField || Boolean(values.valueField))
-			: Boolean(values.fieldName),
-		aggregation: Boolean(values.aggregationType),
+		preset:
+			!values.presetEnabled ||
+			Boolean(values.presetAlias || values.presetField),
+		sourceType: values.presetEnabled || Boolean(values.sourceType),
+		sourceField:
+			values.presetEnabled ||
+			(state.isAttributeMetric
+				? Boolean(values.metricKey) &&
+					(!state.needsValueField || Boolean(values.valueField))
+				: Boolean(values.fieldName)),
+		aggregation: values.presetEnabled || Boolean(values.aggregationType),
 		widgetType: Boolean(values.widgetType),
 		widgetDetails: Boolean(values.title?.trim()),
 		widgetRoles: values.roleIds.length > 0,
@@ -45,6 +50,7 @@ const DashboardWidgetProgressSidebar = () => {
 	};
 
 	const stepLabels: Record<ProgressStep['key'], string> = {
+		preset: t('dashboardBuilder.form.preset.sectionTitle'),
 		sourceType: t('dashboardBuilder.progress.sourceType'),
 		sourceField: t('dashboardBuilder.progress.sourceField'),
 		aggregation: t('dashboardBuilder.progress.aggregation'),
