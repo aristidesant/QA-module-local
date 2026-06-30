@@ -85,7 +85,7 @@ const invoiceApi = (
 				`${DEFAULT_API_URL}/invoices/${id}/download`,
 				{
 					headers: { ..._authHeader, Authorization: `Bearer ${token}` },
-					responseType: import.meta.env.DEV ? 'blob' : undefined,
+					responseType: 'blob',
 				}
 			);
 			const blob = response.data as Blob;
