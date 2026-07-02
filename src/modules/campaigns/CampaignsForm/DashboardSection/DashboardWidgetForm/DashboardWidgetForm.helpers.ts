@@ -1306,14 +1306,21 @@ export const buildRuntimeFilterFieldOptions = (
 		];
 	}
 
-	return getSourceFieldEntries(
-		values.sourceType,
-		conversationFields,
-		dispositionFields
-	).map((entry) => ({
-		value: entry.value,
-		label: entry.label,
-	}));
+	return [
+		...new Map(
+			getSourceFieldEntries(
+				values.sourceType,
+				conversationFields,
+				dispositionFields
+			).map((entry) => [
+				entry.value,
+				{
+					value: entry.value,
+					label: entry.label,
+				},
+			])
+		).values(),
+	];
 };
 
 export const inferRuntimeFilterFieldType = (
@@ -1323,11 +1330,14 @@ export const inferRuntimeFilterFieldType = (
 	conversationFields: MetricColumnConfigEntry[],
 	dispositionFields: MetricColumnConfigEntry[]
 ): RuntimeFilterFieldType | null => {
-	const normalizedKey = normalizeFilterKey(
+	const hasExactField = getSourceFieldEntries(
 		values.sourceType,
-		filterKey,
-		metricKeyOptions
-	);
+		conversationFields,
+		dispositionFields
+	).some((entry) => entry.value === filterKey);
+	const normalizedKey = hasExactField
+		? filterKey
+		: normalizeFilterKey(values.sourceType, filterKey, metricKeyOptions);
 
 	return getFilterFieldType(
 		values,
@@ -1345,22 +1355,31 @@ export const getRuntimeFilterFieldEntry = (
 	conversationFields: MetricColumnConfigEntry[],
 	dispositionFields: MetricColumnConfigEntry[]
 ) => {
+	if (values.sourceType === 'ATTRIBUTE') {
+		return null;
+	}
+
+	const sourceFieldEntries = getSourceFieldEntries(
+		values.sourceType,
+		conversationFields,
+		dispositionFields
+	);
+	const exactEntry = sourceFieldEntries.find(
+		(entry) => entry.value === filterKey
+	);
+
+	if (exactEntry) {
+		return exactEntry;
+	}
+
 	const normalizedKey = normalizeFilterKey(
 		values.sourceType,
 		filterKey,
 		metricKeyOptions
 	);
 
-	if (values.sourceType === 'ATTRIBUTE') {
-		return null;
-	}
-
 	return (
-		getSourceFieldEntries(
-			values.sourceType,
-			conversationFields,
-			dispositionFields
-		).find((entry) => entry.value === normalizedKey) ?? null
+		sourceFieldEntries.find((entry) => entry.value === normalizedKey) ?? null
 	);
 };
 
@@ -1602,11 +1621,13 @@ export const sanitizeWidgetRuntimeFilters = (
 			return row.operator || row.value ? resetRuntimeFilterRow(row) : row;
 		}
 
-		const normalizedField = normalizeFilterKey(
-			nextValues.sourceType,
-			trimmedField,
-			metricKeyOptions
-		);
+		const normalizedField = allowedFilterKeys.has(trimmedField)
+			? trimmedField
+			: normalizeFilterKey(
+					nextValues.sourceType,
+					trimmedField,
+					metricKeyOptions
+				);
 
 		if (!allowedFilterKeys.has(normalizedField)) {
 			return resetRuntimeFilterRow(row);
@@ -1660,6 +1681,14 @@ export const hasInvalidRuntimeFilterRows = (
 	dispositionFields: MetricColumnConfigEntry[]
 ) =>
 	rows.some((row) => {
+		const allowedFilterKeys = new Set(
+			getRuntimeFilterFieldSuggestions(
+				values,
+				metricKeyOptions,
+				conversationFields,
+				dispositionFields
+			)
+		);
 		const trimmedField = typeof row.field === 'string' ? row.field.trim() : '';
 		const hasAnyValue =
 			trimmedField.length > 0 ||
@@ -1678,11 +1707,9 @@ export const hasInvalidRuntimeFilterRows = (
 			return true;
 		}
 
-		const normalizedField = normalizeFilterKey(
-			values.sourceType,
-			trimmedField,
-			metricKeyOptions
-		);
+		const normalizedField = allowedFilterKeys.has(trimmedField)
+			? trimmedField
+			: normalizeFilterKey(values.sourceType, trimmedField, metricKeyOptions);
 		const fieldType = inferRuntimeFilterFieldType(
 			values,
 			normalizedField,
@@ -1720,6 +1747,14 @@ export const buildRuntimeFilters = (
 	conversationFields: MetricColumnConfigEntry[],
 	dispositionFields: MetricColumnConfigEntry[]
 ): RuntimeFilter[] | null => {
+	const allowedFilterKeys = new Set(
+		getRuntimeFilterFieldSuggestions(
+			values,
+			metricKeyOptions,
+			conversationFields,
+			dispositionFields
+		)
+	);
 	const entries = rows.reduce<RuntimeFilter[]>((acc, row) => {
 		const trimmedField = typeof row.field === 'string' ? row.field.trim() : '';
 
@@ -1727,11 +1762,9 @@ export const buildRuntimeFilters = (
 			return acc;
 		}
 
-		const normalizedField = normalizeFilterKey(
-			values.sourceType,
-			trimmedField,
-			metricKeyOptions
-		);
+		const normalizedField = allowedFilterKeys.has(trimmedField)
+			? trimmedField
+			: normalizeFilterKey(values.sourceType, trimmedField, metricKeyOptions);
 		const fieldType = inferRuntimeFilterFieldType(
 			values,
 			normalizedField,
