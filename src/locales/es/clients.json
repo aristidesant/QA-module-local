@@ -9,12 +9,6 @@
 			"newClient": "Nuevo cliente"
 		},
 		"modals": {
-			"create": {
-				"title": "Nuevo cliente"
-			},
-			"edit": {
-				"title": "Editar cliente"
-			},
 			"delete": {
 				"title": "Eliminar cliente",
 				"confirm": "Eliminar cliente",
@@ -40,8 +34,32 @@
 		}
 	},
 	"form": {
-		"intro": "Mantén ordenados los datos de contacto, dirección y facturación para que los equipos avancen rápido.",
-		"footerNote": "Todos los cambios se guardan de forma segura cuando envías.",
+		"editor": {
+			"createTitle": "Crear cliente",
+			"createDescription": "Agrega primero los datos esenciales de la organización. La facturación y la marca estarán disponibles después de crear el cliente.",
+			"editTitle": "Editar {{name}}",
+			"editDescription": "Revisa los datos de la organización, la facturación y la marca del cliente."
+		},
+		"navigation": {
+			"ariaLabel": "Secciones del formulario de cliente",
+			"jumpLabel": "Ir a una sección",
+			"sectionError": "Esta sección requiere atención"
+		},
+		"status": {
+			"unsaved": "Cambios sin guardar",
+			"saved": "Cambios guardados",
+			"validationSummary": "Revisa los campos resaltados antes de guardar."
+		},
+		"leave": {
+			"title": "¿Descartar los cambios sin guardar?",
+			"message": "Los cambios se perderán si abandonas esta página.",
+			"confirm": "Descartar cambios",
+			"stay": "Continuar editando"
+		},
+		"partialSave": {
+			"title": "Datos del cliente guardados",
+			"message": "Los datos principales se guardaron, pero no se pudo actualizar la marca. Revisa la sección Marca y guarda nuevamente."
+		},
 		"actions": {
 			"saveChanges": "Guardar cambios",
 			"createClient": "Crear cliente"
@@ -50,7 +68,9 @@
 			"missingClientId": "Falta el ID del cliente"
 		},
 		"loadError": {
-			"title": "No se pudo cargar el cliente"
+			"title": "No se pudo cargar el cliente",
+			"retry": "Reintentar",
+			"back": "Volver a clientes"
 		},
 		"validation": {
 			"nameRequired": "El nombre es obligatorio",
@@ -118,7 +138,8 @@
 			},
 			"pocUserId": {
 				"label": "Persona de contacto (POC)",
-				"placeholder": "Selecciona un usuario"
+				"placeholder": "Selecciona un usuario",
+				"unknownOption": "Usuario desconocido"
 			},
 			"invoiceTemplateFileId": {
 				"label": "Plantilla de factura (.xlsx)",

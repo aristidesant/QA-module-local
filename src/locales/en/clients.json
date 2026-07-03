@@ -9,12 +9,6 @@
 			"newClient": "New Client"
 		},
 		"modals": {
-			"create": {
-				"title": "New Client"
-			},
-			"edit": {
-				"title": "Edit Client"
-			},
 			"delete": {
 				"title": "Delete Client",
 				"confirm": "Delete client",
@@ -40,8 +34,32 @@
 		}
 	},
 	"form": {
-		"intro": "Keep contact, address, and billing details tidy so teams can move fast.",
-		"footerNote": "All changes are saved securely when you submit.",
+		"editor": {
+			"createTitle": "Create client",
+			"createDescription": "Add the essential organization details first. Billing and branding become available after creation.",
+			"editTitle": "Edit {{name}}",
+			"editDescription": "Review organization details, billing settings, and client branding."
+		},
+		"navigation": {
+			"ariaLabel": "Client form sections",
+			"jumpLabel": "Jump to section",
+			"sectionError": "This section needs attention"
+		},
+		"status": {
+			"unsaved": "Unsaved changes",
+			"saved": "Changes saved",
+			"validationSummary": "Review the highlighted fields before saving."
+		},
+		"leave": {
+			"title": "Discard unsaved changes?",
+			"message": "Your changes will be lost if you leave this page.",
+			"confirm": "Discard changes",
+			"stay": "Keep editing"
+		},
+		"partialSave": {
+			"title": "Client details saved",
+			"message": "Core details were saved, but branding could not be updated. Review the Branding section and save again."
+		},
 		"actions": {
 			"saveChanges": "Save changes",
 			"createClient": "Create client"
@@ -50,7 +68,9 @@
 			"missingClientId": "Missing client ID"
 		},
 		"loadError": {
-			"title": "Unable to load client"
+			"title": "Unable to load client",
+			"retry": "Retry",
+			"back": "Back to clients"
 		},
 		"validation": {
 			"nameRequired": "Name is required",
@@ -118,7 +138,8 @@
 			},
 			"pocUserId": {
 				"label": "Point of Contact (POC)",
-				"placeholder": "Select a user"
+				"placeholder": "Select a user",
+				"unknownOption": "Unknown user"
 			},
 			"invoiceTemplateFileId": {
 				"label": "Invoice Template (.xlsx)",

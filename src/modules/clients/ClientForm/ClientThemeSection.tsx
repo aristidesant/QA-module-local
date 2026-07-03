@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import {
 	Alert,
@@ -29,6 +29,7 @@ import {
 	isValidHexColor,
 } from '~/utils/clientTheme';
 import { getErrorMessage } from '~/utils/httpClient';
+import { CLIENT_FORM_FIELD_IDS } from './ClientForm.constants';
 import classes from './ClientThemeSection.module.css';
 
 export interface ClientThemeFormValue {
@@ -43,6 +44,7 @@ export interface ClientThemeSectionProps {
 	clientId: number;
 	value: ClientThemeFormValue;
 	onChange: (next: ClientThemeFormValue) => void;
+	onUploadingChange?: (isUploading: boolean) => void;
 	errors?: Partial<Record<keyof ClientThemeFormValue, ReactNode>>;
 	disabled?: boolean;
 }
@@ -51,6 +53,7 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 	clientId,
 	value,
 	onChange,
+	onUploadingChange,
 	errors,
 	disabled,
 }) => {
@@ -59,6 +62,21 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 	const uploadMutation = useUploadFile();
 	const [isUploading, setIsUploading] = useState(false);
 	const [logoPreviewBroken, setLogoPreviewBroken] = useState(false);
+	const isMountedRef = useRef(true);
+	const uploadInProgressRef = useRef(false);
+	const onUploadingChangeRef = useRef(onUploadingChange);
+
+	useEffect(() => {
+		onUploadingChangeRef.current = onUploadingChange;
+	}, [onUploadingChange]);
+
+	useEffect(() => {
+		isMountedRef.current = true;
+
+		return () => {
+			isMountedRef.current = false;
+		};
+	}, []);
 
 	const logoType = fileTypes.find((ft) => ft.code === 'logo');
 
@@ -79,6 +97,8 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 	};
 
 	const handleLogoChange = async (file: File | null) => {
+		if (uploadInProgressRef.current) return;
+
 		setLogoPreviewBroken(false);
 
 		if (!file) {
@@ -113,7 +133,10 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 			return;
 		}
 
+		uploadInProgressRef.current = true;
 		setIsUploading(true);
+		const notifyUploadingChange = onUploadingChangeRef.current;
+		notifyUploadingChange?.(true);
 		try {
 			const uploaded = await uploadMutation.mutateAsync({
 				file,
@@ -122,18 +145,27 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 				targetClientId: clientId,
 			});
 
-			update({
-				logoFileId: uploaded.id,
-				logoUrl: uploaded.repositoryRoute,
-			});
+			if (isMountedRef.current) {
+				update({
+					logoFileId: uploaded.id,
+					logoUrl: uploaded.repositoryRoute,
+				});
+			}
 		} catch (error) {
-			notifications.show({
-				title: t('form.fields.logo.errors.uploadFailed.title'),
-				message: getErrorMessage(error),
-				color: 'red',
-			});
+			if (isMountedRef.current) {
+				notifications.show({
+					title: t('form.fields.logo.errors.uploadFailed.title'),
+					message: getErrorMessage(error),
+					color: 'red',
+				});
+			}
 		} finally {
-			setIsUploading(false);
+			uploadInProgressRef.current = false;
+			notifyUploadingChange?.(false);
+
+			if (isMountedRef.current) {
+				setIsUploading(false);
+			}
 		}
 	};
 
@@ -147,7 +179,9 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 
 	return (
 		<SectionCard
-			title={t('form.sections.branding.title')}
+			title={
+				<span id='branding-heading'>{t('form.sections.branding.title')}</span>
+			}
 			description={t('form.sections.branding.description')}
 			contentSpacing='sm'
 			padding='md'
@@ -223,6 +257,7 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 
 				<div className={classes.colorRow}>
 					<ColorInput
+						id={CLIENT_FORM_FIELD_IDS.primaryColor}
 						label={t('form.fields.primaryColor.label')}
 						description={t('form.fields.primaryColor.description')}
 						format='hex'
@@ -237,6 +272,7 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 						size='sm'
 					/>
 					<ColorInput
+						id={CLIENT_FORM_FIELD_IDS.secondaryColor}
 						label={t('form.fields.secondaryColor.label')}
 						description={t('form.fields.secondaryColor.description')}
 						format='hex'
@@ -253,6 +289,7 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 				</div>
 
 				<TextInput
+					id={CLIENT_FORM_FIELD_IDS.brandName}
 					className={classes.brandNameField}
 					label={t('form.fields.brandName.label')}
 					placeholder={t('form.fields.brandName.placeholder')}

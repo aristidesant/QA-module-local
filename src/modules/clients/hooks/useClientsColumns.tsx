@@ -95,7 +95,11 @@ const useClientsColumns = ({
 				id: 'actions',
 				header: t('table.columns.actions'),
 				cell: ({ row }) => (
-					<Group justify='flex-end' onClick={(e) => e.stopPropagation()}>
+					<Group
+						justify='flex-end'
+						onClick={(event) => event.stopPropagation()}
+						onKeyDown={(event) => event.stopPropagation()}
+					>
 						<Menu shadow='sm' position='bottom-end' withinPortal>
 							<Menu.Target>
 								<ActionIcon

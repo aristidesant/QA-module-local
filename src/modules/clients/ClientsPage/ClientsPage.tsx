@@ -4,9 +4,9 @@ import { IconPlus, IconSearch } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import classes from './ClientsPage.module.css';
 import ClientsList from '../ClientsList/ClientsList';
-import ClientForm from '../ClientForm/ClientForm';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import { useDeleteClient } from '~/queries/clientQueries';
@@ -15,6 +15,7 @@ import { getClientDisplayLabel } from '~/utils/clientDisplay';
 
 const ClientsPage: React.FC = () => {
 	const { t } = useTranslation('clients');
+	const navigate = useNavigate();
 	const [search, setSearch] = useState('');
 	const deleteMutation = useDeleteClient();
 
@@ -25,50 +26,15 @@ const ClientsPage: React.FC = () => {
 		[]
 	);
 
-	const handleSuccess = useCallback(() => {
-		modals.closeAll();
-	}, []);
+	const handleCreate = useCallback(() => {
+		navigate('/clients/new');
+	}, [navigate]);
 
-	const openCreateModal = useCallback(() => {
-		modals.open({
-			title: t('page.modals.create.title'),
-			fullScreen: false,
-			size: 'xl',
-			radius: 'lg',
-			children: (
-				<ClientForm
-					mode='create'
-					onSuccess={handleSuccess}
-					onCancel={() => modals.closeAll()}
-				/>
-			),
-			centered: true,
-			withCloseButton: true,
-			closeOnClickOutside: false,
-		});
-	}, [handleSuccess, t]);
-
-	const openEditModal = useCallback(
+	const handleEdit = useCallback(
 		(clientId: number) => {
-			modals.open({
-				title: t('page.modals.edit.title'),
-				fullScreen: false,
-				size: 'xl',
-				radius: 'lg',
-				children: (
-					<ClientForm
-						mode='edit'
-						clientId={clientId}
-						onSuccess={handleSuccess}
-						onCancel={() => modals.closeAll()}
-					/>
-				),
-				centered: true,
-				withCloseButton: true,
-				closeOnClickOutside: false,
-			});
+			navigate(`/clients/${clientId}/edit`);
 		},
-		[handleSuccess, t]
+		[navigate]
 	);
 
 	const handleDelete = useCallback(
@@ -119,7 +85,7 @@ const ClientsPage: React.FC = () => {
 			title={t('page.title')}
 			description={t('page.description')}
 			titleRight={
-				<Button onClick={openCreateModal} leftSection={<IconPlus size={16} />}>
+				<Button onClick={handleCreate} leftSection={<IconPlus size={16} />}>
 					{t('page.actions.newClient')}
 				</Button>
 			}
@@ -135,7 +101,7 @@ const ClientsPage: React.FC = () => {
 				/>
 				<ClientsList
 					search={search}
-					onEdit={openEditModal}
+					onEdit={handleEdit}
 					onDelete={handleDelete}
 				/>
 			</SectionCard>
