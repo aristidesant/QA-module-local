@@ -1,0 +1,55 @@
+.desktopNav {
+	display: none;
+	position: sticky;
+	top: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs);
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+}
+
+.navLink {
+	width: 100%;
+	border-radius: var(--mantine-radius-sm);
+}
+
+.navLink + .navLink {
+	margin-top: calc(var(--mantine-spacing-xs) / 2);
+}
+
+.errorIcon {
+	flex: 0 0 auto;
+	color: light-dark(var(--mantine-color-red-7), var(--mantine-color-red-4));
+}
+
+.mobileSelect {
+	display: block;
+}
+
+.option {
+	display: flex;
+	width: 100%;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.optionLabel {
+	min-width: 0;
+	flex: 1 1 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+@media (min-width: 48.001em) {
+	.desktopNav {
+		display: block;
+	}
+
+	.mobileSelect {
+		display: none;
+	}
+}

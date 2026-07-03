@@ -51,6 +51,9 @@ const RolesPage = React.lazy(
 const ClientsPage = React.lazy(
 	() => import('./modules/clients/ClientsPage/ClientsPage')
 );
+const ClientFormPage = React.lazy(
+	() => import('./modules/clients/ClientFormPage')
+);
 const DispositionPage = React.lazy(
 	() => import('./modules/outcomes/DispositionPage')
 );
@@ -375,6 +378,36 @@ const router = createBrowserRouter([
 												<ClientsPage />
 											</Suspense>
 										</I18nNamespaceLoader>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'clients/new',
+								id: 'clients.new',
+								element: (
+									<ModuleGuard
+										module={ModuleEnum.SETTINGS}
+										permission={PermissionEnum.MANAGE}
+										masterOnly
+									>
+										<Suspense fallback={<SuspenseFallback />}>
+											<ClientFormPage mode='create' />
+										</Suspense>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'clients/:clientId/edit',
+								id: 'clients.edit',
+								element: (
+									<ModuleGuard
+										module={ModuleEnum.SETTINGS}
+										permission={PermissionEnum.MANAGE}
+										masterOnly
+									>
+										<Suspense fallback={<SuspenseFallback />}>
+											<ClientFormPage mode='edit' />
+										</Suspense>
 									</ModuleGuard>
 								),
 							},

@@ -1,83 +1,138 @@
 .form {
 	height: 100%;
+	min-height: 0;
+}
+
+.srStatus {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	margin: -1px;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+}
+
+.partialSaveAlert {
+	margin: var(--mantine-spacing-sm) var(--mantine-spacing-sm) 0;
+}
+
+.pageLayout {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(180px, 220px);
+	align-items: start;
+	gap: var(--mantine-spacing-md);
+	min-width: 0;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-sm)
+		var(--mantine-spacing-lg);
+}
+
+.navigationRail {
+	grid-column: 2;
+	grid-row: 1;
+	min-width: 0;
+}
+
+.sections {
+	display: flex;
+	grid-column: 1;
+	grid-row: 1;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	min-inline-size: 0;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	border: 0;
+}
+
+.sectionAnchor {
+	min-width: 0;
+	scroll-margin-top: var(--mantine-spacing-md);
+	border-radius: var(--mantine-radius-lg);
+	outline: none;
+}
+
+.sectionAnchor:focus-visible {
+	box-shadow: 0 0 0 4px
+		light-dark(var(--mantine-color-green-5), var(--mantine-color-green-4));
+}
+
+.twoColumnGrid,
+.billingGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-sm);
+	min-width: 0;
+}
+
+.fullWidthField {
+	grid-column: 1 / -1;
+	min-width: 0;
+}
+
+.loadingRail {
+	width: 100%;
+	height: 12rem;
+	border: 1px solid var(--surface-border);
+}
+
+.loadingCard {
+	width: 100%;
+	height: 10rem;
+	border: 1px solid var(--surface-border);
+}
+
+.loadingCard:first-child {
+	height: 13rem;
+}
+
+.errorState {
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-sm);
-	border: 1px solid var(--mantine-color-gray-3);
-	background-color: var(--mantine-color-white);
-	padding: var(--mantine-spacing-sm);
-	border-radius: var(--mantine-radius-md);
-	border-top: 3px solid var(--mantine-color-blue-5);
+	min-width: 0;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-sm)
+		var(--mantine-spacing-lg);
 }
 
-.header {
-	display: flex;
-	justify-content: space-between;
-	align-items: flex-start;
-	gap: var(--mantine-spacing-xs);
-}
-
-.headerCopy {
-	max-width: 540px;
-}
-
-.title {
-	font-weight: 600;
-	font-size: var(--mantine-font-size-sm);
-	color: var(--mantine-color-gray-9);
-	letter-spacing: -0.01em;
-}
-
-.body {
-	flex: 1;
-	overflow-y: auto;
-	padding: var(--mantine-spacing-xs);
-	background-color: var(--mantine-color-gray-0);
-	border: 1px solid var(--mantine-color-gray-2);
-	border-radius: var(--mantine-radius-sm);
-}
-
-.row {
-	display: grid;
-	grid-template-columns: 1fr;
-	gap: var(--mantine-spacing-xs);
-}
-
-@media (min-width: 48em) {
-	.row {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-
-.actions {
-	padding-top: var(--mantine-spacing-xs);
-	border-top: 1px solid var(--mantine-color-gray-2);
-	align-items: center;
-	gap: var(--mantine-spacing-xs);
-}
-
-.statusBadge {
-	font-size: var(--mantine-font-size-xs);
-}
-
-.badgeRow {
+.errorActions {
 	flex-wrap: wrap;
 }
 
-[data-mantine-color-scheme='dark'] .form {
-	background-color: var(--mantine-color-dark-7);
-	border-color: var(--mantine-color-dark-5);
-}
+@media (max-width: 48em) {
+	.pageLayout {
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--mantine-spacing-sm);
+		padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm)
+			calc(7rem + env(safe-area-inset-bottom));
+		overflow-x: clip;
+	}
 
-[data-mantine-color-scheme='dark'] .title {
-	color: var(--mantine-color-dark-0);
-}
+	.navigationRail {
+		grid-column: 1;
+		grid-row: 1;
+	}
 
-[data-mantine-color-scheme='dark'] .body {
-	background-color: var(--mantine-color-dark-6);
-	border-color: var(--mantine-color-dark-5);
-}
+	.sections {
+		grid-column: 1;
+		grid-row: 2;
+		gap: var(--mantine-spacing-sm);
+	}
 
-[data-mantine-color-scheme='dark'] .actions {
-	border-top-color: var(--mantine-color-dark-5);
+	.twoColumnGrid,
+	.billingGrid {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.fullWidthField {
+		grid-column: auto;
+	}
+
+	.errorState {
+		padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm)
+			var(--mantine-spacing-lg);
+	}
 }
