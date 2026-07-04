@@ -83,18 +83,21 @@
 		light-dark(var(--mantine-color-green-5), var(--mantine-color-green-4));
 }
 
-.sectionCard {
-	border: 1px solid light-dark(#dde2e8, #232c38);
-	background: light-dark(var(--mantine-color-white), #141a22);
-	box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+.sectionAnchor .sectionCard {
+	border: 1px solid var(--surface-border);
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-8)
+	);
+	box-shadow: var(--mantine-shadow-md);
 	transition:
 		transform 120ms ease,
 		box-shadow 120ms ease;
 }
 
-.sectionCard:hover {
+.sectionAnchor .sectionCard:hover {
 	transform: translateY(-2px);
-	box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+	box-shadow: var(--mantine-shadow-lg);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -102,7 +105,11 @@
 		animation: none;
 	}
 
-	.sectionCard:hover {
+	.sectionAnchor .sectionCard {
+		transition: none;
+	}
+
+	.sectionAnchor .sectionCard:hover {
 		transform: none;
 	}
 }
