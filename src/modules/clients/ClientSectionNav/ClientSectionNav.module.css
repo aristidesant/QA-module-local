@@ -57,14 +57,8 @@
 
 .navLinkActive,
 .navLinkActive:hover {
-	background: #ecfdf2;
-	color: #0d7530;
-}
-
-[data-mantine-color-scheme='dark'] .navLinkActive,
-[data-mantine-color-scheme='dark'] .navLinkActive:hover {
-	background: rgba(27, 181, 74, 0.16);
-	color: #4ade80;
+	background: light-dark(var(--mantine-color-green-0), rgba(27, 181, 74, 0.16));
+	color: light-dark(var(--mantine-color-green-9), var(--mantine-color-green-4));
 }
 
 .navLinkInner {
