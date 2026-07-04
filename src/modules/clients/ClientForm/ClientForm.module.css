@@ -136,3 +136,31 @@
 			var(--mantine-spacing-lg);
 	}
 }
+
+.headerMetadata {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--mantine-spacing-md);
+	margin-top: var(--mantine-spacing-xs);
+}
+
+.metadataItem {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.metadataLabel {
+	font-size: 12px;
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+}
+
+.metadataValue {
+	font-size: 13px;
+	font-weight: 500;
+	color: light-dark(var(--mantine-color-dark-8), var(--mantine-color-dark-0));
+}

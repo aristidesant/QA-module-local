@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	Alert,
+	Badge,
 	Button,
+	Code,
 	Group,
 	Select,
 	Skeleton,
@@ -348,6 +350,16 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 		? t('form.editor.editDescription')
 		: t('form.editor.createDescription');
 
+	// ClientModel does not expose isActive; derive active state from deletedAt.
+	const isClientActive = !client?.deletedAt;
+	const statusLabel = isClientActive
+		? t('form.metadata.active')
+		: t('form.metadata.inactive');
+	const statusColor = isClientActive ? 'green' : 'gray';
+	const createdAtLabel = client?.createdAt
+		? new Date(client.createdAt).toLocaleDateString()
+		: undefined;
+
 	const sectionHasError = (sectionId: ClientFormSectionId) =>
 		failedSection === sectionId ||
 		CLIENT_SECTION_FIELDS[sectionId].some((field) =>
@@ -606,6 +618,52 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 						cancelLabel={t('actions.cancel', { ns: 'common' })}
 						onCancel={handleBack}
 					/>
+				}
+				titleBottom={
+					isEditMode && client ? (
+						<div className={classes.headerMetadata}>
+							{client.alias && (
+								<div className={classes.metadataItem}>
+									<span className={classes.metadataLabel}>
+										{t('form.metadata.aliasLabel')}
+									</span>
+									<Code className={classes.metadataValue}>{client.alias}</Code>
+								</div>
+							)}
+							<div className={classes.metadataItem}>
+								<span className={classes.metadataLabel}>
+									{t('form.metadata.statusLabel')}
+								</span>
+								<Badge
+									color={statusColor}
+									variant='light'
+									size='sm'
+									radius='sm'
+									className={classes.metadataValue}
+								>
+									{statusLabel}
+								</Badge>
+							</div>
+							{createdAtLabel && (
+								<div className={classes.metadataItem}>
+									<span className={classes.metadataLabel}>
+										{t('form.metadata.createdLabel')}
+									</span>
+									<Text className={classes.metadataValue}>
+										{createdAtLabel}
+									</Text>
+								</div>
+							)}
+							{client.id && (
+								<div className={classes.metadataItem}>
+									<span className={classes.metadataLabel}>
+										{t('form.metadata.idLabel')}
+									</span>
+									<Text className={classes.metadataValue}>#{client.id}</Text>
+								</div>
+							)}
+						</div>
+					) : null
 				}
 			>
 				{failedSection === 'branding' && (
