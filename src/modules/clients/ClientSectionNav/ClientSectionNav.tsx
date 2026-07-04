@@ -209,6 +209,11 @@ const ClientSectionNav = ({
 		[reducedMotion]
 	);
 
+	const activeSectionData = useMemo(
+		() => sections.find((section) => section.id === activeSection),
+		[sections, activeSection]
+	);
+
 	return (
 		<>
 			<nav className={classes.desktopNav} aria-label={ariaLabel}>
@@ -226,7 +231,13 @@ const ClientSectionNav = ({
 							onClick={() => navigateToSection(section.id)}
 						>
 							<span className={classes.navLinkInner}>
-								{Icon && <Icon size={18} className={classes.navIcon} />}
+								{Icon && (
+									<Icon
+										size={18}
+										className={classes.navIcon}
+										aria-hidden='true'
+									/>
+								)}
 								<span className={classes.navLabel}>{section.label}</span>
 							</span>
 							{section.hasError && (
@@ -252,6 +263,40 @@ const ClientSectionNav = ({
 						value: section.id,
 						label: section.label,
 					}))}
+					renderOption={({ option }) => {
+						const section = sections.find((s) => s.id === option.value);
+						const Icon = section?.icon;
+
+						return (
+							<span className={classes.selectOption}>
+								{Icon && <Icon size={18} aria-hidden='true' />}
+								<span className={classes.selectOptionLabel}>
+									{option.label}
+								</span>
+								{section?.hasError && (
+									<span
+										className={classes.selectErrorDot}
+										aria-label={errorLabel}
+										title={errorLabel}
+									/>
+								)}
+							</span>
+						);
+					}}
+					leftSection={
+						activeSectionData?.icon ? (
+							<span className={classes.selectLeftSection}>
+								<activeSectionData.icon size={18} aria-hidden='true' />
+								{activeSectionData.hasError && (
+									<span
+										className={classes.selectErrorDot}
+										aria-label={errorLabel}
+										title={errorLabel}
+									/>
+								)}
+							</span>
+						) : null
+					}
 					onChange={(value) => {
 						if (value) {
 							navigateToSection(value as ClientFormSectionId);
