@@ -16,8 +16,10 @@
 	text-align: end;
 }
 
-.button {
-	transition: transform 120ms ease;
+@media (prefers-reduced-motion: no-preference) {
+	.button {
+		transition: transform 120ms cubic-bezier(0.22, 1, 0.36, 1);
+	}
 }
 
 .button:active:not(:disabled) {

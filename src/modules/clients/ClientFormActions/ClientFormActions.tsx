@@ -22,7 +22,7 @@ const ClientFormActions = ({
 	createLabel,
 	saveLabel,
 	cancelLabel,
-	savingLabel = 'Saving...',
+	savingLabel,
 	onCancel,
 }: ClientFormActionsProps) => {
 	const primaryLabel = isSubmitting

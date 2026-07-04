@@ -617,6 +617,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 						unsavedLabel={t('form.status.unsaved')}
 						createLabel={t('form.actions.createClient')}
 						saveLabel={t('form.actions.saveChanges')}
+						savingLabel={t('form.status.saving')}
 						cancelLabel={t('actions.cancel', { ns: 'common' })}
 						onCancel={handleBack}
 					/>
