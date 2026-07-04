@@ -10,7 +10,7 @@ interface ClientFormActionsProps {
 	createLabel: string;
 	saveLabel: string;
 	cancelLabel: string;
-	savingLabel?: string;
+	savingLabel: string;
 	onCancel: () => void;
 }
 
