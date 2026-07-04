@@ -18,7 +18,7 @@
 	font-weight: 600;
 	letter-spacing: 0.08em;
 	text-transform: uppercase;
-	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+	color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-2));
 	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
 	margin-bottom: var(--mantine-spacing-xs);
 }
@@ -53,6 +53,11 @@
 		var(--mantine-color-dark-6)
 	);
 	color: light-dark(var(--mantine-color-dark-8), var(--mantine-color-dark-0));
+}
+
+.navLink:focus-visible {
+	outline: none;
+	box-shadow: var(--sh-focus);
 }
 
 .navLinkActive,

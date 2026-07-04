@@ -232,10 +232,11 @@ const ClientSectionNav = ({
 							{section.hasError && (
 								<span
 									className={classes.errorIndicator}
+									role='img'
 									aria-label={errorLabel}
 									title={errorLabel}
 								>
-									<IconAlertCircle size={16} />
+									<IconAlertCircle size={16} aria-hidden='true' />
 								</span>
 							)}
 						</button>
@@ -256,6 +257,8 @@ const ClientSectionNav = ({
 							navigateToSection(value as ClientFormSectionId);
 						}
 					}}
+					allowDeselect={false}
+					disabled={sections.length === 0}
 					size='sm'
 				/>
 			</div>
