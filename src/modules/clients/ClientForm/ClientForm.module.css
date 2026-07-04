@@ -146,10 +146,7 @@
 	overflow: hidden;
 	border: 1px solid var(--surface-border);
 	border-radius: var(--mantine-radius-lg);
-	background: light-dark(
-		var(--mantine-color-gray-1),
-		var(--mantine-color-dark-8)
-	);
+	background: var(--surface-sunken);
 }
 
 .loadingRail::after,
@@ -160,7 +157,7 @@
 	background: linear-gradient(
 		90deg,
 		transparent,
-		light-dark(rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.08)),
+		light-dark(var(--surface-border-strong), rgba(255, 255, 255, 0.08)),
 		transparent
 	);
 	transform: translateX(-100%);
