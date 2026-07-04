@@ -214,6 +214,8 @@ const ClientSectionNav = ({
 		[sections, activeSection]
 	);
 
+	const ActiveIcon = activeSectionData?.icon;
+
 	return (
 		<>
 			<nav className={classes.desktopNav} aria-label={ariaLabel}>
@@ -276,6 +278,7 @@ const ClientSectionNav = ({
 								{section?.hasError && (
 									<span
 										className={classes.selectErrorDot}
+										role='img'
 										aria-label={errorLabel}
 										title={errorLabel}
 									/>
@@ -284,12 +287,13 @@ const ClientSectionNav = ({
 						);
 					}}
 					leftSection={
-						activeSectionData?.icon ? (
+						ActiveIcon ? (
 							<span className={classes.selectLeftSection}>
-								<activeSectionData.icon size={18} aria-hidden='true' />
-								{activeSectionData.hasError && (
+								<ActiveIcon size={18} aria-hidden='true' />
+								{activeSectionData?.hasError && (
 									<span
 										className={classes.selectErrorDot}
+										role='img'
 										aria-label={errorLabel}
 										title={errorLabel}
 									/>
