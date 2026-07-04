@@ -356,9 +356,11 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 		? t('form.metadata.active')
 		: t('form.metadata.inactive');
 	const statusColor = isClientActive ? 'green' : 'gray';
-	const createdAtLabel = client?.createdAt
-		? new Date(client.createdAt).toLocaleDateString(i18n.language)
-		: undefined;
+	const parsedCreatedAt = client?.createdAt ? new Date(client.createdAt) : null;
+	const createdAtLabel =
+		parsedCreatedAt && !Number.isNaN(parsedCreatedAt.getTime())
+			? parsedCreatedAt.toLocaleDateString(i18n.language)
+			: undefined;
 
 	const sectionHasError = (sectionId: ClientFormSectionId) =>
 		failedSection === sectionId ||
@@ -657,7 +659,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 									</dd>
 								</div>
 							)}
-							{client.id && (
+							{client.id != null && (
 								<div className={classes.metadataItem}>
 									<dt className={classes.metadataLabel}>
 										{t('form.metadata.idLabel')}

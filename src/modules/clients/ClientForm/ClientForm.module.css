@@ -160,11 +160,13 @@
 	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
 }
 
+.metadataValue {
+	margin: 0;
+}
+
 .metadataValue,
 .metadataValue :global(.mantine-Code-root),
-.metadataValue :global(.mantine-Badge-root),
 .metadataValue :global(.mantine-Text-root) {
-	margin: 0;
 	font-size: var(--mantine-font-size-sm);
 	font-weight: 500;
 	color: light-dark(var(--mantine-color-dark-8), var(--mantine-color-dark-0));
