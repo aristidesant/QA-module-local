@@ -57,7 +57,10 @@
 
 .navLinkActive,
 .navLinkActive:hover {
-	background: light-dark(var(--mantine-color-green-0), rgba(27, 181, 74, 0.16));
+	background: light-dark(
+		var(--mantine-color-green-0),
+		var(--mantine-color-green-light)
+	);
 	color: light-dark(var(--mantine-color-green-9), var(--mantine-color-green-4));
 }
 
