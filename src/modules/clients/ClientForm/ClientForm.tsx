@@ -85,7 +85,7 @@ const SECTION_HEADING_IDS: Record<ClientFormSectionId, string> = {
 };
 
 const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
-	const { t } = useTranslation('clients');
+	const { t, i18n } = useTranslation('clients');
 	const navigate = useNavigate();
 	const isEditMode = mode === 'edit';
 	const isMasterClient = useIsMasterClient();
@@ -357,7 +357,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 		: t('form.metadata.inactive');
 	const statusColor = isClientActive ? 'green' : 'gray';
 	const createdAtLabel = client?.createdAt
-		? new Date(client.createdAt).toLocaleDateString()
+		? new Date(client.createdAt).toLocaleDateString(i18n.language)
 		: undefined;
 
 	const sectionHasError = (sectionId: ClientFormSectionId) =>
@@ -621,48 +621,53 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 				}
 				titleBottom={
 					isEditMode && client ? (
-						<div className={classes.headerMetadata}>
+						<dl className={classes.headerMetadata}>
 							{client.alias && (
 								<div className={classes.metadataItem}>
-									<span className={classes.metadataLabel}>
+									<dt className={classes.metadataLabel}>
 										{t('form.metadata.aliasLabel')}
-									</span>
-									<Code className={classes.metadataValue}>{client.alias}</Code>
+									</dt>
+									<dd className={classes.metadataValue}>
+										<Code>{client.alias}</Code>
+									</dd>
 								</div>
 							)}
 							<div className={classes.metadataItem}>
-								<span className={classes.metadataLabel}>
+								<dt className={classes.metadataLabel}>
 									{t('form.metadata.statusLabel')}
-								</span>
-								<Badge
-									color={statusColor}
-									variant='light'
-									size='sm'
-									radius='sm'
-									className={classes.metadataValue}
-								>
-									{statusLabel}
-								</Badge>
+								</dt>
+								<dd className={classes.metadataValue}>
+									<Badge
+										color={statusColor}
+										variant='light'
+										size='sm'
+										radius='sm'
+									>
+										{statusLabel}
+									</Badge>
+								</dd>
 							</div>
 							{createdAtLabel && (
 								<div className={classes.metadataItem}>
-									<span className={classes.metadataLabel}>
+									<dt className={classes.metadataLabel}>
 										{t('form.metadata.createdLabel')}
-									</span>
-									<Text className={classes.metadataValue}>
-										{createdAtLabel}
-									</Text>
+									</dt>
+									<dd className={classes.metadataValue}>
+										<Text>{createdAtLabel}</Text>
+									</dd>
 								</div>
 							)}
 							{client.id && (
 								<div className={classes.metadataItem}>
-									<span className={classes.metadataLabel}>
+									<dt className={classes.metadataLabel}>
 										{t('form.metadata.idLabel')}
-									</span>
-									<Text className={classes.metadataValue}>#{client.id}</Text>
+									</dt>
+									<dd className={classes.metadataValue}>
+										<Text>#{client.id}</Text>
+									</dd>
 								</div>
 							)}
-						</div>
+						</dl>
 					) : null
 				}
 			>
