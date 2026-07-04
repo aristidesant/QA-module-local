@@ -705,6 +705,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 							aria-labelledby={SECTION_HEADING_IDS.identity}
 						>
 							<SectionCard
+								icon={IconBuilding}
 								title={
 									<span id={SECTION_HEADING_IDS.identity}>
 										{t('form.sections.profile.title')}
@@ -713,6 +714,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 								description={t('form.sections.profile.description')}
 								contentSpacing='sm'
 								padding='md'
+								className={classes.sectionCard}
 							>
 								<div className={classes.twoColumnGrid}>
 									<TextInput
@@ -757,6 +759,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 							aria-labelledby={SECTION_HEADING_IDS.contact}
 						>
 							<SectionCard
+								icon={IconAddressBook}
 								title={
 									<span id={SECTION_HEADING_IDS.contact}>
 										{t('form.sections.contact.title')}
@@ -765,6 +768,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 								description={t('form.sections.contact.description')}
 								contentSpacing='sm'
 								padding='md'
+								className={classes.sectionCard}
 							>
 								<div className={classes.twoColumnGrid}>
 									<TextInput
@@ -792,6 +796,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 							aria-labelledby={SECTION_HEADING_IDS['location-tax']}
 						>
 							<SectionCard
+								icon={IconMapPin}
 								title={
 									<span id={SECTION_HEADING_IDS['location-tax']}>
 										{t('form.sections.locationTax.title')}
@@ -800,6 +805,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 								description={t('form.sections.locationTax.description')}
 								contentSpacing='sm'
 								padding='md'
+								className={classes.sectionCard}
 							>
 								<div className={classes.twoColumnGrid}>
 									<TextInput
@@ -828,6 +834,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 								aria-labelledby={SECTION_HEADING_IDS.billing}
 							>
 								<SectionCard
+									icon={IconReceipt}
 									title={
 										<span id={SECTION_HEADING_IDS.billing}>
 											{t('form.sections.invoiceSettings.title')}
@@ -836,6 +843,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 									description={t('form.sections.invoiceSettings.description')}
 									contentSpacing='sm'
 									padding='md'
+									className={classes.sectionCard}
 								>
 									<div className={classes.billingGrid}>
 										<TextInput
@@ -917,6 +925,8 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 										secondaryColor: form.errors.secondaryColor,
 									}}
 									disabled={isSubmitting}
+									icon={IconPalette}
+									className={classes.sectionCard}
 								/>
 							</section>
 						)}

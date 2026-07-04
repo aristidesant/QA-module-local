@@ -21,12 +21,14 @@
 
 .pageLayout {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) minmax(180px, 220px);
+	grid-template-columns: minmax(0, 1fr) 240px;
 	align-items: start;
-	gap: var(--mantine-spacing-md);
+	gap: var(--mantine-spacing-xl);
 	min-width: 0;
-	padding: var(--mantine-spacing-sm) var(--mantine-spacing-sm)
-		var(--mantine-spacing-lg);
+	max-width: 1240px;
+	margin: 0 auto;
+	padding: var(--mantine-spacing-md) var(--mantine-spacing-xl)
+		var(--mantine-spacing-xl);
 }
 
 .navigationRail {
@@ -40,7 +42,7 @@
 	grid-column: 1;
 	grid-row: 1;
 	flex-direction: column;
-	gap: var(--mantine-spacing-md);
+	gap: var(--mantine-spacing-lg);
 	min-inline-size: 0;
 	min-width: 0;
 	margin: 0;
@@ -50,14 +52,71 @@
 
 .sectionAnchor {
 	min-width: 0;
-	scroll-margin-top: var(--mantine-spacing-md);
+	scroll-margin-top: var(--mantine-spacing-lg);
 	border-radius: var(--mantine-radius-lg);
 	outline: none;
+	animation: cardEnter 380ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.sectionAnchor:nth-child(1) {
+	animation-delay: 60ms;
+}
+
+.sectionAnchor:nth-child(2) {
+	animation-delay: 120ms;
+}
+
+.sectionAnchor:nth-child(3) {
+	animation-delay: 180ms;
+}
+
+.sectionAnchor:nth-child(4) {
+	animation-delay: 240ms;
+}
+
+.sectionAnchor:nth-child(5) {
+	animation-delay: 300ms;
 }
 
 .sectionAnchor:focus-visible {
 	box-shadow: 0 0 0 4px
 		light-dark(var(--mantine-color-green-5), var(--mantine-color-green-4));
+}
+
+.sectionCard {
+	border: 1px solid light-dark(#dde2e8, #232c38);
+	background: light-dark(var(--mantine-color-white), #141a22);
+	box-shadow: 0 4px 12px rgba(15, 23, 42, 0.06);
+	transition:
+		transform 120ms ease,
+		box-shadow 120ms ease;
+}
+
+.sectionCard:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 20px rgba(15, 23, 42, 0.08);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sectionAnchor {
+		animation: none;
+	}
+
+	.sectionCard:hover {
+		transform: none;
+	}
+}
+
+@keyframes cardEnter {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
 }
 
 .twoColumnGrid,
