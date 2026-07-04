@@ -59,11 +59,6 @@
 			"jumpLabel": "Ir a una sección",
 			"sectionError": "Esta sección requiere atención"
 		},
-		"status": {
-			"unsaved": "Cambios sin guardar",
-			"saved": "Cambios guardados",
-			"validationSummary": "Revisa los campos resaltados antes de guardar."
-		},
 		"leave": {
 			"title": "¿Descartar los cambios sin guardar?",
 			"message": "Los cambios se perderán si abandonas esta página.",

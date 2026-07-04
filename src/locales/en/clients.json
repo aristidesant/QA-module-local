@@ -59,11 +59,6 @@
 			"jumpLabel": "Jump to section",
 			"sectionError": "This section needs attention"
 		},
-		"status": {
-			"unsaved": "Unsaved changes",
-			"saved": "Changes saved",
-			"validationSummary": "Review the highlighted fields before saving."
-		},
 		"leave": {
 			"title": "Discard unsaved changes?",
 			"message": "Your changes will be lost if you leave this page.",
