@@ -6,7 +6,6 @@ import {
 	Code,
 	Group,
 	Select,
-	Skeleton,
 	Text,
 	TextInput,
 	Textarea,
@@ -547,15 +546,11 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 			>
 				<div className={classes.pageLayout} aria-hidden='true'>
 					<aside className={classes.navigationRail}>
-						<Skeleton className={classes.loadingRail} radius='md' />
+						<div className={classes.loadingRail} />
 					</aside>
 					<div className={classes.sections}>
 						{Array.from({ length: 3 }).map((_, index) => (
-							<Skeleton
-								key={index}
-								className={classes.loadingCard}
-								radius='md'
-							/>
+							<div key={index} className={classes.loadingCard} />
 						))}
 					</div>
 				</div>
