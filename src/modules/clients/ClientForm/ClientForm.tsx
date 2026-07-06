@@ -189,6 +189,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 		if (shouldLoadTheme && !clientTheme) return;
 
 		const hydratedValues = hydrateClientFormValues(client, clientTheme);
+		form.setInitialValues(hydratedValues);
 		form.setValues(hydratedValues);
 		form.resetDirty(hydratedValues);
 		setIsAliasManuallyEdited(Boolean(client.alias));
@@ -435,6 +436,13 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 		navigate('/clients');
 	};
 
+	const handleDiscard = () => {
+		form.reset();
+		setFailedSection(null);
+		setValidationSummary('');
+		setSaveAnnouncement('');
+	};
+
 	const handleSubmit = form.onSubmit(
 		async (values) => {
 			if (isLogoUploadingRef.current) return;
@@ -465,7 +473,12 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 								data: themePatch,
 							});
 						} catch {
-							form.resetDirty(buildCoreSavedBaseline(values, clientTheme));
+							const partialBaseline = buildCoreSavedBaseline(
+								values,
+								clientTheme
+							);
+							form.setInitialValues(partialBaseline);
+							form.resetDirty(partialBaseline);
 							setFailedSection('branding');
 							setSaveAnnouncement(t('form.partialSave.message'));
 							notifications.show({
@@ -477,6 +490,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 						}
 					}
 
+					form.setInitialValues(values);
 					form.resetDirty(values);
 					setFailedSection(null);
 					setValidationSummary('');
@@ -604,19 +618,6 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 				showBackButton
 				backButtonDisabled={isSubmitting || isRetrying}
 				onBackClick={handleBack}
-				titleRight={
-					<ClientFormActions
-						mode={mode}
-						isDirty={form.isDirty()}
-						isSubmitting={isSubmitting}
-						unsavedLabel={t('form.status.unsaved')}
-						createLabel={t('form.actions.createClient')}
-						saveLabel={t('form.actions.saveChanges')}
-						savingLabel={t('form.status.saving')}
-						cancelLabel={t('actions.cancel', { ns: 'common' })}
-						onCancel={handleBack}
-					/>
-				}
 				titleBottom={
 					isEditMode && client ? (
 						<dl className={classes.headerMetadata}>
@@ -928,6 +929,17 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 						)}
 					</fieldset>
 				</div>
+				{isEditMode && (
+					<ClientFormActions
+						visible={form.isDirty() || isSubmitting}
+						isSubmitting={isSubmitting}
+						unsavedLabel={t('form.status.unsaved')}
+						saveLabel={t('form.actions.saveChanges')}
+						savingLabel={t('form.status.saving')}
+						discardLabel={t('form.actions.discard')}
+						onDiscard={handleDiscard}
+					/>
+				)}
 			</ContentContainer>
 		</form>
 	);
