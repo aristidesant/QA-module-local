@@ -40,15 +40,24 @@
 			"editTitle": "Edit {{name}}",
 			"editDescription": "Review organization details, billing settings, and client branding."
 		},
+		"metadata": {
+			"aliasLabel": "Alias",
+			"statusLabel": "Status",
+			"createdLabel": "Created",
+			"idLabel": "ID",
+			"active": "Active",
+			"inactive": "Inactive"
+		},
+		"status": {
+			"unsaved": "Unsaved changes",
+			"saving": "Saving...",
+			"saved": "Changes saved",
+			"validationSummary": "Review the highlighted fields before saving."
+		},
 		"navigation": {
 			"ariaLabel": "Client form sections",
 			"jumpLabel": "Jump to section",
 			"sectionError": "This section needs attention"
-		},
-		"status": {
-			"unsaved": "Unsaved changes",
-			"saved": "Changes saved",
-			"validationSummary": "Review the highlighted fields before saving."
 		},
 		"leave": {
 			"title": "Discard unsaved changes?",

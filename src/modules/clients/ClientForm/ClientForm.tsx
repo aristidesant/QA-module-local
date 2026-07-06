@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	Alert,
+	Badge,
 	Button,
+	Code,
 	Group,
 	Select,
-	Skeleton,
 	Text,
 	TextInput,
 	Textarea,
@@ -83,7 +84,7 @@ const SECTION_HEADING_IDS: Record<ClientFormSectionId, string> = {
 };
 
 const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
-	const { t } = useTranslation('clients');
+	const { t, i18n } = useTranslation('clients');
 	const navigate = useNavigate();
 	const isEditMode = mode === 'edit';
 	const isMasterClient = useIsMasterClient();
@@ -348,6 +349,18 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 		? t('form.editor.editDescription')
 		: t('form.editor.createDescription');
 
+	// ClientModel does not expose isActive; derive active state from deletedAt.
+	const isClientActive = !client?.deletedAt;
+	const statusLabel = isClientActive
+		? t('form.metadata.active')
+		: t('form.metadata.inactive');
+	const statusColor = isClientActive ? 'green' : 'gray';
+	const parsedCreatedAt = client?.createdAt ? new Date(client.createdAt) : null;
+	const createdAtLabel =
+		parsedCreatedAt && !Number.isNaN(parsedCreatedAt.getTime())
+			? parsedCreatedAt.toLocaleDateString(i18n.language)
+			: undefined;
+
 	const sectionHasError = (sectionId: ClientFormSectionId) =>
 		failedSection === sectionId ||
 		CLIENT_SECTION_FIELDS[sectionId].some((field) =>
@@ -533,15 +546,11 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 			>
 				<div className={classes.pageLayout} aria-hidden='true'>
 					<aside className={classes.navigationRail}>
-						<Skeleton className={classes.loadingRail} radius='md' />
+						<div className={classes.loadingRail} />
 					</aside>
 					<div className={classes.sections}>
 						{Array.from({ length: 3 }).map((_, index) => (
-							<Skeleton
-								key={index}
-								className={classes.loadingCard}
-								radius='md'
-							/>
+							<div key={index} className={classes.loadingCard} />
 						))}
 					</div>
 				</div>
@@ -603,9 +612,61 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 						unsavedLabel={t('form.status.unsaved')}
 						createLabel={t('form.actions.createClient')}
 						saveLabel={t('form.actions.saveChanges')}
+						savingLabel={t('form.status.saving')}
 						cancelLabel={t('actions.cancel', { ns: 'common' })}
 						onCancel={handleBack}
 					/>
+				}
+				titleBottom={
+					isEditMode && client ? (
+						<dl className={classes.headerMetadata}>
+							{client.alias && (
+								<div className={classes.metadataItem}>
+									<dt className={classes.metadataLabel}>
+										{t('form.metadata.aliasLabel')}
+									</dt>
+									<dd className={classes.metadataValue}>
+										<Code>{client.alias}</Code>
+									</dd>
+								</div>
+							)}
+							<div className={classes.metadataItem}>
+								<dt className={classes.metadataLabel}>
+									{t('form.metadata.statusLabel')}
+								</dt>
+								<dd className={classes.metadataValue}>
+									<Badge
+										color={statusColor}
+										variant='light'
+										size='sm'
+										radius='sm'
+									>
+										{statusLabel}
+									</Badge>
+								</dd>
+							</div>
+							{createdAtLabel && (
+								<div className={classes.metadataItem}>
+									<dt className={classes.metadataLabel}>
+										{t('form.metadata.createdLabel')}
+									</dt>
+									<dd className={classes.metadataValue}>
+										<Text>{createdAtLabel}</Text>
+									</dd>
+								</div>
+							)}
+							{client.id != null && (
+								<div className={classes.metadataItem}>
+									<dt className={classes.metadataLabel}>
+										{t('form.metadata.idLabel')}
+									</dt>
+									<dd className={classes.metadataValue}>
+										<Text>#{client.id}</Text>
+									</dd>
+								</div>
+							)}
+						</dl>
+					) : null
 				}
 			>
 				{failedSection === 'branding' && (
@@ -640,6 +701,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 							aria-labelledby={SECTION_HEADING_IDS.identity}
 						>
 							<SectionCard
+								icon={IconBuilding}
 								title={
 									<span id={SECTION_HEADING_IDS.identity}>
 										{t('form.sections.profile.title')}
@@ -648,6 +710,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 								description={t('form.sections.profile.description')}
 								contentSpacing='sm'
 								padding='md'
+								className={classes.sectionCard}
 							>
 								<div className={classes.twoColumnGrid}>
 									<TextInput
@@ -692,6 +755,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 							aria-labelledby={SECTION_HEADING_IDS.contact}
 						>
 							<SectionCard
+								icon={IconAddressBook}
 								title={
 									<span id={SECTION_HEADING_IDS.contact}>
 										{t('form.sections.contact.title')}
@@ -700,6 +764,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 								description={t('form.sections.contact.description')}
 								contentSpacing='sm'
 								padding='md'
+								className={classes.sectionCard}
 							>
 								<div className={classes.twoColumnGrid}>
 									<TextInput
@@ -727,6 +792,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 							aria-labelledby={SECTION_HEADING_IDS['location-tax']}
 						>
 							<SectionCard
+								icon={IconMapPin}
 								title={
 									<span id={SECTION_HEADING_IDS['location-tax']}>
 										{t('form.sections.locationTax.title')}
@@ -735,6 +801,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 								description={t('form.sections.locationTax.description')}
 								contentSpacing='sm'
 								padding='md'
+								className={classes.sectionCard}
 							>
 								<div className={classes.twoColumnGrid}>
 									<TextInput
@@ -763,6 +830,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 								aria-labelledby={SECTION_HEADING_IDS.billing}
 							>
 								<SectionCard
+									icon={IconReceipt}
 									title={
 										<span id={SECTION_HEADING_IDS.billing}>
 											{t('form.sections.invoiceSettings.title')}
@@ -771,6 +839,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 									description={t('form.sections.invoiceSettings.description')}
 									contentSpacing='sm'
 									padding='md'
+									className={classes.sectionCard}
 								>
 									<div className={classes.billingGrid}>
 										<TextInput
@@ -852,6 +921,8 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 										secondaryColor: form.errors.secondaryColor,
 									}}
 									disabled={isSubmitting}
+									icon={IconPalette}
+									className={classes.sectionCard}
 								/>
 							</section>
 						)}

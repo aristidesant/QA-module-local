@@ -12,11 +12,13 @@ import {
 	TextInput,
 } from '@mantine/core';
 import {
+	IconPalette,
 	IconPhotoOff,
 	IconUpload,
 	IconInfoCircle,
 	IconX,
 } from '@tabler/icons-react';
+import type { TablerIcon } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
 import SectionCard from '~/components/SectionCard';
@@ -47,6 +49,8 @@ export interface ClientThemeSectionProps {
 	onUploadingChange?: (isUploading: boolean) => void;
 	errors?: Partial<Record<keyof ClientThemeFormValue, ReactNode>>;
 	disabled?: boolean;
+	icon?: TablerIcon;
+	className?: string;
 }
 
 const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
@@ -56,6 +60,8 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 	onUploadingChange,
 	errors,
 	disabled,
+	icon,
+	className,
 }) => {
 	const { t } = useTranslation('clients');
 	const { data: fileTypes = [] } = useGetFileTypes();
@@ -179,12 +185,14 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 
 	return (
 		<SectionCard
+			icon={icon ?? IconPalette}
 			title={
 				<span id='branding-heading'>{t('form.sections.branding.title')}</span>
 			}
 			description={t('form.sections.branding.description')}
 			contentSpacing='sm'
 			padding='md'
+			className={className}
 		>
 			<Stack gap='sm'>
 				<div className={classes.logoBlock}>

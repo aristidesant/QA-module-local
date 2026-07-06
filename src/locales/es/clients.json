@@ -40,15 +40,24 @@
 			"editTitle": "Editar {{name}}",
 			"editDescription": "Revisa los datos de la organización, la facturación y la marca del cliente."
 		},
+		"metadata": {
+			"aliasLabel": "Alias",
+			"statusLabel": "Estado",
+			"createdLabel": "Creado",
+			"idLabel": "ID",
+			"active": "Activo",
+			"inactive": "Inactivo"
+		},
+		"status": {
+			"unsaved": "Cambios sin guardar",
+			"saving": "Guardando...",
+			"saved": "Cambios guardados",
+			"validationSummary": "Revisa los campos resaltados antes de guardar."
+		},
 		"navigation": {
 			"ariaLabel": "Secciones del formulario de cliente",
 			"jumpLabel": "Ir a una sección",
 			"sectionError": "Esta sección requiere atención"
-		},
-		"status": {
-			"unsaved": "Cambios sin guardar",
-			"saved": "Cambios guardados",
-			"validationSummary": "Revisa los campos resaltados antes de guardar."
 		},
 		"leave": {
 			"title": "¿Descartar los cambios sin guardar?",

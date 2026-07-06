@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { NavLink, Select } from '@mantine/core';
+import { Select } from '@mantine/core';
 import { useReducedMotion } from '@mantine/hooks';
 import { IconAlertCircle } from '@tabler/icons-react';
 import type {
@@ -80,11 +80,6 @@ const ClientSectionNav = ({
 		() =>
 			(sectionIdsKey ? sectionIdsKey.split('|') : []) as ClientFormSectionId[],
 		[sectionIdsKey]
-	);
-
-	const sectionById = useMemo(
-		() => new Map(sections.map((section) => [section.id, section])),
-		[sections]
 	);
 
 	useEffect(() => {
@@ -214,41 +209,50 @@ const ClientSectionNav = ({
 		[reducedMotion]
 	);
 
-	const activeSectionItem = activeSection
-		? sectionById.get(activeSection)
-		: undefined;
-	const ActiveIcon = activeSectionItem?.icon;
+	const activeSectionData = useMemo(
+		() => sections.find((section) => section.id === activeSection),
+		[sections, activeSection]
+	);
+
+	const ActiveIcon = activeSectionData?.icon;
 
 	return (
 		<>
 			<nav className={classes.desktopNav} aria-label={ariaLabel}>
+				<div className={classes.navHeader}>{jumpLabel}</div>
 				{sections.map((section) => {
-					const SectionIcon = section.icon;
-					const isActive = section.id === activeSection;
+					const Icon = section.icon;
+					const isActive = activeSection === section.id;
 
 					return (
-						<NavLink
+						<button
 							key={section.id}
-							component='button'
 							type='button'
-							label={section.label}
-							leftSection={<SectionIcon size={18} aria-hidden='true' />}
-							rightSection={
-								section.hasError ? (
-									<IconAlertCircle
-										size={18}
-										className={classes.errorIcon}
-										aria-label={errorLabel}
-										role='img'
-									/>
-								) : undefined
-							}
-							active={isActive}
-							variant='light'
+							className={`${classes.navLink} ${isActive ? classes.navLinkActive : ''}`}
 							aria-current={isActive ? 'location' : undefined}
-							className={classes.navLink}
 							onClick={() => navigateToSection(section.id)}
-						/>
+						>
+							<span className={classes.navLinkInner}>
+								{Icon && (
+									<Icon
+										size={18}
+										className={classes.navIcon}
+										aria-hidden='true'
+									/>
+								)}
+								<span className={classes.navLabel}>{section.label}</span>
+							</span>
+							{section.hasError && (
+								<span
+									className={classes.errorIndicator}
+									role='img'
+									aria-label={errorLabel}
+									title={errorLabel}
+								>
+									<IconAlertCircle size={16} aria-hidden='true' />
+								</span>
+							)}
+						</button>
 					);
 				})}
 			</nav>
@@ -256,57 +260,55 @@ const ClientSectionNav = ({
 			<div className={classes.mobileSelect}>
 				<Select
 					label={jumpLabel}
-					aria-label={jumpLabel}
-					value={activeSection}
+					value={activeSection ?? ''}
 					data={sections.map((section) => ({
 						value: section.id,
 						label: section.label,
 					}))}
-					allowDeselect={false}
-					disabled={sections.length === 0}
-					leftSection={
-						activeSectionItem?.hasError ? (
-							<IconAlertCircle
-								size={18}
-								className={classes.errorIcon}
-								aria-label={errorLabel}
-								role='img'
-							/>
-						) : ActiveIcon ? (
-							<ActiveIcon size={18} aria-hidden='true' />
-						) : undefined
-					}
 					renderOption={({ option }) => {
-						const section = sectionById.get(
-							option.value as ClientFormSectionId
-						);
-
-						if (!section) {
-							return option.label;
-						}
-
-						const SectionIcon = section.icon;
+						const section = sections.find((s) => s.id === option.value);
+						const Icon = section?.icon;
 
 						return (
-							<div className={classes.option}>
-								<SectionIcon size={18} aria-hidden='true' />
-								<span className={classes.optionLabel}>{option.label}</span>
-								{section.hasError && (
-									<IconAlertCircle
-										size={18}
-										className={classes.errorIcon}
-										aria-label={errorLabel}
+							<span className={classes.selectOption}>
+								{Icon && <Icon size={18} aria-hidden='true' />}
+								<span className={classes.selectOptionLabel}>
+									{option.label}
+								</span>
+								{section?.hasError && (
+									<span
+										className={classes.selectErrorDot}
 										role='img'
+										aria-label={errorLabel}
+										title={errorLabel}
 									/>
 								)}
-							</div>
+							</span>
 						);
 					}}
+					leftSection={
+						ActiveIcon ? (
+							<span className={classes.selectLeftSection}>
+								<ActiveIcon size={18} aria-hidden='true' />
+								{activeSectionData?.hasError && (
+									<span
+										className={classes.selectErrorDot}
+										role='img'
+										aria-label={errorLabel}
+										title={errorLabel}
+									/>
+								)}
+							</span>
+						) : null
+					}
 					onChange={(value) => {
-						if (value && sectionById.has(value)) {
+						if (value) {
 							navigateToSection(value as ClientFormSectionId);
 						}
 					}}
+					allowDeselect={false}
+					disabled={sections.length === 0}
+					size='sm'
 				/>
 			</div>
 		</>
