@@ -4,11 +4,13 @@ import {
 	Badge,
 	Button,
 	Code,
+	Collapse,
 	Group,
 	Select,
 	Text,
 	TextInput,
 	Textarea,
+	UnstyledButton,
 } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useReducedMotion } from '@mantine/hooks';
@@ -18,6 +20,7 @@ import {
 	IconAddressBook,
 	IconAlertTriangle,
 	IconBuilding,
+	IconChevronRight,
 	IconInfoCircle,
 	IconMapPin,
 	IconPalette,
@@ -47,6 +50,7 @@ import ClientFormActions from '../ClientFormActions';
 import ClientSectionNav from '../ClientSectionNav';
 import classes from './ClientForm.module.css';
 import {
+	CLIENT_CREATE_OPTIONAL_FIELDS,
 	CLIENT_FORM_FIELD_IDS,
 	CLIENT_FORM_FIELD_ORDER,
 	CLIENT_FORM_ID,
@@ -99,6 +103,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 	const blockedWhilePendingRef = useRef(false);
 	const validationFocusFrameRef = useRef<number | null>(null);
 	const [isAliasManuallyEdited, setIsAliasManuallyEdited] = useState(false);
+	const [isOptionalOpen, setIsOptionalOpen] = useState(false);
 	const [isLogoUploading, setIsLogoUploading] = useState(false);
 	const [isRetrying, setIsRetrying] = useState(false);
 	const [validationSummary, setValidationSummary] = useState('');
@@ -212,6 +217,16 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 		form.setFieldValue('alias', createClientAliasSuggestion(form.values.name));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [form.values.name, isAliasManuallyEdited, isEditMode]);
+
+	const hasOptionalFieldError = CLIENT_CREATE_OPTIONAL_FIELDS.some((field) =>
+		Boolean(form.errors[field])
+	);
+
+	useEffect(() => {
+		if (!isEditMode && hasOptionalFieldError) {
+			setIsOptionalOpen(true);
+		}
+	}, [hasOptionalFieldError, isEditMode]);
 
 	const userOptions = useMemo(
 		() =>
@@ -441,6 +456,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 		setFailedSection(null);
 		setValidationSummary('');
 		setSaveAnnouncement('');
+		document.getElementById(CLIENT_FORM_FIELD_IDS.name)?.focus();
 	};
 
 	const handleSubmit = form.onSubmit(
@@ -523,6 +539,7 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 			}
 		},
 		(errors) => {
+			if (!isEditMode) setIsOptionalOpen(true);
 			setSaveAnnouncement('');
 			setValidationSummary(t('form.status.validationSummary'));
 
@@ -680,265 +697,401 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 						{t('form.partialSave.message')}
 					</Alert>
 				)}
-				<div className={classes.pageLayout}>
-					<aside className={classes.navigationRail}>
-						<ClientSectionNav
-							sections={sections}
-							ariaLabel={t('form.navigation.ariaLabel')}
-							jumpLabel={t('form.navigation.jumpLabel')}
-							errorLabel={t('form.navigation.sectionError')}
-						/>
-					</aside>
-
-					<fieldset
-						className={classes.sections}
-						disabled={isSubmitting}
-						aria-busy={isSubmitting}
-					>
-						<section
-							id='identity'
-							tabIndex={-1}
-							className={classes.sectionAnchor}
-							aria-labelledby={SECTION_HEADING_IDS.identity}
-						>
-							<SectionCard
-								icon={IconBuilding}
-								title={
-									<span id={SECTION_HEADING_IDS.identity}>
-										{t('form.sections.profile.title')}
-									</span>
-								}
-								description={t('form.sections.profile.description')}
-								contentSpacing='sm'
-								padding='md'
-								className={classes.sectionCard}
-							>
-								<div className={classes.twoColumnGrid}>
-									<TextInput
-										id={CLIENT_FORM_FIELD_IDS.name}
-										required
-										label={t('form.fields.name.label')}
-										placeholder={t('form.fields.name.placeholder')}
-										size='sm'
-										{...form.getInputProps('name')}
-									/>
-									<TextInput
-										id={CLIENT_FORM_FIELD_IDS.alias}
-										required
-										label={t('form.fields.alias.label')}
-										placeholder={t('form.fields.alias.placeholder')}
-										description={t('form.fields.alias.description')}
-										size='sm'
-										value={form.values.alias}
-										onChange={(event) => {
-											setIsAliasManuallyEdited(true);
-											form.setFieldValue('alias', event.currentTarget.value);
-										}}
-										error={form.errors.alias}
-									/>
-									<Textarea
-										id={CLIENT_FORM_FIELD_IDS.description}
-										className={classes.fullWidthField}
-										label={t('form.fields.description.label')}
-										placeholder={t('form.fields.description.placeholder')}
-										size='sm'
-										minRows={3}
-										{...form.getInputProps('description')}
-									/>
-								</div>
-							</SectionCard>
-						</section>
-
-						<section
-							id='contact'
-							tabIndex={-1}
-							className={classes.sectionAnchor}
-							aria-labelledby={SECTION_HEADING_IDS.contact}
-						>
-							<SectionCard
-								icon={IconAddressBook}
-								title={
-									<span id={SECTION_HEADING_IDS.contact}>
-										{t('form.sections.contact.title')}
-									</span>
-								}
-								description={t('form.sections.contact.description')}
-								contentSpacing='sm'
-								padding='md'
-								className={classes.sectionCard}
-							>
-								<div className={classes.twoColumnGrid}>
-									<TextInput
-										id={CLIENT_FORM_FIELD_IDS.email}
-										label={t('form.fields.email.label')}
-										placeholder={t('form.fields.email.placeholder')}
-										size='sm'
-										{...form.getInputProps('email')}
-									/>
-									<TextInput
-										id={CLIENT_FORM_FIELD_IDS.phone}
-										label={t('form.fields.phone.label')}
-										placeholder={t('form.fields.phone.placeholder')}
-										size='sm'
-										{...form.getInputProps('phone')}
-									/>
-								</div>
-							</SectionCard>
-						</section>
-
-						<section
-							id='location-tax'
-							tabIndex={-1}
-							className={classes.sectionAnchor}
-							aria-labelledby={SECTION_HEADING_IDS['location-tax']}
-						>
-							<SectionCard
-								icon={IconMapPin}
-								title={
-									<span id={SECTION_HEADING_IDS['location-tax']}>
-										{t('form.sections.locationTax.title')}
-									</span>
-								}
-								description={t('form.sections.locationTax.description')}
-								contentSpacing='sm'
-								padding='md'
-								className={classes.sectionCard}
-							>
-								<div className={classes.twoColumnGrid}>
-									<TextInput
-										id={CLIENT_FORM_FIELD_IDS.address}
-										label={t('form.fields.address.label')}
-										placeholder={t('form.fields.address.placeholder')}
-										size='sm'
-										{...form.getInputProps('address')}
-									/>
-									<TextInput
-										id={CLIENT_FORM_FIELD_IDS.rnc}
-										label={t('form.fields.rnc.label')}
-										placeholder={t('form.fields.rnc.placeholder')}
-										size='sm'
-										{...form.getInputProps('rnc')}
-									/>
-								</div>
-							</SectionCard>
-						</section>
-
-						{shouldLoadTheme && (
-							<section
-								id='billing'
-								tabIndex={-1}
-								className={classes.sectionAnchor}
-								aria-labelledby={SECTION_HEADING_IDS.billing}
-							>
-								<SectionCard
-									icon={IconReceipt}
-									title={
-										<span id={SECTION_HEADING_IDS.billing}>
-											{t('form.sections.invoiceSettings.title')}
-										</span>
-									}
-									description={t('form.sections.invoiceSettings.description')}
-									contentSpacing='sm'
-									padding='md'
-									className={classes.sectionCard}
-								>
-									<div className={classes.billingGrid}>
-										<TextInput
-											id={CLIENT_FORM_FIELD_IDS.website}
-											className={classes.fullWidthField}
-											label={t('form.fields.website.label')}
-											placeholder={t('form.fields.website.placeholder')}
-											size='sm'
-											{...form.getInputProps('website')}
-										/>
-										<Select
-											id={CLIENT_FORM_FIELD_IDS.pocUserId}
-											label={t('form.fields.pocUserId.label')}
-											placeholder={t('form.fields.pocUserId.placeholder')}
-											data={userOptions}
-											value={
-												form.values.pocUserId != null
-													? String(form.values.pocUserId)
-													: null
-											}
-											onChange={(value) =>
-												form.setFieldValue(
-													'pocUserId',
-													value ? Number(value) : null
-												)
-											}
-											clearable
-											searchable
-											size='sm'
-										/>
-										<Select
-											id={CLIENT_FORM_FIELD_IDS.invoiceTemplateFileId}
-											label={t('form.fields.invoiceTemplateFileId.label')}
-											placeholder={t(
-												'form.fields.invoiceTemplateFileId.placeholder'
-											)}
-											data={xlsxFileOptions}
-											value={
-												form.values.invoiceTemplateFileId != null
-													? String(form.values.invoiceTemplateFileId)
-													: null
-											}
-											onChange={(value) =>
-												form.setFieldValue(
-													'invoiceTemplateFileId',
-													value ? Number(value) : null
-												)
-											}
-											clearable
-											searchable
-											size='sm'
-										/>
-									</div>
-								</SectionCard>
-							</section>
-						)}
-
-						{shouldLoadTheme && clientId != null && (
-							<section
-								id='branding'
-								tabIndex={-1}
-								className={classes.sectionAnchor}
-								aria-labelledby={SECTION_HEADING_IDS.branding}
-							>
-								<ClientThemeSection
-									clientId={clientId}
-									value={{
-										brandName: form.values.brandName,
-										primaryColor: form.values.primaryColor,
-										secondaryColor: form.values.secondaryColor,
-										logoFileId: form.values.logoFileId,
-										logoUrl: form.values.logoUrl,
-									}}
-									onChange={handleThemeChange}
-									onUploadingChange={handleLogoUploadingChange}
-									errors={{
-										brandName: form.errors.brandName,
-										primaryColor: form.errors.primaryColor,
-										secondaryColor: form.errors.secondaryColor,
-									}}
-									disabled={isSubmitting}
-									icon={IconPalette}
-									className={classes.sectionCard}
+				{isEditMode ? (
+					<>
+						<div className={classes.pageLayout}>
+							<aside className={classes.navigationRail}>
+								<ClientSectionNav
+									sections={sections}
+									ariaLabel={t('form.navigation.ariaLabel')}
+									jumpLabel={t('form.navigation.jumpLabel')}
+									errorLabel={t('form.navigation.sectionError')}
 								/>
-							</section>
-						)}
-					</fieldset>
-				</div>
-				{isEditMode && (
-					<ClientFormActions
-						visible={form.isDirty() || isSubmitting}
-						isSubmitting={isSubmitting}
-						unsavedLabel={t('form.status.unsaved')}
-						saveLabel={t('form.actions.saveChanges')}
-						savingLabel={t('form.status.saving')}
-						discardLabel={t('form.actions.discard')}
-						onDiscard={handleDiscard}
-					/>
+							</aside>
+
+							<fieldset
+								className={classes.sections}
+								disabled={isSubmitting}
+								aria-busy={isSubmitting}
+							>
+								<section
+									id='identity'
+									tabIndex={-1}
+									className={classes.sectionAnchor}
+									aria-labelledby={SECTION_HEADING_IDS.identity}
+								>
+									<SectionCard
+										icon={IconBuilding}
+										title={
+											<span id={SECTION_HEADING_IDS.identity}>
+												{t('form.sections.profile.title')}
+											</span>
+										}
+										description={t('form.sections.profile.description')}
+										contentSpacing='sm'
+										padding='md'
+										className={classes.sectionCard}
+									>
+										<div className={classes.twoColumnGrid}>
+											<TextInput
+												id={CLIENT_FORM_FIELD_IDS.name}
+												required
+												label={t('form.fields.name.label')}
+												placeholder={t('form.fields.name.placeholder')}
+												size='sm'
+												{...form.getInputProps('name')}
+											/>
+											<TextInput
+												id={CLIENT_FORM_FIELD_IDS.alias}
+												required
+												label={t('form.fields.alias.label')}
+												placeholder={t('form.fields.alias.placeholder')}
+												description={t('form.fields.alias.description')}
+												size='sm'
+												value={form.values.alias}
+												onChange={(event) => {
+													setIsAliasManuallyEdited(true);
+													form.setFieldValue(
+														'alias',
+														event.currentTarget.value
+													);
+												}}
+												error={form.errors.alias}
+											/>
+											<Textarea
+												id={CLIENT_FORM_FIELD_IDS.description}
+												className={classes.fullWidthField}
+												label={t('form.fields.description.label')}
+												placeholder={t('form.fields.description.placeholder')}
+												size='sm'
+												minRows={3}
+												{...form.getInputProps('description')}
+											/>
+										</div>
+									</SectionCard>
+								</section>
+
+								<section
+									id='contact'
+									tabIndex={-1}
+									className={classes.sectionAnchor}
+									aria-labelledby={SECTION_HEADING_IDS.contact}
+								>
+									<SectionCard
+										icon={IconAddressBook}
+										title={
+											<span id={SECTION_HEADING_IDS.contact}>
+												{t('form.sections.contact.title')}
+											</span>
+										}
+										description={t('form.sections.contact.description')}
+										contentSpacing='sm'
+										padding='md'
+										className={classes.sectionCard}
+									>
+										<div className={classes.twoColumnGrid}>
+											<TextInput
+												id={CLIENT_FORM_FIELD_IDS.email}
+												label={t('form.fields.email.label')}
+												placeholder={t('form.fields.email.placeholder')}
+												size='sm'
+												{...form.getInputProps('email')}
+											/>
+											<TextInput
+												id={CLIENT_FORM_FIELD_IDS.phone}
+												label={t('form.fields.phone.label')}
+												placeholder={t('form.fields.phone.placeholder')}
+												size='sm'
+												{...form.getInputProps('phone')}
+											/>
+										</div>
+									</SectionCard>
+								</section>
+
+								<section
+									id='location-tax'
+									tabIndex={-1}
+									className={classes.sectionAnchor}
+									aria-labelledby={SECTION_HEADING_IDS['location-tax']}
+								>
+									<SectionCard
+										icon={IconMapPin}
+										title={
+											<span id={SECTION_HEADING_IDS['location-tax']}>
+												{t('form.sections.locationTax.title')}
+											</span>
+										}
+										description={t('form.sections.locationTax.description')}
+										contentSpacing='sm'
+										padding='md'
+										className={classes.sectionCard}
+									>
+										<div className={classes.twoColumnGrid}>
+											<TextInput
+												id={CLIENT_FORM_FIELD_IDS.address}
+												label={t('form.fields.address.label')}
+												placeholder={t('form.fields.address.placeholder')}
+												size='sm'
+												{...form.getInputProps('address')}
+											/>
+											<TextInput
+												id={CLIENT_FORM_FIELD_IDS.rnc}
+												label={t('form.fields.rnc.label')}
+												placeholder={t('form.fields.rnc.placeholder')}
+												size='sm'
+												{...form.getInputProps('rnc')}
+											/>
+										</div>
+									</SectionCard>
+								</section>
+
+								{shouldLoadTheme && (
+									<section
+										id='billing'
+										tabIndex={-1}
+										className={classes.sectionAnchor}
+										aria-labelledby={SECTION_HEADING_IDS.billing}
+									>
+										<SectionCard
+											icon={IconReceipt}
+											title={
+												<span id={SECTION_HEADING_IDS.billing}>
+													{t('form.sections.invoiceSettings.title')}
+												</span>
+											}
+											description={t(
+												'form.sections.invoiceSettings.description'
+											)}
+											contentSpacing='sm'
+											padding='md'
+											className={classes.sectionCard}
+										>
+											<div className={classes.billingGrid}>
+												<TextInput
+													id={CLIENT_FORM_FIELD_IDS.website}
+													className={classes.fullWidthField}
+													label={t('form.fields.website.label')}
+													placeholder={t('form.fields.website.placeholder')}
+													size='sm'
+													{...form.getInputProps('website')}
+												/>
+												<Select
+													id={CLIENT_FORM_FIELD_IDS.pocUserId}
+													label={t('form.fields.pocUserId.label')}
+													placeholder={t('form.fields.pocUserId.placeholder')}
+													data={userOptions}
+													value={
+														form.values.pocUserId != null
+															? String(form.values.pocUserId)
+															: null
+													}
+													onChange={(value) =>
+														form.setFieldValue(
+															'pocUserId',
+															value ? Number(value) : null
+														)
+													}
+													clearable
+													searchable
+													size='sm'
+												/>
+												<Select
+													id={CLIENT_FORM_FIELD_IDS.invoiceTemplateFileId}
+													label={t('form.fields.invoiceTemplateFileId.label')}
+													placeholder={t(
+														'form.fields.invoiceTemplateFileId.placeholder'
+													)}
+													data={xlsxFileOptions}
+													value={
+														form.values.invoiceTemplateFileId != null
+															? String(form.values.invoiceTemplateFileId)
+															: null
+													}
+													onChange={(value) =>
+														form.setFieldValue(
+															'invoiceTemplateFileId',
+															value ? Number(value) : null
+														)
+													}
+													clearable
+													searchable
+													size='sm'
+												/>
+											</div>
+										</SectionCard>
+									</section>
+								)}
+
+								{shouldLoadTheme && clientId != null && (
+									<section
+										id='branding'
+										tabIndex={-1}
+										className={classes.sectionAnchor}
+										aria-labelledby={SECTION_HEADING_IDS.branding}
+									>
+										<ClientThemeSection
+											clientId={clientId}
+											value={{
+												brandName: form.values.brandName,
+												primaryColor: form.values.primaryColor,
+												secondaryColor: form.values.secondaryColor,
+												logoFileId: form.values.logoFileId,
+												logoUrl: form.values.logoUrl,
+											}}
+											onChange={handleThemeChange}
+											onUploadingChange={handleLogoUploadingChange}
+											errors={{
+												brandName: form.errors.brandName,
+												primaryColor: form.errors.primaryColor,
+												secondaryColor: form.errors.secondaryColor,
+											}}
+											disabled={isSubmitting}
+											icon={IconPalette}
+											className={classes.sectionCard}
+										/>
+									</section>
+								)}
+							</fieldset>
+						</div>
+						<ClientFormActions
+							visible={form.isDirty() || isSubmitting}
+							isSubmitting={isSubmitting}
+							unsavedLabel={t('form.status.unsaved')}
+							saveLabel={t('form.actions.saveChanges')}
+							savingLabel={t('form.status.saving')}
+							discardLabel={t('form.actions.discard')}
+							onDiscard={handleDiscard}
+						/>
+					</>
+				) : (
+					<div className={classes.createLayout}>
+						<SectionCard
+							icon={IconBuilding}
+							title={t('form.sections.profile.title')}
+							description={t('form.sections.profile.description')}
+							contentSpacing='sm'
+							padding='md'
+							className={classes.sectionCard}
+							footer={
+								<div className={classes.createFooter}>
+									<Button type='submit' fullWidth loading={isSubmitting}>
+										{isSubmitting
+											? t('form.status.saving')
+											: t('form.actions.createClient')}
+									</Button>
+									<Button
+										type='button'
+										variant='subtle'
+										color='gray'
+										fullWidth
+										disabled={isSubmitting}
+										onClick={handleBack}
+									>
+										{t('actions.cancel', { ns: 'common' })}
+									</Button>
+								</div>
+							}
+						>
+							<fieldset
+								className={classes.createFields}
+								disabled={isSubmitting}
+								aria-busy={isSubmitting}
+							>
+								<TextInput
+									id={CLIENT_FORM_FIELD_IDS.name}
+									required
+									label={t('form.fields.name.label')}
+									placeholder={t('form.fields.name.placeholder')}
+									size='sm'
+									{...form.getInputProps('name')}
+								/>
+								<TextInput
+									id={CLIENT_FORM_FIELD_IDS.alias}
+									required
+									label={t('form.fields.alias.label')}
+									placeholder={t('form.fields.alias.placeholder')}
+									description={t('form.fields.alias.description')}
+									size='sm'
+									value={form.values.alias}
+									onChange={(event) => {
+										setIsAliasManuallyEdited(true);
+										form.setFieldValue('alias', event.currentTarget.value);
+									}}
+									error={form.errors.alias}
+								/>
+								<Textarea
+									id={CLIENT_FORM_FIELD_IDS.description}
+									label={t('form.fields.description.label')}
+									placeholder={t('form.fields.description.placeholder')}
+									size='sm'
+									minRows={3}
+									{...form.getInputProps('description')}
+								/>
+								<div className={classes.createOptionalGroup}>
+									<UnstyledButton
+										type='button'
+										className={classes.optionalToggle}
+										onClick={() => setIsOptionalOpen((open) => !open)}
+										aria-expanded={isOptionalOpen}
+										aria-controls='client-create-optional-fields'
+									>
+										<IconChevronRight
+											size={16}
+											className={`${classes.optionalChevron} ${
+												isOptionalOpen ? classes.optionalChevronOpen : ''
+											}`}
+											aria-hidden='true'
+										/>
+										<span className={classes.optionalToggleLabel}>
+											{t('form.createOptional.toggle')}
+										</span>
+										<Badge variant='light' color='gray' size='sm' radius='sm'>
+											{t('form.createOptional.optional')}
+										</Badge>
+									</UnstyledButton>
+									<Collapse
+										expanded={isOptionalOpen}
+										id='client-create-optional-fields'
+										transitionDuration={reducedMotion ? 0 : 200}
+									>
+										<div className={classes.createOptionalFields}>
+											<Text size='xs' c='dimmed'>
+												{t('form.createOptional.hint')}
+											</Text>
+											<TextInput
+												id={CLIENT_FORM_FIELD_IDS.email}
+												label={t('form.fields.email.label')}
+												placeholder={t('form.fields.email.placeholder')}
+												size='sm'
+												{...form.getInputProps('email')}
+											/>
+											<TextInput
+												id={CLIENT_FORM_FIELD_IDS.phone}
+												label={t('form.fields.phone.label')}
+												placeholder={t('form.fields.phone.placeholder')}
+												size='sm'
+												{...form.getInputProps('phone')}
+											/>
+											<TextInput
+												id={CLIENT_FORM_FIELD_IDS.address}
+												label={t('form.fields.address.label')}
+												placeholder={t('form.fields.address.placeholder')}
+												size='sm'
+												{...form.getInputProps('address')}
+											/>
+											<TextInput
+												id={CLIENT_FORM_FIELD_IDS.rnc}
+												label={t('form.fields.rnc.label')}
+												placeholder={t('form.fields.rnc.placeholder')}
+												size='sm'
+												{...form.getInputProps('rnc')}
+											/>
+										</div>
+									</Collapse>
+								</div>
+							</fieldset>
+						</SectionCard>
+					</div>
 				)}
 			</ContentContainer>
 		</form>

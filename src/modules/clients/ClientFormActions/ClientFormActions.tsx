@@ -24,7 +24,7 @@ const ClientFormActions = ({
 
 	return (
 		<div className={classes.saveBar}>
-			<Text size='sm' className={classes.status} aria-live='polite'>
+			<Text size='sm' className={classes.status}>
 				<span className={classes.dot} aria-hidden='true' />
 				{unsavedLabel}
 			</Text>

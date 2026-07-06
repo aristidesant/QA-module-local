@@ -76,3 +76,10 @@ export const CLIENT_SECTION_FIELDS: Record<
 	billing: ['website', 'pocUserId', 'invoiceTemplateFileId'],
 	branding: ['brandName', 'primaryColor', 'secondaryColor', 'logoFileId'],
 };
+
+export const CLIENT_CREATE_OPTIONAL_FIELDS: readonly ClientFormField[] = [
+	'email',
+	'phone',
+	'address',
+	'rnc',
+];
