@@ -261,7 +261,7 @@
 	font-weight: 600;
 	letter-spacing: 0.04em;
 	text-transform: uppercase;
-	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+	color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-2));
 }
 
 .metadataValue {
