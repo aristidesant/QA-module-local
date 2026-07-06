@@ -71,7 +71,13 @@
 		},
 		"actions": {
 			"saveChanges": "Save changes",
-			"createClient": "Create client"
+			"createClient": "Create client",
+			"discard": "Discard"
+		},
+		"createOptional": {
+			"toggle": "Contact & location",
+			"optional": "Optional",
+			"hint": "You can also add these after creating the client."
 		},
 		"errors": {
 			"missingClientId": "Missing client ID"
