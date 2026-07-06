@@ -205,7 +205,7 @@
 @media (max-width: 48em) {
 	.pageLayout {
 		grid-template-columns: minmax(0, 1fr);
-		gap: var(--mantine-spacing-sm);
+		gap: var(--mantine-spacing-md);
 		padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm)
 			calc(7rem + env(safe-area-inset-bottom));
 		overflow-x: clip;
@@ -219,7 +219,7 @@
 	.sections {
 		grid-column: 1;
 		grid-row: 2;
-		gap: var(--mantine-spacing-sm);
+		gap: var(--mantine-spacing-md);
 	}
 
 	.twoColumnGrid,
@@ -234,6 +234,10 @@
 	.errorState {
 		padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm)
 			var(--mantine-spacing-lg);
+	}
+
+	.headerMetadata {
+		gap: var(--mantine-spacing-sm);
 	}
 }
 
