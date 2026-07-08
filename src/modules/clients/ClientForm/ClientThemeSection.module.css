@@ -8,8 +8,13 @@
 	width: 96px;
 	height: 96px;
 	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--surface-border);
-	background-color: var(--surface-sunken);
+	border: 1px solid
+		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+	background-color: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-gray-0)
+	);
+	padding: var(--mantine-spacing-xs);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -21,6 +26,7 @@
 	width: 100%;
 	height: 100%;
 	object-fit: contain;
+	display: block;
 }
 
 .logoPlaceholder {

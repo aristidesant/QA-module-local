@@ -12,9 +12,11 @@ import type FileTypeModel from '~/models/FileTypeModel';
  * consistent with other API clients in this project.
  */
 export type GetPresignedUrlOptions = {
-	/** Expiration time in seconds (server default will be used if not provided) */
+	/** Expiration time in seconds (the API allows at most five minutes) */
 	expiresIn?: number;
 };
+
+const DEFAULT_PRESIGNED_URL_EXPIRATION_SECONDS = 300;
 
 const fileApi = (_authHeader?: Record<string, string>) => {
 	return {
@@ -25,10 +27,6 @@ const fileApi = (_authHeader?: Record<string, string>) => {
 			return response.data;
 		},
 
-		/**
-		 * Fetch a presigned URL for a file by ID.
-		 * Accepts both plain string response and object variants commonly used by APIs.
-		 */
 		/**
 		 * Fetch all files belonging to a client.
 		 */
@@ -48,14 +46,15 @@ const fileApi = (_authHeader?: Record<string, string>) => {
 			fileId: number | string,
 			options: GetPresignedUrlOptions = {}
 		): Promise<string> => {
-			const { expiresIn } = options;
+			const expiresIn =
+				options.expiresIn ?? DEFAULT_PRESIGNED_URL_EXPIRATION_SECONDS;
 
 			const response = await axios.get<
 				string | { url?: string; presignedUrl?: string; href?: string }
 			>(`${DEFAULT_API_URL}/files/access/${fileId}`, {
 				params: {
 					presigned: true,
-					...(typeof expiresIn === 'number' ? { expiresIn } : {}),
+					expiresIn,
 				},
 				// Expect JSON or text; axios will parse JSON automatically
 				// If server responds text/plain, data will be a string

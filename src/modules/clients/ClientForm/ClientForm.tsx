@@ -38,7 +38,7 @@ import {
 	useUpdateClient,
 	useUpdateClientTheme,
 } from '~/queries/clientQueries';
-import { useGetClientFiles } from '~/queries/fileQueries';
+import { useGetFile } from '~/queries/fileQueries';
 import { useGetSimpleUsers } from '~/queries/userQueries';
 import {
 	createClientAliasSuggestion,
@@ -158,9 +158,6 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 	const { data: simpleUsers = [] } = useGetSimpleUsers(
 		shouldLoadTheme ? clientId : undefined
 	);
-	const { data: clientFiles = [] } = useGetClientFiles(
-		shouldLoadTheme ? clientId : undefined
-	);
 	const createMutation = useCreateClient();
 	const updateMutation = useUpdateClient();
 	const updateThemeMutation = useUpdateClientTheme();
@@ -180,6 +177,10 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 		error: themeError,
 		refetch: refetchTheme,
 	} = useGetClientTheme(clientId, shouldLoadTheme);
+	const { data: invoiceTemplateFile } = useGetFile(
+		form.values.invoiceTemplateFileId,
+		isEditMode && form.values.invoiceTemplateFileId != null
+	);
 
 	useEffect(() => {
 		if (!isEditMode) {
@@ -238,13 +239,16 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 			})),
 		[simpleUsers, t]
 	);
-	const xlsxFileOptions = useMemo(
-		() =>
-			clientFiles
-				.filter((file) => file.extension === 'xlsx')
-				.map((file) => ({ value: String(file.id), label: file.name })),
-		[clientFiles]
-	);
+	const xlsxFileOptions = useMemo(() => {
+		if (!invoiceTemplateFile) return [];
+
+		return [
+			{
+				value: String(invoiceTemplateFile.id),
+				label: invoiceTemplateFile.name,
+			},
+		];
+	}, [invoiceTemplateFile]);
 	const isSubmitting =
 		createMutation.isPending ||
 		updateMutation.isPending ||
@@ -562,6 +566,15 @@ const ClientForm: React.FC<ClientFormProps> = ({ mode, clientId }) => {
 					block: 'center',
 				});
 				field?.focus({ preventScroll: true });
+
+				// Fields inside the collapsed optional group are not focusable
+				// until the Collapse transition finishes; retry once it has.
+				if (field && document.activeElement !== field) {
+					window.setTimeout(
+						() => field.focus({ preventScroll: true }),
+						reducedMotion ? 0 : 240
+					);
+				}
 			});
 		}
 	);

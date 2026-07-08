@@ -22,7 +22,12 @@ import type { TablerIcon } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
 import SectionCard from '~/components/SectionCard';
-import { useGetFileTypes, useUploadFile } from '~/queries/fileQueries';
+import {
+	useGetFile,
+	useGetFileTypes,
+	useGetPresignedFileUrl,
+	useUploadFile,
+} from '~/queries/fileQueries';
 import {
 	ALLOWED_LOGO_MIME_TYPES,
 	MAX_BRAND_NAME_LENGTH,
@@ -64,6 +69,14 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 	className,
 }) => {
 	const { t } = useTranslation('clients');
+	const { data: logoFile, isError: isLogoFileError } = useGetFile(
+		value.logoFileId,
+		value.logoFileId != null
+	);
+	const { data: presignedLogoUrl } = useGetPresignedFileUrl(
+		logoFile?.id ?? null,
+		logoFile != null && !isLogoFileError
+	);
 	const { data: fileTypes = [] } = useGetFileTypes();
 	const uploadMutation = useUploadFile();
 	const [isUploading, setIsUploading] = useState(false);
@@ -101,6 +114,11 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 		if (typeof node === 'number') return String(node);
 		return null;
 	};
+	const logoPreviewUrl = presignedLogoUrl ?? value.logoUrl;
+
+	useEffect(() => {
+		setLogoPreviewBroken(false);
+	}, [value.logoFileId, logoPreviewUrl]);
 
 	const handleLogoChange = async (file: File | null) => {
 		if (uploadInProgressRef.current) return;
@@ -181,7 +199,10 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 	};
 
 	const showLogoPreview =
-		value.logoFileId != null && value.logoUrl != null && !logoPreviewBroken;
+		value.logoFileId != null &&
+		!isLogoFileError &&
+		Boolean(logoPreviewUrl) &&
+		!logoPreviewBroken;
 
 	return (
 		<SectionCard
@@ -200,7 +221,7 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 						{showLogoPreview ? (
 							<img
 								className={classes.logoImage}
-								src={value.logoUrl ?? ''}
+								src={logoPreviewUrl ?? ''}
 								alt={t('form.fields.logo.previewAlt')}
 								onError={() => setLogoPreviewBroken(true)}
 							/>
@@ -262,7 +283,6 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 						)}
 					</div>
 				</div>
-
 				<div className={classes.colorRow}>
 					<ColorInput
 						id={CLIENT_FORM_FIELD_IDS.primaryColor}
@@ -295,7 +315,6 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 						size='sm'
 					/>
 				</div>
-
 				<TextInput
 					id={CLIENT_FORM_FIELD_IDS.brandName}
 					className={classes.brandNameField}
