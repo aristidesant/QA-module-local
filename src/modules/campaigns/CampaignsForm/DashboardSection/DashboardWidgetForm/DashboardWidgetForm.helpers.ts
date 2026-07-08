@@ -1976,6 +1976,7 @@ const buildPresetMetricShell = (
 			sourceType: expansion.source,
 			aggregationType: 'COUNT',
 			fieldName: expansion.field,
+			aggregateByContact: values.aggregateByContact,
 			resultType: 'PERCENT',
 		};
 	}
@@ -1984,6 +1985,7 @@ const buildPresetMetricShell = (
 			sourceType: 'DISPOSITION',
 			aggregationType: 'COUNT',
 			fieldName: undefined,
+			aggregateByContact: values.aggregateByContact,
 			resultType: 'NUMBER',
 		};
 	}
@@ -1994,6 +1996,7 @@ const buildPresetMetricShell = (
 		sourceType,
 		aggregationType: 'COUNT',
 		fieldName: values.presetField ?? undefined,
+		aggregateByContact: values.aggregateByContact,
 		resultType,
 	};
 };
