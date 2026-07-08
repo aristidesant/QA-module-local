@@ -296,6 +296,9 @@ const normalizePreviewPayload = (
 			...(payload.dataConfig.metric.supportsTimeSeries === undefined
 				? {}
 				: { supportsTimeSeries: payload.dataConfig.metric.supportsTimeSeries }),
+			...(payload.dataConfig.metric.aggregateByContact === undefined
+				? {}
+				: { aggregateByContact: payload.dataConfig.metric.aggregateByContact }),
 			resultType: payload.dataConfig.metric.resultType,
 		},
 		...(payload.dataConfig.query ? { query: payload.dataConfig.query } : {}),
