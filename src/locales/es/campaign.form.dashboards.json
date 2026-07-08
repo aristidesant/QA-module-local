@@ -641,6 +641,10 @@
 				"FLAT": "Sin cambio",
 				"UNAVAILABLE": "—"
 			}
+		},
+		"showExternal": {
+			"toggle": "Mostrar solo campañas visibles en la app móvil",
+			"shortToggle": "Solo móvil"
 		}
 	}
 }

@@ -9,6 +9,7 @@ interface CampaignDashboardViewerState {
 	draftLayouts: ViewerWidgetLayout[];
 	selectedTimeRange: AnalyticsTimeRange | null;
 	comparisonEnabled: boolean;
+	showExternalOnly: boolean;
 	reset: (selectedDashboardId?: string | null) => void;
 	setSelectedDashboardId: (selectedDashboardId: string | null) => void;
 	startEditing: (persistedLayouts: ViewerWidgetLayout[]) => void;
@@ -18,6 +19,7 @@ interface CampaignDashboardViewerState {
 	setDraftLayouts: (draftLayouts: ViewerWidgetLayout[]) => void;
 	setSelectedTimeRange: (timeRange: AnalyticsTimeRange | null) => void;
 	setComparisonEnabled: (enabled: boolean) => void;
+	setShowExternalOnly: (enabled: boolean) => void;
 }
 
 const initialState = {
@@ -26,6 +28,7 @@ const initialState = {
 	draftLayouts: [] as ViewerWidgetLayout[],
 	selectedTimeRange: 'WEEK' as AnalyticsTimeRange,
 	comparisonEnabled: true,
+	showExternalOnly: false,
 };
 
 export const useCampaignDashboardViewerStore =
@@ -74,6 +77,7 @@ export const useCampaignDashboardViewerStore =
 					: { selectedTimeRange: timeRange, comparisonEnabled: true }
 			),
 		setComparisonEnabled: (enabled) => set({ comparisonEnabled: enabled }),
+		setShowExternalOnly: (enabled) => set({ showExternalOnly: enabled }),
 	}));
 
 export default useCampaignDashboardViewerStore;
