@@ -2410,6 +2410,7 @@ export const buildMetricPayload = (
 		: { compareWith: values.compareWith }),
 	supportsGroupBy: values.supportsGroupBy,
 	supportsTimeSeries: values.supportsTimeSeries,
+	aggregateByContact: values.aggregateByContact,
 	resultType:
 		values.resultType ??
 		inferResultType(
@@ -2553,6 +2554,7 @@ export const widgetFormValues = (
 		resultType: metric?.resultType ?? null,
 		supportsGroupBy: metric?.supportsGroupBy ?? false,
 		supportsTimeSeries: metric?.supportsTimeSeries ?? true,
+		aggregateByContact: metric?.aggregateByContact ?? false,
 		groupBy:
 			metric?.sourceType === 'ATTRIBUTE'
 				? (query?.groupBy ?? null)

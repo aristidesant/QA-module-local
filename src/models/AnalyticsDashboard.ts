@@ -117,6 +117,7 @@ export interface DashboardWidgetMetricConfig {
 	compareWith?: MetricCompareWith;
 	supportsGroupBy?: boolean;
 	supportsTimeSeries?: boolean;
+	aggregateByContact?: boolean;
 	resultType: MetricResultType;
 }
 
