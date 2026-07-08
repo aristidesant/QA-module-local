@@ -178,6 +178,7 @@ export interface Campaign {
 	agents?: CampaignAgent[];
 
 	noiseCancellation?: boolean;
+	showExternal?: boolean;
 	/** Persisted node styles for the workflow editor (top-level campaign field) */
 	nodeStyles?: NodeStyles;
 	/** Persisted node groups for the workflow editor (top-level campaign field) */
