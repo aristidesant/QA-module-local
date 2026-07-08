@@ -25,6 +25,7 @@ import {
 	IconPlayerPlay,
 	IconPlayerPause,
 	IconDotsVertical,
+	IconDeviceMobile,
 } from '@tabler/icons-react';
 import type { Campaign } from '~/models/CampaignsModel';
 // useNavigate removed; no client-side navigation from columns
@@ -241,6 +242,29 @@ export const useCampaignsColumns = ({
 				);
 			},
 			size: 120,
+		},
+		{
+			id: 'showExternal',
+			header: '',
+			cell: ({ row }) => {
+				const campaign = row.original;
+				if (!campaign.showExternal) {
+					return null;
+				}
+				return (
+					<Tooltip label={t('columns.showExternalTooltip')} withArrow>
+						<ActionIcon
+							variant='subtle'
+							color='blue'
+							size='xs'
+							aria-label={t('columns.showExternalTooltip')}
+						>
+							<IconDeviceMobile size={13} />
+						</ActionIcon>
+					</Tooltip>
+				);
+			},
+			size: 40,
 		},
 		{
 			accessorKey: 'updatedAt',
