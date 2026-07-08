@@ -200,9 +200,11 @@
 				"widgetRoles": "Allowed roles",
 				"width": "Width",
 				"height": "Height",
-				"enabled": "Widget enabled"
+				"enabled": "Widget enabled",
+				"aggregateByContact": "Aggregate by contact"
 			},
 			"aggregationHint": "Aggregation defines the math applied to the selected source field.",
+			"aggregateByContactHint": "Count each contact once, using their latest conversation.",
 			"visibilityScopeHint": "Internal is the default. Switch to Global or Private only when you need a different audience.",
 			"roleAccess": {
 				"hint": "If no roles are selected, the widget stays public. If roles are selected, render only includes users with at least one of them.",

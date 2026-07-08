@@ -590,6 +590,29 @@ const DashboardWidgetAdvancedSection = () => {
 									classNames={{ body: styles.switchBody }}
 								/>
 							</div>
+							<div
+								className={styles.switchTile}
+								onClick={() =>
+									state.handlers.handleAggregateByContactChange(
+										!state.values.aggregateByContact
+									)
+								}
+							>
+								<Switch
+									labelPosition='left'
+									label={t('dashboardBuilder.form.fields.aggregateByContact')}
+									description={t(
+										'dashboardBuilder.form.aggregateByContactHint'
+									)}
+									checked={state.values.aggregateByContact}
+									onChange={(event) =>
+										state.handlers.handleAggregateByContactChange(
+											event.currentTarget.checked
+										)
+									}
+									classNames={{ body: styles.switchBody }}
+								/>
+							</div>
 							{state.needsGroupedConfig ? (
 								<div
 									className={styles.switchTile}
