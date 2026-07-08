@@ -120,7 +120,7 @@
 	}
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48em) {
 	.contentContainerMain {
 		padding: 0;
 	}
@@ -134,6 +134,11 @@
 		margin-inline: 0;
 		padding: var(--mantine-spacing-sm);
 		padding-bottom: 0;
+	}
+
+	.contentContainerHeaderScrolled,
+	[data-mantine-color-scheme='dark'] .contentContainerHeaderScrolled {
+		clip-path: none;
 	}
 }
 

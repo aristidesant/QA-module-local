@@ -1976,6 +1976,7 @@ const buildPresetMetricShell = (
 			sourceType: expansion.source,
 			aggregationType: 'COUNT',
 			fieldName: expansion.field,
+			aggregateByContact: values.aggregateByContact,
 			resultType: 'PERCENT',
 		};
 	}
@@ -1984,6 +1985,7 @@ const buildPresetMetricShell = (
 			sourceType: 'DISPOSITION',
 			aggregationType: 'COUNT',
 			fieldName: undefined,
+			aggregateByContact: values.aggregateByContact,
 			resultType: 'NUMBER',
 		};
 	}
@@ -1994,6 +1996,7 @@ const buildPresetMetricShell = (
 		sourceType,
 		aggregationType: 'COUNT',
 		fieldName: values.presetField ?? undefined,
+		aggregateByContact: values.aggregateByContact,
 		resultType,
 	};
 };
@@ -2410,6 +2413,7 @@ export const buildMetricPayload = (
 		: { compareWith: values.compareWith }),
 	supportsGroupBy: values.supportsGroupBy,
 	supportsTimeSeries: values.supportsTimeSeries,
+	aggregateByContact: values.aggregateByContact,
 	resultType:
 		values.resultType ??
 		inferResultType(
@@ -2553,6 +2557,7 @@ export const widgetFormValues = (
 		resultType: metric?.resultType ?? null,
 		supportsGroupBy: metric?.supportsGroupBy ?? false,
 		supportsTimeSeries: metric?.supportsTimeSeries ?? true,
+		aggregateByContact: metric?.aggregateByContact ?? false,
 		groupBy:
 			metric?.sourceType === 'ATTRIBUTE'
 				? (query?.groupBy ?? null)

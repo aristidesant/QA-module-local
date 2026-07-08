@@ -76,6 +76,7 @@ const DashboardWidgetPresetSection = () => {
 		handlePresetValuesChange,
 		handlePresetDisplayLabelChange,
 		handlePresetIncludeChildrenChange,
+		handleAggregateByContactChange,
 	} = handlers;
 
 	const aliasOptions = [
@@ -277,6 +278,16 @@ const DashboardWidgetPresetSection = () => {
 							handlePresetDisplayLabelChange(e.currentTarget.value)
 						}
 						maxLength={120}
+					/>
+
+					<Switch
+						checked={values.aggregateByContact}
+						onChange={(e) =>
+							handleAggregateByContactChange(e.currentTarget.checked)
+						}
+						label={t('dashboardBuilder.form.fields.aggregateByContact')}
+						description={t('dashboardBuilder.form.aggregateByContactHint')}
+						size='sm'
 					/>
 				</Stack>
 			)}

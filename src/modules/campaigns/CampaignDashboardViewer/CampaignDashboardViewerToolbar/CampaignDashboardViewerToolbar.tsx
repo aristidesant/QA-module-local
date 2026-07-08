@@ -12,6 +12,7 @@ import {
 	IconCheck,
 	IconChevronDown,
 	IconDeviceFloppy,
+	IconDeviceMobile,
 	IconEdit,
 	IconLayoutDashboard,
 	IconLayoutGrid,
@@ -42,6 +43,7 @@ interface CampaignDashboardViewerToolbarProps {
 	period?: DashboardPeriod;
 	comparisonPeriod?: { current: DashboardPeriod; previous: DashboardPeriod };
 	comparisonEnabled: boolean;
+	showExternalOnly: boolean;
 	allowLayoutEditing: boolean;
 	showBackButton?: boolean;
 	onBackClick?: () => void;
@@ -52,6 +54,7 @@ interface CampaignDashboardViewerToolbarProps {
 	onStartEditing: () => void;
 	onTimeRangeChange: (value: AnalyticsTimeRange | null) => void;
 	onComparisonChange: (value: boolean) => void;
+	onShowExternalOnlyChange: (value: boolean) => void;
 }
 
 const TIME_RANGE_KEYS = ['all', 'TODAY', 'WEEK', 'MONTH', 'YEAR'] as const;
@@ -67,6 +70,7 @@ const CampaignDashboardViewerToolbar = ({
 	period,
 	comparisonPeriod,
 	comparisonEnabled,
+	showExternalOnly,
 	allowLayoutEditing,
 	showBackButton,
 	onBackClick,
@@ -77,6 +81,7 @@ const CampaignDashboardViewerToolbar = ({
 	onStartEditing,
 	onTimeRangeChange,
 	onComparisonChange,
+	onShowExternalOnlyChange,
 }: CampaignDashboardViewerToolbarProps) => {
 	const { t } = useTranslation('campaign.form.dashboards');
 	const isEditingLayout = useCampaignDashboardViewerStore(
@@ -267,6 +272,21 @@ const CampaignDashboardViewerToolbar = ({
 								</Button>
 							</Tooltip>
 						) : null}
+						<Tooltip label={t('dashboard.showExternal.toggle')}>
+							<Button
+								size='sm'
+								variant='default'
+								className={clsx(
+									styles.compareButton,
+									showExternalOnly && styles['compareButton--active']
+								)}
+								leftSection={<IconDeviceMobile size={15} />}
+								onClick={() => onShowExternalOnlyChange(!showExternalOnly)}
+								disabled={isControlDisabled}
+							>
+								{t('dashboard.showExternal.shortToggle')}
+							</Button>
+						</Tooltip>
 					</Group>
 				</div>
 

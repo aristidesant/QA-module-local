@@ -48,6 +48,7 @@ pnpm-debug.log*
 .env
 package-lock.json
 /.claude/
+/.worktrees/
 /.agents/
 /.opencode/
 skills-lock.json

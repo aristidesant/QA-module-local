@@ -130,6 +130,7 @@ export type DashboardWidgetFormState = {
 		handleEnabledChange: (checked: boolean) => void;
 		handleSupportsGroupByChange: (checked: boolean) => void;
 		handleSupportsTimeSeriesChange: (checked: boolean) => void;
+		handleAggregateByContactChange: (checked: boolean) => void;
 		handleViewLegendChange: (checked: boolean) => void;
 		handleTitleChange: (value: string) => void;
 		handlePresetEnabledChange: (enabled: boolean) => void;

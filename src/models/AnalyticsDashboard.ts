@@ -117,6 +117,7 @@ export interface DashboardWidgetMetricConfig {
 	compareWith?: MetricCompareWith;
 	supportsGroupBy?: boolean;
 	supportsTimeSeries?: boolean;
+	aggregateByContact?: boolean;
 	resultType: MetricResultType;
 }
 
@@ -303,6 +304,7 @@ export interface DashboardRenderRequest {
 	timeRange?: AnalyticsTimeRange;
 	filters?: RuntimeFilter[];
 	contactGroupId?: number | null;
+	showExternal?: boolean;
 }
 
 export interface DashboardPeriod {
@@ -331,6 +333,7 @@ export interface DashboardRenderComparisonRequest {
 	timeRange?: AnalyticsTimeRange;
 	comparisonMode?: AnalyticsComparisonMode;
 	contactGroupId?: number | null;
+	showExternal?: boolean;
 }
 
 export interface DashboardComparisonWidget {

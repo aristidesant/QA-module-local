@@ -200,9 +200,11 @@
 				"widgetRoles": "Roles permitidos",
 				"width": "Ancho",
 				"height": "Alto",
-				"enabled": "Widget habilitado"
+				"enabled": "Widget habilitado",
+				"aggregateByContact": "Agrupar por contacto"
 			},
 			"aggregationHint": "La agregación define la matemática aplicada al campo de origen seleccionado.",
+			"aggregateByContactHint": "Cuenta cada contacto una sola vez, usando su última conversación.",
 			"visibilityScopeHint": "Interno es el valor predeterminado. Cambia a Global o Privado solo cuando necesites otro público.",
 			"roleAccess": {
 				"hint": "Si no seleccionas roles, el widget queda público. Si seleccionas roles, el render solo incluye usuarios con al menos uno de ellos.",
@@ -639,6 +641,10 @@
 				"FLAT": "Sin cambio",
 				"UNAVAILABLE": "—"
 			}
+		},
+		"showExternal": {
+			"toggle": "Mostrar solo campañas visibles en la app móvil",
+			"shortToggle": "Solo móvil"
 		}
 	}
 }

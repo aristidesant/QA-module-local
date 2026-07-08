@@ -11,6 +11,19 @@ export const useGetFile = (fileId: number | null, enabled = true) => {
 	});
 };
 
+export const useGetPresignedFileUrl = (
+	fileId: number | null,
+	enabled = true
+) => {
+	return useQuery<string>({
+		queryKey: ['filePresignedUrl', fileId],
+		queryFn: async () => fileApi().getPresignedFileUrl(fileId!),
+		enabled: fileId != null && enabled,
+		staleTime: 4 * 60 * 1000,
+		gcTime: 5 * 60 * 1000,
+	});
+};
+
 /**
  * Query to get all files belonging to a client.
  */
