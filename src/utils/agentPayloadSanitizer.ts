@@ -139,12 +139,6 @@ const sanitizeNestedPayload = (value: unknown): unknown => {
 			return;
 		}
 
-		if (key === 'showExternal') {
-			delete nextValue[key];
-			nextValue.showInMobile = sanitizeNestedPayload(nestedValue);
-			return;
-		}
-
 		nextValue[key] = sanitizeNestedPayload(nestedValue);
 	});
 
