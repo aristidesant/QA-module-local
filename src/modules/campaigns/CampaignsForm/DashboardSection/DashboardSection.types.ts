@@ -41,6 +41,7 @@ export type WidgetFormValues = {
 	resultType: MetricResultType | null;
 	supportsGroupBy: boolean;
 	supportsTimeSeries: boolean;
+	aggregateByContact: boolean;
 	groupBy: string | null;
 	limit: number | '';
 	viewColor: string;

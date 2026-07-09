@@ -92,6 +92,9 @@ const CampaignDashboardViewer = ({
 	const comparisonEnabled = useCampaignDashboardViewerStore(
 		(state) => state.comparisonEnabled
 	);
+	const showExternalOnly = useCampaignDashboardViewerStore(
+		(state) => state.showExternalOnly
+	);
 	const resetStore = useCampaignDashboardViewerStore((state) => state.reset);
 	const setSelectedDashboardId = useCampaignDashboardViewerStore(
 		(state) => state.setSelectedDashboardId
@@ -116,6 +119,9 @@ const CampaignDashboardViewer = ({
 	);
 	const setComparisonEnabled = useCampaignDashboardViewerStore(
 		(state) => state.setComparisonEnabled
+	);
+	const setShowExternalOnly = useCampaignDashboardViewerStore(
+		(state) => state.setShowExternalOnly
 	);
 
 	const updateDashboardWidgetLayouts = useUpdateDashboardWidgetLayouts();
@@ -173,8 +179,9 @@ const CampaignDashboardViewer = ({
 				? { timeRange: selectedTimeRange }
 				: { timeRange: 'ALL' as AnalyticsTimeRange }),
 			...(contactGroupId != null ? { contactGroupId } : {}),
+			...(showExternalOnly ? { showExternal: true } : {}),
 		}),
-		[selectedTimeRange, contactGroupId]
+		[selectedTimeRange, contactGroupId, showExternalOnly]
 	);
 	const isComparisonActive = Boolean(comparisonEnabled && selectedTimeRange);
 
@@ -523,6 +530,7 @@ const CampaignDashboardViewer = ({
 					period={renderResult?.period}
 					comparisonPeriod={unifiedRenderResult?.comparisonPeriod}
 					comparisonEnabled={comparisonEnabled}
+					showExternalOnly={showExternalOnly}
 					allowLayoutEditing={allowLayoutEditing}
 					showBackButton={Boolean(onBackClick)}
 					onBackClick={onBackClick}
@@ -535,6 +543,7 @@ const CampaignDashboardViewer = ({
 						setSelectedTimeRange(v)
 					}
 					onComparisonChange={setComparisonEnabled}
+					onShowExternalOnlyChange={setShowExternalOnly}
 				/>
 			</div>
 

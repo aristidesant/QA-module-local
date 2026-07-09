@@ -13,6 +13,7 @@ export interface ContentContainerProps {
 	titleIcon?: ReactNode;
 	description?: string;
 	showBackButton?: boolean;
+	backButtonDisabled?: boolean;
 	rightSectionTitle?: ReactNode;
 	mainScroll?: boolean; // new prop to control left/main scroll
 	contentClassName?: string;
@@ -27,6 +28,7 @@ export const ContentContainer = ({
 	title,
 	description,
 	showBackButton = false,
+	backButtonDisabled = false,
 	rightSectionTitle,
 	titleRight,
 	titleBottom,
@@ -82,6 +84,7 @@ export const ContentContainer = ({
 												color='gray'
 												aria-label={t('action.back')}
 												onClick={onBackClick}
+												disabled={backButtonDisabled}
 												size='lg'
 											>
 												<IconArrowLeft size={20} />

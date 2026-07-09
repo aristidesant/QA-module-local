@@ -1389,6 +1389,10 @@ const useDashboardWidgetFormController = ({
 		form.setFieldValue('supportsTimeSeries', checked);
 	};
 
+	const handleAggregateByContactChange = (checked: boolean) => {
+		form.setFieldValue('aggregateByContact', checked);
+	};
+
 	const handleViewLegendChange = (checked: boolean) => {
 		form.setFieldValue('viewLegend', checked);
 	};
@@ -1487,6 +1491,7 @@ const useDashboardWidgetFormController = ({
 				handleVisibilityScopeChange,
 				handleSupportsGroupByChange,
 				handleSupportsTimeSeriesChange,
+				handleAggregateByContactChange,
 				handleViewLegendChange,
 				handleTitleChange,
 				handlePresetEnabledChange,
@@ -1534,6 +1539,7 @@ const useDashboardWidgetFormController = ({
 			handleSourceTypeChange,
 			handleSupportsGroupByChange,
 			handleSupportsTimeSeriesChange,
+			handleAggregateByContactChange,
 			handleTitleChange,
 			handleValueFieldChange,
 			handleCompareWithChange,

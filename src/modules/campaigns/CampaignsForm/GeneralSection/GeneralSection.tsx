@@ -1,8 +1,10 @@
 import CampaignBasicsSection from './CampaignBasicsSection';
 import ExecutionDefaultsSection from './ExecutionDefaultsSection';
 import styles from './GeneralSection.module.css';
+import NoiseCancellationSection from './NoiseCancellationSection';
 import RoutingSection from './RoutingSection';
 import RoleVisibilitySection from './RoleVisibilitySection';
+import ShowExternalSection from './ShowExternalSection';
 
 interface GeneralSectionProps {
 	roleVisibilityValue: number[];
@@ -23,6 +25,8 @@ const GeneralSection: React.FC<GeneralSectionProps> = ({
 
 		<div className={styles.column}>
 			<ExecutionDefaultsSection />
+			<NoiseCancellationSection />
+			<ShowExternalSection />
 			<RoleVisibilitySection
 				value={roleVisibilityValue}
 				onChange={onRoleVisibilityChange}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ReactNode } from 'react';
 import {
 	Alert,
@@ -12,15 +12,22 @@ import {
 	TextInput,
 } from '@mantine/core';
 import {
+	IconPalette,
 	IconPhotoOff,
 	IconUpload,
 	IconInfoCircle,
 	IconX,
 } from '@tabler/icons-react';
+import type { TablerIcon } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { notifications } from '@mantine/notifications';
 import SectionCard from '~/components/SectionCard';
-import { useGetFileTypes, useUploadFile } from '~/queries/fileQueries';
+import {
+	useGetFile,
+	useGetFileTypes,
+	useGetPresignedFileUrl,
+	useUploadFile,
+} from '~/queries/fileQueries';
 import {
 	ALLOWED_LOGO_MIME_TYPES,
 	MAX_BRAND_NAME_LENGTH,
@@ -29,6 +36,7 @@ import {
 	isValidHexColor,
 } from '~/utils/clientTheme';
 import { getErrorMessage } from '~/utils/httpClient';
+import { CLIENT_FORM_FIELD_IDS } from './ClientForm.constants';
 import classes from './ClientThemeSection.module.css';
 
 export interface ClientThemeFormValue {
@@ -43,22 +51,51 @@ export interface ClientThemeSectionProps {
 	clientId: number;
 	value: ClientThemeFormValue;
 	onChange: (next: ClientThemeFormValue) => void;
+	onUploadingChange?: (isUploading: boolean) => void;
 	errors?: Partial<Record<keyof ClientThemeFormValue, ReactNode>>;
 	disabled?: boolean;
+	icon?: TablerIcon;
+	className?: string;
 }
 
 const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 	clientId,
 	value,
 	onChange,
+	onUploadingChange,
 	errors,
 	disabled,
+	icon,
+	className,
 }) => {
 	const { t } = useTranslation('clients');
+	const { data: logoFile, isError: isLogoFileError } = useGetFile(
+		value.logoFileId,
+		value.logoFileId != null
+	);
+	const { data: presignedLogoUrl } = useGetPresignedFileUrl(
+		logoFile?.id ?? null,
+		logoFile != null && !isLogoFileError
+	);
 	const { data: fileTypes = [] } = useGetFileTypes();
 	const uploadMutation = useUploadFile();
 	const [isUploading, setIsUploading] = useState(false);
 	const [logoPreviewBroken, setLogoPreviewBroken] = useState(false);
+	const isMountedRef = useRef(true);
+	const uploadInProgressRef = useRef(false);
+	const onUploadingChangeRef = useRef(onUploadingChange);
+
+	useEffect(() => {
+		onUploadingChangeRef.current = onUploadingChange;
+	}, [onUploadingChange]);
+
+	useEffect(() => {
+		isMountedRef.current = true;
+
+		return () => {
+			isMountedRef.current = false;
+		};
+	}, []);
 
 	const logoType = fileTypes.find((ft) => ft.code === 'logo');
 
@@ -77,8 +114,15 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 		if (typeof node === 'number') return String(node);
 		return null;
 	};
+	const logoPreviewUrl = presignedLogoUrl ?? value.logoUrl;
+
+	useEffect(() => {
+		setLogoPreviewBroken(false);
+	}, [value.logoFileId, logoPreviewUrl]);
 
 	const handleLogoChange = async (file: File | null) => {
+		if (uploadInProgressRef.current) return;
+
 		setLogoPreviewBroken(false);
 
 		if (!file) {
@@ -113,7 +157,10 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 			return;
 		}
 
+		uploadInProgressRef.current = true;
 		setIsUploading(true);
+		const notifyUploadingChange = onUploadingChangeRef.current;
+		notifyUploadingChange?.(true);
 		try {
 			const uploaded = await uploadMutation.mutateAsync({
 				file,
@@ -122,18 +169,27 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 				targetClientId: clientId,
 			});
 
-			update({
-				logoFileId: uploaded.id,
-				logoUrl: uploaded.repositoryRoute,
-			});
+			if (isMountedRef.current) {
+				update({
+					logoFileId: uploaded.id,
+					logoUrl: uploaded.repositoryRoute,
+				});
+			}
 		} catch (error) {
-			notifications.show({
-				title: t('form.fields.logo.errors.uploadFailed.title'),
-				message: getErrorMessage(error),
-				color: 'red',
-			});
+			if (isMountedRef.current) {
+				notifications.show({
+					title: t('form.fields.logo.errors.uploadFailed.title'),
+					message: getErrorMessage(error),
+					color: 'red',
+				});
+			}
 		} finally {
-			setIsUploading(false);
+			uploadInProgressRef.current = false;
+			notifyUploadingChange?.(false);
+
+			if (isMountedRef.current) {
+				setIsUploading(false);
+			}
 		}
 	};
 
@@ -143,14 +199,21 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 	};
 
 	const showLogoPreview =
-		value.logoFileId != null && value.logoUrl != null && !logoPreviewBroken;
+		value.logoFileId != null &&
+		!isLogoFileError &&
+		Boolean(logoPreviewUrl) &&
+		!logoPreviewBroken;
 
 	return (
 		<SectionCard
-			title={t('form.sections.branding.title')}
+			icon={icon ?? IconPalette}
+			title={
+				<span id='branding-heading'>{t('form.sections.branding.title')}</span>
+			}
 			description={t('form.sections.branding.description')}
 			contentSpacing='sm'
 			padding='md'
+			className={className}
 		>
 			<Stack gap='sm'>
 				<div className={classes.logoBlock}>
@@ -158,7 +221,7 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 						{showLogoPreview ? (
 							<img
 								className={classes.logoImage}
-								src={value.logoUrl ?? ''}
+								src={logoPreviewUrl ?? ''}
 								alt={t('form.fields.logo.previewAlt')}
 								onError={() => setLogoPreviewBroken(true)}
 							/>
@@ -220,9 +283,9 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 						)}
 					</div>
 				</div>
-
 				<div className={classes.colorRow}>
 					<ColorInput
+						id={CLIENT_FORM_FIELD_IDS.primaryColor}
 						label={t('form.fields.primaryColor.label')}
 						description={t('form.fields.primaryColor.description')}
 						format='hex'
@@ -237,6 +300,7 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 						size='sm'
 					/>
 					<ColorInput
+						id={CLIENT_FORM_FIELD_IDS.secondaryColor}
 						label={t('form.fields.secondaryColor.label')}
 						description={t('form.fields.secondaryColor.description')}
 						format='hex'
@@ -251,8 +315,8 @@ const ClientThemeSection: React.FC<ClientThemeSectionProps> = ({
 						size='sm'
 					/>
 				</div>
-
 				<TextInput
+					id={CLIENT_FORM_FIELD_IDS.brandName}
 					className={classes.brandNameField}
 					label={t('form.fields.brandName.label')}
 					placeholder={t('form.fields.brandName.placeholder')}

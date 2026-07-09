@@ -37,6 +37,7 @@
 		"type": "Tipo",
 		"status": "Estado",
 		"lastUpdated": "Última Actualización",
+		"showExternalTooltip": "Visible en app móvil",
 		"campaignDetails": "Detalles de Campaña",
 		"noDescription": "Sin descripción disponible.",
 		"setupIncomplete": "Configuración incompleta - continúa desde el paso {{step}}",

@@ -1,25 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import {
-	Button,
-	Group,
-	MultiSelect,
-	Switch,
-	TagsInput,
-	Text,
-} from '@mantine/core';
+import { Button, Group, MultiSelect, TagsInput, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import {
-	IconBook2,
-	IconMicrophone,
-	IconMicrophoneOff,
-	IconTag,
-} from '@tabler/icons-react';
+import { IconBook2, IconMicrophone, IconTag } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
-import {
-	useAgentConfigFormContext,
-	useCampaignFormContext,
-} from '~/modules/campaigns/campaignFormFunctions';
+import { useAgentConfigFormContext } from '~/modules/campaigns/campaignFormFunctions';
 import { useGetAgent } from '~/queries/agentQueries';
 import {
 	useBulkAttachDictionariesToAgent,
@@ -48,7 +33,6 @@ const CampaignConfigurationSpeechLanguage: React.FC<Props> = ({ agentId }) => {
 		'campaigns',
 	]);
 	const form = useAgentConfigFormContext();
-	const campaignForm = useCampaignFormContext();
 
 	// ── ASR Keywords ──────────────────────────────────────────────────────────
 	const currentKeywords = form.values.conversationConfig?.asr?.keywords ?? [];
@@ -189,32 +173,6 @@ const CampaignConfigurationSpeechLanguage: React.FC<Props> = ({ agentId }) => {
 					value={currentKeywords}
 					onChange={handleKeywordsChange}
 					size='sm'
-				/>
-			</div>
-
-			{/* Noise Cancellation */}
-			<div className={styles.subSection}>
-				<div className={styles.subSectionHeader}>
-					<IconMicrophoneOff size={15} className={styles.subSectionIcon} />
-					<div>
-						<Text className={styles.subSectionTitle}>
-							{t('general.noiseCancellationLabel', { ns: 'campaigns' })}
-						</Text>
-						<Text className={styles.subSectionDesc}>
-							{t('general.noiseCancellationDesc', { ns: 'campaigns' })}
-						</Text>
-					</div>
-				</div>
-				<Switch
-					aria-label={t('general.noiseCancellationLabel', { ns: 'campaigns' })}
-					size='sm'
-					checked={campaignForm.values.noiseCancellation ?? false}
-					onChange={(e) =>
-						campaignForm.setFieldValue(
-							'noiseCancellation',
-							e.currentTarget.checked
-						)
-					}
 				/>
 			</div>
 
