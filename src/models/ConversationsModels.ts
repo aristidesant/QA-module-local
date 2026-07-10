@@ -71,6 +71,7 @@ export interface TranscriptContent {
 	metadata: Metadata;
 	transcript: TranscriptEntry[];
 	conversationInitiationClientData: ClientData;
+	conversation_initiation_client_data?: ClientData;
 }
 
 export interface Analysis {
@@ -108,6 +109,17 @@ export interface TranscriptEntry {
 	multivoice_message: unknown | null;
 	rag_retrieval_info: Record<string, unknown> | null;
 	conversation_turn_metrics: ConversationTurnMetrics | null;
+	analysis?: unknown | null;
+	config_snapshot_id?: string | null;
+	contextual_update_info?: unknown | null;
+	file_input?: unknown | null;
+	ignored_as_backchannel?: boolean | null;
+	reasoned?: boolean | null;
+	reasoning?: unknown | null;
+	source_event_id?: string | null;
+	used_static_kb_document_ids?: string[] | null;
+	user_identifier?: string | null;
+	[key: string]: unknown;
 }
 
 export interface AgentMetadata {
@@ -119,24 +131,26 @@ export interface AgentMetadata {
 export interface ToolCall {
 	type: string;
 	tool_name: string;
-	request_id: string;
+	request_id?: string | null;
 	tool_details: unknown | null;
-	params_as_json: string;
-	tool_has_been_called: boolean;
+	params_as_json?: string | null;
+	tool_has_been_called?: boolean;
+	[key: string]: unknown;
 }
 
 export interface ToolResult {
 	type?: string;
 	tool_name?: string;
 	request_id?: string;
-	result_value?: string;
+	result_value?: unknown;
 	raw_error_message?: string;
 	error_type?: string;
 	is_error?: boolean;
+	is_blocked?: boolean;
 	tool_has_been_called?: boolean;
 	tool_latency_secs?: number;
-	result?: Record<string, unknown> | null;
-	dynamic_variable_updates?: unknown[];
+	result?: unknown;
+	dynamic_variable_updates?: unknown[] | null;
 	[key: string]: unknown;
 }
 

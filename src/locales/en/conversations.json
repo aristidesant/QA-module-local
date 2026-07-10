@@ -95,6 +95,16 @@
 		"turnCount_one": "{{count}} turn",
 		"turnCount_other": "{{count}} turns"
 	},
+	"technicalOverview": {
+		"title": "Conversation technical payload",
+		"description": "Complete conversation-level records, configuration, and analysis.",
+		"sections": {
+			"metadata": "Metadata",
+			"analysis": "Analysis",
+			"initiationData": "Conversation initiation data",
+			"rawPayload": "Raw conversation payload"
+		}
+	},
 	"actions": {
 		"title": "Actions",
 		"description": "Actions that can be performed on this conversation.",
@@ -187,9 +197,11 @@
 		},
 		"copyTranscript": "Copy transcript",
 		"copiedTranscript": "Copied",
+		"playFromHere": "Play from here",
 		"roles": {
 			"agent": "Agent",
-			"user": "User"
+			"user": "User",
+			"system": "System"
 		},
 		"workflow": {
 			"changed": "Workflow route changed",
@@ -201,6 +213,7 @@
 			"override": "OVERRIDE",
 			"tts": "TTS",
 			"asr": "ASR",
+			"tool": "Tool",
 			"model": "Model",
 			"provider": "Provider",
 			"cost": "Cost",
@@ -238,6 +251,7 @@
 			"toolResults": "Tool Results",
 			"toolResultsCount": "{{count}} tool results",
 			"toolErrorsCount": "{{count}} errors",
+			"results": "Results",
 			"resultValue": "Result Value",
 			"resultPayload": "Result Payload",
 			"resultFallback": "Tool result",
@@ -252,7 +266,46 @@
 			"turnLlmModel": "Turn LLM Model",
 			"turnTtsModel": "TTS Model",
 			"turnAsrProvider": "ASR Provider",
-			"rawMetrics": "Raw Metrics"
+			"rawMetrics": "Raw Metrics",
+			"toolDetails": "Tool details",
+			"rawToolCall": "Raw tool call",
+			"rawResult": "Raw tool result",
+			"responsesRecorded_one": "{{count}} response recorded",
+			"responsesRecorded_other": "{{count}} responses recorded",
+			"completed": "Completed",
+			"blocked": "Blocked",
+			"dynamicVariableUpdates": "Dynamic variable updates",
+			"workflowCallsCount_one": "{{count}} workflow call",
+			"workflowCallsCount_other": "{{count}} workflow calls",
+			"updatesCount_one": "{{count}} update",
+			"updatesCount_other": "{{count}} updates",
+			"event": "Technical event",
+			"eventDetailsCount_one": "{{count}} event detail",
+			"eventDetailsCount_other": "{{count}} event details",
+			"copyValue": "Copy value",
+			"copiedValue": "Copied",
+			"fields": {
+				"contextualUpdate": "Context update",
+				"sourceEventId": "Source event ID",
+				"sourceMedium": "Source medium",
+				"configSnapshot": "Configuration snapshot",
+				"agentMetadata": "Agent metadata",
+				"originalMessage": "Original message",
+				"reasoning": "Reasoning payload",
+				"reasoned": "Reasoned response",
+				"backchannel": "Ignored as backchannel",
+				"analysis": "Entry analysis",
+				"feedback": "Feedback",
+				"fileInput": "File input",
+				"multivoiceMessage": "Multi-voice message",
+				"ragInfo": "RAG retrieval info",
+				"knowledgeBaseDocuments": "Knowledge base document IDs",
+				"userIdentifier": "User identifier",
+				"llmOverride": "LLM override",
+				"llmUsage": "LLM usage",
+				"turnMetrics": "Turn metrics",
+				"rawEvent": "Raw event payload"
+			}
 		}
 	},
 	"player": {

@@ -19,7 +19,7 @@ export interface WorkflowTransition {
 	to: AgentMetadata;
 }
 
-export type FooterMetricKind = 'llm' | 'tts' | 'asr';
+export type FooterMetricKind = 'llm' | 'tts' | 'asr' | 'tool';
 
 export interface FooterMetricItem {
 	kind: FooterMetricKind;

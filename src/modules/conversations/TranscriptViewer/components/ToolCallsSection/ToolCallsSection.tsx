@@ -1,213 +1,154 @@
 import { useState } from 'react';
-import { Badge, Box, Collapse, Group, Stack, Text } from '@mantine/core';
+import {
+	Badge,
+	Box,
+	Collapse,
+	Group,
+	Stack,
+	Text,
+	UnstyledButton,
+} from '@mantine/core';
 import {
 	IconChevronDown,
 	IconChevronRight,
-	IconCircleCheck,
-	IconCircleX,
 	IconTool,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import type { ToolCall, ToolResult } from '~/models/ConversationsModels';
-import { formatJsonDisplay } from '../../helpers/formatUtils';
+import type { ToolDisplayRow } from '../../helpers/formatUtils';
 import styles from './ToolCallsSection.module.css';
 
 interface ToolCallsSectionProps {
-	toolCalls: ToolCall[];
-	toolResultsMap: Map<string, ToolResult>;
+	rows: ToolDisplayRow[];
+	compact?: boolean;
 }
 
 export const ToolCallsSection = ({
-	toolCalls,
-	toolResultsMap,
+	rows,
+	compact = false,
 }: ToolCallsSectionProps) => {
 	const { t } = useTranslation(['conversations', 'common']);
 
+	if (rows.length === 0) {
+		return null;
+	}
+
 	return (
-		<Box className={styles.toolCallsSection}>
+		<Box
+			className={`${styles.toolCallsSection}${compact ? ` ${styles.compact}` : ''}`}
+		>
 			<Group gap={6} align='center'>
-				<IconTool size={12} color='var(--mantine-color-violet-6)' stroke={2} />
-				<Text size='xs' c='dimmed' fw={500}>
-					{t('transcript.technical.toolCalls')}
+				<IconTool size={13} className={styles.sectionIcon} stroke={2} />
+				<Text size='xs' c='dimmed' fw={600}>
+					{t('transcript.technical.toolCallsCount', { count: rows.length })}
 				</Text>
 			</Group>
 			<Stack gap={4} mt={4}>
-				{toolCalls.map((tool, idx) => {
-					const matchingResult = tool.request_id
-						? toolResultsMap.get(tool.request_id)
-						: undefined;
-					return (
-						<ToolCallItem
-							key={`${tool.request_id}-${idx}`}
-							tool={tool}
-							result={matchingResult}
-						/>
-					);
-				})}
+				{rows.map((row) => (
+					<ToolRow key={row.key} row={row} />
+				))}
 			</Stack>
 		</Box>
 	);
 };
 
-interface ToolCallItemProps {
-	tool: ToolCall;
-	result?: ToolResult;
+interface ToolRowProps {
+	row: ToolDisplayRow;
 }
 
-function ToolCallItem({ tool, result }: ToolCallItemProps) {
+function ToolRow({ row }: ToolRowProps) {
 	const [expanded, setExpanded] = useState(false);
 	const { t } = useTranslation(['conversations', 'common']);
-	const hasResult = result !== undefined;
-	const isError = result?.is_error === true;
+	const status = getRowStatus(row, t);
+	const hasExpandableContent = Boolean(row.toolDetails || row.raw);
 
 	return (
 		<Box className={styles.toolCallItem}>
 			<Group
 				gap={6}
 				wrap='nowrap'
-				onClick={() => setExpanded(!expanded)}
-				className={styles.toolCallToggle}
+				align='center'
+				className={styles.toolCallRow}
 			>
 				<Badge
 					size='sm'
 					variant='light'
-					color={tool.tool_has_been_called ? 'violet' : 'gray'}
+					color='violet'
 					leftSection={<IconTool size={10} />}
 					className={styles.toolBadge}
 				>
-					{tool.tool_name}
+					{row.toolName}
 				</Badge>
-				{hasResult && !isError && (
-					<IconCircleCheck size={13} className={styles.resultIconSuccess} />
+				<Badge
+					size='xs'
+					variant='dot'
+					color={status.color}
+					className={styles.statusBadge}
+				>
+					{status.label}
+				</Badge>
+				{hasExpandableContent && (
+					<UnstyledButton
+						onClick={() => setExpanded((value) => !value)}
+						className={styles.resultsToggle}
+						aria-expanded={expanded}
+					>
+						<Group gap={2} wrap='nowrap' align='center'>
+							<Text size='xs' fw={600}>
+								{t('transcript.technical.results')}
+							</Text>
+							{expanded ? (
+								<IconChevronDown size={13} />
+							) : (
+								<IconChevronRight size={13} />
+							)}
+						</Group>
+					</UnstyledButton>
 				)}
-				{hasResult && isError && (
-					<IconCircleX size={13} className={styles.resultIconError} />
-				)}
-				<Box className={styles.chevron}>
-					{expanded ? (
-						<IconChevronDown size={12} />
-					) : (
-						<IconChevronRight size={12} />
-					)}
-				</Box>
 			</Group>
 
-			<Collapse expanded={expanded}>
-				<Box className={styles.toolCallExpanded}>
-					<Stack gap='xs'>
-						<Group justify='space-between' align='flex-start'>
-							<Box>
-								<Text size='xs' c='dimmed' fw={500}>
-									{t('transcript.technical.toolName')}
-								</Text>
-								<Text size='sm' fw={600}>
-									{tool.tool_name}
-								</Text>
-							</Box>
-							<Badge
-								size='xs'
-								variant='dot'
-								color={tool.tool_has_been_called ? 'green' : 'orange'}
-							>
-								{tool.tool_has_been_called
-									? t('transcript.technical.called')
-									: t('transcript.technical.pending')}
-							</Badge>
-						</Group>
-
-						{tool.type && (
-							<Box>
-								<Text size='xs' c='dimmed' fw={500}>
-									{t('transcript.technical.type')}
-								</Text>
-								<Text size='sm'>{tool.type}</Text>
-							</Box>
-						)}
-
-						{formatJsonDisplay(tool.params_as_json) && (
+			{hasExpandableContent && (
+				<Collapse expanded={expanded}>
+					<Stack gap='xs' className={styles.toolCallExpanded}>
+						{row.toolDetails && (
 							<Box>
 								<Text size='xs' c='dimmed' fw={500} mb={4}>
-									{t('transcript.technical.parameters')}
+									{t('transcript.technical.toolDetails')}
 								</Text>
-								<Box className={styles.toolDetailsCode}>
-									{formatJsonDisplay(tool.params_as_json)}
-								</Box>
+								<Box className={styles.toolDetailsCode}>{row.toolDetails}</Box>
 							</Box>
 						)}
-
-						{tool.request_id && (
+						{row.raw && (
 							<Box>
-								<Text size='xs' c='dimmed' fw={500}>
-									{t('transcript.technical.requestId')}
+								<Text size='xs' c='dimmed' fw={500} mb={4}>
+									{t('transcript.technical.resultValue')}
 								</Text>
-								<Text size='xs' c='dimmed' className={styles.monoText}>
-									{tool.request_id}
-								</Text>
+								<Box className={styles.toolDetailsCode}>{row.raw}</Box>
 							</Box>
 						)}
-
-						{hasResult && <ToolResultBlock result={result!} />}
 					</Stack>
-				</Box>
-			</Collapse>
+				</Collapse>
+			)}
 		</Box>
 	);
 }
 
-interface ToolResultBlockProps {
-	result: ToolResult;
-}
+function getRowStatus(
+	row: ToolDisplayRow,
+	t: ReturnType<typeof useTranslation>['t']
+) {
+	if (row.isError) {
+		return { color: 'red', label: t('transcript.technical.error') };
+	}
 
-function ToolResultBlock({ result }: ToolResultBlockProps) {
-	const { t } = useTranslation(['conversations', 'common']);
-	const isError = result.is_error === true;
-	const hasValue = Boolean(result.result_value ?? result.result);
+	if (row.isBlocked) {
+		return { color: 'orange', label: t('transcript.technical.blocked') };
+	}
 
-	return (
-		<Box
-			className={`${styles.toolResultBlock} ${isError ? styles.toolResultBlockError : styles.toolResultBlockSuccess}`}
-		>
-			<Group gap={4} align='center'>
-				{isError ? (
-					<IconCircleX size={12} className={styles.resultIconError} />
-				) : (
-					<IconCircleCheck size={12} className={styles.resultIconSuccess} />
-				)}
-				<Text size='xs' fw={600} c={isError ? 'red.7' : 'green.7'}>
-					{isError
-						? t('transcript.technical.error')
-						: t('transcript.technical.success')}
-				</Text>
-			</Group>
+	if (row.hasResult) {
+		return { color: 'green', label: t('transcript.technical.completed') };
+	}
 
-			{result.tool_latency_secs !== undefined && (
-				<Text size='xs' c='dimmed'>
-					{t('transcript.technical.latency')}:{' '}
-					{result.tool_latency_secs.toFixed(2)}s
-				</Text>
-			)}
-
-			{hasValue && (
-				<Box>
-					<Text size='xs' c='dimmed' fw={500} mb={4}>
-						{t('transcript.technical.resultValue')}
-					</Text>
-					<Box className={styles.toolDetailsCode}>
-						{formatJsonDisplay(result.result_value ?? result.result ?? '')}
-					</Box>
-				</Box>
-			)}
-
-			{isError && result.raw_error_message && (
-				<Box>
-					<Text size='xs' c='dimmed' fw={500}>
-						{t('transcript.technical.rawError')}
-					</Text>
-					<Text size='xs' c='red.7' className={styles.monoText}>
-						{result.raw_error_message}
-					</Text>
-				</Box>
-			)}
-		</Box>
-	);
+	return row.called
+		? { color: 'blue', label: t('transcript.technical.called') }
+		: { color: 'gray', label: t('transcript.technical.pending') };
 }
