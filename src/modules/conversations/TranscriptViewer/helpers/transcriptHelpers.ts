@@ -190,11 +190,18 @@ function buildLlmFooterMetric(
 		'convai_llm_'
 	);
 
-	if (!llmUsage || latencySeconds === null) {
+	// The LLM turn's latency is always recorded in conversation_turn_metrics,
+	// but token/cost usage (llm_usage) is only attached when the response also
+	// produced a message - tool-only turns (e.g. a routing decision) still made
+	// an LLM call and should still show its latency, just without cost/model
+	// breakdown.
+	if (latencySeconds === null) {
 		return null;
 	}
 
-	const modelEntries = Object.entries(llmUsage.model_usage || {});
+	const modelEntries = llmUsage
+		? Object.entries(llmUsage.model_usage || {})
+		: [];
 	const primaryModelName =
 		entry.llm_override ??
 		entry.conversation_turn_metrics?.convai_llm_model ??
@@ -208,11 +215,16 @@ function buildLlmFooterMetric(
 			: t('transcript.footer.llm'),
 		latencySeconds,
 		modelLabel: primaryModelName,
-		costLabel: formatCurrency(getTotalLlmCost(llmUsage), t),
-		details: modelEntries.map(([name, usage]) => ({
-			name,
-			cost: formatCurrency(calculateModelCost(usage), t),
-		})),
+		costLabel: llmUsage
+			? formatCurrency(getTotalLlmCost(llmUsage), t)
+			: t('transcript.footer.notAvailable'),
+		details:
+			modelEntries.length > 0
+				? modelEntries.map(([name, usage]) => ({
+						name,
+						cost: formatCurrency(calculateModelCost(usage), t),
+					}))
+				: undefined,
 	};
 }
 

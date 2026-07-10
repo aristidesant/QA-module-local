@@ -95,6 +95,16 @@
 		"turnCount_one": "{{count}} turno",
 		"turnCount_other": "{{count}} turnos"
 	},
+	"technicalOverview": {
+		"title": "Payload técnico de la conversación",
+		"description": "Registros, configuración y análisis completos de la conversación.",
+		"sections": {
+			"metadata": "Metadatos",
+			"analysis": "Análisis",
+			"initiationData": "Datos de inicio de la conversación",
+			"rawPayload": "Payload crudo de la conversación"
+		}
+	},
 	"actions": {
 		"title": "Acciones",
 		"description": "Acciones que se pueden realizar en esta conversación.",
@@ -187,9 +197,11 @@
 		},
 		"copyTranscript": "Copiar transcripción",
 		"copiedTranscript": "Copiado",
+		"playFromHere": "Reproducir desde aquí",
 		"roles": {
 			"agent": "Agente",
-			"user": "Usuario"
+			"user": "Usuario",
+			"system": "Sistema"
 		},
 		"workflow": {
 			"changed": "Cambio de ruta del workflow",
@@ -201,6 +213,7 @@
 			"override": "OVERRIDE",
 			"tts": "TTS",
 			"asr": "ASR",
+			"tool": "Herramienta",
 			"model": "Modelo",
 			"provider": "Proveedor",
 			"cost": "Costo",
@@ -238,6 +251,7 @@
 			"toolResults": "Resultados de herramientas",
 			"toolResultsCount": "{{count}} resultados",
 			"toolErrorsCount": "{{count}} errores",
+			"results": "Resultados",
 			"resultValue": "Valor del resultado",
 			"resultPayload": "Payload del resultado",
 			"resultFallback": "Resultado de herramienta",
@@ -252,7 +266,46 @@
 			"turnLlmModel": "Modelo LLM del turno",
 			"turnTtsModel": "Modelo TTS",
 			"turnAsrProvider": "Proveedor ASR",
-			"rawMetrics": "Métricas crudas"
+			"rawMetrics": "Métricas crudas",
+			"toolDetails": "Detalles de la herramienta",
+			"rawToolCall": "Llamada de herramienta cruda",
+			"rawResult": "Resultado crudo de herramienta",
+			"responsesRecorded_one": "{{count}} respuesta registrada",
+			"responsesRecorded_other": "{{count}} respuestas registradas",
+			"completed": "Completada",
+			"blocked": "Bloqueada",
+			"dynamicVariableUpdates": "Actualizaciones de variables dinámicas",
+			"workflowCallsCount_one": "{{count}} llamada de workflow",
+			"workflowCallsCount_other": "{{count}} llamadas de workflow",
+			"updatesCount_one": "{{count}} actualización",
+			"updatesCount_other": "{{count}} actualizaciones",
+			"event": "Evento técnico",
+			"eventDetailsCount_one": "{{count}} detalle del evento",
+			"eventDetailsCount_other": "{{count}} detalles del evento",
+			"copyValue": "Copiar valor",
+			"copiedValue": "Copiado",
+			"fields": {
+				"contextualUpdate": "Actualización de contexto",
+				"sourceEventId": "ID del evento de origen",
+				"sourceMedium": "Medio de origen",
+				"configSnapshot": "Instantánea de configuración",
+				"agentMetadata": "Metadatos del agente",
+				"originalMessage": "Mensaje original",
+				"reasoning": "Payload de razonamiento",
+				"reasoned": "Respuesta razonada",
+				"backchannel": "Ignorado como backchannel",
+				"analysis": "Análisis de la entrada",
+				"feedback": "Feedback",
+				"fileInput": "Entrada de archivo",
+				"multivoiceMessage": "Mensaje de múltiples voces",
+				"ragInfo": "Información de recuperación RAG",
+				"knowledgeBaseDocuments": "IDs de documentos de base de conocimiento",
+				"userIdentifier": "Identificador de usuario",
+				"llmOverride": "Override de LLM",
+				"llmUsage": "Uso de LLM",
+				"turnMetrics": "Métricas del turno",
+				"rawEvent": "Payload crudo del evento"
+			}
 		}
 	},
 	"player": {

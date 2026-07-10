@@ -17,6 +17,20 @@ import type {
 
 const getApi = () => conversationsApi();
 
+function isTerminalConversationStatus(status?: string) {
+	const normalizedStatus = status?.trim().toLowerCase() ?? '';
+	return [
+		'done',
+		'completed',
+		'failed',
+		'error',
+		'cancelled',
+		'canceled',
+		'terminated',
+		'ended',
+	].some((terminalStatus) => normalizedStatus.includes(terminalStatus));
+}
+
 type ConversationsQueryParams = {
 	contactGroupId?: string | number | null;
 	campaignId?: string | number | null;
@@ -165,6 +179,13 @@ export const useGetConversation = (id: string) => {
 			return api.getConversationById(id);
 		},
 		enabled: !!id,
+		refetchInterval: (query) => {
+			const conversation = query.state.data;
+			return conversation && !isTerminalConversationStatus(conversation.status)
+				? 5_000
+				: false;
+		},
+		refetchIntervalInBackground: false,
 	});
 };
 

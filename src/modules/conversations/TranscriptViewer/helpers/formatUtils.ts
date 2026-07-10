@@ -1,6 +1,12 @@
 import type { TFunction } from 'i18next';
 import type { ConversationTurnMetrics, LlmUsage } from './types';
-import type { FooterMetricKind } from './types';
+import type { FooterMetricItem, FooterMetricKind } from './types';
+import type { ToolCall, ToolResult } from '~/models/ConversationsModels';
+
+// Internal routing/plumbing tools that add no value to the reader - never
+// surfaced as their own row, whether they appear at the top level or nested
+// inside a workflow tool's result.
+const HIDDEN_TOOL_NAMES = new Set(['transfer_to_agent']);
 
 export function formatTime(seconds: number): string {
 	const minutes = Math.floor(seconds / 60);
@@ -58,6 +64,8 @@ export function getFooterMetricColor(kind: FooterMetricKind): string {
 			return 'grape';
 		case 'asr':
 			return 'teal';
+		case 'tool':
+			return 'violet';
 	}
 }
 
@@ -108,6 +116,215 @@ export function getTotalLlmCost(llmUsage: LlmUsage): number {
 		(sum, usage) => sum + calculateModelCost(usage),
 		0
 	);
+}
+
+function parseResultPayload(
+	result: ToolResult
+): Record<string, unknown> | null {
+	try {
+		if (typeof result.result_value === 'string') {
+			const parsed = JSON.parse(result.result_value);
+			return parsed && typeof parsed === 'object' ? parsed : null;
+		}
+		if (result.result_value && typeof result.result_value === 'object') {
+			return result.result_value as Record<string, unknown>;
+		}
+		if (result.result && typeof result.result === 'object') {
+			return result.result as Record<string, unknown>;
+		}
+	} catch {
+		return null;
+	}
+	return null;
+}
+
+export interface NestedToolResult {
+	requestId?: string;
+	toolName: string;
+	isError: boolean;
+	isBlocked: boolean;
+	toolDetails: string | null;
+	latencySeconds: number | null;
+	raw: string | null;
+}
+
+// Workflow tool calls (e.g. "notify_condition_1_met", "progress_workflow") are
+// routing wrappers - the real tool the agent invoked (e.g. "update_state",
+// "transfer_to_agent") lives inside `result.steps[].results[]`, paired with its
+// request config (url/method/params, etc.) in the sibling `requests[]` array.
+// Surface those instead of the wrapper name when present.
+export function extractNestedToolResults(
+	result: ToolResult
+): NestedToolResult[] {
+	const payload = parseResultPayload(result);
+	const steps = payload && Array.isArray(payload.steps) ? payload.steps : null;
+	if (!steps) return [];
+
+	const rows: NestedToolResult[] = [];
+	for (const step of steps) {
+		if (
+			!step ||
+			typeof step !== 'object' ||
+			(step as Record<string, unknown>).type !== 'nested_tools' ||
+			!Array.isArray((step as Record<string, unknown>).results)
+		) {
+			continue;
+		}
+
+		const requestsByRequestId = new Map<string, ToolCall>();
+		const requests = (step as Record<string, unknown>).requests;
+		if (Array.isArray(requests)) {
+			for (const request of requests) {
+				if (
+					request &&
+					typeof request === 'object' &&
+					typeof (request as ToolCall).request_id === 'string'
+				) {
+					requestsByRequestId.set(
+						(request as ToolCall).request_id as string,
+						request as ToolCall
+					);
+				}
+			}
+		}
+
+		for (const nested of (step as Record<string, unknown>)
+			.results as unknown[]) {
+			if (!nested || typeof nested !== 'object') continue;
+			const nestedResult = nested as ToolResult;
+			const toolName =
+				typeof nestedResult.tool_name === 'string'
+					? nestedResult.tool_name
+					: 'unknown';
+			const matchingRequest = nestedResult.request_id
+				? requestsByRequestId.get(nestedResult.request_id)
+				: undefined;
+
+			rows.push({
+				requestId: nestedResult.request_id,
+				toolName,
+				isError: Boolean(
+					nestedResult.is_error || nestedResult.raw_error_message
+				),
+				isBlocked: Boolean(nestedResult.is_blocked),
+				toolDetails: formatJsonDisplay(matchingRequest?.tool_details),
+				latencySeconds:
+					typeof nestedResult.tool_latency_secs === 'number'
+						? nestedResult.tool_latency_secs
+						: null,
+				raw:
+					formatJsonDisplay(nestedResult.result_value) ??
+					formatJsonDisplay(nestedResult.result),
+			});
+		}
+	}
+	return rows;
+}
+
+export interface ToolDisplayRow {
+	key: string;
+	toolName: string;
+	isError: boolean;
+	isBlocked: boolean;
+	hasResult: boolean;
+	called: boolean;
+	toolDetails: string | null;
+	latencySeconds: number | null;
+	raw: string | null;
+}
+
+export function buildToolDisplayRows(
+	toolCalls: ToolCall[],
+	toolResultsMap: Map<string, ToolResult[]>
+): ToolDisplayRow[] {
+	const rows: ToolDisplayRow[] = [];
+
+	for (const tool of toolCalls) {
+		const results = tool.request_id
+			? (toolResultsMap.get(tool.request_id) ?? [])
+			: [];
+
+		// A workflow tool call (e.g. "notify_condition_1_met") is a routing
+		// wrapper whenever its result contains a nested-tools step - detect that
+		// regardless of whether every nested tool ends up hidden, so we never
+		// fall back to displaying the meaningless wrapper name/result instead.
+		let sawNestedStructure = false;
+		const nestedRows: ToolDisplayRow[] = [];
+		for (const result of results) {
+			const nested = extractNestedToolResults(result);
+			if (nested.length > 0) sawNestedStructure = true;
+			for (const nestedResult of nested) {
+				if (HIDDEN_TOOL_NAMES.has(nestedResult.toolName)) continue;
+				nestedRows.push({
+					key:
+						nestedResult.requestId ??
+						`${nestedResult.toolName}-${nestedRows.length}`,
+					toolName: nestedResult.toolName,
+					isError: nestedResult.isError,
+					isBlocked: nestedResult.isBlocked,
+					hasResult: true,
+					called: true,
+					toolDetails: nestedResult.toolDetails,
+					latencySeconds: nestedResult.latencySeconds,
+					raw: nestedResult.raw,
+				});
+			}
+		}
+
+		if (sawNestedStructure) {
+			rows.push(...nestedRows);
+			continue;
+		}
+
+		if (HIDDEN_TOOL_NAMES.has(tool.tool_name)) continue;
+
+		const lastResult = results[results.length - 1];
+		rows.push({
+			key:
+				tool.request_id ??
+				`${tool.type}-${tool.tool_name}-${tool.params_as_json ?? ''}`,
+			toolName: tool.tool_name,
+			isError: results.some((r) => r.is_error || r.raw_error_message),
+			isBlocked: results.some((r) => r.is_blocked),
+			hasResult: results.length > 0,
+			called: results.length > 0 || Boolean(tool.tool_has_been_called),
+			toolDetails: formatJsonDisplay(tool.tool_details),
+			latencySeconds:
+				typeof lastResult?.tool_latency_secs === 'number'
+					? lastResult.tool_latency_secs
+					: null,
+			raw: lastResult
+				? (formatJsonDisplay(lastResult.result_value) ??
+					formatJsonDisplay(lastResult.result))
+				: null,
+		});
+	}
+
+	return rows;
+}
+
+// Tool execution latency lives on the matching ToolResult (`tool_latency_secs`),
+// not on the calling entry itself - build it from the already-resolved display
+// rows so it can sit alongside the LLM/TTS/ASR footer chips.
+export function buildToolFooterMetric(
+	rows: ToolDisplayRow[],
+	t: TFunction
+): FooterMetricItem | null {
+	const latencies = rows
+		.map((row) => row.latencySeconds)
+		.filter((value): value is number => typeof value === 'number');
+
+	if (latencies.length === 0) return null;
+
+	const totalLatencySeconds = latencies.reduce((sum, value) => sum + value, 0);
+
+	return {
+		kind: 'tool',
+		label: t('transcript.footer.tool'),
+		latencySeconds: totalLatencySeconds,
+		modelLabel: rows.map((row) => row.toolName).join(', '),
+		costLabel: t('transcript.footer.notAvailable'),
+	};
 }
 
 export function extractMissionSummary(

@@ -43,6 +43,7 @@ import ConversationNavigator from '~/modules/conversations/ConversationNavigator
 import { TranscriptPlayerBar } from '~/modules/conversations/TranscriptViewer/TranscriptPlayerBar/TranscriptPlayerBar';
 import ConversationOverviewCard from '~/modules/conversations/ConversationOverviewCard';
 import ConversationCapturedVariables from '~/modules/conversations/ConversationCapturedVariables';
+import ConversationTechnicalOverview from '~/modules/conversations/ConversationTechnicalOverview';
 import { buildWorkflowNodeLabelMaps } from '~/modules/conversations/utils/workflowNodeLabels';
 
 import styles from './ConversationDetailPage.module.css';
@@ -77,11 +78,7 @@ export function ConversationDetailPage({
 		PermissionEnum.EXPORT
 	);
 
-	const {
-		data: conversation,
-		isLoading,
-		isFetching,
-	} = useGetConversation(id || '');
+	const { data: conversation, isLoading } = useGetConversation(id || '');
 	const campaignId =
 		conversation?.campaignId ?? conversation?.campaign?.id ?? 0;
 	const { data: campaignAgents } = useGetCampaignAgents(
@@ -315,7 +312,7 @@ export function ConversationDetailPage({
 
 	// --- Loading / access states ---
 
-	if (isLoading || isFetching) {
+	if (isLoading) {
 		return (
 			<ContentContainer
 				title={t('detailPage.title')}
@@ -528,6 +525,9 @@ export function ConversationDetailPage({
 							conversationId={String(conversation.id)}
 						/>
 						<ConversationCapturedVariables variables={capturedVariables} />
+						<ConversationTechnicalOverview
+							transcriptContent={transcriptContent}
+						/>
 					</Stack>
 				</div>
 			</div>

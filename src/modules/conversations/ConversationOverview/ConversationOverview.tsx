@@ -13,6 +13,7 @@ import ConversationCapturedVariables from '../ConversationCapturedVariables';
 import { useTranslation } from 'react-i18next';
 import ConversationOverviewCard from '../ConversationOverviewCard';
 import ConversationDisposition from '../ConversationDisposition';
+import ConversationTechnicalOverview from '../ConversationTechnicalOverview';
 
 interface ConversationOverviewProps {
 	conversation: ConversationsModel;
@@ -229,6 +230,7 @@ export function ConversationOverview({
 			</div>
 
 			<ConversationCapturedVariables variables={capturedVariables} />
+			<ConversationTechnicalOverview transcriptContent={transcriptContent} />
 		</Stack>
 	);
 }

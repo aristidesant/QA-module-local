@@ -10,3 +10,13 @@
 	padding-bottom: var(--mantine-spacing-xs);
 	background: var(--surface-card);
 }
+
+.technicalSummary {
+	min-width: 0;
+}
+
+@media (max-width: 768px) {
+	.toolbar {
+		align-items: flex-start;
+	}
+}

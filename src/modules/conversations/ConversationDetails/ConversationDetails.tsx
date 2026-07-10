@@ -32,11 +32,7 @@ interface ConversationDetailsProps {
 
 export function ConversationDetails({ id }: ConversationDetailsProps) {
 	const { t } = useTranslation(['conversations', 'common']);
-	const {
-		data: conversation,
-		isLoading,
-		isFetching,
-	} = useGetConversation(`${id}`);
+	const { data: conversation, isLoading } = useGetConversation(`${id}`);
 	const campaignId =
 		conversation?.campaignId ?? conversation?.campaign?.id ?? 0;
 	const { data: campaignAgents } = useGetCampaignAgents(
@@ -114,7 +110,7 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 		},
 	};
 
-	if (isLoading || isFetching) {
+	if (isLoading) {
 		return (
 			<Center p='md' className={styles.container}>
 				<Loader size='lg' color='var(--mantine-primary-color-filled)' />

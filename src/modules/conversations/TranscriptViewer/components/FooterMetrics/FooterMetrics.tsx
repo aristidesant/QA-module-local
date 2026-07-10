@@ -58,7 +58,9 @@ function FooterMetricChip({ metric }: FooterMetricChipProps) {
 						label={
 							metric.kind === 'asr'
 								? t('transcript.footer.provider')
-								: t('transcript.footer.model')
+								: metric.kind === 'tool'
+									? t('transcript.technical.toolName')
+									: t('transcript.footer.model')
 						}
 						value={<Text size='xs'>{metric.modelLabel}</Text>}
 					/>
