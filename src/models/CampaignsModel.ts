@@ -134,6 +134,7 @@ export interface Campaign {
 	name: string;
 	agentName: string;
 	description: string;
+	effectiveContactObjective?: string | null;
 	budget: number;
 	configId: string;
 	spent: number;

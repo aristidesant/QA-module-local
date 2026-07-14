@@ -6,6 +6,15 @@
 		"enterCampaignName": "Enter campaign name",
 		"descriptionLabel": "Description",
 		"describeYourCampaign": "Describe your campaign",
+		"effectiveContactObjective": {
+			"title": "Effective contact definition",
+			"description": "Give the conversation classifier a clear standard for deciding whether a call was an effective contact.",
+			"guidanceTitle": "Write observable criteria",
+			"guidance": "Include who must answer, the minimum meaningful interaction, and which outcomes should count or be excluded.",
+			"label": "Classification criteria",
+			"fieldDescription": "This instruction is evaluated together with the campaign outcomes after each conversation.",
+			"placeholder": "Example: Consider the contact effective when the intended customer or an authorized representative answers, confirms their identity, and completes the campaign's required conversation. Voicemail, wrong numbers, and calls ending before identity confirmation are not effective contacts."
+		},
 		"routing": {
 			"title": "Routing",
 			"description": "Match this campaign to the number and objective used for outbound execution.",

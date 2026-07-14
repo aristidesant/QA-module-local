@@ -1,4 +1,5 @@
 import CampaignBasicsSection from './CampaignBasicsSection';
+import EffectiveContactObjectiveSection from './EffectiveContactObjectiveSection';
 import ExecutionDefaultsSection from './ExecutionDefaultsSection';
 import styles from './GeneralSection.module.css';
 import NoiseCancellationSection from './NoiseCancellationSection';
@@ -20,6 +21,7 @@ const GeneralSection: React.FC<GeneralSectionProps> = ({
 	<div className={styles.generalLayout}>
 		<div className={styles.column}>
 			<CampaignBasicsSection />
+			<EffectiveContactObjectiveSection />
 			<RoutingSection />
 		</div>
 

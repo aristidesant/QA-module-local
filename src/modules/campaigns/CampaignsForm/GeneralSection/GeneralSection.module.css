@@ -57,6 +57,37 @@
 	grid-column: 1 / -1;
 }
 
+.classificationGuidance {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-sm);
+	background: light-dark(
+		var(--mantine-color-green-0),
+		color-mix(in srgb, var(--mantine-color-green-9) 18%, transparent)
+	);
+}
+
+.classificationGuidanceIcon {
+	flex: 0 0 auto;
+}
+
+.classificationGuidanceTitle {
+	font-size: 0.8125rem;
+	font-weight: 650;
+	line-height: 1.3;
+	color: light-dark(var(--mantine-color-green-9), var(--mantine-color-green-2));
+}
+
+.classificationGuidanceText {
+	max-width: 62ch;
+	margin-top: 0.125rem;
+	font-size: 0.8125rem;
+	line-height: 1.4;
+	color: light-dark(var(--mantine-color-green-9), var(--mantine-color-green-1));
+}
+
 .executionStack {
 	display: flex;
 	flex-direction: column;
