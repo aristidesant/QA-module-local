@@ -6,7 +6,7 @@ interface UsePaginationProps {
 	searchDebounceMs?: number;
 }
 
-interface UsePaginationReturn {
+export interface UsePaginationReturn {
 	currentPage: number;
 	itemsPerPage: number;
 	searchValue: string;
