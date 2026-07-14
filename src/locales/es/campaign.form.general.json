@@ -6,6 +6,15 @@
 		"enterCampaignName": "Ingresa el nombre de la campaña",
 		"descriptionLabel": "Descripción",
 		"describeYourCampaign": "Describe tu campaña",
+		"effectiveContactObjective": {
+			"title": "Definición de contacto efectivo",
+			"description": "Dale al clasificador de conversaciones un criterio claro para decidir si una llamada fue un contacto efectivo.",
+			"guidanceTitle": "Escribe criterios observables",
+			"guidance": "Incluye quién debe responder, la interacción mínima esperada y cuáles outcomes deben contar o excluirse.",
+			"label": "Criterios de clasificación",
+			"fieldDescription": "Esta instrucción se evalúa junto con los outcomes de la campaña al finalizar cada conversación.",
+			"placeholder": "Ejemplo: Considera el contacto efectivo cuando responde el cliente objetivo o un representante autorizado, confirma su identidad y completa la conversación requerida por la campaña. Los buzones de voz, números equivocados y llamadas que terminan antes de confirmar la identidad no son contactos efectivos."
+		},
 		"routing": {
 			"title": "Enrutamiento",
 			"description": "Conecta esta campaña con el número y el objetivo usados para la ejecución outbound.",
