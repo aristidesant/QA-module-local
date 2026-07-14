@@ -12,7 +12,7 @@ import {
 import BaseTable from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import PaginationControls from '~/components/PaginationControls';
-import { usePagination } from '~/hooks/usePagination';
+import { usePagination, type UsePaginationReturn } from '~/hooks/usePagination';
 import {
 	useFailAndPauseConversation,
 	useFetchAndProcessConversation,
@@ -43,7 +43,24 @@ type ConversationsListProps = {
 	hiddenColumns?: string[];
 	onRowClick?: (conversation: { id: number }) => void;
 	onListChange?: (ids: number[]) => void;
+	pagination?: UsePaginationReturn;
+	filters?: ConversationFiltersType;
+	onFiltersChange?: (filters: ConversationFiltersType) => void;
+	sorting?: SortingState;
+	onSortingChange?: (sorting: SortingState) => void;
 };
+
+const DEFAULT_SORTING: SortingState = [{ id: 'createdAt', desc: true }];
+
+const areFiltersEqual = (
+	current: ConversationFiltersType,
+	next: ConversationFiltersType
+) =>
+	current.identifier === next.identifier &&
+	current.contactName === next.contactName &&
+	current.contactPhoneNumber === next.contactPhoneNumber &&
+	current.dispositionName === next.dispositionName &&
+	current.status === next.status;
 
 const ConversationsList: React.FC<ConversationsListProps> = ({
 	campaignId,
@@ -52,12 +69,18 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	hiddenColumns,
 	onRowClick: onRowClickProp,
 	onListChange,
+	pagination: paginationProp,
+	filters: filtersProp,
+	onFiltersChange: onFiltersChangeProp,
+	sorting: sortingProp,
+	onSortingChange: onSortingChangeProp,
 }) => {
 	const { t } = useTranslation(['conversations', 'common']);
 	const navigate = useNavigate();
-	const pagination = usePagination({
+	const internalPagination = usePagination({
 		initialItemsPerPage: 10,
 	});
+	const pagination = paginationProp ?? internalPagination;
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const canViewConversations = canAccessModule(ModuleEnum.CONVERSATIONS);
 	const canExportConversations = canPerformAction(
@@ -71,13 +94,15 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 
 	const { limit, offset } = pagination.getApiParams();
 
-	const [sorting, setSorting] = useState<SortingState>([
-		{ id: 'createdAt', desc: true },
-	]);
+	const [internalSorting, setInternalSorting] =
+		useState<SortingState>(DEFAULT_SORTING);
+	const sorting = sortingProp ?? internalSorting;
 	const sortBy = sorting?.[0]?.id;
 	const sortOrder = sorting?.[0]?.desc ? 'DESC' : 'ASC';
 
-	const [filters, setFilters] = useState<ConversationFiltersType>({});
+	const [internalFilters, setInternalFilters] =
+		useState<ConversationFiltersType>({});
+	const filters = filtersProp ?? internalFilters;
 	const [exportModalOpened, setExportModalOpened] = useState(false);
 	const [pendingAction, setPendingAction] = useState<{
 		id: number;
@@ -87,9 +112,31 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	const failAndPauseMutation = useFailAndPauseConversation();
 	const fetchAndProcessMutation = useFetchAndProcessConversation();
 
-	useEffect(() => {
-		pagination.setCurrentPage(1);
-	}, [filters]);
+	const handleFiltersChange = useCallback(
+		(nextFilters: ConversationFiltersType) => {
+			if (areFiltersEqual(filters, nextFilters)) return;
+
+			if (onFiltersChangeProp) {
+				onFiltersChangeProp(nextFilters);
+			} else {
+				setInternalFilters(nextFilters);
+			}
+			pagination.setCurrentPage(1);
+		},
+		[filters, onFiltersChangeProp, pagination.setCurrentPage]
+	);
+
+	const handleSortingChange = useCallback(
+		(nextSorting: SortingState) => {
+			if (onSortingChangeProp) {
+				onSortingChangeProp(nextSorting);
+			} else {
+				setInternalSorting(nextSorting);
+			}
+			pagination.setCurrentPage(1);
+		},
+		[onSortingChangeProp, pagination.setCurrentPage]
+	);
 
 	const { data, isLoading, isFetching, isError, error, refetch } =
 		useGetConversations({
@@ -259,7 +306,10 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 					/>
 				}
 			>
-				<ConversationFilters filters={filters} onFiltersChange={setFilters} />
+				<ConversationFilters
+					filters={filters}
+					onFiltersChange={handleFiltersChange}
+				/>
 
 				{isError ? (
 					<Center className={styles.emptyWrapper}>
@@ -285,10 +335,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 							filterMode='server'
 							onRowClick={handleRowClick}
 							initialSort={sorting}
-							onSortingChange={(newSorting) => {
-								setSorting(newSorting);
-								pagination.setCurrentPage(1);
-							}}
+							onSortingChange={handleSortingChange}
 							getRowClassName={() => styles.tableRow}
 						/>
 					</div>

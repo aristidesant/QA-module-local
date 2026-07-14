@@ -3,10 +3,15 @@ import { useLocation } from 'react-router';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import ConversationsList from '~/modules/conversations/ConversationsList';
 import { ConversationDetailPage } from '~/modules/conversations/ConversationDetailPage/ConversationDetailPage';
+import { usePagination } from '~/hooks/usePagination';
+import type { ConversationFiltersType } from '~/modules/conversations/ConversationsList/ConversationFilters';
+import type { SortingState } from '@tanstack/react-table';
 
 type ConversationLocationState = {
 	selectedConversationId?: number;
 };
+
+const DEFAULT_SORTING: SortingState = [{ id: 'createdAt', desc: true }];
 
 const ConversationsPage = () => {
 	const location = useLocation();
@@ -19,6 +24,9 @@ const ConversationsPage = () => {
 		routeState?.selectedConversationId ?? null
 	);
 	const [conversationIds, setConversationIds] = useState<number[]>([]);
+	const pagination = usePagination({ initialItemsPerPage: 10 });
+	const [filters, setFilters] = useState<ConversationFiltersType>({});
+	const [sorting, setSorting] = useState<SortingState>(DEFAULT_SORTING);
 
 	useEffect(() => {
 		if (routeState?.selectedConversationId) {
@@ -54,6 +62,11 @@ const ConversationsPage = () => {
 			<ConversationsList
 				onRowClick={handleSelectConversation}
 				onListChange={setConversationIds}
+				pagination={pagination}
+				filters={filters}
+				onFiltersChange={setFilters}
+				sorting={sorting}
+				onSortingChange={setSorting}
 			/>
 		</ContentContainer>
 	);
