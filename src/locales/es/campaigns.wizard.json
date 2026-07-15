@@ -186,6 +186,7 @@
 					"outcome": "resultado",
 					"outcomes": "resultados",
 					"flowReady": "Flujo listo para la campaña",
+					"editFlow": "Editar flujo",
 					"previewFlow": "Vista Previa del Flujo",
 					"startOver": "Empezar de Nuevo"
 				}

@@ -1,6 +1,6 @@
 import { Badge, Box, Button, Group, Text, ThemeIcon } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { IconCheck, IconCopy, IconEye } from '@tabler/icons-react';
+import { IconCheck, IconCopy, IconEdit, IconEye } from '@tabler/icons-react';
 import styles from '../StepThreeOutcomes.module.css';
 
 export type FlowOrigin = 'created' | 'imported' | 'existing';
@@ -22,6 +22,7 @@ export function FlowSummary({
 	importSourceCampaignName,
 	canPreviewImported,
 	onPreviewImported,
+	onEditCreated,
 	onStartOver,
 	isDeleting,
 }: FlowSummaryProps) {
@@ -57,6 +58,12 @@ export function FlowSummary({
 								{t('wizard.steps.outcomes.summary.imported')}
 							</Group>
 						</Badge>
+						<Badge variant='light' color='blue'>
+							{nodeCount}{' '}
+							{nodeCount === 1
+								? t('wizard.steps.outcomes.summary.outcome')
+								: t('wizard.steps.outcomes.summary.outcomes')}
+						</Badge>
 						<Text size='xs' c='dimmed'>
 							{t('wizard.steps.outcomes.summary.from', {
 								name:
@@ -81,6 +88,17 @@ export function FlowSummary({
 			</Group>
 
 			<Group gap='xs'>
+				{onEditCreated && (
+					<Button
+						variant='light'
+						size='sm'
+						leftSection={<IconEdit size={16} />}
+						onClick={onEditCreated}
+					>
+						{t('wizard.steps.outcomes.summary.editFlow')}
+					</Button>
+				)}
+
 				{origin === 'imported' && canPreviewImported && (
 					<Button
 						variant='outline'
