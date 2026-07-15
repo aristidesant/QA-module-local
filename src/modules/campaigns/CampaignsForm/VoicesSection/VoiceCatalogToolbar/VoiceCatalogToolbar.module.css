@@ -2,19 +2,13 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-xs);
-	padding: var(--mantine-spacing-sm);
-	border: 1px solid var(--mantine-color-default-border);
-	border-radius: var(--mantine-radius-lg);
-	background: linear-gradient(
-		180deg,
-		light-dark(var(--mantine-color-white), var(--mantine-color-dark-6)),
-		light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-7))
-	);
+	padding-bottom: var(--mantine-spacing-sm);
+	border-bottom: 1px solid var(--surface-border);
 }
 
 .searchGroup {
 	flex: 1;
-	min-width: min(100%, 320px);
+	min-width: min(100%, 20rem);
 }
 
 .search {
@@ -23,15 +17,6 @@
 
 .count {
 	white-space: nowrap;
-}
-
-.clearSearchIcon {
-	cursor: pointer;
-	color: var(--mantine-color-dimmed);
-}
-
-.clearSearchIcon:hover {
-	color: var(--mantine-color-text);
 }
 
 .resetButton {
@@ -59,7 +44,8 @@
 
 .filters {
 	display: flex;
-	flex-direction: column;
+	align-items: center;
+	flex-wrap: wrap;
 	gap: var(--mantine-spacing-xs);
 }
 
@@ -71,10 +57,7 @@
 }
 
 .filterLabel {
-	min-width: 64px;
 	color: var(--mantine-color-dimmed);
-	text-transform: uppercase;
-	letter-spacing: 0.04em;
 }
 
 .chip {
@@ -87,20 +70,17 @@
 	gap: 4px;
 }
 
-.helper {
-	margin-top: 2px;
-}
-
-.filterBadge {
-	align-self: flex-start;
-}
-
 @media (max-width: 48rem) {
-	.toolbar {
-		padding: var(--mantine-spacing-sm);
-	}
-
 	.search {
 		width: 100%;
+	}
+
+	.searchGroup {
+		width: 100%;
+	}
+
+	.filters {
+		align-items: flex-start;
+		flex-direction: column;
 	}
 }

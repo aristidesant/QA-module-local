@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Badge, Chip, Group, Stack, Text, TextInput } from '@mantine/core';
+import { ActionIcon, Chip, Group, Text, TextInput } from '@mantine/core';
 import { IconSearch, IconX } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { getLanguageFlagEmoji } from '~/utils/agentUtils';
@@ -20,6 +20,19 @@ export interface VoiceCatalogToolbarProps {
 	onReset: () => void;
 	resultsCount: number;
 }
+
+const getToggledValue = (
+	previous: string[],
+	next: string[]
+): string | undefined => {
+	const previousSet = new Set(previous);
+	const nextSet = new Set(next);
+
+	return (
+		next.find((value) => !previousSet.has(value)) ??
+		previous.find((value) => !nextSet.has(value))
+	);
+};
 
 const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 	search,
@@ -53,8 +66,8 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 
 	return (
 		<div className={classes.toolbar}>
-			<Group justify='space-between' align='flex-end' gap='sm' wrap='wrap'>
-				<Stack gap={4} className={classes.searchGroup}>
+			<Group justify='space-between' align='center' gap='sm' wrap='wrap'>
+				<Group gap='xs' className={classes.searchGroup} wrap='nowrap'>
 					<TextInput
 						value={search}
 						onChange={(event) => onSearchChange(event.currentTarget.value)}
@@ -62,22 +75,24 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 						leftSection={<IconSearch size={14} />}
 						rightSection={
 							search ? (
-								<IconX
-									size={14}
-									className={classes.clearSearchIcon}
+								<ActionIcon
+									variant='subtle'
+									color='gray'
+									size='sm'
 									onClick={() => onSearchChange('')}
 									aria-label={t('toolbar.reset')}
-									role='button'
-								/>
+								>
+									<IconX size={13} />
+								</ActionIcon>
 							) : undefined
 						}
 						size='sm'
 						className={classes.search}
 					/>
-					<Text size='xs' c='dimmed' className={classes.count}>
+					<Text size='xs' c='dimmed' className={classes.count} component='span'>
 						{t('catalog.resultsCount', { count: resultsCount })}
 					</Text>
-				</Stack>
+				</Group>
 
 				{hasActiveFilters && (
 					<button
@@ -102,10 +117,7 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 								value={selectedGenders}
 								onChange={(values) => {
 									const next = Array.isArray(values) ? values : [values];
-									const previous = selectedGenders;
-									const added = next.find((v) => !previous.includes(v));
-									const removed = previous.find((v) => !next.includes(v));
-									const toggled = added ?? removed;
+									const toggled = getToggledValue(selectedGenders, next);
 									if (toggled) {
 										onToggleGender(toggled);
 									}
@@ -138,10 +150,7 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 								value={selectedLanguages}
 								onChange={(values) => {
 									const next = Array.isArray(values) ? values : [values];
-									const previous = selectedLanguages;
-									const added = next.find((v) => !previous.includes(v));
-									const removed = previous.find((v) => !next.includes(v));
-									const toggled = added ?? removed;
+									const toggled = getToggledValue(selectedLanguages, next);
 									if (toggled) {
 										onToggleLanguage(toggled);
 									}
@@ -169,23 +178,12 @@ const VoiceCatalogToolbar: React.FC<VoiceCatalogToolbarProps> = ({
 						</div>
 					)}
 
-					<Text size='xs' c='dimmed' className={classes.helper}>
-						{hasActiveFilters
-							? t('toolbar.activeFilters', { count: activeFilterCount })
-							: t('toolbar.noFilters')}
-					</Text>
+					{hasActiveFilters && (
+						<Text size='xs' c='dimmed'>
+							{t('toolbar.activeFilters', { count: activeFilterCount })}
+						</Text>
+					)}
 				</div>
-			)}
-
-			{hasActiveFilters && (
-				<Badge
-					variant='light'
-					color='gray'
-					radius='xl'
-					className={classes.filterBadge}
-				>
-					{t('toolbar.activeFiltersLabel', { count: activeFilterCount })}
-				</Badge>
 			)}
 		</div>
 	);
