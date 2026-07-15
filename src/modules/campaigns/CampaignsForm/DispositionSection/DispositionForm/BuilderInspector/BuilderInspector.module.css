@@ -4,7 +4,7 @@
 }
 
 .summaryLabel {
-	letter-spacing: 0.06em;
+	line-height: 1.4;
 }
 
 .statChip {
@@ -12,11 +12,9 @@
 	flex-direction: column;
 	gap: 3px;
 	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
-	border-radius: var(--mantine-radius-md);
-	background: light-dark(
-		var(--mantine-color-gray-0),
-		var(--mantine-color-dark-6)
-	);
+	padding-left: var(--mantine-spacing-md);
+	border-left: 2px solid
+		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
 .statValue {
@@ -35,8 +33,6 @@
 .statLabel {
 	font-size: 10px;
 	font-weight: 600;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
 	line-height: 1.35;
 	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
 	transition: color 120ms ease;
@@ -52,4 +48,24 @@
 
 .emptyHint {
 	padding: var(--mantine-spacing-xl) var(--mantine-spacing-sm);
+}
+
+.catalogPreview {
+	padding: var(--mantine-spacing-md);
+	height: 100%;
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+}
+
+.previewSection {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding-block: var(--mantine-spacing-sm);
+	border-top: 1px solid
+		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+	border-bottom: 1px solid
+		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }

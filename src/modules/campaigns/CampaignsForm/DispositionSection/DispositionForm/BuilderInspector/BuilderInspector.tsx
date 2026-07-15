@@ -1,6 +1,20 @@
 import React, { useMemo } from 'react';
-import { Alert, SimpleGrid, Stack, Text } from '@mantine/core';
-import { IconAlertTriangle } from '@tabler/icons-react';
+import {
+	Alert,
+	Badge,
+	Button,
+	Group,
+	SimpleGrid,
+	Stack,
+	Text,
+	ThemeIcon,
+} from '@mantine/core';
+import {
+	IconAlertTriangle,
+	IconFileDescription,
+	IconFolder,
+	IconPlus,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import { useDispositionBuilderStore } from '../../dispositionStore';
@@ -9,6 +23,10 @@ import DispositionGroupPreview from '../DispositionBuilder/DispositionGroupPrevi
 import { isLeafNode } from '~/utils/dispositionNodeStyles';
 import { findNodeById } from '~/utils/dragDropUtils';
 import styles from './BuilderInspector.module.css';
+import {
+	getActiveChildren,
+	getActiveLeafIds,
+} from '../../dispositionSelection';
 
 interface FlowStats {
 	total: number;
@@ -81,13 +99,7 @@ const BuilderSummary: React.FC = () => {
 
 	return (
 		<Stack gap='md' className={styles.summary}>
-			<Text
-				size='xs'
-				fw={700}
-				tt='uppercase'
-				c='dimmed'
-				className={styles.summaryLabel}
-			>
+			<Text size='xs' fw={650} c='dimmed' className={styles.summaryLabel}>
 				{t('disposition.builder.header')}
 			</Text>
 
@@ -134,6 +146,94 @@ const BuilderSummary: React.FC = () => {
 	);
 };
 
+const CatalogNodeInspector: React.FC<{
+	node: DispositionNode;
+	parentNode: DispositionNode | null;
+}> = ({ node, parentNode }) => {
+	const { t } = useTranslation(['campaign.form.outcomes']);
+	const selectSubtree = useDispositionBuilderStore(
+		(state) => state.selectSubtree
+	);
+	const childCount = getActiveChildren(node).length;
+	const outcomeCount = getActiveLeafIds(node).length;
+	const isLeaf = childCount === 0;
+
+	return (
+		<Stack gap='md' className={styles.catalogPreview}>
+			<Group justify='space-between' align='flex-start' wrap='nowrap'>
+				<Group gap='sm' wrap='nowrap'>
+					<ThemeIcon variant='light' color='gray' size='lg'>
+						{isLeaf ? (
+							<IconFileDescription size={18} />
+						) : (
+							<IconFolder size={18} />
+						)}
+					</ThemeIcon>
+					<div>
+						<Text fw={650}>{node.name}</Text>
+						<Text size='xs' c='dimmed'>
+							{isLeaf
+								? t('disposition.tree.outcomeType')
+								: t('disposition.tree.groupType')}
+						</Text>
+					</div>
+				</Group>
+				<Badge color='gray' variant='light'>
+					{t('disposition.tree.excluded')}
+				</Badge>
+			</Group>
+
+			<div className={styles.previewSection}>
+				<Text size='xs' fw={600} c='dimmed'>
+					{t('disposition.nodeForm.descriptionLabel')}
+				</Text>
+				<Text size='sm'>
+					{node.description?.trim()
+						? node.description
+						: t('disposition.nodeForm.noDescription')}
+				</Text>
+			</div>
+
+			<Group gap='xs'>
+				{parentNode && (
+					<Badge variant='light' color='gray'>
+						{t('disposition.detailPanel.parent')}: {parentNode.name}
+					</Badge>
+				)}
+				{!isLeaf && (
+					<Badge variant='light' color='blue'>
+						{t('disposition.tree.groupContents', {
+							children: childCount,
+							outcomes: outcomeCount,
+						})}
+					</Badge>
+				)}
+			</Group>
+
+			<Alert color='blue' variant='light'>
+				<Text size='xs'>
+					{isLeaf
+						? t('disposition.tree.addLeafDescription')
+						: t('disposition.tree.addGroupDescription', {
+								count: outcomeCount,
+							})}
+				</Text>
+			</Alert>
+
+			<Button
+				variant='light'
+				color='green'
+				leftSection={<IconPlus size={16} />}
+				onClick={() => selectSubtree(node.id)}
+			>
+				{isLeaf
+					? t('disposition.tree.addOutcome')
+					: t('disposition.tree.addGroup')}
+			</Button>
+		</Stack>
+	);
+};
+
 const BuilderInspector: React.FC<BuilderInspectorProps> = ({
 	selectedNode,
 	parentNode,
@@ -151,9 +251,9 @@ const BuilderInspector: React.FC<BuilderInspectorProps> = ({
 		selectedNode.id
 	);
 
-	// Node was deselected or removed — show summary
+	// Keep excluded catalog nodes inspectable and offer a clear add action.
 	if (!flowNode) {
-		return <BuilderSummary />;
+		return <CatalogNodeInspector node={selectedNode} parentNode={parentNode} />;
 	}
 
 	const isLeaf = isLeafNode(flowNode);

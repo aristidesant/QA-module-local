@@ -1,11 +1,60 @@
-.statsBar {
+.summarySurface {
+	overflow: hidden;
+	border: 1px solid
+		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+	border-radius: var(--mantine-radius-md);
 	background: light-dark(
-		var(--mantine-color-gray-0),
+		var(--mantine-color-white),
 		var(--mantine-color-dark-7)
 	);
-	border-color: light-dark(
-		var(--mantine-color-gray-2),
-		var(--mantine-color-dark-5)
+	box-shadow: var(--mantine-shadow-xs);
+}
+
+.summaryHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-md);
+	border-bottom: 1px solid
+		light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+}
+
+.flowIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 36px;
+	height: 36px;
+	border-radius: var(--mantine-radius-sm);
+	color: light-dark(var(--mantine-color-green-7), var(--mantine-color-green-4));
+	background: light-dark(
+		var(--mantine-color-green-0),
+		color-mix(in srgb, var(--mantine-color-green-9) 26%, transparent)
+	);
+}
+
+.flowIdentity {
+	min-width: 0;
+}
+
+.flowName {
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	line-height: 1.3;
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.statsBar {
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+	border-bottom: 1px solid
+		light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-8)
 	);
 }
 
@@ -32,8 +81,6 @@
 .statLabel {
 	font-size: 11px;
 	font-weight: 600;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
 	line-height: 1.35;
 	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
 	transition: color 120ms ease;
@@ -45,4 +92,14 @@
 
 .warningBanner {
 	font-size: 13px;
+}
+
+.flowContent {
+	padding: var(--mantine-spacing-sm);
+}
+
+@media (max-width: 40em) {
+	.summaryHeader {
+		align-items: flex-start;
+	}
 }

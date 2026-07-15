@@ -15,7 +15,7 @@
 }
 
 .sectionIcon {
-	color: var(--mantine-color-blue-6);
+	color: var(--mantine-color-green-6);
 }
 
 .sectionTitle {
@@ -129,4 +129,10 @@
 
 [data-mantine-color-scheme='dark'] .campaignCard:hover {
 	border-color: var(--mantine-color-blue-7);
+}
+
+@media (max-width: 40em) {
+	.flowSummary :global(.mantine-Button-root) {
+		min-height: 44px;
+	}
 }
