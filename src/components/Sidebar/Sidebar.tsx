@@ -49,7 +49,8 @@ type SidebarNavItem = {
 	label: string;
 	icon: React.ReactNode;
 	to: string;
-	module: ModuleEnum;
+	/** When omitted, only the masterOnly/superAdminOnly checks apply. */
+	module?: ModuleEnum;
 	permission?: PermissionEnum;
 	masterOnly?: boolean;
 	superAdminOnly?: boolean;
@@ -308,6 +309,10 @@ export const Sidebar: React.FC = () => {
 					return false;
 				}
 
+				if (!item.module) {
+					return true;
+				}
+
 				if (item.permission) {
 					return canPerformAction(item.module, item.permission);
 				}
@@ -329,6 +334,10 @@ export const Sidebar: React.FC = () => {
 
 						if (item.superAdminOnly && !isSuperAdmin) {
 							return false;
+						}
+
+						if (!item.module) {
+							return true;
 						}
 
 						if (item.permission) {

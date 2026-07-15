@@ -18,6 +18,7 @@ import ModuleGuard from './components/ModuleGuard/ModuleGuard';
 import RouteErrorBoundary from './components/GenericAppError/RouteErrorBoundary';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { campaignRouteNamespaces } from '~/modules/campaigns/campaignNamespaces';
+import { qaRouteNamespaces } from '~/modules/qa/qaNamespaces';
 import SuspenseFallback from './components/SuspenseFallback/SuspenseFallback';
 const Layout = React.lazy(() => import('./components/Layout'));
 
@@ -148,7 +149,9 @@ const I18nNamespaceLoader = ({ children }: { children: React.ReactNode }) => {
 	const namespace = lastMatch?.id;
 	const resolvedNamespace =
 		namespace && namespace !== 'root' && !namespace.includes('/')
-			? (campaignRouteNamespaces[namespace] ?? namespace)
+			? (campaignRouteNamespaces[namespace] ??
+				qaRouteNamespaces[namespace] ??
+				namespace)
 			: 'common';
 
 	// Use useTranslation to ensure the namespace is loaded before rendering children.
