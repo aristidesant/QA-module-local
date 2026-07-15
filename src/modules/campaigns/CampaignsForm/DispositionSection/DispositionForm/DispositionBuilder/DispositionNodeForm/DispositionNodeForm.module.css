@@ -24,8 +24,6 @@
 		var(--mantine-color-gray-4)
 	);
 	background: var(--disposition-surface);
-	border: 1px solid var(--disposition-border);
-	border-radius: var(--mantine-radius-lg);
 	padding: var(--mantine-spacing-md);
 	display: flex;
 	flex-direction: column;
@@ -62,8 +60,6 @@
 .headerEyebrow {
 	font-size: 11px;
 	color: var(--disposition-text-muted);
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
 }
 
 .headerTitle {
@@ -102,8 +98,6 @@
 .infoLabel {
 	font-size: 11px;
 	color: var(--disposition-text-muted);
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
 }
 
 .infoValue {
@@ -120,8 +114,6 @@
 .sectionLabel {
 	font-size: 11px;
 	color: var(--disposition-text-muted);
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
 }
 
 .toggleGrid {
@@ -208,4 +200,18 @@
 	gap: var(--mantine-spacing-xs);
 	padding-top: var(--mantine-spacing-xs);
 	border-top: 1px solid var(--disposition-border);
+}
+
+@media (max-width: 64em) {
+	.toggleCard :global(.mantine-Switch-root) {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		min-width: 44px;
+		min-height: 44px;
+	}
+
+	.actionGroup :global(.mantine-Button-root) {
+		min-height: 44px;
+	}
 }

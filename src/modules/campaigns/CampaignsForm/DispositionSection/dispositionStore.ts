@@ -17,6 +17,14 @@ import {
 	findNodeById,
 	cloneNodeWithChildren,
 } from '~/utils/dragDropUtils';
+import {
+	getActiveLeafIds,
+	getAllActiveLeafIds,
+	getSelectedLeafIds,
+	getTreeSelectionState,
+	rebuildFlowSelection,
+	type TreeSelectionState,
+} from './dispositionSelection';
 
 interface DispositionBuilderState {
 	dispositionFlow?: Partial<DispositionFlowModel>;
@@ -45,6 +53,12 @@ interface DispositionBuilderState {
 	setPreviewNode: (node: DispositionNode | null) => void;
 	populateNodeWithChildren: (nodeId: number) => void;
 	addMissingSiblingsToParent: (nodeId: number) => void;
+	selectSubtree: (nodeId: number) => void;
+	deselectSubtree: (nodeId: number) => void;
+	clearSelection: () => void;
+	getNodeSelectionState: (nodeId: number) => TreeSelectionState;
+	getSelectedLeafCount: () => number;
+	getTotalLeafCount: () => number;
 }
 
 export const useDispositionBuilderStore = create<DispositionBuilderState>(
@@ -57,6 +71,80 @@ export const useDispositionBuilderStore = create<DispositionBuilderState>(
 		setCampaignId: (id) => set({ campaignId: id }),
 		setSelectedCatalog: (catalog) => set({ selectedCatalog: catalog }),
 		setDispositionFlow: (flow) => set({ dispositionFlow: flow }),
+		selectSubtree: (nodeId) => {
+			const state = get();
+			const catalogNodes = state.selectedCatalog?.dispositionNodes ?? [];
+			const catalogNode = findNodeById(catalogNodes, nodeId);
+			if (!catalogNode) return;
+
+			const flowNodes = state.flowJson.dispositionNodes ?? [];
+			const selectedLeafIds = getSelectedLeafIds(catalogNodes, flowNodes);
+			getActiveLeafIds(catalogNode).forEach((id) => selectedLeafIds.add(id));
+
+			set({
+				flowJson: {
+					...state.flowJson,
+					dispositionNodes: rebuildFlowSelection(
+						catalogNodes,
+						selectedLeafIds,
+						flowNodes
+					),
+				},
+			});
+		},
+		deselectSubtree: (nodeId) => {
+			const state = get();
+			const catalogNodes = state.selectedCatalog?.dispositionNodes ?? [];
+			const catalogNode = findNodeById(catalogNodes, nodeId);
+			if (!catalogNode) return;
+
+			const flowNodes = state.flowJson.dispositionNodes ?? [];
+			const selectedLeafIds = getSelectedLeafIds(catalogNodes, flowNodes);
+			getActiveLeafIds(catalogNode).forEach((id) => selectedLeafIds.delete(id));
+
+			set({
+				flowJson: {
+					...state.flowJson,
+					dispositionNodes: rebuildFlowSelection(
+						catalogNodes,
+						selectedLeafIds,
+						flowNodes
+					),
+				},
+			});
+		},
+		clearSelection: () => {
+			const state = get();
+			set({
+				flowJson: {
+					...state.flowJson,
+					dispositionNodes: [],
+				},
+			});
+		},
+		getNodeSelectionState: (nodeId) => {
+			const state = get();
+			const catalogNodes = state.selectedCatalog?.dispositionNodes ?? [];
+			const catalogNode = findNodeById(catalogNodes, nodeId);
+			if (!catalogNode) return 'unchecked';
+
+			return getTreeSelectionState(
+				catalogNode,
+				getSelectedLeafIds(catalogNodes, state.flowJson.dispositionNodes ?? [])
+			);
+		},
+		getSelectedLeafCount: () => {
+			const state = get();
+			const catalogNodes = state.selectedCatalog?.dispositionNodes ?? [];
+			return getSelectedLeafIds(
+				catalogNodes,
+				state.flowJson.dispositionNodes ?? []
+			).size;
+		},
+		getTotalLeafCount: () => {
+			const catalogNodes = get().selectedCatalog?.dispositionNodes ?? [];
+			return getAllActiveLeafIds(catalogNodes).length;
+		},
 		previewNode: null,
 		setPreviewNode: (node) => set({ previewNode: node }),
 		populateNodeWithChildren: (nodeId) => {

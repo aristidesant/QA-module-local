@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { isAxiosError } from 'axios';
 import { useTranslation } from 'react-i18next';
 import { useQueryClient } from '@tanstack/react-query';
 import {
@@ -11,19 +10,14 @@ import {
 	Modal,
 	Center,
 	Loader,
-	ThemeIcon,
 } from '@mantine/core';
-import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { notifications } from '@mantine/notifications';
-import { IconPlus, IconNetwork, IconCopy } from '@tabler/icons-react';
+import { IconNetwork } from '@tabler/icons-react';
 import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
 import { useDispositionBuilderStore } from '~/modules/campaigns/CampaignsForm/DispositionSection/dispositionStore';
 import DispositionForm from '~/modules/campaigns/CampaignsForm/DispositionSection/DispositionForm';
 import DispositionViewer from '~/modules/campaigns/CampaignsForm/DispositionSection/DispositionViewer';
 import {
-	useCreateDispositionFlow,
-	useCampaignsWithDispositionFlow,
-	useCopyDispositionFlow,
 	useDispositionFlow,
 	useDeleteDispositionFlow,
 	useDispositionFlowsByCampaignPath,
@@ -33,7 +27,10 @@ import useDispositionLabel from '~/hooks/useDispositionLabel';
 import styles from './StepThreeOutcomes.module.css';
 import sharedStyles from '../CampaignWizard.module.css';
 import { FlowSummary, type FlowOrigin } from './components/FlowSummary';
-import { ImportFlowPicker } from './components/ImportFlowPicker';
+import OutcomeSetupExperience, {
+	type OutcomeCopyResult,
+} from '~/modules/campaigns/CampaignsForm/DispositionSection/OutcomeSetupExperience';
+import type { DispositionNode } from '~/models/DispositionNodeModel';
 
 interface StepThreeOutcomesProps {
 	onNext: () => void;
@@ -52,25 +49,12 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 	const [modalOpened, setModalOpened] = useState(false);
 	const [previewModalOpened, setPreviewModalOpened] = useState(false);
 	const [previewFlowId, setPreviewFlowId] = useState<number | null>(null);
-	const [previewCampaignName, setPreviewCampaignName] = useState('');
 	const [hasCreatedFlow, setHasCreatedFlow] = useState(false);
-	const [flowMode, setFlowMode] = useState<'create' | 'import'>('create');
-	const [searchQuery, setSearchQuery] = useState('');
 	const [flowOrigin, setFlowOrigin] = useState<FlowOrigin | null>(null);
 	const [importSourceCampaignName, setImportSourceCampaignName] =
 		useState<string>('');
 	const [copiedFlowId, setCopiedFlowId] = useState<number | null>(null);
-	const [copyingFlowId, setCopyingFlowId] = useState<number | null>(null);
-
-	const updateCampaign = useCreateDispositionFlow();
 	const queryClient = useQueryClient();
-	const {
-		data: campaignsWithFlows,
-		isLoading: isLoadingCampaigns,
-		isFetching: isFetchingCampaigns,
-		refetch: refetchCampaigns,
-	} = useCampaignsWithDispositionFlow(flowMode === 'import');
-	const copyDispositionFlow = useCopyDispositionFlow();
 	const deleteDispositionFlow = useDeleteDispositionFlow();
 	const { data: previewFlow, isLoading: isLoadingPreviewFlow } =
 		useDispositionFlow(previewFlowId ?? undefined);
@@ -96,20 +80,30 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 		}
 	}, [existingFlow, setHasOutcomeFlow]);
 
-	const { flowJson, setDispositionFlow, setFlowJson, setCampaignId } =
-		useDispositionBuilderStore();
+	const {
+		flowJson,
+		setDispositionFlow,
+		setFlowJson,
+		setCampaignId,
+		setSelectedCatalog,
+	} = useDispositionBuilderStore();
 
 	const handleOpenModal = () => {
-		// Initialize disposition builder for new campaign
-		setDispositionFlow({});
-		setFlowJson({});
+		setSelectedCatalog(null);
+		if (existingFlow?.id) {
+			setDispositionFlow(existingFlow);
+			setFlowJson(existingFlow.flowJson ?? {});
+		} else {
+			setDispositionFlow({});
+			setFlowJson({});
+		}
 		setCampaignId(createdCampaign?.id);
 		setModalOpened(true);
 	};
 
 	const handleCloseModal = () => {
 		setModalOpened(false);
-		// Keep the flow data in store for potential re-editing
+		setSelectedCatalog(null);
 	};
 
 	const handleFlowComplete = () => {
@@ -119,6 +113,7 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 		setImportSourceCampaignName('');
 		setCopiedFlowId(null);
 		setModalOpened(false);
+		void refetchExistingFlow();
 		notifications.show({
 			title: t('wizard.steps.outcomes.successCreatedTitle'),
 			message: t('wizard.steps.outcomes.successCreatedMessage'),
@@ -126,64 +121,18 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 		});
 	};
 
-	const handleImportFlow = async (flowId: number, campaignName: string) => {
-		if (!createdCampaign?.id) {
-			notifications.show({
-				title: t('common:status.error'),
-				message: t('wizard.steps.outcomes.errorCampaignNotFound'),
-				color: 'red',
-			});
-			return;
-		}
-
-		setCopyingFlowId(flowId);
-
-		try {
-			const response = await copyDispositionFlow.mutateAsync({
-				sourceFlowId: flowId,
-				targetCampaignId: createdCampaign.id,
-			});
-
-			// Store the copied flow ID for potential deletion on "Start Over"
-			if (response.flow?.id) {
-				setCopiedFlowId(response.flow.id);
-				// Set preview flow ID so user can preview it later
-				setPreviewFlowId(response.flow.id);
-			}
-
-			setFlowOrigin('imported');
-			setImportSourceCampaignName(campaignName);
-			setHasCreatedFlow(true);
-			setHasOutcomeFlow(true); // Sync with wizard store
-
-			notifications.show({
-				title: t('wizard.steps.outcomes.successImportedTitle'),
-				message: t('wizard.steps.outcomes.successImportedMessage', {
-					name: campaignName,
-				}),
-				color: 'green',
-			});
-		} catch (error) {
-			let errorMessage = t('wizard.steps.outcomes.errorImportFailed');
-			if (isAxiosError(error)) {
-				errorMessage = error.response?.data?.message || errorMessage;
-			} else if (error instanceof Error) {
-				errorMessage = error.message;
-			}
-			notifications.show({
-				title: t('wizard.steps.outcomes.errorImportTitle'),
-				message: errorMessage,
-				color: 'red',
-			});
-		} finally {
-			setCopyingFlowId(null);
-		}
+	const handleCopiedFlow = async (result: OutcomeCopyResult) => {
+		setCopiedFlowId(result.flowId);
+		setPreviewFlowId(result.flowId);
+		setFlowOrigin('imported');
+		setImportSourceCampaignName(result.sourceCampaignName);
+		setHasCreatedFlow(true);
+		setHasOutcomeFlow(true);
+		await refetchExistingFlow();
 	};
 
-	// Handle preview flow - opens modal with DispositionViewer
-	const handlePreviewFlow = (flowId: number, campaignName: string) => {
+	const handlePreviewFlow = (flowId: number) => {
 		setPreviewFlowId(flowId);
-		setPreviewCampaignName(campaignName);
 		setPreviewModalOpened(true);
 	};
 
@@ -277,8 +226,16 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 		onNext();
 	};
 
-	// Count nodes in flow for summary
-	const nodeCount = flowJson?.dispositionNodes?.length || 0;
+	const countTerminalOutcomes = (nodes: DispositionNode[] = []): number =>
+		nodes.reduce(
+			(total, node) =>
+				total +
+				(node.children?.length ? countTerminalOutcomes(node.children) : 1),
+			0
+		);
+	const summaryNodes =
+		existingFlow?.flowJson.dispositionNodes ?? flowJson.dispositionNodes ?? [];
+	const nodeCount = countTerminalOutcomes(summaryNodes);
 
 	// Loading state check
 	if (!createdCampaign) {
@@ -326,93 +283,19 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 							importSourceCampaignName={importSourceCampaignName}
 							canPreviewImported={!!copiedFlowId}
 							onPreviewImported={
-								copiedFlowId
-									? () =>
-											handlePreviewFlow(copiedFlowId, importSourceCampaignName)
-									: undefined
+								copiedFlowId ? () => handlePreviewFlow(copiedFlowId) : undefined
 							}
-							onEditCreated={
-								(flowOrigin ?? 'created') === 'created'
-									? handleOpenModal
-									: undefined
-							}
+							onEditCreated={handleOpenModal}
 							onStartOver={handleStartOver}
 							isDeleting={deleteDispositionFlow.isPending}
 						/>
 					) : (
 						// Show create/import flow interface
-						<Stack gap='md'>
-							<AppSegmentedControl
-								value={flowMode}
-								onChange={(value) => setFlowMode(value as 'create' | 'import')}
-								data={[
-									{
-										label: (
-											<Group gap='xs' justify='center'>
-												<IconPlus size={16} />
-												<span>{t('wizard.steps.outcomes.createNew')}</span>
-											</Group>
-										),
-										value: 'create',
-									},
-									{
-										label: (
-											<Group gap='xs' justify='center'>
-												<IconCopy size={16} />
-												<span>
-													{t('wizard.steps.outcomes.importFromCampaign')}
-												</span>
-											</Group>
-										),
-										value: 'import',
-									},
-								]}
-								className={styles.segmentedControl}
-							/>
-
-							{flowMode === 'create' ? (
-								<Box className={styles.createFlowContainer}>
-									<Center py='xl'>
-										<Stack align='center' gap='md'>
-											<ThemeIcon variant='light' color='blue' size='xl'>
-												<IconNetwork size={32} />
-											</ThemeIcon>
-											<Stack align='center' gap='xs'>
-												<Text fw={500}>
-													{t('wizard.steps.outcomes.noFlowConfigured')}
-												</Text>
-												<Text size='sm' c='dimmed' ta='center'>
-													{t('wizard.steps.outcomes.createFlowDesc')}
-												</Text>
-											</Stack>
-											<Button
-												leftSection={<IconPlus size={16} />}
-												onClick={handleOpenModal}
-												size='md'
-											>
-												{dispositionLabel(
-													t('wizard.steps.outcomes.createFlowButton')
-												)}
-											</Button>
-										</Stack>
-									</Center>
-								</Box>
-							) : (
-								<Box className={styles.importContainer}>
-									<ImportFlowPicker
-										campaignsWithFlows={campaignsWithFlows}
-										isLoading={isLoadingCampaigns}
-										isFetching={isFetchingCampaigns}
-										searchQuery={searchQuery}
-										onSearchQueryChange={setSearchQuery}
-										onRefresh={() => refetchCampaigns()}
-										copyingFlowId={copyingFlowId}
-										onPreview={handlePreviewFlow}
-										onUseFlow={handleImportFlow}
-									/>
-								</Box>
-							)}
-						</Stack>
+						<OutcomeSetupExperience
+							campaignId={createdCampaign.id}
+							onCreate={handleOpenModal}
+							onCopied={handleCopiedFlow}
+						/>
 					)}
 				</Box>
 			</Stack>
@@ -420,8 +303,8 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 			<Group className={sharedStyles.actions} justify='flex-end'>
 				<Button
 					type='button'
-					loading={updateCampaign.isPending || isLoadingExistingFlow}
-					disabled={!hasCreatedFlow || copyingFlowId !== null}
+					loading={isLoadingExistingFlow}
+					disabled={!hasCreatedFlow}
 					onClick={handleSubmit} // Unified handler
 				>
 					{t('wizard.steps.outcomes.submit')}
@@ -436,6 +319,8 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 				fullScreen
 				withCloseButton={false}
 				padding={0}
+				closeOnEscape={false}
+				closeOnClickOutside={false}
 			>
 				<DispositionForm
 					onCancel={handleCloseModal}
@@ -454,25 +339,6 @@ export const StepThreeOutcomes: React.FC<StepThreeOutcomesProps> = ({
 				closeButtonProps={{ ['data-testid' as string]: 'modal-close-btn' }}
 			>
 				<Stack gap='md'>
-					{!hasCreatedFlow && previewFlowId && (
-						<Group justify='flex-end'>
-							<Button
-								leftSection={<IconCopy size={16} />}
-								loading={copyingFlowId === previewFlowId}
-								disabled={
-									copyingFlowId !== null && copyingFlowId !== previewFlowId
-								}
-								onClick={() => {
-									if (copyingFlowId !== null) return;
-									handleImportFlow(previewFlowId, previewCampaignName);
-									setPreviewModalOpened(false);
-								}}
-								data-testid='modal-use-flow-btn'
-							>
-								{t('wizard.steps.outcomes.useFlow')}
-							</Button>
-						</Group>
-					)}
 					{isLoadingPreviewFlow ? (
 						<Center py='xl'>
 							<Loader size='md' />

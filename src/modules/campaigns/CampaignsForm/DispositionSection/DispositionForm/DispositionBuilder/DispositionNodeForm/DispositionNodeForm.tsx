@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import { useForm } from '@mantine/form';
 import {
 	Group,
@@ -33,15 +33,21 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 		'campaign.detail',
 		'common',
 	]);
+	const updateNode = useDispositionBuilderStore((state) => state.updateNode);
+	const initialNodeRef = useRef(node);
 	const form = useForm<DispositionNode>({
 		initialValues: {
 			...node,
 			doNotCall: node.doNotCall ?? node.do_not_call ?? false,
 			isAbandoned: node.isAbandoned ?? false,
 		},
+		onValuesChange: (values) => {
+			updateNode({
+				...node,
+				...values,
+			});
+		},
 	});
-
-	const updateNode = useDispositionBuilderStore((state) => state.updateNode);
 
 	const {
 		doNotCall,
@@ -261,7 +267,15 @@ const DispositionNodeForm: React.FC<DispositionNodeFormProps> = ({
 				<Divider className={styles.divider} />
 
 				<Group justify='flex-end' gap='xs' className={styles.actionGroup}>
-					<Button variant='default' onClick={onCancel} type='button' size='xs'>
+					<Button
+						variant='default'
+						onClick={() => {
+							updateNode(initialNodeRef.current);
+							onCancel?.();
+						}}
+						type='button'
+						size='xs'
+					>
 						{t('actions.cancel', { ns: 'common' })}
 					</Button>
 					<Button type='submit' variant='filled' color='green' size='xs'>

@@ -1,13 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface UseVoicePreviewReturn {
-	audioRef: React.RefObject<HTMLAudioElement | null>;
 	playingVoiceId: string | null;
 	progress: number;
 	toggle: (voiceId: string, previewUrl: string) => void;
 	stop: () => void;
-	handleEnded: () => void;
-	handleTimeUpdate: () => void;
 }
 
 export const useVoicePreview = (): UseVoicePreviewReturn => {
@@ -63,18 +60,23 @@ export const useVoicePreview = (): UseVoicePreviewReturn => {
 	}, []);
 
 	useEffect(() => {
+		const audio = new Audio();
+		audioRef.current = audio;
+		audio.addEventListener('ended', handleEnded);
+		audio.addEventListener('timeupdate', handleTimeUpdate);
+
 		return () => {
-			audioRef.current?.pause();
+			audio.pause();
+			audio.removeEventListener('ended', handleEnded);
+			audio.removeEventListener('timeupdate', handleTimeUpdate);
+			audioRef.current = null;
 		};
-	}, []);
+	}, [handleEnded, handleTimeUpdate]);
 
 	return {
-		audioRef,
 		playingVoiceId,
 		progress,
 		toggle,
 		stop,
-		handleEnded,
-		handleTimeUpdate,
 	};
 };

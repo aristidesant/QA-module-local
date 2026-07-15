@@ -1,11 +1,14 @@
 import { useCallback, useMemo } from 'react';
-import { Alert, Paper, Stack, Text } from '@mantine/core';
-import { IconInfoCircle, IconAlertTriangle } from '@tabler/icons-react';
+import { Alert, Badge, Text, Title } from '@mantine/core';
+import {
+	IconAlertTriangle,
+	IconMicrophone,
+	IconPlaylist,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
 import { useGetAllAgentVoices } from '~/queries/agentVoiceQueries';
 import { useCampaignFormContext } from '../../campaignFormFunctions';
-import SelectedVoicesStrip from './SelectedVoicesStrip';
 import VoiceAssignmentsList from './VoiceAssignmentsList';
 import VoiceCatalog from './VoiceCatalog';
 import VoiceCatalogToolbar from './VoiceCatalogToolbar';
@@ -13,7 +16,6 @@ import { useVoiceFilters } from './useVoiceFilters';
 import { useVoicePreview } from './useVoicePreview';
 import {
 	getCampaignVoiceAssignmentIssues,
-	getCampaignVoiceAssignmentStats,
 	normalizeCampaignVoiceAssignments,
 } from '~/modules/campaigns/utils/campaignVoiceAssignments';
 import classes from './VoicesSection.module.css';
@@ -48,10 +50,6 @@ const VoicesSection: React.FC = () => {
 		[filters, voices]
 	);
 
-	const assignmentStats = useMemo(
-		() => getCampaignVoiceAssignmentStats(selectedVoiceAssignments, voices),
-		[selectedVoiceAssignments, voices]
-	);
 	const assignmentIssues = useMemo(
 		() => getCampaignVoiceAssignmentIssues(selectedVoiceAssignments, voices),
 		[selectedVoiceAssignments, voices]
@@ -95,24 +93,6 @@ const VoicesSection: React.FC = () => {
 		preview.stop();
 	}, [form, preview]);
 
-	const handleManageDefaults = useCallback(() => {
-		const current = form.values.voices ?? [];
-		if (current.length === 0) {
-			return;
-		}
-
-		const next = current.map((voice) => ({
-			...voice,
-			voiceName: '',
-		}));
-
-		form.setFieldValue('voices', next);
-		form.setFieldValue(
-			'voiceIds',
-			next.map((voice) => voice.voiceId)
-		);
-	}, [form]);
-
 	const handleAddVoice = useCallback(() => {
 		const catalogElement = document.getElementById(CATALOG_ID);
 		catalogElement?.scrollIntoView({
@@ -122,115 +102,93 @@ const VoicesSection: React.FC = () => {
 	}, []);
 
 	const selectedCount = selectedVoiceIds.length;
-	const summaryStatusColor: 'gray' | 'green' | 'yellow' | 'red' =
-		selectedCount === 0
-			? 'gray'
-			: assignmentIssues.length > 0
-				? 'yellow'
-				: 'green';
-	const summaryStatusLabel =
-		selectedCount === 0
-			? t('summary.statusEmpty')
-			: assignmentIssues.length > 0
-				? t('summary.statusReview')
-				: t('summary.statusGood');
-	const helperTone = assignmentIssues.length > 0 ? 'yellow' : 'blue';
 
 	return (
-		<SectionCard
-			title={t('section.title')}
-			description={t('section.description')}
-		>
-			<Stack gap='md' className={classes.layout}>
-				<SelectedVoicesStrip
-					selectedCount={selectedCount}
-					availableCount={voices.length}
-					customNameCount={assignmentStats.customNameCount}
-					statusLabel={summaryStatusLabel}
-					statusColor={summaryStatusColor}
-					onManageDefaults={handleManageDefaults}
-				/>
+		<div className={classes.layout}>
+			<div className={classes.pageHeader}>
+				<div>
+					<Title order={4} className={classes.pageTitle}>
+						{t('section.title')}
+					</Title>
+					<Text className={classes.pageDescription}>
+						{t('section.description')}
+					</Text>
+				</div>
+			</div>
 
-				<VoiceAssignmentsList
-					voices={voices}
-					playingVoiceId={preview.playingVoiceId}
-					onPlay={preview.toggle}
-					onRemove={handleRemoveVoice}
-					onAddVoice={handleAddVoice}
-					onClearAll={handleClearAll}
-				/>
-
-				<Paper
-					withBorder
-					radius='lg'
-					p='sm'
-					className={classes.note}
-					data-tone={helperTone}
+			<div className={classes.workspace}>
+				<SectionCard
+					title={t('catalog.title')}
+					icon={IconMicrophone}
+					contentSpacing='sm'
 				>
-					<Alert
-						variant='light'
-						color={helperTone}
-						icon={
-							helperTone === 'yellow' ? (
-								<IconAlertTriangle size={16} />
-							) : (
-								<IconInfoCircle size={16} />
-							)
-						}
-						title={
-							helperTone === 'yellow'
-								? t('summary.issueTitle')
-								: t('summary.infoTitle')
-						}
-						className={classes.alert}
-					>
-						<Text size='sm' className={classes.noteText}>
-							{helperTone === 'yellow'
-								? t('summary.issueText', {
-										count: assignmentIssues.length,
-									})
-								: t('summary.infoText')}
-						</Text>
-					</Alert>
-				</Paper>
+					<VoiceCatalogToolbar
+						search={filters.search}
+						onSearchChange={filters.setSearch}
+						genderOptions={filters.availableGenders}
+						selectedGenders={filters.genders}
+						onToggleGender={filters.toggleGender}
+						languageOptions={filters.availableLanguages}
+						selectedLanguages={filters.languages}
+						onToggleLanguage={filters.toggleLanguage}
+						hasActiveFilters={filters.hasActiveFilters}
+						activeFilterCount={filters.activeFilterCount}
+						onReset={filters.reset}
+						resultsCount={filteredVoices.length}
+					/>
 
-				<VoiceCatalogToolbar
-					search={filters.search}
-					onSearchChange={filters.setSearch}
-					genderOptions={filters.availableGenders}
-					selectedGenders={filters.genders}
-					onToggleGender={filters.toggleGender}
-					languageOptions={filters.availableLanguages}
-					selectedLanguages={filters.languages}
-					onToggleLanguage={filters.toggleLanguage}
-					hasActiveFilters={filters.hasActiveFilters}
-					activeFilterCount={filters.activeFilterCount}
-					onReset={filters.reset}
-					resultsCount={filteredVoices.length}
-				/>
+					<VoiceCatalog
+						id={CATALOG_ID}
+						voices={filteredVoices}
+						totalAvailable={voices.length}
+						isLoading={isLoading}
+						isError={isError}
+						selectedVoiceIds={selectedVoiceIdSet}
+						playingVoiceId={preview.playingVoiceId}
+						progress={preview.progress}
+						onToggleVoice={handleToggleVoice}
+						onPlayVoice={preview.toggle}
+						onResetFilters={filters.reset}
+					/>
+				</SectionCard>
 
-				<VoiceCatalog
-					id={CATALOG_ID}
-					voices={filteredVoices}
-					totalAvailable={voices.length}
-					isLoading={isLoading}
-					isError={isError}
-					selectedVoiceIds={selectedVoiceIdSet}
-					playingVoiceId={preview.playingVoiceId}
-					progress={preview.progress}
-					onToggleVoice={handleToggleVoice}
-					onPlayVoice={preview.toggle}
-					onResetFilters={filters.reset}
-				/>
+				<SectionCard
+					title={t('selected.title')}
+					icon={IconPlaylist}
+					contentSpacing='sm'
+					className={classes.selectionPanel}
+					headerExtras={
+						<Badge variant='light' color='gray'>
+							{selectedCount}
+						</Badge>
+					}
+				>
+					<VoiceAssignmentsList
+						voices={voices}
+						playingVoiceId={preview.playingVoiceId}
+						onPlay={preview.toggle}
+						onRemove={handleRemoveVoice}
+						onAddVoice={handleAddVoice}
+						onClearAll={handleClearAll}
+					/>
 
-				<audio
-					ref={preview.audioRef}
-					onEnded={preview.handleEnded}
-					onTimeUpdate={preview.handleTimeUpdate}
-					className={classes.hiddenAudio}
-				/>
-			</Stack>
-		</SectionCard>
+					{assignmentIssues.length > 0 && (
+						<Alert
+							variant='light'
+							color='yellow'
+							icon={<IconAlertTriangle size={16} />}
+							title={t('summary.issueTitle')}
+						>
+							<Text size='sm'>
+								{t('summary.issueText', {
+									count: assignmentIssues.length,
+								})}
+							</Text>
+						</Alert>
+					)}
+				</SectionCard>
+			</div>
+		</div>
 	);
 };
 
