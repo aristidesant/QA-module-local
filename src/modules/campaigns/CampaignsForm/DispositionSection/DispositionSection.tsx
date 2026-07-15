@@ -1,15 +1,13 @@
 import React, { useEffect } from 'react';
 import {
 	Button,
-	Group,
 	Paper,
 	SimpleGrid,
 	Skeleton,
 	Stack,
 	Text,
-	ThemeIcon,
 } from '@mantine/core';
-import { IconPlus, IconSitemap } from '@tabler/icons-react';
+import { IconRefresh } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard';
@@ -21,69 +19,7 @@ import { notifications } from '@mantine/notifications';
 import DispositionSummaryCard from './DispositionSummaryCard';
 import { useCampaignId } from '~/modules/campaigns/campaignFormFunctions';
 import styles from './DispositionSection.module.css';
-
-interface DispositionEmptyStateProps {
-	onAdd: () => void;
-}
-
-const DispositionEmptyState: React.FC<DispositionEmptyStateProps> = ({
-	onAdd,
-}) => {
-	const { t } = useTranslation(['campaign.form.outcomes']);
-	const steps = [
-		t('disposition.emptyState.step1'),
-		t('disposition.emptyState.step2'),
-		t('disposition.emptyState.step3'),
-	];
-
-	return (
-		<Paper withBorder className={styles.emptyState} p='xl' radius='md'>
-			<div className={styles.emptyGrid}>
-				<Stack gap='md'>
-					<ThemeIcon size={48} radius='xl' color='gray' variant='light'>
-						<IconSitemap size={24} />
-					</ThemeIcon>
-					<Stack gap={4}>
-						<Text size='sm' fw={700}>
-							{t('disposition.emptyState.heading')}
-						</Text>
-						<Text size='sm' c='dimmed' lh={1.55}>
-							{t('disposition.emptyState.body')}
-						</Text>
-					</Stack>
-				</Stack>
-				<Stack gap='md' justify='space-between'>
-					<Stack gap='sm'>
-						{steps.map((step, i) => (
-							<Group key={i} gap='sm' align='flex-start' wrap='nowrap'>
-								<Text
-									component='span'
-									size='xs'
-									fw={700}
-									className={styles.stepNumber}
-								>
-									{i + 1}
-								</Text>
-								<Text size='xs' c='dimmed' lh={1.5}>
-									{step}
-								</Text>
-							</Group>
-						))}
-					</Stack>
-					<div>
-						<Button
-							leftSection={<IconPlus size={15} />}
-							onClick={onAdd}
-							size='sm'
-						>
-							{t('disposition.addOutcome')}
-						</Button>
-					</div>
-				</Stack>
-			</div>
-		</Paper>
-	);
-};
+import OutcomeSetupExperience from './OutcomeSetupExperience';
 
 const DispositionSection: React.FC = () => {
 	const { t } = useTranslation([
@@ -102,7 +38,7 @@ const DispositionSection: React.FC = () => {
 		refetch: refetchCurrentFlow,
 	} = useDispositionFlowsByCampaignPath(campaignId);
 
-	const { setDispositionFlow, setFlowJson, setCampaignId } =
+	const { setDispositionFlow, setFlowJson, setCampaignId, setSelectedCatalog } =
 		useDispositionBuilderStore((s) => s);
 
 	useEffect(() => {
@@ -121,6 +57,7 @@ const DispositionSection: React.FC = () => {
 		} else {
 			setDispositionFlow({});
 			setFlowJson({});
+			setSelectedCatalog(null);
 			setCampaignId(campaignId);
 		}
 
@@ -128,13 +65,19 @@ const DispositionSection: React.FC = () => {
 			modalId: 'disposition-form',
 			size: '100vw',
 			fullScreen: true,
+			withCloseButton: false,
+			closeOnEscape: false,
+			closeOnClickOutside: false,
+			padding: 0,
 			onClose: () => {
 				setCampaignId(undefined);
 				setDispositionFlow({});
 				setFlowJson({});
+				setSelectedCatalog(null);
 			},
 			children: (
 				<DispositionForm
+					onCancel={() => modals.close('disposition-form')}
 					onComplete={() => {
 						refetchCurrentFlow();
 						modals.close('disposition-form');
@@ -156,16 +99,18 @@ const DispositionSection: React.FC = () => {
 	return (
 		<SectionCard
 			title={t('disposition.title')}
-			actions={{
-				primary: {
-					kind: hasFlow ? 'edit' : 'add',
-					label: hasFlow
-						? t('disposition.editOutcome')
-						: t('disposition.addOutcome'),
-					onClick: () => handleOpenModal(hasFlow),
-					loading: isLoadingCurrentFlow,
-				},
-			}}
+			actions={
+				hasFlow
+					? {
+							primary: {
+								kind: 'edit',
+								label: t('disposition.editOutcome'),
+								onClick: () => handleOpenModal(true),
+								loading: isLoadingCurrentFlow,
+							},
+						}
+					: undefined
+			}
 			description={t('disposition.description')}
 		>
 			{isLoadingCurrentFlow ? (
@@ -191,12 +136,27 @@ const DispositionSection: React.FC = () => {
 						<Text size='xs' c='dimmed' ta='center' maw={460}>
 							{currentFlowError?.message ?? t('disposition.noFlowDescription')}
 						</Text>
+						<Button
+							variant='light'
+							color='red'
+							size='xs'
+							leftSection={<IconRefresh size={15} />}
+							onClick={() => refetchCurrentFlow()}
+						>
+							{t('disposition.tree.retry')}
+						</Button>
 					</Stack>
 				</Paper>
 			) : hasFlow ? (
 				<DispositionSummaryCard flow={currentDispositionFlow!} />
 			) : (
-				<DispositionEmptyState onAdd={() => handleOpenModal(false)} />
+				<OutcomeSetupExperience
+					campaignId={campaignId}
+					onCreate={() => handleOpenModal(false)}
+					onCopied={async () => {
+						await refetchCurrentFlow();
+					}}
+				/>
 			)}
 		</SectionCard>
 	);

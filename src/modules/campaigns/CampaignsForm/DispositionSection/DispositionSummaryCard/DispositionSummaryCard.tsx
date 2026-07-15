@@ -1,6 +1,6 @@
 import React from 'react';
-import { Alert, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
-import { IconAlertTriangle } from '@tabler/icons-react';
+import { Alert, Badge, Group, SimpleGrid, Stack, Text } from '@mantine/core';
+import { IconAlertTriangle, IconHierarchy3 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { DispositionFlowModel } from '~/models/DispositionFlowModel';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
@@ -86,8 +86,29 @@ const DispositionSummaryCard: React.FC<DispositionSummaryCardProps> = ({
 	const stats = computeFlowStats(nodes);
 
 	return (
-		<Stack gap='md'>
-			<Paper withBorder className={styles.statsBar} p='md' radius='md'>
+		<div className={styles.summarySurface}>
+			<div className={styles.summaryHeader}>
+				<Group gap='sm' wrap='nowrap'>
+					<div className={styles.flowIcon} aria-hidden='true'>
+						<IconHierarchy3 size={18} />
+					</div>
+					<div className={styles.flowIdentity}>
+						<Text size='xs' c='dimmed' fw={600}>
+							{t('disposition.viewer.flowLabel')}
+						</Text>
+						<Text className={styles.flowName}>{flow.flowJson.name}</Text>
+					</div>
+				</Group>
+				{flow.flowJson.type && (
+					<Badge variant='light' color='gray' radius='sm'>
+						{flow.flowJson.type === 'INBOUND'
+							? t('disposition.catalog.typeInbound')
+							: t('disposition.catalog.typeOutbound')}
+					</Badge>
+				)}
+			</div>
+
+			<div className={styles.statsBar}>
 				<SimpleGrid cols={{ base: 2, sm: 4 }}>
 					<StatChip
 						value={stats.total}
@@ -107,22 +128,24 @@ const DispositionSummaryCard: React.FC<DispositionSummaryCardProps> = ({
 						isFlagged
 					/>
 				</SimpleGrid>
-			</Paper>
+			</div>
 
-			{stats.flagged > 0 && (
-				<Alert
-					color='yellow'
-					variant='light'
-					icon={<IconAlertTriangle size={18} />}
-					radius='md'
-					className={styles.warningBanner}
-				>
-					{t('disposition.summary.warningBanner', { count: stats.flagged })}
-				</Alert>
-			)}
+			<Stack gap='sm' className={styles.flowContent}>
+				{stats.flagged > 0 && (
+					<Alert
+						color='yellow'
+						variant='light'
+						icon={<IconAlertTriangle size={18} />}
+						radius='sm'
+						className={styles.warningBanner}
+					>
+						{t('disposition.summary.warningBanner', { count: stats.flagged })}
+					</Alert>
+				)}
 
-			<DispositionViewer flow={flow} />
-		</Stack>
+				<DispositionViewer flow={flow} showHeader={false} />
+			</Stack>
+		</div>
 	);
 };
 

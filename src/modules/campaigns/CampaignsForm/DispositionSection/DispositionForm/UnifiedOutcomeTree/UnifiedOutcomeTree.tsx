@@ -1,44 +1,60 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
 	ActionIcon,
+	Alert,
 	Badge,
+	Button,
+	Checkbox,
 	Group,
 	ScrollArea,
 	Select,
+	Skeleton,
 	Stack,
-	Switch,
 	Text,
 	TextInput,
+	ThemeIcon,
 	Tooltip,
 } from '@mantine/core';
+import { modals } from '@mantine/modals';
 import {
+	IconAlertCircle,
 	IconChevronDown,
 	IconChevronRight,
-	IconClock,
+	IconEraser,
+	IconExternalLink,
 	IconFileDescription,
 	IconFolder,
+	IconFolderOff,
 	IconLayoutList,
 	IconLayoutRows,
-	IconPhonePause,
-	IconPhoneOff,
-	IconPhoneX,
 	IconSearch,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
 import { useDispositionBuilderStore } from '../../dispositionStore';
 import { useDispositionCatalogs } from '~/queries/dispositionCatalogQueries';
-import { useCampaignWizardStore } from '~/stores/campaignWizardStore';
-import { findNodeById, getDirectHierarchyTree } from '~/utils/dragDropUtils';
-import { handleAddGroupWithChildren } from '../DispositionCatalogMenu/dispositionCatalogHelper';
-import { getNodeStyle, isLeafNode } from '~/utils/dispositionNodeStyles';
+import { useCampaignsStore } from '~/stores/campaignsStore';
+import { findNodeById } from '~/utils/dragDropUtils';
+import { getNodeStyle } from '~/utils/dispositionNodeStyles';
+import OutcomeNodeFlags from '../../OutcomeNodeFlags';
+import {
+	getActiveChildren,
+	getActiveLeafIds,
+	getAllActiveLeafIds,
+	getSelectedLeafIds,
+	getTreeSelectionState,
+} from '../../dispositionSelection';
 import styles from './UnifiedOutcomeTree.module.css';
+
+const EMPTY_CATALOG_NODES: DispositionNode[] = [];
 
 function shouldRenderNode(node: DispositionNode, query: string): boolean {
 	if (!query.trim()) return true;
-	const q = query.toLowerCase().trim();
-	if (node.name.toLowerCase().includes(q)) return true;
-	return node.children?.some((child) => shouldRenderNode(child, q)) ?? false;
+	const normalizedQuery = query.toLocaleLowerCase().trim();
+	if (node.name.toLocaleLowerCase().includes(normalizedQuery)) return true;
+	return getActiveChildren(node).some((child) =>
+		shouldRenderNode(child, normalizedQuery)
+	);
 }
 
 interface TreeNodeProps {
@@ -46,17 +62,13 @@ interface TreeNodeProps {
 	level: number;
 	branchTone: string;
 	searchQuery: string;
-	expandAll: boolean;
-	collapseAll: boolean;
+	expandSignal: number;
+	collapseSignal: number;
 	flowNodes: DispositionNode[];
-	catalogNodes: DispositionNode[];
+	selectedLeafIds: Set<number>;
 	selectedNodeId?: number;
 	parentNode?: DispositionNode;
-	onToggle: (
-		node: DispositionNode,
-		checked: boolean,
-		parent?: DispositionNode
-	) => void;
+	onToggle: (node: DispositionNode, checked: boolean) => void;
 	onSelect: (node: DispositionNode, parent?: DispositionNode) => void;
 }
 
@@ -65,100 +77,121 @@ const TreeNode: React.FC<TreeNodeProps> = ({
 	level,
 	branchTone,
 	searchQuery,
-	expandAll,
-	collapseAll,
+	expandSignal,
+	collapseSignal,
 	flowNodes,
-	catalogNodes,
+	selectedLeafIds,
 	selectedNodeId,
 	parentNode,
 	onToggle,
 	onSelect,
 }) => {
-	const isLeaf = isLeafNode(node);
-	const hasChildren = !isLeaf;
+	const { t } = useTranslation(['campaign.form.outcomes']);
+	const activeChildren = useMemo(() => getActiveChildren(node), [node]);
+	const isLeaf = activeChildren.length === 0;
+	const hasChildren = activeChildren.length > 0;
 	const tone = level === 0 ? getNodeStyle(node, 0) : branchTone;
 	const [isExpanded, setIsExpanded] = useState(true);
 
 	useEffect(() => {
-		if (collapseAll) setIsExpanded(false);
-	}, [collapseAll]);
+		if (collapseSignal > 0) setIsExpanded(false);
+	}, [collapseSignal]);
 
 	useEffect(() => {
-		if (expandAll) setIsExpanded(true);
-	}, [expandAll]);
+		if (expandSignal > 0) setIsExpanded(true);
+	}, [expandSignal]);
 
-	// Auto-expand when searching
 	const effectivelyExpanded = searchQuery.trim() ? true : isExpanded;
-
-	const isIncluded = Boolean(findNodeById(flowNodes, node.id));
+	const selectionState = getTreeSelectionState(node, selectedLeafIds);
+	const isIncluded = selectionState !== 'unchecked';
 	const flowNode = findNodeById(flowNodes, node.id);
 	const isSelected = selectedNodeId === node.id;
-
-	const isDoNotCall = flowNode
-		? Boolean(flowNode.doNotCall ?? flowNode.do_not_call)
-		: false;
-	const isAbandoned = flowNode ? Boolean(flowNode.isAbandoned) : false;
-	const isInvalidates = flowNode
-		? Boolean(flowNode.isInvalidatesNumber)
-		: false;
-	const isReschedule = flowNode ? Boolean(flowNode.requiresReschedule) : false;
-	const hasAnyFlag =
-		isDoNotCall || isAbandoned || isInvalidates || isReschedule;
-
-	const { t } = useTranslation(['campaign.form.outcomes', 'common']);
-
-	const activeChildren = useMemo(
-		() => (node.children ?? []).filter((c) => c.isActive !== false),
-		[node.children]
-	);
 	const visibleChildren = useMemo(
-		() => activeChildren.filter((c) => shouldRenderNode(c, searchQuery)),
+		() =>
+			activeChildren.filter((child) => shouldRenderNode(child, searchQuery)),
 		[activeChildren, searchQuery]
 	);
+	const leafIds = useMemo(() => getActiveLeafIds(node), [node]);
+	const selectedDescendantCount = leafIds.filter((id) =>
+		selectedLeafIds.has(id)
+	).length;
 
 	if (!shouldRenderNode(node, searchQuery)) return null;
 
+	const toggleSelection = () => {
+		onToggle(node, selectionState !== 'checked');
+	};
+
 	return (
-		<div className={styles.nodeShell}>
+		<div className={styles.nodeShell} role='none'>
 			<div
 				className={`${styles.row} ${isSelected ? styles.rowSelected : ''}`}
 				data-tone={tone}
-				data-clickable='true'
+				data-included={isIncluded ? 'true' : 'false'}
+				role='treeitem'
+				aria-level={level + 1}
+				aria-selected={isSelected}
+				aria-checked={
+					selectionState === 'indeterminate'
+						? 'mixed'
+						: selectionState === 'checked'
+				}
+				aria-expanded={hasChildren ? effectivelyExpanded : undefined}
+				tabIndex={0}
 				onClick={() => onSelect(node, parentNode)}
+				onKeyDown={(event) => {
+					if (event.target !== event.currentTarget) return;
+					if (event.key === 'Enter') onSelect(node, parentNode);
+					if (event.key === ' ') {
+						event.preventDefault();
+						toggleSelection();
+					}
+					if (event.key === 'ArrowRight' && hasChildren) {
+						event.preventDefault();
+						setIsExpanded(true);
+					}
+					if (event.key === 'ArrowLeft' && hasChildren) {
+						event.preventDefault();
+						setIsExpanded(false);
+					}
+				}}
 			>
-				<Switch
-					checked={isIncluded}
-					size='xs'
+				<Checkbox
+					checked={selectionState === 'checked'}
+					indeterminate={selectionState === 'indeterminate'}
+					size='sm'
 					color='green'
-					className={styles.toggle}
-					onClick={(e) => e.stopPropagation()}
-					onChange={(e) => {
-						e.stopPropagation();
-						onToggle(node, e.currentTarget.checked, parentNode);
-					}}
-					aria-label={isIncluded ? 'Remove from flow' : 'Add to flow'}
+					className={styles.checkbox}
+					onClick={(event) => event.stopPropagation()}
+					onChange={toggleSelection}
+					aria-label={t(
+						selectionState === 'checked'
+							? 'disposition.tree.removeNodeAria'
+							: 'disposition.tree.addNodeAria',
+						{ name: node.name }
+					)}
 				/>
 
 				<div className={styles.rowToggle}>
 					{hasChildren ? (
 						<ActionIcon
-							size='xs'
+							size='sm'
 							variant='subtle'
 							className={styles.chevron}
-							onClick={(e) => {
-								e.stopPropagation();
-								setIsExpanded((v) => !v);
+							onClick={(event) => {
+								event.stopPropagation();
+								setIsExpanded((value) => !value);
 							}}
-							aria-label={
+							aria-label={t(
 								effectivelyExpanded
-									? t('disposition.nodeEditor.collapse')
-									: t('disposition.nodeEditor.expand')
-							}
+									? 'disposition.nodeEditor.collapse'
+									: 'disposition.nodeEditor.expand'
+							)}
 						>
 							{effectivelyExpanded ? (
-								<IconChevronDown size={13} />
+								<IconChevronDown size={15} />
 							) : (
-								<IconChevronRight size={13} />
+								<IconChevronRight size={15} />
 							)}
 						</ActionIcon>
 					) : (
@@ -166,76 +199,49 @@ const TreeNode: React.FC<TreeNodeProps> = ({
 					)}
 				</div>
 
-				<span className={styles.icon} data-tone={tone} aria-hidden='true'>
+				<span className={styles.icon} aria-hidden='true'>
 					{isLeaf ? (
-						<IconFileDescription size={13} stroke={1.9} />
+						<IconFileDescription size={15} stroke={1.9} />
 					) : (
-						<IconFolder size={13} stroke={1.9} />
+						<IconFolder size={15} stroke={1.9} />
 					)}
 				</span>
 
-				<Text
-					className={styles.name}
-					size='xs'
-					fw={level === 0 ? 600 : 500}
-					data-included={isIncluded ? 'true' : 'false'}
-				>
-					{node.name}
-				</Text>
+				<div className={styles.nodeIdentity}>
+					<Text className={styles.name} size='sm' fw={level === 0 ? 650 : 500}>
+						{node.name}
+					</Text>
+					{node.description && (
+						<Text className={styles.description} size='xs' lineClamp={1}>
+							{node.description}
+						</Text>
+					)}
+				</div>
 
 				<div className={styles.rowAside}>
-					{isIncluded && hasAnyFlag && (
-						<div className={styles.flags}>
-							{isDoNotCall && (
-								<Tooltip
-									withArrow
-									label={t('disposition.nodeEditor.doNotCall')}
-								>
-									<IconPhoneX size={13} color='var(--mantine-color-red-6)' />
-								</Tooltip>
-							)}
-							{isAbandoned && (
-								<Tooltip
-									withArrow
-									label={t('disposition.nodeEditor.abandoned')}
-								>
-									<IconPhonePause
-										size={13}
-										color='var(--mantine-color-orange-6)'
-									/>
-								</Tooltip>
-							)}
-							{isInvalidates && (
-								<Tooltip
-									withArrow
-									label={t('disposition.nodeEditor.invalidatesNumber')}
-								>
-									<IconPhoneOff size={13} color='var(--mantine-color-red-6)' />
-								</Tooltip>
-							)}
-							{isReschedule && (
-								<Tooltip
-									withArrow
-									label={t('disposition.nodeEditor.requiresReschedule')}
-								>
-									<IconClock size={13} color='var(--mantine-color-orange-6)' />
-								</Tooltip>
-							)}
-						</div>
-					)}
-
-					<div className={styles.hoverMeta}>
-						{hasChildren && (
-							<Badge size='xs' variant='light' color='gray' radius='sm'>
-								{activeChildren.length}
-							</Badge>
-						)}
-					</div>
+					{flowNode && <OutcomeNodeFlags node={flowNode} />}
+					{hasChildren ? (
+						<Badge
+							size='sm'
+							variant='light'
+							color={selectedDescendantCount > 0 ? 'green' : 'gray'}
+							radius='sm'
+						>
+							{t('disposition.tree.branchSelection', {
+								selected: selectedDescendantCount,
+								total: leafIds.length,
+							})}
+						</Badge>
+					) : isIncluded ? (
+						<Badge size='sm' variant='light' color='green' radius='sm'>
+							{t('disposition.tree.included')}
+						</Badge>
+					) : null}
 				</div>
 			</div>
 
 			{effectivelyExpanded && visibleChildren.length > 0 && (
-				<div className={styles.nodeChildren} data-tone={tone}>
+				<div className={styles.nodeChildren} data-tone={tone} role='group'>
 					{visibleChildren.map((child) => (
 						<TreeNode
 							key={child.id}
@@ -243,10 +249,10 @@ const TreeNode: React.FC<TreeNodeProps> = ({
 							level={level + 1}
 							branchTone={tone}
 							searchQuery={searchQuery}
-							expandAll={expandAll}
-							collapseAll={collapseAll}
+							expandSignal={expandSignal}
+							collapseSignal={collapseSignal}
 							flowNodes={flowNodes}
-							catalogNodes={catalogNodes}
+							selectedLeafIds={selectedLeafIds}
 							selectedNodeId={selectedNodeId}
 							parentNode={node}
 							onToggle={onToggle}
@@ -265,198 +271,303 @@ interface UnifiedOutcomeTreeProps {
 		parent?: DispositionNode
 	) => void;
 	selectedNodeId?: number;
+	selectionError?: string;
 }
 
 const UnifiedOutcomeTree: React.FC<UnifiedOutcomeTreeProps> = ({
 	onNodeSelect,
 	selectedNodeId,
+	selectionError,
 }) => {
-	const { t } = useTranslation(['campaign.form.outcomes', 'common']);
+	const { t } = useTranslation(['campaign.form.outcomes']);
 	const {
 		flowJson,
-		addNode,
-		addNodeToParent,
-		removeNode,
-		isParentInFlow,
+		selectSubtree,
+		deselectSubtree,
+		clearSelection,
 		selectedCatalog,
 		setSelectedCatalog,
 	} = useDispositionBuilderStore();
-
-	const wizardCampaignType = useCampaignWizardStore((s) => s.campaignType);
-	const campaignType = wizardCampaignType ?? 'OUTBOUND';
+	const selectedCampaignType = useCampaignsStore(
+		(state) => state.selectedCampaign?.type
+	);
+	const campaignType = flowJson.type ?? selectedCampaignType ?? 'OUTBOUND';
 	const catalogType = campaignType === 'HYBRID' ? 'OUTBOUND' : campaignType;
-
-	const { data: catalogs = [] } = useDispositionCatalogs({ type: catalogType });
+	const {
+		data: catalogs = [],
+		isLoading,
+		isError,
+		refetch,
+	} = useDispositionCatalogs({ type: catalogType });
 	const activeCatalogs = useMemo(
-		() => catalogs.filter((c) => c.isActive),
+		() => catalogs.filter((catalog) => catalog.isActive),
 		[catalogs]
+	);
+	const flowNodes = useMemo(
+		() => flowJson.dispositionNodes ?? [],
+		[flowJson.dispositionNodes]
 	);
 
 	useEffect(() => {
-		if (activeCatalogs.length > 0) {
-			if (
-				!selectedCatalog ||
-				!activeCatalogs.some((c) => c.id === selectedCatalog.id)
-			) {
-				setSelectedCatalog(activeCatalogs[0]);
+		if (activeCatalogs.length === 0) return;
+
+		const findCatalogId = (nodes: DispositionNode[]): number | undefined => {
+			for (const node of nodes) {
+				if (node.catalogId) return node.catalogId;
+				const childCatalogId = findCatalogId(node.children ?? []);
+				if (childCatalogId) return childCatalogId;
 			}
+			return undefined;
+		};
+		const catalogIdFromFlow = flowJson.id ?? findCatalogId(flowNodes);
+		const matchingCatalog = activeCatalogs.find(
+			(catalog) => catalog.id === catalogIdFromFlow
+		);
+
+		if (matchingCatalog && matchingCatalog.id !== selectedCatalog?.id) {
+			setSelectedCatalog(matchingCatalog);
+			return;
 		}
-	}, [activeCatalogs]);
+		if (!matchingCatalog && !selectedCatalog) {
+			setSelectedCatalog(activeCatalogs[0]);
+		}
+	}, [
+		activeCatalogs,
+		flowJson.id,
+		flowNodes,
+		selectedCatalog,
+		setSelectedCatalog,
+	]);
 
 	const [searchQuery, setSearchQuery] = useState('');
-	const [collapseKey, setCollapseKey] = useState(0);
-	const [expandKey, setExpandKey] = useState(0);
-
-	const catalogNodes: DispositionNode[] =
-		selectedCatalog?.dispositionNodes ?? [];
-	const flowNodes: DispositionNode[] = flowJson?.dispositionNodes ?? [];
-
-	const includedCount = useMemo(() => {
-		let count = 0;
-		const walk = (nodes: DispositionNode[]) => {
-			nodes.forEach((n) => {
-				if (findNodeById(flowNodes, n.id)) count++;
-				if (n.children) walk(n.children);
-			});
-		};
-		walk(catalogNodes);
-		return count;
-	}, [catalogNodes, flowNodes]);
-
-	const handleToggle = useCallback(
-		(
-			node: DispositionNode,
-			checked: boolean,
-			_parentNode?: DispositionNode
-		) => {
-			if (checked) {
-				const currentNode = findNodeById(catalogNodes, node.id);
-				if (!currentNode) return;
-				const hasChildren =
-					currentNode.children && currentNode.children.length > 0;
-				if (hasChildren) {
-					handleAddGroupWithChildren(
-						currentNode,
-						catalogNodes,
-						flowNodes,
-						addNode,
-						addNodeToParent
-					);
-				} else {
-					const parentCatalog = currentNode.parentId
-						? findNodeById(catalogNodes, currentNode.parentId)
-						: null;
-					const parentInFlow = parentCatalog && isParentInFlow(parentCatalog);
-					if (parentInFlow && parentCatalog) {
-						addNodeToParent(currentNode);
-					} else {
-						const hierarchyNode = getDirectHierarchyTree(
-							catalogNodes,
-							currentNode.id
-						);
-						if (hierarchyNode) {
-							const existingIds = new Set(flowNodes.map((n) => n.id));
-							if (!existingIds.has(hierarchyNode.id)) addNode(hierarchyNode);
-						}
-					}
-				}
-			} else {
-				removeNode(node.id);
-				// Deselect if the removed node was selected
-				onNodeSelect(null);
-			}
-		},
-		[
-			catalogNodes,
-			flowNodes,
-			addNode,
-			addNodeToParent,
-			removeNode,
-			isParentInFlow,
-			onNodeSelect,
-		]
+	const [collapseSignal, setCollapseSignal] = useState(0);
+	const [expandSignal, setExpandSignal] = useState(0);
+	const catalogNodes = selectedCatalog?.dispositionNodes ?? EMPTY_CATALOG_NODES;
+	const selectedLeafIds = useMemo(
+		() => getSelectedLeafIds(catalogNodes, flowNodes),
+		[catalogNodes, flowNodes]
 	);
-
-	const rootNodes = useMemo(
-		() => catalogNodes.filter((n) => n.isActive !== false),
+	const totalLeafCount = useMemo(
+		() => getAllActiveLeafIds(catalogNodes).length,
 		[catalogNodes]
 	);
+	const rootNodes = useMemo(
+		() => catalogNodes.filter((node) => node.isActive !== false),
+		[catalogNodes]
+	);
+	const visibleRootNodes = useMemo(
+		() => rootNodes.filter((node) => shouldRenderNode(node, searchQuery)),
+		[rootNodes, searchQuery]
+	);
+
+	const handleClearSelection = () => {
+		modals.openConfirmModal({
+			title: t('disposition.tree.clearConfirmTitle'),
+			children: (
+				<Text size='sm'>{t('disposition.tree.clearConfirmDescription')}</Text>
+			),
+			labels: {
+				confirm: t('disposition.tree.clearSelection'),
+				cancel: t('disposition.tree.keepSelection'),
+			},
+			confirmProps: { color: 'red' },
+			onConfirm: () => {
+				clearSelection();
+				onNodeSelect(null);
+			},
+		});
+	};
+
+	if (isLoading) {
+		return (
+			<Stack gap='xs' p='xs' aria-label={t('disposition.tree.loading')}>
+				<Skeleton height={36} radius='sm' />
+				<Skeleton height={36} radius='sm' />
+				{Array.from({ length: 7 }).map((_, index) => (
+					<Skeleton key={index} height={44} radius='sm' />
+				))}
+			</Stack>
+		);
+	}
+
+	if (isError) {
+		return (
+			<Alert
+				icon={<IconAlertCircle size={18} />}
+				title={t('disposition.tree.loadErrorTitle')}
+				color='red'
+				variant='light'
+			>
+				<Stack gap='sm'>
+					<Text size='sm'>{t('disposition.tree.loadErrorDescription')}</Text>
+					<Button
+						variant='light'
+						color='red'
+						size='xs'
+						onClick={() => refetch()}
+					>
+						{t('disposition.tree.retry')}
+					</Button>
+				</Stack>
+			</Alert>
+		);
+	}
+
+	if (activeCatalogs.length === 0) {
+		return (
+			<div className={styles.emptyState}>
+				<ThemeIcon size={48} radius='xl' variant='light' color='gray'>
+					<IconFolderOff size={24} />
+				</ThemeIcon>
+				<Stack gap={4} align='center'>
+					<Text fw={600}>{t('disposition.catalog.noCatalogsTitle')}</Text>
+					<Text size='sm' c='dimmed' ta='center' maw={440}>
+						{t('disposition.tree.noCatalogsDescription')}
+					</Text>
+				</Stack>
+				<Button
+					component='a'
+					href='/outcomes'
+					target='_blank'
+					rel='noreferrer'
+					variant='light'
+					leftSection={<IconExternalLink size={16} />}
+				>
+					{t('disposition.tree.manageCatalogs')}
+				</Button>
+			</div>
+		);
+	}
 
 	return (
 		<div className={styles.container}>
 			<div className={styles.toolbar}>
 				<Select
-					data={activeCatalogs.map((c) => ({
-						value: String(c.id),
-						label: c.name,
+					data={activeCatalogs.map((catalog) => ({
+						value: String(catalog.id),
+						label: catalog.name,
 					}))}
 					value={selectedCatalog ? String(selectedCatalog.id) : null}
 					onChange={(id) => {
 						const catalog =
-							activeCatalogs.find((c) => String(c.id) === id) ?? null;
+							activeCatalogs.find((item) => String(item.id) === id) ?? null;
 						setSelectedCatalog(catalog);
+						onNodeSelect(null);
 					}}
-					size='xs'
+					disabled={selectedLeafIds.size > 0}
+					size='sm'
 					className={styles.catalogSelect}
+					aria-label={t('disposition.catalog.selectCatalog')}
 				/>
-				<Group gap={4} wrap='nowrap'>
-					{includedCount > 0 && (
-						<Badge size='xs' variant='light' color='green'>
-							{includedCount}
-						</Badge>
-					)}
+				<TextInput
+					size='sm'
+					leftSection={<IconSearch size={15} />}
+					placeholder={t('disposition.tree.searchPlaceholder')}
+					value={searchQuery}
+					onChange={(event) => setSearchQuery(event.currentTarget.value)}
+					className={styles.searchInput}
+				/>
+				<Group gap={4} wrap='nowrap' className={styles.toolbarActions}>
+					<Badge size='lg' variant='light' color='green' radius='sm'>
+						{t('disposition.tree.selectionCount', {
+							selected: selectedLeafIds.size,
+							total: totalLeafCount,
+						})}
+					</Badge>
 					<Tooltip label={t('disposition.builder.collapseAll')} withArrow>
 						<ActionIcon
-							size='xs'
+							size='lg'
 							variant='subtle'
-							onClick={() => setCollapseKey((k) => k + 1)}
+							onClick={() => setCollapseSignal((value) => value + 1)}
+							aria-label={t('disposition.builder.collapseAll')}
 						>
-							<IconLayoutList size={13} />
+							<IconLayoutList size={16} />
 						</ActionIcon>
 					</Tooltip>
 					<Tooltip label={t('disposition.builder.expandAll')} withArrow>
 						<ActionIcon
-							size='xs'
+							size='lg'
 							variant='subtle'
-							onClick={() => setExpandKey((k) => k + 1)}
+							onClick={() => setExpandSignal((value) => value + 1)}
+							aria-label={t('disposition.builder.expandAll')}
 						>
-							<IconLayoutRows size={13} />
+							<IconLayoutRows size={16} />
 						</ActionIcon>
 					</Tooltip>
+					{selectedLeafIds.size > 0 && (
+						<Button
+							variant='subtle'
+							color='gray'
+							size='xs'
+							leftSection={<IconEraser size={15} />}
+							onClick={handleClearSelection}
+						>
+							{t('disposition.tree.clearSelection')}
+						</Button>
+					)}
 				</Group>
 			</div>
 
-			<TextInput
-				size='xs'
-				leftSection={<IconSearch size={13} />}
-				placeholder='Search outcomes...'
-				value={searchQuery}
-				onChange={(e) => setSearchQuery(e.currentTarget.value)}
-				className={styles.searchInput}
-			/>
+			{selectedLeafIds.size > 0 && (
+				<Text className={styles.catalogLockHint} size='xs'>
+					{t('disposition.tree.catalogLocked')}
+				</Text>
+			)}
 
-			<ScrollArea className={styles.scrollArea} type='hover' scrollbarSize={5}>
+			{selectionError && (
+				<Alert color='red' variant='light' className={styles.selectionError}>
+					{selectionError}
+				</Alert>
+			)}
+
+			<div className={styles.treeHeader} aria-hidden='true'>
+				<span>{t('disposition.tree.outcomeColumn')}</span>
+				<span>{t('disposition.tree.statusColumn')}</span>
+			</div>
+
+			<ScrollArea className={styles.scrollArea} type='hover' scrollbarSize={7}>
 				{rootNodes.length === 0 ? (
-					<Stack align='center' gap='xs' py='xl'>
-						<Text size='xs' c='dimmed'>
+					<div className={styles.emptyTree}>
+						<Text size='sm' fw={600}>
+							{t('disposition.tree.emptyCatalogTitle')}
+						</Text>
+						<Text size='sm' c='dimmed'>
 							{t('disposition.catalog.noDispositions')}
 						</Text>
-					</Stack>
+					</div>
+				) : visibleRootNodes.length === 0 ? (
+					<div className={styles.emptyTree}>
+						<Text size='sm' fw={600}>
+							{t('disposition.tree.noSearchResultsTitle')}
+						</Text>
+						<Text size='sm' c='dimmed'>
+							{t('disposition.tree.noSearchResultsDescription', {
+								query: searchQuery,
+							})}
+						</Text>
+					</div>
 				) : (
-					<div className={styles.tree}>
-						{rootNodes.map((node) => (
+					<div
+						className={styles.tree}
+						role='tree'
+						aria-label={t('disposition.tree.ariaLabel')}
+					>
+						{visibleRootNodes.map((node) => (
 							<TreeNode
 								key={node.id}
 								node={node}
 								level={0}
 								branchTone={getNodeStyle(node, 0)}
 								searchQuery={searchQuery}
-								expandAll={expandKey > 0}
-								collapseAll={collapseKey > 0}
+								expandSignal={expandSignal}
+								collapseSignal={collapseSignal}
 								flowNodes={flowNodes}
-								catalogNodes={catalogNodes}
+								selectedLeafIds={selectedLeafIds}
 								selectedNodeId={selectedNodeId}
-								onToggle={handleToggle}
+								onToggle={(selectedNode, checked) => {
+									if (checked) selectSubtree(selectedNode.id);
+									else deselectSubtree(selectedNode.id);
+								}}
 								onSelect={onNodeSelect}
 							/>
 						))}

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Group, TextInput } from '@mantine/core';
+import { Badge, Button, Group, Text, TextInput } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
+import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
+import { IconCircleCheck, IconEdit, IconX } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import {
 	useCreateDispositionFlow,
@@ -10,54 +13,22 @@ import { useDispositionBuilderStore } from '../dispositionStore';
 import UnifiedOutcomeTree from './UnifiedOutcomeTree';
 import BuilderInspector from './BuilderInspector';
 import type { DispositionNode } from '~/models/DispositionNodeModel';
-import { findNodeById } from '~/utils/dragDropUtils';
+import type { DispositionCatalogModel } from '~/models/DispositionCatalogModels';
+import AppDrawer from '~/components/AppDrawer';
+import {
+	getSelectedLeafIds,
+	rebuildFlowSelection,
+} from '../dispositionSelection';
 import styles from './DispositionForm.module.css';
-
-/**
- * Rebuilds a clean flow node from the catalog, merging any behavior flags
- * the user set via the node form. Returns null if the node is not included.
- */
-function rebuildFlowNode(
-	catalogNode: DispositionNode,
-	flowNodes: DispositionNode[]
-): DispositionNode | null {
-	const flowNode = findNodeById(flowNodes, catalogNode.id);
-	if (!flowNode) return null;
-
-	const rebuiltChildren = (catalogNode.children ?? [])
-		.filter((c) => c.isActive !== false)
-		.map((c) => rebuildFlowNode(c, flowNodes))
-		.filter(Boolean) as DispositionNode[];
-
-	return {
-		...catalogNode,
-		// Preserve behavior flags the user may have changed
-		doNotCall:
-			flowNode.doNotCall ?? flowNode.do_not_call ?? catalogNode.doNotCall,
-		do_not_call: flowNode.do_not_call ?? catalogNode.do_not_call,
-		requiresReschedule:
-			flowNode.requiresReschedule ?? catalogNode.requiresReschedule,
-		isInvalidatesNumber:
-			flowNode.isInvalidatesNumber ?? catalogNode.isInvalidatesNumber,
-		isAbandoned: flowNode.isAbandoned ?? catalogNode.isAbandoned,
-		isFinal: flowNode.isFinal ?? catalogNode.isFinal,
-		children: rebuiltChildren,
-	};
-}
-
-function rebuildFlowFromCatalog(
-	catalogNodes: DispositionNode[],
-	flowNodes: DispositionNode[]
-): DispositionNode[] {
-	return catalogNodes
-		.filter((n) => n.isActive !== false)
-		.map((n) => rebuildFlowNode(n, flowNodes))
-		.filter(Boolean) as DispositionNode[];
-}
 
 interface DispositionFormProps {
 	onComplete?: () => void;
 	onCancel?: () => void;
+}
+
+interface BuilderErrors {
+	name?: string;
+	selection?: string;
 }
 
 const DispositionForm: React.FC<DispositionFormProps> = ({
@@ -74,56 +45,53 @@ const DispositionForm: React.FC<DispositionFormProps> = ({
 		setFlowJson,
 		selectedCatalog,
 	} = useDispositionBuilderStore();
-
+	const isCompact = useMediaQuery('(max-width: 64em)');
+	const [initialSnapshot] = useState(() => JSON.stringify(flowJson));
 	const [selectedNode, setSelectedNode] = useState<DispositionNode | null>(
 		null
 	);
 	const [parentNode, setParentNode] = useState<DispositionNode | null>(null);
+	const [errors, setErrors] = useState<BuilderErrors>({});
+	const isDirty = initialSnapshot !== JSON.stringify(flowJson);
 
 	const handleNodeSelect = (
 		node: DispositionNode | null,
 		parent?: DispositionNode
 	) => {
-		setSelectedNode(node ?? null);
+		setSelectedNode(node);
 		setParentNode(parent ?? null);
 	};
 
 	const handleSave = async () => {
-		if (!flowJson?.dispositionNodes || flowJson.dispositionNodes.length === 0) {
-			notifications.show({
-				title: t('status.error', { ns: 'common' }),
-				message: t('disposition.builder.errors.minNodes'),
-				color: 'red',
-			});
-			return;
+		const nextErrors: BuilderErrors = {};
+		if (!flowJson.name?.trim()) {
+			nextErrors.name = t('disposition.builder.errors.nameRequired');
 		}
-		if (!flowJson.name || flowJson.name.trim() === '') {
-			notifications.show({
-				title: t('status.error', { ns: 'common' }),
-				message: t('disposition.builder.errors.nameRequired'),
-				color: 'red',
-			});
-			return;
+		if (!flowJson.dispositionNodes?.length) {
+			nextErrors.selection = t('disposition.builder.errors.minNodes');
 		}
+		setErrors(nextErrors);
+		if (Object.keys(nextErrors).length > 0) return;
 
-		// Rebuild from catalog so the saved flow is always clean and complete,
-		// merging any behavior flags the user set on individual nodes.
-		const catalogNodes: DispositionNode[] =
-			selectedCatalog?.dispositionNodes ?? [];
-		const currentFlowNodes: DispositionNode[] = flowJson.dispositionNodes ?? [];
-		const rebuiltNodes = rebuildFlowFromCatalog(catalogNodes, currentFlowNodes);
-
-		const filledFlowJson = {
-			id: flowJson.id ?? 0,
-			name: flowJson.name,
-			clientId: flowJson.clientId ?? 0,
-			type: flowJson.type ?? 'OUTBOUND',
+		const catalogNodes = selectedCatalog?.dispositionNodes ?? [];
+		const currentFlowNodes = flowJson.dispositionNodes ?? [];
+		const selectedLeafIds = getSelectedLeafIds(catalogNodes, currentFlowNodes);
+		const now = new Date().toISOString();
+		const filledFlowJson: DispositionCatalogModel = {
+			id: flowJson.id ?? selectedCatalog?.id ?? 0,
+			name: flowJson.name!.trim(),
+			clientId: flowJson.clientId ?? selectedCatalog?.clientId ?? 0,
+			type: flowJson.type ?? selectedCatalog?.type ?? 'OUTBOUND',
 			isActive: flowJson.isActive ?? true,
 			isDefault: flowJson.isDefault ?? false,
-			createdAt: flowJson.createdAt ?? new Date().toISOString(),
-			updatedAt: flowJson.updatedAt ?? new Date().toISOString(),
-			dispositionNodes: rebuiltNodes,
-			description: flowJson.description,
+			createdAt: flowJson.createdAt ?? selectedCatalog?.createdAt ?? now,
+			updatedAt: now,
+			dispositionNodes: rebuildFlowSelection(
+				catalogNodes,
+				selectedLeafIds,
+				currentFlowNodes
+			),
+			description: flowJson.description ?? selectedCatalog?.description,
 			campaignId,
 		};
 
@@ -131,11 +99,11 @@ const DispositionForm: React.FC<DispositionFormProps> = ({
 			if (dispositionFlow?.id) {
 				await updateMutation.mutateAsync({
 					id: dispositionFlow.id,
-					data: { ...dispositionFlow, flowJson: filledFlowJson as any },
+					data: { ...dispositionFlow, flowJson: filledFlowJson },
 				});
 			} else {
 				await createMutation.mutateAsync({
-					flowJson: filledFlowJson as any,
+					flowJson: filledFlowJson,
 					campaignId,
 				});
 			}
@@ -149,44 +117,99 @@ const DispositionForm: React.FC<DispositionFormProps> = ({
 		}
 	};
 
+	const handleCancel = () => {
+		if (!onCancel) return;
+		if (!isDirty) {
+			onCancel();
+			return;
+		}
+
+		modals.openConfirmModal({
+			title: t('disposition.builder.discardTitle'),
+			children: (
+				<Text size='sm'>{t('disposition.builder.discardDescription')}</Text>
+			),
+			labels: {
+				confirm: t('disposition.builder.discardChanges'),
+				cancel: t('disposition.builder.keepEditing'),
+			},
+			confirmProps: { color: 'red' },
+			onConfirm: onCancel,
+		});
+	};
+
 	const isSaving = createMutation.isPending || updateMutation.isPending;
 
 	return (
 		<div className={styles.wrapper}>
-			<div className={styles.header}>
+			<header className={styles.header}>
+				<div className={styles.headerIntro}>
+					<Group gap='xs' wrap='nowrap'>
+						<IconEdit size={19} className={styles.headerIcon} />
+						<Text className={styles.headerTitle}>
+							{t('disposition.builder.header')}
+						</Text>
+						<Badge
+							variant='light'
+							color={isDirty ? 'orange' : 'green'}
+							radius='sm'
+							leftSection={
+								isDirty ? <IconEdit size={12} /> : <IconCircleCheck size={12} />
+							}
+						>
+							{isDirty
+								? t('disposition.builder.unsaved')
+								: t('disposition.builder.savedState')}
+						</Badge>
+					</Group>
+					<Text size='xs' className={styles.headerDescription}>
+						{t('disposition.builder.headerDescription')}
+					</Text>
+				</div>
+
 				<TextInput
+					label={t('disposition.builder.nameLabel')}
 					placeholder={t('disposition.builder.namePlaceholder')}
-					value={flowJson.name || ''}
-					onChange={(e) =>
-						setFlowJson({ ...flowJson, name: e.currentTarget.value })
-					}
+					value={flowJson.name ?? ''}
+					onChange={(event) => {
+						setFlowJson({ ...flowJson, name: event.currentTarget.value });
+						if (errors.name) {
+							setErrors((current) => ({ ...current, name: undefined }));
+						}
+					}}
+					error={errors.name}
 					required
 					size='sm'
 					className={styles.nameInput}
-					aria-label={t('disposition.builder.nameLabel')}
 				/>
-			</div>
+			</header>
 
 			<div className={styles.body}>
-				<div className={styles.treePane}>
+				<main className={styles.treePane}>
 					<UnifiedOutcomeTree
 						onNodeSelect={handleNodeSelect}
 						selectedNodeId={selectedNode?.id}
+						selectionError={errors.selection}
 					/>
-				</div>
-				<div className={styles.inspectorPane}>
+				</main>
+				<aside className={styles.inspectorPane}>
 					<BuilderInspector
 						selectedNode={selectedNode}
 						parentNode={parentNode}
 						onDeselect={() => handleNodeSelect(null)}
 					/>
-				</div>
+				</aside>
 			</div>
 
-			<div className={styles.footer}>
-				<Group justify={onCancel ? 'space-between' : 'flex-end'}>
+			<footer className={styles.footer}>
+				<Group justify='flex-end' gap='xs'>
 					{onCancel && (
-						<Button variant='default' size='sm' onClick={onCancel}>
+						<Button
+							variant='default'
+							size='sm'
+							leftSection={<IconX size={16} />}
+							onClick={handleCancel}
+						>
 							{t('actions.cancel', { ns: 'common' })}
 						</Button>
 					)}
@@ -202,7 +225,21 @@ const DispositionForm: React.FC<DispositionFormProps> = ({
 							: t('disposition.builder.createFlow')}
 					</Button>
 				</Group>
-			</div>
+			</footer>
+
+			<AppDrawer
+				opened={Boolean(isCompact && selectedNode)}
+				onClose={() => handleNodeSelect(null)}
+				title={selectedNode?.name ?? t('disposition.tree.outcomeDetails')}
+				size='lg'
+				keepMounted
+			>
+				<BuilderInspector
+					selectedNode={selectedNode}
+					parentNode={parentNode}
+					onDeselect={() => handleNodeSelect(null)}
+				/>
+			</AppDrawer>
 		</div>
 	);
 };
