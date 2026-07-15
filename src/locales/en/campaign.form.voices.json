@@ -1,7 +1,7 @@
 {
 	"section": {
 		"title": "Campaign voices",
-		"description": "Shape the campaign voice pool, assign runtime names, preview samples and keep the selection tight."
+		"description": "Choose the voices this campaign can use and preview them before saving."
 	},
 	"summary": {
 		"title": "Selected voices",
@@ -30,7 +30,7 @@
 		"nameColumn": "Campaign name (editable)",
 		"profileColumn": "Profile",
 		"actionColumn": "Action",
-		"fieldLabel": "Campaign voice name",
+		"fieldLabel": "Name in campaign",
 		"fieldDescription": "Used as the runtime voice label for this campaign.",
 		"placeholder": "Use catalog name for {{voiceName}}",
 		"profileUnknown": "Unknown",
@@ -64,7 +64,7 @@
 	"card": {
 		"play": "Preview voice",
 		"pause": "Stop preview",
-		"select": "Add to pool",
+		"select": "Add",
 		"deselect": "Remove from pool",
 		"selectedBadge": "In pool",
 		"added": "Added"
@@ -75,6 +75,7 @@
 		"other": "Other"
 	},
 	"catalog": {
+		"title": "Voice catalog",
 		"loading": "Loading voices…",
 		"loadErrorTitle": "Unable to load voices",
 		"loadErrorDescription": "Refresh to try again.",

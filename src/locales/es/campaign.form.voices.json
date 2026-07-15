@@ -1,7 +1,21 @@
 {
 	"section": {
 		"title": "Voces de la campaña",
-		"description": "Elige las voces que esta campaña podrá usar. Explora, escucha y agrega las que necesites."
+		"description": "Elige y escucha las voces que esta campaña podrá usar."
+	},
+	"summary": {
+		"issueTitle": "Revisa los nombres",
+		"issueText_one": "Una voz seleccionada tiene un problema de nombre.",
+		"issueText_other": "{{count}} voces seleccionadas tienen problemas de nombre."
+	},
+	"assignments": {
+		"emptyTitle": "No hay voces seleccionadas",
+		"emptyDescription": "Agrega voces desde el catálogo para configurar sus nombres.",
+		"addVoice": "Agregar voz",
+		"fieldLabel": "Nombre en la campaña",
+		"placeholder": "Usar el nombre {{voiceName}}",
+		"singleQuoteWarning": "Evita apóstrofes en el nombre.",
+		"duplicateNameWarning": "Este nombre está duplicado."
 	},
 	"selected": {
 		"title": "Voces seleccionadas",
@@ -23,9 +37,10 @@
 	"card": {
 		"play": "Escuchar voz",
 		"pause": "Detener",
-		"select": "Agregar al pool",
+		"select": "Agregar",
 		"deselect": "Quitar del pool",
-		"selectedBadge": "En el pool"
+		"selectedBadge": "En el pool",
+		"added": "Agregada"
 	},
 	"gender": {
 		"female": "Femenina",
@@ -33,6 +48,7 @@
 		"other": "Otra"
 	},
 	"catalog": {
+		"title": "Catálogo de voces",
 		"loading": "Cargando voces…",
 		"loadErrorTitle": "No se pudieron cargar las voces",
 		"loadErrorDescription": "Recarga para intentarlo de nuevo.",
