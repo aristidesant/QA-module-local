@@ -3,7 +3,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Group,
 	Modal,
 	Select,
@@ -28,7 +27,7 @@ import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import PaginationControls from '~/components/PaginationControls';
 import SectionCard from '~/components/SectionCard';
-import { PageHeader } from '~/components/ui/PageHeader';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import EvaluatorAgentEditorForm from '~/modules/qa/components/EvaluatorAgentEditorForm';
 import {
 	getActiveStatusColor,
@@ -239,22 +238,21 @@ export default function EvaluatorAgentsListPage() {
 				/>
 			</Modal>
 
-			<Container className={classes.page} fluid>
+			<ContentContainer
+				contentWidth='full'
+				description={t('description')}
+				title={t('title')}
+				titleRight={
+					<Button
+						leftSection={<IconPlus size={16} />}
+						onClick={() => setCreateOpen(true)}
+						size='sm'
+					>
+						{t('actions.new')}
+					</Button>
+				}
+			>
 				<Stack gap='md'>
-					<PageHeader
-						actions={
-							<Button
-								leftSection={<IconPlus size={16} />}
-								onClick={() => setCreateOpen(true)}
-								size='sm'
-							>
-								{t('actions.new')}
-							</Button>
-						}
-						description={t('description')}
-						title={t('title')}
-					/>
-
 					<ProviderHealthStrip />
 
 					<SectionCard>
@@ -370,7 +368,7 @@ export default function EvaluatorAgentsListPage() {
 						</Stack>
 					</SectionCard>
 				</Stack>
-			</Container>
+			</ContentContainer>
 		</>
 	);
 }

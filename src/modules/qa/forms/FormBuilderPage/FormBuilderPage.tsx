@@ -2,7 +2,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Group,
 	Loader,
 	Stack,
@@ -17,11 +16,11 @@ import {
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router';
+import { useParams, useNavigate } from 'react-router';
 
 import EmptyState from '~/components/EmptyState';
-import PageHeader from '~/components/ui/PageHeader';
 import SectionCard from '~/components/SectionCard';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { getActiveStatusColor } from '~/modules/qa/constants/badgeColors';
 import type {
 	CreateFormGroupPayload,
@@ -53,7 +52,6 @@ import { getErrorMessage } from '~/utils/httpClient';
 import { notifyError, notifySuccess } from '~/modules/qa/utils/notifications';
 import { DEFAULT_QUESTION_OPTIONS } from './FormBuilderPage.constants';
 import type { QuestionFormValues } from './FormBuilderPage.types';
-import classes from './FormBuilderPage.module.css';
 import FormMetadataCard from './components/FormMetadataCard';
 import GroupFormModal from './components/GroupFormModal';
 import GroupPanel from './components/GroupPanel';
@@ -61,6 +59,7 @@ import QuestionFormModal from './components/QuestionFormModal';
 
 export default function FormBuilderPage() {
 	const { t } = useTranslation('qa.forms');
+	const navigate = useNavigate();
 	const params = useParams();
 	const formId = Number(params.formId);
 	const unpaginated = useMemo(() => ({ pagination: false }), []);
@@ -407,29 +406,26 @@ export default function FormBuilderPage() {
 				}
 			/>
 
-			<Container className={classes.page} fluid>
+			<ContentContainer
+				contentWidth='full'
+				description={t('builder.description')}
+				onBackClick={() => navigate('/qa/forms')}
+				showBackButton
+				title={formQuery.data?.name ?? t('builder.title')}
+				titleRight={
+					formQuery.data ? (
+						<Badge
+							color={getActiveStatusColor(formQuery.data.isActive)}
+							variant='light'
+						>
+							{formQuery.data.isActive
+								? t('status.active')
+								: t('status.inactive')}
+						</Badge>
+					) : undefined
+				}
+			>
 				<Stack gap='md'>
-					<PageHeader
-						breadcrumbs={[
-							{ label: t('title'), path: '/qa/forms' },
-							{ label: formQuery.data?.name ?? t('builder.title') },
-						]}
-						description={t('builder.description')}
-						title={formQuery.data?.name ?? t('builder.title')}
-						actions={
-							formQuery.data ? (
-								<Badge
-									color={getActiveStatusColor(formQuery.data.isActive)}
-									variant='light'
-								>
-									{formQuery.data.isActive
-										? t('status.active')
-										: t('status.inactive')}
-								</Badge>
-							) : undefined
-						}
-					/>
-
 					{isLoading ? (
 						<Group justify='center' py='xl'>
 							<Loader size='sm' />
@@ -524,7 +520,7 @@ export default function FormBuilderPage() {
 						</>
 					) : null}
 				</Stack>
-			</Container>
+			</ContentContainer>
 		</>
 	);
 }

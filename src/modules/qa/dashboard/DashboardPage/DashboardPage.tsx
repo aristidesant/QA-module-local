@@ -1,4 +1,5 @@
-import { Alert, Container, Stack, Text } from '@mantine/core';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import { Alert, Stack, Text } from '@mantine/core';
 import {
 	IconAlertTriangle,
 	IconClipboardCheck,
@@ -8,7 +9,6 @@ import {
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
-import PageHeader from '~/components/ui/PageHeader';
 import { useNumberFormatter } from '~/modules/qa/hooks/useFormatters';
 import { useDashboardFilterStore } from '~/stores/qaDashboardFilterStore';
 import { formatScorePct, formatSignedDelta } from '~/modules/qa/utils/format';
@@ -46,14 +46,13 @@ export default function DashboardPage() {
 		kpis.avgScoreDelta == null ? null : formatSignedDelta(kpis.avgScoreDelta);
 
 	return (
-		<Container className={classes.page} fluid>
+		<ContentContainer
+			contentWidth='full'
+			description={t('description')}
+			title={t('title')}
+			titleRight={<TimeRangeControl />}
+		>
 			<Stack gap='md'>
-				<PageHeader
-					actions={<TimeRangeControl />}
-					description={t('description')}
-					title={t('title')}
-				/>
-
 				{evaluationsQuery.isError ? (
 					<Alert
 						color='red'
@@ -159,6 +158,6 @@ export default function DashboardPage() {
 					</Text>
 				) : null}
 			</Stack>
-		</Container>
+		</ContentContainer>
 	);
 }

@@ -2,7 +2,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Group,
 	Skeleton,
 	Stack,
@@ -25,8 +24,8 @@ import { useTranslation } from 'react-i18next';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router';
 
 import EmptyState from '~/components/EmptyState';
-import PageHeader from '~/components/ui/PageHeader';
 import SectionCard from '~/components/SectionCard';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { getCampaignStatusColor } from '~/modules/qa/constants/badgeColors';
 import { useListPageState } from '~/modules/qa/hooks/useListPageState';
 import type { Campaign, Conversation } from '~/models/qa';
@@ -309,67 +308,62 @@ export default function CampaignDetailPage() {
 				title={t('campaignForm.editTitle')}
 			/>
 
-			<Container className={classes.page} fluid>
-				<Stack gap='md'>
-					<PageHeader
-						actions={
+			<ContentContainer
+				contentWidth='full'
+				description={campaignQuery.data?.description || t('detail.description')}
+				onBackClick={() => navigate('/qa/campaigns')}
+				showBackButton
+				title={campaignQuery.data?.name ?? t('detail.title')}
+				titleRight={
+					<>
+						{campaignQuery.data ? (
 							<>
-								{campaignQuery.data ? (
-									<>
-										<Badge
-											color={getCampaignStatusColor(campaignQuery.data.status)}
-											variant='light'
-										>
-											{t(`status.${campaignQuery.data.status.toLowerCase()}`)}
-										</Badge>
-										<Button
-											leftSection={<IconEdit size={16} />}
-											onClick={() => openEditDrawer(campaignQuery.data)}
-											size='sm'
-											variant='light'
-										>
-											{t('detail.actions.editCampaign')}
-										</Button>
-										<Button
-											color='red'
-											leftSection={<IconTrash size={16} />}
-											onClick={confirmDeleteCampaign}
-											size='sm'
-											variant='subtle'
-										>
-											{t('detail.actions.deleteCampaign')}
-										</Button>
-									</>
-								) : null}
+								<Badge
+									color={getCampaignStatusColor(campaignQuery.data.status)}
+									variant='light'
+								>
+									{t(`status.${campaignQuery.data.status.toLowerCase()}`)}
+								</Badge>
 								<Button
-									leftSection={<IconUpload size={16} />}
-									onClick={() => setUploadOpen(true)}
+									leftSection={<IconEdit size={16} />}
+									onClick={() => openEditDrawer(campaignQuery.data)}
 									size='sm'
 									variant='light'
 								>
-									{t('detail.actions.uploadAudio')}
+									{t('detail.actions.editCampaign')}
 								</Button>
 								<Button
-									component={RouterLink}
-									leftSection={<IconClipboardCheck size={16} />}
+									color='red'
+									leftSection={<IconTrash size={16} />}
+									onClick={confirmDeleteCampaign}
 									size='sm'
-									to={`/qa/evaluations/new?campaignId=${campaignId}`}
-									variant='light'
+									variant='subtle'
 								>
-									{t('detail.actions.startEvaluation')}
+									{t('detail.actions.deleteCampaign')}
 								</Button>
 							</>
-						}
-						breadcrumbs={[
-							{ label: t('list.title'), path: '/qa/campaigns' },
-							{ label: campaignQuery.data?.name ?? t('detail.title') },
-						]}
-						description={
-							campaignQuery.data?.description || t('detail.description')
-						}
-						title={campaignQuery.data?.name ?? t('detail.title')}
-					/>
-
+						) : null}
+						<Button
+							leftSection={<IconUpload size={16} />}
+							onClick={() => setUploadOpen(true)}
+							size='sm'
+							variant='light'
+						>
+							{t('detail.actions.uploadAudio')}
+						</Button>
+						<Button
+							component={RouterLink}
+							leftSection={<IconClipboardCheck size={16} />}
+							size='sm'
+							to={`/qa/evaluations/new?campaignId=${campaignId}`}
+							variant='light'
+						>
+							{t('detail.actions.startEvaluation')}
+						</Button>
+					</>
+				}
+			>
+				<Stack gap='md'>
 					{campaignQuery.isError ? (
 						<Alert
 							color='red'
@@ -486,7 +480,7 @@ export default function CampaignDetailPage() {
 						/>
 					) : null}
 				</Stack>
-			</Container>
+			</ContentContainer>
 		</>
 	);
 }

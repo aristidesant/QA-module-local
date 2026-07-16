@@ -3,7 +3,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Group,
 	Select,
 	Stack,
@@ -33,9 +32,9 @@ import {
 
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
-import PageHeader from '~/components/ui/PageHeader';
 import SectionCard from '~/components/SectionCard';
 import PaginationControls from '~/components/PaginationControls';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import {
 	AI_EVALUATION_STATUS_COLORS,
 	EVALUATION_STATUS_COLORS,
@@ -300,23 +299,22 @@ export default function EvaluationsListPage() {
 				/>
 			) : null}
 
-			<Container className={classes.page} fluid>
+			<ContentContainer
+				contentWidth='full'
+				description={t('list.description')}
+				title={t('list.title')}
+				titleRight={
+					<Button
+						component={RouterLink}
+						leftSection={<IconPlus size={16} />}
+						size='sm'
+						to='/qa/evaluations/new'
+					>
+						{t('list.actions.new')}
+					</Button>
+				}
+			>
 				<Stack gap='md'>
-					<PageHeader
-						actions={
-							<Button
-								component={RouterLink}
-								leftSection={<IconPlus size={16} />}
-								size='sm'
-								to='/qa/evaluations/new'
-							>
-								{t('list.actions.new')}
-							</Button>
-						}
-						description={t('list.description')}
-						title={t('list.title')}
-					/>
-
 					<SectionCard>
 						<Stack gap='sm'>
 							<Group className={classes.toolbar} justify='space-between'>
@@ -474,7 +472,7 @@ export default function EvaluationsListPage() {
 						</Stack>
 					</SectionCard>
 				</Stack>
-			</Container>
+			</ContentContainer>
 		</>
 	);
 }

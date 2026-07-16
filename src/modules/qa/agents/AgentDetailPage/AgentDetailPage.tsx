@@ -2,7 +2,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Group,
 	Modal,
 	Skeleton,
@@ -22,7 +21,7 @@ import { useTranslation } from 'react-i18next';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router';
 
 import SectionCard from '~/components/SectionCard';
-import { PageHeader } from '~/components/ui/PageHeader';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import AgentEditorForm from '~/modules/qa/components/AgentEditorForm';
 import { AGENT_TYPE_COLORS } from '~/modules/qa/constants/badgeColors';
 import { useDateFormatter } from '~/modules/qa/hooks/useFormatters';
@@ -132,62 +131,54 @@ export default function AgentDetailPage() {
 				/>
 			</Modal>
 
-			<Container className={classes.page} fluid>
+			<ContentContainer
+				contentWidth='full'
+				onBackClick={() => navigate('/qa/agents')}
+				showBackButton
+				title={agent ? getAgentDisplayName(agent) : t('detail.title')}
+				titleRight={
+					agent ? (
+						<Group gap='xs'>
+							{isAutoMigratedAgent(agent) ? (
+								<Badge color='yellow' variant='light'>
+									{t('badges.autoMigrated')}
+								</Badge>
+							) : null}
+							<Badge color={AGENT_TYPE_COLORS[agent.agentType]} variant='light'>
+								{t(`types.${agent.agentType === 'AI_BOT' ? 'aiBot' : 'human'}`)}
+							</Badge>
+							{!isAutoMigratedAgent(agent) ? (
+								<Button
+									component={RouterLink}
+									leftSection={<IconClipboardCheck size={16} />}
+									size='sm'
+									to={`/qa/evaluations/new?agentId=${agent.id}`}
+								>
+									{t('actions.startEvaluation')}
+								</Button>
+							) : null}
+							<Button
+								leftSection={<IconEdit size={16} />}
+								onClick={() => setEditOpen(true)}
+								size='sm'
+								variant='light'
+							>
+								{t('actions.edit')}
+							</Button>
+							<Button
+								color='red'
+								leftSection={<IconTrash size={16} />}
+								onClick={confirmDelete}
+								size='sm'
+								variant='subtle'
+							>
+								{t('actions.delete')}
+							</Button>
+						</Group>
+					) : null
+				}
+			>
 				<Stack gap='md'>
-					<PageHeader
-						actions={
-							agent ? (
-								<Group gap='xs'>
-									{isAutoMigratedAgent(agent) ? (
-										<Badge color='yellow' variant='light'>
-											{t('badges.autoMigrated')}
-										</Badge>
-									) : null}
-									<Badge
-										color={AGENT_TYPE_COLORS[agent.agentType]}
-										variant='light'
-									>
-										{t(
-											`types.${agent.agentType === 'AI_BOT' ? 'aiBot' : 'human'}`
-										)}
-									</Badge>
-									{!isAutoMigratedAgent(agent) ? (
-										<Button
-											component={RouterLink}
-											leftSection={<IconClipboardCheck size={16} />}
-											size='sm'
-											to={`/qa/evaluations/new?agentId=${agent.id}`}
-										>
-											{t('actions.startEvaluation')}
-										</Button>
-									) : null}
-									<Button
-										leftSection={<IconEdit size={16} />}
-										onClick={() => setEditOpen(true)}
-										size='sm'
-										variant='light'
-									>
-										{t('actions.edit')}
-									</Button>
-									<Button
-										color='red'
-										leftSection={<IconTrash size={16} />}
-										onClick={confirmDelete}
-										size='sm'
-										variant='subtle'
-									>
-										{t('actions.delete')}
-									</Button>
-								</Group>
-							) : null
-						}
-						breadcrumbs={[
-							{ label: t('title'), path: '/qa/agents' },
-							{ label: agent ? getAgentDisplayName(agent) : t('detail.title') },
-						]}
-						title={agent ? getAgentDisplayName(agent) : t('detail.title')}
-					/>
-
 					{agentQuery.isLoading ? (
 						<Stack gap='sm'>
 							<Skeleton height={100} />
@@ -261,7 +252,7 @@ export default function AgentDetailPage() {
 						/>
 					) : null}
 				</Stack>
-			</Container>
+			</ContentContainer>
 		</>
 	);
 }

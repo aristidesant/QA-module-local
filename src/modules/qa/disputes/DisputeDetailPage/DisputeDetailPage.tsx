@@ -2,7 +2,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Divider,
 	Group,
 	Loader,
@@ -21,10 +20,10 @@ import {
 } from '@tabler/icons-react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
-import { Link as RouterLink, useParams } from 'react-router';
+import { Link as RouterLink, useParams, useNavigate } from 'react-router';
 
-import PageHeader from '~/components/ui/PageHeader';
 import SectionCard from '~/components/SectionCard';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import {
 	EVALUATION_STATUS_COLORS,
 	EVALUATOR_TYPE_COLORS,
@@ -249,6 +248,7 @@ function CorrectionSummary({
 
 export default function DisputeDetailPage() {
 	const { t } = useTranslation('qa.disputes');
+	const navigate = useNavigate();
 	const params = useParams();
 	const disputeId = Number(params.disputeId);
 	const disputeQuery = useDisputeQuery(disputeId);
@@ -268,27 +268,24 @@ export default function DisputeDetailPage() {
 	);
 
 	return (
-		<Container className={classes.page} fluid>
+		<ContentContainer
+			contentWidth='full'
+			description={t('detail.description')}
+			onBackClick={() => navigate('/qa/disputes')}
+			showBackButton
+			title={t('detail.title')}
+			titleRight={
+				dispute ? (
+					<Badge
+						color={dispute.scoreDelta >= 0 ? 'green' : 'red'}
+						variant='light'
+					>
+						{t('scoreDelta', { delta: formatPoints(dispute.scoreDelta) })}
+					</Badge>
+				) : null
+			}
+		>
 			<Stack gap='md'>
-				<PageHeader
-					actions={
-						dispute ? (
-							<Badge
-								color={dispute.scoreDelta >= 0 ? 'green' : 'red'}
-								variant='light'
-							>
-								{t('scoreDelta', { delta: formatPoints(dispute.scoreDelta) })}
-							</Badge>
-						) : null
-					}
-					breadcrumbs={[
-						{ label: t('list.title'), path: '/qa/disputes' },
-						{ label: t('detail.title') },
-					]}
-					description={t('detail.description')}
-					title={t('detail.title')}
-				/>
-
 				{disputeQuery.isLoading ? (
 					<Group justify='center' py='xl'>
 						<Loader size='sm' />
@@ -413,6 +410,6 @@ export default function DisputeDetailPage() {
 					</>
 				) : null}
 			</Stack>
-		</Container>
+		</ContentContainer>
 	);
 }

@@ -3,7 +3,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Group,
 	Select,
 	Stack,
@@ -28,7 +27,7 @@ import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import PaginationControls from '~/components/PaginationControls';
 import SectionCard from '~/components/SectionCard';
-import { PageHeader } from '~/components/ui/PageHeader';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { EVALUATOR_TYPE_COLORS } from '~/modules/qa/constants/badgeColors';
 import { useDateFormatter } from '~/modules/qa/hooks/useFormatters';
 import { useListPageState } from '~/modules/qa/hooks/useListPageState';
@@ -208,13 +207,12 @@ export default function DisputesListPage() {
 	];
 
 	return (
-		<Container className={classes.page} fluid>
+		<ContentContainer
+			contentWidth='full'
+			description={t('list.description')}
+			title={t('list.title')}
+		>
 			<Stack gap='md'>
-				<PageHeader
-					description={t('list.description')}
-					title={t('list.title')}
-				/>
-
 				<SectionCard>
 					<Stack gap='sm'>
 						<Group className={classes.toolbar} justify='space-between'>
@@ -348,6 +346,6 @@ export default function DisputesListPage() {
 					</Stack>
 				</SectionCard>
 			</Stack>
-		</Container>
+		</ContentContainer>
 	);
 }

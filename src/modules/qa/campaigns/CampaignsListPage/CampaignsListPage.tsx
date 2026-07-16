@@ -3,7 +3,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Group,
 	Select,
 	Stack,
@@ -29,9 +28,9 @@ import { Link as RouterLink, useNavigate } from 'react-router';
 
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
-import PageHeader from '~/components/ui/PageHeader';
 import PaginationControls from '~/components/PaginationControls';
 import SectionCard from '~/components/SectionCard';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { getCampaignStatusColor } from '~/modules/qa/constants/badgeColors';
 import { useDateFormatter } from '~/modules/qa/hooks/useFormatters';
 import { useListPageState } from '~/modules/qa/hooks/useListPageState';
@@ -303,22 +302,21 @@ export default function CampaignsListPage() {
 				}
 			/>
 
-			<Container className={classes.page} fluid>
+			<ContentContainer
+				contentWidth='full'
+				description={t('list.description')}
+				title={t('list.title')}
+				titleRight={
+					<Button
+						leftSection={<IconPlus size={16} />}
+						onClick={openCreateModal}
+						size='sm'
+					>
+						{t('list.actions.create')}
+					</Button>
+				}
+			>
 				<Stack gap='md'>
-					<PageHeader
-						actions={
-							<Button
-								leftSection={<IconPlus size={16} />}
-								onClick={openCreateModal}
-								size='sm'
-							>
-								{t('list.actions.create')}
-							</Button>
-						}
-						description={t('list.description')}
-						title={t('list.title')}
-					/>
-
 					<SectionCard>
 						<Stack gap='sm'>
 							<Group className={classes.toolbar} justify='space-between'>
@@ -414,7 +412,7 @@ export default function CampaignsListPage() {
 						</Stack>
 					</SectionCard>
 				</Stack>
-			</Container>
+			</ContentContainer>
 		</>
 	);
 }

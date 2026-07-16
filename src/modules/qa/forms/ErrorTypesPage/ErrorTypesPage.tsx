@@ -3,7 +3,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Group,
 	Pagination,
 	Select,
@@ -25,11 +24,12 @@ import {
 } from '@tabler/icons-react';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
-import PageHeader from '~/components/ui/PageHeader';
 import SectionCard from '~/components/SectionCard';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { getActiveStatusColor } from '~/modules/qa/constants/badgeColors';
 import { useDateFormatter } from '~/modules/qa/hooks/useFormatters';
 import { useListPageState } from '~/modules/qa/hooks/useListPageState';
@@ -52,6 +52,7 @@ import ErrorTypeFormModal from './components/ErrorTypeFormModal';
 
 export default function ErrorTypesPage() {
 	const { t } = useTranslation('qa.forms');
+	const navigate = useNavigate();
 	const errorTypesQuery = useQuestionErrorTypesQuery({ pagination: false });
 	const createMutation = useCreateQuestionErrorTypeMutation();
 	const [editingErrorType, setEditingErrorType] =
@@ -331,26 +332,23 @@ export default function ErrorTypesPage() {
 				title={t('errorTypes.editTitle')}
 			/>
 
-			<Container className={classes.page} fluid>
+			<ContentContainer
+				contentWidth='full'
+				description={t('errorTypes.description')}
+				onBackClick={() => navigate('/qa/forms')}
+				showBackButton
+				title={t('errorTypes.title')}
+				titleRight={
+					<Button
+						leftSection={<IconPlus size={16} />}
+						onClick={openCreate}
+						size='sm'
+					>
+						{t('errorTypes.actions.new')}
+					</Button>
+				}
+			>
 				<Stack gap='md'>
-					<PageHeader
-						actions={
-							<Button
-								leftSection={<IconPlus size={16} />}
-								onClick={openCreate}
-								size='sm'
-							>
-								{t('errorTypes.actions.new')}
-							</Button>
-						}
-						breadcrumbs={[
-							{ label: t('title'), path: '/qa/forms' },
-							{ label: t('errorTypes.title') },
-						]}
-						description={t('errorTypes.description')}
-						title={t('errorTypes.title')}
-					/>
-
 					<SectionCard>
 						<Stack gap='md'>
 							<Group className={classes.filters} gap='sm'>
@@ -462,7 +460,7 @@ export default function ErrorTypesPage() {
 						</Stack>
 					</SectionCard>
 				</Stack>
-			</Container>
+			</ContentContainer>
 		</>
 	);
 }

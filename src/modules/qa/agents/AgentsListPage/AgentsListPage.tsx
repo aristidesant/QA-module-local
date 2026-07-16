@@ -3,7 +3,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Group,
 	Modal,
 	Select,
@@ -32,7 +31,7 @@ import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import PaginationControls from '~/components/PaginationControls';
 import SectionCard from '~/components/SectionCard';
-import { PageHeader } from '~/components/ui/PageHeader';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import AgentEditorForm from '~/modules/qa/components/AgentEditorForm';
 import { AGENT_TYPE_COLORS } from '~/modules/qa/constants/badgeColors';
 import { useDateFormatter } from '~/modules/qa/hooks/useFormatters';
@@ -294,22 +293,21 @@ export default function AgentsListPage() {
 				/>
 			</Modal>
 
-			<Container className={classes.page} fluid>
+			<ContentContainer
+				contentWidth='full'
+				description={t('description')}
+				title={t('title')}
+				titleRight={
+					<Button
+						leftSection={<IconPlus size={16} />}
+						onClick={() => setCreateOpen(true)}
+						size='sm'
+					>
+						{t('actions.new')}
+					</Button>
+				}
+			>
 				<Stack gap='md'>
-					<PageHeader
-						actions={
-							<Button
-								leftSection={<IconPlus size={16} />}
-								onClick={() => setCreateOpen(true)}
-								size='sm'
-							>
-								{t('actions.new')}
-							</Button>
-						}
-						description={t('description')}
-						title={t('title')}
-					/>
-
 					<SectionCard>
 						<Stack gap='sm'>
 							<Group className={classes.toolbar} justify='space-between'>
@@ -419,7 +417,7 @@ export default function AgentsListPage() {
 						</Stack>
 					</SectionCard>
 				</Stack>
-			</Container>
+			</ContentContainer>
 		</>
 	);
 }

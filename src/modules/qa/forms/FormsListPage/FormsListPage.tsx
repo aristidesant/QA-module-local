@@ -3,7 +3,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Group,
 	Stack,
 	Text,
@@ -29,9 +28,9 @@ import { Link as RouterLink, useNavigate } from 'react-router';
 
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
-import PageHeader from '~/components/ui/PageHeader';
 import SectionCard from '~/components/SectionCard';
 import PaginationControls from '~/components/PaginationControls';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { getActiveStatusColor } from '~/modules/qa/constants/badgeColors';
 import { useListPageState } from '~/modules/qa/hooks/useListPageState';
 import type { CreateFormPayload, QaForm } from '~/models/qa';
@@ -389,52 +388,51 @@ export default function FormsListPage() {
 				opened={importOpen}
 			/>
 
-			<Container className={classes.page} fluid>
+			<ContentContainer
+				contentWidth='full'
+				description={t('description')}
+				title={t('title')}
+				titleRight={
+					<>
+						<Button
+							component={RouterLink}
+							leftSection={<IconTags size={16} />}
+							size='sm'
+							to='/qa/forms/error-types'
+							variant='light'
+						>
+							{t('errorTypes.actions.manage')}
+						</Button>
+						<Button
+							leftSection={<IconDownload size={16} />}
+							loading={formTemplateQuery.isFetching}
+							onClick={() => {
+								void downloadTemplate();
+							}}
+							size='sm'
+							variant='light'
+						>
+							{t('template.download')}
+						</Button>
+						<Button
+							leftSection={<IconFileImport size={16} />}
+							onClick={() => setImportOpen(true)}
+							size='sm'
+							variant='light'
+						>
+							{t('template.import')}
+						</Button>
+						<Button
+							leftSection={<IconPlus size={16} />}
+							onClick={() => setCreateOpen(true)}
+							size='sm'
+						>
+							{t('actions.create')}
+						</Button>
+					</>
+				}
+			>
 				<Stack gap='md'>
-					<PageHeader
-						actions={
-							<>
-								<Button
-									component={RouterLink}
-									leftSection={<IconTags size={16} />}
-									size='sm'
-									to='/qa/forms/error-types'
-									variant='light'
-								>
-									{t('errorTypes.actions.manage')}
-								</Button>
-								<Button
-									leftSection={<IconDownload size={16} />}
-									loading={formTemplateQuery.isFetching}
-									onClick={() => {
-										void downloadTemplate();
-									}}
-									size='sm'
-									variant='light'
-								>
-									{t('template.download')}
-								</Button>
-								<Button
-									leftSection={<IconFileImport size={16} />}
-									onClick={() => setImportOpen(true)}
-									size='sm'
-									variant='light'
-								>
-									{t('template.import')}
-								</Button>
-								<Button
-									leftSection={<IconPlus size={16} />}
-									onClick={() => setCreateOpen(true)}
-									size='sm'
-								>
-									{t('actions.create')}
-								</Button>
-							</>
-						}
-						description={t('description')}
-						title={t('title')}
-					/>
-
 					<SectionCard>
 						<Stack gap='sm'>
 							<Group className={classes.toolbar} justify='space-between'>
@@ -507,7 +505,7 @@ export default function FormsListPage() {
 						</Stack>
 					</SectionCard>
 				</Stack>
-			</Container>
+			</ContentContainer>
 		</>
 	);
 }

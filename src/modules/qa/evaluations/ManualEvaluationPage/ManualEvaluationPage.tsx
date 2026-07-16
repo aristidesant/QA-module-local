@@ -2,7 +2,6 @@ import {
 	Alert,
 	Badge,
 	Button,
-	Container,
 	Group,
 	Loader,
 	SimpleGrid,
@@ -27,8 +26,8 @@ import {
 	calculateSectionScores,
 } from '~/modules/qa/utils/evaluationScore';
 import { UNSUPPORTED_EVALUATION_DETAIL_ERROR } from '~/api/qa/evaluationsApi';
-import PageHeader from '~/components/ui/PageHeader';
 import SectionCard from '~/components/SectionCard';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { EVALUATION_STATUS_COLORS } from '~/modules/qa/constants/badgeColors';
 import { useQaPermissions } from '~/modules/qa/hooks/useQaPermissions';
 import type { EvaluationQuestion } from '~/models/qa';
@@ -254,61 +253,58 @@ export default function ManualEvaluationPage() {
 				/>
 			) : null}
 
-			<Container className={classes.page} fluid>
-				<Stack gap='md'>
-					<PageHeader
-						actions={
-							<Group gap='xs'>
-								{detail ? (
-									<>
-										<Badge
-											color={EVALUATION_STATUS_COLORS[detail.status]}
-											variant='light'
-										>
-											{t(`status.${detail.status.toLowerCase()}`)}
-										</Badge>
-										{isAiEvaluation ? (
-											<Badge
-												color='violet'
-												leftSection={<IconRobot size={12} />}
-												variant='light'
-											>
-												{detail.evaluatorAgentName || t('ai.badge')}
-											</Badge>
-										) : null}
-										<Badge color='gray' variant='light'>
-											{t('detail.version', { version: detail.version ?? 1 })}
-										</Badge>
-									</>
-								) : null}
-								{canCreateDispute ? (
-									<Button
-										leftSection={<IconGitBranch size={16} />}
-										onClick={() => setDisputeDrawerOpen(true)}
-										size='sm'
-									>
-										{t('disputes.actions.create')}
-									</Button>
-								) : null}
-								<Button
-									color='red'
-									leftSection={<IconTrash size={16} />}
-									onClick={confirmDeleteEvaluation}
-									size='sm'
+			<ContentContainer
+				contentWidth='full'
+				description={t('detail.description')}
+				onBackClick={() => navigate('/qa/evaluations')}
+				showBackButton
+				title={detail?.formName ?? t('detail.title')}
+				titleRight={
+					<Group gap='xs'>
+						{detail ? (
+							<>
+								<Badge
+									color={EVALUATION_STATUS_COLORS[detail.status]}
 									variant='light'
 								>
-									{t('delete.action')}
-								</Button>
-							</Group>
-						}
-						breadcrumbs={[
-							{ label: t('list.title'), path: '/qa/evaluations' },
-							{ label: detail?.formName ?? t('detail.title') },
-						]}
-						description={t('detail.description')}
-						title={detail?.formName ?? t('detail.title')}
-					/>
-
+									{t(`status.${detail.status.toLowerCase()}`)}
+								</Badge>
+								{isAiEvaluation ? (
+									<Badge
+										color='violet'
+										leftSection={<IconRobot size={12} />}
+										variant='light'
+									>
+										{detail.evaluatorAgentName || t('ai.badge')}
+									</Badge>
+								) : null}
+								<Badge color='gray' variant='light'>
+									{t('detail.version', { version: detail.version ?? 1 })}
+								</Badge>
+							</>
+						) : null}
+						{canCreateDispute ? (
+							<Button
+								leftSection={<IconGitBranch size={16} />}
+								onClick={() => setDisputeDrawerOpen(true)}
+								size='sm'
+							>
+								{t('disputes.actions.create')}
+							</Button>
+						) : null}
+						<Button
+							color='red'
+							leftSection={<IconTrash size={16} />}
+							onClick={confirmDeleteEvaluation}
+							size='sm'
+							variant='light'
+						>
+							{t('delete.action')}
+						</Button>
+					</Group>
+				}
+			>
+				<Stack gap='md'>
 					{evaluationQuery.isLoading ? (
 						<Group justify='center' py='xl'>
 							<Loader size='sm' />
@@ -446,7 +442,7 @@ export default function ManualEvaluationPage() {
 						</SimpleGrid>
 					) : null}
 				</Stack>
-			</Container>
+			</ContentContainer>
 		</>
 	);
 }
