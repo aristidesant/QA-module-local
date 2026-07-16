@@ -1,3 +1,4 @@
+import axios, { type AxiosRequestConfig } from 'axios';
 import { useSessionStore } from '~/stores/sessionStore';
 
 /**
@@ -16,4 +17,27 @@ export const qaClientHeaders = (): Record<string, string> => {
 	const { targetClient, user } = useSessionStore.getState();
 	const clientId = targetClient?.id ?? user?.clientId ?? user?.client?.id;
 	return clientId ? { 'x-client-id': String(clientId) } : {};
+};
+
+const withQaDefaults = (config?: AxiosRequestConfig): AxiosRequestConfig => ({
+	...config,
+	headers: { ...qaClientHeaders(), ...config?.headers },
+});
+
+/**
+ * Thin wrapper over the global axios instance for qa-backend calls: prefixes
+ * QA_API_URL and attaches x-client-id while keeping the shared auth/refresh
+ * interceptors (they apply to the default instance only).
+ */
+export const qaHttpClient = {
+	get: <T>(path: string, config?: AxiosRequestConfig) =>
+		axios.get<T>(`${QA_API_URL}${path}`, withQaDefaults(config)),
+	post: <T>(path: string, data?: unknown, config?: AxiosRequestConfig) =>
+		axios.post<T>(`${QA_API_URL}${path}`, data, withQaDefaults(config)),
+	patch: <T>(path: string, data?: unknown, config?: AxiosRequestConfig) =>
+		axios.patch<T>(`${QA_API_URL}${path}`, data, withQaDefaults(config)),
+	put: <T>(path: string, data?: unknown, config?: AxiosRequestConfig) =>
+		axios.put<T>(`${QA_API_URL}${path}`, data, withQaDefaults(config)),
+	delete: <T>(path: string, config?: AxiosRequestConfig) =>
+		axios.delete<T>(`${QA_API_URL}${path}`, withQaDefaults(config)),
 };
