@@ -119,7 +119,9 @@
 			"reportTemplates": "Plantillas de Reportes",
 			"qaEvaluatorAgents": "Agentes evaluadores",
 			"qaDisputes": "Disputas",
-			"qaAgents": "Agentes"
+			"qaAgents": "Agentes",
+			"qaCampaigns": "Campañas",
+			"qaForms": "Formularios"
 		},
 		"account": {
 			"title": "Cuenta",

@@ -153,6 +153,21 @@ const QaDisputesListPage = React.lazy(
 const QaDisputeDetailPage = React.lazy(
 	() => import('./modules/qa/disputes/DisputeDetailPage')
 );
+const QaCampaignsListPage = React.lazy(
+	() => import('./modules/qa/campaigns/CampaignsListPage')
+);
+const QaCampaignDetailPage = React.lazy(
+	() => import('./modules/qa/campaigns/CampaignDetailPage')
+);
+const QaFormsListPage = React.lazy(
+	() => import('./modules/qa/forms/FormsListPage')
+);
+const QaErrorTypesPage = React.lazy(
+	() => import('./modules/qa/forms/ErrorTypesPage')
+);
+const QaFormBuilderPage = React.lazy(
+	() => import('./modules/qa/forms/FormBuilderPage')
+);
 
 /**
  * Automatically loads i18n namespaces based on the active route's ID.
@@ -533,6 +548,61 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QaDisputeDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'campaigns',
+										id: 'qa.campaigns',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaCampaignsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'campaigns/:campaignId',
+										id: 'qa.campaigns.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaCampaignDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'forms',
+										id: 'qa.forms',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaFormsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'forms/error-types',
+										id: 'qa.forms.error-types',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaErrorTypesPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'forms/:formId',
+										id: 'qa.forms.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaFormBuilderPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

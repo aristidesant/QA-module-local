@@ -1,0 +1,47 @@
+.groupPanel {
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+	background: var(--surface-sunken);
+}
+
+.groupPanelHeader {
+	align-items: flex-start;
+}
+
+.groupToggle {
+	align-items: flex-start;
+	background: transparent;
+	border: 0;
+	color: inherit;
+	cursor: pointer;
+	display: flex;
+	flex: 1;
+	gap: var(--mantine-spacing-xs);
+	min-width: 0;
+	padding: 0;
+	text-align: left;
+}
+
+.groupToggle:focus-visible {
+	border-radius: var(--mantine-radius-md);
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: 4px;
+}
+
+.groupToggleIcon {
+	flex: 0 0 auto;
+	margin-top: 2px;
+}
+
+.questionItem {
+	background: var(--surface-elevated);
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	transition: border-color 140ms ease;
+}
+
+.questionItem:hover {
+	border-color: var(--surface-border-strong);
+}

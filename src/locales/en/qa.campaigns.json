@@ -1,0 +1,190 @@
+{
+	"detail": {
+		"actions": {
+			"backToCampaigns": "Back to campaigns",
+			"deleteCampaign": "Delete",
+			"editCampaign": "Edit",
+			"startEvaluation": "Start evaluation",
+			"uploadAudio": "Upload MP3"
+		},
+		"audio": {
+			"errorTitle": "Unable to load audio",
+			"noTimestamp": "No timestamp",
+			"playerLabel": "Conversation audio",
+			"seekTo": "Jump to {{time}}",
+			"speaker": "Speaker {{index}}",
+			"title": "Audio playback",
+			"transcriptLoading": "Loading transcript",
+			"transcriptTitle": "Transcript",
+			"transcriptUnavailable": "Transcript unavailable. Audio playback is still available.",
+			"transcriptUnavailableTitle": "Transcript unavailable",
+			"unsupported": "Your browser does not support audio playback.",
+			"close": "Close player"
+		},
+		"conversations": {
+			"actions": {
+				"evaluate": "Evaluate conversation",
+				"playAudio": "Play audio",
+				"seeTranscript": "See transcript",
+				"delete": "Delete conversation"
+			},
+			"audioSize": {
+				"kilobytes": "{{size}} KB",
+				"megabytes": "{{size}} MB"
+			},
+			"duration": "{{minutes}}:{{seconds}}",
+			"empty": {
+				"description": "Upload or sync conversations for this campaign before starting manual evaluations.",
+				"title": "No conversations found"
+			},
+			"noDate": "No date",
+			"noMetadata": "No metadata",
+			"noReference": "No reference",
+			"table": {
+				"actions": "Actions",
+				"createdAt": "Created",
+				"externalRef": "Reference",
+				"identifier": "Conversation #{{id}}",
+				"media": "Media",
+				"metadata": "Metadata",
+				"transcription": "Transcription"
+			},
+			"transcription": {
+				"action": "Transcribe",
+				"noAudio": "No audio",
+				"rerun": "Re-run",
+				"status": {
+					"completed": "Transcribed",
+					"failed": "Failed",
+					"pending": "Queued",
+					"processing": "Transcribing"
+				}
+			},
+			"delete": {
+				"title": "Delete conversation?",
+				"description": "This will soft-delete the “{{name}}” conversation. It will be removed from the conversation list and can’t be undone.",
+				"confirm": "Delete conversation",
+				"cancel": "Cancel",
+				"fallbackName": "this conversation"
+			}
+		},
+		"description": "Review the conversations attached to this campaign and start a manual evaluation when a form is ready.",
+		"filters": {
+			"count": "{{count}} conversations",
+			"externalRefPlaceholder": "Exact reference",
+			"searchPlaceholder": "Search references"
+		},
+		"title": "Campaign detail",
+		"upload": {
+			"actions": {
+				"cancel": "Cancel",
+				"submit": "Upload audio"
+			},
+			"description": "Upload one MP3 up to {{size}} MB. If a reference already exists in this campaign, the backend will update that audio conversation.",
+			"fields": {
+				"externalRef": "External reference",
+				"externalRefPlaceholder": "call-2026-001",
+				"file": "MP3 file",
+				"filePlaceholder": "Select an MP3 file",
+				"source": "Source",
+				"sourceMetadata": "Source metadata",
+				"sourceMetadataPlaceholder": "{\"agent\":\"Alicia\",\"queue\":\"Sales\"}"
+			},
+			"title": "Upload MP3 conversation"
+		}
+	},
+	"list": {
+		"actions": {
+			"create": "Create campaign",
+			"delete": "Delete campaign",
+			"edit": "Edit campaign",
+			"open": "Open campaign"
+		},
+		"description": "Browse QA campaigns, filter by operational status, and open the conversation queue for manual evaluation.",
+		"empty": {
+			"description": "No campaigns match the current filters. Clear the filters or create a campaign to start attaching conversations.",
+			"title": "No campaigns found"
+		},
+		"eyebrow": "Campaign operations",
+		"filters": {
+			"allStatuses": "All statuses",
+			"count": "{{count}} campaigns",
+			"searchPlaceholder": "Search campaigns"
+		},
+		"table": {
+			"actions": "Actions",
+			"createdAt": "Created",
+			"name": "Campaign",
+			"noDate": "No date",
+			"noDescription": "No description",
+			"status": "Status"
+		},
+		"title": "Campaigns"
+	},
+	"pagination": {
+		"pageSize": "Rows per page"
+	},
+	"states": {
+		"errorTitle": "Unable to load data"
+	},
+	"campaignForm": {
+		"actions": {
+			"cancel": "Cancel",
+			"create": "Create campaign",
+			"update": "Update campaign"
+		},
+		"editTitle": "Edit campaign",
+		"fields": {
+			"description": "Description",
+			"descriptionPlaceholder": "Describe the campaign scope or queue",
+			"name": "Name",
+			"namePlaceholder": "June QA campaign",
+			"source": "Default source",
+			"sourceMetadata": "Source metadata",
+			"sourceMetadataPlaceholder": "{\"queue\":\"Sales\",\"region\":\"US\"}",
+			"sourcePlaceholder": "Select a source",
+			"status": "Status"
+		},
+		"title": "Create campaign"
+	},
+	"delete": {
+		"actions": {
+			"cancel": "Cancel",
+			"confirm": "Delete campaign"
+		},
+		"description": "This will soft-delete {{name}}. Existing references may no longer be available in the active campaign list.",
+		"fallbackName": "this campaign",
+		"title": "Delete campaign"
+	},
+	"status": {
+		"active": "Active",
+		"inactive": "Inactive"
+	},
+	"media": {
+		"audio": "Audio",
+		"structured": "Structured",
+		"unknown": "Unknown"
+	},
+	"notifications": {
+		"audioUploaded": "Audio conversation uploaded.",
+		"campaignCreated": "Campaign created.",
+		"campaignDeleted": "Campaign deleted.",
+		"campaignUpdated": "Campaign updated.",
+		"conversationDeleted": "Conversation deleted"
+	},
+	"source": {
+		"elevenlabs": "ElevenLabs",
+		"manual_upload": "Manual upload",
+		"other": "Other",
+		"ucxm": "UCXM"
+	},
+	"validation": {
+		"audioFileRequired": "Select an MP3 file",
+		"audioFileSize": "The file must be {{size}} MB or smaller",
+		"audioFileType": "Only MP3 audio files are supported",
+		"externalRefMaxLength": "External reference must be 150 characters or fewer",
+		"metadataJson": "Enter valid JSON metadata",
+		"metadataObject": "Metadata must be a JSON object",
+		"nameRequired": "Campaign name is required"
+	}
+}
