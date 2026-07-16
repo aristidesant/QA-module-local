@@ -1,0 +1,39 @@
+.page {
+	min-height: 100%;
+}
+
+.profileGrid {
+	display: grid;
+	gap: var(--mantine-spacing-sm);
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.profileItem {
+	min-width: 0;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	background: var(--surface-sunken);
+	border-radius: var(--mantine-radius-md);
+}
+
+.profileItem > * {
+	overflow-wrap: anywhere;
+}
+
+.profileLabel {
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+	font-weight: 600;
+	color: var(--ink-muted);
+}
+
+@media (max-width: 62em) {
+	.profileGrid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 40em) {
+	.profileGrid {
+		grid-template-columns: 1fr;
+	}
+}

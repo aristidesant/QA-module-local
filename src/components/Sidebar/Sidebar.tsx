@@ -21,6 +21,7 @@ import {
 	IconBook2,
 	IconChecklist,
 	IconChevronDown,
+	IconGitBranch,
 	IconChevronLeft,
 	IconChevronRight,
 	IconChartBar,
@@ -288,6 +289,22 @@ const sidebarSections: SidebarSection[] = [
 		label: 'sidebar.categories.qa',
 		icon: <IconChecklist size={20} className={styles.menuIcon} />,
 		items: [
+			{
+				key: 'qa-disputes',
+				label: 'sidebar.items.qaDisputes',
+				icon: <IconGitBranch size={18} className={styles.menuIcon} />,
+				to: '/qa/disputes',
+				superAdminOnly: true,
+				i18nNamespace: 'qa.disputes',
+			},
+			{
+				key: 'qa-agents',
+				label: 'sidebar.items.qaAgents',
+				icon: <IconUsers size={18} className={styles.menuIcon} />,
+				to: '/qa/agents',
+				superAdminOnly: true,
+				i18nNamespace: 'qa.agents',
+			},
 			{
 				key: 'qa-evaluator-agents',
 				label: 'sidebar.items.qaEvaluatorAgents',

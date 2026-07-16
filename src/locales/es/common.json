@@ -117,7 +117,9 @@
 			"roles": "Roles",
 			"clients": "Clientes",
 			"reportTemplates": "Plantillas de Reportes",
-			"qaEvaluatorAgents": "Agentes evaluadores"
+			"qaEvaluatorAgents": "Agentes evaluadores",
+			"qaDisputes": "Disputas",
+			"qaAgents": "Agentes"
 		},
 		"account": {
 			"title": "Cuenta",

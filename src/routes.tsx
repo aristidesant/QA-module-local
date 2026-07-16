@@ -141,6 +141,18 @@ const InvoiceDetailPage = React.lazy(
 const QaEvaluatorAgentsListPage = React.lazy(
 	() => import('./modules/qa/evaluatorAgents/EvaluatorAgentsListPage')
 );
+const QaAgentsListPage = React.lazy(
+	() => import('./modules/qa/agents/AgentsListPage')
+);
+const QaAgentDetailPage = React.lazy(
+	() => import('./modules/qa/agents/AgentDetailPage')
+);
+const QaDisputesListPage = React.lazy(
+	() => import('./modules/qa/disputes/DisputesListPage')
+);
+const QaDisputeDetailPage = React.lazy(
+	() => import('./modules/qa/disputes/DisputeDetailPage')
+);
 
 /**
  * Automatically loads i18n namespaces based on the active route's ID.
@@ -477,6 +489,50 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QaEvaluatorAgentsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'agents',
+										id: 'qa.agents',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaAgentsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'agents/:agentId',
+										id: 'qa.agents.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaAgentDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'disputes',
+										id: 'qa.disputes',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaDisputesListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'disputes/:disputeId',
+										id: 'qa.disputes.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaDisputeDetailPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

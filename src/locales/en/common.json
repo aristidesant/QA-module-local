@@ -118,7 +118,9 @@
 			"clients": "Clients",
 			"invoices": "Invoices",
 			"reportTemplates": "Report Templates",
-			"qaEvaluatorAgents": "Evaluator agents"
+			"qaEvaluatorAgents": "Evaluator agents",
+			"qaDisputes": "Disputes",
+			"qaAgents": "Agents"
 		},
 		"account": {
 			"title": "Account",

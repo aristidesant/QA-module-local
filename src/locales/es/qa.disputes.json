@@ -1,0 +1,114 @@
+{
+	"detail": {
+		"description": "Revisa qué evaluación fue disputada, qué corrección se aplicó y qué versión de evaluación se creó.",
+		"correction": {
+			"disputedBy": "Disputada por {{name}}",
+			"title": "Corrección de disputa"
+		},
+		"evaluation": {
+			"agent": "Agente: {{name}}",
+			"agentFallback": "Agente #{{id}}",
+			"campaign": "Campaña",
+			"campaignFallback": "Campaña #{{id}}",
+			"evaluator": "Evaluador: {{name}}",
+			"evaluatorAgentFallback": "Agente evaluador #{{id}}",
+			"evaluatorTypes": {
+				"ai": "Evaluación con IA",
+				"human": "Evaluación humana"
+			},
+			"evaluatorUnavailable": "Evaluador no disponible",
+			"evaluatorUserFallback": "Usuario #{{id}}",
+			"id": "Evaluación #{{id}}",
+			"interaction": "Interacción",
+			"open": "Abrir evaluación",
+			"status": {
+				"completed": "Completada",
+				"draft": "Lista"
+			},
+			"unavailable": "No disponible",
+			"version": "Versión {{version}}"
+		},
+		"resulting": {
+			"title": "Evaluación resultante"
+		},
+		"score": {
+			"percent": "{{percent}}%",
+			"points": "{{score}} / {{max}} pts"
+		},
+		"source": {
+			"title": "Evaluación disputada"
+		},
+		"states": {
+			"errorTitle": "No se pudo cargar la disputa",
+			"versionMismatchDescription": "La fila de auditoría dice que la versión resultante es {{auditVersion}}, pero la evaluación resultante anidada dice versión {{nestedVersion}}. Pide al backend alinear estos campos.",
+			"versionMismatchTitle": "Los datos de versión necesitan revisión del backend"
+		},
+		"summary": {
+			"after": "Después",
+			"auditSentence": "Esta disputa corrigió la evaluación original desde la versión {{sourceVersion}} y creó la versión {{resultingVersion}}.",
+			"before": "Antes",
+			"delta": "Cambio de puntaje",
+			"deltaDescription": "Puntaje posterior menos puntaje anterior.",
+			"disputedByUnavailable": "Usuario desconocido",
+			"disputedByUserFallback": "Usuario #{{id}}",
+			"resultingVersion": "Versión resultante {{version}}",
+			"title": "Resumen de disputa"
+		},
+		"title": "Detalle de disputa",
+		"titleWithId": "Disputa #{{id}}"
+	},
+	"list": {
+		"actions": {
+			"open": "Abrir disputa",
+			"retry": "Intentar de nuevo"
+		},
+		"count_one": "{{count}} disputa",
+		"count_other": "{{count}} disputas",
+		"description": "Audita correcciones a respuestas evaluadas con IA y las versiones de evaluación que crearon.",
+		"eyebrow": "Auditoría de evaluaciones",
+		"filters": {
+			"createdAtFrom": "Creada desde",
+			"createdAtTo": "Creada hasta",
+			"order": "Orden"
+		},
+		"order": {
+			"asc": "Más antiguas",
+			"desc": "Más recientes"
+		},
+		"chain": {
+			"correctedScore": "Corregida {{score}}%",
+			"createdVersion": "Creó versión {{version}}",
+			"originalScore": "Original {{score}}%",
+			"summary": "{{form}} · {{agent}}",
+			"unknown": "Desconocido"
+		},
+		"evaluatorTypes": {
+			"ai": "IA",
+			"human": "Humana"
+		},
+		"pagination": {
+			"pageSize": "Filas"
+		},
+		"states": {
+			"emptyDescription": "Las disputas aparecerán aquí cuando usuarios autorizados corrijan evaluaciones con IA completadas.",
+			"emptyTitle": "Aún no hay disputas",
+			"errorTitle": "No se pudieron cargar las disputas",
+			"invalidDateRangeDescription": "Elige una fecha Creada hasta igual o posterior a Creada desde.",
+			"invalidDateRangeTitle": "Revisa el rango de fechas",
+			"noMatchesDescription": "Ajusta o limpia los filtros para ver más disputas.",
+			"noMatchesTitle": "Ninguna disputa coincide con estos filtros"
+		},
+		"table": {
+			"actions": "Acciones",
+			"createdAt": "Creada",
+			"evaluationChain": "Cadena de evaluación",
+			"reason": "Motivo",
+			"resulting": "Resultante",
+			"scoreDelta": "Cambio",
+			"source": "Origen"
+		},
+		"title": "Disputas",
+		"version": "Versión {{version}}"
+	},
+	"scoreDelta": "{{delta}} pts"
+}
