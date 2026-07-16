@@ -139,6 +139,12 @@
 	padding-right: 0;
 	margin-right: 0;
 	width: 100%;
+	/* Reserve the scrollbar gutter symmetrically so the collapsed section
+	   icons keep their center axis at the sidebar midpoint — matching the
+	   primary icons above (which sit outside the scroll area) whether or not
+	   a scrollbar is present. Without this the single right-side gutter shifts
+	   the icons left. */
+	scrollbar-gutter: stable both-edges;
 }
 
 .topBar {
