@@ -122,7 +122,9 @@
 			"qaDisputes": "Disputes",
 			"qaAgents": "Agents",
 			"qaCampaigns": "Campaigns",
-			"qaForms": "Forms"
+			"qaForms": "Forms",
+			"qaDashboard": "Dashboard",
+			"qaEvaluations": "Evaluations"
 		},
 		"account": {
 			"title": "Account",

@@ -1,0 +1,107 @@
+{
+	"aiStatus": {
+		"centerLabel": "{{count}} IA",
+		"description": "Resultados del pipeline de evaluación con IA en el rango seleccionado.",
+		"empty": "Sin evaluaciones de IA",
+		"emptyDescription": "Los resultados de las evaluaciones con IA aparecerán aquí cuando se ejecuten en este rango.",
+		"statuses": {
+			"completed": "Completada",
+			"failed": "Fallida",
+			"pending": "Pendiente",
+			"processing": "En proceso"
+		},
+		"title": "Estado de evaluaciones IA"
+	},
+	"description": "Métricas de calidad en vivo calculadas a partir de evaluaciones, disputas y salud de proveedores de IA.",
+	"error": {
+		"title": "No se pudieron cargar los datos del panel"
+	},
+	"evaluatorType": {
+		"ai": "IA",
+		"human": "Humano"
+	},
+	"eyebrow": "Resumen de calidad",
+	"health": {
+		"latency": "{{ms}} ms",
+		"notConfigured": "No configurado",
+		"overall": {
+			"degraded": "Degradado",
+			"error": "Error",
+			"ok": "Operativo"
+		},
+		"provider": {
+			"disabled": "Deshabilitado",
+			"error": "Error",
+			"ok": "Operativo"
+		},
+		"title": "Salud de proveedores de IA"
+	},
+	"kpis": {
+		"aiFailureRate": {
+			"hint": "{{count}} evaluaciones de IA en el rango",
+			"label": "Tasa de fallos de IA",
+			"value": "{{rate}}%"
+		},
+		"avgScore": {
+			"hint": "Sobre {{count}} evaluaciones completadas",
+			"label": "Puntuación media",
+			"value": "{{score}}%"
+		},
+		"disputes": {
+			"hint": "Cambio medio de puntuación {{delta}} pts",
+			"hintEmpty": "Sin disputas en el rango",
+			"label": "Disputas"
+		},
+		"evaluations": {
+			"hint": "{{count}} completadas",
+			"label": "Evaluaciones"
+		},
+		"noData": "—"
+	},
+	"range": {
+		"all": "Todo",
+		"month": "30 días",
+		"today": "Hoy",
+		"week": "7 días"
+	},
+	"recent": {
+		"columns": {
+			"agent": "Agente",
+			"created": "Creada",
+			"evaluator": "Evaluador",
+			"form": "Formulario",
+			"score": "Puntuación",
+			"status": "Estado"
+		},
+		"description": "Últimas evaluaciones del rango seleccionado.",
+		"empty": "Aún no hay evaluaciones",
+		"emptyDescription": "Las evaluaciones creadas en este rango aparecerán aquí.",
+		"notAvailable": "—",
+		"scoreValue": "{{score}}%",
+		"title": "Evaluaciones recientes",
+		"viewAll": "Ver todas"
+	},
+	"status": {
+		"completed": "Completada",
+		"draft": "Borrador"
+	},
+	"title": "Panel",
+	"topAgents": {
+		"description": "Mejor puntuación media entre agentes con al menos 2 evaluaciones completadas en el rango.",
+		"empty": "No hay suficientes evaluaciones puntuadas",
+		"emptyDescription": "Los agentes aparecen cuando tienen al menos 2 evaluaciones completadas con puntuación.",
+		"series": "Puntuación media",
+		"title": "Mejores agentes por puntuación"
+	},
+	"trend": {
+		"description": "Evaluaciones creadas y completadas durante el rango seleccionado.",
+		"empty": "Sin actividad en este rango",
+		"emptyDescription": "La actividad de evaluación se graficará aquí a medida que ocurra.",
+		"series": {
+			"completed": "Completadas",
+			"created": "Creadas"
+		},
+		"title": "Actividad de evaluación"
+	},
+	"windowNotice": "Las métricas del rango se basan en las {{count}} evaluaciones más recientes."
+}

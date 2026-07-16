@@ -168,6 +168,15 @@ const QaErrorTypesPage = React.lazy(
 const QaFormBuilderPage = React.lazy(
 	() => import('./modules/qa/forms/FormBuilderPage')
 );
+const QaDashboardPage = React.lazy(
+	() => import('./modules/qa/dashboard/DashboardPage')
+);
+const QaEvaluationsListPage = React.lazy(
+	() => import('./modules/qa/evaluations/EvaluationsListPage')
+);
+const QaManualEvaluationPage = React.lazy(
+	() => import('./modules/qa/evaluations/ManualEvaluationPage')
+);
 
 /**
  * Automatically loads i18n namespaces based on the active route's ID.
@@ -495,7 +504,51 @@ const router = createBrowserRouter([
 								children: [
 									{
 										index: true,
-										element: <Navigate to='/qa/evaluator-agents' replace />,
+										element: <Navigate to='/qa/dashboard' replace />,
+									},
+									{
+										path: 'dashboard',
+										id: 'qa.dashboard',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaDashboardPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'evaluations',
+										id: 'qa.evaluations',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaEvaluationsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'evaluations/new',
+										id: 'qa.evaluations.new',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaEvaluationsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'evaluations/:evaluationId',
+										id: 'qa.evaluations.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaManualEvaluationPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
 									},
 									{
 										path: 'evaluator-agents',

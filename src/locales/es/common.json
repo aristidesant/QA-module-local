@@ -121,7 +121,9 @@
 			"qaDisputes": "Disputas",
 			"qaAgents": "Agentes",
 			"qaCampaigns": "Campañas",
-			"qaForms": "Formularios"
+			"qaForms": "Formularios",
+			"qaDashboard": "Panel de control",
+			"qaEvaluations": "Evaluaciones"
 		},
 		"account": {
 			"title": "Cuenta",
