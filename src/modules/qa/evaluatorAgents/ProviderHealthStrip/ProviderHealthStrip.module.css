@@ -1,0 +1,22 @@
+.grid {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: var(--mantine-spacing-sm);
+}
+
+.providerCard {
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	background: var(--surface-sunken);
+	padding: var(--mantine-spacing-sm);
+}
+
+.refreshButton {
+	flex-shrink: 0;
+}
+
+@media (max-width: 62em) {
+	.grid {
+		grid-template-columns: 1fr;
+	}
+}

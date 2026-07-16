@@ -138,6 +138,9 @@ const InvoiceNewPage = React.lazy(
 const InvoiceDetailPage = React.lazy(
 	() => import('./modules/billing/InvoiceDetailPage/InvoiceDetailPage')
 );
+const QaEvaluatorAgentsListPage = React.lazy(
+	() => import('./modules/qa/evaluatorAgents/EvaluatorAgentsListPage')
+);
 
 /**
  * Automatically loads i18n namespaces based on the active route's ID.
@@ -454,6 +457,28 @@ const router = createBrowserRouter([
 													</Suspense>
 												</I18nNamespaceLoader>
 											</ModuleGuard>
+										),
+									},
+								],
+							},
+							{
+								path: 'qa',
+								id: 'qa',
+								element: <ModuleGuard superAdminOnly />,
+								children: [
+									{
+										index: true,
+										element: <Navigate to='/qa/evaluator-agents' replace />,
+									},
+									{
+										path: 'evaluator-agents',
+										id: 'qa.evaluator-agents',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaEvaluatorAgentsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
 										),
 									},
 								],

@@ -91,7 +91,8 @@
 			"operation": "Operation",
 			"configuration": "Configuration",
 			"administration": "Administration",
-			"resources": "Resources"
+			"resources": "Resources",
+			"qa": "Quality Assurance"
 		},
 		"items": {
 			"overview": "Overview",
@@ -116,7 +117,8 @@
 			"roles": "Roles",
 			"clients": "Clients",
 			"invoices": "Invoices",
-			"reportTemplates": "Report Templates"
+			"reportTemplates": "Report Templates",
+			"qaEvaluatorAgents": "Evaluator agents"
 		},
 		"account": {
 			"title": "Account",

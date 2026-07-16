@@ -19,6 +19,7 @@ import {
 import {
 	IconActivity,
 	IconBook2,
+	IconChecklist,
 	IconChevronDown,
 	IconChevronLeft,
 	IconChevronRight,
@@ -279,6 +280,21 @@ const sidebarSections: SidebarSection[] = [
 				to: '/report-templates',
 				module: ModuleEnum.REPORTS,
 				i18nNamespace: 'report-templates',
+			},
+		],
+	},
+	{
+		key: 'qa',
+		label: 'sidebar.categories.qa',
+		icon: <IconChecklist size={20} className={styles.menuIcon} />,
+		items: [
+			{
+				key: 'qa-evaluator-agents',
+				label: 'sidebar.items.qaEvaluatorAgents',
+				icon: <IconChecklist size={18} className={styles.menuIcon} />,
+				to: '/qa/evaluator-agents',
+				superAdminOnly: true,
+				i18nNamespace: 'qa.evaluatorAgents',
 			},
 		],
 	},
