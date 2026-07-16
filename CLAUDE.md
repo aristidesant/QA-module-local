@@ -34,6 +34,10 @@ Source of truth: `package.json`, `src/routes.tsx`.
 
 All app code lives in `src/`: `api/`, `components/`, `modules/`, `queries/`, `routes/`, `routes.tsx`, `locales/`, `stores/`, `models/`, `hooks/`, `utils/`, `styles/`.
 
+### QA section (`/qa/*`)
+
+The QA tool (migrated from the former `qa-frontend-service` repo) lives in namespaced folders: `src/modules/qa/`, `src/api/qa/` (calls qa-backend via `qaHttpClient` from `src/api/qa/qaConfig.ts`, env var `VITE_APP_QA_API_URL`), `src/queries/qa/` (query keys prefixed `['qa', ...]`), `src/models/qa/`, and `qa.*.json` locale namespaces. Routes use ids `qa.*` behind `ModuleGuard superAdminOnly` (swap to `ModuleEnum.QA` once backend role permissions exist). QA screens use the shared UI primitives like the rest of the app.
+
 ## Shared UI Primitives (always apply)
 
 - `SectionCard` (`src/components/SectionCard`) — form/page sections
