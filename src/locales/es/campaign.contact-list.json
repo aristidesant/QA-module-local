@@ -70,6 +70,11 @@
 		"metadata": "Metadatos de la lista de contactos",
 		"active": "Activa",
 		"inactive": "Inactiva",
+		"testList": "Prueba",
+		"testBanner": {
+			"title": "Lista de prueba",
+			"message": "Los resultados de esta lista no se contabilizan en los KPIs ni en los reportes."
+		},
 		"noDescription": "No se proporcionó descripción.",
 		"campaign": "Campaña",
 		"schedule": "Horario",

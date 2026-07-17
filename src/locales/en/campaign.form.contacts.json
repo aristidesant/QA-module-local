@@ -65,6 +65,7 @@
 				"emptyInactiveMessage": "No inactive contact lists found.",
 				"reload": "Reload",
 				"reloadUnavailable": "Reload unavailable while collapsed",
+				"testIndicator": "Test",
 				"nextWaveScheduled": "Next: {{value}}",
 				"columns": {
 					"name": "Name",
@@ -133,6 +134,8 @@
 				"noWaveDelay": "No delay between waves",
 				"humanEquivalentLabel": "Capacity",
 				"availableLabel": "available",
+				"isTestLabel": "Test list",
+				"isTestDescription": "Test lists are excluded from mobile dashboard KPIs and reports.",
 				"form": {
 					"nameLabel": "List name",
 					"namePlaceholder": "e.g. Leads Q2 — June batch"
@@ -248,11 +251,18 @@
 				"title": "Contact List Details",
 				"description": "Review contact list configuration and status.",
 				"configurations": "Configurations",
+				"testBanner": {
+					"title": "Test list",
+					"message": "Results from this list are not included in KPIs or reports."
+				},
 				"meta": {
 					"listStatus": "Created",
 					"queueStatus": "Queue status",
 					"active": "Active",
 					"inactive": "Inactive",
+					"testList": "List type",
+					"testYes": "Test",
+					"testNo": "Real",
 					"expirationDate": "Expiration date",
 					"scheduler": "Scheduler",
 					"schedulerStatus": "Scheduler status",

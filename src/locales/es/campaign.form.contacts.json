@@ -65,6 +65,7 @@
 				"emptyInactiveMessage": "No se encontraron listas de contactos inactivas.",
 				"reload": "Recargar",
 				"reloadUnavailable": "Recarga no disponible mientras está colapsado",
+				"testIndicator": "Prueba",
 				"nextWaveScheduled": "Próxima: {{value}}",
 				"columns": {
 					"name": "Nombre",
@@ -133,6 +134,8 @@
 				"noWaveDelay": "Sin retraso entre oleadas",
 				"humanEquivalentLabel": "Capacidad",
 				"availableLabel": "disponible",
+				"isTestLabel": "Lista de prueba",
+				"isTestDescription": "Las listas de prueba se excluyen de los KPIs e informes del dashboard móvil.",
 				"form": {
 					"nameLabel": "Nombre de la lista",
 					"namePlaceholder": "Ej. Leads Q2 — lote junio"
@@ -248,11 +251,18 @@
 				"title": "Detalles de la lista de contactos",
 				"description": "Revisa la configuración y el estado de la lista de contactos.",
 				"configurations": "Configuraciones",
+				"testBanner": {
+					"title": "Lista de prueba",
+					"message": "Los resultados de esta lista no se contabilizan en los KPIs ni en los reportes."
+				},
 				"meta": {
 					"listStatus": "Creado",
 					"queueStatus": "Estado de cola",
 					"active": "Activa",
 					"inactive": "Inactiva",
+					"testList": "Tipo de lista",
+					"testYes": "Prueba",
+					"testNo": "Real",
 					"expirationDate": "Fecha de vencimiento",
 					"scheduler": "Programador",
 					"schedulerStatus": "Estado del programador",

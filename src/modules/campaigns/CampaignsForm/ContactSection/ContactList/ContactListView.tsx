@@ -14,6 +14,7 @@ import BaseTable from '~/components/BaseTable';
 import useContactListColumns from './useContactListColumns';
 import { PaginatedResponse } from '~/models/CampaignsModel';
 import CapacityProgress from './CapacityProgress';
+import styles from './ContactListView.module.css';
 
 export interface ContactListViewProps {
 	contactGroups?: ContactGroup[] | PaginatedResponse<ContactGroup>;
@@ -112,6 +113,9 @@ export const ContactListView = ({
 					}}
 					isLoading={isLoading}
 					getRowId={(row) => row.id}
+					getRowClassName={(row) =>
+						row.original.isTest ? styles.testRow : undefined
+					}
 				/>
 				<Modal
 					opened={opened}

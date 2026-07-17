@@ -8,6 +8,7 @@ import {
 	Group,
 	NumberInput,
 	Select,
+	Switch,
 } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
@@ -54,6 +55,8 @@ export type ContactLimitsFormProps = {
 	setName: (name: string) => void;
 	selectedVoiceIds: string[];
 	setSelectedVoiceIds: (ids: string[]) => void;
+	isTest: boolean;
+	setIsTest: (value: boolean) => void;
 	campaignVoiceIds: string[];
 	maxWaves: number;
 	setMaxWaves: (value: number) => void;
@@ -87,6 +90,8 @@ export const ContactLimitsForm = ({
 	setName,
 	selectedVoiceIds,
 	setSelectedVoiceIds,
+	isTest,
+	setIsTest,
 	campaignVoiceIds,
 	maxWaves,
 	setMaxWaves,
@@ -222,6 +227,14 @@ export const ContactLimitsForm = ({
 						label={(value) => `${value}`}
 						size='sm'
 						disabled={isCreatingAndFull}
+					/>
+					<Switch
+						label={t('form.contacts.limits.isTestLabel')}
+						description={t('form.contacts.limits.isTestDescription')}
+						checked={isTest}
+						onChange={(event) => setIsTest(event.currentTarget.checked)}
+						size='sm'
+						mt='md'
 					/>
 					{activeSchedule && (
 						<div className={styles.capacityProgress}>

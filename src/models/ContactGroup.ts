@@ -32,6 +32,7 @@ export default interface ContactGroup {
 	schedule?: Scheduler;
 	queueStatus: ContactGroupQueueStatus;
 	isActive: boolean;
+	isTest: boolean;
 	currentWave?: number;
 	maxWaves?: number;
 	waveExecutionDelaySeconds?: number | null;
