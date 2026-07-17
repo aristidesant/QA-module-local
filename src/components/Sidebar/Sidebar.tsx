@@ -19,7 +19,12 @@ import {
 import {
 	IconActivity,
 	IconBook2,
+	IconChecklist,
 	IconChevronDown,
+	IconClipboardCheck,
+	IconForms,
+	IconGitBranch,
+	IconSpeakerphone,
 	IconChevronLeft,
 	IconChevronRight,
 	IconChartBar,
@@ -49,7 +54,8 @@ type SidebarNavItem = {
 	label: string;
 	icon: React.ReactNode;
 	to: string;
-	module: ModuleEnum;
+	/** When omitted, only the masterOnly/superAdminOnly checks apply. */
+	module?: ModuleEnum;
 	permission?: PermissionEnum;
 	masterOnly?: boolean;
 	superAdminOnly?: boolean;
@@ -281,6 +287,69 @@ const sidebarSections: SidebarSection[] = [
 			},
 		],
 	},
+	{
+		key: 'qa',
+		label: 'sidebar.categories.qa',
+		icon: <IconChecklist size={20} className={styles.menuIcon} />,
+		items: [
+			{
+				key: 'qa-dashboard',
+				label: 'sidebar.items.qaDashboard',
+				icon: <IconLayoutDashboard size={18} className={styles.menuIcon} />,
+				to: '/qa/dashboard',
+				superAdminOnly: true,
+				i18nNamespace: 'qa.dashboard',
+			},
+			{
+				key: 'qa-evaluations',
+				label: 'sidebar.items.qaEvaluations',
+				icon: <IconClipboardCheck size={18} className={styles.menuIcon} />,
+				to: '/qa/evaluations',
+				superAdminOnly: true,
+				i18nNamespace: 'qa.evaluations',
+			},
+			{
+				key: 'qa-campaigns',
+				label: 'sidebar.items.qaCampaigns',
+				icon: <IconSpeakerphone size={18} className={styles.menuIcon} />,
+				to: '/qa/campaigns',
+				superAdminOnly: true,
+				i18nNamespace: 'qa.campaigns',
+			},
+			{
+				key: 'qa-forms',
+				label: 'sidebar.items.qaForms',
+				icon: <IconForms size={18} className={styles.menuIcon} />,
+				to: '/qa/forms',
+				superAdminOnly: true,
+				i18nNamespace: 'qa.forms',
+			},
+			{
+				key: 'qa-disputes',
+				label: 'sidebar.items.qaDisputes',
+				icon: <IconGitBranch size={18} className={styles.menuIcon} />,
+				to: '/qa/disputes',
+				superAdminOnly: true,
+				i18nNamespace: 'qa.disputes',
+			},
+			{
+				key: 'qa-agents',
+				label: 'sidebar.items.qaAgents',
+				icon: <IconUsers size={18} className={styles.menuIcon} />,
+				to: '/qa/agents',
+				superAdminOnly: true,
+				i18nNamespace: 'qa.agents',
+			},
+			{
+				key: 'qa-evaluator-agents',
+				label: 'sidebar.items.qaEvaluatorAgents',
+				icon: <IconChecklist size={18} className={styles.menuIcon} />,
+				to: '/qa/evaluator-agents',
+				superAdminOnly: true,
+				i18nNamespace: 'qa.evaluatorAgents',
+			},
+		],
+	},
 ];
 
 export const Sidebar: React.FC = () => {
@@ -308,6 +377,10 @@ export const Sidebar: React.FC = () => {
 					return false;
 				}
 
+				if (!item.module) {
+					return true;
+				}
+
 				if (item.permission) {
 					return canPerformAction(item.module, item.permission);
 				}
@@ -329,6 +402,10 @@ export const Sidebar: React.FC = () => {
 
 						if (item.superAdminOnly && !isSuperAdmin) {
 							return false;
+						}
+
+						if (!item.module) {
+							return true;
 						}
 
 						if (item.permission) {

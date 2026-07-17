@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom/client';
 import { ModalsProvider } from '@mantine/modals';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { QueryClientProvider } from '@tanstack/react-query';
 import { Notifications } from '@mantine/notifications';
 import '@mantine/core/styles.css';
 import '@mantine/carousel/styles.css';
@@ -13,12 +13,11 @@ import '~/utils/axiosInterceptor';
 import { applySiteMetadata } from '~/utils/siteMetadata';
 import { AppColorSchemeProvider } from '~/components/AppColorSchemeProvider';
 import AppErrorBoundary from '~/components/GenericAppError/AppErrorBoundary';
+import { queryClient } from '~/queries/queryClient';
 
 import App from './App';
 import '~/locales/i18n';
 import SuspenseFallback from './components/SuspenseFallback/SuspenseFallback';
-
-const queryClient = new QueryClient({});
 
 applySiteMetadata();
 

@@ -1,0 +1,103 @@
+{
+	"actions": {
+		"cancel": "Cancelar",
+		"create": "Crear evaluador",
+		"delete": "Eliminar",
+		"edit": "Editar",
+		"new": "Nuevo evaluador",
+		"save": "Guardar cambios"
+	},
+	"common": {
+		"notAvailable": "No disponible"
+	},
+	"delete": {
+		"description": "¿Eliminar {{name}}? Las evaluaciones anteriores conservan sus datos; solo se bloquean nuevas evaluaciones con IA.",
+		"title": "Eliminar agente evaluador"
+	},
+	"description": "Administra perfiles reutilizables de evaluadores con IA: un prompt de sistema, un proveedor LLM y un modelo.",
+	"eyebrow": "Evaluadores con IA",
+	"filters": {
+		"count_one": "{{count}} evaluador",
+		"count_other": "{{count}} evaluadores",
+		"provider": "Proveedor",
+		"search": "Buscar por nombre",
+		"status": "Estado"
+	},
+	"form": {
+		"advanced": "Parámetros del modelo",
+		"createTitle": "Crear agente evaluador",
+		"editTitle": "Editar agente evaluador",
+		"isActive": "Activo",
+		"maxTokens": "Tokens máximos",
+		"maxTokensPlaceholder": "1500",
+		"metadata": "Metadatos (objeto JSON)",
+		"metadataHint": "JSON libre opcional almacenado con el perfil.",
+		"metadataPlaceholder": "{\n  \"notes\": \"perfil por defecto\"\n}",
+		"model": "Modelo",
+		"modelHint": "El modelo es libre según el proveedor, p. ej. gpt-4o-mini, gemini-2.0-flash, amazon.nova-lite-v1:0.",
+		"modelPlaceholder": "gpt-4o-mini",
+		"name": "Nombre",
+		"namePlaceholder": "Evaluador QA",
+		"provider": "Proveedor",
+		"systemPrompt": "Prompt de sistema",
+		"systemPromptPlaceholder": "Evalúas llamadas de un centro de contacto.",
+		"temperature": "Temperatura",
+		"temperaturePlaceholder": "0.2",
+		"timeoutMs": "Tiempo limite (ms)",
+		"timeoutMsPlaceholder": "30000"
+	},
+	"health": {
+		"configured": "Configurado",
+		"description": "Verificaciones en vivo usadas por las evaluaciones de IA.",
+		"errorTitle": "No se pudo cargar el estado de proveedores",
+		"latency": "{{latency}} ms de latencia",
+		"notConfigured": "No configurado",
+		"refresh": "Actualizar estado de proveedores",
+		"status": {
+			"disabled": "Deshabilitado",
+			"error": "Error",
+			"ok": "OK"
+		},
+		"title": "Estado de proveedores LLM"
+	},
+	"notifications": {
+		"created": "Agente evaluador creado.",
+		"deleted": "Agente evaluador eliminado.",
+		"updated": "Agente evaluador actualizado."
+	},
+	"pagination": {
+		"pageSize": "Filas"
+	},
+	"providers": {
+		"bedrock": "AWS Bedrock",
+		"gemini": "Google Gemini",
+		"openai": "OpenAI"
+	},
+	"states": {
+		"active": "Activo",
+		"emptyDescription": "Crea un perfil de evaluador antes de ejecutar evaluaciones con IA.",
+		"emptyTitle": "Aún no hay agentes evaluadores",
+		"errorTitle": "No se pudieron cargar los agentes evaluadores",
+		"inactive": "Inactivo",
+		"noMatchesDescription": "Ajusta o limpia los filtros para ver más agentes evaluadores.",
+		"noMatchesTitle": "Ningún agente evaluador coincide con estos filtros"
+	},
+	"table": {
+		"actions": "Acciones",
+		"active": "Estado",
+		"model": "Modelo",
+		"name": "Nombre",
+		"provider": "Proveedor",
+		"updatedAt": "Última actualización"
+	},
+	"title": "Agentes evaluadores",
+	"validation": {
+		"duplicate": "Ya existe un evaluador con este nombre para este cliente.",
+		"maxLength": "Debe tener {{count}} caracteres o menos.",
+		"metadata": "Introduce un objeto JSON válido.",
+		"modelRequired": "El modelo es obligatorio.",
+		"nameRequired": "El nombre es obligatorio.",
+		"systemPromptRequired": "El prompt de sistema es obligatorio.",
+		"timeoutMs": "El tiempo limite debe ser al menos 1000 ms."
+	}
+}

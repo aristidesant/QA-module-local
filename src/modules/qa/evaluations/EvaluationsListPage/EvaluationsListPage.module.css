@@ -1,0 +1,50 @@
+.page {
+	width: 100%;
+}
+
+.toolbar,
+.filters,
+.pagination {
+	align-items: flex-end;
+}
+
+.filters {
+	flex: 1;
+	flex-wrap: wrap;
+}
+
+.search {
+	flex: 1 1 18rem;
+	max-width: 26rem;
+}
+
+.filter {
+	flex: 0 1 11rem;
+}
+
+.pageSize {
+	width: 6rem;
+}
+
+.row {
+	transition: background-color 120ms ease;
+}
+
+@media (max-width: 48em) {
+	.toolbar,
+	.pagination {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.filters {
+		width: 100%;
+	}
+
+	.search,
+	.filter {
+		flex-basis: 100%;
+		max-width: none;
+		width: 100%;
+	}
+}

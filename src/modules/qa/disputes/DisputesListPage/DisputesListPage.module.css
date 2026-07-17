@@ -1,0 +1,43 @@
+.page {
+	min-height: 100%;
+}
+
+.toolbar {
+	align-items: flex-end;
+}
+
+.filters {
+	flex: 1;
+}
+
+.filter {
+	width: 160px;
+}
+
+.dateFilter {
+	width: 170px;
+}
+
+.reasonCell {
+	max-width: 320px;
+}
+
+.row {
+	cursor: pointer;
+}
+
+@media (max-width: 62em) {
+	.toolbar {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.filters {
+		width: 100%;
+	}
+
+	.filter,
+	.dateFilter {
+		flex: 1 1 150px;
+	}
+}

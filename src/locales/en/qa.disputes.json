@@ -1,0 +1,114 @@
+{
+	"detail": {
+		"description": "Review which evaluation was disputed, what correction was applied, and which evaluation version was created.",
+		"correction": {
+			"disputedBy": "Disputed by {{name}}",
+			"title": "Dispute correction"
+		},
+		"evaluation": {
+			"agent": "Agent: {{name}}",
+			"agentFallback": "Agent #{{id}}",
+			"campaign": "Campaign",
+			"campaignFallback": "Campaign #{{id}}",
+			"evaluator": "Evaluator: {{name}}",
+			"evaluatorAgentFallback": "Evaluator agent #{{id}}",
+			"evaluatorTypes": {
+				"ai": "AI evaluation",
+				"human": "Human evaluation"
+			},
+			"evaluatorUnavailable": "Evaluator unavailable",
+			"evaluatorUserFallback": "User #{{id}}",
+			"id": "Evaluation #{{id}}",
+			"interaction": "Interaction",
+			"open": "Open evaluation",
+			"status": {
+				"completed": "Completed",
+				"draft": "Ready"
+			},
+			"unavailable": "Not available",
+			"version": "Version {{version}}"
+		},
+		"resulting": {
+			"title": "Resulting evaluation"
+		},
+		"score": {
+			"percent": "{{percent}}%",
+			"points": "{{score}} / {{max}} pts"
+		},
+		"source": {
+			"title": "Disputed evaluation"
+		},
+		"states": {
+			"errorTitle": "Could not load dispute",
+			"versionMismatchDescription": "The audit row says the resulting version is {{auditVersion}}, but the nested resulting evaluation says version {{nestedVersion}}. Ask backend to align these fields.",
+			"versionMismatchTitle": "Version data needs backend review"
+		},
+		"summary": {
+			"after": "After",
+			"auditSentence": "This dispute corrected the original evaluation from version {{sourceVersion}} and created version {{resultingVersion}}.",
+			"before": "Before",
+			"delta": "Score delta",
+			"deltaDescription": "After score minus before score.",
+			"disputedByUnavailable": "Unknown user",
+			"disputedByUserFallback": "User #{{id}}",
+			"resultingVersion": "Resulting version {{version}}",
+			"title": "Dispute summary"
+		},
+		"title": "Dispute detail",
+		"titleWithId": "Dispute #{{id}}"
+	},
+	"list": {
+		"actions": {
+			"open": "Open dispute",
+			"retry": "Try again"
+		},
+		"count_one": "{{count}} dispute",
+		"count_other": "{{count}} disputes",
+		"description": "Audit corrections to AI-evaluated answers and the evaluation versions they created.",
+		"eyebrow": "Evaluation audit",
+		"filters": {
+			"createdAtFrom": "Created from",
+			"createdAtTo": "Created to",
+			"order": "Order"
+		},
+		"order": {
+			"asc": "Oldest first",
+			"desc": "Newest first"
+		},
+		"chain": {
+			"correctedScore": "Corrected {{score}}%",
+			"createdVersion": "Created version {{version}}",
+			"originalScore": "Original {{score}}%",
+			"summary": "{{form}} · {{agent}}",
+			"unknown": "Unknown"
+		},
+		"evaluatorTypes": {
+			"ai": "AI",
+			"human": "Human"
+		},
+		"pagination": {
+			"pageSize": "Rows"
+		},
+		"states": {
+			"emptyDescription": "Disputes will appear here after authorized users correct completed AI evaluations.",
+			"emptyTitle": "No disputes yet",
+			"errorTitle": "Could not load disputes",
+			"invalidDateRangeDescription": "Choose a Created to date that is the same as or after Created from.",
+			"invalidDateRangeTitle": "Check the date range",
+			"noMatchesDescription": "Adjust or clear the filters to see more disputes.",
+			"noMatchesTitle": "No disputes match these filters"
+		},
+		"table": {
+			"actions": "Actions",
+			"createdAt": "Created",
+			"evaluationChain": "Evaluation chain",
+			"reason": "Reason",
+			"resulting": "Resulting",
+			"scoreDelta": "Delta",
+			"source": "Source"
+		},
+		"title": "Disputes",
+		"version": "Version {{version}}"
+	},
+	"scoreDelta": "{{delta}} pts"
+}

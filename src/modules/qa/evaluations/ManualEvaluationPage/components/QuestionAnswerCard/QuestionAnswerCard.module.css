@@ -1,0 +1,12 @@
+.questionCard {
+	background: var(--surface-elevated);
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+	transition: border-color 140ms ease;
+}
+
+.questionCardAnswered {
+	border-color: var(--mantine-color-newtechGreen-4);
+	box-shadow: inset 3px 0 0 var(--mantine-color-newtechGreen-6);
+}

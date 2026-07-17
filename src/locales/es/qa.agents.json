@@ -1,0 +1,106 @@
+{
+	"actions": {
+		"back": "Volver a agentes",
+		"cancel": "Cancelar",
+		"create": "Crear agente",
+		"delete": "Eliminar",
+		"edit": "Editar",
+		"new": "Nuevo agente",
+		"save": "Guardar cambios",
+		"startEvaluation": "Iniciar evaluación"
+	},
+	"badges": {
+		"autoMigrated": "Auto-migrado"
+	},
+	"common": {
+		"notAvailable": "No disponible",
+		"notProvided": "No informado"
+	},
+	"delete": {
+		"blocked_one": "Este agente tiene {{count}} evaluación asociada y no se puede eliminar.",
+		"blocked_other": "Este agente tiene {{count}} evaluaciones asociadas y no se puede eliminar.",
+		"description": "¿Eliminar a {{name}}? Esta acción quita al agente de las listas activas.",
+		"referencedHint": "Actualmente, los agentes con evaluaciones no se pueden eliminar, archivar ni reasignar.",
+		"title": "Eliminar agente"
+	},
+	"description": "Administra los agentes humanos y de IA que pueden asociarse con evaluaciones de calidad.",
+	"detail": {
+		"createdAt": "Creado",
+		"profile": "Perfil del agente",
+		"title": "Perfil del agente",
+		"updatedAt": "Última actualización"
+	},
+	"evaluationStatus": {
+		"completed": "Completada",
+		"draft": "Lista"
+	},
+	"eyebrow": "Directorio de agentes",
+	"filters": {
+		"count_one": "{{count}} agente",
+		"count_other": "{{count}} agentes",
+		"search": "Buscar nombre, ID o email",
+		"team": "Equipo exacto",
+		"type": "Tipo de agente"
+	},
+	"form": {
+		"agentType": "Tipo de agente",
+		"createTitle": "Crear agente",
+		"editTitle": "Editar agente",
+		"email": "Email",
+		"emailPlaceholder": "agente@ejemplo.com",
+		"employeeId": "ID de empleado",
+		"employeeIdPlaceholder": "EMP-42",
+		"firstName": "Nombre",
+		"lastName": "Apellido",
+		"metadata": "Metadata (objeto JSON)",
+		"metadataPlaceholder": "{\n  \"turno\": \"mañana\"\n}",
+		"team": "Equipo",
+		"teamPlaceholder": "Ventas"
+	},
+	"history": {
+		"count_one": "{{count}} evaluación",
+		"count_other": "{{count}} evaluaciones",
+		"date": "Fecha",
+		"empty": "Este agente todavía no tiene evaluaciones.",
+		"form": "Formulario",
+		"interaction": "Interacción",
+		"openEvaluation": "Abrir la evaluación de {{formName}}",
+		"score": "Puntaje",
+		"status": "Estado",
+		"title": "Historial de evaluaciones"
+	},
+	"notifications": {
+		"created": "Agente creado.",
+		"deleted": "Agente eliminado.",
+		"updated": "Agente actualizado."
+	},
+	"pagination": {
+		"pageSize": "Filas"
+	},
+	"states": {
+		"emptyDescription": "Crea el primer agente antes de iniciar una evaluación de calidad.",
+		"emptyTitle": "No se encontraron agentes",
+		"errorTitle": "No se pudieron cargar los agentes"
+	},
+	"table": {
+		"actions": "Acciones",
+		"createdAt": "Creado",
+		"email": "Email",
+		"employeeId": "ID de empleado",
+		"name": "Nombre",
+		"team": "Equipo",
+		"type": "Tipo"
+	},
+	"title": "Agentes",
+	"types": {
+		"aiBot": "Bot de IA",
+		"human": "Humano"
+	},
+	"validation": {
+		"duplicate": "El ID de empleado o email ya está registrado para este cliente.",
+		"email": "Ingresa un email válido.",
+		"employeeIdRequired": "El ID de empleado es obligatorio.",
+		"maxLength": "Debe tener {{count}} caracteres o menos.",
+		"metadata": "Ingresa un objeto JSON válido."
+	}
+}

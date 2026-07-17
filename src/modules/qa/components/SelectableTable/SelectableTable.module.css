@@ -1,0 +1,11 @@
+.selectedRow td {
+	background: var(--mantine-color-newtechGreen-0);
+}
+
+.selectedRow td:first-of-type {
+	box-shadow: inset 3px 0 0 var(--mantine-color-newtechGreen-6);
+}
+
+[data-mantine-color-scheme='dark'] .selectedRow td {
+	background: var(--surface-sunken);
+}

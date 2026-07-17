@@ -91,7 +91,8 @@
 			"operation": "Operación",
 			"configuration": "Configuración",
 			"administration": "Administración",
-			"resources": "Recursos"
+			"resources": "Recursos",
+			"qa": "Control de calidad"
 		},
 		"items": {
 			"overview": "Resumen",
@@ -115,7 +116,14 @@
 			"users": "Usuarios",
 			"roles": "Roles",
 			"clients": "Clientes",
-			"reportTemplates": "Plantillas de Reportes"
+			"reportTemplates": "Plantillas de Reportes",
+			"qaEvaluatorAgents": "Agentes evaluadores",
+			"qaDisputes": "Disputas",
+			"qaAgents": "Agentes",
+			"qaCampaigns": "Campañas",
+			"qaForms": "Formularios",
+			"qaDashboard": "Panel de control",
+			"qaEvaluations": "Evaluaciones"
 		},
 		"account": {
 			"title": "Cuenta",

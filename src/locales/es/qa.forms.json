@@ -1,0 +1,218 @@
+{
+	"actions": {
+		"backToForms": "Volver a formularios",
+		"cancel": "Cancelar",
+		"create": "Crear formulario",
+		"delete": "Eliminar",
+		"edit": "Editar",
+		"save": "Guardar"
+	},
+	"answerTypes": {
+		"choice": "Opción múltiple",
+		"text": "Texto"
+	},
+	"builder": {
+		"description": "Configura el encabezado, las secciones y las preguntas puntuadas que usarán los evaluadores.",
+		"title": "Constructor de formulario"
+	},
+	"create": {
+		"submit": "Crear formulario",
+		"title": "Crear formulario QA"
+	},
+	"description": "Crea plantillas QA reutilizables con secciones ordenadas, opciones puntuadas y anotaciones de texto.",
+	"errorTypes": {
+		"actions": {
+			"back": "Volver a formularios",
+			"manage": "Tipos de error",
+			"new": "Nuevo tipo de error"
+		},
+		"badges": {
+			"inactiveTooltip": "{{label}} (inactivo)",
+			"unavailable": "No disponible",
+			"unavailableTooltip": "Este tipo de error fue eliminado o ya no está disponible."
+		},
+		"createTitle": "Crear tipo de error",
+		"delete": {
+			"description": "¿Eliminar {{code}} del catálogo activo de tipos de error?",
+			"hint": "Las asignaciones existentes permanecen, pero este tipo ya no podrá seleccionarse.",
+			"title": "Eliminar tipo de error"
+		},
+		"description": "Administra el vocabulario controlado que clasifica las fallas de QA detectadas por las preguntas.",
+		"editTitle": "Editar tipo de error",
+		"fields": {
+			"active": "Disponible para nuevas asignaciones",
+			"code": "Código",
+			"codePlaceholder": "CUMPLIMIENTO",
+			"description": "Descripción",
+			"label": "Etiqueta visible"
+		},
+		"filters": {
+			"active": "Solo activos",
+			"all": "Todos los estados",
+			"code": "Código exacto",
+			"codePlaceholder": "Ingresa el código completo",
+			"count_one": "{{count}} tipo de error",
+			"count_other": "{{count}} tipos de error",
+			"inactive": "Solo inactivos",
+			"showAll": "Mostrar todos",
+			"status": "Estado"
+		},
+		"notifications": {
+			"created": "Tipo de error creado.",
+			"deleted": "Tipo de error eliminado.",
+			"updated": "Tipo de error actualizado."
+		},
+		"selector": {
+			"description": "Categoría opcional de falla de QA detectada por esta pregunta.",
+			"empty": "No hay tipos de error activos disponibles.",
+			"inactiveOption": "{{code}} — {{label}} (inactivo)",
+			"label": "Tipo de error",
+			"manage": "Administrar tipos de error",
+			"nothingFound": "Ningún tipo de error coincide con la búsqueda",
+			"placeholder": "Sin clasificar",
+			"unavailableOption": "Tipo de error no disponible (#{{id}})"
+		},
+		"states": {
+			"empty": "Ningún tipo de error coincide con estos filtros.",
+			"errorTitle": "No se pudieron cargar los tipos de error",
+			"importUnavailable": "No se pudo cargar el catálogo de tipos de error, por lo que no se puede validar ni importar la plantilla."
+		},
+		"status": {
+			"active": "Activo",
+			"inactive": "Inactivo"
+		},
+		"table": {
+			"actions": "Acciones",
+			"code": "Código",
+			"createdAt": "Creado",
+			"description": "Descripción",
+			"label": "Etiqueta",
+			"noDescription": "Sin descripción",
+			"notAvailable": "No disponible",
+			"status": "Estado"
+		},
+		"title": "Tipos de error",
+		"validation": {
+			"codeFormat": "Usa solo letras mayúsculas, números y guiones bajos.",
+			"codeRequired": "El código es obligatorio.",
+			"duplicate": "Este código ya existe para el cliente activo.",
+			"labelRequired": "La etiqueta visible es obligatoria.",
+			"maxLength": "Debe tener {{count}} caracteres o menos."
+		}
+	},
+	"eyebrow": "Plantillas QA",
+	"fields": {
+		"active": "Disponible para nuevas evaluaciones",
+		"answerType": "Tipo de respuesta",
+		"category": "Categoría",
+		"categoryPlaceholder": "ventas",
+		"description": "Descripción",
+		"descriptionPlaceholder": "Describe cuándo se debe usar este formulario",
+		"group": "Sección",
+		"groupDescription": "Guía de la sección",
+		"groupName": "Nombre de la sección",
+		"name": "Nombre",
+		"namePlaceholder": "QA Llamadas Ventas",
+		"optionLabel": "Opción",
+		"optionScore": "Puntaje",
+		"questionDescription": "Guía para el evaluador",
+		"questionText": "Pregunta",
+		"sortOrder": "Orden"
+	},
+	"groups": {
+		"add": "Agregar sección",
+		"createTitle": "Crear sección",
+		"description": "Las secciones organizan preguntas y definen el orden de lectura.",
+		"editTitle": "Editar sección",
+		"empty": "Agrega una sección antes de crear preguntas.",
+		"noDescription": "Sin guía.",
+		"questionCount_one": "{{count}} pregunta",
+		"questionCount_other": "{{count}} preguntas",
+		"sortOrder": "Orden {{order}}",
+		"title": "Secciones y preguntas",
+		"deleteTitle": "Eliminar sección",
+		"deleteConfirm": "¿Eliminar \"{{name}}\" y todas sus preguntas? Esto no se puede deshacer."
+	},
+	"metadata": {
+		"description": "Actualiza el nombre, la categoría, la disponibilidad y la guía para evaluadores.",
+		"title": "Información básica"
+	},
+	"notifications": {
+		"formCreated": "Formulario creado.",
+		"formDeleted": "Formulario eliminado.",
+		"formUpdated": "Formulario actualizado.",
+		"groupCreated": "Sección creada.",
+		"groupDeleted": "Sección eliminada.",
+		"groupUpdated": "Sección actualizada.",
+		"questionCreated": "Pregunta creada.",
+		"questionDeleted": "Pregunta eliminada.",
+		"questionUpdated": "Pregunta actualizada.",
+		"templateDownloaded": "Plantilla descargada.",
+		"templateImported": "Plantilla importada."
+	},
+	"questions": {
+		"add": "Agregar pregunta",
+		"addOption": "Agregar opción",
+		"createTitle": "Crear pregunta",
+		"derivedWeight": "Peso calculado: {{weight}}",
+		"editTitle": "Editar pregunta",
+		"empty": "Aún no hay preguntas en esta sección.",
+		"noDescription": "Sin guía para el evaluador.",
+		"options": "Opciones y puntajes",
+		"weight": "Peso {{weight}}",
+		"deleteTitle": "Eliminar pregunta",
+		"deleteConfirm": "¿Eliminar \"{{text}}\"? Esto no se puede deshacer."
+	},
+	"pagination": {
+		"pageSize": "Filas"
+	},
+	"search": {
+		"count": "{{count}} formularios",
+		"placeholder": "Buscar formularios"
+	},
+	"states": {
+		"deleteConfirm": "¿Eliminar \"{{name}}\"? Esto elimina el formulario y sus secciones y preguntas.",
+		"emptyDescription": "Crea un formulario para comenzar los flujos QA manuales.",
+		"emptyTitle": "No se encontraron formularios",
+		"errorTitle": "No se pudieron cargar los formularios"
+	},
+	"status": {
+		"active": "Activo",
+		"inactive": "Inactivo"
+	},
+	"table": {
+		"actions": "Acciones",
+		"category": "Categoría",
+		"name": "Formulario",
+		"noCategory": "Sin categoría",
+		"noDescription": "Sin descripción",
+		"status": "Estado"
+	},
+	"template": {
+		"download": "Descargar plantilla",
+		"downloadEmpty": "La respuesta de la plantilla estaba vacia",
+		"fields": {
+			"file": "Archivo JSON",
+			"filePlaceholder": "Selecciona un archivo JSON de plantilla",
+			"json": "JSON de plantilla",
+			"jsonPlaceholder": "{\n  \"name\": \"Plantilla QA\",\n  \"groups\": []\n}"
+		},
+		"import": "Importar plantilla",
+		"importDescription": "Pega una plantilla completada o selecciona un archivo JSON. El backend creara el formulario, las secciones y las preguntas en conjunto.",
+		"importSubmit": "Importar plantilla",
+		"importTitle": "Importar plantilla de formulario QA"
+	},
+	"title": "Formularios",
+	"validation": {
+		"groupRequired": "El nombre de la sección es obligatorio",
+		"groupSelectionRequired": "Selecciona una sección",
+		"nameRequired": "El nombre es obligatorio",
+		"optionsRequired": "Agrega al menos una opción",
+		"questionRequired": "La pregunta es obligatoria",
+		"templateErrorType": "El tipo de error #{{errorTypeId}} no es válido o está inactivo en la sección “{{groupName}}”, pregunta “{{questionText}}”.",
+		"templateJson": "Ingresa JSON de plantilla valido",
+		"templateObject": "La plantilla debe ser un objeto JSON",
+		"templateRequired": "Pega o carga un JSON de plantilla",
+		"templateShape": "La plantilla debe incluir nombre y arreglo de grupos"
+	}
+}

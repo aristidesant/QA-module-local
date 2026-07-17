@@ -9,7 +9,8 @@ import AccessDenied from '~/components/AccessDenied/AccessDenied';
 import { ReactNode } from 'react';
 
 interface ModuleGuardProps {
-	module: ModuleEnum;
+	/** When omitted, only the masterOnly/superAdminOnly checks apply. */
+	module?: ModuleEnum;
 	permission?: PermissionEnum;
 	children?: ReactNode;
 	masterOnly?: boolean;
@@ -35,9 +36,11 @@ const ModuleGuard = ({
 		return <AccessDenied />;
 	}
 
-	const hasAccess = permission
-		? canPerformAction(module, permission)
-		: canAccessModule(module);
+	const hasAccess = module
+		? permission
+			? canPerformAction(module, permission)
+			: canAccessModule(module)
+		: true;
 
 	if (!hasAccess) {
 		return <AccessDenied />;

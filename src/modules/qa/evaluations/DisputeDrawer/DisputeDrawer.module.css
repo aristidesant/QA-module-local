@@ -1,0 +1,35 @@
+.drawerBody {
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-8)
+	);
+}
+
+.questionCard {
+	border: 1px solid
+		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+	border-radius: var(--mantine-radius-md);
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-6)
+	);
+	padding: var(--mantine-spacing-sm);
+}
+
+.questionCardChanged {
+	border-color: light-dark(
+		var(--mantine-color-newtechGreen-5),
+		var(--mantine-color-newtechGreen-7)
+	);
+}
+
+.summaryBar {
+	border: 1px solid
+		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+	border-radius: var(--mantine-radius-md);
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-6)
+	);
+	padding: var(--mantine-spacing-sm);
+}

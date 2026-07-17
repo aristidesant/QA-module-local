@@ -1,0 +1,28 @@
+.chartArea {
+	align-content: center;
+	min-height: 16.25rem;
+}
+
+.legendDot {
+	border-radius: 50%;
+	display: inline-block;
+	flex-shrink: 0;
+	height: 0.55rem;
+	width: 0.55rem;
+}
+
+.legendDot[data-status='PENDING'] {
+	background: var(--mantine-color-gray-5);
+}
+
+.legendDot[data-status='PROCESSING'] {
+	background: var(--mantine-color-newtechBlue-5);
+}
+
+.legendDot[data-status='COMPLETED'] {
+	background: var(--mantine-color-newtechGreen-6);
+}
+
+.legendDot[data-status='FAILED'] {
+	background: var(--mantine-color-red-6);
+}

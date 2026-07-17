@@ -1,0 +1,28 @@
+.page {
+	min-height: 100%;
+}
+
+.pageHeader {
+	align-items: flex-start;
+}
+
+.toolbar {
+	width: 100%;
+}
+
+.emptyState {
+	border: 1px dashed var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-xl);
+	text-align: center;
+}
+
+.actions {
+	justify-content: flex-end;
+}
+
+.tableSkeleton {
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+}

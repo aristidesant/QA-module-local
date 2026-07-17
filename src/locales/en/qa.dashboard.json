@@ -1,0 +1,107 @@
+{
+	"aiStatus": {
+		"centerLabel": "{{count}} AI",
+		"description": "AI evaluation pipeline outcomes in the selected range.",
+		"empty": "No AI evaluations",
+		"emptyDescription": "AI evaluation results will appear here once AI evaluations run in this range.",
+		"statuses": {
+			"completed": "Completed",
+			"failed": "Failed",
+			"pending": "Pending",
+			"processing": "Processing"
+		},
+		"title": "AI evaluation status"
+	},
+	"description": "Live quality metrics computed from evaluations, disputes, and AI provider health.",
+	"error": {
+		"title": "Could not load dashboard data"
+	},
+	"evaluatorType": {
+		"ai": "AI",
+		"human": "Human"
+	},
+	"eyebrow": "Quality overview",
+	"health": {
+		"latency": "{{ms}} ms",
+		"notConfigured": "Not configured",
+		"overall": {
+			"degraded": "Degraded",
+			"error": "Error",
+			"ok": "Operational"
+		},
+		"provider": {
+			"disabled": "Disabled",
+			"error": "Error",
+			"ok": "Operational"
+		},
+		"title": "AI provider health"
+	},
+	"kpis": {
+		"aiFailureRate": {
+			"hint": "{{count}} AI evaluations in range",
+			"label": "AI failure rate",
+			"value": "{{rate}}%"
+		},
+		"avgScore": {
+			"hint": "Across {{count}} completed evaluations",
+			"label": "Average score",
+			"value": "{{score}}%"
+		},
+		"disputes": {
+			"hint": "Avg score change {{delta}} pts",
+			"hintEmpty": "No disputes in range",
+			"label": "Disputes"
+		},
+		"evaluations": {
+			"hint": "{{count}} completed",
+			"label": "Evaluations"
+		},
+		"noData": "—"
+	},
+	"range": {
+		"all": "All",
+		"month": "30 days",
+		"today": "Today",
+		"week": "7 days"
+	},
+	"recent": {
+		"columns": {
+			"agent": "Agent",
+			"created": "Created",
+			"evaluator": "Evaluator",
+			"form": "Form",
+			"score": "Score",
+			"status": "Status"
+		},
+		"description": "Latest evaluations in the selected range.",
+		"empty": "No evaluations yet",
+		"emptyDescription": "Evaluations created in this range will show up here.",
+		"notAvailable": "—",
+		"scoreValue": "{{score}}%",
+		"title": "Recent evaluations",
+		"viewAll": "View all"
+	},
+	"status": {
+		"completed": "Completed",
+		"draft": "Draft"
+	},
+	"title": "Dashboard",
+	"topAgents": {
+		"description": "Highest average score among agents with at least 2 completed evaluations in range.",
+		"empty": "Not enough scored evaluations",
+		"emptyDescription": "Agents appear once they have at least 2 completed evaluations with a score.",
+		"series": "Average score",
+		"title": "Top agents by score"
+	},
+	"trend": {
+		"description": "Evaluations created and completed over the selected range.",
+		"empty": "No activity in this range",
+		"emptyDescription": "Evaluation activity will be charted here as it happens.",
+		"series": {
+			"completed": "Completed",
+			"created": "Created"
+		},
+		"title": "Evaluation activity"
+	},
+	"windowNotice": "Range metrics are based on the {{count}} most recent evaluations."
+}

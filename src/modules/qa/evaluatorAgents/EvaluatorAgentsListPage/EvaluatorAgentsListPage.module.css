@@ -1,0 +1,40 @@
+.page {
+	min-height: 100%;
+}
+
+.toolbar {
+	align-items: flex-end;
+}
+
+.filters {
+	flex: 1;
+}
+
+.search {
+	min-width: min(100%, 280px);
+}
+
+.filter {
+	min-width: 180px;
+}
+
+.actions {
+	justify-content: flex-end;
+}
+
+.pageSize {
+	width: 112px;
+}
+
+@media (max-width: 48em) {
+	.toolbar,
+	.filters {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.search,
+	.filter {
+		width: 100%;
+	}
+}
