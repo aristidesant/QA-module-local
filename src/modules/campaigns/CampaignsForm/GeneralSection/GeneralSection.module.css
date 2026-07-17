@@ -1,9 +1,72 @@
 .generalLayout {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	min-width: 0;
+}
+
+.contentGrid {
 	display: grid;
-	grid-template-columns: minmax(0, 1.1fr) minmax(28rem, 0.9fr);
-	gap: var(--mantine-spacing-sm);
+	grid-template-columns: minmax(0, 1.7fr) minmax(20rem, 0.85fr);
+	gap: var(--mantine-spacing-md);
 	align-items: start;
 	min-width: 0;
+}
+
+.primaryColumn,
+.secondaryColumn {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	min-width: 0;
+}
+
+.groupStack {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+.subsection {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	min-width: 0;
+}
+
+.subsection + .subsection {
+	padding-top: var(--mantine-spacing-md);
+	border-top: 1px solid var(--surface-border);
+}
+
+.subsectionHeader {
+	display: flex;
+	flex-direction: column;
+	gap: calc(var(--mantine-spacing-xs) / 2);
+	min-width: 0;
+}
+
+.subsectionTitle {
+	margin: 0;
+	font-size: 0.9375rem;
+	font-weight: 650;
+	line-height: 1.3;
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
+}
+
+.switchList {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+}
+
+.switchRow {
+	min-width: 0;
+	padding-block: var(--mantine-spacing-xs);
+}
+
+.switchRow + .switchRow {
+	border-top: 1px solid var(--surface-border);
 }
 
 .generalLayout :global(.mantine-InputWrapper-label) {
@@ -37,13 +100,6 @@
 	.generalLayout
 	:global(.mantine-InputWrapper-description) {
 	color: var(--mantine-color-dark-2);
-}
-
-.column {
-	display: flex;
-	flex-direction: column;
-	gap: var(--mantine-spacing-sm);
-	min-width: 0;
 }
 
 .fieldGrid {
@@ -218,7 +274,7 @@
 }
 
 @media (max-width: 64em) {
-	.generalLayout {
+	.contentGrid {
 		grid-template-columns: 1fr;
 	}
 }

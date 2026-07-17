@@ -1,5 +1,17 @@
 {
 	"general": {
+		"identity": {
+			"title": "Campaign identity"
+		},
+		"contactAndRouting": {
+			"title": "Contact and routing"
+		},
+		"operationAndAccess": {
+			"title": "Operation and access"
+		},
+		"behavior": {
+			"title": "Campaign behavior"
+		},
 		"title": "General Information",
 		"description": "Basic campaign settings and configuration.",
 		"campaignName": "Campaign Name",
@@ -73,11 +85,11 @@
 		"noiseCancellationTitle": "Noise cancellation",
 		"noiseCancellationSectionDesc": "Control call audio cleanup at the campaign level.",
 		"noiseCancellationLabel": "Noise cancellation",
-		"noiseCancellationDesc": "When enabled, applies noise suppression and voice activity detection tuning to outbound calls.",
+		"noiseCancellationDesc": "Reduces background noise on outbound calls.",
 		"showExternalTitle": "Mobile visibility",
 		"showExternalSectionDesc": "Control whether this campaign's dashboards can be seen in the mobile app.",
 		"showExternalLabel": "Visible in mobile app",
-		"showExternalDesc": "When enabled, this campaign's metrics are included in the mobile app's dashboards.",
+		"showExternalDesc": "Shows campaign dashboards in the mobile app.",
 		"createObjectiveTitle": "Create New Objective",
 		"settingsTitle": "Campaign settings",
 		"settingsDescription": "Define language and wave limits",
@@ -87,7 +99,7 @@
 			"label": "Visible to roles",
 			"fieldDescription": "Select every role that should have campaign visibility.",
 			"placeholder": "Select roles",
-			"hint": "Leaving this empty saves the campaign with no assigned role visibility.",
+			"hint": "With no roles selected, the campaign has no role visibility.",
 			"noRolesFound": "No active roles found",
 			"loadErrorTitle": "Unable to load roles",
 			"loadErrorDescription": "Retry before saving campaign visibility changes.",

@@ -28,6 +28,7 @@ dayjs.extend(timezone);
 
 type ConversationColumnsOptions = {
 	canExecuteConversations?: boolean;
+	combineContactDetails?: boolean;
 	onActionClick?: (
 		event: MouseEvent<HTMLButtonElement>,
 		conversation: ConversationsModel
@@ -71,8 +72,8 @@ export const useConversationsColumns = (
 			}
 
 			const visibleIdentifier =
-				normalizedIdentifier.length > 6
-					? `${normalizedIdentifier.slice(0, 6)}...`
+				normalizedIdentifier.length > 8
+					? `${normalizedIdentifier.slice(0, 8)}...`
 					: normalizedIdentifier;
 
 			return (
@@ -219,13 +220,29 @@ export const useConversationsColumns = (
 			},
 			{
 				id: 'contactName',
-				header: t('list.columns.contactName'),
+				header: options?.combineContactDetails
+					? t('list.columns.contact')
+					: t('list.columns.contactName'),
+				size: options?.combineContactDetails ? 220 : undefined,
 				accessorFn: (row) => row.contactName ?? '',
 				enableSorting: true,
 				cell: ({ row }) => (
-					<Text size='xs' fw={600}>
-						{row.original.contactName || '—'}
-					</Text>
+					<div className={styles.contactCell}>
+						<Text
+							size='sm'
+							fw={650}
+							className={styles.contactName}
+							lineClamp={1}
+						>
+							{row.original.contactName || t('list.unknownContact')}
+						</Text>
+						{options?.combineContactDetails && (
+							<Text size='xs' className={styles.contactMeta} lineClamp={1}>
+								{row.original.contactPhoneNumber ||
+									t('overview.fallbacks.noPhone')}
+							</Text>
+						)}
+					</div>
 				),
 			},
 			{
@@ -234,7 +251,7 @@ export const useConversationsColumns = (
 				accessorFn: (row) => row.contactPhoneNumber ?? '',
 				enableSorting: false,
 				cell: ({ row }) => (
-					<Text size='xs' fw={600}>
+					<Text size='xs' fw={500} className={styles.phoneCell}>
 						{row.original.contactPhoneNumber || '—'}
 					</Text>
 				),
@@ -257,7 +274,9 @@ export const useConversationsColumns = (
 						<Badge
 							color={color}
 							size='xs'
-							className={color === 'gray' ? styles.statusUnknown : undefined}
+							variant='light'
+							radius='xl'
+							className={styles.outcomeBadge}
 						>
 							{isAbandoned
 								? `${row.original?.dispositions?.dispositionName ?? t('overview.fallbacks.na')} • ${t('disposition.abandoned')}`
@@ -273,7 +292,14 @@ export const useConversationsColumns = (
 				cell: ({ getValue }) => {
 					const { color, label } = resolveSimpleStatus(getValue<string>());
 					return (
-						<Badge color={color} size='sm' radius='sm' variant='light'>
+						<Badge
+							color={color}
+							size='sm'
+							radius='xl'
+							variant='light'
+							leftSection={<span className={styles.statusDot} />}
+							className={styles.statusBadge}
+						>
 							{label}
 						</Badge>
 					);
@@ -310,7 +336,14 @@ export const useConversationsColumns = (
 								timezone: userTimezone,
 							})}
 						>
-							<Text size='xs'>{relative}</Text>
+							<div className={styles.dateCell}>
+								<Text size='xs' fw={600} className={styles.dateRelative}>
+									{relative}
+								</Text>
+								<Text size='xs' c='dimmed' className={styles.dateAbsolute}>
+									{zoned.format('MMM D · HH:mm')}
+								</Text>
+							</div>
 						</Tooltip>
 					);
 				},
@@ -335,7 +368,11 @@ export const useConversationsColumns = (
 					);
 
 					if (!endDate) {
-						return <Text size='xs'>{duration}</Text>;
+						return (
+							<Text size='xs' className={styles.duration}>
+								{duration}
+							</Text>
+						);
 					}
 
 					const zonedEnd = formatZonedDate(endDate);
@@ -348,7 +385,9 @@ export const useConversationsColumns = (
 
 					return (
 						<Tooltip label={endTooltip}>
-							<Text size='xs'>{duration}</Text>
+							<Text size='xs' className={styles.duration}>
+								{duration}
+							</Text>
 						</Tooltip>
 					);
 				},
@@ -394,14 +433,19 @@ export const useConversationsColumns = (
 			});
 		}
 
-		if (!hiddenColumns || hiddenColumns.length === 0) return allColumns;
+		const visibleColumns = options?.combineContactDetails
+			? allColumns.filter((column) => column.id !== 'phoneNumber')
+			: allColumns;
 
-		return allColumns.filter((col) => {
+		if (!hiddenColumns || hiddenColumns.length === 0) return visibleColumns;
+		const hiddenColumnIds = new Set(hiddenColumns);
+
+		return visibleColumns.filter((col) => {
 			const colId =
 				(col as { id?: string }).id ??
 				(col as { accessorKey?: string }).accessorKey ??
 				'';
-			return !hiddenColumns.includes(colId);
+			return !hiddenColumnIds.has(colId);
 		});
 	}, [userTimezone, t, hiddenColumns, options]);
 };

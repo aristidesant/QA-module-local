@@ -10,11 +10,16 @@
 	"list": {
 		"title": "Conversaciones",
 		"description": "Últimas conversaciones para esta campaña o grupo de contactos",
+		"pageDescription": "Revisa la actividad, los resultados y el estado de procesamiento.",
 		"refresh": "Actualizar conversaciones",
 		"export": "Exportar conversaciones",
 		"searchPlaceholder": "Buscar conversaciones...",
 		"loading": "Cargando conversaciones...",
 		"itemLabel": "conversaciones",
+		"resultCount_one": "{{count}} conversación",
+		"resultCount_other": "{{count}} conversaciones",
+		"unknownContact": "Contacto desconocido",
+		"openConversation": "Abrir conversación con {{contact}}",
 		"error": "No se pudieron cargar las conversaciones. Por favor, inténtalo de nuevo.",
 		"accessDenied": "No tienes permiso para ver las conversaciones.",
 		"empty": {
@@ -23,6 +28,7 @@
 		},
 		"columns": {
 			"identifier": "ID",
+			"contact": "Contacto",
 			"contactName": "Nombre del contacto",
 			"phoneNumber": "Número de teléfono",
 			"outcome": "Resultado",
@@ -32,7 +38,8 @@
 			"copyId": "Copiar ID",
 			"copiedId": "Copiado",
 			"endedAt": "finalizó el {{date}} ({{timezone}})",
-			"ended": "finalizó"
+			"ended": "finalizó",
+			"actions": "Acciones"
 		},
 		"status": {
 			"done": "Completado",
@@ -44,11 +51,13 @@
 	},
 	"filters": {
 		"title": "Filtros",
+		"active": "Filtros activos",
+		"remove": "Quitar filtro {{label}}",
 		"identifier": "ID de conversación",
 		"identifierPlaceholder": "Buscar por ID de conversación...",
 		"contactName": "Nombre del contacto",
 		"contactNamePlaceholder": "Filtrar por nombre de contacto...",
-		"advanced": "Avanzado",
+		"advanced": "Más filtros",
 		"phoneNumber": "Número de teléfono",
 		"phoneNumberPlaceholder": "Filtrar por número de teléfono",
 		"outcome": "Resultado",

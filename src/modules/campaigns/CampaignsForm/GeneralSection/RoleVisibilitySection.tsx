@@ -1,6 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import SectionCard from '~/components/SectionCard';
 import CampaignRoleVisibilitySelector from '../../components/CampaignRoleVisibilitySelector';
+import styles from './GeneralSection.module.css';
 
 interface RoleVisibilitySectionProps {
 	value: number[];
@@ -16,21 +16,22 @@ const RoleVisibilitySection: React.FC<RoleVisibilitySectionProps> = ({
 	const { t } = useTranslation('campaign.form.general');
 
 	return (
-		<SectionCard
-			title={t('general.roleVisibility.title')}
-			description={t('general.roleVisibility.description')}
-			contentSpacing='sm'
-		>
+		<section className={styles.subsection}>
+			<div className={styles.subsectionHeader}>
+				<h6 className={styles.subsectionTitle}>
+					{t('general.roleVisibility.title')}
+				</h6>
+			</div>
 			<CampaignRoleVisibilitySelector
 				value={value}
 				onChange={onChange}
 				label={t('general.roleVisibility.label')}
-				description={t('general.roleVisibility.fieldDescription')}
+				description=''
 				placeholder={t('general.roleVisibility.placeholder')}
 				hint={t('general.roleVisibility.hint')}
 				disabled={disabled}
 			/>
-		</SectionCard>
+		</section>
 	);
 };
 

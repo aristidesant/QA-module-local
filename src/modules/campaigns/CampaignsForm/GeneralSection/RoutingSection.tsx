@@ -1,6 +1,4 @@
-import { IconPhone } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import SectionCard from '~/components/SectionCard';
 import { useCampaignFormContext } from '../../campaignFormFunctions';
 import CampaignObjectiveField from './CampaignObjectiveField';
 import { normalizeCampaignType } from './GeneralSection.helpers';
@@ -13,16 +11,11 @@ const RoutingSection = () => {
 	const isOutbound = normalizeCampaignType(form.values.type) !== 'INBOUND';
 
 	return (
-		<SectionCard
-			title={t('general.routing.title')}
-			description={
-				isOutbound
-					? t('general.routing.description')
-					: t('general.routing.descriptionInbound')
-			}
-			icon={IconPhone}
-			contentSpacing='sm'
-		>
+		<section className={styles.subsection}>
+			<div className={styles.subsectionHeader}>
+				<h6 className={styles.subsectionTitle}>{t('general.routing.title')}</h6>
+			</div>
+
 			<div className={styles.routingStack}>
 				<div className={styles.routingItem}>
 					<PhoneNumberAssignment />
@@ -34,7 +27,7 @@ const RoutingSection = () => {
 					</div>
 				)}
 			</div>
-		</SectionCard>
+		</section>
 	);
 };
 

@@ -1,5 +1,17 @@
 {
 	"general": {
+		"identity": {
+			"title": "Identidad de campaña"
+		},
+		"contactAndRouting": {
+			"title": "Contacto y enrutamiento"
+		},
+		"operationAndAccess": {
+			"title": "Operación y acceso"
+		},
+		"behavior": {
+			"title": "Comportamiento de campaña"
+		},
 		"title": "Información General",
 		"description": "Configuración básica de la campaña.",
 		"campaignName": "Nombre de la Campaña",
@@ -73,11 +85,11 @@
 		"noiseCancellationTitle": "Cancelación de ruido",
 		"noiseCancellationSectionDesc": "Controla la limpieza de audio de la llamada a nivel de campaña.",
 		"noiseCancellationLabel": "Cancelación de ruido",
-		"noiseCancellationDesc": "Cuando está activado, aplica supresión de ruido y ajuste de detección de actividad de voz en las llamadas salientes.",
+		"noiseCancellationDesc": "Reduce el ruido de fondo en llamadas salientes.",
 		"showExternalTitle": "Visibilidad en mobile",
 		"showExternalSectionDesc": "Controla si los dashboards de esta campaña se pueden ver en la app móvil.",
 		"showExternalLabel": "Visible en app móvil",
-		"showExternalDesc": "Cuando está activado, las métricas de esta campaña se incluyen en los dashboards de la app móvil.",
+		"showExternalDesc": "Muestra los dashboards de la campaña en la app móvil.",
 		"createObjectiveTitle": "Crear Nuevo Objetivo",
 		"settingsTitle": "Configuracion de campana",
 		"settingsDescription": "Define el idioma y los limites de oleadas",
@@ -87,7 +99,7 @@
 			"label": "Visible para roles",
 			"fieldDescription": "Selecciona todos los roles que deben tener visibilidad de la campana.",
 			"placeholder": "Selecciona roles",
-			"hint": "Si dejas esto vacio, la campana se guarda sin visibilidad asignada a roles.",
+			"hint": "Sin roles seleccionados, la campaña no tendrá visibilidad por roles.",
 			"noRolesFound": "No se encontraron roles activos",
 			"loadErrorTitle": "No se pudieron cargar los roles",
 			"loadErrorDescription": "Reintenta antes de guardar cambios de visibilidad.",

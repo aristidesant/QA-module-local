@@ -27,6 +27,7 @@ import {
 	IconTrash,
 	IconUsers,
 	IconCircleCheck,
+	IconFlask,
 } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { notifications } from '@mantine/notifications';
@@ -230,6 +231,14 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 				icon: <IconListDetails size={14} />,
 			},
 			{
+				label: t('form.contacts.details.meta.testList'),
+				value: contactGroup.isTest
+					? t('form.contacts.details.meta.testYes')
+					: t('form.contacts.details.meta.testNo'),
+				accent: contactGroup.isTest ? 'yellow' : 'gray',
+				icon: <IconFlask size={14} />,
+			},
+			{
 				label: t('form.contacts.details.meta.expirationDate'),
 				value: formatDate(t, i18n.language, contactGroup.expirationDate),
 				accent: 'indigo',
@@ -296,6 +305,7 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 		[
 			contactGroup.expirationDate,
 			contactGroup.isActive,
+			contactGroup.isTest,
 			contactGroup.lastWaveCompletedAt,
 			contactGroup.lastWaveStartedAt,
 			contactGroup.nextWaveScheduledAt,
@@ -710,6 +720,16 @@ export const ContactListDetails: React.FC<ContactListDetailsProps> = ({
 
 	return (
 		<Stack gap='md'>
+			{contactGroup.isTest && (
+				<Alert
+					variant='light'
+					color='yellow'
+					icon={<IconFlask size={18} />}
+					title={t('form.contacts.details.testBanner.title')}
+				>
+					{t('form.contacts.details.testBanner.message')}
+				</Alert>
+			)}
 			{canRenderActionsCard && (
 				<RightSectionCard
 					title={t('form.contacts.details.actions.title')}
