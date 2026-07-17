@@ -6,6 +6,8 @@ import { ConversationDetailPage } from '~/modules/conversations/ConversationDeta
 import { usePagination } from '~/hooks/usePagination';
 import type { ConversationFiltersType } from '~/modules/conversations/ConversationsList/ConversationFilters';
 import type { SortingState } from '@tanstack/react-table';
+import { IconMessages } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
 
 type ConversationLocationState = {
 	selectedConversationId?: number;
@@ -14,6 +16,7 @@ type ConversationLocationState = {
 const DEFAULT_SORTING: SortingState = [{ id: 'createdAt', desc: true }];
 
 const ConversationsPage = () => {
+	const { t } = useTranslation('conversations');
 	const location = useLocation();
 	const routeState = useMemo(
 		() => (location.state as ConversationLocationState | null) ?? null,
@@ -58,8 +61,13 @@ const ConversationsPage = () => {
 	}
 
 	return (
-		<ContentContainer>
+		<ContentContainer
+			title={t('list.title')}
+			description={t('list.pageDescription')}
+			titleIcon={<IconMessages size={20} />}
+		>
 			<ConversationsList
+				variant='page'
 				onRowClick={handleSelectConversation}
 				onListChange={setConversationIds}
 				pagination={pagination}

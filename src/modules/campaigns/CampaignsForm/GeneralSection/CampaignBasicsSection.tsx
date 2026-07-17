@@ -11,8 +11,7 @@ const CampaignBasicsSection = () => {
 
 	return (
 		<SectionCard
-			title={t('general.title')}
-			description={t('general.description')}
+			title={t('general.identity.title')}
 			icon={IconRoute}
 			contentSpacing='sm'
 		>

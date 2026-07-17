@@ -8,6 +8,7 @@ import ContactListControl from './ContactListControl';
 import { useTranslation } from 'react-i18next';
 import { getTranslatedQueueStatus } from './queueStatusConfig';
 import { formatWaveDateTime } from '~/utils/waveUtils';
+import { IconFlask } from '@tabler/icons-react';
 import styles from './ContactListView.module.css';
 
 interface UseContactListColumnsParams {
@@ -45,11 +46,24 @@ const useContactListColumns = ({
 					const truncated =
 						name.length > maxLength ? name.slice(0, maxLength) + '...' : name;
 					return (
-						<Tooltip label={name} disabled={name.length <= maxLength}>
-							<Text fz='sm' fw={500} className={styles.nameCell}>
-								{truncated}
-							</Text>
-						</Tooltip>
+						<div className={styles.nameWithIndicator}>
+							<Tooltip label={name} disabled={name.length <= maxLength}>
+								<Text fz='sm' fw={500} className={styles.nameCell}>
+									{truncated}
+								</Text>
+							</Tooltip>
+							{row.original.isTest && (
+								<Badge
+									variant='light'
+									color='yellow'
+									size='xs'
+									leftSection={<IconFlask size={12} />}
+									className={styles.testBadge}
+								>
+									{t('form.contacts.list.testIndicator')}
+								</Badge>
+							)}
+						</div>
 					);
 				},
 			},
