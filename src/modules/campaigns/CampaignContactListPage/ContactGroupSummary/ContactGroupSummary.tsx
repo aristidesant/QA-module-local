@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { Badge, Divider, Stack, Text, SimpleGrid } from '@mantine/core';
+import { Alert, Badge, Divider, Stack, Text, SimpleGrid } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import { IconInfoCircle, IconChartBar } from '@tabler/icons-react';
+import { IconInfoCircle, IconChartBar, IconFlask } from '@tabler/icons-react';
 import RightSectionCard from '~/components/RightSectionCard';
 import styles from './ContactGroupSummary.module.css';
 import type ContactGroup from '~/models/ContactGroup';
@@ -59,6 +59,16 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 
 	return (
 		<Stack gap='md' className={styles.root}>
+			{contactGroup.isTest && (
+				<Alert
+					variant='light'
+					color='yellow'
+					icon={<IconFlask size={18} />}
+					title={t('summary.testBanner.title')}
+				>
+					{t('summary.testBanner.message')}
+				</Alert>
+			)}
 			<RightSectionCard
 				title={t('summary.details')}
 				description={t('summary.metadata')}
@@ -83,6 +93,16 @@ const ContactGroupSummary = ({ contactGroup }: ContactGroupSummaryProps) => {
 						>
 							{statusConfig.label}
 						</Badge>
+						{contactGroup.isTest && (
+							<Badge
+								variant='light'
+								color='yellow'
+								size='sm'
+								className={styles.badge}
+							>
+								{t('summary.testList')}
+							</Badge>
+						)}
 					</div>
 				}
 			>

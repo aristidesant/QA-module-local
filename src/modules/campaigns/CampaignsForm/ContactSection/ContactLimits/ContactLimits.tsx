@@ -63,6 +63,9 @@ export const ContactLimits = ({
 	const [selectedVoiceIds, setSelectedVoiceIds] = useState<string[]>(
 		contactGroup.voiceIds ?? []
 	);
+	const [isTest, setIsTest] = useState<boolean>(
+		contactGroup.id ? (contactGroup.isTest ?? false) : false
+	);
 	const defaultWaves = useMemo(
 		() =>
 			contactGroup.maxWaves ??
@@ -123,6 +126,7 @@ export const ContactLimits = ({
 		setSelectedSchemaId(0);
 		setHumanEquivalent(contactGroup.humanEquivalent || 1);
 		setSelectedVoiceIds(contactGroup.voiceIds ?? []);
+		setIsTest(contactGroup.id ? (contactGroup.isTest ?? false) : false);
 		setMaxWaves(defaultWaves);
 		setWaveExecutionDelaySeconds(defaultWaveExecutionDelaySeconds);
 		setShowMappingError(false);
@@ -235,6 +239,7 @@ export const ContactLimits = ({
 						: {}),
 					maxWaves,
 					waveExecutionDelaySeconds,
+					isTest,
 				});
 
 				notifications.show({
@@ -252,6 +257,7 @@ export const ContactLimits = ({
 						voiceIds: selectedVoiceIds,
 						maxWaves,
 						waveExecutionDelaySeconds,
+						isTest,
 					},
 				});
 
@@ -280,6 +286,8 @@ export const ContactLimits = ({
 			setName={setName}
 			selectedVoiceIds={selectedVoiceIds}
 			setSelectedVoiceIds={setSelectedVoiceIds}
+			isTest={isTest}
+			setIsTest={setIsTest}
 			campaignVoiceIds={campaignVoiceIds}
 			maxWaves={maxWaves}
 			setMaxWaves={setMaxWaves}

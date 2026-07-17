@@ -70,6 +70,11 @@
 		"metadata": "Contact list metadata",
 		"active": "Active",
 		"inactive": "Inactive",
+		"testList": "Test",
+		"testBanner": {
+			"title": "Test list",
+			"message": "Results from this list are not included in KPIs or reports."
+		},
 		"noDescription": "No description provided.",
 		"campaign": "Campaign",
 		"schedule": "Schedule",
