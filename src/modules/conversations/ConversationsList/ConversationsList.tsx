@@ -1,6 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { ActionIcon, Center, Group, Text, Tooltip } from '@mantine/core';
+import {
+	ActionIcon,
+	Button,
+	Center,
+	Group,
+	Text,
+	Tooltip,
+} from '@mantine/core';
 import SectionCard from '~/components/SectionCard';
 import { modals } from '@mantine/modals';
 import { IconMessages as IconMessagesTabler } from '@tabler/icons-react';
@@ -35,8 +42,10 @@ import {
 	type ConversationActionKey,
 	getConversationActionDefinition,
 } from '../ConversationDetails/ConversationActions/ConversationActions.helpers';
+import ConversationListItem from './components/ConversationListItem';
 
 type ConversationsListProps = {
+	variant?: 'embedded' | 'page';
 	campaignId?: number | string;
 	contactGroupId?: number | string;
 	className?: string;
@@ -63,6 +72,7 @@ const areFiltersEqual = (
 	current.status === next.status;
 
 const ConversationsList: React.FC<ConversationsListProps> = ({
+	variant = 'embedded',
 	campaignId,
 	contactGroupId,
 	className,
@@ -158,15 +168,11 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 		}
 	}, [data, onListChange]);
 
-	const totalPages = useMemo(() => {
-		return pagination.calculateTotalPages(totalItems);
-	}, [pagination, totalItems]);
+	const totalPages = pagination.calculateTotalPages(totalItems);
 
 	const isTableLoading = isLoading || isFetching;
 
-	const userTimezone = useMemo(() => {
-		return 'America/Puerto_Rico';
-	}, []);
+	const userTimezone = 'America/Puerto_Rico';
 
 	const handleRowClick = useCallback(
 		(conversation: { id: number }) => {
@@ -250,49 +256,57 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 		canExecuteConversations,
 		onActionClick: handleActionClick,
 		isActionLoading,
+		combineContactDetails: variant === 'page',
 	});
+	const isPageVariant = variant === 'page';
+
+	const toolbarActions = (
+		<Group className={styles.actions} wrap='nowrap'>
+			<Tooltip label={t('list.refresh')} withArrow>
+				<ActionIcon
+					variant='default'
+					size='lg'
+					onClick={() => refetch()}
+					aria-label={t('list.refresh')}
+					loading={isFetching}
+					disabled={isFetching}
+					className={styles.refreshButton}
+				>
+					<IconRefresh size={17} />
+				</ActionIcon>
+			</Tooltip>
+			{canExportConversations && (
+				<Button
+					variant='default'
+					size='sm'
+					leftSection={<IconFileExcel size={16} />}
+					onClick={() => setExportModalOpened(true)}
+					className={styles.exportButton}
+				>
+					{t('list.export')}
+				</Button>
+			)}
+		</Group>
+	);
 
 	if (!canViewConversations) {
 		return <AccessDenied description={t('list.error')} />;
 	}
 
 	return (
-		<div className={`${styles.root} ${className ?? ''}`}>
+		<div
+			className={`${styles.root} ${isPageVariant ? styles.pageRoot : ''} ${className ?? ''}`}
+		>
 			<SectionCard
 				id='conversations-list'
-				title={t('list.title')}
-				description={t('list.description')}
-				icon={IconMessagesTabler}
+				title={isPageVariant ? undefined : t('list.title')}
+				description={isPageVariant ? undefined : t('list.description')}
+				icon={isPageVariant ? undefined : IconMessagesTabler}
 				contentSpacing='sm'
-				padding='sm'
-				headerActions={
-					<Group className={styles.actions}>
-						<Tooltip label={t('list.refresh')} withArrow>
-							<ActionIcon
-								variant='default'
-								size='sm'
-								onClick={() => refetch()}
-								aria-label={t('list.refresh')}
-								loading={isFetching}
-								disabled={isFetching}
-							>
-								<IconRefresh size={16} />
-							</ActionIcon>
-						</Tooltip>
-						{canExportConversations && (
-							<Tooltip label={t('list.export')} withArrow>
-								<ActionIcon
-									variant='default'
-									size='sm'
-									onClick={() => setExportModalOpened(true)}
-									aria-label={t('list.export')}
-								>
-									<IconFileExcel size={16} />
-								</ActionIcon>
-							</Tooltip>
-						)}
-					</Group>
-				}
+				padding={isPageVariant ? 0 : 'sm'}
+				className={isPageVariant ? styles.pageCard : undefined}
+				contentClassName={isPageVariant ? styles.pageCardContent : undefined}
+				headerActions={isPageVariant ? undefined : toolbarActions}
 				footer={
 					<PaginationControls
 						currentPage={pagination.currentPage}
@@ -309,6 +323,9 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 				<ConversationFilters
 					filters={filters}
 					onFiltersChange={handleFiltersChange}
+					resultCount={totalItems}
+					isLoading={isTableLoading}
+					actions={isPageVariant ? toolbarActions : undefined}
 				/>
 
 				{isError ? (
@@ -326,19 +343,39 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 						/>
 					</div>
 				) : (
-					<div className={styles.tableWrapper}>
-						<BaseTable
-							data={conversations}
-							columns={columns}
-							isLoading={isTableLoading}
-							density='compact'
-							filterMode='server'
-							onRowClick={handleRowClick}
-							initialSort={sorting}
-							onSortingChange={handleSortingChange}
-							getRowClassName={() => styles.tableRow}
-						/>
-					</div>
+					<>
+						<div className={styles.tableWrapper}>
+							<BaseTable
+								data={conversations}
+								columns={columns}
+								isLoading={isTableLoading}
+								density='compact'
+								filterMode='server'
+								onRowClick={handleRowClick}
+								initialSort={sorting}
+								onSortingChange={handleSortingChange}
+								getRowClassName={() => styles.tableRow}
+								className={
+									isPageVariant ? styles.conversationsTable : undefined
+								}
+							/>
+						</div>
+						{isPageVariant && (
+							<div className={styles.mobileList}>
+								{conversations.map((conversation) => (
+									<ConversationListItem
+										key={conversation.id}
+										conversation={conversation}
+										userTimezone={userTimezone}
+										onClick={() => handleRowClick(conversation)}
+										canExecute={canExecuteConversations}
+										onActionClick={handleActionClick}
+										isActionLoading={isActionLoading(conversation)}
+									/>
+								))}
+							</div>
+						)}
+					</>
 				)}
 			</SectionCard>
 

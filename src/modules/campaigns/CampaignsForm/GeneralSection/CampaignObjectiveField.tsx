@@ -84,9 +84,6 @@ const CampaignObjectiveField = () => {
 					<Text className={styles.assignmentTitle}>
 						{t('general.campaignObjective')}
 					</Text>
-					<Text size='xs' c='dimmed' className={styles.assignmentHint}>
-						{t('general.campaignObjectiveDesc')}
-					</Text>
 				</div>
 
 				<div className={styles.objectiveField}>

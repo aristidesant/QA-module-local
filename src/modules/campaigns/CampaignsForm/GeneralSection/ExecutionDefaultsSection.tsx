@@ -1,7 +1,5 @@
 import { Badge, NumberInput, Select, Text } from '@mantine/core';
-import { IconSettings } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import SectionCard from '~/components/SectionCard';
 import { useCampaignFormContext } from '../../campaignFormFunctions';
 import { normalizeCampaignType } from './GeneralSection.helpers';
 import styles from './GeneralSection.module.css';
@@ -42,16 +40,13 @@ const ExecutionDefaultsSection = () => {
 	const delayValue = snapDelay(form.values.defaultWaveExecutionDelaySeconds);
 
 	return (
-		<SectionCard
-			title={t('general.execution.title')}
-			description={
-				isOutbound
-					? t('general.execution.description')
-					: t('general.execution.descriptionInbound')
-			}
-			icon={IconSettings}
-			contentSpacing='sm'
-		>
+		<section className={styles.subsection}>
+			<div className={styles.subsectionHeader}>
+				<h6 className={styles.subsectionTitle}>
+					{t('general.execution.title')}
+				</h6>
+			</div>
+
 			<div className={styles.executionStack}>
 				<div className={styles.executionSection}>
 					<div className={styles.executionHeader}>
@@ -106,7 +101,7 @@ const ExecutionDefaultsSection = () => {
 					)}
 				</div>
 			</div>
-		</SectionCard>
+		</section>
 	);
 };
 
