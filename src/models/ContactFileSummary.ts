@@ -33,6 +33,7 @@ export interface ProcessContactGroupFileRequest {
 	maxWaves: number;
 	waveExecutionDelaySeconds: number;
 	voiceIds?: string[];
+	isTest?: boolean;
 }
 
 export interface ProcessContactGroupFileResponse {

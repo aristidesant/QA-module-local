@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
+	Alert,
 	Badge,
 	Breadcrumbs,
 	Anchor,
@@ -15,6 +16,7 @@ import {
 import {
 	IconAlertCircle,
 	IconArrowLeft,
+	IconFlask,
 	IconInfoCircle,
 	IconListNumbers,
 	IconMessage,
@@ -245,6 +247,17 @@ const CampaignContactListPage = () => {
 				) : null
 			}
 		>
+			{contactGroupQuery.data.isTest && (
+				<Alert
+					variant='light'
+					color='yellow'
+					icon={<IconFlask size={18} />}
+					title={t('summary.testBanner.title')}
+					mb='md'
+				>
+					{t('summary.testBanner.message')}
+				</Alert>
+			)}
 			<Tabs defaultValue='overview' keepMounted={false}>
 				<Tabs.List>
 					<Tabs.Tab value='overview' leftSection={<IconInfoCircle size={16} />}>

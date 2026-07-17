@@ -8,6 +8,32 @@
 	text-decoration: none;
 }
 
+.nameWithIndicator {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	min-width: 0;
+}
+
+.testBadge {
+	flex: 0 0 auto;
+}
+
+.testRow.testRow {
+	background-color: light-dark(
+		var(--mantine-color-yellow-0),
+		var(--mantine-color-dark-7)
+	);
+}
+
+.testRow.testRow:hover,
+.testRow.testRow:focus-visible {
+	background-color: light-dark(
+		var(--mantine-color-yellow-1),
+		var(--mantine-color-dark-6)
+	);
+}
+
 .nameCell:hover {
 	color: var(--mantine-color-blue-8);
 	text-decoration: underline;
