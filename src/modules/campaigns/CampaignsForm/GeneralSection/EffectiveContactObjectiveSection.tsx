@@ -1,7 +1,6 @@
 import { Text, Textarea, ThemeIcon } from '@mantine/core';
-import { IconBulb, IconTargetArrow } from '@tabler/icons-react';
+import { IconBulb } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import SectionCard from '~/components/SectionCard';
 import { useCampaignFormContext } from '../../campaignFormFunctions';
 import styles from './GeneralSection.module.css';
 
@@ -10,13 +9,13 @@ const EffectiveContactObjectiveSection = () => {
 	const form = useCampaignFormContext();
 
 	return (
-		<SectionCard
-			title={t('general.effectiveContactObjective.title')}
-			description={t('general.effectiveContactObjective.description')}
-			icon={IconTargetArrow}
-			headerAccent='green'
-			contentSpacing='sm'
-		>
+		<section className={styles.subsection}>
+			<div className={styles.subsectionHeader}>
+				<h6 className={styles.subsectionTitle}>
+					{t('general.effectiveContactObjective.title')}
+				</h6>
+			</div>
+
 			<div className={styles.classificationGuidance}>
 				<ThemeIcon
 					variant='light'
@@ -38,7 +37,6 @@ const EffectiveContactObjectiveSection = () => {
 
 			<Textarea
 				label={t('general.effectiveContactObjective.label')}
-				description={t('general.effectiveContactObjective.fieldDescription')}
 				placeholder={t('general.effectiveContactObjective.placeholder')}
 				autosize
 				minRows={5}
@@ -46,7 +44,7 @@ const EffectiveContactObjectiveSection = () => {
 				size='sm'
 				{...form.getInputProps('effectiveContactObjective')}
 			/>
-		</SectionCard>
+		</section>
 	);
 };
 

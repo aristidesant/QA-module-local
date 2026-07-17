@@ -10,11 +10,16 @@
 	"list": {
 		"title": "Conversations",
 		"description": "Latest conversations for this campaign or contact group",
+		"pageDescription": "Review call activity, outcomes, and processing status.",
 		"refresh": "Refresh conversations",
 		"export": "Export conversations",
 		"searchPlaceholder": "Search conversations...",
 		"loading": "Loading conversations...",
 		"itemLabel": "conversations",
+		"resultCount_one": "{{count}} conversation",
+		"resultCount_other": "{{count}} conversations",
+		"unknownContact": "Unknown contact",
+		"openConversation": "Open conversation with {{contact}}",
 		"error": "Unable to load conversations. Please try again.",
 		"accessDenied": "You do not have permission to view conversations.",
 		"empty": {
@@ -23,6 +28,7 @@
 		},
 		"columns": {
 			"identifier": "ID",
+			"contact": "Contact",
 			"contactName": "Contact Name",
 			"phoneNumber": "Phone Number",
 			"outcome": "Outcome",
@@ -32,7 +38,8 @@
 			"copyId": "Copy ID",
 			"copiedId": "Copied",
 			"endedAt": "ended at {{date}} ({{timezone}})",
-			"ended": "ended"
+			"ended": "ended",
+			"actions": "Actions"
 		},
 		"status": {
 			"done": "Done",
@@ -44,11 +51,13 @@
 	},
 	"filters": {
 		"title": "Filters",
+		"active": "Active filters",
+		"remove": "Remove {{label}} filter",
 		"identifier": "Conversation ID",
 		"identifierPlaceholder": "Search by conversation ID...",
 		"contactName": "Contact Name",
 		"contactNamePlaceholder": "Filter by contact name...",
-		"advanced": "Advanced",
+		"advanced": "More filters",
 		"phoneNumber": "Phone Number",
 		"phoneNumberPlaceholder": "Filter by phone number",
 		"outcome": "Outcome",
