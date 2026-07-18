@@ -20,11 +20,15 @@ import {
 	IconSun,
 	IconMoon,
 	IconDeviceDesktop,
+	IconApps,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
+import { useIsQaAdmin } from '~/hooks/useIsQaAdmin';
+import { useCurrentApp } from '~/hooks/useCurrentApp';
+import { useAppTransitionStore } from '~/stores/appTransitionStore';
 import { useColorSchemeStore } from '~/stores/colorSchemeStore';
 import { getClientDisplayLabel } from '~/utils/clientDisplay';
 import logout from '~/utils/logout';
@@ -48,6 +52,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 	const { t } = useTranslation('common');
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
+	const isQaAdmin = useIsQaAdmin();
+	const currentApp = useCurrentApp();
 	const preference = useColorSchemeStore((s) => s.preference);
 	const setPreference = useColorSchemeStore((s) => s.setPreference);
 	const navigate = useNavigate();
@@ -91,6 +97,16 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 	const handleLogout = () => {
 		closeMenu();
 		logout();
+	};
+
+	// Instant, client-side jump between the QA app and Campaign management —
+	// same token/client, so no backend call. Only rendered for QA-admins. The
+	// transition overlay gives the switch a deliberate, screen-wide moment.
+	const handleAppSwitch = () => {
+		closeMenu();
+		const target = currentApp === 'qa' ? 'ucxm' : 'qa';
+		useAppTransitionStore.getState().start(target);
+		navigate(target === 'qa' ? '/qa/dashboard' : '/');
 	};
 
 	const menuDropdown = (
@@ -137,6 +153,19 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 			>
 				{t('sidebar.account.switchClient')}
 			</Menu.Item>
+			{isQaAdmin && (
+				<Menu.Item
+					leftSection={<IconApps size={16} />}
+					onClick={handleAppSwitch}
+					className={styles.menuItem}
+				>
+					{t(
+						currentApp === 'qa'
+							? 'appSwitcher.switchToCampaign'
+							: 'appSwitcher.switchToQa'
+					)}
+				</Menu.Item>
+			)}
 			<Menu.Label className={styles.menuLabel}>
 				{t('sidebar.account.language')}
 			</Menu.Label>

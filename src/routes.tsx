@@ -500,7 +500,7 @@ const router = createBrowserRouter([
 							{
 								path: 'qa',
 								id: 'qa',
-								element: <ModuleGuard superAdminOnly />,
+								element: <ModuleGuard qaAdminOnly />,
 								children: [
 									{
 										index: true,
