@@ -13,6 +13,7 @@ import '~/utils/axiosInterceptor';
 import { applySiteMetadata } from '~/utils/siteMetadata';
 import { AppColorSchemeProvider } from '~/components/AppColorSchemeProvider';
 import AppErrorBoundary from '~/components/GenericAppError/AppErrorBoundary';
+import AppTransitionOverlay from '~/components/AppTransitionOverlay';
 import { queryClient } from '~/queries/queryClient';
 
 import App from './App';
@@ -32,6 +33,7 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
 						</AppErrorBoundary>
 					</Suspense>
 					<Notifications position='top-right' autoClose={4000} />
+					<AppTransitionOverlay />
 				</ModalsProvider>
 			</AppColorSchemeProvider>
 		</QueryClientProvider>

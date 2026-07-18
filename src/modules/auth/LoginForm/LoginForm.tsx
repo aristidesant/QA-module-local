@@ -32,6 +32,10 @@ import { APP_VERSION } from '~/version';
 import OTPVerificationModal from './OTPVerificationModal';
 import ClientSelectionModal from './ClientSelectionModal';
 import ForgotPasswordModal from './ForgotPasswordModal';
+import AppChooserModal from '~/components/AppChooserModal';
+import { hasQaAdminRole } from '~/hooks/useIsQaAdmin';
+import type { AppKey } from '~/hooks/useCurrentApp';
+import { useAppTransitionStore } from '~/stores/appTransitionStore';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useColorSchemeStore } from '~/stores/colorSchemeStore';
@@ -67,6 +71,7 @@ export function LoginForm() {
 	const [preAuthToken, setPreAuthToken] = useState<string | null>(null);
 	const [forgotPasswordModalOpened, setForgotPasswordModalOpened] =
 		useState(false);
+	const [appChooserOpened, setAppChooserOpened] = useState(false);
 
 	const isLoading = loginMutation.isPending;
 	const logoutReason = new URLSearchParams(location.search).get('reason');
@@ -109,6 +114,30 @@ export function LoginForm() {
 		}
 	};
 
+	// After any fully-authenticated result, QA_ADMIN users pick which app to
+	// enter; everyone else goes straight to Campaign management.
+	const proceedAfterAuth = () => {
+		const { user, targetClient } = useSessionStore.getState();
+		const activeClientId =
+			targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
+		if (hasQaAdminRole(user, activeClientId)) {
+			setAppChooserOpened(true);
+		} else {
+			navigate('/');
+		}
+	};
+
+	const handleAppChoose = (app: AppKey) => {
+		setAppChooserOpened(false);
+		useAppTransitionStore.getState().start(app);
+		navigate(app === 'qa' ? '/qa/dashboard' : '/');
+	};
+
+	const handleAppChooserClose = () => {
+		setAppChooserOpened(false);
+		navigate('/');
+	};
+
 	const handleSubmit = async (values: FormValues) => {
 		if (isLoading) return;
 		setFormError(null);
@@ -145,7 +174,7 @@ export function LoginForm() {
 					});
 				} else {
 					clearPendingCredentials();
-					navigate('/');
+					proceedAfterAuth();
 				}
 			}
 		} catch (err: unknown) {
@@ -193,7 +222,7 @@ export function LoginForm() {
 	const handleOTPSuccess = () => {
 		setOtpModalOpened(false);
 		setPendingLoginData(null);
-		navigate('/');
+		proceedAfterAuth();
 	};
 	const handleOTPModalClose = () => {
 		setOtpModalOpened(false);
@@ -203,7 +232,7 @@ export function LoginForm() {
 		setClientSelectionModalOpened(false);
 		setAvailableClients([]);
 		setPreAuthToken(null);
-		navigate('/');
+		proceedAfterAuth();
 	};
 	const handleClientSelectionModalClose = () => {
 		setClientSelectionModalOpened(false);
@@ -451,6 +480,11 @@ export function LoginForm() {
 			<ForgotPasswordModal
 				opened={forgotPasswordModalOpened}
 				onClose={() => setForgotPasswordModalOpened(false)}
+			/>
+			<AppChooserModal
+				opened={appChooserOpened}
+				onClose={handleAppChooserClose}
+				onChoose={handleAppChoose}
 			/>
 		</div>
 	);

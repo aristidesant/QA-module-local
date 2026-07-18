@@ -2,6 +2,7 @@ import { Outlet } from 'react-router';
 import { usePermissions } from '~/hooks/usePermissions';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
+import { useIsQaAdmin } from '~/hooks/useIsQaAdmin';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import AccessDenied from '~/components/AccessDenied/AccessDenied';
@@ -15,6 +16,8 @@ interface ModuleGuardProps {
 	children?: ReactNode;
 	masterOnly?: boolean;
 	superAdminOnly?: boolean;
+	/** Gate on QA app access (QA_ADMIN role or super-admin). */
+	qaAdminOnly?: boolean;
 }
 
 const ModuleGuard = ({
@@ -23,16 +26,22 @@ const ModuleGuard = ({
 	children,
 	masterOnly = false,
 	superAdminOnly = false,
+	qaAdminOnly = false,
 }: ModuleGuardProps) => {
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const isMasterClient = useIsMasterClient();
 	const isSuperAdmin = useIsSuperAdmin();
+	const isQaAdmin = useIsQaAdmin();
 
 	if (masterOnly && !isMasterClient) {
 		return <AccessDenied />;
 	}
 
 	if (superAdminOnly && !isSuperAdmin) {
+		return <AccessDenied />;
+	}
+
+	if (qaAdminOnly && !isQaAdmin) {
 		return <AccessDenied />;
 	}
 

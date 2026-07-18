@@ -267,5 +267,26 @@
 		"timer": "{{time}} restante",
 		"confirm": "Actualizar sesión",
 		"cancel": "No"
+	},
+	"appSwitcher": {
+		"chooser": {
+			"title": "Elige tu espacio de trabajo",
+			"subtitle": "Tienes acceso a más de una aplicación. Elige a dónde quieres ir.",
+			"ucxm": {
+				"label": "Gestión de campañas",
+				"description": "Campañas, agentes, conversaciones y analíticas."
+			},
+			"qa": {
+				"label": "QA",
+				"description": "Control de calidad: evaluaciones, formularios y disputas."
+			}
+		},
+		"switchToQa": "Cambiar a QA",
+		"switchToCampaign": "Cambiar a Gestión de campañas",
+		"transition": {
+			"kicker": "Unified CXM",
+			"ucxm": "Cargando Gestión de campañas…",
+			"qa": "Cargando Control de calidad…"
+		}
 	}
 }
