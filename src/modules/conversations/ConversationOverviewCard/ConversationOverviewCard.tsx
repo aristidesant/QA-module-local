@@ -1,11 +1,4 @@
-import {
-	Avatar,
-	Badge,
-	CopyButton,
-	Divider,
-	Text,
-	Tooltip,
-} from '@mantine/core';
+import { Avatar, Badge, CopyButton, Text, Tooltip } from '@mantine/core';
 import {
 	IconCalendar,
 	IconCheck,
@@ -24,7 +17,6 @@ import {
 	useCallDispositionWithAi,
 } from '~/queries/callDispositionQueries';
 import ConversationDispositionContent, {
-	getDispositionStatusPresentation,
 	normalizeDispositionStatus,
 } from '../ConversationDisposition/ConversationDispositionContent';
 import type { CallDispositionModel } from '~/models/CallDispositionModel';
@@ -121,8 +113,6 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 	const status = normalizeDispositionStatus(
 		disposition?.callStatus || disposition?.dispositionName
 	);
-	const statusView = getDispositionStatusPresentation(status, t);
-
 	const updatedAt = disposition?.updatedAt || disposition?.createdAt;
 	const timestampLabel =
 		updatedAt && !isLoading && !isError
@@ -146,10 +136,11 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 			icon={IconUser}
 			padding='sm'
 			contentSpacing='sm'
+			className={classes.overviewCard}
 		>
-			<div className={classes.content}>
-				{hasPhone ? (
-					<>
+			<div className={classes.overviewGrid}>
+				<div className={classes.contextColumn}>
+					{hasPhone ? (
 						<div className={classes.contactBlock}>
 							<Avatar radius='xl' size={38} className={classes.avatar}>
 								<IconUser size={17} />
@@ -203,10 +194,7 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 								)}
 							</CopyButton>
 						</div>
-						<Divider className={classes.contactDivider} />
-					</>
-				) : (
-					<>
+					) : (
 						<div className={classes.previewNotice}>
 							<div className={classes.previewNoticeIcon}>
 								<IconEye size={15} />
@@ -220,27 +208,17 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 								</Text>
 							</div>
 						</div>
-						<Divider className={classes.contactDivider} />
-					</>
-				)}
+					)}
 
-				<ConversationMetadataList items={items} columns={2} />
+					<ConversationMetadataList items={items} columns={2} />
+				</div>
 
 				{showOutcome && (
-					<>
-						<Divider className={classes.outcomeDivider} />
-						<div
-							className={classes.outcomeSection}
-							data-status={!isLoading && !isError ? status : undefined}
-							// inline-style-allow: dynamic CSS variable value for status border color cannot be applied via a static CSS class
-							style={
-								!isLoading && !isError
-									? {
-											borderColor: statusView.borderColorVar,
-										}
-									: undefined
-							}
-						>
+					<div className={classes.outcomeColumn}>
+						<Text className={classes.outcomeTitle}>
+							{t('disposition.title')}
+						</Text>
+						<div className={classes.outcomeSection} data-status={status}>
 							<ConversationDispositionContent
 								disposition={disposition}
 								isLoading={isLoading}
@@ -251,7 +229,7 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 								emptyLabel={t('disposition.noOutcome')}
 							/>
 						</div>
-					</>
+					</div>
 				)}
 			</div>
 		</SectionCard>

@@ -4,30 +4,10 @@
 	min-width: 0;
 }
 
-.detailGrid {
-	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
-	align-items: stretch;
-	gap: var(--mantine-spacing-sm);
-	width: 100%;
-	min-width: 0;
-}
-
-.detailGrid > * {
-	min-width: 0;
-	height: 100%;
-}
-
 .summaryText {
-	font-size: 13px;
+	font-size: var(--fs-13);
 	line-height: 1.45;
 	color: var(--mantine-color-text);
-	opacity: 0.8;
+	opacity: 0.88;
 	font-weight: 400;
-}
-
-@media (max-width: 520px) {
-	.detailGrid {
-		grid-template-columns: 1fr;
-	}
 }

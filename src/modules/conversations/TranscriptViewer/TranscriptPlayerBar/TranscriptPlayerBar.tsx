@@ -1,26 +1,58 @@
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { ActionIcon, Box, Group, Slider, Text, Tooltip } from '@mantine/core';
 import {
+	ActionIcon,
+	Box,
+	Button,
+	Group,
+	Popover,
+	Select,
+	Slider,
+	Text,
+	Tooltip,
+} from '@mantine/core';
+import {
+	IconDownload,
 	IconPlayerPause,
 	IconPlayerPlay,
 	IconPlayerSkipBack,
 	IconPlayerSkipForward,
+	IconRefresh,
+	IconVolume,
+	IconVolumeOff,
 } from '@tabler/icons-react';
-import fileApi from '~/api/fileApi';
-import type { VoiceFileModel } from '~/models/ConversationsModels';
 import { useTranslation } from 'react-i18next';
+import fileApi from '~/api/fileApi';
+import { ModuleEnum } from '~/constants/ModuleEnum';
+import { PermissionEnum } from '~/constants/PermissionEnum';
+import usePermissions from '~/hooks/usePermissions';
+import type { VoiceFileModel } from '~/models/ConversationsModels';
+import {
+	useExportConversationAudio,
+	useReuploadConversationAudio,
+} from '~/queries/conversationsQueries';
 import styles from './TranscriptPlayerBar.module.css';
 
 export interface TranscriptPlayerBarProps {
 	voiceFile?: VoiceFileModel | null;
+	conversationId?: number | string;
+	contactName?: string;
 	onTimeUpdate?: (currentTime: number) => void;
 	onPlayStateChange?: (isPlaying: boolean) => void;
 	seekToRef?: React.MutableRefObject<((time: number) => void) | null>;
 }
 
+const SPEED_OPTIONS = ['0.75', '1', '1.25', '1.5', '2'].map((value) => ({
+	value,
+	label: `${Number(value)
+		.toFixed(value === '1' ? 1 : 2)
+		.replace(/0$/, '')}×`,
+}));
+
 export function TranscriptPlayerBar({
 	voiceFile,
+	conversationId,
+	contactName,
 	onTimeUpdate,
 	onPlayStateChange,
 	seekToRef,
@@ -29,170 +61,165 @@ export function TranscriptPlayerBar({
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [currentTime, setCurrentTime] = useState(0);
 	const [duration, setDuration] = useState(0);
+	const [volume, setVolume] = useState(1);
+	const [playbackRate, setPlaybackRate] = useState('1');
 	const [hasLoadError, setHasLoadError] = useState(false);
+	const [reloadToken, setReloadToken] = useState(0);
 	const audioRef = useRef<HTMLAudioElement>(null);
 	const pendingSeekRef = useRef<number | null>(null);
 	const pendingPlayAfterSeekRef = useRef(false);
+	const lastVolumeRef = useRef(1);
 
 	const fileId = voiceFile?.id ?? null;
+	const { canPerformAction } = usePermissions();
+	const canExportConversations = canPerformAction(
+		ModuleEnum.CONVERSATIONS,
+		PermissionEnum.EXPORT
+	);
+	const exportAudioMutation = useExportConversationAudio();
+	const reuploadAudioMutation = useReuploadConversationAudio();
 
-	const { data: presignedUrl, isLoading: isPresignedLoading } = useQuery({
-		queryKey: ['file-presigned-url', fileId],
+	const {
+		data: presignedUrl,
+		isLoading: isPresignedLoading,
+		isError: isPresignedError,
+		refetch: refetchPresignedUrl,
+	} = useQuery({
+		queryKey: ['file-presigned-url', fileId, reloadToken],
 		queryFn: () => fileApi().getPresignedFileUrl(fileId as number | string),
 		enabled: Boolean(fileId),
 		staleTime: 0,
 	});
 
 	const audioSrc = presignedUrl ?? voiceFile?.repositoryRoute ?? '';
+	const isUnavailable =
+		hasLoadError || isPresignedError || (!audioSrc && !isPresignedLoading);
 
-	const togglePlayPause = useCallback(() => {
-		if (!audioRef.current) return;
-		if (isPlaying) {
-			audioRef.current.pause();
-		} else {
-			audioRef.current.play().catch(() => undefined);
-		}
-	}, [isPlaying]);
-
-	const seekTo = useCallback(
+	const updateCurrentTime = useCallback(
 		(time: number) => {
-			if (!audioRef.current) return;
-			const audioDuration = audioRef.current.duration;
-			// If metadata hasn't loaded yet, store a pending seek
-			if (!Number.isFinite(audioDuration) || audioDuration === 0) {
-				pendingSeekRef.current = time;
-				setCurrentTime(time);
-				onTimeUpdate?.(time);
-				return;
-			}
-			const clampedTime = Math.max(0, Math.min(time, audioDuration));
-			audioRef.current.currentTime = clampedTime;
-			setCurrentTime(clampedTime);
-			onTimeUpdate?.(clampedTime);
+			setCurrentTime(time);
+			onTimeUpdate?.(time);
 		},
 		[onTimeUpdate]
+	);
+
+	const seekTo = useCallback(
+		(time: number, playAfterSeek = false) => {
+			const audio = audioRef.current;
+			if (!audio) return;
+
+			const audioDuration = audio.duration;
+			if (!Number.isFinite(audioDuration) || audioDuration === 0) {
+				pendingSeekRef.current = time;
+				pendingPlayAfterSeekRef.current = playAfterSeek;
+				updateCurrentTime(time);
+				return;
+			}
+
+			const clampedTime = Math.max(0, Math.min(time, audioDuration));
+			audio.currentTime = clampedTime;
+			updateCurrentTime(clampedTime);
+			if (playAfterSeek) {
+				audio.play().catch(() => undefined);
+			}
+		},
+		[updateCurrentTime]
 	);
 
 	const seekRelative = useCallback(
 		(delta: number) => {
-			if (!audioRef.current) return;
-			const audioDuration = audioRef.current.duration || 0;
-			const newTime = Math.max(
-				0,
-				Math.min(audioRef.current.currentTime + delta, audioDuration)
-			);
-			audioRef.current.currentTime = newTime;
-			setCurrentTime(newTime);
-			onTimeUpdate?.(newTime);
+			const audio = audioRef.current;
+			if (!audio) return;
+			seekTo(audio.currentTime + delta);
 		},
-		[onTimeUpdate]
+		[seekTo]
 	);
 
-	const handleSeek = useCallback(
-		(value: number) => {
-			if (audioRef.current) {
-				audioRef.current.currentTime = value;
-				setCurrentTime(value);
-				onTimeUpdate?.(value);
-			}
-		},
-		[onTimeUpdate]
-	);
-
-	const handleTimeUpdate = useCallback(() => {
-		if (audioRef.current) {
-			const time = audioRef.current.currentTime;
-			setCurrentTime(time);
-			onTimeUpdate?.(time);
+	const togglePlayPause = useCallback(() => {
+		const audio = audioRef.current;
+		if (!audio) return;
+		if (audio.paused) {
+			audio.play().catch(() => undefined);
+		} else {
+			audio.pause();
 		}
-	}, [onTimeUpdate]);
+	}, []);
 
 	const handleLoadedMetadata = useCallback(() => {
-		if (audioRef.current) {
-			const d = Number.isFinite(audioRef.current.duration)
-				? audioRef.current.duration
-				: 0;
-			setDuration(d);
+		const audio = audioRef.current;
+		if (!audio) return;
 
-			// Apply pending seek that was requested before metadata was ready
-			if (pendingSeekRef.current !== null) {
-				const pendingTime = Math.max(0, Math.min(pendingSeekRef.current, d));
-				audioRef.current.currentTime = pendingTime;
-				setCurrentTime(pendingTime);
-				onTimeUpdate?.(pendingTime);
-				pendingSeekRef.current = null;
-
-				if (pendingPlayAfterSeekRef.current) {
-					pendingPlayAfterSeekRef.current = false;
-					audioRef.current.play().catch(() => undefined);
-				}
-			}
-		}
+		const nextDuration = Number.isFinite(audio.duration) ? audio.duration : 0;
+		setDuration(nextDuration);
+		audio.volume = volume;
+		audio.playbackRate = Number(playbackRate);
 		setHasLoadError(false);
-	}, [onTimeUpdate]);
 
-	const handleAudioPlay = useCallback(() => {
-		setIsPlaying(true);
-		onPlayStateChange?.(true);
-	}, [onPlayStateChange]);
-
-	const handleAudioPause = useCallback(() => {
-		setIsPlaying(false);
-		onPlayStateChange?.(false);
-	}, [onPlayStateChange]);
-
-	const handleAudioEnded = useCallback(() => {
-		setIsPlaying(false);
-		onPlayStateChange?.(false);
-		if (audioRef.current) {
-			setCurrentTime(audioRef.current.duration || 0);
+		if (pendingSeekRef.current !== null) {
+			const pendingTime = pendingSeekRef.current;
+			const shouldPlay = pendingPlayAfterSeekRef.current;
+			pendingSeekRef.current = null;
+			pendingPlayAfterSeekRef.current = false;
+			seekTo(pendingTime, shouldPlay);
 		}
-	}, [onPlayStateChange]);
+	}, [playbackRate, seekTo, volume]);
 
-	const handleAudioError = useCallback(() => {
-		setHasLoadError(true);
-		setIsPlaying(false);
-		onPlayStateChange?.(false);
-	}, [onPlayStateChange]);
+	const handleVolumeChange = (value: number) => {
+		setVolume(value);
+		if (value > 0) lastVolumeRef.current = value;
+		if (audioRef.current) audioRef.current.volume = value;
+	};
 
-	// Expose seekTo via ref for parent click-to-seek
+	const toggleMute = () => {
+		handleVolumeChange(volume === 0 ? lastVolumeRef.current : 0);
+	};
+
+	const handlePlaybackRateChange = (value: string | null) => {
+		const nextRate = value ?? '1';
+		setPlaybackRate(nextRate);
+		if (audioRef.current) audioRef.current.playbackRate = Number(nextRate);
+	};
+
+	const handleDownload = async () => {
+		if (!conversationId || !canExportConversations) return;
+		try {
+			const result = await exportAudioMutation.mutateAsync(conversationId);
+			const url = URL.createObjectURL(result.blob);
+			const link = document.createElement('a');
+			link.href = url;
+			link.download = contactName
+				? `${contactName.toUpperCase()}.MP3`
+				: `conversation-${conversationId}.mp3`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			URL.revokeObjectURL(url);
+		} catch {
+			// The compact player remains in its current state when an export fails.
+		}
+	};
+
+	const handleRetry = async () => {
+		if (!conversationId) return;
+		try {
+			await reuploadAudioMutation.mutateAsync(conversationId);
+			setHasLoadError(false);
+			setReloadToken((value) => value + 1);
+			await refetchPresignedUrl();
+		} catch {
+			setHasLoadError(true);
+		}
+	};
+
 	useEffect(() => {
 		if (seekToRef) {
-			seekToRef.current = (time: number) => {
-				const audio = audioRef.current;
-				if (!audio) return;
-
-				const audioDuration = audio.duration;
-				// If audio metadata isn't loaded yet, store pending seek + play
-				if (!Number.isFinite(audioDuration) || audioDuration === 0) {
-					pendingSeekRef.current = time;
-					pendingPlayAfterSeekRef.current = true;
-					setCurrentTime(time);
-					onTimeUpdate?.(time);
-					return;
-				}
-
-				const clampedTime = Math.max(0, Math.min(time, audioDuration));
-				audio.currentTime = clampedTime;
-				setCurrentTime(clampedTime);
-				onTimeUpdate?.(clampedTime);
-
-				// Wait for the seek to complete before playing to avoid delay
-				const onSeeked = () => {
-					audio.removeEventListener('seeked', onSeeked);
-					audio.play().catch(() => undefined);
-				};
-				// If already at that position, play immediately
-				if (!audio.seeking) {
-					audio.play().catch(() => undefined);
-				} else {
-					audio.addEventListener('seeked', onSeeked, { once: true });
-				}
-			};
+			seekToRef.current = (time: number) => seekTo(time, true);
 		}
-	}, [seekToRef, seekTo, onTimeUpdate]);
+		return () => {
+			if (seekToRef) seekToRef.current = null;
+		};
+	}, [seekTo, seekToRef]);
 
-	// Reset state when audio source changes
 	useEffect(() => {
 		setIsPlaying(false);
 		setCurrentTime(0);
@@ -200,46 +227,45 @@ export function TranscriptPlayerBar({
 		setHasLoadError(false);
 		pendingSeekRef.current = null;
 		pendingPlayAfterSeekRef.current = false;
-
-		if (audioRef.current) {
-			if (audioSrc) {
-				audioRef.current.src = audioSrc;
-				audioRef.current.load();
-			} else {
-				audioRef.current.src = '';
-			}
-		}
 	}, [audioSrc]);
 
-	const formatTime = (s: number) => {
-		const mins = Math.floor(s / 60);
-		const secs = Math.floor(s % 60);
-		return `${mins}:${secs.toString().padStart(2, '0')}`;
+	const formatTime = (seconds: number) => {
+		const safeSeconds = Number.isFinite(seconds) ? seconds : 0;
+		const minutes = Math.floor(safeSeconds / 60);
+		const remainder = Math.floor(safeSeconds % 60);
+		return `${minutes}:${remainder.toString().padStart(2, '0')}`;
 	};
-
-	if (!fileId && !voiceFile?.repositoryRoute) {
-		return null;
-	}
 
 	if (isPresignedLoading) {
 		return (
-			<Box className={styles.playerBar}>
-				<div className={`${styles.glassPlayer} ${styles.statusPlayer}`}>
-					<Text size='xs' ta='center' className={styles.statusText}>
-						{t('player.loading')}
-					</Text>
+			<Box className={styles.playerBar} aria-live='polite'>
+				<div className={styles.statusPlayer}>
+					<Text size='sm'>{t('player.loading')}</Text>
 				</div>
 			</Box>
 		);
 	}
 
-	if (hasLoadError) {
+	if (isUnavailable) {
 		return (
-			<Box className={styles.playerBar}>
-				<div className={`${styles.glassPlayer} ${styles.statusPlayer}`}>
-					<Text size='xs' ta='center' className={styles.statusText}>
-						{t('player.error')}
+			<Box className={styles.playerBar} aria-live='polite'>
+				<div className={styles.statusPlayer}>
+					<Text size='sm' className={styles.statusText}>
+						{hasLoadError || isPresignedError
+							? t('player.error')
+							: t('player.notAvailable')}
 					</Text>
+					{conversationId && (
+						<Button
+							size='xs'
+							variant='default'
+							leftSection={<IconRefresh size={14} />}
+							onClick={handleRetry}
+							loading={reuploadAudioMutation.isPending}
+						>
+							{t('player.retryLabel')}
+						</Button>
+					)}
 				</div>
 			</Box>
 		);
@@ -250,84 +276,158 @@ export function TranscriptPlayerBar({
 			<audio
 				ref={audioRef}
 				src={audioSrc}
-				preload='auto'
-				onTimeUpdate={handleTimeUpdate}
+				preload='metadata'
+				onTimeUpdate={() =>
+					updateCurrentTime(audioRef.current?.currentTime ?? 0)
+				}
 				onLoadedMetadata={handleLoadedMetadata}
-				onError={handleAudioError}
-				onPlay={handleAudioPlay}
-				onPause={handleAudioPause}
-				onEnded={handleAudioEnded}
+				onError={() => setHasLoadError(true)}
+				onPlay={() => {
+					setIsPlaying(true);
+					onPlayStateChange?.(true);
+				}}
+				onPause={() => {
+					setIsPlaying(false);
+					onPlayStateChange?.(false);
+				}}
+				onEnded={() => {
+					setIsPlaying(false);
+					onPlayStateChange?.(false);
+					updateCurrentTime(duration);
+				}}
 				hidden
 			/>
 
-			<Group
-				gap='xs'
-				align='center'
-				wrap='nowrap'
-				className={styles.glassPlayer}
-			>
-				<Tooltip label={t('player.rewindShort')} position='top'>
+			<div className={styles.controls}>
+				<Group gap={4} wrap='nowrap' className={styles.transportControls}>
+					<Tooltip label={t('player.rewindShort')}>
+						<ActionIcon
+							variant='subtle'
+							size='md'
+							onClick={() => seekRelative(-10)}
+							aria-label={t('player.rewind')}
+							className={styles.controlButton}
+						>
+							<IconPlayerSkipBack size={17} />
+						</ActionIcon>
+					</Tooltip>
 					<ActionIcon
-						variant='transparent'
-						size='md'
-						radius='md'
-						onClick={() => seekRelative(-10)}
-						aria-label={t('player.rewind')}
-						className={styles.controlButton}
+						variant='filled'
+						size='lg'
+						onClick={togglePlayPause}
+						aria-label={isPlaying ? t('player.pause') : t('player.play')}
+						aria-pressed={isPlaying}
+						className={styles.playButton}
 					>
-						<IconPlayerSkipBack size={16} />
+						{isPlaying ? (
+							<IconPlayerPause size={18} />
+						) : (
+							<IconPlayerPlay size={18} className={styles.playIcon} />
+						)}
 					</ActionIcon>
-				</Tooltip>
+					<Tooltip label={t('player.forwardShort')}>
+						<ActionIcon
+							variant='subtle'
+							size='md'
+							onClick={() => seekRelative(10)}
+							aria-label={t('player.forward')}
+							className={styles.controlButton}
+						>
+							<IconPlayerSkipForward size={17} />
+						</ActionIcon>
+					</Tooltip>
+				</Group>
 
-				<ActionIcon
-					variant='transparent'
-					size='lg'
-					radius='md'
-					onClick={togglePlayPause}
-					aria-label={isPlaying ? t('player.pause') : t('player.play')}
-					className={styles.playButton}
-				>
-					{isPlaying ? (
-						<IconPlayerPause size={16} />
-					) : (
-						<IconPlayerPlay size={16} className={styles.playIcon} />
+				<div className={styles.timelineGroup}>
+					<Slider
+						value={currentTime}
+						onChange={(value) => seekTo(value)}
+						max={duration || 100}
+						label={(value) => formatTime(Number(value))}
+						className={styles.progressSlider}
+						classNames={{
+							track: styles.sliderTrack,
+							bar: styles.sliderBar,
+							thumb: styles.sliderThumb,
+						}}
+					/>
+					<Text className={styles.time}>
+						{formatTime(currentTime)} / {formatTime(duration)}
+					</Text>
+				</div>
+
+				<Group gap={6} wrap='nowrap' className={styles.utilityControls}>
+					<Select
+						value={playbackRate}
+						onChange={handlePlaybackRateChange}
+						data={SPEED_OPTIONS}
+						allowDeselect={false}
+						aria-label={t('player.speed')}
+						classNames={{ input: styles.speedInput }}
+						className={styles.speedSelect}
+					/>
+					<Popover width={220} position='bottom-end' withArrow shadow='md'>
+						<Popover.Target>
+							<ActionIcon
+								variant='subtle'
+								size='md'
+								aria-label={t('player.volume')}
+								className={styles.controlButton}
+							>
+								{volume === 0 ? (
+									<IconVolumeOff size={18} />
+								) : (
+									<IconVolume size={18} />
+								)}
+							</ActionIcon>
+						</Popover.Target>
+						<Popover.Dropdown className={styles.volumePopover}>
+							<Group gap='xs' wrap='nowrap'>
+								<ActionIcon
+									variant='subtle'
+									onClick={toggleMute}
+									aria-label={
+										volume === 0 ? t('player.unmute') : t('player.mute')
+									}
+								>
+									{volume === 0 ? (
+										<IconVolumeOff size={18} />
+									) : (
+										<IconVolume size={18} />
+									)}
+								</ActionIcon>
+								<div className={styles.volumeControl}>
+									<Text size='xs' fw={600} mb={4}>
+										{t('player.volume')}
+									</Text>
+									<Slider
+										value={volume}
+										onChange={handleVolumeChange}
+										min={0}
+										max={1}
+										step={0.05}
+										label={(value) => `${Math.round(value * 100)}%`}
+									/>
+								</div>
+							</Group>
+						</Popover.Dropdown>
+					</Popover>
+					{canExportConversations && conversationId && (
+						<Tooltip label={t('player.download')}>
+							<ActionIcon
+								variant='subtle'
+								size='md'
+								onClick={handleDownload}
+								loading={exportAudioMutation.isPending}
+								aria-label={t('player.download')}
+								className={styles.controlButton}
+							>
+								<IconDownload size={18} />
+							</ActionIcon>
+						</Tooltip>
 					)}
-				</ActionIcon>
-
-				<Tooltip label={t('player.forwardShort')} position='top'>
-					<ActionIcon
-						variant='transparent'
-						size='md'
-						radius='md'
-						onClick={() => seekRelative(10)}
-						aria-label={t('player.forward')}
-						className={styles.controlButton}
-					>
-						<IconPlayerSkipForward size={16} />
-					</ActionIcon>
-				</Tooltip>
-
-				<Text size='xs' className={styles.time}>
-					{formatTime(currentTime)}
-				</Text>
-
-				<Slider
-					value={currentTime}
-					onChange={handleSeek}
-					max={duration || 100}
-					label={(value) => formatTime(Number(value))}
-					className={styles.progressSlider}
-					classNames={{
-						track: styles.sliderTrack,
-						bar: styles.sliderBar,
-						thumb: styles.sliderThumb,
-					}}
-				/>
-
-				<Text size='xs' className={styles.time}>
-					{formatTime(duration)}
-				</Text>
-			</Group>
+				</Group>
+			</div>
 		</Box>
 	);
 }

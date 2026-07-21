@@ -1,12 +1,4 @@
-import {
-	Box,
-	Tabs,
-	Loader,
-	Center,
-	Stack,
-	ActionIcon,
-	Tooltip,
-} from '@mantine/core';
+import { Box, Tabs, ActionIcon, Skeleton, Tooltip } from '@mantine/core';
 import { IconInfoCircle, IconFileText, IconArrowUp } from '@tabler/icons-react';
 import { useMemo, useState, useCallback, useRef } from 'react';
 import dayjs from 'dayjs';
@@ -112,15 +104,25 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 
 	if (isLoading) {
 		return (
-			<Center p='md' className={styles.container}>
-				<Loader size='lg' color='var(--mantine-primary-color-filled)' />
-			</Center>
+			<div className={styles.loadingState} aria-label={t('player.loading')}>
+				<Skeleton height={42} radius='sm' />
+				<Skeleton height={68} radius='md' />
+				<div className={styles.loadingGrid}>
+					<Skeleton height={176} radius='md' />
+					<Skeleton height={176} radius='md' />
+				</div>
+				<Skeleton height={92} radius='md' />
+				<Skeleton height={220} radius='md' />
+			</div>
 		);
 	}
 
 	if (!canViewConversations) {
 		return <AccessDenied description={t('list.accessDenied')} />;
 	}
+
+	const contactName =
+		`${conversation?.contact?.firstName || ''} ${conversation?.contact?.lastName || ''}`.trim();
 
 	return (
 		<Box className={styles.container}>
@@ -135,29 +137,36 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 			>
 				<Tabs.List grow>
 					<Tabs.Tab value='overview'>
-						<Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+						<Box className={styles.tabLabel}>
 							<IconInfoCircle size={18} />
 							<span>{t('details.tabs.overview')}</span>
 						</Box>
 					</Tabs.Tab>
 					<Tabs.Tab value='transcript'>
-						<Box style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+						<Box className={styles.tabLabel}>
 							<IconFileText size={18} />
 							<span>{t('details.tabs.transcript')}</span>
 						</Box>
 					</Tabs.Tab>
 				</Tabs.List>
 
+				<TranscriptPlayerBar
+					voiceFile={conversation?.voiceFile}
+					conversationId={conversation?.id}
+					contactName={contactName}
+					onTimeUpdate={setAudioCurrentTime}
+					onPlayStateChange={setIsAudioPlaying}
+					seekToRef={seekToRef}
+				/>
+
 				{activeTab === 'overview' && (
 					<div className={styles.panelWrapper}>
 						{conversation ? (
-							<Stack>
-								<ConversationOverview
-									conversation={conversation}
-									status={safeStatus}
-									duration={duration}
-								/>
-							</Stack>
+							<ConversationOverview
+								conversation={conversation}
+								status={safeStatus}
+								duration={duration}
+							/>
 						) : null}
 					</div>
 				)}
@@ -192,14 +201,6 @@ export function ConversationDetails({ id }: ConversationDetailsProps) {
 								</Tooltip>
 							)}
 						</div>
-						{conversation?.voiceFile && (
-							<TranscriptPlayerBar
-								voiceFile={conversation.voiceFile}
-								onTimeUpdate={setAudioCurrentTime}
-								onPlayStateChange={setIsAudioPlaying}
-								seekToRef={seekToRef}
-							/>
-						)}
 					</div>
 				)}
 			</Tabs>

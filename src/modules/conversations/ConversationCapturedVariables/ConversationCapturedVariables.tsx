@@ -1,6 +1,6 @@
-import { Badge, Text, Tooltip } from '@mantine/core';
+import { Badge, Button, Group, Text, Tooltip } from '@mantine/core';
 import { IconVariable } from '@tabler/icons-react';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import SectionCard from '~/components/SectionCard/SectionCard';
 import ConversationMetadataList, {
@@ -68,15 +68,33 @@ const ConversationCapturedVariables: React.FC<
 	ConversationCapturedVariablesProps
 > = ({ variables }) => {
 	const { t } = useTranslation('conversations');
+	const [showEmptyVariables, setShowEmptyVariables] = useState(false);
 
 	const entries = useMemo(() => Object.entries(variables || {}), [variables]);
-	const items = useMemo<ConversationMetadataListItem[]>(
+	const normalizedEntries = useMemo(
 		() =>
-			entries.map(([key, value]) => {
-				const normalized = normalizeCapturedVariable(
+			entries.map(([key, value]) => ({
+				key,
+				normalized: normalizeCapturedVariable(
 					value,
 					t('overview.capturedVariables.invalidValue')
-				);
+				),
+			})),
+		[entries, t]
+	);
+	const capturedCount = normalizedEntries.filter(
+		({ normalized }) => normalized.hasValue
+	).length;
+	const visibleEntries = useMemo(
+		() =>
+			showEmptyVariables
+				? normalizedEntries
+				: normalizedEntries.filter(({ normalized }) => normalized.hasValue),
+		[normalizedEntries, showEmptyVariables]
+	);
+	const items = useMemo<ConversationMetadataListItem[]>(
+		() =>
+			visibleEntries.map(({ key, normalized }) => {
 				const shouldShowValueTooltip =
 					normalized.hasValue && normalized.displayValue.length > 42;
 
@@ -110,12 +128,14 @@ const ConversationCapturedVariables: React.FC<
 					rowTooltip: normalized.rationale,
 				};
 			}),
-		[entries, t]
+		[visibleEntries]
 	);
 
-	const countLabel = t('overview.capturedVariables.count', {
-		count: entries.length,
+	const countLabel = t('overview.capturedVariables.capturedCount', {
+		captured: capturedCount,
+		total: entries.length,
 	});
+	const hasHiddenVariables = capturedCount < entries.length;
 
 	return (
 		<SectionCard
@@ -123,14 +143,31 @@ const ConversationCapturedVariables: React.FC<
 			description={t('overview.capturedVariables.description')}
 			icon={IconVariable}
 			headerActions={
-				<Badge size='xs' variant='light' color='teal'>
-					{countLabel}
-				</Badge>
+				<Group gap={6} wrap='wrap'>
+					<Badge size='xs' variant='light' color='green'>
+						{countLabel}
+					</Badge>
+					{hasHiddenVariables && (
+						<Button
+							size='compact-xs'
+							variant='subtle'
+							color='gray'
+							onClick={() => setShowEmptyVariables((value) => !value)}
+							aria-expanded={showEmptyVariables}
+						>
+							{showEmptyVariables
+								? t('overview.capturedVariables.hideEmpty')
+								: t('overview.capturedVariables.showAll', {
+										count: entries.length,
+									})}
+						</Button>
+					)}
+				</Group>
 			}
 			padding='sm'
 			contentSpacing='sm'
 		>
-			{entries.length === 0 ? (
+			{visibleEntries.length === 0 ? (
 				<Text size='xs' c='dimmed'>
 					{t('overview.capturedVariables.empty')}
 				</Text>
