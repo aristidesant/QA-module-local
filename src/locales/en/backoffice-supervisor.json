@@ -1,0 +1,127 @@
+{
+	"page": {
+		"title": "Backoffice Supervisor",
+		"description": "Monitor the case queue, review workload, and take action across the active client."
+	},
+	"actions": {
+		"refresh": "Refresh dashboard"
+	},
+	"periods": {
+		"7d": "Last 7 days",
+		"30d": "Last 30 days"
+	},
+	"kpis": {
+		"total": "Total cases",
+		"pending": "Pending",
+		"unassigned": "Unassigned",
+		"assigned": "Assigned",
+		"managed": "Managed",
+		"eligibleAgents": "Eligible agents"
+	},
+	"charts": {
+		"trend": {
+			"title": "Case activity",
+			"description": "Cases created and marked as managed during the selected period.",
+			"created": "Created",
+			"managed": "Managed"
+		},
+		"status": {
+			"title": "Cases by status",
+			"description": "Current status distribution for the selected scope."
+		},
+		"workload": {
+			"title": "Agent workload",
+			"description": "Assigned and managed cases by eligible Backoffice agent.",
+			"assigned": "Assigned",
+			"managed": "Managed",
+			"empty": "No agent workload yet",
+			"emptyDescription": "Eligible agents will appear here when the dashboard has workload data."
+		},
+		"empty": {
+			"title": "No chart data",
+			"description": "Try a wider period or remove one of the filters."
+		}
+	},
+	"filters": {
+		"title": "Supervisor filters",
+		"description": "Filter the dashboard and the operational queue by period and ownership.",
+		"period": "Period",
+		"status": "Status",
+		"campaignId": "Campaign ID",
+		"contactGroupId": "Contact group ID",
+		"assignedUser": "Assigned agent",
+		"assignedUserPlaceholder": "All agents",
+		"idPlaceholder": "Enter an ID"
+	},
+	"statuses": {
+		"all": "All statuses",
+		"UNASSIGNED": "Unassigned",
+		"ASSIGNED": "Assigned",
+		"MANAGED": "Managed"
+	},
+	"table": {
+		"title": "Case queue",
+		"description": "Review cases and manage ownership from the contextual actions menu.",
+		"id": "ID",
+		"contact": "Contact",
+		"campaign": "Campaign",
+		"contactGroup": "Contact group",
+		"status": "Status",
+		"assignedUser": "Assigned agent",
+		"assignedAt": "Assigned",
+		"updatedAt": "Updated",
+		"disposition": "Disposition",
+		"actionsLabel": "Case actions",
+		"view": "View case",
+		"assign": "Assign agent",
+		"transfer": "Transfer case",
+		"unassign": "Unassign case",
+		"markManaged": "Mark as managed",
+		"empty": "No cases match the current filters."
+	},
+	"distribution": {
+		"allAction": "Distribute pending cases",
+		"selectedAction": "Distribute {{count}} selected",
+		"allTitle": "Distribute pending cases",
+		"allDescription": "Unassigned cases will be distributed among active Backoffice agents.",
+		"selectedTitle": "Distribute selected cases",
+		"selectedDescription": "Only the selected unassigned cases will be sent to the round-robin distributor.",
+		"confirm": "Distribute cases",
+		"cancel": "Cancel"
+	},
+	"assignment": {
+		"selectAgent": "Backoffice agent",
+		"selectAgentPlaceholder": "Select an active agent",
+		"agentsLoadError": "Eligible agents could not be loaded.",
+		"drawerDescription": "Choose the active Backoffice agent who should own this case.",
+		"caseLabel": "Case #{{id}}",
+		"save": "Save assignment",
+		"assignTitle": "Assign case",
+		"assignDescription": "This case will be assigned to the selected agent.",
+		"transferTitle": "Transfer case",
+		"transferDescription": "The current owner will be replaced by the selected agent.",
+		"unassignTitle": "Unassign case",
+		"unassignDescription": "The case will return to the unassigned queue.",
+		"confirm": "Save assignment",
+		"cancel": "Cancel"
+	},
+	"managed": {
+		"confirmTitle": "Close this case",
+		"confirmDescription": "Confirm that the external work is complete. Managed cases cannot be reopened.",
+		"confirm": "Mark as managed",
+		"cancel": "Keep assigned"
+	},
+	"common": {
+		"notAvailable": "Not available",
+		"unassigned": "Unassigned"
+	},
+	"notifications": {
+		"assignmentSuccessTitle": "Assignment updated",
+		"assignmentSuccessMessage": "The case assignment was updated.",
+		"managedSuccessTitle": "Case managed",
+		"managedSuccessMessage": "The case is now closed and cannot be reopened.",
+		"distributionSuccessTitle": "Cases distributed",
+		"distributionSuccessMessage": "{{assigned}} of {{requested}} requested cases were assigned. {{remaining}} remain unassigned.",
+		"actionFailedTitle": "Action failed"
+	}
+}

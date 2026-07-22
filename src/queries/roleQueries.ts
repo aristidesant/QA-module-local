@@ -34,6 +34,20 @@ export function useGetRole(id: number) {
 }
 
 /**
+ * Query to resolve a role by its stable backend code.
+ */
+export function useGetRoleByCode(code: string | undefined) {
+	return useQuery<RoleModel>({
+		queryKey: ['role-by-code', code],
+		queryFn: async () => {
+			const api = rolesApi();
+			return api.getRoleByCode(code!);
+		},
+		enabled: Boolean(code),
+	});
+}
+
+/**
  * Mutation to create a role
  */
 export function useCreateRole() {

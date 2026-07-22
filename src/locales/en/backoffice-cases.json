@@ -1,0 +1,135 @@
+{
+	"list": {
+		"title": "Backoffice cases",
+		"agentDescription": "Work through the cases assigned to you and close them after the external process is complete.",
+		"adminDescription": "Review every case for the active client, assign ownership, and distribute pending work."
+	},
+	"filters": {
+		"title": "Case filters",
+		"description": "Use the filters to narrow the operational queue.",
+		"status": {
+			"label": "Status",
+			"all": "All statuses"
+		},
+		"campaignId": "Campaign ID",
+		"contactGroupId": "Contact group ID",
+		"assignedUser": "Assigned agent",
+		"assignedUserPlaceholder": "All agents",
+		"idPlaceholder": "Enter an ID"
+	},
+	"table": {
+		"title": "Cases",
+		"description": "Cases are ordered by most recently updated.",
+		"id": "ID",
+		"contact": "Contact",
+		"contactId": "Contact {{id}}",
+		"campaign": "Campaign",
+		"contactGroup": "Contact group",
+		"status": "Status",
+		"assignedUser": "Assigned agent",
+		"disposition": "Disposition",
+		"updatedAt": "Updated",
+		"empty": "No cases match the current filters."
+	},
+	"statuses": {
+		"UNASSIGNED": "Unassigned",
+		"ASSIGNED": "Assigned",
+		"MANAGED": "Managed"
+	},
+	"distribution": {
+		"allAction": "Distribute pending cases",
+		"selectedAction": "Distribute {{count}} selected",
+		"allTitle": "Distribute pending cases",
+		"allDescription": "Unassigned cases will be distributed among active Backoffice agents.",
+		"selectedTitle": "Distribute selected cases",
+		"selectedDescription": "Only selected unassigned cases will be sent to the round-robin distributor.",
+		"confirm": "Distribute cases",
+		"cancel": "Cancel"
+	},
+	"detail": {
+		"title": "Case detail",
+		"titleWithId": "Case #{{id}}",
+		"description": "Review the case context, ownership, and audit history."
+	},
+	"sections": {
+		"caseData": "Case data",
+		"source": "Effective source",
+		"history": "History",
+		"workflow": "Workflow",
+		"manualWorkflow": "External workflow"
+	},
+	"fields": {
+		"caseId": "Case ID",
+		"contactId": "Contact ID",
+		"contact": "Contact",
+		"campaign": "Campaign",
+		"contactGroup": "Contact group",
+		"createdAt": "Created",
+		"conversationId": "Conversation ID",
+		"conversationIdentifier": "Conversation identifier",
+		"conversationStart": "Conversation start",
+		"disposition": "Disposition",
+		"contactOutcome": "Contact outcome",
+		"status": "Status",
+		"assignedUser": "Assigned agent",
+		"assignedAt": "Assigned"
+	},
+	"history": {
+		"event": "Event",
+		"actor": "Actor",
+		"transition": "Transition",
+		"date": "Date",
+		"empty": "This case has no history events."
+	},
+	"events": {
+		"CREATED": "Created",
+		"ASSIGNED": "Assigned",
+		"TRANSFERRED": "Transferred",
+		"UNASSIGNED": "Unassigned",
+		"STATUS_CHANGED": "Status changed",
+		"SOURCE_UPDATED": "Source updated"
+	},
+	"assignment": {
+		"selectAgent": "Backoffice agent",
+		"selectAgentPlaceholder": "Select an active agent",
+		"agentsLoadError": "Active agents could not be loaded.",
+		"save": "Save assignment",
+		"assignTitle": "Assign case",
+		"assignDescription": "This case will be assigned to the selected agent.",
+		"transferTitle": "Transfer case",
+		"transferDescription": "The current owner will be replaced by the selected agent.",
+		"unassignTitle": "Unassign case",
+		"unassignDescription": "The case will return to the unassigned queue.",
+		"confirm": "Save assignment",
+		"cancel": "Cancel"
+	},
+	"managed": {
+		"action": "Mark as managed",
+		"confirmTitle": "Close this case",
+		"confirmDescription": "Confirm that the external work is complete. Managed cases cannot be reopened.",
+		"confirm": "Mark as managed",
+		"cancel": "Keep assigned",
+		"completedNotice": "This case was marked as managed on {{date}}.",
+		"unassignedNotice": "Assign this case before marking it as managed.",
+		"lockedNotice": "This case is complete. Assignment and reopening are unavailable.",
+		"manualWorkflow": "Complete the case in the external system manually. When the work is finished, use the action above to close this case."
+	},
+	"common": {
+		"notAvailable": "Not available",
+		"unassigned": "Unassigned",
+		"unknownUser": "Unknown user",
+		"automated": "Automated event"
+	},
+	"errors": {
+		"invalidId": "The case ID is invalid."
+	},
+	"notifications": {
+		"assignmentSuccessTitle": "Assignment updated",
+		"assignmentSuccessMessage": "The case assignment was updated.",
+		"managedSuccessTitle": "Case managed",
+		"managedSuccessMessage": "The case is now closed and cannot be reopened.",
+		"distributionSuccessTitle": "Cases distributed",
+		"distributionSuccessMessage": "{{assigned}} of {{requested}} requested cases were assigned. {{remaining}} remain unassigned.",
+		"actionFailedTitle": "Action failed"
+	}
+}

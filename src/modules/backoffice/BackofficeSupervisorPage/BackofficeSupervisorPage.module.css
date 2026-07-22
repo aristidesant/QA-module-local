@@ -1,0 +1,72 @@
+.root {
+	width: 100%;
+}
+
+.kpiGrid {
+	grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.chartsGrid {
+	display: grid;
+	grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+	gap: var(--mantine-spacing-md);
+}
+
+.chartArea {
+	min-height: 270px;
+}
+
+.filtersGrid {
+	display: grid;
+	grid-template-columns: repeat(5, minmax(0, 1fr));
+	gap: var(--mantine-spacing-sm);
+	align-items: end;
+}
+
+.tableRoot {
+	max-width: 100%;
+}
+
+.actionCell {
+	display: flex;
+	justify-content: flex-end;
+}
+
+.drawerActions {
+	margin-top: var(--mantine-spacing-md);
+}
+
+.emptyChart {
+	min-height: 270px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+@media (max-width: 1280px) {
+	.kpiGrid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+
+	.filtersGrid {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 900px) {
+	.chartsGrid {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 640px) {
+	.kpiGrid,
+	.filtersGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.chartArea,
+	.emptyChart {
+		min-height: 230px;
+	}
+}

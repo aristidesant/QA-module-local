@@ -4,7 +4,14 @@ import type {
 	CreateRolePayload,
 	UpdateRolePayload,
 } from '~/models/RoleModel';
+import { useSessionStore } from '~/stores/sessionStore';
 import { DEFAULT_API_URL } from './config';
+
+const getClientHeaders = (): Record<string, string> => {
+	const { user, targetClient } = useSessionStore.getState();
+	const clientId = targetClient?.id ?? user?.clientId ?? user?.client?.id;
+	return clientId ? { 'x-client-id': String(clientId) } : {};
+};
 
 export interface GetAllRolesParams {
 	page?: number;
@@ -17,6 +24,7 @@ export interface GetAllRolesParams {
 
 interface RolesApiClient {
 	getRoleById: (id: number) => Promise<RoleModel>;
+	getRoleByCode: (code: string) => Promise<RoleModel>;
 	createRole: (payload: CreateRolePayload) => Promise<RoleModel>;
 	updateRole: (id: number, payload: UpdateRolePayload) => Promise<RoleModel>;
 	deleteRole: (id: number) => Promise<void>;
@@ -29,6 +37,14 @@ const rolesApi = (_authHeader: Record<string, string> = {}): RolesApiClient => {
 			const response = await axios.get<RoleModel>(
 				`${DEFAULT_API_URL}/roles/${id}`,
 				{ headers: { ..._authHeader } }
+			);
+			return response.data;
+		},
+
+		getRoleByCode: async (code: string): Promise<RoleModel> => {
+			const response = await axios.get<RoleModel>(
+				`${DEFAULT_API_URL}/roles/code/${encodeURIComponent(code)}`,
+				{ headers: { ...getClientHeaders(), ..._authHeader } }
 			);
 			return response.data;
 		},

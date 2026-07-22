@@ -30,6 +30,7 @@ import {
 	Skeleton,
 	Pagination,
 	Group,
+	Checkbox,
 } from '@mantine/core';
 import {
 	IconChevronUp,
@@ -57,6 +58,10 @@ export type BaseTableColumnDef<TData> = ColumnDef<TData, unknown> & {
 export type BaseTableProps<TData> = {
 	data: TData[];
 	selectedRowId?: string | number | null;
+	/** Enable a controlled checkbox selection column. */
+	enableRowSelection?: boolean;
+	selectedRowIds?: Array<string | number>;
+	onSelectedRowIdsChange?: (rowIds: string[]) => void;
 	getRowId?: (row: TData) => string | number;
 	columns: BaseTableColumnDef<TData>[];
 	initialSort?: SortingState;
@@ -136,6 +141,9 @@ export type BaseTableProps<TData> = {
 function BaseTable<TData>({
 	data,
 	selectedRowId,
+	enableRowSelection = false,
+	selectedRowIds = [],
+	onSelectedRowIdsChange,
 	getRowId,
 	columns,
 	initialSort = [],
@@ -302,6 +310,53 @@ function BaseTable<TData>({
 		manualSorting: filterMode === 'server',
 	});
 
+	const selectedIdSet = React.useMemo(
+		() => new Set(selectedRowIds.map((id) => String(id))),
+		[selectedRowIds]
+	);
+	const currentPageRowIds = React.useMemo(
+		() => table.getRowModel().rows.map((row) => row.id),
+		[table]
+	);
+	const selectedCurrentPageCount = currentPageRowIds.filter((id) =>
+		selectedIdSet.has(id)
+	).length;
+	const allCurrentPageSelected =
+		currentPageRowIds.length > 0 &&
+		selectedCurrentPageCount === currentPageRowIds.length;
+	const someCurrentPageSelected =
+		selectedCurrentPageCount > 0 && !allCurrentPageSelected;
+
+	const toggleRowSelection = React.useCallback(
+		(rowId: string) => {
+			if (!onSelectedRowIdsChange) return;
+			const next = new Set(selectedIdSet);
+			if (next.has(rowId)) {
+				next.delete(rowId);
+			} else {
+				next.add(rowId);
+			}
+			onSelectedRowIdsChange(Array.from(next));
+		},
+		[onSelectedRowIdsChange, selectedIdSet]
+	);
+
+	const toggleCurrentPageSelection = React.useCallback(() => {
+		if (!onSelectedRowIdsChange) return;
+		const next = new Set(selectedIdSet);
+		if (allCurrentPageSelected) {
+			currentPageRowIds.forEach((id) => next.delete(id));
+		} else {
+			currentPageRowIds.forEach((id) => next.add(id));
+		}
+		onSelectedRowIdsChange(Array.from(next));
+	}, [
+		allCurrentPageSelected,
+		currentPageRowIds,
+		onSelectedRowIdsChange,
+		selectedIdSet,
+	]);
+
 	const hasData = data && data.length > 0;
 	const displayMessage = emptyMessage || t('status.noData');
 	const shouldShowPagination = enablePagination && showPaginationControls;
@@ -389,6 +444,19 @@ function BaseTable<TData>({
 							</div>
 						</Table.Td>
 					)}
+					{enableRowSelection && (
+						<Table.Td
+							className={styles.selectionCell}
+							onClick={(event) => event.stopPropagation()}
+						>
+							<Checkbox
+								aria-label={t('status.selectRow', { id: row.id })}
+								checked={selectedIdSet.has(row.id)}
+								onChange={() => toggleRowSelection(row.id)}
+								size='sm'
+							/>
+						</Table.Td>
+					)}
 					{row.getVisibleCells().map((cell) => (
 						<Table.Td
 							key={cell.id}
@@ -449,6 +517,17 @@ function BaseTable<TData>({
 										.join(' ')}
 								>
 									{/* Empty header for expand column */}
+								</Table.Th>
+							)}
+							{enableRowSelection && (
+								<Table.Th className={styles.selectionCell}>
+									<Checkbox
+										aria-label={t('status.selectAllRows')}
+										checked={allCurrentPageSelected}
+										indeterminate={someCurrentPageSelected}
+										onChange={toggleCurrentPageSelection}
+										size='sm'
+									/>
 								</Table.Th>
 							)}
 							{headerGroup.headers.map((header) => (
@@ -556,6 +635,7 @@ function BaseTable<TData>({
 								<Table.Td
 									colSpan={
 										table.getAllColumns().length +
+										(enableRowSelection ? 1 : 0) +
 										(enableExpanding && renderExpandedRow ? 1 : 0)
 									}
 									className={styles.emptyRow}

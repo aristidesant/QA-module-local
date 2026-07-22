@@ -1,0 +1,127 @@
+{
+	"page": {
+		"title": "Supervisión de Backoffice",
+		"description": "Supervisa la cola de casos, revisa la carga de trabajo y actúa sobre el cliente activo."
+	},
+	"actions": {
+		"refresh": "Actualizar dashboard"
+	},
+	"periods": {
+		"7d": "Últimos 7 días",
+		"30d": "Últimos 30 días"
+	},
+	"kpis": {
+		"total": "Casos totales",
+		"pending": "Pendientes",
+		"unassigned": "Sin asignar",
+		"assigned": "Asignados",
+		"managed": "Gestionados",
+		"eligibleAgents": "Agentes elegibles"
+	},
+	"charts": {
+		"trend": {
+			"title": "Actividad de casos",
+			"description": "Casos creados y marcados como gestionados durante el periodo seleccionado.",
+			"created": "Creados",
+			"managed": "Gestionados"
+		},
+		"status": {
+			"title": "Casos por estado",
+			"description": "Distribución actual de estados para el alcance seleccionado."
+		},
+		"workload": {
+			"title": "Carga por agente",
+			"description": "Casos asignados y gestionados por agente elegible de Backoffice.",
+			"assigned": "Asignados",
+			"managed": "Gestionados",
+			"empty": "Aún no hay carga de agentes",
+			"emptyDescription": "Los agentes elegibles aparecerán cuando el dashboard tenga datos de carga."
+		},
+		"empty": {
+			"title": "No hay datos para la gráfica",
+			"description": "Prueba con un periodo más amplio o elimina alguno de los filtros."
+		}
+	},
+	"filters": {
+		"title": "Filtros de supervisión",
+		"description": "Filtra el dashboard y la cola operativa por periodo y responsable.",
+		"period": "Periodo",
+		"status": "Estado",
+		"campaignId": "ID de campaña",
+		"contactGroupId": "ID de lista de contactos",
+		"assignedUser": "Agente asignado",
+		"assignedUserPlaceholder": "Todos los agentes",
+		"idPlaceholder": "Escribe un ID"
+	},
+	"statuses": {
+		"all": "Todos los estados",
+		"UNASSIGNED": "Sin asignar",
+		"ASSIGNED": "Asignado",
+		"MANAGED": "Gestionado"
+	},
+	"table": {
+		"title": "Cola de casos",
+		"description": "Revisa los casos y gestiona el responsable desde el menú de acciones.",
+		"id": "ID",
+		"contact": "Contacto",
+		"campaign": "Campaña",
+		"contactGroup": "Lista de contactos",
+		"status": "Estado",
+		"assignedUser": "Agente asignado",
+		"assignedAt": "Asignado",
+		"updatedAt": "Actualizado",
+		"disposition": "Disposición",
+		"actionsLabel": "Acciones del caso",
+		"view": "Ver caso",
+		"assign": "Asignar agente",
+		"transfer": "Transferir caso",
+		"unassign": "Desasignar caso",
+		"markManaged": "Marcar como gestionado",
+		"empty": "No hay casos que coincidan con los filtros actuales."
+	},
+	"distribution": {
+		"allAction": "Distribuir casos pendientes",
+		"selectedAction": "Distribuir {{count}} seleccionados",
+		"allTitle": "Distribuir casos pendientes",
+		"allDescription": "Los casos sin asignar se distribuirán entre los agentes activos de Backoffice.",
+		"selectedTitle": "Distribuir casos seleccionados",
+		"selectedDescription": "Solo los casos sin asignar seleccionados se enviarán al distribuidor round-robin.",
+		"confirm": "Distribuir casos",
+		"cancel": "Cancelar"
+	},
+	"assignment": {
+		"selectAgent": "Agente de Backoffice",
+		"selectAgentPlaceholder": "Selecciona un agente activo",
+		"agentsLoadError": "No se pudieron cargar los agentes elegibles.",
+		"drawerDescription": "Selecciona el agente activo de Backoffice responsable de este caso.",
+		"caseLabel": "Caso #{{id}}",
+		"save": "Guardar asignación",
+		"assignTitle": "Asignar caso",
+		"assignDescription": "El caso se asignará al agente seleccionado.",
+		"transferTitle": "Transferir caso",
+		"transferDescription": "El responsable actual será reemplazado por el agente seleccionado.",
+		"unassignTitle": "Desasignar caso",
+		"unassignDescription": "El caso volverá a la cola de casos sin asignar.",
+		"confirm": "Guardar asignación",
+		"cancel": "Cancelar"
+	},
+	"managed": {
+		"confirmTitle": "Cerrar este caso",
+		"confirmDescription": "Confirma que el trabajo externo terminó. Los casos gestionados no se pueden reabrir.",
+		"confirm": "Marcar como gestionado",
+		"cancel": "Mantener asignado"
+	},
+	"common": {
+		"notAvailable": "No disponible",
+		"unassigned": "Sin asignar"
+	},
+	"notifications": {
+		"assignmentSuccessTitle": "Asignación actualizada",
+		"assignmentSuccessMessage": "La asignación del caso fue actualizada.",
+		"managedSuccessTitle": "Caso gestionado",
+		"managedSuccessMessage": "El caso está cerrado y no se puede reabrir.",
+		"distributionSuccessTitle": "Casos distribuidos",
+		"distributionSuccessMessage": "Se asignaron {{assigned}} de {{requested}} casos solicitados. Quedan {{remaining}} sin asignar.",
+		"actionFailedTitle": "La acción falló"
+	}
+}

@@ -49,6 +49,20 @@ export function useGetSimpleUsers(clientId: number | undefined) {
 }
 
 /**
+ * Query to get all roles assigned to a user.
+ */
+export function useGetUserRoles(userId: number | undefined) {
+	return useQuery({
+		queryKey: ['user-roles', userId],
+		queryFn: async () => {
+			const api = userApi();
+			return api.getUserRoles(userId!);
+		},
+		enabled: Boolean(userId),
+	});
+}
+
+/**
  * Query to get user by ID
  */
 export function useGetUser(id: number) {

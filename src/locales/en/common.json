@@ -35,7 +35,9 @@
 		"noData": "No data available",
 		"nothingSelected": "Nothing selected",
 		"active": "Active",
-		"inactive": "Inactive"
+		"inactive": "Inactive",
+		"selectRow": "Select row {{id}}",
+		"selectAllRows": "Select all rows"
 	},
 	"errors": {
 		"unknown": "An unexpected error occurred",
@@ -89,6 +91,7 @@
 		"version": "Version",
 		"categories": {
 			"operation": "Operation",
+			"backoffice": "Backoffice",
 			"configuration": "Configuration",
 			"administration": "Administration",
 			"resources": "Resources",
@@ -98,6 +101,9 @@
 			"overview": "Overview",
 			"campaigns": "Campaigns",
 			"conversations": "Conversations",
+			"backofficeCases": "Backoffice Cases",
+			"backofficeMyCases": "My Backoffice Cases",
+			"backofficeSupervisor": "Supervisor",
 			"agentTests": "Agent Tests",
 			"campaignManagement": "Campaign Management",
 			"outcomes": "Outcomes",

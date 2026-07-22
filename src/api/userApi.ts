@@ -3,9 +3,17 @@ import type {
 	UserModel,
 	CreateUserPayload,
 	UpdateUserPayload,
+	UserRoleModel,
 } from '~/models/UserModels';
 import type { Paginator } from '~/models/Paginator';
+import { useSessionStore } from '~/stores/sessionStore';
 import { DEFAULT_API_URL } from './config';
+
+const getClientHeaders = (): Record<string, string> => {
+	const { user, targetClient } = useSessionStore.getState();
+	const clientId = targetClient?.id ?? user?.clientId ?? user?.client?.id;
+	return clientId ? { 'x-client-id': String(clientId) } : {};
+};
 
 export interface SimpleUser {
 	id: number;
@@ -48,6 +56,7 @@ interface UserApiClient {
 	createUser: (userData: CreateUserPayload) => Promise<UserModel>;
 	getAllUsers: (params?: GetAllUsersParams) => Promise<Paginator<UserModel>>;
 	getSimpleUsers: (clientId: number) => Promise<SimpleUser[]>;
+	getUserRoles: (userId: number) => Promise<UserRoleModel[]>;
 }
 
 // User API client (uses global axios interceptors for auth)
@@ -150,6 +159,14 @@ const userApi = (_authHeader: Record<string, string> = {}): UserApiClient => {
 					params: { clientId },
 					headers: { ..._authHeader },
 				}
+			);
+			return response.data;
+		},
+
+		getUserRoles: async (userId: number): Promise<UserRoleModel[]> => {
+			const response = await axios.get<UserRoleModel[]>(
+				`${DEFAULT_API_URL}/users/${userId}/roles`,
+				{ headers: { ...getClientHeaders(), ..._authHeader } }
 			);
 			return response.data;
 		},

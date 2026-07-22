@@ -114,6 +114,15 @@
 	vertical-align: middle;
 }
 
+.selectionCell {
+	width: 44px;
+	max-width: 44px;
+	min-width: 44px;
+	padding: 8px 10px !important;
+	text-align: center;
+	vertical-align: middle;
+}
+
 .expandIcon {
 	display: flex;
 	align-items: center;

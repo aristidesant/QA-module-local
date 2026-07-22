@@ -32,6 +32,7 @@ import {
 	IconFileInvoice,
 	IconLayoutDashboard,
 	IconListDetails,
+	IconInbox,
 	IconSettings,
 	IconTableExport,
 	IconUsers,
@@ -48,8 +49,14 @@ import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
 import { useIsQaAdmin } from '~/hooks/useIsQaAdmin';
 import { useCurrentApp } from '~/hooks/useCurrentApp';
 import { useSidebarStore } from '~/stores/sidebarStore';
+import { useSessionStore } from '~/stores/sessionStore';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
+import { hasAnyActiveClientRoleCode } from '~/hooks/useBackofficeRole';
+import {
+	BACKOFFICE_ADMIN_ROLE,
+	BACKOFFICE_AGENT_ROLE,
+} from '~/constants/BackofficeRoleConstants';
 import UserMenu from '../UserMenu';
 
 type SidebarNavItem = {
@@ -64,6 +71,7 @@ type SidebarNavItem = {
 	superAdminOnly?: boolean;
 	exact?: boolean;
 	i18nNamespace?: string;
+	roleCodes?: readonly string[];
 };
 
 type SidebarSection = {
@@ -131,6 +139,33 @@ const sidebarSections: SidebarSection[] = [
 				to: '/do-not-call',
 				module: ModuleEnum.SETTINGS,
 				i18nNamespace: 'do-not-call',
+			},
+		],
+	},
+	{
+		key: 'backoffice',
+		label: 'sidebar.categories.backoffice',
+		icon: <IconInbox size={20} className={styles.menuIcon} />,
+		items: [
+			{
+				key: 'backoffice-cases',
+				label: 'sidebar.items.backofficeMyCases',
+				icon: <IconInbox size={18} className={styles.menuIcon} />,
+				to: '/backoffice/cases',
+				module: ModuleEnum.BACKOFFICE_CASES,
+				permission: PermissionEnum.READ,
+				roleCodes: [BACKOFFICE_AGENT_ROLE],
+				i18nNamespace: 'backoffice-cases',
+			},
+			{
+				key: 'backoffice-supervisor',
+				label: 'sidebar.items.backofficeSupervisor',
+				icon: <IconChartBar size={18} className={styles.menuIcon} />,
+				to: '/backoffice/supervisor',
+				module: ModuleEnum.BACKOFFICE_CASES,
+				permission: PermissionEnum.READ,
+				roleCodes: [BACKOFFICE_ADMIN_ROLE],
+				i18nNamespace: 'backoffice-supervisor',
 			},
 		],
 	},
@@ -363,6 +398,9 @@ export const Sidebar: React.FC = () => {
 	const isMasterClient = useIsMasterClient();
 	const isSuperAdmin = useIsSuperAdmin();
 	const isQaAdmin = useIsQaAdmin();
+	const { user, targetClient } = useSessionStore();
+	const activeClientId =
+		targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
 	const inQaApp = useCurrentApp() === 'qa' && isQaAdmin;
 	const { collapsed, toggleCollapsed } = useSidebarStore();
 	const [openSection, setOpenSection] = useState<string>('');
@@ -383,6 +421,13 @@ export const Sidebar: React.FC = () => {
 					return false;
 				}
 
+				if (
+					item.roleCodes &&
+					!hasAnyActiveClientRoleCode(user, activeClientId, item.roleCodes)
+				) {
+					return false;
+				}
+
 				if (!item.module) {
 					return true;
 				}
@@ -393,7 +438,14 @@ export const Sidebar: React.FC = () => {
 
 				return canAccessModule(item.module);
 			}),
-		[canAccessModule, canPerformAction, isMasterClient, isSuperAdmin]
+		[
+			activeClientId,
+			canAccessModule,
+			canPerformAction,
+			isMasterClient,
+			isSuperAdmin,
+			user,
+		]
 	);
 
 	const visibleSections = useMemo(
@@ -410,6 +462,13 @@ export const Sidebar: React.FC = () => {
 							return false;
 						}
 
+						if (
+							item.roleCodes &&
+							!hasAnyActiveClientRoleCode(user, activeClientId, item.roleCodes)
+						) {
+							return false;
+						}
+
 						if (!item.module) {
 							return true;
 						}
@@ -422,7 +481,14 @@ export const Sidebar: React.FC = () => {
 					}),
 				}))
 				.filter((section) => section.items.length > 0),
-		[canAccessModule, canPerformAction, isMasterClient, isSuperAdmin]
+		[
+			activeClientId,
+			canAccessModule,
+			canPerformAction,
+			isMasterClient,
+			isSuperAdmin,
+			user,
+		]
 	);
 
 	// In the QA app the sidebar is just the QA nav (flat, no sections); in

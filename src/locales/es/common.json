@@ -35,7 +35,9 @@
 		"noData": "No hay datos disponibles",
 		"nothingSelected": "Nada seleccionado",
 		"active": "Activo",
-		"inactive": "Inactivo"
+		"inactive": "Inactivo",
+		"selectRow": "Seleccionar fila {{id}}",
+		"selectAllRows": "Seleccionar todas las filas"
 	},
 	"errors": {
 		"unknown": "Ocurrió un error inesperado",
@@ -89,6 +91,7 @@
 		"version": "Versión",
 		"categories": {
 			"operation": "Operación",
+			"backoffice": "Backoffice",
 			"configuration": "Configuración",
 			"administration": "Administración",
 			"resources": "Recursos",
@@ -98,6 +101,9 @@
 			"overview": "Resumen",
 			"campaigns": "Campañas",
 			"conversations": "Conversaciones",
+			"backofficeCases": "Casos de Backoffice",
+			"backofficeMyCases": "Mis casos de Backoffice",
+			"backofficeSupervisor": "Supervisión",
 			"agentTests": "Pruebas de agentes",
 			"campaignManagement": "Gestión de campañas",
 			"outcomes": "Resultados",

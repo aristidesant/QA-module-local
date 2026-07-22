@@ -1,0 +1,135 @@
+{
+	"list": {
+		"title": "Casos de Backoffice",
+		"agentDescription": "Trabaja los casos asignados y ciérralos cuando termine el proceso externo.",
+		"adminDescription": "Revisa todos los casos del cliente activo, asigna responsables y distribuye el trabajo pendiente."
+	},
+	"filters": {
+		"title": "Filtros de casos",
+		"description": "Usa los filtros para acotar la bandeja operativa.",
+		"status": {
+			"label": "Estado",
+			"all": "Todos los estados"
+		},
+		"campaignId": "ID de campaña",
+		"contactGroupId": "ID de lista de contactos",
+		"assignedUser": "Agente asignado",
+		"assignedUserPlaceholder": "Todos los agentes",
+		"idPlaceholder": "Escribe un ID"
+	},
+	"table": {
+		"title": "Casos",
+		"description": "Los casos se ordenan por la actualización más reciente.",
+		"id": "ID",
+		"contact": "Contacto",
+		"contactId": "Contacto {{id}}",
+		"campaign": "Campaña",
+		"contactGroup": "Lista de contactos",
+		"status": "Estado",
+		"assignedUser": "Agente asignado",
+		"disposition": "Disposición",
+		"updatedAt": "Actualizado",
+		"empty": "No hay casos que coincidan con los filtros actuales."
+	},
+	"statuses": {
+		"UNASSIGNED": "Sin asignar",
+		"ASSIGNED": "Asignado",
+		"MANAGED": "Gestionado"
+	},
+	"distribution": {
+		"allAction": "Distribuir casos pendientes",
+		"selectedAction": "Distribuir {{count}} seleccionados",
+		"allTitle": "Distribuir casos pendientes",
+		"allDescription": "Los casos sin asignar se distribuirán entre los agentes activos de Backoffice.",
+		"selectedTitle": "Distribuir casos seleccionados",
+		"selectedDescription": "Solo los casos sin asignar seleccionados se enviarán al distribuidor round-robin.",
+		"confirm": "Distribuir casos",
+		"cancel": "Cancelar"
+	},
+	"detail": {
+		"title": "Detalle del caso",
+		"titleWithId": "Caso #{{id}}",
+		"description": "Revisa el contexto, responsable e historial de auditoría del caso."
+	},
+	"sections": {
+		"caseData": "Datos del caso",
+		"source": "Fuente efectiva",
+		"history": "Historial",
+		"workflow": "Flujo de trabajo",
+		"manualWorkflow": "Flujo externo"
+	},
+	"fields": {
+		"caseId": "ID del caso",
+		"contactId": "ID del contacto",
+		"contact": "Contacto",
+		"campaign": "Campaña",
+		"contactGroup": "Lista de contactos",
+		"createdAt": "Creado",
+		"conversationId": "ID de conversación",
+		"conversationIdentifier": "Identificador de conversación",
+		"conversationStart": "Inicio de conversación",
+		"disposition": "Disposición",
+		"contactOutcome": "Resultado del contacto",
+		"status": "Estado",
+		"assignedUser": "Agente asignado",
+		"assignedAt": "Asignado"
+	},
+	"history": {
+		"event": "Evento",
+		"actor": "Actor",
+		"transition": "Transición",
+		"date": "Fecha",
+		"empty": "Este caso no tiene eventos de historial."
+	},
+	"events": {
+		"CREATED": "Creado",
+		"ASSIGNED": "Asignado",
+		"TRANSFERRED": "Transferido",
+		"UNASSIGNED": "Desasignado",
+		"STATUS_CHANGED": "Estado cambiado",
+		"SOURCE_UPDATED": "Fuente actualizada"
+	},
+	"assignment": {
+		"selectAgent": "Agente de Backoffice",
+		"selectAgentPlaceholder": "Selecciona un agente activo",
+		"agentsLoadError": "No se pudieron cargar los agentes activos.",
+		"save": "Guardar asignación",
+		"assignTitle": "Asignar caso",
+		"assignDescription": "El caso se asignará al agente seleccionado.",
+		"transferTitle": "Transferir caso",
+		"transferDescription": "El responsable actual será reemplazado por el agente seleccionado.",
+		"unassignTitle": "Desasignar caso",
+		"unassignDescription": "El caso volverá a la bandeja de casos sin asignar.",
+		"confirm": "Guardar asignación",
+		"cancel": "Cancelar"
+	},
+	"managed": {
+		"action": "Marcar como gestionado",
+		"confirmTitle": "Cerrar este caso",
+		"confirmDescription": "Confirma que el trabajo externo terminó. Los casos gestionados no se pueden reabrir.",
+		"confirm": "Marcar como gestionado",
+		"cancel": "Mantener asignado",
+		"completedNotice": "Este caso se marcó como gestionado el {{date}}.",
+		"unassignedNotice": "Asigna el caso antes de marcarlo como gestionado.",
+		"lockedNotice": "Este caso está completado. La asignación y reapertura no están disponibles.",
+		"manualWorkflow": "Completa el caso manualmente en el sistema externo. Cuando termines, usa la acción anterior para cerrar este caso."
+	},
+	"common": {
+		"notAvailable": "No disponible",
+		"unassigned": "Sin asignar",
+		"unknownUser": "Usuario desconocido",
+		"automated": "Evento automático"
+	},
+	"errors": {
+		"invalidId": "El ID del caso no es válido."
+	},
+	"notifications": {
+		"assignmentSuccessTitle": "Asignación actualizada",
+		"assignmentSuccessMessage": "La asignación del caso fue actualizada.",
+		"managedSuccessTitle": "Caso gestionado",
+		"managedSuccessMessage": "El caso está cerrado y no se puede reabrir.",
+		"distributionSuccessTitle": "Casos distribuidos",
+		"distributionSuccessMessage": "Se asignaron {{assigned}} de {{requested}} casos solicitados. Quedan {{remaining}} sin asignar.",
+		"actionFailedTitle": "La acción falló"
+	}
+}

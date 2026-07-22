@@ -1,0 +1,80 @@
+.root {
+	width: 100%;
+}
+
+.layout {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+	gap: var(--mantine-spacing-md);
+	align-items: start;
+}
+
+.mainColumn,
+.sideColumn {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	min-width: 0;
+}
+
+.infoGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-sm) var(--mantine-spacing-lg);
+}
+
+.infoRow {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+}
+
+.historyTable {
+	max-width: 100%;
+}
+
+.loadingBlock {
+	height: 160px;
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-default-hover);
+	animation: backoffice-shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes backoffice-shimmer {
+	0%,
+	100% {
+		opacity: 0.55;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+@media (max-width: 900px) {
+	.layout {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 640px) {
+	.infoGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.infoRow {
+		align-items: flex-start;
+		flex-direction: column;
+		gap: 2px;
+	}
+
+	.infoRow :global(.mantine-Text-root:last-child) {
+		text-align: left;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.loadingBlock {
+		animation: none;
+	}
+}

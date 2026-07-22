@@ -19,7 +19,13 @@ import RouteErrorBoundary from './components/GenericAppError/RouteErrorBoundary'
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { campaignRouteNamespaces } from '~/modules/campaigns/campaignNamespaces';
 import { qaRouteNamespaces } from '~/modules/qa/qaNamespaces';
+import { backofficeRouteNamespaces } from '~/modules/backoffice/backofficeNamespaces';
 import SuspenseFallback from './components/SuspenseFallback/SuspenseFallback';
+import BackofficeRoleGuard, {
+	BackofficeAdminGuard,
+	BackofficeAgentGuard,
+	BackofficeHomeRedirect,
+} from './components/BackofficeRoleGuard';
 const Layout = React.lazy(() => import('./components/Layout'));
 
 const CampaignContactListPage = React.lazy(
@@ -180,6 +186,17 @@ const QaEvaluationsListPage = React.lazy(
 const QaManualEvaluationPage = React.lazy(
 	() => import('./modules/qa/evaluations/ManualEvaluationPage')
 );
+const BackofficeCasesPage = React.lazy(
+	() => import('./modules/backoffice/BackofficeCasesPage/BackofficeCasesPage')
+);
+const BackofficeCaseDetailPage = React.lazy(
+	() =>
+		import('./modules/backoffice/BackofficeCaseDetailPage/BackofficeCaseDetailPage')
+);
+const BackofficeSupervisorPage = React.lazy(
+	() =>
+		import('./modules/backoffice/BackofficeSupervisorPage/BackofficeSupervisorPage')
+);
 
 /**
  * Automatically loads i18n namespaces based on the active route's ID.
@@ -193,6 +210,7 @@ const I18nNamespaceLoader = ({ children }: { children: React.ReactNode }) => {
 		namespace && namespace !== 'root' && !namespace.includes('/')
 			? (campaignRouteNamespaces[namespace] ??
 				qaRouteNamespaces[namespace] ??
+				backofficeRouteNamespaces[namespace] ??
 				namespace)
 			: 'common';
 
@@ -246,6 +264,61 @@ const router = createBrowserRouter([
 										</I18nNamespaceLoader>
 									</SmartRootRedirect>
 								),
+							},
+							{
+								path: 'backoffice',
+								id: 'backoffice',
+								element: (
+									<ModuleGuard
+										module={ModuleEnum.BACKOFFICE_CASES}
+										permission={PermissionEnum.READ}
+									>
+										<BackofficeRoleGuard />
+									</ModuleGuard>
+								),
+								children: [
+									{
+										index: true,
+										element: <BackofficeHomeRedirect />,
+									},
+									{
+										path: 'cases',
+										id: 'backoffice.cases',
+										element: (
+											<BackofficeAgentGuard>
+												<I18nNamespaceLoader>
+													<Suspense fallback={<SuspenseFallback />}>
+														<BackofficeCasesPage />
+													</Suspense>
+												</I18nNamespaceLoader>
+											</BackofficeAgentGuard>
+										),
+									},
+									{
+										path: 'supervisor',
+										id: 'backoffice.supervisor',
+										element: (
+											<BackofficeAdminGuard>
+												<I18nNamespaceLoader>
+													<Suspense fallback={<SuspenseFallback />}>
+														<BackofficeSupervisorPage />
+													</Suspense>
+												</I18nNamespaceLoader>
+											</BackofficeAdminGuard>
+										),
+									},
+									{
+										path: 'cases/:caseId',
+										id: 'backoffice.cases.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<BackofficeCaseDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+								],
 							},
 							{
 								path: 'dashboards',
