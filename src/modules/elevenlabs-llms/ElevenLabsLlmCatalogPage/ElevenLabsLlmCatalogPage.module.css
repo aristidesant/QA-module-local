@@ -1,0 +1,133 @@
+.filters {
+	display: flex;
+	align-items: flex-end;
+	gap: var(--mantine-spacing-md);
+	margin-bottom: var(--mantine-spacing-lg);
+	flex-shrink: 0;
+}
+
+.searchInput {
+	flex: 1;
+}
+
+.statusFilter {
+	width: 220px;
+}
+
+.catalogCard {
+	height: 100%;
+	min-height: 0;
+}
+
+.catalogCardShell,
+.catalogCardBody {
+	flex: 1;
+	min-height: 0;
+}
+
+.catalogCardContent {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+	overflow: hidden;
+}
+
+.tableViewport {
+	display: flex;
+	flex: 1;
+	min-width: 0;
+	min-height: 0;
+}
+
+.catalogTable {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	min-width: 0;
+	min-height: 0;
+	overflow: auto;
+	-webkit-overflow-scrolling: touch;
+	overscroll-behavior: contain;
+}
+
+.catalogTable:focus-visible {
+	outline: 2px solid var(--mantine-color-blue-5);
+	outline-offset: 2px;
+}
+
+.catalogTable :global(table) {
+	min-width: 960px;
+}
+
+.catalogTable :global(thead th) {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	background: light-dark(
+		var(--mantine-color-body),
+		var(--mantine-color-dark-8)
+	);
+}
+
+.stateViewport {
+	display: flex;
+	flex: 1;
+	min-width: 0;
+	min-height: 0;
+	align-items: center;
+	justify-content: center;
+	overflow: auto;
+}
+
+.errorState {
+	flex-direction: column;
+	align-items: stretch;
+	justify-content: flex-start;
+	padding-top: var(--mantine-spacing-lg);
+}
+
+.modelName {
+	font-family: 'JetBrains Mono', monospace;
+	font-size: 0.85rem;
+}
+
+.dateText {
+	white-space: nowrap;
+}
+
+.expandedRow {
+	display: grid;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	gap: var(--mantine-spacing-lg);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-7)
+	);
+}
+
+.emptyIcon {
+	color: var(--mantine-color-gray-5);
+}
+
+@media (max-width: 900px) {
+	.expandedRow {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+
+@media (max-width: 640px) {
+	.filters {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.statusFilter {
+		width: 100%;
+	}
+
+	.expandedRow {
+		grid-template-columns: 1fr;
+	}
+}
