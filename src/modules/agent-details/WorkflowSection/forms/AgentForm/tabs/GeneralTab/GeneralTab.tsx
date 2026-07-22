@@ -18,9 +18,9 @@ import {
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import {
-	LLM_MODELS,
-	getGroupedLlmOptions,
-} from '~/modules/configurations/AgentBehaviorsPage/AgentBehaviorsForm/formConfig';
+	buildElevenLabsLlmOptions,
+	useActiveElevenLabsLlmCatalog,
+} from '~/queries/elevenLabsLlmQueries';
 import type { SelectOption } from '../../types';
 import {
 	updateWorkflowNodeSubagent,
@@ -48,6 +48,7 @@ const GeneralTab = () => {
 
 	const campaignId = Number(routeCampaignId) || 0;
 	const [promptModalOpen, setPromptModalOpen] = useState(false);
+	const { llms } = useActiveElevenLabsLlmCatalog();
 
 	const currentNode = workflow?.nodes[nodeId];
 	const subagent =
@@ -210,14 +211,20 @@ const GeneralTab = () => {
 		]
 	);
 
-	const llmOptions = getGroupedLlmOptions().flatMap((group) => group.items);
+	const llmOptions = buildElevenLabsLlmOptions(
+		llms,
+		[llm_model, inheritedLlmModel],
+		t('form.workflow.forms.agent.general.llm.unavailable', {
+			defaultValue: 'Unavailable',
+		})
+	);
 
 	// Helper to get label for a value
 	const getValueLabel = (value: string, options: SelectOption[]) =>
 		options.find((opt) => opt.value === value)?.label || value;
 
 	const getLlmLabel = (value: string) =>
-		LLM_MODELS.find((model) => model.modelCode === value)?.modelName || value;
+		llmOptions.find((option) => option.value === value)?.label || value;
 
 	// Helper to render inherited field
 	const renderInheritedField = (

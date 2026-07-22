@@ -95,6 +95,9 @@ const PhoneNumbersPage = React.lazy(
 const DictionaryRulesPage = React.lazy(
 	() => import('./modules/configurations/DictionaryRules/DictionaryRulesPage')
 );
+const ElevenLabsLlmCatalogPage = React.lazy(
+	() => import('./modules/elevenlabs-llms/ElevenLabsLlmCatalogPage')
+);
 const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
 );
@@ -773,6 +776,19 @@ const router = createBrowserRouter([
 												<I18nNamespaceLoader>
 													<Suspense fallback={<SuspenseFallback />}>
 														<DictionaryRulesPage />
+													</Suspense>
+												</I18nNamespaceLoader>
+											</ModuleGuard>
+										),
+									},
+									{
+										path: 'elevenlabs-llms',
+										id: 'elevenlabs-llms',
+										element: (
+											<ModuleGuard masterOnly superAdminOnly>
+												<I18nNamespaceLoader>
+													<Suspense fallback={<SuspenseFallback />}>
+														<ElevenLabsLlmCatalogPage />
 													</Suspense>
 												</I18nNamespaceLoader>
 											</ModuleGuard>
