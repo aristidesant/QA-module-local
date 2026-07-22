@@ -91,7 +91,8 @@
 			"operation": "Operation",
 			"configuration": "Configuration",
 			"administration": "Administration",
-			"resources": "Resources"
+			"resources": "Resources",
+			"qa": "Quality Assurance"
 		},
 		"items": {
 			"overview": "Overview",
@@ -109,6 +110,7 @@
 			"regionalSettingsParams": "Regional Settings",
 			"phoneNumbers": "Phone Numbers",
 			"dictionaryRules": "Dictionary Rules",
+			"elevenLabsLlms": "ElevenLabs LLMs",
 			"dashboards": "Dashboards",
 			"knowledgeBases": "Knowledge Bases",
 			"tools": "Tools",
@@ -116,7 +118,14 @@
 			"roles": "Roles",
 			"clients": "Clients",
 			"invoices": "Invoices",
-			"reportTemplates": "Report Templates"
+			"reportTemplates": "Report Templates",
+			"qaEvaluatorAgents": "Evaluator agents",
+			"qaDisputes": "Disputes",
+			"qaAgents": "Agents",
+			"qaCampaigns": "Campaigns",
+			"qaForms": "Forms",
+			"qaDashboard": "Dashboard",
+			"qaEvaluations": "Evaluations"
 		},
 		"account": {
 			"title": "Account",
@@ -260,5 +269,26 @@
 		"timer": "{{time}} remaining",
 		"confirm": "Update Session",
 		"cancel": "No"
+	},
+	"appSwitcher": {
+		"chooser": {
+			"title": "Choose your workspace",
+			"subtitle": "You have access to more than one app. Pick where you'd like to go.",
+			"ucxm": {
+				"label": "Campaign management",
+				"description": "Campaigns, agents, conversations, and analytics."
+			},
+			"qa": {
+				"label": "QA",
+				"description": "Quality assurance: evaluations, forms, and disputes."
+			}
+		},
+		"switchToQa": "Switch to QA",
+		"switchToCampaign": "Switch to Campaign management",
+		"transition": {
+			"kicker": "Unified CXM",
+			"ucxm": "Loading Campaign Management…",
+			"qa": "Loading Quality Assurance…"
+		}
 	}
 }

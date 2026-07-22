@@ -1,0 +1,22 @@
+.historyRow {
+	cursor: pointer;
+}
+
+.historyLink {
+	border-radius: var(--mantine-radius-xs);
+	color: light-dark(var(--mantine-color-blue-7), var(--mantine-color-blue-3));
+	width: fit-content;
+}
+
+.historyLink:hover {
+	color: light-dark(var(--mantine-color-blue-8), var(--mantine-color-blue-2));
+}
+
+.historyLink:focus-visible {
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: 2px;
+}
+
+.pageSize {
+	width: 112px;
+}

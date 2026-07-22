@@ -13,4 +13,5 @@ export enum ModuleEnum {
 	REPORTS = 'REPORTS',
 	ROLES = 'ROLES',
 	BILLING = 'BILLING',
+	ELEVENLABS_LLMS = 'ELEVENLABS_LLMS',
 }

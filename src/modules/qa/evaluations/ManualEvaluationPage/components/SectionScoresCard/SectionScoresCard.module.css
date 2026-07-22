@@ -1,0 +1,6 @@
+.sectionScore {
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	background: var(--surface-sunken);
+}

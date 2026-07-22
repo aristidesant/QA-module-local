@@ -1,0 +1,218 @@
+{
+	"actions": {
+		"backToForms": "Back to forms",
+		"cancel": "Cancel",
+		"create": "Create form",
+		"delete": "Delete",
+		"edit": "Edit",
+		"save": "Save"
+	},
+	"answerTypes": {
+		"choice": "Choice",
+		"text": "Text"
+	},
+	"builder": {
+		"description": "Configure the form header, sections, and scoring questions evaluators will use.",
+		"title": "Form builder"
+	},
+	"create": {
+		"submit": "Create form",
+		"title": "Create QA form"
+	},
+	"description": "Create reusable QA templates with ordered sections, scored choices, and free-text annotations.",
+	"errorTypes": {
+		"actions": {
+			"back": "Back to forms",
+			"manage": "Error types",
+			"new": "New error type"
+		},
+		"badges": {
+			"inactiveTooltip": "{{label}} (inactive)",
+			"unavailable": "Unavailable",
+			"unavailableTooltip": "This error type was deleted or is no longer available."
+		},
+		"createTitle": "Create error type",
+		"delete": {
+			"description": "Delete {{code}} from the active error-type catalog?",
+			"hint": "Existing question assignments remain in place, but this type cannot be selected again.",
+			"title": "Delete error type"
+		},
+		"description": "Maintain the controlled vocabulary used to classify the QA failures detected by form questions.",
+		"editTitle": "Edit error type",
+		"fields": {
+			"active": "Available for new question assignments",
+			"code": "Code",
+			"codePlaceholder": "COMPLIANCE",
+			"description": "Description",
+			"label": "Display label"
+		},
+		"filters": {
+			"active": "Active only",
+			"all": "All statuses",
+			"code": "Exact code",
+			"codePlaceholder": "Enter the complete code",
+			"count_one": "{{count}} error type",
+			"count_other": "{{count}} error types",
+			"inactive": "Inactive only",
+			"showAll": "Show all",
+			"status": "Status"
+		},
+		"notifications": {
+			"created": "Error type created.",
+			"deleted": "Error type deleted.",
+			"updated": "Error type updated."
+		},
+		"selector": {
+			"description": "Optional QA failure category detected by this question.",
+			"empty": "No active error types are available.",
+			"inactiveOption": "{{code}} — {{label}} (inactive)",
+			"label": "Error type",
+			"manage": "Manage error types",
+			"nothingFound": "No error types match this search",
+			"placeholder": "Unclassified",
+			"unavailableOption": "Unavailable error type (#{{id}})"
+		},
+		"states": {
+			"empty": "No error types match these filters.",
+			"errorTitle": "Could not load error types",
+			"importUnavailable": "The error-type catalog could not be loaded, so templates cannot be validated or imported."
+		},
+		"status": {
+			"active": "Active",
+			"inactive": "Inactive"
+		},
+		"table": {
+			"actions": "Actions",
+			"code": "Code",
+			"createdAt": "Created",
+			"description": "Description",
+			"label": "Label",
+			"noDescription": "No description",
+			"notAvailable": "Not available",
+			"status": "Status"
+		},
+		"title": "Error types",
+		"validation": {
+			"codeFormat": "Use only uppercase letters, numbers, and underscores.",
+			"codeRequired": "Code is required.",
+			"duplicate": "This code already exists for the active client.",
+			"labelRequired": "Display label is required.",
+			"maxLength": "Must be {{count}} characters or fewer."
+		}
+	},
+	"eyebrow": "QA templates",
+	"fields": {
+		"active": "Available for new evaluations",
+		"answerType": "Answer type",
+		"category": "Category",
+		"categoryPlaceholder": "ventas",
+		"description": "Description",
+		"descriptionPlaceholder": "Describe when this form should be used",
+		"group": "Section",
+		"groupDescription": "Section guidance",
+		"groupName": "Section name",
+		"name": "Name",
+		"namePlaceholder": "QA Sales Calls",
+		"optionLabel": "Option",
+		"optionScore": "Score",
+		"questionDescription": "Evaluator guidance",
+		"questionText": "Question",
+		"sortOrder": "Sort order"
+	},
+	"groups": {
+		"add": "Add section",
+		"createTitle": "Create section",
+		"description": "Sections organize questions and define evaluator reading order.",
+		"editTitle": "Edit section",
+		"empty": "Add a section before creating questions.",
+		"noDescription": "No guidance provided.",
+		"questionCount_one": "{{count}} question",
+		"questionCount_other": "{{count}} questions",
+		"sortOrder": "Order {{order}}",
+		"title": "Sections and questions",
+		"deleteTitle": "Delete section",
+		"deleteConfirm": "Delete \"{{name}}\" and all its questions? This cannot be undone."
+	},
+	"metadata": {
+		"description": "Update the name, category, availability, and guidance shown to evaluators.",
+		"title": "Basic info"
+	},
+	"notifications": {
+		"formCreated": "Form created.",
+		"formDeleted": "Form deleted.",
+		"formUpdated": "Form updated.",
+		"groupCreated": "Section created.",
+		"groupDeleted": "Section deleted.",
+		"groupUpdated": "Section updated.",
+		"questionCreated": "Question created.",
+		"questionDeleted": "Question deleted.",
+		"questionUpdated": "Question updated.",
+		"templateDownloaded": "Template downloaded.",
+		"templateImported": "Template imported."
+	},
+	"questions": {
+		"add": "Add question",
+		"addOption": "Add option",
+		"createTitle": "Create question",
+		"derivedWeight": "Derived weight: {{weight}}",
+		"editTitle": "Edit question",
+		"empty": "No questions in this section yet.",
+		"noDescription": "No evaluator guidance.",
+		"options": "Options and scores",
+		"weight": "Weight {{weight}}",
+		"deleteTitle": "Delete question",
+		"deleteConfirm": "Delete \"{{text}}\"? This cannot be undone."
+	},
+	"pagination": {
+		"pageSize": "Rows"
+	},
+	"search": {
+		"count": "{{count}} forms",
+		"placeholder": "Search forms"
+	},
+	"states": {
+		"deleteConfirm": "Delete \"{{name}}\"? This removes the form and its sections and questions.",
+		"emptyDescription": "Create a form to start building manual QA workflows.",
+		"emptyTitle": "No forms found",
+		"errorTitle": "Could not load forms"
+	},
+	"status": {
+		"active": "Active",
+		"inactive": "Inactive"
+	},
+	"table": {
+		"actions": "Actions",
+		"category": "Category",
+		"name": "Form",
+		"noCategory": "Uncategorized",
+		"noDescription": "No description",
+		"status": "Status"
+	},
+	"template": {
+		"download": "Download template",
+		"downloadEmpty": "Template response was empty",
+		"fields": {
+			"file": "JSON file",
+			"filePlaceholder": "Select a template JSON file",
+			"json": "Template JSON",
+			"jsonPlaceholder": "{\n  \"name\": \"QA Form Template\",\n  \"groups\": []\n}"
+		},
+		"import": "Import template",
+		"importDescription": "Paste a completed template or select a JSON file. The backend will create the form, sections, and questions together.",
+		"importSubmit": "Import template",
+		"importTitle": "Import QA form template"
+	},
+	"title": "Forms",
+	"validation": {
+		"groupRequired": "Section name is required",
+		"groupSelectionRequired": "Select a section",
+		"nameRequired": "Name is required",
+		"optionsRequired": "Add at least one option",
+		"questionRequired": "Question text is required",
+		"templateErrorType": "Error type #{{errorTypeId}} is invalid or inactive in section “{{groupName}}”, question “{{questionText}}”.",
+		"templateJson": "Enter valid template JSON",
+		"templateObject": "Template must be a JSON object",
+		"templateRequired": "Paste or upload a template JSON",
+		"templateShape": "Template must include a name and groups array"
+	}
+}

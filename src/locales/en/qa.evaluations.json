@@ -1,0 +1,272 @@
+{
+	"actions": {
+		"backToEvaluations": "Back to evaluations"
+	},
+	"answer": {
+		"answered": "Answered",
+		"awardedScore": "{{score}} pts awarded",
+		"optionLabel": "{{label}} · {{score}} pts",
+		"save": "Save answer",
+		"saved": "Answer saved.",
+		"textPlaceholder": "Write evaluator notes",
+		"validationRequired": "Enter an answer before saving."
+	},
+	"answerTypes": {
+		"choice": "Choice",
+		"text": "Text"
+	},
+	"agent": {
+		"sectionTitle": "Agent being evaluated",
+		"title": "Agent",
+		"types": {
+			"aiBot": "AI bot agent",
+			"human": "Human agent"
+		},
+		"unavailable": "Agent details are unavailable."
+	},
+	"ai": {
+		"badge": "AI evaluation",
+		"failedFallback": "The AI evaluation failed. Please try again.",
+		"failedTitle": "AI evaluation failed",
+		"processingDescription": "The evaluator agent is scoring this interaction. Results will appear automatically.",
+		"processingTitle": "AI evaluation in progress",
+		"rerun": "Re-run AI evaluation",
+		"rerunQueued": "AI evaluation re-queued.",
+		"errorTypes": {
+			"malformed_response": "Malformed response",
+			"not_configured": "Not configured",
+			"provider_error": "Provider error",
+			"timeout": "Timeout",
+			"unknown": "Unknown error",
+			"validation_error": "Validation error"
+		}
+	},
+	"aiStatus": {
+		"completed": "Completed",
+		"failed": "Failed",
+		"pending": "Queued",
+		"processing": "Processing"
+	},
+	"complete": {
+		"incomplete": "Answer every question before completing the evaluation.",
+		"submit": "Complete evaluation",
+		"success": "Evaluation completed."
+	},
+	"conversation": {
+		"title": "Interaction"
+	},
+	"detail": {
+		"description": "Answer each question, save your responses, and complete the evaluation when everything is ready.",
+		"groupQuestionCount": "{{count}} questions",
+		"title": "Manual evaluation",
+		"unsupportedDescription": "The server did not provide the frozen questions and answers for this evaluation. Try again after the evaluation detail API is updated.",
+		"unsupportedTitle": "This evaluation cannot be opened",
+		"version": "Version {{version}}",
+		"weight": "Weight {{weight}}"
+	},
+	"disputes": {
+		"actions": {
+			"create": "Create dispute",
+			"open": "Open dispute"
+		},
+		"form": {
+			"cancel": "Cancel",
+			"changed": "Changed",
+			"changedCount_one": "{{count}} changed answer",
+			"changedCount_other": "{{count}} changed answers",
+			"pending": "Needs changes",
+			"ready": "Ready",
+			"reason": "Reason",
+			"reasonPlaceholder": "Explain why this evaluation needs correction.",
+			"submit": "Create dispute",
+			"title": "Dispute evaluation #{{id}}",
+			"validation": "Enter a reason and change at least one answer.",
+			"versionDescription": "The original evaluation stays immutable. Submitting creates the next version in the chain.",
+			"versionTitle": "Current version {{version}}"
+		},
+		"history": {
+			"empty": "No disputes have been created for this version chain.",
+			"loading": "Loading disputes...",
+			"title": "Dispute history",
+			"version": "Version {{version}}"
+		},
+		"notifications": {
+			"created": "Dispute created. Version {{version}} is ready."
+		},
+		"scoreDelta": "{{delta}} pts"
+	},
+	"list": {
+		"actions": {
+			"new": "New evaluation",
+			"open": "Open evaluation",
+			"retry": "Try again",
+			"delete": "Delete"
+		},
+		"agentFallback": "Agent #{{id}}",
+		"count_one": "{{count}} evaluation",
+		"count_other": "{{count}} evaluations",
+		"description": "Review every quality evaluation and continue work that is ready to be completed.",
+		"evaluatorTypes": {
+			"ai": "AI",
+			"human": "Human"
+		},
+		"eyebrow": "Quality assurance",
+		"filters": {
+			"aiStatus": "AI status",
+			"evaluator": "Evaluator type",
+			"interaction": "Search interaction reference",
+			"status": "Status"
+		},
+		"notAvailable": "Not available",
+		"pagination": {
+			"pageSize": "Rows"
+		},
+		"scoreValue": "{{score}}%",
+		"states": {
+			"emptyDescription": "Create an evaluation to begin reviewing a campaign conversation.",
+			"emptyTitle": "No evaluations yet",
+			"errorTitle": "Could not load evaluations",
+			"noMatchesDescription": "Adjust or clear the filters to see more evaluations.",
+			"noMatchesTitle": "No evaluations match these filters"
+		},
+		"table": {
+			"actions": "Actions",
+			"agent": "Agent",
+			"date": "Evaluated",
+			"evaluator": "Evaluator",
+			"form": "Form",
+			"interaction": "Interaction",
+			"score": "Score",
+			"status": "Status"
+		},
+		"title": "Evaluations"
+	},
+	"manual": {
+		"agentLabel": "Agent being evaluated",
+		"agentNothingFound": "No agents match this search",
+		"agentPlaceholder": "Search by name, employee ID, or email",
+		"agentRequired": "Select the agent being evaluated.",
+		"campaignFallback": "Campaign",
+		"campaignLabel": "Campaign",
+		"campaignPlaceholder": "Select a campaign",
+		"conversationIdentifier": "Conversation #{{id}}",
+		"conversationLabel": "Campaign conversations",
+		"description": "Select an active form, campaign, and conversation to create a human evaluation.",
+		"eyebrow": "Manual QA",
+		"formLabel": "Form",
+		"formPlaceholder": "Select a form",
+		"invalidAgent": "The preselected agent does not exist or cannot be used.",
+		"manageAgents": "Manage agents",
+		"noCampaigns": "There are no active campaigns available for evaluation.",
+		"noConversations": "This campaign does not have conversations available for evaluation.",
+		"noForms": "There are no active forms available for evaluation.",
+		"noAgents": "There are no selectable agents.",
+		"noMetadata": "No metadata",
+		"noReference": "No reference",
+		"setupDescription": "Choose the evaluation form and the campaign conversation that should be reviewed.",
+		"setupTitle": "Evaluation setup",
+		"start": "Start evaluation",
+		"table": {
+			"actions": "Selection",
+			"count_one": "{{count}} conversation",
+			"count_other": "{{count}} conversations",
+			"createdAt": "Created",
+			"metadata": "Metadata",
+			"noDate": "No date",
+			"pageSize": "Rows",
+			"reference": "Reference",
+			"select": "Select",
+			"selected": "Selected"
+		},
+		"title": "Manual evaluation",
+		"back": "Back",
+		"next": "Continue",
+		"agentSelected": "Agent selected",
+		"stepProgress": "Step {{current}} of {{total}}",
+		"stepPending": "Not selected yet",
+		"stepFormHelper": "Pick the QA form to score this interaction against.",
+		"stepAgentHelper": "Choose the agent whose interaction you're reviewing.",
+		"stepConversationHelper": "Select the campaign, then the conversation to evaluate.",
+		"conversationSearch": "Search by reference",
+		"noConversationMatches": "No conversations match your search"
+	},
+	"modal": {
+		"back": "Back",
+		"campaignLabel": "Campaign",
+		"campaignPlaceholder": "Select a campaign",
+		"columns": {
+			"agent": "Agent",
+			"employeeId": "Employee ID",
+			"evaluator": "Evaluator",
+			"form": "Form",
+			"model": "Model",
+			"provider": "Provider",
+			"reference": "Reference",
+			"transcription": "Transcript"
+		},
+		"conversationIdentifier": "Conversation #{{id}}",
+		"empty": {
+			"agents": "No agents match this search",
+			"conversations": "No conversations available",
+			"evaluators": "No active evaluator agents",
+			"forms": "No active forms available"
+		},
+		"next": "Continue",
+		"noReference": "No reference",
+		"notSelected": "Not selected yet",
+		"resultCount_one": "{{count}} result",
+		"resultCount_other": "{{count}} results",
+		"searchPlaceholder": "Search",
+		"steps": {
+			"agent": "Agent",
+			"conversation": "Conversation",
+			"evaluator": "Evaluator",
+			"form": "Form"
+		},
+		"submitAi": "Run AI evaluation",
+		"submitHuman": "Start evaluation",
+		"summary": {
+			"title": "Your selection"
+		},
+		"title": "New evaluation",
+		"transcriptRequired": "This conversation must be transcribed before running an AI evaluation. Transcribe it from the campaign first.",
+		"type": {
+			"ai": "AI",
+			"aiHelper": "An evaluator agent scores the transcript automatically.",
+			"human": "Human",
+			"humanHelper": "You score the interaction manually against the form."
+		}
+	},
+	"score": {
+		"answered": "{{answered}} / {{total}} answered",
+		"current": "Score",
+		"max": "Max",
+		"percent": "{{percent}}%",
+		"sectionDetail": "{{score}} / {{max}} · {{answered}} / {{total}} answered",
+		"sections": "Section scores",
+		"title": "Progress and score"
+	},
+	"states": {
+		"errorTitle": "Could not load evaluation",
+		"tryAgain": "Try again"
+	},
+	"status": {
+		"completed": "Completed",
+		"draft": "Ready"
+	},
+	"transcription": {
+		"completed": "Transcribed",
+		"failed": "Failed",
+		"none": "Not transcribed",
+		"pending": "Queued",
+		"processing": "Transcribing"
+	},
+	"delete": {
+		"action": "Delete evaluation",
+		"title": "Delete evaluation?",
+		"description": "This will soft-delete the “{{ref}}” evaluation. It will be removed from all lists and views and can’t be undone.",
+		"confirm": "Delete evaluation",
+		"cancel": "Cancel",
+		"notification": "Evaluation deleted"
+	}
+}

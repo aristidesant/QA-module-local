@@ -104,16 +104,6 @@
 		"turnCount_one": "{{count}} turn",
 		"turnCount_other": "{{count}} turns"
 	},
-	"technicalOverview": {
-		"title": "Conversation technical payload",
-		"description": "Complete conversation-level records, configuration, and analysis.",
-		"sections": {
-			"metadata": "Metadata",
-			"analysis": "Analysis",
-			"initiationData": "Conversation initiation data",
-			"rawPayload": "Raw conversation payload"
-		}
-	},
 	"actions": {
 		"title": "Actions",
 		"description": "Actions that can be performed on this conversation.",
@@ -170,7 +160,10 @@
 			"rationaleTooltip": "View rationale",
 			"noRationale": "No rationale available",
 			"count_one": "{{count}} variable",
-			"count_other": "{{count}} variables"
+			"count_other": "{{count}} variables",
+			"capturedCount": "{{captured}} of {{total}} captured",
+			"showAll": "Show all ({{count}})",
+			"hideEmpty": "Hide empty"
 		},
 		"downloadAudio": "Audio",
 		"downloadTranscript": "Download Full Transcript",
@@ -331,6 +324,8 @@
 		"pause": "Pause",
 		"mute": "Mute",
 		"unmute": "Unmute",
+		"volume": "Volume",
+		"speed": "Playback speed",
 		"download": "Download Audio",
 		"retryLabel": "Retry audio",
 		"retryHint": "Recording unavailable. Try reloading the audio."

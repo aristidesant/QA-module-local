@@ -18,6 +18,7 @@ import ModuleGuard from './components/ModuleGuard/ModuleGuard';
 import RouteErrorBoundary from './components/GenericAppError/RouteErrorBoundary';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { campaignRouteNamespaces } from '~/modules/campaigns/campaignNamespaces';
+import { qaRouteNamespaces } from '~/modules/qa/qaNamespaces';
 import SuspenseFallback from './components/SuspenseFallback/SuspenseFallback';
 const Layout = React.lazy(() => import('./components/Layout'));
 
@@ -94,6 +95,9 @@ const PhoneNumbersPage = React.lazy(
 const DictionaryRulesPage = React.lazy(
 	() => import('./modules/configurations/DictionaryRules/DictionaryRulesPage')
 );
+const ElevenLabsLlmCatalogPage = React.lazy(
+	() => import('./modules/elevenlabs-llms/ElevenLabsLlmCatalogPage')
+);
 const ConfigurationsPage = React.lazy(
 	() => import('./modules/configurations/ConfigurationsPage')
 );
@@ -137,6 +141,45 @@ const InvoiceNewPage = React.lazy(
 const InvoiceDetailPage = React.lazy(
 	() => import('./modules/billing/InvoiceDetailPage/InvoiceDetailPage')
 );
+const QaEvaluatorAgentsListPage = React.lazy(
+	() => import('./modules/qa/evaluatorAgents/EvaluatorAgentsListPage')
+);
+const QaAgentsListPage = React.lazy(
+	() => import('./modules/qa/agents/AgentsListPage')
+);
+const QaAgentDetailPage = React.lazy(
+	() => import('./modules/qa/agents/AgentDetailPage')
+);
+const QaDisputesListPage = React.lazy(
+	() => import('./modules/qa/disputes/DisputesListPage')
+);
+const QaDisputeDetailPage = React.lazy(
+	() => import('./modules/qa/disputes/DisputeDetailPage')
+);
+const QaCampaignsListPage = React.lazy(
+	() => import('./modules/qa/campaigns/CampaignsListPage')
+);
+const QaCampaignDetailPage = React.lazy(
+	() => import('./modules/qa/campaigns/CampaignDetailPage')
+);
+const QaFormsListPage = React.lazy(
+	() => import('./modules/qa/forms/FormsListPage')
+);
+const QaErrorTypesPage = React.lazy(
+	() => import('./modules/qa/forms/ErrorTypesPage')
+);
+const QaFormBuilderPage = React.lazy(
+	() => import('./modules/qa/forms/FormBuilderPage')
+);
+const QaDashboardPage = React.lazy(
+	() => import('./modules/qa/dashboard/DashboardPage')
+);
+const QaEvaluationsListPage = React.lazy(
+	() => import('./modules/qa/evaluations/EvaluationsListPage')
+);
+const QaManualEvaluationPage = React.lazy(
+	() => import('./modules/qa/evaluations/ManualEvaluationPage')
+);
 
 /**
  * Automatically loads i18n namespaces based on the active route's ID.
@@ -148,7 +191,9 @@ const I18nNamespaceLoader = ({ children }: { children: React.ReactNode }) => {
 	const namespace = lastMatch?.id;
 	const resolvedNamespace =
 		namespace && namespace !== 'root' && !namespace.includes('/')
-			? (campaignRouteNamespaces[namespace] ?? namespace)
+			? (campaignRouteNamespaces[namespace] ??
+				qaRouteNamespaces[namespace] ??
+				namespace)
 			: 'common';
 
 	// Use useTranslation to ensure the namespace is loaded before rendering children.
@@ -456,6 +501,171 @@ const router = createBrowserRouter([
 								],
 							},
 							{
+								path: 'qa',
+								id: 'qa',
+								element: <ModuleGuard qaAdminOnly />,
+								children: [
+									{
+										index: true,
+										element: <Navigate to='/qa/dashboard' replace />,
+									},
+									{
+										path: 'dashboard',
+										id: 'qa.dashboard',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaDashboardPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'evaluations',
+										id: 'qa.evaluations',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaEvaluationsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'evaluations/new',
+										id: 'qa.evaluations.new',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaEvaluationsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'evaluations/:evaluationId',
+										id: 'qa.evaluations.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaManualEvaluationPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'evaluator-agents',
+										id: 'qa.evaluator-agents',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaEvaluatorAgentsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'agents',
+										id: 'qa.agents',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaAgentsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'agents/:agentId',
+										id: 'qa.agents.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaAgentDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'disputes',
+										id: 'qa.disputes',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaDisputesListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'disputes/:disputeId',
+										id: 'qa.disputes.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaDisputeDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'campaigns',
+										id: 'qa.campaigns',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaCampaignsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'campaigns/:campaignId',
+										id: 'qa.campaigns.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaCampaignDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'forms',
+										id: 'qa.forms',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaFormsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'forms/error-types',
+										id: 'qa.forms.error-types',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaErrorTypesPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'forms/:formId',
+										id: 'qa.forms.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaFormBuilderPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+								],
+							},
+							{
 								path: 'conversations',
 								id: 'conversations',
 								element: (
@@ -566,6 +776,19 @@ const router = createBrowserRouter([
 												<I18nNamespaceLoader>
 													<Suspense fallback={<SuspenseFallback />}>
 														<DictionaryRulesPage />
+													</Suspense>
+												</I18nNamespaceLoader>
+											</ModuleGuard>
+										),
+									},
+									{
+										path: 'elevenlabs-llms',
+										id: 'elevenlabs-llms',
+										element: (
+											<ModuleGuard masterOnly superAdminOnly>
+												<I18nNamespaceLoader>
+													<Suspense fallback={<SuspenseFallback />}>
+														<ElevenLabsLlmCatalogPage />
 													</Suspense>
 												</I18nNamespaceLoader>
 											</ModuleGuard>

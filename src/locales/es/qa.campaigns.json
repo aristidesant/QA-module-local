@@ -1,0 +1,190 @@
+{
+	"detail": {
+		"actions": {
+			"backToCampaigns": "Volver a campañas",
+			"deleteCampaign": "Eliminar",
+			"editCampaign": "Editar",
+			"startEvaluation": "Iniciar evaluacion",
+			"uploadAudio": "Cargar MP3"
+		},
+		"audio": {
+			"errorTitle": "No se pudo cargar el audio",
+			"noTimestamp": "Sin marca de tiempo",
+			"playerLabel": "Audio de la conversacion",
+			"seekTo": "Ir a {{time}}",
+			"speaker": "Hablante {{index}}",
+			"title": "Reproduccion de audio",
+			"transcriptLoading": "Cargando transcripción",
+			"transcriptTitle": "Transcripción",
+			"transcriptUnavailable": "Transcripción no disponible. El audio sigue disponible.",
+			"transcriptUnavailableTitle": "Transcripción no disponible",
+			"unsupported": "Tu navegador no soporta reproduccion de audio.",
+			"close": "Cerrar reproductor"
+		},
+		"conversations": {
+			"actions": {
+				"evaluate": "Evaluar conversacion",
+				"playAudio": "Reproducir audio",
+				"seeTranscript": "Ver transcripción",
+				"delete": "Eliminar conversación"
+			},
+			"audioSize": {
+				"kilobytes": "{{size}} KB",
+				"megabytes": "{{size}} MB"
+			},
+			"duration": "{{minutes}}:{{seconds}}",
+			"empty": {
+				"description": "Carga o sincroniza conversaciones para esta campaña antes de iniciar evaluaciones manuales.",
+				"title": "No se encontraron conversaciones"
+			},
+			"noDate": "Sin fecha",
+			"noMetadata": "Sin metadata",
+			"noReference": "Sin referencia",
+			"table": {
+				"actions": "Acciones",
+				"createdAt": "Creada",
+				"externalRef": "Referencia",
+				"identifier": "Conversacion #{{id}}",
+				"media": "Medio",
+				"metadata": "Metadata",
+				"transcription": "Transcripción"
+			},
+			"transcription": {
+				"action": "Transcribir",
+				"noAudio": "Sin audio",
+				"rerun": "Reintentar",
+				"status": {
+					"completed": "Transcrita",
+					"failed": "Fallida",
+					"pending": "En cola",
+					"processing": "Transcribiendo"
+				}
+			},
+			"delete": {
+				"title": "¿Eliminar conversación?",
+				"description": "Esto eliminará la conversación «{{name}}». Se quitará de la lista de conversaciones y no se puede deshacer.",
+				"confirm": "Eliminar conversación",
+				"cancel": "Cancelar",
+				"fallbackName": "esta conversación"
+			}
+		},
+		"description": "Revisa las conversaciones asociadas a esta campaña e inicia una evaluacion manual cuando el formulario este listo.",
+		"filters": {
+			"count": "{{count}} conversaciones",
+			"externalRefPlaceholder": "Referencia exacta",
+			"searchPlaceholder": "Buscar referencias"
+		},
+		"title": "Detalle de campaña",
+		"upload": {
+			"actions": {
+				"cancel": "Cancelar",
+				"submit": "Cargar audio"
+			},
+			"description": "Carga un MP3 de hasta {{size}} MB. Si la referencia ya existe en esta campaña, el backend actualizara esa conversacion de audio.",
+			"fields": {
+				"externalRef": "Referencia externa",
+				"externalRefPlaceholder": "llamada-2026-001",
+				"file": "Archivo MP3",
+				"filePlaceholder": "Selecciona un archivo MP3",
+				"source": "Origen",
+				"sourceMetadata": "Metadata de origen",
+				"sourceMetadataPlaceholder": "{\"agente\":\"Alicia\",\"cola\":\"Ventas\"}"
+			},
+			"title": "Cargar conversacion MP3"
+		}
+	},
+	"list": {
+		"actions": {
+			"create": "Crear campaña",
+			"delete": "Eliminar campaña",
+			"edit": "Editar campaña",
+			"open": "Abrir campaña"
+		},
+		"description": "Consulta campañas QA, filtra por estado operativo y abre la cola de conversaciones para evaluacion manual.",
+		"empty": {
+			"description": "Ninguna campaña coincide con los filtros actuales. Limpia los filtros o crea una campaña para comenzar a asociar conversaciones.",
+			"title": "No se encontraron campañas"
+		},
+		"eyebrow": "Operaciones de campañas",
+		"filters": {
+			"allStatuses": "Todos los estados",
+			"count": "{{count}} campañas",
+			"searchPlaceholder": "Buscar campañas"
+		},
+		"table": {
+			"actions": "Acciones",
+			"createdAt": "Creada",
+			"name": "Campaña",
+			"noDate": "Sin fecha",
+			"noDescription": "Sin descripcion",
+			"status": "Estado"
+		},
+		"title": "Campañas"
+	},
+	"pagination": {
+		"pageSize": "Filas por pagina"
+	},
+	"states": {
+		"errorTitle": "No se pudieron cargar los datos"
+	},
+	"campaignForm": {
+		"actions": {
+			"cancel": "Cancelar",
+			"create": "Crear campaña",
+			"update": "Actualizar campaña"
+		},
+		"editTitle": "Editar campaña",
+		"fields": {
+			"description": "Descripcion",
+			"descriptionPlaceholder": "Describe el alcance de la campaña o la cola",
+			"name": "Nombre",
+			"namePlaceholder": "Campaña QA junio",
+			"source": "Origen por defecto",
+			"sourceMetadata": "Metadata de origen",
+			"sourceMetadataPlaceholder": "{\"cola\":\"Ventas\",\"region\":\"US\"}",
+			"sourcePlaceholder": "Selecciona un origen",
+			"status": "Estado"
+		},
+		"title": "Crear campaña"
+	},
+	"delete": {
+		"actions": {
+			"cancel": "Cancelar",
+			"confirm": "Eliminar campaña"
+		},
+		"description": "Esto eliminara {{name}} de forma logica. Las referencias existentes pueden dejar de estar disponibles en la lista activa de campañas.",
+		"fallbackName": "esta campaña",
+		"title": "Eliminar campaña"
+	},
+	"status": {
+		"active": "Activa",
+		"inactive": "Inactiva"
+	},
+	"media": {
+		"audio": "Audio",
+		"structured": "Estructurada",
+		"unknown": "Desconocido"
+	},
+	"notifications": {
+		"audioUploaded": "Conversacion de audio cargada.",
+		"campaignCreated": "Campaña creada.",
+		"campaignDeleted": "Campaña eliminada.",
+		"campaignUpdated": "Campaña actualizada.",
+		"conversationDeleted": "Conversación eliminada"
+	},
+	"source": {
+		"elevenlabs": "ElevenLabs",
+		"manual_upload": "Carga manual",
+		"other": "Otro",
+		"ucxm": "UCXM"
+	},
+	"validation": {
+		"audioFileRequired": "Selecciona un archivo MP3",
+		"audioFileSize": "El archivo debe ser de {{size}} MB o menos",
+		"audioFileType": "Solo se soportan archivos de audio MP3",
+		"externalRefMaxLength": "La referencia externa debe tener 150 caracteres o menos",
+		"metadataJson": "Ingresa metadata JSON valida",
+		"metadataObject": "La metadata debe ser un objeto JSON",
+		"nameRequired": "El nombre de la campaña es obligatorio"
+	}
+}

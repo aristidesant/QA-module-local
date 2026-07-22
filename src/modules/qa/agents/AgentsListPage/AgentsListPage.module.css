@@ -1,0 +1,55 @@
+.page {
+	min-height: 100%;
+}
+
+.toolbar {
+	align-items: flex-end;
+}
+
+.filters {
+	flex: 1;
+}
+
+.search {
+	min-width: min(100%, 280px);
+}
+
+.typeFilter {
+	min-width: 180px;
+}
+
+.teamFilter {
+	min-width: 200px;
+}
+
+.emptyState {
+	border: 1px dashed var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-xl);
+}
+
+.row {
+	cursor: pointer;
+}
+
+.actions {
+	justify-content: flex-end;
+}
+
+.pageSize {
+	width: 112px;
+}
+
+@media (max-width: 48em) {
+	.toolbar,
+	.filters {
+		align-items: stretch;
+		flex-direction: column;
+	}
+
+	.search,
+	.typeFilter,
+	.teamFilter {
+		width: 100%;
+	}
+}

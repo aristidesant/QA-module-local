@@ -19,10 +19,16 @@ import {
 import {
 	IconActivity,
 	IconBook2,
+	IconChecklist,
 	IconChevronDown,
+	IconClipboardCheck,
+	IconForms,
+	IconGitBranch,
+	IconSpeakerphone,
 	IconChevronLeft,
 	IconChevronRight,
 	IconChartBar,
+	IconCpu,
 	IconFileInvoice,
 	IconLayoutDashboard,
 	IconListDetails,
@@ -39,6 +45,8 @@ import { APP_VERSION } from '~/version';
 import { usePermissions } from '~/hooks/usePermissions';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
+import { useIsQaAdmin } from '~/hooks/useIsQaAdmin';
+import { useCurrentApp } from '~/hooks/useCurrentApp';
 import { useSidebarStore } from '~/stores/sidebarStore';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -49,7 +57,8 @@ type SidebarNavItem = {
 	label: string;
 	icon: React.ReactNode;
 	to: string;
-	module: ModuleEnum;
+	/** When omitted, only the masterOnly/superAdminOnly checks apply. */
+	module?: ModuleEnum;
 	permission?: PermissionEnum;
 	masterOnly?: boolean;
 	superAdminOnly?: boolean;
@@ -187,6 +196,15 @@ const sidebarSections: SidebarSection[] = [
 				masterOnly: true,
 				i18nNamespace: 'dictionary-rules',
 			},
+			{
+				key: 'elevenlabs-llms',
+				label: 'sidebar.items.elevenLabsLlms',
+				icon: <IconCpu size={18} className={styles.menuIcon} />,
+				to: '/configurations/elevenlabs-llms',
+				masterOnly: true,
+				superAdminOnly: true,
+				i18nNamespace: 'elevenlabs-llms',
+			},
 		],
 	},
 	{
@@ -283,12 +301,69 @@ const sidebarSections: SidebarSection[] = [
 	},
 ];
 
+// QA is its own app mode, not a section in the Campaign-management sidebar.
+// These render as the entire sidebar when the user is inside /qa/*, gated by
+// useIsQaAdmin (QA_ADMIN or super-admin). Everyone else never sees them.
+const qaPrimaryItems: SidebarNavItem[] = [
+	{
+		key: 'qa-dashboard',
+		label: 'sidebar.items.qaDashboard',
+		icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
+		to: '/qa/dashboard',
+		i18nNamespace: 'qa.dashboard',
+	},
+	{
+		key: 'qa-evaluations',
+		label: 'sidebar.items.qaEvaluations',
+		icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
+		to: '/qa/evaluations',
+		i18nNamespace: 'qa.evaluations',
+	},
+	{
+		key: 'qa-campaigns',
+		label: 'sidebar.items.qaCampaigns',
+		icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
+		to: '/qa/campaigns',
+		i18nNamespace: 'qa.campaigns',
+	},
+	{
+		key: 'qa-forms',
+		label: 'sidebar.items.qaForms',
+		icon: <IconForms size={20} className={styles.menuIcon} />,
+		to: '/qa/forms',
+		i18nNamespace: 'qa.forms',
+	},
+	{
+		key: 'qa-disputes',
+		label: 'sidebar.items.qaDisputes',
+		icon: <IconGitBranch size={20} className={styles.menuIcon} />,
+		to: '/qa/disputes',
+		i18nNamespace: 'qa.disputes',
+	},
+	{
+		key: 'qa-agents',
+		label: 'sidebar.items.qaAgents',
+		icon: <IconUsers size={20} className={styles.menuIcon} />,
+		to: '/qa/agents',
+		i18nNamespace: 'qa.agents',
+	},
+	{
+		key: 'qa-evaluator-agents',
+		label: 'sidebar.items.qaEvaluatorAgents',
+		icon: <IconChecklist size={20} className={styles.menuIcon} />,
+		to: '/qa/evaluator-agents',
+		i18nNamespace: 'qa.evaluatorAgents',
+	},
+];
+
 export const Sidebar: React.FC = () => {
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const { t } = useTranslation('common');
 	const location = useLocation();
 	const isMasterClient = useIsMasterClient();
 	const isSuperAdmin = useIsSuperAdmin();
+	const isQaAdmin = useIsQaAdmin();
+	const inQaApp = useCurrentApp() === 'qa' && isQaAdmin;
 	const { collapsed, toggleCollapsed } = useSidebarStore();
 	const [openSection, setOpenSection] = useState<string>('');
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -306,6 +381,10 @@ export const Sidebar: React.FC = () => {
 
 				if (item.superAdminOnly && !isSuperAdmin) {
 					return false;
+				}
+
+				if (!item.module) {
+					return true;
 				}
 
 				if (item.permission) {
@@ -331,6 +410,10 @@ export const Sidebar: React.FC = () => {
 							return false;
 						}
 
+						if (!item.module) {
+							return true;
+						}
+
 						if (item.permission) {
 							return canPerformAction(item.module, item.permission);
 						}
@@ -342,24 +425,27 @@ export const Sidebar: React.FC = () => {
 		[canAccessModule, canPerformAction, isMasterClient, isSuperAdmin]
 	);
 
+	// In the QA app the sidebar is just the QA nav (flat, no sections); in
+	// Campaign management it's the normal UCXM nav (now QA-free).
+	const primaryNav = inQaApp ? qaPrimaryItems : visiblePrimaryItems;
+	const sectionNav = inQaApp ? [] : visibleSections;
+
 	const activeSection = useMemo(
 		() =>
-			visibleSections.find((section) =>
+			sectionNav.find((section) =>
 				section.items.some((item) => isLinkActive(item, location.pathname))
 			) ?? null,
-		[location.pathname, visibleSections]
+		[location.pathname, sectionNav]
 	);
 
 	const activeItem = useMemo(
 		() =>
-			visiblePrimaryItems.find((item) =>
-				isLinkActive(item, location.pathname)
-			) ??
-			visibleSections
+			primaryNav.find((item) => isLinkActive(item, location.pathname)) ??
+			sectionNav
 				.flatMap((section) => section.items)
 				.find((item) => isLinkActive(item, location.pathname)) ??
 			null,
-		[location.pathname, visiblePrimaryItems, visibleSections]
+		[location.pathname, primaryNav, sectionNav]
 	);
 	const activeItemKey = activeItem?.key ?? null;
 	const activeSectionKey = activeSection?.key ?? null;
@@ -497,7 +583,7 @@ export const Sidebar: React.FC = () => {
 			</div>
 
 			<Stack gap='xs' className={styles.primaryLinks}>
-				{visiblePrimaryItems.map((item) => (
+				{primaryNav.map((item) => (
 					<SidebarLinkItem
 						key={item.key}
 						item={item}
@@ -512,7 +598,7 @@ export const Sidebar: React.FC = () => {
 			<div className={styles.mainScrollArea} ref={scrollContainerRef}>
 				<Stack gap='xs' className={styles.menuList}>
 					<Stack gap='xs' className={styles.sectionsList}>
-						{visibleSections.map((section) => (
+						{sectionNav.map((section) => (
 							<SidebarSectionGroup
 								key={section.key}
 								section={section}
@@ -533,7 +619,7 @@ export const Sidebar: React.FC = () => {
 						))}
 					</Stack>
 
-					{visiblePrimaryItems.length === 0 && visibleSections.length === 0 && (
+					{primaryNav.length === 0 && sectionNav.length === 0 && (
 						<div className={styles.emptyState}>
 							<Text size='sm' c='dimmed' fw={600}>
 								{t('sidebar.noModules')}

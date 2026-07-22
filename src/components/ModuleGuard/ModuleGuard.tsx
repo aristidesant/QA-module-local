@@ -2,6 +2,7 @@ import { Outlet } from 'react-router';
 import { usePermissions } from '~/hooks/usePermissions';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
+import { useIsQaAdmin } from '~/hooks/useIsQaAdmin';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import AccessDenied from '~/components/AccessDenied/AccessDenied';
@@ -9,11 +10,14 @@ import AccessDenied from '~/components/AccessDenied/AccessDenied';
 import { ReactNode } from 'react';
 
 interface ModuleGuardProps {
-	module: ModuleEnum;
+	/** When omitted, only the masterOnly/superAdminOnly checks apply. */
+	module?: ModuleEnum;
 	permission?: PermissionEnum;
 	children?: ReactNode;
 	masterOnly?: boolean;
 	superAdminOnly?: boolean;
+	/** Gate on QA app access (QA_ADMIN role or super-admin). */
+	qaAdminOnly?: boolean;
 }
 
 const ModuleGuard = ({
@@ -22,10 +26,12 @@ const ModuleGuard = ({
 	children,
 	masterOnly = false,
 	superAdminOnly = false,
+	qaAdminOnly = false,
 }: ModuleGuardProps) => {
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const isMasterClient = useIsMasterClient();
 	const isSuperAdmin = useIsSuperAdmin();
+	const isQaAdmin = useIsQaAdmin();
 
 	if (masterOnly && !isMasterClient) {
 		return <AccessDenied />;
@@ -35,9 +41,15 @@ const ModuleGuard = ({
 		return <AccessDenied />;
 	}
 
-	const hasAccess = permission
-		? canPerformAction(module, permission)
-		: canAccessModule(module);
+	if (qaAdminOnly && !isQaAdmin) {
+		return <AccessDenied />;
+	}
+
+	const hasAccess = module
+		? permission
+			? canPerformAction(module, permission)
+			: canAccessModule(module)
+		: true;
 
 	if (!hasAccess) {
 		return <AccessDenied />;

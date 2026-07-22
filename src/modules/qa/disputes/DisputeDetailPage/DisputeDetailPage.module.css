@@ -1,0 +1,42 @@
+.page {
+	min-height: 100%;
+}
+
+.scoreGrid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-sm);
+}
+
+.scoreCell {
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	background: var(--surface-sunken);
+	padding: var(--mantine-spacing-sm);
+}
+
+.evaluationLink {
+	align-self: flex-start;
+}
+
+.flowMiddle {
+	position: relative;
+}
+
+.flowIcon {
+	position: absolute;
+	top: 50%;
+	left: calc(var(--mantine-spacing-md) * -1.35);
+	transform: translateY(-50%);
+	z-index: 1;
+}
+
+@media (max-width: 48em) {
+	.scoreGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.flowIcon {
+		display: none;
+	}
+}

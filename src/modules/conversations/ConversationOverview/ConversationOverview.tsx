@@ -7,13 +7,10 @@ import usePermissions from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import styles from './ConversationOverview.module.css';
-import ConversationPlayer from '../ConversationPlayer';
-import RightSectionCard from '~/components/RightSectionCard';
+import SectionCard from '~/components/SectionCard/SectionCard';
 import ConversationCapturedVariables from '../ConversationCapturedVariables';
 import { useTranslation } from 'react-i18next';
 import ConversationOverviewCard from '../ConversationOverviewCard';
-import ConversationDisposition from '../ConversationDisposition';
-import ConversationTechnicalOverview from '../ConversationTechnicalOverview';
 
 interface ConversationOverviewProps {
 	conversation: ConversationsModel;
@@ -175,62 +172,50 @@ export function ConversationOverview({
 
 	return (
 		<Stack gap='xs' className={styles.container}>
-			<ConversationPlayer
-				voiceFile={conversation?.voiceFile}
-				title={t('player.title')}
-				description={t('player.description')}
-				paramConversationId={conversation?.id}
-				contactName={`${getValueOrEmpty(contact?.firstName)} ${getValueOrEmpty(contact?.lastName)}`.trim()}
-			/>
-
 			{/* Conversation Summary */}
 			{transcriptSummary && (
-				<RightSectionCard
+				<SectionCard
 					title={t('overview.summary.title')}
 					icon={IconMessages}
-					iconColor='blue'
 					description={t('overview.summary.description')}
+					padding='sm'
+					contentSpacing='sm'
+					headerActions={
+						canExportConversations ? (
+							<Button
+								size='xs'
+								variant='default'
+								leftSection={<IconPdf size={14} />}
+								loading={exportConversationMutation.isPending}
+								onClick={handleExportConversation}
+							>
+								{t('overview.downloadTranscript')}
+							</Button>
+						) : undefined
+					}
 				>
-					<Text fz='xs' className={styles.summaryText}>
+					<Text className={styles.summaryText}>
 						{(i18n.language === 'es' ? summary?.es : summary?.en) ||
 							summary?.en ||
 							summary?.es ||
 							transcriptSummary}
 					</Text>
-					{canExportConversations && (
-						<Button
-							size='xs'
-							variant='light'
-							rightSection={<IconPdf size={14} />}
-							fullWidth
-							loading={exportConversationMutation.isPending}
-							onClick={handleExportConversation}
-						>
-							{t('overview.downloadTranscript')}
-						</Button>
-					)}
-				</RightSectionCard>
+				</SectionCard>
 			)}
 
-			<div className={styles.detailGrid}>
-				<ConversationOverviewCard
-					contactName={contactName}
-					contactPhone={contactPhone}
-					statusLabel={statusBadge.label}
-					statusColor={statusBadge.color}
-					dateDisplay={dateDisplay}
-					agentName={agentName}
-					campaignName={campaignName}
-					terminationReasonLabel={terminationLabel}
-				/>
-				<ConversationDisposition
-					key={conversation.id}
-					conversationId={String(conversation.id)}
-				/>
-			</div>
+			<ConversationOverviewCard
+				contactName={contactName}
+				contactPhone={contactPhone}
+				statusLabel={statusBadge.label}
+				statusColor={statusBadge.color}
+				dateDisplay={dateDisplay}
+				agentName={agentName}
+				campaignName={campaignName}
+				terminationReasonLabel={terminationLabel}
+				conversationId={String(conversation.id)}
+			/>
 
 			<ConversationCapturedVariables variables={capturedVariables} />
-			<ConversationTechnicalOverview transcriptContent={transcriptContent} />
 		</Stack>
 	);
 }

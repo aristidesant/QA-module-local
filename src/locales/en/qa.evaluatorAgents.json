@@ -1,0 +1,103 @@
+{
+	"actions": {
+		"cancel": "Cancel",
+		"create": "Create evaluator",
+		"delete": "Delete",
+		"edit": "Edit",
+		"new": "New evaluator",
+		"save": "Save changes"
+	},
+	"common": {
+		"notAvailable": "Not available"
+	},
+	"delete": {
+		"description": "Delete {{name}}? Past evaluations keep their data; only new AI evaluations are blocked.",
+		"title": "Delete evaluator agent"
+	},
+	"description": "Manage reusable AI evaluator profiles: a system prompt, an LLM provider, and a model.",
+	"eyebrow": "AI evaluators",
+	"filters": {
+		"count_one": "{{count}} evaluator",
+		"count_other": "{{count}} evaluators",
+		"provider": "Provider",
+		"search": "Search by name",
+		"status": "Status"
+	},
+	"form": {
+		"advanced": "Model parameters",
+		"createTitle": "Create evaluator agent",
+		"editTitle": "Edit evaluator agent",
+		"isActive": "Active",
+		"maxTokens": "Max tokens",
+		"maxTokensPlaceholder": "1500",
+		"metadata": "Metadata (JSON object)",
+		"metadataHint": "Optional free-form JSON stored with the profile.",
+		"metadataPlaceholder": "{\n  \"notes\": \"default profile\"\n}",
+		"model": "Model",
+		"modelHint": "Model is free-form per provider, e.g. gpt-4o-mini, gemini-2.0-flash, amazon.nova-lite-v1:0.",
+		"modelPlaceholder": "gpt-4o-mini",
+		"name": "Name",
+		"namePlaceholder": "QA Evaluator",
+		"provider": "Provider",
+		"systemPrompt": "System prompt",
+		"systemPromptPlaceholder": "You evaluate contact-center calls.",
+		"temperature": "Temperature",
+		"temperaturePlaceholder": "0.2",
+		"timeoutMs": "Timeout (ms)",
+		"timeoutMsPlaceholder": "30000"
+	},
+	"health": {
+		"configured": "Configured",
+		"description": "Live provider checks used by AI evaluations.",
+		"errorTitle": "Could not load provider health",
+		"latency": "{{latency}} ms latency",
+		"notConfigured": "Not configured",
+		"refresh": "Refresh provider health",
+		"status": {
+			"disabled": "Disabled",
+			"error": "Error",
+			"ok": "OK"
+		},
+		"title": "LLM provider health"
+	},
+	"notifications": {
+		"created": "Evaluator agent created.",
+		"deleted": "Evaluator agent deleted.",
+		"updated": "Evaluator agent updated."
+	},
+	"pagination": {
+		"pageSize": "Rows"
+	},
+	"providers": {
+		"bedrock": "AWS Bedrock",
+		"gemini": "Google Gemini",
+		"openai": "OpenAI"
+	},
+	"states": {
+		"active": "Active",
+		"emptyDescription": "Create an evaluator profile before running AI evaluations.",
+		"emptyTitle": "No evaluator agents yet",
+		"errorTitle": "Could not load evaluator agents",
+		"inactive": "Inactive",
+		"noMatchesDescription": "Adjust or clear the filters to see more evaluator agents.",
+		"noMatchesTitle": "No evaluator agents match these filters"
+	},
+	"table": {
+		"actions": "Actions",
+		"active": "Status",
+		"model": "Model",
+		"name": "Name",
+		"provider": "Provider",
+		"updatedAt": "Last updated"
+	},
+	"title": "Evaluator agents",
+	"validation": {
+		"duplicate": "An evaluator with this name already exists for this client.",
+		"maxLength": "Must be {{count}} characters or fewer.",
+		"metadata": "Enter a valid JSON object.",
+		"modelRequired": "Model is required.",
+		"nameRequired": "Name is required.",
+		"systemPromptRequired": "System prompt is required.",
+		"timeoutMs": "Timeout must be at least 1000 ms."
+	}
+}

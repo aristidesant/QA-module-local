@@ -1,0 +1,272 @@
+{
+	"actions": {
+		"backToEvaluations": "Volver a evaluaciones"
+	},
+	"answer": {
+		"answered": "Respondida",
+		"awardedScore": "{{score}} pts otorgados",
+		"optionLabel": "{{label}} · {{score}} pts",
+		"save": "Guardar respuesta",
+		"saved": "Respuesta guardada.",
+		"textPlaceholder": "Escribe notas del evaluador",
+		"validationRequired": "Ingresa una respuesta antes de guardar."
+	},
+	"answerTypes": {
+		"choice": "Opción múltiple",
+		"text": "Texto"
+	},
+	"agent": {
+		"sectionTitle": "Agente evaluado",
+		"title": "Agente",
+		"types": {
+			"aiBot": "Agente bot de IA",
+			"human": "Agente humano"
+		},
+		"unavailable": "Los datos del agente no están disponibles."
+	},
+	"ai": {
+		"badge": "Evaluación con IA",
+		"failedFallback": "La evaluación con IA falló. Inténtalo de nuevo.",
+		"failedTitle": "La evaluación con IA falló",
+		"processingDescription": "El agente evaluador está puntuando esta interacción. Los resultados aparecerán automáticamente.",
+		"processingTitle": "Evaluación con IA en progreso",
+		"rerun": "Reintentar evaluación con IA",
+		"rerunQueued": "Evaluación con IA reencolada.",
+		"errorTypes": {
+			"malformed_response": "Respuesta mal formada",
+			"not_configured": "No configurado",
+			"provider_error": "Error del proveedor",
+			"timeout": "Tiempo agotado",
+			"unknown": "Error desconocido",
+			"validation_error": "Error de validación"
+		}
+	},
+	"aiStatus": {
+		"completed": "Completada",
+		"failed": "Fallida",
+		"pending": "En cola",
+		"processing": "Procesando"
+	},
+	"complete": {
+		"incomplete": "Responde todas las preguntas antes de completar la evaluación.",
+		"submit": "Completar evaluación",
+		"success": "Evaluación completada."
+	},
+	"conversation": {
+		"title": "Interacción"
+	},
+	"detail": {
+		"description": "Responde cada pregunta, guarda tus respuestas y completa la evaluación cuando esté lista.",
+		"groupQuestionCount": "{{count}} preguntas",
+		"title": "Evaluación manual",
+		"unsupportedDescription": "El servidor no proporcionó las preguntas y respuestas congeladas de esta evaluación. Intenta de nuevo después de actualizar la API de detalle de evaluación.",
+		"unsupportedTitle": "No se puede abrir esta evaluación",
+		"version": "Versión {{version}}",
+		"weight": "Peso {{weight}}"
+	},
+	"disputes": {
+		"actions": {
+			"create": "Crear disputa",
+			"open": "Abrir disputa"
+		},
+		"form": {
+			"cancel": "Cancelar",
+			"changed": "Cambiada",
+			"changedCount_one": "{{count}} respuesta cambiada",
+			"changedCount_other": "{{count}} respuestas cambiadas",
+			"pending": "Faltan cambios",
+			"ready": "Lista",
+			"reason": "Motivo",
+			"reasonPlaceholder": "Explica por qué esta evaluación necesita corrección.",
+			"submit": "Crear disputa",
+			"title": "Disputar evaluación #{{id}}",
+			"validation": "Ingresa un motivo y cambia al menos una respuesta.",
+			"versionDescription": "La evaluación original queda inmutable. Al enviar se crea la siguiente versión de la cadena.",
+			"versionTitle": "Versión actual {{version}}"
+		},
+		"history": {
+			"empty": "No se han creado disputas para esta cadena de versiones.",
+			"loading": "Cargando disputas...",
+			"title": "Historial de disputas",
+			"version": "Versión {{version}}"
+		},
+		"notifications": {
+			"created": "Disputa creada. La versión {{version}} está lista."
+		},
+		"scoreDelta": "{{delta}} pts"
+	},
+	"list": {
+		"actions": {
+			"new": "Nueva evaluación",
+			"open": "Abrir evaluación",
+			"retry": "Intentar de nuevo",
+			"delete": "Eliminar"
+		},
+		"agentFallback": "Agente #{{id}}",
+		"count_one": "{{count}} evaluación",
+		"count_other": "{{count}} evaluaciones",
+		"description": "Revisa todas las evaluaciones de calidad y continúa el trabajo que está listo para completarse.",
+		"evaluatorTypes": {
+			"ai": "IA",
+			"human": "Humano"
+		},
+		"eyebrow": "Control de calidad",
+		"filters": {
+			"aiStatus": "Estado de IA",
+			"evaluator": "Tipo de evaluador",
+			"interaction": "Buscar referencia de interacción",
+			"status": "Estado"
+		},
+		"notAvailable": "No disponible",
+		"pagination": {
+			"pageSize": "Filas"
+		},
+		"scoreValue": "{{score}}%",
+		"states": {
+			"emptyDescription": "Crea una evaluación para comenzar a revisar una conversación de campaña.",
+			"emptyTitle": "Aún no hay evaluaciones",
+			"errorTitle": "No se pudieron cargar las evaluaciones",
+			"noMatchesDescription": "Ajusta o elimina los filtros para ver más evaluaciones.",
+			"noMatchesTitle": "Ninguna evaluación coincide con estos filtros"
+		},
+		"table": {
+			"actions": "Acciones",
+			"agent": "Agente",
+			"date": "Evaluada",
+			"evaluator": "Evaluador",
+			"form": "Formulario",
+			"interaction": "Interacción",
+			"score": "Puntaje",
+			"status": "Estado"
+		},
+		"title": "Evaluaciones"
+	},
+	"manual": {
+		"agentLabel": "Agente evaluado",
+		"agentNothingFound": "Ningún agente coincide con la búsqueda",
+		"agentPlaceholder": "Buscar por nombre, ID de empleado o email",
+		"agentRequired": "Selecciona el agente que será evaluado.",
+		"campaignFallback": "Campaña",
+		"campaignLabel": "Campaña",
+		"campaignPlaceholder": "Selecciona una campaña",
+		"conversationIdentifier": "Conversacion #{{id}}",
+		"conversationLabel": "Conversaciones de campaña",
+		"description": "Selecciona un formulario activo, una campaña y una conversacion para crear una evaluacion humana.",
+		"eyebrow": "QA manual",
+		"formLabel": "Formulario",
+		"formPlaceholder": "Selecciona un formulario",
+		"invalidAgent": "El agente preseleccionado no existe o no se puede usar.",
+		"manageAgents": "Administrar agentes",
+		"noCampaigns": "No hay campañas activas disponibles para evaluar.",
+		"noConversations": "Esta campaña no tiene conversaciones disponibles para evaluar.",
+		"noForms": "No hay formularios activos disponibles para evaluar.",
+		"noAgents": "No hay agentes disponibles para seleccionar.",
+		"noMetadata": "Sin metadata",
+		"noReference": "Sin referencia",
+		"setupDescription": "Elige el formulario de evaluacion y la conversacion de campaña que sera revisada.",
+		"setupTitle": "Configuración de evaluación",
+		"start": "Iniciar evaluación",
+		"table": {
+			"actions": "Seleccion",
+			"count_one": "{{count}} conversación",
+			"count_other": "{{count}} conversaciones",
+			"createdAt": "Creada",
+			"metadata": "Metadata",
+			"noDate": "Sin fecha",
+			"pageSize": "Filas",
+			"reference": "Referencia",
+			"select": "Seleccionar",
+			"selected": "Seleccionada"
+		},
+		"title": "Evaluación manual",
+		"back": "Atrás",
+		"next": "Continuar",
+		"agentSelected": "Agente seleccionado",
+		"stepProgress": "Paso {{current}} de {{total}}",
+		"stepPending": "Sin seleccionar",
+		"stepFormHelper": "Elige el formulario QA con el que se calificará esta interacción.",
+		"stepAgentHelper": "Elige el agente cuya interacción vas a revisar.",
+		"stepConversationHelper": "Selecciona la campaña y luego la conversación a evaluar.",
+		"conversationSearch": "Buscar por referencia",
+		"noConversationMatches": "Ninguna conversación coincide con tu búsqueda"
+	},
+	"modal": {
+		"back": "Atrás",
+		"campaignLabel": "Campaña",
+		"campaignPlaceholder": "Selecciona una campaña",
+		"columns": {
+			"agent": "Agente",
+			"employeeId": "ID de empleado",
+			"evaluator": "Evaluador",
+			"form": "Formulario",
+			"model": "Modelo",
+			"provider": "Proveedor",
+			"reference": "Referencia",
+			"transcription": "Transcripción"
+		},
+		"conversationIdentifier": "Conversación #{{id}}",
+		"empty": {
+			"agents": "Ningún agente coincide con la búsqueda",
+			"conversations": "No hay conversaciones disponibles",
+			"evaluators": "No hay agentes evaluadores activos",
+			"forms": "No hay formularios activos disponibles"
+		},
+		"next": "Continuar",
+		"noReference": "Sin referencia",
+		"notSelected": "Sin seleccionar",
+		"resultCount_one": "{{count}} resultado",
+		"resultCount_other": "{{count}} resultados",
+		"searchPlaceholder": "Buscar",
+		"steps": {
+			"agent": "Agente",
+			"conversation": "Conversación",
+			"evaluator": "Evaluador",
+			"form": "Formulario"
+		},
+		"submitAi": "Ejecutar evaluación con IA",
+		"submitHuman": "Iniciar evaluación",
+		"summary": {
+			"title": "Tu selección"
+		},
+		"title": "Nueva evaluación",
+		"transcriptRequired": "Esta conversación debe transcribirse antes de ejecutar una evaluación con IA. Transcríbela primero desde la campaña.",
+		"type": {
+			"ai": "IA",
+			"aiHelper": "Un agente evaluador puntúa la transcripción automáticamente.",
+			"human": "Humano",
+			"humanHelper": "Puntúas la interacción manualmente según el formulario."
+		}
+	},
+	"score": {
+		"answered": "{{answered}} / {{total}} respondidas",
+		"current": "Puntaje",
+		"max": "Máximo",
+		"percent": "{{percent}}%",
+		"sectionDetail": "{{score}} / {{max}} · {{answered}} / {{total}} respondidas",
+		"sections": "Puntajes por sección",
+		"title": "Progreso y puntaje"
+	},
+	"states": {
+		"errorTitle": "No se pudo cargar la evaluación",
+		"tryAgain": "Intentar de nuevo"
+	},
+	"status": {
+		"completed": "Completada",
+		"draft": "Lista"
+	},
+	"transcription": {
+		"completed": "Transcrita",
+		"failed": "Fallida",
+		"none": "Sin transcribir",
+		"pending": "En cola",
+		"processing": "Transcribiendo"
+	},
+	"delete": {
+		"action": "Eliminar evaluación",
+		"title": "¿Eliminar evaluación?",
+		"description": "Esto eliminará la evaluación «{{ref}}». Se quitará de todas las listas y vistas y no se puede deshacer.",
+		"confirm": "Eliminar evaluación",
+		"cancel": "Cancelar",
+		"notification": "Evaluación eliminada"
+	}
+}

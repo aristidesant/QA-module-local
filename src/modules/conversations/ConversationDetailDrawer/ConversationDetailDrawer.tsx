@@ -24,7 +24,7 @@ const ConversationDetailDrawer: React.FC<ConversationDetailDrawerProps> = ({
 			onClose={onClose}
 			title={t('drawer.title')}
 			icon={<IconPhoneCall size={16} />}
-			size='xl'
+			size='min(56rem, 100vw)'
 			classNames={{
 				content: styles.drawerContent,
 				body: styles.drawerBody,

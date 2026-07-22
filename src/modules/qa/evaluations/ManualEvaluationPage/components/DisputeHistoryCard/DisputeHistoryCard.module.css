@@ -1,0 +1,6 @@
+.disputeHistoryItem {
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	background: var(--surface-elevated);
+	padding: var(--mantine-spacing-sm);
+}

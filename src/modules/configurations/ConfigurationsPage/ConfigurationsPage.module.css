@@ -1,0 +1,31 @@
+.catalogContent {
+	display: flex;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.catalogContent > div:last-child {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	height: auto;
+	min-height: 0;
+}
+
+.catalogTabs {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+}
+
+.catalogTabs :global(.mantine-Tabs-list) {
+	flex-shrink: 0;
+}
+
+.catalogPanel {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	min-height: 0;
+}

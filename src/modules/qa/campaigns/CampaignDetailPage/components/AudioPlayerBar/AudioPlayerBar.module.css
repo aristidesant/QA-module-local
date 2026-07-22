@@ -1,0 +1,167 @@
+/* Compact player docked inside the content column: sticky so it rides the
+   viewport bottom while the table scrolls, but never overlaps the sidebar. */
+.audioBar {
+	position: sticky;
+	bottom: var(--mantine-spacing-md);
+	z-index: 20;
+	background-color: var(--mantine-color-body);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+}
+
+.audioBarHeader {
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.audioBarMeta {
+	min-width: 0;
+	max-width: 16rem;
+}
+
+.audioLayout {
+	display: grid;
+	grid-template-columns: minmax(18rem, 0.9fr) minmax(18rem, 1.1fr);
+	gap: var(--mantine-spacing-md);
+	align-items: start;
+}
+
+.audioBarBody {
+	min-width: 16rem;
+}
+
+.audioPlayer {
+	display: block;
+	width: 100%;
+	height: 40px;
+}
+
+.transcriptPanel {
+	min-width: 0;
+	border-left: 1px solid var(--mantine-color-default-border);
+	padding-left: var(--mantine-spacing-md);
+}
+
+/* Transcript reads as a document-style speaker column: each turn is a
+   full-width row with a color-coded speaker rail on the left, a speaker/timestamp
+   header, and the spoken text. Clicking a turn seeks the audio to that moment. */
+.turn {
+	--spk-strong: var(--mantine-color-blue-filled);
+	--spk-soft: var(--mantine-color-blue-light);
+	--spk-text: var(--mantine-color-blue-light-color);
+	position: relative;
+	display: block;
+	width: 100%;
+	cursor: pointer;
+	border: 0;
+	background: transparent;
+	color: var(--mantine-color-text);
+	text-align: left;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	padding-left: calc(var(--mantine-spacing-sm) + 3px);
+	border-radius: var(--mantine-radius-sm);
+	transition: background-color 120ms ease;
+}
+
+.turn[data-speaker-slot='0'] {
+	--spk-strong: var(--mantine-color-blue-filled);
+	--spk-soft: var(--mantine-color-blue-light);
+	--spk-text: var(--mantine-color-blue-light-color);
+}
+
+.turn[data-speaker-slot='1'] {
+	--spk-strong: var(--mantine-color-teal-filled);
+	--spk-soft: var(--mantine-color-teal-light);
+	--spk-text: var(--mantine-color-teal-light-color);
+}
+
+.turn[data-speaker-slot='2'] {
+	--spk-strong: var(--mantine-color-grape-filled);
+	--spk-soft: var(--mantine-color-grape-light);
+	--spk-text: var(--mantine-color-grape-light-color);
+}
+
+.turn[data-speaker-slot='3'] {
+	--spk-strong: var(--mantine-color-orange-filled);
+	--spk-soft: var(--mantine-color-orange-light);
+	--spk-text: var(--mantine-color-orange-light-color);
+}
+
+/* Color-coded speaker rail. */
+.turn::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 6px;
+	bottom: 6px;
+	width: 3px;
+	border-radius: 3px;
+	background: var(--spk-strong);
+	opacity: 0.45;
+	transition: opacity 120ms ease;
+}
+
+.turn:hover {
+	background: var(--mantine-color-default-hover);
+}
+
+.turn:hover::before {
+	opacity: 0.8;
+}
+
+.turn:focus-visible {
+	outline: 2px solid var(--spk-strong);
+	outline-offset: 2px;
+}
+
+.turnSelected,
+.turnSelected:hover {
+	background: var(--spk-soft);
+}
+
+.turnSelected::before {
+	top: 2px;
+	bottom: 2px;
+	opacity: 1;
+}
+
+.turnHeader {
+	display: flex;
+	align-items: baseline;
+	gap: var(--mantine-spacing-xs);
+	margin-bottom: 3px;
+}
+
+.speakerLabel {
+	color: var(--spk-text);
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.timestampLabel {
+	margin-left: auto;
+	color: var(--mantine-color-dimmed);
+	font-family: var(--mantine-font-family-monospace);
+	font-size: 0.6875rem;
+	font-variant-numeric: tabular-nums;
+}
+
+.segmentText {
+	display: block;
+	font-size: var(--mantine-font-size-sm);
+	line-height: 1.55;
+	white-space: pre-wrap;
+}
+
+@media (max-width: 62em) {
+	.audioLayout {
+		grid-template-columns: 1fr;
+	}
+
+	.transcriptPanel {
+		border-left: 0;
+		border-top: 1px solid var(--mantine-color-default-border);
+		padding-left: 0;
+		padding-top: var(--mantine-spacing-sm);
+	}
+}

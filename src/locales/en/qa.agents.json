@@ -1,0 +1,106 @@
+{
+	"actions": {
+		"back": "Back to agents",
+		"cancel": "Cancel",
+		"create": "Create agent",
+		"delete": "Delete",
+		"edit": "Edit",
+		"new": "New agent",
+		"save": "Save changes",
+		"startEvaluation": "Start evaluation"
+	},
+	"badges": {
+		"autoMigrated": "Auto-migrated"
+	},
+	"common": {
+		"notAvailable": "Not available",
+		"notProvided": "Not provided"
+	},
+	"delete": {
+		"blocked_one": "This agent has {{count}} associated evaluation and cannot be deleted.",
+		"blocked_other": "This agent has {{count}} associated evaluations and cannot be deleted.",
+		"description": "Delete {{name}}? This action removes the agent from active lists.",
+		"referencedHint": "Agents with evaluations cannot currently be deleted, archived, or reassigned.",
+		"title": "Delete agent"
+	},
+	"description": "Maintain the human and AI agents who can be associated with quality evaluations.",
+	"detail": {
+		"createdAt": "Created",
+		"profile": "Agent profile",
+		"title": "Agent profile",
+		"updatedAt": "Last updated"
+	},
+	"evaluationStatus": {
+		"completed": "Completed",
+		"draft": "Ready"
+	},
+	"eyebrow": "Agent directory",
+	"filters": {
+		"count_one": "{{count}} agent",
+		"count_other": "{{count}} agents",
+		"search": "Search name, ID, or email",
+		"team": "Exact team",
+		"type": "Agent type"
+	},
+	"form": {
+		"agentType": "Agent type",
+		"createTitle": "Create agent",
+		"editTitle": "Edit agent",
+		"email": "Email",
+		"emailPlaceholder": "agent@example.com",
+		"employeeId": "Employee ID",
+		"employeeIdPlaceholder": "EMP-42",
+		"firstName": "First name",
+		"lastName": "Last name",
+		"metadata": "Metadata (JSON object)",
+		"metadataPlaceholder": "{\n  \"shift\": \"morning\"\n}",
+		"team": "Team",
+		"teamPlaceholder": "Sales"
+	},
+	"history": {
+		"count_one": "{{count}} evaluation",
+		"count_other": "{{count}} evaluations",
+		"date": "Date",
+		"empty": "This agent does not have evaluations yet.",
+		"form": "Form",
+		"interaction": "Interaction",
+		"openEvaluation": "Open evaluation for {{formName}}",
+		"score": "Score",
+		"status": "Status",
+		"title": "Evaluation history"
+	},
+	"notifications": {
+		"created": "Agent created.",
+		"deleted": "Agent deleted.",
+		"updated": "Agent updated."
+	},
+	"pagination": {
+		"pageSize": "Rows"
+	},
+	"states": {
+		"emptyDescription": "Create the first agent before starting a quality evaluation.",
+		"emptyTitle": "No agents found",
+		"errorTitle": "Could not load agents"
+	},
+	"table": {
+		"actions": "Actions",
+		"createdAt": "Created",
+		"email": "Email",
+		"employeeId": "Employee ID",
+		"name": "Name",
+		"team": "Team",
+		"type": "Type"
+	},
+	"title": "Agents",
+	"types": {
+		"aiBot": "AI bot",
+		"human": "Human"
+	},
+	"validation": {
+		"duplicate": "The employee ID or email is already registered for this client.",
+		"email": "Enter a valid email address.",
+		"employeeIdRequired": "Employee ID is required.",
+		"maxLength": "Must be {{count}} characters or fewer.",
+		"metadata": "Enter a valid JSON object."
+	}
+}
