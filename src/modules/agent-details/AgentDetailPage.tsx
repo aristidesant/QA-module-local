@@ -43,6 +43,7 @@ import {
 } from './utils/agentDetailDirty';
 import type { WorkflowSaveRequest } from './WorkflowSection/WorkflowSection';
 import styles from './AgentDetailPage.module.css';
+import { getErrorMessage } from '~/utils/httpClient';
 
 type AgentSaveSurface = 'setup' | 'workflow';
 
@@ -226,10 +227,10 @@ const AgentDetailPage = () => {
 					data: { name: newName },
 				});
 				await refetchCampaignAgent();
-			} catch {
+			} catch (error) {
 				notifications.show({
 					color: 'red',
-					message: t('form.agent.selector.saveError'),
+					message: getErrorMessage(error),
 				});
 				throw new Error('rename failed');
 			}

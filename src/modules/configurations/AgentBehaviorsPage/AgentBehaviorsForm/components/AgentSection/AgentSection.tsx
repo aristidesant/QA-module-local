@@ -8,10 +8,11 @@ import {
 } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { useFormContext } from '../../CampaignPredefinedFormProvider';
+import { DEFAULT_BACKUP_LLM_PREFERENCE } from '../../formConfig';
 import {
-	DEFAULT_BACKUP_LLM_PREFERENCE,
-	getGroupedLlmOptions,
-} from '../../formConfig';
+	buildElevenLabsLlmOptions,
+	useActiveElevenLabsLlmCatalog,
+} from '~/queries/elevenLabsLlmQueries';
 import styles from '../../CampaignPredefinedParamsForm.module.css';
 
 interface AgentSectionProps {
@@ -26,6 +27,12 @@ export const AgentSection: React.FC<AgentSectionProps> = ({
 	const { form } = useFormContext();
 	const { t } = useTranslation('campaign-predefined-params');
 	const selectedModel = form.values.agentPromptLlm;
+	const { llms } = useActiveElevenLabsLlmCatalog();
+	const llmOptions = buildElevenLabsLlmOptions(
+		llms,
+		[form.values.agentPromptLlm, ...form.values.agentPromptBackupLlmOrder],
+		t('form.agent.llmModel.unavailable', { defaultValue: 'Unavailable' })
+	);
 	const selectedReasoningEfforts =
 		reasoningEffortsByModel[selectedModel] ?? null;
 	const showReasoningEffortSelect =
@@ -86,7 +93,7 @@ export const AgentSection: React.FC<AgentSectionProps> = ({
 				label={t('form.agent.llmModel.label')}
 				placeholder={t('form.agent.llmModel.placeholder')}
 				required
-				data={getGroupedLlmOptions()}
+				data={llmOptions}
 				{...form.getInputProps('agentPromptLlm')}
 				searchable
 			/>
@@ -153,7 +160,7 @@ export const AgentSection: React.FC<AgentSectionProps> = ({
 					label={t('form.agent.backupLlm.order.label')}
 					placeholder={t('form.agent.backupLlm.order.placeholder')}
 					description={t('form.agent.backupLlm.order.helper')}
-					data={getGroupedLlmOptions()}
+					data={llmOptions}
 					{...form.getInputProps('agentPromptBackupLlmOrder')}
 					searchable
 					clearable

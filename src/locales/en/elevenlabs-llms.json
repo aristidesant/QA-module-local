@@ -1,0 +1,96 @@
+{
+	"page": {
+		"title": "ElevenLabs LLM catalog",
+		"description": "Review the models available to ElevenLabs and control which models can be selected in new configurations."
+	},
+	"actions": {
+		"sync": "Sync catalog",
+		"retry": "Retry",
+		"enable": "Enable model",
+		"disable": "Disable model",
+		"toggle": "Toggle status for {{llm}}"
+	},
+	"filters": {
+		"search": {
+			"label": "Search models",
+			"placeholder": "Search by model name"
+		},
+		"status": {
+			"label": "Status",
+			"placeholder": "All statuses",
+			"all": "All statuses"
+		}
+	},
+	"columns": {
+		"model": "Model",
+		"status": "Status",
+		"limits": "Limits",
+		"capabilities": "Capabilities",
+		"deprecation": "Lifecycle",
+		"lastSynced": "Last synced",
+		"actions": "Availability"
+	},
+	"table": {
+		"ariaLabel": "ElevenLabs LLM catalog table"
+	},
+	"status": {
+		"active": "Active",
+		"inactive": "Inactive"
+	},
+	"badges": {
+		"checkpoint": "Checkpoint",
+		"manuallyDisabled": "Manually disabled"
+	},
+	"limits": {
+		"tokens": "{{value}} max tokens",
+		"context": "{{value}} context"
+	},
+	"capabilities": {
+		"image": "Image input",
+		"document": "Document input",
+		"parallelTools": "Parallel tools",
+		"none": "None reported"
+	},
+	"deprecation": {
+		"current": "Current",
+		"deprecated": "Deprecated"
+	},
+	"details": {
+		"reasoningEfforts": "Reasoning efforts",
+		"lastSeen": "Last seen",
+		"surcharge": "Regional surcharge",
+		"deprecation": "Deprecation detail",
+		"replacement": "Replacement: {{model}}",
+		"warningPeriod": "In warning period",
+		"fallbackPeriod": "Fallback at {{percentage}}%",
+		"none": "None reported"
+	},
+	"empty": {
+		"title": "The catalog has not been synchronized",
+		"description": "Run a synchronization to load the models currently reported by ElevenLabs.",
+		"filteredTitle": "No models match these filters",
+		"filteredDescription": "Try a different search term or status filter."
+	},
+	"state": {
+		"errorTitle": "Unable to load the LLM catalog",
+		"errorDescription": "The catalog could not be loaded. Try again in a moment."
+	},
+	"notifications": {
+		"syncSuccess": {
+			"title": "Catalog synchronized",
+			"message": "ElevenLabs reported {{providerModelCount}} models. {{insertedCount}} inserted, {{updatedCount}} updated, {{activatedCount}} activated, and {{deactivatedCount}} deactivated."
+		},
+		"syncError": {
+			"title": "Synchronization failed",
+			"message": "The local catalog was not changed. Try again after checking the provider connection."
+		},
+		"statusSuccess": {
+			"title": "Model status updated",
+			"message": "{{llm}} is now {{status}}."
+		},
+		"statusError": {
+			"title": "Status update failed",
+			"message": "The status for {{llm}} could not be changed."
+		}
+	}
+}

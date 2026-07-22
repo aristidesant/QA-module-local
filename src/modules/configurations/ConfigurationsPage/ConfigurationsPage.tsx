@@ -16,12 +16,14 @@ import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
+import styles from './ConfigurationsPage.module.css';
 export default function ConfigurationsPage() {
 	const { t } = useTranslation('configurations');
 	const location = useLocation();
 	const navigate = useNavigate();
 	const isMasterClient = useIsMasterClient();
 	const isSuperAdmin = useIsSuperAdmin();
+	const isLlmCatalogPage = location.pathname.includes('elevenlabs-llms');
 	const { canPerformAction } = usePermissions();
 	const canManageSettings = canPerformAction(
 		ModuleEnum.SETTINGS,
@@ -73,8 +75,13 @@ export default function ConfigurationsPage() {
 			title={t('title')}
 			description={t('description')}
 			titleIcon={<IconSettings size={24} />}
+			mainScroll={!isLlmCatalogPage}
+			contentClassName={isLlmCatalogPage ? styles.catalogContent : undefined}
 		>
-			<Tabs value={getActiveTab()}>
+			<Tabs
+				value={getActiveTab()}
+				className={isLlmCatalogPage ? styles.catalogTabs : undefined}
+			>
 				<Tabs.List>
 					{isMasterClient && (
 						<Tabs.Tab
@@ -128,7 +135,11 @@ export default function ConfigurationsPage() {
 					</Tabs.Tab>
 				</Tabs.List>
 
-				<Tabs.Panel value={getActiveTab()} py='xs'>
+				<Tabs.Panel
+					value={getActiveTab()}
+					py='xs'
+					className={isLlmCatalogPage ? styles.catalogPanel : undefined}
+				>
 					<Outlet />
 				</Tabs.Panel>
 			</Tabs>

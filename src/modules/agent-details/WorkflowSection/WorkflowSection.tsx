@@ -28,6 +28,7 @@ import { toSnakeCase } from '~/utils/stringUtils';
 import '@xyflow/react/dist/style.css';
 import styles from './WorkflowSection.module.css';
 import { validateWorkflow } from './utils/workflowValidation';
+import { getErrorMessage } from '~/utils/httpClient';
 
 const normalizeWorkflow = (
 	raw: AgentWorkflow | undefined
@@ -289,10 +290,10 @@ const WorkflowSection = ({
 				color: 'green',
 				message: t('form.workflow.header.saved'),
 			});
-		} catch {
+		} catch (error) {
 			notifications.show({
 				color: 'red',
-				message: t('form.workflow.header.saveError'),
+				message: getErrorMessage(error),
 			});
 		}
 	};

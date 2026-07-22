@@ -64,6 +64,10 @@ export type BaseTableProps<TData> = {
 	className?: string;
 	density?: 'default' | 'compact';
 	getRowClassName?: (row: Row<TData>) => string | undefined;
+	/**
+	 * Additional attributes for the scrollable table container
+	 */
+	rootProps?: React.HTMLAttributes<HTMLDivElement>;
 	isLoading?: boolean;
 	emptyMessage?: string;
 	skeletonRowsCount?: number;
@@ -139,6 +143,7 @@ function BaseTable<TData>({
 	className,
 	density = 'default',
 	getRowClassName,
+	rootProps,
 	isLoading = false,
 	emptyMessage,
 	skeletonRowsCount = 5,
@@ -300,6 +305,9 @@ function BaseTable<TData>({
 	const hasData = data && data.length > 0;
 	const displayMessage = emptyMessage || t('status.noData');
 	const shouldShowPagination = enablePagination && showPaginationControls;
+	const rootClassName = [styles.root, className, rootProps?.className]
+		.filter(Boolean)
+		.join(' ');
 	const hasSizedColumns = columns.some(
 		(column) => typeof column.size === 'number'
 	);
@@ -419,7 +427,7 @@ function BaseTable<TData>({
 	};
 
 	return (
-		<div className={`${styles.root} ${className ?? ''}`}>
+		<div {...rootProps} className={rootClassName}>
 			<LoadingOverlay visible={isLoading} />
 			<Table
 				className={styles.table}
