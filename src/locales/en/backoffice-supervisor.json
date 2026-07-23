@@ -16,7 +16,13 @@
 		"unassigned": "Unassigned",
 		"assigned": "Assigned",
 		"managed": "Managed",
-		"eligibleAgents": "Eligible agents"
+		"eligibleAgents": "Eligible agents",
+		"totalHint": "All cases in the selected scope and period.",
+		"pendingHint": "Cases not yet managed (unassigned or assigned).",
+		"unassignedHint": "Cases waiting to be assigned to an agent.",
+		"assignedHint": "Cases owned by an agent but not yet managed.",
+		"managedHint": "Cases closed as managed. They cannot be reopened.",
+		"eligibleAgentsHint": "Active Backoffice agents available for distribution."
 	},
 	"charts": {
 		"trend": {
@@ -51,7 +57,8 @@
 		"contactGroupId": "Contact group ID",
 		"assignedUser": "Assigned agent",
 		"assignedUserPlaceholder": "All agents",
-		"idPlaceholder": "Enter an ID"
+		"idPlaceholder": "Enter an ID",
+		"clear": "Clear filters"
 	},
 	"statuses": {
 		"all": "All statuses",

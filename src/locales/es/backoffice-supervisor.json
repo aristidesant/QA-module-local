@@ -16,7 +16,13 @@
 		"unassigned": "Sin asignar",
 		"assigned": "Asignados",
 		"managed": "Gestionados",
-		"eligibleAgents": "Agentes elegibles"
+		"eligibleAgents": "Agentes elegibles",
+		"totalHint": "Todos los casos del alcance y periodo seleccionados.",
+		"pendingHint": "Casos aún no gestionados (sin asignar o asignados).",
+		"unassignedHint": "Casos en espera de asignación a un agente.",
+		"assignedHint": "Casos con agente responsable pero aún no gestionados.",
+		"managedHint": "Casos cerrados como gestionados. No se pueden reabrir.",
+		"eligibleAgentsHint": "Agentes de Backoffice activos disponibles para distribución."
 	},
 	"charts": {
 		"trend": {
@@ -51,7 +57,8 @@
 		"contactGroupId": "ID de lista de contactos",
 		"assignedUser": "Agente asignado",
 		"assignedUserPlaceholder": "Todos los agentes",
-		"idPlaceholder": "Escribe un ID"
+		"idPlaceholder": "Escribe un ID",
+		"clear": "Limpiar filtros"
 	},
 	"statuses": {
 		"all": "Todos los estados",

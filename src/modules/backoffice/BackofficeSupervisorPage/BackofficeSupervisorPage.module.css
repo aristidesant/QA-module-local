@@ -3,24 +3,52 @@
 }
 
 .kpiGrid {
-	grid-template-columns: repeat(6, minmax(0, 1fr));
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.kpiSkeleton {
+	height: 60px;
+	border-radius: var(--mantine-radius-md);
 }
 
 .chartsGrid {
 	display: grid;
 	grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
 	gap: var(--mantine-spacing-md);
+	align-items: stretch;
+}
+
+.chartCard {
+	height: 100%;
 }
 
 .chartArea {
 	min-height: 270px;
 }
 
-.filtersGrid {
-	display: grid;
-	grid-template-columns: repeat(5, minmax(0, 1fr));
+.filterBar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
 	gap: var(--mantine-spacing-sm);
-	align-items: end;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	background: var(--mantine-color-gray-0);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+}
+
+[data-mantine-color-scheme='dark'] .filterBar {
+	background: var(--mantine-color-dark-6);
+	border-color: var(--mantine-color-dark-5);
+}
+
+.filterControl {
+	flex: 1 1 180px;
+	min-width: 160px;
+}
+
+.clearFilters {
+	flex: 0 0 auto;
 }
 
 .tableRoot {
@@ -43,16 +71,6 @@
 	justify-content: center;
 }
 
-@media (max-width: 1280px) {
-	.kpiGrid {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-
-	.filtersGrid {
-		grid-template-columns: repeat(3, minmax(0, 1fr));
-	}
-}
-
 @media (max-width: 900px) {
 	.chartsGrid {
 		grid-template-columns: 1fr;
@@ -60,9 +78,8 @@
 }
 
 @media (max-width: 640px) {
-	.kpiGrid,
-	.filtersGrid {
-		grid-template-columns: 1fr;
+	.filterControl {
+		flex-basis: 100%;
 	}
 
 	.chartArea,

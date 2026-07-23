@@ -20,12 +20,17 @@ import {
 	IconChartDonut,
 	IconChartLine,
 	IconCircleCheck,
+	IconClockHour4,
 	IconDots,
 	IconEye,
+	IconFilterX,
+	IconInbox,
 	IconInfoCircle,
 	IconRefresh,
+	IconUserCheck,
 	IconUserMinus,
 	IconUserPlus,
+	IconUserQuestion,
 	IconUsers,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
@@ -33,7 +38,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import EmptyState from '~/components/EmptyState';
-import MetricInfoCard from '~/components/MetricInfoCard';
+import SmallMetricCard from '~/components/SmallMetricCard';
 import SectionCard from '~/components/SectionCard';
 import AppDrawer from '~/components/AppDrawer';
 import BaseTable, {
@@ -66,6 +71,33 @@ type DashboardPeriod = (typeof PERIODS)[number];
 
 const isStatus = (value: string): value is BackofficeCaseStatus =>
 	value === 'UNASSIGNED' || value === 'ASSIGNED' || value === 'MANAGED';
+
+const STATUS_COLOR: Record<BackofficeCaseStatus, string> = {
+	MANAGED: 'green',
+	ASSIGNED: 'blue',
+	UNASSIGNED: 'gray',
+};
+
+type KpiKey =
+	| 'total'
+	| 'pending'
+	| 'unassigned'
+	| 'assigned'
+	| 'managed'
+	| 'eligibleAgents';
+
+const KPI_CARDS: Array<{
+	key: KpiKey;
+	icon: typeof IconInbox;
+	color: 'gray' | 'orange' | 'red' | 'blue' | 'green' | 'teal';
+}> = [
+	{ key: 'total', icon: IconInbox, color: 'gray' },
+	{ key: 'pending', icon: IconClockHour4, color: 'orange' },
+	{ key: 'unassigned', icon: IconUserQuestion, color: 'red' },
+	{ key: 'assigned', icon: IconUserCheck, color: 'blue' },
+	{ key: 'managed', icon: IconCircleCheck, color: 'green' },
+	{ key: 'eligibleAgents', icon: IconUsers, color: 'teal' },
+];
 
 const parsePositiveNumber = (value: string | number | undefined | null) => {
 	const parsed = Number(value);
@@ -186,6 +218,21 @@ const BackofficeSupervisorPage = () => {
 			}
 		});
 		setSearchParams(next);
+	};
+
+	const hasActiveFilters =
+		statusFilter !== ALL_STATUS ||
+		Boolean(campaignId) ||
+		Boolean(contactGroupId) ||
+		Boolean(assignedUserId);
+
+	const clearFilters = () => {
+		updateFilters({
+			status: ALL_STATUS,
+			campaignId: null,
+			contactGroupId: null,
+			assignedUserId: null,
+		});
 	};
 
 	const agentOptions = useMemo(
@@ -385,13 +432,7 @@ const BackofficeSupervisorPage = () => {
 				header: t('table.status'),
 				cell: ({ row }) => (
 					<Badge
-						color={
-							row.original.status === 'MANAGED'
-								? 'green'
-								: row.original.status === 'ASSIGNED'
-									? 'blue'
-									: 'gray'
-						}
+						color={STATUS_COLOR[row.original.status]}
 						variant='light'
 						size='sm'
 					>
@@ -505,12 +546,7 @@ const BackofficeSupervisorPage = () => {
 	const statusChartData = (summary?.statusBreakdown ?? []).map((item) => ({
 		name: t(`statuses.${item.status}`),
 		value: item.count,
-		color:
-			item.status === 'MANAGED'
-				? 'green.6'
-				: item.status === 'ASSIGNED'
-					? 'blue.6'
-					: 'gray.6',
+		color: `${STATUS_COLOR[item.status]}.6`,
 	}));
 	const trendData = (summary?.dailyTrend ?? []).map((item) => ({
 		label: new Intl.DateTimeFormat(i18n.language, {
@@ -567,24 +603,20 @@ const BackofficeSupervisorPage = () => {
 				)}
 
 				<SimpleGrid className={classes.kpiGrid} spacing='sm'>
-					{[
-						['total', t('kpis.total')],
-						['pending', t('kpis.pending')],
-						['unassigned', t('kpis.unassigned')],
-						['assigned', t('kpis.assigned')],
-						['managed', t('kpis.managed')],
-						['eligibleAgents', t('kpis.eligibleAgents')],
-					].map(([key, label]) => (
-						<MetricInfoCard
-							key={key}
-							label={label}
-							value={
-								dashboardQuery.isLoading || !summary
-									? '—'
-									: summary.kpis[key as keyof typeof summary.kpis]
-							}
-						/>
-					))}
+					{KPI_CARDS.map(({ key, icon: Icon, color }) =>
+						dashboardQuery.isLoading || !summary ? (
+							<Skeleton key={key} className={classes.kpiSkeleton} />
+						) : (
+							<SmallMetricCard
+								key={key}
+								icon={<Icon size={18} />}
+								color={color}
+								label={t(`kpis.${key}`)}
+								value={summary.kpis[key]}
+								tooltip={t(`kpis.${key}Hint`)}
+							/>
+						)
+					)}
 				</SimpleGrid>
 
 				<div className={classes.chartsGrid}>
@@ -592,6 +624,8 @@ const BackofficeSupervisorPage = () => {
 						title={t('charts.trend.title')}
 						description={t('charts.trend.description')}
 						icon={IconChartLine}
+						headerAccent='blue'
+						className={classes.chartCard}
 					>
 						{dashboardQuery.isLoading || !chartReady ? (
 							<Skeleton className={classes.chartArea} />
@@ -631,6 +665,8 @@ const BackofficeSupervisorPage = () => {
 						title={t('charts.status.title')}
 						description={t('charts.status.description')}
 						icon={IconChartDonut}
+						headerAccent='green'
+						className={classes.chartCard}
 					>
 						{dashboardQuery.isLoading || !chartReady ? (
 							<Skeleton className={classes.chartArea} />
@@ -658,6 +694,7 @@ const BackofficeSupervisorPage = () => {
 					title={t('charts.workload.title')}
 					description={t('charts.workload.description')}
 					icon={IconUsers}
+					headerAccent='blue'
 				>
 					{dashboardQuery.isLoading || !chartReady ? (
 						<Skeleton className={classes.chartArea} />
@@ -693,80 +730,77 @@ const BackofficeSupervisorPage = () => {
 					)}
 				</SectionCard>
 
-				<SectionCard
-					title={t('filters.title')}
-					description={t('filters.description')}
-					icon={IconUsers}
-				>
-					<div className={classes.filtersGrid}>
-						<Select
-							label={t('filters.status')}
-							data={[
-								{ value: ALL_STATUS, label: t('statuses.all') },
-								{ value: 'UNASSIGNED', label: t('statuses.UNASSIGNED') },
-								{ value: 'ASSIGNED', label: t('statuses.ASSIGNED') },
-								{ value: 'MANAGED', label: t('statuses.MANAGED') },
-							]}
-							value={statusFilter}
-							onChange={(value) =>
-								updateFilters({ status: value ?? ALL_STATUS })
-							}
+				<div className={classes.filterBar}>
+					<Select
+						label={t('filters.status')}
+						data={[
+							{ value: ALL_STATUS, label: t('statuses.all') },
+							{ value: 'UNASSIGNED', label: t('statuses.UNASSIGNED') },
+							{ value: 'ASSIGNED', label: t('statuses.ASSIGNED') },
+							{ value: 'MANAGED', label: t('statuses.MANAGED') },
+						]}
+						value={statusFilter}
+						onChange={(value) => updateFilters({ status: value ?? ALL_STATUS })}
+						size='sm'
+						allowDeselect={false}
+						className={classes.filterControl}
+					/>
+					<NumberInput
+						label={t('filters.campaignId')}
+						placeholder={t('filters.idPlaceholder')}
+						value={campaignId ?? ''}
+						onChange={(value) =>
+							updateFilters({
+								campaignId: parsePositiveNumber(value) ?? null,
+							})
+						}
+						min={1}
+						allowDecimal={false}
+						size='sm'
+						className={classes.filterControl}
+					/>
+					<NumberInput
+						label={t('filters.contactGroupId')}
+						placeholder={t('filters.idPlaceholder')}
+						value={contactGroupId ?? ''}
+						onChange={(value) =>
+							updateFilters({
+								contactGroupId: parsePositiveNumber(value) ?? null,
+							})
+						}
+						min={1}
+						allowDecimal={false}
+						size='sm'
+						className={classes.filterControl}
+					/>
+					<Select
+						label={t('filters.assignedUser')}
+						placeholder={t('filters.assignedUserPlaceholder')}
+						data={agentOptions}
+						value={assignedUserId ? String(assignedUserId) : null}
+						onChange={(value) =>
+							updateFilters({
+								assignedUserId: value ? Number(value) : null,
+							})
+						}
+						searchable
+						clearable
+						size='sm'
+						className={classes.filterControl}
+					/>
+					{hasActiveFilters && (
+						<Button
+							variant='subtle'
+							color='gray'
 							size='sm'
-							allowDeselect={false}
-						/>
-						<NumberInput
-							label={t('filters.campaignId')}
-							placeholder={t('filters.idPlaceholder')}
-							value={campaignId ?? ''}
-							onChange={(value) =>
-								updateFilters({
-									campaignId: parsePositiveNumber(value) ?? null,
-								})
-							}
-							min={1}
-							allowDecimal={false}
-							size='sm'
-						/>
-						<NumberInput
-							label={t('filters.contactGroupId')}
-							placeholder={t('filters.idPlaceholder')}
-							value={contactGroupId ?? ''}
-							onChange={(value) =>
-								updateFilters({
-									contactGroupId: parsePositiveNumber(value) ?? null,
-								})
-							}
-							min={1}
-							allowDecimal={false}
-							size='sm'
-						/>
-						<Select
-							label={t('filters.assignedUser')}
-							placeholder={t('filters.assignedUserPlaceholder')}
-							data={agentOptions}
-							value={assignedUserId ? String(assignedUserId) : null}
-							onChange={(value) =>
-								updateFilters({
-									assignedUserId: value ? Number(value) : null,
-								})
-							}
-							searchable
-							clearable
-							size='sm'
-						/>
-						<Select
-							label={t('filters.period')}
-							data={[
-								{ value: '7d', label: t('periods.7d') },
-								{ value: '30d', label: t('periods.30d') },
-							]}
-							value={period}
-							onChange={(value) => updateFilters({ period: value ?? '7d' })}
-							size='sm'
-							allowDeselect={false}
-						/>
-					</div>
-				</SectionCard>
+							leftSection={<IconFilterX size={16} />}
+							onClick={clearFilters}
+							className={classes.clearFilters}
+						>
+							{t('filters.clear')}
+						</Button>
+					)}
+				</div>
 
 				{casesQuery.isError && (
 					<Alert color='red' icon={<IconInfoCircle size={18} />}>
@@ -777,6 +811,7 @@ const BackofficeSupervisorPage = () => {
 				<SectionCard
 					title={t('table.title')}
 					description={t('table.description')}
+					headerAccent='blue'
 					headerActions={
 						<Group gap='xs'>
 							{canDistribute &&
