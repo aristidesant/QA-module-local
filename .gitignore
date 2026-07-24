@@ -15,6 +15,7 @@
 /.claude/worktrees/
 /.env
 /.env.*
+/DESIGN_ROLE.md
 /.idea/
 /.parcel-cache/
 /.eslintcache

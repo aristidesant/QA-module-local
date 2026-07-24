@@ -2,6 +2,10 @@
 
 Precedence: 1) User request 2) This file 3) Repo patterns (`package.json`, `src/routes.tsx`)
 
+## Design Sessions
+
+@DESIGN_ROLE.md
+
 ## Critical Rules
 
 - Check available skills before implementing any task.
