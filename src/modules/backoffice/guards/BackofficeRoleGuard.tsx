@@ -2,7 +2,7 @@ import { type ReactNode } from 'react';
 import { Navigate, Outlet } from 'react-router';
 import AccessDenied from '~/components/AccessDenied/AccessDenied';
 import { usePermissions } from '~/hooks/usePermissions';
-import { useBackofficeRole } from '~/hooks/useBackofficeRole';
+import { useBackofficeRole } from '~/modules/backoffice/hooks/useBackofficeRole';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 

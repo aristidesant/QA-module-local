@@ -36,6 +36,16 @@ describe('computeLandingPath', () => {
 		expect(result).toBe('/conversations');
 	});
 
+	it('should return /backoffice when user has only BACKOFFICE_CASES access', () => {
+		const permissionMap = {
+			[ModuleEnum.BACKOFFICE_CASES]: new Set([PermissionEnum.READ]),
+		};
+
+		const result = computeLandingPath(permissionMap);
+
+		expect(result).toBe('/backoffice');
+	});
+
 	it('should return / when user has no module access', () => {
 		const permissionMap = {};
 

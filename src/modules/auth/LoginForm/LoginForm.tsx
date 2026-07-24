@@ -35,6 +35,14 @@ import ForgotPasswordModal from './ForgotPasswordModal';
 import AppChooserModal from '~/components/AppChooserModal';
 import { hasQaAdminRole } from '~/hooks/useIsQaAdmin';
 import type { AppKey } from '~/hooks/useCurrentApp';
+import { hasAnyActiveClientRoleCode } from '~/modules/backoffice/hooks/useBackofficeRole';
+import { BACKOFFICE_ROLE_CODES } from '~/modules/backoffice/constants/BackofficeRoleConstants';
+import { buildPermissionMapFromUser } from '~/utils/permissionUtils';
+import {
+	computeAccessibleApps,
+	hasUcxmAccess,
+	appLandingPath,
+} from '~/utils/computeAccessibleApps';
 import { useAppTransitionStore } from '~/stores/appTransitionStore';
 import { usePasswordResetStore } from '~/stores/passwordResetStore';
 import { useSessionStore } from '~/stores/sessionStore';
@@ -72,6 +80,7 @@ export function LoginForm() {
 	const [forgotPasswordModalOpened, setForgotPasswordModalOpened] =
 		useState(false);
 	const [appChooserOpened, setAppChooserOpened] = useState(false);
+	const [accessibleApps, setAccessibleApps] = useState<AppKey[]>(['ucxm']);
 
 	const isLoading = loginMutation.isPending;
 	const logoutReason = new URLSearchParams(location.search).get('reason');
@@ -114,28 +123,41 @@ export function LoginForm() {
 		}
 	};
 
-	// After any fully-authenticated result, QA_ADMIN users pick which app to
-	// enter; everyone else goes straight to Campaign management.
+	// After any fully-authenticated result, compute which apps the user can
+	// reach. With 2+ they pick via the chooser; with exactly one they go
+	// straight in (a Backoffice-only agent lands on their cases, never seeing
+	// a chooser).
 	const proceedAfterAuth = () => {
 		const { user, targetClient } = useSessionStore.getState();
 		const activeClientId =
 			targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
-		if (hasQaAdminRole(user, activeClientId)) {
+		const permissionMap = buildPermissionMapFromUser(user, activeClientId);
+		const apps = computeAccessibleApps({
+			hasUcxm: hasUcxmAccess(permissionMap),
+			hasQa: hasQaAdminRole(user, activeClientId),
+			hasBackoffice: hasAnyActiveClientRoleCode(
+				user,
+				activeClientId,
+				BACKOFFICE_ROLE_CODES
+			),
+		});
+		setAccessibleApps(apps);
+		if (apps.length >= 2) {
 			setAppChooserOpened(true);
 		} else {
-			navigate('/');
+			navigate(appLandingPath(apps[0]));
 		}
 	};
 
 	const handleAppChoose = (app: AppKey) => {
 		setAppChooserOpened(false);
 		useAppTransitionStore.getState().start(app);
-		navigate(app === 'qa' ? '/qa/dashboard' : '/');
+		navigate(appLandingPath(app));
 	};
 
 	const handleAppChooserClose = () => {
 		setAppChooserOpened(false);
-		navigate('/');
+		navigate(appLandingPath(accessibleApps[0]));
 	};
 
 	const handleSubmit = async (values: FormValues) => {
@@ -485,6 +507,7 @@ export function LoginForm() {
 				opened={appChooserOpened}
 				onClose={handleAppChooserClose}
 				onChoose={handleAppChoose}
+				apps={accessibleApps}
 			/>
 		</div>
 	);

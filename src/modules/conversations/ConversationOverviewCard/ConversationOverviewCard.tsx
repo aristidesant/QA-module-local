@@ -1,4 +1,11 @@
-import { Avatar, Badge, CopyButton, Text, Tooltip } from '@mantine/core';
+import {
+	Avatar,
+	Badge,
+	Button,
+	CopyButton,
+	Text,
+	Tooltip,
+} from '@mantine/core';
 import {
 	IconCalendar,
 	IconCheck,
@@ -6,6 +13,7 @@ import {
 	IconEye,
 	IconInfoCircle,
 	IconPhoneCall,
+	IconPencil,
 	IconRobot,
 	IconUser,
 } from '@tabler/icons-react';
@@ -24,6 +32,9 @@ import ConversationMetadataList, {
 	type ConversationMetadataListItem,
 } from '../ConversationMetadataList/ConversationMetadataList';
 import metadataListStyles from '../ConversationMetadataList/ConversationMetadataList.module.css';
+import ConversationDispositionEditor, {
+	useConversationDispositionEditor,
+} from './ConversationDispositionEditor';
 import classes from './ConversationOverviewCard.module.css';
 
 interface ConversationOverviewCardProps {
@@ -34,9 +45,17 @@ interface ConversationOverviewCardProps {
 	dateDisplay: string;
 	agentName: string;
 	campaignName: string;
+	campaignId?: string | number;
+	conversationStatus?: string;
 	terminationReasonLabel?: string;
 	conversationId?: string | number;
 }
+
+const StatValueWithHover = ({ value }: { value: string }) => (
+	<Tooltip label={value} position='top-start' withArrow openDelay={100}>
+		<Text className={metadataListStyles.valueText}>{value}</Text>
+	</Tooltip>
+);
 
 const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 	contactName,
@@ -46,6 +65,8 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 	dateDisplay,
 	agentName,
 	campaignName,
+	campaignId,
+	conversationStatus,
 	terminationReasonLabel,
 	conversationId,
 }) => {
@@ -68,12 +89,6 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 			setIsCallingAi(false);
 		}
 	};
-
-	const StatValueWithHover = ({ value }: { value: string }) => (
-		<Tooltip label={value} position='top-start' withArrow openDelay={100}>
-			<Text className={metadataListStyles.valueText}>{value}</Text>
-		</Tooltip>
-	);
 
 	const items = useMemo<ConversationMetadataListItem[]>(() => {
 		const baseItems: ConversationMetadataListItem[] = [
@@ -110,6 +125,13 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 	}, [agentName, campaignName, dateDisplay, t, terminationReasonLabel]);
 
 	const disposition = data as CallDispositionModel | undefined;
+	const dispositionEditor = useConversationDispositionEditor({
+		campaignId,
+		conversationId,
+		conversationStatus,
+		currentDisposition: disposition,
+	});
+
 	const status = normalizeDispositionStatus(
 		disposition?.callStatus || disposition?.dispositionName
 	);
@@ -212,22 +234,40 @@ const ConversationOverviewCard: React.FC<ConversationOverviewCardProps> = ({
 
 					<ConversationMetadataList items={items} columns={2} />
 				</div>
-
 				{showOutcome && (
 					<div className={classes.outcomeColumn}>
-						<Text className={classes.outcomeTitle}>
-							{t('disposition.title')}
-						</Text>
+						<div className={classes.outcomeHeader}>
+							<Text className={classes.outcomeTitle}>
+								{t('disposition.title')}
+							</Text>
+							{dispositionEditor.canEdit && !dispositionEditor.isEditing && (
+								<Button
+									variant='subtle'
+									color='gray'
+									size='xs'
+									leftSection={<IconPencil size={14} />}
+									onClick={dispositionEditor.open}
+								>
+									{t('disposition.edit.button')}
+								</Button>
+							)}
+						</div>
 						<div className={classes.outcomeSection} data-status={status}>
-							<ConversationDispositionContent
-								disposition={disposition}
-								isLoading={isLoading}
-								isError={isError}
-								isRetrying={isCallingAi}
-								onRetry={handleRetry}
-								timestampLabel={timestampLabel}
-								emptyLabel={t('disposition.noOutcome')}
-							/>
+							{dispositionEditor.isEditing ? (
+								<ConversationDispositionEditor
+									{...dispositionEditor.editorProps}
+								/>
+							) : (
+								<ConversationDispositionContent
+									disposition={disposition}
+									isLoading={isLoading}
+									isError={isError}
+									isRetrying={isCallingAi}
+									onRetry={handleRetry}
+									timestampLabel={timestampLabel}
+									emptyLabel={t('disposition.noOutcome')}
+								/>
+							)}
 						</div>
 					</div>
 				)}

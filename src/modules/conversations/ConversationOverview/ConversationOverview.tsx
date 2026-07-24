@@ -204,6 +204,7 @@ export function ConversationOverview({
 			)}
 
 			<ConversationOverviewCard
+				key={conversation.id}
 				contactName={contactName}
 				contactPhone={contactPhone}
 				statusLabel={statusBadge.label}
@@ -211,6 +212,8 @@ export function ConversationOverview({
 				dateDisplay={dateDisplay}
 				agentName={agentName}
 				campaignName={campaignName}
+				campaignId={conversation.campaignId ?? campaign?.id}
+				conversationStatus={displayStatus}
 				terminationReasonLabel={terminationLabel}
 				conversationId={String(conversation.id)}
 			/>

@@ -1,0 +1,74 @@
+.grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+	gap: var(--mantine-spacing-sm);
+}
+
+.naGrid {
+	margin-top: var(--mantine-spacing-sm);
+}
+
+.tile {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid
+		light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+	min-width: 0;
+}
+
+/* Objects/arrays render as a JSON block spanning the full row. */
+.tileBlock {
+	grid-column: 1 / -1;
+}
+
+.tileMuted {
+	background: transparent;
+	border-style: dashed;
+}
+
+.tileLabel {
+	font-size: 0.7rem;
+	font-weight: 600;
+	letter-spacing: 0.4px;
+	text-transform: uppercase;
+	color: var(--mantine-color-dimmed);
+}
+
+.tileValue {
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-1));
+	word-break: break-word;
+}
+
+.jsonValue {
+	white-space: pre-wrap;
+	word-break: break-word;
+	font-size: var(--mantine-font-size-xs);
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-8)
+	);
+	border: 1px solid
+		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
+}
+
+.toggleRow {
+	display: flex;
+	justify-content: center;
+	margin-top: var(--mantine-spacing-md);
+	padding-top: var(--mantine-spacing-sm);
+	border-top: 1px solid
+		light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-4));
+}
+
+@media (max-width: 640px) {
+	.grid {
+		grid-template-columns: 1fr;
+	}
+}

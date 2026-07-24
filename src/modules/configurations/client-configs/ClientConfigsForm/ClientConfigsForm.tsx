@@ -17,6 +17,11 @@ interface ClientConfigsFormProps {
 	onCancel: () => void;
 }
 
+const SLA_CONFIG_NAME = 'backoffice_case_sla_target_minutes';
+const SLA_CONFIG_DESCRIPTION =
+	'Default SLA target for backoffice case resolution';
+const SLA_TARGET_OPTIONS = ['30', '60', '90', '120'];
+
 export function ClientConfigsForm({
 	config,
 	onSuccess,
@@ -24,6 +29,7 @@ export function ClientConfigsForm({
 }: ClientConfigsFormProps) {
 	const { t } = useTranslation('client-configs');
 	const isEditMode = !!config;
+	const isSlaConfig = (name: string) => name === SLA_CONFIG_NAME;
 
 	const createMutation = useCreateClientConfig();
 	const updateMutation = useUpdateClientConfig();
@@ -48,6 +54,9 @@ export function ClientConfigsForm({
 				!value ? t('form.fields.description.required') : null,
 			value: (value, values) => {
 				if (!value) return t('form.fields.value.required');
+				if (isSlaConfig(values.name) && !SLA_TARGET_OPTIONS.includes(value)) {
+					return t('form.fields.value.invalidSla');
+				}
 
 				// Validate JSON/array types
 				if (values.type === 'json' || values.type === 'array') {
@@ -60,7 +69,13 @@ export function ClientConfigsForm({
 
 				return null;
 			},
-			type: (value) => (!value ? t('form.fields.type.required') : null),
+			type: (value, values) => {
+				if (!value) return t('form.fields.type.required');
+				if (isSlaConfig(values.name) && value !== 'number') {
+					return t('form.fields.type.invalidSla');
+				}
+				return null;
+			},
 		},
 	});
 
@@ -179,6 +194,16 @@ export function ClientConfigsForm({
 								: t('form.fields.name.descriptionCreate')
 						}
 						{...form.getInputProps('name')}
+						onChange={(event) => {
+							const name = event.currentTarget.value;
+							form.setFieldValue('name', name);
+							if (isSlaConfig(name)) {
+								form.setFieldValue('type', 'number');
+								if (!form.values.description) {
+									form.setFieldValue('description', SLA_CONFIG_DESCRIPTION);
+								}
+							}
+						}}
 						className={styles.input}
 						radius='sm'
 						size='sm'
@@ -203,6 +228,7 @@ export function ClientConfigsForm({
 						required
 						data={configTypes}
 						{...form.getInputProps('type')}
+						disabled={isSlaConfig(form.values.name)}
 						className={styles.input}
 						radius='sm'
 						size='sm'
@@ -220,26 +246,40 @@ export function ClientConfigsForm({
 						</p>
 					</div>
 
-					<Textarea
-						label={t('form.fields.value.label')}
-						placeholder={
-							form.values.type === 'json' || form.values.type === 'array'
-								? t('form.fields.value.placeholderJson')
-								: t('form.fields.value.placeholderDefault')
-						}
-						required
-						autosize
-						minRows={8}
-						maxRows={20}
-						{...form.getInputProps('value')}
-						onBlur={(e) => {
-							form.getInputProps('value').onBlur?.(e);
-							handleValueBlur();
-						}}
-						className={styles.valueTextarea}
-						radius='sm'
-						size='sm'
-					/>
+					{isSlaConfig(form.values.name) ? (
+						<Select
+							label={t('form.fields.value.label')}
+							placeholder={t('form.fields.value.placeholderSla')}
+							data={SLA_TARGET_OPTIONS.map((value) => ({
+								value,
+								label: t('form.fields.value.minutesOption', { value }),
+							}))}
+							{...form.getInputProps('value')}
+							allowDeselect={false}
+							size='sm'
+						/>
+					) : (
+						<Textarea
+							label={t('form.fields.value.label')}
+							placeholder={
+								form.values.type === 'json' || form.values.type === 'array'
+									? t('form.fields.value.placeholderJson')
+									: t('form.fields.value.placeholderDefault')
+							}
+							required
+							autosize
+							minRows={8}
+							maxRows={20}
+							{...form.getInputProps('value')}
+							onBlur={(e) => {
+								form.getInputProps('value').onBlur?.(e);
+								handleValueBlur();
+							}}
+							className={styles.valueTextarea}
+							radius='sm'
+							size='sm'
+						/>
+					)}
 				</div>
 			</div>
 

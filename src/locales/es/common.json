@@ -285,14 +285,20 @@
 			"qa": {
 				"label": "QA",
 				"description": "Control de calidad: evaluaciones, formularios y disputas."
+			},
+			"backoffice": {
+				"label": "Backoffice",
+				"description": "Gestión de casos: tu cola y panel de supervisión."
 			}
 		},
+		"switchApp": "Cambiar de aplicación",
 		"switchToQa": "Cambiar a QA",
 		"switchToCampaign": "Cambiar a Gestión de campañas",
 		"transition": {
 			"kicker": "Unified CXM",
 			"ucxm": "Cargando Gestión de campañas…",
-			"qa": "Cargando Control de calidad…"
+			"qa": "Cargando Control de calidad…",
+			"backoffice": "Cargando Backoffice…"
 		}
 	}
 }

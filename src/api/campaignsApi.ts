@@ -8,7 +8,9 @@ import type {
 } from '~/models/CampaignsModel';
 import type { CampaignRequirements } from '~/models/CampaignRequirementsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
+import type { CampaignDispositionModel } from '~/models/CampaignDispositionModel';
 import { ScheduleType, ScheduleDirection } from '~/models/SchedulerModel';
+import { useSessionStore } from '~/stores/sessionStore';
 import { sanitizeAgentPayload } from '~/utils/agentPayloadSanitizer';
 import { DEFAULT_API_URL } from './config';
 
@@ -106,6 +108,13 @@ export interface ResumeOutboundCampaignPayload {
 	ignoreWaveDelay?: boolean;
 }
 
+const getClientHeaders = (): Record<string, string> => {
+	const { user, targetClient } = useSessionStore.getState();
+	const clientId = targetClient?.id ?? user?.clientId ?? user?.client?.id;
+
+	return clientId ? { 'x-client-id': String(clientId) } : {};
+};
+
 /**
  * Generic Campaigns API client (uses global axios interceptors for auth)
  */
@@ -157,6 +166,15 @@ const campaignsApi = (_authHeader: Record<string, string> = {}) => {
 		findCampaign: async (campaignId: string) => {
 			const response = await axios.get<Campaign>(
 				`${DEFAULT_API_URL}/campaigns/${campaignId}`
+			);
+
+			return response.data;
+		},
+
+		getCampaignDispositions: async (campaignId: string | number) => {
+			const response = await axios.get<CampaignDispositionModel[]>(
+				`${DEFAULT_API_URL}/campaigns/${campaignId}/dispositions`,
+				{ headers: getClientHeaders() }
 			);
 
 			return response.data;

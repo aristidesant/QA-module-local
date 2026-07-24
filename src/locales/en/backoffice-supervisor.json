@@ -22,7 +22,11 @@
 		"unassignedHint": "Cases waiting to be assigned to an agent.",
 		"assignedHint": "Cases owned by an agent but not yet managed.",
 		"managedHint": "Cases closed as managed. They cannot be reopened.",
-		"eligibleAgentsHint": "Active Backoffice agents available for distribution."
+		"eligibleAgentsHint": "Active Backoffice agents available for distribution.",
+		"actionLabel": "Filter the queue by {{label}}",
+		"pendingMenuLabel": "Choose a pending queue",
+		"pendingUnassignedAction": "View unassigned cases",
+		"pendingAssignedAction": "View assigned cases"
 	},
 	"charts": {
 		"trend": {
@@ -33,7 +37,8 @@
 		},
 		"status": {
 			"title": "Cases by status",
-			"description": "Current status distribution for the selected scope."
+			"description": "Current status distribution for the selected scope.",
+			"segmentAction": "Filter the queue by {{status}}"
 		},
 		"workload": {
 			"title": "Agent workload",
@@ -53,11 +58,19 @@
 		"description": "Filter the dashboard and the operational queue by period and ownership.",
 		"period": "Period",
 		"status": "Status",
-		"campaignId": "Campaign ID",
-		"contactGroupId": "Contact group ID",
+		"campaign": "Campaign",
+		"campaignPlaceholder": "Select a campaign",
+		"campaignEmpty": "No visible campaigns found",
+		"campaignLoadError": "Campaigns could not be loaded.",
+		"contactList": "Contact List",
+		"contactListPlaceholder": "Select a contact list",
+		"contactListEmpty": "No active contact lists found",
+		"contactListLoadError": "Contact lists could not be loaded.",
 		"assignedUser": "Assigned agent",
+		"scope": "The dashboard and queue use the {{period}} period.",
+		"scopePeriod": "Period: {{period}}",
+		"updating": "Updating the queue",
 		"assignedUserPlaceholder": "All agents",
-		"idPlaceholder": "Enter an ID",
 		"clear": "Clear filters"
 	},
 	"statuses": {
@@ -65,6 +78,19 @@
 		"UNASSIGNED": "Unassigned",
 		"ASSIGNED": "Assigned",
 		"MANAGED": "Managed"
+	},
+	"sla": {
+		"statuses": {
+			"ON_TRACK": "On track",
+			"AT_RISK": "At risk",
+			"CRITICAL": "Critical",
+			"BREACHED": "Breached"
+		},
+		"target": "Target: {{value}} min",
+		"elapsed": "Elapsed: {{value}} min",
+		"breached": "The SLA target was breached",
+		"withinTarget": "Within the SLA target",
+		"progressLabel": "SLA progress"
 	},
 	"table": {
 		"title": "Case queue",
@@ -74,10 +100,12 @@
 		"campaign": "Campaign",
 		"contactGroup": "Contact group",
 		"status": "Status",
+		"sla": "SLA",
 		"assignedUser": "Assigned agent",
 		"assignedAt": "Assigned",
 		"updatedAt": "Updated",
 		"disposition": "Disposition",
+		"resultCount": "{{count}} cases in queue",
 		"actionsLabel": "Case actions",
 		"view": "View case",
 		"assign": "Assign agent",

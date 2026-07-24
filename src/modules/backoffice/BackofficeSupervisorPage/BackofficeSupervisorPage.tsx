@@ -1,11 +1,11 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	Alert,
 	Badge,
 	Button,
 	Group,
+	Loader,
 	Menu,
-	NumberInput,
 	Select,
 	SimpleGrid,
 	Skeleton,
@@ -44,7 +44,7 @@ import AppDrawer from '~/components/AppDrawer';
 import BaseTable, {
 	type BaseTableColumnDef,
 } from '~/components/BaseTable/BaseTable';
-import { useChartReady } from '~/modules/qa/hooks/useChartReady';
+import { useChartReady } from '~/hooks/useChartReady';
 import { usePermissions } from '~/hooks/usePermissions';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
@@ -55,12 +55,15 @@ import {
 	useMarkBackofficeCaseManaged,
 	useUpdateBackofficeAssignment,
 	useBackofficeSupervisorDashboard,
-} from '~/queries/backofficeCaseQueries';
+} from '~/queries/backoffice/backofficeCaseQueries';
+import { useGetAllCampaigns } from '~/queries/campaignsQueries';
+import { useGetCampaignContactLists } from '~/queries/contactGroupQueries';
 import type {
 	BackofficeCase,
 	BackofficeCaseStatus,
 	BackofficeSupervisorDashboardParams,
-} from '~/models/BackofficeCaseModel';
+} from '~/models/backoffice/BackofficeCaseModel';
+import BackofficeSlaIndicator from '~/modules/backoffice/components/BackofficeSlaIndicator';
 import { getErrorMessage } from '~/utils/httpClient';
 import classes from './BackofficeSupervisorPage.module.css';
 
@@ -68,6 +71,7 @@ const PAGE_SIZE = 50;
 const ALL_STATUS = 'ALL';
 const PERIODS = ['7d', '30d'] as const;
 type DashboardPeriod = (typeof PERIODS)[number];
+const ACTIVE_CONTACT_LIST_PARAMS = { isActive: true as const };
 
 const isStatus = (value: string): value is BackofficeCaseStatus =>
 	value === 'UNASSIGNED' || value === 'ASSIGNED' || value === 'MANAGED';
@@ -123,6 +127,9 @@ const formatDate = (value: string | null | undefined, locale: string) => {
 		timeStyle: 'short',
 	}).format(new Date(value));
 };
+
+const formatNumber = (value: number, locale: string) =>
+	new Intl.NumberFormat(locale).format(value);
 
 const getPeriodDates = (period: DashboardPeriod) => {
 	const to = new Date();
@@ -192,6 +199,11 @@ const BackofficeSupervisorPage = () => {
 	const dashboardQuery = useBackofficeSupervisorDashboard(dashboardParams);
 	const casesQuery = useBackofficeCases(listParams);
 	const agentsQuery = useEligibleBackofficeAgents();
+	const campaignsQuery = useGetAllCampaigns();
+	const contactListsQuery = useGetCampaignContactLists(
+		campaignId,
+		ACTIVE_CONTACT_LIST_PARAMS
+	);
 	const distributeMutation = useDistributeBackofficeCases();
 	const assignmentMutation = useUpdateBackofficeAssignment();
 	const managedMutation = useMarkBackofficeCaseManaged();
@@ -200,6 +212,8 @@ const BackofficeSupervisorPage = () => {
 		null
 	);
 	const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
+	const queueRef = useRef<HTMLDivElement>(null);
+	const workloadRef = useRef<HTMLDivElement>(null);
 
 	useEffect(() => {
 		setSelectedRowIds([]);
@@ -220,6 +234,45 @@ const BackofficeSupervisorPage = () => {
 		setSearchParams(next);
 	};
 
+	const campaignOptions = useMemo(
+		() =>
+			(campaignsQuery.data ?? [])
+				.filter((campaign) => campaign.showExternal === true)
+				.map((campaign) => ({
+					value: String(campaign.id),
+					label: campaign.name,
+				})),
+		[campaignsQuery.data]
+	);
+	const contactListOptions = useMemo(
+		() =>
+			(contactListsQuery.data ?? []).map((contactList) => ({
+				value: String(contactList.id),
+				label: contactList.name,
+			})),
+		[contactListsQuery.data]
+	);
+	const selectedCampaignName =
+		campaignOptions.find((campaign) => campaign.value === String(campaignId))
+			?.label ?? (campaignId ? `#${campaignId}` : '');
+	const selectedContactListName =
+		contactListOptions.find(
+			(contactList) => contactList.value === String(contactGroupId)
+		)?.label ?? (contactGroupId ? `#${contactGroupId}` : '');
+
+	useEffect(() => {
+		if (
+			campaignId &&
+			campaignsQuery.data &&
+			!campaignsQuery.data.some(
+				(campaign) =>
+					campaign.id === campaignId && campaign.showExternal === true
+			)
+		) {
+			updateFilters({ campaignId: null, contactGroupId: null });
+		}
+	}, [campaignId, campaignsQuery.data]);
+
 	const hasActiveFilters =
 		statusFilter !== ALL_STATUS ||
 		Boolean(campaignId) ||
@@ -233,6 +286,59 @@ const BackofficeSupervisorPage = () => {
 			contactGroupId: null,
 			assignedUserId: null,
 		});
+	};
+
+	const scrollToSection = (element: HTMLElement | null) => {
+		if (!element) return;
+		const behavior = window.matchMedia('(prefers-reduced-motion: reduce)')
+			.matches
+			? 'auto'
+			: 'smooth';
+		element.scrollIntoView({ behavior, block: 'start' });
+	};
+
+	const focusQueue = () => scrollToSection(queueRef.current);
+	const focusWorkload = () => scrollToSection(workloadRef.current);
+
+	const applyStatusFilter = (status: BackofficeCaseStatus | null) => {
+		updateFilters({ status: status ?? ALL_STATUS });
+		focusQueue();
+	};
+
+	const applyAgentFilter = (agentId: number) => {
+		updateFilters({
+			assignedUserId: assignedUserId === agentId ? null : agentId,
+		});
+		focusQueue();
+	};
+
+	const isKpiSelected = (key: KpiKey) => {
+		if (key === 'total') return statusFilter === ALL_STATUS;
+		if (key === 'unassigned') return statusFilter === 'UNASSIGNED';
+		if (key === 'assigned') return statusFilter === 'ASSIGNED';
+		if (key === 'managed') return statusFilter === 'MANAGED';
+		if (key === 'eligibleAgents') return Boolean(assignedUserId);
+		return statusFilter === 'UNASSIGNED' || statusFilter === 'ASSIGNED';
+	};
+
+	const handleKpiClick = (key: KpiKey) => {
+		switch (key) {
+			case 'total':
+				applyStatusFilter(null);
+				break;
+			case 'unassigned':
+				applyStatusFilter('UNASSIGNED');
+				break;
+			case 'assigned':
+				applyStatusFilter('ASSIGNED');
+				break;
+			case 'managed':
+				applyStatusFilter('MANAGED');
+				break;
+			case 'eligibleAgents':
+				focusWorkload();
+				break;
+		}
 	};
 
 	const agentOptions = useMemo(
@@ -441,6 +547,17 @@ const BackofficeSupervisorPage = () => {
 				),
 			},
 			{
+				id: 'sla',
+				header: t('table.sla'),
+				cell: ({ row }) => (
+					<BackofficeSlaIndicator
+						caseData={row.original}
+						namespace='backoffice-supervisor'
+						compact
+					/>
+				),
+			},
+			{
 				id: 'assignedUser',
 				header: t('table.assignedUser'),
 				cell: ({ row }) =>
@@ -544,6 +661,7 @@ const BackofficeSupervisorPage = () => {
 
 	const summary = dashboardQuery.data;
 	const statusChartData = (summary?.statusBreakdown ?? []).map((item) => ({
+		status: item.status,
 		name: t(`statuses.${item.status}`),
 		value: item.count,
 		color: `${STATUS_COLOR[item.status]}.6`,
@@ -557,6 +675,7 @@ const BackofficeSupervisorPage = () => {
 		managed: item.managed,
 	}));
 	const workloadData = (summary?.agentWorkload ?? []).map((item) => ({
+		agentId: item.agentId,
 		agentName: item.agentName,
 		assigned: item.assigned,
 		managed: item.managed,
@@ -566,7 +685,6 @@ const BackofficeSupervisorPage = () => {
 		<ContentContainer
 			title={t('page.title')}
 			description={t('page.description')}
-			contentWidth='full'
 			titleRight={
 				<Group gap='xs'>
 					<Select
@@ -603,10 +721,12 @@ const BackofficeSupervisorPage = () => {
 				)}
 
 				<SimpleGrid className={classes.kpiGrid} spacing='sm'>
-					{KPI_CARDS.map(({ key, icon: Icon, color }) =>
-						dashboardQuery.isLoading || !summary ? (
-							<Skeleton key={key} className={classes.kpiSkeleton} />
-						) : (
+					{KPI_CARDS.map(({ key, icon: Icon, color }) => {
+						if (dashboardQuery.isLoading || !summary) {
+							return <Skeleton key={key} className={classes.kpiSkeleton} />;
+						}
+
+						const card = (
 							<SmallMetricCard
 								key={key}
 								icon={<Icon size={18} />}
@@ -614,10 +734,192 @@ const BackofficeSupervisorPage = () => {
 								label={t(`kpis.${key}`)}
 								value={summary.kpis[key]}
 								tooltip={t(`kpis.${key}Hint`)}
+								onClick={() => handleKpiClick(key)}
+								selected={isKpiSelected(key)}
+								ariaLabel={t('kpis.actionLabel', {
+									label: t(`kpis.${key}`),
+								})}
 							/>
-						)
-					)}
+						);
+
+						if (key !== 'pending') return card;
+
+						return (
+							<Menu key={key} position='bottom-start' withinPortal>
+								<Menu.Target>
+									<div
+										className={classes.kpiMenuTarget}
+										role='button'
+										tabIndex={0}
+										aria-label={t('kpis.pendingMenuLabel')}
+									>
+										<SmallMetricCard
+											icon={<Icon size={18} />}
+											color={color}
+											label={t(`kpis.${key}`)}
+											value={summary.kpis[key]}
+											tooltip={t(`kpis.${key}Hint`)}
+											selected={isKpiSelected(key)}
+										/>
+									</div>
+								</Menu.Target>
+								<Menu.Dropdown>
+									<Menu.Label>{t('kpis.pendingMenuLabel')}</Menu.Label>
+									<Menu.Item onClick={() => applyStatusFilter('UNASSIGNED')}>
+										{t('kpis.pendingUnassignedAction')}
+									</Menu.Item>
+									<Menu.Item onClick={() => applyStatusFilter('ASSIGNED')}>
+										{t('kpis.pendingAssignedAction')}
+									</Menu.Item>
+								</Menu.Dropdown>
+							</Menu>
+						);
+					})}
 				</SimpleGrid>
+
+				<div className={classes.filterBar} aria-label={t('filters.title')}>
+					<div className={classes.filterHeader}>
+						<div>
+							<Text size='sm' fw={600}>
+								{t('filters.title')}
+							</Text>
+							<Text size='xs' c='dimmed'>
+								{t('filters.scope', {
+									period: t(`periods.${period}`),
+								})}
+							</Text>
+						</div>
+						{casesQuery.isFetching && !casesQuery.isLoading && (
+							<Loader size='xs' aria-label={t('filters.updating')} />
+						)}
+					</div>
+					<div className={classes.filterControls}>
+						<Select
+							label={t('filters.status')}
+							data={[
+								{ value: ALL_STATUS, label: t('statuses.all') },
+								{ value: 'UNASSIGNED', label: t('statuses.UNASSIGNED') },
+								{ value: 'ASSIGNED', label: t('statuses.ASSIGNED') },
+								{ value: 'MANAGED', label: t('statuses.MANAGED') },
+							]}
+							value={statusFilter}
+							onChange={(value) =>
+								applyStatusFilter(
+									value && value !== ALL_STATUS
+										? (value as BackofficeCaseStatus)
+										: null
+								)
+							}
+							size='sm'
+							allowDeselect={false}
+							className={classes.filterControl}
+						/>
+						<Select
+							label={t('filters.campaign')}
+							placeholder={t('filters.campaignPlaceholder')}
+							data={campaignOptions}
+							value={campaignId ? String(campaignId) : null}
+							onChange={(value) =>
+								updateFilters({
+									campaignId: value ? Number(value) : null,
+									contactGroupId: null,
+								})
+							}
+							searchable
+							clearable
+							loading={campaignsQuery.isLoading}
+							nothingFoundMessage={t('filters.campaignEmpty')}
+							error={
+								campaignsQuery.isError
+									? t('filters.campaignLoadError')
+									: undefined
+							}
+							size='sm'
+							className={classes.filterControl}
+						/>
+						<Select
+							label={t('filters.contactList')}
+							placeholder={t('filters.contactListPlaceholder')}
+							data={contactListOptions}
+							value={contactGroupId ? String(contactGroupId) : null}
+							onChange={(value) =>
+								updateFilters({
+									contactGroupId: value ? Number(value) : null,
+								})
+							}
+							searchable
+							clearable
+							disabled={!campaignId}
+							loading={contactListsQuery.isLoading}
+							nothingFoundMessage={t('filters.contactListEmpty')}
+							error={
+								contactListsQuery.isError
+									? t('filters.contactListLoadError')
+									: undefined
+							}
+							size='sm'
+							className={classes.filterControl}
+						/>
+						<Select
+							label={t('filters.assignedUser')}
+							placeholder={t('filters.assignedUserPlaceholder')}
+							data={agentOptions}
+							value={assignedUserId ? String(assignedUserId) : null}
+							onChange={(value) =>
+								updateFilters({
+									assignedUserId: value ? Number(value) : null,
+								})
+							}
+							searchable
+							clearable
+							size='sm'
+							className={classes.filterControl}
+						/>
+					</div>
+					<div className={classes.filterFooter}>
+						<Group gap='xs' className={classes.activeFilters}>
+							<Badge variant='light' color='blue'>
+								{t('filters.scopePeriod', {
+									period: t(`periods.${period}`),
+								})}
+							</Badge>
+							{statusFilter !== ALL_STATUS && (
+								<Badge variant='light' color={STATUS_COLOR[statusFilter]}>
+									{t(`statuses.${statusFilter}`)}
+								</Badge>
+							)}
+							{campaignId && (
+								<Badge variant='light'>
+									{t('filters.campaign')}: {selectedCampaignName}
+								</Badge>
+							)}
+							{contactGroupId && (
+								<Badge variant='light'>
+									{t('filters.contactList')}: {selectedContactListName}
+								</Badge>
+							)}
+							{assignedUserId && (
+								<Badge variant='light'>
+									{t('filters.assignedUser')}:{' '}
+									{agentOptions.find(
+										(agent) => agent.value === String(assignedUserId)
+									)?.label ?? assignedUserId}
+								</Badge>
+							)}
+						</Group>
+						{hasActiveFilters && (
+							<Button
+								variant='subtle'
+								color='gray'
+								size='sm'
+								leftSection={<IconFilterX size={16} />}
+								onClick={clearFilters}
+							>
+								{t('filters.clear')}
+							</Button>
+						)}
+					</div>
+				</div>
 
 				<div className={classes.chartsGrid}>
 					<SectionCard
@@ -657,6 +959,8 @@ const BackofficeSupervisorPage = () => {
 									},
 								]}
 								withLegend
+								withTooltip
+								valueFormatter={(value) => formatNumber(value, i18n.language)}
 							/>
 						)}
 					</SectionCard>
@@ -684,122 +988,118 @@ const BackofficeSupervisorPage = () => {
 								data={statusChartData}
 								withTooltip
 								withLabels
+								labelsType='percent'
+								tooltipDataSource='segment'
+								valueFormatter={(value) => formatNumber(value, i18n.language)}
 								chartLabel={String(summary?.kpis.total ?? 0)}
+								cellProps={(item) => {
+									const status = statusChartData.find(
+										(entry) => entry.name === item.name
+									)?.status;
+									if (!status) return {};
+
+									return {
+										role: 'button',
+										tabIndex: 0,
+										'aria-label': t('charts.status.segmentAction', {
+											status: item.name,
+										}),
+										style: { cursor: 'pointer' },
+										onClick: () => applyStatusFilter(status),
+										onKeyDown: (event) => {
+											if (event.key !== 'Enter' && event.key !== ' ') return;
+											event.preventDefault();
+											applyStatusFilter(status);
+										},
+									};
+								}}
 							/>
+						)}
+						{statusChartData.length > 0 && (
+							<Group gap='xs' className={classes.chartActions}>
+								{statusChartData.map((item) => (
+									<Button
+										key={item.status}
+										variant={statusFilter === item.status ? 'light' : 'subtle'}
+										color={STATUS_COLOR[item.status]}
+										size='compact-sm'
+										onClick={() => applyStatusFilter(item.status)}
+										aria-pressed={statusFilter === item.status}
+									>
+										{item.name}
+									</Button>
+								))}
+							</Group>
 						)}
 					</SectionCard>
 				</div>
 
-				<SectionCard
-					title={t('charts.workload.title')}
-					description={t('charts.workload.description')}
-					icon={IconUsers}
-					headerAccent='blue'
-				>
-					{dashboardQuery.isLoading || !chartReady ? (
-						<Skeleton className={classes.chartArea} />
-					) : workloadData.length === 0 ? (
-						<div className={classes.emptyChart}>
-							<EmptyState
-								icon={<IconUsers size={32} />}
-								message={t('charts.workload.empty')}
-								description={t('charts.workload.emptyDescription')}
+				<div ref={workloadRef} id='supervisor-workload'>
+					<SectionCard
+						title={t('charts.workload.title')}
+						description={t('charts.workload.description')}
+						icon={IconUsers}
+						headerAccent='blue'
+					>
+						{dashboardQuery.isLoading || !chartReady ? (
+							<Skeleton className={classes.chartArea} />
+						) : workloadData.length === 0 ? (
+							<div className={classes.emptyChart}>
+								<EmptyState
+									icon={<IconUsers size={32} />}
+									message={t('charts.workload.empty')}
+									description={t('charts.workload.emptyDescription')}
+								/>
+							</div>
+						) : (
+							<BarChart
+								className={classes.chartArea}
+								data={workloadData}
+								dataKey='agentName'
+								orientation='vertical'
+								gridAxis='x'
+								series={[
+									{
+										name: 'assigned',
+										label: t('charts.workload.assigned'),
+										color: 'blue.6',
+									},
+									{
+										name: 'managed',
+										label: t('charts.workload.managed'),
+										color: 'green.6',
+									},
+								]}
+								yAxisProps={{ width: 120 }}
+								valueFormatter={(value) => formatNumber(value, i18n.language)}
+								barProps={{
+									style: { cursor: 'pointer' },
+									onClick: (data) => {
+										const agentId = data.payload?.agentId;
+										if (typeof agentId === 'number') applyAgentFilter(agentId);
+									},
+								}}
 							/>
-						</div>
-					) : (
-						<BarChart
-							className={classes.chartArea}
-							data={workloadData}
-							dataKey='agentName'
-							orientation='vertical'
-							gridAxis='x'
-							series={[
-								{
-									name: 'assigned',
-									label: t('charts.workload.assigned'),
-									color: 'blue.6',
-								},
-								{
-									name: 'managed',
-									label: t('charts.workload.managed'),
-									color: 'green.6',
-								},
-							]}
-							yAxisProps={{ width: 120 }}
-						/>
-					)}
-				</SectionCard>
-
-				<div className={classes.filterBar}>
-					<Select
-						label={t('filters.status')}
-						data={[
-							{ value: ALL_STATUS, label: t('statuses.all') },
-							{ value: 'UNASSIGNED', label: t('statuses.UNASSIGNED') },
-							{ value: 'ASSIGNED', label: t('statuses.ASSIGNED') },
-							{ value: 'MANAGED', label: t('statuses.MANAGED') },
-						]}
-						value={statusFilter}
-						onChange={(value) => updateFilters({ status: value ?? ALL_STATUS })}
-						size='sm'
-						allowDeselect={false}
-						className={classes.filterControl}
-					/>
-					<NumberInput
-						label={t('filters.campaignId')}
-						placeholder={t('filters.idPlaceholder')}
-						value={campaignId ?? ''}
-						onChange={(value) =>
-							updateFilters({
-								campaignId: parsePositiveNumber(value) ?? null,
-							})
-						}
-						min={1}
-						allowDecimal={false}
-						size='sm'
-						className={classes.filterControl}
-					/>
-					<NumberInput
-						label={t('filters.contactGroupId')}
-						placeholder={t('filters.idPlaceholder')}
-						value={contactGroupId ?? ''}
-						onChange={(value) =>
-							updateFilters({
-								contactGroupId: parsePositiveNumber(value) ?? null,
-							})
-						}
-						min={1}
-						allowDecimal={false}
-						size='sm'
-						className={classes.filterControl}
-					/>
-					<Select
-						label={t('filters.assignedUser')}
-						placeholder={t('filters.assignedUserPlaceholder')}
-						data={agentOptions}
-						value={assignedUserId ? String(assignedUserId) : null}
-						onChange={(value) =>
-							updateFilters({
-								assignedUserId: value ? Number(value) : null,
-							})
-						}
-						searchable
-						clearable
-						size='sm'
-						className={classes.filterControl}
-					/>
-					{hasActiveFilters && (
-						<Button
-							variant='subtle'
-							color='gray'
-							size='sm'
-							leftSection={<IconFilterX size={16} />}
-							onClick={clearFilters}
-							className={classes.clearFilters}
-						>
-							{t('filters.clear')}
-						</Button>
-					)}
+						)}
+						{workloadData.length > 0 && (
+							<Group gap='xs' className={classes.chartActions}>
+								{workloadData.map((item) => (
+									<Button
+										key={item.agentId}
+										variant={
+											assignedUserId === item.agentId ? 'light' : 'subtle'
+										}
+										color='blue'
+										size='compact-sm'
+										onClick={() => applyAgentFilter(item.agentId)}
+										aria-pressed={assignedUserId === item.agentId}
+									>
+										{item.agentName}
+									</Button>
+								))}
+							</Group>
+						)}
+					</SectionCard>
 				</div>
 
 				{casesQuery.isError && (
@@ -808,64 +1108,76 @@ const BackofficeSupervisorPage = () => {
 					</Alert>
 				)}
 
-				<SectionCard
-					title={t('table.title')}
-					description={t('table.description')}
-					headerAccent='blue'
-					headerActions={
-						<Group gap='xs'>
-							{canDistribute &&
-								statusFilter === 'UNASSIGNED' &&
-								selectedRowIds.length > 0 && (
+				<div ref={queueRef} id='supervisor-case-queue'>
+					<SectionCard
+						title={t('table.title')}
+						description={t('table.description')}
+						headerAccent='blue'
+						headerActions={
+							<Group gap='xs'>
+								<Badge variant='light' color='blue'>
+									{t('table.resultCount', {
+										count: formatNumber(
+											casesQuery.data?.total ?? 0,
+											i18n.language
+										),
+									})}
+								</Badge>
+								{canDistribute &&
+									statusFilter === 'UNASSIGNED' &&
+									selectedRowIds.length > 0 && (
+										<Button
+											variant='light'
+											size='sm'
+											leftSection={<IconArrowsShuffle size={16} />}
+											onClick={() => distribute(selectedRowIds.map(Number))}
+											loading={distributeMutation.isPending}
+										>
+											{t('distribution.selectedAction', {
+												count: selectedRowIds.length,
+											})}
+										</Button>
+									)}
+								{canDistribute && (
 									<Button
 										variant='light'
 										size='sm'
 										leftSection={<IconArrowsShuffle size={16} />}
-										onClick={() => distribute(selectedRowIds.map(Number))}
+										onClick={() => distribute()}
 										loading={distributeMutation.isPending}
 									>
-										{t('distribution.selectedAction', {
-											count: selectedRowIds.length,
-										})}
+										{t('distribution.allAction')}
 									</Button>
 								)}
-							{canDistribute && (
-								<Button
-									variant='light'
-									size='sm'
-									leftSection={<IconArrowsShuffle size={16} />}
-									onClick={() => distribute()}
-									loading={distributeMutation.isPending}
-								>
-									{t('distribution.allAction')}
-								</Button>
+							</Group>
+						}
+					>
+						<BaseTable
+							data={casesQuery.data?.data ?? []}
+							columns={columns}
+							getRowId={(row) => row.id}
+							onRowClick={openCase}
+							isLoading={casesQuery.isLoading}
+							emptyMessage={t('table.empty')}
+							filterMode='server'
+							pageCount={Math.max(
+								1,
+								Math.ceil((casesQuery.data?.total ?? 0) / PAGE_SIZE)
 							)}
-						</Group>
-					}
-				>
-					<BaseTable
-						data={casesQuery.data?.data ?? []}
-						columns={columns}
-						getRowId={(row) => row.id}
-						onRowClick={openCase}
-						isLoading={casesQuery.isLoading}
-						emptyMessage={t('table.empty')}
-						filterMode='server'
-						pageCount={Math.max(
-							1,
-							Math.ceil((casesQuery.data?.total ?? 0) / PAGE_SIZE)
-						)}
-						pageIndex={pageIndex}
-						pageSize={PAGE_SIZE}
-						enablePagination
-						showPaginationControls
-						onPaginationChange={(nextPage) => updateFilters({ page: nextPage })}
-						enableRowSelection={statusFilter === 'UNASSIGNED'}
-						selectedRowIds={selectedRowIds}
-						onSelectedRowIdsChange={setSelectedRowIds}
-						rootProps={{ className: classes.tableRoot }}
-					/>
-				</SectionCard>
+							pageIndex={pageIndex}
+							pageSize={PAGE_SIZE}
+							enablePagination
+							showPaginationControls
+							onPaginationChange={(nextPage) =>
+								updateFilters({ page: nextPage })
+							}
+							enableRowSelection={statusFilter === 'UNASSIGNED'}
+							selectedRowIds={selectedRowIds}
+							onSelectedRowIdsChange={setSelectedRowIds}
+							rootProps={{ className: classes.tableRoot }}
+						/>
+					</SectionCard>
+				</div>
 			</Stack>
 
 			<AppDrawer

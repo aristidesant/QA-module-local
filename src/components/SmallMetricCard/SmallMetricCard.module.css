@@ -10,10 +10,20 @@
 	background: var(--mantine-color-white);
 	border: 1px solid var(--mantine-color-gray-2);
 	border-radius: var(--mantine-radius-md);
+	min-height: 64px;
 	transition:
 		border-color 120ms ease,
-		background-color 120ms ease;
+		background-color 120ms ease,
+		box-shadow 120ms ease,
+		transform 120ms ease;
 	cursor: default;
+}
+
+.metricCardInteractive {
+	width: 100%;
+	font: inherit;
+	text-align: left;
+	cursor: pointer;
 }
 
 [data-mantine-color-scheme='dark'] .metricCard {
@@ -29,6 +39,32 @@
 .metricCard:hover {
 	border-color: var(--metric-accent);
 	background-color: var(--mantine-color-gray-0);
+}
+
+.metricCardInteractive:hover {
+	transform: translateY(-1px);
+}
+
+.metricCardInteractive:active {
+	transform: translateY(1px);
+}
+
+.metricCardInteractive:focus-visible {
+	outline: 3px solid
+		color-mix(in srgb, var(--mantine-color-green-6) 32%, transparent);
+	outline-offset: 2px;
+}
+
+.metricCardSelected {
+	border-color: var(--metric-accent);
+	box-shadow: 0 0 0 2px
+		color-mix(in srgb, var(--metric-accent) 18%, transparent);
+}
+
+.metricCardInteractive:disabled {
+	opacity: 0.55;
+	cursor: not-allowed;
+	transform: none;
 }
 
 [data-mantine-color-scheme='dark'] .metricCard:hover {
@@ -100,6 +136,12 @@
 }
 
 .metricCard:hover .metricInfo {
+	opacity: 1;
+	color: var(--metric-accent);
+}
+
+.metricCardInteractive:focus-visible .metricInfo,
+.metricCardSelected .metricInfo {
 	opacity: 1;
 	color: var(--metric-accent);
 }
@@ -178,5 +220,16 @@
 
 	.metricLabel {
 		max-width: 18ch;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.metricCard {
+		transition: none;
+	}
+
+	.metricCardInteractive:hover,
+	.metricCardInteractive:active {
+		transform: none;
 	}
 }

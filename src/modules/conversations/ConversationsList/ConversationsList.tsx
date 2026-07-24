@@ -37,7 +37,10 @@ import AccessDenied from '~/components/AccessDenied';
 import styles from './ConversationsList.module.css';
 import type { SortingState } from '@tanstack/react-table';
 import { useTranslation } from 'react-i18next';
-import type { ConversationsModel } from '~/models/ConversationsModels';
+import type {
+	ConversationListItem as ConversationListItemModel,
+	ConversationSortField,
+} from '~/models/ConversationsModels';
 import {
 	type ConversationActionKey,
 	getConversationActionDefinition,
@@ -69,7 +72,25 @@ const areFiltersEqual = (
 	current.contactName === next.contactName &&
 	current.contactPhoneNumber === next.contactPhoneNumber &&
 	current.dispositionName === next.dispositionName &&
+	current.contactOutcome === next.contactOutcome &&
+	current.waveNumber === next.waveNumber &&
 	current.status === next.status;
+
+const getSortField = (columnId?: string): ConversationSortField | undefined => {
+	switch (columnId) {
+		case 'createdAt':
+		case 'updatedAt':
+		case 'startDate':
+		case 'endDate':
+		case 'status':
+		case 'contactName':
+		case 'agentName':
+		case 'dispositionName':
+			return columnId;
+		default:
+			return undefined;
+	}
+};
 
 const ConversationsList: React.FC<ConversationsListProps> = ({
 	variant = 'embedded',
@@ -107,7 +128,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	const [internalSorting, setInternalSorting] =
 		useState<SortingState>(DEFAULT_SORTING);
 	const sorting = sortingProp ?? internalSorting;
-	const sortBy = sorting?.[0]?.id;
+	const sortBy = getSortField(sorting?.[0]?.id);
 	const sortOrder = sorting?.[0]?.desc ? 'DESC' : 'ASC';
 
 	const [internalFilters, setInternalFilters] =
@@ -190,7 +211,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	);
 
 	const runConversationAction = useCallback(
-		(conversation: ConversationsModel) => {
+		(conversation: ConversationListItemModel) => {
 			const action = getConversationActionDefinition(conversation, t);
 			const mutation =
 				action.key === 'reprocess'
@@ -215,7 +236,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	const handleActionClick = useCallback(
 		(
 			event: React.MouseEvent<HTMLButtonElement>,
-			conversation: ConversationsModel
+			conversation: ConversationListItemModel
 		) => {
 			event.stopPropagation();
 			const action = getConversationActionDefinition(conversation, t);
@@ -234,7 +255,7 @@ const ConversationsList: React.FC<ConversationsListProps> = ({
 	);
 
 	const isActionLoading = useCallback(
-		(conversation: ConversationsModel) =>
+		(conversation: ConversationListItemModel) =>
 			pendingAction?.id === conversation.id &&
 			(pendingAction.key === 'reprocess'
 				? failAndPauseMutation.isPending

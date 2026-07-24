@@ -10,7 +10,7 @@ import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import timezone from 'dayjs/plugin/timezone';
 import { useTranslation } from 'react-i18next';
-import type { ConversationsModel } from '~/models/ConversationsModels';
+import type { ConversationListItem as ConversationListItemModel } from '~/models/ConversationsModels';
 import { getConversationActionDefinition } from '~/modules/conversations/ConversationDetails/ConversationActions/ConversationActions.helpers';
 import styles from './ConversationListItem.module.css';
 
@@ -18,13 +18,13 @@ dayjs.extend(relativeTime);
 dayjs.extend(timezone);
 
 type ConversationListItemProps = {
-	conversation: ConversationsModel;
+	conversation: ConversationListItemModel;
 	userTimezone: string;
 	onClick: () => void;
 	canExecute?: boolean;
 	onActionClick?: (
 		event: MouseEvent<HTMLButtonElement>,
-		conversation: ConversationsModel
+		conversation: ConversationListItemModel
 	) => void;
 	isActionLoading?: boolean;
 };

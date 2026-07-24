@@ -102,6 +102,7 @@
 				"label": "Type",
 				"placeholder": "Select configuration type",
 				"required": "Type is required",
+				"invalidSla": "This SLA configuration must use the number type",
 				"options": {
 					"string": "String",
 					"number": "Number",
@@ -115,7 +116,10 @@
 				"placeholderDefault": "Enter configuration value",
 				"placeholderJson": "{\"key\": \"value\"}",
 				"required": "Value is required",
-				"invalidJson": "Invalid JSON format"
+				"invalidJson": "Invalid JSON format",
+				"invalidSla": "The SLA must be 30, 60, 90, or 120 minutes",
+				"placeholderSla": "Select the SLA target",
+				"minutesOption": "{{value}} minutes"
 			}
 		},
 		"actions": {

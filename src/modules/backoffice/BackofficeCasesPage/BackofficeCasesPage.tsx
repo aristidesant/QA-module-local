@@ -24,18 +24,19 @@ import BaseTable, {
 	type BaseTableColumnDef,
 } from '~/components/BaseTable/BaseTable';
 import { usePermissions } from '~/hooks/usePermissions';
-import { useBackofficeRole } from '~/hooks/useBackofficeRole';
+import { useBackofficeRole } from '~/modules/backoffice/hooks/useBackofficeRole';
 import {
 	useEligibleBackofficeAgents,
 	useBackofficeCases,
 	useDistributeBackofficeCases,
-} from '~/queries/backofficeCaseQueries';
+} from '~/queries/backoffice/backofficeCaseQueries';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import type {
 	BackofficeCase,
 	BackofficeCaseStatus,
-} from '~/models/BackofficeCaseModel';
+} from '~/models/backoffice/BackofficeCaseModel';
+import BackofficeSlaIndicator from '~/modules/backoffice/components/BackofficeSlaIndicator';
 import { getErrorMessage } from '~/utils/httpClient';
 import classes from './BackofficeCasesPage.module.css';
 
@@ -248,6 +249,17 @@ const BackofficeCasesPage = () => {
 				),
 			},
 			{
+				id: 'sla',
+				header: t('table.sla'),
+				cell: ({ row }) => (
+					<BackofficeSlaIndicator
+						caseData={row.original}
+						namespace='backoffice-cases'
+						compact
+					/>
+				),
+			},
+			{
 				id: 'assignedUser',
 				header: t('table.assignedUser'),
 				cell: ({ row }) =>
@@ -279,7 +291,6 @@ const BackofficeCasesPage = () => {
 			description={t(
 				isAdmin ? 'list.adminDescription' : 'list.agentDescription'
 			)}
-			contentWidth='full'
 			titleRight={
 				isAdmin && canManageDistribution ? (
 					<Button

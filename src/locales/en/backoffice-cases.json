@@ -26,6 +26,7 @@
 		"campaign": "Campaign",
 		"contactGroup": "Contact group",
 		"status": "Status",
+		"sla": "SLA",
 		"assignedUser": "Assigned agent",
 		"disposition": "Disposition",
 		"updatedAt": "Updated",
@@ -35,6 +36,19 @@
 		"UNASSIGNED": "Unassigned",
 		"ASSIGNED": "Assigned",
 		"MANAGED": "Managed"
+	},
+	"sla": {
+		"statuses": {
+			"ON_TRACK": "On track",
+			"AT_RISK": "At risk",
+			"CRITICAL": "Critical",
+			"BREACHED": "Breached"
+		},
+		"target": "Target: {{value}} min",
+		"elapsed": "Elapsed: {{value}} min",
+		"breached": "The SLA target was breached",
+		"withinTarget": "Within the SLA target",
+		"progressLabel": "SLA progress"
 	},
 	"distribution": {
 		"allAction": "Distribute pending cases",
@@ -52,27 +66,39 @@
 		"description": "Review the case context, ownership, and audit history."
 	},
 	"sections": {
-		"caseData": "Case data",
-		"source": "Effective source",
+		"sla": "SLA indicator",
+		"customerData": "Customer data",
+		"customerDataDescription": "Information captured from the customer. This is the source of truth to complete the case.",
+		"context": "Case context",
 		"history": "History",
 		"workflow": "Workflow",
 		"manualWorkflow": "External workflow"
 	},
+	"capturedData": {
+		"empty": "No customer data was captured for this case.",
+		"showMore": "Show more ({{count}})",
+		"showLess": "Show less"
+	},
 	"fields": {
-		"caseId": "Case ID",
-		"contactId": "Contact ID",
 		"contact": "Contact",
+		"phone": "Phone",
+		"otherPhones": "Other phone numbers",
 		"campaign": "Campaign",
 		"contactGroup": "Contact group",
 		"createdAt": "Created",
-		"conversationId": "Conversation ID",
-		"conversationIdentifier": "Conversation identifier",
+		"conversationIdentifier": "Conversation reference",
 		"conversationStart": "Conversation start",
 		"disposition": "Disposition",
 		"contactOutcome": "Contact outcome",
 		"status": "Status",
 		"assignedUser": "Assigned agent",
 		"assignedAt": "Assigned"
+	},
+	"actions": {
+		"copyReference": "Copy reference",
+		"referenceCopied": "Reference copied",
+		"showOtherPhones": "Show other phones ({{count}})",
+		"hideOtherPhones": "Hide other phones"
 	},
 	"history": {
 		"event": "Event",
@@ -118,7 +144,9 @@
 		"notAvailable": "Not available",
 		"unassigned": "Unassigned",
 		"unknownUser": "Unknown user",
-		"automated": "Automated event"
+		"automated": "Automated event",
+		"yes": "Yes",
+		"no": "No"
 	},
 	"errors": {
 		"invalidId": "The case ID is invalid."

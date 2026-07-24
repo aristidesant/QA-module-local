@@ -25,7 +25,7 @@ import BackofficeRoleGuard, {
 	BackofficeAdminGuard,
 	BackofficeAgentGuard,
 	BackofficeHomeRedirect,
-} from './components/BackofficeRoleGuard';
+} from './modules/backoffice/guards';
 const Layout = React.lazy(() => import('./components/Layout'));
 
 const CampaignContactListPage = React.lazy(

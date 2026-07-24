@@ -1,0 +1,35 @@
+.accordion {
+	--accordion-radius: var(--mantine-radius-sm);
+}
+
+.accordion :global(.mantine-Accordion-control) {
+	padding: 8px 10px;
+	background-color: var(--surface-sunken);
+}
+
+.accordion :global(.mantine-Accordion-control:hover) {
+	background-color: color-mix(
+		in srgb,
+		var(--mantine-primary-color-filled) 6%,
+		var(--surface-sunken)
+	);
+}
+
+.accordion :global(.mantine-Accordion-panel) {
+	padding-top: var(--mantine-spacing-xs);
+}
+
+.codeBlock {
+	max-height: 320px;
+	overflow: auto;
+	padding: 8px 10px;
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-sm);
+	background-color: var(--surface-sunken);
+	color: var(--mantine-color-text);
+	font-family: var(--mantine-font-family-monospace);
+	font-size: 11px;
+	line-height: 1.45;
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}

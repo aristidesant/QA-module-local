@@ -1,5 +1,13 @@
 export type BackofficeCaseStatus = 'UNASSIGNED' | 'ASSIGNED' | 'MANAGED';
 
+export type BackofficeCaseSlaStatus =
+	| 'ON_TRACK'
+	| 'AT_RISK'
+	| 'CRITICAL'
+	| 'BREACHED';
+
+export type BackofficeCaseSlaColor = 'green' | 'yellow' | 'orange' | 'red';
+
 export type BackofficeCaseHistoryEventType =
 	| 'CREATED'
 	| 'ASSIGNED'
@@ -12,6 +20,8 @@ export interface BackofficeContact {
 	id: number;
 	firstName: string;
 	lastName: string;
+	phone?: string | null;
+	otherPhones?: string[];
 }
 
 export interface BackofficeCampaign {
@@ -46,6 +56,13 @@ export interface BackofficeDisposition {
 	createdAt?: string;
 }
 
+export type CapturedDataValue =
+	| string
+	| number
+	| boolean
+	| Record<string, unknown>
+	| unknown[];
+
 export interface BackofficeCase {
 	id: number;
 	clientId: number;
@@ -54,6 +71,9 @@ export interface BackofficeCase {
 	assignedUserId: number | null;
 	latestConversationId: number;
 	latestDispositionId: number;
+	// Source of truth captured from the customer during the conversation.
+	// Dynamic key/value map; not included in the cases list endpoint.
+	capturedData?: Record<string, CapturedDataValue>;
 	contact?: BackofficeContact;
 	campaign?: BackofficeCampaign;
 	contactGroup: BackofficeContactGroup | null;
@@ -64,6 +84,13 @@ export interface BackofficeCase {
 	managedAt: string | null;
 	createdAt?: string;
 	updatedAt?: string;
+	slaTargetMinutes?: number;
+	elapsedMinutes?: number;
+	slaPercentage?: number;
+	slaStatus?: BackofficeCaseSlaStatus;
+	slaLabel?: string;
+	slaColor?: BackofficeCaseSlaColor;
+	isBreached?: boolean;
 }
 
 export interface BackofficeCaseListResponse {

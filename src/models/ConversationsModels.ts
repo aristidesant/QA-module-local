@@ -1,4 +1,83 @@
-// Lightweight model for table display
+export type ContactOutcome = 'EFFECTIVE' | 'NOT_EFFECTIVE' | 'NO_CONTACT';
+
+export type ConversationStatus =
+	| 'initiated'
+	| 'in-progress'
+	| 'done'
+	| 'failed';
+
+export type ConversationSortField =
+	| 'createdAt'
+	| 'updatedAt'
+	| 'startDate'
+	| 'endDate'
+	| 'status'
+	| 'contactName'
+	| 'agentName'
+	| 'dispositionName';
+
+export interface GetConversationsQuery {
+	limit?: number;
+	offset?: number;
+	identifier?: string;
+	campaignId?: number;
+	contactGroupId?: number;
+	waveNumber?: number;
+	contactName?: string;
+	contactPhoneNumber?: string;
+	dispositionName?: string;
+	contactOutcome?: ContactOutcome;
+	status?: ConversationStatus;
+	sortBy?: ConversationSortField;
+	sortOrder?: 'ASC' | 'DESC';
+}
+
+export interface ConversationDisposition {
+	id: number;
+	dispositionName: string;
+	dispositionDescription?: string;
+	callStatus?: string;
+	requiresReschedule?: boolean;
+	rescheduleTime?: number | null;
+	isInvalidatesNumber?: boolean;
+	isFinal?: boolean;
+	isVoiceMail: boolean;
+	doNotCall: boolean;
+	statusContact?: string | null;
+	contactOutcome: ContactOutcome | null;
+	notes?: string;
+	createdAt: string;
+	updatedAt: string;
+	deletedAt?: string | null;
+}
+
+export interface ConversationListItem {
+	id: number;
+	agentId: string;
+	agentName: string;
+	agentVoiceLanguage: string;
+	identifier?: string;
+	status: ConversationStatus;
+	campaignId: number;
+	startDate?: string;
+	endDate?: string;
+	duration?: number;
+	createdAt: string;
+	updatedAt: string;
+	contactName: string;
+	contactPhoneNumber: string;
+	contactOutcome: ContactOutcome | null;
+	dispositions: ConversationDisposition | null;
+}
+
+export interface GetConversationsResponse {
+	data: ConversationListItem[];
+	total: number;
+	limit: number;
+	offset: number;
+}
+
+// Lightweight legacy model kept for consumers outside the conversations list.
 export type ConversationTableModel = {
 	id: number;
 	identifier?: string | null;
@@ -13,14 +92,6 @@ export type ConversationTableModel = {
 	updatedAt: string;
 	externalPhoneNumber: string;
 };
-
-export type PaginatedConversationsResponse<TConversation = ConversationsModel> =
-	{
-		total: number;
-		limit: number;
-		offset: number;
-		conversations: TConversation[];
-	};
 import type AgentListObject from './AgentListObject';
 import { CallDispositionModel } from './CallDispositionModel';
 import type { Campaign } from './CampaignsModel';

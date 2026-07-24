@@ -52,11 +52,11 @@ import { useSidebarStore } from '~/stores/sidebarStore';
 import { useSessionStore } from '~/stores/sessionStore';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
-import { hasAnyActiveClientRoleCode } from '~/hooks/useBackofficeRole';
+import { hasAnyActiveClientRoleCode } from '~/modules/backoffice/hooks/useBackofficeRole';
 import {
 	BACKOFFICE_ADMIN_ROLE,
 	BACKOFFICE_AGENT_ROLE,
-} from '~/constants/BackofficeRoleConstants';
+} from '~/modules/backoffice/constants/BackofficeRoleConstants';
 import UserMenu from '../UserMenu';
 
 type SidebarNavItem = {
@@ -139,33 +139,6 @@ const sidebarSections: SidebarSection[] = [
 				to: '/do-not-call',
 				module: ModuleEnum.SETTINGS,
 				i18nNamespace: 'do-not-call',
-			},
-		],
-	},
-	{
-		key: 'backoffice',
-		label: 'sidebar.categories.backoffice',
-		icon: <IconInbox size={20} className={styles.menuIcon} />,
-		items: [
-			{
-				key: 'backoffice-cases',
-				label: 'sidebar.items.backofficeMyCases',
-				icon: <IconInbox size={18} className={styles.menuIcon} />,
-				to: '/backoffice/cases',
-				module: ModuleEnum.BACKOFFICE_CASES,
-				permission: PermissionEnum.READ,
-				roleCodes: [BACKOFFICE_AGENT_ROLE],
-				i18nNamespace: 'backoffice-cases',
-			},
-			{
-				key: 'backoffice-supervisor',
-				label: 'sidebar.items.backofficeSupervisor',
-				icon: <IconChartBar size={18} className={styles.menuIcon} />,
-				to: '/backoffice/supervisor',
-				module: ModuleEnum.BACKOFFICE_CASES,
-				permission: PermissionEnum.READ,
-				roleCodes: [BACKOFFICE_ADMIN_ROLE],
-				i18nNamespace: 'backoffice-supervisor',
 			},
 		],
 	},
@@ -391,6 +364,33 @@ const qaPrimaryItems: SidebarNavItem[] = [
 	},
 ];
 
+// Backoffice is its own app mode, not a section in the Campaign-management
+// sidebar. These render as the entire sidebar when the user is inside
+// /backoffice/*. Per-item roleCodes keep an agent from seeing the supervisor
+// link and vice-versa.
+const backofficePrimaryItems: SidebarNavItem[] = [
+	{
+		key: 'backoffice-supervisor',
+		label: 'sidebar.items.backofficeSupervisor',
+		icon: <IconChartBar size={20} className={styles.menuIcon} />,
+		to: '/backoffice/supervisor',
+		module: ModuleEnum.BACKOFFICE_CASES,
+		permission: PermissionEnum.READ,
+		roleCodes: [BACKOFFICE_ADMIN_ROLE],
+		i18nNamespace: 'backoffice-supervisor',
+	},
+	{
+		key: 'backoffice-cases',
+		label: 'sidebar.items.backofficeMyCases',
+		icon: <IconInbox size={20} className={styles.menuIcon} />,
+		to: '/backoffice/cases',
+		module: ModuleEnum.BACKOFFICE_CASES,
+		permission: PermissionEnum.READ,
+		roleCodes: [BACKOFFICE_AGENT_ROLE],
+		i18nNamespace: 'backoffice-cases',
+	},
+];
+
 export const Sidebar: React.FC = () => {
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const { t } = useTranslation('common');
@@ -401,7 +401,13 @@ export const Sidebar: React.FC = () => {
 	const { user, targetClient } = useSessionStore();
 	const activeClientId =
 		targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
-	const inQaApp = useCurrentApp() === 'qa' && isQaAdmin;
+	const currentApp = useCurrentApp();
+	const inQaApp = currentApp === 'qa' && isQaAdmin;
+	const hasBackofficeRole = hasAnyActiveClientRoleCode(user, activeClientId, [
+		BACKOFFICE_AGENT_ROLE,
+		BACKOFFICE_ADMIN_ROLE,
+	]);
+	const inBackofficeApp = currentApp === 'backoffice' && hasBackofficeRole;
 	const { collapsed, toggleCollapsed } = useSidebarStore();
 	const [openSection, setOpenSection] = useState<string>('');
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
@@ -491,10 +497,37 @@ export const Sidebar: React.FC = () => {
 		]
 	);
 
-	// In the QA app the sidebar is just the QA nav (flat, no sections); in
-	// Campaign management it's the normal UCXM nav (now QA-free).
-	const primaryNav = inQaApp ? qaPrimaryItems : visiblePrimaryItems;
-	const sectionNav = inQaApp ? [] : visibleSections;
+	const visibleBackofficeItems = useMemo(
+		() =>
+			backofficePrimaryItems.filter((item) => {
+				if (
+					item.roleCodes &&
+					!hasAnyActiveClientRoleCode(user, activeClientId, item.roleCodes)
+				) {
+					return false;
+				}
+
+				if (!item.module) {
+					return true;
+				}
+
+				if (item.permission) {
+					return canPerformAction(item.module, item.permission);
+				}
+
+				return canAccessModule(item.module);
+			}),
+		[activeClientId, canAccessModule, canPerformAction, user]
+	);
+
+	// Each app owns its sidebar: QA and Backoffice render as a flat nav with no
+	// sections; Campaign management (UCXM) renders the normal sectioned nav.
+	const primaryNav = inQaApp
+		? qaPrimaryItems
+		: inBackofficeApp
+			? visibleBackofficeItems
+			: visiblePrimaryItems;
+	const sectionNav = inQaApp || inBackofficeApp ? [] : visibleSections;
 
 	const activeSection = useMemo(
 		() =>

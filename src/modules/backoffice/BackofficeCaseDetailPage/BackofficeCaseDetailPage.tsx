@@ -7,24 +7,33 @@ import {
 	Select,
 	Stack,
 	Text,
+	Timeline,
 } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import {
+	IconAddressBook,
 	IconAlertCircle,
+	IconArrowsExchange,
 	IconCircleCheck,
+	IconClockHour4,
 	IconHistory,
 	IconInfoCircle,
+	IconPlus,
+	IconRefresh,
+	IconRefreshDot,
 	IconUser,
+	IconUserCheck,
+	IconUserOff,
+	type TablerIcon,
 } from '@tabler/icons-react';
 import { notifications } from '@mantine/notifications';
 import { useTranslation } from 'react-i18next';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import SectionCard from '~/components/SectionCard';
-import BaseTable, {
-	type BaseTableColumnDef,
-} from '~/components/BaseTable/BaseTable';
-import { useBackofficeRole } from '~/hooks/useBackofficeRole';
+import CapturedDataList from './components/CapturedDataList';
+import CaseContextHero from './components/CaseContextHero';
+import { useBackofficeRole } from '~/modules/backoffice/hooks/useBackofficeRole';
 import { usePermissions } from '~/hooks/usePermissions';
 import {
 	useEligibleBackofficeAgents,
@@ -32,16 +41,17 @@ import {
 	useBackofficeCaseHistory,
 	useMarkBackofficeCaseManaged,
 	useUpdateBackofficeAssignment,
-} from '~/queries/backofficeCaseQueries';
+} from '~/queries/backoffice/backofficeCaseQueries';
 import { ModuleEnum } from '~/constants/ModuleEnum';
 import { PermissionEnum } from '~/constants/PermissionEnum';
 import type {
 	BackofficeCase,
 	BackofficeCaseHistory,
 	BackofficeCaseStatus,
-} from '~/models/BackofficeCaseModel';
+} from '~/models/backoffice/BackofficeCaseModel';
 import { getErrorMessage } from '~/utils/httpClient';
 import classes from './BackofficeCaseDetailPage.module.css';
+import BackofficeSlaIndicator from '~/modules/backoffice/components/BackofficeSlaIndicator';
 
 const parseCaseId = (value: string | undefined) => {
 	const parsed = Number(value);
@@ -73,6 +83,18 @@ const getActorName = (
 	fallback: string,
 	automated: string
 ) => (user ? getUserName(user, fallback) : automated);
+
+const EVENT_ICONS: Record<
+	BackofficeCaseHistory['eventType'],
+	{ icon: TablerIcon; color: string }
+> = {
+	CREATED: { icon: IconPlus, color: 'gray' },
+	ASSIGNED: { icon: IconUserCheck, color: 'blue' },
+	TRANSFERRED: { icon: IconArrowsExchange, color: 'grape' },
+	UNASSIGNED: { icon: IconUserOff, color: 'orange' },
+	STATUS_CHANGED: { icon: IconRefresh, color: 'teal' },
+	SOURCE_UPDATED: { icon: IconRefreshDot, color: 'cyan' },
+};
 
 const StatusBadge = ({
 	status,
@@ -233,44 +255,7 @@ const BackofficeCaseDetailPage = () => {
 		});
 	};
 
-	const historyColumns = useMemo<BaseTableColumnDef<BackofficeCaseHistory>[]>(
-		() => [
-			{
-				accessorKey: 'eventType',
-				header: t('history.event'),
-				cell: ({ row }) => t(`events.${row.original.eventType}`),
-			},
-			{
-				id: 'actor',
-				header: t('history.actor'),
-				cell: ({ row }) =>
-					getActorName(
-						row.original.actorUser,
-						t('common.unknownUser'),
-						t('common.automated')
-					),
-			},
-			{
-				id: 'transition',
-				header: t('history.transition'),
-				cell: ({ row }) => {
-					const previous = row.original.previousStatus
-						? t(`statuses.${row.original.previousStatus}`)
-						: '—';
-					const next = row.original.newStatus
-						? t(`statuses.${row.original.newStatus}`)
-						: '—';
-					return `${previous} → ${next}`;
-				},
-			},
-			{
-				accessorKey: 'createdAt',
-				header: t('history.date'),
-				cell: ({ row }) => formatDate(row.original.createdAt, i18n.language),
-			},
-		],
-		[i18n.language, t]
-	);
+	const historyItems = historyQuery.data ?? [];
 
 	if (!caseId) {
 		return (
@@ -327,7 +312,6 @@ const BackofficeCaseDetailPage = () => {
 					label={t(`statuses.${caseData.status}`)}
 				/>
 			}
-			contentWidth='full'
 		>
 			<Stack gap='md' className={classes.root}>
 				{caseData.status === 'MANAGED' && (
@@ -338,97 +322,29 @@ const BackofficeCaseDetailPage = () => {
 					</Alert>
 				)}
 
+				<CaseContextHero caseData={caseData} locale={i18n.language} />
+
 				<div className={classes.layout}>
 					<div className={classes.mainColumn}>
-						<SectionCard title={t('sections.caseData')} icon={IconInfoCircle}>
-							<div className={classes.infoGrid}>
-								<InfoRow label={t('fields.caseId')} value={`#${caseData.id}`} />
-								<InfoRow
-									label={t('fields.contactId')}
-									value={caseData.contactId}
-								/>
-								<InfoRow
-									label={t('fields.contact')}
-									value={
-										caseData.contact
-											? `${caseData.contact.firstName} ${caseData.contact.lastName}`.trim()
-											: t('common.notAvailable')
-									}
-								/>
-								<InfoRow
-									label={t('fields.campaign')}
-									value={caseData.campaign?.name ?? t('common.notAvailable')}
-								/>
-								<InfoRow
-									label={t('fields.contactGroup')}
-									value={
-										caseData.contactGroup?.name ?? t('common.notAvailable')
-									}
-								/>
-								<InfoRow
-									label={t('fields.createdAt')}
-									value={formatDate(caseData.createdAt, i18n.language)}
-								/>
-							</div>
-						</SectionCard>
-
-						<SectionCard title={t('sections.source')} icon={IconInfoCircle}>
-							<div className={classes.infoGrid}>
-								<InfoRow
-									label={t('fields.conversationId')}
-									value={caseData.latestConversationId}
-								/>
-								<InfoRow
-									label={t('fields.conversationIdentifier')}
-									value={
-										caseData.latestConversation?.identifier ??
-										t('common.notAvailable')
-									}
-								/>
-								<InfoRow
-									label={t('fields.conversationStart')}
-									value={formatDate(
-										caseData.latestConversation?.startDate,
-										i18n.language
-									)}
-								/>
-								<InfoRow
-									label={t('fields.disposition')}
-									value={
-										caseData.latestDisposition?.dispositionName ??
-										t('common.notAvailable')
-									}
-								/>
-								<InfoRow
-									label={t('fields.contactOutcome')}
-									value={
-										caseData.latestDisposition?.contactOutcome ??
-										t('common.notAvailable')
-									}
-								/>
-							</div>
-						</SectionCard>
-
-						<SectionCard title={t('sections.history')} icon={IconHistory}>
-							{historyQuery.isError ? (
-								<Alert color='red' icon={<IconAlertCircle size={18} />}>
-									{getErrorMessage(historyQuery.error)}
-								</Alert>
-							) : (
-								<BaseTable
-									data={historyQuery.data ?? []}
-									columns={historyColumns}
-									getRowId={(row) => row.id}
-									isLoading={historyQuery.isLoading}
-									emptyMessage={t('history.empty')}
-									rootProps={{ className: classes.historyTable }}
-									density='compact'
-								/>
-							)}
+						<SectionCard
+							title={t('sections.customerData')}
+							description={t('sections.customerDataDescription')}
+							icon={IconAddressBook}
+							headerAccent='blue'
+						>
+							<CapturedDataList data={caseData.capturedData} />
 						</SectionCard>
 					</div>
 
 					<div className={classes.sideColumn}>
+						{caseData.slaStatus !== undefined && (
+							<SectionCard title={t('sections.sla')} icon={IconClockHour4}>
+								<BackofficeSlaIndicator
+									caseData={caseData}
+									namespace='backoffice-cases'
+								/>
+							</SectionCard>
+						)}
 						<SectionCard title={t('sections.workflow')} icon={IconUser}>
 							<Stack gap='sm'>
 								<InfoRow
@@ -504,13 +420,65 @@ const BackofficeCaseDetailPage = () => {
 							</Stack>
 						</SectionCard>
 
-						<SectionCard
-							title={t('sections.manualWorkflow')}
-							icon={IconInfoCircle}
-						>
-							<Text size='sm' c='dimmed'>
-								{t('managed.manualWorkflow')}
-							</Text>
+						<SectionCard title={t('sections.history')} icon={IconHistory}>
+							{historyQuery.isError ? (
+								<Alert color='red' icon={<IconAlertCircle size={18} />}>
+									{getErrorMessage(historyQuery.error)}
+								</Alert>
+							) : historyQuery.isLoading ? (
+								<Stack gap='sm'>
+									<div className={classes.loadingBlock} />
+								</Stack>
+							) : historyItems.length === 0 ? (
+								<Text size='sm' c='dimmed'>
+									{t('history.empty')}
+								</Text>
+							) : (
+								<Timeline
+									active={historyItems.length}
+									bulletSize={24}
+									lineWidth={2}
+								>
+									{historyItems.map((event) => {
+										const meta =
+											EVENT_ICONS[event.eventType] ??
+											EVENT_ICONS.STATUS_CHANGED;
+										const EventIcon = meta.icon;
+										const hasTransition =
+											event.previousStatus !== event.newStatus &&
+											(event.previousStatus || event.newStatus);
+										const previous = event.previousStatus
+											? t(`statuses.${event.previousStatus}`)
+											: '—';
+										const next = event.newStatus
+											? t(`statuses.${event.newStatus}`)
+											: '—';
+										return (
+											<Timeline.Item
+												key={event.id}
+												color={meta.color}
+												bullet={<EventIcon size={14} />}
+												title={t(`events.${event.eventType}`)}
+											>
+												<Text size='xs' c='dimmed'>
+													{getActorName(
+														event.actorUser,
+														t('common.unknownUser'),
+														t('common.automated')
+													)}
+													{' · '}
+													{formatDate(event.createdAt, i18n.language)}
+												</Text>
+												{hasTransition && (
+													<Text size='xs' c='dimmed' mt={2}>
+														{previous} → {next}
+													</Text>
+												)}
+											</Timeline.Item>
+										);
+									})}
+								</Timeline>
+							)}
 						</SectionCard>
 					</div>
 				</div>

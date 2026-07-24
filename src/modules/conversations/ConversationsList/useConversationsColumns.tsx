@@ -18,7 +18,7 @@ import {
 	IconPlayerTrackNext,
 	IconRefresh,
 } from '@tabler/icons-react';
-import type { ConversationsModel } from '~/models/ConversationsModels';
+import type { ConversationListItem } from '~/models/ConversationsModels';
 import { useTranslation } from 'react-i18next';
 import { getConversationActionDefinition } from '../ConversationDetails/ConversationActions/ConversationActions.helpers';
 import styles from './ConversationsList.module.css';
@@ -31,9 +31,9 @@ type ConversationColumnsOptions = {
 	combineContactDetails?: boolean;
 	onActionClick?: (
 		event: MouseEvent<HTMLButtonElement>,
-		conversation: ConversationsModel
+		conversation: ConversationListItem
 	) => void;
-	isActionLoading?: (conversation: ConversationsModel) => boolean;
+	isActionLoading?: (conversation: ConversationListItem) => boolean;
 };
 
 export const useConversationsColumns = (
@@ -43,7 +43,7 @@ export const useConversationsColumns = (
 ) => {
 	const { t } = useTranslation(['conversations', 'common']);
 
-	return useMemo<ColumnDef<ConversationsModel>[]>(() => {
+	return useMemo<ColumnDef<ConversationListItem>[]>(() => {
 		const formatZonedDate = (value?: string | null) => {
 			if (!value) return null;
 			const parsed = dayjs.utc(value);
@@ -208,14 +208,14 @@ export const useConversationsColumns = (
 			return parts.join(' ') || '—';
 		};
 
-		const allColumns: ColumnDef<ConversationsModel>[] = [
+		const allColumns: ColumnDef<ConversationListItem>[] = [
 			{
 				id: 'identifier',
 				header: t('list.columns.identifier'),
 				size: 100,
 				accessorFn: (row) =>
 					normalizeConversationIdentifier(row.identifier) ?? '',
-				enableSorting: true,
+				enableSorting: false,
 				cell: ({ row }) => renderIdentifier(row.original.identifier),
 			},
 			{
@@ -262,14 +262,17 @@ export const useConversationsColumns = (
 				accessorFn: (row) => row?.dispositions?.dispositionName ?? '',
 				enableSorting: true,
 				cell: ({ row }) => {
-					const isAbandoned = Boolean(row.original?.dispositions?.isAbandoned);
-					const color = isAbandoned
-						? 'orange'
-						: row?.original?.dispositions?.callStatus === 'NEGATIVE'
-							? 'red'
-							: row?.original?.dispositions?.callStatus === 'POSITIVE'
-								? 'green'
-								: 'gray';
+					const contactOutcome =
+						row.original.contactOutcome ??
+						row.original.dispositions?.contactOutcome;
+					const color =
+						contactOutcome === 'EFFECTIVE'
+							? 'green'
+							: contactOutcome === 'NOT_EFFECTIVE'
+								? 'orange'
+								: contactOutcome === 'NO_CONTACT'
+									? 'gray'
+									: 'gray';
 					return (
 						<Badge
 							color={color}
@@ -278,10 +281,8 @@ export const useConversationsColumns = (
 							radius='xl'
 							className={styles.outcomeBadge}
 						>
-							{isAbandoned
-								? `${row.original?.dispositions?.dispositionName ?? t('overview.fallbacks.na')} • ${t('disposition.abandoned')}`
-								: (row.original?.dispositions?.dispositionName ??
-									t('overview.fallbacks.na'))}
+							{row.original.dispositions?.dispositionName ??
+								t('overview.fallbacks.na')}
 						</Badge>
 					);
 				},
@@ -351,7 +352,27 @@ export const useConversationsColumns = (
 			{
 				id: 'duration',
 				header: t('list.columns.duration'),
+				enableSorting: false,
 				cell: ({ row }) => {
+					if (typeof row.original.duration === 'number') {
+						const duration = Math.max(0, Math.floor(row.original.duration));
+						const hours = Math.floor(duration / 3600);
+						const minutes = Math.floor((duration % 3600) / 60);
+						const seconds = duration % 60;
+						const parts: string[] = [];
+						if (hours)
+							parts.push(`${hours}${t('units.hour', { ns: 'common' })}`);
+						if (minutes)
+							parts.push(`${minutes}${t('units.minute', { ns: 'common' })}`);
+						if (!hours && !minutes)
+							parts.push(`${seconds}${t('units.second', { ns: 'common' })}`);
+						return (
+							<Text size='xs' className={styles.duration}>
+								{parts.join(' ')}
+							</Text>
+						);
+					}
+
 					const originalStartDate = row.original.startDate;
 					const startDate = originalStartDate || row.original.createdAt;
 					const endDate = row.original.endDate;

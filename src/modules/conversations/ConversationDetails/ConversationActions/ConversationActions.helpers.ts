@@ -4,7 +4,6 @@ import {
 	type TablerIcon,
 } from '@tabler/icons-react';
 import type { TFunction } from 'i18next';
-import type { ConversationsModel } from '~/models/ConversationsModels';
 
 export type ConversationActionKey = 'reprocess' | 'fetchAndProcess';
 
@@ -19,7 +18,7 @@ export type ConversationActionDefinition = {
 };
 
 export const getConversationActionDefinition = (
-	conversation: ConversationsModel,
+	conversation: { status: string },
 	t: TFunction
 ): ConversationActionDefinition => {
 	if (conversation.status === 'initiated') {

@@ -8,27 +8,36 @@ import conversationsApi, {
 	Conversation,
 	type PostCallDataParams,
 	type StartDemoParams,
+	type UpdateConversationDispositionParams,
 	type UpdateConversationParams,
 } from '~/api/conversationsApi';
+import type { CallDispositionModel } from '~/models/CallDispositionModel';
 import type {
 	ConversationDemoModel,
+	ContactOutcome,
+	ConversationSortField,
+	ConversationStatus,
 	ConversationsModel,
 } from '~/models/ConversationsModels';
 
 const getApi = () => conversationsApi();
+const TERMINAL_CONVERSATION_STATUSES = new Set([
+	'done',
+	'completed',
+	'failed',
+	'error',
+	'cancelled',
+	'canceled',
+	'terminated',
+	'ended',
+	'finished',
+]);
 
-function isTerminalConversationStatus(status?: string) {
+export function isTerminalConversationStatus(status?: string) {
 	const normalizedStatus = status?.trim().toLowerCase() ?? '';
-	return [
-		'done',
-		'completed',
-		'failed',
-		'error',
-		'cancelled',
-		'canceled',
-		'terminated',
-		'ended',
-	].some((terminalStatus) => normalizedStatus.includes(terminalStatus));
+	return normalizedStatus
+		.split(/[^a-z]+/)
+		.some((statusToken) => TERMINAL_CONVERSATION_STATUSES.has(statusToken));
 }
 
 type ConversationsQueryParams = {
@@ -36,14 +45,23 @@ type ConversationsQueryParams = {
 	campaignId?: string | number | null;
 	limit?: number;
 	offset?: number;
-	search?: string;
 	identifier?: string;
+	waveNumber?: number;
 	contactName?: string;
 	contactPhoneNumber?: string;
 	dispositionName?: string;
-	status?: string;
-	sortBy?: string;
+	contactOutcome?: ContactOutcome;
+	status?: ConversationStatus;
+	sortBy?: ConversationSortField;
 	sortOrder?: 'ASC' | 'DESC';
+};
+
+const normalizeNumericFilter = (
+	value?: string | number | null
+): number | undefined => {
+	if (value === undefined || value === null || value === '') return undefined;
+	const normalized = Number(value);
+	return Number.isFinite(normalized) ? normalized : undefined;
 };
 
 // Create a new conversation
@@ -69,11 +87,12 @@ export const useGetConversations = (params?: ConversationsQueryParams) => {
 		contactGroupId,
 		limit,
 		offset,
-		search,
 		identifier,
+		waveNumber,
 		contactName,
 		contactPhoneNumber,
 		dispositionName,
+		contactOutcome,
 		status,
 		sortBy,
 		sortOrder,
@@ -87,11 +106,12 @@ export const useGetConversations = (params?: ConversationsQueryParams) => {
 			{
 				limit,
 				offset,
-				search,
 				identifier,
+				waveNumber,
 				contactName,
 				contactPhoneNumber,
 				dispositionName,
+				contactOutcome,
 				status,
 				sortBy,
 				sortOrder,
@@ -99,22 +119,21 @@ export const useGetConversations = (params?: ConversationsQueryParams) => {
 		],
 		queryFn: async () => {
 			const api = getApi();
-			return api.getConversations(
-				campaignId ?? undefined,
-				contactGroupId ?? undefined,
-				{
-					limit,
-					offset,
-					search,
-					identifier,
-					contactName,
-					contactPhoneNumber,
-					dispositionName,
-					status,
-					sortBy,
-					sortOrder,
-				}
-			);
+			return api.getConversations({
+				limit,
+				offset,
+				identifier,
+				campaignId: normalizeNumericFilter(campaignId),
+				contactGroupId: normalizeNumericFilter(contactGroupId),
+				waveNumber,
+				contactName,
+				contactPhoneNumber,
+				dispositionName,
+				contactOutcome,
+				status,
+				sortBy,
+				sortOrder,
+			});
 		},
 		staleTime: 30_000,
 		placeholderData: keepPreviousData,
@@ -205,6 +224,40 @@ export const useUpdateConversation = () => {
 		onSuccess: (_, { id }) => {
 			queryClient.invalidateQueries({ queryKey: ['conversations'] });
 			queryClient.invalidateQueries({ queryKey: ['conversation', id] });
+		},
+	});
+};
+
+export const useUpdateConversationDisposition = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation<
+		CallDispositionModel,
+		unknown,
+		{
+			conversationId: string | number;
+		} & UpdateConversationDispositionParams
+	>({
+		mutationFn: async ({ conversationId, dispositionId }) => {
+			const api = getApi();
+			return api.updateConversationDisposition(String(conversationId), {
+				dispositionId,
+			});
+		},
+		onSuccess: (updatedDisposition, { conversationId }) => {
+			const normalizedId = String(conversationId);
+			queryClient.setQueryData(
+				['callDispositionByConversationId', normalizedId],
+				updatedDisposition
+			);
+			queryClient.invalidateQueries({ queryKey: ['conversations'] });
+			queryClient.invalidateQueries({
+				queryKey: ['conversation', normalizedId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ['callDispositionByConversationId', normalizedId],
+			});
+			queryClient.invalidateQueries({ queryKey: ['callDispositions'] });
 		},
 	});
 };

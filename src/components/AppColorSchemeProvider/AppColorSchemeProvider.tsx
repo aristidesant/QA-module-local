@@ -1,53 +1,66 @@
-import { MantineProvider } from '@mantine/core';
-import React, { useEffect, useLayoutEffect } from 'react';
+import {
+	MantineProvider,
+	type MantineColorScheme,
+	type MantineColorSchemeManager,
+} from '@mantine/core';
+import React from 'react';
 import { useColorSchemeStore } from '~/stores/colorSchemeStore';
 import { theme } from '~/theme';
-import { useMantineColorScheme } from '@mantine/core';
 
 type AppColorSchemeProviderProps = {
 	children: React.ReactNode;
 };
 
-const resolveScheme = (
-	preference: 'light' | 'dark' | 'auto'
-): 'light' | 'dark' => {
-	if (preference !== 'auto') return preference;
-	return window.matchMedia?.('(prefers-color-scheme: dark)').matches
-		? 'dark'
-		: 'light';
+/**
+ * Single source of truth for the color scheme.
+ *
+ * Previously Mantine's default localStorage manager (key `mantine-color-scheme-value`)
+ * fought the app's zustand store (key `color-scheme`) plus a manual attribute writer,
+ * so `data-mantine-color-scheme` flickered between light/dark on every switch.
+ *
+ * This manager makes Mantine read/write the SAME zustand preference, so there is a
+ * single writer of the attribute and a single persisted value.
+ */
+const createStoreColorSchemeManager = (): MantineColorSchemeManager => {
+	let unsubscribe: (() => void) | undefined;
+
+	return {
+		get: (defaultValue) =>
+			(useColorSchemeStore.getState().preference ??
+				defaultValue) as MantineColorScheme,
+		set: (value) => {
+			// Mantine only ever emits 'light' | 'dark' | 'auto', which matches the store.
+			useColorSchemeStore
+				.getState()
+				.setPreference(value as 'light' | 'dark' | 'auto');
+		},
+		subscribe: (onUpdate) => {
+			unsubscribe = useColorSchemeStore.subscribe((state, prev) => {
+				if (state.preference !== prev.preference) {
+					onUpdate(state.preference as MantineColorScheme);
+				}
+			});
+		},
+		unsubscribe: () => {
+			unsubscribe?.();
+			unsubscribe = undefined;
+		},
+		clear: () => {
+			useColorSchemeStore.getState().setPreference('auto');
+		},
+	};
 };
 
-const ColorSchemeSync: React.FC<{ children: React.ReactNode }> = ({
-	children,
-}) => {
-	const preference = useColorSchemeStore((s) => s.preference);
-	const { setColorScheme } = useMantineColorScheme();
-
-	// Update DOM attribute before paint to prevent visual flash.
-	// Mantine's own effect fires after paint, so we set it synchronously here.
-	useLayoutEffect(() => {
-		document.documentElement.setAttribute(
-			'data-mantine-color-scheme',
-			resolveScheme(preference)
-		);
-	}, [preference]);
-
-	// Keep Mantine's internal context in sync (for components reading useMantineColorScheme).
-	useEffect(() => {
-		setColorScheme(preference);
-	}, [preference, setColorScheme]);
-
-	return <>{children}</>;
-};
+const colorSchemeManager = createStoreColorSchemeManager();
 
 export const AppColorSchemeProvider: React.FC<AppColorSchemeProviderProps> = ({
 	children,
-}) => {
-	const preference = useColorSchemeStore((s) => s.preference);
-
-	return (
-		<MantineProvider theme={theme} defaultColorScheme={preference}>
-			<ColorSchemeSync>{children}</ColorSchemeSync>
-		</MantineProvider>
-	);
-};
+}) => (
+	<MantineProvider
+		theme={theme}
+		defaultColorScheme='auto'
+		colorSchemeManager={colorSchemeManager}
+	>
+		{children}
+	</MantineProvider>
+);

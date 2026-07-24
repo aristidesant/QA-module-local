@@ -7,8 +7,19 @@
 }
 
 .kpiSkeleton {
-	height: 60px;
+	height: 64px;
 	border-radius: var(--mantine-radius-md);
+}
+
+.kpiMenuTarget {
+	width: 100%;
+	border-radius: var(--mantine-radius-md);
+}
+
+.kpiMenuTarget:focus-visible {
+	outline: 3px solid
+		color-mix(in srgb, var(--mantine-color-green-6) 32%, transparent);
+	outline-offset: 2px;
 }
 
 .chartsGrid {
@@ -28,8 +39,7 @@
 
 .filterBar {
 	display: flex;
-	flex-wrap: wrap;
-	align-items: flex-end;
+	flex-direction: column;
 	gap: var(--mantine-spacing-sm);
 	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
 	background: var(--mantine-color-gray-0);
@@ -42,6 +52,39 @@
 	border-color: var(--mantine-color-dark-5);
 }
 
+.filterHeader,
+.filterFooter {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	width: 100%;
+}
+
+.filterControls {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	gap: var(--mantine-spacing-sm);
+	width: 100%;
+}
+
+.filterFooter {
+	align-items: flex-start;
+	flex-wrap: wrap;
+	padding-top: var(--mantine-spacing-xs);
+	border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .filterFooter {
+	border-top-color: var(--mantine-color-dark-5);
+}
+
+.activeFilters {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
 .filterControl {
 	flex: 1 1 180px;
 	min-width: 160px;
@@ -49,6 +92,16 @@
 
 .clearFilters {
 	flex: 0 0 auto;
+}
+
+.chartActions {
+	flex-wrap: wrap;
+	padding-top: var(--mantine-spacing-xs);
+	border-top: 1px solid var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .chartActions {
+	border-top-color: var(--mantine-color-dark-5);
 }
 
 .tableRoot {
@@ -71,6 +124,11 @@
 	justify-content: center;
 }
 
+#supervisor-workload,
+#supervisor-case-queue {
+	scroll-margin-top: var(--mantine-spacing-md);
+}
+
 @media (max-width: 900px) {
 	.chartsGrid {
 		grid-template-columns: 1fr;
@@ -78,6 +136,12 @@
 }
 
 @media (max-width: 640px) {
+	.filterHeader,
+	.filterFooter {
+		align-items: flex-start;
+		flex-direction: column;
+	}
+
 	.filterControl {
 		flex-basis: 100%;
 	}

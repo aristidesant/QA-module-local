@@ -60,8 +60,18 @@
 		"advanced": "Más filtros",
 		"phoneNumber": "Número de teléfono",
 		"phoneNumberPlaceholder": "Filtrar por número de teléfono",
+		"disposition": "Disposición",
+		"dispositionPlaceholder": "Filtrar por nombre de disposición",
 		"outcome": "Resultado",
 		"outcomePlaceholder": "Filtrar por resultado",
+		"contactOutcomes": {
+			"effective": "Efectivo",
+			"notEffective": "No efectivo",
+			"noContact": "Sin contacto"
+		},
+		"waveNumber": "Oleada",
+		"waveNumberPlaceholder": "Filtrar por número de oleada",
+		"waveValue": "Oleada {{number}}",
 		"status": "Estado",
 		"allStatuses": "Todos los estados",
 		"clear": "Limpiar todos los filtros"
@@ -103,6 +113,16 @@
 		"transcriptSection": "Transcripción",
 		"turnCount_one": "{{count}} turno",
 		"turnCount_other": "{{count}} turnos"
+	},
+	"technicalOverview": {
+		"title": "Payload técnico de la conversación",
+		"description": "Registros, configuración y análisis completos de la conversación.",
+		"sections": {
+			"metadata": "Metadatos",
+			"analysis": "Análisis",
+			"initiationData": "Datos de inicio de la conversación",
+			"rawPayload": "Payload crudo de la conversación"
+		}
 	},
 	"actions": {
 		"title": "Acciones",
@@ -349,6 +369,42 @@
 		"numberInvalidated": "Número invalidado",
 		"doNotRetry": "No reintentar este contacto",
 		"agentNotes": "Notas del agente",
+		"edit": {
+			"button": "Cambiar",
+			"label": "Resultado",
+			"description": "Las opciones están agrupadas por resultado de contacto.",
+			"placeholder": "Selecciona un resultado",
+			"noSearchResults": "Ningún resultado coincide con tu búsqueda.",
+			"save": "Guardar resultado",
+			"cancel": "Cancelar",
+			"loading": "Cargando resultados de la campaña...",
+			"empty": "Esta campaña no tiene resultados activos de hoja.",
+			"groups": {
+				"effective": "Contacto efectivo",
+				"notEffective": "Contacto no efectivo",
+				"noContact": "No contacto",
+				"other": "Otros resultados"
+			},
+			"confirmTitle": "Cambiar disposición de la conversación",
+			"confirmDescription": "La disposición actual será reemplazada. Las notas y la referencia telefónica existentes se conservarán.",
+			"currentLabel": "Disposición actual",
+			"newLabel": "Nueva disposición",
+			"confirm": "Cambiar disposición",
+			"successTitle": "Resultado actualizado",
+			"successMessage": "La conversación ahora está marcada como {{name}}.",
+			"errorTitle": "No se pudo actualizar el resultado",
+			"loadErrors": {
+				"forbidden": "No tienes acceso a las disposiciones de esta campaña.",
+				"notFound": "Esta campaña no tiene un flujo de disposiciones vigente.",
+				"generic": "No se pudieron cargar las disposiciones de la campaña."
+			},
+			"errors": {
+				"invalid": "Esta disposición ya no está activa o disponible. Actualiza la lista y selecciona otra.",
+				"forbidden": "No tienes permiso para cambiar la disposición de esta campaña.",
+				"notFound": "No se encontró la conversación o su flujo de disposiciones vigente.",
+				"generic": "No se pudo actualizar la disposición. Inténtalo de nuevo."
+			}
+		},
 		"duration": {
 			"asap": "lo antes posible",
 			"day": "día",

@@ -1,27 +1,37 @@
 import { Modal, Stack, Text, Title, UnstyledButton } from '@mantine/core';
-import { IconChecklist, IconLayoutDashboard } from '@tabler/icons-react';
+import {
+	IconChecklist,
+	IconInbox,
+	IconLayoutDashboard,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { AppKey } from '~/hooks/useCurrentApp';
 import classes from './AppChooserModal.module.css';
 
 interface AppChooserModalProps {
 	opened: boolean;
-	/** Dismiss (cancel / outside / escape). Treated as choosing Campaign management. */
+	/** Dismiss (cancel / outside / escape). */
 	onClose: () => void;
 	onChoose: (app: AppKey) => void;
+	/** Apps to offer as cards; only these render, in this order. */
+	apps: AppKey[];
 }
+
+const APP_ICONS: Record<AppKey, typeof IconChecklist> = {
+	ucxm: IconLayoutDashboard,
+	qa: IconChecklist,
+	backoffice: IconInbox,
+};
 
 export default function AppChooserModal({
 	opened,
 	onClose,
 	onChoose,
+	apps,
 }: AppChooserModalProps) {
 	const { t } = useTranslation('common');
 
-	const cards: Array<{ app: AppKey; icon: typeof IconChecklist }> = [
-		{ app: 'ucxm', icon: IconLayoutDashboard },
-		{ app: 'qa', icon: IconChecklist },
-	];
+	const cards = apps.map((app) => ({ app, icon: APP_ICONS[app] }));
 
 	return (
 		<Modal

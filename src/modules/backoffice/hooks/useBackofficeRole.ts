@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import type { UserModel, UserRoleModel } from '~/models/UserModels';
 import { useSessionStore } from '~/stores/sessionStore';
-import type { BackofficeRoleCode } from '~/constants/BackofficeRoleConstants';
+import type { BackofficeRoleCode } from '~/modules/backoffice/constants/BackofficeRoleConstants';
 
 type UserRoleWithCode = UserRoleModel & {
 	roleCode?: string | null;

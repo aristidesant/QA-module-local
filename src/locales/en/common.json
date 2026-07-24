@@ -287,14 +287,20 @@
 			"qa": {
 				"label": "QA",
 				"description": "Quality assurance: evaluations, forms, and disputes."
+			},
+			"backoffice": {
+				"label": "Backoffice",
+				"description": "Case management: your queue and supervisor dashboard."
 			}
 		},
+		"switchApp": "Switch app",
 		"switchToQa": "Switch to QA",
 		"switchToCampaign": "Switch to Campaign management",
 		"transition": {
 			"kicker": "Unified CXM",
 			"ucxm": "Loading Campaign Management…",
-			"qa": "Loading Quality Assurance…"
+			"qa": "Loading Quality Assurance…",
+			"backoffice": "Loading Backoffice…"
 		}
 	}
 }

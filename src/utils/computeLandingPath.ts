@@ -12,6 +12,9 @@ const MODULE_PRIORITY: Array<{ module: ModuleEnum; path: string }> = [
 	{ module: ModuleEnum.ROLES, path: '/roles' },
 	{ module: ModuleEnum.BILLING, path: '/billing/invoices' },
 	{ module: ModuleEnum.TOOLS, path: '/tools' },
+	// Backoffice-only users (no UCXM modules, no DASHBOARD) land in their own
+	// app; the /backoffice index then splits admin (supervisor) vs agent (cases).
+	{ module: ModuleEnum.BACKOFFICE_CASES, path: '/backoffice' },
 ];
 
 export const computeLandingPath = (permissionMap: PermissionMap): string => {

@@ -43,6 +43,7 @@ import ConversationNavigator from '~/modules/conversations/ConversationNavigator
 import { TranscriptPlayerBar } from '~/modules/conversations/TranscriptViewer/TranscriptPlayerBar/TranscriptPlayerBar';
 import ConversationOverviewCard from '~/modules/conversations/ConversationOverviewCard';
 import ConversationCapturedVariables from '~/modules/conversations/ConversationCapturedVariables';
+import ConversationTechnicalOverview from '~/modules/conversations/ConversationTechnicalOverview';
 import { buildWorkflowNodeLabelMaps } from '~/modules/conversations/utils/workflowNodeLabels';
 
 import styles from './ConversationDetailPage.module.css';
@@ -520,10 +521,15 @@ export function ConversationDetailPage({
 							dateDisplay={dateDisplay}
 							agentName={agentName}
 							campaignName={campaignName}
+							campaignId={campaignId}
+							conversationStatus={status}
 							terminationReasonLabel={terminationLabel}
 							conversationId={String(conversation.id)}
 						/>
 						<ConversationCapturedVariables variables={capturedVariables} />
+						<ConversationTechnicalOverview
+							transcriptContent={transcriptContent}
+						/>
 					</Stack>
 				</div>
 			</div>

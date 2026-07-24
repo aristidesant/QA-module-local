@@ -29,6 +29,13 @@
 	border-left: 1px solid var(--surface-border);
 }
 
+.outcomeHeader {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+}
+
 .outcomeTitle {
 	font-size: var(--fs-13);
 	font-weight: 650;
@@ -227,6 +234,10 @@
 		padding-left: 0;
 		border-top: 1px solid var(--surface-border);
 		border-left: 0;
+	}
+
+	.outcomeHeader {
+		align-items: flex-start;
 	}
 
 	.contactBlock {

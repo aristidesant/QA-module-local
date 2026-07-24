@@ -26,14 +26,17 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
-import { useIsQaAdmin } from '~/hooks/useIsQaAdmin';
 import { useCurrentApp } from '~/hooks/useCurrentApp';
+import type { AppKey } from '~/hooks/useCurrentApp';
+import { useAccessibleApps } from '~/hooks/useAccessibleApps';
 import { useAppTransitionStore } from '~/stores/appTransitionStore';
 import { useColorSchemeStore } from '~/stores/colorSchemeStore';
 import { getClientDisplayLabel } from '~/utils/clientDisplay';
+import { appLandingPath } from '~/utils/computeAccessibleApps';
 import logout from '~/utils/logout';
 import LanguagePicker from '../LanguagePicker';
 import ClientSwitcherModal from '../ClientSwitcherModal';
+import AppChooserModal from '../AppChooserModal';
 import styles from './UserMenu.module.css';
 
 type ColorSchemePreference = 'light' | 'dark' | 'auto';
@@ -52,12 +55,14 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 	const { t } = useTranslation('common');
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
-	const isQaAdmin = useIsQaAdmin();
 	const currentApp = useCurrentApp();
+	const accessibleApps = useAccessibleApps();
 	const preference = useColorSchemeStore((s) => s.preference);
 	const setPreference = useColorSchemeStore((s) => s.setPreference);
 	const navigate = useNavigate();
 	const [switcherOpened, { open: openSwitcher, close: closeSwitcher }] =
+		useDisclosure(false);
+	const [chooserOpened, { open: openChooser, close: closeChooser }] =
 		useDisclosure(false);
 	const [menuOpened, { open: openMenu, close: closeMenu }] =
 		useDisclosure(false);
@@ -99,15 +104,22 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 		logout();
 	};
 
-	// Instant, client-side jump between the QA app and Campaign management —
-	// same token/client, so no backend call. Only rendered for QA-admins. The
-	// transition overlay gives the switch a deliberate, screen-wide moment.
-	const handleAppSwitch = () => {
-		closeMenu();
-		const target = currentApp === 'qa' ? 'ucxm' : 'qa';
-		useAppTransitionStore.getState().start(target);
-		navigate(target === 'qa' ? '/qa/dashboard' : '/');
+	// Instant, client-side jump between apps — same token/client, so no backend
+	// call. Only offered when the user can reach 2+ apps. The transition overlay
+	// gives the switch a deliberate, screen-wide moment.
+	const handleAppChoose = (app: AppKey) => {
+		closeChooser();
+		if (app === currentApp) return;
+		useAppTransitionStore.getState().start(app);
+		navigate(appLandingPath(app));
 	};
+
+	const handleOpenChooser = () => {
+		closeMenu();
+		openChooser();
+	};
+
+	const canSwitchApps = accessibleApps.length >= 2;
 
 	const menuDropdown = (
 		<Menu.Dropdown className={styles.menuDropdown}>
@@ -153,17 +165,13 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 			>
 				{t('sidebar.account.switchClient')}
 			</Menu.Item>
-			{isQaAdmin && (
+			{canSwitchApps && (
 				<Menu.Item
 					leftSection={<IconApps size={16} />}
-					onClick={handleAppSwitch}
+					onClick={handleOpenChooser}
 					className={styles.menuItem}
 				>
-					{t(
-						currentApp === 'qa'
-							? 'appSwitcher.switchToCampaign'
-							: 'appSwitcher.switchToQa'
-					)}
+					{t('appSwitcher.switchApp')}
 				</Menu.Item>
 			)}
 			<Menu.Label className={styles.menuLabel}>
@@ -343,6 +351,12 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 			)}
 
 			<ClientSwitcherModal opened={switcherOpened} onClose={closeSwitcher} />
+			<AppChooserModal
+				opened={chooserOpened}
+				onClose={closeChooser}
+				onChoose={handleAppChoose}
+				apps={accessibleApps}
+			/>
 		</>
 	);
 };

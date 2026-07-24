@@ -1,0 +1,59 @@
+.editor {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs) 0;
+}
+
+.actions {
+	margin-top: var(--mantine-spacing-xs);
+}
+
+.message {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	flex-wrap: wrap;
+}
+
+.dropdown {
+	padding: var(--mantine-spacing-xs);
+}
+
+.groupLabel {
+	position: sticky;
+	top: 0;
+	z-index: 1;
+	margin: var(--mantine-spacing-xs) 0 0;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-sm);
+	background: light-dark(
+		var(--mantine-color-gray-1),
+		var(--mantine-color-dark-6)
+	);
+	color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-2));
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 700;
+}
+
+.option {
+	min-height: 52px;
+	margin-top: 2px;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+}
+
+.optionContent {
+	min-width: 0;
+}
+
+.optionName,
+.optionPath {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.optionPath {
+	margin-top: 2px;
+}

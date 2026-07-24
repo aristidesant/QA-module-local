@@ -102,6 +102,7 @@
 				"label": "Tipo",
 				"placeholder": "Selecciona el tipo de configuración",
 				"required": "El tipo es obligatorio",
+				"invalidSla": "Esta configuración SLA debe usar el tipo número",
 				"options": {
 					"string": "Cadena",
 					"number": "Número",
@@ -115,7 +116,10 @@
 				"placeholderDefault": "Ingresa el valor de la configuración",
 				"placeholderJson": "{\"key\": \"value\"}",
 				"required": "El valor es obligatorio",
-				"invalidJson": "Formato JSON inválido"
+				"invalidJson": "Formato JSON inválido",
+				"invalidSla": "El SLA debe ser 30, 60, 90 o 120 minutos",
+				"placeholderSla": "Selecciona el objetivo SLA",
+				"minutesOption": "{{value}} minutos"
 			}
 		},
 		"actions": {

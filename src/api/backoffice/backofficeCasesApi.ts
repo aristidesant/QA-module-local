@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { useSessionStore } from '~/stores/sessionStore';
-import { DEFAULT_API_URL } from './config';
+import { DEFAULT_API_URL } from '../config';
 import type {
 	BackofficeCase,
 	BackofficeCaseHistory,
@@ -10,7 +10,7 @@ import type {
 	BackofficeSupervisorDashboard,
 	BackofficeSupervisorDashboardParams,
 	DistributeBackofficeCasesResponse,
-} from '~/models/BackofficeCaseModel';
+} from '~/models/backoffice/BackofficeCaseModel';
 
 export interface BackofficeCaseListParams {
 	status?: BackofficeCaseStatus;

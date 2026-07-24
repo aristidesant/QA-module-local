@@ -3,6 +3,7 @@ import {
 	Button,
 	Collapse,
 	CloseButton,
+	NumberInput,
 	Select,
 	Text,
 	TextInput,
@@ -11,6 +12,7 @@ import { useDebouncedCallback } from '@mantine/hooks';
 import {
 	IconAdjustments,
 	IconChartDots,
+	IconHash,
 	IconPhone,
 	IconSearch,
 	IconUser,
@@ -18,13 +20,19 @@ import {
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import styles from './ConversationFilters.module.css';
 import { useTranslation } from 'react-i18next';
+import type {
+	ContactOutcome,
+	ConversationStatus,
+} from '~/models/ConversationsModels';
 
 export interface ConversationFiltersType {
 	identifier?: string;
 	contactName?: string;
 	contactPhoneNumber?: string;
 	dispositionName?: string;
-	status?: string;
+	contactOutcome?: ContactOutcome;
+	waveNumber?: number;
+	status?: ConversationStatus;
 }
 
 interface ConversationFiltersProps {
@@ -56,6 +64,20 @@ export default function ConversationFilters({
 			},
 			{ value: 'done', label: t('list.status.done') },
 			{ value: 'failed', label: t('list.status.failed') },
+		],
+		[t]
+	);
+	const contactOutcomeOptions = useMemo(
+		() => [
+			{ value: 'EFFECTIVE', label: t('filters.contactOutcomes.effective') },
+			{
+				value: 'NOT_EFFECTIVE',
+				label: t('filters.contactOutcomes.notEffective'),
+			},
+			{
+				value: 'NO_CONTACT',
+				label: t('filters.contactOutcomes.noContact'),
+			},
 		],
 		[t]
 	);
@@ -141,13 +163,22 @@ export default function ConversationFilters({
 		filters.contactName,
 		filters.contactPhoneNumber,
 		filters.dispositionName,
+		filters.contactOutcome,
+		filters.waveNumber,
 	].filter(Boolean).length;
 	const hasActiveFilters = activeFiltersCount > 0;
 
 	const handleStatusChange = (value: string | null) => {
 		onFiltersChange({
 			...filters,
-			status: value ?? undefined,
+			status: (value as ConversationStatus | null) ?? undefined,
+		});
+	};
+
+	const handleContactOutcomeChange = (value: string | null) => {
+		onFiltersChange({
+			...filters,
+			contactOutcome: (value as ContactOutcome | null) ?? undefined,
 		});
 	};
 
@@ -184,7 +215,25 @@ export default function ConversationFilters({
 						t('filters.phoneNumber'),
 						filters.contactPhoneNumber,
 					],
-					['dispositionName', t('filters.outcome'), filters.dispositionName],
+					[
+						'dispositionName',
+						t('filters.disposition'),
+						filters.dispositionName,
+					],
+					[
+						'contactOutcome',
+						t('filters.outcome'),
+						contactOutcomeOptions.find(
+							(option) => option.value === filters.contactOutcome
+						)?.label,
+					],
+					[
+						'waveNumber',
+						t('filters.waveNumber'),
+						filters.waveNumber
+							? t('filters.waveValue', { number: filters.waveNumber })
+							: undefined,
+					],
 					[
 						'status',
 						t('filters.status'),
@@ -193,7 +242,7 @@ export default function ConversationFilters({
 					],
 				] as const
 			).filter(([, , value]) => Boolean(value)),
-		[filters, statusOptions, t]
+		[contactOutcomeOptions, filters, statusOptions, t]
 	);
 
 	return (
@@ -330,8 +379,8 @@ export default function ConversationFilters({
 							size='sm'
 						/>
 						<TextInput
-							label={t('filters.outcome')}
-							placeholder={t('filters.outcomePlaceholder')}
+							label={t('filters.disposition')}
+							placeholder={t('filters.dispositionPlaceholder')}
 							value={localDisposition}
 							onChange={(event) =>
 								updateTextFilter('dispositionName', event.currentTarget.value)
@@ -339,6 +388,35 @@ export default function ConversationFilters({
 							leftSection={
 								<IconChartDots size={16} className={styles.searchIcon} />
 							}
+							size='sm'
+						/>
+						<Select
+							label={t('filters.outcome')}
+							placeholder={t('filters.outcomePlaceholder')}
+							data={contactOutcomeOptions}
+							value={filters.contactOutcome ?? null}
+							onChange={handleContactOutcomeChange}
+							clearable
+							size='sm'
+							comboboxProps={{ withinPortal: true }}
+						/>
+						<NumberInput
+							label={t('filters.waveNumber')}
+							placeholder={t('filters.waveNumberPlaceholder')}
+							value={filters.waveNumber ?? ''}
+							onChange={(value) =>
+								onFiltersChange({
+									...filters,
+									waveNumber:
+										typeof value === 'number' && Number.isInteger(value)
+											? value
+											: undefined,
+								})
+							}
+							min={1}
+							step={1}
+							allowDecimal={false}
+							leftSection={<IconHash size={16} className={styles.searchIcon} />}
 							size='sm'
 						/>
 					</div>

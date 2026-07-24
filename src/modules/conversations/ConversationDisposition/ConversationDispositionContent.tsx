@@ -256,7 +256,7 @@ export default function ConversationDispositionContent({
 									{t('disposition.callbackRequired')}
 								</Text>
 								<Text size='xs'>
-									{formatDispositionDuration(rescheduleTimeSec, t)}
+									{formatDispositionDuration(rescheduleTimeSec ?? undefined, t)}
 								</Text>
 							</div>
 						</div>

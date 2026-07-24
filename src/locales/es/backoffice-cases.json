@@ -26,6 +26,7 @@
 		"campaign": "Campaña",
 		"contactGroup": "Lista de contactos",
 		"status": "Estado",
+		"sla": "SLA",
 		"assignedUser": "Agente asignado",
 		"disposition": "Disposición",
 		"updatedAt": "Actualizado",
@@ -35,6 +36,19 @@
 		"UNASSIGNED": "Sin asignar",
 		"ASSIGNED": "Asignado",
 		"MANAGED": "Gestionado"
+	},
+	"sla": {
+		"statuses": {
+			"ON_TRACK": "En objetivo",
+			"AT_RISK": "En riesgo",
+			"CRITICAL": "Crítico",
+			"BREACHED": "Incumplido"
+		},
+		"target": "Objetivo: {{value}} min",
+		"elapsed": "Transcurrido: {{value}} min",
+		"breached": "El SLA fue incumplido",
+		"withinTarget": "Dentro del objetivo SLA",
+		"progressLabel": "Progreso del SLA"
 	},
 	"distribution": {
 		"allAction": "Distribuir casos pendientes",
@@ -52,27 +66,39 @@
 		"description": "Revisa el contexto, responsable e historial de auditoría del caso."
 	},
 	"sections": {
-		"caseData": "Datos del caso",
-		"source": "Fuente efectiva",
+		"sla": "Indicador SLA",
+		"customerData": "Datos del cliente",
+		"customerDataDescription": "Información capturada del cliente. Es la fuente de la verdad para completar el caso.",
+		"context": "Contexto del caso",
 		"history": "Historial",
 		"workflow": "Flujo de trabajo",
 		"manualWorkflow": "Flujo externo"
 	},
+	"capturedData": {
+		"empty": "No se capturaron datos del cliente para este caso.",
+		"showMore": "Ver más ({{count}})",
+		"showLess": "Ver menos"
+	},
 	"fields": {
-		"caseId": "ID del caso",
-		"contactId": "ID del contacto",
 		"contact": "Contacto",
+		"phone": "Teléfono",
+		"otherPhones": "Otros teléfonos",
 		"campaign": "Campaña",
 		"contactGroup": "Lista de contactos",
 		"createdAt": "Creado",
-		"conversationId": "ID de conversación",
-		"conversationIdentifier": "Identificador de conversación",
+		"conversationIdentifier": "Referencia de conversación",
 		"conversationStart": "Inicio de conversación",
 		"disposition": "Disposición",
 		"contactOutcome": "Resultado del contacto",
 		"status": "Estado",
 		"assignedUser": "Agente asignado",
 		"assignedAt": "Asignado"
+	},
+	"actions": {
+		"copyReference": "Copiar referencia",
+		"referenceCopied": "Referencia copiada",
+		"showOtherPhones": "Ver otros teléfonos ({{count}})",
+		"hideOtherPhones": "Ocultar otros teléfonos"
 	},
 	"history": {
 		"event": "Evento",
@@ -118,7 +144,9 @@
 		"notAvailable": "No disponible",
 		"unassigned": "Sin asignar",
 		"unknownUser": "Usuario desconocido",
-		"automated": "Evento automático"
+		"automated": "Evento automático",
+		"yes": "Sí",
+		"no": "No"
 	},
 	"errors": {
 		"invalidId": "El ID del caso no es válido."

@@ -6,7 +6,7 @@ import {
 } from '@tanstack/react-query';
 import backofficeCasesApi, {
 	type BackofficeCaseListParams,
-} from '~/api/backofficeCasesApi';
+} from '~/api/backoffice/backofficeCasesApi';
 import type {
 	BackofficeCase,
 	BackofficeCaseHistory,
@@ -14,7 +14,7 @@ import type {
 	BackofficeSupervisorDashboard,
 	BackofficeSupervisorDashboardParams,
 	DistributeBackofficeCasesResponse,
-} from '~/models/BackofficeCaseModel';
+} from '~/models/backoffice/BackofficeCaseModel';
 import { useSessionStore } from '~/stores/sessionStore';
 
 const getActiveClientId = () => {

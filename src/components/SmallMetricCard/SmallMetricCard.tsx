@@ -26,6 +26,14 @@ export interface SmallMetricCardProps {
 	color?: SmallMetricCardColor;
 	/** Optional tooltip text shown on hover */
 	tooltip?: string;
+	/** Optional callback that turns the metric into an interactive control */
+	onClick?: () => void;
+	/** Marks the metric as the active selection */
+	selected?: boolean;
+	/** Accessible name for the interactive metric */
+	ariaLabel?: string;
+	/** Disables the interactive metric */
+	disabled?: boolean;
 	/** Optional className for additional styling */
 	className?: string;
 }
@@ -36,12 +44,25 @@ const SmallMetricCard: React.FC<SmallMetricCardProps> = ({
 	label,
 	color = 'blue',
 	tooltip,
+	onClick,
+	selected = false,
+	ariaLabel,
+	disabled = false,
 	className,
 }) => {
-	const cardContent = (
-		<Box
-			className={`${styles.metricCard} ${styles[`metricCard--${color}`]} ${className || ''}`}
-		>
+	const isInteractive = Boolean(onClick);
+	const metricClassName = [
+		styles.metricCard,
+		styles[`metricCard--${color}`],
+		isInteractive ? styles.metricCardInteractive : '',
+		selected ? styles.metricCardSelected : '',
+		className || '',
+	]
+		.filter(Boolean)
+		.join(' ');
+
+	const metricContent = (
+		<>
 			<Box className={`${styles.metricIcon} ${styles[`metricIcon--${color}`]}`}>
 				{icon}
 			</Box>
@@ -50,7 +71,22 @@ const SmallMetricCard: React.FC<SmallMetricCardProps> = ({
 				<Text className={styles.metricValue}>{value}</Text>
 			</Box>
 			{tooltip && <IconInfoCircle size={14} className={styles.metricInfo} />}
-		</Box>
+		</>
+	);
+
+	const cardContent = isInteractive ? (
+		<button
+			type='button'
+			className={metricClassName}
+			onClick={onClick}
+			aria-label={ariaLabel ?? label}
+			aria-pressed={selected}
+			disabled={disabled}
+		>
+			{metricContent}
+		</button>
+	) : (
+		<Box className={metricClassName}>{metricContent}</Box>
 	);
 
 	if (tooltip) {

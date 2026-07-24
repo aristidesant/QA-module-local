@@ -24,14 +24,17 @@ export function useCallDispositions(conversationId?: number | string) {
 export function useCallDispositionByConversationId(
 	conversationId?: number | string
 ) {
+	const normalizedConversationId =
+		conversationId == null ? undefined : String(conversationId);
+
 	return useQuery<CallDispositionModel, Error>({
-		queryKey: ['callDispositionByConversationId', conversationId],
+		queryKey: ['callDispositionByConversationId', normalizedConversationId],
 		queryFn: async () => {
 			if (!conversationId) throw new Error('conversationId required');
 			const api = callDispositionApi();
 			return api.findCallDispositionByConversationId(Number(conversationId));
 		},
-		enabled: !!conversationId,
+		enabled: !!normalizedConversationId,
 		retry: 0,
 	});
 }

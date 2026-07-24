@@ -60,8 +60,18 @@
 		"advanced": "More filters",
 		"phoneNumber": "Phone Number",
 		"phoneNumberPlaceholder": "Filter by phone number",
+		"disposition": "Disposition",
+		"dispositionPlaceholder": "Filter by disposition name",
 		"outcome": "Outcome",
 		"outcomePlaceholder": "Filter by outcome",
+		"contactOutcomes": {
+			"effective": "Effective",
+			"notEffective": "Not effective",
+			"noContact": "No contact"
+		},
+		"waveNumber": "Wave",
+		"waveNumberPlaceholder": "Filter by wave number",
+		"waveValue": "Wave {{number}}",
 		"status": "Status",
 		"allStatuses": "All statuses",
 		"clear": "Clear all filters"
@@ -103,6 +113,16 @@
 		"transcriptSection": "Transcript",
 		"turnCount_one": "{{count}} turn",
 		"turnCount_other": "{{count}} turns"
+	},
+	"technicalOverview": {
+		"title": "Conversation technical payload",
+		"description": "Complete conversation-level records, configuration, and analysis.",
+		"sections": {
+			"metadata": "Metadata",
+			"analysis": "Analysis",
+			"initiationData": "Conversation initiation data",
+			"rawPayload": "Raw conversation payload"
+		}
 	},
 	"actions": {
 		"title": "Actions",
@@ -349,6 +369,42 @@
 		"numberInvalidated": "Number invalidated",
 		"doNotRetry": "Do not retry this contact",
 		"agentNotes": "Agent notes",
+		"edit": {
+			"button": "Change",
+			"label": "Disposition",
+			"description": "Options are grouped by contact outcome.",
+			"placeholder": "Select a disposition",
+			"noSearchResults": "No dispositions match your search.",
+			"save": "Save disposition",
+			"cancel": "Cancel",
+			"loading": "Loading campaign dispositions...",
+			"empty": "This campaign has no active leaf dispositions.",
+			"groups": {
+				"effective": "Effective contact",
+				"notEffective": "Ineffective contact",
+				"noContact": "No contact",
+				"other": "Other outcomes"
+			},
+			"confirmTitle": "Change conversation disposition",
+			"confirmDescription": "The current disposition will be replaced. Existing notes and phone reference will be preserved.",
+			"currentLabel": "Current disposition",
+			"newLabel": "New disposition",
+			"confirm": "Change disposition",
+			"successTitle": "Disposition updated",
+			"successMessage": "The conversation is now marked as {{name}}.",
+			"errorTitle": "Disposition update failed",
+			"loadErrors": {
+				"forbidden": "You do not have access to this campaign's dispositions.",
+				"notFound": "This campaign does not have a current disposition flow.",
+				"generic": "Campaign dispositions could not be loaded."
+			},
+			"errors": {
+				"invalid": "This disposition is no longer active or selectable. Refresh the list and choose another disposition.",
+				"forbidden": "You do not have permission to change the disposition for this campaign.",
+				"notFound": "The conversation or its current disposition flow could not be found.",
+				"generic": "The disposition could not be updated. Try again."
+			}
+		},
 		"duration": {
 			"asap": "as soon as possible",
 			"day": "day",

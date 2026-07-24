@@ -14,6 +14,8 @@ import campaignsApi, {
 } from '~/api/campaignsApi';
 import type { Campaign, CampaignPromptVariable } from '~/models/CampaignsModel';
 import type { CampaignLiveMetric } from '~/models/CampaignLiveMetricModel';
+import type { CampaignDispositionModel } from '~/models/CampaignDispositionModel';
+import { useSessionStore } from '~/stores/sessionStore';
 
 // Create campaign
 export const useCreateCampaign = () => {
@@ -86,6 +88,35 @@ export const useGetCampaign = (
 		},
 		enabled: options?.enabled ?? !!id,
 		...options,
+	});
+};
+
+export const useGetCampaignDispositions = (
+	campaignId?: string | number,
+	options?: { enabled?: boolean }
+) => {
+	const { user, targetClient } = useSessionStore();
+	const activeClientId =
+		targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
+	const normalizedCampaignId = campaignId == null ? '' : String(campaignId);
+	const isEnabled =
+		(options?.enabled ?? true) &&
+		Boolean(normalizedCampaignId) &&
+		activeClientId != null;
+
+	return useQuery<
+		CampaignDispositionModel[],
+		unknown,
+		CampaignDispositionModel[],
+		['campaign-dispositions', number | null, string]
+	>({
+		queryKey: ['campaign-dispositions', activeClientId, normalizedCampaignId],
+		queryFn: async () => {
+			const api = campaignsApi();
+			return api.getCampaignDispositions(normalizedCampaignId);
+		},
+		enabled: isEnabled,
+		retry: false,
 	});
 };
 

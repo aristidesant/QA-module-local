@@ -3,6 +3,9 @@ export interface CallDispositionModel {
 	id: number;
 	clientId?: number; // API includes clientId
 	conversationId: number;
+	dispositionNodeId?: number;
+	callDispositionNodeId?: number;
+	contactPhoneNumberId?: number;
 
 	// Optional relational identifiers (present in other contexts/endpoints)
 	contactId?: number;
@@ -12,16 +15,18 @@ export interface CallDispositionModel {
 	// Disposition details
 	dispositionName: string;
 	dispositionDescription: string;
-	contactOutcome?: string;
-	callStatus?: string; // e.g., "NEUTRAL" (keep string to allow backend variants)
+	contactOutcome?: string | null;
+	statusContact?: string | null;
+	callStatus?: string | null; // e.g., "NEUTRAL" (keep string to allow backend variants)
 
 	// Scheduling/flags
 	requiresReschedule?: boolean;
 	/** Seconds to reschedule, e.g., 1800 = 30 minutes */
-	rescheduleTime?: number;
+	rescheduleTime?: number | null;
 	isInvalidatesNumber?: boolean;
 	isFinal?: boolean;
 	isVoiceMail?: boolean;
+	doNotCall?: boolean;
 	isAbandoned: boolean;
 
 	// Notes/metadata

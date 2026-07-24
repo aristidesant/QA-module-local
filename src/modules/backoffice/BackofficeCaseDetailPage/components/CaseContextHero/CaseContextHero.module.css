@@ -1,0 +1,295 @@
+.hero {
+	min-width: 0;
+}
+
+.ledger {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 1px;
+	min-width: 0;
+	background: var(--surface-border);
+}
+
+.identityCell,
+.dataCell {
+	min-width: 0;
+	min-height: 76px;
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-5)
+	);
+}
+
+.identityCell {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+}
+
+.avatar {
+	flex-shrink: 0;
+	border: 1px solid
+		light-dark(var(--mantine-color-blue-2), var(--mantine-color-blue-8));
+}
+
+.identityContent {
+	display: flex;
+	flex: 1;
+	flex-direction: column;
+	gap: 5px;
+	min-width: 0;
+}
+
+.contactName {
+	overflow: hidden;
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+	font-size: var(--mantine-font-size-md);
+	font-weight: 700;
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.phoneDetails {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 1px;
+	min-width: 0;
+}
+
+.primaryPhoneRow {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	min-width: 0;
+	max-width: 100%;
+	color: light-dark(
+		var(--mantine-primary-color-filled),
+		var(--mantine-color-blue-3)
+	);
+}
+
+.primaryPhoneRow svg {
+	flex-shrink: 0;
+}
+
+.primaryPhone {
+	overflow: hidden;
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 700;
+	letter-spacing: 0.01em;
+	line-height: 1.25;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.otherPhonesToggle {
+	min-height: 44px;
+	height: auto;
+	padding: 4px 6px;
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+}
+
+.otherPhonesToggleIcon {
+	transition: transform 160ms ease-out;
+}
+
+.otherPhonesToggleOpen .otherPhonesToggleIcon {
+	transform: rotate(180deg);
+}
+
+.otherPhonesList {
+	display: flex;
+	flex-direction: column;
+	gap: 3px;
+	margin: 1px 0 0;
+	padding: 0 0 0 20px;
+	color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+	font-family: var(--mantine-font-family-monospace);
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	line-height: 1.3;
+}
+
+.otherPhoneItem {
+	overflow-wrap: anywhere;
+}
+
+.identityMeta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 10px;
+	min-width: 0;
+}
+
+.metaItem {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	min-width: 0;
+	max-width: 100%;
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+}
+
+.metaItem svg {
+	flex-shrink: 0;
+}
+
+.metaItem :global(.mantine-Text-root) {
+	overflow: hidden;
+	font-size: 11px;
+	font-weight: 550;
+	line-height: 1.25;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.dataCell {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	gap: 6px;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+}
+
+.fieldLabel {
+	display: inline-flex;
+	align-items: center;
+	gap: 5px;
+	min-width: 0;
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+}
+
+.fieldLabel svg {
+	flex-shrink: 0;
+}
+
+.fieldLabel :global(.mantine-Text-root) {
+	overflow: hidden;
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	line-height: 1.25;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.fieldValue {
+	overflow: hidden;
+	color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+	font-size: 13px;
+	font-weight: 600;
+	line-height: 1.3;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.emphasizedValue {
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-gray-0));
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 700;
+	letter-spacing: -0.005em;
+}
+
+.accentValue {
+	color: light-dark(
+		var(--mantine-primary-color-filled),
+		var(--mantine-color-blue-3)
+	);
+}
+
+.tabularValue {
+	font-variant-numeric: tabular-nums;
+}
+
+.referenceRow {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	min-width: 0;
+}
+
+.referenceValue {
+	flex: 1;
+	min-width: 0;
+	overflow: hidden;
+	color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-gray-1));
+	font-family: var(--mantine-font-family-monospace);
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	letter-spacing: 0.01em;
+	line-height: 1.3;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.copyAction {
+	flex-shrink: 0;
+}
+
+.copyAction:focus-visible {
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: 2px;
+}
+
+@media (min-width: 40.0625em) and (max-width: 74.9375em) {
+	.ledger {
+		grid-template-columns: repeat(3, minmax(0, 1fr));
+	}
+}
+
+@media (min-width: 75em) {
+	.ledger {
+		grid-template-columns:
+			minmax(0, 1.6fr)
+			minmax(0, 1.1fr)
+			minmax(0, 1fr)
+			minmax(0, 1fr)
+			minmax(0, 1fr)
+			minmax(0, 1.5fr);
+	}
+}
+
+@media (max-width: 40em) {
+	.identityCell,
+	.dataCell {
+		min-height: 0;
+	}
+
+	.identityCell {
+		padding: var(--mantine-spacing-sm);
+	}
+
+	.dataCell {
+		display: grid;
+		grid-template-columns: minmax(120px, 0.85fr) minmax(0, 1.15fr);
+		align-items: center;
+		gap: var(--mantine-spacing-sm);
+		padding: 10px var(--mantine-spacing-sm);
+	}
+
+	.fieldValue {
+		text-align: right;
+		white-space: normal;
+		overflow-wrap: anywhere;
+	}
+
+	.referenceRow {
+		justify-self: stretch;
+	}
+
+	.referenceValue {
+		white-space: normal;
+		overflow-wrap: anywhere;
+		text-align: right;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.otherPhonesToggleIcon {
+		transition: none;
+	}
+}

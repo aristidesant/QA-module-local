@@ -1,7 +1,12 @@
 import axios from 'axios';
-import type { ConversationsModel } from '~/models/ConversationsModels';
+import type {
+	ConversationsModel,
+	GetConversationsQuery,
+	GetConversationsResponse,
+} from '~/models/ConversationsModels';
+import type { CallDispositionModel } from '~/models/CallDispositionModel';
+import { useSessionStore } from '~/stores/sessionStore';
 import { DEFAULT_API_URL } from './config';
-import { PaginatedResponse } from '~/models/CampaignsModel';
 
 export type StartDemoParams = {
 	agentId: string;
@@ -30,9 +35,20 @@ export type UpdateConversationParams = {
 	[key: string]: unknown;
 };
 
+export type UpdateConversationDispositionParams = {
+	dispositionId: number;
+};
+
 export type PostCallDataParams = {
 	// Add fields for post-call data
 	[key: string]: unknown;
+};
+
+const getClientHeaders = (): Record<string, string> => {
+	const { user, targetClient } = useSessionStore.getState();
+	const clientId = targetClient?.id ?? user?.clientId ?? user?.client?.id;
+
+	return clientId ? { 'x-client-id': String(clientId) } : {};
 };
 
 /**
@@ -49,31 +65,10 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 			return response.data;
 		},
 
-		getConversations: async (
-			campaignId?: string | number,
-			contactGroupId?: string | number,
-			params?: {
-				limit?: number;
-				offset?: number;
-				search?: string;
-				identifier?: string;
-				contactName?: string;
-				contactPhoneNumber?: string;
-				dispositionName?: string;
-				status?: string;
-				sortBy?: string;
-				sortOrder?: 'ASC' | 'DESC';
-			}
-		) => {
-			const response = await axios.get<PaginatedResponse<ConversationsModel>>(
+		getConversations: async (params?: GetConversationsQuery) => {
+			const response = await axios.get<GetConversationsResponse>(
 				`${DEFAULT_API_URL}/conversations`,
-				{
-					params: {
-						...params,
-						...(campaignId ? { campaignId } : {}),
-						...(contactGroupId ? { contactGroupId } : {}),
-					},
-				}
+				{ params }
 			);
 			return response.data;
 		},
@@ -118,6 +113,23 @@ const conversationsApi = (_authHeader: Record<string, string> = {}) => {
 			const response = await axios.patch<Conversation>(
 				`${DEFAULT_API_URL}/conversations/${id}`,
 				data
+			);
+			return response.data;
+		},
+
+		/**
+		 * PATCH /conversations/:id/disposition
+		 * The backend validates that dispositionId is an active leaf in the
+		 * conversation campaign and applies the node metadata to the disposition.
+		 */
+		updateConversationDisposition: async (
+			id: string,
+			data: UpdateConversationDispositionParams
+		) => {
+			const response = await axios.patch<CallDispositionModel>(
+				`${DEFAULT_API_URL}/conversations/${id}/disposition`,
+				data,
+				{ headers: getClientHeaders() }
 			);
 			return response.data;
 		},

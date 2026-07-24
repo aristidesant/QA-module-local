@@ -22,7 +22,11 @@
 		"unassignedHint": "Casos en espera de asignación a un agente.",
 		"assignedHint": "Casos con agente responsable pero aún no gestionados.",
 		"managedHint": "Casos cerrados como gestionados. No se pueden reabrir.",
-		"eligibleAgentsHint": "Agentes de Backoffice activos disponibles para distribución."
+		"eligibleAgentsHint": "Agentes de Backoffice activos disponibles para distribución.",
+		"actionLabel": "Filtrar la cola por {{label}}",
+		"pendingMenuLabel": "Elegir una cola pendiente",
+		"pendingUnassignedAction": "Ver casos sin asignar",
+		"pendingAssignedAction": "Ver casos asignados"
 	},
 	"charts": {
 		"trend": {
@@ -33,7 +37,8 @@
 		},
 		"status": {
 			"title": "Casos por estado",
-			"description": "Distribución actual de estados para el alcance seleccionado."
+			"description": "Distribución actual de estados para el alcance seleccionado.",
+			"segmentAction": "Filtrar la cola por {{status}}"
 		},
 		"workload": {
 			"title": "Carga por agente",
@@ -53,11 +58,19 @@
 		"description": "Filtra el dashboard y la cola operativa por periodo y responsable.",
 		"period": "Periodo",
 		"status": "Estado",
-		"campaignId": "ID de campaña",
-		"contactGroupId": "ID de lista de contactos",
+		"campaign": "Campaña",
+		"campaignPlaceholder": "Selecciona una campaña",
+		"campaignEmpty": "No se encontraron campañas visibles",
+		"campaignLoadError": "No se pudieron cargar las campañas.",
+		"contactList": "Lista de contactos",
+		"contactListPlaceholder": "Selecciona una lista de contactos",
+		"contactListEmpty": "No se encontraron listas de contactos activas",
+		"contactListLoadError": "No se pudieron cargar las listas de contactos.",
 		"assignedUser": "Agente asignado",
+		"scope": "El dashboard y la cola usan el periodo {{period}}.",
+		"scopePeriod": "Periodo: {{period}}",
+		"updating": "Actualizando la cola",
 		"assignedUserPlaceholder": "Todos los agentes",
-		"idPlaceholder": "Escribe un ID",
 		"clear": "Limpiar filtros"
 	},
 	"statuses": {
@@ -65,6 +78,19 @@
 		"UNASSIGNED": "Sin asignar",
 		"ASSIGNED": "Asignado",
 		"MANAGED": "Gestionado"
+	},
+	"sla": {
+		"statuses": {
+			"ON_TRACK": "En objetivo",
+			"AT_RISK": "En riesgo",
+			"CRITICAL": "Crítico",
+			"BREACHED": "Incumplido"
+		},
+		"target": "Objetivo: {{value}} min",
+		"elapsed": "Transcurrido: {{value}} min",
+		"breached": "El SLA fue incumplido",
+		"withinTarget": "Dentro del objetivo SLA",
+		"progressLabel": "Progreso del SLA"
 	},
 	"table": {
 		"title": "Cola de casos",
@@ -74,10 +100,12 @@
 		"campaign": "Campaña",
 		"contactGroup": "Lista de contactos",
 		"status": "Estado",
+		"sla": "SLA",
 		"assignedUser": "Agente asignado",
 		"assignedAt": "Asignado",
 		"updatedAt": "Actualizado",
 		"disposition": "Disposición",
+		"resultCount": "{{count}} casos en la cola",
 		"actionsLabel": "Acciones del caso",
 		"view": "Ver caso",
 		"assign": "Asignar agente",
