@@ -144,6 +144,30 @@
 			"light": "Modo claro",
 			"dark": "Modo oscuro",
 			"auto": "Modo del sistema"
+		},
+		"rolePreview": {
+			"items": {
+				"dashboard": "Dashboard",
+				"profile": "Perfil",
+				"yourEvaluations": "Tus evaluaciones",
+				"notifications": "Notificaciones",
+				"coaching": "Coaching",
+				"lms": "LMS",
+				"qaTests": "Pruebas de QA",
+				"campaigns": "Campañas",
+				"agentsRoster": "Plantilla de agentes",
+				"caseManagement": "Gestión de casos",
+				"finder": "Buscador",
+				"billing": "Facturación",
+				"clients": "Clientes",
+				"globalSettings": "Configuración global"
+			}
+		}
+	},
+	"rolePreview": {
+		"placeholder": {
+			"genericTitle": "Próximamente",
+			"description": "Esta pantalla es un marcador de posición para la demo con stakeholders. Aún no ha sido construida."
 		}
 	},
 	"header": {
@@ -198,6 +222,17 @@
 			"tools": "Herramientas",
 			"users": "Usuarios",
 			"roles": "Roles"
+		},
+		"rolePreview": {
+			"menuLabel": "Vista previa por rol",
+			"exit": "Salir de la vista previa",
+			"badge": "Viendo como: {{role}}",
+			"roles": {
+				"agent": "Agent",
+				"supervisor": "Supervisor",
+				"operationManager": "Operation Manager",
+				"superAdmin": "SuperAdmin"
+			}
 		}
 	},
 	"accessDenied": {

@@ -7,6 +7,7 @@
 	--usermenu-active-bg: var(--mantine-color-gray-1);
 	--usermenu-avatar-bg: #0098d4;
 	--usermenu-impersonating-bg: var(--mantine-color-orange-6);
+	--usermenu-preview-bg: var(--mantine-color-teal-6);
 	--usermenu-indicator-bg: var(--mantine-color-red-6);
 
 	display: flex;
@@ -114,6 +115,14 @@
 	);
 }
 
+.avatarPreviewingRole {
+	background: var(--usermenu-preview-bg);
+}
+
+[data-mantine-color-scheme='dark'] .avatarPreviewingRole {
+	background: color-mix(in srgb, var(--usermenu-preview-bg) 85%, white 15%);
+}
+
 .impersonationIndicator {
 	position: absolute;
 	bottom: -2px;
@@ -122,6 +131,21 @@
 	height: 14px;
 	border-radius: 9999px;
 	background: var(--usermenu-indicator-bg);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-white);
+	border: 2px solid var(--usermenu-surface);
+}
+
+.previewIndicator {
+	position: absolute;
+	bottom: -2px;
+	right: -2px;
+	width: 14px;
+	height: 14px;
+	border-radius: 9999px;
+	background: var(--usermenu-preview-bg);
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -167,6 +191,7 @@
 	/* Avatar — redeclared here for portal scope */
 	--usermenu-avatar-bg: #0098d4;
 	--usermenu-impersonating-bg: var(--mantine-color-orange-6);
+	--usermenu-preview-bg: var(--mantine-color-teal-6);
 	/* Item states — neutral, not blue-tinted */
 	--usermenu-dropdown-item-hover: var(--mantine-color-gray-1);
 	--usermenu-dropdown-item-active: var(--mantine-color-gray-2);
@@ -194,6 +219,11 @@
 	--usermenu-impersonating-bg: color-mix(
 		in srgb,
 		var(--mantine-color-orange-6) 85%,
+		white 15%
+	);
+	--usermenu-preview-bg: color-mix(
+		in srgb,
+		var(--mantine-color-teal-6) 85%,
 		white 15%
 	);
 	--usermenu-dropdown-item-hover: color-mix(
@@ -380,6 +410,10 @@
 
 .menuItem:hover {
 	background: var(--usermenu-dropdown-item-hover);
+}
+
+.menuItemActive {
+	background: var(--usermenu-dropdown-item-active);
 }
 
 .menuItemIcon {

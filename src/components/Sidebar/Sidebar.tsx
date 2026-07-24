@@ -18,12 +18,16 @@ import {
 } from '@mantine/core';
 import {
 	IconActivity,
+	IconBell,
 	IconBook2,
 	IconChecklist,
 	IconChevronDown,
 	IconClipboardCheck,
 	IconForms,
+	IconFolders,
 	IconGitBranch,
+	IconSchool,
+	IconSearch,
 	IconSpeakerphone,
 	IconChevronLeft,
 	IconChevronRight,
@@ -35,7 +39,10 @@ import {
 	IconInbox,
 	IconSettings,
 	IconTableExport,
+	IconTargetArrow,
+	IconUserCircle,
 	IconUsers,
+	IconUsersGroup,
 } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -57,9 +64,11 @@ import {
 	BACKOFFICE_ADMIN_ROLE,
 	BACKOFFICE_AGENT_ROLE,
 } from '~/modules/backoffice/constants/BackofficeRoleConstants';
+import { useRoleMockStore } from '~/stores/roleMockStore';
+import type { PreviewRole } from '~/constants/previewRole';
 import UserMenu from '../UserMenu';
 
-type SidebarNavItem = {
+export type SidebarNavItem = {
 	key: string;
 	label: string;
 	icon: React.ReactNode;
@@ -391,6 +400,229 @@ const backofficePrimaryItems: SidebarNavItem[] = [
 	},
 ];
 
+// Static per-role nav shown only when a SuperAdmin has an active role preview
+// (see UserMenu's "Preview as role"). Purely a visual mock — see
+// docs/superpowers/specs/2026-07-24-role-preview-switcher-design.md for the
+// full role -> item mapping and which destinations are real vs. placeholder.
+const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
+	agent: [
+		{
+			key: 'role-preview-dashboard',
+			label: 'sidebar.rolePreview.items.dashboard',
+			icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
+			to: '/',
+			exact: true,
+		},
+		{
+			key: 'role-preview-profile',
+			label: 'sidebar.rolePreview.items.profile',
+			icon: <IconUserCircle size={20} className={styles.menuIcon} />,
+			to: '/profile',
+		},
+		{
+			key: 'role-preview-your-evaluations',
+			label: 'sidebar.rolePreview.items.yourEvaluations',
+			icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
+			to: '/role-preview/your-evaluations',
+		},
+		{
+			key: 'role-preview-notifications',
+			label: 'sidebar.rolePreview.items.notifications',
+			icon: <IconBell size={20} className={styles.menuIcon} />,
+			to: '/role-preview/notifications',
+		},
+		{
+			key: 'role-preview-coaching',
+			label: 'sidebar.rolePreview.items.coaching',
+			icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
+			to: '/role-preview/coaching',
+		},
+		{
+			key: 'role-preview-lms',
+			label: 'sidebar.rolePreview.items.lms',
+			icon: <IconSchool size={20} className={styles.menuIcon} />,
+			to: '/role-preview/lms',
+		},
+	],
+	supervisor: [
+		{
+			key: 'role-preview-dashboard',
+			label: 'sidebar.rolePreview.items.dashboard',
+			icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
+			to: '/',
+			exact: true,
+		},
+		{
+			key: 'role-preview-qa-tests',
+			label: 'sidebar.rolePreview.items.qaTests',
+			icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
+			to: '/qa/dashboard',
+		},
+		{
+			key: 'role-preview-campaigns',
+			label: 'sidebar.rolePreview.items.campaigns',
+			icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
+			to: '/campaigns',
+		},
+		{
+			key: 'role-preview-agents-roster',
+			label: 'sidebar.rolePreview.items.agentsRoster',
+			icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
+			to: '/role-preview/agents-roster',
+		},
+		{
+			key: 'role-preview-coaching',
+			label: 'sidebar.rolePreview.items.coaching',
+			icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
+			to: '/role-preview/coaching',
+		},
+		{
+			key: 'role-preview-case-management',
+			label: 'sidebar.rolePreview.items.caseManagement',
+			icon: <IconFolders size={20} className={styles.menuIcon} />,
+			to: '/backoffice/cases',
+		},
+		{
+			key: 'role-preview-lms',
+			label: 'sidebar.rolePreview.items.lms',
+			icon: <IconSchool size={20} className={styles.menuIcon} />,
+			to: '/role-preview/lms',
+		},
+		{
+			key: 'role-preview-finder',
+			label: 'sidebar.rolePreview.items.finder',
+			icon: <IconSearch size={20} className={styles.menuIcon} />,
+			to: '/role-preview/finder',
+		},
+	],
+	operationManager: [
+		{
+			key: 'role-preview-dashboard',
+			label: 'sidebar.rolePreview.items.dashboard',
+			icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
+			to: '/',
+			exact: true,
+		},
+		{
+			key: 'role-preview-qa-tests',
+			label: 'sidebar.rolePreview.items.qaTests',
+			icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
+			to: '/qa/dashboard',
+		},
+		{
+			key: 'role-preview-campaigns',
+			label: 'sidebar.rolePreview.items.campaigns',
+			icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
+			to: '/campaigns',
+		},
+		{
+			key: 'role-preview-agents-roster',
+			label: 'sidebar.rolePreview.items.agentsRoster',
+			icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
+			to: '/role-preview/agents-roster',
+		},
+		{
+			key: 'role-preview-notifications',
+			label: 'sidebar.rolePreview.items.notifications',
+			icon: <IconBell size={20} className={styles.menuIcon} />,
+			to: '/role-preview/notifications',
+		},
+		{
+			key: 'role-preview-case-management',
+			label: 'sidebar.rolePreview.items.caseManagement',
+			icon: <IconFolders size={20} className={styles.menuIcon} />,
+			to: '/backoffice/cases',
+		},
+		{
+			key: 'role-preview-coaching',
+			label: 'sidebar.rolePreview.items.coaching',
+			icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
+			to: '/role-preview/coaching',
+		},
+		{
+			key: 'role-preview-lms',
+			label: 'sidebar.rolePreview.items.lms',
+			icon: <IconSchool size={20} className={styles.menuIcon} />,
+			to: '/role-preview/lms',
+		},
+		{
+			key: 'role-preview-billing',
+			label: 'sidebar.rolePreview.items.billing',
+			icon: <IconFileInvoice size={20} className={styles.menuIcon} />,
+			to: '/billing/invoices',
+		},
+		{
+			key: 'role-preview-finder',
+			label: 'sidebar.rolePreview.items.finder',
+			icon: <IconSearch size={20} className={styles.menuIcon} />,
+			to: '/role-preview/finder',
+		},
+	],
+	superAdmin: [
+		{
+			key: 'role-preview-dashboard',
+			label: 'sidebar.rolePreview.items.dashboard',
+			icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
+			to: '/',
+			exact: true,
+		},
+		{
+			key: 'role-preview-qa-tests',
+			label: 'sidebar.rolePreview.items.qaTests',
+			icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
+			to: '/qa/dashboard',
+		},
+		{
+			key: 'role-preview-campaigns',
+			label: 'sidebar.rolePreview.items.campaigns',
+			icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
+			to: '/campaigns',
+		},
+		{
+			key: 'role-preview-clients',
+			label: 'sidebar.rolePreview.items.clients',
+			icon: <IconUsers size={20} className={styles.menuIcon} />,
+			to: '/clients',
+		},
+		{
+			key: 'role-preview-case-management',
+			label: 'sidebar.rolePreview.items.caseManagement',
+			icon: <IconFolders size={20} className={styles.menuIcon} />,
+			to: '/backoffice/cases',
+		},
+		{
+			key: 'role-preview-coaching',
+			label: 'sidebar.rolePreview.items.coaching',
+			icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
+			to: '/role-preview/coaching',
+		},
+		{
+			key: 'role-preview-lms',
+			label: 'sidebar.rolePreview.items.lms',
+			icon: <IconSchool size={20} className={styles.menuIcon} />,
+			to: '/role-preview/lms',
+		},
+		{
+			key: 'role-preview-billing',
+			label: 'sidebar.rolePreview.items.billing',
+			icon: <IconFileInvoice size={20} className={styles.menuIcon} />,
+			to: '/billing/invoices',
+		},
+		{
+			key: 'role-preview-finder',
+			label: 'sidebar.rolePreview.items.finder',
+			icon: <IconSearch size={20} className={styles.menuIcon} />,
+			to: '/role-preview/finder',
+		},
+		{
+			key: 'role-preview-global-settings',
+			label: 'sidebar.rolePreview.items.globalSettings',
+			icon: <IconSettings size={20} className={styles.menuIcon} />,
+			to: '/role-preview/global-settings',
+		},
+	],
+};
+
 export const Sidebar: React.FC = () => {
 	const { canAccessModule, canPerformAction } = usePermissions();
 	const { t } = useTranslation('common');
@@ -398,6 +630,7 @@ export const Sidebar: React.FC = () => {
 	const isMasterClient = useIsMasterClient();
 	const isSuperAdmin = useIsSuperAdmin();
 	const isQaAdmin = useIsQaAdmin();
+	const previewRole = useRoleMockStore((state) => state.previewRole);
 	const { user, targetClient } = useSessionStore();
 	const activeClientId =
 		targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
@@ -522,12 +755,15 @@ export const Sidebar: React.FC = () => {
 
 	// Each app owns its sidebar: QA and Backoffice render as a flat nav with no
 	// sections; Campaign management (UCXM) renders the normal sectioned nav.
-	const primaryNav = inQaApp
-		? qaPrimaryItems
-		: inBackofficeApp
-			? visibleBackofficeItems
-			: visiblePrimaryItems;
-	const sectionNav = inQaApp || inBackofficeApp ? [] : visibleSections;
+	const primaryNav = previewRole
+		? rolePreviewNav[previewRole]
+		: inQaApp
+			? qaPrimaryItems
+			: inBackofficeApp
+				? visibleBackofficeItems
+				: visiblePrimaryItems;
+	const sectionNav =
+		previewRole || inQaApp || inBackofficeApp ? [] : visibleSections;
 
 	const activeSection = useMemo(
 		() =>

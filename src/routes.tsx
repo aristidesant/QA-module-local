@@ -80,6 +80,9 @@ const KnowledgeBasePage = React.lazy(
 	() => import('./modules/knowledge-bases/KnowledgeBasePage/KnowledgeBasePage')
 );
 const ProfilePage = React.lazy(() => import('./modules/profile/ProfilePage'));
+const RolePreviewPlaceholderPage = React.lazy(
+	() => import('./modules/role-preview/RolePreviewPlaceholderPage')
+);
 const DoNotCallPage = React.lazy(
 	() => import('./modules/do-not-call/DoNotCallPage/DoNotCallPage')
 );
@@ -960,6 +963,15 @@ const router = createBrowserRouter([
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
 										<ProfilePage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/:section',
+								id: 'role-preview',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<RolePreviewPlaceholderPage />
 									</Suspense>
 								),
 							},

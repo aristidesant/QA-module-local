@@ -146,6 +146,30 @@
 			"light": "Light mode",
 			"dark": "Dark mode",
 			"auto": "System mode"
+		},
+		"rolePreview": {
+			"items": {
+				"dashboard": "Dashboard",
+				"profile": "Profile",
+				"yourEvaluations": "Your Evaluations",
+				"notifications": "Notifications",
+				"coaching": "Coaching",
+				"lms": "LMS",
+				"qaTests": "QA Tests",
+				"campaigns": "Campaigns",
+				"agentsRoster": "Agents Roster",
+				"caseManagement": "Case Management",
+				"finder": "Finder",
+				"billing": "Billing",
+				"clients": "Clients",
+				"globalSettings": "Global Settings"
+			}
+		}
+	},
+	"rolePreview": {
+		"placeholder": {
+			"genericTitle": "Coming soon",
+			"description": "This screen is a placeholder for the stakeholder demo. It has not been built yet."
 		}
 	},
 	"header": {
@@ -200,6 +224,17 @@
 			"tools": "Tools",
 			"users": "Users",
 			"roles": "Roles"
+		},
+		"rolePreview": {
+			"menuLabel": "Preview as role",
+			"exit": "Exit preview",
+			"badge": "Previewing: {{role}}",
+			"roles": {
+				"agent": "Agent",
+				"supervisor": "Supervisor",
+				"operationManager": "Operation Manager",
+				"superAdmin": "SuperAdmin"
+			}
 		}
 	},
 	"accessDenied": {

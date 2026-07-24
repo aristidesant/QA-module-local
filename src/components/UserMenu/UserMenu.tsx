@@ -21,11 +21,17 @@ import {
 	IconMoon,
 	IconDeviceDesktop,
 	IconApps,
+	IconEyeglass,
+	IconX,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
+import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
+import { useRoleMockStore } from '~/stores/roleMockStore';
+import { PREVIEW_ROLES } from '~/constants/previewRole';
+import type { PreviewRole } from '~/constants/previewRole';
 import { useCurrentApp } from '~/hooks/useCurrentApp';
 import type { AppKey } from '~/hooks/useCurrentApp';
 import { useAccessibleApps } from '~/hooks/useAccessibleApps';
@@ -55,6 +61,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 	const { t } = useTranslation('common');
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
+	const isSuperAdmin = useIsSuperAdmin();
+	const previewRole = useRoleMockStore((s) => s.previewRole);
+	const setPreviewRole = useRoleMockStore((s) => s.setPreviewRole);
 	const currentApp = useCurrentApp();
 	const accessibleApps = useAccessibleApps();
 	const preference = useColorSchemeStore((s) => s.preference);
@@ -119,6 +128,17 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 		openChooser();
 	};
 
+	const handleSelectPreviewRole = (role: PreviewRole) => {
+		closeMenu();
+		setPreviewRole(role);
+		navigate('/');
+	};
+
+	const handleExitPreview = () => {
+		closeMenu();
+		setPreviewRole(null);
+	};
+
 	const canSwitchApps = accessibleApps.length >= 2;
 
 	const menuDropdown = (
@@ -173,6 +193,35 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 				>
 					{t('appSwitcher.switchApp')}
 				</Menu.Item>
+			)}
+			{isSuperAdmin && (
+				<>
+					<Menu.Label className={styles.menuLabel}>
+						{t('userMenu.rolePreview.menuLabel')}
+					</Menu.Label>
+					{PREVIEW_ROLES.map((role) => (
+						<Menu.Item
+							key={role.key}
+							leftSection={<IconEyeglass size={16} />}
+							onClick={() => handleSelectPreviewRole(role.key)}
+							className={[
+								styles.menuItem,
+								previewRole === role.key ? styles.menuItemActive : '',
+							].join(' ')}
+						>
+							{t(role.labelKey)}
+						</Menu.Item>
+					))}
+					{previewRole && (
+						<Menu.Item
+							leftSection={<IconX size={16} />}
+							onClick={handleExitPreview}
+							className={styles.menuItem}
+						>
+							{t('userMenu.rolePreview.exit')}
+						</Menu.Item>
+					)}
+				</>
 			)}
 			<Menu.Label className={styles.menuLabel}>
 				{t('sidebar.account.language')}
@@ -244,6 +293,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 									styles.avatarCompact,
 									styles.avatarClickable,
 									isImpersonating ? styles.avatarImpersonating : '',
+									!isImpersonating && previewRole
+										? styles.avatarPreviewingRole
+										: '',
 								].join(' ')}
 								onClick={() => {
 									if (menuOpened) {
@@ -255,10 +307,16 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 								aria-label={t('sidebar.account.menu')}
 							>
 								{initials}
-								{isImpersonating && (
+								{isImpersonating ? (
 									<div className={styles.impersonationIndicator}>
 										<IconShield size={10} />
 									</div>
+								) : (
+									previewRole && (
+										<div className={styles.previewIndicator}>
+											<IconEyeglass size={10} />
+										</div>
+									)
 								)}
 							</UnstyledButton>
 						</Menu.Target>
@@ -268,6 +326,15 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 					{isImpersonating && (
 						<Badge size='xs' variant='light' color='orange'>
 							{t('userMenu.impersonationMode')}
+						</Badge>
+					)}
+					{!isImpersonating && previewRole && (
+						<Badge size='xs' variant='light' color='teal'>
+							{t('userMenu.rolePreview.badge', {
+								role: t(
+									PREVIEW_ROLES.find((r) => r.key === previewRole)!.labelKey
+								),
+							})}
 						</Badge>
 					)}
 				</div>
@@ -287,13 +354,22 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 							className={[
 								styles.avatar,
 								isImpersonating ? styles.avatarImpersonating : '',
+								!isImpersonating && previewRole
+									? styles.avatarPreviewingRole
+									: '',
 							].join(' ')}
 						>
 							{initials}
-							{isImpersonating && (
+							{isImpersonating ? (
 								<div className={styles.impersonationIndicator}>
 									<IconShield size={10} />
 								</div>
+							) : (
+								previewRole && (
+									<div className={styles.previewIndicator}>
+										<IconEyeglass size={10} />
+									</div>
+								)
 							)}
 						</div>
 
@@ -305,6 +381,16 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 								{isImpersonating && (
 									<Badge size='xs' variant='light' color='orange'>
 										{t('userMenu.impersonationMode')}
+									</Badge>
+								)}
+								{!isImpersonating && previewRole && (
+									<Badge size='xs' variant='light' color='teal'>
+										{t('userMenu.rolePreview.badge', {
+											role: t(
+												PREVIEW_ROLES.find((r) => r.key === previewRole)!
+													.labelKey
+											),
+										})}
 									</Badge>
 								)}
 							</Group>
