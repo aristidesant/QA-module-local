@@ -45,7 +45,7 @@ const DemoCallDetailPage: React.FC = () => {
 				contentWidth='full'
 				title='Call not found'
 				showBackButton
-				onBackClick={() => navigate('/evaluations-demo')}
+				onBackClick={() => navigate('/role-preview/qa-campaigns')}
 			>
 				<EmptyState message='This call does not exist in the demo data.' />
 			</ContentContainer>
@@ -57,18 +57,18 @@ const DemoCallDetailPage: React.FC = () => {
 			contentWidth='full'
 			title={
 				<Breadcrumbs>
-					<Anchor onClick={() => navigate('/evaluations-demo')} size='sm'>
+					<Anchor onClick={() => navigate('/role-preview/qa-campaigns')} size='sm'>
 						Campaigns
 					</Anchor>
 					<Anchor
-						onClick={() => navigate(`/evaluations-demo/${campaign.id}`)}
+						onClick={() => navigate(`/role-preview/qa-campaigns/${campaign.id}`)}
 						size='sm'
 					>
 						{campaign.groupLabel}
 					</Anchor>
 					<Anchor
 						onClick={() =>
-							navigate(`/evaluations-demo/${campaign.id}/${evaluation.id}`)
+							navigate(`/role-preview/qa-campaigns/${campaign.id}/${evaluation.id}`)
 						}
 						size='sm'
 					>

@@ -27,7 +27,7 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 	const [files, setFiles] = useState<DemoWizardUploadedFile[]>([]);
 	const [emailOverrides, setEmailOverrides] = useState<Record<string, string>>({});
 
-	const exitWizard = () => navigate('/evaluations-demo');
+	const exitWizard = () => navigate('/role-preview/qa-campaigns');
 
 	const handleCreateCampaign = () => {
 		notifications.show({
@@ -35,7 +35,7 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 			message: `"${details.name}" has been created successfully.`,
 			color: 'green',
 		});
-		navigate('/evaluations-demo');
+		navigate('/role-preview/qa-campaigns');
 	};
 
 	return (

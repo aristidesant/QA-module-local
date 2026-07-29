@@ -74,7 +74,7 @@ export const useDemoCampaignColumns = (): ColumnDef<DemoCampaign, any>[] => {
 							aria-label='View campaign'
 							onClick={(e) => {
 								e.stopPropagation();
-								navigate(`/evaluations-demo/${campaign.id}`);
+								navigate(`/role-preview/qa-campaigns/${campaign.id}`);
 							}}
 						>
 							<IconFileText size={16} />

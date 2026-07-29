@@ -58,7 +58,7 @@ const DemoEvaluationDetailPage: React.FC = () => {
 				contentWidth='full'
 				title='Evaluation not found'
 				showBackButton
-				onBackClick={() => navigate('/evaluations-demo')}
+				onBackClick={() => navigate('/role-preview/qa-campaigns')}
 			>
 				<EmptyState message='This evaluation does not exist in the demo data.' />
 			</ContentContainer>
@@ -99,11 +99,11 @@ const DemoEvaluationDetailPage: React.FC = () => {
 			contentWidth='full'
 			title={
 				<Breadcrumbs>
-					<Anchor onClick={() => navigate('/evaluations-demo')} size='sm'>
+					<Anchor onClick={() => navigate('/role-preview/qa-campaigns')} size='sm'>
 						Campaigns
 					</Anchor>
 					<Anchor
-						onClick={() => navigate(`/evaluations-demo/${campaign.id}`)}
+						onClick={() => navigate(`/role-preview/qa-campaigns/${campaign.id}`)}
 						size='sm'
 					>
 						{campaign.groupLabel}
@@ -180,7 +180,7 @@ const DemoEvaluationDetailPage: React.FC = () => {
 					data={filteredCalls}
 					columns={columns}
 					onRowClick={(call) =>
-						navigate(`/evaluations-demo/${campaign.id}/${evaluation.id}/${call.id}`)
+						navigate(`/role-preview/qa-campaigns/${campaign.id}/${evaluation.id}/${call.id}`)
 					}
 					density='compact'
 					filterMode='client'

@@ -105,7 +105,7 @@ const DemoCampaignDetailPage: React.FC = () => {
 				contentWidth='full'
 				title='Campaign not found'
 				showBackButton
-				onBackClick={() => navigate('/evaluations-demo')}
+				onBackClick={() => navigate('/role-preview/qa-campaigns')}
 			>
 				<EmptyState message='This campaign does not exist in the demo data.' />
 			</ContentContainer>
@@ -170,7 +170,7 @@ const DemoCampaignDetailPage: React.FC = () => {
 			contentWidth='full'
 			title={
 				<Breadcrumbs>
-					<Anchor onClick={() => navigate('/evaluations-demo')} size='sm'>
+					<Anchor onClick={() => navigate('/role-preview/qa-campaigns')} size='sm'>
 						Campaigns
 					</Anchor>
 					<Anchor component='span' size='sm' fw={600}>

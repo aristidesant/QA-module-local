@@ -81,7 +81,7 @@ const DemoCampaignsListPage: React.FC = () => {
 				<Button
 					color='green'
 					leftSection={<IconPlus size={16} />}
-					onClick={() => navigate('/evaluations-demo/new')}
+					onClick={() => navigate('/role-preview/new-campaign')}
 				>
 					New external campaign
 				</Button>
