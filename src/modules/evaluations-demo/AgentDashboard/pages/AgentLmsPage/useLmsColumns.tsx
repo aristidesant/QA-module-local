@@ -64,7 +64,6 @@ export const useLmsColumns = (): BaseTableColumnDef<DemoLmsContent>[] => {
 			accessorKey: 'completionPercent',
 			header: 'Progress',
 			cell: ({ row }) => (
-{/* inline-style-allow: */}
 				<div style={{ width: 80 }}>
 					<Progress
 						value={row.original.completionPercent || 0}

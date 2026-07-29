@@ -137,7 +137,6 @@ const AgentLmsDetailPage: React.FC = () => {
 
 				<Card withBorder radius='md' p='lg' className={styles.viewer}>
 					<Stack align='center' justify='center' gap='lg' py='xl'>
-{/* inline-style-allow: */}
 						<div style={{ textAlign: 'center' }}>
 							<Text size='lg' fw={600}>
 								{content.type} Content

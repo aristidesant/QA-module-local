@@ -156,7 +156,6 @@ const DemoResultCallDetailPage: React.FC = () => {
 								Change Log
 							</Tabs.Tab>
 						</Tabs.List>
-{/* inline-style-allow: */}
 						<div style={{ display: 'flex', gap: 8 }}>
 							<Button variant='default' leftSection={<IconEdit size={16} />}>
 								Edit Evaluation

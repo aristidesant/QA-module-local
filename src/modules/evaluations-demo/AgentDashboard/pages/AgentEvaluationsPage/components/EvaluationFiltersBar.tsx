@@ -56,7 +56,6 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 	};
 
 	return (
-		{/* inline-style-allow: */}
 		<Stack gap='md' p='md' style={{
 			border: '1px solid var(--mantine-color-gray-3)',
 			borderRadius: 'var(--mantine-radius-md)',

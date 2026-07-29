@@ -121,7 +121,6 @@ const DemoEvaluationDetailPage: React.FC = () => {
 						to
 					</Text>
 					<TextInput type='date' size='sm' />
-{/* inline-style-allow: */}
 					<Anchor size='sm' style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
 						<IconDownload size={14} />
 						Export
@@ -144,7 +143,6 @@ const DemoEvaluationDetailPage: React.FC = () => {
 						placeholder='Search by filename or agent...'
 						leftSection={<IconSearch size={16} />}
 						value={search}
-{/* inline-style-allow: */}
 						onChange={(e) => setSearch(e.currentTarget.value)}
 						style={{ flex: 1, minWidth: 220 }}
 					/>

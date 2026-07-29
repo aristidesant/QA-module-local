@@ -22,7 +22,6 @@ const AgentPerformanceTrendChart: React.FC<AgentPerformanceTrendChartProps> = ({
 			</Card.Section>
 
 			<Card.Section inheritPadding py='md'>
-{/* inline-style-allow: */}
 				<Box style={{ height: 300 }}>
 					<LineChart
 						h={300}

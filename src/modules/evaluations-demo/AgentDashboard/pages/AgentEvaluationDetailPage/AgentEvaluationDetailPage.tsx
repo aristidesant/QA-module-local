@@ -194,7 +194,6 @@ const AgentEvaluationDetailPage: React.FC = () => {
 												key={itemIdx}
 												justify='space-between'
 												p='sm'
-{/* inline-style-allow: */}
 												style={{
 													border: '1px solid var(--mantine-color-gray-3)',
 													borderRadius:
@@ -226,7 +225,6 @@ const AgentEvaluationDetailPage: React.FC = () => {
 								{call.transcript.map((turn, idx) => (
 									<div
 										key={idx}
-{/* inline-style-allow: */}
 										style={{
 											marginBottom:
 												'var(--mantine-spacing-md)',

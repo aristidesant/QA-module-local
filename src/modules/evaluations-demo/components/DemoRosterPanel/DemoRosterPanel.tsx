@@ -64,7 +64,6 @@ const DemoRosterPanel: React.FC<DemoRosterPanelProps> = ({ roster }) => {
 						<Box
 							w={8}
 							h={8}
-{/* inline-style-allow: */}
 							style={{
 								borderRadius: '50%',
 								backgroundColor:

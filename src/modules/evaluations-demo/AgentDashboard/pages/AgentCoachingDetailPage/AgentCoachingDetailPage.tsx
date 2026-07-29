@@ -187,7 +187,6 @@ const AgentCoachingDetailPage: React.FC = () => {
 														`/role-preview/agent-dashboard/lms/${ref.contentId}`
 													)
 												}
-												{/* inline-style-allow: */}
 												style={{
 													border: '1px solid var(--mantine-color-gray-3)',
 													borderRadius:
@@ -197,7 +196,6 @@ const AgentCoachingDetailPage: React.FC = () => {
 													padding: 'var(--mantine-spacing-md)',
 												}}
 											>
-												{/* inline-style-allow: */}
 													<Stack gap={0} style={{ flex: 1 }}>
 													<Text fw={600} size='sm'>
 														{ref.title}

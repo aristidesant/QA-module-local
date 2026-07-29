@@ -78,7 +78,6 @@ const DemoQaFormsListPage: React.FC = () => {
 						leftSection={<IconSearch size={16} />}
 						value={search}
 						onChange={(e) => setSearch(e.currentTarget.value)}
-{/* inline-style-allow: */}
 						style={{ flex: 1, minWidth: 220 }}
 					/>
 					<Select

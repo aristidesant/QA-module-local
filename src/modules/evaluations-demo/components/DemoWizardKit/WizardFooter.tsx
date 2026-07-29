@@ -19,7 +19,6 @@ const WizardFooter: React.FC<WizardFooterProps> = ({ children }) => {
 			: 'var(--sidebar-width)';
 
 	return (
-{/* inline-style-allow: */}
 		<div className={styles.footerRow} style={{ left }}>
 			{children}
 		</div>

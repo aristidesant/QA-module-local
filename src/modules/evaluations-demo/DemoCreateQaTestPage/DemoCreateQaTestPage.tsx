@@ -51,7 +51,6 @@ const DemoCreateQaTestPage: React.FC = () => {
 	return (
 		<ContentContainer contentWidth='full'>
 			<div className={wizardKitStyles.headerRow}>
-{/* inline-style-allow: */}
 				<div style={{ display: 'flex', gap: 8, alignItems: 'flex-start' }}>
 					<ActionIcon
 						variant='subtle'
