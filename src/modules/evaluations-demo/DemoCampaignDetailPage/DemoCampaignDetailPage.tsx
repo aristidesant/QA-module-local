@@ -242,6 +242,13 @@ const DemoCampaignDetailPage: React.FC = () => {
 									data={filteredEvaluations}
 									columns={evaluationColumns}
 									getRowId={(evaluation) => evaluation.id}
+									onRowClick={(evaluation) => {
+										if (evaluation.calls && evaluation.calls.length > 0) {
+											navigate(
+												`/role-preview/qa-campaigns/${campaign.id}/call/${evaluation.calls[0].id}`
+											);
+										}
+									}}
 									density='compact'
 									filterMode='client'
 									emptyMessage='No evaluations match this filter.'

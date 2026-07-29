@@ -122,6 +122,9 @@ const DemoCampaignDetailPage = React.lazy(
 const DemoResultCallDetailPage = React.lazy(
 	() => import('./modules/evaluations-demo/DemoResultCallDetailPage')
 );
+const DemoCallDetailPage = React.lazy(
+	() => import('./modules/evaluations-demo/DemoCallDetailPage')
+);
 const DoNotCallPage = React.lazy(
 	() => import('./modules/do-not-call/DoNotCallPage/DoNotCallPage')
 );
@@ -1119,6 +1122,15 @@ const router = createBrowserRouter([
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
 										<DemoResultCallDetailPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/qa-campaigns/:campaignId/call/:callId',
+								id: 'role-preview.qa-campaigns.call.detail',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<DemoCallDetailPage />
 									</Suspense>
 								),
 							},
