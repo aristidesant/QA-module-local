@@ -191,7 +191,7 @@ const DemoResultsPanel: React.FC<DemoResultsPanelProps> = ({
 							columns={columns}
 							getRowId={(r) => r.id}
 							onRowClick={(r) =>
-								navigate(`/evaluations-demo/${campaignId}/result/${r.id}`)
+								navigate(`/role-preview/qa-campaigns/${campaignId}/result/${r.id}`)
 							}
 							density='compact'
 							filterMode='client'
