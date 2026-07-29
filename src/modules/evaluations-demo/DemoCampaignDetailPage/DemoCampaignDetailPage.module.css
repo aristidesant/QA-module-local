@@ -1,0 +1,32 @@
+.sectionHeader {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-sm);
+}
+
+.toolbarRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-sm);
+}
+
+.rowIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 28px;
+	height: 28px;
+	flex-shrink: 0;
+	border-radius: var(--mantine-radius-xl);
+	background-color: var(--mantine-color-gray-0);
+	color: var(--mantine-color-gray-7);
+}
+
+[data-mantine-color-scheme='dark'] .rowIcon {
+	background-color: var(--mantine-color-dark-6);
+	color: var(--mantine-color-dark-1);
+}

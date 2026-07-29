@@ -1,0 +1,11 @@
+.detailCard {
+	background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-7));
+}
+
+.transcript {
+	max-height: 400px;
+	overflow-y: auto;
+	padding: var(--mantine-spacing-md);
+	background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+	border-radius: var(--mantine-radius-md);
+}

@@ -1,0 +1,35 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.headerTitle {
+	font-size: var(--mantine-font-size-xl);
+	font-weight: 700;
+	color: var(--mantine-color-gray-9);
+}
+
+[data-mantine-color-scheme='dark'] .headerTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+.headerSubtitle {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-6);
+}
+
+[data-mantine-color-scheme='dark'] .headerSubtitle {
+	color: var(--mantine-color-dark-2);
+}
+
+.kpiSection {
+	margin-bottom: var(--mantine-spacing-lg);
+}

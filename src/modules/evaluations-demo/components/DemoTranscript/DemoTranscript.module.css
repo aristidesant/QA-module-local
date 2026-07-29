@@ -1,0 +1,22 @@
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	max-height: 360px;
+	overflow-y: auto;
+}
+
+.turn {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-sm);
+	background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+}
+
+.meta {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}

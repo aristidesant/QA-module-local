@@ -83,6 +83,39 @@ const ProfilePage = React.lazy(() => import('./modules/profile/ProfilePage'));
 const RolePreviewPlaceholderPage = React.lazy(
 	() => import('./modules/role-preview/RolePreviewPlaceholderPage')
 );
+const AgentDashboardPage = React.lazy(
+	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentDashboardPage/AgentDashboardPage')
+);
+const AgentEvaluationsPage = React.lazy(
+	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentEvaluationsPage/AgentEvaluationsPage')
+);
+const AgentEvaluationDetailPage = React.lazy(
+	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentEvaluationDetailPage/AgentEvaluationDetailPage')
+);
+const AgentCoachingPage = React.lazy(
+	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentCoachingPage/AgentCoachingPage')
+);
+const AgentCoachingDetailPage = React.lazy(
+	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentCoachingDetailPage/AgentCoachingDetailPage')
+);
+const AgentLmsPage = React.lazy(
+	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentLmsPage/AgentLmsPage')
+);
+const AgentLmsDetailPage = React.lazy(
+	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentLmsDetailPage/AgentLmsDetailPage')
+);
+const DemoQaFormsListPage = React.lazy(
+	() => import('./modules/evaluations-demo/DemoQaFormsListPage')
+);
+const DemoCreateQaTestPage = React.lazy(
+	() => import('./modules/evaluations-demo/DemoCreateQaTestPage')
+);
+const DemoCampaignsListPage = React.lazy(
+	() => import('./modules/evaluations-demo/DemoCampaignsListPage')
+);
+const DemoNewCampaignWizardPage = React.lazy(
+	() => import('./modules/evaluations-demo/DemoNewCampaignWizardPage')
+);
 const DoNotCallPage = React.lazy(
 	() => import('./modules/do-not-call/DoNotCallPage/DoNotCallPage')
 );
@@ -963,6 +996,105 @@ const router = createBrowserRouter([
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
 										<ProfilePage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/agent-dashboard',
+								id: 'role-preview.agent-dashboard',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<AgentDashboardPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/agent-dashboard/evaluations',
+								id: 'role-preview.agent-dashboard.evaluations',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<AgentEvaluationsPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/agent-dashboard/evaluations/:callId',
+								id: 'role-preview.agent-dashboard.evaluations.detail',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<AgentEvaluationDetailPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/agent-dashboard/coaching',
+								id: 'role-preview.agent-dashboard.coaching',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<AgentCoachingPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/agent-dashboard/coaching/:reportId',
+								id: 'role-preview.agent-dashboard.coaching.detail',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<AgentCoachingDetailPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/agent-dashboard/lms',
+								id: 'role-preview.agent-dashboard.lms',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<AgentLmsPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/agent-dashboard/lms/:contentId',
+								id: 'role-preview.agent-dashboard.lms.detail',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<AgentLmsDetailPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/qa-forms',
+								id: 'role-preview.qa-forms',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<DemoQaFormsListPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/new-qa-form',
+								id: 'role-preview.new-qa-form',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<DemoCreateQaTestPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/qa-campaigns',
+								id: 'role-preview.qa-campaigns',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<DemoCampaignsListPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/new-campaign',
+								id: 'role-preview.new-campaign',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<DemoNewCampaignWizardPage />
 									</Suspense>
 								),
 							},

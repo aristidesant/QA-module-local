@@ -1,0 +1,14 @@
+.viewer {
+	min-height: 300px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+	border-style: dashed;
+	border-width: 2px;
+	border-color: var(--mantine-color-gray-3);
+}
+
+[data-mantine-color-scheme='dark'] .viewer {
+	border-color: var(--mantine-color-dark-4);
+}

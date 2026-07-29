@@ -59,6 +59,13 @@
 	gap: 6px;
 }
 
+.labelRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+}
+
 .label {
 	font-size: 12px;
 	font-weight: 600;

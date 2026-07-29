@@ -1,0 +1,57 @@
+.bar {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-default-border);
+	background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+}
+
+.seekRow {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+}
+
+.time {
+	font-variant-numeric: tabular-nums;
+	color: var(--mantine-color-dimmed);
+	font-size: var(--mantine-font-size-xs);
+	min-width: 2.5em;
+}
+
+.slider {
+	flex: 1;
+}
+
+.controlsRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+}
+
+.transport {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.rightControls {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+}
+
+.speedChip {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	padding: 2px 8px;
+	border-radius: var(--mantine-radius-xl);
+	background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+	cursor: pointer;
+}
+
+.volumeSlider {
+	width: 80px;
+}

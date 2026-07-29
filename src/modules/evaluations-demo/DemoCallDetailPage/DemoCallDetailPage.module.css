@@ -1,0 +1,25 @@
+.tabsRow {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-sm);
+}
+
+.callInfoRow {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+}
+
+.callInfoIcon {
+	width: 40px;
+	height: 40px;
+	border-radius: 9999px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+	color: var(--mantine-color-dimmed);
+	flex-shrink: 0;
+}

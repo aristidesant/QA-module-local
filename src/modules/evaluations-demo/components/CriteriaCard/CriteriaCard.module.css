@@ -1,0 +1,16 @@
+.row {
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+	padding: var(--mantine-spacing-xs) 0;
+	border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.row:last-child {
+	border-bottom: none;
+}
+
+.description {
+	flex: 1;
+}

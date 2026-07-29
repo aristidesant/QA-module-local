@@ -1,0 +1,36 @@
+.hero {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-xl) var(--mantine-spacing-md);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-default-border);
+	background: light-dark(var(--mantine-color-white), var(--mantine-color-dark-6));
+}
+
+.label {
+	font-size: var(--mantine-font-size-xs);
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var(--mantine-color-dimmed);
+}
+
+.score {
+	font-size: 2.5rem;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--mantine-color-green-7);
+}
+
+[data-mantine-color-scheme='dark'] .score {
+	color: var(--mantine-color-green-4);
+}
+
+.scoreFail {
+	color: var(--mantine-color-red-7);
+}
+
+[data-mantine-color-scheme='dark'] .scoreFail {
+	color: var(--mantine-color-red-4);
+}

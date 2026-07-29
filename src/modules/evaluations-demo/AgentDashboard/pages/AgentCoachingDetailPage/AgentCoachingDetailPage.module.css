@@ -1,0 +1,15 @@
+.documentContainer {
+	max-width: 800px;
+	margin: 0 auto;
+}
+
+.header {
+	text-align: center;
+	padding-bottom: var(--mantine-spacing-lg);
+	border-bottom: 2px solid var(--mantine-color-gray-2);
+	margin-bottom: var(--mantine-spacing-lg);
+}
+
+[data-mantine-color-scheme='dark'] .header {
+	border-bottom-color: var(--mantine-color-dark-5);
+}

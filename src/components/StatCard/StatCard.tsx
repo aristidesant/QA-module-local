@@ -10,6 +10,7 @@ export interface StatCardProps {
 	color?: string;
 	className?: string;
 	icon?: ReactNode;
+	badge?: ReactNode;
 	variant?: 'default' | 'compact';
 }
 
@@ -20,6 +21,7 @@ export const StatCard = ({
 	color,
 	className,
 	icon,
+	badge,
 	variant = 'default',
 }: StatCardProps) => {
 	const cardClassName = [
@@ -34,7 +36,10 @@ export const StatCard = ({
 		<div className={cardClassName}>
 			{icon && <div className={styles.iconWrapper}>{icon}</div>}
 			<div className={styles.content}>
-				<Text className={styles.label}>{title}</Text>
+				<div className={styles.labelRow}>
+					<Text className={styles.label}>{title}</Text>
+					{badge}
+				</div>
 				<Text className={styles.value} style={color ? { color } : undefined}>
 					{value}
 				</Text>

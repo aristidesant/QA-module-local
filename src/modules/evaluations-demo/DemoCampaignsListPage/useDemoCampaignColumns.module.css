@@ -1,0 +1,13 @@
+.actionsCell {
+	width: 100px;
+	min-width: 100px;
+	white-space: nowrap;
+	text-align: right;
+}
+
+.actionsHeader {
+	width: 100px;
+	min-width: 100px;
+	white-space: nowrap;
+	text-align: right;
+}

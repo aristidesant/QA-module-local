@@ -1,0 +1,79 @@
+.optionCard {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+	padding: var(--mantine-spacing-lg);
+	text-align: center;
+}
+
+[data-mantine-color-scheme='dark'] .optionCard {
+	border-color: var(--mantine-color-dark-5);
+}
+
+.groupCard {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+	padding: var(--mantine-spacing-lg);
+}
+
+[data-mantine-color-scheme='dark'] .groupCard {
+	border-color: var(--mantine-color-dark-5);
+}
+
+.groupDivider {
+	border-top: 1px solid var(--mantine-color-gray-3);
+	margin: var(--mantine-spacing-md) 0;
+}
+
+[data-mantine-color-scheme='dark'] .groupDivider {
+	border-top-color: var(--mantine-color-dark-5);
+}
+
+.itemRow {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-white);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+}
+
+[data-mantine-color-scheme='dark'] .itemRow {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+.reviewSection {
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-lg);
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+[data-mantine-color-scheme='dark'] .reviewSection {
+	border-color: var(--mantine-color-dark-5);
+}
+
+.pointBar {
+	text-align: center;
+	font-size: var(--mantine-font-size-sm);
+	font-weight: 600;
+	color: var(--mantine-color-yellow-9);
+	background: light-dark(var(--mantine-color-yellow-1), var(--mantine-color-dark-5));
+	border-radius: var(--mantine-radius-sm);
+	padding: 6px;
+}
+
+.pointBarComplete {
+	composes: pointBar;
+	color: var(--mantine-color-green-9);
+	background: light-dark(var(--mantine-color-green-1), var(--mantine-color-dark-5));
+}
+
+.totalPointsPill {
+	margin-top: var(--mantine-spacing-md);
+	text-align: center;
+	background: light-dark(var(--mantine-color-blue-0), var(--mantine-color-dark-6));
+	border: 1px solid light-dark(var(--mantine-color-blue-2), var(--mantine-color-dark-4));
+	border-radius: var(--mantine-radius-sm);
+	padding: var(--mantine-spacing-sm);
+}
