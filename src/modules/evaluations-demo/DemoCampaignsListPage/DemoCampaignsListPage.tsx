@@ -123,7 +123,7 @@ const DemoCampaignsListPage: React.FC = () => {
 				<BaseTable
 					data={paginated}
 					columns={columns}
-					onRowClick={(campaign) => navigate(`/evaluations-demo/${campaign.id}`)}
+					onRowClick={(campaign) => navigate(`/role-preview/qa-campaigns/${campaign.id}`)}
 					density='compact'
 					filterMode='client'
 					emptyMessage='No campaigns found'
