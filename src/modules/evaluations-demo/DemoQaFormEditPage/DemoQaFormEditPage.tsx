@@ -6,13 +6,13 @@ import {
 	Stack,
 	Text,
 	TextInput,
-	Textarea,
 	Select,
 	Card,
+	Badge,
 } from '@mantine/core';
 import { IconArrowLeft, IconCheck } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
-import { DEMO_QA_FORMS } from '../mockData';
+import { DEMO_QA_FORMS, type DemoQaForm } from '../DemoQaFormsListPage/mockQaForms';
 
 const DemoQaFormEditPage: React.FC = () => {
 	const { formId } = useParams();
@@ -20,7 +20,7 @@ const DemoQaFormEditPage: React.FC = () => {
 
 	const form = useMemo(() => DEMO_QA_FORMS.find((f) => f.id === formId), [formId]);
 
-	const [formData, setFormData] = useState(form ? { ...form } : null);
+	const [formData, setFormData] = useState<DemoQaForm | null>(form ? { ...form } : null);
 
 	if (!form || !formData) {
 		return (
@@ -54,40 +54,44 @@ const DemoQaFormEditPage: React.FC = () => {
 				<Card withBorder radius='md' p='lg'>
 					<Stack gap='md'>
 						<div>
-							<Text size='lg' fw={700} mb='md'>
-								Edit QA Form
-							</Text>
-							<Text size='sm' c='dimmed'>
-								{formData.id}
-							</Text>
+							<Group justify='space-between' mb='md'>
+								<div>
+									<Text size='lg' fw={700} mb='xs'>
+										Edit QA Form
+									</Text>
+									<Text size='sm' c='dimmed'>
+										ID: {formData.id}
+									</Text>
+								</div>
+								<Badge color={formData.status === 'Ready' ? 'green' : 'yellow'}>
+									{formData.status}
+								</Badge>
+							</Group>
 						</div>
 
 						<TextInput
-							label='Form Name'
-							placeholder='Enter form name'
-							value={formData.name}
+							label='Test Name'
+							placeholder='Enter test name'
+							value={formData.testName}
 							onChange={(e) =>
-								setFormData({ ...formData, name: e.currentTarget.value })
+								setFormData({ ...formData, testName: e.currentTarget.value })
 							}
-						/>
-
-						<Textarea
-							label='Description'
-							placeholder='Enter form description'
-							value={formData.description}
-							onChange={(e) =>
-								setFormData({ ...formData, description: e.currentTarget.value })
-							}
-							minRows={3}
 						/>
 
 						<Select
 							label='QA Type'
 							placeholder='Select QA type'
-							data={['Compliance', 'Quality', 'Customer Experience', 'Technical']}
+							data={[
+								'Sales',
+								'Localization',
+								'Retention',
+								'Activation',
+								'Accounts Receivable',
+								'Compliance',
+							]}
 							value={formData.qaType}
 							onChange={(value) =>
-								setFormData({ ...formData, qaType: value || 'Compliance' })
+								setFormData({ ...formData, qaType: value || 'Sales' })
 							}
 						/>
 
@@ -101,20 +105,27 @@ const DemoQaFormEditPage: React.FC = () => {
 						/>
 
 						<TextInput
-							label='Last Modified'
-							placeholder='Last modified date'
-							value={formData.lastModified}
+							label='Created Date'
+							placeholder='Date (YYYY-MM-DD)'
+							value={formData.createdDate}
 							onChange={(e) =>
-								setFormData({ ...formData, lastModified: e.currentTarget.value })
+								setFormData({ ...formData, createdDate: e.currentTarget.value })
 							}
 						/>
 
-						<TextInput
-							label='Form Version'
-							placeholder='Version number'
-							value={formData.version}
-							onChange={(e) =>
-								setFormData({ ...formData, version: e.currentTarget.value })
+						<Select
+							label='Status'
+							placeholder='Select status'
+							data={[
+								{ value: 'Ready', label: 'Ready' },
+								{ value: 'Draft', label: 'Draft' },
+							]}
+							value={formData.status}
+							onChange={(value) =>
+								setFormData({
+									...formData,
+									status: (value as 'Ready' | 'Draft') || 'Draft',
+								})
 							}
 						/>
 
