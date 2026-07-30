@@ -1,7 +1,6 @@
 import React from 'react';
 import {
 	Button,
-	Checkbox,
 	Group,
 	MultiSelect,
 	NumberInput,
@@ -18,7 +17,6 @@ export interface EvaluationFilters {
 	scoreMax: number;
 	dispute: 'all' | 'yes' | 'no';
 	result: 'all' | 'passed' | 'failed';
-	evaluationTypes: string[];
 }
 
 interface EvaluationFiltersBarProps {
@@ -26,8 +24,6 @@ interface EvaluationFiltersBarProps {
 	onFiltersChange: (filters: EvaluationFilters) => void;
 	campaigns: string[];
 }
-
-const EVALUATION_TYPES = ['Compliance', 'Sentiment Analysis', 'QA'];
 
 const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 	filters,
@@ -40,8 +36,7 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 		filters.scoreMin > 0 ||
 		filters.scoreMax < 100 ||
 		filters.dispute !== 'all' ||
-		filters.result !== 'all' ||
-		filters.evaluationTypes.length > 0;
+		filters.result !== 'all';
 
 	const handleReset = () => {
 		onFiltersChange({
@@ -51,7 +46,6 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 			scoreMax: 100,
 			dispute: 'all',
 			result: 'all',
-			evaluationTypes: [],
 		});
 	};
 
@@ -75,35 +69,35 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 				)}
 			</Group>
 
-			<MultiSelect
-				label='Campaign'
-				placeholder='Select campaigns'
-				data={campaigns}
-				value={filters.campaigns}
-				onChange={(value) =>
-					onFiltersChange({ ...filters, campaigns: value })
-				}
-				searchable
-				clearable
-			/>
-
-			<Select
-				label='Period'
-				data={[
-					{ value: 'weekly', label: 'Weekly' },
-					{ value: 'monthly', label: 'Monthly' },
-					{ value: 'custom', label: 'Custom' },
-				]}
-				value={filters.period}
-				onChange={(value) =>
-					onFiltersChange({
-						...filters,
-						period: (value as any) || 'weekly',
-					})
-				}
-			/>
-
 			<Group grow>
+				<MultiSelect
+					label='Campaign'
+					placeholder='Select campaigns'
+					data={campaigns}
+					value={filters.campaigns}
+					onChange={(value) =>
+						onFiltersChange({ ...filters, campaigns: value })
+					}
+					searchable
+					clearable
+				/>
+
+				<Select
+					label='Period'
+					data={[
+						{ value: 'weekly', label: 'Weekly' },
+						{ value: 'monthly', label: 'Monthly' },
+						{ value: 'custom', label: 'Custom' },
+					]}
+					value={filters.period}
+					onChange={(value) =>
+						onFiltersChange({
+							...filters,
+							period: (value as any) || 'weekly',
+						})
+					}
+				/>
+
 				<NumberInput
 					label='Min Score'
 					placeholder='0'
@@ -157,40 +151,6 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 					onFiltersChange({ ...filters, result: (value as any) || 'all' })
 				}
 			/>
-
-			<div>
-				<Text size='sm' fw={600} mb='xs'>
-					Evaluation Type
-				</Text>
-				<Stack gap='xs'>
-					{EVALUATION_TYPES.map((type) => (
-						<Checkbox
-							key={type}
-							label={type}
-							checked={filters.evaluationTypes.includes(type)}
-							onChange={(e) => {
-								if (e.currentTarget.checked) {
-									onFiltersChange({
-										...filters,
-										evaluationTypes: [
-											...filters.evaluationTypes,
-											type,
-										],
-									});
-								} else {
-									onFiltersChange({
-										...filters,
-										evaluationTypes:
-											filters.evaluationTypes.filter(
-												(t) => t !== type
-											),
-									});
-								}
-							}}
-						/>
-					))}
-				</Stack>
-			</div>
 		</Stack>
 	);
 };

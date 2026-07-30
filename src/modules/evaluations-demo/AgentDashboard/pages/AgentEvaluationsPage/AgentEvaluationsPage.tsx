@@ -19,7 +19,6 @@ const AgentEvaluationsPage: React.FC = () => {
 		scoreMax: 100,
 		dispute: 'all',
 		result: 'all',
-		evaluationTypes: [],
 	});
 
 	const uniqueCampaigns = useMemo(
@@ -45,13 +44,6 @@ const AgentEvaluationsPage: React.FC = () => {
 			}
 
 			if (filters.result !== 'all' && call.result !== filters.result) {
-				return false;
-			}
-
-			if (
-				filters.evaluationTypes.length > 0 &&
-				!filters.evaluationTypes.includes(call.evaluationType)
-			) {
 				return false;
 			}
 
