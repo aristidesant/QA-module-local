@@ -110,6 +110,9 @@ const DemoQaFormsListPage = React.lazy(
 const DemoCreateQaTestPage = React.lazy(
 	() => import('./modules/evaluations-demo/DemoCreateQaTestPage')
 );
+const DemoQaFormEditPage = React.lazy(
+	() => import('./modules/evaluations-demo/DemoQaFormEditPage')
+);
 const DemoCampaignsListPage = React.lazy(
 	() => import('./modules/evaluations-demo/DemoCampaignsListPage')
 );
@@ -1086,6 +1089,15 @@ const router = createBrowserRouter([
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
 										<DemoCreateQaTestPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/qa-forms/:formId/edit',
+								id: 'role-preview.qa-forms.edit',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<DemoQaFormEditPage />
 									</Suspense>
 								),
 							},

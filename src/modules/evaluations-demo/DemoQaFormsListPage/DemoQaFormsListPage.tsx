@@ -94,6 +94,7 @@ const DemoQaFormsListPage: React.FC = () => {
 					data={paginated}
 					columns={columns}
 					getRowId={(form) => form.id}
+					onRowClick={(form) => navigate(`/role-preview/qa-forms/${form.id}/edit`)}
 					density='compact'
 					filterMode='client'
 					emptyMessage='No tests found'
