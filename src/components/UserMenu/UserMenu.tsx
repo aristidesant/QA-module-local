@@ -128,10 +128,16 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 		openChooser();
 	};
 
+	const roleLandingPaths: Record<PreviewRole, string> = {
+		agent: '/role-preview/agent-dashboard',
+		operationManager: '/role-preview/qa-forms',
+		supervisor: '/role-preview/agents-roster',
+	};
+
 	const handleSelectPreviewRole = (role: PreviewRole) => {
 		closeMenu();
 		setPreviewRole(role);
-		navigate('/');
+		navigate(roleLandingPaths[role]);
 	};
 
 	const handleExitPreview = () => {
