@@ -63,7 +63,7 @@ const DemoQaFormsListPage: React.FC = () => {
 				<Button
 					color='green'
 					leftSection={<IconPlus size={16} />}
-					onClick={() => navigate('/role-preview/qa-forms/new')}
+					onClick={() => navigate('/role-preview/new-qa-form')}
 				>
 					New QA Form
 				</Button>
