@@ -2,9 +2,9 @@
 	display: flex;
 	flex-direction: column;
 	gap: var(--mantine-spacing-lg);
-	padding: var(--mantine-spacing-lg) var(--mantine-spacing-xl);
-	max-width: 1600px;
-	margin: 0 auto;
+	padding: 0;
+	max-width: 100%;
+	margin: 0;
 }
 
 .header {
@@ -35,4 +35,5 @@
 
 .kpiSection {
 	margin-bottom: var(--mantine-spacing-lg);
+	width: 100%;
 }
