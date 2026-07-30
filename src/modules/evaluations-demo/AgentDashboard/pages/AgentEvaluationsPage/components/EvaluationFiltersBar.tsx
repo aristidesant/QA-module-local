@@ -8,7 +8,7 @@ import {
 	Stack,
 	Text,
 } from '@mantine/core';
-import { IconX } from '@tabler/icons-react';
+import { IconX, IconSearch } from '@tabler/icons-react';
 
 export interface EvaluationFilters {
 	campaigns: string[];
@@ -23,12 +23,14 @@ interface EvaluationFiltersBarProps {
 	filters: EvaluationFilters;
 	onFiltersChange: (filters: EvaluationFilters) => void;
 	campaigns: string[];
+	onSearch?: () => void;
 }
 
 const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 	filters,
 	onFiltersChange,
 	campaigns,
+	onSearch,
 }) => {
 	const hasActiveFilters =
 		filters.campaigns.length > 0 ||
@@ -126,31 +128,43 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 				/>
 			</Group>
 
-			<Select
-				label='Dispute Status'
-				data={[
-					{ value: 'all', label: 'All' },
-					{ value: 'yes', label: 'Disputed Only' },
-					{ value: 'no', label: 'Not Disputed' },
-				]}
-				value={filters.dispute}
-				onChange={(value) =>
-					onFiltersChange({ ...filters, dispute: (value as any) || 'all' })
-				}
-			/>
+			<Group grow>
+				<Select
+					label='Dispute Status'
+					data={[
+						{ value: 'all', label: 'All' },
+						{ value: 'yes', label: 'Disputed Only' },
+						{ value: 'no', label: 'Not Disputed' },
+					]}
+					value={filters.dispute}
+					onChange={(value) =>
+						onFiltersChange({ ...filters, dispute: (value as any) || 'all' })
+					}
+				/>
 
-			<Select
-				label='Result'
-				data={[
-					{ value: 'all', label: 'All Results' },
-					{ value: 'passed', label: 'Passed' },
-					{ value: 'failed', label: 'Failed' },
-				]}
-				value={filters.result}
-				onChange={(value) =>
-					onFiltersChange({ ...filters, result: (value as any) || 'all' })
-				}
-			/>
+				<Select
+					label='Result'
+					data={[
+						{ value: 'all', label: 'All Results' },
+						{ value: 'passed', label: 'Passed' },
+						{ value: 'failed', label: 'Failed' },
+					]}
+					value={filters.result}
+					onChange={(value) =>
+						onFiltersChange({ ...filters, result: (value as any) || 'all' })
+					}
+				/>
+			</Group>
+
+			<Group justify='flex-end'>
+				<Button
+					w={250}
+					leftSection={<IconSearch size={16} />}
+					onClick={onSearch}
+				>
+					Search
+				</Button>
+			</Group>
 		</Stack>
 	);
 };

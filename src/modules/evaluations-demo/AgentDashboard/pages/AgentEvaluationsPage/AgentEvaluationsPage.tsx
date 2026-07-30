@@ -26,6 +26,11 @@ const AgentEvaluationsPage: React.FC = () => {
 		[]
 	);
 
+	const handleSearch = () => {
+		// Filters are applied in real-time, button here is for UX
+		// Could add analytics or other actions here
+	};
+
 	const filteredCalls = useMemo(() => {
 		return DEMO_AGENT_CALLS.filter((call) => {
 			if (filters.campaigns.length > 0 && !filters.campaigns.includes(call.campaign)) {
@@ -67,6 +72,7 @@ const AgentEvaluationsPage: React.FC = () => {
 					filters={filters}
 					onFiltersChange={setFilters}
 					campaigns={uniqueCampaigns}
+					onSearch={handleSearch}
 				/>
 
 				<BaseTable
