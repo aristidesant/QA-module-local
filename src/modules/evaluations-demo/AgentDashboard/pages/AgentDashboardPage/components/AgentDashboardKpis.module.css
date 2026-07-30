@@ -6,55 +6,53 @@
 }
 
 .primaryRow {
-	display: flex;
-	flex-wrap: wrap;
+	display: grid;
 	gap: var(--mantine-spacing-md);
 	width: 100%;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
 .secondaryRow {
-	display: flex;
-	flex-wrap: wrap;
+	display: grid;
 	gap: var(--mantine-spacing-md);
 	width: 100%;
+	grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
 }
 
 .kpiCol {
-	flex: 1 1 100%;
-	min-width: 200px;
+	min-width: 0;
 }
 
 .kpiCol3 {
-	flex: 1 1 100%;
-	min-width: 200px;
+	min-width: 0;
 }
 
 /* Responsive: Large Desktop - 4 cards per row */
 @media (min-width: 1300px) {
-	.kpiCol {
-		flex: 1 1 22%;
+	.primaryRow {
+		grid-template-columns: repeat(4, 1fr);
 	}
 
-	.kpiCol3 {
-		flex: 1 1 31%;
+	.secondaryRow {
+		grid-template-columns: repeat(3, 1fr);
 	}
 }
 
 /* Responsive: Desktop - 2 cards per row */
 @media (min-width: 900px) and (max-width: 1299px) {
-	.kpiCol {
-		flex: 1 1 48%;
+	.primaryRow {
+		grid-template-columns: repeat(2, 1fr);
 	}
 
-	.kpiCol3 {
-		flex: 1 1 48%;
+	.secondaryRow {
+		grid-template-columns: repeat(2, 1fr);
 	}
 }
 
 /* Responsive: Tablets - stack to full width */
 @media (max-width: 899px) {
-	.kpiCol,
-	.kpiCol3 {
-		flex: 1 1 100%;
+	.primaryRow,
+	.secondaryRow {
+		grid-template-columns: 1fr;
 	}
 }
