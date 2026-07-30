@@ -1,20 +1,21 @@
 import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import {
-	Badge,
-	Button,
-	Card,
+	Tabs,
 	Grid,
-	Group,
 	Stack,
-	Text,
-	Title,
-	ThemeIcon,
-	Box,
+	Button,
+	Group,
 } from '@mantine/core';
-import { IconArrowLeft, IconCheck, IconX } from '@tabler/icons-react';
+import { IconMessageCircle, IconEdit, IconGitBranch, IconDownload, IconMicrophone } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
+import SectionCard from '~/components/SectionCard';
 import { DEMO_AGENT_CALLS } from '../../mockData';
+import FinalScoreHero from '../../../components/FinalScoreHero';
+import EvaluationTypeSelect from '../../../components/EvaluationTypeSelect';
+import MockAudioPlayerBar from '../../../components/MockAudioPlayerBar';
+import DemoTranscript from '../../../components/DemoTranscript';
+import CriteriaCard from '../../../components/CriteriaCard';
 import styles from './AgentEvaluationDetailPage.module.css';
 
 const AgentEvaluationDetailPage: React.FC = () => {
@@ -28,239 +29,208 @@ const AgentEvaluationDetailPage: React.FC = () => {
 
 	if (!call) {
 		return (
-			<ContentContainer>
-				<Stack align='center' justify='center' gap='lg' py='xl'>
-					<Text size='lg'>Call not found</Text>
-					<Button onClick={() => navigate(-1)}>Go back</Button>
-				</Stack>
+			<ContentContainer
+				contentWidth='full'
+				title='Call not found'
+				showBackButton
+				onBackClick={() => navigate(-1)}
+			>
+				<div>Call not found</div>
 			</ContentContainer>
 		);
 	}
 
+	const transcriptTurns = call.transcript.map((turn, idx) => ({
+		id: `turn-${idx}`,
+		role: turn.speaker as 'agent' | 'customer',
+		timestamp: `${Math.floor(turn.timestamp / 60)}:${String(turn.timestamp % 60).padStart(2, '0')}`,
+		text: turn.text,
+	}));
+
+	const extensiveMockEvaluation = [
+		{
+			id: 'greeting',
+			name: 'Greeting Quality',
+			score: 18,
+			maxScore: 20,
+			subCriteria: [
+				{
+					id: 'greeting-1',
+					description: 'Agent greeted within 5 seconds',
+					verdict: 'pass' as const,
+					points: 10,
+					maxPoints: 10,
+				},
+				{
+					id: 'greeting-2',
+					description: 'Used customer name',
+					verdict: 'pass' as const,
+					points: 8,
+					maxPoints: 10,
+				},
+			],
+		},
+		{
+			id: 'communication',
+			name: 'Communication',
+			score: 22,
+			maxScore: 25,
+			subCriteria: [
+				{
+					id: 'communication-1',
+					description: 'Clear and professional tone',
+					verdict: 'pass' as const,
+					points: 10,
+					maxPoints: 10,
+				},
+				{
+					id: 'communication-2',
+					description: 'Active listening demonstrated',
+					verdict: 'pass' as const,
+					points: 12,
+					maxPoints: 15,
+				},
+			],
+		},
+		{
+			id: 'problem-resolution',
+			name: 'Problem Resolution',
+			score: 19,
+			maxScore: 25,
+			subCriteria: [
+				{
+					id: 'resolution-1',
+					description: 'Understood customer issue clearly',
+					verdict: 'pass' as const,
+					points: 10,
+					maxPoints: 10,
+				},
+				{
+					id: 'resolution-2',
+					description: 'Provided effective solution',
+					verdict: 'pass' as const,
+					points: 9,
+					maxPoints: 15,
+				},
+			],
+		},
+		{
+			id: 'compliance',
+			name: 'Compliance & Policies',
+			score: 20,
+			maxScore: 20,
+			subCriteria: [
+				{
+					id: 'compliance-1',
+					description: 'Followed company policies',
+					verdict: 'pass' as const,
+					points: 10,
+					maxPoints: 10,
+				},
+				{
+					id: 'compliance-2',
+					description: 'Security protocols observed',
+					verdict: 'pass' as const,
+					points: 10,
+					maxPoints: 10,
+				},
+			],
+		},
+	];
+
+	const criteriaSections = call.evaluationDetails.length > 0
+		? call.evaluationDetails.map((section) => ({
+			id: section.section.toLowerCase().replace(/\s+/g, '-'),
+			name: section.section,
+			score: section.items.reduce((sum, item) => sum + item.score, 0),
+			maxScore: section.items.reduce((sum, item) => sum + item.maxPoints, 0),
+			subCriteria: section.items.map((item) => ({
+				id: item.name.toLowerCase().replace(/\s+/g, '-'),
+				description: item.name,
+				verdict: (item.score === item.maxPoints ? 'pass' : 'fail') as 'pass' | 'fail',
+				points: item.score,
+				maxPoints: item.maxPoints,
+			})),
+		}))
+		: extensiveMockEvaluation;
+
 	return (
-		<ContentContainer>
-			<Stack gap='lg'>
-				<Group mb='md'>
-					<Button
-						variant='subtle'
-						leftSection={<IconArrowLeft size={18} />}
-						onClick={() => navigate(-1)}
-					>
-						Back
-					</Button>
-				</Group>
+		<ContentContainer contentWidth='full' showBackButton onBackClick={() => navigate(-1)}>
+			<Stack gap='md'>
+				<EvaluationTypeSelect />
 
-				<Grid gutter='lg'>
-					{/* Left Column: Player and Transcript */}
-					<Grid.Col span={{ base: 12, md: 6 }}>
-						<Stack gap='lg'>
-							{/* Player Placeholder */}
-							<Card withBorder radius='md' p='lg'>
-								<Box
-									style={{
-										width: '100%',
-										aspectRatio: '16 / 9',
-										backgroundColor: 'var(--mantine-color-gray-2)',
-										borderRadius: 'var(--mantine-radius-sm)',
-										display: 'flex',
-										alignItems: 'center',
-										justifyContent: 'center',
-										marginBottom: 'var(--mantine-spacing-md)',
-									}}
-								>
-									<Text c='dimmed'>Audio Player</Text>
-								</Box>
-							</Card>
+				<FinalScoreHero score={call.score} pass={call.result === 'passed' ? 'pass' : 'fail'} />
 
-							{/* Transcript */}
-							{call.transcript.length > 0 && (
-								<Card withBorder radius='md' p='lg'>
-									<Stack gap='md'>
-										<Title order={3}>Transcript</Title>
-										<div className={styles.transcript}>
-											{call.transcript.map((turn, idx) => (
-												<div
-													key={idx}
-													style={{
-														marginBottom:
-															'var(--mantine-spacing-md)',
-													}}
-												>
-													<Group gap='xs' mb='xs'>
-														<Badge
-															size='sm'
-															color={
-																turn.speaker ===
-																'agent'
-																	? 'blue'
-																	: 'gray'
-															}
-														>
-															{turn.speaker.charAt(0).toUpperCase() +
-																turn.speaker.slice(1)}
-														</Badge>
-														<Text size='xs' c='dimmed'>
-															{Math.floor(
-																turn.timestamp / 60
-															)}:
-															{String(
-																turn.timestamp % 60
-															).padStart(2, '0')}
-														</Text>
-													</Group>
-													<Text size='sm'>{turn.text}</Text>
-												</div>
-											))}
-										</div>
-									</Stack>
-								</Card>
-							)}
-						</Stack>
-					</Grid.Col>
+				<Tabs defaultValue='general' color='green'>
+					<div className={styles.tabsRow}>
+						<Tabs.List>
+							<Tabs.Tab value='general'>General</Tabs.Tab>
+							<Tabs.Tab value='changeLog' leftSection={<IconGitBranch size={16} />}>
+								Change Log
+							</Tabs.Tab>
+						</Tabs.List>
+						<Button color='green' leftSection={<IconMessageCircle size={16} />} ml='auto'>
+							Submit Dispute
+						</Button>
+					</div>
 
-					{/* Right Column: Evaluation Details */}
-					<Grid.Col span={{ base: 12, md: 6 }}>
-						<Stack gap='lg'>
-							{/* Call Details */}
-							<Card withBorder radius='md' p='lg' className={styles.detailCard}>
+					<Tabs.Panel value='general' pt='md'>
+						<Grid gap='md'>
+							<Grid.Col span={{ base: 12, lg: 4 }}>
 								<Stack gap='md'>
-									<div>
-										<Title order={2} mb='xs'>
-											Call Details
-										</Title>
-										<Text size='sm' c='dimmed'>
-											{new Date(call.callDate).toLocaleDateString(
-												'en-US',
-												{
-													weekday: 'long',
-													year: 'numeric',
-													month: 'long',
-													day: 'numeric',
-													hour: '2-digit',
-													minute: '2-digit',
-												}
-											)}
-										</Text>
-									</div>
-
-									<div>
-										<Text size='sm' fw={600} c='dimmed'>
-											Campaign
-										</Text>
-										<Text size='lg'>{call.campaign}</Text>
-									</div>
-								</Stack>
-							</Card>
-
-							{/* Summary */}
-							<Card withBorder radius='md' p='lg'>
-								<Stack gap='md'>
-									<Title order={3} mb='md'>
-										Summary
-									</Title>
-									<div>
-										<Text size='sm' fw={600} c='dimmed'>
-											Score
-										</Text>
-										<Badge
-											color={
-												call.score >= 80
-													? 'green'
-													: call.score >= 60
-														? 'yellow'
-														: 'red'
-											}
-											size='lg'
-											variant='light'
-										>
-											{call.score}%
-										</Badge>
-									</div>
-									<div>
-										<Text size='sm' fw={600} c='dimmed'>
-											Result
-										</Text>
-										<Group gap='xs'>
-											<ThemeIcon
-												color={
-													call.result ===
-													'passed'
-														? 'green'
-														: 'red'
-												}
-												variant='light'
-												size='lg'
-											>
-												{call.result ===
-												'passed' ? (
-													<IconCheck size={18} />
-												) : (
-													<IconX size={18} />
-												)}
-											</ThemeIcon>
-											<Text size='lg' fw={600}>
-												{call.result.charAt(0).toUpperCase() +
-													call.result.slice(1)}
-											</Text>
-										</Group>
-									</div>
-									<div>
-										<Text size='sm' fw={600} c='dimmed'>
-											Dispute Status
-										</Text>
-										<Badge
-											color={call.disputed ? 'orange' : 'gray'}
-											variant='light'
-										>
-											{call.disputed
-												? 'Disputed'
-												: 'Not Disputed'}
-										</Badge>
-									</div>
-								</Stack>
-							</Card>
-
-							{/* Evaluation Breakdown */}
-							{call.evaluationDetails.length > 0 && (
-								<Card withBorder radius='md' p='lg'>
-									<Stack gap='md'>
-										<Title order={3}>Evaluation Breakdown</Title>
-										{call.evaluationDetails.map((section, idx) => (
-											<div key={idx}>
-												<Text fw={600} mb='sm'>
-													{section.section}
-												</Text>
-												<Stack gap='xs'>
-													{section.items.map((item, itemIdx) => (
-														<Group
-															key={itemIdx}
-															justify='space-between'
-															p='sm'
-															style={{
-																border: '1px solid var(--mantine-color-gray-3)',
-																borderRadius:
-																	'var(--mantine-radius-sm)',
-																backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))',
-															}}
-														>
-															<Text size='sm'>
-																{item.name}
-															</Text>
-															<Badge variant='light'>
-																{item.score}/
-																{item.maxPoints}
-															</Badge>
-														</Group>
-													))}
-												</Stack>
+									<SectionCard>
+										<div className={styles.callInfoRow}>
+											<div className={styles.callInfoIcon}>
+												<IconMicrophone size={20} />
 											</div>
-										))}
-									</Stack>
-								</Card>
-							)}
-						</Stack>
-					</Grid.Col>
-				</Grid>
+											<div>
+												<div style={{ fontWeight: 600 }}>{call.campaign}</div>
+												<div style={{ fontSize: 'var(--mantine-font-size-xs)', color: 'var(--mantine-color-gray-6)' }}>
+													{new Date(call.callDate).toLocaleDateString('en-US', {
+														year: 'numeric',
+														month: 'short',
+														day: 'numeric',
+														hour: '2-digit',
+														minute: '2-digit',
+													})}
+												</div>
+											</div>
+										</div>
+									</SectionCard>
+
+									<MockAudioPlayerBar durationSeconds={call.duration} />
+
+									<SectionCard
+										title={`Transcript · ${transcriptTurns.length} turns`}
+										headerActions={
+											<Button
+												variant='subtle'
+												size='xs'
+												leftSection={<IconDownload size={14} />}
+											>
+												Download
+											</Button>
+										}
+									>
+										<DemoTranscript turns={transcriptTurns} />
+									</SectionCard>
+								</Stack>
+							</Grid.Col>
+
+							<Grid.Col span={{ base: 12, lg: 8 }}>
+								<Stack gap='md'>
+									{criteriaSections.map((section) => (
+										<CriteriaCard key={section.id} section={section} />
+									))}
+								</Stack>
+							</Grid.Col>
+						</Grid>
+					</Tabs.Panel>
+
+					<Tabs.Panel value='changeLog' pt='md'>
+						<div>Change log — demo not yet built.</div>
+					</Tabs.Panel>
+				</Tabs>
 			</Stack>
 		</ContentContainer>
 	);
