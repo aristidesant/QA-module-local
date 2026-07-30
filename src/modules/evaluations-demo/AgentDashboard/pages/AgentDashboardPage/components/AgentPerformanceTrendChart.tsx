@@ -22,9 +22,10 @@ const AgentPerformanceTrendChart: React.FC<AgentPerformanceTrendChartProps> = ({
 			</Card.Section>
 
 			<Card.Section inheritPadding py='md'>
-				<Box style={{ height: 300 }}>
+				<Box style={{ width: '100%', height: 400, minHeight: 300 }}>
 					<LineChart
-						h={300}
+						w='100%'
+						h={400}
 						data={kpis.monthlyTrends}
 						dataKey='month'
 						series={[{ name: 'score', label: 'Score (%)', color: 'green' }]}
