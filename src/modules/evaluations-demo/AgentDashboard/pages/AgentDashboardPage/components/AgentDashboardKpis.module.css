@@ -1,0 +1,46 @@
+.kpisContainer {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	width: 100%;
+}
+
+.primaryRow {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-md);
+	width: 100%;
+}
+
+.secondaryRow {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-md);
+	width: 100%;
+}
+
+.kpiCol {
+	flex: 1 1 calc(25% - var(--mantine-spacing-md));
+	min-width: 250px;
+}
+
+.kpiCol3 {
+	flex: 1 1 calc(33.333% - var(--mantine-spacing-md));
+	min-width: 280px;
+}
+
+/* Responsive: Tablet */
+@media (max-width: 1200px) {
+	.kpiCol {
+		flex: 1 1 calc(50% - var(--mantine-spacing-md));
+	}
+}
+
+/* Responsive: Mobile */
+@media (max-width: 768px) {
+	.kpiCol,
+	.kpiCol3 {
+		flex: 1 1 100%;
+		min-width: 0;
+	}
+}
