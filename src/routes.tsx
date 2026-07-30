@@ -1117,7 +1117,7 @@ const router = createBrowserRouter([
 								),
 							},
 							{
-								path: 'role-preview/qa-campaigns/:campaignId/result/:resultId',
+								path: 'role-preview/qa-campaigns/:campaignId/result/:callId',
 								id: 'role-preview.qa-campaigns.result.detail',
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
