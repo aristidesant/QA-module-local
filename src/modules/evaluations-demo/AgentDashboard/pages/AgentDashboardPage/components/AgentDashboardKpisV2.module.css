@@ -1,0 +1,85 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	width: 100%;
+}
+
+.featuredRow {
+	width: 100%;
+}
+
+.secondaryRow {
+	width: 100%;
+}
+
+.metricCard {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	padding: var(--mantine-spacing-md);
+	border-radius: var(--mantine-radius-md);
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+	border: 1px solid light-dark(
+		var(--mantine-color-gray-2),
+		var(--mantine-color-dark-5)
+	);
+	transition: all 0.2s ease;
+}
+
+.metricCard:hover {
+	border-color: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
+	);
+	box-shadow: var(--mantine-shadow-sm);
+}
+
+.metric-large {
+	padding: var(--mantine-spacing-lg);
+	min-height: 140px;
+	justify-content: center;
+}
+
+.metric-small {
+	padding: var(--mantine-spacing-md);
+	min-height: 110px;
+	justify-content: center;
+}
+
+.metricLabel {
+	font-weight: 600;
+	color: light-dark(
+		var(--mantine-color-gray-6),
+		var(--mantine-color-dark-2)
+	);
+	text-transform: uppercase;
+	letter-spacing: 0.5px;
+	display: block;
+}
+
+.metricValue {
+	font-size: 2rem;
+	font-weight: 700;
+	color: light-dark(
+		var(--mantine-color-dark-9),
+		var(--mantine-color-dark-0)
+	);
+	line-height: 1.2;
+}
+
+.metric-large .metricValue {
+	font-size: 3rem;
+}
+
+.metricSubtitle {
+	color: light-dark(
+		var(--mantine-color-gray-5),
+		var(--mantine-color-dark-3)
+	);
+	font-size: 0.75rem;
+	margin-top: auto;
+}

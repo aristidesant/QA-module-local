@@ -1,7 +1,7 @@
 import React from 'react';
 import { Stack, Text, Title } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
-import AgentDashboardKpis from './components/AgentDashboardKpis';
+import AgentDashboardKpisV2 from './components/AgentDashboardKpisV2';
 import AgentPerformanceTrendChart from './components/AgentPerformanceTrendChart';
 import { DEMO_AGENT_KPIS } from '../../mockData';
 import styles from './AgentDashboardPage.module.css';
@@ -20,7 +20,7 @@ const AgentDashboardPage: React.FC = () => {
 				</div>
 
 				<div className={styles.kpiSection}>
-					<AgentDashboardKpis kpis={DEMO_AGENT_KPIS} />
+					<AgentDashboardKpisV2 kpis={DEMO_AGENT_KPIS} />
 				</div>
 
 				<AgentPerformanceTrendChart kpis={DEMO_AGENT_KPIS} />
