@@ -62,6 +62,14 @@ export const DEMO_AGENT_CALLS: DemoAgentCall[] = [
 			{ speaker: 'agent', text: 'Thank you for calling, how can I help you today?', timestamp: 0 },
 			{ speaker: 'customer', text: 'Hi, I have a question about my order', timestamp: 8 },
 			{ speaker: 'agent', text: 'I would be happy to help. Let me look that up for you.', timestamp: 15 },
+			{ speaker: 'customer', text: 'It was supposed to arrive yesterday', timestamp: 22 },
+			{ speaker: 'agent', text: 'Let me check the tracking for you. Can I have your order number?', timestamp: 30 },
+			{ speaker: 'customer', text: 'Sure, it\'s ORD-2026-12345', timestamp: 35 },
+			{ speaker: 'agent', text: 'Thank you. I see it was delayed in transit but should arrive today.', timestamp: 45 },
+			{ speaker: 'customer', text: 'Great, thank you for checking!', timestamp: 55 },
+			{ speaker: 'agent', text: 'Is there anything else I can help you with?', timestamp: 62 },
+			{ speaker: 'customer', text: 'No, that\'s all. Thank you!', timestamp: 68 },
+			{ speaker: 'agent', text: 'Thank you for calling. Have a great day!', timestamp: 75 },
 		],
 		evaluationDetails: [
 			{
@@ -69,6 +77,42 @@ export const DEMO_AGENT_CALLS: DemoAgentCall[] = [
 				items: [
 					{ name: 'Agent greeted within 5 seconds', score: 10, maxPoints: 10 },
 					{ name: 'Used professional tone', score: 10, maxPoints: 10 },
+					{ name: 'Offered specific help', score: 8, maxPoints: 10 },
+				],
+			},
+			{
+				section: 'Communication',
+				items: [
+					{ name: 'Spoke clearly and at appropriate pace', score: 10, maxPoints: 10 },
+					{ name: 'Used active listening techniques', score: 9, maxPoints: 10 },
+					{ name: 'Avoided jargon or explained terms', score: 10, maxPoints: 10 },
+					{ name: 'Asked clarifying questions', score: 10, maxPoints: 10 },
+				],
+			},
+			{
+				section: 'Problem Resolution',
+				items: [
+					{ name: 'Understood customer issue accurately', score: 10, maxPoints: 10 },
+					{ name: 'Provided effective solution', score: 9, maxPoints: 10 },
+					{ name: 'Offered proactive assistance', score: 8, maxPoints: 10 },
+					{ name: 'Verified resolution satisfaction', score: 9, maxPoints: 10 },
+				],
+			},
+			{
+				section: 'Compliance & Policies',
+				items: [
+					{ name: 'Followed company policies', score: 10, maxPoints: 10 },
+					{ name: 'Protected customer information', score: 10, maxPoints: 10 },
+					{ name: 'Documented call appropriately', score: 10, maxPoints: 10 },
+					{ name: 'Proper call closing procedure', score: 10, maxPoints: 10 },
+				],
+			},
+			{
+				section: 'Customer Engagement',
+				items: [
+					{ name: 'Demonstrated empathy', score: 9, maxPoints: 10 },
+					{ name: 'Maintained positive tone', score: 10, maxPoints: 10 },
+					{ name: 'Built customer rapport', score: 8, maxPoints: 10 },
 				],
 			},
 		],
