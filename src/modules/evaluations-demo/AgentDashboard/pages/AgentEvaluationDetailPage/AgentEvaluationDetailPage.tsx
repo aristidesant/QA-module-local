@@ -173,7 +173,7 @@ const AgentEvaluationDetailPage: React.FC = () => {
 						<Tabs.List>
 							<Tabs.Tab value='general'>General</Tabs.Tab>
 							<Tabs.Tab value='changeLog' leftSection={<IconGitBranch size={16} />}>
-								Change Log
+								Disputes
 							</Tabs.Tab>
 						</Tabs.List>
 						<Button
