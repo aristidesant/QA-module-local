@@ -8,7 +8,7 @@ import styles from './AgentDashboardPage.module.css';
 
 const AgentDashboardPage: React.FC = () => {
 	return (
-		<ContentContainer>
+		<ContentContainer contentWidth='full'>
 			<Stack gap='lg' className={styles.container}>
 				<div className={styles.header}>
 					<Title order={1} className={styles.headerTitle}>
