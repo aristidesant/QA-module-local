@@ -9,3 +9,22 @@
 	background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
 	border-radius: var(--mantine-radius-md);
 }
+
+.tabsRow {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	width: 100%;
+}
+
+.callInfoRow {
+	display: flex;
+	gap: var(--mantine-spacing-sm);
+	align-items: center;
+}
+
+.callInfoIcon {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}

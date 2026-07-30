@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useParams, useNavigate } from 'react-router';
 import {
 	Tabs,
@@ -6,8 +6,11 @@ import {
 	Stack,
 	Button,
 	Group,
+	Drawer,
+	Select,
+	Textarea,
 } from '@mantine/core';
-import { IconMessageCircle, IconEdit, IconGitBranch, IconDownload, IconMicrophone } from '@tabler/icons-react';
+import { IconMessageCircle, IconGitBranch, IconDownload, IconMicrophone } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import { DEMO_AGENT_CALLS } from '../../mockData';
@@ -21,6 +24,10 @@ import styles from './AgentEvaluationDetailPage.module.css';
 const AgentEvaluationDetailPage: React.FC = () => {
 	const { callId } = useParams();
 	const navigate = useNavigate();
+	const [drawerOpened, setDrawerOpened] = useState(false);
+	const [selectedGroup, setSelectedGroup] = useState<string | null>(null);
+	const [selectedItem, setSelectedItem] = useState<string | null>(null);
+	const [comments, setComments] = useState('');
 
 	const call = useMemo(
 		() => DEMO_AGENT_CALLS.find((c) => c.id === callId),
@@ -169,7 +176,12 @@ const AgentEvaluationDetailPage: React.FC = () => {
 								Change Log
 							</Tabs.Tab>
 						</Tabs.List>
-						<Button color='green' leftSection={<IconMessageCircle size={16} />} ml='auto'>
+						<Button
+							color='green'
+							leftSection={<IconMessageCircle size={16} />}
+							ml='auto'
+							onClick={() => setDrawerOpened(true)}
+						>
 							Submit Dispute
 						</Button>
 					</div>
@@ -198,7 +210,7 @@ const AgentEvaluationDetailPage: React.FC = () => {
 										</div>
 									</SectionCard>
 
-									<MockAudioPlayerBar durationSeconds={call.duration} />
+									<MockAudioPlayerBar durationSeconds={call.durationSeconds} />
 
 									<SectionCard
 										title={`Transcript · ${transcriptTurns.length} turns`}
@@ -232,6 +244,88 @@ const AgentEvaluationDetailPage: React.FC = () => {
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>
+
+			<Drawer
+				opened={drawerOpened}
+				onClose={() => {
+					setDrawerOpened(false);
+					setSelectedGroup(null);
+					setSelectedItem(null);
+					setComments('');
+				}}
+				title='Submit Dispute'
+				position='right'
+				size='md'
+			>
+				<Stack gap='md'>
+					<Select
+						label='Select Evaluation Group'
+						placeholder='Choose a group to dispute'
+						data={criteriaSections.map((section) => ({
+							value: section.id,
+							label: section.name,
+						}))}
+						value={selectedGroup}
+						onChange={setSelectedGroup}
+						searchable
+						clearable
+					/>
+
+					{selectedGroup && (
+						<Select
+							label='Select Item'
+							placeholder='Choose a specific item to dispute'
+							data={
+								criteriaSections
+									.find((s) => s.id === selectedGroup)
+									?.subCriteria.map((item) => ({
+										value: item.id,
+										label: item.description,
+									})) || []
+							}
+							value={selectedItem}
+							onChange={setSelectedItem}
+							searchable
+							clearable
+						/>
+					)}
+
+					<Textarea
+						label='Additional Comments'
+						placeholder='Add any comments or context for your dispute'
+						minRows={4}
+						value={comments}
+						onChange={(e) => setComments(e.currentTarget.value)}
+					/>
+
+					<Group justify='flex-end' gap='sm'>
+						<Button
+							variant='default'
+							onClick={() => {
+								setDrawerOpened(false);
+								setSelectedGroup(null);
+								setSelectedItem(null);
+								setComments('');
+							}}
+						>
+							Cancel
+						</Button>
+						<Button
+							color='green'
+							disabled={!selectedGroup || !selectedItem}
+							onClick={() => {
+								// Handle dispute submission
+								setDrawerOpened(false);
+								setSelectedGroup(null);
+								setSelectedItem(null);
+								setComments('');
+							}}
+						>
+							Submit Dispute
+						</Button>
+					</Group>
+				</Stack>
+			</Drawer>
 		</ContentContainer>
 	);
 };
