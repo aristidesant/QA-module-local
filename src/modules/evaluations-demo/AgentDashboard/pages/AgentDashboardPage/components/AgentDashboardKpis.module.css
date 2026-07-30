@@ -21,33 +21,33 @@
 
 .kpiCol {
 	flex: 1 1 100%;
-	min-width: 0;
+	min-width: 200px;
 }
 
 .kpiCol3 {
 	flex: 1 1 100%;
-	min-width: 0;
+	min-width: 200px;
 }
 
 /* Responsive: Large Desktop - 4 cards per row */
 @media (min-width: 1300px) {
 	.kpiCol {
-		flex: 1 1 calc(25% - 12px);
+		flex: 1 1 22%;
 	}
 
 	.kpiCol3 {
-		flex: 1 1 calc(33.333% - 12px);
+		flex: 1 1 31%;
 	}
 }
 
 /* Responsive: Desktop - 2 cards per row */
 @media (min-width: 900px) and (max-width: 1299px) {
 	.kpiCol {
-		flex: 1 1 calc(50% - 12px);
+		flex: 1 1 48%;
 	}
 
 	.kpiCol3 {
-		flex: 1 1 calc(50% - 12px);
+		flex: 1 1 48%;
 	}
 }
 
