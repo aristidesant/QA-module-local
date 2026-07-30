@@ -34,19 +34,8 @@ export const useEvaluationColumns = (): BaseTableColumnDef<DemoAgentCall>[] => {
 			cell: ({ row }) => <Text size='sm'>{row.original.campaign}</Text>,
 		},
 		{
-			accessorKey: 'duration',
-			header: 'Duration',
-			cell: ({ row }) => (
-				<Text size='sm'>
-					{Math.floor(row.original.duration / 60)}:
-					{String(row.original.duration % 60).padStart(2, '0')}
-				</Text>
-			),
-			size: 100,
-		},
-		{
 			accessorKey: 'score',
-			header: 'Score',
+			header: 'QA Score',
 			cell: ({ row }) => (
 				<Badge
 					color={getScoreBadgeColor(row.original.score)}
@@ -58,29 +47,38 @@ export const useEvaluationColumns = (): BaseTableColumnDef<DemoAgentCall>[] => {
 			size: 100,
 		},
 		{
-			accessorKey: 'evaluationType',
-			header: 'Type',
-			cell: ({ row }) => (
-				<Badge size='sm' variant='light'>
-					{row.original.evaluationType}
-				</Badge>
-			),
-			size: 130,
+			accessorKey: 'sentimentScore',
+			header: 'Sentiment Score',
+			cell: ({ row }) => {
+				const score = (row.original as any).sentimentScore;
+				return (
+					<Badge
+						color={score ? undefined : 'gray'}
+						variant='light'
+						size='sm'
+					>
+						{score || 'N/A'}
+					</Badge>
+				);
+			},
+			size: 120,
 		},
 		{
-			accessorKey: 'result',
-			header: 'Result',
-			cell: ({ row }) => (
-				<Badge
-					color={row.original.result === 'passed' ? 'green' : 'red'}
-					variant='light'
-					size='sm'
-				>
-					{row.original.result.charAt(0).toUpperCase() +
-						row.original.result.slice(1)}
-				</Badge>
-			),
-			size: 100,
+			accessorKey: 'complianceScore',
+			header: 'Compliance Score',
+			cell: ({ row }) => {
+				const score = (row.original as any).complianceScore;
+				return (
+					<Badge
+						color={score ? undefined : 'gray'}
+						variant='light'
+						size='sm'
+					>
+						{score || 'N/A'}
+					</Badge>
+				);
+			},
+			size: 130,
 		},
 		{
 			id: 'disputed',

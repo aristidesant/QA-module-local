@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Stack, Title, Text } from '@mantine/core';
+import { Stack, Title, Text, Group, Select } from '@mantine/core';
 import { useNavigate } from 'react-router';
 import ContentContainer from '~/components/ContentContainer';
 import BaseTable from '~/components/BaseTable';
@@ -14,12 +14,13 @@ const AgentEvaluationsPage: React.FC = () => {
 	const columns = useEvaluationColumns();
 	const [filters, setFilters] = useState<EvaluationFilters>({
 		campaigns: [],
-		period: 'weekly',
+		startDate: null,
+		endDate: null,
 		scoreMin: 0,
 		scoreMax: 100,
 		dispute: 'all',
-		result: 'all',
 	});
+	const [pageSize, setPageSize] = useState(10);
 
 	const uniqueCampaigns = useMemo(
 		() => [...new Set(DEMO_AGENT_CALLS.map((call) => call.campaign))],
@@ -48,10 +49,6 @@ const AgentEvaluationsPage: React.FC = () => {
 				return false;
 			}
 
-			if (filters.result !== 'all' && call.result !== filters.result) {
-				return false;
-			}
-
 			return true;
 		});
 	}, [filters]);
@@ -75,21 +72,37 @@ const AgentEvaluationsPage: React.FC = () => {
 					onSearch={handleSearch}
 				/>
 
+				<Group justify='space-between' align='center'>
+					<Text size='sm' c='dimmed'>
+						Showing {filteredCalls.length} of {DEMO_AGENT_CALLS.length} calls
+					</Text>
+					<Select
+						placeholder='Results per page'
+						data={[
+							{ value: '5', label: '5' },
+							{ value: '10', label: '10' },
+							{ value: '25', label: '25' },
+							{ value: '50', label: '50' },
+						]}
+						value={pageSize.toString()}
+						onChange={(value) => setPageSize(value ? parseInt(value, 10) : 10)}
+						w={120}
+					/>
+				</Group>
+
 				<BaseTable
 					data={filteredCalls}
 					columns={columns}
 					getRowId={(call) => call.id}
 					density='compact'
 					filterMode='client'
+					enablePagination
+					showPaginationControls
+					pageSize={pageSize}
 					onRowClick={(call) =>
 						navigate(`/role-preview/agent-dashboard/evaluations/${call.id}`)
 					}
 				/>
-
-				<Text size='sm' c='dimmed'>
-					Showing {filteredCalls.length} of {DEMO_AGENT_CALLS.length}{' '}
-					calls
-				</Text>
 			</Stack>
 		</ContentContainer>
 	);

@@ -7,16 +7,17 @@ import {
 	Select,
 	Stack,
 	Text,
+	Input,
 } from '@mantine/core';
 import { IconX, IconSearch } from '@tabler/icons-react';
 
 export interface EvaluationFilters {
 	campaigns: string[];
-	period: 'weekly' | 'monthly' | 'custom';
+	startDate: Date | null;
+	endDate: Date | null;
 	scoreMin: number;
 	scoreMax: number;
 	dispute: 'all' | 'yes' | 'no';
-	result: 'all' | 'passed' | 'failed';
 }
 
 interface EvaluationFiltersBarProps {
@@ -34,20 +35,20 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 }) => {
 	const hasActiveFilters =
 		filters.campaigns.length > 0 ||
-		filters.period !== 'weekly' ||
+		filters.startDate !== null ||
+		filters.endDate !== null ||
 		filters.scoreMin > 0 ||
 		filters.scoreMax < 100 ||
-		filters.dispute !== 'all' ||
-		filters.result !== 'all';
+		filters.dispute !== 'all';
 
 	const handleReset = () => {
 		onFiltersChange({
 			campaigns: [],
-			period: 'weekly',
+			startDate: null,
+			endDate: null,
 			scoreMin: 0,
 			scoreMax: 100,
 			dispute: 'all',
-			result: 'all',
 		});
 	};
 
@@ -55,7 +56,7 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 		<Stack gap='md' p='md' style={{
 			border: '1px solid var(--mantine-color-gray-3)',
 			borderRadius: 'var(--mantine-radius-md)',
-			backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))',
+			backgroundColor: '#ffffff',
 		}}>
 			<Group justify='space-between' align='center'>
 				<Text fw={600}>Filters</Text>
@@ -71,7 +72,7 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 				)}
 			</Group>
 
-			<Group grow>
+			<Group grow align='flex-end'>
 				<MultiSelect
 					label='Campaign'
 					placeholder='Select campaigns'
@@ -84,20 +85,30 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 					clearable
 				/>
 
-				<Select
-					label='Period'
-					data={[
-						{ value: 'weekly', label: 'Weekly' },
-						{ value: 'monthly', label: 'Monthly' },
-						{ value: 'custom', label: 'Custom' },
-					]}
-					value={filters.period}
-					onChange={(value) =>
+				<Input
+					label='Start Date'
+					type='date'
+					value={filters.startDate ? filters.startDate.toISOString().split('T')[0] : ''}
+					onChange={(e) => {
+						const dateStr = e.currentTarget.value;
 						onFiltersChange({
 							...filters,
-							period: (value as any) || 'weekly',
-						})
-					}
+							startDate: dateStr ? new Date(dateStr) : null,
+						});
+					}}
+				/>
+
+				<Input
+					label='End Date'
+					type='date'
+					value={filters.endDate ? filters.endDate.toISOString().split('T')[0] : ''}
+					onChange={(e) => {
+						const dateStr = e.currentTarget.value;
+						onFiltersChange({
+							...filters,
+							endDate: dateStr ? new Date(dateStr) : null,
+						});
+					}}
 				/>
 
 				<NumberInput
@@ -128,33 +139,19 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 				/>
 			</Group>
 
-			<Group grow>
-				<Select
-					label='Dispute Status'
-					data={[
-						{ value: 'all', label: 'All' },
-						{ value: 'yes', label: 'Disputed Only' },
-						{ value: 'no', label: 'Not Disputed' },
-					]}
-					value={filters.dispute}
-					onChange={(value) =>
-						onFiltersChange({ ...filters, dispute: (value as any) || 'all' })
-					}
-				/>
-
-				<Select
-					label='Result'
-					data={[
-						{ value: 'all', label: 'All Results' },
-						{ value: 'passed', label: 'Passed' },
-						{ value: 'failed', label: 'Failed' },
-					]}
-					value={filters.result}
-					onChange={(value) =>
-						onFiltersChange({ ...filters, result: (value as any) || 'all' })
-					}
-				/>
-			</Group>
+			<Select
+				label='Dispute Status'
+				data={[
+					{ value: 'all', label: 'All' },
+					{ value: 'yes', label: 'Disputed Only' },
+					{ value: 'no', label: 'Not Disputed' },
+				]}
+				value={filters.dispute}
+				onChange={(value) =>
+					onFiltersChange({ ...filters, dispute: (value as any) || 'all' })
+				}
+				w={300}
+			/>
 
 			<Group justify='flex-end'>
 				<Button
