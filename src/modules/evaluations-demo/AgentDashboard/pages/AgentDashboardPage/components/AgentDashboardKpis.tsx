@@ -9,9 +9,9 @@ interface AgentDashboardKpisProps {
 
 const AgentDashboardKpis: React.FC<AgentDashboardKpisProps> = ({ kpis }) => {
 	return (
-		<Grid gap='md'>
+		<Grid gutter='md' grow>
 			{/* Primary 4 KPIs - Top Row */}
-			<Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+			<Grid.Col span={{ base: 12, xs: 6, sm: 6, md: 6, lg: 3, xl: 3 }}>
 				<KpiCard
 					title='Weekly Call Volume'
 					value={kpis.totalCallsPerformed.toString()}
@@ -20,7 +20,7 @@ const AgentDashboardKpis: React.FC<AgentDashboardKpisProps> = ({ kpis }) => {
 				/>
 			</Grid.Col>
 
-			<Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+			<Grid.Col span={{ base: 12, xs: 6, sm: 6, md: 6, lg: 3, xl: 3 }}>
 				<KpiCard
 					title='Avg Call Score'
 					value={`${kpis.avgCallScore}%`}
@@ -29,7 +29,7 @@ const AgentDashboardKpis: React.FC<AgentDashboardKpisProps> = ({ kpis }) => {
 				/>
 			</Grid.Col>
 
-			<Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+			<Grid.Col span={{ base: 12, xs: 6, sm: 6, md: 6, lg: 3, xl: 3 }}>
 				<KpiCard
 					title='Pass Rate'
 					value={`${kpis.weeklyPerformance}%`}
@@ -38,7 +38,7 @@ const AgentDashboardKpis: React.FC<AgentDashboardKpisProps> = ({ kpis }) => {
 				/>
 			</Grid.Col>
 
-			<Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
+			<Grid.Col span={{ base: 12, xs: 6, sm: 6, md: 6, lg: 3, xl: 3 }}>
 				<KpiCard
 					title='Effective Contacts'
 					value={kpis.effectiveContactsCount.toString()}
@@ -48,7 +48,7 @@ const AgentDashboardKpis: React.FC<AgentDashboardKpisProps> = ({ kpis }) => {
 			</Grid.Col>
 
 			{/* Secondary 3 KPIs - Bottom Row */}
-			<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+			<Grid.Col span={{ base: 12, xs: 12, sm: 6, md: 4, lg: 4, xl: 4 }}>
 				<KpiCard
 					title='Active Campaigns'
 					value={kpis.totalCampaigns.toString()}
@@ -57,7 +57,7 @@ const AgentDashboardKpis: React.FC<AgentDashboardKpisProps> = ({ kpis }) => {
 				/>
 			</Grid.Col>
 
-			<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+			<Grid.Col span={{ base: 12, xs: 12, sm: 6, md: 4, lg: 4, xl: 4 }}>
 				<KpiCard
 					title='Quality Trend'
 					value='+2%'
@@ -66,7 +66,7 @@ const AgentDashboardKpis: React.FC<AgentDashboardKpisProps> = ({ kpis }) => {
 				/>
 			</Grid.Col>
 
-			<Grid.Col span={{ base: 12, sm: 12, md: 4 }}>
+			<Grid.Col span={{ base: 12, xs: 12, sm: 12, md: 4, lg: 4, xl: 4 }}>
 				<KpiCard
 					title='Last Evaluation'
 					value='2 hrs ago'
