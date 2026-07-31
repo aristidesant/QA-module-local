@@ -1,7 +1,6 @@
 import {
 	ActionIcon,
 	Alert,
-	Badge,
 	Button,
 	Group,
 	Stack,
@@ -13,8 +12,6 @@ import {
 	IconArrowRight,
 	IconGitBranch,
 	IconRefresh,
-	IconRobot,
-	IconUserCheck,
 } from '@tabler/icons-react';
 import type { SortingState } from '@tanstack/react-table';
 import { useCallback, useState } from 'react';
@@ -26,37 +23,16 @@ import EmptyState from '~/components/EmptyState';
 import PaginationControls from '~/components/PaginationControls';
 import SectionCard from '~/components/SectionCard';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { EVALUATOR_TYPE_COLORS } from '~/modules/qa/constants/badgeColors';
 import { useDateFormatter } from '~/modules/qa/hooks/useFormatters';
 import { useListPageState } from '~/modules/qa/hooks/useListPageState';
 import type {
 	EvaluationDisputeListQueryParams,
 	EvaluationDisputeSummary,
-	EvaluatorType,
 } from '~/models/qa';
 import { useDisputesQuery } from '~/queries/qa/disputesQueries';
-import { formatPoints } from '~/modules/qa/utils/format';
 import { getErrorMessage } from '~/utils/httpClient';
 import DisputesFilters from './DisputesFilters';
 import classes from './DisputesListPage.module.css';
-
-function EvaluatorTypeBadge({ type }: { type?: EvaluatorType | null }) {
-	const { t } = useTranslation('qa.disputes');
-	if (!type) return null;
-
-	const TypeIcon = type === 'AI' ? IconRobot : IconUserCheck;
-
-	return (
-		<Badge
-			color={EVALUATOR_TYPE_COLORS[type]}
-			leftSection={<TypeIcon size={12} />}
-			size='xs'
-			variant='light'
-		>
-			{t(`list.evaluatorTypes.${type.toLowerCase()}`)}
-		</Badge>
-	);
-}
 
 export default function DisputesListPage() {
 	const { t } = useTranslation('qa.disputes');
@@ -182,27 +158,12 @@ export default function DisputesListPage() {
 			),
 		},
 		{
-			id: 'originalEvaluation',
-			header: 'Original Evaluation',
-			enableSorting: false,
-			cell: ({ row }) => (
-				<Stack gap='4'>
-					<Text size='sm'>
-						{row.original.sourceFormName ??
-							row.original.resultingFormName ??
-							t('list.chain.unknown')}
-					</Text>
-					<EvaluatorTypeBadge type={row.original.sourceEvaluatorType} />
-				</Stack>
-			),
-		},
-		{
-			id: 'disputedBy',
-			header: 'Disputed By',
+			id: 'evaluation',
+			header: 'Evaluation',
 			enableSorting: false,
 			cell: ({ row }) => (
 				<Text size='sm'>
-					{row.original.disputedByUserName ?? t('list.states.errorTitle')}
+					{row.original.sourceFormName ?? t('list.chain.unknown')}
 				</Text>
 			),
 		},
@@ -214,20 +175,6 @@ export default function DisputesListPage() {
 				<Text className={classes.reasonCell} lineClamp={2} size='sm'>
 					{row.original.reason}
 				</Text>
-			),
-		},
-		{
-			accessorKey: 'scoreDelta',
-			header: 'Score Change',
-			enableSorting: true,
-			cell: ({ row }) => (
-				<Badge
-					color={row.original.scoreDelta >= 0 ? 'green' : 'red'}
-					variant='light'
-				>
-					{row.original.scoreDelta >= 0 ? '▲' : '▼'}{' '}
-					{formatPoints(Math.abs(row.original.scoreDelta))}
-				</Badge>
 			),
 		},
 		{
