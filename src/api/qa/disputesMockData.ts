@@ -37,6 +37,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		scoreDelta: 13,
 		resultingVersion: 2,
 		createdAt: '2026-07-28T14:32:00Z',
+		status: 'approved',
 	},
 	{
 		id: 1002,
@@ -74,6 +75,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		scoreDelta: 10,
 		resultingVersion: 2,
 		createdAt: '2026-07-27T10:15:00Z',
+		status: 'approved',
 	},
 	{
 		id: 1003,
@@ -111,6 +113,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		scoreDelta: 17,
 		resultingVersion: 2,
 		createdAt: '2026-07-26T09:45:00Z',
+		status: 'open',
 	},
 	{
 		id: 1004,
@@ -148,6 +151,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		scoreDelta: 15,
 		resultingVersion: 2,
 		createdAt: '2026-07-25T16:20:00Z',
+		status: 'rejected',
 	},
 	{
 		id: 1005,
@@ -185,6 +189,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		scoreDelta: 14,
 		resultingVersion: 2,
 		createdAt: '2026-07-24T11:30:00Z',
+		status: 'approved',
 	},
 	{
 		id: 1006,
@@ -222,6 +227,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		scoreDelta: 14,
 		resultingVersion: 2,
 		createdAt: '2026-07-23T13:45:00Z',
+		status: 'open',
 	},
 	{
 		id: 1007,
@@ -259,6 +265,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		scoreDelta: 11,
 		resultingVersion: 2,
 		createdAt: '2026-07-22T08:00:00Z',
+		status: 'approved',
 	},
 	{
 		id: 1008,
@@ -296,6 +303,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		scoreDelta: 15,
 		resultingVersion: 2,
 		createdAt: '2026-07-21T15:30:00Z',
+		status: 'open',
 	},
 	{
 		id: 1009,
@@ -333,6 +341,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		scoreDelta: 14,
 		resultingVersion: 2,
 		createdAt: '2026-07-20T10:15:00Z',
+		status: 'rejected',
 	},
 	{
 		id: 1010,
@@ -370,6 +379,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		scoreDelta: 15,
 		resultingVersion: 2,
 		createdAt: '2026-07-19T12:00:00Z',
+		status: 'approved',
 	},
 ];
 

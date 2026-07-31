@@ -1,6 +1,7 @@
 import {
 	ActionIcon,
 	Alert,
+	Badge,
 	Button,
 	Group,
 	Stack,
@@ -156,6 +157,24 @@ export default function DisputesListPage() {
 						'—'}
 				</Text>
 			),
+		},
+		{
+			id: 'status',
+			header: 'Status',
+			enableSorting: false,
+			cell: ({ row }) => {
+				const statusColors: Record<string, string> = {
+					open: 'blue',
+					approved: 'green',
+					rejected: 'red',
+				};
+				return (
+					<Badge color={statusColors[row.original.status]} variant='light'>
+						{row.original.status.charAt(0).toUpperCase() +
+							row.original.status.slice(1)}
+					</Badge>
+				);
+			},
 		},
 		{
 			id: 'evaluation',

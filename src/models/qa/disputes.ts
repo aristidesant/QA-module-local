@@ -43,6 +43,7 @@ export interface EvaluationDisputeSummary {
 	scoreDelta: number;
 	resultingVersion: number;
 	createdAt: string;
+	status: 'open' | 'approved' | 'rejected';
 }
 
 export interface EvaluationDisputeDetailResponse extends EvaluationDisputeSummary {
