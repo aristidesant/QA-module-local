@@ -3,16 +3,17 @@ import {
 	Badge,
 	Button,
 	Divider,
+	Grid,
 	Group,
 	Loader,
 	Stack,
 	Text,
-	Box,
-	Paper,
 } from '@mantine/core';
 import {
 	IconAlertTriangle,
+	IconDownload,
 	IconGitBranch,
+	IconMicrophone,
 	IconRefresh,
 	IconRobot,
 	IconUserCheck,
@@ -28,6 +29,8 @@ import { useDisputeQuery } from '~/queries/qa/disputesQueries';
 import { getAgentDisplayName } from '~/modules/qa/utils/agent';
 import { formatPoints, formatScorePct } from '~/modules/qa/utils/format';
 import { getErrorMessage } from '~/utils/httpClient';
+import MockAudioPlayerBar from '~/modules/evaluations-demo/components/MockAudioPlayerBar';
+import DemoTranscript from '~/modules/evaluations-demo/components/DemoTranscript';
 import classes from './DisputeDetailPage.module.css';
 
 export default function DisputeDetailPage() {
@@ -98,243 +101,258 @@ export default function DisputeDetailPage() {
 				) : null}
 
 				{dispute ? (
-					<>
-						{/* Call Player and Transcript */}
-						<SectionCard icon={IconGitBranch} title='Call Recording'>
+					<Grid gap='md'>
+						{/* Left Column - Call Info, Player, and Transcript */}
+						<Grid.Col span={{ base: 12, lg: 4 }}>
 							<Stack gap='md'>
-								{/* Call Player Placeholder */}
-								<Paper
-									className={classes.callPlayerPlaceholder}
-									radius='md'
-									withBorder
-									p='md'
+								{/* Call Info */}
+								<SectionCard>
+									<div className={classes.callInfoRow}>
+										<div className={classes.callInfoIcon}>
+											<IconMicrophone size={20} />
+										</div>
+										<div>
+											<Text fw={600}>
+												{dispute.sourceInteractionRef ?? 'CALL-001'}
+											</Text>
+											<Text size='xs' c='dimmed'>
+												{dateFormatter.format(new Date(dispute.createdAt))}
+											</Text>
+										</div>
+									</div>
+								</SectionCard>
+
+								{/* Audio Player */}
+								<MockAudioPlayerBar durationSeconds={330} />
+
+								{/* Transcript */}
+								<SectionCard
+									title={`Transcript · 3 turns`}
+									headerActions={
+										<Button
+											variant='subtle'
+											size='xs'
+											leftSection={<IconDownload size={14} />}
+										>
+											Download
+										</Button>
+									}
 								>
-									<Group justify='center'>
-										<Text size='sm' c='dimmed'>
-											[Call Player -{' '}
-											{dispute.sourceInteractionRef ?? 'CALL-001'}]
-										</Text>
-									</Group>
-								</Paper>
-
-								{/* Transcript Section */}
-								<Box>
-									<Text fw={600} size='sm' mb='xs'>
-										Transcript
-									</Text>
-									<Paper
-										className={classes.transcriptContainer}
-										radius='md'
-										withBorder
-										p='md'
-									>
-										<Stack gap='sm'>
-											<Group>
-												<Badge size='sm' color='blue'>
-													Agent
-												</Badge>
-												<Text size='sm'>
-													Good morning, thank you for calling. How can I help
-													you today?
-												</Text>
-											</Group>
-											<Group>
-												<Badge size='sm' color='gray'>
-													Customer
-												</Badge>
-												<Text size='sm'>
-													Hi, I have a question about my account.
-												</Text>
-											</Group>
-											<Group>
-												<Badge size='sm' color='blue'>
-													Agent
-												</Badge>
-												<Text size='sm'>
-													Of course, I'd be happy to assist. Can you provide
-													your account number?
-												</Text>
-											</Group>
-										</Stack>
-									</Paper>
-								</Box>
+									<DemoTranscript
+										turns={[
+											{
+												id: 't1',
+												role: 'agent',
+												timestamp: '0:00',
+												text: 'Good morning! Thank you for calling. How can I help you today?',
+											},
+											{
+												id: 't2',
+												role: 'customer',
+												timestamp: '0:07',
+												text: 'Hi, I have a question about my account.',
+											},
+											{
+												id: 't3',
+												role: 'agent',
+												timestamp: '0:14',
+												text: "Of course, I'd be happy to assist. Can you provide your account number?",
+											},
+										]}
+									/>
+								</SectionCard>
 							</Stack>
-						</SectionCard>
+						</Grid.Col>
 
-						{/* Original Evaluation - Read Only */}
-						<SectionCard
-							icon={IconGitBranch}
-							title={t('detail.source.title')}
-							headerActions={
-								<Badge color='blue' variant='light'>
-									{t('detail.score.percent', {
-										percent: formatScorePct(dispute.source.overallScorePct),
-									})}
-								</Badge>
-							}
-						>
-							<Stack gap='sm'>
-								<Group gap='xs'>
-									<Badge
-										color={EVALUATOR_TYPE_COLORS[dispute.source.evaluatorType]}
-										leftSection={
-											dispute.source.evaluatorType === 'AI' ? (
-												<IconRobot size={12} />
-											) : (
-												<IconUserCheck size={12} />
-											)
-										}
-										variant='light'
-									>
-										{t(
-											`detail.evaluation.evaluatorTypes.${dispute.source.evaluatorType.toLowerCase()}`
-										)}
-									</Badge>
-									<Badge color='gray' variant='light'>
-										{t('detail.evaluation.version', {
-											version: dispute.source.version ?? 1,
-										})}
-									</Badge>
-								</Group>
-								<Text fw={700} size='sm'>
-									{dispute.source.formName}
-								</Text>
-								<Text c='dimmed' size='sm'>
-									{t('detail.evaluation.agent', {
-										name: dispute.source.agent
-											? getAgentDisplayName(dispute.source.agent)
-											: 'Unknown',
-									})}
-								</Text>
-								<Divider />
-								<Text size='sm'>{dispute.reason}</Text>
-							</Stack>
-						</SectionCard>
-
-						{/* Dispute Information */}
-						<SectionCard
-							icon={IconGitBranch}
-							title={t('detail.correction.title')}
-						>
-							<Stack gap='sm'>
-								<Group gap='xs'>
-									<Badge
-										color={dispute.scoreDelta >= 0 ? 'green' : 'red'}
-										variant='light'
-									>
-										{t('scoreDelta', {
-											delta: formatPoints(dispute.scoreDelta),
-										})}
-									</Badge>
-									<Badge color='blue' variant='light'>
-										{dateFormatter.format(new Date(dispute.createdAt))}
-									</Badge>
-								</Group>
-								<Text c='dimmed' size='sm'>
-									{t('detail.correction.disputedBy', { name: disputedByLabel })}
-								</Text>
-								<Divider />
-								<Group grow>
-									<Stack className={classes.scoreCell} gap={4}>
-										<Text c='dimmed' size='xs'>
-											{t('detail.summary.before')}
-										</Text>
-										<Text fw={700} size='lg'>
+						{/* Right Column - Evaluation Details */}
+						<Grid.Col span={{ base: 12, lg: 8 }}>
+							<Stack gap='md'>
+								{/* Original Evaluation - Read Only */}
+								<SectionCard
+									icon={IconGitBranch}
+									title={t('detail.source.title')}
+									headerActions={
+										<Badge color='blue' variant='light'>
 											{t('detail.score.percent', {
-												percent: formatScorePct(dispute.before.overallScorePct),
+												percent: formatScorePct(dispute.source.overallScorePct),
+											})}
+										</Badge>
+									}
+								>
+									<Stack gap='sm'>
+										<Group gap='xs'>
+											<Badge
+												color={
+													EVALUATOR_TYPE_COLORS[dispute.source.evaluatorType]
+												}
+												leftSection={
+													dispute.source.evaluatorType === 'AI' ? (
+														<IconRobot size={12} />
+													) : (
+														<IconUserCheck size={12} />
+													)
+												}
+												variant='light'
+											>
+												{t(
+													`detail.evaluation.evaluatorTypes.${dispute.source.evaluatorType.toLowerCase()}`
+												)}
+											</Badge>
+											<Badge color='gray' variant='light'>
+												{t('detail.evaluation.version', {
+													version: dispute.source.version ?? 1,
+												})}
+											</Badge>
+										</Group>
+										<Text fw={700} size='sm'>
+											{dispute.source.formName}
+										</Text>
+										<Text c='dimmed' size='sm'>
+											{t('detail.evaluation.agent', {
+												name: dispute.source.agent
+													? getAgentDisplayName(dispute.source.agent)
+													: 'Unknown',
 											})}
 										</Text>
-										<Text c='dimmed' size='xs'>
-											{t('detail.score.points', {
-												score: formatPoints(dispute.before.overallScore),
-												max: formatPoints(dispute.before.maxScore),
+										<Divider />
+										<Text size='sm'>{dispute.reason}</Text>
+									</Stack>
+								</SectionCard>
+
+								{/* Dispute Information */}
+								<SectionCard
+									icon={IconGitBranch}
+									title={t('detail.correction.title')}
+								>
+									<Stack gap='sm'>
+										<Group gap='xs'>
+											<Badge
+												color={dispute.scoreDelta >= 0 ? 'green' : 'red'}
+												variant='light'
+											>
+												{t('scoreDelta', {
+													delta: formatPoints(dispute.scoreDelta),
+												})}
+											</Badge>
+											<Badge color='blue' variant='light'>
+												{dateFormatter.format(new Date(dispute.createdAt))}
+											</Badge>
+										</Group>
+										<Text c='dimmed' size='sm'>
+											{t('detail.correction.disputedBy', {
+												name: disputedByLabel,
+											})}
+										</Text>
+										<Divider />
+										<Group grow>
+											<Stack className={classes.scoreCell} gap={4}>
+												<Text c='dimmed' size='xs'>
+													{t('detail.summary.before')}
+												</Text>
+												<Text fw={700} size='lg'>
+													{t('detail.score.percent', {
+														percent: formatScorePct(
+															dispute.before.overallScorePct
+														),
+													})}
+												</Text>
+												<Text c='dimmed' size='xs'>
+													{t('detail.score.points', {
+														score: formatPoints(dispute.before.overallScore),
+														max: formatPoints(dispute.before.maxScore),
+													})}
+												</Text>
+											</Stack>
+											<Stack className={classes.scoreCell} gap={4}>
+												<Text c='dimmed' size='xs'>
+													{t('detail.summary.after')}
+												</Text>
+												<Text fw={700} size='lg'>
+													{t('detail.score.percent', {
+														percent: formatScorePct(
+															dispute.after.overallScorePct
+														),
+													})}
+												</Text>
+												<Text c='dimmed' size='xs'>
+													{t('detail.score.points', {
+														score: formatPoints(dispute.after.overallScore),
+														max: formatPoints(dispute.after.maxScore),
+													})}
+												</Text>
+											</Stack>
+										</Group>
+									</Stack>
+								</SectionCard>
+
+								{hasVersionMismatch ? (
+									<Alert
+										color='yellow'
+										icon={<IconAlertTriangle size={16} />}
+										title={t('detail.states.versionMismatchTitle')}
+										variant='light'
+									>
+										{t('detail.states.versionMismatchDescription', {
+											nestedVersion: dispute.resulting.version,
+											auditVersion: dispute.resultingVersion,
+										})}
+									</Alert>
+								) : null}
+
+								{/* Resulting Evaluation */}
+								<SectionCard
+									icon={IconGitBranch}
+									title={t('detail.resulting.title')}
+									headerActions={
+										<Badge color='blue' variant='light'>
+											{t('detail.score.percent', {
+												percent: formatScorePct(
+													dispute.resulting.overallScorePct
+												),
+											})}
+										</Badge>
+									}
+								>
+									<Stack gap='sm'>
+										<Group gap='xs'>
+											<Badge
+												color={
+													EVALUATOR_TYPE_COLORS[dispute.resulting.evaluatorType]
+												}
+												leftSection={
+													dispute.resulting.evaluatorType === 'AI' ? (
+														<IconRobot size={12} />
+													) : (
+														<IconUserCheck size={12} />
+													)
+												}
+												variant='light'
+											>
+												{t(
+													`detail.evaluation.evaluatorTypes.${dispute.resulting.evaluatorType.toLowerCase()}`
+												)}
+											</Badge>
+											<Badge color='gray' variant='light'>
+												{t('detail.evaluation.version', {
+													version: dispute.resultingVersion,
+												})}
+											</Badge>
+										</Group>
+										<Text fw={700} size='sm'>
+											{dispute.resulting.formName}
+										</Text>
+										<Text c='dimmed' size='sm'>
+											{t('detail.evaluation.agent', {
+												name: dispute.resulting.agent
+													? getAgentDisplayName(dispute.resulting.agent)
+													: 'Unknown',
 											})}
 										</Text>
 									</Stack>
-									<Stack className={classes.scoreCell} gap={4}>
-										<Text c='dimmed' size='xs'>
-											{t('detail.summary.after')}
-										</Text>
-										<Text fw={700} size='lg'>
-											{t('detail.score.percent', {
-												percent: formatScorePct(dispute.after.overallScorePct),
-											})}
-										</Text>
-										<Text c='dimmed' size='xs'>
-											{t('detail.score.points', {
-												score: formatPoints(dispute.after.overallScore),
-												max: formatPoints(dispute.after.maxScore),
-											})}
-										</Text>
-									</Stack>
-								</Group>
+								</SectionCard>
 							</Stack>
-						</SectionCard>
-
-						{hasVersionMismatch ? (
-							<Alert
-								color='yellow'
-								icon={<IconAlertTriangle size={16} />}
-								title={t('detail.states.versionMismatchTitle')}
-								variant='light'
-							>
-								{t('detail.states.versionMismatchDescription', {
-									nestedVersion: dispute.resulting.version,
-									auditVersion: dispute.resultingVersion,
-								})}
-							</Alert>
-						) : null}
-
-						{/* Resulting Evaluation */}
-						<SectionCard
-							icon={IconGitBranch}
-							title={t('detail.resulting.title')}
-							headerActions={
-								<Badge color='blue' variant='light'>
-									{t('detail.score.percent', {
-										percent: formatScorePct(dispute.resulting.overallScorePct),
-									})}
-								</Badge>
-							}
-						>
-							<Stack gap='sm'>
-								<Group gap='xs'>
-									<Badge
-										color={
-											EVALUATOR_TYPE_COLORS[dispute.resulting.evaluatorType]
-										}
-										leftSection={
-											dispute.resulting.evaluatorType === 'AI' ? (
-												<IconRobot size={12} />
-											) : (
-												<IconUserCheck size={12} />
-											)
-										}
-										variant='light'
-									>
-										{t(
-											`detail.evaluation.evaluatorTypes.${dispute.resulting.evaluatorType.toLowerCase()}`
-										)}
-									</Badge>
-									<Badge color='gray' variant='light'>
-										{t('detail.evaluation.version', {
-											version: dispute.resultingVersion,
-										})}
-									</Badge>
-								</Group>
-								<Text fw={700} size='sm'>
-									{dispute.resulting.formName}
-								</Text>
-								<Text c='dimmed' size='sm'>
-									{t('detail.evaluation.agent', {
-										name: dispute.resulting.agent
-											? getAgentDisplayName(dispute.resulting.agent)
-											: 'Unknown',
-									})}
-								</Text>
-							</Stack>
-						</SectionCard>
-					</>
+						</Grid.Col>
+					</Grid>
 				) : null}
 			</Stack>
 		</ContentContainer>
