@@ -187,16 +187,6 @@ export default function DisputesListPage() {
 			),
 		},
 		{
-			id: 'reason',
-			header: 'Reason',
-			enableSorting: false,
-			cell: ({ row }) => (
-				<Text className={classes.reasonCell} lineClamp={2} size='sm'>
-					{row.original.reason}
-				</Text>
-			),
-		},
-		{
 			id: 'actions',
 			header: 'Actions',
 			enableSorting: false,
