@@ -1,4 +1,11 @@
-import { Button, Group, MultiSelect, Select, Stack } from '@mantine/core';
+import {
+	Button,
+	Group,
+	MultiSelect,
+	Select,
+	Stack,
+	Title,
+} from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { useTranslation } from 'react-i18next';
 
@@ -104,10 +111,14 @@ export default function DisputesFilters({
 
 	return (
 		<Stack gap='md'>
+			<Title order={4} size='sm'>
+				Filters
+			</Title>
+
 			<Group grow>
 				<MultiSelect
-					label={t('filters.supervisor')}
-					placeholder={t('filters.supervisor')}
+					label='Supervisor'
+					placeholder='Supervisor'
 					data={MOCK_SUPERVISORS}
 					value={(filters.supervisorIds || []).map(String)}
 					onChange={(values) =>
@@ -121,8 +132,8 @@ export default function DisputesFilters({
 				/>
 
 				<MultiSelect
-					label={t('filters.agent')}
-					placeholder={t('filters.agent')}
+					label='Agent'
+					placeholder='Agent'
 					data={MOCK_AGENTS}
 					value={(filters.agentIds || []).map(String)}
 					onChange={(values) =>
@@ -138,8 +149,8 @@ export default function DisputesFilters({
 
 			<Group grow>
 				<Select
-					label={t('filters.campaign')}
-					placeholder={t('filters.campaign')}
+					label='Campaign'
+					placeholder='Campaign'
 					data={MOCK_CAMPAIGNS}
 					value={filters.campaignId ? String(filters.campaignId) : null}
 					onChange={(value) =>
@@ -164,8 +175,8 @@ export default function DisputesFilters({
 
 			<Group grow>
 				<DateInput
-					label={t('filters.startDate')}
-					placeholder={t('filters.startDate')}
+					label='Start Date'
+					placeholder='Start Date'
 					value={startDate}
 					onChange={(date) => handleDateChange('dateRangeStart', date)}
 					disabled={isLoading}
@@ -173,8 +184,8 @@ export default function DisputesFilters({
 				/>
 
 				<DateInput
-					label={t('filters.endDate')}
-					placeholder={t('filters.endDate')}
+					label='End Date'
+					placeholder='End Date'
 					value={endDate}
 					onChange={(date) => handleDateChange('dateRangeEnd', date)}
 					disabled={isLoading}
@@ -183,11 +194,18 @@ export default function DisputesFilters({
 				/>
 			</Group>
 
-			{hasActiveFilters && (
-				<Button variant='subtle' onClick={handleClearAll} disabled={isLoading}>
+			<Group justify='space-between'>
+				<Button
+					variant='light'
+					onClick={handleClearAll}
+					disabled={isLoading || !hasActiveFilters}
+				>
 					{t('filters.clearAll')}
 				</Button>
-			)}
+				<Button onClick={() => {}} disabled={isLoading}>
+					Apply Filters
+				</Button>
+			</Group>
 		</Stack>
 	);
 }
