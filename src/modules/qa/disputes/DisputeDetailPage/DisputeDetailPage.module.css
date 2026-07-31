@@ -52,13 +52,6 @@
 	flex-shrink: 0;
 }
 
-.finalScoreCard {
-	background: light-dark(
-		linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%),
-		linear-gradient(135deg, #1a1b1e 0%, #25262b 100%)
-	);
-}
-
 @media (max-width: 48em) {
 	.scoreGrid {
 		grid-template-columns: 1fr;

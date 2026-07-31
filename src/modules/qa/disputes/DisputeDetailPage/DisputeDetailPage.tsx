@@ -32,6 +32,7 @@ import { formatPoints, formatScorePct } from '~/modules/qa/utils/format';
 import { getErrorMessage } from '~/utils/httpClient';
 import MockAudioPlayerBar from '~/modules/evaluations-demo/components/MockAudioPlayerBar';
 import DemoTranscript from '~/modules/evaluations-demo/components/DemoTranscript';
+import FinalScoreHero from '~/modules/evaluations-demo/components/FinalScoreHero';
 import DisputedItemCard from './components/DisputedItemCard';
 import classes from './DisputeDetailPage.module.css';
 
@@ -115,19 +116,10 @@ export default function DisputeDetailPage() {
 						{isOpenDispute && (
 							<>
 								{/* Final Score Section */}
-								<SectionCard className={classes.finalScoreCard}>
-									<Stack gap='sm' align='center'>
-										<Text size='sm' c='dimmed'>
-											Final Score
-										</Text>
-										<Text size='32' fw={700}>
-											{Math.round(dispute.source.overallScorePct ?? 0)}
-										</Text>
-										<Badge color='orange' variant='light' size='lg'>
-											Open
-										</Badge>
-									</Stack>
-								</SectionCard>
+								<FinalScoreHero
+									score={Math.round(dispute.source.overallScorePct ?? 0)}
+									pass='pass'
+								/>
 
 								{/* Agent Info Section */}
 								<SectionCard>
