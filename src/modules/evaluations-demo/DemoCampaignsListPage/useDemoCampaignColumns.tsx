@@ -1,7 +1,11 @@
 import type { ColumnDef } from '@tanstack/react-table';
 import { useNavigate } from 'react-router';
 import { ActionIcon, Badge, Group, Stack, Text } from '@mantine/core';
-import { IconFileText, IconPlayerPause, IconPlayerPlay } from '@tabler/icons-react';
+import {
+	IconFileText,
+	IconPlayerPause,
+	IconPlayerPlay,
+} from '@tabler/icons-react';
 import type { DemoCampaign } from '../mockData';
 import { DEMO_CAMPAIGN_STATUS_COLORS } from '../demoBadgeColors';
 import classes from './useDemoCampaignColumns.module.css';
@@ -54,14 +58,17 @@ export const useDemoCampaignColumns = (): ColumnDef<DemoCampaign, any>[] => {
 		},
 		{
 			accessorKey: 'qaTestsCount',
-			header: 'QA Tests',
+			header: 'Evaluation Types',
 			cell: ({ row }) => <Text size='sm'>{row.original.qaTestsCount}</Text>,
 			size: 100,
 		},
 		{
 			id: 'actions',
 			header: 'Actions',
-			meta: { headerClassName: classes.actionsHeader, cellClassName: classes.actionsCell },
+			meta: {
+				headerClassName: classes.actionsHeader,
+				cellClassName: classes.actionsCell,
+			},
 			cell: ({ row }) => {
 				const campaign = row.original;
 				const isActive = campaign.status === 'active';
@@ -86,7 +93,11 @@ export const useDemoCampaignColumns = (): ColumnDef<DemoCampaign, any>[] => {
 							aria-label={isActive ? 'Pause campaign' : 'Resume campaign'}
 							onClick={(e) => e.stopPropagation()}
 						>
-							{isActive ? <IconPlayerPause size={16} /> : <IconPlayerPlay size={16} />}
+							{isActive ? (
+								<IconPlayerPause size={16} />
+							) : (
+								<IconPlayerPlay size={16} />
+							)}
 						</ActionIcon>
 					</Group>
 				);
