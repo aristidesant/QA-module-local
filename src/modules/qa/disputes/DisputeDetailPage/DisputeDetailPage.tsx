@@ -7,6 +7,8 @@ import {
 	Loader,
 	Stack,
 	Text,
+	Box,
+	Paper,
 } from '@mantine/core';
 import {
 	IconAlertTriangle,
@@ -97,6 +99,68 @@ export default function DisputeDetailPage() {
 
 				{dispute ? (
 					<>
+						{/* Call Player and Transcript */}
+						<SectionCard icon={IconGitBranch} title='Call Recording'>
+							<Stack gap='md'>
+								{/* Call Player Placeholder */}
+								<Paper
+									className={classes.callPlayerPlaceholder}
+									radius='md'
+									withBorder
+									p='md'
+								>
+									<Group justify='center'>
+										<Text size='sm' c='dimmed'>
+											[Call Player -{' '}
+											{dispute.sourceInteractionRef ?? 'CALL-001'}]
+										</Text>
+									</Group>
+								</Paper>
+
+								{/* Transcript Section */}
+								<Box>
+									<Text fw={600} size='sm' mb='xs'>
+										Transcript
+									</Text>
+									<Paper
+										className={classes.transcriptContainer}
+										radius='md'
+										withBorder
+										p='md'
+									>
+										<Stack gap='sm'>
+											<Group>
+												<Badge size='sm' color='blue'>
+													Agent
+												</Badge>
+												<Text size='sm'>
+													Good morning, thank you for calling. How can I help
+													you today?
+												</Text>
+											</Group>
+											<Group>
+												<Badge size='sm' color='gray'>
+													Customer
+												</Badge>
+												<Text size='sm'>
+													Hi, I have a question about my account.
+												</Text>
+											</Group>
+											<Group>
+												<Badge size='sm' color='blue'>
+													Agent
+												</Badge>
+												<Text size='sm'>
+													Of course, I'd be happy to assist. Can you provide
+													your account number?
+												</Text>
+											</Group>
+										</Stack>
+									</Paper>
+								</Box>
+							</Stack>
+						</SectionCard>
+
 						{/* Original Evaluation - Read Only */}
 						<SectionCard
 							icon={IconGitBranch}

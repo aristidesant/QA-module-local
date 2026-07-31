@@ -31,6 +31,16 @@
 	z-index: 1;
 }
 
+.callPlayerPlaceholder {
+	background-color: var(--surface-sunken);
+}
+
+.transcriptContainer {
+	background-color: var(--surface-sunken);
+	max-height: 300px;
+	overflow-y: auto;
+}
+
 @media (max-width: 48em) {
 	.scoreGrid {
 		grid-template-columns: 1fr;
