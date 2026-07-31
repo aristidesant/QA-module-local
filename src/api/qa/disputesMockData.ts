@@ -396,3 +396,9 @@ export function getMockDisputes(
 		total: mockDisputes.length,
 	};
 }
+
+export function getMockDisputeById(
+	disputeId: number
+): EvaluationDisputeSummary | undefined {
+	return mockDisputes.find((dispute) => dispute.id === disputeId);
+}
