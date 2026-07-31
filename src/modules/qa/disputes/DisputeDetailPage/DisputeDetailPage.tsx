@@ -120,7 +120,7 @@ export default function DisputeDetailPage() {
 										<Text size='sm' c='dimmed'>
 											Final Score
 										</Text>
-										<Text size='40' fw={700}>
+										<Text size='32' fw={700}>
 											{Math.round(dispute.source.overallScorePct ?? 0)}
 										</Text>
 										<Badge color='orange' variant='light' size='lg'>
