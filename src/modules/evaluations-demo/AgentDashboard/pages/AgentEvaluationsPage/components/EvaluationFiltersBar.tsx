@@ -53,11 +53,15 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 	};
 
 	return (
-		<Stack gap='md' p='md' style={{
-			border: '1px solid var(--mantine-color-gray-3)',
-			borderRadius: 'var(--mantine-radius-md)',
-			backgroundColor: '#ffffff',
-		}}>
+		<Stack
+			gap='md'
+			p='md'
+			style={{
+				border: '1px solid var(--mantine-color-gray-3)',
+				borderRadius: 'var(--mantine-radius-md)',
+				backgroundColor: '#ffffff',
+			}}
+		>
 			<Group justify='space-between' align='center'>
 				<Text fw={600}>Filters</Text>
 				{hasActiveFilters && (
@@ -86,9 +90,12 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 				/>
 
 				<Input
-					label='Start Date'
 					type='date'
-					value={filters.startDate ? filters.startDate.toISOString().split('T')[0] : ''}
+					value={
+						filters.startDate
+							? filters.startDate.toISOString().split('T')[0]
+							: ''
+					}
 					onChange={(e) => {
 						const dateStr = e.currentTarget.value;
 						onFiltersChange({
@@ -96,12 +103,14 @@ const EvaluationFiltersBar: React.FC<EvaluationFiltersBarProps> = ({
 							startDate: dateStr ? new Date(dateStr) : null,
 						});
 					}}
+					placeholder='Start Date'
 				/>
 
 				<Input
-					label='End Date'
 					type='date'
-					value={filters.endDate ? filters.endDate.toISOString().split('T')[0] : ''}
+					value={
+						filters.endDate ? filters.endDate.toISOString().split('T')[0] : ''
+					}
 					onChange={(e) => {
 						const dateStr = e.currentTarget.value;
 						onFiltersChange({

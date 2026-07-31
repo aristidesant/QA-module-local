@@ -1,0 +1,21 @@
+.itemCard {
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+	background: var(--surface);
+}
+
+.itemCardAnswered {
+	background: light-dark(
+		var(--mantine-color-blue-0),
+		var(--mantine-color-dark-8)
+	);
+	border-color: light-dark(
+		var(--mantine-color-blue-2),
+		var(--mantine-color-dark-6)
+	);
+}
+
+.itemHeader {
+	flex: 1;
+}

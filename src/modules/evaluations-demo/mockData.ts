@@ -261,13 +261,13 @@ const genericTranscript = (agentName: string): DemoTranscriptTurn[] => [
 		id: 't2',
 		role: 'customer',
 		timestamp: '0:06',
-		text: "I had a question about my recent order.",
+		text: 'I had a question about my recent order.',
 	},
 	{
 		id: 't3',
 		role: 'agent',
 		timestamp: '0:12',
-		text: "Happy to take a look — let me pull that up for you.",
+		text: 'Happy to take a look — let me pull that up for you.',
 	},
 ];
 
@@ -343,15 +343,96 @@ const batch2Calls: DemoCall[] = [
 		transcript: call001Transcript,
 		criteria: call001Criteria,
 	},
-	buildCall('call_090', 'call_090.mp3', 'John Smith', '2026-07-20', 89, 'completed', '2:14', 134),
-	buildCall('call_091', 'call_091.mp3', 'John Smith', '2026-07-20', 70, 'completed', '1:48', 108),
-	buildCall('call_088', 'call_088.mp3', 'John Smith', '2026-07-19', 93, 'completed', '3:02', 182),
-	buildCall('call_089', 'call_089.mp3', 'Alex Brown', '2026-07-19', 71, 'pending', '1:22', 82),
-	buildCall('call_086', 'call_086.mp3', 'John Smith', '2026-07-18', 82, 'completed', '2:41', 161),
-	buildCall('call_085', 'call_085.mp3', 'Alex Brown', '2026-07-18', 65, 'completed', '1:57', 117),
-	buildCall('call_084', 'call_084.mp3', 'Maria Garcia', '2026-07-17', 91, 'completed', '2:08', 128),
-	buildCall('call_083', 'call_083.mp3', 'Maria Garcia', '2026-07-17', 58, 'completed', '1:34', 94),
-	buildCall('call_082', 'call_082.mp3', 'John Smith', '2026-07-16', null, 'pending', '0:52', 52),
+	buildCall(
+		'call_090',
+		'call_090.mp3',
+		'John Smith',
+		'2026-07-20',
+		89,
+		'completed',
+		'2:14',
+		134
+	),
+	buildCall(
+		'call_091',
+		'call_091.mp3',
+		'John Smith',
+		'2026-07-20',
+		70,
+		'completed',
+		'1:48',
+		108
+	),
+	buildCall(
+		'call_088',
+		'call_088.mp3',
+		'John Smith',
+		'2026-07-19',
+		93,
+		'completed',
+		'3:02',
+		182
+	),
+	buildCall(
+		'call_089',
+		'call_089.mp3',
+		'Alex Brown',
+		'2026-07-19',
+		71,
+		'pending',
+		'1:22',
+		82
+	),
+	buildCall(
+		'call_086',
+		'call_086.mp3',
+		'John Smith',
+		'2026-07-18',
+		82,
+		'completed',
+		'2:41',
+		161
+	),
+	buildCall(
+		'call_085',
+		'call_085.mp3',
+		'Alex Brown',
+		'2026-07-18',
+		65,
+		'completed',
+		'1:57',
+		117
+	),
+	buildCall(
+		'call_084',
+		'call_084.mp3',
+		'Maria Garcia',
+		'2026-07-17',
+		91,
+		'completed',
+		'2:08',
+		128
+	),
+	buildCall(
+		'call_083',
+		'call_083.mp3',
+		'Maria Garcia',
+		'2026-07-17',
+		58,
+		'completed',
+		'1:34',
+		94
+	),
+	buildCall(
+		'call_082',
+		'call_082.mp3',
+		'John Smith',
+		'2026-07-16',
+		null,
+		'pending',
+		'0:52',
+		52
+	),
 ];
 
 const q2SalesResults: DemoResultCall[] = [
@@ -515,7 +596,12 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 				category: 'Business Insight',
 				health: 'healthy',
 				lastEvaluationAt: 'Jul 23, 2026 at 2:45 PM',
-				stats: { totalCalls: 51, callsAnalyzed: 51, averageScore: 90, passRate: 92 },
+				stats: {
+					totalCalls: 51,
+					callsAnalyzed: 51,
+					averageScore: 90,
+					passRate: 92,
+				},
 				calls: batch2Calls,
 			},
 			{
@@ -524,7 +610,12 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 				category: 'Sentiment',
 				health: 'atRisk',
 				lastEvaluationAt: 'Jul 23, 2026 at 1:30 PM',
-				stats: { totalCalls: 43, callsAnalyzed: 43, averageScore: 82, passRate: 53 },
+				stats: {
+					totalCalls: 43,
+					callsAnalyzed: 43,
+					averageScore: 82,
+					passRate: 53,
+				},
 				calls: batch2Calls,
 			},
 			{
@@ -533,7 +624,12 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 				category: 'Compliance',
 				health: 'healthy',
 				lastEvaluationAt: 'Jul 23, 2026 at 12:30 PM',
-				stats: { totalCalls: 60, callsAnalyzed: 60, averageScore: 87, passRate: 90 },
+				stats: {
+					totalCalls: 60,
+					callsAnalyzed: 60,
+					averageScore: 87,
+					passRate: 90,
+				},
 				calls: batch2Calls,
 			},
 			{
@@ -542,7 +638,12 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 				category: 'Sentiment',
 				health: 'healthy',
 				lastEvaluationAt: 'Jul 23, 2026 at 3:20 PM',
-				stats: { totalCalls: 38, callsAnalyzed: 38, averageScore: 88, passRate: 86 },
+				stats: {
+					totalCalls: 38,
+					callsAnalyzed: 38,
+					averageScore: 88,
+					passRate: 86,
+				},
 				calls: batch2Calls,
 			},
 			{
@@ -551,7 +652,12 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 				category: 'Business Insight',
 				health: 'atRisk',
 				lastEvaluationAt: 'Jul 23, 2026 at 1:10 PM',
-				stats: { totalCalls: 47, callsAnalyzed: 47, averageScore: 76, passRate: 61 },
+				stats: {
+					totalCalls: 47,
+					callsAnalyzed: 47,
+					averageScore: 76,
+					passRate: 61,
+				},
 				calls: batch2Calls,
 			},
 			{
@@ -560,7 +666,12 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 				category: 'Sentiment',
 				health: 'atRisk',
 				lastEvaluationAt: 'Jul 23, 2026 at 11:30 AM',
-				stats: { totalCalls: 55, callsAnalyzed: 55, averageScore: 74, passRate: 58 },
+				stats: {
+					totalCalls: 55,
+					callsAnalyzed: 55,
+					averageScore: 74,
+					passRate: 58,
+				},
 				calls: batch2Calls,
 			},
 			{
@@ -569,7 +680,12 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 				category: 'Business Insight',
 				health: 'healthy',
 				lastEvaluationAt: 'Jul 22, 2026 at 4:05 PM',
-				stats: { totalCalls: 62, callsAnalyzed: 62, averageScore: 91, passRate: 94 },
+				stats: {
+					totalCalls: 62,
+					callsAnalyzed: 62,
+					averageScore: 91,
+					passRate: 94,
+				},
 				calls: batch2Calls,
 			},
 			{
@@ -578,7 +694,12 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 				category: 'Compliance',
 				health: 'critical',
 				lastEvaluationAt: 'Jul 22, 2026 at 10:15 AM',
-				stats: { totalCalls: 41, callsAnalyzed: 41, averageScore: 62, passRate: 39 },
+				stats: {
+					totalCalls: 41,
+					callsAnalyzed: 41,
+					averageScore: 62,
+					passRate: 39,
+				},
 				calls: batch2Calls,
 			},
 		],
@@ -602,15 +723,30 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 			autoFails: 0,
 			disputes: 0,
 		},
-		evaluations: batch2Calls.map((call, i) => ({
-			id: `eval-${i}`,
-			title: `Evaluation ${i + 1}`,
-			category: i % 3 === 0 ? 'Business Insight' : i % 3 === 1 ? 'Sentiment' : 'Compliance',
-			health: i % 3 === 0 ? 'healthy' : 'atRisk',
-			lastEvaluationAt: 'Jul 23, 2026 at 2:45 PM',
-			stats: { totalCalls: 10, callsAnalyzed: 10, averageScore: 85, passRate: 90 },
-			calls: [call],
-		})).slice(0, 3),
+		evaluations: batch2Calls
+			.map((call, i) => {
+				const categories: DemoCategory[] = [
+					'Business Insight',
+					'Sentiment',
+					'Compliance',
+				];
+				const healths: DemoHealth[] = ['healthy', 'atRisk'];
+				return {
+					id: `eval-${i}`,
+					title: `Evaluation ${i + 1}`,
+					category: categories[i % 3],
+					health: healths[i % 2],
+					lastEvaluationAt: 'Jul 23, 2026 at 2:45 PM',
+					stats: {
+						totalCalls: 10,
+						callsAnalyzed: 10,
+						averageScore: 85,
+						passRate: 90,
+					},
+					calls: [call],
+				};
+			})
+			.slice(0, 3),
 		results: q2SalesResults,
 		roster: q2SalesRoster,
 	},
@@ -631,15 +767,30 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 			autoFails: 0,
 			disputes: 0,
 		},
-		evaluations: batch2Calls.map((call, i) => ({
-			id: `eval-${i}`,
-			title: `Evaluation ${i + 1}`,
-			category: i % 3 === 0 ? 'Business Insight' : i % 3 === 1 ? 'Sentiment' : 'Compliance',
-			health: i % 3 === 0 ? 'healthy' : 'atRisk',
-			lastEvaluationAt: 'Jul 23, 2026 at 2:45 PM',
-			stats: { totalCalls: 10, callsAnalyzed: 10, averageScore: 85, passRate: 90 },
-			calls: [call],
-		})).slice(0, 3),
+		evaluations: batch2Calls
+			.map((call, i) => {
+				const categories: DemoCategory[] = [
+					'Business Insight',
+					'Sentiment',
+					'Compliance',
+				];
+				const healths: DemoHealth[] = ['healthy', 'atRisk'];
+				return {
+					id: `eval-${i}`,
+					title: `Evaluation ${i + 1}`,
+					category: categories[i % 3],
+					health: healths[i % 2],
+					lastEvaluationAt: 'Jul 23, 2026 at 2:45 PM',
+					stats: {
+						totalCalls: 10,
+						callsAnalyzed: 10,
+						averageScore: 85,
+						passRate: 90,
+					},
+					calls: [call],
+				};
+			})
+			.slice(0, 3),
 		results: q2SalesResults,
 		roster: q2SalesRoster,
 	},
@@ -660,15 +811,30 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 			autoFails: 2,
 			disputes: 1,
 		},
-		evaluations: batch2Calls.map((call, i) => ({
-			id: `eval-${i}`,
-			title: `Evaluation ${i + 1}`,
-			category: i % 3 === 0 ? 'Business Insight' : i % 3 === 1 ? 'Sentiment' : 'Compliance',
-			health: i % 3 === 0 ? 'healthy' : 'atRisk',
-			lastEvaluationAt: 'Jul 23, 2026 at 2:45 PM',
-			stats: { totalCalls: 10, callsAnalyzed: 10, averageScore: 85, passRate: 90 },
-			calls: [call],
-		})).slice(0, 3),
+		evaluations: batch2Calls
+			.map((call, i) => {
+				const categories: DemoCategory[] = [
+					'Business Insight',
+					'Sentiment',
+					'Compliance',
+				];
+				const healths: DemoHealth[] = ['healthy', 'atRisk'];
+				return {
+					id: `eval-${i}`,
+					title: `Evaluation ${i + 1}`,
+					category: categories[i % 3],
+					health: healths[i % 2],
+					lastEvaluationAt: 'Jul 23, 2026 at 2:45 PM',
+					stats: {
+						totalCalls: 10,
+						callsAnalyzed: 10,
+						averageScore: 85,
+						passRate: 90,
+					},
+					calls: [call],
+				};
+			})
+			.slice(0, 3),
 		results: q2SalesResults,
 		roster: q2SalesRoster,
 	},
@@ -689,15 +855,30 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 			autoFails: 0,
 			disputes: 0,
 		},
-		evaluations: batch2Calls.map((call, i) => ({
-			id: `eval-${i}`,
-			title: `Evaluation ${i + 1}`,
-			category: i % 3 === 0 ? 'Business Insight' : i % 3 === 1 ? 'Sentiment' : 'Compliance',
-			health: i % 3 === 0 ? 'healthy' : 'atRisk',
-			lastEvaluationAt: 'Jul 23, 2026 at 2:45 PM',
-			stats: { totalCalls: 10, callsAnalyzed: 10, averageScore: 85, passRate: 90 },
-			calls: [call],
-		})).slice(0, 3),
+		evaluations: batch2Calls
+			.map((call, i) => {
+				const categories: DemoCategory[] = [
+					'Business Insight',
+					'Sentiment',
+					'Compliance',
+				];
+				const healths: DemoHealth[] = ['healthy', 'atRisk'];
+				return {
+					id: `eval-${i}`,
+					title: `Evaluation ${i + 1}`,
+					category: categories[i % 3],
+					health: healths[i % 2],
+					lastEvaluationAt: 'Jul 23, 2026 at 2:45 PM',
+					stats: {
+						totalCalls: 10,
+						callsAnalyzed: 10,
+						averageScore: 85,
+						passRate: 90,
+					},
+					calls: [call],
+				};
+			})
+			.slice(0, 3),
 		results: q2SalesResults,
 		roster: q2SalesRoster,
 	},
@@ -706,13 +887,14 @@ export const DEMO_CAMPAIGNS: DemoCampaign[] = [
 export const getDemoCampaign = (campaignId?: string) =>
 	DEMO_CAMPAIGNS.find((c) => c.id === campaignId);
 
-export const getDemoEvaluation = (
-	campaignId?: string,
-	evaluationId?: string
-) => getDemoCampaign(campaignId)?.evaluations.find((e) => e.id === evaluationId);
+export const getDemoEvaluation = (campaignId?: string, evaluationId?: string) =>
+	getDemoCampaign(campaignId)?.evaluations.find((e) => e.id === evaluationId);
 
 export const getDemoCall = (
 	campaignId?: string,
 	evaluationId?: string,
 	callId?: string
-) => getDemoEvaluation(campaignId, evaluationId)?.calls.find((c) => c.id === callId);
+) =>
+	getDemoEvaluation(campaignId, evaluationId)?.calls.find(
+		(c) => c.id === callId
+	);
