@@ -44,6 +44,7 @@ export interface EvaluationDisputeSummary {
 	resultingVersion: number;
 	createdAt: string;
 	status: 'open' | 'approved' | 'rejected';
+	disputedQuestionIds?: number[];
 }
 
 export interface EvaluationDisputeDetailResponse extends EvaluationDisputeSummary {

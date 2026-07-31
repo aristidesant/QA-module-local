@@ -38,6 +38,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		resultingVersion: 2,
 		createdAt: '2026-07-28T14:32:00Z',
 		status: 'approved',
+		disputedQuestionIds: [1, 2],
 	},
 	{
 		id: 1002,
@@ -76,6 +77,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		resultingVersion: 2,
 		createdAt: '2026-07-27T10:15:00Z',
 		status: 'approved',
+		disputedQuestionIds: [3, 5],
 	},
 	{
 		id: 1003,

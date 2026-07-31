@@ -64,6 +64,17 @@ export default function DisputeDetailPage() {
 	);
 	const isOpenDispute = dispute?.status === 'open';
 	const allGroups = dispute?.source?.groups ?? [];
+	const disputedQuestionIds = dispute?.disputedQuestionIds ?? [];
+
+	// Filter groups to only include disputed questions
+	const disputedGroups = allGroups
+		.map((group) => ({
+			...group,
+			questions: group.questions.filter((q) =>
+				disputedQuestionIds.includes(q.id)
+			),
+		}))
+		.filter((group) => group.questions.length > 0);
 
 	return (
 		<ContentContainer
@@ -239,13 +250,17 @@ export default function DisputeDetailPage() {
 													title='Disputed Items'
 													headerActions={
 														<Badge color='orange' variant='light'>
-															Edit Responses
+															{disputedGroups.reduce(
+																(acc, g) => acc + g.questions.length,
+																0
+															)}{' '}
+															items
 														</Badge>
 													}
 												>
 													<Stack gap='md'>
-														{allGroups.length > 0 ? (
-															allGroups.map((group) => (
+														{disputedGroups.length > 0 ? (
+															disputedGroups.map((group) => (
 																<Stack key={group.name} gap='sm'>
 																	<Text fw={600} size='sm' c='dimmed'>
 																		{group.name}
@@ -279,7 +294,7 @@ export default function DisputeDetailPage() {
 															))
 														) : (
 															<Text c='dimmed' size='sm'>
-																No items to display
+																No disputed items to display
 															</Text>
 														)}
 													</Stack>
