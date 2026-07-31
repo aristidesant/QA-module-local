@@ -1,4 +1,4 @@
-import {
+﻿import {
 	Alert,
 	Badge,
 	Button,
@@ -190,7 +190,7 @@ export default function DisputeDetailPage() {
 
 									{/* Transcript */}
 									<SectionCard
-										title={`Transcript · 3 turns`}
+										title={`Transcript Â· 3 turns`}
 										headerActions={
 											<Button
 												variant='subtle'

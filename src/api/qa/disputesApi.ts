@@ -66,6 +66,63 @@ export async function getDispute(disputeId: number) {
 		throw new Error(`Dispute ${disputeId} not found`);
 	}
 
+	// Mock QA form groups and questions with Yes/No/N/A options
+	const mockGroups = [
+		{
+			name: 'Compliance Requirements',
+			sortOrder: 1,
+			questions: [
+				{
+					id: 1,
+					evaluationId: mockDispute.sourceEvaluationId,
+					groupName: 'Compliance Requirements',
+					groupSortOrder: 1,
+					text: 'Was the disclosure statement provided?',
+					description:
+						'Verify that the agent provided the required disclosure statement',
+					answerType: 'CHOICE' as const,
+					options: [
+						{ label: 'Yes', score: 25 },
+						{ label: 'No', score: 0 },
+						{ label: 'N/A', score: 25 },
+					],
+					weight: 1,
+					sortOrder: 1,
+					answer: {
+						id: 1,
+						evaluationId: mockDispute.sourceEvaluationId,
+						evaluationQuestionId: 1,
+						selectedLabel: 'No',
+						awardedScore: 0,
+					},
+				},
+				{
+					id: 2,
+					evaluationId: mockDispute.sourceEvaluationId,
+					groupName: 'Compliance Requirements',
+					groupSortOrder: 1,
+					text: 'Was the customer identity verified?',
+					description: 'Confirm that the agent verified the customer identity',
+					answerType: 'CHOICE' as const,
+					options: [
+						{ label: 'Yes', score: 25 },
+						{ label: 'No', score: 0 },
+						{ label: 'N/A', score: 25 },
+					],
+					weight: 1,
+					sortOrder: 2,
+					answer: {
+						id: 2,
+						evaluationId: mockDispute.sourceEvaluationId,
+						evaluationQuestionId: 2,
+						selectedLabel: 'No',
+						awardedScore: 0,
+					},
+				},
+			],
+		},
+	];
+
 	// Create a mock detail object with source and resulting evaluations
 	// For demo purposes, we'll use simplified mock data
 	const mockDetail: EvaluationDisputeDetail = {
@@ -105,7 +162,7 @@ export async function getDispute(disputeId: number) {
 			overallScore: mockDispute.before.overallScore,
 			overallScorePct: mockDispute.before.overallScorePct,
 			maxScore: mockDispute.before.maxScore,
-			groups: [],
+			groups: mockGroups,
 		},
 		resulting: {
 			id: mockDispute.resultingEvaluationId,
@@ -142,7 +199,7 @@ export async function getDispute(disputeId: number) {
 			overallScore: mockDispute.after.overallScore,
 			overallScorePct: mockDispute.after.overallScorePct,
 			maxScore: mockDispute.after.maxScore,
-			groups: [],
+			groups: mockGroups,
 		},
 	};
 

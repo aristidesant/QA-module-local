@@ -78,22 +78,43 @@ export default function DisputedItemCard({
 			</Group>
 
 			<Stack gap='sm'>
-				<Stack gap={4}>
-					<Text size='xs' fw={600} c='dimmed'>
-						Current Response
-					</Text>
-					{question.answer?.selectedLabel ? (
-						<Text size='sm'>{question.answer.selectedLabel}</Text>
-					) : (
-						<Text size='sm' c='dimmed'>
-							No response provided
+				<Group grow align='flex-start'>
+					{/* inline-style-allow: flex layout needed for responsive column sizing */}
+					<Stack gap={4} style={{ flex: 1 }}>
+						<Text size='xs' fw={600} c='dimmed'>
+							System Selected
 						</Text>
-					)}
-				</Stack>
+						<Group gap='xs'>
+							<Badge color='blue' variant='light' size='sm'>
+								{question.answer?.selectedLabel ?? 'Not Selected'}
+							</Badge>
+						</Group>
+					</Stack>
+
+					{/* inline-style-allow: flex layout needed for responsive column sizing */}
+					<Stack gap={4} style={{ flex: 1 }}>
+						<Text size='xs' fw={600} c='dimmed'>
+							Your Selection
+						</Text>
+						<Group gap='xs'>
+							<Badge
+								color={
+									draftValue !== (question.answer?.selectedLabel ?? '')
+										? 'orange'
+										: 'gray'
+								}
+								variant='light'
+								size='sm'
+							>
+								{draftValue || 'Not Selected'}
+							</Badge>
+						</Group>
+					</Stack>
+				</Group>
 
 				<Stack gap={4}>
 					<Text size='xs' fw={600} c='dimmed'>
-						Update Response
+						Select Correct Option
 					</Text>
 					{renderInput()}
 				</Stack>

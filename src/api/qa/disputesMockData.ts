@@ -116,6 +116,7 @@ const mockDisputes: EvaluationDisputeSummary[] = [
 		resultingVersion: 2,
 		createdAt: '2026-07-26T09:45:00Z',
 		status: 'open',
+		disputedQuestionIds: [1, 2],
 	},
 	{
 		id: 1004,
