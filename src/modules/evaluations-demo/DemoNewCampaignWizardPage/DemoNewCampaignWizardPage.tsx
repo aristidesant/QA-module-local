@@ -7,7 +7,10 @@ import { WizardStepper, wizardKitStyles } from '../components/DemoWizardKit';
 import StepCampaignDetails from './StepCampaignDetails';
 import StepUploadFiles from './StepUploadFiles';
 import StepConfirmRoster from './StepConfirmRoster';
-import type { DemoWizardCampaignDetails, DemoWizardUploadedFile } from './types';
+import type {
+	DemoWizardCampaignDetails,
+	DemoWizardUploadedFile,
+} from './types';
 
 const STEPS = [
 	{ label: 'Campaign Details', description: '' },
@@ -25,7 +28,9 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 		description: '',
 	});
 	const [files, setFiles] = useState<DemoWizardUploadedFile[]>([]);
-	const [emailOverrides, setEmailOverrides] = useState<Record<string, string>>({});
+	const [emailOverrides, setEmailOverrides] = useState<Record<string, string>>(
+		{}
+	);
 
 	const exitWizard = () => navigate('/role-preview/qa-campaigns');
 
@@ -56,6 +61,7 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 
 				{activeStep === 1 && (
 					<StepUploadFiles
+						campaignDetails={details}
 						files={files}
 						onChange={setFiles}
 						onBack={() => setActiveStep(0)}

@@ -1,27 +1,90 @@
 import React, { useRef, useState } from 'react';
-import { ActionIcon, Button, Group, Stack, Text, TextInput } from '@mantine/core';
+import {
+	ActionIcon,
+	Button,
+	Group,
+	Stack,
+	Text,
+	TextInput,
+} from '@mantine/core';
 import { IconArrowLeft, IconTrash, IconUpload } from '@tabler/icons-react';
 import BaseTable from '~/components/BaseTable';
 import type { BaseTableColumnDef } from '~/components/BaseTable';
 import { wizardKitStyles } from '../components/DemoWizardKit';
-import type { DemoWizardUploadedFile } from './types';
+import type {
+	DemoWizardUploadedFile,
+	DemoWizardCampaignDetails,
+} from './types';
 import styles from './DemoNewCampaignWizardPage.module.css';
 
 const AGENT_POOL = ['Alex Brown', 'John Smith', 'Sarah Johnson', 'Mike Chen'];
 
-function buildUploadedFile(file: File, index: number): DemoWizardUploadedFile {
+// Generate formatted filename: C4087_20260715-093044_jmendez_8493305512.mp3
+function generateFormattedFilename(
+	agentName: string,
+	campaignName: string,
+	fileExtension: string
+): string {
+	// Campaign code: extract first letter of each word or use default
+	const campaignCode =
+		campaignName
+			.split(/\s+/)
+			.map((word) => word[0].toUpperCase())
+			.join('') || 'CAMP';
+
+	// Current timestamp: yyyyMMdd-HHmmss
+	const now = new Date();
+	const timestamp =
+		[
+			now.getFullYear(),
+			String(now.getMonth() + 1).padStart(2, '0'),
+			String(now.getDate()).padStart(2, '0'),
+		].join('') +
+		'-' +
+		[
+			String(now.getHours()).padStart(2, '0'),
+			String(now.getMinutes()).padStart(2, '0'),
+			String(now.getSeconds()).padStart(2, '0'),
+		].join('');
+
+	// Agent initials: first letter of first and last names
+	const agentInitials = agentName
+		.split(/\s+/)
+		.map((part) => part[0].toLowerCase())
+		.join('');
+
+	// Agent ID/phone: random 10-digit number
+	const agentId = String(Math.floor(Math.random() * 9000000000) + 1000000000);
+
+	return `${campaignCode}_${timestamp}_${agentInitials}_${agentId}.${fileExtension}`;
+}
+
+function buildUploadedFile(
+	file: File,
+	index: number,
+	campaignName: string
+): DemoWizardUploadedFile {
 	const format = (file.name.split('.').pop() ?? 'mp3').toUpperCase();
+	const fileExtension = file.name.split('.').pop() ?? 'mp3';
+	const agentName = AGENT_POOL[index % AGENT_POOL.length];
+	const formattedFileName = generateFormattedFilename(
+		agentName,
+		campaignName,
+		fileExtension
+	);
+
 	return {
 		id: `${file.name}-${Date.now()}-${index}`,
-		fileName: file.name,
+		fileName: formattedFileName,
 		durationSeconds: 60 + Math.floor(Math.random() * 400),
 		format,
-		agentName: AGENT_POOL[index % AGENT_POOL.length],
+		agentName,
 		campaignFileId: `CAMP-${Date.now()}-${index}`,
 	};
 }
 
 interface StepUploadFilesProps {
+	campaignDetails: DemoWizardCampaignDetails;
 	files: DemoWizardUploadedFile[];
 	onChange: (files: DemoWizardUploadedFile[]) => void;
 	onBack: () => void;
@@ -30,6 +93,7 @@ interface StepUploadFilesProps {
 }
 
 const StepUploadFiles: React.FC<StepUploadFilesProps> = ({
+	campaignDetails,
 	files,
 	onChange,
 	onBack,
@@ -42,7 +106,7 @@ const StepUploadFiles: React.FC<StepUploadFilesProps> = ({
 	const addFiles = (fileList: FileList | null) => {
 		if (!fileList || fileList.length === 0) return;
 		const newRows = Array.from(fileList).map((file, index) =>
-			buildUploadedFile(file, files.length + index)
+			buildUploadedFile(file, files.length + index, campaignDetails.name)
 		);
 		onChange([...files, ...newRows]);
 	};
@@ -75,13 +139,19 @@ const StepUploadFiles: React.FC<StepUploadFilesProps> = ({
 		{
 			accessorKey: 'fileName',
 			header: 'Filename',
-			cell: ({ row }) => <Text size='sm' fw={600}>{row.original.fileName}</Text>,
+			cell: ({ row }) => (
+				<Text size='sm' fw={600}>
+					{row.original.fileName}
+				</Text>
+			),
 		},
 		{
 			accessorKey: 'durationSeconds',
 			header: 'Duration',
 			cell: ({ row }) => (
-				<Text size='sm' c='dimmed'>{row.original.durationSeconds}s</Text>
+				<Text size='sm' c='dimmed'>
+					{row.original.durationSeconds}s
+				</Text>
 			),
 			size: 100,
 		},
@@ -104,7 +174,9 @@ const StepUploadFiles: React.FC<StepUploadFilesProps> = ({
 			accessorKey: 'campaignFileId',
 			header: 'Campaign ID',
 			cell: ({ row }) => (
-				<Text size='xs' c='dimmed'>{row.original.campaignFileId}</Text>
+				<Text size='xs' c='dimmed'>
+					{row.original.campaignFileId}
+				</Text>
 			),
 		},
 		{
@@ -125,7 +197,10 @@ const StepUploadFiles: React.FC<StepUploadFilesProps> = ({
 		},
 	];
 
-	const dropzoneClass = [styles.dropzone, isDragOver ? styles.dropzoneDragOver : '']
+	const dropzoneClass = [
+		styles.dropzone,
+		isDragOver ? styles.dropzoneDragOver : '',
+	]
 		.filter(Boolean)
 		.join(' ');
 
@@ -146,8 +221,8 @@ const StepUploadFiles: React.FC<StepUploadFilesProps> = ({
 						Upload Campaign Files
 					</Text>
 					<Text size='sm' c='dimmed'>
-						Upload audio files to create your campaign (Optional — You can upload
-						files later)
+						Upload audio files to create your campaign (Optional — You can
+						upload files later)
 					</Text>
 				</div>
 			</Group>
@@ -175,7 +250,11 @@ const StepUploadFiles: React.FC<StepUploadFilesProps> = ({
 						onKeyDown={(e) => e.key === 'Enter' && handleDropzoneClick()}
 					>
 						<Stack align='center' gap={4}>
-							<IconUpload size={32} stroke={1.5} color='var(--mantine-color-green-6)' />
+							<IconUpload
+								size={32}
+								stroke={1.5}
+								color='var(--mantine-color-green-6)'
+							/>
 							<Text fw={600}>Drag files here or click to upload</Text>
 							<Text size='sm' c='dimmed'>
 								Support for MP3, WAV, and other audio formats. Upload up to 100+
@@ -206,7 +285,13 @@ const StepUploadFiles: React.FC<StepUploadFilesProps> = ({
 							Add More Files
 						</Button>
 					</Group>
-					<BaseTable data={files} columns={columns} getRowId={(f) => f.id} density='compact' filterMode='client' />
+					<BaseTable
+						data={files}
+						columns={columns}
+						getRowId={(f) => f.id}
+						density='compact'
+						filterMode='client'
+					/>
 				</div>
 			)}
 
