@@ -67,6 +67,14 @@
 		"description": "Audit corrections to AI-evaluated answers and the evaluation versions they created.",
 		"eyebrow": "Evaluation audit",
 		"filters": {
+			"supervisor": "Supervisor",
+			"agent": "Agent",
+			"campaign": "Campaign",
+			"dateRange": "Date Range",
+			"startDate": "Start Date",
+			"endDate": "End Date",
+			"sortBy": "Sort By",
+			"clearAll": "Clear Filters",
 			"createdAtFrom": "Created from",
 			"createdAtTo": "Created to",
 			"order": "Order"
@@ -74,6 +82,12 @@
 		"order": {
 			"asc": "Oldest first",
 			"desc": "Newest first"
+		},
+		"sortOptions": {
+			"newestFirst": "Newest First",
+			"oldestFirst": "Oldest First",
+			"scoreChangeHigh": "Score Change (High to Low)",
+			"scoreChangeLow": "Score Change (Low to High)"
 		},
 		"chain": {
 			"correctedScore": "Corrected {{score}}%",

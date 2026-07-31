@@ -59,6 +59,9 @@ export interface EvaluationDisputeDetail extends Omit<
 }
 
 export interface EvaluationDisputeListQueryParams {
+	supervisorIds?: number[];
+	agentIds?: number[];
+	campaignIds?: number[];
 	createdAtFrom?: string;
 	createdAtTo?: string;
 	sortBy?: 'createdAt' | 'scoreDelta';

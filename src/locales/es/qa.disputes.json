@@ -67,6 +67,14 @@
 		"description": "Audita correcciones a respuestas evaluadas con IA y las versiones de evaluación que crearon.",
 		"eyebrow": "Auditoría de evaluaciones",
 		"filters": {
+			"supervisor": "Supervisor",
+			"agent": "Agente",
+			"campaign": "Campaña",
+			"dateRange": "Rango de fechas",
+			"startDate": "Fecha de inicio",
+			"endDate": "Fecha de finalización",
+			"sortBy": "Ordenar por",
+			"clearAll": "Limpiar filtros",
 			"createdAtFrom": "Creada desde",
 			"createdAtTo": "Creada hasta",
 			"order": "Orden"
@@ -74,6 +82,12 @@
 		"order": {
 			"asc": "Más antiguas",
 			"desc": "Más recientes"
+		},
+		"sortOptions": {
+			"newestFirst": "Más recientes primero",
+			"oldestFirst": "Más antiguas primero",
+			"scoreChangeHigh": "Cambio de puntaje (Alto a Bajo)",
+			"scoreChangeLow": "Cambio de puntaje (Bajo a Alto)"
 		},
 		"chain": {
 			"correctedScore": "Corregida {{score}}%",

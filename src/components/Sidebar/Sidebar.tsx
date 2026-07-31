@@ -464,10 +464,10 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/role-preview/coaching',
 		},
 		{
-			key: 'role-preview-case-management',
-			label: 'sidebar.rolePreview.items.caseManagement',
+			key: 'role-preview-disputes',
+			label: 'sidebar.rolePreview.items.disputes',
 			icon: <IconFolders size={20} className={styles.menuIcon} />,
-			to: '/backoffice/cases',
+			to: '/qa/disputes',
 		},
 		{
 			key: 'role-preview-lms',
@@ -515,10 +515,10 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/role-preview/notifications',
 		},
 		{
-			key: 'role-preview-case-management',
-			label: 'sidebar.rolePreview.items.caseManagement',
+			key: 'role-preview-disputes',
+			label: 'sidebar.rolePreview.items.disputes',
 			icon: <IconFolders size={20} className={styles.menuIcon} />,
-			to: '/backoffice/cases',
+			to: '/qa/disputes',
 		},
 		{
 			key: 'role-preview-coaching',

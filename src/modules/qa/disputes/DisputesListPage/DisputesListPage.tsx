@@ -4,10 +4,8 @@ import {
 	Badge,
 	Button,
 	Group,
-	Select,
 	Stack,
 	Text,
-	TextInput,
 	Tooltip,
 } from '@mantine/core';
 import {
@@ -19,7 +17,7 @@ import {
 	IconUserCheck,
 } from '@tabler/icons-react';
 import type { SortingState } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
@@ -37,29 +35,10 @@ import type {
 	EvaluatorType,
 } from '~/models/qa';
 import { useDisputesQuery } from '~/queries/qa/disputesQueries';
-import { formatPoints, formatScorePct } from '~/modules/qa/utils/format';
+import { formatPoints } from '~/modules/qa/utils/format';
 import { getErrorMessage } from '~/utils/httpClient';
+import DisputesFilters from './DisputesFilters';
 import classes from './DisputesListPage.module.css';
-
-function ScoreChange({ dispute }: { dispute: EvaluationDisputeSummary }) {
-	const { t } = useTranslation('qa.disputes');
-
-	return (
-		<Group gap='xs' wrap='nowrap'>
-			<Badge color='gray' variant='light'>
-				{t('list.chain.originalScore', {
-					score: formatScorePct(dispute.before.overallScorePct),
-				})}
-			</Badge>
-			<IconArrowRight size={16} />
-			<Badge color={dispute.scoreDelta >= 0 ? 'green' : 'red'} variant='light'>
-				{t('list.chain.correctedScore', {
-					score: formatScorePct(dispute.after.overallScorePct),
-				})}
-			</Badge>
-		</Group>
-	);
-}
 
 function EvaluatorTypeBadge({ type }: { type?: EvaluatorType | null }) {
 	const { t } = useTranslation('qa.disputes');
@@ -82,6 +61,7 @@ function EvaluatorTypeBadge({ type }: { type?: EvaluatorType | null }) {
 export default function DisputesListPage() {
 	const { t } = useTranslation('qa.disputes');
 	const navigate = useNavigate();
+
 	const {
 		page,
 		setPage,
@@ -92,24 +72,55 @@ export default function DisputesListPage() {
 		resetPage,
 		getTotalPages,
 	} = useListPageState();
-	const [createdAtFrom, setCreatedAtFrom] = useState('');
-	const [createdAtTo, setCreatedAtTo] = useState('');
+
+	// Filter states - Default: oldest first (ASC)
+	const [filters, setFilters] = useState({
+		supervisorIds: undefined as number[] | undefined,
+		agentIds: undefined as number[] | undefined,
+		campaignId: undefined as number | undefined,
+		dateRangeStart: undefined as string | undefined,
+		dateRangeEnd: undefined as string | undefined,
+		sortBy: 'createdAt' as 'createdAt' | 'scoreDelta',
+		orderBy: 'ASC' as 'ASC' | 'DESC',
+	});
+
 	const isDateRangeInverted =
-		Boolean(createdAtFrom && createdAtTo) && createdAtFrom > createdAtTo;
+		Boolean(filters.dateRangeStart && filters.dateRangeEnd) &&
+		(filters.dateRangeStart ?? '') > (filters.dateRangeEnd ?? '');
+
 	const queryParams: EvaluationDisputeListQueryParams = {
 		page,
 		limit,
-		createdAtFrom: createdAtFrom || undefined,
-		createdAtTo: createdAtTo || undefined,
-		sortBy: sort.field as EvaluationDisputeListQueryParams['sortBy'],
-		orderBy: sort.order,
+		supervisorIds: filters.supervisorIds,
+		agentIds: filters.agentIds,
+		campaignIds: filters.campaignId ? [filters.campaignId] : undefined,
+		createdAtFrom: filters.dateRangeStart,
+		createdAtTo: filters.dateRangeEnd,
+		sortBy: filters.sortBy,
+		orderBy: filters.orderBy,
 	};
+
 	const disputesQuery = useDisputesQuery(queryParams, !isDateRangeInverted);
 	const disputes = disputesQuery.data?.data ?? [];
 	const total = disputesQuery.data?.total ?? 0;
 	const totalPages = getTotalPages(total);
-	const hasActiveFilters = Boolean(createdAtFrom || createdAtTo);
+
+	const hasActiveFilters =
+		(filters.supervisorIds && filters.supervisorIds.length > 0) ||
+		(filters.agentIds && filters.agentIds.length > 0) ||
+		filters.campaignId ||
+		filters.dateRangeStart ||
+		filters.dateRangeEnd;
+
 	const dateFormatter = useDateFormatter('dateTime');
+
+	const handleFiltersChange = useCallback(
+		(newFilters: Partial<typeof filters>) => {
+			setFilters((prev) => ({ ...prev, ...newFilters }));
+			resetPage();
+		},
+		[resetPage]
+	);
 
 	const handleSortingChange = (sorting: SortingState) => {
 		const first = sorting[0];
@@ -120,40 +131,84 @@ export default function DisputesListPage() {
 
 	const columns: BaseTableColumnDef<EvaluationDisputeSummary>[] = [
 		{
-			id: 'evaluationChain',
-			header: t('list.table.evaluationChain'),
+			id: 'id',
+			header: 'Dispute ID',
 			enableSorting: false,
 			cell: ({ row }) => (
-				<Stack gap='xs'>
-					<ScoreChange dispute={row.original} />
-					<Group gap='xs'>
-						<Badge color='blue' size='xs' variant='light'>
-							{t('list.chain.createdVersion', {
-								version: row.original.resultingVersion,
-							})}
-						</Badge>
-						<EvaluatorTypeBadge type={row.original.sourceEvaluatorType} />
-					</Group>
-					{row.original.sourceFormName || row.original.resultingFormName ? (
-						<Text c='dimmed' lineClamp={2} size='xs'>
-							{t('list.chain.summary', {
-								form:
-									row.original.sourceFormName ??
-									row.original.resultingFormName ??
-									t('list.chain.unknown'),
-								agent:
-									row.original.sourceAgentName ??
-									row.original.resultingAgentName ??
-									t('list.chain.unknown'),
-							})}
-						</Text>
-					) : null}
+				<Text fw={600} size='sm' ff='monospace'>
+					#{row.original.id}
+				</Text>
+			),
+		},
+		{
+			id: 'campaign',
+			header: 'Campaign',
+			enableSorting: false,
+			cell: ({ row }) => (
+				<Text size='sm'>
+					{row.original.sourceCampaignName ??
+						row.original.resultingCampaignName ??
+						'—'}
+				</Text>
+			),
+		},
+		{
+			id: 'callRecording',
+			header: 'Call Recording',
+			enableSorting: false,
+			cell: ({ row }) => (
+				<Stack gap='2'>
+					<Text fw={500} size='sm'>
+						{row.original.sourceInteractionRef ??
+							row.original.resultingInteractionRef ??
+							'—'}
+					</Text>
+					<Text c='dimmed' size='xs'>
+						{dateFormatter.format(new Date(row.original.createdAt))}
+					</Text>
 				</Stack>
 			),
 		},
 		{
+			id: 'agent',
+			header: 'Agent',
+			enableSorting: false,
+			cell: ({ row }) => (
+				<Text size='sm'>
+					{row.original.sourceAgentName ??
+						row.original.resultingAgentName ??
+						'—'}
+				</Text>
+			),
+		},
+		{
+			id: 'originalEvaluation',
+			header: 'Original Evaluation',
+			enableSorting: false,
+			cell: ({ row }) => (
+				<Stack gap='4'>
+					<Text size='sm'>
+						{row.original.sourceFormName ??
+							row.original.resultingFormName ??
+							t('list.chain.unknown')}
+					</Text>
+					<EvaluatorTypeBadge type={row.original.sourceEvaluatorType} />
+				</Stack>
+			),
+		},
+		{
+			id: 'disputedBy',
+			header: 'Disputed By',
+			enableSorting: false,
+			cell: ({ row }) => (
+				<Text size='sm'>
+					{row.original.disputedByUserName ?? t('list.states.errorTitle')}
+				</Text>
+			),
+		},
+		{
 			id: 'reason',
-			header: t('list.table.reason'),
+			header: 'Reason',
 			enableSorting: false,
 			cell: ({ row }) => (
 				<Text className={classes.reasonCell} lineClamp={2} size='sm'>
@@ -163,28 +218,21 @@ export default function DisputesListPage() {
 		},
 		{
 			accessorKey: 'scoreDelta',
-			header: t('list.table.scoreDelta'),
+			header: 'Score Change',
+			enableSorting: true,
 			cell: ({ row }) => (
 				<Badge
 					color={row.original.scoreDelta >= 0 ? 'green' : 'red'}
 					variant='light'
 				>
-					{t('scoreDelta', { delta: formatPoints(row.original.scoreDelta) })}
+					{row.original.scoreDelta >= 0 ? '▲' : '▼'}{' '}
+					{formatPoints(Math.abs(row.original.scoreDelta))}
 				</Badge>
 			),
 		},
 		{
-			accessorKey: 'createdAt',
-			header: t('list.table.createdAt'),
-			cell: ({ row }) => (
-				<Text c='dimmed' size='sm'>
-					{dateFormatter.format(new Date(row.original.createdAt))}
-				</Text>
-			),
-		},
-		{
 			id: 'actions',
-			header: t('list.table.actions'),
+			header: 'Actions',
 			enableSorting: false,
 			cell: ({ row }) => (
 				<Group justify='flex-end'>
@@ -215,47 +263,13 @@ export default function DisputesListPage() {
 			<Stack gap='md'>
 				<SectionCard>
 					<Stack gap='sm'>
-						<Group className={classes.toolbar} justify='space-between'>
-							<Group className={classes.filters} gap='xs'>
-								<TextInput
-									className={classes.dateFilter}
-									label={t('list.filters.createdAtFrom')}
-									onChange={(event) => {
-										setCreatedAtFrom(event.currentTarget.value);
-										resetPage();
-									}}
-									size='sm'
-									type='date'
-									value={createdAtFrom}
-								/>
-								<TextInput
-									className={classes.dateFilter}
-									label={t('list.filters.createdAtTo')}
-									onChange={(event) => {
-										setCreatedAtTo(event.currentTarget.value);
-										resetPage();
-									}}
-									size='sm'
-									type='date'
-									value={createdAtTo}
-								/>
-								<Select
-									className={classes.filter}
-									data={[
-										{ label: t('list.order.desc'), value: 'DESC' },
-										{ label: t('list.order.asc'), value: 'ASC' },
-									]}
-									label={t('list.filters.order')}
-									onChange={(value) => {
-										setSort({
-											...sort,
-											order: value === 'ASC' ? 'ASC' : 'DESC',
-										});
-									}}
-									size='sm'
-									value={sort.order}
-								/>
-							</Group>
+						<DisputesFilters
+							filters={filters}
+							onFiltersChange={handleFiltersChange}
+							isLoading={disputesQuery.isLoading}
+						/>
+
+						<Group justify='flex-end'>
 							<Text c='dimmed' size='sm'>
 								{t('list.count', { count: total })}
 							</Text>

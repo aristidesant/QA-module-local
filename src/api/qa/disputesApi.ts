@@ -11,6 +11,9 @@ import { qaHttpClient } from '~/api/qa/qaConfig';
 
 function toDisputeListParams(params?: EvaluationDisputeListQueryParams) {
 	return {
+		supervisorIds: params?.supervisorIds,
+		agentIds: params?.agentIds,
+		campaignIds: params?.campaignIds,
 		createdAtFrom: params?.createdAtFrom,
 		createdAtTo: params?.createdAtTo,
 		sortBy: params?.sortBy,
