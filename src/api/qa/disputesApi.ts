@@ -5,23 +5,9 @@ import type {
 	EvaluationDisputeDetailResponse,
 	EvaluationDisputeListQueryParams,
 	EvaluationDisputeSummary,
-	PaginatedResponse,
 } from '~/models/qa';
 import { qaHttpClient } from '~/api/qa/qaConfig';
-
-function toDisputeListParams(params?: EvaluationDisputeListQueryParams) {
-	return {
-		supervisorIds: params?.supervisorIds,
-		agentIds: params?.agentIds,
-		campaignIds: params?.campaignIds,
-		createdAtFrom: params?.createdAtFrom,
-		createdAtTo: params?.createdAtTo,
-		sortBy: params?.sortBy,
-		orderBy: params?.orderBy,
-		page: params?.page,
-		limit: params?.limit,
-	};
-}
+import { getMockDisputes } from '~/api/qa/disputesMockData';
 
 function normalizeDisputeSummary(
 	dispute: EvaluationDisputeSummary
@@ -73,15 +59,15 @@ export async function getEvaluationDisputes(evaluationId: number) {
 }
 
 export async function getDisputes(params?: EvaluationDisputeListQueryParams) {
-	const response = await qaHttpClient.get<
-		PaginatedResponse<EvaluationDisputeSummary>
-	>('/disputes', {
-		params: toDisputeListParams(params),
-	});
+	// Use mock data for demo purposes
+	const mockData = getMockDisputes(
+		params?.page ? (params.page - 1) * (params.limit || 25) : 0,
+		params?.limit || 25
+	);
 
 	return {
-		...response.data,
-		data: response.data.data.map(normalizeDisputeSummary),
+		...mockData,
+		data: mockData.data.map(normalizeDisputeSummary),
 	};
 }
 
