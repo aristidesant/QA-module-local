@@ -1,12 +1,4 @@
-import {
-	Badge,
-	Button,
-	Group,
-	Radio,
-	Stack,
-	Text,
-	Textarea,
-} from '@mantine/core';
+import { Badge, Button, Group, Radio, Stack, Text } from '@mantine/core';
 import { IconDeviceFloppy } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 
@@ -31,32 +23,22 @@ export default function DisputedItemCard({
 	const { t } = useTranslation('qa.evaluations');
 	const hasChanges = draftValue !== (question.answer?.selectedLabel ?? '');
 
-	const renderInput = () => {
-		if (question.answerType === 'CHOICE' && question.options) {
-			return (
-				<Radio.Group value={draftValue} onChange={onDraftChange}>
-					<Stack gap='xs'>
-						{question.options.map((option) => (
-							<Radio
-								key={option.label}
-								value={option.label}
-								label={option.label}
-								disabled={saving}
-							/>
-						))}
-					</Stack>
-				</Radio.Group>
-			);
-		}
+	const qaOptions = ['Yes', 'No', 'N/A'];
 
+	const renderInput = () => {
 		return (
-			<Textarea
-				value={draftValue}
-				onChange={(e) => onDraftChange(e.currentTarget.value)}
-				placeholder='Enter your response'
-				disabled={saving}
-				minRows={3}
-			/>
+			<Radio.Group value={draftValue} onChange={onDraftChange}>
+				<Stack gap='xs'>
+					{qaOptions.map((option) => (
+						<Radio
+							key={option}
+							value={option}
+							label={option}
+							disabled={saving}
+						/>
+					))}
+				</Stack>
+			</Radio.Group>
 		);
 	};
 

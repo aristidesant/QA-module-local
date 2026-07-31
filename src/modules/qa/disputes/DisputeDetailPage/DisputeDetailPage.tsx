@@ -232,15 +232,27 @@ export default function DisputeDetailPage() {
 								<Stack gap='md'>
 									{isOpenDispute ? (
 										<>
-											{/* Resolve Dispute Button */}
+											{/* Action Buttons */}
 											{!isResolving && (
-												<Button
-													onClick={() => setIsResolving(true)}
-													color='orange'
-													size='md'
-												>
-													Resolve Dispute
-												</Button>
+												<Group grow>
+													<Button
+														onClick={() => setIsResolving(true)}
+														color='orange'
+														size='md'
+													>
+														Resolve Dispute
+													</Button>
+													<Button
+														onClick={() => {
+															// Reject dispute - no changes made, navigate back
+															navigate('/qa/disputes');
+														}}
+														variant='light'
+														size='md'
+													>
+														Reject Dispute
+													</Button>
+												</Group>
 											)}
 
 											{/* Editable Disputed Items - Only shown when resolving */}
