@@ -55,6 +55,7 @@ export default function DisputeDetailPage() {
 	const [savingAnswers, setSavingAnswers] = useState(false);
 	const [isResolving, setIsResolving] = useState(false);
 	const [actionTaken, setActionTaken] = useState(false);
+	const [isApproved, setIsApproved] = useState(false);
 	const [disputeComment, setDisputeComment] = useState(dispute?.reason ?? '');
 
 	const disputedByLabel = dispute?.disputedByUserName
@@ -260,7 +261,7 @@ export default function DisputeDetailPage() {
 														}}
 														color='green'
 														size='md'
-														disabled={actionTaken}
+														disabled={actionTaken || isApproved}
 													>
 														Resolve Dispute
 													</Button>
@@ -277,7 +278,7 @@ export default function DisputeDetailPage() {
 														}}
 														color='red'
 														size='md'
-														disabled={actionTaken}
+														disabled={actionTaken || isApproved}
 													>
 														Reject Dispute
 													</Button>
@@ -329,6 +330,7 @@ export default function DisputeDetailPage() {
 																				);
 																			}}
 																			saving={savingAnswers}
+																			readOnly={isApproved}
 																		/>
 																	))}
 																</Stack>
@@ -342,6 +344,29 @@ export default function DisputeDetailPage() {
 												</SectionCard>
 											)}
 
+											{/* Save Changes Button - Only shown when QA Manager is resolving */}
+											{isResolving && isQAManager && isOpenDispute && (
+												<Group grow>
+													<Button
+														onClick={() => {
+															notifications.show({
+																title: 'Changes Saved',
+																message:
+																	'Dispute has been approved with updated items',
+																color: 'green',
+																position: 'top-right',
+															});
+															setIsApproved(true);
+															setSavingAnswers(false);
+															setIsResolving(false);
+														}}
+														color='green'
+														size='md'
+													>
+														Save Changes
+													</Button>
+												</Group>
+											)}
 											{/* Dispute Comment Section */}
 											{isOpenDispute && (
 												<SectionCard
@@ -355,7 +380,7 @@ export default function DisputeDetailPage() {
 														onChange={(e) =>
 															setDisputeComment(e.currentTarget.value)
 														}
-														readOnly={!isQAManager}
+														readOnly={!isQAManager || isApproved}
 														minRows={4}
 													/>
 												</SectionCard>
