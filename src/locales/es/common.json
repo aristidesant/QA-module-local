@@ -230,7 +230,7 @@
 			"roles": {
 				"agent": "Agent",
 				"supervisor": "Supervisor",
-				"operationManager": "Operation Manager",
+				"operationManager": "QA Manager",
 				"superAdmin": "SuperAdmin"
 			}
 		}
