@@ -26,6 +26,7 @@ import {
 	IconForms,
 	IconFolders,
 	IconGitBranch,
+	IconLock,
 	IconSchool,
 	IconSearch,
 	IconSpeakerphone,
@@ -80,6 +81,7 @@ export type SidebarNavItem = {
 	exact?: boolean;
 	i18nNamespace?: string;
 	roleCodes?: readonly string[];
+	disabled?: boolean;
 };
 
 type SidebarSection = {
@@ -419,22 +421,24 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/role-preview/agent-dashboard/evaluations',
 		},
 		{
-			key: 'role-preview-coaching',
-			label: 'sidebar.rolePreview.items.coaching',
-			icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
-			to: '/role-preview/agent-dashboard/coaching',
-		},
-		{
 			key: 'role-preview-disputes',
 			label: 'sidebar.rolePreview.items.disputes',
 			icon: <IconFolders size={20} className={styles.menuIcon} />,
 			to: '/qa/disputes',
 		},
 		{
+			key: 'role-preview-coaching',
+			label: 'sidebar.rolePreview.items.coaching',
+			icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
+			to: '/role-preview/agent-dashboard/coaching',
+			disabled: true,
+		},
+		{
 			key: 'role-preview-lms',
 			label: 'sidebar.rolePreview.items.lms',
 			icon: <IconSchool size={20} className={styles.menuIcon} />,
 			to: '/role-preview/agent-dashboard/lms',
+			disabled: true,
 		},
 	],
 	supervisor: [
@@ -991,6 +995,45 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 	const { closeMobile } = useSidebarStore();
 
 	const isSelected = isLinkActive(item, location.pathname);
+
+	// If disabled, show as a div instead of a link with lock icon
+	if (item.disabled) {
+		// inline-style-allow: disabled state styling for pointer-events and cursor behavior
+		const disabledItem = (
+			<div
+				className={[
+					styles.menuItem,
+					collapsed ? styles.menuItemCollapsed : '',
+					styles.menuItemDisabled,
+				].join(' ')}
+				// inline-style-allow: disabled state styling for pointer-events and cursor behavior
+				style={{ pointerEvents: 'none', opacity: 0.5, cursor: 'not-allowed' }}
+			>
+				{item.icon}
+				{!collapsed && (
+					<>
+						<span className={styles.menuText}>{t(item.label)}</span>
+						{/* inline-style-allow: margin-left auto for right-aligned lock icon */}
+						<IconLock size={16} style={{ marginLeft: 'auto' }} />
+					</>
+				)}
+			</div>
+		);
+
+		if (collapsed) {
+			return (
+				<Tooltip
+					label={`${t(item.label)} (Coming Soon)`}
+					position='right'
+					withArrow
+				>
+					{disabledItem}
+				</Tooltip>
+			);
+		}
+
+		return disabledItem;
+	}
 
 	const link = (
 		<Link
