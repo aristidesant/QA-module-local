@@ -9,6 +9,7 @@
 	Stack,
 	Text,
 } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import {
 	IconAlertTriangle,
 	IconDownload,
@@ -49,6 +50,7 @@ export default function DisputeDetailPage() {
 	const [draftAnswers, setDraftAnswers] = useState<DraftAnswers>({});
 	const [savingAnswers, setSavingAnswers] = useState(false);
 	const [isResolving, setIsResolving] = useState(false);
+	const [actionTaken, setActionTaken] = useState(false);
 
 	const disputedByLabel = dispute?.disputedByUserName
 		? dispute.disputedByUserName
@@ -75,9 +77,6 @@ export default function DisputeDetailPage() {
 			),
 		}))
 		.filter((group) => group.questions.length > 0);
-
-	const isQuestionDisputed = (questionId: number) =>
-		disputedQuestionIds.includes(questionId);
 
 	return (
 		<ContentContainer
@@ -239,19 +238,37 @@ export default function DisputeDetailPage() {
 											{!isResolving && (
 												<Group grow>
 													<Button
-														onClick={() => setIsResolving(true)}
-														color='orange'
+														onClick={() => {
+															notifications.show({
+																title: 'Resolving Dispute',
+																message:
+																	'You can now update the disputed items',
+																color: 'green',
+																position: 'top-right',
+															});
+															setActionTaken(true);
+															setTimeout(() => setIsResolving(true), 500);
+														}}
+														color='green'
 														size='md'
+														disabled={actionTaken}
 													>
 														Resolve Dispute
 													</Button>
 													<Button
 														onClick={() => {
-															// Reject dispute - no changes made, navigate back
-															navigate('/qa/disputes');
+															notifications.show({
+																title: 'Dispute Rejected',
+																message: 'The dispute has been rejected',
+																color: 'red',
+																position: 'top-right',
+															});
+															setActionTaken(true);
+															setTimeout(() => navigate('/qa/disputes'), 500);
 														}}
-														variant='light'
+														color='red'
 														size='md'
+														disabled={actionTaken}
 													>
 														Reject Dispute
 													</Button>
