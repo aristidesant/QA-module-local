@@ -1,5 +1,5 @@
 import React from 'react';
-import { Box, SimpleGrid, Text } from '@mantine/core';
+import { Stack, Text } from '@mantine/core';
 import type { DemoAgentKpis } from '../../../types';
 import styles from './AgentDashboardKpisV2.module.css';
 
@@ -35,22 +35,20 @@ const MetricCard: React.FC<MetricProps> = ({
 
 const SecondaryMetrics: React.FC<SecondaryMetricsProps> = ({ kpis }) => {
 	return (
-		<Box className={styles.container}>
+		<Stack gap='md'>
 			{/* Secondary Metrics - Right Column (3 cards stacked) */}
-			<SimpleGrid cols={1} spacing='md'>
-				<MetricCard
-					label='Weekly Call Volume'
-					value={kpis.totalCallsPerformed}
-					subtitle='This week'
-				/>
-				<MetricCard
-					label='Active Campaigns'
-					value={kpis.totalCampaigns}
-					subtitle='Currently on'
-				/>
-				<MetricCard label='Quality Trend' value='+2%' subtitle='vs last week' />
-			</SimpleGrid>
-		</Box>
+			<MetricCard
+				label='Weekly Call Volume'
+				value={kpis.totalCallsPerformed}
+				subtitle='This week'
+			/>
+			<MetricCard
+				label='Active Campaigns'
+				value={kpis.totalCampaigns}
+				subtitle='Currently on'
+			/>
+			<MetricCard label='Quality Trend' value='+2%' subtitle='vs last week' />
+		</Stack>
 	);
 };
 
