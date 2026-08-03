@@ -386,8 +386,8 @@ export default function DisputeDetailPage() {
 												</SectionCard>
 											)}
 
-											{/* Disputed Items Section - For Agent View */}
-											{!isQAManager && isOpenDispute && (
+											{/* Disputed Items Section - For Both Agent and QA Manager (Read-only before resolving) */}
+											{isOpenDispute && (!isQAManager || !isResolving) && (
 												<SectionCard
 													icon={IconGitBranch}
 													title='Disputed Items'
@@ -428,63 +428,6 @@ export default function DisputeDetailPage() {
 																No disputed items to display
 															</Text>
 														)}
-													</Stack>
-												</SectionCard>
-											)}
-											{/* Original Evaluation - Read Only (QA Manager view) */}
-											{isQAManager && (
-												<SectionCard
-													icon={IconGitBranch}
-													title={t('detail.source.title')}
-													headerActions={
-														<Badge color='blue' variant='light'>
-															{t('detail.score.percent', {
-																percent: formatScorePct(
-																	dispute.source.overallScorePct
-																),
-															})}
-														</Badge>
-													}
-												>
-													<Stack gap='sm'>
-														<Group gap='xs'>
-															<Badge
-																color={
-																	EVALUATOR_TYPE_COLORS[
-																		dispute.source.evaluatorType
-																	]
-																}
-																leftSection={
-																	dispute.source.evaluatorType === 'AI' ? (
-																		<IconRobot size={12} />
-																	) : (
-																		<IconUserCheck size={12} />
-																	)
-																}
-																variant='light'
-															>
-																{t(
-																	`detail.evaluation.evaluatorTypes.${dispute.source.evaluatorType.toLowerCase()}`
-																)}
-															</Badge>
-															<Badge color='gray' variant='light'>
-																{t('detail.evaluation.version', {
-																	version: dispute.source.version ?? 1,
-																})}
-															</Badge>
-														</Group>
-														<Text fw={700} size='sm'>
-															{dispute.source.formName}
-														</Text>
-														<Text c='dimmed' size='sm'>
-															{t('detail.evaluation.agent', {
-																name: dispute.source.agent
-																	? getAgentDisplayName(dispute.source.agent)
-																	: 'Unknown',
-															})}
-														</Text>
-														<Divider />
-														<Text size='sm'>{dispute.reason}</Text>
 													</Stack>
 												</SectionCard>
 											)}
