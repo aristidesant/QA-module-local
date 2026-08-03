@@ -41,8 +41,8 @@ const AgentDashboardKpisV2: React.FC<AgentDashboardKpisV2Props> = ({
 
 	return (
 		<Box className={styles.container}>
-			{/* Featured Metrics - Top Row (3 columns) */}
-			<SimpleGrid cols={3} spacing='md' className={styles.featuredRow}>
+			{/* Featured Metrics - Top Row (4 columns) */}
+			<SimpleGrid cols={4} spacing='md' className={styles.featuredRow}>
 				<MetricCard
 					label='Avg Call Score'
 					value={`${kpis.avgCallScore}%`}
@@ -53,6 +53,12 @@ const AgentDashboardKpisV2: React.FC<AgentDashboardKpisV2Props> = ({
 					label='Effective Contacts'
 					value={kpis.effectiveContactsCount}
 					subtitle='Productive calls'
+					size='large'
+				/>
+				<MetricCard
+					label='No Effective Contacts'
+					value={kpis.nonEffectiveContactsCount}
+					subtitle='Unproductive calls'
 					size='large'
 				/>
 				<MetricCard
