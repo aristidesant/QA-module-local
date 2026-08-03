@@ -535,12 +535,14 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			label: 'sidebar.rolePreview.items.coaching',
 			icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
 			to: '/role-preview/coaching',
+			disabled: true,
 		},
 		{
 			key: 'role-preview-lms',
 			label: 'sidebar.rolePreview.items.lms',
 			icon: <IconSchool size={20} className={styles.menuIcon} />,
 			to: '/role-preview/lms',
+			disabled: true,
 		},
 		{
 			key: 'role-preview-billing',
