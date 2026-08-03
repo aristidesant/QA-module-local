@@ -76,6 +76,9 @@ export default function DisputeDetailPage() {
 		}))
 		.filter((group) => group.questions.length > 0);
 
+	const isQuestionDisputed = (questionId: number) =>
+		disputedQuestionIds.includes(questionId);
+
 	return (
 		<ContentContainer
 			contentWidth='full'
