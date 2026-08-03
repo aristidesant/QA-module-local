@@ -23,7 +23,9 @@ const AgentDashboardPage: React.FC = () => {
 					<AgentDashboardKpisV2 kpis={DEMO_AGENT_KPIS} />
 				</div>
 
-				<AgentPerformanceTrendChart kpis={DEMO_AGENT_KPIS} />
+				<div className={styles.chartGrid}>
+					<AgentPerformanceTrendChart kpis={DEMO_AGENT_KPIS} />
+				</div>
 			</Stack>
 		</ContentContainer>
 	);

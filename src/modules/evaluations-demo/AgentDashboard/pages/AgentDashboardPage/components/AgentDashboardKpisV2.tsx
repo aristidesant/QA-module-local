@@ -14,7 +14,12 @@ interface MetricProps {
 	size?: 'large' | 'small';
 }
 
-const MetricCard: React.FC<MetricProps> = ({ label, value, subtitle, size = 'small' }) => (
+const MetricCard: React.FC<MetricProps> = ({
+	label,
+	value,
+	subtitle,
+	size = 'small',
+}) => (
 	<div className={`${styles.metricCard} ${styles[`metric-${size}`]}`}>
 		<Text size='xs' className={styles.metricLabel}>
 			{label}
@@ -28,11 +33,16 @@ const MetricCard: React.FC<MetricProps> = ({ label, value, subtitle, size = 'sma
 	</div>
 );
 
-const AgentDashboardKpisV2: React.FC<AgentDashboardKpisV2Props> = ({ kpis }) => {
+const AgentDashboardKpisV2: React.FC<AgentDashboardKpisV2Props> = ({
+	kpis,
+}) => {
+	// Calculate lowest score from call history
+	const lowestScore = 76; // This will be dynamically calculated if calls data is available
+
 	return (
 		<Box className={styles.container}>
-			{/* Featured Metrics - Top Row */}
-			<SimpleGrid cols={2} spacing='md' className={styles.featuredRow}>
+			{/* Featured Metrics - Top Row (3 columns) */}
+			<SimpleGrid cols={3} spacing='md' className={styles.featuredRow}>
 				<MetricCard
 					label='Avg Call Score'
 					value={`${kpis.avgCallScore}%`}
@@ -40,35 +50,36 @@ const AgentDashboardKpisV2: React.FC<AgentDashboardKpisV2Props> = ({ kpis }) => 
 					size='large'
 				/>
 				<MetricCard
-					label='Pass Rate'
-					value={`${kpis.weeklyPerformance}%`}
-					subtitle='Calls ≥ 80 score'
+					label='Effective Contacts'
+					value={kpis.effectiveContactsCount}
+					subtitle='Productive calls'
+					size='large'
+				/>
+				<MetricCard
+					label='Lowest Score This Week'
+					value={`${lowestScore}%`}
+					subtitle='Minimum score'
 					size='large'
 				/>
 			</SimpleGrid>
 
 			{/* Secondary Metrics - Bottom Row */}
-			<SimpleGrid cols={{ base: 2, sm: 3, md: 5 }} spacing='md' className={styles.secondaryRow}>
+			<SimpleGrid
+				cols={{ base: 2, sm: 3, md: 4 }}
+				spacing='md'
+				className={styles.secondaryRow}
+			>
 				<MetricCard
 					label='Weekly Call Volume'
 					value={kpis.totalCallsPerformed}
 					subtitle='This week'
 				/>
 				<MetricCard
-					label='Effective Contacts'
-					value={kpis.effectiveContactsCount}
-					subtitle='Productive calls'
-				/>
-				<MetricCard
 					label='Active Campaigns'
 					value={kpis.totalCampaigns}
 					subtitle='Currently on'
 				/>
-				<MetricCard
-					label='Quality Trend'
-					value='+2%'
-					subtitle='vs last week'
-				/>
+				<MetricCard label='Quality Trend' value='+2%' subtitle='vs last week' />
 				<MetricCard
 					label='Last Evaluation'
 					value='2 hrs ago'

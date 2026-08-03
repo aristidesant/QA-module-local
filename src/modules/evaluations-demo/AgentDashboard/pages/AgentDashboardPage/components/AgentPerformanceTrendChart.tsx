@@ -10,42 +10,53 @@ interface AgentPerformanceTrendChartProps {
 const AgentPerformanceTrendChart: React.FC<AgentPerformanceTrendChartProps> = ({
 	kpis,
 }) => {
-	return (
-		<Card withBorder radius='md' p='md' mt='md'>
-			<Card.Section withBorder inheritPadding py='md'>
-				<Text fw={700} size='lg'>
-					Performance Trend (12 Months)
-				</Text>
-				<Text size='sm' c='dimmed'>
-					Monthly average score
-				</Text>
-			</Card.Section>
+	// Get only the last 4 weeks (1 month) of data
+	const lastFourWeeks = kpis.monthlyTrends.slice(-4);
 
-			<Card.Section inheritPadding py='md'>
-				<Box style={{ width: '100%', height: 400, minHeight: 300 }}>
-					<LineChart
-						w='100%'
-						h={400}
-						data={kpis.monthlyTrends}
-						dataKey='month'
-						series={[{ name: 'score', label: 'Score (%)', color: 'green' }]}
-						curveType='monotone'
-						withLegend
-						withXAxis
-						withYAxis
-						type='default'
-						yAxisProps={{ domain: [0, 100] }}
-						tooltipProps={{
-							contentStyle: {
-								backgroundColor:
-									'var(--mantine-color-dark-7)',
-								border: '1px solid var(--mantine-color-gray-3)',
-							},
-						}}
-					/>
-				</Box>
-			</Card.Section>
-		</Card>
+	return (
+		<>
+			{/* inline-style-allow: grid column spanning for 2-column layout */}
+			<Card
+				withBorder
+				radius='md'
+				p='md'
+				mt='md'
+				style={{ gridColumn: 'span 2' }}
+			>
+				<Card.Section withBorder inheritPadding py='md'>
+					<Text fw={700} size='lg'>
+						Performance Trend (1 Month)
+					</Text>
+					<Text size='sm' c='dimmed'>
+						Weekly average score
+					</Text>
+				</Card.Section>
+
+				<Card.Section inheritPadding py='md'>
+					<Box style={{ width: '100%', height: 400, minHeight: 300 }}>
+						<LineChart
+							w='100%'
+							h={400}
+							data={lastFourWeeks}
+							dataKey='month'
+							series={[{ name: 'score', label: 'Score (%)', color: 'green' }]}
+							curveType='monotone'
+							withLegend
+							withXAxis
+							withYAxis
+							type='default'
+							yAxisProps={{ domain: [0, 100] }}
+							tooltipProps={{
+								contentStyle: {
+									backgroundColor: 'var(--mantine-color-dark-7)',
+									border: '1px solid var(--mantine-color-gray-3)',
+								},
+							}}
+						/>
+					</Box>
+				</Card.Section>
+			</Card>
+		</>
 	);
 };
 
