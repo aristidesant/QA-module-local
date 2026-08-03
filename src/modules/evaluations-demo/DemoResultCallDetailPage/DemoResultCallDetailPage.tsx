@@ -14,7 +14,6 @@ import {
 	IconEdit,
 	IconGitBranch,
 	IconMicrophone,
-	IconMessageCircle,
 } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import EmptyState from '~/components/EmptyState';
@@ -39,13 +38,13 @@ const SAMPLE_TRANSCRIPT: DemoTranscriptTurn[] = [
 		id: 't2',
 		role: 'customer',
 		timestamp: '0:07',
-		text: "Hi, I had a question about my recent order.",
+		text: 'Hi, I had a question about my recent order.',
 	},
 	{
 		id: 't3',
 		role: 'agent',
 		timestamp: '0:14',
-		text: "Happy to help — let me pull that up for you.",
+		text: 'Happy to help — let me pull that up for you.',
 	},
 ];
 
@@ -124,11 +123,16 @@ const DemoResultCallDetailPage: React.FC = () => {
 			contentWidth='full'
 			title={
 				<Breadcrumbs>
-					<Anchor onClick={() => navigate('/role-preview/qa-campaigns')} size='sm'>
+					<Anchor
+						onClick={() => navigate('/role-preview/qa-campaigns')}
+						size='sm'
+					>
 						Campaigns
 					</Anchor>
 					<Anchor
-						onClick={() => navigate(`/role-preview/qa-campaigns/${campaign.id}`)}
+						onClick={() =>
+							navigate(`/role-preview/qa-campaigns/${campaign.id}`)
+						}
 						size='sm'
 					>
 						{campaign.groupLabel}
@@ -152,16 +156,16 @@ const DemoResultCallDetailPage: React.FC = () => {
 					<div className={styles.tabsRow}>
 						<Tabs.List>
 							<Tabs.Tab value='general'>General</Tabs.Tab>
-							<Tabs.Tab value='changeLog' leftSection={<IconGitBranch size={16} />}>
+							<Tabs.Tab
+								value='changeLog'
+								leftSection={<IconGitBranch size={16} />}
+							>
 								Change Log
 							</Tabs.Tab>
 						</Tabs.List>
 						<div style={{ display: 'flex', gap: 8 }}>
 							<Button variant='default' leftSection={<IconEdit size={16} />}>
 								Edit Evaluation
-							</Button>
-							<Button color='green' leftSection={<IconMessageCircle size={16} />}>
-								Submit Dispute
 							</Button>
 						</div>
 					</div>
