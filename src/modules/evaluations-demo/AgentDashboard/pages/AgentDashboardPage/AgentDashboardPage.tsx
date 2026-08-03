@@ -3,6 +3,7 @@ import { Stack, Text, Title } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import AgentDashboardKpisV2 from './components/AgentDashboardKpisV2';
 import AgentPerformanceTrendChart from './components/AgentPerformanceTrendChart';
+import SecondaryMetrics from './components/SecondaryMetrics';
 import { DEMO_AGENT_KPIS } from '../../mockData';
 import styles from './AgentDashboardPage.module.css';
 
@@ -23,8 +24,9 @@ const AgentDashboardPage: React.FC = () => {
 					<AgentDashboardKpisV2 kpis={DEMO_AGENT_KPIS} />
 				</div>
 
-				<div className={styles.chartGrid}>
+				<div className={styles.bottomGrid}>
 					<AgentPerformanceTrendChart kpis={DEMO_AGENT_KPIS} />
+					<SecondaryMetrics kpis={DEMO_AGENT_KPIS} />
 				</div>
 			</Stack>
 		</ContentContainer>

@@ -46,15 +46,16 @@
 	width: 100%;
 }
 
-.chartGrid {
+.bottomGrid {
 	display: grid;
-	grid-template-columns: repeat(2, 1fr);
+	grid-template-columns: 1fr 1fr;
 	gap: var(--mantine-spacing-lg);
 	width: 100%;
+	align-items: start;
 }
 
 @media (max-width: 992px) {
-	.chartGrid {
+	.bottomGrid {
 		grid-template-columns: 1fr;
 	}
 }

@@ -3,7 +3,7 @@ import { Box, SimpleGrid, Text } from '@mantine/core';
 import type { DemoAgentKpis } from '../../../types';
 import styles from './AgentDashboardKpisV2.module.css';
 
-interface AgentDashboardKpisV2Props {
+interface SecondaryMetricsProps {
 	kpis: DemoAgentKpis;
 }
 
@@ -33,37 +33,25 @@ const MetricCard: React.FC<MetricProps> = ({
 	</div>
 );
 
-const AgentDashboardKpisV2: React.FC<AgentDashboardKpisV2Props> = ({
-	kpis,
-}) => {
-	// Calculate lowest score from call history
-	const lowestScore = 76; // This will be dynamically calculated if calls data is available
-
+const SecondaryMetrics: React.FC<SecondaryMetricsProps> = ({ kpis }) => {
 	return (
 		<Box className={styles.container}>
-			{/* Featured Metrics - Top Row (3 columns) */}
-			<SimpleGrid cols={3} spacing='md' className={styles.featuredRow}>
+			{/* Secondary Metrics - Right Column (3 cards stacked) */}
+			<SimpleGrid cols={1} spacing='md'>
 				<MetricCard
-					label='Avg Call Score'
-					value={`${kpis.avgCallScore}%`}
-					subtitle='This week average'
-					size='large'
+					label='Weekly Call Volume'
+					value={kpis.totalCallsPerformed}
+					subtitle='This week'
 				/>
 				<MetricCard
-					label='Effective Contacts'
-					value={kpis.effectiveContactsCount}
-					subtitle='Productive calls'
-					size='large'
+					label='Active Campaigns'
+					value={kpis.totalCampaigns}
+					subtitle='Currently on'
 				/>
-				<MetricCard
-					label='Lowest Score This Week'
-					value={`${lowestScore}%`}
-					subtitle='Minimum score'
-					size='large'
-				/>
+				<MetricCard label='Quality Trend' value='+2%' subtitle='vs last week' />
 			</SimpleGrid>
 		</Box>
 	);
 };
 
-export default AgentDashboardKpisV2;
+export default SecondaryMetrics;
