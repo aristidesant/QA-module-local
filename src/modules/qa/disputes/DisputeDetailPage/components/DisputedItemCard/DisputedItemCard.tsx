@@ -67,75 +67,32 @@ export default function DisputedItemCard({
 			}`}
 			gap='sm'
 		>
-			<Group justify='space-between'>
-				<Stack gap={4} className={classes.itemHeader}>
-					<Group gap='xs'>
-						<Badge color='blue' variant='light'>
-							{t(`answerTypes.${question.answerType.toLowerCase()}`)}
-						</Badge>
-						<Badge variant='outline'>
-							{t('detail.weight', {
-								weight: Number(question.weight),
-							})}
-						</Badge>
-					</Group>
-					<Text fw={700} size='sm'>
-						{question.text}
-					</Text>
-					{question.description ? (
-						<Text c='dimmed' size='xs'>
-							{question.description}
-						</Text>
-					) : null}
-				</Stack>
-				{question.answer ? (
-					<Badge color='green' variant='light'>
-						{t('answer.answered')}
+			<Stack gap={4} className={classes.itemHeader}>
+				<Group gap='xs'>
+					<Badge color='blue' variant='light'>
+						{t(`answerTypes.${question.answerType.toLowerCase()}`)}
 					</Badge>
-				) : null}
-			</Group>
-
-			<Stack gap='sm'>
-				<Group grow align='flex-start'>
-					{/* inline-style-allow: flex layout needed for responsive column sizing */}
-					<Stack gap={4} style={{ flex: 1 }}>
-						<Text size='xs' fw={600} c='dimmed'>
-							System Selected
-						</Text>
-						<Group gap='xs'>
-							<Badge color='blue' variant='light' size='sm'>
-								{question.answer?.selectedLabel ?? 'Not Selected'}
-							</Badge>
-						</Group>
-					</Stack>
-
-					{/* inline-style-allow: flex layout needed for responsive column sizing */}
-					<Stack gap={4} style={{ flex: 1 }}>
-						<Text size='xs' fw={600} c='dimmed'>
-							Your Selection
-						</Text>
-						<Group gap='xs'>
-							<Badge
-								color={
-									draftValue !== (question.answer?.selectedLabel ?? '')
-										? 'orange'
-										: 'gray'
-								}
-								variant='light'
-								size='sm'
-							>
-								{draftValue || 'Not Selected'}
-							</Badge>
-						</Group>
-					</Stack>
+					<Badge variant='outline'>
+						{t('detail.weight', {
+							weight: Number(question.weight),
+						})}
+					</Badge>
 				</Group>
-
-				<Stack gap={4}>
-					<Text size='xs' fw={600} c='dimmed'>
-						Select Correct Option
+				<Text fw={700} size='sm'>
+					{question.text}
+				</Text>
+				{question.description ? (
+					<Text c='dimmed' size='xs'>
+						{question.description}
 					</Text>
-					{renderInput()}
-				</Stack>
+				) : null}
+			</Stack>
+
+			<Stack gap={4}>
+				<Text size='xs' fw={600} c='dimmed'>
+					Options
+				</Text>
+				{renderInput()}
 			</Stack>
 
 			{hasChanges && !readOnly && (

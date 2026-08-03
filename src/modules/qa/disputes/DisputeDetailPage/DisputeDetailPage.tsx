@@ -8,6 +8,7 @@
 	Loader,
 	Stack,
 	Text,
+	Textarea,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import {
@@ -54,6 +55,7 @@ export default function DisputeDetailPage() {
 	const [savingAnswers, setSavingAnswers] = useState(false);
 	const [isResolving, setIsResolving] = useState(false);
 	const [actionTaken, setActionTaken] = useState(false);
+	const [disputeComment, setDisputeComment] = useState(dispute?.reason ?? '');
 
 	const disputedByLabel = dispute?.disputedByUserName
 		? dispute.disputedByUserName
@@ -393,6 +395,25 @@ export default function DisputeDetailPage() {
 															</Text>
 														)}
 													</Stack>
+												</SectionCard>
+											)}
+
+											{/* Dispute Comment Section */}
+											{isOpenDispute && (
+												<SectionCard
+													icon={IconGitBranch}
+													title='Dispute Reason'
+												>
+													<Textarea
+														label='Why are you submitting this dispute?'
+														placeholder='Explain the reason for this dispute...'
+														value={disputeComment}
+														onChange={(e) =>
+															setDisputeComment(e.currentTarget.value)
+														}
+														readOnly={!isQAManager}
+														minRows={4}
+													/>
 												</SectionCard>
 											)}
 
