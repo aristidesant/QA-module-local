@@ -23,6 +23,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router';
 
+import { useRoleMockStore } from '~/stores/roleMockStore';
 import SectionCard from '~/components/SectionCard';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { EVALUATOR_TYPE_COLORS } from '~/modules/qa/constants/badgeColors';
@@ -47,6 +48,8 @@ export default function DisputeDetailPage() {
 	const disputeQuery = useDisputeQuery(disputeId);
 	const dispute = disputeQuery.data;
 	const dateFormatter = useDateFormatter('dateTime');
+	const { previewRole } = useRoleMockStore();
+	const isQAManager = previewRole === 'operationManager';
 	const [draftAnswers, setDraftAnswers] = useState<DraftAnswers>({});
 	const [savingAnswers, setSavingAnswers] = useState(false);
 	const [isResolving, setIsResolving] = useState(false);
@@ -166,6 +169,20 @@ export default function DisputeDetailPage() {
 							</>
 						)}
 
+						{/* Agent View Info - Disputes are read-only for agents */}
+						{!isQAManager && isOpenDispute && (
+							<Alert
+								color='blue'
+								icon={<IconAlertTriangle size={16} />}
+								title='Information Only'
+								variant='light'
+							>
+								You can view dispute details, but only QA Managers can resolve
+								or reject disputes. Please contact your QA Manager to take
+								action on this dispute.
+							</Alert>
+						)}
+
 						<Grid gap='md'>
 							{/* Left Column - Call Info, Player, and Transcript */}
 							<Grid.Col span={{ base: 12, lg: 4 }}>
@@ -234,8 +251,8 @@ export default function DisputeDetailPage() {
 								<Stack gap='md'>
 									{isOpenDispute ? (
 										<>
-											{/* Action Buttons */}
-											{!isResolving && (
+											{/* Action Buttons - QA Manager Only */}
+											{!isResolving && isQAManager && (
 												<Group grow>
 													<Button
 														onClick={() => {
@@ -275,8 +292,8 @@ export default function DisputeDetailPage() {
 												</Group>
 											)}
 
-											{/* Editable Disputed Items - Only shown when resolving */}
-											{isResolving && (
+											{/* Editable Disputed Items - Only shown when resolving (QA Manager) */}
+											{isResolving && isQAManager && (
 												<SectionCard
 													icon={IconGitBranch}
 													title='Disputed Items'
