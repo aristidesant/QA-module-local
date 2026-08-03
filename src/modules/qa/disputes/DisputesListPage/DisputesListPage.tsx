@@ -1,16 +1,6 @@
-import {
-	ActionIcon,
-	Alert,
-	Badge,
-	Button,
-	Group,
-	Stack,
-	Text,
-	Tooltip,
-} from '@mantine/core';
+import { Alert, Badge, Button, Group, Stack, Text } from '@mantine/core';
 import {
 	IconAlertTriangle,
-	IconArrowRight,
 	IconGitBranch,
 	IconRefresh,
 } from '@tabler/icons-react';
@@ -109,7 +99,7 @@ export default function DisputesListPage() {
 		}
 	};
 
-	const columns: BaseTableColumnDef<EvaluationDisputeSummary>[] = [
+	const baseColumns: BaseTableColumnDef<EvaluationDisputeSummary>[] = [
 		{
 			id: 'id',
 			header: 'Dispute ID',
@@ -189,34 +179,33 @@ export default function DisputesListPage() {
 				</Text>
 			),
 		},
-		{
-			id: 'actions',
-			header: 'Actions',
-			enableSorting: false,
-			cell: ({ row }) => (
-				<Group justify='flex-end'>
-					<Tooltip label={t('list.actions.open')}>
-						<ActionIcon
-							aria-label={t('list.actions.open')}
-							onClick={(event) => {
-								event.stopPropagation();
-								navigate(`/qa/disputes/${row.original.id}`);
-							}}
-							radius='md'
-							variant='light'
-						>
-							<IconArrowRight size={16} />
-						</ActionIcon>
-					</Tooltip>
-				</Group>
-			),
-		},
 	];
 
-	// Hide Agent and Actions columns for Agent role
-	const visibleColumns = isQAManager
-		? columns
-		: columns.filter((col) => col.id !== 'agent' && col.id !== 'actions');
+	// Add "Reviewed by" column only for QA Manager role
+	const columns: BaseTableColumnDef<EvaluationDisputeSummary>[] = isQAManager
+		? [
+				...baseColumns,
+				{
+					id: 'reviewedBy',
+					header: 'Reviewed by',
+					enableSorting: false,
+					cell: ({ row }) => (
+						<Text size='sm'>
+							{row.original.status === 'open'
+								? 'N/A'
+								: (row.original.resultingEvaluatorUserName ??
+									row.original.resultingEvaluatorAgentName ??
+									'—')}
+						</Text>
+					),
+				},
+			]
+		: baseColumns;
+
+	// Hide Agent column for Agent role
+	const visibleColumns = !isQAManager
+		? columns.filter((col) => col.id !== 'agent')
+		: columns;
 
 	return (
 		<ContentContainer
