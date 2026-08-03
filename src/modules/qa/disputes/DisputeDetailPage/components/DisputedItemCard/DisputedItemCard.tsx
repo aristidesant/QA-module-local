@@ -1,5 +1,4 @@
-import { Badge, Button, Group, Radio, Stack, Text } from '@mantine/core';
-import { IconDeviceFloppy } from '@tabler/icons-react';
+import { Badge, Group, Radio, Stack, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 
 import type { EvaluationQuestion } from '~/models/qa';
@@ -9,8 +8,8 @@ export interface DisputedItemCardProps {
 	question: EvaluationQuestion;
 	draftValue: string;
 	onDraftChange: (value: string) => void;
-	onSave: () => void;
-	saving: boolean;
+	onSave?: () => void;
+	saving?: boolean;
 	readOnly?: boolean;
 }
 
@@ -18,12 +17,9 @@ export default function DisputedItemCard({
 	question,
 	draftValue,
 	onDraftChange,
-	onSave,
-	saving,
 	readOnly = false,
 }: DisputedItemCardProps) {
 	const { t } = useTranslation('qa.evaluations');
-	const hasChanges = draftValue !== (question.answer?.selectedLabel ?? '');
 
 	const qaOptions = ['Yes', 'No', 'N/A'];
 
@@ -48,12 +44,7 @@ export default function DisputedItemCard({
 			<Radio.Group value={draftValue} onChange={onDraftChange}>
 				<Stack gap='xs'>
 					{qaOptions.map((option) => (
-						<Radio
-							key={option}
-							value={option}
-							label={option}
-							disabled={saving}
-						/>
+						<Radio key={option} value={option} label={option} />
 					))}
 				</Stack>
 			</Radio.Group>
@@ -94,19 +85,6 @@ export default function DisputedItemCard({
 				</Text>
 				{renderInput()}
 			</Stack>
-
-			{hasChanges && !readOnly && (
-				<Group justify='flex-end'>
-					<Button
-						leftSection={<IconDeviceFloppy size={14} />}
-						onClick={onSave}
-						loading={saving}
-						size='sm'
-					>
-						{t('answer.save')}
-					</Button>
-				</Group>
-			)}
 		</Stack>
 	);
 }
