@@ -425,6 +425,12 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/role-preview/agent-dashboard/coaching',
 		},
 		{
+			key: 'role-preview-disputes',
+			label: 'sidebar.rolePreview.items.disputes',
+			icon: <IconFolders size={20} className={styles.menuIcon} />,
+			to: '/qa/disputes',
+		},
+		{
 			key: 'role-preview-lms',
 			label: 'sidebar.rolePreview.items.lms',
 			icon: <IconSchool size={20} className={styles.menuIcon} />,

@@ -36,7 +36,7 @@ const MetricCard: React.FC<MetricProps> = ({
 const SecondaryMetrics: React.FC<SecondaryMetricsProps> = ({ kpis }) => {
 	return (
 		<Stack gap='md'>
-			{/* Secondary Metrics - Right Column (3 cards stacked) */}
+			{/* Secondary Metrics - Right Column (4 cards stacked) */}
 			<MetricCard
 				label='Weekly Call Volume'
 				value={kpis.totalCallsPerformed}
@@ -46,6 +46,11 @@ const SecondaryMetrics: React.FC<SecondaryMetricsProps> = ({ kpis }) => {
 				label='Active Campaigns'
 				value={kpis.totalCampaigns}
 				subtitle='Currently on'
+			/>
+			<MetricCard
+				label='Open Disputes'
+				value='2'
+				subtitle='Awaiting resolution'
 			/>
 			<MetricCard
 				label='Lowest Performance Campaign'
