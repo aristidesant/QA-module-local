@@ -11,6 +11,7 @@ export interface DisputedItemCardProps {
 	onDraftChange: (value: string) => void;
 	onSave: () => void;
 	saving: boolean;
+	readOnly?: boolean;
 }
 
 export default function DisputedItemCard({
@@ -19,6 +20,7 @@ export default function DisputedItemCard({
 	onDraftChange,
 	onSave,
 	saving,
+	readOnly = false,
 }: DisputedItemCardProps) {
 	const { t } = useTranslation('qa.evaluations');
 	const hasChanges = draftValue !== (question.answer?.selectedLabel ?? '');
@@ -26,6 +28,22 @@ export default function DisputedItemCard({
 	const qaOptions = ['Yes', 'No', 'N/A'];
 
 	const renderInput = () => {
+		if (readOnly) {
+			return (
+				<Stack gap='xs'>
+					{qaOptions.map((option) => (
+						<Radio
+							key={option}
+							value={option}
+							label={option}
+							disabled
+							checked={draftValue === option}
+						/>
+					))}
+				</Stack>
+			);
+		}
+
 		return (
 			<Radio.Group value={draftValue} onChange={onDraftChange}>
 				<Stack gap='xs'>
@@ -120,7 +138,7 @@ export default function DisputedItemCard({
 				</Stack>
 			</Stack>
 
-			{hasChanges && (
+			{hasChanges && !readOnly && (
 				<Group justify='flex-end'>
 					<Button
 						leftSection={<IconDeviceFloppy size={14} />}
