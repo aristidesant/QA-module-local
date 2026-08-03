@@ -142,14 +142,17 @@ export default function DisputeDetailPage() {
 								{/* Agent Info Section */}
 								<SectionCard>
 									<Group grow>
-										<Stack gap={4}>
-											<Text size='xs' fw={600} c='dimmed'>
-												Agent ID
-											</Text>
-											<Text size='sm'>
-												{dispute.source.agent?.employeeId ?? 'N/A'}
-											</Text>
-										</Stack>
+										{isQAManager && (
+											<Stack gap={4}>
+												<Text size='xs' fw={600} c='dimmed'>
+													Agent ID
+												</Text>
+												<Text size='sm'>
+													{dispute.source.agent?.employeeId ?? 'N/A'}
+												</Text>
+											</Stack>
+										)}
+
 										<Stack gap={4}>
 											<Text size='xs' fw={600} c='dimmed'>
 												Submitted
