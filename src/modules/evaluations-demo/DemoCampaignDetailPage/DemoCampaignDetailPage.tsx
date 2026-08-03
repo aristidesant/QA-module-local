@@ -5,6 +5,7 @@ import {
 	Anchor,
 	Badge,
 	Breadcrumbs,
+	Button,
 	Group,
 	SimpleGrid,
 	Stack,
@@ -13,7 +14,13 @@ import {
 	Title,
 	Tooltip,
 } from '@mantine/core';
-import { IconActivity, IconSettings, IconUsers } from '@tabler/icons-react';
+import {
+	IconActivity,
+	IconSettings,
+	IconUsers,
+	IconUpload,
+} from '@tabler/icons-react';
+import { notifications } from '@mantine/notifications';
 import ContentContainer from '~/components/ContentContainer';
 import EmptyState from '~/components/EmptyState';
 import BaseTable from '~/components/BaseTable';
@@ -35,15 +42,19 @@ import type { DemoViewMode } from '../components/GridListToggle';
 import DemoResultsPanel from '../components/DemoResultsPanel';
 import DemoRosterPanel from '../components/DemoRosterPanel';
 import DemoCampaignSettingsDrawer from '../components/DemoCampaignSettingsDrawer';
+import UploadConversationsModal from '~/modules/qa/campaigns/CampaignDetailPage/components/UploadConversationsModal/UploadConversationsModal';
 import styles from './DemoCampaignDetailPage.module.css';
 
 const DemoCampaignDetailPage: React.FC = () => {
 	const { campaignId } = useParams<{ campaignId: string }>();
 	const navigate = useNavigate();
 	const campaign = getDemoCampaign(campaignId);
-	const [healthFilter, setHealthFilter] = useState<EvaluationHealthFilter>('all');
+	const [healthFilter, setHealthFilter] =
+		useState<EvaluationHealthFilter>('all');
 	const [viewMode, setViewMode] = useState<DemoViewMode>('list');
 	const [settingsOpened, setSettingsOpened] = useState(false);
+	const [uploadConversationsOpen, setUploadConversationsOpen] = useState(false);
+	const [isUploading, setIsUploading] = useState(false);
 
 	const evaluationColumns = useMemo<BaseTableColumnDef<DemoEvaluation>[]>(
 		() => [
@@ -114,6 +125,31 @@ const DemoCampaignDetailPage: React.FC = () => {
 
 	const hasRoster = campaign.source !== 'CMX';
 
+	const handleUploadConversations = async (files: File[]) => {
+		setIsUploading(true);
+		try {
+			// Simulate file upload
+			await new Promise((resolve) => setTimeout(resolve, 1000));
+			notifications.show({
+				title: 'Conversations Uploaded',
+				message: `${files.length} file${files.length !== 1 ? 's' : ''} uploaded successfully to ${campaign.groupLabel}.`,
+				color: 'green',
+				position: 'top-right',
+				autoClose: 3000,
+			});
+			setUploadConversationsOpen(false);
+		} catch (error) {
+			notifications.show({
+				title: 'Upload Failed',
+				message: 'An error occurred while uploading files.',
+				color: 'red',
+				position: 'top-right',
+			});
+		} finally {
+			setIsUploading(false);
+		}
+	};
+
 	const stats = [
 		{
 			key: 'totalEvaluations',
@@ -166,115 +202,153 @@ const DemoCampaignDetailPage: React.FC = () => {
 	];
 
 	return (
-		<ContentContainer
-			contentWidth='full'
-			title={
-				<Breadcrumbs>
-					<Anchor onClick={() => navigate('/role-preview/qa-campaigns')} size='sm'>
-						Campaigns
-					</Anchor>
-					<Anchor component='span' size='sm' fw={600}>
-						{campaign.groupLabel}
-					</Anchor>
-				</Breadcrumbs>
-			}
-			description='Available evaluations for this conversation group'
-			titleRight={
-				<Tooltip label='Settings' withArrow>
-					<ActionIcon
-						variant='default'
-						size='lg'
-						aria-label='Settings'
-						onClick={() => setSettingsOpened(true)}
-					>
-						<IconSettings size={18} />
-					</ActionIcon>
-				</Tooltip>
-			}
-		>
-			<Stack gap='md'>
-				<DemoStatRow stats={stats} />
-
-				<Tabs defaultValue='evaluations' color='green'>
-					<Tabs.List>
-						<Tabs.Tab value='evaluations' leftSection={<IconActivity size={16} />}>
-							Evaluations
-						</Tabs.Tab>
-						<Tabs.Tab value='results' leftSection={<IconActivity size={16} />}>
-							Results
-						</Tabs.Tab>
-						{hasRoster && (
-							<Tabs.Tab value='roster' leftSection={<IconUsers size={16} />}>
-								Roster
-							</Tabs.Tab>
-						)}
-					</Tabs.List>
-
-					<Tabs.Panel value='evaluations' pt='md'>
-						<Stack gap='md'>
-							<div className={styles.sectionHeader}>
-								<div>
-									<Title order={4}>Evaluations</Title>
-									<Text size='sm' c='dimmed'>
-										View results for each evaluation on this conversation group
-									</Text>
-								</div>
-							</div>
-
-							<div className={styles.toolbarRow}>
-								<EvaluationFilterChips
-									value={healthFilter}
-									onChange={setHealthFilter}
-								/>
-								<GridListToggle value={viewMode} onChange={setViewMode} />
-							</div>
-
-							{filteredEvaluations.length === 0 ? (
-								<EmptyState message='No evaluations match this filter.' />
-							) : viewMode === 'grid' ? (
-								<SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing='md'>
-									{filteredEvaluations.map((evaluation) => (
-										<EvaluationCard key={evaluation.id} evaluation={evaluation} />
-									))}
-								</SimpleGrid>
-							) : (
-								<BaseTable
-									data={filteredEvaluations}
-									columns={evaluationColumns}
-									getRowId={(evaluation) => evaluation.id}
-									onRowClick={(evaluation) => {
-										if (evaluation.calls && evaluation.calls.length > 0) {
-											navigate(
-												`/role-preview/qa-campaigns/${campaign.id}/call/${evaluation.calls[0].id}`
-											);
-										}
-									}}
-									density='compact'
-									filterMode='client'
-									emptyMessage='No evaluations match this filter.'
-								/>
-							)}
-						</Stack>
-					</Tabs.Panel>
-
-					<Tabs.Panel value='results' pt='md'>
-						<DemoResultsPanel campaignId={campaign.id} results={campaign.results} />
-					</Tabs.Panel>
-
-					{hasRoster && (
-						<Tabs.Panel value='roster' pt='md'>
-							<DemoRosterPanel roster={campaign.roster} />
-						</Tabs.Panel>
-					)}
-				</Tabs>
-			</Stack>
-
-			<DemoCampaignSettingsDrawer
-				campaign={campaign}
-				opened={settingsOpened}
-				onClose={() => setSettingsOpened(false)}
+		<>
+			<UploadConversationsModal
+				opened={uploadConversationsOpen}
+				onClose={() => setUploadConversationsOpen(false)}
+				onUpload={handleUploadConversations}
+				uploading={isUploading}
+				campaignName={campaign?.groupLabel}
 			/>
-		</ContentContainer>
+
+			<ContentContainer
+				contentWidth='full'
+				title={
+					<Breadcrumbs>
+						<Anchor
+							onClick={() => navigate('/role-preview/qa-campaigns')}
+							size='sm'
+						>
+							Campaigns
+						</Anchor>
+						<Anchor component='span' size='sm' fw={600}>
+							{campaign.groupLabel}
+						</Anchor>
+					</Breadcrumbs>
+				}
+				description='Available evaluations for this conversation group'
+				titleRight={
+					<Group gap='sm'>
+						{campaign.source && campaign.source !== 'CMX' && (
+							<Button
+								leftSection={<IconUpload size={16} />}
+								onClick={() => setUploadConversationsOpen(true)}
+								size='sm'
+								variant='light'
+							>
+								Upload Conversations
+							</Button>
+						)}
+						<Tooltip label='Settings' withArrow>
+							<ActionIcon
+								variant='default'
+								size='lg'
+								aria-label='Settings'
+								onClick={() => setSettingsOpened(true)}
+							>
+								<IconSettings size={18} />
+							</ActionIcon>
+						</Tooltip>
+					</Group>
+				}
+			>
+				<Stack gap='md'>
+					<DemoStatRow stats={stats} />
+
+					<Tabs defaultValue='evaluations' color='green'>
+						<Tabs.List>
+							<Tabs.Tab
+								value='evaluations'
+								leftSection={<IconActivity size={16} />}
+							>
+								Evaluations
+							</Tabs.Tab>
+							<Tabs.Tab
+								value='results'
+								leftSection={<IconActivity size={16} />}
+							>
+								Results
+							</Tabs.Tab>
+							{hasRoster && (
+								<Tabs.Tab value='roster' leftSection={<IconUsers size={16} />}>
+									Roster
+								</Tabs.Tab>
+							)}
+						</Tabs.List>
+
+						<Tabs.Panel value='evaluations' pt='md'>
+							<Stack gap='md'>
+								<div className={styles.sectionHeader}>
+									<div>
+										<Title order={4}>Evaluations</Title>
+										<Text size='sm' c='dimmed'>
+											View results for each evaluation on this conversation
+											group
+										</Text>
+									</div>
+								</div>
+
+								<div className={styles.toolbarRow}>
+									<EvaluationFilterChips
+										value={healthFilter}
+										onChange={setHealthFilter}
+									/>
+									<GridListToggle value={viewMode} onChange={setViewMode} />
+								</div>
+
+								{filteredEvaluations.length === 0 ? (
+									<EmptyState message='No evaluations match this filter.' />
+								) : viewMode === 'grid' ? (
+									<SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing='md'>
+										{filteredEvaluations.map((evaluation) => (
+											<EvaluationCard
+												key={evaluation.id}
+												evaluation={evaluation}
+											/>
+										))}
+									</SimpleGrid>
+								) : (
+									<BaseTable
+										data={filteredEvaluations}
+										columns={evaluationColumns}
+										getRowId={(evaluation) => evaluation.id}
+										onRowClick={(evaluation) => {
+											if (evaluation.calls && evaluation.calls.length > 0) {
+												navigate(
+													`/role-preview/qa-campaigns/${campaign.id}/call/${evaluation.calls[0].id}`
+												);
+											}
+										}}
+										density='compact'
+										filterMode='client'
+										emptyMessage='No evaluations match this filter.'
+									/>
+								)}
+							</Stack>
+						</Tabs.Panel>
+
+						<Tabs.Panel value='results' pt='md'>
+							<DemoResultsPanel
+								campaignId={campaign.id}
+								results={campaign.results}
+							/>
+						</Tabs.Panel>
+
+						{hasRoster && (
+							<Tabs.Panel value='roster' pt='md'>
+								<DemoRosterPanel roster={campaign.roster} />
+							</Tabs.Panel>
+						)}
+					</Tabs>
+				</Stack>
+
+				<DemoCampaignSettingsDrawer
+					campaign={campaign}
+					opened={settingsOpened}
+					onClose={() => setSettingsOpened(false)}
+				/>
+			</ContentContainer>
+		</>
 	);
 };
 

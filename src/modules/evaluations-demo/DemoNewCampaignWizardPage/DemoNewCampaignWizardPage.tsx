@@ -6,7 +6,6 @@ import ContentContainer from '~/components/ContentContainer';
 import { WizardStepper, wizardKitStyles } from '../components/DemoWizardKit';
 import StepCampaignDetails from './StepCampaignDetails';
 import StepUploadFiles from './StepUploadFiles';
-import StepConfirmRoster from './StepConfirmRoster';
 import type {
 	DemoWizardCampaignDetails,
 	DemoWizardUploadedFile,
@@ -15,7 +14,6 @@ import type {
 const STEPS = [
 	{ label: 'Campaign Details', description: '' },
 	{ label: 'Upload Files', description: 'Optional' },
-	{ label: 'Confirm Roster', description: '' },
 ];
 
 const DemoNewCampaignWizardPage: React.FC = () => {
@@ -28,9 +26,6 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 		description: '',
 	});
 	const [files, setFiles] = useState<DemoWizardUploadedFile[]>([]);
-	const [emailOverrides, setEmailOverrides] = useState<Record<string, string>>(
-		{}
-	);
 
 	const exitWizard = () => navigate('/role-preview/qa-campaigns');
 
@@ -65,19 +60,6 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 						files={files}
 						onChange={setFiles}
 						onBack={() => setActiveStep(0)}
-						onNext={() => setActiveStep(2)}
-						onExit={exitWizard}
-					/>
-				)}
-
-				{activeStep === 2 && (
-					<StepConfirmRoster
-						files={files}
-						emailOverrides={emailOverrides}
-						onEmailOverrideChange={(agentName, email) =>
-							setEmailOverrides((prev) => ({ ...prev, [agentName]: email }))
-						}
-						onBack={() => setActiveStep(1)}
 						onCreate={handleCreateCampaign}
 						onExit={exitWizard}
 					/>

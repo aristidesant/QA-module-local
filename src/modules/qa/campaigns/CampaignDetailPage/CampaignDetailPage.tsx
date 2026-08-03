@@ -55,6 +55,7 @@ import classes from './CampaignDetailPage.module.css';
 import AudioPlayerBar from './components/AudioPlayerBar';
 import ConversationsTable from './components/ConversationsTable';
 import UploadAudioModal from './components/UploadAudioModal';
+import UploadConversationsModal from './components/UploadConversationsModal/UploadConversationsModal';
 
 export default function CampaignDetailPage() {
 	const { t } = useTranslation('qa.campaigns');
@@ -66,6 +67,7 @@ export default function CampaignDetailPage() {
 	const [search, setSearch] = useState('');
 	const [externalRef, setExternalRef] = useState('');
 	const [uploadOpen, setUploadOpen] = useState(false);
+	const [uploadConversationsOpen, setUploadConversationsOpen] = useState(false);
 	const [audioOpen, setAudioOpen] = useState(false);
 	const [audioUrl, setAudioUrl] = useState<string | null>(null);
 	const [audioError, setAudioError] = useState<string | null>(null);
@@ -146,6 +148,25 @@ export default function CampaignDetailPage() {
 	const closeUploadDrawer = () => {
 		uploadAudioForm.reset();
 		setUploadOpen(false);
+	};
+
+	const handleUploadConversations = async (files: File[]) => {
+		try {
+			// Upload each file
+			for (const file of files) {
+				await uploadAudioMutation.mutateAsync({
+					file,
+					externalRef: undefined,
+					source: 'MANUAL_UPLOAD',
+				});
+			}
+			await queryClient.invalidateQueries({
+				queryKey: campaignConversationsBaseQueryKey(campaignId),
+			});
+			notifySuccess(t('notifications.audioUploaded'));
+		} catch (error) {
+			notifyError(error);
+		}
 	};
 
 	const openEditDrawer = (campaign: Campaign) => {
@@ -297,6 +318,14 @@ export default function CampaignDetailPage() {
 				uploading={uploadAudioMutation.isPending}
 			/>
 
+			<UploadConversationsModal
+				opened={uploadConversationsOpen}
+				onClose={() => setUploadConversationsOpen(false)}
+				onUpload={handleUploadConversations}
+				uploading={uploadAudioMutation.isPending}
+				campaignName={campaignQuery.data?.name}
+			/>
+
 			<CampaignFormModal
 				form={campaignForm}
 				onClose={closeEditDrawer}
@@ -342,6 +371,16 @@ export default function CampaignDetailPage() {
 									{t('detail.actions.deleteCampaign')}
 								</Button>
 							</>
+						) : null}
+						{campaignQuery.data?.source ? (
+							<Button
+								leftSection={<IconUpload size={16} />}
+								onClick={() => setUploadConversationsOpen(true)}
+								size='sm'
+								variant='light'
+							>
+								Upload Conversations
+							</Button>
 						) : null}
 						<Button
 							leftSection={<IconUpload size={16} />}

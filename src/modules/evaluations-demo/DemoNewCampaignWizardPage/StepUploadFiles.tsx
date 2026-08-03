@@ -88,7 +88,8 @@ interface StepUploadFilesProps {
 	files: DemoWizardUploadedFile[];
 	onChange: (files: DemoWizardUploadedFile[]) => void;
 	onBack: () => void;
-	onNext: () => void;
+	onNext?: () => void;
+	onCreate?: () => void;
 	onExit: () => void;
 }
 
@@ -98,6 +99,7 @@ const StepUploadFiles: React.FC<StepUploadFilesProps> = ({
 	onChange,
 	onBack,
 	onNext,
+	onCreate,
 	onExit,
 }) => {
 	const [isDragOver, setIsDragOver] = useState(false);
@@ -300,16 +302,16 @@ const StepUploadFiles: React.FC<StepUploadFilesProps> = ({
 					Back
 				</Button>
 				{files.length === 0 ? (
-					<Button variant='light' color='green' onClick={onNext}>
-						Skip and Continue
+					<Button variant='light' color='green' onClick={onCreate || onNext}>
+						Skip and Create Campaign
 					</Button>
 				) : (
 					<>
-						<Button variant='light' color='green' onClick={onNext}>
+						<Button variant='light' color='green' onClick={onCreate || onNext}>
 							Upload Later
 						</Button>
-						<Button color='green' onClick={onNext}>
-							Continue
+						<Button color='green' onClick={onCreate || onNext}>
+							Create Campaign
 						</Button>
 					</>
 				)}

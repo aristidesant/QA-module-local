@@ -263,7 +263,7 @@ export default function DisputeDetailPage() {
 														size='md'
 														disabled={actionTaken || isApproved}
 													>
-														Resolve Dispute
+														Resolve
 													</Button>
 													<Button
 														onClick={() => {
@@ -280,7 +280,7 @@ export default function DisputeDetailPage() {
 														size='md'
 														disabled={actionTaken || isApproved}
 													>
-														Reject Dispute
+														Reject
 													</Button>
 												</Group>
 											)}
