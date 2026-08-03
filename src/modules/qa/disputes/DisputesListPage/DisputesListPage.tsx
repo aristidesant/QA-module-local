@@ -19,6 +19,7 @@ import { useCallback, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 
+import { useRoleMockStore } from '~/stores/roleMockStore';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import PaginationControls from '~/components/PaginationControls';
@@ -38,6 +39,8 @@ import classes from './DisputesListPage.module.css';
 export default function DisputesListPage() {
 	const { t } = useTranslation('qa.disputes');
 	const navigate = useNavigate();
+	const { previewRole } = useRoleMockStore();
+	const isQAManager = previewRole === 'operationManager';
 
 	const {
 		page,
@@ -210,6 +213,11 @@ export default function DisputesListPage() {
 		},
 	];
 
+	// Hide Agent and Actions columns for Agent role
+	const visibleColumns = isQAManager
+		? columns
+		: columns.filter((col) => col.id !== 'agent' && col.id !== 'actions');
+
 	return (
 		<ContentContainer
 			contentWidth='full'
@@ -280,7 +288,7 @@ export default function DisputesListPage() {
 								) : (
 									<>
 										<BaseTable<EvaluationDisputeSummary>
-											columns={columns}
+											columns={visibleColumns}
 											data={disputes}
 											filterMode='server'
 											getRowClassName={() => classes.row}
