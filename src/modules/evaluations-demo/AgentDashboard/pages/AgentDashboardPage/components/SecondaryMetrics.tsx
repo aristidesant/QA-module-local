@@ -47,7 +47,11 @@ const SecondaryMetrics: React.FC<SecondaryMetricsProps> = ({ kpis }) => {
 				value={kpis.totalCampaigns}
 				subtitle='Currently on'
 			/>
-			<MetricCard label='Quality Trend' value='+2%' subtitle='vs last week' />
+			<MetricCard
+				label='Lowest Performance Campaign'
+				value='Support Quality'
+				subtitle='68% performance score'
+			/>
 		</Stack>
 	);
 };
