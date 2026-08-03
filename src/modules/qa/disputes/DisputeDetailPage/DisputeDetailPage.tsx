@@ -172,19 +172,6 @@ export default function DisputeDetailPage() {
 						)}
 
 						{/* Agent View Info - Disputes are read-only for agents */}
-						{!isQAManager && isOpenDispute && (
-							<Alert
-								color='blue'
-								icon={<IconAlertTriangle size={16} />}
-								title='Information Only'
-								variant='light'
-							>
-								You can view dispute details, but only QA Managers can resolve
-								or reject disputes. Please contact your QA Manager to take
-								action on this dispute.
-							</Alert>
-						)}
-
 						<Grid gap='md'>
 							{/* Left Column - Call Info, Player, and Transcript */}
 							<Grid.Col span={{ base: 12, lg: 4 }}>
@@ -352,6 +339,25 @@ export default function DisputeDetailPage() {
 												</SectionCard>
 											)}
 
+											{/* Dispute Comment Section */}
+											{isOpenDispute && (
+												<SectionCard
+													icon={IconGitBranch}
+													title='Dispute Reason'
+												>
+													<Textarea
+														label='Why are you submitting this dispute?'
+														placeholder='Explain the reason for this dispute...'
+														value={disputeComment}
+														onChange={(e) =>
+															setDisputeComment(e.currentTarget.value)
+														}
+														readOnly={!isQAManager}
+														minRows={4}
+													/>
+												</SectionCard>
+											)}
+
 											{/* Disputed Items Section - For Agent View */}
 											{!isQAManager && isOpenDispute && (
 												<SectionCard
@@ -397,26 +403,6 @@ export default function DisputeDetailPage() {
 													</Stack>
 												</SectionCard>
 											)}
-
-											{/* Dispute Comment Section */}
-											{isOpenDispute && (
-												<SectionCard
-													icon={IconGitBranch}
-													title='Dispute Reason'
-												>
-													<Textarea
-														label='Why are you submitting this dispute?'
-														placeholder='Explain the reason for this dispute...'
-														value={disputeComment}
-														onChange={(e) =>
-															setDisputeComment(e.currentTarget.value)
-														}
-														readOnly={!isQAManager}
-														minRows={4}
-													/>
-												</SectionCard>
-											)}
-
 											{/* Original Evaluation - Read Only (QA Manager view) */}
 											{isQAManager && (
 												<SectionCard
