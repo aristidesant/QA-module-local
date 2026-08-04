@@ -44,6 +44,8 @@ import {
 	IconUsers,
 	IconUsersGroup,
 	IconMoodSmile,
+	IconShield,
+	IconTrendingUp,
 } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -561,6 +563,18 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			label: 'sidebar.rolePreview.items.finder',
 			icon: <IconSearch size={20} className={styles.menuIcon} />,
 			to: '/role-preview/finder',
+		},
+		{
+			key: 'role-preview-compliance',
+			label: 'sidebar.rolePreview.items.compliance',
+			icon: <IconShield size={20} className={styles.menuIcon} />,
+			to: '/role-preview/compliance',
+		},
+		{
+			key: 'role-preview-business-insights',
+			label: 'sidebar.rolePreview.items.businessInsights',
+			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
+			to: '/role-preview/business-insights',
 		},
 	],
 	superAdmin: [

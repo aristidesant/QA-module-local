@@ -164,7 +164,9 @@
 				"finder": "Finder",
 				"billing": "Billing",
 				"clients": "Clients",
-				"globalSettings": "Global Settings"
+				"globalSettings": "Global Settings",
+				"compliance": "Compliance",
+				"businessInsights": "Business Insights"
 			}
 		}
 	},

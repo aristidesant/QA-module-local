@@ -162,7 +162,9 @@
 				"finder": "Buscador",
 				"billing": "Facturación",
 				"clients": "Clientes",
-				"globalSettings": "Configuración global"
+				"globalSettings": "Configuración global",
+				"compliance": "Cumplimiento",
+				"businessInsights": "Información empresarial"
 			}
 		}
 	},
