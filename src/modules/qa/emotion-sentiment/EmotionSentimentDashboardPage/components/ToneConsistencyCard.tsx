@@ -12,6 +12,7 @@ const TONE_COLORS = {
 	polite: 'var(--mantine-color-blue-6)',
 	professional: 'var(--mantine-color-grape-6)',
 	empathetic: 'var(--mantine-color-teal-6)',
+	disrespectful: 'var(--mantine-color-red-6)',
 };
 
 export default function ToneConsistencyCard({
@@ -36,6 +37,11 @@ export default function ToneConsistencyCard({
 					name: t('charts.toneConsistency.labels.empathetic'),
 					value: data.empathetic,
 					color: TONE_COLORS.empathetic,
+				},
+				{
+					name: t('charts.toneConsistency.labels.disrespectful'),
+					value: data.disrespectful,
+					color: TONE_COLORS.disrespectful,
 				},
 			]
 		: [];

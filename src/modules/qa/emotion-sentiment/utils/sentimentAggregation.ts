@@ -110,6 +110,7 @@ export function generateMockMetrics(): EmotionSentimentMetrics {
 		polite: 88,
 		professional: 82,
 		empathetic: 85,
+		disrespectful: 5,
 	};
 
 	// Emotion distribution

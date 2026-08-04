@@ -39,7 +39,8 @@
 			"labels": {
 				"polite": "Cortés",
 				"professional": "Profesional",
-				"empathetic": "Empático"
+				"empathetic": "Empático",
+				"disrespectful": "Irrespetuoso"
 			}
 		},
 		"emotionDistribution": {

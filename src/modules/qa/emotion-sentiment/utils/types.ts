@@ -49,6 +49,7 @@ export interface ToneScore {
 	polite: number;
 	professional: number;
 	empathetic: number;
+	disrespectful: number;
 }
 
 export interface EmotionCount {
