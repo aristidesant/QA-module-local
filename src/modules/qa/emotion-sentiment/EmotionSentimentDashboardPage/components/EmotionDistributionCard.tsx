@@ -1,8 +1,8 @@
-import { Card, Group, Loader, Stack, Text } from '@mantine/core';
+import { Card, Group, Loader, Stack, Text, Badge } from '@mantine/core';
 import { BarChart } from '@mantine/charts';
 import { useTranslation } from 'react-i18next';
 import type { EmotionCount } from '../../utils/types';
-import { getEmotionColor } from '../../utils/types';
+import { getEmotionDetails } from '../../utils/types';
 
 interface EmotionDistributionCardProps {
 	data: EmotionCount[];
@@ -15,11 +15,14 @@ export default function EmotionDistributionCard({
 }: EmotionDistributionCardProps) {
 	const { t } = useTranslation('qa.emotionSentiment');
 
-	const chartData = data.map((emotion) => ({
-		emotion: t(`emotions.${emotion.emotion}`),
-		count: emotion.count,
-		fill: getEmotionColor(emotion.valence),
-	}));
+	const chartData = data.map((emotion) => {
+		const { color, emoji } = getEmotionDetails(emotion.emotion);
+		return {
+			emotion: `${emoji} ${t(`emotions.${emotion.emotion}`)}`,
+			count: emotion.count,
+			fill: color,
+		};
+	});
 
 	return (
 		<Card withBorder radius='md' p='md' className='h-full'>
@@ -31,7 +34,9 @@ export default function EmotionDistributionCard({
 							{t('charts.emotionDistribution.subtitle')}
 						</Text>
 					</div>
-					{loading && <Loader size='xs' />}
+					<Badge variant='light' color='blue' size='sm'>
+						Client Data Only
+					</Badge>
 				</Group>
 
 				{loading || data.length === 0 ? (

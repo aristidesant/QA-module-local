@@ -93,3 +93,22 @@ export const getEmotionColor = (valence: EmotionValence): string => {
 			return 'var(--mantine-color-red-6)';
 	}
 };
+
+export const getEmotionDetails = (
+	emotion: Emotion
+): { color: string; emoji: string } => {
+	switch (emotion) {
+		case 'satisfaction':
+			return { color: 'var(--mantine-color-green-5)', emoji: '😊' };
+		case 'excitement':
+			return { color: 'var(--mantine-color-lime-5)', emoji: '🤩' };
+		case 'frustration':
+			return { color: 'var(--mantine-color-orange-5)', emoji: '😤' };
+		case 'anger':
+			return { color: 'var(--mantine-color-red-5)', emoji: '😠' };
+		case 'sadness':
+			return { color: 'var(--mantine-color-indigo-5)', emoji: '😢' };
+		case 'neutral':
+			return { color: 'var(--mantine-color-gray-5)', emoji: '😐' };
+	}
+};
