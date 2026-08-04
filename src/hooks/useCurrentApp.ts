@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router';
 
-export type AppKey = 'qa' | 'ucxm' | 'backoffice';
+export type AppKey = 'qa' | 'ucxm' | 'backoffice' | 'coaching' | 'lms';
 
 /**
  * Resolve the app a given path belongs to: anything under `/qa` is the QA app,
@@ -12,6 +12,9 @@ export const appForPath = (pathname: string): AppKey => {
 	if (pathname === '/qa' || pathname.startsWith('/qa/')) return 'qa';
 	if (pathname === '/backoffice' || pathname.startsWith('/backoffice/'))
 		return 'backoffice';
+	if (pathname === '/coaching' || pathname.startsWith('/coaching/'))
+		return 'coaching';
+	if (pathname === '/lms' || pathname.startsWith('/lms/')) return 'lms';
 	return 'ucxm';
 };
 

@@ -527,6 +527,12 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/role-preview/qa-campaigns',
 		},
 		{
+			key: 'role-preview-emotion-sentiment',
+			label: 'sidebar.rolePreview.items.emotionSentiment',
+			icon: <IconMoodSmile size={20} className={styles.menuIcon} />,
+			to: '/role-preview/emotion-sentiment',
+		},
+		{
 			key: 'role-preview-agents-roster',
 			label: 'sidebar.rolePreview.items.agentsRoster',
 			icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
@@ -543,20 +549,6 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			label: 'sidebar.rolePreview.items.disputes',
 			icon: <IconFolders size={20} className={styles.menuIcon} />,
 			to: '/qa/disputes',
-		},
-		{
-			key: 'role-preview-coaching',
-			label: 'sidebar.rolePreview.items.coaching',
-			icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
-			to: '/role-preview/coaching',
-			disabled: true,
-		},
-		{
-			key: 'role-preview-lms',
-			label: 'sidebar.rolePreview.items.lms',
-			icon: <IconSchool size={20} className={styles.menuIcon} />,
-			to: '/role-preview/lms',
-			disabled: true,
 		},
 		{
 			key: 'role-preview-billing',

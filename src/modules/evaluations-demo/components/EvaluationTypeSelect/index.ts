@@ -1,1 +1,1 @@
-export { default } from './EvaluationTypeSelect';
+export { default, type EvaluationType } from './EvaluationTypeSelect';

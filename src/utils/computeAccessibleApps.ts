@@ -36,6 +36,7 @@ export const computeAccessibleApps = ({
 	if (hasUcxm) apps.push('ucxm');
 	if (hasQa) apps.push('qa');
 	if (hasBackoffice) apps.push('backoffice');
+	apps.push('coaching', 'lms');
 	return apps.length ? apps : ['ucxm'];
 };
 
@@ -46,6 +47,10 @@ export const appLandingPath = (app: AppKey): string => {
 			return '/qa/dashboard';
 		case 'backoffice':
 			return '/backoffice';
+		case 'coaching':
+			return '/coaching';
+		case 'lms':
+			return '/lms';
 		default:
 			return '/';
 	}

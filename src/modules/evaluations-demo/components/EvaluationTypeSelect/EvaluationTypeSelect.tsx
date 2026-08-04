@@ -1,5 +1,5 @@
-import React from 'react';
 import { Select } from '@mantine/core';
+import type { FC } from 'react';
 
 export const EVALUATION_TYPES = [
 	'QA Evaluation',
@@ -15,7 +15,7 @@ interface EvaluationTypeSelectProps {
 	onChange?: (value: EvaluationType) => void;
 }
 
-const EvaluationTypeSelect: React.FC<EvaluationTypeSelectProps> = ({
+const EvaluationTypeSelect: FC<EvaluationTypeSelectProps> = ({
 	value = EVALUATION_TYPES[0],
 	onChange,
 }) => {

@@ -21,9 +21,8 @@ import SectionCard from '~/components/SectionCard';
 import { getDemoCampaign } from '../mockData';
 import type { DemoCriteriaSection, DemoTranscriptTurn } from '../mockData';
 import FinalScoreHero from '../components/FinalScoreHero';
-import EvaluationTypeSelect, {
-	type EvaluationType,
-} from '../components/EvaluationTypeSelect';
+import EvaluationTypeSelect from '../components/EvaluationTypeSelect';
+import type { EvaluationType } from '../components/EvaluationTypeSelect';
 import MockAudioPlayerBar from '../components/MockAudioPlayerBar';
 import DemoTranscript from '../components/DemoTranscript';
 import CriteriaCard from '../components/CriteriaCard';
@@ -124,8 +123,7 @@ const DemoResultCallDetailPage: React.FC = () => {
 	}
 
 	// Get the score for the selected evaluation type
-	const typeScore =
-		call.scores?.[evaluationType as keyof typeof call.scores];
+	const typeScore = call.scores?.[evaluationType as keyof typeof call.scores];
 	const displayScore = typeScore?.score ?? call.score ?? 0;
 	const displayPass = typeScore?.passed ?? call.passed;
 

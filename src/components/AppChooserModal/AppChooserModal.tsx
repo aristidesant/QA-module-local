@@ -3,6 +3,8 @@ import {
 	IconChecklist,
 	IconInbox,
 	IconLayoutDashboard,
+	IconTargetArrow,
+	IconSchool,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { AppKey } from '~/hooks/useCurrentApp';
@@ -21,6 +23,8 @@ const APP_ICONS: Record<AppKey, typeof IconChecklist> = {
 	ucxm: IconLayoutDashboard,
 	qa: IconChecklist,
 	backoffice: IconInbox,
+	coaching: IconTargetArrow,
+	lms: IconSchool,
 };
 
 export default function AppChooserModal({

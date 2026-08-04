@@ -326,6 +326,14 @@
 			"backoffice": {
 				"label": "Backoffice",
 				"description": "Gestión de casos: tu cola y panel de supervisión."
+			},
+			"coaching": {
+				"label": "Coaching",
+				"description": "Coaching de agentes y desarrollo del desempeño."
+			},
+			"lms": {
+				"label": "Gestión de Aprendizaje",
+				"description": "Recursos de aprendizaje y contenido de capacitación."
 			}
 		},
 		"switchApp": "Cambiar de aplicación",
@@ -335,7 +343,9 @@
 			"kicker": "Unified CXM",
 			"ucxm": "Cargando Gestión de campañas…",
 			"qa": "Cargando Control de calidad…",
-			"backoffice": "Cargando Backoffice…"
+			"backoffice": "Cargando Backoffice…",
+			"coaching": "Cargando Coaching…",
+			"lms": "Cargando Gestión de Aprendizaje…"
 		}
 	}
 }

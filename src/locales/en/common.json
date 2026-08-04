@@ -328,6 +328,14 @@
 			"backoffice": {
 				"label": "Backoffice",
 				"description": "Case management: your queue and supervisor dashboard."
+			},
+			"coaching": {
+				"label": "Coaching",
+				"description": "Agent coaching and performance development."
+			},
+			"lms": {
+				"label": "Learning Management",
+				"description": "Learning resources and training content."
 			}
 		},
 		"switchApp": "Switch app",
@@ -337,7 +345,9 @@
 			"kicker": "Unified CXM",
 			"ucxm": "Loading Campaign Management…",
 			"qa": "Loading Quality Assurance…",
-			"backoffice": "Loading Backoffice…"
+			"backoffice": "Loading Backoffice…",
+			"coaching": "Loading Coaching…",
+			"lms": "Loading Learning Management…"
 		}
 	}
 }
