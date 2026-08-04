@@ -1,5 +1,5 @@
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { Alert, Grid, Stack } from '@mantine/core';
+import { Alert, Grid, Stack, Tabs } from '@mantine/core';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import KpiRow from './components/KpiRow';
@@ -37,63 +37,83 @@ export default function EmotionSentimentDashboardPage() {
 			title={t('title')}
 			titleRight={<TimeRangeControl />}
 		>
-			<Stack gap='md'>
-				{isError ? (
-					<Alert
-						color='red'
-						icon={<IconAlertTriangle size={18} />}
-						title={t('error.title')}
-						variant='light'
-					>
-						{t('error.message')}
-					</Alert>
-				) : null}
+			<Tabs defaultValue='general'>
+				<Tabs.List>
+					<Tabs.Tab value='general'>General</Tabs.Tab>
+					<Tabs.Tab value='report'>Report</Tabs.Tab>
+				</Tabs.List>
 
-				{/* KPI Metrics Row */}
-				<KpiRow kpis={kpis} loading={isLoading} />
+				<Tabs.Panel value='general' pt='md'>
+					<Stack gap='md'>
+						{isError ? (
+							<Alert
+								color='red'
+								icon={<IconAlertTriangle size={18} />}
+								title={t('error.title')}
+								variant='light'
+							>
+								{t('error.message')}
+							</Alert>
+						) : null}
 
-				{/* Hero Section: Sentiment Trends & Overview */}
-				<Grid>
-					<Grid.Col span={{ base: 12, sm: 8 }}>
-						<SentimentTrendCard data={sentimentTrend} loading={isLoading} />
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, sm: 4 }}>
-						<SentimentOverviewCard
-							data={sentimentOverview}
-							loading={isLoading}
-						/>
-					</Grid.Col>
-				</Grid>
+						{/* KPI Metrics Row */}
+						<KpiRow kpis={kpis} loading={isLoading} />
 
-				{/* Campaign & Emotion Analysis */}
-				<Grid>
-					<Grid.Col span={{ base: 12, md: 6 }}>
-						<CampaignComparisonCard
-							data={campaignComparison}
-							loading={isLoading}
-						/>
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, md: 6 }}>
-						<EmotionDistributionCard
-							data={emotionDistribution}
-							loading={isLoading}
-						/>
-					</Grid.Col>
-				</Grid>
+						{/* Hero Section: Sentiment Trends & Overview */}
+						<Grid>
+							<Grid.Col span={{ base: 12, sm: 8 }}>
+								<SentimentTrendCard data={sentimentTrend} loading={isLoading} />
+							</Grid.Col>
+							<Grid.Col span={{ base: 12, sm: 4 }}>
+								<SentimentOverviewCard
+									data={sentimentOverview}
+									loading={isLoading}
+								/>
+							</Grid.Col>
+						</Grid>
 
-				{/* Agent-Level Insights */}
-				<Grid>
-					<Grid.Col span={{ base: 12, md: 6 }}>
-						<AgentPerformanceCard
-							data={overallPerformance}
-							loading={isLoading}
-						/>
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, md: 6 }}>
-						<ToneConsistencyCard data={toneConsistency} loading={isLoading} />
-					</Grid.Col>
-				</Grid>
-			</Stack>
+						{/* Campaign & Emotion Analysis */}
+						<Grid>
+							<Grid.Col span={{ base: 12, md: 6 }}>
+								<CampaignComparisonCard
+									data={campaignComparison}
+									loading={isLoading}
+								/>
+							</Grid.Col>
+							<Grid.Col span={{ base: 12, md: 6 }}>
+								<EmotionDistributionCard
+									data={emotionDistribution}
+									loading={isLoading}
+								/>
+							</Grid.Col>
+						</Grid>
+
+						{/* Agent-Level Insights */}
+						<Grid>
+							<Grid.Col span={{ base: 12, md: 6 }}>
+								<AgentPerformanceCard
+									data={overallPerformance}
+									loading={isLoading}
+								/>
+							</Grid.Col>
+							<Grid.Col span={{ base: 12, md: 6 }}>
+								<ToneConsistencyCard
+									data={toneConsistency}
+									loading={isLoading}
+								/>
+							</Grid.Col>
+						</Grid>
+					</Stack>
+				</Tabs.Panel>
+
+				<Tabs.Panel value='report' pt='md'>
+					<Stack gap='md'>
+						<Alert color='blue' variant='light'>
+							Report content coming soon
+						</Alert>
+					</Stack>
+				</Tabs.Panel>
+			</Tabs>
 		</ContentContainer>
 	);
 }
