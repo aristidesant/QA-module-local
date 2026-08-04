@@ -1,5 +1,5 @@
 import { Card, Group, Loader, Stack, Text } from '@mantine/core';
-import { AreaChart } from '@mantine/charts';
+import { PieChart } from '@mantine/charts';
 import { useTranslation } from 'react-i18next';
 import type { ToneScore } from '../../utils/types';
 
@@ -17,10 +17,19 @@ export default function ToneConsistencyCard({
 	const chartData = data
 		? [
 				{
-					tone: t('charts.toneConsistency.labels.polite'),
-					polite: data.polite,
-					professional: data.professional,
-					empathetic: data.empathetic,
+					name: t('charts.toneConsistency.labels.polite'),
+					value: data.polite,
+					color: 'var(--mantine-color-blue-6)',
+				},
+				{
+					name: t('charts.toneConsistency.labels.professional'),
+					value: data.professional,
+					color: 'var(--mantine-color-grape-6)',
+				},
+				{
+					name: t('charts.toneConsistency.labels.empathetic'),
+					value: data.empathetic,
+					color: 'var(--mantine-color-teal-6)',
 				},
 			]
 		: [];
@@ -51,31 +60,7 @@ export default function ToneConsistencyCard({
 						<Loader />
 					</div>
 				) : (
-					<AreaChart
-						h={300}
-						data={chartData}
-						dataKey='tone'
-						series={[
-							{
-								name: 'polite',
-								label: t('charts.toneConsistency.labels.polite'),
-								color: 'blue',
-							},
-							{
-								name: 'professional',
-								label: t('charts.toneConsistency.labels.professional'),
-								color: 'grape',
-							},
-							{
-								name: 'empathetic',
-								label: t('charts.toneConsistency.labels.empathetic'),
-								color: 'teal',
-							},
-						]}
-						curveType='monotone'
-						withLegend
-						withTooltip
-					/>
+					<PieChart h={300} data={chartData} />
 				)}
 			</Stack>
 		</Card>
