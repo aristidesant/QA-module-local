@@ -17,12 +17,9 @@ export default function AgentPerformanceCard({
 	const chartData = data
 		? [
 				{
-					metric: t('charts.agentPerformance.labels.empathy'),
-					value: data.avgEmpathy,
-				},
-				{
-					metric: t('charts.agentPerformance.labels.effectiveness'),
-					value: data.avgEffectiveness,
+					metric: 'Overall Performance',
+					empathy: data.avgEmpathy,
+					effectiveness: data.avgEffectiveness,
 				},
 			]
 		: [];
@@ -57,8 +54,19 @@ export default function AgentPerformanceCard({
 						h={300}
 						data={chartData}
 						dataKey='metric'
-						series={[{ name: 'value', label: 'Score' }]}
-						withLegend={false}
+						series={[
+							{
+								name: 'empathy',
+								label: t('charts.agentPerformance.labels.empathy'),
+								color: 'grape',
+							},
+							{
+								name: 'effectiveness',
+								label: t('charts.agentPerformance.labels.effectiveness'),
+								color: 'teal',
+							},
+						]}
+						withLegend
 						withTooltip
 					/>
 				)}
