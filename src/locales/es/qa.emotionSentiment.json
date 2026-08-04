@@ -31,7 +31,11 @@
 		},
 		"agentPerformance": {
 			"title": "Desempeño del Agente",
-			"subtitle": "Agentes principales por empatía y efectividad"
+			"subtitle": "Puntuaciones promedio de empatía y efectividad en todas las campañas",
+			"labels": {
+				"empathy": "Empatía Promedio (Todas las Campañas)",
+				"effectiveness": "Efectividad Promedio (Todas las Campañas)"
+			}
 		},
 		"toneConsistency": {
 			"title": "Tono de Agentes",

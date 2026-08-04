@@ -51,10 +51,14 @@ export default function AgentPerformanceCard({
 						data={chartData}
 						dataKey='agent'
 						series={[
-							{ name: 'empathy', label: 'Empathy Score', color: 'grape' },
+							{
+								name: 'empathy',
+								label: t('charts.agentPerformance.labels.empathy'),
+								color: 'grape',
+							},
 							{
 								name: 'effectiveness',
-								label: 'Effectiveness %',
+								label: t('charts.agentPerformance.labels.effectiveness'),
 								color: 'teal',
 							},
 						]}

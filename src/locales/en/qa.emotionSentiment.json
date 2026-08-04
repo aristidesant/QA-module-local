@@ -31,7 +31,11 @@
 		},
 		"agentPerformance": {
 			"title": "Agent Performance",
-			"subtitle": "Top agents by empathy and effectiveness"
+			"subtitle": "Average empathy and effectiveness scores across all campaigns",
+			"labels": {
+				"empathy": "Avg Empathy (All Campaigns)",
+				"effectiveness": "Avg Effectiveness (All Campaigns)"
+			}
 		},
 		"toneConsistency": {
 			"title": "Agents Tone",
