@@ -1,0 +1,64 @@
+{
+	"title": "Emoción y Sentimiento",
+	"description": "Análisis integral de sentimiento y emoción en campañas y agentes.",
+	"error": {
+		"title": "No se pudieron cargar los datos de sentimiento",
+		"message": "Ocurrió un error al cargar el análisis de sentimiento. Por favor, intenta de nuevo."
+	},
+	"kpis": {
+		"avgSentiment": "Sentimiento Promedio",
+		"totalEvaluations": "Evaluaciones Totales",
+		"recoveryRate": "Tasa de Recuperación",
+		"avgEmpathy": "Empatía Promedio"
+	},
+	"charts": {
+		"sentimentTrend": {
+			"title": "Tendencia de Sentimiento",
+			"subtitle": "Sentimiento del cliente a lo largo del tiempo"
+		},
+		"sentimentOverview": {
+			"title": "Distribución de Sentimiento",
+			"subtitle": "Desglose general de polaridad de sentimiento",
+			"labels": {
+				"positive": "Positivo",
+				"neutral": "Neutral",
+				"negative": "Negativo"
+			}
+		},
+		"campaignComparison": {
+			"title": "Desempeño de Campaña",
+			"subtitle": "Métricas de sentimiento por campaña"
+		},
+		"agentPerformance": {
+			"title": "Desempeño del Agente",
+			"subtitle": "Agentes principales por empatía y efectividad"
+		},
+		"toneConsistency": {
+			"title": "Consistencia de Tono",
+			"subtitle": "Puntuaciones de tono promedio en todas las interacciones",
+			"labels": {
+				"polite": "Cortés",
+				"professional": "Profesional",
+				"empathetic": "Empático"
+			}
+		},
+		"emotionDistribution": {
+			"title": "Distribución de Emociones",
+			"subtitle": "Tipos de emociones detectadas en interacciones de clientes y agentes"
+		}
+	},
+	"emotions": {
+		"satisfaction": "Satisfacción",
+		"frustration": "Frustración",
+		"anger": "Enojo",
+		"neutral": "Neutral",
+		"excitement": "Entusiasmo",
+		"sadness": "Tristeza"
+	},
+	"timeRange": {
+		"7d": "Últimos 7 días",
+		"30d": "Últimos 30 días",
+		"90d": "Últimos 90 días",
+		"custom": "Rango personalizado"
+	}
+}

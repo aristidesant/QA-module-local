@@ -1,0 +1,64 @@
+{
+	"title": "Emotion & Sentiment",
+	"description": "Comprehensive sentiment and emotion analysis across campaigns and agents.",
+	"error": {
+		"title": "Could not load sentiment data",
+		"message": "An error occurred while loading sentiment analytics. Please try again."
+	},
+	"kpis": {
+		"avgSentiment": "Avg Sentiment",
+		"totalEvaluations": "Total Evaluations",
+		"recoveryRate": "Recovery Rate",
+		"avgEmpathy": "Avg Empathy"
+	},
+	"charts": {
+		"sentimentTrend": {
+			"title": "Sentiment Trend",
+			"subtitle": "Customer sentiment over time"
+		},
+		"sentimentOverview": {
+			"title": "Sentiment Distribution",
+			"subtitle": "Overall sentiment polarity breakdown",
+			"labels": {
+				"positive": "Positive",
+				"neutral": "Neutral",
+				"negative": "Negative"
+			}
+		},
+		"campaignComparison": {
+			"title": "Campaign Performance",
+			"subtitle": "Sentiment metrics by campaign"
+		},
+		"agentPerformance": {
+			"title": "Agent Performance",
+			"subtitle": "Top agents by empathy and effectiveness"
+		},
+		"toneConsistency": {
+			"title": "Tone Consistency",
+			"subtitle": "Average tone scores across all interactions",
+			"labels": {
+				"polite": "Polite",
+				"professional": "Professional",
+				"empathetic": "Empathetic"
+			}
+		},
+		"emotionDistribution": {
+			"title": "Emotion Distribution",
+			"subtitle": "Emotion types detected in customer and agent interactions"
+		}
+	},
+	"emotions": {
+		"satisfaction": "Satisfaction",
+		"frustration": "Frustration",
+		"anger": "Anger",
+		"neutral": "Neutral",
+		"excitement": "Excitement",
+		"sadness": "Sadness"
+	},
+	"timeRange": {
+		"7d": "Last 7 days",
+		"30d": "Last 30 days",
+		"90d": "Last 90 days",
+		"custom": "Custom range"
+	}
+}

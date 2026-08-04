@@ -84,25 +84,32 @@ const RolePreviewPlaceholderPage = React.lazy(
 	() => import('./modules/role-preview/RolePreviewPlaceholderPage')
 );
 const AgentDashboardPage = React.lazy(
-	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentDashboardPage/AgentDashboardPage')
+	() =>
+		import('./modules/evaluations-demo/AgentDashboard/pages/AgentDashboardPage/AgentDashboardPage')
 );
 const AgentEvaluationsPage = React.lazy(
-	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentEvaluationsPage/AgentEvaluationsPage')
+	() =>
+		import('./modules/evaluations-demo/AgentDashboard/pages/AgentEvaluationsPage/AgentEvaluationsPage')
 );
 const AgentEvaluationDetailPage = React.lazy(
-	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentEvaluationDetailPage/AgentEvaluationDetailPage')
+	() =>
+		import('./modules/evaluations-demo/AgentDashboard/pages/AgentEvaluationDetailPage/AgentEvaluationDetailPage')
 );
 const AgentCoachingPage = React.lazy(
-	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentCoachingPage/AgentCoachingPage')
+	() =>
+		import('./modules/evaluations-demo/AgentDashboard/pages/AgentCoachingPage/AgentCoachingPage')
 );
 const AgentCoachingDetailPage = React.lazy(
-	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentCoachingDetailPage/AgentCoachingDetailPage')
+	() =>
+		import('./modules/evaluations-demo/AgentDashboard/pages/AgentCoachingDetailPage/AgentCoachingDetailPage')
 );
 const AgentLmsPage = React.lazy(
-	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentLmsPage/AgentLmsPage')
+	() =>
+		import('./modules/evaluations-demo/AgentDashboard/pages/AgentLmsPage/AgentLmsPage')
 );
 const AgentLmsDetailPage = React.lazy(
-	() => import('./modules/evaluations-demo/AgentDashboard/pages/AgentLmsDetailPage/AgentLmsDetailPage')
+	() =>
+		import('./modules/evaluations-demo/AgentDashboard/pages/AgentLmsDetailPage/AgentLmsDetailPage')
 );
 const DemoQaFormsListPage = React.lazy(
 	() => import('./modules/evaluations-demo/DemoQaFormsListPage')
@@ -233,6 +240,10 @@ const QaEvaluationsListPage = React.lazy(
 );
 const QaManualEvaluationPage = React.lazy(
 	() => import('./modules/qa/evaluations/ManualEvaluationPage')
+);
+const EmotionSentimentDashboardPage = React.lazy(
+	() =>
+		import('./modules/qa/emotion-sentiment/EmotionSentimentDashboardPage/EmotionSentimentDashboardPage')
 );
 const BackofficeCasesPage = React.lazy(
 	() => import('./modules/backoffice/BackofficeCasesPage/BackofficeCasesPage')
@@ -670,6 +681,17 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QaManualEvaluationPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'emotion-sentiment',
+										id: 'qa.emotion-sentiment',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<EmotionSentimentDashboardPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -1144,6 +1166,17 @@ const router = createBrowserRouter([
 									<Suspense fallback={<SuspenseFallback />}>
 										<DemoCallDetailPage />
 									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/emotion-sentiment',
+								id: 'role-preview.emotion-sentiment',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense fallback={<SuspenseFallback />}>
+											<EmotionSentimentDashboardPage />
+										</Suspense>
+									</I18nNamespaceLoader>
 								),
 							},
 							{
