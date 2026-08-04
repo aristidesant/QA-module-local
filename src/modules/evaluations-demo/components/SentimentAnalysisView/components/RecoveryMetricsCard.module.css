@@ -1,0 +1,80 @@
+.container {
+  background-color: var(--mantine-color-gray-0);
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: 8px;
+  padding: 16px;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--mantine-color-dark-7);
+    border-color: var(--mantine-color-dark-5);
+  }
+}
+
+.recoveryFlow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 12px;
+  background-color: var(--mantine-color-gray-1);
+  border-radius: 6px;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--mantine-color-dark-6);
+  }
+}
+
+.stage {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+}
+
+.arrow {
+  color: var(--mantine-color-gray-5);
+  font-weight: 600;
+  padding: 0 4px;
+  flex-shrink: 0;
+}
+
+.sentiment {
+  color: var(--mantine-color-gray-8);
+
+  @media (prefers-color-scheme: dark) {
+    color: var(--mantine-color-gray-2);
+  }
+}
+
+.negative {
+  color: var(--mantine-color-red-6);
+}
+
+.positive {
+  color: var(--mantine-color-green-6);
+}
+
+.metrics {
+  padding: 12px;
+  background-color: var(--mantine-color-gray-1);
+  border-radius: 6px;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--mantine-color-dark-6);
+  }
+}
+
+.metricRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 4px 0;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    border-bottom-color: var(--mantine-color-dark-5);
+  }
+}

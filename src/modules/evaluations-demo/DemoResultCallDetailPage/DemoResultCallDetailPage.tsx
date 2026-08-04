@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import {
 	Anchor,
@@ -21,10 +21,13 @@ import SectionCard from '~/components/SectionCard';
 import { getDemoCampaign } from '../mockData';
 import type { DemoCriteriaSection, DemoTranscriptTurn } from '../mockData';
 import FinalScoreHero from '../components/FinalScoreHero';
-import EvaluationTypeSelect from '../components/EvaluationTypeSelect';
+import EvaluationTypeSelect, {
+	type EvaluationType,
+} from '../components/EvaluationTypeSelect';
 import MockAudioPlayerBar from '../components/MockAudioPlayerBar';
 import DemoTranscript from '../components/DemoTranscript';
 import CriteriaCard from '../components/CriteriaCard';
+import SentimentAnalysisView from '../components/SentimentAnalysisView';
 import styles from './DemoResultCallDetailPage.module.css';
 
 const SAMPLE_TRANSCRIPT: DemoTranscriptTurn[] = [
@@ -101,6 +104,8 @@ const DemoResultCallDetailPage: React.FC = () => {
 		callId: string;
 	}>();
 	const navigate = useNavigate();
+	const [evaluationType, setEvaluationType] =
+		useState<EvaluationType>('QA Evaluation');
 
 	const campaign = getDemoCampaign(campaignId);
 	const call = campaign?.results.find((r) => r.id === callId);
@@ -117,6 +122,12 @@ const DemoResultCallDetailPage: React.FC = () => {
 			</ContentContainer>
 		);
 	}
+
+	// Get the score for the selected evaluation type
+	const typeScore =
+		call.scores?.[evaluationType as keyof typeof call.scores];
+	const displayScore = typeScore?.score ?? call.score ?? 0;
+	const displayPass = typeScore?.passed ?? call.passed;
 
 	return (
 		<ContentContainer
@@ -145,82 +156,93 @@ const DemoResultCallDetailPage: React.FC = () => {
 			description='Evaluation results and transcript'
 		>
 			<Stack gap='md'>
-				<EvaluationTypeSelect />
-
-				<FinalScoreHero
-					score={call.score ?? 0}
-					pass={call.passed ? 'pass' : 'fail'}
+				<EvaluationTypeSelect
+					value={evaluationType}
+					onChange={setEvaluationType}
 				/>
 
-				<Tabs defaultValue='general' color='green'>
-					<div className={styles.tabsRow}>
-						<Tabs.List>
-							<Tabs.Tab value='general'>General</Tabs.Tab>
-							<Tabs.Tab
-								value='changeLog'
-								leftSection={<IconGitBranch size={16} />}
-							>
-								Change Log
-							</Tabs.Tab>
-						</Tabs.List>
-						<div style={{ display: 'flex', gap: 8 }}>
-							<Button variant='default' leftSection={<IconEdit size={16} />}>
-								Edit Evaluation
-							</Button>
+				<FinalScoreHero
+					score={displayScore}
+					pass={displayPass ? 'pass' : 'fail'}
+					evaluationType={evaluationType}
+				/>
+
+				{evaluationType === 'Sentiment Analysis' ? (
+					<SentimentAnalysisView
+						transcript={SAMPLE_TRANSCRIPT}
+						durationSeconds={180}
+					/>
+				) : (
+					<Tabs defaultValue='general' color='green'>
+						<div className={styles.tabsRow}>
+							<Tabs.List>
+								<Tabs.Tab value='general'>General</Tabs.Tab>
+								<Tabs.Tab
+									value='changeLog'
+									leftSection={<IconGitBranch size={16} />}
+								>
+									Change Log
+								</Tabs.Tab>
+							</Tabs.List>
+							<div style={{ display: 'flex', gap: 8 }}>
+								<Button variant='default' leftSection={<IconEdit size={16} />}>
+									Edit Evaluation
+								</Button>
+							</div>
 						</div>
-					</div>
 
-					<Tabs.Panel value='general' pt='md'>
-						<Grid gap='md'>
-							<Grid.Col span={{ base: 12, lg: 4 }}>
-								<Stack gap='md'>
-									<SectionCard>
-										<div className={styles.callInfoRow}>
-											<div className={styles.callInfoIcon}>
-												<IconMicrophone size={20} />
+						<Tabs.Panel value='general' pt='md'>
+							<Grid gap='md'>
+								<Grid.Col span={{ base: 12, lg: 4 }}>
+									<Stack gap='md'>
+										<SectionCard>
+											<div className={styles.callInfoRow}>
+												<div className={styles.callInfoIcon}>
+													<IconMicrophone size={20} />
+												</div>
+												<div>
+													<Text fw={600}>{call.fileName}</Text>
+													<Text size='xs' c='dimmed'>
+														{call.date}
+													</Text>
+												</div>
 											</div>
-											<div>
-												<Text fw={600}>{call.fileName}</Text>
-												<Text size='xs' c='dimmed'>
-													{call.date}
-												</Text>
-											</div>
-										</div>
-									</SectionCard>
+										</SectionCard>
 
-									<MockAudioPlayerBar durationSeconds={180} />
+										<MockAudioPlayerBar durationSeconds={180} />
 
-									<SectionCard
-										title={`Transcript · ${SAMPLE_TRANSCRIPT.length} turns`}
-										headerActions={
-											<Button
-												variant='subtle'
-												size='xs'
-												leftSection={<IconDownload size={14} />}
-											>
-												Download
-											</Button>
-										}
-									>
-										<DemoTranscript turns={SAMPLE_TRANSCRIPT} />
-									</SectionCard>
-								</Stack>
-							</Grid.Col>
+										<SectionCard
+											title={`Transcript · ${SAMPLE_TRANSCRIPT.length} turns`}
+											headerActions={
+												<Button
+													variant='subtle'
+													size='xs'
+													leftSection={<IconDownload size={14} />}
+												>
+													Download
+												</Button>
+											}
+										>
+											<DemoTranscript turns={SAMPLE_TRANSCRIPT} />
+										</SectionCard>
+									</Stack>
+								</Grid.Col>
 
-							<Grid.Col span={{ base: 12, lg: 8 }}>
-								<Stack gap='md'>
-									{SAMPLE_CRITERIA.map((section) => (
-										<CriteriaCard key={section.id} section={section} />
-									))}
-								</Stack>
-							</Grid.Col>
-						</Grid>
-					</Tabs.Panel>
+								<Grid.Col span={{ base: 12, lg: 8 }}>
+									<Stack gap='md'>
+										{SAMPLE_CRITERIA.map((section) => (
+											<CriteriaCard key={section.id} section={section} />
+										))}
+									</Stack>
+								</Grid.Col>
+							</Grid>
+						</Tabs.Panel>
 
-					<Tabs.Panel value='changeLog' pt='md'>
-						<EmptyState message='Change log — demo not yet built.' />
-					</Tabs.Panel>
-				</Tabs>
+						<Tabs.Panel value='changeLog' pt='md'>
+							<EmptyState message='Change log — demo not yet built.' />
+						</Tabs.Panel>
+					</Tabs>
+				)}
 			</Stack>
 		</ContentContainer>
 	);

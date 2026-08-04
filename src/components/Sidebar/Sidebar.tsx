@@ -43,6 +43,7 @@ import {
 	IconTargetArrow,
 	IconUsers,
 	IconUsersGroup,
+	IconMoodSmile,
 } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -338,6 +339,13 @@ const qaPrimaryItems: SidebarNavItem[] = [
 		i18nNamespace: 'qa.evaluations',
 	},
 	{
+		key: 'qa-emotion-sentiment',
+		label: 'sidebar.items.qaEmotionSentiment',
+		icon: <IconMoodSmile size={20} className={styles.menuIcon} />,
+		to: '/qa/emotion-sentiment',
+		i18nNamespace: 'qa.emotionSentiment',
+	},
+	{
 		key: 'qa-campaigns',
 		label: 'sidebar.items.qaCampaigns',
 		icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
@@ -460,6 +468,12 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			label: 'sidebar.rolePreview.items.campaigns',
 			icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
 			to: '/role-preview/qa-campaigns',
+		},
+		{
+			key: 'role-preview-emotion-sentiment',
+			label: 'sidebar.rolePreview.items.emotionSentiment',
+			icon: <IconMoodSmile size={20} className={styles.menuIcon} />,
+			to: '/role-preview/emotion-sentiment',
 		},
 		{
 			key: 'role-preview-agents-roster',

@@ -1,0 +1,54 @@
+.transcript {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.turn {
+  padding: 12px;
+  background-color: var(--mantine-color-gray-0);
+  border-left: 3px solid var(--mantine-color-gray-3);
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: var(--mantine-color-gray-1);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .turn {
+    background-color: var(--mantine-color-dark-7);
+    border-left-color: var(--mantine-color-dark-5);
+
+    &:hover {
+      background-color: var(--mantine-color-dark-6);
+    }
+  }
+}
+
+.turn.agent {
+  border-left-color: var(--mantine-color-blue-5);
+}
+
+.turn.customer {
+  border-left-color: var(--mantine-color-violet-5);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+.text {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.emotionTags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}

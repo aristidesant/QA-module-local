@@ -129,7 +129,8 @@
 			"qaCampaigns": "Campañas",
 			"qaForms": "Formularios",
 			"qaDashboard": "Panel de control",
-			"qaEvaluations": "Evaluaciones"
+			"qaEvaluations": "Evaluaciones",
+			"qaEmotionSentiment": "Emoción y Sentimiento"
 		},
 		"account": {
 			"title": "Cuenta",
@@ -155,6 +156,7 @@
 				"lms": "LMS",
 				"qaTests": "Formulario de QA",
 				"campaigns": "Campañas",
+				"emotionSentiment": "Emoción y Sentimiento",
 				"agentsRoster": "Plantilla de agentes",
 				"disputes": "Disputas",
 				"finder": "Buscador",

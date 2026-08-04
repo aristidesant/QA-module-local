@@ -66,6 +66,12 @@ export interface DemoResultCall {
 	passed: boolean;
 	disputeRequested: boolean;
 	disputed: boolean;
+	scores?: {
+		'QA Evaluation'?: { score: number; passed: boolean };
+		'Sentiment Analysis'?: { score: number; passed: boolean };
+		Compliance?: { score: number; passed: boolean };
+		'Business Insight'?: { score: number; passed: boolean };
+	};
 }
 
 export interface DemoRosterAgent {
@@ -445,6 +451,12 @@ const q2SalesResults: DemoResultCall[] = [
 		passed: true,
 		disputeRequested: false,
 		disputed: false,
+		scores: {
+			'QA Evaluation': { score: 85, passed: true },
+			'Sentiment Analysis': { score: 78, passed: true },
+			Compliance: { score: 88, passed: true },
+			'Business Insight': { score: 82, passed: true },
+		},
 	},
 	{
 		id: 'call_002',
@@ -455,6 +467,12 @@ const q2SalesResults: DemoResultCall[] = [
 		passed: true,
 		disputeRequested: false,
 		disputed: false,
+		scores: {
+			'QA Evaluation': { score: 92, passed: true },
+			'Sentiment Analysis': { score: 89, passed: true },
+			Compliance: { score: 95, passed: true },
+			'Business Insight': { score: 90, passed: true },
+		},
 	},
 	{
 		id: 'call_003',
@@ -465,6 +483,12 @@ const q2SalesResults: DemoResultCall[] = [
 		passed: false,
 		disputeRequested: true,
 		disputed: false,
+		scores: {
+			'QA Evaluation': { score: 68, passed: false },
+			'Sentiment Analysis': { score: 45, passed: false },
+			Compliance: { score: 62, passed: false },
+			'Business Insight': { score: 55, passed: false },
+		},
 	},
 	{
 		id: 'call_004',
@@ -475,6 +499,12 @@ const q2SalesResults: DemoResultCall[] = [
 		passed: true,
 		disputeRequested: false,
 		disputed: true,
+		scores: {
+			'QA Evaluation': { score: 78, passed: true },
+			'Sentiment Analysis': { score: 72, passed: true },
+			Compliance: { score: 80, passed: true },
+			'Business Insight': { score: 75, passed: true },
+		},
 	},
 	{
 		id: 'call_005',
@@ -485,6 +515,12 @@ const q2SalesResults: DemoResultCall[] = [
 		passed: false,
 		disputeRequested: false,
 		disputed: false,
+		scores: {
+			'QA Evaluation': { score: 0, passed: false },
+			'Sentiment Analysis': { score: 0, passed: false },
+			Compliance: { score: 0, passed: false },
+			'Business Insight': { score: 0, passed: false },
+		},
 	},
 	{
 		id: 'call_006',

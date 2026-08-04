@@ -1,22 +1,30 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Select } from '@mantine/core';
 
-const EVALUATION_TYPES = [
+export const EVALUATION_TYPES = [
 	'QA Evaluation',
 	'Sentiment Analysis',
 	'Compliance',
 	'Business Insight',
-];
+] as const;
 
-const EvaluationTypeSelect: React.FC = () => {
-	const [value, setValue] = useState<string | null>(EVALUATION_TYPES[0]);
+export type EvaluationType = (typeof EVALUATION_TYPES)[number];
 
+interface EvaluationTypeSelectProps {
+	value?: EvaluationType;
+	onChange?: (value: EvaluationType) => void;
+}
+
+const EvaluationTypeSelect: React.FC<EvaluationTypeSelectProps> = ({
+	value = EVALUATION_TYPES[0],
+	onChange,
+}) => {
 	return (
 		<Select
 			label='Evaluation Type'
 			data={EVALUATION_TYPES}
 			value={value}
-			onChange={setValue}
+			onChange={(val) => onChange?.(val as EvaluationType)}
 			maw={280}
 			allowDeselect={false}
 		/>

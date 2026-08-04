@@ -1,0 +1,24 @@
+.container {
+  background-color: var(--mantine-color-gray-0);
+  border: 1px solid var(--mantine-color-gray-2);
+  border-radius: 8px;
+  padding: 16px;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--mantine-color-dark-7);
+    border-color: var(--mantine-color-dark-5);
+  }
+}
+
+.summary {
+  background-color: var(--mantine-color-green-0);
+  border-left: 3px solid var(--mantine-color-green-5);
+  padding: 10px 12px;
+  border-radius: 4px;
+  margin-top: 8px;
+
+  @media (prefers-color-scheme: dark) {
+    background-color: var(--mantine-color-dark-6);
+    border-left-color: var(--mantine-color-green-6);
+  }
+}

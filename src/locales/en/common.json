@@ -131,7 +131,8 @@
 			"qaCampaigns": "Campaigns",
 			"qaForms": "Forms",
 			"qaDashboard": "Dashboard",
-			"qaEvaluations": "Evaluations"
+			"qaEvaluations": "Evaluations",
+			"qaEmotionSentiment": "Emotion & Sentiment"
 		},
 		"account": {
 			"title": "Account",
@@ -157,6 +158,7 @@
 				"lms": "LMS",
 				"qaTests": "QA Form",
 				"campaigns": "Campaigns",
+				"emotionSentiment": "Emotion & Sentiment",
 				"agentsRoster": "Agents Roster",
 				"disputes": "Disputes",
 				"finder": "Finder",

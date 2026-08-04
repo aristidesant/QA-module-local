@@ -7,12 +7,15 @@ import styles from './FinalScoreHero.module.css';
 interface FinalScoreHeroProps {
 	score: number;
 	pass: DemoPassFail;
+	evaluationType?: string;
 }
 
-const FinalScoreHero: React.FC<FinalScoreHeroProps> = ({ score, pass }) => {
+const FinalScoreHero: React.FC<FinalScoreHeroProps> = ({ score, pass, evaluationType }) => {
 	return (
 		<div className={styles.hero}>
-			<Text className={styles.label}>Final Score</Text>
+			<Text className={styles.label}>
+				Final Score{evaluationType ? ` — ${evaluationType}` : ''}
+			</Text>
 			<Text
 				className={[styles.score, pass === 'fail' ? styles.scoreFail : '']
 					.filter(Boolean)
