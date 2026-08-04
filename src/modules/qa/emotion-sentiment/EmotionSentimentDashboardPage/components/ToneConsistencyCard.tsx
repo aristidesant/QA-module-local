@@ -1,4 +1,4 @@
-import { Card, Group, Loader, Stack, Text } from '@mantine/core';
+import { Card, Group, Loader, Stack, Text, Flex } from '@mantine/core';
 import { PieChart } from '@mantine/charts';
 import { useTranslation } from 'react-i18next';
 import type { ToneScore } from '../../utils/types';
@@ -7,6 +7,12 @@ interface ToneConsistencyCardProps {
 	data: ToneScore | null;
 	loading: boolean;
 }
+
+const TONE_COLORS = {
+	polite: 'var(--mantine-color-blue-6)',
+	professional: 'var(--mantine-color-grape-6)',
+	empathetic: 'var(--mantine-color-teal-6)',
+};
 
 export default function ToneConsistencyCard({
 	data,
@@ -19,17 +25,17 @@ export default function ToneConsistencyCard({
 				{
 					name: t('charts.toneConsistency.labels.polite'),
 					value: data.polite,
-					color: 'var(--mantine-color-blue-6)',
+					color: TONE_COLORS.polite,
 				},
 				{
 					name: t('charts.toneConsistency.labels.professional'),
 					value: data.professional,
-					color: 'var(--mantine-color-grape-6)',
+					color: TONE_COLORS.professional,
 				},
 				{
 					name: t('charts.toneConsistency.labels.empathetic'),
 					value: data.empathetic,
-					color: 'var(--mantine-color-teal-6)',
+					color: TONE_COLORS.empathetic,
 				},
 			]
 		: [];
@@ -60,7 +66,36 @@ export default function ToneConsistencyCard({
 						<Loader />
 					</div>
 				) : (
-					<PieChart h={300} data={chartData} />
+					<Stack gap='lg' align='center'>
+						{/* inline-style-allow: pie chart centering */}
+						<div
+							style={{
+								display: 'flex',
+								justifyContent: 'center',
+								width: '100%',
+							}}
+						>
+							<PieChart h={250} data={chartData} withLabels />
+						</div>
+
+						{/* Legend */}
+						<Flex gap='md' wrap='wrap' justify='center'>
+							{chartData.map((item) => (
+								<Flex key={item.name} gap='xs' align='center'>
+									{/* inline-style-allow: legend color indicator */}
+									<div
+										style={{
+											width: 12,
+											height: 12,
+											borderRadius: 2,
+											backgroundColor: item.color,
+										}}
+									/>
+									<Text size='sm'>{item.name}</Text>
+								</Flex>
+							))}
+						</Flex>
+					</Stack>
 				)}
 			</Stack>
 		</Card>
