@@ -18,7 +18,6 @@ export default function EmotionDistributionCard({
 	const chartData = data.map((emotion) => ({
 		emotion: t(`emotions.${emotion.emotion}`),
 		count: emotion.count,
-		percentage: emotion.percentage,
 		fill: getEmotionColor(emotion.valence),
 	}));
 
@@ -52,11 +51,8 @@ export default function EmotionDistributionCard({
 						h={300}
 						data={chartData}
 						dataKey='emotion'
-						series={[
-							{ name: 'count', label: 'Count', color: 'blue' },
-							{ name: 'percentage', label: 'Percentage', color: 'green' },
-						]}
-						withLegend
+						series={[{ name: 'count', label: 'Count' }]}
+						withLegend={false}
 						withTooltip
 					/>
 				)}
