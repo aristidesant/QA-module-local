@@ -535,6 +535,18 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/role-preview/emotion-sentiment',
 		},
 		{
+			key: 'role-preview-compliance',
+			label: 'sidebar.rolePreview.items.compliance',
+			icon: <IconShield size={20} className={styles.menuIcon} />,
+			to: '/role-preview/compliance',
+		},
+		{
+			key: 'role-preview-business-insights',
+			label: 'sidebar.rolePreview.items.businessInsights',
+			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
+			to: '/role-preview/business-insights',
+		},
+		{
 			key: 'role-preview-agents-roster',
 			label: 'sidebar.rolePreview.items.agentsRoster',
 			icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
@@ -563,18 +575,6 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			label: 'sidebar.rolePreview.items.finder',
 			icon: <IconSearch size={20} className={styles.menuIcon} />,
 			to: '/role-preview/finder',
-		},
-		{
-			key: 'role-preview-compliance',
-			label: 'sidebar.rolePreview.items.compliance',
-			icon: <IconShield size={20} className={styles.menuIcon} />,
-			to: '/role-preview/compliance',
-		},
-		{
-			key: 'role-preview-business-insights',
-			label: 'sidebar.rolePreview.items.businessInsights',
-			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
-			to: '/role-preview/business-insights',
 		},
 	],
 	superAdmin: [
