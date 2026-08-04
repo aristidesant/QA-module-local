@@ -46,30 +46,30 @@ export function generateMockMetrics(): EmotionSentimentMetrics {
 		{
 			campaignId: 1,
 			campaignName: 'Q3 Support Campaign',
-			avgSentiment: 0.45,
 			evaluationCount: 45,
 			positivePercentage: 60,
+			negativePercentage: 25,
 		},
 		{
 			campaignId: 2,
 			campaignName: 'Premium Support Track',
-			avgSentiment: 0.52,
 			evaluationCount: 38,
 			positivePercentage: 65,
+			negativePercentage: 20,
 		},
 		{
 			campaignId: 3,
 			campaignName: 'Retention Program',
-			avgSentiment: 0.38,
 			evaluationCount: 32,
 			positivePercentage: 50,
+			negativePercentage: 35,
 		},
 		{
 			campaignId: 4,
 			campaignName: 'Onboarding Calls',
-			avgSentiment: 0.55,
 			evaluationCount: 27,
 			positivePercentage: 70,
+			negativePercentage: 18,
 		},
 	];
 

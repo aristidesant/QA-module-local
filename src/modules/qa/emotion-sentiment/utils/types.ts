@@ -32,9 +32,9 @@ export interface SentimentOverview {
 export interface CampaignComparison {
 	campaignId: number;
 	campaignName: string;
-	avgSentiment: number;
 	evaluationCount: number;
 	positivePercentage: number;
+	negativePercentage: number;
 }
 
 export interface AgentPerformance {

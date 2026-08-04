@@ -16,8 +16,8 @@ export default function CampaignComparisonCard({
 
 	const chartData = data.map((campaign) => ({
 		campaign: campaign.campaignName,
-		sentiment: Math.round(campaign.avgSentiment * 100),
 		positive: campaign.positivePercentage,
+		negative: campaign.negativePercentage,
 	}));
 
 	return (
@@ -51,8 +51,8 @@ export default function CampaignComparisonCard({
 						data={chartData}
 						dataKey='campaign'
 						series={[
-							{ name: 'sentiment', label: 'Avg Sentiment', color: 'blue' },
 							{ name: 'positive', label: 'Positive %', color: 'green' },
+							{ name: 'negative', label: 'Negative %', color: 'red' },
 						]}
 						withLegend
 						withTooltip
