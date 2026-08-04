@@ -34,7 +34,7 @@
 			"subtitle": "Agentes principales por empatía y efectividad"
 		},
 		"toneConsistency": {
-			"title": "Consistencia de Tono",
+			"title": "Tono de Agentes",
 			"subtitle": "Puntuaciones de tono promedio en todas las interacciones",
 			"labels": {
 				"polite": "Cortés",

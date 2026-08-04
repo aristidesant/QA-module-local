@@ -34,7 +34,7 @@
 			"subtitle": "Top agents by empathy and effectiveness"
 		},
 		"toneConsistency": {
-			"title": "Tone Consistency",
+			"title": "Agents Tone",
 			"subtitle": "Average tone scores across all interactions",
 			"labels": {
 				"polite": "Polite",
