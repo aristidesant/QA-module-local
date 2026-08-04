@@ -1,10 +1,10 @@
 import { Card, Group, Loader, Stack, Text } from '@mantine/core';
 import { BarChart } from '@mantine/charts';
 import { useTranslation } from 'react-i18next';
-import type { AgentPerformance } from '../../utils/types';
+import type { OverallPerformance } from '../../utils/types';
 
 interface AgentPerformanceCardProps {
-	data: AgentPerformance[];
+	data: OverallPerformance | null;
 	loading: boolean;
 }
 
@@ -14,11 +14,18 @@ export default function AgentPerformanceCard({
 }: AgentPerformanceCardProps) {
 	const { t } = useTranslation('qa.emotionSentiment');
 
-	const chartData = data.map((agent) => ({
-		agent: agent.agentName.split(' ')[0],
-		empathy: agent.empathyScore,
-		effectiveness: Math.round(agent.responseEffectiveness * 100),
-	}));
+	const chartData = data
+		? [
+				{
+					metric: t('charts.agentPerformance.labels.empathy'),
+					value: data.avgEmpathy,
+				},
+				{
+					metric: t('charts.agentPerformance.labels.effectiveness'),
+					value: data.avgEffectiveness,
+				},
+			]
+		: [];
 
 	return (
 		<Card withBorder radius='md' p='md' className='h-full'>
@@ -33,7 +40,7 @@ export default function AgentPerformanceCard({
 					{loading && <Loader size='xs' />}
 				</Group>
 
-				{loading || data.length === 0 ? (
+				{loading || !data ? (
 					// inline-style-allow: flex centering for loader
 					<div
 						style={{
@@ -49,20 +56,9 @@ export default function AgentPerformanceCard({
 					<BarChart
 						h={300}
 						data={chartData}
-						dataKey='agent'
-						series={[
-							{
-								name: 'empathy',
-								label: t('charts.agentPerformance.labels.empathy'),
-								color: 'grape',
-							},
-							{
-								name: 'effectiveness',
-								label: t('charts.agentPerformance.labels.effectiveness'),
-								color: 'teal',
-							},
-						]}
-						withLegend
+						dataKey='metric'
+						series={[{ name: 'value', label: 'Score' }]}
+						withLegend={false}
 						withTooltip
 					/>
 				)}

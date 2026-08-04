@@ -22,7 +22,7 @@ export default function EmotionSentimentDashboardPage() {
 		sentimentTrend,
 		sentimentOverview,
 		campaignComparison,
-		agentPerformance,
+		overallPerformance,
 		toneConsistency,
 		emotionDistribution,
 	} = useEmotionSentimentMetrics(timeRange);
@@ -84,7 +84,10 @@ export default function EmotionSentimentDashboardPage() {
 				{/* Agent-Level Insights */}
 				<Grid>
 					<Grid.Col span={{ base: 12, md: 6 }}>
-						<AgentPerformanceCard data={agentPerformance} loading={isLoading} />
+						<AgentPerformanceCard
+							data={overallPerformance}
+							loading={isLoading}
+						/>
 					</Grid.Col>
 					<Grid.Col span={{ base: 12, md: 6 }}>
 						<ToneConsistencyCard data={toneConsistency} loading={isLoading} />

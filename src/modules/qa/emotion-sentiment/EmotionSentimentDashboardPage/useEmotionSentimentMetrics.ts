@@ -22,6 +22,7 @@ export function useEmotionSentimentMetrics(timeRange: TimeRange) {
 				sentimentOverview: null,
 				campaignComparison: [],
 				agentPerformance: [],
+				overallPerformance: null,
 				toneConsistency: null,
 				emotionDistribution: [],
 			};
@@ -33,6 +34,7 @@ export function useEmotionSentimentMetrics(timeRange: TimeRange) {
 			sentimentOverview: metricsQuery.data.sentimentOverview,
 			campaignComparison: metricsQuery.data.campaignComparison,
 			agentPerformance: metricsQuery.data.agentPerformance,
+			overallPerformance: metricsQuery.data.overallPerformance,
 			toneConsistency: metricsQuery.data.toneConsistency,
 			emotionDistribution: metricsQuery.data.emotionDistribution,
 		};

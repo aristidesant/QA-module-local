@@ -153,12 +153,19 @@ export function generateMockMetrics(): EmotionSentimentMetrics {
 		},
 	];
 
+	// Overall performance across all campaigns
+	const overallPerformance = {
+		avgEmpathy: 87,
+		avgEffectiveness: 56,
+	};
+
 	return {
 		kpis,
 		sentimentTrend,
 		sentimentOverview,
 		campaignComparison,
 		agentPerformance,
+		overallPerformance,
 		toneConsistency,
 		emotionDistribution,
 	};

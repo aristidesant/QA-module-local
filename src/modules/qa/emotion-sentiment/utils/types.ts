@@ -59,12 +59,18 @@ export interface EmotionCount {
 	valence: EmotionValence;
 }
 
+export interface OverallPerformance {
+	avgEmpathy: number;
+	avgEffectiveness: number;
+}
+
 export interface EmotionSentimentMetrics {
 	kpis: SentimentKpis;
 	sentimentTrend: SentimentTrendPoint[];
 	sentimentOverview: SentimentOverview;
 	campaignComparison: CampaignComparison[];
 	agentPerformance: AgentPerformance[];
+	overallPerformance: OverallPerformance;
 	toneConsistency: ToneScore;
 	emotionDistribution: EmotionCount[];
 }
