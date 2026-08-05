@@ -1,18 +1,22 @@
 :global(.BaseTable__scrollContainer) table {
-	table-layout: fixed;
+	table-layout: auto;
 	width: 100%;
 }
 
 :global(.BaseTable__scrollContainer) th:nth-child(1),
 :global(.BaseTable__scrollContainer) td:nth-child(1) {
-	width: 120px;
-	word-break: break-word;
+	width: 180px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 :global(.BaseTable__scrollContainer) th:nth-child(2),
 :global(.BaseTable__scrollContainer) td:nth-child(2) {
-	width: 200px;
-	word-break: break-word;
+	width: 250px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 :global(.BaseTable__scrollContainer) th:nth-child(3),
@@ -22,13 +26,15 @@
 
 :global(.BaseTable__scrollContainer) th:nth-child(4),
 :global(.BaseTable__scrollContainer) td:nth-child(4) {
-	width: 180px;
-	word-break: break-word;
+	width: 200px;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 :global(.BaseTable__scrollContainer) th:nth-child(5),
 :global(.BaseTable__scrollContainer) td:nth-child(5) {
-	width: 120px;
+	width: 140px;
 }
 
 :global(.BaseTable__scrollContainer) th:nth-child(6),
