@@ -10,6 +10,7 @@ import {
 	Drawer,
 	Textarea,
 	Text,
+	Badge,
 } from '@mantine/core';
 import {
 	IconMessageCircle,
@@ -32,6 +33,7 @@ const AgentEvaluationDetailPage: React.FC = () => {
 	const navigate = useNavigate();
 	const [disputeDrawerOpened, setDisputeDrawerOpened] = useState(false);
 	const [comments, setComments] = useState('');
+	const [isDisputed, setIsDisputed] = useState(false);
 
 	const call = useMemo(
 		() => DEMO_AGENT_CALLS.find((c) => c.id === callId),
@@ -197,12 +199,18 @@ const AgentEvaluationDetailPage: React.FC = () => {
 							</Tabs.Tab>
 						</Tabs.List>
 						<Group ml='auto' gap='sm'>
-							<Button
-								leftSection={<IconMessageCircle size={16} />}
-								onClick={() => setDisputeDrawerOpened(true)}
-							>
-								Create Dispute
-							</Button>
+							{isDisputed ? (
+								<Badge color='blue' variant='light' size='lg'>
+									Disputed
+								</Badge>
+							) : (
+								<Button
+									leftSection={<IconMessageCircle size={16} />}
+									onClick={() => setDisputeDrawerOpened(true)}
+								>
+									Create Dispute
+								</Button>
+							)}
 						</Group>
 					</div>
 
@@ -323,6 +331,7 @@ const AgentEvaluationDetailPage: React.FC = () => {
 								});
 								setDisputeDrawerOpened(false);
 								setComments('');
+								setIsDisputed(true);
 							}}
 						>
 							Submit Dispute
