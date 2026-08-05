@@ -57,7 +57,11 @@ export default function EmotionSentimentDashboardPage() {
 						) : null}
 
 						{/* KPI Metrics Row */}
-						<KpiRow kpis={kpis} loading={isLoading} />
+						<KpiRow
+							kpis={kpis}
+							emotionDistribution={emotionDistribution}
+							loading={isLoading}
+						/>
 
 						{/* Hero Section: Sentiment Trends & Overview */}
 						<Grid>

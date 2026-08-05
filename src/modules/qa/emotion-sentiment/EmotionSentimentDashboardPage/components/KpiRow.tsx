@@ -6,10 +6,12 @@ import {
 	IconUsers,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import type { SentimentKpis } from '../../utils/types';
+import type { SentimentKpis, EmotionCount } from '../../utils/types';
+import { getEmotionDetails } from '../../utils/types';
 
 interface KpiRowProps {
 	kpis: SentimentKpis | null;
+	emotionDistribution: EmotionCount[];
 	loading: boolean;
 }
 
@@ -63,8 +65,34 @@ function KpiCard({ icon, label, value, loading }: KpiCardProps) {
 	);
 }
 
-export default function KpiRow({ kpis, loading }: KpiRowProps) {
+export default function KpiRow({
+	kpis,
+	emotionDistribution,
+	loading,
+}: KpiRowProps) {
 	const { t } = useTranslation('qa.emotionSentiment');
+
+	const predominantEmotion =
+		emotionDistribution.length > 0
+			? emotionDistribution.reduce((prev, current) =>
+					current.count > prev.count ? current : prev
+				)
+			: null;
+
+	const totalEmotions = emotionDistribution.reduce(
+		(sum, e) => sum + e.count,
+		0
+	);
+	const predominantPercentage =
+		predominantEmotion && totalEmotions > 0
+			? ((predominantEmotion.count / totalEmotions) * 100).toFixed(0)
+			: '0';
+
+	const predominantLabel = predominantEmotion
+		? `${getEmotionDetails(predominantEmotion.emotion).emoji} ${t(
+				`emotions.${predominantEmotion.emotion}`
+			)}`
+		: 'N/A';
 
 	if (loading && !kpis) {
 		return (
@@ -85,8 +113,8 @@ export default function KpiRow({ kpis, loading }: KpiRowProps) {
 			<Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
 				<KpiCard
 					icon={<IconMoodSmile size={20} />}
-					label={t('kpis.avgSentiment')}
-					value={`${(kpis.avgSentimentScore * 100).toFixed(0)}%`}
+					label={t('kpis.predominantSentiment')}
+					value={`${predominantLabel} (${predominantPercentage}%)`}
 					loading={loading}
 				/>
 			</Grid.Col>

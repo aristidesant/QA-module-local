@@ -7,6 +7,7 @@
 	},
 	"kpis": {
 		"avgSentiment": "Sentimiento Promedio",
+		"predominantSentiment": "Sentimiento Predominante",
 		"totalEvaluations": "Evaluaciones Totales",
 		"recoveryRate": "Tasa de Recuperación",
 		"avgEmpathy": "Empatía Promedio"
