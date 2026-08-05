@@ -1,4 +1,4 @@
-import { Card, Group, Loader, Stack, Text, Badge } from '@mantine/core';
+import { Card, Group, Loader, Stack, Text, Badge, Flex } from '@mantine/core';
 import { BarChart } from '@mantine/charts';
 import { useTranslation } from 'react-i18next';
 import type { EmotionCount } from '../../utils/types';
@@ -15,38 +15,14 @@ export default function EmotionDistributionCard({
 }: EmotionDistributionCardProps) {
 	const { t } = useTranslation('qa.emotionSentiment');
 
-	const emotionMap = new Map(
-		data.map((emotion) => {
-			const { color, emoji } = getEmotionDetails(emotion.emotion);
-			return [
-				emotion.emotion,
-				{
-					count: emotion.count,
-					color,
-					emoji,
-					label: t(`emotions.${emotion.emotion}`),
-				},
-			];
-		})
-	);
-
-	const chartData = [
-		{
-			emotion: 'emotions',
-			satisfaction: emotionMap.get('satisfaction')?.count || 0,
-			excitement: emotionMap.get('excitement')?.count || 0,
-			frustration: emotionMap.get('frustration')?.count || 0,
-			anger: emotionMap.get('anger')?.count || 0,
-			sadness: emotionMap.get('sadness')?.count || 0,
-			neutral: emotionMap.get('neutral')?.count || 0,
-		},
-	];
-
-	const series = Array.from(emotionMap.entries()).map(([emotion, details]) => ({
-		name: emotion,
-		label: `${details.emoji} ${details.label}`,
-		color: details.color,
-	}));
+	const chartData = data.map((emotion) => {
+		const { color, emoji } = getEmotionDetails(emotion.emotion);
+		return {
+			emotion: `${emoji} ${t(`emotions.${emotion.emotion}`)}`,
+			count: emotion.count,
+			fill: color,
+		};
+	});
 
 	return (
 		<Card withBorder radius='md' p='md' className='h-full'>
@@ -76,14 +52,40 @@ export default function EmotionDistributionCard({
 						<Loader />
 					</div>
 				) : (
-					<BarChart
-						h={300}
-						data={chartData}
-						dataKey='emotion'
-						series={series}
-						withLegend
-						withTooltip
-					/>
+					<>
+						<BarChart
+							h={300}
+							data={chartData}
+							dataKey='emotion'
+							series={[{ name: 'count', label: 'Count' }]}
+							withLegend={false}
+							withTooltip
+							tooltipAnimationDuration={0}
+						/>
+						<Stack gap='xs'>
+							<Flex gap='md' wrap='wrap'>
+								{data.map((emotion) => {
+									const { color, emoji } = getEmotionDetails(emotion.emotion);
+									return (
+										<Flex key={emotion.emotion} align='center' gap='xs'>
+											{/* inline-style-allow: emotion color legend indicator */}
+											<div
+												style={{
+													width: 12,
+													height: 12,
+													borderRadius: 2,
+													backgroundColor: color,
+												}}
+											/>
+											<Text size='xs' c='dimmed'>
+												{emoji} {t(`emotions.${emotion.emotion}`)}
+											</Text>
+										</Flex>
+									);
+								})}
+							</Flex>
+						</Stack>
+					</>
 				)}
 			</Stack>
 		</Card>
