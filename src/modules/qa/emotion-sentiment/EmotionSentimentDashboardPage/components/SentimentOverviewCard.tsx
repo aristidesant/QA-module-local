@@ -18,18 +18,21 @@ export default function SentimentOverviewCard({
 		? [
 				{
 					sentiment: t('charts.sentimentOverview.labels.positive'),
-					value: data.positive,
-					fill: 'var(--mantine-color-green-6)',
+					positive: data.positive,
+					neutral: 0,
+					negative: 0,
 				},
 				{
 					sentiment: t('charts.sentimentOverview.labels.neutral'),
-					value: data.neutral,
-					fill: 'var(--mantine-color-gray-6)',
+					positive: 0,
+					neutral: data.neutral,
+					negative: 0,
 				},
 				{
 					sentiment: t('charts.sentimentOverview.labels.negative'),
-					value: data.negative,
-					fill: 'var(--mantine-color-red-6)',
+					positive: 0,
+					neutral: 0,
+					negative: data.negative,
 				},
 			]
 		: [];
@@ -64,7 +67,23 @@ export default function SentimentOverviewCard({
 						h={300}
 						data={chartData}
 						dataKey='sentiment'
-						series={[{ name: 'value', label: 'Count' }]}
+						series={[
+							{
+								name: 'positive',
+								label: 'Positive',
+								color: 'var(--mantine-color-green-6)',
+							},
+							{
+								name: 'neutral',
+								label: 'Neutral',
+								color: 'var(--mantine-color-gray-6)',
+							},
+							{
+								name: 'negative',
+								label: 'Negative',
+								color: 'var(--mantine-color-red-6)',
+							},
+						]}
 						withLegend={false}
 						withTooltip
 					/>
