@@ -120,6 +120,21 @@ export default function AgentsRosterPage() {
 				),
 			},
 			{
+				id: 'status',
+				header: t('rolePreview.agentsRoster.status'),
+				enableSorting: false,
+				cell: ({ row }) => (
+					<Badge
+						color={row.original.hasUserAccount ? 'green' : 'orange'}
+						variant='light'
+					>
+						{row.original.hasUserAccount
+							? t('rolePreview.agentsRoster.statusActive')
+							: t('rolePreview.agentsRoster.statusPending')}
+					</Badge>
+				),
+			},
+			{
 				accessorKey: 'createdAt',
 				header: tAgents('table.createdAt'),
 				cell: ({ row }) => (

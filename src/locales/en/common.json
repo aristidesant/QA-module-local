@@ -179,6 +179,9 @@
 			"title": "Agents Roster",
 			"description": "View and manage all agents. Create user accounts for agents to enable platform access and performance tracking.",
 			"supervisor": "Supervisor",
+			"status": "Platform Access",
+			"statusActive": "Active",
+			"statusPending": "Pending",
 			"errorTitle": "Could not load agents",
 			"emptyTitle": "No agents found",
 			"emptyDescription": "There are no agents to display."

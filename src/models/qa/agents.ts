@@ -23,6 +23,7 @@ export interface Agent {
 	createdAt?: string;
 	updatedAt?: string;
 	deletedAt?: string | null;
+	hasUserAccount?: boolean;
 }
 
 export interface CreateAgentPayload {
