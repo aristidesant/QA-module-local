@@ -7,7 +7,7 @@ import {
 	Stack,
 	Button,
 	Group,
-	Modal,
+	Drawer,
 	Textarea,
 	Text,
 } from '@mantine/core';
@@ -30,11 +30,7 @@ import styles from './AgentEvaluationDetailPage.module.css';
 const AgentEvaluationDetailPage: React.FC = () => {
 	const { callId } = useParams();
 	const navigate = useNavigate();
-	const [isDisputeMode, setIsDisputeMode] = useState(false);
-	const [commentModalOpened, setCommentModalOpened] = useState(false);
-	const [selectedItemIds, setSelectedItemIds] = useState<Set<string>>(
-		new Set()
-	);
+	const [disputeDrawerOpened, setDisputeDrawerOpened] = useState(false);
 	const [comments, setComments] = useState('');
 
 	const call = useMemo(
@@ -201,24 +197,11 @@ const AgentEvaluationDetailPage: React.FC = () => {
 							</Tabs.Tab>
 						</Tabs.List>
 						<Group ml='auto' gap='sm'>
-							{isDisputeMode && selectedItemIds.size > 0 && (
-								<Button
-									color='green'
-									disabled={selectedItemIds.size === 0}
-									onClick={() => setCommentModalOpened(true)}
-								>
-									Submit Dispute
-								</Button>
-							)}
 							<Button
-								color={isDisputeMode ? 'gray' : 'green'}
 								leftSection={<IconMessageCircle size={16} />}
-								onClick={() => {
-									setIsDisputeMode(!isDisputeMode);
-									setSelectedItemIds(new Set());
-								}}
+								onClick={() => setDisputeDrawerOpened(true)}
 							>
-								{isDisputeMode ? 'Cancel' : 'Create Dispute'}
+								Create Dispute
 							</Button>
 						</Group>
 					</div>
@@ -277,17 +260,7 @@ const AgentEvaluationDetailPage: React.FC = () => {
 										<CriteriaCard
 											key={section.id}
 											section={section}
-											showCheckboxes={isDisputeMode}
-											selectedItemIds={selectedItemIds}
-											onItemCheck={(itemId, checked) => {
-												const newSelected = new Set(selectedItemIds);
-												if (checked) {
-													newSelected.add(itemId);
-												} else {
-													newSelected.delete(itemId);
-												}
-												setSelectedItemIds(newSelected);
-											}}
+											showCheckboxes={false}
 										/>
 									))}
 								</Stack>
@@ -301,47 +274,46 @@ const AgentEvaluationDetailPage: React.FC = () => {
 				</Tabs>
 			</Stack>
 
-			<Modal
-				opened={commentModalOpened}
+			<Drawer
+				opened={disputeDrawerOpened}
 				onClose={() => {
-					setCommentModalOpened(false);
+					setDisputeDrawerOpened(false);
 					setComments('');
 				}}
-				title='Dispute Comment'
+				title='Submit Dispute'
+				position='right'
 				size='md'
 			>
-				<Stack gap='md'>
-					<Text size='sm' c='dimmed'>
-						Please provide a reason for disputing these {selectedItemIds.size}{' '}
-						item{selectedItemIds.size !== 1 ? 's' : ''}:
-					</Text>
-					<Textarea
-						label='Comment'
-						placeholder='Explain why you are disputing these items...'
-						minRows={5}
-						value={comments}
-						onChange={(e) => setComments(e.currentTarget.value)}
-					/>
+				<Stack gap='md' h='100%' justify='space-between'>
+					<Stack gap='md'>
+						<Text size='sm' c='dimmed'>
+							Please provide a comment explaining your dispute:
+						</Text>
+						<Textarea
+							label='Dispute Comment'
+							placeholder='Explain why you are disputing this evaluation...'
+							minRows={6}
+							value={comments}
+							onChange={(e) => setComments(e.currentTarget.value)}
+							autoFocus
+						/>
+					</Stack>
 
 					<Group justify='flex-end' gap='sm'>
 						<Button
-							variant='default'
+							variant='light'
 							onClick={() => {
-								setCommentModalOpened(false);
+								setDisputeDrawerOpened(false);
 								setComments('');
 							}}
 						>
 							Cancel
 						</Button>
 						<Button
-							color='green'
 							disabled={!comments.trim()}
 							onClick={() => {
-								// Handle final dispute submission
-								console.log('Dispute submitted:', {
-									items: Array.from(selectedItemIds),
-									comment: comments,
-								});
+								// Handle dispute submission
+								console.log('Dispute submitted with comment:', comments);
 								notifications.show({
 									title: 'Dispute Submitted',
 									message: 'Your dispute has been submitted successfully.',
@@ -349,17 +321,15 @@ const AgentEvaluationDetailPage: React.FC = () => {
 									position: 'top-right',
 									autoClose: 3000,
 								});
-								setCommentModalOpened(false);
-								setIsDisputeMode(false);
-								setSelectedItemIds(new Set());
+								setDisputeDrawerOpened(false);
 								setComments('');
 							}}
 						>
-							Submit
+							Submit Dispute
 						</Button>
 					</Group>
 				</Stack>
-			</Modal>
+			</Drawer>
 		</ContentContainer>
 	);
 };
