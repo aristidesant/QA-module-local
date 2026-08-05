@@ -7,6 +7,7 @@ import React, {
 } from 'react';
 import {
 	ActionIcon,
+	Badge,
 	Collapse,
 	Divider,
 	Group,
@@ -18,7 +19,6 @@ import {
 } from '@mantine/core';
 import {
 	IconActivity,
-	IconBell,
 	IconBook2,
 	IconChecklist,
 	IconChevronDown,
@@ -70,6 +70,7 @@ import {
 import { useRoleMockStore } from '~/stores/roleMockStore';
 import type { PreviewRole } from '~/constants/previewRole';
 import UserMenu from '../UserMenu';
+import { useDisputesQuery } from '~/queries/qa/disputesQueries';
 
 export type SidebarNavItem = {
 	key: string;
@@ -85,6 +86,8 @@ export type SidebarNavItem = {
 	i18nNamespace?: string;
 	roleCodes?: readonly string[];
 	disabled?: boolean;
+	/** Badge type to display count or status indicator */
+	badge?: 'disputes';
 };
 
 type SidebarSection = {
@@ -553,16 +556,11 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/role-preview/agents-roster',
 		},
 		{
-			key: 'role-preview-notifications',
-			label: 'sidebar.rolePreview.items.notifications',
-			icon: <IconBell size={20} className={styles.menuIcon} />,
-			to: '/role-preview/notifications',
-		},
-		{
 			key: 'role-preview-disputes',
 			label: 'sidebar.rolePreview.items.disputes',
 			icon: <IconFolders size={20} className={styles.menuIcon} />,
 			to: '/qa/disputes',
+			badge: 'disputes',
 		},
 		{
 			key: 'role-preview-billing',
@@ -1015,8 +1013,13 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 	const location = useLocation();
 	const { t } = useTranslation('common');
 	const { closeMobile } = useSidebarStore();
+	const disputesQuery = useDisputesQuery(
+		{ limit: 1 },
+		item.badge === 'disputes'
+	);
 
 	const isSelected = isLinkActive(item, location.pathname);
+	const openDisputesCount = disputesQuery.data?.total ?? 0;
 
 	// If disabled, show as a div instead of a link with lock icon
 	if (item.disabled) {
@@ -1076,7 +1079,16 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 			}
 		>
 			{item.icon}
-			{!collapsed && <span className={styles.menuText}>{t(item.label)}</span>}
+			{!collapsed && (
+				<Group gap={8} justify='space-between' flex={1}>
+					<span className={styles.menuText}>{t(item.label)}</span>
+					{item.badge === 'disputes' && openDisputesCount > 0 && (
+						<Badge size='sm' variant='filled'>
+							{openDisputesCount}
+						</Badge>
+					)}
+				</Group>
+			)}
 		</Link>
 	);
 
