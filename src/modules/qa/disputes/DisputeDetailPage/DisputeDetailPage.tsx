@@ -1,4 +1,4 @@
-﻿import {
+import {
 	Alert,
 	Badge,
 	Button,
@@ -53,9 +53,10 @@ export default function DisputeDetailPage() {
 	const isQAManager = previewRole === 'operationManager';
 	const [draftAnswers, setDraftAnswers] = useState<DraftAnswers>({});
 	const [savingAnswers, setSavingAnswers] = useState(false);
-	const [isResolving, setIsResolving] = useState(false);
-	const [actionTaken, setActionTaken] = useState(false);
-	const [isApproved, setIsApproved] = useState(false);
+	const [isEditMode, setIsEditMode] = useState(false);
+	const [resolutionStatus, setResolutionStatus] = useState<
+		'open' | 'approved' | 'rejected'
+	>(dispute?.status ?? 'open');
 	const [disputeComment, setDisputeComment] = useState(dispute?.reason ?? '');
 
 	const disputedByLabel = dispute?.disputedByUserName
@@ -70,19 +71,9 @@ export default function DisputeDetailPage() {
 		dispute.resulting.version != null &&
 		dispute.resulting.version !== dispute.resultingVersion
 	);
-	const isOpenDispute = dispute?.status === 'open';
+	const isOpenDispute = resolutionStatus === 'open';
 	const allGroups = dispute?.source?.groups ?? [];
-	const disputedQuestionIds = dispute?.disputedQuestionIds ?? [];
-
-	// Filter groups to only include disputed questions
-	const disputedGroups = allGroups
-		.map((group) => ({
-			...group,
-			questions: group.questions.filter((q) =>
-				disputedQuestionIds.includes(q.id)
-			),
-		}))
-		.filter((group) => group.questions.length > 0);
+	const disputedQuestionIds = new Set(dispute?.disputedQuestionIds ?? []);
 
 	return (
 		<ContentContainer
@@ -202,7 +193,7 @@ export default function DisputeDetailPage() {
 
 									{/* Transcript */}
 									<SectionCard
-										title={`Transcript Â· 3 turns`}
+										title='Transcript · 3 turns'
 										headerActions={
 											<Button
 												variant='subtle'
@@ -245,23 +236,21 @@ export default function DisputeDetailPage() {
 									{isOpenDispute ? (
 										<>
 											{/* Action Buttons - QA Manager Only */}
-											{!isResolving && isQAManager && (
+											{!isEditMode && isQAManager && (
 												<Group grow>
 													<Button
 														onClick={() => {
 															notifications.show({
 																title: 'Resolving Dispute',
 																message:
-																	'You can now update the disputed items',
+																	'You can now update the evaluation items',
 																color: 'green',
 																position: 'top-right',
 															});
-															setActionTaken(true);
-															setTimeout(() => setIsResolving(true), 500);
+															setIsEditMode(true);
 														}}
 														color='green'
 														size='md'
-														disabled={actionTaken || isApproved}
 													>
 														Resolve
 													</Button>
@@ -269,83 +258,93 @@ export default function DisputeDetailPage() {
 														onClick={() => {
 															notifications.show({
 																title: 'Dispute Rejected',
-																message: 'The dispute has been rejected',
+																message:
+																	'The evaluation was correct. Dispute rejected.',
 																color: 'red',
 																position: 'top-right',
 															});
-															setActionTaken(true);
-															setTimeout(() => navigate('/qa/disputes'), 500);
+															setResolutionStatus('rejected');
 														}}
 														color='red'
 														size='md'
-														disabled={actionTaken || isApproved}
 													>
 														Reject
 													</Button>
 												</Group>
 											)}
 
-											{/* Editable Disputed Items - Only shown when resolving (QA Manager) */}
-											{isResolving && isQAManager && (
-												<SectionCard
-													icon={IconGitBranch}
-													title='Disputed Items'
-													headerActions={
-														<Badge color='orange' variant='light'>
-															{disputedGroups.reduce(
-																(acc, g) => acc + g.questions.length,
-																0
-															)}{' '}
-															items
-														</Badge>
+											{/* Dispute Reason Section */}
+											<SectionCard icon={IconGitBranch} title='Dispute Reason'>
+												<Textarea
+													label='Why is this dispute being reviewed?'
+													placeholder='Explain the reason for this dispute...'
+													value={disputeComment}
+													onChange={(e) =>
+														setDisputeComment(e.currentTarget.value)
 													}
-												>
-													<Stack gap='md'>
-														{disputedGroups.length > 0 ? (
-															disputedGroups.map((group) => (
-																<Stack key={group.name} gap='sm'>
-																	<Text fw={600} size='sm' c='dimmed'>
-																		{group.name}
-																	</Text>
-																	{group.questions.map((question) => (
-																		<DisputedItemCard
-																			key={question.id}
-																			question={question}
-																			draftValue={
-																				draftAnswers[question.id] ??
-																				question.answer?.selectedLabel ??
-																				''
-																			}
-																			onDraftChange={(value) =>
-																				setDraftAnswers((prev) => ({
-																					...prev,
-																					[question.id]: value,
-																				}))
-																			}
-																			onSave={() => {
-																				setSavingAnswers(true);
-																				setTimeout(
-																					() => setSavingAnswers(false),
-																					1000
-																				);
-																			}}
-																			saving={savingAnswers}
-																			readOnly={isApproved}
-																		/>
-																	))}
-																</Stack>
-															))
-														) : (
-															<Text c='dimmed' size='sm'>
-																No disputed items to display
-															</Text>
-														)}
-													</Stack>
-												</SectionCard>
-											)}
+													readOnly
+													minRows={4}
+												/>
+											</SectionCard>
 
-											{/* Save Changes Button - Only shown when QA Manager is resolving */}
-											{isResolving && isQAManager && isOpenDispute && (
+											{/* Full Evaluation - All Items with Disputed Indicators */}
+											<SectionCard
+												icon={IconGitBranch}
+												title='Full Evaluation'
+												headerActions={
+													<Badge color='orange' variant='light'>
+														{disputedQuestionIds.size} disputed
+													</Badge>
+												}
+											>
+												<Stack gap='md'>
+													{allGroups.length > 0 ? (
+														allGroups.map((group) => (
+															<Stack key={group.name} gap='sm'>
+																<Text fw={600} size='sm' c='dimmed'>
+																	{group.name}
+																</Text>
+																{group.questions.map((question) => (
+																	<DisputedItemCard
+																		key={question.id}
+																		question={question}
+																		draftValue={
+																			draftAnswers[question.id] ??
+																			question.answer?.selectedLabel ??
+																			''
+																		}
+																		onDraftChange={(value) =>
+																			setDraftAnswers((prev) => ({
+																				...prev,
+																				[question.id]: value,
+																			}))
+																		}
+																		onSave={() => {
+																			setSavingAnswers(true);
+																			setTimeout(
+																				() => setSavingAnswers(false),
+																				1000
+																			);
+																		}}
+																		saving={savingAnswers}
+																		readOnly={!isEditMode}
+																		isDisputed={disputedQuestionIds.has(
+																			question.id
+																		)}
+																	/>
+																))}
+															</Stack>
+														))
+													) : (
+														<Text c='dimmed' size='sm'>
+															No items to display
+														</Text>
+													)}
+												</Stack>
+											</SectionCard>
+
+											{/* Save Changes Button - Only shown when QA Manager is in edit mode */}
+											{isEditMode && isQAManager && (
 												<Group grow>
 													<Button
 														onClick={() => {
@@ -356,9 +355,9 @@ export default function DisputeDetailPage() {
 																color: 'green',
 																position: 'top-right',
 															});
-															setIsApproved(true);
+															setResolutionStatus('approved');
 															setSavingAnswers(false);
-															setIsResolving(false);
+															setIsEditMode(false);
 														}}
 														color='green'
 														size='md'
@@ -366,70 +365,6 @@ export default function DisputeDetailPage() {
 														Save Changes
 													</Button>
 												</Group>
-											)}
-											{/* Dispute Comment Section */}
-											{isOpenDispute && (
-												<SectionCard
-													icon={IconGitBranch}
-													title='Dispute Reason'
-												>
-													<Textarea
-														label='Why are you submitting this dispute?'
-														placeholder='Explain the reason for this dispute...'
-														value={disputeComment}
-														onChange={(e) =>
-															setDisputeComment(e.currentTarget.value)
-														}
-														readOnly={!isQAManager || isApproved}
-														minRows={4}
-													/>
-												</SectionCard>
-											)}
-
-											{/* Disputed Items Section - For Both Agent and QA Manager (Read-only before resolving) */}
-											{isOpenDispute && (!isQAManager || !isResolving) && (
-												<SectionCard
-													icon={IconGitBranch}
-													title='Disputed Items'
-													headerActions={
-														<Badge color='orange' variant='light'>
-															{disputedGroups.reduce(
-																(acc, g) => acc + g.questions.length,
-																0
-															)}{' '}
-															items
-														</Badge>
-													}
-												>
-													<Stack gap='md'>
-														{disputedGroups.length > 0 ? (
-															disputedGroups.map((group) => (
-																<Stack key={group.name} gap='sm'>
-																	<Text fw={600} size='sm' c='dimmed'>
-																		{group.name}
-																	</Text>
-																	{group.questions.map((question) => (
-																		<DisputedItemCard
-																			key={question.id}
-																			question={question}
-																			draftValue={
-																				question.answer?.selectedLabel ?? ''
-																			}
-																			onDraftChange={() => {}}
-																			onSave={() => {}}
-																			saving={false}
-																			readOnly
-																		/>
-																	))}
-																</Stack>
-															))
-														) : (
-															<Text c='dimmed' size='sm'>
-																No disputed items to display
-															</Text>
-														)}
-													</Stack>
-												</SectionCard>
 											)}
 										</>
 									) : (
