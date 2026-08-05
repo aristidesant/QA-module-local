@@ -1,5 +1,6 @@
-import { Card, Group, Loader, Stack, Text } from '@mantine/core';
+import { Card, Group, Loader, Stack, Text, Flex } from '@mantine/core';
 import { LineChart } from '@mantine/charts';
+import { IconTrendingDown, IconTrendingUp } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { SentimentTrendPoint } from '../../utils/types';
 
@@ -45,17 +46,43 @@ export default function SentimentTrendCard({
 						<Loader />
 					</div>
 				) : (
-					<LineChart
-						h={300}
-						data={chartData}
-						dataKey='date'
-						series={[
-							{ name: 'sentiment', label: 'Sentiment Score', color: 'blue' },
-						]}
-						curveType='monotone'
-						withLegend
-						withTooltip
-					/>
+					<>
+						<LineChart
+							h={300}
+							data={chartData}
+							dataKey='date'
+							series={[
+								{ name: 'sentiment', label: 'Sentiment Score', color: 'blue' },
+							]}
+							curveType='monotone'
+							withLegend
+							withTooltip
+						/>
+						<Stack gap='xs'>
+							<Flex gap='md' align='center'>
+								<Flex align='center' gap='xs'>
+									<IconTrendingUp
+										size={16}
+										// inline-style-allow: theme color variable for sentiment legend icon
+										style={{ color: 'var(--mantine-color-green-6)' }}
+									/>
+									<Text size='sm' c='dimmed'>
+										{t('charts.sentimentTrend.legend.higher')}
+									</Text>
+								</Flex>
+								<Flex align='center' gap='xs'>
+									<IconTrendingDown
+										size={16}
+										// inline-style-allow: theme color variable for sentiment legend icon
+										style={{ color: 'var(--mantine-color-red-6)' }}
+									/>
+									<Text size='sm' c='dimmed'>
+										{t('charts.sentimentTrend.legend.lower')}
+									</Text>
+								</Flex>
+							</Flex>
+						</Stack>
+					</>
 				)}
 			</Stack>
 		</Card>

@@ -14,7 +14,11 @@
 	"charts": {
 		"sentimentTrend": {
 			"title": "Sentiment Trend",
-			"subtitle": "Customer sentiment over time"
+			"subtitle": "Customer sentiment over time",
+			"legend": {
+				"higher": "Higher score = More positive sentiment",
+				"lower": "Lower score = More negative sentiment"
+			}
 		},
 		"sentimentOverview": {
 			"title": "Sentiment Distribution",

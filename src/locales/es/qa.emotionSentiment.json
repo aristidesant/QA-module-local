@@ -14,7 +14,11 @@
 	"charts": {
 		"sentimentTrend": {
 			"title": "Tendencia de Sentimiento",
-			"subtitle": "Sentimiento del cliente a lo largo del tiempo"
+			"subtitle": "Sentimiento del cliente a lo largo del tiempo",
+			"legend": {
+				"higher": "Puntuación más alta = Sentimiento más positivo",
+				"lower": "Puntuación más baja = Sentimiento más negativo"
+			}
 		},
 		"sentimentOverview": {
 			"title": "Distribución de Sentimiento",
