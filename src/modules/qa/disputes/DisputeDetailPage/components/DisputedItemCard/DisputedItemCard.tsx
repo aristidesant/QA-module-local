@@ -11,7 +11,6 @@ export interface DisputedItemCardProps {
 	onSave?: () => void;
 	saving?: boolean;
 	readOnly?: boolean;
-	isDisputed?: boolean;
 }
 
 export default function DisputedItemCard({
@@ -19,7 +18,6 @@ export default function DisputedItemCard({
 	draftValue,
 	onDraftChange,
 	readOnly = false,
-	isDisputed = false,
 }: DisputedItemCardProps) {
 	const { t } = useTranslation('qa.evaluations');
 
@@ -70,11 +68,6 @@ export default function DisputedItemCard({
 							weight: Number(question.weight),
 						})}
 					</Badge>
-					{isDisputed && (
-						<Badge color='orange' variant='filled'>
-							Disputed
-						</Badge>
-					)}
 				</Group>
 				<Text fw={700} size='sm'>
 					{question.text}

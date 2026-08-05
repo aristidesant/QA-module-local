@@ -73,7 +73,6 @@ export default function DisputeDetailPage() {
 	);
 	const isOpenDispute = resolutionStatus === 'open';
 	const allGroups = dispute?.source?.groups ?? [];
-	const disputedQuestionIds = new Set(dispute?.disputedQuestionIds ?? []);
 
 	return (
 		<ContentContainer
@@ -290,15 +289,10 @@ export default function DisputeDetailPage() {
 											{/* Full Evaluation - QA Manager Only */}
 											{isQAManager && (
 												<>
-													{/* Full Evaluation - All Items with Disputed Indicators */}
+													{/* Full Evaluation - All Items */}
 													<SectionCard
 														icon={IconGitBranch}
 														title='Full Evaluation'
-														headerActions={
-															<Badge color='orange' variant='light'>
-																{disputedQuestionIds.size} disputed
-															</Badge>
-														}
 													>
 														<Stack gap='md'>
 															{allGroups.length > 0 ? (
@@ -331,9 +325,6 @@ export default function DisputeDetailPage() {
 																				}}
 																				saving={savingAnswers}
 																				readOnly={!isEditMode}
-																				isDisputed={disputedQuestionIds.has(
-																					question.id
-																				)}
 																			/>
 																		))}
 																	</Stack>
