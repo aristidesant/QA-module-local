@@ -542,12 +542,14 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			label: 'sidebar.rolePreview.items.compliance',
 			icon: <IconShield size={20} className={styles.menuIcon} />,
 			to: '/role-preview/compliance',
+			disabled: true,
 		},
 		{
 			key: 'role-preview-business-insights',
 			label: 'sidebar.rolePreview.items.businessInsights',
 			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
 			to: '/role-preview/business-insights',
+			disabled: true,
 		},
 		{
 			key: 'role-preview-agents-roster',
