@@ -3,8 +3,10 @@
 		"back": "Back to agents",
 		"cancel": "Cancel",
 		"create": "Create agent",
+		"createUser": "Create user",
 		"delete": "Delete",
 		"edit": "Edit",
+		"grantAccess": "Grant access",
 		"new": "New agent",
 		"save": "Save changes",
 		"startEvaluation": "Start evaluation"
@@ -15,6 +17,17 @@
 	"common": {
 		"notAvailable": "Not available",
 		"notProvided": "Not provided"
+	},
+	"createUserModal": {
+		"agentEmail": "Agent email",
+		"agentName": "Agent name",
+		"assignEmailDescription": "Assign an email address to this agent to send the platform access invitation.",
+		"confirmButton": "Create & send invite",
+		"description": "This will send an invitation email to {{email}} with instructions to set a password and gain access to the platform.",
+		"grantAccessButton": "Grant access",
+		"grantAccessDescription": "This will send an invitation email to {{email}} with instructions to set a password and gain access to the platform to track performance.",
+		"grantAccessTitle": "Grant platform access",
+		"title": "Create user account"
 	},
 	"delete": {
 		"blocked_one": "This agent has {{count}} associated evaluation and cannot be deleted.",
@@ -72,6 +85,7 @@
 	"notifications": {
 		"created": "Agent created.",
 		"deleted": "Agent deleted.",
+		"invitationSent": "Invitation sent to {{email}}",
 		"updated": "Agent updated."
 	},
 	"pagination": {

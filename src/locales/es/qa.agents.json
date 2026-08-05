@@ -3,8 +3,10 @@
 		"back": "Volver a agentes",
 		"cancel": "Cancelar",
 		"create": "Crear agente",
+		"createUser": "Crear usuario",
 		"delete": "Eliminar",
 		"edit": "Editar",
+		"grantAccess": "Otorgar acceso",
 		"new": "Nuevo agente",
 		"save": "Guardar cambios",
 		"startEvaluation": "Iniciar evaluación"
@@ -15,6 +17,17 @@
 	"common": {
 		"notAvailable": "No disponible",
 		"notProvided": "No informado"
+	},
+	"createUserModal": {
+		"agentEmail": "Email del agente",
+		"agentName": "Nombre del agente",
+		"assignEmailDescription": "Asigna una dirección de correo electrónico a este agente para enviar la invitación de acceso a la plataforma.",
+		"confirmButton": "Crear e invitar",
+		"description": "Se enviará un email de invitación a {{email}} con instrucciones para establecer una contraseña y acceder a la plataforma.",
+		"grantAccessButton": "Otorgar acceso",
+		"grantAccessDescription": "Se enviará un email de invitación a {{email}} con instrucciones para establecer una contraseña y acceder a la plataforma para rastrear el desempeño.",
+		"grantAccessTitle": "Otorgar acceso a la plataforma",
+		"title": "Crear cuenta de usuario"
 	},
 	"delete": {
 		"blocked_one": "Este agente tiene {{count}} evaluación asociada y no se puede eliminar.",
@@ -72,6 +85,7 @@
 	"notifications": {
 		"created": "Agente creado.",
 		"deleted": "Agente eliminado.",
+		"invitationSent": "Invitación enviada a {{email}}",
 		"updated": "Agente actualizado."
 	},
 	"pagination": {

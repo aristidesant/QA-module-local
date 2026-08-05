@@ -1,0 +1,65 @@
+/* Table layout fixed for stable column widths */
+:global {
+	.BaseTable__scrollContainer table {
+		table-layout: fixed;
+		width: 100%;
+	}
+
+	.BaseTable__scrollContainer {
+		th:nth-child(1), /* Employee ID */
+		td:nth-child(1) {
+			width: 100px;
+		}
+
+		th:nth-child(2), /* Name */
+		td:nth-child(2) {
+			width: auto;
+			min-width: 150px;
+		}
+
+		th:nth-child(3), /* Type */
+		td:nth-child(3) {
+			width: 90px;
+		}
+
+		th:nth-child(4), /* Email */
+		td:nth-child(4) {
+			width: 180px;
+		}
+
+		th:nth-child(5), /* Supervisor */
+		td:nth-child(5) {
+			width: 120px;
+		}
+
+		th:nth-child(6), /* Created */
+		td:nth-child(6) {
+			width: 120px;
+		}
+
+		th:nth-child(7), /* Actions */
+		td:nth-child(7) {
+			width: 80px;
+		}
+	}
+}
+
+.actions {
+	pointer-events: auto;
+}
+
+.row {
+	cursor: pointer;
+
+	&:hover {
+		background-color: var(--mantine-color-gray-1);
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.row {
+		&:hover {
+			background-color: var(--mantine-color-dark-7);
+		}
+	}
+}

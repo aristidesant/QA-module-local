@@ -172,6 +172,14 @@
 		"placeholder": {
 			"genericTitle": "Próximamente",
 			"description": "Esta pantalla es un marcador de posición para la demo con stakeholders. Aún no ha sido construida."
+		},
+		"agentsRoster": {
+			"title": "Roster de agentes",
+			"description": "Ver y administrar todos los agentes. Crear cuentas de usuario para los agentes para habilitar el acceso a la plataforma y el seguimiento del desempeño.",
+			"supervisor": "Supervisor",
+			"errorTitle": "No se pudieron cargar los agentes",
+			"emptyTitle": "No se encontraron agentes",
+			"emptyDescription": "No hay agentes para mostrar."
 		}
 	},
 	"header": {

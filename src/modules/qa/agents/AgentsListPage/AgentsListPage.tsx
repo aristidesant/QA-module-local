@@ -33,6 +33,7 @@ import PaginationControls from '~/components/PaginationControls';
 import SectionCard from '~/components/SectionCard';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import AgentEditorForm from '~/modules/qa/components/AgentEditorForm';
+import CreateAgentUserModal from '~/modules/qa/agents/CreateAgentUserModal/CreateAgentUserModal';
 import { AGENT_TYPE_COLORS } from '~/modules/qa/constants/badgeColors';
 import { useDateFormatter } from '~/modules/qa/hooks/useFormatters';
 import { useListPageState } from '~/modules/qa/hooks/useListPageState';
@@ -45,6 +46,7 @@ import type {
 } from '~/models/qa';
 import {
 	useCreateAgentMutation,
+	useCreateAgentUserMutation,
 	useDeleteAgentMutation,
 	useAgentsQuery,
 	useUpdateAgentMutation,
@@ -79,6 +81,8 @@ export default function AgentsListPage() {
 	const [debouncedTeam] = useDebouncedValue(team, 300);
 	const [createOpen, setCreateOpen] = useState(false);
 	const [editingAgent, setEditingAgent] = useState<Agent | null>(null);
+	const [agentForUserCreation, setAgentForUserCreation] =
+		useState<Agent | null>(null);
 	const agentsQuery = useAgentsQuery({
 		limit,
 		offset,
@@ -91,6 +95,7 @@ export default function AgentsListPage() {
 	const createMutation = useCreateAgentMutation();
 	const updateMutation = useUpdateAgentMutation(editingAgent?.id ?? NaN);
 	const deleteMutation = useDeleteAgentMutation();
+	const createAgentUserMutation = useCreateAgentUserMutation();
 	const agents = agentsQuery.data?.data ?? [];
 	const total = agentsQuery.data?.total ?? 0;
 	const totalPages = getTotalPages(total);
@@ -149,6 +154,12 @@ export default function AgentsListPage() {
 		if (first) {
 			setSort({ field: first.id, order: first.desc ? 'DESC' : 'ASC' });
 		}
+	};
+
+	const hasUserAccount = (_agent: Agent) => {
+		// TODO: Check if agent has a user account based on agent data
+		// This will be populated by backend once user creation is implemented
+		return false;
 	};
 
 	const columns: BaseTableColumnDef<Agent>[] = [
@@ -232,6 +243,20 @@ export default function AgentsListPage() {
 					justify='flex-end'
 					wrap='nowrap'
 				>
+					<Tooltip label={t('actions.createUser')}>
+						<ActionIcon
+							aria-label={t('actions.createUser')}
+							disabled={!!row.original.email && hasUserAccount(row.original)}
+							onClick={(event) => {
+								event.stopPropagation();
+								setAgentForUserCreation(row.original);
+							}}
+							radius='md'
+							variant='light'
+						>
+							<IconUser size={16} />
+						</ActionIcon>
+					</Tooltip>
 					<Tooltip label={t('actions.edit')}>
 						<ActionIcon
 							aria-label={t('actions.edit')}
@@ -292,6 +317,16 @@ export default function AgentsListPage() {
 					onSubmit={updateAgent}
 				/>
 			</Modal>
+
+			<CreateAgentUserModal
+				agent={agentForUserCreation}
+				isOpen={Boolean(agentForUserCreation)}
+				isLoading={createAgentUserMutation.isPending}
+				onClose={() => setAgentForUserCreation(null)}
+				onConfirm={async (agentId) => {
+					await createAgentUserMutation.mutateAsync(agentId);
+				}}
+			/>
 
 			<ContentContainer
 				contentWidth='full'

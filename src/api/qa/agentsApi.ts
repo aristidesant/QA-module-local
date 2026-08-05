@@ -59,3 +59,11 @@ export async function deleteAgent(agentId: number) {
 
 	return response.data;
 }
+
+export async function createAgentUser(agentId: number) {
+	const response = await qaHttpClient.post<{ message: string }>(
+		`/agents/${agentId}/create-user`
+	);
+
+	return response.data;
+}

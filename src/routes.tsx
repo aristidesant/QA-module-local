@@ -83,6 +83,9 @@ const ProfilePage = React.lazy(() => import('./modules/profile/ProfilePage'));
 const RolePreviewPlaceholderPage = React.lazy(
 	() => import('./modules/role-preview/RolePreviewPlaceholderPage')
 );
+const AgentsRosterPage = React.lazy(
+	() => import('./modules/role-preview/AgentsRosterPage/AgentsRosterPage')
+);
 const AgentDashboardPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/AgentDashboard/pages/AgentDashboardPage/AgentDashboardPage')
@@ -1177,6 +1180,15 @@ const router = createBrowserRouter([
 											<EmotionSentimentDashboardPage />
 										</Suspense>
 									</I18nNamespaceLoader>
+								),
+							},
+							{
+								path: 'role-preview/agents-roster',
+								id: 'role-preview.agents-roster',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<AgentsRosterPage />
+									</Suspense>
 								),
 							},
 							{

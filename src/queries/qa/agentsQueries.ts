@@ -2,6 +2,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 
 import {
 	createAgent,
+	createAgentUser,
 	deleteAgent,
 	getAgent,
 	getAgents,
@@ -61,6 +62,15 @@ export function useUpdateAgentMutation(agentId: number) {
 export function useDeleteAgentMutation() {
 	return useMutation({
 		mutationFn: (agentId: number) => deleteAgent(agentId),
+		onSuccess: async () => {
+			await queryClient.invalidateQueries({ queryKey: agentsQueryKey });
+		},
+	});
+}
+
+export function useCreateAgentUserMutation() {
+	return useMutation({
+		mutationFn: (agentId: number) => createAgentUser(agentId),
 		onSuccess: async () => {
 			await queryClient.invalidateQueries({ queryKey: agentsQueryKey });
 		},
