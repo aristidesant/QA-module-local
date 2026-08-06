@@ -8,6 +8,7 @@ import {
 	Stack,
 	Tabs,
 	Text,
+	Group,
 } from '@mantine/core';
 import {
 	IconDownload,
@@ -20,8 +21,8 @@ import EmptyState from '~/components/EmptyState';
 import SectionCard from '~/components/SectionCard';
 import { getDemoCampaign } from '../mockData';
 import type { DemoCriteriaSection, DemoTranscriptTurn } from '../mockData';
-import FinalScoreHero from '../components/FinalScoreHero';
-import EvaluationTypeSelect from '../components/EvaluationTypeSelect';
+import ScoreInline from '../components/FinalScoreHero/ScoreInline';
+import EvaluationTypePillGroup from '../components/EvaluationTypePillGroup/EvaluationTypePillGroup';
 import type { EvaluationType } from '../components/EvaluationTypeSelect';
 import MockAudioPlayerBar from '../components/MockAudioPlayerBar';
 import DemoTranscript from '../components/DemoTranscript';
@@ -154,15 +155,9 @@ const DemoResultCallDetailPage: React.FC = () => {
 			description='Evaluation results and transcript'
 		>
 			<Stack gap='md'>
-				<EvaluationTypeSelect
+				<EvaluationTypePillGroup
 					value={evaluationType}
 					onChange={setEvaluationType}
-				/>
-
-				<FinalScoreHero
-					score={displayScore}
-					pass={displayPass ? 'pass' : 'fail'}
-					evaluationType={evaluationType}
 				/>
 
 				{evaluationType === 'Sentiment Analysis' ? (
@@ -172,22 +167,15 @@ const DemoResultCallDetailPage: React.FC = () => {
 					/>
 				) : (
 					<Tabs defaultValue='general' color='green'>
-						<div className={styles.tabsRow}>
-							<Tabs.List>
-								<Tabs.Tab value='general'>General</Tabs.Tab>
-								<Tabs.Tab
-									value='changeLog'
-									leftSection={<IconGitBranch size={16} />}
-								>
-									Change Log
-								</Tabs.Tab>
-							</Tabs.List>
-							<div style={{ display: 'flex', gap: 8 }}>
-								<Button variant='default' leftSection={<IconEdit size={16} />}>
-									Edit Evaluation
-								</Button>
-							</div>
-						</div>
+						<Tabs.List>
+							<Tabs.Tab value='general'>General</Tabs.Tab>
+							<Tabs.Tab
+								value='changeLog'
+								leftSection={<IconGitBranch size={16} />}
+							>
+								Change Log
+							</Tabs.Tab>
+						</Tabs.List>
 
 						<Tabs.Panel value='general' pt='md'>
 							<Grid gap='md'>
@@ -228,6 +216,19 @@ const DemoResultCallDetailPage: React.FC = () => {
 
 								<Grid.Col span={{ base: 12, lg: 8 }}>
 									<Stack gap='md'>
+										<Group align='flex-start' gap='md'>
+											<ScoreInline
+												score={displayScore}
+												pass={displayPass ? 'pass' : 'fail'}
+												evaluationType={evaluationType}
+											/>
+											<Button
+												variant='default'
+												leftSection={<IconEdit size={16} />}
+											>
+												Edit Evaluation
+											</Button>
+										</Group>
 										{SAMPLE_CRITERIA.map((section) => (
 											<CriteriaCard key={section.id} section={section} />
 										))}

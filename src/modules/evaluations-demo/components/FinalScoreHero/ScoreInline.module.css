@@ -1,0 +1,36 @@
+.card {
+	width: fit-content;
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-8)
+	);
+}
+
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	align-items: center;
+	text-align: center;
+}
+
+.label {
+	font-size: var(--mantine-font-size-xs);
+	letter-spacing: 0.05em;
+	text-transform: uppercase;
+	color: var(--mantine-color-dimmed);
+	font-weight: 500;
+	margin: 0;
+}
+
+.score {
+	font-size: 2rem;
+	font-weight: 700;
+	line-height: 1;
+	color: var(--mantine-color-green-7);
+	margin: 0;
+}
+
+.scoreFail {
+	color: var(--mantine-color-red-7);
+}
