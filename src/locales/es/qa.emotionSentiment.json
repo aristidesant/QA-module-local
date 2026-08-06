@@ -70,5 +70,12 @@
 		"30d": "Últimos 30 días",
 		"90d": "Últimos 90 días",
 		"custom": "Rango personalizado"
+	},
+	"sidebar": {
+		"general": "General",
+		"predictive": "Predictivo y Prescriptivo",
+		"reports": "Reportes",
+		"benchmarking": "Comparativo e Indexación",
+		"notifications": "Notificaciones"
 	}
 }
