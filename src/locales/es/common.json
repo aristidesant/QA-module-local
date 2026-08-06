@@ -130,7 +130,12 @@
 			"qaForms": "Formularios",
 			"qaDashboard": "Panel de control",
 			"qaEvaluations": "Evaluaciones",
-			"qaEmotionSentiment": "Emoción y Sentimiento"
+			"qaEmotionSentiment": "Emoción y Sentimiento",
+			"emotionSentimentGeneral": "General",
+			"emotionSentimentPredictive": "Predictivo y Prescriptivo",
+			"emotionSentimentReports": "Reportes",
+			"emotionSentimentBenchmarking": "Comparativo e Indexación",
+			"emotionSentimentNotifications": "Notificaciones"
 		},
 		"account": {
 			"title": "Cuenta",

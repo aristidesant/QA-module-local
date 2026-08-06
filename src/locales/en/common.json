@@ -132,7 +132,12 @@
 			"qaForms": "Forms",
 			"qaDashboard": "Dashboard",
 			"qaEvaluations": "Evaluations",
-			"qaEmotionSentiment": "Emotion & Sentiment"
+			"qaEmotionSentiment": "Emotion & Sentiment",
+			"emotionSentimentGeneral": "General",
+			"emotionSentimentPredictive": "Predictive & Prescriptive",
+			"emotionSentimentReports": "Reports",
+			"emotionSentimentBenchmarking": "Comparative & Benchmarking",
+			"emotionSentimentNotifications": "Notifications"
 		},
 		"account": {
 			"title": "Account",

@@ -328,6 +328,17 @@ const router = createBrowserRouter([
 								),
 							},
 							{
+								path: 'workspace/emotion-sentiment',
+								id: 'emotion-sentiment',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense fallback={<SuspenseFallback />}>
+											<EmotionSentimentDashboardPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
+							},
+							{
 								path: 'backoffice',
 								id: 'backoffice',
 								element: (
@@ -684,17 +695,6 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QaManualEvaluationPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
-										path: 'emotion-sentiment',
-										id: 'qa.emotion-sentiment',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<EmotionSentimentDashboardPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

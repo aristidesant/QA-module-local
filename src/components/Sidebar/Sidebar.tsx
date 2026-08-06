@@ -414,6 +414,45 @@ const backofficePrimaryItems: SidebarNavItem[] = [
 	},
 ];
 
+// Emotion & Sentiment workspace navigation with subsections as flat items
+const emotionSentimentPrimaryItems: SidebarNavItem[] = [
+	{
+		key: 'emotion-sentiment-general',
+		label: 'sidebar.items.emotionSentimentGeneral',
+		icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
+		to: '/workspace/emotion-sentiment',
+		i18nNamespace: 'qa.emotionSentiment',
+	},
+	{
+		key: 'emotion-sentiment-predictive',
+		label: 'sidebar.items.emotionSentimentPredictive',
+		icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
+		to: '/workspace/emotion-sentiment/predictive',
+		i18nNamespace: 'qa.emotionSentiment',
+	},
+	{
+		key: 'emotion-sentiment-reports',
+		label: 'sidebar.items.emotionSentimentReports',
+		icon: <IconChartBar size={20} className={styles.menuIcon} />,
+		to: '/workspace/emotion-sentiment/reports',
+		i18nNamespace: 'qa.emotionSentiment',
+	},
+	{
+		key: 'emotion-sentiment-benchmarking',
+		label: 'sidebar.items.emotionSentimentBenchmarking',
+		icon: <IconUsers size={20} className={styles.menuIcon} />,
+		to: '/workspace/emotion-sentiment/benchmarking',
+		i18nNamespace: 'qa.emotionSentiment',
+	},
+	{
+		key: 'emotion-sentiment-notifications',
+		label: 'sidebar.items.emotionSentimentNotifications',
+		icon: <IconShield size={20} className={styles.menuIcon} />,
+		to: '/workspace/emotion-sentiment/notifications',
+		i18nNamespace: 'qa.emotionSentiment',
+	},
+];
+
 // Static per-role nav shown only when a SuperAdmin has an active role preview
 // (see UserMenu's "Preview as role"). Purely a visual mock — see
 // docs/superpowers/specs/2026-07-24-role-preview-switcher-design.md for the
@@ -655,6 +694,7 @@ export const Sidebar: React.FC = () => {
 		targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
 	const currentApp = useCurrentApp();
 	const inQaApp = currentApp === 'qa' && isQaAdmin;
+	const inEmotionSentimentApp = currentApp === 'emotion-sentiment';
 	const hasBackofficeRole = hasAnyActiveClientRoleCode(user, activeClientId, [
 		BACKOFFICE_AGENT_ROLE,
 		BACKOFFICE_ADMIN_ROLE,
@@ -778,11 +818,15 @@ export const Sidebar: React.FC = () => {
 		? rolePreviewNav[previewRole]
 		: inQaApp
 			? qaPrimaryItems
-			: inBackofficeApp
-				? visibleBackofficeItems
-				: visiblePrimaryItems;
+			: inEmotionSentimentApp
+				? emotionSentimentPrimaryItems
+				: inBackofficeApp
+					? visibleBackofficeItems
+					: visiblePrimaryItems;
 	const sectionNav =
-		previewRole || inQaApp || inBackofficeApp ? [] : visibleSections;
+		previewRole || inQaApp || inEmotionSentimentApp || inBackofficeApp
+			? []
+			: visibleSections;
 
 	const activeSection = useMemo(
 		() =>
