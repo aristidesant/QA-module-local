@@ -344,13 +344,6 @@ const qaPrimaryItems: SidebarNavItem[] = [
 		i18nNamespace: 'qa.evaluations',
 	},
 	{
-		key: 'qa-emotion-sentiment',
-		label: 'sidebar.items.qaEmotionSentiment',
-		icon: <IconMoodSmile size={20} className={styles.menuIcon} />,
-		to: '/qa/emotion-sentiment',
-		i18nNamespace: 'qa.emotionSentiment',
-	},
-	{
 		key: 'qa-campaigns',
 		label: 'sidebar.items.qaCampaigns',
 		icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
