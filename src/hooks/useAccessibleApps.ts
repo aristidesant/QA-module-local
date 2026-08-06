@@ -24,6 +24,9 @@ export const useAccessibleApps = (): AppKey[] => {
 				hasUcxm: hasUcxmAccess(permissionMap),
 				hasQa: isQaAdmin,
 				hasBackoffice: hasBackofficeRole,
+				hasEmotionSentiment: isQaAdmin,
+				hasCompliance: isQaAdmin,
+				hasBusinessInsights: isQaAdmin,
 			}),
 		[permissionMap, isQaAdmin, hasBackofficeRole]
 	);
