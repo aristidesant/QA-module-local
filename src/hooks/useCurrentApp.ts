@@ -24,8 +24,8 @@ export const appForPath = (pathname: string): AppKey => {
 		return 'coaching';
 	if (pathname === '/lms' || pathname.startsWith('/lms/')) return 'lms';
 	if (
-		pathname === '/emotion-sentiment' ||
-		pathname.startsWith('/emotion-sentiment/')
+		pathname === '/workspace/emotion-sentiment' ||
+		pathname.startsWith('/workspace/emotion-sentiment/')
 	)
 		return 'emotion-sentiment';
 	if (pathname === '/compliance' || pathname.startsWith('/compliance/'))

@@ -55,11 +55,11 @@ export const appLandingPath = (app: AppKey): string => {
 		case 'qa':
 			return '/qa/dashboard';
 		case 'emotion-sentiment':
-			return '/emotion-sentiment';
+			return '/workspace/emotion-sentiment';
 		case 'compliance':
-			return '/compliance';
+			return '/workspace/compliance';
 		case 'business-insights':
-			return '/business-insights';
+			return '/workspace/business-insights';
 		case 'backoffice':
 			return '/backoffice';
 		case 'coaching':
