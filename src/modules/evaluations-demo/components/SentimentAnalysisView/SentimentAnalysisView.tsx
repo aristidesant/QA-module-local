@@ -12,6 +12,7 @@ import RecoveryMetricsCard from './components/RecoveryMetricsCard';
 import AgentPerformanceCard from './components/AgentPerformanceCard';
 import EmpathyIndicatorsCard from './components/EmpathyIndicatorsCard';
 import SectionCard from '~/components/SectionCard';
+import MockAudioPlayerBar from '../MockAudioPlayerBar';
 import styles from './SentimentAnalysisView.module.css';
 
 interface SentimentAnalysisViewProps {
@@ -20,7 +21,7 @@ interface SentimentAnalysisViewProps {
 }
 
 export default function SentimentAnalysisView(
-	_props: SentimentAnalysisViewProps
+	props: SentimentAnalysisViewProps
 ) {
 	const sentimentData = useMemo(() => generateMockSentimentAnalysis(), []);
 
@@ -28,6 +29,8 @@ export default function SentimentAnalysisView(
 		<Grid gap='md' className={styles.grid}>
 			<Grid.Col span={{ base: 12, lg: 4 }}>
 				<Stack gap='md'>
+					<MockAudioPlayerBar durationSeconds={props.durationSeconds ?? 180} />
+
 					<SectionCard
 						title={`Transcript · ${sentimentData.transcriptWithEmotions.length} turns`}
 					>

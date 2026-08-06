@@ -1,5 +1,23 @@
-import { Stack, Card, Badge, Group, Text, Progress, Table } from '@mantine/core';
-import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
+import {
+	Stack,
+	Card,
+	Badge,
+	Group,
+	Text,
+	Progress,
+	Table,
+} from '@mantine/core';
+import {
+	LineChart,
+	Line,
+	XAxis,
+	YAxis,
+	CartesianGrid,
+	Tooltip,
+	Legend,
+	ResponsiveContainer,
+	ReferenceLine,
+} from 'recharts';
 
 const mockChurnRiskTrendData = [
 	{ period: 'Week 1', churnRisk: 42, criticalCount: 2, highCount: 5 },
@@ -10,14 +28,6 @@ const mockChurnRiskTrendData = [
 	{ period: 'Week 6', churnRisk: 52, criticalCount: 5, highCount: 10 },
 	{ period: 'Week 7', churnRisk: 48, criticalCount: 4, highCount: 8 },
 	{ period: 'Week 8', churnRisk: 45, criticalCount: 3, highCount: 6 },
-];
-
-const mockOutcomeCorrelationData = [
-	{ sentimentRange: '0-1.5', resolutionRate: 35, csat: 2.1, repeatContact: 78 },
-	{ sentimentRange: '1.5-2.5', resolutionRate: 52, csat: 2.8, repeatContact: 65 },
-	{ sentimentRange: '2.5-3.5', resolutionRate: 68, csat: 3.4, repeatContact: 48 },
-	{ sentimentRange: '3.5-4.5', resolutionRate: 82, csat: 4.1, repeatContact: 28 },
-	{ sentimentRange: '4.5-5.0', resolutionRate: 94, csat: 4.7, repeatContact: 12 },
 ];
 
 const mockTimingRecommendations = [
@@ -52,14 +62,44 @@ const mockTimingRecommendations = [
 ];
 
 const mockKeywordSentimentData = [
-	{ id: 1, phrase: 'problem solved', sentiment: 4.8, frequency: 234, trend: '↑' },
+	{
+		id: 1,
+		phrase: 'problem solved',
+		sentiment: 4.8,
+		frequency: 234,
+		trend: '↑',
+	},
 	{ id: 2, phrase: 'very helpful', sentiment: 4.7, frequency: 189, trend: '↑' },
 	{ id: 3, phrase: 'waste of time', sentiment: 1.2, frequency: 45, trend: '↓' },
-	{ id: 4, phrase: 'great service', sentiment: 4.6, frequency: 156, trend: '↑' },
+	{
+		id: 4,
+		phrase: 'great service',
+		sentiment: 4.6,
+		frequency: 156,
+		trend: '↑',
+	},
 	{ id: 5, phrase: 'disappointed', sentiment: 1.8, frequency: 67, trend: '↑' },
-	{ id: 6, phrase: 'quick resolution', sentiment: 4.5, frequency: 123, trend: '→' },
-	{ id: 7, phrase: 'frustrating experience', sentiment: 1.5, frequency: 82, trend: '↑' },
-	{ id: 8, phrase: 'extremely satisfied', sentiment: 4.9, frequency: 98, trend: '↑' },
+	{
+		id: 6,
+		phrase: 'quick resolution',
+		sentiment: 4.5,
+		frequency: 123,
+		trend: '→',
+	},
+	{
+		id: 7,
+		phrase: 'frustrating experience',
+		sentiment: 1.5,
+		frequency: 82,
+		trend: '↑',
+	},
+	{
+		id: 8,
+		phrase: 'extremely satisfied',
+		sentiment: 4.9,
+		frequency: 98,
+		trend: '↑',
+	},
 ];
 
 const mockToneMismatchData = [
@@ -122,7 +162,12 @@ export function PredictiveAndPrescriptive() {
 							<YAxis domain={[0, 100]} />
 							<Tooltip />
 							<Legend />
-							<ReferenceLine y={50} stroke='var(--mantine-color-orange-6)' strokeDasharray='5 5' label='Warning Threshold' />
+							<ReferenceLine
+								y={50}
+								stroke='var(--mantine-color-orange-6)'
+								strokeDasharray='5 5'
+								label='Warning Threshold'
+							/>
 							<Line
 								type='monotone'
 								dataKey='churnRisk'
@@ -169,70 +214,6 @@ export function PredictiveAndPrescriptive() {
 				</Card.Section>
 			</Card>
 
-			{/* Outcome Correlation */}
-			<Card withBorder radius='md' p='md'>
-				<Card.Section withBorder inheritPadding py='md'>
-					<Text fw={600} size='lg'>
-						Outcome Correlation Analysis
-					</Text>
-					<Text size='sm' c='dimmed'>
-						Link sentiment patterns to resolution rates, CSAT, and repeat contact probability
-					</Text>
-				</Card.Section>
-				<Card.Section inheritPadding pb='md'>
-					<ResponsiveContainer width='100%' height={300}>
-						<BarChart data={mockOutcomeCorrelationData}>
-							<CartesianGrid strokeDasharray='3 3' />
-							<XAxis dataKey='sentimentRange' angle={-45} textAnchor='end' height={80} />
-							<YAxis yAxisId='left' />
-							<YAxis yAxisId='right' orientation='right' />
-							<Tooltip />
-							<Legend />
-							<Bar
-								yAxisId='left'
-								dataKey='resolutionRate'
-								fill='var(--mantine-color-green-6)'
-								name='Resolution Rate (%)'
-							/>
-							<Bar
-								yAxisId='right'
-								dataKey='repeatContact'
-								fill='var(--mantine-color-red-6)'
-								name='Repeat Contact (%)'
-							/>
-						</BarChart>
-					</ResponsiveContainer>
-					<Stack gap='md' mt='md'>
-						<Group grow>
-							<div>
-								<Text size='sm' c='dimmed'>
-									Avg CSAT (High Sentiment)
-								</Text>
-								<Text fw={600} size='lg'>
-									4.4 / 5.0
-								</Text>
-							</div>
-							<div>
-								<Text size='sm' c='dimmed'>
-									Avg CSAT (Low Sentiment)
-								</Text>
-								<Text fw={600} size='lg'>
-									2.4 / 5.0
-								</Text>
-							</div>
-							<div>
-								<Text size='sm' c='dimmed'>
-									Correlation Strength
-								</Text>
-								<Text fw={600} size='lg'>
-									0.92
-								</Text>
-							</div>
-						</Group>
-					</Stack>
-				</Card.Section>
-			</Card>
-
 			{/* Optimal Response Timing */}
 			<Card withBorder radius='md' p='md'>
 				<Card.Section withBorder inheritPadding py='md'>
@@ -240,7 +221,8 @@ export function PredictiveAndPrescriptive() {
 						Optimal Response Timing
 					</Text>
 					<Text size='sm' c='dimmed'>
-						Suggest when to offer breaks, transfers, or escalations based on sentiment trajectory
+						Suggest when to offer breaks, transfers, or escalations based on
+						sentiment trajectory
 					</Text>
 				</Card.Section>
 				<Card.Section inheritPadding pb='md'>
@@ -268,7 +250,10 @@ export function PredictiveAndPrescriptive() {
 										<Badge size='sm' variant='light'>
 											{rec.probability}% likely
 										</Badge>
-										<Badge color={rec.impact === 'High' ? 'orange' : 'blue'} size='sm'>
+										<Badge
+											color={rec.impact === 'High' ? 'orange' : 'blue'}
+											size='sm'
+										>
 											{rec.impact} Impact
 										</Badge>
 									</Group>
@@ -311,7 +296,15 @@ export function PredictiveAndPrescriptive() {
 											</Text>
 										</Table.Td>
 										<Table.Td>
-											<Badge color={item.sentiment >= 4 ? 'green' : item.sentiment >= 3 ? 'gray' : 'red'}>
+											<Badge
+												color={
+													item.sentiment >= 4
+														? 'green'
+														: item.sentiment >= 3
+															? 'gray'
+															: 'red'
+												}
+											>
 												{item.sentiment.toFixed(1)}
 											</Badge>
 										</Table.Td>
@@ -320,7 +313,13 @@ export function PredictiveAndPrescriptive() {
 										</Table.Td>
 										<Table.Td>
 											<Badge
-												color={item.trend === '↑' ? 'orange' : item.trend === '↓' ? 'green' : 'gray'}
+												color={
+													item.trend === '↑'
+														? 'orange'
+														: item.trend === '↓'
+															? 'green'
+															: 'gray'
+												}
 												variant='light'
 											>
 												{item.trend}
@@ -341,7 +340,8 @@ export function PredictiveAndPrescriptive() {
 						Tone vs. Words Mismatch Detection
 					</Text>
 					<Text size='sm' c='dimmed'>
-						Flag calls where transcript and tone analysis diverge (sarcasm, frustration despite polite language)
+						Flag calls where transcript and tone analysis diverge (sarcasm,
+						frustration despite polite language)
 					</Text>
 				</Card.Section>
 				<Card.Section inheritPadding pb='md'>
