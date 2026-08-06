@@ -5,6 +5,9 @@ import {
 	IconLayoutDashboard,
 	IconTargetArrow,
 	IconSchool,
+	IconChartBar,
+	IconShieldCheck,
+	IconTrendingUp,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { AppKey } from '~/hooks/useCurrentApp';
@@ -22,6 +25,9 @@ interface AppChooserModalProps {
 const APP_ICONS: Record<AppKey, typeof IconChecklist> = {
 	ucxm: IconLayoutDashboard,
 	qa: IconChecklist,
+	'emotion-sentiment': IconChartBar,
+	compliance: IconShieldCheck,
+	'business-insights': IconTrendingUp,
 	backoffice: IconInbox,
 	coaching: IconTargetArrow,
 	lms: IconSchool,

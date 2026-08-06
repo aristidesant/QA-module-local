@@ -20,6 +20,9 @@ interface AccessibleAppsInput {
 	hasUcxm: boolean;
 	hasQa: boolean;
 	hasBackoffice: boolean;
+	hasEmotionSentiment?: boolean;
+	hasCompliance?: boolean;
+	hasBusinessInsights?: boolean;
 }
 
 /**
@@ -31,10 +34,16 @@ export const computeAccessibleApps = ({
 	hasUcxm,
 	hasQa,
 	hasBackoffice,
+	hasEmotionSentiment,
+	hasCompliance,
+	hasBusinessInsights,
 }: AccessibleAppsInput): AppKey[] => {
 	const apps: AppKey[] = [];
 	if (hasUcxm) apps.push('ucxm');
 	if (hasQa) apps.push('qa');
+	if (hasEmotionSentiment) apps.push('emotion-sentiment');
+	if (hasCompliance) apps.push('compliance');
+	if (hasBusinessInsights) apps.push('business-insights');
 	if (hasBackoffice) apps.push('backoffice');
 	apps.push('coaching', 'lms');
 	return apps.length ? apps : ['ucxm'];
@@ -45,6 +54,12 @@ export const appLandingPath = (app: AppKey): string => {
 	switch (app) {
 		case 'qa':
 			return '/qa/dashboard';
+		case 'emotion-sentiment':
+			return '/emotion-sentiment';
+		case 'compliance':
+			return '/compliance';
+		case 'business-insights':
+			return '/business-insights';
 		case 'backoffice':
 			return '/backoffice';
 		case 'coaching':
