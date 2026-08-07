@@ -330,13 +330,6 @@ const router = createBrowserRouter([
 							{
 								path: 'workspace/emotion-sentiment',
 								id: 'emotion-sentiment',
-								element: (
-									<I18nNamespaceLoader>
-										<Suspense fallback={<SuspenseFallback />}>
-											<EmotionSentimentDashboardPage />
-										</Suspense>
-									</I18nNamespaceLoader>
-								),
 								children: [
 									{
 										index: true,
@@ -345,41 +338,51 @@ const router = createBrowserRouter([
 									{
 										path: 'general',
 										element: (
-											<Suspense fallback={<SuspenseFallback />}>
-												<EmotionSentimentDashboardPage />
-											</Suspense>
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<EmotionSentimentDashboardPage />
+												</Suspense>
+											</I18nNamespaceLoader>
 										),
 									},
 									{
 										path: 'predictive',
 										element: (
-											<Suspense fallback={<SuspenseFallback />}>
-												<EmotionSentimentDashboardPage />
-											</Suspense>
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<EmotionSentimentDashboardPage />
+												</Suspense>
+											</I18nNamespaceLoader>
 										),
 									},
 									{
 										path: 'reports',
 										element: (
-											<Suspense fallback={<SuspenseFallback />}>
-												<EmotionSentimentDashboardPage />
-											</Suspense>
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<EmotionSentimentDashboardPage />
+												</Suspense>
+											</I18nNamespaceLoader>
 										),
 									},
 									{
 										path: 'benchmarking',
 										element: (
-											<Suspense fallback={<SuspenseFallback />}>
-												<EmotionSentimentDashboardPage />
-											</Suspense>
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<EmotionSentimentDashboardPage />
+												</Suspense>
+											</I18nNamespaceLoader>
 										),
 									},
 									{
 										path: 'notifications',
 										element: (
-											<Suspense fallback={<SuspenseFallback />}>
-												<EmotionSentimentDashboardPage />
-											</Suspense>
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<EmotionSentimentDashboardPage />
+												</Suspense>
+											</I18nNamespaceLoader>
 										),
 									},
 								],
