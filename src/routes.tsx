@@ -337,6 +337,52 @@ const router = createBrowserRouter([
 										</Suspense>
 									</I18nNamespaceLoader>
 								),
+								children: [
+									{
+										index: true,
+										element: <Navigate to="/workspace/emotion-sentiment/general" replace />,
+									},
+									{
+										path: 'general',
+										element: (
+											<Suspense fallback={<SuspenseFallback />}>
+												<EmotionSentimentDashboardPage />
+											</Suspense>
+										),
+									},
+									{
+										path: 'predictive',
+										element: (
+											<Suspense fallback={<SuspenseFallback />}>
+												<EmotionSentimentDashboardPage />
+											</Suspense>
+										),
+									},
+									{
+										path: 'reports',
+										element: (
+											<Suspense fallback={<SuspenseFallback />}>
+												<EmotionSentimentDashboardPage />
+											</Suspense>
+										),
+									},
+									{
+										path: 'benchmarking',
+										element: (
+											<Suspense fallback={<SuspenseFallback />}>
+												<EmotionSentimentDashboardPage />
+											</Suspense>
+										),
+									},
+									{
+										path: 'notifications',
+										element: (
+											<Suspense fallback={<SuspenseFallback />}>
+												<EmotionSentimentDashboardPage />
+											</Suspense>
+										),
+									},
+								],
 							},
 							{
 								path: 'backoffice',
