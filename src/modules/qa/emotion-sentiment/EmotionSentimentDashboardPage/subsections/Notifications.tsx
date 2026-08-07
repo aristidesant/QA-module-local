@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import {
 	Stack,
 	Card,
@@ -10,6 +10,8 @@ import {
 	Select,
 	Modal,
 	Tabs,
+	Pagination,
+	Center,
 } from '@mantine/core';
 import {
 	IconAlertCircle,
@@ -86,10 +88,149 @@ const mockAlertHistory = [
 		score: '3.6',
 		action: 'Slack notification',
 	},
+	{
+		id: 5,
+		alert: 'Empathy Score Decline',
+		triggered: '2026-08-05 08:30',
+		agent: 'Agent 3',
+		score: '3.8',
+		action: 'Email sent',
+	},
+	{
+		id: 6,
+		alert: 'Sentiment Decline',
+		triggered: '2026-08-04 22:15',
+		agent: 'Agent 1',
+		score: '3.1',
+		action: 'Email sent to manager',
+	},
+	{
+		id: 7,
+		alert: 'Recovery Rate Low',
+		triggered: '2026-08-04 15:45',
+		agent: 'Campaign C',
+		score: '76%',
+		action: 'Slack notification',
+	},
+	{
+		id: 8,
+		alert: 'Campaign Sentiment Alert',
+		triggered: '2026-08-04 12:20',
+		agent: 'Agent 5',
+		score: '3.5',
+		action: 'Email sent',
+	},
+	{
+		id: 9,
+		alert: 'Sentiment Decline',
+		triggered: '2026-08-03 18:00',
+		agent: 'Agent 9',
+		score: '3.3',
+		action: 'Slack notification',
+	},
+	{
+		id: 10,
+		alert: 'Empathy Score Decline',
+		triggered: '2026-08-03 14:30',
+		agent: 'Campaign D',
+		score: '3.9',
+		action: 'Email sent',
+	},
+	{
+		id: 11,
+		alert: 'Recovery Rate Low',
+		triggered: '2026-08-03 10:15',
+		agent: 'Agent 2',
+		score: '79%',
+		action: 'Slack notification',
+	},
+	{
+		id: 12,
+		alert: 'Campaign Sentiment Alert',
+		triggered: '2026-08-02 20:45',
+		agent: 'Campaign E',
+		score: '3.7',
+		action: 'Email sent to manager',
+	},
+	{
+		id: 13,
+		alert: 'Sentiment Decline',
+		triggered: '2026-08-02 16:30',
+		agent: 'Agent 8',
+		score: '3.0',
+		action: 'Email sent',
+	},
+	{
+		id: 14,
+		alert: 'Empathy Score Decline',
+		triggered: '2026-08-02 13:00',
+		agent: 'Agent 4',
+		score: '3.7',
+		action: 'Slack notification',
+	},
+	{
+		id: 15,
+		alert: 'Recovery Rate Low',
+		triggered: '2026-08-01 19:20',
+		agent: 'Campaign F',
+		score: '75%',
+		action: 'Email sent',
+	},
+	{
+		id: 16,
+		alert: 'Campaign Sentiment Alert',
+		triggered: '2026-08-01 15:00',
+		agent: 'Agent 6',
+		score: '3.8',
+		action: 'Slack notification',
+	},
+	{
+		id: 17,
+		alert: 'Sentiment Decline',
+		triggered: '2026-08-01 11:45',
+		agent: 'Campaign G',
+		score: '3.2',
+		action: 'Email sent',
+	},
+	{
+		id: 18,
+		alert: 'Empathy Score Decline',
+		triggered: '2026-07-31 21:30',
+		agent: 'Agent 10',
+		score: '3.6',
+		action: 'Email sent to manager',
+	},
+	{
+		id: 19,
+		alert: 'Recovery Rate Low',
+		triggered: '2026-07-31 17:15',
+		agent: 'Campaign H',
+		score: '77%',
+		action: 'Slack notification',
+	},
+	{
+		id: 20,
+		alert: 'Campaign Sentiment Alert',
+		triggered: '2026-07-31 13:00',
+		agent: 'Agent 11',
+		score: '3.9',
+		action: 'Email sent',
+	},
 ];
+
+const ITEMS_PER_PAGE = 10;
 
 export function Notifications() {
 	const [isModalOpen, setIsModalOpen] = useState(false);
+	const [historyPage, setHistoryPage] = useState(1);
+
+	const paginatedHistory = useMemo(() => {
+		const start = (historyPage - 1) * ITEMS_PER_PAGE;
+		const end = start + ITEMS_PER_PAGE;
+		return mockAlertHistory.slice(start, end);
+	}, [historyPage]);
+
+	const totalPages = Math.ceil(mockAlertHistory.length / ITEMS_PER_PAGE);
 
 	const getStatusColor = (status: string) => {
 		return status === 'active' ? 'green' : 'gray';
@@ -166,7 +307,7 @@ export function Notifications() {
 								<Text fw={600} size='lg'>
 									Alert History
 								</Text>
-								<Badge color='gray'>{mockAlertHistory.length} Recent</Badge>
+								<Badge color='gray'>{mockAlertHistory.length} Total</Badge>
 							</Group>
 							{/* inline-style-allow: */}
 							<div style={{ overflowX: 'auto' }}>
@@ -181,7 +322,7 @@ export function Notifications() {
 										</Table.Tr>
 									</Table.Thead>
 									<Table.Tbody>
-										{mockAlertHistory.map((item) => (
+										{paginatedHistory.map((item) => (
 											<Table.Tr key={item.id}>
 												<Table.Td>
 													<Group gap='xs'>
@@ -210,6 +351,15 @@ export function Notifications() {
 									</Table.Tbody>
 								</Table>
 							</div>
+							<Center>
+								<Pagination
+									value={historyPage}
+									onChange={setHistoryPage}
+									total={totalPages}
+									siblings={1}
+									boundaries={1}
+								/>
+							</Center>
 						</Stack>
 					</Tabs.Panel>
 

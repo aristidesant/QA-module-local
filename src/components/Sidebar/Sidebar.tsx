@@ -43,7 +43,6 @@ import {
 	IconTargetArrow,
 	IconUsers,
 	IconUsersGroup,
-	IconMoodSmile,
 	IconShield,
 	IconTrendingUp,
 } from '@tabler/icons-react';
@@ -507,12 +506,6 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/role-preview/qa-campaigns',
 		},
 		{
-			key: 'role-preview-emotion-sentiment',
-			label: 'sidebar.rolePreview.items.emotionSentiment',
-			icon: <IconMoodSmile size={20} className={styles.menuIcon} />,
-			to: '/role-preview/emotion-sentiment',
-		},
-		{
 			key: 'role-preview-agents-roster',
 			label: 'sidebar.rolePreview.items.agentsRoster',
 			icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
@@ -562,26 +555,6 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			label: 'sidebar.rolePreview.items.campaigns',
 			icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
 			to: '/role-preview/qa-campaigns',
-		},
-		{
-			key: 'role-preview-emotion-sentiment',
-			label: 'sidebar.rolePreview.items.emotionSentiment',
-			icon: <IconMoodSmile size={20} className={styles.menuIcon} />,
-			to: '/role-preview/emotion-sentiment',
-		},
-		{
-			key: 'role-preview-compliance',
-			label: 'sidebar.rolePreview.items.compliance',
-			icon: <IconShield size={20} className={styles.menuIcon} />,
-			to: '/role-preview/compliance',
-			disabled: true,
-		},
-		{
-			key: 'role-preview-business-insights',
-			label: 'sidebar.rolePreview.items.businessInsights',
-			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
-			to: '/role-preview/business-insights',
-			disabled: true,
 		},
 		{
 			key: 'role-preview-agents-roster',
