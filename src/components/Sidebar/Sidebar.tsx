@@ -413,7 +413,7 @@ const emotionSentimentPrimaryItems: SidebarNavItem[] = [
 		key: 'emotion-sentiment-general',
 		label: 'sidebar.items.emotionSentimentGeneral',
 		icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
-		to: '/workspace/emotion-sentiment',
+		to: '/workspace/emotion-sentiment/general',
 		i18nNamespace: 'qa.emotionSentiment',
 	},
 	{
@@ -807,12 +807,13 @@ export const Sidebar: React.FC = () => {
 
 	// Each app owns its sidebar: QA and Backoffice render as a flat nav with no
 	// sections; Campaign management (UCXM) renders the normal sectioned nav.
-	const primaryNav = previewRole
-		? rolePreviewNav[previewRole]
-		: inQaApp
-			? qaPrimaryItems
-			: inEmotionSentimentApp
-				? emotionSentimentPrimaryItems
+	// emotion-sentiment takes priority over role preview and QA
+	const primaryNav = inEmotionSentimentApp
+		? emotionSentimentPrimaryItems
+		: previewRole
+			? rolePreviewNav[previewRole]
+			: inQaApp
+				? qaPrimaryItems
 				: inBackofficeApp
 					? visibleBackofficeItems
 					: visiblePrimaryItems;

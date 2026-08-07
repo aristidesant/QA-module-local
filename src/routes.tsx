@@ -330,10 +330,16 @@ const router = createBrowserRouter([
 							{
 								path: 'workspace/emotion-sentiment',
 								id: 'emotion-sentiment',
+								element: <Outlet />,
 								children: [
 									{
 										index: true,
-										element: <Navigate to="/workspace/emotion-sentiment/general" replace />,
+										element: (
+											<Navigate
+												to='/workspace/emotion-sentiment/general'
+												replace
+											/>
+										),
 									},
 									{
 										path: 'general',

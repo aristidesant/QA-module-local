@@ -1,6 +1,5 @@
-import { Stack, Flex, Box } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import { useEmotionSentimentFilterStore } from '~/stores/emotionSentimentFilterStore';
-import { EmotionSentimentSidebar } from './EmotionSentimentSidebar';
 import { PredictiveAndPrescriptive } from './subsections/PredictiveAndPrescriptive';
 import { Reports } from './subsections/Reports';
 import { ComparativeAndBenchmarking } from './subsections/ComparativeAndBenchmarking';
@@ -29,16 +28,5 @@ export function EmotionSentimentLayout() {
 		}
 	};
 
-	return (
-		<Flex gap='md' align='flex-start' direction={{ base: 'column', sm: 'row' }}>
-			{/* inline-style-allow: */}
-			<Box w={{ base: '100%', sm: 250 }} style={{ flexShrink: 0 }}>
-				<EmotionSentimentSidebar />
-			</Box>
-			{/* inline-style-allow: */}
-			<Stack gap='md' style={{ flex: 1, minWidth: 0 }}>
-				{renderContent()}
-			</Stack>
-		</Flex>
-	);
+	return <Stack gap='md'>{renderContent()}</Stack>;
 }

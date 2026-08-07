@@ -1,6 +1,22 @@
 import { useState } from 'react';
-import { Stack, Card, Text, Badge, Button, Group, Table, Select, Modal } from '@mantine/core';
-import { IconAlertCircle, IconBell, IconPlus } from '@tabler/icons-react';
+import {
+	Stack,
+	Card,
+	Text,
+	Badge,
+	Button,
+	Group,
+	Table,
+	Select,
+	Modal,
+	Tabs,
+} from '@mantine/core';
+import {
+	IconAlertCircle,
+	IconBell,
+	IconPlus,
+	IconHistory,
+} from '@tabler/icons-react';
 
 const mockActiveAlerts = [
 	{
@@ -103,7 +119,13 @@ export function Notifications() {
 					<Select
 						label='Condition'
 						placeholder='Select condition...'
-						data={['Falls below', 'Rises above', 'Equals', 'Trending down', 'Trending up']}
+						data={[
+							'Falls below',
+							'Rises above',
+							'Equals',
+							'Trending down',
+							'Trending up',
+						]}
 					/>
 					<Select
 						label='Threshold Value'
@@ -119,151 +141,164 @@ export function Notifications() {
 						<Button variant='default' onClick={() => setIsModalOpen(false)}>
 							Cancel
 						</Button>
-						<Button onClick={() => setIsModalOpen(false)}>
-							Create Alert
-						</Button>
+						<Button onClick={() => setIsModalOpen(false)}>Create Alert</Button>
 					</Group>
 				</Stack>
 			</Modal>
 
-			<Stack gap='md'>
-				{/* Active Alerts */}
-				<Card withBorder radius='md' p='md'>
-					<Card.Section withBorder inheritPadding py='md'>
-						<Group justify='space-between'>
-							<Text fw={600} size='lg'>
-								Active Alerts
-							</Text>
-							<Group gap='xs'>
-								<Badge color='blue'>{mockActiveAlerts.filter(a => a.status === 'active').length} Active</Badge>
-								<Button
-									size='sm'
-									variant='light'
-									leftSection={<IconPlus size={16} />}
-									onClick={() => setIsModalOpen(true)}
-								>
-									New Alert
-								</Button>
-							</Group>
-						</Group>
-					</Card.Section>
-					<Card.Section inheritPadding pb='md'>
-						{/* inline-style-allow: */}
-					<div style={{ overflowX: 'auto' }}>
-							<Table striped highlightOnHover>
-								<Table.Thead>
-									<Table.Tr>
-										<Table.Th>Alert Type</Table.Th>
-										<Table.Th>Threshold</Table.Th>
-										<Table.Th>Status</Table.Th>
-										<Table.Th>Last Triggered</Table.Th>
-										<Table.Th>Frequency</Table.Th>
-										<Table.Th>Actions</Table.Th>
-									</Table.Tr>
-								</Table.Thead>
-								<Table.Tbody>
-									{mockActiveAlerts.map((alert) => (
-										<Table.Tr key={alert.id}>
-											<Table.Td>
-												<Group gap='xs'>
-													<IconAlertCircle size={16} />
-													<Text fw={500} size='sm'>
-														{alert.type}
-													</Text>
-												</Group>
-											</Table.Td>
-											<Table.Td>
-												<Text size='sm'>{alert.threshold}</Text>
-											</Table.Td>
-											<Table.Td>
-												<Badge
-													color={getStatusColor(alert.status)}
-													size='sm'
-													variant='dot'
-												>
-													{alert.status.charAt(0).toUpperCase() + alert.status.slice(1)}
-												</Badge>
-											</Table.Td>
-											<Table.Td>
-												<Text size='sm'>{alert.lastTriggered}</Text>
-											</Table.Td>
-											<Table.Td>
-												<Text size='sm'>{alert.frequency}</Text>
-											</Table.Td>
-											<Table.Td>
-												<Group gap='xs'>
-													<Button size='xs' variant='subtle'>
-														Edit
-													</Button>
-													<Button size='xs' variant='subtle' color='red'>
-														Remove
-													</Button>
-												</Group>
-											</Table.Td>
-										</Table.Tr>
-									))}
-								</Table.Tbody>
-							</Table>
-						</div>
-					</Card.Section>
-				</Card>
+			<Card withBorder radius='md' p='md'>
+				<Tabs defaultValue='history'>
+					<Tabs.List>
+						<Tabs.Tab value='history' leftSection={<IconHistory size={16} />}>
+							Alert History
+						</Tabs.Tab>
+						<Tabs.Tab
+							value='alerts'
+							leftSection={<IconAlertCircle size={16} />}
+						>
+							Alert List
+						</Tabs.Tab>
+					</Tabs.List>
 
-				{/* Alert History */}
-				<Card withBorder radius='md' p='md'>
-					<Card.Section withBorder inheritPadding py='md'>
-						<Group justify='space-between'>
-							<Text fw={600} size='lg'>
-								Alert History
-							</Text>
-							<Badge color='gray'>{mockAlertHistory.length} Recent</Badge>
-						</Group>
-					</Card.Section>
-					<Card.Section inheritPadding pb='md'>
-						{/* inline-style-allow: */}
-					<div style={{ overflowX: 'auto' }}>
-							<Table striped highlightOnHover>
-								<Table.Thead>
-									<Table.Tr>
-										<Table.Th>Alert Type</Table.Th>
-										<Table.Th>Triggered</Table.Th>
-										<Table.Th>Target</Table.Th>
-										<Table.Th>Score</Table.Th>
-										<Table.Th>Action Taken</Table.Th>
-									</Table.Tr>
-								</Table.Thead>
-								<Table.Tbody>
-									{mockAlertHistory.map((item) => (
-										<Table.Tr key={item.id}>
-											<Table.Td>
-												<Group gap='xs'>
-													<IconBell size={16} />
-													<Text fw={500} size='sm'>
-														{item.alert}
-													</Text>
-												</Group>
-											</Table.Td>
-											<Table.Td>
-												<Text size='sm'>{item.triggered}</Text>
-											</Table.Td>
-											<Table.Td>
-												<Badge size='sm' variant='light'>
-													{item.agent}
-												</Badge>
-											</Table.Td>
-											<Table.Td>
-												<Text size='sm'>{item.score}</Text>
-											</Table.Td>
-											<Table.Td>
-												<Text size='sm'>{item.action}</Text>
-											</Table.Td>
+					<Tabs.Panel value='history' pt='md'>
+						<Stack gap='md'>
+							<Group justify='space-between'>
+								<Text fw={600} size='lg'>
+									Alert History
+								</Text>
+								<Badge color='gray'>{mockAlertHistory.length} Recent</Badge>
+							</Group>
+							{/* inline-style-allow: */}
+							<div style={{ overflowX: 'auto' }}>
+								<Table striped highlightOnHover>
+									<Table.Thead>
+										<Table.Tr>
+											<Table.Th>Alert Type</Table.Th>
+											<Table.Th>Triggered</Table.Th>
+											<Table.Th>Target</Table.Th>
+											<Table.Th>Score</Table.Th>
+											<Table.Th>Action Taken</Table.Th>
 										</Table.Tr>
-									))}
-								</Table.Tbody>
-							</Table>
-						</div>
-					</Card.Section>
-				</Card>
-			</Stack>
+									</Table.Thead>
+									<Table.Tbody>
+										{mockAlertHistory.map((item) => (
+											<Table.Tr key={item.id}>
+												<Table.Td>
+													<Group gap='xs'>
+														<IconBell size={16} />
+														<Text fw={500} size='sm'>
+															{item.alert}
+														</Text>
+													</Group>
+												</Table.Td>
+												<Table.Td>
+													<Text size='sm'>{item.triggered}</Text>
+												</Table.Td>
+												<Table.Td>
+													<Badge size='sm' variant='light'>
+														{item.agent}
+													</Badge>
+												</Table.Td>
+												<Table.Td>
+													<Text size='sm'>{item.score}</Text>
+												</Table.Td>
+												<Table.Td>
+													<Text size='sm'>{item.action}</Text>
+												</Table.Td>
+											</Table.Tr>
+										))}
+									</Table.Tbody>
+								</Table>
+							</div>
+						</Stack>
+					</Tabs.Panel>
+
+					<Tabs.Panel value='alerts' pt='md'>
+						<Stack gap='md'>
+							<Group justify='space-between'>
+								<Text fw={600} size='lg'>
+									Active Alerts
+								</Text>
+								<Group gap='xs'>
+									<Badge color='blue'>
+										{
+											mockActiveAlerts.filter((a) => a.status === 'active')
+												.length
+										}{' '}
+										Active
+									</Badge>
+									<Button
+										size='sm'
+										variant='light'
+										leftSection={<IconPlus size={16} />}
+										onClick={() => setIsModalOpen(true)}
+									>
+										New Alert
+									</Button>
+								</Group>
+							</Group>
+							{/* inline-style-allow: */}
+							<div style={{ overflowX: 'auto' }}>
+								<Table striped highlightOnHover>
+									<Table.Thead>
+										<Table.Tr>
+											<Table.Th>Alert Type</Table.Th>
+											<Table.Th>Threshold</Table.Th>
+											<Table.Th>Status</Table.Th>
+											<Table.Th>Last Triggered</Table.Th>
+											<Table.Th>Frequency</Table.Th>
+											<Table.Th>Actions</Table.Th>
+										</Table.Tr>
+									</Table.Thead>
+									<Table.Tbody>
+										{mockActiveAlerts.map((alert) => (
+											<Table.Tr key={alert.id}>
+												<Table.Td>
+													<Group gap='xs'>
+														<IconAlertCircle size={16} />
+														<Text fw={500} size='sm'>
+															{alert.type}
+														</Text>
+													</Group>
+												</Table.Td>
+												<Table.Td>
+													<Text size='sm'>{alert.threshold}</Text>
+												</Table.Td>
+												<Table.Td>
+													<Badge
+														color={getStatusColor(alert.status)}
+														size='sm'
+														variant='dot'
+													>
+														{alert.status.charAt(0).toUpperCase() +
+															alert.status.slice(1)}
+													</Badge>
+												</Table.Td>
+												<Table.Td>
+													<Text size='sm'>{alert.lastTriggered}</Text>
+												</Table.Td>
+												<Table.Td>
+													<Text size='sm'>{alert.frequency}</Text>
+												</Table.Td>
+												<Table.Td>
+													<Group gap='xs'>
+														<Button size='xs' variant='subtle'>
+															Edit
+														</Button>
+														<Button size='xs' variant='subtle' color='red'>
+															Remove
+														</Button>
+													</Group>
+												</Table.Td>
+											</Table.Tr>
+										))}
+									</Table.Tbody>
+								</Table>
+							</div>
+						</Stack>
+					</Tabs.Panel>
+				</Tabs>
+			</Card>
 		</>
 	);
 }

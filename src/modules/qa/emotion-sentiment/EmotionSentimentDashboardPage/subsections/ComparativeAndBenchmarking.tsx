@@ -1,6 +1,17 @@
-import { Stack, Card, Text, Badge, Group, Table, Progress, ThemeIcon } from '@mantine/core';
-import { IconTrendingUp, IconTrendingDown, IconMinus } from '@tabler/icons-react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+	Stack,
+	Card,
+	Text,
+	Badge,
+	Group,
+	Table,
+	ThemeIcon,
+} from '@mantine/core';
+import {
+	IconTrendingUp,
+	IconTrendingDown,
+	IconMinus,
+} from '@tabler/icons-react';
 
 const mockTeamComparison = [
 	{
@@ -40,13 +51,6 @@ const mockTeamComparison = [
 	},
 ];
 
-const mockBenchmarkData = [
-	{ metric: 'Sentiment Score', team: 4.0, industry: 3.8, leader: 4.5 },
-	{ metric: 'Recovery Rate', team: 82, industry: 80, leader: 92 },
-	{ metric: 'Empathy Score', team: 4.1, industry: 3.9, leader: 4.6 },
-	{ metric: 'Response Time', team: 2.3, industry: 2.5, leader: 1.8 },
-];
-
 const mockLeaderboard = [
 	{ rank: 1, agent: 'Agent 3', score: 4.5, change: '↑ 0.3' },
 	{ rank: 2, agent: 'Agent 5', score: 4.3, change: '→ 0.0' },
@@ -62,7 +66,6 @@ const getTrendIcon = (change: string) => {
 };
 
 export function ComparativeAndBenchmarking() {
-
 	const getVarianceColor = (actual: number, target: number) => {
 		if (actual > target) return 'green';
 		if (actual < target) return 'red';
@@ -99,7 +102,10 @@ export function ComparativeAndBenchmarking() {
 										<Table.Td fw={500}>{item.agent}</Table.Td>
 										<Table.Td>
 											<Badge
-												color={getVarianceColor(item.sentiment, item.teamAvg.sentiment)}
+												color={getVarianceColor(
+													item.sentiment,
+													item.teamAvg.sentiment
+												)}
 											>
 												{item.sentiment}
 											</Badge>
@@ -107,14 +113,20 @@ export function ComparativeAndBenchmarking() {
 										<Table.Td>
 											<Text
 												size='sm'
-												c={getVarianceColor(item.sentiment, item.teamAvg.sentiment)}
+												c={getVarianceColor(
+													item.sentiment,
+													item.teamAvg.sentiment
+												)}
 											>
 												{(item.sentiment - item.teamAvg.sentiment).toFixed(1)}
 											</Text>
 										</Table.Td>
 										<Table.Td>
 											<Badge
-												color={getVarianceColor(item.recovery, item.teamAvg.recovery)}
+												color={getVarianceColor(
+													item.recovery,
+													item.teamAvg.recovery
+												)}
 											>
 												{item.recovery}%
 											</Badge>
@@ -122,14 +134,20 @@ export function ComparativeAndBenchmarking() {
 										<Table.Td>
 											<Text
 												size='sm'
-												c={getVarianceColor(item.recovery, item.teamAvg.recovery)}
+												c={getVarianceColor(
+													item.recovery,
+													item.teamAvg.recovery
+												)}
 											>
 												{(item.recovery - item.teamAvg.recovery).toFixed(1)}%
 											</Text>
 										</Table.Td>
 										<Table.Td>
 											<Badge
-												color={getVarianceColor(item.empathy, item.teamAvg.empathy)}
+												color={getVarianceColor(
+													item.empathy,
+													item.teamAvg.empathy
+												)}
 											>
 												{item.empathy}
 											</Badge>
@@ -147,29 +165,6 @@ export function ComparativeAndBenchmarking() {
 							</Table.Tbody>
 						</Table>
 					</div>
-				</Card.Section>
-			</Card>
-
-			{/* Industry Benchmarks */}
-			<Card withBorder radius='md' p='md'>
-				<Card.Section withBorder inheritPadding py='md'>
-					<Text fw={600} size='lg'>
-						Industry Benchmarks
-					</Text>
-				</Card.Section>
-				<Card.Section inheritPadding pb='md'>
-					<ResponsiveContainer width='100%' height={300}>
-						<BarChart data={mockBenchmarkData}>
-							<CartesianGrid strokeDasharray='3 3' />
-							<XAxis dataKey='metric' />
-							<YAxis />
-							<Tooltip />
-							<Legend />
-							<Bar dataKey='team' fill='var(--mantine-color-blue-6)' name='Your Team' />
-							<Bar dataKey='industry' fill='var(--mantine-color-gray-6)' name='Industry Avg' />
-							<Bar dataKey='leader' fill='var(--mantine-color-green-6)' name='Top Performer' />
-						</BarChart>
-					</ResponsiveContainer>
 				</Card.Section>
 			</Card>
 
@@ -213,40 +208,6 @@ export function ComparativeAndBenchmarking() {
 								</Group>
 							</Group>
 						))}
-					</Stack>
-				</Card.Section>
-			</Card>
-
-			{/* Performance Gaps */}
-			<Card withBorder radius='md' p='md'>
-				<Card.Section withBorder inheritPadding py='md'>
-					<Text fw={600} size='lg'>
-						Performance Gaps vs Benchmarks
-					</Text>
-				</Card.Section>
-				<Card.Section inheritPadding pb='md'>
-					<Stack gap='md'>
-						<div>
-							<Group justify='space-between' mb={8}>
-								<Text fw={500}>Team Sentiment vs Industry</Text>
-								<Badge color='green'>+0.2 (Above Average)</Badge>
-							</Group>
-							<Progress value={100} />
-						</div>
-						<div>
-							<Group justify='space-between' mb={8}>
-								<Text fw={500}>Recovery Rate vs Best Practice</Text>
-								<Badge color='orange'>-10% (Below Target)</Badge>
-							</Group>
-							<Progress value={89} />
-						</div>
-						<div>
-							<Group justify='space-between' mb={8}>
-								<Text fw={500}>Empathy Score vs Top Performer</Text>
-								<Badge color='red'>-0.5 (Gap Identified)</Badge>
-							</Group>
-							<Progress value={89} />
-						</div>
 					</Stack>
 				</Card.Section>
 			</Card>
