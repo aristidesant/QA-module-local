@@ -352,6 +352,10 @@
 			"lms": {
 				"label": "Gestión de Aprendizaje",
 				"description": "Recursos de aprendizaje y contenido de capacitación."
+			},
+			"emotion-sentiment": {
+				"label": "Emoción y Sentimiento",
+				"description": "Análisis de emoción y sentimiento para garantía de calidad."
 			}
 		},
 		"switchApp": "Cambiar de aplicación",
@@ -361,6 +365,7 @@
 			"kicker": "Unified CXM",
 			"ucxm": "Cargando Gestión de campañas…",
 			"qa": "Cargando Control de calidad…",
+			"emotion-sentiment": "Cargando Emoción y Sentimiento…",
 			"backoffice": "Cargando Backoffice…",
 			"coaching": "Cargando Coaching…",
 			"lms": "Cargando Gestión de Aprendizaje…"

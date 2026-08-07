@@ -21,8 +21,6 @@ interface AccessibleAppsInput {
 	hasQa: boolean;
 	hasBackoffice: boolean;
 	hasEmotionSentiment?: boolean;
-	hasCompliance?: boolean;
-	hasBusinessInsights?: boolean;
 }
 
 /**
@@ -35,15 +33,11 @@ export const computeAccessibleApps = ({
 	hasQa,
 	hasBackoffice,
 	hasEmotionSentiment,
-	hasCompliance,
-	hasBusinessInsights,
 }: AccessibleAppsInput): AppKey[] => {
 	const apps: AppKey[] = [];
 	if (hasUcxm) apps.push('ucxm');
 	if (hasQa) apps.push('qa');
 	if (hasEmotionSentiment) apps.push('emotion-sentiment');
-	if (hasCompliance) apps.push('compliance');
-	if (hasBusinessInsights) apps.push('business-insights');
 	if (hasBackoffice) apps.push('backoffice');
 	apps.push('coaching', 'lms');
 	return apps.length ? apps : ['ucxm'];

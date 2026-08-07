@@ -25,8 +25,6 @@ export const useAccessibleApps = (): AppKey[] => {
 				hasQa: isQaAdmin,
 				hasBackoffice: hasBackofficeRole,
 				hasEmotionSentiment: isQaAdmin,
-				hasCompliance: isQaAdmin,
-				hasBusinessInsights: isQaAdmin,
 			}),
 		[permissionMap, isQaAdmin, hasBackofficeRole]
 	);
