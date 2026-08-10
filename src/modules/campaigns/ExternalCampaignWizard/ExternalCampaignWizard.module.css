@@ -226,3 +226,7 @@
 	gap: var(--mantine-spacing-sm);
 	flex-wrap: wrap;
 }
+
+.flexField {
+	flex: 1;
+}
