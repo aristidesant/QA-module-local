@@ -230,3 +230,7 @@
 .flexField {
 	flex: 1;
 }
+
+.fullWidth {
+	width: 100%;
+}

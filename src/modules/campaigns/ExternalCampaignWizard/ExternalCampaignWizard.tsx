@@ -3,13 +3,11 @@ import { Stepper, Button, Group, Container, Card, Stack } from '@mantine/core';
 import {
 	IconServer,
 	IconLock,
-	IconFileText,
 	IconClock,
 	IconChecks,
 } from '@tabler/icons-react';
 import StepOneServerSetup from './StepOneServerSetup';
 import StepTwoAuthAndDirectory from './StepTwoAuthAndDirectory';
-import StepThreeNomenclature from './StepThreeNomenclature';
 import StepFourImportSettings from './StepFourImportSettings';
 import StepFiveSuccess from './StepFiveSuccess';
 import styles from './ExternalCampaignWizard.module.css';
@@ -38,7 +36,6 @@ export default function ExternalCampaignWizard({
 }: ExternalCampaignWizardProps = {}) {
 	const [activeStep, setActiveStep] = useState(0);
 	const [connectionTested, setConnectionTested] = useState(false);
-	const [filePreviewMatches, setFilePreviewMatches] = useState(false);
 	const [confirmationDone, setConfirmationDone] = useState(false);
 
 	const [formData, setFormData] = useState<FtpConfigFormData>({
@@ -65,10 +62,7 @@ export default function ExternalCampaignWizard({
 		if (activeStep === 0 && !connectionTested) {
 			return;
 		}
-		if (activeStep === 2 && !filePreviewMatches) {
-			return;
-		}
-		if (activeStep < 4) {
+		if (activeStep < 3) {
 			setActiveStep((current) => current + 1);
 		}
 	};
@@ -101,11 +95,6 @@ export default function ExternalCampaignWizard({
 			label: 'Authentication',
 			description: 'Credentials and directory',
 			icon: <IconLock size={18} />,
-		},
-		{
-			label: 'File Naming',
-			description: 'Define file patterns',
-			icon: <IconFileText size={18} />,
 		},
 		{
 			label: 'Import Settings',
@@ -162,20 +151,12 @@ export default function ExternalCampaignWizard({
 							/>
 						)}
 						{activeStep === 2 && (
-							<StepThreeNomenclature
-								formData={formData}
-								updateFormData={updateFormData}
-								filePreviewMatches={filePreviewMatches}
-								setFilePreviewMatches={setFilePreviewMatches}
-							/>
-						)}
-						{activeStep === 3 && (
 							<StepFourImportSettings
 								formData={formData}
 								updateFormData={updateFormData}
 							/>
 						)}
-						{activeStep === 4 && !confirmationDone && (
+						{activeStep === 3 && !confirmationDone && (
 							<StepFiveSuccess
 								formData={formData}
 								onEdit={handleEdit}
@@ -183,7 +164,7 @@ export default function ExternalCampaignWizard({
 								isReview={true}
 							/>
 						)}
-						{activeStep === 4 && confirmationDone && (
+						{activeStep === 3 && confirmationDone && (
 							<StepFiveSuccess
 								formData={formData}
 								onEdit={handleEdit}
@@ -193,7 +174,7 @@ export default function ExternalCampaignWizard({
 						)}
 					</div>
 
-					{activeStep < 4 && !confirmationDone && (
+					{activeStep < 3 && !confirmationDone && (
 						<Group justify='space-between'>
 							<Button
 								variant='default'
@@ -204,10 +185,7 @@ export default function ExternalCampaignWizard({
 							</Button>
 							<Button
 								onClick={handleNext}
-								disabled={
-									(activeStep === 0 && !connectionTested) ||
-									(activeStep === 2 && !filePreviewMatches)
-								}
+								disabled={activeStep === 0 && !connectionTested}
 							>
 								Next
 							</Button>
