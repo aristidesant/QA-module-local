@@ -29,7 +29,13 @@ export interface FtpConfigFormData {
 	deleteAfterImport: boolean;
 }
 
-export default function ExternalCampaignWizard() {
+interface ExternalCampaignWizardProps {
+	onComplete?: () => void;
+}
+
+export default function ExternalCampaignWizard({
+	onComplete,
+}: ExternalCampaignWizardProps = {}) {
 	const [activeStep, setActiveStep] = useState(0);
 	const [connectionTested, setConnectionTested] = useState(false);
 	const [filePreviewMatches, setFilePreviewMatches] = useState(false);
@@ -80,6 +86,9 @@ export default function ExternalCampaignWizard() {
 
 	const handleConfirm = () => {
 		setConfirmationDone(true);
+		if (onComplete) {
+			setTimeout(() => onComplete(), 1500);
+		}
 	};
 
 	const stepData = [

@@ -6,6 +6,7 @@ import ContentContainer from '~/components/ContentContainer';
 import { WizardStepper, wizardKitStyles } from '../components/DemoWizardKit';
 import StepCampaignDetails from './StepCampaignDetails';
 import StepUploadFiles from './StepUploadFiles';
+import ExternalCampaignWizard from '~/modules/campaigns/ExternalCampaignWizard/ExternalCampaignWizard';
 import type {
 	DemoWizardCampaignDetails,
 	DemoWizardUploadedFile,
@@ -13,6 +14,7 @@ import type {
 
 const STEPS = [
 	{ label: 'Campaign Details', description: '' },
+	{ label: 'FTP Configuration', description: 'Connect data source' },
 	{ label: 'Upload Files', description: 'Optional' },
 ];
 
@@ -55,11 +57,15 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 				)}
 
 				{activeStep === 1 && (
+					<ExternalCampaignWizard onComplete={() => setActiveStep(2)} />
+				)}
+
+				{activeStep === 2 && (
 					<StepUploadFiles
 						campaignDetails={details}
 						files={files}
 						onChange={setFiles}
-						onBack={() => setActiveStep(0)}
+						onBack={() => setActiveStep(1)}
 						onCreate={handleCreateCampaign}
 						onExit={exitWizard}
 					/>
