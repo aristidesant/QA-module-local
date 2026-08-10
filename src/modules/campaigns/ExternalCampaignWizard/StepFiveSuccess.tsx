@@ -53,22 +53,29 @@ export default function StepFiveSuccess({
 	onConfirm,
 	isReview,
 }: StepFiveProps) {
-	const getDelimiterDisplay = () => {
-		if (formData.delimiter === 'none') return 'None';
-		if (formData.delimiter === '_') return 'Underscore (_)';
-		if (formData.delimiter === '-') return 'Dash (-)';
-		if (formData.delimiter === '.') return 'Period (.)';
-		return formData.delimiter;
+	const getPatternExample = () => {
+		if (formData.patternTags.length === 0) return 'No pattern configured';
+		const values = formData.patternTags.map((tag) => tag.value);
+		return values.join(formData.patternDelimiter);
 	};
 
-	const getPatternExample = () => {
-		const delim = formData.delimiter === 'none' ? '' : formData.delimiter;
-		let pattern = `ACME${delim}20260810${delim}143022`;
-		if (formData.contactNameEnabled) {
-			pattern += `${delim}ContactName`;
-		}
-		pattern += '.wav';
-		return pattern;
+	const getPatternSummary = () => {
+		if (formData.patternTags.length === 0) return 'No pattern configured';
+		const fieldLabels = formData.patternTags
+			.map((tag) => {
+				const labels: Record<string, string> = {
+					clientId: 'Client ID',
+					agentId: 'Agent ID',
+					date: 'Date',
+					time: 'Time',
+					contactNumber: 'Contact Number',
+					fileExtension: 'File Extension',
+					custom: 'Custom',
+				};
+				return labels[tag.fieldType] || tag.fieldType;
+			})
+			.join(', ');
+		return fieldLabels;
 	};
 
 	if (!isReview) {
@@ -173,11 +180,7 @@ export default function StepFiveSuccess({
 
 				<div className={styles.summaryItem}>
 					<span className={styles.summaryLabel}>Pattern Details</span>
-					<span className={styles.summaryValue}>
-						Client ID, Date, Time
-						{formData.contactNameEnabled ? ', Contact Name' : ''} (
-						{getDelimiterDisplay()})
-					</span>
+					<span className={styles.summaryValue}>{getPatternSummary()}</span>
 				</div>
 
 				<div className={styles.summaryItem}>

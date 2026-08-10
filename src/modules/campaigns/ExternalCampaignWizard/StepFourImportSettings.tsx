@@ -1,4 +1,5 @@
 import { Select, Checkbox, Stack, Text } from '@mantine/core';
+import FilePatternExtractor from './Components/FilePatternExtractor';
 import { FtpConfigFormData } from './ExternalCampaignWizard';
 import styles from './ExternalCampaignWizard.module.css';
 
@@ -13,6 +14,17 @@ export default function StepFourImportSettings({
 }: StepFourProps) {
 	return (
 		<Stack gap='md' className={styles.formSection}>
+			{/* File Naming Pattern Section */}
+			<FilePatternExtractor
+				onPatternsChange={(patterns, delimiter) => {
+					updateFormData({
+						patternTags: patterns as any,
+						patternDelimiter: delimiter,
+					});
+				}}
+			/>
+
+			{/* Import Settings Section */}
 			<div>
 				<h3 className={styles.sectionTitle}>Auto-Import Settings</h3>
 				{/* inline-style-allow: */}

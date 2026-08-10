@@ -12,6 +12,13 @@ import StepFourImportSettings from './StepFourImportSettings';
 import StepFiveSuccess from './StepFiveSuccess';
 import styles from './ExternalCampaignWizard.module.css';
 
+export interface PatternTag {
+	id: string;
+	value: string;
+	fieldType: string;
+	order: number;
+}
+
 export interface FtpConfigFormData {
 	host: string;
 	port: number;
@@ -21,8 +28,8 @@ export interface FtpConfigFormData {
 	password: string;
 	sshKey: File | null;
 	directory: string;
-	contactNameEnabled: boolean;
-	delimiter: '_' | '-' | '.' | 'none';
+	patternTags: PatternTag[];
+	patternDelimiter: string;
 	frequency: 'every30' | 'hourly' | 'daily' | 'weekly' | 'ondemand';
 	deleteAfterImport: boolean;
 }
@@ -47,8 +54,8 @@ export default function ExternalCampaignWizard({
 		password: '',
 		sshKey: null,
 		directory: '',
-		contactNameEnabled: false,
-		delimiter: '_',
+		patternTags: [],
+		patternDelimiter: '_',
 		frequency: 'hourly',
 		deleteAfterImport: true,
 	});
@@ -58,10 +65,6 @@ export default function ExternalCampaignWizard({
 	};
 
 	const handleNext = () => {
-		// Validation gates
-		if (activeStep === 0 && !connectionTested) {
-			return;
-		}
 		if (activeStep < 3) {
 			setActiveStep((current) => current + 1);
 		}
@@ -76,6 +79,11 @@ export default function ExternalCampaignWizard({
 	const handleEdit = () => {
 		setActiveStep(0);
 		setConnectionTested(false);
+	};
+
+	const handleSkipFTP = () => {
+		// Skip FTP configuration and go to Step 3 (File Pattern)
+		setActiveStep(2);
 	};
 
 	const handleConfirm = () => {
@@ -97,8 +105,8 @@ export default function ExternalCampaignWizard({
 			icon: <IconLock size={18} />,
 		},
 		{
-			label: 'Import Settings',
-			description: 'Frequency and cleanup',
+			label: 'File Pattern & Import',
+			description: 'Nomenclature and frequency',
 			icon: <IconClock size={18} />,
 		},
 		{
@@ -111,7 +119,8 @@ export default function ExternalCampaignWizard({
 	return (
 		<Container size='sm' py='xl' className={styles.wizardContainer}>
 			<Card shadow='sm' p='lg' radius='md' withBorder className={styles.card}>
-				<Stack gap='lg'>
+				{/* inline-style-allow: */}
+				<Stack gap='lg' style={{ paddingBottom: '100px' }}>
 					<div>
 						<h1 className={styles.title}>External Campaign Setup</h1>
 						<p className={styles.subtitle}>
@@ -135,7 +144,8 @@ export default function ExternalCampaignWizard({
 						<Stepper.Completed>Completed</Stepper.Completed>
 					</Stepper>
 
-					<div className={styles.stepContent}>
+					{/* inline-style-allow: */}
+					<div className={styles.stepContent} style={{ paddingBottom: '0' }}>
 						{activeStep === 0 && (
 							<StepOneServerSetup
 								formData={formData}
@@ -175,21 +185,38 @@ export default function ExternalCampaignWizard({
 					</div>
 
 					{activeStep < 3 && !confirmationDone && (
-						<Group justify='space-between'>
-							<Button
-								variant='default'
-								onClick={handlePrevious}
-								disabled={activeStep === 0}
+						<>
+							{/* inline-style-allow: */}
+							<Group
+								justify='space-between'
+								style={{
+									position: 'fixed',
+									bottom: 0,
+									left: 0,
+									right: 0,
+									padding: 'var(--mantine-spacing-lg)',
+									backgroundColor: 'var(--mantine-color-white)',
+									borderTop: '1px solid var(--mantine-color-gray-2)',
+									zIndex: 100,
+								}}
 							>
-								Previous
-							</Button>
-							<Button
-								onClick={handleNext}
-								disabled={activeStep === 0 && !connectionTested}
-							>
-								Next
-							</Button>
-						</Group>
+								<Button
+									variant='default'
+									onClick={handlePrevious}
+									disabled={activeStep === 0}
+								>
+									Previous
+								</Button>
+
+								{activeStep === 0 && (
+									<Button variant='subtle' onClick={handleSkipFTP}>
+										Skip FTP Configuration
+									</Button>
+								)}
+
+								<Button onClick={handleNext}>Next</Button>
+							</Group>
+						</>
 					)}
 				</Stack>
 			</Card>

@@ -5,17 +5,12 @@ import { notifications } from '@mantine/notifications';
 import ContentContainer from '~/components/ContentContainer';
 import { WizardStepper, wizardKitStyles } from '../components/DemoWizardKit';
 import StepCampaignDetails from './StepCampaignDetails';
-import StepUploadFiles from './StepUploadFiles';
 import ExternalCampaignWizard from '~/modules/campaigns/ExternalCampaignWizard/ExternalCampaignWizard';
-import type {
-	DemoWizardCampaignDetails,
-	DemoWizardUploadedFile,
-} from './types';
+import type { DemoWizardCampaignDetails } from './types';
 
 const STEPS = [
 	{ label: 'Campaign Details', description: '' },
 	{ label: 'FTP Configuration', description: 'Connect data source' },
-	{ label: 'Upload Files', description: 'Optional' },
 ];
 
 const DemoNewCampaignWizardPage: React.FC = () => {
@@ -27,7 +22,6 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 		callDirection: 'Inbound',
 		description: '',
 	});
-	const [files, setFiles] = useState<DemoWizardUploadedFile[]>([]);
 
 	const exitWizard = () => navigate('/role-preview/qa-campaigns');
 
@@ -57,18 +51,7 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 				)}
 
 				{activeStep === 1 && (
-					<ExternalCampaignWizard onComplete={() => setActiveStep(2)} />
-				)}
-
-				{activeStep === 2 && (
-					<StepUploadFiles
-						campaignDetails={details}
-						files={files}
-						onChange={setFiles}
-						onBack={() => setActiveStep(1)}
-						onCreate={handleCreateCampaign}
-						onExit={exitWizard}
-					/>
+					<ExternalCampaignWizard onComplete={handleCreateCampaign} />
 				)}
 			</Stack>
 		</ContentContainer>

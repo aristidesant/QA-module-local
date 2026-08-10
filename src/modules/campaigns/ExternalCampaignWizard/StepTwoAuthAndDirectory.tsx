@@ -1,13 +1,13 @@
 import {
-	TextInput,
 	PasswordInput,
 	Radio,
 	Group,
 	Stack,
 	Text,
 	FileInput,
+	Alert,
 } from '@mantine/core';
-import { IconUpload } from '@tabler/icons-react';
+import { IconUpload, IconAlertCircle } from '@tabler/icons-react';
 import { FtpConfigFormData } from './ExternalCampaignWizard';
 import styles from './ExternalCampaignWizard.module.css';
 
@@ -22,10 +22,39 @@ export default function StepTwoAuthAndDirectory({
 }: StepTwoProps) {
 	const isSFTP = formData.protocol === 'SFTP';
 
+	// Only show SFTP auth if user configured FTP/SFTP
+	const hasFtpConfig = formData.host && formData.username;
+
+	if (!hasFtpConfig) {
+		return (
+			<Stack gap='md' className={styles.formSection}>
+				<Alert
+					icon={<IconAlertCircle size={16} />}
+					title='No FTP Configuration'
+				>
+					You skipped FTP configuration. Proceed to select a file naming pattern
+					from the global patterns library.
+				</Alert>
+			</Stack>
+		);
+	}
+
+	if (!isSFTP) {
+		return (
+			<Stack gap='md' className={styles.formSection}>
+				<Alert title='FTP Configuration Complete'>
+					Your FTP connection is configured. Proceed to the next step to select
+					file naming pattern.
+				</Alert>
+			</Stack>
+		);
+	}
+
+	// SFTP only - show SSH key option
 	return (
 		<Stack gap='md' className={styles.formSection}>
 			<div>
-				<h3 className={styles.sectionTitle}>Authentication</h3>
+				<h3 className={styles.sectionTitle}>SFTP Authentication</h3>
 				{/* inline-style-allow: */}
 				<p
 					style={{
@@ -33,82 +62,51 @@ export default function StepTwoAuthAndDirectory({
 						color: 'var(--mantine-color-gray-6)',
 					}}
 				>
-					{isSFTP
-						? 'Select authentication method for SFTP'
-						: 'Enter your FTP password'}
+					Select how to authenticate with your SFTP server
 				</p>
 			</div>
 
-			{isSFTP ? (
-				<>
-					<Radio.Group
-						value={formData.authMethod}
-						onChange={(value) =>
-							updateFormData({ authMethod: value as 'password' | 'sshKey' })
-						}
-						label='Authentication Method'
-					>
-						<Group mt='xs'>
-							<Radio value='password' label='Password' />
-							<Radio value='sshKey' label='SSH Key' />
-						</Group>
-					</Radio.Group>
+			<Radio.Group
+				value={formData.authMethod}
+				onChange={(value) =>
+					updateFormData({ authMethod: value as 'password' | 'sshKey' })
+				}
+				label='Authentication Method'
+			>
+				<Group mt='xs'>
+					<Radio value='password' label='Password' />
+					<Radio value='sshKey' label='SSH Key' />
+				</Group>
+			</Radio.Group>
 
-					{formData.authMethod === 'password' ? (
-						<PasswordInput
-							label='Password'
-							placeholder='Enter SFTP password'
-							value={formData.password}
-							onChange={(e) =>
-								updateFormData({ password: e.currentTarget.value })
-							}
-							required
-						/>
-					) : (
-						<FileInput
-							label='SSH Private Key'
-							placeholder='Select your .pem or .key file'
-							accept='.pem,.key,.pub'
-							value={formData.sshKey}
-							onChange={(file) => {
-								if (file) {
-									updateFormData({ sshKey: file });
-								}
-							}}
-							leftSection={<IconUpload size={14} />}
-							description='Upload your SSH private key file (max 10 MB)'
-							required
-						/>
-					)}
-
-					{formData.sshKey && formData.authMethod === 'sshKey' && (
-						<Text size='sm' c='green'>
-							✓ File selected: {formData.sshKey.name}
-						</Text>
-					)}
-				</>
-			) : (
+			{formData.authMethod === 'password' ? (
 				<PasswordInput
 					label='Password'
-					placeholder='Enter FTP password'
+					placeholder='Enter SFTP password'
 					value={formData.password}
 					onChange={(e) => updateFormData({ password: e.currentTarget.value })}
-					required
+				/>
+			) : (
+				<FileInput
+					label='SSH Private Key'
+					placeholder='Select your .pem or .key file'
+					accept='.pem,.key,.pub'
+					value={formData.sshKey}
+					onChange={(file) => {
+						if (file) {
+							updateFormData({ sshKey: file });
+						}
+					}}
+					leftSection={<IconUpload size={14} />}
+					description='Upload your SSH private key file (max 10 MB)'
 				/>
 			)}
 
-			{/* inline-style-allow: */}
-			<div style={{ marginTop: 'var(--mantine-spacing-lg)' }}>
-				<h3 className={styles.sectionTitle}>Source Directory</h3>
-				<TextInput
-					label='Directory Path'
-					placeholder='/campaigns/2026/'
-					value={formData.directory}
-					onChange={(e) => updateFormData({ directory: e.currentTarget.value })}
-					description='Path on FTP server (e.g., /campaigns/ or leave empty for root)'
-					required
-				/>
-			</div>
+			{formData.sshKey && formData.authMethod === 'sshKey' && (
+				<Text size='sm' c='green'>
+					✓ File selected: {formData.sshKey.name}
+				</Text>
+			)}
 		</Stack>
 	);
 }

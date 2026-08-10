@@ -5,8 +5,11 @@ import {
 	SegmentedControl,
 	Stack,
 	Alert,
+	PasswordInput,
+	FileInput,
+	Text,
 } from '@mantine/core';
-import { IconCheck, IconAlertCircle } from '@tabler/icons-react';
+import { IconCheck, IconAlertCircle, IconUpload } from '@tabler/icons-react';
 import ConnectionTestButton from './Components/ConnectionTestButton';
 import { FtpConfigFormData } from './ExternalCampaignWizard';
 import styles from './ExternalCampaignWizard.module.css';
@@ -28,12 +31,28 @@ export default function StepOneServerSetup({
 	const [testError, setTestError] = useState<string | null>(null);
 
 	const handleTestConnection = async () => {
+		// Check if any fields are filled
+		const hasAnyFields = formData.host || formData.port || formData.username;
+
+		if (!hasAnyFields) {
+			// No fields filled, skip testing
+			setConnectionTested(true);
+			return;
+		}
+
 		setTestingConnection(true);
 		setTestError(null);
 
-		// Validate required fields
+		// If any fields are filled, validate all required fields
 		if (!formData.host || !formData.port || !formData.username) {
 			setTestError('Please fill in all connection details');
+			setTestingConnection(false);
+			return;
+		}
+
+		// Validate FTP password if FTP protocol selected
+		if (formData.protocol === 'FTP' && !formData.password) {
+			setTestError('Please enter FTP password');
 			setTestingConnection(false);
 			return;
 		}
@@ -69,7 +88,6 @@ export default function StepOneServerSetup({
 					setConnectionTested(false);
 					setTestError(null);
 				}}
-				required
 			/>
 
 			<NumberInput
@@ -85,7 +103,6 @@ export default function StepOneServerSetup({
 				}}
 				min={1}
 				max={65535}
-				required
 			/>
 
 			<TextInput
@@ -97,7 +114,6 @@ export default function StepOneServerSetup({
 					setConnectionTested(false);
 					setTestError(null);
 				}}
-				required
 			/>
 
 			<div>
@@ -125,6 +141,56 @@ export default function StepOneServerSetup({
 					fullWidth
 				/>
 			</div>
+
+			{formData.protocol === 'FTP' ? (
+				<PasswordInput
+					label='Password'
+					placeholder='Enter FTP password'
+					value={formData.password}
+					onChange={(e) => {
+						updateFormData({ password: e.currentTarget.value });
+						setConnectionTested(false);
+						setTestError(null);
+					}}
+					required
+				/>
+			) : (
+				<div>
+					<FileInput
+						label='SSH Private Key'
+						placeholder='Select your .pem or .key file'
+						accept='.pem,.key,.pub'
+						value={formData.sshKey}
+						onChange={(file) => {
+							if (file) {
+								updateFormData({ sshKey: file });
+								setConnectionTested(false);
+								setTestError(null);
+							}
+						}}
+						leftSection={<IconUpload size={14} />}
+						description='Upload your SSH private key file (max 10 MB)'
+						required
+					/>
+					{formData.sshKey && (
+						<Text size='sm' c='green' mt='xs'>
+							✓ File selected: {formData.sshKey.name}
+						</Text>
+					)}
+				</div>
+			)}
+
+			<TextInput
+				label='Source Directory'
+				placeholder='/campaigns/imports'
+				value={formData.directory}
+				onChange={(e) => {
+					updateFormData({ directory: e.currentTarget.value });
+					setConnectionTested(false);
+					setTestError(null);
+				}}
+				description='Path on the FTP server where files are located'
+			/>
 
 			<ConnectionTestButton
 				loading={testingConnection}
