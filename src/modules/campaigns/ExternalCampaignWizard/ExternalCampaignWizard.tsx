@@ -70,11 +70,6 @@ export default function ExternalCampaignWizard({
 		}
 	};
 
-	const handleEdit = () => {
-		setActiveStep(0);
-		setConnectionTested(false);
-	};
-
 	const handleSkipFTP = () => {
 		// Skip FTP configuration and go to Step 2 (File Pattern & Import)
 		setActiveStep(1);
@@ -150,24 +145,14 @@ export default function ExternalCampaignWizard({
 							/>
 						)}
 						{activeStep === 2 && !confirmationDone && (
-							<StepFiveSuccess
-								formData={formData}
-								onEdit={handleEdit}
-								onConfirm={handleConfirm}
-								isReview={true}
-							/>
+							<StepFiveSuccess formData={formData} isReview={true} />
 						)}
 						{activeStep === 2 && confirmationDone && (
-							<StepFiveSuccess
-								formData={formData}
-								onEdit={handleEdit}
-								onConfirm={handleConfirm}
-								isReview={false}
-							/>
+							<StepFiveSuccess formData={formData} isReview={false} />
 						)}
 					</div>
 
-					{activeStep < 2 && !confirmationDone && (
+					{!confirmationDone && (
 						<>
 							{/* inline-style-allow: */}
 							<Group
@@ -197,7 +182,10 @@ export default function ExternalCampaignWizard({
 									</Button>
 								)}
 
-								<Button onClick={handleNext}>Next</Button>
+								{activeStep < 2 && <Button onClick={handleNext}>Next</Button>}
+								{activeStep === 2 && (
+									<Button onClick={handleConfirm}>Confirm & Save</Button>
+								)}
 							</Group>
 						</>
 					)}
