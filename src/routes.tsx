@@ -187,6 +187,10 @@ const AgentDetailPage = React.lazy(
 const CampaignsPage = React.lazy(
 	() => import('./modules/campaigns/CampaignsPage/CampaignsPage')
 );
+const ExternalCampaignWizard = React.lazy(
+	() =>
+		import('./modules/campaigns/ExternalCampaignWizard/ExternalCampaignWizard')
+);
 const ReportTemplatesPage = React.lazy(
 	() => import('./modules/report-templates/ReportTemplatesPage')
 );
@@ -480,6 +484,19 @@ const router = createBrowserRouter([
 										<I18nNamespaceLoader>
 											<Suspense fallback={<SuspenseFallback />}>
 												<CampaignsPage />
+											</Suspense>
+										</I18nNamespaceLoader>
+									</ModuleGuard>
+								),
+							},
+							{
+								path: 'external-campaign-setup',
+								id: 'external-campaign-setup',
+								element: (
+									<ModuleGuard module={ModuleEnum.CAMPAIGNS}>
+										<I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<ExternalCampaignWizard />
 											</Suspense>
 										</I18nNamespaceLoader>
 									</ModuleGuard>

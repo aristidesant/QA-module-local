@@ -5,6 +5,7 @@ import {
 	IconFileText,
 	IconChartBar,
 	IconBell,
+	IconMicrophone,
 } from '@tabler/icons-react';
 import {
 	useEmotionSentimentFilterStore,
@@ -16,19 +17,36 @@ const subsectionConfig: Array<{
 	icon: React.ReactNode;
 	labelKey: string;
 }> = [
-	{ id: 'general', icon: <IconTrendingUp size={18} />, labelKey: 'sidebar.general' },
+	{
+		id: 'general',
+		icon: <IconTrendingUp size={18} />,
+		labelKey: 'sidebar.general',
+	},
 	{
 		id: 'predictive',
 		icon: <IconTrendingUp size={18} />,
 		labelKey: 'sidebar.predictive',
 	},
-	{ id: 'reports', icon: <IconFileText size={18} />, labelKey: 'sidebar.reports' },
+	{
+		id: 'reports',
+		icon: <IconFileText size={18} />,
+		labelKey: 'sidebar.reports',
+	},
 	{
 		id: 'benchmarking',
 		icon: <IconChartBar size={18} />,
 		labelKey: 'sidebar.benchmarking',
 	},
-	{ id: 'notifications', icon: <IconBell size={18} />, labelKey: 'sidebar.notifications' },
+	{
+		id: 'notifications',
+		icon: <IconBell size={18} />,
+		labelKey: 'sidebar.notifications',
+	},
+	{
+		id: 'calls',
+		icon: <IconMicrophone size={18} />,
+		labelKey: 'sidebar.calls',
+	},
 ];
 
 export function EmotionSentimentSidebar() {

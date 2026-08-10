@@ -118,3 +118,50 @@ export const getEmotionDetails = (
 			return { color: 'var(--mantine-color-gray-5)', emoji: '😐' };
 	}
 };
+
+export type ToneType = 'polite' | 'professional' | 'empathetic';
+
+export interface TranscriptSegment {
+	timestamp: number;
+	speaker: 'agent' | 'customer';
+	text: string;
+	tone?: ToneType;
+	emotion?: Emotion;
+	sentiment?: number;
+	empathy?: 'high' | 'medium' | 'low';
+}
+
+export interface ToneBreakdown {
+	polite: {
+		percentage: number;
+		durationSeconds: number;
+	};
+	professional: {
+		percentage: number;
+		durationSeconds: number;
+	};
+	empathetic: {
+		percentage: number;
+		durationSeconds: number;
+	};
+	totalDurationSeconds: number;
+}
+
+export interface Call {
+	id: string;
+	agentId: string;
+	agentName: string;
+	customerId: string;
+	customerName: string;
+	isRepeatCustomer: boolean;
+	callCount?: number;
+	date: string;
+	duration: number;
+	sentiment: number;
+	toneBreakdown?: ToneBreakdown;
+	emotions: Emotion[];
+	issueTag: string;
+	transcriptUrl: string;
+	audioUrl: string;
+	transcript: TranscriptSegment[];
+}

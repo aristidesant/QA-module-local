@@ -4,6 +4,7 @@ import { PredictiveAndPrescriptive } from './subsections/PredictiveAndPrescripti
 import { Reports } from './subsections/Reports';
 import { ComparativeAndBenchmarking } from './subsections/ComparativeAndBenchmarking';
 import { Notifications } from './subsections/Notifications';
+import { CallsAndTranscripts } from './subsections/CallsAndTranscripts';
 import GeneralTab from './components/GeneralTab';
 
 export function EmotionSentimentLayout() {
@@ -23,6 +24,8 @@ export function EmotionSentimentLayout() {
 				return <ComparativeAndBenchmarking />;
 			case 'notifications':
 				return <Notifications />;
+			case 'calls':
+				return <CallsAndTranscripts />;
 			default:
 				return <GeneralTab />;
 		}

@@ -7,7 +7,8 @@ export type EmotionSentimentSubsection =
 	| 'predictive'
 	| 'reports'
 	| 'benchmarking'
-	| 'notifications';
+	| 'notifications'
+	| 'calls';
 
 interface EmotionSentimentFilterState {
 	timeRange: TimeRange;
