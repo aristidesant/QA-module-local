@@ -1,13 +1,7 @@
 import { useState } from 'react';
 import { Stepper, Button, Group, Container, Card, Stack } from '@mantine/core';
-import {
-	IconServer,
-	IconLock,
-	IconClock,
-	IconChecks,
-} from '@tabler/icons-react';
+import { IconServer, IconClock, IconChecks } from '@tabler/icons-react';
 import StepOneServerSetup from './StepOneServerSetup';
-import StepTwoAuthAndDirectory from './StepTwoAuthAndDirectory';
 import StepFourImportSettings from './StepFourImportSettings';
 import StepFiveSuccess from './StepFiveSuccess';
 import styles from './ExternalCampaignWizard.module.css';
@@ -65,7 +59,7 @@ export default function ExternalCampaignWizard({
 	};
 
 	const handleNext = () => {
-		if (activeStep < 3) {
+		if (activeStep < 2) {
 			setActiveStep((current) => current + 1);
 		}
 	};
@@ -82,8 +76,8 @@ export default function ExternalCampaignWizard({
 	};
 
 	const handleSkipFTP = () => {
-		// Skip FTP configuration and go to Step 3 (File Pattern)
-		setActiveStep(2);
+		// Skip FTP configuration and go to Step 2 (File Pattern & Import)
+		setActiveStep(1);
 	};
 
 	const handleConfirm = () => {
@@ -98,11 +92,6 @@ export default function ExternalCampaignWizard({
 			label: 'Server Setup',
 			description: 'Configure FTP/SFTP connection',
 			icon: <IconServer size={18} />,
-		},
-		{
-			label: 'Authentication',
-			description: 'Credentials and directory',
-			icon: <IconLock size={18} />,
 		},
 		{
 			label: 'File Pattern & Import',
@@ -155,18 +144,12 @@ export default function ExternalCampaignWizard({
 							/>
 						)}
 						{activeStep === 1 && (
-							<StepTwoAuthAndDirectory
-								formData={formData}
-								updateFormData={updateFormData}
-							/>
-						)}
-						{activeStep === 2 && (
 							<StepFourImportSettings
 								formData={formData}
 								updateFormData={updateFormData}
 							/>
 						)}
-						{activeStep === 3 && !confirmationDone && (
+						{activeStep === 2 && !confirmationDone && (
 							<StepFiveSuccess
 								formData={formData}
 								onEdit={handleEdit}
@@ -174,7 +157,7 @@ export default function ExternalCampaignWizard({
 								isReview={true}
 							/>
 						)}
-						{activeStep === 3 && confirmationDone && (
+						{activeStep === 2 && confirmationDone && (
 							<StepFiveSuccess
 								formData={formData}
 								onEdit={handleEdit}
@@ -184,7 +167,7 @@ export default function ExternalCampaignWizard({
 						)}
 					</div>
 
-					{activeStep < 3 && !confirmationDone && (
+					{activeStep < 2 && !confirmationDone && (
 						<>
 							{/* inline-style-allow: */}
 							<Group
