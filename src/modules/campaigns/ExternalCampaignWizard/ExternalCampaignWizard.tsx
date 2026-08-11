@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Stepper, Button, Group, Container, Card } from '@mantine/core';
+import { Stepper, Button, Container, Card } from '@mantine/core';
 import { IconServer, IconClock, IconChecks } from '@tabler/icons-react';
 import StepOneServerSetup from './StepOneServerSetup';
 import StepFourImportSettings from './StepFourImportSettings';
