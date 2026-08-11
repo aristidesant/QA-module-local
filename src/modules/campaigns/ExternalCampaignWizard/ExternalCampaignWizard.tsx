@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Stepper, Button, Container, Card } from '@mantine/core';
-import { IconServer, IconChecks } from '@tabler/icons-react';
+import { Button, Container, Card } from '@mantine/core';
 import StepOneServerSetup from './StepOneServerSetup';
 import StepFiveSuccess from './StepFiveSuccess';
 import styles from './ExternalCampaignWizard.module.css';
@@ -66,7 +65,7 @@ export default function ExternalCampaignWizard({
 	};
 
 	const handleSkipFTP = () => {
-		// Skip FTP configuration and go to Step 2 (File Pattern & Import)
+		// Skip FTP configuration and go to Review
 		setActiveStep(1);
 	};
 
@@ -83,68 +82,13 @@ export default function ExternalCampaignWizard({
 		}
 	};
 
-	const stepData = [
-		{
-			label: 'Server Setup',
-			description: 'Configure FTP/SFTP connection',
-			icon: <IconServer size={18} />,
-		},
-		{
-			label: 'Review',
-			description: 'Confirm configuration',
-			icon: <IconChecks size={18} />,
-		},
-	];
-
 	return (
 		<>
-			{/* Fixed Stepper at Top - Full Width */}
+			{/* Main Content Area */}
 			{/* inline-style-allow: */}
 			<div
 				style={{
-					position: 'fixed',
-					top: 0,
-					left: 0,
-					right: 0,
-					backgroundColor: 'var(--mantine-color-white)',
-					borderBottom: '1px solid var(--mantine-color-gray-2)',
-					padding: 'var(--mantine-spacing-md) var(--mantine-spacing-lg)',
-					zIndex: 99,
-				}}
-			>
-				<div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-					<div style={{ marginBottom: 'var(--mantine-spacing-sm)' }}>
-						<h1 className={styles.title}>External Campaign Setup</h1>
-						<p className={styles.subtitle}>
-							Configure FTP/SFTP for automated file imports
-						</p>
-					</div>
-
-					<Stepper
-						active={activeStep}
-						onStepClick={setActiveStep}
-						allowNextStepsSelect={false}
-						size='sm'
-					>
-						{stepData.map((step, idx) => (
-							<Stepper.Step
-								key={idx}
-								label={step.label}
-								description={step.description}
-								icon={step.icon}
-							/>
-						))}
-						<Stepper.Completed>Completed</Stepper.Completed>
-					</Stepper>
-				</div>
-			</div>
-
-			{/* Main Content Area with Top Padding */}
-			{/* inline-style-allow: */}
-			<div
-				style={{
-					marginTop: '180px',
-					minHeight: 'calc(100vh - 180px)',
+					minHeight: '100vh',
 					paddingBottom: '80px',
 				}}
 			>
