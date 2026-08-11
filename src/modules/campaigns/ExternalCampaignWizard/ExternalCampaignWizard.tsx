@@ -96,7 +96,7 @@ export default function ExternalCampaignWizard({
 
 	return (
 		<>
-			{/* Fixed Stepper at Top */}
+			{/* Fixed Stepper at Top - Full Width */}
 			{/* inline-style-allow: */}
 			<div
 				style={{
@@ -106,12 +106,12 @@ export default function ExternalCampaignWizard({
 					right: 0,
 					backgroundColor: 'var(--mantine-color-white)',
 					borderBottom: '1px solid var(--mantine-color-gray-2)',
-					padding: 'var(--mantine-spacing-lg)',
+					padding: 'var(--mantine-spacing-md) var(--mantine-spacing-lg)',
 					zIndex: 99,
 				}}
 			>
-				<Container size='sm'>
-					<div>
+				<div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+					<div style={{ marginBottom: 'var(--mantine-spacing-sm)' }}>
 						<h1 className={styles.title}>External Campaign Setup</h1>
 						<p className={styles.subtitle}>
 							Configure FTP/SFTP for automated file imports
@@ -122,6 +122,7 @@ export default function ExternalCampaignWizard({
 						active={activeStep}
 						onStepClick={setActiveStep}
 						allowNextStepsSelect={false}
+						size='sm'
 					>
 						{stepData.map((step, idx) => (
 							<Stepper.Step
@@ -133,15 +134,15 @@ export default function ExternalCampaignWizard({
 						))}
 						<Stepper.Completed>Completed</Stepper.Completed>
 					</Stepper>
-				</Container>
+				</div>
 			</div>
 
 			{/* Main Content Area with Top Padding */}
 			{/* inline-style-allow: */}
 			<div
 				style={{
-					marginTop: '300px',
-					minHeight: '100vh',
+					marginTop: '180px',
+					minHeight: 'calc(100vh - 180px)',
 					paddingBottom: '80px',
 				}}
 			>
@@ -174,20 +175,22 @@ export default function ExternalCampaignWizard({
 				</Container>
 			</div>
 
-			{/* Fixed Controls at Bottom Right */}
+			{/* Fixed Controls at Bottom - Full Width */}
 			{!confirmationDone && (
 				<>
 					{/* inline-style-allow: */}
-					<Group
-						gap='sm'
+					<div
 						style={{
 							position: 'fixed',
 							bottom: 0,
+							left: 0,
 							right: 0,
+							display: 'flex',
+							justifyContent: 'flex-end',
+							gap: 'var(--mantine-spacing-sm)',
 							padding: 'var(--mantine-spacing-lg)',
 							backgroundColor: 'var(--mantine-color-white)',
 							borderTop: '1px solid var(--mantine-color-gray-2)',
-							borderLeft: '1px solid var(--mantine-color-gray-2)',
 							zIndex: 100,
 						}}
 					>
@@ -207,7 +210,7 @@ export default function ExternalCampaignWizard({
 						{activeStep === 2 && (
 							<Button onClick={handleConfirm}>Confirm & Save</Button>
 						)}
-					</Group>
+					</div>
 				</>
 			)}
 		</>
