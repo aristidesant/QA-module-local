@@ -51,7 +51,10 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 				)}
 
 				{activeStep === 1 && (
-					<ExternalCampaignWizard onComplete={handleCreateCampaign} />
+					<ExternalCampaignWizard
+						onComplete={handleCreateCampaign}
+						onCancel={exitWizard}
+					/>
 				)}
 			</Stack>
 		</ContentContainer>

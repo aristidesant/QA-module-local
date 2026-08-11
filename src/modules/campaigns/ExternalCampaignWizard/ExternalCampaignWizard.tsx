@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import { Stepper, Button, Container, Card } from '@mantine/core';
-import { IconServer, IconClock, IconChecks } from '@tabler/icons-react';
+import { IconServer, IconChecks } from '@tabler/icons-react';
 import StepOneServerSetup from './StepOneServerSetup';
-import StepFourImportSettings from './StepFourImportSettings';
 import StepFiveSuccess from './StepFiveSuccess';
 import styles from './ExternalCampaignWizard.module.css';
 
@@ -27,10 +26,12 @@ export interface FtpConfigFormData {
 
 interface ExternalCampaignWizardProps {
 	onComplete?: () => void;
+	onCancel?: () => void;
 }
 
 export default function ExternalCampaignWizard({
 	onComplete,
+	onCancel,
 }: ExternalCampaignWizardProps = {}) {
 	const [activeStep, setActiveStep] = useState(0);
 	const [connectionTested, setConnectionTested] = useState(false);
@@ -53,7 +54,7 @@ export default function ExternalCampaignWizard({
 	};
 
 	const handleNext = () => {
-		if (activeStep < 2) {
+		if (activeStep < 1) {
 			setActiveStep((current) => current + 1);
 		}
 	};
@@ -76,16 +77,17 @@ export default function ExternalCampaignWizard({
 		}
 	};
 
+	const handleCancel = () => {
+		if (onCancel) {
+			onCancel();
+		}
+	};
+
 	const stepData = [
 		{
 			label: 'Server Setup',
 			description: 'Configure FTP/SFTP connection',
 			icon: <IconServer size={18} />,
-		},
-		{
-			label: 'File Pattern & Import',
-			description: 'Nomenclature and frequency',
-			icon: <IconClock size={18} />,
 		},
 		{
 			label: 'Review',
@@ -158,16 +160,10 @@ export default function ExternalCampaignWizard({
 									setConnectionTested={setConnectionTested}
 								/>
 							)}
-							{activeStep === 1 && (
-								<StepFourImportSettings
-									formData={formData}
-									updateFormData={updateFormData}
-								/>
-							)}
-							{activeStep === 2 && !confirmationDone && (
+							{activeStep === 1 && !confirmationDone && (
 								<StepFiveSuccess formData={formData} isReview={true} />
 							)}
-							{activeStep === 2 && confirmationDone && (
+							{activeStep === 1 && confirmationDone && (
 								<StepFiveSuccess formData={formData} isReview={false} />
 							)}
 						</div>
@@ -194,6 +190,10 @@ export default function ExternalCampaignWizard({
 							zIndex: 100,
 						}}
 					>
+						<Button variant='default' onClick={handleCancel}>
+							Cancel
+						</Button>
+
 						<Button
 							variant='default'
 							onClick={handlePrevious}
@@ -206,8 +206,8 @@ export default function ExternalCampaignWizard({
 							<Button onClick={handleSkipFTP}>Skip FTP Configuration</Button>
 						)}
 
-						{activeStep < 2 && <Button onClick={handleNext}>Next</Button>}
-						{activeStep === 2 && (
+						{activeStep < 1 && <Button onClick={handleNext}>Next</Button>}
+						{activeStep === 1 && (
 							<Button onClick={handleConfirm}>Confirm & Save</Button>
 						)}
 					</div>
