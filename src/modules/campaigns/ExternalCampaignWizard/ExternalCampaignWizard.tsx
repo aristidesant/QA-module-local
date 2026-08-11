@@ -26,11 +26,13 @@ export interface FtpConfigFormData {
 interface ExternalCampaignWizardProps {
 	onComplete?: () => void;
 	onCancel?: () => void;
+	onBack?: () => void;
 }
 
 export default function ExternalCampaignWizard({
 	onComplete,
 	onCancel,
+	onBack,
 }: ExternalCampaignWizardProps = {}) {
 	const [activeStep, setActiveStep] = useState(0);
 	const [connectionTested, setConnectionTested] = useState(false);
@@ -61,6 +63,8 @@ export default function ExternalCampaignWizard({
 	const handlePrevious = () => {
 		if (activeStep > 0) {
 			setActiveStep((current) => current - 1);
+		} else if (activeStep === 0 && onBack) {
+			onBack();
 		}
 	};
 
@@ -138,11 +142,7 @@ export default function ExternalCampaignWizard({
 							Cancel
 						</Button>
 
-						<Button
-							variant='default'
-							onClick={handlePrevious}
-							disabled={activeStep === 0}
-						>
+						<Button variant='default' onClick={handlePrevious}>
 							Previous
 						</Button>
 

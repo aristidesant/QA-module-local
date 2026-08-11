@@ -54,6 +54,7 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 					<ExternalCampaignWizard
 						onComplete={handleCreateCampaign}
 						onCancel={exitWizard}
+						onBack={() => setActiveStep(0)}
 					/>
 				)}
 			</Stack>
