@@ -46,31 +46,6 @@ const getNextImportTime = (freq: string) => {
 };
 
 export default function StepFiveSuccess({ formData, isReview }: StepFiveProps) {
-	const getPatternExample = () => {
-		if (formData.patternTags.length === 0) return 'No pattern configured';
-		const values = formData.patternTags.map((tag) => tag.value);
-		return values.join(formData.patternDelimiter);
-	};
-
-	const getPatternSummary = () => {
-		if (formData.patternTags.length === 0) return 'No pattern configured';
-		const fieldLabels = formData.patternTags
-			.map((tag) => {
-				const labels: Record<string, string> = {
-					clientId: 'Client ID',
-					agentId: 'Agent ID',
-					date: 'Date',
-					time: 'Time',
-					contactNumber: 'Contact Number',
-					fileExtension: 'File Extension',
-					custom: 'Custom',
-				};
-				return labels[tag.fieldType] || tag.fieldType;
-			})
-			.join(', ');
-		return fieldLabels;
-	};
-
 	if (!isReview) {
 		// Success state
 		return (
@@ -119,11 +94,7 @@ export default function StepFiveSuccess({ formData, isReview }: StepFiveProps) {
 							<strong>
 								{getFrequencyLabel(formData.frequency).toLowerCase()}
 							</strong>
-							. Files matching the pattern will be imported and{' '}
-							{formData.deleteAfterImport
-								? 'automatically deleted after processing'
-								: 'kept on the server'}
-							.
+							. Files will be imported automatically.
 						</Text>
 					</div>
 				</Stack>
@@ -163,35 +134,9 @@ export default function StepFiveSuccess({ formData, isReview }: StepFiveProps) {
 					</div>
 
 					<div className={styles.summaryItem}>
-						<span className={styles.summaryLabel}>File Pattern</span>
-						{/* inline-style-allow: */}
-						<span
-							className={styles.summaryValue}
-							style={{
-								fontFamily: 'Courier New, monospace',
-								fontSize: 'var(--mantine-font-size-xs)',
-							}}
-						>
-							{getPatternExample()}
-						</span>
-					</div>
-
-					<div className={styles.summaryItem}>
-						<span className={styles.summaryLabel}>Pattern Details</span>
-						<span className={styles.summaryValue}>{getPatternSummary()}</span>
-					</div>
-
-					<div className={styles.summaryItem}>
 						<span className={styles.summaryLabel}>Import Frequency</span>
 						<span className={styles.summaryValue}>
 							{getFrequencyLabel(formData.frequency)}
-						</span>
-					</div>
-
-					<div className={styles.summaryItem}>
-						<span className={styles.summaryLabel}>Auto-Delete Files</span>
-						<span className={styles.summaryValue}>
-							{formData.deleteAfterImport ? 'Yes' : 'No'}
 						</span>
 					</div>
 				</div>

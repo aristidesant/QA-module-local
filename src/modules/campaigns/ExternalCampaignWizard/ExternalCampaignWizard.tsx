@@ -22,10 +22,7 @@ export interface FtpConfigFormData {
 	password: string;
 	sshKey: File | null;
 	directory: string;
-	patternTags: PatternTag[];
-	patternDelimiter: string;
 	frequency: 'every30' | 'hourly' | 'daily' | 'weekly' | 'ondemand';
-	deleteAfterImport: boolean;
 }
 
 interface ExternalCampaignWizardProps {
@@ -48,10 +45,7 @@ export default function ExternalCampaignWizard({
 		password: '',
 		sshKey: null,
 		directory: '',
-		patternTags: [],
-		patternDelimiter: '_',
 		frequency: 'hourly',
-		deleteAfterImport: true,
 	});
 
 	const updateFormData = (updates: Partial<FtpConfigFormData>) => {
