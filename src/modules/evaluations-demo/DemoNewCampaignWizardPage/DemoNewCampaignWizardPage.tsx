@@ -46,7 +46,7 @@ const DemoNewCampaignWizardPage: React.FC = () => {
 						value={details}
 						onChange={setDetails}
 						onNext={() => setActiveStep(1)}
-						onExit={exitWizard}
+						onCancel={exitWizard}
 					/>
 				)}
 
