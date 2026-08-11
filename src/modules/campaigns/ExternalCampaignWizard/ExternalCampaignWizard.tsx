@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Stepper, Button, Group, Container, Card, Stack } from '@mantine/core';
+import { Stepper, Button, Group, Container, Card } from '@mantine/core';
 import { IconServer, IconClock, IconChecks } from '@tabler/icons-react';
 import StepOneServerSetup from './StepOneServerSetup';
 import StepFourImportSettings from './StepFourImportSettings';
@@ -95,10 +95,22 @@ export default function ExternalCampaignWizard({
 	];
 
 	return (
-		<Container size='sm' py='xl' className={styles.wizardContainer}>
-			<Card shadow='sm' p='lg' radius='md' withBorder className={styles.card}>
-				{/* inline-style-allow: */}
-				<Stack gap='lg' style={{ paddingBottom: '100px' }}>
+		<>
+			{/* Fixed Stepper at Top */}
+			{/* inline-style-allow: */}
+			<div
+				style={{
+					position: 'fixed',
+					top: 0,
+					left: 0,
+					right: 0,
+					backgroundColor: 'var(--mantine-color-white)',
+					borderBottom: '1px solid var(--mantine-color-gray-2)',
+					padding: 'var(--mantine-spacing-lg)',
+					zIndex: 99,
+				}}
+			>
+				<Container size='sm'>
 					<div>
 						<h1 className={styles.title}>External Campaign Setup</h1>
 						<p className={styles.subtitle}>
@@ -121,70 +133,83 @@ export default function ExternalCampaignWizard({
 						))}
 						<Stepper.Completed>Completed</Stepper.Completed>
 					</Stepper>
+				</Container>
+			</div>
 
+			{/* Main Content Area with Top Padding */}
+			{/* inline-style-allow: */}
+			<div
+				style={{
+					marginTop: '300px',
+					minHeight: '100vh',
+					paddingBottom: '80px',
+				}}
+			>
+				<Container size='sm' py='xl' className={styles.wizardContainer}>
+					<Card shadow='sm' p='lg' radius='md' withBorder className={styles.card}>
+						{/* inline-style-allow: */}
+						<div className={styles.stepContent} style={{ paddingBottom: '0' }}>
+							{activeStep === 0 && (
+								<StepOneServerSetup
+									formData={formData}
+									updateFormData={updateFormData}
+									connectionTested={connectionTested}
+									setConnectionTested={setConnectionTested}
+								/>
+							)}
+							{activeStep === 1 && (
+								<StepFourImportSettings
+									formData={formData}
+									updateFormData={updateFormData}
+								/>
+							)}
+							{activeStep === 2 && !confirmationDone && (
+								<StepFiveSuccess formData={formData} isReview={true} />
+							)}
+							{activeStep === 2 && confirmationDone && (
+								<StepFiveSuccess formData={formData} isReview={false} />
+							)}
+						</div>
+					</Card>
+				</Container>
+			</div>
+
+			{/* Fixed Controls at Bottom Right */}
+			{!confirmationDone && (
+				<>
 					{/* inline-style-allow: */}
-					<div className={styles.stepContent} style={{ paddingBottom: '0' }}>
+					<Group
+						gap='sm'
+						style={{
+							position: 'fixed',
+							bottom: 0,
+							right: 0,
+							padding: 'var(--mantine-spacing-lg)',
+							backgroundColor: 'var(--mantine-color-white)',
+							borderTop: '1px solid var(--mantine-color-gray-2)',
+							borderLeft: '1px solid var(--mantine-color-gray-2)',
+							zIndex: 100,
+						}}
+					>
+						<Button
+							variant='default'
+							onClick={handlePrevious}
+							disabled={activeStep === 0}
+						>
+							Previous
+						</Button>
+
 						{activeStep === 0 && (
-							<StepOneServerSetup
-								formData={formData}
-								updateFormData={updateFormData}
-								connectionTested={connectionTested}
-								setConnectionTested={setConnectionTested}
-							/>
+							<Button onClick={handleSkipFTP}>Skip FTP Configuration</Button>
 						)}
-						{activeStep === 1 && (
-							<StepFourImportSettings
-								formData={formData}
-								updateFormData={updateFormData}
-							/>
-						)}
-						{activeStep === 2 && !confirmationDone && (
-							<StepFiveSuccess formData={formData} isReview={true} />
-						)}
-						{activeStep === 2 && confirmationDone && (
-							<StepFiveSuccess formData={formData} isReview={false} />
-						)}
-					</div>
 
-					{!confirmationDone && (
-						<>
-							{/* inline-style-allow: */}
-							<Group
-								justify='space-between'
-								style={{
-									position: 'fixed',
-									bottom: 0,
-									left: 0,
-									right: 0,
-									padding: 'var(--mantine-spacing-lg)',
-									backgroundColor: 'var(--mantine-color-white)',
-									borderTop: '1px solid var(--mantine-color-gray-2)',
-									zIndex: 100,
-								}}
-							>
-								<Button
-									variant='default'
-									onClick={handlePrevious}
-									disabled={activeStep === 0}
-								>
-									Previous
-								</Button>
-
-								{activeStep === 0 && (
-									<Button variant='subtle' onClick={handleSkipFTP}>
-										Skip FTP Configuration
-									</Button>
-								)}
-
-								{activeStep < 2 && <Button onClick={handleNext}>Next</Button>}
-								{activeStep === 2 && (
-									<Button onClick={handleConfirm}>Confirm & Save</Button>
-								)}
-							</Group>
-						</>
-					)}
-				</Stack>
-			</Card>
-		</Container>
+						{activeStep < 2 && <Button onClick={handleNext}>Next</Button>}
+						{activeStep === 2 && (
+							<Button onClick={handleConfirm}>Confirm & Save</Button>
+						)}
+					</Group>
+				</>
+			)}
+		</>
 	);
 }

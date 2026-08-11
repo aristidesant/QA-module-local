@@ -51,12 +51,7 @@ export default function StepFiveSuccess({ formData, isReview }: StepFiveProps) {
 		return (
 			<>
 				{/* inline-style-allow: */}
-				<Stack
-					gap='lg'
-					className={styles.formSection}
-					align='center'
-					style={{ paddingBottom: '80px' }}
-				>
+				<Stack gap='lg' className={styles.formSection} align='center'>
 					{/* inline-style-allow: */}
 					<div style={{ textAlign: 'center' }}>
 						<IconCheck size={64} color='var(--mantine-color-green-6)' />
@@ -106,11 +101,7 @@ export default function StepFiveSuccess({ formData, isReview }: StepFiveProps) {
 	return (
 		<>
 			{/* inline-style-allow: */}
-			<Stack
-				gap='md'
-				className={styles.formSection}
-				style={{ paddingBottom: '80px' }}
-			>
+			<Stack gap='md' className={styles.formSection}>
 				<h3 className={styles.sectionTitle}>Configuration Summary</h3>
 
 				<div className={styles.summaryCard}>
