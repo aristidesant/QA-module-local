@@ -33,14 +33,14 @@ const EMOTION_COLORS: Record<EmotionType, string> = {
 };
 
 const EMOTION_ICONS: Record<EmotionType, React.ReactNode> = {
-	NEUTRAL: <IconMoodSmile size={32} stroke={1.5} />,
-	JOY: <IconMoodHappy size={32} stroke={1.5} />,
-	ANGER: <IconMoodAngry size={32} stroke={1.5} />,
-	RAGE: <IconMoodAngry size={32} stroke={1.5} />,
-	FRUSTRATION: <IconMoodCry size={32} stroke={1.5} />,
-	SADNESS: <IconMoodCry size={32} stroke={1.5} />,
-	FEAR: <IconMoodNervous size={32} stroke={1.5} />,
-	SURPRISE: <IconMoodSurprised size={32} stroke={1.5} />,
+	NEUTRAL: <IconMoodSmile size={24} stroke={1.5} />,
+	JOY: <IconMoodHappy size={24} stroke={1.5} />,
+	ANGER: <IconMoodAngry size={24} stroke={1.5} />,
+	RAGE: <IconMoodAngry size={24} stroke={1.5} />,
+	FRUSTRATION: <IconMoodCry size={24} stroke={1.5} />,
+	SADNESS: <IconMoodCry size={24} stroke={1.5} />,
+	FEAR: <IconMoodNervous size={24} stroke={1.5} />,
+	SURPRISE: <IconMoodSurprised size={24} stroke={1.5} />,
 };
 
 export default function EmotionDisplay({
@@ -155,17 +155,18 @@ export default function EmotionDisplay({
 
 	// Idle State (Default)
 	return (
-		<Card shadow='sm' p={24} radius={12} withBorder className={styles.card}>
-			<Stack gap={20} h='100%'>
+		<Card shadow='sm' p={16} radius={12} withBorder className={styles.card}>
+			<Stack gap={12} h='100%'>
 				{/* Header: Subtle User Type Badge */}
 				<Badge
 					variant='light'
 					color='gray'
+					size='xs'
 					leftSection={
 						type === 'agent' ? (
-							<IconHeadphones size={14} style={{ marginRight: 6 }} />
+							<IconHeadphones size={12} style={{ marginRight: 4 }} />
 						) : (
-							<IconPhone size={14} style={{ marginRight: 6 }} />
+							<IconPhone size={12} style={{ marginRight: 4 }} />
 						)
 					}
 					className={styles.typeBadge}
@@ -184,7 +185,7 @@ export default function EmotionDisplay({
 								{emotionIcon}
 							</div>
 						</div>
-						<Text size='xl' fw={700} mt='lg' className={styles.emotionLabel}>
+						<Text size='sm' fw={700} mt={8} className={styles.emotionLabel}>
 							{emotion}
 						</Text>
 					</Stack>
