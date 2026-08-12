@@ -1,0 +1,55 @@
+.container {
+	background: light-dark(
+		#f7f8fa,
+		#0b0f14
+	);
+	min-height: 100dvh;
+}
+
+.title {
+	font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-size: 40px;
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	color: light-dark(
+		#141a22,
+		#ffffff
+	);
+}
+
+.sectionTitle {
+	font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-size: 24px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	color: light-dark(
+		#141a22,
+		#ffffff
+	);
+}
+
+.subsectionLabel {
+	font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+	font-size: 11px;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: light-dark(
+		#6b7684,
+		#b8c0cc
+	);
+}
+
+.docsBox {
+	background: light-dark(
+		#ffffff,
+		#1f2731
+	);
+	border: 1px solid light-dark(
+		rgba(221, 226, 232, 0.7),
+		#232c38
+	);
+	border-radius: 12px;
+	padding: 24px;
+	font-family: 'JetBrains Mono', 'Courier New', monospace;
+}

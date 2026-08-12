@@ -1,5 +1,5 @@
-import { Card, Stack, Text, ThemeIcon, Skeleton, Alert, Group, Loader } from '@mantine/core';
-import { IconAlertCircle } from '@tabler/icons-react';
+import { Card, Stack, Text, ThemeIcon, Skeleton, Alert, Group, Loader, Center, RingProgress, Badge } from '@mantine/core';
+import { IconAlertCircle, IconHeadphones, IconPhone } from '@tabler/icons-react';
 import {
 	IconMoodSmile,
 	IconMoodHappy,
@@ -33,14 +33,14 @@ const EMOTION_COLORS: Record<EmotionType, string> = {
 };
 
 const EMOTION_ICONS: Record<EmotionType, React.ReactNode> = {
-	NEUTRAL: <IconMoodSmile size={24} />,
-	JOY: <IconMoodHappy size={24} />,
-	ANGER: <IconMoodAngry size={24} />,
-	RAGE: <IconMoodAngry size={24} />,
-	FRUSTRATION: <IconMoodCry size={24} />,
-	SADNESS: <IconMoodCry size={24} />,
-	FEAR: <IconMoodNervous size={24} />,
-	SURPRISE: <IconMoodSurprised size={24} />,
+	NEUTRAL: <IconMoodSmile size={32} stroke={1.5} />,
+	JOY: <IconMoodHappy size={32} stroke={1.5} />,
+	ANGER: <IconMoodAngry size={32} stroke={1.5} />,
+	RAGE: <IconMoodAngry size={32} stroke={1.5} />,
+	FRUSTRATION: <IconMoodCry size={32} stroke={1.5} />,
+	SADNESS: <IconMoodCry size={32} stroke={1.5} />,
+	FEAR: <IconMoodNervous size={32} stroke={1.5} />,
+	SURPRISE: <IconMoodSurprised size={32} stroke={1.5} />,
 };
 
 export default function EmotionDisplay({
@@ -58,22 +58,22 @@ export default function EmotionDisplay({
 	// Skeleton State
 	if (status === 'skeleton') {
 		return (
-			<Card shadow='sm' p='lg' radius='md' withBorder className={styles.card}>
-				<Stack gap='md' h='100%'>
-					<Group gap='xs' align='center'>
-						<Skeleton height={32} width={32} radius='md' />
-						<Skeleton height={14} width={60} />
+			<Card shadow='sm' p={24} radius={12} withBorder className={styles.card}>
+				<Stack gap={20} h='100%'>
+					<Group justify='space-between' align='center'>
+						<Skeleton height={28} width={100} radius='sm' />
+						<Skeleton height={14} width={60} radius='sm' />
 					</Group>
 
-					<Group justify='center' align='center' gap='md' grow>
-						<div style={{ textAlign: 'center' }}>
-							<Skeleton height={64} width={64} radius='md' mx='auto' mb='md' circle />
-							<Skeleton height={20} width={100} mx='auto' />
-						</div>
-					</Group>
+					<Center>
+						<Stack gap={12} align='center'>
+							<Skeleton height={120} width={120} circle />
+							<Skeleton height={24} width={140} radius='sm' />
+						</Stack>
+					</Center>
 
-					<Group justify='center' gap='xs' mt='auto'>
-						<Skeleton height={14} width={80} />
+					<Group justify='center' gap='sm' mt='auto'>
+						<Skeleton height={80} width={80} circle />
 					</Group>
 				</Stack>
 			</Card>
@@ -83,21 +83,34 @@ export default function EmotionDisplay({
 	// Error State
 	if (status === 'error') {
 		return (
-			<Card shadow='sm' p='lg' radius='md' withBorder className={styles.card}>
-				<Stack gap='md'>
-					<Alert icon={<IconAlertCircle size={16} />} title='Error' color='red'>
+			<Card shadow='sm' p={24} radius={12} withBorder className={styles.card}>
+				<Stack gap={16}>
+					<Badge
+						variant='light'
+						color='gray'
+						size='sm'
+						leftSection={
+							type === 'agent' ? (
+								<IconHeadphones size={14} style={{ marginRight: 4 }} />
+							) : (
+								<IconPhone size={14} style={{ marginRight: 4 }} />
+							)
+						}
+					>
+						{label}
+					</Badge>
+
+					<Alert
+						icon={<IconAlertCircle size={18} />}
+						title='Analysis Failed'
+						color='red'
+						variant='light'
+						className={styles.alert}
+					>
 						{errorMessage}
 					</Alert>
-					<Group gap='xs' align='center'>
-						<ThemeIcon size='sm' radius='md' variant='light' color='gray'>
-							<span>!</span>
-						</ThemeIcon>
-						<Text size='xs' fw={500} c='dimmed' tt='uppercase'>
-							{label}
-						</Text>
-					</Group>
-					<Text size='sm' c='dimmed' ta='center'>
-						Unable to determine emotion
+					<Text size='xs' c='dimmed' ta='center' fw={500}>
+						Unable to determine emotion from audio
 					</Text>
 				</Stack>
 			</Card>
@@ -107,25 +120,34 @@ export default function EmotionDisplay({
 	// Loading State
 	if (status === 'loading') {
 		return (
-			<Card shadow='sm' p='lg' radius='md' withBorder className={styles.card}>
-				<Stack gap='md' h='100%' align='center' justify='center'>
-					<Group gap='xs' align='center'>
-						<ThemeIcon size='sm' radius='md' variant='light' color='gray'>
-							<span>⏳</span>
-						</ThemeIcon>
-						<Text size='xs' fw={500} c='dimmed' tt='uppercase'>
-							{label}
-						</Text>
-					</Group>
+			<Card shadow='sm' p={24} radius={12} withBorder className={styles.card}>
+				<Stack gap={20} h='100%' align='center' justify='center'>
+					<Badge
+						variant='light'
+						color='gray'
+						size='sm'
+						leftSection={
+							type === 'agent' ? (
+								<IconHeadphones size={14} style={{ marginRight: 4 }} />
+							) : (
+								<IconPhone size={14} style={{ marginRight: 4 }} />
+							)
+						}
+					>
+						{label}
+					</Badge>
 
-					<Group justify='center' align='center' gap='md' grow>
-						<div style={{ textAlign: 'center' }}>
-							<Loader size='lg' mb='md' />
-							<Text size='sm' c='dimmed'>
-								Analyzing emotion...
+					<Stack gap='lg' align='center'>
+						<Loader size='lg' color='#1BB54A' />
+						<Stack gap={4} align='center'>
+							<Text size='sm' fw={600}>
+								Analyzing emotion
 							</Text>
-						</div>
-					</Group>
+							<Text size='xs' c='dimmed'>
+								Processing audio...
+							</Text>
+						</Stack>
+					</Stack>
 				</Stack>
 			</Card>
 		);
@@ -133,46 +155,69 @@ export default function EmotionDisplay({
 
 	// Idle State (Default)
 	return (
-		<Card shadow='sm' p='lg' radius='md' withBorder className={styles.card}>
-			<Stack gap='md' h='100%'>
-				{/* Header: User Type Tag */}
-				<Group gap='xs' align='center'>
-					<ThemeIcon size='sm' radius='md' variant='light' color='gray'>
-						<span>{type === 'agent' ? '🎧' : '📞'}</span>
-					</ThemeIcon>
-					<Text size='xs' fw={500} c='dimmed' tt='uppercase'>
+		<Card shadow='sm' p={24} radius={12} withBorder className={styles.card}>
+			<Stack gap={20} h='100%'>
+				{/* Header: Subtle User Type Badge */}
+				<Group justify='space-between' align='center'>
+					<Badge
+						variant='light'
+						color='gray'
+						size='sm'
+						leftSection={
+							type === 'agent' ? (
+								<IconHeadphones size={14} style={{ marginRight: 4 }} />
+							) : (
+								<IconPhone size={14} style={{ marginRight: 4 }} />
+							)
+						}
+						className={styles.typeBadge}
+					>
 						{label}
+					</Badge>
+					<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
+						Analysis
 					</Text>
 				</Group>
 
-				{/* Main: Emotion Display (Emphasized) */}
-				<Group justify='center' align='center' gap='md' grow>
-					<div style={{ textAlign: 'center' }}>
-						<ThemeIcon
-							size='4rem'
-							radius='md'
-							mx='auto'
-							mb='md'
+				{/* Main: Emotion Display (Hero) */}
+				<Center>
+					<Stack gap={0} align='center'>
+						<div
+							className={styles.emotionIconContainer}
 							style={{ backgroundColor: emotionColor }}
 						>
-							<div style={{ color: 'white' }}>
+							<div style={{ color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
 								{emotionIcon}
 							</div>
-						</ThemeIcon>
-						<Text size='lg' fw={700}>
+						</div>
+						<Text size='xl' fw={700} mt='lg' className={styles.emotionLabel}>
 							{emotion}
 						</Text>
-					</div>
-				</Group>
+					</Stack>
+				</Center>
 
-				{/* Footer: Confidence */}
-				<Group justify='center' gap='xs' mt='auto'>
-					<Text size='xs' fw={500} c='dimmed'>
-						Confidence
-					</Text>
-					<Text size='sm' fw={700}>
-						{confidencePercent}%
-					</Text>
+				{/* Footer: Confidence Indicator */}
+				<Group justify='center' gap='sm' mt='auto'>
+					<div className={styles.confidenceContainer}>
+						<Center>
+							<RingProgress
+								sections={[{ value: confidencePercent, color: emotionColor }]}
+								label={
+									<Stack gap={0} align='center'>
+										<Text size='sm' fw={700} className={styles.confidenceValue}>
+											{confidencePercent}%
+										</Text>
+										<Text size='xs' c='dimmed' fw={500}>
+											Confidence
+										</Text>
+									</Stack>
+								}
+								size={80}
+								thickness={4}
+								className={styles.ringProgress}
+							/>
+						</Center>
+					</div>
 				</Group>
 			</Stack>
 		</Card>
