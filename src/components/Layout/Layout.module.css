@@ -87,7 +87,6 @@
 	display: flex;
 	flex-direction: column;
 	height: 100vh;
-	overflow: hidden;
 }
 
 /* Remove conflicting AppShell styles since we're using custom layout */
@@ -105,7 +104,7 @@
 	flex-direction: column;
 	height: 100%;
 	min-height: 0;
-	overflow: hidden;
+	overflow-y: auto;
 }
 
 .appFooter {
