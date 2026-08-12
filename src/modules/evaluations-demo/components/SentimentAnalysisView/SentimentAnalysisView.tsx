@@ -62,25 +62,25 @@ export default function SentimentAnalysisView(
 			</Grid.Col>
 
 			<Grid.Col span={{ base: 12, lg: 8 }}>
-				<Stack gap='md'>
-					{/* Emotion Cards - Horizontal Layout */}
-					<Grid gap='md'>
-						<Grid.Col span={{ base: 12, sm: 6 }}>
-							<EmotionCard
-								type='agent'
-								emotion={sentiment.agent.emotion}
-								confidence={sentiment.agent.confidence}
-							/>
-						</Grid.Col>
-						<Grid.Col span={{ base: 12, sm: 6 }}>
-							<EmotionCard
-								type='customer'
-								emotion={sentiment.customer.emotion}
-								confidence={sentiment.customer.confidence}
-							/>
-						</Grid.Col>
-					</Grid>
+				{/* Emotion Cards - Horizontal Layout */}
+				<Grid gap='md' mb='md'>
+					<Grid.Col span={{ base: 12, sm: 6 }}>
+						<EmotionCard
+							type='agent'
+							emotion={sentiment.agent.emotion}
+							confidence={sentiment.agent.confidence}
+						/>
+					</Grid.Col>
+					<Grid.Col span={{ base: 12, sm: 6 }}>
+						<EmotionCard
+							type='customer'
+							emotion={sentiment.customer.emotion}
+							confidence={sentiment.customer.confidence}
+						/>
+					</Grid.Col>
+				</Grid>
 
+				<Stack gap='md'>
 					<SectionCard>
 						<SentimentPolarityChart
 							polarity={sentimentData.sentimentPolarity}
