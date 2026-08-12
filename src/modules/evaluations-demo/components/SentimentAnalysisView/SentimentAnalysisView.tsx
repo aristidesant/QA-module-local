@@ -10,7 +10,7 @@ import ToneScoreCard from './components/ToneScoreCard';
 import RecoveryMetricsCard from './components/RecoveryMetricsCard';
 import AgentPerformanceCard from './components/AgentPerformanceCard';
 import EmpathyIndicatorsCard from './components/EmpathyIndicatorsCard';
-import EmotionCard from './components/EmotionCard';
+import EmotionDisplay from './components/EmotionDisplay';
 import SectionCard from '~/components/SectionCard';
 import MockAudioPlayerBar from '../MockAudioPlayerBar';
 import styles from './SentimentAnalysisView.module.css';
@@ -65,17 +65,19 @@ export default function SentimentAnalysisView(
 				{/* Emotion Cards - Horizontal Layout */}
 				<Grid gap='md' mb='md'>
 					<Grid.Col span={{ base: 12, sm: 6 }}>
-						<EmotionCard
+						<EmotionDisplay
 							type='agent'
-							emotion={sentiment.agent.emotion}
+							emotion={sentiment.agent.emotion as any}
 							confidence={sentiment.agent.confidence}
+							status='idle'
 						/>
 					</Grid.Col>
 					<Grid.Col span={{ base: 12, sm: 6 }}>
-						<EmotionCard
+						<EmotionDisplay
 							type='customer'
-							emotion={sentiment.customer.emotion}
+							emotion={sentiment.customer.emotion as any}
 							confidence={sentiment.customer.confidence}
+							status='idle'
 						/>
 					</Grid.Col>
 				</Grid>
