@@ -3,7 +3,6 @@ import {
 	IconHeadphones,
 	IconPhone,
 	IconMoodSmile,
-	IconMoodWink,
 	IconMoodAngry,
 	IconMoodHappy,
 	IconMoodCry,
@@ -18,9 +17,20 @@ interface EmotionCardProps {
 	type: 'agent' | 'customer';
 }
 
+const EMOTION_COLORS: Record<string, string> = {
+	NEUTRAL: '#748CFF',      // Purple
+	FRUSTRATION: '#FF6B6B',  // Red
+	SATISFACTION: '#51CF66', // Green
+	ANGER: '#FA5252',        // Dark Red
+	JOY: '#FFD43B',          // Yellow
+	SADNESS: '#4C6EF5',      // Blue
+	FEAR: '#9C36B5',         // Purple
+	SURPRISE: '#FF922B',     // Orange
+};
+
 const EMOTION_ICONS: Record<string, React.ReactNode> = {
 	NEUTRAL: <IconMoodSmile size={24} />,
-	FRUSTRATION: <IconMoodWink size={24} />,
+	FRUSTRATION: <IconMoodCry size={24} />,
 	SATISFACTION: <IconMoodHappy size={24} />,
 	ANGER: <IconMoodAngry size={24} />,
 	JOY: <IconMoodHappy size={24} />,
@@ -36,6 +46,7 @@ export default function EmotionCard({
 }: EmotionCardProps) {
 	const confidencePercent = Math.round(confidence * 100);
 	const label = type === 'agent' ? 'Agent' : 'Customer';
+	const emotionColor = EMOTION_COLORS[emotion] || EMOTION_COLORS.NEUTRAL;
 	const userIcon =
 		type === 'agent' ? (
 			<IconHeadphones size={16} color='currentColor' />
@@ -65,8 +76,16 @@ export default function EmotionCard({
 				{/* Main: Emotion Display (Emphasized) */}
 				<Group justify='center' align='center' gap='md' grow>
 					<div style={{ textAlign: 'center' }}>
-						<ThemeIcon size='4rem' variant='light' radius='md' mx='auto' mb='md'>
-							{emotionIcon}
+						<ThemeIcon
+							size='4rem'
+							radius='md'
+							mx='auto'
+							mb='md'
+							style={{ backgroundColor: emotionColor }}
+						>
+							<div style={{ color: 'white' }}>
+								{emotionIcon}
+							</div>
 						</ThemeIcon>
 						<Text size='lg' fw={700}>
 							{emotion}
