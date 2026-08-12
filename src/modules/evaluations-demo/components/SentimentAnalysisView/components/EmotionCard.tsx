@@ -1,5 +1,15 @@
-import { Card, Group, Stack, Text, ThemeIcon, Progress } from '@mantine/core';
-import { IconUser, IconUsers } from '@tabler/icons-react';
+import { Card, Group, Stack, Text, ThemeIcon } from '@mantine/core';
+import {
+	IconHeadphones,
+	IconPhone,
+	IconMoodSmile,
+	IconMoodWink,
+	IconMoodAngry,
+	IconMoodHappy,
+	IconMoodCry,
+	IconMoodNervous,
+	IconMoodSurprised,
+} from '@tabler/icons-react';
 import styles from './EmotionCard.module.css';
 
 interface EmotionCardProps {
@@ -8,15 +18,15 @@ interface EmotionCardProps {
 	type: 'agent' | 'customer';
 }
 
-const EMOTION_COLORS: Record<string, string> = {
-	NEUTRAL: '#748CFF',
-	FRUSTRATION: '#FF6B6B',
-	SATISFACTION: '#51CF66',
-	ANGER: '#FA5252',
-	JOY: '#FFD43B',
-	SADNESS: '#4C6EF5',
-	FEAR: '#9C36B5',
-	SURPRISE: '#FF922B',
+const EMOTION_ICONS: Record<string, React.ReactNode> = {
+	NEUTRAL: <IconMoodSmile size={24} />,
+	FRUSTRATION: <IconMoodWink size={24} />,
+	SATISFACTION: <IconMoodHappy size={24} />,
+	ANGER: <IconMoodAngry size={24} />,
+	JOY: <IconMoodHappy size={24} />,
+	SADNESS: <IconMoodCry size={24} />,
+	FEAR: <IconMoodNervous size={24} />,
+	SURPRISE: <IconMoodSurprised size={24} />,
 };
 
 export default function EmotionCard({
@@ -24,48 +34,51 @@ export default function EmotionCard({
 	confidence,
 	type,
 }: EmotionCardProps) {
-	const color = EMOTION_COLORS[emotion] || '#748CFF';
 	const confidencePercent = Math.round(confidence * 100);
-	const label = type === 'agent' ? 'Agent Emotion' : 'Customer Emotion';
+	const label = type === 'agent' ? 'Agent' : 'Customer';
+	const userIconColor = type === 'agent' ? '#4C6EF5' : '#51CF66';
+	const userIcon =
+		type === 'agent' ? (
+			<IconHeadphones size={20} color='white' />
+		) : (
+			<IconPhone size={20} color='white' />
+		);
+	const emotionIcon = EMOTION_ICONS[emotion] || EMOTION_ICONS.NEUTRAL;
 
 	return (
 		<Card shadow='sm' p='lg' radius='md' withBorder className={styles.card}>
 			<Stack gap='md'>
-				<Group justify='space-between' align='center'>
-					<Group gap='sm'>
+				<Group justify='space-between' align='flex-start'>
+					<Group gap='md' align='flex-start'>
 						<ThemeIcon
 							size='lg'
 							radius='md'
-							style={{ backgroundColor: color }}
+							style={{ backgroundColor: userIconColor }}
 						>
-							{type === 'agent' ? (
-								<IconUser size={20} color='white' />
-							) : (
-								<IconUsers size={20} color='white' />
-							)}
+							{userIcon}
 						</ThemeIcon>
 						<div>
-							<Text size='sm' fw={500} c='dimmed'>
+							<Text size='xs' fw={500} c='dimmed' tt='uppercase'>
 								{label}
 							</Text>
-							<Text size='lg' fw={700}>
+							<Text size='sm' fw={700}>
 								{emotion}
 							</Text>
 						</div>
 					</Group>
+					<ThemeIcon size='xl' variant='light' radius='md'>
+						{emotionIcon}
+					</ThemeIcon>
 				</Group>
 
-				<div>
-					<Group justify='space-between' mb='xs'>
-						<Text size='xs' fw={500}>
-							Confidence
-						</Text>
-						<Text size='xs' fw={600} c='dimmed'>
-							{confidencePercent}%
-						</Text>
-					</Group>
-					<Progress value={confidencePercent} color={color} size='md' />
-				</div>
+				<Group justify='space-between' align='center'>
+					<Text size='xs' fw={500} c='dimmed'>
+						Confidence
+					</Text>
+					<Text size='md' fw={700}>
+						{confidencePercent}%
+					</Text>
+				</Group>
 			</Stack>
 		</Card>
 	);
