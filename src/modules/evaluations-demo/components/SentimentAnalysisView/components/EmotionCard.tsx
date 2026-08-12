@@ -47,9 +47,10 @@ export default function EmotionCard({
 
 	return (
 		<Card shadow='sm' p='lg' radius='md' withBorder className={styles.card}>
-			<Stack gap='md'>
-				<Group justify='space-between' align='flex-start'>
-					<Group gap='md' align='flex-start'>
+			<Stack gap='sm'>
+				{/* User Type and Emotion with Icon */}
+				<Group justify='space-between' align='center'>
+					<Group gap='md' align='center'>
 						<ThemeIcon
 							size='lg'
 							radius='md'
@@ -61,21 +62,24 @@ export default function EmotionCard({
 							<Text size='xs' fw={500} c='dimmed' tt='uppercase'>
 								{label}
 							</Text>
-							<Text size='sm' fw={700}>
-								{emotion}
-							</Text>
 						</div>
 					</Group>
-					<ThemeIcon size='xl' variant='light' radius='md'>
-						{emotionIcon}
-					</ThemeIcon>
+					<Group gap='xs' align='center'>
+						<ThemeIcon size='lg' variant='light' radius='md'>
+							{emotionIcon}
+						</ThemeIcon>
+						<Text size='sm' fw={700}>
+							{emotion}
+						</Text>
+					</Group>
 				</Group>
 
-				<Group justify='space-between' align='center'>
+				{/* Confidence */}
+				<Group justify='flex-end' gap='xs'>
 					<Text size='xs' fw={500} c='dimmed'>
-						Confidence
+						Confidence:
 					</Text>
-					<Text size='md' fw={700}>
+					<Text size='sm' fw={700}>
 						{confidencePercent}%
 					</Text>
 				</Group>
