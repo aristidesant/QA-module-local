@@ -1,0 +1,10 @@
+.card {
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-gray-8)
+	);
+	border-color: light-dark(
+		var(--mantine-color-gray-2),
+		var(--mantine-color-gray-7)
+	);
+}

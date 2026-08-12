@@ -2,7 +2,6 @@ import { useMemo } from 'react';
 import { Grid, Stack } from '@mantine/core';
 import type { DemoTranscriptTurn } from '../../mockData';
 import { generateMockSentimentAnalysis } from './mockSentimentData';
-import EmotionTimelineChart from './components/EmotionTimelineChart';
 import EmotionDistributionCard from './components/EmotionDistributionCard';
 import KeyMomentsCard from './components/KeyMomentsCard';
 import TranscriptWithEmotions from './components/TranscriptWithEmotions';
@@ -11,19 +10,40 @@ import ToneScoreCard from './components/ToneScoreCard';
 import RecoveryMetricsCard from './components/RecoveryMetricsCard';
 import AgentPerformanceCard from './components/AgentPerformanceCard';
 import EmpathyIndicatorsCard from './components/EmpathyIndicatorsCard';
+import EmotionCard from './components/EmotionCard';
 import SectionCard from '~/components/SectionCard';
 import MockAudioPlayerBar from '../MockAudioPlayerBar';
 import styles from './SentimentAnalysisView.module.css';
 
+interface SentimentAnalysisData {
+	status: string;
+	agent: {
+		emotion: string;
+		confidence: number;
+	};
+	customer: {
+		emotion: string;
+		confidence: number;
+	};
+}
+
 interface SentimentAnalysisViewProps {
 	transcript: DemoTranscriptTurn[];
 	durationSeconds?: number;
+	sentimentAnalysis?: SentimentAnalysisData;
 }
 
 export default function SentimentAnalysisView(
 	props: SentimentAnalysisViewProps
 ) {
 	const sentimentData = useMemo(() => generateMockSentimentAnalysis(), []);
+
+	// Use provided sentiment analysis data or fallback to mock data
+	const sentiment = props.sentimentAnalysis || {
+		status: 'COMPLETED',
+		agent: { emotion: 'NEUTRAL', confidence: 0.85 },
+		customer: { emotion: 'FRUSTRATION', confidence: 0.9 },
+	};
 
 	return (
 		<Grid gap='md' className={styles.grid}>
@@ -43,23 +63,17 @@ export default function SentimentAnalysisView(
 
 			<Grid.Col span={{ base: 12, lg: 8 }}>
 				<Stack gap='md'>
-					<SectionCard>
-						<EmotionTimelineChart
-							data={sentimentData.agentEmotions}
-							title='Agent Emotion Timeline'
-							avgEmotion={sentimentData.agentAvgEmotion}
-							trend={sentimentData.agentTrend}
-						/>
-					</SectionCard>
+					<EmotionCard
+						type='agent'
+						emotion={sentiment.agent.emotion}
+						confidence={sentiment.agent.confidence}
+					/>
 
-					<SectionCard>
-						<EmotionTimelineChart
-							data={sentimentData.customerEmotions}
-							title='Customer Emotion Timeline'
-							avgEmotion={sentimentData.customerAvgEmotion}
-							trend={sentimentData.customerTrend}
-						/>
-					</SectionCard>
+					<EmotionCard
+						type='customer'
+						emotion={sentiment.customer.emotion}
+						confidence={sentiment.customer.confidence}
+					/>
 
 					<SectionCard>
 						<SentimentPolarityChart
