@@ -36,48 +36,48 @@ export default function EmotionCard({
 }: EmotionCardProps) {
 	const confidencePercent = Math.round(confidence * 100);
 	const label = type === 'agent' ? 'Agent' : 'Customer';
-	const userIconColor = type === 'agent' ? '#4C6EF5' : '#51CF66';
 	const userIcon =
 		type === 'agent' ? (
-			<IconHeadphones size={20} color='white' />
+			<IconHeadphones size={16} color='currentColor' />
 		) : (
-			<IconPhone size={20} color='white' />
+			<IconPhone size={16} color='currentColor' />
 		);
 	const emotionIcon = EMOTION_ICONS[emotion] || EMOTION_ICONS.NEUTRAL;
 
 	return (
 		<Card shadow='sm' p='lg' radius='md' withBorder className={styles.card}>
-			<Stack gap='sm'>
-				{/* User Type and Emotion with Icon */}
-				<Group justify='space-between' align='center'>
-					<Group gap='md' align='center'>
-						<ThemeIcon
-							size='lg'
-							radius='md'
-							style={{ backgroundColor: userIconColor }}
-						>
-							{userIcon}
-						</ThemeIcon>
-						<div>
-							<Text size='xs' fw={500} c='dimmed' tt='uppercase'>
-								{label}
-							</Text>
-						</div>
-					</Group>
-					<Group gap='xs' align='center'>
-						<ThemeIcon size='lg' variant='light' radius='md'>
-							{emotionIcon}
-						</ThemeIcon>
-						<Text size='sm' fw={700}>
-							{emotion}
-						</Text>
-					</Group>
+			<Stack gap='md' h='100%'>
+				{/* Header: User Type Tag */}
+				<Group gap='xs' align='center'>
+					<ThemeIcon
+						size='sm'
+						radius='md'
+						variant='light'
+						color='gray'
+					>
+						{userIcon}
+					</ThemeIcon>
+					<Text size='xs' fw={500} c='dimmed' tt='uppercase'>
+						{label}
+					</Text>
 				</Group>
 
-				{/* Confidence */}
-				<Group justify='flex-end' gap='xs'>
+				{/* Main: Emotion Display (Emphasized) */}
+				<Group justify='center' align='center' gap='md' grow>
+					<div style={{ textAlign: 'center' }}>
+						<ThemeIcon size='4rem' variant='light' radius='md' mx='auto' mb='md'>
+							{emotionIcon}
+						</ThemeIcon>
+						<Text size='lg' fw={700}>
+							{emotion}
+						</Text>
+					</div>
+				</Group>
+
+				{/* Footer: Confidence */}
+				<Group justify='center' gap='xs' mt='auto'>
 					<Text size='xs' fw={500} c='dimmed'>
-						Confidence:
+						Confidence
 					</Text>
 					<Text size='sm' fw={700}>
 						{confidencePercent}%
