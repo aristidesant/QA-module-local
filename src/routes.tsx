@@ -114,6 +114,9 @@ const AgentLmsDetailPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/AgentDashboard/pages/AgentLmsDetailPage/AgentLmsDetailPage')
 );
+const EmotionDisplayShowcase = React.lazy(
+	() => import('./modules/evaluations-demo/pages/EmotionDisplayShowcase')
+);
 const DemoQaFormsListPage = React.lazy(
 	() => import('./modules/evaluations-demo/DemoQaFormsListPage')
 );
@@ -1252,6 +1255,15 @@ const router = createBrowserRouter([
 											<EmotionSentimentDashboardPage />
 										</Suspense>
 									</I18nNamespaceLoader>
+								),
+							},
+							{
+								path: 'role-preview/emotion-display-showcase',
+								id: 'role-preview.emotion-display-showcase',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<EmotionDisplayShowcase />
+									</Suspense>
 								),
 							},
 							{
