@@ -27,8 +27,8 @@ const EMOTION_COLORS: Record<EmotionType, string> = {
 	ANGER: '#FA5252',        // Dark Red
 	RAGE: '#C41E3A',         // Deep Red
 	FRUSTRATION: '#FF6B6B',  // Red
-	SADNESS: '#4C6EF5',      // Blue
-	FEAR: '#9C36B5',         // Purple
+	SADNESS: '#9B8BA8',      // Dusty Mauve (nostalgic)
+	FEAR: '#36313D',         // Dark Charcoal (near black)
 	SURPRISE: '#FF922B',     // Orange
 };
 
