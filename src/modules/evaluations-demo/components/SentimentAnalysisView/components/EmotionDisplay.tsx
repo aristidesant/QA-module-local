@@ -1,4 +1,4 @@
-import { Card, Stack, Text, ThemeIcon, Skeleton, Alert, Group, Loader, Center, RingProgress, Badge } from '@mantine/core';
+import { Card, Stack, Text, ThemeIcon, Skeleton, Alert, Group, Loader, Center, Badge } from '@mantine/core';
 import { IconAlertCircle, IconHeadphones, IconPhone } from '@tabler/icons-react';
 import {
 	IconMoodSmile,
@@ -158,26 +158,22 @@ export default function EmotionDisplay({
 		<Card shadow='sm' p={24} radius={12} withBorder className={styles.card}>
 			<Stack gap={20} h='100%'>
 				{/* Header: Subtle User Type Badge */}
-				<Group justify='space-between' align='center'>
-					<Badge
-						variant='light'
-						color='gray'
-						size='sm'
-						leftSection={
-							type === 'agent' ? (
-								<IconHeadphones size={14} style={{ marginRight: 4 }} />
-							) : (
-								<IconPhone size={14} style={{ marginRight: 4 }} />
-							)
-						}
-						className={styles.typeBadge}
-					>
-						{label}
-					</Badge>
-					<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
-						Analysis
-					</Text>
-				</Group>
+				<Badge
+					variant='light'
+					color='gray'
+					size='sm'
+					leftSection={
+						type === 'agent' ? (
+							<IconHeadphones size={14} style={{ marginRight: 4 }} />
+						) : (
+							<IconPhone size={14} style={{ marginRight: 4 }} />
+						)
+					}
+					className={styles.typeBadge}
+					w='fit-content'
+				>
+					{label}
+				</Badge>
 
 				{/* Main: Emotion Display (Hero) */}
 				<Center>
@@ -196,28 +192,14 @@ export default function EmotionDisplay({
 					</Stack>
 				</Center>
 
-				{/* Footer: Confidence Indicator */}
-				<Group justify='center' gap='sm' mt='auto'>
-					<div className={styles.confidenceContainer}>
-						<Center>
-							<RingProgress
-								sections={[{ value: confidencePercent, color: emotionColor }]}
-								label={
-									<Stack gap={0} align='center'>
-										<Text size='sm' fw={700} className={styles.confidenceValue}>
-											{confidencePercent}%
-										</Text>
-										<Text size='xs' c='dimmed' fw={500}>
-											Confidence
-										</Text>
-									</Stack>
-								}
-								size={80}
-								thickness={4}
-								className={styles.ringProgress}
-							/>
-						</Center>
-					</div>
+				{/* Footer: Confidence */}
+				<Group justify='center' gap='xs' mt='auto'>
+					<Text size='xs' fw={500} c='dimmed'>
+						Confidence
+					</Text>
+					<Text size='sm' fw={700}>
+						{confidencePercent}%
+					</Text>
 				</Group>
 			</Stack>
 		</Card>
