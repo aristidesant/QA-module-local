@@ -1,6 +1,5 @@
 import { Stack, Text } from '@mantine/core';
 import type { TranscriptTurnWithEmotion } from '../types';
-import EmotionTag from './EmotionTag';
 import styles from './TranscriptWithEmotions.module.css';
 
 interface TranscriptWithEmotionsProps {
@@ -26,13 +25,6 @@ export default function TranscriptWithEmotions({
 					<Text size='sm' className={styles.text}>
 						{turn.text}
 					</Text>
-
-					<div className={styles.emotionTags}>
-						<EmotionTag
-							emotion={turn.emotion}
-							intensity={Math.round(turn.emotionIntensity)}
-						/>
-					</div>
 				</div>
 			))}
 		</Stack>
