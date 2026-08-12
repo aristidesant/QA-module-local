@@ -161,16 +161,14 @@ export default function EmotionDisplay({
 				<Badge
 					variant='light'
 					color='gray'
-					size='sm'
 					leftSection={
 						type === 'agent' ? (
-							<IconHeadphones size={14} style={{ marginRight: 4 }} />
+							<IconHeadphones size={14} style={{ marginRight: 6 }} />
 						) : (
-							<IconPhone size={14} style={{ marginRight: 4 }} />
+							<IconPhone size={14} style={{ marginRight: 6 }} />
 						)
 					}
 					className={styles.typeBadge}
-					w='fit-content'
 				>
 					{label}
 				</Badge>
