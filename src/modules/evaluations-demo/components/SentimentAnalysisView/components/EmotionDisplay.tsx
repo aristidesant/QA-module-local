@@ -22,7 +22,7 @@ interface EmotionDisplayProps {
 }
 
 const EMOTION_COLORS: Record<EmotionType, string> = {
-	NEUTRAL: '#748CFF',      // Purple
+	NEUTRAL: '#868E96',      // Gray
 	JOY: '#FFD43B',          // Yellow
 	ANGER: '#FA5252',        // Dark Red
 	RAGE: '#C41E3A',         // Deep Red
