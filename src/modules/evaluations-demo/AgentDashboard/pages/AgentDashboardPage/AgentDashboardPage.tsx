@@ -5,6 +5,7 @@ import AgentPerformanceTrendChart from './components/AgentPerformanceTrendChart'
 import SecondaryMetrics from './components/SecondaryMetrics';
 import ScoreCardsPanel from './components/ScoreCardsPanel';
 import BestWorstCallsPanel from './components/BestWorstCallsPanel';
+import EmotionGaugeWidget from '../../../components/EmotionGaugeWidget';
 import { DEMO_AGENT_KPIS, DEMO_AGENT_CALLS } from '../../mockData';
 import styles from './AgentDashboardPage.module.css';
 
@@ -21,12 +22,23 @@ const AgentDashboardPage: React.FC = () => {
 					</Text>
 				</div>
 
-				<div>
-					<Text fw={700} size='lg' mb='md'>
-						Performance Scores
-					</Text>
-					<ScoreCardsPanel calls={DEMO_AGENT_CALLS} />
-				</div>
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<div>
+						<Text fw={700} size='lg' mb='md'>
+							Performance Scores
+						</Text>
+						<ScoreCardsPanel calls={DEMO_AGENT_CALLS} />
+					</div>
+					<div>
+						<Text fw={700} size='lg' mb='md'>
+							Customer Sentiment
+						</Text>
+						<EmotionGaugeWidget
+							calls={DEMO_AGENT_CALLS}
+							title='Your customer avg emotion'
+						/>
+					</div>
+				</SimpleGrid>
 
 				<div>
 					<Text fw={700} size='lg' mb='md'>
