@@ -34,10 +34,10 @@
 }
 
 .filterSection {
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	gap: var(--mantine-spacing-lg);
-	padding: var(--mantine-spacing-md);
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-lg);
 	background: light-dark(
 		var(--mantine-color-gray-0),
 		var(--mantine-color-gray-8)
@@ -45,13 +45,26 @@
 	border-radius: var(--mantine-radius-md);
 	border: 1px solid
 		light-dark(var(--mantine-color-gray-2), var(--mantine-color-gray-7));
+}
+
+.filtersGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: var(--mantine-spacing-lg);
 	align-items: flex-end;
 }
 
-.filterSection > * {
+.filtersGrid > * {
 	display: flex;
 	flex-direction: column;
 	height: 100%;
+}
+
+.filterActions {
+	display: flex;
+	gap: var(--mantine-spacing-md);
+	justify-content: flex-end;
+	padding-top: var(--mantine-spacing-md);
 }
 
 .metricsPanel {
@@ -63,13 +76,22 @@
 }
 
 @media (max-width: 1200px) {
-	.filterSection {
+	.filtersGrid {
 		grid-template-columns: 1fr 1fr;
 	}
 }
 
 @media (max-width: 768px) {
-	.filterSection {
+	.filtersGrid {
 		grid-template-columns: 1fr;
+	}
+
+	.filterActions {
+		flex-direction: column;
+		justify-content: stretch;
+	}
+
+	.filterActions > button {
+		width: 100%;
 	}
 }

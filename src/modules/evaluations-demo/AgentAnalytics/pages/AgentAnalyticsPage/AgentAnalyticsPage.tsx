@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { Stack, Text, Title, Button, Group } from '@mantine/core';
-import { IconFileText } from '@tabler/icons-react';
+import { Stack, Text, Title, Button, Divider } from '@mantine/core';
+import { IconFileText, IconCheck, IconX } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import { AnalysisType, DateRange } from '../../types/analyticsTypes';
 import { useAnalyticsData } from '../../hooks/useAnalyticsData';
@@ -96,46 +96,67 @@ const AgentAnalyticsPage: React.FC = () => {
 				</div>
 
 				<div className={styles.filterSection}>
-					<AnalysisTypeSelector
-						value={selectedAnalysis}
-						onChange={setSelectedAnalysis}
-					/>
-					<DateRangeFilter
-						dateRange={dateRange}
-						onDateRangeChange={setDateRange}
-						compareEnabled={compareEnabled}
-						onCompareToggle={setCompareEnabled}
-						compareDateRange={compareDateRange}
-						onCompareDateRangeChange={setCompareDateRange}
-						onReset={handleReset}
-					/>
-					<CampaignFilter
-						selectedCampaigns={selectedCampaigns}
-						onCampaignsChange={setSelectedCampaigns}
-						availableCampaigns={CAMPAIGNS}
-					/>
-					<AutofailFilter
-						selectedAutofail={selectedAutofail}
-						onAutofailChange={setSelectedAutofail}
-					/>
-					<DisputeFilter
-						selectedDisputes={selectedDisputes}
-						onDisputesChange={setSelectedDisputes}
-					/>
-					<ScoreRangeFilter
-						minScore={minScore}
-						maxScore={maxScore}
-						onMinScoreChange={setMinScore}
-						onMaxScoreChange={setMaxScore}
-					/>
-					<Group>
+					<div className={styles.filtersGrid}>
+						<AnalysisTypeSelector
+							value={selectedAnalysis}
+							onChange={setSelectedAnalysis}
+						/>
+						<DateRangeFilter
+							dateRange={dateRange}
+							onDateRangeChange={setDateRange}
+							compareEnabled={compareEnabled}
+							onCompareToggle={setCompareEnabled}
+							compareDateRange={compareDateRange}
+							onCompareDateRangeChange={setCompareDateRange}
+							onReset={handleReset}
+						/>
+						<CampaignFilter
+							selectedCampaigns={selectedCampaigns}
+							onCampaignsChange={setSelectedCampaigns}
+							availableCampaigns={CAMPAIGNS}
+						/>
+						<AutofailFilter
+							selectedAutofail={selectedAutofail}
+							onAutofailChange={setSelectedAutofail}
+						/>
+						<DisputeFilter
+							selectedDisputes={selectedDisputes}
+							onDisputesChange={setSelectedDisputes}
+						/>
+						<ScoreRangeFilter
+							minScore={minScore}
+							maxScore={maxScore}
+							onMinScoreChange={setMinScore}
+							onMaxScoreChange={setMaxScore}
+						/>
+					</div>
+
+					<Divider />
+
+					<div className={styles.filterActions}>
 						<Button
-							leftSection={<IconFileText size={18} />}
 							onClick={handleGenerateReport}
+							leftSection={<IconFileText size={18} />}
+							variant='light'
+							color='blue'
 						>
 							Generate Report
 						</Button>
-					</Group>
+						<Button
+							onClick={handleReset}
+							leftSection={<IconX size={18} />}
+							variant='light'
+							color='gray'
+						>
+							Reset Filters
+						</Button>
+						<Button
+							leftSection={<IconCheck size={18} />}
+							color='green'
+						>
+							Apply Filters
+						</Button>
+					</div>
 				</div>
 
 				<div className={styles.metricsPanel}>
