@@ -3,6 +3,7 @@ import { jwtDecode } from 'jwt-decode';
 import type { UserModel } from '~/models/UserModels';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
+import { useRoleMockStore } from '~/stores/roleMockStore';
 
 interface TokenRolePayload {
 	roles?: string[];
@@ -48,11 +49,15 @@ export const hasQaAdminRole = (
 export const useIsQaAdmin = (): boolean => {
 	const { user, targetClient, token } = useSessionStore();
 	const isSuperAdmin = useIsSuperAdmin();
+	const previewRole = useRoleMockStore((s) => s.previewRole);
 	const activeClientId =
 		targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
 
 	return useMemo(() => {
 		if (isSuperAdmin) {
+			return true;
+		}
+		if (previewRole === 'supervisor') {
 			return true;
 		}
 		if (hasQaAdminRole(user, activeClientId)) {
@@ -67,7 +72,7 @@ export const useIsQaAdmin = (): boolean => {
 		} catch {
 			return false;
 		}
-	}, [isSuperAdmin, user, activeClientId, token]);
+	}, [isSuperAdmin, previewRole, user, activeClientId, token]);
 };
 
 export default useIsQaAdmin;
