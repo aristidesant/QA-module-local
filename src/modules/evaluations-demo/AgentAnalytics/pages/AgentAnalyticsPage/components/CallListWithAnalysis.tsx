@@ -98,14 +98,6 @@ const CallListWithAnalysis: React.FC<CallListWithAnalysisProps> = ({
 			<Table.Td>{call.agentEmotion}</Table.Td>
 			<Table.Td>{call.customerEmotion}</Table.Td>
 			<Table.Td fw={600}>{call.sentimentScore?.toFixed(2)}</Table.Td>
-			<Table.Td>
-				<Badge
-					color={call.recoveryStatus === 'recovered' ? 'green' : 'orange'}
-					variant='light'
-				>
-					{call.recoveryStatus}
-				</Badge>
-			</Table.Td>
 			<Table.Td>{call.tone}</Table.Td>
 		</Table.Tr>
 	);
@@ -195,7 +187,6 @@ const CallListWithAnalysis: React.FC<CallListWithAnalysisProps> = ({
 					'Agent Emotion',
 					'Customer Emotion',
 					'Sentiment',
-					'Recovery',
 					'Tone',
 				];
 			case 'compliance':

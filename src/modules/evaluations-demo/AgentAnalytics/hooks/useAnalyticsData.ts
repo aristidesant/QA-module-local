@@ -179,11 +179,6 @@ export const useAnalyticsData = (
 					? Math.round((predominantCustomerEmotion[1] / filteredCalls.length) * 100)
 					: 0;
 
-				const recoveredCount = filteredCalls.filter(
-					(c) => c.recoveryStatus === 'recovered'
-				).length;
-				const recoveryRate = (recoveredCount / filteredCalls.length) * 100;
-
 				return [
 					{
 						label: 'Average Sentiment Score',
@@ -203,11 +198,6 @@ export const useAnalyticsData = (
 					{
 						label: `Client Emotion (${predominantCustomerEmotion?.[0] || 'N/A'})`,
 						value: predominantCustomerEmotionPercentage,
-						suffix: '%',
-					},
-					{
-						label: 'Recovery Rate',
-						value: Math.round(recoveryRate),
 						suffix: '%',
 					},
 				];
