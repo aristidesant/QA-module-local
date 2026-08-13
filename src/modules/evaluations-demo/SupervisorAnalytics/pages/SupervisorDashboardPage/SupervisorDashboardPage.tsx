@@ -3,6 +3,7 @@ import { Stack, Text, Title, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import TeamScoreCardsPanel from './components/TeamScoreCardsPanel';
 import TeamPerformanceTrendChart from './components/TeamPerformanceTrendChart';
+import DowntrendingAgentsTable from './components/DowntrendingAgentsTable';
 import AgentPerformanceComparisonTable from './components/AgentPerformanceComparisonTable';
 import BestWorstCallsPanel from '../../../AgentDashboard/pages/AgentDashboardPage/components/BestWorstCallsPanel';
 import { DEMO_AGENT_CALLS } from '../../../AgentDashboard/mockData';
@@ -28,12 +29,21 @@ const SupervisorDashboardPage: React.FC = () => {
 					<TeamScoreCardsPanel calls={DEMO_AGENT_CALLS} />
 				</div>
 
-				<div>
-					<Text fw={700} size='lg' mb='md'>
-						Team Performance Trend (4 Weeks)
-					</Text>
-					<TeamPerformanceTrendChart calls={DEMO_AGENT_CALLS} />
-				</div>
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<div>
+						<Text fw={700} size='lg' mb='md'>
+							Team Performance Trend (4 Weeks)
+						</Text>
+						<TeamPerformanceTrendChart calls={DEMO_AGENT_CALLS} />
+					</div>
+
+					<div>
+						<Text fw={700} size='lg' mb='md'>
+							Performance Alerts
+						</Text>
+						<DowntrendingAgentsTable calls={DEMO_AGENT_CALLS} />
+					</div>
+				</SimpleGrid>
 
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
 					<div>
