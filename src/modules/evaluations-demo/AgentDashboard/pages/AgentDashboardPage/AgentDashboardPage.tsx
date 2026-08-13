@@ -22,21 +22,34 @@ const AgentDashboardPage: React.FC = () => {
 					</Text>
 				</div>
 
+				{/* inline-style-allow: flex layout for section alignment */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					<div>
+					{/* inline-style-allow: flex layout for equal height sections */}
+					<div
+						style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+					>
 						<Text fw={700} size='lg' mb='md'>
 							Performance Scores
 						</Text>
-						<ScoreCardsPanel calls={DEMO_AGENT_CALLS} />
+						{/* inline-style-allow: flex grow for content stretching */}
+						<div style={{ flex: 1 }}>
+							<ScoreCardsPanel calls={DEMO_AGENT_CALLS} />
+						</div>
 					</div>
-					<div>
+					{/* inline-style-allow: flex layout for equal height sections */}
+					<div
+						style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
+					>
 						<Text fw={700} size='lg' mb='md'>
 							Customer Sentiment
 						</Text>
-						<EmotionGaugeWidget
-							calls={DEMO_AGENT_CALLS}
-							title='Your customer avg emotion'
-						/>
+						{/* inline-style-allow: flex grow for content stretching */}
+						<div style={{ flex: 1 }}>
+							<EmotionGaugeWidget
+								calls={DEMO_AGENT_CALLS}
+								title='Your customer avg emotion'
+							/>
+						</div>
 					</div>
 				</SimpleGrid>
 
