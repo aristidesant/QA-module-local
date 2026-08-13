@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
-import { Card, Stack, Text, Button, RingProgress, Center } from '@mantine/core';
-import { IconChevronRight } from '@tabler/icons-react';
+import { Card, Stack, Text, RingProgress, Center } from '@mantine/core';
 import type { DemoAgentCall } from '../AgentDashboard/types';
 import styles from './EmotionGaugeWidget.module.css';
 
@@ -90,12 +89,12 @@ const EmotionGaugeWidget: React.FC<EmotionGaugeWidgetProps> = ({
 
 	return (
 		<Card withBorder radius='md' shadow='sm' className={styles.card}>
-			<Stack gap='lg'>
+			<Stack gap='md'>
 				<div>
-					<Text fw={700} size='lg' mb='xs'>
+					<Text fw={700} size='md' mb='xs'>
 						{title}
 					</Text>
-					<Text size='sm' c='dimmed'>
+					<Text size='xs' c='dimmed'>
 						Negative ← | → Positive
 					</Text>
 				</div>
@@ -110,31 +109,22 @@ const EmotionGaugeWidget: React.FC<EmotionGaugeWidgetProps> = ({
 						]}
 						label={
 							<div className={styles.ringLabel}>
-								<Text fw={700} size='xl' className={styles.percentage}>
+								<Text fw={700} size='lg' className={styles.percentage}>
 									{emotionMetrics.score}%
 								</Text>
-								<Text size='sm' c='dimmed' ta='center'>
+								<Text size='xs' c='dimmed' ta='center'>
 									{getEmotionLabel(emotionMetrics.emotionLevel)}
 								</Text>
 							</div>
 						}
-						size={200}
-						thickness={8}
+						size={140}
+						thickness={6}
 					/>
 				</Center>
 
-				<Stack gap='xs' ta='center'>
-					<Text size='sm' c='dimmed'>
-						{getSubtitle()}
-					</Text>
-					<Button
-						variant='light'
-						rightSection={<IconChevronRight size={16} />}
-						fullWidth
-					>
-						Show details
-					</Button>
-				</Stack>
+				<Text size='xs' c='dimmed' ta='center'>
+					{getSubtitle()}
+				</Text>
 			</Stack>
 		</Card>
 	);
