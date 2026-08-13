@@ -1,10 +1,11 @@
 import React from 'react';
 import { Stack, Text, Title, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
-import AgentDashboardKpisV2 from './components/AgentDashboardKpisV2';
 import AgentPerformanceTrendChart from './components/AgentPerformanceTrendChart';
 import SecondaryMetrics from './components/SecondaryMetrics';
-import { DEMO_AGENT_KPIS } from '../../mockData';
+import ScoreCardsPanel from './components/ScoreCardsPanel';
+import BestWorstCallsPanel from './components/BestWorstCallsPanel';
+import { DEMO_AGENT_KPIS, DEMO_AGENT_CALLS } from '../../mockData';
 import styles from './AgentDashboardPage.module.css';
 
 const AgentDashboardPage: React.FC = () => {
@@ -20,13 +21,27 @@ const AgentDashboardPage: React.FC = () => {
 					</Text>
 				</div>
 
-				<div className={styles.kpiSection}>
-					<AgentDashboardKpisV2 kpis={DEMO_AGENT_KPIS} />
+				<div>
+					<Text fw={700} size='lg' mb='md'>
+						Performance Scores
+					</Text>
+					<ScoreCardsPanel calls={DEMO_AGENT_CALLS} />
 				</div>
 
-				<SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing='lg' className={styles.bottomGrid}>
+				<div>
+					<Text fw={700} size='lg' mb='md'>
+						Best & Worst Calls
+					</Text>
+					<BestWorstCallsPanel calls={DEMO_AGENT_CALLS} />
+				</div>
+
+				<SimpleGrid
+					cols={{ base: 1, sm: 2, md: 3 }}
+					spacing='lg'
+					className={styles.bottomGrid}
+				>
 					<div className={styles.chartColumn}>
-						<AgentPerformanceTrendChart kpis={DEMO_AGENT_KPIS} />
+						<AgentPerformanceTrendChart calls={DEMO_AGENT_CALLS} />
 					</div>
 					<div className={styles.metricsColumn}>
 						<SecondaryMetrics kpis={DEMO_AGENT_KPIS} />
@@ -34,9 +49,12 @@ const AgentDashboardPage: React.FC = () => {
 					<div className={styles.summaryColumn}>
 						{/* Third column for additional insights or summary */}
 						<Stack gap='md' style={{ height: '100%' }}>
-							<Text fw={700} size='lg'>Quick Insights</Text>
+							<Text fw={700} size='lg'>
+								Quick Insights
+							</Text>
 							<Text size='sm' c='dimmed'>
-								Your performance is trending positively this week. Keep up the great work!
+								Your performance is trending positively this week. Keep up the
+								great work!
 							</Text>
 						</Stack>
 					</div>

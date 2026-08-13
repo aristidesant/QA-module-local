@@ -1,17 +1,56 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { LineChart } from '@mantine/charts';
 import { Box, Card, Text } from '@mantine/core';
-import type { DemoAgentKpis } from '../../../types';
+import type { DemoAgentCall } from '../../../types';
 
 interface AgentPerformanceTrendChartProps {
-	kpis: DemoAgentKpis;
+	calls: DemoAgentCall[];
 }
 
 const AgentPerformanceTrendChart: React.FC<AgentPerformanceTrendChartProps> = ({
-	kpis,
+	calls,
 }) => {
-	// Get only the last 4 weeks (1 month) of data
-	const lastFourWeeks = kpis.monthlyTrends.slice(-4);
+	const chartData = useMemo(() => {
+		// Generate data for the last 4 weeks with scores for each evaluation type
+		const weeks = [];
+		const today = new Date();
+
+		for (let i = 3; i >= 0; i--) {
+			const weekStart = new Date(today);
+			weekStart.setDate(weekStart.getDate() - i * 7);
+			const weekLabel = `Week ${4 - i}`;
+
+			// Calculate average scores for each evaluation type
+			const qaScores = calls
+				.filter((call) => call.evaluationType === 'QA' && call.score !== null)
+				.map((call) => call.score as number);
+			const sentimentScores = calls
+				.filter(
+					(call) =>
+						call.evaluationType === 'Sentiment Analysis' && call.score !== null
+				)
+				.map((call) => call.score as number);
+			const complianceScores = calls
+				.filter(
+					(call) => call.evaluationType === 'Compliance' && call.score !== null
+				)
+				.map((call) => call.score as number);
+
+			const getAverage = (scores: number[]) =>
+				scores.length > 0
+					? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length)
+					: 0;
+
+			weeks.push({
+				week: weekLabel,
+				QA: getAverage(qaScores),
+				'Emotion & Sentiment': getAverage(sentimentScores),
+				Compliance: getAverage(complianceScores),
+			});
+		}
+
+		return weeks;
+	}, [calls]);
 
 	return (
 		<Card withBorder radius='md' p='md'>
@@ -20,7 +59,7 @@ const AgentPerformanceTrendChart: React.FC<AgentPerformanceTrendChartProps> = ({
 					Performance Trend (1 Month)
 				</Text>
 				<Text size='sm' c='dimmed'>
-					Weekly average score
+					Weekly average by analysis type
 				</Text>
 			</Card.Section>
 
@@ -29,9 +68,17 @@ const AgentPerformanceTrendChart: React.FC<AgentPerformanceTrendChartProps> = ({
 					<LineChart
 						w='100%'
 						h={400}
-						data={lastFourWeeks}
-						dataKey='month'
-						series={[{ name: 'score', label: 'Score (%)', color: 'green' }]}
+						data={chartData}
+						dataKey='week'
+						series={[
+							{ name: 'QA', label: 'QA Analysis', color: 'blue' },
+							{
+								name: 'Emotion & Sentiment',
+								label: 'Emotion & Sentiment',
+								color: 'green',
+							},
+							{ name: 'Compliance', label: 'Compliance', color: 'grape' },
+						]}
 						curveType='monotone'
 						withLegend
 						withXAxis
