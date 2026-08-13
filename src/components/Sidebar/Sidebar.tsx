@@ -472,20 +472,6 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/qa/disputes',
 		},
 		{
-			key: 'role-preview-coaching',
-			label: 'sidebar.rolePreview.items.coaching',
-			icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
-			to: '/role-preview/agent-dashboard/coaching',
-			disabled: true,
-		},
-		{
-			key: 'role-preview-lms',
-			label: 'sidebar.rolePreview.items.lms',
-			icon: <IconSchool size={20} className={styles.menuIcon} />,
-			to: '/role-preview/agent-dashboard/lms',
-			disabled: true,
-		},
-		{
 			key: 'role-preview-analytics',
 			label: 'sidebar.rolePreview.items.analytics',
 			icon: <IconChartLine size={20} className={styles.menuIcon} />,
