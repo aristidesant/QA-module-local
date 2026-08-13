@@ -511,6 +511,12 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/role-preview/coaching',
 		},
 		{
+			key: 'role-preview-supervisor-analytics',
+			label: 'sidebar.rolePreview.items.analytics',
+			icon: <IconChartLine size={20} className={styles.menuIcon} />,
+			to: '/role-preview/supervisor-analytics',
+		},
+		{
 			key: 'role-preview-disputes',
 			label: 'sidebar.rolePreview.items.disputes',
 			icon: <IconFolders size={20} className={styles.menuIcon} />,

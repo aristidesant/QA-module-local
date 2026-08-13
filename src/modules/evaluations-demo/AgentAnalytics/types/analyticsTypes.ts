@@ -10,6 +10,7 @@ export interface AnalysisCall {
 	date: Date;
 	duration: number;
 	agentName: string;
+	supervisorId: string;
 	campaign: string;
 
 	// QA specific
@@ -49,4 +50,18 @@ export interface AggregatedMetrics {
 	emotion: AggregatedMetric[];
 	compliance: AggregatedMetric[];
 	behavioral: AggregatedMetric[];
+}
+
+export interface AgentMetrics {
+	agentName: string;
+	metrics: AggregatedMetric[];
+	callCount: number;
+	trend?: 'up' | 'down' | 'neutral';
+}
+
+export interface SupervisorAnalyticsData {
+	calls: AnalysisCall[];
+	teamMetrics: AggregatedMetric[];
+	agentMetrics: AgentMetrics[];
+	totalCalls: number;
 }

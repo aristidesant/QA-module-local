@@ -1,0 +1,36 @@
+.card {
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+	border-color: light-dark(
+		var(--mantine-color-gray-2),
+		var(--mantine-color-dark-5)
+	);
+	transition: all 0.2s ease;
+}
+
+.card:hover {
+	box-shadow: light-dark(
+		0 4px 16px rgba(0, 0, 0, 0.08),
+		0 4px 16px rgba(0, 0, 0, 0.3)
+	);
+}
+
+.table {
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-7)
+	);
+}
+
+.clickableRow {
+	transition: background-color 0.15s ease;
+}
+
+.clickableRow:hover {
+	background: light-dark(
+		var(--mantine-color-gray-1),
+		var(--mantine-color-dark-6)
+	) !important;
+}

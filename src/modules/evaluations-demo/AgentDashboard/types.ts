@@ -36,11 +36,12 @@ export interface DemoAgentCall {
 	id: string;
 	callDate: string; // ISO date
 	campaign: string; // Campaign name
+	agentName?: string; // Agent name (optional for backward compatibility)
 	durationSeconds: number;
 	score: number; // 0-100
 	result: 'passed' | 'failed'; // passed = score >= 80, failed = score < 80
 	disputed: boolean;
-	evaluationType: 'Compliance' | 'Sentiment Analysis' | 'QA';
+	evaluationType: 'Compliance' | 'Sentiment Analysis' | 'QA' | 'Behavioral';
 	transcript: Array<{
 		speaker: 'agent' | 'customer';
 		text: string;

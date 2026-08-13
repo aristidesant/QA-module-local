@@ -1,0 +1,33 @@
+.container {
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-8)
+	);
+}
+
+.header {
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.headerTitle {
+	color: light-dark(var(--mantine-color-dark-9), var(--mantine-color-white));
+	font-size: 2rem;
+	font-weight: 700;
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.headerSubtitle {
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+	font-size: 1rem;
+}
+
+.filterBar {
+	background: light-dark(
+		var(--mantine-color-gray-1),
+		var(--mantine-color-dark-7)
+	);
+	padding: var(--mantine-spacing-md);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid
+		light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+}
