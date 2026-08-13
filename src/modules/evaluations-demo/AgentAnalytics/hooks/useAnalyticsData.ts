@@ -137,7 +137,7 @@ export const useAnalyticsData = (
 						suffix: '',
 					},
 					{
-						label: 'Total Calls Evaluated',
+						label: 'Calls in Period',
 						value: filteredCalls.length,
 						suffix: '',
 					},
@@ -188,6 +188,11 @@ export const useAnalyticsData = (
 					{
 						label: 'Average Sentiment Score',
 						value: avgSentiment.toFixed(2),
+						suffix: '',
+					},
+					{
+						label: 'Calls in Period',
+						value: filteredCalls.length,
 						suffix: '',
 					},
 					{
