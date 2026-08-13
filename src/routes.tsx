@@ -122,6 +122,10 @@ const SupervisorDashboardPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/SupervisorAnalytics/pages/SupervisorDashboardPage/SupervisorDashboardPage')
 );
+const SupervisorAnalyticsPage = React.lazy(
+	() =>
+		import('./modules/evaluations-demo/SupervisorAnalytics/pages/SupervisorAnalyticsPage/SupervisorAnalyticsPage')
+);
 const EmotionDisplayShowcase = React.lazy(
 	() => import('./modules/evaluations-demo/pages/EmotionDisplayShowcase')
 );
@@ -1286,6 +1290,15 @@ const router = createBrowserRouter([
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
 										<AgentsRosterPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/supervisor-analytics',
+								id: 'role-preview.supervisor-analytics',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<SupervisorAnalyticsPage />
 									</Suspense>
 								),
 							},
