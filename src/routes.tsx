@@ -125,6 +125,10 @@ const SupervisorDashboardPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/SupervisorAnalytics/pages/SupervisorDashboardPage/SupervisorDashboardPage')
 );
+const QAManagerDashboardPage = React.lazy(
+	() =>
+		import('./modules/evaluations-demo/SupervisorAnalytics/pages/QAManagerDashboardPage/QAManagerDashboardPage')
+);
 const SupervisorAnalyticsPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/SupervisorAnalytics/pages/SupervisorAnalyticsPage/SupervisorAnalyticsPage')
@@ -1311,6 +1315,15 @@ const router = createBrowserRouter([
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
 										<SupervisorAnalyticsPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/qa-manager-dashboard',
+								id: 'role-preview.qa-manager-dashboard',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<QAManagerDashboardPage />
 									</Suspense>
 								),
 							},

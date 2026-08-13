@@ -1,0 +1,23 @@
+.container {
+	background: var(--mantine-color-gray-0);
+}
+
+@media (prefers-color-scheme: dark) {
+	.container {
+		background: var(--mantine-color-dark-8);
+	}
+}
+
+.header {
+	margin-bottom: var(--mantine-spacing-lg);
+}
+
+.headerTitle {
+	margin-bottom: var(--mantine-spacing-xs);
+	color: light-dark(var(--mantine-color-dark-9), var(--mantine-color-white));
+}
+
+.headerSubtitle {
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-gray-4));
+	font-size: var(--mantine-font-size-sm);
+}

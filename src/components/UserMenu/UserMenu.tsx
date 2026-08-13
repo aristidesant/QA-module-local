@@ -130,7 +130,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 
 	const roleLandingPaths: Record<PreviewRole, string> = {
 		agent: '/role-preview/agent-dashboard',
-		operationManager: '/role-preview/qa-forms',
+		operationManager: '/role-preview/qa-manager-dashboard',
 		supervisor: '/qa/dashboard',
 		superAdmin: '/role-preview/qa-forms',
 	};

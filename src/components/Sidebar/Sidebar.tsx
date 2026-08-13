@@ -540,7 +540,7 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			key: 'role-preview-dashboard',
 			label: 'sidebar.rolePreview.items.dashboard',
 			icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
-			to: '/',
+			to: '/role-preview/qa-manager-dashboard',
 			exact: true,
 		},
 		{
