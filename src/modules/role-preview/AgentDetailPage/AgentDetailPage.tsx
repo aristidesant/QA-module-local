@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
 	Stack,
 	Text,
@@ -10,6 +10,9 @@ import {
 	Button,
 	Alert,
 	Skeleton,
+	Tabs,
+	Progress,
+	Table,
 } from '@mantine/core';
 import { IconArrowLeft, IconAlertTriangle } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
@@ -23,6 +26,7 @@ import styles from './AgentDetailPage.module.css';
 const AgentDetailPage: React.FC = () => {
 	const { agentId } = useParams<{ agentId: string }>();
 	const navigate = useNavigate();
+	const [activeTab, setActiveTab] = useState<string | null>('overview');
 
 	const agentsQuery = useAgentsQuery({
 		limit: 100,
@@ -174,108 +178,440 @@ const AgentDetailPage: React.FC = () => {
 					</Stack>
 				</Card>
 
-				{/* Key Metrics */}
-				<div>
-					<Title order={3} mb='md'>
-						Performance Metrics
-					</Title>
-					<SimpleGrid cols={{ base: 2, sm: 3, md: 6 }} spacing='md'>
-						<MetricCard
-							label='Customer Satisfaction'
-							value={metrics.satisfactionRate}
-							color='blue'
-						/>
-						<MetricCard
-							label='Best Performance Day'
-							value={metrics.bestDay}
-							color='green'
-						/>
-						<MetricCard
-							label='Best Performance Hour'
-							value={metrics.bestHour}
-							color='violet'
-						/>
-						<MetricCard
-							label='Avg Handle Time'
-							value={metrics.avgHandleTime}
-							color='cyan'
-						/>
-						<MetricCard
-							label='Total Calls Analyzed'
-							value={metrics.totalCalls}
-							color='orange'
-						/>
-						<MetricCard
-							label='Dominant Sentiment'
-							value={metrics.dominantSentiment}
-							color='pink'
-						/>
-					</SimpleGrid>
-				</div>
+				{/* Tabs */}
+				<Tabs value={activeTab} onChange={setActiveTab} defaultValue='overview'>
+					<Tabs.List>
+						<Tabs.Tab value='overview'>General Overview</Tabs.Tab>
+						<Tabs.Tab value='qa'>QA</Tabs.Tab>
+						<Tabs.Tab value='sentiment'>Emotion & Sentiment</Tabs.Tab>
+						<Tabs.Tab value='compliance'>Compliance</Tabs.Tab>
+					</Tabs.List>
 
-				{/* Performance History */}
-				<div>
-					<Title order={3} mb='md'>
-						Performance History
-					</Title>
-					<Card withBorder radius='md' shadow='sm' p='md'>
-						{agentCalls.length > 0 ? (
-							<AgentPerformanceTrendChart calls={agentCalls} />
-						) : (
-							<Text c='dimmed' ta='center' py='xl'>
-								No performance data available
-							</Text>
-						)}
-					</Card>
-				</div>
+					{/* General Overview Tab */}
+					<Tabs.Panel value='overview' pt='md'>
+						<Stack gap='lg'>
+							{/* Key Metrics */}
+							<div>
+								<Title order={3} mb='md'>
+									Performance Metrics
+								</Title>
+								<SimpleGrid cols={{ base: 2, sm: 3, md: 6 }} spacing='md'>
+									<MetricCard
+										label='Customer Satisfaction'
+										value={metrics.satisfactionRate}
+										color='blue'
+									/>
+									<MetricCard
+										label='Best Performance Day'
+										value={metrics.bestDay}
+										color='green'
+									/>
+									<MetricCard
+										label='Best Performance Hour'
+										value={metrics.bestHour}
+										color='violet'
+									/>
+									<MetricCard
+										label='Avg Handle Time'
+										value={metrics.avgHandleTime}
+										color='cyan'
+									/>
+									<MetricCard
+										label='Total Calls Analyzed'
+										value={metrics.totalCalls}
+										color='orange'
+									/>
+									<MetricCard
+										label='Dominant Sentiment'
+										value={metrics.dominantSentiment}
+										color='pink'
+									/>
+								</SimpleGrid>
+							</div>
 
-				{/* Additional Info */}
-				<div>
-					<Title order={3} mb='md'>
-						Additional Information
-					</Title>
-					<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='md'>
-						<Card withBorder radius='md' shadow='sm' p='md'>
-							<Stack gap='sm'>
-								<Text fw={700} size='sm'>
-									Campaign Performance
-								</Text>
-								{Object.entries(metrics.campaignPerformance).map(
-									([campaign, performance]) => (
-										<Group key={campaign} justify='space-between'>
-											<Text size='sm' c='dimmed'>
-												{campaign}:
+							{/* Performance History */}
+							<div>
+								<Title order={3} mb='md'>
+									Performance History
+								</Title>
+								<Card withBorder radius='md' shadow='sm' p='md'>
+									{agentCalls.length > 0 ? (
+										<AgentPerformanceTrendChart calls={agentCalls} />
+									) : (
+										<Text c='dimmed' ta='center' py='xl'>
+											No performance data available
+										</Text>
+									)}
+								</Card>
+							</div>
+
+							{/* Additional Info */}
+							<div>
+								<Title order={3} mb='md'>
+									Additional Information
+								</Title>
+								<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='md'>
+									<Card withBorder radius='md' shadow='sm' p='md'>
+										<Stack gap='sm'>
+											<Text fw={700} size='sm'>
+												Campaign Performance
 											</Text>
-											<Badge size='sm' variant='light'>
-												{performance as string}
-											</Badge>
+											{Object.entries(metrics.campaignPerformance).map(
+												([campaign, performance]) => (
+													<Group key={campaign} justify='space-between'>
+														<Text size='sm' c='dimmed'>
+															{campaign}:
+														</Text>
+														<Badge size='sm' variant='light'>
+															{performance as string}
+														</Badge>
+													</Group>
+												)
+											)}
+										</Stack>
+									</Card>
+									<Card withBorder radius='md' shadow='sm' p='md'>
+										<Stack gap='sm'>
+											<Text fw={700} size='sm'>
+												Additional Metrics
+											</Text>
+											<Text size='sm' c='dimmed'>
+												<strong>Localization:</strong> English (Primary)
+											</Text>
+											<Text size='sm' c='dimmed'>
+												<strong>Supervisor:</strong> {metrics.supervisor}
+											</Text>
+											<Text size='sm' c='dimmed'>
+												<strong>Tenure:</strong> Since registration to current
+												date
+											</Text>
+											<Text size='sm' c='dimmed'>
+												<strong>Account Status:</strong>{' '}
+												{agent.hasUserAccount ? 'Active' : 'Pending'}
+											</Text>
+										</Stack>
+									</Card>
+								</SimpleGrid>
+							</div>
+						</Stack>
+					</Tabs.Panel>
+
+					{/* QA Tab */}
+					<Tabs.Panel value='qa' pt='md'>
+						<Stack gap='lg'>
+							<SimpleGrid cols={{ base: 1, sm: 4 }} spacing='md'>
+								<MetricCard label='QA Score' value='87%' color='blue' />
+								<MetricCard label='Calls Passed' value='22/25' color='green' />
+								<MetricCard label='Quality Issues' value='3' color='orange' />
+								<MetricCard
+									label='Improvement Rate'
+									value='+12%'
+									color='cyan'
+								/>
+							</SimpleGrid>
+
+							<Card withBorder radius='md' shadow='sm' p='md'>
+								<Stack gap='md'>
+									<Title order={4}>Quality Breakdown</Title>
+									<div>
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Communication Clarity</Text>
+											<Text size='sm' fw={700}>
+												92%
+											</Text>
 										</Group>
-									)
-								)}
-							</Stack>
-						</Card>
-						<Card withBorder radius='md' shadow='sm' p='md'>
-							<Stack gap='sm'>
-								<Text fw={700} size='sm'>
-									Additional Metrics
-								</Text>
-								<Text size='sm' c='dimmed'>
-									<strong>Localization:</strong> English (Primary)
-								</Text>
-								<Text size='sm' c='dimmed'>
-									<strong>Supervisor:</strong> {metrics.supervisor}
-								</Text>
-								<Text size='sm' c='dimmed'>
-									<strong>Tenure:</strong> Since registration to current date
-								</Text>
-								<Text size='sm' c='dimmed'>
-									<strong>Account Status:</strong>{' '}
-									{agent.hasUserAccount ? 'Active' : 'Pending'}
-								</Text>
-							</Stack>
-						</Card>
-					</SimpleGrid>
-				</div>
+										<Progress value={92} size='md' mb='md' />
+
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Professionalism</Text>
+											<Text size='sm' fw={700}>
+												88%
+											</Text>
+										</Group>
+										<Progress value={88} size='md' mb='md' />
+
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Problem Resolution</Text>
+											<Text size='sm' fw={700}>
+												85%
+											</Text>
+										</Group>
+										<Progress value={85} size='md' mb='md' />
+
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Customer Courtesy</Text>
+											<Text size='sm' fw={700}>
+												90%
+											</Text>
+										</Group>
+										<Progress value={90} size='md' />
+									</div>
+								</Stack>
+							</Card>
+
+							<Card withBorder radius='md' shadow='sm' p='md'>
+								<Stack gap='md'>
+									<Title order={4}>Recent QA Issues</Title>
+									<Table striped highlightOnHover>
+										<Table.Thead>
+											<Table.Tr>
+												<Table.Th>Date</Table.Th>
+												<Table.Th>Issue Type</Table.Th>
+												<Table.Th>Severity</Table.Th>
+												<Table.Th>Status</Table.Th>
+											</Table.Tr>
+										</Table.Thead>
+										<Table.Tbody>
+											<Table.Tr>
+												<Table.Td>
+													<Text size='sm'>Aug 2, 2026</Text>
+												</Table.Td>
+												<Table.Td>
+													<Text size='sm'>Missed Policy Step</Text>
+												</Table.Td>
+												<Table.Td>
+													<Badge size='sm' color='orange'>
+														Medium
+													</Badge>
+												</Table.Td>
+												<Table.Td>
+													<Badge size='sm' color='blue'>
+														Resolved
+													</Badge>
+												</Table.Td>
+											</Table.Tr>
+											<Table.Tr>
+												<Table.Td>
+													<Text size='sm'>Jul 31, 2026</Text>
+												</Table.Td>
+												<Table.Td>
+													<Text size='sm'>Documentation Error</Text>
+												</Table.Td>
+												<Table.Td>
+													<Badge size='sm' color='yellow'>
+														Low
+													</Badge>
+												</Table.Td>
+												<Table.Td>
+													<Badge size='sm' color='blue'>
+														Resolved
+													</Badge>
+												</Table.Td>
+											</Table.Tr>
+											<Table.Tr>
+												<Table.Td>
+													<Text size='sm'>Jul 28, 2026</Text>
+												</Table.Td>
+												<Table.Td>
+													<Text size='sm'>Incomplete Info</Text>
+												</Table.Td>
+												<Table.Td>
+													<Badge size='sm' color='orange'>
+														Medium
+													</Badge>
+												</Table.Td>
+												<Table.Td>
+													<Badge size='sm' color='blue'>
+														Resolved
+													</Badge>
+												</Table.Td>
+											</Table.Tr>
+										</Table.Tbody>
+									</Table>
+								</Stack>
+							</Card>
+						</Stack>
+					</Tabs.Panel>
+
+					{/* Emotion & Sentiment Tab */}
+					<Tabs.Panel value='sentiment' pt='md'>
+						<Stack gap='lg'>
+							<SimpleGrid cols={{ base: 1, sm: 4 }} spacing='md'>
+								<MetricCard
+									label='Sentiment Score'
+									value='82/100'
+									color='green'
+								/>
+								<MetricCard label='Positive Calls' value='18/25' color='lime' />
+								<MetricCard label='Neutral Calls' value='6/25' color='gray' />
+								<MetricCard label='Negative Calls' value='1/25' color='red' />
+							</SimpleGrid>
+
+							<Card withBorder radius='md' shadow='sm' p='md'>
+								<Stack gap='md'>
+									<Title order={4}>Sentiment Distribution</Title>
+									<div>
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Very Positive</Text>
+											<Text size='sm' fw={700}>
+												32%
+											</Text>
+										</Group>
+										<Progress value={32} size='md' mb='md' color='green' />
+
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Positive</Text>
+											<Text size='sm' fw={700}>
+												40%
+											</Text>
+										</Group>
+										<Progress value={40} size='md' mb='md' color='lime' />
+
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Neutral</Text>
+											<Text size='sm' fw={700}>
+												24%
+											</Text>
+										</Group>
+										<Progress value={24} size='md' mb='md' color='gray' />
+
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Negative</Text>
+											<Text size='sm' fw={700}>
+												4%
+											</Text>
+										</Group>
+										<Progress value={4} size='md' color='red' />
+									</div>
+								</Stack>
+							</Card>
+
+							<Card withBorder radius='md' shadow='sm' p='md'>
+								<Stack gap='md'>
+									<Title order={4}>Emotion Indicators</Title>
+									<Group justify='space-between' mb='xs'>
+										<Text size='sm'>Customer Satisfaction</Text>
+										<Text size='sm' fw={700}>
+											88%
+										</Text>
+									</Group>
+									<Progress value={88} size='md' mb='md' color='blue' />
+
+									<Group justify='space-between' mb='xs'>
+										<Text size='sm'>Empathy Level</Text>
+										<Text size='sm' fw={700}>
+											85%
+										</Text>
+									</Group>
+									<Progress value={85} size='md' mb='md' color='violet' />
+
+									<Group justify='space-between' mb='xs'>
+										<Text size='sm'>Recovery Success Rate</Text>
+										<Text size='sm' fw={700}>
+											92%
+										</Text>
+									</Group>
+									<Progress value={92} size='md' color='cyan' />
+								</Stack>
+							</Card>
+						</Stack>
+					</Tabs.Panel>
+
+					{/* Compliance Tab */}
+					<Tabs.Panel value='compliance' pt='md'>
+						<Stack gap='lg'>
+							<SimpleGrid cols={{ base: 1, sm: 4 }} spacing='md'>
+								<MetricCard label='Compliance Score' value='91%' color='blue' />
+								<MetricCard label='Violations Found' value='2' color='orange' />
+								<MetricCard label='Critical Issues' value='0' color='green' />
+								<MetricCard label='Resolved Issues' value='2' color='green' />
+							</SimpleGrid>
+
+							<Card withBorder radius='md' shadow='sm' p='md'>
+								<Stack gap='md'>
+									<Title order={4}>Compliance Metrics</Title>
+									<div>
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Policy Adherence</Text>
+											<Text size='sm' fw={700}>
+												94%
+											</Text>
+										</Group>
+										<Progress value={94} size='md' mb='md' />
+
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Documentation Compliance</Text>
+											<Text size='sm' fw={700}>
+												89%
+											</Text>
+										</Group>
+										<Progress value={89} size='md' mb='md' />
+
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Data Security Standards</Text>
+											<Text size='sm' fw={700}>
+												96%
+											</Text>
+										</Group>
+										<Progress value={96} size='md' mb='md' />
+
+										<Group justify='space-between' mb='xs'>
+											<Text size='sm'>Regulatory Requirements</Text>
+											<Text size='sm' fw={700}>
+												92%
+											</Text>
+										</Group>
+										<Progress value={92} size='md' />
+									</div>
+								</Stack>
+							</Card>
+
+							<Card withBorder radius='md' shadow='sm' p='md'>
+								<Stack gap='md'>
+									<Title order={4}>Violation History</Title>
+									<Table striped highlightOnHover>
+										<Table.Thead>
+											<Table.Tr>
+												<Table.Th>Date</Table.Th>
+												<Table.Th>Violation Type</Table.Th>
+												<Table.Th>Severity</Table.Th>
+												<Table.Th>Resolution</Table.Th>
+											</Table.Tr>
+										</Table.Thead>
+										<Table.Tbody>
+											<Table.Tr>
+												<Table.Td>
+													<Text size='sm'>Aug 1, 2026</Text>
+												</Table.Td>
+												<Table.Td>
+													<Text size='sm'>Missing Verification</Text>
+												</Table.Td>
+												<Table.Td>
+													<Badge size='sm' color='yellow'>
+														Low
+													</Badge>
+												</Table.Td>
+												<Table.Td>
+													<Badge size='sm' color='green'>
+														Corrected
+													</Badge>
+												</Table.Td>
+											</Table.Tr>
+											<Table.Tr>
+												<Table.Td>
+													<Text size='sm'>Jul 29, 2026</Text>
+												</Table.Td>
+												<Table.Td>
+													<Text size='sm'>Form Field Incomplete</Text>
+												</Table.Td>
+												<Table.Td>
+													<Badge size='sm' color='yellow'>
+														Low
+													</Badge>
+												</Table.Td>
+												<Table.Td>
+													<Badge size='sm' color='green'>
+														Corrected
+													</Badge>
+												</Table.Td>
+											</Table.Tr>
+										</Table.Tbody>
+									</Table>
+								</Stack>
+							</Card>
+						</Stack>
+					</Tabs.Panel>
+				</Tabs>
 			</Stack>
 		</ContentContainer>
 	);
