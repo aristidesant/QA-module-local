@@ -67,28 +67,47 @@
 /* Ensure consistent label height and spacing across all filter components */
 .filtersGrid :global(.mantine-Stack-root) {
 	height: 100%;
+	justify-content: flex-end;
 }
 
 .filtersGrid :global(.mantine-Text-root) {
-	min-height: 20px;
+	height: 20px;
+	line-height: 20px;
 	margin-bottom: var(--mantine-spacing-xs);
+	flex-shrink: 0;
 }
 
 .filtersGrid :global(.mantine-Input-wrapper) {
 	flex: 1;
-}
-
-.filtersGrid :global(.mantine-MultiSelect-wrapper),
-.filtersGrid :global(.mantine-NumberInput-wrapper),
-.filtersGrid :global(.mantine-TextInput-wrapper),
-.filtersGrid :global(.mantine-Checkbox-root) {
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-end;
 }
 
+.filtersGrid :global(.mantine-Input-wrapper > label) {
+	height: 20px;
+	line-height: 20px;
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.filtersGrid :global(.mantine-MultiSelect-wrapper),
+.filtersGrid :global(.mantine-NumberInput-wrapper),
+.filtersGrid :global(.mantine-TextInput-wrapper) {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	height: 100%;
+}
+
 .filtersGrid :global(.mantine-Group-root) {
 	align-items: flex-end;
+	width: 100%;
+}
+
+.filtersGrid :global(.mantine-Group-root > *) {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
 }
 
 .metricsPanel {
