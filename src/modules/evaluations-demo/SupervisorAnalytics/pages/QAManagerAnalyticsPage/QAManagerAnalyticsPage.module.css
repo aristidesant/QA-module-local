@@ -1,0 +1,141 @@
+.container {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+	padding: 0;
+	max-width: 100%;
+	margin: 0;
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
+	margin-bottom: var(--mantine-spacing-md);
+}
+
+.headerTitle {
+	font-size: var(--mantine-font-size-xl);
+	font-weight: 700;
+	color: var(--mantine-color-gray-9);
+}
+
+[data-mantine-color-scheme='dark'] .headerTitle {
+	color: var(--mantine-color-dark-0);
+}
+
+.headerSubtitle {
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-6);
+}
+
+[data-mantine-color-scheme='dark'] .headerSubtitle {
+	color: var(--mantine-color-dark-2);
+}
+
+.filterSection {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-lg);
+	background: white;
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+[data-mantine-color-scheme='dark'] .filterSection {
+	background: var(--mantine-color-dark-7);
+	border-color: var(--mantine-color-dark-5);
+}
+
+.filtersGrid {
+	display: grid;
+	grid-template-columns: 1fr 1fr 1fr;
+	gap: var(--mantine-spacing-lg);
+	align-items: end;
+}
+
+.filtersGrid > * {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	height: auto;
+}
+
+.filterActions {
+	display: flex;
+	gap: var(--mantine-spacing-md);
+	justify-content: flex-end;
+	padding-top: var(--mantine-spacing-md);
+}
+
+.filtersGrid :global(.mantine-Stack-root) {
+	justify-content: flex-end;
+}
+
+.filtersGrid :global(.mantine-Text-root) {
+	height: 20px;
+	line-height: 20px;
+	margin-bottom: var(--mantine-spacing-xs);
+	flex-shrink: 0;
+}
+
+.filtersGrid :global(.mantine-Input-wrapper) {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+}
+
+.filtersGrid :global(.mantine-Input-wrapper > label) {
+	height: 20px;
+	line-height: 20px;
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.filtersGrid :global(.mantine-MultiSelect-wrapper),
+.filtersGrid :global(.mantine-NumberInput-wrapper),
+.filtersGrid :global(.mantine-TextInput-wrapper) {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+}
+
+.filtersGrid :global(.mantine-Group-root) {
+	align-items: flex-end;
+	width: 100%;
+}
+
+.filtersGrid :global(.mantine-Group-root > *) {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+}
+
+.metricsPanel {
+	width: 100%;
+}
+
+.agentTableContainer {
+	width: 100%;
+}
+
+@media (max-width: 1200px) {
+	.filtersGrid {
+		grid-template-columns: 1fr 1fr;
+	}
+}
+
+@media (max-width: 768px) {
+	.filtersGrid {
+		grid-template-columns: 1fr;
+	}
+
+	.filterActions {
+		flex-direction: column;
+		justify-content: stretch;
+	}
+
+	.filterActions > button {
+		width: 100%;
+	}
+}

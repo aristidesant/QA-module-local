@@ -544,6 +544,12 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			exact: true,
 		},
 		{
+			key: 'role-preview-qa-manager-analytics',
+			label: 'sidebar.rolePreview.items.analytics',
+			icon: <IconChartLine size={20} className={styles.menuIcon} />,
+			to: '/role-preview/qa-manager-analytics',
+		},
+		{
 			key: 'role-preview-qa-tests',
 			label: 'sidebar.rolePreview.items.qaTests',
 			icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
