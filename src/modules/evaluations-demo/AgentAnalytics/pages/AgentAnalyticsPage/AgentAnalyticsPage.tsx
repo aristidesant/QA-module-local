@@ -101,6 +101,11 @@ const AgentAnalyticsPage: React.FC = () => {
 							value={selectedAnalysis}
 							onChange={setSelectedAnalysis}
 						/>
+						<CampaignFilter
+							selectedCampaigns={selectedCampaigns}
+							onCampaignsChange={setSelectedCampaigns}
+							availableCampaigns={CAMPAIGNS}
+						/>
 						<DateRangeFilter
 							dateRange={dateRange}
 							onDateRangeChange={setDateRange}
@@ -109,18 +114,13 @@ const AgentAnalyticsPage: React.FC = () => {
 							compareDateRange={compareDateRange}
 							onCompareDateRangeChange={setCompareDateRange}
 						/>
-						<CampaignFilter
-							selectedCampaigns={selectedCampaigns}
-							onCampaignsChange={setSelectedCampaigns}
-							availableCampaigns={CAMPAIGNS}
+						<DisputeFilter
+							selectedDisputes={selectedDisputes}
+							onDisputesChange={setSelectedDisputes}
 						/>
 						<AutofailFilter
 							selectedAutofail={selectedAutofail}
 							onAutofailChange={setSelectedAutofail}
-						/>
-						<DisputeFilter
-							selectedDisputes={selectedDisputes}
-							onDisputesChange={setSelectedDisputes}
 						/>
 						<ScoreRangeFilter
 							minScore={minScore}
