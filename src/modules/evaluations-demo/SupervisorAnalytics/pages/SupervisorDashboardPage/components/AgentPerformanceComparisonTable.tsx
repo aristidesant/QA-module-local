@@ -20,7 +20,6 @@ import styles from './AgentPerformanceComparisonTable.module.css';
 
 interface AgentPerformanceComparisonTableProps {
 	calls: DemoAgentCall[];
-	analysisType: string;
 }
 
 interface AgentPerformanceData {
@@ -32,22 +31,14 @@ interface AgentPerformanceData {
 
 const AgentPerformanceComparisonTable: React.FC<
 	AgentPerformanceComparisonTableProps
-> = ({ calls, analysisType }) => {
+> = ({ calls }) => {
 	const [sortBy, setSortBy] = useState<'score' | 'gap' | 'name'>('score');
 
 	const { agentMetrics, teamAverage } = useMemo(() => {
-		// Filter calls by analysis type
-		const filteredCalls = calls.filter((call) => {
-			if (analysisType === 'qa')
-				return call.evaluationType === 'QA' && call.score !== null;
-			if (analysisType === 'emotion')
-				return (
-					call.evaluationType === 'Sentiment Analysis' && call.score !== null
-				);
-			if (analysisType === 'compliance')
-				return call.evaluationType === 'Compliance' && call.score !== null;
-			return false;
-		});
+		// Filter calls by QA Analysis (default metric for agent ranking)
+		const filteredCalls = calls.filter(
+			(call) => call.evaluationType === 'QA' && call.score !== null
+		);
 
 		// Group by agent and calculate metrics
 		const agentMap = new Map<string, number[]>();
@@ -81,7 +72,7 @@ const AgentPerformanceComparisonTable: React.FC<
 			agentMetrics: metrics,
 			teamAverage: teamAvg,
 		};
-	}, [calls, analysisType]);
+	}, [calls]);
 
 	const sortedMetrics = useMemo(() => {
 		const sorted = [...agentMetrics];

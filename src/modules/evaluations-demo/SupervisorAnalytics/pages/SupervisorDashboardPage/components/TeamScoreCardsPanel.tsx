@@ -18,7 +18,6 @@ import styles from './TeamScoreCardsPanel.module.css';
 
 interface TeamScoreCardsPanelProps {
 	calls: DemoAgentCall[];
-	analysisType: string;
 }
 
 interface TeamScoreData {
@@ -31,10 +30,7 @@ interface TeamScoreData {
 	icon: React.ReactNode;
 }
 
-const TeamScoreCardsPanel: React.FC<TeamScoreCardsPanelProps> = ({
-	calls,
-	analysisType,
-}) => {
+const TeamScoreCardsPanel: React.FC<TeamScoreCardsPanelProps> = ({ calls }) => {
 	const scoreData = useMemo(() => {
 		const getScores = (type: string) =>
 			calls
@@ -67,7 +63,7 @@ const TeamScoreCardsPanel: React.FC<TeamScoreCardsPanelProps> = ({
 		const qaStats = calculateStats(qaScores);
 		const emotionStats = calculateStats(emotionScores);
 		const complianceStats = calculateStats(complianceScores);
-		const allData = [
+		const allData: TeamScoreData[] = [
 			{
 				label: 'QA Analysis Score',
 				teamAvg: qaStats.avg,
@@ -100,16 +96,6 @@ const TeamScoreCardsPanel: React.FC<TeamScoreCardsPanelProps> = ({
 		return allData;
 	}, [calls]);
 
-	// Filter to show only selected analysis type
-	const filteredData = useMemo((): TeamScoreData[] => {
-		const typeMap: Record<string, number> = {
-			qa: 0,
-			emotion: 1,
-			compliance: 2,
-		};
-		return [scoreData[typeMap[analysisType] || 0]];
-	}, [scoreData, analysisType]);
-
 	const getSpreadColor = (spread: number): string => {
 		if (spread <= 15) return 'green';
 		if (spread <= 30) return 'yellow';
@@ -118,7 +104,7 @@ const TeamScoreCardsPanel: React.FC<TeamScoreCardsPanelProps> = ({
 
 	return (
 		<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='md'>
-			{filteredData.map((data) => (
+			{scoreData.map((data) => (
 				<Card
 					key={data.label}
 					withBorder

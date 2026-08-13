@@ -5,95 +5,82 @@ import type { DemoAgentCall } from '../../../../AgentDashboard/types';
 
 interface TeamPerformanceTrendChartProps {
 	calls: DemoAgentCall[];
-	analysisType: string;
 }
 
 const TeamPerformanceTrendChart: React.FC<TeamPerformanceTrendChartProps> = ({
 	calls,
-	analysisType,
 }) => {
 	const chartData = useMemo(() => {
 		const weeks = [];
 		const today = new Date();
-		const agentNames = [
-			...new Set(calls.map((call) => call.agentName || 'Unknown Agent')),
-		];
 
 		for (let i = 3; i >= 0; i--) {
 			const weekStart = new Date(today);
 			weekStart.setDate(weekStart.getDate() - i * 7);
 			const weekLabel = `Week ${4 - i}`;
 
-			// Filter calls for this analysis type
-			const filteredCalls = calls.filter((call) => {
-				if (analysisType === 'qa')
-					return call.evaluationType === 'QA' && call.score !== null;
-				if (analysisType === 'emotion')
-					return (
-						call.evaluationType === 'Sentiment Analysis' && call.score !== null
-					);
-				if (analysisType === 'compliance')
-					return call.evaluationType === 'Compliance' && call.score !== null;
-				return false;
-			});
+			// Calculate team average for QA
+			const qaScores = calls
+				.filter((call) => call.evaluationType === 'QA' && call.score !== null)
+				.map((call) => call.score as number);
+			const qaAvg =
+				qaScores.length > 0
+					? Math.round(qaScores.reduce((a, b) => a + b, 0) / qaScores.length)
+					: 0;
 
-			// Calculate team average
-			const teamScores = filteredCalls.map((call) => call.score as number);
-			const teamAvg =
-				teamScores.length > 0
+			// Calculate team average for Emotion & Sentiment
+			const emotionScores = calls
+				.filter(
+					(call) =>
+						call.evaluationType === 'Sentiment Analysis' && call.score !== null
+				)
+				.map((call) => call.score as number);
+			const emotionAvg =
+				emotionScores.length > 0
 					? Math.round(
-							teamScores.reduce((a, b) => a + b, 0) / teamScores.length
+							emotionScores.reduce((a, b) => a + b, 0) / emotionScores.length
+						)
+					: 0;
+
+			// Calculate team average for Compliance
+			const complianceScores = calls
+				.filter(
+					(call) => call.evaluationType === 'Compliance' && call.score !== null
+				)
+				.map((call) => call.score as number);
+			const complianceAvg =
+				complianceScores.length > 0
+					? Math.round(
+							complianceScores.reduce((a, b) => a + b, 0) /
+								complianceScores.length
 						)
 					: 0;
 
 			const weekData: Record<string, number | string> = {
 				week: weekLabel,
-				'Team Avg': teamAvg,
+				'QA Analysis': qaAvg,
+				'Emotion & Sentiment': emotionAvg,
+				Compliance: complianceAvg,
 			};
-
-			// Calculate per-agent average
-			agentNames.forEach((agent) => {
-				const agentScores = filteredCalls
-					.filter((call) => (call.agentName || 'Unknown Agent') === agent)
-					.map((call) => call.score as number);
-
-				const agentAvg =
-					agentScores.length > 0
-						? Math.round(
-								agentScores.reduce((a, b) => a + b, 0) / agentScores.length
-							)
-						: 0;
-
-				weekData[agent] = agentAvg;
-			});
 
 			weeks.push(weekData);
 		}
 
 		return weeks;
-	}, [calls, analysisType]);
-
-	const getSeries = useMemo(() => {
-		const agentNames = [
-			...new Set(calls.map((call) => call.agentName || 'Unknown Agent')),
-		];
-		const series: Array<{ name: string; label: string; color: string }> = [
-			{ name: 'Team Avg', label: 'Team Average', color: 'blue' },
-		];
-
-		const colors = ['green', 'grape', 'cyan', 'yellow', 'red'];
-		agentNames.forEach((agent) => {
-			if (agent) {
-				series.push({
-					name: agent,
-					label: agent,
-					color: colors[series.length % colors.length],
-				});
-			}
-		});
-
-		return series;
 	}, [calls]);
+
+	const getSeries = useMemo(
+		() => [
+			{ name: 'QA Analysis', label: 'QA Analysis', color: 'blue' },
+			{
+				name: 'Emotion & Sentiment',
+				label: 'Emotion & Sentiment',
+				color: 'green',
+			},
+			{ name: 'Compliance', label: 'Compliance', color: 'grape' },
+		],
+		[]
+	);
 
 	return (
 		<Card withBorder radius='md' p='md'>
