@@ -151,23 +151,34 @@ export const useAnalyticsData = (
 					filteredCalls.reduce((sum, c) => sum + (c.sentimentScore || 0), 0) /
 					filteredCalls.length;
 
-				// Calculate predominant emotion
-				const emotionCounts: Record<string, number> = {};
+				// Calculate agent predominant emotion
+				const agentEmotionCounts: Record<string, number> = {};
 				filteredCalls.forEach((c) => {
 					if (c.agentEmotion) {
-						emotionCounts[c.agentEmotion] = (emotionCounts[c.agentEmotion] || 0) + 1;
+						agentEmotionCounts[c.agentEmotion] = (agentEmotionCounts[c.agentEmotion] || 0) + 1;
 					}
 				});
-				const predominantEmotion = Object.entries(emotionCounts).sort(
+				const predominantAgentEmotion = Object.entries(agentEmotionCounts).sort(
 					(a, b) => b[1] - a[1]
 				)[0];
-				const predominantEmotionPercentage = predominantEmotion
-					? Math.round((predominantEmotion[1] / filteredCalls.length) * 100)
+				const predominantAgentEmotionPercentage = predominantAgentEmotion
+					? Math.round((predominantAgentEmotion[1] / filteredCalls.length) * 100)
 					: 0;
 
-				const empathyCount = filteredCalls.filter(
-					(c) => c.agentEmotion === 'EMPATHY'
-				).length;
+				// Calculate customer predominant emotion
+				const customerEmotionCounts: Record<string, number> = {};
+				filteredCalls.forEach((c) => {
+					if (c.customerEmotion) {
+						customerEmotionCounts[c.customerEmotion] = (customerEmotionCounts[c.customerEmotion] || 0) + 1;
+					}
+				});
+				const predominantCustomerEmotion = Object.entries(customerEmotionCounts).sort(
+					(a, b) => b[1] - a[1]
+				)[0];
+				const predominantCustomerEmotionPercentage = predominantCustomerEmotion
+					? Math.round((predominantCustomerEmotion[1] / filteredCalls.length) * 100)
+					: 0;
+
 				const recoveredCount = filteredCalls.filter(
 					(c) => c.recoveryStatus === 'recovered'
 				).length;
@@ -180,11 +191,15 @@ export const useAnalyticsData = (
 						suffix: '',
 					},
 					{
-						label: `Predominant Emotion (${predominantEmotion?.[0] || 'N/A'})`,
-						value: predominantEmotionPercentage,
+						label: `Agent Emotion (${predominantAgentEmotion?.[0] || 'N/A'})`,
+						value: predominantAgentEmotionPercentage,
 						suffix: '%',
 					},
-					{ label: 'Empathy Indicators', value: empathyCount, suffix: '' },
+					{
+						label: `Client Emotion (${predominantCustomerEmotion?.[0] || 'N/A'})`,
+						value: predominantCustomerEmotionPercentage,
+						suffix: '%',
+					},
 					{
 						label: 'Recovery Rate',
 						value: Math.round(recoveryRate),

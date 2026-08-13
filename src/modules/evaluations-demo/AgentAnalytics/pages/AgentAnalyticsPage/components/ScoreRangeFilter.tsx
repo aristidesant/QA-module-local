@@ -14,6 +14,22 @@ const ScoreRangeFilter: React.FC<ScoreRangeFilterProps> = ({
 	onMinScoreChange,
 	onMaxScoreChange,
 }) => {
+	const handleMinChange = (val: number | string | null) => {
+		if (val === null || val === '') {
+			onMinScoreChange('');
+		} else if (typeof val === 'number') {
+			onMinScoreChange(val);
+		}
+	};
+
+	const handleMaxChange = (val: number | string | null) => {
+		if (val === null || val === '') {
+			onMaxScoreChange('');
+		} else if (typeof val === 'number') {
+			onMaxScoreChange(val);
+		}
+	};
+
 	return (
 		<Stack gap='sm'>
 			<Text fw={600} size='sm'>
@@ -24,7 +40,7 @@ const ScoreRangeFilter: React.FC<ScoreRangeFilterProps> = ({
 					label='Minimum'
 					placeholder='Start value'
 					value={minScore}
-					onChange={(val) => onMinScoreChange(val || '')}
+					onChange={handleMinChange}
 					min={0}
 					max={100}
 				/>
@@ -32,7 +48,7 @@ const ScoreRangeFilter: React.FC<ScoreRangeFilterProps> = ({
 					label='Maximum'
 					placeholder='Limit value'
 					value={maxScore}
-					onChange={(val) => onMaxScoreChange(val || '')}
+					onChange={handleMaxChange}
 					min={0}
 					max={100}
 				/>
