@@ -1,5 +1,19 @@
-import { Card, Stack, Text, ThemeIcon, Skeleton, Alert, Group, Loader, Center, Badge } from '@mantine/core';
-import { IconAlertCircle, IconHeadphones, IconPhone } from '@tabler/icons-react';
+import {
+	Card,
+	Stack,
+	Text,
+	Skeleton,
+	Alert,
+	Group,
+	Loader,
+	Center,
+	Badge,
+} from '@mantine/core';
+import {
+	IconAlertCircle,
+	IconHeadphones,
+	IconPhone,
+} from '@tabler/icons-react';
 import {
 	IconMoodSmile,
 	IconMoodHappy,
@@ -10,7 +24,15 @@ import {
 } from '@tabler/icons-react';
 import styles from './EmotionDisplay.module.css';
 
-type EmotionType = 'NEUTRAL' | 'JOY' | 'ANGER' | 'RAGE' | 'FRUSTRATION' | 'SADNESS' | 'FEAR' | 'SURPRISE';
+type EmotionType =
+	| 'NEUTRAL'
+	| 'JOY'
+	| 'ANGER'
+	| 'RAGE'
+	| 'FRUSTRATION'
+	| 'SADNESS'
+	| 'FEAR'
+	| 'SURPRISE';
 type Status = 'idle' | 'loading' | 'error' | 'skeleton';
 
 interface EmotionDisplayProps {
@@ -22,14 +44,14 @@ interface EmotionDisplayProps {
 }
 
 const EMOTION_COLORS: Record<EmotionType, string> = {
-	NEUTRAL: '#868E96',      // Gray
-	JOY: '#FFD43B',          // Yellow
-	ANGER: '#FA5252',        // Dark Red
-	RAGE: '#C41E3A',         // Deep Red
-	FRUSTRATION: '#FF6B6B',  // Red
-	SADNESS: '#9B8BA8',      // Dusty Mauve (nostalgic)
-	FEAR: '#36313D',         // Dark Charcoal (near black)
-	SURPRISE: '#FF922B',     // Orange
+	NEUTRAL: '#868E96', // Gray
+	JOY: '#FFD43B', // Yellow
+	ANGER: '#FA5252', // Dark Red
+	RAGE: '#C41E3A', // Deep Red
+	FRUSTRATION: '#FF6B6B', // Red
+	SADNESS: '#9B8BA8', // Dusty Mauve (nostalgic)
+	FEAR: '#36313D', // Dark Charcoal (near black)
+	SURPRISE: '#FF922B', // Orange
 };
 
 const EMOTION_ICONS: Record<EmotionType, React.ReactNode> = {
@@ -181,7 +203,16 @@ export default function EmotionDisplay({
 							className={styles.emotionIconContainer}
 							style={{ backgroundColor: emotionColor }}
 						>
-							<div style={{ color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+							<div
+								style={{
+									color: 'white',
+									display: 'flex',
+									alignItems: 'center',
+									justifyContent: 'center',
+									width: '100%',
+									height: '100%',
+								}}
+							>
 								{emotionIcon}
 							</div>
 						</div>

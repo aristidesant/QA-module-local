@@ -114,6 +114,10 @@ const AgentLmsDetailPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/AgentDashboard/pages/AgentLmsDetailPage/AgentLmsDetailPage')
 );
+const AgentAnalyticsPage = React.lazy(
+	() =>
+		import('./modules/evaluations-demo/AgentAnalytics/pages/AgentAnalyticsPage/AgentAnalyticsPage')
+);
 const EmotionDisplayShowcase = React.lazy(
 	() => import('./modules/evaluations-demo/pages/EmotionDisplayShowcase')
 );
@@ -1171,6 +1175,15 @@ const router = createBrowserRouter([
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
 										<AgentLmsDetailPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/agent-analytics',
+								id: 'role-preview.agent-analytics',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<AgentAnalyticsPage />
 									</Suspense>
 								),
 							},

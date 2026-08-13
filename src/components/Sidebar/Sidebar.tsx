@@ -45,6 +45,7 @@ import {
 	IconUsersGroup,
 	IconShield,
 	IconTrendingUp,
+	IconChartLine,
 } from '@tabler/icons-react';
 import { Link, useLocation } from 'react-router';
 import { useTranslation } from 'react-i18next';
@@ -483,6 +484,12 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			icon: <IconSchool size={20} className={styles.menuIcon} />,
 			to: '/role-preview/agent-dashboard/lms',
 			disabled: true,
+		},
+		{
+			key: 'role-preview-analytics',
+			label: 'sidebar.rolePreview.items.analytics',
+			icon: <IconChartLine size={20} className={styles.menuIcon} />,
+			to: '/role-preview/agent-analytics',
 		},
 	],
 	supervisor: [

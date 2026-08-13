@@ -1,8 +1,26 @@
-import { Container, Grid, Stack, Text, Title, Divider, Group, Badge, Box } from '@mantine/core';
+import {
+	Container,
+	Grid,
+	Stack,
+	Text,
+	Title,
+	Divider,
+	Group,
+	Badge,
+	Box,
+} from '@mantine/core';
 import EmotionDisplay from '../components/SentimentAnalysisView/components/EmotionDisplay';
 import styles from './EmotionDisplayShowcase.module.css';
 
-type EmotionType = 'NEUTRAL' | 'JOY' | 'ANGER' | 'RAGE' | 'FRUSTRATION' | 'SADNESS' | 'FEAR' | 'SURPRISE';
+type EmotionType =
+	| 'NEUTRAL'
+	| 'JOY'
+	| 'ANGER'
+	| 'RAGE'
+	| 'FRUSTRATION'
+	| 'SADNESS'
+	| 'FEAR'
+	| 'SURPRISE';
 
 const emotions: EmotionType[] = [
 	'NEUTRAL',
@@ -43,7 +61,9 @@ export default function EmotionDisplayShowcase() {
 						</Title>
 					</div>
 					<Text size='lg' c='dimmed' maw={600}>
-						Real-time emotion analysis visualization for agent and customer sentiment tracking. Supports multiple emotion types, confidence levels, and status states.
+						Real-time emotion analysis visualization for agent and customer
+						sentiment tracking. Supports multiple emotion types, confidence
+						levels, and status states.
 					</Text>
 				</Stack>
 
@@ -62,12 +82,22 @@ export default function EmotionDisplayShowcase() {
 
 					{/* Agent Emotions */}
 					<div>
-						<Text size='sm' fw={600} c='dimmed' tt='uppercase' mb={12} className={styles.subsectionLabel}>
+						<Text
+							size='sm'
+							fw={600}
+							c='dimmed'
+							tt='uppercase'
+							mb={12}
+							className={styles.subsectionLabel}
+						>
 							Agent Perspective
 						</Text>
 						<Grid gap={16}>
 							{emotions.map((emotion) => (
-								<Grid.Col key={`agent-idle-${emotion}`} span={{ base: 12, sm: 6, md: 4, lg: 3 }}>
+								<Grid.Col
+									key={`agent-idle-${emotion}`}
+									span={{ base: 12, sm: 6, md: 4, lg: 3 }}
+								>
 									<Stack gap={8}>
 										<div>
 											<Text size='sm' fw={600}>
@@ -91,12 +121,22 @@ export default function EmotionDisplayShowcase() {
 
 					{/* Customer Emotions */}
 					<div>
-						<Text size='sm' fw={600} c='dimmed' tt='uppercase' mb={12} className={styles.subsectionLabel}>
+						<Text
+							size='sm'
+							fw={600}
+							c='dimmed'
+							tt='uppercase'
+							mb={12}
+							className={styles.subsectionLabel}
+						>
 							Customer Perspective
 						</Text>
 						<Grid gap={16}>
 							{emotions.map((emotion) => (
-								<Grid.Col key={`customer-idle-${emotion}`} span={{ base: 12, sm: 6, md: 4, lg: 3 }}>
+								<Grid.Col
+									key={`customer-idle-${emotion}`}
+									span={{ base: 12, sm: 6, md: 4, lg: 3 }}
+								>
 									<Stack gap={8}>
 										<div>
 											<Text size='sm' fw={600}>
@@ -134,13 +174,22 @@ export default function EmotionDisplayShowcase() {
 
 					{/* Loading State */}
 					<Box>
-						<Text size='sm' fw={600} c='dimmed' tt='uppercase' mb={12} className={styles.subsectionLabel}>
+						<Text
+							size='sm'
+							fw={600}
+							c='dimmed'
+							tt='uppercase'
+							mb={12}
+							className={styles.subsectionLabel}
+						>
 							Loading
 						</Text>
 						<Grid gap={16}>
 							<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
 								<Stack gap={8}>
-									<Text size='sm' fw={600}>Agent Loading</Text>
+									<Text size='sm' fw={600}>
+										Agent Loading
+									</Text>
 									<EmotionDisplay
 										emotion='NEUTRAL'
 										status='loading'
@@ -150,7 +199,9 @@ export default function EmotionDisplayShowcase() {
 							</Grid.Col>
 							<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
 								<Stack gap={8}>
-									<Text size='sm' fw={600}>Customer Loading</Text>
+									<Text size='sm' fw={600}>
+										Customer Loading
+									</Text>
 									<EmotionDisplay
 										emotion='JOY'
 										status='loading'
@@ -163,13 +214,22 @@ export default function EmotionDisplayShowcase() {
 
 					{/* Skeleton State */}
 					<Box>
-						<Text size='sm' fw={600} c='dimmed' tt='uppercase' mb={12} className={styles.subsectionLabel}>
+						<Text
+							size='sm'
+							fw={600}
+							c='dimmed'
+							tt='uppercase'
+							mb={12}
+							className={styles.subsectionLabel}
+						>
 							Skeleton (Placeholder)
 						</Text>
 						<Grid gap={16}>
 							<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
 								<Stack gap={8}>
-									<Text size='sm' fw={600}>Agent Skeleton</Text>
+									<Text size='sm' fw={600}>
+										Agent Skeleton
+									</Text>
 									<EmotionDisplay
 										emotion='NEUTRAL'
 										status='skeleton'
@@ -179,7 +239,9 @@ export default function EmotionDisplayShowcase() {
 							</Grid.Col>
 							<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
 								<Stack gap={8}>
-									<Text size='sm' fw={600}>Customer Skeleton</Text>
+									<Text size='sm' fw={600}>
+										Customer Skeleton
+									</Text>
 									<EmotionDisplay
 										emotion='JOY'
 										status='skeleton'
@@ -192,13 +254,22 @@ export default function EmotionDisplayShowcase() {
 
 					{/* Error State */}
 					<Box>
-						<Text size='sm' fw={600} c='dimmed' tt='uppercase' mb={12} className={styles.subsectionLabel}>
+						<Text
+							size='sm'
+							fw={600}
+							c='dimmed'
+							tt='uppercase'
+							mb={12}
+							className={styles.subsectionLabel}
+						>
 							Error
 						</Text>
 						<Grid gap={16}>
 							<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
 								<Stack gap={8}>
-									<Text size='sm' fw={600}>Agent Error</Text>
+									<Text size='sm' fw={600}>
+										Agent Error
+									</Text>
 									<EmotionDisplay
 										emotion='NEUTRAL'
 										status='error'
@@ -209,7 +280,9 @@ export default function EmotionDisplayShowcase() {
 							</Grid.Col>
 							<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
 								<Stack gap={8}>
-									<Text size='sm' fw={600}>Customer Error</Text>
+									<Text size='sm' fw={600}>
+										Customer Error
+									</Text>
 									<EmotionDisplay
 										emotion='JOY'
 										status='error'
@@ -238,7 +311,9 @@ export default function EmotionDisplayShowcase() {
 					<Grid gap={16}>
 						<Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
 							<Stack gap={8}>
-								<Text size='sm' fw={600}>Very Low (25%)</Text>
+								<Text size='sm' fw={600}>
+									Very Low (25%)
+								</Text>
 								<EmotionDisplay
 									emotion='NEUTRAL'
 									confidence={0.25}
@@ -249,7 +324,9 @@ export default function EmotionDisplayShowcase() {
 						</Grid.Col>
 						<Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
 							<Stack gap={8}>
-								<Text size='sm' fw={600}>Low (45%)</Text>
+								<Text size='sm' fw={600}>
+									Low (45%)
+								</Text>
 								<EmotionDisplay
 									emotion='JOY'
 									confidence={0.45}
@@ -260,7 +337,9 @@ export default function EmotionDisplayShowcase() {
 						</Grid.Col>
 						<Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
 							<Stack gap={8}>
-								<Text size='sm' fw={600}>High (75%)</Text>
+								<Text size='sm' fw={600}>
+									High (75%)
+								</Text>
 								<EmotionDisplay
 									emotion='ANGER'
 									confidence={0.75}
@@ -271,7 +350,9 @@ export default function EmotionDisplayShowcase() {
 						</Grid.Col>
 						<Grid.Col span={{ base: 12, sm: 6, md: 3 }}>
 							<Stack gap={8}>
-								<Text size='sm' fw={600}>Very High (95%)</Text>
+								<Text size='sm' fw={600}>
+									Very High (95%)
+								</Text>
 								<EmotionDisplay
 									emotion='SADNESS'
 									confidence={0.95}
@@ -291,35 +372,47 @@ export default function EmotionDisplayShowcase() {
 						Component Props
 					</Title>
 					<Box className={styles.docsBox}>
-						<Stack gap={12} size='sm'>
+						<Stack gap={12}>
 							<div>
-								<Text size='sm' fw={600} ff='monospace'>emotion?: EmotionType</Text>
+								<Text size='sm' fw={600} ff='monospace'>
+									emotion?: EmotionType
+								</Text>
 								<Text size='xs' c='dimmed'>
-									One of: NEUTRAL | JOY | ANGER | RAGE | FRUSTRATION | SADNESS | FEAR | SURPRISE
+									One of: NEUTRAL | JOY | ANGER | RAGE | FRUSTRATION | SADNESS |
+									FEAR | SURPRISE
 								</Text>
 							</div>
 							<div>
-								<Text size='sm' fw={600} ff='monospace'>confidence?: number</Text>
+								<Text size='sm' fw={600} ff='monospace'>
+									confidence?: number
+								</Text>
 								<Text size='xs' c='dimmed'>
 									Decimal value from 0 to 1 (0% to 100%). Default: 0.85
 								</Text>
 							</div>
 							<div>
-								<Text size='sm' fw={600} ff='monospace'>status?: 'idle' | 'loading' | 'error' | 'skeleton'</Text>
+								<Text size='sm' fw={600} ff='monospace'>
+									status?: 'idle' | 'loading' | 'error' | 'skeleton'
+								</Text>
 								<Text size='xs' c='dimmed'>
 									Current state of the component. Default: 'idle'
 								</Text>
 							</div>
 							<div>
-								<Text size='sm' fw={600} ff='monospace'>type?: 'agent' | 'customer'</Text>
+								<Text size='sm' fw={600} ff='monospace'>
+									type?: 'agent' | 'customer'
+								</Text>
 								<Text size='xs' c='dimmed'>
 									Who the emotion is from. Default: 'agent'
 								</Text>
 							</div>
 							<div>
-								<Text size='sm' fw={600} ff='monospace'>errorMessage?: string</Text>
+								<Text size='sm' fw={600} ff='monospace'>
+									errorMessage?: string
+								</Text>
 								<Text size='xs' c='dimmed'>
-									Custom error message for error state. Default: 'Failed to analyze emotion'
+									Custom error message for error state. Default: 'Failed to
+									analyze emotion'
 								</Text>
 							</div>
 						</Stack>
