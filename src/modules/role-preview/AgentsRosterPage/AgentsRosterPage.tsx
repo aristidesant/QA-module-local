@@ -70,7 +70,7 @@ export default function AgentsRosterPage() {
 		() => [
 			{
 				accessorKey: 'employeeId',
-				header: tAgents('table.employeeId'),
+				header: 'Agent ID',
 				cell: ({ row }) => (
 					<Text fw={700} size='sm'>
 						{row.original.employeeId}

@@ -5,7 +5,7 @@
 
 :global(.BaseTable__scrollContainer) th:nth-child(1),
 :global(.BaseTable__scrollContainer) td:nth-child(1) {
-	width: 180px;
+	width: 200px;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
