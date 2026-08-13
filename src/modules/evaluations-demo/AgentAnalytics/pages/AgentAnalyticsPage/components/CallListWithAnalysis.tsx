@@ -72,7 +72,6 @@ const CallListWithAnalysis: React.FC<CallListWithAnalysisProps> = ({
 		>
 			<Table.Td fw={500}>{call.id}</Table.Td>
 			<Table.Td>{call.date.toLocaleDateString()}</Table.Td>
-			<Table.Td>{call.agentName}</Table.Td>
 			<Table.Td>{Math.round(call.duration / 60)} min</Table.Td>
 			<Table.Td fw={600}>{call.qaScore}</Table.Td>
 			<Table.Td>
@@ -184,7 +183,6 @@ const CallListWithAnalysis: React.FC<CallListWithAnalysisProps> = ({
 				return [
 					'Call ID',
 					'Date',
-					'Agent',
 					'Duration',
 					'Score',
 					'Status',

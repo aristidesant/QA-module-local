@@ -74,7 +74,11 @@ export const useAnalyticsData = (
 	analysisType: AnalysisType,
 	dateRange: DateRange,
 	_compareEnabled: boolean,
-	selectedCampaigns: string[] = []
+	selectedCampaigns: string[] = [],
+	minScore?: number,
+	maxScore?: number,
+	selectedAutofail?: string[],
+	selectedDisputes?: string[]
 ) => {
 	const mockCalls = useMemo(() => generateMockCalls(), []);
 
@@ -84,13 +88,33 @@ export const useAnalyticsData = (
 			const isInDateRange =
 				callDate >= dateRange.startDate && callDate <= dateRange.endDate;
 
-			if (selectedCampaigns.length === 0) {
-				return isInDateRange;
+			if (!isInDateRange) return false;
+
+			if (selectedCampaigns.length > 0 && !selectedCampaigns.includes(call.campaign)) {
+				return false;
 			}
 
-			return isInDateRange && selectedCampaigns.includes(call.campaign);
+			if (minScore !== undefined && call.qaScore && call.qaScore < minScore) {
+				return false;
+			}
+
+			if (maxScore !== undefined && call.qaScore && call.qaScore > maxScore) {
+				return false;
+			}
+
+			if (selectedAutofail && selectedAutofail.length > 0 && !selectedAutofail.includes('All')) {
+				// Mock autofail filtering - in real app this would come from call data
+				return true;
+			}
+
+			if (selectedDisputes && selectedDisputes.length > 0 && !selectedDisputes.includes('All')) {
+				// Mock dispute filtering - in real app this would come from call data
+				return true;
+			}
+
+			return true;
 		});
-	}, [mockCalls, dateRange, selectedCampaigns]);
+	}, [mockCalls, dateRange, selectedCampaigns, minScore, maxScore, selectedAutofail, selectedDisputes]);
 
 	const aggregatedMetrics = useMemo<AggregatedMetric[]>(() => {
 		if (filteredCalls.length === 0) {
@@ -105,7 +129,6 @@ export const useAnalyticsData = (
 				const passCount = filteredCalls.filter(
 					(c) => c.qaStatus === 'pass'
 				).length;
-				const passRate = (passCount / filteredCalls.length) * 100;
 
 				return [
 					{
@@ -118,19 +141,30 @@ export const useAnalyticsData = (
 						value: filteredCalls.length,
 						suffix: '',
 					},
-					{ label: 'Pass Rate', value: Math.round(passRate), suffix: '%' },
+					{ label: 'Avg. Metric Card', value: Math.round(avgScore), suffix: '' },
 					{ label: 'Conversations Passed', value: passCount, suffix: '' },
 				];
 			}
 
 			case 'emotion': {
-				const positiveCount = filteredCalls.filter(
-					(c) => c.sentimentScore && c.sentimentScore > 0
-				).length;
 				const avgSentiment =
 					filteredCalls.reduce((sum, c) => sum + (c.sentimentScore || 0), 0) /
 					filteredCalls.length;
-				const positiveRate = (positiveCount / filteredCalls.length) * 100;
+
+				// Calculate predominant emotion
+				const emotionCounts: Record<string, number> = {};
+				filteredCalls.forEach((c) => {
+					if (c.agentEmotion) {
+						emotionCounts[c.agentEmotion] = (emotionCounts[c.agentEmotion] || 0) + 1;
+					}
+				});
+				const predominantEmotion = Object.entries(emotionCounts).sort(
+					(a, b) => b[1] - a[1]
+				)[0];
+				const predominantEmotionPercentage = predominantEmotion
+					? Math.round((predominantEmotion[1] / filteredCalls.length) * 100)
+					: 0;
+
 				const empathyCount = filteredCalls.filter(
 					(c) => c.agentEmotion === 'EMPATHY'
 				).length;
@@ -146,8 +180,8 @@ export const useAnalyticsData = (
 						suffix: '',
 					},
 					{
-						label: 'Positive Rate',
-						value: Math.round(positiveRate),
+						label: `Predominant Emotion (${predominantEmotion?.[0] || 'N/A'})`,
+						value: predominantEmotionPercentage,
 						suffix: '%',
 					},
 					{ label: 'Empathy Indicators', value: empathyCount, suffix: '' },
