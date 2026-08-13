@@ -38,8 +38,9 @@ const AgentDetailPage: React.FC = () => {
 
 	const agentCalls = useMemo(() => {
 		if (!agent) return [];
-		const agentName = `Agent ${agent.id}`;
-		return AGENT_DETAIL_CALLS.filter((call) => call.agentName === agentName);
+		return AGENT_DETAIL_CALLS.filter(
+			(call) => call.agentName === agent.employeeId
+		);
 	}, [agent]);
 
 	const metrics = useMemo(() => {
@@ -56,9 +57,10 @@ const AgentDetailPage: React.FC = () => {
 			};
 		}
 
-		const agentName = `Agent ${agent.id}`;
 		const performanceData =
-			AGENT_PERFORMANCE_DATA[agentName as keyof typeof AGENT_PERFORMANCE_DATA];
+			AGENT_PERFORMANCE_DATA[
+				agent.employeeId as keyof typeof AGENT_PERFORMANCE_DATA
+			];
 
 		if (!performanceData) {
 			return {
