@@ -1,8 +1,5 @@
 .card {
-	background: light-dark(
-		var(--mantine-color-white),
-		var(--mantine-color-dark-7)
-	);
+	background: transparent;
 	border-color: light-dark(
 		var(--mantine-color-gray-2),
 		var(--mantine-color-dark-5)
@@ -18,10 +15,7 @@
 }
 
 .table {
-	background: light-dark(
-		var(--mantine-color-white),
-		var(--mantine-color-dark-7)
-	);
+	background: transparent;
 }
 
 .clickableRow {
