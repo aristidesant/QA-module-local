@@ -86,6 +86,9 @@ const RolePreviewPlaceholderPage = React.lazy(
 const AgentsRosterPage = React.lazy(
 	() => import('./modules/role-preview/AgentsRosterPage/AgentsRosterPage')
 );
+const RolePreviewAgentDetailPage = React.lazy(
+	() => import('./modules/role-preview/AgentDetailPage/AgentDetailPage')
+);
 const AgentDashboardPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/AgentDashboard/pages/AgentDashboardPage/AgentDashboardPage')
@@ -1290,6 +1293,15 @@ const router = createBrowserRouter([
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
 										<AgentsRosterPage />
+									</Suspense>
+								),
+							},
+							{
+								path: 'role-preview/agent-detail/:agentId',
+								id: 'role-preview.agent-detail',
+								element: (
+									<Suspense fallback={<SuspenseFallback />}>
+										<RolePreviewAgentDetailPage />
 									</Suspense>
 								),
 							},

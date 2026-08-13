@@ -6,10 +6,17 @@ import {
 	Stack,
 	Text,
 	Tooltip,
+	TextInput,
 } from '@mantine/core';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { IconAlertTriangle, IconKey, IconUsers } from '@tabler/icons-react';
+import {
+	IconAlertTriangle,
+	IconKey,
+	IconUsers,
+	IconSearch,
+} from '@tabler/icons-react';
+import { useNavigate } from 'react-router';
 import type { SortingState } from '@tanstack/react-table';
 
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
@@ -33,6 +40,7 @@ import classes from './AgentsRosterPage.module.css';
 export default function AgentsRosterPage() {
 	const { t: tAgents } = useTranslation('qa.agents');
 	const { t } = useTranslation('common');
+	const navigate = useNavigate();
 	const {
 		page,
 		setPage,
@@ -45,6 +53,7 @@ export default function AgentsRosterPage() {
 	} = useListPageState();
 	const [agentForUserCreation, setAgentForUserCreation] =
 		useState<Agent | null>(null);
+	const [searchQuery, setSearchQuery] = useState('');
 
 	const agentsQuery = useAgentsQuery({
 		limit,
@@ -54,16 +63,36 @@ export default function AgentsRosterPage() {
 	});
 
 	const createAgentUserMutation = useCreateAgentUserMutation();
-	const agents = agentsQuery.data?.data ?? [];
+	const allAgents = agentsQuery.data?.data ?? [];
 	const total = agentsQuery.data?.total ?? 0;
 	const totalPages = getTotalPages(total);
 	const dateFormatter = useDateFormatter('date');
+
+	// Filter agents based on search query
+	const agents = useMemo(() => {
+		if (!searchQuery.trim()) {
+			return allAgents;
+		}
+		const query = searchQuery.toLowerCase();
+		return allAgents.filter(
+			(agent) =>
+				agent.employeeId?.toLowerCase().includes(query) ||
+				agent.firstName?.toLowerCase().includes(query) ||
+				agent.lastName?.toLowerCase().includes(query) ||
+				agent.email?.toLowerCase().includes(query) ||
+				`${agent.firstName} ${agent.lastName}`.toLowerCase().includes(query)
+		);
+	}, [allAgents, searchQuery]);
 
 	const handleSortingChange = (sorting: SortingState) => {
 		const first = sorting[0];
 		if (first) {
 			setSort({ field: first.id, order: first.desc ? 'DESC' : 'ASC' });
 		}
+	};
+
+	const handleAgentRowClick = (agentId: number) => {
+		navigate(`/role-preview/agent-detail/${agentId}`);
 	};
 
 	const columns: BaseTableColumnDef<Agent>[] = useMemo(
@@ -194,6 +223,12 @@ export default function AgentsRosterPage() {
 				title={t('rolePreview.agentsRoster.title')}
 			>
 				<Stack gap='md'>
+					<TextInput
+						placeholder='Search by agent ID, name, or email...'
+						leftSection={<IconSearch size={16} />}
+						value={searchQuery}
+						onChange={(e) => setSearchQuery(e.currentTarget.value)}
+					/>
 					<SectionCard>
 						<Stack gap='sm'>
 							{agentsQuery.isError ? (
@@ -227,6 +262,7 @@ export default function AgentsRosterPage() {
 													{ id: sort.field, desc: sort.order === 'DESC' },
 												]}
 												isLoading={agentsQuery.isLoading}
+												onRowClick={(agent) => handleAgentRowClick(agent.id)}
 												onSortingChange={handleSortingChange}
 												skeletonRowsCount={Math.min(limit, 10)}
 											/>
