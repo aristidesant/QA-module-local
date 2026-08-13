@@ -2,11 +2,11 @@ import React from 'react';
 import { Stack, Text, Title, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import AgentPerformanceTrendChart from './components/AgentPerformanceTrendChart';
-import SecondaryMetrics from './components/SecondaryMetrics';
 import ScoreCardsPanel from './components/ScoreCardsPanel';
 import BestWorstCallsPanel from './components/BestWorstCallsPanel';
+import AgentMetricsSidebar from './components/AgentMetricsSidebar';
 import EmotionGaugeWidget from '../../../components/EmotionGaugeWidget';
-import { DEMO_AGENT_KPIS, DEMO_AGENT_CALLS } from '../../mockData';
+import { DEMO_AGENT_CALLS, THIS_WEEK_KPIS } from '../../mockData';
 import styles from './AgentDashboardPage.module.css';
 
 const AgentDashboardPage: React.FC = () => {
@@ -40,23 +40,32 @@ const AgentDashboardPage: React.FC = () => {
 					</div>
 				</SimpleGrid>
 
-				<div>
-					<Text fw={700} size='lg' mb='md'>
-						Best & Worst Calls
-					</Text>
-					<BestWorstCallsPanel calls={DEMO_AGENT_CALLS} />
-				</div>
+				<SimpleGrid cols={{ base: 1, md: 3 }} spacing='lg'>
+					<div>
+						<Text fw={700} size='lg' mb='md'>
+							Quick Stats
+						</Text>
+						<AgentMetricsSidebar
+							calls={DEMO_AGENT_CALLS}
+							kpis={THIS_WEEK_KPIS}
+						/>
+					</div>
+					{/* inline-style-allow: required for grid column spanning */}
+					<div style={{ gridColumn: 'span 2' }}>
+						<Text fw={700} size='lg' mb='md'>
+							Best & Worst Calls
+						</Text>
+						<BestWorstCallsPanel calls={DEMO_AGENT_CALLS} />
+					</div>
+				</SimpleGrid>
 
 				<SimpleGrid
-					cols={{ base: 1, sm: 2, md: 3 }}
+					cols={{ base: 1, sm: 2, md: 2 }}
 					spacing='lg'
 					className={styles.bottomGrid}
 				>
 					<div className={styles.chartColumn}>
 						<AgentPerformanceTrendChart calls={DEMO_AGENT_CALLS} />
-					</div>
-					<div className={styles.metricsColumn}>
-						<SecondaryMetrics kpis={DEMO_AGENT_KPIS} />
 					</div>
 					<div className={styles.summaryColumn}>
 						{/* Third column for additional insights or summary */}
