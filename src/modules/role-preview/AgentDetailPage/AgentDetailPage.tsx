@@ -16,7 +16,7 @@ import { useNavigate, useParams } from 'react-router';
 import ContentContainer from '~/components/ContentContainer';
 import { useAgentsQuery } from '~/queries/qa/agentsQueries';
 import { getAgentDisplayName } from '~/modules/qa/utils/agent';
-import { DEMO_AGENT_CALLS } from '../../evaluations-demo/AgentDashboard/mockData';
+import { AGENT_DETAIL_CALLS, AGENT_PERFORMANCE_DATA } from './mockAgentData';
 import AgentPerformanceTrendChart from '../../evaluations-demo/AgentDashboard/pages/AgentDashboardPage/components/AgentPerformanceTrendChart';
 import styles from './AgentDetailPage.module.css';
 
@@ -38,13 +38,12 @@ const AgentDetailPage: React.FC = () => {
 
 	const agentCalls = useMemo(() => {
 		if (!agent) return [];
-		return DEMO_AGENT_CALLS.filter(
-			(call) => call.agentName === `Agent ${agent.id}`
-		);
+		const agentName = `Agent ${agent.id}`;
+		return AGENT_DETAIL_CALLS.filter((call) => call.agentName === agentName);
 	}, [agent]);
 
 	const metrics = useMemo(() => {
-		if (!agentCalls.length) {
+		if (!agent) {
 			return {
 				satisfactionRate: 'N/A',
 				bestDay: 'N/A',
@@ -52,71 +51,39 @@ const AgentDetailPage: React.FC = () => {
 				avgHandleTime: 'N/A',
 				totalCalls: '0',
 				dominantSentiment: 'N/A',
+				supervisor: 'N/A',
+				campaignPerformance: {},
 			};
 		}
 
-		// Calculate metrics from mock data
-		const scores = agentCalls
-			.map((c) => c.score)
-			.filter((s) => s !== null) as number[];
-		const satisfactionRate =
-			scores.length > 0
-				? Math.round((scores.reduce((a, b) => a + b, 0) / scores.length) * 10) /
-					10
-				: 0;
+		const agentName = `Agent ${agent.id}`;
+		const performanceData =
+			AGENT_PERFORMANCE_DATA[agentName as keyof typeof AGENT_PERFORMANCE_DATA];
 
-		// Best performance day (mock: distribute calls across week)
-		const dayMap = new Map<string, number[]>();
-		agentCalls.forEach((call) => {
-			const date = new Date(call.callDate);
-			const day = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][
-				date.getDay()
-			];
-			if (!dayMap.has(day)) dayMap.set(day, []);
-			if (call.score !== null) dayMap.get(day)!.push(call.score);
-		});
-
-		let bestDay = 'N/A';
-		let bestDayScore = 0;
-		dayMap.forEach((scores, day) => {
-			const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
-			if (avg > bestDayScore) {
-				bestDayScore = avg;
-				bestDay = day;
-			}
-		});
-
-		// Best performance hour (mock: random hour)
-		const bestHour = '02:00 - 03:00 PM';
-
-		// Average handle time (mock)
-		const avgHandleTime = '5m 42s';
-
-		// Dominant sentiment
-		const sentimentCalls = agentCalls.filter(
-			(c) => c.evaluationType === 'Sentiment Analysis'
-		);
-		let dominantSentiment = 'Neutral';
-		if (sentimentCalls.length > 0) {
-			const avgSentiment =
-				sentimentCalls.reduce((sum, c) => sum + (c.score || 0), 0) /
-				sentimentCalls.length;
-			if (avgSentiment >= 75) dominantSentiment = 'Very Positive';
-			else if (avgSentiment >= 60) dominantSentiment = 'Positive';
-			else if (avgSentiment >= 40) dominantSentiment = 'Neutral';
-			else if (avgSentiment >= 25) dominantSentiment = 'Slightly Negative';
-			else dominantSentiment = 'Very Negative';
+		if (!performanceData) {
+			return {
+				satisfactionRate: 'N/A',
+				bestDay: 'N/A',
+				bestHour: 'N/A',
+				avgHandleTime: 'N/A',
+				totalCalls: '0',
+				dominantSentiment: 'N/A',
+				supervisor: 'N/A',
+				campaignPerformance: {},
+			};
 		}
 
 		return {
-			satisfactionRate: `${satisfactionRate.toFixed(1)}%`,
-			bestDay,
-			bestHour,
-			avgHandleTime,
-			totalCalls: String(agentCalls.length),
-			dominantSentiment,
+			satisfactionRate: `${performanceData.satisfactionRate}%`,
+			bestDay: performanceData.bestDay,
+			bestHour: performanceData.bestHour,
+			avgHandleTime: performanceData.avgHandleTime,
+			totalCalls: String(performanceData.totalCalls),
+			dominantSentiment: performanceData.dominantSentiment,
+			supervisor: performanceData.supervisor,
+			campaignPerformance: performanceData.campaignPerformance,
 		};
-	}, [agentCalls]);
+	}, [agent]);
 
 	if (agentsQuery.isLoading) {
 		return (
@@ -271,15 +238,18 @@ const AgentDetailPage: React.FC = () => {
 								<Text fw={700} size='sm'>
 									Campaign Performance
 								</Text>
-								<Text size='sm' c='dimmed'>
-									Sales: Excellent
-								</Text>
-								<Text size='sm' c='dimmed'>
-									Retention: Good
-								</Text>
-								<Text size='sm' c='dimmed'>
-									Accounts Receivable: Standard
-								</Text>
+								{Object.entries(metrics.campaignPerformance).map(
+									([campaign, performance]) => (
+										<Group key={campaign} justify='space-between'>
+											<Text size='sm' c='dimmed'>
+												{campaign}:
+											</Text>
+											<Badge size='sm' variant='light'>
+												{performance as string}
+											</Badge>
+										</Group>
+									)
+								)}
 							</Stack>
 						</Card>
 						<Card withBorder radius='md' shadow='sm' p='md'>
@@ -288,13 +258,17 @@ const AgentDetailPage: React.FC = () => {
 									Additional Metrics
 								</Text>
 								<Text size='sm' c='dimmed'>
-									Localization: English (Primary)
+									<strong>Localization:</strong> English (Primary)
 								</Text>
 								<Text size='sm' c='dimmed'>
-									Supervisor: Not assigned
+									<strong>Supervisor:</strong> {metrics.supervisor}
 								</Text>
 								<Text size='sm' c='dimmed'>
-									Tenure: Since registration
+									<strong>Tenure:</strong> Since registration to current date
+								</Text>
+								<Text size='sm' c='dimmed'>
+									<strong>Account Status:</strong>{' '}
+									{agent.hasUserAccount ? 'Active' : 'Pending'}
 								</Text>
 							</Stack>
 						</Card>
