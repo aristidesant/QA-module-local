@@ -254,9 +254,6 @@ const QaErrorTypesPage = React.lazy(
 const QaFormBuilderPage = React.lazy(
 	() => import('./modules/qa/forms/FormBuilderPage')
 );
-const QaDashboardPage = React.lazy(
-	() => import('./modules/qa/dashboard/DashboardPage')
-);
 const QaEvaluationsListPage = React.lazy(
 	() => import('./modules/qa/evaluations/EvaluationsListPage')
 );
@@ -748,7 +745,7 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<QaDashboardPage />
+													<SupervisorDashboardPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -1192,15 +1189,6 @@ const router = createBrowserRouter([
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
 										<AgentAnalyticsPage />
-									</Suspense>
-								),
-							},
-							{
-								path: 'role-preview/supervisor-dashboard',
-								id: 'role-preview.supervisor-dashboard',
-								element: (
-									<Suspense fallback={<SuspenseFallback />}>
-										<SupervisorDashboardPage />
 									</Suspense>
 								),
 							},
