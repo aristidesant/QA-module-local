@@ -47,11 +47,38 @@
 }
 
 .bottomGrid {
-	display: grid;
-	grid-template-columns: 1fr 1fr;
-	gap: var(--mantine-spacing-lg);
 	width: 100%;
-	align-items: start;
+}
+
+.chartColumn {
+	display: flex;
+	flex-direction: column;
+	height: 100%;
+}
+
+.chartColumn > * {
+	height: 100%;
+}
+
+.metricsColumn {
+	display: flex;
+	flex-direction: column;
+}
+
+.summaryColumn {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-start;
+	padding: var(--mantine-spacing-md);
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-gray-8)
+	);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid light-dark(
+		var(--mantine-color-gray-2),
+		var(--mantine-color-gray-7)
+	);
 }
 
 @media (max-width: 992px) {

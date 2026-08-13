@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, Text, Title } from '@mantine/core';
+import { Stack, Text, Title, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import AgentDashboardKpisV2 from './components/AgentDashboardKpisV2';
 import AgentPerformanceTrendChart from './components/AgentPerformanceTrendChart';
@@ -24,10 +24,23 @@ const AgentDashboardPage: React.FC = () => {
 					<AgentDashboardKpisV2 kpis={DEMO_AGENT_KPIS} />
 				</div>
 
-				<div className={styles.bottomGrid}>
-					<AgentPerformanceTrendChart kpis={DEMO_AGENT_KPIS} />
-					<SecondaryMetrics kpis={DEMO_AGENT_KPIS} />
-				</div>
+				<SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing='lg' className={styles.bottomGrid}>
+					<div className={styles.chartColumn}>
+						<AgentPerformanceTrendChart kpis={DEMO_AGENT_KPIS} />
+					</div>
+					<div className={styles.metricsColumn}>
+						<SecondaryMetrics kpis={DEMO_AGENT_KPIS} />
+					</div>
+					<div className={styles.summaryColumn}>
+						{/* Third column for additional insights or summary */}
+						<Stack gap='md' style={{ height: '100%' }}>
+							<Text fw={700} size='lg'>Quick Insights</Text>
+							<Text size='sm' c='dimmed'>
+								Your performance is trending positively this week. Keep up the great work!
+							</Text>
+						</Stack>
+					</div>
+				</SimpleGrid>
 			</Stack>
 		</ContentContainer>
 	);
