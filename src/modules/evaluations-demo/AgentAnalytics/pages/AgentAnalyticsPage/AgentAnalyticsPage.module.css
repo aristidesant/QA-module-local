@@ -47,12 +47,13 @@
 	display: grid;
 	grid-template-columns: 1fr 1fr 1fr;
 	gap: var(--mantine-spacing-lg);
-	align-items: flex-end;
+	align-items: stretch;
 }
 
 .filtersGrid > * {
 	display: flex;
 	flex-direction: column;
+	justify-content: flex-end;
 	height: 100%;
 }
 
@@ -61,6 +62,33 @@
 	gap: var(--mantine-spacing-md);
 	justify-content: flex-end;
 	padding-top: var(--mantine-spacing-md);
+}
+
+/* Ensure consistent label height and spacing across all filter components */
+.filtersGrid :global(.mantine-Stack-root) {
+	height: 100%;
+}
+
+.filtersGrid :global(.mantine-Text-root) {
+	min-height: 20px;
+	margin-bottom: var(--mantine-spacing-xs);
+}
+
+.filtersGrid :global(.mantine-Input-wrapper) {
+	flex: 1;
+}
+
+.filtersGrid :global(.mantine-MultiSelect-wrapper),
+.filtersGrid :global(.mantine-NumberInput-wrapper),
+.filtersGrid :global(.mantine-TextInput-wrapper),
+.filtersGrid :global(.mantine-Checkbox-root) {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+}
+
+.filtersGrid :global(.mantine-Group-root) {
+	align-items: flex-end;
 }
 
 .metricsPanel {
