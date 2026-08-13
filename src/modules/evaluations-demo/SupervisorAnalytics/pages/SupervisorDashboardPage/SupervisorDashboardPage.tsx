@@ -6,6 +6,7 @@ import TeamPerformanceTrendChart from './components/TeamPerformanceTrendChart';
 import DowntrendingAgentsTable from './components/DowntrendingAgentsTable';
 import ActiveCampaignsWidget from './components/ActiveCampaignsWidget';
 import AgentPerformanceComparisonTable from './components/AgentPerformanceComparisonTable';
+import TeamQuickStatsWidget from './components/TeamQuickStatsWidget';
 import BestWorstCallsPanel from '../../../AgentDashboard/pages/AgentDashboardPage/components/BestWorstCallsPanel';
 import EmotionGaugeWidget from '../../../components/EmotionGaugeWidget';
 import { DEMO_AGENT_CALLS } from '../../../AgentDashboard/mockData';
@@ -24,7 +25,7 @@ const SupervisorDashboardPage: React.FC = () => {
 					</Text>
 				</div>
 
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+				<SimpleGrid cols={{ base: 1, md: 3 }} spacing='lg'>
 					<div>
 						<Text fw={700} size='lg' mb='md'>
 							Team Performance Scores
@@ -39,6 +40,12 @@ const SupervisorDashboardPage: React.FC = () => {
 							calls={DEMO_AGENT_CALLS}
 							title='Your avg customer emotion for your team'
 						/>
+					</div>
+					<div>
+						<Text fw={700} size='lg' mb='md'>
+							Quick Stats
+						</Text>
+						<TeamQuickStatsWidget calls={DEMO_AGENT_CALLS} />
 					</div>
 				</SimpleGrid>
 
