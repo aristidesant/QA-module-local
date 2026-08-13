@@ -38,7 +38,7 @@ const QAManagerDashboardPage: React.FC = () => {
 						</Text>
 						<EmotionGaugeWidget
 							calls={DEMO_AGENT_CALLS}
-							title='Team avg customer emotion'
+							title='Clients avg customer emotions'
 						/>
 					</div>
 					<div>
