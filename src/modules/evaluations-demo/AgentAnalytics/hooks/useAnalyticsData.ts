@@ -161,8 +161,9 @@ export const useAnalyticsData = (
 				const predominantAgentEmotion = Object.entries(agentEmotionCounts).sort(
 					(a, b) => b[1] - a[1]
 				)[0];
+				const predominantAgentEmotionCount = predominantAgentEmotion?.[1] || 0;
 				const predominantAgentEmotionPercentage = predominantAgentEmotion
-					? Math.round((predominantAgentEmotion[1] / filteredCalls.length) * 100)
+					? Math.round((predominantAgentEmotionCount / filteredCalls.length) * 100)
 					: 0;
 
 				// Calculate customer predominant emotion
@@ -175,8 +176,9 @@ export const useAnalyticsData = (
 				const predominantCustomerEmotion = Object.entries(customerEmotionCounts).sort(
 					(a, b) => b[1] - a[1]
 				)[0];
+				const predominantCustomerEmotionCount = predominantCustomerEmotion?.[1] || 0;
 				const predominantCustomerEmotionPercentage = predominantCustomerEmotion
-					? Math.round((predominantCustomerEmotion[1] / filteredCalls.length) * 100)
+					? Math.round((predominantCustomerEmotionCount / filteredCalls.length) * 100)
 					: 0;
 
 				return [
@@ -191,12 +193,12 @@ export const useAnalyticsData = (
 						suffix: '',
 					},
 					{
-						label: `Your Predominant Emotion (${predominantAgentEmotion?.[0] || 'N/A'})`,
+						label: `Your Predominant Emotion (${predominantAgentEmotion?.[0] || 'N/A'}) - ${predominantAgentEmotionCount} calls`,
 						value: predominantAgentEmotionPercentage,
 						suffix: '%',
 					},
 					{
-						label: `Client Predominant Emotion (${predominantCustomerEmotion?.[0] || 'N/A'})`,
+						label: `Client Predominant Emotion (${predominantCustomerEmotion?.[0] || 'N/A'}) - ${predominantCustomerEmotionCount} calls`,
 						value: predominantCustomerEmotionPercentage,
 						suffix: '%',
 					},
