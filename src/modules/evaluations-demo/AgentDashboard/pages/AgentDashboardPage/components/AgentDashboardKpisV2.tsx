@@ -45,13 +45,13 @@ const AgentDashboardKpisV2: React.FC<AgentDashboardKpisV2Props> = ({
 			<SimpleGrid cols={2} spacing='md' className={styles.featuredRow}>
 				<MetricCard
 					label='Avg Call Score'
-					value={`${kpis.avgCallScore}%`}
+					value={kpis.avgCallScore}
 					subtitle='This week average'
 					size='large'
 				/>
 				<MetricCard
 					label='Lowest Score This Week'
-					value={`${lowestScore}%`}
+					value={lowestScore}
 					subtitle='Minimum score'
 					size='large'
 				/>
