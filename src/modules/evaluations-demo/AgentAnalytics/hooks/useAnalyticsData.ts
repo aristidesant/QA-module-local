@@ -191,12 +191,12 @@ export const useAnalyticsData = (
 						suffix: '',
 					},
 					{
-						label: `Agent Emotion (${predominantAgentEmotion?.[0] || 'N/A'})`,
+						label: `Your Predominant Emotion (${predominantAgentEmotion?.[0] || 'N/A'})`,
 						value: predominantAgentEmotionPercentage,
 						suffix: '%',
 					},
 					{
-						label: `Client Emotion (${predominantCustomerEmotion?.[0] || 'N/A'})`,
+						label: `Client Predominant Emotion (${predominantCustomerEmotion?.[0] || 'N/A'})`,
 						value: predominantCustomerEmotionPercentage,
 						suffix: '%',
 					},
