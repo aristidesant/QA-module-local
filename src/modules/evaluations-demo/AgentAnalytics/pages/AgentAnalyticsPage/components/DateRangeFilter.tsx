@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { Checkbox, Group, Stack, Button, Text } from '@mantine/core';
+import { Checkbox, Group, Stack, Text } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
-import { IconX } from '@tabler/icons-react';
 import { DateRange } from '../../../types/analyticsTypes';
 
 interface DateRangeFilterProps {
@@ -11,7 +10,6 @@ interface DateRangeFilterProps {
 	onCompareToggle: (enabled: boolean) => void;
 	compareDateRange?: DateRange;
 	onCompareDateRangeChange?: (range: DateRange) => void;
-	onReset: () => void;
 }
 
 const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
@@ -21,7 +19,6 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
 	onCompareToggle,
 	compareDateRange,
 	onCompareDateRangeChange,
-	onReset,
 }) => {
 	const [showCompareInputs, setShowCompareInputs] = useState(false);
 
@@ -116,16 +113,6 @@ const DateRangeFilter: React.FC<DateRangeFilterProps> = ({
 					</Group>
 				</>
 			)}
-
-			<Button
-				variant='default'
-				size='sm'
-				leftSection={<IconX size={16} />}
-				onClick={onReset}
-				fullWidth
-			>
-				Reset Filters
-			</Button>
 		</Stack>
 	);
 };

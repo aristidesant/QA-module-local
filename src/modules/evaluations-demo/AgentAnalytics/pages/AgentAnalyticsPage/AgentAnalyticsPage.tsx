@@ -108,7 +108,6 @@ const AgentAnalyticsPage: React.FC = () => {
 							onCompareToggle={setCompareEnabled}
 							compareDateRange={compareDateRange}
 							onCompareDateRangeChange={setCompareDateRange}
-							onReset={handleReset}
 						/>
 						<CampaignFilter
 							selectedCampaigns={selectedCampaigns}
