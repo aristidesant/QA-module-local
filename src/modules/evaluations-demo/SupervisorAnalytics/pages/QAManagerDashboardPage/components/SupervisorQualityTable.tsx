@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, Badge, Text, Progress, Avatar, Group } from '@mantine/core';
+import { Table, Badge, Text, Progress, Avatar, Group, Stack } from '@mantine/core';
 import SectionCard from '~/components/SectionCard';
 
 interface Supervisor {
@@ -10,6 +10,7 @@ interface Supervisor {
 	emotionScore: number;
 	sentimentScore: number;
 	uptrendingAgentsPercent: number;
+	qaAnalysisScore: number;
 	avatar: string;
 	status: 'strong' | 'caution' | 'at-risk';
 }
@@ -48,7 +49,7 @@ const SupervisorQualityTable: React.FC<SupervisorQualityTableProps> = ({
 	return (
 		<SectionCard
 			title='Supervisor Quality Scorecard'
-			description='Ranked supervisors by compliance, emotion/sentiment, and coaching effectiveness'
+			description='Ranked supervisors by compliance, emotion/sentiment, QA analysis, and coaching effectiveness'
 		>
 			<Table striped highlightOnHover>
 				<Table.Thead>
@@ -56,9 +57,8 @@ const SupervisorQualityTable: React.FC<SupervisorQualityTableProps> = ({
 						<Table.Th>Supervisor</Table.Th>
 						<Table.Th>Team Size</Table.Th>
 						<Table.Th>Compliance Adherence</Table.Th>
-						<Table.Th>Emotion Score</Table.Th>
-						<Table.Th>Sentiment Score</Table.Th>
-						<Table.Th>Uptrending Agents</Table.Th>
+						<Table.Th>Emotion & Sentiment</Table.Th>
+						<Table.Th>QA Analysis Score</Table.Th>
 						<Table.Th>Status</Table.Th>
 					</Table.Tr>
 				</Table.Thead>
@@ -79,7 +79,7 @@ const SupervisorQualityTable: React.FC<SupervisorQualityTableProps> = ({
 							<Table.Td>
 								<div>
 									<Text size='sm' fw={500} mb={4}>
-										{supervisor.complianceAdherence}%
+										{supervisor.complianceAdherence}
 									</Text>
 									<Progress
 										value={supervisor.complianceAdherence}
@@ -95,18 +95,18 @@ const SupervisorQualityTable: React.FC<SupervisorQualityTableProps> = ({
 								</div>
 							</Table.Td>
 							<Table.Td>
-								<Text size='sm' fw={500}>
-									{supervisor.emotionScore.toFixed(1)}/10
-								</Text>
+								<Stack gap={2}>
+									<Text size='sm' fw={500}>
+										Emotion: {supervisor.emotionScore.toFixed(1)}/10
+									</Text>
+									<Text size='sm' fw={500}>
+										Sentiment: {supervisor.sentimentScore.toFixed(1)}/10
+									</Text>
+								</Stack>
 							</Table.Td>
 							<Table.Td>
 								<Text size='sm' fw={500}>
-									{supervisor.sentimentScore.toFixed(1)}/10
-								</Text>
-							</Table.Td>
-							<Table.Td>
-								<Text size='sm' fw={500}>
-									{supervisor.uptrendingAgentsPercent}%
+									{supervisor.qaAnalysisScore}
 								</Text>
 							</Table.Td>
 							<Table.Td>

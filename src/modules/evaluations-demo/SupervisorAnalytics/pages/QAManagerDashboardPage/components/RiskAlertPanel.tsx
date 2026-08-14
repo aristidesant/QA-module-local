@@ -1,7 +1,6 @@
 import React from 'react';
 import { SimpleGrid, Card, Text, Group, Badge } from '@mantine/core';
 import SectionCard from '~/components/SectionCard';
-import { AlertTriangle } from '@tabler/icons-react';
 
 interface Alert {
 	id: string;

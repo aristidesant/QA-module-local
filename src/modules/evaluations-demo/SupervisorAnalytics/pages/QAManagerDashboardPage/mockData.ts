@@ -28,6 +28,12 @@ export const mockRiskAlerts = [
 	},
 ];
 
+export const mockDashboardKPIs = {
+	generalQAScore: 87,
+	generalEmotionSentimentScore: 81,
+	complianceScore: 87,
+};
+
 export const mockSupervisors = [
 	{
 		id: 'sup-1',
@@ -37,6 +43,7 @@ export const mockSupervisors = [
 		emotionScore: 8.2,
 		sentimentScore: 7.9,
 		uptrendingAgentsPercent: 75,
+		qaAnalysisScore: 82,
 		avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Sarah',
 		status: 'caution' as const,
 	},
@@ -48,6 +55,7 @@ export const mockSupervisors = [
 		emotionScore: 8.7,
 		sentimentScore: 8.5,
 		uptrendingAgentsPercent: 87,
+		qaAnalysisScore: 91,
 		avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Marcus',
 		status: 'strong' as const,
 	},
@@ -59,6 +67,7 @@ export const mockSupervisors = [
 		emotionScore: 7.1,
 		sentimentScore: 6.8,
 		uptrendingAgentsPercent: 60,
+		qaAnalysisScore: 68,
 		avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=James',
 		status: 'at-risk' as const,
 	},
@@ -70,6 +79,7 @@ export const mockSupervisors = [
 		emotionScore: 8.5,
 		sentimentScore: 8.3,
 		uptrendingAgentsPercent: 84,
+		qaAnalysisScore: 89,
 		avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Elena',
 		status: 'strong' as const,
 	},
@@ -81,6 +91,7 @@ export const mockSupervisors = [
 		emotionScore: 7.8,
 		sentimentScore: 7.6,
 		uptrendingAgentsPercent: 70,
+		qaAnalysisScore: 79,
 		avatar: 'https://api.dicebear.com/7.x/avataaars/svg?seed=Michael',
 		status: 'caution' as const,
 	},
@@ -227,7 +238,7 @@ export const mockDisputes = [
 		evaluationScore: 78,
 		evaluationDate: '2024-08-12',
 		submittedDate: '2024-08-14',
-		status: 'pending',
+		status: 'pending' as const,
 		reason: 'Score is too low, call quality was better',
 	},
 	{
@@ -237,7 +248,7 @@ export const mockDisputes = [
 		evaluationScore: 85,
 		evaluationDate: '2024-08-11',
 		submittedDate: '2024-08-13',
-		status: 'pending',
+		status: 'pending' as const,
 		reason: 'Disagree with compliance breach marking',
 	},
 	{
@@ -247,7 +258,7 @@ export const mockDisputes = [
 		evaluationScore: 92,
 		evaluationDate: '2024-08-10',
 		submittedDate: '2024-08-12',
-		status: 'in-review',
+		status: 'in-review' as const,
 		reason: 'Emotion score calculation error',
 	},
 	{
@@ -257,7 +268,7 @@ export const mockDisputes = [
 		evaluationScore: 71,
 		evaluationDate: '2024-08-09',
 		submittedDate: '2024-08-11',
-		status: 'pending',
+		status: 'pending' as const,
 		reason: 'Supervisor scoring inconsistency',
 	},
 	{
@@ -267,7 +278,7 @@ export const mockDisputes = [
 		evaluationScore: 88,
 		evaluationDate: '2024-08-08',
 		submittedDate: '2024-08-10',
-		status: 'resolved',
+		status: 'resolved' as const,
 		reason: 'Score adjusted after review',
 	},
 ];

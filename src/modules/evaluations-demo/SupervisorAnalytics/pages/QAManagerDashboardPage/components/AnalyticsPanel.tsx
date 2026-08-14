@@ -99,7 +99,7 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({
 				</Tabs.List>
 
 				<Tabs.Panel value='supervisors' pt='md'>
-					<Table striped highlightOnHover size='sm'>
+					<Table striped highlightOnHover>
 						<Table.Thead>
 							<Table.Tr>
 								<Table.Th>Supervisor</Table.Th>
@@ -114,13 +114,15 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({
 									<Table.Td>{supervisor.name}</Table.Td>
 									<Table.Td>
 										<Group gap='xs'>
-											<Progress
-												value={supervisor.compliance}
-												color={getComplianceColor(supervisor.compliance)}
-												size='sm'
-												style={{ flex: 1 }}
-											/>
-											<Text size='sm' fw={500} style={{ minWidth: 40 }}>
+										{/* inline-style-allow: flex sizing for responsive progress */}
+										<Progress
+											value={supervisor.compliance}
+											color={getComplianceColor(supervisor.compliance)}
+											size='sm'
+											style={{ flex: 1 }}
+										/>
+										{/* inline-style-allow: width constraint for text label */}
+										<Text size='sm' fw={500} style={{ minWidth: 40 }}>
 												{supervisor.compliance}%
 											</Text>
 										</Group>
@@ -142,7 +144,7 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({
 				</Tabs.Panel>
 
 				<Tabs.Panel value='campaigns' pt='md'>
-					<Table striped highlightOnHover size='sm'>
+					<Table striped highlightOnHover>
 						<Table.Thead>
 							<Table.Tr>
 								<Table.Th>Campaign</Table.Th>
@@ -158,13 +160,15 @@ const AnalyticsPanel: React.FC<AnalyticsPanelProps> = ({
 									<Table.Td>{campaign.name}</Table.Td>
 									<Table.Td>
 										<Group gap='xs'>
-											<Progress
-												value={campaign.compliance}
-												color={getComplianceColor(campaign.compliance)}
-												size='sm'
-												style={{ flex: 1 }}
-											/>
-											<Text size='sm' fw={500} style={{ minWidth: 40 }}>
+										{/* inline-style-allow: Progress flex sizing */}
+										<Progress
+											value={campaign.compliance}
+											color={getComplianceColor(campaign.compliance)}
+											size='sm'
+											style={{ flex: 1 }}
+										/>
+										{/* inline-style-allow: Text width constraint */}
+										<Text size='sm' fw={500} style={{ minWidth: 40 }}>
 												{campaign.compliance}%
 											</Text>
 										</Group>
