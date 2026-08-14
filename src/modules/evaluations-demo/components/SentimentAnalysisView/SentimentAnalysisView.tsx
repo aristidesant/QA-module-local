@@ -8,7 +8,6 @@ import TranscriptWithEmotions from './components/TranscriptWithEmotions';
 import SentimentPolarityChart from './components/SentimentPolarityChart';
 import ToneScoreCard from './components/ToneScoreCard';
 import RecoveryMetricsCard from './components/RecoveryMetricsCard';
-import AgentPerformanceCard from './components/AgentPerformanceCard';
 import EmpathyTimelineCard from './components/EmpathyTimelineCard';
 import EmotionDisplay from './components/EmotionDisplay';
 import SpeechPatternsCard from './components/SpeechPatternsCard';
@@ -107,12 +106,6 @@ export default function SentimentAnalysisView(
 
 					<SectionCard>
 						<SpeechPatternsCard metrics={sentimentData.speechMetrics} />
-					</SectionCard>
-
-					<SectionCard>
-						<AgentPerformanceCard
-							performance={sentimentData.agentPerformance}
-						/>
 					</SectionCard>
 
 					<SectionCard>

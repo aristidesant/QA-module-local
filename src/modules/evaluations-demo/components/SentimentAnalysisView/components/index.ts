@@ -6,6 +6,5 @@ export { default as KeyMomentsCard } from './KeyMomentsCard';
 export { default as SentimentPolarityChart } from './SentimentPolarityChart';
 export { default as ToneScoreCard } from './ToneScoreCard';
 export { default as RecoveryMetricsCard } from './RecoveryMetricsCard';
-export { default as AgentPerformanceCard } from './AgentPerformanceCard';
 export { default as EmpathyIndicatorsCard } from './EmpathyIndicatorsCard';
 export type * from '../types';
