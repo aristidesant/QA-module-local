@@ -24,10 +24,10 @@ const SupervisorDashboardPage: React.FC = () => {
 			<Stack gap='lg' className={styles.container}>
 				<div className={styles.header}>
 					<Title order={1} className={styles.headerTitle}>
-						Team Analytics Dashboard
+						Welcome, Sarah Chen
 					</Title>
 					<Text className={styles.headerSubtitle}>
-						Monitor your team's performance across all dimensions
+						Here's an overview of your team's performance this week
 					</Text>
 				</div>
 

@@ -86,10 +86,10 @@ const QAManagerDashboardPage: React.FC = () => {
 			<Stack gap='lg' className={styles.container}>
 				<div className={styles.header}>
 					<Title order={1} className={styles.headerTitle}>
-						QA Manager Analytics Dashboard
+						Welcome, Michael Rodriguez
 					</Title>
 					<Text className={styles.headerSubtitle}>
-						System-wide oversight: compliance, emotion, sentiment, audit queue
+						Here's an overview of system-wide performance this week
 					</Text>
 				</div>
 
