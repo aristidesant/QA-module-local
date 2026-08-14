@@ -1,16 +1,39 @@
 import React, { useState } from 'react';
-import { Stack, Title, Text, SimpleGrid, Card, Progress } from '@mantine/core';
+import {
+	Stack,
+	Title,
+	Text,
+	SimpleGrid,
+	Card,
+	Group,
+	ThemeIcon,
+} from '@mantine/core';
+import {
+	IconCircleCheck,
+	IconMoodSmile,
+	IconShieldCheck,
+} from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import RiskAlertPanel from './components/RiskAlertPanel';
 import SupervisorQualityTable from './components/SupervisorQualityTable';
 import AnalyticsPanel from './components/AnalyticsPanel';
 import AuditQueuePanel from './components/AuditQueuePanel';
-import { mockRiskAlerts, mockSupervisors, mockQAAnalytics, mockDisputes, mockDashboardKPIs } from './mockData';
+import {
+	mockRiskAlerts,
+	mockSupervisors,
+	mockQAAnalytics,
+	mockDisputes,
+	mockDashboardKPIs,
+} from './mockData';
 import styles from './QAManagerDashboardPage.module.css';
 
 const QAManagerDashboardPage: React.FC = () => {
-	const [selectedSupervisor, setSelectedSupervisor] = useState<string | null>(null);
-	const [selectedDateRange, setSelectedDateRange] = useState<'1w' | '2w' | '4w'>('4w');
+	const [selectedSupervisor, setSelectedSupervisor] = useState<string | null>(
+		null
+	);
+	const [selectedDateRange, setSelectedDateRange] = useState<
+		'1w' | '2w' | '4w'
+	>('4w');
 	const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
 
 	return (
@@ -27,33 +50,51 @@ const QAManagerDashboardPage: React.FC = () => {
 
 				<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='md'>
 					<Card withBorder>
-						<Text size='sm' c='dimmed' fw={500} mb='sm'>
-							General QA Score
-						</Text>
-						<Text size='xl' fw={700} mb='sm'>
-							{mockDashboardKPIs.generalQAScore}
-						</Text>
-						<Progress value={mockDashboardKPIs.generalQAScore} color='blue' size='sm' />
+						<Group justify='space-between' align='flex-start'>
+							<Stack gap='xs'>
+								<Text size='sm' c='dimmed' fw={500}>
+									General QA Score
+								</Text>
+								<Text size='xl' fw={700}>
+									{mockDashboardKPIs.generalQAScore}
+								</Text>
+							</Stack>
+							<ThemeIcon size='lg' radius='md' variant='light' color='blue'>
+								<IconCircleCheck size={32} />
+							</ThemeIcon>
+						</Group>
 					</Card>
 
 					<Card withBorder>
-						<Text size='sm' c='dimmed' fw={500} mb='sm'>
-							General Emotion & Sentiment Score
-						</Text>
-						<Text size='xl' fw={700} mb='sm'>
-							{mockDashboardKPIs.generalEmotionSentimentScore}
-						</Text>
-						<Progress value={mockDashboardKPIs.generalEmotionSentimentScore} color='cyan' size='sm' />
+						<Group justify='space-between' align='flex-start'>
+							<Stack gap='xs'>
+								<Text size='sm' c='dimmed' fw={500}>
+									General Emotion & Sentiment Score
+								</Text>
+								<Text size='xl' fw={700}>
+									{mockDashboardKPIs.generalEmotionSentimentScore}
+								</Text>
+							</Stack>
+							<ThemeIcon size='lg' radius='md' variant='light' color='green'>
+								<IconMoodSmile size={32} />
+							</ThemeIcon>
+						</Group>
 					</Card>
 
 					<Card withBorder>
-						<Text size='sm' c='dimmed' fw={500} mb='sm'>
-							Compliance Score
-						</Text>
-						<Text size='xl' fw={700} mb='sm'>
-							{mockDashboardKPIs.complianceScore}
-						</Text>
-						<Progress value={mockDashboardKPIs.complianceScore} color='green' size='sm' />
+						<Group justify='space-between' align='flex-start'>
+							<Stack gap='xs'>
+								<Text size='sm' c='dimmed' fw={500}>
+									Compliance Score
+								</Text>
+								<Text size='xl' fw={700}>
+									{mockDashboardKPIs.complianceScore}
+								</Text>
+							</Stack>
+							<ThemeIcon size='lg' radius='md' variant='light' color='grape'>
+								<IconShieldCheck size={32} />
+							</ThemeIcon>
+						</Group>
 					</Card>
 				</SimpleGrid>
 
