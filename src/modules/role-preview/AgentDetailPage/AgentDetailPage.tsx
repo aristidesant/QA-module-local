@@ -21,6 +21,9 @@ import { useAgentsQuery } from '~/queries/qa/agentsQueries';
 import { getAgentDisplayName } from '~/modules/qa/utils/agent';
 import { AGENT_DETAIL_CALLS, AGENT_PERFORMANCE_DATA } from './mockAgentData';
 import AgentPerformanceTrendChart from '../../evaluations-demo/AgentDashboard/pages/AgentDashboardPage/components/AgentPerformanceTrendChart';
+import PerformanceAlertsSection from './components/PerformanceAlertsSection';
+import PeerComparisonSection from './components/PeerComparisonSection';
+import CoachingDevelopmentSection from './components/CoachingDevelopmentSection';
 import styles from './AgentDetailPage.module.css';
 
 const AgentDetailPage: React.FC = () => {
@@ -46,6 +49,108 @@ const AgentDetailPage: React.FC = () => {
 			(call) => call.agentName === agent.employeeId
 		);
 	}, [agent]);
+
+	// Mock alerts based on agent performance
+	const alerts = useMemo(() => {
+		const mockAlerts = [];
+		// Simulate declining QA score alert
+		if (Math.random() > 0.3) {
+			mockAlerts.push({
+				id: 'alert-1',
+				type: 'critical' as const,
+				title: 'Declining QA Score',
+				description:
+					'Latest 5 calls show decrease in Communication Clarity from 92% to 85%. Latest 5 calls show decrease in Communication Clarity.',
+				relatedTab: 'qa',
+			});
+		}
+		// Simulate compliance gap alert
+		if (Math.random() > 0.5) {
+			mockAlerts.push({
+				id: 'alert-2',
+				type: 'caution' as const,
+				title: 'Compliance Gap',
+				description:
+					'2 policy violations detected in the past 14 days. Review compliance training may be needed.',
+				relatedTab: 'compliance',
+			});
+		}
+		return mockAlerts;
+	}, []);
+
+	// Mock peer comparison data (team averages for demo)
+	const peerComparisonMetrics = [
+		{ label: 'QA Score', agentValue: 87, teamAverage: 82, unit: '%' },
+		{ label: 'Compliance', agentValue: 91, teamAverage: 88, unit: '%' },
+		{ label: 'Sentiment Score', agentValue: 82, teamAverage: 78, unit: '' },
+		{
+			label: 'Customer Satisfaction',
+			agentValue: 92,
+			teamAverage: 86,
+			unit: '%',
+		},
+	];
+
+	// Mock coaching data
+	const coachingReports = [
+		{
+			id: 'coaching-1',
+			date: 'Aug 10, 2026',
+			topic: 'QA Gap Analysis',
+			supervisor: 'Sarah Chen',
+			status: 'completed' as const,
+		},
+		{
+			id: 'coaching-2',
+			date: 'Jul 28, 2026',
+			topic: 'Policy Updates',
+			supervisor: 'Sarah Chen',
+			status: 'completed' as const,
+		},
+	];
+
+	// Mock training data
+	const trainingModules = [
+		{
+			id: 'training-1',
+			name: 'Policy Updates',
+			dueDate: 'Aug 30, 2026',
+			progress: 50,
+			status: 'in_progress' as const,
+		},
+		{
+			id: 'training-2',
+			name: 'Communication Excellence',
+			dueDate: 'Sep 15, 2026',
+			progress: 0,
+			status: 'not_started' as const,
+		},
+	];
+
+	// Mock recommendations
+	const recommendations = [
+		{
+			id: 'rec-1',
+			title: 'Focus Area: Communication Clarity',
+			description:
+				'3 recent calls scored <85%. Consider focusing on clear enunciation and avoiding technical jargon.',
+			priority: 'high' as const,
+		},
+		{
+			id: 'rec-2',
+			title: 'Complete Policy Updates Module by Aug 30',
+			description:
+				'Currently at 50% completion. This training covers recent compliance changes in your department.',
+			priority: 'high' as const,
+		},
+		{
+			id: 'rec-3',
+			title: 'Strength: Problem Resolution',
+			description:
+				'Consistent high scores (avg 90%) - keep up the excellent work!',
+			priority: 'low' as const,
+		},
+	];
 
 	const metrics = useMemo(() => {
 		if (!agent) {
@@ -178,6 +283,14 @@ const AgentDetailPage: React.FC = () => {
 					</Stack>
 				</Card>
 
+				{/* Performance Alerts */}
+				{alerts.length > 0 && (
+					<PerformanceAlertsSection
+						alerts={alerts}
+						onAlertClick={(tabName) => setActiveTab(tabName)}
+					/>
+				)}
+
 				{/* Tabs */}
 				<Tabs value={activeTab} onChange={setActiveTab} defaultValue='overview'>
 					<Tabs.List>
@@ -185,11 +298,24 @@ const AgentDetailPage: React.FC = () => {
 						<Tabs.Tab value='qa'>QA</Tabs.Tab>
 						<Tabs.Tab value='sentiment'>Emotion & Sentiment</Tabs.Tab>
 						<Tabs.Tab value='compliance'>Compliance</Tabs.Tab>
+						<Tabs.Tab value='coaching'>Coaching & Development</Tabs.Tab>
 					</Tabs.List>
 
 					{/* General Overview Tab */}
 					<Tabs.Panel value='overview' pt='md'>
 						<Stack gap='lg'>
+							{/* Peer Comparison Section */}
+							<div>
+								<Title order={3} mb='md'>
+									Peer Comparison
+								</Title>
+								<PeerComparisonSection
+									metrics={peerComparisonMetrics}
+									agentName={getAgentDisplayName(agent)}
+									percentileRank='Top 15%'
+								/>
+							</div>
+
 							{/* Key Metrics */}
 							<div>
 								<Title order={3} mb='md'>
@@ -610,6 +736,17 @@ const AgentDetailPage: React.FC = () => {
 								</Stack>
 							</Card>
 						</Stack>
+					</Tabs.Panel>
+
+					{/* Coaching & Development Tab */}
+					<Tabs.Panel value='coaching' pt='md'>
+						<CoachingDevelopmentSection
+							coachingReports={coachingReports}
+							trainingModules={trainingModules}
+							recommendations={recommendations}
+							onScheduleCoaching={() => alert('Schedule coaching feature')}
+							onAssignTraining={() => alert('Assign training feature')}
+						/>
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>

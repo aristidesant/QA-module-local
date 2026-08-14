@@ -6,16 +6,10 @@ import {
 	Stack,
 	Text,
 	Tooltip,
-	TextInput,
 } from '@mantine/core';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	IconAlertTriangle,
-	IconKey,
-	IconUsers,
-	IconSearch,
-} from '@tabler/icons-react';
+import { IconAlertTriangle, IconKey, IconUsers } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import type { SortingState } from '@tanstack/react-table';
 
@@ -35,6 +29,9 @@ import {
 } from '~/queries/qa/agentsQueries';
 import { getAgentDisplayName } from '~/modules/qa/utils/agent';
 import { getErrorMessage } from '~/utils/httpClient';
+import AgentFilterPanel, {
+	type AgentFilters,
+} from './components/AgentFilterPanel';
 import classes from './AgentsRosterPage.module.css';
 
 export default function AgentsRosterPage() {
@@ -53,7 +50,14 @@ export default function AgentsRosterPage() {
 	} = useListPageState();
 	const [agentForUserCreation, setAgentForUserCreation] =
 		useState<Agent | null>(null);
-	const [searchQuery, setSearchQuery] = useState('');
+	const [filters, setFilters] = useState<AgentFilters>({
+		search: '',
+		supervisors: [],
+		teams: [],
+		statuses: [],
+		types: [],
+		dateRange: undefined,
+	});
 
 	const agentsQuery = useAgentsQuery({
 		limit,
@@ -68,21 +72,84 @@ export default function AgentsRosterPage() {
 	const totalPages = getTotalPages(total);
 	const dateFormatter = useDateFormatter('date');
 
-	// Filter agents based on search query
+	// Build supervisor and team options from agents
+	const supervisorOptions = useMemo(() => {
+		const supervisors = new Set<string>();
+		allAgents.forEach((agent) => {
+			if (agent.team) {
+				supervisors.add(agent.team);
+			}
+		});
+		return Array.from(supervisors)
+			.sort()
+			.map((supervisor) => ({
+				value: supervisor,
+				label: supervisor,
+			}));
+	}, [allAgents]);
+
+	const teamOptions = useMemo(() => {
+		const teams = new Set<string>();
+		allAgents.forEach((agent) => {
+			if (agent.team) {
+				teams.add(agent.team);
+			}
+		});
+		return Array.from(teams)
+			.sort()
+			.map((team) => ({
+				value: team,
+				label: team,
+			}));
+	}, [allAgents]);
+
+	// Filter agents based on all filters
 	const agents = useMemo(() => {
-		if (!searchQuery.trim()) {
-			return allAgents;
-		}
-		const query = searchQuery.toLowerCase();
-		return allAgents.filter(
-			(agent) =>
-				agent.employeeId?.toLowerCase().includes(query) ||
-				agent.firstName?.toLowerCase().includes(query) ||
-				agent.lastName?.toLowerCase().includes(query) ||
-				agent.email?.toLowerCase().includes(query) ||
-				`${agent.firstName} ${agent.lastName}`.toLowerCase().includes(query)
-		);
-	}, [allAgents, searchQuery]);
+		return allAgents.filter((agent) => {
+			// Search filter
+			if (filters.search.trim()) {
+				const query = filters.search.toLowerCase();
+				const matchesSearch =
+					agent.employeeId?.toLowerCase().includes(query) ||
+					agent.firstName?.toLowerCase().includes(query) ||
+					agent.lastName?.toLowerCase().includes(query) ||
+					agent.email?.toLowerCase().includes(query) ||
+					`${agent.firstName} ${agent.lastName}`.toLowerCase().includes(query);
+				if (!matchesSearch) return false;
+			}
+
+			// Supervisor/Team filter
+			if (filters.supervisors.length > 0) {
+				if (!filters.supervisors.includes(agent.team || '')) {
+					return false;
+				}
+			}
+
+			// Team filter
+			if (filters.teams.length > 0) {
+				if (!filters.teams.includes(agent.team || '')) {
+					return false;
+				}
+			}
+
+			// Status filter
+			if (filters.statuses.length > 0) {
+				const agentStatus = agent.hasUserAccount ? 'active' : 'pending';
+				if (!filters.statuses.includes(agentStatus)) {
+					return false;
+				}
+			}
+
+			// Type filter
+			if (filters.types.length > 0) {
+				if (!filters.types.includes(agent.agentType)) {
+					return false;
+				}
+			}
+
+			return true;
+		});
+	}, [allAgents, filters]);
 
 	const handleSortingChange = (sorting: SortingState) => {
 		const first = sorting[0];
@@ -142,9 +209,14 @@ export default function AgentsRosterPage() {
 				id: 'supervisor',
 				header: t('rolePreview.agentsRoster.supervisor'),
 				enableSorting: false,
-				cell: () => (
-					<Text c='dimmed' size='sm'>
-						{t('common.notAvailable')}
+				cell: ({ row }) => (
+					<Text
+						c={row.original.team ? undefined : 'dimmed'}
+						size='sm'
+						// inline-style-allow: pointer cursor for clickable cell
+						style={{ cursor: 'pointer' }}
+					>
+						{row.original.team || t('common.notAvailable')}
 					</Text>
 				),
 			},
@@ -223,11 +295,12 @@ export default function AgentsRosterPage() {
 				title={t('rolePreview.agentsRoster.title')}
 			>
 				<Stack gap='md'>
-					<TextInput
-						placeholder='Search by agent ID, name, or email...'
-						leftSection={<IconSearch size={16} />}
-						value={searchQuery}
-						onChange={(e) => setSearchQuery(e.currentTarget.value)}
+					<AgentFilterPanel
+						filters={filters}
+						onFiltersChange={setFilters}
+						supervisorOptions={supervisorOptions}
+						teamOptions={teamOptions}
+						isLoading={agentsQuery.isLoading}
 					/>
 					<SectionCard>
 						<Stack gap='sm'>
