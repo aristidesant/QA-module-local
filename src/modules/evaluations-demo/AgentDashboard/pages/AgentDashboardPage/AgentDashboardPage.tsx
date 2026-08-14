@@ -59,24 +59,26 @@ const AgentDashboardPage: React.FC = () => {
 					<BestWorstCallsPanel calls={DEMO_AGENT_CALLS} />
 				</SectionCard>
 
-				<SectionCard
-					title='Performance Trend'
-					description='4-week trend analysis of your performance scores'
-				>
-					<AgentPerformanceTrendChart calls={DEMO_AGENT_CALLS} />
-				</SectionCard>
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<SectionCard
+						title='Performance Trend'
+						description='4-week trend analysis of your performance scores'
+					>
+						<AgentPerformanceTrendChart calls={DEMO_AGENT_CALLS} />
+					</SectionCard>
 
-				<SectionCard
-					title='Quick Insights'
-					description='Performance analysis and recommendations'
-				>
-					<Stack gap='md'>
-						<Text size='sm' c='dimmed'>
-							Your performance is trending positively this week. Keep up the
-							great work!
-						</Text>
-					</Stack>
-				</SectionCard>
+					<SectionCard
+						title='Quick Insights'
+						description='Performance analysis and recommendations'
+					>
+						<Stack gap='md'>
+							<Text size='sm' c='dimmed'>
+								Your performance is trending positively this week. Keep up the
+								great work!
+							</Text>
+						</Stack>
+					</SectionCard>
+				</SimpleGrid>
 			</Stack>
 		</ContentContainer>
 	);
