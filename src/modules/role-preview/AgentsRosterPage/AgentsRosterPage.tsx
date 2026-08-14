@@ -167,6 +167,7 @@ export default function AgentsRosterPage() {
 			{
 				accessorKey: 'employeeId',
 				header: 'Agent ID',
+				size: 100,
 				cell: ({ row }) => (
 					<Text fw={700} size='sm'>
 						{row.original.employeeId}
@@ -176,6 +177,7 @@ export default function AgentsRosterPage() {
 			{
 				accessorKey: 'firstName',
 				header: tAgents('table.name'),
+				size: 150,
 				cell: ({ row }) => (
 					<Text size='sm'>{getAgentDisplayName(row.original)}</Text>
 				),
