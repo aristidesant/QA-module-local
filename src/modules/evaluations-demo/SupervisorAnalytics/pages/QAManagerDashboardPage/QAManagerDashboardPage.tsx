@@ -1,92 +1,47 @@
-import React from 'react';
-import { Stack, Text, Title, SimpleGrid } from '@mantine/core';
+import React, { useState } from 'react';
+import { Stack, Title, Text } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
-import TeamScoreCardsPanel from '../SupervisorDashboardPage/components/TeamScoreCardsPanel';
-import TeamPerformanceTrendChart from '../SupervisorDashboardPage/components/TeamPerformanceTrendChart';
-import DowntrendingAgentsTable from '../SupervisorDashboardPage/components/DowntrendingAgentsTable';
-import ActiveCampaignsWidget from '../SupervisorDashboardPage/components/ActiveCampaignsWidget';
-import AgentPerformanceComparisonTable from '../SupervisorDashboardPage/components/AgentPerformanceComparisonTable';
-import TeamQuickStatsWidget from '../SupervisorDashboardPage/components/TeamQuickStatsWidget';
-import BestWorstCallsPanel from '../../../AgentDashboard/pages/AgentDashboardPage/components/BestWorstCallsPanel';
-import EmotionGaugeWidget from '../../../components/EmotionGaugeWidget';
-import { DEMO_AGENT_CALLS } from '../../../AgentDashboard/mockData';
+import RiskAlertPanel from './components/RiskAlertPanel';
+import SupervisorQualityTable from './components/SupervisorQualityTable';
+import AnalyticsPanel from './components/AnalyticsPanel';
+import AuditQueuePanel from './components/AuditQueuePanel';
+import { mockRiskAlerts, mockSupervisors, mockQAAnalytics, mockDisputes } from './mockData';
 import styles from './QAManagerDashboardPage.module.css';
 
 const QAManagerDashboardPage: React.FC = () => {
+	const [selectedSupervisor, setSelectedSupervisor] = useState<string | null>(null);
+	const [selectedDateRange, setSelectedDateRange] = useState<'1w' | '2w' | '4w'>('4w');
+	const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
+
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg' className={styles.container}>
 				<div className={styles.header}>
 					<Title order={1} className={styles.headerTitle}>
-						QA Team Analytics Dashboard
+						QA Manager Analytics Dashboard
 					</Title>
 					<Text className={styles.headerSubtitle}>
-						Monitor QA team performance across all dimensions
+						System-wide oversight: compliance, emotion, sentiment, audit queue
 					</Text>
 				</div>
 
-				<SimpleGrid cols={{ base: 1, md: 3 }} spacing='lg'>
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Team Performance Scores
-						</Text>
-						<TeamScoreCardsPanel calls={DEMO_AGENT_CALLS} />
-					</div>
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Customer Sentiment
-						</Text>
-						<EmotionGaugeWidget
-							calls={DEMO_AGENT_CALLS}
-							title='Clients avg customer emotions'
-						/>
-					</div>
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Quick Stats
-						</Text>
-						<TeamQuickStatsWidget calls={DEMO_AGENT_CALLS} />
-					</div>
-				</SimpleGrid>
+				<RiskAlertPanel alerts={mockRiskAlerts} />
 
-				<SimpleGrid cols={{ base: 1, md: 3 }} spacing='lg'>
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Team Performance Trend (4 Weeks)
-						</Text>
-						<TeamPerformanceTrendChart calls={DEMO_AGENT_CALLS} />
-					</div>
+				<SupervisorQualityTable
+					supervisors={mockSupervisors}
+					onSelectSupervisor={setSelectedSupervisor}
+				/>
 
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Performance Alerts
-						</Text>
-						<DowntrendingAgentsTable calls={DEMO_AGENT_CALLS} />
-					</div>
+				<AnalyticsPanel
+					analytics={mockQAAnalytics}
+					dateRange={selectedDateRange}
+					onDateRangeChange={setSelectedDateRange}
+					selectedSupervisor={selectedSupervisor}
+					selectedCampaign={selectedCampaign}
+					onCampaignChange={setSelectedCampaign}
+				/>
 
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							QA Campaigns
-						</Text>
-						<ActiveCampaignsWidget calls={DEMO_AGENT_CALLS} />
-					</div>
-				</SimpleGrid>
-
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							QA Analyst Performance Comparison
-						</Text>
-						<AgentPerformanceComparisonTable calls={DEMO_AGENT_CALLS} />
-					</div>
-
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Team Best & Worst Calls
-						</Text>
-						<BestWorstCallsPanel calls={DEMO_AGENT_CALLS} />
-					</div>
-				</SimpleGrid>
+				<AuditQueuePanel disputes={mockDisputes} />
 			</Stack>
 		</ContentContainer>
 	);
