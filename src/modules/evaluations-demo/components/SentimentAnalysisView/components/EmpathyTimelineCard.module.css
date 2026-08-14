@@ -1,0 +1,167 @@
+.container {
+	width: 100%;
+}
+
+.chartContainer {
+	position: relative;
+	width: 100%;
+	height: 200px;
+	margin-bottom: 2rem;
+	background: linear-gradient(
+		to bottom,
+		var(--mantine-color-gray-0),
+		transparent
+	);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: var(--mantine-radius-md);
+	padding: 1rem;
+	overflow: hidden;
+}
+
+.chartContainer svg {
+	width: 100%;
+	height: 160px;
+}
+
+.gridLine {
+	stroke: var(--mantine-color-gray-2);
+	stroke-width: 1;
+	stroke-dasharray: 4, 4;
+	opacity: 0.5;
+}
+
+.curve {
+	fill: none;
+	stroke: var(--mantine-color-blue-6);
+	stroke-width: 2.5;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.fill {
+	fill: var(--mantine-color-blue-0);
+	opacity: 0.3;
+}
+
+.marker {
+	fill: var(--mantine-color-green-6);
+	stroke: white;
+	stroke-width: 1.5;
+	filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+.timelineLabels {
+	display: flex;
+	justify-content: space-between;
+	padding: 0.5rem 1rem;
+	font-size: 0.75rem;
+	color: var(--mantine-color-gray-6);
+	font-weight: 500;
+	position: absolute;
+	bottom: 10px;
+	left: 1rem;
+	right: 1rem;
+	width: calc(100% - 2rem);
+}
+
+.sentimentLabels {
+	position: absolute;
+	left: -60px;
+	top: 0;
+	bottom: 0;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-around;
+	font-size: 0.7rem;
+	color: var(--mantine-color-gray-6);
+	font-weight: 500;
+	text-align: right;
+	width: 50px;
+}
+
+.moment {
+	display: flex;
+	gap: 1rem;
+	padding: 0.75rem;
+	background: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-sm);
+	border-left: 3px solid var(--mantine-color-blue-4);
+	transition: all 200ms ease;
+}
+
+.moment:hover {
+	background: var(--mantine-color-gray-1);
+	border-left-color: var(--mantine-color-blue-6);
+	box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.timeline {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 0.25rem;
+	min-width: 24px;
+}
+
+.dot {
+	width: 24px;
+	height: 24px;
+	border-radius: 50%;
+	background: var(--mantine-color-blue-1);
+	border: 2px solid var(--mantine-color-blue-4);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: var(--mantine-color-red-6);
+	font-size: 0.75rem;
+}
+
+.line {
+	width: 2px;
+	flex: 1;
+	background: var(--mantine-color-gray-3);
+	min-height: 32px;
+}
+
+.content {
+	flex: 1;
+	padding: 0.25rem 0;
+}
+
+.summaryMetric {
+	text-align: right;
+}
+
+@media (prefers-color-scheme: dark) {
+	.chartContainer {
+		background: linear-gradient(
+			to bottom,
+			var(--mantine-color-dark-6),
+			transparent
+		);
+		border-color: var(--mantine-color-dark-5);
+	}
+
+	.gridLine {
+		stroke: var(--mantine-color-dark-5);
+	}
+
+	.fill {
+		fill: var(--mantine-color-blue-9);
+	}
+
+	.moment {
+		background: var(--mantine-color-dark-6);
+		border-left-color: var(--mantine-color-blue-8);
+	}
+
+	.moment:hover {
+		background: var(--mantine-color-dark-5);
+		border-left-color: var(--mantine-color-blue-6);
+	}
+
+	.dot {
+		background: var(--mantine-color-blue-9);
+		border-color: var(--mantine-color-blue-7);
+	}
+}

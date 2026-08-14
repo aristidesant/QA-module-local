@@ -9,7 +9,7 @@ import SentimentPolarityChart from './components/SentimentPolarityChart';
 import ToneScoreCard from './components/ToneScoreCard';
 import RecoveryMetricsCard from './components/RecoveryMetricsCard';
 import AgentPerformanceCard from './components/AgentPerformanceCard';
-import EmpathyIndicatorsCard from './components/EmpathyIndicatorsCard';
+import EmpathyTimelineCard from './components/EmpathyTimelineCard';
 import EmotionDisplay from './components/EmotionDisplay';
 import SectionCard from '~/components/SectionCard';
 import MockAudioPlayerBar from '../MockAudioPlayerBar';
@@ -110,8 +110,10 @@ export default function SentimentAnalysisView(
 					</SectionCard>
 
 					<SectionCard>
-						<EmpathyIndicatorsCard
+						<EmpathyTimelineCard
 							indicators={sentimentData.empathyIndicators}
+							recoveryDelta={sentimentData.recoveryMetrics.improvementDelta}
+							callDuration={props.durationSeconds ?? 180}
 						/>
 					</SectionCard>
 
