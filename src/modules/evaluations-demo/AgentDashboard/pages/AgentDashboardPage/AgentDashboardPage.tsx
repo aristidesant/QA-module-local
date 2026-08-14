@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, Title, Text } from '@mantine/core';
+import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import AgentPerformanceTrendChart from './components/AgentPerformanceTrendChart';
@@ -30,22 +30,27 @@ const AgentDashboardPage: React.FC = () => {
 					<ScoreCardsPanel calls={DEMO_AGENT_CALLS} />
 				</SectionCard>
 
-				<SectionCard
-					title='Customer Sentiment'
-					description='Average emotion scores from your customer interactions'
-				>
-					<EmotionGaugeWidget
-						calls={DEMO_AGENT_CALLS}
-						title='Your customer avg emotion'
-					/>
-				</SectionCard>
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<SectionCard
+						title='Customer Sentiment'
+						description='Average emotion scores from your customer interactions'
+					>
+						<EmotionGaugeWidget
+							calls={DEMO_AGENT_CALLS}
+							title='Your customer avg emotion'
+						/>
+					</SectionCard>
 
-				<SectionCard
-					title='Quick Stats'
-					description='Key metrics for your performance this week'
-				>
-					<AgentMetricsSidebar calls={DEMO_AGENT_CALLS} kpis={THIS_WEEK_KPIS} />
-				</SectionCard>
+					<SectionCard
+						title='Quick Stats'
+						description='Key metrics for your performance this week'
+					>
+						<AgentMetricsSidebar
+							calls={DEMO_AGENT_CALLS}
+							kpis={THIS_WEEK_KPIS}
+						/>
+					</SectionCard>
+				</SimpleGrid>
 
 				<SectionCard
 					title='Best and Worst Calls'
