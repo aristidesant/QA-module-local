@@ -1,6 +1,7 @@
 import React from 'react';
-import { Stack, Text, Title, SimpleGrid } from '@mantine/core';
+import { Stack, Title, Text } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
+import SectionCard from '~/components/SectionCard';
 import AgentPerformanceTrendChart from './components/AgentPerformanceTrendChart';
 import ScoreCardsPanel from './components/ScoreCardsPanel';
 import BestWorstCallsPanel from './components/BestWorstCallsPanel';
@@ -22,77 +23,55 @@ const AgentDashboardPage: React.FC = () => {
 					</Text>
 				</div>
 
-				{/* inline-style-allow: flex layout for section alignment */}
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					{/* inline-style-allow: flex layout for equal height sections */}
-					<div
-						style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-					>
-						<Text fw={700} size='lg' mb='md'>
-							Performance Scores
-						</Text>
-						{/* inline-style-allow: flex grow for content stretching */}
-						<div style={{ flex: 1 }}>
-							<ScoreCardsPanel calls={DEMO_AGENT_CALLS} />
-						</div>
-					</div>
-					{/* inline-style-allow: flex layout for equal height sections */}
-					<div
-						style={{ display: 'flex', flexDirection: 'column', height: '100%' }}
-					>
-						<Text fw={700} size='lg' mb='md'>
-							Customer Sentiment
-						</Text>
-						{/* inline-style-allow: flex grow for content stretching */}
-						<div style={{ flex: 1 }}>
-							<EmotionGaugeWidget
-								calls={DEMO_AGENT_CALLS}
-								title='Your customer avg emotion'
-							/>
-						</div>
-					</div>
-				</SimpleGrid>
-
-				<SimpleGrid cols={{ base: 1, md: 3 }} spacing='lg'>
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Quick Stats
-						</Text>
-						<AgentMetricsSidebar
-							calls={DEMO_AGENT_CALLS}
-							kpis={THIS_WEEK_KPIS}
-						/>
-					</div>
-					{/* inline-style-allow: required for grid column spanning */}
-					<div style={{ gridColumn: 'span 2' }}>
-						<Text fw={700} size='lg' mb='md'>
-							Best & Worst Calls
-						</Text>
-						<BestWorstCallsPanel calls={DEMO_AGENT_CALLS} />
-					</div>
-				</SimpleGrid>
-
-				<SimpleGrid
-					cols={{ base: 1, sm: 2, md: 2 }}
-					spacing='lg'
-					className={styles.bottomGrid}
+				<SectionCard
+					title='Performance Scores'
+					description='Your QA analysis, emotion and sentiment, and compliance scores'
 				>
-					<div className={styles.chartColumn}>
-						<AgentPerformanceTrendChart calls={DEMO_AGENT_CALLS} />
-					</div>
-					<div className={styles.summaryColumn}>
-						{/* Third column for additional insights or summary */}
-						<Stack gap='md' style={{ height: '100%' }}>
-							<Text fw={700} size='lg'>
-								Quick Insights
-							</Text>
-							<Text size='sm' c='dimmed'>
-								Your performance is trending positively this week. Keep up the
-								great work!
-							</Text>
-						</Stack>
-					</div>
-				</SimpleGrid>
+					<ScoreCardsPanel calls={DEMO_AGENT_CALLS} />
+				</SectionCard>
+
+				<SectionCard
+					title='Customer Sentiment'
+					description='Average emotion scores from your customer interactions'
+				>
+					<EmotionGaugeWidget
+						calls={DEMO_AGENT_CALLS}
+						title='Your customer avg emotion'
+					/>
+				</SectionCard>
+
+				<SectionCard
+					title='Quick Stats'
+					description='Key metrics for your performance this week'
+				>
+					<AgentMetricsSidebar calls={DEMO_AGENT_CALLS} kpis={THIS_WEEK_KPIS} />
+				</SectionCard>
+
+				<SectionCard
+					title='Best and Worst Calls'
+					description='Your top and bottom performing calls this week'
+				>
+					<BestWorstCallsPanel calls={DEMO_AGENT_CALLS} />
+				</SectionCard>
+
+				<SectionCard
+					title='Performance Trend'
+					description='4-week trend analysis of your performance scores'
+				>
+					<AgentPerformanceTrendChart calls={DEMO_AGENT_CALLS} />
+				</SectionCard>
+
+				<SectionCard
+					title='Quick Insights'
+					description='Performance analysis and recommendations'
+				>
+					<Stack gap='md'>
+						<Text size='sm' c='dimmed'>
+							Your performance is trending positively this week. Keep up the
+							great work!
+						</Text>
+					</Stack>
+				</SectionCard>
 			</Stack>
 		</ContentContainer>
 	);

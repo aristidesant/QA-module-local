@@ -1,6 +1,7 @@
 import React from 'react';
-import { Stack, Text, Title, SimpleGrid } from '@mantine/core';
+import { Stack, Title, Text } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
+import SectionCard from '~/components/SectionCard';
 import TeamScoreCardsPanel from './components/TeamScoreCardsPanel';
 import TeamPerformanceTrendChart from './components/TeamPerformanceTrendChart';
 import DowntrendingAgentsTable from './components/DowntrendingAgentsTable';
@@ -25,68 +26,64 @@ const SupervisorDashboardPage: React.FC = () => {
 					</Text>
 				</div>
 
-				<SimpleGrid cols={{ base: 1, md: 3 }} spacing='lg'>
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Team Performance Scores
-						</Text>
-						<TeamScoreCardsPanel calls={DEMO_AGENT_CALLS} />
-					</div>
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Customer Sentiment
-						</Text>
-						<EmotionGaugeWidget
-							calls={DEMO_AGENT_CALLS}
-							title='Your avg customer emotion for your team'
-						/>
-					</div>
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Quick Stats
-						</Text>
-						<TeamQuickStatsWidget calls={DEMO_AGENT_CALLS} />
-					</div>
-				</SimpleGrid>
+				<SectionCard
+					title='Team Performance Scores'
+					description="Your team's QA analysis, emotion and sentiment, and compliance scores"
+				>
+					<TeamScoreCardsPanel calls={DEMO_AGENT_CALLS} />
+				</SectionCard>
 
-				<SimpleGrid cols={{ base: 1, md: 3 }} spacing='lg'>
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Team Performance Trend (4 Weeks)
-						</Text>
-						<TeamPerformanceTrendChart calls={DEMO_AGENT_CALLS} />
-					</div>
+				<SectionCard
+					title='Customer Sentiment'
+					description="Average emotion scores from your team's customer interactions"
+				>
+					<EmotionGaugeWidget
+						calls={DEMO_AGENT_CALLS}
+						title='Your avg customer emotion for your team'
+					/>
+				</SectionCard>
 
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Performance Alerts
-						</Text>
-						<DowntrendingAgentsTable calls={DEMO_AGENT_CALLS} />
-					</div>
+				<SectionCard
+					title='Quick Stats'
+					description="Key metrics for your team's performance this week"
+				>
+					<TeamQuickStatsWidget calls={DEMO_AGENT_CALLS} />
+				</SectionCard>
 
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Campaigns
-						</Text>
-						<ActiveCampaignsWidget calls={DEMO_AGENT_CALLS} />
-					</div>
-				</SimpleGrid>
+				<SectionCard
+					title='Team Performance Trend'
+					description="4-week trend analysis of your team's performance scores"
+				>
+					<TeamPerformanceTrendChart calls={DEMO_AGENT_CALLS} />
+				</SectionCard>
 
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Agent Performance Comparison
-						</Text>
-						<AgentPerformanceComparisonTable calls={DEMO_AGENT_CALLS} />
-					</div>
+				<SectionCard
+					title='Performance Alerts'
+					description='Agents with declining performance requiring attention'
+				>
+					<DowntrendingAgentsTable calls={DEMO_AGENT_CALLS} />
+				</SectionCard>
 
-					<div>
-						<Text fw={700} size='lg' mb='md'>
-							Team Best & Worst Calls
-						</Text>
-						<BestWorstCallsPanel calls={DEMO_AGENT_CALLS} />
-					</div>
-				</SimpleGrid>
+				<SectionCard
+					title='Active Campaigns'
+					description='Current campaigns your team is working on'
+				>
+					<ActiveCampaignsWidget calls={DEMO_AGENT_CALLS} />
+				</SectionCard>
+
+				<SectionCard
+					title='Agent Performance Comparison'
+					description='Ranked comparison of your team members'
+				>
+					<AgentPerformanceComparisonTable calls={DEMO_AGENT_CALLS} />
+				</SectionCard>
+
+				<SectionCard
+					title='Team Best and Worst Calls'
+					description="Your team's top and bottom performing calls this week"
+				>
+					<BestWorstCallsPanel calls={DEMO_AGENT_CALLS} />
+				</SectionCard>
 			</Stack>
 		</ContentContainer>
 	);
