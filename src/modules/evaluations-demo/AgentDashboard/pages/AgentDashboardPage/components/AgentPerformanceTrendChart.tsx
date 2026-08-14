@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { LineChart } from '@mantine/charts';
 import { Box, Card, Text } from '@mantine/core';
 import type { DemoAgentCall } from '../../../types';
+import styles from './AgentPerformanceTrendChart.module.css';
 
 interface AgentPerformanceTrendChartProps {
 	calls: DemoAgentCall[];
@@ -53,7 +54,7 @@ const AgentPerformanceTrendChart: React.FC<AgentPerformanceTrendChartProps> = ({
 	}, [calls]);
 
 	return (
-		<Card withBorder radius='md' p='md'>
+		<Card withBorder radius='md' p='md' className={styles.card}>
 			<Card.Section withBorder inheritPadding py='md'>
 				<Text fw={700} size='lg'>
 					Performance Trend (1 Month)
@@ -63,7 +64,8 @@ const AgentPerformanceTrendChart: React.FC<AgentPerformanceTrendChartProps> = ({
 				</Text>
 			</Card.Section>
 
-			<Card.Section inheritPadding py='md'>
+			<Card.Section inheritPadding py='md' className={styles.chartSection}>
+				{/* inline-style-allow: chart container sizing */}
 				<Box style={{ width: '100%', height: 400, minHeight: 300 }}>
 					<LineChart
 						w='100%'
