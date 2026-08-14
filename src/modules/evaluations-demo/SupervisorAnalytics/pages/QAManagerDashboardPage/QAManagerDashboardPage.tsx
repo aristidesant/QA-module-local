@@ -7,6 +7,7 @@ import {
 	Card,
 	Group,
 	ThemeIcon,
+	Box,
 } from '@mantine/core';
 import {
 	IconCircleCheck,
@@ -152,16 +153,20 @@ const QAManagerDashboardPage: React.FC = () => {
 					</Card>
 				</SimpleGrid>
 
-				<SectionCard
-					title='Quick Stats'
-					description='Key metrics for this week'
-				>
-					<QAManagerQuickStatsWidget calls={DEMO_AGENT_CALLS} />
-				</SectionCard>
-
 				<CriticalIssuesPanel issues={mockCriticalIssuesQAManager} />
 
-				<RiskAlertPanel alerts={mockRiskAlerts} />
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<SectionCard
+						title='Quick Stats'
+						description='Key metrics for this week'
+					>
+						<QAManagerQuickStatsWidget calls={DEMO_AGENT_CALLS} />
+					</SectionCard>
+
+					<Box>
+						<RiskAlertPanel alerts={mockRiskAlerts} />
+					</Box>
+				</SimpleGrid>
 
 				<SupervisorQualityTable
 					supervisors={mockSupervisors}
