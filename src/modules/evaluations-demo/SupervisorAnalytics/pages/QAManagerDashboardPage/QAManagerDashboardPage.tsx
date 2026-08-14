@@ -15,6 +15,7 @@ import {
 } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import RiskAlertPanel from './components/RiskAlertPanel';
+import CriticalIssuesPanel from './components/CriticalIssuesPanel';
 import SupervisorQualityTable from './components/SupervisorQualityTable';
 import AnalyticsPanel from './components/AnalyticsPanel';
 import AuditQueuePanel from './components/AuditQueuePanel';
@@ -25,6 +26,7 @@ import {
 	mockDisputes,
 	mockDashboardKPIs,
 } from './mockData';
+import { mockCriticalIssuesQAManager } from './mockCriticalIssues';
 import styles from './QAManagerDashboardPage.module.css';
 
 const QAManagerDashboardPage: React.FC = () => {
@@ -97,6 +99,8 @@ const QAManagerDashboardPage: React.FC = () => {
 						</Group>
 					</Card>
 				</SimpleGrid>
+
+				<CriticalIssuesPanel issues={mockCriticalIssuesQAManager} />
 
 				<RiskAlertPanel alerts={mockRiskAlerts} />
 

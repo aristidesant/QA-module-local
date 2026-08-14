@@ -10,10 +10,15 @@ import AgentPerformanceComparisonTable from './components/AgentPerformanceCompar
 import TeamQuickStatsWidget from './components/TeamQuickStatsWidget';
 import BestWorstCallsPanel from '../../../AgentDashboard/pages/AgentDashboardPage/components/BestWorstCallsPanel';
 import EmotionGaugeWidget from '../../../components/EmotionGaugeWidget';
+import CriticalIssuesPanel from '../QAManagerDashboardPage/components/CriticalIssuesPanel';
 import { DEMO_AGENT_CALLS } from '../../../AgentDashboard/mockData';
+import { mockCriticalIssuesQAManager } from '../QAManagerDashboardPage/mockCriticalIssues';
 import styles from './SupervisorDashboardPage.module.css';
 
 const SupervisorDashboardPage: React.FC = () => {
+	// In a real app, supervisor name would come from route params or context
+	// For demo, we'll show all critical issues with team scope
+	const teamCriticalIssues = mockCriticalIssuesQAManager;
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg' className={styles.container}>
@@ -32,6 +37,8 @@ const SupervisorDashboardPage: React.FC = () => {
 				>
 					<TeamScoreCardsPanel calls={DEMO_AGENT_CALLS} />
 				</SectionCard>
+
+				<CriticalIssuesPanel issues={teamCriticalIssues} />
 
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
 					<SectionCard
