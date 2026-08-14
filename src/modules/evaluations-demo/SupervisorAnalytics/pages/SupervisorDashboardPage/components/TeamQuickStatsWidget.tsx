@@ -71,7 +71,7 @@ const TeamQuickStatsWidget: React.FC<TeamQuickStatsWidgetProps> = ({
 							</ThemeIcon>
 							<div>
 								<Text size='xs' c='dimmed' fw={500}>
-									Team Weekly Calls
+									Team This week calls
 								</Text>
 								<Text fw={700} size='lg'>
 									{metrics.teamCallVolume}

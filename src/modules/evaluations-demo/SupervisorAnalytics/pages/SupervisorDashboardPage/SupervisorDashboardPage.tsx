@@ -29,6 +29,9 @@ const SupervisorDashboardPage: React.FC = () => {
 					<Text className={styles.headerSubtitle}>
 						Here's an overview of your team's performance this week
 					</Text>
+					<Text size='xs' c='dimmed' fw={400}>
+						This week's data
+					</Text>
 				</div>
 
 				<SectionCard

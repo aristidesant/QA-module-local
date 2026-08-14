@@ -21,6 +21,9 @@ const AgentDashboardPage: React.FC = () => {
 					<Text className={styles.headerSubtitle}>
 						Here's an overview of your performance this week
 					</Text>
+					<Text size='xs' c='dimmed' fw={400}>
+						This week's data
+					</Text>
 				</div>
 
 				<SectionCard

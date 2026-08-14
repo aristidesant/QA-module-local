@@ -6,27 +6,24 @@ import {
 	IconAlertCircle,
 	IconTrendingDown,
 } from '@tabler/icons-react';
-import type { DemoAgentCall } from '../../../types';
-import type { DemoAgentWeeklyKpis } from '../../../types';
-import styles from './AgentMetricsSidebar.module.css';
+import type { DemoAgentCall } from '../../../../AgentDashboard/types';
+import styles from './QAManagerQuickStatsWidget.module.css';
 
-interface AgentMetricsSidebarProps {
+interface QAManagerQuickStatsWidgetProps {
 	calls: DemoAgentCall[];
-	kpis: DemoAgentWeeklyKpis;
 }
 
-const AgentMetricsSidebar: React.FC<AgentMetricsSidebarProps> = ({
+const QAManagerQuickStatsWidget: React.FC<QAManagerQuickStatsWidgetProps> = ({
 	calls,
-	kpis,
 }) => {
 	const metrics = useMemo(() => {
-		// Weekly call volume from KPIs
-		const weeklyCallVolume = kpis.totalCalls;
+		// System call volume (all calls in dataset)
+		const callVolume = calls.length;
 
 		// Active campaigns (unique campaigns from calls)
 		const activeCampaigns = new Set(calls.map((c) => c.campaign)).size;
 
-		// Open disputes (mock: count calls with disputed flag)
+		// Open disputes (count calls with disputed flag)
 		const openDisputes = calls.filter((c) => c.disputed).length;
 
 		// Lowest performance campaign
@@ -49,17 +46,17 @@ const AgentMetricsSidebar: React.FC<AgentMetricsSidebarProps> = ({
 		});
 
 		return {
-			weeklyCallVolume,
+			callVolume,
 			activeCampaigns,
 			openDisputes,
 			lowestCampaign,
 		};
-	}, [calls, kpis]);
+	}, [calls]);
 
 	return (
 		<Card withBorder radius='md' shadow='sm' className={styles.card}>
 			<Stack gap='md'>
-				{/* Weekly Call Volume */}
+				{/* System Call Volume */}
 				<div className={styles.metricItem}>
 					<Group justify='space-between' mb='xs'>
 						<Group gap='xs'>
@@ -77,7 +74,7 @@ const AgentMetricsSidebar: React.FC<AgentMetricsSidebarProps> = ({
 									This week calls
 								</Text>
 								<Text fw={700} size='lg'>
-									{metrics.weeklyCallVolume}
+									{metrics.callVolume}
 								</Text>
 							</div>
 						</Group>
@@ -174,4 +171,4 @@ const AgentMetricsSidebar: React.FC<AgentMetricsSidebarProps> = ({
 	);
 };
 
-export default AgentMetricsSidebar;
+export default QAManagerQuickStatsWidget;

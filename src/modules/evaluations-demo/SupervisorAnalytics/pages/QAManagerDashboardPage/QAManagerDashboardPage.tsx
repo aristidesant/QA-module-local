@@ -14,11 +14,13 @@ import {
 	IconShieldCheck,
 } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
+import SectionCard from '~/components/SectionCard';
 import RiskAlertPanel from './components/RiskAlertPanel';
 import CriticalIssuesPanel from './components/CriticalIssuesPanel';
 import SupervisorQualityTable from './components/SupervisorQualityTable';
 import AnalyticsPanel from './components/AnalyticsPanel';
 import AuditQueuePanel from './components/AuditQueuePanel';
+import QAManagerQuickStatsWidget from './components/QAManagerQuickStatsWidget';
 import {
 	mockRiskAlerts,
 	mockSupervisors,
@@ -91,6 +93,9 @@ const QAManagerDashboardPage: React.FC = () => {
 					<Text className={styles.headerSubtitle}>
 						Here's an overview of system-wide performance this week
 					</Text>
+					<Text size='xs' c='dimmed' fw={400}>
+						This week's data
+					</Text>
 				</div>
 
 				<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='md'>
@@ -146,6 +151,13 @@ const QAManagerDashboardPage: React.FC = () => {
 						</Group>
 					</Card>
 				</SimpleGrid>
+
+				<SectionCard
+					title='Quick Stats'
+					description='Key metrics for this week'
+				>
+					<QAManagerQuickStatsWidget calls={DEMO_AGENT_CALLS} />
+				</SectionCard>
 
 				<CriticalIssuesPanel issues={mockCriticalIssuesQAManager} />
 
