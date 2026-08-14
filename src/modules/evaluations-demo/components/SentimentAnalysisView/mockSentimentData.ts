@@ -3,7 +3,118 @@ import type {
 	Emotion,
 	TranscriptTurnWithEmotion,
 	SentimentData,
+	SpeechMetrics,
+	SentimentInflectionPoint,
 } from './types';
+
+function generateSpeechMetrics(): SpeechMetrics {
+	const agentWords = [12, 8, 15, 6, 18, 12];
+	const customerWords = [0, 11, 8, 14, 8, 5];
+
+	const totalAgentWords = agentWords.reduce((a, b) => a + b, 0);
+	const totalCustomerWords = customerWords.reduce((a, b) => a + b, 0);
+	const totalWords = totalAgentWords + totalCustomerWords;
+
+	return {
+		agentAvgResponseLengthWords: Math.round(
+			totalAgentWords / agentWords.length
+		),
+		agentAvgResponseLengthChars: Math.round(
+			(totalAgentWords / agentWords.length) * 5.5
+		), // avg 5.5 chars per word
+		customerAvgStatementLengthWords: Math.round(
+			totalCustomerWords / customerWords.length
+		),
+		customerAvgStatementLengthChars: Math.round(
+			(totalCustomerWords / customerWords.length) * 5.5
+		),
+		silencePeriods: [
+			{ startSeconds: 3, endSeconds: 5, durationSeconds: 2, timestamp: '0:03' },
+			{
+				startSeconds: 12,
+				endSeconds: 14,
+				durationSeconds: 2,
+				timestamp: '0:12',
+			},
+			{
+				startSeconds: 35,
+				endSeconds: 37,
+				durationSeconds: 2,
+				timestamp: '0:35',
+			},
+		],
+		totalSilenceDurationSeconds: 6,
+		avgSilenceDurationSeconds: 2,
+		silenceCount: 3,
+		talkTimeRatio: {
+			agent: Math.round((totalAgentWords / totalWords) * 100),
+			customer: Math.round((totalCustomerWords / totalWords) * 100),
+		},
+		responseLatencies: [
+			{ timestamp: '0:18', delaySeconds: 2.5, sentiment: 0.6 },
+			{ timestamp: '0:42', delaySeconds: 1.8, sentiment: 0.8 },
+		],
+		avgResponseLatencySeconds: 2.2,
+	};
+}
+
+function generateInflectionPoints(): SentimentInflectionPoint[] {
+	return [
+		{
+			id: 'ip1',
+			timestamp: '0:07',
+			timeSeconds: 7,
+			quote: 'It arrived damaged.',
+			role: 'customer',
+			sentimentBefore: 0.2,
+			sentimentAfter: -0.6,
+			sentimentDelta: -0.8,
+			direction: 'negative',
+			impactScore: 80,
+			context: 'Customer introduces the problem',
+		},
+		{
+			id: 'ip2',
+			timestamp: '0:28',
+			timeSeconds: 28,
+			quote: "I've been trying to reach you for two days.",
+			role: 'customer',
+			sentimentBefore: -0.5,
+			sentimentAfter: -0.8,
+			sentimentDelta: -0.3,
+			direction: 'negative',
+			impactScore: 30,
+			context: 'Frustration escalates due to wait time',
+		},
+		{
+			id: 'ip3',
+			timestamp: '0:42',
+			timeSeconds: 42,
+			quote:
+				"I completely understand your frustration. I'm going to get this resolved for you today.",
+			role: 'agent',
+			sentimentBefore: -0.8,
+			sentimentAfter: 0.0,
+			sentimentDelta: 0.8,
+			direction: 'positive',
+			impactScore: 80,
+			context: 'Agent empathy and commitment triggers recovery',
+		},
+		{
+			id: 'ip4',
+			timestamp: '1:10',
+			timeSeconds: 70,
+			quote: 'Thank you, I appreciate that.',
+			role: 'customer',
+			sentimentBefore: 0.0,
+			sentimentAfter: 0.75,
+			sentimentDelta: 0.75,
+			direction: 'positive',
+			impactScore: 75,
+			context: 'Resolution achieved, customer satisfied',
+		},
+	];
+}
 
 export function generateMockSentimentAnalysis(): SentimentAnalysisData {
 	// Mock transcript data with emotions and sentiment
@@ -199,6 +310,9 @@ export function generateMockSentimentAnalysis(): SentimentAnalysisData {
 		},
 	];
 
+	const speechMetrics = generateSpeechMetrics();
+	const sentimentInflectionPoints = generateInflectionPoints();
+
 	return {
 		agentEmotions,
 		customerEmotions,
@@ -215,5 +329,7 @@ export function generateMockSentimentAnalysis(): SentimentAnalysisData {
 		customerAvgEmotion: 'frustration',
 		agentTrend: 'improving',
 		customerTrend: 'improving',
+		speechMetrics,
+		sentimentInflectionPoints,
 	};
 }

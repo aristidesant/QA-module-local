@@ -1,0 +1,69 @@
+.container {
+	width: 100%;
+}
+
+.metricsGrid {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 12px;
+
+	@media (min-width: 640px) {
+		grid-template-columns: 1fr 1fr;
+	}
+
+	@media (min-width: 1024px) {
+		grid-template-columns: repeat(3, 1fr);
+	}
+}
+
+.metricCard {
+	background-color: var(--mantine-color-gray-1);
+	border: 1px solid var(--mantine-color-gray-2);
+	border-radius: 6px;
+	padding: 12px;
+	transition: all 200ms ease;
+
+	&:hover {
+		box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+		border-color: var(--mantine-color-gray-3);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		background-color: var(--mantine-color-dark-6);
+		border-color: var(--mantine-color-dark-5);
+
+		&:hover {
+			border-color: var(--mantine-color-dark-4);
+			box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+		}
+	}
+}
+
+.latencyList {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	padding: 8px;
+	background-color: var(--mantine-color-gray-0);
+	border-radius: 4px;
+
+	@media (prefers-color-scheme: dark) {
+		background-color: var(--mantine-color-dark-7);
+	}
+}
+
+.latencyItem {
+	padding: 6px;
+	border-radius: 3px;
+	transition: background-color 200ms ease;
+
+	&:hover {
+		background-color: var(--mantine-color-gray-1);
+	}
+
+	@media (prefers-color-scheme: dark) {
+		&:hover {
+			background-color: var(--mantine-color-dark-6);
+		}
+	}
+}

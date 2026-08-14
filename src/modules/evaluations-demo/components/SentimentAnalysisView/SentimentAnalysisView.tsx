@@ -11,6 +11,8 @@ import RecoveryMetricsCard from './components/RecoveryMetricsCard';
 import AgentPerformanceCard from './components/AgentPerformanceCard';
 import EmpathyTimelineCard from './components/EmpathyTimelineCard';
 import EmotionDisplay from './components/EmotionDisplay';
+import SpeechPatternsCard from './components/SpeechPatternsCard';
+import SentimentInflectionPointsCard from './components/SentimentInflectionPointsCard';
 import SectionCard from '~/components/SectionCard';
 import MockAudioPlayerBar from '../MockAudioPlayerBar';
 import styles from './SentimentAnalysisView.module.css';
@@ -104,6 +106,10 @@ export default function SentimentAnalysisView(
 					</SectionCard>
 
 					<SectionCard>
+						<SpeechPatternsCard metrics={sentimentData.speechMetrics} />
+					</SectionCard>
+
+					<SectionCard>
 						<AgentPerformanceCard
 							performance={sentimentData.agentPerformance}
 						/>
@@ -114,6 +120,12 @@ export default function SentimentAnalysisView(
 							indicators={sentimentData.empathyIndicators}
 							recoveryDelta={sentimentData.recoveryMetrics.improvementDelta}
 							callDuration={props.durationSeconds ?? 180}
+						/>
+					</SectionCard>
+
+					<SectionCard>
+						<SentimentInflectionPointsCard
+							inflectionPoints={sentimentData.sentimentInflectionPoints}
 						/>
 					</SectionCard>
 
