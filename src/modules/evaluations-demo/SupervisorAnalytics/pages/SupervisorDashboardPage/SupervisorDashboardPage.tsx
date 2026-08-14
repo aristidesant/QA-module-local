@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, Title, Text } from '@mantine/core';
+import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import TeamScoreCardsPanel from './components/TeamScoreCardsPanel';
@@ -33,22 +33,24 @@ const SupervisorDashboardPage: React.FC = () => {
 					<TeamScoreCardsPanel calls={DEMO_AGENT_CALLS} />
 				</SectionCard>
 
-				<SectionCard
-					title='Customer Sentiment'
-					description="Average emotion scores from your team's customer interactions"
-				>
-					<EmotionGaugeWidget
-						calls={DEMO_AGENT_CALLS}
-						title='Your avg customer emotion for your team'
-					/>
-				</SectionCard>
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<SectionCard
+						title='Customer Sentiment'
+						description="Average emotion scores from your team's customer interactions"
+					>
+						<EmotionGaugeWidget
+							calls={DEMO_AGENT_CALLS}
+							title='Your avg customer emotion for your team'
+						/>
+					</SectionCard>
 
-				<SectionCard
-					title='Quick Stats'
-					description="Key metrics for your team's performance this week"
-				>
-					<TeamQuickStatsWidget calls={DEMO_AGENT_CALLS} />
-				</SectionCard>
+					<SectionCard
+						title='Quick Stats'
+						description="Key metrics for your team's performance this week"
+					>
+						<TeamQuickStatsWidget calls={DEMO_AGENT_CALLS} />
+					</SectionCard>
+				</SimpleGrid>
 
 				<SectionCard
 					title='Team Performance Trend'
