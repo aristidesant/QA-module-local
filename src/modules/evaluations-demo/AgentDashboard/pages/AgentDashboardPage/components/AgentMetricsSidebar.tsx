@@ -149,7 +149,7 @@ const AgentMetricsSidebar: React.FC<AgentMetricsSidebarProps> = ({
 							</ThemeIcon>
 							<div>
 								<Text size='xs' c='dimmed' fw={500}>
-									Lowest Campaign
+									Lowest Performance Campaign
 								</Text>
 								<Stack gap={2}>
 									<Text fw={700} size='sm' lineClamp={1}>

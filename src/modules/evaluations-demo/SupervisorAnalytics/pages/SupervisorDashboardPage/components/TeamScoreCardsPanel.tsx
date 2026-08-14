@@ -14,20 +14,11 @@ import {
 	IconShieldCheck,
 } from '@tabler/icons-react';
 import type { DemoAgentCall } from '../../../../AgentDashboard/types';
+import type { Emotion } from '../../../../components/SentimentAnalysisView/types';
 import styles from './TeamScoreCardsPanel.module.css';
 
 interface TeamScoreCardsPanelProps {
 	calls: DemoAgentCall[];
-}
-
-interface TeamScoreData {
-	label: string;
-	teamAvg: number;
-	min: number;
-	max: number;
-	spread: number;
-	color: string;
-	icon: React.ReactNode;
 }
 
 const TeamScoreCardsPanel: React.FC<TeamScoreCardsPanelProps> = ({ calls }) => {
@@ -37,11 +28,6 @@ const TeamScoreCardsPanel: React.FC<TeamScoreCardsPanelProps> = ({ calls }) => {
 				.filter((call) => {
 					if (type === 'qa')
 						return call.evaluationType === 'QA' && call.score !== null;
-					if (type === 'emotion')
-						return (
-							call.evaluationType === 'Sentiment Analysis' &&
-							call.score !== null
-						);
 					if (type === 'compliance')
 						return call.evaluationType === 'Compliance' && call.score !== null;
 					return false;
@@ -56,14 +42,58 @@ const TeamScoreCardsPanel: React.FC<TeamScoreCardsPanelProps> = ({ calls }) => {
 			return { avg, min, max, spread: max - min };
 		};
 
+		// Calculate predominant emotion based on all call scores
+		const allCallScores = calls
+			.filter((call) => call.score !== null)
+			.map((call) => call.score as number);
+
+		const getPredominantEmotion = (scores: number[]) => {
+			const emotionMap: Record<Emotion, number> = {
+				satisfaction: 0,
+				frustration: 0,
+				anger: 0,
+				neutral: 0,
+				excitement: 0,
+				sadness: 0,
+			};
+
+			scores.forEach((score) => {
+				let emotion: Emotion = 'neutral';
+				if (score >= 85) {
+					emotion = Math.random() > 0.5 ? 'satisfaction' : 'excitement';
+				} else if (score >= 70) {
+					emotion = 'satisfaction';
+				} else if (score >= 50) {
+					emotion = 'neutral';
+				} else if (score >= 30) {
+					emotion = 'frustration';
+				} else {
+					emotion = 'anger';
+				}
+
+				emotionMap[emotion]++;
+			});
+
+			const total = scores.length;
+			if (total === 0) return { emotion: 'neutral' as Emotion, percentage: 0 };
+
+			const dominantEmotion = (Object.entries(emotionMap).sort(
+				([, a], [, b]) => b - a
+			)[0] || ['neutral', 0])[0] as Emotion;
+			const percentage = Math.round(
+				(emotionMap[dominantEmotion] / total) * 100
+			);
+
+			return { emotion: dominantEmotion, percentage };
+		};
+
 		const qaScores = getScores('qa');
-		const emotionScores = getScores('emotion');
 		const complianceScores = getScores('compliance');
+		const predominantEmotion = getPredominantEmotion(allCallScores);
 
 		const qaStats = calculateStats(qaScores);
-		const emotionStats = calculateStats(emotionScores);
 		const complianceStats = calculateStats(complianceScores);
-		const allData: TeamScoreData[] = [
+		const allData: any[] = [
 			{
 				label: 'QA Analysis Score',
 				teamAvg: qaStats.avg,
@@ -74,11 +104,8 @@ const TeamScoreCardsPanel: React.FC<TeamScoreCardsPanelProps> = ({ calls }) => {
 				icon: <IconCircleCheck size={32} />,
 			},
 			{
-				label: 'Emotion & Sentiment Score',
-				teamAvg: emotionStats.avg,
-				min: emotionStats.min,
-				max: emotionStats.max,
-				spread: emotionStats.spread,
+				label: 'Predominant Emotion',
+				emotion: predominantEmotion,
 				color: 'green',
 				icon: <IconMoodSmile size={32} />,
 			},
@@ -118,10 +145,24 @@ const TeamScoreCardsPanel: React.FC<TeamScoreCardsPanelProps> = ({ calls }) => {
 								<Text size='sm' c='dimmed' fw={500}>
 									{data.label}
 								</Text>
-								<Text className={styles.scoreValue}>{data.teamAvg}</Text>
-								<Text size='xs' c='dimmed'>
-									Range: {data.min}–{data.max}
-								</Text>
+								{data.teamAvg !== undefined ? (
+									<>
+										<Text className={styles.scoreValue}>{data.teamAvg}</Text>
+										<Text size='xs' c='dimmed'>
+											Range: {data.min}–{data.max}
+										</Text>
+									</>
+								) : (
+									<div>
+										<Text className={styles.scoreValue}>
+											{data.emotion!.emotion.charAt(0).toUpperCase() +
+												data.emotion!.emotion.slice(1)}
+										</Text>
+										<Text size='xs' c='dimmed'>
+											{data.emotion!.percentage}% of calls
+										</Text>
+									</div>
+								)}
 							</Stack>
 							<ThemeIcon
 								size='lg'
@@ -133,18 +174,20 @@ const TeamScoreCardsPanel: React.FC<TeamScoreCardsPanelProps> = ({ calls }) => {
 								{data.icon}
 							</ThemeIcon>
 						</Group>
-						<Group gap='xs'>
-							<Text size='xs' c='dimmed'>
-								Spread:
-							</Text>
-							<Badge
-								variant='light'
-								color={getSpreadColor(data.spread)}
-								size='sm'
-							>
-								{data.spread} points
-							</Badge>
-						</Group>
+						{data.spread !== undefined && (
+							<Group gap='xs'>
+								<Text size='xs' c='dimmed'>
+									Spread:
+								</Text>
+								<Badge
+									variant='light'
+									color={getSpreadColor(data.spread)}
+									size='sm'
+								>
+									{data.spread} points
+								</Badge>
+							</Group>
+						)}
 					</Stack>
 				</Card>
 			))}
