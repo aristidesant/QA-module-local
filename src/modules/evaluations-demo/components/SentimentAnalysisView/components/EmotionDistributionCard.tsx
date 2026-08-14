@@ -1,14 +1,14 @@
-import { Stack, Text } from '@mantine/core';
+import { Stack, Text, Group, Tooltip } from '@mantine/core';
 import type { EmotionDistribution, Emotion } from '../types';
 import styles from './EmotionDistributionCard.module.css';
 
 const EMOTION_COLORS: Record<Emotion, string> = {
-	satisfaction: '#51cf66',
-	frustration: '#ff922b',
-	anger: '#ff6b6b',
-	neutral: '#909090',
-	excitement: '#ffd60a',
-	sadness: '#748ffc',
+	satisfaction: 'var(--mantine-color-green-6)',
+	frustration: 'var(--mantine-color-orange-6)',
+	anger: 'var(--mantine-color-red-6)',
+	neutral: 'var(--mantine-color-gray-6)',
+	excitement: 'var(--mantine-color-yellow-6)',
+	sadness: 'var(--mantine-color-blue-6)',
 };
 
 interface EmotionDistributionCardProps {
@@ -24,23 +24,43 @@ export default function EmotionDistributionCard({
 				Emotion Distribution
 			</Text>
 
-			<div className={styles.grid}>
+			{/* Horizontal segmented bar */}
+			<div className={styles.barContainer}>
 				{distribution.map((item) => (
-					<div key={item.emotion} className={styles.stat}>
-						{/* inline-style-allow: emotion dot background color */}
+					<Tooltip
+						key={item.emotion}
+						label={`${item.emotion}: ${item.percentage}%`}
+					>
 						<div
-							className={styles.dot}
+							className={styles.segment}
+							// inline-style-allow: emotion segment width and color
+							style={{
+								width: `${item.percentage}%`,
+								backgroundColor: EMOTION_COLORS[item.emotion],
+							}}
+						/>
+					</Tooltip>
+				))}
+			</div>
+
+			{/* Legend below bar */}
+			<div className={styles.legend}>
+				{distribution.map((item) => (
+					<Group key={item.emotion} gap='xs' className={styles.legendItem}>
+						<div
+							className={styles.legendDot}
+							// inline-style-allow: emotion legend dot background color
 							style={{
 								backgroundColor: EMOTION_COLORS[item.emotion],
 							}}
 						/>
-						<Text size='xs' fw={600} className={styles.label}>
+						<Text size='xs' fw={500} className={styles.legendLabel}>
 							{item.emotion}
 						</Text>
-						<Text size='xs' c='dimmed' className={styles.percentage}>
+						<Text size='xs' c='dimmed'>
 							{item.percentage}%
 						</Text>
-					</div>
+					</Group>
 				))}
 			</div>
 		</Stack>
