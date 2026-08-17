@@ -283,6 +283,74 @@ export const mockDisputes = [
 	},
 ];
 
+export const mockCampaignPerformance = [
+	{
+		id: 'camp-1',
+		name: 'VIP Account Services',
+		callVolume: 2845,
+		complianceViolations: 3,
+		performance: 'best' as const,
+	},
+	{
+		id: 'camp-2',
+		name: 'Technical Support',
+		callVolume: 2156,
+		complianceViolations: 8,
+		performance: 'best' as const,
+	},
+	{
+		id: 'camp-3',
+		name: 'General Inquiries',
+		callVolume: 1923,
+		complianceViolations: 12,
+		performance: 'best' as const,
+	},
+	{
+		id: 'camp-4',
+		name: 'Billing Support Q3',
+		callVolume: 1245,
+		complianceViolations: 31,
+		performance: 'lowest' as const,
+	},
+	{
+		id: 'camp-5',
+		name: 'Collections Campaign',
+		callVolume: 1089,
+		complianceViolations: 42,
+		performance: 'lowest' as const,
+	},
+	{
+		id: 'camp-6',
+		name: 'Renewal Outreach',
+		callVolume: 987,
+		complianceViolations: 28,
+		performance: 'lowest' as const,
+	},
+];
+
+export const mockSentimentMetrics = {
+	agentSentimentScore: 8.3,
+	clientSentimentScore: 8.1,
+};
+
+export const mockQAIssuesSummary = [
+	{
+		category: 'Billing Policy Violations',
+		count: 12,
+		trend: 'up' as const,
+	},
+	{
+		category: 'Negative Sentiment Escalations',
+		count: 8,
+		trend: 'down' as const,
+	},
+	{
+		category: 'Documentation Gaps',
+		count: 6,
+		trend: 'stable' as const,
+	},
+];
+
 export const mockAuditQueue = {
 	pendingAudits: [
 		{

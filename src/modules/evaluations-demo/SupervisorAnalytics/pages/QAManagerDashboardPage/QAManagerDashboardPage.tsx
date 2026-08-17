@@ -22,12 +22,19 @@ import SupervisorQualityTable from './components/SupervisorQualityTable';
 import AnalyticsPanel from './components/AnalyticsPanel';
 import AuditQueuePanel from './components/AuditQueuePanel';
 import QAManagerQuickStatsWidget from './components/QAManagerQuickStatsWidget';
+import CampaignPerformanceTable from './components/CampaignPerformanceTable';
+import AgentSentimentCard from './components/AgentSentimentCard';
+import ClientSentimentCard from './components/ClientSentimentCard';
+import QAIssuesCard from './components/QAIssuesCard';
 import {
 	mockRiskAlerts,
 	mockSupervisors,
 	mockQAAnalytics,
 	mockDisputes,
 	mockDashboardKPIs,
+	mockCampaignPerformance,
+	mockSentimentMetrics,
+	mockQAIssuesSummary,
 } from './mockData';
 import { mockCriticalIssuesQAManager } from './mockCriticalIssues';
 import { DEMO_AGENT_CALLS } from '../../../AgentDashboard/mockData';
@@ -154,6 +161,24 @@ const QAManagerDashboardPage: React.FC = () => {
 				</SimpleGrid>
 
 				<CriticalIssuesPanel issues={mockCriticalIssuesQAManager} />
+
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<CampaignPerformanceTable
+						bestPerforming={mockCampaignPerformance.filter(
+							(c) => c.performance === 'best'
+						)}
+						lowestPerforming={mockCampaignPerformance.filter(
+							(c) => c.performance === 'lowest'
+						)}
+					/>
+					<AgentSentimentCard
+						score={mockSentimentMetrics.agentSentimentScore}
+					/>
+					<ClientSentimentCard
+						score={mockSentimentMetrics.clientSentimentScore}
+					/>
+					<QAIssuesCard issues={mockQAIssuesSummary} />
+				</SimpleGrid>
 
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
 					<SectionCard

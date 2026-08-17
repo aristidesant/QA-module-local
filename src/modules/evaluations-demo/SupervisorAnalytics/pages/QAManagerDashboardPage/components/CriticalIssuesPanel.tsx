@@ -84,7 +84,7 @@ const CriticalIssuesPanel: React.FC<CriticalIssuesPanelProps> = ({
 							{/* inline-style-allow: flex layout for affected entities column */}
 							<Stack gap={4} style={{ flex: 1 }}>
 								<Text size='xs' fw={500} c='dimmed'>
-									Affected:
+									Agents:
 								</Text>
 								<Group gap={4}>
 									{issue.affectedEntities.slice(0, 2).map((entity) => (
