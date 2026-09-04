@@ -4,6 +4,7 @@ import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import { DashboardMetricCard, ProfileBadge } from '../components';
 import BaseTable from '~/components/BaseTable/BaseTable';
+import DashboardRoleGuard from '../components/DashboardRoleGuard';
 
 interface SupervisorMetric {
 	id: number;
@@ -43,6 +44,7 @@ const OperationManagerDashboard: React.FC = () => {
 	];
 
 	return (
+		<DashboardRoleGuard>
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
 				<div>
@@ -224,6 +226,7 @@ const OperationManagerDashboard: React.FC = () => {
 				</Tabs>
 			</Stack>
 		</ContentContainer>
+		</DashboardRoleGuard>
 	);
 };
 

@@ -5,6 +5,7 @@ import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import { DashboardMetricCard, ProfileBadge, AlertsInbox } from '../components';
 import BaseTable from '~/components/BaseTable/BaseTable';
+import DashboardRoleGuard from '../components/DashboardRoleGuard';
 
 interface Dispute {
 	id: number;
@@ -91,6 +92,7 @@ const QAManagerDashboard: React.FC = () => {
 	];
 
 	return (
+		<DashboardRoleGuard>
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
 				<div>
@@ -248,6 +250,7 @@ const QAManagerDashboard: React.FC = () => {
 				</Tabs>
 			</Stack>
 		</ContentContainer>
+		</DashboardRoleGuard>
 	);
 };
 
