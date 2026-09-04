@@ -3,7 +3,6 @@ import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import { DashboardMetricCard, AlertsInbox, ProfileBadge } from '../components';
-import DashboardRoleGuard from '../components/DashboardRoleGuard';
 
 interface AlertMock {
 	id: number;
@@ -45,9 +44,8 @@ const AgentDashboard: React.FC = () => {
 	};
 
 	return (
-		<DashboardRoleGuard>
-			<ContentContainer contentWidth='full'>
-				<Stack gap='lg'>
+		<ContentContainer contentWidth='full'>
+			<Stack gap='lg'>
 				<div>
 					<Title order={1}>Welcome, Agent Smith</Title>
 					<Text c='dimmed' mt='xs'>
@@ -122,9 +120,8 @@ const AgentDashboard: React.FC = () => {
 						<ProfileBadge name='Sentiment Champion' role='Avg 4.5+ sentiment' />
 					</Stack>
 				</SectionCard>
-				</Stack>
-			</ContentContainer>
-		</DashboardRoleGuard>
+			</Stack>
+		</ContentContainer>
 	);
 };
 
