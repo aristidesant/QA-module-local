@@ -1,7 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router';
 import { useRoleMockStore } from '~/stores/roleMockStore';
-import type { PreviewRole } from '~/constants/previewRole';
 
 /**
  * Redirects users to the correct dashboard based on their role
@@ -17,34 +16,34 @@ export const useDashboardRoleRedirect = () => {
 	const previewRole = useRoleMockStore(s => s.previewRole);
 
 	useEffect(() => {
-		// Only redirect if on a dashboard route
-		if (!location.pathname.includes('/qa/dashboards/')) {
+		// Map role to target dashboard
+		const getRoleDashboard = () => {
+			switch (previewRole) {
+				case 'agent':
+					return '/qa/dashboards/agent';
+				case 'supervisor':
+					return '/qa/dashboards/supervisor';
+				case 'operationManager':
+					return '/qa/dashboards/operation-manager';
+				case 'superAdmin':
+					return '/qa/dashboards/qa-manager';
+				default:
+					return null;
+			}
+		};
+
+		// Check if we're on any dashboard route
+		const isDashboardRoute = location.pathname.includes('/qa/dashboards/');
+		if (!isDashboardRoute || !previewRole) {
 			return;
 		}
 
-		// Determine which dashboard the user should see
-		let targetDashboard: string;
-
-		switch (previewRole) {
-			case 'agent':
-				targetDashboard = '/qa/dashboards/agent';
-				break;
-			case 'supervisor':
-				targetDashboard = '/qa/dashboards/supervisor';
-				break;
-			case 'operationManager':
-				targetDashboard = '/qa/dashboards/operation-manager';
-				break;
-			case 'superAdmin':
-				// Super admin defaults to QA Manager dashboard
-				targetDashboard = '/qa/dashboards/qa-manager';
-				break;
-			default:
-				// If no preview role set, don't redirect
-				return;
+		const targetDashboard = getRoleDashboard();
+		if (!targetDashboard) {
+			return;
 		}
 
-		// Only redirect if not already on the correct dashboard
+		// Redirect if not on the correct dashboard for this role
 		if (location.pathname !== targetDashboard) {
 			navigate(targetDashboard, { replace: true });
 		}
