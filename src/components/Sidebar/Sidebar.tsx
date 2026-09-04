@@ -19,10 +19,13 @@ import {
 } from '@mantine/core';
 import {
 	IconActivity,
+	IconAlertCircle,
+	IconBell,
 	IconBook2,
 	IconChecklist,
 	IconChevronDown,
 	IconClipboardCheck,
+	IconFileText,
 	IconForms,
 	IconFolders,
 	IconGitBranch,
@@ -377,6 +380,57 @@ const qaPrimaryItems: SidebarNavItem[] = [
 		icon: <IconChecklist size={20} className={styles.menuIcon} />,
 		to: '/qa/evaluator-agents',
 		i18nNamespace: 'qa.evaluatorAgents',
+	},
+	// Role-based dashboards
+	{
+		key: 'qa-dashboards-agent',
+		label: 'sidebar.items.qaAgentDashboard',
+		icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
+		to: '/qa/dashboards/agent',
+		i18nNamespace: 'qa.dashboards',
+	},
+	{
+		key: 'qa-dashboards-supervisor',
+		label: 'sidebar.items.qaSupervisorDashboard',
+		icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
+		to: '/qa/dashboards/supervisor',
+		i18nNamespace: 'qa.dashboards',
+	},
+	{
+		key: 'qa-dashboards-qa-manager',
+		label: 'sidebar.items.qaManagerDashboard',
+		icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
+		to: '/qa/dashboards/qa-manager',
+		i18nNamespace: 'qa.dashboards',
+	},
+	{
+		key: 'qa-dashboards-operation-manager',
+		label: 'sidebar.items.qaOperationDashboard',
+		icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
+		to: '/qa/dashboards/operation-manager',
+		i18nNamespace: 'qa.dashboards',
+	},
+	// Advanced features
+	{
+		key: 'qa-disputes-list',
+		label: 'sidebar.items.qaDisputesList',
+		icon: <IconAlertCircle size={20} className={styles.menuIcon} />,
+		to: '/qa/disputes-list',
+		i18nNamespace: 'qa.disputes',
+	},
+	{
+		key: 'qa-auto-triggers',
+		label: 'sidebar.items.qaAutoTriggers',
+		icon: <IconBell size={20} className={styles.menuIcon} />,
+		to: '/qa/auto-triggers',
+		i18nNamespace: 'qa.autoTriggers',
+	},
+	{
+		key: 'qa-reporting',
+		label: 'sidebar.items.qaReporting',
+		icon: <IconFileText size={20} className={styles.menuIcon} />,
+		to: '/qa/reporting',
+		i18nNamespace: 'qa.reporting',
 	},
 ];
 
