@@ -133,6 +133,36 @@ const SupervisorAnalyticsPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/SupervisorAnalytics/pages/SupervisorAnalyticsPage/SupervisorAnalyticsPage')
 );
+const NewAgentDashboard = React.lazy(
+	() => import('./modules/qa/dashboard/pages/AgentDashboard')
+);
+const NewSupervisorDashboard = React.lazy(
+	() => import('./modules/qa/dashboard/pages/SupervisorDashboard')
+);
+const NewQAManagerDashboard = React.lazy(
+	() => import('./modules/qa/dashboard/pages/QAManagerDashboard')
+);
+const NewOperationManagerDashboard = React.lazy(
+	() => import('./modules/qa/dashboard/pages/OperationManagerDashboard')
+);
+const AgentProfilePage = React.lazy(
+	() => import('./modules/qa/dashboard/pages/AgentProfilePage')
+);
+const CustomerProfilePage = React.lazy(
+	() => import('./modules/qa/dashboard/pages/CustomerProfilePage')
+);
+const DisputesPage = React.lazy(
+	() => import('./modules/qa/dashboard/pages/DisputesPage')
+);
+const AutoTriggersPage = React.lazy(
+	() => import('./modules/qa/dashboard/pages/AutoTriggersPage')
+);
+const ReportingPage = React.lazy(
+	() => import('./modules/qa/dashboard/pages/ReportingPage')
+);
+const CallDetailPage = React.lazy(
+	() => import('./modules/qa/dashboard/pages/CallDetailPage')
+);
 const QAManagerAnalyticsPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/SupervisorAnalytics/pages/QAManagerAnalyticsPage/QAManagerAnalyticsPage')
@@ -757,6 +787,116 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<SupervisorDashboardPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'dashboards/agent',
+										id: 'qa.dashboards.agent',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<NewAgentDashboard />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'dashboards/supervisor',
+										id: 'qa.dashboards.supervisor',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<NewSupervisorDashboard />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'dashboards/qa-manager',
+										id: 'qa.dashboards.qa-manager',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<NewQAManagerDashboard />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'dashboards/operation-manager',
+										id: 'qa.dashboards.operation-manager',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<NewOperationManagerDashboard />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'profiles/agent/:agentId',
+										id: 'qa.profiles.agent',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<AgentProfilePage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'profiles/customer/:customerId',
+										id: 'qa.profiles.customer',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CustomerProfilePage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'disputes-list',
+										id: 'qa.disputes-list',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<DisputesPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'auto-triggers',
+										id: 'qa.auto-triggers',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<AutoTriggersPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'reporting',
+										id: 'qa.reporting',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<ReportingPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'call/:callId',
+										id: 'qa.call.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CallDetailPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
