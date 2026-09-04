@@ -23,6 +23,8 @@ export const useDashboardRoleRedirect = () => {
 					return '/qa/dashboards/agent';
 				case 'supervisor':
 					return '/qa/dashboards/supervisor';
+				case 'qaManager':
+					return '/qa/dashboards/qa-manager';
 				case 'operationManager':
 					return '/qa/dashboards/operation-manager';
 				case 'superAdmin':
