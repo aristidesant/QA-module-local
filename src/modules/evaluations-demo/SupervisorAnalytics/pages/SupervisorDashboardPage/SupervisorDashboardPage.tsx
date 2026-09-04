@@ -11,6 +11,9 @@ import TeamQuickStatsWidget from './components/TeamQuickStatsWidget';
 import BestWorstCallsPanel from '../../../AgentDashboard/pages/AgentDashboardPage/components/BestWorstCallsPanel';
 import EmotionGaugeWidget from '../../../components/EmotionGaugeWidget';
 import CriticalIssuesPanel from '../QAManagerDashboardPage/components/CriticalIssuesPanel';
+import { SentimentCategoryComparison } from '../../../../qa/emotion-sentiment/components/SentimentCategoryComparison';
+import { EmotionBreakdownComparison } from '../../../../qa/emotion-sentiment/components/EmotionBreakdownComparison';
+import { useSupervisorTeamSentimentMetrics } from '../../../../qa/emotion-sentiment/hooks/useSupervisorTeamSentimentMetrics';
 import { DEMO_AGENT_CALLS } from '../../../AgentDashboard/mockData';
 import { mockCriticalIssuesQAManager } from '../QAManagerDashboardPage/mockCriticalIssues';
 import styles from './SupervisorDashboardPage.module.css';
@@ -19,6 +22,8 @@ const SupervisorDashboardPage: React.FC = () => {
 	// In a real app, supervisor name would come from route params or context
 	// For demo, we'll show all critical issues with team scope
 	const teamCriticalIssues = mockCriticalIssuesQAManager;
+	const { data: sentimentData, teamBenchmark } = useSupervisorTeamSentimentMetrics();
+
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg' className={styles.container}>
@@ -61,6 +66,34 @@ const SupervisorDashboardPage: React.FC = () => {
 						<TeamQuickStatsWidget calls={DEMO_AGENT_CALLS} />
 					</SectionCard>
 				</SimpleGrid>
+
+				{sentimentData && (
+					<>
+						<SectionCard
+							title='Sentiment Category Distribution'
+							description="Your team's emotions vs. client emotions this week"
+						>
+							<SentimentCategoryComparison
+								agentCategories={sentimentData.agent.categories}
+								clientCategories={sentimentData.client.categories}
+								teamAverage={teamBenchmark?.categories}
+								role='supervisor'
+							/>
+						</SectionCard>
+
+						<SectionCard
+							title='Individual Emotion Breakdown'
+							description="Detailed emotion percentages for your team's interactions"
+						>
+							<EmotionBreakdownComparison
+								agentEmotions={sentimentData.agent.emotions}
+								clientEmotions={sentimentData.client.emotions}
+								teamAverages={teamBenchmark?.emotions}
+								role='supervisor'
+							/>
+						</SectionCard>
+					</>
+				)}
 
 				<SectionCard
 					title='Team Performance Trend'

@@ -68,6 +68,39 @@ export interface Evaluation {
 	evaluatedAt?: string | null;
 	createdAt?: string;
 	updatedAt?: string;
+
+	// QA Aspect
+	qaScore?: number | null;
+	qaMethod?: 'STANDARD' | 'COPC' | null;
+	qaDetails?: {
+		errorCriticoBusiness?: number | null;
+		errorCriticoNonBusiness?: number | null;
+		errorCriticoCompliance?: number | null;
+		errorCriticoEndUser?: number | null;
+	} | null;
+
+	// Sentiment & Emotion Aspect
+	sentimentScore?: number | null;
+	sentiment?: 'very-negative' | 'negative' | 'neutral' | 'positive' | 'very-positive' | null;
+	emotions?: string[] | null;
+	forecastNps?: number | null;
+
+	// Compliance Aspect
+	complianceScore?: number | null;
+	complianceCategories?: {
+		security?: string[];
+		regulatory?: string[];
+		legal?: string[];
+	} | null;
+
+	// Business Insights Aspect
+	businessInsights?: string[] | null;
+
+	// Markers & Feedback
+	markerIds?: number[] | null;
+
+	// Alert Configuration
+	triggeredByAlertConfiguration?: number | null;
 }
 
 export interface EvaluationAnswer {

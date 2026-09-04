@@ -1,0 +1,43 @@
+.container {
+  width: 100%;
+}
+
+.table {
+  font-size: 0.875rem;
+}
+
+.headerCell {
+  padding: 0.5rem 0.75rem;
+  font-weight: 500;
+  font-size: 0.75rem;
+  color: var(--mantine-color-gray-6);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .headerCell {
+    color: var(--mantine-color-dark-3);
+  }
+}
+
+.emotionRow {
+  border-bottom: 0.5px solid var(--mantine-color-gray-2);
+
+  @media (prefers-color-scheme: dark) {
+    border-bottom-color: var(--mantine-color-dark-6);
+  }
+
+  &:hover {
+    background-color: var(--mantine-color-gray-0);
+
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--mantine-color-dark-7);
+    }
+  }
+}
+
+.emotionName {
+  padding: 0.75rem;
+  font-weight: 500;
+}

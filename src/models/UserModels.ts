@@ -15,6 +15,7 @@ export interface UserModel {
 		ClientModel,
 		'id' | 'name' | 'alias' | 'identifier' | 'email'
 	> | null;
+	agentId?: number | null;
 	createdAt: string | Date;
 	updatedAt: string | Date;
 	deletedAt: string | Date | null;
@@ -48,7 +49,7 @@ export interface ImpersonatedClient {
 
 export interface CreateUserPayload extends Omit<
 	UserModel,
-	'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'status'
+	'id' | 'createdAt' | 'updatedAt' | 'deletedAt' | 'status' | 'client'
 > {
 	status?: string;
 	password?: string;

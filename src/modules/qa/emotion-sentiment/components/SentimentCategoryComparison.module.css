@@ -1,0 +1,26 @@
+.container {
+  width: 100%;
+}
+
+.categoryItem {
+  padding: 0.75rem;
+  border: 0.5px solid var(--mantine-color-gray-2);
+  border-radius: var(--mantine-radius-md);
+  background: var(--mantine-color-gray-0);
+  transition: background-color 150ms ease;
+
+  &:hover {
+    background: var(--mantine-color-gray-1);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .categoryItem {
+    border-color: var(--mantine-color-dark-6);
+    background: var(--mantine-color-dark-7);
+
+    &:hover {
+      background: var(--mantine-color-dark-6);
+    }
+  }
+}

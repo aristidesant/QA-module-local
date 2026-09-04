@@ -26,6 +26,9 @@ import CampaignPerformanceTable from './components/CampaignPerformanceTable';
 import AgentSentimentCard from './components/AgentSentimentCard';
 import ClientSentimentCard from './components/ClientSentimentCard';
 import QAIssuesCard from './components/QAIssuesCard';
+import { SentimentCategoryComparison } from '../../../../qa/emotion-sentiment/components/SentimentCategoryComparison';
+import { EmotionBreakdownComparison } from '../../../../qa/emotion-sentiment/components/EmotionBreakdownComparison';
+import { useSystemSentimentMetrics } from '../../../../qa/emotion-sentiment/hooks/useSystemSentimentMetrics';
 import {
 	mockRiskAlerts,
 	mockSupervisors,
@@ -49,6 +52,7 @@ const QAManagerDashboardPage: React.FC = () => {
 		'1w' | '2w' | '4w'
 	>('4w');
 	const [selectedCampaign, setSelectedCampaign] = useState<string | null>(null);
+	const { data: sentimentData } = useSystemSentimentMetrics();
 
 	// Calculate predominant emotion based on call scores
 	const predominantEmotion = useMemo(() => {
@@ -192,6 +196,32 @@ const QAManagerDashboardPage: React.FC = () => {
 						<RiskAlertPanel alerts={mockRiskAlerts} />
 					</Box>
 				</SimpleGrid>
+
+				{sentimentData && (
+					<>
+						<SectionCard
+							title='Sentiment Category Distribution'
+							description='System-wide agent and client emotions'
+						>
+							<SentimentCategoryComparison
+								agentCategories={sentimentData.agent.categories}
+								clientCategories={sentimentData.client.categories}
+								role='qa-manager'
+							/>
+						</SectionCard>
+
+						<SectionCard
+							title='Individual Emotion Breakdown'
+							description='Detailed emotion metrics across the system'
+						>
+							<EmotionBreakdownComparison
+								agentEmotions={sentimentData.agent.emotions}
+								clientEmotions={sentimentData.client.emotions}
+								role='qa-manager'
+							/>
+						</SectionCard>
+					</>
+				)}
 
 				<SupervisorQualityTable
 					supervisors={mockSupervisors}

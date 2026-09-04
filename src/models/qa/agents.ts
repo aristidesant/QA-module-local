@@ -13,6 +13,7 @@ export interface AgentListQueryParams extends ListQueryParams {
 export interface Agent {
 	id: number;
 	clientId?: number;
+	supervisorId?: number | null;
 	employeeId: string;
 	agentType: AgentType;
 	firstName?: string | null;
@@ -33,6 +34,7 @@ export interface CreateAgentPayload {
 	lastName?: string;
 	email?: string;
 	team?: string;
+	supervisorId?: number;
 	metadata?: Record<string, unknown>;
 }
 
@@ -42,5 +44,6 @@ export interface UpdateAgentPayload {
 	lastName?: string | null;
 	email?: string | null;
 	team?: string | null;
+	supervisorId?: number | null;
 	metadata?: Record<string, unknown> | null;
 }

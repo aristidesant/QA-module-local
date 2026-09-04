@@ -7,10 +7,15 @@ import ScoreCardsPanel from './components/ScoreCardsPanel';
 import BestWorstCallsPanel from './components/BestWorstCallsPanel';
 import AgentMetricsSidebar from './components/AgentMetricsSidebar';
 import EmotionGaugeWidget from '../../../components/EmotionGaugeWidget';
+import { SentimentCategoryComparison } from '../../../../qa/emotion-sentiment/components/SentimentCategoryComparison';
+import { EmotionBreakdownComparison } from '../../../../qa/emotion-sentiment/components/EmotionBreakdownComparison';
+import { useAgentSentimentWithTeamAverage } from '../../../../qa/emotion-sentiment/hooks/useAgentSentimentWithTeamAverage';
 import { DEMO_AGENT_CALLS, THIS_WEEK_KPIS } from '../../mockData';
 import styles from './AgentDashboardPage.module.css';
 
 const AgentDashboardPage: React.FC = () => {
+	const { data: sentimentData, teamBenchmark } = useAgentSentimentWithTeamAverage();
+
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg' className={styles.container}>
@@ -82,6 +87,34 @@ const AgentDashboardPage: React.FC = () => {
 						</Stack>
 					</SectionCard>
 				</SimpleGrid>
+
+				{sentimentData && (
+					<>
+						<SectionCard
+							title='Sentiment Category Distribution'
+							description='Your emotions vs. client emotions this week'
+						>
+							<SentimentCategoryComparison
+								agentCategories={sentimentData.agent.categories}
+								clientCategories={sentimentData.client.categories}
+								teamAverage={teamBenchmark?.categories}
+								role='agent'
+							/>
+						</SectionCard>
+
+						<SectionCard
+							title='Individual Emotion Breakdown'
+							description='Detailed emotion percentages for your interactions'
+						>
+							<EmotionBreakdownComparison
+								agentEmotions={sentimentData.agent.emotions}
+								clientEmotions={sentimentData.client.emotions}
+								teamAverages={teamBenchmark?.emotions}
+								role='agent'
+							/>
+						</SectionCard>
+					</>
+				)}
 			</Stack>
 		</ContentContainer>
 	);
