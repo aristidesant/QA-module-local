@@ -350,6 +350,76 @@ export const SUPERVISOR_WEEKLY_METRICS: WeeklyMetrics = {
 	},
 };
 
+export const SUPERVISOR_QUICK_STATS = {
+	teamSize: 8,
+	totalCalls: 156,
+	avgHandlingTime: '8.5m',
+	completionRate: 89,
+	escalationRate: 11,
+	teamAvgSentimentAgent: 4.0,
+	teamAvgSentimentCustomer: 3.9,
+	evaluationsCompleted: 42,
+};
+
+export const SUPERVISOR_CALLS: BestWorstCall[] = [
+	// Best calls
+	{
+		id: 'CALL-BEST-SUP-001',
+		date: '2026-09-07T10:30:00Z',
+		agent: 'Sarah Johnson',
+		duration: 420,
+		qaScore: 98,
+		sentiment: 4.8,
+		type: 'best',
+	},
+	{
+		id: 'CALL-BEST-SUP-002',
+		date: '2026-09-06T14:15:00Z',
+		agent: 'Mike Chen',
+		duration: 380,
+		qaScore: 96,
+		sentiment: 4.7,
+		type: 'best',
+	},
+	{
+		id: 'CALL-BEST-SUP-003',
+		date: '2026-09-05T09:45:00Z',
+		agent: 'Jessica Martinez',
+		duration: 450,
+		qaScore: 97,
+		sentiment: 4.9,
+		type: 'best',
+	},
+	// Worst calls
+	{
+		id: 'CALL-WORST-SUP-001',
+		date: '2026-09-07T13:45:00Z',
+		agent: 'David Brown',
+		duration: 520,
+		qaScore: 62,
+		sentiment: 2.1,
+		type: 'worst',
+	},
+	{
+		id: 'CALL-WORST-SUP-002',
+		date: '2026-09-06T11:20:00Z',
+		agent: 'Lisa Wong',
+		duration: 680,
+		qaScore: 58,
+		sentiment: 2.3,
+		type: 'worst',
+	},
+	{
+		id: 'CALL-WORST-SUP-003',
+		date: '2026-09-05T15:30:00Z',
+		agent: 'Robert Kim',
+		duration: 610,
+		qaScore: 61,
+		sentiment: 2.0,
+		type: 'worst',
+	},
+];
+
 export const CRITICAL_ISSUES_SUPERVISOR: CriticalIssue[] = [
 	{
 		id: 'ISSUE-SUP-001',
@@ -654,3 +724,114 @@ export const CRITICAL_ISSUES_OPERATION_MANAGER: CriticalIssue[] = [
 		timestamp: '2026-08-29T10:30:00Z',
 	},
 ];
+
+// ============================================================================
+// QA Manager Calls (Platform-wide best/worst calls from all teams)
+// ============================================================================
+
+export const QA_MANAGER_CALLS: BestWorstCall[] = [
+	// Best calls from across all supervisors
+	{
+		id: 'CALL-BEST-QA-001',
+		date: '2026-09-07T10:30:00Z',
+		agent: 'Sarah Johnson',
+		duration: 420,
+		qaScore: 98,
+		sentiment: 4.8,
+		type: 'best',
+	},
+	{
+		id: 'CALL-BEST-QA-002',
+		date: '2026-09-06T14:15:00Z',
+		agent: 'Mike Chen',
+		duration: 380,
+		qaScore: 96,
+		sentiment: 4.7,
+		type: 'best',
+	},
+	{
+		id: 'CALL-BEST-QA-003',
+		date: '2026-09-05T09:45:00Z',
+		agent: 'Jessica Martinez',
+		duration: 450,
+		qaScore: 97,
+		sentiment: 4.9,
+		type: 'best',
+	},
+	{
+		id: 'CALL-BEST-QA-004',
+		date: '2026-09-04T11:20:00Z',
+		agent: 'James Wilson',
+		duration: 410,
+		qaScore: 95,
+		sentiment: 4.6,
+		type: 'best',
+	},
+	{
+		id: 'CALL-BEST-QA-005',
+		date: '2026-09-03T16:00:00Z',
+		agent: 'Amanda Taylor',
+		duration: 390,
+		qaScore: 94,
+		sentiment: 4.5,
+		type: 'best',
+	},
+	// Worst calls from across all supervisors
+	{
+		id: 'CALL-WORST-QA-001',
+		date: '2026-09-07T13:45:00Z',
+		agent: 'David Brown',
+		duration: 520,
+		qaScore: 62,
+		sentiment: 2.1,
+		type: 'worst',
+	},
+	{
+		id: 'CALL-WORST-QA-002',
+		date: '2026-09-06T11:20:00Z',
+		agent: 'Lisa Wong',
+		duration: 680,
+		qaScore: 58,
+		sentiment: 2.3,
+		type: 'worst',
+	},
+	{
+		id: 'CALL-WORST-QA-003',
+		date: '2026-09-05T15:30:00Z',
+		agent: 'Robert Kim',
+		duration: 610,
+		qaScore: 61,
+		sentiment: 2.0,
+		type: 'worst',
+	},
+	{
+		id: 'CALL-WORST-QA-004',
+		date: '2026-09-04T14:10:00Z',
+		agent: 'Patricia Lopez',
+		duration: 590,
+		qaScore: 59,
+		sentiment: 2.2,
+		type: 'worst',
+	},
+	{
+		id: 'CALL-WORST-QA-005',
+		date: '2026-09-03T12:50:00Z',
+		agent: 'Thomas Anderson',
+		duration: 710,
+		qaScore: 56,
+		sentiment: 1.9,
+		type: 'worst',
+	},
+];
+
+export const QA_MANAGER_QUICK_STATS = {
+	supervisors: 12,
+	agents: 85,
+	totalCalls: 2340,
+	avgHandlingTime: '7.8m',
+	completionRate: 88,
+	escalationRate: 12,
+	averageSentimentAgent: 3.9,
+	averageSentimentCustomer: 3.8,
+	evaluationsCompleted: 234,
+};
