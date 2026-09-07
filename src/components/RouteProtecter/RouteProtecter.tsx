@@ -39,7 +39,7 @@ export async function clientLoader(): Promise<LoaderData> {
 				username: 'asantana',
 				exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60),
 				iat: Math.floor(Date.now() / 1000),
-				roles: ['QAADMIN'],
+				roles: ['SUPERADMIN'],
 			};
 			// Mock JWT: header.payload.signature
 			const mockToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(JSON.stringify(payload))}.mock-signature`;
