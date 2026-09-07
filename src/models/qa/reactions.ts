@@ -15,7 +15,7 @@ export interface Reaction {
 	rankingEntryId: number;
 	targetAgentId: number;
 	givenByAgentId: number;
-	reactionType: ReactionType;
+	reactionType: PeerRecognitionType;
 	createdAt?: string;
 	updatedAt?: string;
 }
@@ -34,17 +34,17 @@ export interface ReactionSummary {
 export interface CreateReactionPayload {
 	rankingEntryId: number;
 	targetAgentId: number;
-	reactionType: ReactionType;
+	reactionType: PeerRecognitionType;
 }
 
 export interface ReactionConfig {
-	type: ReactionType;
+	type: PeerRecognitionType;
 	label: string;
 	emoji?: string;
 	description?: string;
 }
 
-export const REACTION_TYPES: Record<ReactionType, ReactionConfig> = {
+export const REACTION_TYPES: Record<PeerRecognitionType, ReactionConfig> = {
 	LIKE: {
 		type: 'LIKE',
 		label: 'Like',

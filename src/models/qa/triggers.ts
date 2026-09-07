@@ -15,7 +15,7 @@ export interface TriggerConditionConfig {
 export interface TriggerConfigurationListQueryParams extends ListQueryParams {
 	supervisorId?: number;
 	triggerType?: TriggerType;
-	scope?: TriggerScope;
+	scope?: TriggerConfigScope;
 	status?: 'ACTIVE' | 'INACTIVE';
 	sortBy?: 'id' | 'name' | 'triggerType' | 'createdAt';
 	orderBy?: 'ASC' | 'DESC';
@@ -27,7 +27,7 @@ export interface TriggerConfiguration {
 	name: string;
 	description?: string | null;
 	triggerType: TriggerType;
-	scope: TriggerScope;
+	scope: TriggerConfigScope;
 	supervisorId?: number;
 	campaignId?: number;
 	conditions: TriggerConditionConfig[];
@@ -59,7 +59,7 @@ export interface CreateTriggerConfigurationPayload {
 	name: string;
 	description?: string;
 	triggerType: TriggerType;
-	scope: TriggerScope;
+	scope: TriggerConfigScope;
 	supervisorId?: number;
 	campaignId?: number;
 	conditions: TriggerConditionConfig[];

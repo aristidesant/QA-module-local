@@ -16,3 +16,7 @@ export { COPCScoreCard } from './COPCScoreCard';
 export { SentimentScaleCard } from './SentimentScaleCard';
 export { AutoFailsCard } from './AutoFailsCard';
 export { AgentInbox } from './AgentInbox';
+
+// Phase 3: Agent & Supervisor features
+export { RankingsTable } from './RankingsTable';
+export type { RankingEntry } from './RankingsTable';
