@@ -167,6 +167,17 @@ const QAManagerAnalyticsPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/SupervisorAnalytics/pages/QAManagerAnalyticsPage/QAManagerAnalyticsPage')
 );
+
+// Phase 4-5: New QA Admin Components
+const GlobalTriggersConfigPanel = React.lazy(
+	() => import('./modules/qa/qamanager/administration/GlobalTriggersConfigPanel').then(m => ({ default: m.GlobalTriggersConfigPanel }))
+);
+const SupervisorRankingsConfigPanel = React.lazy(
+	() => import('./modules/qa/operationmanager/configuration/SupervisorRankingsConfigPanel').then(m => ({ default: m.SupervisorRankingsConfigPanel }))
+);
+const DisputesManagement = React.lazy(
+	() => import('./modules/qa/disputes/DisputesManagement').then(m => ({ default: m.DisputesManagement }))
+);
 const EmotionDisplayShowcase = React.lazy(
 	() => import('./modules/evaluations-demo/pages/EmotionDisplayShowcase')
 );
@@ -1040,6 +1051,53 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QaFormBuilderPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									// Phase 4: QA Manager Global Triggers Configuration
+									{
+										path: 'qamanager/admin/triggers',
+										id: 'qa.qamanager.admin.triggers',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<GlobalTriggersConfigPanel />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									// Phase 4: Operation Manager Supervisor Rankings Configuration
+									{
+										path: 'operationmanager/rankings',
+										id: 'qa.operationmanager.rankings',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<SupervisorRankingsConfigPanel />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									// Phase 4: Disputes Management (used by Supervisor and QA Manager)
+									{
+										path: 'supervisor/disputes',
+										id: 'qa.supervisor.disputes',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<DisputesManagement />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qamanager/disputes',
+										id: 'qa.qamanager.disputes',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<DisputesManagement />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
