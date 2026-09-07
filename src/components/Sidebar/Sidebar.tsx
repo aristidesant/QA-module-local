@@ -528,7 +528,7 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 		{
 			key: 'role-preview-profile',
 			label: 'sidebar.rolePreview.items.profile',
-			icon: <IconUserCircle size={20} className={styles.menuIcon} />,
+			icon: <IconUsers size={20} className={styles.menuIcon} />,
 			to: '/qa/dashboards/agent#profile',
 		},
 	],
