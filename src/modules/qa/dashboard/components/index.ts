@@ -20,3 +20,10 @@ export { AgentInbox } from './AgentInbox';
 // Phase 3: Agent & Supervisor features
 export { RankingsTable } from './RankingsTable';
 export type { RankingEntry } from './RankingsTable';
+
+// Phase 4: Performance Metrics
+export { PerformanceScoresSection } from './PerformanceScoresSection';
+export { CriticalIssuesTable } from './CriticalIssuesTable';
+
+// Phase 5: Sentiment Analysis
+export { SentimentTrendChart } from './SentimentTrendChart';
