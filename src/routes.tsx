@@ -134,16 +134,16 @@ const SupervisorAnalyticsPage = React.lazy(
 		import('./modules/evaluations-demo/SupervisorAnalytics/pages/SupervisorAnalyticsPage/SupervisorAnalyticsPage')
 );
 const NewAgentDashboard = React.lazy(
-	() => import('./modules/qa/dashboard/pages/AgentDashboard')
+	() => import('./modules/qa/dashboard/pages/NewAgentDashboard')
 );
 const NewSupervisorDashboard = React.lazy(
-	() => import('./modules/qa/dashboard/pages/SupervisorDashboard')
+	() => import('./modules/qa/dashboard/pages/NewSupervisorDashboard')
 );
 const NewQAManagerDashboard = React.lazy(
-	() => import('./modules/qa/dashboard/pages/QAManagerDashboard')
+	() => import('./modules/qa/dashboard/pages/NewQAManagerDashboard')
 );
 const NewOperationManagerDashboard = React.lazy(
-	() => import('./modules/qa/dashboard/pages/OperationManagerDashboard')
+	() => import('./modules/qa/dashboard/pages/NewOperationManagerDashboard')
 );
 const AgentProfilePage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/AgentProfilePage')
@@ -789,7 +789,7 @@ const router = createBrowserRouter([
 								children: [
 									{
 										index: true,
-										element: <Navigate to='/qa/dashboard' replace />,
+										element: <Navigate to='/qa/dashboards/qa-manager' replace />,
 									},
 									{
 										path: 'dashboard',
