@@ -35,3 +35,7 @@ export type { PerformanceTrendPoint } from './PerformanceTrendChart';
 
 // Quick Stats Widget for KPI display
 export { QuickStatsWidget } from './QuickStatsWidget';
+
+// Quick Insights Widget for performance recommendations
+export { QuickInsightsWidget } from './QuickInsightsWidget';
+export type { Insight } from './QuickInsightsWidget';
