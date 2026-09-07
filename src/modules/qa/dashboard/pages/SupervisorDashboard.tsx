@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Stack, Title, Text, SimpleGrid, Tabs } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
+import { useDashboardRoleRedirect } from '~/hooks/useDashboardRoleRedirect';
 import { DashboardMetricCard, ProfileBadge, AlertsInbox } from '../components';
 import BaseTable from '~/components/BaseTable/BaseTable';
 
@@ -15,6 +16,8 @@ interface TeamMember {
 }
 
 const SupervisorDashboard: React.FC = () => {
+	useDashboardRoleRedirect();
+
 	const [alerts, setAlerts] = useState([
 		{
 			id: 1,
@@ -116,26 +119,26 @@ const SupervisorDashboard: React.FC = () => {
 						<SectionCard title='Team Performance' description='All team members'>
 							<BaseTable
 								columns={[
-									{ key: 'name', title: 'Name', render: r => r.name },
+									{ id: 'name', header: 'Name', cell: info => (info.row.original as TeamMember).name },
 									{
-										key: 'score',
-										title: 'QA Score',
-										render: r => `${r.score}%`,
+										id: 'score',
+										header: 'QA Score',
+										cell: info => `${(info.row.original as TeamMember).score}%`,
 									},
 									{
-										key: 'sentiment',
-										title: 'Sentiment',
-										render: r => r.sentiment,
+										id: 'sentiment',
+										header: 'Sentiment',
+										cell: info => (info.row.original as TeamMember).sentiment,
 									},
 									{
-										key: 'calls',
-										title: 'Calls This Week',
-										render: r => r.callsThisWeek,
+										id: 'calls',
+										header: 'Calls This Week',
+										cell: info => (info.row.original as TeamMember).callsThisWeek,
 									},
 									{
-										key: 'compliance',
-										title: 'Compliance',
-										render: r => `${r.compliance}%`,
+										id: 'compliance',
+										header: 'Compliance',
+										cell: info => `${(info.row.original as TeamMember).compliance}%`,
 									},
 								]}
 								data={teamMembers}

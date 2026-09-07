@@ -13,7 +13,7 @@ import {
 	Center,
 	Avatar,
 } from '@mantine/core';
-import { IconMedal, IconGift, IconHeart, IconThumbUp, IconStar, IconFire, IconTrophy } from '@tabler/icons-react';
+import { IconMedal, IconHeart, IconThumbUp, IconStar, IconFlame, IconTrophy } from '@tabler/icons-react';
 import styles from '../Dashboard.module.css';
 
 export interface RankingEntry {
@@ -47,7 +47,7 @@ const ReactionIcon: React.FC<{ type: string; count: number }> = ({ type, count }
 		like: { icon: <IconThumbUp size={16} />, color: '#4ECDC4' },
 		helpful: { icon: <IconHeart size={16} />, color: '#FF6B6B' },
 		inspiring: { icon: <IconStar size={16} />, color: '#FFD93D' },
-		amazing: { icon: <IconFire size={16} />, color: '#FF8C42' },
+		amazing: { icon: <IconFlame size={16} />, color: '#FF8C42' },
 		leader: { icon: <IconTrophy size={16} />, color: '#FFD700' },
 	};
 
@@ -222,7 +222,7 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 														color="#FF8C42"
 														onClick={() => handleReact(entry.position, 'amazing')}
 													>
-														<IconFire size={16} />
+														<IconFlame size={16} />
 													</ActionIcon>
 												</Tooltip>
 											</Group>

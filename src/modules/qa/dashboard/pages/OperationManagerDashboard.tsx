@@ -2,6 +2,7 @@ import React from 'react';
 import { Stack, Title, Text, SimpleGrid, Tabs } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
+import { useDashboardRoleRedirect } from '~/hooks/useDashboardRoleRedirect';
 import { DashboardMetricCard, ProfileBadge } from '../components';
 import BaseTable from '~/components/BaseTable/BaseTable';
 
@@ -15,6 +16,8 @@ interface SupervisorMetric {
 }
 
 const OperationManagerDashboard: React.FC = () => {
+	useDashboardRoleRedirect();
+
 	const supervisors: SupervisorMetric[] = [
 		{
 			id: 1,
@@ -103,29 +106,29 @@ const OperationManagerDashboard: React.FC = () => {
 							<BaseTable
 								columns={[
 									{
-										key: 'name',
-										title: 'Supervisor',
-										render: r => r.name,
+										id: 'name',
+										header: 'Supervisor',
+										accessorKey: 'name',
 									},
 									{
-										key: 'teamSize',
-										title: 'Team Size',
-										render: r => r.teamSize,
+										id: 'teamSize',
+										header: 'Team Size',
+										accessorKey: 'teamSize',
 									},
 									{
-										key: 'score',
-										title: 'Avg QA Score',
-										render: r => `${r.avgScore}%`,
+										id: 'score',
+										header: 'Avg QA Score',
+										cell: info => `${(info.row.original as SupervisorMetric).avgScore}%`,
 									},
 									{
-										key: 'sentiment',
-										title: 'Sentiment',
-										render: r => r.sentiment,
+										id: 'sentiment',
+										header: 'Sentiment',
+										accessorKey: 'sentiment',
 									},
 									{
-										key: 'compliance',
-										title: 'Compliance',
-										render: r => `${r.compliance}%`,
+										id: 'compliance',
+										header: 'Compliance',
+										cell: info => `${(info.row.original as SupervisorMetric).compliance}%`,
 									},
 								]}
 								data={supervisors}

@@ -2,6 +2,7 @@ import React from 'react';
 import { Stack, Title, Text } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
+import { useDashboardRoleRedirect } from '~/hooks/useDashboardRoleRedirect';
 import {
 	PerformanceScoresSection,
 	SentimentTrendChart,
@@ -56,6 +57,8 @@ const DEFAULT_AGENT_INSIGHTS: Insight[] = [
 ];
 
 const AgentDashboard: React.FC = () => {
+	useDashboardRoleRedirect();
+
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>

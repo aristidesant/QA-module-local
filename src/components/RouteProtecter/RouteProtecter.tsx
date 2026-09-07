@@ -21,6 +21,34 @@ const ACCESS_TOKEN_KEY = 'accessToken';
 
 // Client loader to check session from sessionStorage (token only)
 export async function clientLoader(): Promise<LoaderData> {
+	// Development mode: return mock dev token for prototype
+	const isDev = typeof window !== 'undefined' && (
+		window.location.hostname === 'localhost' ||
+		window.location.hostname === '127.0.0.1' ||
+		window.location.hostname.includes('localhost:')
+	);
+
+	if (isDev && typeof window !== 'undefined') {
+		// Check if we have a mock dev token set
+		let token = window.sessionStorage.getItem(ACCESS_TOKEN_KEY);
+		if (!token) {
+			// Create a mock JWT token for development (expires in 24 hours)
+			const payload = {
+				sub: '1',
+				email: 'aristides.02@gmail.com',
+				username: 'asantana',
+				exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60),
+				iat: Math.floor(Date.now() / 1000),
+				roles: ['QAADMIN'],
+			};
+			// Mock JWT: header.payload.signature
+			const mockToken = `eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.${btoa(JSON.stringify(payload))}.mock-signature`;
+			window.sessionStorage.setItem(ACCESS_TOKEN_KEY, mockToken);
+			token = mockToken;
+		}
+		return { token, user: null };
+	}
+
 	let token: string | null = null;
 
 	if (typeof window !== 'undefined') {
@@ -85,12 +113,61 @@ export const RouteProtecter = () => {
 		}
 	}, [queryClient, setToken, setUser, storeToken, loaderToken]);
 
+	// Development mode: set mock user and token for QA routes without auth
+	const isDev = import.meta.env.DEV && (
+		typeof window !== 'undefined' &&
+		(window.location.hostname === 'localhost' ||
+		 window.location.hostname === '127.0.0.1' ||
+		 window.location.hostname.includes('localhost:'))
+	);
+	const isQaPath = path.startsWith('/qa');
+
+	useEffect(() => {
+		if (isDev && isQaPath && !storeToken && !user) {
+			// Set mock dev token for QA route access
+			const mockToken = 'dev-mock-token';
+			setToken(mockToken);
+
+			// Set a mock development user for QA route access
+			const mockUser: UserModel = {
+				id: 1,
+				username: 'asantana',
+				email: 'aristides.02@gmail.com',
+				firstName: 'Aristides',
+				lastName: 'Santana',
+				clientId: 1,
+				status: 'ACTIVE',
+				createdAt: new Date().toISOString(),
+				updatedAt: new Date().toISOString(),
+				deletedAt: null,
+				userRolesClient: [],
+			} as UserModel;
+			setUser(mockUser);
+		}
+	}, [isDev, isQaPath, storeToken, user, setToken, setUser]);
+
 	// Use store token as primary, fallback to loader token for initial render
 	const authToken = storeToken ?? loaderToken;
 
 	const meQuery = useQuery<UserModel>({
 		queryKey: ['currentUser'],
 		queryFn: async () => {
+			// In dev mode, return mock user without API call
+			if (isDev) {
+				return {
+					id: 1,
+					username: 'asantana',
+					email: 'aristides.02@gmail.com',
+					firstName: 'Aristides',
+					lastName: 'Santana',
+					clientId: 1,
+					status: 'ACTIVE',
+					createdAt: new Date().toISOString(),
+					updatedAt: new Date().toISOString(),
+					deletedAt: null,
+					userRolesClient: [],
+				} as UserModel;
+			}
 			const api = userApi();
 			return api.getCurrentUser();
 		},
@@ -132,7 +209,7 @@ export const RouteProtecter = () => {
 		}
 	}, [authToken, meQuery.error, meQuery.isError]);
 
-	if (!authToken && path !== '/login') {
+	if (!authToken && path !== '/login' && !(isDev && isQaPath)) {
 		return <Navigate to='/login' replace />;
 	}
 

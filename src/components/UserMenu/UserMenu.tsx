@@ -129,11 +129,11 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 	};
 
 	const roleLandingPaths: Record<PreviewRole, string> = {
-		agent: '/role-preview/agent-dashboard',
-		qaManager: '/role-preview/qa-manager-dashboard',
-		operationManager: '/role-preview/qa-manager-dashboard',
-		supervisor: '/qa/dashboard',
-		superAdmin: '/role-preview/qa-forms',
+		agent: '/qa/dashboards/agent',
+		qaManager: '/qa/dashboards/qa-manager',
+		operationManager: '/qa/dashboards/operation-manager',
+		supervisor: '/qa/dashboards/supervisor',
+		superAdmin: '/qa/dashboards/qa-manager',
 	};
 
 	const handleSelectPreviewRole = (role: PreviewRole) => {

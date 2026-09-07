@@ -3,6 +3,7 @@ import { Stack, Title, Text, SimpleGrid, Tabs, Button, Group } from '@mantine/co
 import { IconPlus } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
+import { useDashboardRoleRedirect } from '~/hooks/useDashboardRoleRedirect';
 import { DashboardMetricCard, ProfileBadge, AlertsInbox } from '../components';
 import BaseTable from '~/components/BaseTable/BaseTable';
 
@@ -23,6 +24,8 @@ interface Campaign {
 }
 
 const QAManagerDashboard: React.FC = () => {
+	useDashboardRoleRedirect();
+
 	const [alerts, setAlerts] = useState([
 		{
 			id: 1,
@@ -155,24 +158,24 @@ const QAManagerDashboard: React.FC = () => {
 							<BaseTable
 								columns={[
 									{
-										key: 'agentName',
-										title: 'Agent',
-										render: r => r.agentName,
+										id: 'agentName',
+										header: 'Agent',
+										accessorKey: 'agentName',
 									},
 									{
-										key: 'type',
-										title: 'Type',
-										render: r => r.type,
+										id: 'type',
+										header: 'Type',
+										accessorKey: 'type',
 									},
 									{
-										key: 'status',
-										title: 'Status',
-										render: r => r.status,
+										id: 'status',
+										header: 'Status',
+										accessorKey: 'status',
 									},
 									{
-										key: 'date',
-										title: 'Date',
-										render: r => r.createdDate,
+										id: 'date',
+										header: 'Date',
+										accessorKey: 'createdDate',
 									},
 								]}
 								data={disputes}
@@ -197,24 +200,24 @@ const QAManagerDashboard: React.FC = () => {
 								<BaseTable
 									columns={[
 										{
-											key: 'name',
-											title: 'Campaign Name',
-											render: r => r.name,
+											id: 'name',
+											header: 'Campaign Name',
+											accessorKey: 'name',
 										},
 										{
-											key: 'status',
-											title: 'Status',
-											render: r => r.status,
+											id: 'status',
+											header: 'Status',
+											accessorKey: 'status',
 										},
 										{
-											key: 'calls',
-											title: 'Calls',
-											render: r => r.callsCount,
+											id: 'calls',
+											header: 'Calls',
+											accessorKey: 'callsCount',
 										},
 										{
-											key: 'date',
-											title: 'Created',
-											render: r => r.createdDate,
+											id: 'date',
+											header: 'Created',
+											accessorKey: 'createdDate',
 										},
 									]}
 									data={campaigns}
