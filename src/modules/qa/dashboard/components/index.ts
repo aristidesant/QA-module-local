@@ -23,7 +23,11 @@ export type { RankingEntry } from './RankingsTable';
 
 // Phase 4: Performance Metrics
 export { PerformanceScoresSection } from './PerformanceScoresSection';
-export { CriticalIssuesTable } from './CriticalIssuesTable';
+// TODO: CriticalIssuesTable component is referenced but not yet implemented
+// export { CriticalIssuesTable } from './CriticalIssuesTable';
 
 // Phase 5: Sentiment Analysis
 export { SentimentTrendChart } from './SentimentTrendChart';
+
+// Quick Stats Widget for KPI display
+export { QuickStatsWidget } from './QuickStatsWidget';
