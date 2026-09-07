@@ -29,5 +29,9 @@ export { PerformanceScoresSection } from './PerformanceScoresSection';
 // Phase 5: Sentiment Analysis
 export { SentimentTrendChart } from './SentimentTrendChart';
 
+// Phase 6: Performance Trend Analysis
+export { PerformanceTrendChart } from './PerformanceTrendChart';
+export type { PerformanceTrendPoint } from './PerformanceTrendChart';
+
 // Quick Stats Widget for KPI display
 export { QuickStatsWidget } from './QuickStatsWidget';
