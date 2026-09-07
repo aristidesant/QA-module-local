@@ -1,124 +1,131 @@
-import React, { useState } from 'react';
-import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
+import React from 'react';
+import { Stack, Title, Text } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
-import { DashboardMetricCard, AlertsInbox, ProfileBadge } from '../components';
+import {
+	PerformanceScoresSection,
+	SentimentTrendChart,
+	QuickStatsWidget,
+	PerformanceTrendChart,
+	QuickInsightsWidget,
+	BestWorstCallsPanel,
+	CriticalIssuesTable,
+} from '../components';
+import type { Insight } from '../components/QuickInsightsWidget';
+import type { PerformanceTrendPoint } from '../components/PerformanceTrendChart';
+import {
+	AGENT_WEEKLY_METRICS,
+	AGENT_SENTIMENT_TREND,
+	AGENT_QUICK_STATS,
+	BEST_WORST_CALLS,
+	CRITICAL_ISSUES_AGENT,
+} from '../mockData';
 
-interface AlertMock {
-	id: number;
-	title: string;
-	description: string;
-	severity: 'low' | 'medium' | 'high';
-	timestamp: string;
-	read: boolean;
-}
+/**
+ * Mock 4-week performance trend data for the agent
+ * This shows the agent's QA score progression over the past 4 weeks
+ */
+const AGENT_PERFORMANCE_TREND: PerformanceTrendPoint[] = [
+	{ week: 'Week 1', score: 88 },
+	{ week: 'Week 2', score: 89 },
+	{ week: 'Week 3', score: 91 },
+	{ week: 'Week 4', score: 92 },
+];
+
+/**
+ * Default insights for agent dashboard
+ * These are generic recommendations that apply to all agents
+ */
+const DEFAULT_AGENT_INSIGHTS: Insight[] = [
+	{
+		title: 'Strong Performance',
+		description: 'Your QA score is performing well. Keep up the great work!',
+		type: 'positive',
+	},
+	{
+		title: 'Sentiment Improvement',
+		description:
+			'Customer sentiment is trending positively this week.',
+		type: 'positive',
+	},
+	{
+		title: 'Compliance Status',
+		description: 'All compliance categories are in good standing.',
+		type: 'positive',
+	},
+];
 
 const AgentDashboard: React.FC = () => {
-	const [alerts, setAlerts] = useState<AlertMock[]>([
-		{
-			id: 1,
-			title: 'Low QA Score',
-			description: 'Your QA score dropped to 72% this week',
-			severity: 'medium',
-			timestamp: '2 hours ago',
-			read: false,
-		},
-		{
-			id: 2,
-			title: 'Compliance Issue Detected',
-			description: 'Call #12456 has a regulatory compliance violation',
-			severity: 'high',
-			timestamp: '1 hour ago',
-			read: false,
-		},
-	]);
-
-	const handleMarkAsRead = (alertId: number) => {
-		setAlerts(prev =>
-			prev.map(a => (a.id === alertId ? { ...a, read: true } : a))
-		);
-	};
-
-	const handleDismiss = (alertId: number) => {
-		setAlerts(prev => prev.filter(a => a.id !== alertId));
-	};
-
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
+				{/* Header Section */}
 				<div>
-					<Title order={1}>Welcome, Agent Smith</Title>
+					<Title order={1}>Agent Dashboard</Title>
 					<Text c='dimmed' mt='xs'>
-						Here's an overview of your performance
+						Your personal performance overview - This week
 					</Text>
 				</div>
 
-				<SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing='md'>
-					<DashboardMetricCard
-						label='QA Score'
-						value={78}
-						unit='%'
-						progress={78}
-						trend='up'
-						trendValue='+5% vs last week'
-						color='blue'
-					/>
-					<DashboardMetricCard
-						label='Sentiment'
-						value='Positive'
-						progress={72}
-						trend='up'
-						trendValue='+3% vs last week'
-						color='green'
-					/>
-					<DashboardMetricCard
-						label='Compliance'
-						value={85}
-						unit='%'
-						progress={85}
-						trend='down'
-						trendValue='-2% vs last week'
-						color='orange'
-					/>
-					<DashboardMetricCard
-						label='Calls This Week'
-						value={24}
-						trend='up'
-						trendValue='+4 vs last week'
-					/>
-				</SimpleGrid>
-
-				<AlertsInbox
-					alerts={alerts}
-					onMarkAsRead={handleMarkAsRead}
-					onDismiss={handleDismiss}
-				/>
-
+				{/* Performance Scores Section */}
 				<SectionCard
-					title='My Recent Calls'
-					description='Last 5 calls you handled'
+					title='Performance Scores'
+					description='Your QA analysis, sentiment, compliance, and business insights'
 				>
-					<Stack gap='sm'>
-						{[1, 2, 3, 4, 5].map(i => (
-							<ProfileBadge
-								key={i}
-								name={`Call #${12450 + i}`}
-								role='Customer: John Doe'
-								score={78 + i}
-								status='active'
-							/>
-						))}
-					</Stack>
+					<PerformanceScoresSection metrics={AGENT_WEEKLY_METRICS} />
 				</SectionCard>
 
+				{/* Quick Stats Widget */}
 				<SectionCard
-					title='My Badges & Achievements'
-					description='Badges earned this month'
+					title='Quick Stats'
+					description='Key metrics for this week'
 				>
-					<Stack gap='sm'>
-						<ProfileBadge name='QA Excellence' role='3 calls with 90%+ score' />
-						<ProfileBadge name='Sentiment Champion' role='Avg 4.5+ sentiment' />
-					</Stack>
+					<QuickStatsWidget
+						data={AGENT_QUICK_STATS}
+						title='Weekly Statistics'
+					/>
+				</SectionCard>
+
+				{/* Sentiment Trend Chart */}
+				<SectionCard
+					title='Sentiment Trend'
+					description='4-week sentiment analysis for you and your customers'
+				>
+					<SentimentTrendChart data={AGENT_SENTIMENT_TREND} />
+				</SectionCard>
+
+				{/* Performance Trend Chart */}
+				<SectionCard
+					title='Performance Trend'
+					description='Your QA score progression over the past 4 weeks'
+				>
+					<PerformanceTrendChart data={AGENT_PERFORMANCE_TREND} />
+				</SectionCard>
+
+				{/* Critical Issues Table */}
+				{CRITICAL_ISSUES_AGENT.length > 0 && (
+					<SectionCard
+						title='Critical Issues'
+						description='Urgent items requiring your attention'
+					>
+						<CriticalIssuesTable issues={CRITICAL_ISSUES_AGENT} />
+					</SectionCard>
+				)}
+
+				{/* Best and Worst Calls Panel */}
+				<SectionCard
+					title='Best and Worst Calls'
+					description='Your top and bottom performing calls this week'
+				>
+					<BestWorstCallsPanel calls={BEST_WORST_CALLS} />
+				</SectionCard>
+
+				{/* Quick Insights Widget */}
+				<SectionCard
+					title='Quick Insights'
+					description='Performance recommendations and analysis'
+				>
+					<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
 				</SectionCard>
 			</Stack>
 		</ContentContainer>
