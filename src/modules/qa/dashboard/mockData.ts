@@ -52,6 +52,16 @@ export interface CallData {
 	resolution: 'resolved' | 'escalated' | 'pending';
 }
 
+export interface BestWorstCall {
+	id: string;
+	date: string;
+	agent: string;
+	duration: number;
+	qaScore: number;
+	sentiment: number;
+	type: 'best' | 'worst';
+}
+
 export interface SentimentTrendPoint {
 	week: number;
 	agentAverage: number;
@@ -214,6 +224,56 @@ export const AGENT_QUICK_STATS = {
 	averageSentimentCustomer: 4.1,
 	emotion: 'Satisfaction',
 };
+
+export const BEST_WORST_CALLS: BestWorstCall[] = [
+	// Best calls
+	{
+		id: 'CALL-BEST-001',
+		date: '2026-09-07T10:30:00Z',
+		agent: 'John Smith',
+		duration: 420,
+		qaScore: 98,
+		sentiment: 4.8,
+		type: 'best',
+	},
+	{
+		id: 'CALL-BEST-002',
+		date: '2026-09-06T14:15:00Z',
+		agent: 'Sarah Johnson',
+		duration: 380,
+		qaScore: 96,
+		sentiment: 4.7,
+		type: 'best',
+	},
+	{
+		id: 'CALL-BEST-003',
+		date: '2026-09-05T09:45:00Z',
+		agent: 'Mike Chen',
+		duration: 450,
+		qaScore: 97,
+		sentiment: 4.9,
+		type: 'best',
+	},
+	// Worst calls
+	{
+		id: 'CALL-WORST-001',
+		date: '2026-09-07T13:45:00Z',
+		agent: 'David Brown',
+		duration: 520,
+		qaScore: 62,
+		sentiment: 2.1,
+		type: 'worst',
+	},
+	{
+		id: 'CALL-WORST-002',
+		date: '2026-09-06T11:20:00Z',
+		agent: 'Lisa Wong',
+		duration: 680,
+		qaScore: 58,
+		sentiment: 2.3,
+		type: 'worst',
+	},
+];
 
 export const CRITICAL_ISSUES_AGENT: CriticalIssue[] = [
 	{

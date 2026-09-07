@@ -39,3 +39,7 @@ export { QuickStatsWidget } from './QuickStatsWidget';
 // Quick Insights Widget for performance recommendations
 export { QuickInsightsWidget } from './QuickInsightsWidget';
 export type { Insight } from './QuickInsightsWidget';
+
+// Best/Worst Calls Panel for performance comparison
+export { BestWorstCallsPanel } from './BestWorstCallsPanel';
+export type { BestWorstCall } from './BestWorstCallsPanel';
