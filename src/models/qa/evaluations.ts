@@ -45,6 +45,8 @@ export interface Evaluation {
 	id: number;
 	agentId: number;
 	agent?: Agent | null;
+	clientId?: number | null;
+	supervisorId?: number | null;
 	formId: number | null;
 	formName: string;
 	formCategory?: string | null;
@@ -70,18 +72,22 @@ export interface Evaluation {
 	updatedAt?: string;
 
 	// QA Aspect
-	qaScore?: number | null;
 	qaMethod?: 'STANDARD' | 'COPC' | null;
 	qaDetails?: {
-		errorCriticoBusiness?: number | null;
-		errorCriticoNonBusiness?: number | null;
-		errorCriticoCompliance?: number | null;
-		errorCriticoEndUser?: number | null;
+		// COPC Standard (4 separate metrics)
+		errorCriticoBusiness?: number | null; // ECN
+		errorCriticoNonBusiness?: number | null; // ENC
+		errorCriticoCompliance?: number | null; // ECC
+		errorCriticoEndUser?: number | null; // ECUF
 	} | null;
+	autoFailCount?: number | null;
+	autoFailIds?: number[] | null;
+	qaInvalidated?: boolean | null;
 
-	// Sentiment & Emotion Aspect
-	sentimentScore?: number | null;
-	sentiment?: 'very-negative' | 'negative' | 'neutral' | 'positive' | 'very-positive' | null;
+	// Sentiment & Emotion Aspect (5.0 scale: 1=Very Negative, 5=Very Positive)
+	agentSentimentScore?: number | null; // 1-5 scale
+	customerSentimentScore?: number | null; // 1-5 scale
+	sentimentScale?: 5.0;
 	emotions?: string[] | null;
 	forecastNps?: number | null;
 

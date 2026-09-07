@@ -641,6 +641,58 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/role-preview/finder',
 		},
 	],
+	qaManager: [
+		{
+			key: 'role-preview-dashboard',
+			label: 'sidebar.rolePreview.items.dashboard',
+			icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
+			to: '/role-preview/qa-manager-dashboard',
+			exact: true,
+		},
+		{
+			key: 'role-preview-qa-manager-analytics',
+			label: 'sidebar.rolePreview.items.analytics',
+			icon: <IconChartLine size={20} className={styles.menuIcon} />,
+			to: '/role-preview/qa-manager-analytics',
+		},
+		{
+			key: 'role-preview-qa-tests',
+			label: 'sidebar.rolePreview.items.qaTests',
+			icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
+			to: '/role-preview/qa-forms',
+		},
+		{
+			key: 'role-preview-campaigns',
+			label: 'sidebar.rolePreview.items.campaigns',
+			icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
+			to: '/role-preview/qa-campaigns',
+		},
+		{
+			key: 'role-preview-agents-roster',
+			label: 'sidebar.rolePreview.items.agentsRoster',
+			icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
+			to: '/role-preview/agents-roster',
+		},
+		{
+			key: 'role-preview-disputes',
+			label: 'sidebar.rolePreview.items.disputes',
+			icon: <IconFolders size={20} className={styles.menuIcon} />,
+			to: '/qa/disputes',
+			badge: 'disputes',
+		},
+		{
+			key: 'role-preview-billing',
+			label: 'sidebar.rolePreview.items.billing',
+			icon: <IconFileInvoice size={20} className={styles.menuIcon} />,
+			to: '/billing/invoices',
+		},
+		{
+			key: 'role-preview-finder',
+			label: 'sidebar.rolePreview.items.finder',
+			icon: <IconSearch size={20} className={styles.menuIcon} />,
+			to: '/role-preview/finder',
+		},
+	],
 	superAdmin: [
 		{
 			key: 'role-preview-dashboard',
