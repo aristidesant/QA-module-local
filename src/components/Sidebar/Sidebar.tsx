@@ -536,8 +536,9 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 		{
 			key: 'role-preview-lms',
 			label: 'sidebar.rolePreview.items.lms',
-			icon: <IconSchool size={20} className={styles.menuIcon} />,
+			icon: <IconLock size={20} className={styles.menuIcon} />,
 			to: '/qa/agent/lms',
+			disabled: true,
 		},
 	],
 	supervisor: [
