@@ -168,27 +168,28 @@ export const NewAgentDashboard: React.FC = () => {
 					</SectionCard>
 				</SimpleGrid>
 
-				{/* 5. Best & Worst Calls (single table with a Best/Worst toggle) */}
-				<SectionCard title='Best & Worst Calls' description='Your top and bottom performing calls this week'>
-					<BestWorstCallsTable calls={BEST_WORST_CALLS} />
-				</SectionCard>
+				{/* 5-6. Best & Worst Calls + Team Rankings (same row) */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+					<SectionCard title='Best & Worst Calls' description='Your top and bottom performing calls this week'>
+						<BestWorstCallsTable calls={BEST_WORST_CALLS} />
+					</SectionCard>
 
-				{/* 6. Team Rankings Tab (full width) */}
-				<Tabs defaultValue='rankings'>
-					<Tabs.List>
-						<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
-					</Tabs.List>
+					<Tabs defaultValue='rankings' style={{ flex: 1 }}>
+						<Tabs.List>
+							<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
+						</Tabs.List>
 
-					<Tabs.Panel value='rankings' pt='lg'>
-						<RankingsTable
-							entries={AGENT_TEAM_RANKINGS}
-							title='Team Rankings'
-							description="Your current ranking alongside the team's top performers this period"
-							goal={AGENT_RANKING_GOAL}
-							maxDisplay={5}
-						/>
-					</Tabs.Panel>
-				</Tabs>
+						<Tabs.Panel value='rankings' pt='lg'>
+							<RankingsTable
+								entries={AGENT_TEAM_RANKINGS}
+								title='Team Rankings'
+								description="Your current ranking alongside the team's top performers this period"
+								goal={AGENT_RANKING_GOAL}
+								maxDisplay={5}
+							/>
+						</Tabs.Panel>
+					</Tabs>
+				</SimpleGrid>
 			</Stack>
 		</ContentContainer>
 	);

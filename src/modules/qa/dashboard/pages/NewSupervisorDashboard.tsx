@@ -311,51 +311,52 @@ export const NewSupervisorDashboard: React.FC = () => {
 					</SectionCard>
 				</SimpleGrid>
 
-				{/* 5. Best & Worst Calls (single table with a Best/Worst toggle) */}
-				<SectionCard title='Best & Worst Calls' description="Your team's top and bottom performing calls this week">
-					<BestWorstCallsTable calls={SUPERVISOR_CALLS} />
-				</SectionCard>
+				{/* 5-6. Best & Worst Calls + Tabs Section (same row) */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+					<SectionCard title='Best & Worst Calls' description="Your team's top and bottom performing calls this week">
+						<BestWorstCallsTable calls={SUPERVISOR_CALLS} />
+					</SectionCard>
 
-				{/* 6. Tabs Section: Team Rankings + Team Members + Disputes (full width) */}
-				<Tabs defaultValue='rankings'>
-					<Tabs.List>
-						<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
-						<Tabs.Tab value='team-members'>Team Members</Tabs.Tab>
-						<Tabs.Tab value='disputes'>Disputes</Tabs.Tab>
-					</Tabs.List>
+					<Tabs defaultValue='rankings' style={{ flex: 1 }}>
+						<Tabs.List>
+							<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
+							<Tabs.Tab value='team-members'>Team Members</Tabs.Tab>
+							<Tabs.Tab value='disputes'>Disputes</Tabs.Tab>
+						</Tabs.List>
 
-					<Tabs.Panel value='rankings' pt='lg'>
-						<RankingsTable
-							entries={SUPERVISOR_TEAM_RANKINGS}
-							title='Team Rankings'
-							description='Your team ranked against the goal you defined for this period'
-							goal={SUPERVISOR_RANKING_GOAL}
-							maxDisplay={7}
-						/>
-					</Tabs.Panel>
-
-					<Tabs.Panel value='team-members' pt='lg'>
-						<SectionCard title='Team Members' description="Individual performance across your team this week">
-							<BaseTable<TeamMemberRow>
-								columns={teamMemberColumns}
-								data={TEAM_MEMBERS}
-								getRowId={member => member.id}
-								emptyMessage='No team members found'
+						<Tabs.Panel value='rankings' pt='lg'>
+							<RankingsTable
+								entries={SUPERVISOR_TEAM_RANKINGS}
+								title='Team Rankings'
+								description='Your team ranked against the goal you defined for this period'
+								goal={SUPERVISOR_RANKING_GOAL}
+								maxDisplay={7}
 							/>
-						</SectionCard>
-					</Tabs.Panel>
+						</Tabs.Panel>
 
-					<Tabs.Panel value='disputes' pt='lg'>
-						<SectionCard title='Disputes' description='Evaluation disputes raised by your team'>
-							<BaseTable<DisputeRow>
-								columns={disputeColumns}
-								data={DISPUTES_SAMPLE}
-								getRowId={dispute => dispute.id}
-								emptyMessage='No disputes found'
-							/>
-						</SectionCard>
-					</Tabs.Panel>
-				</Tabs>
+						<Tabs.Panel value='team-members' pt='lg'>
+							<SectionCard title='Team Members' description="Individual performance across your team this week">
+								<BaseTable<TeamMemberRow>
+									columns={teamMemberColumns}
+									data={TEAM_MEMBERS}
+									getRowId={member => member.id}
+									emptyMessage='No team members found'
+								/>
+							</SectionCard>
+						</Tabs.Panel>
+
+						<Tabs.Panel value='disputes' pt='lg'>
+							<SectionCard title='Disputes' description='Evaluation disputes raised by your team'>
+								<BaseTable<DisputeRow>
+									columns={disputeColumns}
+									data={DISPUTES_SAMPLE}
+									getRowId={dispute => dispute.id}
+									emptyMessage='No disputes found'
+								/>
+							</SectionCard>
+						</Tabs.Panel>
+					</Tabs>
+				</SimpleGrid>
 			</Stack>
 		</ContentContainer>
 	);

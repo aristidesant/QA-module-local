@@ -404,93 +404,94 @@ export const NewOperationManagerDashboard: React.FC = () => {
 					</SectionCard>
 				</SimpleGrid>
 
-				{/* 5. Best & Worst Calls (single table with a Best/Worst toggle) */}
-				<SectionCard title='Best & Worst Calls' description='Top and bottom performing calls from across all clients this week'>
-					<BestWorstCallsTable calls={OPERATION_MANAGER_CALLS} />
-				</SectionCard>
+				{/* 5-6. Best & Worst Calls + Tabs Section (same row) */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+					<SectionCard title='Best & Worst Calls' description='Top and bottom performing calls from across all clients this week'>
+						<BestWorstCallsTable calls={OPERATION_MANAGER_CALLS} />
+					</SectionCard>
 
-				{/* 6. Tabs Section: Team Rankings + Team Health + Clients + Critical Alerts (full width) */}
-				<Tabs defaultValue='rankings'>
-					<Tabs.List>
-						<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
-						<Tabs.Tab value='team-health'>Team Health</Tabs.Tab>
-						<Tabs.Tab value='clients'>Clients</Tabs.Tab>
-						<Tabs.Tab value='critical-alerts'>Critical Alerts</Tabs.Tab>
-					</Tabs.List>
+					<Tabs defaultValue='rankings' style={{ flex: 1 }}>
+						<Tabs.List>
+							<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
+							<Tabs.Tab value='team-health'>Team Health</Tabs.Tab>
+							<Tabs.Tab value='clients'>Clients</Tabs.Tab>
+							<Tabs.Tab value='critical-alerts'>Critical Alerts</Tabs.Tab>
+						</Tabs.List>
 
-					<Tabs.Panel value='rankings' pt='lg'>
-						<RankingsTable
-							entries={OPERATION_MANAGER_RANKINGS}
-							title='Client Rankings'
-							description='Client accounts ranked against the operational goal for this period'
-							goal={OPERATION_MANAGER_RANKING_GOAL}
-							maxDisplay={7}
-						/>
-					</Tabs.Panel>
+						<Tabs.Panel value='rankings' pt='lg'>
+							<RankingsTable
+								entries={OPERATION_MANAGER_RANKINGS}
+								title='Client Rankings'
+								description='Client accounts ranked against the operational goal for this period'
+								goal={OPERATION_MANAGER_RANKING_GOAL}
+								maxDisplay={7}
+							/>
+						</Tabs.Panel>
 
-					<Tabs.Panel value='team-health' pt='lg'>
-						<Stack gap='lg'>
-							<SectionCard title='Key KPIs' description='Cross-client operational health indicators this week'>
-								<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='md'>
-									{TEAM_HEALTH_KPIS.map(kpi => (
-										<DashboardMetricCard
-											key={kpi.label}
-											label={kpi.label}
-											value={kpi.value}
-											unit={kpi.unit}
-											progress={kpi.progress}
-											color={kpi.color}
-											trend={kpi.trend}
-											trendValue={kpi.trendValue}
+						<Tabs.Panel value='team-health' pt='lg'>
+							<Stack gap='lg'>
+								<SectionCard title='Key KPIs' description='Cross-client operational health indicators this week'>
+									<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='md'>
+										{TEAM_HEALTH_KPIS.map(kpi => (
+											<DashboardMetricCard
+												key={kpi.label}
+												label={kpi.label}
+												value={kpi.value}
+												unit={kpi.unit}
+												progress={kpi.progress}
+												color={kpi.color}
+												trend={kpi.trend}
+												trendValue={kpi.trendValue}
+											/>
+										))}
+									</SimpleGrid>
+								</SectionCard>
+
+								<SectionCard title='Risk Indicators' description='Areas of operational risk across the client portfolio'>
+									<Stack gap='sm'>
+										{RISK_INDICATORS.map(risk => (
+											<ProfileBadge
+												key={risk.id}
+												name={risk.name}
+												role={risk.description}
+												status={risk.status}
+												score={risk.value}
+											/>
+										))}
+									</Stack>
+								</SectionCard>
+							</Stack>
+						</Tabs.Panel>
+
+						<Tabs.Panel value='clients' pt='lg'>
+							<SectionCard title='Client Portfolio' description='All clients under management with agent count, QA score, and sentiment'>
+								<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+									{CLIENTS_PORTFOLIO.map(client => (
+										<ProfileBadge
+											key={client.id}
+											name={client.name}
+											role={`${client.agentCount} agents · Sentiment ${client.sentiment.toFixed(1)}/5.0`}
+											status={client.status}
+											score={client.qaScore}
+											onClick={() => handleClientClick(client)}
 										/>
 									))}
 								</SimpleGrid>
 							</SectionCard>
+						</Tabs.Panel>
 
-							<SectionCard title='Risk Indicators' description='Areas of operational risk across the client portfolio'>
-								<Stack gap='sm'>
-									{RISK_INDICATORS.map(risk => (
-										<ProfileBadge
-											key={risk.id}
-											name={risk.name}
-											role={risk.description}
-											status={risk.status}
-											score={risk.value}
-										/>
-									))}
-								</Stack>
+						<Tabs.Panel value='critical-alerts' pt='lg'>
+							<SectionCard title='Critical Alerts' description='High-severity issues affecting one or more clients'>
+								<BaseTable<CriticalAlertRow>
+									columns={criticalAlertColumns}
+									data={CRITICAL_ALERTS}
+									getRowId={alert => alert.id}
+									emptyMessage='No critical alerts found'
+								/>
 							</SectionCard>
-						</Stack>
-					</Tabs.Panel>
-
-					<Tabs.Panel value='clients' pt='lg'>
-						<SectionCard title='Client Portfolio' description='All clients under management with agent count, QA score, and sentiment'>
-							<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-								{CLIENTS_PORTFOLIO.map(client => (
-									<ProfileBadge
-										key={client.id}
-										name={client.name}
-										role={`${client.agentCount} agents · Sentiment ${client.sentiment.toFixed(1)}/5.0`}
-										status={client.status}
-										score={client.qaScore}
-										onClick={() => handleClientClick(client)}
-									/>
-								))}
-							</SimpleGrid>
-						</SectionCard>
-					</Tabs.Panel>
-
-					<Tabs.Panel value='critical-alerts' pt='lg'>
-						<SectionCard title='Critical Alerts' description='High-severity issues affecting one or more clients'>
-							<BaseTable<CriticalAlertRow>
-								columns={criticalAlertColumns}
-								data={CRITICAL_ALERTS}
-								getRowId={alert => alert.id}
-								emptyMessage='No critical alerts found'
-							/>
-						</SectionCard>
-					</Tabs.Panel>
-				</Tabs>
+						</Tabs.Panel>
+					</Tabs>
+				</SimpleGrid>
 			</Stack>
 		</ContentContainer>
 	);

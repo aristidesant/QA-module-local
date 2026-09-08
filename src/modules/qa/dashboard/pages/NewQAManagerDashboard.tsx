@@ -379,63 +379,64 @@ export const NewQAManagerDashboard: React.FC = () => {
 					</SectionCard>
 				</SimpleGrid>
 
-				{/* 5. Best & Worst Calls (single table with a Best/Worst toggle) */}
-				<SectionCard title='Best & Worst Calls' description='Top and bottom performing calls from across all teams this week'>
-					<BestWorstCallsTable calls={QA_MANAGER_CALLS} />
-				</SectionCard>
+				{/* 5-6. Best & Worst Calls + Tabs Section (same row) */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+					<SectionCard title='Best & Worst Calls' description='Top and bottom performing calls from across all teams this week'>
+						<BestWorstCallsTable calls={QA_MANAGER_CALLS} />
+					</SectionCard>
 
-				{/* 6. Tabs Section: Team Rankings + Supervisors + Disputes + Campaigns (full width) */}
-				<Tabs defaultValue='rankings'>
-					<Tabs.List>
-						<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
-						<Tabs.Tab value='supervisors'>Supervisors</Tabs.Tab>
-						<Tabs.Tab value='disputes'>Disputes</Tabs.Tab>
-						<Tabs.Tab value='campaigns'>Campaigns</Tabs.Tab>
-					</Tabs.List>
+					<Tabs defaultValue='rankings' style={{ flex: 1 }}>
+						<Tabs.List>
+							<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
+							<Tabs.Tab value='supervisors'>Supervisors</Tabs.Tab>
+							<Tabs.Tab value='disputes'>Disputes</Tabs.Tab>
+							<Tabs.Tab value='campaigns'>Campaigns</Tabs.Tab>
+						</Tabs.List>
 
-					<Tabs.Panel value='rankings' pt='lg'>
-						<RankingsTable
-							entries={QA_MANAGER_RANKINGS}
-							title='Supervisor Rankings'
-							description='Supervisor teams ranked against the platform goal for this period'
-							goal={QA_MANAGER_RANKING_GOAL}
-							maxDisplay={7}
-						/>
-					</Tabs.Panel>
-
-					<Tabs.Panel value='supervisors' pt='lg'>
-						<SectionCard title='Supervisors' description="All supervisors' performance metrics across the platform">
-							<BaseTable<SupervisorRow>
-								columns={supervisorColumns}
-								data={SUPERVISORS_OVERVIEW}
-								getRowId={supervisor => supervisor.id}
-								emptyMessage='No supervisors found'
+						<Tabs.Panel value='rankings' pt='lg'>
+							<RankingsTable
+								entries={QA_MANAGER_RANKINGS}
+								title='Supervisor Rankings'
+								description='Supervisor teams ranked against the platform goal for this period'
+								goal={QA_MANAGER_RANKING_GOAL}
+								maxDisplay={7}
 							/>
-						</SectionCard>
-					</Tabs.Panel>
+						</Tabs.Panel>
 
-					<Tabs.Panel value='disputes' pt='lg'>
-						<SectionCard title='Disputes' description='All platform disputes across supervisors and teams'>
-							<BaseTable<DisputeRow>
-								columns={disputeColumns}
-								data={ALL_DISPUTES}
-								getRowId={dispute => dispute.id}
-								emptyMessage='No disputes found'
-							/>
-						</SectionCard>
-					</Tabs.Panel>
+						<Tabs.Panel value='supervisors' pt='lg'>
+							<SectionCard title='Supervisors' description="All supervisors' performance metrics across the platform">
+								<BaseTable<SupervisorRow>
+									columns={supervisorColumns}
+									data={SUPERVISORS_OVERVIEW}
+									getRowId={supervisor => supervisor.id}
+									emptyMessage='No supervisors found'
+								/>
+							</SectionCard>
+						</Tabs.Panel>
 
-					<Tabs.Panel value='campaigns' pt='lg'>
-						<SectionCard title='Campaigns' description='Active and archived campaigns across the platform'>
-							<BaseTable<CampaignRow>
-								columns={campaignColumns}
-								data={CAMPAIGNS_LIST}
-								getRowId={campaign => campaign.id}
-								emptyMessage='No campaigns found'
-							/>
-						</SectionCard>
-					</Tabs.Panel>
-				</Tabs>
+						<Tabs.Panel value='disputes' pt='lg'>
+							<SectionCard title='Disputes' description='All platform disputes across supervisors and teams'>
+								<BaseTable<DisputeRow>
+									columns={disputeColumns}
+									data={ALL_DISPUTES}
+									getRowId={dispute => dispute.id}
+									emptyMessage='No disputes found'
+								/>
+							</SectionCard>
+						</Tabs.Panel>
+
+						<Tabs.Panel value='campaigns' pt='lg'>
+							<SectionCard title='Campaigns' description='Active and archived campaigns across the platform'>
+								<BaseTable<CampaignRow>
+									columns={campaignColumns}
+									data={CAMPAIGNS_LIST}
+									getRowId={campaign => campaign.id}
+									emptyMessage='No campaigns found'
+								/>
+							</SectionCard>
+						</Tabs.Panel>
+					</Tabs>
+				</SimpleGrid>
 			</Stack>
 		</ContentContainer>
 	);
