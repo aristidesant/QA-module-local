@@ -148,9 +148,6 @@ const NewOperationManagerDashboard = React.lazy(
 const QaInboxPage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/InboxPage')
 );
-const AgentEvaluationsPage = React.lazy(
-	() => import('./modules/qa/agent/evaluations/AgentEvaluationsPage')
-);
 const AgentProfilePage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/AgentProfilePage')
 );
