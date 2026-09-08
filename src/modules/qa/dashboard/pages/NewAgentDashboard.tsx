@@ -144,31 +144,13 @@ export const NewAgentDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Critical Issues */}
-				<SectionCard title='Critical Issues' description='Personal issues requiring your attention'>
-					<CriticalIssuesTable
-						issues={CRITICAL_ISSUES_AGENT}
-						onIssueClick={() => navigate(AGENT_INBOX_PATH)}
-					/>
-				</SectionCard>
-
-				{/* 4. Sentiment trend and quick insights */}
+				{/* 3-4. Critical Issues + Team Rankings (same row) */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<SectionCard title='Sentiment Trend' description='4-week sentiment progression'>
-						<Card className={styles.metricCard} p='md' radius='md' withBorder>
-							<SentimentTrendChart data={AGENT_SENTIMENT_TREND} />
-						</Card>
-					</SectionCard>
-
-					<SectionCard title='Quick Insights' description='Performance recommendations and analysis'>
-						<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
-					</SectionCard>
-				</SimpleGrid>
-
-				{/* 5-6. Best & Worst Calls + Team Rankings (same row) */}
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<SectionCard title='Best & Worst Calls' description='Your top and bottom performing calls this week'>
-						<BestWorstCallsTable calls={BEST_WORST_CALLS} />
+					<SectionCard title='Critical Issues' description='Personal issues requiring your attention'>
+						<CriticalIssuesTable
+							issues={CRITICAL_ISSUES_AGENT}
+							onIssueClick={() => navigate(AGENT_INBOX_PATH)}
+						/>
 					</SectionCard>
 
 					<Tabs defaultValue='rankings' style={{ flex: 1 }}>
@@ -187,6 +169,24 @@ export const NewAgentDashboard: React.FC = () => {
 						</Tabs.Panel>
 					</Tabs>
 				</SimpleGrid>
+
+				{/* 5. Sentiment trend and quick insights */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+					<SectionCard title='Sentiment Trend' description='4-week sentiment progression'>
+						<Card className={styles.metricCard} p='md' radius='md' withBorder>
+							<SentimentTrendChart data={AGENT_SENTIMENT_TREND} />
+						</Card>
+					</SectionCard>
+
+					<SectionCard title='Quick Insights' description='Performance recommendations and analysis'>
+						<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
+					</SectionCard>
+				</SimpleGrid>
+
+				{/* 6. Best & Worst Calls (full-width) */}
+				<SectionCard title='Best & Worst Calls' description='Your top and bottom performing calls this week'>
+					<BestWorstCallsTable calls={BEST_WORST_CALLS} />
+				</SectionCard>
 			</Stack>
 		</ContentContainer>
 	);
