@@ -106,7 +106,7 @@ const ReactionButton: React.FC<{
 				lineHeight: 1.4,
 			}}
 		>
-			<span aria-hidden style={{ fontSize: 14 }}>
+			<span aria-hidden style={{ fontSize: 14, color: 'light-dark(var(--mantine-color-dark-7), var(--mantine-color-gray-1))' }}>
 				{emoji}
 			</span>
 			<Text size='xs' fw={active ? 700 : 500}>
