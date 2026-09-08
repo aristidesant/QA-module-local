@@ -109,6 +109,7 @@ const SUPERVISOR_RANKING_GOAL: RankingGoal = {
 	metric: 'Sentiment & Emotion',
 	criteria: 'Team average sentiment and emotion scores',
 	target: 'Team average of 4.0 or above',
+	startDate: '2026-09-01',
 	dueDate: '2026-12-31',
 	setBy: 'You · Supervisor',
 };

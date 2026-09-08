@@ -142,6 +142,7 @@ const QA_MANAGER_RANKING_GOAL: RankingGoal = {
 	metric: 'Sentiment & Emotion',
 	criteria: 'Platform-wide sentiment and emotion performance',
 	target: 'All teams at 4.0 or above',
+	startDate: '2026-09-01',
 	dueDate: '2026-12-31',
 	setBy: 'You · QA Manager',
 };

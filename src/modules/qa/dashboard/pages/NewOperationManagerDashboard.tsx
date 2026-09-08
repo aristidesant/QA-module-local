@@ -213,6 +213,7 @@ const OPERATION_MANAGER_RANKING_GOAL: RankingGoal = {
 	metric: 'Sentiment & Emotion',
 	criteria: 'Cross-client sentiment and emotion performance',
 	target: 'All clients at 4.0 or above',
+	startDate: '2026-09-01',
 	dueDate: '2026-12-31',
 	setBy: 'You · Operation Manager',
 };

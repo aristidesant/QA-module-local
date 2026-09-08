@@ -42,6 +42,8 @@ export interface RankingGoal {
 	criteria: string;
 	/** Optional target the team is ranked against */
 	target?: string;
+	/** Start date for the ranking goal (ISO date string, e.g. "2026-09-01") */
+	startDate?: string;
 	/** Due date for the ranking goal (ISO date string, e.g. "2026-12-31") */
 	dueDate?: string;
 	/** Who defined the goal */
@@ -164,6 +166,7 @@ const RankingGoalBanner: React.FC<{ goal: RankingGoal }> = ({ goal }) => (
 				<Text size='xs' c='dimmed'>
 					Scoring criteria: {goal.criteria}
 					{goal.target ? ` · Target: ${goal.target}` : ''}
+					{goal.startDate ? ` · Start: ${new Date(goal.startDate).toLocaleDateString()}` : ''}
 					{goal.dueDate ? ` · Due: ${new Date(goal.dueDate).toLocaleDateString()}` : ''}
 				</Text>
 			</Stack>
