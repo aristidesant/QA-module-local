@@ -37,7 +37,7 @@ export const AutoFailsCard: React.FC<AutoFailsCardProps> = ({
 							<Text size='xs' c='dimmed' fw={500} mb='xs'>
 								Section
 							</Text>
-							<Text fw={700} size='xl'>
+							<Text className={styles.scoreValue}>
 								{sectionAutoFails}
 							</Text>
 						</div>
@@ -45,7 +45,7 @@ export const AutoFailsCard: React.FC<AutoFailsCardProps> = ({
 							<Text size='xs' c='dimmed' fw={500} mb='xs'>
 								Global
 							</Text>
-							<Text fw={700} size='xl'>
+							<Text className={styles.scoreValue}>
 								{globalAutoFails}
 							</Text>
 						</div>
