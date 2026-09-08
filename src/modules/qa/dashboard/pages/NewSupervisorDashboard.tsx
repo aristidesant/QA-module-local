@@ -106,9 +106,9 @@ const DISPUTE_STATUS_COLORS: Record<DisputeRow['status'], string> = {
  * ranking score and how they are weighted.
  */
 const SUPERVISOR_RANKING_GOAL: RankingGoal = {
-	metric: 'QA Score',
-	criteria: 'Team average with compliance weighting',
-	target: 'Team average of 85 or above',
+	metric: 'Sentiment & Emotion',
+	criteria: 'Team average sentiment and emotion scores',
+	target: 'Team average of 4.0 or above',
 	dueDate: '2026-12-31',
 	setBy: 'You · Supervisor',
 };

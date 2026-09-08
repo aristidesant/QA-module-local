@@ -53,9 +53,9 @@ const DEFAULT_AGENT_INSIGHTS: Insight[] = [
  * score is built from and how they are weighted.
  */
 const AGENT_RANKING_GOAL: RankingGoal = {
-	metric: 'QA Score',
-	criteria: 'Weighted average with compliance adjustments',
-	target: 'Score of 90 or above',
+	metric: 'Sentiment & Emotion',
+	criteria: 'Customer and agent sentiment scores',
+	target: 'Average score of 4.0 or above',
 	dueDate: '2026-12-31',
 	setBy: 'Sarah Johnson · Supervisor',
 };

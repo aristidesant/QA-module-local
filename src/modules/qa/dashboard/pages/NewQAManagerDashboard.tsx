@@ -139,9 +139,9 @@ const CAMPAIGN_STATUS_COLORS: Record<CampaignRow['status'], string> = {
  * ranked on a broader metric mix than individual agents.
  */
 const QA_MANAGER_RANKING_GOAL: RankingGoal = {
-	metric: 'Supervisor Performance Index',
-	criteria: 'Team QA scores and compliance adherence',
-	target: 'All teams at 85 or above',
+	metric: 'Sentiment & Emotion',
+	criteria: 'Platform-wide sentiment and emotion performance',
+	target: 'All teams at 4.0 or above',
 	dueDate: '2026-12-31',
 	setBy: 'You · QA Manager',
 };
