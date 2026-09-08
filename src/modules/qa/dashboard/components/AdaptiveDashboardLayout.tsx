@@ -148,12 +148,12 @@ export const useCOPCMetrics = (evaluations: any[]) => {
 			ecc = 0,
 			ecuf = 0;
 
-		evaluations.forEach((eval) => {
-			if (eval.qaDetails) {
-				ecn += eval.qaDetails.errorCriticoBusiness ?? 0;
-				enc += eval.qaDetails.errorCriticoNonBusiness ?? 0;
-				ecc += eval.qaDetails.errorCriticoCompliance ?? 0;
-				ecuf += eval.qaDetails.errorCriticoEndUser ?? 0;
+		evaluations.forEach((evaluation) => {
+			if (evaluation.qaDetails) {
+				ecn += evaluation.qaDetails.errorCriticoBusiness ?? 0;
+				enc += evaluation.qaDetails.errorCriticoNonBusiness ?? 0;
+				ecc += evaluation.qaDetails.errorCriticoCompliance ?? 0;
+				ecuf += evaluation.qaDetails.errorCriticoEndUser ?? 0;
 			}
 		});
 
@@ -180,14 +180,14 @@ export const useAverageSentiment = (evaluations: any[]) => {
 			customerSum = 0,
 			count = 0;
 
-		evaluations.forEach((eval) => {
-			if (eval.agentSentimentScore) {
-				agentSum += eval.agentSentimentScore;
+		evaluations.forEach((evaluation) => {
+			if (evaluation.agentSentimentScore) {
+				agentSum += evaluation.agentSentimentScore;
 			}
-			if (eval.customerSentimentScore) {
-				customerSum += eval.customerSentimentScore;
+			if (evaluation.customerSentimentScore) {
+				customerSum += evaluation.customerSentimentScore;
 			}
-			if (eval.agentSentimentScore || eval.customerSentimentScore) {
+			if (evaluation.agentSentimentScore || evaluation.customerSentimentScore) {
 				count++;
 			}
 		});
@@ -213,9 +213,9 @@ export const useAutoFailCount = (evaluations: any[]) => {
 			critical = 0;
 		const evaluated = evaluations.filter((e) => (e.autoFailCount ?? 0) > 0).length;
 
-		evaluations.forEach((eval) => {
-			total += eval.autoFailCount ?? 0;
-			if (eval.qaInvalidated) {
+		evaluations.forEach((evaluation) => {
+			total += evaluation.autoFailCount ?? 0;
+			if (evaluation.qaInvalidated) {
 				critical++;
 			}
 		});

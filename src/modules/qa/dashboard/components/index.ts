@@ -19,7 +19,7 @@ export { AgentInbox } from './AgentInbox';
 
 // Phase 3: Agent & Supervisor features
 export { RankingsTable } from './RankingsTable';
-export type { RankingEntry } from './RankingsTable';
+export type { RankingEntry, RankingGoal, ReactionType, ReactionCounts } from './RankingsTable';
 
 // Phase 4: Performance Metrics
 export { PerformanceScoresSection } from './PerformanceScoresSection';
@@ -42,3 +42,12 @@ export type { Insight } from './QuickInsightsWidget';
 // Best/Worst Calls Panel for performance comparison
 export { BestWorstCallsPanel } from './BestWorstCallsPanel';
 export type { BestWorstCall } from './BestWorstCallsPanel';
+
+// Performance Score row: Quality Assurance / Compliance / Sentiment & Emotion
+export { QualityAssuranceCard } from './QualityAssuranceCard';
+export type { QualityAssuranceScore } from './QualityAssuranceCard';
+export { ComplianceCard, getComplianceColor } from './ComplianceCard';
+export { SentimentEmotionCard, getSentimentBand } from './SentimentEmotionCard';
+
+// Single-table Best/Worst calls view with a Best/Worst segmented control
+export { BestWorstCallsTable } from './BestWorstCallsTable';

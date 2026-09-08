@@ -170,7 +170,23 @@
 				"clients": "Clientes",
 				"globalSettings": "Configuración global",
 				"compliance": "Cumplimiento",
-				"businessInsights": "Información empresarial"
+				"businessInsights": "Información empresarial",
+				"myCalls": "Mis Llamadas",
+				"myEvaluations": "Mis Evaluaciones",
+				"inbox": "Bandeja de entrada",
+				"rankings": "Rankings del equipo",
+				"team": "Equipo",
+				"triggersConfig": "Configuración de disparadores",
+				"rankingsConfig": "Configuración de rankings",
+				"calls": "Llamadas",
+				"evaluations": "Evaluaciones",
+				"reports": "Reportes",
+				"supervisors": "Supervisores",
+				"teamHealth": "Salud del equipo",
+				"configuration": "Configuración",
+				"supervisorRankings": "Rankings de supervisores",
+				"teams": "Equipos",
+				"admin": "Administración"
 			}
 		}
 	},

@@ -1,40 +1,32 @@
 import React from 'react';
-import { Stack, Title, Text, SimpleGrid, Tabs, Card, Group, ThemeIcon, Progress, Badge } from '@mantine/core';
-import { IconShieldCheck } from '@tabler/icons-react';
+import { useNavigate } from 'react-router';
+import { Stack, Title, Text, SimpleGrid, Tabs, Card, Badge } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import {
-	DashboardMetricCard,
-	SentimentScaleCard,
+	QualityAssuranceCard,
+	ComplianceCard,
+	SentimentEmotionCard,
 	AutoFailsCard,
 	SentimentTrendChart,
-	PerformanceTrendChart,
 	CriticalIssuesTable,
-	BestWorstCallsPanel,
+	BestWorstCallsTable,
 	QuickInsightsWidget,
+	RankingsTable,
 } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
-import type { PerformanceTrendPoint } from '../components/PerformanceTrendChart';
+import type { RankingEntry, RankingGoal } from '../components/RankingsTable';
 import {
 	SUPERVISOR_WEEKLY_METRICS,
 	SUPERVISOR_SENTIMENT_TREND,
 	SUPERVISOR_CALLS,
 	CRITICAL_ISSUES_SUPERVISOR,
 } from '../mockData';
-import type { ComplianceCategory } from '../mockData';
 import styles from '../Dashboard.module.css';
 
-/**
- * Mock 4-week performance trend data for the supervisor's team.
- * Mirrors the QA score progression shown on the legacy Supervisor dashboard.
- */
-const SUPERVISOR_PERFORMANCE_TREND: PerformanceTrendPoint[] = [
-	{ week: 'Week 1', score: 85 },
-	{ week: 'Week 2', score: 86 },
-	{ week: 'Week 3', score: 86 },
-	{ week: 'Week 4', score: 87 },
-];
+/** Inbox this dashboard's critical issues drill into */
+const SUPERVISOR_INBOX_PATH = '/qa/supervisor/inbox';
 
 /**
  * Default insights for the supervisor dashboard (team-level recommendations)
@@ -109,66 +101,79 @@ const DISPUTE_STATUS_COLORS: Record<DisputeRow['status'], string> = {
 	rejected: 'red',
 };
 
-/** Maps a compliance category status to a theme-aware Mantine color token */
-const getComplianceColor = (status: ComplianceCategory['status']) => {
-	switch (status) {
-		case 'compliant':
-			return 'teal';
-		case 'warning':
-			return 'yellow';
-		case 'violation':
-			return 'red';
-		default:
-			return 'gray';
-	}
+/**
+ * Ranking goal the supervisor set for their team: which metrics feed the
+ * ranking score and how they are weighted.
+ */
+const SUPERVISOR_RANKING_GOAL: RankingGoal = {
+	metrics: ['QA Score', 'Compliance'],
+	criteria: '60% QA Score + 40% Compliance',
+	target: 'Every team member at 85 or above',
+	setBy: 'You · Supervisor',
 };
 
 /**
- * Compact compliance breakdown card for the Supervisor dashboard's secondary
- * metrics row. Mirrors the visual language of the other dashboard cards
- * (Card + Progress + Badge) using Mantine color tokens only, so it renders
- * correctly in both dark and light mode.
+ * Team ranking entries for the "Team Rankings" tab, derived from the same
+ * roster as the "Team Members" tab so both views stay consistent.
  */
-const SupervisorComplianceCard: React.FC<{ categories: ComplianceCategory[] }> = ({ categories }) => (
-	<Card className={styles.metricCard} p='lg' radius='md' withBorder shadow='sm'>
-		<Stack gap='md'>
-			<Group justify='space-between' align='flex-start'>
-				<div>
-					<Text fw={600} size='md'>
-						Compliance
-					</Text>
-					<Text size='xs' c='dimmed'>
-						Team category overview
-					</Text>
-				</div>
-				<ThemeIcon size='lg' color='green' radius='md'>
-					<IconShieldCheck size={20} />
-				</ThemeIcon>
-			</Group>
-
-			<Stack gap='sm'>
-				{categories.map(category => (
-					<div key={category.name}>
-						<Group justify='space-between' mb={4}>
-							<Group gap='xs' align='center'>
-								<Text size='sm' fw={500}>
-									{category.name}
-								</Text>
-								<Badge size='xs' color={getComplianceColor(category.status)} variant='light'>
-									{category.status.charAt(0).toUpperCase() + category.status.slice(1)}
-								</Badge>
-							</Group>
-							<Text size='sm' fw={600}>
-								{category.score}%
-							</Text>
-						</Group>
-						<Progress value={category.score} size='sm' color={getComplianceColor(category.status)} />
-					</div>
-				))}
-			</Stack>
-		</Stack>
-	</Card>
-);
+const SUPERVISOR_TEAM_RANKINGS: RankingEntry[] = [
+	{
+		position: 1,
+		name: 'Mike Chen',
+		score: 97,
+		reactions: { applause: 14, reverence: 9, salute: 6, thumbsUp: 11 },
+		trend: 'up',
+		trendValue: 2,
+	},
+	{
+		position: 2,
+		name: 'Sarah Johnson',
+		score: 95,
+		reactions: { applause: 11, reverence: 7, salute: 5, thumbsUp: 8 },
+		trend: 'up',
+		trendValue: 1,
+	},
+	{
+		position: 3,
+		name: 'Jessica Martinez',
+		score: 93,
+		reactions: { applause: 9, reverence: 6, salute: 3, thumbsUp: 5 },
+		trend: 'stable',
+		trendValue: 0,
+	},
+	{
+		position: 4,
+		name: 'John Smith',
+		score: 90,
+		reactions: { applause: 7, reverence: 4, salute: 2, thumbsUp: 4 },
+		trend: 'up',
+		trendValue: 2,
+	},
+	{
+		position: 5,
+		name: 'Emma Davis',
+		score: 88,
+		reactions: { applause: 5, reverence: 3, salute: 1, thumbsUp: 3 },
+		trend: 'down',
+		trendValue: 1,
+	},
+	{
+		position: 6,
+		name: 'David Brown',
+		score: 62,
+		reactions: { applause: 2, reverence: 1, salute: 0, thumbsUp: 1 },
+		trend: 'down',
+		trendValue: 4,
+	},
+	{
+		position: 7,
+		name: 'Lisa Wong',
+		score: 58,
+		reactions: { applause: 1, reverence: 0, salute: 0, thumbsUp: 1 },
+		trend: 'down',
+		trendValue: 3,
+	},
+];
 
 const teamMemberColumns: BaseTableColumnDef<TeamMemberRow>[] = [
 	{
@@ -246,7 +251,11 @@ const disputeColumns: BaseTableColumnDef<DisputeRow>[] = [
 ];
 
 export const NewSupervisorDashboard: React.FC = () => {
+	const navigate = useNavigate();
 	const { qaScore, sentiment, complianceCategories, autoFailsCount } = SUPERVISOR_WEEKLY_METRICS;
+
+	/** Overall sentiment on the 0-5 scale, averaging agent and customer readings */
+	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -259,94 +268,71 @@ export const NewSupervisorDashboard: React.FC = () => {
 					</Text>
 				</div>
 
-				{/* 2. Performance Scores Row */}
+				{/* 2. Performance Score Row: Quality Assurance | Compliance | Sentiment & Emotion */}
 				<SectionCard
-					title='Performance Scores'
-					description="Your team's QA score breakdown by category this week"
+					title='Performance Score'
+					description="Your team's quality assurance, compliance, and sentiment results this week"
 				>
-					<SimpleGrid cols={{ base: 1, sm: 2, md: 4 }} spacing='md'>
-						<DashboardMetricCard
-							label='ECN'
-							value={qaScore.ecn}
-							unit='%'
-							progress={qaScore.ecn}
-							color='cyan'
-						/>
-						<DashboardMetricCard
-							label='ENC'
-							value={qaScore.enc}
-							unit='%'
-							progress={qaScore.enc}
-							color='blue'
-						/>
-						<DashboardMetricCard
-							label='ECC'
-							value={qaScore.ecc}
-							unit='%'
-							progress={qaScore.ecc}
-							color='grape'
-						/>
-						<DashboardMetricCard
-							label='ECUF'
-							value={qaScore.ecuf}
-							unit='%'
-							progress={qaScore.ecuf}
-							color='indigo'
+					<SimpleGrid cols={{ base: 1, md: 3 }} spacing='md'>
+						<QualityAssuranceCard score={qaScore} subtitle='Team category breakdown' />
+						<ComplianceCard categories={complianceCategories} subtitle='Team category overview' />
+						<SentimentEmotionCard
+							score={overallSentiment}
+							predominantEmotion={sentiment.predominantEmotion}
+							subtitle='0-5 scale assessment'
 						/>
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Secondary Metrics Row (asymmetric 2-column layout) */}
-				<SectionCard
-					title='Sentiment, Compliance & Auto-Fails'
-					description="Detailed breakdown of your team's sentiment analysis, compliance status, and auto-fail tracking"
-				>
-					<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-						<Stack gap='md'>
-							<SentimentScaleCard agentScore={sentiment.agentAvg} customerScore={sentiment.customerAvg} />
-							<SupervisorComplianceCard categories={complianceCategories} />
-						</Stack>
+				{/* 3. Critical Issues (2-column) alongside Auto-Fails */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+					<SectionCard title='Critical Issues' description='Team issues, disputes, and auto-fails requiring your attention'>
+						<CriticalIssuesTable
+							issues={CRITICAL_ISSUES_SUPERVISOR}
+							onIssueClick={() => navigate(SUPERVISOR_INBOX_PATH)}
+						/>
+					</SectionCard>
+
+					<SectionCard title='Auto-Fails' description="Automatic failures detected across your team this week">
 						<AutoFailsCard totalCount={autoFailsCount} />
-					</SimpleGrid>
-				</SectionCard>
+					</SectionCard>
+				</SimpleGrid>
 
-				{/* 4. Charts Section */}
-				<SectionCard title='Trends' description="4-week team sentiment and performance trends">
-					<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+				{/* 4. Sentiment trend and quick insights */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+					<SectionCard title='Sentiment Trend' description='4-week team sentiment progression'>
 						<Card className={styles.metricCard} p='md' radius='md' withBorder>
 							<SentimentTrendChart data={SUPERVISOR_SENTIMENT_TREND} />
 						</Card>
-						<Card className={styles.metricCard} p='md' radius='md' withBorder>
-							<PerformanceTrendChart data={SUPERVISOR_PERFORMANCE_TREND} />
-						</Card>
-					</SimpleGrid>
-				</SectionCard>
-
-				{/* 5. Critical Issues Table (full width, team-scoped) */}
-				{CRITICAL_ISSUES_SUPERVISOR.length > 0 && (
-					<SectionCard title='Critical Issues' description='Team issues, disputes, and auto-fails requiring your attention'>
-						<CriticalIssuesTable issues={CRITICAL_ISSUES_SUPERVISOR} />
 					</SectionCard>
-				)}
 
-				{/* 6. Best & Worst Calls Panel (full width, team-scoped) */}
-				<SectionCard title='Best & Worst Calls' description="Your team's top and bottom performing calls this week">
-					<BestWorstCallsPanel calls={SUPERVISOR_CALLS} />
-				</SectionCard>
-
-				{/* 7. Quick Insights Widget (smaller width section) */}
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
 					<SectionCard title='Quick Insights' description='Team-level recommendations and analysis'>
 						<QuickInsightsWidget insights={DEFAULT_SUPERVISOR_INSIGHTS} />
 					</SectionCard>
 				</SimpleGrid>
 
-				{/* 8. Tabs Section: Team Members + Disputes (full width) */}
-				<Tabs defaultValue='team-members'>
+				{/* 5. Best & Worst Calls (single table with a Best/Worst toggle) */}
+				<SectionCard title='Best & Worst Calls' description="Your team's top and bottom performing calls this week">
+					<BestWorstCallsTable calls={SUPERVISOR_CALLS} />
+				</SectionCard>
+
+				{/* 6. Tabs Section: Team Rankings + Team Members + Disputes (full width) */}
+				<Tabs defaultValue='rankings'>
 					<Tabs.List>
+						<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
 						<Tabs.Tab value='team-members'>Team Members</Tabs.Tab>
 						<Tabs.Tab value='disputes'>Disputes</Tabs.Tab>
 					</Tabs.List>
+
+					<Tabs.Panel value='rankings' pt='lg'>
+						<RankingsTable
+							entries={SUPERVISOR_TEAM_RANKINGS}
+							title='Team Rankings'
+							description='Your team ranked against the goal you defined for this period'
+							goal={SUPERVISOR_RANKING_GOAL}
+							maxDisplay={7}
+						/>
+					</Tabs.Panel>
 
 					<Tabs.Panel value='team-members' pt='lg'>
 						<SectionCard title='Team Members' description="Individual performance across your team this week">

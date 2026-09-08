@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, Stack, Text, Group, ThemeIcon, Badge, SimpleGrid } from '@mantine/core';
-import { IconAlertTriangle, IconAlertCircle, IconCheckCircle } from '@tabler/icons-react';
+import { IconAlertTriangle, IconAlertCircle, IconCircleCheck } from '@tabler/icons-react';
 import styles from '../Dashboard.module.css';
 
 interface AutoFailsCardProps {
@@ -80,7 +80,7 @@ export const AutoFailsCard: React.FC<AutoFailsCardProps> = ({
 						</ThemeIcon>
 					) : (
 						<ThemeIcon size="lg" color="green" radius="md">
-							<IconCheckCircle size={20} />
+							<IconCircleCheck size={20} />
 						</ThemeIcon>
 					)}
 				</Group>

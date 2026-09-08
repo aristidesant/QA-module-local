@@ -1,0 +1,55 @@
+/* Dashboard component styles */
+
+.metricCard {
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}
+
+.metricCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.scoreValue {
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.scaleContainer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.rankingRow {
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.rankingRow:last-child {
+  border-bottom: none;
+}
+
+.dashboardLayout {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.alertBadge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.headerSection {
+  margin-bottom: 1.5rem;
+}
+
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+}

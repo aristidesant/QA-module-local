@@ -13,6 +13,11 @@ import styles from '../Dashboard.module.css';
 
 interface CriticalIssuesTableProps {
 	issues: CriticalIssue[];
+	/**
+	 * Row click handler. When provided, rows become interactive (pointer cursor,
+	 * keyboard focusable) and are typically wired to the role's inbox.
+	 */
+	onIssueClick?: (issue: CriticalIssue) => void;
 }
 
 /**
@@ -71,6 +76,7 @@ const formatDate = (dateString: string): string => {
  */
 export const CriticalIssuesTable: React.FC<CriticalIssuesTableProps> = ({
 	issues,
+	onIssueClick,
 }) => {
 	if (issues.length === 0) {
 		return (
@@ -102,7 +108,23 @@ export const CriticalIssuesTable: React.FC<CriticalIssuesTableProps> = ({
 						</Table.Thead>
 						<Table.Tbody>
 							{issues.map((issue) => (
-								<Table.Tr key={issue.id}>
+								<Table.Tr
+									key={issue.id}
+									onClick={onIssueClick ? () => onIssueClick(issue) : undefined}
+									onKeyDown={
+										onIssueClick
+											? (event) => {
+													if (event.key === 'Enter' || event.key === ' ') {
+														event.preventDefault();
+														onIssueClick(issue);
+													}
+												}
+											: undefined
+									}
+									tabIndex={onIssueClick ? 0 : undefined}
+									role={onIssueClick ? 'button' : undefined}
+									style={onIssueClick ? { cursor: 'pointer' } : undefined}
+								>
 									<Table.Td>
 										<Stack gap="xs">
 											<Text size="sm" fw={600}>

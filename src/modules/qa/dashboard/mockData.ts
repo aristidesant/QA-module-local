@@ -8,7 +8,7 @@
 // ============================================================================
 
 export interface ComplianceCategory {
-	name: 'Seguridad' | 'Regulatorio' | 'Legal';
+	name: 'Security' | 'Regulatory' | 'Legal';
 	items: string[];
 	status: 'compliant' | 'warning' | 'violation';
 	score: number;
@@ -93,8 +93,8 @@ export const AGENT_WEEKLY_METRICS: WeeklyMetrics = {
 	},
 	autoFailsCount: 2,
 	complianceCategories: [
-		{ name: 'Seguridad', items: ['Protocol adherence', 'Data protection'], status: 'compliant', score: 94 },
-		{ name: 'Regulatorio', items: ['Disclosure compliance', 'Record-keeping'], status: 'compliant', score: 88 },
+		{ name: 'Security', items: ['Protocol adherence', 'Data protection'], status: 'compliant', score: 94 },
+		{ name: 'Regulatory', items: ['Disclosure compliance', 'Record-keeping'], status: 'compliant', score: 88 },
 		{ name: 'Legal', items: ['Consent verification', 'Terms acknowledgment'], status: 'compliant', score: 91 },
 	],
 	businessInsights: [
@@ -309,8 +309,8 @@ export const SUPERVISOR_WEEKLY_METRICS: WeeklyMetrics = {
 	},
 	autoFailsCount: 5,
 	complianceCategories: [
-		{ name: 'Seguridad', items: ['Team protocol adherence', 'Data access controls'], status: 'compliant', score: 91 },
-		{ name: 'Regulatorio', items: ['Disclosure standards', 'Audit trail maintenance'], status: 'warning', score: 86 },
+		{ name: 'Security', items: ['Team protocol adherence', 'Data access controls'], status: 'compliant', score: 91 },
+		{ name: 'Regulatory', items: ['Disclosure standards', 'Audit trail maintenance'], status: 'warning', score: 86 },
 		{ name: 'Legal', items: ['Consent procedures', 'Documentation standards'], status: 'compliant', score: 88 },
 	],
 	businessInsights: [
@@ -478,8 +478,8 @@ export const QA_MANAGER_WEEKLY_METRICS: WeeklyMetrics = {
 	},
 	autoFailsCount: 18,
 	complianceCategories: [
-		{ name: 'Seguridad', items: ['Platform security controls', 'Audit logging'], status: 'warning', score: 89 },
-		{ name: 'Regulatorio', items: ['Compliance monitoring', 'Regulatory reporting'], status: 'warning', score: 83 },
+		{ name: 'Security', items: ['Platform security controls', 'Audit logging'], status: 'warning', score: 89 },
+		{ name: 'Regulatory', items: ['Compliance monitoring', 'Regulatory reporting'], status: 'warning', score: 83 },
 		{ name: 'Legal', items: ['Policy enforcement', 'Legal documentation'], status: 'warning', score: 85 },
 	],
 	businessInsights: [
@@ -601,8 +601,8 @@ export const OPERATION_MANAGER_WEEKLY_METRICS: WeeklyMetrics = {
 	},
 	autoFailsCount: 42,
 	complianceCategories: [
-		{ name: 'Seguridad', items: ['Cross-client security standards', 'Infrastructure compliance'], status: 'warning', score: 86 },
-		{ name: 'Regulatorio', items: ['Multi-client compliance', 'Regulatory alignment'], status: 'violation', score: 80 },
+		{ name: 'Security', items: ['Cross-client security standards', 'Infrastructure compliance'], status: 'warning', score: 86 },
+		{ name: 'Regulatory', items: ['Multi-client compliance', 'Regulatory alignment'], status: 'violation', score: 80 },
 		{ name: 'Legal', items: ['Client agreements', 'Legal compliance verification'], status: 'warning', score: 82 },
 	],
 	businessInsights: [

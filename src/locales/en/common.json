@@ -172,7 +172,23 @@
 				"clients": "Clients",
 				"globalSettings": "Global Settings",
 				"compliance": "Compliance",
-				"businessInsights": "Business Insights"
+				"businessInsights": "Business Insights",
+				"myCalls": "My Calls",
+				"myEvaluations": "My Evaluations",
+				"inbox": "Inbox",
+				"rankings": "Team Rankings",
+				"team": "Team",
+				"triggersConfig": "Triggers Config",
+				"rankingsConfig": "Rankings Config",
+				"calls": "Calls",
+				"evaluations": "Evaluations",
+				"reports": "Reports",
+				"supervisors": "Supervisors",
+				"teamHealth": "Team Health",
+				"configuration": "Configuration",
+				"supervisorRankings": "Supervisor Rankings",
+				"teams": "Teams",
+				"admin": "Admin"
 			}
 		}
 	},

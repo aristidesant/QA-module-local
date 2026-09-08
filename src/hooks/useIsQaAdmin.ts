@@ -54,6 +54,21 @@ export const useIsQaAdmin = (): boolean => {
 		targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
 
 	return useMemo(() => {
+		// Development mode bypass: allow access if running in dev/localhost
+		if (import.meta.env.DEV) {
+			const isDev = typeof window !== 'undefined' &&
+				(window.location.hostname === 'localhost' ||
+				 window.location.hostname === '127.0.0.1' ||
+				 window.location.hostname.includes('localhost:'));
+			if (isDev && (user?.email === 'aristides.02@gmail.com' || user?.username === 'asantana')) {
+				return true;
+			}
+			// Also allow if no user but in dev mode (development access)
+			if (isDev && !user) {
+				return true;
+			}
+		}
+
 		if (isSuperAdmin) {
 			return true;
 		}

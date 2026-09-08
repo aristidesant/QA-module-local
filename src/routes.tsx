@@ -145,6 +145,9 @@ const NewQAManagerDashboard = React.lazy(
 const NewOperationManagerDashboard = React.lazy(
 	() => import('./modules/qa/dashboard/pages/NewOperationManagerDashboard')
 );
+const QaInboxPage = React.lazy(
+	() => import('./modules/qa/dashboard/pages/InboxPage')
+);
 const AgentProfilePage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/AgentProfilePage')
 );
@@ -842,6 +845,50 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<NewOperationManagerDashboard />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'agent/inbox',
+										id: 'qa.agent.inbox',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaInboxPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/inbox',
+										id: 'qa.supervisor.inbox',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaInboxPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/inbox',
+										id: 'qa.qa-manager.inbox',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaInboxPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'operation-manager/inbox',
+										id: 'qa.operation-manager.inbox',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaInboxPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, SimpleGrid, Text, Group, Stack, Progress, ThemeIcon } from '@mantine/core';
-import { IconMood, IconMoodSmile, IconMoodNeutral, IconMoodEmpty, IconMoodCry } from '@tabler/icons-react';
+import { IconMoodSmile, IconMoodNeutral, IconMoodEmpty, IconMoodCry } from '@tabler/icons-react';
 import styles from '../Dashboard.module.css';
 
 interface SentimentScaleCardProps {
@@ -15,7 +15,7 @@ const sentimentConfig = [
 	{ value: 2, label: 'Negative', color: '#FD7E14', icon: IconMoodEmpty },
 	{ value: 3, label: 'Neutral', color: '#FFD43B', icon: IconMoodNeutral },
 	{ value: 4, label: 'Positive', color: '#94D82D', icon: IconMoodSmile },
-	{ value: 5, label: 'Very Positive', color: '#51CF66', icon: IconMood },
+	{ value: 5, label: 'Very Positive', color: '#51CF66', icon: IconMoodSmile },
 ];
 
 const getSentimentConfig = (score: number | null | undefined) => {
