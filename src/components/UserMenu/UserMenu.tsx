@@ -202,35 +202,33 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 					{t('appSwitcher.switchApp')}
 				</Menu.Item>
 			)}
-			{isSuperAdmin && (
-				<>
-					<Menu.Label className={styles.menuLabel}>
-						{t('userMenu.rolePreview.menuLabel')}
-					</Menu.Label>
-					{PREVIEW_ROLES.map((role) => (
-						<Menu.Item
-							key={role.key}
-							leftSection={<IconEyeglass size={16} />}
-							onClick={() => handleSelectPreviewRole(role.key)}
-							className={[
-								styles.menuItem,
-								previewRole === role.key ? styles.menuItemActive : '',
-							].join(' ')}
-						>
-							{t(role.labelKey)}
-						</Menu.Item>
-					))}
-					{previewRole && (
-						<Menu.Item
-							leftSection={<IconX size={16} />}
-							onClick={handleExitPreview}
-							className={styles.menuItem}
-						>
-							{t('userMenu.rolePreview.exit')}
-						</Menu.Item>
-					)}
-				</>
-			)}
+			<>
+				<Menu.Label className={styles.menuLabel}>
+					{t('userMenu.rolePreview.menuLabel')}
+				</Menu.Label>
+				{PREVIEW_ROLES.map((role) => (
+					<Menu.Item
+						key={role.key}
+						leftSection={<IconEyeglass size={16} />}
+						onClick={() => handleSelectPreviewRole(role.key)}
+						className={[
+							styles.menuItem,
+							previewRole === role.key ? styles.menuItemActive : '',
+						].join(' ')}
+					>
+						{t(role.labelKey)}
+					</Menu.Item>
+				))}
+				{previewRole && (
+					<Menu.Item
+						leftSection={<IconX size={16} />}
+						onClick={handleExitPreview}
+						className={styles.menuItem}
+					>
+						{t('userMenu.rolePreview.exit')}
+					</Menu.Item>
+				)}
+			</>
 			<Menu.Label className={styles.menuLabel}>
 				{t('sidebar.account.language')}
 			</Menu.Label>
