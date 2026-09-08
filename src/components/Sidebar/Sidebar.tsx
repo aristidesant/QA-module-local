@@ -516,16 +516,10 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			exact: true,
 		},
 		{
-			key: 'role-preview-my-calls',
-			label: 'sidebar.rolePreview.items.myCalls',
-			icon: <IconPhone size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/agent',
-		},
-		{
 			key: 'role-preview-my-evaluations',
 			label: 'sidebar.rolePreview.items.myEvaluations',
 			icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/agent',
+			to: '/qa/agent/evaluations',
 		},
 		{
 			key: 'role-preview-inbox',
