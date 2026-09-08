@@ -153,21 +153,15 @@ export const NewAgentDashboard: React.FC = () => {
 						/>
 					</SectionCard>
 
-					<Tabs defaultValue='rankings' style={{ flex: 1 }}>
-						<Tabs.List>
-							<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
-						</Tabs.List>
-
-						<Tabs.Panel value='rankings' pt='lg'>
-							<RankingsTable
-								entries={AGENT_TEAM_RANKINGS}
-								title='Team Rankings'
-								description="Your current ranking alongside the team's top performers this period"
-								goal={AGENT_RANKING_GOAL}
-								maxDisplay={5}
-							/>
-						</Tabs.Panel>
-					</Tabs>
+					<SectionCard title='Team Rankings' description="Your current ranking alongside the team's top performers this period">
+						<RankingsTable
+							entries={AGENT_TEAM_RANKINGS}
+							title='Team Rankings'
+							description="Your current ranking alongside the team's top performers this period"
+							goal={AGENT_RANKING_GOAL}
+							maxDisplay={5}
+						/>
+					</SectionCard>
 				</SimpleGrid>
 
 				{/* 5. Sentiment trend and quick insights */}
