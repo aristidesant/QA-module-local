@@ -19,6 +19,7 @@ import {
 	Legend,
 	Line,
 	Bar,
+	Cell,
 	XAxis,
 	YAxis,
 	CartesianGrid,
@@ -365,10 +366,13 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 										<Legend />
 										<Bar
 											dataKey='frequency'
-											
 											name='Frequency'
 											radius={[0, 8, 8, 0]}
-										/>
+										>
+											{emotionChartDataWithColors.map((entry, index) => (
+												<Cell key={`cell-${index}`} fill={entry.fill} />
+											))}
+										</Bar>
 									</BarChart>
 								</ResponsiveContainer>
 							</div>
