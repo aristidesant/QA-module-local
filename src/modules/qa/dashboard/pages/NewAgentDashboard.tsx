@@ -162,6 +162,13 @@ export const NewAgentDashboard: React.FC = () => {
 							description="Your current ranking alongside the team's top performers this period"
 							goal={AGENT_RANKING_GOAL}
 							maxDisplay={5}
+							onViewAll={() => {
+								// Navigate to full rankings view
+								const element = document.getElementById('team-rankings-section');
+								if (element) {
+									element.scrollIntoView({ behavior: 'smooth' });
+								}
+							}}
 						/>
 					</SectionCard>
 				</SimpleGrid>

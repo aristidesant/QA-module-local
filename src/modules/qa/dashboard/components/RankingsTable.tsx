@@ -12,6 +12,7 @@ import {
 	Avatar,
 	UnstyledButton,
 	Paper,
+	Button,
 } from '@mantine/core';
 import { IconMedal, IconTrophy, IconTarget } from '@tabler/icons-react';
 import styles from '../Dashboard.module.css';
@@ -57,6 +58,7 @@ interface RankingsTableProps {
 	maxDisplay?: number;
 	goal?: RankingGoal;
 	onReact?: (position: number, reactionType: ReactionType) => void;
+	onViewAll?: () => void;
 	currentAgentId?: number;
 	compact?: boolean;
 }
@@ -181,6 +183,7 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 	maxDisplay = 10,
 	goal,
 	onReact,
+	onViewAll,
 	compact = false,
 }) => {
 	/** Per-entry reaction the current user has given (mockup-local state) */
@@ -234,14 +237,21 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 	return (
 		<Card className={styles.metricCard} p='lg' radius='md' withBorder>
 			<Stack gap='md'>
-				<div>
-					<Text fw={600} size='md'>
-						{title}
-					</Text>
-					<Text size='xs' c='dimmed'>
-						{description}
-					</Text>
-				</div>
+				<Group justify='space-between' align='flex-start'>
+					<div>
+						<Text fw={600} size='md'>
+							{title}
+						</Text>
+						<Text size='xs' c='dimmed'>
+							{description}
+						</Text>
+					</div>
+					{onViewAll && (
+						<Button variant='subtle' size='xs' onClick={onViewAll}>
+							View All →
+						</Button>
+					)}
+				</Group>
 
 				{goal && <RankingGoalBanner goal={goal} />}
 

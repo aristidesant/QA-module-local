@@ -399,6 +399,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 								description='Supervisor teams ranked against the platform goal for this period'
 								goal={QA_MANAGER_RANKING_GOAL}
 								maxDisplay={7}
+								onViewAll={() => navigate('/qa/qamanager/rankings')}
 							/>
 						</Tabs.Panel>
 

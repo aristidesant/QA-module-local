@@ -354,6 +354,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 								description='Your team ranked against the goal you defined for this period'
 								goal={SUPERVISOR_RANKING_GOAL}
 								maxDisplay={7}
+								onViewAll={() => navigate('/qa/supervisor/rankings')}
 							/>
 						</Tabs.Panel>
 
