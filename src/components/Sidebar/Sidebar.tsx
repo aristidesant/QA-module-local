@@ -531,7 +531,7 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			key: 'role-preview-inbox',
 			label: 'sidebar.rolePreview.items.inbox',
 			icon: <IconInbox size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/agent',
+			to: '/qa/agent/inbox',
 		},
 		{
 			key: 'role-preview-rankings',
