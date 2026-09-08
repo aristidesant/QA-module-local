@@ -148,6 +148,9 @@ const NewOperationManagerDashboard = React.lazy(
 const QaInboxPage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/InboxPage')
 );
+const AgentEvaluationsPage = React.lazy(
+	() => import('./modules/qa/agent/evaluations/AgentEvaluationsPage')
+);
 const AgentProfilePage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/AgentProfilePage')
 );
@@ -845,6 +848,17 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<NewOperationManagerDashboard />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'agent/evaluations',
+										id: 'qa.agent.evaluations',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<AgentEvaluationsPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
