@@ -366,7 +366,7 @@ export const NewOperationManagerDashboard: React.FC = () => {
 					title='Performance Score'
 					description='Cross-client quality assurance, compliance, and sentiment results this week'
 				>
-					<SimpleGrid cols={{ base: 1, md: 3 }} spacing='md'>
+					<SimpleGrid cols={{ base: 1, md: 4 }} spacing='md'>
 						<QualityAssuranceCard score={qaScore} subtitle='Cross-client category breakdown' />
 						<ComplianceCard categories={complianceCategories} subtitle='Cross-client category overview' />
 						<SentimentEmotionCard
@@ -374,22 +374,19 @@ export const NewOperationManagerDashboard: React.FC = () => {
 							predominantEmotion={sentiment.predominantEmotion}
 							subtitle='0-5 scale assessment'
 						/>
+						<div>
+							<AutoFailsCard sectionAutoFails={autoFailsCount} globalAutoFails={autoFailsCount} compact />
+						</div>
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Critical Issues (2-column) alongside Auto-Fails */}
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<SectionCard title='Critical Issues' description='Urgent operational items requiring immediate attention across all clients'>
-						<CriticalIssuesTable
-							issues={CRITICAL_ISSUES_OPERATION_MANAGER}
-							onIssueClick={() => navigate(OPERATION_MANAGER_INBOX_PATH)}
-						/>
-					</SectionCard>
-
-					<SectionCard title='Auto-Fails' description='Automatic failures detected across all clients this week'>
-						<AutoFailsCard sectionAutoFails={autoFailsCount} globalAutoFails={autoFailsCount} />
-					</SectionCard>
-				</SimpleGrid>
+				{/* 3. Critical Issues */}
+				<SectionCard title='Critical Issues' description='Urgent operational items requiring immediate attention across all clients'>
+					<CriticalIssuesTable
+						issues={CRITICAL_ISSUES_OPERATION_MANAGER}
+						onIssueClick={() => navigate(OPERATION_MANAGER_INBOX_PATH)}
+					/>
+				</SectionCard>
 
 				{/* 4. Sentiment trend and quick insights */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>

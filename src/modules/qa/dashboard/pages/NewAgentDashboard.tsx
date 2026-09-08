@@ -125,12 +125,12 @@ export const NewAgentDashboard: React.FC = () => {
 					</Text>
 				</div>
 
-				{/* 2. Performance Score Row: Quality Assurance | Compliance | Sentiment & Emotion */}
+				{/* 2. Performance Score Row: Quality Assurance | Compliance | Sentiment & Emotion | Auto-Fails */}
 				<SectionCard
 					title='Performance Score'
-					description='Your quality assurance, compliance, and sentiment results this week'
+					description='Your quality assurance, compliance, sentiment, and auto-fails results this week'
 				>
-					<SimpleGrid cols={{ base: 1, md: 3 }} spacing='md'>
+					<SimpleGrid cols={{ base: 1, md: 4 }} spacing='md'>
 						<QualityAssuranceCard score={qaScore} subtitle='Category breakdown' />
 						<ComplianceCard categories={complianceCategories} subtitle='Category overview' />
 						<SentimentEmotionCard
@@ -138,22 +138,19 @@ export const NewAgentDashboard: React.FC = () => {
 							predominantEmotion={sentiment.predominantEmotion}
 							subtitle='0-5 scale assessment'
 						/>
+						<div>
+							<AutoFailsCard sectionAutoFails={autoFailsCount} globalAutoFails={18} compact />
+						</div>
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Critical Issues (2-column) alongside Auto-Fails */}
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<SectionCard title='Critical Issues' description='Personal issues requiring your attention'>
-						<CriticalIssuesTable
-							issues={CRITICAL_ISSUES_AGENT}
-							onIssueClick={() => navigate(AGENT_INBOX_PATH)}
-						/>
-					</SectionCard>
-
-					<SectionCard title='Auto-Fails' description='Automatic failures detected on your calls this week'>
-						<AutoFailsCard sectionAutoFails={autoFailsCount} globalAutoFails={18} />
-					</SectionCard>
-				</SimpleGrid>
+				{/* 3. Critical Issues */}
+				<SectionCard title='Critical Issues' description='Personal issues requiring your attention'>
+					<CriticalIssuesTable
+						issues={CRITICAL_ISSUES_AGENT}
+						onIssueClick={() => navigate(AGENT_INBOX_PATH)}
+					/>
+				</SectionCard>
 
 				{/* 4. Sentiment trend and quick insights */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
