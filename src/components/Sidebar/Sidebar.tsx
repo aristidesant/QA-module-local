@@ -533,6 +533,12 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
 			to: '/qa/dashboards/agent',
 		},
+		{
+			key: 'role-preview-lms',
+			label: 'sidebar.rolePreview.items.lms',
+			icon: <IconSchool size={20} className={styles.menuIcon} />,
+			to: '/qa/agent/lms',
+		},
 	],
 	supervisor: [
 		{

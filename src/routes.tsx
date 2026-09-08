@@ -148,6 +148,9 @@ const NewOperationManagerDashboard = React.lazy(
 const QaInboxPage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/InboxPage')
 );
+const AgentLMSPage = React.lazy(
+	() => import('./modules/qa/agent/lms/AgentLMSPage')
+);
 const AgentProfilePage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/AgentProfilePage')
 );
@@ -867,6 +870,17 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QaInboxPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'agent/lms',
+										id: 'qa.agent.lms',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<AgentLMSPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
