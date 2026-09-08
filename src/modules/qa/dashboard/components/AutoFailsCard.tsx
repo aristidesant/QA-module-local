@@ -16,8 +16,8 @@ export const AutoFailsCard: React.FC<AutoFailsCardProps> = ({
 }) => {
 	if (compact) {
 		return (
-			<Card className={styles.metricCard} p="md" radius="md" withBorder>
-				<Stack gap="xs">
+			<Card className={styles.metricCard} p="md" radius="md" withBorder h="100%">
+				<Stack gap="xs" h="100%">
 					<Text fw={600} size="sm">
 						Auto-Fails
 					</Text>
