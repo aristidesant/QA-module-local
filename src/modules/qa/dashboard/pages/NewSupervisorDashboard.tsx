@@ -121,7 +121,7 @@ const SUPERVISOR_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 1,
 		name: 'Mike Chen',
-		score: 97,
+		score: 4.9,
 		reactions: { applause: 14, reverence: 9, salute: 6, thumbsUp: 11 },
 		trend: 'up',
 		trendValue: 2,
@@ -129,7 +129,7 @@ const SUPERVISOR_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 2,
 		name: 'Sarah Johnson',
-		score: 95,
+		score: 4.7,
 		reactions: { applause: 11, reverence: 7, salute: 5, thumbsUp: 8 },
 		trend: 'up',
 		trendValue: 1,
@@ -137,7 +137,7 @@ const SUPERVISOR_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 3,
 		name: 'Jessica Martinez',
-		score: 93,
+		score: 4.5,
 		reactions: { applause: 9, reverence: 6, salute: 3, thumbsUp: 5 },
 		trend: 'stable',
 		trendValue: 0,
@@ -145,7 +145,7 @@ const SUPERVISOR_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 4,
 		name: 'John Smith',
-		score: 90,
+		score: 4.2,
 		reactions: { applause: 7, reverence: 4, salute: 2, thumbsUp: 4 },
 		trend: 'up',
 		trendValue: 2,
@@ -153,7 +153,7 @@ const SUPERVISOR_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 5,
 		name: 'Emma Davis',
-		score: 88,
+		score: 4.0,
 		reactions: { applause: 5, reverence: 3, salute: 1, thumbsUp: 3 },
 		trend: 'down',
 		trendValue: 1,
@@ -161,7 +161,7 @@ const SUPERVISOR_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 6,
 		name: 'David Brown',
-		score: 62,
+		score: 2.9,
 		reactions: { applause: 2, reverence: 1, salute: 0, thumbsUp: 1 },
 		trend: 'down',
 		trendValue: 4,
@@ -169,7 +169,7 @@ const SUPERVISOR_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 7,
 		name: 'Lisa Wong',
-		score: 58,
+		score: 2.6,
 		reactions: { applause: 1, reverence: 0, salute: 0, thumbsUp: 1 },
 		trend: 'down',
 		trendValue: 3,

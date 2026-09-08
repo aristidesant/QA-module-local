@@ -69,7 +69,7 @@ const AGENT_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 1,
 		name: 'Mike Chen',
-		score: 97,
+		score: 4.9,
 		reactions: { applause: 12, reverence: 8, salute: 5, thumbsUp: 10 },
 		trend: 'up',
 		trendValue: 3,
@@ -77,7 +77,7 @@ const AGENT_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 2,
 		name: 'Sarah Johnson',
-		score: 95,
+		score: 4.7,
 		reactions: { applause: 10, reverence: 7, salute: 4, thumbsUp: 6 },
 		trend: 'up',
 		trendValue: 1,
@@ -85,7 +85,7 @@ const AGENT_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 3,
 		name: 'Jessica Martinez',
-		score: 93,
+		score: 4.5,
 		reactions: { applause: 9, reverence: 5, salute: 3, thumbsUp: 4 },
 		trend: 'stable',
 		trendValue: 0,
@@ -93,7 +93,7 @@ const AGENT_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 4,
 		name: 'John Smith',
-		score: 90,
+		score: 4.2,
 		reactions: { applause: 8, reverence: 4, salute: 2, thumbsUp: 3 },
 		trend: 'up',
 		trendValue: 2,
@@ -101,7 +101,7 @@ const AGENT_TEAM_RANKINGS: RankingEntry[] = [
 	{
 		position: 5,
 		name: 'Emma Davis',
-		score: 88,
+		score: 4.0,
 		reactions: { applause: 6, reverence: 3, salute: 1, thumbsUp: 2 },
 		trend: 'down',
 		trendValue: 1,

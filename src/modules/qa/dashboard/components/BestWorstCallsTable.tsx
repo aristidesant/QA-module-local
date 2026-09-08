@@ -70,14 +70,18 @@ export const BestWorstCallsTable: React.FC<BestWorstCallsTableProps> = ({ calls,
 								<Table.Th>Date</Table.Th>
 								<Table.Th>Agent</Table.Th>
 								<Table.Th>Duration</Table.Th>
-								<Table.Th ta='right'>QA Score</Table.Th>
+								<Table.Th ta='center'>ECN</Table.Th>
+								<Table.Th ta='center'>ENC</Table.Th>
+								<Table.Th ta='center'>ECC</Table.Th>
+								<Table.Th ta='center'>ECUF</Table.Th>
 								<Table.Th ta='right'>Sentiment</Table.Th>
+								<Table.Th ta='right'>Compliance</Table.Th>
 							</Table.Tr>
 						</Table.Thead>
 						<Table.Tbody>
 							{visibleCalls.length === 0 ? (
 								<Table.Tr>
-									<Table.Td colSpan={5}>
+									<Table.Td colSpan={9}>
 										<Center p='lg'>
 											<Text size='sm' c='dimmed'>
 												No {isBest ? 'best' : 'worst'} calls this week
@@ -105,14 +109,26 @@ export const BestWorstCallsTable: React.FC<BestWorstCallsTableProps> = ({ calls,
 										<Table.Td>
 											<Text size='sm'>{formatDuration(call.duration)}</Text>
 										</Table.Td>
-										<Table.Td ta='right'>
-											<Text size='sm' fw={600} c={accentColor}>
-												{call.qaScore}%
-											</Text>
+										<Table.Td ta='center'>
+											<Text size='sm' fw={500}>{call.ecn ?? 0}</Text>
+										</Table.Td>
+										<Table.Td ta='center'>
+											<Text size='sm' fw={500}>{call.enc ?? 0}</Text>
+										</Table.Td>
+										<Table.Td ta='center'>
+											<Text size='sm' fw={500}>{call.ecc ?? 0}</Text>
+										</Table.Td>
+										<Table.Td ta='center'>
+											<Text size='sm' fw={500}>{call.ecuf ?? 0}</Text>
 										</Table.Td>
 										<Table.Td ta='right'>
 											<Text size='sm' fw={600} c={accentColor}>
 												{call.sentiment.toFixed(1)}
+											</Text>
+										</Table.Td>
+										<Table.Td ta='right'>
+											<Text size='sm' fw={600} c={accentColor}>
+												{call.compliance ?? 0}%
 											</Text>
 										</Table.Td>
 									</Table.Tr>

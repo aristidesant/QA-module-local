@@ -225,7 +225,7 @@ const OPERATION_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 1,
 		name: 'Client A - Retail Services',
-		score: 91,
+		score: 4.6,
 		reactions: { applause: 15, reverence: 9, salute: 6, thumbsUp: 11 },
 		trend: 'up',
 		trendValue: 2,
@@ -233,7 +233,7 @@ const OPERATION_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 2,
 		name: 'Client B - Telecom Support',
-		score: 87,
+		score: 4.4,
 		reactions: { applause: 12, reverence: 7, salute: 5, thumbsUp: 8 },
 		trend: 'up',
 		trendValue: 1,
@@ -241,7 +241,7 @@ const OPERATION_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 3,
 		name: 'Client C - Financial Services',
-		score: 84,
+		score: 4.2,
 		reactions: { applause: 9, reverence: 6, salute: 3, thumbsUp: 6 },
 		trend: 'stable',
 		trendValue: 0,
@@ -249,7 +249,7 @@ const OPERATION_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 4,
 		name: 'Client D - Healthcare Enrollment',
-		score: 79,
+		score: 4.0,
 		reactions: { applause: 7, reverence: 4, salute: 2, thumbsUp: 4 },
 		trend: 'down',
 		trendValue: 1,
@@ -257,7 +257,7 @@ const OPERATION_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 5,
 		name: 'Client E - Insurance Claims',
-		score: 74,
+		score: 3.7,
 		reactions: { applause: 5, reverence: 2, salute: 1, thumbsUp: 3 },
 		trend: 'down',
 		trendValue: 2,
@@ -265,7 +265,7 @@ const OPERATION_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 6,
 		name: 'Client G - Legacy Program',
-		score: 71,
+		score: 3.6,
 		reactions: { applause: 3, reverence: 1, salute: 1, thumbsUp: 2 },
 		trend: 'stable',
 		trendValue: 0,
@@ -273,7 +273,7 @@ const OPERATION_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 7,
 		name: 'Client F - Utilities',
-		score: 68,
+		score: 3.4,
 		reactions: { applause: 2, reverence: 1, salute: 0, thumbsUp: 1 },
 		trend: 'down',
 		trendValue: 3,

@@ -154,7 +154,7 @@ const QA_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 1,
 		name: 'Sarah Johnson',
-		score: 91,
+		score: 4.6,
 		reactions: { applause: 16, reverence: 10, salute: 7, thumbsUp: 12 },
 		trend: 'up',
 		trendValue: 2,
@@ -162,7 +162,7 @@ const QA_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 2,
 		name: 'Mike Chen',
-		score: 89,
+		score: 4.5,
 		reactions: { applause: 13, reverence: 8, salute: 5, thumbsUp: 9 },
 		trend: 'up',
 		trendValue: 1,
@@ -170,7 +170,7 @@ const QA_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 3,
 		name: 'Jessica Martinez',
-		score: 86,
+		score: 4.3,
 		reactions: { applause: 10, reverence: 6, salute: 4, thumbsUp: 7 },
 		trend: 'stable',
 		trendValue: 0,
@@ -178,7 +178,7 @@ const QA_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 4,
 		name: 'James Wilson',
-		score: 84,
+		score: 4.2,
 		reactions: { applause: 8, reverence: 5, salute: 3, thumbsUp: 5 },
 		trend: 'up',
 		trendValue: 1,
@@ -186,7 +186,7 @@ const QA_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 5,
 		name: 'Amanda Taylor',
-		score: 82,
+		score: 4.1,
 		reactions: { applause: 6, reverence: 4, salute: 2, thumbsUp: 4 },
 		trend: 'down',
 		trendValue: 1,
@@ -194,7 +194,7 @@ const QA_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 6,
 		name: 'Robert Kim',
-		score: 78,
+		score: 3.9,
 		reactions: { applause: 4, reverence: 2, salute: 1, thumbsUp: 2 },
 		trend: 'down',
 		trendValue: 3,
@@ -202,7 +202,7 @@ const QA_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 7,
 		name: 'Patricia Lopez',
-		score: 75,
+		score: 3.8,
 		reactions: { applause: 2, reverence: 1, salute: 0, thumbsUp: 1 },
 		trend: 'down',
 		trendValue: 2,
