@@ -291,18 +291,6 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 													<Text fw={500} size='sm'>
 														{entry.name}
 													</Text>
-													{entry.trend && (
-														<Badge
-															size='xs'
-															variant='light'
-															color={
-																entry.trend === 'up' ? 'green' : entry.trend === 'down' ? 'red' : 'gray'
-															}
-														>
-															{entry.trend === 'up' && '↑'}
-															{entry.trend === 'down' && '↓'} {entry.trendValue ?? 0}
-														</Badge>
-													)}
 												</div>
 											</Group>
 										</Table.Td>
