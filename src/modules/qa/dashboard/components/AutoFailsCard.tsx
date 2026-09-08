@@ -16,25 +16,36 @@ export const AutoFailsCard: React.FC<AutoFailsCardProps> = ({
 }) => {
 	if (compact) {
 		return (
-			<Card className={styles.metricCard} p="md" radius="md" withBorder h="100%">
-				<Stack gap="xs" h="100%">
-					<Text fw={600} size="sm">
-						Auto-Fails
-					</Text>
-					<Group justify="space-between">
+			<Card className={styles.metricCard} p='lg' radius='md' withBorder shadow='sm' h='100%'>
+				<Stack gap='md' h='100%'>
+					<Group justify='space-between' align='flex-start' wrap='nowrap'>
 						<div>
-							<Text size="xs" c="dimmed">
+							<Text fw={600} size='md'>
+								Auto-Fails
+							</Text>
+							<Text size='xs' c='dimmed'>
+								Automatic failures this week
+							</Text>
+						</div>
+						<ThemeIcon size='lg' color='yellow' radius='md'>
+							<IconAlertTriangle size={20} />
+						</ThemeIcon>
+					</Group>
+
+					<Group gap='lg' align='flex-end'>
+						<div>
+							<Text size='xs' c='dimmed' fw={500} mb='xs'>
 								Section
 							</Text>
-							<Text fw={700} size="lg">
+							<Text fw={700} size='xl'>
 								{sectionAutoFails}
 							</Text>
 						</div>
 						<div>
-							<Text size="xs" c="dimmed">
+							<Text size='xs' c='dimmed' fw={500} mb='xs'>
 								Global
 							</Text>
-							<Text fw={700} size="lg">
+							<Text fw={700} size='xl'>
 								{globalAutoFails}
 							</Text>
 						</div>
