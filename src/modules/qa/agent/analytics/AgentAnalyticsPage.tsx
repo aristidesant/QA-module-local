@@ -1,11 +1,23 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { Stack, Text, Tabs } from '@mantine/core';
 import { useAgentAnalyticsStore } from '~/stores/qa/agentAnalyticsStore';
 import { DateRangeAndGranularityControl } from './components/DateRangeAndGranularityControl';
+import { QAAnalyticsTab } from './tabs';
+import { AGENT_CALL_METRICS, aggregateMetricsByDateRange } from '~/modules/qa/dashboard/mockData';
 
 const AgentAnalyticsPage: React.FC = () => {
-	const { activeTab, setActiveTab } = useAgentAnalyticsStore();
+	const { activeTab, setActiveTab, dateRange, granularity } = useAgentAnalyticsStore();
+
+	// Aggregate metrics based on date range and granularity
+	const aggregatedMetrics = useMemo(() => {
+		return aggregateMetricsByDateRange(
+			AGENT_CALL_METRICS,
+			dateRange.from.toISOString(),
+			dateRange.to.toISOString(),
+			granularity
+		);
+	}, [dateRange, granularity]);
 
 	const handleApply = (
 		_range: { from: Date; to: Date },
@@ -40,7 +52,7 @@ const AgentAnalyticsPage: React.FC = () => {
 					</Tabs.List>
 
 					<Tabs.Panel value='qa' pt='lg'>
-						<Text>Coming soon</Text>
+						<QAAnalyticsTab aggregated={aggregatedMetrics} />
 					</Tabs.Panel>
 
 					<Tabs.Panel value='sentiment' pt='lg'>
