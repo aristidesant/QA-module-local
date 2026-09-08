@@ -298,7 +298,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 					</SectionCard>
 				</SimpleGrid>
 
-				{/* 4. Sentiment trend and quick insights */}
+				{/* 4. Sentiment trend and disputes */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
 					<SectionCard title='Sentiment Trend' description='4-week team sentiment progression'>
 						<Card className={styles.metricCard} p='md' radius='md' withBorder>
@@ -306,8 +306,13 @@ export const NewSupervisorDashboard: React.FC = () => {
 						</Card>
 					</SectionCard>
 
-					<SectionCard title='Quick Insights' description='Team-level recommendations and analysis'>
-						<QuickInsightsWidget insights={DEFAULT_SUPERVISOR_INSIGHTS} />
+					<SectionCard title='Disputes' description='Evaluation disputes raised by your team'>
+						<BaseTable<DisputeRow>
+							columns={disputeColumns}
+							data={DISPUTES_SAMPLE}
+							getRowId={dispute => dispute.id}
+							emptyMessage='No disputes found'
+						/>
 					</SectionCard>
 				</SimpleGrid>
 
@@ -321,7 +326,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 						<Tabs.List>
 							<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
 							<Tabs.Tab value='team-members'>Team Members</Tabs.Tab>
-							<Tabs.Tab value='disputes'>Disputes</Tabs.Tab>
+							<Tabs.Tab value='insights'>Quick Insights</Tabs.Tab>
 						</Tabs.List>
 
 						<Tabs.Panel value='rankings' pt='lg'>
@@ -345,14 +350,9 @@ export const NewSupervisorDashboard: React.FC = () => {
 							</SectionCard>
 						</Tabs.Panel>
 
-						<Tabs.Panel value='disputes' pt='lg'>
-							<SectionCard title='Disputes' description='Evaluation disputes raised by your team'>
-								<BaseTable<DisputeRow>
-									columns={disputeColumns}
-									data={DISPUTES_SAMPLE}
-									getRowId={dispute => dispute.id}
-									emptyMessage='No disputes found'
-								/>
+						<Tabs.Panel value='insights' pt='lg'>
+							<SectionCard title='Quick Insights' description='Team-level recommendations and analysis'>
+								<QuickInsightsWidget insights={DEFAULT_SUPERVISOR_INSIGHTS} />
 							</SectionCard>
 						</Tabs.Panel>
 					</Tabs>
