@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
-import { Stack, Title, Text, SimpleGrid, Tabs, Card, Badge } from '@mantine/core';
+import { Stack, Title, Text, SimpleGrid, Tabs, Card, Badge, Group, Button } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
@@ -257,6 +257,10 @@ export const NewSupervisorDashboard: React.FC = () => {
 	/** Overall sentiment on the 0-5 scale, averaging agent and customer readings */
 	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
 
+	/** Filter only open disputes */
+	const openDisputes = DISPUTES_SAMPLE.filter(d => d.status === 'open');
+	const openDisputeCount = openDisputes.length;
+
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
@@ -306,12 +310,27 @@ export const NewSupervisorDashboard: React.FC = () => {
 						</Card>
 					</SectionCard>
 
-					<SectionCard title='Disputes' description='Evaluation disputes raised by your team'>
+					<SectionCard>
+						<Group justify='space-between' align='center' mb='md'>
+							<div>
+								<Title order={4}>Open Disputes</Title>
+								<Badge size='lg' color='blue' variant='light'>
+									{openDisputeCount} {openDisputeCount === 1 ? 'dispute' : 'disputes'} open
+								</Badge>
+							</div>
+							<Button
+								variant='subtle'
+								size='xs'
+								onClick={() => navigate('/qa/supervisor/disputes')}
+							>
+								Manage →
+							</Button>
+						</Group>
 						<BaseTable<DisputeRow>
 							columns={disputeColumns}
-							data={DISPUTES_SAMPLE}
+							data={openDisputes}
 							getRowId={dispute => dispute.id}
-							emptyMessage='No disputes found'
+							emptyMessage='No open disputes'
 						/>
 					</SectionCard>
 				</SimpleGrid>
