@@ -298,7 +298,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 					</SectionCard>
 
 					<SectionCard title='Auto-Fails' description="Automatic failures detected across your team this week">
-						<AutoFailsCard totalCount={autoFailsCount} />
+						<AutoFailsCard sectionAutoFails={autoFailsCount} globalAutoFails={18} />
 					</SectionCard>
 				</SimpleGrid>
 

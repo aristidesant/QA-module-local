@@ -362,7 +362,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 					</SectionCard>
 
 					<SectionCard title='Auto-Fails' description='Automatic failures detected across the platform this week'>
-						<AutoFailsCard totalCount={autoFailsCount} />
+						<AutoFailsCard sectionAutoFails={autoFailsCount} globalAutoFails={42} />
 					</SectionCard>
 				</SimpleGrid>
 

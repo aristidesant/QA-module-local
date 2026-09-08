@@ -151,7 +151,7 @@ export const NewAgentDashboard: React.FC = () => {
 					</SectionCard>
 
 					<SectionCard title='Auto-Fails' description='Automatic failures detected on your calls this week'>
-						<AutoFailsCard totalCount={autoFailsCount} />
+						<AutoFailsCard sectionAutoFails={autoFailsCount} globalAutoFails={18} />
 					</SectionCard>
 				</SimpleGrid>
 

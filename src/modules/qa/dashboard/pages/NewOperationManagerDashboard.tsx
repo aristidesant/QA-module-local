@@ -387,7 +387,7 @@ export const NewOperationManagerDashboard: React.FC = () => {
 					</SectionCard>
 
 					<SectionCard title='Auto-Fails' description='Automatic failures detected across all clients this week'>
-						<AutoFailsCard totalCount={autoFailsCount} />
+						<AutoFailsCard sectionAutoFails={autoFailsCount} globalAutoFails={autoFailsCount} />
 					</SectionCard>
 				</SimpleGrid>
 
