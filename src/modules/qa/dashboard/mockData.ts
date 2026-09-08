@@ -80,6 +80,46 @@ export interface CriticalIssue {
 	timestamp: string;
 }
 
+export interface ComplianceArea {
+	score: number;
+	items: Record<string, number>;
+}
+
+export interface CallMetric {
+	id: string;
+	date: string;
+	qaScores: {
+		ecn: number;
+		enc: number;
+		ecc: number;
+		ecuf: number;
+	};
+	agentSentiment: number;
+	customerSentiment: number;
+	predominantEmotion: 'Joy' | 'Trust' | 'Anticipation' | 'Surprise' | 'Anger' | 'Fear' | 'Sadness' | 'Disgust';
+	complianceByArea: {
+		security: ComplianceArea;
+		regulatory: ComplianceArea;
+		legal: ComplianceArea;
+	};
+}
+
+export interface AggregatedMetrics {
+	timestamp: string;
+	period: string;
+	callCount: number;
+	avgAgentSentiment: number;
+	avgCustomerSentiment: number;
+	avgSecurityCompliance: number;
+	avgRegulatoryCompliance: number;
+	avgLegalCompliance: number;
+	totalErrorsECN: number;
+	totalErrorsENC: number;
+	totalErrorsECC: number;
+	totalErrorsECUF: number;
+	predominantEmotion: string;
+}
+
 // ============================================================================
 // Agent Mock Data (Personal Metrics)
 // ============================================================================
@@ -1403,3 +1443,593 @@ export const QA_MANAGER_TRIGGERS: NotificationTrigger[] = [
 		recipients: 'AGENT',
 	},
 ];
+
+// ============================================================================
+// Agent Analytics Mock Data (Call Metrics & Aggregation)
+// ============================================================================
+
+/**
+ * Generate realistic call metrics spanning the last 30 days
+ * Includes variation in QA scores, sentiment, and compliance across all 8 emotions
+ */
+export const AGENT_CALL_METRICS: CallMetric[] = [
+	// Week 1 (Aug 9-15, 2026)
+	{
+		id: 'METRIC-001',
+		date: '2026-08-09T08:30:00Z',
+		qaScores: { ecn: 0, enc: 1, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.2,
+		customerSentiment: 4.1,
+		predominantEmotion: 'Joy',
+		complianceByArea: {
+			security: { score: 94, items: { dataProtection: 95, disclosureCompliance: 93 } },
+			regulatory: { score: 91, items: { cobranzaRegulada: 90, transparenciaConsentimiento: 92 } },
+			legal: { score: 93, items: { amenazasTradicionales: 93, rrss: 92, superintendenciaBancos: 94, noLlamarList: 93 } },
+		},
+	},
+	{
+		id: 'METRIC-002',
+		date: '2026-08-09T10:15:00Z',
+		qaScores: { ecn: 1, enc: 0, ecc: 0, ecuf: 1 },
+		agentSentiment: 3.9,
+		customerSentiment: 3.8,
+		predominantEmotion: 'Trust',
+		complianceByArea: {
+			security: { score: 88, items: { dataProtection: 89, disclosureCompliance: 87 } },
+			regulatory: { score: 85, items: { cobranzaRegulada: 84, transparenciaConsentimiento: 86 } },
+			legal: { score: 87, items: { amenazasTradicionales: 88, rrss: 86, superintendenciaBancos: 87, noLlamarList: 87 } },
+		},
+	},
+	{
+		id: 'METRIC-003',
+		date: '2026-08-09T14:45:00Z',
+		qaScores: { ecn: 2, enc: 2, ecc: 1, ecuf: 0 },
+		agentSentiment: 3.2,
+		customerSentiment: 3.1,
+		predominantEmotion: 'Anger',
+		complianceByArea: {
+			security: { score: 76, items: { dataProtection: 75, disclosureCompliance: 77 } },
+			regulatory: { score: 72, items: { cobranzaRegulada: 71, transparenciaConsentimiento: 73 } },
+			legal: { score: 74, items: { amenazasTradicionales: 73, rrss: 74, superintendenciaBancos: 75, noLlamarList: 74 } },
+		},
+	},
+	{
+		id: 'METRIC-004',
+		date: '2026-08-10T09:00:00Z',
+		qaScores: { ecn: 0, enc: 0, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.5,
+		customerSentiment: 4.4,
+		predominantEmotion: 'Anticipation',
+		complianceByArea: {
+			security: { score: 96, items: { dataProtection: 97, disclosureCompliance: 95 } },
+			regulatory: { score: 94, items: { cobranzaRegulada: 93, transparenciaConsentimiento: 95 } },
+			legal: { score: 95, items: { amenazasTradicionales: 95, rrss: 94, superintendenciaBancos: 96, noLlamarList: 95 } },
+		},
+	},
+	{
+		id: 'METRIC-005',
+		date: '2026-08-10T11:30:00Z',
+		qaScores: { ecn: 1, enc: 1, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.0,
+		customerSentiment: 3.9,
+		predominantEmotion: 'Surprise',
+		complianceByArea: {
+			security: { score: 89, items: { dataProtection: 90, disclosureCompliance: 88 } },
+			regulatory: { score: 86, items: { cobranzaRegulada: 85, transparenciaConsentimiento: 87 } },
+			legal: { score: 88, items: { amenazasTradicionales: 89, rrss: 87, superintendenciaBancos: 88, noLlamarList: 88 } },
+		},
+	},
+	{
+		id: 'METRIC-006',
+		date: '2026-08-11T08:20:00Z',
+		qaScores: { ecn: 0, enc: 1, ecc: 1, ecuf: 0 },
+		agentSentiment: 3.7,
+		customerSentiment: 3.6,
+		predominantEmotion: 'Fear',
+		complianceByArea: {
+			security: { score: 83, items: { dataProtection: 84, disclosureCompliance: 82 } },
+			regulatory: { score: 80, items: { cobranzaRegulada: 79, transparenciaConsentimiento: 81 } },
+			legal: { score: 82, items: { amenazasTradicionales: 81, rrss: 82, superintendenciaBancos: 83, noLlamarList: 82 } },
+		},
+	},
+	{
+		id: 'METRIC-007',
+		date: '2026-08-12T13:10:00Z',
+		qaScores: { ecn: 2, enc: 1, ecc: 0, ecuf: 1 },
+		agentSentiment: 3.4,
+		customerSentiment: 3.3,
+		predominantEmotion: 'Sadness',
+		complianceByArea: {
+			security: { score: 79, items: { dataProtection: 78, disclosureCompliance: 80 } },
+			regulatory: { score: 76, items: { cobranzaRegulada: 75, transparenciaConsentimiento: 77 } },
+			legal: { score: 78, items: { amenazasTradicionales: 77, rrss: 78, superintendenciaBancos: 79, noLlamarList: 78 } },
+		},
+	},
+	{
+		id: 'METRIC-008',
+		date: '2026-08-13T10:40:00Z',
+		qaScores: { ecn: 0, enc: 0, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.3,
+		customerSentiment: 4.2,
+		predominantEmotion: 'Joy',
+		complianceByArea: {
+			security: { score: 95, items: { dataProtection: 96, disclosureCompliance: 94 } },
+			regulatory: { score: 93, items: { cobranzaRegulada: 92, transparenciaConsentimiento: 94 } },
+			legal: { score: 94, items: { amenazasTradicionales: 94, rrss: 93, superintendenciaBancos: 95, noLlamarList: 94 } },
+		},
+	},
+	{
+		id: 'METRIC-009',
+		date: '2026-08-14T15:25:00Z',
+		qaScores: { ecn: 3, enc: 2, ecc: 1, ecuf: 1 },
+		agentSentiment: 2.9,
+		customerSentiment: 2.8,
+		predominantEmotion: 'Disgust',
+		complianceByArea: {
+			security: { score: 72, items: { dataProtection: 71, disclosureCompliance: 73 } },
+			regulatory: { score: 68, items: { cobranzaRegulada: 67, transparenciaConsentimiento: 69 } },
+			legal: { score: 70, items: { amenazasTradicionales: 69, rrss: 70, superintendenciaBancos: 71, noLlamarList: 70 } },
+		},
+	},
+	{
+		id: 'METRIC-010',
+		date: '2026-08-15T09:50:00Z',
+		qaScores: { ecn: 1, enc: 0, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.1,
+		customerSentiment: 4.0,
+		predominantEmotion: 'Trust',
+		complianceByArea: {
+			security: { score: 91, items: { dataProtection: 92, disclosureCompliance: 90 } },
+			regulatory: { score: 89, items: { cobranzaRegulada: 88, transparenciaConsentimiento: 90 } },
+			legal: { score: 90, items: { amenazasTradicionales: 90, rrss: 89, superintendenciaBancos: 91, noLlamarList: 90 } },
+		},
+	},
+
+	// Week 2 (Aug 16-22, 2026)
+	{
+		id: 'METRIC-011',
+		date: '2026-08-16T08:15:00Z',
+		qaScores: { ecn: 0, enc: 1, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.2,
+		customerSentiment: 4.1,
+		predominantEmotion: 'Anticipation',
+		complianceByArea: {
+			security: { score: 92, items: { dataProtection: 93, disclosureCompliance: 91 } },
+			regulatory: { score: 90, items: { cobranzaRegulada: 89, transparenciaConsentimiento: 91 } },
+			legal: { score: 91, items: { amenazasTradicionales: 91, rrss: 90, superintendenciaBancos: 92, noLlamarList: 91 } },
+		},
+	},
+	{
+		id: 'METRIC-012',
+		date: '2026-08-17T11:45:00Z',
+		qaScores: { ecn: 1, enc: 2, ecc: 0, ecuf: 1 },
+		agentSentiment: 3.6,
+		customerSentiment: 3.5,
+		predominantEmotion: 'Surprise',
+		complianceByArea: {
+			security: { score: 85, items: { dataProtection: 86, disclosureCompliance: 84 } },
+			regulatory: { score: 82, items: { cobranzaRegulada: 81, transparenciaConsentimiento: 83 } },
+			legal: { score: 84, items: { amenazasTradicionales: 84, rrss: 83, superintendenciaBancos: 85, noLlamarList: 84 } },
+		},
+	},
+	{
+		id: 'METRIC-013',
+		date: '2026-08-18T14:20:00Z',
+		qaScores: { ecn: 0, enc: 0, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.4,
+		customerSentiment: 4.3,
+		predominantEmotion: 'Joy',
+		complianceByArea: {
+			security: { score: 97, items: { dataProtection: 98, disclosureCompliance: 96 } },
+			regulatory: { score: 95, items: { cobranzaRegulada: 94, transparenciaConsentimiento: 96 } },
+			legal: { score: 96, items: { amenazasTradicionales: 96, rrss: 95, superintendenciaBancos: 97, noLlamarList: 96 } },
+		},
+	},
+	{
+		id: 'METRIC-014',
+		date: '2026-08-19T10:05:00Z',
+		qaScores: { ecn: 2, enc: 1, ecc: 1, ecuf: 0 },
+		agentSentiment: 3.3,
+		customerSentiment: 3.2,
+		predominantEmotion: 'Fear',
+		complianceByArea: {
+			security: { score: 80, items: { dataProtection: 81, disclosureCompliance: 79 } },
+			regulatory: { score: 77, items: { cobranzaRegulada: 76, transparenciaConsentimiento: 78 } },
+			legal: { score: 79, items: { amenazasTradicionales: 78, rrss: 79, superintendenciaBancos: 80, noLlamarList: 79 } },
+		},
+	},
+	{
+		id: 'METRIC-015',
+		date: '2026-08-20T13:35:00Z',
+		qaScores: { ecn: 1, enc: 0, ecc: 0, ecuf: 1 },
+		agentSentiment: 4.0,
+		customerSentiment: 3.9,
+		predominantEmotion: 'Trust',
+		complianceByArea: {
+			security: { score: 88, items: { dataProtection: 89, disclosureCompliance: 87 } },
+			regulatory: { score: 86, items: { cobranzaRegulada: 85, transparenciaConsentimiento: 87 } },
+			legal: { score: 87, items: { amenazasTradicionales: 87, rrss: 86, superintendenciaBancos: 88, noLlamarList: 87 } },
+		},
+	},
+	{
+		id: 'METRIC-016',
+		date: '2026-08-21T09:15:00Z',
+		qaScores: { ecn: 2, enc: 2, ecc: 0, ecuf: 1 },
+		agentSentiment: 3.1,
+		customerSentiment: 3.0,
+		predominantEmotion: 'Anger',
+		complianceByArea: {
+			security: { score: 74, items: { dataProtection: 75, disclosureCompliance: 73 } },
+			regulatory: { score: 71, items: { cobranzaRegulada: 70, transparenciaConsentimiento: 72 } },
+			legal: { score: 73, items: { amenazasTradicionales: 72, rrss: 73, superintendenciaBancos: 74, noLlamarList: 73 } },
+		},
+	},
+	{
+		id: 'METRIC-017',
+		date: '2026-08-22T12:40:00Z',
+		qaScores: { ecn: 0, enc: 0, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.3,
+		customerSentiment: 4.2,
+		predominantEmotion: 'Joy',
+		complianceByArea: {
+			security: { score: 94, items: { dataProtection: 95, disclosureCompliance: 93 } },
+			regulatory: { score: 92, items: { cobranzaRegulada: 91, transparenciaConsentimiento: 93 } },
+			legal: { score: 93, items: { amenazasTradicionales: 93, rrss: 92, superintendenciaBancos: 94, noLlamarList: 93 } },
+		},
+	},
+
+	// Week 3 (Aug 23-29, 2026)
+	{
+		id: 'METRIC-018',
+		date: '2026-08-23T08:30:00Z',
+		qaScores: { ecn: 1, enc: 1, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.1,
+		customerSentiment: 4.0,
+		predominantEmotion: 'Anticipation',
+		complianceByArea: {
+			security: { score: 90, items: { dataProtection: 91, disclosureCompliance: 89 } },
+			regulatory: { score: 88, items: { cobranzaRegulada: 87, transparenciaConsentimiento: 89 } },
+			legal: { score: 89, items: { amenazasTradicionales: 89, rrss: 88, superintendenciaBancos: 90, noLlamarList: 89 } },
+		},
+	},
+	{
+		id: 'METRIC-019',
+		date: '2026-08-24T11:20:00Z',
+		qaScores: { ecn: 3, enc: 1, ecc: 1, ecuf: 0 },
+		agentSentiment: 3.0,
+		customerSentiment: 2.9,
+		predominantEmotion: 'Sadness',
+		complianceByArea: {
+			security: { score: 76, items: { dataProtection: 77, disclosureCompliance: 75 } },
+			regulatory: { score: 73, items: { cobranzaRegulada: 72, transparenciaConsentimiento: 74 } },
+			legal: { score: 75, items: { amenazasTradicionales: 74, rrss: 75, superintendenciaBancos: 76, noLlamarList: 75 } },
+		},
+	},
+	{
+		id: 'METRIC-020',
+		date: '2026-08-25T14:50:00Z',
+		qaScores: { ecn: 0, enc: 0, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.5,
+		customerSentiment: 4.4,
+		predominantEmotion: 'Joy',
+		complianceByArea: {
+			security: { score: 96, items: { dataProtection: 97, disclosureCompliance: 95 } },
+			regulatory: { score: 94, items: { cobranzaRegulada: 93, transparenciaConsentimiento: 95 } },
+			legal: { score: 95, items: { amenazasTradicionales: 95, rrss: 94, superintendenciaBancos: 96, noLlamarList: 95 } },
+		},
+	},
+	{
+		id: 'METRIC-021',
+		date: '2026-08-26T10:10:00Z',
+		qaScores: { ecn: 1, enc: 2, ecc: 1, ecuf: 1 },
+		agentSentiment: 3.5,
+		customerSentiment: 3.4,
+		predominantEmotion: 'Surprise',
+		complianceByArea: {
+			security: { score: 82, items: { dataProtection: 83, disclosureCompliance: 81 } },
+			regulatory: { score: 79, items: { cobranzaRegulada: 78, transparenciaConsentimiento: 80 } },
+			legal: { score: 81, items: { amenazasTradicionales: 80, rrss: 81, superintendenciaBancos: 82, noLlamarList: 81 } },
+		},
+	},
+	{
+		id: 'METRIC-022',
+		date: '2026-08-27T13:45:00Z',
+		qaScores: { ecn: 0, enc: 1, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.2,
+		customerSentiment: 4.1,
+		predominantEmotion: 'Trust',
+		complianceByArea: {
+			security: { score: 93, items: { dataProtection: 94, disclosureCompliance: 92 } },
+			regulatory: { score: 91, items: { cobranzaRegulada: 90, transparenciaConsentimiento: 92 } },
+			legal: { score: 92, items: { amenazasTradicionales: 92, rrss: 91, superintendenciaBancos: 93, noLlamarList: 92 } },
+		},
+	},
+	{
+		id: 'METRIC-023',
+		date: '2026-08-28T09:30:00Z',
+		qaScores: { ecn: 2, enc: 1, ecc: 0, ecuf: 0 },
+		agentSentiment: 3.4,
+		customerSentiment: 3.3,
+		predominantEmotion: 'Disgust',
+		complianceByArea: {
+			security: { score: 81, items: { dataProtection: 82, disclosureCompliance: 80 } },
+			regulatory: { score: 78, items: { cobranzaRegulada: 77, transparenciaConsentimiento: 79 } },
+			legal: { score: 80, items: { amenazasTradicionales: 79, rrss: 80, superintendenciaBancos: 81, noLlamarList: 80 } },
+		},
+	},
+	{
+		id: 'METRIC-024',
+		date: '2026-08-29T15:15:00Z',
+		qaScores: { ecn: 0, enc: 0, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.4,
+		customerSentiment: 4.3,
+		predominantEmotion: 'Joy',
+		complianceByArea: {
+			security: { score: 95, items: { dataProtection: 96, disclosureCompliance: 94 } },
+			regulatory: { score: 93, items: { cobranzaRegulada: 92, transparenciaConsentimiento: 94 } },
+			legal: { score: 94, items: { amenazasTradicionales: 94, rrss: 93, superintendenciaBancos: 95, noLlamarList: 94 } },
+		},
+	},
+
+	// Week 4 (Aug 30 - Sep 5, 2026)
+	{
+		id: 'METRIC-025',
+		date: '2026-08-30T08:45:00Z',
+		qaScores: { ecn: 1, enc: 0, ecc: 0, ecuf: 1 },
+		agentSentiment: 4.0,
+		customerSentiment: 3.9,
+		predominantEmotion: 'Anticipation',
+		complianceByArea: {
+			security: { score: 89, items: { dataProtection: 90, disclosureCompliance: 88 } },
+			regulatory: { score: 87, items: { cobranzaRegulada: 86, transparenciaConsentimiento: 88 } },
+			legal: { score: 88, items: { amenazasTradicionales: 88, rrss: 87, superintendenciaBancos: 89, noLlamarList: 88 } },
+		},
+	},
+	{
+		id: 'METRIC-026',
+		date: '2026-08-31T12:25:00Z',
+		qaScores: { ecn: 2, enc: 1, ecc: 1, ecuf: 0 },
+		agentSentiment: 3.2,
+		customerSentiment: 3.1,
+		predominantEmotion: 'Fear',
+		complianceByArea: {
+			security: { score: 79, items: { dataProtection: 80, disclosureCompliance: 78 } },
+			regulatory: { score: 76, items: { cobranzaRegulada: 75, transparenciaConsentimiento: 77 } },
+			legal: { score: 78, items: { amenazasTradicionales: 77, rrss: 78, superintendenciaBancos: 79, noLlamarList: 78 } },
+		},
+	},
+	{
+		id: 'METRIC-027',
+		date: '2026-09-01T10:00:00Z',
+		qaScores: { ecn: 0, enc: 0, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.3,
+		customerSentiment: 4.2,
+		predominantEmotion: 'Joy',
+		complianceByArea: {
+			security: { score: 94, items: { dataProtection: 95, disclosureCompliance: 93 } },
+			regulatory: { score: 92, items: { cobranzaRegulada: 91, transparenciaConsentimiento: 93 } },
+			legal: { score: 93, items: { amenazasTradicionales: 93, rrss: 92, superintendenciaBancos: 94, noLlamarList: 93 } },
+		},
+	},
+	{
+		id: 'METRIC-028',
+		date: '2026-09-02T14:35:00Z',
+		qaScores: { ecn: 1, enc: 1, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.1,
+		customerSentiment: 4.0,
+		predominantEmotion: 'Trust',
+		complianceByArea: {
+			security: { score: 91, items: { dataProtection: 92, disclosureCompliance: 90 } },
+			regulatory: { score: 89, items: { cobranzaRegulada: 88, transparenciaConsentimiento: 90 } },
+			legal: { score: 90, items: { amenazasTradicionales: 90, rrss: 89, superintendenciaBancos: 91, noLlamarList: 90 } },
+		},
+	},
+	{
+		id: 'METRIC-029',
+		date: '2026-09-03T11:10:00Z',
+		qaScores: { ecn: 2, enc: 2, ecc: 1, ecuf: 1 },
+		agentSentiment: 3.3,
+		customerSentiment: 3.2,
+		predominantEmotion: 'Sadness',
+		complianceByArea: {
+			security: { score: 78, items: { dataProtection: 79, disclosureCompliance: 77 } },
+			regulatory: { score: 75, items: { cobranzaRegulada: 74, transparenciaConsentimiento: 76 } },
+			legal: { score: 77, items: { amenazasTradicionales: 76, rrss: 77, superintendenciaBancos: 78, noLlamarList: 77 } },
+		},
+	},
+	{
+		id: 'METRIC-030',
+		date: '2026-09-04T09:55:00Z',
+		qaScores: { ecn: 0, enc: 1, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.2,
+		customerSentiment: 4.1,
+		predominantEmotion: 'Anticipation',
+		complianceByArea: {
+			security: { score: 92, items: { dataProtection: 93, disclosureCompliance: 91 } },
+			regulatory: { score: 90, items: { cobranzaRegulada: 89, transparenciaConsentimiento: 91 } },
+			legal: { score: 91, items: { amenazasTradicionales: 91, rrss: 90, superintendenciaBancos: 92, noLlamarList: 91 } },
+		},
+	},
+	{
+		id: 'METRIC-031',
+		date: '2026-09-05T13:20:00Z',
+		qaScores: { ecn: 1, enc: 0, ecc: 0, ecuf: 1 },
+		agentSentiment: 4.0,
+		customerSentiment: 3.9,
+		predominantEmotion: 'Joy',
+		complianceByArea: {
+			security: { score: 90, items: { dataProtection: 91, disclosureCompliance: 89 } },
+			regulatory: { score: 88, items: { cobranzaRegulada: 87, transparenciaConsentimiento: 89 } },
+			legal: { score: 89, items: { amenazasTradicionales: 89, rrss: 88, superintendenciaBancos: 90, noLlamarList: 89 } },
+		},
+	},
+
+	// Week 5 (Sep 6-8, 2026)
+	{
+		id: 'METRIC-032',
+		date: '2026-09-06T08:30:00Z',
+		qaScores: { ecn: 0, enc: 0, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.4,
+		customerSentiment: 4.3,
+		predominantEmotion: 'Joy',
+		complianceByArea: {
+			security: { score: 96, items: { dataProtection: 97, disclosureCompliance: 95 } },
+			regulatory: { score: 94, items: { cobranzaRegulada: 93, transparenciaConsentimiento: 95 } },
+			legal: { score: 95, items: { amenazasTradicionales: 95, rrss: 94, superintendenciaBancos: 96, noLlamarList: 95 } },
+		},
+	},
+	{
+		id: 'METRIC-033',
+		date: '2026-09-07T10:15:00Z',
+		qaScores: { ecn: 1, enc: 1, ecc: 0, ecuf: 0 },
+		agentSentiment: 4.1,
+		customerSentiment: 4.0,
+		predominantEmotion: 'Trust',
+		complianceByArea: {
+			security: { score: 91, items: { dataProtection: 92, disclosureCompliance: 90 } },
+			regulatory: { score: 89, items: { cobranzaRegulada: 88, transparenciaConsentimiento: 90 } },
+			legal: { score: 90, items: { amenazasTradicionales: 90, rrss: 89, superintendenciaBancos: 91, noLlamarList: 90 } },
+		},
+	},
+	{
+		id: 'METRIC-034',
+		date: '2026-09-08T11:45:00Z',
+		qaScores: { ecn: 2, enc: 1, ecc: 0, ecuf: 1 },
+		agentSentiment: 3.6,
+		customerSentiment: 3.5,
+		predominantEmotion: 'Surprise',
+		complianceByArea: {
+			security: { score: 85, items: { dataProtection: 86, disclosureCompliance: 84 } },
+			regulatory: { score: 82, items: { cobranzaRegulada: 81, transparenciaConsentimiento: 83 } },
+			legal: { score: 84, items: { amenazasTradicionales: 84, rrss: 83, superintendenciaBancos: 85, noLlamarList: 84 } },
+		},
+	},
+];
+
+/**
+ * Aggregates call metrics by date range and granularity
+ * @param calls - Array of CallMetric objects to aggregate
+ * @param startDate - Start date in ISO format
+ * @param endDate - End date in ISO format
+ * @param granularity - Aggregation level: 'per-call' | 'daily' | 'weekly' | 'monthly'
+ * @returns Array of aggregated metrics grouped by time period
+ */
+export function aggregateMetricsByDateRange(
+	calls: CallMetric[],
+	startDate: string,
+	endDate: string,
+	granularity: 'per-call' | 'daily' | 'weekly' | 'monthly' = 'daily'
+): AggregatedMetrics[] {
+	const start = new Date(startDate);
+	const end = new Date(endDate);
+
+	// Filter calls within date range
+	const filteredCalls = calls.filter((call) => {
+		const callDate = new Date(call.date);
+		return callDate >= start && callDate <= end;
+	});
+
+	if (filteredCalls.length === 0) {
+		return [];
+	}
+
+	// For 'per-call' granularity, return each call as individual aggregated metric
+	if (granularity === 'per-call') {
+		return filteredCalls.map((call) => ({
+			timestamp: call.date,
+			period: new Date(call.date).toISOString().split('T')[0],
+			callCount: 1,
+			avgAgentSentiment: call.agentSentiment,
+			avgCustomerSentiment: call.customerSentiment,
+			avgSecurityCompliance: call.complianceByArea.security.score,
+			avgRegulatoryCompliance: call.complianceByArea.regulatory.score,
+			avgLegalCompliance: call.complianceByArea.legal.score,
+			totalErrorsECN: call.qaScores.ecn,
+			totalErrorsENC: call.qaScores.enc,
+			totalErrorsECC: call.qaScores.ecc,
+			totalErrorsECUF: call.qaScores.ecuf,
+			predominantEmotion: call.predominantEmotion,
+		}));
+	}
+
+	// Group calls by time period
+	const grouped = new Map<string, CallMetric[]>();
+
+	filteredCalls.forEach((call) => {
+		const callDate = new Date(call.date);
+		let key: string = '';
+
+		if (granularity === 'daily') {
+			key = callDate.toISOString().split('T')[0];
+		} else if (granularity === 'weekly') {
+			// Get ISO week number
+			const date = new Date(callDate);
+			const startOfYear = new Date(date.getFullYear(), 0, 1);
+			const diff = date.getTime() - startOfYear.getTime();
+			const weekNumber = Math.floor(diff / (7 * 24 * 60 * 60 * 1000));
+			key = `${date.getFullYear()}-W${String(weekNumber + 1).padStart(2, '0')}`;
+		} else if (granularity === 'monthly') {
+			key = callDate.toISOString().substring(0, 7);
+		} else {
+			// Default to daily if granularity is per-call (shouldn't reach here)
+			key = callDate.toISOString().split('T')[0];
+		}
+
+		if (!grouped.has(key)) {
+			grouped.set(key, []);
+		}
+		grouped.get(key)!.push(call);
+	});
+
+	// Aggregate metrics for each group
+	const result: AggregatedMetrics[] = [];
+
+	grouped.forEach((groupedCalls, key) => {
+		const callCount = groupedCalls.length;
+
+		// Calculate averages
+		const avgAgentSentiment = groupedCalls.reduce((sum, c) => sum + c.agentSentiment, 0) / callCount;
+		const avgCustomerSentiment = groupedCalls.reduce((sum, c) => sum + c.customerSentiment, 0) / callCount;
+		const avgSecurityCompliance = groupedCalls.reduce((sum, c) => sum + c.complianceByArea.security.score, 0) / callCount;
+		const avgRegulatoryCompliance =
+			groupedCalls.reduce((sum, c) => sum + c.complianceByArea.regulatory.score, 0) / callCount;
+		const avgLegalCompliance = groupedCalls.reduce((sum, c) => sum + c.complianceByArea.legal.score, 0) / callCount;
+
+		// Sum errors
+		const totalErrorsECN = groupedCalls.reduce((sum, c) => sum + c.qaScores.ecn, 0);
+		const totalErrorsENC = groupedCalls.reduce((sum, c) => sum + c.qaScores.enc, 0);
+		const totalErrorsECC = groupedCalls.reduce((sum, c) => sum + c.qaScores.ecc, 0);
+		const totalErrorsECUF = groupedCalls.reduce((sum, c) => sum + c.qaScores.ecuf, 0);
+
+		// Get most common emotion
+		const emotionCounts = new Map<string, number>();
+		groupedCalls.forEach((c) => {
+			emotionCounts.set(c.predominantEmotion, (emotionCounts.get(c.predominantEmotion) || 0) + 1);
+		});
+		const predominantEmotion = Array.from(emotionCounts.entries()).sort((a, b) => b[1] - a[1])[0][0];
+
+		// Determine timestamp based on first call in group
+		const timestamp = groupedCalls[0].date;
+
+		result.push({
+			timestamp,
+			period: key,
+			callCount,
+			avgAgentSentiment: Math.round(avgAgentSentiment * 100) / 100,
+			avgCustomerSentiment: Math.round(avgCustomerSentiment * 100) / 100,
+			avgSecurityCompliance: Math.round(avgSecurityCompliance),
+			avgRegulatoryCompliance: Math.round(avgRegulatoryCompliance),
+			avgLegalCompliance: Math.round(avgLegalCompliance),
+			totalErrorsECN,
+			totalErrorsENC,
+			totalErrorsECC,
+			totalErrorsECUF,
+			predominantEmotion,
+		});
+	});
+
+	// Sort by timestamp
+	result.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+
+	return result;
+}
