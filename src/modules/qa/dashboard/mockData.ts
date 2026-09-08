@@ -3,6 +3,8 @@
  * Provides realistic test data for Agent, Supervisor, QA Manager, and Operation Manager roles
  */
 
+import type { AgentNotification, NotificationTrigger } from '~/models/qa/notifications';
+
 // ============================================================================
 // TypeScript Interfaces
 // ============================================================================
@@ -1071,5 +1073,333 @@ export const OPERATION_MANAGER_CALLS: BestWorstCall[] = [
 		ecc: 2,
 		ecuf: 1,
 		compliance: 50,
+	},
+];
+
+// ============================================================================
+// Agent Inbox Mock Data (Notifications & Triggers)
+// ============================================================================
+
+export const AGENT_NOTIFICATIONS: AgentNotification[] = [
+	// DIRECT_MESSAGE notifications
+	{
+		id: 'NOTIF-001',
+		agentId: 'AGENT-001',
+		category: 'DIRECT_MESSAGE',
+		priority: 'CRITICAL',
+		title: 'Urgent: Compliance Issue on Call CALL-003',
+		message:
+			'Hi John, I reviewed your call with Carol Brown (CALL-003). You missed the security protocol disclosure. Please review the latest compliance guidelines and schedule a coaching session with me.',
+		icon: 'IconAlertTriangle',
+		sourceRole: 'SUPERVISOR',
+		sourceId: 'SUP-001',
+		read: true,
+		archived: false,
+		actioned: false,
+		threadId: 'THREAD-001',
+		replies: [
+			{
+				id: 'REPLY-001',
+				fromRole: 'AGENT',
+				fromId: 'AGENT-001',
+				message: 'Thanks for flagging this. I see the gap now. I will review the protocol and confirm with you by end of day.',
+				createdAt: '2026-09-08T09:15:00Z',
+			},
+			{
+				id: 'REPLY-002',
+				fromRole: 'SUPERVISOR',
+				fromId: 'SUP-001',
+				message:
+					'Perfect. I scheduled our coaching for tomorrow at 2pm. Focus on the disclosure steps—we can walk through a few examples.',
+				createdAt: '2026-09-08T09:45:00Z',
+			},
+		],
+		actions: [
+			{
+				label: 'View Call Recording',
+				url: '/qa/calls/CALL-003',
+				icon: 'IconPlayerPlay',
+			},
+		],
+		createdAt: '2026-09-08T08:30:00Z',
+		readAt: '2026-09-08T08:45:00Z',
+	},
+	{
+		id: 'NOTIF-002',
+		agentId: 'AGENT-001',
+		category: 'DIRECT_MESSAGE',
+		priority: 'HIGH',
+		title: 'Great Job on CALL-001',
+		message: 'John, your handling of the objection with Alice Johnson was textbook perfect. Your sentiment score was 4.5 and compliance was 95%. Keep this up!',
+		icon: 'IconMessageSquare',
+		sourceRole: 'SUPERVISOR',
+		sourceId: 'SUP-001',
+		read: false,
+		archived: false,
+		actioned: false,
+		createdAt: '2026-09-08T07:00:00Z',
+	},
+	// METRIC_ALERT notifications
+	{
+		id: 'NOTIF-003',
+		agentId: 'AGENT-001',
+		category: 'METRIC_ALERT',
+		priority: 'HIGH',
+		title: 'QA Score Alert: Below Team Average',
+		message:
+			'Your weekly QA score is 90, which is 2 points below your team average of 92. Focus on reducing error codes, particularly ECN and ECUF categories.',
+		icon: 'IconAlert',
+		sourceRole: 'SYSTEM',
+		metric: 'QUALITY_ASSURANCE',
+		read: false,
+		archived: false,
+		actioned: false,
+		actions: [
+			{
+				label: 'View QA Details',
+				url: '/qa/agent/AGENT-001/metrics',
+				icon: 'IconBarChart',
+			},
+		],
+		createdAt: '2026-09-07T18:00:00Z',
+	},
+	{
+		id: 'NOTIF-004',
+		agentId: 'AGENT-001',
+		category: 'METRIC_ALERT',
+		priority: 'NORMAL',
+		title: 'Compliance Score Update',
+		message: 'Your compliance score for this week is 91%, maintaining a good standing across all compliance categories.',
+		icon: 'IconCheckCircle',
+		sourceRole: 'QA_MANAGER',
+		sourceId: 'QAM-001',
+		metric: 'COMPLIANCE',
+		read: true,
+		archived: false,
+		actioned: false,
+		createdAt: '2026-09-07T09:30:00Z',
+		readAt: '2026-09-07T10:15:00Z',
+	},
+	// TREND_WARNING notifications
+	{
+		id: 'NOTIF-005',
+		agentId: 'AGENT-001',
+		category: 'TREND_WARNING',
+		priority: 'HIGH',
+		title: 'Sentiment Decline Detected',
+		message:
+			'Your customer sentiment scores have declined 0.3 points over the past 3 weeks. This may indicate customers perceive longer hold times or slower issue resolution.',
+		icon: 'IconTrendingDown',
+		sourceRole: 'SYSTEM',
+		metric: 'SENTIMENT_EMOTION',
+		read: false,
+		archived: false,
+		actioned: false,
+		actions: [
+			{
+				label: 'View Sentiment Trends',
+				url: '/qa/agent/AGENT-001/sentiment-trends',
+				icon: 'IconTrendingDown',
+			},
+		],
+		createdAt: '2026-09-06T14:00:00Z',
+	},
+	{
+		id: 'NOTIF-006',
+		agentId: 'AGENT-001',
+		category: 'TREND_WARNING',
+		priority: 'NORMAL',
+		title: 'Auto-Fail Rate Stable',
+		message:
+			'Your auto-fail rate remains at 2 failures per week, consistent with your baseline. No action needed at this time.',
+		icon: 'IconCheckCircle',
+		sourceRole: 'QA_MANAGER',
+		sourceId: 'QAM-001',
+		metric: 'AUTO_FAILS',
+		read: true,
+		archived: false,
+		actioned: false,
+		createdAt: '2026-09-05T11:00:00Z',
+		readAt: '2026-09-05T15:30:00Z',
+	},
+	// POSITIVE_RECOGNITION notifications
+	{
+		id: 'NOTIF-007',
+		agentId: 'AGENT-001',
+		category: 'POSITIVE_RECOGNITION',
+		priority: 'NORMAL',
+		title: 'Top Performer This Week',
+		message:
+			'John, you ranked in the top 3 of your team this week with a QA score of 90 and 4 out of 5 calls rated highly by customers. Excellent work!',
+		icon: 'IconAward',
+		sourceRole: 'SUPERVISOR',
+		sourceId: 'SUP-001',
+		read: false,
+		archived: false,
+		actioned: false,
+		createdAt: '2026-09-08T06:00:00Z',
+	},
+	// WEEKLY_SUMMARY notification
+	{
+		id: 'NOTIF-008',
+		agentId: 'AGENT-001',
+		category: 'WEEKLY_SUMMARY',
+		priority: 'NORMAL',
+		title: 'Weekly Summary: Sept 2-8',
+		message:
+			"Here's your weekly snapshot: 24 calls completed, 90 QA score, 4.2 agent sentiment, 2 auto-fails. You had 1 escalation. Review the full report in your dashboard.",
+		icon: 'IconBarChart',
+		sourceRole: 'SYSTEM',
+		read: false,
+		archived: false,
+		actioned: false,
+		actions: [
+			{
+				label: 'View Full Summary',
+				url: '/qa/agent/AGENT-001/weekly-summary',
+				icon: 'IconBarChart',
+			},
+		],
+		createdAt: '2026-09-08T05:00:00Z',
+	},
+];
+
+export const SUPERVISOR_TRIGGERS: NotificationTrigger[] = [
+	{
+		id: 'TRIG-SUP-001',
+		name: 'QA Drop Alert',
+		category: 'METRIC_ALERT',
+		priority: 'HIGH',
+		enabled: true,
+		scope: 'TEAM',
+		supervisorId: 'SUP-001',
+		condition: 'THRESHOLD',
+		metricThreshold: {
+			metric: 'QUALITY_ASSURANCE',
+			operator: '<',
+			value: 85,
+		},
+		templateId: 'TMPL-QUALITY-DROP',
+		recipients: 'AGENT',
+	},
+	{
+		id: 'TRIG-SUP-002',
+		name: 'Sentiment Uptrend Recognition',
+		category: 'POSITIVE_RECOGNITION',
+		priority: 'NORMAL',
+		enabled: true,
+		scope: 'TEAM',
+		supervisorId: 'SUP-001',
+		condition: 'TREND',
+		trendDetection: {
+			metric: 'SENTIMENT_EMOTION',
+			direction: 'UP',
+			windowSize: 5,
+			threshold: 10,
+		},
+		templateId: 'TMPL-SENTIMENT-UP',
+		recipients: 'AGENT',
+	},
+	{
+		id: 'TRIG-SUP-003',
+		name: 'Weekly Supervisor Summary',
+		category: 'WEEKLY_SUMMARY',
+		priority: 'NORMAL',
+		enabled: true,
+		scope: 'TEAM',
+		supervisorId: 'SUP-001',
+		condition: 'SCHEDULED',
+		schedule: {
+			frequency: 'WEEKLY',
+			dayOfWeek: 'FRIDAY',
+			time: '17:00',
+		},
+		templateId: 'TMPL-WEEKLY-SUMMARY',
+		recipients: 'AGENT',
+	},
+	{
+		id: 'TRIG-SUP-004',
+		name: 'Compliance Violation Alert',
+		category: 'METRIC_ALERT',
+		priority: 'CRITICAL',
+		enabled: false,
+		scope: 'TEAM',
+		supervisorId: 'SUP-001',
+		condition: 'THRESHOLD',
+		metricThreshold: {
+			metric: 'COMPLIANCE',
+			operator: '<',
+			value: 80,
+		},
+		templateId: 'TMPL-COMPLIANCE-VIOLATION',
+		recipients: 'AGENT',
+	},
+];
+
+export const QA_MANAGER_TRIGGERS: NotificationTrigger[] = [
+	{
+		id: 'TRIG-QAM-001',
+		name: 'Platform Compliance Alert',
+		category: 'METRIC_ALERT',
+		priority: 'CRITICAL',
+		enabled: true,
+		scope: 'PLATFORM',
+		condition: 'THRESHOLD',
+		metricThreshold: {
+			metric: 'COMPLIANCE',
+			operator: '<=',
+			value: 82,
+		},
+		templateId: 'TMPL-PLATFORM-COMPLIANCE',
+		recipients: 'SUPERVISORS',
+	},
+	{
+		id: 'TRIG-QAM-002',
+		name: 'Agent Achievement Recognition',
+		category: 'POSITIVE_RECOGNITION',
+		priority: 'NORMAL',
+		enabled: true,
+		scope: 'PLATFORM',
+		condition: 'ACHIEVEMENT',
+		achievement: {
+			pattern: '5_perfect_calls',
+			value: 5,
+		},
+		templateId: 'TMPL-ACHIEVEMENT-MILESTONE',
+		recipients: 'AGENT',
+	},
+	{
+		id: 'TRIG-QAM-003',
+		name: 'Auto-Fail Rate Spike',
+		category: 'TREND_WARNING',
+		priority: 'HIGH',
+		enabled: true,
+		scope: 'PLATFORM',
+		condition: 'TREND',
+		trendDetection: {
+			metric: 'AUTO_FAILS',
+			direction: 'UP',
+			windowSize: 7,
+			threshold: 20,
+		},
+		templateId: 'TMPL-AUTO-FAIL-SPIKE',
+		recipients: 'SUPERVISORS',
+	},
+	{
+		id: 'TRIG-QAM-004',
+		name: 'Team Quality Trend Monitor',
+		category: 'TREND_WARNING',
+		priority: 'NORMAL',
+		enabled: true,
+		scope: 'TEAM',
+		condition: 'TREND',
+		trendDetection: {
+			metric: 'QUALITY_ASSURANCE',
+			direction: 'DOWN',
+			windowSize: 4,
+			threshold: 15,
+		},
+		templateId: 'TMPL-QUALITY-DECLINE',
+		recipients: 'AGENT',
 	},
 ];
