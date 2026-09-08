@@ -210,9 +210,10 @@ const CRITICAL_ALERTS: CriticalAlertRow[] = CRITICAL_ISSUES_OPERATION_MANAGER.sl
  * on an operations-weighted mix rather than QA score alone.
  */
 const OPERATION_MANAGER_RANKING_GOAL: RankingGoal = {
-	metrics: ['QA Score', 'Compliance', 'Sentiment & Emotion'],
-	criteria: '35% QA Score + 45% Compliance + 20% Sentiment & Emotion',
+	metric: 'Operational Excellence Index',
+	criteria: 'Cross-client performance and compliance',
 	target: 'Every client account at 80 or above',
+	dueDate: '2026-12-31',
 	setBy: 'You · Operation Manager',
 };
 

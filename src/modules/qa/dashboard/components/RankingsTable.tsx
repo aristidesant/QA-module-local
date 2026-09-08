@@ -32,16 +32,18 @@ export interface RankingEntry {
 }
 
 /**
- * The ranking goal defined by the supervisor: which metrics feed the score
- * and how they are weighted / what target must be met.
+ * The ranking goal defined by the supervisor: the single metric the ranking
+ * is based on and the target/deadline for achievement.
  */
 export interface RankingGoal {
-	/** Metrics the ranking score is built from, e.g. ['QA Score', 'Compliance'] */
-	metrics: string[];
-	/** Human-readable scoring criteria, e.g. "60% QA Score + 40% Compliance" */
+	/** The single metric the ranking score is built from, e.g. 'QA Score' */
+	metric: string;
+	/** Human-readable scoring criteria, e.g. "Weighted score of 90 or above" */
 	criteria: string;
 	/** Optional target the team is ranked against */
 	target?: string;
+	/** Due date for the ranking goal (ISO date string, e.g. "2026-12-31") */
+	dueDate?: string;
 	/** Who defined the goal */
 	setBy?: string;
 }
@@ -155,17 +157,14 @@ const RankingGoalBanner: React.FC<{ goal: RankingGoal }> = ({ goal }) => (
 					)}
 				</Group>
 
-				<Group gap={6} wrap='wrap'>
-					{goal.metrics.map(metric => (
-						<Badge key={metric} size='sm' variant='light' color='blue'>
-							{metric}
-						</Badge>
-					))}
-				</Group>
+				<Badge size='sm' variant='light' color='blue'>
+					{goal.metric}
+				</Badge>
 
 				<Text size='xs' c='dimmed'>
 					Scoring criteria: {goal.criteria}
 					{goal.target ? ` · Target: ${goal.target}` : ''}
+					{goal.dueDate ? ` · Due: ${new Date(goal.dueDate).toLocaleDateString()}` : ''}
 				</Text>
 			</Stack>
 		</Group>
