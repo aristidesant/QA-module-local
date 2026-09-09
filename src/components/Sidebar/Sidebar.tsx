@@ -45,7 +45,6 @@ import {
 	IconSettings,
 	IconTableExport,
 	IconTargetArrow,
-	IconUserCircle,
 	IconUsers,
 	IconUsersGroup,
 	IconShield,
