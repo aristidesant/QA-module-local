@@ -901,6 +901,17 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'agent/disputes',
+										id: 'qa.agent.disputes',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<DisputesManagement />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'supervisor/inbox',
 										id: 'qa.supervisor.inbox',
 										element: (
