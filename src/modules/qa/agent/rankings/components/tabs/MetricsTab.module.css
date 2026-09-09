@@ -1,0 +1,35 @@
+/**
+ * Metrics tab of the ranking detail drawer.
+ * All colors resolve through Mantine CSS variables / light-dark().
+ */
+
+.card {
+	background: var(--mantine-color-body);
+}
+
+.columns {
+	display: grid;
+	grid-template-columns: 1fr 1fr;
+	gap: var(--mantine-spacing-sm);
+	align-items: baseline;
+}
+
+.column {
+	min-width: 0;
+}
+
+.currentValue {
+	white-space: nowrap;
+}
+
+.deltaUp {
+	color: var(--mantine-color-green-text);
+}
+
+.deltaDown {
+	color: var(--mantine-color-red-text);
+}
+
+.deltaFlat {
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+}

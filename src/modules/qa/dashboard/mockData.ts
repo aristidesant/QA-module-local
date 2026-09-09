@@ -8,6 +8,7 @@ import type {
 	NotificationTrigger,
 } from '~/models/qa/notifications';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
+import type { PeerRecognitionType } from '~/models/qa/reactions';
 
 // ============================================================================
 // TypeScript Interfaces
@@ -2795,3 +2796,304 @@ const buildAgentRankings = (count: number): AgentRankingEntry[] => {
 
 /** Full team leaderboard used by the Team Rankings page. */
 export const AGENT_RANKINGS: AgentRankingEntry[] = buildAgentRankings(120);
+
+// ============================================================================
+// Ranking Detail Drawer mock data
+// ----------------------------------------------------------------------------
+// Everything below is derived deterministically from an `AgentRankingEntry`, so
+// the drawer shows the same demo data on every render and reload. It is replaced
+// by real endpoints once the rankings backend exposes them.
+// ============================================================================
+
+/** One badge already earned by an agent, with the criteria that unlocked it. */
+export interface RankingAchievement {
+	/** Key of `PREDEFINED_BADGE_CATALOGS` */
+	badgeType: string;
+	name: string;
+	icon: string;
+	description: string;
+	/** ISO date the badge was earned */
+	earnedAt: string;
+	criteria: string[];
+}
+
+/** The next badge an agent can unlock and how far along they are. */
+export interface RankingNextMilestone {
+	badgeType: string;
+	name: string;
+	icon: string;
+	/** Completion towards the badge, 0-100 */
+	progress: number;
+	criteriaRemaining: string[];
+}
+
+export interface RankingAchievementsDetail {
+	earned: RankingAchievement[];
+	nextMilestone?: RankingNextMilestone;
+}
+
+/** A teammate who gave one reaction to the agent. */
+export interface RankingReactionGiver {
+	agentId: string;
+	agentName: string;
+	/** Mantine palette key used for the avatar */
+	avatarColor: string;
+	/** ISO date the reaction was given */
+	givenAt: string;
+}
+
+export interface RankingReactionBreakdown {
+	type: PeerRecognitionType;
+	count: number;
+	/** Sample of givers (most recent first). Can be shorter than `count`. */
+	givenBy: RankingReactionGiver[];
+}
+
+export interface RankingMetricsSnapshot {
+	period: string;
+	/** 0-100 */
+	qaScore: number;
+	/** 1-5 */
+	sentimentScore: number;
+	/** 0-100 */
+	complianceScore: number;
+	callsCount: number;
+}
+
+export interface RankingMetricsComparison {
+	current: RankingMetricsSnapshot;
+	previous: RankingMetricsSnapshot;
+}
+
+/** Expanded, human readable criteria per badge (catalog only stores one line). */
+const BADGE_CRITERIA_DETAIL: Record<string, string[]> = {
+	QA_EXCELLENCE: [
+		'QA score ≥ 95% on the last 5 evaluations',
+		'No critical findings this period',
+		'Every dispute resolved in favour',
+	],
+	SENTIMENT_CHAMPION: [
+		'Sentiment ≥ 4.5 on 3+ consecutive calls',
+		'No negative sentiment escalations',
+		'Positive closing on 90% of calls',
+	],
+	COMPLIANCE_GUARDIAN: [
+		'0 compliance violations across 10+ calls',
+		'Mandatory disclosures read on every call',
+		'Identity verification completed 100% of the time',
+	],
+	STREAKER: [
+		'5+ consecutive high-performing evaluations',
+		'Score above team average every week',
+		'No week skipped this period',
+	],
+	IMPROVEMENT_CHAMPION: [
+		'10%+ improvement on a tracked metric within a month',
+		'Coaching plan completed',
+		'Follow-up evaluation above target',
+	],
+	BUSINESS_DRIVER: [
+		'5+ business insights identified this month',
+		'2+ insights adopted by the team',
+		'Upsell opportunity flagged on 10% of calls',
+	],
+};
+
+/** Mantine palette keys used for reaction giver avatars (theme aware). */
+const RANKING_AVATAR_COLORS = [
+	'blue',
+	'grape',
+	'teal',
+	'orange',
+	'cyan',
+	'pink',
+	'indigo',
+	'lime',
+	'violet',
+	'red',
+];
+
+const REACTION_DETAIL_ORDER: PeerRecognitionType[] = [
+	'LIKE',
+	'HELPFUL',
+	'INSPIRING',
+	'AMAZING',
+	'LEADER',
+];
+
+/** Max giver rows generated per reaction type; the rest stay as a "+N" count. */
+const MAX_REACTION_GIVERS = 8;
+
+const DAY_MS = 86_400_000;
+
+/** Fixed "today" so generated dates do not drift between demo sessions. */
+const RANKING_DETAIL_REFERENCE_DATE = Date.parse('2026-09-09T09:00:00.000Z');
+
+const toIsoDaysAgo = (days: number): string =>
+	new Date(RANKING_DETAIL_REFERENCE_DATE - days * DAY_MS).toISOString();
+
+const clampNumber = (value: number, min: number, max: number): number =>
+	Math.min(max, Math.max(min, value));
+
+/** Stable numeric seed derived from `agent-<n>` ids (falls back to a char sum). */
+const getRankingSeed = (agentId: string): number => {
+	const numeric = Number.parseInt(agentId.replace(/\D/g, ''), 10);
+	if (Number.isFinite(numeric) && numeric > 0) return numeric;
+
+	return (
+		Array.from(agentId).reduce((sum, char) => sum + char.charCodeAt(0), 0) || 1
+	);
+};
+
+const getBadgeCriteria = (badgeType: string): string[] => {
+	const detailed = BADGE_CRITERIA_DETAIL[badgeType];
+	if (detailed) return detailed;
+
+	const catalog = PREDEFINED_BADGE_CATALOGS[badgeType];
+	return catalog ? [catalog.criteria] : [];
+};
+
+/**
+ * Badge history for one agent: everything already earned plus the next badge
+ * in the catalog they have not unlocked yet.
+ */
+export const getRankingAchievements = (
+	entry: AgentRankingEntry
+): RankingAchievementsDetail => {
+	const random = createSeededRandom(getRankingSeed(entry.agentId) * 31 + 7);
+	const earnedTypes = entry.achievements ?? [];
+
+	const earned: RankingAchievement[] = earnedTypes
+		.map((badgeType, index) => {
+			const catalog = PREDEFINED_BADGE_CATALOGS[badgeType];
+			const daysAgo = Math.round(2 + index * 6 + random() * 45);
+
+			return {
+				badgeType,
+				name: catalog?.name ?? badgeType,
+				icon: catalog?.icon ?? '🏅',
+				description: catalog?.description ?? '',
+				earnedAt: toIsoDaysAgo(daysAgo),
+				criteria: getBadgeCriteria(badgeType),
+			};
+		})
+		.sort((a, b) => b.earnedAt.localeCompare(a.earnedAt));
+
+	const nextBadgeType = BADGE_TYPES.find(
+		(badgeType) => !earnedTypes.includes(badgeType)
+	);
+	if (!nextBadgeType) return { earned };
+
+	const nextCatalog = PREDEFINED_BADGE_CATALOGS[nextBadgeType];
+	const criteria = getBadgeCriteria(nextBadgeType);
+	const progress = Math.round(
+		clampNumber(entry.score * 0.55 + random() * 35, 8, 94)
+	);
+	const remainingCount = progress >= 70 ? 1 : Math.min(criteria.length, 2);
+
+	return {
+		earned,
+		nextMilestone: {
+			badgeType: nextBadgeType,
+			name: nextCatalog?.name ?? nextBadgeType,
+			icon: nextCatalog?.icon ?? '🏅',
+			progress,
+			criteriaRemaining: criteria.slice(-remainingCount),
+		},
+	};
+};
+
+/**
+ * Social proof for one agent: per reaction type, a sample of the teammates who
+ * gave it, most recent first.
+ */
+export const getRankingReactionBreakdown = (
+	entry: AgentRankingEntry
+): RankingReactionBreakdown[] => {
+	const totals = entry.reactionsTotals;
+	const seed = getRankingSeed(entry.agentId);
+	const random = createSeededRandom(seed * 13 + 977);
+	const pool = AGENT_RANKINGS.filter(
+		(candidate) => candidate.agentId !== entry.agentId
+	);
+
+	return REACTION_DETAIL_ORDER.map((type, typeIndex) => {
+		const count = totals?.[type] ?? 0;
+		if (count === 0 || pool.length === 0) {
+			return { type, count, givenBy: [] };
+		}
+
+		const giverCount = Math.min(count, MAX_REACTION_GIVERS);
+		// Stride walk over the roster: distinct givers, stable across renders.
+		const offset = (seed * 17 + typeIndex * 29) % pool.length;
+
+		const givenBy: RankingReactionGiver[] = Array.from(
+			{ length: giverCount },
+			(_, index) => {
+				const giver = pool[(offset + index * 11) % pool.length];
+				const daysAgo = Number((0.5 + index * 1.7 + random() * 2).toFixed(2));
+
+				return {
+					agentId: giver.agentId,
+					agentName: giver.agentName,
+					avatarColor:
+						RANKING_AVATAR_COLORS[
+							(getRankingSeed(giver.agentId) + typeIndex) %
+								RANKING_AVATAR_COLORS.length
+						],
+					givenAt: toIsoDaysAgo(daysAgo),
+				};
+			}
+		).sort((a, b) => b.givenAt.localeCompare(a.givenAt));
+
+		return { type, count, givenBy };
+	});
+};
+
+/**
+ * QA / sentiment / compliance snapshot for the current period and the one
+ * before it, so the drawer can render deltas.
+ */
+export const getRankingMetricsComparison = (
+	entry: AgentRankingEntry
+): RankingMetricsComparison => {
+	const random = createSeededRandom(getRankingSeed(entry.agentId) * 7 + 4231);
+
+	const qaScore = Math.round(
+		clampNumber(entry.score + (random() - 0.5) * 6, 42, 100)
+	);
+	const complianceScore = Math.round(
+		clampNumber(entry.score * 0.94 + 6 + (random() - 0.5) * 8, 48, 100)
+	);
+	const sentimentScore = Number(
+		clampNumber(
+			1.1 + (entry.score / 100) * 3.8 + (random() - 0.5) * 0.5,
+			1,
+			5
+		).toFixed(1)
+	);
+	const callsCount = Math.round(38 + random() * 90);
+
+	const current: RankingMetricsSnapshot = {
+		period: 'Last 7 days',
+		qaScore,
+		sentimentScore,
+		complianceScore,
+		callsCount,
+	};
+
+	// Previous period sits within roughly ±5 points of the current one.
+	const previous: RankingMetricsSnapshot = {
+		period: 'Previous 7 days',
+		qaScore: Math.round(clampNumber(qaScore + (random() - 0.5) * 10, 42, 100)),
+		sentimentScore: Number(
+			clampNumber(sentimentScore + (random() - 0.5) * 0.8, 1, 5).toFixed(1)
+		),
+		complianceScore: Math.round(
+			clampNumber(complianceScore + (random() - 0.5) * 10, 48, 100)
+		),
+		callsCount: Math.round(callsCount * (0.82 + random() * 0.34)),
+	};
+
+	return { current, previous };
+};
