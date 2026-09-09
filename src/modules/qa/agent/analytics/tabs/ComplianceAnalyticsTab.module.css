@@ -1,0 +1,86 @@
+.summaryCard {
+	background-color: var(--mantine-color-white);
+	border-color: var(--mantine-color-gray-2);
+	transition: all 0.2s ease;
+
+	&:hover {
+		border-color: var(--mantine-color-gray-4);
+		box-shadow: var(--mantine-shadow-sm);
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.summaryCard {
+		background-color: var(--mantine-color-dark-7);
+		border-color: var(--mantine-color-dark-6);
+
+		&:hover {
+			border-color: var(--mantine-color-dark-5);
+		}
+	}
+}
+
+.chartContainer {
+	width: 100%;
+	height: 300px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-md);
+	box-sizing: border-box;
+}
+
+@media (prefers-color-scheme: dark) {
+	.chartContainer {
+		background-color: var(--mantine-color-dark-8);
+	}
+}
+
+.areaCard {
+	background-color: var(--mantine-color-white);
+	border-color: var(--mantine-color-gray-2);
+	cursor: pointer;
+	transition: all 0.2s ease;
+
+	&:hover {
+		border-color: var(--mantine-color-gray-4);
+		box-shadow: var(--mantine-shadow-sm);
+	}
+}
+
+@media (prefers-color-scheme: dark) {
+	.areaCard {
+		background-color: var(--mantine-color-dark-7);
+		border-color: var(--mantine-color-dark-6);
+
+		&:hover {
+			border-color: var(--mantine-color-dark-5);
+		}
+	}
+}
+
+.scoreTrack {
+	width: 100%;
+	height: 6px;
+	background-color: var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-sm);
+	overflow: hidden;
+}
+
+@media (prefers-color-scheme: dark) {
+	.scoreTrack {
+		background-color: var(--mantine-color-dark-5);
+	}
+}
+
+.scoreFill {
+	height: 100%;
+	transition: width 0.3s ease;
+}
+
+.tableContainer {
+	overflow-x: auto;
+	border-radius: var(--mantine-radius-md);
+}

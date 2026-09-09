@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { Stack, Text, Tabs } from '@mantine/core';
+import { Stack, Tabs } from '@mantine/core';
 import { useAgentAnalyticsStore } from '~/stores/qa/agentAnalyticsStore';
 import { DateRangeAndGranularityControl } from './components/DateRangeAndGranularityControl';
-import { QAAnalyticsTab } from './tabs';
+import { QAAnalyticsTab, SentimentAnalyticsTab, ComplianceAnalyticsTab } from './tabs';
 import { AGENT_CALL_METRICS, aggregateMetricsByDateRange } from '~/modules/qa/dashboard/mockData';
 
 const AgentAnalyticsPage: React.FC = () => {
@@ -56,11 +56,11 @@ const AgentAnalyticsPage: React.FC = () => {
 					</Tabs.Panel>
 
 					<Tabs.Panel value='sentiment' pt='lg'>
-						<Text>Coming soon</Text>
+						<SentimentAnalyticsTab calls={AGENT_CALL_METRICS} aggregated={aggregatedMetrics} />
 					</Tabs.Panel>
 
 					<Tabs.Panel value='compliance' pt='lg'>
-						<Text>Coming soon</Text>
+						<ComplianceAnalyticsTab calls={AGENT_CALL_METRICS} aggregated={aggregatedMetrics} />
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>
