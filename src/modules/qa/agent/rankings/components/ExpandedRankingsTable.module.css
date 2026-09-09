@@ -1,0 +1,224 @@
+/**
+ * Expanded (full) team leaderboard table.
+ * All colors come from Mantine CSS variables so the table reads correctly in
+ * both light and dark mode.
+ */
+
+.root {
+	width: 100%;
+	max-height: 560px;
+	overflow: auto;
+	border: 1px solid var(--mantine-color-gray-3);
+	border-radius: var(--mantine-radius-md);
+	background: var(--mantine-color-body);
+}
+
+.table {
+	width: 100%;
+	border-collapse: collapse;
+	margin: 0;
+	table-layout: fixed;
+}
+
+.thead {
+	background: var(--mantine-color-gray-0);
+}
+
+.th {
+	padding: 8px 12px;
+	text-align: left;
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--mantine-color-gray-7);
+	background: var(--mantine-color-gray-0);
+	border-bottom: 1px solid var(--mantine-color-gray-3);
+	white-space: nowrap;
+}
+
+.headerButton {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-xs);
+	width: 100%;
+	font: inherit;
+	color: inherit;
+	letter-spacing: inherit;
+	text-transform: inherit;
+}
+
+.headerLabel {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.sortIcon {
+	display: inline-flex;
+	align-items: center;
+	color: var(--mantine-color-gray-5);
+	opacity: 0.6;
+	transition:
+		opacity 150ms ease,
+		color 150ms ease;
+}
+
+.headerButton:hover .sortIcon {
+	color: var(--mantine-color-gray-7);
+	opacity: 1;
+}
+
+.th[data-sorted] .sortIcon {
+	color: var(--mantine-color-blue-6);
+	opacity: 1;
+}
+
+.row {
+	height: 52px;
+}
+
+.row[data-even] > td {
+	background: var(--mantine-color-gray-0);
+}
+
+.row[data-clickable] {
+	cursor: pointer;
+}
+
+.td {
+	padding: 6px 12px;
+	height: 52px;
+	font-size: var(--mantine-font-size-sm);
+	color: var(--mantine-color-gray-8);
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.spacerRow,
+.spacerCell {
+	padding: 0 !important;
+	border: 0 !important;
+	background: transparent !important;
+}
+
+.emptyCell {
+	padding: 24px 12px;
+	text-align: center;
+	color: var(--mantine-color-gray-6);
+}
+
+.score {
+	color: var(--mantine-color-blue-7);
+}
+
+.reaction {
+	white-space: nowrap;
+	color: var(--mantine-color-gray-8);
+}
+
+.achievement {
+	font-size: 16px;
+	line-height: 1;
+	cursor: default;
+}
+
+.streak {
+	white-space: nowrap;
+	color: var(--mantine-color-orange-7);
+}
+
+.trendUp {
+	color: var(--mantine-color-green-7);
+}
+
+.trendDown {
+	color: var(--mantine-color-red-7);
+}
+
+.trendFlat {
+	color: var(--mantine-color-gray-6);
+}
+
+/* --- Dark mode overrides (must come after the light rules) --------------- */
+
+[data-mantine-color-scheme='dark'] .root {
+	border-color: var(--mantine-color-dark-4);
+	background: var(--mantine-color-dark-7);
+}
+
+[data-mantine-color-scheme='dark'] .thead,
+[data-mantine-color-scheme='dark'] .th {
+	background: var(--mantine-color-dark-8);
+	color: var(--mantine-color-dark-1);
+	border-bottom-color: var(--mantine-color-dark-4);
+}
+
+[data-mantine-color-scheme='dark'] .sortIcon {
+	color: var(--mantine-color-dark-3);
+}
+
+[data-mantine-color-scheme='dark'] .headerButton:hover .sortIcon {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .th[data-sorted] .sortIcon {
+	color: var(--mantine-color-blue-4);
+}
+
+[data-mantine-color-scheme='dark'] .td {
+	color: var(--mantine-color-dark-0);
+	border-bottom-color: var(--mantine-color-dark-5);
+}
+
+[data-mantine-color-scheme='dark'] .row[data-even] > td {
+	background: var(--mantine-color-dark-6);
+}
+
+[data-mantine-color-scheme='dark'] .emptyCell {
+	color: var(--mantine-color-dark-2);
+}
+
+[data-mantine-color-scheme='dark'] .score {
+	color: var(--mantine-color-blue-4);
+}
+
+[data-mantine-color-scheme='dark'] .reaction {
+	color: var(--mantine-color-dark-0);
+}
+
+[data-mantine-color-scheme='dark'] .streak {
+	color: var(--mantine-color-orange-4);
+}
+
+[data-mantine-color-scheme='dark'] .trendUp {
+	color: var(--mantine-color-green-4);
+}
+
+[data-mantine-color-scheme='dark'] .trendDown {
+	color: var(--mantine-color-red-4);
+}
+
+[data-mantine-color-scheme='dark'] .trendFlat {
+	color: var(--mantine-color-dark-2);
+}
+
+/* --- Responsive ---------------------------------------------------------- */
+
+@media (max-width: 768px) {
+	.root {
+		max-height: 70vh;
+	}
+
+	.table {
+		table-layout: auto;
+		min-width: 720px;
+	}
+
+	.td,
+	.th {
+		padding: 6px 8px;
+	}
+}

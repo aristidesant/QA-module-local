@@ -3,7 +3,11 @@
  * Provides realistic test data for Agent, Supervisor, QA Manager, and Operation Manager roles
  */
 
-import type { AgentNotification, NotificationTrigger } from '~/models/qa/notifications';
+import type {
+	AgentNotification,
+	NotificationTrigger,
+} from '~/models/qa/notifications';
+import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 
 // ============================================================================
 // TypeScript Interfaces
@@ -17,7 +21,11 @@ export interface ComplianceCategory {
 }
 
 export interface BusinessInsight {
-	type: 'Early Objection' | 'Unhandled objection' | 'Competitor plus cost' | 'Mis-targeted offer';
+	type:
+		| 'Early Objection'
+		| 'Unhandled objection'
+		| 'Competitor plus cost'
+		| 'Mis-targeted offer';
 	count: number;
 	percentage: number;
 	trend: 'up' | 'down' | 'stable';
@@ -96,7 +104,15 @@ export interface CallMetric {
 	};
 	agentSentiment: number;
 	customerSentiment: number;
-	predominantEmotion: 'Joy' | 'Trust' | 'Anticipation' | 'Surprise' | 'Anger' | 'Fear' | 'Sadness' | 'Disgust';
+	predominantEmotion:
+		| 'Joy'
+		| 'Trust'
+		| 'Anticipation'
+		| 'Surprise'
+		| 'Anger'
+		| 'Fear'
+		| 'Sadness'
+		| 'Disgust';
 	complianceByArea: {
 		security: ComplianceArea;
 		regulatory: ComplianceArea;
@@ -135,9 +151,24 @@ export const AGENT_WEEKLY_METRICS: WeeklyMetrics = {
 	},
 	autoFailsCount: 2,
 	complianceCategories: [
-		{ name: 'Security', items: ['Protocol adherence', 'Data protection'], status: 'compliant', score: 94 },
-		{ name: 'Regulatory', items: ['Disclosure compliance', 'Record-keeping'], status: 'compliant', score: 88 },
-		{ name: 'Legal', items: ['Consent verification', 'Terms acknowledgment'], status: 'compliant', score: 91 },
+		{
+			name: 'Security',
+			items: ['Protocol adherence', 'Data protection'],
+			status: 'compliant',
+			score: 94,
+		},
+		{
+			name: 'Regulatory',
+			items: ['Disclosure compliance', 'Record-keeping'],
+			status: 'compliant',
+			score: 88,
+		},
+		{
+			name: 'Legal',
+			items: ['Consent verification', 'Terms acknowledgment'],
+			status: 'compliant',
+			score: 91,
+		},
 	],
 	businessInsights: [
 		{
@@ -322,7 +353,8 @@ export const CRITICAL_ISSUES_AGENT: CriticalIssue[] = [
 		id: 'ISSUE-AGENT-001',
 		title: 'Frequent objection on pricing during customer lifecycle stage',
 		severity: 'high',
-		description: 'Customers are raising pricing concerns more frequently this week',
+		description:
+			'Customers are raising pricing concerns more frequently this week',
 		affectedCount: 3,
 		timestamp: '2026-09-05T09:00:00Z',
 	},
@@ -351,9 +383,24 @@ export const SUPERVISOR_WEEKLY_METRICS: WeeklyMetrics = {
 	},
 	autoFailsCount: 5,
 	complianceCategories: [
-		{ name: 'Security', items: ['Team protocol adherence', 'Data access controls'], status: 'compliant', score: 91 },
-		{ name: 'Regulatory', items: ['Disclosure standards', 'Audit trail maintenance'], status: 'warning', score: 86 },
-		{ name: 'Legal', items: ['Consent procedures', 'Documentation standards'], status: 'compliant', score: 88 },
+		{
+			name: 'Security',
+			items: ['Team protocol adherence', 'Data access controls'],
+			status: 'compliant',
+			score: 91,
+		},
+		{
+			name: 'Regulatory',
+			items: ['Disclosure standards', 'Audit trail maintenance'],
+			status: 'warning',
+			score: 86,
+		},
+		{
+			name: 'Legal',
+			items: ['Consent procedures', 'Documentation standards'],
+			status: 'compliant',
+			score: 88,
+		},
 	],
 	businessInsights: [
 		{
@@ -497,7 +544,8 @@ export const CRITICAL_ISSUES_SUPERVISOR: CriticalIssue[] = [
 		id: 'ISSUE-SUP-001',
 		title: 'Regulatory compliance drift in team',
 		severity: 'high',
-		description: 'Supervisor team is showing declining compliance with regulatory requirements',
+		description:
+			'Supervisor team is showing declining compliance with regulatory requirements',
 		affectedCount: 5,
 		timestamp: '2026-09-06T08:00:00Z',
 	},
@@ -505,7 +553,8 @@ export const CRITICAL_ISSUES_SUPERVISOR: CriticalIssue[] = [
 		id: 'ISSUE-SUP-002',
 		title: 'Training needed for new compliance update',
 		severity: 'high',
-		description: 'Three agents on team not following latest compliance protocol',
+		description:
+			'Three agents on team not following latest compliance protocol',
 		affectedCount: 3,
 		timestamp: '2026-09-05T11:20:00Z',
 	},
@@ -550,9 +599,24 @@ export const QA_MANAGER_WEEKLY_METRICS: WeeklyMetrics = {
 	},
 	autoFailsCount: 18,
 	complianceCategories: [
-		{ name: 'Security', items: ['Platform security controls', 'Audit logging'], status: 'warning', score: 89 },
-		{ name: 'Regulatory', items: ['Compliance monitoring', 'Regulatory reporting'], status: 'warning', score: 83 },
-		{ name: 'Legal', items: ['Policy enforcement', 'Legal documentation'], status: 'warning', score: 85 },
+		{
+			name: 'Security',
+			items: ['Platform security controls', 'Audit logging'],
+			status: 'warning',
+			score: 89,
+		},
+		{
+			name: 'Regulatory',
+			items: ['Compliance monitoring', 'Regulatory reporting'],
+			status: 'warning',
+			score: 83,
+		},
+		{
+			name: 'Legal',
+			items: ['Policy enforcement', 'Legal documentation'],
+			status: 'warning',
+			score: 85,
+		},
 	],
 	businessInsights: [
 		{
@@ -596,7 +660,8 @@ export const CRITICAL_ISSUES_QA_MANAGER: CriticalIssue[] = [
 		id: 'ISSUE-QA-001',
 		title: 'Platform-wide compliance violation trend',
 		severity: 'critical',
-		description: 'Multiple teams showing non-compliance with security protocols',
+		description:
+			'Multiple teams showing non-compliance with security protocols',
 		affectedCount: 18,
 		timestamp: '2026-09-07T07:00:00Z',
 	},
@@ -673,9 +738,24 @@ export const OPERATION_MANAGER_WEEKLY_METRICS: WeeklyMetrics = {
 	},
 	autoFailsCount: 42,
 	complianceCategories: [
-		{ name: 'Security', items: ['Cross-client security standards', 'Infrastructure compliance'], status: 'warning', score: 86 },
-		{ name: 'Regulatory', items: ['Multi-client compliance', 'Regulatory alignment'], status: 'violation', score: 80 },
-		{ name: 'Legal', items: ['Client agreements', 'Legal compliance verification'], status: 'warning', score: 82 },
+		{
+			name: 'Security',
+			items: ['Cross-client security standards', 'Infrastructure compliance'],
+			status: 'warning',
+			score: 86,
+		},
+		{
+			name: 'Regulatory',
+			items: ['Multi-client compliance', 'Regulatory alignment'],
+			status: 'violation',
+			score: 80,
+		},
+		{
+			name: 'Legal',
+			items: ['Client agreements', 'Legal compliance verification'],
+			status: 'warning',
+			score: 82,
+		},
 	],
 	businessInsights: [
 		{
@@ -1142,7 +1222,8 @@ export const AGENT_NOTIFICATIONS: AgentNotification[] = [
 				id: 'REPLY-001',
 				fromRole: 'AGENT',
 				fromId: 'AGENT-001',
-				message: 'Thanks for flagging this. I see the gap now. I will review the protocol and confirm with you by end of day.',
+				message:
+					'Thanks for flagging this. I see the gap now. I will review the protocol and confirm with you by end of day.',
 				createdAt: '2026-09-08T09:15:00Z',
 			},
 			{
@@ -1170,7 +1251,8 @@ export const AGENT_NOTIFICATIONS: AgentNotification[] = [
 		category: 'DIRECT_MESSAGE',
 		priority: 'HIGH',
 		title: 'Great Job on CALL-001',
-		message: 'John, your handling of the objection with Alice Johnson was textbook perfect. Your sentiment score was 4.5 and compliance was 95%. Keep this up!',
+		message:
+			'John, your handling of the objection with Alice Johnson was textbook perfect. Your sentiment score was 4.5 and compliance was 95%. Keep this up!',
 		icon: 'IconMessageSquare',
 		sourceRole: 'SUPERVISOR',
 		sourceId: 'SUP-001',
@@ -1209,7 +1291,8 @@ export const AGENT_NOTIFICATIONS: AgentNotification[] = [
 		category: 'METRIC_ALERT',
 		priority: 'NORMAL',
 		title: 'Compliance Score Update',
-		message: 'Your compliance score for this week is 91%, maintaining a good standing across all compliance categories.',
+		message:
+			'Your compliance score for this week is 91%, maintaining a good standing across all compliance categories.',
 		icon: 'IconCheckCircle',
 		sourceRole: 'QA_MANAGER',
 		sourceId: 'QAM-001',
@@ -1462,9 +1545,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.1,
 		predominantEmotion: 'Joy',
 		complianceByArea: {
-			security: { score: 94, items: { dataProtection: 95, disclosureCompliance: 93 } },
-			regulatory: { score: 91, items: { cobranzaRegulada: 90, transparenciaConsentimiento: 92 } },
-			legal: { score: 93, items: { amenazasTradicionales: 93, rrss: 92, superintendenciaBancos: 94, noLlamarList: 93 } },
+			security: {
+				score: 94,
+				items: { dataProtection: 95, disclosureCompliance: 93 },
+			},
+			regulatory: {
+				score: 91,
+				items: { cobranzaRegulada: 90, transparenciaConsentimiento: 92 },
+			},
+			legal: {
+				score: 93,
+				items: {
+					amenazasTradicionales: 93,
+					rrss: 92,
+					superintendenciaBancos: 94,
+					noLlamarList: 93,
+				},
+			},
 		},
 	},
 	{
@@ -1475,9 +1572,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.8,
 		predominantEmotion: 'Trust',
 		complianceByArea: {
-			security: { score: 88, items: { dataProtection: 89, disclosureCompliance: 87 } },
-			regulatory: { score: 85, items: { cobranzaRegulada: 84, transparenciaConsentimiento: 86 } },
-			legal: { score: 87, items: { amenazasTradicionales: 88, rrss: 86, superintendenciaBancos: 87, noLlamarList: 87 } },
+			security: {
+				score: 88,
+				items: { dataProtection: 89, disclosureCompliance: 87 },
+			},
+			regulatory: {
+				score: 85,
+				items: { cobranzaRegulada: 84, transparenciaConsentimiento: 86 },
+			},
+			legal: {
+				score: 87,
+				items: {
+					amenazasTradicionales: 88,
+					rrss: 86,
+					superintendenciaBancos: 87,
+					noLlamarList: 87,
+				},
+			},
 		},
 	},
 	{
@@ -1488,9 +1599,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.1,
 		predominantEmotion: 'Anger',
 		complianceByArea: {
-			security: { score: 76, items: { dataProtection: 75, disclosureCompliance: 77 } },
-			regulatory: { score: 72, items: { cobranzaRegulada: 71, transparenciaConsentimiento: 73 } },
-			legal: { score: 74, items: { amenazasTradicionales: 73, rrss: 74, superintendenciaBancos: 75, noLlamarList: 74 } },
+			security: {
+				score: 76,
+				items: { dataProtection: 75, disclosureCompliance: 77 },
+			},
+			regulatory: {
+				score: 72,
+				items: { cobranzaRegulada: 71, transparenciaConsentimiento: 73 },
+			},
+			legal: {
+				score: 74,
+				items: {
+					amenazasTradicionales: 73,
+					rrss: 74,
+					superintendenciaBancos: 75,
+					noLlamarList: 74,
+				},
+			},
 		},
 	},
 	{
@@ -1501,9 +1626,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.4,
 		predominantEmotion: 'Anticipation',
 		complianceByArea: {
-			security: { score: 96, items: { dataProtection: 97, disclosureCompliance: 95 } },
-			regulatory: { score: 94, items: { cobranzaRegulada: 93, transparenciaConsentimiento: 95 } },
-			legal: { score: 95, items: { amenazasTradicionales: 95, rrss: 94, superintendenciaBancos: 96, noLlamarList: 95 } },
+			security: {
+				score: 96,
+				items: { dataProtection: 97, disclosureCompliance: 95 },
+			},
+			regulatory: {
+				score: 94,
+				items: { cobranzaRegulada: 93, transparenciaConsentimiento: 95 },
+			},
+			legal: {
+				score: 95,
+				items: {
+					amenazasTradicionales: 95,
+					rrss: 94,
+					superintendenciaBancos: 96,
+					noLlamarList: 95,
+				},
+			},
 		},
 	},
 	{
@@ -1514,9 +1653,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.9,
 		predominantEmotion: 'Surprise',
 		complianceByArea: {
-			security: { score: 89, items: { dataProtection: 90, disclosureCompliance: 88 } },
-			regulatory: { score: 86, items: { cobranzaRegulada: 85, transparenciaConsentimiento: 87 } },
-			legal: { score: 88, items: { amenazasTradicionales: 89, rrss: 87, superintendenciaBancos: 88, noLlamarList: 88 } },
+			security: {
+				score: 89,
+				items: { dataProtection: 90, disclosureCompliance: 88 },
+			},
+			regulatory: {
+				score: 86,
+				items: { cobranzaRegulada: 85, transparenciaConsentimiento: 87 },
+			},
+			legal: {
+				score: 88,
+				items: {
+					amenazasTradicionales: 89,
+					rrss: 87,
+					superintendenciaBancos: 88,
+					noLlamarList: 88,
+				},
+			},
 		},
 	},
 	{
@@ -1527,9 +1680,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.6,
 		predominantEmotion: 'Fear',
 		complianceByArea: {
-			security: { score: 83, items: { dataProtection: 84, disclosureCompliance: 82 } },
-			regulatory: { score: 80, items: { cobranzaRegulada: 79, transparenciaConsentimiento: 81 } },
-			legal: { score: 82, items: { amenazasTradicionales: 81, rrss: 82, superintendenciaBancos: 83, noLlamarList: 82 } },
+			security: {
+				score: 83,
+				items: { dataProtection: 84, disclosureCompliance: 82 },
+			},
+			regulatory: {
+				score: 80,
+				items: { cobranzaRegulada: 79, transparenciaConsentimiento: 81 },
+			},
+			legal: {
+				score: 82,
+				items: {
+					amenazasTradicionales: 81,
+					rrss: 82,
+					superintendenciaBancos: 83,
+					noLlamarList: 82,
+				},
+			},
 		},
 	},
 	{
@@ -1540,9 +1707,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.3,
 		predominantEmotion: 'Sadness',
 		complianceByArea: {
-			security: { score: 79, items: { dataProtection: 78, disclosureCompliance: 80 } },
-			regulatory: { score: 76, items: { cobranzaRegulada: 75, transparenciaConsentimiento: 77 } },
-			legal: { score: 78, items: { amenazasTradicionales: 77, rrss: 78, superintendenciaBancos: 79, noLlamarList: 78 } },
+			security: {
+				score: 79,
+				items: { dataProtection: 78, disclosureCompliance: 80 },
+			},
+			regulatory: {
+				score: 76,
+				items: { cobranzaRegulada: 75, transparenciaConsentimiento: 77 },
+			},
+			legal: {
+				score: 78,
+				items: {
+					amenazasTradicionales: 77,
+					rrss: 78,
+					superintendenciaBancos: 79,
+					noLlamarList: 78,
+				},
+			},
 		},
 	},
 	{
@@ -1553,9 +1734,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.2,
 		predominantEmotion: 'Joy',
 		complianceByArea: {
-			security: { score: 95, items: { dataProtection: 96, disclosureCompliance: 94 } },
-			regulatory: { score: 93, items: { cobranzaRegulada: 92, transparenciaConsentimiento: 94 } },
-			legal: { score: 94, items: { amenazasTradicionales: 94, rrss: 93, superintendenciaBancos: 95, noLlamarList: 94 } },
+			security: {
+				score: 95,
+				items: { dataProtection: 96, disclosureCompliance: 94 },
+			},
+			regulatory: {
+				score: 93,
+				items: { cobranzaRegulada: 92, transparenciaConsentimiento: 94 },
+			},
+			legal: {
+				score: 94,
+				items: {
+					amenazasTradicionales: 94,
+					rrss: 93,
+					superintendenciaBancos: 95,
+					noLlamarList: 94,
+				},
+			},
 		},
 	},
 	{
@@ -1566,9 +1761,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 2.8,
 		predominantEmotion: 'Disgust',
 		complianceByArea: {
-			security: { score: 72, items: { dataProtection: 71, disclosureCompliance: 73 } },
-			regulatory: { score: 68, items: { cobranzaRegulada: 67, transparenciaConsentimiento: 69 } },
-			legal: { score: 70, items: { amenazasTradicionales: 69, rrss: 70, superintendenciaBancos: 71, noLlamarList: 70 } },
+			security: {
+				score: 72,
+				items: { dataProtection: 71, disclosureCompliance: 73 },
+			},
+			regulatory: {
+				score: 68,
+				items: { cobranzaRegulada: 67, transparenciaConsentimiento: 69 },
+			},
+			legal: {
+				score: 70,
+				items: {
+					amenazasTradicionales: 69,
+					rrss: 70,
+					superintendenciaBancos: 71,
+					noLlamarList: 70,
+				},
+			},
 		},
 	},
 	{
@@ -1579,9 +1788,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.0,
 		predominantEmotion: 'Trust',
 		complianceByArea: {
-			security: { score: 91, items: { dataProtection: 92, disclosureCompliance: 90 } },
-			regulatory: { score: 89, items: { cobranzaRegulada: 88, transparenciaConsentimiento: 90 } },
-			legal: { score: 90, items: { amenazasTradicionales: 90, rrss: 89, superintendenciaBancos: 91, noLlamarList: 90 } },
+			security: {
+				score: 91,
+				items: { dataProtection: 92, disclosureCompliance: 90 },
+			},
+			regulatory: {
+				score: 89,
+				items: { cobranzaRegulada: 88, transparenciaConsentimiento: 90 },
+			},
+			legal: {
+				score: 90,
+				items: {
+					amenazasTradicionales: 90,
+					rrss: 89,
+					superintendenciaBancos: 91,
+					noLlamarList: 90,
+				},
+			},
 		},
 	},
 
@@ -1594,9 +1817,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.1,
 		predominantEmotion: 'Anticipation',
 		complianceByArea: {
-			security: { score: 92, items: { dataProtection: 93, disclosureCompliance: 91 } },
-			regulatory: { score: 90, items: { cobranzaRegulada: 89, transparenciaConsentimiento: 91 } },
-			legal: { score: 91, items: { amenazasTradicionales: 91, rrss: 90, superintendenciaBancos: 92, noLlamarList: 91 } },
+			security: {
+				score: 92,
+				items: { dataProtection: 93, disclosureCompliance: 91 },
+			},
+			regulatory: {
+				score: 90,
+				items: { cobranzaRegulada: 89, transparenciaConsentimiento: 91 },
+			},
+			legal: {
+				score: 91,
+				items: {
+					amenazasTradicionales: 91,
+					rrss: 90,
+					superintendenciaBancos: 92,
+					noLlamarList: 91,
+				},
+			},
 		},
 	},
 	{
@@ -1607,9 +1844,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.5,
 		predominantEmotion: 'Surprise',
 		complianceByArea: {
-			security: { score: 85, items: { dataProtection: 86, disclosureCompliance: 84 } },
-			regulatory: { score: 82, items: { cobranzaRegulada: 81, transparenciaConsentimiento: 83 } },
-			legal: { score: 84, items: { amenazasTradicionales: 84, rrss: 83, superintendenciaBancos: 85, noLlamarList: 84 } },
+			security: {
+				score: 85,
+				items: { dataProtection: 86, disclosureCompliance: 84 },
+			},
+			regulatory: {
+				score: 82,
+				items: { cobranzaRegulada: 81, transparenciaConsentimiento: 83 },
+			},
+			legal: {
+				score: 84,
+				items: {
+					amenazasTradicionales: 84,
+					rrss: 83,
+					superintendenciaBancos: 85,
+					noLlamarList: 84,
+				},
+			},
 		},
 	},
 	{
@@ -1620,9 +1871,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.3,
 		predominantEmotion: 'Joy',
 		complianceByArea: {
-			security: { score: 97, items: { dataProtection: 98, disclosureCompliance: 96 } },
-			regulatory: { score: 95, items: { cobranzaRegulada: 94, transparenciaConsentimiento: 96 } },
-			legal: { score: 96, items: { amenazasTradicionales: 96, rrss: 95, superintendenciaBancos: 97, noLlamarList: 96 } },
+			security: {
+				score: 97,
+				items: { dataProtection: 98, disclosureCompliance: 96 },
+			},
+			regulatory: {
+				score: 95,
+				items: { cobranzaRegulada: 94, transparenciaConsentimiento: 96 },
+			},
+			legal: {
+				score: 96,
+				items: {
+					amenazasTradicionales: 96,
+					rrss: 95,
+					superintendenciaBancos: 97,
+					noLlamarList: 96,
+				},
+			},
 		},
 	},
 	{
@@ -1633,9 +1898,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.2,
 		predominantEmotion: 'Fear',
 		complianceByArea: {
-			security: { score: 80, items: { dataProtection: 81, disclosureCompliance: 79 } },
-			regulatory: { score: 77, items: { cobranzaRegulada: 76, transparenciaConsentimiento: 78 } },
-			legal: { score: 79, items: { amenazasTradicionales: 78, rrss: 79, superintendenciaBancos: 80, noLlamarList: 79 } },
+			security: {
+				score: 80,
+				items: { dataProtection: 81, disclosureCompliance: 79 },
+			},
+			regulatory: {
+				score: 77,
+				items: { cobranzaRegulada: 76, transparenciaConsentimiento: 78 },
+			},
+			legal: {
+				score: 79,
+				items: {
+					amenazasTradicionales: 78,
+					rrss: 79,
+					superintendenciaBancos: 80,
+					noLlamarList: 79,
+				},
+			},
 		},
 	},
 	{
@@ -1646,9 +1925,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.9,
 		predominantEmotion: 'Trust',
 		complianceByArea: {
-			security: { score: 88, items: { dataProtection: 89, disclosureCompliance: 87 } },
-			regulatory: { score: 86, items: { cobranzaRegulada: 85, transparenciaConsentimiento: 87 } },
-			legal: { score: 87, items: { amenazasTradicionales: 87, rrss: 86, superintendenciaBancos: 88, noLlamarList: 87 } },
+			security: {
+				score: 88,
+				items: { dataProtection: 89, disclosureCompliance: 87 },
+			},
+			regulatory: {
+				score: 86,
+				items: { cobranzaRegulada: 85, transparenciaConsentimiento: 87 },
+			},
+			legal: {
+				score: 87,
+				items: {
+					amenazasTradicionales: 87,
+					rrss: 86,
+					superintendenciaBancos: 88,
+					noLlamarList: 87,
+				},
+			},
 		},
 	},
 	{
@@ -1659,9 +1952,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.0,
 		predominantEmotion: 'Anger',
 		complianceByArea: {
-			security: { score: 74, items: { dataProtection: 75, disclosureCompliance: 73 } },
-			regulatory: { score: 71, items: { cobranzaRegulada: 70, transparenciaConsentimiento: 72 } },
-			legal: { score: 73, items: { amenazasTradicionales: 72, rrss: 73, superintendenciaBancos: 74, noLlamarList: 73 } },
+			security: {
+				score: 74,
+				items: { dataProtection: 75, disclosureCompliance: 73 },
+			},
+			regulatory: {
+				score: 71,
+				items: { cobranzaRegulada: 70, transparenciaConsentimiento: 72 },
+			},
+			legal: {
+				score: 73,
+				items: {
+					amenazasTradicionales: 72,
+					rrss: 73,
+					superintendenciaBancos: 74,
+					noLlamarList: 73,
+				},
+			},
 		},
 	},
 	{
@@ -1672,9 +1979,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.2,
 		predominantEmotion: 'Joy',
 		complianceByArea: {
-			security: { score: 94, items: { dataProtection: 95, disclosureCompliance: 93 } },
-			regulatory: { score: 92, items: { cobranzaRegulada: 91, transparenciaConsentimiento: 93 } },
-			legal: { score: 93, items: { amenazasTradicionales: 93, rrss: 92, superintendenciaBancos: 94, noLlamarList: 93 } },
+			security: {
+				score: 94,
+				items: { dataProtection: 95, disclosureCompliance: 93 },
+			},
+			regulatory: {
+				score: 92,
+				items: { cobranzaRegulada: 91, transparenciaConsentimiento: 93 },
+			},
+			legal: {
+				score: 93,
+				items: {
+					amenazasTradicionales: 93,
+					rrss: 92,
+					superintendenciaBancos: 94,
+					noLlamarList: 93,
+				},
+			},
 		},
 	},
 
@@ -1687,9 +2008,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.0,
 		predominantEmotion: 'Anticipation',
 		complianceByArea: {
-			security: { score: 90, items: { dataProtection: 91, disclosureCompliance: 89 } },
-			regulatory: { score: 88, items: { cobranzaRegulada: 87, transparenciaConsentimiento: 89 } },
-			legal: { score: 89, items: { amenazasTradicionales: 89, rrss: 88, superintendenciaBancos: 90, noLlamarList: 89 } },
+			security: {
+				score: 90,
+				items: { dataProtection: 91, disclosureCompliance: 89 },
+			},
+			regulatory: {
+				score: 88,
+				items: { cobranzaRegulada: 87, transparenciaConsentimiento: 89 },
+			},
+			legal: {
+				score: 89,
+				items: {
+					amenazasTradicionales: 89,
+					rrss: 88,
+					superintendenciaBancos: 90,
+					noLlamarList: 89,
+				},
+			},
 		},
 	},
 	{
@@ -1700,9 +2035,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 2.9,
 		predominantEmotion: 'Sadness',
 		complianceByArea: {
-			security: { score: 76, items: { dataProtection: 77, disclosureCompliance: 75 } },
-			regulatory: { score: 73, items: { cobranzaRegulada: 72, transparenciaConsentimiento: 74 } },
-			legal: { score: 75, items: { amenazasTradicionales: 74, rrss: 75, superintendenciaBancos: 76, noLlamarList: 75 } },
+			security: {
+				score: 76,
+				items: { dataProtection: 77, disclosureCompliance: 75 },
+			},
+			regulatory: {
+				score: 73,
+				items: { cobranzaRegulada: 72, transparenciaConsentimiento: 74 },
+			},
+			legal: {
+				score: 75,
+				items: {
+					amenazasTradicionales: 74,
+					rrss: 75,
+					superintendenciaBancos: 76,
+					noLlamarList: 75,
+				},
+			},
 		},
 	},
 	{
@@ -1713,9 +2062,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.4,
 		predominantEmotion: 'Joy',
 		complianceByArea: {
-			security: { score: 96, items: { dataProtection: 97, disclosureCompliance: 95 } },
-			regulatory: { score: 94, items: { cobranzaRegulada: 93, transparenciaConsentimiento: 95 } },
-			legal: { score: 95, items: { amenazasTradicionales: 95, rrss: 94, superintendenciaBancos: 96, noLlamarList: 95 } },
+			security: {
+				score: 96,
+				items: { dataProtection: 97, disclosureCompliance: 95 },
+			},
+			regulatory: {
+				score: 94,
+				items: { cobranzaRegulada: 93, transparenciaConsentimiento: 95 },
+			},
+			legal: {
+				score: 95,
+				items: {
+					amenazasTradicionales: 95,
+					rrss: 94,
+					superintendenciaBancos: 96,
+					noLlamarList: 95,
+				},
+			},
 		},
 	},
 	{
@@ -1726,9 +2089,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.4,
 		predominantEmotion: 'Surprise',
 		complianceByArea: {
-			security: { score: 82, items: { dataProtection: 83, disclosureCompliance: 81 } },
-			regulatory: { score: 79, items: { cobranzaRegulada: 78, transparenciaConsentimiento: 80 } },
-			legal: { score: 81, items: { amenazasTradicionales: 80, rrss: 81, superintendenciaBancos: 82, noLlamarList: 81 } },
+			security: {
+				score: 82,
+				items: { dataProtection: 83, disclosureCompliance: 81 },
+			},
+			regulatory: {
+				score: 79,
+				items: { cobranzaRegulada: 78, transparenciaConsentimiento: 80 },
+			},
+			legal: {
+				score: 81,
+				items: {
+					amenazasTradicionales: 80,
+					rrss: 81,
+					superintendenciaBancos: 82,
+					noLlamarList: 81,
+				},
+			},
 		},
 	},
 	{
@@ -1739,9 +2116,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.1,
 		predominantEmotion: 'Trust',
 		complianceByArea: {
-			security: { score: 93, items: { dataProtection: 94, disclosureCompliance: 92 } },
-			regulatory: { score: 91, items: { cobranzaRegulada: 90, transparenciaConsentimiento: 92 } },
-			legal: { score: 92, items: { amenazasTradicionales: 92, rrss: 91, superintendenciaBancos: 93, noLlamarList: 92 } },
+			security: {
+				score: 93,
+				items: { dataProtection: 94, disclosureCompliance: 92 },
+			},
+			regulatory: {
+				score: 91,
+				items: { cobranzaRegulada: 90, transparenciaConsentimiento: 92 },
+			},
+			legal: {
+				score: 92,
+				items: {
+					amenazasTradicionales: 92,
+					rrss: 91,
+					superintendenciaBancos: 93,
+					noLlamarList: 92,
+				},
+			},
 		},
 	},
 	{
@@ -1752,9 +2143,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.3,
 		predominantEmotion: 'Disgust',
 		complianceByArea: {
-			security: { score: 81, items: { dataProtection: 82, disclosureCompliance: 80 } },
-			regulatory: { score: 78, items: { cobranzaRegulada: 77, transparenciaConsentimiento: 79 } },
-			legal: { score: 80, items: { amenazasTradicionales: 79, rrss: 80, superintendenciaBancos: 81, noLlamarList: 80 } },
+			security: {
+				score: 81,
+				items: { dataProtection: 82, disclosureCompliance: 80 },
+			},
+			regulatory: {
+				score: 78,
+				items: { cobranzaRegulada: 77, transparenciaConsentimiento: 79 },
+			},
+			legal: {
+				score: 80,
+				items: {
+					amenazasTradicionales: 79,
+					rrss: 80,
+					superintendenciaBancos: 81,
+					noLlamarList: 80,
+				},
+			},
 		},
 	},
 	{
@@ -1765,9 +2170,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.3,
 		predominantEmotion: 'Joy',
 		complianceByArea: {
-			security: { score: 95, items: { dataProtection: 96, disclosureCompliance: 94 } },
-			regulatory: { score: 93, items: { cobranzaRegulada: 92, transparenciaConsentimiento: 94 } },
-			legal: { score: 94, items: { amenazasTradicionales: 94, rrss: 93, superintendenciaBancos: 95, noLlamarList: 94 } },
+			security: {
+				score: 95,
+				items: { dataProtection: 96, disclosureCompliance: 94 },
+			},
+			regulatory: {
+				score: 93,
+				items: { cobranzaRegulada: 92, transparenciaConsentimiento: 94 },
+			},
+			legal: {
+				score: 94,
+				items: {
+					amenazasTradicionales: 94,
+					rrss: 93,
+					superintendenciaBancos: 95,
+					noLlamarList: 94,
+				},
+			},
 		},
 	},
 
@@ -1780,9 +2199,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.9,
 		predominantEmotion: 'Anticipation',
 		complianceByArea: {
-			security: { score: 89, items: { dataProtection: 90, disclosureCompliance: 88 } },
-			regulatory: { score: 87, items: { cobranzaRegulada: 86, transparenciaConsentimiento: 88 } },
-			legal: { score: 88, items: { amenazasTradicionales: 88, rrss: 87, superintendenciaBancos: 89, noLlamarList: 88 } },
+			security: {
+				score: 89,
+				items: { dataProtection: 90, disclosureCompliance: 88 },
+			},
+			regulatory: {
+				score: 87,
+				items: { cobranzaRegulada: 86, transparenciaConsentimiento: 88 },
+			},
+			legal: {
+				score: 88,
+				items: {
+					amenazasTradicionales: 88,
+					rrss: 87,
+					superintendenciaBancos: 89,
+					noLlamarList: 88,
+				},
+			},
 		},
 	},
 	{
@@ -1793,9 +2226,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.1,
 		predominantEmotion: 'Fear',
 		complianceByArea: {
-			security: { score: 79, items: { dataProtection: 80, disclosureCompliance: 78 } },
-			regulatory: { score: 76, items: { cobranzaRegulada: 75, transparenciaConsentimiento: 77 } },
-			legal: { score: 78, items: { amenazasTradicionales: 77, rrss: 78, superintendenciaBancos: 79, noLlamarList: 78 } },
+			security: {
+				score: 79,
+				items: { dataProtection: 80, disclosureCompliance: 78 },
+			},
+			regulatory: {
+				score: 76,
+				items: { cobranzaRegulada: 75, transparenciaConsentimiento: 77 },
+			},
+			legal: {
+				score: 78,
+				items: {
+					amenazasTradicionales: 77,
+					rrss: 78,
+					superintendenciaBancos: 79,
+					noLlamarList: 78,
+				},
+			},
 		},
 	},
 	{
@@ -1806,9 +2253,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.2,
 		predominantEmotion: 'Joy',
 		complianceByArea: {
-			security: { score: 94, items: { dataProtection: 95, disclosureCompliance: 93 } },
-			regulatory: { score: 92, items: { cobranzaRegulada: 91, transparenciaConsentimiento: 93 } },
-			legal: { score: 93, items: { amenazasTradicionales: 93, rrss: 92, superintendenciaBancos: 94, noLlamarList: 93 } },
+			security: {
+				score: 94,
+				items: { dataProtection: 95, disclosureCompliance: 93 },
+			},
+			regulatory: {
+				score: 92,
+				items: { cobranzaRegulada: 91, transparenciaConsentimiento: 93 },
+			},
+			legal: {
+				score: 93,
+				items: {
+					amenazasTradicionales: 93,
+					rrss: 92,
+					superintendenciaBancos: 94,
+					noLlamarList: 93,
+				},
+			},
 		},
 	},
 	{
@@ -1819,9 +2280,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.0,
 		predominantEmotion: 'Trust',
 		complianceByArea: {
-			security: { score: 91, items: { dataProtection: 92, disclosureCompliance: 90 } },
-			regulatory: { score: 89, items: { cobranzaRegulada: 88, transparenciaConsentimiento: 90 } },
-			legal: { score: 90, items: { amenazasTradicionales: 90, rrss: 89, superintendenciaBancos: 91, noLlamarList: 90 } },
+			security: {
+				score: 91,
+				items: { dataProtection: 92, disclosureCompliance: 90 },
+			},
+			regulatory: {
+				score: 89,
+				items: { cobranzaRegulada: 88, transparenciaConsentimiento: 90 },
+			},
+			legal: {
+				score: 90,
+				items: {
+					amenazasTradicionales: 90,
+					rrss: 89,
+					superintendenciaBancos: 91,
+					noLlamarList: 90,
+				},
+			},
 		},
 	},
 	{
@@ -1832,9 +2307,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.2,
 		predominantEmotion: 'Sadness',
 		complianceByArea: {
-			security: { score: 78, items: { dataProtection: 79, disclosureCompliance: 77 } },
-			regulatory: { score: 75, items: { cobranzaRegulada: 74, transparenciaConsentimiento: 76 } },
-			legal: { score: 77, items: { amenazasTradicionales: 76, rrss: 77, superintendenciaBancos: 78, noLlamarList: 77 } },
+			security: {
+				score: 78,
+				items: { dataProtection: 79, disclosureCompliance: 77 },
+			},
+			regulatory: {
+				score: 75,
+				items: { cobranzaRegulada: 74, transparenciaConsentimiento: 76 },
+			},
+			legal: {
+				score: 77,
+				items: {
+					amenazasTradicionales: 76,
+					rrss: 77,
+					superintendenciaBancos: 78,
+					noLlamarList: 77,
+				},
+			},
 		},
 	},
 	{
@@ -1845,9 +2334,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.1,
 		predominantEmotion: 'Anticipation',
 		complianceByArea: {
-			security: { score: 92, items: { dataProtection: 93, disclosureCompliance: 91 } },
-			regulatory: { score: 90, items: { cobranzaRegulada: 89, transparenciaConsentimiento: 91 } },
-			legal: { score: 91, items: { amenazasTradicionales: 91, rrss: 90, superintendenciaBancos: 92, noLlamarList: 91 } },
+			security: {
+				score: 92,
+				items: { dataProtection: 93, disclosureCompliance: 91 },
+			},
+			regulatory: {
+				score: 90,
+				items: { cobranzaRegulada: 89, transparenciaConsentimiento: 91 },
+			},
+			legal: {
+				score: 91,
+				items: {
+					amenazasTradicionales: 91,
+					rrss: 90,
+					superintendenciaBancos: 92,
+					noLlamarList: 91,
+				},
+			},
 		},
 	},
 	{
@@ -1858,9 +2361,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.9,
 		predominantEmotion: 'Joy',
 		complianceByArea: {
-			security: { score: 90, items: { dataProtection: 91, disclosureCompliance: 89 } },
-			regulatory: { score: 88, items: { cobranzaRegulada: 87, transparenciaConsentimiento: 89 } },
-			legal: { score: 89, items: { amenazasTradicionales: 89, rrss: 88, superintendenciaBancos: 90, noLlamarList: 89 } },
+			security: {
+				score: 90,
+				items: { dataProtection: 91, disclosureCompliance: 89 },
+			},
+			regulatory: {
+				score: 88,
+				items: { cobranzaRegulada: 87, transparenciaConsentimiento: 89 },
+			},
+			legal: {
+				score: 89,
+				items: {
+					amenazasTradicionales: 89,
+					rrss: 88,
+					superintendenciaBancos: 90,
+					noLlamarList: 89,
+				},
+			},
 		},
 	},
 
@@ -1873,9 +2390,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.3,
 		predominantEmotion: 'Joy',
 		complianceByArea: {
-			security: { score: 96, items: { dataProtection: 97, disclosureCompliance: 95 } },
-			regulatory: { score: 94, items: { cobranzaRegulada: 93, transparenciaConsentimiento: 95 } },
-			legal: { score: 95, items: { amenazasTradicionales: 95, rrss: 94, superintendenciaBancos: 96, noLlamarList: 95 } },
+			security: {
+				score: 96,
+				items: { dataProtection: 97, disclosureCompliance: 95 },
+			},
+			regulatory: {
+				score: 94,
+				items: { cobranzaRegulada: 93, transparenciaConsentimiento: 95 },
+			},
+			legal: {
+				score: 95,
+				items: {
+					amenazasTradicionales: 95,
+					rrss: 94,
+					superintendenciaBancos: 96,
+					noLlamarList: 95,
+				},
+			},
 		},
 	},
 	{
@@ -1886,9 +2417,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 4.0,
 		predominantEmotion: 'Trust',
 		complianceByArea: {
-			security: { score: 91, items: { dataProtection: 92, disclosureCompliance: 90 } },
-			regulatory: { score: 89, items: { cobranzaRegulada: 88, transparenciaConsentimiento: 90 } },
-			legal: { score: 90, items: { amenazasTradicionales: 90, rrss: 89, superintendenciaBancos: 91, noLlamarList: 90 } },
+			security: {
+				score: 91,
+				items: { dataProtection: 92, disclosureCompliance: 90 },
+			},
+			regulatory: {
+				score: 89,
+				items: { cobranzaRegulada: 88, transparenciaConsentimiento: 90 },
+			},
+			legal: {
+				score: 90,
+				items: {
+					amenazasTradicionales: 90,
+					rrss: 89,
+					superintendenciaBancos: 91,
+					noLlamarList: 90,
+				},
+			},
 		},
 	},
 	{
@@ -1899,9 +2444,23 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 		customerSentiment: 3.5,
 		predominantEmotion: 'Surprise',
 		complianceByArea: {
-			security: { score: 85, items: { dataProtection: 86, disclosureCompliance: 84 } },
-			regulatory: { score: 82, items: { cobranzaRegulada: 81, transparenciaConsentimiento: 83 } },
-			legal: { score: 84, items: { amenazasTradicionales: 84, rrss: 83, superintendenciaBancos: 85, noLlamarList: 84 } },
+			security: {
+				score: 85,
+				items: { dataProtection: 86, disclosureCompliance: 84 },
+			},
+			regulatory: {
+				score: 82,
+				items: { cobranzaRegulada: 81, transparenciaConsentimiento: 83 },
+			},
+			legal: {
+				score: 84,
+				items: {
+					amenazasTradicionales: 84,
+					rrss: 83,
+					superintendenciaBancos: 85,
+					noLlamarList: 84,
+				},
+			},
 		},
 	},
 ];
@@ -1988,25 +2547,53 @@ export function aggregateMetricsByDateRange(
 		const callCount = groupedCalls.length;
 
 		// Calculate averages
-		const avgAgentSentiment = groupedCalls.reduce((sum, c) => sum + c.agentSentiment, 0) / callCount;
-		const avgCustomerSentiment = groupedCalls.reduce((sum, c) => sum + c.customerSentiment, 0) / callCount;
-		const avgSecurityCompliance = groupedCalls.reduce((sum, c) => sum + c.complianceByArea.security.score, 0) / callCount;
+		const avgAgentSentiment =
+			groupedCalls.reduce((sum, c) => sum + c.agentSentiment, 0) / callCount;
+		const avgCustomerSentiment =
+			groupedCalls.reduce((sum, c) => sum + c.customerSentiment, 0) / callCount;
+		const avgSecurityCompliance =
+			groupedCalls.reduce(
+				(sum, c) => sum + c.complianceByArea.security.score,
+				0
+			) / callCount;
 		const avgRegulatoryCompliance =
-			groupedCalls.reduce((sum, c) => sum + c.complianceByArea.regulatory.score, 0) / callCount;
-		const avgLegalCompliance = groupedCalls.reduce((sum, c) => sum + c.complianceByArea.legal.score, 0) / callCount;
+			groupedCalls.reduce(
+				(sum, c) => sum + c.complianceByArea.regulatory.score,
+				0
+			) / callCount;
+		const avgLegalCompliance =
+			groupedCalls.reduce((sum, c) => sum + c.complianceByArea.legal.score, 0) /
+			callCount;
 
 		// Sum errors
-		const totalErrorsECN = groupedCalls.reduce((sum, c) => sum + c.qaScores.ecn, 0);
-		const totalErrorsENC = groupedCalls.reduce((sum, c) => sum + c.qaScores.enc, 0);
-		const totalErrorsECC = groupedCalls.reduce((sum, c) => sum + c.qaScores.ecc, 0);
-		const totalErrorsECUF = groupedCalls.reduce((sum, c) => sum + c.qaScores.ecuf, 0);
+		const totalErrorsECN = groupedCalls.reduce(
+			(sum, c) => sum + c.qaScores.ecn,
+			0
+		);
+		const totalErrorsENC = groupedCalls.reduce(
+			(sum, c) => sum + c.qaScores.enc,
+			0
+		);
+		const totalErrorsECC = groupedCalls.reduce(
+			(sum, c) => sum + c.qaScores.ecc,
+			0
+		);
+		const totalErrorsECUF = groupedCalls.reduce(
+			(sum, c) => sum + c.qaScores.ecuf,
+			0
+		);
 
 		// Get most common emotion
 		const emotionCounts = new Map<string, number>();
 		groupedCalls.forEach((c) => {
-			emotionCounts.set(c.predominantEmotion, (emotionCounts.get(c.predominantEmotion) || 0) + 1);
+			emotionCounts.set(
+				c.predominantEmotion,
+				(emotionCounts.get(c.predominantEmotion) || 0) + 1
+			);
 		});
-		const predominantEmotion = Array.from(emotionCounts.entries()).sort((a, b) => b[1] - a[1])[0][0];
+		const predominantEmotion = Array.from(emotionCounts.entries()).sort(
+			(a, b) => b[1] - a[1]
+		)[0][0];
 
 		// Determine timestamp based on first call in group
 		const timestamp = groupedCalls[0].date;
@@ -2029,7 +2616,182 @@ export function aggregateMetricsByDateRange(
 	});
 
 	// Sort by timestamp
-	result.sort((a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime());
+	result.sort(
+		(a, b) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+	);
 
 	return result;
 }
+
+// ============================================================================
+// Team Rankings (full leaderboard) mock data
+// ============================================================================
+
+/** Reaction totals received by an agent, keyed by PeerRecognitionType. */
+export interface AgentRankingReactionTotals {
+	LIKE: number;
+	HELPFUL: number;
+	INSPIRING: number;
+	AMAZING: number;
+	LEADER: number;
+}
+
+/**
+ * One row of the full team leaderboard.
+ *
+ * Note: `achievements` currently holds badge type keys from
+ * `PREDEFINED_BADGE_CATALOGS`. It becomes `Badge[]` once real badges land.
+ */
+export interface AgentRankingEntry {
+	/** 1-based position in the leaderboard */
+	rank: number;
+	agentId: string;
+	agentName: string;
+	/** Total period score, 0-100 */
+	score: number;
+	reactionsTotals?: AgentRankingReactionTotals;
+	/** Consecutive weeks inside the top of the ranking */
+	streak?: number;
+	/** Rank movement vs. previous period: +3 moved up 3, -1 moved down 1, 0 no change */
+	rankTrend?: number;
+	/** Badge types earned this period (keys of PREDEFINED_BADGE_CATALOGS) */
+	achievements?: string[];
+}
+
+const RANKING_FIRST_NAMES = [
+	'Mike',
+	'Sarah',
+	'Jessica',
+	'John',
+	'Emma',
+	'Carlos',
+	'Priya',
+	'Daniel',
+	'Olivia',
+	'Ahmed',
+	'Sofia',
+	'Lucas',
+	'Nina',
+	'Marcus',
+	'Elena',
+	'Tomas',
+	'Grace',
+	'Hiroshi',
+	'Laura',
+	'Victor',
+	'Amara',
+	'Diego',
+	'Chloe',
+	'Ravi',
+];
+
+const RANKING_LAST_NAMES = [
+	'Chen',
+	'Johnson',
+	'Martinez',
+	'Smith',
+	'Davis',
+	'Rivera',
+	'Patel',
+	'Brown',
+	'Nguyen',
+	'Hassan',
+	'Rossi',
+	'Silva',
+	'Kowalski',
+	'Thompson',
+	'Petrova',
+	'Novak',
+	'Okafor',
+	'Tanaka',
+	'Fernandez',
+	'Lindqvist',
+];
+
+/**
+ * Deterministic pseudo-random generator so the mock leaderboard is stable
+ * between renders and reloads (Lehmer / Park-Miller).
+ */
+const createSeededRandom = (seed: number): (() => number) => {
+	let state = seed % 2147483647;
+	if (state <= 0) state += 2147483646;
+
+	return () => {
+		state = (state * 16807) % 2147483647;
+		return (state - 1) / 2147483646;
+	};
+};
+
+const BADGE_TYPES = Object.keys(PREDEFINED_BADGE_CATALOGS);
+
+/**
+ * Builds a full team leaderboard (all agents, not just the top 5) so the
+ * expanded rankings table can be exercised with a realistic row count.
+ */
+const buildAgentRankings = (count: number): AgentRankingEntry[] => {
+	const random = createSeededRandom(20260909);
+
+	const seeded = Array.from({ length: count }, (_, index) => {
+		const firstName = RANKING_FIRST_NAMES[index % RANKING_FIRST_NAMES.length];
+		const lastName =
+			RANKING_LAST_NAMES[(index * 7 + 3) % RANKING_LAST_NAMES.length];
+		const score = Math.max(48, Math.round(99 - index * 0.38 - random() * 4));
+
+		return {
+			agentId: `agent-${index + 1}`,
+			agentName: `${firstName} ${lastName}`,
+			score,
+			noise: random(),
+			trendNoise: random(),
+			badgeNoise: random(),
+		};
+	});
+
+	seeded.sort(
+		(a, b) => b.score - a.score || a.agentName.localeCompare(b.agentName)
+	);
+
+	return seeded.map((entry, index) => {
+		const rank = index + 1;
+		const intensity = entry.score / 100;
+		const volume = Math.round(60 * intensity * (0.5 + entry.noise));
+
+		const reactionsTotals: AgentRankingReactionTotals = {
+			LIKE: Math.max(0, Math.round(volume)),
+			HELPFUL: Math.max(0, Math.round(volume * 0.72)),
+			INSPIRING: Math.max(0, Math.round(volume * 0.44)),
+			AMAZING: Math.max(0, Math.round(volume * 0.28)),
+			LEADER: Math.max(0, Math.round(volume * 0.12)),
+		};
+
+		const streak =
+			rank <= 18
+				? Math.max(1, Math.round(9 - rank * 0.4 - entry.noise * 2))
+				: undefined;
+		const rankTrend = Math.round((entry.trendNoise - 0.5) * 10);
+
+		const badgeCount = Math.min(
+			3,
+			Math.floor(entry.badgeNoise * 4 * (rank <= 25 ? 1 : 0.6))
+		);
+		const achievements = Array.from(
+			{ length: badgeCount },
+			(_, badgeIndex) =>
+				BADGE_TYPES[(index * 3 + badgeIndex * 2) % BADGE_TYPES.length]
+		);
+
+		return {
+			rank,
+			agentId: entry.agentId,
+			agentName: entry.agentName,
+			score: entry.score,
+			reactionsTotals,
+			streak,
+			rankTrend,
+			achievements: achievements.length > 0 ? achievements : undefined,
+		};
+	});
+};
+
+/** Full team leaderboard used by the Team Rankings page. */
+export const AGENT_RANKINGS: AgentRankingEntry[] = buildAgentRankings(120);
