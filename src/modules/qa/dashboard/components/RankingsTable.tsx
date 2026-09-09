@@ -15,10 +15,11 @@ import {
 	Button,
 } from '@mantine/core';
 import { IconMedal, IconTrophy, IconTarget } from '@tabler/icons-react';
+import { REACTION_TYPES, type PeerRecognitionType } from '../../../../models/qa/reactions';
 import styles from '../Dashboard.module.css';
 
-/** The four reaction types teammates can give each other */
-export type ReactionType = 'applause' | 'reverence' | 'salute' | 'thumbsUp';
+/** The reaction types teammates can give each other (source of truth: PeerRecognitionType) */
+export type ReactionType = PeerRecognitionType;
 
 export type ReactionCounts = Record<ReactionType, number>;
 
@@ -64,17 +65,17 @@ interface RankingsTableProps {
 }
 
 /**
- * Reaction display config. Emoji are used rather than icons because the
- * requested set (applause, reverence, military salute, thumbs up) has no
- * complete equivalent in the Tabler icon set, and emoji render identically
- * in both dark and light mode.
+ * Reaction display config, derived from the official PeerRecognitionType
+ * emoji/label mappings (`REACTION_TYPES` in `models/qa/reactions.ts`) so the
+ * rankings table stays in sync with the rest of the app.
  */
-const REACTION_CONFIG: { type: ReactionType; emoji: string; label: string }[] = [
-	{ type: 'applause', emoji: '👏', label: 'Applause' },
-	{ type: 'reverence', emoji: '🙇', label: 'Reverence' },
-	{ type: 'salute', emoji: '🫡', label: 'Military Salute' },
-	{ type: 'thumbsUp', emoji: '👍', label: 'Thumbs Up' },
-];
+const REACTION_CONFIG: { type: ReactionType; emoji: string; label: string }[] = (
+	Object.values(REACTION_TYPES) as { type: PeerRecognitionType; emoji?: string; label: string }[]
+).map(config => ({
+	type: config.type,
+	emoji: config.emoji ?? '',
+	label: config.label,
+}));
 
 /**
  * A single clickable reaction chip. Toggling it optimistically adjusts the
