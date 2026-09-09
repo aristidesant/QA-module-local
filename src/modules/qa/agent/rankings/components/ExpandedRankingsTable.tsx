@@ -29,15 +29,21 @@ import {
 	type ColumnDef,
 	type SortingState,
 } from '@tanstack/react-table';
-import {
-	REACTION_TYPES,
-	type PeerRecognitionType,
-} from '~/models/qa/reactions';
+import { REACTION_TYPES } from '~/models/qa/reactions';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 import {
 	AGENT_RANKINGS,
 	type AgentRankingEntry,
 } from '~/modules/qa/dashboard/mockData';
+import {
+	HEALTHY_LEAD_THRESHOLD,
+	REACTION_ORDER,
+	buildRankIndex,
+	getPointLead,
+	getPointLeadTooltip,
+	getRankMovementTooltip,
+	getReactionsTotal,
+} from '../gamification';
 import styles from './ExpandedRankingsTable.module.css';
 
 /** Fixed row height used by the virtualizer (must match `.row` height in the CSS module). */
@@ -48,8 +54,6 @@ const OVERSCAN = 8;
 const DEFAULT_VIEWPORT_HEIGHT = 560;
 /** Max number of achievement badges rendered per row. */
 const MAX_VISIBLE_ACHIEVEMENTS = 3;
-
-const REACTION_ORDER = Object.keys(REACTION_TYPES) as PeerRecognitionType[];
 
 const RANK_BADGE_COLORS: Record<number, string> = {
 	1: 'yellow',
@@ -62,13 +66,6 @@ const EmptyCell: React.FC = () => (
 		—
 	</Text>
 );
-
-/** Sum of every reaction type, used to keep the reactions column sortable. */
-const getReactionsTotal = (entry: AgentRankingEntry): number =>
-	REACTION_ORDER.reduce(
-		(total, type) => total + (entry.reactionsTotals?.[type] ?? 0),
-		0
-	);
 
 export interface ExpandedRankingsTableProps {
 	/** Leaderboard rows. Defaults to the full mock roster. */
@@ -91,6 +88,9 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: 'rank', desc: false },
 	]);
+
+	/** Rank lookup so each row can read the score of the position below it. */
+	const rankIndex = useMemo(() => buildRankIndex(data), [data]);
 
 	const columns = useMemo<ColumnDef<AgentRankingEntry>[]>(
 		() => [
@@ -124,12 +124,34 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 			{
 				accessorKey: 'score',
 				header: 'Score',
-				size: 90,
-				cell: ({ row }) => (
-					<Text size='sm' fw={700} className={styles.score}>
-						{row.original.score}
-					</Text>
-				),
+				size: 150,
+				cell: ({ row }) => {
+					const entry = row.original;
+					const lead = getPointLead(entry, rankIndex);
+
+					return (
+						<Group gap={6} wrap='nowrap'>
+							<Text size='sm' fw={700} className={styles.score}>
+								{entry.score}
+							</Text>
+							{lead.points !== null && (
+								<Tooltip label={getPointLeadTooltip(lead)} withArrow>
+									<Text
+										size='xs'
+										fw={600}
+										className={
+											lead.points > HEALTHY_LEAD_THRESHOLD
+												? styles.leadStrong
+												: styles.leadTight
+										}
+									>
+										+{lead.points} ahead
+									</Text>
+								</Tooltip>
+							)}
+						</Group>
+					);
+				},
 			},
 			{
 				id: 'achievements',
@@ -223,36 +245,41 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 				header: 'Velocity',
 				size: 110,
 				cell: ({ row }) => {
-					const trend = row.original.rankTrend ?? 0;
+					const entry = row.original;
+					const trend = entry.rankTrend ?? 0;
+					const isUp = trend > 0;
+					const isFlat = trend === 0;
 
-					if (trend === 0) {
-						return (
-							<Group gap={4} wrap='nowrap' className={styles.trendFlat}>
-								<IconMinus size={16} />
+					return (
+						<Tooltip label={getRankMovementTooltip(entry)} withArrow>
+							<Group
+								gap={4}
+								wrap='nowrap'
+								className={
+									isFlat
+										? styles.trendFlat
+										: isUp
+											? styles.trendUp
+											: styles.trendDown
+								}
+							>
+								{isFlat && <IconMinus size={16} />}
+								{!isFlat &&
+									(isUp ? (
+										<IconArrowUp size={16} />
+									) : (
+										<IconArrowDown size={16} />
+									))}
 								<Text size='sm' inherit>
-									0
+									{Math.abs(trend)}
 								</Text>
 							</Group>
-						);
-					}
-
-					const isUp = trend > 0;
-					return (
-						<Group
-							gap={4}
-							wrap='nowrap'
-							className={isUp ? styles.trendUp : styles.trendDown}
-						>
-							{isUp ? <IconArrowUp size={16} /> : <IconArrowDown size={16} />}
-							<Text size='sm' inherit>
-								{Math.abs(trend)}
-							</Text>
-						</Group>
+						</Tooltip>
 					);
 				},
 			},
 		],
-		[]
+		[rankIndex]
 	);
 
 	const table = useReactTable({

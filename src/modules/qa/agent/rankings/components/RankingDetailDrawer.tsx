@@ -1,5 +1,14 @@
 import React from 'react';
-import { Badge, Group, Paper, Stack, Tabs, Text } from '@mantine/core';
+import {
+	Badge,
+	Divider,
+	Group,
+	Paper,
+	Stack,
+	Tabs,
+	Text,
+	Tooltip,
+} from '@mantine/core';
 import {
 	IconAward,
 	IconChartBar,
@@ -7,6 +16,14 @@ import {
 } from '@tabler/icons-react';
 import AppDrawer from '~/components/AppDrawer';
 import type { AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
+import {
+	getPointLeadColor,
+	getPointLeadFromRoster,
+	getPointLeadTooltip,
+	getRankMovementColor,
+	getRankMovementTooltip,
+	getReactionsTotal,
+} from '../gamification';
 import AchievementsTab from './tabs/AchievementsTab';
 import MetricsTab from './tabs/MetricsTab';
 import ReactionsTab from './tabs/ReactionsTab';
@@ -35,6 +52,28 @@ const QuickStat: React.FC<QuickStatProps> = ({ label, value }) => (
 	</div>
 );
 
+interface GamificationChipProps {
+	/** Indicator emoji (📊 / 🔥 / 💪 / 🤝). */
+	emoji: string;
+	label: string;
+	tooltip: string;
+	color: string;
+}
+
+/** One compact indicator of the gamification summary row. */
+const GamificationChip: React.FC<GamificationChipProps> = ({
+	emoji,
+	label,
+	tooltip,
+	color,
+}) => (
+	<Tooltip label={tooltip} withArrow>
+		<Badge variant='light' color={color} radius='sm' size='lg'>
+			<span aria-hidden>{emoji}</span> {label}
+		</Badge>
+	</Tooltip>
+);
+
 /**
  * Detail drawer for a leaderboard row: quick stats plus achievements, peer
  * reactions and metric comparison tabs.
@@ -47,6 +86,9 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 	if (!entry) return null;
 
 	const trend = entry.rankTrend ?? 0;
+	const streak = entry.streak ?? 0;
+	const pointLead = getPointLeadFromRoster(entry);
+	const reactionsTotal = getReactionsTotal(entry);
 
 	return (
 		<AppDrawer
@@ -72,17 +114,42 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 						/>
 					</Group>
 
-					<Group gap='xs' mt='sm'>
-						<Badge
-							variant='light'
-							color={trend > 0 ? 'green' : trend < 0 ? 'red' : 'gray'}
-							radius='sm'
-						>
-							{trend > 0 ? '▲' : trend < 0 ? '▼' : '■'} {Math.abs(trend)} vs.
-							last period
-						</Badge>
+					<Divider my='sm' />
+
+					{/* Gamification summary: rank movement · streak · point lead · social proof */}
+					<Group gap='xs'>
+						<GamificationChip
+							emoji='📊'
+							label={`${trend > 0 ? '↑' : trend < 0 ? '↓' : '–'} ${Math.abs(trend)}`}
+							tooltip={getRankMovementTooltip(entry)}
+							color={getRankMovementColor(trend)}
+						/>
+						<GamificationChip
+							emoji='🔥'
+							label={`${streak} ${streak === 1 ? 'week' : 'weeks'}`}
+							tooltip={
+								streak > 0
+									? `${streak} consecutive week${streak === 1 ? '' : 's'} in the top of the ranking`
+									: 'No active streak this period'
+							}
+							color={streak > 0 ? 'orange' : 'gray'}
+						/>
+						<GamificationChip
+							emoji='💪'
+							label={
+								pointLead.points === null ? '—' : `+${pointLead.points} pts`
+							}
+							tooltip={getPointLeadTooltip(pointLead)}
+							color={getPointLeadColor(pointLead.points)}
+						/>
+						<GamificationChip
+							emoji='🤝'
+							label={`${reactionsTotal}`}
+							tooltip={`${reactionsTotal} peer reaction${reactionsTotal === 1 ? '' : 's'} received`}
+							color={reactionsTotal > 0 ? 'grape' : 'gray'}
+						/>
 						{entry.achievements?.length ? (
-							<Badge variant='light' color='blue' radius='sm'>
+							<Badge variant='light' color='blue' radius='sm' size='lg'>
 								{entry.achievements.length} badge
 								{entry.achievements.length === 1 ? '' : 's'}
 							</Badge>

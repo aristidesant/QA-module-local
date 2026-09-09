@@ -114,6 +114,17 @@
 	color: var(--mantine-color-blue-7);
 }
 
+/* Point lead: comfortable gap (> threshold) vs. tight gap. */
+.leadStrong {
+	white-space: nowrap;
+	color: var(--mantine-color-green-7);
+}
+
+.leadTight {
+	white-space: nowrap;
+	color: var(--mantine-color-gray-6);
+}
+
 .reaction {
 	white-space: nowrap;
 	color: var(--mantine-color-gray-8);
@@ -183,6 +194,14 @@
 
 [data-mantine-color-scheme='dark'] .score {
 	color: var(--mantine-color-blue-4);
+}
+
+[data-mantine-color-scheme='dark'] .leadStrong {
+	color: var(--mantine-color-green-4);
+}
+
+[data-mantine-color-scheme='dark'] .leadTight {
+	color: var(--mantine-color-dark-2);
 }
 
 [data-mantine-color-scheme='dark'] .reaction {
