@@ -534,6 +534,13 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			to: '/qa/agent/analytics',
 		},
 		{
+			key: 'role-preview-disputes',
+			label: 'sidebar.rolePreview.items.disputes',
+			icon: <IconFolders size={20} className={styles.menuIcon} />,
+			to: '/qa/agent/disputes',
+			badge: 'disputes',
+		},
+		{
 			key: 'role-preview-rankings',
 			label: 'sidebar.rolePreview.items.rankings',
 			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
