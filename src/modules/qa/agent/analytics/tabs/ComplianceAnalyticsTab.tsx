@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Stack,
 	Group,
@@ -136,11 +137,29 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 	calls,
 	aggregated,
 }) => {
+	const { t } = useTranslation('qa.agent.analytics');
 	const theme = useMantineTheme();
 	const [chartView, setChartView] = useState<'stacked' | 'separate'>('stacked');
 	const [expandedArea, setExpandedArea] = useState<ComplianceAreaKey | null>(
 		null
 	);
+
+	const areaLabels: Record<ComplianceAreaKey, string> = {
+		security: t('compliance.areas.security'),
+		regulatory: t('compliance.areas.regulatory'),
+		legal: t('compliance.areas.legal'),
+	};
+
+	const itemLabels: Record<string, string> = {
+		dataProtection: t('compliance.items.dataProtection'),
+		disclosureCompliance: t('compliance.items.disclosureCompliance'),
+		cobranzaRegulada: t('compliance.items.cobranzaRegulada'),
+		transparenciaConsentimiento: t('compliance.items.transparenciaConsentimiento'),
+		amenazasTradicionales: t('compliance.items.amenazasTradicionales'),
+		rrss: t('compliance.items.rrss'),
+		superintendenciaBancos: t('compliance.items.superintendenciaBancos'),
+		noLlamarList: t('compliance.items.noLlamarList'),
+	};
 
 	const areaColors: Record<ComplianceAreaKey, string> = {
 		security: theme.colors.blue[6],
@@ -217,8 +236,8 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 		const violations: Array<{
 			id: string;
 			date: string;
-			area: string;
-			issue: string;
+			area: ComplianceAreaKey;
+			issueKey: 'securityIssue' | 'regulatoryIssue' | 'legalIssue';
 			severity: 'critical' | 'warning' | 'info';
 		}> = [];
 
@@ -234,8 +253,8 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 				violations.push({
 					id: `sec-${index}`,
 					date,
-					area: 'Security',
-					issue: 'Data Protection: Low compliance detected',
+					area: 'security',
+					issueKey: 'securityIssue',
 					severity: metric.avgSecurityCompliance < 70 ? 'critical' : 'warning',
 				});
 			}
@@ -245,8 +264,8 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 				violations.push({
 					id: `reg-${index}`,
 					date,
-					area: 'Regulatory',
-					issue: 'Regulatory Process: Non-compliance detected',
+					area: 'regulatory',
+					issueKey: 'regulatoryIssue',
 					severity:
 						metric.avgRegulatoryCompliance < 70 ? 'critical' : 'warning',
 				});
@@ -257,8 +276,8 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 				violations.push({
 					id: `leg-${index}`,
 					date,
-					area: 'Legal',
-					issue: 'Legal Compliance: Non-compliance detected',
+					area: 'legal',
+					issueKey: 'legalIssue',
 					severity: metric.avgLegalCompliance < 70 ? 'critical' : 'warning',
 				});
 			}
@@ -293,43 +312,45 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 		<Stack gap='lg'>
 			{/* Summary Cards Row */}
 			<SectionCard
-				title='Compliance Summary'
-				description='Overall compliance metrics by area'
+				title={t('compliance.summary.title')}
+				description={t('compliance.summary.description')}
 				icon={IconShield}
 			>
-				<Grid gap='md'>
-					<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
-						<ComplianceSummaryCard
-							title='Security Score'
-							value={`${summary.avgSecurityCompliance}%`}
-							badge='Area Total'
-							badgeColor={getComplianceColor(summary.avgSecurityCompliance)}
-						/>
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
-						<ComplianceSummaryCard
-							title='Regulatory Score'
-							value={`${summary.avgRegulatoryCompliance}%`}
-							badge='Area Total'
-							badgeColor={getComplianceColor(summary.avgRegulatoryCompliance)}
-						/>
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
-						<ComplianceSummaryCard
-							title='Legal Score'
-							value={`${summary.avgLegalCompliance}%`}
-							badge='Area Total'
-							badgeColor={getComplianceColor(summary.avgLegalCompliance)}
-						/>
-					</Grid.Col>
-				</Grid>
+				{aggregated.length > 0 ? (
+					<Grid gap='md'>
+						<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+							<ComplianceSummaryCard
+								title={t('compliance.summary.security')}
+								value={`${summary.avgSecurityCompliance}%`}
+								badge={t('compliance.summary.areaTotal')}
+								badgeColor={getComplianceColor(summary.avgSecurityCompliance)}
+							/>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+							<ComplianceSummaryCard
+								title={t('compliance.summary.regulatory')}
+								value={`${summary.avgRegulatoryCompliance}%`}
+								badge={t('compliance.summary.areaTotal')}
+								badgeColor={getComplianceColor(summary.avgRegulatoryCompliance)}
+							/>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 6, md: 4 }}>
+							<ComplianceSummaryCard
+								title={t('compliance.summary.legal')}
+								value={`${summary.avgLegalCompliance}%`}
+								badge={t('compliance.summary.areaTotal')}
+								badgeColor={getComplianceColor(summary.avgLegalCompliance)}
+							/>
+						</Grid.Col>
+					</Grid>
+				) : null}
 			</SectionCard>
 
 			{/* Compliance Trend Chart with Toggle */}
 			{trendData.length > 0 && (
 				<SectionCard
-					title='Compliance Trend'
-					description='Compliance scores over time across all areas'
+					title={t('compliance.trend.title')}
+					description={t('compliance.trend.description')}
 					icon={IconTrendingUp}
 				>
 					<Stack gap='md'>
@@ -339,14 +360,14 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 								size='sm'
 								onClick={() => setChartView('stacked')}
 							>
-								Stacked Area
+								{t('compliance.toggle.stacked')}
 							</Button>
 							<Button
 								variant={chartView === 'separate' ? 'filled' : 'light'}
 								size='sm'
 								onClick={() => setChartView('separate')}
 							>
-								Multi-Line
+								{t('compliance.toggle.separate')}
 							</Button>
 						</Group>
 
@@ -381,6 +402,7 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 										<Area
 											type='monotone'
 											dataKey='Security'
+											name={t('compliance.areas.security')}
 											stackId='1'
 											stroke={theme.colors.blue[6]}
 											fill={theme.colors.blue[6]}
@@ -389,6 +411,7 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 										<Area
 											type='monotone'
 											dataKey='Regulatory'
+											name={t('compliance.areas.regulatory')}
 											stackId='1'
 											stroke={theme.colors.orange[6]}
 											fill={theme.colors.orange[6]}
@@ -397,6 +420,7 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 										<Area
 											type='monotone'
 											dataKey='Legal'
+											name={t('compliance.areas.legal')}
 											stackId='1'
 											stroke={theme.colors.red[6]}
 											fill={theme.colors.red[6]}
@@ -432,6 +456,7 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 										<Line
 											type='monotone'
 											dataKey='Security'
+											name={t('compliance.areas.security')}
 											stroke={theme.colors.blue[6]}
 											dot={false}
 											strokeWidth={2}
@@ -439,6 +464,7 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 										<Line
 											type='monotone'
 											dataKey='Regulatory'
+											name={t('compliance.areas.regulatory')}
 											stroke={theme.colors.orange[6]}
 											dot={false}
 											strokeWidth={2}
@@ -446,6 +472,7 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 										<Line
 											type='monotone'
 											dataKey='Legal'
+											name={t('compliance.areas.legal')}
 											stroke={theme.colors.red[6]}
 											dot={false}
 											strokeWidth={2}
@@ -460,9 +487,10 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 
 			{/* Compliance Breakdown Section - Collapsible Cards */}
 			<SectionCard
-				title='Compliance Details'
-				description='Detailed breakdown by compliance area'
+				title={t('compliance.details.title')}
+				description={t('compliance.details.description')}
 			>
+				{aggregated.length > 0 ? (
 				<SimpleGrid cols={{ base: 1, md: 3 }} spacing='md'>
 					{COMPLIANCE_AREA_KEYS.map((area) => {
 						const config = COMPLIANCE_AREA_CONFIG[area];
@@ -486,7 +514,7 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 									<Stack gap='md'>
 										<Group justify='space-between' align='center'>
 											<Text fw={600} size='lg'>
-												{config.displayName}
+												{areaLabels[area]}
 											</Text>
 											<Badge color={getComplianceColor(areaScore)} size='lg'>
 												{areaScore}%
@@ -496,19 +524,19 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 										{/* Collapsed view - show hint text */}
 										{expandedArea !== area && (
 											<Text size='sm' c='dimmed'>
-												Click to expand details
+												{t('compliance.details.clickToExpand')}
 											</Text>
 										)}
 
 										{/* Expanded view - show detailed breakdown */}
 										<Collapse expanded={expandedArea === area}>
 											<Stack gap='sm'>
-												{config.items.map(({ key: itemKey, label }) => {
+												{config.items.map(({ key: itemKey }) => {
 													const itemScore = itemScores[area][itemKey] ?? 0;
 													return (
 														<div key={itemKey}>
 															<Group justify='space-between' mb='xs'>
-																<Text size='sm'>{label}</Text>
+																<Text size='sm'>{itemLabels[itemKey] || itemKey}</Text>
 																<Badge
 																	size='sm'
 																	variant='light'
@@ -538,22 +566,23 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 						);
 					})}
 				</SimpleGrid>
+				) : null}
 			</SectionCard>
 
 			{/* Compliance Issues Table */}
-			{violationsData.length > 0 && (
+			{aggregated.length > 0 && violationsData.length > 0 && (
 				<SectionCard
-					title='Compliance Issues'
-					description='Top 10 most recent violations'
+					title={t('compliance.issues.title')}
+					description={t('compliance.issues.description')}
 				>
 					<div className={styles.tableContainer}>
 						<Table striped highlightOnHover>
 							<Table.Thead>
 								<Table.Tr>
-									<Table.Th>Date</Table.Th>
-									<Table.Th>Area</Table.Th>
-									<Table.Th>Issue</Table.Th>
-									<Table.Th align='center'>Severity</Table.Th>
+									<Table.Th>{t('compliance.issues.date')}</Table.Th>
+									<Table.Th>{t('compliance.issues.area')}</Table.Th>
+									<Table.Th>{t('compliance.issues.issue')}</Table.Th>
+									<Table.Th align='center'>{t('compliance.issues.severity')}</Table.Th>
 								</Table.Tr>
 							</Table.Thead>
 							<Table.Tbody>
@@ -562,18 +591,17 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 										<Table.Td>{row.date}</Table.Td>
 										<Table.Td>
 											<Badge size='sm' variant='light'>
-												{row.area}
+												{areaLabels[row.area]}
 											</Badge>
 										</Table.Td>
-										<Table.Td>{row.issue}</Table.Td>
+										<Table.Td>{t(`compliance.issues.${row.issueKey}`)}</Table.Td>
 										<Table.Td align='center'>
 											<Badge
 												size='sm'
 												variant='dot'
 												color={getSeverityColor(row.severity)}
 											>
-												{row.severity.charAt(0).toUpperCase() +
-													row.severity.slice(1)}
+												{t(`compliance.severity.${row.severity}`)}
 											</Badge>
 										</Table.Td>
 									</Table.Tr>
@@ -587,17 +615,17 @@ const ComplianceAnalyticsTab: React.FC<ComplianceAnalyticsTabProps> = ({
 			{/* Empty State */}
 			{aggregated.length === 0 && (
 				<SectionCard
-					title='No Data'
-					description='No analytics data available for selected period'
+					title={t('empty.noData')}
+					description={t('empty.noDataDescription')}
 				>
 					<Center py='xl'>
 						<Stack gap='xs' align='center'>
 							<IconAlertCircle size={32} opacity={0.5} />
 							<Text c='dimmed'>
-								No compliance data found for the selected date range.
+								{t('compliance.empty.title')}
 							</Text>
 							<Text size='sm' c='dimmed'>
-								Try adjusting your date range or granularity settings.
+								{t('empty.tryAdjusting')}
 							</Text>
 						</Stack>
 					</Center>

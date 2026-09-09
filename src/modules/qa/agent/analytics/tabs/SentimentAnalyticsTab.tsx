@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Stack,
 	Group,
@@ -98,7 +99,19 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, icon, badge, ba
 };
 
 const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _calls, aggregated }) => {
+	const { t } = useTranslation('qa.agent.analytics');
 	const theme = useMantineTheme();
+
+	const emotionLabels: Record<string, string> = {
+		Joy: t('sentiment.emotion.joy'),
+		Trust: t('sentiment.emotion.trust'),
+		Anticipation: t('sentiment.emotion.anticipation'),
+		Surprise: t('sentiment.emotion.surprise'),
+		Anger: t('sentiment.emotion.anger'),
+		Fear: t('sentiment.emotion.fear'),
+		Sadness: t('sentiment.emotion.sadness'),
+		Disgust: t('sentiment.emotion.disgust'),
+	};
 
 	// Calculate summary metrics
 	const summary = useMemo(() => {
@@ -213,51 +226,53 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 		<Stack gap='lg'>
 			{/* Summary Cards Row */}
 			<SectionCard
-				title='Sentiment Summary'
-				description='Overall sentiment metrics from aggregated data'
+				title={t('sentiment.summary.title')}
+				description={t('sentiment.summary.description')}
 				icon={IconMoodSmile}
 			>
-				<Grid gap='md'>
-					<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
-						<SummaryCard
-							title='Avg Agent Sentiment'
-							value={summary.avgAgentSentiment.toFixed(1)}
-							badge='out of 5'
-							badgeColor={getSentimentColor(summary.avgAgentSentiment)}
-						/>
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
-						<SummaryCard
-							title='Avg Customer Sentiment'
-							value={summary.avgCustomerSentiment.toFixed(1)}
-							badge='out of 5'
-							badgeColor={getSentimentColor(summary.avgCustomerSentiment)}
-						/>
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
-						<SummaryCard
-							title='Sentiment Delta'
-							value={`${summary.sentimentDelta > 0 ? '↑' : summary.sentimentDelta < 0 ? '↓' : '→'} ${Math.abs(summary.sentimentDelta).toFixed(2)}`}
-							badge={summary.sentimentDelta > 0 ? 'Customer Higher' : 'Agent Higher'}
-							badgeColor={summary.sentimentDelta > 0 ? 'green' : 'orange'}
-						/>
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
-						<SummaryCard
-							title='Predominant Emotion'
-							value={`${EMOTION_CONFIG[summary.predominantEmotion]?.emoji || ''} ${summary.predominantEmotion}`}
-							badge={`${summary.predominantEmotionCount}x`}
-							badgeColor='violet'
-						/>
-					</Grid.Col>
-				</Grid>
+				{aggregated.length > 0 ? (
+					<Grid gap='md'>
+						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
+							<SummaryCard
+								title={t('sentiment.summary.agentSentiment')}
+								value={summary.avgAgentSentiment.toFixed(1)}
+								badge={t('sentiment.summary.outOfFive')}
+								badgeColor={getSentimentColor(summary.avgAgentSentiment)}
+							/>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
+							<SummaryCard
+								title={t('sentiment.summary.customerSentiment')}
+								value={summary.avgCustomerSentiment.toFixed(1)}
+								badge={t('sentiment.summary.outOfFive')}
+								badgeColor={getSentimentColor(summary.avgCustomerSentiment)}
+							/>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
+							<SummaryCard
+								title={t('sentiment.summary.delta')}
+								value={`${summary.sentimentDelta > 0 ? '↑' : summary.sentimentDelta < 0 ? '↓' : '→'} ${Math.abs(summary.sentimentDelta).toFixed(2)}`}
+								badge={summary.sentimentDelta > 0 ? t('sentiment.summary.customerHigher') : t('sentiment.summary.agentHigher')}
+								badgeColor={summary.sentimentDelta > 0 ? 'green' : 'orange'}
+							/>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
+							<SummaryCard
+								title={t('sentiment.summary.predominantEmotion')}
+								value={`${EMOTION_CONFIG[summary.predominantEmotion]?.emoji || ''} ${emotionLabels[summary.predominantEmotion] || summary.predominantEmotion}`}
+								badge={`${summary.predominantEmotionCount}x`}
+								badgeColor='violet'
+							/>
+						</Grid.Col>
+					</Grid>
+				) : null}
 			</SectionCard>
 
 			{/* Dual-Line Trend Chart */}
 			{trendData.length > 0 && (
 				<SectionCard
-					title='Sentiment Trend'
-					description='Agent vs customer sentiment over time'
+					title={t('sentiment.trend.title')}
+					description={t('sentiment.trend.description')}
 					icon={IconTrendingUp}
 				>
 					<div className={styles.chartContainer}>
@@ -284,7 +299,7 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 									stroke={theme.colors.blue[6]}
 									dot={false}
 									strokeWidth={2}
-									name='Agent Sentiment'
+									name={t('sentiment.trend.agentSentiment')}
 								/>
 								<Line
 									type='monotone'
@@ -292,7 +307,7 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 									stroke={theme.colors.green[6]}
 									dot={false}
 									strokeWidth={2}
-									name='Customer Sentiment'
+									name={t('sentiment.trend.customerSentiment')}
 								/>
 							</LineChart>
 						</ResponsiveContainer>
@@ -301,105 +316,109 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 			)}
 
 			{/* Emotion Distribution Section */}
-			<Grid gap='md'>
-				{/* Part A: Predominant Emotion Card */}
-				<Grid.Col span={{ base: 12, md: 6 }}>
-					<SectionCard title='Predominant Emotion' description='Most frequent emotion in period'>
-						<Card
-							p='lg'
-							radius='md'
-							withBorder
-							style={{
-								borderLeft: `4px solid ${theme.colors.violet[6]}`,
-								backgroundColor: 'var(--mantine-color-gray-0)',
-							}}
-						>
-							<Stack gap='md' align='center'>
-								<Text size='4xl'>{EMOTION_CONFIG[summary.predominantEmotion]?.emoji}</Text>
-								<div style={{ textAlign: 'center' }}>
-									<Text fw={700} size='lg'>
-										{summary.predominantEmotion}
-									</Text>
-									<Text c='dimmed' size='sm' mt='xs'>
-										Appeared {summary.predominantEmotionCount} times in period
-									</Text>
-								</div>
-								<Badge size='lg' variant='dot' color='violet'>
-									{Math.round((summary.predominantEmotionCount / aggregated.length) * 100)}% of calls
-								</Badge>
-							</Stack>
-						</Card>
-					</SectionCard>
-				</Grid.Col>
+			{aggregated.length > 0 ? (
+				<Grid gap='md'>
+					{/* Part A: Predominant Emotion Card */}
+					<Grid.Col span={{ base: 12, md: 6 }}>
+						<SectionCard title={t('sentiment.predominantEmotionCard.title')} description={t('sentiment.predominantEmotionCard.description')}>
+							<Card
+								p='lg'
+								radius='md'
+								withBorder
+								style={{
+									borderLeft: `4px solid ${theme.colors.violet[6]}`,
+									backgroundColor: 'var(--mantine-color-gray-0)',
+								}}
+							>
+								<Stack gap='md' align='center'>
+									<Text fz={48} fw={700}>{EMOTION_CONFIG[summary.predominantEmotion]?.emoji}</Text>
+									<div style={{ textAlign: 'center' }}>
+										<Text fw={700} size='lg'>
+											{emotionLabels[summary.predominantEmotion] || summary.predominantEmotion}
+										</Text>
+										<Text c='dimmed' size='sm' mt='xs'>
+											{t('sentiment.predominantEmotionCard.appearedTimes', { count: summary.predominantEmotionCount })}
+										</Text>
+									</div>
+									<Badge size='lg' variant='dot' color='violet'>
+										{t('sentiment.predominantEmotionCard.percentOfCalls', {
+											percent: Math.round((summary.predominantEmotionCount / aggregated.length) * 100),
+										})}
+									</Badge>
+								</Stack>
+							</Card>
+						</SectionCard>
+					</Grid.Col>
 
-				{/* Part B: 8-Emotion Bar Chart */}
-				<Grid.Col span={{ base: 12, md: 6 }}>
-					<SectionCard title='Emotion Distribution' description='Breakdown of 8 emotions'>
-						{emotionChartDataWithColors.length > 0 ? (
-							<div className={styles.chartContainer}>
-								<ResponsiveContainer width='100%' height={250}>
-									<BarChart
-										data={emotionChartDataWithColors}
-										margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
-										layout='vertical'
-									>
-										<CartesianGrid strokeDasharray='3 3' stroke='var(--mantine-color-gray-2)' />
-										<XAxis type='number' stroke='var(--mantine-color-gray-6)' />
-										<YAxis
-											dataKey='name'
-											type='category'
-											width={30}
-											stroke='var(--mantine-color-gray-6)'
-										/>
-										<Tooltip
-											contentStyle={{
-												backgroundColor: 'var(--mantine-color-gray-0)',
-												border: '1px solid var(--mantine-color-gray-3)',
-												borderRadius: 'var(--mantine-radius-md)',
-											}}
-											formatter={(value) => `${value} occurrences`}
-											labelFormatter={(label) => {
-												const emotion = emotionChartDataWithColors.find((e) => e.name === label);
-												return emotion?.label || label;
-											}}
-										/>
-										<Legend />
-										<Bar
-											dataKey='frequency'
-											name='Frequency'
-											radius={[0, 8, 8, 0]}
+					{/* Part B: 8-Emotion Bar Chart */}
+					<Grid.Col span={{ base: 12, md: 6 }}>
+						<SectionCard title={t('sentiment.distribution.title')} description={t('sentiment.distribution.description')}>
+							{emotionChartDataWithColors.length > 0 ? (
+								<div className={styles.chartContainer}>
+									<ResponsiveContainer width='100%' height={250}>
+										<BarChart
+											data={emotionChartDataWithColors}
+											margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
+											layout='vertical'
 										>
-											{emotionChartDataWithColors.map((entry, index) => (
-												<Cell key={`cell-${index}`} fill={entry.fill} />
-											))}
-										</Bar>
-									</BarChart>
-								</ResponsiveContainer>
-							</div>
-						) : (
-							<Center py='xl'>
-								<Text c='dimmed'>No emotion data available</Text>
-							</Center>
-						)}
-					</SectionCard>
-				</Grid.Col>
-			</Grid>
+											<CartesianGrid strokeDasharray='3 3' stroke='var(--mantine-color-gray-2)' />
+											<XAxis type='number' stroke='var(--mantine-color-gray-6)' />
+											<YAxis
+												dataKey='name'
+												type='category'
+												width={30}
+												stroke='var(--mantine-color-gray-6)'
+											/>
+											<Tooltip
+												contentStyle={{
+													backgroundColor: 'var(--mantine-color-gray-0)',
+													border: '1px solid var(--mantine-color-gray-3)',
+													borderRadius: 'var(--mantine-radius-md)',
+												}}
+												formatter={(value) => t('sentiment.distribution.occurrences', { count: value as number })}
+												labelFormatter={(label) => {
+													const emotion = emotionChartDataWithColors.find((e) => e.name === label);
+													return (emotion && emotionLabels[emotion.label]) || emotion?.label || label;
+												}}
+											/>
+											<Legend />
+											<Bar
+												dataKey='frequency'
+												name={t('sentiment.distribution.frequency')}
+												radius={[0, 8, 8, 0]}
+											>
+												{emotionChartDataWithColors.map((entry, index) => (
+													<Cell key={`cell-${index}`} fill={entry.fill} />
+												))}
+											</Bar>
+										</BarChart>
+									</ResponsiveContainer>
+								</div>
+							) : (
+								<Center py='xl'>
+									<Text c='dimmed'>{t('sentiment.distribution.noData')}</Text>
+								</Center>
+							)}
+						</SectionCard>
+					</Grid.Col>
+				</Grid>
+			) : null}
 
 			{/* Sentiment Comparison Table */}
 			{comparisonData.length > 0 && (
 				<SectionCard
-					title='Sentiment Comparison'
-					description='Top 10 most recent calls with sentiment deltas'
+					title={t('sentiment.comparison.title')}
+					description={t('sentiment.comparison.description')}
 				>
 					<div className={styles.tableContainer}>
 						<Table striped highlightOnHover>
 							<Table.Thead>
 								<Table.Tr>
-									<Table.Th>Date</Table.Th>
-									<Table.Th align='center'>Agent Sentiment</Table.Th>
-									<Table.Th align='center'>Customer Sentiment</Table.Th>
-									<Table.Th align='center'>Delta</Table.Th>
-									<Table.Th>Predominant Emotion</Table.Th>
+									<Table.Th>{t('sentiment.comparison.date')}</Table.Th>
+									<Table.Th align='center'>{t('sentiment.comparison.agentSentiment')}</Table.Th>
+									<Table.Th align='center'>{t('sentiment.comparison.customerSentiment')}</Table.Th>
+									<Table.Th align='center'>{t('sentiment.comparison.delta')}</Table.Th>
+									<Table.Th>{t('sentiment.comparison.predominantEmotion')}</Table.Th>
 								</Table.Tr>
 							</Table.Thead>
 							<Table.Tbody>
@@ -439,7 +458,7 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 											<Table.Td>
 												<Group gap='xs'>
 													<Text>{EMOTION_CONFIG[row.emotion]?.emoji}</Text>
-													<Text>{row.emotion}</Text>
+													<Text>{emotionLabels[row.emotion] || row.emotion}</Text>
 												</Group>
 											</Table.Td>
 										</Table.Tr>
@@ -454,15 +473,15 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 			{/* Empty State */}
 			{aggregated.length === 0 && (
 				<SectionCard
-					title='No Data'
-					description='No analytics data available for selected period'
+					title={t('empty.noData')}
+					description={t('empty.noDataDescription')}
 				>
 					<Center py='xl'>
 						<Stack gap='xs' align='center'>
 							<IconAlertCircle size={32} opacity={0.5} />
-							<Text c='dimmed'>No sentiment data found for the selected date range.</Text>
+							<Text c='dimmed'>{t('sentiment.empty.title')}</Text>
 							<Text size='sm' c='dimmed'>
-								Try adjusting your date range or granularity settings.
+								{t('empty.tryAdjusting')}
 							</Text>
 						</Stack>
 					</Center>

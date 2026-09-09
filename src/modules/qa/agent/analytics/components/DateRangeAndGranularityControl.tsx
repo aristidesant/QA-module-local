@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { Stack, Group, TextInput, SegmentedControl, Checkbox, Button, Text } from '@mantine/core';
 import { useAgentAnalyticsStore } from '~/stores/qa/agentAnalyticsStore';
 
@@ -9,6 +10,7 @@ interface DateRangeAndGranularityControlProps {
 export const DateRangeAndGranularityControl: React.FC<DateRangeAndGranularityControlProps> = ({
 	onApply,
 }) => {
+	const { t } = useTranslation('qa.agent.analytics');
 	const { dateRange, setDateRange, granularity, setGranularity, compareWithPrevious, toggleComparison } = useAgentAnalyticsStore();
 
 	// Local state for form inputs
@@ -39,13 +41,13 @@ export const DateRangeAndGranularityControl: React.FC<DateRangeAndGranularityCon
 			{/* Date Range Row */}
 			<Group grow>
 				<TextInput
-					label='From Date'
+					label={t('controls.fromDate')}
 					type='date'
 					value={fromDate}
 					onChange={(e) => setFromDate(e.currentTarget.value)}
 				/>
 				<TextInput
-					label='To Date'
+					label={t('controls.toDate')}
 					type='date'
 					value={toDate}
 					onChange={(e) => setToDate(e.currentTarget.value)}
@@ -54,14 +56,14 @@ export const DateRangeAndGranularityControl: React.FC<DateRangeAndGranularityCon
 
 			{/* Granularity Control */}
 			<Stack gap='xs'>
-				<Text size='sm' fw={500}>Granularity</Text>
+				<Text size='sm' fw={500}>{t('controls.granularity')}</Text>
 				<SegmentedControl
 					fullWidth
 					data={[
-						{ label: 'Per Call', value: 'per-call' },
-						{ label: 'Daily', value: 'daily' },
-						{ label: 'Weekly', value: 'weekly' },
-						{ label: 'Monthly', value: 'monthly' },
+						{ label: t('controls.granularityOptions.perCall'), value: 'per-call' },
+						{ label: t('controls.granularityOptions.daily'), value: 'daily' },
+						{ label: t('controls.granularityOptions.weekly'), value: 'weekly' },
+						{ label: t('controls.granularityOptions.monthly'), value: 'monthly' },
 					]}
 					value={selectedGranularity}
 					onChange={setSelectedGranularity}
@@ -70,14 +72,14 @@ export const DateRangeAndGranularityControl: React.FC<DateRangeAndGranularityCon
 
 			{/* Comparison Checkbox */}
 			<Checkbox
-				label='Compare to previous period'
+				label={t('controls.compareCheckbox')}
 				checked={compare}
 				onChange={(e) => setCompare(e.currentTarget.checked)}
 			/>
 
 			{/* Apply Button */}
 			<Button fullWidth onClick={handleApply}>
-				Apply
+				{t('controls.applyButton')}
 			</Button>
 		</Stack>
 	);

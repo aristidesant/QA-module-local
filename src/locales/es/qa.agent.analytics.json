@@ -1,0 +1,171 @@
+{
+	"page": {
+		"title": "Analítica",
+		"subtitle": "Tu desempeño en QA, Sentimiento y Cumplimiento"
+	},
+	"controls": {
+		"fromDate": "Fecha desde",
+		"toDate": "Fecha hasta",
+		"granularity": "Granularidad",
+		"granularityOptions": {
+			"perCall": "Por llamada",
+			"daily": "Diario",
+			"weekly": "Semanal",
+			"monthly": "Mensual"
+		},
+		"compareCheckbox": "Comparar con el período anterior",
+		"applyButton": "Aplicar"
+	},
+	"tabs": {
+		"qa": "QA",
+		"sentiment": "Sentimiento y Emoción",
+		"compliance": "Cumplimiento"
+	},
+	"qa": {
+		"summary": {
+			"title": "Resumen de Errores",
+			"description": "Vista general de todos los tipos de error",
+			"ecn": "ECN",
+			"enc": "ENC",
+			"ecc": "ECC",
+			"ecuf": "ECUF",
+			"totalErrors": "Total de Errores",
+			"good": "Bien"
+		},
+		"trend": {
+			"title": "Tendencia de Errores",
+			"description": "Tasas de error a lo largo del tiempo"
+		},
+		"distribution": {
+			"title": "Distribución de Errores",
+			"description": "Desglose porcentual por tipo de error"
+		},
+		"breakdown": {
+			"title": "Desglose de Errores",
+			"description": "Los 10 errores más frecuentes",
+			"date": "Fecha",
+			"errorType": "Tipo de Error",
+			"count": "Cantidad",
+			"severity": "Severidad"
+		},
+		"empty": {
+			"title": "No se encontraron métricas de llamadas para el rango de fechas seleccionado."
+		}
+	},
+	"sentiment": {
+		"summary": {
+			"title": "Resumen de Sentimiento",
+			"description": "Métricas generales de sentimiento de los datos agregados",
+			"agentSentiment": "Sentimiento Prom. del Agente",
+			"customerSentiment": "Sentimiento Prom. del Cliente",
+			"delta": "Delta de Sentimiento",
+			"predominantEmotion": "Emoción Predominante",
+			"outOfFive": "de 5",
+			"customerHigher": "Cliente más alto",
+			"agentHigher": "Agente más alto"
+		},
+		"trend": {
+			"title": "Tendencia de Sentimiento",
+			"description": "Sentimiento del agente vs. cliente a lo largo del tiempo",
+			"agentSentiment": "Sentimiento del Agente",
+			"customerSentiment": "Sentimiento del Cliente"
+		},
+		"predominantEmotionCard": {
+			"title": "Emoción Predominante",
+			"description": "Emoción más frecuente en el período",
+			"appearedTimes": "Apareció {{count}} veces en el período",
+			"percentOfCalls": "{{percent}}% de las llamadas"
+		},
+		"distribution": {
+			"title": "Distribución de Emociones",
+			"description": "Desglose de 8 emociones",
+			"occurrences": "{{count}} ocurrencias",
+			"frequency": "Frecuencia",
+			"noData": "No hay datos de emociones disponibles"
+		},
+		"comparison": {
+			"title": "Comparación de Sentimiento",
+			"description": "Las 10 llamadas más recientes con deltas de sentimiento",
+			"date": "Fecha",
+			"agentSentiment": "Sentimiento del Agente",
+			"customerSentiment": "Sentimiento del Cliente",
+			"delta": "Delta",
+			"predominantEmotion": "Emoción Predominante"
+		},
+		"emotion": {
+			"joy": "Alegría",
+			"trust": "Confianza",
+			"anticipation": "Anticipación",
+			"surprise": "Sorpresa",
+			"anger": "Enojo",
+			"fear": "Miedo",
+			"sadness": "Tristeza",
+			"disgust": "Disgusto"
+		},
+		"empty": {
+			"title": "No se encontraron datos de sentimiento para el rango de fechas seleccionado."
+		}
+	},
+	"compliance": {
+		"summary": {
+			"title": "Resumen de Cumplimiento",
+			"description": "Métricas generales de cumplimiento por área",
+			"security": "Puntaje de Seguridad",
+			"regulatory": "Puntaje Regulatorio",
+			"legal": "Puntaje Legal",
+			"areaTotal": "Total del Área"
+		},
+		"trend": {
+			"title": "Tendencia de Cumplimiento",
+			"description": "Puntajes de cumplimiento a lo largo del tiempo por área"
+		},
+		"toggle": {
+			"stacked": "Área Apilada",
+			"separate": "Multi-línea"
+		},
+		"areas": {
+			"security": "Seguridad",
+			"regulatory": "Regulatorio",
+			"legal": "Legal"
+		},
+		"items": {
+			"dataProtection": "Protección de Datos",
+			"disclosureCompliance": "Cumplimiento de Divulgación",
+			"cobranzaRegulada": "Proceso de Cobranza",
+			"transparenciaConsentimiento": "Transparencia",
+			"amenazasTradicionales": "Amenazas",
+			"rrss": "Redes Sociales",
+			"superintendenciaBancos": "Superintendencia de Bancos",
+			"noLlamarList": "No Llamar"
+		},
+		"details": {
+			"title": "Detalles de Cumplimiento",
+			"description": "Desglose detallado por área de cumplimiento",
+			"clickToExpand": "Clic para ver los detalles"
+		},
+		"issues": {
+			"title": "Incidencias de Cumplimiento",
+			"description": "Las 10 violaciones más recientes",
+			"date": "Fecha",
+			"area": "Área",
+			"issue": "Incidencia",
+			"severity": "Severidad",
+			"securityIssue": "Protección de Datos: se detectó bajo cumplimiento",
+			"regulatoryIssue": "Proceso Regulatorio: se detectó incumplimiento",
+			"legalIssue": "Cumplimiento Legal: se detectó incumplimiento"
+		},
+		"severity": {
+			"critical": "Crítico",
+			"warning": "Advertencia",
+			"info": "Info"
+		},
+		"empty": {
+			"title": "No se encontraron datos de cumplimiento para el rango de fechas seleccionado."
+		}
+	},
+	"empty": {
+		"noData": "Sin Datos",
+		"noDataDescription": "No hay datos de analítica disponibles para el período seleccionado",
+		"tryAdjusting": "Intenta ajustar el rango de fechas o la granularidad."
+	}
+}

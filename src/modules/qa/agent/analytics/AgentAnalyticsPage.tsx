@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import { Stack, Tabs } from '@mantine/core';
 import { useAgentAnalyticsStore } from '~/stores/qa/agentAnalyticsStore';
@@ -7,6 +8,7 @@ import { QAAnalyticsTab, SentimentAnalyticsTab, ComplianceAnalyticsTab } from '.
 import { AGENT_CALL_METRICS, aggregateMetricsByDateRange } from '~/modules/qa/dashboard/mockData';
 
 const AgentAnalyticsPage: React.FC = () => {
+	const { t } = useTranslation('qa.agent.analytics');
 	const { activeTab, setActiveTab, dateRange, granularity } = useAgentAnalyticsStore();
 
 	// Aggregate metrics based on date range and granularity
@@ -30,8 +32,8 @@ const AgentAnalyticsPage: React.FC = () => {
 	return (
 		<ContentContainer
 			contentWidth='full'
-			title='Analytics'
-			description='Your performance across QA, Sentiment, and Compliance'
+			title={t('page.title')}
+			description={t('page.subtitle')}
 		>
 			<Stack gap='lg'>
 				{/* Date Range and Granularity Control */}
@@ -46,9 +48,9 @@ const AgentAnalyticsPage: React.FC = () => {
 					defaultValue='qa'
 				>
 					<Tabs.List>
-						<Tabs.Tab value='qa'>QA</Tabs.Tab>
-						<Tabs.Tab value='sentiment'>Sentiment & Emotion</Tabs.Tab>
-						<Tabs.Tab value='compliance'>Compliance</Tabs.Tab>
+						<Tabs.Tab value='qa'>{t('tabs.qa')}</Tabs.Tab>
+						<Tabs.Tab value='sentiment'>{t('tabs.sentiment')}</Tabs.Tab>
+						<Tabs.Tab value='compliance'>{t('tabs.compliance')}</Tabs.Tab>
 					</Tabs.List>
 
 					<Tabs.Panel value='qa' pt='lg'>

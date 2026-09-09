@@ -1,0 +1,171 @@
+{
+	"page": {
+		"title": "Analytics",
+		"subtitle": "Your performance across QA, Sentiment, and Compliance"
+	},
+	"controls": {
+		"fromDate": "From Date",
+		"toDate": "To Date",
+		"granularity": "Granularity",
+		"granularityOptions": {
+			"perCall": "Per Call",
+			"daily": "Daily",
+			"weekly": "Weekly",
+			"monthly": "Monthly"
+		},
+		"compareCheckbox": "Compare to previous period",
+		"applyButton": "Apply"
+	},
+	"tabs": {
+		"qa": "QA",
+		"sentiment": "Sentiment & Emotion",
+		"compliance": "Compliance"
+	},
+	"qa": {
+		"summary": {
+			"title": "Error Summary",
+			"description": "High-level overview of all error types",
+			"ecn": "ECN",
+			"enc": "ENC",
+			"ecc": "ECC",
+			"ecuf": "ECUF",
+			"totalErrors": "Total Errors",
+			"good": "Good"
+		},
+		"trend": {
+			"title": "Error Trends",
+			"description": "Error rates over time"
+		},
+		"distribution": {
+			"title": "Error Distribution",
+			"description": "Percentage breakdown by error type"
+		},
+		"breakdown": {
+			"title": "Error Breakdown",
+			"description": "Top 10 errors by frequency",
+			"date": "Date",
+			"errorType": "Error Type",
+			"count": "Count",
+			"severity": "Severity"
+		},
+		"empty": {
+			"title": "No call metrics found for the selected date range."
+		}
+	},
+	"sentiment": {
+		"summary": {
+			"title": "Sentiment Summary",
+			"description": "Overall sentiment metrics from aggregated data",
+			"agentSentiment": "Avg Agent Sentiment",
+			"customerSentiment": "Avg Customer Sentiment",
+			"delta": "Sentiment Delta",
+			"predominantEmotion": "Predominant Emotion",
+			"outOfFive": "out of 5",
+			"customerHigher": "Customer Higher",
+			"agentHigher": "Agent Higher"
+		},
+		"trend": {
+			"title": "Sentiment Trend",
+			"description": "Agent vs customer sentiment over time",
+			"agentSentiment": "Agent Sentiment",
+			"customerSentiment": "Customer Sentiment"
+		},
+		"predominantEmotionCard": {
+			"title": "Predominant Emotion",
+			"description": "Most frequent emotion in period",
+			"appearedTimes": "Appeared {{count}} times in period",
+			"percentOfCalls": "{{percent}}% of calls"
+		},
+		"distribution": {
+			"title": "Emotion Distribution",
+			"description": "Breakdown of 8 emotions",
+			"occurrences": "{{count}} occurrences",
+			"frequency": "Frequency",
+			"noData": "No emotion data available"
+		},
+		"comparison": {
+			"title": "Sentiment Comparison",
+			"description": "Top 10 most recent calls with sentiment deltas",
+			"date": "Date",
+			"agentSentiment": "Agent Sentiment",
+			"customerSentiment": "Customer Sentiment",
+			"delta": "Delta",
+			"predominantEmotion": "Predominant Emotion"
+		},
+		"emotion": {
+			"joy": "Joy",
+			"trust": "Trust",
+			"anticipation": "Anticipation",
+			"surprise": "Surprise",
+			"anger": "Anger",
+			"fear": "Fear",
+			"sadness": "Sadness",
+			"disgust": "Disgust"
+		},
+		"empty": {
+			"title": "No sentiment data found for the selected date range."
+		}
+	},
+	"compliance": {
+		"summary": {
+			"title": "Compliance Summary",
+			"description": "Overall compliance metrics by area",
+			"security": "Security Score",
+			"regulatory": "Regulatory Score",
+			"legal": "Legal Score",
+			"areaTotal": "Area Total"
+		},
+		"trend": {
+			"title": "Compliance Trend",
+			"description": "Compliance scores over time across all areas"
+		},
+		"toggle": {
+			"stacked": "Stacked Area",
+			"separate": "Multi-Line"
+		},
+		"areas": {
+			"security": "Security",
+			"regulatory": "Regulatory",
+			"legal": "Legal"
+		},
+		"items": {
+			"dataProtection": "Data Protection",
+			"disclosureCompliance": "Disclosure Compliance",
+			"cobranzaRegulada": "Billing Process",
+			"transparenciaConsentimiento": "Transparency",
+			"amenazasTradicionales": "Threats",
+			"rrss": "Social Media",
+			"superintendenciaBancos": "Banking Superintendence",
+			"noLlamarList": "Do-Not-Call"
+		},
+		"details": {
+			"title": "Compliance Details",
+			"description": "Detailed breakdown by compliance area",
+			"clickToExpand": "Click to expand details"
+		},
+		"issues": {
+			"title": "Compliance Issues",
+			"description": "Top 10 most recent violations",
+			"date": "Date",
+			"area": "Area",
+			"issue": "Issue",
+			"severity": "Severity",
+			"securityIssue": "Data Protection: Low compliance detected",
+			"regulatoryIssue": "Regulatory Process: Non-compliance detected",
+			"legalIssue": "Legal Compliance: Non-compliance detected"
+		},
+		"severity": {
+			"critical": "Critical",
+			"warning": "Warning",
+			"info": "Info"
+		},
+		"empty": {
+			"title": "No compliance data found for the selected date range."
+		}
+	},
+	"empty": {
+		"noData": "No Data",
+		"noDataDescription": "No analytics data available for selected period",
+		"tryAdjusting": "Try adjusting your date range or granularity settings."
+	}
+}

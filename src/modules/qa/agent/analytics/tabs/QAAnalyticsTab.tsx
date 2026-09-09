@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Stack,
 	Group,
@@ -25,10 +26,11 @@ interface SummaryCardProps {
 	title: string;
 	value: number;
 	severity: 'good' | 'warning' | 'critical';
+	goodLabel: string;
 	icon?: React.ReactNode;
 }
 
-const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, severity }) => {
+const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, severity, goodLabel }) => {
 	const getBadgeColor = () => {
 		switch (severity) {
 			case 'good':
@@ -57,7 +59,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, severity }) => 
 					</Text>
 					{value === 0 ? (
 						<Badge size='sm' variant='light' color='green'>
-							Good
+							{goodLabel}
 						</Badge>
 					) : (
 						<Badge size='sm' variant='light' color={getBadgeColor()}>
@@ -74,6 +76,7 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, severity }) => 
 };
 
 const QAAnalyticsTab: React.FC<QAAnalyticsTabProps> = ({ aggregated }) => {
+	const { t } = useTranslation('qa.agent.analytics');
 	const theme = useMantineTheme();
 
 	// Get error colors from theme
@@ -207,49 +210,56 @@ const QAAnalyticsTab: React.FC<QAAnalyticsTabProps> = ({ aggregated }) => {
 	return (
 		<Stack gap='lg'>
 			{/* Summary Cards Row */}
-			<SectionCard title='Error Summary' description='High-level overview of all error types' icon={IconAlertCircle}>
-				<Grid gap='md'>
-					<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 2.4 }}>
-						<SummaryCard
-							title='ECN'
-							value={summary.ecnCount}
-							severity={summary.ecnCount > 0 ? 'critical' : 'good'}
-						/>
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 2.4 }}>
-						<SummaryCard
-							title='ENC'
-							value={summary.encCount}
-							severity={summary.encCount > 0 ? 'warning' : 'good'}
-						/>
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 2.4 }}>
-						<SummaryCard
-							title='ECC'
-							value={summary.eccCount}
-							severity={summary.eccCount > 0 ? 'warning' : 'good'}
-						/>
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 2.4 }}>
-						<SummaryCard
-							title='ECUF'
-							value={summary.ecufCount}
-							severity={summary.ecufCount > 0 ? 'warning' : 'good'}
-						/>
-					</Grid.Col>
-					<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 2.4 }}>
-						<SummaryCard
-							title='Total Errors'
-							value={summary.totalErrors}
-							severity={summary.totalErrors > 5 ? 'critical' : summary.totalErrors > 0 ? 'warning' : 'good'}
-						/>
-					</Grid.Col>
-				</Grid>
+			<SectionCard title={t('qa.summary.title')} description={t('qa.summary.description')} icon={IconAlertCircle}>
+				{aggregated.length > 0 ? (
+					<Grid gap='md'>
+						<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 2.4 }}>
+							<SummaryCard
+								title={t('qa.summary.ecn')}
+								value={summary.ecnCount}
+								severity={summary.ecnCount > 0 ? 'critical' : 'good'}
+								goodLabel={t('qa.summary.good')}
+							/>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 2.4 }}>
+							<SummaryCard
+								title={t('qa.summary.enc')}
+								value={summary.encCount}
+								severity={summary.encCount > 0 ? 'warning' : 'good'}
+								goodLabel={t('qa.summary.good')}
+							/>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 2.4 }}>
+							<SummaryCard
+								title={t('qa.summary.ecc')}
+								value={summary.eccCount}
+								severity={summary.eccCount > 0 ? 'warning' : 'good'}
+								goodLabel={t('qa.summary.good')}
+							/>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 2.4 }}>
+							<SummaryCard
+								title={t('qa.summary.ecuf')}
+								value={summary.ecufCount}
+								severity={summary.ecufCount > 0 ? 'warning' : 'good'}
+								goodLabel={t('qa.summary.good')}
+							/>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 2.4 }}>
+							<SummaryCard
+								title={t('qa.summary.totalErrors')}
+								value={summary.totalErrors}
+								severity={summary.totalErrors > 5 ? 'critical' : summary.totalErrors > 0 ? 'warning' : 'good'}
+								goodLabel={t('qa.summary.good')}
+							/>
+						</Grid.Col>
+					</Grid>
+				) : null}
 			</SectionCard>
 
 			{/* Trend Chart */}
 			{trendData.length > 0 && (
-				<SectionCard title='Error Trends' description='Error rates over time' icon={IconTrendingUp}>
+				<SectionCard title={t('qa.trend.title')} description={t('qa.trend.description')} icon={IconTrendingUp}>
 					<div className={styles.chartContainer}>
 						<ResponsiveContainer width='100%' height={300}>
 							<LineChart
@@ -302,8 +312,8 @@ const QAAnalyticsTab: React.FC<QAAnalyticsTabProps> = ({ aggregated }) => {
 			)}
 
 			{/* Error Distribution Chart */}
-			{summary.totalErrors > 0 && (
-				<SectionCard title='Error Distribution' description='Percentage breakdown by error type'>
+			{aggregated.length > 0 && summary.totalErrors > 0 && (
+				<SectionCard title={t('qa.distribution.title')} description={t('qa.distribution.description')}>
 					<div className={styles.chartContainer}>
 						<ResponsiveContainer width='100%' height={300}>
 							<PieChart>
@@ -338,16 +348,16 @@ const QAAnalyticsTab: React.FC<QAAnalyticsTabProps> = ({ aggregated }) => {
 			)}
 
 			{/* Error Breakdown Table */}
-			{breakdownData.length > 0 && (
-				<SectionCard title='Error Breakdown' description='Top 10 errors by frequency'>
+			{aggregated.length > 0 && breakdownData.length > 0 && (
+				<SectionCard title={t('qa.breakdown.title')} description={t('qa.breakdown.description')}>
 					<div className={styles.tableContainer}>
 						<Table striped highlightOnHover>
 							<Table.Thead>
 								<Table.Tr>
-									<Table.Th>Date</Table.Th>
-									<Table.Th>Error Type</Table.Th>
-									<Table.Th align='right'>Count</Table.Th>
-									<Table.Th align='right'>Severity</Table.Th>
+									<Table.Th>{t('qa.breakdown.date')}</Table.Th>
+									<Table.Th>{t('qa.breakdown.errorType')}</Table.Th>
+									<Table.Th align='right'>{t('qa.breakdown.count')}</Table.Th>
+									<Table.Th align='right'>{t('qa.breakdown.severity')}</Table.Th>
 								</Table.Tr>
 							</Table.Thead>
 							<Table.Tbody>
@@ -391,12 +401,12 @@ const QAAnalyticsTab: React.FC<QAAnalyticsTabProps> = ({ aggregated }) => {
 
 			{/* Empty State */}
 			{aggregated.length === 0 && (
-				<SectionCard title='No Data' description='No analytics data available for selected period'>
+				<SectionCard title={t('empty.noData')} description={t('empty.noDataDescription')}>
 					<Center py='xl'>
 						<Stack gap='xs' align='center'>
 							<IconAlertCircle size={32} opacity={0.5} />
-							<Text c='dimmed'>No call metrics found for the selected date range.</Text>
-							<Text size='sm' c='dimmed'>Try adjusting your date range or granularity settings.</Text>
+							<Text c='dimmed'>{t('qa.empty.title')}</Text>
+							<Text size='sm' c='dimmed'>{t('empty.tryAdjusting')}</Text>
 						</Stack>
 					</Center>
 				</SectionCard>
