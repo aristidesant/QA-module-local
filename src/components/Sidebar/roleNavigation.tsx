@@ -53,7 +53,7 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 		key: 'agent-rankings',
 		label: 'sidebar.agent.rankings',
 		icon: <IconTarget size={20} className={styles.menuIcon} />,
-		to: '/workspace/qa/agent/rankings',
+		to: '/qa/agent/rankings',
 		i18nNamespace: 'qa.agent',
 	},
 	{
