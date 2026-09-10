@@ -16,6 +16,10 @@
 		"compareCheckbox": "Compare to previous period",
 		"applyButton": "Apply"
 	},
+	"filters": {
+		"campaign": "Campaign",
+		"allCampaigns": "All Campaigns"
+	},
 	"tabs": {
 		"qa": "QA",
 		"sentiment": "Sentiment & Emotion",

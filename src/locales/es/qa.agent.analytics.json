@@ -16,6 +16,10 @@
 		"compareCheckbox": "Comparar con el período anterior",
 		"applyButton": "Aplicar"
 	},
+	"filters": {
+		"campaign": "Campaña",
+		"allCampaigns": "Todas las Campañas"
+	},
 	"tabs": {
 		"qa": "QA",
 		"sentiment": "Sentimiento y Emoción",
