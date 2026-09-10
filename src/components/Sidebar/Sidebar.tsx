@@ -433,6 +433,13 @@ const qaPrimaryItems: SidebarNavItem[] = [
 		to: '/qa/reporting',
 		i18nNamespace: 'qa.reporting',
 	},
+	{
+		key: 'qa-agent-rankings',
+		label: 'sidebar.items.qaAgentRankings',
+		icon: <IconChartLine size={20} className={styles.menuIcon} />,
+		to: '/qa/agent/rankings',
+		i18nNamespace: 'qa.agent',
+	},
 ];
 
 // Backoffice is its own app mode, not a section in the Campaign-management
