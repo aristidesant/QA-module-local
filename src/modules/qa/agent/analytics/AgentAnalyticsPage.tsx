@@ -9,17 +9,25 @@ import { AGENT_CALL_METRICS, aggregateMetricsByDateRange } from '~/modules/qa/da
 
 const AgentAnalyticsPage: React.FC = () => {
 	const { t } = useTranslation('qa.agent.analytics');
-	const { activeTab, setActiveTab, dateRange, granularity } = useAgentAnalyticsStore();
+	const { activeTab, setActiveTab, dateRange, granularity, selectedCampaign } = useAgentAnalyticsStore();
+
+	// Filter metrics by selected campaign
+	const campaignFilteredMetrics = useMemo(() => {
+		if (selectedCampaign === null) {
+			return AGENT_CALL_METRICS;
+		}
+		return AGENT_CALL_METRICS.filter(metric => metric.campaignId === selectedCampaign);
+	}, [selectedCampaign]);
 
 	// Aggregate metrics based on date range and granularity
 	const aggregatedMetrics = useMemo(() => {
 		return aggregateMetricsByDateRange(
-			AGENT_CALL_METRICS,
+			campaignFilteredMetrics,
 			dateRange.from.toISOString(),
 			dateRange.to.toISOString(),
 			granularity
 		);
-	}, [dateRange, granularity]);
+	}, [campaignFilteredMetrics, dateRange, granularity]);
 
 	const handleApply = (
 		_range: { from: Date; to: Date },
