@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
 	Stack,
 	Title,
@@ -28,6 +29,7 @@ interface Dispute {
 }
 
 const DisputesPage: React.FC = () => {
+	const navigate = useNavigate();
 	const [searchTerm, setSearchTerm] = useState('');
 	const [typeFilter, setTypeFilter] = useState<string | null>(null);
 	const [statusFilter, setStatusFilter] = useState<string | null>(null);
@@ -448,7 +450,7 @@ const DisputesPage: React.FC = () => {
 						]}
 						data={filteredDisputes}
 						onRowClick={(dispute: Dispute) => {
-							console.log('Viewing dispute:', dispute.id);
+							navigate(`/qa/disputes/${dispute.id}`);
 						}}
 					/>
 				</SectionCard>
