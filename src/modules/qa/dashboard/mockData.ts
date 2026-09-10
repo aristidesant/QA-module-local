@@ -11,6 +11,7 @@ import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 import type { PeerRecognitionType } from '~/models/qa/reactions';
 import type { LeaderboardMetadata, UserReactionMap } from '~/modules/qa/agent/rankings/types/leaderboard';
 import { UserReactionType } from '~/modules/qa/agent/rankings/types/leaderboard';
+import { BurnoutRiskLevel, BurnoutRiskData } from './types/burnoutRisk';
 
 // ============================================================================
 // TypeScript Interfaces
@@ -3219,4 +3220,12 @@ export const getRankingMetricsComparison = (
 	};
 
 	return { current, previous };
+};
+
+export const AGENT_BURNOUT_RISK: BurnoutRiskData = {
+	agentId: 'agent-001',
+	level: BurnoutRiskLevel.MEDIUM,
+	percentage: 65,
+	trend: 'stable',
+	lastUpdated: '2026-09-10T10:00:00Z',
 };
