@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, Title, Text } from '@mantine/core';
+import { Stack, Title, Text, Grid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import { useDashboardRoleRedirect } from '~/hooks/useDashboardRoleRedirect';
@@ -12,6 +12,7 @@ import {
 	BestWorstCallsPanel,
 	CriticalIssuesTable,
 } from '../components';
+import BurnoutRiskWidget from '../components/BurnoutRiskWidget';
 import type { Insight } from '../components/QuickInsightsWidget';
 import type { PerformanceTrendPoint } from '../components/PerformanceTrendChart';
 import {
@@ -20,6 +21,7 @@ import {
 	AGENT_QUICK_STATS,
 	BEST_WORST_CALLS,
 	CRITICAL_ISSUES_AGENT,
+	AGENT_BURNOUT_RISK,
 } from '../mockData';
 
 /**
@@ -105,15 +107,30 @@ const AgentDashboard: React.FC = () => {
 					<PerformanceTrendChart data={AGENT_PERFORMANCE_TREND} />
 				</SectionCard>
 
-				{/* Critical Issues Table */}
-				{CRITICAL_ISSUES_AGENT.length > 0 && (
-					<SectionCard
-						title='Critical Issues'
-						description='Urgent items requiring your attention'
-					>
-						<CriticalIssuesTable issues={CRITICAL_ISSUES_AGENT} />
-					</SectionCard>
-				)}
+				{/* 2-Row Grid: Burnout Risk and Critical Issues */}
+				<Grid>
+					{/* Burnout Risk Widget */}
+					<Grid.Col span={{ base: 12, sm: 6, md: 6, lg: 6 }}>
+						<SectionCard
+							title='Burnout Assessment'
+							description='Your current burnout risk level'
+						>
+							<BurnoutRiskWidget data={AGENT_BURNOUT_RISK} />
+						</SectionCard>
+					</Grid.Col>
+
+					{/* Critical Issues Table */}
+					<Grid.Col span={{ base: 12, sm: 6, md: 6, lg: 6 }}>
+						{CRITICAL_ISSUES_AGENT.length > 0 && (
+							<SectionCard
+								title='Critical Issues'
+								description='Urgent items requiring your attention'
+							>
+								<CriticalIssuesTable issues={CRITICAL_ISSUES_AGENT} />
+							</SectionCard>
+						)}
+					</Grid.Col>
+				</Grid>
 
 				{/* Best and Worst Calls Panel */}
 				<SectionCard
