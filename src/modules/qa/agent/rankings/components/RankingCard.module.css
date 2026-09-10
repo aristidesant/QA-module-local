@@ -1,0 +1,107 @@
+/**
+ * Compact leaderboard card used on tablet / mobile instead of the full table.
+ * All colors resolve through Mantine CSS variables / light-dark() so the card
+ * reads correctly in both light and dark mode.
+ */
+
+.card {
+	background: var(--mantine-color-body);
+	border-color: light-dark(
+		var(--mantine-color-gray-3),
+		var(--mantine-color-dark-4)
+	);
+	transition:
+		border-color 150ms ease,
+		background-color 150ms ease;
+}
+
+.card[data-clickable] {
+	cursor: pointer;
+}
+
+.card[data-clickable]:hover {
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+	border-color: light-dark(
+		var(--mantine-color-gray-4),
+		var(--mantine-color-dark-3)
+	);
+}
+
+.card[data-clickable]:focus-visible {
+	outline: 2px solid var(--mantine-color-blue-filled);
+	outline-offset: 2px;
+}
+
+.nameBlock {
+	flex: 1;
+	min-width: 0;
+}
+
+.score {
+	color: light-dark(
+		var(--mantine-color-blue-7),
+		var(--mantine-color-blue-4)
+	);
+	line-height: 1.1;
+}
+
+/* Point lead: comfortable gap (> threshold) vs. tight gap. */
+.leadStrong {
+	white-space: nowrap;
+	color: light-dark(
+		var(--mantine-color-green-7),
+		var(--mantine-color-green-4)
+	);
+}
+
+.leadTight {
+	white-space: nowrap;
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+}
+
+.streak {
+	white-space: nowrap;
+	color: light-dark(
+		var(--mantine-color-orange-7),
+		var(--mantine-color-orange-4)
+	);
+}
+
+.reaction {
+	white-space: nowrap;
+	color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-0));
+}
+
+.achievement {
+	font-size: 16px;
+	line-height: 1;
+}
+
+.trendUp {
+	color: light-dark(
+		var(--mantine-color-green-7),
+		var(--mantine-color-green-4)
+	);
+}
+
+.trendDown {
+	color: light-dark(var(--mantine-color-red-7), var(--mantine-color-red-4));
+}
+
+.trendFlat {
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-2));
+}
+
+.divider {
+	border-color: light-dark(
+		var(--mantine-color-gray-2),
+		var(--mantine-color-dark-5)
+	);
+}
+
+.footer {
+	color: var(--mantine-color-anchor);
+}
