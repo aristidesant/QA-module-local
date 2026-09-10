@@ -17,11 +17,15 @@ interface AgentAnalyticsStoreState {
 	// Tab state
 	activeTab: AnalyticsTab;
 
+	// Campaign filter
+	selectedCampaign: string | null; // null means "All Campaigns"
+
 	// Actions
 	setDateRange: (range: DateRange) => void;
 	setGranularity: (granularity: AnalyticsGranularity) => void;
 	toggleComparison: () => void;
 	setActiveTab: (tab: AnalyticsTab) => void;
+	setCampaign: (campaignId: string | null) => void;
 }
 
 // Helper to get date 7 days ago from today
@@ -41,6 +45,7 @@ export const useAgentAnalyticsStore = create<AgentAnalyticsStoreState>((set) => 
 	granularity: 'daily',
 	compareWithPrevious: false,
 	activeTab: 'qa',
+	selectedCampaign: null, // "All Campaigns" by default
 
 	// Actions
 	setDateRange: (range) => set({ dateRange: range }),
@@ -50,4 +55,5 @@ export const useAgentAnalyticsStore = create<AgentAnalyticsStoreState>((set) => 
 			compareWithPrevious: !state.compareWithPrevious,
 		})),
 	setActiveTab: (tab) => set({ activeTab: tab }),
+	setCampaign: (campaignId) => set({ selectedCampaign: campaignId }),
 }));
