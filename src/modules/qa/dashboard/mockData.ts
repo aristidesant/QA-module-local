@@ -9,6 +9,8 @@ import type {
 } from '~/models/qa/notifications';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 import type { PeerRecognitionType } from '~/models/qa/reactions';
+import type { LeaderboardMetadata, UserReactionMap } from '~/modules/qa/agent/rankings/types/leaderboard';
+import { UserReactionType } from '~/modules/qa/agent/rankings/types/leaderboard';
 
 // ============================================================================
 // TypeScript Interfaces
@@ -136,6 +138,30 @@ export interface AggregatedMetrics {
 	totalErrorsECUF: number;
 	predominantEmotion: string;
 }
+
+// ============================================================================
+// Leaderboard Mock Data
+// ============================================================================
+
+export const currentLeaderboard: LeaderboardMetadata = {
+	id: 'lboard-2026-09-01',
+	name: 'September Agent Performance',
+	description: 'Agent performance ranking for September 2026',
+	startDate: '2026-09-01T00:00:00Z',
+	endDate: '2026-09-30T23:59:59Z',
+	scoreType: 'Sentiment & Emotion',
+	winnerId: null,
+	createdBy: 'supervisor-001',
+	status: 'active',
+};
+
+export const userReactions: UserReactionMap = {
+	'agent-001': UserReactionType.THUMBS_UP,
+	'agent-002': null,
+	'agent-003': UserReactionType.FIRE,
+	'agent-004': null,
+	'agent-005': UserReactionType.CLAPPING_HANDS,
+};
 
 // ============================================================================
 // Agent Mock Data (Personal Metrics)
