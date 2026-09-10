@@ -2823,6 +2823,26 @@ const buildAgentRankings = (count: number): AgentRankingEntry[] => {
 /** Full team leaderboard used by the Team Rankings page. */
 export const AGENT_RANKINGS: AgentRankingEntry[] = buildAgentRankings(120);
 
+/**
+ * Determine if a leaderboard period has ended and auto-select winner
+ */
+export function selectWinnerIfPeriodEnded(
+	leaderboard: LeaderboardMetadata,
+	roster: AgentRankingEntry[]
+): void {
+	const now = new Date();
+	const endDate = new Date(leaderboard.endDate);
+
+	if (now >= endDate && leaderboard.winnerId === null) {
+		// Auto-select rank #1 as winner
+		const winner = roster.find(entry => entry.rank === 1);
+		if (winner) {
+			leaderboard.winnerId = winner.agentId;
+			leaderboard.status = 'completed';
+		}
+	}
+}
+
 // ============================================================================
 // Ranking Detail Drawer mock data
 // ----------------------------------------------------------------------------
