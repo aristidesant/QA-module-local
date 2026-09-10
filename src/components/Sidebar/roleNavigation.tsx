@@ -259,11 +259,23 @@ export const getOperationManagerNavigation = (): SidebarNavItem[] => [
 	},
 ];
 
-export type PreviewRole = 'agent' | 'supervisor' | 'qaManager' | 'operationManager';
+// SUPER ADMIN NAVIGATION
+export const getSuperAdminNavigation = (): SidebarNavItem[] => [
+	{
+		key: 'superadmin-rankings',
+		label: 'sidebar.superadmin.rankings',
+		icon: <IconTarget size={20} className={styles.menuIcon} />,
+		to: '/qa/agent/rankings',
+		i18nNamespace: 'qa.agent',
+	},
+];
+
+export type PreviewRole = 'agent' | 'supervisor' | 'qaManager' | 'operationManager' | 'superAdmin';
 
 export const roleNavigationMap: Record<PreviewRole, () => SidebarNavItem[]> = {
 	agent: getAgentNavigation,
 	supervisor: getSupervisorNavigation,
 	qaManager: getQAManagerNavigation,
 	operationManager: getOperationManagerNavigation,
+	superAdmin: getSuperAdminNavigation,
 };
