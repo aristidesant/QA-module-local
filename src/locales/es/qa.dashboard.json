@@ -1,4 +1,17 @@
 {
+	"burnout": {
+		"title": "Riesgo de Agotamiento",
+		"level": {
+			"low": "Bajo",
+			"medium": "Medio",
+			"high": "Alto"
+		},
+		"trend": {
+			"improving": "Mejorando",
+			"stable": "Estable",
+			"declining": "Empeorando"
+		}
+	},
 	"aiStatus": {
 		"centerLabel": "{{count}} IA",
 		"description": "Resultados del pipeline de evaluación con IA en el rango seleccionado.",

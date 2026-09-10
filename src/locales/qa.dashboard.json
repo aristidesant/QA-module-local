@@ -1,0 +1,15 @@
+{
+	"burnout": {
+		"title": "Burnout Risk",
+		"level": {
+			"low": "Low",
+			"medium": "Medium",
+			"high": "High"
+		},
+		"trend": {
+			"improving": "Improving",
+			"stable": "Stable",
+			"declining": "Declining"
+		}
+	}
+}
