@@ -240,7 +240,7 @@ export const getOperationManagerNavigation = (): SidebarNavItem[] => [
 		key: 'operationmanager-rankings',
 		label: 'sidebar.operationmanager.supervisorRankings',
 		icon: <IconTarget size={20} className={styles.menuIcon} />,
-		to: '/workspace/qa/operationmanager/rankings',
+		to: '/qa/agent/rankings',
 		i18nNamespace: 'qa.operationmanager',
 	},
 	{
