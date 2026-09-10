@@ -4,6 +4,8 @@ import { IconChevronRight } from '@tabler/icons-react';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 import type { AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
 import { getReactionsTotal } from '../gamification';
+import { WinnerBadge } from './WinnerBadge';
+import { useLeaderboardMetadata } from '../hooks/useLeaderboardMetadata';
 import styles from './RankingCard.module.css';
 
 /** Max number of achievement badges rendered inside a card. */
@@ -32,6 +34,7 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 	entry,
 	onRowClick,
 }) => {
+	const { isCompleted } = useLeaderboardMetadata();
 	const reactionsTotal = getReactionsTotal(entry);
 	const achievements = entry.achievements ?? [];
 	const visibleAchievements = achievements.slice(0, MAX_VISIBLE_ACHIEVEMENTS);
@@ -70,13 +73,16 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 			<Stack gap='xs'>
 				{/* Header: rank + name + streak */}
 				<Group gap='xs' wrap='nowrap'>
-					<Badge
-						color={RANK_BADGE_COLORS[entry.rank] ?? 'gray'}
-						variant='light'
-						radius='sm'
-					>
-						#{entry.rank}
-					</Badge>
+					<Group gap={4} wrap='nowrap'>
+						<Badge
+							color={RANK_BADGE_COLORS[entry.rank] ?? 'gray'}
+							variant='light'
+							radius='sm'
+						>
+							#{entry.rank}
+						</Badge>
+						<WinnerBadge isWinner={isCompleted && entry.rank === 1} />
+					</Group>
 
 					<div className={styles.nameBlock}>
 						<Text size='sm' fw={600} lineClamp={1}>

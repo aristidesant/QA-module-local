@@ -37,6 +37,8 @@ import {
 	buildRankIndex,
 	getReactionsTotal,
 } from '../gamification';
+import { WinnerBadge } from './WinnerBadge';
+import { useLeaderboardMetadata } from '../hooks/useLeaderboardMetadata';
 import styles from './ExpandedRankingsTable.module.css';
 
 /** Fixed row height used by the virtualizer (must match `.row` height in the CSS module). */
@@ -82,6 +84,8 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 		{ id: 'rank', desc: false },
 	]);
 
+	const { isCompleted } = useLeaderboardMetadata();
+
 	/** Rank lookup so each row can read the score of the position below it. */
 	const rankIndex = useMemo(() => buildRankIndex(data), [data]);
 
@@ -94,13 +98,16 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 				cell: ({ row }) => {
 					const { rank } = row.original;
 					return (
-						<Badge
-							color={RANK_BADGE_COLORS[rank] ?? 'gray'}
-							variant='light'
-							radius='sm'
-						>
-							#{rank}
-						</Badge>
+						<Group gap={4} wrap='nowrap'>
+							<Badge
+								color={RANK_BADGE_COLORS[rank] ?? 'gray'}
+								variant='light'
+								radius='sm'
+							>
+								#{rank}
+							</Badge>
+							<WinnerBadge isWinner={isCompleted && rank === 1} />
+						</Group>
 					);
 				},
 			},
