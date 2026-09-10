@@ -92,7 +92,7 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		key: 'supervisor-team-rankings',
 		label: 'sidebar.supervisor.rankingsConfig',
 		icon: <IconTarget size={20} className={styles.menuIcon} />,
-		to: '/workspace/qa/supervisor/team/rankings',
+		to: '/qa/agent/rankings',
 		i18nNamespace: 'qa.supervisor',
 	},
 	{
@@ -174,6 +174,13 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.qamanager.triggersConfig',
 		icon: <IconBell size={20} className={styles.menuIcon} />,
 		to: '/workspace/qa/qamanager/admin/triggers',
+		i18nNamespace: 'qa.qamanager',
+	},
+	{
+		key: 'qamanager-rankings',
+		label: 'sidebar.qamanager.rankings',
+		icon: <IconTarget size={20} className={styles.menuIcon} />,
+		to: '/qa/agent/rankings',
 		i18nNamespace: 'qa.qamanager',
 	},
 	{
