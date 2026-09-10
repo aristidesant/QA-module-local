@@ -177,6 +177,9 @@ const QAManagerAnalyticsPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/SupervisorAnalytics/pages/QAManagerAnalyticsPage/QAManagerAnalyticsPage')
 );
+const TeamRankingsPage = React.lazy(
+	() => import('./modules/qa/agent/rankings/TeamRankingsPage')
+);
 
 // Phase 4-5: New QA Admin Components
 const GlobalTriggersConfigPanel = React.lazy(
@@ -907,6 +910,17 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<DisputesManagement />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'agent/rankings',
+										id: 'qa.agent.rankings',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TeamRankingsPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
