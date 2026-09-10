@@ -14,12 +14,9 @@ import {
 	UnstyledButton,
 } from '@mantine/core';
 import {
-	IconArrowDown,
-	IconArrowUp,
 	IconArrowsUpDown,
 	IconChevronDown,
 	IconChevronUp,
-	IconMinus,
 } from '@tabler/icons-react';
 import {
 	flexRender,
@@ -36,12 +33,8 @@ import {
 	type AgentRankingEntry,
 } from '~/modules/qa/dashboard/mockData';
 import {
-	HEALTHY_LEAD_THRESHOLD,
 	REACTION_ORDER,
 	buildRankIndex,
-	getPointLead,
-	getPointLeadTooltip,
-	getRankMovementTooltip,
 	getReactionsTotal,
 } from '../gamification';
 import styles from './ExpandedRankingsTable.module.css';
@@ -124,34 +117,12 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 			{
 				accessorKey: 'score',
 				header: 'Score',
-				size: 150,
-				cell: ({ row }) => {
-					const entry = row.original;
-					const lead = getPointLead(entry, rankIndex);
-
-					return (
-						<Group gap={6} wrap='nowrap'>
-							<Text size='sm' fw={700} className={styles.score}>
-								{entry.score}
-							</Text>
-							{lead.points !== null && (
-								<Tooltip label={getPointLeadTooltip(lead)} withArrow>
-									<Text
-										size='xs'
-										fw={600}
-										className={
-											lead.points > HEALTHY_LEAD_THRESHOLD
-												? styles.leadStrong
-												: styles.leadTight
-										}
-									>
-										+{lead.points} ahead
-									</Text>
-								</Tooltip>
-							)}
-						</Group>
-					);
-				},
+				size: 100,
+				cell: ({ row }) => (
+					<Text size='sm' fw={700} className={styles.score}>
+						{row.original.score}
+					</Text>
+				),
 			},
 			{
 				id: 'achievements',
@@ -218,63 +189,6 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 								);
 							})}
 						</Group>
-					);
-				},
-			},
-			{
-				id: 'streak',
-				accessorFn: (entry) => entry.streak ?? 0,
-				header: 'Streak',
-				size: 100,
-				cell: ({ row }) => {
-					const { streak } = row.original;
-					if (!streak) return <EmptyCell />;
-
-					return (
-						<Tooltip label={`${streak} consecutive weeks`} withArrow>
-							<Text size='sm' fw={500} className={styles.streak}>
-								<span aria-hidden>🔥</span> {streak}
-							</Text>
-						</Tooltip>
-					);
-				},
-			},
-			{
-				id: 'velocity',
-				accessorFn: (entry) => entry.rankTrend ?? 0,
-				header: 'Velocity',
-				size: 110,
-				cell: ({ row }) => {
-					const entry = row.original;
-					const trend = entry.rankTrend ?? 0;
-					const isUp = trend > 0;
-					const isFlat = trend === 0;
-
-					return (
-						<Tooltip label={getRankMovementTooltip(entry)} withArrow>
-							<Group
-								gap={4}
-								wrap='nowrap'
-								className={
-									isFlat
-										? styles.trendFlat
-										: isUp
-											? styles.trendUp
-											: styles.trendDown
-								}
-							>
-								{isFlat && <IconMinus size={16} />}
-								{!isFlat &&
-									(isUp ? (
-										<IconArrowUp size={16} />
-									) : (
-										<IconArrowDown size={16} />
-									))}
-								<Text size='sm' inherit>
-									{Math.abs(trend)}
-								</Text>
-							</Group>
-						</Tooltip>
 					);
 				},
 			},

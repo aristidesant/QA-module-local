@@ -1,10 +1,9 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { SimpleGrid, Text } from '@mantine/core';
 import {
 	AGENT_RANKINGS,
 	type AgentRankingEntry,
 } from '~/modules/qa/dashboard/mockData';
-import { buildRankIndex } from '../gamification';
 import RankingCard from './RankingCard';
 
 export interface RankingCardGridProps {
@@ -26,8 +25,6 @@ export const RankingCardGrid: React.FC<RankingCardGridProps> = ({
 	onRowClick,
 }) => {
 	/** Rank lookup so each card can read the score of the position below it. */
-	const rankIndex = useMemo(() => buildRankIndex(data), [data]);
-
 	if (data.length === 0) {
 		return (
 			<Text size='sm' c='dimmed' ta='center' py='xl'>
@@ -42,7 +39,6 @@ export const RankingCardGrid: React.FC<RankingCardGridProps> = ({
 				<RankingCard
 					key={entry.agentId}
 					entry={entry}
-					rankIndex={rankIndex}
 					onRowClick={onRowClick}
 				/>
 			))}
