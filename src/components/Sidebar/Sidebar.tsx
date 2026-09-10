@@ -543,7 +543,7 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			key: 'role-preview-rankings',
 			label: 'sidebar.rolePreview.items.rankings',
 			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/agent',
+			to: '/qa/agent/rankings',
 		},
 		{
 			key: 'role-preview-lms',
@@ -577,7 +577,7 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			key: 'role-preview-team-rankings-config',
 			label: 'sidebar.rolePreview.items.rankingsConfig',
 			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/supervisor',
+			to: '/qa/agent/rankings',
 		},
 		{
 			key: 'role-preview-calls',
@@ -647,7 +647,7 @@ const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
 			key: 'role-preview-configuration-supervisor-rankings',
 			label: 'sidebar.rolePreview.items.supervisorRankings',
 			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/operation-manager',
+			to: '/qa/agent/rankings',
 		},
 		{
 			key: 'role-preview-analytics',
