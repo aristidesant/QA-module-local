@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Stack, Group, TextInput, SegmentedControl, Checkbox, Button, Text } from '@mantine/core';
+import { Stack, Group, TextInput, SegmentedControl, Checkbox, Button, Text, Select } from '@mantine/core';
 import { useAgentAnalyticsStore } from '~/stores/qa/agentAnalyticsStore';
+import { ANALYTICS_CAMPAIGNS } from '~/modules/qa/dashboard/mockData';
 
 interface DateRangeAndGranularityControlProps {
 	onApply?: (range: { from: Date; to: Date }, granularity: string, compare: boolean) => void;
@@ -11,7 +12,7 @@ export const DateRangeAndGranularityControl: React.FC<DateRangeAndGranularityCon
 	onApply,
 }) => {
 	const { t } = useTranslation('qa.agent.analytics');
-	const { dateRange, setDateRange, granularity, setGranularity, compareWithPrevious, toggleComparison } = useAgentAnalyticsStore();
+	const { dateRange, setDateRange, granularity, setGranularity, compareWithPrevious, toggleComparison, selectedCampaign, setCampaign } = useAgentAnalyticsStore();
 
 	// Local state for form inputs
 	const [fromDate, setFromDate] = useState<string>(dateRange.from.toISOString().split('T')[0]);
@@ -53,6 +54,17 @@ export const DateRangeAndGranularityControl: React.FC<DateRangeAndGranularityCon
 					onChange={(e) => setToDate(e.currentTarget.value)}
 				/>
 			</Group>
+
+			{/* Campaign Filter */}
+			<Select
+				label={t('filters.campaign')}
+				placeholder={t('filters.allCampaigns')}
+				data={ANALYTICS_CAMPAIGNS.map(c => ({ value: c.id, label: c.name }))}
+				value={selectedCampaign}
+				onChange={(value) => setCampaign(value)}
+				clearable
+				searchable
+			/>
 
 			{/* Granularity Control */}
 			<Stack gap='xs'>
