@@ -21,7 +21,7 @@ interface Dispute {
 	id: number;
 	agentName: string;
 	type: 'qa' | 'sentiment' | 'compliance';
-	status: 'pending' | 'approved' | 'rejected';
+	status: 'open' | 'approved' | 'rejected';
 	createdDate: string;
 	supervisorName: string;
 	campaignName: string;
@@ -34,11 +34,12 @@ const DisputesPage: React.FC = () => {
 	const [supervisorFilter, setSupervisorFilter] = useState<string | null>(null);
 
 	const allDisputes: Dispute[] = [
+		// Open disputes (40%)
 		{
 			id: 101,
 			agentName: 'Sarah Johnson',
 			type: 'qa',
-			status: 'pending',
+			status: 'open',
 			createdDate: 'Today',
 			supervisorName: 'David Martinez',
 			campaignName: 'Q3 Customer Service',
@@ -47,7 +48,7 @@ const DisputesPage: React.FC = () => {
 			id: 102,
 			agentName: 'Mike Chen',
 			type: 'sentiment',
-			status: 'pending',
+			status: 'open',
 			createdDate: 'Yesterday',
 			supervisorName: 'Lisa Wong',
 			campaignName: 'Sales Training',
@@ -56,7 +57,7 @@ const DisputesPage: React.FC = () => {
 			id: 103,
 			agentName: 'Emily Watson',
 			type: 'compliance',
-			status: 'approved',
+			status: 'open',
 			createdDate: '2 days ago',
 			supervisorName: 'David Martinez',
 			campaignName: 'Q3 Customer Service',
@@ -65,18 +66,200 @@ const DisputesPage: React.FC = () => {
 			id: 104,
 			agentName: 'James Wilson',
 			type: 'qa',
-			status: 'rejected',
+			status: 'open',
 			createdDate: '3 days ago',
-			supervisorName: 'James Wilson',
-			campaignName: 'Sales Training',
+			supervisorName: 'Robert Khan',
+			campaignName: 'Q4 Compliance',
 		},
 		{
 			id: 105,
 			agentName: 'Sarah Johnson',
 			type: 'sentiment',
-			status: 'pending',
+			status: 'open',
 			createdDate: '4 days ago',
 			supervisorName: 'David Martinez',
+			campaignName: 'Tech Support',
+		},
+		{
+			id: 106,
+			agentName: 'Jennifer Lee',
+			type: 'compliance',
+			status: 'open',
+			createdDate: '5 days ago',
+			supervisorName: 'Lisa Wong',
+			campaignName: 'Q4 Compliance',
+		},
+		{
+			id: 107,
+			agentName: 'Marcus Rodriguez',
+			type: 'qa',
+			status: 'open',
+			createdDate: '6 days ago',
+			supervisorName: 'Robert Khan',
+			campaignName: 'Tech Support',
+		},
+		{
+			id: 108,
+			agentName: 'Angela Thompson',
+			type: 'sentiment',
+			status: 'open',
+			createdDate: '1 week ago',
+			supervisorName: 'David Martinez',
+			campaignName: 'Sales Training',
+		},
+		{
+			id: 109,
+			agentName: 'David Park',
+			type: 'qa',
+			status: 'open',
+			createdDate: '8 days ago',
+			supervisorName: 'Lisa Wong',
+			campaignName: 'Q3 Customer Service',
+		},
+		{
+			id: 110,
+			agentName: 'Michelle Brown',
+			type: 'compliance',
+			status: 'open',
+			createdDate: '9 days ago',
+			supervisorName: 'Robert Khan',
+			campaignName: 'Q4 Compliance',
+		},
+		// Approved disputes (35%)
+		{
+			id: 111,
+			agentName: 'Lisa Chen',
+			type: 'qa',
+			status: 'approved',
+			createdDate: '10 days ago',
+			supervisorName: 'David Martinez',
+			campaignName: 'Sales Training',
+		},
+		{
+			id: 112,
+			agentName: 'Thomas Anderson',
+			type: 'sentiment',
+			status: 'approved',
+			createdDate: '11 days ago',
+			supervisorName: 'Lisa Wong',
+			campaignName: 'Tech Support',
+		},
+		{
+			id: 113,
+			agentName: 'Kevin Hayes',
+			type: 'compliance',
+			status: 'approved',
+			createdDate: '12 days ago',
+			supervisorName: 'Robert Khan',
+			campaignName: 'Q3 Customer Service',
+		},
+		{
+			id: 114,
+			agentName: 'Jessica Turner',
+			type: 'qa',
+			status: 'approved',
+			createdDate: '13 days ago',
+			supervisorName: 'David Martinez',
+			campaignName: 'Q4 Compliance',
+		},
+		{
+			id: 115,
+			agentName: 'Amanda White',
+			type: 'sentiment',
+			status: 'approved',
+			createdDate: '14 days ago',
+			supervisorName: 'Lisa Wong',
+			campaignName: 'Sales Training',
+		},
+		{
+			id: 116,
+			agentName: 'Brandon Scott',
+			type: 'compliance',
+			status: 'approved',
+			createdDate: '15 days ago',
+			supervisorName: 'Robert Khan',
+			campaignName: 'Tech Support',
+		},
+		{
+			id: 117,
+			agentName: 'Rachel Greene',
+			type: 'qa',
+			status: 'approved',
+			createdDate: '16 days ago',
+			supervisorName: 'David Martinez',
+			campaignName: 'Q3 Customer Service',
+		},
+		{
+			id: 118,
+			agentName: 'Steven Murphy',
+			type: 'sentiment',
+			status: 'approved',
+			createdDate: '17 days ago',
+			supervisorName: 'Lisa Wong',
+			campaignName: 'Q4 Compliance',
+		},
+		{
+			id: 119,
+			agentName: 'Patricia Allen',
+			type: 'compliance',
+			status: 'approved',
+			createdDate: '18 days ago',
+			supervisorName: 'Robert Khan',
+			campaignName: 'Sales Training',
+		},
+		// Rejected disputes (25%)
+		{
+			id: 120,
+			agentName: 'Christopher Davis',
+			type: 'qa',
+			status: 'rejected',
+			createdDate: '19 days ago',
+			supervisorName: 'David Martinez',
+			campaignName: 'Tech Support',
+		},
+		{
+			id: 121,
+			agentName: 'Nicole Taylor',
+			type: 'sentiment',
+			status: 'rejected',
+			createdDate: '20 days ago',
+			supervisorName: 'Lisa Wong',
+			campaignName: 'Q3 Customer Service',
+		},
+		{
+			id: 122,
+			agentName: 'Daniel Jackson',
+			type: 'compliance',
+			status: 'rejected',
+			createdDate: '21 days ago',
+			supervisorName: 'Robert Khan',
+			campaignName: 'Q4 Compliance',
+		},
+		{
+			id: 123,
+			agentName: 'Susan Clark',
+			type: 'qa',
+			status: 'rejected',
+			createdDate: '22 days ago',
+			supervisorName: 'David Martinez',
+			campaignName: 'Sales Training',
+		},
+		{
+			id: 124,
+			agentName: 'Gregory Martin',
+			type: 'sentiment',
+			status: 'rejected',
+			createdDate: '23 days ago',
+			supervisorName: 'Lisa Wong',
+			campaignName: 'Tech Support',
+		},
+		{
+			id: 125,
+			agentName: 'Linda Lewis',
+			type: 'compliance',
+			status: 'rejected',
+			createdDate: '24 days ago',
+			supervisorName: 'Robert Khan',
 			campaignName: 'Q3 Customer Service',
 		},
 	];
@@ -95,13 +278,13 @@ const DisputesPage: React.FC = () => {
 	});
 
 	const stats = {
-		pending: filteredDisputes.filter(d => d.status === 'pending').length,
+		open: filteredDisputes.filter(d => d.status === 'open').length,
 		approved: filteredDisputes.filter(d => d.status === 'approved').length,
 		rejected: filteredDisputes.filter(d => d.status === 'rejected').length,
 	};
 
 	const statusColor = {
-		pending: 'yellow',
+		open: 'yellow',
 		approved: 'green',
 		rejected: 'red',
 	};
@@ -123,7 +306,7 @@ const DisputesPage: React.FC = () => {
 				</div>
 
 				<DisputesStats
-					pending={stats.pending}
+					open={stats.open}
 					approved={stats.approved}
 					rejected={stats.rejected}
 				/>
@@ -162,7 +345,7 @@ const DisputesPage: React.FC = () => {
 								label='Status'
 								placeholder='All statuses'
 								data={[
-									{ value: 'pending', label: 'Pending' },
+									{ value: 'open', label: 'Open' },
 									{ value: 'approved', label: 'Approved' },
 									{ value: 'rejected', label: 'Rejected' },
 								]}

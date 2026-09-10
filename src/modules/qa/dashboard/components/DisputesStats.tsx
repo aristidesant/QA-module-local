@@ -4,13 +4,13 @@ import { IconAlertCircle, IconCheck, IconX } from '@tabler/icons-react';
 import SectionCard from '~/components/SectionCard';
 
 interface DisputeStatsProps {
-	pending?: number;
+	open?: number;
 	approved?: number;
 	rejected?: number;
 }
 
 export const DisputesStats: React.FC<DisputeStatsProps> = ({
-	pending = 0,
+	open = 0,
 	approved = 0,
 	rejected = 0,
 }) => {
@@ -23,10 +23,10 @@ export const DisputesStats: React.FC<DisputeStatsProps> = ({
 					</ThemeIcon>
 					<Stack gap='xs'>
 						<Text size='sm' c='dimmed'>
-							Pending
+							Open
 						</Text>
 						<Text fw={700} size='lg'>
-							{pending}
+							{open}
 						</Text>
 					</Stack>
 				</Group>
