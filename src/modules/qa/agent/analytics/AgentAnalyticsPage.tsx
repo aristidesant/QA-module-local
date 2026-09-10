@@ -66,11 +66,11 @@ const AgentAnalyticsPage: React.FC = () => {
 					</Tabs.Panel>
 
 					<Tabs.Panel value='sentiment' pt='lg'>
-						<SentimentAnalyticsTab calls={AGENT_CALL_METRICS} aggregated={aggregatedMetrics} />
+						<SentimentAnalyticsTab calls={campaignFilteredMetrics} aggregated={aggregatedMetrics} />
 					</Tabs.Panel>
 
 					<Tabs.Panel value='compliance' pt='lg'>
-						<ComplianceAnalyticsTab calls={AGENT_CALL_METRICS} aggregated={aggregatedMetrics} />
+						<ComplianceAnalyticsTab calls={campaignFilteredMetrics} aggregated={aggregatedMetrics} />
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>
