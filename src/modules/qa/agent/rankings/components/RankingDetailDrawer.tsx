@@ -27,6 +27,9 @@ import {
 import AchievementsTab from './tabs/AchievementsTab';
 import MetricsTab from './tabs/MetricsTab';
 import ReactionsTab from './tabs/ReactionsTab';
+import ReactionButtons from './ReactionButtons';
+import { useUserReaction } from '../hooks/useUserReaction';
+import { WinnerBadge } from './WinnerBadge';
 import styles from './RankingDetailDrawer.module.css';
 
 export interface RankingDetailDrawerProps {
@@ -89,6 +92,7 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 	const streak = entry.streak ?? 0;
 	const pointLead = getPointLeadFromRoster(entry);
 	const reactionsTotal = getReactionsTotal(entry);
+	const { currentReaction, setReaction } = useUserReaction(entry.agentId);
 
 	return (
 		<AppDrawer
@@ -156,6 +160,18 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 						) : null}
 					</Group>
 				</Paper>
+
+				<Divider />
+
+				<Stack gap='sm'>
+					<ReactionButtons
+						currentReaction={currentReaction}
+						onReactionChange={setReaction}
+					/>
+					<Text size='xs' c='dimmed'>
+						Your reaction helps celebrate team achievements
+					</Text>
+				</Stack>
 
 				<Tabs defaultValue='achievements' variant='pills' keepMounted={false}>
 					<Tabs.List>
