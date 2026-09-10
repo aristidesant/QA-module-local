@@ -796,7 +796,7 @@ const router = createBrowserRouter([
 								],
 							},
 							{
-								path: 'qa',
+								path: 'workspace/qa',
 								id: 'qa',
 								element: (
 									<ModuleGuard qaAdminOnly>
@@ -806,7 +806,7 @@ const router = createBrowserRouter([
 								children: [
 									{
 										index: true,
-										element: <Navigate to='/qa/dashboards/qa-manager' replace />,
+										element: <Navigate to='/workspace/qa/dashboards/qa-manager' replace />,
 									},
 									{
 										path: 'dashboard',
