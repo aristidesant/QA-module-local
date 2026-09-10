@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
-import { Stack, Title, Text, SimpleGrid, Tabs, Card } from '@mantine/core';
+import { Stack, Title, Text, SimpleGrid, Card } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import {
@@ -13,6 +13,7 @@ import {
 	BestWorstCallsTable,
 	QuickInsightsWidget,
 	RankingsTable,
+	BurnoutRiskWidget,
 } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import type { RankingEntry, RankingGoal } from '../components/RankingsTable';
@@ -21,6 +22,7 @@ import {
 	AGENT_SENTIMENT_TREND,
 	BEST_WORST_CALLS,
 	CRITICAL_ISSUES_AGENT,
+	AGENT_BURNOUT_RISK,
 } from '../mockData';
 import styles from '../Dashboard.module.css';
 
@@ -146,32 +148,37 @@ export const NewAgentDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3-4. Critical Issues + Team Rankings (same row) */}
+				{/* 3. 2-Row Grid: Burnout Risk + Critical Issues */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+					<SectionCard title='Burnout Assessment' description='Your current burnout risk level'>
+						<BurnoutRiskWidget data={AGENT_BURNOUT_RISK} />
+					</SectionCard>
+
 					<SectionCard title='Critical Issues' description='Personal issues requiring your attention'>
 						<CriticalIssuesTable
 							issues={CRITICAL_ISSUES_AGENT}
 							onIssueClick={() => navigate(AGENT_INBOX_PATH)}
 						/>
 					</SectionCard>
-
-					<SectionCard title='Team Rankings' description="Your current ranking alongside the team's top performers this period">
-						<RankingsTable
-							entries={AGENT_TEAM_RANKINGS}
-							title='Team Rankings'
-							description="Your current ranking alongside the team's top performers this period"
-							goal={AGENT_RANKING_GOAL}
-							maxDisplay={5}
-							onViewAll={() => {
-								// Navigate to full rankings view
-								const element = document.getElementById('team-rankings-section');
-								if (element) {
-									element.scrollIntoView({ behavior: 'smooth' });
-								}
-							}}
-						/>
-					</SectionCard>
 				</SimpleGrid>
+
+				{/* 4. Team Rankings */}
+				<SectionCard title='Team Rankings' description="Your current ranking alongside the team's top performers this period">
+					<RankingsTable
+						entries={AGENT_TEAM_RANKINGS}
+						title='Team Rankings'
+						description="Your current ranking alongside the team's top performers this period"
+						goal={AGENT_RANKING_GOAL}
+						maxDisplay={5}
+						onViewAll={() => {
+							// Navigate to full rankings view
+							const element = document.getElementById('team-rankings-section');
+							if (element) {
+								element.scrollIntoView({ behavior: 'smooth' });
+							}
+						}}
+					/>
+				</SectionCard>
 
 				{/* 5. Sentiment trend and quick insights */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>

@@ -51,3 +51,7 @@ export { SentimentEmotionCard, getSentimentBand } from './SentimentEmotionCard';
 
 // Single-table Best/Worst calls view with a Best/Worst segmented control
 export { BestWorstCallsTable } from './BestWorstCallsTable';
+
+// Task 2: Burnout Risk Widget for agent wellbeing monitoring
+export { default as BurnoutRiskWidget } from './BurnoutRiskWidget';
+export type { BurnoutRiskData, BurnoutRiskLevel } from '../types/burnoutRisk';
