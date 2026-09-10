@@ -798,7 +798,11 @@ const router = createBrowserRouter([
 							{
 								path: 'qa',
 								id: 'qa',
-								element: <ModuleGuard qaAdminOnly />,
+								element: (
+									<ModuleGuard qaAdminOnly>
+										<Outlet />
+									</ModuleGuard>
+								),
 								children: [
 									{
 										index: true,
