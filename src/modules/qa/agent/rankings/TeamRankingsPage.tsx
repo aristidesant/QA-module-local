@@ -7,6 +7,8 @@ import type { AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
 import ExpandedRankingsTable from './components/ExpandedRankingsTable';
 import RankingCardGrid from './components/RankingCardGrid';
 import RankingDetailDrawer from './components/RankingDetailDrawer';
+import LeaderboardHeader from './components/LeaderboardHeader';
+import { useLeaderboardMetadata } from './hooks/useLeaderboardMetadata';
 
 /** Below this width the table is replaced by the responsive card grid. */
 const TABLE_BREAKPOINT = '(max-width: 1024px)';
@@ -23,6 +25,7 @@ const TABLE_BREAKPOINT = '(max-width: 1024px)';
  */
 export const TeamRankingsPage: React.FC = () => {
 	const isCompact = useMediaQuery(TABLE_BREAKPOINT);
+	const { metadata, isCompleted, daysRemaining } = useLeaderboardMetadata();
 
 	const [selectedEntry, setSelectedEntry] = useState<AgentRankingEntry | null>(
 		null
@@ -39,12 +42,7 @@ export const TeamRankingsPage: React.FC = () => {
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
-				<div>
-					<Title order={1}>Team Rankings</Title>
-					<Text c='dimmed' mt='xs'>
-						Agent performance leaderboard this period
-					</Text>
-				</div>
+				<LeaderboardHeader metadata={metadata} daysRemaining={daysRemaining} />
 
 				<SectionCard
 					title='Leaderboard'
