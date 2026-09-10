@@ -121,6 +121,8 @@ export interface CallMetric {
 		regulatory: ComplianceArea;
 		legal: ComplianceArea;
 	};
+	campaignId: string;
+	campaignName: string;
 }
 
 export interface AggregatedMetrics {
@@ -1558,6 +1560,13 @@ export const QA_MANAGER_TRIGGERS: NotificationTrigger[] = [
 // Agent Analytics Mock Data (Call Metrics & Aggregation)
 // ============================================================================
 
+export const ANALYTICS_CAMPAIGNS = [
+	{ id: 'camp-001', name: 'Q3 Customer Service' },
+	{ id: 'camp-002', name: 'Sales Training' },
+	{ id: 'camp-003', name: 'Q4 Compliance' },
+	{ id: 'camp-004', name: 'Tech Support' },
+];
+
 /**
  * Generate realistic call metrics spanning the last 30 days
  * Includes variation in QA scores, sentiment, and compliance across all 8 emotions
@@ -1590,6 +1599,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-001',
+		campaignName: 'Q3 Customer Service',
 	},
 	{
 		id: 'METRIC-002',
@@ -1617,6 +1628,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-001',
+		campaignName: 'Q3 Customer Service',
 	},
 	{
 		id: 'METRIC-003',
@@ -1644,6 +1657,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-001',
+		campaignName: 'Q3 Customer Service',
 	},
 	{
 		id: 'METRIC-004',
@@ -1671,6 +1686,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-001',
+		campaignName: 'Q3 Customer Service',
 	},
 	{
 		id: 'METRIC-005',
@@ -1698,6 +1715,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-001',
+		campaignName: 'Q3 Customer Service',
 	},
 	{
 		id: 'METRIC-006',
@@ -1725,6 +1744,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-001',
+		campaignName: 'Q3 Customer Service',
 	},
 	{
 		id: 'METRIC-007',
@@ -1752,6 +1773,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-001',
+		campaignName: 'Q3 Customer Service',
 	},
 	{
 		id: 'METRIC-008',
@@ -1779,6 +1802,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-001',
+		campaignName: 'Q3 Customer Service',
 	},
 	{
 		id: 'METRIC-009',
@@ -1806,6 +1831,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-001',
+		campaignName: 'Q3 Customer Service',
 	},
 	{
 		id: 'METRIC-010',
@@ -1833,6 +1860,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-002',
+		campaignName: 'Sales Training',
 	},
 
 	// Week 2 (Aug 16-22, 2026)
@@ -1862,6 +1891,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-002',
+		campaignName: 'Sales Training',
 	},
 	{
 		id: 'METRIC-012',
@@ -1889,6 +1920,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-002',
+		campaignName: 'Sales Training',
 	},
 	{
 		id: 'METRIC-013',
@@ -1916,6 +1949,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-002',
+		campaignName: 'Sales Training',
 	},
 	{
 		id: 'METRIC-014',
@@ -1943,6 +1978,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-002',
+		campaignName: 'Sales Training',
 	},
 	{
 		id: 'METRIC-015',
@@ -1970,6 +2007,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-002',
+		campaignName: 'Sales Training',
 	},
 	{
 		id: 'METRIC-016',
@@ -1997,6 +2036,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-002',
+		campaignName: 'Sales Training',
 	},
 	{
 		id: 'METRIC-017',
@@ -2024,6 +2065,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-002',
+		campaignName: 'Sales Training',
 	},
 
 	// Week 3 (Aug 23-29, 2026)
@@ -2053,6 +2096,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-003',
+		campaignName: 'Q4 Compliance',
 	},
 	{
 		id: 'METRIC-019',
@@ -2080,6 +2125,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-003',
+		campaignName: 'Q4 Compliance',
 	},
 	{
 		id: 'METRIC-020',
@@ -2107,6 +2154,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-003',
+		campaignName: 'Q4 Compliance',
 	},
 	{
 		id: 'METRIC-021',
@@ -2134,6 +2183,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-003',
+		campaignName: 'Q4 Compliance',
 	},
 	{
 		id: 'METRIC-022',
@@ -2161,6 +2212,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-003',
+		campaignName: 'Q4 Compliance',
 	},
 	{
 		id: 'METRIC-023',
@@ -2188,6 +2241,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-003',
+		campaignName: 'Q4 Compliance',
 	},
 	{
 		id: 'METRIC-024',
@@ -2215,6 +2270,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-003',
+		campaignName: 'Q4 Compliance',
 	},
 
 	// Week 4 (Aug 30 - Sep 5, 2026)
@@ -2244,6 +2301,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-003',
+		campaignName: 'Q4 Compliance',
 	},
 	{
 		id: 'METRIC-026',
@@ -2271,6 +2330,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-003',
+		campaignName: 'Q4 Compliance',
 	},
 	{
 		id: 'METRIC-027',
@@ -2298,6 +2359,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-004',
+		campaignName: 'Tech Support',
 	},
 	{
 		id: 'METRIC-028',
@@ -2325,6 +2388,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-004',
+		campaignName: 'Tech Support',
 	},
 	{
 		id: 'METRIC-029',
@@ -2352,6 +2417,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-004',
+		campaignName: 'Tech Support',
 	},
 	{
 		id: 'METRIC-030',
@@ -2379,6 +2446,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-004',
+		campaignName: 'Tech Support',
 	},
 	{
 		id: 'METRIC-031',
@@ -2406,6 +2475,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-004',
+		campaignName: 'Tech Support',
 	},
 
 	// Week 5 (Sep 6-8, 2026)
@@ -2435,6 +2506,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-004',
+		campaignName: 'Tech Support',
 	},
 	{
 		id: 'METRIC-033',
@@ -2462,6 +2535,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-004',
+		campaignName: 'Tech Support',
 	},
 	{
 		id: 'METRIC-034',
@@ -2489,6 +2564,8 @@ export const AGENT_CALL_METRICS: CallMetric[] = [
 				},
 			},
 		},
+		campaignId: 'camp-004',
+		campaignName: 'Tech Support',
 	},
 ];
 
