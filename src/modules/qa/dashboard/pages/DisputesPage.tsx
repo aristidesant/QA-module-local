@@ -436,7 +436,7 @@ const DisputesPage: React.FC = () => {
 												d.status as keyof typeof statusColor
 											]
 										}
-										variant='dot'
+										variant='light'
 									>
 										{d.status}
 									</Badge>
