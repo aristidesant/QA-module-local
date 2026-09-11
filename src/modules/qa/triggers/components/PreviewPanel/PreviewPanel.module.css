@@ -1,0 +1,7 @@
+.preview {
+	position: sticky;
+	top: 0;
+	z-index: 2;
+	background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-8));
+	padding-bottom: var(--mantine-spacing-xs) !important;
+}

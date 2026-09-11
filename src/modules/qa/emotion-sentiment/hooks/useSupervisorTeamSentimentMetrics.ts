@@ -72,8 +72,8 @@ export interface UseSupervisorTeamSentimentMetricsResult {
 }
 
 export function useSupervisorTeamSentimentMetrics(
-  supervisorId?: string,
-  period?: string
+  _supervisorId?: string,
+  _period?: string
 ): UseSupervisorTeamSentimentMetricsResult {
   // Mock implementation - returns static data immediately
   // Replace with actual API call when backend is ready

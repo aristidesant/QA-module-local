@@ -155,23 +155,14 @@ const QaInboxPage = React.lazy(
 const AgentLMSPage = React.lazy(
 	() => import('./modules/qa/agent/lms/AgentLMSPage')
 );
-const AgentProfilePage = React.lazy(
-	() => import('./modules/qa/dashboard/pages/AgentProfilePage')
-);
 const CustomerProfilePage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/CustomerProfilePage')
-);
-const DisputesPage = React.lazy(
-	() => import('./modules/qa/dashboard/pages/DisputesPage')
 );
 const AutoTriggersPage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/AutoTriggersPage')
 );
 const ReportingPage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/ReportingPage')
-);
-const CallDetailPage = React.lazy(
-	() => import('./modules/qa/dashboard/pages/CallDetailPage')
 );
 const QAManagerAnalyticsPage = React.lazy(
 	() =>
@@ -963,34 +954,12 @@ const router = createBrowserRouter([
 										),
 									},
 									{
-										path: 'profiles/agent/:agentId',
-										id: 'qa.profiles.agent',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<AgentProfilePage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
 										path: 'profiles/customer/:customerId',
 										id: 'qa.profiles.customer',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<CustomerProfilePage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
-										path: 'disputes-list',
-										id: 'qa.disputes-list',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<DisputesPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -1013,17 +982,6 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<ReportingPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
-										path: 'call/:callId',
-										id: 'qa.call.detail',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<CallDetailPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

@@ -29,7 +29,6 @@ import MetricsTab from './tabs/MetricsTab';
 import ReactionsTab from './tabs/ReactionsTab';
 import ReactionButtons from './ReactionButtons';
 import { useUserReaction } from '../hooks/useUserReaction';
-import { WinnerBadge } from './WinnerBadge';
 import styles from './RankingDetailDrawer.module.css';
 
 export interface RankingDetailDrawerProps {

@@ -1,4 +1,4 @@
-import { Box, Grid, Progress, Stack, Table, Text, ThemeIcon } from '@mantine/core';
+import { Box, Grid, Stack, Table, Text, ThemeIcon } from '@mantine/core';
 import {
   IconMoodAngry,
   IconMoodCry,
@@ -9,7 +9,6 @@ import {
   IconHeartHandshake,
   IconMask,
   IconSparkles,
-  IconGift,
 } from '@tabler/icons-react';
 import styles from './EmotionBreakdownComparison.module.css';
 import { Emotion, EmotionBreakdown, UserRole } from '../types';
@@ -115,7 +114,7 @@ export function EmotionBreakdownComparison({
 
   return (
     <Box className={styles.container}>
-      <Grid gutter="lg">
+      <Grid gap="lg">
         <Grid.Col span={{ base: 12, md: 6 }}>
           <Stack gap="md">
             <Box>

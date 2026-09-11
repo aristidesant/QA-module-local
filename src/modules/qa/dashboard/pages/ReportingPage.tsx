@@ -15,7 +15,7 @@ interface GeneratedReport {
 }
 
 const ReportingPage: React.FC = () => {
-	const [generatedReports, setGeneratedReports] = useState<GeneratedReport[]>([
+	const [generatedReports] = useState<GeneratedReport[]>([
 		{
 			id: 1,
 			name: 'Weekly Team Report',

@@ -1,5 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react';
-import { Stack, Text, Title } from '@mantine/core';
+import { Stack } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
@@ -26,7 +26,7 @@ const TABLE_BREAKPOINT = '(max-width: 1024px)';
  */
 export const TeamRankingsPage: React.FC = () => {
 	const isCompact = useMediaQuery(TABLE_BREAKPOINT);
-	const { metadata, isCompleted, daysRemaining } = useLeaderboardMetadata();
+	const { metadata, daysRemaining } = useLeaderboardMetadata();
 
 	useEffect(() => {
 		selectWinnerIfPeriodEnded(metadata, AGENT_RANKINGS ?? []);

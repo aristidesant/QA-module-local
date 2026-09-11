@@ -1,5 +1,5 @@
 import React from 'react';
-import { Stack, Title, Text, Tabs } from '@mantine/core';
+import { Stack, Title, Text } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import { AutoTriggersManager } from '../components';

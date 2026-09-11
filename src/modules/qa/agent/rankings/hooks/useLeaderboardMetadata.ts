@@ -13,7 +13,6 @@ export const useLeaderboardMetadata = (): UseLeaderboardMetadataResult => {
   return useMemo(() => {
     const now = new Date();
     const endDate = new Date(currentLeaderboard.endDate);
-    const startDate = new Date(currentLeaderboard.startDate);
 
     const isCompleted = now >= endDate;
     const daysRemaining = Math.ceil(

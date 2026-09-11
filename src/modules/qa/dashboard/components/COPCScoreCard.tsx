@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, SimpleGrid, Text, ThemeIcon, Group, Stack, RingProgress, Center } from '@mantine/core';
+import { Card, SimpleGrid, Text, ThemeIcon, Group, Stack } from '@mantine/core';
 import { IconAlertCircle, IconCheck } from '@tabler/icons-react';
 import styles from '../Dashboard.module.css';
 

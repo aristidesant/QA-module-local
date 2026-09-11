@@ -1,4 +1,4 @@
-import { DualSentimentData, EmotionBreakdown, SentimentDistribution, TeamBenchmark } from '../types';
+import { DualSentimentData, TeamBenchmark } from '../types';
 
 const MOCK_AGENT_DATA: DualSentimentData = {
   agent: {
@@ -72,8 +72,8 @@ export interface UseAgentSentimentWithTeamAverageResult {
 }
 
 export function useAgentSentimentWithTeamAverage(
-  agentId?: string,
-  period?: string
+  _agentId?: string,
+  _period?: string
 ): UseAgentSentimentWithTeamAverageResult {
   // Mock implementation - returns static data immediately
   // Replace with actual API call when backend is ready

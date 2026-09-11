@@ -10,7 +10,6 @@ import {
 	Popover,
 	Button,
 	Divider,
-	Checkbox,
 	Center,
 	ScrollArea,
 } from '@mantine/core';
@@ -21,7 +20,6 @@ import {
 	IconTrendingUp,
 	IconAlertCircle,
 	IconGift,
-	IconMessage,
 	IconUsers,
 } from '@tabler/icons-react';
 import type { InboxItem } from '~/models/qa';

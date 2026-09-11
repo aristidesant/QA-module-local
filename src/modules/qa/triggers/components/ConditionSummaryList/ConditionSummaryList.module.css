@@ -1,0 +1,12 @@
+.root {
+	/* No additional styles needed - uses Mantine system */
+}
+
+.card {
+	background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+	transition: background-color 150ms ease;
+
+	&:hover {
+		background: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-5));
+	}
+}

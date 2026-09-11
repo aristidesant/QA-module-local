@@ -3,14 +3,12 @@ import {
   IconMoodAngry,
   IconMoodSad,
   IconMoodSmile,
-  IconMoodCry,
   IconMoodEmpty,
 } from '@tabler/icons-react';
 import styles from './SentimentCategoryComparison.module.css';
 import {
   SentimentCategory,
   SentimentDistribution,
-  TeamBenchmark,
   UserRole,
 } from '../types';
 
@@ -140,7 +138,7 @@ export function SentimentCategoryComparison({
 
   return (
     <Box className={styles.container}>
-      <Grid gutter="xl">
+      <Grid gap="xl">
         <Grid.Col span={{ base: 12, md: 6 }}>
           <Stack gap="lg">
             <Text fw={500} size="sm">

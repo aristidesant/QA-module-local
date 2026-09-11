@@ -45,7 +45,7 @@ export interface UseSystemSentimentMetricsResult {
   error: Error | null;
 }
 
-export function useSystemSentimentMetrics(period?: string): UseSystemSentimentMetricsResult {
+export function useSystemSentimentMetrics(_period?: string): UseSystemSentimentMetricsResult {
   // Mock implementation - returns static data immediately
   // Replace with actual API call when backend is ready
   return {

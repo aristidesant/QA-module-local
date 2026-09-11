@@ -1,6 +1,5 @@
 import React from 'react';
-import { Container, Stack, Grid, Group, Text, Title, SimpleGrid, Tabs, Card } from '@mantine/core';
-import styles from '../Dashboard.module.css';
+import { Container, Stack, Group, Text, Title, SimpleGrid, Tabs, Card } from '@mantine/core';
 
 /**
  * Adaptive Dashboard Layout Pattern
@@ -48,7 +47,6 @@ export const AdaptiveDashboardLayout: React.FC<AdaptiveDashboardLayoutProps> = (
 	alertsComponent,
 	tabs,
 	widget,
-	loading = false,
 }) => {
 	return (
 		<Container size="xl" py="lg">

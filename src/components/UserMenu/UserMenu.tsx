@@ -28,7 +28,6 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useImpersonationState } from '~/hooks/useImpersonationState';
-import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
 import { useRoleMockStore } from '~/stores/roleMockStore';
 import { PREVIEW_ROLES } from '~/constants/previewRole';
 import type { PreviewRole } from '~/constants/previewRole';
@@ -61,7 +60,6 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 	const { t } = useTranslation('common');
 	const { user, targetClient } = useSessionStore();
 	const { isImpersonating } = useImpersonationState();
-	const isSuperAdmin = useIsSuperAdmin();
 	const previewRole = useRoleMockStore((s) => s.previewRole);
 	const setPreviewRole = useRoleMockStore((s) => s.setPreviewRole);
 	const currentApp = useCurrentApp();

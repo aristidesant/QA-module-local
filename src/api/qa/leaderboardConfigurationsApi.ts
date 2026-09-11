@@ -2,7 +2,6 @@ import type {
 	CreateLeaderboardConfigurationPayload,
 	LeaderboardConfiguration,
 	LeaderboardConfigurationListQueryParams,
-	LeaderboardPosition,
 	LeaderboardWithPositions,
 	PaginatedResponse,
 	UpdateLeaderboardConfigurationPayload,

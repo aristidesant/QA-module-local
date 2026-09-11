@@ -1,4 +1,4 @@
-import type { TriggerConfiguration, TriggerConfigScope } from '~/models/qa';
+import type { TriggerConfiguration } from '~/models/qa';
 
 export interface CampaignOverride {
 	id: number;

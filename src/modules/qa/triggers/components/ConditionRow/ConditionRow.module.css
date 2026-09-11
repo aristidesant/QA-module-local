@@ -1,0 +1,6 @@
+.row {
+	background: light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6));
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+}

@@ -21,6 +21,7 @@ export * from './businessInsightTypes';
 export * from './autoFails';
 export * from './rankings';
 export * from './triggers';
+export * from './triggerRules';
 export * from './reactions';
 export * from './inbox';
 export * from './client';

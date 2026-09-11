@@ -74,6 +74,11 @@ export interface BestWorstCall {
 	qaScore: number;
 	sentiment: number;
 	type: 'best' | 'worst';
+	ecn?: number;
+	enc?: number;
+	ecc?: number;
+	ecuf?: number;
+	compliance?: number;
 }
 
 export interface SentimentTrendPoint {

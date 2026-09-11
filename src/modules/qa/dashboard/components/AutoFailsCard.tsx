@@ -1,6 +1,6 @@
 import React from 'react';
-import { Card, Stack, Text, Group, ThemeIcon, Badge, SimpleGrid } from '@mantine/core';
-import { IconAlertTriangle, IconAlertCircle, IconCircleCheck } from '@tabler/icons-react';
+import { Card, Stack, Text, Group, ThemeIcon, SimpleGrid } from '@mantine/core';
+import { IconAlertTriangle } from '@tabler/icons-react';
 import styles from '../Dashboard.module.css';
 
 interface AutoFailsCardProps {
