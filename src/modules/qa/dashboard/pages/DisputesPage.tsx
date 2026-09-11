@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router';
 import {
 	Stack,
 	Title,
 	Text,
-	SimpleGrid,
 	Select,
 	Input,
 	Group,
@@ -266,7 +265,7 @@ const DisputesPage: React.FC = () => {
 		},
 	];
 
-	const filteredDisputes = allDisputes.filter(dispute => {
+	const filteredDisputes = allDisputes.filter((dispute) => {
 		const matchesSearch =
 			dispute.agentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
 			dispute.id.toString().includes(searchTerm);
@@ -280,9 +279,9 @@ const DisputesPage: React.FC = () => {
 	});
 
 	const stats = {
-		open: filteredDisputes.filter(d => d.status === 'open').length,
-		approved: filteredDisputes.filter(d => d.status === 'approved').length,
-		rejected: filteredDisputes.filter(d => d.status === 'rejected').length,
+		open: filteredDisputes.filter((d) => d.status === 'open').length,
+		approved: filteredDisputes.filter((d) => d.status === 'approved').length,
+		rejected: filteredDisputes.filter((d) => d.status === 'rejected').length,
 	};
 
 	const statusColor = {
@@ -313,17 +312,14 @@ const DisputesPage: React.FC = () => {
 					rejected={stats.rejected}
 				/>
 
-				<SectionCard
-					title='Filters'
-					description='Advanced dispute filtering'
-				>
+				<SectionCard title='Filters' description='Advanced dispute filtering'>
 					<Stack gap='md'>
 						<Group grow>
 							<Input
 								placeholder='Search by agent name or dispute ID...'
 								leftSection={<IconSearch size={14} />}
 								value={searchTerm}
-								onChange={e => setSearchTerm(e.currentTarget.value)}
+								onChange={(e) => setSearchTerm(e.currentTarget.value)}
 							/>
 							<ActionIcon color='blue' size='lg' radius='md'>
 								<IconFilter size={18} />
@@ -398,54 +394,54 @@ const DisputesPage: React.FC = () => {
 					<BaseTable
 						columns={[
 							{
-								key: 'id',
-								title: 'Dispute ID',
-								render: d => `#${d.id}`,
+								id: 'id',
+								header: 'Dispute ID',
+								cell: ({ row }) => `#${row.original.id}`,
 							},
 							{
-								key: 'agentName',
-								title: 'Agent',
-								render: d => d.agentName,
+								id: 'agentName',
+								header: 'Agent',
+								cell: ({ row }) => row.original.agentName,
 							},
 							{
-								key: 'type',
-								title: 'Type',
-								render: d => (
+								id: 'type',
+								header: 'Type',
+								cell: ({ row }) => (
 									<Badge size='sm' variant='light'>
-										{typeLabel[d.type as keyof typeof typeLabel]}
+										{typeLabel[row.original.type as keyof typeof typeLabel]}
 									</Badge>
 								),
 							},
 							{
-								key: 'supervisorName',
-								title: 'Supervisor',
-								render: d => d.supervisorName,
+								id: 'supervisorName',
+								header: 'Supervisor',
+								cell: ({ row }) => row.original.supervisorName,
 							},
 							{
-								key: 'campaign',
-								title: 'Campaign',
-								render: d => d.campaignName,
+								id: 'campaign',
+								header: 'Campaign',
+								cell: ({ row }) => row.original.campaignName,
 							},
 							{
-								key: 'status',
-								title: 'Status',
-								render: d => (
+								id: 'status',
+								header: 'Status',
+								cell: ({ row }) => (
 									<Badge
 										color={
 											statusColor[
-												d.status as keyof typeof statusColor
+												row.original.status as keyof typeof statusColor
 											]
 										}
 										variant='light'
 									>
-										{d.status}
+										{row.original.status}
 									</Badge>
 								),
 							},
 							{
-								key: 'date',
-								title: 'Created',
-								render: d => d.createdDate,
+								id: 'date',
+								header: 'Created',
+								cell: ({ row }) => row.original.createdDate,
 							},
 						]}
 						data={filteredDisputes}
