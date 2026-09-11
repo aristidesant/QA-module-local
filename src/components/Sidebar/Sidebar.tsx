@@ -73,10 +73,7 @@ import { useRoleMockStore } from '~/stores/roleMockStore';
 import type { PreviewRole } from '~/constants/previewRole';
 import UserMenu from '../UserMenu';
 import { useDisputesQuery } from '~/queries/qa/disputesQueries';
-import {
-	roleNavigationGroupedMap,
-	type NavGroup,
-} from './roleNavigation';
+import { roleNavigationGroupedMap, type NavGroup } from './roleNavigation';
 
 export type SidebarNavItem = {
 	key: string;
@@ -367,7 +364,7 @@ const qaPrimaryItems: SidebarNavItem[] = [
 		key: 'qa-disputes',
 		label: 'sidebar.items.qaDisputes',
 		icon: <IconGitBranch size={20} className={styles.menuIcon} />,
-		to: '/qa/disputes',
+		to: '/qa/agent/disputes',
 		i18nNamespace: 'qa.disputes',
 	},
 	{
@@ -749,7 +746,9 @@ export const Sidebar: React.FC = () => {
 	const activeItem = useMemo(() => {
 		// Check flat items in primaryNav
 		const flatItem = primaryNav.find(
-			(navItem) => !isNavGroup(navItem) && isLinkActive(navItem as SidebarNavItem, location.pathname)
+			(navItem) =>
+				!isNavGroup(navItem) &&
+				isLinkActive(navItem as SidebarNavItem, location.pathname)
 		);
 		if (flatItem) return flatItem as SidebarNavItem;
 
@@ -926,7 +925,10 @@ export const Sidebar: React.FC = () => {
 						// Render as group (collapsible or not)
 						const group = navItem as NavGroup;
 						const isCollapsible = group.collapsible !== false;
-						const isOpen = !isCollapsible || openGroupSection === group.key || (group.defaultExpanded ?? false);
+						const isOpen =
+							!isCollapsible ||
+							openGroupSection === group.key ||
+							(group.defaultExpanded ?? false);
 
 						return (
 							<div key={group.key} className={styles.sectionGroup}>
@@ -942,7 +944,11 @@ export const Sidebar: React.FC = () => {
 									aria-expanded={isOpen}
 									{...(isCollapsible ? {} : { disabled: true })}
 								>
-									<Group gap='xs' wrap='nowrap' className={styles.sectionHeaderInner}>
+									<Group
+										gap='xs'
+										wrap='nowrap'
+										className={styles.sectionHeaderInner}
+									>
 										{group.icon}
 										<Text
 											size='xs'
