@@ -241,7 +241,6 @@ const CallDetailPage: React.FC = () => {
 
 					<Tabs.Panel value='audio' pt='lg'>
 						<AudioPlayerWithClipping
-							audioUrl='https://example.com/call-12451.mp3'
 							duration={272}
 							clips={audioClips}
 							onClipSelect={clip => console.log('Clip selected:', clip)}

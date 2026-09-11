@@ -34,10 +34,10 @@ const AgentProfilePage: React.FC = () => {
 	];
 
 	const leaderboardData = [
-		{ rank: 1, name: 'Sarah Johnson', score: 88, change: 'up', changeValue: 2, reactions: 14 },
-		{ rank: 2, name: 'Mike Chen', score: 86, change: 'stable', reactions: 12 },
-		{ rank: 3, name: 'Agent Smith', score: 82, change: 'down', changeValue: 1, reactions: 8 },
-		{ rank: 4, name: 'Emily Watson', score: 78, change: 'up', changeValue: 3, reactions: 6 },
+		{ rank: 1, name: 'Sarah Johnson', score: 88, change: 'up' as const, changeValue: 2, reactions: 14 },
+		{ rank: 2, name: 'Mike Chen', score: 86, change: 'stable' as const, changeValue: undefined, reactions: 12 },
+		{ rank: 3, name: 'Agent Smith', score: 82, change: 'down' as const, changeValue: 1, reactions: 8 },
+		{ rank: 4, name: 'Emily Watson', score: 78, change: 'up' as const, changeValue: 3, reactions: 6 },
 	];
 
 	return (
