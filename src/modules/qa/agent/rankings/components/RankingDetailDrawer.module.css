@@ -22,3 +22,26 @@
 	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
 	white-space: nowrap;
 }
+
+/* Monochromatic tab styling */
+.tabs {
+	/* Tab list styling */
+	/* Active tab gets subtle gray background with bold text for clear distinction */
+}
+
+.tabs :global(.mantine-Tabs-tab) {
+	color: light-dark(var(--mantine-color-gray-6), var(--mantine-color-dark-3));
+	border-color: light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+	transition: all 200ms ease;
+}
+
+.tabs :global(.mantine-Tabs-tab[data-active]) {
+	color: light-dark(var(--mantine-color-gray-9), var(--mantine-color-dark-0));
+	font-weight: 600;
+	border-color: light-dark(var(--mantine-color-gray-4), var(--mantine-color-dark-3));
+	background-color: light-dark(var(--mantine-color-gray-1), var(--mantine-color-dark-6));
+}
+
+.tabs :global(.mantine-Tabs-panel) {
+	color: light-dark(var(--mantine-color-gray-8), var(--mantine-color-dark-1));
+}

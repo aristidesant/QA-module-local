@@ -153,6 +153,58 @@
 			"dark": "Dark mode",
 			"auto": "System mode"
 		},
+		"supervisor": {
+			"dashboard": "Dashboard",
+			"team": "Your Team",
+			"groupTeam": "Your Team",
+			"calls": "Calls",
+			"evaluations": "Evaluations",
+			"triggersConfig": "Team Triggers",
+			"rankingsConfig": "Rankings Config",
+			"disputes": "Disputes",
+			"analytics": "Analytics",
+			"reports": "Reports",
+			"groupOperations": "Operations",
+			"groupInsights": "Insights"
+		},
+		"agent": {
+			"dashboard": "Dashboard",
+			"myCalls": "My Calls",
+			"myEvaluations": "My Evaluations",
+			"inbox": "Inbox",
+			"rankings": "Team Rankings",
+			"profile": "Profile",
+			"groupMyWork": "My Work",
+			"groupInsights": "Insights"
+		},
+		"qamanager": {
+			"dashboard": "Dashboard",
+			"supervisors": "Supervisors",
+			"teams": "Teams",
+			"calls": "Calls",
+			"campaigns": "Campaigns",
+			"disputes": "Disputes",
+			"triggersConfig": "Triggers Config",
+			"rankings": "Rankings",
+			"analytics": "Analytics",
+			"reports": "Reports",
+			"groupOrganization": "Organization",
+			"groupOperations": "Operations",
+			"groupConfiguration": "Configuration",
+			"groupInsights": "Insights"
+		},
+		"operationmanager": {
+			"dashboard": "Dashboard",
+			"supervisors": "Supervisors",
+			"teamHealth": "Team Health",
+			"clients": "Clients",
+			"supervisorRankings": "Supervisor Rankings",
+			"analytics": "Analytics",
+			"reports": "Reports",
+			"groupOrganization": "Organization",
+			"groupConfiguration": "Configuration",
+			"groupInsights": "Insights"
+		},
 		"rolePreview": {
 			"items": {
 				"dashboard": "Dashboard",
@@ -178,6 +230,7 @@
 				"inbox": "Inbox",
 				"rankings": "Team Rankings",
 				"team": "Team",
+				"triggers": "Triggers",
 				"triggersConfig": "Triggers Config",
 				"rankingsConfig": "Rankings Config",
 				"calls": "Calls",
@@ -188,7 +241,10 @@
 				"configuration": "Configuration",
 				"supervisorRankings": "Supervisor Rankings",
 				"teams": "Teams",
-				"admin": "Admin"
+				"admin": "Admin",
+				"yourTeam": "Your Team",
+				"agents": "Agents",
+				"settings": "Settings"
 			}
 		}
 	},

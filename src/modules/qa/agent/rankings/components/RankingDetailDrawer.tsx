@@ -106,12 +106,23 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 				<Paper withBorder radius='md' p='md' className={styles.statsCard}>
 					<Group grow align='flex-start' wrap='nowrap'>
 						<QuickStat label='Rank' value={`#${entry.rank}`} />
-						<QuickStat label='Score' value={entry.score} />
+						<QuickStat
+							label='Score'
+							value={
+								<>
+									<div>{entry.score}/5</div>
+									<Text size='xs' c='dimmed' mt={4}>
+										{entry.score >= 4.5 ? 'Excellent' : entry.score >= 4.0 ? 'Good' : 'Needs work'}
+									</Text>
+								</>
+							}
+						/>
 						<QuickStat
 							label='Streak'
 							value={
 								<>
-									<span aria-hidden>🔥</span> {entry.streak ?? 0}
+									<div>{streak}</div>
+									<Text size='xs' c='dimmed' mt={4}>weeks active</Text>
 								</>
 							}
 						/>
@@ -119,17 +130,17 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 
 					<Divider my='sm' />
 
-					{/* Gamification summary: rank movement · streak · point lead · social proof */}
-					<Group gap='xs'>
+					{/* Gamification summary with improved context labels */}
+					<Stack gap='xs'>
 						<GamificationChip
 							emoji='📊'
-							label={`${trend > 0 ? '↑' : trend < 0 ? '↓' : '–'} ${Math.abs(trend)}`}
+							label={`${trend > 0 ? 'Up' : trend < 0 ? 'Down' : 'Stable'} ${Math.abs(trend)} positions`}
 							tooltip={getRankMovementTooltip(entry)}
 							color={getRankMovementColor(trend)}
 						/>
 						<GamificationChip
 							emoji='🔥'
-							label={`${streak} ${streak === 1 ? 'week' : 'weeks'}`}
+							label={`${streak} week${streak === 1 ? '' : 's'} streak`}
 							tooltip={
 								streak > 0
 									? `${streak} consecutive week${streak === 1 ? '' : 's'} in the top of the ranking`
@@ -140,14 +151,14 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 						<GamificationChip
 							emoji='💪'
 							label={
-								pointLead.points === null ? '—' : `+${pointLead.points} pts`
+								pointLead.points === null ? 'Tied with next' : `${pointLead.points} points ahead`
 							}
 							tooltip={getPointLeadTooltip(pointLead)}
 							color={getPointLeadColor(pointLead.points)}
 						/>
 						<GamificationChip
 							emoji='🤝'
-							label={`${reactionsTotal}`}
+							label={`${reactionsTotal} reaction${reactionsTotal === 1 ? '' : 's'} received`}
 							tooltip={`${reactionsTotal} peer reaction${reactionsTotal === 1 ? '' : 's'} received`}
 							color={reactionsTotal > 0 ? 'grape' : 'gray'}
 						/>
@@ -157,7 +168,7 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 								{entry.achievements.length === 1 ? '' : 's'}
 							</Badge>
 						) : null}
-					</Group>
+					</Stack>
 				</Paper>
 
 				<Divider />
@@ -172,7 +183,7 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 					</Text>
 				</Stack>
 
-				<Tabs defaultValue='achievements' variant='pills' keepMounted={false}>
+				<Tabs defaultValue='achievements' variant='default' keepMounted={false} className={styles.tabs}>
 					<Tabs.List>
 						<Tabs.Tab
 							value='achievements'

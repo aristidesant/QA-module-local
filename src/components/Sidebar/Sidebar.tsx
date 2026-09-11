@@ -41,12 +41,10 @@ import {
 	IconLayoutDashboard,
 	IconListDetails,
 	IconInbox,
-	IconPhone,
 	IconSettings,
 	IconTableExport,
 	IconTargetArrow,
 	IconUsers,
-	IconUsersGroup,
 	IconShield,
 	IconTrendingUp,
 	IconChartLine,
@@ -75,6 +73,10 @@ import { useRoleMockStore } from '~/stores/roleMockStore';
 import type { PreviewRole } from '~/constants/previewRole';
 import UserMenu from '../UserMenu';
 import { useDisputesQuery } from '~/queries/qa/disputesQueries';
+import {
+	roleNavigationGroupedMap,
+	type NavGroup,
+} from './roleNavigation';
 
 export type SidebarNavItem = {
 	key: string;
@@ -423,8 +425,8 @@ const qaPrimaryItems: SidebarNavItem[] = [
 		key: 'qa-auto-triggers',
 		label: 'sidebar.items.qaAutoTriggers',
 		icon: <IconBell size={20} className={styles.menuIcon} />,
-		to: '/qa/auto-triggers',
-		i18nNamespace: 'qa.autoTriggers',
+		to: '/qa/qa-manager/triggers',
+		i18nNamespace: 'qa.triggers',
 	},
 	{
 		key: 'qa-reporting',
@@ -508,231 +510,20 @@ const emotionSentimentPrimaryItems: SidebarNavItem[] = [
 	},
 ];
 
+// Type guard to detect NavGroup vs SidebarNavItem
+const isNavGroup = (item: SidebarNavItem | NavGroup): item is NavGroup => {
+	return 'items' in item && Array.isArray(item.items) && 'collapsible' in item;
+};
+
 // Static per-role nav shown only when a SuperAdmin has an active role preview
 // (see UserMenu's "Preview as role"). Purely a visual mock — see
 // docs/superpowers/specs/2026-07-24-role-preview-switcher-design.md for the
 // full role -> item mapping and which destinations are real vs. placeholder.
-const rolePreviewNav: Record<PreviewRole, SidebarNavItem[]> = {
-	agent: [
-		{
-			key: 'role-preview-dashboard',
-			label: 'sidebar.rolePreview.items.dashboard',
-			icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/agent',
-			exact: true,
-		},
-		{
-			key: 'role-preview-my-evaluations',
-			label: 'sidebar.rolePreview.items.myEvaluations',
-			icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
-			to: '/qa/agent/evaluations',
-		},
-		{
-			key: 'role-preview-inbox',
-			label: 'sidebar.rolePreview.items.inbox',
-			icon: <IconInbox size={20} className={styles.menuIcon} />,
-			to: '/qa/agent/inbox',
-		},
-		{
-			key: 'role-preview-analytics',
-			label: 'sidebar.rolePreview.items.analytics',
-			icon: <IconChartBar size={20} className={styles.menuIcon} />,
-			to: '/qa/agent/analytics',
-		},
-		{
-			key: 'role-preview-disputes',
-			label: 'sidebar.rolePreview.items.disputes',
-			icon: <IconFolders size={20} className={styles.menuIcon} />,
-			to: '/qa/agent/disputes',
-			badge: 'disputes',
-		},
-		{
-			key: 'role-preview-rankings',
-			label: 'sidebar.rolePreview.items.rankings',
-			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
-			to: '/qa/agent/rankings',
-		},
-		{
-			key: 'role-preview-lms',
-			label: 'sidebar.rolePreview.items.lms',
-			icon: <IconLock size={20} className={styles.menuIcon} />,
-			to: '/qa/agent/lms',
-			disabled: true,
-		},
-	],
-	supervisor: [
-		{
-			key: 'role-preview-dashboard',
-			label: 'sidebar.rolePreview.items.dashboard',
-			icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/supervisor',
-			exact: true,
-		},
-		{
-			key: 'role-preview-team',
-			label: 'sidebar.rolePreview.items.team',
-			icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/supervisor',
-		},
-		{
-			key: 'role-preview-team-triggers',
-			label: 'sidebar.rolePreview.items.triggersConfig',
-			icon: <IconBell size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/supervisor',
-		},
-		{
-			key: 'role-preview-team-rankings-config',
-			label: 'sidebar.rolePreview.items.rankingsConfig',
-			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
-			to: '/qa/agent/rankings',
-		},
-		{
-			key: 'role-preview-calls',
-			label: 'sidebar.rolePreview.items.calls',
-			icon: <IconPhone size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/supervisor',
-		},
-		{
-			key: 'role-preview-evaluations',
-			label: 'sidebar.rolePreview.items.evaluations',
-			icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/supervisor',
-		},
-		{
-			key: 'role-preview-disputes',
-			label: 'sidebar.rolePreview.items.disputes',
-			icon: <IconFolders size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/supervisor',
-			badge: 'disputes',
-		},
-		{
-			key: 'role-preview-analytics',
-			label: 'sidebar.rolePreview.items.analytics',
-			icon: <IconChartLine size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/supervisor',
-		},
-		{
-			key: 'role-preview-reports',
-			label: 'sidebar.rolePreview.items.reports',
-			icon: <IconFileText size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/supervisor',
-		},
-	],
-	operationManager: [
-		{
-			key: 'role-preview-dashboard',
-			label: 'sidebar.rolePreview.items.dashboard',
-			icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/operation-manager',
-			exact: true,
-		},
-		{
-			key: 'role-preview-supervisors',
-			label: 'sidebar.rolePreview.items.supervisors',
-			icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/operation-manager',
-		},
-		{
-			key: 'role-preview-team-health',
-			label: 'sidebar.rolePreview.items.teamHealth',
-			icon: <IconActivity size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/operation-manager',
-		},
-		{
-			key: 'role-preview-clients',
-			label: 'sidebar.rolePreview.items.clients',
-			icon: <IconCpu size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/operation-manager',
-		},
-		{
-			key: 'role-preview-configuration',
-			label: 'sidebar.rolePreview.items.configuration',
-			icon: <IconSettings size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/operation-manager',
-		},
-		{
-			key: 'role-preview-configuration-supervisor-rankings',
-			label: 'sidebar.rolePreview.items.supervisorRankings',
-			icon: <IconTrendingUp size={20} className={styles.menuIcon} />,
-			to: '/qa/agent/rankings',
-		},
-		{
-			key: 'role-preview-analytics',
-			label: 'sidebar.rolePreview.items.analytics',
-			icon: <IconChartLine size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/operation-manager',
-		},
-		{
-			key: 'role-preview-reports',
-			label: 'sidebar.rolePreview.items.reports',
-			icon: <IconFileText size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/operation-manager',
-		},
-	],
-	qaManager: [
-		{
-			key: 'role-preview-dashboard',
-			label: 'sidebar.rolePreview.items.dashboard',
-			icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/qa-manager',
-			exact: true,
-		},
-		{
-			key: 'role-preview-supervisors',
-			label: 'sidebar.rolePreview.items.supervisors',
-			icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/qa-manager',
-		},
-		{
-			key: 'role-preview-teams',
-			label: 'sidebar.rolePreview.items.teams',
-			icon: <IconUsers size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/qa-manager',
-		},
-		{
-			key: 'role-preview-calls',
-			label: 'sidebar.rolePreview.items.calls',
-			icon: <IconPhone size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/qa-manager',
-		},
-		{
-			key: 'role-preview-disputes',
-			label: 'sidebar.rolePreview.items.disputes',
-			icon: <IconFolders size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/qa-manager',
-			badge: 'disputes',
-		},
-		{
-			key: 'role-preview-admin',
-			label: 'sidebar.rolePreview.items.admin',
-			icon: <IconSettings size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/qa-manager',
-		},
-		{
-			key: 'role-preview-admin-triggers',
-			label: 'sidebar.rolePreview.items.triggersConfig',
-			icon: <IconBell size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/qa-manager',
-		},
-		{
-			key: 'role-preview-admin-campaigns',
-			label: 'sidebar.rolePreview.items.campaigns',
-			icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/qa-manager',
-		},
-		{
-			key: 'role-preview-analytics',
-			label: 'sidebar.rolePreview.items.analytics',
-			icon: <IconChartLine size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/qa-manager',
-		},
-		{
-			key: 'role-preview-reports',
-			label: 'sidebar.rolePreview.items.reports',
-			icon: <IconFileText size={20} className={styles.menuIcon} />,
-			to: '/qa/dashboards/qa-manager',
-		},
-	],
+const rolePreviewNav: Record<PreviewRole, (SidebarNavItem | NavGroup)[]> = {
+	agent: roleNavigationGroupedMap.agent(),
+	supervisor: roleNavigationGroupedMap.supervisor(),
+	operationManager: roleNavigationGroupedMap.operationManager(),
+	qaManager: roleNavigationGroupedMap.qaManager(),
 	superAdmin: [
 		{
 			key: 'role-preview-dashboard',
@@ -819,6 +610,7 @@ export const Sidebar: React.FC = () => {
 	const inBackofficeApp = currentApp === 'backoffice' && hasBackofficeRole;
 	const { collapsed, toggleCollapsed } = useSidebarStore();
 	const [openSection, setOpenSection] = useState<string>('');
+	const [openGroupSection, setOpenGroupSection] = useState<string>('');
 	const scrollContainerRef = useRef<HTMLDivElement | null>(null);
 	const pendingScrollSectionRef = useRef<string | null>(null);
 	// Keep track of the section that still needs to finish expanding before scrolling.
@@ -954,17 +746,47 @@ export const Sidebar: React.FC = () => {
 		[location.pathname, sectionNav]
 	);
 
-	const activeItem = useMemo(
-		() =>
-			primaryNav.find((item) => isLinkActive(item, location.pathname)) ??
-			sectionNav
-				.flatMap((section) => section.items)
-				.find((item) => isLinkActive(item, location.pathname)) ??
-			null,
-		[location.pathname, primaryNav, sectionNav]
-	);
+	const activeItem = useMemo(() => {
+		// Check flat items in primaryNav
+		const flatItem = primaryNav.find(
+			(navItem) => !isNavGroup(navItem) && isLinkActive(navItem as SidebarNavItem, location.pathname)
+		);
+		if (flatItem) return flatItem as SidebarNavItem;
+
+		// Check items within groups in primaryNav
+		for (const navItem of primaryNav) {
+			if (isNavGroup(navItem)) {
+				const groupItem = (navItem as NavGroup).items.find((item) =>
+					isLinkActive(item, location.pathname)
+				);
+				if (groupItem) return groupItem;
+			}
+		}
+
+		// Check section items
+		const sectionItem = sectionNav
+			.flatMap((section) => section.items)
+			.find((item) => isLinkActive(item, location.pathname));
+		return sectionItem ?? null;
+	}, [location.pathname, primaryNav, sectionNav]);
 	const activeItemKey = activeItem?.key ?? null;
 	const activeSectionKey = activeSection?.key ?? null;
+
+	// Auto-expand active group in primaryNav
+	useEffect(() => {
+		if (activeItem) {
+			for (const navItem of primaryNav) {
+				if (isNavGroup(navItem)) {
+					const group = navItem as NavGroup;
+					if (group.items.some((item) => item.key === activeItem.key)) {
+						setOpenGroupSection(group.key);
+						return;
+					}
+				}
+			}
+		}
+		// Don't auto-close groups when no active item found
+	}, [activeItem, primaryNav]);
 
 	useEffect(() => {
 		if (activeSection) {
@@ -1099,14 +921,75 @@ export const Sidebar: React.FC = () => {
 			</div>
 
 			<Stack gap='xs' className={styles.primaryLinks}>
-				{primaryNav.map((item) => (
-					<SidebarLinkItem
-						key={item.key}
-						item={item}
-						collapsed={collapsed}
-						isActive={activeItem?.key === item.key}
-					/>
-				))}
+				{primaryNav.map((navItem) => {
+					if (isNavGroup(navItem)) {
+						// Render as group (collapsible or not)
+						const group = navItem as NavGroup;
+						const isCollapsible = group.collapsible !== false;
+						const isOpen = !isCollapsible || openGroupSection === group.key || (group.defaultExpanded ?? false);
+
+						return (
+							<div key={group.key} className={styles.sectionGroup}>
+								<UnstyledButton
+									className={styles.sectionHeader}
+									onClick={() => {
+										if (isCollapsible) {
+											setOpenGroupSection((current) =>
+												current === group.key ? '' : group.key
+											);
+										}
+									}}
+									aria-expanded={isOpen}
+									{...(isCollapsible ? {} : { disabled: true })}
+								>
+									<Group gap='xs' wrap='nowrap' className={styles.sectionHeaderInner}>
+										{group.icon}
+										<Text
+											size='xs'
+											fw={700}
+											tt='uppercase'
+											c='dimmed'
+											className={styles.sectionLabel}
+										>
+											{t(group.label)}
+										</Text>
+									</Group>
+									{isCollapsible && (
+										<IconChevronDown
+											size={14}
+											className={[
+												styles.sectionChevron,
+												isOpen ? styles.sectionChevronOpen : '',
+											].join(' ')}
+										/>
+									)}
+								</UnstyledButton>
+								{isOpen && (
+									<Stack gap={4} className={styles.sectionItems}>
+										{group.items.map((item) => (
+											<SidebarLinkItem
+												key={item.key}
+												item={item}
+												collapsed={false}
+												isActive={activeItem?.key === item.key}
+											/>
+										))}
+									</Stack>
+								)}
+							</div>
+						);
+					} else {
+						// Render as flat item
+						return (
+							<SidebarLinkItem
+								key={navItem.key}
+								item={navItem}
+								collapsed={collapsed}
+								isActive={activeItem?.key === navItem.key}
+							/>
+						);
+					}
+				})}
 			</Stack>
 
 			<Divider className={styles.divider} />

@@ -6,6 +6,7 @@ interface NotificationStoreState {
   // Notifications
   notifications: AgentNotification[];
   setNotifications: (notifications: AgentNotification[]) => void;
+  addNotification: (notification: AgentNotification) => void;
   markAsRead: (notificationId: string) => void;
   markAsUnread: (notificationId: string) => void;
   archiveNotification: (notificationId: string) => void;
@@ -34,6 +35,8 @@ export const useNotificationStore = create<NotificationStoreState>((set, get) =>
 
   // Notification actions
   setNotifications: (notifications) => set({ notifications }),
+
+  addNotification: (notification) => set((state) => ({ notifications: [notification, ...state.notifications] })),
 
   markAsRead: (notificationId) =>
     set((state) => ({

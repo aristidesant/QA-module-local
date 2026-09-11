@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Stack, Title, Text, SimpleGrid, Tabs, Card, Badge } from '@mantine/core';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
@@ -10,10 +11,10 @@ import {
 	SentimentEmotionCard,
 	AutoFailsCard,
 	SentimentTrendChart,
-	CriticalIssuesTable,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
 	RankingsTable,
+	InboxSummary,
 } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import type { RankingEntry, RankingGoal } from '../components/RankingsTable';
@@ -21,16 +22,10 @@ import {
 	QA_MANAGER_WEEKLY_METRICS,
 	QA_MANAGER_SENTIMENT_TREND,
 	QA_MANAGER_CALLS,
-	CRITICAL_ISSUES_QA_MANAGER,
 } from '../mockData';
 import styles from '../Dashboard.module.css';
 
-/** Inbox this dashboard's critical issues drill into */
-const QA_MANAGER_INBOX_PATH = '/qa/qa-manager/inbox';
 
-/**
- * Default insights for the QA manager dashboard (platform-level recommendations)
- */
 const DEFAULT_QA_MANAGER_INSIGHTS: Insight[] = [
 	{
 		title: 'Platform Performance',
@@ -54,11 +49,6 @@ const DEFAULT_QA_MANAGER_INSIGHTS: Insight[] = [
 	},
 ];
 
-/**
- * Row shape for the "Supervisors" tab table.
- * No shared model/mock export exists for this yet, so it is defined locally
- * (mirrors the approach taken for TEAM_MEMBERS in NewSupervisorDashboard.tsx).
- */
 interface SupervisorRow {
 	id: string;
 	name: string;
@@ -78,11 +68,6 @@ const SUPERVISORS_OVERVIEW: SupervisorRow[] = [
 	{ id: 'SUP-007', name: 'Patricia Lopez', teamSize: 7, avgQaScore: 75, sentiment: 3.2, compliance: 72 },
 ];
 
-/**
- * Row shape for the "Disputes" tab table (platform-wide audit view).
- * Status colors follow the same convention used in the real DisputesListPage
- * ('open' | 'approved' | 'rejected'), plus 'pending' for disputes awaiting review.
- */
 interface DisputeRow {
 	id: string;
 	agentName: string;
@@ -109,9 +94,6 @@ const DISPUTE_STATUS_COLORS: Record<DisputeRow['status'], string> = {
 	rejected: 'red',
 };
 
-/**
- * Row shape for the "Campaigns" tab table.
- */
 interface CampaignRow {
 	id: string;
 	name: string;
@@ -134,10 +116,6 @@ const CAMPAIGN_STATUS_COLORS: Record<CampaignRow['status'], string> = {
 	archived: 'gray',
 };
 
-/**
- * Ranking goal applied platform-wide by the QA Manager. Supervisors are
- * ranked on a broader metric mix than individual agents.
- */
 const QA_MANAGER_RANKING_GOAL: RankingGoal = {
 	metric: 'Sentiment & Emotion',
 	criteria: 'Platform-wide sentiment and emotion performance',
@@ -147,10 +125,6 @@ const QA_MANAGER_RANKING_GOAL: RankingGoal = {
 	setBy: 'You · QA Manager',
 };
 
-/**
- * Supervisor ranking entries for the "Team Rankings" tab, derived from the
- * same roster as the "Supervisors" tab so both views stay consistent.
- */
 const QA_MANAGER_RANKINGS: RankingEntry[] = [
 	{
 		position: 1,
@@ -320,17 +294,24 @@ const campaignColumns: BaseTableColumnDef<CampaignRow>[] = [
 	},
 ];
 
+type EvaluationType = 'all' | 'qa' | 'sentiment' | 'compliance' | 'business';
+
 export const NewQAManagerDashboard: React.FC = () => {
 	const navigate = useNavigate();
+	const [evaluationType, setEvaluationType] = useState<EvaluationType>('all');
 	const { qaScore, sentiment, complianceCategories, autoFailsCount } = QA_MANAGER_WEEKLY_METRICS;
 
-	/** Overall sentiment on the 0-5 scale, averaging agent and customer readings */
 	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
+
+	const shouldShowCard = (type: EvaluationType | EvaluationType[]): boolean => {
+		if (evaluationType === 'all') return true;
+		const types = Array.isArray(type) ? type : [type];
+		return types.includes(evaluationType);
+	};
 
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
-				{/* 1. Header Section */}
 				<div>
 					<Title order={1}>QA Manager Dashboard</Title>
 					<Text c='dimmed' mt='xs'>
@@ -338,7 +319,6 @@ export const NewQAManagerDashboard: React.FC = () => {
 					</Text>
 				</div>
 
-				{/* 2. Performance Score Row: Quality Assurance | Compliance | Sentiment & Emotion */}
 				<SectionCard
 					title='Performance Score'
 					description='Platform-wide quality assurance, compliance, and sentiment results this week'
@@ -357,85 +337,109 @@ export const NewQAManagerDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Critical Issues */}
-				<SectionCard title='Critical Issues' description='Platform-wide issues requiring attention'>
-					<CriticalIssuesTable
-						issues={CRITICAL_ISSUES_QA_MANAGER}
-						onIssueClick={() => navigate(QA_MANAGER_INBOX_PATH)}
+				<div>
+					<Text size='sm' fw={500} mb='xs'>
+						Filter by evaluation type
+					</Text>
+					<AppSegmentedControl
+						value={evaluationType}
+						onChange={(value) => setEvaluationType(value as EvaluationType)}
+						data={[
+							{ label: 'All', value: 'all' },
+							{ label: 'QA', value: 'qa' },
+							{ label: 'Sentiment & Emotion', value: 'sentiment' },
+							{ label: 'Compliance', value: 'compliance' },
+							{ label: 'Business Insight', value: 'business' },
+						]}
 					/>
-				</SectionCard>
+				</div>
 
-				{/* 4. Sentiment trend and quick insights */}
+				<div style={{ opacity: shouldShowCard('qa') ? 1 : 0.5, transition: 'opacity 0.2s' }}>
+					<InboxSummary
+						autoDrivenCount={5}
+						negativeCount={4}
+						trendCount={8}
+						inboxPath='/qa/qa-manager/inbox'
+					/>
+				</div>
+
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<SectionCard title='Sentiment Trend' description='4-week platform sentiment progression'>
-						<Card className={styles.metricCard} p='md' radius='md' withBorder>
-							<SentimentTrendChart data={QA_MANAGER_SENTIMENT_TREND} />
-						</Card>
-					</SectionCard>
+					<div style={{ opacity: shouldShowCard('sentiment') ? 1 : 0.5, transition: 'opacity 0.2s' }}>
+						<SectionCard title='Sentiment Trend' description='4-week platform sentiment progression'>
+							<Card className={styles.metricCard} p='md' radius='md' withBorder>
+								<SentimentTrendChart data={QA_MANAGER_SENTIMENT_TREND} />
+							</Card>
+						</SectionCard>
+					</div>
 
-					<SectionCard title='Quick Insights' description='Platform-level recommendations and analysis'>
-						<QuickInsightsWidget insights={DEFAULT_QA_MANAGER_INSIGHTS} />
-					</SectionCard>
+					<div style={{ opacity: shouldShowCard(['sentiment', 'compliance', 'business']) ? 1 : 0.5, transition: 'opacity 0.2s' }}>
+						<SectionCard title='Quick Insights' description='Platform-level recommendations and analysis'>
+							<QuickInsightsWidget insights={DEFAULT_QA_MANAGER_INSIGHTS} />
+						</SectionCard>
+					</div>
 				</SimpleGrid>
 
-				{/* 5-6. Best & Worst Calls + Tabs Section (same row) */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<SectionCard title='Best & Worst Calls' description='Top and bottom performing calls from across all teams this week'>
-						<BestWorstCallsTable calls={QA_MANAGER_CALLS} />
-					</SectionCard>
+					<div style={{ opacity: shouldShowCard('qa') ? 1 : 0.5, transition: 'opacity 0.2s' }}>
+						<SectionCard title='Best & Worst Calls' description='Top and bottom performing calls from across all teams this week'>
+							<BestWorstCallsTable calls={QA_MANAGER_CALLS} />
+						</SectionCard>
+					</div>
 
-					<Tabs defaultValue='rankings' style={{ flex: 1 }}>
-						<Tabs.List>
-							<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
-							<Tabs.Tab value='supervisors'>Supervisors</Tabs.Tab>
-							<Tabs.Tab value='disputes'>Disputes</Tabs.Tab>
-							<Tabs.Tab value='campaigns'>Campaigns</Tabs.Tab>
-						</Tabs.List>
+					<div style={{ opacity: shouldShowCard(['qa', 'sentiment', 'compliance', 'business']) ? 1 : 0.5, transition: 'opacity 0.2s' }}>
+						<Tabs defaultValue='rankings' style={{ flex: 1 }}>
+							<Tabs.List>
+								<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
+								<Tabs.Tab value='supervisors'>Supervisors</Tabs.Tab>
+								<Tabs.Tab value='disputes'>Disputes</Tabs.Tab>
+								<Tabs.Tab value='campaigns'>Campaigns</Tabs.Tab>
+							</Tabs.List>
 
-						<Tabs.Panel value='rankings' pt='lg'>
-							<RankingsTable
-								entries={QA_MANAGER_RANKINGS}
-								title='Supervisor Rankings'
-								description='Supervisor teams ranked against the platform goal for this period'
-								goal={QA_MANAGER_RANKING_GOAL}
-								maxDisplay={7}
-								onViewAll={() => navigate('/qa/qamanager/rankings')}
-							/>
-						</Tabs.Panel>
-
-						<Tabs.Panel value='supervisors' pt='lg'>
-							<SectionCard title='Supervisors' description="All supervisors' performance metrics across the platform">
-								<BaseTable<SupervisorRow>
-									columns={supervisorColumns}
-									data={SUPERVISORS_OVERVIEW}
-									getRowId={supervisor => supervisor.id}
-									emptyMessage='No supervisors found'
+							<Tabs.Panel value='rankings' pt='lg'>
+								<RankingsTable
+									entries={QA_MANAGER_RANKINGS}
+									title='Supervisor Rankings'
+									description='Supervisor teams ranked against the platform goal for this period'
+									goal={QA_MANAGER_RANKING_GOAL}
+									maxDisplay={7}
+									onViewAll={() => navigate('/qa/qamanager/rankings')}
 								/>
-							</SectionCard>
-						</Tabs.Panel>
+							</Tabs.Panel>
 
-						<Tabs.Panel value='disputes' pt='lg'>
-							<SectionCard title='Disputes' description='All platform disputes across supervisors and teams'>
-								<BaseTable<DisputeRow>
-									columns={disputeColumns}
-									data={ALL_DISPUTES}
-									getRowId={dispute => dispute.id}
-									emptyMessage='No disputes found'
-								/>
-							</SectionCard>
-						</Tabs.Panel>
+							<Tabs.Panel value='supervisors' pt='lg'>
+								<SectionCard title='Supervisors' description="All supervisors' performance metrics across the platform">
+									<BaseTable<SupervisorRow>
+										columns={supervisorColumns}
+										data={SUPERVISORS_OVERVIEW}
+										getRowId={supervisor => supervisor.id}
+										emptyMessage='No supervisors found'
+									/>
+								</SectionCard>
+							</Tabs.Panel>
 
-						<Tabs.Panel value='campaigns' pt='lg'>
-							<SectionCard title='Campaigns' description='Active and archived campaigns across the platform'>
-								<BaseTable<CampaignRow>
-									columns={campaignColumns}
-									data={CAMPAIGNS_LIST}
-									getRowId={campaign => campaign.id}
-									emptyMessage='No campaigns found'
-								/>
-							</SectionCard>
-						</Tabs.Panel>
-					</Tabs>
+							<Tabs.Panel value='disputes' pt='lg'>
+								<SectionCard title='Disputes' description='All platform disputes across supervisors and teams'>
+									<BaseTable<DisputeRow>
+										columns={disputeColumns}
+										data={ALL_DISPUTES}
+										getRowId={dispute => dispute.id}
+										emptyMessage='No disputes found'
+									/>
+								</SectionCard>
+							</Tabs.Panel>
+
+							<Tabs.Panel value='campaigns' pt='lg'>
+								<SectionCard title='Campaigns' description='Active and archived campaigns across the platform'>
+									<BaseTable<CampaignRow>
+										columns={campaignColumns}
+										data={CAMPAIGNS_LIST}
+										getRowId={campaign => campaign.id}
+										emptyMessage='No campaigns found'
+									/>
+								</SectionCard>
+							</Tabs.Panel>
+						</Tabs>
+					</div>
 				</SimpleGrid>
 			</Stack>
 		</ContentContainer>

@@ -24,6 +24,7 @@ export type { RankingEntry, RankingGoal, ReactionType, ReactionCounts } from './
 // Phase 4: Performance Metrics
 export { PerformanceScoresSection } from './PerformanceScoresSection';
 export { CriticalIssuesTable } from './CriticalIssuesTable';
+export { InboxSummary } from './InboxSummary';
 
 // Phase 5: Sentiment Analysis
 export { SentimentTrendChart } from './SentimentTrendChart';

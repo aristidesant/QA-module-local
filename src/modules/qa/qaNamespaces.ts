@@ -19,4 +19,6 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.disputes': 'qa.disputes',
 	'qa.disputes.detail': 'qa.disputes',
 	'qa.evaluator-agents': 'qa.evaluatorAgents',
+	'qa.supervisor.triggers': 'qa.triggers',
+	'qa.qa-manager.triggers': 'qa.triggers',
 };

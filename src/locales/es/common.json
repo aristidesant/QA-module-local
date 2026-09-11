@@ -151,6 +151,58 @@
 			"dark": "Modo oscuro",
 			"auto": "Modo del sistema"
 		},
+		"supervisor": {
+			"dashboard": "Panel de control",
+			"team": "Tu equipo",
+			"groupTeam": "Tu equipo",
+			"calls": "Llamadas",
+			"evaluations": "Evaluaciones",
+			"triggersConfig": "Disparadores del equipo",
+			"rankingsConfig": "Configuración de rankings",
+			"disputes": "Disputas",
+			"analytics": "Análisis",
+			"reports": "Reportes",
+			"groupOperations": "Operaciones",
+			"groupInsights": "Perspectivas"
+		},
+		"agent": {
+			"dashboard": "Panel de control",
+			"myCalls": "Mis llamadas",
+			"myEvaluations": "Mis evaluaciones",
+			"inbox": "Bandeja de entrada",
+			"rankings": "Rankings del equipo",
+			"profile": "Perfil",
+			"groupMyWork": "Mi trabajo",
+			"groupInsights": "Perspectivas"
+		},
+		"qamanager": {
+			"dashboard": "Panel de control",
+			"supervisors": "Supervisores",
+			"teams": "Equipos",
+			"calls": "Llamadas",
+			"campaigns": "Campañas",
+			"disputes": "Disputas",
+			"triggersConfig": "Configuración de disparadores",
+			"rankings": "Rankings",
+			"analytics": "Análisis",
+			"reports": "Reportes",
+			"groupOrganization": "Organización",
+			"groupOperations": "Operaciones",
+			"groupConfiguration": "Configuración",
+			"groupInsights": "Perspectivas"
+		},
+		"operationmanager": {
+			"dashboard": "Panel de control",
+			"supervisors": "Supervisores",
+			"teamHealth": "Salud del equipo",
+			"clients": "Clientes",
+			"supervisorRankings": "Rankings de supervisores",
+			"analytics": "Análisis",
+			"reports": "Reportes",
+			"groupOrganization": "Organización",
+			"groupConfiguration": "Configuración",
+			"groupInsights": "Perspectivas"
+		},
 		"rolePreview": {
 			"items": {
 				"dashboard": "Dashboard",
@@ -176,6 +228,7 @@
 				"inbox": "Bandeja de entrada",
 				"rankings": "Rankings del equipo",
 				"team": "Equipo",
+				"triggers": "Triggers",
 				"triggersConfig": "Configuración de disparadores",
 				"rankingsConfig": "Configuración de rankings",
 				"calls": "Llamadas",
@@ -186,7 +239,10 @@
 				"configuration": "Configuración",
 				"supervisorRankings": "Rankings de supervisores",
 				"teams": "Equipos",
-				"admin": "Administración"
+				"admin": "Administración",
+				"yourTeam": "Tu equipo",
+				"agents": "Agentes",
+				"settings": "Configuración"
 			}
 		}
 	},
