@@ -113,7 +113,8 @@ type EvaluationType = 'all' | 'qa' | 'sentiment' | 'compliance' | 'business';
 
 export const NewAgentDashboard: React.FC = () => {
 	const [evaluationType, setEvaluationType] = useState<EvaluationType>('all');
-	const { qaScore, sentiment, complianceCategories, autoFailsCount } = AGENT_WEEKLY_METRICS;
+	const { qaScore, sentiment, complianceCategories, autoFailsCount } =
+		AGENT_WEEKLY_METRICS;
 
 	/** Overall sentiment on the 0-5 scale, averaging agent and customer readings */
 	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
@@ -142,15 +143,25 @@ export const NewAgentDashboard: React.FC = () => {
 					description='Your quality assurance, compliance, sentiment, and auto-fails results this week'
 				>
 					<SimpleGrid cols={{ base: 1, md: 4 }} spacing='md'>
-						<QualityAssuranceCard score={qaScore} subtitle='Category breakdown' />
-						<ComplianceCard categories={complianceCategories} subtitle='Category overview' />
+						<QualityAssuranceCard
+							score={qaScore}
+							subtitle='Category breakdown'
+						/>
+						<ComplianceCard
+							categories={complianceCategories}
+							subtitle='Category overview'
+						/>
 						<SentimentEmotionCard
 							score={overallSentiment}
 							predominantEmotion={sentiment.predominantEmotion}
 							subtitle='0-5 scale assessment'
 						/>
 						<div>
-							<AutoFailsCard sectionAutoFails={autoFailsCount} globalAutoFails={18} compact />
+							<AutoFailsCard
+								sectionAutoFails={autoFailsCount}
+								globalAutoFails={18}
+								compact
+							/>
 						</div>
 					</SimpleGrid>
 				</SectionCard>
@@ -173,26 +184,50 @@ export const NewAgentDashboard: React.FC = () => {
 					/>
 				</div>
 
-				{/* 3. Inbox Summary (replaced Critical Issues) */}
-				<div style={{ opacity: shouldShowCard('qa') ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-					<InboxSummary
-						autoDrivenCount={3}
-						negativeCount={2}
-						trendCount={5}
-						inboxPath='/qa/agent/inbox'
-					/>
-				</div>
+				{/* 3. Inbox Summary & Burnout Assessment (Side by side) */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+					{/* inline-style-allow: dynamic opacity based on filter state */}
+					<div
+						style={{
+							opacity: shouldShowCard('qa') ? 1 : 0.5,
+							transition: 'opacity 0.2s',
+						}}
+					>
+						<InboxSummary
+							autoDrivenCount={3}
+							negativeCount={2}
+							trendCount={5}
+							inboxPath='/qa/agent/inbox'
+						/>
+					</div>
 
-				{/* 4. Burnout Risk Widget */}
-				<div style={{ opacity: shouldShowCard('qa') ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-					<SectionCard title='Burnout Assessment' description='Your current burnout risk level'>
-						<BurnoutRiskWidget data={AGENT_BURNOUT_RISK} />
-					</SectionCard>
-				</div>
+					{/* inline-style-allow: dynamic opacity based on filter state */}
+					<div
+						style={{
+							opacity: shouldShowCard('qa') ? 1 : 0.5,
+							transition: 'opacity 0.2s',
+						}}
+					>
+						<SectionCard
+							title='Burnout Assessment'
+							description='Your current burnout risk level'
+						>
+							<BurnoutRiskWidget data={AGENT_BURNOUT_RISK} />
+						</SectionCard>
+					</div>
+				</SimpleGrid>
 
 				{/* 4. Team Rankings */}
-				<div style={{ opacity: shouldShowCard('qa') ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-					<SectionCard title='Team Rankings' description="Your current ranking alongside the team's top performers this period">
+				<div
+					style={{
+						opacity: shouldShowCard('qa') ? 1 : 0.5,
+						transition: 'opacity 0.2s',
+					}}
+				>
+					<SectionCard
+						title='Team Rankings'
+						description="Your current ranking alongside the team's top performers this period"
+					>
 						<RankingsTable
 							entries={AGENT_TEAM_RANKINGS}
 							title='Team Rankings'
@@ -201,7 +236,9 @@ export const NewAgentDashboard: React.FC = () => {
 							maxDisplay={5}
 							onViewAll={() => {
 								// Navigate to full rankings view
-								const element = document.getElementById('team-rankings-section');
+								const element = document.getElementById(
+									'team-rankings-section'
+								);
 								if (element) {
 									element.scrollIntoView({ behavior: 'smooth' });
 								}
@@ -212,24 +249,50 @@ export const NewAgentDashboard: React.FC = () => {
 
 				{/* 5. Sentiment trend and quick insights */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<div style={{ opacity: shouldShowCard('sentiment') ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-						<SectionCard title='Sentiment Trend' description='4-week sentiment progression'>
+					<div
+						style={{
+							opacity: shouldShowCard('sentiment') ? 1 : 0.5,
+							transition: 'opacity 0.2s',
+						}}
+					>
+						<SectionCard
+							title='Sentiment Trend'
+							description='4-week sentiment progression'
+						>
 							<Card className={styles.metricCard} p='md' radius='md' withBorder>
 								<SentimentTrendChart data={AGENT_SENTIMENT_TREND} />
 							</Card>
 						</SectionCard>
 					</div>
 
-					<div style={{ opacity: shouldShowCard(['sentiment', 'compliance', 'business']) ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-						<SectionCard title='Quick Insights' description='Performance recommendations and analysis'>
+					<div
+						style={{
+							opacity: shouldShowCard(['sentiment', 'compliance', 'business'])
+								? 1
+								: 0.5,
+							transition: 'opacity 0.2s',
+						}}
+					>
+						<SectionCard
+							title='Quick Insights'
+							description='Performance recommendations and analysis'
+						>
 							<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
 						</SectionCard>
 					</div>
 				</SimpleGrid>
 
 				{/* 6. Best & Worst Calls (full-width) */}
-				<div style={{ opacity: shouldShowCard('qa') ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-					<SectionCard title='Best & Worst Calls' description='Your top and bottom performing calls this week'>
+				<div
+					style={{
+						opacity: shouldShowCard('qa') ? 1 : 0.5,
+						transition: 'opacity 0.2s',
+					}}
+				>
+					<SectionCard
+						title='Best & Worst Calls'
+						description='Your top and bottom performing calls this week'
+					>
 						<BestWorstCallsTable calls={BEST_WORST_CALLS} />
 					</SectionCard>
 				</div>
