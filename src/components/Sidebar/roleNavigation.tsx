@@ -10,6 +10,7 @@ import {
 	IconTarget,
 	IconHeartHandshake,
 	IconLock,
+	IconGitBranch,
 } from '@tabler/icons-react';
 import type { SidebarNavItem } from './Sidebar';
 import styles from './Sidebar.module.css';
@@ -68,6 +69,20 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 		to: '/qa/agent/lms',
 		i18nNamespace: 'qa.agent',
 	},
+	{
+		key: 'agent-analytics',
+		label: 'sidebar.agent.analytics',
+		icon: <IconChartLine size={20} className={styles.menuIcon} />,
+		to: '/qa/agent/analytics',
+		i18nNamespace: 'qa.agent',
+	},
+	{
+		key: 'agent-disputes',
+		label: 'sidebar.agent.disputes',
+		icon: <IconGitBranch size={20} className={styles.menuIcon} />,
+		to: '/qa/agent/disputes',
+		i18nNamespace: 'qa.agent',
+	},
 ];
 
 // AGENT NAVIGATION (organized by functional groups)
@@ -95,7 +110,7 @@ export const getAgentNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'agent-insights',
 			label: 'sidebar.agent.groupInsights',
-			items: items.slice(3), // Rankings, LMS
+			items: items.slice(3), // Rankings, LMS, Analytics, Disputes
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -435,7 +450,12 @@ export const getSuperAdminNavigation = (): SidebarNavItem[] => [
 	},
 ];
 
-export type PreviewRole = 'agent' | 'supervisor' | 'qaManager' | 'operationManager' | 'superAdmin';
+export type PreviewRole =
+	| 'agent'
+	| 'supervisor'
+	| 'qaManager'
+	| 'operationManager'
+	| 'superAdmin';
 
 export const roleNavigationMap: Record<PreviewRole, () => SidebarNavItem[]> = {
 	agent: getAgentNavigation,
@@ -447,7 +467,10 @@ export const roleNavigationMap: Record<PreviewRole, () => SidebarNavItem[]> = {
 
 // Grouped versions (for integration with sidebar)
 export const roleNavigationGroupedMap: Record<
-	Extract<PreviewRole, 'agent' | 'supervisor' | 'qaManager' | 'operationManager'>,
+	Extract<
+		PreviewRole,
+		'agent' | 'supervisor' | 'qaManager' | 'operationManager'
+	>,
 	() => NavGroup[]
 > = {
 	agent: getAgentNavigationGrouped,
