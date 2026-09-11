@@ -89,10 +89,6 @@ const AgentsRosterPage = React.lazy(
 const RolePreviewAgentDetailPage = React.lazy(
 	() => import('./modules/role-preview/AgentDetailPage/AgentDetailPage')
 );
-const AgentDashboardPage = React.lazy(
-	() =>
-		import('./modules/evaluations-demo/AgentDashboard/pages/AgentDashboardPage/AgentDashboardPage')
-);
 const AgentEvaluationsPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/AgentDashboard/pages/AgentEvaluationsPage/AgentEvaluationsPage')
@@ -123,10 +119,6 @@ const AgentAnalyticsPage = React.lazy(
 );
 const QAAgentAnalyticsPage = React.lazy(
 	() => import('./modules/qa/agent/analytics/AgentAnalyticsPage')
-);
-const QAManagerDashboardPage = React.lazy(
-	() =>
-		import('./modules/evaluations-demo/SupervisorAnalytics/pages/QAManagerDashboardPage/QAManagerDashboardPage')
 );
 const SupervisorAnalyticsPage = React.lazy(
 	() =>
@@ -1572,15 +1564,6 @@ const router = createBrowserRouter([
 								),
 							},
 							{
-								path: 'role-preview/agent-dashboard',
-								id: 'role-preview.agent-dashboard',
-								element: (
-									<Suspense fallback={<SuspenseFallback />}>
-										<AgentDashboardPage />
-									</Suspense>
-								),
-							},
-							{
 								path: 'role-preview/agent-dashboard/evaluations',
 								id: 'role-preview.agent-dashboard.evaluations',
 								element: (
@@ -1759,15 +1742,6 @@ const router = createBrowserRouter([
 								element: (
 									<Suspense fallback={<SuspenseFallback />}>
 										<SupervisorAnalyticsPage />
-									</Suspense>
-								),
-							},
-							{
-								path: 'role-preview/qa-manager-dashboard',
-								id: 'role-preview.qa-manager-dashboard',
-								element: (
-									<Suspense fallback={<SuspenseFallback />}>
-										<QAManagerDashboardPage />
 									</Suspense>
 								),
 							},
