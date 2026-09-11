@@ -124,10 +124,6 @@ const AgentAnalyticsPage = React.lazy(
 const QAAgentAnalyticsPage = React.lazy(
 	() => import('./modules/qa/agent/analytics/AgentAnalyticsPage')
 );
-const SupervisorDashboardPage = React.lazy(
-	() =>
-		import('./modules/evaluations-demo/SupervisorAnalytics/pages/SupervisorDashboardPage/SupervisorDashboardPage')
-);
 const QAManagerDashboardPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/SupervisorAnalytics/pages/QAManagerDashboardPage/QAManagerDashboardPage')
@@ -837,11 +833,7 @@ const router = createBrowserRouter([
 										path: 'dashboard',
 										id: 'qa.dashboard',
 										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<SupervisorDashboardPage />
-												</Suspense>
-											</I18nNamespaceLoader>
+											<Navigate to='/qa/dashboards/qa-manager' replace />
 										),
 									},
 									{
@@ -979,160 +971,158 @@ const router = createBrowserRouter([
 									// QA Manager routes
 									{
 										path: 'qa-manager/agents',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<SupervisorSettingsPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-																			{
-																				path: 'supervisor/calls',
-																				id: 'qa.supervisor.calls',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<SupervisorCallsPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-																			{
-																				path: 'supervisor/evaluations',
-																				id: 'qa.supervisor.evaluations',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<SupervisorEvaluationsPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-																			{
-																				path: 'supervisor/analytics',
-																				id: 'qa.supervisor.analytics',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<SupervisorAnalyticsPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-																			{
-																				path: 'supervisor/reports',
-																				id: 'qa.supervisor.reports',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<SupervisorReportsPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-																			{
-																				path: 'qa-manager/supervisors',
-																				id: 'qa.qa-manager.supervisors',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<QAManagerSupervisorsPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-																			{
-																				path: 'qa-manager/teams',
-																				id: 'qa.qa-manager.teams',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<QAManagerTeamsPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-																			{
-																				path: 'qa-manager/campaigns',
-																				id: 'qa.qa-manager.campaigns',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<QAManagerCampaignsPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-																			{
-																				path: 'qa-manager/agents',
-																				id: 'qa.qa-manager.agents',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<QAManagerAgentsPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-																			{
-																				path: 'qa-manager/coaching',
-																				id: 'qa.qa-manager.coaching',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<QAManagerCoachingPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-																			{
-																				path: 'qa-manager/lms',
-																				id: 'qa.qa-manager.lms',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<QAManagerLmsPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-																			{
-																				path: 'qa-manager/settings',
-																				id: 'qa.qa-manager.settings',
-																				element: (
-																					<I18nNamespaceLoader>
-																						<Suspense fallback={<SuspenseFallback />}>
-																							<QAManagerSettingsPage />
-																						</Suspense>
-																					</I18nNamespaceLoader>
-																				),
-																			},
-										{
-											path: 'qa-manager/calls',
-											id: 'qa.qa-manager.calls',
-											element: (
-												<I18nNamespaceLoader>
-													<Suspense fallback={<SuspenseFallback />}>
-														<QAManagerCallsPage />
-													</Suspense>
-												</I18nNamespaceLoader>
-											),
-										},
-										{
-
-											path: 'qa-manager/reports',
-											id: 'qa.qa-manager.reports',
-											element: (
-												<I18nNamespaceLoader>
-													<Suspense fallback={<SuspenseFallback />}>
-														<QAManagerReportsPage />
-													</Suspense>
-												</I18nNamespaceLoader>
-											),
-										},
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<SupervisorSettingsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
 									{
-
+										path: 'supervisor/calls',
+										id: 'qa.supervisor.calls',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<SupervisorCallsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/evaluations',
+										id: 'qa.supervisor.evaluations',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<SupervisorEvaluationsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/analytics',
+										id: 'qa.supervisor.analytics',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<SupervisorAnalyticsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/reports',
+										id: 'qa.supervisor.reports',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<SupervisorReportsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/supervisors',
+										id: 'qa.qa-manager.supervisors',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerSupervisorsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/teams',
+										id: 'qa.qa-manager.teams',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerTeamsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/campaigns',
+										id: 'qa.qa-manager.campaigns',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerCampaignsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/agents',
+										id: 'qa.qa-manager.agents',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerAgentsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/coaching',
+										id: 'qa.qa-manager.coaching',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerCoachingPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/lms',
+										id: 'qa.qa-manager.lms',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerLmsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/settings',
+										id: 'qa.qa-manager.settings',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerSettingsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/calls',
+										id: 'qa.qa-manager.calls',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerCallsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/reports',
+										id: 'qa.qa-manager.reports',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerReportsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'operation-manager/inbox',
 										id: 'qa.operation-manager.inbox',
 										element: (
@@ -1157,7 +1147,7 @@ const router = createBrowserRouter([
 									{
 										path: 'auto-triggers',
 										id: 'qa.auto-triggers',
-						element: <Navigate to='/qa/qa-manager/triggers' replace />,
+										element: <Navigate to='/qa/qa-manager/triggers' replace />,
 									},
 									{
 										path: 'reporting',
@@ -1317,7 +1307,7 @@ const router = createBrowserRouter([
 									{
 										path: 'qamanager/admin/triggers',
 										id: 'qa.qamanager.admin.triggers',
-						element: <Navigate to='/qa/qa-manager/triggers' replace />,
+										element: <Navigate to='/qa/qa-manager/triggers' replace />,
 									},
 									// Phase 4: Operation Manager Supervisor Rankings Configuration
 									{
@@ -1784,10 +1774,7 @@ const router = createBrowserRouter([
 							{
 								path: 'role-preview/qa-manager-analytics',
 								id: 'role-preview.qa-manager-analytics',
-								element: (
-									<Suspense fallback={<SuspenseFallback />}>
-									</Suspense>
-								),
+								element: <Suspense fallback={<SuspenseFallback />}></Suspense>,
 							},
 							{
 								path: 'role-preview/:section',
@@ -1809,4 +1796,3 @@ const router = createBrowserRouter([
 export default function AppRoutes() {
 	return <RouterProvider router={router} />;
 }
-
