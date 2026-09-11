@@ -1,0 +1,13 @@
+{
+	"sidebar": {
+		"dashboard": "Dashboard",
+		"myEvaluations": "My Evaluations",
+		"inbox": "Inbox",
+		"rankings": "Rankings",
+		"lms": "Learning",
+		"analytics": "Analytics",
+		"disputes": "Disputes",
+		"groupMyWork": "My Work",
+		"groupInsights": "Insights"
+	}
+}

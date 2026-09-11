@@ -1,0 +1,13 @@
+{
+	"sidebar": {
+		"dashboard": "Panel de Control",
+		"myEvaluations": "Mis Evaluaciones",
+		"inbox": "Bandeja",
+		"rankings": "Rankings",
+		"lms": "Aprendizaje",
+		"analytics": "Análisis",
+		"disputes": "Disputas",
+		"groupMyWork": "Mi Trabajo",
+		"groupInsights": "Análisis"
+	}
+}
