@@ -122,8 +122,7 @@ const AgentAnalyticsPage = React.lazy(
 		import('./modules/evaluations-demo/AgentAnalytics/pages/AgentAnalyticsPage/AgentAnalyticsPage')
 );
 const QAAgentAnalyticsPage = React.lazy(
-	() =>
-		import('./modules/qa/agent/analytics/AgentAnalyticsPage')
+	() => import('./modules/qa/agent/analytics/AgentAnalyticsPage')
 );
 const SupervisorDashboardPage = React.lazy(
 	() =>
@@ -164,23 +163,94 @@ const AutoTriggersPage = React.lazy(
 const ReportingPage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/ReportingPage')
 );
-const QAManagerAnalyticsPage = React.lazy(
-	() =>
-		import('./modules/evaluations-demo/SupervisorAnalytics/pages/QAManagerAnalyticsPage/QAManagerAnalyticsPage')
-);
 const TeamRankingsPage = React.lazy(
 	() => import('./modules/qa/agent/rankings/TeamRankingsPage')
 );
 
+// QA Manager Pages
+const QAManagerAgentsPage = React.lazy(
+	() => import('./modules/qa/qamanager/pages/AgentsPage')
+);
+const QAManagerAnalyticsPage = React.lazy(
+	() => import('./modules/qa/qamanager/pages/AnalyticsPage')
+);
+const QAManagerCallsPage = React.lazy(
+	() => import('./modules/qa/qamanager/pages/CallsPage')
+);
+const QAManagerCampaignsPage = React.lazy(
+	() => import('./modules/qa/qamanager/pages/CampaignsPage')
+);
+const QAManagerCoachingPage = React.lazy(
+	() => import('./modules/qa/qamanager/pages/CoachingPage')
+);
+const QAManagerLmsPage = React.lazy(
+	() => import('./modules/qa/qamanager/pages/LmsPage')
+);
+const QAManagerReportsPage = React.lazy(
+	() => import('./modules/qa/qamanager/pages/ReportsPage')
+);
+const QAManagerSettingsPage = React.lazy(
+	() => import('./modules/qa/qamanager/pages/SettingsPage')
+);
+const QAManagerSupervisorsPage = React.lazy(
+	() => import('./modules/qa/qamanager/pages/SupervisorsPage')
+);
+const QAManagerTeamsPage = React.lazy(
+	() => import('./modules/qa/qamanager/pages/TeamsPage')
+);
+
+// QA Supervisor Pages
+const QASupervisorAgentsPage = React.lazy(
+	() => import('./modules/qa/supervisor/pages/AgentsPage')
+);
+const QASupervisorAnalyticsPage = React.lazy(
+	() => import('./modules/qa/supervisor/pages/AnalyticsPage')
+);
+const QASupervisorCallsPage = React.lazy(
+	() => import('./modules/qa/supervisor/pages/CallsPage')
+);
+const QASupervisorCampaignsPage = React.lazy(
+	() => import('./modules/qa/supervisor/pages/CampaignsPage')
+);
+const QASupervisorCoachingPage = React.lazy(
+	() => import('./modules/qa/supervisor/pages/CoachingPage')
+);
+const QASupervisorEvaluationsPage = React.lazy(
+	() => import('./modules/qa/supervisor/pages/EvaluationsPage')
+);
+const QASupervisorLmsPage = React.lazy(
+	() => import('./modules/qa/supervisor/pages/LmsPage')
+);
+const QASupervisorReportsPage = React.lazy(
+	() => import('./modules/qa/supervisor/pages/ReportsPage')
+);
+const QASupervisorSettingsPage = React.lazy(
+	() => import('./modules/qa/supervisor/pages/SettingsPage')
+);
+const QASupervisorYourTeamPage = React.lazy(
+	() => import('./modules/qa/supervisor/pages/YourTeamPage')
+);
+
+// Triggers Page
+const TriggersPage = React.lazy(
+	() => import('./modules/qa/triggers/TriggersPage/TriggersPage')
+);
+
 // Phase 4-5: New QA Admin Components
-const GlobalTriggersConfigPanel = React.lazy(
-	() => import('./modules/qa/qamanager/administration/GlobalTriggersConfigPanel').then(m => ({ default: m.GlobalTriggersConfigPanel }))
+const GlobalTriggersConfigPanel = React.lazy(() =>
+	import('./modules/qa/qamanager/administration/GlobalTriggersConfigPanel').then(
+		(m) => ({ default: m.GlobalTriggersConfigPanel })
+	)
 );
-const SupervisorRankingsConfigPanel = React.lazy(
-	() => import('./modules/qa/operationmanager/configuration/SupervisorRankingsConfigPanel').then(m => ({ default: m.SupervisorRankingsConfigPanel }))
+const SupervisorRankingsConfigPanel = React.lazy(() =>
+	import('./modules/qa/operationmanager/configuration/SupervisorRankingsConfigPanel').then(
+		(m) => ({ default: m.SupervisorRankingsConfigPanel })
+	)
 );
-const DisputesManagement = React.lazy(
-	() => import('./modules/qa/disputes/DisputesManagement').then(m => ({ default: m.DisputesManagement }))
+const DisputesManagement = React.lazy(() =>
+	import('./modules/qa/disputes/DisputesManagement').then((m) => ({
+		default: m.DisputesManagement,
+	}))
 );
 const EmotionDisplayShowcase = React.lazy(
 	() => import('./modules/evaluations-demo/pages/EmotionDisplayShowcase')
@@ -797,7 +867,9 @@ const router = createBrowserRouter([
 								children: [
 									{
 										index: true,
-										element: <Navigate to='/qa/dashboards/qa-manager' replace />,
+										element: (
+											<Navigate to='/qa/dashboards/qa-manager' replace />
+										),
 									},
 									{
 										path: 'dashboard',
@@ -938,6 +1010,239 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QaInboxPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									// QA Manager routes
+									{
+										path: 'qa-manager/agents',
+										id: 'qa.qa-manager.agents',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerAgentsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/analytics',
+										id: 'qa.qa-manager.analytics',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerAnalyticsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/calls',
+										id: 'qa.qa-manager.calls',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerCallsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/campaigns',
+										id: 'qa.qa-manager.campaigns',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerCampaignsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/coaching',
+										id: 'qa.qa-manager.coaching',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerCoachingPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/lms',
+										id: 'qa.qa-manager.lms',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerLmsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/reports',
+										id: 'qa.qa-manager.reports',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerReportsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/settings',
+										id: 'qa.qa-manager.settings',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerSettingsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/supervisors',
+										id: 'qa.qa-manager.supervisors',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerSupervisorsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/teams',
+										id: 'qa.qa-manager.teams',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerTeamsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/triggers',
+										id: 'qa.qa-manager.triggers',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TriggersPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									// Supervisor routes
+									{
+										path: 'supervisor/agents',
+										id: 'qa.supervisor.agents',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QASupervisorAgentsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/analytics',
+										id: 'qa.supervisor.analytics',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QASupervisorAnalyticsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/calls',
+										id: 'qa.supervisor.calls',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QASupervisorCallsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/campaigns',
+										id: 'qa.supervisor.campaigns',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QASupervisorCampaignsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/coaching',
+										id: 'qa.supervisor.coaching',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QASupervisorCoachingPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/evaluations',
+										id: 'qa.supervisor.evaluations',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QASupervisorEvaluationsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/lms',
+										id: 'qa.supervisor.lms',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QASupervisorLmsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/reports',
+										id: 'qa.supervisor.reports',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QASupervisorReportsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/settings',
+										id: 'qa.supervisor.settings',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QASupervisorSettingsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/your-team',
+										id: 'qa.supervisor.your-team',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QASupervisorYourTeamPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
