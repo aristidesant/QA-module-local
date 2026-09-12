@@ -351,14 +351,14 @@ export default function CampaignDetail() {
             <Group align="center" gap="sm">
               <ActionIcon
                 variant="subtle"
-                onClick={() => navigate('/campaigns')}
+                onClick={() => navigate('/qa/campaigns')}
                 title="Back to campaigns"
                 size="lg"
               >
                 <IconArrowLeft size={20} />
               </ActionIcon>
               <Breadcrumbs style={{ flex: 1 }}>
-                <Anchor onClick={() => navigate('/campaigns')} style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}>
+                <Anchor onClick={() => navigate('/qa/campaigns')} style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}>
                   Campaigns
                 </Anchor>
                 <Text size="sm" c="gray.6" fw={500}>{campaignName}</Text>
@@ -677,7 +677,7 @@ export default function CampaignDetail() {
                                       <ActionIcon
                                         color="brand"
                                         variant="light"
-                                        onClick={() => navigate(`/campaigns/${id}/calls/${call.id}`)}
+                                        onClick={() => navigate(`/qa/campaigns/${id}/calls/${call.id}`)}
                                         title="View call evaluation"
                                       >
                                         <IconPlayerPlay size={16} />

@@ -400,7 +400,7 @@ export default function CampaignCreate() {
   const handleViewEvaluation = () => {
     const evaluationId = selectedEvaluation?.id || '1';
     // Navigate to evaluation detail page with simplified URL pattern
-    navigate(`/campaigns/${selectedCMXCampaign}/evaluations/${evaluationId}`);
+    navigate(`/qa/campaigns/${selectedCMXCampaign}/evaluations/${evaluationId}`);
   };
 
   const handleAssignAndEvaluateLater = () => {
@@ -410,7 +410,7 @@ export default function CampaignCreate() {
     });
     setShowAssignmentOptions(false);
     notifySuccess('Evaluation assigned successfully');
-    navigate(`/campaigns/${selectedCMXCampaign}`);
+    navigate(`/qa/campaigns/${selectedCMXCampaign}`);
   };
 
   const handleSaveCampaign = () => {
@@ -421,7 +421,7 @@ export default function CampaignCreate() {
       files: uploadedFiles,
     });
     notifySuccess('Campaign created successfully');
-    navigate(`/campaigns/${campaignId}`);
+    navigate(`/qa/campaigns/${campaignId}`);
   };
 
   // ═══════════════════════════════════════════════════════════════════
@@ -436,7 +436,7 @@ export default function CampaignCreate() {
               if (currentStep > 0) {
                 setCurrentStep(currentStep - 1);
               } else {
-                navigate('/campaigns');
+                navigate('/qa/campaigns');
                 setCurrentStep(0);
               }
             }} title="Back">
@@ -970,7 +970,7 @@ export default function CampaignCreate() {
                 if (currentStep > 0) {
                   setCurrentStep(currentStep - 1);
                 } else {
-                  navigate('/campaigns');
+                  navigate('/qa/campaigns');
                   setCurrentStep(0);
                 }
               }}>
@@ -1009,7 +1009,7 @@ export default function CampaignCreate() {
           <ExternalCampaignProgress currentStep="form" />
 
           <Group>
-            <ActionIcon variant="subtle" onClick={() => navigate('/campaigns')} title="Back">
+            <ActionIcon variant="subtle" onClick={() => navigate('/qa/campaigns')} title="Back">
               <IconArrowLeft size={18} />
             </ActionIcon>
             <div style={{ flex: 1 }}>
@@ -1085,7 +1085,7 @@ export default function CampaignCreate() {
         zIndex: 100,
       }}>
         <Group justify="flex-end" style={{ maxWidth: '1240px', margin: '0 auto' }}>
-          <Button variant="default" onClick={() => navigate('/campaigns')}>
+          <Button variant="default" onClick={() => navigate('/qa/campaigns')}>
             Back
           </Button>
           <Button
@@ -1466,7 +1466,7 @@ export default function CampaignCreate() {
 
                       console.log('Creating campaign without evaluations:', campaignConfig);
                       notifySuccess('Campaign created successfully');
-                      navigate(`/campaigns/${campaignId}`);
+                      navigate(`/qa/campaigns/${campaignId}`);
                     }}
                   >
                     Skip and Continue
@@ -1508,7 +1508,7 @@ export default function CampaignCreate() {
 
                       console.log('Creating campaign with evaluations:', campaignConfig);
                       notifySuccess('Campaign created successfully');
-                      navigate(`/campaigns/${campaignId}`);
+                      navigate(`/qa/campaigns/${campaignId}`);
                     }}
                   >
                     Create Campaign ({selectedEvaluations.size} selected)

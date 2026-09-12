@@ -166,18 +166,18 @@ export default function ConversationAspects() {
           <Group align="center" gap="sm">
             <ActionIcon
               variant="subtle"
-              onClick={() => navigate(`/campaigns/${campaignId}`)}
+              onClick={() => navigate(`/qa/campaigns/${campaignId}`)}
               title="Back to campaign"
               size="lg"
             >
               <IconArrowLeft size={20} />
             </ActionIcon>
             <Breadcrumbs style={{ flex: 1 }}>
-              <Anchor onClick={() => navigate('/campaigns')} style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}>
+              <Anchor onClick={() => navigate('/qa/campaigns')} style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}>
                 Campaigns
               </Anchor>
               <Anchor
-                onClick={() => navigate(`/campaigns/${campaignId}`)}
+                onClick={() => navigate(`/qa/campaigns/${campaignId}`)}
                 style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}
               >
                 {campaignName}
@@ -276,7 +276,7 @@ export default function ConversationAspects() {
                   }}
                   onClick={() => {
                     if (!card.blocked) {
-                      navigate(`/campaigns/${campaignId}/evaluations/1`);
+                      navigate(`/qa/campaigns/${campaignId}/evaluations/1`);
                     }
                   }}
                 >
@@ -454,7 +454,7 @@ export default function ConversationAspects() {
                         disabled={card.blocked}
                         onClick={() => {
                           if (!card.blocked) {
-                            navigate(`/campaigns/${campaignId}/evaluations/1`);
+                            navigate(`/qa/campaigns/${campaignId}/evaluations/1`);
                           }
                         }}
                       >

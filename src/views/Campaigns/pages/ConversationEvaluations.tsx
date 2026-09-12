@@ -20,7 +20,7 @@ export default function ConversationEvaluations() {
   const campaignName = mockCampaignNames[campaignId || ''] || 'Campaign';
 
   const handleEvaluationClick = (evaluationId: string) => {
-    navigate(`/campaigns/${campaignId}/evaluations/${evaluationId}/calls/${callId}`);
+    navigate(`/qa/campaigns/${campaignId}/evaluations/${evaluationId}/calls/${callId}`);
   };
 
   return (
@@ -37,10 +37,10 @@ export default function ConversationEvaluations() {
             <IconArrowLeft size={20} />
           </ActionIcon>
           <Breadcrumbs style={{ flex: 1 }}>
-            <Anchor onClick={() => navigate('/campaigns')} style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}>
+            <Anchor onClick={() => navigate('/qa/campaigns')} style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}>
               Campaigns
             </Anchor>
-            <Anchor onClick={() => navigate(`/campaigns/${campaignId}/contact-lists/${contactListId}`)} style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}>
+            <Anchor onClick={() => navigate(`/qa/campaigns/${campaignId}/contact-lists/${contactListId}`)} style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}>
               {campaignName}
             </Anchor>
             <Text size="sm" c="gray.6" fw={500}>{callId}</Text>

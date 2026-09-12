@@ -100,7 +100,7 @@ export default function CampaignsList() {
     <Table.Tr
       key={campaign.id}
       style={{ cursor: 'pointer' }}
-      onClick={() => navigate(`/campaigns/${campaign.id}/contact-lists/list1`)}
+      onClick={() => navigate(`/qa/campaigns/${campaign.id}/contact-lists/list1`)}
     >
       <Table.Td>
         <div>
@@ -129,7 +129,7 @@ export default function CampaignsList() {
             <ActionIcon
               variant="light"
               color="blue"
-              onClick={() => navigate(`/campaigns/${campaign.id}/contact-lists/list1`)}
+              onClick={() => navigate(`/qa/campaigns/${campaign.id}/contact-lists/list1`)}
               title="View Details"
             >
               <IconFileText size={18} />
@@ -198,7 +198,7 @@ export default function CampaignsList() {
             <Button
               leftSection={<IconPlus size={18} />}
               color="brand"
-              onClick={() => navigate('/campaigns/new')}
+              onClick={() => navigate('/qa/campaigns/new')}
             >
               New external campaign
             </Button>
