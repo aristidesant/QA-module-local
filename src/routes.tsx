@@ -324,9 +324,9 @@ const CampaignDetail = React.lazy(
 const ConversationEvaluations = React.lazy(
 	() => import('./views/Campaigns/pages/ConversationEvaluations')
 );
-const CampaignResults = React.lazy(
-	() => import('./views/Campaigns/pages/CampaignResults')
-);
+// const CampaignResults = React.lazy(
+// 	() => import('./views/Campaigns/pages/CampaignResults')
+// );
 const QaFormsListPage = React.lazy(
 	() => import('./modules/qa/forms/FormsListPage')
 );
@@ -1268,6 +1268,18 @@ const router = createBrowserRouter([
 											</I18nNamespaceLoader>
 										),
 									},
+									{
+										path: 'campaigns/:campaignId/calls/:callId',
+										id: 'qa.campaigns.conversation',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<ConversationEvaluations />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+
 									{
 										path: 'forms',
 										id: 'qa.forms',

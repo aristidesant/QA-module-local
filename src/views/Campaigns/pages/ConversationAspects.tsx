@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Container, Title, Stack, Group, Button, Badge, Text, Card, ActionIcon, Breadcrumbs, Anchor, Table, Avatar, Select, Modal, Tabs, Checkbox, Radio } from '@mantine/core';
 import { IconArrowLeft, IconLayoutGrid, IconList, IconCheckbox, IconHeartHandshake, IconChartBar, IconShield, IconSettings } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
-import { useEvaluationStore } from '@stores/useEvaluationStore';
+import { useEvaluationStore } from '../../stores/useEvaluationStore';
 
 interface AspectCard {
   id: string;

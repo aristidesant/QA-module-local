@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Container, Title, Table, Badge, Button, Group, Stack, ActionIcon, Modal, Text, Tooltip, Card, TextInput, Select, Pagination, Breadcrumbs, Anchor, Switch, useMantineTheme } from '@mantine/core';
+import { Container, Title, Table, Badge, Button, Group, Stack, ActionIcon, Modal, Text, Tooltip, Card, TextInput, Select, Pagination, Breadcrumbs, Anchor, Switch } from '@mantine/core';
 import { IconPlus, IconFileText, IconSearch, IconPlayerPlay, IconPlayerPause } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { notifySuccess, notifyError } from '~/modules/qa/utils/notifications';
@@ -8,7 +8,6 @@ import { mockCampaigns } from '../constants';
 
 export default function CampaignsList() {
   const navigate = useNavigate();
-  const theme = useMantineTheme();
   const [campaigns, setCampaigns] = useState<Campaign[]>(mockCampaigns);
   const [completeConfirm, setCompleteConfirm] = useState<string | null>(null);
   const [evaluationSettingsId, setEvaluationSettingsId] = useState<string | null>(null);
@@ -100,7 +99,7 @@ export default function CampaignsList() {
     <Table.Tr
       key={campaign.id}
       style={{ cursor: 'pointer' }}
-      onClick={() => navigate(`/qa/campaigns/${campaign.id}/contact-lists/list1`)}
+      onClick={() => navigate(`/qa/campaigns/${campaign.id}`)}
     >
       <Table.Td>
         <div>
@@ -129,7 +128,7 @@ export default function CampaignsList() {
             <ActionIcon
               variant="light"
               color="blue"
-              onClick={() => navigate(`/qa/campaigns/${campaign.id}/contact-lists/list1`)}
+              onClick={() => navigate(`/qa/campaigns/${campaign.id}`)}
               title="View Details"
             >
               <IconFileText size={18} />

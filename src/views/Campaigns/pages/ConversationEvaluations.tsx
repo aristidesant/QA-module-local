@@ -1,26 +1,124 @@
-import { Container, Title, Stack, Group, Button, Badge, Text, Card, Breadcrumbs, Anchor, ActionIcon, Grid } from '@mantine/core';
-import { IconArrowLeft, IconChevronRight, IconTrendingUp, IconMoodSmile, IconShieldCheck } from '@tabler/icons-react';
+import { Container, Title, Stack, Group, Button, Badge, Text, Card, Breadcrumbs, Anchor, ActionIcon, Grid, Radio, ScrollArea } from '@mantine/core';
+import { IconArrowLeft, IconMoodSmile, IconShieldCheck, IconTrendingUp, IconPlayerPlay, IconPlayerPause, IconVolume2 } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
-import type { EvaluationType, ConversationEvaluation } from '../types';
+import { useState } from 'react';
+import type { EvaluationType } from '../types';
 import { mockConversationEvaluations, mockCampaignNames } from '../constants';
 
 const getEvaluationTypeInfo = (type: EvaluationType) => {
-  const typeMap: Record<EvaluationType, { icon: typeof IconTrendingUp; color: string; label: string }> = {
-    'sentiment-analysis': { icon: IconMoodSmile, color: 'violet', label: 'Sentiment Analysis' },
-    'business-insights': { icon: IconTrendingUp, color: 'blue', label: 'Business Insights' },
-    'compliance': { icon: IconShieldCheck, color: 'green', label: 'Compliance' },
+  const typeMap: Record<EvaluationType, { icon: typeof IconMoodSmile; color: string; label: string; description: string }> = {
+    'sentiment-analysis': {
+      icon: IconMoodSmile,
+      color: 'violet',
+      label: 'Sentiment Analysis',
+      description: 'Customer sentiment and emotion analysis'
+    },
+    'business-insights': {
+      icon: IconTrendingUp,
+      color: 'blue',
+      label: 'Business Insights',
+      description: 'Business opportunity and revenue insights'
+    },
+    'compliance': {
+      icon: IconShieldCheck,
+      color: 'green',
+      label: 'Compliance',
+      description: 'Regulatory compliance evaluation'
+    },
   };
   return typeMap[type];
 };
 
 export default function ConversationEvaluations() {
   const navigate = useNavigate();
-  const { campaignId, contactListId, callId } = useParams();
+  const { campaignId, callId } = useParams();
+  const [selectedEvalType, setSelectedEvalType] = useState<EvaluationType>('sentiment-analysis');
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const campaignName = mockCampaignNames[campaignId || ''] || 'Campaign';
+  const selectedEvaluation = mockConversationEvaluations.find(e => e.type === selectedEvalType);
 
-  const handleEvaluationClick = (evaluationId: string) => {
-    navigate(`/qa/campaigns/${campaignId}/evaluations/${evaluationId}/calls/${callId}`);
+  const renderEvaluationContent = () => {
+    switch (selectedEvalType) {
+      case 'sentiment-analysis':
+        return (
+          <Stack gap="md">
+            <div style={{ padding: '16px', backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '8px' }}>
+              <Text size="sm" c="dimmed" mb="xs">Overall Sentiment Score</Text>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                <Text size="xl" fw={700}>{selectedEvaluation?.score}%</Text>
+                <Badge color="green" variant="light">Positive</Badge>
+              </div>
+            </div>
+            <div>
+              <Text fw={600} size="sm" mb="xs">Key Insights</Text>
+              <Stack gap="xs">
+                <Text size="sm">Customer expressed satisfaction with solution</Text>
+                <Text size="sm">Minor concerns about response time</Text>
+                <Text size="sm">Overall tone was professional and courteous</Text>
+              </Stack>
+            </div>
+          </Stack>
+        );
+
+      case 'compliance':
+        return (
+          <Stack gap="md">
+            <div style={{ padding: '16px', backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '8px' }}>
+              <Text size="sm" c="dimmed" mb="xs">Compliance Score</Text>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                <Text size="xl" fw={700}>{selectedEvaluation?.score}%</Text>
+                <Badge color="green" variant="light">Compliant</Badge>
+              </div>
+            </div>
+            <div>
+              <Text fw={600} size="sm" mb="xs">Compliance Items</Text>
+              <Stack gap="xs">
+                <Group gap="xs" justify="space-between" p="xs" style={{ backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '6px' }}>
+                  <Text size="sm">Required disclosure provided</Text>
+                  <Badge color="green">✓</Badge>
+                </Group>
+                <Group gap="xs" justify="space-between" p="xs" style={{ backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '6px' }}>
+                  <Text size="sm">Proper identification verified</Text>
+                  <Badge color="green">✓</Badge>
+                </Group>
+                <Group gap="xs" justify="space-between" p="xs" style={{ backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '6px' }}>
+                  <Text size="sm">No prohibited content detected</Text>
+                  <Badge color="green">✓</Badge>
+                </Group>
+              </Stack>
+            </div>
+          </Stack>
+        );
+
+      case 'business-insights':
+        return (
+          <Stack gap="md">
+            <div style={{ padding: '16px', backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '8px' }}>
+              <Text size="sm" c="dimmed" mb="xs">Business Insights Score</Text>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                <Text size="xl" fw={700}>{selectedEvaluation?.score || 'N/A'}</Text>
+                {selectedEvaluation?.status === 'not-evaluated' ? (
+                  <Badge color="gray" variant="light">Not Yet Evaluated</Badge>
+                ) : (
+                  <Badge color="blue" variant="light">Evaluated</Badge>
+                )}
+              </div>
+            </div>
+            <div>
+              <Text fw={600} size="sm" mb="xs">Opportunity Assessment</Text>
+              <Stack gap="xs">
+                <Text size="sm">Potential upsell opportunity identified</Text>
+                <Text size="sm">Cross-sell recommendation: Premium package</Text>
+                <Text size="sm">Expected value: $500-$1000</Text>
+              </Stack>
+            </div>
+          </Stack>
+        );
+
+      default:
+        return null;
+    }
   };
 
   return (
@@ -40,127 +138,170 @@ export default function ConversationEvaluations() {
             <Anchor onClick={() => navigate('/qa/campaigns')} style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}>
               Campaigns
             </Anchor>
-            <Anchor onClick={() => navigate(`/qa/campaigns/${campaignId}/contact-lists/${contactListId}`)} style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}>
+            <Anchor onClick={() => navigate(`/qa/campaigns/${campaignId}`)} style={{ cursor: 'pointer', color: 'var(--nt-blue-500)' }}>
               {campaignName}
             </Anchor>
-            <Text size="sm" c="gray.6" fw={500}>{callId}</Text>
+            <Text size="sm" c="gray.6" fw={500}>Call {callId}</Text>
           </Breadcrumbs>
         </Group>
 
         {/* Header */}
         <div>
-          <Title order={2} style={{ fontSize: '1.75rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.25rem' }}>
-            Evaluations
+          <Title order={2} style={{ fontSize: '1.75rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '0.5rem' }}>
+            Call Evaluation
           </Title>
-          <Text size="sm" c="dimmed">Select an evaluation type to review this conversation</Text>
+          <Text size="sm" c="dimmed">Review detailed evaluation results for this call</Text>
         </div>
 
-        {/* Evaluation Type Cards */}
-        <Grid gap="lg" columns={12}>
-          {mockConversationEvaluations.map((evaluation) => {
-            const typeInfo = getEvaluationTypeInfo(evaluation.type);
-            const IconComponent = typeInfo.icon;
+        {/* Main 2-Column Layout */}
+        <Grid gap="lg" style={{ minHeight: '600px' }}>
+          {/* Left Column: Player + Transcript */}
+          <Grid.Col span={{ base: 12, md: 6 }}>
+            <Stack gap="md">
+              {/* Audio Player */}
+              <Card padding="lg" radius="md" withBorder>
+                <Stack gap="md">
+                  <Group justify="space-between" align="center">
+                    <Text fw={600} size="sm">Call Recording</Text>
+                    <Badge size="sm" variant="light">2:45 min</Badge>
+                  </Group>
 
-            return (
-              <Grid.Col key={evaluation.id} span={{ base: 12, sm: 6, md: 4 }}>
-                <Card
-                  padding="lg"
-                  radius="md"
-                  withBorder
-                  style={{
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    borderColor: 'var(--mantine-color-gray-3)',
-                    height: '100%',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = 'var(--nt-blue-500)';
-                    e.currentTarget.style.boxShadow = '0 4px 16px rgba(27, 75, 184, 0.12)';
-                    e.currentTarget.style.transform = 'translateY(-2px)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = '#dde2e8';
-                    e.currentTarget.style.boxShadow = 'none';
-                    e.currentTarget.style.transform = 'translateY(0)';
-                  }}
-                  onClick={() => handleEvaluationClick(evaluation.id)}
-                >
-                  <Stack gap="md">
-                    {/* Icon and Title */}
-                    <Group gap="md" align="flex-start">
-                      <div
-                        style={{
-                          width: '48px',
-                          height: '48px',
-                          borderRadius: '8px',
-                          backgroundColor: `rgba(27, 75, 184, 0.08)`,
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          flexShrink: 0,
-                        }}
-                      >
-                        <IconComponent size={24} style={{ color: `var(--nt-${typeInfo.color}-500)` }} />
-                      </div>
-                      <div style={{ flex: 1 }}>
-                        <Text fw={600} size="sm" mb="xs">
-                          {typeInfo.label}
-                        </Text>
-                      </div>
-                    </Group>
-
-                    {/* Score or Status */}
-                    <div>
-                      {evaluation.score !== null ? (
-                        <>
-                          <Text size="xs" c="dimmed" fw={500} mb="xs">SCORE</Text>
-                          <Title order={3} style={{ fontSize: '2rem', fontWeight: 700, margin: 0 }}>
-                            {evaluation.score}
-                          </Title>
-                        </>
-                      ) : (
-                        <>
-                          <Text size="xs" c="dimmed" fw={500} mb="xs">STATUS</Text>
-                          <Badge size="lg" variant="light" color="gray">
-                            Not yet evaluated
-                          </Badge>
-                        </>
-                      )}
-                    </div>
-
-                    {/* Status Badge */}
-                    <Group justify="space-between" align="center">
-                      <Badge
-                        size="sm"
-                        variant="filled"
-                        color={
-                          evaluation.status === 'completed' ? 'green' :
-                          evaluation.status === 'in-progress' ? 'blue' :
-                          'gray'
-                        }
-                      >
-                        {evaluation.status === 'completed' ? 'Completed' :
-                         evaluation.status === 'in-progress' ? 'In Progress' :
-                         'Not Evaluated'}
-                      </Badge>
-                      <IconChevronRight size={16} style={{ color: 'var(--mantine-color-gray-6)' }} />
-                    </Group>
-
-                    {/* View Button */}
+                  {/* Mock Player */}
+                  <div style={{
+                    padding: '16px',
+                    backgroundColor: 'var(--mantine-color-gray-0)',
+                    borderRadius: '8px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px'
+                  }}>
                     <Button
+                      variant="light"
                       size="sm"
-                      variant="subtle"
-                      color="gray"
-                      fullWidth
-                      rightSection={<IconChevronRight size={14} />}
+                      onClick={() => setIsPlaying(!isPlaying)}
+                      leftSection={isPlaying ? <IconPlayerPause size={16} /> : <IconPlayerPlay size={16} />}
                     >
-                      View Results
+                      {isPlaying ? 'Pause' : 'Play'}
                     </Button>
-                  </Stack>
-                </Card>
-              </Grid.Col>
-            );
-          })}
+                    <div style={{ flex: 1, height: '4px', backgroundColor: 'var(--mantine-color-gray-3)', borderRadius: '2px' }}>
+                      <div style={{ width: '35%', height: '100%', backgroundColor: 'var(--nt-blue-500)', borderRadius: '2px' }} />
+                    </div>
+                    <Text size="xs" c="dimmed">0:57 / 2:45</Text>
+                  </div>
+
+                  <Group gap="xs">
+                    <IconVolume2 size={18} style={{ color: 'var(--mantine-color-gray-5)' }} />
+                    <div style={{ flex: 1, height: '4px', backgroundColor: 'var(--mantine-color-gray-3)', borderRadius: '2px' }}>
+                      <div style={{ width: '70%', height: '100%', backgroundColor: 'var(--nt-blue-500)', borderRadius: '2px' }} />
+                    </div>
+                  </Group>
+                </Stack>
+              </Card>
+
+              {/* Transcript */}
+              <Card padding="lg" radius="md" withBorder>
+                <Stack gap="md">
+                  <Text fw={600} size="sm">Conversation Transcript</Text>
+                  <ScrollArea style={{ height: '300px' }}>
+                    <Stack gap="md" pr="md">
+                      <div style={{ padding: '8px 12px', backgroundColor: 'var(--mantine-color-blue-0)', borderRadius: '6px' }}>
+                        <Text size="xs" c="dimmed" mb="4px">Agent - 0:12</Text>
+                        <Text size="sm">Hello, thank you for calling customer support. How can I assist you today?</Text>
+                      </div>
+                      <div style={{ padding: '8px 12px', backgroundColor: 'var(--mantine-color-gray-1)', borderRadius: '6px' }}>
+                        <Text size="xs" c="dimmed" mb="4px">Customer - 0:28</Text>
+                        <Text size="sm">Hi, I'm having trouble with my account access. I can't log in this morning.</Text>
+                      </div>
+                      <div style={{ padding: '8px 12px', backgroundColor: 'var(--mantine-color-blue-0)', borderRadius: '6px' }}>
+                        <Text size="xs" c="dimmed" mb="4px">Agent - 0:45</Text>
+                        <Text size="sm">I'd be happy to help you regain access. Let me pull up your account details. Can you provide me with your email address please?</Text>
+                      </div>
+                      <div style={{ padding: '8px 12px', backgroundColor: 'var(--mantine-color-gray-1)', borderRadius: '6px' }}>
+                        <Text size="xs" c="dimmed" mb="4px">Customer - 1:10</Text>
+                        <Text size="sm">Sure, it's john.doe@email.com</Text>
+                      </div>
+                    </Stack>
+                  </ScrollArea>
+                </Stack>
+              </Card>
+            </Stack>
+          </Grid.Col>
+
+          {/* Right Column: Evaluation Panel */}
+          <Grid.Col span={{ base: 12, md: 6 }}>
+            <Stack gap="md">
+              {/* Evaluation Type Selector */}
+              <Card padding="lg" radius="md" withBorder>
+                <Stack gap="md">
+                  <Text fw={600} size="sm">Select Evaluation Type</Text>
+                  <Radio.Group
+                    value={selectedEvalType}
+                    onChange={(value) => setSelectedEvalType(value as EvaluationType)}
+                  >
+                    <Stack gap="xs">
+                      {mockConversationEvaluations.map((evaluation) => {
+                        const info = getEvaluationTypeInfo(evaluation.type);
+                        const Icon = info.icon;
+                        return (
+                          <Group
+                            key={evaluation.type}
+                            p="xs"
+                            style={{
+                              backgroundColor: selectedEvalType === evaluation.type ? 'var(--mantine-color-blue-0)' : 'transparent',
+                              borderRadius: '6px',
+                              cursor: 'pointer',
+                              border: selectedEvalType === evaluation.type ? '2px solid var(--nt-blue-500)' : '2px solid transparent',
+                            }}
+                          >
+                            <Radio value={evaluation.type} style={{ cursor: 'pointer' }} />
+                            <Group gap="sm" style={{ flex: 1 }}>
+                              <div
+                                style={{
+                                  width: '40px',
+                                  height: '40px',
+                                  borderRadius: '6px',
+                                  backgroundColor: `rgba(27, 75, 184, 0.08)`,
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                }}
+                              >
+                                <Icon size={20} color={`var(--mantine-color-${info.color}-6)`} />
+                              </div>
+                              <div style={{ flex: 1 }}>
+                                <Text fw={500} size="sm">{info.label}</Text>
+                                <Text size="xs" c="dimmed">{info.description}</Text>
+                              </div>
+                              {evaluation.score !== null && (
+                                <Badge color={info.color} variant="light">{evaluation.score}%</Badge>
+                              )}
+                            </Group>
+                          </Group>
+                        );
+                      })}
+                    </Stack>
+                  </Radio.Group>
+                </Stack>
+              </Card>
+
+              {/* Evaluation Details */}
+              <Card padding="lg" radius="md" withBorder>
+                <ScrollArea style={{ height: '420px' }}>
+                  {renderEvaluationContent()}
+                </ScrollArea>
+              </Card>
+
+              {/* Action Buttons */}
+              <Group grow>
+                <Button variant="light" onClick={() => navigate(-1)}>
+                  Back to Calls
+                </Button>
+                <Button color="brand">
+                  Review All Evaluations
+                </Button>
+              </Group>
+            </Stack>
+          </Grid.Col>
         </Grid>
       </Stack>
     </Container>
