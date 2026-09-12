@@ -1,16 +1,24 @@
-import { Container, Title, Stack, Group, Button, Badge, Text, Card, Breadcrumbs, Anchor, ActionIcon, Grid, Radio, ScrollArea } from '@mantine/core';
-import { IconArrowLeft, IconMoodSmile, IconShieldCheck, IconTrendingUp, IconPlayerPlay, IconPlayerPause, IconVolume2 } from '@tabler/icons-react';
+import { Container, Title, Stack, Group, Button, Badge, Text, Card, Breadcrumbs, Anchor, ActionIcon, Grid, ScrollArea, Tabs } from '@mantine/core';
+import { IconArrowLeft, IconMoodSmile, IconShieldCheck, IconTrendingUp, IconPlayerPlay, IconPlayerPause, IconVolume2, IconClipboardList } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
 import { useState } from 'react';
 import type { EvaluationType } from '../types';
 import { mockConversationEvaluations, mockCampaignNames } from '../constants';
 
-const getEvaluationTypeInfo = (type: EvaluationType) => {
-  const typeMap: Record<EvaluationType, { icon: typeof IconMoodSmile; color: string; label: string; description: string }> = {
+type EvaluationTabType = 'qa' | 'sentiment-analysis' | 'business-insights' | 'compliance';
+
+const getEvaluationTypeInfo = (type: EvaluationTabType) => {
+  const typeMap: Record<EvaluationTabType, { icon: typeof IconMoodSmile; color: string; label: string; description: string }> = {
+    'qa': {
+      icon: IconClipboardList,
+      color: 'orange',
+      label: 'QA',
+      description: 'Quality Assurance evaluation'
+    },
     'sentiment-analysis': {
       icon: IconMoodSmile,
       color: 'violet',
-      label: 'Sentiment Analysis',
+      label: 'Sentiment and Emotion',
       description: 'Customer sentiment and emotion analysis'
     },
     'business-insights': {
@@ -32,22 +40,51 @@ const getEvaluationTypeInfo = (type: EvaluationType) => {
 export default function ConversationEvaluations() {
   const navigate = useNavigate();
   const { campaignId, callId } = useParams();
-  const [selectedEvalType, setSelectedEvalType] = useState<EvaluationType>('sentiment-analysis');
+  const [selectedEvalType, setSelectedEvalType] = useState<EvaluationTabType>('qa');
   const [isPlaying, setIsPlaying] = useState(false);
 
   const campaignName = mockCampaignNames[campaignId || ''] || 'Campaign';
-  const selectedEvaluation = mockConversationEvaluations.find(e => e.type === selectedEvalType);
 
   const renderEvaluationContent = () => {
     switch (selectedEvalType) {
+      case 'qa':
+        return (
+          <Stack gap="md">
+            <div style={{ padding: '16px', backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '8px' }}>
+              <Text size="sm" c="dimmed" mb="xs">QA Score</Text>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
+                <Text size="xl" fw={700}>87%</Text>
+                <Badge color="orange" variant="light">Stable</Badge>
+              </div>
+            </div>
+            <div>
+              <Text fw={600} size="sm" mb="xs">Quality Metrics</Text>
+              <Stack gap="xs">
+                <Group gap="xs" justify="space-between" p="xs" style={{ backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '6px' }}>
+                  <Text size="sm">Call clarity</Text>
+                  <Badge color="green">Good</Badge>
+                </Group>
+                <Group gap="xs" justify="space-between" p="xs" style={{ backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '6px' }}>
+                  <Text size="sm">Agent response time</Text>
+                  <Badge color="green">Good</Badge>
+                </Group>
+                <Group gap="xs" justify="space-between" p="xs" style={{ backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '6px' }}>
+                  <Text size="sm">Call handling</Text>
+                  <Badge color="yellow">Needs improvement</Badge>
+                </Group>
+              </Stack>
+            </div>
+          </Stack>
+        );
+
       case 'sentiment-analysis':
         return (
           <Stack gap="md">
             <div style={{ padding: '16px', backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '8px' }}>
-              <Text size="sm" c="dimmed" mb="xs">Overall Sentiment Score</Text>
+              <Text size="sm" c="dimmed" mb="xs">Sentiment Score</Text>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                <Text size="xl" fw={700}>{selectedEvaluation?.score}%</Text>
-                <Badge color="green" variant="light">Positive</Badge>
+                <Text size="xl" fw={700}>68%</Text>
+                <Badge color="violet" variant="light">Positive</Badge>
               </div>
             </div>
             <div>
@@ -67,7 +104,7 @@ export default function ConversationEvaluations() {
             <div style={{ padding: '16px', backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '8px' }}>
               <Text size="sm" c="dimmed" mb="xs">Compliance Score</Text>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                <Text size="xl" fw={700}>{selectedEvaluation?.score}%</Text>
+                <Text size="xl" fw={700}>82%</Text>
                 <Badge color="green" variant="light">Compliant</Badge>
               </div>
             </div>
@@ -95,14 +132,10 @@ export default function ConversationEvaluations() {
         return (
           <Stack gap="md">
             <div style={{ padding: '16px', backgroundColor: 'var(--mantine-color-gray-0)', borderRadius: '8px' }}>
-              <Text size="sm" c="dimmed" mb="xs">Business Insights Score</Text>
+              <Text size="sm" c="dimmed" mb="xs">Business Insights</Text>
               <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px' }}>
-                <Text size="xl" fw={700}>{selectedEvaluation?.score || 'N/A'}</Text>
-                {selectedEvaluation?.status === 'not-evaluated' ? (
-                  <Badge color="gray" variant="light">Not Yet Evaluated</Badge>
-                ) : (
-                  <Badge color="blue" variant="light">Evaluated</Badge>
-                )}
+                <Text size="xl" fw={700}>High</Text>
+                <Badge color="blue" variant="light">Identified</Badge>
               </div>
             </div>
             <div>
@@ -120,6 +153,8 @@ export default function ConversationEvaluations() {
         return null;
     }
   };
+
+  const evaluationTabs: EvaluationTabType[] = ['qa', 'sentiment-analysis', 'compliance', 'business-insights'];
 
   return (
     <Container size="xl" px="lg" style={{ paddingTop: '48px', paddingBottom: '32px' }}>
@@ -152,6 +187,28 @@ export default function ConversationEvaluations() {
           </Title>
           <Text size="sm" c="dimmed">Review detailed evaluation results for this call</Text>
         </div>
+
+        {/* Evaluation Type Tabs */}
+        <Card padding="lg" radius="md" withBorder>
+          <Group gap="md" wrap="wrap">
+            {evaluationTabs.map((tabType) => {
+              const info = getEvaluationTypeInfo(tabType);
+              const Icon = info.icon;
+              const isSelected = selectedEvalType === tabType;
+              return (
+                <Button
+                  key={tabType}
+                  variant={isSelected ? 'filled' : 'light'}
+                  color={isSelected ? info.color : 'gray'}
+                  onClick={() => setSelectedEvalType(tabType)}
+                  leftSection={<Icon size={18} />}
+                >
+                  {info.label}
+                </Button>
+              );
+            })}
+          </Group>
+        </Card>
 
         {/* Main 2-Column Layout */}
         <Grid gap="lg" style={{ minHeight: '600px' }}>
@@ -227,80 +284,19 @@ export default function ConversationEvaluations() {
             </Stack>
           </Grid.Col>
 
-          {/* Right Column: Evaluation Panel */}
+          {/* Right Column: Evaluation Details */}
           <Grid.Col span={{ base: 12, md: 6 }}>
-            <Stack gap="md">
-              {/* Evaluation Type Selector */}
-              <Card padding="lg" radius="md" withBorder>
-                <Stack gap="md">
-                  <Text fw={600} size="sm">Select Evaluation Type</Text>
-                  <Radio.Group
-                    value={selectedEvalType}
-                    onChange={(value) => setSelectedEvalType(value as EvaluationType)}
-                  >
-                    <Stack gap="xs">
-                      {mockConversationEvaluations.map((evaluation) => {
-                        const info = getEvaluationTypeInfo(evaluation.type);
-                        const Icon = info.icon;
-                        return (
-                          <Group
-                            key={evaluation.type}
-                            p="xs"
-                            style={{
-                              backgroundColor: selectedEvalType === evaluation.type ? 'var(--mantine-color-blue-0)' : 'transparent',
-                              borderRadius: '6px',
-                              cursor: 'pointer',
-                              border: selectedEvalType === evaluation.type ? '2px solid var(--nt-blue-500)' : '2px solid transparent',
-                            }}
-                          >
-                            <Radio value={evaluation.type} style={{ cursor: 'pointer' }} />
-                            <Group gap="sm" style={{ flex: 1 }}>
-                              <div
-                                style={{
-                                  width: '40px',
-                                  height: '40px',
-                                  borderRadius: '6px',
-                                  backgroundColor: `rgba(27, 75, 184, 0.08)`,
-                                  display: 'flex',
-                                  alignItems: 'center',
-                                  justifyContent: 'center',
-                                }}
-                              >
-                                <Icon size={20} color={`var(--mantine-color-${info.color}-6)`} />
-                              </div>
-                              <div style={{ flex: 1 }}>
-                                <Text fw={500} size="sm">{info.label}</Text>
-                                <Text size="xs" c="dimmed">{info.description}</Text>
-                              </div>
-                              {evaluation.score !== null && (
-                                <Badge color={info.color} variant="light">{evaluation.score}%</Badge>
-                              )}
-                            </Group>
-                          </Group>
-                        );
-                      })}
-                    </Stack>
-                  </Radio.Group>
-                </Stack>
-              </Card>
-
-              {/* Evaluation Details */}
-              <Card padding="lg" radius="md" withBorder>
-                <ScrollArea style={{ height: '420px' }}>
+            <Card padding="lg" radius="md" withBorder style={{ height: '100%' }}>
+              <Stack gap="md" style={{ height: '100%' }}>
+                <div>
+                  <Text fw={600} size="sm" mb="xs">Evaluation Results</Text>
+                  <Text size="xs" c="dimmed">{getEvaluationTypeInfo(selectedEvalType).description}</Text>
+                </div>
+                <ScrollArea style={{ flex: 1 }}>
                   {renderEvaluationContent()}
                 </ScrollArea>
-              </Card>
-
-              {/* Action Buttons */}
-              <Group grow>
-                <Button variant="light" onClick={() => navigate(-1)}>
-                  Back to Calls
-                </Button>
-                <Button color="brand">
-                  Review All Evaluations
-                </Button>
-              </Group>
-            </Stack>
+              </Stack>
+            </Card>
           </Grid.Col>
         </Grid>
       </Stack>
