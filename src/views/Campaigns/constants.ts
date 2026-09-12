@@ -9,6 +9,7 @@ import type {
   ConversationEvaluation,
   QATest,
   Aspect,
+  EvaluationItem,
 } from './types';
 
 export const mockCampaigns: Campaign[] = [
@@ -153,8 +154,8 @@ export const mockEvaluations: Evaluation[] = [
   {
     id: 'eval2',
     name: 'Compliance Review',
-    status: 'pending',
-    type: 'automatic',
+    status: 'in-progress',
+    type: 'mixed',
     finalScore: 0,
     result: 'passed',
     evaluatedPercentage: 65,
