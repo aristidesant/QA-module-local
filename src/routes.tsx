@@ -315,11 +315,17 @@ const QaDisputesListPage = React.lazy(
 const QaDisputeDetailPage = React.lazy(
 	() => import('./modules/qa/disputes/DisputeDetailPage')
 );
-const QaCampaignsListPage = React.lazy(
-	() => import('./modules/qa/campaigns/CampaignsListPage')
+const CampaignsList = React.lazy(
+	() => import('./views/Campaigns/pages/CampaignsList')
 );
-const QaCampaignDetailPage = React.lazy(
-	() => import('./modules/qa/campaigns/CampaignDetailPage')
+const CampaignDetail = React.lazy(
+	() => import('./views/Campaigns/pages/CampaignDetail')
+);
+const ConversationEvaluations = React.lazy(
+	() => import('./views/Campaigns/pages/ConversationEvaluations')
+);
+const CampaignResults = React.lazy(
+	() => import('./views/Campaigns/pages/CampaignResults')
 );
 const QaFormsListPage = React.lazy(
 	() => import('./modules/qa/forms/FormsListPage')
@@ -1246,18 +1252,18 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<QaCampaignsListPage />
+													<CampaignsList />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
 									},
 									{
-										path: 'campaigns/:campaignId',
+										path: 'campaigns/:id',
 										id: 'qa.campaigns.detail',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<QaCampaignDetailPage />
+													<CampaignDetail />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
