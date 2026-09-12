@@ -278,8 +278,8 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 	{
 		key: 'qamanager-campaigns',
 		label: 'sidebar.qamanager.campaigns',
-		icon: <IconFileText size={20} className={styles.menuIcon} />,
-		to: '/qa/qa-manager/campaigns',
+		icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
+		to: '/qa/campaigns',
 		i18nNamespace: 'qa.qamanager',
 	},
 	{
