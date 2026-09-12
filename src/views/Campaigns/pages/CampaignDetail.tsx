@@ -3,7 +3,7 @@ import { Container, Title, Stack, Group, Button, Badge, Text, Card, Table, Actio
 import { IconArrowLeft, IconEdit, IconPlayerPlay } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
 import { useCampaignStore } from '../stores/useCampaignStore';
-import type { ContactList, Evaluation, CampaignDetail, EvaluationItem, Aspect, QATest } from '../types';
+import type { Campaign, ContactList, Evaluation, CampaignDetail as CampaignDetailType, QATest } from '../types';
 import { mockCampaignDetails, mockContactLists, mockQATests } from '../constants';
 
 // TODO: Import QATestEditor from common components when available
@@ -132,7 +132,7 @@ export default function CampaignDetail() {
   const [extractionResults, setExtractionResults] = useState<{ totalEffective: number } | null>(null);
 
   // Campaign Information Edit State
-  const [campaignData, setCampaignData] = useState<Campaign | null>(() => {
+  const [campaignData, setCampaignData] = useState<any>(() => {
     const mockData = mockCampaignDetails[id || ''];
     if (mockData) {
       return mockData;
