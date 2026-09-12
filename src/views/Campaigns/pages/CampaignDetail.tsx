@@ -342,11 +342,8 @@ export default function CampaignDetail() {
 
   return (
     <>
-      <div style={{ position: 'relative', paddingLeft: '280px', paddingRight: campaignData ? '360px' : '0' }}>
-        {/* Main Content Area */}
-        <div style={{ paddingBottom: '32px', transition: 'padding-right 0.2s ease' }}>
-          <Container size="xl" px="lg" style={{ width: '100%', maxWidth: '100%', paddingTop: '48px', paddingBottom: '32px' }}>
-            <Stack gap="lg" style={{ width: '100%' }}>
+      <Container size="xl" px="lg" style={{ paddingTop: '48px', paddingBottom: '32px' }}>
+        <Stack gap="lg">
             {/* Breadcrumb Navigation with Back Button */}
             <Group align="center" gap="sm">
               <ActionIcon
@@ -704,9 +701,8 @@ export default function CampaignDetail() {
             </Tabs>
             </Stack>
         </Container>
-      </div>
 
-      {/* Removed old Conversation Groups section - replaced with Evaluated Calls table above */}
+      {/* Modals */}
 
       {/* Add Conversations Modal */}
       <Modal
@@ -1379,9 +1375,8 @@ export default function CampaignDetail() {
           </Stack>
         </div>
       )}
-      </div>
 
-{/* Analysis Settings Modal with Tabs */}
+      {/* Analysis Settings Modal with Tabs */}
       <Modal
         opened={showAnalysisSettingsModal}
         onClose={() => setShowAnalysisSettingsModal(false)}
