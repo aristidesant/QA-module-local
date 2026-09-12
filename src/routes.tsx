@@ -97,9 +97,6 @@ const AgentEvaluationDetailPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/AgentDashboard/pages/AgentEvaluationDetailPage/AgentEvaluationDetailPage')
 );
-const AgentCampaignsPage = React.lazy(
-	() => import('./modules/qa/agent/pages/CampaignsPage')
-);
 const AgentCoachingPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/AgentDashboard/pages/AgentCoachingPage/AgentCoachingPage')
@@ -165,9 +162,6 @@ const SupervisorEvaluationsPage = React.lazy(
 );
 const SupervisorReportsPage = React.lazy(
 	() => import('./modules/qa/supervisor/pages/ReportsPage')
-);
-const SupervisorCampaignsPage = React.lazy(
-	() => import('./modules/qa/supervisor/pages/CampaignsPage')
 );
 const QAManagerSupervisorsPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/SupervisorsPage')
@@ -890,17 +884,6 @@ const router = createBrowserRouter([
 										),
 									},
 									{
-										path: 'agent/campaigns',
-										id: 'qa.agent.campaigns',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<AgentCampaignsPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
 										path: 'agent/inbox',
 										id: 'qa.agent.inbox',
 										element: (
@@ -1006,17 +989,6 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<SupervisorEvaluationsPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
-										path: 'supervisor/campaigns',
-										id: 'qa.supervisor.campaigns',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<SupervisorCampaignsPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
