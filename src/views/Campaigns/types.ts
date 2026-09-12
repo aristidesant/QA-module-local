@@ -88,14 +88,6 @@ export interface CallEvaluationResult {
   evaluatedAt: string;
 }
 
-export type EvaluationType = 'sentiment-analysis' | 'business-insights' | 'compliance';
-
-export interface ConversationEvaluation {
-  id: string;
-  type: EvaluationType;
-  score: number | null;
-  status: 'not-evaluated' | 'in-progress' | 'completed';
-}
 
 export interface UploadedFile {
   id: string;
@@ -126,4 +118,210 @@ export interface CampaignConfig {
   selectedTests: SelectedQATest[];
   createdAt: string;
   source?: 'external' | 'cmx';
+}
+
+import type { Emotion, SentimentCategory } from '~/modules/qa/emotion-sentiment/types';
+
+// ---------- Call detail: evaluation tabs ----------
+
+export type CallEvaluationTab = 'qa' | 'sentiment-emotion' | 'compliance' | 'business-insights';
+
+export type Speaker = 'agent' | 'customer';
+
+export interface TranscriptTurn {
+  id: string;
+  speaker: Speaker;
+  timestamp: string; // m:ss
+  text: string;
+}
+
+export interface Evidence {
+  timestamp: string; // m:ss
+  speaker: Speaker;
+  quote: string;
+}
+
+// ---------- QA (COPC error types) ----------
+
+export type QAErrorTypeCode = 'ECN' | 'ENC' | 'ECC' | 'ECUF';
+export type QAItemAnswer = 'yes' | 'no' | 'na';
+export type QAStatus = 'good' | 'warning' | 'critical';
+
+export interface QAErrorTypeScore {
+  code: QAErrorTypeCode;
+  score: number;
+  errorsFound: number;
+  itemsEvaluated: number;
+  status: QAStatus;
+}
+
+export interface QAItemResult {
+  id: string;
+  name: string;
+  errorType: QAErrorTypeCode;
+  answer: QAItemAnswer;
+  valuation: number;
+  awarded: number;
+  evidence?: Evidence;
+}
+
+export interface QAAspectResult {
+  id: string;
+  name: string;
+  score: number;
+  maxScore: number;
+  items: QAItemResult[];
+}
+
+export interface CallQAEvaluation {
+  overallScore: number;
+  passed: boolean;
+  passThreshold: number;
+  autoFailCount: number;
+  qaFormName: string;
+  errorTypes: QAErrorTypeScore[];
+  aspects: QAAspectResult[];
+}
+
+// ---------- Sentiment & Emotion ----------
+
+export interface EmotionShare {
+  emotion: Emotion;
+  percentage: number;
+}
+
+export interface SpeakerSentiment {
+  overallCategory: SentimentCategory;
+  overallScore: number;
+  dominantEmotion: Emotion;
+  categories: Record<SentimentCategory, number>;
+  emotions: EmotionShare[];
+}
+
+export interface SentimentRecovery {
+  startCategory: SentimentCategory;
+  startScore: number;
+  lowestCategory: SentimentCategory;
+  lowestScore: number;
+  lowestAt: string;
+  endCategory: SentimentCategory;
+  endScore: number;
+  recovered: boolean;
+  recoveryTimeSeconds: number;
+  improvementDelta: number;
+}
+
+export interface EmpathyIndicator {
+  timestamp: string;
+  phrase: string;
+  context: string;
+}
+
+export interface AgentTone {
+  polite: number;
+  professional: number;
+  empathetic: number;
+  consistency: number;
+}
+
+export interface SpeechPatterns {
+  talkTimeRatio: { agent: number; customer: number };
+  silenceCount: number;
+  totalSilenceSeconds: number;
+  longestSilenceSeconds: number;
+  avgResponseLatencySeconds: number;
+  interruptions: { byAgent: number; byCustomer: number };
+  agentWordsPerMinute: number;
+}
+
+export interface CallSentimentEvaluation {
+  agent: SpeakerSentiment;
+  customer: SpeakerSentiment;
+  recovery: SentimentRecovery;
+  empathyIndicators: EmpathyIndicator[];
+  tone: AgentTone;
+  speech: SpeechPatterns;
+}
+
+// ---------- Compliance ----------
+
+export type ComplianceAreaKey = 'security' | 'regulatory' | 'legal';
+export type ComplianceItemStatus = 'compliant' | 'warning' | 'violation';
+
+export interface ComplianceItemResult {
+  key: string;
+  label: string;
+  status: ComplianceItemStatus;
+  score: number;
+  note?: string;
+  evidence?: Evidence;
+}
+
+export interface ComplianceAreaResult {
+  key: ComplianceAreaKey;
+  score: number;
+  items: ComplianceItemResult[];
+}
+
+export interface CallComplianceEvaluation {
+  overallScore: number;
+  status: ComplianceItemStatus;
+  violationCount: number;
+  warningCount: number;
+  areas: ComplianceAreaResult[];
+}
+
+// ---------- Business Insights ----------
+
+export type BusinessSignalType =
+  | 'EARLY_OBJECTION'
+  | 'UNHANDLED_OBJECTION'
+  | 'COMPETITOR_PLUS_COST'
+  | 'MISTARGETED_OFFER'
+  | 'BEST_TIME_FRAME';
+
+export type NonConversionReasonKey =
+  | 'priceTooHigh'
+  | 'noNeed'
+  | 'distrustQuality'
+  | 'thirdPartyDecision'
+  | 'installationRequirements'
+  | 'other';
+
+export interface BusinessSignalResult {
+  type: BusinessSignalType;
+  detected: boolean;
+  evidence?: Evidence;
+  note?: string;
+}
+
+export interface BusinessOutcome {
+  converted: boolean;
+  offerPresented: string;
+  nonConversionReason?: NonConversionReasonKey;
+  competitorMentioned?: string;
+  bestTimeFrame?: string;
+  followUpRecommended: boolean;
+}
+
+export interface CallBusinessEvaluation {
+  signals: BusinessSignalResult[];
+  outcome: BusinessOutcome;
+}
+
+// ---------- Aggregate ----------
+
+export interface CallEvaluationDetail {
+  callId: string;
+  fileName: string;
+  agentName: string;
+  customerName: string;
+  date: string;
+  durationSeconds: number;
+  direction: 'inbound' | 'outbound';
+  transcript: TranscriptTurn[];
+  qa: CallQAEvaluation;
+  sentiment: CallSentimentEvaluation;
+  compliance: CallComplianceEvaluation;
+  business: CallBusinessEvaluation;
 }
