@@ -1269,6 +1269,28 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										{
+											path: 'campaigns/:campaignId/contact-lists/:contactListId',
+											id: 'qa.campaigns.results',
+											element: (
+												<I18nNamespaceLoader>
+													<Suspense fallback={<SuspenseFallback />}>
+														<CampaignResults />
+													</Suspense>
+												</I18nNamespaceLoader>
+											),
+										},
+										{
+											path: 'campaigns/:campaignId/evaluations/:eid/calls/:callId',
+											id: 'qa.campaigns.evaluations',
+											element: (
+												<I18nNamespaceLoader>
+													<Suspense fallback={<SuspenseFallback />}>
+														<ConversationEvaluations />
+													</Suspense>
+												</I18nNamespaceLoader>
+											),
+										},
 										path: 'forms',
 										id: 'qa.forms',
 										element: (
