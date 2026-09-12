@@ -158,7 +158,7 @@
 			"team": "Your Team",
 			"groupTeam": "Your Team",
 			"calls": "Calls",
-			"evaluations": "Evaluations",
+			"campaigns": "Campaigns",
 			"triggersConfig": "Team Triggers",
 			"rankingsConfig": "Rankings Config",
 			"disputes": "Disputes",
@@ -170,7 +170,7 @@
 		"agent": {
 			"dashboard": "Dashboard",
 			"myCalls": "My Calls",
-			"myEvaluations": "My Evaluations",
+			"campaigns": "Campaigns",
 			"inbox": "Inbox",
 			"rankings": "Team Rankings",
 			"profile": "Profile",

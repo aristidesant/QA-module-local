@@ -156,7 +156,7 @@
 			"team": "Tu equipo",
 			"groupTeam": "Tu equipo",
 			"calls": "Llamadas",
-			"evaluations": "Evaluaciones",
+			"campaigns": "Campañas",
 			"triggersConfig": "Disparadores del equipo",
 			"rankingsConfig": "Configuración de rankings",
 			"disputes": "Disputas",
@@ -168,7 +168,7 @@
 		"agent": {
 			"dashboard": "Panel de control",
 			"myCalls": "Mis llamadas",
-			"myEvaluations": "Mis evaluaciones",
+			"campaigns": "Campañas",
 			"inbox": "Bandeja de entrada",
 			"rankings": "Rankings del equipo",
 			"profile": "Perfil",

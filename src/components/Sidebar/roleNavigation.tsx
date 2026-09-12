@@ -1,7 +1,6 @@
 import {
 	IconLayoutDashboard,
 	IconPhone,
-	IconClipboardCheck,
 	IconBell,
 	IconFolders,
 	IconChartLine,
@@ -11,6 +10,7 @@ import {
 	IconHeartHandshake,
 	IconLock,
 	IconGitBranch,
+	IconSpeakerphone,
 } from '@tabler/icons-react';
 import type { SidebarNavItem } from './Sidebar';
 import styles from './Sidebar.module.css';
@@ -42,10 +42,10 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.agent',
 	},
 	{
-		key: 'agent-my-evaluations',
-		label: 'sidebar.agent.myEvaluations',
-		icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
-		to: '/qa/evaluations',
+		key: 'agent-campaigns',
+		label: 'sidebar.agent.campaigns',
+		icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
+		to: '/qa/campaigns',
 		i18nNamespace: 'qa.agent',
 	},
 	{
@@ -141,10 +141,10 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.supervisor',
 	},
 	{
-		key: 'supervisor-evaluations',
-		label: 'sidebar.supervisor.evaluations',
-		icon: <IconClipboardCheck size={20} className={styles.menuIcon} />,
-		to: '/qa/supervisor/evaluations',
+		key: 'supervisor-campaigns',
+		label: 'sidebar.supervisor.campaigns',
+		icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
+		to: '/qa/campaigns',
 		i18nNamespace: 'qa.supervisor',
 	},
 	{
