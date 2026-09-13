@@ -1,0 +1,69 @@
+.pageContainer {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+}
+
+.header {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+}
+
+.eyebrow {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 500;
+	color: var(--mantine-color-gray-6);
+	text-transform: uppercase;
+	letter-spacing: 0.05em;
+}
+
+.titleGroup {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.viewSelector {
+	border-bottom: 1px solid var(--mantine-color-gray-2);
+}
+
+.controlsRow {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-md);
+	@media (min-width: 768px) {
+		flex-direction: row;
+		align-items: center;
+	}
+}
+
+.filterBar {
+	padding: var(--mantine-spacing-md);
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+.kpiStrip {
+	padding: var(--mantine-spacing-md);
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+.contentArea {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-lg);
+	min-height: 400px;
+	padding: var(--mantine-spacing-lg);
+	background-color: var(--mantine-color-gray-0);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
+}
+
+.unit {
+	font-size: 0.75em;
+	margin-left: 2px;
+}
