@@ -18,8 +18,12 @@ import { OperationsTab } from './tabs/OperationsTab';
 import { CoachingLmsTab } from './tabs/CoachingLmsTab';
 import { AchievementsTab } from './tabs/AchievementsTab';
 import { ActivityTab } from './tabs/ActivityTab';
-import { ScheduleCoachingModal } from '../components/modals/ScheduleCoachingModal';
-import { AssignLmsModal } from '../components/modals/AssignLmsModal';
+import { SessionEditorDrawer } from '~/modules/qa/coaching/components/SessionEditorDrawer';
+import { AssignContentDrawer } from '~/modules/qa/lms/components/AssignContentDrawer';
+import { managerPersona } from '~/modules/qa/lms/helpers';
+import { useLmsStore, selectAssignments, selectContent } from '~/stores/qa/lmsStore';
+import { useCoachingStore, selectCohorts } from '~/stores/qa/coachingStore';
+import type { LmsContent } from '~/models/qa';
 import { SendMessageModal } from '../components/modals/SendMessageModal';
 
 export default function AgentProfilePage() {
@@ -47,6 +51,18 @@ export default function AgentProfilePage() {
 	const notVisible = profile && role === 'supervisor' && profile.agent.supervisorId !== SUPERVISOR_PERSONA.id;
 
 	const points = useMemo(() => (profile ? filterByPeriod(profile.performance, period) : []), [profile, period]);
+
+	const allAssignments = useLmsStore(selectAssignments);
+	const allContent = useLmsStore(selectContent);
+	const cohorts = useCoachingStore(selectCohorts);
+	const agentAssignments = useMemo(
+		() => allAssignments.filter((a) => a.agentId === agentId),
+		[allAssignments, agentId]
+	);
+	const contentById = useMemo(
+		() => Object.fromEntries(allContent.map((c) => [c.id, c])) as Record<string, LmsContent>,
+		[allContent]
+	);
 
 	if (!profile || notVisible) {
 		return (
@@ -103,8 +119,22 @@ export default function AgentProfilePage() {
 				</Tabs>
 			</Stack>
 
-			<ScheduleCoachingModal agentId={profile.agent.id} role={role} opened={coachingOpen} onClose={() => setCoachingOpen(false)} />
-			<AssignLmsModal agentId={profile.agent.id} role={role} opened={lmsOpen} onClose={() => setLmsOpen(false)} />
+			<SessionEditorDrawer
+				opened={coachingOpen}
+				onClose={() => setCoachingOpen(false)}
+				role={role}
+				persona={managerPersona(role)}
+				preset={{ agentId: profile.agent.id }}
+				cohorts={cohorts}
+				assignments={agentAssignments}
+				contentById={contentById}
+			/>
+			<AssignContentDrawer
+				opened={lmsOpen}
+				onClose={() => setLmsOpen(false)}
+				role={role}
+				preset={{ agentIds: [profile.agent.id] }}
+			/>
 			<SendMessageModal agentId={profile.agent.id} role={role} opened={messageOpen} onClose={() => setMessageOpen(false)} />
 		</ContentContainer>
 	);

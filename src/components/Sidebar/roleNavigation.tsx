@@ -7,8 +7,9 @@ import {
 	IconFileText,
 	IconUsers,
 	IconTarget,
+	IconTargetArrow,
 	IconHeartHandshake,
-	IconLock,
+	IconSchool,
 	IconGitBranch,
 	IconSpeakerphone,
 	IconUserSquareRounded,
@@ -67,9 +68,9 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 	{
 		key: 'agent-lms',
 		label: 'sidebar.agent.lms',
-		icon: <IconLock size={20} className={styles.menuIcon} />,
+		icon: <IconSchool size={20} className={styles.menuIcon} />,
 		to: '/qa/agent/lms',
-		i18nNamespace: 'qa.agent',
+		i18nNamespace: 'qa.lms',
 	},
 	{
 		key: 'agent-analytics',
@@ -104,7 +105,7 @@ export const getAgentNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'agent-mywork',
 			label: 'sidebar.agent.groupMyWork',
-			items: items.slice(1, 3), // My Evaluations, Inbox
+			items: [items[1], items[2], items[4]], // Campaigns, Inbox, My Learning
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -112,7 +113,7 @@ export const getAgentNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'agent-insights',
 			label: 'sidebar.agent.groupInsights',
-			items: items.slice(3), // Rankings, LMS, Analytics, Disputes
+			items: [items[3], items[5], items[6]], // Rankings, Analytics, Disputes
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -157,6 +158,20 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.supervisor',
 	},
 	{
+		key: 'supervisor-coaching',
+		label: 'sidebar.supervisor.coaching',
+		icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
+		to: '/qa/supervisor/coaching',
+		i18nNamespace: 'qa.coaching',
+	},
+	{
+		key: 'supervisor-lms',
+		label: 'sidebar.supervisor.lms',
+		icon: <IconSchool size={20} className={styles.menuIcon} />,
+		to: '/qa/supervisor/lms',
+		i18nNamespace: 'qa.lms',
+	},
+	{
 		key: 'supervisor-disputes',
 		label: 'sidebar.supervisor.disputes',
 		icon: <IconFolders size={20} className={styles.menuIcon} />,
@@ -196,6 +211,8 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 // SUPERVISOR NAVIGATION (organized by functional groups)
 export const getSupervisorNavigationGrouped = (): NavGroup[] => {
 	const items = getSupervisorNavigation();
+	const byKey = Object.fromEntries(items.map((i) => [i.key, i]));
+	const pick = (...keys: string[]) => keys.map((k) => byKey[k]);
 
 	return [
 		// Primary: Dashboard (always visible, non-collapsible)
@@ -210,7 +227,15 @@ export const getSupervisorNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'supervisor-team',
 			label: 'sidebar.supervisor.groupTeam',
-			items: items.slice(1, 5), // Team, Calls, Customers, Campaigns
+			items: pick('supervisor-team', 'supervisor-calls', 'supervisor-customers', 'supervisor-campaigns'),
+			collapsible: false,
+			defaultExpanded: true,
+		},
+		// Primary: Development — coaching and learning
+		{
+			key: 'supervisor-development',
+			label: 'sidebar.supervisor.groupDevelopment',
+			items: pick('supervisor-coaching', 'supervisor-lms'),
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -218,7 +243,7 @@ export const getSupervisorNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'supervisor-operations',
 			label: 'sidebar.supervisor.groupOperations',
-			items: [items[5], items[8]], // Disputes, Triggers
+			items: pick('supervisor-disputes', 'supervisor-triggers'),
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -226,7 +251,7 @@ export const getSupervisorNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'supervisor-insights',
 			label: 'sidebar.supervisor.groupInsights',
-			items: [items[6], items[7], items[9]], // Analytics, Reports, Rankings
+			items: pick('supervisor-analytics', 'supervisor-reports', 'supervisor-rankings'),
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -278,6 +303,20 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.customers',
 	},
 	{
+		key: 'qamanager-coaching',
+		label: 'sidebar.qamanager.coaching',
+		icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
+		to: '/qa/qa-manager/coaching',
+		i18nNamespace: 'qa.coaching',
+	},
+	{
+		key: 'qamanager-lms',
+		label: 'sidebar.qamanager.lms',
+		icon: <IconSchool size={20} className={styles.menuIcon} />,
+		to: '/qa/qa-manager/lms',
+		i18nNamespace: 'qa.lms',
+	},
+	{
 		key: 'qamanager-disputes',
 		label: 'sidebar.qamanager.disputes',
 		icon: <IconFolders size={20} className={styles.menuIcon} />,
@@ -324,6 +363,8 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 // QA MANAGER NAVIGATION (organized by functional groups)
 export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 	const items = getQAManagerNavigation();
+	const byKey = Object.fromEntries(items.map((i) => [i.key, i]));
+	const pick = (...keys: string[]) => keys.map((k) => byKey[k]);
 
 	return [
 		// Primary: Dashboard (always visible, non-collapsible)
@@ -338,7 +379,15 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-organization',
 			label: 'sidebar.qamanager.groupOrganization',
-			items: items.slice(1, 4), // Supervisors, Teams, Agents
+			items: pick('qamanager-supervisors', 'qamanager-teams', 'qamanager-agents'),
+			collapsible: false,
+			defaultExpanded: true,
+		},
+		// Primary: Development — coaching and learning
+		{
+			key: 'qamanager-development',
+			label: 'sidebar.qamanager.groupDevelopment',
+			items: pick('qamanager-coaching', 'qamanager-lms'),
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -346,7 +395,7 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-operations',
 			label: 'sidebar.qamanager.groupOperations',
-			items: [items[4], items[5], items[6], items[9]], // Calls, Customers, Disputes, Campaigns
+			items: pick('qamanager-calls', 'qamanager-customers', 'qamanager-disputes', 'qamanager-campaigns'),
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -354,7 +403,7 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-configuration',
 			label: 'sidebar.qamanager.groupConfiguration',
-			items: [items[7], items[8]], // Triggers, Rankings
+			items: pick('qamanager-triggers', 'qamanager-rankings'),
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -362,7 +411,7 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-insights',
 			label: 'sidebar.qamanager.groupInsights',
-			items: [items[10], items[11]], // Analytics, Reports
+			items: pick('qamanager-analytics', 'qamanager-reports'),
 			collapsible: true,
 			defaultExpanded: false,
 		},

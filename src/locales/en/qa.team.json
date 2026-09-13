@@ -97,7 +97,7 @@
 		"columns": { "date": "Date", "topic": "Topic", "coach": "Coach", "dimension": "Dimension", "status": "Status", "outcome": "Outcome / follow-up" },
 		"status": { "scheduled": "Scheduled", "completed": "Completed", "missed": "Missed" },
 		"lms": "LMS material", "lmsDescription": "Assigned courses, videos and documents",
-		"lmsColumns": { "title": "Material", "type": "Type", "assigned": "Assigned", "due": "Due", "progress": "Progress", "status": "Status" },
+		"lmsColumns": { "title": "Material", "type": "Format", "assigned": "Assigned", "due": "Due", "acceptance": "Acceptance", "progress": "Progress", "status": "Status", "impact": "Impact" },
 		"lmsStatus": { "not-started": "Not started", "in-progress": "In progress", "completed": "Completed", "overdue": "Overdue" },
 		"mandatory": "Mandatory", "noSessions": "No coaching sessions yet.", "noLms": "No material assigned."
 	},

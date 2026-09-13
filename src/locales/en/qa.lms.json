@@ -1,0 +1,501 @@
+{
+	"areas": {
+		"QUALITY_ASSURANCE": "Quality Assurance",
+		"COMPLIANCE": "Compliance",
+		"SENTIMENT_EMOTION": "Sentiment & Emotion",
+		"BUSINESS_INSIGHTS": "Business Insights",
+		"GENERAL": "General"
+	},
+	"formats": {
+		"VIDEO": "Video",
+		"DOCUMENT": "Document",
+		"QUIZ": "Quiz",
+		"SCENARIO": "Practice scenario"
+	},
+	"levels": { "BEGINNER": "Beginner", "INTERMEDIATE": "Intermediate", "ADVANCED": "Advanced" },
+	"cta": {
+		"watch": "Watch",
+		"read": "Read",
+		"takeQuiz": "Take quiz",
+		"practice": "Practice",
+		"continue": "Continue",
+		"start": "Start",
+		"review": "Review",
+		"retry": "Retry"
+	},
+	"status": {
+		"NOT_STARTED": "Not started",
+		"IN_PROGRESS": "In progress",
+		"COMPLETED": "Completed",
+		"OVERDUE": "Overdue"
+	},
+	"acceptance": {
+		"NOT_REQUIRED": "No response needed",
+		"PENDING": "Awaiting your response",
+		"ACCEPTED": "Accepted",
+		"RESCHEDULE_REQUESTED": "New date requested",
+		"NO_RESPONSE": "No response",
+		"approved": "New date approved",
+		"rejected": "New date rejected"
+	},
+	"verdict": {
+		"IMPROVED": "Improved",
+		"SAME": "No change",
+		"DECLINED": "Declined",
+		"PENDING": "Measuring"
+	},
+	"source": {
+		"MANUAL": "Assigned by your supervisor",
+		"COACHING_RULE": "Assigned by a coaching rule",
+		"LEARNING_PATH": "Part of a learning path",
+		"SELF": "Self-enrolled"
+	},
+	"due": {
+		"completed": "Completed",
+		"overdueBy_one": "Overdue by {{count}} day",
+		"overdueBy_other": "Overdue by {{count}} days",
+		"today": "Due today",
+		"inDays_one": "Due in {{count}} day",
+		"inDays_other": "Due in {{count}} days",
+		"date": "Due {{date}}"
+	},
+	"subItems": {
+		"openingIdentification": "Opening & Identification",
+		"needsAssessment": "Needs Assessment",
+		"objectionHandling": "Objection Handling",
+		"closing": "Closing",
+		"mandatoryDisclosures": "Mandatory Disclosures",
+		"ECN": "Critical Business Error",
+		"ENC": "Non-Critical Error",
+		"ECC": "Critical Compliance Error",
+		"ECUF": "Critical End-User Error",
+		"dataProtection": "Data Protection",
+		"disclosureCompliance": "Disclosure Compliance",
+		"cobranzaRegulada": "Billing Process",
+		"transparenciaConsentimiento": "Transparency",
+		"amenazasTradicionales": "Threats",
+		"rrss": "Social Media",
+		"superintendenciaBancos": "Banking Superintendence",
+		"noLlamarList": "Do-Not-Call",
+		"FRUSTRATION": "Frustration",
+		"ANGER": "Anger",
+		"DISAPPOINTMENT": "Disappointment",
+		"SADNESS": "Sadness",
+		"FEAR": "Fear",
+		"RAGE": "Rage",
+		"EARLY_OBJECTION": "Early Objection",
+		"UNHANDLED_OBJECTION": "Unhandled Objection",
+		"COMPETITOR_PLUS_COST": "Competitor Plus Cost",
+		"MISTARGETED_OFFER": "Mis-targeted Offer",
+		"BEST_TIME_FRAME": "Best Time Frame",
+		"WELLBEING": "Wellbeing"
+	},
+	"agent": {
+		"eyebrow": "Agent",
+		"title": "My Learning",
+		"description": "Your assignments, learning paths and coaching commitments — tied to the aspects you are evaluated on.",
+		"activePath": "Active path",
+		"noActivePath": "No active learning path",
+		"kpi": {
+			"needsResponse": "Needs your response",
+			"dueThisWeek": "Due this week",
+			"overdue": "Overdue",
+			"completedThisMonth": "Completed this month",
+			"quizAverage": "Quiz average"
+		},
+		"tabs": {
+			"assignments": "My assignments",
+			"paths": "Learning paths",
+			"catalog": "Catalogue",
+			"history": "History",
+			"coaching": "Coaching"
+		},
+		"assignments": {
+			"needsResponse": "Needs your response",
+			"needsResponseDescription": "Your supervisor assigned this with a deadline. Accept it or propose another date.",
+			"mandatory": "Mandatory with deadline",
+			"mandatoryDescription": "Sorted by due date. Overdue items are highlighted.",
+			"optional": "Recommended for you",
+			"optionalDescription": "Optional material picked for your recent evaluations.",
+			"empty": "Nothing assigned right now — explore the catalogue.",
+			"assignedBy": "Assigned by {{name}}",
+			"why": "Why this was assigned",
+			"accept": "I accept this deadline",
+			"proposeDate": "Propose another date",
+			"accepted": "Accepted on {{date}}",
+			"rescheduleSent": "New date proposed: {{date}} — waiting for {{name}}",
+			"noResponse": "No response for {{count}} hours — your supervisor has been notified",
+			"mandatoryBadge": "Mandatory",
+			"progress": "{{value}}% complete",
+			"score": "Score {{value}}%",
+			"acceptSuccess": "Deadline accepted"
+		},
+		"reschedule": {
+			"title": "Propose another date",
+			"current": "Current deadline: {{date}}",
+			"newDate": "Proposed deadline",
+			"reason": "Reason",
+			"reasonPlaceholder": "Tell your supervisor why you need more time",
+			"submit": "Send proposal",
+			"cancel": "Cancel",
+			"success": "Proposal sent to your supervisor"
+		},
+		"paths": {
+			"enrolled": "Your learning paths",
+			"enrolledDescription": "Complete the required modules in order to earn the path badge.",
+			"available": "Available paths",
+			"availableDescription": "Enrol yourself in a path for any aspect you want to strengthen.",
+			"modules": "{{done}} of {{total}} modules",
+			"required": "Required",
+			"optional": "Optional",
+			"nextUp": "Next up",
+			"enrol": "Enrol",
+			"enrolledSuccess": "You are enrolled in {{title}}",
+			"badge": "Earn: {{badge}}",
+			"completedOn": "Completed on {{date}}",
+			"dueDate": "Path due {{date}}",
+			"empty": "No learning paths available."
+		},
+		"catalog": {
+			"title": "Catalogue",
+			"description": "Everything published, grouped by the aspect it strengthens.",
+			"search": "Search material",
+			"format": "Format",
+			"area": "Aspect",
+			"all": "All",
+			"enrolSelf": "Add to my learning",
+			"alreadyAssigned": "Already in your list",
+			"enrolledSuccess": "Added to your assignments",
+			"empty": "No material matches these filters.",
+			"count": "{{count}} items"
+		},
+		"history": {
+			"title": "Completed material",
+			"description": "What you finished and how your scores moved afterwards.",
+			"kpi": {
+				"completed": "Completed",
+				"averageScore": "Average score",
+				"improved": "Improved",
+				"declined": "Declined"
+			},
+			"columns": {
+				"material": "Material",
+				"completed": "Completed",
+				"score": "Score",
+				"impact": "Impact",
+				"metric": "Metric",
+				"before": "Before",
+				"after": "After"
+			},
+			"impactHint": "30 days before vs 30 days after completion",
+			"empty": "Nothing completed yet."
+		},
+		"coaching": {
+			"upcoming": "Upcoming sessions",
+			"upcomingDescription": "Sessions scheduled with your supervisor or the QA manager.",
+			"commitments": "My commitments",
+			"commitmentsDescription": "Action items agreed in coaching. Confirm them so your coach knows you are on it.",
+			"past": "Past sessions",
+			"columns": {
+				"date": "Date",
+				"topic": "Topic",
+				"coach": "Coach",
+				"area": "Aspect",
+				"status": "Status",
+				"outcome": "Outcome"
+			},
+			"status": { "scheduled": "Scheduled", "completed": "Completed", "missed": "Missed" },
+			"acknowledge": "I commit to this",
+			"acknowledged": "Committed on {{date}}",
+			"linkedMaterial": "Linked material",
+			"empty": "No coaching sessions yet.",
+			"noCommitments": "No open commitments."
+		}
+	},
+	"player": {
+		"back": "Back to My Learning",
+		"partOfPath": "Part of {{path}}",
+		"nextModule": "Next module",
+		"markWatched": "Mark as watched",
+		"markRead": "Mark as read",
+		"chapters": "Chapters",
+		"playing": "Playing",
+		"paused": "Paused",
+		"readingProgress": "Reading progress",
+		"notAssigned": "This material is not assigned to you.",
+		"quiz": {
+			"question": "Question {{n}} of {{total}}",
+			"next": "Next",
+			"previous": "Previous",
+			"submit": "Submit answers",
+			"passed": "You passed with {{score}}%",
+			"failed": "{{score}}% — you need {{pass}}% to pass",
+			"retry": "Try again",
+			"explanation": "Why",
+			"passScore": "Pass mark {{value}}%",
+			"yourAnswer": "Your answer",
+			"correctAnswer": "Correct answer"
+		},
+		"scenario": {
+			"situation": "The situation",
+			"customerSays": "Customer",
+			"coachAsks": "Your coach asks",
+			"selfCheck": "Self-check",
+			"yourAnswer": "Your answer",
+			"answerPlaceholder": "Write what you would say",
+			"finish": "Finish practice",
+			"continue": "Continue"
+		},
+		"completed": {
+			"title": "Completed!",
+			"message": "We will measure your {{metric}} over the next 30 days and show the result here.",
+			"noImpact": "This material is informational — no score is tracked.",
+			"backToList": "Back to my assignments"
+		},
+		"meta": {
+			"duration": "{{count}} min",
+			"level": "Level",
+			"assigned": "Assigned {{date}}",
+			"due": "Due {{date}}",
+			"by": "By {{name}}",
+			"author": "Author"
+		}
+	},
+	"impact": {
+		"title": "Impact on your score",
+		"baseline": "Before",
+		"after": "After 30 days",
+		"checkpoint15": "Day 15",
+		"checkpoint30": "Day 30",
+		"pending": "Still measuring — {{days}} days to go",
+		"delta": "{{value}} points"
+	},
+	"manager": {
+		"eyebrow": { "supervisor": "Supervisor · Team 1", "qa-manager": "QA Manager · All teams" },
+		"title": "Learning",
+		"description": "Browse the catalogue, assign material or paths, and follow completion and acceptance.",
+		"assignButton": "Assign material",
+		"kpi": {
+			"published": "Published items",
+			"activeAssignments": "Active assignments",
+			"pendingAcceptance": "Awaiting response",
+			"rescheduleRequests": "Date change requests",
+			"overdue": "Overdue",
+			"completionRate": "Completion rate (30d)"
+		},
+		"tabs": {
+			"library": "Library",
+			"paths": "Learning paths",
+			"assignments": "Assignments",
+			"reports": "Reports"
+		},
+		"library": {
+			"title": "Content library",
+			"description": "Videos, documents, quizzes and practice scenarios tagged by aspect.",
+			"filters": {
+				"search": "Search title or tag",
+				"format": "Format",
+				"area": "Aspect",
+				"status": "Status",
+				"level": "Level",
+				"all": "All",
+				"clear": "Clear"
+			},
+			"columns": {
+				"title": "Material",
+				"format": "Format",
+				"area": "Aspect",
+				"duration": "Duration",
+				"level": "Level",
+				"assigned": "Assigned",
+				"completed": "Completed",
+				"avgScore": "Avg. score",
+				"rating": "Rating",
+				"status": "Status",
+				"updated": "Updated"
+			},
+			"contentStatus": { "PUBLISHED": "Published", "DRAFT": "Draft", "ARCHIVED": "Archived" },
+			"actions": {
+				"assign": "Assign",
+				"publish": "Publish",
+				"archive": "Archive",
+				"restore": "Restore",
+				"preview": "Preview as agent"
+			},
+			"notifications": { "published": "Material published", "archived": "Material archived" },
+			"empty": "No material matches these filters.",
+			"count": "{{count}} items"
+		},
+		"contentDetail": {
+			"usedInRules": "Used in coaching rules",
+			"noRules": "Not referenced by any rule yet.",
+			"inPaths": "In learning paths",
+			"noPaths": "Not part of a learning path.",
+			"stats": "Usage",
+			"assigned": "Assigned",
+			"completed": "Completed",
+			"completionRate": "Completion",
+			"avgScore": "Average score",
+			"rating": "Rating",
+			"impact": "Measured impact",
+			"impactHint": "Agents who improved on {{metric}} 30 days after completing this",
+			"noImpact": "Nothing measured yet.",
+			"improved": "improved",
+			"same": "no change",
+			"declined": "declined",
+			"recentAgents": "Recent assignees",
+			"preview": "Preview",
+			"questions": "Questions",
+			"chapters": "Chapters",
+			"columns": { "agent": "Agent", "team": "Team", "status": "Status", "acceptance": "Acceptance", "due": "Due" }
+		},
+		"paths": {
+			"title": "Learning paths",
+			"description": "Ordered sets of modules that earn a badge. Assign a path to enrol several agents at once.",
+			"modules": "{{count}} modules",
+			"enrolled": "{{count}} enrolled",
+			"completion": "{{value}}% completion",
+			"assignPath": "Assign path",
+			"viewPath": "View path",
+			"detail": {
+				"modules": "Modules",
+				"enrolledAgents": "Enrolled agents",
+				"progress": "Progress",
+				"columns": {
+					"agent": "Agent",
+					"team": "Team",
+					"modules": "Modules",
+					"enrolledAt": "Enrolled",
+					"due": "Due",
+					"status": "Status"
+				},
+				"status": { "inProgress": "In progress", "completed": "Completed", "notStarted": "Not started" },
+				"empty": "Nobody enrolled yet."
+			}
+		},
+		"assignments": {
+			"title": "Assignments",
+			"description": "Every assignment in your scope with its acceptance and completion state.",
+			"filters": {
+				"search": "Search agent or material",
+				"status": "Status",
+				"acceptance": "Acceptance",
+				"area": "Aspect",
+				"source": "Source",
+				"team": "Team",
+				"mandatoryOnly": "Mandatory only",
+				"all": "All",
+				"clear": "Clear"
+			},
+			"columns": {
+				"agent": "Agent",
+				"material": "Material",
+				"area": "Aspect",
+				"assigned": "Assigned",
+				"due": "Due",
+				"mandatory": "Mandatory",
+				"acceptance": "Acceptance",
+				"progress": "Progress",
+				"status": "Status",
+				"impact": "Impact",
+				"source": "Source"
+			},
+			"sourceShort": { "MANUAL": "Manual", "COACHING_RULE": "Rule", "LEARNING_PATH": "Path", "SELF": "Self" },
+			"rescheduleBanner_one": "{{count}} agent asked for a new deadline",
+			"rescheduleBanner_other": "{{count}} agents asked for a new deadline",
+			"reviewRequests": "Review requests",
+			"detail": {
+				"reason": "Why it was assigned",
+				"timeline": "Timeline",
+				"assignedOn": "Assigned by {{name}} on {{date}}",
+				"acceptedOn": "Accepted on {{date}}",
+				"rescheduleAsk": "Asked to move the deadline to {{date}}",
+				"rescheduleReason": "Reason",
+				"approve": "Approve new date",
+				"reject": "Keep original date",
+				"approved": "Approved by {{name}}",
+				"rejected": "Rejected by {{name}}",
+				"started": "Started on {{date}}",
+				"completed": "Completed on {{date}}",
+				"noResponse": "No response after 48 h",
+				"remind": "Send reminder",
+				"reminded": "Reminder sent to {{name}}",
+				"openProfile": "Open agent profile",
+				"impact": "Impact",
+				"decided": "Decision sent to {{name}}"
+			},
+			"empty": "No assignments match these filters.",
+			"count": "{{count}} assignments"
+		},
+		"reports": {
+			"title": "Reports",
+			"description": "Completion and acceptance across teams, aspects and content.",
+			"byTeam": "Completion by team",
+			"byArea": "Completion by aspect",
+			"byContent": "Most assigned content",
+			"acceptance": "Acceptance funnel",
+			"columns": {
+				"team": "Team",
+				"assigned": "Assigned",
+				"completed": "Completed",
+				"overdue": "Overdue",
+				"rate": "Rate",
+				"material": "Material",
+				"improved": "Improved"
+			},
+			"series": { "completed": "Completed", "overdue": "Overdue", "open": "Open" },
+			"funnel": {
+				"assigned": "Assigned",
+				"accepted": "Accepted",
+				"started": "Started",
+				"completed": "Completed",
+				"improved": "Improved"
+			},
+			"period": "Last 30 days",
+			"empty": "Nothing assigned in this period."
+		},
+		"assignDrawer": {
+			"title": "Assign material",
+			"titleWithAgent": "Assign material to {{name}}",
+			"what": "What",
+			"who": "Who",
+			"when": "When",
+			"mode": { "content": "Material", "path": "Learning path" },
+			"material": "Material",
+			"materialPlaceholder": "Pick one or more items",
+			"path": "Learning path",
+			"targetMode": { "agents": "Agents", "team": "Whole team", "cohort": "Cohort" },
+			"agents": "Agents",
+			"agentsPlaceholder": "Search agents",
+			"team": "Team",
+			"cohort": "Cohort",
+			"dueDate": "Deadline",
+			"dueQuick": { "7": "In 7 days", "14": "In 14 days", "30": "In 30 days" },
+			"mandatory": "Mandatory",
+			"mandatoryHint": "Counts as overdue after the deadline and feeds the at-risk flag",
+			"requireAcceptance": "Ask the agent to accept the deadline",
+			"requireAcceptanceHint": "The agent can accept or propose another date; you decide in Assignments",
+			"reason": "Why are you assigning this?",
+			"reasonPlaceholder": "The agent sees this text. Example: Compliance score 79% in the last two weeks.",
+			"summary": "{{items}} items · {{agents}} agents · due {{date}}",
+			"submit": "Assign",
+			"cancel": "Cancel",
+			"success": "{{count}} assignments created",
+			"successPath": "{{count}} agents enrolled in {{path}}",
+			"validation": {
+				"material": "Pick at least one item",
+				"agents": "Pick at least one agent",
+				"reason": "Write a short reason (min 10 characters)",
+				"due": "Pick a deadline"
+			}
+		}
+	},
+	"common": {
+		"notFound": "Material not found",
+		"notFoundDescription": "No content with id {{id}}.",
+		"minutes": "{{count}} min",
+		"cancel": "Cancel",
+		"close": "Close",
+		"save": "Save"
+	}
+}

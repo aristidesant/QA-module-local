@@ -1,6 +1,9 @@
 import { create } from 'zustand';
 import type { AgentNotification } from '~/models/qa/notifications';
 import { useNotificationStore } from '~/stores/qa/notificationStore';
+import { useLmsStore } from '~/stores/qa/lmsStore';
+import { useCoachingStore } from '~/stores/qa/coachingStore';
+import { DIMENSION_TO_AREA } from '~/modules/qa/lms/constants';
 import type { ActivityEvent, AgentProfile, CoachingSession, LmsAssignment, SupervisorNote, TeamRole } from '~/modules/qa/team/types';
 import { TEAM_PROFILES } from '~/modules/qa/team/mockData';
 import { NOW_ISO, QA_MANAGER_PERSONA, SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
@@ -33,30 +36,63 @@ const notify = (role: TeamRole, agentId: string, partial: Pick<AgentNotification
 
 const prepend = (profile: AgentProfile, event: ActivityEvent): AgentProfile => ({ ...profile, activity: [event, ...profile.activity] });
 
-export const useTeamStore = create<TeamState>((set) => ({
+export const useTeamStore = create<TeamState>((set, get) => ({
 	profiles: TEAM_PROFILES,
 
+	/**
+	 * Creates the real session in the coaching store (which notifies the agent) and
+	 * mirrors a legacy row on the profile so the Your Team counters keep working.
+	 */
 	scheduleCoaching: (input, role) => {
 		const a = author(role);
 		const session: CoachingSession = { id: nextId('coa'), date: input.date, topic: input.topic, coachName: a.name, coachRole: a.sourceRole, status: 'scheduled', linkedDimension: input.linkedDimension, outcome: input.notes };
+		useCoachingStore.getState().scheduleSession(
+			{
+				agentId: input.agentId,
+				agentName: get().profiles[input.agentId].agent.name,
+				date: input.date,
+				durationMin: 30,
+				type: 'ONE_ON_ONE',
+				topic: input.topic,
+				area: input.linkedDimension ? DIMENSION_TO_AREA[input.linkedDimension] : null,
+				subItem: null,
+				evidenceCallIds: [],
+				talkingPoints: [],
+				notes: input.notes ?? '',
+				linkedAssignmentIds: [],
+			},
+			{ id: a.id, name: a.name, role: a.sourceRole }
+		);
 		set((s) => {
 			const p = s.profiles[input.agentId];
 			const updated = prepend({ ...p, coaching: [session, ...p.coaching] }, { id: nextId('act'), type: 'coaching', date: NOW_ISO, title: `Coaching scheduled: ${session.topic}`, description: `${a.name} · ${new Date(input.date).toLocaleDateString()}` });
 			return { profiles: { ...s.profiles, [input.agentId]: updated } };
 		});
-		notify(role, input.agentId, { category: 'DIRECT_MESSAGE', priority: 'NORMAL', title: `Coaching session scheduled: ${input.topic}`, message: `${a.name} scheduled a coaching session for ${new Date(input.date).toLocaleString()}.`, icon: 'school', actions: [{ label: 'View coaching', url: '/qa/agent/coaching', icon: 'school' }] });
 		return session;
 	},
 
+	/**
+	 * Creates the real assignment in the LMS store (which notifies the agent) and
+	 * mirrors a legacy row on the profile so the Your Team counters keep working.
+	 */
 	assignLms: (input, role) => {
 		const a = author(role);
+		useLmsStore.getState().assign({
+			agentIds: [input.agentId],
+			contentIds: [input.materialId],
+			dueDate: input.dueDate,
+			mandatory: input.mandatory,
+			requireAcceptance: input.mandatory,
+			reason: 'Assigned from the agent profile',
+			assignedBy: a.name,
+			assignedByRole: a.sourceRole,
+		});
 		const assignment: LmsAssignment = { id: nextId('lms'), materialId: input.materialId, title: input.title, type: input.type, mandatory: input.mandatory, assignedAt: NOW_ISO.slice(0, 10), assignedBy: a.name, dueDate: input.dueDate, progress: 0, status: 'not-started' };
 		set((s) => {
 			const p = s.profiles[input.agentId];
 			const updated = prepend({ ...p, lms: [assignment, ...p.lms] }, { id: nextId('act'), type: 'lms', date: NOW_ISO, title: `Assigned: ${assignment.title}`, description: `${assignment.type} · due ${assignment.dueDate}${assignment.mandatory ? ' · mandatory' : ''}` });
 			return { profiles: { ...s.profiles, [input.agentId]: updated } };
 		});
-		notify(role, input.agentId, { category: 'DIRECT_MESSAGE', priority: input.mandatory ? 'HIGH' : 'NORMAL', title: `New training assigned: ${input.title}`, message: `${a.name} assigned "${input.title}" (${input.type}). Due ${input.dueDate}.`, icon: 'book', actions: [{ label: 'Open LMS', url: '/qa/agent/lms', icon: 'book' }] });
 		return assignment;
 	},
 

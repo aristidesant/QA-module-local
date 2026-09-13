@@ -3,9 +3,12 @@ import {
 	IconAward, IconBriefcase, IconClipboardList, IconHeadset, IconHistory, IconMoodSmile,
 	IconSchool, IconShieldCheck, IconTrendingUp,
 } from '@tabler/icons-react';
+import type { EvaluationArea, LmsFormat } from '~/models/qa';
 import type { Emotion, SentimentCategory } from '~/modules/qa/emotion-sentiment/types';
+import { LMS_CONTENT } from '~/modules/qa/lms/catalog';
+import { AREA_TO_DIMENSION } from '~/modules/qa/lms/constants';
 import type {
-	ActivityType, BusinessSignalType, ComplianceAreaKey, DimensionKey, LmsMaterial,
+	ActivityType, BusinessSignalType, ComplianceAreaKey, DimensionKey, LmsMaterial, LmsMaterialType,
 	NonConversionReasonKey, OperationalMetricKey, ProfilePeriod, QAErrorTypeCode,
 } from './types';
 
@@ -113,16 +116,22 @@ export const ACTIVITY_META: Record<ActivityType, { color: string; labelKey: stri
 	rank: { color: 'green', labelKey: 'activity.types.rank' },
 };
 
-export const LMS_CATALOG: LmsMaterial[] = [
-	{ id: 'lms-001', title: 'Objection Handling Fundamentals', type: 'Course', durationMin: 45, dimension: 'business' },
-	{ id: 'lms-002', title: 'Active Listening & Empathy', type: 'Video', durationMin: 20, dimension: 'sentiment' },
-	{ id: 'lms-003', title: 'Regulatory Disclosures 2026', type: 'PDF', durationMin: 15, dimension: 'compliance' },
-	{ id: 'lms-004', title: 'Closing the Call: Recap & Next Steps', type: 'Article', durationMin: 10, dimension: 'qa' },
-	{ id: 'lms-005', title: 'Handling Competitor Comparisons', type: 'Course', durationMin: 35, dimension: 'business' },
-	{ id: 'lms-006', title: 'De-escalation Techniques', type: 'Video', durationMin: 25, dimension: 'sentiment' },
-	{ id: 'lms-007', title: 'Data Protection on Calls', type: 'Course', durationMin: 30, dimension: 'compliance' },
-	{ id: 'lms-008', title: 'Needs Assessment Questions', type: 'Article', durationMin: 12, dimension: 'qa' },
-];
+/** Legacy view of the LMS catalogue, derived from `~/modules/qa/lms/catalog`. */
+const LEGACY_LMS_TYPE: Record<LmsFormat, LmsMaterialType> = {
+	VIDEO: 'Video',
+	DOCUMENT: 'Article',
+	QUIZ: 'Course',
+	SCENARIO: 'Course',
+};
+export const LMS_CATALOG: LmsMaterial[] = LMS_CONTENT
+	.filter((c) => c.status === 'PUBLISHED' && c.area !== 'GENERAL')
+	.map((c) => ({
+		id: c.id,
+		title: c.title,
+		type: LEGACY_LMS_TYPE[c.format],
+		durationMin: c.durationMin,
+		dimension: AREA_TO_DIMENSION[c.area as EvaluationArea],
+	}));
 
 export const COACHING_TOPICS = [
 	'Objection handling', 'Empathy & tone', 'Mandatory disclosures', 'Call closing', 'Needs assessment',

@@ -139,9 +139,10 @@ const NewOperationManagerDashboard = React.lazy(
 const QaInboxPage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/InboxPage')
 );
-const AgentLMSPage = React.lazy(
-	() => import('./modules/qa/agent/lms/AgentLMSPage')
-);
+const AgentMyLearningPage = React.lazy(() => import('./modules/qa/lms/AgentLmsPage'));
+const LmsContentPage = React.lazy(() => import('./modules/qa/lms/LmsContentPage'));
+const LmsManagerPage = React.lazy(() => import('./modules/qa/lms/LmsManagerPage'));
+const CoachingPage = React.lazy(() => import('./modules/qa/coaching/CoachingPage'));
 const CustomersPage = React.lazy(
 	() => import('./modules/qa/customers/CustomersPage')
 );
@@ -180,12 +181,6 @@ const YourTeamPage = React.lazy(
 );
 const AgentProfilePage = React.lazy(
 	() => import('./modules/qa/team/AgentProfilePage')
-);
-const QAManagerCoachingPage = React.lazy(
-	() => import('./modules/qa/qamanager/pages/CoachingPage')
-);
-const QAManagerLmsPage = React.lazy(
-	() => import('./modules/qa/qamanager/pages/LmsPage')
 );
 const QAManagerSettingsPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/SettingsPage')
@@ -819,6 +814,18 @@ const router = createBrowserRouter([
 								],
 							},
 							{
+								// App-chooser card → the agent's learning section.
+								path: 'lms',
+								id: 'app.lms',
+								element: <Navigate to='/qa/agent/lms' replace />,
+							},
+							{
+								// App-chooser card → the supervisor's coaching section.
+								path: 'coaching',
+								id: 'app.coaching',
+								element: <Navigate to='/qa/supervisor/coaching' replace />,
+							},
+							{
 								path: 'qa',
 								id: 'qa',
 								element: (
@@ -912,10 +919,26 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<AgentLMSPage />
+													<AgentMyLearningPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
+									},
+									{
+										path: 'agent/lms/:contentId',
+										id: 'qa.agent.lms.content',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<LmsContentPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'agent/coaching',
+										id: 'qa.agent.coaching',
+										element: <Navigate to='/qa/agent/lms?tab=coaching' replace />,
 									},
 									{
 										path: 'agent/analytics',
@@ -1144,7 +1167,18 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<QAManagerCoachingPage />
+													<CoachingPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/coaching',
+										id: 'qa.supervisor.coaching',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -1155,7 +1189,18 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<QAManagerLmsPage />
+													<LmsManagerPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/lms',
+										id: 'qa.supervisor.lms',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<LmsManagerPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
