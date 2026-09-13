@@ -25,4 +25,8 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.supervisor.your-team.profile': ['qa.team', 'qa.dashboard'],
 	'qa.qa-manager.agents': ['qa.team', 'qa.dashboard'],
 	'qa.qa-manager.agents.profile': ['qa.team', 'qa.dashboard'],
+	'qa.supervisor.customers': ['qa.customers', 'qa.team', 'qa.dashboard'],
+	'qa.supervisor.customers.profile': ['qa.customers', 'qa.team', 'qa.dashboard'],
+	'qa.qa-manager.customers': ['qa.customers', 'qa.team', 'qa.dashboard'],
+	'qa.qa-manager.customers.profile': ['qa.customers', 'qa.team', 'qa.dashboard'],
 };

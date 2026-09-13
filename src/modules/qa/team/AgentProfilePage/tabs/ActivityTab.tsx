@@ -20,7 +20,7 @@ export function ActivityTab({ profile, role }: ActivityTabProps) {
 	const togglePinNote = useTeamStore((s) => s.togglePinNote);
 
 	return (
-		<Grid gutter='md'>
+		<Grid gap='md'>
 			<Grid.Col span={{ base: 12, md: 7 }}>
 				<SectionCard title={t('activity.title')} icon={IconHistory}>
 					<ActivityTimeline events={profile.activity} filter={filter} onFilterChange={setFilter} />

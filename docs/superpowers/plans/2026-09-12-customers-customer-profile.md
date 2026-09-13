@@ -116,7 +116,7 @@ src/locales/es/qa.customers.json
 
 ## B · Task 1 — `src/modules/qa/customers/types.ts`
 
-- [ ] Paste:
+- [x] Paste:
 
 ```typescript
 import type { Emotion, SentimentCategory } from '~/modules/qa/emotion-sentiment/types';
@@ -295,13 +295,13 @@ export interface CustomerFilters {
 }
 ```
 
-- [ ] `npm run typecheck`.
+- [x] `npm run typecheck`.
 
 ---
 
 ## B · Task 2 — `constants.ts` + `mockData.ts` (24 customers, deterministic contact history)
 
-- [ ] **`src/modules/qa/customers/constants.ts`** (paste)
+- [x] **`src/modules/qa/customers/constants.ts`** (paste)
 
 ```typescript
 import type { TablerIcon } from '@tabler/icons-react';
@@ -371,7 +371,7 @@ export const OBJECTION_PHRASES = [
 export const FOLLOW_UP_REASONS = ['Contract renewal', 'Promo follow-up', 'Complaint check-in', 'Survey callback', 'Upgrade proposal'];
 ```
 
-- [ ] **`src/modules/qa/customers/mockData.ts`** (paste). One persona row per customer drives receptiveness, sentiment slope and volume.
+- [x] **`src/modules/qa/customers/mockData.ts`** (paste). One persona row per customer drives receptiveness, sentiment slope and volume.
 
 ```typescript
 import { TEAM_AGENTS, TEAM_CAMPAIGNS } from '~/modules/qa/team/mockData';
@@ -576,13 +576,13 @@ export function buildCustomerProfile(p: CustomerPersona): CustomerProfile {
 export const CUSTOMER_PROFILES: Record<string, CustomerProfile> = Object.fromEntries(CUSTOMER_PERSONAS.map((p) => [p.id, buildCustomerProfile(p)]));
 ```
 
-- [ ] `npm run typecheck`. Sanity: CUST-001 (Mr. Doe) → sentiment trend `up` (2.4 → ~3.6), receptiveness `neutral`/`resistant`, first contact `call-001`; CUST-003 → trend `down`, churn `high`; CUST-010 → `receptive`, churn `low`; CUST-006 and CUST-021 → `doNotCall`.
+- [x] `npm run typecheck`. Sanity: CUST-001 (Mr. Doe) → sentiment trend `up` (2.4 → ~3.6), receptiveness `neutral`/`resistant`, first contact `call-001`; CUST-003 → trend `down`, churn `high`; CUST-010 → `receptive`, churn `low`; CUST-006 and CUST-021 → `doNotCall`.
 
 ---
 
 ## B · Task 3 — `helpers.ts` + `src/stores/qa/customersStore.ts`
 
-- [ ] **`src/modules/qa/customers/helpers.ts`** (paste)
+- [x] **`src/modules/qa/customers/helpers.ts`** (paste)
 
 ```typescript
 import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
@@ -633,7 +633,7 @@ export const npsBand = (score: number): { label: 'promoter' | 'passive' | 'detra
 	score >= 9 ? { label: 'promoter', color: 'green' } : score >= 7 ? { label: 'passive', color: 'yellow' } : { label: 'detractor', color: 'red' };
 ```
 
-- [ ] **`src/stores/qa/customersStore.ts`** (paste)
+- [x] **`src/stores/qa/customersStore.ts`** (paste)
 
 ```typescript
 import { create } from 'zustand';
@@ -700,13 +700,13 @@ export const useCustomersStore = create<CustomersState>((set) => ({
 export const selectCustomer = (id: string | undefined) => (s: CustomersState) => (id ? s.profiles[id] : undefined);
 ```
 
-- [ ] `npm run typecheck`.
+- [x] `npm run typecheck`.
 
 ---
 
 ## B · Task 4 — i18n `src/locales/en/qa.customers.json` (+ `es/qa.customers.json`)
 
-- [ ] Paste the English file:
+- [x] Paste the English file:
 
 ```json
 {
@@ -779,7 +779,7 @@ export const selectCustomer = (id: string | undefined) => (s: CustomersState) =>
 }
 ```
 
-- [ ] Create `src/locales/es/qa.customers.json` with the same keys in Spanish (`"title": "Clientes"`, `"receptive": "Receptivo"`, `"resistant": "Reacio"`, `"churn.high": "Alto"`, `"tabs.offers": "Ofertas y señales"`, `"tabs.surveys": "Encuestas"`, `"dayPart.morning": "mañana"`, `"dayPart.afternoon": "tarde"`, `"dayPart.evening": "noche"`, weekdays `Lun/Mar/Mié/Jue/Vie/Sáb`).
+- [x] Create `src/locales/es/qa.customers.json` with the same keys in Spanish (`"title": "Clientes"`, `"receptive": "Receptivo"`, `"resistant": "Reacio"`, `"churn.high": "Alto"`, `"tabs.offers": "Ofertas y señales"`, `"tabs.surveys": "Encuestas"`, `"dayPart.morning": "mañana"`, `"dayPart.afternoon": "tarde"`, `"dayPart.evening": "noche"`, weekdays `Lun/Mar/Mié/Jue/Vie/Sáb`).
 
 ---
 
@@ -787,10 +787,10 @@ export const selectCustomer = (id: string | undefined) => (s: CustomersState) =>
 
 Files: `CustomersPage/CustomersPage.tsx` (+ `.module.css`, `index.ts`), `CustomerKpiStrip.tsx`, `CustomerFilters.tsx`, `useCustomerColumns.tsx`. Namespace `qa.customers`. Same skeleton as Plan A Task 6.
 
-- [ ] **`CustomersPage.tsx`** — `role = roleFromPath(...)`; `profiles = useCustomersStore((s) => s.profiles)`; `rows = useMemo(() => applyCustomerFilters(visibleForRole(Object.values(profiles).map(toCustomerRow), role), profiles, filters))`; default filters `{ search: '', segment: 'all', status: 'all', receptiveness: 'all', churnRisk: 'all', agentId: 'all', dncOnly: false }`. `ContentContainer contentWidth='full' title={t('list.title')} description={t(role === 'qa-manager' ? 'list.descriptionQaManager' : 'list.description')}` → `CustomerKpiStrip`, `CustomerFilters`, `SectionCard` with `BaseTable<CustomerTableRow>` (`initialSort` `lastContactAt` desc, `pageSize={10}`, `density='compact'`, `onRowClick → navigate(`${customersBasePath(role)}/${row.id}`)`, `getRowClassName` → `styles.dncRow` (`box-shadow: inset 3px 0 0 var(--mantine-color-red-6)`) when `doNotCall`).
-- [ ] **`CustomerKpiStrip.tsx`** — `SimpleGrid cols={{ base: 2, md: 5 }}` `StatCard`: total (badge `↑{improving}` teal / `↓{declining}` red with tooltips), receptive (`green`), churnHigh (`red` if >0), doNotCall (`gray`), avgAcceptance `{v}%`.
-- [ ] **`CustomerFilters.tsx`** — `TextInput` search (w 280); `Select` segment / status / receptiveness / churn; `Select` "Contacted by" (`all` + visible agents: Supervisor → `TEAM_AGENTS` of `SUPERVISOR_PERSONA.id`, QA Manager → all, label `name · team`); `Switch` DNC only; clear button.
-- [ ] **`useCustomerColumns.tsx`** columns:
+- [x] **`CustomersPage.tsx`** — `role = roleFromPath(...)`; `profiles = useCustomersStore((s) => s.profiles)`; `rows = useMemo(() => applyCustomerFilters(visibleForRole(Object.values(profiles).map(toCustomerRow), role), profiles, filters))`; default filters `{ search: '', segment: 'all', status: 'all', receptiveness: 'all', churnRisk: 'all', agentId: 'all', dncOnly: false }`. `ContentContainer contentWidth='full' title={t('list.title')} description={t(role === 'qa-manager' ? 'list.descriptionQaManager' : 'list.description')}` → `CustomerKpiStrip`, `CustomerFilters`, `SectionCard` with `BaseTable<CustomerTableRow>` (`initialSort` `lastContactAt` desc, `pageSize={10}`, `density='compact'`, `onRowClick → navigate(`${customersBasePath(role)}/${row.id}`)`, `getRowClassName` → `styles.dncRow` (`box-shadow: inset 3px 0 0 var(--mantine-color-red-6)`) when `doNotCall`).
+- [x] **`CustomerKpiStrip.tsx`** — `SimpleGrid cols={{ base: 2, md: 5 }}` `StatCard`: total (badge `↑{improving}` teal / `↓{declining}` red with tooltips), receptive (`green`), churnHigh (`red` if >0), doNotCall (`gray`), avgAcceptance `{v}%`.
+- [x] **`CustomerFilters.tsx`** — `TextInput` search (w 280); `Select` segment / status / receptiveness / churn; `Select` "Contacted by" (`all` + visible agents: Supervisor → `TEAM_AGENTS` of `SUPERVISOR_PERSONA.id`, QA Manager → all, label `name · team`); `Switch` DNC only; clear button.
+- [x] **`useCustomerColumns.tsx`** columns:
 
 | id | header | cell |
 |---|---|---|
@@ -806,13 +806,13 @@ Files: `CustomersPage/CustomersPage.tsx` (+ `.module.css`, `index.ts`), `Custome
 | `npsLatest` | nps | `Badge variant='outline' color={npsBand(v).color}` `{v}` or `—` |
 | `bestWindow` | bestWindow | `Text size='xs'` (`windowLabel` when profile has a best window) |
 
-- [ ] `npm run typecheck`.
+- [x] `npm run typecheck`.
 
 ---
 
 ## B · Task 6 — `CustomerProfilePage` (header, components, six tabs, modals)
 
-- [ ] **Shared components (`src/modules/qa/customers/components/`)**
+- [x] **Shared components (`src/modules/qa/customers/components/`)**
 
 | Component | Props | Renders |
 |---|---|---|
@@ -826,12 +826,12 @@ Files: `CustomersPage/CustomersPage.tsx` (+ `.module.css`, `index.ts`), `Custome
 | `modals/ScheduleFollowUpModal.tsx` | `{ customerId; role; opened; onClose }` | `DateTimePicker` (default next best window: tomorrow 10:00), `Select` reason (`FOLLOW_UP_REASONS`), `Select` agent (visible agents by role, default = last agent who contacted the customer), `Textarea` note → `scheduleFollowUp(...)` + `notifications.show` success |
 | `LegacyCustomerRedirect.tsx` | — | `const { customerId } = useParams(); return <Navigate to={`/qa/supervisor/customers/${customerId ?? ''}`} replace />` |
 
-- [ ] **`CustomerProfilePage/CustomerHeader.tsx`** — `{ profile; role; onFollowUp; onAddNote; onToggleDnc }`. `SectionCard padding='lg'`:
+- [x] **`CustomerProfilePage/CustomerHeader.tsx`** — `{ profile; role; onFollowUp; onAddNote; onToggleDnc }`. `SectionCard padding='lg'`:
   - **Left** `Group gap='md'`: `Avatar size={72} radius='md' color name`; `Stack gap={4}`: `Group gap='xs'`: `Title order={2}` name, `Badge variant='light' color={SEGMENT_META.color}` segment, `Badge variant='dot' color={STATUS_META.color}` status, `doNotCall && <Badge color='red' variant='filled' leftSection={<IconBan size={12}/>}>{t('header.dnc')}</Badge>`; `Text size='sm' c='dimmed'` `{id} · {phone} · {email} · {city}`; `Group gap={6}`: `Badge variant='outline' size='xs'` `t('header.plan')}: {currentPlan}`, `monthlyValue > 0 && Badge` `t('header.value', { value: `$${monthlyValue}` })`, `Badge variant='light' color='gray' size='xs'` `t('header.prefers', { channel: t(CHANNEL_META) })`, `Badge size='xs'` language, tags as `Badge size='xs' variant='light' color='indigo'`; `Text size='xs' c='dimmed'` `t('header.customerSince', { date }) · t('header.trackedSince', { date }) · {kpis.totalContacts} contacts`.
   - **Right** `Group gap='xl' align='center'`: `ReceptivenessGauge`; `Stack gap={6}`: `Group gap='xs'`: `Text size='xs' c='dimmed' tt='uppercase'` `t('header.churn')` + `Badge color={CHURN_META.color} variant='filled'` level; `Group gap='xs'`: `Text size='xs' c='dimmed' tt='uppercase'` `t('header.bestWindow')` + `Badge color='teal' variant='light' leftSection={<IconClock size={12}/>}` `windowLabel(bestWindows[0])` (or `—`); `TrendDelta delta={sentimentDelta} trend={sentimentTrend} unit='/5' suffix={t('common.vsFirst')}`.
   - **Bottom** `Alert variant='light' color='blue' icon={<IconBulb/>} title={t('header.nextBestAction')} mt='md'` `{nextBestAction}`; `Group justify='flex-end' mt='sm'`: `Button variant='light' leftSection={<IconCalendarEvent/>}` followUp (disabled when `doNotCall`, tooltip explains), `Button variant='default' leftSection={<IconNote/>}` addNote (focuses the notes textarea on the Timeline tab: navigate to `?tab=timeline` and call `onAddNote`), `Button variant={doNotCall ? 'default' : 'outline'} color='red' leftSection={<IconBan/>}` flag/unflag → opens a confirm `Modal` (`modals.dnc.*`) → `setDoNotCall`.
-- [ ] **`CustomerProfilePage.tsx`** — `useParams().customerId`, `role`, `profile = useCustomersStore(selectCustomer(id))`; not found or (supervisor and `!toCustomerRow(profile).teamIds.includes(SUPERVISOR_PERSONA.id)`) → `EmptyState` with back button. Tab from `?tab=` (default `overview`). `Breadcrumbs` (Customers → name), `CustomerHeader`, `Tabs` from `CUSTOMER_TABS`, `ScheduleFollowUpModal`, DNC confirm modal.
-- [ ] **Tabs** — each `{ profile: CustomerProfile; role: TeamRole }`:
+- [x] **`CustomerProfilePage.tsx`** — `useParams().customerId`, `role`, `profile = useCustomersStore(selectCustomer(id))`; not found or (supervisor and `!toCustomerRow(profile).teamIds.includes(SUPERVISOR_PERSONA.id)`) → `EmptyState` with back button. Tab from `?tab=` (default `overview`). `Breadcrumbs` (Customers → name), `CustomerHeader`, `Tabs` from `CUSTOMER_TABS`, `ScheduleFollowUpModal`, DNC confirm modal.
+- [x] **Tabs** — each `{ profile: CustomerProfile; role: TeamRole }`:
 
 | Tab | Blocks |
 |---|---|
@@ -842,13 +842,13 @@ Files: `CustomersPage/CustomersPage.tsx` (+ `.module.css`, `index.ts`), `Custome
 | `SurveysTab` | ① `SimpleGrid cols={{ base: 2, md: 4 }}` `StatCard`: answered, npsLatest (badge `npsBand` label), csatAvg (`x.x/5`), responseRate = `surveys/answered contacts %`. ② `SimpleGrid cols={{ base: 1, md: 2 }}`: `SectionCard title={t('surveys.npsTrend')}` → `LineChart h={220} data={NPS surveys oldest→newest mapped {label: shortDate, score}} dataKey='label' series={[{name:'score',color:'teal.6'}]} yAxisProps={{ domain: [0, 10] }} withDots` (or `EmptyState`); `SectionCard title={t('surveys.history')}` → `Stack gap='xs'` of `SurveyCard` newest first or `EmptyState noSurveys`. |
 | `TimelineTab` | `Grid`: col 7 → `SectionCard title={t('timeline.title')} icon={IconHistory}` → `CustomerTimeline`; col 5 → `CustomerNotesPanel notes onAdd={(text) => addNote(id, text, role)}` (textarea gets `autoFocus` when `?focus=note` is present — set by the header's Add note action). |
 
-- [ ] `npm run typecheck`.
+- [x] `npm run typecheck`.
 
 ---
 
 ## B · Task 7 — Routes, namespaces, sidebar, call-detail link, deletions
 
-- [ ] **`src/routes.tsx`**
+- [x] **`src/routes.tsx`**
   - Remove the `CustomerProfilePage` lazy import (:145-147). Add:
     ```tsx
     const CustomersPage = React.lazy(() => import('./modules/qa/customers/CustomersPage'));
@@ -857,25 +857,25 @@ Files: `CustomersPage/CustomersPage.tsx` (+ `.module.css`, `index.ts`), `Custome
     ```
   - Add four routes next to the Plan A ones: `supervisor/customers` (`qa.supervisor.customers`) → `<CustomersPage/>`; `supervisor/customers/:customerId` (`qa.supervisor.customers.profile`) → `<CustomerProfilePage/>`; `qa-manager/customers` (`qa.qa-manager.customers`); `qa-manager/customers/:customerId` (`qa.qa-manager.customers.profile`).
   - `profiles/customer/:customerId` (:1134-1144): element → `<Suspense fallback={<SuspenseFallback />}><LegacyCustomerRedirect /></Suspense>` (no namespace loader needed).
-- [ ] **`src/modules/qa/qaNamespaces.ts`** — the 4 new ids → `['qa.customers', 'qa.team', 'qa.dashboard']`.
-- [ ] **`roleNavigation.tsx`**
+- [x] **`src/modules/qa/qaNamespaces.ts`** — the 4 new ids → `['qa.customers', 'qa.team', 'qa.dashboard']`.
+- [x] **`roleNavigation.tsx`**
   - Supervisor flat: insert after `supervisor-calls` (index 2): `{ key: 'supervisor-customers', label: 'sidebar.supervisor.customers', icon: <IconAddressBook size={20} className={styles.menuIcon} />, to: '/qa/supervisor/customers', i18nNamespace: 'qa.customers' }`. New indices: 0 dashboard, 1 team, 2 calls, **3 customers**, 4 campaigns, 5 disputes, 6 analytics, 7 reports, 8 triggers, 9 rankings. Grouped: Team → `items.slice(1, 5)`; Operations → `[items[5], items[8]]`; Insights → `[items[6], items[7], items[9]]`.
   - QA Manager flat (after Plan A): insert after `qamanager-calls` (index 4): `qamanager-customers` → `/qa/qa-manager/customers`, label `sidebar.qamanager.customers`, namespace `qa.customers`. New indices: 0 dashboard, 1 supervisors, 2 teams, 3 agents, 4 calls, **5 customers**, 6 disputes, 7 triggers, 8 rankings, 9 campaigns, 10 analytics, 11 reports. Grouped: Organization `slice(1, 4)`; Operations `[items[4], items[5], items[6], items[9]]`; Configuration `[items[7], items[8]]`; Insights `[items[10], items[11]]`.
-- [ ] **`common.json`** en: `sidebar.supervisor.customers: "Customers"`, `sidebar.qamanager.customers: "Customers"`; es: `"Clientes"` ×2.
-- [ ] **Call detail link** — `src/views/Campaigns/types.ts` `CallEvaluationDetail`: add `customerId: string;` after `customerName`. `constants.ts` `mockCallEvaluationDetail`: add `customerId: 'CUST-001',`. `pages/ConversationEvaluations.tsx` subtitle: render `call.customerName` as `<Anchor size='sm' onClick={() => navigate(`/qa/supervisor/customers/${call.customerId}`)}>{call.customerName}</Anchor>` inside the existing metadata line (`{call.fileName} · {call.agentName} · <customer link> · {call.date} …`).
-- [ ] **Deletions** — remove `export { default as CustomerProfilePage } from './CustomerProfilePage';` from `src/modules/qa/dashboard/pages/index.ts`; `grep -rn "dashboard/pages/CustomerProfilePage\|CustomerProfilePage" src/` → only the new module + routes; delete `src/modules/qa/dashboard/pages/CustomerProfilePage.tsx`.
-- [ ] `npm run typecheck` → 0 errors in `src/modules/qa/customers/**`, `src/stores/qa/customersStore.ts`, `src/routes.tsx`, `src/components/Sidebar/**`, `src/views/Campaigns/**`.
+- [x] **`common.json`** en: `sidebar.supervisor.customers: "Customers"`, `sidebar.qamanager.customers: "Customers"`; es: `"Clientes"` ×2.
+- [x] **Call detail link** — `src/views/Campaigns/types.ts` `CallEvaluationDetail`: add `customerId: string;` after `customerName`. `constants.ts` `mockCallEvaluationDetail`: add `customerId: 'CUST-001',`. `pages/ConversationEvaluations.tsx` subtitle: render `call.customerName` as `<Anchor size='sm' onClick={() => navigate(`/qa/supervisor/customers/${call.customerId}`)}>{call.customerName}</Anchor>` inside the existing metadata line (`{call.fileName} · {call.agentName} · <customer link> · {call.date} …`).
+- [x] **Deletions** — remove `export { default as CustomerProfilePage } from './CustomerProfilePage';` from `src/modules/qa/dashboard/pages/index.ts`; `grep -rn "dashboard/pages/CustomerProfilePage\|CustomerProfilePage" src/` → only the new module + routes; delete `src/modules/qa/dashboard/pages/CustomerProfilePage.tsx`.
+- [x] `npm run typecheck` → 0 errors in `src/modules/qa/customers/**`, `src/stores/qa/customersStore.ts`, `src/routes.tsx`, `src/components/Sidebar/**`, `src/views/Campaigns/**`.
 
 ---
 
 ## B · Task 8 — Verification & commit
 
-- [ ] Sidebar: Supervisor shows **Customers** under "Your Team" after Calls; QA Manager shows it under Operations after Calls.
-- [ ] `/qa/supervisor/customers`: only customers contacted by Team 1 agents (≈18 rows; CUST-008, 011, 012, 014, 015, 019 etc. contacted solely by Team 2/3 are hidden); `/qa/qa-manager/customers`: 24 rows. KPI strip counts match; filters work (receptiveness `resistant` → CUST-003, 006, 015, 017, 024…; DNC only → CUST-006, CUST-021); row click → profile.
-- [ ] `/qa/supervisor/customers/CUST-001` (Mr. Doe): header receptiveness gauge, churn badge, best window `Tue afternoon`, next-best-action alert; Overview trend **Improving**; contact windows tiles (best has ✓ counts, worst has ✕ counts); Contacts tab first answered row opens `/qa/campaigns/1/calls/call-001` and the row expands with the summary; Offers tab shows a mix of accepted/rejected with reasons and at least one competitor badge; Surveys tab shows NPS/CSAT cards; Timeline shows contacts/offers/surveys/notes with type chips.
-- [ ] `/qa/qa-manager/customers/CUST-003` (Roberto Peña): churn **High**, trend **Declining**, resistant.
-- [ ] Actions: Schedule follow-up → appears in Overview follow-ups + timeline + agent inbox notification; Mark done flips the badge; Add note (header button jumps to Timeline tab with the textarea focused) → note listed + timeline event; Flag Do-Not-Call → confirm modal → red DNC badge in header and row stripe in the table, follow-up button disabled; unflag restores.
-- [ ] Legacy `/qa/profiles/customer/CUST-002` redirects to `/qa/supervisor/customers/CUST-002`.
-- [ ] Call detail `/qa/campaigns/1/calls/call-001`: "Mr. Doe" is a link to `/qa/supervisor/customers/CUST-001`.
-- [ ] Dark mode + tablet width checks as in Plan A; `read_console_messages onlyErrors` → none.
-- [ ] Commit (if allowed): branch `feature/customers-customer-profile`, message `feat(customers): add Customers list and Customer Profile for supervisor and QA manager` + Co-Authored-By trailer.
+- [x] Sidebar: Supervisor shows **Customers** under "Your Team" after Calls; QA Manager shows it under Operations after Calls.
+- [x] `/qa/supervisor/customers`: only customers contacted by Team 1 agents (≈18 rows; CUST-008, 011, 012, 014, 015, 019 etc. contacted solely by Team 2/3 are hidden); `/qa/qa-manager/customers`: 24 rows. KPI strip counts match; filters work (receptiveness `resistant` → CUST-003, 006, 015, 017, 024…; DNC only → CUST-006, CUST-021); row click → profile.
+- [x] `/qa/supervisor/customers/CUST-001` (Mr. Doe): header receptiveness gauge, churn badge, best window `Tue afternoon`, next-best-action alert; Overview trend **Improving**; contact windows tiles (best has ✓ counts, worst has ✕ counts); Contacts tab first answered row opens `/qa/campaigns/1/calls/call-001` and the row expands with the summary; Offers tab shows a mix of accepted/rejected with reasons and at least one competitor badge; Surveys tab shows NPS/CSAT cards; Timeline shows contacts/offers/surveys/notes with type chips.
+- [x] `/qa/qa-manager/customers/CUST-003` (Roberto Peña): churn **High**, trend **Declining**, resistant.
+- [x] Actions: Schedule follow-up → appears in Overview follow-ups + timeline + agent inbox notification; Mark done flips the badge; Add note (header button jumps to Timeline tab with the textarea focused) → note listed + timeline event; Flag Do-Not-Call → confirm modal → red DNC badge in header and row stripe in the table, follow-up button disabled; unflag restores.
+- [x] Legacy `/qa/profiles/customer/CUST-002` redirects to `/qa/supervisor/customers/CUST-002`.
+- [x] Call detail `/qa/campaigns/1/calls/call-001`: "Mr. Doe" is a link to `/qa/supervisor/customers/CUST-001`.
+- [x] Dark mode + tablet width checks as in Plan A; `read_console_messages onlyErrors` → none.
+- [x] Commit (if allowed): branch `feature/customers-customer-profile`, message `feat(customers): add Customers list and Customer Profile for supervisor and QA manager` + Co-Authored-By trailer.

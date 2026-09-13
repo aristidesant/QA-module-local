@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Anchor, Badge, Button, Chip, Group, Stack, Text, Timeline, ThemeIcon } from '@mantine/core';
 import {
-	IconAlertTriangle, IconAward, IconBell, IconClipboardCheck, IconFlag, IconGavel, IconNote, IconSchool, IconTrophy,
+	IconAward, IconBell, IconClipboardCheck, IconFlag, IconGavel, IconNote, IconSchool, IconTrophy,
 } from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';

@@ -507,6 +507,7 @@ export const mockCallEvaluationDetail: CallEvaluationDetail = {
   fileName: 'call_001_2026-07-20.mp3',
   agentName: 'Sarah Johnson',
   customerName: 'Mr. Doe',
+  customerId: 'CUST-001',
   date: '2026-07-20 14:32',
   durationSeconds: 165,
   direction: 'outbound',

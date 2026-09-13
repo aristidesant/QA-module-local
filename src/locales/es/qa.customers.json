@@ -1,0 +1,68 @@
+{
+	"list": {
+		"title": "Clientes",
+		"description": "Personas y empresas contactadas por tu equipo, con su nivel de receptividad y la evolución de su sentimiento.",
+		"descriptionQaManager": "Todos los clientes contactados a través de la plataforma.",
+		"kpi": { "total": "Clientes", "receptive": "Receptivos", "churnHigh": "Riesgo de abandono alto", "doNotCall": "No llamar", "avgAcceptance": "Aceptación prom. de ofertas", "improving": "mejorando", "declining": "en descenso" },
+		"filters": { "search": "Buscar nombre, ID o teléfono", "segment": "Segmento", "status": "Estado", "receptiveness": "Receptividad", "churn": "Riesgo de abandono", "agent": "Contactado por", "dncOnly": "Solo No llamar", "all": "Todos", "clear": "Limpiar filtros" },
+		"columns": { "customer": "Cliente", "segment": "Segmento", "status": "Estado", "contacts": "Contactos", "lastContact": "Último contacto", "receptiveness": "Receptividad", "churn": "Riesgo de abandono", "sentiment": "Sentimiento prom.", "acceptance": "Aceptación de ofertas", "nps": "Último NPS", "lastAgent": "Último agente", "bestWindow": "Mejor ventana" },
+		"empty": "Ningún cliente coincide con los filtros actuales.",
+		"rowsCount": "{{count}} clientes"
+	},
+	"segment": { "residential": "Residencial", "business": "Empresarial", "premium": "Premium" },
+	"status": { "active": "Activo", "prospect": "Prospecto", "churned": "Perdido" },
+	"channel": { "phone": "Teléfono", "whatsapp": "WhatsApp", "email": "Correo", "sms": "SMS" },
+	"outcome": { "answered": "Contestó", "noAnswer": "No contestó", "voicemail": "Buzón de voz", "busy": "Ocupado", "callback": "Solicitó devolución de llamada" },
+	"offerResult": { "accepted": "Aceptada", "rejected": "Rechazada", "deferred": "Aplazada" },
+	"receptiveness": { "receptive": "Receptivo", "neutral": "Neutral", "resistant": "Reacio", "hint": "50% aceptación de ofertas · 25% tasa de respuesta · 25% sentimiento promedio" },
+	"churn": { "low": "Bajo", "medium": "Medio", "high": "Alto" },
+	"weekday": { "Mon": "Lun", "Tue": "Mar", "Wed": "Mié", "Thu": "Jue", "Fri": "Vie", "Sat": "Sáb" },
+	"dayPart": { "morning": "mañana", "afternoon": "tarde", "evening": "noche" },
+	"tabs": { "overview": "Resumen", "contacts": "Contactos", "sentiment": "Sentimiento y emoción", "offers": "Ofertas y señales", "surveys": "Encuestas", "timeline": "Línea de tiempo" },
+	"header": {
+		"back": "Volver a clientes", "customerSince": "Cliente desde {{date}}", "trackedSince": "Monitoreado desde {{date}}", "plan": "Plan", "value": "{{value}}/mes",
+		"dnc": "No llamar", "consentRecording": "Consentimiento de grabación", "consentMarketing": "Consentimiento de marketing", "language": { "es": "Español", "en": "Inglés" },
+		"prefers": "Prefiere {{channel}}", "receptiveness": "Receptividad", "churn": "Riesgo de abandono", "bestWindow": "Mejor ventana", "nextBestAction": "Siguiente mejor acción",
+		"actions": { "followUp": "Programar seguimiento", "addNote": "Agregar nota", "flagDnc": "Marcar No llamar", "unflagDnc": "Quitar No llamar" }
+	},
+	"overview": {
+		"kpi": { "contacts": "Contactos", "answerRate": "Tasa de respuesta", "avgDuration": "Duración prom.", "agents": "Agentes involucrados", "offers": "Ofertas presentadas", "acceptance": "Tasa de aceptación", "sentiment": "Sentimiento prom.", "nps": "Último NPS" },
+		"sentimentTrend": "Sentimiento del cliente a través del tiempo", "sentimentTrendDescription": "Un punto por cada contacto contestado (1–5)",
+		"direction": { "up": "Mejorando", "down": "En descenso", "flat": "Sin cambios" }, "directionHint": "{{delta}} puntos entre el primer y el último contacto",
+		"windows": "Ventanas de contacto", "windowsDescription": "Cuándo este cliente contesta y acepta ofertas, y cuándo rechaza",
+		"best": "Mejores ventanas", "worst": "Peores ventanas", "windowStats": "{{answered}}/{{contacts}} contestadas · {{accepted}} aceptadas · {{rejected}} rechazadas", "noWindows": "Aún no hay suficientes contactos.",
+		"signals": "Señales de negocio", "followUps": "Seguimientos", "noFollowUps": "Sin seguimientos programados.", "markDone": "Marcar hecho", "done": "Hecho",
+		"preferences": "Preferencias y consentimiento", "tags": "Etiquetas", "preferredChannel": "Canal preferido", "language": "Idioma"
+	},
+	"contacts": {
+		"title": "Historial de contactos", "description": "Todos los intentos de contacto a través de la plataforma",
+		"columns": { "date": "Fecha", "direction": "Dirección", "channel": "Canal", "agent": "Agente", "campaign": "Campaña", "outcome": "Resultado", "duration": "Duración", "sentiment": "Sentimiento", "emotion": "Emoción", "offer": "Oferta", "open": "Abrir llamada" },
+		"inbound": "Entrante", "outbound": "Saliente", "summary": "Resumen", "byAgent": "Sentimiento por agente", "byAgentDescription": "Cómo reacciona el cliente ante cada agente", "contactsCount": "{{count}} contactos"
+	},
+	"sentiment": {
+		"average": "Sentimiento promedio del cliente", "categories": "Categorías de sentimiento", "emotions": "Emociones dominantes", "trend": "Sentimiento a través del tiempo", "trendDescription": "Cliente vs. agente por cada contacto contestado",
+		"customer": "Cliente", "agent": "Agente", "first": "Primer contacto", "latest": "Último contacto", "peak": "Mejor", "low": "Peor"
+	},
+	"offers": {
+		"kpi": { "presented": "Presentadas", "accepted": "Aceptadas", "rejected": "Rechazadas", "deferred": "Aplazadas" },
+		"history": "Historial de ofertas", "reasons": "Razones de no conversión", "competitors": "Competidores mencionados", "mentions": "{{count}} menciones", "objections": "Objeciones comunes", "times": "{{count}} veces",
+		"signals": "Señales de negocio detectadas", "signalsDescription": "En todos los contactos con este cliente", "noOffers": "Aún no se han presentado ofertas.", "price": "{{price}}/mes"
+	},
+	"surveys": {
+		"kpi": { "answered": "Encuestas respondidas", "npsLatest": "Último NPS", "csatAvg": "CSAT promedio", "responseRate": "Tasa de respuesta" },
+		"band": { "promoter": "Promotor", "passive": "Pasivo", "detractor": "Detractor" },
+		"history": "Respuestas de encuestas", "verbatim": "Comentario", "noSurveys": "Aún no hay respuestas de encuestas.", "npsTrend": "NPS a través del tiempo"
+	},
+	"timeline": {
+		"title": "Línea de tiempo de interacciones", "filterAll": "Todos",
+		"types": { "contact": "Contacto", "offer": "Oferta", "survey": "Encuesta", "note": "Nota", "followUp": "Seguimiento", "flag": "Marca" },
+		"open": "Abrir llamada", "empty": "Sin eventos de este tipo.",
+		"notes": "Notas", "notesDescription": "Visibles para supervisores y QA managers", "notePlaceholder": "Escribe una nota sobre este cliente…", "save": "Guardar nota", "showMore": "Ver más"
+	},
+	"modals": {
+		"followUp": { "title": "Programar seguimiento", "date": "Fecha y hora", "reason": "Razón", "agent": "Asignar a agente", "note": "Nota para el agente", "submit": "Programar", "success": "Seguimiento programado y agente notificado." },
+		"dnc": { "title": "Marcar No llamar", "body": "El cliente será excluido de las campañas de ofertas. Las llamadas de servicio se mantienen permitidas.", "confirm": "Marcar", "removeTitle": "Quitar No llamar", "removeBody": "El cliente puede volver a ser contactado para ofertas.", "removeConfirm": "Quitar", "success": "Marca de No llamar actualizada." },
+		"cancel": "Cancelar"
+	},
+	"common": { "vsFirst": "vs. primeros contactos", "notFound": "Cliente no encontrado", "notFoundDescription": "El cliente {{id}} no fue contactado por tu equipo." }
+}

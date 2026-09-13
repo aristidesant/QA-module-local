@@ -1,0 +1,68 @@
+{
+	"list": {
+		"title": "Customers",
+		"description": "People and businesses contacted by your team, with how receptive they are and how their sentiment is evolving.",
+		"descriptionQaManager": "All customers contacted through the platform.",
+		"kpi": { "total": "Customers", "receptive": "Receptive", "churnHigh": "High churn risk", "doNotCall": "Do-Not-Call", "avgAcceptance": "Avg. offer acceptance", "improving": "improving", "declining": "declining" },
+		"filters": { "search": "Search name, ID or phone", "segment": "Segment", "status": "Status", "receptiveness": "Receptiveness", "churn": "Churn risk", "agent": "Contacted by", "dncOnly": "Do-Not-Call only", "all": "All", "clear": "Clear filters" },
+		"columns": { "customer": "Customer", "segment": "Segment", "status": "Status", "contacts": "Contacts", "lastContact": "Last contact", "receptiveness": "Receptiveness", "churn": "Churn risk", "sentiment": "Avg. sentiment", "acceptance": "Offer acceptance", "nps": "Latest NPS", "lastAgent": "Last agent", "bestWindow": "Best window" },
+		"empty": "No customers match the current filters.",
+		"rowsCount": "{{count}} customers"
+	},
+	"segment": { "residential": "Residential", "business": "Business", "premium": "Premium" },
+	"status": { "active": "Active", "prospect": "Prospect", "churned": "Churned" },
+	"channel": { "phone": "Phone", "whatsapp": "WhatsApp", "email": "Email", "sms": "SMS" },
+	"outcome": { "answered": "Answered", "noAnswer": "No answer", "voicemail": "Voicemail", "busy": "Busy", "callback": "Callback requested" },
+	"offerResult": { "accepted": "Accepted", "rejected": "Rejected", "deferred": "Deferred" },
+	"receptiveness": { "receptive": "Receptive", "neutral": "Neutral", "resistant": "Resistant", "hint": "50% offer acceptance · 25% answer rate · 25% average sentiment" },
+	"churn": { "low": "Low", "medium": "Medium", "high": "High" },
+	"weekday": { "Mon": "Mon", "Tue": "Tue", "Wed": "Wed", "Thu": "Thu", "Fri": "Fri", "Sat": "Sat" },
+	"dayPart": { "morning": "morning", "afternoon": "afternoon", "evening": "evening" },
+	"tabs": { "overview": "Overview", "contacts": "Contacts", "sentiment": "Sentiment & Emotion", "offers": "Offers & Signals", "surveys": "Surveys", "timeline": "Timeline" },
+	"header": {
+		"back": "Back to customers", "customerSince": "Customer since {{date}}", "trackedSince": "Tracked since {{date}}", "plan": "Plan", "value": "{{value}}/mo",
+		"dnc": "Do-Not-Call", "consentRecording": "Recording consent", "consentMarketing": "Marketing consent", "language": { "es": "Spanish", "en": "English" },
+		"prefers": "Prefers {{channel}}", "receptiveness": "Receptiveness", "churn": "Churn risk", "bestWindow": "Best window", "nextBestAction": "Next best action",
+		"actions": { "followUp": "Schedule follow-up", "addNote": "Add note", "flagDnc": "Flag Do-Not-Call", "unflagDnc": "Remove Do-Not-Call" }
+	},
+	"overview": {
+		"kpi": { "contacts": "Contacts", "answerRate": "Answer rate", "avgDuration": "Avg. duration", "agents": "Agents involved", "offers": "Offers presented", "acceptance": "Acceptance rate", "sentiment": "Avg. sentiment", "nps": "Latest NPS" },
+		"sentimentTrend": "Customer sentiment over time", "sentimentTrendDescription": "One point per answered contact (1–5)",
+		"direction": { "up": "Improving", "down": "Declining", "flat": "No change" }, "directionHint": "{{delta}} points between first and last contacts",
+		"windows": "Contact windows", "windowsDescription": "When this customer answers and accepts offers, and when they reject",
+		"best": "Best windows", "worst": "Worst windows", "windowStats": "{{answered}}/{{contacts}} answered · {{accepted}} accepted · {{rejected}} rejected", "noWindows": "Not enough contacts yet.",
+		"signals": "Business signals", "followUps": "Follow-ups", "noFollowUps": "No follow-ups scheduled.", "markDone": "Mark done", "done": "Done",
+		"preferences": "Preferences & consent", "tags": "Tags", "preferredChannel": "Preferred channel", "language": "Language"
+	},
+	"contacts": {
+		"title": "Contact history", "description": "Every contact attempt through the platform",
+		"columns": { "date": "Date", "direction": "Direction", "channel": "Channel", "agent": "Agent", "campaign": "Campaign", "outcome": "Outcome", "duration": "Duration", "sentiment": "Sentiment", "emotion": "Emotion", "offer": "Offer", "open": "Open call" },
+		"inbound": "Inbound", "outbound": "Outbound", "summary": "Summary", "byAgent": "Sentiment by agent", "byAgentDescription": "How the customer reacts to each agent", "contactsCount": "{{count}} contacts"
+	},
+	"sentiment": {
+		"average": "Average customer sentiment", "categories": "Sentiment categories", "emotions": "Dominant emotions", "trend": "Sentiment over time", "trendDescription": "Customer vs agent per answered contact",
+		"customer": "Customer", "agent": "Agent", "first": "First contact", "latest": "Latest contact", "peak": "Best", "low": "Worst"
+	},
+	"offers": {
+		"kpi": { "presented": "Presented", "accepted": "Accepted", "rejected": "Rejected", "deferred": "Deferred" },
+		"history": "Offer history", "reasons": "Non-conversion reasons", "competitors": "Competitors mentioned", "mentions": "{{count}} mentions", "objections": "Common objections", "times": "{{count}} times",
+		"signals": "Business signals detected", "signalsDescription": "Across all contacts with this customer", "noOffers": "No offers presented yet.", "price": "{{price}}/mo"
+	},
+	"surveys": {
+		"kpi": { "answered": "Surveys answered", "npsLatest": "Latest NPS", "csatAvg": "Average CSAT", "responseRate": "Response rate" },
+		"band": { "promoter": "Promoter", "passive": "Passive", "detractor": "Detractor" },
+		"history": "Survey responses", "verbatim": "Verbatim", "noSurveys": "No survey responses yet.", "npsTrend": "NPS over time"
+	},
+	"timeline": {
+		"title": "Interaction timeline", "filterAll": "All",
+		"types": { "contact": "Contact", "offer": "Offer", "survey": "Survey", "note": "Note", "followUp": "Follow-up", "flag": "Flag" },
+		"open": "Open call", "empty": "No events of this type.",
+		"notes": "Notes", "notesDescription": "Visible to supervisors and QA managers", "notePlaceholder": "Write a note about this customer…", "save": "Save note", "showMore": "Show more"
+	},
+	"modals": {
+		"followUp": { "title": "Schedule follow-up", "date": "Date and time", "reason": "Reason", "agent": "Assign to agent", "note": "Note for the agent", "submit": "Schedule", "success": "Follow-up scheduled and agent notified." },
+		"dnc": { "title": "Flag Do-Not-Call", "body": "The customer will be excluded from offer campaigns. Service calls remain allowed.", "confirm": "Flag", "removeTitle": "Remove Do-Not-Call", "removeBody": "The customer can be contacted for offers again.", "removeConfirm": "Remove", "success": "Do-Not-Call flag updated." },
+		"cancel": "Cancel"
+	},
+	"common": { "vsFirst": "vs first contacts", "notFound": "Customer not found", "notFoundDescription": "The customer {{id}} was not contacted by your team." }
+}

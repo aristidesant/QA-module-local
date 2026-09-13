@@ -70,7 +70,11 @@ export default function ConversationEvaluations() {
             Call Evaluation
           </Title>
           <Text size="sm" c="dimmed">
-            {call.fileName} · {call.agentName} · {call.date} · {formatDuration(call.durationSeconds)} · {call.direction === 'outbound' ? 'Outbound' : 'Inbound'}
+            {call.fileName} · {call.agentName} ·{' '}
+            <Anchor size="sm" onClick={() => navigate(`/qa/supervisor/customers/${call.customerId}`)}>
+              {call.customerName}
+            </Anchor>{' '}
+            · {call.date} · {formatDuration(call.durationSeconds)} · {call.direction === 'outbound' ? 'Outbound' : 'Inbound'}
           </Text>
         </div>
 

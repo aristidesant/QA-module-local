@@ -12,6 +12,7 @@ import {
 	IconGitBranch,
 	IconSpeakerphone,
 	IconUserSquareRounded,
+	IconAddressBook,
 } from '@tabler/icons-react';
 import type { SidebarNavItem } from './Sidebar';
 import styles from './Sidebar.module.css';
@@ -142,6 +143,13 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.supervisor',
 	},
 	{
+		key: 'supervisor-customers',
+		label: 'sidebar.supervisor.customers',
+		icon: <IconAddressBook size={20} className={styles.menuIcon} />,
+		to: '/qa/supervisor/customers',
+		i18nNamespace: 'qa.customers',
+	},
+	{
 		key: 'supervisor-campaigns',
 		label: 'sidebar.supervisor.campaigns',
 		icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
@@ -202,7 +210,7 @@ export const getSupervisorNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'supervisor-team',
 			label: 'sidebar.supervisor.groupTeam',
-			items: items.slice(1, 4), // Team, Calls, Evaluations
+			items: items.slice(1, 5), // Team, Calls, Customers, Campaigns
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -210,7 +218,7 @@ export const getSupervisorNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'supervisor-operations',
 			label: 'sidebar.supervisor.groupOperations',
-			items: [items[4], items[7]], // Disputes, Triggers
+			items: [items[5], items[8]], // Disputes, Triggers
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -218,7 +226,7 @@ export const getSupervisorNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'supervisor-insights',
 			label: 'sidebar.supervisor.groupInsights',
-			items: [items[5], items[6], items[8]], // Analytics, Reports, Rankings
+			items: [items[6], items[7], items[9]], // Analytics, Reports, Rankings
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -261,6 +269,13 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		icon: <IconPhone size={20} className={styles.menuIcon} />,
 		to: '/qa/qa-manager/calls',
 		i18nNamespace: 'qa.qamanager',
+	},
+	{
+		key: 'qamanager-customers',
+		label: 'sidebar.qamanager.customers',
+		icon: <IconAddressBook size={20} className={styles.menuIcon} />,
+		to: '/qa/qa-manager/customers',
+		i18nNamespace: 'qa.customers',
 	},
 	{
 		key: 'qamanager-disputes',
@@ -331,7 +346,7 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-operations',
 			label: 'sidebar.qamanager.groupOperations',
-			items: [items[4], items[5], items[8]], // Calls, Disputes, Campaigns
+			items: [items[4], items[5], items[6], items[9]], // Calls, Customers, Disputes, Campaigns
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -339,7 +354,7 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-configuration',
 			label: 'sidebar.qamanager.groupConfiguration',
-			items: [items[6], items[7]], // Triggers, Rankings
+			items: [items[7], items[8]], // Triggers, Rankings
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -347,7 +362,7 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-insights',
 			label: 'sidebar.qamanager.groupInsights',
-			items: [items[9], items[10]], // Analytics, Reports
+			items: [items[10], items[11]], // Analytics, Reports
 			collapsible: true,
 			defaultExpanded: false,
 		},

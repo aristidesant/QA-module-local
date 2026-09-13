@@ -316,6 +316,7 @@ export interface CallEvaluationDetail {
   fileName: string;
   agentName: string;
   customerName: string;
+  customerId: string;
   date: string;
   durationSeconds: number;
   direction: 'inbound' | 'outbound';

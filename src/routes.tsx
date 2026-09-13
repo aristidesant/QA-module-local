@@ -142,17 +142,20 @@ const QaInboxPage = React.lazy(
 const AgentLMSPage = React.lazy(
 	() => import('./modules/qa/agent/lms/AgentLMSPage')
 );
+const CustomersPage = React.lazy(
+	() => import('./modules/qa/customers/CustomersPage')
+);
 const CustomerProfilePage = React.lazy(
-	() => import('./modules/qa/dashboard/pages/CustomerProfilePage')
+	() => import('./modules/qa/customers/CustomerProfilePage')
+);
+const LegacyCustomerRedirect = React.lazy(
+	() => import('./modules/qa/customers/components/LegacyCustomerRedirect')
 );
 const ReportingPage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/ReportingPage')
 );
 const TeamRankingsPage = React.lazy(
 	() => import('./modules/qa/agent/rankings/TeamRankingsPage')
-);
-const SupervisorSettingsPage = React.lazy(
-	() => import('./modules/qa/supervisor/pages/SettingsPage')
 );
 const SupervisorCallsPage = React.lazy(
 	() => import('./modules/qa/supervisor/pages/CallsPage')
@@ -1092,6 +1095,50 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'supervisor/customers',
+										id: 'qa.supervisor.customers',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CustomersPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/customers/:customerId',
+										id: 'qa.supervisor.customers.profile',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CustomerProfilePage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/customers',
+										id: 'qa.qa-manager.customers',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CustomersPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/customers/:customerId',
+										id: 'qa.qa-manager.customers.profile',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CustomerProfilePage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'qa-manager/coaching',
 										id: 'qa.qa-manager.coaching',
 										element: (
@@ -1161,11 +1208,9 @@ const router = createBrowserRouter([
 										path: 'profiles/customer/:customerId',
 										id: 'qa.profiles.customer',
 										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<CustomerProfilePage />
-												</Suspense>
-											</I18nNamespaceLoader>
+											<Suspense fallback={<SuspenseFallback />}>
+												<LegacyCustomerRedirect />
+											</Suspense>
 										),
 									},
 									{
