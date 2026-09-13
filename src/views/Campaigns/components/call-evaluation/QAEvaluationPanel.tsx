@@ -1,4 +1,4 @@
-import { Accordion, Accordion as AccordionComponent, Badge, Card, Group, Progress, RingProgress, SimpleGrid, Stack, Text, Tooltip } from '@mantine/core';
+import { Accordion, Badge, Card, Group, Paper, Progress, RingProgress, SimpleGrid, Stack, Text, Tooltip } from '@mantine/core';
 import { IconAlertOctagon, IconAlertTriangle, IconCircleCheck } from '@tabler/icons-react';
 import { SectionCard } from '~/components/SectionCard';
 import { QA_ERROR_TYPES, QA_ERROR_TYPE_ORDER } from '../../constants';
@@ -87,8 +87,8 @@ export function QAEvaluationPanel({ qa }: QAEvaluationPanelProps) {
           {qa.aspects.map(aspect => {
             const pct = Math.round((aspect.score / aspect.maxScore) * 100);
             return (
-              <AccordionComponent.Item key={aspect.id} value={aspect.id}>
-                <AccordionComponent.Control>
+              <Accordion.Item key={aspect.id} value={aspect.id}>
+                <Accordion.Control>
                   <Group justify="space-between" pr="md" style={{ width: '100%' }}>
                     <Text fw={600}>{aspect.name}</Text>
                     <Group gap="xs">
@@ -98,8 +98,8 @@ export function QAEvaluationPanel({ qa }: QAEvaluationPanelProps) {
                       <Badge color={getScoreColor(pct)} variant="light">{pct}%</Badge>
                     </Group>
                   </Group>
-                </AccordionComponent.Control>
-                <AccordionComponent.Panel>
+                </Accordion.Control>
+                <Accordion.Panel>
                   <Stack gap="xs">
                     {aspect.items.map(item => (
                       <div key={item.id}>
@@ -137,8 +137,8 @@ export function QAEvaluationPanel({ qa }: QAEvaluationPanelProps) {
                       </div>
                     ))}
                   </Stack>
-                </AccordionComponent.Panel>
-              </AccordionComponent.Item>
+                </Accordion.Panel>
+              </Accordion.Item>
             );
           })}
         </Accordion>

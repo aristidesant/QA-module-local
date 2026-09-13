@@ -1,7 +1,7 @@
 import {
   Badge, ColorSwatch, Grid, Group, Paper, Progress, SimpleGrid, Stack, Text, ThemeIcon, Tooltip,
 } from '@mantine/core';
-import { IconArrowRight, IconCalendarEvent, IconHeadset, IconMicrophone2, IconTrendingDown, IconTrendingUp, IconUser, IconWaveSine, IconHeartHandshake } from '@tabler/icons-react';
+import { IconArrowRight, IconHeadset, IconMicrophone2, IconTrendingDown, IconTrendingUp, IconUser, IconWaveSine, IconHeartHandshake } from '@tabler/icons-react';
 import { SectionCard } from '~/components/SectionCard';
 import {
   EMOTION_COLORS, EMOTION_LABELS, SENTIMENT_CATEGORIES, SENTIMENT_CATEGORY_ORDER,
@@ -88,8 +88,6 @@ export function SentimentEmotionPanel({ sentiment }: SentimentEmotionPanelProps)
     );
   };
 
-  const detectedSignalsCount = sentiment.recovery.recovered ? 1 : 0;
-
   return (
     <Stack gap="md">
       {/* Speaker cards */}
@@ -118,7 +116,7 @@ export function SentimentEmotionPanel({ sentiment }: SentimentEmotionPanelProps)
               </Paper>
 
               {/* Arrow */}
-              <IconArrowRight size={16} c="dimmed" />
+              <IconArrowRight size={16} style={{ color: 'var(--mantine-color-dimmed)' }} />
 
               {/* Lowest */}
               <Paper withBorder p="sm" radius="sm" style={{ flex: 1 }}>
@@ -130,7 +128,7 @@ export function SentimentEmotionPanel({ sentiment }: SentimentEmotionPanelProps)
               </Paper>
 
               {/* Arrow */}
-              <IconArrowRight size={16} c="dimmed" />
+              <IconArrowRight size={16} style={{ color: 'var(--mantine-color-dimmed)' }} />
 
               {/* End */}
               <Paper withBorder p="sm" radius="sm" style={{ flex: 1 }}>
@@ -214,10 +212,10 @@ export function SentimentEmotionPanel({ sentiment }: SentimentEmotionPanelProps)
         <Text size="xs" fw={600} c="dimmed" tt="uppercase" mb="xs">Talk time ratio</Text>
         <Progress.Root size="xl" mb="md">
           <Progress.Section value={sentiment.speech.talkTimeRatio.agent} color="blue">
-            <Progress.Label c="blue" size="xs">Agent {sentiment.speech.talkTimeRatio.agent}%</Progress.Label>
+            <Progress.Label c="blue">Agent {sentiment.speech.talkTimeRatio.agent}%</Progress.Label>
           </Progress.Section>
           <Progress.Section value={sentiment.speech.talkTimeRatio.customer} color="gray">
-            <Progress.Label c="gray" size="xs">Customer {sentiment.speech.talkTimeRatio.customer}%</Progress.Label>
+            <Progress.Label c="gray">Customer {sentiment.speech.talkTimeRatio.customer}%</Progress.Label>
           </Progress.Section>
         </Progress.Root>
 

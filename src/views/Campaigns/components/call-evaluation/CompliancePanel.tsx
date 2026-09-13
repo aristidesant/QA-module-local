@@ -1,5 +1,6 @@
 import { Badge, Group, Paper, Progress, RingProgress, Stack, Text } from '@mantine/core';
 import { IconAlertOctagon, IconAlertTriangle, IconCircleCheck, IconShieldCheck } from '@tabler/icons-react';
+import type { ReactNode } from 'react';
 import { SectionCard } from '~/components/SectionCard';
 import { COMPLIANCE_AREAS, COMPLIANCE_AREA_ORDER } from '../../constants';
 import type { CallComplianceEvaluation, ComplianceItemStatus } from '../../types';
@@ -10,7 +11,7 @@ interface CompliancePanelProps {
   compliance: CallComplianceEvaluation;
 }
 
-const statusMeta: Record<ComplianceItemStatus, { color: string; label: string; icon: JSX.Element }> = {
+const statusMeta: Record<ComplianceItemStatus, { color: string; label: string; icon: ReactNode }> = {
   compliant: {
     color: 'green',
     label: 'Compliant',
