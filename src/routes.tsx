@@ -120,6 +120,9 @@ const AgentAnalyticsPage = React.lazy(
 const QAAgentAnalyticsPage = React.lazy(
 	() => import('./modules/qa/agent/analytics/AgentAnalyticsPage')
 );
+const TeamAnalyticsPage = React.lazy(
+	() => import('./modules/qa/analytics/TeamAnalyticsPage')
+);
 const SupervisorAnalyticsPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/SupervisorAnalytics/pages/SupervisorAnalyticsPage/SupervisorAnalyticsPage')
@@ -1024,7 +1027,18 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<SupervisorAnalyticsPage />
+													<TeamAnalyticsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/analytics',
+										id: 'qa.qa-manager.analytics',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TeamAnalyticsPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

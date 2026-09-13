@@ -183,7 +183,7 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.supervisor.analytics',
 		icon: <IconChartLine size={20} className={styles.menuIcon} />,
 		to: '/qa/supervisor/analytics',
-		i18nNamespace: 'qa.supervisor',
+		i18nNamespace: 'qa.teamAnalytics',
 	},
 	{
 		key: 'supervisor-reports',
@@ -349,7 +349,7 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.qamanager.analytics',
 		icon: <IconChartLine size={20} className={styles.menuIcon} />,
 		to: '/qa/qa-manager/analytics',
-		i18nNamespace: 'qa.qamanager',
+		i18nNamespace: 'qa.teamAnalytics',
 	},
 	{
 		key: 'qamanager-reports',
