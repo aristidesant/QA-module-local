@@ -1,0 +1,123 @@
+{
+	"team": {
+		"title": "Tu equipo",
+		"titleQaManager": "Agentes",
+		"description": "Todos los agentes que supervisas, con su puntuación general, dimensiones de evaluación y seguimientos pendientes.",
+		"descriptionQaManager": "Todos los agentes de todos los supervisores y equipos.",
+		"kpi": { "averageOverall": "Puntuación general del equipo", "atRisk": "Agentes en riesgo", "atRiskHint": "Burnout alto, general menor a 70 o capacitación vencida", "overdueLms": "Materiales LMS vencidos", "openCoaching": "Coaching programado", "improving": "mejorando", "declining": "en descenso" },
+		"filters": { "search": "Buscar agente o ID", "status": "Estado", "campaign": "Campaña", "supervisor": "Supervisor", "riskOnly": "Solo en riesgo", "all": "Todos", "clear": "Limpiar filtros" },
+		"columns": { "agent": "Agente", "team": "Equipo", "supervisor": "Supervisor", "status": "Estado", "overall": "General", "qa": "QA", "sentiment": "Sentimiento", "compliance": "Cumplimiento", "conversion": "Conversión", "aht": "AHT", "burnout": "Burnout", "badges": "Insignias", "followUps": "Seguimientos", "lastEvaluation": "Última evaluación" },
+		"followUpsCell": "{{coaching}} coaching · {{lms}} vencidos",
+		"empty": "Ningún agente coincide con los filtros actuales.",
+		"rowsCount": "{{count}} agentes"
+	},
+	"status": { "active": "Activo", "on-leave": "De licencia", "training": "En formación" },
+	"burnout": { "low": "Bajo", "medium": "Medio", "high": "Alto" },
+	"period": { "30d": "30 días", "90d": "90 días", "12m": "12 meses", "all": "Todo el historial" },
+	"tabs": { "overview": "Resumen", "qa": "QA", "sentiment": "Sentimiento y emoción", "compliance": "Cumplimiento", "business": "Oportunidades de negocio", "operations": "Operaciones", "coaching": "Coaching y LMS", "achievements": "Logros", "activity": "Actividad" },
+	"dimension": { "qa": "Puntuación QA", "sentiment": "Sentimiento", "compliance": "Cumplimiento", "business": "Tasa de conversión" },
+	"header": {
+		"back": "Volver al equipo",
+		"trackedSince": "Monitoreado desde {{date}}",
+		"tenure": "Antigüedad {{tenure}}",
+		"evaluations": "{{count}} evaluaciones",
+		"overall": "Puntuación general",
+		"rank": "#{{rank}} de {{size}}",
+		"percentile": "P{{value}}",
+		"weights": "Ponderación: QA {{qa}}% · Sentimiento {{sentiment}}% · Cumplimiento {{compliance}}% · Negocio {{business}}%",
+		"vsPrevious": "vs. período anterior",
+		"actions": { "scheduleCoaching": "Programar coaching", "assignLms": "Asignar material", "sendMessage": "Enviar mensaje" },
+		"shift": { "morning": "Turno mañana", "afternoon": "Turno tarde", "night": "Turno noche" }
+	},
+	"overview": {
+		"performance": "Desempeño a través del tiempo",
+		"performanceDescription": "Promedio mensual de la puntuación general y de cada dimensión de evaluación",
+		"direction": { "up": "Mejorando", "down": "En descenso", "flat": "Estable" },
+		"directionHint": "{{delta}} puntos entre el inicio y el final del período",
+		"series": { "overall": "General", "qa": "QA", "sentiment": "Sentimiento", "compliance": "Cumplimiento", "business": "Conversión" },
+		"strengths": "Fortalezas",
+		"weaknesses": "Áreas de mejora",
+		"noWeaknesses": "Ninguna dimensión por debajo de 75 en este período.",
+		"noStrengths": "Ninguna dimensión por encima de 85 todavía.",
+		"suggestedAction": "Acción sugerida",
+		"peer": "Comparación con el equipo",
+		"peerDescription": "Valor del agente vs. promedio de {{team}}",
+		"burnout": "Riesgo de burnout",
+		"risk": "Resumen de riesgo",
+		"riskTiles": { "autoFails": "Auto-fallas", "criticalErrors": "Errores críticos", "openAlerts": "Alertas abiertas", "openDisputes": "Disputas abiertas" },
+		"alerts": "Alertas de disparadores",
+		"alertsDescription": "Reglas que se activaron para este agente",
+		"acknowledge": "Confirmar",
+		"acknowledged": "Confirmada",
+		"disputes": "Disputas",
+		"disputeStatus": { "open": "Abierta", "won": "Ganada", "lost": "Perdida", "withdrawn": "Retirada" },
+		"noAlerts": "Sin alertas de disparadores en este período.",
+		"noDisputes": "Sin disputas presentadas."
+	},
+	"qa": {
+		"kpi": { "average": "Puntuación QA promedio", "passRate": "Tasa de aprobación", "evaluations": "Evaluaciones", "autoFails": "Auto-fallas" },
+		"errorTypes": "Tipos de error (COPC)",
+		"errorTypesDescription": "Ocurrencias por tipo de error en todas las llamadas evaluadas",
+		"perCall": "{{value}}% de las llamadas",
+		"errorTrend": "Errores por mes",
+		"topFailed": "Ítems más fallados",
+		"columns": { "item": "Ítem", "aspect": "Aspecto", "errorType": "Tipo", "count": "Veces fallado" },
+		"history": "Historial de evaluaciones",
+		"historyDescription": "Últimas llamadas evaluadas; abre una llamada para ver la evaluación completa",
+		"historyColumns": { "date": "Fecha", "campaign": "Campaña", "duration": "Duración", "qa": "QA", "sentiment": "Sent. cliente", "compliance": "Cumplimiento", "converted": "Convertida", "evaluatedBy": "Evaluado por", "open": "Abrir llamada" },
+		"autoFail": "Auto-falla"
+	},
+	"sentiment": {
+		"agent": "Agente", "customer": "Cliente",
+		"average": "Puntuación promedio", "categories": "Categorías de sentimiento", "emotions": "Emociones principales",
+		"trend": "Sentimiento a través del tiempo", "trendDescription": "Promedio mensual, agente vs. cliente (1–5)",
+		"recoveryRate": "Tasa de recuperación", "recoveryHint": "Llamadas que iniciaron negativas y terminaron neutrales o mejor",
+		"empathy": "Frases de empatía por llamada"
+	},
+	"compliance": {
+		"overall": "Puntuación de cumplimiento", "areas": "Áreas", "violations": "violaciones", "warnings": "advertencias",
+		"timeline": "Violaciones y advertencias por mes", "flagged": "Ítems marcados", "columns": { "item": "Ítem", "area": "Área", "count": "Ocurrencias", "lastSeen": "Última vez" },
+		"noFlagged": "Sin ítems de cumplimiento marcados."
+	},
+	"business": {
+		"kpi": { "conversion": "Tasa de conversión", "offers": "Ofertas presentadas", "converted": "Convertidas", "followUps": "Seguimientos programados" },
+		"signals": "Señales de negocio", "signalsDescription": "Frecuencia de cada señal predefinida en las llamadas de este agente",
+		"tone": { "risk": "Riesgo", "opportunity": "Oportunidad" },
+		"conversionTrend": "Conversión a través del tiempo", "reasons": "Razones de no conversión", "competitors": "Competidores mencionados", "mentions": "{{count}} menciones"
+	},
+	"ops": {
+		"title": "KPIs operativos", "description": "Valor del agente vs. promedio del equipo en el período seleccionado",
+		"callsHandled": "Llamadas atendidas", "callsPerDay": "Llamadas por día", "aht": "Tiempo promedio de atención", "talkTime": "Tiempo de conversación", "holdTime": "Tiempo en espera", "wrapUpTime": "Tiempo de cierre",
+		"fcr": "Resolución en primer contacto", "transferRate": "Tasa de transferencia", "adherence": "Cumplimiento de horario", "occupancy": "Ocupación",
+		"teamAverage": "Prom. equipo {{value}}", "ahtTrend": "AHT a través del tiempo", "breakdown": "Desglose del tiempo de atención", "breakdownSeries": { "talk": "Conversación", "hold": "Espera", "wrapUp": "Cierre" }
+	},
+	"coaching": {
+		"summary": { "attendance": "Asistencia a coaching", "lmsCompletion": "Cumplimiento LMS", "overdue": "Ítems vencidos", "mandatoryPending": "Obligatorios pendientes" },
+		"sessions": "Sesiones de coaching", "sessionsDescription": "Sesiones programadas, completadas y perdidas",
+		"columns": { "date": "Fecha", "topic": "Tema", "coach": "Coach", "dimension": "Dimensión", "status": "Estado", "outcome": "Resultado / seguimiento" },
+		"status": { "scheduled": "Programada", "completed": "Completada", "missed": "Perdida" },
+		"lms": "Material LMS", "lmsDescription": "Cursos, videos y documentos asignados",
+		"lmsColumns": { "title": "Material", "type": "Tipo", "assigned": "Asignado", "due": "Vence", "progress": "Progreso", "status": "Estado" },
+		"lmsStatus": { "not-started": "No iniciado", "in-progress": "En progreso", "completed": "Completado", "overdue": "Vencido" },
+		"mandatory": "Obligatorio", "noSessions": "Sin sesiones de coaching todavía.", "noLms": "Sin material asignado."
+	},
+	"achievements": {
+		"badges": "Insignias obtenidas", "badgesDescription": "{{count}} insignias", "noBadges": "Sin insignias obtenidas todavía.",
+		"milestones": "Hitos", "achievedOn": "Logrado el {{date}}", "inProgress": "{{progress}}% completado",
+		"ranking": "Historial de ranking", "rankingDescription": "Posición en {{team}} por mes (1 = mejor)", "bestRank": "Mejor posición", "currentRank": "Posición actual"
+	},
+	"activity": {
+		"title": "Línea de tiempo de actividad", "filterAll": "Todos",
+		"types": { "evaluation": "Evaluación", "badge": "Insignia", "milestone": "Hito", "coaching": "Coaching", "lms": "LMS", "alert": "Alerta", "dispute": "Disputa", "note": "Nota", "rank": "Ranking" },
+		"open": "Abrir", "empty": "Sin actividad de este tipo.",
+		"notes": "Notas del supervisor", "notesDescription": "Privadas para supervisores y QA managers",
+		"addNote": "Agregar nota", "notePlaceholder": "Escribe una nota sobre este agente…", "save": "Guardar nota", "pin": "Fijar", "unpin": "Desfijar", "pinned": "Fijada", "showMore": "Ver más"
+	},
+	"modals": {
+		"coaching": { "title": "Programar coaching", "date": "Fecha y hora", "topic": "Tema", "dimension": "Dimensión relacionada", "notes": "Notas para el agente", "submit": "Programar", "success": "Sesión de coaching programada y agente notificado." },
+		"lms": { "title": "Asignar material LMS", "material": "Material", "due": "Fecha límite", "mandatory": "Obligatorio", "submit": "Asignar", "success": "Material asignado y agente notificado." },
+		"message": { "title": "Enviar mensaje", "subject": "Asunto", "body": "Mensaje", "priority": "Prioridad", "submit": "Enviar", "success": "Mensaje enviado a la bandeja de entrada del agente." },
+		"cancel": "Cancelar"
+	},
+	"common": { "vsPrevious": "vs. anterior", "notFound": "Agente no encontrado", "notFoundDescription": "El agente {{id}} no forma parte de tu equipo." }
+}

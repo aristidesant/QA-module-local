@@ -21,4 +21,8 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.evaluator-agents': 'qa.evaluatorAgents',
 	'qa.supervisor.triggers': 'qa.triggers',
 	'qa.qa-manager.triggers': 'qa.triggers',
+	'qa.supervisor.your-team': ['qa.team', 'qa.dashboard'],
+	'qa.supervisor.your-team.profile': ['qa.team', 'qa.dashboard'],
+	'qa.qa-manager.agents': ['qa.team', 'qa.dashboard'],
+	'qa.qa-manager.agents.profile': ['qa.team', 'qa.dashboard'],
 };

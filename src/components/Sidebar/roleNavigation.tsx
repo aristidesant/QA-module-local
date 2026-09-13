@@ -11,6 +11,7 @@ import {
 	IconLock,
 	IconGitBranch,
 	IconSpeakerphone,
+	IconUserSquareRounded,
 } from '@tabler/icons-react';
 import type { SidebarNavItem } from './Sidebar';
 import styles from './Sidebar.module.css';
@@ -131,7 +132,7 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.supervisor.team',
 		icon: <IconUsers size={20} className={styles.menuIcon} />,
 		to: '/qa/supervisor/your-team',
-		i18nNamespace: 'qa.supervisor',
+		i18nNamespace: 'qa.team',
 	},
 	{
 		key: 'supervisor-calls',
@@ -248,6 +249,13 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.qamanager',
 	},
 	{
+		key: 'qamanager-agents',
+		label: 'sidebar.qamanager.agents',
+		icon: <IconUserSquareRounded size={20} className={styles.menuIcon} />,
+		to: '/qa/qa-manager/agents',
+		i18nNamespace: 'qa.team',
+	},
+	{
 		key: 'qamanager-calls',
 		label: 'sidebar.qamanager.calls',
 		icon: <IconPhone size={20} className={styles.menuIcon} />,
@@ -315,7 +323,7 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-organization',
 			label: 'sidebar.qamanager.groupOrganization',
-			items: items.slice(1, 3), // Supervisors, Teams
+			items: items.slice(1, 4), // Supervisors, Teams, Agents
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -323,7 +331,7 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-operations',
 			label: 'sidebar.qamanager.groupOperations',
-			items: [items[3], items[4], items[7]], // Calls, Disputes, Campaigns
+			items: [items[4], items[5], items[8]], // Calls, Disputes, Campaigns
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -331,7 +339,7 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-configuration',
 			label: 'sidebar.qamanager.groupConfiguration',
-			items: [items[5], items[6]], // Triggers, Rankings
+			items: [items[6], items[7]], // Triggers, Rankings
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -339,7 +347,7 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-insights',
 			label: 'sidebar.qamanager.groupInsights',
-			items: [items[8], items[9]], // Analytics, Reports
+			items: [items[9], items[10]], // Analytics, Reports
 			collapsible: true,
 			defaultExpanded: false,
 		},

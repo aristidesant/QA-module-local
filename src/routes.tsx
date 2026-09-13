@@ -172,8 +172,11 @@ const QAManagerTeamsPage = React.lazy(
 const QAManagerCampaignsPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/CampaignsPage')
 );
-const QAManagerAgentsPage = React.lazy(
-	() => import('./modules/qa/qamanager/pages/AgentsPage')
+const YourTeamPage = React.lazy(
+	() => import('./modules/qa/team/YourTeamPage')
+);
+const AgentProfilePage = React.lazy(
+	() => import('./modules/qa/team/AgentProfilePage')
 );
 const QAManagerCoachingPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/CoachingPage')
@@ -968,16 +971,6 @@ const router = createBrowserRouter([
 									},
 									// QA Manager routes
 									{
-										path: 'qa-manager/agents',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<SupervisorSettingsPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
 										path: 'supervisor/calls',
 										id: 'qa.supervisor.calls',
 										element: (
@@ -1060,7 +1053,40 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<QAManagerAgentsPage />
+													<YourTeamPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/agents/:agentId',
+										id: 'qa.qa-manager.agents.profile',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<AgentProfilePage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/your-team',
+										id: 'qa.supervisor.your-team',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<YourTeamPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/your-team/:agentId',
+										id: 'qa.supervisor.your-team.profile',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<AgentProfilePage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

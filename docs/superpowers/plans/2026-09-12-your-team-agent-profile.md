@@ -121,7 +121,7 @@ src/locales/es/qa.team.json
 
 ## A · Task 1 — `src/modules/qa/team/types.ts`
 
-- [ ] Create the file with exactly this content:
+- [x] Create the file with exactly this content:
 
 ```typescript
 import type { Emotion, SentimentCategory } from '~/modules/qa/emotion-sentiment/types';
@@ -408,13 +408,13 @@ export interface TeamFilters {
 }
 ```
 
-- [ ] `npm run typecheck` (no consumers yet; must be clean for this file).
+- [x] `npm run typecheck` (no consumers yet; must be clean for this file).
 
 ---
 
 ## A · Task 2 — `src/modules/qa/team/constants.ts`
 
-- [ ] Paste:
+- [x] Paste:
 
 ```typescript
 import type { TablerIcon } from '@tabler/icons-react';
@@ -551,7 +551,7 @@ export const COACHING_TOPICS = [
 export const SCORE_COLOR_STEPS: [number, string][] = [[90, 'green'], [80, 'lime'], [70, 'yellow'], [60, 'orange'], [0, 'red']];
 ```
 
-- [ ] `npm run typecheck`.
+- [x] `npm run typecheck`.
 
 ---
 
@@ -559,7 +559,7 @@ export const SCORE_COLOR_STEPS: [number, string][] = [[90, 'green'], [80, 'lime'
 
 The builder makes every agent's profile from a small persona table; numbers are stable across reloads. Keep it in one file (~350 lines).
 
-- [ ] **Step 1: roster + campaigns** (paste)
+- [x] **Step 1: roster + campaigns** (paste)
 
 ```typescript
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
@@ -630,7 +630,7 @@ export const TEAM_AGENTS: RosterAgent[] = PERSONAS.map((p, i) => {
 });
 ```
 
-- [ ] **Step 2: helpers inside mockData.ts** (paste below Step 1)
+- [x] **Step 2: helpers inside mockData.ts** (paste below Step 1)
 
 ```typescript
 function seeded(seed: number) {
@@ -665,7 +665,7 @@ function dimensionAt(key: DimensionKey, base: number, slope: number, i: number, 
 const toPct = (key: DimensionKey, v: number) => (key === 'sentiment' ? Math.round(((v - 1) / 4) * 100) : v);
 ```
 
-- [ ] **Step 3: `buildAgentProfile(persona, rankCtx)`** (paste). It must produce every `AgentProfile` field; rules per block:
+- [x] **Step 3: `buildAgentProfile(persona, rankCtx)`** (paste). It must produce every `AgentProfile` field; rules per block:
 
 ```typescript
 interface RankContext { rankInTeam: number; teamSize: number; percentile: number }
@@ -894,7 +894,7 @@ export function buildAgentProfile(p: Persona, rank: RankContext): AgentProfile {
 }
 ```
 
-- [ ] **Step 4: build all profiles with team ranks** (paste at the end)
+- [x] **Step 4: build all profiles with team ranks** (paste at the end)
 
 ```typescript
 /** Rank each agent inside its team by the latest overall score, then build the profiles. */
@@ -916,13 +916,13 @@ function buildAll(): Record<string, AgentProfile> {
 export const TEAM_PROFILES: Record<string, AgentProfile> = buildAll();
 ```
 
-- [ ] `npm run typecheck`. Sanity (mentally or with a quick `node`-free check in the page later): Sarah Johnson ≈ overall 90+, rank #1 of 7; David Brown ≈ 55-62, rank #7, burnout HIGH, 2 alerts, 2 disputes; John Smith trend `up`.
+- [x] `npm run typecheck`. Sanity (mentally or with a quick `node`-free check in the page later): Sarah Johnson ≈ overall 90+, rank #1 of 7; David Brown ≈ 55-62, rank #7, burnout HIGH, 2 alerts, 2 disputes; John Smith trend `up`.
 
 ---
 
 ## A · Task 4 — `helpers.ts` + `src/stores/qa/teamStore.ts`
 
-- [ ] **`src/modules/qa/team/helpers.ts`** (paste)
+- [x] **`src/modules/qa/team/helpers.ts`** (paste)
 
 ```typescript
 import type { AgentProfile, PerformancePoint, ProfilePeriod, TeamFilters, TeamRole, TeamTableRow, Trend } from './types';
@@ -1004,7 +1004,7 @@ export const teamKpis = (rows: TeamTableRow[]) => ({
 });
 ```
 
-- [ ] **`src/stores/qa/teamStore.ts`** (paste). Mutations also push an inbox notification (cross-section convention).
+- [x] **`src/stores/qa/teamStore.ts`** (paste). Mutations also push an inbox notification (cross-section convention).
 
 ```typescript
 import { create } from 'zustand';
@@ -1098,13 +1098,13 @@ export const selectVisibleProfiles = (role: TeamRole) => (s: TeamState) =>
 	Object.values(s.profiles).filter((p) => role === 'qa-manager' || p.agent.supervisorId === SUPERVISOR_PERSONA.id);
 ```
 
-- [ ] `npm run typecheck`.
+- [x] `npm run typecheck`.
 
 ---
 
 ## A · Task 5 — i18n `src/locales/en/qa.team.json` (+ `es/qa.team.json` with Spanish values)
 
-- [ ] Paste the English file (flat sections; add keys if a component needs one more, never hardcode strings in TSX):
+- [x] Paste the English file (flat sections; add keys if a component needs one more, never hardcode strings in TSX):
 
 ```json
 {
@@ -1232,8 +1232,8 @@ export const selectVisibleProfiles = (role: TeamRole) => (s: TeamState) =>
 }
 ```
 
-- [ ] Create `src/locales/es/qa.team.json` with identical keys and Spanish values (e.g. `"title": "Tu equipo"`, `"atRisk": "Agentes en riesgo"`, `"tabs.overview": "Resumen"`, `"tabs.sentiment": "Sentimiento y emoción"`, `"tabs.coaching": "Coaching y LMS"`, `"tabs.achievements": "Logros"`, `"tabs.activity": "Actividad"`). Keep interpolation names identical.
-- [ ] `npm run typecheck` (JSON is not type-checked; just confirm both files are valid JSON).
+- [x] Create `src/locales/es/qa.team.json` with identical keys and Spanish values (e.g. `"title": "Tu equipo"`, `"atRisk": "Agentes en riesgo"`, `"tabs.overview": "Resumen"`, `"tabs.sentiment": "Sentimiento y emoción"`, `"tabs.coaching": "Coaching y LMS"`, `"tabs.achievements": "Logros"`, `"tabs.activity": "Actividad"`). Keep interpolation names identical.
+- [x] `npm run typecheck` (JSON is not type-checked; just confirm both files are valid JSON).
 
 ---
 
@@ -1241,12 +1241,12 @@ export const selectVisibleProfiles = (role: TeamRole) => (s: TeamState) =>
 
 Files: `YourTeamPage/YourTeamPage.tsx`, `YourTeamPage.module.css`, `index.ts`, `TeamKpiStrip.tsx`, `TeamFilters.tsx`, `useTeamColumns.tsx`. All use `useTranslation('qa.team')`.
 
-- [ ] **`YourTeamPage.tsx`** — default export, no props.
+- [x] **`YourTeamPage.tsx`** — default export, no props.
   - `const role = roleFromPath(useLocation().pathname)`; `const profiles = useTeamStore(selectVisibleProfiles(role))`; `const [filters, setFilters] = useState<TeamFilters>({ search: '', status: 'all', campaignId: 'all', supervisorId: 'all', riskOnly: false })`; `rows = useMemo(() => applyTeamFilters(profiles.map(toTableRow), profilesById, filters))`.
   - Layout: `ContentContainer contentWidth='full' title={t(role === 'qa-manager' ? 'team.titleQaManager' : 'team.title')} description={t(role === 'qa-manager' ? 'team.descriptionQaManager' : 'team.description')}` → `Stack gap='lg'`: `<TeamKpiStrip kpis={teamKpis(rows)} />`, `<TeamFilters role={role} value={filters} onChange={setFilters} />`, `SectionCard` (no title) `headerActions={<Text size='sm' c='dimmed'>{t('team.rowsCount', { count: rows.length })}</Text>}` containing `BaseTable<TeamTableRow> data={rows} columns={columns} getRowId={(r) => r.id} initialSort={[{ id: 'overall', desc: true }]} enablePagination pageSize={10} density='compact' emptyMessage={t('team.empty')} onRowClick={(r) => navigate(`${teamBasePath(role)}/${r.id}`)}`.
-- [ ] **`TeamKpiStrip.tsx`** — `{ kpis: ReturnType<typeof teamKpis> }` → `SimpleGrid cols={{ base: 2, md: 4 }}` of `StatCard`: `team.kpi.averageOverall` value `{averageOverall}` with `badge` = `Badge color='teal'` `↑{improving}` + `Badge color='red'` `↓{declining}` (`t('team.kpi.improving')`/`declining` in a `Tooltip`), `color={getScoreColor(averageOverall)}`; `atRisk` (`color='red'` when >0, subtitle `t('team.kpi.atRiskHint')`); `overdueLms` (`orange` when >0); `openCoaching` (`blue`). Icons: `IconChartBar, IconAlertTriangle, IconSchool, IconCalendarEvent`.
-- [ ] **`TeamFilters.tsx`** — `{ role, value: TeamFilters, onChange }` → `Group gap='sm' wrap='wrap'`: `TextInput leftSection={<IconSearch size={16}/>} placeholder={t('team.filters.search')}` (w 260); `Select` status (`all` + 3 statuses from `status.*`); `Select` campaign (`all` + `TEAM_CAMPAIGNS` names); **QA Manager only**: `Select` supervisor (`all` + `TEAM_SUPERVISORS` `name — team`); `Switch label={t('team.filters.riskOnly')}`; `Button variant='subtle' size='xs'` clear (visible when any filter differs from default).
-- [ ] **`useTeamColumns.tsx`** — returns `BaseTableColumnDef<TeamTableRow>[]` (use `createColumnHelper<TeamTableRow>()` from `@tanstack/react-table`):
+- [x] **`TeamKpiStrip.tsx`** — `{ kpis: ReturnType<typeof teamKpis> }` → `SimpleGrid cols={{ base: 2, md: 4 }}` of `StatCard`: `team.kpi.averageOverall` value `{averageOverall}` with `badge` = `Badge color='teal'` `↑{improving}` + `Badge color='red'` `↓{declining}` (`t('team.kpi.improving')`/`declining` in a `Tooltip`), `color={getScoreColor(averageOverall)}`; `atRisk` (`color='red'` when >0, subtitle `t('team.kpi.atRiskHint')`); `overdueLms` (`orange` when >0); `openCoaching` (`blue`). Icons: `IconChartBar, IconAlertTriangle, IconSchool, IconCalendarEvent`.
+- [x] **`TeamFilters.tsx`** — `{ role, value: TeamFilters, onChange }` → `Group gap='sm' wrap='wrap'`: `TextInput leftSection={<IconSearch size={16}/>} placeholder={t('team.filters.search')}` (w 260); `Select` status (`all` + 3 statuses from `status.*`); `Select` campaign (`all` + `TEAM_CAMPAIGNS` names); **QA Manager only**: `Select` supervisor (`all` + `TEAM_SUPERVISORS` `name — team`); `Switch label={t('team.filters.riskOnly')}`; `Button variant='subtle' size='xs'` clear (visible when any filter differs from default).
+- [x] **`useTeamColumns.tsx`** — returns `BaseTableColumnDef<TeamTableRow>[]` (use `createColumnHelper<TeamTableRow>()` from `@tanstack/react-table`):
 
 | id | header key | cell |
 |---|---|---|
@@ -1265,7 +1265,7 @@ Files: `YourTeamPage/YourTeamPage.tsx`, `YourTeamPage.module.css`, `index.ts`, `
 | `lastEvaluationAt` | `team.columns.lastEvaluation` | `formatDate` |
 
   Row click navigates (handled by the page). `getRowClassName={(r) => isAtRisk(r) ? styles.riskRow : ''}` with `.riskRow { box-shadow: inset 3px 0 0 var(--mantine-color-red-6); }` in the module CSS.
-- [ ] `npm run typecheck` (the page is not routed yet; fine).
+- [x] `npm run typecheck` (the page is not routed yet; fine).
 
 ---
 
@@ -1273,7 +1273,7 @@ Files: `YourTeamPage/YourTeamPage.tsx`, `YourTeamPage.module.css`, `index.ts`, `
 
 All components take data props (no store access) except the page and the modals. Namespace `qa.team`. Charts use `@mantine/charts`.
 
-- [ ] **Shared components (`src/modules/qa/team/components/`)**
+- [x] **Shared components (`src/modules/qa/team/components/`)**
 
 | Component | Props | Renders |
 |---|---|---|
@@ -1287,16 +1287,16 @@ All components take data props (no store access) except the page and the modals.
 | `ActivityTimeline.tsx` | `{ events: ActivityEvent[]; filter: ActivityType \| 'all'; onFilterChange }` | `Chip.Group` (all + each `ACTIVITY_META` type) then Mantine `Timeline bulletSize={24} lineWidth={2}`; each `Timeline.Item bullet={<ThemeIcon size={24} radius='xl' color={meta.color} variant='light'>{icon by type: evaluation IconClipboardCheck, badge IconAward, milestone IconFlag, coaching IconSchool, lms IconBook, alert IconBell, dispute IconGavel, note IconNote, rank IconTrophy}</ThemeIcon>} title={<Group gap='xs'><Text fw={600} size='sm'>{title}</Text><Badge size='xs' variant='light' color={meta.color}>{t(meta.labelKey)}</Badge></Group>}`: `Text size='sm'` description, `Text size='xs' c='dimmed'` `formatDateTime(date)`, optional `Anchor size='xs'` `t('activity.open')` → `navigate(link)`. Show 20, `Button variant='subtle'` "Show more" adds 20. |
 | `NotesPanel.tsx` | `{ notes: SupervisorNote[]; onAdd(text); onTogglePin(id) }` | `SectionCard title={t('activity.notes')} description={t('activity.notesDescription')} icon={IconNote}`: `Textarea autosize minRows={2} placeholder` + `Button size='xs' leftSection={<IconPlus/>}` `t('activity.save')` (disabled when empty; clears after add); list sorted pinned-first then newest: `Paper withBorder p='sm' bg={pinned ? 'var(--mantine-color-yellow-light)' : undefined}`: `Group justify='space-between'`: `Text size='xs' fw={600}` `{authorName}` + `Badge size='xs' variant='outline'` role + `Text size='xs' c='dimmed'` date; `ActionIcon variant='subtle'` `IconPin/IconPinnedOff`; `Text size='sm'` text |
 
-- [ ] **`AgentProfilePage/ProfileHeader.tsx`** — `{ profile: AgentProfile; role: TeamRole; period: ProfilePeriod; onPeriodChange; onScheduleCoaching; onAssignLms; onSendMessage }`. `SectionCard padding='lg'`:
+- [x] **`AgentProfilePage/ProfileHeader.tsx`** — `{ profile: AgentProfile; role: TeamRole; period: ProfilePeriod; onPeriodChange; onScheduleCoaching; onAssignLms; onSendMessage }`. `SectionCard padding='lg'`:
   - `Group justify='space-between' align='flex-start' wrap='wrap'`. **Left** `Group gap='md'`: `Avatar size={72} radius='md' color={avatarColor} name={name}`; `Stack gap={4}`: `Group gap='xs'`: `Title order={2}` name, `Badge variant='light' color={status color}` `t('status.<status>')`, `Badge variant='dot' color={burnout color}` `t('burnout.<level>')`; `Text size='sm' c='dimmed'` `{id} · {team} · {supervisorName} · t('header.shift.<shift>')`; `Group gap={6}` campaign `Badge variant='outline' size='xs'` per `campaignIds` (name from `TEAM_CAMPAIGNS`) + skills `Badge variant='light' color='gray' size='xs'`; `Text size='xs' c='dimmed'` `t('header.trackedSince', { date: formatDate(trackedSince) }) · t('header.tenure', { tenure: formatTenure(hireDate) }) · t('header.evaluations', { count: qa.evaluations })`.
   - **Right** `Group gap='xl' align='center'`: `ScoreRing value={overall.score} size={112}` with `Stack gap={2}` beside it: `Text size='xs' c='dimmed' tt='uppercase'` `t('header.overall')`; `Group gap='xs'`: `Badge size='lg' variant='filled' color={getScoreColor(overall.score)}` `t('header.rank', { rank, size })`, `Badge variant='light'` `t('header.percentile', { value })`; `TrendDelta delta={overall.delta} trend={overall.trend} unit='' suffix={t('header.vsPrevious')}`; `Tooltip label={t('header.weights', weights)}` on an `IconInfoCircle size={14}`.
   - **Bottom row** `Group justify='space-between' mt='md'`: `SegmentedControl data={PROFILE_PERIODS.map(p => ({ value: p.value, label: t(p.labelKey) }))} value={period} onChange`; `Group gap='xs'`: `Button variant='light' leftSection={<IconCalendarEvent size={16}/>}` `t('header.actions.scheduleCoaching')`, `Button variant='light' leftSection={<IconBook size={16}/>}` `assignLms`, `Button variant='default' leftSection={<IconSend size={16}/>}` `sendMessage`.
-- [ ] **`AgentProfilePage.tsx`** — default export. `const { agentId } = useParams(); const role = roleFromPath(...); const profile = useTeamStore(selectProfile(agentId))`; if `!profile` or (supervisor role and `profile.agent.supervisorId !== SUPERVISOR_PERSONA.id`) → `ContentContainer` with `EmptyState message={t('common.notFound')} description={t('common.notFoundDescription', { id })} action={<Button onClick={() => navigate(teamBasePath(role))}>{t('header.back')}</Button>}`.
+- [x] **`AgentProfilePage.tsx`** — default export. `const { agentId } = useParams(); const role = roleFromPath(...); const profile = useTeamStore(selectProfile(agentId))`; if `!profile` or (supervisor role and `profile.agent.supervisorId !== SUPERVISOR_PERSONA.id`) → `ContentContainer` with `EmptyState message={t('common.notFound')} description={t('common.notFoundDescription', { id })} action={<Button onClick={() => navigate(teamBasePath(role))}>{t('header.back')}</Button>}`.
   - State: `period` (`useState<ProfilePeriod>('12m')`), `tab` from `useSearchParams` `?tab=` (default `overview`; `setSearchParams` on change, `replace: true`), three modal `opened` booleans.
   - `const points = useMemo(() => filterByPeriod(profile.performance, period))`.
   - Layout: `ContentContainer contentWidth='full' showBackButton title={undefined}` → `Stack gap='lg'`: `Breadcrumbs`: `Anchor onClick → navigate(teamBasePath(role))` `t(role === 'qa-manager' ? 'team.titleQaManager' : 'team.title')` / `Text c='dimmed'` name; `<ProfileHeader …/>`; `Tabs value={tab} onChange keepMounted={false}` with `Tabs.List` from `PROFILE_TABS` (`leftSection={<Icon size={16}/>}`) and one `Tabs.Panel pt='md'` per tab rendering the tab component with `{ profile, points, period, role }` (+ store callbacks where noted).
   - Modals rendered at the end, receive `agentId`, `role`, `opened`, `onClose`.
-- [ ] **Tabs (`AgentProfilePage/tabs/*.tsx`)** — each `{ profile: AgentProfile; points: PerformancePoint[]; period: ProfilePeriod; role: TeamRole }`, returns `Stack gap='md'`:
+- [x] **Tabs (`AgentProfilePage/tabs/*.tsx`)** — each `{ profile: AgentProfile; points: PerformancePoint[]; period: ProfilePeriod; role: TeamRole }`, returns `Stack gap='md'`:
 
 | Tab | Blocks (top → bottom) |
 |---|---|
@@ -1310,18 +1310,18 @@ All components take data props (no store access) except the page and the modals.
 | `AchievementsTab` | ① `SectionCard title={t('achievements.badges')} description={t('achievements.badgesDescription', { count })} icon={IconAward}` → `BadgeGrid`. ② `SectionCard title={t('achievements.milestones')} icon={IconFlag}` → `Stack gap='sm'`, per milestone `Paper withBorder p='sm'`: `Group justify='space-between'`: `Stack gap={2}`: `Text fw={600} size='sm'` name, `Text size='xs' c='dimmed'` description; right `achievedAt ? Badge color='green' leftSection={<IconCheck size={12}/>} t('achievements.achievedOn', { date: formatDate }) : Text size='xs' c='dimmed' t('achievements.inProgress', { progress })`; `Progress value={progress} color={achievedAt ? 'green' : 'blue'} size='sm' mt='xs'`. ③ `SectionCard title={t('achievements.ranking')} description={t('achievements.rankingDescription', { team })} icon={IconTrophy}` → `Group` two `StatCard variant='compact'`: bestRank `#{min position}`, currentRank `#{last position} of {teamSize}`; `LineChart h={220} data={rankingHistory} dataKey='label' series={[{name:'position',color:'grape.6'}]} yAxisProps={{ domain: [1, teamSize], reversed: true, allowDecimals: false }} withDots`. |
 | `ActivityTab` | `Grid`: `Grid.Col span={{ base: 12, md: 7 }}` → `SectionCard title={t('activity.title')} icon={IconHistory}` → `ActivityTimeline events={profile.activity} filter onFilterChange` (local state); `Grid.Col span={{ base: 12, md: 5 }}` → `NotesPanel notes={profile.notes} onAdd={(text) => addNote(agentId, text, role)} onTogglePin={(id) => togglePinNote(agentId, id)}`. |
 
-- [ ] **Modals (`components/modals/*.tsx`)** — Mantine `Modal centered`, `useForm` from `@mantine/form`, all `{ agentId: string; role: TeamRole; opened: boolean; onClose: () => void }`:
+- [x] **Modals (`components/modals/*.tsx`)** — Mantine `Modal centered`, `useForm` from `@mantine/form`, all `{ agentId: string; role: TeamRole; opened: boolean; onClose: () => void }`:
   - `ScheduleCoachingModal`: `DateTimePicker` (`@mantine/dates`, `minDate` today, default tomorrow 10:00) `t('modals.coaching.date')`; `Select` topic from `COACHING_TOPICS` (searchable, `allowDeselect={false}`); `Select` dimension (`DIMENSION_ORDER`, optional); `Textarea` notes. Submit → `useTeamStore.getState().scheduleCoaching({ agentId, date: iso, topic, linkedDimension, notes }, role)`, `notifications.show({ color: 'teal', message: t('modals.coaching.success') })` (`@mantine/notifications`), close + reset.
   - `AssignLmsModal`: `Select` material from `LMS_CATALOG` (label `{title} · {type} · {durationMin} min`, group by dimension); `DatePickerInput` due (default +14 days); `Switch` mandatory. Submit → `assignLms({ agentId, materialId, title, type, dueDate: 'YYYY-MM-DD', mandatory }, role)` + success notification.
   - `SendMessageModal`: `TextInput` subject (required), `Textarea` body (required, `minRows={4}`), `SegmentedControl` priority (`LOW | NORMAL | HIGH`, default `NORMAL`). Submit → `sendMessage(...)` + success notification.
   - Footer `Group justify='flex-end'`: `Button variant='default'` `t('modals.cancel')` + primary submit.
-- [ ] `npm run typecheck`.
+- [x] `npm run typecheck`.
 
 ---
 
 ## A · Task 8 — Routes, namespaces, sidebar, labels, deletions
 
-- [ ] **`src/routes.tsx`**
+- [x] **`src/routes.tsx`**
   - Replace the lazy import of `QAManagerAgentsPage` (:175-177, `./modules/qa/qamanager/pages/AgentsPage`) with:
     ```tsx
     const YourTeamPage = React.lazy(() => import('./modules/qa/team/YourTeamPage'));
@@ -1334,14 +1334,14 @@ All components take data props (no store access) except the page and the modals.
     - `path: 'qa-manager/agents/:agentId'`, `id: 'qa.qa-manager.agents.profile'` → `<AgentProfilePage />`
     - `path: 'supervisor/your-team'`, `id: 'qa.supervisor.your-team'` → `<YourTeamPage />`
     - `path: 'supervisor/your-team/:agentId'`, `id: 'qa.supervisor.your-team.profile'` → `<AgentProfilePage />`
-- [ ] **`src/modules/qa/qaNamespaces.ts`** — add:
+- [x] **`src/modules/qa/qaNamespaces.ts`** — add:
   ```ts
   'qa.supervisor.your-team': ['qa.team', 'qa.dashboard'],
   'qa.supervisor.your-team.profile': ['qa.team', 'qa.dashboard'],
   'qa.qa-manager.agents': ['qa.team', 'qa.dashboard'],
   'qa.qa-manager.agents.profile': ['qa.team', 'qa.dashboard'],
   ```
-- [ ] **`src/components/Sidebar/roleNavigation.tsx`**
+- [x] **`src/components/Sidebar/roleNavigation.tsx`**
   - `getSupervisorNavigation()`: change `supervisor-team` `i18nNamespace` to `'qa.team'` (label key stays `sidebar.supervisor.team`).
   - `getQAManagerNavigation()`: insert after `qamanager-teams` (index 2):
     ```tsx
@@ -1355,9 +1355,9 @@ All components take data props (no store access) except the page and the modals.
     ```
     (add `IconUserSquareRounded` to the tabler import). The flat array is now: 0 dashboard, 1 supervisors, 2 teams, **3 agents**, 4 calls, 5 disputes, 6 triggers, 7 rankings, 8 campaigns, 9 analytics, 10 reports.
   - `getQAManagerNavigationGrouped()`: Organization → `items.slice(1, 4)` (Supervisors, Teams, Agents); Operations → `[items[4], items[5], items[8]]`; Configuration → `[items[6], items[7]]`; Insights → `[items[9], items[10]]`. Update the trailing comments.
-- [ ] **`src/locales/en/common.json`** — in `sidebar.qamanager` add `"agents": "Agents"` (after `"teams"`); **`src/locales/es/common.json`** — `"agents": "Agentes"`.
-- [ ] **Deletions** — `grep -rn "AgentProfilePage\|qamanager/pages/AgentsPage\|supervisor/pages/YourTeamPage" src/` must show only the new module + routes; then delete `src/modules/qa/dashboard/pages/AgentProfilePage.tsx`, `src/modules/qa/qamanager/pages/AgentsPage.tsx`, `src/modules/qa/supervisor/pages/YourTeamPage.tsx`.
-- [ ] `npm run typecheck` → 0 errors in `src/modules/qa/team/**`, `src/stores/qa/teamStore.ts`, `src/routes.tsx`, `src/components/Sidebar/**`.
+- [x] **`src/locales/en/common.json`** — in `sidebar.qamanager` add `"agents": "Agents"` (after `"teams"`); **`src/locales/es/common.json`** — `"agents": "Agentes"`.
+- [x] **Deletions** — `grep -rn "AgentProfilePage\|qamanager/pages/AgentsPage\|supervisor/pages/YourTeamPage" src/` must show only the new module + routes; then delete `src/modules/qa/dashboard/pages/AgentProfilePage.tsx`, `src/modules/qa/qamanager/pages/AgentsPage.tsx`, `src/modules/qa/supervisor/pages/YourTeamPage.tsx`.
+- [x] `npm run typecheck` → 0 errors in `src/modules/qa/team/**`, `src/stores/qa/teamStore.ts`, `src/routes.tsx`, `src/components/Sidebar/**`.
 
 ---
 
@@ -1365,15 +1365,15 @@ All components take data props (no store access) except the page and the modals.
 
 Preview server config `dev` (`.claude/launch.json`) serves `http://localhost:8082`. Use the role preview switcher to view as Supervisor and QA Manager if the sidebar is role-gated.
 
-- [ ] `/qa/supervisor/your-team`: 4 KPI cards; table with 7 Team 1 agents sorted by overall desc (Sarah Johnson first, David Brown last with red risk stripe); filters work (search "lisa" → 1 row; "At risk only" → David Brown, Emma Davis, Lisa Wong and anyone with overdue LMS); row click → `/qa/supervisor/your-team/AGT-006`.
-- [ ] `/qa/qa-manager/agents`: 21 rows, Team/Supervisor column and supervisor filter visible; sidebar shows **Agents** under Organization.
-- [ ] Profile `AGT-006` (David Brown): header shows burnout **High**, rank #7 of 7, trend down; Overview → performance chart declining with "Declining" badge, 1–2 weaknesses with suggested actions, burnout widget, 2 alerts (one with Acknowledge button that flips to Acknowledged), 2 disputes; QA tab → 4 error tiles, stacked bar, most-failed table, evaluation history whose first row opens `/qa/campaigns/1/calls/call-001`; Sentiment → two rings, stacked category bars, trend chart; Compliance → 3 area cards, timeline, flagged items; Business → 5 signals, donut, competitors; Operations → 10 KPI cards + 2 charts; Coaching & LMS → tables incl. one **Overdue** item; Achievements → badges (possibly empty state), milestones, ranking chart; Activity → timeline with type chips + notes panel (add a note → appears pinned-first after pinning).
-- [ ] Profile `AGT-001` (Sarah Johnson): rank #1, ≥4 badges, no alerts/disputes empty states, "Improving"/"Stable".
-- [ ] Actions: Schedule coaching → new row in Coaching table + activity event + `notifications.show`; Assign material → new LMS row; Send message → activity event. Check `/qa/agent/inbox` (or the agent Inbox page) shows the new notification at the top.
-- [ ] Period control changes the chart window (30d shows 2 points, All shows every month since trackedSince).
-- [ ] `?tab=compliance` deep link opens that tab; unknown `agentId` shows the not-found state.
-- [ ] Dark mode (`resize_window colorScheme: dark`): no light boxes, charts readable; back to light. Tablet width: grids collapse, header wraps.
-- [ ] `read_console_messages onlyErrors` → none.
-- [ ] Commit (if allowed): branch `feature/your-team-agent-profile`, message `feat(team): add Your Team roster and Agent Profile for supervisor and QA manager` + the Co-Authored-By trailer given in the execution session.
+- [x] `/qa/supervisor/your-team`: 4 KPI cards; table with 7 Team 1 agents sorted by overall desc (Sarah Johnson first, David Brown last with red risk stripe); filters work (search "lisa" → 1 row; "At risk only" → David Brown, Emma Davis, Lisa Wong and anyone with overdue LMS); row click → `/qa/supervisor/your-team/AGT-006`.
+- [x] `/qa/qa-manager/agents`: 21 rows, Team/Supervisor column and supervisor filter visible; sidebar shows **Agents** under Organization.
+- [x] Profile `AGT-006` (David Brown): header shows burnout **High**, rank #7 of 7, trend down; Overview → performance chart declining with "Declining" badge, 1–2 weaknesses with suggested actions, burnout widget, 2 alerts (one with Acknowledge button that flips to Acknowledged), 2 disputes; QA tab → 4 error tiles, stacked bar, most-failed table, evaluation history whose first row opens `/qa/campaigns/1/calls/call-001`; Sentiment → two rings, stacked category bars, trend chart; Compliance → 3 area cards, timeline, flagged items; Business → 5 signals, donut, competitors; Operations → 10 KPI cards + 2 charts; Coaching & LMS → tables incl. one **Overdue** item; Achievements → badges (possibly empty state), milestones, ranking chart; Activity → timeline with type chips + notes panel (add a note → appears pinned-first after pinning).
+- [x] Profile `AGT-001` (Sarah Johnson): rank #1, ≥4 badges, no alerts/disputes empty states, "Improving"/"Stable".
+- [x] Actions: Schedule coaching → new row in Coaching table + activity event + `notifications.show`; Assign material → new LMS row; Send message → activity event. Check `/qa/agent/inbox` (or the agent Inbox page) shows the new notification at the top.
+- [x] Period control changes the chart window (30d shows 2 points, All shows every month since trackedSince).
+- [x] `?tab=compliance` deep link opens that tab; unknown `agentId` shows the not-found state.
+- [x] Dark mode (`resize_window colorScheme: dark`): no light boxes, charts readable; back to light. Tablet width: grids collapse, header wraps.
+- [x] `read_console_messages onlyErrors` → none.
+- [x] Commit (if allowed): branch `feature/your-team-agent-profile`, message `feat(team): add Your Team roster and Agent Profile for supervisor and QA manager` + the Co-Authored-By trailer given in the execution session.
 
 ---
