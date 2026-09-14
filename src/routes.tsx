@@ -163,8 +163,8 @@ const CustomerProfilePage = React.lazy(
 const LegacyCustomerRedirect = React.lazy(
 	() => import('./modules/qa/customers/components/LegacyCustomerRedirect')
 );
-const ReportingPage = React.lazy(
-	() => import('./modules/qa/dashboard/pages/ReportingPage')
+const ReportsPage = React.lazy(
+	() => import('./modules/qa/reports/ReportsPage')
 );
 const TeamRankingsPage = React.lazy(
 	() => import('./modules/qa/agent/rankings/TeamRankingsPage')
@@ -174,9 +174,6 @@ const SupervisorCallsPage = React.lazy(
 );
 const SupervisorEvaluationsPage = React.lazy(
 	() => import('./modules/qa/supervisor/pages/EvaluationsPage')
-);
-const SupervisorReportsPage = React.lazy(
-	() => import('./modules/qa/supervisor/pages/ReportsPage')
 );
 const QAManagerSupervisorsPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/SupervisorsPage')
@@ -196,9 +193,6 @@ const QAManagerSettingsPage = React.lazy(
 );
 const QAManagerCallsPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/CallsPage')
-);
-const QAManagerReportsPage = React.lazy(
-	() => import('./modules/qa/qamanager/pages/ReportsPage')
 );
 
 // Phase 4-5: New QA Admin Components
@@ -381,6 +375,22 @@ const BackofficeSupervisorPage = React.lazy(
 /**
  * Automatically loads i18n namespaces based on the active route's ID.
  */
+/**
+ * Suspends until the namespaces are loaded. Remounted by key whenever the
+ * namespace set changes, because react-i18next memoises on the namespace list
+ * and React forbids a dependency array that changes length.
+ */
+const NamespaceGate = ({
+	namespace,
+	children,
+}: {
+	namespace: string | readonly string[];
+	children: React.ReactNode;
+}) => {
+	useTranslation(namespace as string | string[]);
+	return <>{children}</>;
+};
+
 const I18nNamespaceLoader = ({ children }: { children: React.ReactNode }) => {
 	const matches = useMatches();
 	const lastMatch = matches[matches.length - 1];
@@ -394,11 +404,15 @@ const I18nNamespaceLoader = ({ children }: { children: React.ReactNode }) => {
 				namespace)
 			: 'common';
 
-	// Use useTranslation to ensure the namespace is loaded before rendering children.
-	// This will trigger suspension if the namespace is not yet available.
-	useTranslation(resolvedNamespace);
+	const key = Array.isArray(resolvedNamespace)
+		? resolvedNamespace.join('|')
+		: String(resolvedNamespace);
 
-	return <>{children}</>;
+	return (
+		<NamespaceGate key={key} namespace={resolvedNamespace}>
+			{children}
+		</NamespaceGate>
+	);
 };
 
 const router = createBrowserRouter([
@@ -1100,7 +1114,7 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<SupervisorReportsPage />
+													<ReportsPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -1298,7 +1312,7 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<QAManagerReportsPage />
+													<ReportsPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -1331,13 +1345,7 @@ const router = createBrowserRouter([
 									{
 										path: 'reporting',
 										id: 'qa.reporting',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<ReportingPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
+										element: <Navigate to='/qa/qa-manager/reports' replace />,
 									},
 									{
 										path: 'evaluations',

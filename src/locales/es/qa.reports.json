@@ -1,0 +1,281 @@
+{
+	"page": {
+		"eyebrow": {
+			"supervisor": "Supervisor · Equipo 1",
+			"qa-manager": "QA Manager · Todos los equipos"
+		},
+		"title": "Informes",
+		"description": "Crea informes para tu equipo o para un cliente, previsualízalos, expórtalos y programa su envío",
+		"new": "Nuevo informe"
+	},
+	"kpis": {
+		"saved": "Informes guardados",
+		"generatedMonth": "Generados este mes",
+		"schedules": "Programaciones activas",
+		"lastGenerated": "Último generado",
+		"never": "Nunca"
+	},
+	"tabs": {
+		"builder": "Editor",
+		"saved": "Informes guardados",
+		"generated": "Generados",
+		"schedules": "Programaciones"
+	},
+	"audience": {
+		"label": "Destinatario",
+		"internal": "Interno",
+		"client": "Cliente",
+		"clientName": "Nombre del cliente",
+		"clientNamePlaceholder": "Acme Retail",
+		"showAgentNames": "Mostrar nombres de agentes",
+		"showAgentNamesHint": "Desactivado: los agentes aparecen como Agent 01, Agent 02…",
+		"name": "Nombre del informe",
+		"namePlaceholder": "Informe semanal de calidad",
+		"description": "Descripción",
+		"descriptionPlaceholder": "Qué cubre este informe y quién lo lee"
+	},
+	"steps": {
+		"audience": "Destinatario y datos básicos",
+		"period": "Periodo y alcance",
+		"sections": "Secciones y métricas",
+		"output": "Salida y envío"
+	},
+	"period": {
+		"label": "Periodo",
+		"presets": {
+			"7d": "7 días",
+			"30d": "30 días",
+			"90d": "90 días",
+			"custom": "Personalizado"
+		},
+		"from": "Desde",
+		"to": "Hasta",
+		"compare": "Comparar con el periodo anterior"
+	},
+	"scope": {
+		"teams": "Equipos",
+		"teamsLocked": "Los supervisores informan sobre su propio equipo",
+		"allTeams": "Todos los equipos",
+		"campaigns": "Campañas",
+		"linesOfBusiness": "Líneas de negocio",
+		"agents": "Agentes",
+		"groupBy": "Agrupar filas por",
+		"groupByOptions": {
+			"none": "Sin agrupar",
+			"team": "Equipo",
+			"supervisor": "Supervisor",
+			"agent": "Agente",
+			"campaign": "Campaña",
+			"lineOfBusiness": "Línea de negocio"
+		}
+	},
+	"sections": {
+		"label": "Secciones",
+		"selected_one": "{{count}} sección",
+		"selected_other": "{{count}} secciones",
+		"metrics": "Métricas",
+		"metricsHint": "Déjalo vacío para usar las métricas por defecto de cada sección",
+		"internalOnly": "Solo uso interno — no disponible en informes de cliente",
+		"moveUp": "Subir",
+		"moveDown": "Bajar",
+		"items": {
+			"overview": {
+				"label": "Resumen ejecutivo",
+				"description": "Cuatro KPI principales con comparación de periodo y tendencia"
+			},
+			"qa": {
+				"label": "Quality Assurance",
+				"description": "Puntuación de QA y tipos de error COPC"
+			},
+			"compliance": {
+				"label": "Compliance",
+				"description": "Puntuaciones de seguridad, normativa y legal"
+			},
+			"sentiment": {
+				"label": "Sentimiento y emoción",
+				"description": "Sentimiento del cliente y del agente, emociones y recuperaciones"
+			},
+			"business": {
+				"label": "Business Insights",
+				"description": "Conversión, objeciones y menciones a la competencia"
+			},
+			"campaigns": {
+				"label": "Por campaña",
+				"description": "Métricas principales por campaña"
+			},
+			"agents": {
+				"label": "Por agente",
+				"description": "Métricas principales por agente"
+			},
+			"coaching": {
+				"label": "Coaching y formación",
+				"description": "Sesiones, asignaciones y finalización"
+			},
+			"disputes": {
+				"label": "Disputas",
+				"description": "Abiertas, aceptadas, rechazadas y correcciones de puntuación"
+			},
+			"burnout": {
+				"label": "Riesgo de burnout",
+				"description": "Agentes señalados y su nivel de riesgo"
+			},
+			"rankings": {
+				"label": "Rankings de equipo",
+				"description": "Programas, líderes y ganadores"
+			}
+		}
+	},
+	"output": {
+		"formats": "Formatos",
+		"schedule": "Programar envío",
+		"enabled": "Enviar este informe automáticamente",
+		"frequency": "Frecuencia",
+		"frequencies": {
+			"WEEKLY": "Semanal",
+			"BIWEEKLY": "Cada dos semanas",
+			"MONTHLY": "Mensual"
+		},
+		"dayOfWeek": "Día",
+		"dayOfMonth": "Día del mes",
+		"days": {
+			"0": "Domingo",
+			"1": "Lunes",
+			"2": "Martes",
+			"3": "Miércoles",
+			"4": "Jueves",
+			"5": "Viernes",
+			"6": "Sábado"
+		},
+		"time": "Hora",
+		"recipients": "Destinatarios",
+		"recipientsPlaceholder": "Escribe un email y pulsa Enter",
+		"nextRun": "Próximo envío {{date}}"
+	},
+	"builder": {
+		"save": "Guardar informe",
+		"saveTitle": "Guardar informe",
+		"saveName": "Nombre",
+		"saved": "Informe guardado",
+		"generate": "Generar",
+		"generateAs": "Generar como {{format}}",
+		"editing": "Editando {{name}}",
+		"reset": "Empezar un informe nuevo",
+		"validation": {
+			"name": "El nombre es obligatorio",
+			"client": "El nombre del cliente es obligatorio",
+			"sections": "Selecciona al menos una sección",
+			"formats": "Selecciona al menos un formato",
+			"dates": "La fecha final debe ser posterior a la inicial"
+		}
+	},
+	"preview": {
+		"title": "Vista previa",
+		"description": "Esto es lo que recibirá el destinatario",
+		"untitled": "Informe sin título",
+		"generatedAt": "Generado el {{date}}",
+		"period": "{{from}} → {{to}}",
+		"vsPrevious": "vs periodo anterior",
+		"scope": "Alcance: {{scope}}",
+		"preparedFor": "Preparado para {{client}}",
+		"internalLabel": "Informe interno",
+		"confidential": {
+			"internal": "Interno — no distribuir fuera de la compañía",
+			"client": "Preparado para {{client}} — confidencial"
+		},
+		"noData": "No hay datos para esta sección en el periodo seleccionado",
+		"noSections": "Selecciona al menos una sección para ver la vista previa",
+		"trend": "Puntuación de QA, periodo actual vs anterior",
+		"current": "Actual",
+		"previous": "Anterior",
+		"columns": {
+			"segment": "Segmento",
+			"calls": "Llamadas",
+			"change": "Variación",
+			"metric": "Métrica",
+			"current": "Actual",
+			"previous": "Anterior",
+			"conversionRate": "Tasa de conversión",
+			"agent": "Agente",
+			"sessions": "Sesiones",
+			"assignments": "Asignaciones",
+			"completed": "Completadas",
+			"id": "ID",
+			"type": "Tipo",
+			"status": "Estado",
+			"score": "Puntuación",
+			"scoreBefore": "Puntuación antes",
+			"scoreAfter": "Puntuación después",
+			"level": "Nivel",
+			"risk": "Riesgo",
+			"program": "Ranking",
+			"leader": "Líder",
+			"winner": "Ganador",
+			"periodCol": "Periodo"
+		},
+		"tiles": {
+			"qa": "Puntuación de QA",
+			"compliance": "Compliance",
+			"sentiment": "Sentimiento del cliente",
+			"conversion": "Tasa de conversión",
+			"calls": "Llamadas evaluadas",
+			"sessions": "Sesiones",
+			"completed": "Completadas",
+			"overdue": "Asignaciones vencidas",
+			"open": "Abiertas",
+			"accepted": "Aceptadas",
+			"rejected": "Rechazadas",
+			"acceptanceRate": "Tasa de aceptación"
+		}
+	},
+	"saved": {
+		"columns": {
+			"name": "Informe",
+			"audience": "Destinatario",
+			"sections": "Secciones",
+			"groupBy": "Agrupado por",
+			"schedule": "Programación",
+			"lastGenerated": "Último generado"
+		},
+		"load": "Cargar en el editor",
+		"duplicate": "Duplicar",
+		"delete": "Eliminar",
+		"builtIn": "Los informes predefinidos no se pueden eliminar",
+		"builtInBadge": "Predefinido",
+		"noSchedule": "—",
+		"empty": "Todavía no hay informes guardados"
+	},
+	"generated": {
+		"columns": {
+			"report": "Informe",
+			"audience": "Destinatario",
+			"format": "Formato",
+			"generatedAt": "Generado",
+			"trigger": "Origen",
+			"size": "Tamaño",
+			"status": "Estado"
+		},
+		"triggers": { "MANUAL": "Manual", "SCHEDULED": "Programado" },
+		"statuses": { "READY": "Listo", "SENT": "Enviado" },
+		"download": "Descargar",
+		"print": "Abrir vista de impresión",
+		"mockXlsx": "XLSX generado (simulado) — míralo en la pestaña Generados",
+		"csvReady": "CSV descargado",
+		"pdfReady": "Diálogo de impresión abierto — guárdalo como PDF",
+		"unsaved": "Borrador sin guardar",
+		"empty": "Todavía no se ha generado nada"
+	},
+	"schedules": {
+		"columns": {
+			"report": "Informe",
+			"audience": "Destinatario",
+			"frequency": "Frecuencia",
+			"nextRun": "Próximo envío",
+			"recipients": "Destinatarios",
+			"enabled": "Activo"
+		},
+		"runNow": "Ejecutar ahora",
+		"ran": "Informe generado y enviado (simulado)",
+		"more": "+{{count}}",
+		"empty": "No hay informes programados"
+	}
+}

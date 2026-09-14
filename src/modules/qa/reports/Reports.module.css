@@ -1,0 +1,125 @@
+/**
+ * Reports section. Every colour is a Mantine variable so the builder, the
+ * preview and the print view all read correctly in light and dark mode.
+ */
+
+/* Badges ellipsise when a table squeezes them; give those columns a floor. */
+.badgeColumn {
+	min-width: 92px;
+	justify-content: center;
+}
+
+/* --- Preview document ---------------------------------------------------- */
+
+.previewScroll {
+	max-height: 72vh;
+	overflow: auto;
+}
+
+.paper {
+	max-width: 880px;
+	margin: 0 auto;
+	background: light-dark(#ffffff, var(--mantine-color-dark-6));
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	padding: var(--mantine-spacing-xl);
+}
+
+.coverMark {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	border-radius: 50%;
+	background: light-dark(
+		var(--mantine-color-blue-1),
+		var(--mantine-color-blue-9)
+	);
+	color: light-dark(var(--mantine-color-blue-8), var(--mantine-color-blue-1));
+	font-weight: 700;
+	font-size: var(--mantine-font-size-lg);
+	letter-spacing: 0.04em;
+}
+
+.coverRule {
+	border: 0;
+	border-top: 2px solid var(--mantine-color-default-border);
+	margin: var(--mantine-spacing-md) 0;
+}
+
+.confidential {
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-dimmed);
+	font-style: italic;
+}
+
+.section {
+	break-inside: avoid;
+}
+
+.tableScroll {
+	overflow-x: auto;
+}
+
+.numeric {
+	text-align: right;
+	white-space: nowrap;
+}
+
+/* --- Builder ------------------------------------------------------------- */
+
+.sectionRow {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-sm);
+	padding: 6px 8px;
+	border-radius: var(--mantine-radius-sm);
+}
+
+.sectionRow:hover {
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+}
+
+.sectionRow[data-disabled] {
+	opacity: 0.5;
+}
+
+.sectionLabel {
+	flex: 1;
+	min-width: 0;
+}
+
+/* --- Print --------------------------------------------------------------- */
+
+@media print {
+	body * {
+		visibility: hidden;
+	}
+
+	#report-preview,
+	#report-preview * {
+		visibility: visible;
+	}
+
+	#report-preview {
+		position: absolute;
+		inset: 0;
+		margin: 0;
+		padding: 16mm;
+		max-width: none;
+		width: 100%;
+		background: #ffffff;
+		color: #000000;
+		border: 0;
+		box-shadow: none;
+	}
+
+	.previewScroll {
+		max-height: none;
+		overflow: visible;
+	}
+}

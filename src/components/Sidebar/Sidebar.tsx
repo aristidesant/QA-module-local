@@ -439,8 +439,8 @@ const qaPrimaryItems: SidebarNavItem[] = [
 		key: 'qa-reporting',
 		label: 'sidebar.items.qaReporting',
 		icon: <IconFileText size={20} className={styles.menuIcon} />,
-		to: '/qa/reporting',
-		i18nNamespace: 'qa.reporting',
+		to: '/qa/qa-manager/reports',
+		i18nNamespace: 'qa.reports',
 	},
 	{
 		key: 'qa-agent-rankings',

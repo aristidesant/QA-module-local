@@ -201,7 +201,7 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.supervisor.reports',
 		icon: <IconFileText size={20} className={styles.menuIcon} />,
 		to: '/qa/supervisor/reports',
-		i18nNamespace: 'qa.supervisor',
+		i18nNamespace: 'qa.reports',
 	},
 	{
 		key: 'supervisor-triggers',
@@ -385,7 +385,7 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.qamanager.reports',
 		icon: <IconFileText size={20} className={styles.menuIcon} />,
 		to: '/qa/qa-manager/reports',
-		i18nNamespace: 'qa.qamanager',
+		i18nNamespace: 'qa.reports',
 	},
 ];
 

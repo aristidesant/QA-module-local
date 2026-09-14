@@ -8,7 +8,6 @@ export { LeaderboardTable } from './LeaderboardTable';
 export { TranscriptWithMarkers } from './TranscriptWithMarkers';
 export { AudioPlayerWithClipping } from './AudioPlayerWithClipping';
 export { AutoTriggersManager } from './AutoTriggersManager';
-export { ReportBuilder } from './ReportBuilder';
 
 // Phase 2: Adaptive dashboard pattern and new metric cards
 export {

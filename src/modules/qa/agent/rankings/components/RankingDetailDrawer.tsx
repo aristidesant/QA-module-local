@@ -54,7 +54,7 @@ const QuickStat: React.FC<QuickStatProps> = ({ label, value }) => (
 		<Text size='xs' c='dimmed' tt='uppercase' fw={600}>
 			{label}
 		</Text>
-		<Text size='xl' fw={700} className={styles.statValue}>
+		<Text component='div' size='xl' fw={700} className={styles.statValue}>
 			{value}
 		</Text>
 	</div>

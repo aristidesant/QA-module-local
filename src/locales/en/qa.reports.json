@@ -1,0 +1,281 @@
+{
+	"page": {
+		"eyebrow": {
+			"supervisor": "Supervisor · Team 1",
+			"qa-manager": "QA Manager · All teams"
+		},
+		"title": "Reports",
+		"description": "Build reports for your team or for a client, preview them, export and schedule delivery",
+		"new": "New report"
+	},
+	"kpis": {
+		"saved": "Saved reports",
+		"generatedMonth": "Generated this month",
+		"schedules": "Active schedules",
+		"lastGenerated": "Last generated",
+		"never": "Never"
+	},
+	"tabs": {
+		"builder": "Builder",
+		"saved": "Saved reports",
+		"generated": "Generated",
+		"schedules": "Schedules"
+	},
+	"audience": {
+		"label": "Audience",
+		"internal": "Internal",
+		"client": "Client",
+		"clientName": "Client name",
+		"clientNamePlaceholder": "Acme Retail",
+		"showAgentNames": "Show agent names",
+		"showAgentNamesHint": "Off: agents appear as Agent 01, Agent 02…",
+		"name": "Report name",
+		"namePlaceholder": "Weekly Quality Report",
+		"description": "Description",
+		"descriptionPlaceholder": "What this report covers and who reads it"
+	},
+	"steps": {
+		"audience": "Audience & basics",
+		"period": "Period & scope",
+		"sections": "Sections & metrics",
+		"output": "Output & delivery"
+	},
+	"period": {
+		"label": "Period",
+		"presets": {
+			"7d": "7 days",
+			"30d": "30 days",
+			"90d": "90 days",
+			"custom": "Custom"
+		},
+		"from": "From",
+		"to": "To",
+		"compare": "Compare with previous period"
+	},
+	"scope": {
+		"teams": "Teams",
+		"teamsLocked": "Supervisors report on their own team",
+		"allTeams": "All teams",
+		"campaigns": "Campaigns",
+		"linesOfBusiness": "Lines of business",
+		"agents": "Agents",
+		"groupBy": "Group rows by",
+		"groupByOptions": {
+			"none": "No grouping",
+			"team": "Team",
+			"supervisor": "Supervisor",
+			"agent": "Agent",
+			"campaign": "Campaign",
+			"lineOfBusiness": "Line of business"
+		}
+	},
+	"sections": {
+		"label": "Sections",
+		"selected_one": "{{count}} section",
+		"selected_other": "{{count}} sections",
+		"metrics": "Metrics",
+		"metricsHint": "Leave empty to use each section's defaults",
+		"internalOnly": "Internal only — not available in client reports",
+		"moveUp": "Move up",
+		"moveDown": "Move down",
+		"items": {
+			"overview": {
+				"label": "Executive overview",
+				"description": "Four headline KPIs with period comparison and trend"
+			},
+			"qa": {
+				"label": "Quality Assurance",
+				"description": "QA score and COPC error types"
+			},
+			"compliance": {
+				"label": "Compliance",
+				"description": "Security, regulatory and legal scores"
+			},
+			"sentiment": {
+				"label": "Sentiment & Emotion",
+				"description": "Customer and agent sentiment, emotions, recoveries"
+			},
+			"business": {
+				"label": "Business Insights",
+				"description": "Conversion, objections, competitor mentions"
+			},
+			"campaigns": {
+				"label": "By campaign",
+				"description": "Headline metrics per campaign"
+			},
+			"agents": {
+				"label": "By agent",
+				"description": "Headline metrics per agent"
+			},
+			"coaching": {
+				"label": "Coaching & learning",
+				"description": "Sessions, assignments and completion"
+			},
+			"disputes": {
+				"label": "Disputes",
+				"description": "Opened, accepted, rejected and score corrections"
+			},
+			"burnout": {
+				"label": "Burnout risk",
+				"description": "Flagged agents and their risk level"
+			},
+			"rankings": {
+				"label": "Team rankings",
+				"description": "Programs, leaders and winners"
+			}
+		}
+	},
+	"output": {
+		"formats": "Formats",
+		"schedule": "Schedule delivery",
+		"enabled": "Send this report automatically",
+		"frequency": "Frequency",
+		"frequencies": {
+			"WEEKLY": "Weekly",
+			"BIWEEKLY": "Every two weeks",
+			"MONTHLY": "Monthly"
+		},
+		"dayOfWeek": "Day",
+		"dayOfMonth": "Day of month",
+		"days": {
+			"0": "Sunday",
+			"1": "Monday",
+			"2": "Tuesday",
+			"3": "Wednesday",
+			"4": "Thursday",
+			"5": "Friday",
+			"6": "Saturday"
+		},
+		"time": "Time",
+		"recipients": "Recipients",
+		"recipientsPlaceholder": "Add an email and press Enter",
+		"nextRun": "Next run {{date}}"
+	},
+	"builder": {
+		"save": "Save report",
+		"saveTitle": "Save report",
+		"saveName": "Name",
+		"saved": "Report saved",
+		"generate": "Generate",
+		"generateAs": "Generate as {{format}}",
+		"editing": "Editing {{name}}",
+		"reset": "Start a new report",
+		"validation": {
+			"name": "Name is required",
+			"client": "Client name is required",
+			"sections": "Pick at least one section",
+			"formats": "Pick at least one format",
+			"dates": "End must be after start"
+		}
+	},
+	"preview": {
+		"title": "Preview",
+		"description": "This is what the recipient will receive",
+		"untitled": "Untitled report",
+		"generatedAt": "Generated {{date}}",
+		"period": "{{from}} → {{to}}",
+		"vsPrevious": "vs previous period",
+		"scope": "Scope: {{scope}}",
+		"preparedFor": "Prepared for {{client}}",
+		"internalLabel": "Internal report",
+		"confidential": {
+			"internal": "Internal — do not distribute outside the company",
+			"client": "Prepared for {{client}} — confidential"
+		},
+		"noData": "No data for this section in the selected period",
+		"noSections": "Pick at least one section to see the preview",
+		"trend": "QA score, current vs previous period",
+		"current": "Current",
+		"previous": "Previous",
+		"columns": {
+			"segment": "Segment",
+			"calls": "Calls",
+			"change": "Change",
+			"metric": "Metric",
+			"current": "Current",
+			"previous": "Previous",
+			"conversionRate": "Conversion rate",
+			"agent": "Agent",
+			"sessions": "Sessions",
+			"assignments": "Assignments",
+			"completed": "Completed",
+			"id": "ID",
+			"type": "Type",
+			"status": "Status",
+			"score": "Score",
+			"scoreBefore": "Score before",
+			"scoreAfter": "Score after",
+			"level": "Level",
+			"risk": "Risk",
+			"program": "Ranking",
+			"leader": "Leader",
+			"winner": "Winner",
+			"periodCol": "Period"
+		},
+		"tiles": {
+			"qa": "QA score",
+			"compliance": "Compliance",
+			"sentiment": "Customer sentiment",
+			"conversion": "Conversion rate",
+			"calls": "Calls evaluated",
+			"sessions": "Sessions",
+			"completed": "Completed",
+			"overdue": "Overdue assignments",
+			"open": "Open",
+			"accepted": "Accepted",
+			"rejected": "Rejected",
+			"acceptanceRate": "Acceptance rate"
+		}
+	},
+	"saved": {
+		"columns": {
+			"name": "Report",
+			"audience": "Audience",
+			"sections": "Sections",
+			"groupBy": "Grouped by",
+			"schedule": "Schedule",
+			"lastGenerated": "Last generated"
+		},
+		"load": "Load into builder",
+		"duplicate": "Duplicate",
+		"delete": "Delete",
+		"builtIn": "Built-in reports cannot be deleted",
+		"builtInBadge": "Built-in",
+		"noSchedule": "—",
+		"empty": "No saved reports yet"
+	},
+	"generated": {
+		"columns": {
+			"report": "Report",
+			"audience": "Audience",
+			"format": "Format",
+			"generatedAt": "Generated",
+			"trigger": "Trigger",
+			"size": "Size",
+			"status": "Status"
+		},
+		"triggers": { "MANUAL": "Manual", "SCHEDULED": "Scheduled" },
+		"statuses": { "READY": "Ready", "SENT": "Sent" },
+		"download": "Download",
+		"print": "Open print view",
+		"mockXlsx": "XLSX generated (mock) — see the Generated tab",
+		"csvReady": "CSV downloaded",
+		"pdfReady": "Print dialog opened — save as PDF",
+		"unsaved": "Unsaved draft",
+		"empty": "Nothing generated yet"
+	},
+	"schedules": {
+		"columns": {
+			"report": "Report",
+			"audience": "Audience",
+			"frequency": "Frequency",
+			"nextRun": "Next run",
+			"recipients": "Recipients",
+			"enabled": "Enabled"
+		},
+		"runNow": "Run now",
+		"ran": "Report generated and sent (mock)",
+		"more": "+{{count}}",
+		"empty": "No scheduled reports"
+	}
+}
