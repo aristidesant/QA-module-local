@@ -45,11 +45,11 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.agent',
 	},
 	{
-		key: 'agent-campaigns',
-		label: 'sidebar.agent.campaigns',
-		icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
-		to: '/qa/campaigns',
-		i18nNamespace: 'qa.agent',
+		key: 'agent-calls',
+		label: 'sidebar.agent.myCalls',
+		icon: <IconPhone size={20} className={styles.menuIcon} />,
+		to: '/qa/agent/calls',
+		i18nNamespace: 'qa.calls',
 	},
 	{
 		key: 'agent-inbox',
@@ -107,7 +107,7 @@ export const getAgentNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'agent-mywork',
 			label: 'sidebar.agent.groupMyWork',
-			items: [items[1], items[2], items[4]], // Campaigns, Inbox, My Learning
+			items: [items[1], items[2], items[4]], // My Calls, Inbox, My Learning
 			collapsible: false,
 			defaultExpanded: true,
 		},

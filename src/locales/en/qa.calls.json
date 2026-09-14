@@ -1,0 +1,49 @@
+{
+	"myCalls": {
+		"title": "My Calls",
+		"description": "Every call you handled, newest first. Open a call to review its evaluation or raise a dispute.",
+		"filters": {
+			"period": "Period",
+			"dateFrom": "Date from",
+			"dateTo": "Date to",
+			"autoFailOnly": "Auto-fails only",
+			"clear": "Clear"
+		},
+		"columns": {
+			"date": "Date",
+			"duration": "Duration",
+			"autoFails": "Auto-fails"
+		},
+		"autoFailNone": "None",
+		"autoFailCount": "{{count}} auto-fail",
+		"autoFailCount_other": "{{count}} auto-fails",
+		"rowsCount": "{{count}} calls",
+		"empty": "No calls in this period.",
+		"breadcrumb": "My Calls"
+	},
+	"period": {
+		"7d": "Last 7 days",
+		"30d": "Last 30 days",
+		"90d": "Last 90 days",
+		"all": "All time"
+	},
+	"roster": {
+		"tab": "Roster",
+		"description": "Agents participating in this campaign",
+		"descriptionSupervisor": "Agents from your team participating in this campaign",
+		"columns": {
+			"agent": "Agent",
+			"team": "Team",
+			"supervisor": "Supervisor",
+			"status": "Status",
+			"calls": "Calls",
+			"averageQa": "Avg. QA",
+			"autoFails": "Auto-fails",
+			"lastCall": "Last call"
+		},
+		"rowsCount": "{{count}} agents",
+		"empty": "No agents from your team participate in this campaign.",
+		"emptyAll": "No agents participate in this campaign yet."
+	},
+	"conversations": { "agentFilter": "Agent", "allAgents": "All agents" }
+}

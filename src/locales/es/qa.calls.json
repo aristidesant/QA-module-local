@@ -1,0 +1,49 @@
+{
+	"myCalls": {
+		"title": "Mis llamadas",
+		"description": "Todas las llamadas que atendiste, de la más reciente a la más antigua. Abre una llamada para revisar su evaluación o presentar una disputa.",
+		"filters": {
+			"period": "Período",
+			"dateFrom": "Fecha desde",
+			"dateTo": "Fecha hasta",
+			"autoFailOnly": "Solo con auto-fails",
+			"clear": "Limpiar"
+		},
+		"columns": {
+			"date": "Fecha",
+			"duration": "Duración",
+			"autoFails": "Auto-fails"
+		},
+		"autoFailNone": "Ninguno",
+		"autoFailCount": "{{count}} auto-fail",
+		"autoFailCount_other": "{{count}} auto-fails",
+		"rowsCount": "{{count}} llamadas",
+		"empty": "No hay llamadas en este período.",
+		"breadcrumb": "Mis llamadas"
+	},
+	"period": {
+		"7d": "Últimos 7 días",
+		"30d": "Últimos 30 días",
+		"90d": "Últimos 90 días",
+		"all": "Todo el tiempo"
+	},
+	"roster": {
+		"tab": "Roster",
+		"description": "Agentes que participan en esta campaña",
+		"descriptionSupervisor": "Agentes de tu equipo que participan en esta campaña",
+		"columns": {
+			"agent": "Agente",
+			"team": "Equipo",
+			"supervisor": "Supervisor",
+			"status": "Estado",
+			"calls": "Llamadas",
+			"averageQa": "QA medio",
+			"autoFails": "Auto-fails",
+			"lastCall": "Última llamada"
+		},
+		"rowsCount": "{{count}} agentes",
+		"empty": "Ningún agente de tu equipo participa en esta campaña.",
+		"emptyAll": "Todavía ningún agente participa en esta campaña."
+	},
+	"conversations": { "agentFilter": "Agente", "allAgents": "Todos los agentes" }
+}
