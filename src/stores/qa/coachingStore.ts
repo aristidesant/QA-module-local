@@ -10,6 +10,7 @@ import type {
 	RuleStatus,
 } from '~/models/qa';
 import { useLmsStore } from '~/stores/qa/lmsStore';
+import { buildNotification } from '~/modules/qa/inbox/helpers';
 import { useNotificationStore } from '~/stores/qa/notificationStore';
 import {
 	COACHING_ACTIVITY_SEEDS,
@@ -19,7 +20,11 @@ import {
 } from '~/modules/qa/coaching/mockData';
 import { describeCondition } from '~/modules/qa/triggers/helpers';
 import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
-import { NOW_ISO, QA_MANAGER_PERSONA, SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
+import {
+	NOW_ISO,
+	QA_MANAGER_PERSONA,
+	SUPERVISOR_PERSONA,
+} from '~/modules/qa/team/constants';
 import { day } from '~/modules/qa/lms/mockData';
 import { today } from '~/modules/qa/lms/helpers';
 import { AGENT_LMS_PATH } from '~/modules/qa/lms/constants';
@@ -58,7 +63,11 @@ interface CoachingState {
 	setRuleStatus: (id: string, status: RuleStatus) => void;
 	duplicateRule: (id: string) => CoachingRule | null;
 	/** Demo: applies a rule to the given agents through the LMS store and logs the activity. */
-	runRuleNow: (ruleId: string, agentIds: string[], by: { name: string; role: CoachRole }) => number;
+	runRuleNow: (
+		ruleId: string,
+		agentIds: string[],
+		by: { name: string; role: CoachRole }
+	) => number;
 
 	scheduleSession: (
 		input: ScheduleSessionInput,
@@ -71,11 +80,16 @@ interface CoachingState {
 		actionItems: CoachingActionItem[],
 		followUpDate: string | null
 	) => void;
-	setSessionStatus: (id: string, status: CoachingSessionRecord['status']) => void;
+	setSessionStatus: (
+		id: string,
+		status: CoachingSessionRecord['status']
+	) => void;
 	acknowledgeActionItem: (sessionId: string, itemId: string) => void;
 	acknowledgeCommitment: (sessionId: string, comment: string | null) => void;
 
-	addCohort: (cohort: Omit<CoachingCohort, 'id' | 'createdAt'>) => CoachingCohort;
+	addCohort: (
+		cohort: Omit<CoachingCohort, 'id' | 'createdAt'>
+	) => CoachingCohort;
 	updateCohort: (cohort: CoachingCohort) => void;
 	deleteCohort: (id: string) => void;
 
@@ -83,23 +97,40 @@ interface CoachingState {
 	logActivity: (entry: Omit<CoachingActivityEntry, 'id' | 'date'>) => void;
 }
 
-const notifySession = (session: CoachingSessionRecord, title: string, message: string) =>
-	useNotificationStore.getState().addNotification({
-		id: nextCoachingId('ntf'),
-		agentId: session.agentId,
-		category: 'DIRECT_MESSAGE',
-		priority: 'NORMAL',
-		title,
-		message,
-		icon: 'school',
-		sourceRole: session.coachRole,
-		sourceId: session.coachRole === 'QA_MANAGER' ? QA_MANAGER_PERSONA.id : SUPERVISOR_PERSONA.id,
-		read: false,
-		archived: false,
-		actioned: false,
-		createdAt: NOW_ISO,
-		actions: [{ label: 'View coaching', url: `${AGENT_LMS_PATH}?tab=coaching`, icon: 'school' }],
-	});
+const notifySession = (
+	session: CoachingSessionRecord,
+	title: string,
+	message: string
+) =>
+	useNotificationStore.getState().addNotification(
+		buildNotification({
+			agentId: session.agentId,
+			category: 'DIRECT_MESSAGE',
+			priority: 'NORMAL',
+			title,
+			message,
+			icon: 'school',
+			sourceRole: session.coachRole,
+			sourceId:
+				session.coachRole === 'QA_MANAGER'
+					? QA_MANAGER_PERSONA.id
+					: SUPERVISOR_PERSONA.id,
+			payload: {
+				kind: 'COACHING_SESSION',
+				sessionId: session.id,
+				date: session.date,
+				coachName: session.coachName,
+				topic: session.topic,
+			},
+			actions: [
+				{
+					label: 'View coaching',
+					url: `${AGENT_LMS_PATH}?tab=coaching`,
+					icon: 'school',
+				},
+			],
+		})
+	);
 
 export const useCoachingStore = create<CoachingState>((set, get) => ({
 	rules: COACHING_RULE_SEEDS,
@@ -111,12 +142,21 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 	addRule: (rule) => set((s) => ({ rules: [rule, ...s.rules] })),
 
 	updateRule: (rule) =>
-		set((s) => ({ rules: s.rules.map((r) => (r.id === rule.id ? { ...rule, updatedAt: NOW_ISO } : r)) })),
+		set((s) => ({
+			rules: s.rules.map((r) =>
+				r.id === rule.id ? { ...rule, updatedAt: NOW_ISO } : r
+			),
+		})),
 
-	deleteRule: (id) => set((s) => ({ rules: s.rules.filter((r) => r.id !== id) })),
+	deleteRule: (id) =>
+		set((s) => ({ rules: s.rules.filter((r) => r.id !== id) })),
 
 	setRuleStatus: (id, status) =>
-		set((s) => ({ rules: s.rules.map((r) => (r.id === id ? { ...r, status, updatedAt: NOW_ISO } : r)) })),
+		set((s) => ({
+			rules: s.rules.map((r) =>
+				r.id === id ? { ...r, status, updatedAt: NOW_ISO } : r
+			),
+		})),
 
 	duplicateRule: (id) => {
 		const original = get().rules.find((r) => r.id === id);
@@ -126,7 +166,12 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 			id: nextCoachingId('cr'),
 			name: `${original.name} (copy)`,
 			status: 'DRAFT',
-			stats: { triggeredLast30Days: 0, agentsAffected: 0, improvedRate: null, lastTriggeredAt: null },
+			stats: {
+				triggeredLast30Days: 0,
+				agentsAffected: 0,
+				improvedRate: null,
+				lastTriggeredAt: null,
+			},
 			createdAt: NOW_ISO,
 			updatedAt: NOW_ISO,
 		};
@@ -139,8 +184,12 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 		if (!rule || agentIds.length === 0) return 0;
 
 		const tTriggers = i18n.getFixedT(null, 'qa.triggers');
-		const conditionText = rule.conditions.length ? describeCondition(tTriggers, rule.conditions[0]) : '';
-		const reason = conditionText ? `${rule.name} — ${conditionText}` : rule.name;
+		const conditionText = rule.conditions.length
+			? describeCondition(tTriggers, rule.conditions[0])
+			: '';
+		const reason = conditionText
+			? `${rule.name} — ${conditionText}`
+			: rule.name;
 		const dueDate = day(today(), rule.action.dueInDays);
 		const lms = useLmsStore.getState();
 		const paths = lms.paths;
@@ -149,11 +198,19 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 			let createdIds: string[] = [];
 
 			if (rule.action.kind === 'ASSIGN_PATH' && rule.action.pathId) {
-				lms.enroll([agentId], rule.action.pathId, by.name, 'COACHING_RULE', dueDate);
+				lms.enroll(
+					[agentId],
+					rule.action.pathId,
+					by.name,
+					'COACHING_RULE',
+					dueDate
+				);
 				const path = paths.find((p) => p.id === rule.action.pathId);
 				const created = lms.assign({
 					agentIds: [agentId],
-					contentIds: path ? path.modules.filter((m) => m.required).map((m) => m.contentId) : [],
+					contentIds: path
+						? path.modules.filter((m) => m.required).map((m) => m.contentId)
+						: [],
 					pathId: rule.action.pathId,
 					dueDate,
 					mandatory: rule.action.mandatory,
@@ -201,7 +258,10 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 						ruleId: rule.id,
 					},
 					{
-						id: rule.action.sessionCoach === 'QA_MANAGER' ? QA_MANAGER_PERSONA.id : SUPERVISOR_PERSONA.id,
+						id:
+							rule.action.sessionCoach === 'QA_MANAGER'
+								? QA_MANAGER_PERSONA.id
+								: SUPERVISOR_PERSONA.id,
 						name: by.name,
 						role: rule.action.sessionCoach,
 					}
@@ -216,7 +276,8 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 							...r,
 							stats: {
 								...r.stats,
-								triggeredLast30Days: r.stats.triggeredLast30Days + agentIds.length,
+								triggeredLast30Days:
+									r.stats.triggeredLast30Days + agentIds.length,
 								agentsAffected: r.stats.agentsAffected + agentIds.length,
 								lastTriggeredAt: NOW_ISO,
 							},
@@ -256,7 +317,11 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 			talkingPoints: input.talkingPoints,
 			notes: input.notes,
 			actionItems: [],
-			agentCommitment: { acknowledged: false, acknowledgedAt: null, comment: null },
+			agentCommitment: {
+				acknowledged: false,
+				acknowledgedAt: null,
+				comment: null,
+			},
 			status: 'SCHEDULED',
 			outcome: null,
 			followUpDate: null,
@@ -287,7 +352,9 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 	},
 
 	updateSession: (session) =>
-		set((s) => ({ sessions: s.sessions.map((x) => (x.id === session.id ? session : x)) })),
+		set((s) => ({
+			sessions: s.sessions.map((x) => (x.id === session.id ? session : x)),
+		})),
 
 	completeSession: (id, outcome, actionItems, followUpDate) => {
 		const session = get().sessions.find((s) => s.id === id);
@@ -295,7 +362,9 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 
 		set((s) => ({
 			sessions: s.sessions.map((x) =>
-				x.id === id ? { ...x, status: 'COMPLETED', outcome, actionItems, followUpDate } : x
+				x.id === id
+					? { ...x, status: 'COMPLETED', outcome, actionItems, followUpDate }
+					: x
 			),
 		}));
 
@@ -313,7 +382,9 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 	},
 
 	setSessionStatus: (id, status) =>
-		set((s) => ({ sessions: s.sessions.map((x) => (x.id === id ? { ...x, status } : x)) })),
+		set((s) => ({
+			sessions: s.sessions.map((x) => (x.id === id ? { ...x, status } : x)),
+		})),
 
 	acknowledgeActionItem: (sessionId, itemId) =>
 		set((s) => ({
@@ -323,7 +394,11 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 							...x,
 							actionItems: x.actionItems.map((item) =>
 								item.id === itemId
-									? { ...item, acknowledgedByAgent: true, acknowledgedAt: NOW_ISO }
+									? {
+											...item,
+											acknowledgedByAgent: true,
+											acknowledgedAt: NOW_ISO,
+										}
 									: item
 							),
 						}
@@ -335,13 +410,24 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 		set((s) => ({
 			sessions: s.sessions.map((x) =>
 				x.id === sessionId
-					? { ...x, agentCommitment: { acknowledged: true, acknowledgedAt: NOW_ISO, comment } }
+					? {
+							...x,
+							agentCommitment: {
+								acknowledged: true,
+								acknowledgedAt: NOW_ISO,
+								comment,
+							},
+						}
 					: x
 			),
 		})),
 
 	addCohort: (cohort) => {
-		const created: CoachingCohort = { ...cohort, id: nextCoachingId('coh'), createdAt: NOW_ISO };
+		const created: CoachingCohort = {
+			...cohort,
+			id: nextCoachingId('coh'),
+			createdAt: NOW_ISO,
+		};
 		set((s) => ({ cohorts: [created, ...s.cohorts] }));
 		get().logActivity({
 			type: 'COHORT_CREATED',
@@ -356,16 +442,22 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 	},
 
 	updateCohort: (cohort) =>
-		set((s) => ({ cohorts: s.cohorts.map((c) => (c.id === cohort.id ? cohort : c)) })),
+		set((s) => ({
+			cohorts: s.cohorts.map((c) => (c.id === cohort.id ? cohort : c)),
+		})),
 
-	deleteCohort: (id) => set((s) => ({ cohorts: s.cohorts.filter((c) => c.id !== id) })),
+	deleteCohort: (id) =>
+		set((s) => ({ cohorts: s.cohorts.filter((c) => c.id !== id) })),
 
 	snoozeAgent: (agentId, days) =>
 		set((s) => ({ snoozed: { ...s.snoozed, [agentId]: day(today(), days) } })),
 
 	logActivity: (entry) =>
 		set((s) => ({
-			activity: [{ ...entry, id: nextCoachingId('cact'), date: NOW_ISO }, ...s.activity],
+			activity: [
+				{ ...entry, id: nextCoachingId('cact'), date: NOW_ISO },
+				...s.activity,
+			],
 		})),
 }));
 

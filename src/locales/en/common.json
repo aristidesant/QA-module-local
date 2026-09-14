@@ -169,7 +169,8 @@
 			"analytics": "Analytics",
 			"reports": "Reports",
 			"groupOperations": "Operations",
-			"groupInsights": "Insights"
+			"groupInsights": "Insights",
+			"inbox": "Inbox"
 		},
 		"agent": {
 			"dashboard": "Dashboard",
@@ -203,7 +204,8 @@
 			"groupOrganization": "Organization",
 			"groupOperations": "Operations",
 			"groupConfiguration": "Configuration",
-			"groupInsights": "Insights"
+			"groupInsights": "Insights",
+			"inbox": "Inbox"
 		},
 		"operationmanager": {
 			"dashboard": "Dashboard",

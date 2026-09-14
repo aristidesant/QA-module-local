@@ -1,0 +1,170 @@
+{
+	"page": {
+		"eyebrow": {
+			"agent": "Agent · John Smith",
+			"supervisor": "Supervisor · Team 1",
+			"qa-manager": "QA Manager · All teams"
+		},
+		"title": "Inbox",
+		"description": "Alerts, recognitions, messages and updates routed to you",
+		"unread_one": "{{count}} unread",
+		"unread_other": "{{count}} unread",
+		"markAllRead": "Mark all as read",
+		"sectionTitle": "Notifications",
+		"sectionDescription": "Everything routed to you this period"
+	},
+	"table": {
+		"columns": {
+			"type": "Type",
+			"title": "Title",
+			"priority": "Priority",
+			"source": "From",
+			"about": "Agent",
+			"date": "Date"
+		},
+		"actions": {
+			"view": "View details",
+			"markRead": "Mark as read",
+			"markUnread": "Mark as unread",
+			"archive": "Archive"
+		},
+		"empty": "No notifications match the current filters"
+	},
+	"categories": {
+		"DIRECT_MESSAGE": "Message",
+		"METRIC_ALERT": "Metric alert",
+		"TREND_WARNING": "Trend warning",
+		"POSITIVE_RECOGNITION": "Recognition",
+		"WEEKLY_SUMMARY": "Weekly summary"
+	},
+	"priorities": {
+		"CRITICAL": "Critical",
+		"HIGH": "High",
+		"NORMAL": "Normal",
+		"LOW": "Low"
+	},
+	"sources": {
+		"SUPERVISOR": "Supervisor",
+		"QA_MANAGER": "QA Manager",
+		"SYSTEM": "System",
+		"AGENT": "Agent"
+	},
+	"filters": {
+		"status": {
+			"all": "All",
+			"read": "Read",
+			"unread": "Unread"
+		},
+		"types": "Types",
+		"dateFrom": "From",
+		"dateTo": "To",
+		"search": "Search title or message",
+		"clear": "Clear filters"
+	},
+	"drawer": {
+		"from": "From {{name}} · {{role}}",
+		"thread": "Conversation",
+		"noReplies": "No replies yet",
+		"replyPlaceholder": "Write a reply…",
+		"send": "Send",
+		"markUnread": "Mark as unread",
+		"archive": "Archive",
+		"actions": "Actions"
+	},
+	"reply": {
+		"title": "Reply from {{name}}"
+	},
+	"details": {
+		"metricAlert": {
+			"current": "Current",
+			"threshold": "Threshold",
+			"window": "Window",
+			"direction": {
+				"BELOW": "below",
+				"ABOVE": "above"
+			},
+			"rule": "Rule: {{name}}",
+			"cta": "Open analytics"
+		},
+		"trendWarning": {
+			"from": "Was",
+			"to": "Now",
+			"change": "Change",
+			"period": "Period",
+			"cta": "Open analytics"
+		},
+		"burnout": {
+			"level": "Risk level",
+			"levels": {
+				"medium": "Medium",
+				"high": "High"
+			},
+			"drivers": "Drivers",
+			"cta": "Reply to your supervisor",
+			"ctaManager": "Open burnout analytics"
+		},
+		"recognition": {
+			"MILESTONE": "Milestone reached",
+			"STREAK": "{{count}}-week streak",
+			"IMPROVEMENT": "Improved {{delta}}%",
+			"value": "Value"
+		},
+		"badge": {
+			"earned": "Badge earned",
+			"tier": {
+				"BRONZE": "Bronze",
+				"SILVER": "Silver",
+				"GOLD": "Gold"
+			},
+			"cta": "View my badges"
+		},
+		"weekly": {
+			"week": "Week {{label}}",
+			"highlights": "Highlights",
+			"cta": "Open analytics"
+		},
+		"coaching": {
+			"when": "When",
+			"coach": "Coach",
+			"topic": "Topic",
+			"cta": "Open coaching"
+		},
+		"lms": {
+			"content": "Content",
+			"due": "Due",
+			"overdue": "Overdue",
+			"mandatory": "Mandatory",
+			"cta": "Open assignment"
+		},
+		"followUp": {
+			"customer": "Customer",
+			"due": "Due",
+			"cta": "Open customer"
+		},
+		"dispute": {
+			"status": {
+				"open": "Open",
+				"accepted": "Accepted",
+				"rejected": "Rejected"
+			},
+			"call": "Call",
+			"score": "Score",
+			"cta": "Open dispute",
+			"statusLabel": "Status",
+			"type": "Evaluation"
+		},
+		"ranking": {
+			"events": {
+				"STARTED": "Ranking started",
+				"POSITION_CHANGED": "Position changed",
+				"MILESTONE": "Milestone reached",
+				"ENDED": "Ranking ended",
+				"WON": "You won!"
+			},
+			"rank": "Rank",
+			"previous": "was #{{rank}}",
+			"prize": "Prize",
+			"cta": "Open ranking"
+		}
+	}
+}

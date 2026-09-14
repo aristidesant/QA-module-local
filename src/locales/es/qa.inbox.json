@@ -1,0 +1,170 @@
+{
+	"page": {
+		"eyebrow": {
+			"agent": "Agente · John Smith",
+			"supervisor": "Supervisor · Equipo 1",
+			"qa-manager": "QA Manager · Todos los equipos"
+		},
+		"title": "Bandeja de entrada",
+		"description": "Alertas, reconocimientos, mensajes y novedades dirigidos a ti",
+		"unread_one": "{{count}} sin leer",
+		"unread_other": "{{count}} sin leer",
+		"markAllRead": "Marcar todo como leído",
+		"sectionTitle": "Notificaciones",
+		"sectionDescription": "Todo lo que te llegó en este periodo"
+	},
+	"table": {
+		"columns": {
+			"type": "Tipo",
+			"title": "Título",
+			"priority": "Prioridad",
+			"source": "De",
+			"about": "Agente",
+			"date": "Fecha"
+		},
+		"actions": {
+			"view": "Ver detalle",
+			"markRead": "Marcar como leído",
+			"markUnread": "Marcar como no leído",
+			"archive": "Archivar"
+		},
+		"empty": "Ninguna notificación coincide con los filtros"
+	},
+	"categories": {
+		"DIRECT_MESSAGE": "Mensaje",
+		"METRIC_ALERT": "Alerta de métrica",
+		"TREND_WARNING": "Aviso de tendencia",
+		"POSITIVE_RECOGNITION": "Reconocimiento",
+		"WEEKLY_SUMMARY": "Resumen semanal"
+	},
+	"priorities": {
+		"CRITICAL": "Crítica",
+		"HIGH": "Alta",
+		"NORMAL": "Normal",
+		"LOW": "Baja"
+	},
+	"sources": {
+		"SUPERVISOR": "Supervisor",
+		"QA_MANAGER": "QA Manager",
+		"SYSTEM": "Sistema",
+		"AGENT": "Agente"
+	},
+	"filters": {
+		"status": {
+			"all": "Todas",
+			"read": "Leídas",
+			"unread": "Sin leer"
+		},
+		"types": "Tipos",
+		"dateFrom": "Desde",
+		"dateTo": "Hasta",
+		"search": "Buscar en título o mensaje",
+		"clear": "Limpiar filtros"
+	},
+	"drawer": {
+		"from": "De {{name}} · {{role}}",
+		"thread": "Conversación",
+		"noReplies": "Todavía no hay respuestas",
+		"replyPlaceholder": "Escribe una respuesta…",
+		"send": "Enviar",
+		"markUnread": "Marcar como no leído",
+		"archive": "Archivar",
+		"actions": "Acciones"
+	},
+	"reply": {
+		"title": "Respuesta de {{name}}"
+	},
+	"details": {
+		"metricAlert": {
+			"current": "Actual",
+			"threshold": "Umbral",
+			"window": "Ventana",
+			"direction": {
+				"BELOW": "por debajo de",
+				"ABOVE": "por encima de"
+			},
+			"rule": "Regla: {{name}}",
+			"cta": "Abrir analytics"
+		},
+		"trendWarning": {
+			"from": "Antes",
+			"to": "Ahora",
+			"change": "Cambio",
+			"period": "Periodo",
+			"cta": "Abrir analytics"
+		},
+		"burnout": {
+			"level": "Nivel de riesgo",
+			"levels": {
+				"medium": "Medio",
+				"high": "Alto"
+			},
+			"drivers": "Factores",
+			"cta": "Responder a tu supervisor",
+			"ctaManager": "Abrir analytics de burnout"
+		},
+		"recognition": {
+			"MILESTONE": "Hito alcanzado",
+			"STREAK": "Racha de {{count}} semanas",
+			"IMPROVEMENT": "Mejora del {{delta}}%",
+			"value": "Valor"
+		},
+		"badge": {
+			"earned": "Insignia obtenida",
+			"tier": {
+				"BRONZE": "Bronce",
+				"SILVER": "Plata",
+				"GOLD": "Oro"
+			},
+			"cta": "Ver mis insignias"
+		},
+		"weekly": {
+			"week": "Semana {{label}}",
+			"highlights": "Destacados",
+			"cta": "Abrir analytics"
+		},
+		"coaching": {
+			"when": "Cuándo",
+			"coach": "Coach",
+			"topic": "Tema",
+			"cta": "Abrir coaching"
+		},
+		"lms": {
+			"content": "Contenido",
+			"due": "Vence",
+			"overdue": "Vencido",
+			"mandatory": "Obligatorio",
+			"cta": "Abrir asignación"
+		},
+		"followUp": {
+			"customer": "Cliente",
+			"due": "Vence",
+			"cta": "Abrir cliente"
+		},
+		"dispute": {
+			"status": {
+				"open": "Abierta",
+				"accepted": "Aceptada",
+				"rejected": "Rechazada"
+			},
+			"call": "Llamada",
+			"score": "Puntuación",
+			"cta": "Abrir disputa",
+			"statusLabel": "Estado",
+			"type": "Evaluación"
+		},
+		"ranking": {
+			"events": {
+				"STARTED": "Ranking iniciado",
+				"POSITION_CHANGED": "Cambio de posición",
+				"MILESTONE": "Hito alcanzado",
+				"ENDED": "Ranking finalizado",
+				"WON": "¡Ganaste!"
+			},
+			"rank": "Posición",
+			"previous": "antes #{{rank}}",
+			"prize": "Premio",
+			"cta": "Abrir ranking"
+		}
+	}
+}

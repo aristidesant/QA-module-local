@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Group,
 	Stack,
@@ -49,6 +50,7 @@ export const InboxFilters: React.FC<InboxFiltersProps> = ({
 	onSearchChange,
 	onClearFilters,
 }) => {
+	const { t } = useTranslation('qa.inbox');
 
 	const hasActiveFilters =
 		status !== 'all' ||
@@ -61,20 +63,22 @@ export const InboxFilters: React.FC<InboxFiltersProps> = ({
 		<Stack gap='md' className={styles.filtersContainer}>
 			<Group grow align='flex-end'>
 				<TextInput
-					placeholder='Search by title or message...'
+					placeholder={t('filters.search')}
 					leftSection={<IconSearch size={16} />}
 					value={searchQuery}
 					onChange={(e) => onSearchChange(e.currentTarget.value)}
-					rightSection={searchQuery && (
-						<ActionIcon
-							size='xs'
-							color='gray'
-							variant='transparent'
-							onClick={() => onSearchChange('')}
-						>
-							<IconX size={14} />
-						</ActionIcon>
-					)}
+					rightSection={
+						searchQuery && (
+							<ActionIcon
+								size='xs'
+								color='gray'
+								variant='transparent'
+								onClick={() => onSearchChange('')}
+							>
+								<IconX size={14} />
+							</ActionIcon>
+						)
+					}
 					className={styles.searchInput}
 				/>
 			</Group>
@@ -88,9 +92,9 @@ export const InboxFilters: React.FC<InboxFiltersProps> = ({
 							onStatusChange(value as 'all' | 'read' | 'unread')
 						}
 						data={[
-							{ label: 'All', value: 'all' },
-							{ label: 'Unread', value: 'unread' },
-							{ label: 'Read', value: 'read' },
+							{ label: t('filters.status.all'), value: 'all' },
+							{ label: t('filters.status.unread'), value: 'unread' },
+							{ label: t('filters.status.read'), value: 'read' },
 						]}
 						fullWidth
 					/>
@@ -99,13 +103,11 @@ export const InboxFilters: React.FC<InboxFiltersProps> = ({
 				<div className={styles.filterGroup}>
 					<label className={styles.filterLabel}>Type</label>
 					<MultiSelect
-						placeholder='Select notification types...'
+						placeholder={t('filters.types')}
 						data={NOTIFICATION_TYPES}
 						value={selectedTypes}
 						onChange={(value: string[]) =>
-							onTypesChange(
-								value as AgentNotification['category'][]
-							)
+							onTypesChange(value as AgentNotification['category'][])
 						}
 						clearable
 						searchable
@@ -115,8 +117,8 @@ export const InboxFilters: React.FC<InboxFiltersProps> = ({
 
 			<Group grow align='flex-end'>
 				<DateInput
-					label='From Date'
-					placeholder='Select start date'
+					label={t('filters.dateFrom')}
+					placeholder={t('filters.dateFrom')}
 					value={dateFrom}
 					onChange={(value: string | null) => {
 						const date = value ? new Date(value) : null;
@@ -126,8 +128,8 @@ export const InboxFilters: React.FC<InboxFiltersProps> = ({
 				/>
 
 				<DateInput
-					label='To Date'
-					placeholder='Select end date'
+					label={t('filters.dateTo')}
+					placeholder={t('filters.dateTo')}
 					value={dateTo}
 					onChange={(value: string | null) => {
 						const date = value ? new Date(value) : null;
@@ -143,7 +145,7 @@ export const InboxFilters: React.FC<InboxFiltersProps> = ({
 						onClick={onClearFilters}
 						className={styles.clearButton}
 					>
-						Clear Filters
+						{t('filters.clear')}
 					</Button>
 				)}
 			</Group>

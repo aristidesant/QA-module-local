@@ -1,0 +1,36 @@
+.message {
+	white-space: pre-wrap;
+}
+
+.badgeCircle {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 56px;
+	height: 56px;
+	flex: none;
+	border-radius: 50%;
+	background: var(--mantine-color-gray-light);
+	border: 1px solid var(--mantine-color-default-border);
+}
+
+.rankBlock {
+	text-align: right;
+}
+
+/* Reply bubbles: the viewer's own messages sit on the right. */
+.thread {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+}
+
+.bubble {
+	max-width: 85%;
+	align-self: flex-start;
+}
+
+.bubbleOwn {
+	align-self: flex-end;
+	background-color: var(--mantine-color-blue-light);
+}

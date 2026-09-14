@@ -56,7 +56,8 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.agent.inbox',
 		icon: <IconBell size={20} className={styles.menuIcon} />,
 		to: '/qa/agent/inbox',
-		i18nNamespace: 'qa.agent',
+		i18nNamespace: 'qa.inbox',
+		badge: 'inbox',
 	},
 	{
 		key: 'agent-rankings',
@@ -128,6 +129,14 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
 		to: '/qa/dashboards/supervisor',
 		i18nNamespace: 'qa.supervisor',
+	},
+	{
+		key: 'supervisor-inbox',
+		label: 'sidebar.supervisor.inbox',
+		icon: <IconBell size={20} className={styles.menuIcon} />,
+		to: '/qa/supervisor/inbox',
+		i18nNamespace: 'qa.inbox',
+		badge: 'inbox',
 	},
 	{
 		key: 'supervisor-team',
@@ -219,7 +228,7 @@ export const getSupervisorNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'supervisor-primary',
 			label: items[0].label, // 'sidebar.supervisor.dashboard'
-			items: [items[0]],
+			items: pick('supervisor-dashboard', 'supervisor-inbox'),
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -227,7 +236,12 @@ export const getSupervisorNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'supervisor-team',
 			label: 'sidebar.supervisor.groupTeam',
-			items: pick('supervisor-team', 'supervisor-calls', 'supervisor-customers', 'supervisor-campaigns'),
+			items: pick(
+				'supervisor-team',
+				'supervisor-calls',
+				'supervisor-customers',
+				'supervisor-campaigns'
+			),
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -251,7 +265,11 @@ export const getSupervisorNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'supervisor-insights',
 			label: 'sidebar.supervisor.groupInsights',
-			items: pick('supervisor-analytics', 'supervisor-reports', 'supervisor-rankings'),
+			items: pick(
+				'supervisor-analytics',
+				'supervisor-reports',
+				'supervisor-rankings'
+			),
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -266,6 +284,14 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		icon: <IconLayoutDashboard size={20} className={styles.menuIcon} />,
 		to: '/qa/dashboards/qa-manager',
 		i18nNamespace: 'qa.qamanager',
+	},
+	{
+		key: 'qamanager-inbox',
+		label: 'sidebar.qamanager.inbox',
+		icon: <IconBell size={20} className={styles.menuIcon} />,
+		to: '/qa/qa-manager/inbox',
+		i18nNamespace: 'qa.inbox',
+		badge: 'inbox',
 	},
 	{
 		key: 'qamanager-supervisors',
@@ -371,7 +397,7 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-primary',
 			label: items[0].label, // 'sidebar.qamanager.dashboard'
-			items: [items[0]],
+			items: pick('qamanager-dashboard', 'qamanager-inbox'),
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -379,7 +405,11 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-organization',
 			label: 'sidebar.qamanager.groupOrganization',
-			items: pick('qamanager-supervisors', 'qamanager-teams', 'qamanager-agents'),
+			items: pick(
+				'qamanager-supervisors',
+				'qamanager-teams',
+				'qamanager-agents'
+			),
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -395,7 +425,12 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'qamanager-operations',
 			label: 'sidebar.qamanager.groupOperations',
-			items: pick('qamanager-calls', 'qamanager-customers', 'qamanager-disputes', 'qamanager-campaigns'),
+			items: pick(
+				'qamanager-calls',
+				'qamanager-customers',
+				'qamanager-disputes',
+				'qamanager-campaigns'
+			),
 			collapsible: false,
 			defaultExpanded: true,
 		},

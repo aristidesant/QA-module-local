@@ -1,3 +1,114 @@
+import type {
+	BadgeTier,
+	EvaluationArea,
+	TriggerMetricId,
+} from './triggerRules';
+import type { CallEvaluationTab } from '~/views/Campaigns/types';
+
+/** Whose inbox a notification lands in. */
+export type NotificationRecipientRole = 'AGENT' | 'SUPERVISOR' | 'QA_MANAGER';
+
+/**
+ * Typed body of a notification. The inbox drawer switches on `kind` to render a
+ * detail that fits what happened, instead of showing the same text block for a
+ * metric breach, a badge and a coaching invite.
+ */
+export type NotificationPayload =
+	| { kind: 'MESSAGE' }
+	| {
+			kind: 'METRIC_ALERT';
+			area: EvaluationArea;
+			metricId: TriggerMetricId;
+			value: number;
+			threshold: number;
+			direction: 'BELOW' | 'ABOVE';
+			windowLabel: string;
+			sparkline: number[];
+			ruleName?: string;
+	  }
+	| {
+			kind: 'TREND_WARNING';
+			area: EvaluationArea;
+			metricId: TriggerMetricId;
+			from: number;
+			to: number;
+			deltaPct: number;
+			periodLabel: string;
+			sparkline: number[];
+			ruleName?: string;
+	  }
+	| {
+			kind: 'BURNOUT_RISK';
+			level: 'medium' | 'high';
+			percentage: number;
+			/** Driver keys of `burnout.drivers.*` in the qa.teamAnalytics namespace. */
+			drivers: string[];
+	  }
+	| {
+			kind: 'RECOGNITION';
+			type: 'MILESTONE' | 'STREAK' | 'IMPROVEMENT';
+			area?: EvaluationArea;
+			metricId?: TriggerMetricId;
+			value?: number;
+			streakWeeks?: number;
+			deltaPct?: number;
+	  }
+	| {
+			kind: 'BADGE_EARNED';
+			badgeId: string;
+			badgeName: string;
+			badgeIcon: string;
+			badgeColor: string;
+			tier: BadgeTier;
+			reason: string;
+	  }
+	| {
+			kind: 'WEEKLY_SUMMARY';
+			weekLabel: string;
+			kpis: { label: string; value: string; delta: number | null }[];
+			highlights: string[];
+	  }
+	| {
+			kind: 'COACHING_SESSION';
+			sessionId: string;
+			date: string;
+			coachName: string;
+			topic: string;
+	  }
+	| {
+			kind: 'LMS_ASSIGNMENT';
+			assignmentId: string;
+			contentTitle: string;
+			dueDate: string;
+			mandatory: boolean;
+	  }
+	| {
+			kind: 'FOLLOW_UP';
+			customerId: string;
+			customerName: string;
+			dueDate: string;
+	  }
+	| {
+			kind: 'DISPUTE_UPDATE';
+			disputeId: string;
+			status: 'open' | 'accepted' | 'rejected';
+			evaluationType: CallEvaluationTab;
+			callId: string;
+			agentName: string;
+			scoreBefore: number | null;
+			scoreAfter: number | null;
+	  }
+	| {
+			kind: 'RANKING_UPDATE';
+			rankingId: string;
+			rankingName: string;
+			event: 'STARTED' | 'POSITION_CHANGED' | 'MILESTONE' | 'ENDED' | 'WON';
+			rank?: number;
+			previousRank?: number;
+			prizeTitle?: string;
+			badgeName?: string;
+	  };
+
 /**
  * Agent Inbox Notification and Trigger Interfaces
  *
@@ -43,35 +154,50 @@
  * @property {string} [expiresAt] - Optional ISO timestamp after which this notification should be considered expired
  */
 export interface AgentNotification {
-  id: string;
-  agentId: string;
-  category: 'DIRECT_MESSAGE' | 'METRIC_ALERT' | 'TREND_WARNING' | 'POSITIVE_RECOGNITION' | 'WEEKLY_SUMMARY';
-  priority: 'CRITICAL' | 'HIGH' | 'NORMAL' | 'LOW';
-  title: string;
-  message: string;
-  icon: string;
-  sourceRole: 'SUPERVISOR' | 'QA_MANAGER' | 'SYSTEM';
-  sourceId?: string;
-  metric?: 'QUALITY_ASSURANCE' | 'SENTIMENT_EMOTION' | 'COMPLIANCE' | 'AUTO_FAILS';
-  read: boolean;
-  archived: boolean;
-  actioned: boolean;
-  threadId?: string;
-  replies?: Array<{
-    id: string;
-    fromRole: 'AGENT' | 'SUPERVISOR' | 'QA_MANAGER';
-    fromId: string;
-    message: string;
-    createdAt: string;
-  }>;
-  actions?: Array<{
-    label: string;
-    url: string;
-    icon: string;
-  }>;
-  createdAt: string;
-  readAt?: string;
-  expiresAt?: string;
+	id: string;
+	agentId: string;
+	category:
+		| 'DIRECT_MESSAGE'
+		| 'METRIC_ALERT'
+		| 'TREND_WARNING'
+		| 'POSITIVE_RECOGNITION'
+		| 'WEEKLY_SUMMARY';
+	priority: 'CRITICAL' | 'HIGH' | 'NORMAL' | 'LOW';
+	title: string;
+	message: string;
+	icon: string;
+	sourceRole: 'SUPERVISOR' | 'QA_MANAGER' | 'SYSTEM' | 'AGENT';
+	sourceId?: string;
+	metric?:
+		| 'QUALITY_ASSURANCE'
+		| 'SENTIMENT_EMOTION'
+		| 'COMPLIANCE'
+		| 'AUTO_FAILS';
+	read: boolean;
+	archived: boolean;
+	actioned: boolean;
+	threadId?: string;
+	replies?: Array<{
+		id: string;
+		fromRole: 'AGENT' | 'SUPERVISOR' | 'QA_MANAGER';
+		fromId: string;
+		message: string;
+		createdAt: string;
+	}>;
+	actions?: Array<{
+		label: string;
+		url: string;
+		icon: string;
+	}>;
+	createdAt: string;
+	readAt?: string;
+	expiresAt?: string;
+	/** Whose inbox this lands in. Undefined = AGENT (legacy rows). */
+	recipientRole?: NotificationRecipientRole;
+	/** SUP-001 / QAM-001 for manager inboxes. Undefined falls back to `agentId`. */
+	recipientId?: string;
+	/** Typed body driving the detail drawer. Undefined behaves as a plain message. */
+	payload?: NotificationPayload;
 }
 
 /**
@@ -112,35 +238,55 @@ export interface AgentNotification {
  * @property {string} recipients - Who receives notifications from this trigger (AGENT, TEAM, SUPERVISORS)
  */
 export interface NotificationTrigger {
-  id: string;
-  name: string;
-  category: 'DIRECT_MESSAGE' | 'METRIC_ALERT' | 'TREND_WARNING' | 'POSITIVE_RECOGNITION' | 'WEEKLY_SUMMARY';
-  priority: 'CRITICAL' | 'HIGH' | 'NORMAL' | 'LOW';
-  enabled: boolean;
-  scope: 'TEAM' | 'PLATFORM';
-  supervisorId?: string;
-  condition: 'THRESHOLD' | 'TREND' | 'ACHIEVEMENT' | 'SCHEDULED';
-  metricThreshold?: {
-    metric: 'QUALITY_ASSURANCE' | 'SENTIMENT_EMOTION' | 'COMPLIANCE' | 'AUTO_FAILS';
-    operator: '>' | '<' | '>=' | '<=';
-    value: number;
-  };
-  trendDetection?: {
-    metric: 'QUALITY_ASSURANCE' | 'SENTIMENT_EMOTION' | 'COMPLIANCE' | 'AUTO_FAILS';
-    direction: 'UP' | 'DOWN';
-    windowSize: number;
-    threshold: number;
-  };
-  achievement?: {
-    pattern: string;
-    value: number;
-  };
-  schedule?: {
-    frequency: 'WEEKLY';
-    dayOfWeek: 'MONDAY' | 'TUESDAY' | 'WEDNESDAY' | 'THURSDAY' | 'FRIDAY' | 'SATURDAY' | 'SUNDAY';
-    time: string;
-  };
-  templateId: string;
-  customMessage?: string;
-  recipients: 'AGENT' | 'TEAM' | 'SUPERVISORS';
+	id: string;
+	name: string;
+	category:
+		| 'DIRECT_MESSAGE'
+		| 'METRIC_ALERT'
+		| 'TREND_WARNING'
+		| 'POSITIVE_RECOGNITION'
+		| 'WEEKLY_SUMMARY';
+	priority: 'CRITICAL' | 'HIGH' | 'NORMAL' | 'LOW';
+	enabled: boolean;
+	scope: 'TEAM' | 'PLATFORM';
+	supervisorId?: string;
+	condition: 'THRESHOLD' | 'TREND' | 'ACHIEVEMENT' | 'SCHEDULED';
+	metricThreshold?: {
+		metric:
+			| 'QUALITY_ASSURANCE'
+			| 'SENTIMENT_EMOTION'
+			| 'COMPLIANCE'
+			| 'AUTO_FAILS';
+		operator: '>' | '<' | '>=' | '<=';
+		value: number;
+	};
+	trendDetection?: {
+		metric:
+			| 'QUALITY_ASSURANCE'
+			| 'SENTIMENT_EMOTION'
+			| 'COMPLIANCE'
+			| 'AUTO_FAILS';
+		direction: 'UP' | 'DOWN';
+		windowSize: number;
+		threshold: number;
+	};
+	achievement?: {
+		pattern: string;
+		value: number;
+	};
+	schedule?: {
+		frequency: 'WEEKLY';
+		dayOfWeek:
+			| 'MONDAY'
+			| 'TUESDAY'
+			| 'WEDNESDAY'
+			| 'THURSDAY'
+			| 'FRIDAY'
+			| 'SATURDAY'
+			| 'SUNDAY';
+		time: string;
+	};
+	templateId: string;
+	customMessage?: string;
+	recipients: 'AGENT' | 'TEAM' | 'SUPERVISORS';
 }

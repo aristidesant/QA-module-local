@@ -10,6 +10,7 @@ import type {
 	LmsPathEnrollment,
 	LmsRescheduleDecision,
 } from '~/models/qa';
+import { buildNotification } from '~/modules/qa/inbox/helpers';
 import { useNotificationStore } from '~/stores/qa/notificationStore';
 import {
 	LMS_ASSIGNMENT_SEEDS,
@@ -21,7 +22,11 @@ import {
 	seeded,
 } from '~/modules/qa/lms/mockData';
 import { AGENT_LMS_PATH } from '~/modules/qa/lms/constants';
-import { NOW_ISO, QA_MANAGER_PERSONA, SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
+import {
+	NOW_ISO,
+	QA_MANAGER_PERSONA,
+	SUPERVISOR_PERSONA,
+} from '~/modules/qa/team/constants';
 
 let counter = 900;
 export const nextLmsId = (prefix: string) => `${prefix}-${++counter}`;
@@ -58,10 +63,18 @@ interface LmsState {
 		dueDate: string | null
 	) => void;
 	setContentStatus: (contentId: string, status: LmsContentStatus) => void;
-	decideReschedule: (assignmentId: string, decision: LmsRescheduleDecision, decidedBy: string) => void;
+	decideReschedule: (
+		assignmentId: string,
+		decision: LmsRescheduleDecision,
+		decidedBy: string
+	) => void;
 	/** Agent side */
 	accept: (assignmentId: string) => void;
-	requestReschedule: (assignmentId: string, proposedDueDate: string, reason: string) => void;
+	requestReschedule: (
+		assignmentId: string,
+		proposedDueDate: string,
+		reason: string
+	) => void;
 	updateProgress: (assignmentId: string, progress: number) => void;
 	complete: (assignmentId: string, score?: number | null) => void;
 	selfEnroll: (agentId: string, contentId: string) => LmsAssignment | undefined;
@@ -72,21 +85,31 @@ interface LmsState {
 export const notifyAgent = (
 	agentId: string,
 	from: { name: string; role: LmsAssignerRole },
-	partial: Pick<AgentNotification, 'priority' | 'title' | 'message' | 'actions'>
+	partial: Pick<
+		AgentNotification,
+		'priority' | 'title' | 'message' | 'actions'
+	> &
+		Pick<Partial<AgentNotification>, 'payload'>
 ) =>
-	useNotificationStore.getState().addNotification({
-		id: nextLmsId('ntf'),
-		agentId,
-		category: 'DIRECT_MESSAGE',
-		icon: 'book',
-		sourceRole: from.role === 'QA_MANAGER' ? 'QA_MANAGER' : from.role === 'SUPERVISOR' ? 'SUPERVISOR' : 'SYSTEM',
-		sourceId: from.role === 'QA_MANAGER' ? QA_MANAGER_PERSONA.id : SUPERVISOR_PERSONA.id,
-		read: false,
-		archived: false,
-		actioned: false,
-		createdAt: NOW_ISO,
-		...partial,
-	});
+	useNotificationStore.getState().addNotification(
+		buildNotification({
+			agentId,
+			category: 'DIRECT_MESSAGE',
+			icon: 'book',
+			sourceRole:
+				from.role === 'QA_MANAGER'
+					? 'QA_MANAGER'
+					: from.role === 'SUPERVISOR'
+						? 'SUPERVISOR'
+						: 'SYSTEM',
+			sourceId:
+				from.role === 'QA_MANAGER'
+					? QA_MANAGER_PERSONA.id
+					: SUPERVISOR_PERSONA.id,
+			payload: { kind: 'MESSAGE' },
+			...partial,
+		})
+	);
 
 export const useLmsStore = create<LmsState>((set, get) => ({
 	content: LMS_CONTENT,
@@ -99,7 +122,10 @@ export const useLmsStore = create<LmsState>((set, get) => ({
 		for (const agentId of input.agentIds) {
 			for (const contentId of input.contentIds) {
 				const alreadyOpen = get().assignments.some(
-					(a) => a.agentId === agentId && a.contentId === contentId && a.status !== 'COMPLETED'
+					(a) =>
+						a.agentId === agentId &&
+						a.contentId === contentId &&
+						a.status !== 'COMPLETED'
 				);
 				if (alreadyOpen) continue;
 				created.push({
@@ -149,9 +175,17 @@ export const useLmsStore = create<LmsState>((set, get) => ({
 					priority: a.mandatory ? 'HIGH' : 'NORMAL',
 					title: `New training assigned: ${c?.title ?? a.contentId}`,
 					message: `${a.assignedBy} assigned "${c?.title ?? a.contentId}" · due ${a.dueDate}${
-						a.acceptance.status === 'PENDING' ? ' · please accept or propose a new date' : ''
+						a.acceptance.status === 'PENDING'
+							? ' · please accept or propose a new date'
+							: ''
 					}. ${a.reason}`,
-					actions: [{ label: 'Open My Learning', url: `${AGENT_LMS_PATH}?tab=assignments`, icon: 'book' }],
+					actions: [
+						{
+							label: 'Open My Learning',
+							url: `${AGENT_LMS_PATH}?tab=assignments`,
+							icon: 'book',
+						},
+					],
 				}
 			);
 		}
@@ -163,7 +197,12 @@ export const useLmsStore = create<LmsState>((set, get) => ({
 		set((s) => ({
 			enrollments: [
 				...agentIds
-					.filter((id) => !s.enrollments.some((e) => e.agentId === id && e.pathId === pathId))
+					.filter(
+						(id) =>
+							!s.enrollments.some(
+								(e) => e.agentId === id && e.pathId === pathId
+							)
+					)
 					.map((agentId) => ({
 						id: nextLmsId('enr'),
 						agentId,
@@ -181,7 +220,9 @@ export const useLmsStore = create<LmsState>((set, get) => ({
 
 	setContentStatus: (contentId, status) =>
 		set((s) => ({
-			content: s.content.map((c) => (c.id === contentId ? { ...c, status, updatedAt: TODAY } : c)),
+			content: s.content.map((c) =>
+				c.id === contentId ? { ...c, status, updatedAt: TODAY } : c
+			),
 		})),
 
 	decideReschedule: (assignmentId, decision, decidedBy) =>
@@ -210,7 +251,14 @@ export const useLmsStore = create<LmsState>((set, get) => ({
 		set((s) => ({
 			assignments: s.assignments.map((a) =>
 				a.id === assignmentId
-					? { ...a, acceptance: { ...a.acceptance, status: 'ACCEPTED', respondedAt: NOW_ISO } }
+					? {
+							...a,
+							acceptance: {
+								...a.acceptance,
+								status: 'ACCEPTED',
+								respondedAt: NOW_ISO,
+							},
+						}
 					: a
 			),
 		})),
@@ -239,7 +287,10 @@ export const useLmsStore = create<LmsState>((set, get) => ({
 				a.id === assignmentId && a.status !== 'COMPLETED'
 					? {
 							...a,
-							progress: Math.max(a.progress, Math.min(99, Math.round(progress))),
+							progress: Math.max(
+								a.progress,
+								Math.min(99, Math.round(progress))
+							),
 							status: 'IN_PROGRESS',
 							startedAt: a.startedAt ?? TODAY,
 						}
@@ -252,7 +303,9 @@ export const useLmsStore = create<LmsState>((set, get) => ({
 		if (!a) return;
 		const c = get().content.find((x) => x.id === a.contentId);
 		const rand = seeded(4441 + counter);
-		const impact = c?.impactMetricId ? buildImpact(c.impactMetricId, TODAY, rand, 'IMPROVED') : null;
+		const impact = c?.impactMetricId
+			? buildImpact(c.impactMetricId, TODAY, rand, 'IMPROVED')
+			: null;
 
 		set((s) => ({
 			assignments: s.assignments.map((x) =>
@@ -272,9 +325,16 @@ export const useLmsStore = create<LmsState>((set, get) => ({
 				if (e.agentId !== a.agentId) return e;
 				const belongs = a.pathId
 					? e.pathId === a.pathId
-					: s.paths.some((p) => p.id === e.pathId && p.modules.some((m) => m.contentId === a.contentId));
+					: s.paths.some(
+							(p) =>
+								p.id === e.pathId &&
+								p.modules.some((m) => m.contentId === a.contentId)
+						);
 				if (!belongs || e.completedContentIds.includes(a.contentId)) return e;
-				return { ...e, completedContentIds: [...e.completedContentIds, a.contentId] };
+				return {
+					...e,
+					completedContentIds: [...e.completedContentIds, a.contentId],
+				};
 			}),
 		}));
 	},
@@ -294,7 +354,8 @@ export const useLmsStore = create<LmsState>((set, get) => ({
 		return created;
 	},
 
-	selfEnrollPath: (agentId, pathId) => get().enroll([agentId], pathId, 'You', 'SELF', null),
+	selfEnrollPath: (agentId, pathId) =>
+		get().enroll([agentId], pathId, 'You', 'SELF', null),
 }));
 
 export const selectAssignments = (s: LmsState) => s.assignments;

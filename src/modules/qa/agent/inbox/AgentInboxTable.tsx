@@ -1,11 +1,5 @@
 import React from 'react';
-import {
-	Badge,
-	Tooltip,
-	Group,
-	ActionIcon,
-	Text,
-} from '@mantine/core';
+import { Badge, Tooltip, Group, ActionIcon, Text } from '@mantine/core';
 import {
 	IconCircleFilled,
 	IconArchive,
@@ -13,9 +7,12 @@ import {
 	IconChevronRight,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import { personNameOf } from '~/modules/qa/inbox/constants';
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
-import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable/BaseTable';
+import BaseTable, {
+	type BaseTableColumnDef,
+} from '~/components/BaseTable/BaseTable';
 import type { AgentNotification } from '~/models/qa/notifications';
 import styles from './AgentInboxTable.module.css';
 
@@ -25,6 +22,8 @@ export interface AgentInboxTableProps {
 	notifications: AgentNotification[];
 	onMarkRead: (id: string) => void;
 	onMarkUnread: (id: string) => void;
+	/** Managers also see which agent each notification is about. */
+	showAbout?: boolean;
 	onArchive: (id: string) => void;
 	onViewDetails: (id: string) => void;
 	isLoading?: boolean;
@@ -45,39 +44,16 @@ const getPriorityColor = (priority: AgentNotification['priority']) => {
 	}
 };
 
-const getCategoryLabel = (category: AgentNotification['category']) => {
-	const categoryMap: Record<AgentNotification['category'], string> = {
-		DIRECT_MESSAGE: 'Direct Message',
-		METRIC_ALERT: 'Metric Alert',
-		TREND_WARNING: 'Trend Warning',
-		POSITIVE_RECOGNITION: 'Recognition',
-		WEEKLY_SUMMARY: 'Weekly Summary',
-	};
-	return categoryMap[category] || category;
-};
-
-const getSourceLabel = (sourceRole: AgentNotification['sourceRole']) => {
-	switch (sourceRole) {
-		case 'SUPERVISOR':
-			return 'Supervisor';
-		case 'QA_MANAGER':
-			return 'QA Manager';
-		case 'SYSTEM':
-			return 'System';
-		default:
-			return sourceRole;
-	}
-};
-
 export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 	notifications,
 	onMarkRead,
 	onMarkUnread,
 	onArchive,
 	onViewDetails,
+	showAbout = false,
 	isLoading = false,
 }) => {
-	const { t } = useTranslation();
+	const { t } = useTranslation('qa.inbox');
 
 	const columns: BaseTableColumnDef<AgentNotification>[] = [
 		{
@@ -85,7 +61,13 @@ export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 			header: '',
 			size: 50,
 			cell: ({ row }) => (
-				<Tooltip label={row.original.read ? 'Mark as unread' : 'Mark as read'}>
+				<Tooltip
+					label={
+						row.original.read
+							? t('table.actions.markUnread')
+							: t('table.actions.markRead')
+					}
+				>
 					<ActionIcon
 						variant='subtle'
 						size='sm'
@@ -100,7 +82,11 @@ export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 					>
 						<IconCircleFilled
 							size={14}
-							color={row.original.read ? 'var(--mantine-color-gray-4)' : 'var(--mantine-color-blue-6)'}
+							color={
+								row.original.read
+									? 'var(--mantine-color-gray-4)'
+									: 'var(--mantine-color-blue-6)'
+							}
 							style={{ fill: 'currentColor' }}
 						/>
 					</ActionIcon>
@@ -109,7 +95,7 @@ export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 		},
 		{
 			accessorKey: 'category',
-			header: 'Type',
+			header: t('table.columns.type'),
 			size: 130,
 			cell: ({ row }) => (
 				<Badge
@@ -119,14 +105,14 @@ export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 						'data-category': row.original.category,
 					}}
 				>
-					{getCategoryLabel(row.original.category)}
+					{t(`categories.${row.original.category}`)}
 				</Badge>
 			),
 			enableSorting: true,
 		},
 		{
 			accessorKey: 'title',
-			header: 'Title',
+			header: t('table.columns.title'),
 			size: 300,
 			cell: ({ row }) => (
 				<Text
@@ -138,9 +124,23 @@ export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 				</Text>
 			),
 		},
+		...(showAbout
+			? [
+					{
+						accessorKey: 'agentId',
+						header: t('table.columns.about'),
+						size: 150,
+						cell: ({ row }: { row: { original: AgentNotification } }) => (
+							<Text size='sm' c='dimmed'>
+								{personNameOf(row.original.agentId) ?? row.original.agentId}
+							</Text>
+						),
+					} as BaseTableColumnDef<AgentNotification>,
+				]
+			: []),
 		{
 			accessorKey: 'priority',
-			header: 'Priority',
+			header: t('table.columns.priority'),
 			size: 100,
 			cell: ({ row }) => (
 				<Badge
@@ -148,27 +148,27 @@ export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 					variant='filled'
 					size='sm'
 				>
-					{row.original.priority}
+					{t(`priorities.${row.original.priority}`)}
 				</Badge>
 			),
 			enableSorting: true,
 		},
 		{
 			accessorKey: 'sourceRole',
-			header: 'Source',
+			header: t('table.columns.source'),
 			size: 110,
 			cell: ({ row }) => (
-				<Text size='sm'>
-					{getSourceLabel(row.original.sourceRole)}
-				</Text>
+				<Text size='sm'>{t(`sources.${row.original.sourceRole}`)}</Text>
 			),
 		},
 		{
 			accessorKey: 'createdAt',
-			header: 'Date',
+			header: t('table.columns.date'),
 			size: 150,
 			cell: ({ row }) => (
-				<Tooltip label={dayjs(row.original.createdAt).format('YYYY-MM-DD HH:mm')}>
+				<Tooltip
+					label={dayjs(row.original.createdAt).format('YYYY-MM-DD HH:mm')}
+				>
 					<Text size='sm' c='dimmed'>
 						{dayjs(row.original.createdAt).fromNow()}
 					</Text>
@@ -182,7 +182,7 @@ export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 			size: 100,
 			cell: ({ row }) => (
 				<Group gap='xs' justify='flex-end'>
-					<Tooltip label='View details'>
+					<Tooltip label={t('table.actions.view')}>
 						<ActionIcon
 							variant='subtle'
 							size='sm'
@@ -194,7 +194,7 @@ export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 							<IconChevronRight size={16} />
 						</ActionIcon>
 					</Tooltip>
-					<Tooltip label='Archive'>
+					<Tooltip label={t('table.actions.archive')}>
 						<ActionIcon
 							variant='subtle'
 							size='sm'
@@ -207,7 +207,7 @@ export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 						</ActionIcon>
 					</Tooltip>
 					{row.original.read && (
-						<Tooltip label='Mark as read'>
+						<Tooltip label={t('table.actions.markRead')}>
 							<ActionIcon
 								variant='subtle'
 								size='sm'
@@ -231,7 +231,7 @@ export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 			columns={columns}
 			getRowId={(row) => row.id}
 			isLoading={isLoading}
-			emptyMessage={t('status.noData')}
+			emptyMessage={t('table.empty')}
 			initialSort={[{ id: 'createdAt', desc: true }]}
 			onRowClick={(notification) => onViewDetails(notification.id)}
 			className={styles.inboxTable}

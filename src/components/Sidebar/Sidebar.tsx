@@ -73,6 +73,15 @@ import { useRoleMockStore } from '~/stores/roleMockStore';
 import type { PreviewRole } from '~/constants/previewRole';
 import UserMenu from '../UserMenu';
 import { useDisputesQuery } from '~/queries/qa/disputesQueries';
+import {
+	useNotificationStore,
+	selectNotifications,
+} from '~/stores/qa/notificationStore';
+import {
+	INBOX_IDENTITY,
+	inboxRoleFromPath,
+} from '~/modules/qa/inbox/constants';
+import { unreadCountFor } from '~/modules/qa/inbox/helpers';
 import { roleNavigationGroupedMap, type NavGroup } from './roleNavigation';
 
 export type SidebarNavItem = {
@@ -90,7 +99,7 @@ export type SidebarNavItem = {
 	roleCodes?: readonly string[];
 	disabled?: boolean;
 	/** Badge type to display count or status indicator */
-	badge?: 'disputes';
+	badge?: 'disputes' | 'inbox';
 };
 
 type SidebarSection = {
@@ -1070,9 +1079,22 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 		{ limit: 1 },
 		item.badge === 'disputes'
 	);
+	const notifications = useNotificationStore(selectNotifications);
 
 	const isSelected = isLinkActive(item, location.pathname);
 	const openDisputesCount = disputesQuery.data?.total ?? 0;
+	/** Unread count of the inbox this link points at (agent / supervisor / QA manager). */
+	const inboxUnread = useMemo(() => {
+		if (item.badge !== 'inbox') return 0;
+		const me = INBOX_IDENTITY[inboxRoleFromPath(item.to)];
+		return unreadCountFor(notifications, me.role, me.id);
+	}, [item.badge, item.to, notifications]);
+	const badgeCount =
+		item.badge === 'inbox'
+			? inboxUnread
+			: item.badge === 'disputes'
+				? openDisputesCount
+				: 0;
 
 	// If disabled, show as a div instead of a link with lock icon
 	if (item.disabled) {
@@ -1135,9 +1157,9 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 			{!collapsed && (
 				<Group gap={8} justify='space-between' flex={1}>
 					<span className={styles.menuText}>{t(item.label)}</span>
-					{item.badge === 'disputes' && openDisputesCount > 0 && (
+					{badgeCount > 0 && (
 						<Badge size='sm' variant='filled'>
-							{openDisputesCount}
+							{badgeCount}
 						</Badge>
 					)}
 				</Group>
