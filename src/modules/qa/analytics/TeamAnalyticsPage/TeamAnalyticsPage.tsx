@@ -9,6 +9,9 @@ import FilterBar from './FilterBar';
 import KPIStrip from './KPIStrip';
 import SavedViewsMenu from './SavedViewsMenu';
 import { SegmentationView } from './Segmentation';
+import { BusinessView } from './Business';
+import { FinderView } from './Finder';
+import { BurnoutView } from './Burnout';
 import { DEFAULT_VIEW, VIEW_PARAM } from '../constants';
 import type { TeamAnalyticsView } from '../types';
 import styles from './TeamAnalyticsPage.module.css';
@@ -34,38 +37,11 @@ function TeamAnalyticsPageContent() {
 			case 'compliance':
 				return <SegmentationView viewType={currentView} />;
 			case 'business':
-				return (
-					<Group justify='center' py='xl'>
-						<Stack align='center' gap='xs'>
-							<Loader type='dots' />
-							<Text size='sm' c='dimmed'>
-								Business Insights view - Coming soon
-							</Text>
-						</Stack>
-					</Group>
-				);
+				return <BusinessView />;
 			case 'finder':
-				return (
-					<Group justify='center' py='xl'>
-						<Stack align='center' gap='xs'>
-							<Loader type='dots' />
-							<Text size='sm' c='dimmed'>
-								Agent Finder view - Coming soon
-							</Text>
-						</Stack>
-					</Group>
-				);
+				return <FinderView />;
 			case 'burnout':
-				return (
-					<Group justify='center' py='xl'>
-						<Stack align='center' gap='xs'>
-							<Loader type='dots' />
-							<Text size='sm' c='dimmed'>
-								Burnout Risk view - Coming soon
-							</Text>
-						</Stack>
-					</Group>
-				);
+				return <BurnoutView />;
 			default:
 				return (
 					<Group justify='center' py='xl'>
