@@ -1,23 +1,45 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Stack, Group, TextInput, SegmentedControl, Checkbox, Button, Text, Select } from '@mantine/core';
+import {
+	Stack,
+	Group,
+	TextInput,
+	Checkbox,
+	Button,
+	Select,
+} from '@mantine/core';
 import { useAgentAnalyticsStore } from '~/stores/qa/agentAnalyticsStore';
 import { ANALYTICS_CAMPAIGNS } from '~/modules/qa/dashboard/mockData';
 
 interface DateRangeAndGranularityControlProps {
-	onApply?: (range: { from: Date; to: Date }, granularity: string, compare: boolean) => void;
+	onApply?: (
+		range: { from: Date; to: Date },
+		granularity: string,
+		compare: boolean
+	) => void;
 }
 
-export const DateRangeAndGranularityControl: React.FC<DateRangeAndGranularityControlProps> = ({
-	onApply,
-}) => {
+export const DateRangeAndGranularityControl: React.FC<
+	DateRangeAndGranularityControlProps
+> = ({ onApply }) => {
 	const { t } = useTranslation('qa.agent.analytics');
-	const { dateRange, setDateRange, granularity, setGranularity, compareWithPrevious, toggleComparison, selectedCampaign, setCampaign } = useAgentAnalyticsStore();
+	const {
+		dateRange,
+		setDateRange,
+		granularity,
+		compareWithPrevious,
+		toggleComparison,
+		selectedCampaign,
+		setCampaign,
+	} = useAgentAnalyticsStore();
 
 	// Local state for form inputs
-	const [fromDate, setFromDate] = useState<string>(dateRange.from.toISOString().split('T')[0]);
-	const [toDate, setToDate] = useState<string>(dateRange.to.toISOString().split('T')[0]);
-	const [selectedGranularity, setSelectedGranularity] = useState<string>(granularity);
+	const [fromDate, setFromDate] = useState<string>(
+		dateRange.from.toISOString().split('T')[0]
+	);
+	const [toDate, setToDate] = useState<string>(
+		dateRange.to.toISOString().split('T')[0]
+	);
 	const [compare, setCompare] = useState<boolean>(compareWithPrevious);
 
 	const handleApply = () => {
@@ -25,7 +47,6 @@ export const DateRangeAndGranularityControl: React.FC<DateRangeAndGranularityCon
 		const to = new Date(toDate);
 
 		setDateRange({ from, to });
-		setGranularity(selectedGranularity as 'per-call' | 'daily' | 'weekly' | 'monthly');
 
 		if (compare !== compareWithPrevious) {
 			toggleComparison();
@@ -33,7 +54,7 @@ export const DateRangeAndGranularityControl: React.FC<DateRangeAndGranularityCon
 
 		// Call optional callback
 		if (onApply) {
-			onApply({ from, to }, selectedGranularity, compare);
+			onApply({ from, to }, granularity, compare);
 		}
 	};
 
@@ -59,28 +80,12 @@ export const DateRangeAndGranularityControl: React.FC<DateRangeAndGranularityCon
 			<Select
 				label={t('filters.campaign')}
 				placeholder={t('filters.allCampaigns')}
-				data={ANALYTICS_CAMPAIGNS.map(c => ({ value: c.id, label: c.name }))}
+				data={ANALYTICS_CAMPAIGNS.map((c) => ({ value: c.id, label: c.name }))}
 				value={selectedCampaign}
 				onChange={(value) => setCampaign(value)}
 				clearable
 				searchable
 			/>
-
-			{/* Granularity Control */}
-			<Stack gap='xs'>
-				<Text size='sm' fw={500}>{t('controls.granularity')}</Text>
-				<SegmentedControl
-					fullWidth
-					data={[
-						{ label: t('controls.granularityOptions.perCall'), value: 'per-call' },
-						{ label: t('controls.granularityOptions.daily'), value: 'daily' },
-						{ label: t('controls.granularityOptions.weekly'), value: 'weekly' },
-						{ label: t('controls.granularityOptions.monthly'), value: 'monthly' },
-					]}
-					value={selectedGranularity}
-					onChange={setSelectedGranularity}
-				/>
-			</Stack>
 
 			{/* Comparison Checkbox */}
 			<Checkbox
