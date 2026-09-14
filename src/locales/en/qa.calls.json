@@ -6,6 +6,7 @@
 			"period": "Period",
 			"dateFrom": "Date from",
 			"dateTo": "Date to",
+			"evaluationType": "Evaluation type",
 			"scoreMin": "Score min",
 			"scoreMax": "Score max",
 			"autoFailOnly": "Auto-fails only",
@@ -28,6 +29,11 @@
 		"30d": "Last 30 days",
 		"90d": "Last 90 days",
 		"all": "All time"
+	},
+	"evaluationType": {
+		"qa": "QA",
+		"sentiment": "Sentiment & Emotion",
+		"compliance": "Compliance"
 	},
 	"roster": {
 		"tab": "Roster",

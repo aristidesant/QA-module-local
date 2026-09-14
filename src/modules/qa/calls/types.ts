@@ -1,8 +1,12 @@
 import type { RosterAgent } from '~/modules/qa/team/types';
 
+/** The evaluation aspect a My Calls score-range filter can target — each has its own scale. */
+export type MyCallsEvaluationType = 'qa' | 'sentiment' | 'compliance';
+
 /**
- * One of the agent's own calls (My Calls page). `qaScore` is kept only to
- * back the score-range filter — the table itself never renders a score column.
+ * One of the agent's own calls (My Calls page). The score fields are kept
+ * only to back the score-range filter — the table itself never renders a
+ * score column.
  */
 export interface AgentCallRow {
 	id: string; // TeamCallMetric.id
@@ -14,6 +18,8 @@ export interface AgentCallRow {
 	autoFail: boolean;
 	autoFailCount: number; // critical errors behind the auto-fail (0 when !autoFail)
 	qaScore: number; // 0-100, filter-only — not displayed
+	sentimentScore: number; // 1-5 (customer sentiment), filter-only — not displayed
+	complianceScore: number; // 0-100 (average of security/regulatory/legal), filter-only — not displayed
 }
 
 /** Row of the campaign Conversations table — same shape CampaignDetail already filters on. */

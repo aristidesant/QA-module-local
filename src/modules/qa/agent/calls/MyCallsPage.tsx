@@ -7,6 +7,7 @@ import {
 	Button,
 	Group,
 	SegmentedControl,
+	Select,
 	Stack,
 	Switch,
 	Text,
@@ -22,10 +23,14 @@ import { AGENT_PERSONA_ID, NOW_ISO } from '~/modules/qa/team/constants';
 import { formatDateTime, formatSeconds } from '~/modules/qa/team/helpers';
 import { buildAgentCalls } from '~/modules/qa/calls/helpers';
 import {
+	MY_CALLS_EVALUATION_TYPES,
 	MY_CALLS_PERIODS,
 	type MyCallsPeriod,
 } from '~/modules/qa/calls/constants';
-import type { AgentCallRow } from '~/modules/qa/calls/types';
+import type {
+	AgentCallRow,
+	MyCallsEvaluationType,
+} from '~/modules/qa/calls/types';
 import styles from './MyCallsPage.module.css';
 
 const helper = createColumnHelper<AgentCallRow>();
@@ -35,6 +40,7 @@ interface FiltersState {
 	from: Date | null;
 	to: Date | null;
 	autoFailOnly: boolean;
+	evaluationType: MyCallsEvaluationType;
 	scoreMin: number | null;
 	scoreMax: number | null;
 }
@@ -44,6 +50,7 @@ const DEFAULT_FILTERS: FiltersState = {
 	from: null,
 	to: null,
 	autoFailOnly: false,
+	evaluationType: 'qa',
 	scoreMin: null,
 	scoreMax: null,
 };
@@ -89,15 +96,25 @@ export default function MyCallsPage() {
 			result = result.filter((r) => r.autoFail);
 		}
 
-		if (filters.scoreMin !== null) {
-			result = result.filter((r) => r.qaScore >= filters.scoreMin!);
-		}
-		if (filters.scoreMax !== null) {
-			result = result.filter((r) => r.qaScore <= filters.scoreMax!);
+		if (filters.scoreMin !== null || filters.scoreMax !== null) {
+			const scoreField =
+				MY_CALLS_EVALUATION_TYPES.find(
+					(t) => t.value === filters.evaluationType
+				)?.scoreField ?? 'qaScore';
+			if (filters.scoreMin !== null) {
+				result = result.filter((r) => r[scoreField] >= filters.scoreMin!);
+			}
+			if (filters.scoreMax !== null) {
+				result = result.filter((r) => r[scoreField] <= filters.scoreMax!);
+			}
 		}
 
 		return result;
 	}, [rows, filters]);
+
+	const activeEvaluationType =
+		MY_CALLS_EVALUATION_TYPES.find((t) => t.value === filters.evaluationType) ??
+		MY_CALLS_EVALUATION_TYPES[0];
 
 	const columns: BaseTableColumnDef<AgentCallRow>[] = [
 		helper.accessor('date', {
@@ -188,12 +205,34 @@ export default function MyCallsPage() {
 							clearable
 							size='sm'
 						/>
+						<Select
+							label={t('myCalls.filters.evaluationType')}
+							value={filters.evaluationType}
+							onChange={(value) =>
+								setFilters((f) => ({
+									...f,
+									evaluationType: (value as MyCallsEvaluationType) ?? 'qa',
+									// Each aspect scores on a different scale — clear the range
+									// rather than carry over values that no longer make sense.
+									scoreMin: null,
+									scoreMax: null,
+								}))
+							}
+							data={MY_CALLS_EVALUATION_TYPES.map((type) => ({
+								value: type.value,
+								label: t(type.labelKey),
+							}))}
+							allowDeselect={false}
+							size='sm'
+							w={180}
+						/>
 						<TextInput
 							label={t('myCalls.filters.scoreMin')}
 							type='number'
-							placeholder='0'
-							min={0}
-							max={100}
+							placeholder={String(activeEvaluationType.min)}
+							min={activeEvaluationType.min}
+							max={activeEvaluationType.max}
+							step={activeEvaluationType.step}
 							value={filters.scoreMin ?? ''}
 							onChange={(e) => {
 								const value = e.currentTarget.value;
@@ -208,9 +247,10 @@ export default function MyCallsPage() {
 						<TextInput
 							label={t('myCalls.filters.scoreMax')}
 							type='number'
-							placeholder='100'
-							min={0}
-							max={100}
+							placeholder={String(activeEvaluationType.max)}
+							min={activeEvaluationType.min}
+							max={activeEvaluationType.max}
+							step={activeEvaluationType.step}
 							value={filters.scoreMax ?? ''}
 							onChange={(e) => {
 								const value = e.currentTarget.value;

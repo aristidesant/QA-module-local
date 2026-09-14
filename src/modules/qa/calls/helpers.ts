@@ -20,6 +20,15 @@ export const rosterCampaignIdFor = (
 const criticalErrors = (c: TeamCallMetric) =>
 	c.qaScores.ecn + c.qaScores.ecc + c.qaScores.ecuf;
 
+/** Average of the three compliance areas, rounded to a whole 0-100 score. */
+const complianceScoreFor = (c: TeamCallMetric) =>
+	Math.round(
+		(c.complianceByArea.security.score +
+			c.complianceByArea.regulatory.score +
+			c.complianceByArea.legal.score) /
+			3
+	);
+
 /** The agent's own calls, newest first. */
 export const buildAgentCalls = (agentId: string): AgentCallRow[] =>
 	TEAM_CALLS.filter((c) => c.agentId === agentId)
@@ -33,6 +42,8 @@ export const buildAgentCalls = (agentId: string): AgentCallRow[] =>
 			autoFail: c.autoFail,
 			autoFailCount: c.autoFail ? criticalErrors(c) : 0,
 			qaScore: c.qaScore,
+			sentimentScore: c.customerSentiment,
+			complianceScore: complianceScoreFor(c),
 		}))
 		.sort((a, b) => b.date.localeCompare(a.date));
 
