@@ -67,3 +67,13 @@
 	font-size: 0.75em;
 	margin-left: 2px;
 }
+
+.segmentationTable {
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-gray-2);
+	overflow: hidden;
+}
+
+.actionColumn {
+	width: 40px;
+}

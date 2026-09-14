@@ -8,6 +8,9 @@ import ViewSelector from './ViewSelector';
 import FilterBar from './FilterBar';
 import KPIStrip from './KPIStrip';
 import SavedViewsMenu from './SavedViewsMenu';
+import { SegmentationView } from './Segmentation';
+import { DEFAULT_VIEW, VIEW_PARAM } from '../constants';
+import type { TeamAnalyticsView } from '../types';
 import styles from './TeamAnalyticsPage.module.css';
 
 function TeamAnalyticsPageContent() {
@@ -16,9 +19,66 @@ function TeamAnalyticsPageContent() {
 	const role = roleFromPath(location.pathname);
 	const isManager = role === 'qa-manager';
 
+	const params = new URLSearchParams(location.search);
+	const currentView =
+		(params.get(VIEW_PARAM) as TeamAnalyticsView) || DEFAULT_VIEW;
+
 	const eyebrow = isManager
 		? t('page.eyebrow.manager')
 		: t('page.eyebrow.supervisor');
+
+	const renderContent = () => {
+		switch (currentView) {
+			case 'qa':
+			case 'sentiment':
+			case 'compliance':
+				return <SegmentationView viewType={currentView} />;
+			case 'business':
+				return (
+					<Group justify='center' py='xl'>
+						<Stack align='center' gap='xs'>
+							<Loader type='dots' />
+							<Text size='sm' c='dimmed'>
+								Business Insights view - Coming soon
+							</Text>
+						</Stack>
+					</Group>
+				);
+			case 'finder':
+				return (
+					<Group justify='center' py='xl'>
+						<Stack align='center' gap='xs'>
+							<Loader type='dots' />
+							<Text size='sm' c='dimmed'>
+								Agent Finder view - Coming soon
+							</Text>
+						</Stack>
+					</Group>
+				);
+			case 'burnout':
+				return (
+					<Group justify='center' py='xl'>
+						<Stack align='center' gap='xs'>
+							<Loader type='dots' />
+							<Text size='sm' c='dimmed'>
+								Burnout Risk view - Coming soon
+							</Text>
+						</Stack>
+					</Group>
+				);
+			default:
+				return (
+					<Group justify='center' py='xl'>
+						<Stack align='center' gap='xs'>
+							<Loader type='dots' />
+							<Text size='sm' c='dimmed'>
+								Loading analytics view...
+							</Text>
+						</Stack>
+					</Group>
+				);
+		}
+	};
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -42,16 +102,7 @@ function TeamAnalyticsPageContent() {
 
 				<KPIStrip />
 
-				<div className={styles.contentArea}>
-					<Group justify='center' py='xl'>
-						<Stack align='center' gap='xs'>
-							<Loader type='dots' />
-							<Text size='sm' c='dimmed'>
-								Loading analytics view...
-							</Text>
-						</Stack>
-					</Group>
-				</div>
+				<div className={styles.contentArea}>{renderContent()}</div>
 			</div>
 		</ContentContainer>
 	);
