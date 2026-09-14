@@ -6,6 +6,8 @@
 			"period": "Período",
 			"dateFrom": "Fecha desde",
 			"dateTo": "Fecha hasta",
+			"scoreMin": "Score mínimo",
+			"scoreMax": "Score máximo",
 			"autoFailOnly": "Solo con auto-fails",
 			"clear": "Limpiar"
 		},

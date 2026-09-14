@@ -6,6 +6,8 @@
 			"period": "Period",
 			"dateFrom": "Date from",
 			"dateTo": "Date to",
+			"scoreMin": "Score min",
+			"scoreMax": "Score max",
 			"autoFailOnly": "Auto-fails only",
 			"clear": "Clear"
 		},

@@ -1,6 +1,9 @@
 import type { RosterAgent } from '~/modules/qa/team/types';
 
-/** One of the agent's own calls (My Calls page). Deliberately carries no score. */
+/**
+ * One of the agent's own calls (My Calls page). `qaScore` is kept only to
+ * back the score-range filter — the table itself never renders a score column.
+ */
 export interface AgentCallRow {
 	id: string; // TeamCallMetric.id
 	callId: string; // id used in /qa/campaigns/:campaignId/calls/:callId
@@ -10,6 +13,7 @@ export interface AgentCallRow {
 	durationSeconds: number;
 	autoFail: boolean;
 	autoFailCount: number; // critical errors behind the auto-fail (0 when !autoFail)
+	qaScore: number; // 0-100, filter-only — not displayed
 }
 
 /** Row of the campaign Conversations table — same shape CampaignDetail already filters on. */

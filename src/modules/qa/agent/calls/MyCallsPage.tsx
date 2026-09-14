@@ -10,6 +10,7 @@ import {
 	Stack,
 	Switch,
 	Text,
+	TextInput,
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
 import { IconX } from '@tabler/icons-react';
@@ -34,6 +35,8 @@ interface FiltersState {
 	from: Date | null;
 	to: Date | null;
 	autoFailOnly: boolean;
+	scoreMin: number | null;
+	scoreMax: number | null;
 }
 
 const DEFAULT_FILTERS: FiltersState = {
@@ -41,6 +44,8 @@ const DEFAULT_FILTERS: FiltersState = {
 	from: null,
 	to: null,
 	autoFailOnly: false,
+	scoreMin: null,
+	scoreMax: null,
 };
 
 export default function MyCallsPage() {
@@ -82,6 +87,13 @@ export default function MyCallsPage() {
 
 		if (filters.autoFailOnly) {
 			result = result.filter((r) => r.autoFail);
+		}
+
+		if (filters.scoreMin !== null) {
+			result = result.filter((r) => r.qaScore >= filters.scoreMin!);
+		}
+		if (filters.scoreMax !== null) {
+			result = result.filter((r) => r.qaScore <= filters.scoreMax!);
 		}
 
 		return result;
@@ -175,6 +187,40 @@ export default function MyCallsPage() {
 							}}
 							clearable
 							size='sm'
+						/>
+						<TextInput
+							label={t('myCalls.filters.scoreMin')}
+							type='number'
+							placeholder='0'
+							min={0}
+							max={100}
+							value={filters.scoreMin ?? ''}
+							onChange={(e) => {
+								const value = e.currentTarget.value;
+								setFilters((f) => ({
+									...f,
+									scoreMin: value ? Number(value) : null,
+								}));
+							}}
+							size='sm'
+							w={100}
+						/>
+						<TextInput
+							label={t('myCalls.filters.scoreMax')}
+							type='number'
+							placeholder='100'
+							min={0}
+							max={100}
+							value={filters.scoreMax ?? ''}
+							onChange={(e) => {
+								const value = e.currentTarget.value;
+								setFilters((f) => ({
+									...f,
+									scoreMax: value ? Number(value) : null,
+								}));
+							}}
+							size='sm'
+							w={100}
 						/>
 						<Switch
 							label={t('myCalls.filters.autoFailOnly')}

@@ -32,6 +32,7 @@ export const buildAgentCalls = (agentId: string): AgentCallRow[] =>
 			durationSeconds: c.handleTimeSeconds,
 			autoFail: c.autoFail,
 			autoFailCount: c.autoFail ? criticalErrors(c) : 0,
+			qaScore: c.qaScore,
 		}))
 		.sort((a, b) => b.date.localeCompare(a.date));
 
