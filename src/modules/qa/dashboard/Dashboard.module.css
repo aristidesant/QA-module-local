@@ -51,3 +51,12 @@
 .gridCard {
 	height: 100%;
 }
+
+/* Highlights the logged-in agent's own row in RankingsTable. */
+.currentAgentRow {
+	background-color: light-dark(
+		var(--mantine-color-blue-0),
+		var(--mantine-color-blue-9)
+	);
+	box-shadow: inset 3px 0 0 var(--mantine-color-blue-5);
+}

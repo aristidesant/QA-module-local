@@ -30,6 +30,8 @@ export type ReactionCounts = Record<ReactionType, number>;
 export interface RankingEntry {
 	position: number;
 	name: string;
+	/** Matched against `currentAgentId` to highlight the logged-in agent's own row. */
+	agentId?: string;
 	score: number;
 	scoreDetails?: Record<string, number>;
 	reactions: ReactionCounts;
@@ -64,7 +66,10 @@ interface RankingsTableProps {
 	goal?: RankingGoal;
 	onReact?: (position: number, reactionType: ReactionType) => void;
 	onViewAll?: () => void;
-	currentAgentId?: number;
+	/** The logged-in agent's id — highlights their row when it appears in `entries`. */
+	currentAgentId?: string;
+	/** The logged-in agent's own rank, shown even when it falls outside `maxDisplay`. */
+	myPosition?: { rank: number; total: number } | null;
 	compact?: boolean;
 }
 
@@ -214,6 +219,8 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 	goal,
 	onReact,
 	onViewAll,
+	currentAgentId,
+	myPosition,
 	compact = false,
 }) => {
 	/** Per-entry reaction the current user has given (mockup-local state) */
@@ -279,11 +286,18 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 							{description}
 						</Text>
 					</div>
-					{onViewAll && (
-						<Button variant='subtle' size='xs' onClick={onViewAll}>
-							View All →
-						</Button>
-					)}
+					<Group gap='sm' align='center'>
+						{myPosition && (
+							<Badge variant='light' color='blue' size='lg'>
+								Your rank: #{myPosition.rank} of {myPosition.total}
+							</Badge>
+						)}
+						{onViewAll && (
+							<Button variant='subtle' size='xs' onClick={onViewAll}>
+								View All →
+							</Button>
+						)}
+					</Group>
 				</Group>
 
 				{goal && <RankingGoalBanner goal={goal} />}
@@ -313,7 +327,14 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 								</Table.Tr>
 							) : (
 								displayEntries.map((entry) => (
-									<Table.Tr key={entry.position}>
+									<Table.Tr
+										key={entry.position}
+										className={
+											entry.agentId && entry.agentId === currentAgentId
+												? styles.currentAgentRow
+												: undefined
+										}
+									>
 										<Table.Td>
 											<MedalIcon position={entry.position} />
 										</Table.Td>
@@ -323,6 +344,12 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 												<div>
 													<Text fw={500} size='sm'>
 														{entry.name}
+														{entry.agentId &&
+															entry.agentId === currentAgentId && (
+																<Text span c='blue' fw={600} size='xs' ml={6}>
+																	(You)
+																</Text>
+															)}
 													</Text>
 												</div>
 											</Group>

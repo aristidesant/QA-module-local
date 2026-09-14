@@ -15,6 +15,7 @@ import {
 } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
+import { AGENT_PERSONA_ID } from '~/modules/qa/team/constants';
 import {
 	AGENT_WEEKLY_METRICS,
 	AGENT_SENTIMENT_TREND,
@@ -46,10 +47,11 @@ const DEFAULT_AGENT_INSIGHTS: Insight[] = [
 ];
 
 export const NewAgentDashboard: React.FC = () => {
-	const { entries: rankingEntries, goal: rankingGoal } = useDashboardRankings(
-		'Team 1',
-		7
-	);
+	const {
+		entries: rankingEntries,
+		goal: rankingGoal,
+		myPosition: rankingMyPosition,
+	} = useDashboardRankings('Team 1', 7, AGENT_PERSONA_ID);
 	const {
 		qaScore,
 		sentiment,
@@ -128,6 +130,8 @@ export const NewAgentDashboard: React.FC = () => {
 						description="Your current ranking alongside the team's top performers this period"
 						goal={rankingGoal}
 						maxDisplay={5}
+						currentAgentId={AGENT_PERSONA_ID}
+						myPosition={rankingMyPosition}
 					/>
 				</SectionCard>
 
