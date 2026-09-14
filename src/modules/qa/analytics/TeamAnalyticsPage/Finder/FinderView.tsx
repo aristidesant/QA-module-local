@@ -1,109 +1,84 @@
-import { useState } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Badge, Group, Stack, Table, Text, TextInput } from '@mantine/core';
-import { IconSearch } from '@tabler/icons-react';
+import {
+	Badge,
+	Group,
+	NumberInput,
+	Select,
+	Stack,
+	Table,
+	Text,
+	ThemeIcon,
+} from '@mantine/core';
+import {
+	IconTrendingUp,
+	IconTrendingDown,
+	IconMinus,
+} from '@tabler/icons-react';
+import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
+import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
+import {
+	useTeamAnalyticsStore,
+	selectFinderQuery,
+	selectFinderPresets,
+} from '~/stores/qa/teamAnalyticsStore';
+import { VIEW_METRICS } from '../../constants';
+import {
+	comparison,
+	describeFinderQuery,
+	formatMetric,
+	isImprovement,
+	runFinderQuery,
+	burnoutLevelsByAgent,
+} from '../../helpers';
+import type { FinderOperator, MetricView, SegmentMetricId } from '../../types';
+import { useTeamAnalyticsData } from '../TeamAnalyticsContext';
 import styles from '../TeamAnalyticsPage.module.css';
 
-interface FinderResult {
-	agentId: string;
-	agentName: string;
-	metricKey: string;
-	value: number;
-	operator: 'BELOW' | 'ABOVE' | 'BETWEEN';
-	threshold: string;
-	calls: number;
-	severity: 'warning' | 'danger' | 'info';
-}
+const OPERATORS: FinderOperator[] = ['BELOW', 'ABOVE', 'BETWEEN'];
 
-const FINDER_RESULTS: FinderResult[] = [
-	{
-		agentId: 'AG-001',
-		agentName: 'Agent Smith',
-		metricKey: 'QA_OVERALL_SCORE',
-		value: 68,
-		operator: 'BELOW',
-		threshold: '75',
-		calls: 142,
-		severity: 'warning',
-	},
-	{
-		agentId: 'AG-002',
-		agentName: 'Agent Johnson',
-		metricKey: 'CUSTOMER_SENTIMENT_SCORE',
-		value: 3.1,
-		operator: 'BELOW',
-		threshold: '3.5',
-		calls: 128,
-		severity: 'warning',
-	},
-	{
-		agentId: 'AG-003',
-		agentName: 'Agent Williams',
-		metricKey: 'NEGATIVE_EMOTION_CALL_SHARE',
-		value: 45,
-		operator: 'ABOVE',
-		threshold: '30',
-		calls: 156,
-		severity: 'danger',
-	},
-	{
-		agentId: 'AG-004',
-		agentName: 'Agent Brown',
-		metricKey: 'COMPLIANCE_OVERALL_SCORE',
-		value: 72,
-		operator: 'BETWEEN',
-		threshold: '70 – 85',
-		calls: 98,
-		severity: 'info',
-	},
-];
+/** Metric picker groups mirror the evaluation areas. */
+const AREA_OF_VIEW: Record<MetricView, string> = {
+	qa: 'QUALITY_ASSURANCE',
+	sentiment: 'SENTIMENT_EMOTION',
+	compliance: 'COMPLIANCE',
+	business: 'BUSINESS_INSIGHTS',
+};
 
-const SEVERITY_COLOR: Record<FinderResult['severity'], string> = {
-	danger: 'red',
-	warning: 'yellow',
-	info: 'blue',
+const BURNOUT_COLOR: Record<BurnoutRiskLevel, string> = {
+	[BurnoutRiskLevel.HIGH]: 'red',
+	[BurnoutRiskLevel.MEDIUM]: 'orange',
+	[BurnoutRiskLevel.LOW]: 'gray',
 };
 
 const FinderView = () => {
 	const { t } = useTranslation('qa.teamAnalytics');
-	const [search, setSearch] = useState('');
+	const { role, calls, previousCalls, scopedAgents } = useTeamAnalyticsData();
+	const query = useTeamAnalyticsStore(selectFinderQuery);
+	const presets = useTeamAnalyticsStore(selectFinderPresets);
+	const { setFinderQuery } = useTeamAnalyticsStore();
 
-	const term = search.trim().toLowerCase();
-	const results = term
-		? FINDER_RESULTS.filter((r) => r.agentName.toLowerCase().includes(term))
-		: FINDER_RESULTS;
+	const burnoutByAgent = useMemo(() => burnoutLevelsByAgent(), []);
+	const rows = useMemo(
+		() =>
+			runFinderQuery(calls, previousCalls, scopedAgents, query, burnoutByAgent),
+		[calls, previousCalls, scopedAgents, query, burnoutByAgent]
+	);
 
-	const rows = results.map((result) => (
-		<Table.Tr key={result.agentId}>
-			<Table.Td>
-				<Text fw={500} size='sm'>
-					{result.agentName}
-				</Text>
-			</Table.Td>
-			<Table.Td>
-				<Text size='sm'>{t(`metrics.${result.metricKey}`)}</Text>
-			</Table.Td>
-			<Table.Td align='right'>
-				<Group gap='xs' justify='flex-end'>
-					<Text fw={700} size='sm'>
-						{result.value.toFixed(1)}
-					</Text>
-					<Badge
-						size='sm'
-						variant='light'
-						color={SEVERITY_COLOR[result.severity]}
-					>
-						{t(`finder.operators.${result.operator}`)} {result.threshold}
-					</Badge>
-				</Group>
-			</Table.Td>
-			<Table.Td align='right'>
-				<Text size='sm' c='dimmed'>
-					{result.calls}
-				</Text>
-			</Table.Td>
-		</Table.Tr>
-	));
+	const metricOptions = (Object.keys(VIEW_METRICS) as MetricView[]).map(
+		(view) => ({
+			group: t(`areas.${AREA_OF_VIEW[view]}`),
+			items: VIEW_METRICS[view].map((id) => ({
+				value: id,
+				label: t(`metrics.${id}`),
+			})),
+		})
+	);
+
+	const metricLabel = t(`metrics.${query.metricId}`);
+	const higherIsBetter = METRIC_BY_ID[query.metricId].higherIsBetter;
+	const isManager = role === 'qa-manager';
+	const na = t('common.na');
 
 	return (
 		<Stack gap='md'>
@@ -116,15 +91,83 @@ const FinderView = () => {
 				</Text>
 			</div>
 
-			<TextInput
-				label={t('finder.columns.agent')}
-				description={t('finder.liveHint')}
-				leftSection={<IconSearch size={16} />}
-				value={search}
-				onChange={(e) => setSearch(e.currentTarget.value)}
-			/>
+			<Group align='flex-end' gap='sm' wrap='wrap'>
+				<Select
+					label={t('finder.fields.metric')}
+					data={metricOptions}
+					value={query.metricId}
+					onChange={(value) =>
+						value && setFinderQuery({ metricId: value as SegmentMetricId })
+					}
+					allowDeselect={false}
+					comboboxProps={{ withinPortal: true }}
+					className={styles.finderMetricField}
+				/>
+				<Select
+					label={t('finder.fields.operator')}
+					data={OPERATORS.map((op) => ({
+						value: op,
+						label: t(`finder.operators.${op}`),
+					}))}
+					value={query.operator}
+					onChange={(value) =>
+						value && setFinderQuery({ operator: value as FinderOperator })
+					}
+					allowDeselect={false}
+					comboboxProps={{ withinPortal: true }}
+					className={styles.finderField}
+				/>
+				<NumberInput
+					label={
+						query.operator === 'BETWEEN'
+							? t('finder.fields.from')
+							: t('finder.fields.value')
+					}
+					value={query.value}
+					onChange={(value) => setFinderQuery({ value: Number(value) || 0 })}
+					decimalScale={1}
+					className={styles.finderField}
+				/>
+				{query.operator === 'BETWEEN' && (
+					<NumberInput
+						label={t('finder.fields.to')}
+						value={query.value2 ?? query.value}
+						onChange={(value) => setFinderQuery({ value2: Number(value) || 0 })}
+						decimalScale={1}
+						error={
+							(query.value2 ?? 0) <= query.value
+								? t('finder.validation.rangeInvalid')
+								: undefined
+						}
+						className={styles.finderField}
+					/>
+				)}
+				<NumberInput
+					label={t('finder.fields.minCalls')}
+					value={query.minCalls}
+					onChange={(value) => setFinderQuery({ minCalls: Number(value) || 0 })}
+					min={0}
+					className={styles.finderField}
+				/>
+				<Select
+					label={t('finder.presets')}
+					placeholder={t('finder.presets')}
+					data={presets.map((p) => ({ value: p.id, label: p.name }))}
+					value={null}
+					onChange={(id) => {
+						const preset = presets.find((p) => p.id === id);
+						if (preset) setFinderQuery(preset.query);
+					}}
+					comboboxProps={{ withinPortal: true }}
+					className={styles.finderMetricField}
+				/>
+			</Group>
 
-			{results.length === 0 ? (
+			<Text size='xs' c='dimmed'>
+				{t('finder.liveHint')}
+			</Text>
+
+			{rows.length === 0 ? (
 				<Stack gap={4} py='xl' align='center'>
 					<Text fw={500} size='sm'>
 						{t('finder.empty')}
@@ -136,22 +179,114 @@ const FinderView = () => {
 			) : (
 				<>
 					<div className={styles.tableSurface}>
-						<Table striped highlightOnHover verticalSpacing='sm' miw={640}>
+						<Table striped highlightOnHover verticalSpacing='sm' miw={720}>
 							<Table.Thead>
 								<Table.Tr>
 									<Table.Th>{t('finder.columns.agent')}</Table.Th>
-									<Table.Th>{t('finder.fields.metric')}</Table.Th>
+									{isManager && (
+										<Table.Th>{t('finder.columns.supervisor')}</Table.Th>
+									)}
 									<Table.Th align='right'>{t('finder.columns.value')}</Table.Th>
+									<Table.Th align='right'>
+										{t('finder.columns.previous')}
+									</Table.Th>
+									<Table.Th align='right'>{t('finder.columns.trend')}</Table.Th>
 									<Table.Th align='right'>{t('finder.columns.calls')}</Table.Th>
+									<Table.Th>{t('finder.columns.burnout')}</Table.Th>
 								</Table.Tr>
 							</Table.Thead>
-							<Table.Tbody>{rows}</Table.Tbody>
+							<Table.Tbody>
+								{rows.map((row) => {
+									const cmp = comparison(row.value, row.previousValue);
+									const improved = isImprovement(cmp, higherIsBetter);
+									const TrendIcon =
+										cmp.trend === 'UP'
+											? IconTrendingUp
+											: cmp.trend === 'DOWN'
+												? IconTrendingDown
+												: IconMinus;
+									return (
+										<Table.Tr key={row.agentId}>
+											<Table.Td>
+												<Text size='sm' fw={500}>
+													{row.agentName}
+												</Text>
+												<Text size='xs' c='dimmed'>
+													{row.team}
+												</Text>
+											</Table.Td>
+											{isManager && (
+												<Table.Td>
+													<Text size='sm' c='dimmed'>
+														{row.supervisorName}
+													</Text>
+												</Table.Td>
+											)}
+											<Table.Td align='right'>
+												<Text size='sm' fw={700}>
+													{formatMetric(query.metricId, row.value)}
+												</Text>
+											</Table.Td>
+											<Table.Td align='right'>
+												<Text size='sm' c='dimmed'>
+													{formatMetric(query.metricId, row.previousValue)}
+												</Text>
+											</Table.Td>
+											<Table.Td align='right' className={styles.trendColumn}>
+												{cmp.trend === 'UNAVAILABLE' ? (
+													<Text size='sm' c='dimmed'>
+														{na}
+													</Text>
+												) : (
+													<ThemeIcon
+														size='sm'
+														variant='light'
+														color={
+															improved === null
+																? 'gray'
+																: improved
+																	? 'green'
+																	: 'red'
+														}
+													>
+														<TrendIcon size={14} />
+													</ThemeIcon>
+												)}
+											</Table.Td>
+											<Table.Td align='right'>
+												<Text size='sm' c='dimmed'>
+													{row.callsEvaluated}
+												</Text>
+											</Table.Td>
+											<Table.Td className={styles.levelColumn}>
+												<Badge
+													size='sm'
+													variant='light'
+													color={BURNOUT_COLOR[row.burnoutLevel]}
+												>
+													{row.burnoutLevel}
+												</Badge>
+											</Table.Td>
+										</Table.Tr>
+									);
+								})}
+							</Table.Tbody>
 						</Table>
 					</div>
 
-					<Text size='sm' c='dimmed'>
-						{t('finder.summary', { count: results.length })}
-					</Text>
+					<Group gap='xs'>
+						<Text size='sm' fw={500}>
+							{t('finder.summary', { count: rows.length })}
+						</Text>
+						<Text size='sm' c='dimmed'>
+							·{' '}
+							{describeFinderQuery(
+								query,
+								metricLabel,
+								t(`finder.operators.${query.operator}`).toLowerCase()
+							)}
+						</Text>
+					</Group>
 				</>
 			)}
 		</Stack>

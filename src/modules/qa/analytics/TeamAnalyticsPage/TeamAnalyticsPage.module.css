@@ -109,3 +109,20 @@
 	min-width: 40px;
 	text-align: right;
 }
+
+.trendColumn {
+	width: 120px;
+	white-space: nowrap;
+}
+
+.nowrapCell {
+	white-space: nowrap;
+}
+
+.finderField {
+	width: 140px;
+}
+
+.finderMetricField {
+	width: 240px;
+}

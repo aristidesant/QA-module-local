@@ -1,66 +1,59 @@
 import { useTranslation } from 'react-i18next';
+import { Group, Stack, ThemeIcon, Text, Tooltip } from '@mantine/core';
 import {
-	Group,
-	Stack,
-	ThemeIcon,
-	Text,
-	Tooltip,
-	Skeleton,
-} from '@mantine/core';
-import { IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
+	IconTrendingUp,
+	IconTrendingDown,
+	IconMinus,
+} from '@tabler/icons-react';
+import type { MetricComparison } from '~/models/AnalyticsDashboard';
+import { comparison, isImprovement } from '../helpers';
+import { useTeamAnalyticsData } from './TeamAnalyticsContext';
 import styles from './TeamAnalyticsPage.module.css';
 
 interface KPIMetricProps {
 	label: string;
-	value: number | string;
-	unit?: string;
-	trend?: 'up' | 'down' | null;
-	trendValue?: number;
-	loading?: boolean;
+	value: string;
+	cmp: MetricComparison;
+	/** Drives the trend colour: a rising error count is not an improvement. */
+	higherIsBetter: boolean;
+	/** Volume has no good/bad direction — show the arrow without a verdict colour. */
+	neutral?: boolean;
+	vsPreviousLabel: string;
 }
 
 function KPIMetric({
 	label,
 	value,
-	unit,
-	trend,
-	trendValue,
-	loading,
+	cmp,
+	higherIsBetter,
+	neutral,
+	vsPreviousLabel,
 }: KPIMetricProps) {
-	if (loading) {
-		return (
-			<Stack gap={4} flex={1}>
-				<Skeleton height={12} width='60%' />
-				<Skeleton height={20} width='40%' />
-			</Stack>
-		);
-	}
+	const improved = neutral ? null : isImprovement(cmp, higherIsBetter);
+	const color = improved === null ? 'gray' : improved ? 'green' : 'red';
+	const Icon =
+		cmp.trend === 'UP'
+			? IconTrendingUp
+			: cmp.trend === 'DOWN'
+				? IconTrendingDown
+				: IconMinus;
 
 	return (
 		<Stack gap={2} flex={1}>
 			<Text size='xs' fw={500} c='dimmed'>
 				{label}
 			</Text>
-			<Group gap='xs' align='flex-end'>
+			<Group gap='xs' align='center'>
 				<Text size='lg' fw={700}>
 					{value}
-					{unit && <span className={styles.unit}>{unit}</span>}
 				</Text>
-				{trend && trendValue !== undefined && (
+				{cmp.trend !== 'UNAVAILABLE' && cmp.percentageChange !== null && (
 					<Tooltip
-						label={`${trend === 'up' ? '+' : '-'}${Math.abs(trendValue).toFixed(1)}%`}
+						label={`${cmp.percentageChange > 0 ? '+' : ''}${cmp.percentageChange}% ${vsPreviousLabel}`}
 						withArrow
 					>
-						<ThemeIcon
-							size='xs'
-							variant='light'
-							color={trend === 'up' ? 'green' : 'red'}
-						>
-							{trend === 'up' ? (
-								<IconTrendingUp size={12} />
-							) : (
-								<IconTrendingDown size={12} />
-							)}
+						<ThemeIcon size='xs' variant='light' color={color}>
+							<Icon size={12} />
 						</ThemeIcon>
 					</Tooltip>
 				)}
@@ -69,49 +62,69 @@ function KPIMetric({
 	);
 }
 
-interface KPIStripProps {
-	loading?: boolean;
-}
-
-export default function KPIStrip({ loading }: KPIStripProps) {
+export default function KPIStrip() {
 	const { t } = useTranslation('qa.teamAnalytics');
+	const { kpis, previousKpis } = useTeamAnalyticsData();
+
+	const na = t('common.na');
+	const pct = (v: number | null) => (v === null ? na : `${Math.round(v)}%`);
+	const score = (v: number | null) => (v === null ? na : v.toFixed(1));
+	const vsPrevious = t('kpis.vsPrevious');
+
+	const metrics: {
+		label: string;
+		value: string;
+		cmp: MetricComparison;
+		higherIsBetter: boolean;
+		neutral?: boolean;
+	}[] = [
+		{
+			label: t('kpis.qaScore'),
+			value: pct(kpis.qaScore),
+			cmp: comparison(kpis.qaScore, previousKpis.qaScore),
+			higherIsBetter: true,
+		},
+		{
+			label: t('kpis.compliance'),
+			value: pct(kpis.compliance),
+			cmp: comparison(kpis.compliance, previousKpis.compliance),
+			higherIsBetter: true,
+		},
+		{
+			label: t('kpis.customerSentiment'),
+			value: score(kpis.customerSentiment),
+			cmp: comparison(kpis.customerSentiment, previousKpis.customerSentiment),
+			higherIsBetter: true,
+		},
+		{
+			label: t('kpis.conversionRate'),
+			value: pct(kpis.conversionRate),
+			cmp: comparison(kpis.conversionRate, previousKpis.conversionRate),
+			higherIsBetter: true,
+		},
+		{
+			label: t('kpis.calls'),
+			value: kpis.calls.toLocaleString(),
+			cmp: comparison(kpis.calls, previousKpis.calls),
+			higherIsBetter: true,
+			neutral: true,
+		},
+	];
 
 	return (
 		<div className={styles.kpiStrip}>
 			<Group gap='xl' grow>
-				<KPIMetric
-					label={t('kpis.qaScore')}
-					value={85}
-					unit='%'
-					trend='up'
-					trendValue={2.3}
-					loading={loading}
-				/>
-				<KPIMetric
-					label={t('kpis.compliance')}
-					value={92}
-					unit='%'
-					trend='up'
-					trendValue={1.1}
-					loading={loading}
-				/>
-				<KPIMetric
-					label={t('kpis.customerSentiment')}
-					value={4.2}
-					unit='/5'
-					trend='down'
-					trendValue={0.3}
-					loading={loading}
-				/>
-				<KPIMetric
-					label={t('kpis.conversionRate')}
-					value={18}
-					unit='%'
-					trend='up'
-					trendValue={4.5}
-					loading={loading}
-				/>
-				<KPIMetric label={t('kpis.calls')} value={1243} loading={loading} />
+				{metrics.map((m) => (
+					<KPIMetric
+						key={m.label}
+						label={m.label}
+						value={m.value}
+						cmp={m.cmp}
+						higherIsBetter={m.higherIsBetter}
+						neutral={m.neutral}
+						vsPreviousLabel={vsPrevious}
+					/>
+				))}
 			</Group>
 		</div>
 	);

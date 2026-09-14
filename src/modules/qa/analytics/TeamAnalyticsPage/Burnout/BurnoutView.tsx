@@ -1,8 +1,7 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
 import {
 	Badge,
-	Button,
 	Group,
 	Progress,
 	Stack,
@@ -10,22 +9,15 @@ import {
 	Text,
 	Tooltip,
 } from '@mantine/core';
-import { roleFromPath } from '~/modules/qa/team/helpers';
-import type { BurnoutDriverId } from '../../types';
+import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
+import { TEAM_PROFILES } from '~/modules/qa/team/mockData';
+import { burnoutCandidates, computeBurnoutDrivers } from '../../helpers';
+import type { BurnoutDriver } from '../../types';
+import { useTeamAnalyticsData } from '../TeamAnalyticsContext';
 import styles from '../TeamAnalyticsPage.module.css';
 
-interface BurnoutRow {
-	agentId: string;
-	agentName: string;
-	supervisorName: string;
-	riskLevel: 'HIGH' | 'MEDIUM';
-	riskScore: number;
-	drivers: BurnoutDriverId[];
-	lastAction?: string;
-}
-
-/** Driver rule ids map to their own label keys under `burnout.drivers`. */
-const DRIVER_LABEL_KEY: Record<BurnoutDriverId, string> = {
+/** Driver rule ids carry their own label keys under `burnout.drivers`. */
+const DRIVER_LABEL_KEY: Record<string, string> = {
 	AGENT_SENTIMENT_TREND: 'agentSentimentTrend',
 	NEGATIVE_EMOTION_7D: 'negativeEmotionShare',
 	QA_TREND_14D: 'qaScoreTrend',
@@ -35,62 +27,61 @@ const DRIVER_LABEL_KEY: Record<BurnoutDriverId, string> = {
 
 const MAX_VISIBLE_DRIVERS = 2;
 
-const BURNOUT_ROWS: BurnoutRow[] = [
-	{
-		agentId: 'AG-001',
-		agentName: 'Agent Smith',
-		supervisorName: 'Laura Méndez',
-		riskLevel: 'HIGH',
-		riskScore: 85,
-		drivers: ['AGENT_SENTIMENT_TREND', 'AFTER_HOURS_30D', 'QA_TREND_14D'],
-		lastAction: 'Check-in · 2 days ago',
-	},
-	{
-		agentId: 'AG-002',
-		agentName: 'Agent Johnson',
-		supervisorName: 'Laura Méndez',
-		riskLevel: 'MEDIUM',
-		riskScore: 62,
-		drivers: ['NEGATIVE_EMOTION_7D', 'QA_TREND_14D'],
-		lastAction: 'Coaching · 1 week ago',
-	},
-	{
-		agentId: 'AG-003',
-		agentName: 'Agent Williams',
-		supervisorName: 'Laura Méndez',
-		riskLevel: 'MEDIUM',
-		riskScore: 58,
-		drivers: ['AHT_VS_TEAM_30D'],
-	},
-];
-
 const BurnoutView = () => {
 	const { t } = useTranslation('qa.teamAnalytics');
-	const location = useLocation();
-	const role = roleFromPath(location.pathname);
+	const { role, scopedCalls } = useTeamAnalyticsData();
 
-	const rows = BURNOUT_ROWS.map((row) => {
-		const visibleDrivers = row.drivers.slice(0, MAX_VISIBLE_DRIVERS);
-		const hiddenCount = row.drivers.length - visibleDrivers.length;
-		const riskColor = row.riskLevel === 'HIGH' ? 'red' : 'orange';
+	const candidates = useMemo(() => {
+		return burnoutCandidates(role).map((agent) => {
+			const teamCalls = scopedCalls.filter((c) => c.team === agent.team);
+			const drivers = computeBurnoutDrivers(agent.id, scopedCalls, teamCalls);
+			return {
+				agent,
+				risk: TEAM_PROFILES[agent.id].risk.burnout,
+				breached: drivers.filter((d) => d.status === 'BREACHED'),
+				near: drivers.filter((d) => d.status === 'NEAR'),
+			};
+		});
+	}, [role, scopedCalls]);
+
+	const driverLabel = (driver: BurnoutDriver) =>
+		t(`burnout.drivers.${DRIVER_LABEL_KEY[driver.id]}`);
+
+	if (candidates.length === 0) {
+		return (
+			<Stack gap='md'>
+				<Text fw={600} size='sm'>
+					{t('burnout.title')}
+				</Text>
+				<Text size='sm' c='dimmed' py='xl' ta='center'>
+					{t('burnout.historyEmpty')}
+				</Text>
+			</Stack>
+		);
+	}
+
+	const rows = candidates.map(({ agent, risk, breached, near }) => {
+		const visible = breached.slice(0, MAX_VISIBLE_DRIVERS);
+		const hidden = breached.slice(MAX_VISIBLE_DRIVERS);
+		const riskColor = risk.level === BurnoutRiskLevel.HIGH ? 'red' : 'orange';
 
 		return (
-			<Table.Tr key={row.agentId}>
+			<Table.Tr key={agent.id}>
 				<Table.Td>
 					<Text fw={500} size='sm'>
-						{row.agentName}
+						{agent.name}
 					</Text>
 				</Table.Td>
 				{role === 'qa-manager' && (
 					<Table.Td>
 						<Text size='sm' c='dimmed'>
-							{row.supervisorName}
+							{agent.supervisorName}
 						</Text>
 					</Table.Td>
 				)}
 				<Table.Td className={styles.levelColumn}>
 					<Badge color={riskColor} variant='light' size='sm'>
-						{row.riskLevel === 'HIGH'
+						{risk.level === BurnoutRiskLevel.HIGH
 							? t('burnout.levelHigh')
 							: t('burnout.levelMedium')}
 					</Badge>
@@ -98,53 +89,49 @@ const BurnoutView = () => {
 				<Table.Td className={styles.riskColumn}>
 					<Group gap='xs' wrap='nowrap'>
 						<Progress
-							value={row.riskScore}
+							value={risk.percentage}
 							color={riskColor}
 							size='sm'
 							className={styles.riskBar}
 						/>
 						<Text size='sm' fw={600}>
-							{row.riskScore}%
+							{risk.percentage}%
 						</Text>
 					</Group>
 				</Table.Td>
 				<Table.Td>
 					<Group gap={4} wrap='wrap'>
-						{visibleDrivers.map((driver) => (
+						{visible.map((driver) => (
 							<Badge
-								key={driver}
+								key={driver.id}
 								variant='outline'
 								size='sm'
-								color='gray'
+								color='red'
 								tt='none'
 							>
-								{t(`burnout.drivers.${DRIVER_LABEL_KEY[driver]}`)}
+								{driverLabel(driver)}
 							</Badge>
 						))}
-						{hiddenCount > 0 && (
-							<Tooltip
-								label={row.drivers
-									.slice(MAX_VISIBLE_DRIVERS)
-									.map((d) => t(`burnout.drivers.${DRIVER_LABEL_KEY[d]}`))
-									.join(', ')}
-								withArrow
-							>
-								<Badge variant='light' size='sm' color='gray'>
-									{t('filters.chips.more', { count: hiddenCount })}
+						{hidden.length > 0 && (
+							<Tooltip label={hidden.map(driverLabel).join(', ')} withArrow>
+								<Badge variant='light' size='sm' color='red'>
+									{t('filters.chips.more', { count: hidden.length })}
 								</Badge>
 							</Tooltip>
 						)}
+						{near.length > 0 && (
+							<Tooltip label={near.map(driverLabel).join(', ')} withArrow>
+								<Badge variant='light' size='sm' color='yellow' tt='none'>
+									{t('burnout.driverStatus.NEAR')} ({near.length})
+								</Badge>
+							</Tooltip>
+						)}
+						{breached.length === 0 && near.length === 0 && (
+							<Text size='sm' c='dimmed'>
+								{t('common.na')}
+							</Text>
+						)}
 					</Group>
-				</Table.Td>
-				<Table.Td>
-					<Text size='sm' c={row.lastAction ? undefined : 'dimmed'}>
-						{row.lastAction ?? t('burnout.historyEmpty')}
-					</Text>
-				</Table.Td>
-				<Table.Td align='right'>
-					<Button size='xs' variant='light'>
-						{t('actions.viewProfile')}
-					</Button>
 				</Table.Td>
 			</Table.Tr>
 		);
@@ -176,8 +163,6 @@ const BurnoutView = () => {
 								{t('burnout.columns.risk')}
 							</Table.Th>
 							<Table.Th>{t('burnout.columns.drivers')}</Table.Th>
-							<Table.Th>{t('burnout.columns.lastAction')}</Table.Th>
-							<Table.Th align='right' className={styles.actionColumn} />
 						</Table.Tr>
 					</Table.Thead>
 					<Table.Tbody>{rows}</Table.Tbody>

@@ -1,86 +1,87 @@
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
-import { Stack, Group, Text } from '@mantine/core';
-import { roleFromPath } from '~/modules/qa/team/helpers';
-import { useTeamAnalyticsStore } from '~/stores/qa/teamAnalyticsStore';
+import { Group, Select, Stack, Text } from '@mantine/core';
+import {
+	useTeamAnalyticsStore,
+	selectDrill,
+} from '~/stores/qa/teamAnalyticsStore';
+import {
+	MAX_SEGMENT_SERIES,
+	OTHER_SEGMENT_KEY,
+	PRIMARY_METRIC,
+	VIEW_METRICS,
+} from '../../constants';
+import { buildSegments } from '../../helpers';
+import type { MetricView, SegmentMetricId, SegmentRow } from '../../types';
+import { useTeamAnalyticsData } from '../TeamAnalyticsContext';
 import BreadcrumbNav from './BreadcrumbNav';
 import GroupBySelector from './GroupBySelector';
 import SegmentationTable from './SegmentationTable';
 
 interface SegmentationViewProps {
-	viewType: 'qa' | 'sentiment' | 'compliance';
+	viewType: Extract<MetricView, 'qa' | 'sentiment' | 'compliance'>;
 }
 
-/** Headline metric shown in the comparison table for each metric view. */
-const VIEW_HEADLINE_METRIC: Record<SegmentationViewProps['viewType'], string> =
-	{
-		qa: 'QA_OVERALL_SCORE',
-		sentiment: 'CUSTOMER_SENTIMENT_SCORE',
-		compliance: 'COMPLIANCE_OVERALL_SCORE',
-	};
+/** Dimensions whose segment key is a raw enum value needing a translated label. */
+const KEY_LABEL_NAMESPACE: Partial<Record<string, string>> = {
+	campaignType: 'filters.campaignTypeLabels',
+	callDirection: 'filters.directionLabels',
+	shift: 'filters.shiftLabels',
+	tenure: 'filters.tenureLabels',
+};
 
 export default function SegmentationView({ viewType }: SegmentationViewProps) {
 	const { t } = useTranslation('qa.teamAnalytics');
-	const location = useLocation();
-	const role = roleFromPath(location.pathname) as 'supervisor' | 'qa-manager';
-	const { groupBy, drill } = useTeamAnalyticsStore();
+	const { role, filters, groupBy, calls, previousCalls } =
+		useTeamAnalyticsData();
+	const drill = useTeamAnalyticsStore(selectDrill);
 
-	const metricLabel = t(`metrics.${VIEW_HEADLINE_METRIC[viewType]}`);
+	const metricIds = VIEW_METRICS[viewType];
+	const [metricId, setMetricId] = useState<SegmentMetricId>(
+		PRIMARY_METRIC[viewType]
+	);
+	// Each view offers its own metric list, so the choice resets when the tab changes.
+	useEffect(() => setMetricId(PRIMARY_METRIC[viewType]), [viewType]);
+
+	const rows = useMemo(
+		() =>
+			buildSegments(
+				calls,
+				previousCalls,
+				groupBy,
+				metricIds,
+				filters.from,
+				filters.to,
+				filters.minCalls
+			),
+		[
+			calls,
+			previousCalls,
+			groupBy,
+			metricIds,
+			filters.from,
+			filters.to,
+			filters.minCalls,
+		]
+	);
+
+	const labelOf = (row: SegmentRow) => {
+		if (row.key === OTHER_SEGMENT_KEY) {
+			return t('segments.other', { count: row.calls });
+		}
+		const ns = KEY_LABEL_NAMESPACE[groupBy];
+		return ns ? t(`${ns}.${row.key}`, { defaultValue: row.label }) : row.label;
+	};
+
 	const groupByLabel = t(`filters.groupByOptions.${groupBy}`);
-
-	const sampleData = [
-		{
-			key: 'agent-1',
-			label: 'Agent Smith',
-			current: 85,
-			previous: 83,
-			trend: 'up' as const,
-			trendValue: 2.4,
-			callCount: 142,
-		},
-		{
-			key: 'agent-2',
-			label: 'Agent Johnson',
-			current: 78,
-			previous: 80,
-			trend: 'down' as const,
-			trendValue: -2.5,
-			callCount: 128,
-		},
-		{
-			key: 'agent-3',
-			label: 'Agent Williams',
-			current: 92,
-			previous: 88,
-			trend: 'up' as const,
-			trendValue: 4.5,
-			callCount: 156,
-		},
-		{
-			key: 'agent-4',
-			label: 'Agent Brown',
-			current: 81,
-			previous: 82,
-			trend: 'neutral' as const,
-			trendValue: -1.2,
-			callCount: 98,
-		},
-		{
-			key: 'agent-5',
-			label: 'Agent Davis',
-			current: 88,
-			previous: 85,
-			trend: 'up' as const,
-			trendValue: 3.5,
-			callCount: 134,
-		},
-	];
+	const metricLabel = t(`metrics.${metricId}`);
+	const truncated = rows.some((r) => r.key === OTHER_SEGMENT_KEY);
 
 	return (
 		<Stack gap='md'>
 			{drill && <BreadcrumbNav />}
 
-			<Group justify='space-between' align='flex-start'>
+			<Group justify='space-between' align='flex-end' wrap='wrap'>
 				<div>
 					<Text fw={600} size='sm'>
 						{groupBy === 'none'
@@ -91,14 +92,43 @@ export default function SegmentationView({ viewType }: SegmentationViewProps) {
 						{t('segments.description')}
 					</Text>
 				</div>
-				<GroupBySelector role={role} />
+				<Group gap='sm'>
+					<Select
+						size='sm'
+						aria-label={t('segments.metric')}
+						data={metricIds.map((id) => ({
+							value: id,
+							label: t(`metrics.${id}`),
+						}))}
+						value={metricId}
+						onChange={(value) => value && setMetricId(value as SegmentMetricId)}
+						allowDeselect={false}
+						comboboxProps={{ withinPortal: true }}
+					/>
+					<GroupBySelector role={role} />
+				</Group>
 			</Group>
 
-			<SegmentationTable
-				data={sampleData}
-				dimension={groupBy}
-				metricLabel={metricLabel}
-			/>
+			{rows.length === 0 ? (
+				<Text size='sm' c='dimmed' py='xl' ta='center'>
+					{t('segments.empty')}
+				</Text>
+			) : (
+				<>
+					<SegmentationTable
+						rows={rows}
+						dimension={groupBy}
+						metricId={metricId}
+						metricLabel={metricLabel}
+						labelOf={labelOf}
+					/>
+					{truncated && (
+						<Text size='xs' c='dimmed'>
+							{t('segments.hiddenSeries', { count: MAX_SEGMENT_SERIES - 1 })}
+						</Text>
+					)}
+				</>
+			)}
 		</Stack>
 	);
 }
