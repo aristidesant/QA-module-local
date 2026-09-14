@@ -22,7 +22,6 @@ import {
 	getPointLeadTooltip,
 	getRankMovementColor,
 	getRankMovementTooltip,
-	getReactionsTotal,
 } from '../gamification';
 import { useTranslation } from 'react-i18next';
 import type { RankingProgram } from '~/models/qa/rankingPrograms';
@@ -87,22 +86,22 @@ const GamificationChip: React.FC<GamificationChipProps> = ({
  * Detail drawer for a leaderboard row: quick stats plus achievements, peer
  * reactions and metric comparison tabs.
  */
-export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
-	entry,
-	data,
-	program,
-	opened,
-	onClose,
-}) => {
+const DrawerBody: React.FC<
+	Omit<RankingDetailDrawerProps, 'entry'> & { entry: AgentRankingEntry }
+> = ({ entry, data, program, opened, onClose }) => {
 	const { t } = useTranslation('qa.rankings');
-
-	if (!entry) return null;
 
 	const trend = entry.rankTrend ?? 0;
 	const streak = entry.streak ?? 0;
 	const pointLead = getPointLeadFromRoster(entry, data);
-	const reactionsTotal = getReactionsTotal(entry);
-	const { currentReaction, setReaction } = useUserReaction(entry.agentId);
+	const { currentReaction, totals, setReaction } = useUserReaction(
+		entry.agentId
+	);
+	// Peer reactions given on this ranking, the same number the row shows.
+	const reactionsTotal = Object.values(totals).reduce(
+		(sum, count) => sum + count,
+		0
+	);
 
 	return (
 		<AppDrawer
@@ -240,5 +239,13 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 		</AppDrawer>
 	);
 };
+
+/**
+ * Keeps the hook order stable: the body only mounts once a row is selected,
+ * so its hooks are never called conditionally.
+ */
+export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = (
+	props
+) => (props.entry ? <DrawerBody {...props} entry={props.entry} /> : null);
 
 export default RankingDetailDrawer;
