@@ -9,7 +9,11 @@ import {
 	Text,
 	ThemeIcon,
 } from '@mantine/core';
-import { IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
+import {
+	IconTrendingUp,
+	IconTrendingDown,
+	IconChevronRight,
+} from '@tabler/icons-react';
 import { useTeamAnalyticsStore } from '~/stores/qa/teamAnalyticsStore';
 import { DRILL_NEXT } from '../../constants';
 import type { GroupByDimension } from '../../types';
@@ -52,6 +56,11 @@ export default function SegmentationTable({
 		onDrill?.(key, label);
 	};
 
+	const segmentColumnLabel =
+		dimension === 'none'
+			? t('segments.columns.segment')
+			: t(`filters.groupByOptions.${dimension}`);
+
 	const rows = sortedData.map((row) => (
 		<Table.Tr key={row.key}>
 			<Table.Td>
@@ -93,13 +102,17 @@ export default function SegmentationTable({
 				</Group>
 			</Table.Td>
 			<Table.Td align='right'>
-				<Tooltip label={t('drill.label')} withArrow>
+				<Tooltip
+					label={t('segments.drillInto', { label: row.label })}
+					withArrow
+				>
 					<ActionIcon
 						size='sm'
 						variant='light'
+						aria-label={t('actions.drillDown')}
 						onClick={() => handleDrill(row.key, row.label)}
 					>
-						→
+						<IconChevronRight size={16} />
 					</ActionIcon>
 				</Tooltip>
 			</Table.Td>
@@ -107,14 +120,18 @@ export default function SegmentationTable({
 	));
 
 	return (
-		<div className={styles.segmentationTable}>
-			<Table striped highlightOnHover>
+		<div className={styles.tableSurface}>
+			<Table striped highlightOnHover verticalSpacing='sm' miw={640}>
 				<Table.Thead>
 					<Table.Tr>
-						<Table.Th>{t(`filters.${dimension}`)}</Table.Th>
-						<Table.Th align='right'>{metricLabel} (Current)</Table.Th>
-						<Table.Th align='right'>{metricLabel} (Previous)</Table.Th>
-						<Table.Th align='right'>Trend</Table.Th>
+						<Table.Th>{segmentColumnLabel}</Table.Th>
+						<Table.Th align='right'>
+							{metricLabel} · {t('overview.current')}
+						</Table.Th>
+						<Table.Th align='right'>
+							{metricLabel} · {t('overview.previous')}
+						</Table.Th>
+						<Table.Th align='right'>{t('segments.columns.trend')}</Table.Th>
 						<Table.Th align='right' className={styles.actionColumn} />
 					</Table.Tr>
 				</Table.Thead>

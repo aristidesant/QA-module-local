@@ -1,121 +1,159 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Stack,
-	TextInput,
-	Button,
-	Group,
-	Table,
-	Badge,
-	Text,
-} from '@mantine/core';
+import { Badge, Group, Stack, Table, Text, TextInput } from '@mantine/core';
 import { IconSearch } from '@tabler/icons-react';
+import styles from '../TeamAnalyticsPage.module.css';
 
 interface FinderResult {
 	agentId: string;
 	agentName: string;
-	metric: string;
+	metricKey: string;
 	value: number;
+	operator: 'BELOW' | 'ABOVE' | 'BETWEEN';
 	threshold: string;
-	status: 'warning' | 'danger' | 'info';
+	calls: number;
+	severity: 'warning' | 'danger' | 'info';
 }
+
+const FINDER_RESULTS: FinderResult[] = [
+	{
+		agentId: 'AG-001',
+		agentName: 'Agent Smith',
+		metricKey: 'QA_OVERALL_SCORE',
+		value: 68,
+		operator: 'BELOW',
+		threshold: '75',
+		calls: 142,
+		severity: 'warning',
+	},
+	{
+		agentId: 'AG-002',
+		agentName: 'Agent Johnson',
+		metricKey: 'CUSTOMER_SENTIMENT_SCORE',
+		value: 3.1,
+		operator: 'BELOW',
+		threshold: '3.5',
+		calls: 128,
+		severity: 'warning',
+	},
+	{
+		agentId: 'AG-003',
+		agentName: 'Agent Williams',
+		metricKey: 'NEGATIVE_EMOTION_CALL_SHARE',
+		value: 45,
+		operator: 'ABOVE',
+		threshold: '30',
+		calls: 156,
+		severity: 'danger',
+	},
+	{
+		agentId: 'AG-004',
+		agentName: 'Agent Brown',
+		metricKey: 'COMPLIANCE_OVERALL_SCORE',
+		value: 72,
+		operator: 'BETWEEN',
+		threshold: '70 – 85',
+		calls: 98,
+		severity: 'info',
+	},
+];
+
+const SEVERITY_COLOR: Record<FinderResult['severity'], string> = {
+	danger: 'red',
+	warning: 'yellow',
+	info: 'blue',
+};
 
 const FinderView = () => {
 	const { t } = useTranslation('qa.teamAnalytics');
-	const [searchQuery, setSearchQuery] = useState('');
+	const [search, setSearch] = useState('');
 
-	const sampleResults: FinderResult[] = [
-		{
-			agentId: 'AG-001',
-			agentName: 'Agent Smith',
-			metric: 'QA Score',
-			value: 68,
-			threshold: 'Below 75',
-			status: 'warning',
-		},
-		{
-			agentId: 'AG-002',
-			agentName: 'Agent Johnson',
-			metric: 'Sentiment',
-			value: 3.1,
-			threshold: 'Below 3.5',
-			status: 'warning',
-		},
-		{
-			agentId: 'AG-003',
-			agentName: 'Agent Williams',
-			metric: 'Negative Emotion',
-			value: 45,
-			threshold: 'Above 30%',
-			status: 'danger',
-		},
-		{
-			agentId: 'AG-004',
-			agentName: 'Agent Brown',
-			metric: 'Compliance',
-			value: 72,
-			threshold: 'Between 70-85',
-			status: 'info',
-		},
-	];
+	const term = search.trim().toLowerCase();
+	const results = term
+		? FINDER_RESULTS.filter((r) => r.agentName.toLowerCase().includes(term))
+		: FINDER_RESULTS;
 
-	const rows = sampleResults.map((result) => (
+	const rows = results.map((result) => (
 		<Table.Tr key={result.agentId}>
 			<Table.Td>
-				<Text fw={500}>{result.agentName}</Text>
+				<Text fw={500} size='sm'>
+					{result.agentName}
+				</Text>
 			</Table.Td>
-			<Table.Td>{result.metric}</Table.Td>
 			<Table.Td>
-				<Text fw={700}>{result.value.toFixed(1)}</Text>
+				<Text size='sm'>{t(`metrics.${result.metricKey}`)}</Text>
 			</Table.Td>
-			<Table.Td>{result.threshold}</Table.Td>
-			<Table.Td>
-				<Badge
-					size='sm'
-					variant='light'
-					color={
-						result.status === 'danger'
-							? 'red'
-							: result.status === 'warning'
-								? 'yellow'
-								: 'blue'
-					}
-				>
-					{result.status}
-				</Badge>
+			<Table.Td align='right'>
+				<Group gap='xs' justify='flex-end'>
+					<Text fw={700} size='sm'>
+						{result.value.toFixed(1)}
+					</Text>
+					<Badge
+						size='sm'
+						variant='light'
+						color={SEVERITY_COLOR[result.severity]}
+					>
+						{t(`finder.operators.${result.operator}`)} {result.threshold}
+					</Badge>
+				</Group>
+			</Table.Td>
+			<Table.Td align='right'>
+				<Text size='sm' c='dimmed'>
+					{result.calls}
+				</Text>
 			</Table.Td>
 		</Table.Tr>
 	));
 
 	return (
-		<Stack gap='lg'>
-			<Group>
-				<TextInput
-					placeholder={t('finder.searchPlaceholder')}
-					leftSection={<IconSearch size={16} />}
-					value={searchQuery}
-					onChange={(e) => setSearchQuery(e.currentTarget.value)}
-					flex={1}
-				/>
-				<Button>{t('finder.search')}</Button>
-			</Group>
+		<Stack gap='md'>
+			<div>
+				<Text fw={600} size='sm'>
+					{t('finder.title')}
+				</Text>
+				<Text size='sm' c='dimmed'>
+					{t('finder.description')}
+				</Text>
+			</div>
 
-			<Table striped highlightOnHover>
-				<Table.Thead>
-					<Table.Tr>
-						<Table.Th>{t('finder.agent')}</Table.Th>
-						<Table.Th>{t('finder.metric')}</Table.Th>
-						<Table.Th>{t('finder.value')}</Table.Th>
-						<Table.Th>{t('finder.criteria')}</Table.Th>
-						<Table.Th>{t('finder.status')}</Table.Th>
-					</Table.Tr>
-				</Table.Thead>
-				<Table.Tbody>{rows}</Table.Tbody>
-			</Table>
+			<TextInput
+				label={t('finder.columns.agent')}
+				description={t('finder.liveHint')}
+				leftSection={<IconSearch size={16} />}
+				value={search}
+				onChange={(e) => setSearch(e.currentTarget.value)}
+			/>
 
-			<Text size='sm' c='dimmed'>
-				{sampleResults.length} {t('finder.resultsFound')}
-			</Text>
+			{results.length === 0 ? (
+				<Stack gap={4} py='xl' align='center'>
+					<Text fw={500} size='sm'>
+						{t('finder.empty')}
+					</Text>
+					<Text size='sm' c='dimmed'>
+						{t('finder.emptyDescription')}
+					</Text>
+				</Stack>
+			) : (
+				<>
+					<div className={styles.tableSurface}>
+						<Table striped highlightOnHover verticalSpacing='sm' miw={640}>
+							<Table.Thead>
+								<Table.Tr>
+									<Table.Th>{t('finder.columns.agent')}</Table.Th>
+									<Table.Th>{t('finder.fields.metric')}</Table.Th>
+									<Table.Th align='right'>{t('finder.columns.value')}</Table.Th>
+									<Table.Th align='right'>{t('finder.columns.calls')}</Table.Th>
+								</Table.Tr>
+							</Table.Thead>
+							<Table.Tbody>{rows}</Table.Tbody>
+						</Table>
+					</div>
+
+					<Text size='sm' c='dimmed'>
+						{t('finder.summary', { count: results.length })}
+					</Text>
+				</>
+			)}
 		</Stack>
 	);
 };

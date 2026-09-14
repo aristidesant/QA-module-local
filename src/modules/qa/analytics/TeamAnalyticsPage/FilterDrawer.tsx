@@ -11,10 +11,10 @@ export default function FilterDrawer({ open, onClose }: FilterDrawerProps) {
 	const { t } = useTranslation('qa.teamAnalytics');
 
 	return (
-		<AppDrawer opened={open} onClose={onClose} title={t('filters.label')}>
+		<AppDrawer opened={open} onClose={onClose} title={t('filters.title')}>
 			<Stack gap='md'>
 				<Text size='sm' c='dimmed'>
-					{t('filters.label')} - Coming soon
+					{t('common.comingSoon')}
 				</Text>
 				<Loader type='dots' />
 			</Stack>

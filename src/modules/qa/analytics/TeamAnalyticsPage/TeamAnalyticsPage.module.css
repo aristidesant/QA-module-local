@@ -13,7 +13,7 @@
 .eyebrow {
 	font-size: var(--mantine-font-size-xs);
 	font-weight: 500;
-	color: var(--mantine-color-gray-6);
+	color: var(--mantine-color-dimmed);
 	text-transform: uppercase;
 	letter-spacing: 0.05em;
 }
@@ -25,7 +25,7 @@
 }
 
 .viewSelector {
-	border-bottom: 1px solid var(--mantine-color-gray-2);
+	border-bottom: 1px solid var(--mantine-color-default-border);
 }
 
 .controlsRow {
@@ -39,17 +39,18 @@
 }
 
 .filterBar {
+	flex: 1;
 	padding: var(--mantine-spacing-md);
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-body);
 	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--mantine-color-default-border);
 }
 
 .kpiStrip {
 	padding: var(--mantine-spacing-md);
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-body);
 	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--mantine-color-default-border);
 }
 
 .contentArea {
@@ -58,9 +59,9 @@
 	gap: var(--mantine-spacing-lg);
 	min-height: 400px;
 	padding: var(--mantine-spacing-lg);
-	background-color: var(--mantine-color-gray-0);
+	background-color: var(--mantine-color-body);
 	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--mantine-color-gray-2);
+	border: 1px solid var(--mantine-color-default-border);
 }
 
 .unit {
@@ -68,12 +69,43 @@
 	margin-left: 2px;
 }
 
-.segmentationTable {
+/* Table wrapper: keeps rows on the body surface and clips the rounded corners. */
+.tableSurface {
+	background-color: var(--mantine-color-body);
 	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--mantine-color-gray-2);
-	overflow: hidden;
+	border: 1px solid var(--mantine-color-default-border);
+	overflow-x: auto;
 }
 
 .actionColumn {
 	width: 40px;
+}
+
+.riskBar {
+	width: 72px;
+	flex: none;
+}
+
+/*
+ * Mantine Badge ellipsises its label when squeezed, so the badge columns get an
+ * explicit width instead of letting auto table layout collapse them.
+ */
+.levelColumn {
+	width: 110px;
+	white-space: nowrap;
+}
+
+.riskColumn {
+	width: 150px;
+	white-space: nowrap;
+}
+
+.controlsAside {
+	align-self: flex-start;
+}
+
+/* Keeps the trailing percentage aligned across stacked progress rows. */
+.percentValue {
+	min-width: 40px;
+	text-align: right;
 }

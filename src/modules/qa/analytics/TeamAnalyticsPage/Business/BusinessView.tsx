@@ -1,11 +1,12 @@
+import { useTranslation } from 'react-i18next';
 import {
-	Stack,
-	SimpleGrid,
-	Card,
-	Text,
-	Progress,
-	Group,
 	Badge,
+	Card,
+	Group,
+	Progress,
+	SimpleGrid,
+	Stack,
+	Text,
 	ThemeIcon,
 } from '@mantine/core';
 import {
@@ -13,137 +14,129 @@ import {
 	IconUsers,
 	IconAlertCircle,
 } from '@tabler/icons-react';
+import type { NonConversionReasonKey } from '~/modules/qa/team/types';
+import styles from '../TeamAnalyticsPage.module.css';
 
-interface BusinessMetric {
-	label: string;
-	value: number;
-	unit: string;
-	trend?: 'up' | 'down';
-	trendValue?: number;
-}
+const CONVERSION_SUMMARY = { offered: 642, converted: 119, rate: 18.5 };
+
+const NON_CONVERSION_REASONS: {
+	key: NonConversionReasonKey;
+	count: number;
+	percentage: number;
+}[] = [
+	{ key: 'priceTooHigh', count: 156, percentage: 34 },
+	{ key: 'noNeed', count: 142, percentage: 31 },
+	{ key: 'distrustQuality', count: 98, percentage: 21 },
+	{ key: 'thirdPartyDecision', count: 68, percentage: 14 },
+];
+
+const COMPETITORS: {
+	name: string;
+	mentions: number;
+	share: number;
+	sentiment: 'positive' | 'negative' | 'neutral';
+}[] = [
+	{ name: 'CompetitorA', mentions: 87, share: 12, sentiment: 'positive' },
+	{ name: 'CompetitorB', mentions: 62, share: 9, sentiment: 'negative' },
+	{ name: 'CompetitorC', mentions: 45, share: 6, sentiment: 'neutral' },
+];
 
 const BusinessView = () => {
-	const conversionMetrics: BusinessMetric[] = [
-		{
-			label: 'Overall Conversion',
-			value: 18.5,
-			unit: '%',
-			trend: 'up',
-			trendValue: 2.3,
-		},
-		{
-			label: 'First Call Conversion',
-			value: 12.2,
-			unit: '%',
-			trend: 'up',
-			trendValue: 1.8,
-		},
-		{
-			label: 'Call Backs Converted',
-			value: 24.6,
-			unit: '%',
-			trend: 'down',
-			trendValue: -0.5,
-		},
-	];
-
-	const objectionHandling = [
-		{ reason: 'Price Concern', count: 156, percentage: 34 },
-		{ reason: 'Not Interested', count: 142, percentage: 31 },
-		{ reason: 'Competitor Better', count: 98, percentage: 21 },
-		{ reason: 'Need Info', count: 68, percentage: 14 },
-	];
-
-	const competitors = [
-		{ name: 'CompetitorA', mentions: 87, sentiment: 'positive' },
-		{ name: 'CompetitorB', mentions: 62, sentiment: 'negative' },
-		{ name: 'CompetitorC', mentions: 45, sentiment: 'neutral' },
-	];
+	const { t } = useTranslation('qa.teamAnalytics');
 
 	return (
-		<Stack gap='lg'>
-			<div>
-				<Text fw={600} size='sm' mb='md'>
-					Conversion Analysis
+		<Stack gap='xl'>
+			<section>
+				<Text fw={600} size='sm'>
+					{t('business.conversionTrend')}
 				</Text>
-				<SimpleGrid cols={3} spacing='lg'>
-					{conversionMetrics.map((metric) => (
-						<Card key={metric.label} withBorder p='md'>
-							<Group justify='space-between' mb='xs'>
-								<Text size='sm' fw={500}>
-									{metric.label}
-								</Text>
-								{metric.trend && (
-									<Badge
-										size='sm'
-										variant='light'
-										color={metric.trend === 'up' ? 'green' : 'red'}
-									>
-										{metric.trend === 'up' ? '+' : '-'}
-										{Math.abs(metric.trendValue || 0).toFixed(1)}%
-									</Badge>
-								)}
-							</Group>
+				<Text size='sm' c='dimmed' mb='md'>
+					{t('business.conversionTrendDescription')}
+				</Text>
+				<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='md'>
+					<Card withBorder p='md'>
+						<Text size='sm' c='dimmed'>
+							{t('business.offered')}
+						</Text>
+						<Text fw={700} size='lg'>
+							{CONVERSION_SUMMARY.offered}
+						</Text>
+					</Card>
+					<Card withBorder p='md'>
+						<Text size='sm' c='dimmed'>
+							{t('business.converted')}
+						</Text>
+						<Text fw={700} size='lg'>
+							{CONVERSION_SUMMARY.converted}
+						</Text>
+					</Card>
+					<Card withBorder p='md'>
+						<Text size='sm' c='dimmed'>
+							{t('kpis.conversionRate')}
+						</Text>
+						<Group gap='xs' align='baseline'>
 							<Text fw={700} size='lg'>
-								{metric.value.toFixed(1)}
-								{metric.unit}
+								{t('business.overallRate', { rate: CONVERSION_SUMMARY.rate })}
 							</Text>
-						</Card>
-					))}
+							<ThemeIcon size='sm' variant='light' color='green'>
+								<IconTrendingUp size={14} />
+							</ThemeIcon>
+						</Group>
+					</Card>
 				</SimpleGrid>
-			</div>
+			</section>
 
-			<div>
+			<section>
 				<Text fw={600} size='sm' mb='md'>
-					Objection Handling
+					{t('business.reasons')}
 				</Text>
-				<Stack gap='md'>
-					{objectionHandling.map((obj) => (
-						<Card key={obj.reason} withBorder p='md'>
+				<Stack gap='sm'>
+					{NON_CONVERSION_REASONS.map((reason) => (
+						<Card key={reason.key} withBorder p='md'>
 							<Group justify='space-between' mb='xs'>
 								<Text size='sm' fw={500}>
-									{obj.reason}
+									{t(`business.reasonLabels.${reason.key}`)}
 								</Text>
 								<Badge size='sm' variant='light'>
-									{obj.count} calls
+									{t('business.signalCalls', { count: reason.count })}
 								</Badge>
 							</Group>
-							<Stack gap='xs' mb='xs'>
-								<Progress value={obj.percentage} size='sm' />
-								<Text size='sm' fw={500}>
-									{obj.percentage}%
+							<Group gap='sm' wrap='nowrap'>
+								<Progress value={reason.percentage} size='sm' flex={1} />
+								<Text size='sm' fw={500} className={styles.percentValue}>
+									{reason.percentage}%
 								</Text>
-							</Stack>
+							</Group>
 						</Card>
 					))}
 				</Stack>
-			</div>
+			</section>
 
-			<div>
+			<section>
 				<Text fw={600} size='sm' mb='md'>
-					Competitor Mentions
+					{t('business.competitors')}
 				</Text>
-				<SimpleGrid cols={3} spacing='lg'>
-					{competitors.map((comp) => (
-						<Card key={comp.name} withBorder p='md'>
+				<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='md'>
+					{COMPETITORS.map((competitor) => (
+						<Card key={competitor.name} withBorder p='md'>
 							<Group justify='space-between' mb='xs'>
 								<Text size='sm' fw={500}>
-									{comp.name}
+									{competitor.name}
 								</Text>
 								<ThemeIcon
 									size='sm'
 									variant='light'
 									color={
-										comp.sentiment === 'positive'
+										competitor.sentiment === 'positive'
 											? 'green'
-											: comp.sentiment === 'negative'
+											: competitor.sentiment === 'negative'
 												? 'red'
 												: 'gray'
 									}
 								>
-									{comp.sentiment === 'positive' ? (
+									{competitor.sentiment === 'positive' ? (
 										<IconTrendingUp size={14} />
-									) : comp.sentiment === 'negative' ? (
+									) : competitor.sentiment === 'negative' ? (
 										<IconAlertCircle size={14} />
 									) : (
 										<IconUsers size={14} />
@@ -151,12 +144,15 @@ const BusinessView = () => {
 								</ThemeIcon>
 							</Group>
 							<Text fw={700} size='lg'>
-								{comp.mentions} mentions
+								{competitor.mentions}
+							</Text>
+							<Text size='xs' c='dimmed'>
+								{t('business.competitorShare', { share: competitor.share })}
 							</Text>
 						</Card>
 					))}
 				</SimpleGrid>
-			</div>
+			</section>
 		</Stack>
 	);
 };

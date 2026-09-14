@@ -20,7 +20,7 @@ export default function BreadcrumbNav() {
 			}}
 			size='sm'
 		>
-			{t('drill.root')}
+			{t('segments.breadcrumbRoot')}
 		</Anchor>,
 		...drill.path.map((crumb: DrillCrumb, idx: number) => (
 			<Anchor
@@ -45,7 +45,7 @@ export default function BreadcrumbNav() {
 				size='sm'
 				onClick={() => clearDrill()}
 			>
-				{t('drill.back')}
+				{t('segments.clearDrill')}
 			</Button>
 			<Breadcrumbs>{items}</Breadcrumbs>
 		</Group>

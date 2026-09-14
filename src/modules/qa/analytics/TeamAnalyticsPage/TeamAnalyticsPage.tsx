@@ -20,15 +20,12 @@ function TeamAnalyticsPageContent() {
 	const { t } = useTranslation('qa.teamAnalytics');
 	const location = useLocation();
 	const role = roleFromPath(location.pathname);
-	const isManager = role === 'qa-manager';
 
 	const params = new URLSearchParams(location.search);
 	const currentView =
 		(params.get(VIEW_PARAM) as TeamAnalyticsView) || DEFAULT_VIEW;
 
-	const eyebrow = isManager
-		? t('page.eyebrow.manager')
-		: t('page.eyebrow.supervisor');
+	const eyebrow = t(`page.eyebrow.${role}`);
 
 	const renderContent = () => {
 		switch (currentView) {
@@ -64,7 +61,7 @@ function TeamAnalyticsPageContent() {
 					<div className={styles.titleGroup}>
 						<Title order={1}>{t('page.title')}</Title>
 						<Text size='sm' c='dimmed'>
-							{t('page.description')}
+							{t(`page.description.${role}`)}
 						</Text>
 					</div>
 				</div>
@@ -73,7 +70,9 @@ function TeamAnalyticsPageContent() {
 
 				<div className={styles.controlsRow}>
 					<FilterBar />
-					<SavedViewsMenu />
+					<div className={styles.controlsAside}>
+						<SavedViewsMenu />
+					</div>
 				</div>
 
 				<KPIStrip />

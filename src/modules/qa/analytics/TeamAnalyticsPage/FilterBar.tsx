@@ -16,21 +16,25 @@ export default function FilterBar() {
 	const activeCount = activeFilterCount(filters);
 
 	const chipLabels: Record<string, string> = {
-		period: t('filters.period'),
+		period: t('filters.chips.period'),
 		granularity: t('filters.granularity'),
 		supervisorIds: t('filters.supervisors'),
 		agentIds: t('filters.agents'),
 		campaignIds: t('filters.campaigns'),
-		linesOfBusiness: t('filters.lineOfBusiness'),
-		campaignTypes: t('filters.campaignType'),
-		directions: t('filters.callDirection'),
-		shifts: t('filters.shift'),
-		tenureBands: t('filters.tenure'),
-		timeSlots: t('filters.timeOfDay'),
-		weekdays: t('filters.weekday'),
+		linesOfBusiness: t('filters.linesOfBusiness'),
+		campaignTypes: t('filters.campaignTypes'),
+		directions: t('filters.directions'),
+		shifts: t('filters.shifts'),
+		statuses: t('filters.statuses'),
+		tenureBands: t('filters.tenureBands'),
+		timeSlots: t('filters.timeSlots'),
+		weekdays: t('filters.weekdays'),
 		emotions: t('filters.emotions'),
-		qascoringFlags: t('filters.qascoringFlags'),
-		scoreRange: t('filters.scoreRange'),
+		autoFailOnly: t('filters.flags.autoFailOnly'),
+		recoveredOnly: t('filters.flags.recoveredOnly'),
+		offeredOnly: t('filters.flags.offeredOnly'),
+		convertedOnly: t('filters.flags.convertedOnly'),
+		scoreRange: t('filters.scoreRange.label'),
 		minCalls: t('filters.minCalls'),
 	};
 
@@ -38,14 +42,14 @@ export default function FilterBar() {
 		<>
 			<div className={styles.filterBar}>
 				<Group gap='xs' wrap='wrap'>
-					<Tooltip label={t('filters.detail')} withArrow>
+					<Tooltip label={t('filters.moreFilters')} withArrow>
 						<Button
 							leftSection={<IconAdjustments size={16} />}
 							variant='light'
 							size='sm'
 							onClick={() => setFilterDrawerOpen(true)}
 						>
-							{t('filters.label')}
+							{t('filters.title')}
 							{activeCount > 0 && (
 								<Badge size='xs' variant='filled' ml='xs'>
 									{activeCount}
@@ -59,20 +63,21 @@ export default function FilterBar() {
 							<Group gap={4}>
 								{chips.map((chip) => (
 									<Badge key={chip.key} variant='dot' size='lg'>
-										{chipLabels[chip.key] || chip.key}:{' '}
-										{chip.values.slice(0, 2).join(', ')}
+										{chipLabels[chip.key] || chip.key}
+										{chip.values.length > 0 &&
+											`: ${chip.values.slice(0, 2).join(', ')}`}
 									</Badge>
 								))}
 							</Group>
 
-							<Tooltip label={t('common.clearAll')} withArrow>
+							<Tooltip label={t('filters.chips.clearAll')} withArrow>
 								<Button
 									variant='subtle'
 									size='xs'
 									rightSection={<IconX size={14} />}
 									onClick={() => resetFilters()}
 								>
-									{t('common.clear')}
+									{t('filters.chips.clearAll')}
 								</Button>
 							</Tooltip>
 						</>

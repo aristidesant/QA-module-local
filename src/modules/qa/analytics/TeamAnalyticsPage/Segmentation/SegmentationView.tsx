@@ -11,13 +11,21 @@ interface SegmentationViewProps {
 	viewType: 'qa' | 'sentiment' | 'compliance';
 }
 
+/** Headline metric shown in the comparison table for each metric view. */
+const VIEW_HEADLINE_METRIC: Record<SegmentationViewProps['viewType'], string> =
+	{
+		qa: 'QA_OVERALL_SCORE',
+		sentiment: 'CUSTOMER_SENTIMENT_SCORE',
+		compliance: 'COMPLIANCE_OVERALL_SCORE',
+	};
+
 export default function SegmentationView({ viewType }: SegmentationViewProps) {
 	const { t } = useTranslation('qa.teamAnalytics');
 	const location = useLocation();
 	const role = roleFromPath(location.pathname) as 'supervisor' | 'qa-manager';
 	const { groupBy, drill } = useTeamAnalyticsStore();
 
-	const metricLabel = t(`metrics.${viewType}`);
+	const metricLabel = t(`metrics.${VIEW_HEADLINE_METRIC[viewType]}`);
 	const groupByLabel = t(`filters.groupByOptions.${groupBy}`);
 
 	const sampleData = [
@@ -72,13 +80,15 @@ export default function SegmentationView({ viewType }: SegmentationViewProps) {
 		<Stack gap='md'>
 			{drill && <BreadcrumbNav />}
 
-			<Group justify='space-between'>
+			<Group justify='space-between' align='flex-start'>
 				<div>
 					<Text fw={600} size='sm'>
-						{t('segmentation.title')}
+						{groupBy === 'none'
+							? t('segments.tableTitle')
+							: t('segments.title', { dimension: groupByLabel.toLowerCase() })}
 					</Text>
 					<Text size='sm' c='dimmed'>
-						{t('segmentation.description')}: {groupByLabel}
+						{t('segments.description')}
 					</Text>
 				</div>
 				<GroupBySelector role={role} />
