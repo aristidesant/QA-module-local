@@ -11,7 +11,6 @@ import {
 	BestWorstCallsTable,
 	QuickInsightsWidget,
 	RankingsTable,
-	BurnoutRiskWidget,
 	InboxSummary,
 } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
@@ -20,7 +19,6 @@ import {
 	AGENT_WEEKLY_METRICS,
 	AGENT_SENTIMENT_TREND,
 	BEST_WORST_CALLS,
-	AGENT_BURNOUT_RISK,
 } from '../mockData';
 import styles from '../Dashboard.module.css';
 
@@ -111,23 +109,13 @@ export const NewAgentDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Inbox summary & burnout assessment */}
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					<InboxSummary
-						autoDrivenCount={3}
-						negativeCount={2}
-						trendCount={5}
-						inboxPath='/qa/agent/inbox'
-						fullHeight
-					/>
-					<SectionCard
-						title='Burnout Assessment'
-						description='Your current burnout risk level'
-						fullHeight
-					>
-						<BurnoutRiskWidget data={AGENT_BURNOUT_RISK} />
-					</SectionCard>
-				</SimpleGrid>
+				{/* 3. Inbox summary */}
+				<InboxSummary
+					autoDrivenCount={3}
+					negativeCount={2}
+					trendCount={5}
+					inboxPath='/qa/agent/inbox'
+				/>
 
 				{/* 4. Team rankings */}
 				<SectionCard
