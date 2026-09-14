@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import { Stack, Title, Text, SimpleGrid, Tabs, Badge } from '@mantine/core';
@@ -10,15 +10,12 @@ import {
 	ComplianceCard,
 	SentimentEmotionCard,
 	BusinessInsightsCard,
-	DashboardEvaluationFilter,
-	isCardVisible,
 	SentimentTrendChart,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
 	RankingsTable,
 	InboxSummary,
 } from '../components';
-import type { DashboardEvaluationType } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
 import {
@@ -388,8 +385,6 @@ export const NewQAManagerDashboard: React.FC = () => {
 		'all',
 		7
 	);
-	const [evaluationType, setEvaluationType] =
-		useState<DashboardEvaluationType>('all');
 	const {
 		qaScore,
 		sentiment,
@@ -400,11 +395,6 @@ export const NewQAManagerDashboard: React.FC = () => {
 	} = QA_MANAGER_WEEKLY_METRICS;
 
 	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
-
-	const cardClass = (
-		types: DashboardEvaluationType | DashboardEvaluationType[]
-	) =>
-		isCardVisible(evaluationType, types) ? styles.gridCard : styles.dimmedCard;
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -421,27 +411,27 @@ export const NewQAManagerDashboard: React.FC = () => {
 					description='Platform quality assurance, compliance, sentiment and business results this week'
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
-						<div className={cardClass('qa')}>
+						<div className={styles.gridCard}>
 							<QualityAssuranceCard
 								score={qaScore}
 								subtitle='Platform category breakdown'
 								autoFails={autoFailsCount}
 							/>
 						</div>
-						<div className={cardClass('compliance')}>
+						<div className={styles.gridCard}>
 							<ComplianceCard
 								categories={complianceCategories}
 								subtitle='Platform category overview'
 							/>
 						</div>
-						<div className={cardClass('sentiment')}>
+						<div className={styles.gridCard}>
 							<SentimentEmotionCard
 								score={overallSentiment}
 								predominantEmotion={sentiment.predominantEmotion}
 								subtitle='0-5 scale assessment'
 							/>
 						</div>
-						<div className={cardClass('business')}>
+						<div className={styles.gridCard}>
 							<BusinessInsightsCard
 								insights={businessInsights}
 								outcome={businessOutcome}
@@ -451,17 +441,11 @@ export const NewQAManagerDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				<DashboardEvaluationFilter
-					value={evaluationType}
-					onChange={setEvaluationType}
-				/>
-
 				<InboxSummary
 					autoDrivenCount={5}
 					negativeCount={4}
 					trendCount={8}
 					inboxPath='/qa/qa-manager/inbox'
-					dimmed={!isCardVisible(evaluationType, 'qa')}
 				/>
 
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
@@ -469,7 +453,6 @@ export const NewQAManagerDashboard: React.FC = () => {
 						title='Sentiment Trend'
 						description='4-week platform sentiment progression'
 						fullHeight
-						dimmed={!isCardVisible(evaluationType, 'sentiment')}
 					>
 						<SentimentTrendChart data={QA_MANAGER_SENTIMENT_TREND} />
 					</SectionCard>
@@ -478,13 +461,6 @@ export const NewQAManagerDashboard: React.FC = () => {
 						title='Quick Insights'
 						description='Platform-level recommendations and analysis'
 						fullHeight
-						dimmed={
-							!isCardVisible(evaluationType, [
-								'sentiment',
-								'compliance',
-								'business',
-							])
-						}
 					>
 						<QuickInsightsWidget insights={DEFAULT_QA_MANAGER_INSIGHTS} />
 					</SectionCard>
@@ -495,7 +471,6 @@ export const NewQAManagerDashboard: React.FC = () => {
 						title='Best & Worst Calls'
 						description='Top and bottom performing calls from across all teams this week'
 						fullHeight
-						dimmed={!isCardVisible(evaluationType, 'qa')}
 					>
 						<BestWorstCallsTable calls={QA_MANAGER_CALLS} />
 					</SectionCard>

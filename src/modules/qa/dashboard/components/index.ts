@@ -19,11 +19,6 @@ export {
 export { COPCScoreCard } from './COPCScoreCard';
 export { SentimentScaleCard } from './SentimentScaleCard';
 export { BusinessInsightsCard } from './BusinessInsightsCard';
-export {
-	DashboardEvaluationFilter,
-	isCardVisible,
-} from './DashboardEvaluationFilter';
-export type { DashboardEvaluationType } from './DashboardEvaluationFilter';
 export { AgentInbox } from './AgentInbox';
 
 // Phase 3: Agent & Supervisor features

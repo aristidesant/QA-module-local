@@ -48,16 +48,6 @@
 	"error": {
 		"title": "No se pudieron cargar los datos del panel"
 	},
-	"evaluationFilter": {
-		"label": "Filtrar por tipo de evaluación",
-		"options": {
-			"all": "Todas",
-			"qa": "QA",
-			"sentiment": "Sentimiento y emoción",
-			"compliance": "Compliance",
-			"business": "Business Insights"
-		}
-	},
 	"evaluatorType": {
 		"ai": "IA",
 		"human": "Humano"

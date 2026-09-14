@@ -30,7 +30,6 @@ interface InboxSummaryProps {
 	inboxPath: string;
 	/** Stretch to the grid cell so it lines up with the card beside it. */
 	fullHeight?: boolean;
-	dimmed?: boolean;
 }
 
 export const InboxSummary: React.FC<InboxSummaryProps> = ({
@@ -39,7 +38,6 @@ export const InboxSummary: React.FC<InboxSummaryProps> = ({
 	trendCount = 5,
 	inboxPath,
 	fullHeight,
-	dimmed,
 }) => {
 	const navigate = useNavigate();
 	const totalCount = autoDrivenCount + negativeCount + trendCount;
@@ -96,7 +94,6 @@ export const InboxSummary: React.FC<InboxSummaryProps> = ({
 			title='Inbox Summary'
 			description={`${totalCount} trigger${totalCount !== 1 ? 's' : ''} this period`}
 			fullHeight={fullHeight}
-			dimmed={dimmed}
 		>
 			<Stack gap='md'>
 				<Group justify='flex-end'>

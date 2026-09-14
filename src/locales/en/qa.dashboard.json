@@ -48,16 +48,6 @@
 	"error": {
 		"title": "Could not load dashboard data"
 	},
-	"evaluationFilter": {
-		"label": "Filter by evaluation type",
-		"options": {
-			"all": "All",
-			"qa": "QA",
-			"sentiment": "Sentiment & Emotion",
-			"compliance": "Compliance",
-			"business": "Business Insights"
-		}
-	},
 	"evaluatorType": {
 		"ai": "AI",
 		"human": "Human"

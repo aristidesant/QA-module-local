@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import {
@@ -19,15 +19,12 @@ import {
 	ComplianceCard,
 	SentimentEmotionCard,
 	BusinessInsightsCard,
-	DashboardEvaluationFilter,
-	isCardVisible,
 	SentimentTrendChart,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
 	RankingsTable,
 	InboxSummary,
 } from '../components';
-import type { DashboardEvaluationType } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
 import {
@@ -271,8 +268,6 @@ export const NewSupervisorDashboard: React.FC = () => {
 		'Team 1',
 		7
 	);
-	const [evaluationType, setEvaluationType] =
-		useState<DashboardEvaluationType>('all');
 	const {
 		qaScore,
 		sentiment,
@@ -286,11 +281,6 @@ export const NewSupervisorDashboard: React.FC = () => {
 
 	const openDisputes = DISPUTES_SAMPLE.filter((d) => d.status === 'open');
 	const openDisputeCount = openDisputes.length;
-
-	const cardClass = (
-		types: DashboardEvaluationType | DashboardEvaluationType[]
-	) =>
-		isCardVisible(evaluationType, types) ? styles.gridCard : styles.dimmedCard;
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -307,27 +297,27 @@ export const NewSupervisorDashboard: React.FC = () => {
 					description="Your team's quality assurance, compliance, sentiment and business results this week"
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
-						<div className={cardClass('qa')}>
+						<div className={styles.gridCard}>
 							<QualityAssuranceCard
 								score={qaScore}
 								subtitle='Team category breakdown'
 								autoFails={autoFailsCount}
 							/>
 						</div>
-						<div className={cardClass('compliance')}>
+						<div className={styles.gridCard}>
 							<ComplianceCard
 								categories={complianceCategories}
 								subtitle='Team category overview'
 							/>
 						</div>
-						<div className={cardClass('sentiment')}>
+						<div className={styles.gridCard}>
 							<SentimentEmotionCard
 								score={overallSentiment}
 								predominantEmotion={sentiment.predominantEmotion}
 								subtitle='0-5 scale assessment'
 							/>
 						</div>
-						<div className={cardClass('business')}>
+						<div className={styles.gridCard}>
 							<BusinessInsightsCard
 								insights={businessInsights}
 								outcome={businessOutcome}
@@ -337,17 +327,11 @@ export const NewSupervisorDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				<DashboardEvaluationFilter
-					value={evaluationType}
-					onChange={setEvaluationType}
-				/>
-
 				<InboxSummary
 					autoDrivenCount={4}
 					negativeCount={3}
 					trendCount={6}
 					inboxPath='/qa/supervisor/inbox'
-					dimmed={!isCardVisible(evaluationType, 'qa')}
 				/>
 
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
@@ -355,7 +339,6 @@ export const NewSupervisorDashboard: React.FC = () => {
 						title='Sentiment Trend'
 						description='4-week team sentiment progression'
 						fullHeight
-						dimmed={!isCardVisible(evaluationType, 'sentiment')}
 					>
 						<SentimentTrendChart data={SUPERVISOR_SENTIMENT_TREND} />
 					</SectionCard>
@@ -364,7 +347,6 @@ export const NewSupervisorDashboard: React.FC = () => {
 						title='Open Disputes'
 						description='Evaluations your team is contesting right now'
 						fullHeight
-						dimmed={!isCardVisible(evaluationType, 'compliance')}
 						headerActions={
 							<Group gap='xs'>
 								<Badge size='lg' color='blue' variant='light'>
@@ -394,7 +376,6 @@ export const NewSupervisorDashboard: React.FC = () => {
 						title='Best & Worst Calls'
 						description="Your team's top and bottom performing calls this week"
 						fullHeight
-						dimmed={!isCardVisible(evaluationType, 'qa')}
 					>
 						<BestWorstCallsTable calls={SUPERVISOR_CALLS} />
 					</SectionCard>

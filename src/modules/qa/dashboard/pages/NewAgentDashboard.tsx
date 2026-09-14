@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
@@ -7,8 +7,6 @@ import {
 	ComplianceCard,
 	SentimentEmotionCard,
 	BusinessInsightsCard,
-	DashboardEvaluationFilter,
-	isCardVisible,
 	SentimentTrendChart,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
@@ -16,7 +14,6 @@ import {
 	BurnoutRiskWidget,
 	InboxSummary,
 } from '../components';
-import type { DashboardEvaluationType } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
 import {
@@ -55,8 +52,6 @@ export const NewAgentDashboard: React.FC = () => {
 		'Team 1',
 		7
 	);
-	const [evaluationType, setEvaluationType] =
-		useState<DashboardEvaluationType>('all');
 	const {
 		qaScore,
 		sentiment,
@@ -68,11 +63,6 @@ export const NewAgentDashboard: React.FC = () => {
 
 	/** Overall sentiment on the 0-5 scale, averaging agent and customer readings */
 	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
-
-	const cardClass = (
-		types: DashboardEvaluationType | DashboardEvaluationType[]
-	) =>
-		isCardVisible(evaluationType, types) ? styles.gridCard : styles.dimmedCard;
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -91,27 +81,27 @@ export const NewAgentDashboard: React.FC = () => {
 					description='Your quality assurance, compliance, sentiment and business results this week'
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
-						<div className={cardClass('qa')}>
+						<div className={styles.gridCard}>
 							<QualityAssuranceCard
 								score={qaScore}
 								subtitle='Category breakdown'
 								autoFails={autoFailsCount}
 							/>
 						</div>
-						<div className={cardClass('compliance')}>
+						<div className={styles.gridCard}>
 							<ComplianceCard
 								categories={complianceCategories}
 								subtitle='Category overview'
 							/>
 						</div>
-						<div className={cardClass('sentiment')}>
+						<div className={styles.gridCard}>
 							<SentimentEmotionCard
 								score={overallSentiment}
 								predominantEmotion={sentiment.predominantEmotion}
 								subtitle='0-5 scale assessment'
 							/>
 						</div>
-						<div className={cardClass('business')}>
+						<div className={styles.gridCard}>
 							<BusinessInsightsCard
 								insights={businessInsights}
 								outcome={businessOutcome}
@@ -121,11 +111,6 @@ export const NewAgentDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				<DashboardEvaluationFilter
-					value={evaluationType}
-					onChange={setEvaluationType}
-				/>
-
 				{/* 3. Inbox summary & burnout assessment */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
 					<InboxSummary
@@ -134,13 +119,11 @@ export const NewAgentDashboard: React.FC = () => {
 						trendCount={5}
 						inboxPath='/qa/agent/inbox'
 						fullHeight
-						dimmed={!isCardVisible(evaluationType, 'qa')}
 					/>
 					<SectionCard
 						title='Burnout Assessment'
 						description='Your current burnout risk level'
 						fullHeight
-						dimmed={!isCardVisible(evaluationType, ['sentiment', 'qa'])}
 					>
 						<BurnoutRiskWidget data={AGENT_BURNOUT_RISK} />
 					</SectionCard>
@@ -150,7 +133,6 @@ export const NewAgentDashboard: React.FC = () => {
 				<SectionCard
 					title='Team Rankings'
 					description="Your current ranking alongside the team's top performers this period"
-					dimmed={!isCardVisible(evaluationType, 'sentiment')}
 				>
 					<RankingsTable
 						entries={rankingEntries}
@@ -167,7 +149,6 @@ export const NewAgentDashboard: React.FC = () => {
 						title='Sentiment Trend'
 						description='4-week sentiment progression'
 						fullHeight
-						dimmed={!isCardVisible(evaluationType, 'sentiment')}
 					>
 						<SentimentTrendChart data={AGENT_SENTIMENT_TREND} />
 					</SectionCard>
@@ -175,13 +156,6 @@ export const NewAgentDashboard: React.FC = () => {
 						title='Quick Insights'
 						description='Performance recommendations and analysis'
 						fullHeight
-						dimmed={
-							!isCardVisible(evaluationType, [
-								'sentiment',
-								'compliance',
-								'business',
-							])
-						}
 					>
 						<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
 					</SectionCard>
@@ -191,7 +165,6 @@ export const NewAgentDashboard: React.FC = () => {
 				<SectionCard
 					title='Best & Worst Calls'
 					description='Your top and bottom performing calls this week'
-					dimmed={!isCardVisible(evaluationType, 'qa')}
 				>
 					<BestWorstCallsTable calls={BEST_WORST_CALLS} />
 				</SectionCard>

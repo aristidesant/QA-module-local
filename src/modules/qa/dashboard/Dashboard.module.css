@@ -45,15 +45,9 @@
 }
 
 /*
- * Grid item wrapper for the four evaluation cards. They are Mantine `Card`s, not
- * `SectionCard`s, so the dimming lives here while the inner card keeps h='100%'.
+ * Grid item wrapper so the four evaluation cards stretch to equal height.
+ * They are Mantine `Card`s, not `SectionCard`s, so this lives here.
  */
-.dimmedCard {
-	height: 100%;
-	opacity: 0.5;
-	transition: opacity 160ms ease;
-}
-
 .gridCard {
 	height: 100%;
 }
