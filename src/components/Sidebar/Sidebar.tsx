@@ -929,7 +929,14 @@ export const Sidebar: React.FC = () => {
 				<Divider className={styles.brandDivider} />
 			</div>
 
-			<Stack gap='xs' className={styles.primaryLinks}>
+			<Stack
+				gap='xs'
+				className={
+					sectionNav.length === 0
+						? `${styles.primaryLinks} ${styles.primaryLinksScrollable}`
+						: styles.primaryLinks
+				}
+			>
 				{primaryNav.map((navItem) => {
 					if (isNavGroup(navItem)) {
 						// Render as group (collapsible or not)

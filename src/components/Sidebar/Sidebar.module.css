@@ -135,6 +135,29 @@
 	scrollbar-gutter: stable;
 }
 
+/*
+ * Applied to .primaryLinks when there is no sectionNav (role preview, QA,
+ * Backoffice and emotion-sentiment sidebars all render their whole nav as
+ * primaryNav). Without this, a long flat or grouped nav list has no bounded
+ * height to scroll within, so it overflows past the sidebar's fixed height
+ * and pushes the bottom section (user menu / role switcher) out of view.
+ */
+.primaryLinksScrollable {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	padding-right: 0.25rem;
+	margin-right: -0.25rem;
+	scrollbar-gutter: stable;
+}
+
+.sidebarCollapsed .primaryLinksScrollable {
+	padding-right: 0;
+	margin-right: 0;
+	width: 100%;
+	scrollbar-gutter: stable both-edges;
+}
+
 .sidebarCollapsed .mainScrollArea {
 	padding-right: 0;
 	margin-right: 0;
