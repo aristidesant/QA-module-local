@@ -14,6 +14,7 @@ import {
 	IconSpeakerphone,
 	IconUserSquareRounded,
 	IconAddressBook,
+	IconForms,
 } from '@tabler/icons-react';
 import type { SidebarNavItem } from './Sidebar';
 import styles from './Sidebar.module.css';
@@ -309,6 +310,13 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.team',
 	},
 	{
+		key: 'qamanager-forms',
+		label: 'sidebar.qamanager.forms',
+		icon: <IconForms size={20} className={styles.menuIcon} />,
+		to: '/qa/forms',
+		i18nNamespace: 'qa.forms',
+	},
+	{
 		key: 'qamanager-customers',
 		label: 'sidebar.qamanager.customers',
 		icon: <IconAddressBook size={20} className={styles.menuIcon} />,
@@ -396,7 +404,8 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 			items: pick(
 				'qamanager-supervisors',
 				'qamanager-teams',
-				'qamanager-agents'
+				'qamanager-agents',
+				'qamanager-forms'
 			),
 			collapsible: false,
 			defaultExpanded: true,
