@@ -85,7 +85,8 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.agent.disputes',
 		icon: <IconGitBranch size={20} className={styles.menuIcon} />,
 		to: '/qa/agent/disputes',
-		i18nNamespace: 'qa.agent',
+		i18nNamespace: 'qa.disputes',
+		badge: 'disputes',
 	},
 ];
 
@@ -185,7 +186,8 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.supervisor.disputes',
 		icon: <IconFolders size={20} className={styles.menuIcon} />,
 		to: '/qa/supervisor/disputes',
-		i18nNamespace: 'qa.supervisor',
+		i18nNamespace: 'qa.disputes',
+		badge: 'disputes',
 	},
 	{
 		key: 'supervisor-analytics',
@@ -347,7 +349,8 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.qamanager.disputes',
 		icon: <IconFolders size={20} className={styles.menuIcon} />,
 		to: '/qa/qa-manager/disputes',
-		i18nNamespace: 'qa.qamanager',
+		i18nNamespace: 'qa.disputes',
+		badge: 'disputes',
 	},
 	{
 		key: 'qamanager-triggers',

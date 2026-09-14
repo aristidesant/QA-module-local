@@ -124,5 +124,138 @@
 		"title": "Disputes",
 		"version": "Version {{version}}"
 	},
-	"scoreDelta": "{{delta}} pts"
+	"scoreDelta": "{{delta}} pts",
+	"cases": {
+		"page": {
+			"eyebrow": {
+				"agent": "Agent · John Smith",
+				"supervisor": "Supervisor · Team 1",
+				"qa-manager": "QA Manager · All teams"
+			},
+			"title": "Disputes",
+			"description": {
+				"agent": "Evaluations you disagreed with and what the QA Manager decided",
+				"supervisor": "Disputes opened by your team — read-only, the QA Manager resolves them",
+				"qa-manager": "Review each dispute, correct the items scored wrongly or reject it"
+			}
+		},
+		"kpis": {
+			"open": "Open",
+			"accepted": "Accepted",
+			"rejected": "Rejected",
+			"acceptanceRate": "Acceptance rate"
+		},
+		"filters": {
+			"status": {
+				"all": "All",
+				"open": "Open",
+				"accepted": "Accepted",
+				"rejected": "Rejected"
+			},
+			"type": "Evaluation type",
+			"allTypes": "All types",
+			"team": "Team",
+			"allTeams": "All teams",
+			"agentSearch": "Search agent"
+		},
+		"table": {
+			"columns": {
+				"id": "ID",
+				"call": "Call",
+				"agent": "Agent",
+				"team": "Team",
+				"supervisor": "Supervisor",
+				"type": "Type",
+				"score": "Score",
+				"status": "Status",
+				"opened": "Opened",
+				"resolved": "Resolved"
+			},
+			"empty": "No disputes match the current filters"
+		},
+		"status": {
+			"open": "Open",
+			"accepted": "Accepted",
+			"rejected": "Rejected"
+		},
+		"types": {
+			"qa": "QA",
+			"sentiment-emotion": "Sentiment & Emotion",
+			"compliance": "Compliance",
+			"business-insights": "Business Insights"
+		},
+		"detail": {
+			"back": "All disputes",
+			"title": "{{type}} dispute · {{agent}}",
+			"openedBy": "Opened by {{agent}} {{when}}",
+			"resolvedBy": "{{status}} by {{name}} on {{date}}",
+			"summary": {
+				"before": "Score before",
+				"after": "Score after",
+				"pending": "Pending review",
+				"change": "Change",
+				"daysOpen": "Days open",
+				"signalsBefore": "Signals before",
+				"signalsAfter": "Signals after",
+				"signals": "Signals detected"
+			},
+			"recording": "Call recording",
+			"transcript": "Transcript",
+			"turns_one": "{{count}} turn",
+			"turns_other": "{{count}} turns",
+			"statement": "Agent statement",
+			"flaggedItems": "Items the agent flagged",
+			"noFlaggedItems": "No specific items flagged",
+			"evaluation": "Evaluation",
+			"view": {
+				"original": "Original",
+				"corrected": "Corrected"
+			},
+			"resolution": {
+				"title": "Resolution",
+				"corrections": "Corrected items",
+				"before": "Before",
+				"after": "After",
+				"managerComment": "QA Manager comment",
+				"none": "No items were corrected"
+			},
+			"waiting": "Waiting for the QA Manager to review this dispute.",
+			"notFound": "This dispute does not exist or is outside your scope"
+		},
+		"review": {
+			"title": "Review",
+			"description": "Tick the items that were scored wrongly. The score recalculates as you go.",
+			"items": "Disputed items",
+			"preview": "Recalculated score",
+			"comment": "Comment",
+			"commentPlaceholder": "Explain the decision to the agent…",
+			"accept": "Accept & correct",
+			"reject": "Reject",
+			"confirmReject": {
+				"title": "Reject this dispute?",
+				"body": "The agent will be notified with your comment. This cannot be undone.",
+				"confirm": "Reject dispute"
+			},
+			"acceptedToast": "Dispute accepted — the corrected score is now on the call",
+			"rejectedToast": "Dispute rejected",
+			"needItems": "Tick at least one item to accept",
+			"needComment": "Write a comment to reject"
+		},
+		"open": {
+			"button": "Dispute this evaluation",
+			"alreadyOpen": "A dispute for this evaluation is already open",
+			"title": "Open a dispute",
+			"description": "Tell the QA Manager what you disagree with. You can flag specific items.",
+			"type": "Evaluation type",
+			"score": "Current score",
+			"items": "Items you disagree with (optional)",
+			"itemsHint": "Only items scored against you are listed",
+			"noItems": "This evaluation has no items scored against you",
+			"comment": "Why do you disagree?",
+			"commentPlaceholder": "Be specific: what happened on the call and why the score is wrong…",
+			"minLength": "At least {{count}} characters",
+			"submit": "Open dispute",
+			"toast": "Dispute opened — the QA Manager has been notified"
+		}
+	}
 }

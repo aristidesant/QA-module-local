@@ -72,7 +72,6 @@ import {
 import { useRoleMockStore } from '~/stores/roleMockStore';
 import type { PreviewRole } from '~/constants/previewRole';
 import UserMenu from '../UserMenu';
-import { useDisputesQuery } from '~/queries/qa/disputesQueries';
 import {
 	useNotificationStore,
 	selectNotifications,
@@ -82,6 +81,8 @@ import {
 	inboxRoleFromPath,
 } from '~/modules/qa/inbox/constants';
 import { unreadCountFor } from '~/modules/qa/inbox/helpers';
+import { useDisputesStore, selectCases } from '~/stores/qa/disputesStore';
+import { casesForRole, openCount } from '~/modules/qa/disputes/cases/helpers';
 import { roleNavigationGroupedMap, type NavGroup } from './roleNavigation';
 
 export type SidebarNavItem = {
@@ -1075,14 +1076,18 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 	const location = useLocation();
 	const { t } = useTranslation('common');
 	const { closeMobile } = useSidebarStore();
-	const disputesQuery = useDisputesQuery(
-		{ limit: 1 },
-		item.badge === 'disputes'
-	);
 	const notifications = useNotificationStore(selectNotifications);
+	const disputeCases = useDisputesStore(selectCases);
 
 	const isSelected = isLinkActive(item, location.pathname);
-	const openDisputesCount = disputesQuery.data?.total ?? 0;
+	/** Open disputes in the scope of the role this link belongs to. */
+	const openDisputesCount = useMemo(
+		() =>
+			item.badge === 'disputes'
+				? openCount(casesForRole(disputeCases, inboxRoleFromPath(item.to)))
+				: 0,
+		[item.badge, item.to, disputeCases]
+	);
 	/** Unread count of the inbox this link points at (agent / supervisor / QA manager). */
 	const inboxUnread = useMemo(() => {
 		if (item.badge !== 'inbox') return 0;

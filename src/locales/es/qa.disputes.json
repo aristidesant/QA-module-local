@@ -124,5 +124,138 @@
 		"title": "Disputas",
 		"version": "Versión {{version}}"
 	},
-	"scoreDelta": "{{delta}} pts"
+	"scoreDelta": "{{delta}} pts",
+	"cases": {
+		"page": {
+			"eyebrow": {
+				"agent": "Agente · John Smith",
+				"supervisor": "Supervisor · Equipo 1",
+				"qa-manager": "QA Manager · Todos los equipos"
+			},
+			"title": "Disputas",
+			"description": {
+				"agent": "Evaluaciones con las que no estuviste de acuerdo y qué decidió el QA Manager",
+				"supervisor": "Disputas abiertas por tu equipo — solo lectura, las resuelve el QA Manager",
+				"qa-manager": "Revisa cada disputa, corrige los ítems mal calificados o recházala"
+			}
+		},
+		"kpis": {
+			"open": "Abiertas",
+			"accepted": "Aceptadas",
+			"rejected": "Rechazadas",
+			"acceptanceRate": "Tasa de aceptación"
+		},
+		"filters": {
+			"status": {
+				"all": "Todas",
+				"open": "Abiertas",
+				"accepted": "Aceptadas",
+				"rejected": "Rechazadas"
+			},
+			"type": "Tipo de evaluación",
+			"allTypes": "Todos los tipos",
+			"team": "Equipo",
+			"allTeams": "Todos los equipos",
+			"agentSearch": "Buscar agente"
+		},
+		"table": {
+			"columns": {
+				"id": "ID",
+				"call": "Llamada",
+				"agent": "Agente",
+				"team": "Equipo",
+				"supervisor": "Supervisor",
+				"type": "Tipo",
+				"score": "Puntuación",
+				"status": "Estado",
+				"opened": "Abierta",
+				"resolved": "Resuelta"
+			},
+			"empty": "Ninguna disputa coincide con los filtros"
+		},
+		"status": {
+			"open": "Abierta",
+			"accepted": "Aceptada",
+			"rejected": "Rechazada"
+		},
+		"types": {
+			"qa": "QA",
+			"sentiment-emotion": "Sentimiento y emoción",
+			"compliance": "Compliance",
+			"business-insights": "Business Insights"
+		},
+		"detail": {
+			"back": "Todas las disputas",
+			"title": "Disputa de {{type}} · {{agent}}",
+			"openedBy": "Abierta por {{agent}} {{when}}",
+			"resolvedBy": "{{status}} por {{name}} el {{date}}",
+			"summary": {
+				"before": "Puntuación antes",
+				"after": "Puntuación después",
+				"pending": "Pendiente de revisión",
+				"change": "Cambio",
+				"daysOpen": "Días abierta",
+				"signalsBefore": "Señales antes",
+				"signalsAfter": "Señales después",
+				"signals": "Señales detectadas"
+			},
+			"recording": "Grabación de la llamada",
+			"transcript": "Transcripción",
+			"turns_one": "{{count}} intervención",
+			"turns_other": "{{count}} intervenciones",
+			"statement": "Declaración del agente",
+			"flaggedItems": "Ítems señalados por el agente",
+			"noFlaggedItems": "No señaló ítems concretos",
+			"evaluation": "Evaluación",
+			"view": {
+				"original": "Original",
+				"corrected": "Corregida"
+			},
+			"resolution": {
+				"title": "Resolución",
+				"corrections": "Ítems corregidos",
+				"before": "Antes",
+				"after": "Después",
+				"managerComment": "Comentario del QA Manager",
+				"none": "No se corrigió ningún ítem"
+			},
+			"waiting": "Esperando la revisión del QA Manager.",
+			"notFound": "Esta disputa no existe o está fuera de tu alcance"
+		},
+		"review": {
+			"title": "Revisión",
+			"description": "Marca los ítems que se calificaron mal. La puntuación se recalcula al instante.",
+			"items": "Ítems disputados",
+			"preview": "Puntuación recalculada",
+			"comment": "Comentario",
+			"commentPlaceholder": "Explica la decisión al agente…",
+			"accept": "Aceptar y corregir",
+			"reject": "Rechazar",
+			"confirmReject": {
+				"title": "¿Rechazar esta disputa?",
+				"body": "Se notificará al agente con tu comentario. Esta acción no se puede deshacer.",
+				"confirm": "Rechazar disputa"
+			},
+			"acceptedToast": "Disputa aceptada — la puntuación corregida ya está en la llamada",
+			"rejectedToast": "Disputa rechazada",
+			"needItems": "Marca al menos un ítem para aceptar",
+			"needComment": "Escribe un comentario para rechazar"
+		},
+		"open": {
+			"button": "Disputar esta evaluación",
+			"alreadyOpen": "Ya hay una disputa abierta para esta evaluación",
+			"title": "Abrir una disputa",
+			"description": "Cuéntale al QA Manager con qué no estás de acuerdo. Puedes señalar ítems concretos.",
+			"type": "Tipo de evaluación",
+			"score": "Puntuación actual",
+			"items": "Ítems con los que no estás de acuerdo (opcional)",
+			"itemsHint": "Solo se listan los ítems que se calificaron en tu contra",
+			"noItems": "Esta evaluación no tiene ítems calificados en tu contra",
+			"comment": "¿Por qué no estás de acuerdo?",
+			"commentPlaceholder": "Sé específico: qué pasó en la llamada y por qué la puntuación es incorrecta…",
+			"minLength": "Al menos {{count}} caracteres",
+			"submit": "Abrir disputa",
+			"toast": "Disputa abierta — el QA Manager ha sido notificado"
+		}
+	}
 }

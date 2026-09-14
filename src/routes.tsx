@@ -142,10 +142,18 @@ const NewOperationManagerDashboard = React.lazy(
 const QaInboxPage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/InboxPage')
 );
-const AgentMyLearningPage = React.lazy(() => import('./modules/qa/lms/AgentLmsPage'));
-const LmsContentPage = React.lazy(() => import('./modules/qa/lms/LmsContentPage'));
-const LmsManagerPage = React.lazy(() => import('./modules/qa/lms/LmsManagerPage'));
-const CoachingPage = React.lazy(() => import('./modules/qa/coaching/CoachingPage'));
+const AgentMyLearningPage = React.lazy(
+	() => import('./modules/qa/lms/AgentLmsPage')
+);
+const LmsContentPage = React.lazy(
+	() => import('./modules/qa/lms/LmsContentPage')
+);
+const LmsManagerPage = React.lazy(
+	() => import('./modules/qa/lms/LmsManagerPage')
+);
+const CoachingPage = React.lazy(
+	() => import('./modules/qa/coaching/CoachingPage')
+);
 const CustomersPage = React.lazy(
 	() => import('./modules/qa/customers/CustomersPage')
 );
@@ -179,9 +187,7 @@ const QAManagerTeamsPage = React.lazy(
 const QAManagerCampaignsPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/CampaignsPage')
 );
-const YourTeamPage = React.lazy(
-	() => import('./modules/qa/team/YourTeamPage')
-);
+const YourTeamPage = React.lazy(() => import('./modules/qa/team/YourTeamPage'));
 const AgentProfilePage = React.lazy(
 	() => import('./modules/qa/team/AgentProfilePage')
 );
@@ -201,9 +207,14 @@ const SupervisorRankingsConfigPanel = React.lazy(() =>
 		(m) => ({ default: m.SupervisorRankingsConfigPanel })
 	)
 );
-const DisputesManagement = React.lazy(() =>
-	import('./modules/qa/disputes/DisputesManagement').then((m) => ({
-		default: m.DisputesManagement,
+const DisputeCaseDetailPage = React.lazy(() =>
+	import('./modules/qa/disputes/cases/DisputeCaseDetailPage').then((m) => ({
+		default: m.default,
+	}))
+);
+const DisputeCasesPage = React.lazy(() =>
+	import('./modules/qa/disputes/cases/DisputeCasesPage').then((m) => ({
+		default: m.default,
 	}))
 );
 const EmotionDisplayShowcase = React.lazy(
@@ -941,7 +952,9 @@ const router = createBrowserRouter([
 									{
 										path: 'agent/coaching',
 										id: 'qa.agent.coaching',
-										element: <Navigate to='/qa/agent/lms?tab=coaching' replace />,
+										element: (
+											<Navigate to='/qa/agent/lms?tab=coaching' replace />
+										),
 									},
 									{
 										path: 'agent/analytics',
@@ -960,7 +973,18 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<DisputesManagement />
+													<DisputeCasesPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'agent/disputes/:disputeId',
+										id: 'qa.agent.disputes.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<DisputeCaseDetailPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -1468,7 +1492,40 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<DisputesManagement />
+													<DisputeCasesPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/disputes/:disputeId',
+										id: 'qa.supervisor.disputes.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<DisputeCaseDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/disputes',
+										id: 'qa.qa-manager.disputes',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<DisputeCasesPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/disputes/:disputeId',
+										id: 'qa.qa-manager.disputes.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<DisputeCaseDetailPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -1479,7 +1536,18 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<DisputesManagement />
+													<DisputeCasesPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qamanager/disputes/:disputeId',
+										id: 'qa.qamanager.disputes.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<DisputeCaseDetailPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

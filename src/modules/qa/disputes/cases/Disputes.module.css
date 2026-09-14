@@ -1,0 +1,18 @@
+.filterField {
+	width: 190px;
+}
+
+/* Badge cells ellipsise when the table is tight; these stay on one line. */
+.nowrapCell {
+	white-space: nowrap;
+}
+
+.statement {
+	white-space: pre-wrap;
+}
+
+.tableSurface {
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	overflow-x: auto;
+}
