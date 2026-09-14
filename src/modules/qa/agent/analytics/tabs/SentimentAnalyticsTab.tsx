@@ -27,8 +27,15 @@ import {
 	ResponsiveContainer,
 } from 'recharts';
 import SectionCard from '~/components/SectionCard';
-import { IconTrendingUp, IconAlertCircle, IconMoodSmile } from '@tabler/icons-react';
-import type { AggregatedMetrics, CallMetric } from '~/modules/qa/dashboard/mockData';
+import {
+	IconTrendingUp,
+	IconAlertCircle,
+	IconMoodSmile,
+} from '@tabler/icons-react';
+import type {
+	AggregatedMetrics,
+	CallMetric,
+} from '~/modules/qa/dashboard/mockData';
 import styles from './SentimentAnalyticsTab.module.css';
 
 export interface SentimentAnalyticsTabProps {
@@ -39,7 +46,11 @@ export interface SentimentAnalyticsTabProps {
 // Emotion configurations with emoji and colors
 const EMOTION_CONFIG: Record<
 	string,
-	{ emoji: string; label: string; color: 'green' | 'red' | 'yellow' | 'blue' | 'orange' | 'violet' }
+	{
+		emoji: string;
+		label: string;
+		color: 'green' | 'red' | 'yellow' | 'blue' | 'orange' | 'violet';
+	}
 > = {
 	Joy: { emoji: '😄', label: 'Joy', color: 'green' },
 	Trust: { emoji: '🤝', label: 'Trust', color: 'blue' },
@@ -51,18 +62,27 @@ const EMOTION_CONFIG: Record<
 	Disgust: { emoji: '😒', label: 'Disgust', color: 'orange' },
 };
 
-const EMOTIONS = ['Joy', 'Trust', 'Anticipation', 'Surprise', 'Anger', 'Fear', 'Sadness', 'Disgust'];
+const EMOTIONS = [
+	'Joy',
+	'Trust',
+	'Anticipation',
+	'Surprise',
+	'Anger',
+	'Fear',
+	'Sadness',
+	'Disgust',
+];
 
 // Emotion sentiment mapping for color coding
 const emotionSentiment: Record<string, 'positive' | 'negative'> = {
-	'Joy': 'positive',
-	'Trust': 'positive',
-	'Anticipation': 'positive',
-	'Surprise': 'positive',
-	'Anger': 'negative',
-	'Fear': 'negative',
-	'Sadness': 'negative',
-	'Disgust': 'negative',
+	Joy: 'positive',
+	Trust: 'positive',
+	Anticipation: 'positive',
+	Surprise: 'positive',
+	Anger: 'negative',
+	Fear: 'negative',
+	Sadness: 'negative',
+	Disgust: 'negative',
 };
 
 interface SummaryCardProps {
@@ -73,7 +93,13 @@ interface SummaryCardProps {
 	badgeColor?: string;
 }
 
-const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, icon, badge, badgeColor }) => {
+const SummaryCard: React.FC<SummaryCardProps> = ({
+	title,
+	value,
+	icon,
+	badge,
+	badgeColor,
+}) => {
 	return (
 		<Paper p='lg' radius='md' withBorder className={styles.summaryCard}>
 			<Stack gap='xs'>
@@ -88,7 +114,11 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, icon, badge, ba
 					)}
 				</Group>
 				<Group align='center' gap='xs'>
-					{icon && <ThemeIcon variant='light' size='lg'>{icon}</ThemeIcon>}
+					{icon && (
+						<ThemeIcon variant='light' size='lg'>
+							{icon}
+						</ThemeIcon>
+					)}
 					<Text size='xl' fw={700}>
 						{value}
 					</Text>
@@ -98,7 +128,10 @@ const SummaryCard: React.FC<SummaryCardProps> = ({ title, value, icon, badge, ba
 	);
 };
 
-const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _calls, aggregated }) => {
+const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({
+	calls: _calls,
+	aggregated,
+}) => {
 	const { t } = useTranslation('qa.agent.analytics');
 	const theme = useMantineTheme();
 
@@ -126,18 +159,25 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 		}
 
 		const avgAgentSentiment =
-			aggregated.reduce((sum, m) => sum + m.avgAgentSentiment, 0) / aggregated.length;
+			aggregated.reduce((sum, m) => sum + m.avgAgentSentiment, 0) /
+			aggregated.length;
 		const avgCustomerSentiment =
-			aggregated.reduce((sum, m) => sum + m.avgCustomerSentiment, 0) / aggregated.length;
+			aggregated.reduce((sum, m) => sum + m.avgCustomerSentiment, 0) /
+			aggregated.length;
 		const sentimentDelta = avgCustomerSentiment - avgAgentSentiment;
 
 		// Get emotion frequencies
 		const emotionCounts = new Map<string, number>();
 		aggregated.forEach((m) => {
-			emotionCounts.set(m.predominantEmotion, (emotionCounts.get(m.predominantEmotion) || 0) + 1);
+			emotionCounts.set(
+				m.predominantEmotion,
+				(emotionCounts.get(m.predominantEmotion) || 0) + 1
+			);
 		});
 
-		const predominantEmotion = Array.from(emotionCounts.entries()).sort((a, b) => b[1] - a[1])[0];
+		const predominantEmotion = Array.from(emotionCounts.entries()).sort(
+			(a, b) => b[1] - a[1]
+		)[0];
 
 		return {
 			avgAgentSentiment: Math.round(avgAgentSentiment * 10) / 10,
@@ -151,7 +191,10 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 	// Prepare trend chart data
 	const trendData = useMemo(() => {
 		return aggregated.map((metric) => ({
-			date: new Date(metric.timestamp).toLocaleDateString('en-US', { month: 'short', day: '2-digit' }),
+			date: new Date(metric.timestamp).toLocaleDateString('en-US', {
+				month: 'short',
+				day: '2-digit',
+			}),
 			agentSentiment: metric.avgAgentSentiment,
 			customerSentiment: metric.avgCustomerSentiment,
 			timestamp: metric.timestamp,
@@ -162,7 +205,10 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 	const emotionFrequencies = useMemo(() => {
 		const frequencies = new Map<string, number>();
 		aggregated.forEach((m) => {
-			frequencies.set(m.predominantEmotion, (frequencies.get(m.predominantEmotion) || 0) + 1);
+			frequencies.set(
+				m.predominantEmotion,
+				(frequencies.get(m.predominantEmotion) || 0) + 1
+			);
 		});
 
 		return EMOTIONS.map((emotion) => ({
@@ -186,32 +232,36 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 	const emotionChartDataWithColors = useMemo(() => {
 		return emotionChartData.map((emotion) => ({
 			...emotion,
-			fill: emotionSentiment[emotion.label] === 'positive'
-				? theme.colors.green[6]
-				: theme.colors.red[6],
+			fill:
+				emotionSentiment[emotion.label] === 'positive'
+					? theme.colors.green[6]
+					: theme.colors.red[6],
 		}));
 	}, [emotionChartData, theme]);
 
 	// Prepare comparison table data (top 10 by recency)
 	const comparisonData = useMemo(() => {
-		return aggregated.slice(-10).reverse().map((metric, index) => {
-			const date = new Date(metric.timestamp).toLocaleDateString('en-US', {
-				month: 'short',
-				day: '2-digit',
-				year: '2-digit',
-			});
-			const delta = metric.avgCustomerSentiment - metric.avgAgentSentiment;
-			const deltaDirection = delta > 0 ? '↑' : delta < 0 ? '↓' : '→';
+		return aggregated
+			.slice(-10)
+			.reverse()
+			.map((metric, index) => {
+				const date = new Date(metric.timestamp).toLocaleDateString('en-US', {
+					month: 'short',
+					day: '2-digit',
+					year: '2-digit',
+				});
+				const delta = metric.avgCustomerSentiment - metric.avgAgentSentiment;
+				const deltaDirection = delta > 0 ? '↑' : delta < 0 ? '↓' : '→';
 
-			return {
-				id: `${index}-${metric.timestamp}`,
-				date,
-				agentSentiment: metric.avgAgentSentiment.toFixed(1),
-				customerSentiment: metric.avgCustomerSentiment.toFixed(1),
-				delta: `${deltaDirection} ${Math.abs(delta).toFixed(2)}`,
-				emotion: metric.predominantEmotion,
-			};
-		});
+				return {
+					id: `${index}-${metric.timestamp}`,
+					date,
+					agentSentiment: metric.avgAgentSentiment.toFixed(1),
+					customerSentiment: metric.avgCustomerSentiment.toFixed(1),
+					delta: `${deltaDirection} ${Math.abs(delta).toFixed(2)}`,
+					emotion: metric.predominantEmotion,
+				};
+			});
 	}, [aggregated]);
 
 	const getSentimentColor = (value: number) => {
@@ -232,7 +282,7 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 			>
 				{aggregated.length > 0 ? (
 					<Grid gap='md'>
-						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
+						<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 4 }}>
 							<SummaryCard
 								title={t('sentiment.summary.agentSentiment')}
 								value={summary.avgAgentSentiment.toFixed(1)}
@@ -240,7 +290,7 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 								badgeColor={getSentimentColor(summary.avgAgentSentiment)}
 							/>
 						</Grid.Col>
-						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
+						<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 4 }}>
 							<SummaryCard
 								title={t('sentiment.summary.customerSentiment')}
 								value={summary.avgCustomerSentiment.toFixed(1)}
@@ -248,15 +298,7 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 								badgeColor={getSentimentColor(summary.avgCustomerSentiment)}
 							/>
 						</Grid.Col>
-						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
-							<SummaryCard
-								title={t('sentiment.summary.delta')}
-								value={`${summary.sentimentDelta > 0 ? '↑' : summary.sentimentDelta < 0 ? '↓' : '→'} ${Math.abs(summary.sentimentDelta).toFixed(2)}`}
-								badge={summary.sentimentDelta > 0 ? t('sentiment.summary.customerHigher') : t('sentiment.summary.agentHigher')}
-								badgeColor={summary.sentimentDelta > 0 ? 'green' : 'orange'}
-							/>
-						</Grid.Col>
-						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
+						<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 4 }}>
 							<SummaryCard
 								title={t('sentiment.summary.predominantEmotion')}
 								value={`${EMOTION_CONFIG[summary.predominantEmotion]?.emoji || ''} ${emotionLabels[summary.predominantEmotion] || summary.predominantEmotion}`}
@@ -281,7 +323,10 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 								data={trendData}
 								margin={{ top: 5, right: 30, left: 0, bottom: 5 }}
 							>
-								<CartesianGrid strokeDasharray='3 3' stroke='var(--mantine-color-gray-2)' />
+								<CartesianGrid
+									strokeDasharray='3 3'
+									stroke='var(--mantine-color-gray-2)'
+								/>
 								<XAxis dataKey='date' stroke='var(--mantine-color-gray-6)' />
 								<YAxis domain={[0, 5]} stroke='var(--mantine-color-gray-6)' />
 								<Tooltip
@@ -320,7 +365,10 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 				<Grid gap='md'>
 					{/* Part A: Predominant Emotion Card */}
 					<Grid.Col span={{ base: 12, md: 6 }}>
-						<SectionCard title={t('sentiment.predominantEmotionCard.title')} description={t('sentiment.predominantEmotionCard.description')}>
+						<SectionCard
+							title={t('sentiment.predominantEmotionCard.title')}
+							description={t('sentiment.predominantEmotionCard.description')}
+						>
 							<Card
 								p='lg'
 								radius='md'
@@ -331,18 +379,26 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 								}}
 							>
 								<Stack gap='md' align='center'>
-									<Text fz={48} fw={700}>{EMOTION_CONFIG[summary.predominantEmotion]?.emoji}</Text>
+									<Text fz={48} fw={700}>
+										{EMOTION_CONFIG[summary.predominantEmotion]?.emoji}
+									</Text>
 									<div style={{ textAlign: 'center' }}>
 										<Text fw={700} size='lg'>
-											{emotionLabels[summary.predominantEmotion] || summary.predominantEmotion}
+											{emotionLabels[summary.predominantEmotion] ||
+												summary.predominantEmotion}
 										</Text>
 										<Text c='dimmed' size='sm' mt='xs'>
-											{t('sentiment.predominantEmotionCard.appearedTimes', { count: summary.predominantEmotionCount })}
+											{t('sentiment.predominantEmotionCard.appearedTimes', {
+												count: summary.predominantEmotionCount,
+											})}
 										</Text>
 									</div>
 									<Badge size='lg' variant='dot' color='violet'>
 										{t('sentiment.predominantEmotionCard.percentOfCalls', {
-											percent: Math.round((summary.predominantEmotionCount / aggregated.length) * 100),
+											percent: Math.round(
+												(summary.predominantEmotionCount / aggregated.length) *
+													100
+											),
 										})}
 									</Badge>
 								</Stack>
@@ -352,7 +408,10 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 
 					{/* Part B: 8-Emotion Bar Chart */}
 					<Grid.Col span={{ base: 12, md: 6 }}>
-						<SectionCard title={t('sentiment.distribution.title')} description={t('sentiment.distribution.description')}>
+						<SectionCard
+							title={t('sentiment.distribution.title')}
+							description={t('sentiment.distribution.description')}
+						>
 							{emotionChartDataWithColors.length > 0 ? (
 								<div className={styles.chartContainer}>
 									<ResponsiveContainer width='100%' height={250}>
@@ -361,8 +420,14 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 											margin={{ top: 20, right: 30, left: 0, bottom: 60 }}
 											layout='vertical'
 										>
-											<CartesianGrid strokeDasharray='3 3' stroke='var(--mantine-color-gray-2)' />
-											<XAxis type='number' stroke='var(--mantine-color-gray-6)' />
+											<CartesianGrid
+												strokeDasharray='3 3'
+												stroke='var(--mantine-color-gray-2)'
+											/>
+											<XAxis
+												type='number'
+												stroke='var(--mantine-color-gray-6)'
+											/>
 											<YAxis
 												dataKey='name'
 												type='category'
@@ -375,10 +440,20 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 													border: '1px solid var(--mantine-color-gray-3)',
 													borderRadius: 'var(--mantine-radius-md)',
 												}}
-												formatter={(value) => t('sentiment.distribution.occurrences', { count: value as number })}
+												formatter={(value) =>
+													t('sentiment.distribution.occurrences', {
+														count: value as number,
+													})
+												}
 												labelFormatter={(label) => {
-													const emotion = emotionChartDataWithColors.find((e) => e.name === label);
-													return (emotion && emotionLabels[emotion.label]) || emotion?.label || label;
+													const emotion = emotionChartDataWithColors.find(
+														(e) => e.name === label
+													);
+													return (
+														(emotion && emotionLabels[emotion.label]) ||
+														emotion?.label ||
+														label
+													);
 												}}
 											/>
 											<Legend />
@@ -415,10 +490,18 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 							<Table.Thead>
 								<Table.Tr>
 									<Table.Th>{t('sentiment.comparison.date')}</Table.Th>
-									<Table.Th align='center'>{t('sentiment.comparison.agentSentiment')}</Table.Th>
-									<Table.Th align='center'>{t('sentiment.comparison.customerSentiment')}</Table.Th>
-									<Table.Th align='center'>{t('sentiment.comparison.delta')}</Table.Th>
-									<Table.Th>{t('sentiment.comparison.predominantEmotion')}</Table.Th>
+									<Table.Th align='center'>
+										{t('sentiment.comparison.agentSentiment')}
+									</Table.Th>
+									<Table.Th align='center'>
+										{t('sentiment.comparison.customerSentiment')}
+									</Table.Th>
+									<Table.Th align='center'>
+										{t('sentiment.comparison.delta')}
+									</Table.Th>
+									<Table.Th>
+										{t('sentiment.comparison.predominantEmotion')}
+									</Table.Th>
 								</Table.Tr>
 							</Table.Thead>
 							<Table.Tbody>
@@ -450,7 +533,13 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 												<Badge
 													size='sm'
 													variant='dot'
-													color={row.delta.includes('↑') ? 'green' : row.delta.includes('↓') ? 'orange' : 'blue'}
+													color={
+														row.delta.includes('↑')
+															? 'green'
+															: row.delta.includes('↓')
+																? 'orange'
+																: 'blue'
+													}
 												>
 													{row.delta}
 												</Badge>
@@ -458,7 +547,9 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({ calls: _c
 											<Table.Td>
 												<Group gap='xs'>
 													<Text>{EMOTION_CONFIG[row.emotion]?.emoji}</Text>
-													<Text>{emotionLabels[row.emotion] || row.emotion}</Text>
+													<Text>
+														{emotionLabels[row.emotion] || row.emotion}
+													</Text>
 												</Group>
 											</Table.Td>
 										</Table.Tr>
