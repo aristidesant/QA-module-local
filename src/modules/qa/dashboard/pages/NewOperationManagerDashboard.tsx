@@ -1,6 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { Stack, Title, Text, SimpleGrid, Tabs, Card, Group, Badge } from '@mantine/core';
+import {
+	Stack,
+	Title,
+	Text,
+	SimpleGrid,
+	Tabs,
+	Group,
+	Badge,
+} from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
@@ -10,13 +19,16 @@ import {
 	QualityAssuranceCard,
 	ComplianceCard,
 	SentimentEmotionCard,
-	AutoFailsCard,
+	BusinessInsightsCard,
+	DashboardEvaluationFilter,
+	isCardVisible,
 	SentimentTrendChart,
 	CriticalIssuesTable,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
 	RankingsTable,
 } from '../components';
+import type { DashboardEvaluationType } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import type { RankingEntry, RankingGoal } from '../components/RankingsTable';
 import {
@@ -37,22 +49,26 @@ const OPERATION_MANAGER_INBOX_PATH = '/qa/operation-manager/inbox';
 const DEFAULT_OPERATION_MANAGER_INSIGHTS: Insight[] = [
 	{
 		title: 'Multi-Client Compliance',
-		description: 'Regulatory compliance issues detected across multiple clients - immediate remediation required.',
+		description:
+			'Regulatory compliance issues detected across multiple clients - immediate remediation required.',
 		type: 'warning',
 	},
 	{
 		title: 'Resource Constraints',
-		description: 'Several clients approaching resource capacity limits - consider workforce optimization.',
+		description:
+			'Several clients approaching resource capacity limits - consider workforce optimization.',
 		type: 'warning',
 	},
 	{
 		title: 'SLA Performance',
-		description: 'Monitor SLA adherence across clients - some teams approaching threshold limits.',
+		description:
+			'Monitor SLA adherence across clients - some teams approaching threshold limits.',
 		type: 'warning',
 	},
 	{
 		title: 'Platform Stability',
-		description: 'Overall platform stability at 86% - continue infrastructure monitoring and improvements.',
+		description:
+			'Overall platform stability at 86% - continue infrastructure monitoring and improvements.',
 		type: 'neutral',
 	},
 ];
@@ -155,13 +171,62 @@ interface ClientPortfolioRow {
 }
 
 const CLIENTS_PORTFOLIO: ClientPortfolioRow[] = [
-	{ id: 'CLIENT-A', name: 'Client A - Retail Services', agentCount: 42, qaScore: 91, sentiment: 4.4, status: 'active' },
-	{ id: 'CLIENT-B', name: 'Client B - Telecom Support', agentCount: 38, qaScore: 87, sentiment: 4.1, status: 'active' },
-	{ id: 'CLIENT-C', name: 'Client C - Financial Services', agentCount: 55, qaScore: 84, sentiment: 3.8, status: 'active' },
-	{ id: 'CLIENT-D', name: 'Client D - Healthcare Enrollment', agentCount: 29, qaScore: 79, sentiment: 3.5, status: 'active' },
-	{ id: 'CLIENT-E', name: 'Client E - Insurance Claims', agentCount: 33, qaScore: 74, sentiment: 3.1, status: 'active' },
-	{ id: 'CLIENT-F', name: 'Client F - Utilities', agentCount: 21, qaScore: 68, sentiment: 2.7, status: 'active' },
-	{ id: 'CLIENT-G', name: 'Client G - Legacy Program', agentCount: 12, qaScore: 71, sentiment: 3.2, status: 'inactive' },
+	{
+		id: 'CLIENT-A',
+		name: 'Client A - Retail Services',
+		agentCount: 42,
+		qaScore: 91,
+		sentiment: 4.4,
+		status: 'active',
+	},
+	{
+		id: 'CLIENT-B',
+		name: 'Client B - Telecom Support',
+		agentCount: 38,
+		qaScore: 87,
+		sentiment: 4.1,
+		status: 'active',
+	},
+	{
+		id: 'CLIENT-C',
+		name: 'Client C - Financial Services',
+		agentCount: 55,
+		qaScore: 84,
+		sentiment: 3.8,
+		status: 'active',
+	},
+	{
+		id: 'CLIENT-D',
+		name: 'Client D - Healthcare Enrollment',
+		agentCount: 29,
+		qaScore: 79,
+		sentiment: 3.5,
+		status: 'active',
+	},
+	{
+		id: 'CLIENT-E',
+		name: 'Client E - Insurance Claims',
+		agentCount: 33,
+		qaScore: 74,
+		sentiment: 3.1,
+		status: 'active',
+	},
+	{
+		id: 'CLIENT-F',
+		name: 'Client F - Utilities',
+		agentCount: 21,
+		qaScore: 68,
+		sentiment: 2.7,
+		status: 'active',
+	},
+	{
+		id: 'CLIENT-G',
+		name: 'Client G - Legacy Program',
+		agentCount: 12,
+		qaScore: 71,
+		sentiment: 3.2,
+		status: 'inactive',
+	},
 ];
 
 /** Logs a client detail-view intent (mock action - no real navigation in this mockup). */
@@ -169,6 +234,60 @@ const handleClientClick = (client: ClientPortfolioRow) => {
 	// eslint-disable-next-line no-console
 	console.log('Client detail view requested for', client.name);
 };
+
+/** QA score bands reused across the client table. */
+const clientScoreColor = (score: number) =>
+	score >= 90 ? 'green' : score >= 80 ? 'teal' : score >= 70 ? 'yellow' : 'red';
+
+const clientColumns: BaseTableColumnDef<ClientPortfolioRow>[] = [
+	{
+		accessorKey: 'name',
+		header: 'Client',
+		cell: ({ row }) => (
+			<Text fw={600} size='sm'>
+				{row.original.name}
+			</Text>
+		),
+	},
+	{
+		accessorKey: 'agentCount',
+		header: 'Agents',
+		cell: ({ row }) => <Text size='sm'>{row.original.agentCount}</Text>,
+	},
+	{
+		accessorKey: 'qaScore',
+		header: 'QA',
+		cell: ({ row }) => (
+			<Badge
+				size='sm'
+				variant='light'
+				color={clientScoreColor(row.original.qaScore)}
+			>
+				{row.original.qaScore}%
+			</Badge>
+		),
+	},
+	{
+		accessorKey: 'sentiment',
+		header: 'Sentiment',
+		cell: ({ row }) => (
+			<Text size='sm'>{row.original.sentiment.toFixed(1)}/5.0</Text>
+		),
+	},
+	{
+		accessorKey: 'status',
+		header: 'Status',
+		cell: ({ row }) => (
+			<Badge
+				size='sm'
+				variant='light'
+				color={row.original.status === 'active' ? 'green' : 'gray'}
+			>
+				{row.original.status === 'active' ? 'Active' : 'Inactive'}
+			</Badge>
+		),
+	},
+];
 
 /**
  * Cross-client critical alert row for the "Critical Alerts" tab.
@@ -180,30 +299,31 @@ interface CriticalAlertRow extends CriticalIssue {
 	action: string;
 }
 
-const CRITICAL_ALERTS: CriticalAlertRow[] = CRITICAL_ISSUES_OPERATION_MANAGER.slice(0, 6).map((issue, index) => {
-	const affectedClientsByIndex: string[][] = [
-		['Client C', 'Client E', 'Client F'],
-		['Client B', 'Client D'],
-		['Client A', 'Client C', 'Client E', 'Client G'],
-		['Client D', 'Client F'],
-		['Client B', 'Client E'],
-		['Client A', 'Client C'],
-	];
-	const actionsByIndex: string[] = [
-		'Escalate to compliance for immediate remediation',
-		'Notify account managers and confirm SLA recovery plan',
-		'Schedule client check-in to review satisfaction drivers',
-		'Reallocate staffing from lower-priority queues',
-		'Coordinate joint training session across affected teams',
-		'Review budget allocation with finance',
-	];
+const CRITICAL_ALERTS: CriticalAlertRow[] =
+	CRITICAL_ISSUES_OPERATION_MANAGER.slice(0, 6).map((issue, index) => {
+		const affectedClientsByIndex: string[][] = [
+			['Client C', 'Client E', 'Client F'],
+			['Client B', 'Client D'],
+			['Client A', 'Client C', 'Client E', 'Client G'],
+			['Client D', 'Client F'],
+			['Client B', 'Client E'],
+			['Client A', 'Client C'],
+		];
+		const actionsByIndex: string[] = [
+			'Escalate to compliance for immediate remediation',
+			'Notify account managers and confirm SLA recovery plan',
+			'Schedule client check-in to review satisfaction drivers',
+			'Reallocate staffing from lower-priority queues',
+			'Coordinate joint training session across affected teams',
+			'Review budget allocation with finance',
+		];
 
-	return {
-		...issue,
-		affectedClients: affectedClientsByIndex[index] ?? ['Client A'],
-		action: actionsByIndex[index] ?? 'Review and assign owner',
-	};
-});
+		return {
+			...issue,
+			affectedClients: affectedClientsByIndex[index] ?? ['Client A'],
+			action: actionsByIndex[index] ?? 'Review and assign owner',
+		};
+	});
 
 /**
  * Ranking goal applied across the client portfolio. Client teams are ranked
@@ -317,7 +437,7 @@ const criticalAlertColumns: BaseTableColumnDef<CriticalAlertRow>[] = [
 		header: 'Affected Clients',
 		cell: ({ row }) => (
 			<Group gap={4} wrap='wrap'>
-				{row.original.affectedClients.map(client => (
+				{row.original.affectedClients.map((client) => (
 					<Badge key={client} size='sm' variant='outline' color='gray'>
 						{client}
 					</Badge>
@@ -329,8 +449,13 @@ const criticalAlertColumns: BaseTableColumnDef<CriticalAlertRow>[] = [
 		accessorKey: 'severity',
 		header: 'Severity',
 		cell: ({ row }) => (
-			<Badge color={getSeverityColor(row.original.severity)} variant='filled' size='sm'>
-				{row.original.severity.charAt(0).toUpperCase() + row.original.severity.slice(1)}
+			<Badge
+				color={getSeverityColor(row.original.severity)}
+				variant='filled'
+				size='sm'
+			>
+				{row.original.severity.charAt(0).toUpperCase() +
+					row.original.severity.slice(1)}
 			</Badge>
 		),
 	},
@@ -347,7 +472,22 @@ const criticalAlertColumns: BaseTableColumnDef<CriticalAlertRow>[] = [
 
 export const NewOperationManagerDashboard: React.FC = () => {
 	const navigate = useNavigate();
-	const { qaScore, sentiment, complianceCategories, autoFailsCount } = OPERATION_MANAGER_WEEKLY_METRICS;
+	const { t } = useTranslation('qa.dashboard');
+	const [evaluationType, setEvaluationType] =
+		useState<DashboardEvaluationType>('all');
+	const {
+		qaScore,
+		sentiment,
+		complianceCategories,
+		autoFailsCount,
+		businessInsights,
+		businessOutcome,
+	} = OPERATION_MANAGER_WEEKLY_METRICS;
+
+	const cardClass = (
+		types: DashboardEvaluationType | DashboardEvaluationType[]
+	) =>
+		isCardVisible(evaluationType, types) ? styles.gridCard : styles.dimmedCard;
 
 	/** Overall sentiment on the 0-5 scale, averaging agent and customer readings */
 	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
@@ -363,27 +503,53 @@ export const NewOperationManagerDashboard: React.FC = () => {
 					</Text>
 				</div>
 
-				{/* 2. Performance Score Row: Quality Assurance | Compliance | Sentiment & Emotion */}
+				{/* 2. Performance Score: the four evaluation aspects */}
 				<SectionCard
 					title='Performance Score'
-					description='Cross-client quality assurance, compliance, and sentiment results this week'
+					description='Cross-client quality assurance, compliance, sentiment and business results this week'
 				>
-					<SimpleGrid cols={{ base: 1, md: 4 }} spacing='md'>
-						<QualityAssuranceCard score={qaScore} subtitle='Cross-client category breakdown' />
-						<ComplianceCard categories={complianceCategories} subtitle='Cross-client category overview' />
-						<SentimentEmotionCard
-							score={overallSentiment}
-							predominantEmotion={sentiment.predominantEmotion}
-							subtitle='0-5 scale assessment'
-						/>
-						<div>
-							<AutoFailsCard sectionAutoFails={autoFailsCount} globalAutoFails={autoFailsCount} compact />
+					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
+						<div className={cardClass('qa')}>
+							<QualityAssuranceCard
+								score={qaScore}
+								subtitle='Cross-client category breakdown'
+								autoFails={autoFailsCount}
+							/>
+						</div>
+						<div className={cardClass('compliance')}>
+							<ComplianceCard
+								categories={complianceCategories}
+								subtitle='Cross-client category overview'
+							/>
+						</div>
+						<div className={cardClass('sentiment')}>
+							<SentimentEmotionCard
+								score={overallSentiment}
+								predominantEmotion={sentiment.predominantEmotion}
+								subtitle='0-5 scale assessment'
+							/>
+						</div>
+						<div className={cardClass('business')}>
+							<BusinessInsightsCard
+								insights={businessInsights}
+								outcome={businessOutcome}
+								subtitle='Cross-client conversion and signals'
+							/>
 						</div>
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Critical Issues */}
-				<SectionCard title='Critical Issues' description='Urgent operational items requiring immediate attention across all clients'>
+				<DashboardEvaluationFilter
+					value={evaluationType}
+					onChange={setEvaluationType}
+				/>
+
+				{/* 3. Critical issues */}
+				<SectionCard
+					title='Critical Issues'
+					description='Urgent operational items requiring immediate attention across all clients'
+					dimmed={!isCardVisible(evaluationType, ['qa', 'compliance'])}
+				>
 					<CriticalIssuesTable
 						issues={CRITICAL_ISSUES_OPERATION_MANAGER}
 						onIssueClick={() => navigate(OPERATION_MANAGER_INBOX_PATH)}
@@ -391,48 +557,73 @@ export const NewOperationManagerDashboard: React.FC = () => {
 				</SectionCard>
 
 				{/* 4. Sentiment trend and quick insights */}
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<SectionCard title='Sentiment Trend' description='4-week multi-client sentiment progression'>
-						<Card className={styles.metricCard} p='md' radius='md' withBorder>
-							<SentimentTrendChart data={OPERATION_MANAGER_SENTIMENT_TREND} />
-						</Card>
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<SectionCard
+						title='Sentiment Trend'
+						description='4-week multi-client sentiment progression'
+						fullHeight
+						dimmed={!isCardVisible(evaluationType, 'sentiment')}
+					>
+						<SentimentTrendChart data={OPERATION_MANAGER_SENTIMENT_TREND} />
 					</SectionCard>
 
-					<SectionCard title='Quick Insights' description='Operations-level recommendations for platform improvement'>
-						<QuickInsightsWidget insights={DEFAULT_OPERATION_MANAGER_INSIGHTS} />
+					<SectionCard
+						title='Quick Insights'
+						description='Operations-level recommendations for platform improvement'
+						fullHeight
+						dimmed={
+							!isCardVisible(evaluationType, [
+								'sentiment',
+								'compliance',
+								'business',
+							])
+						}
+					>
+						<QuickInsightsWidget
+							insights={DEFAULT_OPERATION_MANAGER_INSIGHTS}
+						/>
 					</SectionCard>
 				</SimpleGrid>
 
-				{/* 5-6. Best & Worst Calls + Tabs Section (same row) */}
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<SectionCard title='Best & Worst Calls' description='Top and bottom performing calls from across all clients this week'>
+				{/* 5. Best & worst calls + operations tabs */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<SectionCard
+						title='Best & Worst Calls'
+						description='Top and bottom performing calls from across all clients this week'
+						fullHeight
+						dimmed={!isCardVisible(evaluationType, 'qa')}
+					>
 						<BestWorstCallsTable calls={OPERATION_MANAGER_CALLS} />
 					</SectionCard>
 
-					<Tabs defaultValue='rankings' style={{ flex: 1 }}>
-						<Tabs.List>
-							<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
-							<Tabs.Tab value='team-health'>Team Health</Tabs.Tab>
-							<Tabs.Tab value='clients'>Clients</Tabs.Tab>
-							<Tabs.Tab value='critical-alerts'>Critical Alerts</Tabs.Tab>
-						</Tabs.List>
+					<SectionCard
+						title={t('sections.operations')}
+						description='Rankings, team health, clients and critical alerts'
+						fullHeight
+					>
+						<Tabs defaultValue='rankings'>
+							<Tabs.List>
+								<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
+								<Tabs.Tab value='team-health'>Team Health</Tabs.Tab>
+								<Tabs.Tab value='clients'>{t('sections.clients')}</Tabs.Tab>
+								<Tabs.Tab value='critical-alerts'>Critical Alerts</Tabs.Tab>
+							</Tabs.List>
 
-						<Tabs.Panel value='rankings' pt='lg'>
-							<RankingsTable
-								entries={OPERATION_MANAGER_RANKINGS}
-								title='Client Rankings'
-								description='Client accounts ranked against the operational goal for this period'
-								goal={OPERATION_MANAGER_RANKING_GOAL}
-								maxDisplay={7}
-								onViewAll={() => navigate('/qa/operationmanager/rankings')}
-							/>
-						</Tabs.Panel>
+							<Tabs.Panel value='rankings' pt='lg'>
+								<RankingsTable
+									entries={OPERATION_MANAGER_RANKINGS}
+									title='Client Rankings'
+									description='Client accounts ranked against the operational goal for this period'
+									goal={OPERATION_MANAGER_RANKING_GOAL}
+									maxDisplay={7}
+									onViewAll={() => navigate('/qa/operationmanager/rankings')}
+								/>
+							</Tabs.Panel>
 
-						<Tabs.Panel value='team-health' pt='lg'>
-							<Stack gap='lg'>
-								<SectionCard title='Key KPIs' description='Cross-client operational health indicators this week'>
+							<Tabs.Panel value='team-health' pt='lg'>
+								<Stack gap='lg'>
 									<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='md'>
-										{TEAM_HEALTH_KPIS.map(kpi => (
+										{TEAM_HEALTH_KPIS.map((kpi) => (
 											<DashboardMetricCard
 												key={kpi.label}
 												label={kpi.label}
@@ -445,11 +636,9 @@ export const NewOperationManagerDashboard: React.FC = () => {
 											/>
 										))}
 									</SimpleGrid>
-								</SectionCard>
 
-								<SectionCard title='Risk Indicators' description='Areas of operational risk across the client portfolio'>
 									<Stack gap='sm'>
-										{RISK_INDICATORS.map(risk => (
+										{RISK_INDICATORS.map((risk) => (
 											<ProfileBadge
 												key={risk.id}
 												name={risk.name}
@@ -459,38 +648,29 @@ export const NewOperationManagerDashboard: React.FC = () => {
 											/>
 										))}
 									</Stack>
-								</SectionCard>
-							</Stack>
-						</Tabs.Panel>
+								</Stack>
+							</Tabs.Panel>
 
-						<Tabs.Panel value='clients' pt='lg'>
-							<SectionCard title='Client Portfolio' description='All clients under management with agent count, QA score, and sentiment'>
-								<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-									{CLIENTS_PORTFOLIO.map(client => (
-										<ProfileBadge
-											key={client.id}
-											name={client.name}
-											role={`${client.agentCount} agents · Sentiment ${client.sentiment.toFixed(1)}/5.0`}
-											status={client.status}
-											score={client.qaScore}
-											onClick={() => handleClientClick(client)}
-										/>
-									))}
-								</SimpleGrid>
-							</SectionCard>
-						</Tabs.Panel>
+							<Tabs.Panel value='clients' pt='lg'>
+								<BaseTable<ClientPortfolioRow>
+									columns={clientColumns}
+									data={CLIENTS_PORTFOLIO}
+									getRowId={(client) => client.id}
+									onRowClick={handleClientClick}
+									emptyMessage='No clients found'
+								/>
+							</Tabs.Panel>
 
-						<Tabs.Panel value='critical-alerts' pt='lg'>
-							<SectionCard title='Critical Alerts' description='High-severity issues affecting one or more clients'>
+							<Tabs.Panel value='critical-alerts' pt='lg'>
 								<BaseTable<CriticalAlertRow>
 									columns={criticalAlertColumns}
 									data={CRITICAL_ALERTS}
-									getRowId={alert => alert.id}
+									getRowId={(alert) => alert.id}
 									emptyMessage='No critical alerts found'
 								/>
-							</SectionCard>
-						</Tabs.Panel>
-					</Tabs>
+							</Tabs.Panel>
+						</Tabs>
+					</SectionCard>
 				</SimpleGrid>
 			</Stack>
 		</ContentContainer>

@@ -11,15 +11,30 @@ export { AutoTriggersManager } from './AutoTriggersManager';
 export { ReportBuilder } from './ReportBuilder';
 
 // Phase 2: Adaptive dashboard pattern and new metric cards
-export { AdaptiveDashboardLayout, useCOPCMetrics, useAverageSentiment, useAutoFailCount } from './AdaptiveDashboardLayout';
+export {
+	AdaptiveDashboardLayout,
+	useCOPCMetrics,
+	useAverageSentiment,
+	useAutoFailCount,
+} from './AdaptiveDashboardLayout';
 export { COPCScoreCard } from './COPCScoreCard';
 export { SentimentScaleCard } from './SentimentScaleCard';
-export { AutoFailsCard } from './AutoFailsCard';
+export { BusinessInsightsCard } from './BusinessInsightsCard';
+export {
+	DashboardEvaluationFilter,
+	isCardVisible,
+} from './DashboardEvaluationFilter';
+export type { DashboardEvaluationType } from './DashboardEvaluationFilter';
 export { AgentInbox } from './AgentInbox';
 
 // Phase 3: Agent & Supervisor features
 export { RankingsTable } from './RankingsTable';
-export type { RankingEntry, RankingGoal, ReactionType, ReactionCounts } from './RankingsTable';
+export type {
+	RankingEntry,
+	RankingGoal,
+	ReactionType,
+	ReactionCounts,
+} from './RankingsTable';
 
 // Phase 4: Performance Metrics
 export { PerformanceScoresSection } from './PerformanceScoresSection';

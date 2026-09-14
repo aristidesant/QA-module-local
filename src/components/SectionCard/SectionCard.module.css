@@ -258,3 +258,20 @@
 	color: var(--mantine-color-green-3);
 	border-color: var(--mantine-color-green-8);
 }
+
+/* Fills the grid cell so sibling cards in a SimpleGrid end at the same baseline. */
+.fullHeight {
+	height: 100%;
+}
+
+.fullHeight .sectionShell,
+.fullHeight .sectionBody,
+.fullHeight .content {
+	flex: 1;
+	min-height: 0;
+}
+
+.dimmed {
+	opacity: 0.5;
+	transition: opacity 160ms ease;
+}

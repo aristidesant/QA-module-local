@@ -9,7 +9,10 @@ import type {
 } from '~/models/qa/notifications';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 import type { PeerRecognitionType } from '~/models/qa/reactions';
-import type { LeaderboardMetadata, UserReactionMap } from '~/modules/qa/agent/rankings/types/leaderboard';
+import type {
+	LeaderboardMetadata,
+	UserReactionMap,
+} from '~/modules/qa/agent/rankings/types/leaderboard';
 import { UserReactionType } from '~/modules/qa/agent/rankings/types/leaderboard';
 import { BurnoutRiskLevel, BurnoutRiskData } from './types/burnoutRisk';
 
@@ -48,6 +51,11 @@ export interface WeeklyMetrics {
 	autoFailsCount: number;
 	complianceCategories: ComplianceCategory[];
 	businessInsights: BusinessInsight[];
+	businessOutcome: {
+		conversionRate: number;
+		offersPresented: number;
+		converted: number;
+	};
 	sentiment: {
 		agentAvg: number;
 		customerAvg: number;
@@ -235,6 +243,11 @@ export const AGENT_WEEKLY_METRICS: WeeklyMetrics = {
 			description: 'Offers well-matched to customer needs',
 		},
 	],
+	businessOutcome: {
+		conversionRate: 24,
+		offersPresented: 38,
+		converted: 9,
+	},
 	sentiment: {
 		agentAvg: 4.2,
 		customerAvg: 4.1,
@@ -467,6 +480,11 @@ export const SUPERVISOR_WEEKLY_METRICS: WeeklyMetrics = {
 			description: 'Improving offer alignment',
 		},
 	],
+	businessOutcome: {
+		conversionRate: 26,
+		offersPresented: 158,
+		converted: 41,
+	},
 	sentiment: {
 		agentAvg: 4.0,
 		customerAvg: 3.9,
@@ -683,6 +701,11 @@ export const QA_MANAGER_WEEKLY_METRICS: WeeklyMetrics = {
 			description: 'Offer targeting accuracy declining',
 		},
 	],
+	businessOutcome: {
+		conversionRate: 25,
+		offersPresented: 446,
+		converted: 112,
+	},
 	sentiment: {
 		agentAvg: 3.9,
 		customerAvg: 3.8,
@@ -822,6 +845,11 @@ export const OPERATION_MANAGER_WEEKLY_METRICS: WeeklyMetrics = {
 			description: 'Offer targeting accuracy needs improvement',
 		},
 	],
+	businessOutcome: {
+		conversionRate: 23,
+		offersPresented: 1210,
+		converted: 278,
+	},
 	sentiment: {
 		agentAvg: 3.75,
 		customerAvg: 3.65,
@@ -2918,7 +2946,7 @@ export function selectWinnerIfPeriodEnded(
 
 	if (now >= endDate && leaderboard.winnerId === null) {
 		// Auto-select rank #1 as winner
-		const winner = roster.find(entry => entry.rank === 1);
+		const winner = roster.find((entry) => entry.rank === 1);
 		if (winner) {
 			leaderboard.winnerId = winner.agentId;
 			leaderboard.status = 'completed';

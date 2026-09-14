@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
-import { Stack, Title, Text, SimpleGrid, Card } from '@mantine/core';
-import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
+import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import {
 	QualityAssuranceCard,
 	ComplianceCard,
 	SentimentEmotionCard,
-	AutoFailsCard,
+	BusinessInsightsCard,
+	DashboardEvaluationFilter,
+	isCardVisible,
 	SentimentTrendChart,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
@@ -15,6 +16,7 @@ import {
 	BurnoutRiskWidget,
 	InboxSummary,
 } from '../components';
+import type { DashboardEvaluationType } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import type { RankingEntry, RankingGoal } from '../components/RankingsTable';
 import {
@@ -109,22 +111,25 @@ const AGENT_TEAM_RANKINGS: RankingEntry[] = [
 	},
 ];
 
-type EvaluationType = 'all' | 'qa' | 'sentiment' | 'compliance' | 'business';
-
 export const NewAgentDashboard: React.FC = () => {
-	const [evaluationType, setEvaluationType] = useState<EvaluationType>('all');
-	const { qaScore, sentiment, complianceCategories, autoFailsCount } =
-		AGENT_WEEKLY_METRICS;
+	const [evaluationType, setEvaluationType] =
+		useState<DashboardEvaluationType>('all');
+	const {
+		qaScore,
+		sentiment,
+		complianceCategories,
+		autoFailsCount,
+		businessInsights,
+		businessOutcome,
+	} = AGENT_WEEKLY_METRICS;
 
 	/** Overall sentiment on the 0-5 scale, averaging agent and customer readings */
 	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
 
-	/** Helper to determine if a card should be shown based on filter */
-	const shouldShowCard = (type: EvaluationType | EvaluationType[]): boolean => {
-		if (evaluationType === 'all') return true;
-		const types = Array.isArray(type) ? type : [type];
-		return types.includes(evaluationType);
-	};
+	const cardClass = (
+		types: DashboardEvaluationType | DashboardEvaluationType[]
+	) =>
+		isCardVisible(evaluationType, types) ? styles.gridCard : styles.dimmedCard;
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -137,165 +142,116 @@ export const NewAgentDashboard: React.FC = () => {
 					</Text>
 				</div>
 
-				{/* 2. Performance Score Row: Quality Assurance | Compliance | Sentiment & Emotion | Auto-Fails */}
+				{/* 2. Performance Score: the four evaluation aspects */}
 				<SectionCard
 					title='Performance Score'
-					description='Your quality assurance, compliance, sentiment, and auto-fails results this week'
+					description='Your quality assurance, compliance, sentiment and business results this week'
 				>
-					<SimpleGrid cols={{ base: 1, md: 4 }} spacing='md'>
-						<QualityAssuranceCard
-							score={qaScore}
-							subtitle='Category breakdown'
-						/>
-						<ComplianceCard
-							categories={complianceCategories}
-							subtitle='Category overview'
-						/>
-						<SentimentEmotionCard
-							score={overallSentiment}
-							predominantEmotion={sentiment.predominantEmotion}
-							subtitle='0-5 scale assessment'
-						/>
-						<div>
-							<AutoFailsCard
-								sectionAutoFails={autoFailsCount}
-								globalAutoFails={18}
-								compact
+					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
+						<div className={cardClass('qa')}>
+							<QualityAssuranceCard
+								score={qaScore}
+								subtitle='Category breakdown'
+								autoFails={autoFailsCount}
+							/>
+						</div>
+						<div className={cardClass('compliance')}>
+							<ComplianceCard
+								categories={complianceCategories}
+								subtitle='Category overview'
+							/>
+						</div>
+						<div className={cardClass('sentiment')}>
+							<SentimentEmotionCard
+								score={overallSentiment}
+								predominantEmotion={sentiment.predominantEmotion}
+								subtitle='0-5 scale assessment'
+							/>
+						</div>
+						<div className={cardClass('business')}>
+							<BusinessInsightsCard
+								insights={businessInsights}
+								outcome={businessOutcome}
+								subtitle='Conversion and signals'
 							/>
 						</div>
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 2.5. Evaluation Type Filter */}
-				<div>
-					<Text size='sm' fw={500} mb='xs'>
-						Filter by evaluation type
-					</Text>
-					<AppSegmentedControl
-						value={evaluationType}
-						onChange={(value) => setEvaluationType(value as EvaluationType)}
-						data={[
-							{ label: 'All', value: 'all' },
-							{ label: 'QA', value: 'qa' },
-							{ label: 'Sentiment & Emotion', value: 'sentiment' },
-							{ label: 'Compliance', value: 'compliance' },
-							{ label: 'Business Insight', value: 'business' },
-						]}
+				<DashboardEvaluationFilter
+					value={evaluationType}
+					onChange={setEvaluationType}
+				/>
+
+				{/* 3. Inbox summary & burnout assessment */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<InboxSummary
+						autoDrivenCount={3}
+						negativeCount={2}
+						trendCount={5}
+						inboxPath='/qa/agent/inbox'
+						fullHeight
+						dimmed={!isCardVisible(evaluationType, 'qa')}
 					/>
-				</div>
-
-				{/* 3. Inbox Summary & Burnout Assessment (Side by side) */}
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					{/* inline-style-allow: dynamic opacity based on filter state */}
-					<div
-						style={{
-							opacity: shouldShowCard('qa') ? 1 : 0.5,
-							transition: 'opacity 0.2s',
-						}}
+					<SectionCard
+						title='Burnout Assessment'
+						description='Your current burnout risk level'
+						fullHeight
+						dimmed={!isCardVisible(evaluationType, ['sentiment', 'qa'])}
 					>
-						<InboxSummary
-							autoDrivenCount={3}
-							negativeCount={2}
-							trendCount={5}
-							inboxPath='/qa/agent/inbox'
-						/>
-					</div>
-
-					{/* inline-style-allow: dynamic opacity based on filter state */}
-					<div
-						style={{
-							opacity: shouldShowCard('qa') ? 1 : 0.5,
-							transition: 'opacity 0.2s',
-						}}
-					>
-						<SectionCard
-							title='Burnout Assessment'
-							description='Your current burnout risk level'
-						>
-							<BurnoutRiskWidget data={AGENT_BURNOUT_RISK} />
-						</SectionCard>
-					</div>
+						<BurnoutRiskWidget data={AGENT_BURNOUT_RISK} />
+					</SectionCard>
 				</SimpleGrid>
 
-				{/* 4. Team Rankings */}
-				<div
-					style={{
-						opacity: shouldShowCard('qa') ? 1 : 0.5,
-						transition: 'opacity 0.2s',
-					}}
+				{/* 4. Team rankings */}
+				<SectionCard
+					title='Team Rankings'
+					description="Your current ranking alongside the team's top performers this period"
+					dimmed={!isCardVisible(evaluationType, 'sentiment')}
 				>
-					<SectionCard
+					<RankingsTable
+						entries={AGENT_TEAM_RANKINGS}
 						title='Team Rankings'
 						description="Your current ranking alongside the team's top performers this period"
+						goal={AGENT_RANKING_GOAL}
+						maxDisplay={5}
+					/>
+				</SectionCard>
+
+				{/* 5. Sentiment trend & quick insights */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<SectionCard
+						title='Sentiment Trend'
+						description='4-week sentiment progression'
+						fullHeight
+						dimmed={!isCardVisible(evaluationType, 'sentiment')}
 					>
-						<RankingsTable
-							entries={AGENT_TEAM_RANKINGS}
-							title='Team Rankings'
-							description="Your current ranking alongside the team's top performers this period"
-							goal={AGENT_RANKING_GOAL}
-							maxDisplay={5}
-							onViewAll={() => {
-								// Navigate to full rankings view
-								const element = document.getElementById(
-									'team-rankings-section'
-								);
-								if (element) {
-									element.scrollIntoView({ behavior: 'smooth' });
-								}
-							}}
-						/>
+						<SentimentTrendChart data={AGENT_SENTIMENT_TREND} />
 					</SectionCard>
-				</div>
-
-				{/* 5. Sentiment trend and quick insights */}
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<div
-						style={{
-							opacity: shouldShowCard('sentiment') ? 1 : 0.5,
-							transition: 'opacity 0.2s',
-						}}
+					<SectionCard
+						title='Quick Insights'
+						description='Performance recommendations and analysis'
+						fullHeight
+						dimmed={
+							!isCardVisible(evaluationType, [
+								'sentiment',
+								'compliance',
+								'business',
+							])
+						}
 					>
-						<SectionCard
-							title='Sentiment Trend'
-							description='4-week sentiment progression'
-						>
-							<Card className={styles.metricCard} p='md' radius='md' withBorder>
-								<SentimentTrendChart data={AGENT_SENTIMENT_TREND} />
-							</Card>
-						</SectionCard>
-					</div>
-
-					<div
-						style={{
-							opacity: shouldShowCard(['sentiment', 'compliance', 'business'])
-								? 1
-								: 0.5,
-							transition: 'opacity 0.2s',
-						}}
-					>
-						<SectionCard
-							title='Quick Insights'
-							description='Performance recommendations and analysis'
-						>
-							<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
-						</SectionCard>
-					</div>
+						<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
+					</SectionCard>
 				</SimpleGrid>
 
-				{/* 6. Best & Worst Calls (full-width) */}
-				<div
-					style={{
-						opacity: shouldShowCard('qa') ? 1 : 0.5,
-						transition: 'opacity 0.2s',
-					}}
+				{/* 6. Best & worst calls */}
+				<SectionCard
+					title='Best & Worst Calls'
+					description='Your top and bottom performing calls this week'
+					dimmed={!isCardVisible(evaluationType, 'qa')}
 				>
-					<SectionCard
-						title='Best & Worst Calls'
-						description='Your top and bottom performing calls this week'
-					>
-						<BestWorstCallsTable calls={BEST_WORST_CALLS} />
-					</SectionCard>
-				</div>
+					<BestWorstCallsTable calls={BEST_WORST_CALLS} />
+				</SectionCard>
 			</Stack>
 		</ContentContainer>
 	);

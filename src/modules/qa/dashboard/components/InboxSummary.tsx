@@ -1,6 +1,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router';
-import { Group, Text, Badge, Button, Stack, Table, ThemeIcon } from '@mantine/core';
+import {
+	Group,
+	Text,
+	Badge,
+	Button,
+	Stack,
+	Table,
+	ThemeIcon,
+} from '@mantine/core';
 import {
 	IconGift,
 	IconAlertTriangle,
@@ -20,6 +28,9 @@ interface InboxSummaryProps {
 	negativeCount?: number;
 	trendCount?: number;
 	inboxPath: string;
+	/** Stretch to the grid cell so it lines up with the card beside it. */
+	fullHeight?: boolean;
+	dimmed?: boolean;
 }
 
 export const InboxSummary: React.FC<InboxSummaryProps> = ({
@@ -27,6 +38,8 @@ export const InboxSummary: React.FC<InboxSummaryProps> = ({
 	negativeCount = 2,
 	trendCount = 5,
 	inboxPath,
+	fullHeight,
+	dimmed,
 }) => {
 	const navigate = useNavigate();
 	const totalCount = autoDrivenCount + negativeCount + trendCount;
@@ -82,6 +95,8 @@ export const InboxSummary: React.FC<InboxSummaryProps> = ({
 		<SectionCard
 			title='Inbox Summary'
 			description={`${totalCount} trigger${totalCount !== 1 ? 's' : ''} this period`}
+			fullHeight={fullHeight}
+			dimmed={dimmed}
 		>
 			<Stack gap='md'>
 				<Group justify='flex-end'>

@@ -1,17 +1,4 @@
 {
-	"burnout": {
-		"title": "Riesgo de Agotamiento",
-		"level": {
-			"low": "Bajo",
-			"medium": "Medio",
-			"high": "Alto"
-		},
-		"trend": {
-			"improving": "Mejorando",
-			"stable": "Estable",
-			"declining": "Empeorando"
-		}
-	},
 	"aiStatus": {
 		"centerLabel": "{{count}} IA",
 		"description": "Resultados del pipeline de evaluación con IA en el rango seleccionado.",
@@ -25,9 +12,51 @@
 		},
 		"title": "Estado de evaluaciones IA"
 	},
+	"autoFails": {
+		"present": "Revisar",
+		"none": "Sin incidencias"
+	},
+	"burnout": {
+		"title": "Riesgo de Agotamiento",
+		"level": {
+			"low": "Bajo",
+			"medium": "Medio",
+			"high": "Alto"
+		},
+		"trend": {
+			"improving": "Mejorando",
+			"stable": "Estable",
+			"declining": "Empeorando"
+		}
+	},
+	"businessInsights": {
+		"title": "Business Insights",
+		"period": "Esta semana",
+		"conversionRate": "Tasa de conversión",
+		"offers": "{{converted}} de {{offers}} ofertas convertidas",
+		"autoFails": "Auto-fails",
+		"signals": {
+			"EARLY_OBJECTION": "Objeciones tempranas",
+			"UNHANDLED_OBJECTION": "Objeciones no gestionadas",
+			"COMPETITOR_PLUS_COST": "Competencia + precio",
+			"MISTARGETED_OFFER": "Ofertas mal dirigidas"
+		},
+		"signalCalls_one": "{{count}} llamada",
+		"signalCalls_other": "{{count}} llamadas"
+	},
 	"description": "Métricas de calidad en vivo calculadas a partir de evaluaciones, disputas y salud de proveedores de IA.",
 	"error": {
 		"title": "No se pudieron cargar los datos del panel"
+	},
+	"evaluationFilter": {
+		"label": "Filtrar por tipo de evaluación",
+		"options": {
+			"all": "Todas",
+			"qa": "QA",
+			"sentiment": "Sentimiento y emoción",
+			"compliance": "Compliance",
+			"business": "Business Insights"
+		}
 	},
 	"evaluatorType": {
 		"ai": "IA",
@@ -93,6 +122,12 @@
 		"scoreValue": "{{score}}%",
 		"title": "Evaluaciones recientes",
 		"viewAll": "Ver todas"
+	},
+	"sections": {
+		"team": "Equipo",
+		"organisation": "Organización",
+		"operations": "Operaciones",
+		"clients": "Clientes"
 	},
 	"status": {
 		"completed": "Completada",

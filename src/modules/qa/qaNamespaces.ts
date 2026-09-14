@@ -4,6 +4,10 @@
  */
 export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.dashboard': 'qa.dashboard',
+	'qa.dashboards.agent': 'qa.dashboard',
+	'qa.dashboards.supervisor': 'qa.dashboard',
+	'qa.dashboards.qa-manager': 'qa.dashboard',
+	'qa.dashboards.operation-manager': 'qa.dashboard',
 	'qa.agents': 'qa.agents',
 	'qa.agents.detail': 'qa.agents',
 	'qa.campaigns': 'qa.campaigns',
@@ -33,9 +37,31 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.qa-manager.agents': ['qa.team', 'qa.dashboard'],
 	'qa.qa-manager.agents.profile': ['qa.team', 'qa.dashboard'],
 	'qa.supervisor.customers': ['qa.customers', 'qa.team', 'qa.dashboard'],
-	'qa.supervisor.customers.profile': ['qa.customers', 'qa.team', 'qa.dashboard'],
+	'qa.supervisor.customers.profile': [
+		'qa.customers',
+		'qa.team',
+		'qa.dashboard',
+	],
 	'qa.qa-manager.customers': ['qa.customers', 'qa.team', 'qa.dashboard'],
-	'qa.qa-manager.customers.profile': ['qa.customers', 'qa.team', 'qa.dashboard'],
-	'qa.supervisor.analytics': ['qa.teamAnalytics', 'qa.agent.analytics', 'qa.dashboard', 'qa.team', 'qa.lms', 'qa.coaching'],
-	'qa.qa-manager.analytics': ['qa.teamAnalytics', 'qa.agent.analytics', 'qa.dashboard', 'qa.team', 'qa.lms', 'qa.coaching'],
+	'qa.qa-manager.customers.profile': [
+		'qa.customers',
+		'qa.team',
+		'qa.dashboard',
+	],
+	'qa.supervisor.analytics': [
+		'qa.teamAnalytics',
+		'qa.agent.analytics',
+		'qa.dashboard',
+		'qa.team',
+		'qa.lms',
+		'qa.coaching',
+	],
+	'qa.qa-manager.analytics': [
+		'qa.teamAnalytics',
+		'qa.agent.analytics',
+		'qa.dashboard',
+		'qa.team',
+		'qa.lms',
+		'qa.coaching',
+	],
 };

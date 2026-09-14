@@ -24,6 +24,10 @@ export interface SectionCardProps extends CardActionProps {
 	id?: string;
 	/** Color accent for the header (icon badge + border) */
 	headerAccent?: 'yellow' | 'red' | 'blue' | 'green';
+	/** Fills the grid cell so sibling cards in a SimpleGrid end at the same baseline. */
+	fullHeight?: boolean;
+	/** Filter-dimmed state (replaces page-level opacity wrappers). */
+	dimmed?: boolean;
 
 	padding?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | number;
 }
@@ -55,6 +59,8 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 	bodyClassName,
 	contentClassName,
 	headerAccent,
+	fullHeight,
+	dimmed,
 	padding = 'lg',
 }) => {
 	// Convert spacing to pixel value if it's a string preset
@@ -78,7 +84,12 @@ export const SectionCard: React.FC<SectionCardProps> = ({
 		gap: getSpacingValue(),
 	};
 
-	const cardClassName = [styles.sectionCard, className]
+	const cardClassName = [
+		styles.sectionCard,
+		fullHeight ? styles.fullHeight : '',
+		dimmed ? styles.dimmed : '',
+		className,
+	]
 		.filter(Boolean)
 		.join(' ');
 	const shellClassNames = [styles.sectionShell, shellClassName]

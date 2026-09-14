@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { Stack, Title, Text, SimpleGrid, Tabs, Card, Badge } from '@mantine/core';
-import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
+import { Stack, Title, Text, SimpleGrid, Tabs, Badge } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
@@ -9,13 +9,16 @@ import {
 	QualityAssuranceCard,
 	ComplianceCard,
 	SentimentEmotionCard,
-	AutoFailsCard,
+	BusinessInsightsCard,
+	DashboardEvaluationFilter,
+	isCardVisible,
 	SentimentTrendChart,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
 	RankingsTable,
 	InboxSummary,
 } from '../components';
+import type { DashboardEvaluationType } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import type { RankingEntry, RankingGoal } from '../components/RankingsTable';
 import {
@@ -25,26 +28,29 @@ import {
 } from '../mockData';
 import styles from '../Dashboard.module.css';
 
-
 const DEFAULT_QA_MANAGER_INSIGHTS: Insight[] = [
 	{
 		title: 'Platform Performance',
-		description: 'Platform-wide QA scores are trending upward with consistent improvements.',
+		description:
+			'Platform-wide QA scores are trending upward with consistent improvements.',
 		type: 'positive',
 	},
 	{
 		title: 'Compliance Monitoring',
-		description: 'Multiple supervisors need reinforced compliance training across the platform.',
+		description:
+			'Multiple supervisors need reinforced compliance training across the platform.',
 		type: 'warning',
 	},
 	{
 		title: 'Escalation Management',
-		description: 'Escalation rates remain elevated - coordinate with supervisors for improvement.',
+		description:
+			'Escalation rates remain elevated - coordinate with supervisors for improvement.',
 		type: 'warning',
 	},
 	{
 		title: 'Resource Optimization',
-		description: 'Consider redistributing QA resources for more balanced team coverage.',
+		description:
+			'Consider redistributing QA resources for more balanced team coverage.',
 		type: 'neutral',
 	},
 ];
@@ -59,13 +65,62 @@ interface SupervisorRow {
 }
 
 const SUPERVISORS_OVERVIEW: SupervisorRow[] = [
-	{ id: 'SUP-001', name: 'Sarah Johnson', teamSize: 8, avgQaScore: 91, sentiment: 4.3, compliance: 94 },
-	{ id: 'SUP-002', name: 'Mike Chen', teamSize: 9, avgQaScore: 89, sentiment: 4.1, compliance: 92 },
-	{ id: 'SUP-003', name: 'Jessica Martinez', teamSize: 7, avgQaScore: 86, sentiment: 3.9, compliance: 88 },
-	{ id: 'SUP-004', name: 'James Wilson', teamSize: 8, avgQaScore: 84, sentiment: 3.8, compliance: 85 },
-	{ id: 'SUP-005', name: 'Amanda Taylor', teamSize: 6, avgQaScore: 82, sentiment: 3.7, compliance: 83 },
-	{ id: 'SUP-006', name: 'Robert Kim', teamSize: 9, avgQaScore: 78, sentiment: 3.4, compliance: 76 },
-	{ id: 'SUP-007', name: 'Patricia Lopez', teamSize: 7, avgQaScore: 75, sentiment: 3.2, compliance: 72 },
+	{
+		id: 'SUP-001',
+		name: 'Sarah Johnson',
+		teamSize: 8,
+		avgQaScore: 91,
+		sentiment: 4.3,
+		compliance: 94,
+	},
+	{
+		id: 'SUP-002',
+		name: 'Mike Chen',
+		teamSize: 9,
+		avgQaScore: 89,
+		sentiment: 4.1,
+		compliance: 92,
+	},
+	{
+		id: 'SUP-003',
+		name: 'Jessica Martinez',
+		teamSize: 7,
+		avgQaScore: 86,
+		sentiment: 3.9,
+		compliance: 88,
+	},
+	{
+		id: 'SUP-004',
+		name: 'James Wilson',
+		teamSize: 8,
+		avgQaScore: 84,
+		sentiment: 3.8,
+		compliance: 85,
+	},
+	{
+		id: 'SUP-005',
+		name: 'Amanda Taylor',
+		teamSize: 6,
+		avgQaScore: 82,
+		sentiment: 3.7,
+		compliance: 83,
+	},
+	{
+		id: 'SUP-006',
+		name: 'Robert Kim',
+		teamSize: 9,
+		avgQaScore: 78,
+		sentiment: 3.4,
+		compliance: 76,
+	},
+	{
+		id: 'SUP-007',
+		name: 'Patricia Lopez',
+		teamSize: 7,
+		avgQaScore: 75,
+		sentiment: 3.2,
+		compliance: 72,
+	},
 ];
 
 interface DisputeRow {
@@ -77,14 +132,62 @@ interface DisputeRow {
 }
 
 const ALL_DISPUTES: DisputeRow[] = [
-	{ id: 'DSP-1042', agentName: 'David Brown', type: 'Score Dispute', status: 'open', createdDate: '2026-09-06T09:15:00Z' },
-	{ id: 'DSP-1041', agentName: 'Lisa Wong', type: 'Auto-Fail Dispute', status: 'pending', createdDate: '2026-09-05T14:30:00Z' },
-	{ id: 'DSP-1038', agentName: 'Jessica Martinez', type: 'Compliance Dispute', status: 'approved', createdDate: '2026-09-04T11:00:00Z' },
-	{ id: 'DSP-1035', agentName: 'John Smith', type: 'Score Dispute', status: 'rejected', createdDate: '2026-09-03T16:45:00Z' },
-	{ id: 'DSP-1030', agentName: 'Sarah Johnson', type: 'Evaluation Error', status: 'approved', createdDate: '2026-09-01T10:20:00Z' },
-	{ id: 'DSP-1027', agentName: 'Robert Kim', type: 'Score Dispute', status: 'pending', createdDate: '2026-08-31T13:10:00Z' },
-	{ id: 'DSP-1022', agentName: 'Patricia Lopez', type: 'Auto-Fail Dispute', status: 'open', createdDate: '2026-08-30T08:40:00Z' },
-	{ id: 'DSP-1019', agentName: 'Thomas Anderson', type: 'Compliance Dispute', status: 'rejected', createdDate: '2026-08-29T15:55:00Z' },
+	{
+		id: 'DSP-1042',
+		agentName: 'David Brown',
+		type: 'Score Dispute',
+		status: 'open',
+		createdDate: '2026-09-06T09:15:00Z',
+	},
+	{
+		id: 'DSP-1041',
+		agentName: 'Lisa Wong',
+		type: 'Auto-Fail Dispute',
+		status: 'pending',
+		createdDate: '2026-09-05T14:30:00Z',
+	},
+	{
+		id: 'DSP-1038',
+		agentName: 'Jessica Martinez',
+		type: 'Compliance Dispute',
+		status: 'approved',
+		createdDate: '2026-09-04T11:00:00Z',
+	},
+	{
+		id: 'DSP-1035',
+		agentName: 'John Smith',
+		type: 'Score Dispute',
+		status: 'rejected',
+		createdDate: '2026-09-03T16:45:00Z',
+	},
+	{
+		id: 'DSP-1030',
+		agentName: 'Sarah Johnson',
+		type: 'Evaluation Error',
+		status: 'approved',
+		createdDate: '2026-09-01T10:20:00Z',
+	},
+	{
+		id: 'DSP-1027',
+		agentName: 'Robert Kim',
+		type: 'Score Dispute',
+		status: 'pending',
+		createdDate: '2026-08-31T13:10:00Z',
+	},
+	{
+		id: 'DSP-1022',
+		agentName: 'Patricia Lopez',
+		type: 'Auto-Fail Dispute',
+		status: 'open',
+		createdDate: '2026-08-30T08:40:00Z',
+	},
+	{
+		id: 'DSP-1019',
+		agentName: 'Thomas Anderson',
+		type: 'Compliance Dispute',
+		status: 'rejected',
+		createdDate: '2026-08-29T15:55:00Z',
+	},
 ];
 
 const DISPUTE_STATUS_COLORS: Record<DisputeRow['status'], string> = {
@@ -103,12 +206,48 @@ interface CampaignRow {
 }
 
 const CAMPAIGNS_LIST: CampaignRow[] = [
-	{ id: 'CMP-001', name: 'Q3 Renewal Outreach', status: 'active', callsCount: 542, createdDate: '2026-07-01T09:00:00Z' },
-	{ id: 'CMP-002', name: 'Customer Retention Sprint', status: 'active', callsCount: 389, createdDate: '2026-07-15T09:00:00Z' },
-	{ id: 'CMP-003', name: 'New Product Launch', status: 'active', callsCount: 271, createdDate: '2026-08-01T09:00:00Z' },
-	{ id: 'CMP-004', name: 'Compliance Refresh Campaign', status: 'active', callsCount: 198, createdDate: '2026-08-10T09:00:00Z' },
-	{ id: 'CMP-005', name: 'Winter Promo 2025', status: 'archived', callsCount: 764, createdDate: '2025-11-20T09:00:00Z' },
-	{ id: 'CMP-006', name: 'Spring Cleanup Follow-ups', status: 'archived', callsCount: 412, createdDate: '2026-03-05T09:00:00Z' },
+	{
+		id: 'CMP-001',
+		name: 'Q3 Renewal Outreach',
+		status: 'active',
+		callsCount: 542,
+		createdDate: '2026-07-01T09:00:00Z',
+	},
+	{
+		id: 'CMP-002',
+		name: 'Customer Retention Sprint',
+		status: 'active',
+		callsCount: 389,
+		createdDate: '2026-07-15T09:00:00Z',
+	},
+	{
+		id: 'CMP-003',
+		name: 'New Product Launch',
+		status: 'active',
+		callsCount: 271,
+		createdDate: '2026-08-01T09:00:00Z',
+	},
+	{
+		id: 'CMP-004',
+		name: 'Compliance Refresh Campaign',
+		status: 'active',
+		callsCount: 198,
+		createdDate: '2026-08-10T09:00:00Z',
+	},
+	{
+		id: 'CMP-005',
+		name: 'Winter Promo 2025',
+		status: 'archived',
+		callsCount: 764,
+		createdDate: '2025-11-20T09:00:00Z',
+	},
+	{
+		id: 'CMP-006',
+		name: 'Spring Cleanup Follow-ups',
+		status: 'archived',
+		callsCount: 412,
+		createdDate: '2026-03-05T09:00:00Z',
+	},
 ];
 
 const CAMPAIGN_STATUS_COLORS: Record<CampaignRow['status'], string> = {
@@ -203,7 +342,11 @@ const supervisorColumns: BaseTableColumnDef<SupervisorRow>[] = [
 		accessorKey: 'avgQaScore',
 		header: 'Avg QA Score',
 		cell: ({ row }) => (
-			<Text fw={600} size='sm' c={row.original.avgQaScore < 80 ? 'red' : undefined}>
+			<Text
+				fw={600}
+				size='sm'
+				c={row.original.avgQaScore < 80 ? 'red' : undefined}
+			>
 				{row.original.avgQaScore}%
 			</Text>
 		),
@@ -211,13 +354,18 @@ const supervisorColumns: BaseTableColumnDef<SupervisorRow>[] = [
 	{
 		accessorKey: 'sentiment',
 		header: 'Sentiment',
-		cell: ({ row }) => <Text size='sm'>{row.original.sentiment.toFixed(1)} / 5.0</Text>,
+		cell: ({ row }) => (
+			<Text size='sm'>{row.original.sentiment.toFixed(1)} / 5.0</Text>
+		),
 	},
 	{
 		accessorKey: 'compliance',
 		header: 'Compliance %',
 		cell: ({ row }) => (
-			<Badge color={row.original.compliance < 80 ? 'red' : 'teal'} variant='light'>
+			<Badge
+				color={row.original.compliance < 80 ? 'red' : 'teal'}
+				variant='light'
+			>
 				{row.original.compliance}%
 			</Badge>
 		),
@@ -244,7 +392,8 @@ const disputeColumns: BaseTableColumnDef<DisputeRow>[] = [
 		header: 'Status',
 		cell: ({ row }) => (
 			<Badge color={DISPUTE_STATUS_COLORS[row.original.status]} variant='light'>
-				{row.original.status.charAt(0).toUpperCase() + row.original.status.slice(1)}
+				{row.original.status.charAt(0).toUpperCase() +
+					row.original.status.slice(1)}
 			</Badge>
 		),
 	},
@@ -273,15 +422,21 @@ const campaignColumns: BaseTableColumnDef<CampaignRow>[] = [
 		accessorKey: 'status',
 		header: 'Status',
 		cell: ({ row }) => (
-			<Badge color={CAMPAIGN_STATUS_COLORS[row.original.status]} variant='light'>
-				{row.original.status.charAt(0).toUpperCase() + row.original.status.slice(1)}
+			<Badge
+				color={CAMPAIGN_STATUS_COLORS[row.original.status]}
+				variant='light'
+			>
+				{row.original.status.charAt(0).toUpperCase() +
+					row.original.status.slice(1)}
 			</Badge>
 		),
 	},
 	{
 		accessorKey: 'callsCount',
 		header: 'Calls Count',
-		cell: ({ row }) => <Text size='sm'>{row.original.callsCount.toLocaleString()}</Text>,
+		cell: ({ row }) => (
+			<Text size='sm'>{row.original.callsCount.toLocaleString()}</Text>
+		),
 	},
 	{
 		accessorKey: 'createdDate',
@@ -294,20 +449,26 @@ const campaignColumns: BaseTableColumnDef<CampaignRow>[] = [
 	},
 ];
 
-type EvaluationType = 'all' | 'qa' | 'sentiment' | 'compliance' | 'business';
-
 export const NewQAManagerDashboard: React.FC = () => {
 	const navigate = useNavigate();
-	const [evaluationType, setEvaluationType] = useState<EvaluationType>('all');
-	const { qaScore, sentiment, complianceCategories, autoFailsCount } = QA_MANAGER_WEEKLY_METRICS;
+	const { t } = useTranslation('qa.dashboard');
+	const [evaluationType, setEvaluationType] =
+		useState<DashboardEvaluationType>('all');
+	const {
+		qaScore,
+		sentiment,
+		complianceCategories,
+		autoFailsCount,
+		businessInsights,
+		businessOutcome,
+	} = QA_MANAGER_WEEKLY_METRICS;
 
 	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
 
-	const shouldShowCard = (type: EvaluationType | EvaluationType[]): boolean => {
-		if (evaluationType === 'all') return true;
-		const types = Array.isArray(type) ? type : [type];
-		return types.includes(evaluationType);
-	};
+	const cardClass = (
+		types: DashboardEvaluationType | DashboardEvaluationType[]
+	) =>
+		isCardVisible(evaluationType, types) ? styles.gridCard : styles.dimmedCard;
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -321,73 +482,94 @@ export const NewQAManagerDashboard: React.FC = () => {
 
 				<SectionCard
 					title='Performance Score'
-					description='Platform-wide quality assurance, compliance, and sentiment results this week'
+					description='Platform quality assurance, compliance, sentiment and business results this week'
 				>
-					<SimpleGrid cols={{ base: 1, md: 4 }} spacing='md'>
-						<QualityAssuranceCard score={qaScore} subtitle='Platform category breakdown' />
-						<ComplianceCard categories={complianceCategories} subtitle='Platform category overview' />
-						<SentimentEmotionCard
-							score={overallSentiment}
-							predominantEmotion={sentiment.predominantEmotion}
-							subtitle='0-5 scale assessment'
-						/>
-						<div>
-							<AutoFailsCard sectionAutoFails={autoFailsCount} globalAutoFails={42} compact />
+					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
+						<div className={cardClass('qa')}>
+							<QualityAssuranceCard
+								score={qaScore}
+								subtitle='Platform category breakdown'
+								autoFails={autoFailsCount}
+							/>
+						</div>
+						<div className={cardClass('compliance')}>
+							<ComplianceCard
+								categories={complianceCategories}
+								subtitle='Platform category overview'
+							/>
+						</div>
+						<div className={cardClass('sentiment')}>
+							<SentimentEmotionCard
+								score={overallSentiment}
+								predominantEmotion={sentiment.predominantEmotion}
+								subtitle='0-5 scale assessment'
+							/>
+						</div>
+						<div className={cardClass('business')}>
+							<BusinessInsightsCard
+								insights={businessInsights}
+								outcome={businessOutcome}
+								subtitle='Platform conversion and signals'
+							/>
 						</div>
 					</SimpleGrid>
 				</SectionCard>
 
-				<div>
-					<Text size='sm' fw={500} mb='xs'>
-						Filter by evaluation type
-					</Text>
-					<AppSegmentedControl
-						value={evaluationType}
-						onChange={(value) => setEvaluationType(value as EvaluationType)}
-						data={[
-							{ label: 'All', value: 'all' },
-							{ label: 'QA', value: 'qa' },
-							{ label: 'Sentiment & Emotion', value: 'sentiment' },
-							{ label: 'Compliance', value: 'compliance' },
-							{ label: 'Business Insight', value: 'business' },
-						]}
-					/>
-				</div>
+				<DashboardEvaluationFilter
+					value={evaluationType}
+					onChange={setEvaluationType}
+				/>
 
-				<div style={{ opacity: shouldShowCard('qa') ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-					<InboxSummary
-						autoDrivenCount={5}
-						negativeCount={4}
-						trendCount={8}
-						inboxPath='/qa/qa-manager/inbox'
-					/>
-				</div>
+				<InboxSummary
+					autoDrivenCount={5}
+					negativeCount={4}
+					trendCount={8}
+					inboxPath='/qa/qa-manager/inbox'
+					dimmed={!isCardVisible(evaluationType, 'qa')}
+				/>
 
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<div style={{ opacity: shouldShowCard('sentiment') ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-						<SectionCard title='Sentiment Trend' description='4-week platform sentiment progression'>
-							<Card className={styles.metricCard} p='md' radius='md' withBorder>
-								<SentimentTrendChart data={QA_MANAGER_SENTIMENT_TREND} />
-							</Card>
-						</SectionCard>
-					</div>
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<SectionCard
+						title='Sentiment Trend'
+						description='4-week platform sentiment progression'
+						fullHeight
+						dimmed={!isCardVisible(evaluationType, 'sentiment')}
+					>
+						<SentimentTrendChart data={QA_MANAGER_SENTIMENT_TREND} />
+					</SectionCard>
 
-					<div style={{ opacity: shouldShowCard(['sentiment', 'compliance', 'business']) ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-						<SectionCard title='Quick Insights' description='Platform-level recommendations and analysis'>
-							<QuickInsightsWidget insights={DEFAULT_QA_MANAGER_INSIGHTS} />
-						</SectionCard>
-					</div>
+					<SectionCard
+						title='Quick Insights'
+						description='Platform-level recommendations and analysis'
+						fullHeight
+						dimmed={
+							!isCardVisible(evaluationType, [
+								'sentiment',
+								'compliance',
+								'business',
+							])
+						}
+					>
+						<QuickInsightsWidget insights={DEFAULT_QA_MANAGER_INSIGHTS} />
+					</SectionCard>
 				</SimpleGrid>
 
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-					<div style={{ opacity: shouldShowCard('qa') ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-						<SectionCard title='Best & Worst Calls' description='Top and bottom performing calls from across all teams this week'>
-							<BestWorstCallsTable calls={QA_MANAGER_CALLS} />
-						</SectionCard>
-					</div>
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<SectionCard
+						title='Best & Worst Calls'
+						description='Top and bottom performing calls from across all teams this week'
+						fullHeight
+						dimmed={!isCardVisible(evaluationType, 'qa')}
+					>
+						<BestWorstCallsTable calls={QA_MANAGER_CALLS} />
+					</SectionCard>
 
-					<div style={{ opacity: shouldShowCard(['qa', 'sentiment', 'compliance', 'business']) ? 1 : 0.5, transition: 'opacity 0.2s' }}>
-						<Tabs defaultValue='rankings' style={{ flex: 1 }}>
+					<SectionCard
+						title={t('sections.organisation')}
+						description='Rankings, supervisors, disputes and campaigns'
+						fullHeight
+					>
+						<Tabs defaultValue='rankings'>
 							<Tabs.List>
 								<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
 								<Tabs.Tab value='supervisors'>Supervisors</Tabs.Tab>
@@ -402,44 +584,38 @@ export const NewQAManagerDashboard: React.FC = () => {
 									description='Supervisor teams ranked against the platform goal for this period'
 									goal={QA_MANAGER_RANKING_GOAL}
 									maxDisplay={7}
-									onViewAll={() => navigate('/qa/qamanager/rankings')}
+									onViewAll={() => navigate('/qa/qa-manager/rankings')}
 								/>
 							</Tabs.Panel>
 
 							<Tabs.Panel value='supervisors' pt='lg'>
-								<SectionCard title='Supervisors' description="All supervisors' performance metrics across the platform">
-									<BaseTable<SupervisorRow>
-										columns={supervisorColumns}
-										data={SUPERVISORS_OVERVIEW}
-										getRowId={supervisor => supervisor.id}
-										emptyMessage='No supervisors found'
-									/>
-								</SectionCard>
+								<BaseTable<SupervisorRow>
+									columns={supervisorColumns}
+									data={SUPERVISORS_OVERVIEW}
+									getRowId={(supervisor) => supervisor.id}
+									emptyMessage='No supervisors found'
+								/>
 							</Tabs.Panel>
 
 							<Tabs.Panel value='disputes' pt='lg'>
-								<SectionCard title='Disputes' description='All platform disputes across supervisors and teams'>
-									<BaseTable<DisputeRow>
-										columns={disputeColumns}
-										data={ALL_DISPUTES}
-										getRowId={dispute => dispute.id}
-										emptyMessage='No disputes found'
-									/>
-								</SectionCard>
+								<BaseTable<DisputeRow>
+									columns={disputeColumns}
+									data={ALL_DISPUTES}
+									getRowId={(dispute) => dispute.id}
+									emptyMessage='No disputes found'
+								/>
 							</Tabs.Panel>
 
 							<Tabs.Panel value='campaigns' pt='lg'>
-								<SectionCard title='Campaigns' description='Active and archived campaigns across the platform'>
-									<BaseTable<CampaignRow>
-										columns={campaignColumns}
-										data={CAMPAIGNS_LIST}
-										getRowId={campaign => campaign.id}
-										emptyMessage='No campaigns found'
-									/>
-								</SectionCard>
+								<BaseTable<CampaignRow>
+									columns={campaignColumns}
+									data={CAMPAIGNS_LIST}
+									getRowId={(campaign) => campaign.id}
+									emptyMessage='No campaigns found'
+								/>
 							</Tabs.Panel>
 						</Tabs>
-					</div>
+					</SectionCard>
 				</SimpleGrid>
 			</Stack>
 		</ContentContainer>

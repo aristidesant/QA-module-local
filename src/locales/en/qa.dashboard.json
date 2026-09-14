@@ -1,17 +1,4 @@
 {
-	"burnout": {
-		"title": "Burnout Risk",
-		"level": {
-			"low": "Low",
-			"medium": "Medium",
-			"high": "High"
-		},
-		"trend": {
-			"improving": "Improving",
-			"stable": "Stable",
-			"declining": "Declining"
-		}
-	},
 	"aiStatus": {
 		"centerLabel": "{{count}} AI",
 		"description": "AI evaluation pipeline outcomes in the selected range.",
@@ -25,9 +12,51 @@
 		},
 		"title": "AI evaluation status"
 	},
+	"autoFails": {
+		"present": "Review",
+		"none": "Clean"
+	},
+	"burnout": {
+		"title": "Burnout Risk",
+		"level": {
+			"low": "Low",
+			"medium": "Medium",
+			"high": "High"
+		},
+		"trend": {
+			"improving": "Improving",
+			"stable": "Stable",
+			"declining": "Declining"
+		}
+	},
+	"businessInsights": {
+		"title": "Business Insights",
+		"period": "This week",
+		"conversionRate": "Conversion rate",
+		"offers": "{{converted}} of {{offers}} offers converted",
+		"autoFails": "Auto-fails",
+		"signals": {
+			"EARLY_OBJECTION": "Early objections",
+			"UNHANDLED_OBJECTION": "Unhandled objections",
+			"COMPETITOR_PLUS_COST": "Competitor + price",
+			"MISTARGETED_OFFER": "Mis-targeted offers"
+		},
+		"signalCalls_one": "{{count}} call",
+		"signalCalls_other": "{{count}} calls"
+	},
 	"description": "Live quality metrics computed from evaluations, disputes, and AI provider health.",
 	"error": {
 		"title": "Could not load dashboard data"
+	},
+	"evaluationFilter": {
+		"label": "Filter by evaluation type",
+		"options": {
+			"all": "All",
+			"qa": "QA",
+			"sentiment": "Sentiment & Emotion",
+			"compliance": "Compliance",
+			"business": "Business Insights"
+		}
 	},
 	"evaluatorType": {
 		"ai": "AI",
@@ -93,6 +122,12 @@
 		"scoreValue": "{{score}}%",
 		"title": "Recent evaluations",
 		"viewAll": "View all"
+	},
+	"sections": {
+		"team": "Team",
+		"organisation": "Organisation",
+		"operations": "Operations",
+		"clients": "Clients"
 	},
 	"status": {
 		"completed": "Completed",
