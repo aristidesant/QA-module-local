@@ -1,5 +1,8 @@
 {
-	"eyebrow": { "supervisor": "Supervisor · Team 1", "qa-manager": "QA Manager · All teams" },
+	"eyebrow": {
+		"supervisor": "Supervisor · Team 1",
+		"qa-manager": "QA Manager · All teams"
+	},
 	"title": "Coaching",
 	"description": "See who needs attention, turn low scores into learning, and check whether it worked.",
 	"newRule": "New rule",
@@ -15,7 +18,6 @@
 		"sessionsThisWeek": "Sessions this week"
 	},
 	"tabs": {
-		"queue": "Queue",
 		"agents": "Agents",
 		"cohorts": "Cohorts",
 		"rules": "Rules",
@@ -26,7 +28,13 @@
 	"queue": {
 		"title": "Who needs attention",
 		"description": "Prioritised from rules, scores, trends, overdue training and pending responses.",
-		"filters": { "priority": "Priority", "team": "Team", "area": "Aspect", "action": "Suggested action", "all": "All" },
+		"filters": {
+			"priority": "Priority",
+			"team": "Team",
+			"area": "Aspect",
+			"action": "Suggested action",
+			"all": "All"
+		},
 		"reasons": {
 			"LOW_SCORE": "{{area}} at {{value}} — below {{threshold}}",
 			"DECLINING_TREND": "{{area}} down {{delta}} pts vs last period",
@@ -71,7 +79,14 @@
 	"agents": {
 		"title": "Agents",
 		"description": "Every agent in your scope with their coaching state.",
-		"filters": { "search": "Search agent", "team": "Team", "area": "Weakest aspect", "state": "State", "all": "All", "clear": "Clear" },
+		"filters": {
+			"search": "Search agent",
+			"team": "Team",
+			"area": "Weakest aspect",
+			"state": "State",
+			"all": "All",
+			"clear": "Clear"
+		},
 		"state": {
 			"attention": "Needs attention",
 			"inTraining": "In training",
@@ -93,7 +108,12 @@
 		"teamCard": "{{team}} · {{supervisor}}",
 		"empty": "No agents match these filters.",
 		"drawer": {
-			"tabs": { "timeline": "Timeline", "assignments": "Assignments", "sessions": "Sessions", "impact": "Impact" },
+			"tabs": {
+				"timeline": "Timeline",
+				"assignments": "Assignments",
+				"sessions": "Sessions",
+				"impact": "Impact"
+			},
 			"scores": "Scores",
 			"assign": "Assign material",
 			"schedule": "Schedule session",
@@ -125,7 +145,10 @@
 			"submit": "Create cohort",
 			"cancel": "Cancel",
 			"success": "Cohort {{name}} created",
-			"validation": { "name": "Name is required", "members": "Pick at least two agents" }
+			"validation": {
+				"name": "Name is required",
+				"members": "Pick at least two agents"
+			}
 		},
 		"drawer": {
 			"members": "Members",
@@ -133,7 +156,13 @@
 			"assignMaterial": "Assign material to cohort",
 			"scheduleGroup": "Schedule group session",
 			"progress": "Progress",
-			"columns": { "agent": "Agent", "team": "Team", "modules": "Modules", "overdue": "Overdue", "impact": "Impact" },
+			"columns": {
+				"agent": "Agent",
+				"team": "Team",
+				"modules": "Modules",
+				"overdue": "Overdue",
+				"impact": "Impact"
+			},
 			"linkedRules": "Linked rules",
 			"noRules": "No rules linked.",
 			"delete": "Delete cohort",
@@ -144,7 +173,13 @@
 	"rules": {
 		"title": "Coaching rules",
 		"description": "When a condition is met, material is assigned automatically with a deadline. Reuses the same metrics as Triggers.",
-		"filters": { "search": "Search rule", "area": "Aspect", "status": "Status", "all": "All", "clear": "Clear" },
+		"filters": {
+			"search": "Search rule",
+			"area": "Aspect",
+			"status": "Status",
+			"all": "All",
+			"clear": "Clear"
+		},
 		"columns": {
 			"name": "Rule",
 			"condition": "Condition",
@@ -162,7 +197,11 @@
 			"path": "Enrol in {{path}} · due in {{days}} d",
 			"withSession": "+ session"
 		},
-		"scopeSummary": { "all": "Everyone", "team": "Team {{team}}", "custom": "Custom" },
+		"scopeSummary": {
+			"all": "Everyone",
+			"team": "Team {{team}}",
+			"custom": "Custom"
+		},
 		"menu": {
 			"edit": "Edit",
 			"duplicate": "Duplicate",
@@ -224,7 +263,10 @@
 				"logic": "Logic",
 				"showAllContent": "Show material from every aspect"
 			},
-			"actionKinds": { "ASSIGN_CONTENT": "Assign material", "ASSIGN_PATH": "Enrol in a learning path" },
+			"actionKinds": {
+				"ASSIGN_CONTENT": "Assign material",
+				"ASSIGN_PATH": "Enrol in a learning path"
+			},
 			"coach": { "SUPERVISOR": "Supervisor", "QA_MANAGER": "QA Manager" },
 			"scope": {
 				"everyone": "Everyone in my scope",
@@ -240,7 +282,12 @@
 				"condition": "Add at least one condition",
 				"due": "Due must be between 1 and 90 days"
 			},
-			"footer": { "cancel": "Cancel", "saveDraft": "Save as draft", "saveActivate": "Save & activate", "save": "Save" },
+			"footer": {
+				"cancel": "Cancel",
+				"saveDraft": "Save as draft",
+				"saveActivate": "Save & activate",
+				"save": "Save"
+			},
 			"discard": "Discard changes?"
 		},
 		"detail": {
@@ -259,7 +306,13 @@
 			"noMatches": "No agents match right now.",
 			"runNow": "Run now",
 			"edit": "Edit",
-			"columns": { "agent": "Agent", "material": "Material", "assigned": "Assigned", "status": "Status", "impact": "Impact" }
+			"columns": {
+				"agent": "Agent",
+				"material": "Material",
+				"assigned": "Assigned",
+				"status": "Status",
+				"impact": "Impact"
+			}
 		},
 		"empty": "No coaching rules yet.",
 		"emptyDescription": "Create the first rule to turn low scores into learning automatically."
@@ -267,7 +320,15 @@
 	"sessions": {
 		"title": "Coaching sessions",
 		"description": "1:1, side-by-side, micro and group sessions.",
-		"filters": { "status": "Status", "type": "Type", "coach": "Coach", "team": "Team", "all": "All", "upcoming": "Upcoming", "past": "Past" },
+		"filters": {
+			"status": "Status",
+			"type": "Type",
+			"coach": "Coach",
+			"team": "Team",
+			"all": "All",
+			"upcoming": "Upcoming",
+			"past": "Past"
+		},
 		"columns": {
 			"date": "Date",
 			"agent": "Agent",
@@ -279,9 +340,23 @@
 			"commitment": "Commitment",
 			"followUp": "Follow-up"
 		},
-		"types": { "ONE_ON_ONE": "1:1", "SIDE_BY_SIDE": "Side-by-side", "GROUP": "Group", "MICRO": "Micro (10 min)" },
-		"status": { "SCHEDULED": "Scheduled", "COMPLETED": "Completed", "MISSED": "Missed", "CANCELLED": "Cancelled" },
-		"commitment": { "acknowledged": "Committed", "pending": "Not yet", "none": "—" },
+		"types": {
+			"ONE_ON_ONE": "1:1",
+			"SIDE_BY_SIDE": "Side-by-side",
+			"GROUP": "Group",
+			"MICRO": "Micro (10 min)"
+		},
+		"status": {
+			"SCHEDULED": "Scheduled",
+			"COMPLETED": "Completed",
+			"MISSED": "Missed",
+			"CANCELLED": "Cancelled"
+		},
+		"commitment": {
+			"acknowledged": "Committed",
+			"pending": "Not yet",
+			"none": "—"
+		},
 		"thisWeek": "This week",
 		"later": "Later",
 		"past": "Past sessions",
@@ -306,7 +381,11 @@
 			"submit": "Schedule",
 			"cancel": "Cancel",
 			"success": "Session scheduled with {{name}}",
-			"validation": { "agent": "Pick an agent", "topic": "Topic is required", "date": "Pick a date" }
+			"validation": {
+				"agent": "Pick an agent",
+				"topic": "Topic is required",
+				"date": "Pick a date"
+			}
 		},
 		"detail": {
 			"evidence": "Evidence",
@@ -338,7 +417,12 @@
 	"impact": {
 		"title": "Did it work?",
 		"description": "Impact of completed training on the linked metric, 30 days before vs after.",
-		"kpi": { "measured": "Measured", "improved": "Improved", "same": "No change", "declined": "Declined" },
+		"kpi": {
+			"measured": "Measured",
+			"improved": "Improved",
+			"same": "No change",
+			"declined": "Declined"
+		},
 		"byArea": "By aspect",
 		"byAreaDescription": "Share of completed items whose metric improved.",
 		"byContent": "Content effectiveness",
@@ -358,7 +442,11 @@
 			"improvedRate": "Improved rate",
 			"team": "Team"
 		},
-		"series": { "improved": "Improved", "same": "No change", "declined": "Declined" },
+		"series": {
+			"improved": "Improved",
+			"same": "No change",
+			"declined": "Declined"
+		},
 		"recent": "Recently measured",
 		"recentDescription": "Latest completions with a verdict.",
 		"recentColumns": {

@@ -5,7 +5,6 @@ import {
 	IconCalendarEvent,
 	IconChartBar,
 	IconFlame,
-	IconListCheck,
 	IconMailForward,
 	IconRoute,
 	IconSchool,
@@ -22,10 +21,18 @@ import type {
 } from '~/models/qa';
 import type { TeamRole } from '~/modules/qa/team/types';
 
-export type CoachingTab = 'queue' | 'agents' | 'cohorts' | 'rules' | 'sessions' | 'impact';
+export type CoachingTab =
+	| 'agents'
+	| 'cohorts'
+	| 'rules'
+	| 'sessions'
+	| 'impact';
 
-export const COACHING_TABS: { value: CoachingTab; labelKey: string; icon: TablerIcon }[] = [
-	{ value: 'queue', labelKey: 'tabs.queue', icon: IconListCheck },
+export const COACHING_TABS: {
+	value: CoachingTab;
+	labelKey: string;
+	icon: TablerIcon;
+}[] = [
 	{ value: 'agents', labelKey: 'tabs.agents', icon: IconUsers },
 	{ value: 'cohorts', labelKey: 'tabs.cohorts', icon: IconUsersGroup },
 	{ value: 'rules', labelKey: 'tabs.rules', icon: IconRoute },
@@ -33,9 +40,16 @@ export const COACHING_TABS: { value: CoachingTab; labelKey: string; icon: Tabler
 	{ value: 'impact', labelKey: 'tabs.impact', icon: IconChartBar },
 ];
 
-export const PRIORITY_COLOR: Record<CoachingPriority, string> = { HIGH: 'red', MEDIUM: 'orange', LOW: 'blue' };
+export const PRIORITY_COLOR: Record<CoachingPriority, string> = {
+	HIGH: 'red',
+	MEDIUM: 'orange',
+	LOW: 'blue',
+};
 
-export const REASON_META: Record<CoachingQueueReasonKind, { icon: TablerIcon; color: string }> = {
+export const REASON_META: Record<
+	CoachingQueueReasonKind,
+	{ icon: TablerIcon; color: string }
+> = {
 	RULE_TRIGGERED: { icon: IconBell, color: 'orange' },
 	LOW_SCORE: { icon: IconAlertTriangle, color: 'red' },
 	DECLINING_TREND: { icon: IconTrendingDown, color: 'yellow' },
@@ -56,9 +70,19 @@ export const SUGGESTED_ACTION_ORDER: CoachingSuggestedAction[] = [
 	'CHECK_IN',
 ];
 
-export const SESSION_TYPES: CoachingSessionType[] = ['ONE_ON_ONE', 'SIDE_BY_SIDE', 'GROUP', 'MICRO'];
+export const SESSION_TYPES: CoachingSessionType[] = [
+	'ONE_ON_ONE',
+	'SIDE_BY_SIDE',
+	'GROUP',
+	'MICRO',
+];
 export const SESSION_DURATIONS = [15, 30, 45, 60];
-export const SESSION_STATUSES: CoachingSessionStatus[] = ['SCHEDULED', 'COMPLETED', 'MISSED', 'CANCELLED'];
+export const SESSION_STATUSES: CoachingSessionStatus[] = [
+	'SCHEDULED',
+	'COMPLETED',
+	'MISSED',
+	'CANCELLED',
+];
 export const SESSION_STATUS_COLOR: Record<CoachingSessionStatus, string> = {
 	SCHEDULED: 'blue',
 	COMPLETED: 'green',
