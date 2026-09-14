@@ -126,6 +126,22 @@
 	min-height: 0;
 }
 
+/* Scrollable but with no visible scrollbar track/arrows — the gutter is still
+   reserved (scrollbar-gutter: stable) so content doesn't shift, it just never
+   paints a visible scrollbar. Wheel/touch/keyboard scrolling still works. */
+.mainScrollArea,
+.primaryLinksScrollable {
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none; /* legacy Edge/IE */
+}
+
+.mainScrollArea::-webkit-scrollbar,
+.primaryLinksScrollable::-webkit-scrollbar {
+	display: none; /* Chrome, Safari, Chromium Edge */
+	width: 0;
+	height: 0;
+}
+
 .mainScrollArea {
 	flex: 1;
 	min-height: 0;
