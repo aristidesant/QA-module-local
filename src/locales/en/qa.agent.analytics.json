@@ -62,11 +62,9 @@
 			"description": "Overall sentiment metrics from aggregated data",
 			"agentSentiment": "Avg Agent Sentiment",
 			"customerSentiment": "Avg Customer Sentiment",
-			"delta": "Sentiment Delta",
-			"predominantEmotion": "Predominant Emotion",
-			"outOfFive": "out of 5",
-			"customerHigher": "Customer Higher",
-			"agentHigher": "Agent Higher"
+			"agentPredominantEmotion": "Agent Predominant Emotion",
+			"customerPredominantEmotion": "Customer Predominant Emotion",
+			"outOfFive": "out of 5"
 		},
 		"trend": {
 			"title": "Sentiment Trend",

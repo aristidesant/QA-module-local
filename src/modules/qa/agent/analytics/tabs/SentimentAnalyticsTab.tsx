@@ -73,6 +73,20 @@ const EMOTIONS = [
 	'Disgust',
 ];
 
+/**
+ * Deterministic sentiment (1-5 scale) → emotion mapping, used to split the
+ * per-call `predominantEmotion` (which isn't tagged by speaker in the mock
+ * data) into an Agent and a Customer reading for the summary KPI cards.
+ */
+const emotionForScore = (score: number): string => {
+	if (score >= 4.5) return 'Joy';
+	if (score >= 4.0) return 'Trust';
+	if (score >= 3.3) return 'Surprise';
+	if (score >= 2.6) return 'Disgust';
+	if (score >= 2.0) return 'Sadness';
+	return 'Anger';
+};
+
 // Emotion sentiment mapping for color coding
 const emotionSentiment: Record<string, 'positive' | 'negative'> = {
 	Joy: 'positive',
@@ -155,6 +169,10 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({
 				sentimentDelta: 0,
 				predominantEmotion: 'Joy',
 				predominantEmotionCount: 0,
+				agentPredominantEmotion: 'Joy',
+				agentPredominantEmotionCount: 0,
+				customerPredominantEmotion: 'Joy',
+				customerPredominantEmotionCount: 0,
 			};
 		}
 
@@ -179,12 +197,43 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({
 			(a, b) => b[1] - a[1]
 		)[0];
 
+		// The mock data only tags one predominantEmotion per call (not per
+		// speaker), so the agent/customer readings are derived from each
+		// period's own agent/customer sentiment average via emotionForScore,
+		// then the most frequent result per role is taken (same mode logic
+		// as the combined predominantEmotion above).
+		const agentEmotionCounts = new Map<string, number>();
+		const customerEmotionCounts = new Map<string, number>();
+		aggregated.forEach((m) => {
+			const agentEmotion = emotionForScore(m.avgAgentSentiment);
+			const customerEmotion = emotionForScore(m.avgCustomerSentiment);
+			agentEmotionCounts.set(
+				agentEmotion,
+				(agentEmotionCounts.get(agentEmotion) || 0) + 1
+			);
+			customerEmotionCounts.set(
+				customerEmotion,
+				(customerEmotionCounts.get(customerEmotion) || 0) + 1
+			);
+		});
+
+		const agentPredominantEmotion = Array.from(
+			agentEmotionCounts.entries()
+		).sort((a, b) => b[1] - a[1])[0];
+		const customerPredominantEmotion = Array.from(
+			customerEmotionCounts.entries()
+		).sort((a, b) => b[1] - a[1])[0];
+
 		return {
 			avgAgentSentiment: Math.round(avgAgentSentiment * 10) / 10,
 			avgCustomerSentiment: Math.round(avgCustomerSentiment * 10) / 10,
 			sentimentDelta: Math.round(sentimentDelta * 10) / 10,
 			predominantEmotion: predominantEmotion[0],
 			predominantEmotionCount: predominantEmotion[1],
+			agentPredominantEmotion: agentPredominantEmotion[0],
+			agentPredominantEmotionCount: agentPredominantEmotion[1],
+			customerPredominantEmotion: customerPredominantEmotion[0],
+			customerPredominantEmotionCount: customerPredominantEmotion[1],
 		};
 	}, [aggregated]);
 
@@ -282,7 +331,7 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({
 			>
 				{aggregated.length > 0 ? (
 					<Grid gap='md'>
-						<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 4 }}>
+						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
 							<SummaryCard
 								title={t('sentiment.summary.agentSentiment')}
 								value={summary.avgAgentSentiment.toFixed(1)}
@@ -290,7 +339,7 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({
 								badgeColor={getSentimentColor(summary.avgAgentSentiment)}
 							/>
 						</Grid.Col>
-						<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 4 }}>
+						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
 							<SummaryCard
 								title={t('sentiment.summary.customerSentiment')}
 								value={summary.avgCustomerSentiment.toFixed(1)}
@@ -298,11 +347,19 @@ const SentimentAnalyticsTab: React.FC<SentimentAnalyticsTabProps> = ({
 								badgeColor={getSentimentColor(summary.avgCustomerSentiment)}
 							/>
 						</Grid.Col>
-						<Grid.Col span={{ base: 12, sm: 6, md: 4, lg: 4 }}>
+						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
 							<SummaryCard
-								title={t('sentiment.summary.predominantEmotion')}
-								value={`${EMOTION_CONFIG[summary.predominantEmotion]?.emoji || ''} ${emotionLabels[summary.predominantEmotion] || summary.predominantEmotion}`}
-								badge={`${summary.predominantEmotionCount}x`}
+								title={t('sentiment.summary.agentPredominantEmotion')}
+								value={`${EMOTION_CONFIG[summary.agentPredominantEmotion]?.emoji || ''} ${emotionLabels[summary.agentPredominantEmotion] || summary.agentPredominantEmotion}`}
+								badge={`${summary.agentPredominantEmotionCount}x`}
+								badgeColor='violet'
+							/>
+						</Grid.Col>
+						<Grid.Col span={{ base: 12, sm: 6, md: 3, lg: 3 }}>
+							<SummaryCard
+								title={t('sentiment.summary.customerPredominantEmotion')}
+								value={`${EMOTION_CONFIG[summary.customerPredominantEmotion]?.emoji || ''} ${emotionLabels[summary.customerPredominantEmotion] || summary.customerPredominantEmotion}`}
+								badge={`${summary.customerPredominantEmotionCount}x`}
 								badgeColor='violet'
 							/>
 						</Grid.Col>

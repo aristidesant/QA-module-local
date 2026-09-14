@@ -62,11 +62,9 @@
 			"description": "Métricas generales de sentimiento de los datos agregados",
 			"agentSentiment": "Sentimiento Prom. del Agente",
 			"customerSentiment": "Sentimiento Prom. del Cliente",
-			"delta": "Delta de Sentimiento",
-			"predominantEmotion": "Emoción Predominante",
-			"outOfFive": "de 5",
-			"customerHigher": "Cliente más alto",
-			"agentHigher": "Agente más alto"
+			"agentPredominantEmotion": "Emoción Predominante del Agente",
+			"customerPredominantEmotion": "Emoción Predominante del Cliente",
+			"outOfFive": "de 5"
 		},
 		"trend": {
 			"title": "Tendencia de Sentimiento",
