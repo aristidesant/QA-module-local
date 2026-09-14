@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import React, {
 	useCallback,
 	useEffect,
@@ -26,19 +27,13 @@ import {
 	type ColumnDef,
 	type SortingState,
 } from '@tanstack/react-table';
-import { REACTION_TYPES } from '~/models/qa/reactions';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
-import {
-	AGENT_RANKINGS,
-	type AgentRankingEntry,
-} from '~/modules/qa/dashboard/mockData';
-import {
-	REACTION_ORDER,
-	buildRankIndex,
-	getReactionsTotal,
-} from '../gamification';
+import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
+import { type AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
+import { buildRankIndex, getReactionsTotal } from '../gamification';
 import { WinnerBadge } from './WinnerBadge';
-import { useLeaderboardMetadata } from '../hooks/useLeaderboardMetadata';
+import LeaderboardReactions from './LeaderboardReactions';
+import { useLeaderboardStatus } from '../hooks/useLeaderboardStatus';
 import styles from './ExpandedRankingsTable.module.css';
 
 /** Fixed row height used by the virtualizer (must match `.row` height in the CSS module). */
@@ -63,8 +58,12 @@ const EmptyCell: React.FC = () => (
 );
 
 export interface ExpandedRankingsTableProps {
-	/** Leaderboard rows. Defaults to the full mock roster. */
-	data?: AgentRankingEntry[];
+	/** Leaderboard rows, computed from the active ranking program. */
+	data: AgentRankingEntry[];
+	/** Highlights the row of the agent viewing their own leaderboard. */
+	currentAgentId?: string;
+	/** Renders the score with the ranking metric's unit. */
+	formatScore?: (score: number) => string;
 	/** Invoked when a row is clicked (detail drawer hook-up). */
 	onRowClick?: (entry: AgentRankingEntry) => void;
 }
@@ -77,14 +76,18 @@ export interface ExpandedRankingsTableProps {
  * without pulling in an extra virtualization dependency.
  */
 export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
-	data = AGENT_RANKINGS,
+	data,
+	currentAgentId,
+	formatScore,
 	onRowClick,
 }) => {
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: 'rank', desc: false },
 	]);
 
-	const { isCompleted } = useLeaderboardMetadata();
+	const { t } = useTranslation('qa.rankings');
+	const { isCompleted } = useLeaderboardStatus();
+	const badges = useTriggerRulesStore((state) => state.badges);
 
 	/** Rank lookup so each row can read the score of the position below it. */
 	const rankIndex = useMemo(() => buildRankIndex(data), [data]);
@@ -93,7 +96,7 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 		() => [
 			{
 				accessorKey: 'rank',
-				header: 'Rank',
+				header: t('table.rank'),
 				size: 80,
 				cell: ({ row }) => {
 					const { rank } = row.original;
@@ -113,7 +116,7 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 			},
 			{
 				accessorKey: 'agentName',
-				header: 'Name',
+				header: t('table.name'),
 				size: 200,
 				cell: ({ row }) => (
 					<Text size='sm' fw={500} lineClamp={1}>
@@ -123,18 +126,18 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 			},
 			{
 				accessorKey: 'score',
-				header: 'Score',
+				header: t('table.score'),
 				size: 100,
 				cell: ({ row }) => (
 					<Text size='sm' fw={700} className={styles.score}>
-						{row.original.score}
+						{formatScore ? formatScore(row.original.score) : row.original.score}
 					</Text>
 				),
 			},
 			{
 				id: 'achievements',
 				accessorFn: (entry) => entry.achievements?.length ?? 0,
-				header: 'Achievements',
+				header: t('table.achievements'),
 				size: 140,
 				cell: ({ row }) => {
 					const achievements = row.original.achievements ?? [];
@@ -146,7 +149,10 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 					return (
 						<Group gap={4} wrap='nowrap'>
 							{visible.map((badgeType, index) => {
-								const catalog = PREDEFINED_BADGE_CATALOGS[badgeType];
+								const badge = badges.find(
+									(candidate) => candidate.id === badgeType
+								);
+								const catalog = badge ?? PREDEFINED_BADGE_CATALOGS[badgeType];
 								return (
 									<Tooltip
 										key={`${badgeType}-${index}`}
@@ -174,33 +180,18 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 			{
 				id: 'reactions',
 				accessorFn: getReactionsTotal,
-				header: 'Reactions',
+				enableSorting: false,
+				header: t('table.reactions'),
 				size: 260,
-				cell: ({ row }) => {
-					const { reactionsTotals } = row.original;
-					if (!reactionsTotals) return <EmptyCell />;
-
-					return (
-						<Group gap='xs' wrap='nowrap'>
-							{REACTION_ORDER.map((type) => {
-								const count = reactionsTotals[type];
-								if (!count) return null;
-
-								const config = REACTION_TYPES[type];
-								return (
-									<Tooltip key={type} label={config.label} withArrow>
-										<Text size='sm' fw={500} className={styles.reaction}>
-											<span aria-hidden>{config.emoji}</span> {count}
-										</Text>
-									</Tooltip>
-								);
-							})}
-						</Group>
-					);
-				},
+				cell: ({ row }) => (
+					<LeaderboardReactions
+						agentId={row.original.agentId}
+						agentName={row.original.agentName}
+					/>
+				),
 			},
 		],
-		[rankIndex]
+		[rankIndex, isCompleted, badges, formatScore, t]
 	);
 
 	const table = useReactTable({
@@ -327,6 +318,9 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 						<Table.Tr
 							key={row.id}
 							className={styles.row}
+							data-current={
+								row.original.agentId === currentAgentId || undefined
+							}
 							data-even={(startIndex + index) % 2 === 1 || undefined}
 							data-clickable={onRowClick ? true : undefined}
 							onClick={onRowClick ? () => onRowClick(row.original) : undefined}

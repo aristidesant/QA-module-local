@@ -4,10 +4,40 @@
  */
 export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.dashboard': 'qa.dashboard',
-	'qa.dashboards.agent': 'qa.dashboard',
-	'qa.dashboards.supervisor': 'qa.dashboard',
-	'qa.dashboards.qa-manager': 'qa.dashboard',
-	'qa.dashboards.operation-manager': 'qa.dashboard',
+	'qa.agent.rankings': [
+		'qa.rankings',
+		'qa.teamAnalytics',
+		'qa.triggers',
+		'qa.team',
+	],
+	'qa.supervisor.rankings': [
+		'qa.rankings',
+		'qa.teamAnalytics',
+		'qa.triggers',
+		'qa.team',
+	],
+	'qa.qa-manager.rankings': [
+		'qa.rankings',
+		'qa.teamAnalytics',
+		'qa.triggers',
+		'qa.team',
+	],
+	'qa.dashboards.agent': ['qa.dashboard', 'qa.rankings', 'qa.teamAnalytics'],
+	'qa.dashboards.supervisor': [
+		'qa.dashboard',
+		'qa.rankings',
+		'qa.teamAnalytics',
+	],
+	'qa.dashboards.qa-manager': [
+		'qa.dashboard',
+		'qa.rankings',
+		'qa.teamAnalytics',
+	],
+	'qa.dashboards.operation-manager': [
+		'qa.dashboard',
+		'qa.rankings',
+		'qa.teamAnalytics',
+	],
 	'qa.agent.inbox': ['qa.inbox', 'qa.teamAnalytics', 'qa.team'],
 	'qa.supervisor.inbox': ['qa.inbox', 'qa.teamAnalytics', 'qa.team'],
 	'qa.qa-manager.inbox': ['qa.inbox', 'qa.teamAnalytics', 'qa.team'],

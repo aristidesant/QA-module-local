@@ -29,7 +29,7 @@ import {
 } from '../components';
 import type { DashboardEvaluationType } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
-import type { RankingEntry, RankingGoal } from '../components/RankingsTable';
+import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
 import {
 	SUPERVISOR_WEEKLY_METRICS,
 	SUPERVISOR_SENTIMENT_TREND,
@@ -179,74 +179,6 @@ const DISPUTE_STATUS_COLORS: Record<DisputeRow['status'], string> = {
 	rejected: 'red',
 };
 
-const SUPERVISOR_RANKING_GOAL: RankingGoal = {
-	metric: 'Sentiment & Emotion',
-	criteria: 'Team average sentiment and emotion scores',
-	target: 'Team average of 4.0 or above',
-	startDate: '2026-09-01',
-	dueDate: '2026-12-31',
-	setBy: 'You · Supervisor',
-};
-
-const SUPERVISOR_TEAM_RANKINGS: RankingEntry[] = [
-	{
-		position: 1,
-		name: 'Mike Chen',
-		score: 4.9,
-		reactions: { LIKE: 11, HELPFUL: 14, INSPIRING: 9, AMAZING: 6, LEADER: 3 },
-		trend: 'up',
-		trendValue: 2,
-	},
-	{
-		position: 2,
-		name: 'Sarah Johnson',
-		score: 4.7,
-		reactions: { LIKE: 8, HELPFUL: 11, INSPIRING: 7, AMAZING: 5, LEADER: 2 },
-		trend: 'up',
-		trendValue: 1,
-	},
-	{
-		position: 3,
-		name: 'Jessica Martinez',
-		score: 4.5,
-		reactions: { LIKE: 5, HELPFUL: 9, INSPIRING: 6, AMAZING: 3, LEADER: 1 },
-		trend: 'stable',
-		trendValue: 0,
-	},
-	{
-		position: 4,
-		name: 'John Smith',
-		score: 4.2,
-		reactions: { LIKE: 4, HELPFUL: 7, INSPIRING: 4, AMAZING: 2, LEADER: 1 },
-		trend: 'up',
-		trendValue: 2,
-	},
-	{
-		position: 5,
-		name: 'Emma Davis',
-		score: 4.0,
-		reactions: { LIKE: 3, HELPFUL: 5, INSPIRING: 3, AMAZING: 1, LEADER: 0 },
-		trend: 'down',
-		trendValue: 1,
-	},
-	{
-		position: 6,
-		name: 'David Brown',
-		score: 2.9,
-		reactions: { LIKE: 1, HELPFUL: 2, INSPIRING: 1, AMAZING: 0, LEADER: 0 },
-		trend: 'down',
-		trendValue: 4,
-	},
-	{
-		position: 7,
-		name: 'Lisa Wong',
-		score: 2.6,
-		reactions: { LIKE: 1, HELPFUL: 1, INSPIRING: 0, AMAZING: 0, LEADER: 0 },
-		trend: 'down',
-		trendValue: 3,
-	},
-];
-
 const teamMemberColumns: BaseTableColumnDef<TeamMemberRow>[] = [
 	{
 		accessorKey: 'name',
@@ -335,6 +267,10 @@ const disputeColumns: BaseTableColumnDef<DisputeRow>[] = [
 export const NewSupervisorDashboard: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('qa.dashboard');
+	const { entries: rankingEntries, goal: rankingGoal } = useDashboardRankings(
+		'Team 1',
+		7
+	);
 	const [evaluationType, setEvaluationType] =
 		useState<DashboardEvaluationType>('all');
 	const {
@@ -477,10 +413,10 @@ export const NewSupervisorDashboard: React.FC = () => {
 
 							<Tabs.Panel value='rankings' pt='lg'>
 								<RankingsTable
-									entries={SUPERVISOR_TEAM_RANKINGS}
+									entries={rankingEntries}
 									title='Team Rankings'
 									description='Your team ranked against the goal you defined for this period'
-									goal={SUPERVISOR_RANKING_GOAL}
+									goal={rankingGoal}
 									maxDisplay={7}
 									onViewAll={() => navigate('/qa/supervisor/rankings')}
 								/>

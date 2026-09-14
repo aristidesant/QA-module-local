@@ -20,7 +20,7 @@ import {
 } from '../components';
 import type { DashboardEvaluationType } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
-import type { RankingEntry, RankingGoal } from '../components/RankingsTable';
+import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
 import {
 	QA_MANAGER_WEEKLY_METRICS,
 	QA_MANAGER_SENTIMENT_TREND,
@@ -255,74 +255,6 @@ const CAMPAIGN_STATUS_COLORS: Record<CampaignRow['status'], string> = {
 	archived: 'gray',
 };
 
-const QA_MANAGER_RANKING_GOAL: RankingGoal = {
-	metric: 'Sentiment & Emotion',
-	criteria: 'Platform-wide sentiment and emotion performance',
-	target: 'All teams at 4.0 or above',
-	startDate: '2026-09-01',
-	dueDate: '2026-12-31',
-	setBy: 'You · QA Manager',
-};
-
-const QA_MANAGER_RANKINGS: RankingEntry[] = [
-	{
-		position: 1,
-		name: 'Sarah Johnson',
-		score: 4.6,
-		reactions: { LIKE: 12, HELPFUL: 16, INSPIRING: 10, AMAZING: 7, LEADER: 3 },
-		trend: 'up',
-		trendValue: 2,
-	},
-	{
-		position: 2,
-		name: 'Mike Chen',
-		score: 4.5,
-		reactions: { LIKE: 9, HELPFUL: 13, INSPIRING: 8, AMAZING: 5, LEADER: 2 },
-		trend: 'up',
-		trendValue: 1,
-	},
-	{
-		position: 3,
-		name: 'Jessica Martinez',
-		score: 4.3,
-		reactions: { LIKE: 7, HELPFUL: 10, INSPIRING: 6, AMAZING: 4, LEADER: 2 },
-		trend: 'stable',
-		trendValue: 0,
-	},
-	{
-		position: 4,
-		name: 'James Wilson',
-		score: 4.2,
-		reactions: { LIKE: 5, HELPFUL: 8, INSPIRING: 5, AMAZING: 3, LEADER: 1 },
-		trend: 'up',
-		trendValue: 1,
-	},
-	{
-		position: 5,
-		name: 'Amanda Taylor',
-		score: 4.1,
-		reactions: { LIKE: 4, HELPFUL: 6, INSPIRING: 4, AMAZING: 2, LEADER: 1 },
-		trend: 'down',
-		trendValue: 1,
-	},
-	{
-		position: 6,
-		name: 'Robert Kim',
-		score: 3.9,
-		reactions: { LIKE: 2, HELPFUL: 4, INSPIRING: 2, AMAZING: 1, LEADER: 0 },
-		trend: 'down',
-		trendValue: 3,
-	},
-	{
-		position: 7,
-		name: 'Patricia Lopez',
-		score: 3.8,
-		reactions: { LIKE: 1, HELPFUL: 2, INSPIRING: 1, AMAZING: 0, LEADER: 0 },
-		trend: 'down',
-		trendValue: 2,
-	},
-];
-
 const supervisorColumns: BaseTableColumnDef<SupervisorRow>[] = [
 	{
 		accessorKey: 'name',
@@ -452,6 +384,10 @@ const campaignColumns: BaseTableColumnDef<CampaignRow>[] = [
 export const NewQAManagerDashboard: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('qa.dashboard');
+	const { entries: rankingEntries, goal: rankingGoal } = useDashboardRankings(
+		'all',
+		7
+	);
 	const [evaluationType, setEvaluationType] =
 		useState<DashboardEvaluationType>('all');
 	const {
@@ -579,10 +515,10 @@ export const NewQAManagerDashboard: React.FC = () => {
 
 							<Tabs.Panel value='rankings' pt='lg'>
 								<RankingsTable
-									entries={QA_MANAGER_RANKINGS}
-									title='Supervisor Rankings'
-									description='Supervisor teams ranked against the platform goal for this period'
-									goal={QA_MANAGER_RANKING_GOAL}
+									entries={rankingEntries}
+									title='Agent Rankings'
+									description='Agents ranked against the active ranking program for this period'
+									goal={rankingGoal}
 									maxDisplay={7}
 									onViewAll={() => navigate('/qa/qa-manager/rankings')}
 								/>

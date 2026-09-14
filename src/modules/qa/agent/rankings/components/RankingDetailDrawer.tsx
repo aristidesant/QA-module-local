@@ -24,6 +24,9 @@ import {
 	getRankMovementTooltip,
 	getReactionsTotal,
 } from '../gamification';
+import { useTranslation } from 'react-i18next';
+import type { RankingProgram } from '~/models/qa/rankingPrograms';
+import { formatScore, formatTarget } from '~/modules/qa/rankings/helpers';
 import AchievementsTab from './tabs/AchievementsTab';
 import MetricsTab from './tabs/MetricsTab';
 import ReactionsTab from './tabs/ReactionsTab';
@@ -34,6 +37,10 @@ import styles from './RankingDetailDrawer.module.css';
 export interface RankingDetailDrawerProps {
 	/** Row the drawer describes. `null` keeps the drawer unmounted. */
 	entry: AgentRankingEntry | null;
+	/** Full leaderboard, used to compute the gap to the position below. */
+	data: AgentRankingEntry[];
+	/** Ranking the row belongs to. */
+	program: RankingProgram;
 	opened: boolean;
 	onClose: () => void;
 }
@@ -82,14 +89,18 @@ const GamificationChip: React.FC<GamificationChipProps> = ({
  */
 export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 	entry,
+	data,
+	program,
 	opened,
 	onClose,
 }) => {
+	const { t } = useTranslation('qa.rankings');
+
 	if (!entry) return null;
 
 	const trend = entry.rankTrend ?? 0;
 	const streak = entry.streak ?? 0;
-	const pointLead = getPointLeadFromRoster(entry);
+	const pointLead = getPointLeadFromRoster(entry, data);
 	const reactionsTotal = getReactionsTotal(entry);
 	const { currentReaction, setReaction } = useUserReaction(entry.agentId);
 
@@ -110,9 +121,11 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 							label='Score'
 							value={
 								<>
-									<div>{entry.score}/5</div>
+									<div>{formatScore(program, entry.score)}</div>
 									<Text size='xs' c='dimmed' mt={4}>
-										{entry.score >= 4.5 ? 'Excellent' : entry.score >= 4.0 ? 'Good' : 'Needs work'}
+										{t('drawer.targetIs', {
+											value: formatTarget(program),
+										})}
 									</Text>
 								</>
 							}
@@ -122,7 +135,9 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 							value={
 								<>
 									<div>{streak}</div>
-									<Text size='xs' c='dimmed' mt={4}>weeks active</Text>
+									<Text size='xs' c='dimmed' mt={4}>
+										weeks active
+									</Text>
 								</>
 							}
 						/>
@@ -151,7 +166,9 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 						<GamificationChip
 							emoji='💪'
 							label={
-								pointLead.points === null ? 'Tied with next' : `${pointLead.points} points ahead`
+								pointLead.points === null
+									? 'Tied with next'
+									: `${pointLead.points} points ahead`
 							}
 							tooltip={getPointLeadTooltip(pointLead)}
 							color={getPointLeadColor(pointLead.points)}
@@ -183,7 +200,12 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 					</Text>
 				</Stack>
 
-				<Tabs defaultValue='achievements' variant='default' keepMounted={false} className={styles.tabs}>
+				<Tabs
+					defaultValue='achievements'
+					variant='default'
+					keepMounted={false}
+					className={styles.tabs}
+				>
 					<Tabs.List>
 						<Tabs.Tab
 							value='achievements'
@@ -203,7 +225,7 @@ export const RankingDetailDrawer: React.FC<RankingDetailDrawerProps> = ({
 					</Tabs.List>
 
 					<Tabs.Panel value='achievements' pt='md'>
-						<AchievementsTab entry={entry} />
+						<AchievementsTab entry={entry} program={program} />
 					</Tabs.Panel>
 
 					<Tabs.Panel value='reactions' pt='md'>

@@ -1,110 +1,87 @@
-import React, { useMemo, useState } from 'react';
-import {
-	Badge,
-	Collapse,
-	Group,
-	List,
-	Paper,
-	Progress,
-	Stack,
-	Text,
-	UnstyledButton,
-} from '@mantine/core';
-import {
-	IconChevronDown,
-	IconChevronRight,
-	IconCircleCheck,
-	IconTargetArrow,
-} from '@tabler/icons-react';
-import {
-	getRankingAchievements,
-	type AgentRankingEntry,
-	type RankingAchievement,
-} from '~/modules/qa/dashboard/mockData';
+import React, { useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Badge, Group, Paper, Progress, Stack, Text } from '@mantine/core';
+import { IconTargetArrow } from '@tabler/icons-react';
+import type { RankingProgram } from '~/models/qa/rankingPrograms';
+import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
+import type { AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
+import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
+import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
+import { formatScore } from '~/modules/qa/rankings/helpers';
 import styles from './AchievementsTab.module.css';
 
-const dateFormatter = new Intl.DateTimeFormat('en-US', {
-	day: 'numeric',
-	month: 'short',
-	year: 'numeric',
-});
-
-const formatEarnedAt = (isoDate: string): string =>
-	dateFormatter.format(new Date(isoDate));
-
-interface AchievementRowProps {
-	achievement: RankingAchievement;
+interface ResolvedBadge {
+	id: string;
+	name: string;
+	description: string;
+	icon: string;
+	color: string;
+	tier: string | null;
+	earnedAt: string | null;
 }
-
-const AchievementRow: React.FC<AchievementRowProps> = ({ achievement }) => {
-	const [expanded, setExpanded] = useState(false);
-
-	return (
-		<Paper withBorder radius='md' p='sm' className={styles.card}>
-			<UnstyledButton
-				className={styles.trigger}
-				onClick={() => setExpanded((value) => !value)}
-				aria-expanded={expanded}
-			>
-				<Group gap='sm' wrap='nowrap' className={styles.triggerInner}>
-					<span className={styles.icon} aria-hidden>
-						{achievement.icon}
-					</span>
-
-					<div className={styles.titleBlock}>
-						<Text size='sm' fw={600} lineClamp={1}>
-							{achievement.name}
-						</Text>
-						<Text size='xs' c='dimmed' lineClamp={1}>
-							{achievement.description}
-						</Text>
-					</div>
-
-					<Group gap='xs' wrap='nowrap'>
-						<Badge variant='light' color='gray' radius='sm' size='sm'>
-							{formatEarnedAt(achievement.earnedAt)}
-						</Badge>
-						<span className={styles.chevron} aria-hidden>
-							{expanded ? (
-								<IconChevronDown size={16} />
-							) : (
-								<IconChevronRight size={16} />
-							)}
-						</span>
-					</Group>
-				</Group>
-			</UnstyledButton>
-
-			<Collapse expanded={expanded}>
-				<Stack gap='xs' pt='sm'>
-					<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
-						Criteria met
-					</Text>
-					<List
-						spacing={4}
-						size='sm'
-						icon={<IconCircleCheck size={16} className={styles.criteriaIcon} />}
-					>
-						{achievement.criteria.map((criterion) => (
-							<List.Item key={criterion}>{criterion}</List.Item>
-						))}
-					</List>
-				</Stack>
-			</Collapse>
-		</Paper>
-	);
-};
 
 export interface AchievementsTabProps {
 	entry: AgentRankingEntry;
+	/** Ranking the row belongs to — its milestones define the badges on offer. */
+	program: RankingProgram;
 }
 
-/** Badge history for one agent plus progress towards the next badge. */
-export const AchievementsTab: React.FC<AchievementsTabProps> = ({ entry }) => {
-	const { earned, nextMilestone } = useMemo(
-		() => getRankingAchievements(entry),
-		[entry]
+/**
+ * Badges this agent earned in the current ranking, resolved against the
+ * Triggers badge catalogue the managers author, plus the next milestone.
+ */
+export const AchievementsTab: React.FC<AchievementsTabProps> = ({
+	entry,
+	program,
+}) => {
+	const { t } = useTranslation('qa.rankings');
+	const badges = useTriggerRulesStore((state) => state.badges);
+
+	const earned = useMemo<ResolvedBadge[]>(
+		() =>
+			(entry.achievements ?? []).map((badgeId) => {
+				const badge = badges.find((candidate) => candidate.id === badgeId);
+				const legacy = PREDEFINED_BADGE_CATALOGS[badgeId];
+
+				return {
+					id: badgeId,
+					name: badge?.name ?? legacy?.name ?? badgeId,
+					description: badge?.description ?? legacy?.description ?? '',
+					icon: badge?.icon ?? legacy?.icon ?? '🏅',
+					color: badge?.color ?? 'gray',
+					tier: badge?.tier ?? null,
+					earnedAt:
+						badge?.holders.find((holder) => holder.agentId === entry.agentId)
+							?.earnedAt ?? null,
+				};
+			}),
+		[entry.achievements, entry.agentId, badges]
 	);
+
+	const higherIsBetter = METRIC_BY_ID[program.metricId]?.higherIsBetter ?? true;
+
+	/** Closest milestone whose badge the agent has not earned yet. */
+	const next = useMemo(() => {
+		const earnedBadgeIds = new Set(entry.achievements ?? []);
+		const milestone = program.milestones
+			.filter((candidate) => !earnedBadgeIds.has(candidate.badgeId))
+			.sort((a, b) =>
+				higherIsBetter ? a.threshold - b.threshold : b.threshold - a.threshold
+			)[0];
+		if (!milestone) return null;
+
+		const badge = badges.find(
+			(candidate) => candidate.id === milestone.badgeId
+		);
+		const progress = higherIsBetter
+			? Math.min(100, Math.round((entry.score / milestone.threshold) * 100))
+			: Math.min(
+					100,
+					Math.round((milestone.threshold / Math.max(entry.score, 1)) * 100)
+				);
+
+		return { milestone, badge, progress: Math.max(0, progress) };
+	}, [program, entry.achievements, entry.score, badges, higherIsBetter]);
 
 	return (
 		<Stack gap='md'>
@@ -115,70 +92,93 @@ export const AchievementsTab: React.FC<AchievementsTabProps> = ({ entry }) => {
 							🏅
 						</span>
 						<Text size='sm' fw={600}>
-							No badges earned yet
+							{t('achievements.empty')}
 						</Text>
 						<Text size='xs' c='dimmed' ta='center'>
-							Keep performing — the first badge is within reach.
+							{t('achievements.emptyHint')}
 						</Text>
 					</Stack>
 				</Paper>
 			) : (
 				<Stack gap='xs'>
 					<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
-						Earned this period ({earned.length})
+						{t('achievements.earned', { count: earned.length })}
 					</Text>
-					{earned.map((achievement) => (
-						<AchievementRow
-							key={achievement.badgeType}
-							achievement={achievement}
-						/>
+					{earned.map((badge) => (
+						<Paper
+							key={badge.id}
+							withBorder
+							radius='md'
+							p='sm'
+							className={styles.card}
+						>
+							<Group gap='sm' wrap='nowrap'>
+								<span className={styles.icon} aria-hidden>
+									{badge.icon}
+								</span>
+								<div className={styles.titleBlock}>
+									<Text size='sm' fw={600} lineClamp={1}>
+										{badge.name}
+									</Text>
+									<Text size='xs' c='dimmed' lineClamp={2}>
+										{badge.description}
+									</Text>
+								</div>
+								{badge.tier && (
+									<Badge
+										variant='light'
+										color={badge.color}
+										radius='sm'
+										size='sm'
+										tt='none'
+									>
+										{t(`achievements.tier.${badge.tier}`)}
+									</Badge>
+								)}
+							</Group>
+						</Paper>
 					))}
 				</Stack>
 			)}
 
-			{nextMilestone ? (
+			{next && (
 				<Paper withBorder radius='md' p='md' className={styles.nextCard}>
 					<Stack gap='sm'>
 						<Group gap='xs' wrap='nowrap'>
 							<IconTargetArrow size={18} className={styles.nextIcon} />
 							<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
-								Next badge
+								{t('achievements.next')}
 							</Text>
 						</Group>
 
 						<Group gap='sm' wrap='nowrap'>
 							<span className={styles.icon} aria-hidden>
-								{nextMilestone.icon}
+								{next.badge?.icon ?? '🏅'}
 							</span>
 							<Text size='sm' fw={600}>
-								{nextMilestone.name}
+								{next.badge?.name ?? next.milestone.label}
 							</Text>
 							<Text size='sm' fw={700} ml='auto'>
-								{nextMilestone.progress}%
+								{next.progress}%
 							</Text>
 						</Group>
 
 						<Progress
-							value={nextMilestone.progress}
+							value={next.progress}
 							color='blue'
 							radius='xl'
 							size='md'
-							aria-label={`Progress towards ${nextMilestone.name}`}
 						/>
 
-						<Stack gap={4}>
-							<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
-								Still missing
-							</Text>
-							<List spacing={4} size='sm' withPadding>
-								{nextMilestone.criteriaRemaining.map((criterion) => (
-									<List.Item key={criterion}>{criterion}</List.Item>
-								))}
-							</List>
-						</Stack>
+						<Text size='xs' c='dimmed'>
+							{t('achievements.nextHint', {
+								label: next.milestone.label,
+								value: formatScore(program, next.milestone.threshold),
+							})}
+						</Text>
 					</Stack>
 				</Paper>
-			) : null}
+			)}
 		</Stack>
 	);
 };

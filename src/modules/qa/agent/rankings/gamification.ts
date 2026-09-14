@@ -12,10 +12,7 @@ import {
 	REACTION_TYPES,
 	type PeerRecognitionType,
 } from '~/models/qa/reactions';
-import {
-	AGENT_RANKINGS,
-	type AgentRankingEntry,
-} from '~/modules/qa/dashboard/mockData';
+import { type AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
 
 export const REACTION_ORDER = Object.keys(
 	REACTION_TYPES
@@ -58,14 +55,16 @@ export const getPointLead = (
 	if (!next) return EMPTY_LEAD;
 
 	return {
-		points: Math.max(0, entry.score - next.score),
+		points: Math.round(Math.max(0, entry.score - next.score) * 10) / 10,
 		nextAgentName: next.agentName,
 	};
 };
 
-/** Point lead resolved against the full mock roster (drawer convenience). */
-export const getPointLeadFromRoster = (entry: AgentRankingEntry): PointLead =>
-	getPointLead(entry, buildRankIndex(AGENT_RANKINGS));
+/** Point lead resolved against a leaderboard (drawer convenience). */
+export const getPointLeadFromRoster = (
+	entry: AgentRankingEntry,
+	data: AgentRankingEntry[]
+): PointLead => getPointLead(entry, buildRankIndex(data));
 
 /** Green for a comfortable lead, gray for a tight one. */
 export const getPointLeadColor = (points: number | null): 'green' | 'gray' =>
@@ -95,5 +94,7 @@ export const getRankMovementTooltip = (entry: AgentRankingEntry): string => {
 };
 
 /** Green when climbing, red when dropping, gray when flat. */
-export const getRankMovementColor = (trend: number): 'green' | 'red' | 'gray' =>
+export const getRankMovementColor = (
+	trend: number
+): 'green' | 'red' | 'gray' =>
 	trend > 0 ? 'green' : trend < 0 ? 'red' : 'gray';

@@ -1,65 +1,108 @@
 import React from 'react';
-import { Group, Stack, Text, Title, Progress, Badge } from '@mantine/core';
-import { IconCalendar, IconClock } from '@tabler/icons-react';
-import type { LeaderboardMetadata } from '../types/leaderboard';
+import { useTranslation } from 'react-i18next';
+import { Badge, Group, Progress, Stack, Text, Title } from '@mantine/core';
+import { IconCalendar, IconClock, IconTarget } from '@tabler/icons-react';
+import dayjs from 'dayjs';
+import type { RankingProgram } from '~/models/qa/rankingPrograms';
+import { CALL_EVALUATION_TABS } from '~/views/Campaigns/constants';
+import {
+	daysLeft,
+	elapsedPct,
+	formatTarget,
+} from '~/modules/qa/rankings/helpers';
+import styles from '~/modules/qa/rankings/Rankings.module.css';
 
 interface LeaderboardHeaderProps {
-  metadata: LeaderboardMetadata;
-  daysRemaining: number;
+	program: RankingProgram;
 }
 
+/** Name, period, target and prize of the ranking the agent is competing in. */
 export const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({
-  metadata,
-  daysRemaining,
+	program,
 }) => {
-  const startDate = new Date(metadata.startDate);
-  const endDate = new Date(metadata.endDate);
-  const totalDays = Math.ceil(
-    (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  const daysElapsed = totalDays - daysRemaining;
-  const percentComplete = totalDays > 0 ? (daysElapsed / totalDays) * 100 : 0;
+	const { t } = useTranslation('qa.rankings');
+	const typeMeta = CALL_EVALUATION_TABS.find(
+		(tab) => tab.key === program.evaluationType
+	);
+	const remaining = daysLeft(program);
+	const completed = program.status === 'completed';
 
-  return (
-    <Stack gap='md'>
-      <div>
-        <Group justify='space-between' align='flex-start'>
-          <div>
-            <Title order={2}>{metadata.name}</Title>
-            {metadata.description && (
-              <Text c='dimmed' mt='xs'>{metadata.description}</Text>
-            )}
-          </div>
-          <Badge size='lg' variant='light'>
-            {metadata.scoreType}
-          </Badge>
-        </Group>
-      </div>
+	return (
+		<Stack gap='md'>
+			<Group justify='space-between' align='flex-start' wrap='wrap'>
+				<div>
+					<Title order={2}>{program.name}</Title>
+					{program.description && (
+						<Text c='dimmed' mt='xs'>
+							{program.description}
+						</Text>
+					)}
+					<Text size='xs' c='dimmed' mt={4}>
+						{t('agent.header.setBy', { name: program.createdBy })}
+					</Text>
+				</div>
+				<Group gap='xs' align='flex-start'>
+					<Badge size='lg' variant='light' color={typeMeta?.color ?? 'gray'}>
+						{t(`types.${program.evaluationType}`)}
+					</Badge>
+					<Badge
+						size='lg'
+						variant='light'
+						color='yellow'
+						className={styles.prizeChip}
+						leftSection={program.prize.icon}
+					>
+						{program.prize.title}
+					</Badge>
+				</Group>
+			</Group>
 
-      <Group gap='xl'>
-        <div>
-          <Text size='xs' c='dimmed' tt='uppercase' fw={600}>Start Date</Text>
-          <Group gap={4} mt={4}>
-            <IconCalendar size={16} />
-            <Text size='sm'>{startDate.toLocaleDateString()}</Text>
-          </Group>
-        </div>
-        <div>
-          <Text size='xs' c='dimmed' tt='uppercase' fw={600}>End Date</Text>
-          <Group gap={4} mt={4}>
-            <IconClock size={16} />
-            <Text size='sm'>{endDate.toLocaleDateString()}</Text>
-          </Group>
-        </div>
-        <div>
-          <Text size='xs' c='dimmed' tt='uppercase' fw={600}>Days Remaining</Text>
-          <Text size='sm' fw={600}>{Math.max(0, daysRemaining)}</Text>
-        </div>
-      </Group>
+			<Group gap='xl' wrap='wrap'>
+				<div>
+					<Text size='xs' c='dimmed' tt='uppercase' fw={600}>
+						{t('editor.start')}
+					</Text>
+					<Group gap={4} mt={4}>
+						<IconCalendar size={16} />
+						<Text size='sm'>
+							{dayjs(program.startDate).format('DD MMM YYYY')}
+						</Text>
+					</Group>
+				</div>
+				<div>
+					<Text size='xs' c='dimmed' tt='uppercase' fw={600}>
+						{t('editor.end')}
+					</Text>
+					<Group gap={4} mt={4}>
+						<IconClock size={16} />
+						<Text size='sm'>
+							{dayjs(program.endDate).format('DD MMM YYYY')}
+						</Text>
+					</Group>
+				</div>
+				<div>
+					<Text size='xs' c='dimmed' tt='uppercase' fw={600}>
+						{t('editor.target')}
+					</Text>
+					<Group gap={4} mt={4}>
+						<IconTarget size={16} />
+						<Text size='sm' fw={600}>
+							{formatTarget(program)}
+						</Text>
+					</Group>
+				</div>
+				<div>
+					<Text size='xs' c='dimmed' tt='uppercase' fw={600}>
+						{completed
+							? t('agent.header.completed')
+							: t('agent.header.daysLeft', { count: remaining })}
+					</Text>
+				</div>
+			</Group>
 
-      <Progress value={percentComplete} radius='md' size='sm' />
-    </Stack>
-  );
+			<Progress value={elapsedPct(program)} radius='md' size='sm' />
+		</Stack>
+	);
 };
 
 export default LeaderboardHeader;

@@ -207,6 +207,11 @@ const SupervisorRankingsConfigPanel = React.lazy(() =>
 		(m) => ({ default: m.SupervisorRankingsConfigPanel })
 	)
 );
+const ManagerRankingsPage = React.lazy(() =>
+	import('./modules/qa/rankings/ManagerRankingsPage').then((m) => ({
+		default: m.default,
+	}))
+);
 const DisputeCaseDetailPage = React.lazy(() =>
 	import('./modules/qa/disputes/cases/DisputeCaseDetailPage').then((m) => ({
 		default: m.default,
@@ -996,6 +1001,28 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<TeamRankingsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/rankings',
+										id: 'qa.supervisor.rankings',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<ManagerRankingsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/rankings',
+										id: 'qa.qa-manager.rankings',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<ManagerRankingsPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

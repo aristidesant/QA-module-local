@@ -1,0 +1,220 @@
+{
+	"page": {
+		"eyebrow": {
+			"supervisor": "Supervisor · Equipo 1",
+			"qa-manager": "QA Manager · Todos los equipos"
+		},
+		"title": "Rankings de equipo",
+		"description": "Crea rankings sobre cualquier aspecto de evaluación con periodo, objetivo, premio e insignias por hito",
+		"new": "Nuevo ranking"
+	},
+	"kpis": {
+		"active": "Activos",
+		"scheduled": "Programados",
+		"completed": "Finalizados",
+		"agents": "Agentes participando"
+	},
+	"tabs": {
+		"active": "Activos",
+		"scheduled": "Programados",
+		"completed": "Finalizados",
+		"drafts": "Borradores"
+	},
+	"empty": {
+		"active": "No hay ningún ranking activo — lanza uno para motivar al equipo",
+		"scheduled": "Nada programado",
+		"completed": "Todavía no hay rankings finalizados",
+		"drafts": "No hay borradores"
+	},
+	"status": {
+		"draft": "Borrador",
+		"scheduled": "Programado",
+		"active": "Activo",
+		"completed": "Finalizado",
+		"cancelled": "Cancelado"
+	},
+	"types": {
+		"qa": "QA",
+		"sentiment-emotion": "Sentimiento y emoción",
+		"compliance": "Compliance",
+		"business-insights": "Business Insights"
+	},
+	"prizeKinds": {
+		"BONUS": "Bono",
+		"TIME_OFF": "Día libre",
+		"GIFT_CARD": "Tarjeta regalo",
+		"RECOGNITION": "Reconocimiento",
+		"OTHER": "Otro"
+	},
+	"card": {
+		"target": "Objetivo {{value}} · mín. {{calls}} llamadas",
+		"period": "{{from}} → {{to}}",
+		"daysLeft_one": "Queda {{count}} día",
+		"daysLeft_other": "Quedan {{count}} días",
+		"ended": "Finalizado",
+		"notStarted": "Empieza el {{date}}",
+		"leader": "Líder",
+		"winner": "Ganador",
+		"prize": "Premio",
+		"view": "Ver clasificación",
+		"edit": "Editar",
+		"duplicate": "Duplicar",
+		"end": "Finalizar ahora",
+		"cancel": "Cancelar",
+		"delete": "Eliminar borrador",
+		"teams": "Equipos"
+	},
+	"drawer": {
+		"participants": "Participantes",
+		"qualified": "Clasificados",
+		"reachedTarget": "Alcanzaron el objetivo",
+		"leader": "Líder",
+		"standings": "Clasificación",
+		"milestones": "Hitos",
+		"prize": "Premio",
+		"winner": "Ganador",
+		"pending": "La clasificación aparece cuando el ranking empieza",
+		"columns": {
+			"rank": "#",
+			"agent": "Agente",
+			"team": "Equipo",
+			"score": "Puntuación",
+			"calls": "Llamadas",
+			"delta": "7 días",
+			"milestones": "Insignias"
+		},
+		"unranked": "Por debajo del mínimo de llamadas",
+		"targetIs": "Objetivo {{value}}"
+	},
+	"editor": {
+		"titleNew": "Nuevo ranking",
+		"titleEdit": "Editar ranking",
+		"basics": "Datos básicos",
+		"name": "Nombre",
+		"description": "Descripción",
+		"scope": "Alcance",
+		"teams": "Equipos",
+		"teamsLocked": "Los supervisores rankean a su propio equipo",
+		"evaluation": "Qué se rankea",
+		"type": "Tipo de evaluación",
+		"metric": "Métrica",
+		"target": "Puntuación objetivo",
+		"minCalls": "Mínimo de llamadas para clasificar",
+		"period": "Periodo",
+		"start": "Inicio",
+		"end": "Fin",
+		"presets": {
+			"thisMonth": "Este mes",
+			"nextMonth": "Mes que viene",
+			"quarter": "Este trimestre"
+		},
+		"prize": "Premio",
+		"prizeKind": "Tipo",
+		"prizeTitle": "Título",
+		"prizeDescription": "Descripción",
+		"prizeIcon": "Icono",
+		"milestones": "Insignias por hito",
+		"milestoneLabel": "Etiqueta",
+		"milestoneThreshold": "Al llegar a",
+		"milestoneBadge": "Insignia",
+		"addMilestone": "Añadir hito",
+		"winnerBadge": "Insignia del ganador",
+		"noBadge": "Sin insignia",
+		"preview": "Vista previa",
+		"previewHint": "Clasificación de hoy con la configuración actual",
+		"previewEmpty": "Todavía no hay llamadas en este periodo",
+		"conflict": "{{name}} ya está en marcha para {{teams}} ({{from}} → {{to}}). Solo puede haber un ranking por equipo a la vez.",
+		"endConflict": "Finalizarlo ahora",
+		"saveDraft": "Guardar borrador",
+		"launch": "Iniciar ranking",
+		"schedule": "Programar",
+		"cancel": "Cancelar",
+		"validation": {
+			"name": "El nombre es obligatorio",
+			"teams": "Elige al menos un equipo",
+			"dates": "El fin debe ser posterior al inicio",
+			"target": "El objetivo debe ser mayor que 0"
+		},
+		"saved": "Ranking guardado",
+		"launched": "Ranking iniciado — se ha notificado a los agentes",
+		"scheduled": "Ranking programado",
+		"ended": "Ranking finalizado — gana {{winner}}",
+		"cancelled": "Ranking cancelado",
+		"duplicated": "Copia guardada como borrador"
+	},
+	"agent": {
+		"leaderboard": "Clasificación",
+		"leaderboardDescription": "Todo el equipo ordenado por puntuación — selecciona una fila para ver el detalle",
+		"header": {
+			"target": "Objetivo {{value}}",
+			"prize": "Premio",
+			"daysLeft_one": "Queda {{count}} día",
+			"daysLeft_other": "Quedan {{count}} días",
+			"completed": "Finalizado",
+			"setBy": "Definido por {{name}}"
+		},
+		"mine": {
+			"title": "Mi posición",
+			"rank": "#{{rank}} de {{total}}",
+			"unranked": "Te faltan {{count}} llamadas para clasificar",
+			"score": "Puntuación",
+			"target": "Objetivo",
+			"delta": "vs hace 7 días",
+			"noDelta": "Todavía no hay comparación",
+			"milestones": "Hitos conseguidos",
+			"nextMilestone": "Siguiente: {{label}} al llegar a {{value}}",
+			"reachedTarget": "Objetivo alcanzado"
+		},
+		"podium": {
+			"title": "Podio",
+			"first": "1.º",
+			"second": "2.º",
+			"third": "3.º"
+		},
+		"past": {
+			"title": "Rankings anteriores",
+			"columns": {
+				"name": "Ranking",
+				"period": "Periodo",
+				"type": "Tipo",
+				"winner": "Ganador",
+				"prize": "Premio"
+			},
+			"empty": "Todavía no hay rankings anteriores"
+		},
+		"empty": {
+			"noActive": "Tu equipo no tiene ningún ranking activo ahora mismo"
+		}
+	},
+	"table": {
+		"rank": "Posición",
+		"name": "Nombre",
+		"score": "Puntuación",
+		"achievements": "Insignias",
+		"reactions": "Reacciones"
+	},
+	"achievements": {
+		"empty": "Todavía no hay insignias",
+		"emptyHint": "Sigue así — la primera insignia está al alcance.",
+		"earned_one": "Conseguidas en este ranking ({{count}})",
+		"earned_other": "Conseguidas en este ranking ({{count}})",
+		"next": "Siguiente insignia",
+		"nextHint": "{{label}} se desbloquea en {{value}}",
+		"tier": {
+			"BRONZE": "Bronce",
+			"SILVER": "Plata",
+			"GOLD": "Oro"
+		}
+	},
+	"reactions": {
+		"you": "Tu posición",
+		"give": "Reaccionar {{reaction}} a {{name}}",
+		"remove": "Quitar tu {{reaction}}",
+		"labels": {
+			"thumbsUp": "👍",
+			"clap": "👏",
+			"heart": "❤️",
+			"fire": "🔥"
+		}
+	}
+}

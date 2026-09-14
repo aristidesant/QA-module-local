@@ -1,0 +1,220 @@
+{
+	"page": {
+		"eyebrow": {
+			"supervisor": "Supervisor · Team 1",
+			"qa-manager": "QA Manager · All teams"
+		},
+		"title": "Team Rankings",
+		"description": "Run rankings on any evaluation aspect with a period, a target, a prize and milestone badges",
+		"new": "New ranking"
+	},
+	"kpis": {
+		"active": "Active",
+		"scheduled": "Scheduled",
+		"completed": "Completed",
+		"agents": "Agents participating"
+	},
+	"tabs": {
+		"active": "Active",
+		"scheduled": "Scheduled",
+		"completed": "Completed",
+		"drafts": "Drafts"
+	},
+	"empty": {
+		"active": "No active ranking — launch one to motivate the team",
+		"scheduled": "Nothing scheduled",
+		"completed": "No completed rankings yet",
+		"drafts": "No drafts"
+	},
+	"status": {
+		"draft": "Draft",
+		"scheduled": "Scheduled",
+		"active": "Active",
+		"completed": "Completed",
+		"cancelled": "Cancelled"
+	},
+	"types": {
+		"qa": "QA",
+		"sentiment-emotion": "Sentiment & Emotion",
+		"compliance": "Compliance",
+		"business-insights": "Business Insights"
+	},
+	"prizeKinds": {
+		"BONUS": "Bonus",
+		"TIME_OFF": "Time off",
+		"GIFT_CARD": "Gift card",
+		"RECOGNITION": "Recognition",
+		"OTHER": "Other"
+	},
+	"card": {
+		"target": "Target {{value}} · min. {{calls}} calls",
+		"period": "{{from}} → {{to}}",
+		"daysLeft_one": "{{count}} day left",
+		"daysLeft_other": "{{count}} days left",
+		"ended": "Ended",
+		"notStarted": "Starts {{date}}",
+		"leader": "Leader",
+		"winner": "Winner",
+		"prize": "Prize",
+		"view": "View standings",
+		"edit": "Edit",
+		"duplicate": "Duplicate",
+		"end": "End now",
+		"cancel": "Cancel",
+		"delete": "Delete draft",
+		"teams": "Teams"
+	},
+	"drawer": {
+		"participants": "Participants",
+		"qualified": "Qualified",
+		"reachedTarget": "Reached target",
+		"leader": "Leader",
+		"standings": "Standings",
+		"milestones": "Milestones",
+		"prize": "Prize",
+		"winner": "Winner",
+		"pending": "Standings appear once the ranking starts",
+		"columns": {
+			"rank": "#",
+			"agent": "Agent",
+			"team": "Team",
+			"score": "Score",
+			"calls": "Calls",
+			"delta": "7-day",
+			"milestones": "Badges"
+		},
+		"unranked": "Below minimum calls",
+		"targetIs": "Target {{value}}"
+	},
+	"editor": {
+		"titleNew": "New ranking",
+		"titleEdit": "Edit ranking",
+		"basics": "Basics",
+		"name": "Name",
+		"description": "Description",
+		"scope": "Scope",
+		"teams": "Teams",
+		"teamsLocked": "Supervisors rank their own team",
+		"evaluation": "What is ranked",
+		"type": "Evaluation type",
+		"metric": "Metric",
+		"target": "Target score",
+		"minCalls": "Minimum calls to qualify",
+		"period": "Period",
+		"start": "Start",
+		"end": "End",
+		"presets": {
+			"thisMonth": "This month",
+			"nextMonth": "Next month",
+			"quarter": "This quarter"
+		},
+		"prize": "Prize",
+		"prizeKind": "Type",
+		"prizeTitle": "Title",
+		"prizeDescription": "Description",
+		"prizeIcon": "Icon",
+		"milestones": "Milestone badges",
+		"milestoneLabel": "Label",
+		"milestoneThreshold": "At score",
+		"milestoneBadge": "Badge",
+		"addMilestone": "Add milestone",
+		"winnerBadge": "Winner badge",
+		"noBadge": "No badge",
+		"preview": "Preview",
+		"previewHint": "Standings as of today with the current settings",
+		"previewEmpty": "No calls in this period yet",
+		"conflict": "{{name}} is already running for {{teams}} ({{from}} → {{to}}). Only one ranking per team at a time.",
+		"endConflict": "End it now",
+		"saveDraft": "Save draft",
+		"launch": "Start ranking",
+		"schedule": "Schedule",
+		"cancel": "Cancel",
+		"validation": {
+			"name": "Name is required",
+			"teams": "Pick at least one team",
+			"dates": "End must be after start",
+			"target": "Target must be greater than 0"
+		},
+		"saved": "Ranking saved",
+		"launched": "Ranking started — agents have been notified",
+		"scheduled": "Ranking scheduled",
+		"ended": "Ranking ended — {{winner}} wins",
+		"cancelled": "Ranking cancelled",
+		"duplicated": "Copy saved as a draft"
+	},
+	"agent": {
+		"leaderboard": "Leaderboard",
+		"leaderboardDescription": "Everyone on the team ranked by score — select a row for details",
+		"header": {
+			"target": "Target {{value}}",
+			"prize": "Prize",
+			"daysLeft_one": "{{count}} day left",
+			"daysLeft_other": "{{count}} days left",
+			"completed": "Completed",
+			"setBy": "Set by {{name}}"
+		},
+		"mine": {
+			"title": "My position",
+			"rank": "#{{rank}} of {{total}}",
+			"unranked": "{{count}} more calls to qualify",
+			"score": "Score",
+			"target": "Target",
+			"delta": "vs 7 days ago",
+			"noDelta": "No comparison yet",
+			"milestones": "Milestones earned",
+			"nextMilestone": "Next: {{label}} at {{value}}",
+			"reachedTarget": "Target reached"
+		},
+		"podium": {
+			"title": "Podium",
+			"first": "1st",
+			"second": "2nd",
+			"third": "3rd"
+		},
+		"past": {
+			"title": "Past rankings",
+			"columns": {
+				"name": "Ranking",
+				"period": "Period",
+				"type": "Type",
+				"winner": "Winner",
+				"prize": "Prize"
+			},
+			"empty": "No past rankings yet"
+		},
+		"empty": {
+			"noActive": "No active ranking for your team right now"
+		}
+	},
+	"table": {
+		"rank": "Rank",
+		"name": "Name",
+		"score": "Score",
+		"achievements": "Badges",
+		"reactions": "Reactions"
+	},
+	"achievements": {
+		"empty": "No badges earned yet",
+		"emptyHint": "Keep performing — the first badge is within reach.",
+		"earned_one": "Earned in this ranking ({{count}})",
+		"earned_other": "Earned in this ranking ({{count}})",
+		"next": "Next badge",
+		"nextHint": "{{label}} unlocks at {{value}}",
+		"tier": {
+			"BRONZE": "Bronze",
+			"SILVER": "Silver",
+			"GOLD": "Gold"
+		}
+	},
+	"reactions": {
+		"you": "Your standing",
+		"give": "React {{reaction}} to {{name}}",
+		"remove": "Remove your {{reaction}}",
+		"labels": {
+			"thumbsUp": "👍",
+			"clap": "👏",
+			"heart": "❤️",
+			"fire": "🔥"
+		}
+	}
+}

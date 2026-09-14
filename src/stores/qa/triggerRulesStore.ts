@@ -1,15 +1,25 @@
 import { create } from 'zustand';
 import type {
-	BadgeDefinition, MessageTemplate, TriggerActivityEntry, TriggerRule, RuleStatus,
+	BadgeDefinition,
+	BadgeHolder,
+	MessageTemplate,
+	TriggerActivityEntry,
+	TriggerRule,
+	RuleStatus,
 } from '~/models/qa';
 import type { AgentNotification } from '~/models/qa/notifications';
 import { useNotificationStore } from '~/stores/qa/notificationStore';
 import {
-	MOCK_ACTIVITY, MOCK_BADGES, MOCK_RULES, MOCK_TEMPLATES, NOW_ISO,
+	MOCK_ACTIVITY,
+	MOCK_BADGES,
+	MOCK_RULES,
+	MOCK_TEMPLATES,
+	NOW_ISO,
 } from '~/modules/qa/triggers/mockData';
 
 let idCounter = 100;
-export const nextId = (prefix: string) => `${prefix}-${String(++idCounter).padStart(3, '0')}`;
+export const nextId = (prefix: string) =>
+	`${prefix}-${String(++idCounter).padStart(3, '0')}`;
 
 interface TriggerRulesState {
 	rules: TriggerRule[];
@@ -26,6 +36,8 @@ interface TriggerRulesState {
 	addBadge: (badge: BadgeDefinition) => void;
 	updateBadge: (badge: BadgeDefinition) => void;
 	setBadgeStatus: (badgeId: string, status: BadgeDefinition['status']) => void;
+	/** Adds a holder unless the agent already has the badge. */
+	awardBadge: (badgeId: string, holder: BadgeHolder) => void;
 
 	addTemplate: (template: MessageTemplate) => void;
 	updateTemplate: (template: MessageTemplate) => void;
@@ -34,7 +46,10 @@ interface TriggerRulesState {
 
 	acknowledgeActivity: (activityId: string) => void;
 	/** Appends an activity entry and pushes an inbox notification (demo of the end-to-end flow). */
-	sendTest: (entry: TriggerActivityEntry, notification: AgentNotification) => void;
+	sendTest: (
+		entry: TriggerActivityEntry,
+		notification: AgentNotification
+	) => void;
 }
 
 export const useTriggerRulesStore = create<TriggerRulesState>((set, get) => ({
@@ -44,8 +59,14 @@ export const useTriggerRulesStore = create<TriggerRulesState>((set, get) => ({
 	activity: MOCK_ACTIVITY,
 
 	addRule: (rule) => set((s) => ({ rules: [rule, ...s.rules] })),
-	updateRule: (rule) => set((s) => ({ rules: s.rules.map((r) => (r.id === rule.id ? { ...rule, updatedAt: NOW_ISO } : r)) })),
-	deleteRule: (ruleId) => set((s) => ({ rules: s.rules.filter((r) => r.id !== ruleId) })),
+	updateRule: (rule) =>
+		set((s) => ({
+			rules: s.rules.map((r) =>
+				r.id === rule.id ? { ...rule, updatedAt: NOW_ISO } : r
+			),
+		})),
+	deleteRule: (ruleId) =>
+		set((s) => ({ rules: s.rules.filter((r) => r.id !== ruleId) })),
 	duplicateRule: (ruleId) => {
 		const source = get().rules.find((r) => r.id === ruleId);
 		if (!source) return null;
@@ -61,32 +82,90 @@ export const useTriggerRulesStore = create<TriggerRulesState>((set, get) => ({
 		set((s) => ({ rules: [copy, ...s.rules] }));
 		return copy;
 	},
-	setRuleStatus: (ruleId, status) => set((s) => ({ rules: s.rules.map((r) => (r.id === ruleId ? { ...r, status, updatedAt: NOW_ISO } : r)) })),
+	setRuleStatus: (ruleId, status) =>
+		set((s) => ({
+			rules: s.rules.map((r) =>
+				r.id === ruleId ? { ...r, status, updatedAt: NOW_ISO } : r
+			),
+		})),
 
 	addBadge: (badge) => set((s) => ({ badges: [badge, ...s.badges] })),
-	updateBadge: (badge) => set((s) => ({ badges: s.badges.map((b) => (b.id === badge.id ? { ...badge, updatedAt: NOW_ISO } : b)) })),
-	setBadgeStatus: (badgeId, status) => set((s) => ({ badges: s.badges.map((b) => (b.id === badgeId ? { ...b, status } : b)) })),
+	updateBadge: (badge) =>
+		set((s) => ({
+			badges: s.badges.map((b) =>
+				b.id === badge.id ? { ...badge, updatedAt: NOW_ISO } : b
+			),
+		})),
+	setBadgeStatus: (badgeId, status) =>
+		set((s) => ({
+			badges: s.badges.map((b) => (b.id === badgeId ? { ...b, status } : b)),
+		})),
 
-	addTemplate: (template) => set((s) => ({ templates: [template, ...s.templates] })),
-	updateTemplate: (template) => set((s) => ({ templates: s.templates.map((t) => (t.id === template.id ? { ...template, updatedAt: NOW_ISO } : t)) })),
-	deleteTemplate: (templateId) => set((s) => ({ templates: s.templates.filter((t) => t.id !== templateId) })),
-	setDefaultTemplate: (templateId) => set((s) => {
-		const target = s.templates.find((t) => t.id === templateId);
-		if (!target) return {};
-		return { templates: s.templates.map((t) => (t.category === target.category ? { ...t, isDefault: t.id === templateId } : t)) };
-	}),
+	awardBadge: (badgeId, holder) =>
+		set((s) => ({
+			badges: s.badges.map((b) =>
+				b.id === badgeId && !b.holders.some((h) => h.agentId === holder.agentId)
+					? {
+							...b,
+							holders: [...b.holders, holder],
+							updatedAt: holder.earnedAt,
+						}
+					: b
+			),
+		})),
 
-	acknowledgeActivity: (activityId) => set((s) => ({
-		activity: s.activity.map((a) => (a.id === activityId ? { ...a, status: 'ACKNOWLEDGED', acknowledgedAt: NOW_ISO } : a)),
-	})),
+	addTemplate: (template) =>
+		set((s) => ({ templates: [template, ...s.templates] })),
+	updateTemplate: (template) =>
+		set((s) => ({
+			templates: s.templates.map((t) =>
+				t.id === template.id ? { ...template, updatedAt: NOW_ISO } : t
+			),
+		})),
+	deleteTemplate: (templateId) =>
+		set((s) => ({ templates: s.templates.filter((t) => t.id !== templateId) })),
+	setDefaultTemplate: (templateId) =>
+		set((s) => {
+			const target = s.templates.find((t) => t.id === templateId);
+			if (!target) return {};
+			return {
+				templates: s.templates.map((t) =>
+					t.category === target.category
+						? { ...t, isDefault: t.id === templateId }
+						: t
+				),
+			};
+		}),
+
+	acknowledgeActivity: (activityId) =>
+		set((s) => ({
+			activity: s.activity.map((a) =>
+				a.id === activityId
+					? { ...a, status: 'ACKNOWLEDGED', acknowledgedAt: NOW_ISO }
+					: a
+			),
+		})),
 	sendTest: (entry, notification) => {
 		const notificationStore = useNotificationStore.getState();
-		notificationStore.setNotifications([notification, ...notificationStore.notifications]);
+		notificationStore.setNotifications([
+			notification,
+			...notificationStore.notifications,
+		]);
 		set((s) => ({
 			activity: [entry, ...s.activity],
-			rules: s.rules.map((r) => (r.id === entry.ruleId
-				? { ...r, stats: { ...r.stats, firedLast7Days: r.stats.firedLast7Days + 1, firedLast30Days: r.stats.firedLast30Days + 1, lastFiredAt: entry.firedAt } }
-				: r)),
+			rules: s.rules.map((r) =>
+				r.id === entry.ruleId
+					? {
+							...r,
+							stats: {
+								...r.stats,
+								firedLast7Days: r.stats.firedLast7Days + 1,
+								firedLast30Days: r.stats.firedLast30Days + 1,
+								lastFiredAt: entry.firedAt,
+							},
+						}
+					: r
+			),
 		}));
 	},
 }));

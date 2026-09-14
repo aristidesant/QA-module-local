@@ -64,7 +64,7 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.agent.rankings',
 		icon: <IconTarget size={20} className={styles.menuIcon} />,
 		to: '/qa/agent/rankings',
-		i18nNamespace: 'qa.agent',
+		i18nNamespace: 'qa.rankings',
 	},
 	{
 		key: 'agent-lms',
@@ -214,8 +214,8 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		key: 'supervisor-rankings',
 		label: 'sidebar.supervisor.rankingsConfig',
 		icon: <IconTarget size={20} className={styles.menuIcon} />,
-		to: '/qa/agent/rankings',
-		i18nNamespace: 'qa.supervisor',
+		to: '/qa/supervisor/rankings',
+		i18nNamespace: 'qa.rankings',
 	},
 ];
 
@@ -363,8 +363,8 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		key: 'qamanager-rankings',
 		label: 'sidebar.qamanager.rankings',
 		icon: <IconTarget size={20} className={styles.menuIcon} />,
-		to: '/qa/agent/rankings',
-		i18nNamespace: 'qa.qamanager',
+		to: '/qa/qa-manager/rankings',
+		i18nNamespace: 'qa.rankings',
 	},
 	{
 		key: 'qamanager-campaigns',
@@ -556,7 +556,7 @@ export const getSuperAdminNavigation = (): SidebarNavItem[] => [
 		label: 'sidebar.superadmin.rankings',
 		icon: <IconTarget size={20} className={styles.menuIcon} />,
 		to: '/qa/agent/rankings',
-		i18nNamespace: 'qa.agent',
+		i18nNamespace: 'qa.rankings',
 	},
 ];
 

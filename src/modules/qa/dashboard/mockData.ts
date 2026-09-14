@@ -9,11 +9,7 @@ import type {
 } from '~/models/qa/notifications';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 import type { PeerRecognitionType } from '~/models/qa/reactions';
-import type {
-	LeaderboardMetadata,
-	UserReactionMap,
-} from '~/modules/qa/agent/rankings/types/leaderboard';
-import { UserReactionType } from '~/modules/qa/agent/rankings/types/leaderboard';
+import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 import { BurnoutRiskLevel, BurnoutRiskData } from './types/burnoutRisk';
 
 // ============================================================================
@@ -154,30 +150,6 @@ export interface AggregatedMetrics {
 	totalErrorsECUF: number;
 	predominantEmotion: string;
 }
-
-// ============================================================================
-// Leaderboard Mock Data
-// ============================================================================
-
-export const currentLeaderboard: LeaderboardMetadata = {
-	id: 'lboard-2026-09-01',
-	name: 'September Agent Performance',
-	description: 'Agent performance ranking for September 2026',
-	startDate: '2026-09-01T00:00:00Z',
-	endDate: '2026-09-30T23:59:59Z',
-	scoreType: 'Sentiment & Emotion',
-	winnerId: null,
-	createdBy: 'supervisor-001',
-	status: 'active',
-};
-
-export const userReactions: UserReactionMap = {
-	'agent-001': UserReactionType.THUMBS_UP,
-	'agent-002': null,
-	'agent-003': UserReactionType.FIRE,
-	'agent-004': null,
-	'agent-005': UserReactionType.CLAPPING_HANDS,
-};
 
 // ============================================================================
 // Agent Mock Data (Personal Metrics)
@@ -2796,56 +2768,6 @@ export interface AgentRankingEntry {
 	achievements?: string[];
 }
 
-const RANKING_FIRST_NAMES = [
-	'Mike',
-	'Sarah',
-	'Jessica',
-	'John',
-	'Emma',
-	'Carlos',
-	'Priya',
-	'Daniel',
-	'Olivia',
-	'Ahmed',
-	'Sofia',
-	'Lucas',
-	'Nina',
-	'Marcus',
-	'Elena',
-	'Tomas',
-	'Grace',
-	'Hiroshi',
-	'Laura',
-	'Victor',
-	'Amara',
-	'Diego',
-	'Chloe',
-	'Ravi',
-];
-
-const RANKING_LAST_NAMES = [
-	'Chen',
-	'Johnson',
-	'Martinez',
-	'Smith',
-	'Davis',
-	'Rivera',
-	'Patel',
-	'Brown',
-	'Nguyen',
-	'Hassan',
-	'Rossi',
-	'Silva',
-	'Kowalski',
-	'Thompson',
-	'Petrova',
-	'Novak',
-	'Okafor',
-	'Tanaka',
-	'Fernandez',
-	'Lindqvist',
-];
-
 /**
  * Deterministic pseudo-random generator so the mock leaderboard is stable
  * between renders and reloads (Lehmer / Park-Miller).
@@ -2861,98 +2783,6 @@ const createSeededRandom = (seed: number): (() => number) => {
 };
 
 const BADGE_TYPES = Object.keys(PREDEFINED_BADGE_CATALOGS);
-
-/**
- * Builds a full team leaderboard (all agents, not just the top 5) so the
- * expanded rankings table can be exercised with a realistic row count.
- */
-const buildAgentRankings = (count: number): AgentRankingEntry[] => {
-	const random = createSeededRandom(20260909);
-
-	const seeded = Array.from({ length: count }, (_, index) => {
-		const firstName = RANKING_FIRST_NAMES[index % RANKING_FIRST_NAMES.length];
-		const lastName =
-			RANKING_LAST_NAMES[(index * 7 + 3) % RANKING_LAST_NAMES.length];
-		const score = Math.max(48, Math.round(99 - index * 0.38 - random() * 4));
-
-		return {
-			agentId: `agent-${index + 1}`,
-			agentName: `${firstName} ${lastName}`,
-			score,
-			noise: random(),
-			trendNoise: random(),
-			badgeNoise: random(),
-		};
-	});
-
-	seeded.sort(
-		(a, b) => b.score - a.score || a.agentName.localeCompare(b.agentName)
-	);
-
-	return seeded.map((entry, index) => {
-		const rank = index + 1;
-		const intensity = entry.score / 100;
-		const volume = Math.round(60 * intensity * (0.5 + entry.noise));
-
-		const reactionsTotals: AgentRankingReactionTotals = {
-			LIKE: Math.max(0, Math.round(volume)),
-			HELPFUL: Math.max(0, Math.round(volume * 0.72)),
-			INSPIRING: Math.max(0, Math.round(volume * 0.44)),
-			AMAZING: Math.max(0, Math.round(volume * 0.28)),
-			LEADER: Math.max(0, Math.round(volume * 0.12)),
-		};
-
-		const streak =
-			rank <= 18
-				? Math.max(1, Math.round(9 - rank * 0.4 - entry.noise * 2))
-				: undefined;
-		const rankTrend = Math.round((entry.trendNoise - 0.5) * 10);
-
-		const badgeCount = Math.min(
-			3,
-			Math.floor(entry.badgeNoise * 4 * (rank <= 25 ? 1 : 0.6))
-		);
-		const achievements = Array.from(
-			{ length: badgeCount },
-			(_, badgeIndex) =>
-				BADGE_TYPES[(index * 3 + badgeIndex * 2) % BADGE_TYPES.length]
-		);
-
-		return {
-			rank,
-			agentId: entry.agentId,
-			agentName: entry.agentName,
-			score: entry.score,
-			reactionsTotals,
-			streak,
-			rankTrend,
-			achievements: achievements.length > 0 ? achievements : undefined,
-		};
-	});
-};
-
-/** Full team leaderboard used by the Team Rankings page. */
-export const AGENT_RANKINGS: AgentRankingEntry[] = buildAgentRankings(120);
-
-/**
- * Determine if a leaderboard period has ended and auto-select winner
- */
-export function selectWinnerIfPeriodEnded(
-	leaderboard: LeaderboardMetadata,
-	roster: AgentRankingEntry[]
-): void {
-	const now = new Date();
-	const endDate = new Date(leaderboard.endDate);
-
-	if (now >= endDate && leaderboard.winnerId === null) {
-		// Auto-select rank #1 as winner
-		const winner = roster.find((entry) => entry.rank === 1);
-		if (winner) {
-			leaderboard.winnerId = winner.agentId;
-			leaderboard.status = 'completed';
-		}
-	}
-}
 
 // ============================================================================
 // Ranking Detail Drawer mock data
@@ -3170,8 +3000,8 @@ export const getRankingReactionBreakdown = (
 	const totals = entry.reactionsTotals;
 	const seed = getRankingSeed(entry.agentId);
 	const random = createSeededRandom(seed * 13 + 977);
-	const pool = AGENT_RANKINGS.filter(
-		(candidate) => candidate.agentId !== entry.agentId
+	const pool = TEAM_AGENTS.filter(
+		(candidate) => candidate.id !== entry.agentId
 	);
 
 	return REACTION_DETAIL_ORDER.map((type, typeIndex) => {
@@ -3191,11 +3021,11 @@ export const getRankingReactionBreakdown = (
 				const daysAgo = Number((0.5 + index * 1.7 + random() * 2).toFixed(2));
 
 				return {
-					agentId: giver.agentId,
-					agentName: giver.agentName,
+					agentId: giver.id,
+					agentName: giver.name,
 					avatarColor:
 						RANKING_AVATAR_COLORS[
-							(getRankingSeed(giver.agentId) + typeIndex) %
+							(getRankingSeed(giver.id) + typeIndex) %
 								RANKING_AVATAR_COLORS.length
 						],
 					givenAt: toIsoDaysAgo(daysAgo),

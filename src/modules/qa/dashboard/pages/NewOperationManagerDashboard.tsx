@@ -616,7 +616,7 @@ export const NewOperationManagerDashboard: React.FC = () => {
 									description='Client accounts ranked against the operational goal for this period'
 									goal={OPERATION_MANAGER_RANKING_GOAL}
 									maxDisplay={7}
-									onViewAll={() => navigate('/qa/operationmanager/rankings')}
+									onViewAll={() => navigate('/qa/qa-manager/rankings')}
 								/>
 							</Tabs.Panel>
 

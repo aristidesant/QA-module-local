@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import React, { useState } from 'react';
 import {
 	Card,
@@ -15,7 +16,10 @@ import {
 	Button,
 } from '@mantine/core';
 import { IconMedal, IconTrophy, IconTarget } from '@tabler/icons-react';
-import { REACTION_TYPES, type PeerRecognitionType } from '../../../../models/qa/reactions';
+import {
+	REACTION_TYPES,
+	type PeerRecognitionType,
+} from '../../../../models/qa/reactions';
 import styles from '../Dashboard.module.css';
 
 /** The reaction types teammates can give each other (source of truth: PeerRecognitionType) */
@@ -69,13 +73,18 @@ interface RankingsTableProps {
  * emoji/label mappings (`REACTION_TYPES` in `models/qa/reactions.ts`) so the
  * rankings table stays in sync with the rest of the app.
  */
-const REACTION_CONFIG: { type: ReactionType; emoji: string; label: string }[] = (
-	Object.values(REACTION_TYPES) as { type: PeerRecognitionType; emoji?: string; label: string }[]
-).map(config => ({
-	type: config.type,
-	emoji: config.emoji ?? '',
-	label: config.label,
-}));
+const REACTION_CONFIG: { type: ReactionType; emoji: string; label: string }[] =
+	(
+		Object.values(REACTION_TYPES) as {
+			type: PeerRecognitionType;
+			emoji?: string;
+			label: string;
+		}[]
+	).map((config) => ({
+		type: config.type,
+		emoji: config.emoji ?? '',
+		label: config.label,
+	}));
 
 /**
  * A single clickable reaction chip. Toggling it optimistically adjusts the
@@ -109,7 +118,14 @@ const ReactionButton: React.FC<{
 				lineHeight: 1.4,
 			}}
 		>
-			<span aria-hidden style={{ fontSize: 14, color: 'light-dark(var(--mantine-color-dark-7), var(--mantine-color-gray-1))' }}>
+			<span
+				aria-hidden
+				style={{
+					fontSize: 14,
+					color:
+						'light-dark(var(--mantine-color-dark-7), var(--mantine-color-gray-1))',
+				}}
+			>
 				{emoji}
 			</span>
 			<Text size='xs' fw={active ? 700 : 500}>
@@ -121,9 +137,15 @@ const ReactionButton: React.FC<{
 
 const MedalIcon: React.FC<{ position: number }> = ({ position }) => {
 	const medals: Record<number, { icon: React.ReactNode; color: string }> = {
-		1: { icon: <IconTrophy size={20} />, color: 'var(--mantine-color-yellow-5)' },
+		1: {
+			icon: <IconTrophy size={20} />,
+			color: 'var(--mantine-color-yellow-5)',
+		},
 		2: { icon: <IconMedal size={20} />, color: 'var(--mantine-color-gray-5)' },
-		3: { icon: <IconMedal size={20} />, color: 'var(--mantine-color-orange-5)' },
+		3: {
+			icon: <IconMedal size={20} />,
+			color: 'var(--mantine-color-orange-5)',
+		},
 	};
 
 	const config = medals[position];
@@ -144,7 +166,10 @@ const RankingGoalBanner: React.FC<{ goal: RankingGoal }> = ({ goal }) => (
 		p='md'
 		radius='md'
 		withBorder
-		style={{ backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))' }}
+		style={{
+			backgroundColor:
+				'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))',
+		}}
 	>
 		<Group gap='sm' align='flex-start' wrap='nowrap'>
 			<ThemeIcon size='lg' color='blue' radius='md' variant='light'>
@@ -169,8 +194,12 @@ const RankingGoalBanner: React.FC<{ goal: RankingGoal }> = ({ goal }) => (
 				<Text size='xs' c='dimmed'>
 					Scoring criteria: {goal.criteria}
 					{goal.target ? ` · Target: ${goal.target}` : ''}
-					{goal.startDate ? ` · Start: ${new Date(goal.startDate).toLocaleDateString()}` : ''}
-					{goal.dueDate ? ` · Due: ${new Date(goal.dueDate).toLocaleDateString()}` : ''}
+					{goal.startDate
+						? ` · Start: ${dayjs(goal.startDate).format('DD MMM YYYY')}`
+						: ''}
+					{goal.dueDate
+						? ` · Due: ${dayjs(goal.dueDate).format('DD MMM YYYY')}`
+						: ''}
 				</Text>
 			</Stack>
 		</Group>
@@ -188,12 +217,14 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 	compact = false,
 }) => {
 	/** Per-entry reaction the current user has given (mockup-local state) */
-	const [reactionStates, setReactionStates] = useState<Record<number, ReactionType | null>>({});
+	const [reactionStates, setReactionStates] = useState<
+		Record<number, ReactionType | null>
+	>({});
 
 	const displayEntries = entries.slice(0, maxDisplay);
 
 	const handleReact = (position: number, reactionType: ReactionType) => {
-		setReactionStates(prev => ({
+		setReactionStates((prev) => ({
 			...prev,
 			[position]: prev[position] === reactionType ? null : reactionType,
 		}));
@@ -208,13 +239,14 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 						{title}
 					</Text>
 					<Stack gap={8}>
-						{displayEntries.map(entry => (
+						{displayEntries.map((entry) => (
 							<Group
 								key={entry.position}
 								justify='space-between'
 								p='xs'
 								style={{
-									backgroundColor: 'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))',
+									backgroundColor:
+										'light-dark(var(--mantine-color-gray-0), var(--mantine-color-dark-6))',
 									borderRadius: 'var(--mantine-radius-md)',
 								}}
 							>
@@ -280,7 +312,7 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 									</Table.Td>
 								</Table.Tr>
 							) : (
-								displayEntries.map(entry => (
+								displayEntries.map((entry) => (
 									<Table.Tr key={entry.position}>
 										<Table.Td>
 											<MedalIcon position={entry.position} />
@@ -302,16 +334,22 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 										</Table.Td>
 										<Table.Td>
 											<Group gap={6} wrap='wrap'>
-												{REACTION_CONFIG.map(reaction => {
-													const active = reactionStates[entry.position] === reaction.type;
+												{REACTION_CONFIG.map((reaction) => {
+													const active =
+														reactionStates[entry.position] === reaction.type;
 													return (
 														<ReactionButton
 															key={reaction.type}
 															emoji={reaction.emoji}
 															label={reaction.label}
-															count={entry.reactions[reaction.type] + (active ? 1 : 0)}
+															count={
+																entry.reactions[reaction.type] +
+																(active ? 1 : 0)
+															}
 															active={active}
-															onClick={() => handleReact(entry.position, reaction.type)}
+															onClick={() =>
+																handleReact(entry.position, reaction.type)
+															}
 														/>
 													);
 												})}

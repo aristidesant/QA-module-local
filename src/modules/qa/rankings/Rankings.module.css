@@ -1,0 +1,65 @@
+.tableSurface {
+	background-color: var(--mantine-color-body);
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	overflow-x: auto;
+}
+
+.rankCell {
+	width: 56px;
+}
+
+.scoreCell {
+	width: 190px;
+	white-space: nowrap;
+}
+
+.scoreBar {
+	width: 80px;
+	flex: none;
+}
+
+.deltaCell {
+	width: 96px;
+	white-space: nowrap;
+}
+
+/* The row of the agent looking at their own leaderboard. */
+.currentRow td {
+	background-color: var(--mantine-color-blue-light);
+	font-weight: 600;
+}
+
+.podiumStep {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 6px;
+	flex: 1;
+	min-width: 0;
+}
+
+.podiumName {
+	text-align: center;
+	max-width: 100%;
+}
+
+.prizeChip {
+	white-space: normal;
+	height: auto;
+	padding-top: 4px;
+	padding-bottom: 4px;
+}
+
+.milestoneRow {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 110px minmax(0, 1.2fr) 36px;
+	gap: var(--mantine-spacing-xs);
+	align-items: flex-end;
+}
+
+@media (max-width: 48em) {
+	.milestoneRow {
+		grid-template-columns: 1fr;
+	}
+}

@@ -18,7 +18,7 @@ import {
 } from '../components';
 import type { DashboardEvaluationType } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
-import type { RankingEntry, RankingGoal } from '../components/RankingsTable';
+import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
 import {
 	AGENT_WEEKLY_METRICS,
 	AGENT_SENTIMENT_TREND,
@@ -50,68 +50,11 @@ const DEFAULT_AGENT_INSIGHTS: Insight[] = [
 	},
 ];
 
-/**
- * Ranking goal defined by the agent's supervisor: the metrics the ranking
- * score is built from and how they are weighted.
- */
-const AGENT_RANKING_GOAL: RankingGoal = {
-	metric: 'Sentiment & Emotion',
-	criteria: 'Customer and agent sentiment scores',
-	target: 'Average score of 4.0 or above',
-	startDate: '2026-09-01',
-	dueDate: '2026-12-31',
-	setBy: 'Sarah Johnson · Supervisor',
-};
-
-/**
- * Mock team rankings for the "Team Rankings" tab.
- * Includes the current agent (John Smith, matching the agent identity used
- * across this module's other mock datasets) alongside the top team members.
- */
-const AGENT_TEAM_RANKINGS: RankingEntry[] = [
-	{
-		position: 1,
-		name: 'Mike Chen',
-		score: 4.9,
-		reactions: { LIKE: 10, HELPFUL: 12, INSPIRING: 8, AMAZING: 5, LEADER: 2 },
-		trend: 'up',
-		trendValue: 3,
-	},
-	{
-		position: 2,
-		name: 'Sarah Johnson',
-		score: 4.7,
-		reactions: { LIKE: 6, HELPFUL: 10, INSPIRING: 7, AMAZING: 4, LEADER: 2 },
-		trend: 'up',
-		trendValue: 1,
-	},
-	{
-		position: 3,
-		name: 'Jessica Martinez',
-		score: 4.5,
-		reactions: { LIKE: 4, HELPFUL: 9, INSPIRING: 5, AMAZING: 3, LEADER: 1 },
-		trend: 'stable',
-		trendValue: 0,
-	},
-	{
-		position: 4,
-		name: 'John Smith',
-		score: 4.2,
-		reactions: { LIKE: 3, HELPFUL: 8, INSPIRING: 4, AMAZING: 2, LEADER: 1 },
-		trend: 'up',
-		trendValue: 2,
-	},
-	{
-		position: 5,
-		name: 'Emma Davis',
-		score: 4.0,
-		reactions: { LIKE: 2, HELPFUL: 6, INSPIRING: 3, AMAZING: 1, LEADER: 0 },
-		trend: 'down',
-		trendValue: 1,
-	},
-];
-
 export const NewAgentDashboard: React.FC = () => {
+	const { entries: rankingEntries, goal: rankingGoal } = useDashboardRankings(
+		'Team 1',
+		7
+	);
 	const [evaluationType, setEvaluationType] =
 		useState<DashboardEvaluationType>('all');
 	const {
@@ -210,10 +153,10 @@ export const NewAgentDashboard: React.FC = () => {
 					dimmed={!isCardVisible(evaluationType, 'sentiment')}
 				>
 					<RankingsTable
-						entries={AGENT_TEAM_RANKINGS}
+						entries={rankingEntries}
 						title='Team Rankings'
 						description="Your current ranking alongside the team's top performers this period"
-						goal={AGENT_RANKING_GOAL}
+						goal={rankingGoal}
 						maxDisplay={5}
 					/>
 				</SectionCard>

@@ -1,0 +1,49 @@
+/**
+ * Inline peer-reaction toggles on the leaderboard.
+ * Colors come from Mantine variables so both themes keep their contrast.
+ */
+
+.chip {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	padding: 2px 7px;
+	border-radius: var(--mantine-radius-xl);
+	border: 1px solid var(--mantine-color-default-border);
+	background: var(--mantine-color-body);
+	font-size: var(--mantine-font-size-sm);
+	line-height: 1.4;
+	transition:
+		background-color 120ms ease,
+		border-color 120ms ease;
+}
+
+.chip[data-size='md'] {
+	padding: 4px 10px;
+	font-size: var(--mantine-font-size-md);
+}
+
+.chip:hover {
+	background: light-dark(
+		var(--mantine-color-gray-1),
+		var(--mantine-color-dark-5)
+	);
+}
+
+.chip[data-active] {
+	border-color: var(--mantine-color-blue-5);
+	background: light-dark(
+		var(--mantine-color-blue-0),
+		var(--mantine-color-blue-9)
+	);
+}
+
+.count {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	color: var(--mantine-color-dimmed);
+}
+
+.chip[data-active] .count {
+	color: light-dark(var(--mantine-color-blue-7), var(--mantine-color-blue-1));
+}

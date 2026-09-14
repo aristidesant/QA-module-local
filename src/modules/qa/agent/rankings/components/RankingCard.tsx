@@ -2,10 +2,11 @@ import React from 'react';
 import { Badge, Card, Divider, Group, Stack, Text } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
+import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
+import LeaderboardReactions from './LeaderboardReactions';
 import type { AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
-import { getReactionsTotal } from '../gamification';
 import { WinnerBadge } from './WinnerBadge';
-import { useLeaderboardMetadata } from '../hooks/useLeaderboardMetadata';
+import { useLeaderboardStatus } from '../hooks/useLeaderboardStatus';
 import styles from './RankingCard.module.css';
 
 /** Max number of achievement badges rendered inside a card. */
@@ -20,6 +21,10 @@ const RANK_BADGE_COLORS: Record<number, string> = {
 export interface RankingCardProps {
 	/** Leaderboard row rendered by this card. */
 	entry: AgentRankingEntry;
+	/** Highlights the card when it is the viewing agent's own row. */
+	isCurrentAgent?: boolean;
+	/** Renders the score with the ranking metric's unit. */
+	formatScore?: (score: number) => string;
 	/** Invoked when the card is activated (detail drawer hook-up). */
 	onRowClick?: (entry: AgentRankingEntry) => void;
 }
@@ -32,10 +37,12 @@ export interface RankingCardProps {
  */
 export const RankingCard: React.FC<RankingCardProps> = ({
 	entry,
+	isCurrentAgent,
+	formatScore,
 	onRowClick,
 }) => {
-	const { isCompleted } = useLeaderboardMetadata();
-	const reactionsTotal = getReactionsTotal(entry);
+	const { isCompleted } = useLeaderboardStatus();
+	const badges = useTriggerRulesStore((state) => state.badges);
 	const achievements = entry.achievements ?? [];
 	const visibleAchievements = achievements.slice(0, MAX_VISIBLE_ACHIEVEMENTS);
 	const hiddenAchievements = achievements.length - visibleAchievements.length;
@@ -50,6 +57,7 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 			padding='md'
 			shadow='md'
 			className={styles.card}
+			data-current={isCurrentAgent || undefined}
 			data-clickable={clickable || undefined}
 			role={clickable ? 'button' : undefined}
 			tabIndex={clickable ? 0 : undefined}
@@ -93,7 +101,7 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 
 				{/* Body: score only */}
 				<Text size='xl' fw={700} className={styles.score}>
-					{entry.score}
+					{formatScore ? formatScore(entry.score) : entry.score}
 				</Text>
 
 				{/* Achievements + reactions */}
@@ -105,7 +113,10 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 							</Text>
 						) : (
 							visibleAchievements.map((badgeType, index) => {
-								const catalog = PREDEFINED_BADGE_CATALOGS[badgeType];
+								const badge = badges.find(
+									(candidate) => candidate.id === badgeType
+								);
+								const catalog = badge ?? PREDEFINED_BADGE_CATALOGS[badgeType];
 								return (
 									<span
 										key={`${badgeType}-${index}`}
@@ -125,9 +136,10 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 						)}
 					</Group>
 
-					<Text size='sm' fw={500} className={styles.reaction}>
-						<span aria-hidden>🤝</span> {reactionsTotal} reactions
-					</Text>
+					<LeaderboardReactions
+						agentId={entry.agentId}
+						agentName={entry.agentName}
+					/>
 				</Group>
 
 				{clickable && (

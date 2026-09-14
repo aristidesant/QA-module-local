@@ -1,14 +1,16 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { SimpleGrid, Text } from '@mantine/core';
-import {
-	AGENT_RANKINGS,
-	type AgentRankingEntry,
-} from '~/modules/qa/dashboard/mockData';
+import { type AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
 import RankingCard from './RankingCard';
 
 export interface RankingCardGridProps {
-	/** Leaderboard rows. Defaults to the full mock roster. */
-	data?: AgentRankingEntry[];
+	/** Leaderboard rows, computed from the active ranking program. */
+	data: AgentRankingEntry[];
+	/** Highlights the card of the agent viewing their own leaderboard. */
+	currentAgentId?: string;
+	/** Renders the score with the ranking metric's unit. */
+	formatScore?: (score: number) => string;
 	/** Invoked when a card is clicked (detail drawer hook-up). */
 	onRowClick?: (entry: AgentRankingEntry) => void;
 }
@@ -21,14 +23,17 @@ export interface RankingCardGridProps {
  * scrolling over a plain grid.
  */
 export const RankingCardGrid: React.FC<RankingCardGridProps> = ({
-	data = AGENT_RANKINGS,
+	data,
+	currentAgentId,
+	formatScore,
 	onRowClick,
 }) => {
-	/** Rank lookup so each card can read the score of the position below it. */
+	const { t } = useTranslation('qa.rankings');
+
 	if (data.length === 0) {
 		return (
 			<Text size='sm' c='dimmed' ta='center' py='xl'>
-				No rankings available for this period
+				{t('agent.empty.noActive')}
 			</Text>
 		);
 	}
@@ -39,6 +44,8 @@ export const RankingCardGrid: React.FC<RankingCardGridProps> = ({
 				<RankingCard
 					key={entry.agentId}
 					entry={entry}
+					isCurrentAgent={entry.agentId === currentAgentId}
+					formatScore={formatScore}
 					onRowClick={onRowClick}
 				/>
 			))}

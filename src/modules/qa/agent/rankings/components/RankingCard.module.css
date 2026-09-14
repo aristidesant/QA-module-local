@@ -41,20 +41,14 @@
 }
 
 .score {
-	color: light-dark(
-		var(--mantine-color-blue-7),
-		var(--mantine-color-blue-4)
-	);
+	color: light-dark(var(--mantine-color-blue-7), var(--mantine-color-blue-4));
 	line-height: 1.1;
 }
 
 /* Point lead: comfortable gap (> threshold) vs. tight gap. */
 .leadStrong {
 	white-space: nowrap;
-	color: light-dark(
-		var(--mantine-color-green-7),
-		var(--mantine-color-green-4)
-	);
+	color: light-dark(var(--mantine-color-green-7), var(--mantine-color-green-4));
 }
 
 .leadTight {
@@ -81,10 +75,7 @@
 }
 
 .trendUp {
-	color: light-dark(
-		var(--mantine-color-green-7),
-		var(--mantine-color-green-4)
-	);
+	color: light-dark(var(--mantine-color-green-7), var(--mantine-color-green-4));
 }
 
 .trendDown {
@@ -104,4 +95,13 @@
 
 .footer {
 	color: var(--mantine-color-anchor);
+}
+
+/* The card of the agent looking at their own leaderboard. */
+.card[data-current] {
+	border-color: var(--mantine-color-blue-6);
+	background: light-dark(
+		var(--mantine-color-blue-0),
+		var(--mantine-color-blue-9)
+	);
 }
