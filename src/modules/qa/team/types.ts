@@ -1,4 +1,7 @@
-import type { Emotion, SentimentCategory } from '~/modules/qa/emotion-sentiment/types';
+import type {
+	Emotion,
+	SentimentCategory,
+} from '~/modules/qa/emotion-sentiment/types';
 import type { BurnoutRiskData } from '~/modules/qa/dashboard/types/burnoutRisk';
 
 export type TeamRole = 'supervisor' | 'qa-manager';
@@ -8,8 +11,17 @@ export type DimensionKey = 'qa' | 'sentiment' | 'compliance' | 'business';
 export type AgentStatus = 'active' | 'on-leave' | 'training';
 export type Shift = 'morning' | 'afternoon' | 'night';
 
-export interface RosterSupervisor { id: string; name: string; team: string }
-export interface RosterCampaign { id: string; name: string; lineOfBusiness: string; campaignType: 'INBOUND' | 'OUTBOUND' | 'BLENDED' }
+export interface RosterSupervisor {
+	id: string;
+	name: string;
+	team: string;
+}
+export interface RosterCampaign {
+	id: string;
+	name: string;
+	lineOfBusiness: string;
+	campaignType: 'INBOUND' | 'OUTBOUND' | 'BLENDED';
+}
 
 export interface RosterAgent {
 	id: string;
@@ -57,8 +69,16 @@ export interface PerformancePoint {
 }
 
 export type OperationalMetricKey =
-	| 'callsHandled' | 'callsPerDay' | 'aht' | 'talkTime' | 'holdTime' | 'wrapUpTime'
-	| 'fcr' | 'transferRate' | 'adherence' | 'occupancy';
+	| 'callsHandled'
+	| 'callsPerDay'
+	| 'aht'
+	| 'talkTime'
+	| 'holdTime'
+	| 'wrapUpTime'
+	| 'fcr'
+	| 'transferRate'
+	| 'adherence'
+	| 'occupancy';
 
 export interface OperationalMetric {
 	key: OperationalMetricKey;
@@ -69,7 +89,14 @@ export interface OperationalMetric {
 	betterWhen: 'higher' | 'lower';
 }
 
-export interface OperationalPoint { label: string; aht: number; talk: number; hold: number; wrapUp: number; calls: number }
+export interface OperationalPoint {
+	label: string;
+	aht: number;
+	talk: number;
+	hold: number;
+	wrapUp: number;
+	calls: number;
+}
 
 export type QAErrorTypeCode = 'ECN' | 'ENC' | 'ECC' | 'ECUF';
 
@@ -78,9 +105,25 @@ export interface QAHistory {
 	passRate: number; // 0-100
 	evaluations: number;
 	autoFails: number;
-	errorTypes: { code: QAErrorTypeCode; count: number; ratePerCall: number; delta: number }[];
-	errorTrend: { label: string; ECN: number; ENC: number; ECC: number; ECUF: number }[];
-	topFailedItems: { item: string; aspect: string; errorType: QAErrorTypeCode; count: number }[];
+	errorTypes: {
+		code: QAErrorTypeCode;
+		count: number;
+		ratePerCall: number;
+		delta: number;
+	}[];
+	errorTrend: {
+		label: string;
+		ECN: number;
+		ENC: number;
+		ECC: number;
+		ECUF: number;
+	}[];
+	topFailedItems: {
+		item: string;
+		aspect: string;
+		errorType: QAErrorTypeCode;
+		count: number;
+	}[];
 }
 
 export interface SentimentHistory {
@@ -99,22 +142,47 @@ export type ComplianceAreaKey = 'security' | 'regulatory' | 'legal';
 
 export interface ComplianceHistory {
 	overall: number;
-	areas: { key: ComplianceAreaKey; score: number; violations: number; warnings: number; delta: number }[];
+	areas: {
+		key: ComplianceAreaKey;
+		score: number;
+		violations: number;
+		warnings: number;
+		delta: number;
+	}[];
 	timeline: { label: string; violations: number; warnings: number }[];
-	flaggedItems: { item: string; area: ComplianceAreaKey; count: number; lastSeen: string }[];
+	flaggedItems: {
+		item: string;
+		area: ComplianceAreaKey;
+		count: number;
+		lastSeen: string;
+	}[];
 }
 
 export type BusinessSignalType =
-	| 'EARLY_OBJECTION' | 'UNHANDLED_OBJECTION' | 'COMPETITOR_PLUS_COST' | 'MISTARGETED_OFFER' | 'BEST_TIME_FRAME';
+	| 'EARLY_OBJECTION'
+	| 'UNHANDLED_OBJECTION'
+	| 'COMPETITOR_PLUS_COST'
+	| 'MISTARGETED_OFFER'
+	| 'BEST_TIME_FRAME';
 export type NonConversionReasonKey =
-	| 'priceTooHigh' | 'noNeed' | 'distrustQuality' | 'thirdPartyDecision' | 'installationRequirements' | 'other';
+	| 'priceTooHigh'
+	| 'noNeed'
+	| 'distrustQuality'
+	| 'thirdPartyDecision'
+	| 'installationRequirements'
+	| 'other';
 
 export interface BusinessHistory {
 	conversionRate: number;
 	offersPresented: number;
 	converted: number;
 	followUpsScheduled: number;
-	signals: { type: BusinessSignalType; count: number; ratePerCall: number; delta: number }[];
+	signals: {
+		type: BusinessSignalType;
+		count: number;
+		ratePerCall: number;
+		delta: number;
+	}[];
 	nonConversionReasons: { key: NonConversionReasonKey; count: number }[];
 	competitorMentions: { name: string; count: number }[];
 	conversionTrend: { label: string; conversionRate: number; offers: number }[];
@@ -139,7 +207,11 @@ export interface DisputeSummary {
 }
 
 export interface RiskHistory {
-	criticalErrorsTrend: { label: string; autoFails: number; criticalErrors: number }[];
+	criticalErrorsTrend: {
+		label: string;
+		autoFails: number;
+		criticalErrors: number;
+	}[];
 	alerts: TriggerAlert[];
 	disputes: DisputeSummary[];
 	burnout: BurnoutRiskData;
@@ -161,7 +233,13 @@ export interface CoachingSession {
 export type LmsMaterialType = 'Course' | 'Video' | 'PDF' | 'Article';
 export type LmsStatus = 'not-started' | 'in-progress' | 'completed' | 'overdue';
 
-export interface LmsMaterial { id: string; title: string; type: LmsMaterialType; durationMin: number; dimension: DimensionKey }
+export interface LmsMaterial {
+	id: string;
+	title: string;
+	type: LmsMaterialType;
+	durationMin: number;
+	dimension: DimensionKey;
+}
 
 export interface LmsAssignment {
 	id: string;
@@ -186,11 +264,31 @@ export interface EarnedBadge {
 	reason: string;
 }
 
-export interface MilestoneProgress { id: string; name: string; description: string; progress: number; achievedAt?: string }
+export interface MilestoneProgress {
+	id: string;
+	name: string;
+	description: string;
+	progress: number;
+	achievedAt?: string;
+}
 
-export interface RankingPoint { label: string; position: number; teamSize: number; score: number }
+export interface RankingPoint {
+	label: string;
+	position: number;
+	teamSize: number;
+	score: number;
+}
 
-export type ActivityType = 'evaluation' | 'badge' | 'milestone' | 'coaching' | 'lms' | 'alert' | 'dispute' | 'note' | 'rank';
+export type ActivityType =
+	| 'evaluation'
+	| 'badge'
+	| 'milestone'
+	| 'coaching'
+	| 'lms'
+	| 'alert'
+	| 'dispute'
+	| 'note'
+	| 'rank';
 
 export interface ActivityEvent {
 	id: string;
@@ -226,7 +324,11 @@ export interface EvaluationHistoryRow {
 	evaluatedBy: 'AI' | 'Manual';
 }
 
-export interface StrengthOrWeakness { label: string; evidence: string; suggestedAction?: string }
+export interface StrengthOrWeakness {
+	label: string;
+	evidence: string;
+	suggestedAction?: string;
+}
 
 export interface AgentProfile {
 	agent: RosterAgent;
@@ -248,7 +350,12 @@ export interface AgentProfile {
 	activity: ActivityEvent[];
 	notes: SupervisorNote[];
 	evaluations: EvaluationHistoryRow[];
-	peerComparison: { label: string; agentValue: number; teamAverage: number; unit?: string }[];
+	peerComparison: {
+		label: string;
+		agentValue: number;
+		teamAverage: number;
+		unit?: string;
+	}[];
 	strengths: StrengthOrWeakness[];
 	weaknesses: StrengthOrWeakness[];
 }
@@ -275,8 +382,6 @@ export interface TeamTableRow {
 
 export interface TeamFilters {
 	search: string;
-	status: AgentStatus | 'all';
-	campaignId: string | 'all';
 	supervisorId: string | 'all'; // QA Manager only
 	riskOnly: boolean;
 }

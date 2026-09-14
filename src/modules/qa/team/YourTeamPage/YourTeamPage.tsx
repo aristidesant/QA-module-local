@@ -8,13 +8,24 @@ import BaseTable from '~/components/BaseTable/BaseTable';
 import { useTeamStore } from '~/stores/qa/teamStore';
 import { SUPERVISOR_PERSONA } from '../constants';
 import type { TeamFilters as TeamFiltersState, TeamTableRow } from '../types';
-import { applyTeamFilters, isAtRisk, roleFromPath, teamBasePath, teamKpis, toTableRow } from '../helpers';
+import {
+	applyTeamFilters,
+	isAtRisk,
+	roleFromPath,
+	teamBasePath,
+	teamKpis,
+	toTableRow,
+} from '../helpers';
 import { TeamKpiStrip } from './TeamKpiStrip';
 import { TeamFilters } from './TeamFilters';
 import { useTeamColumns } from './useTeamColumns';
 import styles from './YourTeamPage.module.css';
 
-const DEFAULT_FILTERS: TeamFiltersState = { search: '', status: 'all', campaignId: 'all', supervisorId: 'all', riskOnly: false };
+const DEFAULT_FILTERS: TeamFiltersState = {
+	search: '',
+	supervisorId: 'all',
+	riskOnly: false,
+};
 
 export default function YourTeamPage() {
 	const { t } = useTranslation('qa.team');
@@ -26,7 +37,8 @@ export default function YourTeamPage() {
 
 	const rows = useMemo(() => {
 		const visible = Object.values(profilesById).filter(
-			(p) => role === 'qa-manager' || p.agent.supervisorId === SUPERVISOR_PERSONA.id,
+			(p) =>
+				role === 'qa-manager' || p.agent.supervisorId === SUPERVISOR_PERSONA.id
 		);
 		return applyTeamFilters(visible.map(toTableRow), profilesById, filters);
 	}, [profilesById, role, filters]);
@@ -36,13 +48,19 @@ export default function YourTeamPage() {
 		<ContentContainer
 			contentWidth='full'
 			title={t(role === 'qa-manager' ? 'team.titleQaManager' : 'team.title')}
-			description={t(role === 'qa-manager' ? 'team.descriptionQaManager' : 'team.description')}
+			description={t(
+				role === 'qa-manager' ? 'team.descriptionQaManager' : 'team.description'
+			)}
 		>
 			<Stack gap='lg'>
 				<TeamKpiStrip kpis={teamKpis(rows)} />
 				<TeamFilters role={role} value={filters} onChange={setFilters} />
 				<SectionCard
-					headerActions={<Text size='sm' c='dimmed'>{t('team.rowsCount', { count: rows.length })}</Text>}
+					headerActions={
+						<Text size='sm' c='dimmed'>
+							{t('team.rowsCount', { count: rows.length })}
+						</Text>
+					}
 				>
 					<BaseTable<TeamTableRow>
 						data={rows}
@@ -54,7 +72,9 @@ export default function YourTeamPage() {
 						density='compact'
 						emptyMessage={t('team.empty')}
 						onRowClick={(r) => navigate(`${teamBasePath(role)}/${r.id}`)}
-						getRowClassName={(row) => (isAtRisk(row.original) ? styles.riskRow : undefined)}
+						getRowClassName={(row) =>
+							isAtRisk(row.original) ? styles.riskRow : undefined
+						}
 					/>
 				</SectionCard>
 			</Stack>
