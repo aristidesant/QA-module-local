@@ -172,9 +172,6 @@ const ReportsPage = React.lazy(
 const TeamRankingsPage = React.lazy(
 	() => import('./modules/qa/agent/rankings/TeamRankingsPage')
 );
-const SupervisorCallsPage = React.lazy(
-	() => import('./modules/qa/supervisor/pages/CallsPage')
-);
 const SupervisorEvaluationsPage = React.lazy(
 	() => import('./modules/qa/supervisor/pages/EvaluationsPage')
 );
@@ -193,9 +190,6 @@ const AgentProfilePage = React.lazy(
 );
 const QAManagerSettingsPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/SettingsPage')
-);
-const QAManagerCallsPage = React.lazy(
-	() => import('./modules/qa/qamanager/pages/CallsPage')
 );
 
 // Phase 4-5: New QA Admin Components
@@ -1079,17 +1073,6 @@ const router = createBrowserRouter([
 									},
 									// QA Manager routes
 									{
-										path: 'supervisor/calls',
-										id: 'qa.supervisor.calls',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<SupervisorCallsPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
 										path: 'supervisor/evaluations',
 										id: 'qa.supervisor.evaluations',
 										element: (
@@ -1305,17 +1288,6 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QAManagerSettingsPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
-										path: 'qa-manager/calls',
-										id: 'qa.qa-manager.calls',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<QAManagerCallsPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

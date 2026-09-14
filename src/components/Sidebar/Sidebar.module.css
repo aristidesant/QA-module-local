@@ -152,6 +152,16 @@
 }
 
 /*
+ * Used instead of .mainScrollArea when there is no sectionNav — it renders
+ * nothing in that case, so it must not claim a flex-grow share of the
+ * sidebar's height (that would leave dead empty space and shrink
+ * .primaryLinksScrollable below what the nav list actually needs).
+ */
+.mainScrollAreaCollapsed {
+	flex: none;
+}
+
+/*
  * Applied to .primaryLinks when there is no sectionNav (role preview, QA,
  * Backoffice and emotion-sentiment sidebars all render their whole nav as
  * primaryNav). Without this, a long flat or grouped nav list has no bounded

@@ -147,13 +147,6 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.team',
 	},
 	{
-		key: 'supervisor-calls',
-		label: 'sidebar.supervisor.calls',
-		icon: <IconPhone size={20} className={styles.menuIcon} />,
-		to: '/qa/supervisor/calls',
-		i18nNamespace: 'qa.supervisor',
-	},
-	{
 		key: 'supervisor-customers',
 		label: 'sidebar.supervisor.customers',
 		icon: <IconAddressBook size={20} className={styles.menuIcon} />,
@@ -240,7 +233,6 @@ export const getSupervisorNavigationGrouped = (): NavGroup[] => {
 			label: 'sidebar.supervisor.groupTeam',
 			items: pick(
 				'supervisor-team',
-				'supervisor-calls',
 				'supervisor-customers',
 				'supervisor-campaigns'
 			),
@@ -315,13 +307,6 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		icon: <IconUserSquareRounded size={20} className={styles.menuIcon} />,
 		to: '/qa/qa-manager/agents',
 		i18nNamespace: 'qa.team',
-	},
-	{
-		key: 'qamanager-calls',
-		label: 'sidebar.qamanager.calls',
-		icon: <IconPhone size={20} className={styles.menuIcon} />,
-		to: '/qa/qa-manager/calls',
-		i18nNamespace: 'qa.qamanager',
 	},
 	{
 		key: 'qamanager-customers',
@@ -429,7 +414,6 @@ export const getQAManagerNavigationGrouped = (): NavGroup[] => {
 			key: 'qamanager-operations',
 			label: 'sidebar.qamanager.groupOperations',
 			items: pick(
-				'qamanager-calls',
 				'qamanager-customers',
 				'qamanager-disputes',
 				'qamanager-campaigns'

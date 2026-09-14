@@ -1017,7 +1017,14 @@ export const Sidebar: React.FC = () => {
 
 			<Divider className={styles.divider} />
 
-			<div className={styles.mainScrollArea} ref={scrollContainerRef}>
+			<div
+				className={
+					sectionNav.length === 0
+						? styles.mainScrollAreaCollapsed
+						: styles.mainScrollArea
+				}
+				ref={scrollContainerRef}
+			>
 				<Stack gap='xs' className={styles.menuList}>
 					<Stack gap='xs' className={styles.sectionsList}>
 						{sectionNav.map((section) => (
