@@ -98,8 +98,6 @@
 		"eyebrow": "Agent",
 		"title": "My Learning",
 		"description": "Your assignments, learning paths and coaching commitments — tied to the aspects you are evaluated on.",
-		"activePath": "Active path",
-		"noActivePath": "No active learning path",
 		"kpi": {
 			"needsResponse": "Needs your response",
 			"dueThisWeek": "Due this week",

@@ -14,8 +14,6 @@ import {
 	useLmsStore,
 	selectAssignments,
 	selectContent,
-	selectEnrollments,
-	selectPaths,
 } from '~/stores/qa/lmsStore';
 import {
 	AGENT_PERSONA,
@@ -42,8 +40,6 @@ export default function AgentLmsPage() {
 
 	const assignments = useLmsStore(selectAssignments);
 	const content = useLmsStore(selectContent);
-	const paths = useLmsStore(selectPaths);
-	const enrollments = useLmsStore(selectEnrollments);
 
 	const [rescheduleTarget, setRescheduleTarget] =
 		useState<LmsAssignment | null>(null);
@@ -51,10 +47,6 @@ export default function AgentLmsPage() {
 	const mine = useMemo(
 		() => assignments.filter((a) => a.agentId === AGENT_PERSONA.id),
 		[assignments]
-	);
-	const myEnrollments = useMemo(
-		() => enrollments.filter((e) => e.agentId === AGENT_PERSONA.id),
-		[enrollments]
 	);
 	const contentById = useMemo(
 		() =>
@@ -104,12 +96,7 @@ export default function AgentLmsPage() {
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
-				<LearningHeader
-					assignments={mine}
-					paths={paths}
-					enrollments={myEnrollments}
-					contentById={contentById}
-				/>
+				<LearningHeader assignments={mine} />
 
 				<Tabs value={tab} onChange={setTab} keepMounted={false}>
 					<Tabs.List>

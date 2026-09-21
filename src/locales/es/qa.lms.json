@@ -98,8 +98,6 @@
 		"eyebrow": "Agente",
 		"title": "Mi aprendizaje",
 		"description": "Tus asignaciones, rutas de aprendizaje y compromisos de coaching, ligados a los aspectos en los que te evalúan.",
-		"activePath": "Ruta activa",
-		"noActivePath": "Sin ruta de aprendizaje activa",
 		"kpi": {
 			"needsResponse": "Requiere tu respuesta",
 			"dueThisWeek": "Vence esta semana",
