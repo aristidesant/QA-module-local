@@ -8,8 +8,6 @@ import type {
 	NotificationTrigger,
 } from '~/models/qa/notifications';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
-import type { PeerRecognitionType } from '~/models/qa/reactions';
-import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 import { BurnoutRiskLevel, BurnoutRiskData } from './types/burnoutRisk';
 
 // ============================================================================
@@ -2737,20 +2735,13 @@ export function aggregateMetricsByDateRange(
 // Team Rankings (full leaderboard) mock data
 // ============================================================================
 
-/** Reaction totals received by an agent, keyed by PeerRecognitionType. */
-export interface AgentRankingReactionTotals {
-	LIKE: number;
-	HELPFUL: number;
-	INSPIRING: number;
-	AMAZING: number;
-	LEADER: number;
-}
-
 /**
  * One row of the full team leaderboard.
  *
  * Note: `achievements` currently holds badge type keys from
  * `PREDEFINED_BADGE_CATALOGS`. It becomes `Badge[]` once real badges land.
+ * Reaction totals aren't carried on this row — they live in `rankingsStore`,
+ * keyed by program and agent, since reactions are given live.
  */
 export interface AgentRankingEntry {
 	/** 1-based position in the leaderboard */
@@ -2759,7 +2750,6 @@ export interface AgentRankingEntry {
 	agentName: string;
 	/** Total period score, 0-100 */
 	score: number;
-	reactionsTotals?: AgentRankingReactionTotals;
 	/** Consecutive weeks inside the top of the ranking */
 	streak?: number;
 	/** Rank movement vs. previous period: +3 moved up 3, -1 moved down 1, 0 no change */
@@ -2819,39 +2809,6 @@ export interface RankingAchievementsDetail {
 	nextMilestone?: RankingNextMilestone;
 }
 
-/** A teammate who gave one reaction to the agent. */
-export interface RankingReactionGiver {
-	agentId: string;
-	agentName: string;
-	/** Mantine palette key used for the avatar */
-	avatarColor: string;
-	/** ISO date the reaction was given */
-	givenAt: string;
-}
-
-export interface RankingReactionBreakdown {
-	type: PeerRecognitionType;
-	count: number;
-	/** Sample of givers (most recent first). Can be shorter than `count`. */
-	givenBy: RankingReactionGiver[];
-}
-
-export interface RankingMetricsSnapshot {
-	period: string;
-	/** 0-100 */
-	qaScore: number;
-	/** 1-5 */
-	sentimentScore: number;
-	/** 0-100 */
-	complianceScore: number;
-	callsCount: number;
-}
-
-export interface RankingMetricsComparison {
-	current: RankingMetricsSnapshot;
-	previous: RankingMetricsSnapshot;
-}
-
 /** Expanded, human readable criteria per badge (catalog only stores one line). */
 const BADGE_CRITERIA_DETAIL: Record<string, string[]> = {
 	QA_EXCELLENCE: [
@@ -2887,30 +2844,6 @@ const BADGE_CRITERIA_DETAIL: Record<string, string[]> = {
 };
 
 /** Mantine palette keys used for reaction giver avatars (theme aware). */
-const RANKING_AVATAR_COLORS = [
-	'blue',
-	'grape',
-	'teal',
-	'orange',
-	'cyan',
-	'pink',
-	'indigo',
-	'lime',
-	'violet',
-	'red',
-];
-
-const REACTION_DETAIL_ORDER: PeerRecognitionType[] = [
-	'LIKE',
-	'HELPFUL',
-	'INSPIRING',
-	'AMAZING',
-	'LEADER',
-];
-
-/** Max giver rows generated per reaction type; the rest stay as a "+N" count. */
-const MAX_REACTION_GIVERS = 8;
-
 const DAY_MS = 86_400_000;
 
 /** Fixed "today" so generated dates do not drift between demo sessions. */
@@ -2988,101 +2921,6 @@ export const getRankingAchievements = (
 			criteriaRemaining: criteria.slice(-remainingCount),
 		},
 	};
-};
-
-/**
- * Social proof for one agent: per reaction type, a sample of the teammates who
- * gave it, most recent first.
- */
-export const getRankingReactionBreakdown = (
-	entry: AgentRankingEntry
-): RankingReactionBreakdown[] => {
-	const totals = entry.reactionsTotals;
-	const seed = getRankingSeed(entry.agentId);
-	const random = createSeededRandom(seed * 13 + 977);
-	const pool = TEAM_AGENTS.filter(
-		(candidate) => candidate.id !== entry.agentId
-	);
-
-	return REACTION_DETAIL_ORDER.map((type, typeIndex) => {
-		const count = totals?.[type] ?? 0;
-		if (count === 0 || pool.length === 0) {
-			return { type, count, givenBy: [] };
-		}
-
-		const giverCount = Math.min(count, MAX_REACTION_GIVERS);
-		// Stride walk over the roster: distinct givers, stable across renders.
-		const offset = (seed * 17 + typeIndex * 29) % pool.length;
-
-		const givenBy: RankingReactionGiver[] = Array.from(
-			{ length: giverCount },
-			(_, index) => {
-				const giver = pool[(offset + index * 11) % pool.length];
-				const daysAgo = Number((0.5 + index * 1.7 + random() * 2).toFixed(2));
-
-				return {
-					agentId: giver.id,
-					agentName: giver.name,
-					avatarColor:
-						RANKING_AVATAR_COLORS[
-							(getRankingSeed(giver.id) + typeIndex) %
-								RANKING_AVATAR_COLORS.length
-						],
-					givenAt: toIsoDaysAgo(daysAgo),
-				};
-			}
-		).sort((a, b) => b.givenAt.localeCompare(a.givenAt));
-
-		return { type, count, givenBy };
-	});
-};
-
-/**
- * QA / sentiment / compliance snapshot for the current period and the one
- * before it, so the drawer can render deltas.
- */
-export const getRankingMetricsComparison = (
-	entry: AgentRankingEntry
-): RankingMetricsComparison => {
-	const random = createSeededRandom(getRankingSeed(entry.agentId) * 7 + 4231);
-
-	const qaScore = Math.round(
-		clampNumber(entry.score + (random() - 0.5) * 6, 42, 100)
-	);
-	const complianceScore = Math.round(
-		clampNumber(entry.score * 0.94 + 6 + (random() - 0.5) * 8, 48, 100)
-	);
-	const sentimentScore = Number(
-		clampNumber(
-			1.1 + (entry.score / 100) * 3.8 + (random() - 0.5) * 0.5,
-			1,
-			5
-		).toFixed(1)
-	);
-	const callsCount = Math.round(38 + random() * 90);
-
-	const current: RankingMetricsSnapshot = {
-		period: 'Last 7 days',
-		qaScore,
-		sentimentScore,
-		complianceScore,
-		callsCount,
-	};
-
-	// Previous period sits within roughly ±5 points of the current one.
-	const previous: RankingMetricsSnapshot = {
-		period: 'Previous 7 days',
-		qaScore: Math.round(clampNumber(qaScore + (random() - 0.5) * 10, 42, 100)),
-		sentimentScore: Number(
-			clampNumber(sentimentScore + (random() - 0.5) * 0.8, 1, 5).toFixed(1)
-		),
-		complianceScore: Math.round(
-			clampNumber(complianceScore + (random() - 0.5) * 10, 48, 100)
-		),
-		callsCount: Math.round(callsCount * (0.82 + random() * 0.34)),
-	};
-
-	return { current, previous };
 };
 
 export const AGENT_BURNOUT_RISK: BurnoutRiskData = {

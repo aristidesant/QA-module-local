@@ -153,18 +153,6 @@
 			"completed": "Finalizado",
 			"setBy": "Definido por {{name}}"
 		},
-		"mine": {
-			"title": "Mi posición",
-			"rank": "#{{rank}} de {{total}}",
-			"unranked": "Te faltan {{count}} llamadas para clasificar",
-			"score": "Puntuación",
-			"target": "Objetivo",
-			"delta": "vs hace 7 días",
-			"noDelta": "Todavía no hay comparación",
-			"milestones": "Hitos conseguidos",
-			"nextMilestone": "Siguiente: {{label}} al llegar a {{value}}",
-			"reachedTarget": "Objetivo alcanzado"
-		},
 		"podium": {
 			"title": "Podio",
 			"first": "1.º",
@@ -211,10 +199,10 @@
 		"give": "Reaccionar {{reaction}} a {{name}}",
 		"remove": "Quitar tu {{reaction}}",
 		"labels": {
-			"thumbsUp": "👍",
-			"clap": "👏",
-			"heart": "❤️",
-			"fire": "🔥"
+			"thumbsUp": "Me gusta",
+			"clap": "Celebrar",
+			"heart": "Corazón",
+			"fire": "Fuego"
 		}
 	}
 }

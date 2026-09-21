@@ -65,9 +65,3 @@
 		var(--mantine-color-dark-6)
 	);
 }
-
-.emptyIcon {
-	font-size: 28px;
-	line-height: 1;
-	opacity: 0.7;
-}

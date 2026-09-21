@@ -30,7 +30,7 @@ import {
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
 import { type AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
-import { buildRankIndex, getReactionsTotal } from '../gamification';
+import { buildRankIndex } from '../gamification';
 import { WinnerBadge } from './WinnerBadge';
 import LeaderboardReactions from './LeaderboardReactions';
 import { useLeaderboardStatus } from '../hooks/useLeaderboardStatus';
@@ -179,7 +179,6 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 			},
 			{
 				id: 'reactions',
-				accessorFn: getReactionsTotal,
 				enableSorting: false,
 				header: t('table.reactions'),
 				size: 260,

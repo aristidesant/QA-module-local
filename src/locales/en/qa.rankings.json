@@ -153,18 +153,6 @@
 			"completed": "Completed",
 			"setBy": "Set by {{name}}"
 		},
-		"mine": {
-			"title": "My position",
-			"rank": "#{{rank}} of {{total}}",
-			"unranked": "{{count}} more calls to qualify",
-			"score": "Score",
-			"target": "Target",
-			"delta": "vs 7 days ago",
-			"noDelta": "No comparison yet",
-			"milestones": "Milestones earned",
-			"nextMilestone": "Next: {{label}} at {{value}}",
-			"reachedTarget": "Target reached"
-		},
 		"podium": {
 			"title": "Podium",
 			"first": "1st",
@@ -211,10 +199,10 @@
 		"give": "React {{reaction}} to {{name}}",
 		"remove": "Remove your {{reaction}}",
 		"labels": {
-			"thumbsUp": "👍",
-			"clap": "👏",
-			"heart": "❤️",
-			"fire": "🔥"
+			"thumbsUp": "Thumbs up",
+			"clap": "Celebrate",
+			"heart": "Heart",
+			"fire": "Fire"
 		}
 	}
 }

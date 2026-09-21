@@ -1,7 +1,15 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Badge, Group, Paper, Progress, Stack, Text } from '@mantine/core';
-import { IconTargetArrow } from '@tabler/icons-react';
+import {
+	Badge,
+	Group,
+	Paper,
+	Progress,
+	Stack,
+	Text,
+	ThemeIcon,
+} from '@mantine/core';
+import { IconAward, IconTargetArrow } from '@tabler/icons-react';
 import type { RankingProgram } from '~/models/qa/rankingPrograms';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 import type { AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
@@ -88,9 +96,9 @@ export const AchievementsTab: React.FC<AchievementsTabProps> = ({
 			{earned.length === 0 ? (
 				<Paper withBorder radius='md' p='lg' className={styles.emptyState}>
 					<Stack gap={4} align='center'>
-						<span className={styles.emptyIcon} aria-hidden>
-							🏅
-						</span>
+						<ThemeIcon size={40} variant='light' color='gray' radius='xl'>
+							<IconAward size={20} />
+						</ThemeIcon>
 						<Text size='sm' fw={600}>
 							{t('achievements.empty')}
 						</Text>

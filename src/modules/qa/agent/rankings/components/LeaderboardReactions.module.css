@@ -38,6 +38,14 @@
 	);
 }
 
+.icon {
+	color: var(--mantine-color-dimmed);
+}
+
+.chip[data-active] .icon {
+	color: light-dark(var(--mantine-color-blue-7), var(--mantine-color-blue-1));
+}
+
 .count {
 	font-size: var(--mantine-font-size-xs);
 	font-weight: 600;

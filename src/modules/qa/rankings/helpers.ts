@@ -163,8 +163,7 @@ export const leader = (standings: RankingStanding[]): RankingStanding | null =>
  */
 export const toRankingEntry = (
 	standing: RankingStanding,
-	program: RankingProgram,
-	reactions?: AgentRankingEntry['reactionsTotals']
+	program: RankingProgram
 ): AgentRankingEntry => {
 	const badgeIds = standing.milestoneIds
 		.map(
@@ -181,7 +180,6 @@ export const toRankingEntry = (
 		score: standing.score ?? 0,
 		rankTrend: standing.delta ?? 0,
 		achievements: badgeIds.length > 0 ? badgeIds : undefined,
-		reactionsTotals: reactions,
 	};
 };
 
