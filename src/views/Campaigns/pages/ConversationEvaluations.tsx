@@ -74,6 +74,11 @@ export default function ConversationEvaluations() {
 	const selectedMeta = CALL_EVALUATION_TABS.find(
 		(tab) => tab.key === selectedTab
 	)!;
+	// Business Insights carries commercial/outcome data the agent shouldn't see.
+	const visibleTabs =
+		previewRole === 'agent'
+			? CALL_EVALUATION_TABS.filter((tab) => tab.key !== 'business-insights')
+			: CALL_EVALUATION_TABS;
 	const alreadyDisputed = hasOpenDispute(
 		disputeCases,
 		call.callId,
@@ -172,7 +177,7 @@ export default function ConversationEvaluations() {
 							gap='sm'
 						>
 							<Group gap='sm' wrap='wrap'>
-								{CALL_EVALUATION_TABS.map((meta) => {
+								{visibleTabs.map((meta) => {
 									const isSelected = selectedTab === meta.key;
 									const Icon = meta.icon;
 									const badge = (
@@ -375,9 +380,10 @@ export default function ConversationEvaluations() {
 							{selectedTab === 'compliance' && (
 								<CompliancePanel compliance={call.compliance} />
 							)}
-							{selectedTab === 'business-insights' && (
-								<BusinessInsightsPanel business={call.business} />
-							)}
+							{selectedTab === 'business-insights' &&
+								previewRole !== 'agent' && (
+									<BusinessInsightsPanel business={call.business} />
+								)}
 						</Stack>
 					</Grid.Col>
 				</Grid>
