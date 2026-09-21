@@ -1,5 +1,4 @@
-import { Badge, Group, Paper, Stack, Text, ThemeIcon } from '@mantine/core';
-import { IconLock } from '@tabler/icons-react';
+import { Group, Paper, Stack, Text, ThemeIcon } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import type { RolePlayModel } from '~/models/qa';
 import {
@@ -11,15 +10,10 @@ import classes from './Cards.module.css';
 
 interface RolePlayModelCardProps {
 	model: RolePlayModel;
-	locked: boolean;
 	onOpen: () => void;
 }
 
-export function RolePlayModelCard({
-	model,
-	locked,
-	onOpen,
-}: RolePlayModelCardProps) {
+export function RolePlayModelCard({ model, onOpen }: RolePlayModelCardProps) {
 	const { t } = useTranslation('qa.lms');
 	const personaMeta = ROLE_PLAY_PERSONA_META[model.persona];
 	const PersonaIcon = personaMeta.icon;
@@ -29,36 +23,24 @@ export function RolePlayModelCard({
 			withBorder
 			p='md'
 			radius='md'
-			className={locked ? undefined : classes.pointer}
-			opacity={locked ? 0.6 : 1}
-			onClick={locked ? undefined : onOpen}
+			className={classes.pointer}
+			onClick={onOpen}
+			h='100%'
 		>
 			<Stack gap='xs'>
-				<Group justify='space-between' align='flex-start' wrap='nowrap'>
-					<Group gap='xs' align='flex-start' wrap='nowrap' flex={1} miw={0}>
-						<ThemeIcon size='md' variant='light' color='gray'>
-							<PersonaIcon size={16} />
-						</ThemeIcon>
-						<Stack gap={2} flex={1} miw={0}>
-							<Text fw={600} size='sm'>
-								{model.name}
-							</Text>
-							<Text size='xs' c='dimmed'>
-								{t(personaMeta.labelKey)} ·{' '}
-								{t(ROLE_PLAY_DIFFICULTY_META[model.difficulty].labelKey)}
-							</Text>
-						</Stack>
-					</Group>
-					{locked && (
-						<Badge
-							size='xs'
-							color='gray'
-							variant='light'
-							leftSection={<IconLock size={12} />}
-						>
-							{t('agent.rolePlay.lockedBadge')}
-						</Badge>
-					)}
+				<Group gap='xs' align='flex-start' wrap='nowrap'>
+					<ThemeIcon size='md' variant='light' color='gray'>
+						<PersonaIcon size={16} />
+					</ThemeIcon>
+					<Stack gap={2} flex={1} miw={0}>
+						<Text fw={600} size='sm'>
+							{model.name}
+						</Text>
+						<Text size='xs' c='dimmed'>
+							{t(personaMeta.labelKey)} ·{' '}
+							{t(ROLE_PLAY_DIFFICULTY_META[model.difficulty].labelKey)}
+						</Text>
+					</Stack>
 				</Group>
 
 				<AreaBadge area={model.area} subItem={model.subItem} size='xs' />
@@ -66,12 +48,6 @@ export function RolePlayModelCard({
 				<Text size='xs' c='dimmed'>
 					{model.description}
 				</Text>
-
-				{locked && (
-					<Text size='xs' c='dimmed' fs='italic'>
-						{t('agent.rolePlay.lockedHint')}
-					</Text>
-				)}
 			</Stack>
 		</Paper>
 	);
