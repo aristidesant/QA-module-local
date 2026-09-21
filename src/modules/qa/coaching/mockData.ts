@@ -7,6 +7,8 @@ import type {
 	CoachingCohort,
 	CoachingRule,
 	CoachingSessionRecord,
+	CoachRole,
+	EvaluationArea,
 	RuleCondition,
 	RuleScope,
 } from '~/models/qa';
@@ -26,7 +28,9 @@ const emptyScope = (): RuleScope => ({
 	campaignTypes: [],
 });
 
-const condition = (partial: Partial<RuleCondition> & Pick<RuleCondition, 'id' | 'metricId'>): RuleCondition => ({
+const condition = (
+	partial: Partial<RuleCondition> & Pick<RuleCondition, 'id' | 'metricId'>
+): RuleCondition => ({
 	subItem: null,
 	mode: 'THRESHOLD',
 	operator: 'LT',
@@ -51,7 +55,13 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 		status: 'ACTIVE',
 		area: 'COMPLIANCE',
 		conditions: [
-			condition({ id: 'cr-001-c1', metricId: 'COMPLIANCE_OVERALL_SCORE', operator: 'LT', value: 85, window: 'LAST_14_DAYS' }),
+			condition({
+				id: 'cr-001-c1',
+				metricId: 'COMPLIANCE_OVERALL_SCORE',
+				operator: 'LT',
+				value: 85,
+				window: 'LAST_14_DAYS',
+			}),
 		],
 		conditionLogic: 'ALL',
 		scope: emptyScope(),
@@ -69,7 +79,12 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 30,
-		stats: { triggeredLast30Days: 6, agentsAffected: 5, improvedRate: 60, lastTriggeredAt: '2026-09-10T08:00:00Z' },
+		stats: {
+			triggeredLast30Days: 6,
+			agentsAffected: 5,
+			improvedRate: 60,
+			lastTriggeredAt: '2026-09-10T08:00:00Z',
+		},
 		createdBy: 'Elena Ruiz',
 		createdByRole: 'QA_MANAGER',
 		createdAt: CREATED_AT,
@@ -107,7 +122,12 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 21,
-		stats: { triggeredLast30Days: 3, agentsAffected: 3, improvedRate: 67, lastTriggeredAt: '2026-09-11T10:30:00Z' },
+		stats: {
+			triggeredLast30Days: 3,
+			agentsAffected: 3,
+			improvedRate: 67,
+			lastTriggeredAt: '2026-09-11T10:30:00Z',
+		},
 		createdBy: 'Maria García',
 		createdByRole: 'SUPERVISOR',
 		createdAt: CREATED_AT,
@@ -148,7 +168,12 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 14,
-		stats: { triggeredLast30Days: 2, agentsAffected: 2, improvedRate: 100, lastTriggeredAt: '2026-07-20T09:00:00Z' },
+		stats: {
+			triggeredLast30Days: 2,
+			agentsAffected: 2,
+			improvedRate: 100,
+			lastTriggeredAt: '2026-07-20T09:00:00Z',
+		},
 		createdBy: 'Maria García',
 		createdByRole: 'SUPERVISOR',
 		createdAt: CREATED_AT,
@@ -157,7 +182,8 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 	{
 		id: 'cr-004',
 		name: 'Unhandled objections above 20% → Sales path',
-		description: 'Sales agents who leave more than one objection in five unanswered are enrolled in the sales path.',
+		description:
+			'Sales agents who leave more than one objection in five unanswered are enrolled in the sales path.',
 		status: 'ACTIVE',
 		area: 'BUSINESS_INSIGHTS',
 		conditions: [
@@ -185,7 +211,12 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 45,
-		stats: { triggeredLast30Days: 4, agentsAffected: 4, improvedRate: 50, lastTriggeredAt: '2026-09-02T09:00:00Z' },
+		stats: {
+			triggeredLast30Days: 4,
+			agentsAffected: 4,
+			improvedRate: 50,
+			lastTriggeredAt: '2026-09-02T09:00:00Z',
+		},
 		createdBy: 'Elena Ruiz',
 		createdByRole: 'QA_MANAGER',
 		createdAt: CREATED_AT,
@@ -194,7 +225,8 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 	{
 		id: 'cr-005',
 		name: 'Do-Not-Call violation → DNC refresher + QA Manager session',
-		description: 'A single do-not-call violation assigns the refresher within three days and books a session with the QA manager.',
+		description:
+			'A single do-not-call violation assigns the refresher within three days and books a session with the QA manager.',
 		status: 'ACTIVE',
 		area: 'COMPLIANCE',
 		conditions: [
@@ -223,7 +255,12 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP, checkpointDays: [7, 30] },
 		cooldownDays: 7,
-		stats: { triggeredLast30Days: 1, agentsAffected: 1, improvedRate: null, lastTriggeredAt: '2026-08-27T15:00:00Z' },
+		stats: {
+			triggeredLast30Days: 1,
+			agentsAffected: 1,
+			improvedRate: null,
+			lastTriggeredAt: '2026-08-27T15:00:00Z',
+		},
 		createdBy: 'Elena Ruiz',
 		createdByRole: 'QA_MANAGER',
 		createdAt: CREATED_AT,
@@ -232,7 +269,8 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 	{
 		id: 'cr-006',
 		name: 'QA score dropped 10% → QA Essentials',
-		description: 'A ten-percent drop in the monthly QA score enrols the agent in the QA Essentials path.',
+		description:
+			'A ten-percent drop in the monthly QA score enrols the agent in the QA Essentials path.',
 		status: 'PAUSED',
 		area: 'QUALITY_ASSURANCE',
 		conditions: [
@@ -261,7 +299,12 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 30,
-		stats: { triggeredLast30Days: 0, agentsAffected: 0, improvedRate: null, lastTriggeredAt: null },
+		stats: {
+			triggeredLast30Days: 0,
+			agentsAffected: 0,
+			improvedRate: null,
+			lastTriggeredAt: null,
+		},
 		createdBy: 'Maria García',
 		createdByRole: 'SUPERVISOR',
 		createdAt: CREATED_AT,
@@ -270,11 +313,18 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 	{
 		id: 'cr-007',
 		name: 'Auto-fail → critical errors video',
-		description: 'Any auto-failed call assigns the critical-error prevention video within five days.',
+		description:
+			'Any auto-failed call assigns the critical-error prevention video within five days.',
 		status: 'DRAFT',
 		area: 'QUALITY_ASSURANCE',
 		conditions: [
-			condition({ id: 'cr-007-c1', metricId: 'QA_AUTO_FAIL_COUNT', operator: 'GTE', value: 1, window: 'PER_CALL' }),
+			condition({
+				id: 'cr-007-c1',
+				metricId: 'QA_AUTO_FAIL_COUNT',
+				operator: 'GTE',
+				value: 1,
+				window: 'PER_CALL',
+			}),
 		],
 		conditionLogic: 'ALL',
 		scope: emptyScope(),
@@ -292,7 +342,12 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 14,
-		stats: { triggeredLast30Days: 0, agentsAffected: 0, improvedRate: null, lastTriggeredAt: null },
+		stats: {
+			triggeredLast30Days: 0,
+			agentsAffected: 0,
+			improvedRate: null,
+			lastTriggeredAt: null,
+		},
 		createdBy: 'Elena Ruiz',
 		createdByRole: 'QA_MANAGER',
 		createdAt: CREATED_AT,
@@ -318,7 +373,9 @@ function buildRosterSessions(): CoachingSessionRecord[] {
 			const isQaManager = legacy.coachRole === 'QA_MANAGER';
 			const status = STATUS_MAP[legacy.status];
 			const ack = rand() < 0.7;
-			const ackAt = ack ? `${day(legacy.date.slice(0, 10), 1)}T09:00:00Z` : null;
+			const ackAt = ack
+				? `${day(legacy.date.slice(0, 10), 1)}T09:00:00Z`
+				: null;
 			const done = rand() < 0.5;
 
 			out.push({
@@ -332,7 +389,9 @@ function buildRosterSessions(): CoachingSessionRecord[] {
 				date: legacy.date,
 				durationMin: 30,
 				topic: legacy.topic,
-				area: legacy.linkedDimension ? DIMENSION_TO_AREA[legacy.linkedDimension] : null,
+				area: legacy.linkedDimension
+					? DIMENSION_TO_AREA[legacy.linkedDimension]
+					: null,
 				subItem: null,
 				evidenceCallIds: status === 'COMPLETED' ? ['call-001'] : [],
 				talkingPoints: [
@@ -346,14 +405,19 @@ function buildRosterSessions(): CoachingSessionRecord[] {
 								{
 									id: `${legacy.id}-ai1`,
 									text: legacy.outcome ?? 'Practise on live calls this week',
-									dueDate: legacy.followUpDate ?? day(legacy.date.slice(0, 10), 14),
+									dueDate:
+										legacy.followUpDate ?? day(legacy.date.slice(0, 10), 14),
 									done,
 									acknowledgedByAgent: ack,
 									acknowledgedAt: ackAt,
 								},
 							]
 						: [],
-				agentCommitment: { acknowledged: status === 'COMPLETED' ? ack : false, acknowledgedAt: ackAt, comment: null },
+				agentCommitment: {
+					acknowledged: status === 'COMPLETED' ? ack : false,
+					acknowledgedAt: ackAt,
+					comment: null,
+				},
 				status,
 				outcome: legacy.outcome ?? null,
 				followUpDate: legacy.followUpDate ?? null,
@@ -367,7 +431,131 @@ function buildRosterSessions(): CoachingSessionRecord[] {
 	return out;
 }
 
+/**
+ * AGT-004 (John Smith) is the persona whose own Coaching page the demo shows,
+ * so — unlike every other agent, who only gets the generic 2-session roster
+ * template above — he gets a real history: one session roughly every 3 weeks
+ * since he started being tracked, enough to need pagination on Past sessions.
+ * Ends 3 weeks before the earliest roster-template session (2026-06-18) so
+ * the two runs read as one continuous history with no gap or overlap.
+ */
+function buildAgentHistoryAGT004(): CoachingSessionRecord[] {
+	const rand = seeded(4004);
+	const topics: {
+		topic: string;
+		area: EvaluationArea;
+		subItem: string | null;
+		coachRole: CoachRole;
+	}[] = [
+		{
+			topic: 'Opening & identification',
+			area: 'QUALITY_ASSURANCE',
+			subItem: 'openingIdentification',
+			coachRole: 'SUPERVISOR',
+		},
+		{
+			topic: 'Closing techniques',
+			area: 'QUALITY_ASSURANCE',
+			subItem: 'closing',
+			coachRole: 'SUPERVISOR',
+		},
+		{
+			topic: 'Mandatory disclosures',
+			area: 'COMPLIANCE',
+			subItem: 'mandatoryDisclosures',
+			coachRole: 'QA_MANAGER',
+		},
+		{
+			topic: 'Competitor objections',
+			area: 'BUSINESS_INSIGHTS',
+			subItem: 'COMPETITOR_PLUS_COST',
+			coachRole: 'SUPERVISOR',
+		},
+		{
+			topic: 'Needs assessment',
+			area: 'QUALITY_ASSURANCE',
+			subItem: 'needsAssessment',
+			coachRole: 'SUPERVISOR',
+		},
+		{
+			topic: 'Objection handling',
+			area: 'QUALITY_ASSURANCE',
+			subItem: 'objectionHandling',
+			coachRole: 'SUPERVISOR',
+		},
+	];
+	const outcomes = [
+		'Practised 3 role-plays; agent used the new opener on the next shift',
+		'Agreed to lead with the disclosure before the pitch',
+		'Reviewed 2 recorded calls together; agent spotted the tone shift himself',
+		'Roleplayed the acknowledge-then-ask sequence',
+		'Walked through the objection script; checked in again the following week',
+	];
+	const missedReasons =
+		'Agent was on an escalation call; rescheduled the same week.';
+
+	const SESSION_COUNT = 12;
+	const out: CoachingSessionRecord[] = [];
+
+	for (let i = SESSION_COUNT; i >= 1; i--) {
+		const meta = topics[i % topics.length];
+		const isQaManager = meta.coachRole === 'QA_MANAGER';
+		const date = day('2026-06-18', -21 * i);
+		const missed = i !== SESSION_COUNT && rand() < 0.12;
+		const ackDelayDays = 1 + Math.floor(rand() * 3);
+
+		out.push({
+			id: `coa-a04-hist-${i}`,
+			agentId: 'AGT-004',
+			agentName: 'John Smith',
+			coachId: isQaManager ? 'QAM-001' : 'SUP-001',
+			coachName: isQaManager ? 'Elena Ruiz' : 'Maria García',
+			coachRole: meta.coachRole,
+			type: 'ONE_ON_ONE',
+			date: `${date}T${10 + Math.floor(rand() * 6)}:00:00Z`,
+			durationMin: 30,
+			topic: meta.topic,
+			area: meta.area,
+			subItem: meta.subItem,
+			evidenceCallIds: [],
+			talkingPoints: [
+				`Review last week's ${meta.topic.toLowerCase()} calls`,
+				'Agree one behaviour to practise before the next session',
+			],
+			notes: '',
+			actionItems: missed
+				? []
+				: [
+						{
+							id: `coa-a04-hist-${i}-ai1`,
+							text: outcomes[i % outcomes.length],
+							dueDate: day(date, 14),
+							done: true,
+							acknowledgedByAgent: true,
+							acknowledgedAt: `${day(date, ackDelayDays)}T09:00:00Z`,
+						},
+					],
+			agentCommitment: missed
+				? { acknowledged: false, acknowledgedAt: null, comment: null }
+				: {
+						acknowledged: true,
+						acknowledgedAt: `${day(date, ackDelayDays)}T09:00:00Z`,
+						comment: null,
+					},
+			status: missed ? 'MISSED' : 'COMPLETED',
+			outcome: missed ? missedReasons : outcomes[i % outcomes.length],
+			followUpDate: missed ? null : day(date, 14),
+			linkedAssignmentIds: [],
+			ruleId: null,
+			cohortId: null,
+		});
+	}
+
+	return out;
+}
+
 const CURATED_SESSIONS: CoachingSessionRecord[] = [
+	...buildAgentHistoryAGT004(),
 	{
 		id: 'coa-a04-rule',
 		agentId: 'AGT-004',
@@ -389,7 +577,11 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 		],
 		notes: '',
 		actionItems: [],
-		agentCommitment: { acknowledged: false, acknowledgedAt: null, comment: null },
+		agentCommitment: {
+			acknowledged: false,
+			acknowledgedAt: null,
+			comment: null,
+		},
 		status: 'SCHEDULED',
 		outcome: null,
 		followUpDate: null,
@@ -411,10 +603,17 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 		area: 'SENTIMENT_EMOTION',
 		subItem: 'WELLBEING',
 		evidenceCallIds: [],
-		talkingPoints: ['Listen together to two calls from the busiest hour', 'Agree a micro-break routine'],
+		talkingPoints: [
+			'Listen together to two calls from the busiest hour',
+			'Agree a micro-break routine',
+		],
 		notes: '',
 		actionItems: [],
-		agentCommitment: { acknowledged: false, acknowledgedAt: null, comment: null },
+		agentCommitment: {
+			acknowledged: false,
+			acknowledgedAt: null,
+			comment: null,
+		},
 		status: 'SCHEDULED',
 		outcome: null,
 		followUpDate: null,
@@ -436,7 +635,10 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 		area: 'COMPLIANCE',
 		subItem: 'noLlamarList',
 		evidenceCallIds: ['call-001'],
-		talkingPoints: ['Walk through the DNC pre-call check', 'Review the flagged call'],
+		talkingPoints: [
+			'Walk through the DNC pre-call check',
+			'Review the flagged call',
+		],
 		notes: 'Agent was receptive; the miss came from a rushed queue.',
 		actionItems: [
 			{
@@ -456,9 +658,14 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 				acknowledgedAt: null,
 			},
 		],
-		agentCommitment: { acknowledged: false, acknowledgedAt: null, comment: null },
+		agentCommitment: {
+			acknowledged: false,
+			acknowledgedAt: null,
+			comment: null,
+		},
 		status: 'COMPLETED',
-		outcome: 'Reviewed the DNC check step; agent will use the pre-call checklist',
+		outcome:
+			'Reviewed the DNC check step; agent will use the pre-call checklist',
 		followUpDate: '2026-09-18',
 		linkedAssignmentIds: [],
 		ruleId: 'cr-005',
@@ -478,10 +685,17 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 		area: 'SENTIMENT_EMOTION',
 		subItem: null,
 		evidenceCallIds: [],
-		talkingPoints: ['Share one recovered call each', 'Practise empathy statements in pairs'],
+		talkingPoints: [
+			'Share one recovered call each',
+			'Practise empathy statements in pairs',
+		],
 		notes: '',
 		actionItems: [],
-		agentCommitment: { acknowledged: false, acknowledgedAt: null, comment: null },
+		agentCommitment: {
+			acknowledged: false,
+			acknowledgedAt: null,
+			comment: null,
+		},
 		status: 'SCHEDULED',
 		outcome: null,
 		followUpDate: null,
@@ -514,7 +728,8 @@ export const COACHING_COHORT_SEEDS: CoachingCohort[] = [
 	{
 		id: 'coh-002',
 		name: 'Compliance watchlist — August',
-		description: 'Agents who fell below the compliance threshold during August.',
+		description:
+			'Agents who fell below the compliance threshold during August.',
 		agentIds: ['AGT-006', 'AGT-007', 'AGT-010', 'AGT-017'],
 		pathId: 'path-compliance',
 		ruleIds: ['cr-001'],
@@ -546,7 +761,8 @@ export const COACHING_ACTIVITY_SEEDS: CoachingActivityEntry[] = [
 		agentId: 'AGT-004',
 		agentName: 'John Smith',
 		title: 'Negative emotion share above 30% → De-escalation',
-		description: 'Negative emotion share 34% over the last 14 days · 2 items assigned',
+		description:
+			'Negative emotion share 34% over the last 14 days · 2 items assigned',
 		date: '2026-09-11T10:30:00Z',
 		area: 'SENTIMENT_EMOTION',
 		link: '?tab=agents&agentId=AGT-004',
