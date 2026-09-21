@@ -7,7 +7,6 @@ import {
 	QualityAssuranceCard,
 	ComplianceCard,
 	SentimentEmotionSplitCard,
-	SentimentTrendChart,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
 } from '../components';
@@ -18,7 +17,7 @@ import {
 	buildAgentDashboardMetrics,
 } from '~/modules/qa/calls/agentMetrics';
 import type { CallIssueKey } from '~/modules/qa/calls/issues';
-import { AGENT_SENTIMENT_TREND, BEST_WORST_CALLS } from '../mockData';
+import { BEST_WORST_CALLS } from '../mockData';
 import styles from '../Dashboard.module.css';
 
 /**
@@ -136,23 +135,13 @@ export const NewAgentDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Sentiment trend & quick insights */}
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					<SectionCard
-						title='Sentiment Trend'
-						description='4-week sentiment progression'
-						fullHeight
-					>
-						<SentimentTrendChart data={AGENT_SENTIMENT_TREND} />
-					</SectionCard>
-					<SectionCard
-						title='Quick Insights'
-						description='Performance recommendations and analysis'
-						fullHeight
-					>
-						<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
-					</SectionCard>
-				</SimpleGrid>
+				{/* 3. Quick insights */}
+				<SectionCard
+					title='Quick Insights'
+					description='Performance recommendations and analysis'
+				>
+					<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
+				</SectionCard>
 
 				{/* 4. Best & worst calls */}
 				<SectionCard
