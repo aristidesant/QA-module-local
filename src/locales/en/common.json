@@ -178,10 +178,7 @@
 			"rankings": "Team Ranking",
 			"lms": "My Learning",
 			"analytics": "Analytics",
-			"disputes": "Disputes",
-			"profile": "Profile",
-			"groupMyWork": "My Work",
-			"groupInsights": "Insights"
+			"profile": "Profile"
 		},
 		"qamanager": {
 			"dashboard": "Dashboard",
