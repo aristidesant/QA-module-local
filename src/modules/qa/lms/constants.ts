@@ -222,13 +222,8 @@ export const DIMENSION_TO_AREA: Record<DimensionKey, EvaluationArea> = {
 	business: 'BUSINESS_INSIGHTS',
 };
 
-export type AgentLmsTab = 'assignments' | 'paths' | 'catalog' | 'history';
-export const AGENT_LMS_TABS: AgentLmsTab[] = [
-	'assignments',
-	'paths',
-	'catalog',
-	'history',
-];
+export type AgentLmsTab = 'assignments' | 'history';
+export const AGENT_LMS_TABS: AgentLmsTab[] = ['assignments', 'history'];
 
 export const AGENT_LMS_PATH = '/qa/agent/lms';
 export const agentContentPath = (contentId: string) =>

@@ -109,8 +109,6 @@
 		},
 		"tabs": {
 			"assignments": "My assignments",
-			"paths": "Learning paths",
-			"catalog": "Catalogue",
 			"history": "History"
 		},
 		"assignments": {
