@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
@@ -9,6 +9,8 @@ import {
 	SentimentEmotionSplitCard,
 	BestWorstCallsTable,
 	CoachingLearningWidget,
+	CommitLearningModal,
+	type PendingLearningItem,
 } from '../components';
 import { AGENT_PERSONA_ID } from '~/modules/qa/team/constants';
 import {
@@ -26,9 +28,10 @@ import {
 	selectAssignments,
 	selectContent,
 } from '~/stores/qa/lmsStore';
-import { groupAssignments } from '~/modules/qa/lms/helpers';
+import { groupAssignments, needsResponse } from '~/modules/qa/lms/helpers';
 import { agentContentPath } from '~/modules/qa/lms/constants';
 import { coachingPath } from '~/modules/qa/inbox/constants';
+import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { BEST_WORST_CALLS } from '../mockData';
 import styles from '../Dashboard.module.css';
 
@@ -64,6 +67,9 @@ export const NewAgentDashboard: React.FC = () => {
 	const cohorts = useCoachingStore(selectCohorts);
 	const assignments = useLmsStore(selectAssignments);
 	const content = useLmsStore(selectContent);
+	const [commitTarget, setCommitTarget] = useState<PendingLearningItem | null>(
+		null
+	);
 
 	const lastCoachingSession = useMemo(() => {
 		const myCohortIds = cohorts
@@ -96,6 +102,18 @@ export const NewAgentDashboard: React.FC = () => {
 	/** Opens My Calls filtered on one issue, over the same 30-day window the cards summarise. */
 	const openIssue = (issue: CallIssueKey) =>
 		navigate(`${MY_CALLS_PATH}?tab=calls&issue=${issue}&period=30d`);
+
+	/** Confirms the agent's commitment to the supervisor's due date before opening the material. */
+	const handleCommitLearning = () => {
+		if (!commitTarget) return;
+		const { assignment } = commitTarget;
+		if (needsResponse(assignment)) {
+			useLmsStore.getState().accept(assignment.id);
+			notifySuccess('Commitment confirmed');
+		}
+		navigate(agentContentPath(assignment.contentId));
+		setCommitTarget(null);
+	};
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -170,9 +188,7 @@ export const NewAgentDashboard: React.FC = () => {
 							lastSession={lastCoachingSession}
 							pendingLearning={pendingLearning}
 							onOpenCoaching={() => navigate(coachingPath('agent'))}
-							onOpenLearning={(contentId) =>
-								navigate(agentContentPath(contentId))
-							}
+							onOpenLearning={(item) => setCommitTarget(item)}
 						/>
 					</SectionCard>
 					<SectionCard
@@ -184,6 +200,13 @@ export const NewAgentDashboard: React.FC = () => {
 					</SectionCard>
 				</SimpleGrid>
 			</Stack>
+
+			<CommitLearningModal
+				item={commitTarget}
+				opened={commitTarget !== null}
+				onClose={() => setCommitTarget(null)}
+				onCommit={handleCommitLearning}
+			/>
 		</ContentContainer>
 	);
 };

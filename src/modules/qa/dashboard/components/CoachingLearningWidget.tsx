@@ -29,7 +29,7 @@ interface CoachingLearningWidgetProps {
 	/** Mandatory assignments not yet completed, most urgent first. */
 	pendingLearning: PendingLearningItem[];
 	onOpenCoaching: () => void;
-	onOpenLearning: (contentId: string) => void;
+	onOpenLearning: (item: PendingLearningItem) => void;
 }
 
 /**
@@ -103,7 +103,8 @@ export function CoachingLearningWidget({
 					</Text>
 				) : (
 					<Stack gap='xs'>
-						{pendingLearning.map(({ assignment, content }) => {
+						{pendingLearning.map((item) => {
+							const { assignment, content } = item;
 							const overdue = isOverdue(assignment);
 							const pending = needsResponse(assignment);
 							return (
@@ -113,7 +114,7 @@ export function CoachingLearningWidget({
 									p='sm'
 									radius='md'
 									className={cardStyles.clickable}
-									onClick={() => onOpenLearning(assignment.contentId)}
+									onClick={() => onOpenLearning(item)}
 								>
 									<Stack gap={4}>
 										<Group

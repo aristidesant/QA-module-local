@@ -70,6 +70,7 @@ export { BestWorstCallsTable } from './BestWorstCallsTable';
 // Agent dashboard: last coaching session + pending learning material
 export { CoachingLearningWidget } from './CoachingLearningWidget';
 export type { PendingLearningItem } from './CoachingLearningWidget';
+export { CommitLearningModal } from './CommitLearningModal';
 
 // Task 2: Burnout Risk Widget for agent wellbeing monitoring
 export { default as BurnoutRiskWidget } from './BurnoutRiskWidget';
