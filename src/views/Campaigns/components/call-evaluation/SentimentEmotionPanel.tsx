@@ -1,6 +1,5 @@
 import {
 	Badge,
-	ColorSwatch,
 	Grid,
 	Group,
 	Paper,
@@ -9,7 +8,6 @@ import {
 	Stack,
 	Text,
 	ThemeIcon,
-	Tooltip,
 } from '@mantine/core';
 import {
 	IconArrowRight,
@@ -22,11 +20,7 @@ import {
 	IconHeartHandshake,
 } from '@tabler/icons-react';
 import { SectionCard } from '~/components/SectionCard';
-import {
-	EMOTION_LABELS,
-	SENTIMENT_CATEGORIES,
-	SENTIMENT_CATEGORY_ORDER,
-} from '../../constants';
+import { EMOTION_LABELS, SENTIMENT_CATEGORIES } from '../../constants';
 import type { CallSentimentEvaluation } from '../../types';
 import { formatDuration, getScoreColor } from './scoreColor';
 import { EvidenceQuote } from './EvidenceQuote';
@@ -68,43 +62,6 @@ export function SentimentEmotionPanel({
 							{EMOTION_LABELS[data.dominantEmotion]}
 						</Text>
 					</Stack>
-				</Group>
-
-				{/* Category distribution */}
-				<Text size='xs' fw={600} c='dimmed' tt='uppercase' mt='md' mb='xs'>
-					Sentiment categories
-				</Text>
-				<Progress.Root size='lg' mb='xs'>
-					{SENTIMENT_CATEGORY_ORDER.map((key) => {
-						const pct = data.categories[key];
-						if (pct === 0) return null;
-						const meta = SENTIMENT_CATEGORIES[key];
-						return (
-							<Tooltip key={key} label={`${meta.label} ${pct}%`}>
-								<Progress.Section value={pct} color={meta.color} />
-							</Tooltip>
-						);
-					})}
-				</Progress.Root>
-
-				{/* Legend */}
-				<Group gap='sm'>
-					{SENTIMENT_CATEGORY_ORDER.map((key) => {
-						const pct = data.categories[key];
-						if (pct === 0) return null;
-						const meta = SENTIMENT_CATEGORIES[key];
-						return (
-							<Group key={key} gap={4}>
-								<ColorSwatch
-									size={10}
-									color={`var(--mantine-color-${meta.color}-6)`}
-								/>
-								<Text size='xs'>
-									{meta.label} {pct}%
-								</Text>
-							</Group>
-						);
-					})}
 				</Group>
 			</SectionCard>
 		);
