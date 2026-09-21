@@ -222,7 +222,7 @@ export function SentimentEmotionPanel({
 							<Badge
 								variant='light'
 								color={
-									sentiment.recovery.improvementDelta >= 0 ? 'teal' : 'red'
+									sentiment.recovery.improvementDelta >= 0 ? 'green' : 'red'
 								}
 							>
 								{sentiment.recovery.improvementDelta >= 0 ? '+' : ''}

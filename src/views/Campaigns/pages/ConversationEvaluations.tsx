@@ -178,7 +178,7 @@ export default function ConversationEvaluations() {
 									const badge = (
 										<Badge
 											variant={isSelected ? 'white' : 'light'}
-											color={isSelected ? undefined : meta.color}
+											color={isSelected ? undefined : 'gray'}
 											size='sm'
 										>
 											{getTabBadge()}
@@ -188,7 +188,7 @@ export default function ConversationEvaluations() {
 										<Button
 											key={meta.key}
 											variant={isSelected ? 'filled' : 'light'}
-											color={isSelected ? meta.color : 'gray'}
+											color={isSelected ? 'green' : 'gray'}
 											onClick={() => setSelectedTab(meta.key)}
 											leftSection={<Icon size={18} />}
 											rightSection={badge}
