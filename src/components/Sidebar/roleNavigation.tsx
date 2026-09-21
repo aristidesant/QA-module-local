@@ -77,6 +77,13 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.lms',
 	},
 	{
+		key: 'agent-coaching',
+		label: 'sidebar.agent.coaching',
+		icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
+		to: '/qa/agent/coaching',
+		i18nNamespace: 'qa.lms',
+	},
+	{
 		key: 'agent-analytics',
 		label: 'sidebar.agent.analytics',
 		icon: <IconChartLine size={20} className={styles.menuIcon} />,

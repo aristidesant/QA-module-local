@@ -55,8 +55,7 @@ export const disputesListPath = (role: InboxRole) =>
 export const rankingsBasePath = (role: InboxRole) => `/qa/${role}/rankings`;
 export const analyticsPath = (role: InboxRole) =>
 	role === 'agent' ? '/qa/agent/analytics' : `/qa/${role}/analytics`;
-export const coachingPath = (role: InboxRole) =>
-	role === 'agent' ? '/qa/agent/lms?tab=coaching' : `/qa/${role}/coaching`;
+export const coachingPath = (role: InboxRole) => `/qa/${role}/coaching`;
 export const lmsPath = (role: InboxRole) =>
 	role === 'agent' ? '/qa/agent/lms' : `/qa/${role}/lms`;
 export const customersPath = (role: InboxRole) =>

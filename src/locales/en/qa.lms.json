@@ -12,7 +12,11 @@
 		"QUIZ": "Quiz",
 		"SCENARIO": "Practice scenario"
 	},
-	"levels": { "BEGINNER": "Beginner", "INTERMEDIATE": "Intermediate", "ADVANCED": "Advanced" },
+	"levels": {
+		"BEGINNER": "Beginner",
+		"INTERMEDIATE": "Intermediate",
+		"ADVANCED": "Advanced"
+	},
 	"cta": {
 		"watch": "Watch",
 		"read": "Read",
@@ -107,8 +111,7 @@
 			"assignments": "My assignments",
 			"paths": "Learning paths",
 			"catalog": "Catalogue",
-			"history": "History",
-			"coaching": "Coaching"
+			"history": "History"
 		},
 		"assignments": {
 			"needsResponse": "Needs your response",
@@ -191,6 +194,8 @@
 			"empty": "Nothing completed yet."
 		},
 		"coaching": {
+			"title": "Coaching",
+			"description": "Your scheduled sessions, past sessions and the commitments you've made.",
 			"upcoming": "Upcoming sessions",
 			"upcomingDescription": "Sessions scheduled with your supervisor or the QA manager.",
 			"commitments": "My commitments",
@@ -204,7 +209,11 @@
 				"status": "Status",
 				"outcome": "Outcome"
 			},
-			"status": { "scheduled": "Scheduled", "completed": "Completed", "missed": "Missed" },
+			"status": {
+				"scheduled": "Scheduled",
+				"completed": "Completed",
+				"missed": "Missed"
+			},
 			"acknowledge": "I commit to this",
 			"acknowledged": "Committed on {{date}}",
 			"linkedMaterial": "Linked material",
@@ -271,7 +280,10 @@
 		"delta": "{{value}} points"
 	},
 	"manager": {
-		"eyebrow": { "supervisor": "Supervisor · Team 1", "qa-manager": "QA Manager · All teams" },
+		"eyebrow": {
+			"supervisor": "Supervisor · Team 1",
+			"qa-manager": "QA Manager · All teams"
+		},
 		"title": "Learning",
 		"description": "Browse the catalogue, assign material or paths, and follow completion and acceptance.",
 		"assignButton": "Assign material",
@@ -314,7 +326,11 @@
 				"status": "Status",
 				"updated": "Updated"
 			},
-			"contentStatus": { "PUBLISHED": "Published", "DRAFT": "Draft", "ARCHIVED": "Archived" },
+			"contentStatus": {
+				"PUBLISHED": "Published",
+				"DRAFT": "Draft",
+				"ARCHIVED": "Archived"
+			},
 			"actions": {
 				"assign": "Assign",
 				"publish": "Publish",
@@ -322,7 +338,10 @@
 				"restore": "Restore",
 				"preview": "Preview as agent"
 			},
-			"notifications": { "published": "Material published", "archived": "Material archived" },
+			"notifications": {
+				"published": "Material published",
+				"archived": "Material archived"
+			},
 			"empty": "No material matches these filters.",
 			"count": "{{count}} items"
 		},
@@ -347,7 +366,13 @@
 			"preview": "Preview",
 			"questions": "Questions",
 			"chapters": "Chapters",
-			"columns": { "agent": "Agent", "team": "Team", "status": "Status", "acceptance": "Acceptance", "due": "Due" }
+			"columns": {
+				"agent": "Agent",
+				"team": "Team",
+				"status": "Status",
+				"acceptance": "Acceptance",
+				"due": "Due"
+			}
 		},
 		"paths": {
 			"title": "Learning paths",
@@ -369,7 +394,11 @@
 					"due": "Due",
 					"status": "Status"
 				},
-				"status": { "inProgress": "In progress", "completed": "Completed", "notStarted": "Not started" },
+				"status": {
+					"inProgress": "In progress",
+					"completed": "Completed",
+					"notStarted": "Not started"
+				},
 				"empty": "Nobody enrolled yet."
 			}
 		},
@@ -400,7 +429,12 @@
 				"impact": "Impact",
 				"source": "Source"
 			},
-			"sourceShort": { "MANUAL": "Manual", "COACHING_RULE": "Rule", "LEARNING_PATH": "Path", "SELF": "Self" },
+			"sourceShort": {
+				"MANUAL": "Manual",
+				"COACHING_RULE": "Rule",
+				"LEARNING_PATH": "Path",
+				"SELF": "Self"
+			},
 			"rescheduleBanner_one": "{{count}} agent asked for a new deadline",
 			"rescheduleBanner_other": "{{count}} agents asked for a new deadline",
 			"reviewRequests": "Review requests",
@@ -443,7 +477,11 @@
 				"material": "Material",
 				"improved": "Improved"
 			},
-			"series": { "completed": "Completed", "overdue": "Overdue", "open": "Open" },
+			"series": {
+				"completed": "Completed",
+				"overdue": "Overdue",
+				"open": "Open"
+			},
 			"funnel": {
 				"assigned": "Assigned",
 				"accepted": "Accepted",
@@ -464,7 +502,11 @@
 			"material": "Material",
 			"materialPlaceholder": "Pick one or more items",
 			"path": "Learning path",
-			"targetMode": { "agents": "Agents", "team": "Whole team", "cohort": "Cohort" },
+			"targetMode": {
+				"agents": "Agents",
+				"team": "Whole team",
+				"cohort": "Cohort"
+			},
 			"agents": "Agents",
 			"agentsPlaceholder": "Search agents",
 			"team": "Team",

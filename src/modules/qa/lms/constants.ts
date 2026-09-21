@@ -32,23 +32,67 @@ export const LMS_AREAS: LmsArea[] = [
 ];
 
 /** Colors aligned with src/modules/qa/triggers/constants.ts AREA_COLORS. */
-export const LMS_AREA_META: Record<LmsArea, { labelKey: string; color: string; icon: TablerIcon }> = {
-	QUALITY_ASSURANCE: { labelKey: 'areas.QUALITY_ASSURANCE', color: 'cyan', icon: IconClipboardList },
-	COMPLIANCE: { labelKey: 'areas.COMPLIANCE', color: 'grape', icon: IconShieldCheck },
-	SENTIMENT_EMOTION: { labelKey: 'areas.SENTIMENT_EMOTION', color: 'teal', icon: IconMoodSmile },
-	BUSINESS_INSIGHTS: { labelKey: 'areas.BUSINESS_INSIGHTS', color: 'indigo', icon: IconBriefcase },
+export const LMS_AREA_META: Record<
+	LmsArea,
+	{ labelKey: string; color: string; icon: TablerIcon }
+> = {
+	QUALITY_ASSURANCE: {
+		labelKey: 'areas.QUALITY_ASSURANCE',
+		color: 'cyan',
+		icon: IconClipboardList,
+	},
+	COMPLIANCE: {
+		labelKey: 'areas.COMPLIANCE',
+		color: 'grape',
+		icon: IconShieldCheck,
+	},
+	SENTIMENT_EMOTION: {
+		labelKey: 'areas.SENTIMENT_EMOTION',
+		color: 'teal',
+		icon: IconMoodSmile,
+	},
+	BUSINESS_INSIGHTS: {
+		labelKey: 'areas.BUSINESS_INSIGHTS',
+		color: 'indigo',
+		icon: IconBriefcase,
+	},
 	GENERAL: { labelKey: 'areas.GENERAL', color: 'gray', icon: IconSchool },
 };
 
-export const LMS_FORMATS: LmsFormat[] = ['VIDEO', 'DOCUMENT', 'QUIZ', 'SCENARIO'];
+export const LMS_FORMATS: LmsFormat[] = [
+	'VIDEO',
+	'DOCUMENT',
+	'QUIZ',
+	'SCENARIO',
+];
 export const LMS_FORMAT_META: Record<
 	LmsFormat,
 	{ labelKey: string; color: string; icon: TablerIcon; ctaKey: string }
 > = {
-	VIDEO: { labelKey: 'formats.VIDEO', color: 'blue', icon: IconPlayerPlay, ctaKey: 'cta.watch' },
-	DOCUMENT: { labelKey: 'formats.DOCUMENT', color: 'orange', icon: IconBook, ctaKey: 'cta.read' },
-	QUIZ: { labelKey: 'formats.QUIZ', color: 'violet', icon: IconClipboardCheck, ctaKey: 'cta.takeQuiz' },
-	SCENARIO: { labelKey: 'formats.SCENARIO', color: 'pink', icon: IconMasksTheater, ctaKey: 'cta.practice' },
+	VIDEO: {
+		labelKey: 'formats.VIDEO',
+		color: 'blue',
+		icon: IconPlayerPlay,
+		ctaKey: 'cta.watch',
+	},
+	DOCUMENT: {
+		labelKey: 'formats.DOCUMENT',
+		color: 'orange',
+		icon: IconBook,
+		ctaKey: 'cta.read',
+	},
+	QUIZ: {
+		labelKey: 'formats.QUIZ',
+		color: 'violet',
+		icon: IconClipboardCheck,
+		ctaKey: 'cta.takeQuiz',
+	},
+	SCENARIO: {
+		labelKey: 'formats.SCENARIO',
+		color: 'pink',
+		icon: IconMasksTheater,
+		ctaKey: 'cta.practice',
+	},
 };
 
 export const LMS_LEVELS: LmsLevel[] = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'];
@@ -145,7 +189,15 @@ export const SUB_ITEMS_BY_AREA: Record<LmsArea, SubItemKey[]> = {
 		'superintendenciaBancos',
 		'noLlamarList',
 	],
-	SENTIMENT_EMOTION: ['FRUSTRATION', 'ANGER', 'DISAPPOINTMENT', 'SADNESS', 'FEAR', 'RAGE', 'WELLBEING'],
+	SENTIMENT_EMOTION: [
+		'FRUSTRATION',
+		'ANGER',
+		'DISAPPOINTMENT',
+		'SADNESS',
+		'FEAR',
+		'RAGE',
+		'WELLBEING',
+	],
 	BUSINESS_INSIGHTS: [
 		'EARLY_OBJECTION',
 		'UNHANDLED_OBJECTION',
@@ -170,8 +222,14 @@ export const DIMENSION_TO_AREA: Record<DimensionKey, EvaluationArea> = {
 	business: 'BUSINESS_INSIGHTS',
 };
 
-export type AgentLmsTab = 'assignments' | 'paths' | 'catalog' | 'history' | 'coaching';
-export const AGENT_LMS_TABS: AgentLmsTab[] = ['assignments', 'paths', 'catalog', 'history', 'coaching'];
+export type AgentLmsTab = 'assignments' | 'paths' | 'catalog' | 'history';
+export const AGENT_LMS_TABS: AgentLmsTab[] = [
+	'assignments',
+	'paths',
+	'catalog',
+	'history',
+];
 
 export const AGENT_LMS_PATH = '/qa/agent/lms';
-export const agentContentPath = (contentId: string) => `${AGENT_LMS_PATH}/${contentId}`;
+export const agentContentPath = (contentId: string) =>
+	`${AGENT_LMS_PATH}/${contentId}`;

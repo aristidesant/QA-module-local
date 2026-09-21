@@ -1,7 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { Badge, Stack, Tabs } from '@mantine/core';
-import { IconHistory, IconLibrary, IconListCheck, IconRoute, IconSchool } from '@tabler/icons-react';
+import {
+	IconHistory,
+	IconLibrary,
+	IconListCheck,
+	IconRoute,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
 import type { LmsAssignment, LmsContent } from '~/models/qa';
@@ -13,21 +18,23 @@ import {
 	selectEnrollments,
 	selectPaths,
 } from '~/stores/qa/lmsStore';
-import { AGENT_PERSONA, agentContentPath, type AgentLmsTab } from '../constants';
+import {
+	AGENT_PERSONA,
+	agentContentPath,
+	type AgentLmsTab,
+} from '../constants';
 import { RescheduleModal } from '../components/RescheduleModal';
 import { LearningHeader } from './LearningHeader';
 import { AssignmentsTab } from './tabs/AssignmentsTab';
 import { PathsTab } from './tabs/PathsTab';
 import { CatalogTab } from './tabs/CatalogTab';
 import { HistoryTab } from './tabs/HistoryTab';
-import { AgentCoachingTab } from './tabs/AgentCoachingTab';
 
 const TAB_ICONS = {
 	assignments: IconListCheck,
 	paths: IconRoute,
 	catalog: IconLibrary,
 	history: IconHistory,
-	coaching: IconSchool,
 } as const;
 
 export default function AgentLmsPage() {
@@ -40,7 +47,8 @@ export default function AgentLmsPage() {
 	const paths = useLmsStore(selectPaths);
 	const enrollments = useLmsStore(selectEnrollments);
 
-	const [rescheduleTarget, setRescheduleTarget] = useState<LmsAssignment | null>(null);
+	const [rescheduleTarget, setRescheduleTarget] =
+		useState<LmsAssignment | null>(null);
 
 	const mine = useMemo(
 		() => assignments.filter((a) => a.agentId === AGENT_PERSONA.id),
@@ -51,7 +59,11 @@ export default function AgentLmsPage() {
 		[enrollments]
 	);
 	const contentById = useMemo(
-		() => Object.fromEntries(content.map((c) => [c.id, c])) as Record<string, LmsContent>,
+		() =>
+			Object.fromEntries(content.map((c) => [c.id, c])) as Record<
+				string,
+				LmsContent
+			>,
 		[content]
 	);
 
@@ -67,7 +79,8 @@ export default function AgentLmsPage() {
 		);
 	};
 
-	const openContent = (contentId: string) => navigate(agentContentPath(contentId));
+	const openContent = (contentId: string) =>
+		navigate(agentContentPath(contentId));
 
 	const counts = {
 		assignments: mine.filter((a) => a.status !== 'COMPLETED').length,
@@ -83,7 +96,9 @@ export default function AgentLmsPage() {
 
 	const handleReschedule = (proposedDueDate: string, reason: string) => {
 		if (!rescheduleTarget) return;
-		useLmsStore.getState().requestReschedule(rescheduleTarget.id, proposedDueDate, reason);
+		useLmsStore
+			.getState()
+			.requestReschedule(rescheduleTarget.id, proposedDueDate, reason);
 		notifySuccess(t('agent.reschedule.success'));
 	};
 
@@ -95,7 +110,9 @@ export default function AgentLmsPage() {
 	const handleEnrolPath = (pathId: string) => {
 		useLmsStore.getState().selfEnrollPath(AGENT_PERSONA.id, pathId);
 		const path = paths.find((p) => p.id === pathId);
-		notifySuccess(t('agent.paths.enrolledSuccess', { title: path?.title ?? '' }));
+		notifySuccess(
+			t('agent.paths.enrolledSuccess', { title: path?.title ?? '' })
+		);
 	};
 
 	return (
@@ -114,7 +131,11 @@ export default function AgentLmsPage() {
 							value='assignments'
 							leftSection={<TAB_ICONS.assignments size={16} />}
 							rightSection={
-								<Badge size='xs' variant='light' color={counts.assignments > 0 ? 'blue' : 'gray'}>
+								<Badge
+									size='xs'
+									variant='light'
+									color={counts.assignments > 0 ? 'blue' : 'gray'}
+								>
 									{counts.assignments}
 								</Badge>
 							}
@@ -154,9 +175,6 @@ export default function AgentLmsPage() {
 						>
 							{t('agent.tabs.history')}
 						</Tabs.Tab>
-						<Tabs.Tab value='coaching' leftSection={<TAB_ICONS.coaching size={16} />}>
-							{t('agent.tabs.coaching')}
-						</Tabs.Tab>
 					</Tabs.List>
 
 					<Tabs.Panel value='assignments' pt='md'>
@@ -189,11 +207,11 @@ export default function AgentLmsPage() {
 					</Tabs.Panel>
 
 					<Tabs.Panel value='history' pt='md'>
-						<HistoryTab assignments={mine} contentById={contentById} onReview={openContent} />
-					</Tabs.Panel>
-
-					<Tabs.Panel value='coaching' pt='md'>
-						<AgentCoachingTab />
+						<HistoryTab
+							assignments={mine}
+							contentById={contentById}
+							onReview={openContent}
+						/>
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>
