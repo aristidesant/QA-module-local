@@ -55,9 +55,14 @@ export type { BestWorstCall } from './BestWorstCallsPanel';
 
 // Performance Score row: Quality Assurance / Compliance / Sentiment & Emotion
 export { QualityAssuranceCard } from './QualityAssuranceCard';
-export type { QualityAssuranceScore } from './QualityAssuranceCard';
+export type {
+	QualityAssuranceScore,
+	QaCategoryKey,
+} from './QualityAssuranceCard';
 export { ComplianceCard, getComplianceColor } from './ComplianceCard';
 export { SentimentEmotionCard, getSentimentBand } from './SentimentEmotionCard';
+export { SentimentEmotionSplitCard } from './SentimentEmotionSplitCard';
+export type { SentimentSide } from './SentimentEmotionSplitCard';
 
 // Single-table Best/Worst calls view with a Best/Worst segmented control
 export { BestWorstCallsTable } from './BestWorstCallsTable';

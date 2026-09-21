@@ -71,6 +71,8 @@ interface RankingsTableProps {
 	/** The logged-in agent's own rank, shown even when it falls outside `maxDisplay`. */
 	myPosition?: { rank: number; total: number } | null;
 	compact?: boolean;
+	/** Skip the card's own title/description and outer Card chrome — the parent SectionCard already shows them. */
+	hideHeader?: boolean;
 }
 
 /**
@@ -222,6 +224,7 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 	currentAgentId,
 	myPosition,
 	compact = false,
+	hideHeader = false,
 }) => {
 	/** Per-entry reaction the current user has given (mockup-local state) */
 	const [reactionStates, setReactionStates] = useState<
@@ -274,10 +277,13 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 		);
 	}
 
-	return (
-		<Card className={styles.metricCard} p='lg' radius='md' withBorder>
-			<Stack gap='md'>
-				<Group justify='space-between' align='flex-start'>
+	const body = (
+		<Stack gap='md'>
+			<Group
+				justify={hideHeader ? 'flex-end' : 'space-between'}
+				align='flex-start'
+			>
+				{!hideHeader && (
 					<div>
 						<Text fw={600} size='md'>
 							{title}
@@ -286,115 +292,122 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 							{description}
 						</Text>
 					</div>
-					<Group gap='sm' align='center'>
-						{myPosition && (
-							<Badge variant='light' color='blue' size='lg'>
-								Your rank: #{myPosition.rank} of {myPosition.total}
-							</Badge>
-						)}
-						{onViewAll && (
-							<Button variant='subtle' size='xs' onClick={onViewAll}>
-								View All →
-							</Button>
-						)}
-					</Group>
+				)}
+				<Group gap='sm' align='center'>
+					{myPosition && (
+						<Badge variant='light' color='blue' size='lg'>
+							Your rank: #{myPosition.rank} of {myPosition.total}
+						</Badge>
+					)}
+					{onViewAll && (
+						<Button variant='subtle' size='xs' onClick={onViewAll}>
+							View All →
+						</Button>
+					)}
 				</Group>
+			</Group>
 
-				{goal && <RankingGoalBanner goal={goal} />}
+			{goal && <RankingGoalBanner goal={goal} />}
 
-				<div style={{ overflowX: 'auto' }}>
-					<Table striped highlightOnHover>
-						<Table.Thead>
+			<div style={{ overflowX: 'auto' }}>
+				<Table striped highlightOnHover>
+					<Table.Thead>
+						<Table.Tr>
+							<Table.Th style={{ width: 60 }}>Rank</Table.Th>
+							<Table.Th>Name</Table.Th>
+							<Table.Th style={{ width: 90 }} ta='right'>
+								Score
+							</Table.Th>
+							<Table.Th style={{ width: 280 }}>Reactions</Table.Th>
+						</Table.Tr>
+					</Table.Thead>
+					<Table.Tbody>
+						{displayEntries.length === 0 ? (
 							<Table.Tr>
-								<Table.Th style={{ width: 60 }}>Rank</Table.Th>
-								<Table.Th>Name</Table.Th>
-								<Table.Th style={{ width: 90 }} ta='right'>
-									Score
-								</Table.Th>
-								<Table.Th style={{ width: 280 }}>Reactions</Table.Th>
+								<Table.Td colSpan={4}>
+									<Center p='lg'>
+										<Text size='sm' c='dimmed'>
+											No rankings available
+										</Text>
+									</Center>
+								</Table.Td>
 							</Table.Tr>
-						</Table.Thead>
-						<Table.Tbody>
-							{displayEntries.length === 0 ? (
-								<Table.Tr>
-									<Table.Td colSpan={4}>
-										<Center p='lg'>
-											<Text size='sm' c='dimmed'>
-												No rankings available
-											</Text>
-										</Center>
+						) : (
+							displayEntries.map((entry) => (
+								<Table.Tr
+									key={entry.position}
+									className={
+										entry.agentId && entry.agentId === currentAgentId
+											? styles.currentAgentRow
+											: undefined
+									}
+								>
+									<Table.Td>
+										<MedalIcon position={entry.position} />
+									</Table.Td>
+									<Table.Td>
+										<Group gap='xs'>
+											<Avatar name={entry.name} size='sm' color='blue' />
+											<div>
+												<Text fw={500} size='sm'>
+													{entry.name}
+													{entry.agentId &&
+														entry.agentId === currentAgentId && (
+															<Text span c='blue' fw={600} size='xs' ml={6}>
+																(You)
+															</Text>
+														)}
+												</Text>
+											</div>
+										</Group>
+									</Table.Td>
+									<Table.Td ta='right'>
+										<Text fw={700} size='md'>
+											{entry.score.toFixed(1)}
+										</Text>
+									</Table.Td>
+									<Table.Td>
+										<Group gap={6} wrap='wrap'>
+											{REACTION_CONFIG.map((reaction) => {
+												const active =
+													reactionStates[entry.position] === reaction.type;
+												return (
+													<ReactionButton
+														key={reaction.type}
+														emoji={reaction.emoji}
+														label={reaction.label}
+														count={
+															entry.reactions[reaction.type] + (active ? 1 : 0)
+														}
+														active={active}
+														onClick={() =>
+															handleReact(entry.position, reaction.type)
+														}
+													/>
+												);
+											})}
+										</Group>
 									</Table.Td>
 								</Table.Tr>
-							) : (
-								displayEntries.map((entry) => (
-									<Table.Tr
-										key={entry.position}
-										className={
-											entry.agentId && entry.agentId === currentAgentId
-												? styles.currentAgentRow
-												: undefined
-										}
-									>
-										<Table.Td>
-											<MedalIcon position={entry.position} />
-										</Table.Td>
-										<Table.Td>
-											<Group gap='xs'>
-												<Avatar name={entry.name} size='sm' color='blue' />
-												<div>
-													<Text fw={500} size='sm'>
-														{entry.name}
-														{entry.agentId &&
-															entry.agentId === currentAgentId && (
-																<Text span c='blue' fw={600} size='xs' ml={6}>
-																	(You)
-																</Text>
-															)}
-													</Text>
-												</div>
-											</Group>
-										</Table.Td>
-										<Table.Td ta='right'>
-											<Text fw={700} size='md'>
-												{entry.score.toFixed(1)}
-											</Text>
-										</Table.Td>
-										<Table.Td>
-											<Group gap={6} wrap='wrap'>
-												{REACTION_CONFIG.map((reaction) => {
-													const active =
-														reactionStates[entry.position] === reaction.type;
-													return (
-														<ReactionButton
-															key={reaction.type}
-															emoji={reaction.emoji}
-															label={reaction.label}
-															count={
-																entry.reactions[reaction.type] +
-																(active ? 1 : 0)
-															}
-															active={active}
-															onClick={() =>
-																handleReact(entry.position, reaction.type)
-															}
-														/>
-													);
-												})}
-											</Group>
-										</Table.Td>
-									</Table.Tr>
-								))
-							)}
-						</Table.Tbody>
-					</Table>
-				</div>
+							))
+						)}
+					</Table.Tbody>
+				</Table>
+			</div>
 
-				{entries.length > maxDisplay && (
-					<Text size='xs' c='dimmed' ta='center'>
-						Showing top {maxDisplay} of {entries.length}
-					</Text>
-				)}
-			</Stack>
+			{entries.length > maxDisplay && (
+				<Text size='xs' c='dimmed' ta='center'>
+					Showing top {maxDisplay} of {entries.length}
+				</Text>
+			)}
+		</Stack>
+	);
+
+	return hideHeader ? (
+		body
+	) : (
+		<Card className={styles.metricCard} p='lg' radius='md' withBorder>
+			{body}
 		</Card>
 	);
 };

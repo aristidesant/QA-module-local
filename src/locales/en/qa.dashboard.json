@@ -45,6 +45,11 @@
 		"signalCalls_other": "{{count}} calls"
 	},
 	"description": "Live quality metrics computed from evaluations, disputes, and AI provider health.",
+	"drill": {
+		"calls_one": "{{count}} call",
+		"calls_other": "{{count}} calls",
+		"hint": "Open the calls behind this number"
+	},
 	"error": {
 		"title": "Could not load dashboard data"
 	},
@@ -118,6 +123,17 @@
 		"organisation": "Organisation",
 		"operations": "Operations",
 		"clients": "Clients"
+	},
+	"sentimentSplit": {
+		"title": "Sentiment & Emotion",
+		"agent": "You",
+		"customer": "Customers",
+		"outOfFive": "/ 5.0",
+		"predominantSentiment": "Predominant sentiment",
+		"predominantEmotion": "Predominant emotion",
+		"negativeCustomer": "Negative customer emotion",
+		"negativeAgent": "Negative agent emotion",
+		"none": "—"
 	},
 	"status": {
 		"completed": "Completed",

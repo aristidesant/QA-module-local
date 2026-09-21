@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import {
 	QualityAssuranceCard,
 	ComplianceCard,
-	SentimentEmotionCard,
-	BusinessInsightsCard,
+	SentimentEmotionSplitCard,
 	SentimentTrendChart,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
@@ -17,13 +17,12 @@ import type { Insight } from '../components/QuickInsightsWidget';
 import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
 import { AGENT_PERSONA_ID } from '~/modules/qa/team/constants';
 import {
-	AGENT_WEEKLY_METRICS,
-	AGENT_SENTIMENT_TREND,
-	BEST_WORST_CALLS,
-} from '../mockData';
+	AGENT_DASHBOARD_DAYS,
+	buildAgentDashboardMetrics,
+} from '~/modules/qa/calls/agentMetrics';
+import type { CallIssueKey } from '~/modules/qa/calls/issues';
+import { AGENT_SENTIMENT_TREND, BEST_WORST_CALLS } from '../mockData';
 import styles from '../Dashboard.module.css';
-
-/** Inbox this dashboard's critical issues drill into */
 
 /**
  * Default insights for the agent dashboard
@@ -46,23 +45,42 @@ const DEFAULT_AGENT_INSIGHTS: Insight[] = [
 	},
 ];
 
+/** Card rows → the My Calls issue they open. */
+const QA_ISSUE: Record<
+	'ecn' | 'enc' | 'ecc' | 'ecuf' | 'autoFails',
+	CallIssueKey
+> = {
+	ecn: 'qa-ecn',
+	enc: 'qa-enc',
+	ecc: 'qa-ecc',
+	ecuf: 'qa-ecuf',
+	autoFails: 'auto-fail',
+};
+const COMPLIANCE_ISSUE: Record<
+	'Security' | 'Regulatory' | 'Legal',
+	CallIssueKey
+> = {
+	Security: 'compliance-security',
+	Regulatory: 'compliance-regulatory',
+	Legal: 'compliance-legal',
+};
+const MY_CALLS_PATH = '/qa/agent/calls';
+
 export const NewAgentDashboard: React.FC = () => {
+	const navigate = useNavigate();
 	const {
 		entries: rankingEntries,
 		goal: rankingGoal,
 		myPosition: rankingMyPosition,
 	} = useDashboardRankings('Team 1', 7, AGENT_PERSONA_ID);
-	const {
-		qaScore,
-		sentiment,
-		complianceCategories,
-		autoFailsCount,
-		businessInsights,
-		businessOutcome,
-	} = AGENT_WEEKLY_METRICS;
+	const metrics = useMemo(
+		() => buildAgentDashboardMetrics(AGENT_PERSONA_ID, AGENT_DASHBOARD_DAYS),
+		[]
+	);
 
-	/** Overall sentiment on the 0-5 scale, averaging agent and customer readings */
-	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
+	/** Opens My Calls filtered on one issue, over the same 30-day window the cards summarise. */
+	const openIssue = (issue: CallIssueKey) =>
+		navigate(`${MY_CALLS_PATH}?tab=calls&issue=${issue}&period=30d`);
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -75,67 +93,84 @@ export const NewAgentDashboard: React.FC = () => {
 					</Text>
 				</div>
 
-				{/* 2. Performance Score: the four evaluation aspects */}
+				{/* 2. Performance Score: QA, Compliance, Sentiment & Emotion — each row opens the calls behind it */}
 				<SectionCard
 					title='Performance Score'
-					description='Your quality assurance, compliance, sentiment and business results this week'
+					description={`Your quality assurance, compliance and sentiment results over the last ${AGENT_DASHBOARD_DAYS} days · ${metrics.calls} calls evaluated`}
 				>
-					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
+					<SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing='md'>
 						<div className={styles.gridCard}>
 							<QualityAssuranceCard
-								score={qaScore}
-								subtitle='Category breakdown'
-								autoFails={autoFailsCount}
+								score={metrics.qa}
+								subtitle='Calls without each error type'
+								autoFails={metrics.autoFails}
+								issueCounts={{
+									...metrics.qaIssueCounts,
+									autoFails: metrics.autoFails,
+								}}
+								onCategoryClick={(key) => openIssue(QA_ISSUE[key])}
 							/>
 						</div>
 						<div className={styles.gridCard}>
 							<ComplianceCard
-								categories={complianceCategories}
-								subtitle='Category overview'
+								categories={metrics.complianceCategories}
+								subtitle='Calls meeting each area target'
+								issueCounts={metrics.complianceIssueCounts}
+								onCategoryClick={(name) => openIssue(COMPLIANCE_ISSUE[name])}
 							/>
 						</div>
 						<div className={styles.gridCard}>
-							<SentimentEmotionCard
-								score={overallSentiment}
-								predominantEmotion={sentiment.predominantEmotion}
-								subtitle='0-5 scale assessment'
-							/>
-						</div>
-						<div className={styles.gridCard}>
-							<BusinessInsightsCard
-								insights={businessInsights}
-								outcome={businessOutcome}
-								subtitle='Conversion and signals'
+							<SentimentEmotionSplitCard
+								agent={{
+									score: metrics.sentiment.agentAvg,
+									emotion: metrics.sentiment.agentEmotion,
+									negativeCount: metrics.sentiment.agentNegativeCount,
+								}}
+								customer={{
+									score: metrics.sentiment.customerAvg,
+									emotion: metrics.sentiment.customerEmotion,
+									negativeCount: metrics.sentiment.customerNegativeCount,
+								}}
+								subtitle='You vs the customers you contacted'
+								onReviewClick={(side) =>
+									openIssue(
+										side === 'agent'
+											? 'negative-agent-emotion'
+											: 'negative-customer-emotion'
+									)
+								}
 							/>
 						</div>
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Inbox summary */}
-				<InboxSummary
-					autoDrivenCount={3}
-					negativeCount={2}
-					trendCount={5}
-					inboxPath='/qa/agent/inbox'
-				/>
-
-				{/* 4. Team rankings */}
-				<SectionCard
-					title='Team Rankings'
-					description="Your current ranking alongside the team's top performers this period"
-				>
-					<RankingsTable
-						entries={rankingEntries}
-						title='Team Rankings'
-						description="Your current ranking alongside the team's top performers this period"
-						goal={rankingGoal}
-						maxDisplay={5}
-						currentAgentId={AGENT_PERSONA_ID}
-						myPosition={rankingMyPosition}
+				{/* 3. Inbox summary + Team ranking, half width each */}
+				<SimpleGrid cols={{ base: 1, lg: 2 }} spacing='lg'>
+					<InboxSummary
+						autoDrivenCount={3}
+						negativeCount={2}
+						trendCount={5}
+						inboxPath='/qa/agent/inbox'
+						fullHeight
 					/>
-				</SectionCard>
+					<SectionCard
+						title='Team Ranking'
+						description="Your current ranking alongside the team's top performers this period"
+						fullHeight
+					>
+						<RankingsTable
+							entries={rankingEntries}
+							hideHeader
+							goal={rankingGoal}
+							maxDisplay={5}
+							currentAgentId={AGENT_PERSONA_ID}
+							myPosition={rankingMyPosition}
+							onViewAll={() => navigate('/qa/agent/rankings')}
+						/>
+					</SectionCard>
+				</SimpleGrid>
 
-				{/* 5. Sentiment trend & quick insights */}
+				{/* 4. Sentiment trend & quick insights */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
 					<SectionCard
 						title='Sentiment Trend'
@@ -153,7 +188,7 @@ export const NewAgentDashboard: React.FC = () => {
 					</SectionCard>
 				</SimpleGrid>
 
-				{/* 6. Best & worst calls */}
+				{/* 5. Best & worst calls */}
 				<SectionCard
 					title='Best & Worst Calls'
 					description='Your top and bottom performing calls this week'
