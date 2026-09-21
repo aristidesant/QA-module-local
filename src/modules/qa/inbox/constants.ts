@@ -47,6 +47,11 @@ export const inboxRoleFromPath = (pathname: string): InboxRole =>
 			: 'agent';
 
 export const disputesBasePath = (role: InboxRole) => `/qa/${role}/disputes`;
+
+/** Where the disputes LIST lives per role — the agent's is a tab of My Calls. Detail links keep disputesBasePath. */
+export const disputesListPath = (role: InboxRole) =>
+	role === 'agent' ? '/qa/agent/calls?tab=disputes' : `/qa/${role}/disputes`;
+
 export const rankingsBasePath = (role: InboxRole) => `/qa/${role}/rankings`;
 export const analyticsPath = (role: InboxRole) =>
 	role === 'agent' ? '/qa/agent/analytics' : `/qa/${role}/analytics`;

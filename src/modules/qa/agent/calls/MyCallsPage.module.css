@@ -4,3 +4,9 @@
 	flex-wrap: wrap;
 	align-items: flex-end;
 }
+
+.issueCell {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}

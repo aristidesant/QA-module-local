@@ -1,27 +1,30 @@
 {
 	"myCalls": {
 		"title": "Mis llamadas",
-		"description": "Todas las llamadas que atendiste, de la más reciente a la más antigua. Abre una llamada para revisar su evaluación o presentar una disputa.",
+		"description": "Llamadas que requieren tu atención: auto-fails, errores, brechas de cumplimiento y emociones negativas. Abre una llamada para revisar su evaluación o abrir una disputa.",
+		"tabs": { "calls": "Llamadas a revisar", "disputes": "Disputas" },
 		"filters": {
 			"period": "Período",
 			"dateFrom": "Fecha desde",
 			"dateTo": "Fecha hasta",
-			"evaluationType": "Tipo de evaluación",
+			"aspect": "Aspecto",
+			"issues": "Tipo de incidencia",
+			"issuesPlaceholder": "Cualquier incidencia",
+			"evaluationType": "Puntuación de",
 			"scoreMin": "Score mínimo",
 			"scoreMax": "Score máximo",
-			"autoFailOnly": "Solo con auto-fails",
 			"clear": "Limpiar"
 		},
 		"columns": {
 			"date": "Fecha",
 			"duration": "Duración",
-			"autoFails": "Auto-fails"
+			"issues": "Incidencias"
 		},
-		"autoFailNone": "Ninguno",
+		"moreIssues": "+{{count}}",
 		"autoFailCount": "{{count}} auto-fail",
 		"autoFailCount_other": "{{count}} auto-fails",
-		"rowsCount": "{{count}} llamadas",
-		"empty": "No hay llamadas en este período.",
+		"rowsCount": "{{count}} llamadas a revisar",
+		"empty": "No hay llamadas a revisar en este periodo — buen trabajo.",
 		"breadcrumb": "Mis llamadas"
 	},
 	"period": {
@@ -53,5 +56,29 @@
 		"empty": "Ningún agente de tu equipo participa en esta campaña.",
 		"emptyAll": "Todavía ningún agente participa en esta campaña."
 	},
-	"conversations": { "agentFilter": "Agente", "allAgents": "Todos los agentes" }
+	"conversations": {
+		"agentFilter": "Agente",
+		"allAgents": "Todos los agentes"
+	},
+	"issues": {
+		"aspect": {
+			"all": "Todos los aspectos",
+			"qa": "Aseguramiento de calidad",
+			"compliance": "Cumplimiento",
+			"sentiment": "Sentimiento y emoción"
+		},
+		"auto-fail": "Auto-fail",
+		"qa-ecn": "Error crítico de negocio (ECN)",
+		"qa-enc": "Error no crítico (ENC)",
+		"qa-ecc": "Error crítico de cumplimiento (ECC)",
+		"qa-ecuf": "Error crítico de usuario final (ECUF)",
+		"low-qa-score": "Puntuación QA baja",
+		"compliance-security": "Seguridad bajo el objetivo",
+		"compliance-regulatory": "Regulatorio bajo el objetivo",
+		"compliance-legal": "Legal bajo el objetivo",
+		"negative-customer-emotion": "Emoción negativa del cliente",
+		"negative-agent-emotion": "Emoción negativa del agente",
+		"low-customer-sentiment": "Sentimiento del cliente bajo",
+		"low-agent-sentiment": "Sentimiento del agente bajo"
+	}
 }

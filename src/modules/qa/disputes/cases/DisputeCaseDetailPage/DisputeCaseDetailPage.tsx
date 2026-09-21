@@ -34,7 +34,10 @@ import { CompliancePanel } from '~/views/Campaigns/components/call-evaluation/Co
 import { BusinessInsightsPanel } from '~/views/Campaigns/components/call-evaluation/BusinessInsightsPanel';
 import { CALL_EVALUATION_TABS } from '~/views/Campaigns/constants';
 import { useDisputesStore, selectCases } from '~/stores/qa/disputesStore';
-import { inboxRoleFromPath } from '~/modules/qa/inbox/constants';
+import {
+	disputesListPath,
+	inboxRoleFromPath,
+} from '~/modules/qa/inbox/constants';
 import {
 	applyCorrections,
 	detectedSignalCount,
@@ -99,7 +102,7 @@ export const DisputeCaseDetailPage: React.FC = () => {
 				<EmptyState
 					message={t('cases.detail.notFound')}
 					action={
-						<Anchor onClick={() => navigate(`/qa/${role}/disputes`)}>
+						<Anchor onClick={() => navigate(disputesListPath(role))}>
 							{t('cases.detail.back')}
 						</Anchor>
 					}
@@ -151,7 +154,7 @@ export const DisputeCaseDetailPage: React.FC = () => {
 				<div>
 					<Anchor
 						size='sm'
-						onClick={() => navigate(`/qa/${role}/disputes`)}
+						onClick={() => navigate(disputesListPath(role))}
 						mb='xs'
 						inline
 					>

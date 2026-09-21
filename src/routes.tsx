@@ -998,11 +998,7 @@ const router = createBrowserRouter([
 										path: 'agent/disputes',
 										id: 'qa.agent.disputes',
 										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<DisputeCasesPage />
-												</Suspense>
-											</I18nNamespaceLoader>
+											<Navigate to='/qa/agent/calls?tab=disputes' replace />
 										),
 									},
 									{
