@@ -26,6 +26,7 @@ import { buildAgentIssueCalls } from '~/modules/qa/calls/helpers';
 import {
 	MY_CALLS_EVALUATION_TYPES,
 	MY_CALLS_PERIODS,
+	MY_CALLS_PRESET_PERIODS,
 	type MyCallsPeriod,
 } from '~/modules/qa/calls/constants';
 import {
@@ -295,7 +296,7 @@ export default function MyCallsPage() {
 											to: null,
 										}))
 									}
-									data={MY_CALLS_PERIODS.map((p) => ({
+									data={MY_CALLS_PRESET_PERIODS.map((p) => ({
 										value: p.value,
 										label: t(p.labelKey),
 									}))}

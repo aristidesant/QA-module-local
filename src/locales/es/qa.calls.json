@@ -2,7 +2,10 @@
 	"myCalls": {
 		"title": "Mis llamadas",
 		"description": "Llamadas que requieren tu atención: auto-fails, errores, brechas de cumplimiento y emociones negativas. Abre una llamada para revisar su evaluación o abrir una disputa.",
-		"tabs": { "calls": "Llamadas a revisar", "disputes": "Disputas" },
+		"tabs": {
+			"calls": "Llamadas a revisar",
+			"disputes": "Disputas"
+		},
 		"filters": {
 			"period": "Período",
 			"dateFrom": "Fecha desde",
@@ -30,7 +33,6 @@
 	"period": {
 		"7d": "Últimos 7 días",
 		"30d": "Últimos 30 días",
-		"90d": "Últimos 90 días",
 		"all": "Todo el tiempo"
 	},
 	"evaluationType": {

@@ -17,7 +17,12 @@ export const ROSTER_TO_MOCK_CAMPAIGN: Record<string, string> = {
 	'camp-004': '3',
 };
 
-export type MyCallsPeriod = '7d' | '30d' | '90d' | 'all';
+/**
+ * 30 days is the maximum window My Calls can retrieve. 'all' isn't a
+ * user-facing preset (see `MY_CALLS_PRESET_PERIODS`) — it's kept as the
+ * internal sentinel value for "a custom date range is active".
+ */
+export type MyCallsPeriod = '7d' | '30d' | 'all';
 export const MY_CALLS_PERIODS: {
 	value: MyCallsPeriod;
 	labelKey: string;
@@ -25,9 +30,13 @@ export const MY_CALLS_PERIODS: {
 }[] = [
 	{ value: '7d', labelKey: 'period.7d', days: 7 },
 	{ value: '30d', labelKey: 'period.30d', days: 30 },
-	{ value: '90d', labelKey: 'period.90d', days: 90 },
 	{ value: 'all', labelKey: 'period.all', days: null },
 ];
+
+/** Selectable presets shown in the period filter — excludes the 'all' sentinel. */
+export const MY_CALLS_PRESET_PERIODS = MY_CALLS_PERIODS.filter(
+	(p) => p.value !== 'all'
+);
 
 export const QA_FORM_BY_CAMPAIGN_TYPE = {
 	INBOUND: 'Customer Service Excellence',

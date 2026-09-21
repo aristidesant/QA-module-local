@@ -2,7 +2,10 @@
 	"myCalls": {
 		"title": "My Calls",
 		"description": "Calls that need your attention — auto-fails, errors, compliance gaps and negative emotions. Open a call to review its evaluation or raise a dispute.",
-		"tabs": { "calls": "Calls to review", "disputes": "Disputes" },
+		"tabs": {
+			"calls": "Calls to review",
+			"disputes": "Disputes"
+		},
 		"filters": {
 			"period": "Period",
 			"dateFrom": "Date from",
@@ -30,7 +33,6 @@
 	"period": {
 		"7d": "Last 7 days",
 		"30d": "Last 30 days",
-		"90d": "Last 90 days",
 		"all": "All time"
 	},
 	"evaluationType": {
@@ -56,7 +58,10 @@
 		"empty": "No agents from your team participate in this campaign.",
 		"emptyAll": "No agents participate in this campaign yet."
 	},
-	"conversations": { "agentFilter": "Agent", "allAgents": "All agents" },
+	"conversations": {
+		"agentFilter": "Agent",
+		"allAgents": "All agents"
+	},
 	"issues": {
 		"aspect": {
 			"all": "All aspects",
