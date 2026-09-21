@@ -1,41 +1,62 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Badge, Group, Stack, Text } from '@mantine/core';
+import {
+	IconHeadset,
+	IconMoodSmile,
+	IconShieldCheck,
+	IconSparkles,
+	IconUser,
+} from '@tabler/icons-react';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
-import { Stack, Tabs } from '@mantine/core';
-import { useAgentAnalyticsStore } from '~/stores/qa/agentAnalyticsStore';
-import { DateRangeAndGranularityControl } from './components/DateRangeAndGranularityControl';
-import { QAAnalyticsTab, SentimentAnalyticsTab, ComplianceAnalyticsTab } from './tabs';
-import { AGENT_CALL_METRICS, aggregateMetricsByDateRange } from '~/modules/qa/dashboard/mockData';
+import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
+import {
+	AGENT_PERSONA_ID,
+	COMPLIANCE_AREA_META,
+} from '~/modules/qa/team/constants';
+import { TrendWidget } from './components/TrendWidget';
+import { DEFAULT_ANALYTICS_PERIOD, type AnalyticsPeriod } from './constants';
+import {
+	buildComplianceSeries,
+	buildOperationalSeries,
+	buildSentimentSeries,
+	predominantEmotions,
+} from './helpers';
 
 const AgentAnalyticsPage: React.FC = () => {
 	const { t } = useTranslation('qa.agent.analytics');
-	const { activeTab, setActiveTab, dateRange, granularity, selectedCampaign } = useAgentAnalyticsStore();
+	const calls = useMemo(
+		() => TEAM_CALLS.filter((c) => c.agentId === AGENT_PERSONA_ID),
+		[]
+	);
 
-	// Filter metrics by selected campaign
-	const campaignFilteredMetrics = useMemo(() => {
-		if (selectedCampaign === null) {
-			return AGENT_CALL_METRICS;
-		}
-		return AGENT_CALL_METRICS.filter(metric => metric.campaignId === selectedCampaign);
-	}, [selectedCampaign]);
+	// Each widget owns its window — the user asked for the selector inside the widgets.
+	const [opsPeriod, setOpsPeriod] = useState<AnalyticsPeriod>(
+		DEFAULT_ANALYTICS_PERIOD
+	);
+	const [sentimentPeriod, setSentimentPeriod] = useState<AnalyticsPeriod>(
+		DEFAULT_ANALYTICS_PERIOD
+	);
+	const [compliancePeriod, setCompliancePeriod] = useState<AnalyticsPeriod>(
+		DEFAULT_ANALYTICS_PERIOD
+	);
 
-	// Aggregate metrics based on date range and granularity
-	const aggregatedMetrics = useMemo(() => {
-		return aggregateMetricsByDateRange(
-			campaignFilteredMetrics,
-			dateRange.from.toISOString(),
-			dateRange.to.toISOString(),
-			granularity
-		);
-	}, [campaignFilteredMetrics, dateRange, granularity]);
-
-	const handleApply = (
-		_range: { from: Date; to: Date },
-		_granularity: string,
-		_compare: boolean
-	) => {
-		// Handler for when the user applies date range/granularity changes
-	};
+	const operational = useMemo(
+		() => buildOperationalSeries(calls, opsPeriod),
+		[calls, opsPeriod]
+	);
+	const sentiment = useMemo(
+		() => buildSentimentSeries(calls, sentimentPeriod),
+		[calls, sentimentPeriod]
+	);
+	const emotions = useMemo(
+		() => predominantEmotions(calls, sentimentPeriod),
+		[calls, sentimentPeriod]
+	);
+	const compliance = useMemo(
+		() => buildComplianceSeries(calls, compliancePeriod),
+		[calls, compliancePeriod]
+	);
 
 	return (
 		<ContentContainer
@@ -44,35 +65,111 @@ const AgentAnalyticsPage: React.FC = () => {
 			description={t('page.subtitle')}
 		>
 			<Stack gap='lg'>
-				{/* Date Range and Granularity Control */}
-				<div style={{ maxWidth: 600 }}>
-					<DateRangeAndGranularityControl onApply={handleApply} />
-				</div>
+				<TrendWidget
+					title={t('operational.title')}
+					description={t('operational.description')}
+					icon={IconHeadset}
+					period={opsPeriod}
+					onPeriodChange={setOpsPeriod}
+					data={operational}
+					series={[
+						{
+							name: 'calls',
+							label: t('operational.series.calls'),
+							color: 'blue.6',
+						},
+						{
+							name: 'effective',
+							label: t('operational.series.effective'),
+							color: 'teal.6',
+						},
+						{
+							name: 'nonEffective',
+							label: t('operational.series.nonEffective'),
+							color: 'orange.6',
+						},
+					]}
+					yAxisProps={{ allowDecimals: false }}
+				/>
 
-				{/* Tabs for different analytics sections */}
-				<Tabs
-					value={activeTab}
-					onChange={(value) => setActiveTab(value as 'qa' | 'sentiment' | 'compliance')}
-					defaultValue='qa'
-				>
-					<Tabs.List>
-						<Tabs.Tab value='qa'>{t('tabs.qa')}</Tabs.Tab>
-						<Tabs.Tab value='sentiment'>{t('tabs.sentiment')}</Tabs.Tab>
-						<Tabs.Tab value='compliance'>{t('tabs.compliance')}</Tabs.Tab>
-					</Tabs.List>
+				<TrendWidget
+					title={t('sentiment.title')}
+					description={t('sentiment.description')}
+					icon={IconMoodSmile}
+					period={sentimentPeriod}
+					onPeriodChange={setSentimentPeriod}
+					data={sentiment}
+					series={[
+						{
+							name: 'agent',
+							label: t('sentiment.series.agent'),
+							color: 'blue.6',
+						},
+						{
+							name: 'customer',
+							label: t('sentiment.series.customer'),
+							color: 'orange.6',
+						},
+					]}
+					yAxisProps={{ domain: [1, 5] }}
+					valueFormatter={(value) => value.toFixed(1)}
+					extra={
+						<Group gap='lg'>
+							<Group gap='xs'>
+								<Text size='sm' c='dimmed'>
+									{t('sentiment.predominantAgent')}
+								</Text>
+								<Badge
+									color='violet'
+									variant='light'
+									leftSection={<IconSparkles size={12} />}
+								>
+									{emotions.agent ?? t('sentiment.none')}
+								</Badge>
+							</Group>
+							<Group gap='xs'>
+								<Text size='sm' c='dimmed'>
+									{t('sentiment.predominantCustomer')}
+								</Text>
+								<Badge
+									color='violet'
+									variant='light'
+									leftSection={<IconUser size={12} />}
+								>
+									{emotions.customer ?? t('sentiment.none')}
+								</Badge>
+							</Group>
+						</Group>
+					}
+				/>
 
-					<Tabs.Panel value='qa' pt='lg'>
-						<QAAnalyticsTab aggregated={aggregatedMetrics} />
-					</Tabs.Panel>
-
-					<Tabs.Panel value='sentiment' pt='lg'>
-						<SentimentAnalyticsTab calls={campaignFilteredMetrics} aggregated={aggregatedMetrics} />
-					</Tabs.Panel>
-
-					<Tabs.Panel value='compliance' pt='lg'>
-						<ComplianceAnalyticsTab calls={campaignFilteredMetrics} aggregated={aggregatedMetrics} />
-					</Tabs.Panel>
-				</Tabs>
+				<TrendWidget
+					title={t('compliance.title')}
+					description={t('compliance.description')}
+					icon={IconShieldCheck}
+					period={compliancePeriod}
+					onPeriodChange={setCompliancePeriod}
+					data={compliance}
+					series={[
+						{
+							name: 'security',
+							label: t('compliance.series.security'),
+							color: `${COMPLIANCE_AREA_META.security.color}.6`,
+						},
+						{
+							name: 'regulatory',
+							label: t('compliance.series.regulatory'),
+							color: `${COMPLIANCE_AREA_META.regulatory.color}.6`,
+						},
+						{
+							name: 'legal',
+							label: t('compliance.series.legal'),
+							color: `${COMPLIANCE_AREA_META.legal.color}.6`,
+						},
+					]}
+					yAxisProps={{ domain: [50, 100] }}
+					valueFormatter={(value) => `${value}%`}
+				/>
 			</Stack>
 		</ContentContainer>
 	);
