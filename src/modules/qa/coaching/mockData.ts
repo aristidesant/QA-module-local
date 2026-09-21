@@ -503,6 +503,9 @@ function buildAgentHistoryAGT004(): CoachingSessionRecord[] {
 		const date = day('2026-06-18', -21 * i);
 		const missed = i !== SESSION_COUNT && rand() < 0.12;
 		const ackDelayDays = 1 + Math.floor(rand() * 3);
+		// The most recent completed session's commitment is still open — gives
+		// "My Commitments" a real one to confirm instead of an all-done list.
+		const stillOpen = i === 1 && !missed;
 
 		out.push({
 			id: `coa-a04-hist-${i}`,
@@ -530,18 +533,21 @@ function buildAgentHistoryAGT004(): CoachingSessionRecord[] {
 							id: `coa-a04-hist-${i}-ai1`,
 							text: outcomes[i % outcomes.length],
 							dueDate: day(date, 14),
-							done: true,
-							acknowledgedByAgent: true,
-							acknowledgedAt: `${day(date, ackDelayDays)}T09:00:00Z`,
+							done: !stillOpen,
+							acknowledgedByAgent: !stillOpen,
+							acknowledgedAt: stillOpen
+								? null
+								: `${day(date, ackDelayDays)}T09:00:00Z`,
 						},
 					],
-			agentCommitment: missed
-				? { acknowledged: false, acknowledgedAt: null, comment: null }
-				: {
-						acknowledged: true,
-						acknowledgedAt: `${day(date, ackDelayDays)}T09:00:00Z`,
-						comment: null,
-					},
+			agentCommitment:
+				missed || stillOpen
+					? { acknowledged: false, acknowledgedAt: null, comment: null }
+					: {
+							acknowledged: true,
+							acknowledgedAt: `${day(date, ackDelayDays)}T09:00:00Z`,
+							comment: null,
+						},
 			status: missed ? 'MISSED' : 'COMPLETED',
 			outcome: missed ? missedReasons : outcomes[i % outcomes.length],
 			followUpDate: missed ? null : day(date, 14),

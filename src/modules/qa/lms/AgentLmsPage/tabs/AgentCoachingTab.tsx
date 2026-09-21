@@ -76,11 +76,20 @@ export function AgentCoachingTab() {
 				.sort((a, b) => b.date.localeCompare(a.date)),
 		[sessions]
 	);
+	const MAX_COMMITMENTS = 3;
 	const commitments = useMemo(
 		() =>
 			sessions
 				.filter((s) => s.status === 'COMPLETED')
-				.flatMap((s) => s.actionItems.map((item) => ({ session: s, item }))),
+				.flatMap((s) => s.actionItems.map((item) => ({ session: s, item })))
+				// Still-open ones first (they need a response), then most recent.
+				.sort((a, b) => {
+					if (a.item.acknowledgedByAgent !== b.item.acknowledgedByAgent) {
+						return a.item.acknowledgedByAgent ? 1 : -1;
+					}
+					return b.session.date.localeCompare(a.session.date);
+				})
+				.slice(0, MAX_COMMITMENTS),
 		[sessions]
 	);
 
