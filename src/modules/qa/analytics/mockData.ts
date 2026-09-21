@@ -4,7 +4,10 @@ import {
 	TEAM_AGENTS,
 	TEAM_CAMPAIGNS,
 } from '~/modules/qa/team/mockData';
-import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
+import {
+	AGENT_PERSONA_ID,
+	SUPERVISOR_PERSONA,
+} from '~/modules/qa/team/constants';
 import { monthsBetween } from '~/modules/qa/team/helpers';
 import type { NonConversionReasonKey, Shift } from '~/modules/qa/team/types';
 import { TODAY, addDays } from './constants';
@@ -307,6 +310,25 @@ export function buildTeamCalls(): TeamCallMetric[] {
 }
 
 export const TEAM_CALLS: TeamCallMetric[] = buildTeamCalls();
+
+/**
+ * Mock incident: John Smith's (AGT-004) 3 most recent calls get a real regulatory
+ * disclosure compliance dip. Matches the "Regulatory disclosure compliance is at
+ * 86%" inbox alert (`ntf-a13` in `qa/inbox/mockData.ts`) and gives the dashboard's
+ * Compliance drill-down / My Calls "compliance-regulatory" issue filter and the
+ * inbox alert's deep link something real to show — without this, the generator's
+ * seeded RNG never dips this agent's regulatory score below the compliance target.
+ */
+const REGULATORY_DIP_SCORES = [68, 74, 82];
+TEAM_CALLS.filter((c) => c.agentId === AGENT_PERSONA_ID)
+	.slice(-REGULATORY_DIP_SCORES.length)
+	.forEach((call, i) => {
+		const score = REGULATORY_DIP_SCORES[i];
+		call.complianceByArea.regulatory.score = score;
+		call.complianceByArea.regulatory.items.cobranzaRegulada = score;
+		call.complianceByArea.regulatory.items.transparenciaConsentimiento =
+			Math.max(40, score - 5);
+	});
 
 export const BURNOUT_ACTIONS_SEED: BurnoutAction[] = [
 	{

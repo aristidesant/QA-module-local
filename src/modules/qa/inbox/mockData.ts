@@ -291,6 +291,13 @@ const AGENT_INBOX: AgentNotification[] = [
 			sparkline: [93, 92, 90, 89, 88, 87, 86],
 			ruleName: 'Regulatory floor',
 		},
+		actions: [
+			{
+				label: 'Review the calls',
+				url: '/qa/agent/calls?tab=calls&issue=compliance-regulatory&period=30d',
+				icon: 'phone',
+			},
+		],
 	}),
 ];
 
