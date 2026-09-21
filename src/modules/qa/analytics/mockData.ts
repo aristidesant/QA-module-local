@@ -330,6 +330,47 @@ TEAM_CALLS.filter((c) => c.agentId === AGENT_PERSONA_ID)
 			Math.max(40, score - 5);
 	});
 
+/**
+ * Mock incident: 2 more of John Smith's recent calls (distinct from the
+ * compliance dip above, so no single call carries every possible issue) get a
+ * real negative sentiment/emotion dip on both sides. Gives the dashboard's
+ * Sentiment & Emotion drill-down (agent vs customer negative-emotion rows) and
+ * the "Customer sentiment is trending down" inbox alert (`ntf-a02`) real calls
+ * to point to — the seeded RNG's recent trend for this agent is improving, so
+ * neither side ever dips within the dashboard's 30-day window otherwise.
+ */
+const SENTIMENT_DIP: {
+	customerSentiment: number;
+	predominantEmotion: CallEmotion;
+	agentSentiment: number;
+	agentEmotion: CallEmotion;
+}[] = [
+	{
+		customerSentiment: 2.1,
+		predominantEmotion: 'Anger',
+		agentSentiment: 2.4,
+		agentEmotion: 'Fear',
+	},
+	{
+		customerSentiment: 1.9,
+		predominantEmotion: 'Sadness',
+		agentSentiment: 2.2,
+		agentEmotion: 'Sadness',
+	},
+];
+TEAM_CALLS.filter((c) => c.agentId === AGENT_PERSONA_ID)
+	.slice(
+		-(REGULATORY_DIP_SCORES.length + SENTIMENT_DIP.length),
+		-REGULATORY_DIP_SCORES.length
+	)
+	.forEach((call, i) => {
+		const dip = SENTIMENT_DIP[i];
+		call.customerSentiment = dip.customerSentiment;
+		call.predominantEmotion = dip.predominantEmotion;
+		call.agentSentiment = dip.agentSentiment;
+		call.agentEmotion = dip.agentEmotion;
+	});
+
 export const BURNOUT_ACTIONS_SEED: BurnoutAction[] = [
 	{
 		id: 'bact-003',
