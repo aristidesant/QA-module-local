@@ -67,6 +67,10 @@ export type { SentimentSide } from './SentimentEmotionSplitCard';
 // Single-table Best/Worst calls view with a Best/Worst segmented control
 export { BestWorstCallsTable } from './BestWorstCallsTable';
 
+// Agent dashboard: last coaching session + pending learning material
+export { CoachingLearningWidget } from './CoachingLearningWidget';
+export type { PendingLearningItem } from './CoachingLearningWidget';
+
 // Task 2: Burnout Risk Widget for agent wellbeing monitoring
 export { default as BurnoutRiskWidget } from './BurnoutRiskWidget';
 export type { BurnoutRiskData, BurnoutRiskLevel } from '../types/burnoutRisk';

@@ -8,38 +8,29 @@ import {
 	ComplianceCard,
 	SentimentEmotionSplitCard,
 	BestWorstCallsTable,
-	QuickInsightsWidget,
+	CoachingLearningWidget,
 } from '../components';
-import type { Insight } from '../components/QuickInsightsWidget';
 import { AGENT_PERSONA_ID } from '~/modules/qa/team/constants';
 import {
 	AGENT_DASHBOARD_DAYS,
 	buildAgentDashboardMetrics,
 } from '~/modules/qa/calls/agentMetrics';
 import type { CallIssueKey } from '~/modules/qa/calls/issues';
+import {
+	useCoachingStore,
+	selectCohorts,
+	selectSessions,
+} from '~/stores/qa/coachingStore';
+import {
+	useLmsStore,
+	selectAssignments,
+	selectContent,
+} from '~/stores/qa/lmsStore';
+import { groupAssignments } from '~/modules/qa/lms/helpers';
+import { agentContentPath } from '~/modules/qa/lms/constants';
+import { coachingPath } from '~/modules/qa/inbox/constants';
 import { BEST_WORST_CALLS } from '../mockData';
 import styles from '../Dashboard.module.css';
-
-/**
- * Default insights for the agent dashboard
- */
-const DEFAULT_AGENT_INSIGHTS: Insight[] = [
-	{
-		title: 'Strong Performance',
-		description: 'Your QA score is performing well. Keep up the great work!',
-		type: 'positive',
-	},
-	{
-		title: 'Sentiment Improvement',
-		description: 'Customer sentiment is trending positively this week.',
-		type: 'positive',
-	},
-	{
-		title: 'Compliance Status',
-		description: 'All compliance categories are in good standing.',
-		type: 'positive',
-	},
-];
 
 /** Card rows → the My Calls issue they open. */
 const QA_ISSUE: Record<
@@ -68,6 +59,39 @@ export const NewAgentDashboard: React.FC = () => {
 		() => buildAgentDashboardMetrics(AGENT_PERSONA_ID, AGENT_DASHBOARD_DAYS),
 		[]
 	);
+
+	const allSessions = useCoachingStore(selectSessions);
+	const cohorts = useCoachingStore(selectCohorts);
+	const assignments = useLmsStore(selectAssignments);
+	const content = useLmsStore(selectContent);
+
+	const lastCoachingSession = useMemo(() => {
+		const myCohortIds = cohorts
+			.filter((c) => c.agentIds.includes(AGENT_PERSONA_ID))
+			.map((c) => c.id);
+		return (
+			allSessions
+				.filter(
+					(s) =>
+						(s.agentId === AGENT_PERSONA_ID ||
+							(s.cohortId && myCohortIds.includes(s.cohortId))) &&
+						s.status === 'COMPLETED'
+				)
+				.sort((a, b) => b.date.localeCompare(a.date))[0] ?? null
+		);
+	}, [allSessions, cohorts]);
+
+	const pendingLearning = useMemo(() => {
+		const contentById = Object.fromEntries(content.map((c) => [c.id, c]));
+		const mine = assignments.filter((a) => a.agentId === AGENT_PERSONA_ID);
+		const groups = groupAssignments(mine);
+		return [...groups.needsResponse, ...groups.mandatory]
+			.slice(0, 3)
+			.map((assignment) => ({
+				assignment,
+				content: contentById[assignment.contentId],
+			}));
+	}, [assignments, content]);
 
 	/** Opens My Calls filtered on one issue, over the same 30-day window the cards summarise. */
 	const openIssue = (issue: CallIssueKey) =>
@@ -135,14 +159,21 @@ export const NewAgentDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Quick insights & best/worst calls */}
+				{/* 3. Coaching & learning, and best/worst calls */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
 					<SectionCard
-						title='Quick Insights'
-						description='Performance recommendations and analysis'
+						title='Coaching & Learning'
+						description='Your last coaching session and pending learning material'
 						fullHeight
 					>
-						<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
+						<CoachingLearningWidget
+							lastSession={lastCoachingSession}
+							pendingLearning={pendingLearning}
+							onOpenCoaching={() => navigate(coachingPath('agent'))}
+							onOpenLearning={(contentId) =>
+								navigate(agentContentPath(contentId))
+							}
+						/>
 					</SectionCard>
 					<SectionCard
 						title='Best & Worst Calls'
