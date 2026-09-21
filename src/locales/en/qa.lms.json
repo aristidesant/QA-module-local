@@ -192,8 +192,9 @@
 		"coaching": {
 			"title": "Coaching",
 			"description": "Your scheduled sessions, past sessions and the commitments you've made.",
-			"upcoming": "Upcoming sessions",
-			"upcomingDescription": "Sessions scheduled with your supervisor or the QA manager.",
+			"upcoming": "Upcoming session",
+			"upcomingDescription": "Your next session with your supervisor or the QA manager.",
+			"talkingPoints": "Talking points",
 			"commitments": "My commitments",
 			"commitmentsDescription": "Action items agreed in coaching. Confirm them so your coach knows you are on it.",
 			"past": "Past sessions",

@@ -192,8 +192,9 @@
 		"coaching": {
 			"title": "Coaching",
 			"description": "Tus sesiones agendadas, sesiones anteriores y los compromisos que has hecho.",
-			"upcoming": "Próximas sesiones",
-			"upcomingDescription": "Sesiones agendadas con tu supervisor o el QA manager.",
+			"upcoming": "Próxima sesión",
+			"upcomingDescription": "Tu próxima sesión con tu supervisor o el QA manager.",
+			"talkingPoints": "Puntos a tratar",
 			"commitments": "Mis compromisos",
 			"commitmentsDescription": "Acciones acordadas en coaching. Confírmalas para que tu coach sepa que estás en ello.",
 			"past": "Sesiones anteriores",
