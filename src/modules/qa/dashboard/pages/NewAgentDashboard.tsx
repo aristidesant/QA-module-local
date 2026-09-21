@@ -135,21 +135,23 @@ export const NewAgentDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Quick insights */}
-				<SectionCard
-					title='Quick Insights'
-					description='Performance recommendations and analysis'
-				>
-					<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
-				</SectionCard>
-
-				{/* 4. Best & worst calls */}
-				<SectionCard
-					title='Best & Worst Calls'
-					description='Your top and bottom performing calls this week'
-				>
-					<BestWorstCallsTable calls={BEST_WORST_CALLS} />
-				</SectionCard>
+				{/* 3. Quick insights & best/worst calls */}
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
+					<SectionCard
+						title='Quick Insights'
+						description='Performance recommendations and analysis'
+						fullHeight
+					>
+						<QuickInsightsWidget insights={DEFAULT_AGENT_INSIGHTS} />
+					</SectionCard>
+					<SectionCard
+						title='Best & Worst Calls'
+						description='Your top and bottom performing calls this week'
+						fullHeight
+					>
+						<BestWorstCallsTable calls={BEST_WORST_CALLS} />
+					</SectionCard>
+				</SimpleGrid>
 			</Stack>
 		</ContentContainer>
 	);
