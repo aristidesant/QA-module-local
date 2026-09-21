@@ -10,6 +10,7 @@ import {
 	QA_FORM_BY_CAMPAIGN_TYPE,
 	ROSTER_TO_MOCK_CAMPAIGN,
 } from './constants';
+import { callIssues } from './issues';
 import type { AgentCallRow, CampaignCallRow, CampaignRosterRow } from './types';
 
 export const rosterCampaignIdFor = (
@@ -44,8 +45,15 @@ export const buildAgentCalls = (agentId: string): AgentCallRow[] =>
 			qaScore: c.qaScore,
 			sentimentScore: c.customerSentiment,
 			complianceScore: complianceScoreFor(c),
+			customerEmotion: c.predominantEmotion,
+			agentEmotion: c.agentEmotion,
+			issues: callIssues(c),
 		}))
 		.sort((a, b) => b.date.localeCompare(a.date));
+
+/** My Calls only lists calls that need attention — the agent never scrolls through clean calls here. */
+export const buildAgentIssueCalls = (agentId: string): AgentCallRow[] =>
+	buildAgentCalls(agentId).filter((row) => row.issues.length > 0);
 
 /** Agents participating in a roster campaign, scoped by preview role (supervisor → own team only). */
 export const campaignRosterAgents = (

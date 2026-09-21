@@ -1,12 +1,14 @@
+import type { CallEmotion } from '~/modules/qa/analytics/types';
 import type { RosterAgent } from '~/modules/qa/team/types';
+import type { CallIssueKey } from './issues';
 
 /** The evaluation aspect a My Calls score-range filter can target — each has its own scale. */
 export type MyCallsEvaluationType = 'qa' | 'sentiment' | 'compliance';
 
 /**
- * One of the agent's own calls (My Calls page). The score fields are kept
- * only to back the score-range filter — the table itself never renders a
- * score column.
+ * One of the agent's own calls (My Calls page). Scores are kept only to back
+ * the score-range filter — the table never renders a score column. `issues`
+ * is what the list is filtered on: My Calls only lists calls with ≥ 1 issue.
  */
 export interface AgentCallRow {
 	id: string; // TeamCallMetric.id
@@ -17,9 +19,12 @@ export interface AgentCallRow {
 	durationSeconds: number;
 	autoFail: boolean;
 	autoFailCount: number; // critical errors behind the auto-fail (0 when !autoFail)
-	qaScore: number; // 0-100, filter-only — not displayed
-	sentimentScore: number; // 1-5 (customer sentiment), filter-only — not displayed
-	complianceScore: number; // 0-100 (average of security/regulatory/legal), filter-only — not displayed
+	qaScore: number; // 0-100, filter-only
+	sentimentScore: number; // 1-5 (customer sentiment), filter-only
+	complianceScore: number; // 0-100 (average of security/regulatory/legal), filter-only
+	customerEmotion: CallEmotion;
+	agentEmotion: CallEmotion;
+	issues: CallIssueKey[];
 }
 
 /** Row of the campaign Conversations table — same shape CampaignDetail already filters on. */
