@@ -66,7 +66,7 @@ const SideColumn: React.FC<{
 				{band.label}
 			</Badge>
 			<Badge
-				color='violet'
+				color='gray'
 				variant='light'
 				size='sm'
 				leftSection={<IconSparkles size={12} />}

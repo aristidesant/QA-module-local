@@ -10,6 +10,7 @@ import {
 	Badge,
 } from '@mantine/core';
 import { IconChevronRight, IconShieldCheck } from '@tabler/icons-react';
+import { SCORE_BAND_COLOR } from '~/modules/qa/constants/badgeColors';
 import type { ComplianceCategory } from '../mockData';
 import DrillRow from './DrillRow';
 import styles from '../Dashboard.module.css';
@@ -26,11 +27,11 @@ interface ComplianceCardProps {
 export const getComplianceColor = (status: ComplianceCategory['status']) => {
 	switch (status) {
 		case 'compliant':
-			return 'teal';
+			return SCORE_BAND_COLOR.good;
 		case 'warning':
-			return 'yellow';
+			return SCORE_BAND_COLOR.warning;
 		case 'violation':
-			return 'red';
+			return SCORE_BAND_COLOR.critical;
 		default:
 			return 'gray';
 	}
@@ -80,7 +81,7 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 							</Text>
 						)}
 					</div>
-					<ThemeIcon size='lg' color='green' radius='md'>
+					<ThemeIcon size='lg' color='gray' radius='md'>
 						<IconShieldCheck size={20} />
 					</ThemeIcon>
 				</Group>

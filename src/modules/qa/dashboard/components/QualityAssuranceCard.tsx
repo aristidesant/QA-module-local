@@ -10,6 +10,10 @@ import {
 	Badge,
 } from '@mantine/core';
 import { IconChevronRight, IconClipboardCheck } from '@tabler/icons-react';
+import {
+	getScoreBand,
+	SCORE_BAND_COLOR,
+} from '~/modules/qa/constants/badgeColors';
 import DrillRow from './DrillRow';
 import styles from '../Dashboard.module.css';
 
@@ -40,15 +44,11 @@ interface QualityAssuranceCardProps {
  * Colors reuse the palette previously applied to the standalone
  * DashboardMetricCard tiles so the visual language stays consistent.
  */
-const QA_CATEGORIES: {
-	key: QaCategoryKey;
-	label: string;
-	color: string;
-}[] = [
-	{ key: 'ecn', label: 'ECN', color: 'cyan' },
-	{ key: 'enc', label: 'ENC', color: 'blue' },
-	{ key: 'ecc', label: 'ECC', color: 'grape' },
-	{ key: 'ecuf', label: 'ECUF', color: 'indigo' },
+const QA_CATEGORIES: { key: QaCategoryKey; label: string }[] = [
+	{ key: 'ecn', label: 'ECN' },
+	{ key: 'enc', label: 'ENC' },
+	{ key: 'ecc', label: 'ECC' },
+	{ key: 'ecuf', label: 'ECUF' },
 ];
 
 /**
@@ -88,7 +88,7 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 							</Text>
 						)}
 					</div>
-					<ThemeIcon size='lg' color='blue' radius='md'>
+					<ThemeIcon size='lg' color='gray' radius='md'>
 						<IconClipboardCheck size={20} />
 					</ThemeIcon>
 				</Group>
@@ -97,6 +97,14 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 					{QA_CATEGORIES.map((category) => {
 						const count = issueCounts?.[category.key];
 						const clickable = Boolean(onCategoryClick) && (count ?? 0) > 0;
+						const band = getScoreBand(score[category.key]);
+						const bandLabel =
+							band === 'good'
+								? 'On target'
+								: band === 'warning'
+									? 'Watch'
+									: 'At risk';
+						const bandColor = SCORE_BAND_COLOR[band];
 						return (
 							<DrillRow
 								key={category.key}
@@ -110,12 +118,8 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 										<Text size='sm' fw={500}>
 											{category.label}
 										</Text>
-										<Badge size='xs' variant='light' color={category.color}>
-											{score[category.key] >= 90
-												? 'On target'
-												: score[category.key] >= 80
-													? 'Watch'
-													: 'At risk'}
+										<Badge size='xs' variant='light' color={bandColor}>
+											{bandLabel}
 										</Badge>
 									</Group>
 									<Group gap={6} wrap='nowrap'>
@@ -133,7 +137,7 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 								<Progress
 									value={score[category.key]}
 									size='sm'
-									color={category.color}
+									color={bandColor}
 								/>
 							</DrillRow>
 						);
