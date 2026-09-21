@@ -11,7 +11,6 @@ import {
 	BestWorstCallsTable,
 	QuickInsightsWidget,
 	RankingsTable,
-	InboxSummary,
 } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
@@ -144,31 +143,21 @@ export const NewAgentDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Inbox summary + Team ranking, half width each */}
-				<SimpleGrid cols={{ base: 1, lg: 2 }} spacing='lg'>
-					<InboxSummary
-						autoDrivenCount={3}
-						negativeCount={2}
-						trendCount={5}
-						inboxPath='/qa/agent/inbox'
-						fullHeight
+				{/* 3. Team ranking */}
+				<SectionCard
+					title='Team Ranking'
+					description="Your current ranking alongside the team's top performers this period"
+				>
+					<RankingsTable
+						entries={rankingEntries}
+						hideHeader
+						goal={rankingGoal}
+						maxDisplay={5}
+						currentAgentId={AGENT_PERSONA_ID}
+						myPosition={rankingMyPosition}
+						onViewAll={() => navigate('/qa/agent/rankings')}
 					/>
-					<SectionCard
-						title='Team Ranking'
-						description="Your current ranking alongside the team's top performers this period"
-						fullHeight
-					>
-						<RankingsTable
-							entries={rankingEntries}
-							hideHeader
-							goal={rankingGoal}
-							maxDisplay={5}
-							currentAgentId={AGENT_PERSONA_ID}
-							myPosition={rankingMyPosition}
-							onViewAll={() => navigate('/qa/agent/rankings')}
-						/>
-					</SectionCard>
-				</SimpleGrid>
+				</SectionCard>
 
 				{/* 4. Sentiment trend & quick insights */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
