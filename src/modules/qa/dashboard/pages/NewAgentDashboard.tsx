@@ -10,10 +10,8 @@ import {
 	SentimentTrendChart,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
-	RankingsTable,
 } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
-import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
 import { AGENT_PERSONA_ID } from '~/modules/qa/team/constants';
 import {
 	AGENT_DASHBOARD_DAYS,
@@ -67,11 +65,6 @@ const MY_CALLS_PATH = '/qa/agent/calls';
 
 export const NewAgentDashboard: React.FC = () => {
 	const navigate = useNavigate();
-	const {
-		entries: rankingEntries,
-		goal: rankingGoal,
-		myPosition: rankingMyPosition,
-	} = useDashboardRankings('Team 1', 7, AGENT_PERSONA_ID);
 	const metrics = useMemo(
 		() => buildAgentDashboardMetrics(AGENT_PERSONA_ID, AGENT_DASHBOARD_DAYS),
 		[]
@@ -143,23 +136,7 @@ export const NewAgentDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				{/* 3. Team ranking */}
-				<SectionCard
-					title='Team Ranking'
-					description="Your current ranking alongside the team's top performers this period"
-				>
-					<RankingsTable
-						entries={rankingEntries}
-						hideHeader
-						goal={rankingGoal}
-						maxDisplay={5}
-						currentAgentId={AGENT_PERSONA_ID}
-						myPosition={rankingMyPosition}
-						onViewAll={() => navigate('/qa/agent/rankings')}
-					/>
-				</SectionCard>
-
-				{/* 4. Sentiment trend & quick insights */}
+				{/* 3. Sentiment trend & quick insights */}
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
 					<SectionCard
 						title='Sentiment Trend'
@@ -177,7 +154,7 @@ export const NewAgentDashboard: React.FC = () => {
 					</SectionCard>
 				</SimpleGrid>
 
-				{/* 5. Best & worst calls */}
+				{/* 4. Best & worst calls */}
 				<SectionCard
 					title='Best & Worst Calls'
 					description='Your top and bottom performing calls this week'
