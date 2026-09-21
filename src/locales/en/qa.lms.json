@@ -198,6 +198,8 @@
 			"commitments": "My commitments",
 			"commitmentsDescription": "Action items agreed in coaching. Confirm them so your coach knows you are on it.",
 			"past": "Past sessions",
+			"pastDescription": "Every session you've had with your supervisor or the QA manager.",
+			"rowsCount": "{{count}} sessions",
 			"columns": {
 				"date": "Date",
 				"topic": "Topic",
@@ -209,13 +211,24 @@
 			"status": {
 				"scheduled": "Scheduled",
 				"completed": "Completed",
-				"missed": "Missed"
+				"missed": "Missed",
+				"cancelled": "Cancelled"
 			},
 			"acknowledge": "I commit to this",
 			"acknowledged": "Committed on {{date}}",
 			"linkedMaterial": "Linked material",
 			"empty": "No coaching sessions yet.",
-			"noCommitments": "No open commitments."
+			"noCommitments": "No open commitments.",
+			"detail": {
+				"talkingPoints": "Talking points",
+				"noPoints": "No talking points recorded.",
+				"evidence": "Evidence",
+				"actionItems": "Action items",
+				"noItems": "No action items from this session.",
+				"outcome": "Outcome",
+				"commitment": "Your commitment",
+				"notCommitted": "Not committed yet."
+			}
 		}
 	},
 	"player": {

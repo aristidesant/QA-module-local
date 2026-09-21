@@ -198,6 +198,8 @@
 			"commitments": "Mis compromisos",
 			"commitmentsDescription": "Acciones acordadas en coaching. Confírmalas para que tu coach sepa que estás en ello.",
 			"past": "Sesiones anteriores",
+			"pastDescription": "Todas las sesiones que has tenido con tu supervisor o el QA manager.",
+			"rowsCount": "{{count}} sesiones",
 			"columns": {
 				"date": "Fecha",
 				"topic": "Tema",
@@ -209,13 +211,24 @@
 			"status": {
 				"scheduled": "Agendada",
 				"completed": "Completada",
-				"missed": "Perdida"
+				"missed": "Perdida",
+				"cancelled": "Cancelada"
 			},
 			"acknowledge": "Me comprometo",
 			"acknowledged": "Comprometido el {{date}}",
 			"linkedMaterial": "Material relacionado",
 			"empty": "Todavía no tienes sesiones de coaching.",
-			"noCommitments": "No tienes compromisos abiertos."
+			"noCommitments": "No tienes compromisos abiertos.",
+			"detail": {
+				"talkingPoints": "Puntos a tratar",
+				"noPoints": "No hay puntos a tratar registrados.",
+				"evidence": "Evidencia",
+				"actionItems": "Acciones a seguir",
+				"noItems": "Esta sesión no tiene acciones a seguir.",
+				"outcome": "Resultado",
+				"commitment": "Tu compromiso",
+				"notCommitted": "Todavía no te has comprometido."
+			}
 		}
 	},
 	"player": {

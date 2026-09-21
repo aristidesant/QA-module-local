@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import {
 	Badge,
 	Button,
@@ -29,8 +29,10 @@ import {
 	selectSessions,
 } from '~/stores/qa/coachingStore';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
+import { AgentSessionDetailDrawer } from '~/modules/qa/coaching/components/AgentSessionDetailDrawer';
 import { AGENT_PERSONA } from '../../constants';
 import { AreaBadge } from '../../components/Badges';
+import cardStyles from '../../components/Cards.module.css';
 
 const helper = createColumnHelper<CoachingSessionRecord>();
 
@@ -45,6 +47,8 @@ export function AgentCoachingTab() {
 	const { t } = useTranslation('qa.lms');
 	const allSessions = useCoachingStore(selectSessions);
 	const cohorts = useCoachingStore(selectCohorts);
+	const [detailSession, setDetailSession] =
+		useState<CoachingSessionRecord | null>(null);
 
 	const sessions = useMemo(() => {
 		const myCohortIds = cohorts
@@ -158,7 +162,11 @@ export function AgentCoachingTab() {
 							{t('agent.coaching.empty')}
 						</Text>
 					) : (
-						<Stack gap='sm'>
+						<Stack
+							gap='sm'
+							className={cardStyles.clickable}
+							onClick={() => setDetailSession(next)}
+						>
 							<Group gap='xs' align='flex-start'>
 								<Text fw={600} size='md' flex={1}>
 									{next.topic}
@@ -206,7 +214,14 @@ export function AgentCoachingTab() {
 					) : (
 						<Stack gap='sm'>
 							{commitments.map(({ session, item }) => (
-								<Paper key={item.id} withBorder p='sm' radius='md'>
+								<Paper
+									key={item.id}
+									withBorder
+									p='sm'
+									radius='md'
+									className={cardStyles.clickable}
+									onClick={() => setDetailSession(session)}
+								>
 									<Group
 										justify='space-between'
 										align='flex-start'
@@ -235,7 +250,10 @@ export function AgentCoachingTab() {
 											<Button
 												size='xs'
 												variant='light'
-												onClick={() => handleCommit(session.id, item.id)}
+												onClick={(e) => {
+													e.stopPropagation();
+													handleCommit(session.id, item.id);
+												}}
 											>
 												{t('agent.coaching.acknowledge')}
 											</Button>
@@ -248,15 +266,35 @@ export function AgentCoachingTab() {
 				</SectionCard>
 			</SimpleGrid>
 
-			<SectionCard title={t('agent.coaching.past')} icon={IconHistory}>
+			<SectionCard
+				title={t('agent.coaching.past')}
+				description={t('agent.coaching.pastDescription')}
+				icon={IconHistory}
+				headerActions={
+					<Text size='sm' c='dimmed'>
+						{t('agent.coaching.rowsCount', { count: past.length })}
+					</Text>
+				}
+			>
 				<BaseTable<CoachingSessionRecord>
 					data={past}
 					columns={columns}
 					getRowId={(r) => r.id}
+					initialSort={[{ id: 'date', desc: true }]}
+					enablePagination
+					showPaginationControls
+					pageSize={10}
 					density='compact'
 					emptyMessage={t('agent.coaching.empty')}
+					onRowClick={(session) => setDetailSession(session)}
 				/>
 			</SectionCard>
+
+			<AgentSessionDetailDrawer
+				session={detailSession}
+				opened={detailSession !== null}
+				onClose={() => setDetailSession(null)}
+			/>
 		</Stack>
 	);
 }
