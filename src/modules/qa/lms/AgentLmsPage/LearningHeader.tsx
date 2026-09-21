@@ -1,9 +1,27 @@
-﻿import { Group, Paper, RingProgress, SimpleGrid, Stack, Text, Title } from '@mantine/core';
-import { IconAlertTriangle, IconCalendarDue, IconCircleCheck, IconClipboardCheck, IconMailForward } from '@tabler/icons-react';
+﻿import {
+	Group,
+	Paper,
+	RingProgress,
+	SimpleGrid,
+	Stack,
+	Text,
+	Title,
+} from '@mantine/core';
+import {
+	IconAlertTriangle,
+	IconCalendarDue,
+	IconCircleCheck,
+	IconClipboardCheck,
+	IconMailForward,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { StatCard } from '~/components/StatCard';
-import type { LmsAssignment, LmsContent, LmsLearningPath, LmsPathEnrollment } from '~/models/qa';
-import { LMS_AREA_META } from '../constants';
+import type {
+	LmsAssignment,
+	LmsContent,
+	LmsLearningPath,
+	LmsPathEnrollment,
+} from '~/models/qa';
 import { agentLmsKpis, pathProgress } from '../helpers';
 
 interface LearningHeaderProps {
@@ -13,14 +31,23 @@ interface LearningHeaderProps {
 	contentById: Record<string, LmsContent>;
 }
 
-export function LearningHeader({ assignments, paths, enrollments }: LearningHeaderProps) {
+export function LearningHeader({
+	assignments,
+	paths,
+	enrollments,
+}: LearningHeaderProps) {
 	const { t } = useTranslation('qa.lms');
 	const kpis = agentLmsKpis(assignments);
 
 	const activeEnrollment = enrollments.find((e) => !e.completedAt);
-	const activePath = activeEnrollment ? paths.find((p) => p.id === activeEnrollment.pathId) : undefined;
-	const progress = activePath ? pathProgress(activePath, activeEnrollment) : null;
-	const ringColor = activePath ? LMS_AREA_META[activePath.area].color : 'gray';
+	const activePath = activeEnrollment
+		? paths.find((p) => p.id === activeEnrollment.pathId)
+		: undefined;
+	const progress = activePath
+		? pathProgress(activePath, activeEnrollment)
+		: null;
+	// Progress ring uses the one informational accent — area no longer carries its own color.
+	const ringColor = activePath ? 'blue' : 'gray';
 
 	return (
 		<Stack gap='md'>
@@ -57,7 +84,10 @@ export function LearningHeader({ assignments, paths, enrollments }: LearningHead
 							</Text>
 							{activePath && progress && (
 								<Text size='xs' c='dimmed'>
-									{t('agent.paths.modules', { done: progress.done, total: progress.total })}
+									{t('agent.paths.modules', {
+										done: progress.done,
+										total: progress.total,
+									})}
 								</Text>
 							)}
 						</Stack>
@@ -69,7 +99,9 @@ export function LearningHeader({ assignments, paths, enrollments }: LearningHead
 				<StatCard
 					title={t('agent.kpi.needsResponse')}
 					value={kpis.needsResponse}
-					color={kpis.needsResponse > 0 ? 'var(--mantine-color-yellow-7)' : undefined}
+					color={
+						kpis.needsResponse > 0 ? 'var(--mantine-color-yellow-7)' : undefined
+					}
 					icon={<IconMailForward size={18} />}
 					variant='compact'
 				/>

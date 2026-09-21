@@ -31,29 +31,34 @@ export const LMS_AREAS: LmsArea[] = [
 	'GENERAL',
 ];
 
-/** Colors aligned with src/modules/qa/triggers/constants.ts AREA_COLORS. */
+/**
+ * Area is identity, not status — it never carried its own semantic meaning
+ * (unlike a score or a state), so every area shares the same neutral color.
+ * Badges tell areas apart by icon + label only; score/status colors
+ * (green/yellow/red) stay reserved for actual evaluation results.
+ */
 export const LMS_AREA_META: Record<
 	LmsArea,
 	{ labelKey: string; color: string; icon: TablerIcon }
 > = {
 	QUALITY_ASSURANCE: {
 		labelKey: 'areas.QUALITY_ASSURANCE',
-		color: 'cyan',
+		color: 'gray',
 		icon: IconClipboardList,
 	},
 	COMPLIANCE: {
 		labelKey: 'areas.COMPLIANCE',
-		color: 'grape',
+		color: 'gray',
 		icon: IconShieldCheck,
 	},
 	SENTIMENT_EMOTION: {
 		labelKey: 'areas.SENTIMENT_EMOTION',
-		color: 'teal',
+		color: 'gray',
 		icon: IconMoodSmile,
 	},
 	BUSINESS_INSIGHTS: {
 		labelKey: 'areas.BUSINESS_INSIGHTS',
-		color: 'indigo',
+		color: 'gray',
 		icon: IconBriefcase,
 	},
 	GENERAL: { labelKey: 'areas.GENERAL', color: 'gray', icon: IconSchool },
@@ -65,31 +70,32 @@ export const LMS_FORMATS: LmsFormat[] = [
 	'QUIZ',
 	'SCENARIO',
 ];
+/** Format is identity too — same neutral treatment as LMS_AREA_META above. */
 export const LMS_FORMAT_META: Record<
 	LmsFormat,
 	{ labelKey: string; color: string; icon: TablerIcon; ctaKey: string }
 > = {
 	VIDEO: {
 		labelKey: 'formats.VIDEO',
-		color: 'blue',
+		color: 'gray',
 		icon: IconPlayerPlay,
 		ctaKey: 'cta.watch',
 	},
 	DOCUMENT: {
 		labelKey: 'formats.DOCUMENT',
-		color: 'orange',
+		color: 'gray',
 		icon: IconBook,
 		ctaKey: 'cta.read',
 	},
 	QUIZ: {
 		labelKey: 'formats.QUIZ',
-		color: 'violet',
+		color: 'gray',
 		icon: IconClipboardCheck,
 		ctaKey: 'cta.takeQuiz',
 	},
 	SCENARIO: {
 		labelKey: 'formats.SCENARIO',
-		color: 'pink',
+		color: 'gray',
 		icon: IconMasksTheater,
 		ctaKey: 'cta.practice',
 	},
@@ -108,7 +114,7 @@ export const ACCEPTANCE_COLOR: Record<LmsAcceptanceStatus, string> = {
 	NOT_REQUIRED: 'gray',
 	PENDING: 'yellow',
 	ACCEPTED: 'green',
-	RESCHEDULE_REQUESTED: 'orange',
+	RESCHEDULE_REQUESTED: 'yellow',
 	NO_RESPONSE: 'red',
 };
 
