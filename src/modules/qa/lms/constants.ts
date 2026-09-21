@@ -4,9 +4,14 @@ import {
 	IconBriefcase,
 	IconClipboardCheck,
 	IconClipboardList,
+	IconClock,
 	IconMasksTheater,
+	IconMoodAngry,
+	IconMoodConfuzed,
+	IconMoodSad,
 	IconMoodSmile,
 	IconPlayerPlay,
+	IconQuestionMark,
 	IconSchool,
 	IconShieldCheck,
 } from '@tabler/icons-react';
@@ -18,6 +23,8 @@ import type {
 	LmsFormat,
 	LmsImpactVerdict,
 	LmsLevel,
+	RolePlayDifficulty,
+	RolePlayPersonaTrait,
 } from '~/models/qa';
 import type { DimensionKey } from '~/modules/qa/team/types';
 
@@ -99,6 +106,35 @@ export const LMS_FORMAT_META: Record<
 		icon: IconMasksTheater,
 		ctaKey: 'cta.practice',
 	},
+};
+
+/** Persona trait is identity, not status — same neutral treatment as area/format. */
+export const ROLE_PLAY_PERSONA_META: Record<
+	RolePlayPersonaTrait,
+	{ labelKey: string; icon: TablerIcon }
+> = {
+	FRUSTRATED: { labelKey: 'rolePlayPersona.FRUSTRATED', icon: IconMoodSad },
+	SKEPTICAL: {
+		labelKey: 'rolePlayPersona.SKEPTICAL',
+		icon: IconMoodConfuzed,
+	},
+	CONFUSED: {
+		labelKey: 'rolePlayPersona.CONFUSED',
+		icon: IconQuestionMark,
+	},
+	RUSHED: { labelKey: 'rolePlayPersona.RUSHED', icon: IconClock },
+	CALM: { labelKey: 'rolePlayPersona.CALM', icon: IconMoodSmile },
+	HOSTILE: { labelKey: 'rolePlayPersona.HOSTILE', icon: IconMoodAngry },
+};
+
+/** Difficulty is a spec the agent picks, not a score — no color banding. */
+export const ROLE_PLAY_DIFFICULTY_META: Record<
+	RolePlayDifficulty,
+	{ labelKey: string }
+> = {
+	EASY: { labelKey: 'rolePlayDifficulty.EASY' },
+	MEDIUM: { labelKey: 'rolePlayDifficulty.MEDIUM' },
+	HARD: { labelKey: 'rolePlayDifficulty.HARD' },
 };
 
 export const LMS_LEVELS: LmsLevel[] = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'];
@@ -228,8 +264,12 @@ export const DIMENSION_TO_AREA: Record<DimensionKey, EvaluationArea> = {
 	business: 'BUSINESS_INSIGHTS',
 };
 
-export type AgentLmsTab = 'assignments' | 'history';
-export const AGENT_LMS_TABS: AgentLmsTab[] = ['assignments', 'history'];
+export type AgentLmsTab = 'assignments' | 'rolePlay' | 'history';
+export const AGENT_LMS_TABS: AgentLmsTab[] = [
+	'assignments',
+	'rolePlay',
+	'history',
+];
 
 export const AGENT_LMS_PATH = '/qa/agent/lms';
 export const agentContentPath = (contentId: string) =>

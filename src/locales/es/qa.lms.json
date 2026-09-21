@@ -109,7 +109,8 @@
 		},
 		"tabs": {
 			"assignments": "Mis asignaciones",
-			"history": "Historial"
+			"history": "Historial",
+			"rolePlay": "Juego de roles"
 		},
 		"assignments": {
 			"needsResponse": "Requiere tu respuesta",
@@ -233,6 +234,20 @@
 				"session": "Sesión de coaching",
 				"material": "Material asignado"
 			}
+		},
+		"rolePlay": {
+			"available": "Disponibles para practicar",
+			"availableDescription": "Modelos de cliente que tu supervisor te ha desbloqueado.",
+			"noneAvailable": "Todavía no tienes ninguno desbloqueado. Pídele acceso a tu supervisor.",
+			"locked": "Bloqueados por tu supervisor",
+			"lockedDescription": "Estos modelos todavía no están desbloqueados para ti.",
+			"lockedBadge": "Bloqueado",
+			"lockedHint": "Pídele a tu supervisor que desbloquee este modelo.",
+			"objectives": "Qué practicar",
+			"startPractice": "Iniciar práctica",
+			"practiceStarted": "Sesión de práctica iniciada con {{name}} (simulada).",
+			"mockDisclaimer": "Esta es una sesión simulada para el prototipo: no se realizará ninguna llamada real.",
+			"empty": "Todavía no hay modelos de juego de roles configurados."
 		}
 	},
 	"player": {
@@ -560,5 +575,18 @@
 		"cancel": "Cancelar",
 		"close": "Cerrar",
 		"save": "Guardar"
+	},
+	"rolePlayPersona": {
+		"FRUSTRATED": "Frustrado",
+		"SKEPTICAL": "Escéptico",
+		"CONFUSED": "Confundido",
+		"RUSHED": "Apurado",
+		"CALM": "Tranquilo",
+		"HOSTILE": "Hostil"
+	},
+	"rolePlayDifficulty": {
+		"EASY": "Fácil",
+		"MEDIUM": "Medio",
+		"HARD": "Difícil"
 	}
 }

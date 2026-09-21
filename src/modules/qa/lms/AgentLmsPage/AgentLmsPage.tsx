@@ -1,7 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
 import { Badge, Stack, Tabs } from '@mantine/core';
-import { IconHistory, IconListCheck } from '@tabler/icons-react';
+import {
+	IconHistory,
+	IconListCheck,
+	IconMasksTheater,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
 import type { LmsAssignment, LmsContent } from '~/models/qa';
@@ -18,13 +22,16 @@ import {
 	agentContentPath,
 	type AgentLmsTab,
 } from '../constants';
+import { ROLE_PLAY_MODEL_SEEDS } from '../rolePlayMockData';
 import { RescheduleModal } from '../components/RescheduleModal';
 import { LearningHeader } from './LearningHeader';
 import { AssignmentsTab } from './tabs/AssignmentsTab';
+import { RolePlayTab } from './tabs/RolePlayTab';
 import { HistoryTab } from './tabs/HistoryTab';
 
 const TAB_ICONS = {
 	assignments: IconListCheck,
+	rolePlay: IconMasksTheater,
 	history: IconHistory,
 } as const;
 
@@ -75,6 +82,9 @@ export default function AgentLmsPage() {
 
 	const counts = {
 		assignments: mine.filter((a) => a.status !== 'COMPLETED').length,
+		rolePlay: ROLE_PLAY_MODEL_SEEDS.filter((m) =>
+			m.unlockedForAgentIds.includes(AGENT_PERSONA.id)
+		).length,
 		history: mine.filter((a) => a.status === 'COMPLETED').length,
 	};
 
@@ -119,6 +129,21 @@ export default function AgentLmsPage() {
 							{t('agent.tabs.assignments')}
 						</Tabs.Tab>
 						<Tabs.Tab
+							value='rolePlay'
+							leftSection={<TAB_ICONS.rolePlay size={16} />}
+							rightSection={
+								<Badge
+									size='xs'
+									variant='light'
+									color={counts.rolePlay > 0 ? 'blue' : 'gray'}
+								>
+									{counts.rolePlay}
+								</Badge>
+							}
+						>
+							{t('agent.tabs.rolePlay')}
+						</Tabs.Tab>
+						<Tabs.Tab
 							value='history'
 							leftSection={<TAB_ICONS.history size={16} />}
 							rightSection={
@@ -138,6 +163,13 @@ export default function AgentLmsPage() {
 							onOpen={openContent}
 							onAccept={handleAccept}
 							onPropose={setRescheduleTarget}
+						/>
+					</Tabs.Panel>
+
+					<Tabs.Panel value='rolePlay' pt='md'>
+						<RolePlayTab
+							models={ROLE_PLAY_MODEL_SEEDS}
+							agentId={AGENT_PERSONA.id}
 						/>
 					</Tabs.Panel>
 

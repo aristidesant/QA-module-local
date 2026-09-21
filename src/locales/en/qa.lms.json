@@ -109,7 +109,8 @@
 		},
 		"tabs": {
 			"assignments": "My assignments",
-			"history": "History"
+			"history": "History",
+			"rolePlay": "Role Play"
 		},
 		"assignments": {
 			"needsResponse": "Needs your response",
@@ -233,6 +234,20 @@
 				"session": "Coaching session",
 				"material": "Assigned material"
 			}
+		},
+		"rolePlay": {
+			"available": "Available to practice",
+			"availableDescription": "Client models your supervisor has unlocked for you.",
+			"noneAvailable": "Nothing unlocked yet. Ask your supervisor for access.",
+			"locked": "Locked by your supervisor",
+			"lockedDescription": "These models aren't unlocked for you yet.",
+			"lockedBadge": "Locked",
+			"lockedHint": "Ask your supervisor to unlock this model.",
+			"objectives": "What to practice",
+			"startPractice": "Start practice",
+			"practiceStarted": "Practice session started with {{name}} (mock).",
+			"mockDisclaimer": "This is a mock session for the prototype — no real call will be placed.",
+			"empty": "No role play models configured yet."
 		}
 	},
 	"player": {
@@ -560,5 +575,18 @@
 		"cancel": "Cancel",
 		"close": "Close",
 		"save": "Save"
+	},
+	"rolePlayPersona": {
+		"FRUSTRATED": "Frustrated",
+		"SKEPTICAL": "Skeptical",
+		"CONFUSED": "Confused",
+		"RUSHED": "Rushed",
+		"CALM": "Calm",
+		"HOSTILE": "Hostile"
+	},
+	"rolePlayDifficulty": {
+		"EASY": "Easy",
+		"MEDIUM": "Medium",
+		"HARD": "Hard"
 	}
 }
