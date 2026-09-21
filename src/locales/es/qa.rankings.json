@@ -166,12 +166,19 @@
 				"period": "Periodo",
 				"type": "Tipo",
 				"winner": "Ganador",
-				"prize": "Premio"
+				"prize": "Premio",
+				"myRank": "Tu puesto"
 			},
-			"empty": "Todavía no hay rankings anteriores"
+			"empty": "Todavía no hay rankings anteriores",
+			"myRankValue": "#{{rank}} · {{score}}",
+			"unranked": "Sin clasificar"
 		},
 		"empty": {
 			"noActive": "Tu equipo no tiene ningún ranking activo ahora mismo"
+		},
+		"tabs": {
+			"current": "Ranking actual",
+			"past": "Rankings anteriores"
 		}
 	},
 	"table": {

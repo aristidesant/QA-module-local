@@ -166,12 +166,19 @@
 				"period": "Period",
 				"type": "Type",
 				"winner": "Winner",
-				"prize": "Prize"
+				"prize": "Prize",
+				"myRank": "Your rank"
 			},
-			"empty": "No past rankings yet"
+			"empty": "No past rankings yet",
+			"myRankValue": "#{{rank}} · {{score}}",
+			"unranked": "Unranked"
 		},
 		"empty": {
 			"noActive": "No active ranking for your team right now"
+		},
+		"tabs": {
+			"current": "Current leaderboard",
+			"past": "Past leaderboards"
 		}
 	},
 	"table": {
