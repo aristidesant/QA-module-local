@@ -17,22 +17,54 @@ import {
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import { SectionCard } from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
 import BaseTable, {
 	type BaseTableColumnDef,
 } from '~/components/BaseTable/BaseTable';
-import type { CoachingSessionRecord } from '~/models/qa';
+import type {
+	CoachingActionItem,
+	CoachingSessionRecord,
+	LmsAssignment,
+	LmsContent,
+} from '~/models/qa';
 import {
 	useCoachingStore,
 	selectCohorts,
 	selectSessions,
 } from '~/stores/qa/coachingStore';
+import {
+	useLmsStore,
+	selectAssignments,
+	selectContent,
+} from '~/stores/qa/lmsStore';
+import { needsResponse } from '~/modules/qa/lms/helpers';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { AgentSessionDetailDrawer } from '~/modules/qa/coaching/components/AgentSessionDetailDrawer';
-import { AGENT_PERSONA } from '../../constants';
+import { AGENT_PERSONA, agentContentPath } from '../../constants';
 import { AreaBadge } from '../../components/Badges';
 import cardStyles from '../../components/Cards.module.css';
+
+interface SessionCommitment {
+	kind: 'session';
+	key: string;
+	acknowledged: boolean;
+	sortDate: string;
+	session: CoachingSessionRecord;
+	item: CoachingActionItem;
+}
+
+interface MaterialCommitment {
+	kind: 'material';
+	key: string;
+	acknowledged: boolean;
+	sortDate: string;
+	assignment: LmsAssignment;
+	content: LmsContent | undefined;
+}
+
+type Commitment = SessionCommitment | MaterialCommitment;
 
 const helper = createColumnHelper<CoachingSessionRecord>();
 
@@ -45,10 +77,22 @@ const STATUS_COLOR: Record<CoachingSessionRecord['status'], string> = {
 
 export function AgentCoachingTab() {
 	const { t } = useTranslation('qa.lms');
+	const navigate = useNavigate();
 	const allSessions = useCoachingStore(selectSessions);
 	const cohorts = useCoachingStore(selectCohorts);
+	const assignments = useLmsStore(selectAssignments);
+	const content = useLmsStore(selectContent);
 	const [detailSession, setDetailSession] =
 		useState<CoachingSessionRecord | null>(null);
+
+	const contentById = useMemo(
+		() =>
+			Object.fromEntries(content.map((c) => [c.id, c])) as Record<
+				string,
+				LmsContent
+			>,
+		[content]
+	);
 
 	const sessions = useMemo(() => {
 		const myCohortIds = cohorts
@@ -76,22 +120,49 @@ export function AgentCoachingTab() {
 				.sort((a, b) => b.date.localeCompare(a.date)),
 		[sessions]
 	);
+	// Two kinds of commitment: behavioral action items agreed during a session,
+	// and educational material assigned because of coaching (COACHING_RULE).
+	// Merged into one list, still-open ones first, then most recent.
 	const MAX_COMMITMENTS = 3;
-	const commitments = useMemo(
-		() =>
-			sessions
-				.filter((s) => s.status === 'COMPLETED')
-				.flatMap((s) => s.actionItems.map((item) => ({ session: s, item })))
-				// Still-open ones first (they need a response), then most recent.
-				.sort((a, b) => {
-					if (a.item.acknowledgedByAgent !== b.item.acknowledgedByAgent) {
-						return a.item.acknowledgedByAgent ? 1 : -1;
-					}
-					return b.session.date.localeCompare(a.session.date);
-				})
-				.slice(0, MAX_COMMITMENTS),
-		[sessions]
-	);
+	const commitments = useMemo(() => {
+		const fromSessions: Commitment[] = sessions
+			.filter((s) => s.status === 'COMPLETED')
+			.flatMap((s) =>
+				s.actionItems.map((item) => ({
+					kind: 'session' as const,
+					key: item.id,
+					acknowledged: item.acknowledgedByAgent,
+					sortDate: s.date,
+					session: s,
+					item,
+				}))
+			);
+
+		const fromMaterial: Commitment[] = assignments
+			.filter(
+				(a) =>
+					a.agentId === AGENT_PERSONA.id &&
+					a.source === 'COACHING_RULE' &&
+					a.status !== 'COMPLETED'
+			)
+			.map((a) => ({
+				kind: 'material' as const,
+				key: a.id,
+				acknowledged: !needsResponse(a),
+				sortDate: a.assignedAt,
+				assignment: a,
+				content: contentById[a.contentId],
+			}));
+
+		return [...fromSessions, ...fromMaterial]
+			.sort((a, b) => {
+				if (a.acknowledged !== b.acknowledged) {
+					return a.acknowledged ? 1 : -1;
+				}
+				return b.sortDate.localeCompare(a.sortDate);
+			})
+			.slice(0, MAX_COMMITMENTS);
+	}, [sessions, assignments, contentById]);
 
 	const handleCommit = (sessionId: string, itemId: string) => {
 		useCoachingStore.getState().acknowledgeActionItem(sessionId, itemId);
@@ -222,14 +293,18 @@ export function AgentCoachingTab() {
 						</Text>
 					) : (
 						<Stack gap='sm'>
-							{commitments.map(({ session, item }) => (
+							{commitments.map((c) => (
 								<Paper
-									key={item.id}
+									key={c.key}
 									withBorder
 									p='sm'
 									radius='md'
 									className={cardStyles.clickable}
-									onClick={() => setDetailSession(session)}
+									onClick={() =>
+										c.kind === 'session'
+											? setDetailSession(c.session)
+											: navigate(agentContentPath(c.assignment.contentId))
+									}
 								>
 									<Group
 										justify='space-between'
@@ -237,35 +312,81 @@ export function AgentCoachingTab() {
 										wrap='nowrap'
 									>
 										<Stack gap={2} flex={1} miw={0}>
-											<Text size='sm' fw={500}>
-												{item.text}
-											</Text>
-											<Text size='xs' c='dimmed'>
-												{session.topic} · {session.coachName} ·{' '}
-												{t('due.date', { date: item.dueDate })}
-											</Text>
+											<Badge
+												size='xs'
+												variant='outline'
+												color='gray'
+												w='fit-content'
+											>
+												{t(
+													c.kind === 'session'
+														? 'agent.coaching.commitmentType.session'
+														: 'agent.coaching.commitmentType.material'
+												)}
+											</Badge>
+											{c.kind === 'session' ? (
+												<>
+													<Text size='sm' fw={500}>
+														{c.item.text}
+													</Text>
+													<Text size='xs' c='dimmed'>
+														{c.session.topic} · {c.session.coachName} ·{' '}
+														{t('due.date', { date: c.item.dueDate })}
+													</Text>
+												</>
+											) : (
+												<>
+													<Text size='sm' fw={500}>
+														{c.content?.title ?? c.assignment.contentId}
+													</Text>
+													<Text size='xs' c='dimmed'>
+														{t('agent.assignments.assignedBy', {
+															name: c.assignment.assignedBy,
+														})}{' '}
+														· {t('due.date', { date: c.assignment.dueDate })}
+													</Text>
+												</>
+											)}
 										</Stack>
-										{item.acknowledgedByAgent ? (
+										{c.kind === 'session' ? (
+											c.item.acknowledgedByAgent ? (
+												<Badge
+													color='green'
+													variant='light'
+													leftSection={<IconCheck size={12} />}
+												>
+													{t('agent.coaching.acknowledged', {
+														date: c.item.acknowledgedAt?.slice(0, 10) ?? '',
+													})}
+												</Badge>
+											) : (
+												<Button
+													size='xs'
+													variant='light'
+													onClick={(e) => {
+														e.stopPropagation();
+														handleCommit(c.session.id, c.item.id);
+													}}
+												>
+													{t('agent.coaching.acknowledge')}
+												</Button>
+											)
+										) : !needsResponse(c.assignment) ? (
 											<Badge
 												color='green'
 												variant='light'
 												leftSection={<IconCheck size={12} />}
 											>
-												{t('agent.coaching.acknowledged', {
-													date: item.acknowledgedAt?.slice(0, 10) ?? '',
+												{t('agent.assignments.accepted', {
+													date:
+														c.assignment.acceptance.respondedAt?.slice(0, 10) ??
+														'',
 												})}
 											</Badge>
 										) : (
-											<Button
-												size='xs'
-												variant='light'
-												onClick={(e) => {
-													e.stopPropagation();
-													handleCommit(session.id, item.id);
-												}}
-											>
-												{t('agent.coaching.acknowledge')}
-											</Button>
+											<Badge color='yellow' variant='light'>
+												{t('agent.assignments.needsResponse')}
+											</Badge>
 										)}
 									</Group>
 								</Paper>

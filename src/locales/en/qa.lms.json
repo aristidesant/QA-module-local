@@ -196,7 +196,7 @@
 			"upcomingDescription": "Your next session with your supervisor or the QA manager.",
 			"talkingPoints": "Talking points",
 			"commitments": "My commitments",
-			"commitmentsDescription": "Action items agreed in coaching. Confirm them so your coach knows you are on it.",
+			"commitmentsDescription": "Action items from your sessions, and material assigned as a result of coaching. Keep both moving.",
 			"past": "Past sessions",
 			"pastDescription": "Every session you've had with your supervisor or the QA manager.",
 			"rowsCount": "{{count}} sessions",
@@ -228,6 +228,10 @@
 				"outcome": "Outcome",
 				"commitment": "Your commitment",
 				"notCommitted": "Not committed yet."
+			},
+			"commitmentType": {
+				"session": "Coaching session",
+				"material": "Assigned material"
 			}
 		}
 	},
@@ -508,7 +512,10 @@
 			"what": "What",
 			"who": "Who",
 			"when": "When",
-			"mode": { "content": "Material", "path": "Learning path" },
+			"mode": {
+				"content": "Material",
+				"path": "Learning path"
+			},
 			"material": "Material",
 			"materialPlaceholder": "Pick one or more items",
 			"path": "Learning path",
@@ -522,7 +529,11 @@
 			"team": "Team",
 			"cohort": "Cohort",
 			"dueDate": "Deadline",
-			"dueQuick": { "7": "In 7 days", "14": "In 14 days", "30": "In 30 days" },
+			"dueQuick": {
+				"7": "In 7 days",
+				"14": "In 14 days",
+				"30": "In 30 days"
+			},
 			"mandatory": "Mandatory",
 			"mandatoryHint": "Counts as overdue after the deadline and feeds the at-risk flag",
 			"requireAcceptance": "Ask the agent to accept the deadline",

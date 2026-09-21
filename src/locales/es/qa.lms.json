@@ -196,7 +196,7 @@
 			"upcomingDescription": "Tu próxima sesión con tu supervisor o el QA manager.",
 			"talkingPoints": "Puntos a tratar",
 			"commitments": "Mis compromisos",
-			"commitmentsDescription": "Acciones acordadas en coaching. Confírmalas para que tu coach sepa que estás en ello.",
+			"commitmentsDescription": "Acciones de tus sesiones y material asignado a raíz del coaching. Mantén ambos al día.",
 			"past": "Sesiones anteriores",
 			"pastDescription": "Todas las sesiones que has tenido con tu supervisor o el QA manager.",
 			"rowsCount": "{{count}} sesiones",
@@ -228,6 +228,10 @@
 				"outcome": "Resultado",
 				"commitment": "Tu compromiso",
 				"notCommitted": "Todavía no te has comprometido."
+			},
+			"commitmentType": {
+				"session": "Sesión de coaching",
+				"material": "Material asignado"
 			}
 		}
 	},
@@ -508,7 +512,10 @@
 			"what": "Qué",
 			"who": "A quién",
 			"when": "Cuándo",
-			"mode": { "content": "Material", "path": "Ruta de aprendizaje" },
+			"mode": {
+				"content": "Material",
+				"path": "Ruta de aprendizaje"
+			},
 			"material": "Material",
 			"materialPlaceholder": "Elige uno o varios elementos",
 			"path": "Ruta de aprendizaje",
@@ -522,7 +529,11 @@
 			"team": "Equipo",
 			"cohort": "Cohorte",
 			"dueDate": "Fecha límite",
-			"dueQuick": { "7": "En 7 días", "14": "En 14 días", "30": "En 30 días" },
+			"dueQuick": {
+				"7": "En 7 días",
+				"14": "En 14 días",
+				"30": "En 30 días"
+			},
 			"mandatory": "Obligatorio",
 			"mandatoryHint": "Cuenta como vencido tras la fecha límite y alimenta la marca de riesgo",
 			"requireAcceptance": "Pedir al agente que acepte la fecha límite",
