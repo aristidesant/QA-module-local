@@ -62,6 +62,8 @@ export type {
 export { ComplianceCard, getComplianceColor } from './ComplianceCard';
 export { OperationalCard } from './OperationalCard';
 export { TeamBurnoutRiskCard } from './TeamBurnoutRiskCard';
+export { CampaignPerformanceCard } from './CampaignPerformanceCard';
+export type { CampaignPerformanceEntry } from './CampaignPerformanceCard';
 export { SentimentEmotionCard, getSentimentBand } from './SentimentEmotionCard';
 export { SentimentEmotionSplitCard } from './SentimentEmotionSplitCard';
 export type { SentimentSide } from './SentimentEmotionSplitCard';

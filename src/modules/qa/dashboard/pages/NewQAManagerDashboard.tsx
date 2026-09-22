@@ -19,10 +19,10 @@ import {
 	SentimentEmotionSplitCard,
 	BusinessInsightsCard,
 	OperationalCard,
-	TeamBurnoutRiskCard,
+	CampaignPerformanceCard,
+	type CampaignPerformanceEntry,
 } from '../components';
 import { buildTeamDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
-import { teamBurnoutRisk } from '~/modules/qa/analytics/helpers';
 import {
 	DASHBOARD_LINES_OF_BUSINESS,
 	type DashboardLineOfBusiness,
@@ -95,6 +95,111 @@ const ALL_DISPUTES: DisputeRow[] = [
 		status: 'rejected',
 		createdDate: '2026-08-29T15:55:00Z',
 	},
+	{
+		id: 'DSP-1016',
+		agentName: 'Maria Gonzalez',
+		type: 'Score Dispute',
+		status: 'open',
+		createdDate: '2026-08-28T12:05:00Z',
+	},
+	{
+		id: 'DSP-1013',
+		agentName: 'Kevin Park',
+		type: 'Evaluation Error',
+		status: 'pending',
+		createdDate: '2026-08-27T09:40:00Z',
+	},
+	{
+		id: 'DSP-1010',
+		agentName: 'Angela Torres',
+		type: 'Auto-Fail Dispute',
+		status: 'open',
+		createdDate: '2026-08-26T17:20:00Z',
+	},
+	{
+		id: 'DSP-1007',
+		agentName: 'Brian Walsh',
+		type: 'Compliance Dispute',
+		status: 'approved',
+		createdDate: '2026-08-25T10:15:00Z',
+	},
+	{
+		id: 'DSP-1004',
+		agentName: 'Nicole Foster',
+		type: 'Score Dispute',
+		status: 'open',
+		createdDate: '2026-08-24T14:50:00Z',
+	},
+	{
+		id: 'DSP-1001',
+		agentName: 'Daniel Reyes',
+		type: 'Evaluation Error',
+		status: 'rejected',
+		createdDate: '2026-08-22T08:30:00Z',
+	},
+];
+
+const ACTIVE_CAMPAIGNS: CampaignPerformanceEntry[] = [
+	{
+		id: 'CMP-1',
+		name: 'Q2 Sales Performance',
+		status: 'active',
+		qaScore: 92,
+		complianceScore: 88,
+		sentimentScore: 90,
+		businessScore: 85,
+		callsScored: 612,
+	},
+	{
+		id: 'CMP-2',
+		name: 'Customer Support Quality',
+		status: 'active',
+		qaScore: 78,
+		complianceScore: 95,
+		sentimentScore: 72,
+		businessScore: 69,
+		callsScored: 845,
+	},
+	{
+		id: 'CMP-3',
+		name: 'Compliance Audit Wave 2',
+		status: 'active',
+		qaScore: 95,
+		complianceScore: 98,
+		sentimentScore: 91,
+		businessScore: 88,
+		callsScored: 421,
+	},
+	{
+		id: 'CMP-4',
+		name: 'Retention Outreach',
+		status: 'active',
+		qaScore: 65,
+		complianceScore: 74,
+		sentimentScore: 58,
+		businessScore: 52,
+		callsScored: 298,
+	},
+	{
+		id: 'CMP-5',
+		name: 'VIP Escalations',
+		status: 'active',
+		qaScore: 88,
+		complianceScore: 90,
+		sentimentScore: 95,
+		businessScore: 93,
+		callsScored: 156,
+	},
+	{
+		id: 'CMP-6',
+		name: 'New Hire Training - June',
+		status: 'paused',
+		qaScore: 70,
+		complianceScore: 80,
+		sentimentScore: 75,
+		businessScore: 60,
+		callsScored: 45,
+	},
 ];
 
 const DISPUTE_STATUS_COLORS: Record<DisputeRow['status'], string> = {
@@ -146,7 +251,6 @@ export const NewQAManagerDashboard: React.FC = () => {
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
 	const metrics = buildTeamDashboardMetrics('qa-manager', 7, lineOfBusiness);
-	const burnoutRisk = teamBurnoutRisk('qa-manager');
 
 	const openDisputes = ALL_DISPUTES.filter((d) => d.status === 'open');
 	const openDisputeCount = openDisputes.length;
@@ -259,11 +363,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 						/>
 					</SectionCard>
 
-					<TeamBurnoutRiskCard
-						entries={burnoutRisk}
-						role='qa-manager'
-						subtitle='Team members across the platform showing signs of burnout'
-					/>
+					<CampaignPerformanceCard entries={ACTIVE_CAMPAIGNS} />
 				</SimpleGrid>
 			</Stack>
 		</ContentContainer>
