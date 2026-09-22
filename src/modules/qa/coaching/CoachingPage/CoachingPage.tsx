@@ -48,7 +48,8 @@ import {
 	AssignContentDrawer,
 	type AssignPreset,
 } from '~/modules/qa/lms/components/AssignContentDrawer';
-import { roleFromPath, teamBasePath } from '~/modules/qa/team/helpers';
+import { agentProfilePath, roleFromPath } from '~/modules/qa/team/helpers';
+import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import { COACHING_TABS, type CoachingTab } from '../constants';
 import { buildQueue } from '../helpers';
@@ -530,10 +531,12 @@ export default function CoachingPage() {
 							preset: { agentId: agentDrawerId },
 						});
 				}}
-				onProfile={() =>
-					agentDrawerId &&
-					navigate(`${teamBasePath(role)}/${agentDrawerId}?tab=coaching`)
-				}
+				onProfile={() => {
+					const agent = agentDrawerId
+						? TEAM_AGENTS.find((a) => a.id === agentDrawerId)
+						: undefined;
+					if (agent) navigate(`${agentProfilePath(role, agent)}?tab=coaching`);
+				}}
 				onOpenSession={(id) => {
 					setAgentDrawerId(null);
 					setSessionId(id);

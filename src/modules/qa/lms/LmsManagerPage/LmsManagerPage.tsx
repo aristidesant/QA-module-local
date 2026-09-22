@@ -1,6 +1,15 @@
 ﻿import { useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
-import { Badge, Button, Group, SimpleGrid, Stack, Tabs, Text, Title } from '@mantine/core';
+import {
+	Badge,
+	Button,
+	Group,
+	SimpleGrid,
+	Stack,
+	Tabs,
+	Text,
+	Title,
+} from '@mantine/core';
 import {
 	IconAlertTriangle,
 	IconCalendarEvent,
@@ -15,7 +24,8 @@ import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
 import { StatCard } from '~/components/StatCard';
 import type { LmsContent } from '~/models/qa';
-import { roleFromPath, teamBasePath } from '~/modules/qa/team/helpers';
+import { agentProfilePath, roleFromPath } from '~/modules/qa/team/helpers';
+import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 import {
 	useLmsStore,
 	selectAssignments,
@@ -25,8 +35,16 @@ import {
 } from '~/stores/qa/lmsStore';
 import { useCoachingStore, selectRules } from '~/stores/qa/coachingStore';
 import { agentContentPath } from '../constants';
-import { managerKpis, managerPersona, managerScopeAgents, toAssignmentRows } from '../helpers';
-import { AssignContentDrawer, type AssignPreset } from '../components/AssignContentDrawer';
+import {
+	managerKpis,
+	managerPersona,
+	managerScopeAgents,
+	toAssignmentRows,
+} from '../helpers';
+import {
+	AssignContentDrawer,
+	type AssignPreset,
+} from '../components/AssignContentDrawer';
 import { ContentDetailDrawer } from '../components/ContentDetailDrawer';
 import { PathDetailDrawer } from '../components/PathDetailDrawer';
 import { AssignmentDetailDrawer } from '../components/AssignmentDetailDrawer';
@@ -53,13 +71,20 @@ export default function LmsManagerPage() {
 	const enrollments = useLmsStore(selectEnrollments);
 	const rules = useCoachingStore(selectRules);
 
-	const [assignState, setAssignState] = useState<{ opened: boolean; preset?: AssignPreset }>({ opened: false });
+	const [assignState, setAssignState] = useState<{
+		opened: boolean;
+		preset?: AssignPreset;
+	}>({ opened: false });
 	const [contentId, setContentId] = useState<string | null>(null);
 	const [pathId, setPathId] = useState<string | null>(null);
 	const [assignmentId, setAssignmentId] = useState<string | null>(null);
 
 	const contentById = useMemo(
-		() => Object.fromEntries(content.map((c) => [c.id, c])) as Record<string, LmsContent>,
+		() =>
+			Object.fromEntries(content.map((c) => [c.id, c])) as Record<
+				string,
+				LmsContent
+			>,
 		[content]
 	);
 	const rows = useMemo(
@@ -67,12 +92,14 @@ export default function LmsManagerPage() {
 		[assignments, contentById, scopeAgents]
 	);
 	const scopeEnrollments = useMemo(
-		() => enrollments.filter((e) => scopeAgents.some((a) => a.id === e.agentId)),
+		() =>
+			enrollments.filter((e) => scopeAgents.some((a) => a.id === e.agentId)),
 		[enrollments, scopeAgents]
 	);
 	const enrolledCounts = useMemo(() => {
 		const counts: Record<string, number> = {};
-		for (const e of scopeEnrollments) counts[e.pathId] = (counts[e.pathId] ?? 0) + 1;
+		for (const e of scopeEnrollments)
+			counts[e.pathId] = (counts[e.pathId] ?? 0) + 1;
 		return counts;
 	}, [scopeEnrollments]);
 
@@ -85,7 +112,9 @@ export default function LmsManagerPage() {
 		return rules
 			.filter((r) => {
 				if (r.action.contentIds.includes(contentId)) return true;
-				const path = r.action.pathId ? paths.find((p) => p.id === r.action.pathId) : undefined;
+				const path = r.action.pathId
+					? paths.find((p) => p.id === r.action.pathId)
+					: undefined;
 				return !!path?.modules.some((m) => m.contentId === contentId);
 			})
 			.map((r) => ({ id: r.id, name: r.name }));
@@ -103,7 +132,8 @@ export default function LmsManagerPage() {
 		);
 	};
 
-	const openAssign = (preset?: AssignPreset) => setAssignState({ opened: true, preset });
+	const openAssign = (preset?: AssignPreset) =>
+		setAssignState({ opened: true, preset });
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -118,25 +148,46 @@ export default function LmsManagerPage() {
 							{t('manager.description')}
 						</Text>
 					</Stack>
-					<Button leftSection={<IconPlus size={16} />} onClick={() => openAssign()}>
+					<Button
+						leftSection={<IconPlus size={16} />}
+						onClick={() => openAssign()}
+					>
 						{t('manager.assignButton')}
 					</Button>
 				</Group>
 
 				<SimpleGrid cols={{ base: 2, md: 6 }} spacing='md'>
-					<StatCard title={t('manager.kpi.published')} value={kpis.published} variant='compact' icon={<IconLibrary size={18} />} />
-					<StatCard title={t('manager.kpi.activeAssignments')} value={kpis.activeAssignments} variant='compact' icon={<IconListCheck size={18} />} />
+					<StatCard
+						title={t('manager.kpi.published')}
+						value={kpis.published}
+						variant='compact'
+						icon={<IconLibrary size={18} />}
+					/>
+					<StatCard
+						title={t('manager.kpi.activeAssignments')}
+						value={kpis.activeAssignments}
+						variant='compact'
+						icon={<IconListCheck size={18} />}
+					/>
 					<StatCard
 						title={t('manager.kpi.pendingAcceptance')}
 						value={kpis.pendingAcceptance}
-						color={kpis.pendingAcceptance > 0 ? 'var(--mantine-color-yellow-7)' : undefined}
+						color={
+							kpis.pendingAcceptance > 0
+								? 'var(--mantine-color-yellow-7)'
+								: undefined
+						}
 						variant='compact'
 						icon={<IconMailForward size={18} />}
 					/>
 					<StatCard
 						title={t('manager.kpi.rescheduleRequests')}
 						value={kpis.rescheduleRequests}
-						color={kpis.rescheduleRequests > 0 ? 'var(--mantine-color-orange-7)' : undefined}
+						color={
+							kpis.rescheduleRequests > 0
+								? 'var(--mantine-color-orange-7)'
+								: undefined
+						}
 						variant='compact'
 						icon={<IconCalendarEvent size={18} />}
 					/>
@@ -147,7 +198,12 @@ export default function LmsManagerPage() {
 						variant='compact'
 						icon={<IconAlertTriangle size={18} />}
 					/>
-					<StatCard title={t('manager.kpi.completionRate')} value={`${kpis.completionRate}%`} variant='compact' icon={<IconChartBar size={18} />} />
+					<StatCard
+						title={t('manager.kpi.completionRate')}
+						value={`${kpis.completionRate}%`}
+						variant='compact'
+						icon={<IconChartBar size={18} />}
+					/>
 				</SimpleGrid>
 
 				<Tabs value={tab} onChange={setTab} keepMounted={false}>
@@ -178,7 +234,11 @@ export default function LmsManagerPage() {
 							value='assignments'
 							leftSection={<IconListCheck size={16} />}
 							rightSection={
-								<Badge size='xs' variant='light' color={kpis.overdue > 0 ? 'red' : 'gray'}>
+								<Badge
+									size='xs'
+									variant='light'
+									color={kpis.overdue > 0 ? 'red' : 'gray'}
+								>
 									{openCount}
 								</Badge>
 							}
@@ -210,7 +270,11 @@ export default function LmsManagerPage() {
 					</Tabs.Panel>
 
 					<Tabs.Panel value='assignments' pt='md'>
-						<ManagerAssignmentsTab rows={rows} role={role} onOpen={setAssignmentId} />
+						<ManagerAssignmentsTab
+							rows={rows}
+							role={role}
+							onOpen={setAssignmentId}
+						/>
 					</Tabs.Panel>
 
 					<Tabs.Panel value='reports' pt='md'>
@@ -262,11 +326,18 @@ export default function LmsManagerPage() {
 			/>
 
 			<AssignmentDetailDrawer
-				assignment={assignmentId ? (rows.find((r) => r.id === assignmentId) ?? null) : null}
+				assignment={
+					assignmentId
+						? (rows.find((r) => r.id === assignmentId) ?? null)
+						: null
+				}
 				persona={persona}
 				opened={assignmentId !== null}
 				onClose={() => setAssignmentId(null)}
-				onOpenProfile={(agentId) => navigate(`${teamBasePath(role)}/${agentId}?tab=coaching`)}
+				onOpenProfile={(agentId) => {
+					const agent = TEAM_AGENTS.find((a) => a.id === agentId);
+					if (agent) navigate(`${agentProfilePath(role, agent)}?tab=coaching`);
+				}}
 			/>
 		</ContentContainer>
 	);

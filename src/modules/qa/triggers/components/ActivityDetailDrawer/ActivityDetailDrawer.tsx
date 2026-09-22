@@ -22,7 +22,8 @@ import {
 	RULE_TYPE_META,
 } from '~/modules/qa/triggers/constants';
 import { formatMetricValue } from '~/modules/qa/triggers/helpers';
-import { teamBasePath } from '~/modules/qa/team/helpers';
+import { agentProfilePath } from '~/modules/qa/team/helpers';
+import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 
 interface ActivityDetailDrawerProps {
 	entry: TriggerActivityEntry | null;
@@ -64,7 +65,9 @@ export default function ActivityDetailDrawer({
 
 	const handleOpenAnalytics = () => {
 		const teamRole = role === 'supervisor' ? 'supervisor' : 'qa-manager';
-		navigate(`${teamBasePath(teamRole)}/${entry.agentId}`);
+		const agent = TEAM_AGENTS.find((a) => a.id === entry.agentId);
+		if (!agent) return;
+		navigate(agentProfilePath(teamRole, agent));
 	};
 
 	const handleOpenInbox = () => {

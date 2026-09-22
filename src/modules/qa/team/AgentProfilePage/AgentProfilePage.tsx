@@ -1,12 +1,21 @@
 import { useMemo, useState } from 'react';
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
+import {
+	useLocation,
+	useNavigate,
+	useParams,
+	useSearchParams,
+} from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Anchor, Breadcrumbs, Button, Stack, Tabs, Text } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer';
 import { EmptyState } from '~/components/EmptyState/EmptyState';
 import { useTeamStore, selectProfile } from '~/stores/qa/teamStore';
 import type { ProfilePeriod } from '../types';
-import { PROFILE_TABS, SUPERVISOR_PERSONA, type ProfileTab } from '../constants';
+import {
+	PROFILE_TABS,
+	SUPERVISOR_PERSONA,
+	type ProfileTab,
+} from '../constants';
 import { filterByPeriod, roleFromPath, teamBasePath } from '../helpers';
 import { ProfileHeader } from './ProfileHeader';
 import { OverviewTab } from './tabs/OverviewTab';
@@ -21,7 +30,11 @@ import { ActivityTab } from './tabs/ActivityTab';
 import { SessionEditorDrawer } from '~/modules/qa/coaching/components/SessionEditorDrawer';
 import { AssignContentDrawer } from '~/modules/qa/lms/components/AssignContentDrawer';
 import { managerPersona } from '~/modules/qa/lms/helpers';
-import { useLmsStore, selectAssignments, selectContent } from '~/stores/qa/lmsStore';
+import {
+	useLmsStore,
+	selectAssignments,
+	selectContent,
+} from '~/stores/qa/lmsStore';
 import { useCoachingStore, selectCohorts } from '~/stores/qa/coachingStore';
 import type { LmsContent } from '~/models/qa';
 import { SendMessageModal } from '../components/modals/SendMessageModal';
@@ -41,16 +54,25 @@ export default function AgentProfilePage() {
 
 	const tab = (searchParams.get('tab') as ProfileTab | null) ?? 'overview';
 	const setTab = (value: string | null) => {
-		setSearchParams((prev) => {
-			const next = new URLSearchParams(prev);
-			if (value) next.set('tab', value);
-			return next;
-		}, { replace: true });
+		setSearchParams(
+			(prev) => {
+				const next = new URLSearchParams(prev);
+				if (value) next.set('tab', value);
+				return next;
+			},
+			{ replace: true }
+		);
 	};
 
-	const notVisible = profile && role === 'supervisor' && profile.agent.supervisorId !== SUPERVISOR_PERSONA.id;
+	const notVisible =
+		profile &&
+		role === 'supervisor' &&
+		profile.agent.supervisorId !== SUPERVISOR_PERSONA.id;
 
-	const points = useMemo(() => (profile ? filterByPeriod(profile.performance, period) : []), [profile, period]);
+	const points = useMemo(
+		() => (profile ? filterByPeriod(profile.performance, period) : []),
+		[profile, period]
+	);
 
 	const allAssignments = useLmsStore(selectAssignments);
 	const allContent = useLmsStore(selectContent);
@@ -60,7 +82,11 @@ export default function AgentProfilePage() {
 		[allAssignments, agentId]
 	);
 	const contentById = useMemo(
-		() => Object.fromEntries(allContent.map((c) => [c.id, c])) as Record<string, LmsContent>,
+		() =>
+			Object.fromEntries(allContent.map((c) => [c.id, c])) as Record<
+				string,
+				LmsContent
+			>,
 		[allContent]
 	);
 
@@ -70,19 +96,36 @@ export default function AgentProfilePage() {
 				<EmptyState
 					message={t('common.notFound')}
 					description={t('common.notFoundDescription', { id: agentId })}
-					action={<Button onClick={() => navigate(teamBasePath(role))}>{t('header.back')}</Button>}
+					action={
+						<Button onClick={() => navigate(teamBasePath(role))}>
+							{t('header.back')}
+						</Button>
+					}
 				/>
 			</ContentContainer>
 		);
 	}
 
 	return (
-		<ContentContainer contentWidth='full' showBackButton onBackClick={() => navigate(teamBasePath(role))}>
+		<ContentContainer
+			contentWidth='full'
+			showBackButton
+			onBackClick={() => navigate(teamBasePath(role))}
+		>
 			<Stack gap='lg'>
 				<Breadcrumbs>
 					<Anchor onClick={() => navigate(teamBasePath(role))}>
-						{t(role === 'qa-manager' ? 'team.titleQaManager' : 'team.title')}
+						{t(role === 'qa-manager' ? 'teams.list.title' : 'team.title')}
 					</Anchor>
+					{role === 'qa-manager' && (
+						<Anchor
+							onClick={() =>
+								navigate(`/qa/qa-manager/teams/${profile.agent.supervisorId}`)
+							}
+						>
+							{profile.agent.team}
+						</Anchor>
+					)}
 					<Text c='dimmed'>{profile.agent.name}</Text>
 				</Breadcrumbs>
 
@@ -99,23 +142,47 @@ export default function AgentProfilePage() {
 				<Tabs value={tab} onChange={setTab} keepMounted={false}>
 					<Tabs.List>
 						{PROFILE_TABS.map(({ value, labelKey, icon: Icon }) => (
-							<Tabs.Tab key={value} value={value} leftSection={<Icon size={16} />}>
+							<Tabs.Tab
+								key={value}
+								value={value}
+								leftSection={<Icon size={16} />}
+							>
 								{t(labelKey)}
 							</Tabs.Tab>
 						))}
 					</Tabs.List>
 
-					<Tabs.Panel value='overview' pt='md'><OverviewTab profile={profile} points={points} period={period} /></Tabs.Panel>
-					<Tabs.Panel value='qa' pt='md'><QATab profile={profile} /></Tabs.Panel>
-					<Tabs.Panel value='sentiment' pt='md'><SentimentTab profile={profile} /></Tabs.Panel>
-					<Tabs.Panel value='compliance' pt='md'><ComplianceTab profile={profile} /></Tabs.Panel>
-					<Tabs.Panel value='business' pt='md'><BusinessTab profile={profile} /></Tabs.Panel>
-					<Tabs.Panel value='operations' pt='md'><OperationsTab profile={profile} /></Tabs.Panel>
-					<Tabs.Panel value='coaching' pt='md'>
-						<CoachingLmsTab profile={profile} onScheduleCoaching={() => setCoachingOpen(true)} onAssignLms={() => setLmsOpen(true)} />
+					<Tabs.Panel value='overview' pt='md'>
+						<OverviewTab profile={profile} points={points} period={period} />
 					</Tabs.Panel>
-					<Tabs.Panel value='achievements' pt='md'><AchievementsTab profile={profile} /></Tabs.Panel>
-					<Tabs.Panel value='activity' pt='md'><ActivityTab profile={profile} role={role} /></Tabs.Panel>
+					<Tabs.Panel value='qa' pt='md'>
+						<QATab profile={profile} />
+					</Tabs.Panel>
+					<Tabs.Panel value='sentiment' pt='md'>
+						<SentimentTab profile={profile} />
+					</Tabs.Panel>
+					<Tabs.Panel value='compliance' pt='md'>
+						<ComplianceTab profile={profile} />
+					</Tabs.Panel>
+					<Tabs.Panel value='business' pt='md'>
+						<BusinessTab profile={profile} />
+					</Tabs.Panel>
+					<Tabs.Panel value='operations' pt='md'>
+						<OperationsTab profile={profile} />
+					</Tabs.Panel>
+					<Tabs.Panel value='coaching' pt='md'>
+						<CoachingLmsTab
+							profile={profile}
+							onScheduleCoaching={() => setCoachingOpen(true)}
+							onAssignLms={() => setLmsOpen(true)}
+						/>
+					</Tabs.Panel>
+					<Tabs.Panel value='achievements' pt='md'>
+						<AchievementsTab profile={profile} />
+					</Tabs.Panel>
+					<Tabs.Panel value='activity' pt='md'>
+						<ActivityTab profile={profile} role={role} />
+					</Tabs.Panel>
 				</Tabs>
 			</Stack>
 
@@ -135,7 +202,12 @@ export default function AgentProfilePage() {
 				role={role}
 				preset={{ agentIds: [profile.agent.id] }}
 			/>
-			<SendMessageModal agentId={profile.agent.id} role={role} opened={messageOpen} onClose={() => setMessageOpen(false)} />
+			<SendMessageModal
+				agentId={profile.agent.id}
+				role={role}
+				opened={messageOpen}
+				onClose={() => setMessageOpen(false)}
+			/>
 		</ContentContainer>
 	);
 }

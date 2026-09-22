@@ -2,7 +2,7 @@ import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import type { TeamCallMetric } from '~/modules/qa/analytics/types';
 import { TEAM_AGENTS, TEAM_CAMPAIGNS } from '~/modules/qa/team/mockData';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
-import { teamBasePath } from '~/modules/qa/team/helpers';
+import { agentProfilePath } from '~/modules/qa/team/helpers';
 import type { RosterAgent } from '~/modules/qa/team/types';
 import type { PreviewRole } from '~/constants/previewRole';
 import {
@@ -121,6 +121,9 @@ export const buildCampaignRoster = (
 /** Where a roster row navigates: the role's own agent-profile route. */
 export const agentProfilePathFor = (
 	previewRole: PreviewRole | null,
-	agentId: string
+	agent: Pick<RosterAgent, 'id' | 'supervisorId'>
 ) =>
-	`${teamBasePath(previewRole === 'supervisor' ? 'supervisor' : 'qa-manager')}/${agentId}`;
+	agentProfilePath(
+		previewRole === 'supervisor' ? 'supervisor' : 'qa-manager',
+		agent
+	);

@@ -136,9 +136,7 @@ export function CampaignRosterTab({
 				pageSize={10}
 				density='compact'
 				emptyMessage={t(isSupervisor ? 'roster.empty' : 'roster.emptyAll')}
-				onRowClick={(r) =>
-					navigate(agentProfilePathFor(previewRole, r.agent.id))
-				}
+				onRowClick={(r) => navigate(agentProfilePathFor(previewRole, r.agent))}
 			/>
 		</SectionCard>
 	);

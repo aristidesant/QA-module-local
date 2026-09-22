@@ -11,7 +11,6 @@ import {
 	IconHeartHandshake,
 	IconSchool,
 	IconSpeakerphone,
-	IconUserSquareRounded,
 	IconAddressBook,
 	IconForms,
 } from '@tabler/icons-react';
@@ -237,24 +236,10 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		badge: 'inbox',
 	},
 	{
-		key: 'qamanager-supervisors',
-		label: 'sidebar.qamanager.supervisors',
-		icon: <IconUsers size={20} className={styles.menuIcon} />,
-		to: '/qa/qa-manager/supervisors',
-		i18nNamespace: 'qa.qamanager',
-	},
-	{
 		key: 'qamanager-teams',
 		label: 'sidebar.qamanager.teams',
 		icon: <IconUsers size={20} className={styles.menuIcon} />,
 		to: '/qa/qa-manager/teams',
-		i18nNamespace: 'qa.qamanager',
-	},
-	{
-		key: 'qamanager-agents',
-		label: 'sidebar.qamanager.agents',
-		icon: <IconUserSquareRounded size={20} className={styles.menuIcon} />,
-		to: '/qa/qa-manager/agents',
 		i18nNamespace: 'qa.team',
 	},
 	{
@@ -346,9 +331,7 @@ export const getQAManagerNavigationGrouped = (): (
 		...pick(
 			'qamanager-dashboard',
 			'qamanager-inbox',
-			'qamanager-supervisors',
 			'qamanager-teams',
-			'qamanager-agents',
 			'qamanager-forms',
 			'qamanager-coaching',
 			'qamanager-lms'

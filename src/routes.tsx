@@ -175,11 +175,11 @@ const TeamRankingsPage = React.lazy(
 const SupervisorEvaluationsPage = React.lazy(
 	() => import('./modules/qa/supervisor/pages/EvaluationsPage')
 );
-const QAManagerSupervisorsPage = React.lazy(
-	() => import('./modules/qa/qamanager/pages/SupervisorsPage')
+const QAManagerTeamsListPage = React.lazy(
+	() => import('./modules/qa/team/TeamsListPage')
 );
-const QAManagerTeamsPage = React.lazy(
-	() => import('./modules/qa/qamanager/pages/TeamsPage')
+const QAManagerTeamDetailPage = React.lazy(
+	() => import('./modules/qa/team/TeamDetailPage')
 );
 const QAManagerCampaignsPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/CampaignsPage')
@@ -1108,13 +1108,7 @@ const router = createBrowserRouter([
 									{
 										path: 'qa-manager/supervisors',
 										id: 'qa.qa-manager.supervisors',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<QAManagerSupervisorsPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
+										element: <Navigate to='/qa/qa-manager/teams' replace />,
 									},
 									{
 										path: 'qa-manager/teams',
@@ -1122,7 +1116,29 @@ const router = createBrowserRouter([
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<QAManagerTeamsPage />
+													<QAManagerTeamsListPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/teams/:supervisorId',
+										id: 'qa.qa-manager.teams.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QAManagerTeamDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/teams/:supervisorId/agents/:agentId',
+										id: 'qa.qa-manager.teams.agents.profile',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<AgentProfilePage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -1141,24 +1157,12 @@ const router = createBrowserRouter([
 									{
 										path: 'qa-manager/agents',
 										id: 'qa.qa-manager.agents',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<YourTeamPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
+										element: <Navigate to='/qa/qa-manager/teams' replace />,
 									},
 									{
 										path: 'qa-manager/agents/:agentId',
 										id: 'qa.qa-manager.agents.profile',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<AgentProfilePage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
+										element: <Navigate to='/qa/qa-manager/teams' replace />,
 									},
 									{
 										path: 'supervisor/your-team',
