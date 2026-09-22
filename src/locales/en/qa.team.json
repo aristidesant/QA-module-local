@@ -4,18 +4,119 @@
 		"titleQaManager": "Agents",
 		"description": "Every agent you supervise, with their overall score, evaluation dimensions and open follow-ups.",
 		"descriptionQaManager": "All agents across supervisors and teams.",
-		"kpi": { "averageOverall": "Team overall score", "atRisk": "Agents at risk", "atRiskHint": "Burnout high, overall below 70 or overdue training", "overdueLms": "Overdue LMS items", "openCoaching": "Scheduled coaching", "improving": "improving", "declining": "declining" },
-		"filters": { "search": "Search agent or ID", "status": "Status", "campaign": "Campaign", "supervisor": "Supervisor", "riskOnly": "At risk only", "all": "All", "clear": "Clear filters" },
-		"columns": { "agent": "Agent", "team": "Team", "supervisor": "Supervisor", "status": "Status", "overall": "Overall", "qa": "QA", "sentiment": "Sentiment", "compliance": "Compliance", "conversion": "Conversion", "aht": "AHT", "burnout": "Burnout", "badges": "Badges", "followUps": "Follow-ups", "lastEvaluation": "Last evaluation" },
+		"kpi": {
+			"averageOverall": "Team overall score",
+			"atRisk": "Agents at risk",
+			"atRiskHint": "Burnout high, overall below 70 or overdue training",
+			"overdueLms": "Overdue LMS items",
+			"openCoaching": "Scheduled coaching",
+			"improving": "improving",
+			"declining": "declining"
+		},
+		"filters": {
+			"search": "Search agent or ID",
+			"status": "Status",
+			"campaign": "Campaign",
+			"supervisor": "Supervisor",
+			"riskOnly": "At risk only",
+			"all": "All",
+			"clear": "Clear filters"
+		},
+		"columns": {
+			"agent": "Agent",
+			"team": "Team",
+			"supervisor": "Supervisor",
+			"status": "Status",
+			"overall": "Overall",
+			"qa": "QA",
+			"sentiment": "Sentiment",
+			"compliance": "Compliance",
+			"conversion": "Conversion",
+			"aht": "AHT",
+			"burnout": "Burnout",
+			"badges": "Badges",
+			"followUps": "Follow-ups",
+			"lastEvaluation": "Last evaluation"
+		},
 		"followUpsCell": "{{coaching}} coaching · {{lms}} overdue",
 		"empty": "No agents match the current filters.",
 		"rowsCount": "{{count}} agents"
 	},
-	"status": { "active": "Active", "on-leave": "On leave", "training": "Training" },
+	"teams": {
+		"list": {
+			"title": "Teams",
+			"description": "Supervisors, their agents and the campaigns each team runs.",
+			"membersCount": "{{count}} members",
+			"atRisk": "{{count}} at risk"
+		},
+		"detail": {
+			"back": "Back to teams",
+			"membersTitle": "Members",
+			"membersDescription": "Agents assigned to this team",
+			"addMembers": "Add members",
+			"removeMember": "Remove from team",
+			"removeMemberConfirmTitle": "Remove from team",
+			"removeMemberConfirmBody": "{{name}} will be moved to Unassigned. You can add them to a team again at any time.",
+			"editSupervisor": "Edit supervisor",
+			"campaignsTitle": "Campaigns",
+			"campaignsDescription": "Campaigns this team is running",
+			"assignCampaigns": "Assign campaigns",
+			"removeCampaign": "Remove",
+			"emptyCampaigns": "No campaigns assigned to this team yet.",
+			"emptyMembers": "No agents in this team yet."
+		},
+		"addMembers": {
+			"title": "Add members",
+			"source": "Agents",
+			"sourceHint": "Unassigned agents and agents from other teams",
+			"submit": "Add",
+			"success": "{{count}} member(s) added to {{team}}.",
+			"validationEmpty": "Select at least one agent."
+		},
+		"assignCampaigns": {
+			"title": "Assign campaigns",
+			"campaigns": "Campaigns",
+			"submit": "Assign",
+			"success": "Campaigns updated for {{team}}."
+		},
+		"editSupervisor": {
+			"title": "Edit supervisor",
+			"name": "Name",
+			"email": "Email",
+			"submit": "Save",
+			"success": "Supervisor updated.",
+			"validationName": "Name is required."
+		}
+	},
+	"status": {
+		"active": "Active",
+		"on-leave": "On leave",
+		"training": "Training"
+	},
 	"burnout": { "low": "Low", "medium": "Medium", "high": "High" },
-	"period": { "30d": "30 days", "90d": "90 days", "12m": "12 months", "all": "All time" },
-	"tabs": { "overview": "Overview", "qa": "QA", "sentiment": "Sentiment & Emotion", "compliance": "Compliance", "business": "Business Insights", "operations": "Operations", "coaching": "Coaching & LMS", "achievements": "Achievements", "activity": "Activity" },
-	"dimension": { "qa": "QA score", "sentiment": "Sentiment", "compliance": "Compliance", "business": "Conversion rate" },
+	"period": {
+		"30d": "30 days",
+		"90d": "90 days",
+		"12m": "12 months",
+		"all": "All time"
+	},
+	"tabs": {
+		"overview": "Overview",
+		"qa": "QA",
+		"sentiment": "Sentiment & Emotion",
+		"compliance": "Compliance",
+		"business": "Business Insights",
+		"operations": "Operations",
+		"coaching": "Coaching & LMS",
+		"achievements": "Achievements",
+		"activity": "Activity"
+	},
+	"dimension": {
+		"qa": "QA score",
+		"sentiment": "Sentiment",
+		"compliance": "Compliance",
+		"business": "Conversion rate"
+	},
 	"header": {
 		"back": "Back to team",
 		"trackedSince": "Tracked since {{date}}",
@@ -26,15 +127,29 @@
 		"percentile": "P{{value}}",
 		"weights": "Weights: QA {{qa}}% · Sentiment {{sentiment}}% · Compliance {{compliance}}% · Business {{business}}%",
 		"vsPrevious": "vs previous period",
-		"actions": { "scheduleCoaching": "Schedule coaching", "assignLms": "Assign material", "sendMessage": "Send message" },
-		"shift": { "morning": "Morning shift", "afternoon": "Afternoon shift", "night": "Night shift" }
+		"actions": {
+			"scheduleCoaching": "Schedule coaching",
+			"assignLms": "Assign material",
+			"sendMessage": "Send message"
+		},
+		"shift": {
+			"morning": "Morning shift",
+			"afternoon": "Afternoon shift",
+			"night": "Night shift"
+		}
 	},
 	"overview": {
 		"performance": "Performance over time",
 		"performanceDescription": "Monthly average of the overall score and each evaluation dimension",
 		"direction": { "up": "Improving", "down": "Declining", "flat": "Stable" },
 		"directionHint": "{{delta}} points between the start and the end of the period",
-		"series": { "overall": "Overall", "qa": "QA", "sentiment": "Sentiment", "compliance": "Compliance", "business": "Conversion" },
+		"series": {
+			"overall": "Overall",
+			"qa": "QA",
+			"sentiment": "Sentiment",
+			"compliance": "Compliance",
+			"business": "Conversion"
+		},
 		"strengths": "Strengths",
 		"weaknesses": "Areas to improve",
 		"noWeaknesses": "No dimension below 75 in this period.",
@@ -44,80 +159,232 @@
 		"peerDescription": "Agent value vs {{team}} average",
 		"burnout": "Burnout risk",
 		"risk": "Risk summary",
-		"riskTiles": { "autoFails": "Auto-fails", "criticalErrors": "Critical errors", "openAlerts": "Open alerts", "openDisputes": "Open disputes" },
+		"riskTiles": {
+			"autoFails": "Auto-fails",
+			"criticalErrors": "Critical errors",
+			"openAlerts": "Open alerts",
+			"openDisputes": "Open disputes"
+		},
 		"alerts": "Trigger alerts",
 		"alertsDescription": "Rules that fired for this agent",
 		"acknowledge": "Acknowledge",
 		"acknowledged": "Acknowledged",
 		"disputes": "Disputes",
-		"disputeStatus": { "open": "Open", "won": "Won", "lost": "Lost", "withdrawn": "Withdrawn" },
+		"disputeStatus": {
+			"open": "Open",
+			"won": "Won",
+			"lost": "Lost",
+			"withdrawn": "Withdrawn"
+		},
 		"noAlerts": "No trigger alerts in this period.",
 		"noDisputes": "No disputes filed."
 	},
 	"qa": {
-		"kpi": { "average": "Average QA score", "passRate": "Pass rate", "evaluations": "Evaluations", "autoFails": "Auto-fails" },
+		"kpi": {
+			"average": "Average QA score",
+			"passRate": "Pass rate",
+			"evaluations": "Evaluations",
+			"autoFails": "Auto-fails"
+		},
 		"errorTypes": "Error types (COPC)",
 		"errorTypesDescription": "Occurrences per error type across all evaluated calls",
 		"perCall": "{{value}}% of calls",
 		"errorTrend": "Errors per month",
 		"topFailed": "Most failed items",
-		"columns": { "item": "Item", "aspect": "Aspect", "errorType": "Type", "count": "Times failed" },
+		"columns": {
+			"item": "Item",
+			"aspect": "Aspect",
+			"errorType": "Type",
+			"count": "Times failed"
+		},
 		"history": "Evaluation history",
 		"historyDescription": "Latest evaluated calls; open a call to see the full evaluation",
-		"historyColumns": { "date": "Date", "campaign": "Campaign", "duration": "Duration", "qa": "QA", "sentiment": "Cust. sentiment", "compliance": "Compliance", "converted": "Converted", "evaluatedBy": "Evaluated by", "open": "Open call" },
+		"historyColumns": {
+			"date": "Date",
+			"campaign": "Campaign",
+			"duration": "Duration",
+			"qa": "QA",
+			"sentiment": "Cust. sentiment",
+			"compliance": "Compliance",
+			"converted": "Converted",
+			"evaluatedBy": "Evaluated by",
+			"open": "Open call"
+		},
 		"autoFail": "Auto-fail"
 	},
 	"sentiment": {
-		"agent": "Agent", "customer": "Customer",
-		"average": "Average score", "categories": "Sentiment categories", "emotions": "Top emotions",
-		"trend": "Sentiment over time", "trendDescription": "Monthly average, agent vs customer (1–5)",
-		"recoveryRate": "Recovery rate", "recoveryHint": "Calls that started negative and ended neutral or better",
+		"agent": "Agent",
+		"customer": "Customer",
+		"average": "Average score",
+		"categories": "Sentiment categories",
+		"emotions": "Top emotions",
+		"trend": "Sentiment over time",
+		"trendDescription": "Monthly average, agent vs customer (1–5)",
+		"recoveryRate": "Recovery rate",
+		"recoveryHint": "Calls that started negative and ended neutral or better",
 		"empathy": "Empathy phrases per call"
 	},
 	"compliance": {
-		"overall": "Compliance score", "areas": "Areas", "violations": "violations", "warnings": "warnings",
-		"timeline": "Violations and warnings per month", "flagged": "Flagged items", "columns": { "item": "Item", "area": "Area", "count": "Occurrences", "lastSeen": "Last seen" },
+		"overall": "Compliance score",
+		"areas": "Areas",
+		"violations": "violations",
+		"warnings": "warnings",
+		"timeline": "Violations and warnings per month",
+		"flagged": "Flagged items",
+		"columns": {
+			"item": "Item",
+			"area": "Area",
+			"count": "Occurrences",
+			"lastSeen": "Last seen"
+		},
 		"noFlagged": "No flagged compliance items."
 	},
 	"business": {
-		"kpi": { "conversion": "Conversion rate", "offers": "Offers presented", "converted": "Converted", "followUps": "Follow-ups scheduled" },
-		"signals": "Business signals", "signalsDescription": "How often each predefined signal appears in this agent's calls",
+		"kpi": {
+			"conversion": "Conversion rate",
+			"offers": "Offers presented",
+			"converted": "Converted",
+			"followUps": "Follow-ups scheduled"
+		},
+		"signals": "Business signals",
+		"signalsDescription": "How often each predefined signal appears in this agent's calls",
 		"tone": { "risk": "Risk", "opportunity": "Opportunity" },
-		"conversionTrend": "Conversion over time", "reasons": "Non-conversion reasons", "competitors": "Competitors mentioned", "mentions": "{{count}} mentions"
+		"conversionTrend": "Conversion over time",
+		"reasons": "Non-conversion reasons",
+		"competitors": "Competitors mentioned",
+		"mentions": "{{count}} mentions"
 	},
 	"ops": {
-		"title": "Operational KPIs", "description": "Agent value vs team average for the selected period",
-		"callsHandled": "Calls handled", "callsPerDay": "Calls per day", "aht": "Average handling time", "talkTime": "Talk time", "holdTime": "Hold time", "wrapUpTime": "Wrap-up time",
-		"fcr": "First-call resolution", "transferRate": "Transfer rate", "adherence": "Schedule adherence", "occupancy": "Occupancy",
-		"teamAverage": "Team avg {{value}}", "ahtTrend": "AHT over time", "breakdown": "Handling time breakdown", "breakdownSeries": { "talk": "Talk", "hold": "Hold", "wrapUp": "Wrap-up" }
+		"title": "Operational KPIs",
+		"description": "Agent value vs team average for the selected period",
+		"callsHandled": "Calls handled",
+		"callsPerDay": "Calls per day",
+		"aht": "Average handling time",
+		"talkTime": "Talk time",
+		"holdTime": "Hold time",
+		"wrapUpTime": "Wrap-up time",
+		"fcr": "First-call resolution",
+		"transferRate": "Transfer rate",
+		"adherence": "Schedule adherence",
+		"occupancy": "Occupancy",
+		"teamAverage": "Team avg {{value}}",
+		"ahtTrend": "AHT over time",
+		"breakdown": "Handling time breakdown",
+		"breakdownSeries": { "talk": "Talk", "hold": "Hold", "wrapUp": "Wrap-up" }
 	},
 	"coaching": {
-		"summary": { "attendance": "Coaching attendance", "lmsCompletion": "LMS completion", "overdue": "Overdue items", "mandatoryPending": "Mandatory pending" },
-		"sessions": "Coaching sessions", "sessionsDescription": "Scheduled, completed and missed sessions",
-		"columns": { "date": "Date", "topic": "Topic", "coach": "Coach", "dimension": "Dimension", "status": "Status", "outcome": "Outcome / follow-up" },
-		"status": { "scheduled": "Scheduled", "completed": "Completed", "missed": "Missed" },
-		"lms": "LMS material", "lmsDescription": "Assigned courses, videos and documents",
-		"lmsColumns": { "title": "Material", "type": "Format", "assigned": "Assigned", "due": "Due", "acceptance": "Acceptance", "progress": "Progress", "status": "Status", "impact": "Impact" },
-		"lmsStatus": { "not-started": "Not started", "in-progress": "In progress", "completed": "Completed", "overdue": "Overdue" },
-		"mandatory": "Mandatory", "noSessions": "No coaching sessions yet.", "noLms": "No material assigned."
+		"summary": {
+			"attendance": "Coaching attendance",
+			"lmsCompletion": "LMS completion",
+			"overdue": "Overdue items",
+			"mandatoryPending": "Mandatory pending"
+		},
+		"sessions": "Coaching sessions",
+		"sessionsDescription": "Scheduled, completed and missed sessions",
+		"columns": {
+			"date": "Date",
+			"topic": "Topic",
+			"coach": "Coach",
+			"dimension": "Dimension",
+			"status": "Status",
+			"outcome": "Outcome / follow-up"
+		},
+		"status": {
+			"scheduled": "Scheduled",
+			"completed": "Completed",
+			"missed": "Missed"
+		},
+		"lms": "LMS material",
+		"lmsDescription": "Assigned courses, videos and documents",
+		"lmsColumns": {
+			"title": "Material",
+			"type": "Format",
+			"assigned": "Assigned",
+			"due": "Due",
+			"acceptance": "Acceptance",
+			"progress": "Progress",
+			"status": "Status",
+			"impact": "Impact"
+		},
+		"lmsStatus": {
+			"not-started": "Not started",
+			"in-progress": "In progress",
+			"completed": "Completed",
+			"overdue": "Overdue"
+		},
+		"mandatory": "Mandatory",
+		"noSessions": "No coaching sessions yet.",
+		"noLms": "No material assigned."
 	},
 	"achievements": {
-		"badges": "Badges earned", "badgesDescription": "{{count}} badges", "noBadges": "No badges earned yet.",
-		"milestones": "Milestones", "achievedOn": "Achieved {{date}}", "inProgress": "{{progress}}% complete",
-		"ranking": "Ranking history", "rankingDescription": "Position in {{team}} by month (1 = best)", "bestRank": "Best rank", "currentRank": "Current rank"
+		"badges": "Badges earned",
+		"badgesDescription": "{{count}} badges",
+		"noBadges": "No badges earned yet.",
+		"milestones": "Milestones",
+		"achievedOn": "Achieved {{date}}",
+		"inProgress": "{{progress}}% complete",
+		"ranking": "Ranking history",
+		"rankingDescription": "Position in {{team}} by month (1 = best)",
+		"bestRank": "Best rank",
+		"currentRank": "Current rank"
 	},
 	"activity": {
-		"title": "Activity timeline", "filterAll": "All",
-		"types": { "evaluation": "Evaluation", "badge": "Badge", "milestone": "Milestone", "coaching": "Coaching", "lms": "LMS", "alert": "Alert", "dispute": "Dispute", "note": "Note", "rank": "Ranking" },
-		"open": "Open", "empty": "No activity of this type.",
-		"notes": "Supervisor notes", "notesDescription": "Private to supervisors and QA managers",
-		"addNote": "Add note", "notePlaceholder": "Write a note about this agent…", "save": "Save note", "pin": "Pin", "unpin": "Unpin", "pinned": "Pinned", "showMore": "Show more"
+		"title": "Activity timeline",
+		"filterAll": "All",
+		"types": {
+			"evaluation": "Evaluation",
+			"badge": "Badge",
+			"milestone": "Milestone",
+			"coaching": "Coaching",
+			"lms": "LMS",
+			"alert": "Alert",
+			"dispute": "Dispute",
+			"note": "Note",
+			"rank": "Ranking"
+		},
+		"open": "Open",
+		"empty": "No activity of this type.",
+		"notes": "Supervisor notes",
+		"notesDescription": "Private to supervisors and QA managers",
+		"addNote": "Add note",
+		"notePlaceholder": "Write a note about this agent…",
+		"save": "Save note",
+		"pin": "Pin",
+		"unpin": "Unpin",
+		"pinned": "Pinned",
+		"showMore": "Show more"
 	},
 	"modals": {
-		"coaching": { "title": "Schedule coaching", "date": "Date and time", "topic": "Topic", "dimension": "Related dimension", "notes": "Notes for the agent", "submit": "Schedule", "success": "Coaching session scheduled and agent notified." },
-		"lms": { "title": "Assign LMS material", "material": "Material", "due": "Due date", "mandatory": "Mandatory", "submit": "Assign", "success": "Material assigned and agent notified." },
-		"message": { "title": "Send message", "subject": "Subject", "body": "Message", "priority": "Priority", "submit": "Send", "success": "Message sent to the agent's inbox." },
+		"coaching": {
+			"title": "Schedule coaching",
+			"date": "Date and time",
+			"topic": "Topic",
+			"dimension": "Related dimension",
+			"notes": "Notes for the agent",
+			"submit": "Schedule",
+			"success": "Coaching session scheduled and agent notified."
+		},
+		"lms": {
+			"title": "Assign LMS material",
+			"material": "Material",
+			"due": "Due date",
+			"mandatory": "Mandatory",
+			"submit": "Assign",
+			"success": "Material assigned and agent notified."
+		},
+		"message": {
+			"title": "Send message",
+			"subject": "Subject",
+			"body": "Message",
+			"priority": "Priority",
+			"submit": "Send",
+			"success": "Message sent to the agent's inbox."
+		},
 		"cancel": "Cancel"
 	},
-	"common": { "vsPrevious": "vs previous", "notFound": "Agent not found", "notFoundDescription": "The agent {{id}} is not part of your team." }
+	"common": {
+		"vsPrevious": "vs previous",
+		"notFound": "Agent not found",
+		"notFoundDescription": "The agent {{id}} is not part of your team."
+	}
 }
