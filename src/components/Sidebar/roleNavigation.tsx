@@ -176,40 +176,26 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 ];
 
 // SUPERVISOR NAVIGATION (organized by functional groups)
-export const getSupervisorNavigationGrouped = (): NavGroup[] => {
+// Dashboard / Your Team / Development render as flat links, no section
+// header — only Operations and Insights keep their collapsible groups.
+export const getSupervisorNavigationGrouped = (): (
+	| SidebarNavItem
+	| NavGroup
+)[] => {
 	const items = getSupervisorNavigation();
 	const byKey = Object.fromEntries(items.map((i) => [i.key, i]));
 	const pick = (...keys: string[]) => keys.map((k) => byKey[k]);
 
 	return [
-		// Primary: Dashboard (always visible, non-collapsible)
-		{
-			key: 'supervisor-primary',
-			label: items[0].label, // 'sidebar.supervisor.dashboard'
-			items: pick('supervisor-dashboard', 'supervisor-inbox'),
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Primary: Your Team (always visible, non-collapsible)
-		{
-			key: 'supervisor-team',
-			label: 'sidebar.supervisor.groupTeam',
-			items: pick(
-				'supervisor-team',
-				'supervisor-customers',
-				'supervisor-campaigns'
-			),
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Primary: Development — coaching and learning
-		{
-			key: 'supervisor-development',
-			label: 'sidebar.supervisor.groupDevelopment',
-			items: pick('supervisor-coaching', 'supervisor-lms'),
-			collapsible: false,
-			defaultExpanded: true,
-		},
+		...pick(
+			'supervisor-dashboard',
+			'supervisor-inbox',
+			'supervisor-team',
+			'supervisor-customers',
+			'supervisor-campaigns',
+			'supervisor-coaching',
+			'supervisor-lms'
+		),
 		// Secondary: Operations (collapsible, collapsed by default)
 		{
 			key: 'supervisor-operations',
@@ -345,41 +331,28 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 ];
 
 // QA MANAGER NAVIGATION (organized by functional groups)
-export const getQAManagerNavigationGrouped = (): NavGroup[] => {
+// Dashboard / Organization ("Your team" equivalent — supervisors, teams,
+// agents) / Development render as flat links, no section header — Operations,
+// Configuration and Insights keep their groups.
+export const getQAManagerNavigationGrouped = (): (
+	| SidebarNavItem
+	| NavGroup
+)[] => {
 	const items = getQAManagerNavigation();
 	const byKey = Object.fromEntries(items.map((i) => [i.key, i]));
 	const pick = (...keys: string[]) => keys.map((k) => byKey[k]);
 
 	return [
-		// Primary: Dashboard (always visible, non-collapsible)
-		{
-			key: 'qamanager-primary',
-			label: items[0].label, // 'sidebar.qamanager.dashboard'
-			items: pick('qamanager-dashboard', 'qamanager-inbox'),
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Primary: Organization (always visible, non-collapsible)
-		{
-			key: 'qamanager-organization',
-			label: 'sidebar.qamanager.groupOrganization',
-			items: pick(
-				'qamanager-supervisors',
-				'qamanager-teams',
-				'qamanager-agents',
-				'qamanager-forms'
-			),
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Primary: Development — coaching and learning
-		{
-			key: 'qamanager-development',
-			label: 'sidebar.qamanager.groupDevelopment',
-			items: pick('qamanager-coaching', 'qamanager-lms'),
-			collapsible: false,
-			defaultExpanded: true,
-		},
+		...pick(
+			'qamanager-dashboard',
+			'qamanager-inbox',
+			'qamanager-supervisors',
+			'qamanager-teams',
+			'qamanager-agents',
+			'qamanager-forms',
+			'qamanager-coaching',
+			'qamanager-lms'
+		),
 		// Primary: Operations (always visible, non-collapsible)
 		{
 			key: 'qamanager-operations',
@@ -533,7 +506,7 @@ export const roleNavigationMap: Record<PreviewRole, () => SidebarNavItem[]> = {
 // Grouped versions (for integration with sidebar). The agent is flat — see getAgentNavigation above.
 export const roleNavigationGroupedMap: Record<
 	Extract<PreviewRole, 'supervisor' | 'qaManager' | 'operationManager'>,
-	() => NavGroup[]
+	() => (SidebarNavItem | NavGroup)[]
 > = {
 	supervisor: getSupervisorNavigationGrouped,
 	qaManager: getQAManagerNavigationGrouped,
