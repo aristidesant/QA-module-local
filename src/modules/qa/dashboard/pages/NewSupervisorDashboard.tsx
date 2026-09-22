@@ -1,19 +1,19 @@
-import React, { useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router';
+import { useMediaQuery } from '@mantine/hooks';
 import {
 	Stack,
 	Title,
 	Text,
 	SimpleGrid,
-	Tabs,
 	Badge,
 	Group,
 	Select,
 } from '@mantine/core';
+import { IconTrophy } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
-import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
+import EmptyState from '~/components/EmptyState';
 import {
 	QualityAssuranceCard,
 	ComplianceCard,
@@ -21,12 +21,16 @@ import {
 	BusinessInsightsCard,
 	OperationalCard,
 	TeamBurnoutRiskCard,
-	QuickInsightsWidget,
-	RankingsTable,
 	InboxSummary,
 } from '../components';
-import type { Insight } from '../components/QuickInsightsWidget';
-import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
+import { useActiveRankingByTeam } from '~/modules/qa/rankings/hooks/useActiveRanking';
+import {
+	formatScore as formatRankingScore,
+	toRankingEntry,
+} from '~/modules/qa/rankings/helpers';
+import PodiumStrip from '~/modules/qa/rankings/components/PodiumStrip';
+import ExpandedRankingsTable from '~/modules/qa/agent/rankings/components/ExpandedRankingsTable';
+import RankingCardGrid from '~/modules/qa/agent/rankings/components/RankingCardGrid';
 import { buildTeamDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
 import { teamBurnoutRisk } from '~/modules/qa/analytics/helpers';
 import {
@@ -36,156 +40,32 @@ import {
 import { SUPERVISOR_WEEKLY_METRICS } from '../mockData';
 import styles from '../Dashboard.module.css';
 
-const DEFAULT_SUPERVISOR_INSIGHTS: Insight[] = [
-	{
-		title: 'Team Consistency',
-		description:
-			'Your team is maintaining steady performance with positive trends.',
-		type: 'positive',
-	},
-	{
-		title: 'Compliance Focus',
-		description:
-			'Consider reinforcing compliance training for regulatory adherence.',
-		type: 'warning',
-	},
-	{
-		title: 'Escalation Pattern',
-		description:
-			'Monitor escalation rates - a slight uptick was detected this week.',
-		type: 'warning',
-	},
-];
-
-interface TeamMemberRow {
-	id: string;
-	name: string;
-	qaScore: number;
-	sentiment: number;
-	callsThisWeek: number;
-	compliance: number;
-}
-
-const TEAM_MEMBERS: TeamMemberRow[] = [
-	{
-		id: 'AGT-001',
-		name: 'Sarah Johnson',
-		qaScore: 95,
-		sentiment: 4.6,
-		callsThisWeek: 32,
-		compliance: 96,
-	},
-	{
-		id: 'AGT-002',
-		name: 'Mike Chen',
-		qaScore: 97,
-		sentiment: 4.7,
-		callsThisWeek: 29,
-		compliance: 98,
-	},
-	{
-		id: 'AGT-003',
-		name: 'Jessica Martinez',
-		qaScore: 93,
-		sentiment: 4.4,
-		callsThisWeek: 35,
-		compliance: 92,
-	},
-	{
-		id: 'AGT-004',
-		name: 'John Smith',
-		qaScore: 90,
-		sentiment: 4.2,
-		callsThisWeek: 24,
-		compliance: 91,
-	},
-	{
-		id: 'AGT-005',
-		name: 'Emma Davis',
-		qaScore: 88,
-		sentiment: 4.0,
-		callsThisWeek: 27,
-		compliance: 89,
-	},
-	{
-		id: 'AGT-006',
-		name: 'David Brown',
-		qaScore: 62,
-		sentiment: 2.1,
-		callsThisWeek: 19,
-		compliance: 71,
-	},
-	{
-		id: 'AGT-007',
-		name: 'Lisa Wong',
-		qaScore: 58,
-		sentiment: 2.3,
-		callsThisWeek: 22,
-		compliance: 68,
-	},
-];
-
-const teamMemberColumns: BaseTableColumnDef<TeamMemberRow>[] = [
-	{
-		accessorKey: 'name',
-		header: 'Name',
-		cell: ({ row }) => (
-			<Text fw={500} size='sm'>
-				{row.original.name}
-			</Text>
-		),
-	},
-	{
-		accessorKey: 'qaScore',
-		header: 'QA Score',
-		cell: ({ row }) => (
-			<Text
-				fw={600}
-				size='sm'
-				c={row.original.qaScore < 70 ? 'red' : undefined}
-			>
-				{row.original.qaScore}%
-			</Text>
-		),
-	},
-	{
-		accessorKey: 'sentiment',
-		header: 'Sentiment',
-		cell: ({ row }) => (
-			<Text size='sm'>{row.original.sentiment.toFixed(1)} / 5.0</Text>
-		),
-	},
-	{
-		accessorKey: 'callsThisWeek',
-		header: 'Calls This Week',
-		cell: ({ row }) => <Text size='sm'>{row.original.callsThisWeek}</Text>,
-	},
-	{
-		accessorKey: 'compliance',
-		header: 'Compliance',
-		cell: ({ row }) => (
-			<Badge
-				color={row.original.compliance < 80 ? 'red' : 'teal'}
-				variant='light'
-			>
-				{row.original.compliance}%
-			</Badge>
-		),
-	},
-];
+/** Below this width the leaderboard table is replaced by the responsive card grid. */
+const TABLE_BREAKPOINT = '(max-width: 1024px)';
 
 export const NewSupervisorDashboard: React.FC = () => {
-	const navigate = useNavigate();
-	const { t } = useTranslation('qa.dashboard');
-	const { entries: rankingEntries, goal: rankingGoal } = useDashboardRankings(
-		'Team 1',
-		7
-	);
+	const { t } = useTranslation('qa.rankings');
+	const isCompact = useMediaQuery(TABLE_BREAKPOINT);
+	const { program, standings } = useActiveRankingByTeam('Team 1');
 	const { businessInsights, businessOutcome } = SUPERVISOR_WEEKLY_METRICS;
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
 	const metrics = buildTeamDashboardMetrics('supervisor', 7, lineOfBusiness);
 	const burnoutRisk = teamBurnoutRisk('supervisor');
+
+	const entries = useMemo(
+		() =>
+			program
+				? standings.map((standing) => toRankingEntry(standing, program))
+				: [],
+		[program, standings]
+	);
+
+	const renderScore = useCallback(
+		(score: number) =>
+			program ? formatRankingScore(program, score) : String(score),
+		[program]
+	);
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -275,43 +155,42 @@ export const NewSupervisorDashboard: React.FC = () => {
 				/>
 
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					<SectionCard
-						title={t('sections.team')}
-						description='Rankings, members and insights for your team'
-						fullHeight
-					>
-						<Tabs defaultValue='rankings'>
-							<Tabs.List>
-								<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
-								<Tabs.Tab value='team-members'>Team Members</Tabs.Tab>
-								<Tabs.Tab value='insights'>Quick Insights</Tabs.Tab>
-							</Tabs.List>
+					{!program ? (
+						<SectionCard fullHeight>
+							<EmptyState
+								icon={<IconTrophy size={32} />}
+								message={t('agent.empty.noActive')}
+							/>
+						</SectionCard>
+					) : (
+						<Stack gap='lg'>
+							<PodiumStrip program={program} standings={standings} />
 
-							<Tabs.Panel value='rankings' pt='lg'>
-								<RankingsTable
-									entries={rankingEntries}
-									title='Team Rankings'
-									description='Your team ranked against the goal you defined for this period'
-									goal={rankingGoal}
-									maxDisplay={7}
-									onViewAll={() => navigate('/qa/supervisor/rankings')}
-								/>
-							</Tabs.Panel>
-
-							<Tabs.Panel value='team-members' pt='lg'>
-								<BaseTable<TeamMemberRow>
-									columns={teamMemberColumns}
-									data={TEAM_MEMBERS}
-									getRowId={(member) => member.id}
-									emptyMessage='No team members found'
-								/>
-							</Tabs.Panel>
-
-							<Tabs.Panel value='insights' pt='lg'>
-								<QuickInsightsWidget insights={DEFAULT_SUPERVISOR_INSIGHTS} />
-							</Tabs.Panel>
-						</Tabs>
-					</SectionCard>
+							<SectionCard
+								title={t('agent.leaderboard')}
+								description={t('agent.leaderboardDescription')}
+								headerActions={
+									<Badge variant='light' size='sm'>
+										{standings.length}
+									</Badge>
+								}
+							>
+								{isCompact ? (
+									<RankingCardGrid
+										data={entries}
+										formatScore={renderScore}
+										hideReactions
+									/>
+								) : (
+									<ExpandedRankingsTable
+										data={entries}
+										formatScore={renderScore}
+										hideReactions
+									/>
+								)}
+							</SectionCard>
+						</Stack>
+					)}
 
 					<TeamBurnoutRiskCard
 						entries={burnoutRisk}

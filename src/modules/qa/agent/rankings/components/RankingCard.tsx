@@ -27,6 +27,8 @@ export interface RankingCardProps {
 	formatScore?: (score: number) => string;
 	/** Invoked when the card is activated (detail drawer hook-up). */
 	onRowClick?: (entry: AgentRankingEntry) => void;
+	/** Drops the peer-reactions row — for read-only views (e.g. a supervisor's dashboard). */
+	hideReactions?: boolean;
 }
 
 /**
@@ -40,6 +42,7 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 	isCurrentAgent,
 	formatScore,
 	onRowClick,
+	hideReactions,
 }) => {
 	const { isCompleted } = useLeaderboardStatus();
 	const badges = useTriggerRulesStore((state) => state.badges);
@@ -136,10 +139,12 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 						)}
 					</Group>
 
-					<LeaderboardReactions
-						agentId={entry.agentId}
-						agentName={entry.agentName}
-					/>
+					{!hideReactions && (
+						<LeaderboardReactions
+							agentId={entry.agentId}
+							agentName={entry.agentName}
+						/>
+					)}
 				</Group>
 
 				{clickable && (
