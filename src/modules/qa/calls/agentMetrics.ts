@@ -1,7 +1,9 @@
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import { TODAY, addDays } from '~/modules/qa/analytics/constants';
 import type { CallEmotion, TeamCallMetric } from '~/modules/qa/analytics/types';
+import { scopeAgents } from '~/modules/qa/analytics/helpers';
 import type { ComplianceCategory } from '~/modules/qa/dashboard/mockData';
+import type { TeamRole } from '~/modules/qa/team/types';
 import { COMPLIANCE_TARGET, isNegativeEmotion } from './issues';
 
 /** Window the agent dashboard cards summarise — agents see weekly data. My Calls' `7d` period matches it. */
@@ -89,11 +91,29 @@ export const agentCallsInWindow = (
 	);
 };
 
-export const buildAgentDashboardMetrics = (
-	agentId: string,
-	days = AGENT_DASHBOARD_DAYS
+/** Every call of the scoped role's roster inside the last `days` days ending on TODAY (inclusive). */
+export const teamCallsInWindow = (
+	role: TeamRole,
+	days: number
+): TeamCallMetric[] => {
+	const agentIds = new Set(scopeAgents(role).map((a) => a.id));
+	const from = addDays(TODAY, -(days - 1));
+	return TEAM_CALLS.filter(
+		(c) =>
+			agentIds.has(c.agentId) &&
+			c.date.slice(0, 10) >= from &&
+			c.date.slice(0, 10) <= TODAY
+	);
+};
+
+/**
+ * QA / Compliance / Sentiment / Operational breakdown for any set of calls —
+ * shared by the agent's own dashboard and the team-scoped supervisor/QA
+ * manager dashboards, so both read the same category thresholds.
+ */
+export const aggregateDashboardMetrics = (
+	calls: TeamCallMetric[]
 ): AgentDashboardMetrics => {
-	const calls = agentCallsInWindow(agentId, days);
 	const n = calls.length;
 	const qaKeys: QaCategoryKey[] = ['ecn', 'enc', 'ecc', 'ecuf'];
 	const qaIssueCounts = Object.fromEntries(
@@ -144,3 +164,16 @@ export const buildAgentDashboardMetrics = (
 		},
 	};
 };
+
+export const buildAgentDashboardMetrics = (
+	agentId: string,
+	days = AGENT_DASHBOARD_DAYS
+): AgentDashboardMetrics =>
+	aggregateDashboardMetrics(agentCallsInWindow(agentId, days));
+
+/** Team-scoped version of `buildAgentDashboardMetrics`: Team 1 for a supervisor, every team for QA Manager. */
+export const buildTeamDashboardMetrics = (
+	role: TeamRole,
+	days: number
+): AgentDashboardMetrics =>
+	aggregateDashboardMetrics(teamCallsInWindow(role, days));

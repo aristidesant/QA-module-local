@@ -22,7 +22,6 @@ import {
 	TEAM_SUPERVISORS,
 } from '~/modules/qa/team/mockData';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
-import { TEAM_CALLS } from './mockData';
 import {
 	BURNOUT_DRIVER_RULES,
 	DEFAULT_FILTERS,
@@ -120,36 +119,6 @@ export const scopeAgents = (role: TeamRole): RosterAgent[] =>
 	TEAM_AGENTS.filter(
 		(a) => role === 'qa-manager' || a.supervisorId === SUPERVISOR_PERSONA.id
 	);
-
-export interface OperationalSummary {
-	calls: number;
-	effectiveContacts: number;
-	nonEffectiveContacts: number;
-}
-
-/** Team call volume and contact effectiveness for the Performance Score row's Operational card. */
-export const operationalSummary = (
-	role: TeamRole,
-	days: number
-): OperationalSummary => {
-	const agentIds = new Set(scopeAgents(role).map((a) => a.id));
-	const from = addDays(TODAY, -(days - 1));
-	const calls = TEAM_CALLS.filter(
-		(c) =>
-			agentIds.has(c.agentId) &&
-			c.date.slice(0, 10) >= from &&
-			c.date.slice(0, 10) <= TODAY
-	);
-
-	return {
-		calls: calls.length,
-		effectiveContacts: calls.filter((c) => c.contactOutcome === 'EFFECTIVE')
-			.length,
-		nonEffectiveContacts: calls.filter(
-			(c) => c.contactOutcome === 'NON_EFFECTIVE'
-		).length,
-	};
-};
 
 /** ISO bounds for aggregateMetricsByDateRange (inclusive day range). */
 export const toRangeISO = (f: Pick<TeamAnalyticsFilters, 'from' | 'to'>) => ({

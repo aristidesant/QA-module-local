@@ -8,7 +8,7 @@ import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import {
 	QualityAssuranceCard,
 	ComplianceCard,
-	SentimentEmotionCard,
+	SentimentEmotionSplitCard,
 	BusinessInsightsCard,
 	OperationalCard,
 	SentimentTrendChart,
@@ -19,7 +19,7 @@ import {
 } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
-import { operationalSummary } from '~/modules/qa/analytics/helpers';
+import { buildTeamDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
 import {
 	QA_MANAGER_WEEKLY_METRICS,
 	QA_MANAGER_SENTIMENT_TREND,
@@ -387,17 +387,8 @@ export const NewQAManagerDashboard: React.FC = () => {
 		'all',
 		7
 	);
-	const {
-		qaScore,
-		sentiment,
-		complianceCategories,
-		autoFailsCount,
-		businessInsights,
-		businessOutcome,
-	} = QA_MANAGER_WEEKLY_METRICS;
-
-	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
-	const operational = operationalSummary('qa-manager', 7);
+	const { businessInsights, businessOutcome } = QA_MANAGER_WEEKLY_METRICS;
+	const metrics = buildTeamDashboardMetrics('qa-manager', 7);
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -416,30 +407,43 @@ export const NewQAManagerDashboard: React.FC = () => {
 					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
 						<div className={styles.gridCard}>
 							<OperationalCard
-								calls={operational.calls}
-								effectiveContacts={operational.effectiveContacts}
-								nonEffectiveContacts={operational.nonEffectiveContacts}
+								calls={metrics.calls}
+								effectiveContacts={metrics.effectiveContacts}
+								nonEffectiveContacts={metrics.nonEffectiveContacts}
 								subtitle="Platform's contact effectiveness this week"
 							/>
 						</div>
 						<div className={styles.gridCard}>
 							<QualityAssuranceCard
-								score={qaScore}
+								score={metrics.qa}
 								subtitle='Platform category breakdown'
-								autoFails={autoFailsCount}
+								autoFails={metrics.autoFails}
+								issueCounts={{
+									...metrics.qaIssueCounts,
+									autoFails: metrics.autoFails,
+								}}
 							/>
 						</div>
 						<div className={styles.gridCard}>
 							<ComplianceCard
-								categories={complianceCategories}
+								categories={metrics.complianceCategories}
 								subtitle='Platform category overview'
+								issueCounts={metrics.complianceIssueCounts}
 							/>
 						</div>
 						<div className={styles.gridCard}>
-							<SentimentEmotionCard
-								score={overallSentiment}
-								predominantEmotion={sentiment.predominantEmotion}
-								subtitle='0-5 scale assessment'
+							<SentimentEmotionSplitCard
+								agent={{
+									score: metrics.sentiment.agentAvg,
+									emotion: metrics.sentiment.agentEmotion,
+									negativeCount: metrics.sentiment.agentNegativeCount,
+								}}
+								customer={{
+									score: metrics.sentiment.customerAvg,
+									emotion: metrics.sentiment.customerEmotion,
+									negativeCount: metrics.sentiment.customerNegativeCount,
+								}}
+								subtitle='Platform vs the customers they contacted'
 							/>
 						</div>
 						<div className={styles.gridCard}>
