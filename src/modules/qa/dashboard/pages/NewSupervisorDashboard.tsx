@@ -21,14 +21,12 @@ import {
 	BusinessInsightsCard,
 	OperationalCard,
 	TeamBurnoutRiskCard,
-	InboxSummary,
 } from '../components';
 import { useActiveRankingByTeam } from '~/modules/qa/rankings/hooks/useActiveRanking';
 import {
 	formatScore as formatRankingScore,
 	toRankingEntry,
 } from '~/modules/qa/rankings/helpers';
-import PodiumStrip from '~/modules/qa/rankings/components/PodiumStrip';
 import ExpandedRankingsTable from '~/modules/qa/agent/rankings/components/ExpandedRankingsTable';
 import RankingCardGrid from '~/modules/qa/agent/rankings/components/RankingCardGrid';
 import { buildTeamDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
@@ -147,13 +145,6 @@ export const NewSupervisorDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				<InboxSummary
-					autoDrivenCount={4}
-					negativeCount={3}
-					trendCount={6}
-					inboxPath='/qa/supervisor/inbox'
-				/>
-
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
 					{!program ? (
 						<SectionCard fullHeight>
@@ -163,33 +154,29 @@ export const NewSupervisorDashboard: React.FC = () => {
 							/>
 						</SectionCard>
 					) : (
-						<Stack gap='lg'>
-							<PodiumStrip program={program} standings={standings} />
-
-							<SectionCard
-								title={t('agent.leaderboard')}
-								description={t('agent.leaderboardDescription')}
-								headerActions={
-									<Badge variant='light' size='sm'>
-										{standings.length}
-									</Badge>
-								}
-							>
-								{isCompact ? (
-									<RankingCardGrid
-										data={entries}
-										formatScore={renderScore}
-										hideReactions
-									/>
-								) : (
-									<ExpandedRankingsTable
-										data={entries}
-										formatScore={renderScore}
-										hideReactions
-									/>
-								)}
-							</SectionCard>
-						</Stack>
+						<SectionCard
+							title={t('agent.leaderboard')}
+							description={t('agent.leaderboardDescription')}
+							headerActions={
+								<Badge variant='light' size='sm'>
+									{standings.length}
+								</Badge>
+							}
+						>
+							{isCompact ? (
+								<RankingCardGrid
+									data={entries}
+									formatScore={renderScore}
+									hideReactions
+								/>
+							) : (
+								<ExpandedRankingsTable
+									data={entries}
+									formatScore={renderScore}
+									hideReactions
+								/>
+							)}
+						</SectionCard>
 					)}
 
 					<TeamBurnoutRiskCard
