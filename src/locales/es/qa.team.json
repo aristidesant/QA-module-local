@@ -63,7 +63,9 @@
 			"assignCampaigns": "Asignar campañas",
 			"removeCampaign": "Quitar",
 			"emptyCampaigns": "Este equipo todavía no tiene campañas asignadas.",
-			"emptyMembers": "Este equipo todavía no tiene agentes."
+			"emptyMembers": "Este equipo todavía no tiene agentes.",
+			"notFound": "Equipo no encontrado",
+			"notFoundDescription": "El equipo {{id}} no existe."
 		},
 		"addMembers": {
 			"title": "Añadir miembros",

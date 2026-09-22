@@ -63,7 +63,9 @@
 			"assignCampaigns": "Assign campaigns",
 			"removeCampaign": "Remove",
 			"emptyCampaigns": "No campaigns assigned to this team yet.",
-			"emptyMembers": "No agents in this team yet."
+			"emptyMembers": "No agents in this team yet.",
+			"notFound": "Team not found",
+			"notFoundDescription": "The team {{id}} does not exist."
 		},
 		"addMembers": {
 			"title": "Add members",

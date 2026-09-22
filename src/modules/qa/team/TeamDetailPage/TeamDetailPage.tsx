@@ -89,8 +89,10 @@ export default function TeamDetailPage() {
 		return (
 			<ContentContainer contentWidth='full'>
 				<EmptyState
-					message={t('common.notFound')}
-					description={t('common.notFoundDescription', { id: supervisorId })}
+					message={t('teams.detail.notFound')}
+					description={t('teams.detail.notFoundDescription', {
+						id: supervisorId,
+					})}
 					action={
 						<Button onClick={() => navigate(teamBasePath('qa-manager'))}>
 							{t('teams.detail.back')}

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button, Group, MultiSelect, Stack } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { AppDrawer } from '~/components/AppDrawer';
@@ -22,6 +22,10 @@ export function AddMembersDrawer({
 	const profiles = useTeamStore((s) => s.profiles);
 	const addMembers = useTeamStore((s) => s.addMembers);
 	const [selected, setSelected] = useState<string[]>([]);
+
+	useEffect(() => {
+		if (opened) setSelected([]);
+	}, [opened]);
 
 	const options = Object.values(profiles)
 		.map((p) => p.agent)
