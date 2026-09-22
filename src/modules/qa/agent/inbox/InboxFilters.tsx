@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Group,
-	Stack,
 	TextInput,
 	SegmentedControl,
 	MultiSelect,
@@ -60,96 +59,90 @@ export const InboxFilters: React.FC<InboxFiltersProps> = ({
 		searchQuery.trim() !== '';
 
 	return (
-		<Stack gap='md' className={styles.filtersContainer}>
-			<Group grow align='flex-end'>
-				<TextInput
-					placeholder={t('filters.search')}
-					leftSection={<IconSearch size={16} />}
-					value={searchQuery}
-					onChange={(e) => onSearchChange(e.currentTarget.value)}
-					rightSection={
-						searchQuery && (
-							<ActionIcon
-								size='xs'
-								color='gray'
-								variant='transparent'
-								onClick={() => onSearchChange('')}
-							>
-								<IconX size={14} />
-							</ActionIcon>
-						)
-					}
-					className={styles.searchInput}
-				/>
-			</Group>
+		<Group
+			align='flex-end'
+			gap='md'
+			wrap='wrap'
+			className={styles.filtersContainer}
+		>
+			<TextInput
+				placeholder={t('filters.search')}
+				leftSection={<IconSearch size={16} />}
+				value={searchQuery}
+				onChange={(e) => onSearchChange(e.currentTarget.value)}
+				rightSection={
+					searchQuery && (
+						<ActionIcon
+							size='xs'
+							color='gray'
+							variant='transparent'
+							onClick={() => onSearchChange('')}
+						>
+							<IconX size={14} />
+						</ActionIcon>
+					)
+				}
+				w={260}
+			/>
 
-			<Group grow align='flex-end'>
-				<div className={styles.filterGroup}>
-					<label className={styles.filterLabel}>Status</label>
-					<SegmentedControl
-						value={status}
-						onChange={(value: string) =>
-							onStatusChange(value as 'all' | 'read' | 'unread')
-						}
-						data={[
-							{ label: t('filters.status.all'), value: 'all' },
-							{ label: t('filters.status.unread'), value: 'unread' },
-							{ label: t('filters.status.read'), value: 'read' },
-						]}
-						fullWidth
-					/>
-				</div>
+			<SegmentedControl
+				value={status}
+				onChange={(value: string) =>
+					onStatusChange(value as 'all' | 'read' | 'unread')
+				}
+				data={[
+					{ label: t('filters.status.all'), value: 'all' },
+					{ label: t('filters.status.unread'), value: 'unread' },
+					{ label: t('filters.status.read'), value: 'read' },
+				]}
+			/>
 
-				<div className={styles.filterGroup}>
-					<label className={styles.filterLabel}>Type</label>
-					<MultiSelect
-						placeholder={t('filters.types')}
-						data={NOTIFICATION_TYPES}
-						value={selectedTypes}
-						onChange={(value: string[]) =>
-							onTypesChange(value as AgentNotification['category'][])
-						}
-						clearable
-						searchable
-					/>
-				</div>
-			</Group>
+			<MultiSelect
+				placeholder={t('filters.types')}
+				data={NOTIFICATION_TYPES}
+				value={selectedTypes}
+				onChange={(value: string[]) =>
+					onTypesChange(value as AgentNotification['category'][])
+				}
+				clearable
+				searchable
+				w={200}
+			/>
 
-			<Group grow align='flex-end'>
-				<DateInput
-					label={t('filters.dateFrom')}
-					placeholder={t('filters.dateFrom')}
-					value={dateFrom}
-					onChange={(value: string | null) => {
-						const date = value ? new Date(value) : null;
-						onDateChange(date, dateTo);
-					}}
-					clearable
-				/>
+			<DateInput
+				label={t('filters.dateFrom')}
+				placeholder={t('filters.dateFrom')}
+				value={dateFrom}
+				onChange={(value: string | null) => {
+					const date = value ? new Date(value) : null;
+					onDateChange(date, dateTo);
+				}}
+				clearable
+				w={140}
+			/>
 
-				<DateInput
-					label={t('filters.dateTo')}
-					placeholder={t('filters.dateTo')}
-					value={dateTo}
-					onChange={(value: string | null) => {
-						const date = value ? new Date(value) : null;
-						onDateChange(dateFrom, date);
-					}}
-					clearable
-				/>
+			<DateInput
+				label={t('filters.dateTo')}
+				placeholder={t('filters.dateTo')}
+				value={dateTo}
+				onChange={(value: string | null) => {
+					const date = value ? new Date(value) : null;
+					onDateChange(dateFrom, date);
+				}}
+				clearable
+				w={140}
+			/>
 
-				{hasActiveFilters && (
-					<Button
-						variant='light'
-						leftSection={<IconX size={16} />}
-						onClick={onClearFilters}
-						className={styles.clearButton}
-					>
-						{t('filters.clear')}
-					</Button>
-				)}
-			</Group>
-		</Stack>
+			{hasActiveFilters && (
+				<Button
+					variant='light'
+					leftSection={<IconX size={16} />}
+					onClick={onClearFilters}
+				>
+					{t('filters.clear')}
+				</Button>
+			)}
+		</Group>
 	);
 };
 
