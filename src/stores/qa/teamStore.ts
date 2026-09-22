@@ -13,12 +13,19 @@ import type {
 	SupervisorNote,
 	TeamRole,
 } from '~/modules/qa/team/types';
-import { TEAM_PROFILES } from '~/modules/qa/team/mockData';
+import {
+	TEAM_PROFILES,
+	TEAM_SUPERVISORS,
+	initialTeamCampaignIds,
+} from '~/modules/qa/team/mockData';
 import {
 	NOW_ISO,
 	QA_MANAGER_PERSONA,
 	SUPERVISOR_PERSONA,
+	UNASSIGNED_SUPERVISOR,
+	UNASSIGNED_SUPERVISOR_ID,
 } from '~/modules/qa/team/constants';
+import type { RosterSupervisor } from '~/modules/qa/team/types';
 
 let counter = 500;
 const nextId = (prefix: string) => `${prefix}-${++counter}`;
@@ -47,6 +54,8 @@ export interface SendMessageInput {
 
 interface TeamState {
 	profiles: Record<string, AgentProfile>;
+	supervisors: Record<string, RosterSupervisor>;
+	teamCampaignIds: Record<string, string[]>;
 	scheduleCoaching: (
 		input: ScheduleCoachingInput,
 		role: TeamRole
@@ -56,6 +65,13 @@ interface TeamState {
 	addNote: (agentId: string, text: string, role: TeamRole) => SupervisorNote;
 	togglePinNote: (agentId: string, noteId: string) => void;
 	acknowledgeAlert: (agentId: string, alertId: string) => void;
+	updateSupervisor: (
+		id: string,
+		patch: Partial<Pick<RosterSupervisor, 'name' | 'email'>>
+	) => void;
+	setTeamCampaigns: (supervisorId: string, campaignIds: string[]) => void;
+	removeMember: (agentId: string) => void;
+	addMembers: (agentIds: string[], supervisorId: string) => void;
 }
 
 const author = (role: TeamRole) =>
@@ -73,17 +89,15 @@ const notify = (
 		Pick<Partial<AgentNotification>, 'payload'>
 ) => {
 	const a = author(role);
-	useNotificationStore
-		.getState()
-		.addNotification(
-			buildNotification({
-				agentId,
-				sourceRole: a.sourceRole,
-				sourceId: a.id,
-				payload: { kind: 'MESSAGE' },
-				...partial,
-			})
-		);
+	useNotificationStore.getState().addNotification(
+		buildNotification({
+			agentId,
+			sourceRole: a.sourceRole,
+			sourceId: a.id,
+			payload: { kind: 'MESSAGE' },
+			...partial,
+		})
+	);
 };
 
 const prepend = (
@@ -93,6 +107,8 @@ const prepend = (
 
 export const useTeamStore = create<TeamState>((set, get) => ({
 	profiles: TEAM_PROFILES,
+	supervisors: Object.fromEntries(TEAM_SUPERVISORS.map((s) => [s.id, s])),
+	teamCampaignIds: initialTeamCampaignIds(),
 
 	/**
 	 * Creates the real session in the coaching store (which notifies the agent) and
@@ -272,6 +288,59 @@ export const useTeamStore = create<TeamState>((set, get) => ({
 				},
 			};
 		}),
+
+	updateSupervisor: (id, patch) =>
+		set((s) => ({
+			supervisors: {
+				...s.supervisors,
+				[id]: { ...s.supervisors[id], ...patch },
+			},
+		})),
+
+	setTeamCampaigns: (supervisorId, campaignIds) =>
+		set((s) => ({
+			teamCampaignIds: { ...s.teamCampaignIds, [supervisorId]: campaignIds },
+		})),
+
+	/** Moves the agent to the Unassigned pool; keeps their profile and history intact. */
+	removeMember: (agentId) =>
+		set((s) => {
+			const p = s.profiles[agentId];
+			return {
+				profiles: {
+					...s.profiles,
+					[agentId]: {
+						...p,
+						agent: {
+							...p.agent,
+							supervisorId: UNASSIGNED_SUPERVISOR_ID,
+							supervisorName: UNASSIGNED_SUPERVISOR.name,
+							team: UNASSIGNED_SUPERVISOR.team,
+						},
+					},
+				},
+			};
+		}),
+
+	/** Adds (or transfers) agents into a team; reads the supervisor's current name/team from `supervisors` so edits stay in sync. */
+	addMembers: (agentIds, supervisorId) =>
+		set((s) => {
+			const sup = s.supervisors[supervisorId] ?? UNASSIGNED_SUPERVISOR;
+			const profiles = { ...s.profiles };
+			for (const agentId of agentIds) {
+				const p = profiles[agentId];
+				profiles[agentId] = {
+					...p,
+					agent: {
+						...p.agent,
+						supervisorId: sup.id,
+						supervisorName: sup.name,
+						team: sup.team,
+					},
+				};
+			}
+			return { profiles };
+		}),
 }));
 
 export const selectProfile = (agentId: string | undefined) => (s: TeamState) =>
@@ -281,3 +350,17 @@ export const selectVisibleProfiles = (role: TeamRole) => (s: TeamState) =>
 		(p) =>
 			role === 'qa-manager' || p.agent.supervisorId === SUPERVISOR_PERSONA.id
 	);
+
+export const selectSupervisors = (s: TeamState) => s.supervisors;
+export const selectSupervisor = (id: string) => (s: TeamState) =>
+	s.supervisors[id];
+export const selectTeamCampaignIds = (supervisorId: string) => (s: TeamState) =>
+	s.teamCampaignIds[supervisorId] ?? [];
+export const selectTeamAgents = (supervisorId: string) => (s: TeamState) =>
+	Object.values(s.profiles)
+		.map((p) => p.agent)
+		.filter((a) => a.supervisorId === supervisorId);
+export const selectUnassignedAgents = (s: TeamState) =>
+	Object.values(s.profiles)
+		.map((p) => p.agent)
+		.filter((a) => a.supervisorId === UNASSIGNED_SUPERVISOR_ID);
