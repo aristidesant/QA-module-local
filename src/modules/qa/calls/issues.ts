@@ -1,11 +1,12 @@
 import type { CallEmotion, TeamCallMetric } from '~/modules/qa/analytics/types';
 
 /** Evaluation aspect an issue belongs to — drives filter grouping and badge colours. */
-export type CallIssueAspect = 'qa' | 'compliance' | 'sentiment';
+export type CallIssueAspect = 'qa' | 'compliance' | 'sentiment' | 'operational';
 export const CALL_ISSUE_ASPECTS: CallIssueAspect[] = [
 	'qa',
 	'compliance',
 	'sentiment',
+	'operational',
 ];
 
 export type CallIssueKey =
@@ -21,7 +22,8 @@ export type CallIssueKey =
 	| 'negative-customer-emotion'
 	| 'negative-agent-emotion'
 	| 'low-customer-sentiment'
-	| 'low-agent-sentiment';
+	| 'low-agent-sentiment'
+	| 'non-effective-contact';
 
 /** Thresholds shared by the dashboard cards and the My Calls list so both agree on what an incident is. */
 export const LOW_QA_SCORE = 70; // qaScore below this is an incident
@@ -119,6 +121,12 @@ export const CALL_ISSUES: CallIssueMeta[] = [
 		aspect: 'sentiment',
 		color: 'pink',
 		test: (c) => c.agentSentiment < LOW_SENTIMENT,
+	},
+	{
+		key: 'non-effective-contact',
+		aspect: 'operational',
+		color: 'gray',
+		test: (c) => c.contactOutcome === 'NON_EFFECTIVE',
 	},
 ];
 

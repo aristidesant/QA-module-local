@@ -10,6 +10,7 @@ import {
 	ComplianceCard,
 	SentimentEmotionCard,
 	BusinessInsightsCard,
+	OperationalCard,
 	SentimentTrendChart,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
@@ -18,6 +19,7 @@ import {
 } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
+import { operationalSummary } from '~/modules/qa/analytics/helpers';
 import {
 	QA_MANAGER_WEEKLY_METRICS,
 	QA_MANAGER_SENTIMENT_TREND,
@@ -395,6 +397,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 	} = QA_MANAGER_WEEKLY_METRICS;
 
 	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
+	const operational = operationalSummary('qa-manager', 7);
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -410,7 +413,15 @@ export const NewQAManagerDashboard: React.FC = () => {
 					title='Performance Score'
 					description='Platform quality assurance, compliance, sentiment and business results this week'
 				>
-					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
+					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
+						<div className={styles.gridCard}>
+							<OperationalCard
+								calls={operational.calls}
+								effectiveContacts={operational.effectiveContacts}
+								nonEffectiveContacts={operational.nonEffectiveContacts}
+								subtitle="Platform's contact effectiveness this week"
+							/>
+						</div>
 						<div className={styles.gridCard}>
 							<QualityAssuranceCard
 								score={qaScore}

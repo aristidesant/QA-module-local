@@ -67,7 +67,8 @@
 			"all": "All aspects",
 			"qa": "Quality Assurance",
 			"compliance": "Compliance",
-			"sentiment": "Sentiment & Emotion"
+			"sentiment": "Sentiment & Emotion",
+			"operational": "Operational"
 		},
 		"auto-fail": "Auto-fail",
 		"qa-ecn": "Critical business error (ECN)",
@@ -81,6 +82,7 @@
 		"negative-customer-emotion": "Negative customer emotion",
 		"negative-agent-emotion": "Negative agent emotion",
 		"low-customer-sentiment": "Low customer sentiment",
-		"low-agent-sentiment": "Low agent sentiment"
+		"low-agent-sentiment": "Low agent sentiment",
+		"non-effective-contact": "Non-effective contact"
 	}
 }

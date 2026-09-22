@@ -139,6 +139,7 @@ export const NewAgentDashboard: React.FC = () => {
 								effectiveContacts={metrics.effectiveContacts}
 								nonEffectiveContacts={metrics.nonEffectiveContacts}
 								subtitle='Contact effectiveness over the same window'
+								onNonEffectiveClick={() => openIssue('non-effective-contact')}
 							/>
 						</div>
 						<div className={styles.gridCard}>

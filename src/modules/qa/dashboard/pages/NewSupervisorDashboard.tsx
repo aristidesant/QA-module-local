@@ -19,6 +19,7 @@ import {
 	ComplianceCard,
 	SentimentEmotionCard,
 	BusinessInsightsCard,
+	OperationalCard,
 	SentimentTrendChart,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
@@ -27,6 +28,7 @@ import {
 } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
+import { operationalSummary } from '~/modules/qa/analytics/helpers';
 import {
 	SUPERVISOR_WEEKLY_METRICS,
 	SUPERVISOR_SENTIMENT_TREND,
@@ -278,6 +280,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 	} = SUPERVISOR_WEEKLY_METRICS;
 
 	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
+	const operational = operationalSummary('supervisor', 7);
 
 	const openDisputes = DISPUTES_SAMPLE.filter((d) => d.status === 'open');
 	const openDisputeCount = openDisputes.length;
@@ -296,7 +299,15 @@ export const NewSupervisorDashboard: React.FC = () => {
 					title='Performance Score'
 					description="Your team's quality assurance, compliance, sentiment and business results this week"
 				>
-					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
+					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
+						<div className={styles.gridCard}>
+							<OperationalCard
+								calls={operational.calls}
+								effectiveContacts={operational.effectiveContacts}
+								nonEffectiveContacts={operational.nonEffectiveContacts}
+								subtitle="Team's contact effectiveness this week"
+							/>
+						</div>
 						<div className={styles.gridCard}>
 							<QualityAssuranceCard
 								score={qaScore}

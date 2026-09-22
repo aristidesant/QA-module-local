@@ -1,6 +1,8 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Card, Stack, Group, Text, Progress, ThemeIcon } from '@mantine/core';
-import { IconPhoneCall } from '@tabler/icons-react';
+import { IconChevronRight, IconPhoneCall } from '@tabler/icons-react';
+import DrillRow from './DrillRow';
 import styles from '../Dashboard.module.css';
 
 interface OperationalCardProps {
@@ -12,6 +14,8 @@ interface OperationalCardProps {
 	nonEffectiveContacts: number;
 	/** Short line under the card title, used to scope the card per role */
 	subtitle?: string;
+	/** Opens the non-effective calls behind the number, when there are any. */
+	onNonEffectiveClick?: () => void;
 }
 
 const pct = (part: number, total: number) =>
@@ -23,9 +27,12 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 	effectiveContacts,
 	nonEffectiveContacts,
 	subtitle,
+	onNonEffectiveClick,
 }) => {
+	const { t } = useTranslation('qa.dashboard');
 	const effectivePct = pct(effectiveContacts, calls);
 	const nonEffectivePct = pct(nonEffectiveContacts, calls);
+	const clickable = Boolean(onNonEffectiveClick) && nonEffectiveContacts > 0;
 
 	return (
 		<Card
@@ -61,39 +68,43 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 				</Group>
 
 				<Stack gap='sm'>
-					<div>
+					<DrillRow hint={t('drill.hint')}>
 						<Group justify='space-between' mb={4}>
 							<Text size='sm' fw={500}>
 								Effective contacts
 							</Text>
 							<Group gap={6} wrap='nowrap'>
 								<Text size='sm' fw={600}>
-									{effectiveContacts}
+									{effectivePct}%
 								</Text>
 								<Text size='xs' c='dimmed'>
-									{effectivePct}%
+									{t('drill.calls', { count: effectiveContacts })}
 								</Text>
 							</Group>
 						</Group>
 						<Progress value={effectivePct} size='sm' color='green' />
-					</div>
+					</DrillRow>
 
-					<div>
+					<DrillRow
+						onClick={clickable ? onNonEffectiveClick : undefined}
+						hint={t('drill.hint')}
+					>
 						<Group justify='space-between' mb={4}>
 							<Text size='sm' fw={500}>
 								Non-effective contacts
 							</Text>
 							<Group gap={6} wrap='nowrap'>
 								<Text size='sm' fw={600}>
-									{nonEffectiveContacts}
-								</Text>
-								<Text size='xs' c='dimmed'>
 									{nonEffectivePct}%
 								</Text>
+								<Text size='xs' c='dimmed'>
+									{t('drill.calls', { count: nonEffectiveContacts })}
+								</Text>
+								{clickable && <IconChevronRight size={14} />}
 							</Group>
 						</Group>
 						<Progress value={nonEffectivePct} size='sm' color='gray' />
-					</div>
+					</DrillRow>
 				</Stack>
 			</Stack>
 		</Card>
