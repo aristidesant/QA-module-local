@@ -30,6 +30,9 @@ import type { RosterSupervisor } from '~/modules/qa/team/types';
 let counter = 500;
 const nextId = (prefix: string) => `${prefix}-${++counter}`;
 
+/** Stable reference for `selectTeamCampaignIds`'s no-entry fallback (Zustand v5 selectors must not return a fresh array). */
+const EMPTY_CAMPAIGN_IDS: string[] = [];
+
 export interface ScheduleCoachingInput {
 	agentId: string;
 	date: string;
@@ -290,12 +293,23 @@ export const useTeamStore = create<TeamState>((set, get) => ({
 		}),
 
 	updateSupervisor: (id, patch) =>
-		set((s) => ({
-			supervisors: {
+		set((s) => {
+			const supervisors = {
 				...s.supervisors,
 				[id]: { ...s.supervisors[id], ...patch },
-			},
-		})),
+			};
+			if (patch.name === undefined) return { supervisors };
+			const profiles = { ...s.profiles };
+			for (const [agentId, p] of Object.entries(profiles)) {
+				if (p.agent.supervisorId === id) {
+					profiles[agentId] = {
+						...p,
+						agent: { ...p.agent, supervisorName: patch.name },
+					};
+				}
+			}
+			return { supervisors, profiles };
+		}),
 
 	setTeamCampaigns: (supervisorId, campaignIds) =>
 		set((s) => ({
@@ -355,12 +369,4 @@ export const selectSupervisors = (s: TeamState) => s.supervisors;
 export const selectSupervisor = (id: string) => (s: TeamState) =>
 	s.supervisors[id];
 export const selectTeamCampaignIds = (supervisorId: string) => (s: TeamState) =>
-	s.teamCampaignIds[supervisorId] ?? [];
-export const selectTeamAgents = (supervisorId: string) => (s: TeamState) =>
-	Object.values(s.profiles)
-		.map((p) => p.agent)
-		.filter((a) => a.supervisorId === supervisorId);
-export const selectUnassignedAgents = (s: TeamState) =>
-	Object.values(s.profiles)
-		.map((p) => p.agent)
-		.filter((a) => a.supervisorId === UNASSIGNED_SUPERVISOR_ID);
+	s.teamCampaignIds[supervisorId] ?? EMPTY_CAMPAIGN_IDS;

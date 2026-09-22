@@ -22,10 +22,10 @@ import BaseTable from '~/components/BaseTable/BaseTable';
 import {
 	useTeamStore,
 	selectSupervisor,
-	selectTeamAgents,
 	selectTeamCampaignIds,
 } from '~/stores/qa/teamStore';
 import { TEAM_CAMPAIGNS } from '../mockData';
+import { UNASSIGNED_SUPERVISOR, UNASSIGNED_SUPERVISOR_ID } from '../constants';
 import type { TeamTableRow } from '../types';
 import {
 	agentProfilePath,
@@ -44,8 +44,11 @@ export default function TeamDetailPage() {
 	const { t } = useTranslation('qa.team');
 	const navigate = useNavigate();
 	const { supervisorId } = useParams<{ supervisorId: string }>();
-	const supervisor = useTeamStore(selectSupervisor(supervisorId ?? ''));
-	const agents = useTeamStore(selectTeamAgents(supervisorId ?? ''));
+	const storeSupervisor = useTeamStore(selectSupervisor(supervisorId ?? ''));
+	const supervisor =
+		supervisorId === UNASSIGNED_SUPERVISOR_ID
+			? UNASSIGNED_SUPERVISOR
+			: storeSupervisor;
 	const campaignIds = useTeamStore(selectTeamCampaignIds(supervisorId ?? ''));
 	const profiles = useTeamStore((s) => s.profiles);
 	const removeMemberAction = useTeamStore((s) => s.removeMember);
@@ -54,6 +57,14 @@ export default function TeamDetailPage() {
 	const [assignCampaignsOpen, setAssignCampaignsOpen] = useState(false);
 	const [addMembersOpen, setAddMembersOpen] = useState(false);
 	const [editSupervisorOpen, setEditSupervisorOpen] = useState(false);
+
+	const agents = useMemo(
+		() =>
+			Object.values(profiles)
+				.map((p) => p.agent)
+				.filter((a) => a.supervisorId === supervisorId),
+		[profiles, supervisorId]
+	);
 
 	const rows = useMemo(
 		() =>
@@ -128,13 +139,15 @@ export default function TeamDetailPage() {
 								</Text>
 							</Stack>
 						</Group>
-						<Button
-							variant='light'
-							leftSection={<IconEdit size={16} />}
-							onClick={() => setEditSupervisorOpen(true)}
-						>
-							{t('teams.detail.editSupervisor')}
-						</Button>
+						{supervisorId !== UNASSIGNED_SUPERVISOR_ID && (
+							<Button
+								variant='light'
+								leftSection={<IconEdit size={16} />}
+								onClick={() => setEditSupervisorOpen(true)}
+							>
+								{t('teams.detail.editSupervisor')}
+							</Button>
+						)}
 					</Group>
 				</SectionCard>
 
@@ -176,14 +189,16 @@ export default function TeamDetailPage() {
 					title={t('teams.detail.campaignsTitle')}
 					description={t('teams.detail.campaignsDescription')}
 					headerActions={
-						<Button
-							size='xs'
-							variant='light'
-							leftSection={<IconPlus size={14} />}
-							onClick={() => setAssignCampaignsOpen(true)}
-						>
-							{t('teams.detail.assignCampaigns')}
-						</Button>
+						supervisorId !== UNASSIGNED_SUPERVISOR_ID && (
+							<Button
+								size='xs'
+								variant='light'
+								leftSection={<IconPlus size={14} />}
+								onClick={() => setAssignCampaignsOpen(true)}
+							>
+								{t('teams.detail.assignCampaigns')}
+							</Button>
+						)
 					}
 				>
 					{campaignIds.length === 0 ? (

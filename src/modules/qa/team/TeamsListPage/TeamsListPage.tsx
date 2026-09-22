@@ -1,14 +1,11 @@
+import { useMemo } from 'react';
 import { SimpleGrid } from '@mantine/core';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer';
-import {
-	useTeamStore,
-	selectSupervisors,
-	selectUnassignedAgents,
-} from '~/stores/qa/teamStore';
+import { useTeamStore, selectSupervisors } from '~/stores/qa/teamStore';
 import { TEAM_CAMPAIGNS } from '../mockData';
-import { UNASSIGNED_SUPERVISOR } from '../constants';
+import { UNASSIGNED_SUPERVISOR, UNASSIGNED_SUPERVISOR_ID } from '../constants';
 import { teamCardStats } from '../helpers';
 import { TeamCard } from './TeamCard';
 
@@ -18,7 +15,13 @@ export default function TeamsListPage() {
 	const supervisors = useTeamStore(selectSupervisors);
 	const teamCampaignIds = useTeamStore((s) => s.teamCampaignIds);
 	const profiles = useTeamStore((s) => s.profiles);
-	const unassignedAgents = useTeamStore(selectUnassignedAgents);
+	const unassignedAgents = useMemo(
+		() =>
+			Object.values(profiles)
+				.map((p) => p.agent)
+				.filter((a) => a.supervisorId === UNASSIGNED_SUPERVISOR_ID),
+		[profiles]
+	);
 
 	const campaignNamesFor = (supervisorId: string) =>
 		(teamCampaignIds[supervisorId] ?? [])
