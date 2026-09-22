@@ -2,6 +2,7 @@ import type {
 	AgentProfile,
 	PerformancePoint,
 	ProfilePeriod,
+	RosterAgent,
 	TeamFilters,
 	TeamRole,
 	TeamTableRow,
@@ -11,8 +12,17 @@ import { NOW_ISO, PROFILE_PERIODS, SCORE_COLOR_STEPS } from './constants';
 
 export const roleFromPath = (pathname: string): TeamRole =>
 	pathname.startsWith('/qa/qa-manager') ? 'qa-manager' : 'supervisor';
+/** Where "back" goes: the Teams list for QA Manager (agents no longer have a standalone list), Your Team for Supervisor. */
 export const teamBasePath = (role: TeamRole) =>
-	role === 'qa-manager' ? '/qa/qa-manager/agents' : '/qa/supervisor/your-team';
+	role === 'qa-manager' ? '/qa/qa-manager/teams' : '/qa/supervisor/your-team';
+/** The agent-profile URL for a given role. QA Manager profiles are nested under their team. */
+export const agentProfilePath = (
+	role: TeamRole,
+	agent: Pick<RosterAgent, 'id' | 'supervisorId'>
+) =>
+	role === 'qa-manager'
+		? `/qa/qa-manager/teams/${agent.supervisorId}/agents/${agent.id}`
+		: `/qa/supervisor/your-team/${agent.id}`;
 export const customersBasePath = (role: TeamRole) =>
 	role === 'qa-manager'
 		? '/qa/qa-manager/customers'
@@ -143,3 +153,20 @@ export const teamKpis = (rows: TeamTableRow[]) => ({
 	improving: rows.filter((r) => r.overallTrend === 'up').length,
 	declining: rows.filter((r) => r.overallTrend === 'down').length,
 });
+
+/** Summary numbers for one Teams-list card: member count, average overall score, at-risk count. */
+export const teamCardStats = (
+	supervisorId: string,
+	profiles: Record<string, AgentProfile>
+) => {
+	const rows = Object.values(profiles)
+		.filter((p) => p.agent.supervisorId === supervisorId)
+		.map(toTableRow);
+	return {
+		memberCount: rows.length,
+		averageOverall: rows.length
+			? Math.round(rows.reduce((s, r) => s + r.overall, 0) / rows.length)
+			: 0,
+		atRisk: rows.filter(isAtRisk).length,
+	};
+};
