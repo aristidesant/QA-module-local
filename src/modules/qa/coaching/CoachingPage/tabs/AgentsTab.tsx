@@ -1,18 +1,42 @@
 ﻿import { useMemo, useState } from 'react';
-import { Badge, Button, Group, Select, Stack, Text, TextInput } from '@mantine/core';
+import {
+	Badge,
+	Button,
+	Group,
+	Select,
+	Stack,
+	Text,
+	TextInput,
+} from '@mantine/core';
 import { createColumnHelper } from '@tanstack/react-table';
 import { IconSearch, IconUsers } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
-import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable/BaseTable';
+import BaseTable, {
+	type BaseTableColumnDef,
+} from '~/components/BaseTable/BaseTable';
 import EmptyState from '~/components/EmptyState';
-import type { CoachingQueueItem, CoachingSessionRecord, EvaluationArea, LmsAssignment, LmsImpactVerdict } from '~/models/qa';
+import type {
+	CoachingQueueItem,
+	CoachingSessionRecord,
+	EvaluationArea,
+	LmsAssignment,
+	LmsImpactVerdict,
+} from '~/models/qa';
 import { AreaBadge, ImpactBadge } from '~/modules/qa/lms/components/Badges';
 import { DIMENSION_TO_AREA, LMS_AREA_META } from '~/modules/qa/lms/constants';
 import { daysUntil, isOverdue } from '~/modules/qa/lms/helpers';
 import { getScoreColor } from '~/modules/qa/team/helpers';
-import { TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
-import type { AgentProfile, DimensionKey, TeamRole } from '~/modules/qa/team/types';
+import { TEAM_PROFILES, TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
+import type {
+	AgentProfile,
+	DimensionKey,
+	TeamRole,
+} from '~/modules/qa/team/types';
+import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
+
+/** Not a real EvaluationArea — a synthetic filter value for the "Weakest" dropdown. */
+const BURNOUT_RISK_FILTER = 'BURNOUT_RISK';
 
 type AgentState = 'attention' | 'inTraining' | 'measuring' | 'onTrack';
 
@@ -56,8 +80,11 @@ export function buildAgentRows(
 			.filter((a) => a.impact)
 			.sort((a, b) => (b.completedAt ?? '').localeCompare(a.completedAt ?? ''));
 		/** Sentiment is scored 1-5; every dimension is compared on the same 0-100 scale. */
-		const toPct = (k: DimensionKey, v: number) => (k === 'sentiment' ? Math.round(((v - 1) / 4) * 100) : v);
-		const weakest = [...p.dimensions].sort((a, b) => toPct(a.key, a.score) - toPct(b.key, b.score))[0];
+		const toPct = (k: DimensionKey, v: number) =>
+			k === 'sentiment' ? Math.round(((v - 1) / 4) * 100) : v;
+		const weakest = [...p.dimensions].sort(
+			(a, b) => toPct(a.key, a.score) - toPct(b.key, b.score)
+		)[0];
 		const lastImpact = measured[0]?.impact?.verdict ?? null;
 
 		const state: AgentState = inQueue.has(p.agent.id)
@@ -78,10 +105,14 @@ export function buildAgentRows(
 			weakestValue: toPct(weakest.key, weakest.score),
 			active: open.length,
 			pending: mine.filter(
-				(a) => a.acceptance.status === 'PENDING' || a.acceptance.status === 'NO_RESPONSE'
+				(a) =>
+					a.acceptance.status === 'PENDING' ||
+					a.acceptance.status === 'NO_RESPONSE'
 			).length,
 			overdue: open.filter(isOverdue).length,
-			sessions30d: sessions.filter((s) => s.agentId === p.agent.id && daysUntil(s.date) >= -30).length,
+			sessions30d: sessions.filter(
+				(s) => s.agentId === p.agent.id && daysUntil(s.date) >= -30
+			).length,
 			lastImpact,
 			state,
 		};
@@ -105,9 +136,17 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 	const filtered = useMemo(() => {
 		const q = search.trim().toLowerCase();
 		return rows.filter((r) => {
-			if (q && !r.name.toLowerCase().includes(q) && !r.id.toLowerCase().includes(q)) return false;
+			if (
+				q &&
+				!r.name.toLowerCase().includes(q) &&
+				!r.id.toLowerCase().includes(q)
+			)
+				return false;
 			if (team && r.supervisorId !== team) return false;
-			if (area && r.weakestArea !== area) return false;
+			if (area === BURNOUT_RISK_FILTER) {
+				const level = TEAM_PROFILES[r.id]?.risk.burnout.level;
+				if (!level || level === BurnoutRiskLevel.LOW) return false;
+			} else if (area && r.weakestArea !== area) return false;
 			if (state && r.state !== state) return false;
 			return true;
 		});
@@ -124,7 +163,11 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 	const columns: BaseTableColumnDef<AgentCoachingRow>[] = [
 		helper.accessor('name', {
 			header: t('agents.columns.agent'),
-			cell: (info) => <Text size='sm' fw={500}>{info.getValue()}</Text>,
+			cell: (info) => (
+				<Text size='sm' fw={500}>
+					{info.getValue()}
+				</Text>
+			),
 		}) as BaseTableColumnDef<AgentCoachingRow>,
 		helper.accessor('overall', {
 			header: t('agents.columns.overall'),
@@ -146,7 +189,9 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 				</Group>
 			),
 		}) as BaseTableColumnDef<AgentCoachingRow>,
-		helper.accessor('active', { header: t('agents.columns.active') }) as BaseTableColumnDef<AgentCoachingRow>,
+		helper.accessor('active', {
+			header: t('agents.columns.active'),
+		}) as BaseTableColumnDef<AgentCoachingRow>,
 		helper.accessor('pending', {
 			header: t('agents.columns.pending'),
 			cell: (info) => (
@@ -158,12 +203,18 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 		helper.accessor('overdue', {
 			header: t('agents.columns.overdue'),
 			cell: (info) => (
-				<Text size='sm' c={info.getValue() > 0 ? 'red' : undefined} fw={info.getValue() > 0 ? 600 : 400}>
+				<Text
+					size='sm'
+					c={info.getValue() > 0 ? 'red' : undefined}
+					fw={info.getValue() > 0 ? 600 : 400}
+				>
 					{info.getValue()}
 				</Text>
 			),
 		}) as BaseTableColumnDef<AgentCoachingRow>,
-		helper.accessor('sessions30d', { header: t('agents.columns.sessions') }) as BaseTableColumnDef<AgentCoachingRow>,
+		helper.accessor('sessions30d', {
+			header: t('agents.columns.sessions'),
+		}) as BaseTableColumnDef<AgentCoachingRow>,
 		helper.display({
 			id: 'lastImpact',
 			header: t('agents.columns.lastImpact'),
@@ -171,7 +222,9 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 				const agentId = info.row.original.id;
 				const last = assignments
 					.filter((a) => a.agentId === agentId && a.impact)
-					.sort((a, b) => (b.completedAt ?? '').localeCompare(a.completedAt ?? ''))[0];
+					.sort((a, b) =>
+						(b.completedAt ?? '').localeCompare(a.completedAt ?? '')
+					)[0];
 				return <ImpactBadge impact={last?.impact ?? null} size='xs' />;
 			},
 		}) as BaseTableColumnDef<AgentCoachingRow>,
@@ -194,7 +247,11 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 
 	return (
 		<Stack gap='md'>
-			<SectionCard title={t('agents.title')} description={t('agents.description')} icon={IconUsers}>
+			<SectionCard
+				title={t('agents.title')}
+				description={t('agents.description')}
+				icon={IconUsers}
+			>
 				<Group gap='sm' wrap='wrap'>
 					<TextInput
 						size='sm'
@@ -208,7 +265,10 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 						<Select
 							size='sm'
 							placeholder={t('agents.filters.team')}
-							data={TEAM_SUPERVISORS.map((s) => ({ value: s.id, label: s.team }))}
+							data={TEAM_SUPERVISORS.map((s) => ({
+								value: s.id,
+								label: s.team,
+							}))}
 							value={team}
 							onChange={setTeam}
 							clearable
@@ -218,10 +278,23 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 					<Select
 						size='sm'
 						placeholder={t('agents.filters.area')}
-						data={(['QUALITY_ASSURANCE', 'COMPLIANCE', 'SENTIMENT_EMOTION', 'BUSINESS_INSIGHTS'] as const).map((a) => ({
-							value: a,
-							label: t(LMS_AREA_META[a].labelKey, { ns: 'qa.lms' }),
-						}))}
+						data={[
+							...(
+								[
+									'QUALITY_ASSURANCE',
+									'COMPLIANCE',
+									'SENTIMENT_EMOTION',
+									'BUSINESS_INSIGHTS',
+								] as const
+							).map((a) => ({
+								value: a as string,
+								label: t(LMS_AREA_META[a].labelKey, { ns: 'qa.lms' }),
+							})),
+							{
+								value: BURNOUT_RISK_FILTER,
+								label: t('agents.filters.burnoutRisk', 'Burnout Risk'),
+							},
+						]}
 						value={area}
 						onChange={setArea}
 						clearable
@@ -230,7 +303,14 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 					<Select
 						size='sm'
 						placeholder={t('agents.filters.state')}
-						data={(['attention', 'inTraining', 'measuring', 'onTrack'] as AgentState[]).map((s) => ({
+						data={(
+							[
+								'attention',
+								'inTraining',
+								'measuring',
+								'onTrack',
+							] as AgentState[]
+						).map((s) => ({
 							value: s,
 							label: t(`agents.state.${s}`),
 						}))}
@@ -249,12 +329,17 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 				<EmptyState message={t('agents.empty')} />
 			) : (
 				byTeam.map(([supervisorId, teamRows]) => {
-					const supervisor = TEAM_SUPERVISORS.find((s) => s.id === supervisorId);
+					const supervisor = TEAM_SUPERVISORS.find(
+						(s) => s.id === supervisorId
+					);
 					return (
 						<SectionCard
 							key={supervisorId}
 							title={supervisor?.team ?? supervisorId}
-							description={t('agents.teamCard', { team: supervisor?.team ?? '', supervisor: supervisor?.name ?? '' })}
+							description={t('agents.teamCard', {
+								team: supervisor?.team ?? '',
+								supervisor: supervisor?.name ?? '',
+							})}
 						>
 							<BaseTable<AgentCoachingRow>
 								data={teamRows}
