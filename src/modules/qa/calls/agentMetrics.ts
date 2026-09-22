@@ -4,14 +4,18 @@ import type { CallEmotion, TeamCallMetric } from '~/modules/qa/analytics/types';
 import type { ComplianceCategory } from '~/modules/qa/dashboard/mockData';
 import { COMPLIANCE_TARGET, isNegativeEmotion } from './issues';
 
-/** Window the agent dashboard cards summarise. My Calls' `30d` period matches it. */
-export const AGENT_DASHBOARD_DAYS = 30;
+/** Window the agent dashboard cards summarise — agents see weekly data. My Calls' `7d` period matches it. */
+export const AGENT_DASHBOARD_DAYS = 7;
 
 export type QaCategoryKey = 'ecn' | 'enc' | 'ecc' | 'ecuf';
 export type ComplianceAreaName = ComplianceCategory['name'];
 
 export interface AgentDashboardMetrics {
 	calls: number;
+	/** Calls where the intended contact was actually reached and engaged. */
+	effectiveContacts: number;
+	/** Calls that didn't connect with the intended contact (no answer, voicemail, wrong number…). */
+	nonEffectiveContacts: number;
 	/** `total` = average qaScore; each category = % of calls WITHOUT that error type. */
 	qa: { total: number; ecn: number; enc: number; ecc: number; ecuf: number };
 	autoFails: number;
@@ -106,6 +110,11 @@ export const buildAgentDashboardMetrics = (
 
 	return {
 		calls: n,
+		effectiveContacts: calls.filter((c) => c.contactOutcome === 'EFFECTIVE')
+			.length,
+		nonEffectiveContacts: calls.filter(
+			(c) => c.contactOutcome === 'NON_EFFECTIVE'
+		).length,
 		qa: {
 			total: Math.round(avg1(calls.map((c) => c.qaScore))),
 			ecn: pct(n - qaIssueCounts.ecn, n),

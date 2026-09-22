@@ -7,6 +7,7 @@ import {
 	QualityAssuranceCard,
 	ComplianceCard,
 	SentimentEmotionSplitCard,
+	OperationalCard,
 	BestWorstCallsTable,
 	CoachingLearningWidget,
 	CommitLearningModal,
@@ -99,9 +100,9 @@ export const NewAgentDashboard: React.FC = () => {
 			}));
 	}, [assignments, content]);
 
-	/** Opens My Calls filtered on one issue, over the same 30-day window the cards summarise. */
+	/** Opens My Calls filtered on one issue, over the same weekly window the cards summarise. */
 	const openIssue = (issue: CallIssueKey) =>
-		navigate(`${MY_CALLS_PATH}?tab=calls&issue=${issue}&period=30d`);
+		navigate(`${MY_CALLS_PATH}?tab=calls&issue=${issue}&period=7d`);
 
 	/** Confirms the agent's commitment to the supervisor's due date before opening the material. */
 	const handleCommitLearning = () => {
@@ -131,7 +132,15 @@ export const NewAgentDashboard: React.FC = () => {
 					title='Performance Score'
 					description={`Your quality assurance, compliance and sentiment results over the last ${AGENT_DASHBOARD_DAYS} days · ${metrics.calls} calls evaluated`}
 				>
-					<SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing='md'>
+					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
+						<div className={styles.gridCard}>
+							<OperationalCard
+								calls={metrics.calls}
+								effectiveContacts={metrics.effectiveContacts}
+								nonEffectiveContacts={metrics.nonEffectiveContacts}
+								subtitle='Contact effectiveness over the same window'
+							/>
+						</div>
 						<div className={styles.gridCard}>
 							<QualityAssuranceCard
 								score={metrics.qa}

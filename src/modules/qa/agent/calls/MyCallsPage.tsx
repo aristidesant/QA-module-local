@@ -94,7 +94,7 @@ export default function MyCallsPage() {
 		);
 	};
 
-	// Dashboard drill-down: ?issue=a,b[&period=30d] pre-selects the issue filter.
+	// Dashboard drill-down: ?issue=a,b[&period=7d] pre-selects the issue filter.
 	const issueParam = searchParams.get('issue');
 	const periodParam = searchParams.get('period');
 	useEffect(() => {
