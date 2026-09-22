@@ -15,6 +15,7 @@ export interface RosterSupervisor {
 	id: string;
 	name: string;
 	team: string;
+	email: string;
 }
 export interface RosterCampaign {
 	id: string;

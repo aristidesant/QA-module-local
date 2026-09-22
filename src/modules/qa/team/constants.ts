@@ -28,11 +28,20 @@ import type {
 	OperationalMetricKey,
 	ProfilePeriod,
 	QAErrorTypeCode,
+	RosterSupervisor,
 } from './types';
 
 export const NOW_ISO = '2026-09-12T15:00:00Z';
 export const SUPERVISOR_PERSONA = { id: 'SUP-001', name: 'Maria García' };
 export const QA_MANAGER_PERSONA = { id: 'QAM-001', name: 'Elena Ruiz' };
+/** Pseudo-team for agents removed from a real team; not part of TEAM_SUPERVISORS. */
+export const UNASSIGNED_SUPERVISOR_ID = 'UNASSIGNED';
+export const UNASSIGNED_SUPERVISOR: RosterSupervisor = {
+	id: UNASSIGNED_SUPERVISOR_ID,
+	name: 'Unassigned',
+	team: 'Unassigned',
+	email: '',
+};
 /** The agent whose own screens (inbox, rankings, disputes, LMS) the demo shows. */
 export const AGENT_PERSONA_ID = 'AGT-004';
 
