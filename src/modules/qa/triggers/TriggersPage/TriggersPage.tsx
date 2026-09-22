@@ -1,11 +1,20 @@
 import {
-	createContext, useContext, useMemo, useState, useCallback,
+	createContext,
+	useContext,
+	useMemo,
+	useState,
+	useCallback,
 } from 'react';
 import { useLocation } from 'react-router';
+import { Stack, Group, Title, Text, Button, Tabs, Badge } from '@mantine/core';
 import {
-	Stack, Group, Title, Text, Button, Tabs, Badge,
-} from '@mantine/core';
-import { IconPlus, IconAlertTriangle, IconSparkles, IconAward, IconTemplate, IconHistory } from '@tabler/icons-react';
+	IconPlus,
+	IconAlertTriangle,
+	IconSparkles,
+	IconAward,
+	IconTemplate,
+	IconHistory,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import ContentContainer from '~/components/ContentContainer';
@@ -42,8 +51,11 @@ export default function TriggersPage() {
 	const { rules, badges, templates, activity } = useTriggerRulesStore();
 
 	// Determine role from path
-	const role = location.pathname.includes('/qa/supervisor/') ? 'supervisor' : 'qaManager';
-	const inboxPath = role === 'supervisor' ? '/qa/supervisor/inbox' : '/qa/qa-manager/inbox';
+	const role = location.pathname.includes('/qa/supervisor/')
+		? 'supervisor'
+		: 'qaManager';
+	const inboxPath =
+		role === 'supervisor' ? '/qa/supervisor/inbox' : '/qa/qa-manager/inbox';
 	const defaultSupervisorIds = role === 'supervisor' ? ['SUP-001'] : [];
 
 	// State management
@@ -57,12 +69,15 @@ export default function TriggersPage() {
 		badgePreset?: Partial<any>;
 	}>({ opened: false, mode: 'create', type: 'METRIC_ALERT', rule: null });
 	const [detailRuleId, setDetailRuleId] = useState<string | null>(null);
-	const [detailActivityEntry, setDetailActivityEntry] = useState<TriggerActivityEntry | null>(null);
+	const [detailActivityEntry, setDetailActivityEntry] =
+		useState<TriggerActivityEntry | null>(null);
 
 	// Compute KPI counts
 	const tabCounts = useMemo(() => {
 		const alertRules = rules.filter((r) => r.kind === 'ALERT').length;
-		const recognitionRules = rules.filter((r) => r.kind === 'RECOGNITION').length;
+		const recognitionRules = rules.filter(
+			(r) => r.kind === 'RECOGNITION'
+		).length;
 		const activeBadges = badges.filter((b) => b.status === 'ACTIVE').length;
 		const sentActivity = activity.filter((a) => a.status === 'SENT').length;
 
@@ -79,7 +94,13 @@ export default function TriggersPage() {
 			rule: null,
 		});
 		// Switch tab to matching kind
-		const kind = type === 'METRIC_ALERT' || type === 'TREND_WARNING' || type === 'WEEKLY_SUMMARY' || type === 'BURNOUT_RISK' ? 'alerts' : 'recognition';
+		const kind =
+			type === 'METRIC_ALERT' ||
+			type === 'TREND_WARNING' ||
+			type === 'WEEKLY_SUMMARY' ||
+			type === 'BURNOUT_RISK'
+				? 'alerts'
+				: 'recognition';
 		setTab(kind);
 	}, []);
 
@@ -99,20 +120,27 @@ export default function TriggersPage() {
 		setDetailRuleId(null);
 	}, []);
 
-	const handleAcknowledgeActivity = useCallback((entryId: string) => {
-		useTriggerRulesStore.getState().acknowledgeActivity(entryId);
-		notifySuccess(t('activity.notifications.acknowledged'));
-	}, [t]);
+	const handleAcknowledgeActivity = useCallback(
+		(entryId: string) => {
+			useTriggerRulesStore.getState().acknowledgeActivity(entryId);
+			notifySuccess(t('activity.notifications.acknowledged'));
+		},
+		[t]
+	);
 
 	return (
-		<TriggersPageContext.Provider value={{ role, inboxPath, defaultSupervisorIds }}>
+		<TriggersPageContext.Provider
+			value={{ role, inboxPath, defaultSupervisorIds }}
+		>
 			<ContentContainer contentWidth='full'>
 				<Stack gap='lg'>
 					{/* Header */}
 					<Group justify='space-between' align='flex-start'>
 						<Stack gap={0} flex={1}>
 							<Text size='xs' c='dimmed' tt='uppercase' fw={600}>
-								{t(`page.eyebrow.${role === 'supervisor' ? 'supervisor' : 'qaManager'}`)}
+								{t(
+									`page.eyebrow.${role === 'supervisor' ? 'supervisor' : 'qaManager'}`
+								)}
 							</Text>
 							<Title order={1}>{t('page.title')}</Title>
 							<Text c='dimmed' size='sm'>
@@ -236,7 +264,11 @@ export default function TriggersPage() {
 										mode: 'create',
 										type: 'BADGE_AWARD',
 										rule: null,
-										badgePreset: { badgeId: badge.id, conditions: badge.conditions, conditionLogic: badge.conditionLogic },
+										badgePreset: {
+											badgeId: badge.id,
+											conditions: badge.conditions,
+											conditionLogic: badge.conditionLogic,
+										},
 									});
 								}}
 							/>
@@ -312,6 +344,7 @@ export default function TriggersPage() {
 					}
 				}}
 				inboxPath={inboxPath}
+				role={role}
 			/>
 		</TriggersPageContext.Provider>
 	);

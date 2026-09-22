@@ -83,13 +83,6 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 		to: '/qa/agent/coaching',
 		i18nNamespace: 'qa.lms',
 	},
-	{
-		key: 'agent-analytics',
-		label: 'sidebar.agent.analytics',
-		icon: <IconChartLine size={20} className={styles.menuIcon} />,
-		to: '/qa/agent/analytics',
-		i18nNamespace: 'qa.agent',
-	},
 ];
 
 // SUPERVISOR NAVIGATION (flat version - source of truth for routes)

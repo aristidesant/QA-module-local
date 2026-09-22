@@ -24,14 +24,46 @@
 	},
 	"kinds": { "ALERT": "Alerta", "RECOGNITION": "Reconocimiento" },
 	"types": {
-		"METRIC_ALERT": { "label": "Alerta de métrica", "description": "Notificar cuando una métrica cruza un valor o rango que definas.", "example": "Puntuación de cumplimiento < 80% durante los últimos 7 días" },
-		"TREND_WARNING": { "label": "Advertencia de tendencia", "description": "Notificar sobre una disminución porcentual o una serie de llamadas malas.", "example": "La sentencia del cliente cae 15% vs. los últimos 14 días" },
-		"WEEKLY_SUMMARY": { "label": "Resumen semanal", "description": "Envía a cada agente un resumen de sus métricas en un día y hora fijos.", "example": "Cada viernes a las 17:00" },
-		"BURNOUT_RISK": { "label": "Riesgo de burnout", "description": "Combina señales de sentimiento, emoción y rendimiento para marcar agentes en riesgo.", "example": "Sentimiento del agente ↓10% y emociones negativas > 40%" },
-		"MILESTONE": { "label": "Hito", "description": "Celebra cuando un agente alcanza una meta.", "example": "Puntuación de QA ≥ 95% esta semana" },
-		"STREAK": { "label": "Racha", "description": "Celebra llamadas consecutivas que cumplen un estándar.", "example": "3 llamadas consecutivas con sentimiento ≥ 4.5" },
-		"IMPROVEMENT": { "label": "Mejora", "description": "Celebra un aumento porcentual vs. el período anterior.", "example": "Puntuación de QA +10% en 30 días" },
-		"BADGE_AWARD": { "label": "Otorgación de insignia", "description": "Otorga una insignia automáticamente cuando se cumplen sus criterios.", "example": "5 recuperaciones de sentimiento en 30 días → Elevador de humor" }
+		"METRIC_ALERT": {
+			"label": "Alerta de métrica",
+			"description": "Notificar cuando una métrica cruza un valor o rango que definas.",
+			"example": "Puntuación de cumplimiento < 80% durante los últimos 7 días"
+		},
+		"TREND_WARNING": {
+			"label": "Advertencia de tendencia",
+			"description": "Notificar sobre una disminución porcentual o una serie de llamadas malas.",
+			"example": "La sentencia del cliente cae 15% vs. los últimos 14 días"
+		},
+		"WEEKLY_SUMMARY": {
+			"label": "Resumen semanal",
+			"description": "Envía a cada agente un resumen de sus métricas en un día y hora fijos.",
+			"example": "Cada viernes a las 17:00"
+		},
+		"BURNOUT_RISK": {
+			"label": "Riesgo de burnout",
+			"description": "Combina señales de sentimiento, emoción y rendimiento para marcar agentes en riesgo.",
+			"example": "Sentimiento del agente ↓10% y emociones negativas > 40%"
+		},
+		"MILESTONE": {
+			"label": "Hito",
+			"description": "Celebra cuando un agente alcanza una meta.",
+			"example": "Puntuación de QA ≥ 95% esta semana"
+		},
+		"STREAK": {
+			"label": "Racha",
+			"description": "Celebra llamadas consecutivas que cumplen un estándar.",
+			"example": "3 llamadas consecutivas con sentimiento ≥ 4.5"
+		},
+		"IMPROVEMENT": {
+			"label": "Mejora",
+			"description": "Celebra un aumento porcentual vs. el período anterior.",
+			"example": "Puntuación de QA +10% en 30 días"
+		},
+		"BADGE_AWARD": {
+			"label": "Otorgación de insignia",
+			"description": "Otorga una insignia automáticamente cuando se cumplen sus criterios.",
+			"example": "5 recuperaciones de sentimiento en 30 días → Elevador de humor"
+		}
 	},
 	"areas": {
 		"QUALITY_ASSURANCE": "Aseguramiento de calidad",
@@ -74,9 +106,19 @@
 		"rrss": "Redes sociales",
 		"superintendenciaBancos": "Superintendencia bancaria",
 		"noLlamarList": "No llamar",
-		"ELATION": "Euforia", "GRATITUDE": "Gratitud", "JOY": "Alegría", "RELIEF": "Alivio", "SATISFACTION": "Satisfacción",
-		"NEUTRAL": "Neutral", "SURPRISE": "Sorpresa", "FRUSTRATION": "Frustración", "SADNESS": "Tristeza",
-		"FEAR": "Miedo", "DISAPPOINTMENT": "Decepción", "ANGER": "Ira", "RAGE": "Furia"
+		"ELATION": "Euforia",
+		"GRATITUDE": "Gratitud",
+		"JOY": "Alegría",
+		"RELIEF": "Alivio",
+		"SATISFACTION": "Satisfacción",
+		"NEUTRAL": "Neutral",
+		"SURPRISE": "Sorpresa",
+		"FRUSTRATION": "Frustración",
+		"SADNESS": "Tristeza",
+		"FEAR": "Miedo",
+		"DISAPPOINTMENT": "Decepción",
+		"ANGER": "Ira",
+		"RAGE": "Furia"
 	},
 	"modes": {
 		"THRESHOLD": "Valor nominal",
@@ -84,8 +126,16 @@
 		"PERCENT_CHANGE": "Cambio porcentual",
 		"CONSECUTIVE": "Llamadas consecutivas"
 	},
-	"operators": { "LT": "Menor que", "LTE": "Menor o igual", "GT": "Mayor que", "GTE": "Mayor o igual" },
-	"directions": { "DECREASE": "Disminución de al menos", "INCREASE": "Aumento de al menos" },
+	"operators": {
+		"LT": "Menor que",
+		"LTE": "Menor o igual",
+		"GT": "Mayor que",
+		"GTE": "Mayor o igual"
+	},
+	"directions": {
+		"DECREASE": "Disminución de al menos",
+		"INCREASE": "Aumento de al menos"
+	},
 	"windows": {
 		"PER_CALL": "Por llamada",
 		"LAST_N_CALLS": "Últimas N llamadas",
@@ -94,26 +144,68 @@
 		"LAST_14_DAYS": "Últimos 14 días",
 		"LAST_30_DAYS": "Últimos 30 días"
 	},
-	"logic": { "ALL": "Coincidir con TODAS las condiciones", "ANY": "Coincidir con CUALQUIER condición" },
+	"logic": {
+		"ALL": "Coincidir con TODAS las condiciones",
+		"ANY": "Coincidir con CUALQUIER condición"
+	},
 	"conditions": {
 		"between": "entre {{from}} y {{to}}",
-		"change": { "DECREASE": "disminuye ≥ {{percent}}%", "INCREASE": "aumenta ≥ {{percent}}%" },
+		"change": {
+			"DECREASE": "disminuye ≥ {{percent}}%",
+			"INCREASE": "aumenta ≥ {{percent}}%"
+		},
 		"consecutive": "{{count}} llamadas consecutivas con {{metric}} {{operator}} {{value}}",
 		"scheduled": "Cada {{day}} a las {{time}}",
 		"none": "Sin condiciones",
 		"more": "+{{count}} más ({{logic}})"
 	},
-	"days": { "MONDAY": "Lunes", "TUESDAY": "Martes", "WEDNESDAY": "Miércoles", "THURSDAY": "Jueves", "FRIDAY": "Viernes", "SATURDAY": "Sábado", "SUNDAY": "Domingo" },
-	"severity": { "INFO": "Información", "WARNING": "Advertencia", "CRITICAL": "Crítico" },
+	"days": {
+		"MONDAY": "Lunes",
+		"TUESDAY": "Martes",
+		"WEDNESDAY": "Miércoles",
+		"THURSDAY": "Jueves",
+		"FRIDAY": "Viernes",
+		"SATURDAY": "Sábado",
+		"SUNDAY": "Domingo"
+	},
+	"severity": {
+		"INFO": "Información",
+		"WARNING": "Advertencia",
+		"CRITICAL": "Crítico"
+	},
 	"status": { "ACTIVE": "Activo", "PAUSED": "Pausado", "DRAFT": "Borrador" },
-	"recipients": { "AGENT": "Agente", "SUPERVISOR": "Supervisor", "QA_MANAGER": "Gerente de QA" },
-	"channels": { "INBOX": "Bandeja de entrada", "EMAIL": "Correo", "DASHBOARD": "Panel" },
+	"recipients": {
+		"AGENT": "Agente",
+		"SUPERVISOR": "Supervisor",
+		"QA_MANAGER": "Gerente de QA"
+	},
+	"channels": {
+		"INBOX": "Bandeja de entrada",
+		"EMAIL": "Correo",
+		"DASHBOARD": "Panel"
+	},
 	"tiers": { "BRONZE": "Bronce", "SILVER": "Plata", "GOLD": "Oro" },
-	"visibility": { "PRIVATE": "Privado del agente", "TEAM_FEED": "Feed del equipo" },
+	"visibility": {
+		"PRIVATE": "Privado del agente",
+		"TEAM_FEED": "Feed del equipo"
+	},
 	"burnoutLevels": { "LOW": "Bajo", "MEDIUM": "Medio", "HIGH": "Alto" },
-	"templateCategories": { "ALERT": "Alerta", "RECOGNITION": "Reconocimiento", "SUMMARY": "Resumen" },
-	"activityStatus": { "SENT": "Enviado", "ACKNOWLEDGED": "Reconocido", "ESCALATED": "Escalado", "SUPPRESSED": "Suprimido" },
-	"campaignTypes": { "INBOUND": "Entrante", "OUTBOUND": "Saliente", "BLENDED": "Mixto" },
+	"templateCategories": {
+		"ALERT": "Alerta",
+		"RECOGNITION": "Reconocimiento",
+		"SUMMARY": "Resumen"
+	},
+	"activityStatus": {
+		"SENT": "Enviado",
+		"ACKNOWLEDGED": "Reconocido",
+		"ESCALATED": "Escalado",
+		"SUPPRESSED": "Suprimido"
+	},
+	"campaignTypes": {
+		"INBOUND": "Entrante",
+		"OUTBOUND": "Saliente",
+		"BLENDED": "Mixto"
+	},
 	"picker": {
 		"title": "¿Qué deseas crear?",
 		"alerts": "Alertas",
@@ -209,7 +301,12 @@
 		"noQuietHours": "Sin horas silenciosas",
 		"includedAreas": "Áreas incluidas",
 		"teamComparison": "Incluye comparación de equipo",
-		"stats": { "fired7d": "Disparado · 7d", "fired30d": "Disparado · 30d", "lastFired": "Último disparo", "createdBy": "Creado por" },
+		"stats": {
+			"fired7d": "Disparado · 7d",
+			"fired30d": "Disparado · 30d",
+			"lastFired": "Último disparo",
+			"createdBy": "Creado por"
+		},
 		"previewSample": "Previsualizar con datos de ejemplo",
 		"noActivity": "Esta regla aún no se ha disparado"
 	},
@@ -321,55 +418,168 @@
 		"title": "Catálogo de insignias",
 		"description": "Insignias que los agentes pueden ganar automáticamente a través de reglas de reconocimiento u otorgarse manualmente.",
 		"new": "Nueva insignia",
-		"filters": { "search": "Buscar insignias...", "area": "Área", "tier": "Nivel", "status": "Estado", "all": "Todos", "active": "Activo", "archived": "Archivado", "clear": "Limpiar filtros" },
-		"card": { "holders_one": "{{count}} agente", "holders_other": "{{count}} agentes", "noHolders": "No ganada aún", "autoAward": "Auto-otorgación", "manual": "Manual", "linkedRule": "Regla vinculada" },
-		"actions": { "edit": "Editar", "archive": "Archivar", "restore": "Restaurar", "createRule": "Crear regla de reconocimiento" },
+		"filters": {
+			"search": "Buscar insignias...",
+			"area": "Área",
+			"tier": "Nivel",
+			"status": "Estado",
+			"all": "Todos",
+			"active": "Activo",
+			"archived": "Archivado",
+			"clear": "Limpiar filtros"
+		},
+		"card": {
+			"holders_one": "{{count}} agente",
+			"holders_other": "{{count}} agentes",
+			"noHolders": "No ganada aún",
+			"autoAward": "Auto-otorgación",
+			"manual": "Manual",
+			"linkedRule": "Regla vinculada"
+		},
+		"actions": {
+			"edit": "Editar",
+			"archive": "Archivar",
+			"restore": "Restaurar",
+			"createRule": "Crear regla de reconocimiento"
+		},
 		"detail": {
 			"criteria": "Criterios",
 			"linkedRule": "Regla de reconocimiento vinculada",
 			"noLinkedRule": "Ninguna regla otorga esta insignia automáticamente",
 			"holders": "Poseedores",
 			"columns": { "agent": "Agente", "team": "Equipo", "earnedAt": "Ganado" },
-			"stats": { "holders": "Total de poseedores", "lastAwarded": "Último otorgado", "tier": "Nivel" }
+			"stats": {
+				"holders": "Total de poseedores",
+				"lastAwarded": "Último otorgado",
+				"tier": "Nivel"
+			}
 		},
 		"editor": {
 			"createTitle": "Nueva insignia",
 			"editTitle": "Editar insignia",
-			"sections": { "identity": "Identidad", "criteria": "Criterios", "criteriaDescription": "¿Qué comportamiento consistente gana esta insignia?", "settings": "Configuración" },
-			"fields": { "name": "Nombre", "description": "Descripción", "icon": "Icono", "color": "Color", "area": "Área", "tier": "Nivel", "autoAward": "Otorgar automáticamente cuando se cumplen los criterios", "autoAwardHint": "Guardar crea una regla de reconocimiento vinculada que puedes ajustar en la pestaña Reconocimiento.", "status": "Activo" },
-			"validation": { "nameRequired": "El nombre es obligatorio", "iconRequired": "Elige un icono" }
+			"sections": {
+				"identity": "Identidad",
+				"criteria": "Criterios",
+				"criteriaDescription": "¿Qué comportamiento consistente gana esta insignia?",
+				"settings": "Configuración"
+			},
+			"fields": {
+				"name": "Nombre",
+				"description": "Descripción",
+				"icon": "Icono",
+				"color": "Color",
+				"area": "Área",
+				"tier": "Nivel",
+				"autoAward": "Otorgar automáticamente cuando se cumplen los criterios",
+				"autoAwardHint": "Guardar crea una regla de reconocimiento vinculada que puedes ajustar en la pestaña Reconocimiento.",
+				"status": "Activo"
+			},
+			"validation": {
+				"nameRequired": "El nombre es obligatorio",
+				"iconRequired": "Elige un icono"
+			}
 		},
-		"empty": { "title": "Sin insignias aún", "description": "Crea una insignia para recompensar el comportamiento consistente.", "noMatches": "Ninguna insignia coincide con los filtros actuales" },
-		"notifications": { "created": "Insignia creada", "updated": "Insignia actualizada", "archived": "Insignia archivada", "restored": "Insignia restaurada", "ruleCreated": "Regla de reconocimiento creada para {{badge}}" }
+		"empty": {
+			"title": "Sin insignias aún",
+			"description": "Crea una insignia para recompensar el comportamiento consistente.",
+			"noMatches": "Ninguna insignia coincide con los filtros actuales"
+		},
+		"notifications": {
+			"created": "Insignia creada",
+			"updated": "Insignia actualizada",
+			"archived": "Insignia archivada",
+			"restored": "Insignia restaurada",
+			"ruleCreated": "Regla de reconocimiento creada para {{badge}}"
+		}
 	},
 	"templates": {
 		"title": "Plantillas de mensaje",
 		"description": "Mensajes reutilizables para alertas, reconocimientos y resúmenes. Las reglas copian una plantilla cuando se crean.",
 		"new": "Nueva plantilla",
-		"filters": { "search": "Buscar plantillas...", "category": "Categoría", "all": "Todos", "clear": "Limpiar filtros" },
-		"columns": { "name": "Plantilla", "category": "Categoría", "subject": "Asunto", "variables": "Variables", "usedBy": "Usado por", "updated": "Actualizado" },
+		"filters": {
+			"search": "Buscar plantillas...",
+			"category": "Categoría",
+			"all": "Todos",
+			"clear": "Limpiar filtros"
+		},
+		"columns": {
+			"name": "Plantilla",
+			"category": "Categoría",
+			"subject": "Asunto",
+			"variables": "Variables",
+			"usedBy": "Usado por",
+			"updated": "Actualizado"
+		},
 		"default": "Predeterminado",
 		"usedBy_one": "{{count}} regla",
 		"usedBy_other": "{{count}} reglas",
-		"actions": { "edit": "Editar", "duplicate": "Duplicar", "setDefault": "Establecer como predeterminado", "delete": "Eliminar", "deleteDisabled": "En uso por reglas — no se puede eliminar" },
+		"actions": {
+			"edit": "Editar",
+			"duplicate": "Duplicar",
+			"setDefault": "Establecer como predeterminado",
+			"delete": "Eliminar",
+			"deleteDisabled": "En uso por reglas — no se puede eliminar"
+		},
 		"editor": {
 			"createTitle": "Nueva plantilla",
 			"editTitle": "Editar plantilla",
-			"fields": { "name": "Nombre", "category": "Categoría", "subject": "Asunto", "body": "Mensaje", "variables": "Insertar variable" },
+			"fields": {
+				"name": "Nombre",
+				"category": "Categoría",
+				"subject": "Asunto",
+				"body": "Mensaje",
+				"variables": "Insertar variable"
+			},
 			"preview": "Previsualizar con datos de ejemplo",
-			"validation": { "nameRequired": "El nombre es obligatorio", "subjectRequired": "El asunto es obligatorio", "bodyRequired": "El mensaje es obligatorio" }
+			"validation": {
+				"nameRequired": "El nombre es obligatorio",
+				"subjectRequired": "El asunto es obligatorio",
+				"bodyRequired": "El mensaje es obligatorio"
+			}
 		},
-		"confirmDelete": { "title": "Eliminar plantilla", "message": "\"{{name}}\" será eliminada. Las reglas conservan su propia copia del texto.", "confirm": "Eliminar", "cancel": "Cancelar" },
-		"empty": { "title": "Sin plantillas aún", "description": "Crea una plantilla para reutilizar mensajes en reglas.", "noMatches": "Ninguna plantilla coincide con los filtros actuales" },
-		"notifications": { "created": "Plantilla creada", "updated": "Plantilla actualizada", "deleted": "Plantilla eliminada", "duplicated": "Plantilla duplicada", "defaultSet": "Plantilla predeterminada actualizada" }
+		"confirmDelete": {
+			"title": "Eliminar plantilla",
+			"message": "\"{{name}}\" será eliminada. Las reglas conservan su propia copia del texto.",
+			"confirm": "Eliminar",
+			"cancel": "Cancelar"
+		},
+		"empty": {
+			"title": "Sin plantillas aún",
+			"description": "Crea una plantilla para reutilizar mensajes en reglas.",
+			"noMatches": "Ninguna plantilla coincide con los filtros actuales"
+		},
+		"notifications": {
+			"created": "Plantilla creada",
+			"updated": "Plantilla actualizada",
+			"deleted": "Plantilla eliminada",
+			"duplicated": "Plantilla duplicada",
+			"defaultSet": "Plantilla predeterminada actualizada"
+		}
 	},
 	"activity": {
 		"title": "Registro de actividad",
 		"description": "Cada alerta y reconocimiento que se disparó, quién lo recibió y qué pasó después.",
 		"export": "Exportar CSV",
 		"exportStarted": "Exportación iniciada — recibirás el archivo en tu bandeja de entrada",
-		"filters": { "search": "Buscar por agente o regla...", "kind": "Tipo", "rule": "Regla", "agent": "Agente", "status": "Estado", "from": "De", "to": "A", "all": "Todos", "clear": "Limpiar filtros" },
-		"columns": { "firedAt": "Disparado", "rule": "Regla", "agent": "Agente", "observed": "Observado", "recipients": "Destinatarios", "status": "Estado" },
+		"filters": {
+			"search": "Buscar por agente o regla...",
+			"kind": "Tipo",
+			"rule": "Regla",
+			"agent": "Agente",
+			"status": "Estado",
+			"from": "De",
+			"to": "A",
+			"all": "Todos",
+			"clear": "Limpiar filtros"
+		},
+		"columns": {
+			"firedAt": "Disparado",
+			"rule": "Regla",
+			"agent": "Agente",
+			"observed": "Observado",
+			"recipients": "Destinatarios",
+			"status": "Estado"
+		},
 		"suppressedHint": "Suprimido por enfriamiento u horas silenciosas",
 		"actions": { "acknowledge": "Reconocer", "view": "Ver" },
 		"detail": {
@@ -383,7 +593,7 @@
 			"agent": "Agente",
 			"supervisor": "Supervisor",
 			"campaign": "Campaña",
-			"openAnalytics": "Abrir análisis del agente",
+			"openAnalytics": "Abrir perfil del agente",
 			"openInbox": "Abrir en bandeja de entrada",
 			"acknowledge": "Reconocer",
 			"acknowledgedAt": "Reconocido {{date}}",
@@ -391,7 +601,11 @@
 			"channels": "Canales",
 			"badge": "Insignia otorgada"
 		},
-		"empty": { "title": "Nada se ha disparado aún", "description": "La actividad aparece aquí tan pronto como una regla activa coincide con un agente.", "noMatches": "Ninguna actividad coincide con los filtros actuales" },
+		"empty": {
+			"title": "Nada se ha disparado aún",
+			"description": "La actividad aparece aquí tan pronto como una regla activa coincide con un agente.",
+			"noMatches": "Ninguna actividad coincide con los filtros actuales"
+		},
 		"notifications": { "acknowledged": "Marcado como reconocido" }
 	},
 	"common": {
