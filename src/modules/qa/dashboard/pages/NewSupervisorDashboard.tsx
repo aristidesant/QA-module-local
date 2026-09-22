@@ -181,6 +181,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 
 					<TeamBurnoutRiskCard
 						entries={burnoutRisk}
+						role='supervisor'
 						subtitle="Your team's members showing signs of burnout"
 					/>
 				</SimpleGrid>

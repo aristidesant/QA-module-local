@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import {
 	Badge,
@@ -216,6 +216,23 @@ export default function CoachingPage() {
 				daysUntil(s.date) <= 7
 		).length,
 	};
+
+	// Deep link from outside the page (e.g. the Burnout Risk widget): open the
+	// schedule-session drawer preset for that agent, then drop the param.
+	useEffect(() => {
+		const scheduleAgentId = searchParams.get('schedule');
+		if (!scheduleAgentId) return;
+		setSessionEditor({ opened: true, preset: { agentId: scheduleAgentId } });
+		setSearchParams(
+			(prev) => {
+				const next = new URLSearchParams(prev);
+				next.delete('schedule');
+				return next;
+			},
+			{ replace: true }
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchParams]);
 
 	const tab = (searchParams.get('tab') as CoachingTab | null) ?? 'agents';
 	const setTab = (value: string | null) => {

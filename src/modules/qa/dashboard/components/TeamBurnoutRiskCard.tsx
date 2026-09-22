@@ -1,26 +1,33 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 import {
 	Card,
 	Stack,
 	Group,
 	Text,
 	Badge,
+	Button,
 	ThemeIcon,
 	Progress,
 } from '@mantine/core';
 import {
+	IconCalendarEvent,
 	IconMinus,
 	IconMoodSad2,
 	IconTrendingDown,
 	IconTrendingUp,
 } from '@tabler/icons-react';
+import { coachingBasePath } from '~/modules/qa/coaching/constants';
+import type { TeamRole } from '~/modules/qa/team/types';
 import { BurnoutRiskLevel } from '../types/burnoutRisk';
 import type { TeamBurnoutRiskEntry } from '~/modules/qa/analytics/helpers';
 import styles from '../Dashboard.module.css';
 
 interface TeamBurnoutRiskCardProps {
 	entries: TeamBurnoutRiskEntry[];
+	/** Scopes the "Schedule Coaching" links to the right coaching section. */
+	role: TeamRole;
 	subtitle?: string;
 }
 
@@ -42,9 +49,11 @@ const TREND_META: Record<
 /** Card listing team members currently at burnout risk (MEDIUM/HIGH), read-only. */
 export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 	entries,
+	role,
 	subtitle,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
+	const navigate = useNavigate();
 
 	return (
 		<Card
@@ -108,6 +117,20 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 										size='sm'
 										color={LEVEL_COLOR[entry.level]}
 									/>
+									<Group justify='flex-end' mt={6}>
+										<Button
+											variant='subtle'
+											size='xs'
+											leftSection={<IconCalendarEvent size={14} />}
+											onClick={() =>
+												navigate(
+													`${coachingBasePath(role)}?schedule=${entry.agentId}`
+												)
+											}
+										>
+											{t('burnout.scheduleCoaching', 'Schedule Coaching')}
+										</Button>
+									</Group>
 								</div>
 							);
 						})}

@@ -261,6 +261,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 
 					<TeamBurnoutRiskCard
 						entries={burnoutRisk}
+						role='qa-manager'
 						subtitle='Team members across the platform showing signs of burnout'
 					/>
 				</SimpleGrid>
