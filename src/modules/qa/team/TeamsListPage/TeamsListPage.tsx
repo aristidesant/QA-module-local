@@ -53,6 +53,7 @@ export default function TeamsListPage() {
 						averageOverall={0}
 						atRisk={0}
 						campaignNames={[]}
+						showScore={false}
 						onClick={() =>
 							navigate(`/qa/qa-manager/teams/${UNASSIGNED_SUPERVISOR.id}`)
 						}

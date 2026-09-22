@@ -11,6 +11,7 @@ interface TeamCardProps {
 	atRisk: number;
 	campaignNames: string[];
 	onClick: () => void;
+	showScore?: boolean;
 }
 
 export function TeamCard({
@@ -20,6 +21,7 @@ export function TeamCard({
 	atRisk,
 	campaignNames,
 	onClick,
+	showScore = true,
 }: TeamCardProps) {
 	const { t } = useTranslation('qa.team');
 
@@ -41,7 +43,7 @@ export function TeamCard({
 						</Text>
 					</Stack>
 				</Group>
-				{memberCount > 0 && (
+				{showScore && memberCount > 0 && (
 					<Badge
 						size='lg'
 						variant='filled'
