@@ -9,7 +9,6 @@ import {
 	Tabs,
 	Badge,
 	Group,
-	Button,
 	Select,
 } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
@@ -21,8 +20,7 @@ import {
 	SentimentEmotionSplitCard,
 	BusinessInsightsCard,
 	OperationalCard,
-	SentimentTrendChart,
-	BestWorstCallsTable,
+	TeamBurnoutRiskCard,
 	QuickInsightsWidget,
 	RankingsTable,
 	InboxSummary,
@@ -30,15 +28,12 @@ import {
 import type { Insight } from '../components/QuickInsightsWidget';
 import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
 import { buildTeamDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
+import { teamBurnoutRisk } from '~/modules/qa/analytics/helpers';
 import {
 	DASHBOARD_LINES_OF_BUSINESS,
 	type DashboardLineOfBusiness,
 } from '../lineOfBusiness';
-import {
-	SUPERVISOR_WEEKLY_METRICS,
-	SUPERVISOR_SENTIMENT_TREND,
-	SUPERVISOR_CALLS,
-} from '../mockData';
+import { SUPERVISOR_WEEKLY_METRICS } from '../mockData';
 import styles from '../Dashboard.module.css';
 
 const DEFAULT_SUPERVISOR_INSIGHTS: Insight[] = [
@@ -130,59 +125,6 @@ const TEAM_MEMBERS: TeamMemberRow[] = [
 	},
 ];
 
-interface DisputeRow {
-	id: string;
-	agentName: string;
-	type: string;
-	status: 'open' | 'pending' | 'approved' | 'rejected';
-	createdDate: string;
-}
-
-const DISPUTES_SAMPLE: DisputeRow[] = [
-	{
-		id: 'DSP-1042',
-		agentName: 'David Brown',
-		type: 'Score Dispute',
-		status: 'open',
-		createdDate: '2026-09-06T09:15:00Z',
-	},
-	{
-		id: 'DSP-1041',
-		agentName: 'Lisa Wong',
-		type: 'Auto-Fail Dispute',
-		status: 'pending',
-		createdDate: '2026-09-05T14:30:00Z',
-	},
-	{
-		id: 'DSP-1038',
-		agentName: 'Jessica Martinez',
-		type: 'Compliance Dispute',
-		status: 'approved',
-		createdDate: '2026-09-04T11:00:00Z',
-	},
-	{
-		id: 'DSP-1035',
-		agentName: 'John Smith',
-		type: 'Score Dispute',
-		status: 'rejected',
-		createdDate: '2026-09-03T16:45:00Z',
-	},
-	{
-		id: 'DSP-1030',
-		agentName: 'Sarah Johnson',
-		type: 'Evaluation Error',
-		status: 'approved',
-		createdDate: '2026-09-01T10:20:00Z',
-	},
-];
-
-const DISPUTE_STATUS_COLORS: Record<DisputeRow['status'], string> = {
-	open: 'blue',
-	pending: 'yellow',
-	approved: 'green',
-	rejected: 'red',
-};
-
 const teamMemberColumns: BaseTableColumnDef<TeamMemberRow>[] = [
 	{
 		accessorKey: 'name',
@@ -232,42 +174,6 @@ const teamMemberColumns: BaseTableColumnDef<TeamMemberRow>[] = [
 	},
 ];
 
-const disputeColumns: BaseTableColumnDef<DisputeRow>[] = [
-	{
-		accessorKey: 'agentName',
-		header: 'Agent Name',
-		cell: ({ row }) => (
-			<Text fw={500} size='sm'>
-				{row.original.agentName}
-			</Text>
-		),
-	},
-	{
-		accessorKey: 'type',
-		header: 'Type',
-		cell: ({ row }) => <Text size='sm'>{row.original.type}</Text>,
-	},
-	{
-		accessorKey: 'status',
-		header: 'Status',
-		cell: ({ row }) => (
-			<Badge color={DISPUTE_STATUS_COLORS[row.original.status]} variant='light'>
-				{row.original.status.charAt(0).toUpperCase() +
-					row.original.status.slice(1)}
-			</Badge>
-		),
-	},
-	{
-		accessorKey: 'createdDate',
-		header: 'Created Date',
-		cell: ({ row }) => (
-			<Text c='dimmed' size='sm'>
-				{new Date(row.original.createdDate).toLocaleDateString()}
-			</Text>
-		),
-	},
-];
-
 export const NewSupervisorDashboard: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('qa.dashboard');
@@ -279,9 +185,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
 	const metrics = buildTeamDashboardMetrics('supervisor', 7, lineOfBusiness);
-
-	const openDisputes = DISPUTES_SAMPLE.filter((d) => d.status === 'open');
-	const openDisputeCount = openDisputes.length;
+	const burnoutRisk = teamBurnoutRisk('supervisor');
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -372,51 +276,6 @@ export const NewSupervisorDashboard: React.FC = () => {
 
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
 					<SectionCard
-						title='Sentiment Trend'
-						description='4-week team sentiment progression'
-						fullHeight
-					>
-						<SentimentTrendChart data={SUPERVISOR_SENTIMENT_TREND} />
-					</SectionCard>
-
-					<SectionCard
-						title='Open Disputes'
-						description='Evaluations your team is contesting right now'
-						fullHeight
-						headerActions={
-							<Group gap='xs'>
-								<Badge size='lg' color='blue' variant='light'>
-									{openDisputeCount}
-								</Badge>
-								<Button
-									variant='subtle'
-									size='xs'
-									onClick={() => navigate('/qa/supervisor/disputes')}
-								>
-									Manage →
-								</Button>
-							</Group>
-						}
-					>
-						<BaseTable<DisputeRow>
-							columns={disputeColumns}
-							data={openDisputes}
-							getRowId={(dispute) => dispute.id}
-							emptyMessage='No open disputes'
-						/>
-					</SectionCard>
-				</SimpleGrid>
-
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					<SectionCard
-						title='Best & Worst Calls'
-						description="Your team's top and bottom performing calls this week"
-						fullHeight
-					>
-						<BestWorstCallsTable calls={SUPERVISOR_CALLS} />
-					</SectionCard>
-
-					<SectionCard
 						title={t('sections.team')}
 						description='Rankings, members and insights for your team'
 						fullHeight
@@ -453,6 +312,11 @@ export const NewSupervisorDashboard: React.FC = () => {
 							</Tabs.Panel>
 						</Tabs>
 					</SectionCard>
+
+					<TeamBurnoutRiskCard
+						entries={burnoutRisk}
+						subtitle="Your team's members showing signs of burnout"
+					/>
 				</SimpleGrid>
 			</Stack>
 		</ContentContainer>

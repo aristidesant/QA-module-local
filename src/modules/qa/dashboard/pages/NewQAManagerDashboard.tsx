@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import {
 	Stack,
 	Title,
 	Text,
 	SimpleGrid,
-	Tabs,
 	Badge,
 	Group,
+	Button,
 	Select,
 } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
@@ -20,120 +19,16 @@ import {
 	SentimentEmotionSplitCard,
 	BusinessInsightsCard,
 	OperationalCard,
-	SentimentTrendChart,
-	BestWorstCallsTable,
-	QuickInsightsWidget,
-	RankingsTable,
-	InboxSummary,
+	TeamBurnoutRiskCard,
 } from '../components';
-import type { Insight } from '../components/QuickInsightsWidget';
-import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
 import { buildTeamDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
+import { teamBurnoutRisk } from '~/modules/qa/analytics/helpers';
 import {
 	DASHBOARD_LINES_OF_BUSINESS,
 	type DashboardLineOfBusiness,
 } from '../lineOfBusiness';
-import {
-	QA_MANAGER_WEEKLY_METRICS,
-	QA_MANAGER_SENTIMENT_TREND,
-	QA_MANAGER_CALLS,
-} from '../mockData';
+import { QA_MANAGER_WEEKLY_METRICS } from '../mockData';
 import styles from '../Dashboard.module.css';
-
-const DEFAULT_QA_MANAGER_INSIGHTS: Insight[] = [
-	{
-		title: 'Platform Performance',
-		description:
-			'Platform-wide QA scores are trending upward with consistent improvements.',
-		type: 'positive',
-	},
-	{
-		title: 'Compliance Monitoring',
-		description:
-			'Multiple supervisors need reinforced compliance training across the platform.',
-		type: 'warning',
-	},
-	{
-		title: 'Escalation Management',
-		description:
-			'Escalation rates remain elevated - coordinate with supervisors for improvement.',
-		type: 'warning',
-	},
-	{
-		title: 'Resource Optimization',
-		description:
-			'Consider redistributing QA resources for more balanced team coverage.',
-		type: 'neutral',
-	},
-];
-
-interface SupervisorRow {
-	id: string;
-	name: string;
-	teamSize: number;
-	avgQaScore: number;
-	sentiment: number;
-	compliance: number;
-}
-
-const SUPERVISORS_OVERVIEW: SupervisorRow[] = [
-	{
-		id: 'SUP-001',
-		name: 'Sarah Johnson',
-		teamSize: 8,
-		avgQaScore: 91,
-		sentiment: 4.3,
-		compliance: 94,
-	},
-	{
-		id: 'SUP-002',
-		name: 'Mike Chen',
-		teamSize: 9,
-		avgQaScore: 89,
-		sentiment: 4.1,
-		compliance: 92,
-	},
-	{
-		id: 'SUP-003',
-		name: 'Jessica Martinez',
-		teamSize: 7,
-		avgQaScore: 86,
-		sentiment: 3.9,
-		compliance: 88,
-	},
-	{
-		id: 'SUP-004',
-		name: 'James Wilson',
-		teamSize: 8,
-		avgQaScore: 84,
-		sentiment: 3.8,
-		compliance: 85,
-	},
-	{
-		id: 'SUP-005',
-		name: 'Amanda Taylor',
-		teamSize: 6,
-		avgQaScore: 82,
-		sentiment: 3.7,
-		compliance: 83,
-	},
-	{
-		id: 'SUP-006',
-		name: 'Robert Kim',
-		teamSize: 9,
-		avgQaScore: 78,
-		sentiment: 3.4,
-		compliance: 76,
-	},
-	{
-		id: 'SUP-007',
-		name: 'Patricia Lopez',
-		teamSize: 7,
-		avgQaScore: 75,
-		sentiment: 3.2,
-		compliance: 72,
-	},
-];
 
 interface DisputeRow {
 	id: string;
@@ -209,113 +104,6 @@ const DISPUTE_STATUS_COLORS: Record<DisputeRow['status'], string> = {
 	rejected: 'red',
 };
 
-interface CampaignRow {
-	id: string;
-	name: string;
-	status: 'active' | 'archived';
-	callsCount: number;
-	createdDate: string;
-}
-
-const CAMPAIGNS_LIST: CampaignRow[] = [
-	{
-		id: 'CMP-001',
-		name: 'Q3 Renewal Outreach',
-		status: 'active',
-		callsCount: 542,
-		createdDate: '2026-07-01T09:00:00Z',
-	},
-	{
-		id: 'CMP-002',
-		name: 'Customer Retention Sprint',
-		status: 'active',
-		callsCount: 389,
-		createdDate: '2026-07-15T09:00:00Z',
-	},
-	{
-		id: 'CMP-003',
-		name: 'New Product Launch',
-		status: 'active',
-		callsCount: 271,
-		createdDate: '2026-08-01T09:00:00Z',
-	},
-	{
-		id: 'CMP-004',
-		name: 'Compliance Refresh Campaign',
-		status: 'active',
-		callsCount: 198,
-		createdDate: '2026-08-10T09:00:00Z',
-	},
-	{
-		id: 'CMP-005',
-		name: 'Winter Promo 2025',
-		status: 'archived',
-		callsCount: 764,
-		createdDate: '2025-11-20T09:00:00Z',
-	},
-	{
-		id: 'CMP-006',
-		name: 'Spring Cleanup Follow-ups',
-		status: 'archived',
-		callsCount: 412,
-		createdDate: '2026-03-05T09:00:00Z',
-	},
-];
-
-const CAMPAIGN_STATUS_COLORS: Record<CampaignRow['status'], string> = {
-	active: 'teal',
-	archived: 'gray',
-};
-
-const supervisorColumns: BaseTableColumnDef<SupervisorRow>[] = [
-	{
-		accessorKey: 'name',
-		header: 'Name',
-		cell: ({ row }) => (
-			<Text fw={500} size='sm'>
-				{row.original.name}
-			</Text>
-		),
-	},
-	{
-		accessorKey: 'teamSize',
-		header: 'Team Size',
-		cell: ({ row }) => <Text size='sm'>{row.original.teamSize}</Text>,
-	},
-	{
-		accessorKey: 'avgQaScore',
-		header: 'Avg QA Score',
-		cell: ({ row }) => (
-			<Text
-				fw={600}
-				size='sm'
-				c={row.original.avgQaScore < 80 ? 'red' : undefined}
-			>
-				{row.original.avgQaScore}%
-			</Text>
-		),
-	},
-	{
-		accessorKey: 'sentiment',
-		header: 'Sentiment',
-		cell: ({ row }) => (
-			<Text size='sm'>{row.original.sentiment.toFixed(1)} / 5.0</Text>
-		),
-	},
-	{
-		accessorKey: 'compliance',
-		header: 'Compliance %',
-		cell: ({ row }) => (
-			<Badge
-				color={row.original.compliance < 80 ? 'red' : 'teal'}
-				variant='light'
-			>
-				{row.original.compliance}%
-			</Badge>
-		),
-	},
-];
-
 const disputeColumns: BaseTableColumnDef<DisputeRow>[] = [
 	{
 		accessorKey: 'agentName',
@@ -352,58 +140,16 @@ const disputeColumns: BaseTableColumnDef<DisputeRow>[] = [
 	},
 ];
 
-const campaignColumns: BaseTableColumnDef<CampaignRow>[] = [
-	{
-		accessorKey: 'name',
-		header: 'Campaign Name',
-		cell: ({ row }) => (
-			<Text fw={500} size='sm'>
-				{row.original.name}
-			</Text>
-		),
-	},
-	{
-		accessorKey: 'status',
-		header: 'Status',
-		cell: ({ row }) => (
-			<Badge
-				color={CAMPAIGN_STATUS_COLORS[row.original.status]}
-				variant='light'
-			>
-				{row.original.status.charAt(0).toUpperCase() +
-					row.original.status.slice(1)}
-			</Badge>
-		),
-	},
-	{
-		accessorKey: 'callsCount',
-		header: 'Calls Count',
-		cell: ({ row }) => (
-			<Text size='sm'>{row.original.callsCount.toLocaleString()}</Text>
-		),
-	},
-	{
-		accessorKey: 'createdDate',
-		header: 'Created Date',
-		cell: ({ row }) => (
-			<Text c='dimmed' size='sm'>
-				{new Date(row.original.createdDate).toLocaleDateString()}
-			</Text>
-		),
-	},
-];
-
 export const NewQAManagerDashboard: React.FC = () => {
 	const navigate = useNavigate();
-	const { t } = useTranslation('qa.dashboard');
-	const { entries: rankingEntries, goal: rankingGoal } = useDashboardRankings(
-		'all',
-		7
-	);
 	const { businessInsights, businessOutcome } = QA_MANAGER_WEEKLY_METRICS;
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
 	const metrics = buildTeamDashboardMetrics('qa-manager', 7, lineOfBusiness);
+	const burnoutRisk = teamBurnoutRisk('qa-manager');
+
+	const openDisputes = ALL_DISPUTES.filter((d) => d.status === 'open');
+	const openDisputeCount = openDisputes.length;
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -485,92 +231,38 @@ export const NewQAManagerDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				<InboxSummary
-					autoDrivenCount={5}
-					negativeCount={4}
-					trendCount={8}
-					inboxPath='/qa/qa-manager/inbox'
-				/>
-
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
 					<SectionCard
-						title='Sentiment Trend'
-						description='4-week platform sentiment progression'
+						title='Open Disputes'
+						description='Evaluations being contested across the platform right now'
 						fullHeight
+						headerActions={
+							<Group gap='xs'>
+								<Badge size='lg' color='blue' variant='light'>
+									{openDisputeCount}
+								</Badge>
+								<Button
+									variant='subtle'
+									size='xs'
+									onClick={() => navigate('/qa/qa-manager/disputes')}
+								>
+									Manage →
+								</Button>
+							</Group>
+						}
 					>
-						<SentimentTrendChart data={QA_MANAGER_SENTIMENT_TREND} />
+						<BaseTable<DisputeRow>
+							columns={disputeColumns}
+							data={openDisputes}
+							getRowId={(dispute) => dispute.id}
+							emptyMessage='No open disputes'
+						/>
 					</SectionCard>
 
-					<SectionCard
-						title='Quick Insights'
-						description='Platform-level recommendations and analysis'
-						fullHeight
-					>
-						<QuickInsightsWidget insights={DEFAULT_QA_MANAGER_INSIGHTS} />
-					</SectionCard>
-				</SimpleGrid>
-
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					<SectionCard
-						title='Best & Worst Calls'
-						description='Top and bottom performing calls from across all teams this week'
-						fullHeight
-					>
-						<BestWorstCallsTable calls={QA_MANAGER_CALLS} />
-					</SectionCard>
-
-					<SectionCard
-						title={t('sections.organisation')}
-						description='Rankings, supervisors, disputes and campaigns'
-						fullHeight
-					>
-						<Tabs defaultValue='rankings'>
-							<Tabs.List>
-								<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
-								<Tabs.Tab value='supervisors'>Supervisors</Tabs.Tab>
-								<Tabs.Tab value='disputes'>Disputes</Tabs.Tab>
-								<Tabs.Tab value='campaigns'>Campaigns</Tabs.Tab>
-							</Tabs.List>
-
-							<Tabs.Panel value='rankings' pt='lg'>
-								<RankingsTable
-									entries={rankingEntries}
-									title='Agent Rankings'
-									description='Agents ranked against the active ranking program for this period'
-									goal={rankingGoal}
-									maxDisplay={7}
-									onViewAll={() => navigate('/qa/qa-manager/rankings')}
-								/>
-							</Tabs.Panel>
-
-							<Tabs.Panel value='supervisors' pt='lg'>
-								<BaseTable<SupervisorRow>
-									columns={supervisorColumns}
-									data={SUPERVISORS_OVERVIEW}
-									getRowId={(supervisor) => supervisor.id}
-									emptyMessage='No supervisors found'
-								/>
-							</Tabs.Panel>
-
-							<Tabs.Panel value='disputes' pt='lg'>
-								<BaseTable<DisputeRow>
-									columns={disputeColumns}
-									data={ALL_DISPUTES}
-									getRowId={(dispute) => dispute.id}
-									emptyMessage='No disputes found'
-								/>
-							</Tabs.Panel>
-
-							<Tabs.Panel value='campaigns' pt='lg'>
-								<BaseTable<CampaignRow>
-									columns={campaignColumns}
-									data={CAMPAIGNS_LIST}
-									getRowId={(campaign) => campaign.id}
-									emptyMessage='No campaigns found'
-								/>
-							</Tabs.Panel>
-						</Tabs>
-					</SectionCard>
+					<TeamBurnoutRiskCard
+						entries={burnoutRisk}
+						subtitle='Team members across the platform showing signs of burnout'
+					/>
 				</SimpleGrid>
 			</Stack>
 		</ContentContainer>

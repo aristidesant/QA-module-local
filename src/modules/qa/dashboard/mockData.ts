@@ -232,20 +232,6 @@ export const AGENT_SENTIMENT_TREND: SentimentTrendPoint[] = [
 	{ week: 4, agentAverage: 4.2, customerAverage: 4.1, label: 'Week 4' },
 ];
 
-export const SUPERVISOR_SENTIMENT_TREND: SentimentTrendPoint[] = [
-	{ week: 1, agentAverage: 3.9, customerAverage: 3.8, label: 'Week 1' },
-	{ week: 2, agentAverage: 4.0, customerAverage: 3.9, label: 'Week 2' },
-	{ week: 3, agentAverage: 4.05, customerAverage: 3.95, label: 'Week 3' },
-	{ week: 4, agentAverage: 4.1, customerAverage: 4.0, label: 'Week 4' },
-];
-
-export const QA_MANAGER_SENTIMENT_TREND: SentimentTrendPoint[] = [
-	{ week: 1, agentAverage: 3.7, customerAverage: 3.6, label: 'Week 1' },
-	{ week: 2, agentAverage: 3.8, customerAverage: 3.7, label: 'Week 2' },
-	{ week: 3, agentAverage: 3.85, customerAverage: 3.75, label: 'Week 3' },
-	{ week: 4, agentAverage: 3.9, customerAverage: 3.8, label: 'Week 4' },
-];
-
 export const OPERATION_MANAGER_SENTIMENT_TREND: SentimentTrendPoint[] = [
 	{ week: 1, agentAverage: 3.6, customerAverage: 3.5, label: 'Week 1' },
 	{ week: 2, agentAverage: 3.65, customerAverage: 3.55, label: 'Week 2' },

@@ -874,6 +874,28 @@ export function burnoutCandidates(role: TeamRole): RosterAgent[] {
 		});
 }
 
+export interface TeamBurnoutRiskEntry {
+	agentId: string;
+	agentName: string;
+	/** MEDIUM | HIGH only — burnoutCandidates already excludes LOW. */
+	level: BurnoutRiskLevel;
+	percentage: number;
+	trend: 'improving' | 'stable' | 'declining';
+}
+
+/** Dashboard-facing summary of burnoutCandidates: name + risk data per at-risk team member. */
+export const teamBurnoutRisk = (role: TeamRole): TeamBurnoutRiskEntry[] =>
+	burnoutCandidates(role).map((agent) => {
+		const risk = TEAM_PROFILES[agent.id].risk.burnout;
+		return {
+			agentId: agent.id,
+			agentName: agent.name,
+			level: risk.level,
+			percentage: risk.percentage,
+			trend: risk.trend,
+		};
+	});
+
 const daysWindow = (daysBack: number, len: number) => ({
 	from: addDays(TODAY, -(daysBack + len - 1)),
 	to: addDays(TODAY, -daysBack),
