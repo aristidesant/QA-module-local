@@ -1,7 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
-import { Stack, Title, Text, SimpleGrid, Tabs, Badge } from '@mantine/core';
+import {
+	Stack,
+	Title,
+	Text,
+	SimpleGrid,
+	Tabs,
+	Badge,
+	Group,
+	Select,
+} from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
@@ -20,6 +29,10 @@ import {
 import type { Insight } from '../components/QuickInsightsWidget';
 import { useDashboardRankings } from '~/modules/qa/rankings/hooks/useDashboardRankings';
 import { buildTeamDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
+import {
+	DASHBOARD_LINES_OF_BUSINESS,
+	type DashboardLineOfBusiness,
+} from '../lineOfBusiness';
 import {
 	QA_MANAGER_WEEKLY_METRICS,
 	QA_MANAGER_SENTIMENT_TREND,
@@ -388,7 +401,9 @@ export const NewQAManagerDashboard: React.FC = () => {
 		7
 	);
 	const { businessInsights, businessOutcome } = QA_MANAGER_WEEKLY_METRICS;
-	const metrics = buildTeamDashboardMetrics('qa-manager', 7);
+	const [lineOfBusiness, setLineOfBusiness] =
+		useState<DashboardLineOfBusiness | null>(null);
+	const metrics = buildTeamDashboardMetrics('qa-manager', 7, lineOfBusiness);
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -400,9 +415,23 @@ export const NewQAManagerDashboard: React.FC = () => {
 					</Text>
 				</div>
 
+				<Group justify='flex-end'>
+					<Select
+						label='Line of Business'
+						placeholder='All lines of business'
+						data={DASHBOARD_LINES_OF_BUSINESS}
+						value={lineOfBusiness}
+						onChange={(value) =>
+							setLineOfBusiness(value as DashboardLineOfBusiness | null)
+						}
+						clearable
+						w={220}
+					/>
+				</Group>
+
 				<SectionCard
 					title='Performance Score'
-					description='Platform quality assurance, compliance, sentiment and business results this week'
+					description={`Platform quality assurance, compliance, sentiment and business results this week${lineOfBusiness ? ` · ${lineOfBusiness}` : ''}`}
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
 						<div className={styles.gridCard}>

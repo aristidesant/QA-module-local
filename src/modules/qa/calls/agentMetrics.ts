@@ -3,6 +3,10 @@ import { TODAY, addDays } from '~/modules/qa/analytics/constants';
 import type { CallEmotion, TeamCallMetric } from '~/modules/qa/analytics/types';
 import { scopeAgents } from '~/modules/qa/analytics/helpers';
 import type { ComplianceCategory } from '~/modules/qa/dashboard/mockData';
+import {
+	dashboardLineOfBusinessFor,
+	type DashboardLineOfBusiness,
+} from '~/modules/qa/dashboard/lineOfBusiness';
 import type { TeamRole } from '~/modules/qa/team/types';
 import { COMPLIANCE_TARGET, isNegativeEmotion } from './issues';
 
@@ -91,10 +95,14 @@ export const agentCallsInWindow = (
 	);
 };
 
-/** Every call of the scoped role's roster inside the last `days` days ending on TODAY (inclusive). */
+/**
+ * Every call of the scoped role's roster inside the last `days` days ending
+ * on TODAY (inclusive), optionally narrowed to one dashboard Line of Business.
+ */
 export const teamCallsInWindow = (
 	role: TeamRole,
-	days: number
+	days: number,
+	lineOfBusiness?: DashboardLineOfBusiness | null
 ): TeamCallMetric[] => {
 	const agentIds = new Set(scopeAgents(role).map((a) => a.id));
 	const from = addDays(TODAY, -(days - 1));
@@ -102,7 +110,9 @@ export const teamCallsInWindow = (
 		(c) =>
 			agentIds.has(c.agentId) &&
 			c.date.slice(0, 10) >= from &&
-			c.date.slice(0, 10) <= TODAY
+			c.date.slice(0, 10) <= TODAY &&
+			(!lineOfBusiness ||
+				dashboardLineOfBusinessFor(c.campaignId) === lineOfBusiness)
 	);
 };
 
@@ -174,6 +184,7 @@ export const buildAgentDashboardMetrics = (
 /** Team-scoped version of `buildAgentDashboardMetrics`: Team 1 for a supervisor, every team for QA Manager. */
 export const buildTeamDashboardMetrics = (
 	role: TeamRole,
-	days: number
+	days: number,
+	lineOfBusiness?: DashboardLineOfBusiness | null
 ): AgentDashboardMetrics =>
-	aggregateDashboardMetrics(teamCallsInWindow(role, days));
+	aggregateDashboardMetrics(teamCallsInWindow(role, days, lineOfBusiness));
