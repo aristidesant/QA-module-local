@@ -126,6 +126,22 @@
 	min-height: 0;
 }
 
+/* Scrollable but with no visible scrollbar track/arrows — the gutter is still
+   reserved (scrollbar-gutter: stable) so content doesn't shift, it just never
+   paints a visible scrollbar. Wheel/touch/keyboard scrolling still works. */
+.mainScrollArea,
+.primaryLinksScrollable {
+	scrollbar-width: none; /* Firefox */
+	-ms-overflow-style: none; /* legacy Edge/IE */
+}
+
+.mainScrollArea::-webkit-scrollbar,
+.primaryLinksScrollable::-webkit-scrollbar {
+	display: none; /* Chrome, Safari, Chromium Edge */
+	width: 0;
+	height: 0;
+}
+
 .mainScrollArea {
 	flex: 1;
 	min-height: 0;
@@ -133,6 +149,39 @@
 	padding-right: 0.25rem;
 	margin-right: -0.25rem;
 	scrollbar-gutter: stable;
+}
+
+/*
+ * Used instead of .mainScrollArea when there is no sectionNav — it renders
+ * nothing in that case, so it must not claim a flex-grow share of the
+ * sidebar's height (that would leave dead empty space and shrink
+ * .primaryLinksScrollable below what the nav list actually needs).
+ */
+.mainScrollAreaCollapsed {
+	flex: none;
+}
+
+/*
+ * Applied to .primaryLinks when there is no sectionNav (role preview, QA,
+ * Backoffice and emotion-sentiment sidebars all render their whole nav as
+ * primaryNav). Without this, a long flat or grouped nav list has no bounded
+ * height to scroll within, so it overflows past the sidebar's fixed height
+ * and pushes the bottom section (user menu / role switcher) out of view.
+ */
+.primaryLinksScrollable {
+	flex: 1;
+	min-height: 0;
+	overflow-y: auto;
+	padding-right: 0.25rem;
+	margin-right: -0.25rem;
+	scrollbar-gutter: stable;
+}
+
+.sidebarCollapsed .primaryLinksScrollable {
+	padding-right: 0;
+	margin-right: 0;
+	width: 100%;
+	scrollbar-gutter: stable both-edges;
 }
 
 .sidebarCollapsed .mainScrollArea {

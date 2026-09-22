@@ -4,9 +4,14 @@ import {
 	IconBriefcase,
 	IconClipboardCheck,
 	IconClipboardList,
+	IconClock,
 	IconMasksTheater,
+	IconMoodAngry,
+	IconMoodConfuzed,
+	IconMoodSad,
 	IconMoodSmile,
 	IconPlayerPlay,
+	IconQuestionMark,
 	IconSchool,
 	IconShieldCheck,
 } from '@tabler/icons-react';
@@ -18,6 +23,8 @@ import type {
 	LmsFormat,
 	LmsImpactVerdict,
 	LmsLevel,
+	RolePlayDifficulty,
+	RolePlayPersonaTrait,
 } from '~/models/qa';
 import type { DimensionKey } from '~/modules/qa/team/types';
 
@@ -31,24 +38,103 @@ export const LMS_AREAS: LmsArea[] = [
 	'GENERAL',
 ];
 
-/** Colors aligned with src/modules/qa/triggers/constants.ts AREA_COLORS. */
-export const LMS_AREA_META: Record<LmsArea, { labelKey: string; color: string; icon: TablerIcon }> = {
-	QUALITY_ASSURANCE: { labelKey: 'areas.QUALITY_ASSURANCE', color: 'cyan', icon: IconClipboardList },
-	COMPLIANCE: { labelKey: 'areas.COMPLIANCE', color: 'grape', icon: IconShieldCheck },
-	SENTIMENT_EMOTION: { labelKey: 'areas.SENTIMENT_EMOTION', color: 'teal', icon: IconMoodSmile },
-	BUSINESS_INSIGHTS: { labelKey: 'areas.BUSINESS_INSIGHTS', color: 'indigo', icon: IconBriefcase },
+/**
+ * Area is identity, not status — it never carried its own semantic meaning
+ * (unlike a score or a state), so every area shares the same neutral color.
+ * Badges tell areas apart by icon + label only; score/status colors
+ * (green/yellow/red) stay reserved for actual evaluation results.
+ */
+export const LMS_AREA_META: Record<
+	LmsArea,
+	{ labelKey: string; color: string; icon: TablerIcon }
+> = {
+	QUALITY_ASSURANCE: {
+		labelKey: 'areas.QUALITY_ASSURANCE',
+		color: 'gray',
+		icon: IconClipboardList,
+	},
+	COMPLIANCE: {
+		labelKey: 'areas.COMPLIANCE',
+		color: 'gray',
+		icon: IconShieldCheck,
+	},
+	SENTIMENT_EMOTION: {
+		labelKey: 'areas.SENTIMENT_EMOTION',
+		color: 'gray',
+		icon: IconMoodSmile,
+	},
+	BUSINESS_INSIGHTS: {
+		labelKey: 'areas.BUSINESS_INSIGHTS',
+		color: 'gray',
+		icon: IconBriefcase,
+	},
 	GENERAL: { labelKey: 'areas.GENERAL', color: 'gray', icon: IconSchool },
 };
 
-export const LMS_FORMATS: LmsFormat[] = ['VIDEO', 'DOCUMENT', 'QUIZ', 'SCENARIO'];
+export const LMS_FORMATS: LmsFormat[] = [
+	'VIDEO',
+	'DOCUMENT',
+	'QUIZ',
+	'SCENARIO',
+];
+/** Format is identity too — same neutral treatment as LMS_AREA_META above. */
 export const LMS_FORMAT_META: Record<
 	LmsFormat,
 	{ labelKey: string; color: string; icon: TablerIcon; ctaKey: string }
 > = {
-	VIDEO: { labelKey: 'formats.VIDEO', color: 'blue', icon: IconPlayerPlay, ctaKey: 'cta.watch' },
-	DOCUMENT: { labelKey: 'formats.DOCUMENT', color: 'orange', icon: IconBook, ctaKey: 'cta.read' },
-	QUIZ: { labelKey: 'formats.QUIZ', color: 'violet', icon: IconClipboardCheck, ctaKey: 'cta.takeQuiz' },
-	SCENARIO: { labelKey: 'formats.SCENARIO', color: 'pink', icon: IconMasksTheater, ctaKey: 'cta.practice' },
+	VIDEO: {
+		labelKey: 'formats.VIDEO',
+		color: 'gray',
+		icon: IconPlayerPlay,
+		ctaKey: 'cta.watch',
+	},
+	DOCUMENT: {
+		labelKey: 'formats.DOCUMENT',
+		color: 'gray',
+		icon: IconBook,
+		ctaKey: 'cta.read',
+	},
+	QUIZ: {
+		labelKey: 'formats.QUIZ',
+		color: 'gray',
+		icon: IconClipboardCheck,
+		ctaKey: 'cta.takeQuiz',
+	},
+	SCENARIO: {
+		labelKey: 'formats.SCENARIO',
+		color: 'gray',
+		icon: IconMasksTheater,
+		ctaKey: 'cta.practice',
+	},
+};
+
+/** Persona trait is identity, not status — same neutral treatment as area/format. */
+export const ROLE_PLAY_PERSONA_META: Record<
+	RolePlayPersonaTrait,
+	{ labelKey: string; icon: TablerIcon }
+> = {
+	FRUSTRATED: { labelKey: 'rolePlayPersona.FRUSTRATED', icon: IconMoodSad },
+	SKEPTICAL: {
+		labelKey: 'rolePlayPersona.SKEPTICAL',
+		icon: IconMoodConfuzed,
+	},
+	CONFUSED: {
+		labelKey: 'rolePlayPersona.CONFUSED',
+		icon: IconQuestionMark,
+	},
+	RUSHED: { labelKey: 'rolePlayPersona.RUSHED', icon: IconClock },
+	CALM: { labelKey: 'rolePlayPersona.CALM', icon: IconMoodSmile },
+	HOSTILE: { labelKey: 'rolePlayPersona.HOSTILE', icon: IconMoodAngry },
+};
+
+/** Difficulty is a spec the agent picks, not a score — no color banding. */
+export const ROLE_PLAY_DIFFICULTY_META: Record<
+	RolePlayDifficulty,
+	{ labelKey: string }
+> = {
+	EASY: { labelKey: 'rolePlayDifficulty.EASY' },
+	MEDIUM: { labelKey: 'rolePlayDifficulty.MEDIUM' },
+	HARD: { labelKey: 'rolePlayDifficulty.HARD' },
 };
 
 export const LMS_LEVELS: LmsLevel[] = ['BEGINNER', 'INTERMEDIATE', 'ADVANCED'];
@@ -64,7 +150,7 @@ export const ACCEPTANCE_COLOR: Record<LmsAcceptanceStatus, string> = {
 	NOT_REQUIRED: 'gray',
 	PENDING: 'yellow',
 	ACCEPTED: 'green',
-	RESCHEDULE_REQUESTED: 'orange',
+	RESCHEDULE_REQUESTED: 'yellow',
 	NO_RESPONSE: 'red',
 };
 
@@ -145,7 +231,15 @@ export const SUB_ITEMS_BY_AREA: Record<LmsArea, SubItemKey[]> = {
 		'superintendenciaBancos',
 		'noLlamarList',
 	],
-	SENTIMENT_EMOTION: ['FRUSTRATION', 'ANGER', 'DISAPPOINTMENT', 'SADNESS', 'FEAR', 'RAGE', 'WELLBEING'],
+	SENTIMENT_EMOTION: [
+		'FRUSTRATION',
+		'ANGER',
+		'DISAPPOINTMENT',
+		'SADNESS',
+		'FEAR',
+		'RAGE',
+		'WELLBEING',
+	],
 	BUSINESS_INSIGHTS: [
 		'EARLY_OBJECTION',
 		'UNHANDLED_OBJECTION',
@@ -170,8 +264,13 @@ export const DIMENSION_TO_AREA: Record<DimensionKey, EvaluationArea> = {
 	business: 'BUSINESS_INSIGHTS',
 };
 
-export type AgentLmsTab = 'assignments' | 'paths' | 'catalog' | 'history' | 'coaching';
-export const AGENT_LMS_TABS: AgentLmsTab[] = ['assignments', 'paths', 'catalog', 'history', 'coaching'];
+export type AgentLmsTab = 'assignments' | 'rolePlay' | 'history';
+export const AGENT_LMS_TABS: AgentLmsTab[] = [
+	'assignments',
+	'rolePlay',
+	'history',
+];
 
 export const AGENT_LMS_PATH = '/qa/agent/lms';
-export const agentContentPath = (contentId: string) => `${AGENT_LMS_PATH}/${contentId}`;
+export const agentContentPath = (contentId: string) =>
+	`${AGENT_LMS_PATH}/${contentId}`;

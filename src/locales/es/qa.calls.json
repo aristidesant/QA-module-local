@@ -1,0 +1,88 @@
+{
+	"myCalls": {
+		"title": "Mis llamadas",
+		"description": "Llamadas que requieren tu atención: auto-fails, errores, brechas de cumplimiento y emociones negativas. Abre una llamada para revisar su evaluación o abrir una disputa.",
+		"tabs": {
+			"calls": "Llamadas a revisar",
+			"disputes": "Disputas"
+		},
+		"filters": {
+			"period": "Período",
+			"dateFrom": "Fecha desde",
+			"dateTo": "Fecha hasta",
+			"aspect": "Aspecto",
+			"issues": "Tipo de incidencia",
+			"issuesPlaceholder": "Cualquier incidencia",
+			"evaluationType": "Puntuación de",
+			"scoreMin": "Score mínimo",
+			"scoreMax": "Score máximo",
+			"clear": "Limpiar"
+		},
+		"columns": {
+			"date": "Fecha",
+			"duration": "Duración",
+			"issues": "Incidencias"
+		},
+		"moreIssues": "+{{count}}",
+		"autoFailCount": "{{count}} auto-fail",
+		"autoFailCount_other": "{{count}} auto-fails",
+		"rowsCount": "{{count}} llamadas a revisar",
+		"empty": "No hay llamadas a revisar en este periodo — buen trabajo.",
+		"breadcrumb": "Mis llamadas"
+	},
+	"period": {
+		"7d": "Últimos 7 días",
+		"30d": "Últimos 30 días",
+		"all": "Todo el tiempo"
+	},
+	"evaluationType": {
+		"qa": "QA",
+		"sentiment": "Sentimiento y Emoción",
+		"compliance": "Compliance"
+	},
+	"roster": {
+		"tab": "Roster",
+		"description": "Agentes que participan en esta campaña",
+		"descriptionSupervisor": "Agentes de tu equipo que participan en esta campaña",
+		"columns": {
+			"agent": "Agente",
+			"team": "Equipo",
+			"supervisor": "Supervisor",
+			"status": "Estado",
+			"calls": "Llamadas",
+			"averageQa": "QA medio",
+			"autoFails": "Auto-fails",
+			"lastCall": "Última llamada"
+		},
+		"rowsCount": "{{count}} agentes",
+		"empty": "Ningún agente de tu equipo participa en esta campaña.",
+		"emptyAll": "Todavía ningún agente participa en esta campaña."
+	},
+	"conversations": {
+		"agentFilter": "Agente",
+		"allAgents": "Todos los agentes"
+	},
+	"issues": {
+		"aspect": {
+			"all": "Todos los aspectos",
+			"qa": "Aseguramiento de calidad",
+			"compliance": "Cumplimiento",
+			"sentiment": "Sentimiento y emoción",
+			"operational": "Operacional"
+		},
+		"auto-fail": "Auto-fail",
+		"qa-ecn": "Error crítico de negocio (ECN)",
+		"qa-enc": "Error no crítico (ENC)",
+		"qa-ecc": "Error crítico de cumplimiento (ECC)",
+		"qa-ecuf": "Error crítico de usuario final (ECUF)",
+		"low-qa-score": "Puntuación QA baja",
+		"compliance-security": "Seguridad bajo el objetivo",
+		"compliance-regulatory": "Regulatorio bajo el objetivo",
+		"compliance-legal": "Legal bajo el objetivo",
+		"negative-customer-emotion": "Emoción negativa del cliente",
+		"negative-agent-emotion": "Emoción negativa del agente",
+		"low-customer-sentiment": "Sentimiento del cliente bajo",
+		"low-agent-sentiment": "Sentimiento del agente bajo",
+		"non-effective-contact": "Contacto no efectivo"
+	}
+}

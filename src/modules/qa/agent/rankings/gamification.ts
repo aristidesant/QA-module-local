@@ -1,32 +1,14 @@
 /**
- * Gamification helpers shared by the Team Rankings table and detail drawer.
- *
- * Phase 1 indicators:
- * - 📊 Rank movement (velocity vs. the previous period)
- * - 🔥 Streak (consecutive weeks in the top of the ranking)
- * - 💪 Point lead (score gap to the agent one position below)
- * - 🤝 Social proof (total peer reactions received)
+ * Gamification helpers shared by the Team Rankings table and detail drawer:
+ * rank movement (velocity vs. the previous period) and point lead (score gap
+ * to the agent one position below). Reaction totals live in the real
+ * `rankingsStore` instead — see `useUserReaction` and `reactionMeta.ts`.
  */
 
-import {
-	REACTION_TYPES,
-	type PeerRecognitionType,
-} from '~/models/qa/reactions';
 import { type AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
-
-export const REACTION_ORDER = Object.keys(
-	REACTION_TYPES
-) as PeerRecognitionType[];
 
 /** Above this gap the lead is considered comfortable and is highlighted green. */
 export const HEALTHY_LEAD_THRESHOLD = 5;
-
-/** Sum of every reaction type, used for the reactions column and social proof. */
-export const getReactionsTotal = (entry: AgentRankingEntry): number =>
-	REACTION_ORDER.reduce(
-		(total, type) => total + (entry.reactionsTotals?.[type] ?? 0),
-		0
-	);
 
 export interface PointLead {
 	/** Points ahead of the next position. `null` when the agent is last. */

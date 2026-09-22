@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Badge, SimpleGrid, Stack } from '@mantine/core';
+import { Badge, Stack, Tabs } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
-import { IconTrophy } from '@tabler/icons-react';
+import { IconHistory, IconTrophy } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
@@ -11,7 +12,6 @@ import { AGENT_PERSONA_ID } from '~/modules/qa/team/constants';
 import { useRankingsStore } from '~/stores/qa/rankingsStore';
 import { useActiveRanking } from '~/modules/qa/rankings/hooks/useActiveRanking';
 import { formatScore, toRankingEntry } from '~/modules/qa/rankings/helpers';
-import MyPositionCard from '~/modules/qa/rankings/components/MyPositionCard';
 import PodiumStrip from '~/modules/qa/rankings/components/PodiumStrip';
 import PastRankingsCard from '~/modules/qa/rankings/components/PastRankingsCard';
 import ExpandedRankingsTable from './components/ExpandedRankingsTable';
@@ -22,19 +22,34 @@ import LeaderboardHeader from './components/LeaderboardHeader';
 /** Below this width the table is replaced by the responsive card grid. */
 const TABLE_BREAKPOINT = '(max-width: 1024px)';
 
+type RankingsTab = 'current' | 'past';
+
 /**
- * The agent's view of the ranking their supervisor is running: prize, their own
- * position, the podium and the full leaderboard.
+ * The agent's view of the rankings their supervisor runs: the current
+ * leaderboard (prize, podium, standings) and their placement in past ones.
  */
 export const TeamRankingsPage: React.FC = () => {
 	const { t } = useTranslation('qa.rankings');
 	const isCompact = useMediaQuery(TABLE_BREAKPOINT);
 	const { program, standings, pastPrograms } = useActiveRanking();
 	const syncMilestones = useRankingsStore((s) => s.syncMilestones);
+	const [searchParams, setSearchParams] = useSearchParams();
 
 	const [selectedEntry, setSelectedEntry] = useState<AgentRankingEntry | null>(
 		null
 	);
+
+	const tab = (searchParams.get('tab') as RankingsTab | null) ?? 'current';
+	const setTab = (value: string | null) => {
+		setSearchParams(
+			(prev) => {
+				const next = new URLSearchParams(prev);
+				if (value) next.set('tab', value);
+				return next;
+			},
+			{ replace: true }
+		);
+	};
 
 	// Opening the leaderboard reconciles any milestone the agent has just reached.
 	useEffect(() => {
@@ -49,11 +64,6 @@ export const TeamRankingsPage: React.FC = () => {
 		[program, standings]
 	);
 
-	const mine = standings.find(
-		(standing) => standing.agentId === AGENT_PERSONA_ID
-	);
-	const ranked = standings.filter((standing) => standing.rank !== null).length;
-
 	const renderScore = useCallback(
 		(score: number) => (program ? formatScore(program, score) : String(score)),
 		[program]
@@ -63,66 +73,76 @@ export const TeamRankingsPage: React.FC = () => {
 		setSelectedEntry(entry);
 	}, []);
 
-	if (!program) {
-		return (
-			<ContentContainer contentWidth='full'>
-				<Stack gap='lg'>
-					<EmptyState
-						icon={<IconTrophy size={32} />}
-						message={t('agent.empty.noActive')}
-					/>
-					<PastRankingsCard programs={pastPrograms} />
-				</Stack>
-			</ContentContainer>
-		);
-	}
-
 	return (
 		<ContentContainer contentWidth='full'>
-			<Stack gap='lg'>
-				<LeaderboardHeader program={program} />
+			<Tabs value={tab} onChange={setTab} keepMounted={false}>
+				<Tabs.List>
+					<Tabs.Tab value='current' leftSection={<IconTrophy size={16} />}>
+						{t('agent.tabs.current')}
+					</Tabs.Tab>
+					<Tabs.Tab value='past' leftSection={<IconHistory size={16} />}>
+						{t('agent.tabs.past')}
+					</Tabs.Tab>
+				</Tabs.List>
 
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					<MyPositionCard program={program} standing={mine} total={ranked} />
-					<PodiumStrip program={program} standings={standings} />
-				</SimpleGrid>
-
-				<SectionCard
-					title={t('agent.leaderboard')}
-					description={t('agent.leaderboardDescription')}
-					headerActions={
-						<Badge variant='light' size='sm'>
-							{standings.length}
-						</Badge>
-					}
-				>
-					{isCompact ? (
-						<RankingCardGrid
-							data={entries}
-							currentAgentId={AGENT_PERSONA_ID}
-							formatScore={renderScore}
-							onRowClick={handleRowClick}
+				<Tabs.Panel value='current' pt='md'>
+					{!program ? (
+						<EmptyState
+							icon={<IconTrophy size={32} />}
+							message={t('agent.empty.noActive')}
 						/>
 					) : (
-						<ExpandedRankingsTable
-							data={entries}
-							currentAgentId={AGENT_PERSONA_ID}
-							formatScore={renderScore}
-							onRowClick={handleRowClick}
-						/>
+						<Stack gap='lg'>
+							<LeaderboardHeader program={program} />
+
+							<PodiumStrip program={program} standings={standings} />
+
+							<SectionCard
+								title={t('agent.leaderboard')}
+								description={t('agent.leaderboardDescription')}
+								headerActions={
+									<Badge variant='light' size='sm'>
+										{standings.length}
+									</Badge>
+								}
+							>
+								{isCompact ? (
+									<RankingCardGrid
+										data={entries}
+										currentAgentId={AGENT_PERSONA_ID}
+										formatScore={renderScore}
+										onRowClick={handleRowClick}
+									/>
+								) : (
+									<ExpandedRankingsTable
+										data={entries}
+										currentAgentId={AGENT_PERSONA_ID}
+										formatScore={renderScore}
+										onRowClick={handleRowClick}
+									/>
+								)}
+							</SectionCard>
+						</Stack>
 					)}
-				</SectionCard>
+				</Tabs.Panel>
 
-				<PastRankingsCard programs={pastPrograms} />
-			</Stack>
+				<Tabs.Panel value='past' pt='md'>
+					<PastRankingsCard
+						programs={pastPrograms}
+						agentId={AGENT_PERSONA_ID}
+					/>
+				</Tabs.Panel>
+			</Tabs>
 
-			<RankingDetailDrawer
-				entry={selectedEntry}
-				data={entries}
-				program={program}
-				opened={selectedEntry !== null}
-				onClose={() => setSelectedEntry(null)}
-			/>
+			{program && (
+				<RankingDetailDrawer
+					entry={selectedEntry}
+					data={entries}
+					program={program}
+					opened={selectedEntry !== null}
+					onClose={() => setSelectedEntry(null)}
+				/>
+			)}
 		</ContentContainer>
 	);
 };

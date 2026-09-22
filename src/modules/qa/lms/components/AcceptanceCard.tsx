@@ -1,10 +1,13 @@
-﻿import { Alert, Badge, Box, Button, Group, Paper, Stack, Text } from '@mantine/core';
-import { IconAlertTriangle, IconCalendarEvent, IconCheck, IconInfoCircle } from '@tabler/icons-react';
+import { Alert, Badge, Button, Group, Paper, Stack, Text } from '@mantine/core';
+import {
+	IconAlertTriangle,
+	IconCalendarEvent,
+	IconCheck,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { LmsAssignment, LmsContent } from '~/models/qa';
 import { ACCEPTANCE_SLA_HOURS } from '../constants';
 import { AreaBadge, FormatBadge } from './Badges';
-import classes from './Cards.module.css';
 
 interface AcceptanceCardProps {
 	assignment: LmsAssignment;
@@ -13,49 +16,48 @@ interface AcceptanceCardProps {
 	onPropose: () => void;
 }
 
-export function AcceptanceCard({ assignment, content, onAccept, onPropose }: AcceptanceCardProps) {
+export function AcceptanceCard({
+	assignment,
+	content,
+	onAccept,
+	onPropose,
+}: AcceptanceCardProps) {
 	const { t } = useTranslation('qa.lms');
 	if (!content) return null;
 
 	const noResponse = assignment.acceptance.status === 'NO_RESPONSE';
 
 	return (
-		<Paper withBorder p='md' radius='md' className={classes.acceptanceCard}>
+		<Paper withBorder p='md' radius='md'>
 			<Stack gap='sm'>
-				<Group justify='space-between' align='flex-start' wrap='nowrap'>
-					<Stack gap={6} flex={1} miw={0}>
-						<Group gap='xs'>
-							<Text fw={600}>{content.title}</Text>
-							{assignment.mandatory && (
-								<Badge size='xs' color='red' variant='light'>
-									{t('agent.assignments.mandatoryBadge')}
-								</Badge>
-							)}
-						</Group>
-						<Group gap='xs'>
-							<FormatBadge format={content.format} size='xs' />
-							<AreaBadge area={content.area} subItem={content.subItem} size='xs' />
-							<Text size='xs' c='dimmed'>
-								{t('common.minutes', { count: content.durationMin })}
-							</Text>
-						</Group>
-					</Stack>
-					<Badge color='yellow' variant='filled' size='sm'>
-						{t('acceptance.PENDING')}
-					</Badge>
-				</Group>
-
-				<Group gap='xs' align='flex-start' wrap='nowrap' className={classes.reasonBlock}>
-					<Box mt={2} flex='0 0 auto'>
-						<IconInfoCircle size={16} />
-					</Box>
-					<Stack gap={2}>
+				<Stack gap={6}>
+					<Group gap='xs'>
+						<Text fw={600}>{content.title}</Text>
+						{assignment.mandatory && (
+							<Badge size='xs' color='gray' variant='outline'>
+								{t('agent.assignments.mandatoryBadge')}
+							</Badge>
+						)}
+					</Group>
+					<Group gap='xs'>
+						<FormatBadge format={content.format} size='xs' />
+						<AreaBadge
+							area={content.area}
+							subItem={content.subItem}
+							size='xs'
+						/>
 						<Text size='xs' c='dimmed'>
-							{t('agent.assignments.why')}
+							{t('common.minutes', { count: content.durationMin })}
 						</Text>
-						<Text size='sm'>{assignment.reason}</Text>
-					</Stack>
-				</Group>
+					</Group>
+				</Stack>
+
+				<Stack gap={2}>
+					<Text size='xs' c='dimmed'>
+						{t('agent.assignments.why')}
+					</Text>
+					<Text size='sm'>{assignment.reason}</Text>
+				</Stack>
 
 				<Group gap='xs'>
 					<IconCalendarEvent size={16} />
@@ -68,8 +70,17 @@ export function AcceptanceCard({ assignment, content, onAccept, onPropose }: Acc
 				</Group>
 
 				{noResponse && (
-					<Alert color='red' variant='light' icon={<IconAlertTriangle size={16} />} p='xs'>
-						<Text size='xs'>{t('agent.assignments.noResponse', { count: ACCEPTANCE_SLA_HOURS })}</Text>
+					<Alert
+						color='red'
+						variant='light'
+						icon={<IconAlertTriangle size={16} />}
+						p='xs'
+					>
+						<Text size='xs'>
+							{t('agent.assignments.noResponse', {
+								count: ACCEPTANCE_SLA_HOURS,
+							})}
+						</Text>
 					</Alert>
 				)}
 
@@ -77,7 +88,11 @@ export function AcceptanceCard({ assignment, content, onAccept, onPropose }: Acc
 					<Button size='xs' variant='default' onClick={onPropose}>
 						{t('agent.assignments.proposeDate')}
 					</Button>
-					<Button size='xs' leftSection={<IconCheck size={14} />} onClick={onAccept}>
+					<Button
+						size='xs'
+						leftSection={<IconCheck size={14} />}
+						onClick={onAccept}
+					>
 						{t('agent.assignments.accept')}
 					</Button>
 				</Group>

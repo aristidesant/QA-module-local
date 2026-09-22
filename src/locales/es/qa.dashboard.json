@@ -45,18 +45,13 @@
 		"signalCalls_other": "{{count}} llamadas"
 	},
 	"description": "Métricas de calidad en vivo calculadas a partir de evaluaciones, disputas y salud de proveedores de IA.",
+	"drill": {
+		"calls_one": "{{count}} llamada",
+		"calls_other": "{{count}} llamadas",
+		"hint": "Abrir las llamadas detrás de este número"
+	},
 	"error": {
 		"title": "No se pudieron cargar los datos del panel"
-	},
-	"evaluationFilter": {
-		"label": "Filtrar por tipo de evaluación",
-		"options": {
-			"all": "Todas",
-			"qa": "QA",
-			"sentiment": "Sentimiento y emoción",
-			"compliance": "Compliance",
-			"business": "Business Insights"
-		}
 	},
 	"evaluatorType": {
 		"ai": "IA",
@@ -128,6 +123,17 @@
 		"organisation": "Organización",
 		"operations": "Operaciones",
 		"clients": "Clientes"
+	},
+	"sentimentSplit": {
+		"title": "Sentimiento y emoción",
+		"agent": "Tú",
+		"customer": "Clientes",
+		"outOfFive": "/ 5.0",
+		"predominantSentiment": "Sentimiento predominante",
+		"predominantEmotion": "Emoción predominante",
+		"negativeCustomer": "Emoción negativa del cliente",
+		"negativeAgent": "Emoción negativa del agente",
+		"none": "—"
 	},
 	"status": {
 		"completed": "Completada",

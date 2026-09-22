@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import {
-	Anchor,
 	Avatar,
 	Badge,
 	Collapse,
@@ -8,27 +8,27 @@ import {
 	Paper,
 	Stack,
 	Text,
+	ThemeIcon,
 	UnstyledButton,
 } from '@mantine/core';
-import { IconChevronDown, IconChevronRight } from '@tabler/icons-react';
-import { REACTION_TYPES } from '~/models/qa/reactions';
 import {
-	getRankingReactionBreakdown,
-	type AgentRankingEntry,
-	type RankingReactionBreakdown,
-} from '~/modules/qa/dashboard/mockData';
+	IconChevronDown,
+	IconChevronRight,
+	IconHeartHandshake,
+} from '@tabler/icons-react';
+import { useRankingsStore, selectReactions } from '~/stores/qa/rankingsStore';
+import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
+import { UserReactionType } from '../../types/leaderboard';
+import { REACTION_ICON, REACTION_ORDER } from '../../reactionMeta';
+import type { AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
 import styles from './ReactionsTab.module.css';
 
-/** Givers shown before the "View more" link. */
-const PREVIEW_GIVERS = 4;
-
-const dateFormatter = new Intl.DateTimeFormat('en-US', {
-	day: 'numeric',
-	month: 'short',
-});
-
-const formatGivenAt = (isoDate: string): string =>
-	dateFormatter.format(new Date(isoDate));
+const LABEL_KEY: Record<UserReactionType, string> = {
+	[UserReactionType.THUMBS_UP]: 'thumbsUp',
+	[UserReactionType.CLAPPING_HANDS]: 'clap',
+	[UserReactionType.HEART]: 'heart',
+	[UserReactionType.FIRE]: 'fire',
+};
 
 const getInitials = (name: string): string =>
 	name
@@ -38,21 +38,20 @@ const getInitials = (name: string): string =>
 		.join('')
 		.toUpperCase();
 
-interface ReactionRowProps {
-	breakdown: RankingReactionBreakdown;
+interface ReactionGroup {
+	type: UserReactionType;
+	givers: { agentId: string; agentName: string; avatarColor: string }[];
 }
 
-const ReactionRow: React.FC<ReactionRowProps> = ({ breakdown }) => {
-	const [expanded, setExpanded] = useState(false);
-	const [showAll, setShowAll] = useState(false);
+interface ReactionRowProps {
+	group: ReactionGroup;
+}
 
-	const config = REACTION_TYPES[breakdown.type];
-	const hasGivers = breakdown.givenBy.length > 0;
-	const visibleGivers = showAll
-		? breakdown.givenBy
-		: breakdown.givenBy.slice(0, PREVIEW_GIVERS);
-	const hiddenSampled = breakdown.givenBy.length - visibleGivers.length;
-	const notSampled = breakdown.count - breakdown.givenBy.length;
+const ReactionRow: React.FC<ReactionRowProps> = ({ group }) => {
+	const { t } = useTranslation('qa.rankings');
+	const [expanded, setExpanded] = useState(false);
+	const Icon = REACTION_ICON[group.type];
+	const hasGivers = group.givers.length > 0;
 
 	return (
 		<Paper
@@ -69,16 +68,18 @@ const ReactionRow: React.FC<ReactionRowProps> = ({ breakdown }) => {
 				aria-expanded={expanded}
 			>
 				<Group gap='sm' wrap='nowrap'>
-					<span className={styles.emoji} aria-hidden>
-						{config.emoji}
-					</span>
+					<ThemeIcon
+						size='md'
+						variant='light'
+						color={hasGivers ? 'blue' : 'gray'}
+						radius='sm'
+					>
+						<Icon size={16} />
+					</ThemeIcon>
 
 					<div className={styles.labelBlock}>
 						<Text size='sm' fw={600}>
-							{config.label}
-						</Text>
-						<Text size='xs' c='dimmed' lineClamp={1}>
-							{config.description}
+							{t(`reactions.labels.${LABEL_KEY[group.type]}`)}
 						</Text>
 					</div>
 
@@ -88,7 +89,7 @@ const ReactionRow: React.FC<ReactionRowProps> = ({ breakdown }) => {
 							color={hasGivers ? 'blue' : 'gray'}
 							radius='sm'
 						>
-							{breakdown.count}
+							{group.givers.length}
 						</Badge>
 						{hasGivers ? (
 							<span className={styles.chevron} aria-hidden>
@@ -105,40 +106,16 @@ const ReactionRow: React.FC<ReactionRowProps> = ({ breakdown }) => {
 
 			<Collapse expanded={expanded && hasGivers}>
 				<Stack gap='xs' pt='sm'>
-					{visibleGivers.map((giver) => (
-						<Group
-							key={`${giver.agentId}-${giver.givenAt}`}
-							gap='sm'
-							wrap='nowrap'
-						>
+					{group.givers.map((giver) => (
+						<Group key={giver.agentId} gap='sm' wrap='nowrap'>
 							<Avatar color={giver.avatarColor} radius='xl' size='sm'>
 								{getInitials(giver.agentName)}
 							</Avatar>
 							<Text size='sm' lineClamp={1} className={styles.giverName}>
 								{giver.agentName}
 							</Text>
-							<Text size='xs' c='dimmed' ml='auto'>
-								{formatGivenAt(giver.givenAt)}
-							</Text>
 						</Group>
 					))}
-
-					{hiddenSampled > 0 ? (
-						<Anchor
-							component='button'
-							type='button'
-							size='xs'
-							onClick={() => setShowAll(true)}
-						>
-							View more ({hiddenSampled})
-						</Anchor>
-					) : null}
-
-					{notSampled > 0 && showAll ? (
-						<Text size='xs' c='dimmed'>
-							+{notSampled} more teammate{notSampled === 1 ? '' : 's'}
-						</Text>
-					) : null}
 				</Stack>
 			</Collapse>
 		</Paper>
@@ -147,21 +124,45 @@ const ReactionRow: React.FC<ReactionRowProps> = ({ breakdown }) => {
 
 export interface ReactionsTabProps {
 	entry: AgentRankingEntry;
+	/** Ranking program the entry belongs to — reactions are scoped per program. */
+	programId: string;
 }
 
-/** Social proof breakdown: who gave each reaction type, most recent first. */
-export const ReactionsTab: React.FC<ReactionsTabProps> = ({ entry }) => {
-	const breakdowns = useMemo(() => getRankingReactionBreakdown(entry), [entry]);
+/** Who reacted to this agent on this ranking, grouped by the reaction they gave. */
+export const ReactionsTab: React.FC<ReactionsTabProps> = ({
+	entry,
+	programId,
+}) => {
+	const allReactions = useRankingsStore(selectReactions);
 
-	const total = breakdowns.reduce((sum, breakdown) => sum + breakdown.count, 0);
+	const groups = useMemo<ReactionGroup[]>(() => {
+		const given = allReactions[programId]?.[entry.agentId] ?? {};
+		return REACTION_ORDER.map((type) => ({
+			type,
+			givers: Object.entries(given)
+				.filter(([, reaction]) => reaction === type)
+				.map(([agentId]) => {
+					const agent = TEAM_AGENTS.find(
+						(candidate) => candidate.id === agentId
+					);
+					return {
+						agentId,
+						agentName: agent?.name ?? agentId,
+						avatarColor: agent?.avatarColor ?? 'gray',
+					};
+				}),
+		}));
+	}, [allReactions, programId, entry.agentId]);
+
+	const total = groups.reduce((sum, group) => sum + group.givers.length, 0);
 
 	if (total === 0) {
 		return (
 			<Paper withBorder radius='md' p='lg' className={styles.emptyState}>
 				<Stack gap={4} align='center'>
-					<span className={styles.emptyIcon} aria-hidden>
-						👏
-					</span>
+					<ThemeIcon size={40} variant='light' color='gray' radius='xl'>
+						<IconHeartHandshake size={20} />
+					</ThemeIcon>
 					<Text size='sm' fw={600}>
 						No reactions yet
 					</Text>
@@ -178,8 +179,8 @@ export const ReactionsTab: React.FC<ReactionsTabProps> = ({ entry }) => {
 			<Text size='xs' c='dimmed' fw={600} tt='uppercase'>
 				{total} reaction{total === 1 ? '' : 's'} received
 			</Text>
-			{breakdowns.map((breakdown) => (
-				<ReactionRow key={breakdown.type} breakdown={breakdown} />
+			{groups.map((group) => (
+				<ReactionRow key={group.type} group={group} />
 			))}
 		</Stack>
 	);

@@ -12,7 +12,11 @@
 		"QUIZ": "Cuestionario",
 		"SCENARIO": "Escenario de práctica"
 	},
-	"levels": { "BEGINNER": "Inicial", "INTERMEDIATE": "Intermedio", "ADVANCED": "Avanzado" },
+	"levels": {
+		"BEGINNER": "Inicial",
+		"INTERMEDIATE": "Intermedio",
+		"ADVANCED": "Avanzado"
+	},
 	"cta": {
 		"watch": "Ver",
 		"read": "Leer",
@@ -94,8 +98,6 @@
 		"eyebrow": "Agente",
 		"title": "Mi aprendizaje",
 		"description": "Tus asignaciones, rutas de aprendizaje y compromisos de coaching, ligados a los aspectos en los que te evalúan.",
-		"activePath": "Ruta activa",
-		"noActivePath": "Sin ruta de aprendizaje activa",
 		"kpi": {
 			"needsResponse": "Requiere tu respuesta",
 			"dueThisWeek": "Vence esta semana",
@@ -105,19 +107,15 @@
 		},
 		"tabs": {
 			"assignments": "Mis asignaciones",
-			"paths": "Rutas de aprendizaje",
-			"catalog": "Catálogo",
 			"history": "Historial",
-			"coaching": "Coaching"
+			"rolePlay": "Juego de roles"
 		},
 		"assignments": {
 			"needsResponse": "Requiere tu respuesta",
 			"needsResponseDescription": "Tu supervisor asignó esto con una fecha límite. Acéptala o propón otra fecha.",
 			"mandatory": "Obligatorios con fecha límite",
 			"mandatoryDescription": "Ordenados por fecha de vencimiento. Los vencidos se destacan.",
-			"optional": "Recomendados para ti",
-			"optionalDescription": "Material opcional elegido a partir de tus últimas evaluaciones.",
-			"empty": "No tienes nada asignado ahora mismo. Explora el catálogo.",
+			"empty": "No tienes nada asignado ahora mismo.",
 			"assignedBy": "Asignado por {{name}}",
 			"why": "Por qué te lo asignaron",
 			"accept": "Acepto esta fecha límite",
@@ -191,11 +189,16 @@
 			"empty": "Todavía no has completado nada."
 		},
 		"coaching": {
-			"upcoming": "Próximas sesiones",
-			"upcomingDescription": "Sesiones agendadas con tu supervisor o el QA manager.",
+			"title": "Coaching",
+			"description": "Tus sesiones agendadas, sesiones anteriores y los compromisos que has hecho.",
+			"upcoming": "Próxima sesión",
+			"upcomingDescription": "Tu próxima sesión con tu supervisor o el QA manager.",
+			"talkingPoints": "Puntos a tratar",
 			"commitments": "Mis compromisos",
-			"commitmentsDescription": "Acciones acordadas en coaching. Confírmalas para que tu coach sepa que estás en ello.",
+			"commitmentsDescription": "Acciones de tus sesiones y material asignado a raíz del coaching. Mantén ambos al día.",
 			"past": "Sesiones anteriores",
+			"pastDescription": "Todas las sesiones que has tenido con tu supervisor o el QA manager.",
+			"rowsCount": "{{count}} sesiones",
 			"columns": {
 				"date": "Fecha",
 				"topic": "Tema",
@@ -204,12 +207,41 @@
 				"status": "Estado",
 				"outcome": "Resultado"
 			},
-			"status": { "scheduled": "Agendada", "completed": "Completada", "missed": "Perdida" },
+			"status": {
+				"scheduled": "Agendada",
+				"completed": "Completada",
+				"missed": "Perdida",
+				"cancelled": "Cancelada"
+			},
 			"acknowledge": "Me comprometo",
 			"acknowledged": "Comprometido el {{date}}",
 			"linkedMaterial": "Material relacionado",
 			"empty": "Todavía no tienes sesiones de coaching.",
-			"noCommitments": "No tienes compromisos abiertos."
+			"noCommitments": "No tienes compromisos abiertos.",
+			"detail": {
+				"talkingPoints": "Puntos a tratar",
+				"noPoints": "No hay puntos a tratar registrados.",
+				"evidence": "Evidencia",
+				"actionItems": "Acciones a seguir",
+				"noItems": "Esta sesión no tiene acciones a seguir.",
+				"outcome": "Resultado",
+				"commitment": "Tu compromiso",
+				"notCommitted": "Todavía no te has comprometido."
+			},
+			"commitmentType": {
+				"session": "Sesión de coaching",
+				"material": "Material asignado"
+			}
+		},
+		"rolePlay": {
+			"available": "Disponibles para practicar",
+			"availableDescription": "Modelos de cliente que tu supervisor te ha desbloqueado.",
+			"noneAvailable": "Todavía no tienes ninguno desbloqueado. Pídele acceso a tu supervisor.",
+			"objectives": "Qué practicar",
+			"startPractice": "Iniciar práctica",
+			"practiceStarted": "Sesión de práctica iniciada con {{name}} (simulada).",
+			"mockDisclaimer": "Esta es una sesión simulada para el prototipo: no se realizará ninguna llamada real.",
+			"empty": "Todavía no hay modelos de juego de roles configurados."
 		}
 	},
 	"player": {
@@ -271,7 +303,10 @@
 		"delta": "{{value}} puntos"
 	},
 	"manager": {
-		"eyebrow": { "supervisor": "Supervisor · Equipo 1", "qa-manager": "QA Manager · Todos los equipos" },
+		"eyebrow": {
+			"supervisor": "Supervisor · Equipo 1",
+			"qa-manager": "QA Manager · Todos los equipos"
+		},
 		"title": "Aprendizaje",
 		"description": "Explora el catálogo, asigna material o rutas y da seguimiento a la aceptación y el avance.",
 		"assignButton": "Asignar material",
@@ -314,7 +349,11 @@
 				"status": "Estado",
 				"updated": "Actualizado"
 			},
-			"contentStatus": { "PUBLISHED": "Publicado", "DRAFT": "Borrador", "ARCHIVED": "Archivado" },
+			"contentStatus": {
+				"PUBLISHED": "Publicado",
+				"DRAFT": "Borrador",
+				"ARCHIVED": "Archivado"
+			},
 			"actions": {
 				"assign": "Asignar",
 				"publish": "Publicar",
@@ -322,7 +361,10 @@
 				"restore": "Restaurar",
 				"preview": "Ver como agente"
 			},
-			"notifications": { "published": "Material publicado", "archived": "Material archivado" },
+			"notifications": {
+				"published": "Material publicado",
+				"archived": "Material archivado"
+			},
 			"empty": "Ningún material coincide con estos filtros.",
 			"count": "{{count}} elementos"
 		},
@@ -347,7 +389,13 @@
 			"preview": "Vista previa",
 			"questions": "Preguntas",
 			"chapters": "Capítulos",
-			"columns": { "agent": "Agente", "team": "Equipo", "status": "Estado", "acceptance": "Aceptación", "due": "Vence" }
+			"columns": {
+				"agent": "Agente",
+				"team": "Equipo",
+				"status": "Estado",
+				"acceptance": "Aceptación",
+				"due": "Vence"
+			}
 		},
 		"paths": {
 			"title": "Rutas de aprendizaje",
@@ -369,7 +417,11 @@
 					"due": "Vence",
 					"status": "Estado"
 				},
-				"status": { "inProgress": "En curso", "completed": "Completada", "notStarted": "Sin empezar" },
+				"status": {
+					"inProgress": "En curso",
+					"completed": "Completada",
+					"notStarted": "Sin empezar"
+				},
 				"empty": "Todavía no hay inscritos."
 			}
 		},
@@ -400,7 +452,12 @@
 				"impact": "Impacto",
 				"source": "Origen"
 			},
-			"sourceShort": { "MANUAL": "Manual", "COACHING_RULE": "Regla", "LEARNING_PATH": "Ruta", "SELF": "Propia" },
+			"sourceShort": {
+				"MANUAL": "Manual",
+				"COACHING_RULE": "Regla",
+				"LEARNING_PATH": "Ruta",
+				"SELF": "Propia"
+			},
 			"rescheduleBanner_one": "{{count}} agente pidió una nueva fecha límite",
 			"rescheduleBanner_other": "{{count}} agentes pidieron una nueva fecha límite",
 			"reviewRequests": "Revisar solicitudes",
@@ -443,7 +500,11 @@
 				"material": "Material",
 				"improved": "Mejoraron"
 			},
-			"series": { "completed": "Completados", "overdue": "Vencidos", "open": "Abiertos" },
+			"series": {
+				"completed": "Completados",
+				"overdue": "Vencidos",
+				"open": "Abiertos"
+			},
 			"funnel": {
 				"assigned": "Asignados",
 				"accepted": "Aceptados",
@@ -460,17 +521,28 @@
 			"what": "Qué",
 			"who": "A quién",
 			"when": "Cuándo",
-			"mode": { "content": "Material", "path": "Ruta de aprendizaje" },
+			"mode": {
+				"content": "Material",
+				"path": "Ruta de aprendizaje"
+			},
 			"material": "Material",
 			"materialPlaceholder": "Elige uno o varios elementos",
 			"path": "Ruta de aprendizaje",
-			"targetMode": { "agents": "Agentes", "team": "Equipo completo", "cohort": "Cohorte" },
+			"targetMode": {
+				"agents": "Agentes",
+				"team": "Equipo completo",
+				"cohort": "Cohorte"
+			},
 			"agents": "Agentes",
 			"agentsPlaceholder": "Buscar agentes",
 			"team": "Equipo",
 			"cohort": "Cohorte",
 			"dueDate": "Fecha límite",
-			"dueQuick": { "7": "En 7 días", "14": "En 14 días", "30": "En 30 días" },
+			"dueQuick": {
+				"7": "En 7 días",
+				"14": "En 14 días",
+				"30": "En 30 días"
+			},
 			"mandatory": "Obligatorio",
 			"mandatoryHint": "Cuenta como vencido tras la fecha límite y alimenta la marca de riesgo",
 			"requireAcceptance": "Pedir al agente que acepte la fecha límite",
@@ -497,5 +569,18 @@
 		"cancel": "Cancelar",
 		"close": "Cerrar",
 		"save": "Guardar"
+	},
+	"rolePlayPersona": {
+		"FRUSTRATED": "Frustrado",
+		"SKEPTICAL": "Escéptico",
+		"CONFUSED": "Confundido",
+		"RUSHED": "Apurado",
+		"CALM": "Tranquilo",
+		"HOSTILE": "Hostil"
+	},
+	"rolePlayDifficulty": {
+		"EASY": "Fácil",
+		"MEDIUM": "Medio",
+		"HARD": "Difícil"
 	}
 }

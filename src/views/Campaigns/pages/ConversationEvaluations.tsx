@@ -44,6 +44,21 @@ import { useDisputesStore, selectCases } from '~/stores/qa/disputesStore';
 import { hasOpenDispute } from '~/modules/qa/disputes/cases/helpers';
 import OpenDisputeDrawer from '~/modules/qa/disputes/cases/components/OpenDisputeDrawer';
 
+/** Shared style for a clickable breadcrumb Anchor, matching the pre-existing anchors in this file. */
+const breadcrumbLinkStyle = {
+	cursor: 'pointer',
+	color: 'var(--mantine-color-blue-6)',
+};
+
+function renderBreadcrumbLink(key: string, label: string, onClick: () => void) {
+	return (
+		// inline-style-allow: reusing the pre-existing breadcrumb anchor style, same as the other Anchors in this file
+		<Anchor key={key} onClick={onClick} style={breadcrumbLinkStyle}>
+			{label}
+		</Anchor>
+	);
+}
+
 export default function ConversationEvaluations() {
 	const navigate = useNavigate();
 	const { campaignId, callId } = useParams();
@@ -59,6 +74,11 @@ export default function ConversationEvaluations() {
 	const selectedMeta = CALL_EVALUATION_TABS.find(
 		(tab) => tab.key === selectedTab
 	)!;
+	// Business Insights carries commercial/outcome data the agent shouldn't see.
+	const visibleTabs =
+		previewRole === 'agent'
+			? CALL_EVALUATION_TABS.filter((tab) => tab.key !== 'business-insights')
+			: CALL_EVALUATION_TABS;
 	const alreadyDisputed = hasOpenDispute(
 		disputeCases,
 		call.callId,
@@ -99,24 +119,20 @@ export default function ConversationEvaluations() {
 						<IconArrowLeft size={20} />
 					</ActionIcon>
 					<Breadcrumbs style={{ flex: 1 }}>
-						<Anchor
-							onClick={() => navigate('/qa/campaigns')}
-							style={{
-								cursor: 'pointer',
-								color: 'var(--mantine-color-blue-6)',
-							}}
-						>
-							Campaigns
-						</Anchor>
-						<Anchor
-							onClick={() => navigate(`/qa/campaigns/${campaignId}`)}
-							style={{
-								cursor: 'pointer',
-								color: 'var(--mantine-color-blue-6)',
-							}}
-						>
-							{campaignName}
-						</Anchor>
+						{previewRole === 'agent'
+							? renderBreadcrumbLink(
+									'my-calls',
+									t('myCalls.breadcrumb', { ns: 'qa.calls' }),
+									() => navigate('/qa/agent/calls')
+								)
+							: [
+									renderBreadcrumbLink('campaigns', 'Campaigns', () =>
+										navigate('/qa/campaigns')
+									),
+									renderBreadcrumbLink('campaign-name', campaignName, () =>
+										navigate(`/qa/campaigns/${campaignId}`)
+									),
+								]}
 						<Text size='sm' c='dimmed' fw={500}>
 							Call {callId}
 						</Text>
@@ -161,13 +177,13 @@ export default function ConversationEvaluations() {
 							gap='sm'
 						>
 							<Group gap='sm' wrap='wrap'>
-								{CALL_EVALUATION_TABS.map((meta) => {
+								{visibleTabs.map((meta) => {
 									const isSelected = selectedTab === meta.key;
 									const Icon = meta.icon;
 									const badge = (
 										<Badge
 											variant={isSelected ? 'white' : 'light'}
-											color={isSelected ? undefined : meta.color}
+											color={isSelected ? undefined : 'gray'}
 											size='sm'
 										>
 											{getTabBadge()}
@@ -177,7 +193,7 @@ export default function ConversationEvaluations() {
 										<Button
 											key={meta.key}
 											variant={isSelected ? 'filled' : 'light'}
-											color={isSelected ? meta.color : 'gray'}
+											color={isSelected ? 'green' : 'gray'}
 											onClick={() => setSelectedTab(meta.key)}
 											leftSection={<Icon size={18} />}
 											rightSection={badge}
@@ -364,9 +380,10 @@ export default function ConversationEvaluations() {
 							{selectedTab === 'compliance' && (
 								<CompliancePanel compliance={call.compliance} />
 							)}
-							{selectedTab === 'business-insights' && (
-								<BusinessInsightsPanel business={call.business} />
-							)}
+							{selectedTab === 'business-insights' &&
+								previewRole !== 'agent' && (
+									<BusinessInsightsPanel business={call.business} />
+								)}
 						</Stack>
 					</Grid.Col>
 				</Grid>

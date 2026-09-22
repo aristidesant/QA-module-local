@@ -1,5 +1,14 @@
 import React from 'react';
-import { Card, Stack, Group, Text, Progress, ThemeIcon, Badge, Divider } from '@mantine/core';
+import {
+	Card,
+	Stack,
+	Group,
+	Text,
+	Progress,
+	ThemeIcon,
+	Badge,
+	Divider,
+} from '@mantine/core';
 import {
 	IconMoodSmile,
 	IconMoodNeutral,
@@ -24,15 +33,21 @@ interface SentimentEmotionCardProps {
  */
 const SENTIMENT_BANDS = [
 	{ max: 1.5, label: 'Very Negative', color: 'red', icon: IconMoodCry },
-	{ max: 2.5, label: 'Negative', color: 'orange', icon: IconMoodEmpty },
-	{ max: 3.5, label: 'Neutral', color: 'yellow', icon: IconMoodNeutral },
-	{ max: 4.5, label: 'Positive', color: 'lime', icon: IconMoodSmile },
-	{ max: Infinity, label: 'Very Positive', color: 'teal', icon: IconMoodHappy },
+	{ max: 2.5, label: 'Negative', color: 'red', icon: IconMoodEmpty },
+	{ max: 3.5, label: 'Neutral', color: 'gray', icon: IconMoodNeutral },
+	{ max: 4.5, label: 'Positive', color: 'green', icon: IconMoodSmile },
+	{
+		max: Infinity,
+		label: 'Very Positive',
+		color: 'green',
+		icon: IconMoodHappy,
+	},
 ] as const;
 
 /** Resolves the predominant sentiment band for a 0-5 score */
 export const getSentimentBand = (score: number) =>
-	SENTIMENT_BANDS.find(band => score < band.max) ?? SENTIMENT_BANDS[SENTIMENT_BANDS.length - 1];
+	SENTIMENT_BANDS.find((band) => score < band.max) ??
+	SENTIMENT_BANDS[SENTIMENT_BANDS.length - 1];
 
 /**
  * SentimentEmotionCard
@@ -52,7 +67,14 @@ export const SentimentEmotionCard: React.FC<SentimentEmotionCardProps> = ({
 	const BandIcon = band.icon;
 
 	return (
-		<Card className={styles.metricCard} p='lg' radius='md' withBorder shadow='sm' h='100%'>
+		<Card
+			className={styles.metricCard}
+			p='lg'
+			radius='md'
+			withBorder
+			shadow='sm'
+			h='100%'
+		>
 			<Stack gap='md' h='100%'>
 				<Group justify='space-between' align='flex-start' wrap='nowrap'>
 					<div>
@@ -77,7 +99,12 @@ export const SentimentEmotionCard: React.FC<SentimentEmotionCardProps> = ({
 							/ 5.0
 						</Text>
 					</Group>
-					<Progress value={(score / 5) * 100} size='sm' color={band.color} mt='xs' />
+					<Progress
+						value={(score / 5) * 100}
+						size='sm'
+						color={band.color}
+						mt='xs'
+					/>
 				</div>
 
 				<Divider />
@@ -97,7 +124,7 @@ export const SentimentEmotionCard: React.FC<SentimentEmotionCardProps> = ({
 							Predominant emotion
 						</Text>
 						<Badge
-							color='violet'
+							color='gray'
 							variant='light'
 							size='lg'
 							leftSection={<IconSparkles size={14} />}

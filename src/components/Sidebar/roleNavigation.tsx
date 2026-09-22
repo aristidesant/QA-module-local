@@ -10,10 +10,10 @@ import {
 	IconTargetArrow,
 	IconHeartHandshake,
 	IconSchool,
-	IconGitBranch,
 	IconSpeakerphone,
 	IconUserSquareRounded,
 	IconAddressBook,
+	IconForms,
 } from '@tabler/icons-react';
 import type { SidebarNavItem } from './Sidebar';
 import styles from './Sidebar.module.css';
@@ -35,7 +35,7 @@ export interface NavGroup {
 	defaultExpanded?: boolean;
 }
 
-// AGENT NAVIGATION (flat structure - not yet grouped)
+// AGENT NAVIGATION — flat by design (no group headers)
 export const getAgentNavigation = (): SidebarNavItem[] => [
 	{
 		key: 'agent-dashboard',
@@ -45,11 +45,14 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.agent',
 	},
 	{
-		key: 'agent-campaigns',
-		label: 'sidebar.agent.campaigns',
-		icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
-		to: '/qa/campaigns',
-		i18nNamespace: 'qa.agent',
+		key: 'agent-calls',
+		label: 'sidebar.agent.myCalls',
+		icon: <IconPhone size={20} className={styles.menuIcon} />,
+		to: '/qa/agent/calls',
+		i18nNamespace: 'qa.calls',
+		// The dispute detail page (/qa/agent/disputes/:id) lives outside /qa/agent/calls
+		// but its list is the Disputes tab of My Calls — keep this item highlighted there too.
+		activePaths: ['/qa/agent/disputes'],
 	},
 	{
 		key: 'agent-inbox',
@@ -74,53 +77,13 @@ export const getAgentNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.lms',
 	},
 	{
-		key: 'agent-analytics',
-		label: 'sidebar.agent.analytics',
-		icon: <IconChartLine size={20} className={styles.menuIcon} />,
-		to: '/qa/agent/analytics',
-		i18nNamespace: 'qa.agent',
-	},
-	{
-		key: 'agent-disputes',
-		label: 'sidebar.agent.disputes',
-		icon: <IconGitBranch size={20} className={styles.menuIcon} />,
-		to: '/qa/agent/disputes',
-		i18nNamespace: 'qa.disputes',
-		badge: 'disputes',
+		key: 'agent-coaching',
+		label: 'sidebar.agent.coaching',
+		icon: <IconTargetArrow size={20} className={styles.menuIcon} />,
+		to: '/qa/agent/coaching',
+		i18nNamespace: 'qa.lms',
 	},
 ];
-
-// AGENT NAVIGATION (organized by functional groups)
-export const getAgentNavigationGrouped = (): NavGroup[] => {
-	const items = getAgentNavigation();
-
-	return [
-		// Primary: Dashboard (always visible, non-collapsible)
-		{
-			key: 'agent-primary',
-			label: items[0].label, // 'sidebar.agent.dashboard'
-			items: [items[0]],
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Primary: My Work (always visible, non-collapsible)
-		{
-			key: 'agent-mywork',
-			label: 'sidebar.agent.groupMyWork',
-			items: [items[1], items[2], items[4]], // Campaigns, Inbox, My Learning
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Secondary: Insights (collapsible, collapsed by default)
-		{
-			key: 'agent-insights',
-			label: 'sidebar.agent.groupInsights',
-			items: [items[3], items[5], items[6]], // Rankings, Analytics, Disputes
-			collapsible: true,
-			defaultExpanded: false,
-		},
-	];
-};
 
 // SUPERVISOR NAVIGATION (flat version - source of truth for routes)
 export const getSupervisorNavigation = (): SidebarNavItem[] => [
@@ -145,13 +108,6 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		icon: <IconUsers size={20} className={styles.menuIcon} />,
 		to: '/qa/supervisor/your-team',
 		i18nNamespace: 'qa.team',
-	},
-	{
-		key: 'supervisor-calls',
-		label: 'sidebar.supervisor.calls',
-		icon: <IconPhone size={20} className={styles.menuIcon} />,
-		to: '/qa/supervisor/calls',
-		i18nNamespace: 'qa.supervisor',
 	},
 	{
 		key: 'supervisor-customers',
@@ -220,41 +176,26 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 ];
 
 // SUPERVISOR NAVIGATION (organized by functional groups)
-export const getSupervisorNavigationGrouped = (): NavGroup[] => {
+// Dashboard / Your Team / Development render as flat links, no section
+// header — only Operations and Insights keep their collapsible groups.
+export const getSupervisorNavigationGrouped = (): (
+	| SidebarNavItem
+	| NavGroup
+)[] => {
 	const items = getSupervisorNavigation();
 	const byKey = Object.fromEntries(items.map((i) => [i.key, i]));
 	const pick = (...keys: string[]) => keys.map((k) => byKey[k]);
 
 	return [
-		// Primary: Dashboard (always visible, non-collapsible)
-		{
-			key: 'supervisor-primary',
-			label: items[0].label, // 'sidebar.supervisor.dashboard'
-			items: pick('supervisor-dashboard', 'supervisor-inbox'),
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Primary: Your Team (always visible, non-collapsible)
-		{
-			key: 'supervisor-team',
-			label: 'sidebar.supervisor.groupTeam',
-			items: pick(
-				'supervisor-team',
-				'supervisor-calls',
-				'supervisor-customers',
-				'supervisor-campaigns'
-			),
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Primary: Development — coaching and learning
-		{
-			key: 'supervisor-development',
-			label: 'sidebar.supervisor.groupDevelopment',
-			items: pick('supervisor-coaching', 'supervisor-lms'),
-			collapsible: false,
-			defaultExpanded: true,
-		},
+		...pick(
+			'supervisor-dashboard',
+			'supervisor-inbox',
+			'supervisor-team',
+			'supervisor-customers',
+			'supervisor-campaigns',
+			'supervisor-coaching',
+			'supervisor-lms'
+		),
 		// Secondary: Operations (collapsible, collapsed by default)
 		{
 			key: 'supervisor-operations',
@@ -317,11 +258,11 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.team',
 	},
 	{
-		key: 'qamanager-calls',
-		label: 'sidebar.qamanager.calls',
-		icon: <IconPhone size={20} className={styles.menuIcon} />,
-		to: '/qa/qa-manager/calls',
-		i18nNamespace: 'qa.qamanager',
+		key: 'qamanager-forms',
+		label: 'sidebar.qamanager.forms',
+		icon: <IconForms size={20} className={styles.menuIcon} />,
+		to: '/qa/forms',
+		i18nNamespace: 'qa.forms',
 	},
 	{
 		key: 'qamanager-customers',
@@ -390,46 +331,33 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 ];
 
 // QA MANAGER NAVIGATION (organized by functional groups)
-export const getQAManagerNavigationGrouped = (): NavGroup[] => {
+// Dashboard / Organization ("Your team" equivalent — supervisors, teams,
+// agents) / Development render as flat links, no section header — Operations,
+// Configuration and Insights keep their groups.
+export const getQAManagerNavigationGrouped = (): (
+	| SidebarNavItem
+	| NavGroup
+)[] => {
 	const items = getQAManagerNavigation();
 	const byKey = Object.fromEntries(items.map((i) => [i.key, i]));
 	const pick = (...keys: string[]) => keys.map((k) => byKey[k]);
 
 	return [
-		// Primary: Dashboard (always visible, non-collapsible)
-		{
-			key: 'qamanager-primary',
-			label: items[0].label, // 'sidebar.qamanager.dashboard'
-			items: pick('qamanager-dashboard', 'qamanager-inbox'),
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Primary: Organization (always visible, non-collapsible)
-		{
-			key: 'qamanager-organization',
-			label: 'sidebar.qamanager.groupOrganization',
-			items: pick(
-				'qamanager-supervisors',
-				'qamanager-teams',
-				'qamanager-agents'
-			),
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Primary: Development — coaching and learning
-		{
-			key: 'qamanager-development',
-			label: 'sidebar.qamanager.groupDevelopment',
-			items: pick('qamanager-coaching', 'qamanager-lms'),
-			collapsible: false,
-			defaultExpanded: true,
-		},
+		...pick(
+			'qamanager-dashboard',
+			'qamanager-inbox',
+			'qamanager-supervisors',
+			'qamanager-teams',
+			'qamanager-agents',
+			'qamanager-forms',
+			'qamanager-coaching',
+			'qamanager-lms'
+		),
 		// Primary: Operations (always visible, non-collapsible)
 		{
 			key: 'qamanager-operations',
 			label: 'sidebar.qamanager.groupOperations',
 			items: pick(
-				'qamanager-calls',
 				'qamanager-customers',
 				'qamanager-disputes',
 				'qamanager-campaigns'
@@ -575,15 +503,11 @@ export const roleNavigationMap: Record<PreviewRole, () => SidebarNavItem[]> = {
 	superAdmin: getSuperAdminNavigation,
 };
 
-// Grouped versions (for integration with sidebar)
+// Grouped versions (for integration with sidebar). The agent is flat — see getAgentNavigation above.
 export const roleNavigationGroupedMap: Record<
-	Extract<
-		PreviewRole,
-		'agent' | 'supervisor' | 'qaManager' | 'operationManager'
-	>,
-	() => NavGroup[]
+	Extract<PreviewRole, 'supervisor' | 'qaManager' | 'operationManager'>,
+	() => (SidebarNavItem | NavGroup)[]
 > = {
-	agent: getAgentNavigationGrouped,
 	supervisor: getSupervisorNavigationGrouped,
 	qaManager: getQAManagerNavigationGrouped,
 	operationManager: getOperationManagerNavigationGrouped,

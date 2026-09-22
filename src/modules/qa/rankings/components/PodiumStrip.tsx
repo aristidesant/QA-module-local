@@ -37,19 +37,32 @@ export const PodiumStrip: React.FC<PodiumStripProps> = ({
 
 	return (
 		<SectionCard fullHeight title={t('agent.podium.title')}>
-			<Group align='flex-start' gap='md' grow>
+			<Group align='flex-end' gap='md' grow>
 				{top.map((standing, index) => (
-					<div key={standing.agentId} className={styles.podiumStep}>
-						<Avatar size='lg' radius='xl' color={PODIUM_COLORS[index]}>
+					<div
+						key={standing.agentId}
+						className={styles.podiumStep}
+						data-place={index + 1}
+					>
+						<Avatar
+							size={index === 0 ? 'xl' : 'lg'}
+							radius='xl'
+							color={PODIUM_COLORS[index]}
+							className={styles.podiumAvatar}
+						>
 							{initials(standing.agentName)}
 						</Avatar>
 						<Stack gap={0} align='center'>
-							<Text size='xs' fw={700} c={PODIUM_COLORS[index]}>
+							<Text
+								size={index === 0 ? 'sm' : 'xs'}
+								fw={700}
+								c={PODIUM_COLORS[index]}
+							>
 								{places[index]}
 							</Text>
 							<Text
-								size='sm'
-								fw={500}
+								size={index === 0 ? 'md' : 'sm'}
+								fw={index === 0 ? 700 : 500}
 								className={styles.podiumName}
 								lineClamp={1}
 							>

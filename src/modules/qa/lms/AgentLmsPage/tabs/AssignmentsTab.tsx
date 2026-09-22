@@ -1,5 +1,5 @@
 import { SimpleGrid, Stack } from '@mantine/core';
-import { IconBook, IconCalendarDue, IconMailForward } from '@tabler/icons-react';
+import { IconCalendarDue, IconMailForward } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
@@ -16,10 +16,16 @@ interface AssignmentsTabProps {
 	onPropose: (assignment: LmsAssignment) => void;
 }
 
-export function AssignmentsTab({ assignments, contentById, onOpen, onAccept, onPropose }: AssignmentsTabProps) {
+export function AssignmentsTab({
+	assignments,
+	contentById,
+	onOpen,
+	onAccept,
+	onPropose,
+}: AssignmentsTabProps) {
 	const { t } = useTranslation('qa.lms');
 	const groups = groupAssignments(assignments);
-	const isEmpty = !groups.needsResponse.length && !groups.mandatory.length && !groups.optional.length;
+	const isEmpty = !groups.needsResponse.length && !groups.mandatory.length;
 
 	if (isEmpty) {
 		return <EmptyState message={t('agent.assignments.empty')} />;
@@ -56,25 +62,6 @@ export function AssignmentsTab({ assignments, contentById, onOpen, onAccept, onP
 				>
 					<Stack gap='sm'>
 						{groups.mandatory.map((a) => (
-							<AssignmentCard
-								key={a.id}
-								assignment={a}
-								content={contentById[a.contentId]}
-								onOpen={() => onOpen(a.contentId)}
-							/>
-						))}
-					</Stack>
-				</SectionCard>
-			)}
-
-			{groups.optional.length > 0 && (
-				<SectionCard
-					title={t('agent.assignments.optional')}
-					description={t('agent.assignments.optionalDescription')}
-					icon={IconBook}
-				>
-					<Stack gap='sm'>
-						{groups.optional.map((a) => (
 							<AssignmentCard
 								key={a.id}
 								assignment={a}

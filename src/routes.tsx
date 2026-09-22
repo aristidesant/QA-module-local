@@ -93,6 +93,9 @@ const AgentEvaluationsPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/AgentDashboard/pages/AgentEvaluationsPage/AgentEvaluationsPage')
 );
+const MyCallsPage = React.lazy(
+	() => import('./modules/qa/agent/calls/MyCallsPage')
+);
 const AgentEvaluationDetailPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/AgentDashboard/pages/AgentEvaluationDetailPage/AgentEvaluationDetailPage')
@@ -117,8 +120,8 @@ const AgentAnalyticsPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/AgentAnalytics/pages/AgentAnalyticsPage/AgentAnalyticsPage')
 );
-const QAAgentAnalyticsPage = React.lazy(
-	() => import('./modules/qa/agent/analytics/AgentAnalyticsPage')
+const QAAgentCoachingPage = React.lazy(
+	() => import('./modules/qa/coaching/AgentCoachingPage')
 );
 const TeamAnalyticsPage = React.lazy(
 	() => import('./modules/qa/analytics/TeamAnalyticsPage')
@@ -169,9 +172,6 @@ const ReportsPage = React.lazy(
 const TeamRankingsPage = React.lazy(
 	() => import('./modules/qa/agent/rankings/TeamRankingsPage')
 );
-const SupervisorCallsPage = React.lazy(
-	() => import('./modules/qa/supervisor/pages/CallsPage')
-);
 const SupervisorEvaluationsPage = React.lazy(
 	() => import('./modules/qa/supervisor/pages/EvaluationsPage')
 );
@@ -190,9 +190,6 @@ const AgentProfilePage = React.lazy(
 );
 const QAManagerSettingsPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/SettingsPage')
-);
-const QAManagerCallsPage = React.lazy(
-	() => import('./modules/qa/qamanager/pages/CallsPage')
 );
 
 // Phase 4-5: New QA Admin Components
@@ -936,6 +933,17 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'agent/calls',
+										id: 'qa.agent.calls',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<MyCallsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'agent/inbox',
 										id: 'qa.agent.inbox',
 										element: (
@@ -972,16 +980,9 @@ const router = createBrowserRouter([
 										path: 'agent/coaching',
 										id: 'qa.agent.coaching',
 										element: (
-											<Navigate to='/qa/agent/lms?tab=coaching' replace />
-										),
-									},
-									{
-										path: 'agent/analytics',
-										id: 'qa.agent.analytics',
-										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<QAAgentAnalyticsPage />
+													<QAAgentCoachingPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -990,11 +991,7 @@ const router = createBrowserRouter([
 										path: 'agent/disputes',
 										id: 'qa.agent.disputes',
 										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<DisputeCasesPage />
-												</Suspense>
-											</I18nNamespaceLoader>
+											<Navigate to='/qa/agent/calls?tab=disputes' replace />
 										),
 									},
 									{
@@ -1064,17 +1061,6 @@ const router = createBrowserRouter([
 										),
 									},
 									// QA Manager routes
-									{
-										path: 'supervisor/calls',
-										id: 'qa.supervisor.calls',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<SupervisorCallsPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
 									{
 										path: 'supervisor/evaluations',
 										id: 'qa.supervisor.evaluations',
@@ -1291,17 +1277,6 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QAManagerSettingsPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
-										path: 'qa-manager/calls',
-										id: 'qa.qa-manager.calls',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<QAManagerCallsPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

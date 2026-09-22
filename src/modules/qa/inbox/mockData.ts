@@ -58,6 +58,13 @@ const AGENT_INBOX: AgentNotification[] = [
 			sparkline: [4.1, 4.0, 3.9, 3.9, 3.8, 3.7, 3.6],
 			ruleName: 'Sentiment decline',
 		},
+		actions: [
+			{
+				label: 'Review the calls',
+				url: '/qa/agent/calls?tab=calls&issue=low-customer-sentiment,negative-customer-emotion&period=30d',
+				icon: 'mood-sad',
+			},
+		],
 	}),
 	buildNotification({
 		id: 'ntf-a03',
@@ -291,6 +298,13 @@ const AGENT_INBOX: AgentNotification[] = [
 			sparkline: [93, 92, 90, 89, 88, 87, 86],
 			ruleName: 'Regulatory floor',
 		},
+		actions: [
+			{
+				label: 'Review the calls',
+				url: '/qa/agent/calls?tab=calls&issue=compliance-regulatory&period=30d',
+				icon: 'phone',
+			},
+		],
 	}),
 ];
 

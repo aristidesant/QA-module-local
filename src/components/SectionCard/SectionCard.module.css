@@ -270,8 +270,3 @@
 	flex: 1;
 	min-height: 0;
 }
-
-.dimmed {
-	opacity: 0.5;
-	transition: opacity 160ms ease;
-}

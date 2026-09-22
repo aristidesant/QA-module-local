@@ -1,9 +1,12 @@
-import { SimpleGrid, Badge, Tooltip, Group } from '@mantine/core';
-import { IconAlertTriangle, IconCalendarEvent, IconChartBar, IconSchool } from '@tabler/icons-react';
+import { SimpleGrid } from '@mantine/core';
+import {
+	IconAlertTriangle,
+	IconCalendarEvent,
+	IconSchool,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { StatCard } from '~/components/StatCard';
 import type { teamKpis } from '../helpers';
-import { getScoreColor } from '../helpers';
 
 interface TeamKpiStripProps {
 	kpis: ReturnType<typeof teamKpis>;
@@ -13,23 +16,7 @@ export function TeamKpiStrip({ kpis }: TeamKpiStripProps) {
 	const { t } = useTranslation('qa.team');
 
 	return (
-		<SimpleGrid cols={{ base: 2, md: 4 }} spacing='md'>
-			<StatCard
-				title={t('team.kpi.averageOverall')}
-				value={kpis.averageOverall}
-				color={getScoreColor(kpis.averageOverall)}
-				icon={<IconChartBar size={18} />}
-				badge={
-					<Group gap={4}>
-						<Tooltip label={t('team.kpi.improving')}>
-							<Badge color='teal' variant='light'>↑{kpis.improving}</Badge>
-						</Tooltip>
-						<Tooltip label={t('team.kpi.declining')}>
-							<Badge color='red' variant='light'>↓{kpis.declining}</Badge>
-						</Tooltip>
-					</Group>
-				}
-			/>
+		<SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing='md'>
 			<StatCard
 				title={t('team.kpi.atRisk')}
 				value={kpis.atRisk}

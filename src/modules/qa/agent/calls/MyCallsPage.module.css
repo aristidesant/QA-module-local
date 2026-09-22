@@ -1,0 +1,12 @@
+.filters {
+	display: flex;
+	gap: var(--mantine-spacing-md);
+	flex-wrap: wrap;
+	align-items: flex-end;
+}
+
+.issueCell {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}

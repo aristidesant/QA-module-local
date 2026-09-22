@@ -13,6 +13,8 @@ export interface RankingCardGridProps {
 	formatScore?: (score: number) => string;
 	/** Invoked when a card is clicked (detail drawer hook-up). */
 	onRowClick?: (entry: AgentRankingEntry) => void;
+	/** Drops the peer-reactions row — for read-only views (e.g. a supervisor's dashboard). */
+	hideReactions?: boolean;
 }
 
 /**
@@ -27,6 +29,7 @@ export const RankingCardGrid: React.FC<RankingCardGridProps> = ({
 	currentAgentId,
 	formatScore,
 	onRowClick,
+	hideReactions,
 }) => {
 	const { t } = useTranslation('qa.rankings');
 
@@ -47,6 +50,7 @@ export const RankingCardGrid: React.FC<RankingCardGridProps> = ({
 					isCurrentAgent={entry.agentId === currentAgentId}
 					formatScore={formatScore}
 					onRowClick={onRowClick}
+					hideReactions={hideReactions}
 				/>
 			))}
 		</SimpleGrid>

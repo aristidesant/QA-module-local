@@ -39,6 +39,21 @@
 	min-width: 0;
 }
 
+.podiumStep[data-place='1'] {
+	transform: translateY(-6px);
+}
+
+.podiumAvatar {
+	box-shadow: 0 0 0 1px var(--mantine-color-body);
+}
+
+.podiumStep[data-place='1'] .podiumAvatar {
+	box-shadow:
+		0 0 0 3px var(--mantine-color-body),
+		0 0 0 4px
+			light-dark(var(--mantine-color-yellow-5), var(--mantine-color-yellow-6));
+}
+
 .podiumName {
 	text-align: center;
 	max-width: 100%;

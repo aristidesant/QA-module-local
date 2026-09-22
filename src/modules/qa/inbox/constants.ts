@@ -47,15 +47,20 @@ export const inboxRoleFromPath = (pathname: string): InboxRole =>
 			: 'agent';
 
 export const disputesBasePath = (role: InboxRole) => `/qa/${role}/disputes`;
+
+/** Where the disputes LIST lives per role — the agent's is a tab of My Calls. Detail links keep disputesBasePath. */
+export const disputesListPath = (role: InboxRole) =>
+	role === 'agent' ? '/qa/agent/calls?tab=disputes' : `/qa/${role}/disputes`;
+
 export const rankingsBasePath = (role: InboxRole) => `/qa/${role}/rankings`;
+/** The agent has no dedicated analytics page — their metrics live on the dashboard. */
 export const analyticsPath = (role: InboxRole) =>
-	role === 'agent' ? '/qa/agent/analytics' : `/qa/${role}/analytics`;
-export const coachingPath = (role: InboxRole) =>
-	role === 'agent' ? '/qa/agent/lms?tab=coaching' : `/qa/${role}/coaching`;
+	role === 'agent' ? '/qa/dashboards/agent' : `/qa/${role}/analytics`;
+export const coachingPath = (role: InboxRole) => `/qa/${role}/coaching`;
 export const lmsPath = (role: InboxRole) =>
 	role === 'agent' ? '/qa/agent/lms' : `/qa/${role}/lms`;
 export const customersPath = (role: InboxRole) =>
-	role === 'agent' ? '/qa/agent/analytics' : `/qa/${role}/customers`;
+	role === 'agent' ? '/qa/dashboards/agent' : `/qa/${role}/customers`;
 
 export const CATEGORY_META: Record<
 	AgentNotification['category'],

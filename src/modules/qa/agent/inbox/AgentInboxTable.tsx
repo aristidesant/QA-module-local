@@ -238,6 +238,9 @@ export const AgentInboxTable: React.FC<AgentInboxTableProps> = ({
 			rootProps={{
 				className: styles.tableRoot,
 			}}
+			enablePagination
+			showPaginationControls
+			pageSize={10}
 		/>
 	);
 };

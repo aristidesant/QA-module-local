@@ -1,5 +1,8 @@
 {
-	"eyebrow": { "supervisor": "Supervisor · Equipo 1", "qa-manager": "QA Manager · Todos los equipos" },
+	"eyebrow": {
+		"supervisor": "Supervisor · Equipo 1",
+		"qa-manager": "QA Manager · Todos los equipos"
+	},
 	"title": "Coaching",
 	"description": "Mira quién necesita atención, convierte los puntajes bajos en aprendizaje y comprueba si funcionó.",
 	"newRule": "Nueva regla",
@@ -15,7 +18,6 @@
 		"sessionsThisWeek": "Sesiones esta semana"
 	},
 	"tabs": {
-		"queue": "Cola",
 		"agents": "Agentes",
 		"cohorts": "Cohortes",
 		"rules": "Reglas",
@@ -26,7 +28,13 @@
 	"queue": {
 		"title": "Quién necesita atención",
 		"description": "Priorizado por reglas, puntajes, tendencias, capacitaciones vencidas y respuestas pendientes.",
-		"filters": { "priority": "Prioridad", "team": "Equipo", "area": "Aspecto", "action": "Acción sugerida", "all": "Todos" },
+		"filters": {
+			"priority": "Prioridad",
+			"team": "Equipo",
+			"area": "Aspecto",
+			"action": "Acción sugerida",
+			"all": "Todos"
+		},
 		"reasons": {
 			"LOW_SCORE": "{{area}} en {{value}} — por debajo de {{threshold}}",
 			"DECLINING_TREND": "{{area}} bajó {{delta}} pts vs el periodo anterior",
@@ -71,7 +79,14 @@
 	"agents": {
 		"title": "Agentes",
 		"description": "Todos los agentes de tu alcance con su estado de coaching.",
-		"filters": { "search": "Buscar agente", "team": "Equipo", "area": "Aspecto más débil", "state": "Estado", "all": "Todos", "clear": "Limpiar" },
+		"filters": {
+			"search": "Buscar agente",
+			"team": "Equipo",
+			"area": "Aspecto más débil",
+			"state": "Estado",
+			"all": "Todos",
+			"clear": "Limpiar"
+		},
 		"state": {
 			"attention": "Necesita atención",
 			"inTraining": "Capacitándose",
@@ -93,7 +108,12 @@
 		"teamCard": "{{team}} · {{supervisor}}",
 		"empty": "Ningún agente coincide con estos filtros.",
 		"drawer": {
-			"tabs": { "timeline": "Cronología", "assignments": "Asignaciones", "sessions": "Sesiones", "impact": "Impacto" },
+			"tabs": {
+				"timeline": "Cronología",
+				"assignments": "Asignaciones",
+				"sessions": "Sesiones",
+				"impact": "Impacto"
+			},
 			"scores": "Puntajes",
 			"assign": "Asignar material",
 			"schedule": "Agendar sesión",
@@ -125,7 +145,10 @@
 			"submit": "Crear cohorte",
 			"cancel": "Cancelar",
 			"success": "Cohorte {{name}} creada",
-			"validation": { "name": "El nombre es obligatorio", "members": "Elige al menos dos agentes" }
+			"validation": {
+				"name": "El nombre es obligatorio",
+				"members": "Elige al menos dos agentes"
+			}
 		},
 		"drawer": {
 			"members": "Miembros",
@@ -133,7 +156,13 @@
 			"assignMaterial": "Asignar material a la cohorte",
 			"scheduleGroup": "Agendar sesión grupal",
 			"progress": "Avance",
-			"columns": { "agent": "Agente", "team": "Equipo", "modules": "Módulos", "overdue": "Vencidos", "impact": "Impacto" },
+			"columns": {
+				"agent": "Agente",
+				"team": "Equipo",
+				"modules": "Módulos",
+				"overdue": "Vencidos",
+				"impact": "Impacto"
+			},
 			"linkedRules": "Reglas vinculadas",
 			"noRules": "Sin reglas vinculadas.",
 			"delete": "Eliminar cohorte",
@@ -144,7 +173,13 @@
 	"rules": {
 		"title": "Reglas de coaching",
 		"description": "Cuando se cumple una condición, el material se asigna automáticamente con una fecha límite. Usa las mismas métricas que Disparadores.",
-		"filters": { "search": "Buscar regla", "area": "Aspecto", "status": "Estado", "all": "Todos", "clear": "Limpiar" },
+		"filters": {
+			"search": "Buscar regla",
+			"area": "Aspecto",
+			"status": "Estado",
+			"all": "Todos",
+			"clear": "Limpiar"
+		},
 		"columns": {
 			"name": "Regla",
 			"condition": "Condición",
@@ -162,7 +197,11 @@
 			"path": "Inscribir en {{path}} · vence en {{days}} d",
 			"withSession": "+ sesión"
 		},
-		"scopeSummary": { "all": "Todos", "team": "Equipo {{team}}", "custom": "Personalizado" },
+		"scopeSummary": {
+			"all": "Todos",
+			"team": "Equipo {{team}}",
+			"custom": "Personalizado"
+		},
 		"menu": {
 			"edit": "Editar",
 			"duplicate": "Duplicar",
@@ -224,7 +263,10 @@
 				"logic": "Lógica",
 				"showAllContent": "Mostrar material de todos los aspectos"
 			},
-			"actionKinds": { "ASSIGN_CONTENT": "Asignar material", "ASSIGN_PATH": "Inscribir en una ruta" },
+			"actionKinds": {
+				"ASSIGN_CONTENT": "Asignar material",
+				"ASSIGN_PATH": "Inscribir en una ruta"
+			},
 			"coach": { "SUPERVISOR": "Supervisor", "QA_MANAGER": "QA Manager" },
 			"scope": {
 				"everyone": "Todos en mi alcance",
@@ -240,7 +282,12 @@
 				"condition": "Añade al menos una condición",
 				"due": "El vencimiento debe estar entre 1 y 90 días"
 			},
-			"footer": { "cancel": "Cancelar", "saveDraft": "Guardar como borrador", "saveActivate": "Guardar y activar", "save": "Guardar" },
+			"footer": {
+				"cancel": "Cancelar",
+				"saveDraft": "Guardar como borrador",
+				"saveActivate": "Guardar y activar",
+				"save": "Guardar"
+			},
 			"discard": "¿Descartar los cambios?"
 		},
 		"detail": {
@@ -259,7 +306,13 @@
 			"noMatches": "Ningún agente coincide ahora mismo.",
 			"runNow": "Ejecutar ahora",
 			"edit": "Editar",
-			"columns": { "agent": "Agente", "material": "Material", "assigned": "Asignado", "status": "Estado", "impact": "Impacto" }
+			"columns": {
+				"agent": "Agente",
+				"material": "Material",
+				"assigned": "Asignado",
+				"status": "Estado",
+				"impact": "Impacto"
+			}
 		},
 		"empty": "Todavía no hay reglas de coaching.",
 		"emptyDescription": "Crea la primera regla para convertir automáticamente los puntajes bajos en aprendizaje."
@@ -267,7 +320,15 @@
 	"sessions": {
 		"title": "Sesiones de coaching",
 		"description": "Sesiones 1:1, lado a lado, micro y grupales.",
-		"filters": { "status": "Estado", "type": "Tipo", "coach": "Coach", "team": "Equipo", "all": "Todos", "upcoming": "Próximas", "past": "Pasadas" },
+		"filters": {
+			"status": "Estado",
+			"type": "Tipo",
+			"coach": "Coach",
+			"team": "Equipo",
+			"all": "Todos",
+			"upcoming": "Próximas",
+			"past": "Pasadas"
+		},
 		"columns": {
 			"date": "Fecha",
 			"agent": "Agente",
@@ -279,9 +340,23 @@
 			"commitment": "Compromiso",
 			"followUp": "Seguimiento"
 		},
-		"types": { "ONE_ON_ONE": "1:1", "SIDE_BY_SIDE": "Lado a lado", "GROUP": "Grupal", "MICRO": "Micro (10 min)" },
-		"status": { "SCHEDULED": "Agendada", "COMPLETED": "Completada", "MISSED": "Perdida", "CANCELLED": "Cancelada" },
-		"commitment": { "acknowledged": "Comprometido", "pending": "Todavía no", "none": "—" },
+		"types": {
+			"ONE_ON_ONE": "1:1",
+			"SIDE_BY_SIDE": "Lado a lado",
+			"GROUP": "Grupal",
+			"MICRO": "Micro (10 min)"
+		},
+		"status": {
+			"SCHEDULED": "Agendada",
+			"COMPLETED": "Completada",
+			"MISSED": "Perdida",
+			"CANCELLED": "Cancelada"
+		},
+		"commitment": {
+			"acknowledged": "Comprometido",
+			"pending": "Todavía no",
+			"none": "—"
+		},
 		"thisWeek": "Esta semana",
 		"later": "Más adelante",
 		"past": "Sesiones pasadas",
@@ -306,7 +381,11 @@
 			"submit": "Agendar",
 			"cancel": "Cancelar",
 			"success": "Sesión agendada con {{name}}",
-			"validation": { "agent": "Elige un agente", "topic": "El tema es obligatorio", "date": "Elige una fecha" }
+			"validation": {
+				"agent": "Elige un agente",
+				"topic": "El tema es obligatorio",
+				"date": "Elige una fecha"
+			}
 		},
 		"detail": {
 			"evidence": "Evidencia",
@@ -338,7 +417,12 @@
 	"impact": {
 		"title": "¿Funcionó?",
 		"description": "Impacto de la capacitación completada en la métrica vinculada, 30 días antes vs después.",
-		"kpi": { "measured": "Medidos", "improved": "Mejoraron", "same": "Sin cambio", "declined": "Empeoraron" },
+		"kpi": {
+			"measured": "Medidos",
+			"improved": "Mejoraron",
+			"same": "Sin cambio",
+			"declined": "Empeoraron"
+		},
 		"byArea": "Por aspecto",
 		"byAreaDescription": "Proporción de materiales completados cuya métrica mejoró.",
 		"byContent": "Efectividad del contenido",
@@ -358,7 +442,11 @@
 			"improvedRate": "Tasa de mejora",
 			"team": "Equipo"
 		},
-		"series": { "improved": "Mejoraron", "same": "Sin cambio", "declined": "Empeoraron" },
+		"series": {
+			"improved": "Mejoraron",
+			"same": "Sin cambio",
+			"declined": "Empeoraron"
+		},
 		"recent": "Medidos recientemente",
 		"recentDescription": "Últimos materiales completados con veredicto.",
 		"recentColumns": {

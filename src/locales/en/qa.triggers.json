@@ -24,14 +24,46 @@
 	},
 	"kinds": { "ALERT": "Alert", "RECOGNITION": "Recognition" },
 	"types": {
-		"METRIC_ALERT": { "label": "Metric alert", "description": "Notify when a metric crosses a value or range you define.", "example": "Compliance score < 80% over the last 7 days" },
-		"TREND_WARNING": { "label": "Trend warning", "description": "Notify on a percentage decline or a run of bad calls.", "example": "Customer sentiment drops 15% vs. the previous 14 days" },
-		"WEEKLY_SUMMARY": { "label": "Weekly summary", "description": "Send each agent a digest of their metrics on a fixed day and time.", "example": "Every Friday at 17:00" },
-		"BURNOUT_RISK": { "label": "Burnout risk", "description": "Combine sentiment, emotion and performance signals to flag agents at risk.", "example": "Agent sentiment ↓10% and negative emotions > 40%" },
-		"MILESTONE": { "label": "Milestone", "description": "Celebrate when an agent reaches a goal.", "example": "QA score ≥ 95% this week" },
-		"STREAK": { "label": "Streak", "description": "Celebrate consecutive calls that meet a standard.", "example": "3 consecutive calls with sentiment ≥ 4.5" },
-		"IMPROVEMENT": { "label": "Improvement", "description": "Celebrate a percentage increase vs. the previous period.", "example": "QA score +10% in 30 days" },
-		"BADGE_AWARD": { "label": "Badge award", "description": "Award a badge automatically when its criteria are met.", "example": "5 sentiment recoveries in 30 days → Mood Booster" }
+		"METRIC_ALERT": {
+			"label": "Metric alert",
+			"description": "Notify when a metric crosses a value or range you define.",
+			"example": "Compliance score < 80% over the last 7 days"
+		},
+		"TREND_WARNING": {
+			"label": "Trend warning",
+			"description": "Notify on a percentage decline or a run of bad calls.",
+			"example": "Customer sentiment drops 15% vs. the previous 14 days"
+		},
+		"WEEKLY_SUMMARY": {
+			"label": "Weekly summary",
+			"description": "Send each agent a digest of their metrics on a fixed day and time.",
+			"example": "Every Friday at 17:00"
+		},
+		"BURNOUT_RISK": {
+			"label": "Burnout risk",
+			"description": "Combine sentiment, emotion and performance signals to flag agents at risk.",
+			"example": "Agent sentiment ↓10% and negative emotions > 40%"
+		},
+		"MILESTONE": {
+			"label": "Milestone",
+			"description": "Celebrate when an agent reaches a goal.",
+			"example": "QA score ≥ 95% this week"
+		},
+		"STREAK": {
+			"label": "Streak",
+			"description": "Celebrate consecutive calls that meet a standard.",
+			"example": "3 consecutive calls with sentiment ≥ 4.5"
+		},
+		"IMPROVEMENT": {
+			"label": "Improvement",
+			"description": "Celebrate a percentage increase vs. the previous period.",
+			"example": "QA score +10% in 30 days"
+		},
+		"BADGE_AWARD": {
+			"label": "Badge award",
+			"description": "Award a badge automatically when its criteria are met.",
+			"example": "5 sentiment recoveries in 30 days → Mood Booster"
+		}
 	},
 	"areas": {
 		"QUALITY_ASSURANCE": "Quality Assurance",
@@ -74,9 +106,19 @@
 		"rrss": "Social Media",
 		"superintendenciaBancos": "Banking Superintendence",
 		"noLlamarList": "Do-Not-Call",
-		"ELATION": "Elation", "GRATITUDE": "Gratitude", "JOY": "Joy", "RELIEF": "Relief", "SATISFACTION": "Satisfaction",
-		"NEUTRAL": "Neutral", "SURPRISE": "Surprise", "FRUSTRATION": "Frustration", "SADNESS": "Sadness",
-		"FEAR": "Fear", "DISAPPOINTMENT": "Disappointment", "ANGER": "Anger", "RAGE": "Rage"
+		"ELATION": "Elation",
+		"GRATITUDE": "Gratitude",
+		"JOY": "Joy",
+		"RELIEF": "Relief",
+		"SATISFACTION": "Satisfaction",
+		"NEUTRAL": "Neutral",
+		"SURPRISE": "Surprise",
+		"FRUSTRATION": "Frustration",
+		"SADNESS": "Sadness",
+		"FEAR": "Fear",
+		"DISAPPOINTMENT": "Disappointment",
+		"ANGER": "Anger",
+		"RAGE": "Rage"
 	},
 	"modes": {
 		"THRESHOLD": "Nominal value",
@@ -84,8 +126,16 @@
 		"PERCENT_CHANGE": "Percentage change",
 		"CONSECUTIVE": "Consecutive calls"
 	},
-	"operators": { "LT": "Less than", "LTE": "Less or equal", "GT": "Greater than", "GTE": "Greater or equal" },
-	"directions": { "DECREASE": "Decline of at least", "INCREASE": "Increase of at least" },
+	"operators": {
+		"LT": "Less than",
+		"LTE": "Less or equal",
+		"GT": "Greater than",
+		"GTE": "Greater or equal"
+	},
+	"directions": {
+		"DECREASE": "Decline of at least",
+		"INCREASE": "Increase of at least"
+	},
 	"windows": {
 		"PER_CALL": "Per call",
 		"LAST_N_CALLS": "Last N calls",
@@ -97,23 +147,51 @@
 	"logic": { "ALL": "Match ALL conditions", "ANY": "Match ANY condition" },
 	"conditions": {
 		"between": "between {{from}} and {{to}}",
-		"change": { "DECREASE": "declines ≥ {{percent}}%", "INCREASE": "increases ≥ {{percent}}%" },
+		"change": {
+			"DECREASE": "declines ≥ {{percent}}%",
+			"INCREASE": "increases ≥ {{percent}}%"
+		},
 		"consecutive": "{{count}} consecutive calls with {{metric}} {{operator}} {{value}}",
 		"scheduled": "Every {{day}} at {{time}}",
 		"none": "No conditions",
 		"more": "+{{count}} more ({{logic}})"
 	},
-	"days": { "MONDAY": "Monday", "TUESDAY": "Tuesday", "WEDNESDAY": "Wednesday", "THURSDAY": "Thursday", "FRIDAY": "Friday", "SATURDAY": "Saturday", "SUNDAY": "Sunday" },
+	"days": {
+		"MONDAY": "Monday",
+		"TUESDAY": "Tuesday",
+		"WEDNESDAY": "Wednesday",
+		"THURSDAY": "Thursday",
+		"FRIDAY": "Friday",
+		"SATURDAY": "Saturday",
+		"SUNDAY": "Sunday"
+	},
 	"severity": { "INFO": "Info", "WARNING": "Warning", "CRITICAL": "Critical" },
 	"status": { "ACTIVE": "Active", "PAUSED": "Paused", "DRAFT": "Draft" },
-	"recipients": { "AGENT": "Agent", "SUPERVISOR": "Supervisor", "QA_MANAGER": "QA Manager" },
+	"recipients": {
+		"AGENT": "Agent",
+		"SUPERVISOR": "Supervisor",
+		"QA_MANAGER": "QA Manager"
+	},
 	"channels": { "INBOX": "Inbox", "EMAIL": "Email", "DASHBOARD": "Dashboard" },
 	"tiers": { "BRONZE": "Bronze", "SILVER": "Silver", "GOLD": "Gold" },
 	"visibility": { "PRIVATE": "Private to the agent", "TEAM_FEED": "Team feed" },
 	"burnoutLevels": { "LOW": "Low", "MEDIUM": "Medium", "HIGH": "High" },
-	"templateCategories": { "ALERT": "Alert", "RECOGNITION": "Recognition", "SUMMARY": "Summary" },
-	"activityStatus": { "SENT": "Sent", "ACKNOWLEDGED": "Acknowledged", "ESCALATED": "Escalated", "SUPPRESSED": "Suppressed" },
-	"campaignTypes": { "INBOUND": "Inbound", "OUTBOUND": "Outbound", "BLENDED": "Blended" },
+	"templateCategories": {
+		"ALERT": "Alert",
+		"RECOGNITION": "Recognition",
+		"SUMMARY": "Summary"
+	},
+	"activityStatus": {
+		"SENT": "Sent",
+		"ACKNOWLEDGED": "Acknowledged",
+		"ESCALATED": "Escalated",
+		"SUPPRESSED": "Suppressed"
+	},
+	"campaignTypes": {
+		"INBOUND": "Inbound",
+		"OUTBOUND": "Outbound",
+		"BLENDED": "Blended"
+	},
 	"picker": {
 		"title": "What do you want to create?",
 		"alerts": "Alerts",
@@ -209,7 +287,12 @@
 		"noQuietHours": "No quiet hours",
 		"includedAreas": "Included areas",
 		"teamComparison": "Includes team comparison",
-		"stats": { "fired7d": "Fired · 7d", "fired30d": "Fired · 30d", "lastFired": "Last fired", "createdBy": "Created by" },
+		"stats": {
+			"fired7d": "Fired · 7d",
+			"fired30d": "Fired · 30d",
+			"lastFired": "Last fired",
+			"createdBy": "Created by"
+		},
 		"previewSample": "Preview with sample data",
 		"noActivity": "This rule has not fired yet"
 	},
@@ -321,55 +404,168 @@
 		"title": "Badge catalog",
 		"description": "Badges agents can earn automatically through recognition rules or be awarded manually.",
 		"new": "New badge",
-		"filters": { "search": "Search badges...", "area": "Area", "tier": "Tier", "status": "Status", "all": "All", "active": "Active", "archived": "Archived", "clear": "Clear filters" },
-		"card": { "holders_one": "{{count}} agent", "holders_other": "{{count}} agents", "noHolders": "Not earned yet", "autoAward": "Auto-award", "manual": "Manual", "linkedRule": "Linked rule" },
-		"actions": { "edit": "Edit", "archive": "Archive", "restore": "Restore", "createRule": "Create recognition rule" },
+		"filters": {
+			"search": "Search badges...",
+			"area": "Area",
+			"tier": "Tier",
+			"status": "Status",
+			"all": "All",
+			"active": "Active",
+			"archived": "Archived",
+			"clear": "Clear filters"
+		},
+		"card": {
+			"holders_one": "{{count}} agent",
+			"holders_other": "{{count}} agents",
+			"noHolders": "Not earned yet",
+			"autoAward": "Auto-award",
+			"manual": "Manual",
+			"linkedRule": "Linked rule"
+		},
+		"actions": {
+			"edit": "Edit",
+			"archive": "Archive",
+			"restore": "Restore",
+			"createRule": "Create recognition rule"
+		},
 		"detail": {
 			"criteria": "Criteria",
 			"linkedRule": "Linked recognition rule",
 			"noLinkedRule": "No rule awards this badge automatically",
 			"holders": "Holders",
 			"columns": { "agent": "Agent", "team": "Team", "earnedAt": "Earned" },
-			"stats": { "holders": "Total holders", "lastAwarded": "Last awarded", "tier": "Tier" }
+			"stats": {
+				"holders": "Total holders",
+				"lastAwarded": "Last awarded",
+				"tier": "Tier"
+			}
 		},
 		"editor": {
 			"createTitle": "New badge",
 			"editTitle": "Edit badge",
-			"sections": { "identity": "Identity", "criteria": "Criteria", "criteriaDescription": "What consistent behaviour earns this badge?", "settings": "Settings" },
-			"fields": { "name": "Name", "description": "Description", "icon": "Icon", "color": "Color", "area": "Area", "tier": "Tier", "autoAward": "Award automatically when criteria are met", "autoAwardHint": "Saving creates a linked recognition rule you can fine-tune in the Recognition tab.", "status": "Active" },
-			"validation": { "nameRequired": "Name is required", "iconRequired": "Pick an icon" }
+			"sections": {
+				"identity": "Identity",
+				"criteria": "Criteria",
+				"criteriaDescription": "What consistent behaviour earns this badge?",
+				"settings": "Settings"
+			},
+			"fields": {
+				"name": "Name",
+				"description": "Description",
+				"icon": "Icon",
+				"color": "Color",
+				"area": "Area",
+				"tier": "Tier",
+				"autoAward": "Award automatically when criteria are met",
+				"autoAwardHint": "Saving creates a linked recognition rule you can fine-tune in the Recognition tab.",
+				"status": "Active"
+			},
+			"validation": {
+				"nameRequired": "Name is required",
+				"iconRequired": "Pick an icon"
+			}
 		},
-		"empty": { "title": "No badges yet", "description": "Create a badge to reward consistent behaviour.", "noMatches": "No badges match the current filters" },
-		"notifications": { "created": "Badge created", "updated": "Badge updated", "archived": "Badge archived", "restored": "Badge restored", "ruleCreated": "Recognition rule created for {{badge}}" }
+		"empty": {
+			"title": "No badges yet",
+			"description": "Create a badge to reward consistent behaviour.",
+			"noMatches": "No badges match the current filters"
+		},
+		"notifications": {
+			"created": "Badge created",
+			"updated": "Badge updated",
+			"archived": "Badge archived",
+			"restored": "Badge restored",
+			"ruleCreated": "Recognition rule created for {{badge}}"
+		}
 	},
 	"templates": {
 		"title": "Message templates",
 		"description": "Reusable messages for alerts, recognitions and summaries. Rules copy a template when created.",
 		"new": "New template",
-		"filters": { "search": "Search templates...", "category": "Category", "all": "All", "clear": "Clear filters" },
-		"columns": { "name": "Template", "category": "Category", "subject": "Subject", "variables": "Variables", "usedBy": "Used by", "updated": "Updated" },
+		"filters": {
+			"search": "Search templates...",
+			"category": "Category",
+			"all": "All",
+			"clear": "Clear filters"
+		},
+		"columns": {
+			"name": "Template",
+			"category": "Category",
+			"subject": "Subject",
+			"variables": "Variables",
+			"usedBy": "Used by",
+			"updated": "Updated"
+		},
 		"default": "Default",
 		"usedBy_one": "{{count}} rule",
 		"usedBy_other": "{{count}} rules",
-		"actions": { "edit": "Edit", "duplicate": "Duplicate", "setDefault": "Set as default", "delete": "Delete", "deleteDisabled": "In use by rules — cannot delete" },
+		"actions": {
+			"edit": "Edit",
+			"duplicate": "Duplicate",
+			"setDefault": "Set as default",
+			"delete": "Delete",
+			"deleteDisabled": "In use by rules — cannot delete"
+		},
 		"editor": {
 			"createTitle": "New template",
 			"editTitle": "Edit template",
-			"fields": { "name": "Name", "category": "Category", "subject": "Subject", "body": "Message", "variables": "Insert variable" },
+			"fields": {
+				"name": "Name",
+				"category": "Category",
+				"subject": "Subject",
+				"body": "Message",
+				"variables": "Insert variable"
+			},
 			"preview": "Preview with sample data",
-			"validation": { "nameRequired": "Name is required", "subjectRequired": "Subject is required", "bodyRequired": "Message is required" }
+			"validation": {
+				"nameRequired": "Name is required",
+				"subjectRequired": "Subject is required",
+				"bodyRequired": "Message is required"
+			}
 		},
-		"confirmDelete": { "title": "Delete template", "message": "\"{{name}}\" will be removed. Rules keep their own copy of the text.", "confirm": "Delete", "cancel": "Cancel" },
-		"empty": { "title": "No templates yet", "description": "Create a template to reuse messages across rules.", "noMatches": "No templates match the current filters" },
-		"notifications": { "created": "Template created", "updated": "Template updated", "deleted": "Template deleted", "duplicated": "Template duplicated", "defaultSet": "Default template updated" }
+		"confirmDelete": {
+			"title": "Delete template",
+			"message": "\"{{name}}\" will be removed. Rules keep their own copy of the text.",
+			"confirm": "Delete",
+			"cancel": "Cancel"
+		},
+		"empty": {
+			"title": "No templates yet",
+			"description": "Create a template to reuse messages across rules.",
+			"noMatches": "No templates match the current filters"
+		},
+		"notifications": {
+			"created": "Template created",
+			"updated": "Template updated",
+			"deleted": "Template deleted",
+			"duplicated": "Template duplicated",
+			"defaultSet": "Default template updated"
+		}
 	},
 	"activity": {
 		"title": "Activity log",
 		"description": "Every alert and recognition that fired, who received it and what happened next.",
 		"export": "Export CSV",
 		"exportStarted": "Export started — you'll get the file in your Inbox",
-		"filters": { "search": "Search by agent or rule...", "kind": "Kind", "rule": "Rule", "agent": "Agent", "status": "Status", "from": "From", "to": "To", "all": "All", "clear": "Clear filters" },
-		"columns": { "firedAt": "Fired", "rule": "Rule", "agent": "Agent", "observed": "Observed", "recipients": "Recipients", "status": "Status" },
+		"filters": {
+			"search": "Search by agent or rule...",
+			"kind": "Kind",
+			"rule": "Rule",
+			"agent": "Agent",
+			"status": "Status",
+			"from": "From",
+			"to": "To",
+			"all": "All",
+			"clear": "Clear filters"
+		},
+		"columns": {
+			"firedAt": "Fired",
+			"rule": "Rule",
+			"agent": "Agent",
+			"observed": "Observed",
+			"recipients": "Recipients",
+			"status": "Status"
+		},
 		"suppressedHint": "Suppressed by cooldown or quiet hours",
 		"actions": { "acknowledge": "Acknowledge", "view": "View" },
 		"detail": {
@@ -383,7 +579,7 @@
 			"agent": "Agent",
 			"supervisor": "Supervisor",
 			"campaign": "Campaign",
-			"openAnalytics": "Open agent analytics",
+			"openAnalytics": "Open agent profile",
 			"openInbox": "Open in Inbox",
 			"acknowledge": "Acknowledge",
 			"acknowledgedAt": "Acknowledged {{date}}",
@@ -391,7 +587,11 @@
 			"channels": "Channels",
 			"badge": "Badge awarded"
 		},
-		"empty": { "title": "Nothing has fired yet", "description": "Activity appears here as soon as an active rule matches an agent.", "noMatches": "No activity matches the current filters" },
+		"empty": {
+			"title": "Nothing has fired yet",
+			"description": "Activity appears here as soon as an active rule matches an agent.",
+			"noMatches": "No activity matches the current filters"
+		},
 		"notifications": { "acknowledged": "Marked as acknowledged" }
 	},
 	"common": {

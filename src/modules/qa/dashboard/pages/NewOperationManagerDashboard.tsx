@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import {
@@ -20,15 +20,12 @@ import {
 	ComplianceCard,
 	SentimentEmotionCard,
 	BusinessInsightsCard,
-	DashboardEvaluationFilter,
-	isCardVisible,
 	SentimentTrendChart,
 	CriticalIssuesTable,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
 	RankingsTable,
 } from '../components';
-import type { DashboardEvaluationType } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
 import type { RankingEntry, RankingGoal } from '../components/RankingsTable';
 import {
@@ -473,8 +470,6 @@ const criticalAlertColumns: BaseTableColumnDef<CriticalAlertRow>[] = [
 export const NewOperationManagerDashboard: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('qa.dashboard');
-	const [evaluationType, setEvaluationType] =
-		useState<DashboardEvaluationType>('all');
 	const {
 		qaScore,
 		sentiment,
@@ -483,11 +478,6 @@ export const NewOperationManagerDashboard: React.FC = () => {
 		businessInsights,
 		businessOutcome,
 	} = OPERATION_MANAGER_WEEKLY_METRICS;
-
-	const cardClass = (
-		types: DashboardEvaluationType | DashboardEvaluationType[]
-	) =>
-		isCardVisible(evaluationType, types) ? styles.gridCard : styles.dimmedCard;
 
 	/** Overall sentiment on the 0-5 scale, averaging agent and customer readings */
 	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
@@ -509,27 +499,27 @@ export const NewOperationManagerDashboard: React.FC = () => {
 					description='Cross-client quality assurance, compliance, sentiment and business results this week'
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
-						<div className={cardClass('qa')}>
+						<div className={styles.gridCard}>
 							<QualityAssuranceCard
 								score={qaScore}
 								subtitle='Cross-client category breakdown'
 								autoFails={autoFailsCount}
 							/>
 						</div>
-						<div className={cardClass('compliance')}>
+						<div className={styles.gridCard}>
 							<ComplianceCard
 								categories={complianceCategories}
 								subtitle='Cross-client category overview'
 							/>
 						</div>
-						<div className={cardClass('sentiment')}>
+						<div className={styles.gridCard}>
 							<SentimentEmotionCard
 								score={overallSentiment}
 								predominantEmotion={sentiment.predominantEmotion}
 								subtitle='0-5 scale assessment'
 							/>
 						</div>
-						<div className={cardClass('business')}>
+						<div className={styles.gridCard}>
 							<BusinessInsightsCard
 								insights={businessInsights}
 								outcome={businessOutcome}
@@ -539,16 +529,10 @@ export const NewOperationManagerDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				<DashboardEvaluationFilter
-					value={evaluationType}
-					onChange={setEvaluationType}
-				/>
-
 				{/* 3. Critical issues */}
 				<SectionCard
 					title='Critical Issues'
 					description='Urgent operational items requiring immediate attention across all clients'
-					dimmed={!isCardVisible(evaluationType, ['qa', 'compliance'])}
 				>
 					<CriticalIssuesTable
 						issues={CRITICAL_ISSUES_OPERATION_MANAGER}
@@ -562,7 +546,6 @@ export const NewOperationManagerDashboard: React.FC = () => {
 						title='Sentiment Trend'
 						description='4-week multi-client sentiment progression'
 						fullHeight
-						dimmed={!isCardVisible(evaluationType, 'sentiment')}
 					>
 						<SentimentTrendChart data={OPERATION_MANAGER_SENTIMENT_TREND} />
 					</SectionCard>
@@ -571,13 +554,6 @@ export const NewOperationManagerDashboard: React.FC = () => {
 						title='Quick Insights'
 						description='Operations-level recommendations for platform improvement'
 						fullHeight
-						dimmed={
-							!isCardVisible(evaluationType, [
-								'sentiment',
-								'compliance',
-								'business',
-							])
-						}
 					>
 						<QuickInsightsWidget
 							insights={DEFAULT_OPERATION_MANAGER_INSIGHTS}
@@ -591,7 +567,6 @@ export const NewOperationManagerDashboard: React.FC = () => {
 						title='Best & Worst Calls'
 						description='Top and bottom performing calls from across all clients this week'
 						fullHeight
-						dimmed={!isCardVisible(evaluationType, 'qa')}
 					>
 						<BestWorstCallsTable calls={OPERATION_MANAGER_CALLS} />
 					</SectionCard>

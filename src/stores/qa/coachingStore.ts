@@ -27,7 +27,6 @@ import {
 } from '~/modules/qa/team/constants';
 import { day } from '~/modules/qa/lms/mockData';
 import { today } from '~/modules/qa/lms/helpers';
-import { AGENT_LMS_PATH } from '~/modules/qa/lms/constants';
 
 let counter = 300;
 export const nextCoachingId = (prefix: string) => `${prefix}-${++counter}`;
@@ -125,7 +124,7 @@ const notifySession = (
 			actions: [
 				{
 					label: 'View coaching',
-					url: `${AGENT_LMS_PATH}?tab=coaching`,
+					url: '/qa/agent/coaching',
 					icon: 'school',
 				},
 			],

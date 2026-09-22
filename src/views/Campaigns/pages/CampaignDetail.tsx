@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
 	Container,
 	Title,
@@ -26,9 +26,18 @@ import {
 } from '@mantine/core';
 import { IconArrowLeft, IconEdit, IconPlayerPlay } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../stores/useCampaignStore';
 import type { ContactList, Evaluation, QATest, Aspect } from '../types';
 import { mockContactLists, mockQATests } from '../constants';
+import { useRoleMockStore } from '~/stores/roleMockStore';
+import {
+	buildCampaignCalls,
+	campaignRosterAgents,
+	rosterCampaignIdFor,
+} from '~/modules/qa/calls/helpers';
+import type { CampaignCallRow } from '~/modules/qa/calls/types';
+import { CampaignRosterTab } from '../components/CampaignRosterTab';
 
 // TODO: Import QATestEditor from common components when available
 // import { QATestEditor } from '../components/QATestEditor';
@@ -41,196 +50,30 @@ const QATestEditor = (_props: {
 	readyButtonText?: string;
 }) => <div>QA Test Editor placeholder</div>;
 
-const mockAgents = [
-	'Sarah Johnson',
-	'Marcus Lee',
-	'Diana Torres',
-	'Kevin Park',
-	'Aisha Brown',
-];
 const mockQAForms = [
 	'Sales Call Quality Standards',
 	'Customer Service Excellence',
 	'Compliance Check',
 ];
 
-interface Call {
-	id: string;
-	filename: string;
-	agentName: string;
-	date: string;
-	score: number;
-	status: 'completed' | 'pending';
-	isAutoFailed: boolean;
-	isDisputed: boolean;
-	qaForm: string;
-	qaFormPassed: boolean;
-	disputeRequested: boolean;
-}
-
-const mockCalls: Call[] = [
-	{
-		id: '1',
-		filename: 'call_001_2026-07-20.mp3',
-		agentName: 'Sarah Johnson',
-		date: '2026-07-20',
-		score: 85,
-		status: 'completed',
-		isAutoFailed: false,
-		isDisputed: false,
-		qaForm: 'Sales Call Quality Standards',
-		qaFormPassed: true,
-		disputeRequested: false,
-	},
-	{
-		id: '2',
-		filename: 'call_002_2026-07-20.mp3',
-		agentName: 'Marcus Lee',
-		date: '2026-07-20',
-		score: 92,
-		status: 'completed',
-		isAutoFailed: false,
-		isDisputed: false,
-		qaForm: 'Sales Call Quality Standards',
-		qaFormPassed: true,
-		disputeRequested: false,
-	},
-	{
-		id: '3',
-		filename: 'call_003_2026-07-20.mp3',
-		agentName: 'Diana Torres',
-		date: '2026-07-20',
-		score: 68,
-		status: 'completed',
-		isAutoFailed: true,
-		isDisputed: false,
-		qaForm: 'Customer Service Excellence',
-		qaFormPassed: false,
-		disputeRequested: false,
-	},
-	{
-		id: '4',
-		filename: 'call_004_2026-07-19.mp3',
-		agentName: 'Kevin Park',
-		date: '2026-07-19',
-		score: 78,
-		status: 'completed',
-		isAutoFailed: false,
-		isDisputed: true,
-		qaForm: 'Sales Call Quality Standards',
-		qaFormPassed: true,
-		disputeRequested: true,
-	},
-	{
-		id: '5',
-		filename: 'call_005_2026-07-19.mp3',
-		agentName: 'Aisha Brown',
-		date: '2026-07-19',
-		score: 88,
-		status: 'completed',
-		isAutoFailed: false,
-		isDisputed: false,
-		qaForm: 'Compliance Check',
-		qaFormPassed: true,
-		disputeRequested: false,
-	},
-	{
-		id: '6',
-		filename: 'call_006_2026-07-19.mp3',
-		agentName: 'Sarah Johnson',
-		date: '2026-07-19',
-		score: 45,
-		status: 'completed',
-		isAutoFailed: true,
-		isDisputed: false,
-		qaForm: 'Customer Service Excellence',
-		qaFormPassed: false,
-		disputeRequested: false,
-	},
-	{
-		id: '7',
-		filename: 'call_007_2026-07-18.mp3',
-		agentName: 'Marcus Lee',
-		date: '2026-07-18',
-		score: 81,
-		status: 'completed',
-		isAutoFailed: false,
-		isDisputed: false,
-		qaForm: 'Sales Call Quality Standards',
-		qaFormPassed: true,
-		disputeRequested: false,
-	},
-	{
-		id: '8',
-		filename: 'call_008_2026-07-18.mp3',
-		agentName: 'Diana Torres',
-		date: '2026-07-18',
-		score: 55,
-		status: 'completed',
-		isAutoFailed: true,
-		isDisputed: true,
-		qaForm: 'Compliance Check',
-		qaFormPassed: false,
-		disputeRequested: true,
-	},
-	{
-		id: '9',
-		filename: 'call_009_2026-07-18.mp3',
-		agentName: 'Kevin Park',
-		date: '2026-07-18',
-		score: 79,
-		status: 'pending',
-		isAutoFailed: false,
-		isDisputed: false,
-		qaForm: 'Customer Service Excellence',
-		qaFormPassed: true,
-		disputeRequested: false,
-	},
-	{
-		id: '10',
-		filename: 'call_010_2026-07-17.mp3',
-		agentName: 'Aisha Brown',
-		date: '2026-07-17',
-		score: 90,
-		status: 'completed',
-		isAutoFailed: false,
-		isDisputed: false,
-		qaForm: 'Sales Call Quality Standards',
-		qaFormPassed: true,
-		disputeRequested: false,
-	},
-	{
-		id: '11',
-		filename: 'call_011_2026-07-17.mp3',
-		agentName: 'Sarah Johnson',
-		date: '2026-07-17',
-		score: 52,
-		status: 'completed',
-		isAutoFailed: true,
-		isDisputed: false,
-		qaForm: 'Compliance Check',
-		qaFormPassed: false,
-		disputeRequested: false,
-	},
-	{
-		id: '12',
-		filename: 'call_012_2026-07-17.mp3',
-		agentName: 'Marcus Lee',
-		date: '2026-07-17',
-		score: 87,
-		status: 'completed',
-		isAutoFailed: false,
-		isDisputed: false,
-		qaForm: 'Sales Call Quality Standards',
-		qaFormPassed: true,
-		disputeRequested: false,
-	},
-];
-
 export default function CampaignDetail() {
 	const navigate = useNavigate();
 	const { id } = useParams();
+	const { t } = useTranslation('qa.calls');
+	const previewRole = useRoleMockStore((s) => s.previewRole);
 	const getCampaign = useCampaignStore((state) => state.getCampaign);
+	const campaignCalls = useMemo<CampaignCallRow[]>(
+		() => buildCampaignCalls(id),
+		[id]
+	);
+	const agentOptions = useMemo(
+		() =>
+			campaignRosterAgents(rosterCampaignIdFor(id), previewRole).map((a) => ({
+				value: a.id,
+				label: a.name,
+			})),
+		[id, previewRole]
+	);
 
 	// Campaign name lookup
 	const mockCampaignNames: { [key: string]: string } = {
@@ -488,11 +331,12 @@ export default function CampaignDetail() {
 						</Text>
 					</div>
 
-					{/* Campaign Tabs - Overview and Conversations */}
-					<Tabs defaultValue='overview'>
+					{/* Campaign Tabs - Overview, Conversations and Roster */}
+					<Tabs defaultValue='overview' keepMounted={false}>
 						<Tabs.List>
 							<Tabs.Tab value='overview'>Overview</Tabs.Tab>
 							<Tabs.Tab value='conversations'>Conversations</Tabs.Tab>
+							<Tabs.Tab value='roster'>{t('roster.tab')}</Tabs.Tab>
 						</Tabs.List>
 
 						<Tabs.Panel value='overview' pt='md'>
@@ -564,7 +408,7 @@ export default function CampaignDetail() {
 												</Badge>
 											</Group>
 											<Text size='lg' fw={700}>
-												{mockCalls.filter((c) => c.isAutoFailed).length}
+												{campaignCalls.filter((c) => c.isAutoFailed).length}
 											</Text>
 											<Text size='xs' c='dimmed'>
 												Automatically failed calls
@@ -583,7 +427,7 @@ export default function CampaignDetail() {
 											</Group>
 											<Text size='lg' fw={700}>
 												{
-													mockCalls.filter(
+													campaignCalls.filter(
 														(c) => c.disputeRequested || c.isDisputed
 													).length
 												}
@@ -608,14 +452,14 @@ export default function CampaignDetail() {
 											<Stack gap='md'>
 												<Group grow>
 													<Select
-														label='Agent'
-														placeholder='All agents'
-														data={mockAgents.map((name) => ({
-															value: name,
-															label: name,
-														}))}
+														label={t('conversations.agentFilter')}
+														placeholder={t('conversations.allAgents')}
+														data={agentOptions}
 														value={callsTableAgentFilter}
-														onChange={setCallsTableAgentFilter}
+														onChange={(value) => {
+															setCallsTableAgentFilter(value);
+															setCallsTableCurrentPage(1);
+														}}
 														clearable
 														searchable
 														size='sm'
@@ -800,11 +644,20 @@ export default function CampaignDetail() {
 
 										{/* Calls Table */}
 										{(() => {
-											let filteredCalls = mockCalls;
+											let filteredCalls = campaignCalls;
+
+											if (previewRole === 'supervisor') {
+												const teamAgentIds = new Set(
+													agentOptions.map((o) => o.value)
+												);
+												filteredCalls = filteredCalls.filter((c) =>
+													teamAgentIds.has(c.agentId)
+												);
+											}
 
 											if (callsTableAgentFilter) {
 												filteredCalls = filteredCalls.filter(
-													(c) => c.agentName === callsTableAgentFilter
+													(c) => c.agentId === callsTableAgentFilter
 												);
 											}
 
@@ -989,6 +842,10 @@ export default function CampaignDetail() {
 									</Stack>
 								</Card>
 							</Stack>
+						</Tabs.Panel>
+
+						<Tabs.Panel value='roster' pt='md'>
+							<CampaignRosterTab campaignId={id} />
 						</Tabs.Panel>
 					</Tabs>
 				</Stack>

@@ -45,15 +45,54 @@
 }
 
 /*
- * Grid item wrapper for the four evaluation cards. They are Mantine `Card`s, not
- * `SectionCard`s, so the dimming lives here while the inner card keeps h='100%'.
+ * Grid item wrapper so the four evaluation cards stretch to equal height.
+ * They are Mantine `Card`s, not `SectionCard`s, so this lives here.
  */
-.dimmedCard {
-	height: 100%;
-	opacity: 0.5;
-	transition: opacity 160ms ease;
-}
-
 .gridCard {
 	height: 100%;
+}
+
+/* Highlights the logged-in agent's own row in RankingsTable. */
+.currentAgentRow {
+	background-color: light-dark(
+		var(--mantine-color-blue-0),
+		var(--mantine-color-blue-9)
+	);
+	box-shadow: inset 3px 0 0 var(--mantine-color-blue-5);
+}
+
+/* Clickable breakdown row on the Performance Score cards (agent drill-down). */
+.drillRow {
+	display: block;
+	width: calc(100% + 12px);
+	margin: 0 -6px;
+	padding: 4px 6px;
+	border-radius: var(--mantine-radius-sm);
+	transition: background-color 0.15s ease;
+}
+
+.drillRow:hover,
+.drillRow:focus-visible {
+	background-color: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-5)
+	);
+}
+
+/* Same box as .drillRow but inert (no issues to open). */
+.drillRowStatic {
+	display: block;
+	width: calc(100% + 12px);
+	margin: 0 -6px;
+	padding: 4px 6px;
+}
+
+/* Agent | Customer columns of SentimentEmotionSplitCard. */
+.splitColumn {
+	padding: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-md);
+	background-color: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
 }

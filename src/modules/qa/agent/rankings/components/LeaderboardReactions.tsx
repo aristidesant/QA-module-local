@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Group, Text, Tooltip, UnstyledButton } from '@mantine/core';
 import { UserReactionType } from '../types/leaderboard';
 import { useUserReaction } from '../hooks/useUserReaction';
+import { REACTION_ICON } from '../reactionMeta';
 import styles from './LeaderboardReactions.module.css';
 
 const REACTION_OPTIONS: { emoji: UserReactionType; key: string }[] = [
@@ -44,6 +45,7 @@ export const LeaderboardReactions: React.FC<LeaderboardReactionsProps> = ({
 			{REACTION_OPTIONS.map(({ emoji, key }) => {
 				const count = totals[emoji] ?? 0;
 				const mine = currentReaction === emoji;
+				const Icon = REACTION_ICON[emoji];
 
 				return (
 					<Tooltip
@@ -61,7 +63,11 @@ export const LeaderboardReactions: React.FC<LeaderboardReactionsProps> = ({
 							aria-pressed={mine}
 							onClick={() => setReaction(mine ? null : emoji)}
 						>
-							<span aria-hidden>{emoji}</span>
+							<Icon
+								size={size === 'md' ? 16 : 14}
+								className={styles.icon}
+								stroke={2}
+							/>
 							{count > 0 && <span className={styles.count}>{count}</span>}
 						</UnstyledButton>
 					</Tooltip>

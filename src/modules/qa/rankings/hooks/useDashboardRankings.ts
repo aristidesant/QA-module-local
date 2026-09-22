@@ -22,6 +22,8 @@ interface UseDashboardRankingsResult {
 	program: RankingProgram | null;
 	entries: RankingEntry[];
 	goal: RankingGoal | undefined;
+	/** The highlighted agent's own rank, when they have one — regardless of maxEntries. */
+	myPosition: { rank: number; total: number } | null;
 }
 
 /** The leaderboard's emoji reactions mapped onto the widget's own taxonomy. */
@@ -46,7 +48,9 @@ const emptyReactions = (): ReactionCounts => ({
  */
 export const useDashboardRankings = (
 	scope: DashboardRankingScope,
-	maxEntries = 5
+	maxEntries = 5,
+	/** When given, myPosition reports this agent's own rank even if it falls outside maxEntries. */
+	highlightAgentId?: string
 ): UseDashboardRankingsResult => {
 	const { t } = useTranslation('qa.rankings');
 	const programs = useRankingsStore(selectPrograms);
@@ -60,15 +64,18 @@ export const useDashboardRankings = (
 					(scope === 'all' || candidate.teams.includes(scope))
 			) ?? null;
 
-		if (!program) return { program: null, entries: [], goal: undefined };
+		if (!program) {
+			return { program: null, entries: [], goal: undefined, myPosition: null };
+		}
 
 		const standings = computeStandings(program, TEAM_CALLS);
-		const entries: RankingEntry[] = standings
-			.filter((standing) => standing.rank !== null)
+		const ranked = standings.filter((standing) => standing.rank !== null);
+		const entries: RankingEntry[] = ranked
 			.slice(0, maxEntries)
 			.map((standing) => ({
 				position: standing.rank ?? 0,
 				name: standing.agentName,
+				agentId: standing.agentId,
 				score: standing.score ?? 0,
 				reactions: Object.values(
 					reactions[program.id]?.[standing.agentId] ?? {}
@@ -85,6 +92,14 @@ export const useDashboardRankings = (
 				trendValue: Math.abs(standing.delta ?? 0),
 			}));
 
+		const mine = highlightAgentId
+			? standings.find((standing) => standing.agentId === highlightAgentId)
+			: undefined;
+		const myPosition =
+			mine && mine.rank !== null
+				? { rank: mine.rank, total: ranked.length }
+				: null;
+
 		const goal: RankingGoal = {
 			metric: t(`types.${program.evaluationType}`),
 			criteria: t(`metrics.${program.metricId}`, {
@@ -99,8 +114,8 @@ export const useDashboardRankings = (
 			)}`,
 		};
 
-		return { program, entries, goal };
-	}, [programs, reactions, scope, maxEntries, t]);
+		return { program, entries, goal, myPosition };
+	}, [programs, reactions, scope, maxEntries, highlightAgentId, t]);
 };
 
 export default useDashboardRankings;

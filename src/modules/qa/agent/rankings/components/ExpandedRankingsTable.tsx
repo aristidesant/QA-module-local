@@ -30,7 +30,7 @@ import {
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
 import { type AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
-import { buildRankIndex, getReactionsTotal } from '../gamification';
+import { buildRankIndex } from '../gamification';
 import { WinnerBadge } from './WinnerBadge';
 import LeaderboardReactions from './LeaderboardReactions';
 import { useLeaderboardStatus } from '../hooks/useLeaderboardStatus';
@@ -66,6 +66,8 @@ export interface ExpandedRankingsTableProps {
 	formatScore?: (score: number) => string;
 	/** Invoked when a row is clicked (detail drawer hook-up). */
 	onRowClick?: (entry: AgentRankingEntry) => void;
+	/** Drops the peer-reactions column — for read-only views (e.g. a supervisor's dashboard). */
+	hideReactions?: boolean;
 }
 
 /**
@@ -80,6 +82,7 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 	currentAgentId,
 	formatScore,
 	onRowClick,
+	hideReactions,
 }) => {
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: 'rank', desc: false },
@@ -92,8 +95,8 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 	/** Rank lookup so each row can read the score of the position below it. */
 	const rankIndex = useMemo(() => buildRankIndex(data), [data]);
 
-	const columns = useMemo<ColumnDef<AgentRankingEntry>[]>(
-		() => [
+	const columns = useMemo<ColumnDef<AgentRankingEntry>[]>(() => {
+		const allColumns: (ColumnDef<AgentRankingEntry> & { id?: string })[] = [
 			{
 				accessorKey: 'rank',
 				header: t('table.rank'),
@@ -179,7 +182,6 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 			},
 			{
 				id: 'reactions',
-				accessorFn: getReactionsTotal,
 				enableSorting: false,
 				header: t('table.reactions'),
 				size: 260,
@@ -190,9 +192,12 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 					/>
 				),
 			},
-		],
-		[rankIndex, isCompleted, badges, formatScore, t]
-	);
+		];
+
+		return hideReactions
+			? allColumns.filter((column) => column.id !== 'reactions')
+			: allColumns;
+	}, [rankIndex, isCompleted, badges, formatScore, t, hideReactions]);
 
 	const table = useReactTable({
 		data,

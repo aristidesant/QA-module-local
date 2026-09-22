@@ -19,11 +19,6 @@ export {
 export { COPCScoreCard } from './COPCScoreCard';
 export { SentimentScaleCard } from './SentimentScaleCard';
 export { BusinessInsightsCard } from './BusinessInsightsCard';
-export {
-	DashboardEvaluationFilter,
-	isCardVisible,
-} from './DashboardEvaluationFilter';
-export type { DashboardEvaluationType } from './DashboardEvaluationFilter';
 export { AgentInbox } from './AgentInbox';
 
 // Phase 3: Agent & Supervisor features
@@ -60,12 +55,24 @@ export type { BestWorstCall } from './BestWorstCallsPanel';
 
 // Performance Score row: Quality Assurance / Compliance / Sentiment & Emotion
 export { QualityAssuranceCard } from './QualityAssuranceCard';
-export type { QualityAssuranceScore } from './QualityAssuranceCard';
+export type {
+	QualityAssuranceScore,
+	QaCategoryKey,
+} from './QualityAssuranceCard';
 export { ComplianceCard, getComplianceColor } from './ComplianceCard';
+export { OperationalCard } from './OperationalCard';
+export { TeamBurnoutRiskCard } from './TeamBurnoutRiskCard';
 export { SentimentEmotionCard, getSentimentBand } from './SentimentEmotionCard';
+export { SentimentEmotionSplitCard } from './SentimentEmotionSplitCard';
+export type { SentimentSide } from './SentimentEmotionSplitCard';
 
 // Single-table Best/Worst calls view with a Best/Worst segmented control
 export { BestWorstCallsTable } from './BestWorstCallsTable';
+
+// Agent dashboard: last coaching session + pending learning material
+export { CoachingLearningWidget } from './CoachingLearningWidget';
+export type { PendingLearningItem } from './CoachingLearningWidget';
+export { CommitLearningModal } from './CommitLearningModal';
 
 // Task 2: Burnout Risk Widget for agent wellbeing monitoring
 export { default as BurnoutRiskWidget } from './BurnoutRiskWidget';

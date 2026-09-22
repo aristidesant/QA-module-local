@@ -83,7 +83,11 @@ import {
 import { unreadCountFor } from '~/modules/qa/inbox/helpers';
 import { useDisputesStore, selectCases } from '~/stores/qa/disputesStore';
 import { casesForRole, openCount } from '~/modules/qa/disputes/cases/helpers';
-import { roleNavigationGroupedMap, type NavGroup } from './roleNavigation';
+import {
+	roleNavigationGroupedMap,
+	roleNavigationMap,
+	type NavGroup,
+} from './roleNavigation';
 
 export type SidebarNavItem = {
 	key: string;
@@ -101,6 +105,8 @@ export type SidebarNavItem = {
 	disabled?: boolean;
 	/** Badge type to display count or status indicator */
 	badge?: 'disputes' | 'inbox';
+	/** Extra path prefixes that keep this item active (e.g. a detail page living under another route). */
+	activePaths?: string[];
 };
 
 type SidebarSection = {
@@ -527,7 +533,7 @@ const isNavGroup = (item: SidebarNavItem | NavGroup): item is NavGroup => {
 // docs/superpowers/specs/2026-07-24-role-preview-switcher-design.md for the
 // full role -> item mapping and which destinations are real vs. placeholder.
 const rolePreviewNav: Record<PreviewRole, (SidebarNavItem | NavGroup)[]> = {
-	agent: roleNavigationGroupedMap.agent(),
+	agent: roleNavigationMap.agent(),
 	supervisor: roleNavigationGroupedMap.supervisor(),
 	operationManager: roleNavigationGroupedMap.operationManager(),
 	qaManager: roleNavigationGroupedMap.qaManager(),
@@ -929,7 +935,14 @@ export const Sidebar: React.FC = () => {
 				<Divider className={styles.brandDivider} />
 			</div>
 
-			<Stack gap='xs' className={styles.primaryLinks}>
+			<Stack
+				gap='xs'
+				className={
+					sectionNav.length === 0
+						? `${styles.primaryLinks} ${styles.primaryLinksScrollable}`
+						: styles.primaryLinks
+				}
+			>
 				{primaryNav.map((navItem) => {
 					if (isNavGroup(navItem)) {
 						// Render as group (collapsible or not)
@@ -1010,7 +1023,14 @@ export const Sidebar: React.FC = () => {
 
 			<Divider className={styles.divider} />
 
-			<div className={styles.mainScrollArea} ref={scrollContainerRef}>
+			<div
+				className={
+					sectionNav.length === 0
+						? styles.mainScrollAreaCollapsed
+						: styles.mainScrollArea
+				}
+				ref={scrollContainerRef}
+			>
 				<Stack gap='xs' className={styles.menuList}>
 					<Stack gap='xs' className={styles.sectionsList}>
 						{sectionNav.map((section) => (
@@ -1306,6 +1326,14 @@ const isLinkActive = (item: SidebarNavItem, pathname: string) => {
 
 	if (item.to === '/campaigns') {
 		return pathname === '/campaigns' || pathname.startsWith('/campaign/');
+	}
+
+	if (
+		item.activePaths?.some(
+			(p) => pathname === p || pathname.startsWith(`${p}/`)
+		)
+	) {
+		return true;
 	}
 
 	return pathname === item.to || pathname.startsWith(`${item.to}/`);

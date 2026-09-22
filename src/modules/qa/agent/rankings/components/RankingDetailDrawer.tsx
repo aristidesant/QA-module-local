@@ -1,18 +1,21 @@
 import React from 'react';
 import {
-	Badge,
 	Divider,
 	Group,
 	Paper,
 	Stack,
 	Tabs,
 	Text,
+	ThemeIcon,
 	Tooltip,
 } from '@mantine/core';
 import {
 	IconAward,
-	IconChartBar,
+	IconArrowDownRight,
+	IconArrowUpRight,
+	IconBolt,
 	IconHeartHandshake,
+	IconMinus,
 } from '@tabler/icons-react';
 import AppDrawer from '~/components/AppDrawer';
 import type { AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
@@ -27,9 +30,8 @@ import { useTranslation } from 'react-i18next';
 import type { RankingProgram } from '~/models/qa/rankingPrograms';
 import { formatScore, formatTarget } from '~/modules/qa/rankings/helpers';
 import AchievementsTab from './tabs/AchievementsTab';
-import MetricsTab from './tabs/MetricsTab';
 import ReactionsTab from './tabs/ReactionsTab';
-import ReactionButtons from './ReactionButtons';
+import LeaderboardReactions from './LeaderboardReactions';
 import { useUserReaction } from '../hooks/useUserReaction';
 import styles from './RankingDetailDrawer.module.css';
 
@@ -60,31 +62,33 @@ const QuickStat: React.FC<QuickStatProps> = ({ label, value }) => (
 	</div>
 );
 
-interface GamificationChipProps {
-	/** Indicator emoji (📊 / 🔥 / 💪 / 🤝). */
-	emoji: string;
+interface SignalRowProps {
+	icon: React.ComponentType<{ size?: number }>;
 	label: string;
 	tooltip: string;
 	color: string;
 }
 
-/** One compact indicator of the gamification summary row. */
-const GamificationChip: React.FC<GamificationChipProps> = ({
-	emoji,
+/** One line of the compact signal summary: rank movement, point lead, reactions, badges. */
+const SignalRow: React.FC<SignalRowProps> = ({
+	icon: Icon,
 	label,
 	tooltip,
 	color,
 }) => (
-	<Tooltip label={tooltip} withArrow>
-		<Badge variant='light' color={color} radius='sm' size='lg'>
-			<span aria-hidden>{emoji}</span> {label}
-		</Badge>
+	<Tooltip label={tooltip} withArrow position='left'>
+		<Group gap='xs' wrap='nowrap'>
+			<ThemeIcon size='sm' variant='light' color={color} radius='sm'>
+				<Icon size={14} />
+			</ThemeIcon>
+			<Text size='sm'>{label}</Text>
+		</Group>
 	</Tooltip>
 );
 
 /**
- * Detail drawer for a leaderboard row: quick stats plus achievements, peer
- * reactions and metric comparison tabs.
+ * Detail drawer for a leaderboard row: quick stats plus achievements and
+ * peer reactions tabs.
  */
 const DrawerBody: React.FC<
 	Omit<RankingDetailDrawerProps, 'entry'> & { entry: AgentRankingEntry }
@@ -94,9 +98,7 @@ const DrawerBody: React.FC<
 	const trend = entry.rankTrend ?? 0;
 	const streak = entry.streak ?? 0;
 	const pointLead = getPointLeadFromRoster(entry, data);
-	const { currentReaction, totals, setReaction } = useUserReaction(
-		entry.agentId
-	);
+	const { totals } = useUserReaction(entry.agentId);
 	// Peer reactions given on this ranking, the same number the row shows.
 	const reactionsTotal = Object.values(totals).reduce(
 		(sum, count) => sum + count,
@@ -144,60 +146,56 @@ const DrawerBody: React.FC<
 
 					<Divider my='sm' />
 
-					{/* Gamification summary with improved context labels */}
+					{/* Signals not already covered by the Rank/Score/Streak stats above. */}
 					<Stack gap='xs'>
-						<GamificationChip
-							emoji='📊'
-							label={`${trend > 0 ? 'Up' : trend < 0 ? 'Down' : 'Stable'} ${Math.abs(trend)} positions`}
+						<SignalRow
+							icon={
+								trend > 0
+									? IconArrowUpRight
+									: trend < 0
+										? IconArrowDownRight
+										: IconMinus
+							}
+							label={
+								trend === 0
+									? 'Held position since last week'
+									: `${trend > 0 ? 'Up' : 'Down'} ${Math.abs(trend)} position${Math.abs(trend) === 1 ? '' : 's'} since last week`
+							}
 							tooltip={getRankMovementTooltip(entry)}
 							color={getRankMovementColor(trend)}
 						/>
-						<GamificationChip
-							emoji='🔥'
-							label={`${streak} week${streak === 1 ? '' : 's'} streak`}
-							tooltip={
-								streak > 0
-									? `${streak} consecutive week${streak === 1 ? '' : 's'} in the top of the ranking`
-									: 'No active streak this period'
-							}
-							color={streak > 0 ? 'orange' : 'gray'}
-						/>
-						<GamificationChip
-							emoji='💪'
+						<SignalRow
+							icon={IconBolt}
 							label={
 								pointLead.points === null
-									? 'Tied with next'
-									: `${pointLead.points} points ahead`
+									? 'Tied with next position'
+									: `${pointLead.points} point${pointLead.points === 1 ? '' : 's'} ahead of next`
 							}
 							tooltip={getPointLeadTooltip(pointLead)}
 							color={getPointLeadColor(pointLead.points)}
 						/>
-						<GamificationChip
-							emoji='🤝'
+						<SignalRow
+							icon={IconHeartHandshake}
 							label={`${reactionsTotal} reaction${reactionsTotal === 1 ? '' : 's'} received`}
 							tooltip={`${reactionsTotal} peer reaction${reactionsTotal === 1 ? '' : 's'} received`}
-							color={reactionsTotal > 0 ? 'grape' : 'gray'}
+							color={reactionsTotal > 0 ? 'blue' : 'gray'}
 						/>
-						{entry.achievements?.length ? (
-							<Badge variant='light' color='blue' radius='sm' size='lg'>
-								{entry.achievements.length} badge
-								{entry.achievements.length === 1 ? '' : 's'}
-							</Badge>
-						) : null}
+						<SignalRow
+							icon={IconAward}
+							label={`${entry.achievements?.length ?? 0} badge${(entry.achievements?.length ?? 0) === 1 ? '' : 's'} earned`}
+							tooltip='See the Achievements tab for detail'
+							color={entry.achievements?.length ? 'blue' : 'gray'}
+						/>
 					</Stack>
 				</Paper>
 
 				<Divider />
 
-				<Stack gap='sm'>
-					<ReactionButtons
-						currentReaction={currentReaction}
-						onReactionChange={setReaction}
-					/>
-					<Text size='xs' c='dimmed'>
-						Your reaction helps celebrate team achievements
-					</Text>
-				</Stack>
+				<LeaderboardReactions
+					agentId={entry.agentId}
+					agentName={entry.agentName}
+					size='md'
+				/>
 
 				<Tabs
 					defaultValue='achievements'
@@ -218,9 +216,6 @@ const DrawerBody: React.FC<
 						>
 							Reactions
 						</Tabs.Tab>
-						<Tabs.Tab value='metrics' leftSection={<IconChartBar size={16} />}>
-							Metrics
-						</Tabs.Tab>
 					</Tabs.List>
 
 					<Tabs.Panel value='achievements' pt='md'>
@@ -228,11 +223,7 @@ const DrawerBody: React.FC<
 					</Tabs.Panel>
 
 					<Tabs.Panel value='reactions' pt='md'>
-						<ReactionsTab entry={entry} />
-					</Tabs.Panel>
-
-					<Tabs.Panel value='metrics' pt='md'>
-						<MetricsTab entry={entry} />
+						<ReactionsTab entry={entry} programId={program.id} />
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>

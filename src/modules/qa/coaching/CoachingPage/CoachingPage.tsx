@@ -1,15 +1,28 @@
-﻿import { useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
-import { Badge, Button, Group, SimpleGrid, Stack, Tabs, Text, Title } from '@mantine/core';
-import { IconAlertTriangle, IconBook, IconCalendarEvent, IconPlus } from '@tabler/icons-react';
+import {
+	Badge,
+	Button,
+	Group,
+	SimpleGrid,
+	Stack,
+	Tabs,
+	Text,
+	Title,
+} from '@mantine/core';
+import {
+	IconAlertTriangle,
+	IconBook,
+	IconCalendarEvent,
+	IconPlus,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
 import { StatCard } from '~/components/StatCard';
-import type { CoachingQueueItem, CoachingRule, LmsContent } from '~/models/qa';
+import type { CoachingRule, LmsContent } from '~/models/qa';
 import { notifySuccess, notifyWarning } from '~/modules/qa/utils/notifications';
 import {
 	useLmsStore,
-	notifyAgent,
 	selectAssignments,
 	selectContent,
 	selectEnrollments,
@@ -17,14 +30,12 @@ import {
 } from '~/stores/qa/lmsStore';
 import {
 	useCoachingStore,
-	selectCoachingActivity,
 	selectCohorts,
 	selectRules,
 	selectSessions,
 	selectSnoozed,
 } from '~/stores/qa/coachingStore';
 import { useTeamStore } from '~/stores/qa/teamStore';
-import { AGENT_LMS_PATH } from '~/modules/qa/lms/constants';
 import {
 	daysUntil,
 	isOverdue,
@@ -33,13 +44,14 @@ import {
 	toAssignmentRows,
 	today,
 } from '~/modules/qa/lms/helpers';
-import { AssignContentDrawer, type AssignPreset } from '~/modules/qa/lms/components/AssignContentDrawer';
-import { SendMessageModal } from '~/modules/qa/team/components/modals/SendMessageModal';
+import {
+	AssignContentDrawer,
+	type AssignPreset,
+} from '~/modules/qa/lms/components/AssignContentDrawer';
 import { roleFromPath, teamBasePath } from '~/modules/qa/team/helpers';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import { COACHING_TABS, type CoachingTab } from '../constants';
-import { areaHealth, buildQueue } from '../helpers';
-import { QueueTab } from './tabs/QueueTab';
+import { buildQueue } from '../helpers';
 import { AgentsTab, buildAgentRows } from './tabs/AgentsTab';
 import { CohortsTab } from './tabs/CohortsTab';
 import { RulesTab } from './tabs/RulesTab';
@@ -50,7 +62,10 @@ import { CohortDrawer } from '../components/CohortDrawer';
 import { CreateCohortModal } from '../components/CreateCohortModal';
 import { CoachingRuleEditorDrawer } from '../components/CoachingRuleEditorDrawer';
 import { CoachingRuleDetailDrawer } from '../components/CoachingRuleDetailDrawer';
-import { SessionEditorDrawer, type SessionPreset } from '../components/SessionEditorDrawer';
+import {
+	SessionEditorDrawer,
+	type SessionPreset,
+} from '../components/SessionEditorDrawer';
 import { SessionDetailDrawer } from '../components/SessionDetailDrawer';
 
 export default function CoachingPage() {
@@ -71,12 +86,21 @@ export default function CoachingPage() {
 	const rules = useCoachingStore(selectRules);
 	const sessions = useCoachingStore(selectSessions);
 	const cohorts = useCoachingStore(selectCohorts);
-	const activity = useCoachingStore(selectCoachingActivity);
 	const snoozed = useCoachingStore(selectSnoozed);
 
-	const [assignState, setAssignState] = useState<{ opened: boolean; preset?: AssignPreset }>({ opened: false });
-	const [sessionEditor, setSessionEditor] = useState<{ opened: boolean; preset?: SessionPreset }>({ opened: false });
-	const [ruleEditor, setRuleEditor] = useState<{ opened: boolean; mode: 'create' | 'edit'; rule: CoachingRule | null }>({
+	const [assignState, setAssignState] = useState<{
+		opened: boolean;
+		preset?: AssignPreset;
+	}>({ opened: false });
+	const [sessionEditor, setSessionEditor] = useState<{
+		opened: boolean;
+		preset?: SessionPreset;
+	}>({ opened: false });
+	const [ruleEditor, setRuleEditor] = useState<{
+		opened: boolean;
+		mode: 'create' | 'edit';
+		rule: CoachingRule | null;
+	}>({
 		opened: false,
 		mode: 'create',
 		rule: null,
@@ -86,19 +110,24 @@ export default function CoachingPage() {
 	const [cohortId, setCohortId] = useState<string | null>(null);
 	const [ruleId, setRuleId] = useState<string | null>(null);
 	const [sessionId, setSessionId] = useState<string | null>(null);
-	const [checkInAgentId, setCheckInAgentId] = useState<string | null>(null);
 	const [cohortModal, setCohortModal] = useState(false);
 
 	const scopeProfiles = useMemo(
 		() =>
 			Object.values(profilesMap).filter(
-				(p) => role === 'qa-manager' || p.agent.supervisorId === SUPERVISOR_PERSONA.id
+				(p) =>
+					role === 'qa-manager' ||
+					p.agent.supervisorId === SUPERVISOR_PERSONA.id
 			),
 		[profilesMap, role]
 	);
 
 	const contentById = useMemo(
-		() => Object.fromEntries(content.map((c) => [c.id, c])) as Record<string, LmsContent>,
+		() =>
+			Object.fromEntries(content.map((c) => [c.id, c])) as Record<
+				string,
+				LmsContent
+			>,
 		[content]
 	);
 	const rows = useMemo(
@@ -110,11 +139,15 @@ export default function CoachingPage() {
 		[sessions, scopeAgents]
 	);
 	const scopeAssignments = useMemo(
-		() => assignments.filter((a) => scopeAgents.some((x) => x.id === a.agentId)),
+		() =>
+			assignments.filter((a) => scopeAgents.some((x) => x.id === a.agentId)),
 		[assignments, scopeAgents]
 	);
 	const scopeCohorts = useMemo(
-		() => cohorts.filter((c) => c.agentIds.some((id) => scopeAgents.some((a) => a.id === id))),
+		() =>
+			cohorts.filter((c) =>
+				c.agentIds.some((id) => scopeAgents.some((a) => a.id === id))
+			),
 		[cohorts, scopeAgents]
 	);
 	const scopeRules = useMemo(
@@ -131,12 +164,17 @@ export default function CoachingPage() {
 
 	const queue = useMemo(
 		() =>
-			buildQueue(scopeProfiles, scopeAssignments, scopeSessions, content, t).filter(
+			buildQueue(
+				scopeProfiles,
+				scopeAssignments,
+				scopeSessions,
+				content,
+				t
+			).filter(
 				(item) => !snoozed[item.agentId] || snoozed[item.agentId] < today()
 			),
 		[scopeProfiles, scopeAssignments, scopeSessions, content, t, snoozed]
 	);
-	const health = useMemo(() => areaHealth(scopeProfiles), [scopeProfiles]);
 	const agentRows = useMemo(
 		() => buildAgentRows(scopeProfiles, scopeAssignments, scopeSessions, queue),
 		[scopeProfiles, scopeAssignments, scopeSessions, queue]
@@ -151,23 +189,52 @@ export default function CoachingPage() {
 		[scopeAgents]
 	);
 
-	const measured = scopeAssignments.filter((a) => a.impact && a.impact.verdict !== 'PENDING');
+	const measured = scopeAssignments.filter(
+		(a) => a.impact && a.impact.verdict !== 'PENDING'
+	);
 	const kpis = {
 		attention: queue.filter((q) => q.priority !== 'LOW').length,
-		activePlans: scopeAssignments.filter((a) => a.status !== 'COMPLETED').length,
+		activePlans: scopeAssignments.filter((a) => a.status !== 'COMPLETED')
+			.length,
 		pendingResponses: scopeAssignments.filter(
-			(a) => a.acceptance.status === 'PENDING' || a.acceptance.status === 'NO_RESPONSE'
+			(a) =>
+				a.acceptance.status === 'PENDING' ||
+				a.acceptance.status === 'NO_RESPONSE'
 		).length,
 		overdue: scopeAssignments.filter(isOverdue).length,
 		improvedRate: measured.length
-			? Math.round((measured.filter((a) => a.impact?.verdict === 'IMPROVED').length / measured.length) * 100)
+			? Math.round(
+					(measured.filter((a) => a.impact?.verdict === 'IMPROVED').length /
+						measured.length) *
+						100
+				)
 			: 0,
 		sessionsThisWeek: scopeSessions.filter(
-			(s) => s.status === 'SCHEDULED' && daysUntil(s.date) >= 0 && daysUntil(s.date) <= 7
+			(s) =>
+				s.status === 'SCHEDULED' &&
+				daysUntil(s.date) >= 0 &&
+				daysUntil(s.date) <= 7
 		).length,
 	};
 
-	const tab = (searchParams.get('tab') as CoachingTab | null) ?? 'queue';
+	// Deep link from outside the page (e.g. the Burnout Risk widget): open the
+	// schedule-session drawer preset for that agent, then drop the param.
+	useEffect(() => {
+		const scheduleAgentId = searchParams.get('schedule');
+		if (!scheduleAgentId) return;
+		setSessionEditor({ opened: true, preset: { agentId: scheduleAgentId } });
+		setSearchParams(
+			(prev) => {
+				const next = new URLSearchParams(prev);
+				next.delete('schedule');
+				return next;
+			},
+			{ replace: true }
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [searchParams]);
+
+	const tab = (searchParams.get('tab') as CoachingTab | null) ?? 'agents';
 	const setTab = (value: string | null) => {
 		setSearchParams(
 			(prev) => {
@@ -179,55 +246,8 @@ export default function CoachingPage() {
 		);
 	};
 
-	const pathTitle = (id: string | null) => paths.find((p) => p.id === id)?.title ?? '—';
-
-	const handleQueueAction = (item: CoachingQueueItem) => {
-		switch (item.suggestedAction) {
-			case 'ASSIGN_CONTENT':
-				setAssignState({
-					opened: true,
-					preset: {
-						agentIds: [item.agentId],
-						contentIds: item.suggestedContentIds,
-						reason: item.reasons[0]?.detail ?? '',
-					},
-				});
-				break;
-			case 'SCHEDULE_SESSION':
-				setSessionEditor({ opened: true, preset: { agentId: item.agentId, area: item.weakestArea } });
-				break;
-			case 'REVIEW_REQUEST':
-				setAgentDrawerTab('assignments');
-				setAgentDrawerId(item.agentId);
-				break;
-			case 'SEND_REMINDER': {
-				notifyAgent(
-					item.agentId,
-					{ name: persona.name, role: persona.role },
-					{
-						priority: 'HIGH',
-						title: 'Reminder: please respond to your training assignment',
-						message: `${persona.name} is waiting for your answer. ${item.reasons[0]?.detail ?? ''}`,
-						actions: [{ label: 'Open My Learning', url: `${AGENT_LMS_PATH}?tab=assignments`, icon: 'book' }],
-					}
-				);
-				useCoachingStore.getState().logActivity({
-					type: 'REMINDER_SENT',
-					agentId: item.agentId,
-					agentName: item.agentName,
-					title: `Reminder sent to ${item.agentName}`,
-					description: item.reasons[0]?.detail ?? '',
-					area: null,
-					link: `?tab=agents&agentId=${item.agentId}`,
-				});
-				notifySuccess(t('queue.reminderSent', { name: item.agentName }));
-				break;
-			}
-			case 'CHECK_IN':
-				setCheckInAgentId(item.agentId);
-				break;
-		}
-	};
+	const pathTitle = (id: string | null) =>
+		paths.find((p) => p.id === id)?.title ?? '—';
 
 	const handleRunNow = (rule: CoachingRule, agentIds: string[]) => {
 		if (agentIds.length === 0) {
@@ -272,7 +292,9 @@ export default function CoachingPage() {
 						</Button>
 						<Button
 							leftSection={<IconPlus size={16} />}
-							onClick={() => setRuleEditor({ opened: true, mode: 'create', rule: null })}
+							onClick={() =>
+								setRuleEditor({ opened: true, mode: 'create', rule: null })
+							}
 						>
 							{t('newRule')}
 						</Button>
@@ -283,15 +305,25 @@ export default function CoachingPage() {
 					<StatCard
 						title={t('kpi.attention')}
 						value={kpis.attention}
-						color={kpis.attention > 0 ? 'var(--mantine-color-red-7)' : undefined}
+						color={
+							kpis.attention > 0 ? 'var(--mantine-color-red-7)' : undefined
+						}
 						icon={<IconAlertTriangle size={18} />}
 						variant='compact'
 					/>
-					<StatCard title={t('kpi.activePlans')} value={kpis.activePlans} variant='compact' />
+					<StatCard
+						title={t('kpi.activePlans')}
+						value={kpis.activePlans}
+						variant='compact'
+					/>
 					<StatCard
 						title={t('kpi.pendingResponses')}
 						value={kpis.pendingResponses}
-						color={kpis.pendingResponses > 0 ? 'var(--mantine-color-yellow-7)' : undefined}
+						color={
+							kpis.pendingResponses > 0
+								? 'var(--mantine-color-yellow-7)'
+								: undefined
+						}
 						variant='compact'
 					/>
 					<StatCard
@@ -306,35 +338,34 @@ export default function CoachingPage() {
 						color='var(--mantine-color-green-7)'
 						variant='compact'
 					/>
-					<StatCard title={t('kpi.sessionsThisWeek')} value={kpis.sessionsThisWeek} variant='compact' />
+					<StatCard
+						title={t('kpi.sessionsThisWeek')}
+						value={kpis.sessionsThisWeek}
+						variant='compact'
+					/>
 				</SimpleGrid>
 
 				<Tabs value={tab} onChange={setTab} keepMounted={false}>
 					<Tabs.List>
 						{COACHING_TABS.map(({ value, labelKey, icon: Icon }) => {
 							const count =
-								value === 'queue'
-									? kpis.attention
-									: value === 'agents'
-										? agentRows.length
-										: value === 'cohorts'
-											? scopeCohorts.length
-											: value === 'rules'
-												? scopeRules.filter((r) => r.status === 'ACTIVE').length
-												: value === 'sessions'
-													? scopeSessions.filter((s) => s.status === 'SCHEDULED').length
-													: measured.length;
+								value === 'agents'
+									? agentRows.length
+									: value === 'cohorts'
+										? scopeCohorts.length
+										: value === 'rules'
+											? scopeRules.filter((r) => r.status === 'ACTIVE').length
+											: value === 'sessions'
+												? scopeSessions.filter((s) => s.status === 'SCHEDULED')
+														.length
+												: measured.length;
 							return (
 								<Tabs.Tab
 									key={value}
 									value={value}
 									leftSection={<Icon size={16} />}
 									rightSection={
-										<Badge
-											size='xs'
-											variant='light'
-											color={value === 'queue' && kpis.attention > 0 ? 'red' : 'gray'}
-										>
+										<Badge size='xs' variant='light' color='gray'>
 											{count}
 										</Badge>
 									}
@@ -344,24 +375,6 @@ export default function CoachingPage() {
 							);
 						})}
 					</Tabs.List>
-
-					<Tabs.Panel value='queue' pt='md'>
-						<QueueTab
-							queue={queue}
-							health={health}
-							activity={activity}
-							contentById={contentById}
-							role={role}
-							onAction={handleQueueAction}
-							onDetails={(agentId) => {
-								setAgentDrawerTab('timeline');
-								setAgentDrawerId(agentId);
-							}}
-							onProfile={(agentId) => navigate(`${teamBasePath(role)}/${agentId}?tab=coaching`)}
-							onSnooze={(agentId) => useCoachingStore.getState().snoozeAgent(agentId, 7)}
-							onActivityLink={(link) => setSearchParams(new URLSearchParams(link.replace(/^\?/, '')))}
-						/>
-					</Tabs.Panel>
 
 					<Tabs.Panel value='agents' pt='md'>
 						<AgentsTab
@@ -389,8 +402,12 @@ export default function CoachingPage() {
 						<RulesTab
 							rules={scopeRules}
 							pathTitle={pathTitle}
-							onCreate={() => setRuleEditor({ opened: true, mode: 'create', rule: null })}
-							onEdit={(rule) => setRuleEditor({ opened: true, mode: 'edit', rule })}
+							onCreate={() =>
+								setRuleEditor({ opened: true, mode: 'create', rule: null })
+							}
+							onEdit={(rule) =>
+								setRuleEditor({ opened: true, mode: 'edit', rule })
+							}
 							onOpen={setRuleId}
 							onDuplicate={(rule) => {
 								const copy = useCoachingStore.getState().duplicateRule(rule.id);
@@ -407,7 +424,11 @@ export default function CoachingPage() {
 								const next = rule.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE';
 								useCoachingStore.getState().setRuleStatus(rule.id, next);
 								notifySuccess(
-									t(next === 'ACTIVE' ? 'rules.notifications.activated' : 'rules.notifications.paused')
+									t(
+										next === 'ACTIVE'
+											? 'rules.notifications.activated'
+											: 'rules.notifications.paused'
+									)
 								);
 							}}
 							onRunNow={(rule) => setRuleId(rule.id)}
@@ -465,8 +486,12 @@ export default function CoachingPage() {
 				rule={ruleEditor.rule}
 				role={role}
 				persona={persona}
-				onClose={() => setRuleEditor({ opened: false, mode: 'create', rule: null })}
-				onSaved={() => setRuleEditor({ opened: false, mode: 'create', rule: null })}
+				onClose={() =>
+					setRuleEditor({ opened: false, mode: 'create', rule: null })
+				}
+				onSaved={() =>
+					setRuleEditor({ opened: false, mode: 'create', rule: null })
+				}
 			/>
 
 			<CoachingRuleDetailDrawer
@@ -492,12 +517,23 @@ export default function CoachingPage() {
 				initialTab={agentDrawerTab}
 				onClose={() => setAgentDrawerId(null)}
 				onAssign={() => {
-					if (agentDrawerId) setAssignState({ opened: true, preset: { agentIds: [agentDrawerId] } });
+					if (agentDrawerId)
+						setAssignState({
+							opened: true,
+							preset: { agentIds: [agentDrawerId] },
+						});
 				}}
 				onSchedule={() => {
-					if (agentDrawerId) setSessionEditor({ opened: true, preset: { agentId: agentDrawerId } });
+					if (agentDrawerId)
+						setSessionEditor({
+							opened: true,
+							preset: { agentId: agentDrawerId },
+						});
 				}}
-				onProfile={() => agentDrawerId && navigate(`${teamBasePath(role)}/${agentDrawerId}?tab=coaching`)}
+				onProfile={() =>
+					agentDrawerId &&
+					navigate(`${teamBasePath(role)}/${agentDrawerId}?tab=coaching`)
+				}
 				onOpenSession={(id) => {
 					setAgentDrawerId(null);
 					setSessionId(id);
@@ -505,7 +541,11 @@ export default function CoachingPage() {
 			/>
 
 			<CohortDrawer
-				cohort={cohortId ? (scopeCohorts.find((c) => c.id === cohortId) ?? null) : null}
+				cohort={
+					cohortId
+						? (scopeCohorts.find((c) => c.id === cohortId) ?? null)
+						: null
+				}
 				paths={paths}
 				enrollments={enrollments}
 				assignments={assignments}
@@ -515,7 +555,13 @@ export default function CoachingPage() {
 				onAssignPath={() => {
 					const cohort = scopeCohorts.find((c) => c.id === cohortId);
 					if (cohort) {
-						setAssignState({ opened: true, preset: { cohortId: cohort.id, pathId: cohort.pathId ?? undefined } });
+						setAssignState({
+							opened: true,
+							preset: {
+								cohortId: cohort.id,
+								pathId: cohort.pathId ?? undefined,
+							},
+						});
 						setCohortId(null);
 					}
 				}}
@@ -527,7 +573,10 @@ export default function CoachingPage() {
 				}}
 				onScheduleGroup={() => {
 					if (cohortId) {
-						setSessionEditor({ opened: true, preset: { cohortId, type: 'GROUP' } });
+						setSessionEditor({
+							opened: true,
+							preset: { cohortId, type: 'GROUP' },
+						});
 						setCohortId(null);
 					}
 				}}
@@ -545,8 +594,16 @@ export default function CoachingPage() {
 			/>
 
 			<SessionDetailDrawer
-				session={sessionId ? (sessions.find((s) => s.id === sessionId) ?? null) : null}
-				profile={sessionId ? profilesMap[sessions.find((s) => s.id === sessionId)?.agentId ?? ''] : undefined}
+				session={
+					sessionId ? (sessions.find((s) => s.id === sessionId) ?? null) : null
+				}
+				profile={
+					sessionId
+						? profilesMap[
+								sessions.find((s) => s.id === sessionId)?.agentId ?? ''
+							]
+						: undefined
+				}
 				assignments={assignments}
 				contentById={contentById}
 				opened={sessionId !== null}
@@ -560,15 +617,6 @@ export default function CoachingPage() {
 				role={role}
 				persona={persona}
 			/>
-
-			{checkInAgentId && (
-				<SendMessageModal
-					agentId={checkInAgentId}
-					role={role}
-					opened={checkInAgentId !== null}
-					onClose={() => setCheckInAgentId(null)}
-				/>
-			)}
 		</ContentContainer>
 	);
 }
