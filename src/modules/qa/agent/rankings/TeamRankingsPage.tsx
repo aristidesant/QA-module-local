@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Badge, Stack, Tabs } from '@mantine/core';
+import { Badge, Group, SegmentedControl, Stack, Tabs } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { IconHistory, IconTrophy } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
@@ -11,9 +11,21 @@ import type { AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
 import { AGENT_PERSONA_ID } from '~/modules/qa/team/constants';
 import { useRankingsStore } from '~/stores/qa/rankingsStore';
 import { useActiveRanking } from '~/modules/qa/rankings/hooks/useActiveRanking';
-import { formatScore, toRankingEntry } from '~/modules/qa/rankings/helpers';
+import {
+	computeStandings,
+	formatScore,
+	toRankingEntry,
+} from '~/modules/qa/rankings/helpers';
 import PodiumStrip from '~/modules/qa/rankings/components/PodiumStrip';
 import PastRankingsCard from '~/modules/qa/rankings/components/PastRankingsCard';
+import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
+import { TODAY } from '~/modules/qa/analytics/constants';
+import {
+	PERFORMANCE_SCORE_PERIODS,
+	DEFAULT_PERFORMANCE_SCORE_PERIOD,
+	performanceScoreDays,
+	type PerformanceScorePeriod,
+} from '~/modules/qa/dashboard/constants';
 import ExpandedRankingsTable from './components/ExpandedRankingsTable';
 import RankingCardGrid from './components/RankingCardGrid';
 import RankingDetailDrawer from './components/RankingDetailDrawer';
@@ -30,10 +42,19 @@ type RankingsTab = 'current' | 'past';
  */
 export const TeamRankingsPage: React.FC = () => {
 	const { t } = useTranslation('qa.rankings');
+	const { t: tDashboard } = useTranslation('qa.dashboard');
 	const isCompact = useMediaQuery(TABLE_BREAKPOINT);
-	const { program, standings, pastPrograms } = useActiveRanking();
+	const { program, pastPrograms } = useActiveRanking();
 	const syncMilestones = useRankingsStore((s) => s.syncMilestones);
 	const [searchParams, setSearchParams] = useSearchParams();
+	const [period, setPeriod] = useState<PerformanceScorePeriod>(
+		DEFAULT_PERFORMANCE_SCORE_PERIOD
+	);
+	const days = performanceScoreDays(period);
+	const standings = useMemo(
+		() => (program ? computeStandings(program, TEAM_CALLS, TODAY, days) : []),
+		[program, days]
+	);
 
 	const [selectedEntry, setSelectedEntry] = useState<AgentRankingEntry | null>(
 		null
@@ -101,9 +122,20 @@ export const TeamRankingsPage: React.FC = () => {
 								title={t('agent.leaderboard')}
 								description={t('agent.leaderboardDescription')}
 								headerActions={
-									<Badge variant='light' size='sm'>
-										{standings.length}
-									</Badge>
+									<Group gap='sm' wrap='nowrap'>
+										<SegmentedControl
+											size='xs'
+											value={period}
+											onChange={(v) => setPeriod(v as PerformanceScorePeriod)}
+											data={PERFORMANCE_SCORE_PERIODS.map((p) => ({
+												value: p.value,
+												label: tDashboard(p.labelKey),
+											}))}
+										/>
+										<Badge variant='light' size='sm'>
+											{standings.length}
+										</Badge>
+									</Group>
 								}
 							>
 								{isCompact ? (
