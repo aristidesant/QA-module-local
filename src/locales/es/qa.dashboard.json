@@ -102,11 +102,6 @@
 			"month": "Mensual",
 			"quarter": "3 meses",
 			"sixMonths": "6 meses"
-		},
-		"trend": {
-			"up": "Tendencia al alza",
-			"down": "Tendencia a la baja",
-			"stable": "Estable"
 		}
 	},
 	"range": {

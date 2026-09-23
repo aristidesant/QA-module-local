@@ -18,7 +18,7 @@ import {
 	IconSparkles,
 	IconUser,
 } from '@tabler/icons-react';
-import type { MetricTrend } from '~/modules/qa/calls/agentMetrics';
+import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import { getSentimentBand } from './SentimentEmotionCard';
 import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
@@ -31,7 +31,7 @@ export interface SentimentSide {
 	/** Calls whose predominant emotion was negative */
 	negativeCount: number;
 	/** This side's sentiment trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
-	trend?: MetricTrend;
+	trend?: DashboardMetricTrend;
 }
 
 interface SentimentEmotionSplitCardProps {

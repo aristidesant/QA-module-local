@@ -14,7 +14,7 @@ import {
 	getScoreBand,
 	SCORE_BAND_COLOR,
 } from '~/modules/qa/constants/badgeColors';
-import type { MetricTrend } from '~/modules/qa/calls/agentMetrics';
+import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import DrillRow from './DrillRow';
 import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
@@ -40,7 +40,7 @@ interface QualityAssuranceCardProps {
 	issueCounts?: Partial<Record<QaCategoryKey | 'autoFails', number>>;
 	onCategoryClick?: (key: QaCategoryKey | 'autoFails') => void;
 	/** Overall QA score's trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
-	trend?: MetricTrend;
+	trend?: DashboardMetricTrend;
 }
 
 /**

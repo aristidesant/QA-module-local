@@ -2,7 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, Stack, Group, Text, Progress, ThemeIcon } from '@mantine/core';
 import { IconChevronRight, IconPhoneCall } from '@tabler/icons-react';
-import type { MetricTrend } from '~/modules/qa/calls/agentMetrics';
+import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import DrillRow from './DrillRow';
 import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
@@ -19,7 +19,7 @@ interface OperationalCardProps {
 	/** Opens the non-effective calls behind the number, when there are any. */
 	onNonEffectiveClick?: () => void;
 	/** Effective-contacts trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
-	trend?: MetricTrend;
+	trend?: DashboardMetricTrend;
 }
 
 const pct = (part: number, total: number) =>

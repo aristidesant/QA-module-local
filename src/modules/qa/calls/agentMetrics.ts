@@ -26,12 +26,18 @@ export type ComplianceAreaName = ComplianceCategory['name'];
 
 export type MetricTrend = 'up' | 'down' | 'stable';
 
+export interface DashboardMetricTrend {
+	direction: MetricTrend;
+	/** Percentage-point change vs. the prior period, rounded, signed. Sentiment is expressed on its 0-100 equivalent (score-1)/4*100, so every metric here shares one percentage scale. */
+	deltaPct: number;
+}
+
 export interface DashboardMetricTrends {
-	effectiveContacts: MetricTrend;
-	qa: MetricTrend;
-	compliance: MetricTrend;
-	agentSentiment: MetricTrend;
-	customerSentiment: MetricTrend;
+	effectiveContacts: DashboardMetricTrend;
+	qa: DashboardMetricTrend;
+	compliance: DashboardMetricTrend;
+	agentSentiment: DashboardMetricTrend;
+	customerSentiment: DashboardMetricTrend;
 }
 
 export interface AgentDashboardMetrics {
@@ -210,14 +216,16 @@ export const aggregateDashboardMetrics = (
 	};
 };
 
-/** `current`/`previous` differ by less than `epsilon` → 'stable'; otherwise the sign of the delta. */
+/** `current`/`previous` differ by less than `epsilon` → 'stable'; otherwise the sign of the (rounded) delta. */
 const metricTrend = (
 	current: number,
 	previous: number,
 	epsilon: number
-): MetricTrend => {
+): DashboardMetricTrend => {
 	const delta = current - previous;
-	return Math.abs(delta) < epsilon ? 'stable' : delta > 0 ? 'up' : 'down';
+	const direction: MetricTrend =
+		Math.abs(delta) < epsilon ? 'stable' : delta > 0 ? 'up' : 'down';
+	return { direction, deltaPct: Math.round(delta) };
 };
 
 const effectivePct = (m: AgentDashboardMetrics) =>
@@ -230,19 +238,23 @@ const complianceAverage = (categories: ComplianceCategory[]) =>
 			)
 		: 0;
 
+/** The 1-5 sentiment scale expressed as its 0-100 equivalent, so its trend shares the same percentage-point scale as every other card. */
+const sentimentPct = (score: number) => Math.round(((score - 1) / 4) * 100);
+
 const ALL_STABLE: DashboardMetricTrends = {
-	effectiveContacts: 'stable',
-	qa: 'stable',
-	compliance: 'stable',
-	agentSentiment: 'stable',
-	customerSentiment: 'stable',
+	effectiveContacts: { direction: 'stable', deltaPct: 0 },
+	qa: { direction: 'stable', deltaPct: 0 },
+	compliance: { direction: 'stable', deltaPct: 0 },
+	agentSentiment: { direction: 'stable', deltaPct: 0 },
+	customerSentiment: { direction: 'stable', deltaPct: 0 },
 };
 
 /**
  * Compares two windows' worth of already-aggregated metrics into the per-card
  * trend each Performance Score card shows. An empty `previous` window (e.g.
  * the 6-months period, whose prior window falls outside TEAM_CALLS' 180-day
- * generated range) has no real baseline — reads as 'stable', not a false 'up'.
+ * generated range) has no real baseline — reads as 'stable'/0%, not a false
+ * 'up' against a zeroed comparison.
  */
 const buildTrends = (
 	current: AgentDashboardMetrics,
@@ -262,14 +274,14 @@ const buildTrends = (
 			1
 		),
 		agentSentiment: metricTrend(
-			current.sentiment.agentAvg,
-			previous.sentiment.agentAvg,
-			0.1
+			sentimentPct(current.sentiment.agentAvg),
+			sentimentPct(previous.sentiment.agentAvg),
+			1
 		),
 		customerSentiment: metricTrend(
-			current.sentiment.customerAvg,
-			previous.sentiment.customerAvg,
-			0.1
+			sentimentPct(current.sentiment.customerAvg),
+			sentimentPct(previous.sentiment.customerAvg),
+			1
 		),
 	};
 };
@@ -304,7 +316,7 @@ export interface BusinessInsightsMetrics {
 	insights: BusinessInsight[];
 	outcome: WeeklyMetrics['businessOutcome'];
 	/** `outcome.conversionRate`'s trend vs. the immediately-preceding period of equal length. */
-	conversionTrend: MetricTrend;
+	conversionTrend: DashboardMetricTrend;
 }
 
 const BUSINESS_SIGNAL_TYPES: {
@@ -388,9 +400,10 @@ export const aggregateBusinessInsights = (
 
 	const prevOffered = previousCalls.filter((c) => c.offeredProduct !== null);
 	const prevConverted = prevOffered.filter((c) => c.converted);
+	// No previous offers → compare the rate against itself (delta 0, 'stable'), never a false reading off a zeroed baseline.
 	const previousConversionRate = prevOffered.length
 		? share(prevConverted.length, prevOffered.length)
-		: null;
+		: conversionRate;
 
 	return {
 		insights,
@@ -399,7 +412,7 @@ export const aggregateBusinessInsights = (
 			converted: converted.length,
 			conversionRate,
 		},
-		conversionTrend: trendOf(conversionRate, previousConversionRate),
+		conversionTrend: metricTrend(conversionRate, previousConversionRate, 1),
 	};
 };
 

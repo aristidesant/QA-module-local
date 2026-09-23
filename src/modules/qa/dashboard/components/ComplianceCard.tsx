@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { IconChevronRight, IconShieldCheck } from '@tabler/icons-react';
 import { SCORE_BAND_COLOR } from '~/modules/qa/constants/badgeColors';
-import type { MetricTrend } from '~/modules/qa/calls/agentMetrics';
+import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import type { ComplianceCategory } from '../mockData';
 import DrillRow from './DrillRow';
 import { TrendIndicator } from './TrendIndicator';
@@ -24,7 +24,7 @@ interface ComplianceCardProps {
 	issueCounts?: Partial<Record<ComplianceCategory['name'], number>>;
 	onCategoryClick?: (name: ComplianceCategory['name']) => void;
 	/** Overall compliance average's trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
-	trend?: MetricTrend;
+	trend?: DashboardMetricTrend;
 }
 
 /** Maps a compliance category status to a theme-aware Mantine color token */

@@ -15,7 +15,7 @@ import {
 	IconMinus,
 	IconChartHistogram,
 } from '@tabler/icons-react';
-import type { MetricTrend } from '~/modules/qa/calls/agentMetrics';
+import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import type { BusinessInsight, WeeklyMetrics } from '../mockData';
 import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
@@ -26,7 +26,7 @@ interface BusinessInsightsCardProps {
 	/** Short line under the card title, used to scope the card per role */
 	subtitle?: string;
 	/** Conversion rate's trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
-	conversionTrend?: MetricTrend;
+	conversionTrend?: DashboardMetricTrend;
 }
 
 /** Signal labels live in i18n under stable keys, not under the mock's English wording. */
