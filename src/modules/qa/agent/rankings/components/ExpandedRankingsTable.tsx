@@ -103,6 +103,13 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 				size: 80,
 				cell: ({ row }) => {
 					const { rank } = row.original;
+					if (rank === 0) {
+						return (
+							<Badge color='gray' variant='light' radius='sm'>
+								{t('drawer.unranked')}
+							</Badge>
+						);
+					}
 					return (
 						<Group gap={4} wrap='nowrap'>
 							<Badge
@@ -131,11 +138,15 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 				accessorKey: 'score',
 				header: t('table.score'),
 				size: 100,
-				cell: ({ row }) => (
-					<Text size='sm' fw={700} className={styles.score}>
-						{formatScore ? formatScore(row.original.score) : row.original.score}
-					</Text>
-				),
+				cell: ({ row }) => {
+					const { rank, score } = row.original;
+					if (rank === 0) return <EmptyCell />;
+					return (
+						<Text size='sm' fw={700} className={styles.score}>
+							{formatScore ? formatScore(score) : score}
+						</Text>
+					);
+				},
 			},
 			{
 				id: 'achievements',

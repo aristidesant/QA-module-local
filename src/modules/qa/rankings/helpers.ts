@@ -63,20 +63,29 @@ const reached = (
  * Ranks the agents of a program's teams on its metric over its period.
  * Agents below `minCalls` stay listed but unranked so they can see what they
  * need to qualify.
+ *
+ * `windowDays`, when given, ranks agents over the trailing `windowDays`-day
+ * window ending at `asOf` instead of the program's own start-to-end range —
+ * this is what backs a period control placed on top of the leaderboard.
+ * Movement is then measured against the equal-length window right before it;
+ * without `windowDays`, movement keeps its original meaning: vs.
+ * `PREVIOUS_RANK_DAYS` ago, cumulative from the program's start.
  */
 export function computeStandings(
 	program: RankingProgram,
 	calls: TeamCallMetric[],
-	asOf: string = TODAY
+	asOf: string = TODAY,
+	windowDays?: number
 ): RankingStanding[] {
 	const higherIsBetter = METRIC_BY_ID[program.metricId]?.higherIsBetter ?? true;
 	const to = asOf < program.endDate ? asOf : program.endDate;
+	const from = windowDays ? addDays(to, -(windowDays - 1)) : program.startDate;
 
-	const scoreOf = (agentId: string, until: string) => {
+	const scoreOf = (agentId: string, from: string, until: string) => {
 		const agentCalls = calls.filter(
 			(call) =>
 				call.agentId === agentId &&
-				dayOf(call.date) >= program.startDate &&
+				dayOf(call.date) >= from &&
 				dayOf(call.date) <= until
 		);
 		return {
@@ -104,23 +113,35 @@ export function computeStandings(
 	);
 	const current = agents.map((agent) => ({
 		agent,
-		...scoreOf(agent.id, to),
+		...scoreOf(agent.id, from, to),
 	}));
 	const ranks = rankList(
 		current.map(({ agent, score }) => ({ agentId: agent.id, score }))
 	);
 
-	// Movement is only meaningful once the period has run for a week.
-	const previousDay = addDays(to, -PREVIOUS_RANK_DAYS);
-	const previousRanks =
-		previousDay >= program.startDate
-			? rankList(
-					agents.map((agent) => ({
-						agentId: agent.id,
-						score: scoreOf(agent.id, previousDay).score,
-					}))
-				)
-			: new Map<string, number>();
+	let previousRanks: Map<string, number>;
+	if (windowDays) {
+		const prevTo = addDays(from, -1);
+		const prevFrom = addDays(prevTo, -(windowDays - 1));
+		previousRanks = rankList(
+			agents.map((agent) => ({
+				agentId: agent.id,
+				score: scoreOf(agent.id, prevFrom, prevTo).score,
+			}))
+		);
+	} else {
+		// Movement is only meaningful once the period has run for a week.
+		const previousDay = addDays(to, -PREVIOUS_RANK_DAYS);
+		previousRanks =
+			previousDay >= program.startDate
+				? rankList(
+						agents.map((agent) => ({
+							agentId: agent.id,
+							score: scoreOf(agent.id, program.startDate, previousDay).score,
+						}))
+					)
+				: new Map<string, number>();
+	}
 
 	return current
 		.map(({ agent, score, calls: callCount }) => {

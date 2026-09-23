@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge, Card, Divider, Group, Stack, Text } from '@mantine/core';
 import { IconChevronRight } from '@tabler/icons-react';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
@@ -44,8 +45,10 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 	onRowClick,
 	hideReactions,
 }) => {
+	const { t } = useTranslation('qa.rankings');
 	const { isCompleted } = useLeaderboardStatus();
 	const badges = useTriggerRulesStore((state) => state.badges);
+	const isUnranked = entry.rank === 0;
 	const achievements = entry.achievements ?? [];
 	const visibleAchievements = achievements.slice(0, MAX_VISIBLE_ACHIEVEMENTS);
 	const hiddenAchievements = achievements.length - visibleAchievements.length;
@@ -85,14 +88,22 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 				{/* Header: rank + name + streak */}
 				<Group gap='xs' wrap='nowrap'>
 					<Group gap={4} wrap='nowrap'>
-						<Badge
-							color={RANK_BADGE_COLORS[entry.rank] ?? 'gray'}
-							variant='light'
-							radius='sm'
-						>
-							#{entry.rank}
-						</Badge>
-						<WinnerBadge isWinner={isCompleted && entry.rank === 1} />
+						{isUnranked ? (
+							<Badge color='gray' variant='light' radius='sm'>
+								{t('drawer.unranked')}
+							</Badge>
+						) : (
+							<>
+								<Badge
+									color={RANK_BADGE_COLORS[entry.rank] ?? 'gray'}
+									variant='light'
+									radius='sm'
+								>
+									#{entry.rank}
+								</Badge>
+								<WinnerBadge isWinner={isCompleted && entry.rank === 1} />
+							</>
+						)}
 					</Group>
 
 					<div className={styles.nameBlock}>
@@ -103,8 +114,17 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 				</Group>
 
 				{/* Body: score only */}
-				<Text size='xl' fw={700} className={styles.score}>
-					{formatScore ? formatScore(entry.score) : entry.score}
+				<Text
+					size='xl'
+					fw={700}
+					c={isUnranked ? 'dimmed' : undefined}
+					className={styles.score}
+				>
+					{isUnranked
+						? '—'
+						: formatScore
+							? formatScore(entry.score)
+							: entry.score}
 				</Text>
 
 				{/* Achievements + reactions */}

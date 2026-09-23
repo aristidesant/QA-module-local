@@ -25,6 +25,7 @@ import {
 } from '../components';
 import { useActiveRankingByTeam } from '~/modules/qa/rankings/hooks/useActiveRanking';
 import {
+	computeStandings,
 	formatScore as formatRankingScore,
 	toRankingEntry,
 } from '~/modules/qa/rankings/helpers';
@@ -35,6 +36,8 @@ import {
 	buildTeamBusinessInsights,
 } from '~/modules/qa/calls/agentMetrics';
 import { teamBurnoutRisk } from '~/modules/qa/analytics/helpers';
+import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
+import { TODAY } from '~/modules/qa/analytics/constants';
 import {
 	DASHBOARD_LINES_OF_BUSINESS,
 	type DashboardLineOfBusiness,
@@ -63,11 +66,15 @@ export const NewSupervisorDashboard: React.FC = () => {
 	const { t } = useTranslation('qa.rankings');
 	const { t: tDashboard } = useTranslation('qa.dashboard');
 	const isCompact = useMediaQuery(TABLE_BREAKPOINT);
-	const { program, standings } = useActiveRankingByTeam('Team 1');
+	const { program } = useActiveRankingByTeam('Team 1');
 	const [period, setPeriod] = useState<PerformanceScorePeriod>(
 		DEFAULT_PERFORMANCE_SCORE_PERIOD
 	);
 	const days = performanceScoreDays(period);
+	const [rankingsPeriod, setRankingsPeriod] = useState<PerformanceScorePeriod>(
+		DEFAULT_PERFORMANCE_SCORE_PERIOD
+	);
+	const rankingsDays = performanceScoreDays(rankingsPeriod);
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
 	const metrics = useMemo(
@@ -83,6 +90,12 @@ export const NewSupervisorDashboard: React.FC = () => {
 		[days, lineOfBusiness]
 	);
 	const burnoutRisk = teamBurnoutRisk('supervisor');
+
+	const standings = useMemo(
+		() =>
+			program ? computeStandings(program, TEAM_CALLS, TODAY, rankingsDays) : [],
+		[program, rankingsDays]
+	);
 
 	const entries = useMemo(
 		() =>
@@ -208,9 +221,22 @@ export const NewSupervisorDashboard: React.FC = () => {
 							title={t('agent.leaderboard')}
 							description={t('agent.leaderboardDescription')}
 							headerActions={
-								<Badge variant='light' size='sm'>
-									{standings.length}
-								</Badge>
+								<Group gap='sm' wrap='nowrap'>
+									<SegmentedControl
+										size='xs'
+										value={rankingsPeriod}
+										onChange={(v) =>
+											setRankingsPeriod(v as PerformanceScorePeriod)
+										}
+										data={PERFORMANCE_SCORE_PERIODS.map((p) => ({
+											value: p.value,
+											label: tDashboard(p.labelKey),
+										}))}
+									/>
+									<Badge variant='light' size='sm'>
+										{standings.length}
+									</Badge>
+								</Group>
 							}
 						>
 							{isCompact ? (
