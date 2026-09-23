@@ -11,8 +11,10 @@ import {
 } from '@mantine/core';
 import { IconChevronRight, IconShieldCheck } from '@tabler/icons-react';
 import { SCORE_BAND_COLOR } from '~/modules/qa/constants/badgeColors';
+import type { MetricTrend } from '~/modules/qa/calls/agentMetrics';
 import type { ComplianceCategory } from '../mockData';
 import DrillRow from './DrillRow';
+import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
 
 interface ComplianceCardProps {
@@ -21,6 +23,8 @@ interface ComplianceCardProps {
 	subtitle?: string;
 	issueCounts?: Partial<Record<ComplianceCategory['name'], number>>;
 	onCategoryClick?: (name: ComplianceCategory['name']) => void;
+	/** Overall compliance average's trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
+	trend?: MetricTrend;
 }
 
 /** Maps a compliance category status to a theme-aware Mantine color token */
@@ -51,6 +55,7 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 	subtitle,
 	issueCounts,
 	onCategoryClick,
+	trend,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const averageScore = categories.length
@@ -80,6 +85,7 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 								{subtitle}
 							</Text>
 						)}
+						{trend && <TrendIndicator trend={trend} />}
 					</div>
 					<ThemeIcon size='lg' color='gray' radius='md'>
 						<IconShieldCheck size={20} />

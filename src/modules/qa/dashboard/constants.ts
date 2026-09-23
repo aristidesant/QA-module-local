@@ -1,4 +1,9 @@
-export type PerformanceScorePeriod = 'today' | 'week' | 'month' | 'quarter';
+export type PerformanceScorePeriod =
+	| 'today'
+	| 'week'
+	| 'month'
+	| 'quarter'
+	| 'sixMonths';
 
 /** Period control in the Performance Score widget header (Agent, Supervisor, QA Manager — not Operation Manager). */
 export const PERFORMANCE_SCORE_PERIODS: {
@@ -10,6 +15,11 @@ export const PERFORMANCE_SCORE_PERIODS: {
 	{ value: 'week', labelKey: 'performanceScore.period.week', days: 7 },
 	{ value: 'month', labelKey: 'performanceScore.period.month', days: 30 },
 	{ value: 'quarter', labelKey: 'performanceScore.period.quarter', days: 90 },
+	{
+		value: 'sixMonths',
+		labelKey: 'performanceScore.period.sixMonths',
+		days: 180,
+	},
 ];
 
 /** Matches today's hardcoded 7-day default on all 3 dashboards. */

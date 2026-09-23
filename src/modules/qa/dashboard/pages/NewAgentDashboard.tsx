@@ -73,6 +73,7 @@ const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
 	week: 'over the last 7 days',
 	month: 'over the last 30 days',
 	quarter: 'over the last 3 months',
+	sixMonths: 'over the last 6 months',
 };
 
 export const NewAgentDashboard: React.FC = () => {
@@ -174,6 +175,7 @@ export const NewAgentDashboard: React.FC = () => {
 								nonEffectiveContacts={metrics.nonEffectiveContacts}
 								subtitle='Contact effectiveness over the same window'
 								onNonEffectiveClick={() => openIssue('non-effective-contact')}
+								trend={metrics.trends?.effectiveContacts}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -186,6 +188,7 @@ export const NewAgentDashboard: React.FC = () => {
 									autoFails: metrics.autoFails,
 								}}
 								onCategoryClick={(key) => openIssue(QA_ISSUE[key])}
+								trend={metrics.trends?.qa}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -194,6 +197,7 @@ export const NewAgentDashboard: React.FC = () => {
 								subtitle='Calls meeting each area target'
 								issueCounts={metrics.complianceIssueCounts}
 								onCategoryClick={(name) => openIssue(COMPLIANCE_ISSUE[name])}
+								trend={metrics.trends?.compliance}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -202,11 +206,13 @@ export const NewAgentDashboard: React.FC = () => {
 									score: metrics.sentiment.agentAvg,
 									emotion: metrics.sentiment.agentEmotion,
 									negativeCount: metrics.sentiment.agentNegativeCount,
+									trend: metrics.trends?.agentSentiment,
 								}}
 								customer={{
 									score: metrics.sentiment.customerAvg,
 									emotion: metrics.sentiment.customerEmotion,
 									negativeCount: metrics.sentiment.customerNegativeCount,
+									trend: metrics.trends?.customerSentiment,
 								}}
 								subtitle='You vs the customers you contacted'
 								onReviewClick={(side) =>

@@ -14,7 +14,9 @@ import {
 	getScoreBand,
 	SCORE_BAND_COLOR,
 } from '~/modules/qa/constants/badgeColors';
+import type { MetricTrend } from '~/modules/qa/calls/agentMetrics';
 import DrillRow from './DrillRow';
+import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
 
 /** QA score breakdown shape shared by every role's weekly metrics */
@@ -37,6 +39,8 @@ interface QualityAssuranceCardProps {
 	/** Calls behind each row (agent drill-down). Rows render a count and become clickable when `onCategoryClick` is set. */
 	issueCounts?: Partial<Record<QaCategoryKey | 'autoFails', number>>;
 	onCategoryClick?: (key: QaCategoryKey | 'autoFails') => void;
+	/** Overall QA score's trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
+	trend?: MetricTrend;
 }
 
 /**
@@ -64,6 +68,7 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 	autoFails,
 	issueCounts,
 	onCategoryClick,
+	trend,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 
@@ -87,6 +92,7 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 								{subtitle}
 							</Text>
 						)}
+						{trend && <TrendIndicator trend={trend} />}
 					</div>
 					<ThemeIcon size='lg' color='gray' radius='md'>
 						<IconClipboardCheck size={20} />

@@ -24,6 +24,16 @@ export const AGENT_DASHBOARD_DAYS = 7;
 export type QaCategoryKey = 'ecn' | 'enc' | 'ecc' | 'ecuf';
 export type ComplianceAreaName = ComplianceCategory['name'];
 
+export type MetricTrend = 'up' | 'down' | 'stable';
+
+export interface DashboardMetricTrends {
+	effectiveContacts: MetricTrend;
+	qa: MetricTrend;
+	compliance: MetricTrend;
+	agentSentiment: MetricTrend;
+	customerSentiment: MetricTrend;
+}
+
 export interface AgentDashboardMetrics {
 	calls: number;
 	/** Calls where the intended contact was actually reached and engaged. */
@@ -46,6 +56,13 @@ export interface AgentDashboardMetrics {
 		agentNegativeCount: number;
 		customerNegativeCount: number;
 	};
+	/**
+	 * This period's trend vs. the immediately-preceding period of equal length.
+	 * Only set by `buildAgentDashboardMetrics`/`buildTeamDashboardMetrics`
+	 * (which have both windows) — `aggregateDashboardMetrics` alone, given a
+	 * single window, cannot compute it.
+	 */
+	trends?: DashboardMetricTrends;
 }
 
 const COMPLIANCE_AREAS: {
@@ -193,23 +210,101 @@ export const aggregateDashboardMetrics = (
 	};
 };
 
+/** `current`/`previous` differ by less than `epsilon` → 'stable'; otherwise the sign of the delta. */
+const metricTrend = (
+	current: number,
+	previous: number,
+	epsilon: number
+): MetricTrend => {
+	const delta = current - previous;
+	return Math.abs(delta) < epsilon ? 'stable' : delta > 0 ? 'up' : 'down';
+};
+
+const effectivePct = (m: AgentDashboardMetrics) =>
+	m.calls === 0 ? 0 : Math.round((m.effectiveContacts / m.calls) * 100);
+
+const complianceAverage = (categories: ComplianceCategory[]) =>
+	categories.length
+		? Math.round(
+				categories.reduce((sum, c) => sum + c.score, 0) / categories.length
+			)
+		: 0;
+
+const ALL_STABLE: DashboardMetricTrends = {
+	effectiveContacts: 'stable',
+	qa: 'stable',
+	compliance: 'stable',
+	agentSentiment: 'stable',
+	customerSentiment: 'stable',
+};
+
+/**
+ * Compares two windows' worth of already-aggregated metrics into the per-card
+ * trend each Performance Score card shows. An empty `previous` window (e.g.
+ * the 6-months period, whose prior window falls outside TEAM_CALLS' 180-day
+ * generated range) has no real baseline — reads as 'stable', not a false 'up'.
+ */
+const buildTrends = (
+	current: AgentDashboardMetrics,
+	previous: AgentDashboardMetrics
+): DashboardMetricTrends => {
+	if (previous.calls === 0) return ALL_STABLE;
+	return {
+		effectiveContacts: metricTrend(
+			effectivePct(current),
+			effectivePct(previous),
+			1
+		),
+		qa: metricTrend(current.qa.total, previous.qa.total, 1),
+		compliance: metricTrend(
+			complianceAverage(current.complianceCategories),
+			complianceAverage(previous.complianceCategories),
+			1
+		),
+		agentSentiment: metricTrend(
+			current.sentiment.agentAvg,
+			previous.sentiment.agentAvg,
+			0.1
+		),
+		customerSentiment: metricTrend(
+			current.sentiment.customerAvg,
+			previous.sentiment.customerAvg,
+			0.1
+		),
+	};
+};
+
 export const buildAgentDashboardMetrics = (
 	agentId: string,
 	days = AGENT_DASHBOARD_DAYS
-): AgentDashboardMetrics =>
-	aggregateDashboardMetrics(agentCallsInWindow(agentId, days));
+): AgentDashboardMetrics => {
+	const current = aggregateDashboardMetrics(agentCallsInWindow(agentId, days));
+	const previous = aggregateDashboardMetrics(
+		agentCallsInWindow(agentId, days, days)
+	);
+	return { ...current, trends: buildTrends(current, previous) };
+};
 
 /** Team-scoped version of `buildAgentDashboardMetrics`: Team 1 for a supervisor, every team for QA Manager. */
 export const buildTeamDashboardMetrics = (
 	role: TeamRole,
 	days: number,
 	lineOfBusiness?: DashboardLineOfBusiness | null
-): AgentDashboardMetrics =>
-	aggregateDashboardMetrics(teamCallsInWindow(role, days, lineOfBusiness));
+): AgentDashboardMetrics => {
+	const current = aggregateDashboardMetrics(
+		teamCallsInWindow(role, days, lineOfBusiness)
+	);
+	const previous = aggregateDashboardMetrics(
+		teamCallsInWindow(role, days, lineOfBusiness, days)
+	);
+	return { ...current, trends: buildTrends(current, previous) };
+};
 
 export interface BusinessInsightsMetrics {
 	insights: BusinessInsight[];
 	outcome: WeeklyMetrics['businessOutcome'];
+	/** `outcome.conversionRate`'s trend vs. the immediately-preceding period of equal length. */
+	conversionTrend: MetricTrend;
 }
 
 const BUSINESS_SIGNAL_TYPES: {
@@ -289,13 +384,22 @@ export const aggregateBusinessInsights = (
 
 	const offered = calls.filter((c) => c.offeredProduct !== null);
 	const converted = offered.filter((c) => c.converted);
+	const conversionRate = share(converted.length, offered.length);
+
+	const prevOffered = previousCalls.filter((c) => c.offeredProduct !== null);
+	const prevConverted = prevOffered.filter((c) => c.converted);
+	const previousConversionRate = prevOffered.length
+		? share(prevConverted.length, prevOffered.length)
+		: null;
+
 	return {
 		insights,
 		outcome: {
 			offersPresented: offered.length,
 			converted: converted.length,
-			conversionRate: share(converted.length, offered.length),
+			conversionRate,
 		},
+		conversionTrend: trendOf(conversionRate, previousConversionRate),
 	};
 };
 

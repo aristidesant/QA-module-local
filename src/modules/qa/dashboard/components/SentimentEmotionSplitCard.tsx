@@ -18,7 +18,9 @@ import {
 	IconSparkles,
 	IconUser,
 } from '@tabler/icons-react';
+import type { MetricTrend } from '~/modules/qa/calls/agentMetrics';
 import { getSentimentBand } from './SentimentEmotionCard';
+import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
 
 export interface SentimentSide {
@@ -28,6 +30,8 @@ export interface SentimentSide {
 	emotion: string | null;
 	/** Calls whose predominant emotion was negative */
 	negativeCount: number;
+	/** This side's sentiment trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
+	trend?: MetricTrend;
 }
 
 interface SentimentEmotionSplitCardProps {
@@ -73,6 +77,7 @@ const SideColumn: React.FC<{
 			>
 				{side.emotion ?? t('sentimentSplit.none')}
 			</Badge>
+			{side.trend && <TrendIndicator trend={side.trend} />}
 		</Stack>
 	);
 };

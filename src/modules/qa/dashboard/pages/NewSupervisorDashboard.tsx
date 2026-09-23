@@ -53,6 +53,7 @@ const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
 	week: 'this week',
 	month: 'this month',
 	quarter: 'over the last 3 months',
+	sixMonths: 'over the last 6 months',
 };
 
 /** Below this width the leaderboard table is replaced by the responsive card grid. */
@@ -73,7 +74,11 @@ export const NewSupervisorDashboard: React.FC = () => {
 		() => buildTeamDashboardMetrics('supervisor', days, lineOfBusiness),
 		[days, lineOfBusiness]
 	);
-	const { insights: businessInsights, outcome: businessOutcome } = useMemo(
+	const {
+		insights: businessInsights,
+		outcome: businessOutcome,
+		conversionTrend,
+	} = useMemo(
 		() => buildTeamBusinessInsights('supervisor', days, lineOfBusiness),
 		[days, lineOfBusiness]
 	);
@@ -139,6 +144,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 								effectiveContacts={metrics.effectiveContacts}
 								nonEffectiveContacts={metrics.nonEffectiveContacts}
 								subtitle="Team's contact effectiveness this week"
+								trend={metrics.trends?.effectiveContacts}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -150,6 +156,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 									...metrics.qaIssueCounts,
 									autoFails: metrics.autoFails,
 								}}
+								trend={metrics.trends?.qa}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -157,6 +164,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 								categories={metrics.complianceCategories}
 								subtitle='Team category overview'
 								issueCounts={metrics.complianceIssueCounts}
+								trend={metrics.trends?.compliance}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -165,11 +173,13 @@ export const NewSupervisorDashboard: React.FC = () => {
 									score: metrics.sentiment.agentAvg,
 									emotion: metrics.sentiment.agentEmotion,
 									negativeCount: metrics.sentiment.agentNegativeCount,
+									trend: metrics.trends?.agentSentiment,
 								}}
 								customer={{
 									score: metrics.sentiment.customerAvg,
 									emotion: metrics.sentiment.customerEmotion,
 									negativeCount: metrics.sentiment.customerNegativeCount,
+									trend: metrics.trends?.customerSentiment,
 								}}
 								subtitle='Team vs the customers they contacted'
 							/>
@@ -179,6 +189,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 								insights={businessInsights}
 								outcome={businessOutcome}
 								subtitle='Team conversion and signals'
+								conversionTrend={conversionTrend}
 							/>
 						</div>
 					</SimpleGrid>

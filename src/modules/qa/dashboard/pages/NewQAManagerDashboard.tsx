@@ -46,6 +46,7 @@ const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
 	week: 'this week',
 	month: 'this month',
 	quarter: 'over the last 3 months',
+	sixMonths: 'over the last 6 months',
 };
 
 interface DisputeRow {
@@ -276,7 +277,11 @@ export const NewQAManagerDashboard: React.FC = () => {
 		() => buildTeamDashboardMetrics('qa-manager', days, lineOfBusiness),
 		[days, lineOfBusiness]
 	);
-	const { insights: businessInsights, outcome: businessOutcome } = useMemo(
+	const {
+		insights: businessInsights,
+		outcome: businessOutcome,
+		conversionTrend,
+	} = useMemo(
 		() => buildTeamBusinessInsights('qa-manager', days, lineOfBusiness),
 		[days, lineOfBusiness]
 	);
@@ -330,6 +335,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 								effectiveContacts={metrics.effectiveContacts}
 								nonEffectiveContacts={metrics.nonEffectiveContacts}
 								subtitle="Platform's contact effectiveness this week"
+								trend={metrics.trends?.effectiveContacts}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -341,6 +347,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 									...metrics.qaIssueCounts,
 									autoFails: metrics.autoFails,
 								}}
+								trend={metrics.trends?.qa}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -348,6 +355,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 								categories={metrics.complianceCategories}
 								subtitle='Platform category overview'
 								issueCounts={metrics.complianceIssueCounts}
+								trend={metrics.trends?.compliance}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -356,11 +364,13 @@ export const NewQAManagerDashboard: React.FC = () => {
 									score: metrics.sentiment.agentAvg,
 									emotion: metrics.sentiment.agentEmotion,
 									negativeCount: metrics.sentiment.agentNegativeCount,
+									trend: metrics.trends?.agentSentiment,
 								}}
 								customer={{
 									score: metrics.sentiment.customerAvg,
 									emotion: metrics.sentiment.customerEmotion,
 									negativeCount: metrics.sentiment.customerNegativeCount,
+									trend: metrics.trends?.customerSentiment,
 								}}
 								subtitle='Platform vs the customers they contacted'
 							/>
@@ -370,6 +380,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 								insights={businessInsights}
 								outcome={businessOutcome}
 								subtitle='Platform conversion and signals'
+								conversionTrend={conversionTrend}
 							/>
 						</div>
 					</SimpleGrid>

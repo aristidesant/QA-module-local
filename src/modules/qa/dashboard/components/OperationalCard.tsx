@@ -2,7 +2,9 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, Stack, Group, Text, Progress, ThemeIcon } from '@mantine/core';
 import { IconChevronRight, IconPhoneCall } from '@tabler/icons-react';
+import type { MetricTrend } from '~/modules/qa/calls/agentMetrics';
 import DrillRow from './DrillRow';
+import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
 
 interface OperationalCardProps {
@@ -16,6 +18,8 @@ interface OperationalCardProps {
 	subtitle?: string;
 	/** Opens the non-effective calls behind the number, when there are any. */
 	onNonEffectiveClick?: () => void;
+	/** Effective-contacts trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
+	trend?: MetricTrend;
 }
 
 const pct = (part: number, total: number) =>
@@ -28,6 +32,7 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 	nonEffectiveContacts,
 	subtitle,
 	onNonEffectiveClick,
+	trend,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const effectivePct = pct(effectiveContacts, calls);
@@ -54,6 +59,7 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 								{subtitle}
 							</Text>
 						)}
+						{trend && <TrendIndicator trend={trend} />}
 					</div>
 					<ThemeIcon size='lg' color='gray' radius='md'>
 						<IconPhoneCall size={20} />

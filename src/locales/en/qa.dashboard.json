@@ -100,7 +100,13 @@
 			"today": "Today",
 			"week": "Last week",
 			"month": "Monthly",
-			"quarter": "3 months"
+			"quarter": "3 months",
+			"sixMonths": "6 months"
+		},
+		"trend": {
+			"up": "Trending up",
+			"down": "Trending down",
+			"stable": "Stable"
 		}
 	},
 	"range": {

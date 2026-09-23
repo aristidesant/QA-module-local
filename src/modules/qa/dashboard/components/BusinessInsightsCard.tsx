@@ -15,7 +15,9 @@ import {
 	IconMinus,
 	IconChartHistogram,
 } from '@tabler/icons-react';
+import type { MetricTrend } from '~/modules/qa/calls/agentMetrics';
 import type { BusinessInsight, WeeklyMetrics } from '../mockData';
+import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
 
 interface BusinessInsightsCardProps {
@@ -23,6 +25,8 @@ interface BusinessInsightsCardProps {
 	outcome: WeeklyMetrics['businessOutcome'];
 	/** Short line under the card title, used to scope the card per role */
 	subtitle?: string;
+	/** Conversion rate's trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
+	conversionTrend?: MetricTrend;
 }
 
 /** Signal labels live in i18n under stable keys, not under the mock's English wording. */
@@ -54,6 +58,7 @@ export const BusinessInsightsCard: React.FC<BusinessInsightsCardProps> = ({
 	insights,
 	outcome,
 	subtitle,
+	conversionTrend,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 
@@ -98,6 +103,7 @@ export const BusinessInsightsCard: React.FC<BusinessInsightsCardProps> = ({
 							offers: outcome.offersPresented,
 						})}
 					</Text>
+					{conversionTrend && <TrendIndicator trend={conversionTrend} />}
 				</div>
 
 				<Divider />

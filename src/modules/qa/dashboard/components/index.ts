@@ -67,6 +67,7 @@ export type { CampaignPerformanceEntry } from './CampaignPerformanceCard';
 export { SentimentEmotionCard, getSentimentBand } from './SentimentEmotionCard';
 export { SentimentEmotionSplitCard } from './SentimentEmotionSplitCard';
 export type { SentimentSide } from './SentimentEmotionSplitCard';
+export { TrendIndicator } from './TrendIndicator';
 
 // Single-table Best/Worst calls view with a Best/Worst segmented control
 export { BestWorstCallsTable } from './BestWorstCallsTable';
