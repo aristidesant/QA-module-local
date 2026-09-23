@@ -137,7 +137,7 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 			{
 				accessorKey: 'score',
 				header: t('table.score'),
-				size: 100,
+				size: 150,
 				cell: ({ row }) => {
 					const { rank, score } = row.original;
 					if (rank === 0) return <EmptyCell />;

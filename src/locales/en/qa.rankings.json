@@ -186,7 +186,7 @@
 	"table": {
 		"rank": "Rank",
 		"name": "Name",
-		"score": "Score",
+		"score": "Scorecard score",
 		"achievements": "Badges",
 		"reactions": "Reactions"
 	},

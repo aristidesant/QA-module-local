@@ -186,7 +186,7 @@
 	"table": {
 		"rank": "Posición",
 		"name": "Nombre",
-		"score": "Puntuación",
+		"score": "Puntuación de scorecard",
 		"achievements": "Insignias",
 		"reactions": "Reacciones"
 	},
