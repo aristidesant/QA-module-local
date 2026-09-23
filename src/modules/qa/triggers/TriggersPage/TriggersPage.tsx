@@ -6,9 +6,8 @@ import {
 	useCallback,
 } from 'react';
 import { useLocation } from 'react-router';
-import { Stack, Group, Title, Text, Button, Tabs, Badge } from '@mantine/core';
+import { Stack, Title, Text, Tabs, Badge } from '@mantine/core';
 import {
-	IconPlus,
 	IconAlertTriangle,
 	IconSparkles,
 	IconAward,
@@ -135,25 +134,17 @@ export default function TriggersPage() {
 			<ContentContainer contentWidth='full'>
 				<Stack gap='lg'>
 					{/* Header */}
-					<Group justify='space-between' align='flex-start'>
-						<Stack gap={0} flex={1}>
-							<Text size='xs' c='dimmed' tt='uppercase' fw={600}>
-								{t(
-									`page.eyebrow.${role === 'supervisor' ? 'supervisor' : 'qaManager'}`
-								)}
-							</Text>
-							<Title order={1}>{t('page.title')}</Title>
-							<Text c='dimmed' size='sm'>
-								{t('page.description')}
-							</Text>
-						</Stack>
-						<Button
-							leftSection={<IconPlus size={16} />}
-							onClick={() => setPickerOpened(true)}
-						>
-							{t('page.newRule')}
-						</Button>
-					</Group>
+					<Stack gap={0}>
+						<Text size='xs' c='dimmed' tt='uppercase' fw={600}>
+							{t(
+								`page.eyebrow.${role === 'supervisor' ? 'supervisor' : 'qaManager'}`
+							)}
+						</Text>
+						<Title order={1}>{t('page.title')}</Title>
+						<Text c='dimmed' size='sm'>
+							{t('page.description')}
+						</Text>
+					</Stack>
 
 					{/* KPI Strip */}
 					<TriggersKpiStrip />
