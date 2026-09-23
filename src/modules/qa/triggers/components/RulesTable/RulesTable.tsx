@@ -7,15 +7,11 @@ import {
 	Switch,
 	Text,
 	ThemeIcon,
-	Tooltip,
 } from '@mantine/core';
 import {
 	IconCopy,
 	IconDotsVertical,
 	IconEdit,
-	IconInbox,
-	IconLayoutDashboard,
-	IconMail,
 	IconPlayerPause,
 	IconPlayerPlay,
 	IconSend,
@@ -63,7 +59,7 @@ export default function RulesTable({
 			{
 				accessorKey: 'name',
 				header: t('rules.columns.name'),
-				size: 320,
+				size: 420,
 				cell: (info) => {
 					const rule = info.row.original;
 					const meta = RULE_TYPE_META[rule.type];
@@ -155,59 +151,6 @@ export default function RulesTable({
 				},
 			});
 		}
-
-		// Recipients column
-		base.push({
-			accessorKey: 'delivery.recipients',
-			header: t('rules.columns.recipients'),
-			size: 170,
-			cell: (info) => {
-				const rule = info.row.original;
-				const channels = rule.delivery.channels;
-				return (
-					<Group gap={4} wrap='nowrap'>
-						{rule.delivery.recipients.map((r) => (
-							<Badge key={r} size='xs' variant='default'>
-								{t(`recipients.${r}`)}
-							</Badge>
-						))}
-						{channels.includes('INBOX') && (
-							<Tooltip label={t('channels.INBOX')}>
-								<IconInbox size={14} color='var(--mantine-color-gray-6)' />
-							</Tooltip>
-						)}
-						{channels.includes('EMAIL') && (
-							<Tooltip label={t('channels.EMAIL')}>
-								<IconMail size={14} color='var(--mantine-color-gray-6)' />
-							</Tooltip>
-						)}
-						{channels.includes('DASHBOARD') && (
-							<Tooltip label={t('channels.DASHBOARD')}>
-								<IconLayoutDashboard
-									size={14}
-									color='var(--mantine-color-gray-6)'
-								/>
-							</Tooltip>
-						)}
-					</Group>
-				);
-			},
-		});
-
-		// Fired 7d column
-		base.push({
-			accessorKey: 'stats.firedLast7Days',
-			header: t('rules.columns.fired7d'),
-			size: 90,
-			cell: (info) => {
-				const value = info.getValue() as number;
-				return (
-					<Text size='sm' ta='right'>
-						{value}
-					</Text>
-				);
-			},
-		});
 
 		// Last fired column
 		base.push({
