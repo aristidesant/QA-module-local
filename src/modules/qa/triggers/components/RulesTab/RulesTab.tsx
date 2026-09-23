@@ -3,7 +3,7 @@ import { IconPlus } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { useTranslation } from 'react-i18next';
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import type { RuleKind, RuleType, TriggerRule, TriggerActivityEntry } from '~/models/qa';
+import type { RuleKind, TriggerRule, TriggerActivityEntry } from '~/models/qa';
 import { SectionCard } from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
@@ -16,7 +16,7 @@ import RuleDetailDrawer from '../RuleDetailDrawer';
 
 interface RulesTabProps {
 	kind: RuleKind;
-	onCreate: (type?: RuleType) => void;
+	onCreate: (kind: RuleKind) => void;
 	onEdit: (rule: TriggerRule) => void;
 	onOpenActivity?: (entry: TriggerActivityEntry) => void;
 	onAcknowledgeActivity?: (entryId: string) => void;
@@ -33,10 +33,17 @@ const defaultFilters: RulesFilterValues = {
 };
 
 export default function RulesTab({
-	kind, onCreate, onEdit, onOpenActivity, onAcknowledgeActivity, detailRuleId, onDetailRuleHandled,
+	kind,
+	onCreate,
+	onEdit,
+	onOpenActivity,
+	onAcknowledgeActivity,
+	detailRuleId,
+	onDetailRuleHandled,
 }: RulesTabProps) {
 	const { t } = useTranslation('qa.triggers');
-	const { rules, deleteRule, setRuleStatus, duplicateRule } = useTriggerRulesStore();
+	const { rules, deleteRule, setRuleStatus, duplicateRule } =
+		useTriggerRulesStore();
 
 	const [filters, setFilters] = useState<RulesFilterValues>(defaultFilters);
 	const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
@@ -54,7 +61,10 @@ export default function RulesTab({
 		}
 	}, [detailRuleId]);
 
-	const kindRules = useMemo(() => rules.filter((r) => r.kind === kind), [rules, kind]);
+	const kindRules = useMemo(
+		() => rules.filter((r) => r.kind === kind),
+		[rules, kind]
+	);
 
 	const filteredRules = useMemo(() => {
 		let result = kindRules;
@@ -62,7 +72,11 @@ export default function RulesTab({
 		// Search filter
 		if (filters.search) {
 			const q = filters.search.toLowerCase();
-			result = result.filter((r) => r.name.toLowerCase().includes(q) || r.description.toLowerCase().includes(q));
+			result = result.filter(
+				(r) =>
+					r.name.toLowerCase().includes(q) ||
+					r.description.toLowerCase().includes(q)
+			);
 		}
 
 		// Type filter
@@ -90,7 +104,8 @@ export default function RulesTab({
 		result.sort((a, b) => {
 			const statusCmp = STATUS_ORDER[a.status] - STATUS_ORDER[b.status];
 			if (statusCmp !== 0) return statusCmp;
-			const severityCmp = SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
+			const severityCmp =
+				SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity];
 			if (severityCmp !== 0) return severityCmp;
 			return a.name.localeCompare(b.name);
 		});
@@ -98,12 +113,18 @@ export default function RulesTab({
 		return result;
 	}, [kindRules, filters]);
 
-	const selectedRule = selectedRuleId ? filteredRules.find((r) => r.id === selectedRuleId) : null;
+	const selectedRule = selectedRuleId
+		? filteredRules.find((r) => r.id === selectedRuleId)
+		: null;
 
 	const handleToggle = (rule: TriggerRule) => {
 		const newStatus = rule.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE';
 		setRuleStatus(rule.id, newStatus);
-		notifySuccess(t(`rules.notifications.${newStatus === 'ACTIVE' ? 'activated' : 'paused'}`));
+		notifySuccess(
+			t(
+				`rules.notifications.${newStatus === 'ACTIVE' ? 'activated' : 'paused'}`
+			)
+		);
 	};
 
 	const handleDuplicate = (rule: TriggerRule) => {
@@ -138,17 +159,31 @@ export default function RulesTab({
 
 	const handleSendTest = (_rule: TriggerRule) => {
 		// TODO: Implement send test with notification building
-		notifySuccess(t('rules.notifications.testSent', { agent: 'Sarah Johnson' }));
+		notifySuccess(
+			t('rules.notifications.testSent', { agent: 'Sarah Johnson' })
+		);
 	};
 
-	const isEmptyAfterFilters = kindRules.length > 0 && filteredRules.length === 0;
+	const isEmptyAfterFilters =
+		kindRules.length > 0 && filteredRules.length === 0;
 	const isCompletelyEmpty = kindRules.length === 0;
 
-	const titleKey = kind === 'ALERT' ? 'rules.alertsTitle' : 'rules.recognitionTitle';
-	const descKey = kind === 'ALERT' ? 'rules.alertsDescription' : 'rules.recognitionDescription';
-	const newButtonKey = kind === 'ALERT' ? 'rules.newAlert' : 'rules.newRecognition';
-	const emptyTitleKey = kind === 'ALERT' ? 'rules.empty.alertsTitle' : 'rules.empty.recognitionTitle';
-	const emptyDescKey = kind === 'ALERT' ? 'rules.empty.alertsDescription' : 'rules.empty.recognitionDescription';
+	const titleKey =
+		kind === 'ALERT' ? 'rules.alertsTitle' : 'rules.recognitionTitle';
+	const descKey =
+		kind === 'ALERT'
+			? 'rules.alertsDescription'
+			: 'rules.recognitionDescription';
+	const newButtonKey =
+		kind === 'ALERT' ? 'rules.newAlert' : 'rules.newRecognition';
+	const emptyTitleKey =
+		kind === 'ALERT'
+			? 'rules.empty.alertsTitle'
+			: 'rules.empty.recognitionTitle';
+	const emptyDescKey =
+		kind === 'ALERT'
+			? 'rules.empty.alertsDescription'
+			: 'rules.empty.recognitionDescription';
 
 	return (
 		<>
@@ -158,7 +193,10 @@ export default function RulesTab({
 					message={t(emptyTitleKey)}
 					description={t(emptyDescKey)}
 					action={
-						<Button leftSection={<IconPlus size={16} />} onClick={() => onCreate()}>
+						<Button
+							leftSection={<IconPlus size={16} />}
+							onClick={() => onCreate(kind)}
+						>
 							{t(newButtonKey)}
 						</Button>
 					}
@@ -168,12 +206,16 @@ export default function RulesTab({
 					title={t(titleKey)}
 					description={t(descKey)}
 					headerActions={
-						<Button size="sm" leftSection={<IconPlus size={16} />} onClick={() => onCreate()}>
+						<Button
+							size='sm'
+							leftSection={<IconPlus size={16} />}
+							onClick={() => onCreate(kind)}
+						>
 							{t(newButtonKey)}
 						</Button>
 					}
 				>
-					<Stack gap="md">
+					<Stack gap='md'>
 						<RulesFilters
 							kind={kind}
 							values={filters}
@@ -186,8 +228,8 @@ export default function RulesTab({
 								message={t('rules.empty.noMatches')}
 								action={
 									<Button
-										variant="light"
-										size="sm"
+										variant='light'
+										size='sm'
 										onClick={() => setFilters(defaultFilters)}
 									>
 										{t('rules.filters.clear')}
@@ -219,8 +261,14 @@ export default function RulesTab({
 				onToggle={handleToggle}
 				onDelete={handleDelete}
 				onSendTest={handleSendTest}
-				onOpenActivity={onOpenActivity ? (entry) => onOpenActivity(entry) : () => {}}
-				onAcknowledgeActivity={onAcknowledgeActivity ? (entryId) => onAcknowledgeActivity(entryId) : () => {}}
+				onOpenActivity={
+					onOpenActivity ? (entry) => onOpenActivity(entry) : () => {}
+				}
+				onAcknowledgeActivity={
+					onAcknowledgeActivity
+						? (entryId) => onAcknowledgeActivity(entryId)
+						: () => {}
+				}
 			/>
 		</>
 	);

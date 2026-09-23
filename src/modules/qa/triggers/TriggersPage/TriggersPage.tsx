@@ -26,7 +26,12 @@ import { RuleEditorDrawer } from '../components/RuleEditorDrawer';
 import ActivityTab from '../components/ActivityTab';
 import ActivityDetailDrawer from '../components/ActivityDetailDrawer';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
-import type { RuleType, TriggerRule, TriggerActivityEntry } from '~/models/qa';
+import type {
+	RuleKind,
+	RuleType,
+	TriggerRule,
+	TriggerActivityEntry,
+} from '~/models/qa';
 
 interface TriggersPageContextType {
 	role: 'supervisor' | 'qaManager';
@@ -60,6 +65,7 @@ export default function TriggersPage() {
 	// State management
 	const [tab, setTab] = useState<string | null>('alerts');
 	const [pickerOpened, setPickerOpened] = useState(false);
+	const [pickerKind, setPickerKind] = useState<RuleKind>('ALERT');
 	const [editorState, setEditorState] = useState<{
 		opened: boolean;
 		mode: 'create' | 'edit';
@@ -103,12 +109,9 @@ export default function TriggersPage() {
 		setTab(kind);
 	}, []);
 
-	const handleCreateRule = useCallback((type?: RuleType) => {
-		if (type) {
-			setEditorState({ opened: true, mode: 'create', type, rule: null });
-		} else {
-			setPickerOpened(true);
-		}
+	const handleCreateRule = useCallback((kind: RuleKind) => {
+		setPickerKind(kind);
+		setPickerOpened(true);
 	}, []);
 
 	const handleEditRule = useCallback((rule: TriggerRule) => {
@@ -283,7 +286,7 @@ export default function TriggersPage() {
 			<RuleTypePickerModal
 				opened={pickerOpened}
 				onClose={() => setPickerOpened(false)}
-				kinds={['ALERT', 'RECOGNITION']}
+				kinds={[pickerKind]}
 				onSelect={handlePickerSelect}
 			/>
 
