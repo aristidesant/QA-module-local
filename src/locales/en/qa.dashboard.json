@@ -95,6 +95,14 @@
 		},
 		"noData": "—"
 	},
+	"performanceScore": {
+		"period": {
+			"today": "Today",
+			"week": "Last week",
+			"month": "Monthly",
+			"quarter": "3 months"
+		}
+	},
 	"range": {
 		"all": "All",
 		"month": "30 days",

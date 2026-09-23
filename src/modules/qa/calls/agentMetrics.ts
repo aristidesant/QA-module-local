@@ -1,8 +1,16 @@
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import { TODAY, addDays } from '~/modules/qa/analytics/constants';
-import type { CallEmotion, TeamCallMetric } from '~/modules/qa/analytics/types';
+import type {
+	CallEmotion,
+	TeamCallMetric,
+	TeamCallSignals,
+} from '~/modules/qa/analytics/types';
 import { scopeAgents } from '~/modules/qa/analytics/helpers';
-import type { ComplianceCategory } from '~/modules/qa/dashboard/mockData';
+import type {
+	BusinessInsight,
+	ComplianceCategory,
+	WeeklyMetrics,
+} from '~/modules/qa/dashboard/mockData';
 import {
 	dashboardLineOfBusinessFor,
 	type DashboardLineOfBusiness,
@@ -81,36 +89,46 @@ export const predominantEmotion = (
 	return [...counts.entries()].sort((a, b) => b[1] - a[1])[0][0];
 };
 
-/** The agent's calls inside the last `days` days ending on TODAY (inclusive). */
+/**
+ * The agent's calls inside the `days`-day window ending `endOffsetDays` days
+ * before TODAY (inclusive). `endOffsetDays = 0` (default) is the current
+ * window; pass `days` as `endOffsetDays` to get the equal-length window that
+ * immediately precedes it (used for period-over-period trend comparisons).
+ */
 export const agentCallsInWindow = (
 	agentId: string,
-	days: number
+	days: number,
+	endOffsetDays = 0
 ): TeamCallMetric[] => {
-	const from = addDays(TODAY, -(days - 1));
+	const to = addDays(TODAY, -endOffsetDays);
+	const from = addDays(to, -(days - 1));
 	return TEAM_CALLS.filter(
 		(c) =>
 			c.agentId === agentId &&
 			c.date.slice(0, 10) >= from &&
-			c.date.slice(0, 10) <= TODAY
+			c.date.slice(0, 10) <= to
 	);
 };
 
 /**
- * Every call of the scoped role's roster inside the last `days` days ending
- * on TODAY (inclusive), optionally narrowed to one dashboard Line of Business.
+ * Every call of the scoped role's roster inside the `days`-day window ending
+ * `endOffsetDays` days before TODAY (inclusive), optionally narrowed to one
+ * dashboard Line of Business. See `agentCallsInWindow` for `endOffsetDays`.
  */
 export const teamCallsInWindow = (
 	role: TeamRole,
 	days: number,
-	lineOfBusiness?: DashboardLineOfBusiness | null
+	lineOfBusiness?: DashboardLineOfBusiness | null,
+	endOffsetDays = 0
 ): TeamCallMetric[] => {
 	const agentIds = new Set(scopeAgents(role).map((a) => a.id));
-	const from = addDays(TODAY, -(days - 1));
+	const to = addDays(TODAY, -endOffsetDays);
+	const from = addDays(to, -(days - 1));
 	return TEAM_CALLS.filter(
 		(c) =>
 			agentIds.has(c.agentId) &&
 			c.date.slice(0, 10) >= from &&
-			c.date.slice(0, 10) <= TODAY &&
+			c.date.slice(0, 10) <= to &&
 			(!lineOfBusiness ||
 				dashboardLineOfBusinessFor(c.campaignId) === lineOfBusiness)
 	);
@@ -188,3 +206,107 @@ export const buildTeamDashboardMetrics = (
 	lineOfBusiness?: DashboardLineOfBusiness | null
 ): AgentDashboardMetrics =>
 	aggregateDashboardMetrics(teamCallsInWindow(role, days, lineOfBusiness));
+
+export interface BusinessInsightsMetrics {
+	insights: BusinessInsight[];
+	outcome: WeeklyMetrics['businessOutcome'];
+}
+
+const BUSINESS_SIGNAL_TYPES: {
+	field: keyof TeamCallSignals;
+	type: BusinessInsight['type'];
+}[] = [
+	{ field: 'earlyObjection', type: 'Early Objection' },
+	{ field: 'unhandledObjection', type: 'Unhandled objection' },
+	{ field: 'competitorPlusCost', type: 'Competitor plus cost' },
+	{ field: 'mistargetedOffer', type: 'Mis-targeted offer' },
+];
+
+/** Tooltip copy per signal, split by scope so Supervisor ("team") and QA Manager ("platform") keep their distinct voice. */
+const BUSINESS_SIGNAL_DESCRIPTION: Record<
+	BusinessInsight['type'],
+	Record<'team' | 'platform', string>
+> = {
+	'Early Objection': {
+		team: 'Team is proactively addressing objections',
+		platform: 'Platform-wide early objection handling',
+	},
+	'Unhandled objection': {
+		team: 'Some customer concerns requiring escalation',
+		platform: 'Increasing unhandled objections across teams',
+	},
+	'Competitor plus cost': {
+		team: 'Competitive pressure affecting the team',
+		platform: 'Competitive pressure impacting multiple teams',
+	},
+	'Mis-targeted offer': {
+		team: 'Offer targeting accuracy for the team',
+		platform: 'Offer targeting accuracy across the platform',
+	},
+};
+
+/** Share of `calls` (0-100); 0 on an empty window (a signal "rate" reading 100% on 0 calls would be misleading). */
+const share = (part: number, total: number) =>
+	total === 0 ? 0 : Math.round((part / total) * 100);
+
+/** < 1pt of share change reads as noise, not a trend. */
+const trendOf = (
+	currentShare: number,
+	previousShare: number | null
+): BusinessInsight['trend'] => {
+	if (previousShare === null) return 'stable';
+	const delta = currentShare - previousShare;
+	return Math.abs(delta) < 1 ? 'stable' : delta > 0 ? 'up' : 'down';
+};
+
+/**
+ * Business Insights card data for any set of calls: the 4 signal shares (with
+ * trend vs. `previousCalls`, an equal-length prior window) plus the
+ * conversion outcome. `scope` only selects tooltip wording.
+ */
+export const aggregateBusinessInsights = (
+	calls: TeamCallMetric[],
+	previousCalls: TeamCallMetric[],
+	scope: 'team' | 'platform'
+): BusinessInsightsMetrics => {
+	const insights: BusinessInsight[] = BUSINESS_SIGNAL_TYPES.map(
+		({ field, type }) => {
+			const count = calls.filter((c) => c.signals[field]).length;
+			const prevCount = previousCalls.filter((c) => c.signals[field]).length;
+			const percentage = share(count, calls.length);
+			return {
+				type,
+				count,
+				percentage,
+				trend: trendOf(
+					percentage,
+					previousCalls.length ? share(prevCount, previousCalls.length) : null
+				),
+				description: BUSINESS_SIGNAL_DESCRIPTION[type][scope],
+			};
+		}
+	);
+
+	const offered = calls.filter((c) => c.offeredProduct !== null);
+	const converted = offered.filter((c) => c.converted);
+	return {
+		insights,
+		outcome: {
+			offersPresented: offered.length,
+			converted: converted.length,
+			conversionRate: share(converted.length, offered.length),
+		},
+	};
+};
+
+/** Team-scoped Business Insights: mirrors buildTeamDashboardMetrics's signature exactly. */
+export const buildTeamBusinessInsights = (
+	role: TeamRole,
+	days: number,
+	lineOfBusiness?: DashboardLineOfBusiness | null
+): BusinessInsightsMetrics =>
+	aggregateBusinessInsights(
+		teamCallsInWindow(role, days, lineOfBusiness),
+		teamCallsInWindow(role, days, lineOfBusiness, days),
+		role === 'supervisor' ? 'team' : 'platform'
+	);

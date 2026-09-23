@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { useTranslation } from 'react-i18next';
 import {
 	Stack,
 	Title,
@@ -9,6 +10,7 @@ import {
 	Group,
 	Button,
 	Select,
+	SegmentedControl,
 } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
@@ -22,13 +24,29 @@ import {
 	CampaignPerformanceCard,
 	type CampaignPerformanceEntry,
 } from '../components';
-import { buildTeamDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
+import {
+	buildTeamDashboardMetrics,
+	buildTeamBusinessInsights,
+} from '~/modules/qa/calls/agentMetrics';
 import {
 	DASHBOARD_LINES_OF_BUSINESS,
 	type DashboardLineOfBusiness,
 } from '../lineOfBusiness';
-import { QA_MANAGER_WEEKLY_METRICS } from '../mockData';
+import {
+	PERFORMANCE_SCORE_PERIODS,
+	DEFAULT_PERFORMANCE_SCORE_PERIOD,
+	performanceScoreDays,
+	type PerformanceScorePeriod,
+} from '../constants';
 import styles from '../Dashboard.module.css';
+
+/** Time-window clause per period, in this page's existing "...this week" voice. */
+const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
+	today: 'today',
+	week: 'this week',
+	month: 'this month',
+	quarter: 'over the last 3 months',
+};
 
 interface DisputeRow {
 	id: string;
@@ -247,10 +265,21 @@ const disputeColumns: BaseTableColumnDef<DisputeRow>[] = [
 
 export const NewQAManagerDashboard: React.FC = () => {
 	const navigate = useNavigate();
-	const { businessInsights, businessOutcome } = QA_MANAGER_WEEKLY_METRICS;
+	const { t } = useTranslation('qa.dashboard');
+	const [period, setPeriod] = useState<PerformanceScorePeriod>(
+		DEFAULT_PERFORMANCE_SCORE_PERIOD
+	);
+	const days = performanceScoreDays(period);
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
-	const metrics = buildTeamDashboardMetrics('qa-manager', 7, lineOfBusiness);
+	const metrics = useMemo(
+		() => buildTeamDashboardMetrics('qa-manager', days, lineOfBusiness),
+		[days, lineOfBusiness]
+	);
+	const { insights: businessInsights, outcome: businessOutcome } = useMemo(
+		() => buildTeamBusinessInsights('qa-manager', days, lineOfBusiness),
+		[days, lineOfBusiness]
+	);
 
 	const openDisputes = ALL_DISPUTES.filter((d) => d.status === 'open');
 	const openDisputeCount = openDisputes.length;
@@ -281,7 +310,18 @@ export const NewQAManagerDashboard: React.FC = () => {
 
 				<SectionCard
 					title='Performance Score'
-					description={`Platform quality assurance, compliance, sentiment and business results this week${lineOfBusiness ? ` · ${lineOfBusiness}` : ''}`}
+					description={`Platform quality assurance, compliance, sentiment and business results ${WINDOW_PHRASE[period]}${lineOfBusiness ? ` · ${lineOfBusiness}` : ''}`}
+					headerActions={
+						<SegmentedControl
+							size='xs'
+							value={period}
+							onChange={(v) => setPeriod(v as PerformanceScorePeriod)}
+							data={PERFORMANCE_SCORE_PERIODS.map((p) => ({
+								value: p.value,
+								label: t(p.labelKey),
+							}))}
+						/>
+					}
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
 						<div className={styles.gridCard}>

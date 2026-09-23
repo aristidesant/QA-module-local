@@ -1,6 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
+import {
+	Stack,
+	Title,
+	Text,
+	SimpleGrid,
+	SegmentedControl,
+} from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import {
@@ -14,10 +21,13 @@ import {
 	type PendingLearningItem,
 } from '../components';
 import { AGENT_PERSONA_ID } from '~/modules/qa/team/constants';
+import { buildAgentDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
 import {
-	AGENT_DASHBOARD_DAYS,
-	buildAgentDashboardMetrics,
-} from '~/modules/qa/calls/agentMetrics';
+	PERFORMANCE_SCORE_PERIODS,
+	DEFAULT_PERFORMANCE_SCORE_PERIOD,
+	performanceScoreDays,
+	type PerformanceScorePeriod,
+} from '../constants';
 import type { CallIssueKey } from '~/modules/qa/calls/issues';
 import {
 	useCoachingStore,
@@ -57,11 +67,24 @@ const COMPLIANCE_ISSUE: Record<
 };
 const MY_CALLS_PATH = '/qa/agent/calls';
 
+/** Time-window clause per period, in this page's existing "over the last N days" voice. */
+const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
+	today: 'today',
+	week: 'over the last 7 days',
+	month: 'over the last 30 days',
+	quarter: 'over the last 3 months',
+};
+
 export const NewAgentDashboard: React.FC = () => {
 	const navigate = useNavigate();
+	const { t } = useTranslation('qa.dashboard');
+	const [period, setPeriod] = useState<PerformanceScorePeriod>(
+		DEFAULT_PERFORMANCE_SCORE_PERIOD
+	);
+	const days = performanceScoreDays(period);
 	const metrics = useMemo(
-		() => buildAgentDashboardMetrics(AGENT_PERSONA_ID, AGENT_DASHBOARD_DAYS),
-		[]
+		() => buildAgentDashboardMetrics(AGENT_PERSONA_ID, days),
+		[days]
 	);
 
 	const allSessions = useCoachingStore(selectSessions);
@@ -130,7 +153,18 @@ export const NewAgentDashboard: React.FC = () => {
 				{/* 2. Performance Score: QA, Compliance, Sentiment & Emotion — each row opens the calls behind it */}
 				<SectionCard
 					title='Performance Score'
-					description={`Your quality assurance, compliance and sentiment results over the last ${AGENT_DASHBOARD_DAYS} days · ${metrics.calls} calls evaluated`}
+					description={`Your quality assurance, compliance and sentiment results ${WINDOW_PHRASE[period]} · ${metrics.calls} calls evaluated`}
+					headerActions={
+						<SegmentedControl
+							size='xs'
+							value={period}
+							onChange={(v) => setPeriod(v as PerformanceScorePeriod)}
+							data={PERFORMANCE_SCORE_PERIODS.map((p) => ({
+								value: p.value,
+								label: t(p.labelKey),
+							}))}
+						/>
+					}
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
 						<div className={styles.gridCard}>

@@ -9,6 +9,7 @@ import {
 	Badge,
 	Group,
 	Select,
+	SegmentedControl,
 } from '@mantine/core';
 import { IconTrophy } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
@@ -29,26 +30,53 @@ import {
 } from '~/modules/qa/rankings/helpers';
 import ExpandedRankingsTable from '~/modules/qa/agent/rankings/components/ExpandedRankingsTable';
 import RankingCardGrid from '~/modules/qa/agent/rankings/components/RankingCardGrid';
-import { buildTeamDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
+import {
+	buildTeamDashboardMetrics,
+	buildTeamBusinessInsights,
+} from '~/modules/qa/calls/agentMetrics';
 import { teamBurnoutRisk } from '~/modules/qa/analytics/helpers';
 import {
 	DASHBOARD_LINES_OF_BUSINESS,
 	type DashboardLineOfBusiness,
 } from '../lineOfBusiness';
-import { SUPERVISOR_WEEKLY_METRICS } from '../mockData';
+import {
+	PERFORMANCE_SCORE_PERIODS,
+	DEFAULT_PERFORMANCE_SCORE_PERIOD,
+	performanceScoreDays,
+	type PerformanceScorePeriod,
+} from '../constants';
 import styles from '../Dashboard.module.css';
+
+/** Time-window clause per period, in this page's existing "...this week" voice. */
+const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
+	today: 'today',
+	week: 'this week',
+	month: 'this month',
+	quarter: 'over the last 3 months',
+};
 
 /** Below this width the leaderboard table is replaced by the responsive card grid. */
 const TABLE_BREAKPOINT = '(max-width: 1024px)';
 
 export const NewSupervisorDashboard: React.FC = () => {
 	const { t } = useTranslation('qa.rankings');
+	const { t: tDashboard } = useTranslation('qa.dashboard');
 	const isCompact = useMediaQuery(TABLE_BREAKPOINT);
 	const { program, standings } = useActiveRankingByTeam('Team 1');
-	const { businessInsights, businessOutcome } = SUPERVISOR_WEEKLY_METRICS;
+	const [period, setPeriod] = useState<PerformanceScorePeriod>(
+		DEFAULT_PERFORMANCE_SCORE_PERIOD
+	);
+	const days = performanceScoreDays(period);
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
-	const metrics = buildTeamDashboardMetrics('supervisor', 7, lineOfBusiness);
+	const metrics = useMemo(
+		() => buildTeamDashboardMetrics('supervisor', days, lineOfBusiness),
+		[days, lineOfBusiness]
+	);
+	const { insights: businessInsights, outcome: businessOutcome } = useMemo(
+		() => buildTeamBusinessInsights('supervisor', days, lineOfBusiness),
+		[days, lineOfBusiness]
+	);
 	const burnoutRisk = teamBurnoutRisk('supervisor');
 
 	const entries = useMemo(
@@ -91,7 +119,18 @@ export const NewSupervisorDashboard: React.FC = () => {
 
 				<SectionCard
 					title='Performance Score'
-					description={`Your team's quality assurance, compliance, sentiment and business results this week${lineOfBusiness ? ` · ${lineOfBusiness}` : ''}`}
+					description={`Your team's quality assurance, compliance, sentiment and business results ${WINDOW_PHRASE[period]}${lineOfBusiness ? ` · ${lineOfBusiness}` : ''}`}
+					headerActions={
+						<SegmentedControl
+							size='xs'
+							value={period}
+							onChange={(v) => setPeriod(v as PerformanceScorePeriod)}
+							data={PERFORMANCE_SCORE_PERIODS.map((p) => ({
+								value: p.value,
+								label: tDashboard(p.labelKey),
+							}))}
+						/>
+					}
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
 						<div className={styles.gridCard}>
