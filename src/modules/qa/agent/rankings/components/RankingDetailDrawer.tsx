@@ -174,12 +174,14 @@ const DrawerBody: React.FC<
 							tooltip={getPointLeadTooltip(pointLead)}
 							color={getPointLeadColor(pointLead.points)}
 						/>
-						<SignalRow
-							icon={IconHeartHandshake}
-							label={`${reactionsTotal} reaction${reactionsTotal === 1 ? '' : 's'} received`}
-							tooltip={`${reactionsTotal} peer reaction${reactionsTotal === 1 ? '' : 's'} received`}
-							color={reactionsTotal > 0 ? 'blue' : 'gray'}
-						/>
+						{program.allowReactions && (
+							<SignalRow
+								icon={IconHeartHandshake}
+								label={`${reactionsTotal} reaction${reactionsTotal === 1 ? '' : 's'} received`}
+								tooltip={`${reactionsTotal} peer reaction${reactionsTotal === 1 ? '' : 's'} received`}
+								color={reactionsTotal > 0 ? 'blue' : 'gray'}
+							/>
+						)}
 						<SignalRow
 							icon={IconAward}
 							label={`${entry.achievements?.length ?? 0} badge${(entry.achievements?.length ?? 0) === 1 ? '' : 's'} earned`}
@@ -189,13 +191,17 @@ const DrawerBody: React.FC<
 					</Stack>
 				</Paper>
 
-				<Divider />
+				{program.allowReactions && (
+					<>
+						<Divider />
 
-				<LeaderboardReactions
-					agentId={entry.agentId}
-					agentName={entry.agentName}
-					size='md'
-				/>
+						<LeaderboardReactions
+							agentId={entry.agentId}
+							agentName={entry.agentName}
+							size='md'
+						/>
+					</>
+				)}
 
 				<Tabs
 					defaultValue='achievements'
@@ -210,21 +216,25 @@ const DrawerBody: React.FC<
 						>
 							Achievements
 						</Tabs.Tab>
-						<Tabs.Tab
-							value='reactions'
-							leftSection={<IconHeartHandshake size={16} />}
-						>
-							Reactions
-						</Tabs.Tab>
+						{program.allowReactions && (
+							<Tabs.Tab
+								value='reactions'
+								leftSection={<IconHeartHandshake size={16} />}
+							>
+								Reactions
+							</Tabs.Tab>
+						)}
 					</Tabs.List>
 
 					<Tabs.Panel value='achievements' pt='md'>
 						<AchievementsTab entry={entry} program={program} />
 					</Tabs.Panel>
 
-					<Tabs.Panel value='reactions' pt='md'>
-						<ReactionsTab entry={entry} programId={program.id} />
-					</Tabs.Panel>
+					{program.allowReactions && (
+						<Tabs.Panel value='reactions' pt='md'>
+							<ReactionsTab entry={entry} programId={program.id} />
+						</Tabs.Panel>
+					)}
 				</Tabs>
 			</Stack>
 		</AppDrawer>

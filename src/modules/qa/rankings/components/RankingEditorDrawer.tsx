@@ -11,6 +11,7 @@ import {
 	SegmentedControl,
 	Select,
 	Stack,
+	Switch,
 	Text,
 	TextInput,
 	Textarea,
@@ -78,6 +79,7 @@ const emptyDraft = (role: TeamRole): ProgramDraft => ({
 	prize: { kind: 'GIFT_CARD', title: '', description: '', icon: '🎁' },
 	milestones: [],
 	winnerBadgeId: null,
+	allowReactions: true,
 	status: 'draft',
 	createdBy:
 		role === 'qa-manager' ? QA_MANAGER_PERSONA.name : SUPERVISOR_PERSONA.name,
@@ -153,6 +155,12 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 		value: badge.id,
 		label: `${badge.icon} ${badge.name}`,
 	}));
+
+	/** Supervisors don't rank on Business Insights — that view stays QA Manager-only. */
+	const evaluationTypeOptions =
+		role === 'supervisor'
+			? CALL_EVALUATION_TABS.filter((tab) => tab.key !== 'business-insights')
+			: CALL_EVALUATION_TABS;
 
 	const unit = METRIC_BY_ID[draft.metricId]?.unit;
 	const suffix = unit === 'PERCENT' ? '%' : unit === 'SCORE_5' ? ' / 5' : '';
@@ -262,7 +270,7 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 							fullWidth
 							value={draft.evaluationType}
 							onChange={(value) => setType(value as RankingEvaluationType)}
-							data={CALL_EVALUATION_TABS.map((tab) => ({
+							data={evaluationTypeOptions.map((tab) => ({
 								value: tab.key,
 								label: t(`types.${tab.key}`),
 							}))}
@@ -296,6 +304,14 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 								min={0}
 							/>
 						</Group>
+						<Switch
+							label={t('editor.allowReactions')}
+							description={t('editor.allowReactionsHint')}
+							checked={draft.allowReactions}
+							onChange={(e) =>
+								patch({ allowReactions: e.currentTarget.checked })
+							}
+						/>
 					</Stack>
 				</SectionCard>
 

@@ -100,6 +100,8 @@
 		"metric": "Metric",
 		"target": "Target score",
 		"minCalls": "Minimum calls to qualify",
+		"allowReactions": "Allow peer reactions",
+		"allowReactionsHint": "Agents can react to each other's standings on the leaderboard",
 		"period": "Period",
 		"start": "Start",
 		"end": "End",

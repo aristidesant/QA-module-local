@@ -100,6 +100,8 @@
 		"metric": "Métrica",
 		"target": "Puntuación objetivo",
 		"minCalls": "Mínimo de llamadas para clasificar",
+		"allowReactions": "Permitir reacciones entre compañeros",
+		"allowReactionsHint": "Los agentes pueden reaccionar a las posiciones de sus compañeros en la tabla de clasificación",
 		"period": "Periodo",
 		"start": "Inicio",
 		"end": "Fin",

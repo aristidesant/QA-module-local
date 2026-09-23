@@ -49,6 +49,8 @@ export interface RankingProgram {
 	prize: RankingPrize;
 	milestones: RankingMilestone[];
 	winnerBadgeId: string | null;
+	/** Whether agents can give each other peer reactions on this ranking's leaderboard. */
+	allowReactions: boolean;
 	status: RankingStatus;
 	winnerId: string | null;
 	winnerName: string | null;

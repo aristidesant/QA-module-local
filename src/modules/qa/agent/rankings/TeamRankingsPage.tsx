@@ -112,6 +112,7 @@ export const TeamRankingsPage: React.FC = () => {
 										currentAgentId={AGENT_PERSONA_ID}
 										formatScore={renderScore}
 										onRowClick={handleRowClick}
+										hideReactions={!program.allowReactions}
 									/>
 								) : (
 									<ExpandedRankingsTable
@@ -119,6 +120,7 @@ export const TeamRankingsPage: React.FC = () => {
 										currentAgentId={AGENT_PERSONA_ID}
 										formatScore={renderScore}
 										onRowClick={handleRowClick}
+										hideReactions={!program.allowReactions}
 									/>
 								)}
 							</SectionCard>
