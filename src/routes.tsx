@@ -203,6 +203,9 @@ const ManagerRankingsPage = React.lazy(() =>
 		default: m.default,
 	}))
 );
+const TriggersPage = React.lazy(
+	() => import('./modules/qa/triggers/TriggersPage')
+);
 const DisputeCaseDetailPage = React.lazy(() =>
 	import('./modules/qa/disputes/cases/DisputeCaseDetailPage').then((m) => ({
 		default: m.default,
@@ -1248,6 +1251,28 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<CoachingPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/triggers',
+										id: 'qa.qa-manager.triggers',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TriggersPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/triggers',
+										id: 'qa.supervisor.triggers',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TriggersPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
