@@ -80,3 +80,8 @@ export { CommitLearningModal } from './CommitLearningModal';
 // Task 2: Burnout Risk Widget for agent wellbeing monitoring
 export { default as BurnoutRiskWidget } from './BurnoutRiskWidget';
 export type { BurnoutRiskData, BurnoutRiskLevel } from '../types/burnoutRisk';
+
+// Role dashboards: shared filter bar and needs-attention list
+export { DashboardFilterBar } from './DashboardFilterBar';
+export { NeedsAttentionStrip } from './NeedsAttentionStrip';
+export type { NeedsAttentionItem } from './NeedsAttentionStrip';

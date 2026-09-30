@@ -166,5 +166,67 @@
 		},
 		"title": "Actividad de evaluación"
 	},
-	"windowNotice": "Las métricas del rango se basan en las {{count}} evaluaciones más recientes."
+	"windowNotice": "Las métricas del rango se basan en las {{count}} evaluaciones más recientes.",
+	"roleDashboard": {
+		"title": {
+			"agent": "Panel del agente",
+			"supervisor": "Panel del supervisor",
+			"qaManager": "Panel del gerente de QA"
+		},
+		"subtitle": {
+			"agent": "Resumen de tu desempeño personal",
+			"supervisor": "Resumen del desempeño de tu equipo",
+			"qaManager": "Resumen del desempeño de la plataforma"
+		},
+		"scope": {
+			"agent": "Tus llamadas",
+			"supervisor": "Tu equipo",
+			"qaManager": "Plataforma"
+		},
+		"measure": {
+			"operational": "Efectividad de contacto",
+			"qa": "Puntaje por categoría de error",
+			"compliance": "Puntaje por área de cumplimiento",
+			"sentiment": "Sentimiento del agente vs. cliente",
+			"business": "Conversión y señales"
+		},
+		"scoped": "{{scope}} · {{measure}}",
+		"filters": {
+			"period": "Período",
+			"lineOfBusiness": "Línea de negocio",
+			"lineOfBusinessHint": "Solo aplica al Puntaje de desempeño",
+			"allLines": "Todas las líneas de negocio"
+		},
+		"attention": {
+			"title": "Requiere atención",
+			"description": "Elementos que necesitan una decisión o seguimiento en el período seleccionado",
+			"burnout": {
+				"label": "En riesgo de agotamiento",
+				"hint": "Programar coaching"
+			},
+			"autoFails": {
+				"label": "Fallos automáticos",
+				"hint": "Abrir en Analítica del equipo"
+			},
+			"negativeCustomer": {
+				"label": "Llamadas con cliente negativo",
+				"hint": "Abrir en Analítica del equipo"
+			},
+			"disputes": {
+				"label": "Disputas pendientes de acción",
+				"hint": "La más antigua espera {{days}} días"
+			},
+			"campaigns": {
+				"label": "Campañas bajo el objetivo",
+				"hint": "Puntaje de QA menor a 70"
+			}
+		},
+		"disputes": {
+			"age": "Antigüedad",
+			"ageDays": "{{count}} d"
+		},
+		"bestWorst": {
+			"description": "Tus mejores y peores llamadas de los últimos 7 días"
+		}
+	}
 }

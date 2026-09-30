@@ -1,13 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import {
-	Stack,
-	Title,
-	Text,
-	SimpleGrid,
-	SegmentedControl,
-} from '@mantine/core';
+import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import {
@@ -18,12 +12,13 @@ import {
 	BestWorstCallsTable,
 	CoachingLearningWidget,
 	CommitLearningModal,
+	DashboardFilterBar,
 	type PendingLearningItem,
 } from '../components';
+import { useDashboardCopy } from '../useDashboardCopy';
 import { AGENT_PERSONA_ID } from '~/modules/qa/team/constants';
 import { buildAgentDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
 import {
-	PERFORMANCE_SCORE_PERIODS,
 	DEFAULT_PERFORMANCE_SCORE_PERIOD,
 	performanceScoreDays,
 	type PerformanceScorePeriod,
@@ -79,6 +74,7 @@ const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
 export const NewAgentDashboard: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('qa.dashboard');
+	const copy = useDashboardCopy('agent');
 	const [period, setPeriod] = useState<PerformanceScorePeriod>(
 		DEFAULT_PERFORMANCE_SCORE_PERIOD
 	);
@@ -145,27 +141,18 @@ export const NewAgentDashboard: React.FC = () => {
 			<Stack gap='lg'>
 				{/* 1. Header Section */}
 				<div>
-					<Title order={1}>Agent Dashboard</Title>
+					<Title order={1}>{copy.title}</Title>
 					<Text c='dimmed' mt='xs'>
-						Your personal performance overview
+						{copy.subtitle}
 					</Text>
 				</div>
+
+				<DashboardFilterBar period={period} onPeriodChange={setPeriod} />
 
 				{/* 2. Performance Score: QA, Compliance, Sentiment & Emotion — each row opens the calls behind it */}
 				<SectionCard
 					title='Performance Score'
 					description={`Your quality assurance, compliance and sentiment results ${WINDOW_PHRASE[period]} · ${metrics.calls} calls evaluated`}
-					headerActions={
-						<SegmentedControl
-							size='xs'
-							value={period}
-							onChange={(v) => setPeriod(v as PerformanceScorePeriod)}
-							data={PERFORMANCE_SCORE_PERIODS.map((p) => ({
-								value: p.value,
-								label: t(p.labelKey),
-							}))}
-						/>
-					}
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
 						<div className={styles.gridCard}>
@@ -173,7 +160,7 @@ export const NewAgentDashboard: React.FC = () => {
 								calls={metrics.calls}
 								effectiveContacts={metrics.effectiveContacts}
 								nonEffectiveContacts={metrics.nonEffectiveContacts}
-								subtitle='Contact effectiveness over the same window'
+								subtitle={copy.cardSubtitle('operational')}
 								onNonEffectiveClick={() => openIssue('non-effective-contact')}
 								trend={metrics.trends?.effectiveContacts}
 							/>
@@ -181,7 +168,7 @@ export const NewAgentDashboard: React.FC = () => {
 						<div className={styles.gridCard}>
 							<QualityAssuranceCard
 								score={metrics.qa}
-								subtitle='Calls without each error type'
+								subtitle={copy.cardSubtitle('qa')}
 								autoFails={metrics.autoFails}
 								issueCounts={{
 									...metrics.qaIssueCounts,
@@ -194,7 +181,7 @@ export const NewAgentDashboard: React.FC = () => {
 						<div className={styles.gridCard}>
 							<ComplianceCard
 								categories={metrics.complianceCategories}
-								subtitle='Calls meeting each area target'
+								subtitle={copy.cardSubtitle('compliance')}
 								issueCounts={metrics.complianceIssueCounts}
 								onCategoryClick={(name) => openIssue(COMPLIANCE_ISSUE[name])}
 								trend={metrics.trends?.compliance}
@@ -214,7 +201,7 @@ export const NewAgentDashboard: React.FC = () => {
 									negativeCount: metrics.sentiment.customerNegativeCount,
 									trend: metrics.trends?.customerSentiment,
 								}}
-								subtitle='You vs the customers you contacted'
+								subtitle={copy.cardSubtitle('sentiment')}
 								onReviewClick={(side) =>
 									openIssue(
 										side === 'agent'
@@ -243,7 +230,7 @@ export const NewAgentDashboard: React.FC = () => {
 					</SectionCard>
 					<SectionCard
 						title='Best & Worst Calls'
-						description='Your top and bottom performing calls this week'
+						description={t('roleDashboard.bestWorst.description')}
 						fullHeight
 					>
 						<BestWorstCallsTable calls={BEST_WORST_CALLS} />

@@ -166,5 +166,67 @@
 		},
 		"title": "Evaluation activity"
 	},
-	"windowNotice": "Range metrics are based on the {{count}} most recent evaluations."
+	"windowNotice": "Range metrics are based on the {{count}} most recent evaluations.",
+	"roleDashboard": {
+		"title": {
+			"agent": "Agent Dashboard",
+			"supervisor": "Supervisor Dashboard",
+			"qaManager": "QA Manager Dashboard"
+		},
+		"subtitle": {
+			"agent": "Your personal performance overview",
+			"supervisor": "Your team's performance overview",
+			"qaManager": "Platform performance overview"
+		},
+		"scope": {
+			"agent": "Your calls",
+			"supervisor": "Your team",
+			"qaManager": "Platform"
+		},
+		"measure": {
+			"operational": "Contact effectiveness",
+			"qa": "Score by error category",
+			"compliance": "Score by compliance area",
+			"sentiment": "Agent vs customer sentiment",
+			"business": "Conversion and signals"
+		},
+		"scoped": "{{scope}} · {{measure}}",
+		"filters": {
+			"period": "Period",
+			"lineOfBusiness": "Line of Business",
+			"lineOfBusinessHint": "Applies to Performance Score only",
+			"allLines": "All lines of business"
+		},
+		"attention": {
+			"title": "Needs attention",
+			"description": "Items that need a decision or follow-up, for the selected period",
+			"burnout": {
+				"label": "At burnout risk",
+				"hint": "Schedule coaching"
+			},
+			"autoFails": {
+				"label": "Auto-fails",
+				"hint": "Open in Team Analytics"
+			},
+			"negativeCustomer": {
+				"label": "Negative customer calls",
+				"hint": "Open in Team Analytics"
+			},
+			"disputes": {
+				"label": "Disputes awaiting action",
+				"hint": "Oldest waiting {{days}} days"
+			},
+			"campaigns": {
+				"label": "Campaigns below target",
+				"hint": "QA score under 70"
+			}
+		},
+		"disputes": {
+			"age": "Age",
+			"ageDays": "{{count}}d"
+		},
+		"bestWorst": {
+			"description": "Your top and bottom performing calls over the last 7 days"
+		}
+	}
 }

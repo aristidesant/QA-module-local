@@ -1,16 +1,8 @@
 import React, { useCallback, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from '@mantine/hooks';
-import {
-	Stack,
-	Title,
-	Text,
-	SimpleGrid,
-	Badge,
-	Group,
-	Select,
-	SegmentedControl,
-} from '@mantine/core';
+import { Stack, Title, Text, SimpleGrid, Badge } from '@mantine/core';
 import { IconTrophy } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
@@ -22,7 +14,12 @@ import {
 	BusinessInsightsCard,
 	OperationalCard,
 	TeamBurnoutRiskCard,
+	DashboardFilterBar,
+	NeedsAttentionStrip,
+	type NeedsAttentionItem,
 } from '../components';
+import { useDashboardCopy } from '../useDashboardCopy';
+import { coachingBasePath } from '~/modules/qa/coaching/constants';
 import { useActiveRankingByTeam } from '~/modules/qa/rankings/hooks/useActiveRanking';
 import {
 	computeStandings,
@@ -38,19 +35,15 @@ import {
 import { teamBurnoutRisk } from '~/modules/qa/analytics/helpers';
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import { TODAY } from '~/modules/qa/analytics/constants';
+import type { DashboardLineOfBusiness } from '../lineOfBusiness';
 import {
-	DASHBOARD_LINES_OF_BUSINESS,
-	type DashboardLineOfBusiness,
-} from '../lineOfBusiness';
-import {
-	PERFORMANCE_SCORE_PERIODS,
 	DEFAULT_PERFORMANCE_SCORE_PERIOD,
 	performanceScoreDays,
 	type PerformanceScorePeriod,
 } from '../constants';
 import styles from '../Dashboard.module.css';
 
-/** Time-window clause per period, in this page's existing "...this week" voice. */
+/** Time-window clause per period, used in the Performance Score description. */
 const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
 	today: 'today',
 	week: 'this week',
@@ -62,19 +55,20 @@ const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
 /** Below this width the leaderboard table is replaced by the responsive card grid. */
 const TABLE_BREAKPOINT = '(max-width: 1024px)';
 
+/** Team-wide drill-down target: no team calls list exists yet, so rows open Team Analytics. */
+const ANALYTICS_PATH = '/qa/supervisor/analytics';
+
 export const NewSupervisorDashboard: React.FC = () => {
 	const { t } = useTranslation('qa.rankings');
 	const { t: tDashboard } = useTranslation('qa.dashboard');
+	const copy = useDashboardCopy('supervisor');
+	const navigate = useNavigate();
 	const isCompact = useMediaQuery(TABLE_BREAKPOINT);
 	const { program } = useActiveRankingByTeam('Team 1');
 	const [period, setPeriod] = useState<PerformanceScorePeriod>(
 		DEFAULT_PERFORMANCE_SCORE_PERIOD
 	);
 	const days = performanceScoreDays(period);
-	const [rankingsPeriod, setRankingsPeriod] = useState<PerformanceScorePeriod>(
-		DEFAULT_PERFORMANCE_SCORE_PERIOD
-	);
-	const rankingsDays = performanceScoreDays(rankingsPeriod);
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
 	const metrics = useMemo(
@@ -92,9 +86,8 @@ export const NewSupervisorDashboard: React.FC = () => {
 	const burnoutRisk = teamBurnoutRisk('supervisor');
 
 	const standings = useMemo(
-		() =>
-			program ? computeStandings(program, TEAM_CALLS, TODAY, rankingsDays) : [],
-		[program, rankingsDays]
+		() => (program ? computeStandings(program, TEAM_CALLS, TODAY, days) : []),
+		[program, days]
 	);
 
 	const entries = useMemo(
@@ -104,6 +97,32 @@ export const NewSupervisorDashboard: React.FC = () => {
 				: [],
 		[program, standings]
 	);
+
+	const openAnalytics = () => navigate(ANALYTICS_PATH);
+
+	const attentionItems: NeedsAttentionItem[] = [
+		{
+			id: 'burnout',
+			label: tDashboard('roleDashboard.attention.burnout.label'),
+			value: burnoutRisk.length,
+			hint: tDashboard('roleDashboard.attention.burnout.hint'),
+			onOpen: () => navigate(coachingBasePath('supervisor')),
+		},
+		{
+			id: 'autoFails',
+			label: tDashboard('roleDashboard.attention.autoFails.label'),
+			value: metrics.autoFails,
+			hint: tDashboard('roleDashboard.attention.autoFails.hint'),
+			onOpen: openAnalytics,
+		},
+		{
+			id: 'negativeCustomer',
+			label: tDashboard('roleDashboard.attention.negativeCustomer.label'),
+			value: metrics.sentiment.customerNegativeCount,
+			hint: tDashboard('roleDashboard.attention.negativeCustomer.hint'),
+			onOpen: openAnalytics,
+		},
+	];
 
 	const renderScore = useCallback(
 		(score: number) =>
@@ -115,40 +134,24 @@ export const NewSupervisorDashboard: React.FC = () => {
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
 				<div>
-					<Title order={1}>Supervisor Dashboard</Title>
+					<Title order={1}>{copy.title}</Title>
 					<Text c='dimmed' mt='xs'>
-						Your team's performance overview
+						{copy.subtitle}
 					</Text>
 				</div>
 
-				<Group justify='flex-end'>
-					<Select
-						label='Line of Business'
-						placeholder='All lines of business'
-						data={DASHBOARD_LINES_OF_BUSINESS}
-						value={lineOfBusiness}
-						onChange={(value) =>
-							setLineOfBusiness(value as DashboardLineOfBusiness | null)
-						}
-						clearable
-						w={220}
-					/>
-				</Group>
+				<DashboardFilterBar
+					period={period}
+					onPeriodChange={setPeriod}
+					lineOfBusiness={lineOfBusiness}
+					onLineOfBusinessChange={setLineOfBusiness}
+				/>
+
+				<NeedsAttentionStrip items={attentionItems} />
 
 				<SectionCard
 					title='Performance Score'
 					description={`Your team's quality assurance, compliance, sentiment and business results ${WINDOW_PHRASE[period]}${lineOfBusiness ? ` · ${lineOfBusiness}` : ''}`}
-					headerActions={
-						<SegmentedControl
-							size='xs'
-							value={period}
-							onChange={(v) => setPeriod(v as PerformanceScorePeriod)}
-							data={PERFORMANCE_SCORE_PERIODS.map((p) => ({
-								value: p.value,
-								label: tDashboard(p.labelKey),
-							}))}
-						/>
-					}
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
 						<div className={styles.gridCard}>
@@ -156,14 +159,16 @@ export const NewSupervisorDashboard: React.FC = () => {
 								calls={metrics.calls}
 								effectiveContacts={metrics.effectiveContacts}
 								nonEffectiveContacts={metrics.nonEffectiveContacts}
-								subtitle="Team's contact effectiveness this week"
+								subtitle={copy.cardSubtitle('operational')}
+								onNonEffectiveClick={openAnalytics}
 								trend={metrics.trends?.effectiveContacts}
 							/>
 						</div>
 						<div className={styles.gridCard}>
 							<QualityAssuranceCard
 								score={metrics.qa}
-								subtitle='Team category breakdown'
+								subtitle={copy.cardSubtitle('qa')}
+								onCategoryClick={openAnalytics}
 								autoFails={metrics.autoFails}
 								issueCounts={{
 									...metrics.qaIssueCounts,
@@ -175,7 +180,8 @@ export const NewSupervisorDashboard: React.FC = () => {
 						<div className={styles.gridCard}>
 							<ComplianceCard
 								categories={metrics.complianceCategories}
-								subtitle='Team category overview'
+								subtitle={copy.cardSubtitle('compliance')}
+								onCategoryClick={openAnalytics}
 								issueCounts={metrics.complianceIssueCounts}
 								trend={metrics.trends?.compliance}
 							/>
@@ -194,14 +200,15 @@ export const NewSupervisorDashboard: React.FC = () => {
 									negativeCount: metrics.sentiment.customerNegativeCount,
 									trend: metrics.trends?.customerSentiment,
 								}}
-								subtitle='Team vs the customers they contacted'
+								subtitle={copy.cardSubtitle('sentiment')}
+								onReviewClick={openAnalytics}
 							/>
 						</div>
 						<div className={styles.gridCard}>
 							<BusinessInsightsCard
 								insights={businessInsights}
 								outcome={businessOutcome}
-								subtitle='Team conversion and signals'
+								subtitle={copy.cardSubtitle('business')}
 								conversionTrend={conversionTrend}
 							/>
 						</div>
@@ -221,22 +228,9 @@ export const NewSupervisorDashboard: React.FC = () => {
 							title={t('agent.leaderboard')}
 							description={t('agent.leaderboardDescription')}
 							headerActions={
-								<Group gap='sm' wrap='nowrap'>
-									<SegmentedControl
-										size='xs'
-										value={rankingsPeriod}
-										onChange={(v) =>
-											setRankingsPeriod(v as PerformanceScorePeriod)
-										}
-										data={PERFORMANCE_SCORE_PERIODS.map((p) => ({
-											value: p.value,
-											label: tDashboard(p.labelKey),
-										}))}
-									/>
-									<Badge variant='light' size='sm'>
-										{standings.length}
-									</Badge>
-								</Group>
+								<Badge variant='light' size='sm'>
+									{standings.length}
+								</Badge>
 							}
 						>
 							{isCompact ? (

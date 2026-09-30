@@ -9,8 +9,6 @@ import {
 	Badge,
 	Group,
 	Button,
-	Select,
-	SegmentedControl,
 } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
@@ -22,25 +20,26 @@ import {
 	BusinessInsightsCard,
 	OperationalCard,
 	CampaignPerformanceCard,
+	DashboardFilterBar,
+	NeedsAttentionStrip,
 	type CampaignPerformanceEntry,
+	type NeedsAttentionItem,
 } from '../components';
+import { useDashboardCopy } from '../useDashboardCopy';
+import { TODAY } from '~/modules/qa/analytics/constants';
 import {
 	buildTeamDashboardMetrics,
 	buildTeamBusinessInsights,
 } from '~/modules/qa/calls/agentMetrics';
+import type { DashboardLineOfBusiness } from '../lineOfBusiness';
 import {
-	DASHBOARD_LINES_OF_BUSINESS,
-	type DashboardLineOfBusiness,
-} from '../lineOfBusiness';
-import {
-	PERFORMANCE_SCORE_PERIODS,
 	DEFAULT_PERFORMANCE_SCORE_PERIOD,
 	performanceScoreDays,
 	type PerformanceScorePeriod,
 } from '../constants';
 import styles from '../Dashboard.module.css';
 
-/** Time-window clause per period, in this page's existing "...this week" voice. */
+/** Time-window clause per period, used in the Performance Score description. */
 const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
 	today: 'today',
 	week: 'this week',
@@ -221,6 +220,21 @@ const ACTIVE_CAMPAIGNS: CampaignPerformanceEntry[] = [
 	},
 ];
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Whole days a dispute has been waiting, measured from the dashboard's reference "today". */
+const disputeAgeDays = (createdDate: string) =>
+	Math.max(
+		0,
+		Math.floor((Date.parse(TODAY) - Date.parse(createdDate)) / DAY_MS)
+	);
+
+/** Below this QA score a campaign counts as under target (the "critical" score band). */
+const CAMPAIGN_QA_TARGET = 70;
+
+/** Team-wide drill-down target: no platform calls list exists yet, so rows open Team Analytics. */
+const ANALYTICS_PATH = '/qa/qa-manager/analytics';
+
 const DISPUTE_STATUS_COLORS: Record<DisputeRow['status'], string> = {
 	open: 'blue',
 	pending: 'yellow',
@@ -255,10 +269,14 @@ const disputeColumns: BaseTableColumnDef<DisputeRow>[] = [
 	},
 	{
 		accessorKey: 'createdDate',
-		header: 'Date Created',
+		header: 'Age',
 		cell: ({ row }) => (
-			<Text c='dimmed' size='sm'>
-				{new Date(row.original.createdDate).toLocaleDateString()}
+			<Text
+				c='dimmed'
+				size='sm'
+				title={new Date(row.original.createdDate).toLocaleDateString()}
+			>
+				{disputeAgeDays(row.original.createdDate)}d
 			</Text>
 		),
 	},
@@ -267,6 +285,7 @@ const disputeColumns: BaseTableColumnDef<DisputeRow>[] = [
 export const NewQAManagerDashboard: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('qa.dashboard');
+	const copy = useDashboardCopy('qaManager');
 	const [period, setPeriod] = useState<PerformanceScorePeriod>(
 		DEFAULT_PERFORMANCE_SCORE_PERIOD
 	);
@@ -286,47 +305,68 @@ export const NewQAManagerDashboard: React.FC = () => {
 		[days, lineOfBusiness]
 	);
 
-	const openDisputes = ALL_DISPUTES.filter((d) => d.status === 'open');
+	// Open and pending both still wait on a decision; oldest first so the longest wait leads.
+	const openDisputes = ALL_DISPUTES.filter(
+		(d) => d.status === 'open' || d.status === 'pending'
+	).sort((a, b) => a.createdDate.localeCompare(b.createdDate));
 	const openDisputeCount = openDisputes.length;
+	const oldestDisputeDays = openDisputes.length
+		? disputeAgeDays(openDisputes[0].createdDate)
+		: 0;
+	const campaignsBelowTarget = ACTIVE_CAMPAIGNS.filter(
+		(c) => c.status === 'active' && c.qaScore < CAMPAIGN_QA_TARGET
+	).length;
+
+	const openAnalytics = () => navigate(ANALYTICS_PATH);
+
+	const attentionItems: NeedsAttentionItem[] = [
+		{
+			id: 'disputes',
+			label: t('roleDashboard.attention.disputes.label'),
+			value: openDisputeCount,
+			hint: t('roleDashboard.attention.disputes.hint', {
+				days: oldestDisputeDays,
+			}),
+			onOpen: () => navigate('/qa/qa-manager/disputes'),
+		},
+		{
+			id: 'campaigns',
+			label: t('roleDashboard.attention.campaigns.label'),
+			value: campaignsBelowTarget,
+			hint: t('roleDashboard.attention.campaigns.hint'),
+			onOpen: () => navigate('/qa/qa-manager/campaigns'),
+		},
+		{
+			id: 'autoFails',
+			label: t('roleDashboard.attention.autoFails.label'),
+			value: metrics.autoFails,
+			hint: t('roleDashboard.attention.autoFails.hint'),
+			onOpen: openAnalytics,
+		},
+	];
 
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
 				<div>
-					<Title order={1}>QA Manager Dashboard</Title>
+					<Title order={1}>{copy.title}</Title>
 					<Text c='dimmed' mt='xs'>
-						Platform performance overview
+						{copy.subtitle}
 					</Text>
 				</div>
 
-				<Group justify='flex-end'>
-					<Select
-						label='Line of Business'
-						placeholder='All lines of business'
-						data={DASHBOARD_LINES_OF_BUSINESS}
-						value={lineOfBusiness}
-						onChange={(value) =>
-							setLineOfBusiness(value as DashboardLineOfBusiness | null)
-						}
-						clearable
-						w={220}
-					/>
-				</Group>
+				<DashboardFilterBar
+					period={period}
+					onPeriodChange={setPeriod}
+					lineOfBusiness={lineOfBusiness}
+					onLineOfBusinessChange={setLineOfBusiness}
+				/>
+
+				<NeedsAttentionStrip items={attentionItems} />
 
 				<SectionCard
 					title='Performance Score'
 					description={`Platform quality assurance, compliance, sentiment and business results ${WINDOW_PHRASE[period]}${lineOfBusiness ? ` · ${lineOfBusiness}` : ''}`}
-					headerActions={
-						<SegmentedControl
-							size='xs'
-							value={period}
-							onChange={(v) => setPeriod(v as PerformanceScorePeriod)}
-							data={PERFORMANCE_SCORE_PERIODS.map((p) => ({
-								value: p.value,
-								label: t(p.labelKey),
-							}))}
-						/>
-					}
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
 						<div className={styles.gridCard}>
@@ -334,14 +374,16 @@ export const NewQAManagerDashboard: React.FC = () => {
 								calls={metrics.calls}
 								effectiveContacts={metrics.effectiveContacts}
 								nonEffectiveContacts={metrics.nonEffectiveContacts}
-								subtitle="Platform's contact effectiveness this week"
+								subtitle={copy.cardSubtitle('operational')}
+								onNonEffectiveClick={openAnalytics}
 								trend={metrics.trends?.effectiveContacts}
 							/>
 						</div>
 						<div className={styles.gridCard}>
 							<QualityAssuranceCard
 								score={metrics.qa}
-								subtitle='Platform category breakdown'
+								subtitle={copy.cardSubtitle('qa')}
+								onCategoryClick={openAnalytics}
 								autoFails={metrics.autoFails}
 								issueCounts={{
 									...metrics.qaIssueCounts,
@@ -353,7 +395,8 @@ export const NewQAManagerDashboard: React.FC = () => {
 						<div className={styles.gridCard}>
 							<ComplianceCard
 								categories={metrics.complianceCategories}
-								subtitle='Platform category overview'
+								subtitle={copy.cardSubtitle('compliance')}
+								onCategoryClick={openAnalytics}
 								issueCounts={metrics.complianceIssueCounts}
 								trend={metrics.trends?.compliance}
 							/>
@@ -372,14 +415,15 @@ export const NewQAManagerDashboard: React.FC = () => {
 									negativeCount: metrics.sentiment.customerNegativeCount,
 									trend: metrics.trends?.customerSentiment,
 								}}
-								subtitle='Platform vs the customers they contacted'
+								subtitle={copy.cardSubtitle('sentiment')}
+								onReviewClick={openAnalytics}
 							/>
 						</div>
 						<div className={styles.gridCard}>
 							<BusinessInsightsCard
 								insights={businessInsights}
 								outcome={businessOutcome}
-								subtitle='Platform conversion and signals'
+								subtitle={copy.cardSubtitle('business')}
 								conversionTrend={conversionTrend}
 							/>
 						</div>
@@ -410,6 +454,9 @@ export const NewQAManagerDashboard: React.FC = () => {
 							columns={disputeColumns}
 							data={openDisputes}
 							getRowId={(dispute) => dispute.id}
+							onRowClick={(dispute) =>
+								navigate(`/qa/qa-manager/disputes/${dispute.id}`)
+							}
 							emptyMessage='No open disputes'
 						/>
 					</SectionCard>
