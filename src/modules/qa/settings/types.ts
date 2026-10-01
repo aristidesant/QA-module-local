@@ -1,8 +1,4 @@
-import type {
-	BurnoutDriverId,
-	BurnoutDriverRule,
-	CallEmotion,
-} from '~/modules/qa/analytics/types';
+import type { BurnoutDriverRule } from '~/modules/qa/analytics/types';
 
 export type SettingsAspect = 'qa' | 'compliance' | 'sentiment' | 'business';
 
@@ -12,7 +8,8 @@ export interface ScoreBands {
 	watch: number;
 }
 
-export type QaMetricKey = 'overall' | 'ecn' | 'enc' | 'ecc' | 'ecuf';
+/** The COPC categories; the standard QA score has its own `scoreBands`. */
+export type QaMetricKey = 'ecn' | 'enc' | 'ecc' | 'ecuf';
 export type ComplianceMetricKey =
 	| 'overall'
 	| 'Security'
@@ -26,8 +23,10 @@ export type BusinessSignalKey =
 	| 'mistargetedOffer';
 
 export interface QaThresholds {
-	bands: ScoreBands;
-	overrides: Partial<Record<QaMetricKey, ScoreBands>>;
+	/** Bands of the standard QA score (0-100 average). */
+	scoreBands: ScoreBands;
+	/** Each COPC category (ECN, ENC, ECC, ECUF) is measured on its own, so it has its own bands. */
+	categoryBands: Record<QaMetricKey, ScoreBands>;
 	/** A call whose QA score is below this is an incident. */
 	lowScoreIncident: number;
 }
@@ -46,12 +45,20 @@ export interface SentimentCutPoints {
 	positive: number;
 }
 
+export type SentimentBandKey =
+	| 'veryNegative'
+	| 'negative'
+	| 'neutral'
+	| 'positive'
+	| 'veryPositive';
+
 export interface SentimentThresholds {
 	/** Upper bounds of the first four bands on the 1-5 scale, ascending. Above `positive` is "very positive". */
 	cutPoints: SentimentCutPoints;
 	/** A call whose sentiment is below this is an incident. */
 	lowSentimentIncident: number;
-	negativeEmotions: CallEmotion[];
+	/** Which emotions belong to each sentiment type. Very negative + Negative are the "negative" emotions. */
+	emotionsBySentiment: Record<SentimentBandKey, string[]>;
 }
 
 export interface BusinessThresholds {
@@ -69,10 +76,11 @@ export interface ThresholdSettings {
 	business: BusinessThresholds;
 }
 
-export type BurnoutPatternId = BurnoutDriverId;
-
-export interface BurnoutPattern extends Omit<BurnoutDriverRule, 'id'> {
-	id: BurnoutPatternId;
+/** A burnout rule plus how Settings presents it. Built-ins can be switched off but not removed. */
+export interface BurnoutPattern extends BurnoutDriverRule {
+	/** Name of a pattern the QA Manager created; built-ins are named from i18n. */
+	name?: string;
+	builtIn: boolean;
 	enabled: boolean;
 }
 

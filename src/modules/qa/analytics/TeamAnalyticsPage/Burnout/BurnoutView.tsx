@@ -11,20 +11,11 @@ import {
 } from '@mantine/core';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
 import { useSettingsStore, selectBurnout } from '~/stores/qa/settingsStore';
+import { usePatternText } from '~/modules/qa/settings/usePatternText';
 import { assessBurnout, burnoutCandidates } from '../../helpers';
 import type { BurnoutDriver } from '../../types';
 import { useTeamAnalyticsData } from '../TeamAnalyticsContext';
 import styles from '../TeamAnalyticsPage.module.css';
-
-/** Driver rule ids carry their own label keys under `burnout.drivers`. */
-const DRIVER_LABEL_KEY: Record<string, string> = {
-	NEGATIVE_EMOTION_STREAK: 'negativeEmotionStreak',
-	AGENT_SENTIMENT_TREND: 'agentSentimentTrend',
-	NEGATIVE_EMOTION_7D: 'negativeEmotionShare',
-	QA_TREND_14D: 'qaScoreTrend',
-	AFTER_HOURS_30D: 'afterHoursShare',
-	AHT_VS_TEAM_30D: 'ahtVsTeam',
-};
 
 const MAX_VISIBLE_DRIVERS = 2;
 
@@ -45,8 +36,12 @@ const BurnoutView = () => {
 		});
 	}, [role, burnoutSettings]);
 
-	const driverLabel = (driver: BurnoutDriver) =>
-		t(`burnout.drivers.${DRIVER_LABEL_KEY[driver.id]}`);
+	const patternText = usePatternText();
+	/** Built-ins are named from i18n, custom patterns by the name the QA Manager gave them. */
+	const driverLabel = (driver: BurnoutDriver) => {
+		const pattern = burnoutSettings.patterns.find((p) => p.id === driver.id);
+		return pattern ? patternText.patternName(pattern) : driver.id;
+	};
 
 	if (candidates.length === 0) {
 		return (

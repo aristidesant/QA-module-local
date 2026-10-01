@@ -1,10 +1,10 @@
 import type { ScoreBand } from '~/modules/qa/constants/badgeColors';
-import type { CallEmotion } from '~/modules/qa/analytics/types';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
 import type {
 	BurnoutSettings,
 	ScoreBands,
 	SentimentCutPoints,
+	SentimentThresholds,
 	SettingsAspect,
 	ThresholdSettings,
 } from './types';
@@ -17,7 +17,7 @@ export const bandFor = (score: number, bands: ScoreBands): ScoreBand =>
 			? 'warning'
 			: 'critical';
 
-type BandedAspect = Exclude<SettingsAspect, 'sentiment'>;
+type BandedAspect = Exclude<SettingsAspect, 'sentiment' | 'qa'>;
 
 /** The metric's own bands when it overrides its aspect, otherwise the aspect's. */
 export const bandsFor = (
@@ -59,9 +59,40 @@ export const sentimentBandIndex = (
 	return index === -1 ? bounds.length : index;
 };
 
+const negativeCache = new WeakMap<
+	SentimentThresholds['emotionsBySentiment'],
+	string[]
+>();
+const positiveCache = new WeakMap<
+	SentimentThresholds['emotionsBySentiment'],
+	string[]
+>();
+
+/** Emotions of the Very negative and Negative types. The array is stable until the assignment changes. */
+export const negativeEmotionsOf = (sentiment: SentimentThresholds) => {
+	const by = sentiment.emotionsBySentiment;
+	let list = negativeCache.get(by);
+	if (!list) {
+		list = [...by.veryNegative, ...by.negative];
+		negativeCache.set(by, list);
+	}
+	return list;
+};
+
+/** Emotions of the Positive and Very positive types. */
+export const positiveEmotionsOf = (sentiment: SentimentThresholds) => {
+	const by = sentiment.emotionsBySentiment;
+	let list = positiveCache.get(by);
+	if (!list) {
+		list = [...by.positive, ...by.veryPositive];
+		positiveCache.set(by, list);
+	}
+	return list;
+};
+
 export const isNegativeEmotionIn = (
-	emotion: CallEmotion,
-	negativeEmotions: CallEmotion[]
+	emotion: string,
+	negativeEmotions: string[]
 ) => negativeEmotions.includes(emotion);
 
 export const burnoutLevelFor = (

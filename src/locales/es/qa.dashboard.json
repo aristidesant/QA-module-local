@@ -253,5 +253,19 @@
 			"warning": "Advertencia",
 			"violation": "Violación"
 		}
+	},
+	"qualityAssurance": {
+		"averageScore": "puntaje de QA promedio"
+	},
+	"bestWorst": {
+		"info": {
+			"label": "Cómo se eligen las mejores y peores llamadas",
+			"title": "Cómo se eligen las llamadas",
+			"bestTitle": "Mejor llamada",
+			"bestRule": "Puntaje de QA de {{onTarget}} o más (En objetivo), sin fallo automático ni violación de cumplimiento.",
+			"worstTitle": "Peor llamada",
+			"worstRule": "Puntaje de QA menor a {{incident}}, o cualquier fallo automático.",
+			"footer": "Ambos umbrales se definen en Configuración › Aseguramiento de calidad."
+		}
 	}
 }

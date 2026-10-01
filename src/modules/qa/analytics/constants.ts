@@ -1,11 +1,8 @@
 import type { Shift } from '~/modules/qa/team/types';
 import { NOW_ISO } from '~/modules/qa/team/constants';
-import { DEFAULT_BURNOUT_RULES } from '~/modules/qa/settings/constants';
 import type {
 	AnalyticsPreset,
 	BurnoutActionKind,
-	BurnoutDriverId,
-	BurnoutDriverRule,
 	CallDirection,
 	CallEmotion,
 	FinderPreset,
@@ -299,15 +296,3 @@ export const BURNOUT_ACTION_KINDS: BurnoutActionKind[] = [
 	'ADJUST_WORKLOAD',
 	'ASSIGN_MENTOR',
 ];
-
-export const BURNOUT_DRIVER_LABEL_KEY: Record<BurnoutDriverId, string> = {
-	AGENT_SENTIMENT_TREND: 'burnout.drivers.agentSentimentTrend',
-	NEGATIVE_EMOTION_7D: 'burnout.drivers.negativeEmotionShare',
-	QA_TREND_14D: 'burnout.drivers.qaScoreTrend',
-	AFTER_HOURS_30D: 'burnout.drivers.afterHoursShare',
-	AHT_VS_TEAM_30D: 'burnout.drivers.ahtVsTeam',
-	NEGATIVE_EMOTION_STREAK: 'burnout.drivers.negativeEmotionStreak',
-};
-
-/** Default driver rules; the live, editable copy lives in the settings store. */
-export const BURNOUT_DRIVER_RULES: BurnoutDriverRule[] = DEFAULT_BURNOUT_RULES;

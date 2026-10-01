@@ -1,6 +1,24 @@
 import React, { useState } from 'react';
-import { Card, Stack, Group, Text, Table, Badge, SegmentedControl, ThemeIcon, Center } from '@mantine/core';
-import { IconTrendingUp, IconTrendingDown } from '@tabler/icons-react';
+import { useTranslation } from 'react-i18next';
+import {
+	ActionIcon,
+	Card,
+	Stack,
+	Group,
+	Text,
+	Table,
+	Badge,
+	SegmentedControl,
+	ThemeIcon,
+	Center,
+	Popover,
+} from '@mantine/core';
+import {
+	IconInfoCircle,
+	IconTrendingUp,
+	IconTrendingDown,
+} from '@tabler/icons-react';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import type { BestWorstCall } from './BestWorstCallsPanel';
 import styles from '../Dashboard.module.css';
 
@@ -11,12 +29,16 @@ interface BestWorstCallsTableProps {
 }
 
 /** Formats a duration in seconds as whole minutes */
-const formatDuration = (seconds: number): string => `${Math.round(seconds / 60)}m`;
+const formatDuration = (seconds: number): string =>
+	`${Math.round(seconds / 60)}m`;
 
 /** Formats an ISO date string as MM/DD */
 const formatDate = (dateString: string): string => {
 	try {
-		return new Date(dateString).toLocaleDateString('en-US', { month: '2-digit', day: '2-digit' });
+		return new Date(dateString).toLocaleDateString('en-US', {
+			month: '2-digit',
+			day: '2-digit',
+		});
 	} catch {
 		return dateString;
 	}
@@ -29,11 +51,16 @@ const formatDate = (dateString: string): string => {
  * contents are switched by a segmented control at the top ("Best Calls" /
  * "Worst Calls"). Only one set is visible at a time.
  */
-export const BestWorstCallsTable: React.FC<BestWorstCallsTableProps> = ({ calls, onCallClick }) => {
+export const BestWorstCallsTable: React.FC<BestWorstCallsTableProps> = ({
+	calls,
+	onCallClick,
+}) => {
+	const { t } = useTranslation('qa.dashboard');
+	const thresholds = useSettingsStore(selectThresholds);
 	const [view, setView] = useState<'best' | 'worst'>('best');
 
-	const bestCalls = calls.filter(call => call.type === 'best');
-	const worstCalls = calls.filter(call => call.type === 'worst');
+	const bestCalls = calls.filter((call) => call.type === 'best');
+	const worstCalls = calls.filter((call) => call.type === 'worst');
 	const visibleCalls = view === 'best' ? bestCalls : worstCalls;
 
 	const isBest = view === 'best';
@@ -41,7 +68,13 @@ export const BestWorstCallsTable: React.FC<BestWorstCallsTableProps> = ({ calls,
 	const AccentIcon = isBest ? IconTrendingUp : IconTrendingDown;
 
 	return (
-		<Card className={styles.metricCard} p='lg' radius='md' withBorder shadow='sm'>
+		<Card
+			className={styles.metricCard}
+			p='lg'
+			radius='md'
+			withBorder
+			shadow='sm'
+		>
 			<Stack gap='md'>
 				<Group justify='space-between' align='center' wrap='wrap'>
 					<Group gap='sm' align='center'>
@@ -51,11 +84,62 @@ export const BestWorstCallsTable: React.FC<BestWorstCallsTableProps> = ({ calls,
 						<Badge color={accentColor} variant='light' size='lg'>
 							{visibleCalls.length} {isBest ? 'best' : 'worst'} calls
 						</Badge>
+						<Popover width={320} position='bottom-start' withArrow shadow='md'>
+							<Popover.Target>
+								<ActionIcon
+									variant='subtle'
+									color='gray'
+									aria-label={t('bestWorst.info.label')}
+								>
+									<IconInfoCircle size={18} />
+								</ActionIcon>
+							</Popover.Target>
+							<Popover.Dropdown>
+								<Stack gap='sm'>
+									<Text fw={600} size='sm'>
+										{t('bestWorst.info.title')}
+									</Text>
+									<Stack gap={2}>
+										<Group gap='xs'>
+											<ThemeIcon size='xs' color='green' variant='light'>
+												<IconTrendingUp size={12} />
+											</ThemeIcon>
+											<Text size='sm' fw={600}>
+												{t('bestWorst.info.bestTitle')}
+											</Text>
+										</Group>
+										<Text size='sm' c='dimmed'>
+											{t('bestWorst.info.bestRule', {
+												onTarget: thresholds.qa.scoreBands.onTarget,
+											})}
+										</Text>
+									</Stack>
+									<Stack gap={2}>
+										<Group gap='xs'>
+											<ThemeIcon size='xs' color='red' variant='light'>
+												<IconTrendingDown size={12} />
+											</ThemeIcon>
+											<Text size='sm' fw={600}>
+												{t('bestWorst.info.worstTitle')}
+											</Text>
+										</Group>
+										<Text size='sm' c='dimmed'>
+											{t('bestWorst.info.worstRule', {
+												incident: thresholds.qa.lowScoreIncident,
+											})}
+										</Text>
+									</Stack>
+									<Text size='xs' c='dimmed'>
+										{t('bestWorst.info.footer')}
+									</Text>
+								</Stack>
+							</Popover.Dropdown>
+						</Popover>
 					</Group>
 
 					<SegmentedControl
 						value={view}
-						onChange={value => setView(value as 'best' | 'worst')}
+						onChange={(value) => setView(value as 'best' | 'worst')}
 						data={[
 							{ label: 'Best Calls', value: 'best' },
 							{ label: 'Worst Calls', value: 'worst' },
@@ -90,7 +174,7 @@ export const BestWorstCallsTable: React.FC<BestWorstCallsTableProps> = ({ calls,
 									</Table.Td>
 								</Table.Tr>
 							) : (
-								visibleCalls.map(call => (
+								visibleCalls.map((call) => (
 									<Table.Tr
 										key={call.id}
 										onClick={onCallClick ? () => onCallClick(call) : undefined}
@@ -110,16 +194,24 @@ export const BestWorstCallsTable: React.FC<BestWorstCallsTableProps> = ({ calls,
 											<Text size='sm'>{formatDuration(call.duration)}</Text>
 										</Table.Td>
 										<Table.Td ta='center'>
-											<Text size='sm' fw={500}>{call.ecn ?? 0}</Text>
+											<Text size='sm' fw={500}>
+												{call.ecn ?? 0}
+											</Text>
 										</Table.Td>
 										<Table.Td ta='center'>
-											<Text size='sm' fw={500}>{call.enc ?? 0}</Text>
+											<Text size='sm' fw={500}>
+												{call.enc ?? 0}
+											</Text>
 										</Table.Td>
 										<Table.Td ta='center'>
-											<Text size='sm' fw={500}>{call.ecc ?? 0}</Text>
+											<Text size='sm' fw={500}>
+												{call.ecc ?? 0}
+											</Text>
 										</Table.Td>
 										<Table.Td ta='center'>
-											<Text size='sm' fw={500}>{call.ecuf ?? 0}</Text>
+											<Text size='sm' fw={500}>
+												{call.ecuf ?? 0}
+											</Text>
 										</Table.Td>
 										<Table.Td ta='right'>
 											<Text size='sm' fw={600} c={accentColor}>

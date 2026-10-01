@@ -314,7 +314,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 		? disputeAgeDays(openDisputes[0].createdDate)
 		: 0;
 	const campaignsBelowTarget = ACTIVE_CAMPAIGNS.filter(
-		(c) => c.status === 'active' && c.qaScore < thresholds.qa.bands.watch
+		(c) => c.status === 'active' && c.qaScore < thresholds.qa.scoreBands.watch
 	).length;
 
 	const openAnalytics = () => navigate(ANALYTICS_PATH);

@@ -1,5 +1,6 @@
 import type { CallEmotion, TeamCallMetric } from '~/modules/qa/analytics/types';
 import { DEFAULT_SETTINGS } from '~/modules/qa/settings/constants';
+import { negativeEmotionsOf } from '~/modules/qa/settings/helpers';
 import { useSettingsStore } from '~/stores/qa/settingsStore';
 
 /** Evaluation aspect an issue belongs to — drives filter grouping and badge colours. */
@@ -33,15 +34,16 @@ export const COMPLIANCE_TARGET =
 	DEFAULT_SETTINGS.thresholds.compliance.areaTargetPerCall;
 export const LOW_SENTIMENT =
 	DEFAULT_SETTINGS.thresholds.sentiment.lowSentimentIncident;
-export const NEGATIVE_EMOTIONS: CallEmotion[] =
-	DEFAULT_SETTINGS.thresholds.sentiment.negativeEmotions;
+export const NEGATIVE_EMOTIONS: string[] = negativeEmotionsOf(
+	DEFAULT_SETTINGS.thresholds.sentiment
+);
 
 /** Thresholds shared by the dashboard cards and the My Calls list so both agree on what an incident is. */
 const live = () => useSettingsStore.getState().thresholds;
 
 export const isNegativeEmotion = (
 	emotion: CallEmotion,
-	negativeEmotions: CallEmotion[] = live().sentiment.negativeEmotions
+	negativeEmotions: string[] = negativeEmotionsOf(live().sentiment)
 ) => negativeEmotions.includes(emotion);
 
 export interface CallIssueMeta {

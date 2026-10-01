@@ -376,14 +376,7 @@
 			"ahtVsTeam": "Handle time vs team (30 d)",
 			"negativeEmotionStreak": "Negative-emotion streak"
 		},
-		"driverConditions": {
-			"declinePts": "drops ≥ {{threshold}} points vs the previous 14 days",
-			"declinePct": "declines ≥ {{threshold}}% vs the previous 14 days",
-			"aboveShare": "> {{threshold}}% of calls",
-			"aboveTeam": "> {{threshold}}% above the team average",
-			"afterHours": "> {{threshold}}% of calls after 18:00",
-			"streakDays": "≥ {{threshold}} consecutive days with a negative predominant emotion"
-		},
+		"driverConditions": {},
 		"timelineTitle": "Risk timeline",
 		"timelineDescription": "Burnout risk over the last months · badges list the actions taken",
 		"timelineSeries": "Risk %",

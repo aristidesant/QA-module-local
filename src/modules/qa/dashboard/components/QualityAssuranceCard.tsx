@@ -11,7 +11,7 @@ import {
 } from '@mantine/core';
 import { IconChevronRight, IconClipboardCheck } from '@tabler/icons-react';
 import { SCORE_BAND_COLOR } from '~/modules/qa/constants/badgeColors';
-import { bandFor, bandsFor } from '~/modules/qa/settings/helpers';
+import { bandFor } from '~/modules/qa/settings/helpers';
 import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import DrillRow from './DrillRow';
@@ -42,6 +42,13 @@ interface QualityAssuranceCardProps {
 	trend?: DashboardMetricTrend;
 }
 
+/** Label of each score band, in `qa.dashboard`. */
+const BAND_LABEL_KEY = {
+	good: 'bands.onTarget',
+	warning: 'bands.watch',
+	critical: 'bands.atRisk',
+} as const;
+
 /**
  * The four QA breakdown categories, in display order.
  * Colors reuse the palette previously applied to the standalone
@@ -71,6 +78,8 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const thresholds = useSettingsStore(selectThresholds);
+	const totalBand = bandFor(score.total, thresholds.qa.scoreBands);
+	const totalBandColor = SCORE_BAND_COLOR[totalBand];
 
 	return (
 		<Card
@@ -99,21 +108,25 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 					</ThemeIcon>
 				</Group>
 
+				<Group gap='xs' align='baseline'>
+					<Text className={styles.scoreValue}>{score.total}</Text>
+					<Text size='sm' c='dimmed'>
+						{t('qualityAssurance.averageScore')}
+					</Text>
+					<Badge size='xs' variant='light' color={totalBandColor}>
+						{t(BAND_LABEL_KEY[totalBand])}
+					</Badge>
+				</Group>
+
 				<Stack gap='sm'>
 					{QA_CATEGORIES.map((category) => {
 						const count = issueCounts?.[category.key];
 						const clickable = Boolean(onCategoryClick) && (count ?? 0) > 0;
 						const band = bandFor(
 							score[category.key],
-							bandsFor(thresholds, 'qa', category.key)
+							thresholds.qa.categoryBands[category.key]
 						);
-						const bandLabel = t(
-							band === 'good'
-								? 'bands.onTarget'
-								: band === 'warning'
-									? 'bands.watch'
-									: 'bands.atRisk'
-						);
+						const bandLabel = t(BAND_LABEL_KEY[band]);
 						const bandColor = SCORE_BAND_COLOR[band];
 						return (
 							<DrillRow

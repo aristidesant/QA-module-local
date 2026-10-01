@@ -1,81 +1,90 @@
-import type {
-	BurnoutDriverRule,
-	CallEmotion,
-} from '~/modules/qa/analytics/types';
+import type { CallEmotion } from '~/modules/qa/analytics/types';
 import type {
 	BurnoutPattern,
 	BusinessSignalKey,
 	QaSettings,
+	SentimentBandKey,
 	SettingsAspect,
 } from './types';
 
-/** The five trailing-window drivers plus the negative-emotion streak, as seeded in Settings. */
-export const DEFAULT_BURNOUT_RULES: BurnoutDriverRule[] = [
+/** Patterns every install starts with. They behave like any other pattern but can't be deleted. */
+export const DEFAULT_BURNOUT_PATTERNS: BurnoutPattern[] = [
 	{
 		id: 'AGENT_SENTIMENT_TREND',
 		metricId: 'AGENT_SENTIMENT_SCORE',
-		conditionLabelKey: 'burnout.driverConditions.declinePts',
+		mode: 'DELTA',
+		windowDays: 14,
+		direction: 'BELOW',
 		threshold: -0.3,
 		nearBand: 0.15,
-		direction: 'BELOW',
-		evaluate: 'DELTA',
+		builtIn: true,
+		enabled: true,
 	},
 	{
 		id: 'NEGATIVE_EMOTION_7D',
 		metricId: 'NEGATIVE_EMOTION_CALL_SHARE',
-		conditionLabelKey: 'burnout.driverConditions.aboveShare',
+		mode: 'VALUE',
+		windowDays: 7,
+		direction: 'ABOVE',
 		threshold: 30,
 		nearBand: 8,
-		direction: 'ABOVE',
-		evaluate: 'VALUE',
+		builtIn: true,
+		enabled: true,
 	},
 	{
 		id: 'QA_TREND_14D',
 		metricId: 'QA_OVERALL_SCORE',
-		conditionLabelKey: 'burnout.driverConditions.declinePct',
+		mode: 'DELTA',
+		windowDays: 14,
+		direction: 'BELOW',
 		threshold: -5,
 		nearBand: 3,
-		direction: 'BELOW',
-		evaluate: 'DELTA',
-	},
-	{
-		id: 'AFTER_HOURS_30D',
-		metricId: 'AFTER_HOURS_SHARE',
-		conditionLabelKey: 'burnout.driverConditions.afterHours',
-		threshold: 10,
-		nearBand: 4,
-		direction: 'ABOVE',
-		evaluate: 'VALUE',
+		builtIn: true,
+		enabled: true,
 	},
 	{
 		id: 'AHT_VS_TEAM_30D',
 		metricId: 'AHT_VS_TEAM',
-		conditionLabelKey: 'burnout.driverConditions.aboveTeam',
+		mode: 'VALUE',
+		windowDays: 30,
+		direction: 'ABOVE',
 		threshold: 15,
 		nearBand: 6,
-		direction: 'ABOVE',
-		evaluate: 'VALUE',
+		builtIn: true,
+		enabled: true,
 	},
 	{
 		id: 'NEGATIVE_EMOTION_STREAK',
-		metricId: 'NEGATIVE_EMOTION_CALL_SHARE',
-		conditionLabelKey: 'burnout.driverConditions.streakDays',
-		threshold: 3,
-		nearBand: 1,
+		metricId: 'AGENT_NEGATIVE_EMOTION_SHARE',
+		mode: 'STREAK',
+		windowDays: 30,
 		direction: 'ABOVE',
-		evaluate: 'VALUE',
+		threshold: 3,
+		dayLevel: 50,
+		nearBand: 1,
+		builtIn: true,
+		enabled: true,
 	},
 ];
 
-export const DEFAULT_BURNOUT_PATTERNS: BurnoutPattern[] =
-	DEFAULT_BURNOUT_RULES.map((rule) => ({ ...rule, enabled: true }));
+/** Label of each built-in pattern, in `qa.teamAnalytics` `burnout.drivers.*`. */
+export const BUILT_IN_PATTERN_LABEL_KEY: Record<string, string> = {
+	AGENT_SENTIMENT_TREND: 'agentSentimentTrend',
+	NEGATIVE_EMOTION_7D: 'negativeEmotionShare',
+	QA_TREND_14D: 'qaScoreTrend',
+	AHT_VS_TEAM_30D: 'ahtVsTeam',
+	NEGATIVE_EMOTION_STREAK: 'negativeEmotionStreak',
+};
 
-export const DEFAULT_NEGATIVE_EMOTIONS: CallEmotion[] = [
-	'Anger',
-	'Fear',
-	'Sadness',
-	'Disgust',
-];
+/** Same split the dashboards used before it was configurable: negative = Anger, Fear, Sadness, Disgust; positive = Joy, Trust, Anticipation. */
+export const DEFAULT_EMOTIONS_BY_SENTIMENT: Record<SentimentBandKey, string[]> =
+	{
+		veryNegative: ['Anger', 'Disgust'],
+		negative: ['Fear', 'Sadness'],
+		neutral: ['Surprise'],
+		positive: ['Trust', 'Anticipation'],
+		veryPositive: ['Joy'],
+	};
 
 /** Every emotion a call can carry, in the order the picker lists them. */
 export const ALL_CALL_EMOTIONS: CallEmotion[] = [
@@ -100,8 +109,13 @@ export const BUSINESS_SIGNAL_KEYS: BusinessSignalKey[] = [
 export const DEFAULT_SETTINGS: QaSettings = {
 	thresholds: {
 		qa: {
-			bands: { onTarget: 90, watch: 70 },
-			overrides: {},
+			scoreBands: { onTarget: 90, watch: 70 },
+			categoryBands: {
+				ecn: { onTarget: 90, watch: 70 },
+				enc: { onTarget: 90, watch: 70 },
+				ecc: { onTarget: 90, watch: 70 },
+				ecuf: { onTarget: 90, watch: 70 },
+			},
 			lowScoreIncident: 70,
 		},
 		compliance: {
@@ -117,7 +131,7 @@ export const DEFAULT_SETTINGS: QaSettings = {
 				positive: 4.5,
 			},
 			lowSentimentIncident: 2.5,
-			negativeEmotions: DEFAULT_NEGATIVE_EMOTIONS,
+			emotionsBySentiment: DEFAULT_EMOTIONS_BY_SENTIMENT,
 		},
 		business: {
 			bands: { onTarget: 30, watch: 20 },
@@ -138,16 +152,9 @@ export const DEFAULT_SETTINGS: QaSettings = {
 
 /** Metrics that can override their aspect's bands, in display order. `labelKey` lives in `qa.settings`. */
 export const OVERRIDE_METRICS: Record<
-	Exclude<SettingsAspect, 'sentiment'>,
+	Exclude<SettingsAspect, 'sentiment' | 'qa'>,
 	{ key: string; labelKey: string }[]
 > = {
-	qa: [
-		{ key: 'overall', labelKey: 'metrics.qa.overall' },
-		{ key: 'ecn', labelKey: 'metrics.qa.ecn' },
-		{ key: 'enc', labelKey: 'metrics.qa.enc' },
-		{ key: 'ecc', labelKey: 'metrics.qa.ecc' },
-		{ key: 'ecuf', labelKey: 'metrics.qa.ecuf' },
-	],
 	compliance: [
 		{ key: 'overall', labelKey: 'metrics.compliance.overall' },
 		{ key: 'Security', labelKey: 'metrics.compliance.security' },

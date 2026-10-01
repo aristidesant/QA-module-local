@@ -7,7 +7,7 @@ import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import { DEFAULT_SETTINGS } from '../../constants';
 import { validateBands } from '../../helpers';
 import { useSettingsDraft } from '../../useSettingsDraft';
-import { MetricOverridesTable } from '../../components/MetricOverridesTable';
+import { CategoryBandsTable } from '../../components/CategoryBandsTable';
 import { ScoreBandsEditor } from '../../components/ScoreBandsEditor';
 import { SettingsActions } from '../../components/SettingsActions';
 import type { QaThresholds } from '../../types';
@@ -20,22 +20,16 @@ export const QualityAssuranceTab: React.FC = () => {
 		useSettingsDraft<QaThresholds>(stored);
 
 	const invalid =
-		validateBands(draft.bands) !== null ||
-		Object.values(draft.overrides).some((b) => b && validateBands(b));
+		validateBands(draft.scoreBands) !== null ||
+		Object.values(draft.categoryBands).some((b) => validateBands(b) !== null);
 
 	return (
 		<Stack gap='lg'>
 			<ScoreBandsEditor
-				title={t('qa.bandsTitle')}
-				description={t('qa.bandsDescription')}
-				value={draft.bands}
-				onChange={(bands) => setDraft({ ...draft, bands })}
-			/>
-			<MetricOverridesTable
-				aspect='qa'
-				inherited={draft.bands}
-				overrides={draft.overrides}
-				onChange={(overrides) => setDraft({ ...draft, overrides })}
+				title={t('qa.scoreBandsTitle')}
+				description={t('qa.scoreBandsDescription')}
+				value={draft.scoreBands}
+				onChange={(scoreBands) => setDraft({ ...draft, scoreBands })}
 			/>
 			<SectionCard
 				title={t('qa.incidentsTitle')}
@@ -56,6 +50,12 @@ export const QualityAssuranceTab: React.FC = () => {
 					w={260}
 				/>
 			</SectionCard>
+			<CategoryBandsTable
+				title={t('copc.title')}
+				description={t('copc.description')}
+				value={draft.categoryBands}
+				onChange={(categoryBands) => setDraft({ ...draft, categoryBands })}
+			/>
 			<SettingsActions
 				dirty={dirty}
 				invalid={invalid}

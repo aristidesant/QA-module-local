@@ -26,12 +26,18 @@ import { useSettingsStore } from '~/stores/qa/settingsStore';
 import {
 	burnoutLevelFor,
 	isNegativeEmotionIn,
+	negativeEmotionsOf,
+	positiveEmotionsOf,
 } from '~/modules/qa/settings/helpers';
 import type {
 	BurnoutPattern,
 	BurnoutSettings,
 } from '~/modules/qa/settings/types';
 import { TEAM_CALLS } from './mockData';
+import {
+	patternMetricInfo,
+	toDayPercent,
+} from '~/modules/qa/settings/burnoutPatterns';
 import {
 	DEFAULT_FILTERS,
 	MAX_SEGMENT_SERIES,
@@ -88,16 +94,15 @@ const pct = (part: number, total: number) =>
 	total ? round1((part / total) * 100) : 0;
 const toBool = (v: boolean) => (v ? 1 : 0);
 
-const POSITIVE_EMOTIONS: ReadonlySet<string> = new Set([
-	'Joy',
-	'Trust',
-	'Anticipation',
-]);
-/** Emotions counted as negative are configured in Settings. */
+/** Which emotions count as positive or negative is configured in Settings. */
+const isPositiveCallEmotion = (emotion: string) =>
+	positiveEmotionsOf(useSettingsStore.getState().thresholds.sentiment).includes(
+		emotion
+	);
 const isNegativeCallEmotion = (emotion: CallEmotion) =>
 	isNegativeEmotionIn(
 		emotion,
-		useSettingsStore.getState().thresholds.sentiment.negativeEmotions
+		negativeEmotionsOf(useSettingsStore.getState().thresholds.sentiment)
 	);
 /** PERCENT metrics whose per-call value is 1/0 → aggregated as 100 × mean. */
 export const SHARE_METRIC_IDS: ReadonlySet<TriggerMetricId> =
@@ -371,7 +376,7 @@ export function metricOf(
 		case 'AGENT_SENTIMENT_SCORE':
 			return call.agentSentiment;
 		case 'POSITIVE_EMOTION_CALL_SHARE':
-			return toBool(POSITIVE_EMOTIONS.has(call.predominantEmotion));
+			return toBool(isPositiveCallEmotion(call.predominantEmotion));
 		case 'NEGATIVE_EMOTION_CALL_SHARE':
 			return toBool(isNegativeCallEmotion(call.predominantEmotion));
 		case 'SENTIMENT_RECOVERY_COUNT':
@@ -928,39 +933,67 @@ const ahtVsTeam = (
 };
 const diff = (a: number | null, b: number | null) =>
 	a === null || b === null ? null : round1(a - b);
+/** A streak counts days, so it always trips when the count reaches the threshold. */
+const effectiveDirection = (rule: BurnoutDriverRule) =>
+	rule.mode === 'STREAK' ? 'ABOVE' : rule.direction;
+
 const statusOf = (
 	rule: BurnoutDriverRule,
 	v: number | null
 ): BurnoutDriverStatus => {
 	if (v === null) return 'OK';
-	const breached =
-		rule.direction === 'ABOVE' ? v >= rule.threshold : v <= rule.threshold;
+	const above = effectiveDirection(rule) === 'ABOVE';
+	const breached = above ? v >= rule.threshold : v <= rule.threshold;
 	if (breached) return 'BREACHED';
-	const near =
-		rule.direction === 'ABOVE'
-			? v >= rule.threshold - rule.nearBand
-			: v <= rule.threshold + rule.nearBand;
+	const near = above
+		? v >= rule.threshold - rule.nearBand
+		: v <= rule.threshold + rule.nearBand;
 	return near ? 'NEAR' : 'OK';
 };
 
-/** Per call-day (oldest first): was the agent's predominant emotion that day a negative one? */
-const negativeDayFlags = (calls: TeamCallMetric[]): boolean[] => {
-	const byDay = new Map<string, Map<CallEmotion, number>>();
-	for (const call of calls) {
-		const day = dayOf(call.date);
-		const counts = byDay.get(day) ?? new Map<CallEmotion, number>();
-		counts.set(call.agentEmotion, (counts.get(call.agentEmotion) ?? 0) + 1);
-		byDay.set(day, counts);
-	}
-	return [...byDay.entries()]
-		.sort(([a], [b]) => a.localeCompare(b))
-		.map(([, counts]) => {
-			const [predominant] = [...counts.entries()].sort(
-				(a, b) => b[1] - a[1]
-			)[0];
-			return isNegativeCallEmotion(predominant);
-		});
+/** A pattern's metric over one set of calls; `teamCalls` is only read by handle time vs team. */
+const burnoutMetricValue = (
+	metricId: BurnoutDriverRule['metricId'],
+	agentCalls: TeamCallMetric[],
+	teamCalls: TeamCallMetric[]
+): number | null => {
+	if (metricId === 'AHT_VS_TEAM') return ahtVsTeam(agentCalls, teamCalls);
+	if (metricId === 'AGENT_NEGATIVE_EMOTION_SHARE')
+		return agentCalls.length
+			? pct(
+					agentCalls.filter((c) => isNegativeCallEmotion(c.agentEmotion))
+						.length,
+					agentCalls.length
+				)
+			: null;
+	return aggregateMetric(agentCalls, metricId);
 };
+
+/** Metric per equal slice of `[from, to]`, carrying the last value over empty slices. */
+const seriesOver = (
+	valueIn: (w: { from: string; to: string }) => number | null,
+	from: string,
+	to: string,
+	points = 8
+): number[] => {
+	const totalDays = daysBetween(from, to) + 1;
+	const size = Math.max(1, Math.ceil(totalDays / points));
+	const out: number[] = [];
+	let last = 0;
+	for (let i = 0; i < points; i++) {
+		const bFrom = addDays(from, i * size);
+		const bTo = addDays(from, Math.min(totalDays - 1, (i + 1) * size - 1));
+		if (bFrom <= to) {
+			const v = valueIn({ from: bFrom, to: bTo });
+			if (v !== null) last = v;
+		}
+		out.push(last);
+	}
+	return out;
+};
+
+/** Days a streak looks back over. */
+const STREAK_LOOKBACK_DAYS = 30;
 
 /** Length of the run of `true` at the end of the list. */
 const trailingStreak = (flags: boolean[]): number => {
@@ -969,7 +1002,10 @@ const trailingStreak = (flags: boolean[]): number => {
 	return streak;
 };
 
-/** `calls` = all 90-day scoped calls (unfiltered); `teamCalls` = the agent's team calls (same 90 days). */
+/**
+ * Evaluates every enabled pattern for one agent. `calls` = all scoped calls (unfiltered);
+ * `teamCalls` = the agent's team calls (same range).
+ */
 export function computeBurnoutDrivers(
 	agentId: string,
 	calls: TeamCallMetric[],
@@ -977,134 +1013,77 @@ export function computeBurnoutDrivers(
 	patterns: BurnoutPattern[] = useSettingsStore.getState().burnout.patterns
 ): BurnoutDriver[] {
 	const agentCalls = calls.filter((c) => c.agentId === agentId);
-	const last7 = daysWindow(0, 7),
-		prior7 = daysWindow(7, 7),
-		last14 = daysWindow(0, 14),
-		prior14 = daysWindow(14, 14),
-		last30 = daysWindow(0, 30),
-		prior30 = daysWindow(30, 30);
-	const tenDaySeries = (
-		w: { from: string; to: string },
-		f: (sub: { from: string; to: string }) => number | null
-	) =>
-		[0, 1, 2].map(
-			(i) =>
-				f({ from: addDays(w.from, i * 10), to: addDays(w.from, i * 10 + 9) }) ??
-				0
-		);
+
 	return patterns
 		.filter((pattern) => pattern.enabled)
 		.map((rule) => {
-			let currentValue: number | null = null,
-				delta: number | null = null,
-				series: number[] = [];
-			switch (rule.id) {
-				case 'AGENT_SENTIMENT_TREND': {
-					currentValue = aggregateMetric(
-						within(agentCalls, last14),
-						'AGENT_SENTIMENT_SCORE'
+			const valueIn = (w: { from: string; to: string }) =>
+				burnoutMetricValue(
+					rule.metricId,
+					within(agentCalls, w),
+					within(teamCalls, w)
+				);
+			let currentValue: number | null = null;
+			let delta: number | null = null;
+			let series: number[] = [];
+
+			if (rule.mode === 'STREAK') {
+				const lookback = daysWindow(0, STREAK_LOOKBACK_DAYS);
+				const level = rule.dayLevel ?? 0;
+				const metricInfo = patternMetricInfo(rule.metricId);
+				const days = [
+					...new Set(within(agentCalls, lookback).map((c) => dayOf(c.date))),
+				].sort();
+				const flags = days.map((day) => {
+					const raw = valueIn({ from: day, to: day });
+					// The daily level is a percentage; 1-5 scores compare by their share of the scale.
+					const v = raw === null ? null : toDayPercent(metricInfo, raw);
+					return (
+						v !== null && (rule.direction === 'ABOVE' ? v >= level : v <= level)
 					);
-					delta = diff(
-						currentValue,
-						aggregateMetric(
-							within(agentCalls, prior14),
-							'AGENT_SENTIMENT_SCORE'
-						)
-					);
-					series = sparklineFor(
-						agentCalls,
-						'AGENT_SENTIMENT_SCORE',
-						prior14.from,
-						last14.to,
-						8
-					);
-					break;
-				}
-				case 'NEGATIVE_EMOTION_7D': {
-					currentValue = aggregateMetric(
-						within(agentCalls, last7),
-						'NEGATIVE_EMOTION_CALL_SHARE'
-					);
-					delta = diff(
-						currentValue,
-						aggregateMetric(
-							within(agentCalls, prior7),
-							'NEGATIVE_EMOTION_CALL_SHARE'
-						)
-					);
-					series = sparklineFor(
-						agentCalls,
-						'NEGATIVE_EMOTION_CALL_SHARE',
-						prior14.from,
-						last14.to,
-						8
-					);
-					break;
-				}
-				case 'QA_TREND_14D': {
-					currentValue = aggregateMetric(
-						within(agentCalls, last14),
-						'QA_OVERALL_SCORE'
-					);
-					delta = diff(
-						currentValue,
-						aggregateMetric(within(agentCalls, prior14), 'QA_OVERALL_SCORE')
-					);
-					series = sparklineFor(
-						agentCalls,
-						'QA_OVERALL_SCORE',
-						prior14.from,
-						last14.to,
-						8
-					);
-					break;
-				}
-				case 'AFTER_HOURS_30D': {
-					currentValue = afterHoursShare(within(agentCalls, last30));
-					delta = diff(
-						currentValue,
-						afterHoursShare(within(agentCalls, prior30))
-					);
-					series = [prior30, last30].flatMap((w) =>
-						tenDaySeries(w, (sub) => afterHoursShare(within(agentCalls, sub)))
-					);
-					break;
-				}
-				case 'NEGATIVE_EMOTION_STREAK': {
-					const flags = negativeDayFlags(within(agentCalls, last30));
-					currentValue = flags.length ? trailingStreak(flags) : null;
-					series = flags.slice(-10).map(toBool);
-					break;
-				}
-				case 'AHT_VS_TEAM_30D': {
-					currentValue = ahtVsTeam(
-						within(agentCalls, last30),
-						within(teamCalls, last30)
-					);
-					delta = diff(
-						currentValue,
-						ahtVsTeam(within(agentCalls, prior30), within(teamCalls, prior30))
-					);
-					series = [prior30, last30].flatMap((w) =>
-						tenDaySeries(w, (sub) =>
-							ahtVsTeam(within(agentCalls, sub), within(teamCalls, sub))
-						)
-					);
-					break;
-				}
+				});
+				currentValue = flags.length ? trailingStreak(flags) : null;
+				series = flags.slice(-10).map(toBool);
+			} else {
+				const window = daysWindow(0, rule.windowDays);
+				const prior = daysWindow(rule.windowDays, rule.windowDays);
+				currentValue = valueIn(window);
+				delta = diff(currentValue, valueIn(prior));
+				series = seriesOver(valueIn, prior.from, window.to);
+				if (rule.mode === 'DELTA') currentValue = delta;
 			}
-			const compared = rule.evaluate === 'DELTA' ? delta : currentValue;
+
 			return {
 				id: rule.id,
 				metricId: rule.metricId,
+				mode: rule.mode,
 				currentValue,
-				conditionLabelKey: rule.conditionLabelKey,
 				threshold: rule.threshold,
-				status: statusOf(rule, compared),
+				status: statusOf(rule, currentValue),
 				delta,
 				series,
 			};
 		});
+}
+
+/** How many agents currently meet a pattern; powers the "would flag N agents" preview. */
+export function countAgentsMeetingPattern(pattern: BurnoutPattern): number {
+	const rule = { ...pattern, enabled: true };
+	const teamCalls = new Map<string, TeamCallMetric[]>();
+	return TEAM_AGENTS.filter((agent) => {
+		if (!teamCalls.has(agent.team))
+			teamCalls.set(
+				agent.team,
+				TEAM_CALLS.filter((c) => c.team === agent.team)
+			);
+		const [driver] = computeBurnoutDrivers(
+			agent.id,
+			TEAM_CALLS,
+			teamCalls.get(agent.team)!,
+			[rule]
+		);
+		return driver?.status === 'BREACHED';
+	}).length;
 }
 
 export const formatDriverValue = (
@@ -1113,10 +1092,10 @@ export const formatDriverValue = (
 ): string =>
 	value === null
 		? '—'
-		: d.metricId === 'AFTER_HOURS_SHARE'
-			? `${Math.round(value)}%`
-			: d.metricId === 'AHT_VS_TEAM'
-				? `${value > 0 ? '+' : ''}${Math.round(value)}%`
+		: d.metricId === 'AHT_VS_TEAM'
+			? `${value > 0 ? '+' : ''}${Math.round(value)}%`
+			: d.metricId === 'AGENT_NEGATIVE_EMOTION_SHARE'
+				? `${Math.round(value)}%`
 				: formatMetricValue(d.metricId, value);
 
 export interface BurnoutAssessment {
@@ -1132,7 +1111,7 @@ export interface BurnoutAssessment {
 /** Per settings object; entries also remember the negative-emotion list they were computed with. */
 const assessmentCache = new WeakMap<
 	BurnoutSettings,
-	Map<string, { emotions: CallEmotion[]; assessment: BurnoutAssessment }>
+	Map<string, { emotions: string[]; assessment: BurnoutAssessment }>
 >();
 
 /**
@@ -1148,8 +1127,9 @@ export function assessBurnout(
 		cache = new Map();
 		assessmentCache.set(settings, cache);
 	}
-	const emotions =
-		useSettingsStore.getState().thresholds.sentiment.negativeEmotions;
+	const emotions = negativeEmotionsOf(
+		useSettingsStore.getState().thresholds.sentiment
+	);
 	const cached = cache.get(agentId);
 	if (cached && cached.emotions === emotions) return cached.assessment;
 

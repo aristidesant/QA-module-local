@@ -380,14 +380,7 @@
 			"ahtVsTeam": "Tiempo de gestión vs equipo (30 d)",
 			"negativeEmotionStreak": "Racha de emoción negativa"
 		},
-		"driverConditions": {
-			"declinePts": "cae ≥ {{threshold}} puntos respecto a los 14 días anteriores",
-			"declinePct": "cae ≥ {{threshold}}% respecto a los 14 días anteriores",
-			"aboveShare": "> {{threshold}}% de las llamadas",
-			"aboveTeam": "> {{threshold}}% por encima de la media del equipo",
-			"afterHours": "> {{threshold}}% de las llamadas después de las 18:00",
-			"streakDays": "≥ {{threshold}} días seguidos con emoción predominante negativa"
-		},
+		"driverConditions": {},
 		"timelineTitle": "Línea de tiempo del riesgo",
 		"timelineDescription": "Riesgo de burnout en los últimos meses · las etiquetas listan las acciones tomadas",
 		"timelineSeries": "Riesgo %",

@@ -1,8 +1,16 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Group, MultiSelect, NumberInput, Stack, Text } from '@mantine/core';
+import {
+	Box,
+	Group,
+	NumberInput,
+	Paper,
+	SimpleGrid,
+	Stack,
+	TagsInput,
+	Text,
+} from '@mantine/core';
 import SectionCard from '~/components/SectionCard';
-import type { CallEmotion } from '~/modules/qa/analytics/types';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import { ALL_CALL_EMOTIONS, DEFAULT_SETTINGS } from '../../constants';
@@ -14,7 +22,11 @@ import {
 	type BandPreviewSegment,
 } from '../../components/BandPreview';
 import { SettingsActions } from '../../components/SettingsActions';
-import type { SentimentCutPoints, SentimentThresholds } from '../../types';
+import type {
+	SentimentBandKey,
+	SentimentCutPoints,
+	SentimentThresholds,
+} from '../../types';
 
 const CUT_POINT_FIELDS: (keyof SentimentCutPoints)[] = [
 	'veryNegative',
@@ -30,6 +42,25 @@ const BAND_KEYS = [
 	'positive',
 	'veryPositive',
 ] as const;
+
+/** Emotion names match regardless of case. */
+const sameEmotion = (a: string, b: string) =>
+	a.toLowerCase() === b.toLowerCase();
+
+/** Trims typed names, reuses the casing of an emotion that already exists and drops duplicates. */
+const normalizeEmotions = (typed: string[], known: string[]) => {
+	const result: string[] = [];
+	for (const raw of typed) {
+		const name = raw.trim();
+		if (!name) continue;
+		const canonical =
+			known.find((emotion) => sameEmotion(emotion, name)) ??
+			name.charAt(0).toUpperCase() + name.slice(1);
+		if (!result.some((emotion) => sameEmotion(emotion, canonical)))
+			result.push(canonical);
+	}
+	return result;
+};
 
 const SCALE_MIN = 1;
 const SCALE_MAX = 5;
@@ -57,6 +88,36 @@ export const SentimentTab: React.FC = () => {
 		size: bounds[index + 1] - bounds[index],
 		...SENTIMENT_SEGMENT_COLORS[index],
 	}));
+
+	const assignedEmotions = Object.values(draft.emotionsBySentiment).flat();
+	// Suggestions: the emotions calls carry plus any the QA Manager has added.
+	const knownEmotions = [
+		...ALL_CALL_EMOTIONS,
+		...assignedEmotions.filter(
+			(emotion) =>
+				!ALL_CALL_EMOTIONS.some((known) => sameEmotion(known, emotion))
+		),
+	];
+	const unassigned = knownEmotions.filter(
+		(emotion) => !assignedEmotions.includes(emotion)
+	);
+
+	/** An emotion belongs to one sentiment type: adding it here takes it out of the others. */
+	const setEmotions = (key: SentimentBandKey, typed: string[]) => {
+		const value = normalizeEmotions(typed, knownEmotions);
+		const added = value.filter(
+			(emotion) => !draft.emotionsBySentiment[key].includes(emotion)
+		);
+		const next = Object.fromEntries(
+			BAND_KEYS.map((band) => [
+				band,
+				band === key
+					? value
+					: draft.emotionsBySentiment[band].filter((e) => !added.includes(e)),
+			])
+		) as SentimentThresholds['emotionsBySentiment'];
+		setDraft({ ...draft, emotionsBySentiment: next });
+	};
 
 	return (
 		<Stack gap='lg'>
@@ -96,6 +157,55 @@ export const SentimentTab: React.FC = () => {
 				</Stack>
 			</SectionCard>
 			<SectionCard
+				title={t('sentiment.emotionsTitle')}
+				description={t('sentiment.emotionsDescription')}
+			>
+				<Stack gap='md'>
+					<SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing='md'>
+						{BAND_KEYS.map((key, index) => (
+							<Paper key={key} withBorder p='sm' radius='md'>
+								<Stack gap='xs'>
+									<Group gap='xs' wrap='nowrap'>
+										<Box
+											w={10}
+											h={10}
+											bdrs='xl'
+											bg={SENTIMENT_SEGMENT_COLORS[index].bg}
+										/>
+										<Text size='sm' fw={600}>
+											{t(`sentiment.bands.${key}`)}
+										</Text>
+									</Group>
+									<TagsInput
+										aria-label={t('sentiment.emotionsFor', {
+											band: t(`sentiment.bands.${key}`),
+										})}
+										placeholder={t('sentiment.placeholderAdd')}
+										data={knownEmotions}
+										value={draft.emotionsBySentiment[key]}
+										onChange={(value) => setEmotions(key, value)}
+										acceptValueOnBlur
+										clearable
+									/>
+								</Stack>
+							</Paper>
+						))}
+					</SimpleGrid>
+					<Text size='xs' c='dimmed'>
+						{t('sentiment.emotionsHint')}
+					</Text>
+					{unassigned.length > 0 && (
+						<Text size='xs' c='dimmed'>
+							{t('sentiment.unassigned', {
+								emotions: unassigned
+									.map((e) => t(`sentiment.emotions.${e}`))
+									.join(', '),
+							})}
+						</Text>
+					)}
+				</Stack>
+			</SectionCard>
+			<SectionCard
 				title={t('sentiment.incidentsTitle')}
 				description={t('sentiment.incidentsDescription')}
 			>
@@ -115,15 +225,6 @@ export const SentimentTab: React.FC = () => {
 						step={0.1}
 						decimalScale={1}
 						w={260}
-					/>
-					<MultiSelect
-						label={t('sentiment.negativeEmotions')}
-						description={t('sentiment.negativeEmotionsHint')}
-						data={ALL_CALL_EMOTIONS}
-						value={draft.negativeEmotions}
-						onChange={(value) =>
-							setDraft({ ...draft, negativeEmotions: value as CallEmotion[] })
-						}
 					/>
 				</Stack>
 			</SectionCard>

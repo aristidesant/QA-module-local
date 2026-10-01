@@ -18,7 +18,11 @@ import {
 import type { TeamRole } from '~/modules/qa/team/types';
 import { isNegativeEmotion } from './issues';
 import { useSettingsStore } from '~/stores/qa/settingsStore';
-import { bandsFor, complianceStatusFor } from '~/modules/qa/settings/helpers';
+import {
+	bandsFor,
+	complianceStatusFor,
+	negativeEmotionsOf,
+} from '~/modules/qa/settings/helpers';
 import type { ThresholdSettings } from '~/modules/qa/settings/types';
 
 /** Window the agent dashboard cards summarise — agents see weekly data. My Calls' `7d` period matches it. */
@@ -187,6 +191,7 @@ export const aggregateDashboardMetrics = (
 	) as Record<ComplianceAreaName, number>;
 
 	const offered = calls.filter((c) => c.offeredProduct !== null);
+	const negativeEmotions = negativeEmotionsOf(thresholds.sentiment);
 
 	return {
 		calls: n,
@@ -225,13 +230,10 @@ export const aggregateDashboardMetrics = (
 				calls.map((c) => c.predominantEmotion)
 			),
 			agentNegativeCount: calls.filter((c) =>
-				isNegativeEmotion(c.agentEmotion, thresholds.sentiment.negativeEmotions)
+				isNegativeEmotion(c.agentEmotion, negativeEmotions)
 			).length,
 			customerNegativeCount: calls.filter((c) =>
-				isNegativeEmotion(
-					c.predominantEmotion,
-					thresholds.sentiment.negativeEmotions
-				)
+				isNegativeEmotion(c.predominantEmotion, negativeEmotions)
 			).length,
 		},
 		sales: {

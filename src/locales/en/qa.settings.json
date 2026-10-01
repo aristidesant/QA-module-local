@@ -14,7 +14,8 @@
 	"actions": {
 		"save": "Save changes",
 		"discard": "Discard",
-		"reset": "Reset to defaults"
+		"reset": "Reset to defaults",
+		"cancel": "Cancel"
 	},
 	"saved": "Settings saved",
 	"bands": {
@@ -26,8 +27,8 @@
 		"atRiskHint": "Anything below {{value}} is At risk."
 	},
 	"overrides": {
-		"title": "Per-metric values",
-		"description": "Each metric follows the bands above until you switch on Custom.",
+		"title": "Per-category values",
+		"description": "Each COPC category follows the bands above until you switch on Custom.",
 		"columns": {
 			"metric": "Metric",
 			"values": "On target ≥ / Watch ≥",
@@ -38,7 +39,6 @@
 	},
 	"metrics": {
 		"qa": {
-			"overall": "QA score",
 			"ecn": "ECN",
 			"enc": "ENC",
 			"ecc": "ECC",
@@ -55,11 +55,11 @@
 		}
 	},
 	"qa": {
-		"bandsTitle": "Score bands",
-		"bandsDescription": "Applies to the QA score and each error category unless overridden below.",
-		"incidentsTitle": "Incidents",
-		"incidentsDescription": "What counts as a QA incident when listing calls.",
-		"lowScoreIncident": "A call is an incident when its QA score is below"
+		"incidentsTitle": "QA score incidents",
+		"incidentsDescription": "What counts as a low QA score when listing calls.",
+		"lowScoreIncident": "A call is an incident when its QA score is below",
+		"scoreBandsTitle": "QA score bands",
+		"scoreBandsDescription": "Applies to the average QA score shown on the Quality Assurance card and the campaign QA column."
 	},
 	"compliance": {
 		"bandsTitle": "Compliant / Warning / Violation",
@@ -85,11 +85,16 @@
 			"veryPositive": "Very positive"
 		},
 		"scaleHint": "From {{value}} up is Very positive.",
-		"incidentsTitle": "Incidents and emotions",
+		"incidentsTitle": "Incidents",
 		"incidentsDescription": "What counts as a sentiment incident when listing calls.",
 		"lowSentimentIncident": "A call is an incident when its sentiment is below",
-		"negativeEmotions": "Emotions counted as negative",
-		"negativeEmotionsHint": "Used for negative-emotion counts and burnout patterns."
+		"emotionsTitle": "Emotions by sentiment type",
+		"emotionsDescription": "Choose which emotions belong to each sentiment type. Very negative and Negative emotions are the ones counted as negative on the dashboards.",
+		"emotionsHint": "An emotion belongs to one type: adding it to a box removes it from the others. Type a new name and press Enter to add an emotion; it only counts on calls where the analysis detects it.",
+		"emotionsFor": "Emotions for {{band}}",
+		"noEmotions": "No emotions assigned",
+		"unassigned": "Not assigned to any type: {{emotions}}.",
+		"placeholderAdd": "Type to add an emotion"
 	},
 	"business": {
 		"bandsTitle": "Conversion rate bands",
@@ -117,14 +122,6 @@
 			"nearBand": "Near band",
 			"enabled": "Enabled"
 		},
-		"windows": {
-			"AGENT_SENTIMENT_TREND": "Last 14 days vs the previous 14",
-			"NEGATIVE_EMOTION_7D": "Last 7 days",
-			"QA_TREND_14D": "Last 14 days vs the previous 14",
-			"AFTER_HOURS_30D": "Last 30 days",
-			"AHT_VS_TEAM_30D": "Last 30 days",
-			"NEGATIVE_EMOTION_STREAK": "Latest call days"
-		},
 		"units": {
 			"pts": "pts",
 			"days": "days",
@@ -137,7 +134,90 @@
 		"highAt": "High when at least this many are met",
 		"previewLead": "With these rules, of {{total}} agents:",
 		"previewHigh": "{{count}} High",
-		"previewMedium": "{{count}} Medium"
+		"previewMedium": "{{count}} Medium",
+		"custom": "Custom",
+		"edit": "Edit pattern",
+		"delete": "Delete pattern",
+		"addPattern": "Add pattern",
+		"metrics": {
+			"AHT_VS_TEAM": "Handle time vs team",
+			"AGENT_NEGATIVE_EMOTION_SHARE": "Agent negative-emotion calls"
+		},
+		"areas": {
+			"QUALITY_ASSURANCE": "Quality Assurance",
+			"COMPLIANCE": "Compliance",
+			"SENTIMENT_EMOTION": "Sentiment & Emotion",
+			"BUSINESS_INSIGHTS": "Business Insights",
+			"OTHER": "Other signals"
+		},
+		"condition": {
+			"VALUE": {
+				"ABOVE": "{{metric}} is at or above {{threshold}}{{unit}} over the last {{days}} days",
+				"BELOW": "{{metric}} is at or below {{threshold}}{{unit}} over the last {{days}} days"
+			},
+			"DELTA": {
+				"ABOVE": "{{metric}} rises {{threshold}}{{unit}} or more vs the previous {{days}} days",
+				"BELOW": "{{metric}} drops {{threshold}}{{unit}} or more vs the previous {{days}} days"
+			},
+			"STREAK": {
+				"ABOVE": "{{threshold}}+ days in a row with {{metric}} at or above {{dayLevel}}{{unit}}",
+				"BELOW": "{{threshold}}+ days in a row with {{metric}} at or below {{dayLevel}}{{unit}}"
+			}
+		},
+		"modeSummary": {
+			"VALUE": "Value · last {{days}} days",
+			"DELTA": "Change vs previous {{days}} days",
+			"STREAK": "Streak · last 30 days"
+		},
+		"mode": {
+			"VALUE": "Value",
+			"DELTA": "Change",
+			"STREAK": "Streak"
+		},
+		"modeHint": {
+			"VALUE": "Reads the metric over a recent window.",
+			"DELTA": "Reads how much the metric moved versus the previous window.",
+			"STREAK": "Counts the days in a row where the day's value crosses a level."
+		},
+		"direction": {
+			"VALUE": {
+				"ABOVE": "At or above",
+				"BELOW": "At or below"
+			},
+			"DELTA": {
+				"ABOVE": "Rises by",
+				"BELOW": "Drops by"
+			},
+			"STREAK": {
+				"ABOVE": "Above",
+				"BELOW": "Below"
+			}
+		},
+		"thresholdLabel": {
+			"VALUE": "Threshold",
+			"DELTA": "Size of the change",
+			"STREAK": "Days in a row",
+			"dayLevel": "Daily level"
+		},
+		"drawer": {
+			"addTitle": "Add burnout pattern",
+			"editTitle": "Edit burnout pattern",
+			"description": "A pattern flags an agent when its metric meets the condition. The level rule decides how many patterns make Medium or High.",
+			"name": "Name",
+			"namePlaceholder": "e.g. Rising handle time",
+			"nameRequired": "Give the pattern a name",
+			"metric": "Metric",
+			"conditionType": "Condition type",
+			"direction": "Direction",
+			"window": "Window",
+			"windowOption": "{{count}} days",
+			"nearBand": "Near band",
+			"nearBandHint": "How close to the threshold still shows as Near on the Burnout view.",
+			"summary": "This pattern flags an agent when",
+			"preview": "Today it would flag {{count}} of {{total}} agents.",
+			"add": "Add pattern",
+			"save": "Save pattern"
+		}
 	},
 	"validation": {
 		"bandsOrder": "On target must be higher than Watch",
@@ -146,5 +226,13 @@
 		"cutPointsRange": "Use values between 1 and 5",
 		"levelOrder": "High must be higher than Medium",
 		"levelAboveEnabled": "High can't exceed the {{count}} enabled patterns"
+	},
+	"copc": {
+		"title": "COPC categories",
+		"description": "ECN, ENC, ECC and ECUF are measured individually. Set when each one is On target or Watch, as the % of calls without that error.",
+		"columns": {
+			"category": "Category",
+			"values": "On target ≥ / Watch ≥"
+		}
 	}
 }

@@ -1,6 +1,17 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Badge, Group, NumberInput, Stack, Switch, Text } from '@mantine/core';
+import {
+	ActionIcon,
+	Badge,
+	Button,
+	Group,
+	NumberInput,
+	Stack,
+	Switch,
+	Text,
+	Tooltip,
+} from '@mantine/core';
+import { IconPencil, IconPlus, IconTrash } from '@tabler/icons-react';
 import SectionCard from '~/components/SectionCard';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import { assessBurnout } from '~/modules/qa/analytics/helpers';
@@ -9,45 +20,38 @@ import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { useSettingsStore, selectBurnout } from '~/stores/qa/settingsStore';
 import { DEFAULT_SETTINGS } from '../../constants';
+import {
+	deltaRange,
+	displayThreshold,
+	patternMetricInfo,
+	storedThreshold,
+} from '../../burnoutPatterns';
 import { burnoutLevelFor, validateLevelRule } from '../../helpers';
+import { usePatternText } from '../../usePatternText';
 import { useSettingsDraft } from '../../useSettingsDraft';
+import { PatternDrawer } from '../../components/PatternDrawer';
 import { SettingsActions } from '../../components/SettingsActions';
 import type { BurnoutPattern, BurnoutSettings } from '../../types';
 
-/** Label key under `qa.teamAnalytics` `burnout.drivers.*` for each pattern. */
-const PATTERN_LABEL_KEY: Record<BurnoutPattern['id'], string> = {
-	AGENT_SENTIMENT_TREND: 'agentSentimentTrend',
-	NEGATIVE_EMOTION_7D: 'negativeEmotionShare',
-	QA_TREND_14D: 'qaScoreTrend',
-	AFTER_HOURS_30D: 'afterHoursShare',
-	AHT_VS_TEAM_30D: 'ahtVsTeam',
-	NEGATIVE_EMOTION_STREAK: 'negativeEmotionStreak',
-};
-
-const PATTERN_UNIT: Record<BurnoutPattern['id'], 'pts' | 'days' | '%'> = {
-	AGENT_SENTIMENT_TREND: 'pts',
-	NEGATIVE_EMOTION_7D: '%',
-	QA_TREND_14D: '%',
-	AFTER_HOURS_30D: '%',
-	AHT_VS_TEAM_30D: '%',
-	NEGATIVE_EMOTION_STREAK: 'days',
-};
-
-/** Drops are stored as negative numbers but edited as the size of the drop. */
-const toDisplay = (pattern: BurnoutPattern) =>
-	pattern.direction === 'BELOW'
-		? Math.abs(pattern.threshold)
-		: pattern.threshold;
-const fromDisplay = (pattern: BurnoutPattern, value: number) =>
-	pattern.direction === 'BELOW' ? -Math.abs(value) : value;
+interface DrawerState {
+	opened: boolean;
+	/** Bumped on every open so the form starts fresh. */
+	key: number;
+	pattern: BurnoutPattern | null;
+}
 
 export const BurnoutTab: React.FC = () => {
 	const { t } = useTranslation('qa.settings');
-	const { t: tAnalytics } = useTranslation('qa.teamAnalytics');
+	const text = usePatternText();
 	const stored = useSettingsStore(selectBurnout);
 	const saveBurnout = useSettingsStore((s) => s.saveBurnout);
 	const { draft, setDraft, dirty, discard, fillWith } =
 		useSettingsDraft<BurnoutSettings>(stored);
+	const [drawer, setDrawer] = useState<DrawerState>({
+		opened: false,
+		key: 0,
+		pattern: null,
+	});
 
 	const enabledCount = draft.patterns.filter((p) => p.enabled).length;
 	const levelErrorKey = validateLevelRule(draft.level, enabledCount);
@@ -72,15 +76,32 @@ export const BurnoutTab: React.FC = () => {
 		(l) => l === BurnoutRiskLevel.MEDIUM
 	).length;
 
-	const setPattern = (
-		id: BurnoutPattern['id'],
-		patch: Partial<BurnoutPattern>
-	) =>
+	const setPattern = (id: string, patch: Partial<BurnoutPattern>) =>
 		setDraft({
 			...draft,
 			patterns: draft.patterns.map((p) =>
 				p.id === id ? { ...p, ...patch } : p
 			),
+		});
+
+	const openDrawer = (pattern: BurnoutPattern | null) =>
+		setDrawer((prev) => ({ opened: true, key: prev.key + 1, pattern }));
+
+	const savePattern = (pattern: BurnoutPattern) => {
+		const exists = draft.patterns.some((p) => p.id === pattern.id);
+		setDraft({
+			...draft,
+			patterns: exists
+				? draft.patterns.map((p) => (p.id === pattern.id ? pattern : p))
+				: [...draft.patterns, pattern],
+		});
+		setDrawer((prev) => ({ ...prev, opened: false }));
+	};
+
+	const removePattern = (id: string) =>
+		setDraft({
+			...draft,
+			patterns: draft.patterns.filter((p) => p.id !== id),
 		});
 
 	const columns: BaseTableColumnDef<BurnoutPattern>[] = [
@@ -89,13 +110,18 @@ export const BurnoutTab: React.FC = () => {
 			header: t('burnout.columns.pattern'),
 			cell: ({ row }) => (
 				<Stack gap={0}>
-					<Text size='sm' fw={500}>
-						{tAnalytics(
-							`burnout.drivers.${PATTERN_LABEL_KEY[row.original.id]}`
+					<Group gap='xs' wrap='nowrap'>
+						<Text size='sm' fw={500}>
+							{text.patternName(row.original)}
+						</Text>
+						{!row.original.builtIn && (
+							<Badge size='xs' variant='light'>
+								{t('burnout.custom')}
+							</Badge>
 						)}
-					</Text>
+					</Group>
 					<Text size='xs' c='dimmed'>
-						{t(`burnout.windows.${row.original.id}`)}
+						{text.modeSummary(row.original)}
 					</Text>
 				</Stack>
 			),
@@ -105,39 +131,45 @@ export const BurnoutTab: React.FC = () => {
 			header: t('burnout.columns.condition'),
 			cell: ({ row }) => (
 				<Text size='sm' c={row.original.enabled ? undefined : 'dimmed'}>
-					{tAnalytics(row.original.conditionLabelKey, {
-						threshold: toDisplay(row.original),
-					})}
+					{text.condition(row.original)}
 				</Text>
 			),
 		},
 		{
 			id: 'threshold',
 			header: t('burnout.columns.threshold'),
-			cell: ({ row }) => (
-				<NumberInput
-					size='xs'
-					w={110}
-					aria-label={t('burnout.columns.threshold')}
-					value={toDisplay(row.original)}
-					onChange={(v) =>
-						typeof v === 'number' &&
-						setPattern(row.original.id, {
-							threshold: fromDisplay(row.original, v),
-						})
-					}
-					min={0}
-					step={PATTERN_UNIT[row.original.id] === 'pts' ? 0.1 : 1}
-					decimalScale={PATTERN_UNIT[row.original.id] === 'pts' ? 1 : 0}
-					rightSection={
-						<Text size='xs'>
-							{t(`burnout.units.${PATTERN_UNIT[row.original.id]}`)}
-						</Text>
-					}
-					rightSectionWidth={44}
-					disabled={!row.original.enabled}
-				/>
-			),
+			cell: ({ row }) => {
+				const pattern = row.original;
+				const info = patternMetricInfo(pattern.metricId);
+				const streak = pattern.mode === 'STREAK';
+				return (
+					<NumberInput
+						size='xs'
+						w={120}
+						aria-label={t('burnout.columns.threshold')}
+						value={displayThreshold(pattern)}
+						onChange={(v) =>
+							typeof v === 'number' &&
+							setPattern(pattern.id, {
+								threshold: storedThreshold(pattern.mode, pattern.direction, v),
+							})
+						}
+						min={streak ? 1 : pattern.mode === 'DELTA' ? 0 : info.min}
+						max={
+							streak
+								? 30
+								: pattern.mode === 'DELTA'
+									? deltaRange(info)
+									: info.max
+						}
+						step={streak ? 1 : info.step}
+						decimalScale={info.unit === 'SCORE_5' && !streak ? 1 : 0}
+						rightSection={<Text size='xs'>{text.thresholdUnit(pattern)}</Text>}
+						rightSectionWidth={44}
+						disabled={!pattern.enabled}
+					/>
+				);
+			},
 		},
 		{
 			id: 'nearBand',
@@ -153,7 +185,12 @@ export const BurnoutTab: React.FC = () => {
 						setPattern(row.original.id, { nearBand: v })
 					}
 					min={0}
-					step={PATTERN_UNIT[row.original.id] === 'pts' ? 0.05 : 1}
+					step={
+						patternMetricInfo(row.original.metricId).unit === 'SCORE_5' &&
+						row.original.mode !== 'STREAK'
+							? 0.05
+							: 1
+					}
 					decimalScale={2}
 					disabled={!row.original.enabled}
 				/>
@@ -165,9 +202,7 @@ export const BurnoutTab: React.FC = () => {
 			cell: ({ row }) => (
 				<Switch
 					aria-label={t('burnout.enable', {
-						pattern: tAnalytics(
-							`burnout.drivers.${PATTERN_LABEL_KEY[row.original.id]}`
-						),
+						pattern: text.patternName(row.original),
 					})}
 					checked={row.original.enabled}
 					onChange={(event) =>
@@ -178,6 +213,34 @@ export const BurnoutTab: React.FC = () => {
 				/>
 			),
 		},
+		{
+			id: 'actions',
+			header: '',
+			cell: ({ row }) =>
+				row.original.builtIn ? null : (
+					<Group gap={4} wrap='nowrap'>
+						<Tooltip label={t('burnout.edit')} withArrow>
+							<ActionIcon
+								variant='subtle'
+								aria-label={t('burnout.edit')}
+								onClick={() => openDrawer(row.original)}
+							>
+								<IconPencil size={16} />
+							</ActionIcon>
+						</Tooltip>
+						<Tooltip label={t('burnout.delete')} withArrow>
+							<ActionIcon
+								variant='subtle'
+								color='red'
+								aria-label={t('burnout.delete')}
+								onClick={() => removePattern(row.original.id)}
+							>
+								<IconTrash size={16} />
+							</ActionIcon>
+						</Tooltip>
+					</Group>
+				),
+		},
 	];
 
 	return (
@@ -185,6 +248,15 @@ export const BurnoutTab: React.FC = () => {
 			<SectionCard
 				title={t('burnout.patternsTitle')}
 				description={t('burnout.patternsDescription')}
+				headerActions={
+					<Button
+						size='xs'
+						leftSection={<IconPlus size={14} />}
+						onClick={() => openDrawer(null)}
+					>
+						{t('burnout.addPattern')}
+					</Button>
+				}
 			>
 				<BaseTable<BurnoutPattern>
 					columns={columns}
@@ -251,6 +323,14 @@ export const BurnoutTab: React.FC = () => {
 				}}
 				onDiscard={discard}
 				onReset={() => fillWith(DEFAULT_SETTINGS.burnout)}
+			/>
+
+			<PatternDrawer
+				key={drawer.key}
+				opened={drawer.opened}
+				pattern={drawer.pattern}
+				onClose={() => setDrawer((prev) => ({ ...prev, opened: false }))}
+				onSave={savePattern}
 			/>
 		</Stack>
 	);

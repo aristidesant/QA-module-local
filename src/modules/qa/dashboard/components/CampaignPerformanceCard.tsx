@@ -43,7 +43,7 @@ export const CampaignPerformanceCard: React.FC<
 	const { t } = useTranslation('qa.dashboard');
 	const thresholds = useSettingsStore(selectThresholds);
 	// Campaign scores are all 0-100 scores: QA and Compliance follow their own bands, Sentiment and Business reuse the QA bands.
-	const qaBands = bandsFor(thresholds, 'qa', 'overall');
+	const qaBands = thresholds.qa.scoreBands;
 	const complianceBands = bandsFor(thresholds, 'compliance', 'overall');
 	const active = entries
 		.filter((entry) => entry.status === 'active')

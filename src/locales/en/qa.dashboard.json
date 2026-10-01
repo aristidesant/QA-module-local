@@ -253,5 +253,19 @@
 			"warning": "Warning",
 			"violation": "Violation"
 		}
+	},
+	"qualityAssurance": {
+		"averageScore": "average QA score"
+	},
+	"bestWorst": {
+		"info": {
+			"label": "How best and worst calls are chosen",
+			"title": "How calls are chosen",
+			"bestTitle": "Best call",
+			"bestRule": "QA score of {{onTarget}} or higher (On target), with no auto-fail and no compliance violation.",
+			"worstTitle": "Worst call",
+			"worstRule": "QA score below {{incident}}, or any auto-fail.",
+			"footer": "Both thresholds are set in Settings › Quality Assurance."
+		}
 	}
 }

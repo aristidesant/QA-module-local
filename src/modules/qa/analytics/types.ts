@@ -290,36 +290,44 @@ export interface SignalsByAgentRow {
 }
 
 // ---------- Burnout ----------
-export type BurnoutDriverId =
-	| 'AGENT_SENTIMENT_TREND'
-	| 'NEGATIVE_EMOTION_7D'
-	| 'QA_TREND_14D'
-	| 'AFTER_HOURS_30D'
-	| 'AHT_VS_TEAM_30D'
-	| 'NEGATIVE_EMOTION_STREAK';
+/** Built-in patterns keep a stable id; patterns the QA Manager creates get a generated one. */
+export type BurnoutDriverId = string;
+/** Any catalogue metric, plus two burnout-only ones computed from the agent's own calls. */
 export type BurnoutDriverMetricId =
 	| TriggerMetricId
-	| 'AFTER_HOURS_SHARE'
-	| 'AHT_VS_TEAM';
+	| 'AHT_VS_TEAM'
+	| 'AGENT_NEGATIVE_EMOTION_SHARE';
 export type BurnoutDriverStatus = 'BREACHED' | 'NEAR' | 'OK';
+
+/**
+ * How a pattern reads its metric:
+ * - VALUE: the metric over the last `windowDays` days.
+ * - DELTA: its change versus the previous `windowDays` days.
+ * - STREAK: how many call-days in a row the day's value is above/below `dayLevel`.
+ */
+export type BurnoutPatternMode = 'VALUE' | 'DELTA' | 'STREAK';
 
 export interface BurnoutDriverRule {
 	id: BurnoutDriverId;
 	metricId: BurnoutDriverMetricId;
-	conditionLabelKey: string;
-	threshold: number;
-	/** distance from threshold that counts as NEAR */
-	nearBand: number;
+	mode: BurnoutPatternMode;
+	/** Trailing window for VALUE and DELTA. Streaks look back 30 days. */
+	windowDays: number;
+	/** ABOVE/BELOW applies to the metric (STREAK: to each day's value). */
 	direction: 'ABOVE' | 'BELOW';
-	/** which number is compared with the threshold */
-	evaluate: 'VALUE' | 'DELTA';
+	/** VALUE: the level. DELTA: the signed change. STREAK: the number of days. */
+	threshold: number;
+	/** STREAK only: the level a day's value must cross to count towards the streak. */
+	dayLevel?: number;
+	/** Distance from the threshold that counts as NEAR. */
+	nearBand: number;
 }
 
 export interface BurnoutDriver {
 	id: BurnoutDriverId;
 	metricId: BurnoutDriverMetricId;
+	mode: BurnoutPatternMode;
 	currentValue: number | null;
-	conditionLabelKey: string;
 	threshold: number;
 	status: BurnoutDriverStatus;
 	delta: number | null;

@@ -7,7 +7,7 @@ import { OVERRIDE_METRICS } from '../constants';
 import { validateBands } from '../helpers';
 import type { ScoreBands, SettingsAspect } from '../types';
 
-type OverrideAspect = Exclude<SettingsAspect, 'sentiment'>;
+type OverrideAspect = Exclude<SettingsAspect, 'sentiment' | 'qa'>;
 
 interface OverrideRow {
 	key: string;
