@@ -62,6 +62,8 @@ export interface AgentDashboardMetrics {
 		agentNegativeCount: number;
 		customerNegativeCount: number;
 	};
+	/** Calls where a product was offered, and how many of those ended in a sale. */
+	sales: { offered: number; sold: number };
 	/**
 	 * This period's trend vs. the immediately-preceding period of equal length.
 	 * Only set by `buildAgentDashboardMetrics`/`buildTeamDashboardMetrics`
@@ -179,6 +181,8 @@ export const aggregateDashboardMetrics = (
 		])
 	) as Record<ComplianceAreaName, number>;
 
+	const offered = calls.filter((c) => c.offeredProduct !== null);
+
 	return {
 		calls: n,
 		effectiveContacts: calls.filter((c) => c.contactOutcome === 'EFFECTIVE')
@@ -212,6 +216,10 @@ export const aggregateDashboardMetrics = (
 			customerNegativeCount: calls.filter((c) =>
 				isNegativeEmotion(c.predominantEmotion)
 			).length,
+		},
+		sales: {
+			offered: offered.length,
+			sold: offered.filter((c) => c.converted).length,
 		},
 	};
 };

@@ -1,6 +1,14 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, Stack, Group, Text, Progress, ThemeIcon } from '@mantine/core';
+import {
+	Card,
+	Divider,
+	Stack,
+	Group,
+	Text,
+	Progress,
+	ThemeIcon,
+} from '@mantine/core';
 import { IconChevronRight, IconPhoneCall } from '@tabler/icons-react';
 import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import DrillRow from './DrillRow';
@@ -14,6 +22,8 @@ interface OperationalCardProps {
 	effectiveContacts: number;
 	/** Calls that didn't connect with the intended contact. */
 	nonEffectiveContacts: number;
+	/** Product offers and the sales they produced. Omitted on roles that don't show an individual sales outcome. */
+	sales?: { offered: number; sold: number };
 	/** Short line under the card title, used to scope the card per role */
 	subtitle?: string;
 	/** Opens the non-effective calls behind the number, when there are any. */
@@ -30,6 +40,7 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 	calls,
 	effectiveContacts,
 	nonEffectiveContacts,
+	sales,
 	subtitle,
 	onNonEffectiveClick,
 	trend,
@@ -38,6 +49,7 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 	const effectivePct = pct(effectiveContacts, calls);
 	const nonEffectivePct = pct(nonEffectiveContacts, calls);
 	const clickable = Boolean(onNonEffectiveClick) && nonEffectiveContacts > 0;
+	const salesPct = sales ? pct(sales.sold, sales.offered) : 0;
 
 	return (
 		<Card
@@ -111,6 +123,31 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 						</Group>
 						<Progress value={nonEffectivePct} size='sm' color='gray' />
 					</DrillRow>
+
+					{sales && (
+						<>
+							<Divider />
+							<DrillRow hint={t('drill.hint')}>
+								<Group justify='space-between' mb={4}>
+									<Text size='sm' fw={500}>
+										{t('operational.sales.label')}
+									</Text>
+									<Group gap={6} wrap='nowrap'>
+										<Text size='sm' fw={600}>
+											{salesPct}%
+										</Text>
+										<Text size='xs' c='dimmed'>
+											{t('operational.sales.offered', {
+												sold: sales.sold,
+												offered: sales.offered,
+											})}
+										</Text>
+									</Group>
+								</Group>
+								<Progress value={salesPct} size='sm' color='teal' />
+							</DrillRow>
+						</>
+					)}
 				</Stack>
 			</Stack>
 		</Card>

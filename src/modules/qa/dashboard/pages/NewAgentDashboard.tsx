@@ -17,6 +17,7 @@ import {
 } from '../components';
 import { useDashboardCopy } from '../useDashboardCopy';
 import { AGENT_PERSONA_ID } from '~/modules/qa/team/constants';
+import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 import { buildAgentDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
 import {
 	DEFAULT_PERFORMANCE_SCORE_PERIOD,
@@ -75,6 +76,8 @@ export const NewAgentDashboard: React.FC = () => {
 	const navigate = useNavigate();
 	const { t } = useTranslation('qa.dashboard');
 	const copy = useDashboardCopy('agent');
+	const agentName =
+		TEAM_AGENTS.find((agent) => agent.id === AGENT_PERSONA_ID)?.name ?? '';
 	const [period, setPeriod] = useState<PerformanceScorePeriod>(
 		DEFAULT_PERFORMANCE_SCORE_PERIOD
 	);
@@ -141,7 +144,9 @@ export const NewAgentDashboard: React.FC = () => {
 			<Stack gap='lg'>
 				{/* 1. Header Section */}
 				<div>
-					<Title order={1}>{copy.title}</Title>
+					<Title order={1}>
+						{t('roleDashboard.welcomeBack', { name: agentName })}
+					</Title>
 					<Text c='dimmed' mt='xs'>
 						{copy.subtitle}
 					</Text>
@@ -164,6 +169,7 @@ export const NewAgentDashboard: React.FC = () => {
 								calls={metrics.calls}
 								effectiveContacts={metrics.effectiveContacts}
 								nonEffectiveContacts={metrics.nonEffectiveContacts}
+								sales={metrics.sales}
 								subtitle={copy.cardSubtitle('operational')}
 								onNonEffectiveClick={() => openIssue('non-effective-contact')}
 								trend={metrics.trends?.effectiveContacts}

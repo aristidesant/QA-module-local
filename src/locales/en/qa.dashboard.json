@@ -169,7 +169,6 @@
 	"windowNotice": "Range metrics are based on the {{count}} most recent evaluations.",
 	"roleDashboard": {
 		"title": {
-			"agent": "Agent Dashboard",
 			"supervisor": "Supervisor Dashboard",
 			"qaManager": "QA Manager Dashboard"
 		},
@@ -226,6 +225,13 @@
 		},
 		"bestWorst": {
 			"description": "Your top and bottom performing calls over the last 7 days"
+		},
+		"welcomeBack": "Welcome Back, {{name}}!"
+	},
+	"operational": {
+		"sales": {
+			"label": "Credit cards sold",
+			"offered": "{{sold}} of {{offered}} offered"
 		}
 	}
 }

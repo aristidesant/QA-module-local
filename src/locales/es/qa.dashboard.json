@@ -169,7 +169,6 @@
 	"windowNotice": "Las métricas del rango se basan en las {{count}} evaluaciones más recientes.",
 	"roleDashboard": {
 		"title": {
-			"agent": "Panel del agente",
 			"supervisor": "Panel del supervisor",
 			"qaManager": "Panel del gerente de QA"
 		},
@@ -226,6 +225,13 @@
 		},
 		"bestWorst": {
 			"description": "Tus mejores y peores llamadas de los últimos 7 días"
+		},
+		"welcomeBack": "¡Qué bueno verte de nuevo, {{name}}!"
+	},
+	"operational": {
+		"sales": {
+			"label": "Tarjetas de crédito vendidas",
+			"offered": "{{sold}} de {{offered}} ofrecidas"
 		}
 	}
 }
