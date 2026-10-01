@@ -1,7 +1,21 @@
 import { useState } from 'react';
-import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router';
+import {
+	useLocation,
+	useNavigate,
+	useParams,
+	useSearchParams,
+} from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Anchor, Breadcrumbs, Button, Group, Modal, Stack, Tabs, Text } from '@mantine/core';
+import {
+	Anchor,
+	Breadcrumbs,
+	Button,
+	Group,
+	Modal,
+	Stack,
+	Tabs,
+	Text,
+} from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { ContentContainer } from '~/components/ContentContainer';
 import { EmptyState } from '~/components/EmptyState/EmptyState';
@@ -17,7 +31,6 @@ import { SentimentTab } from './tabs/SentimentTab';
 import { OffersTab } from './tabs/OffersTab';
 import { SurveysTab } from './tabs/SurveysTab';
 import { TimelineTab } from './tabs/TimelineTab';
-import { ScheduleFollowUpModal } from '../components/modals/ScheduleFollowUpModal';
 
 export default function CustomerProfilePage() {
 	const { t } = useTranslation('qa.customers');
@@ -28,20 +41,25 @@ export default function CustomerProfilePage() {
 	const profile = useCustomersStore(selectCustomer(customerId));
 	const setDoNotCall = useCustomersStore((s) => s.setDoNotCall);
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [followUpOpen, setFollowUpOpen] = useState(false);
 	const [dncModalOpen, setDncModalOpen] = useState(false);
 
 	const tab = (searchParams.get('tab') as CustomerTab | null) ?? 'overview';
 	const setTab = (value: string | null) => {
-		setSearchParams((prev) => {
-			const next = new URLSearchParams(prev);
-			if (value) next.set('tab', value);
-			next.delete('focus');
-			return next;
-		}, { replace: true });
+		setSearchParams(
+			(prev) => {
+				const next = new URLSearchParams(prev);
+				if (value) next.set('tab', value);
+				next.delete('focus');
+				return next;
+			},
+			{ replace: true }
+		);
 	};
 
-	const notVisible = profile && role === 'supervisor' && !toCustomerRow(profile).teamIds.includes(SUPERVISOR_PERSONA.id);
+	const notVisible =
+		profile &&
+		role === 'supervisor' &&
+		!toCustomerRow(profile).teamIds.includes(SUPERVISOR_PERSONA.id);
 
 	if (!profile || notVisible) {
 		return (
@@ -49,19 +67,26 @@ export default function CustomerProfilePage() {
 				<EmptyState
 					message={t('common.notFound')}
 					description={t('common.notFoundDescription', { id: customerId })}
-					action={<Button onClick={() => navigate(customersBasePath(role))}>{t('header.back')}</Button>}
+					action={
+						<Button onClick={() => navigate(customersBasePath(role))}>
+							{t('header.back')}
+						</Button>
+					}
 				/>
 			</ContentContainer>
 		);
 	}
 
 	const handleAddNoteClick = () => {
-		setSearchParams((prev) => {
-			const next = new URLSearchParams(prev);
-			next.set('tab', 'timeline');
-			next.set('focus', 'note');
-			return next;
-		}, { replace: true });
+		setSearchParams(
+			(prev) => {
+				const next = new URLSearchParams(prev);
+				next.set('tab', 'timeline');
+				next.set('focus', 'note');
+				return next;
+			},
+			{ replace: true }
+		);
 	};
 
 	const handleConfirmDnc = () => {
@@ -71,17 +96,22 @@ export default function CustomerProfilePage() {
 	};
 
 	return (
-		<ContentContainer contentWidth='full' showBackButton onBackClick={() => navigate(customersBasePath(role))}>
+		<ContentContainer
+			contentWidth='full'
+			showBackButton
+			onBackClick={() => navigate(customersBasePath(role))}
+		>
 			<Stack gap='lg'>
 				<Breadcrumbs>
-					<Anchor onClick={() => navigate(customersBasePath(role))}>{t('list.title')}</Anchor>
+					<Anchor onClick={() => navigate(customersBasePath(role))}>
+						{t('list.title')}
+					</Anchor>
 					<Text c='dimmed'>{profile.customer.name}</Text>
 				</Breadcrumbs>
 
 				<CustomerHeader
 					profile={profile}
 					role={role}
-					onFollowUp={() => setFollowUpOpen(true)}
 					onAddNote={handleAddNoteClick}
 					onToggleDnc={() => setDncModalOpen(true)}
 				/>
@@ -89,43 +119,69 @@ export default function CustomerProfilePage() {
 				<Tabs value={tab} onChange={setTab} keepMounted={false}>
 					<Tabs.List>
 						{CUSTOMER_TABS.map(({ value, labelKey, icon: Icon }) => (
-							<Tabs.Tab key={value} value={value} leftSection={<Icon size={16} />}>
+							<Tabs.Tab
+								key={value}
+								value={value}
+								leftSection={<Icon size={16} />}
+							>
 								{t(labelKey)}
 							</Tabs.Tab>
 						))}
 					</Tabs.List>
 
-					<Tabs.Panel value='overview' pt='md'><OverviewTab profile={profile} /></Tabs.Panel>
-					<Tabs.Panel value='contacts' pt='md'><ContactsTab profile={profile} /></Tabs.Panel>
-					<Tabs.Panel value='sentiment' pt='md'><SentimentTab profile={profile} /></Tabs.Panel>
-					<Tabs.Panel value='offers' pt='md'><OffersTab profile={profile} /></Tabs.Panel>
-					<Tabs.Panel value='surveys' pt='md'><SurveysTab profile={profile} /></Tabs.Panel>
+					<Tabs.Panel value='overview' pt='md'>
+						<OverviewTab profile={profile} />
+					</Tabs.Panel>
+					<Tabs.Panel value='contacts' pt='md'>
+						<ContactsTab profile={profile} />
+					</Tabs.Panel>
+					<Tabs.Panel value='sentiment' pt='md'>
+						<SentimentTab profile={profile} />
+					</Tabs.Panel>
+					<Tabs.Panel value='offers' pt='md'>
+						<OffersTab profile={profile} />
+					</Tabs.Panel>
+					<Tabs.Panel value='surveys' pt='md'>
+						<SurveysTab profile={profile} />
+					</Tabs.Panel>
 					<Tabs.Panel value='timeline' pt='md'>
-						<TimelineTab profile={profile} role={role} autoFocusNote={searchParams.get('focus') === 'note'} />
+						<TimelineTab
+							profile={profile}
+							role={role}
+							autoFocusNote={searchParams.get('focus') === 'note'}
+						/>
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>
 
-			<ScheduleFollowUpModal
-				customerId={profile.customer.id}
-				role={role}
-				defaultAgentId={profile.contacts[0]?.agentId}
-				opened={followUpOpen}
-				onClose={() => setFollowUpOpen(false)}
-			/>
-
 			<Modal
 				opened={dncModalOpen}
 				onClose={() => setDncModalOpen(false)}
-				title={t(profile.customer.doNotCall ? 'modals.dnc.removeTitle' : 'modals.dnc.title')}
+				title={t(
+					profile.customer.doNotCall
+						? 'modals.dnc.removeTitle'
+						: 'modals.dnc.title'
+				)}
 				centered
 			>
 				<Stack gap='md'>
-					<Text size='sm'>{t(profile.customer.doNotCall ? 'modals.dnc.removeBody' : 'modals.dnc.body')}</Text>
+					<Text size='sm'>
+						{t(
+							profile.customer.doNotCall
+								? 'modals.dnc.removeBody'
+								: 'modals.dnc.body'
+						)}
+					</Text>
 					<Group justify='flex-end'>
-						<Button variant='default' onClick={() => setDncModalOpen(false)}>{t('modals.cancel')}</Button>
+						<Button variant='default' onClick={() => setDncModalOpen(false)}>
+							{t('modals.cancel')}
+						</Button>
 						<Button color='red' onClick={handleConfirmDnc}>
-							{t(profile.customer.doNotCall ? 'modals.dnc.removeConfirm' : 'modals.dnc.confirm')}
+							{t(
+								profile.customer.doNotCall
+									? 'modals.dnc.removeConfirm'
+									: 'modals.dnc.confirm'
+							)}
 						</Button>
 					</Group>
 				</Stack>

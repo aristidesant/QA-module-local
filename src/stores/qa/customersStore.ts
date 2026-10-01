@@ -1,6 +1,4 @@
 import { create } from 'zustand';
-import { buildNotification } from '~/modules/qa/inbox/helpers';
-import { useNotificationStore } from '~/stores/qa/notificationStore';
 import {
 	QA_MANAGER_PERSONA,
 	SUPERVISOR_PERSONA,
@@ -10,7 +8,6 @@ import type {
 	CustomerEvent,
 	CustomerNote,
 	CustomerProfile,
-	FollowUp,
 } from '~/modules/qa/customers/types';
 import { CUSTOMER_PROFILES } from '~/modules/qa/customers/mockData';
 import { NOW_ISO } from '~/modules/qa/customers/constants';
@@ -26,87 +23,14 @@ const prepend = (p: CustomerProfile, e: CustomerEvent): CustomerProfile => ({
 	timeline: [e, ...p.timeline],
 });
 
-export interface ScheduleFollowUpInput {
-	customerId: string;
-	date: string;
-	reason: string;
-	agentId: string;
-	agentName: string;
-	note?: string;
-}
-
 interface CustomersState {
 	profiles: Record<string, CustomerProfile>;
-	scheduleFollowUp: (input: ScheduleFollowUpInput, role: TeamRole) => FollowUp;
-	completeFollowUp: (customerId: string, followUpId: string) => void;
 	addNote: (customerId: string, text: string, role: TeamRole) => CustomerNote;
 	setDoNotCall: (customerId: string, value: boolean, role: TeamRole) => void;
 }
 
-export const useCustomersStore = create<CustomersState>((set, get) => ({
+export const useCustomersStore = create<CustomersState>((set) => ({
 	profiles: CUSTOMER_PROFILES,
-
-	scheduleFollowUp: (input, role) => {
-		const a = author(role);
-		const fu: FollowUp = {
-			id: nextId('fu'),
-			date: input.date,
-			reason: input.reason,
-			assignedAgentName: input.agentName,
-			status: 'scheduled',
-		};
-		set((s) => {
-			const p = s.profiles[input.customerId];
-			return {
-				profiles: {
-					...s.profiles,
-					[input.customerId]: prepend(
-						{ ...p, followUps: [fu, ...p.followUps] },
-						{
-							id: nextId('ev'),
-							type: 'followUp',
-							date: NOW_ISO,
-							title: `Follow-up scheduled: ${fu.reason}`,
-							description: `${fu.assignedAgentName} · ${new Date(fu.date).toLocaleString()}${input.note ? ' · ' + input.note : ''}`,
-						}
-					),
-				},
-			};
-		});
-		useNotificationStore.getState().addNotification(
-			buildNotification({
-				agentId: input.agentId,
-				category: 'DIRECT_MESSAGE',
-				priority: 'NORMAL',
-				title: `Follow-up assigned: ${input.reason}`,
-				message: `${a.name} scheduled a follow-up with customer ${input.customerId} for ${new Date(input.date).toLocaleString()}.${input.note ? ' ' + input.note : ''}`,
-				icon: 'phone-call',
-				sourceRole: a.sourceRole,
-				sourceId: a.id,
-				payload: {
-					kind: 'FOLLOW_UP',
-					customerId: input.customerId,
-					customerName:
-						get().profiles[input.customerId]?.customer.name ?? input.customerId,
-					dueDate: input.date,
-				},
-			})
-		);
-		return fu;
-	},
-
-	completeFollowUp: (customerId, followUpId) =>
-		set((s) => ({
-			profiles: {
-				...s.profiles,
-				[customerId]: {
-					...s.profiles[customerId],
-					followUps: s.profiles[customerId].followUps.map((f) =>
-						f.id === followUpId ? { ...f, status: 'done' } : f
-					),
-				},
-			},
-		})),
 
 	addNote: (customerId, text, role) => {
 		const a = author(role);

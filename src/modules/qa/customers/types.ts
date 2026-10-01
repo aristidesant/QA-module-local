@@ -1,5 +1,12 @@
-import type { Emotion, SentimentCategory } from '~/modules/qa/emotion-sentiment/types';
-import type { BusinessSignalType, NonConversionReasonKey, Trend } from '~/modules/qa/team/types';
+import type {
+	Emotion,
+	SentimentCategory,
+} from '~/modules/qa/emotion-sentiment/types';
+import type {
+	BusinessSignalType,
+	NonConversionReasonKey,
+	Trend,
+} from '~/modules/qa/team/types';
 
 export type CustomerSegment = 'residential' | 'business' | 'premium';
 export type CustomerStatus = 'active' | 'prospect' | 'churned';
@@ -8,7 +15,12 @@ export type DayPart = 'morning' | 'afternoon' | 'evening';
 export type Weekday = 'Mon' | 'Tue' | 'Wed' | 'Thu' | 'Fri' | 'Sat';
 export type ChurnRisk = 'low' | 'medium' | 'high';
 export type ReceptivenessBand = 'receptive' | 'neutral' | 'resistant';
-export type ContactOutcome = 'answered' | 'no-answer' | 'voicemail' | 'busy' | 'callback';
+export type ContactOutcome =
+	| 'answered'
+	| 'no-answer'
+	| 'voicemail'
+	| 'busy'
+	| 'callback';
 export type OfferResult = 'accepted' | 'rejected' | 'deferred';
 
 export interface CustomerRecord {
@@ -112,13 +124,36 @@ export interface CustomerKpis {
 	surveysAnswered: number;
 }
 
-export interface SentimentPoint { label: string; date: string; customer: number; agent: number; category: SentimentCategory }
+export interface SentimentPoint {
+	label: string;
+	date: string;
+	customer: number;
+	agent: number;
+	category: SentimentCategory;
+}
 
-export type CustomerEventType = 'contact' | 'offer' | 'survey' | 'note' | 'followUp' | 'flag';
-export interface CustomerEvent { id: string; type: CustomerEventType; date: string; title: string; description: string; link?: string }
+export type CustomerEventType =
+	| 'contact'
+	| 'offer'
+	| 'survey'
+	| 'note'
+	| 'flag';
+export interface CustomerEvent {
+	id: string;
+	type: CustomerEventType;
+	date: string;
+	title: string;
+	description: string;
+	link?: string;
+}
 
-export interface CustomerNote { id: string; authorName: string; authorRole: 'SUPERVISOR' | 'QA_MANAGER'; createdAt: string; text: string }
-export interface FollowUp { id: string; date: string; reason: string; assignedAgentName: string; status: 'scheduled' | 'done' }
+export interface CustomerNote {
+	id: string;
+	authorName: string;
+	authorRole: 'SUPERVISOR' | 'QA_MANAGER';
+	createdAt: string;
+	text: string;
+}
 
 export interface CustomerProfile {
 	customer: CustomerRecord;
@@ -129,7 +164,11 @@ export interface CustomerProfile {
 	sentimentSeries: SentimentPoint[]; // one per answered contact, oldest first
 	categoryShare: Record<SentimentCategory, number>;
 	topEmotions: { emotion: Emotion; share: number }[];
-	sentimentByAgent: { agentName: string; contacts: number; avgSentiment: number }[];
+	sentimentByAgent: {
+		agentName: string;
+		contacts: number;
+		avgSentiment: number;
+	}[];
 	windows: ContactWindowStat[];
 	bestWindows: ContactWindowStat[]; // top 3 by acceptance then answer rate
 	worstWindows: ContactWindowStat[]; // top 3 by rejections
@@ -139,7 +178,6 @@ export interface CustomerProfile {
 	objections: { text: string; count: number }[];
 	timeline: CustomerEvent[];
 	notes: CustomerNote[];
-	followUps: FollowUp[];
 	nextBestAction: string;
 }
 

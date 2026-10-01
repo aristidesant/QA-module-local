@@ -1,6 +1,22 @@
 import { useState } from 'react';
-import { Anchor, Badge, Button, Chip, Group, Stack, Text, ThemeIcon, Timeline } from '@mantine/core';
-import { IconBan, IconCalendarEvent, IconClipboardText, IconNote, IconPhone, IconTag } from '@tabler/icons-react';
+import {
+	Anchor,
+	Badge,
+	Button,
+	Chip,
+	Group,
+	Stack,
+	Text,
+	ThemeIcon,
+	Timeline,
+} from '@mantine/core';
+import {
+	IconBan,
+	IconClipboardText,
+	IconNote,
+	IconPhone,
+	IconTag,
+} from '@tabler/icons-react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '~/components/EmptyState/EmptyState';
@@ -13,11 +29,16 @@ const ICONS: Record<CustomerEventType, typeof IconPhone> = {
 	offer: IconTag,
 	survey: IconClipboardText,
 	note: IconNote,
-	followUp: IconCalendarEvent,
 	flag: IconBan,
 };
 
-const ALL_TYPES: CustomerEventType[] = ['contact', 'offer', 'survey', 'note', 'followUp', 'flag'];
+const ALL_TYPES: CustomerEventType[] = [
+	'contact',
+	'offer',
+	'survey',
+	'note',
+	'flag',
+];
 
 interface CustomerTimelineProps {
 	events: CustomerEvent[];
@@ -25,7 +46,11 @@ interface CustomerTimelineProps {
 	onFilterChange: (filter: CustomerEventType | 'all') => void;
 }
 
-export function CustomerTimeline({ events, filter, onFilterChange }: CustomerTimelineProps) {
+export function CustomerTimeline({
+	events,
+	filter,
+	onFilterChange,
+}: CustomerTimelineProps) {
 	const { t } = useTranslation('qa.customers');
 	const navigate = useNavigate();
 	const [limit, setLimit] = useState(20);
@@ -34,16 +59,31 @@ export function CustomerTimeline({ events, filter, onFilterChange }: CustomerTim
 		return <EmptyState message={t('timeline.empty')} />;
 	}
 
-	const filtered = filter === 'all' ? events : events.filter((e) => e.type === filter);
+	const filtered =
+		filter === 'all' ? events : events.filter((e) => e.type === filter);
 	const visible = filtered.slice(0, limit);
 
 	return (
 		<Stack gap='md'>
-			<Chip.Group value={filter} onChange={(v) => onFilterChange((v as CustomerEventType | 'all') || 'all')}>
+			<Chip.Group
+				value={filter}
+				onChange={(v) =>
+					onFilterChange((v as CustomerEventType | 'all') || 'all')
+				}
+			>
 				<Group gap='xs'>
-					<Chip value='all' size='xs'>{t('timeline.filterAll')}</Chip>
+					<Chip value='all' size='xs'>
+						{t('timeline.filterAll')}
+					</Chip>
 					{ALL_TYPES.map((type) => (
-						<Chip key={type} value={type} size='xs' color={EVENT_META[type].color}>{t(EVENT_META[type].labelKey)}</Chip>
+						<Chip
+							key={type}
+							value={type}
+							size='xs'
+							color={EVENT_META[type].color}
+						>
+							{t(EVENT_META[type].labelKey)}
+						</Chip>
 					))}
 				</Group>
 			</Chip.Group>
@@ -59,20 +99,31 @@ export function CustomerTimeline({ events, filter, onFilterChange }: CustomerTim
 							return (
 								<Timeline.Item
 									key={event.id}
-									bullet={(
-										<ThemeIcon size={24} radius='xl' color={meta.color} variant='light'>
+									bullet={
+										<ThemeIcon
+											size={24}
+											radius='xl'
+											color={meta.color}
+											variant='light'
+										>
 											<Icon size={14} />
 										</ThemeIcon>
-									)}
-									title={(
+									}
+									title={
 										<Group gap='xs'>
-											<Text fw={600} size='sm'>{event.title}</Text>
-											<Badge size='xs' variant='light' color={meta.color}>{t(meta.labelKey)}</Badge>
+											<Text fw={600} size='sm'>
+												{event.title}
+											</Text>
+											<Badge size='xs' variant='light' color={meta.color}>
+												{t(meta.labelKey)}
+											</Badge>
 										</Group>
-									)}
+									}
 								>
 									<Text size='sm'>{event.description}</Text>
-									<Text size='xs' c='dimmed'>{formatDateTime(event.date)}</Text>
+									<Text size='xs' c='dimmed'>
+										{formatDateTime(event.date)}
+									</Text>
 									{event.link && (
 										<Anchor size='xs' onClick={() => navigate(event.link!)}>
 											{t('timeline.open')}
