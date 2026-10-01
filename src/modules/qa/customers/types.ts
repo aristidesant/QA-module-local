@@ -178,7 +178,6 @@ export interface CustomerProfile {
 	objections: { text: string; count: number }[];
 	timeline: CustomerEvent[];
 	notes: CustomerNote[];
-	nextBestAction: string;
 }
 
 export interface CustomerTableRow {

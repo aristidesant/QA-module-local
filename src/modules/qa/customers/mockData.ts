@@ -1028,14 +1028,6 @@ export function buildCustomerProfile(p: CustomerPersona): CustomerProfile {
 			: []),
 	].sort((a, b) => b.date.localeCompare(a.date));
 
-	const nextBestAction = customer.doNotCall
-		? 'Do not contact for offers; service calls only.'
-		: churnRisk === 'high'
-			? 'Retention call by a senior agent; lead with the loyalty discount.'
-			: receptivenessBand === 'receptive'
-				? `Upsell ${p.segment === 'business' ? 'Business Fiber 1 Gbps' : 'Premium Fiber 500 + TV'} on ${bestWindows[0]?.weekday ?? p.bestDay} ${bestWindows[0]?.dayPart ?? p.bestPart}.`
-				: `Nurture: answer the price-after-promo question first; contact on ${bestWindows[0]?.weekday ?? p.bestDay} ${bestWindows[0]?.dayPart ?? p.bestPart}.`;
-
 	return {
 		customer,
 		contacts,
@@ -1058,7 +1050,6 @@ export function buildCustomerProfile(p: CustomerPersona): CustomerProfile {
 		objections,
 		timeline,
 		notes,
-		nextBestAction,
 		kpis: {
 			totalContacts: contacts.length,
 			answered: answered.length,

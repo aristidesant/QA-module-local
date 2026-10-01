@@ -104,7 +104,6 @@
 		"receptiveness": "Receptividad",
 		"churn": "Riesgo de abandono",
 		"bestWindow": "Mejor ventana",
-		"nextBestAction": "Siguiente mejor acción",
 		"actions": {
 			"addNote": "Agregar nota",
 			"flagDnc": "Marcar No llamar",

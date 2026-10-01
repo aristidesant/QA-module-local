@@ -1,5 +1,4 @@
 import {
-	Alert,
 	Avatar,
 	Badge,
 	Button,
@@ -8,7 +7,7 @@ import {
 	Text,
 	Title,
 } from '@mantine/core';
-import { IconBan, IconBulb, IconNote } from '@tabler/icons-react';
+import { IconBan, IconNote } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import { formatDate, trendDelta } from '~/modules/qa/team/helpers';
@@ -124,15 +123,6 @@ export function CustomerHeader({
 					</Stack>
 				</Group>
 			</Group>
-
-			<Alert
-				variant='default'
-				icon={<IconBulb size={16} />}
-				title={t('header.nextBestAction')}
-				mt='md'
-			>
-				{profile.nextBestAction}
-			</Alert>
 
 			<Group justify='flex-end' mt='sm'>
 				<Button
