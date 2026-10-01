@@ -20,7 +20,7 @@ import {
 	BusinessInsightsCard,
 	OperationalCard,
 	CampaignPerformanceCard,
-	DashboardFilterBar,
+	PerformanceScoreControls,
 	NeedsAttentionStrip,
 	type CampaignPerformanceEntry,
 	type NeedsAttentionItem,
@@ -355,18 +355,19 @@ export const NewQAManagerDashboard: React.FC = () => {
 					</Text>
 				</div>
 
-				<DashboardFilterBar
-					period={period}
-					onPeriodChange={setPeriod}
-					lineOfBusiness={lineOfBusiness}
-					onLineOfBusinessChange={setLineOfBusiness}
-				/>
-
 				<NeedsAttentionStrip items={attentionItems} />
 
 				<SectionCard
 					title='Performance Score'
 					description={`Platform quality assurance, compliance, sentiment and business results ${WINDOW_PHRASE[period]}${lineOfBusiness ? ` · ${lineOfBusiness}` : ''}`}
+					headerActions={
+						<PerformanceScoreControls
+							period={period}
+							onPeriodChange={setPeriod}
+							lineOfBusiness={lineOfBusiness}
+							onLineOfBusinessChange={setLineOfBusiness}
+						/>
+					}
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
 						<div className={styles.gridCard}>

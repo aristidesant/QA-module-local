@@ -194,7 +194,6 @@
 		"filters": {
 			"period": "Período",
 			"lineOfBusiness": "Línea de negocio",
-			"lineOfBusinessHint": "Solo aplica al Puntaje de desempeño",
 			"allLines": "Todas las líneas de negocio"
 		},
 		"attention": {

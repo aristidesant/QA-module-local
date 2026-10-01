@@ -2,7 +2,15 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from '@mantine/hooks';
-import { Stack, Title, Text, SimpleGrid, Badge } from '@mantine/core';
+import {
+	Stack,
+	Title,
+	Text,
+	SimpleGrid,
+	Badge,
+	Group,
+	SegmentedControl,
+} from '@mantine/core';
 import { IconTrophy } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
@@ -14,7 +22,7 @@ import {
 	BusinessInsightsCard,
 	OperationalCard,
 	TeamBurnoutRiskCard,
-	DashboardFilterBar,
+	PerformanceScoreControls,
 	NeedsAttentionStrip,
 	type NeedsAttentionItem,
 } from '../components';
@@ -37,6 +45,7 @@ import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import { TODAY } from '~/modules/qa/analytics/constants';
 import type { DashboardLineOfBusiness } from '../lineOfBusiness';
 import {
+	PERFORMANCE_SCORE_PERIODS,
 	DEFAULT_PERFORMANCE_SCORE_PERIOD,
 	performanceScoreDays,
 	type PerformanceScorePeriod,
@@ -69,6 +78,10 @@ export const NewSupervisorDashboard: React.FC = () => {
 		DEFAULT_PERFORMANCE_SCORE_PERIOD
 	);
 	const days = performanceScoreDays(period);
+	const [rankingsPeriod, setRankingsPeriod] = useState<PerformanceScorePeriod>(
+		DEFAULT_PERFORMANCE_SCORE_PERIOD
+	);
+	const rankingsDays = performanceScoreDays(rankingsPeriod);
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
 	const metrics = useMemo(
@@ -86,8 +99,9 @@ export const NewSupervisorDashboard: React.FC = () => {
 	const burnoutRisk = teamBurnoutRisk('supervisor');
 
 	const standings = useMemo(
-		() => (program ? computeStandings(program, TEAM_CALLS, TODAY, days) : []),
-		[program, days]
+		() =>
+			program ? computeStandings(program, TEAM_CALLS, TODAY, rankingsDays) : [],
+		[program, rankingsDays]
 	);
 
 	const entries = useMemo(
@@ -140,18 +154,19 @@ export const NewSupervisorDashboard: React.FC = () => {
 					</Text>
 				</div>
 
-				<DashboardFilterBar
-					period={period}
-					onPeriodChange={setPeriod}
-					lineOfBusiness={lineOfBusiness}
-					onLineOfBusinessChange={setLineOfBusiness}
-				/>
-
 				<NeedsAttentionStrip items={attentionItems} />
 
 				<SectionCard
 					title='Performance Score'
 					description={`Your team's quality assurance, compliance, sentiment and business results ${WINDOW_PHRASE[period]}${lineOfBusiness ? ` · ${lineOfBusiness}` : ''}`}
+					headerActions={
+						<PerformanceScoreControls
+							period={period}
+							onPeriodChange={setPeriod}
+							lineOfBusiness={lineOfBusiness}
+							onLineOfBusinessChange={setLineOfBusiness}
+						/>
+					}
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
 						<div className={styles.gridCard}>
@@ -228,9 +243,23 @@ export const NewSupervisorDashboard: React.FC = () => {
 							title={t('agent.leaderboard')}
 							description={t('agent.leaderboardDescription')}
 							headerActions={
-								<Badge variant='light' size='sm'>
-									{standings.length}
-								</Badge>
+								<Group gap='sm' wrap='nowrap'>
+									<SegmentedControl
+										size='sm'
+										aria-label={tDashboard('roleDashboard.filters.period')}
+										value={rankingsPeriod}
+										onChange={(v) =>
+											setRankingsPeriod(v as PerformanceScorePeriod)
+										}
+										data={PERFORMANCE_SCORE_PERIODS.map((p) => ({
+											value: p.value,
+											label: tDashboard(p.labelKey),
+										}))}
+									/>
+									<Badge variant='light' size='sm'>
+										{standings.length}
+									</Badge>
+								</Group>
 							}
 						>
 							{isCompact ? (

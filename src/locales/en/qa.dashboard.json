@@ -194,7 +194,6 @@
 		"filters": {
 			"period": "Period",
 			"lineOfBusiness": "Line of Business",
-			"lineOfBusinessHint": "Applies to Performance Score only",
 			"allLines": "All lines of business"
 		},
 		"attention": {

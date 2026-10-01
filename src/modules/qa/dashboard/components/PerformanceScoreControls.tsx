@@ -10,7 +10,7 @@ import {
 	type DashboardLineOfBusiness,
 } from '../lineOfBusiness';
 
-interface DashboardFilterBarProps {
+interface PerformanceScoreControlsProps {
 	period: PerformanceScorePeriod;
 	onPeriodChange: (period: PerformanceScorePeriod) => void;
 	/** Omit on dashboards without a Line of Business filter (Agent). */
@@ -18,17 +18,28 @@ interface DashboardFilterBarProps {
 	onLineOfBusinessChange?: (value: DashboardLineOfBusiness | null) => void;
 }
 
-/** One filter row shared by the role dashboards: period first, then Line of Business when the role has it. */
-export const DashboardFilterBar: React.FC<DashboardFilterBarProps> = ({
-	period,
-	onPeriodChange,
-	lineOfBusiness,
-	onLineOfBusinessChange,
-}) => {
+/** Period (and Line of Business) controls, rendered in the Performance Score header so it is clear they only filter that section. */
+export const PerformanceScoreControls: React.FC<
+	PerformanceScoreControlsProps
+> = ({ period, onPeriodChange, lineOfBusiness, onLineOfBusinessChange }) => {
 	const { t } = useTranslation('qa.dashboard');
 
 	return (
-		<Group justify='space-between' align='flex-end' gap='md'>
+		<Group gap='sm' wrap='wrap' justify='flex-end'>
+			{onLineOfBusinessChange && (
+				<Select
+					size='sm'
+					aria-label={t('roleDashboard.filters.lineOfBusiness')}
+					placeholder={t('roleDashboard.filters.allLines')}
+					data={DASHBOARD_LINES_OF_BUSINESS}
+					value={lineOfBusiness ?? null}
+					onChange={(value) =>
+						onLineOfBusinessChange(value as DashboardLineOfBusiness | null)
+					}
+					clearable
+					w={220}
+				/>
+			)}
 			<SegmentedControl
 				size='sm'
 				aria-label={t('roleDashboard.filters.period')}
@@ -39,22 +50,8 @@ export const DashboardFilterBar: React.FC<DashboardFilterBarProps> = ({
 					label: t(p.labelKey),
 				}))}
 			/>
-			{onLineOfBusinessChange && (
-				<Select
-					label={t('roleDashboard.filters.lineOfBusiness')}
-					description={t('roleDashboard.filters.lineOfBusinessHint')}
-					placeholder={t('roleDashboard.filters.allLines')}
-					data={DASHBOARD_LINES_OF_BUSINESS}
-					value={lineOfBusiness ?? null}
-					onChange={(value) =>
-						onLineOfBusinessChange(value as DashboardLineOfBusiness | null)
-					}
-					clearable
-					w={240}
-				/>
-			)}
 		</Group>
 	);
 };
 
-export default DashboardFilterBar;
+export default PerformanceScoreControls;

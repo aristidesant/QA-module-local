@@ -12,7 +12,7 @@ import {
 	BestWorstCallsTable,
 	CoachingLearningWidget,
 	CommitLearningModal,
-	DashboardFilterBar,
+	PerformanceScoreControls,
 	type PendingLearningItem,
 } from '../components';
 import { useDashboardCopy } from '../useDashboardCopy';
@@ -147,12 +147,16 @@ export const NewAgentDashboard: React.FC = () => {
 					</Text>
 				</div>
 
-				<DashboardFilterBar period={period} onPeriodChange={setPeriod} />
-
 				{/* 2. Performance Score: QA, Compliance, Sentiment & Emotion — each row opens the calls behind it */}
 				<SectionCard
 					title='Performance Score'
 					description={`Your quality assurance, compliance and sentiment results ${WINDOW_PHRASE[period]} · ${metrics.calls} calls evaluated`}
+					headerActions={
+						<PerformanceScoreControls
+							period={period}
+							onPeriodChange={setPeriod}
+						/>
+					}
 				>
 					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
 						<div className={styles.gridCard}>
