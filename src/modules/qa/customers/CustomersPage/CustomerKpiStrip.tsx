@@ -1,4 +1,4 @@
-import { Badge, Group, SimpleGrid, Tooltip } from '@mantine/core';
+import { Group, SimpleGrid, Text, Tooltip } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { StatCard } from '~/components/StatCard';
 import type { customerKpis } from '../helpers';
@@ -7,6 +7,7 @@ interface CustomerKpiStripProps {
 	kpis: ReturnType<typeof customerKpis>;
 }
 
+/** Numbers stay neutral; the only colour is red on churn, and only when there is someone at high risk. */
 export function CustomerKpiStrip({ kpis }: CustomerKpiStripProps) {
 	const { t } = useTranslation('qa.customers');
 
@@ -15,21 +16,32 @@ export function CustomerKpiStrip({ kpis }: CustomerKpiStripProps) {
 			<StatCard
 				title={t('list.kpi.total')}
 				value={kpis.total}
-				badge={(
-					<Group gap={4}>
+				badge={
+					<Group gap={8}>
 						<Tooltip label={t('list.kpi.improving')}>
-							<Badge color='teal' variant='light'>↑{kpis.improving}</Badge>
+							<Text size='xs' c='dimmed'>
+								↑ {kpis.improving}
+							</Text>
 						</Tooltip>
 						<Tooltip label={t('list.kpi.declining')}>
-							<Badge color='red' variant='light'>↓{kpis.declining}</Badge>
+							<Text size='xs' c='dimmed'>
+								↓ {kpis.declining}
+							</Text>
 						</Tooltip>
 					</Group>
-				)}
+				}
 			/>
-			<StatCard title={t('list.kpi.receptive')} value={kpis.receptive} color='green' />
-			<StatCard title={t('list.kpi.churnHigh')} value={kpis.churnHigh} color={kpis.churnHigh > 0 ? 'red' : undefined} />
-			<StatCard title={t('list.kpi.doNotCall')} value={kpis.doNotCall} color='gray' />
-			<StatCard title={t('list.kpi.avgAcceptance')} value={`${kpis.avgAcceptance}%`} />
+			<StatCard title={t('list.kpi.receptive')} value={kpis.receptive} />
+			<StatCard
+				title={t('list.kpi.churnHigh')}
+				value={kpis.churnHigh}
+				color={kpis.churnHigh > 0 ? 'var(--mantine-color-red-text)' : undefined}
+			/>
+			<StatCard title={t('list.kpi.doNotCall')} value={kpis.doNotCall} />
+			<StatCard
+				title={t('list.kpi.avgAcceptance')}
+				value={`${kpis.avgAcceptance}%`}
+			/>
 		</SimpleGrid>
 	);
 }

@@ -7,14 +7,29 @@ import { SectionCard } from '~/components/SectionCard';
 import BaseTable from '~/components/BaseTable/BaseTable';
 import { useCustomersStore } from '~/stores/qa/customersStore';
 import { customersBasePath, roleFromPath } from '~/modules/qa/team/helpers';
-import type { CustomerFilters as CustomerFiltersState, CustomerTableRow } from '../types';
-import { applyCustomerFilters, customerKpis, toCustomerRow, visibleForRole } from '../helpers';
+import type {
+	CustomerFilters as CustomerFiltersState,
+	CustomerTableRow,
+} from '../types';
+import {
+	applyCustomerFilters,
+	customerKpis,
+	toCustomerRow,
+	visibleForRole,
+} from '../helpers';
 import { CustomerKpiStrip } from './CustomerKpiStrip';
 import { CustomerFilters } from './CustomerFilters';
 import { useCustomerColumns } from './useCustomerColumns';
-import styles from './CustomersPage.module.css';
 
-const DEFAULT_FILTERS: CustomerFiltersState = { search: '', segment: 'all', status: 'all', receptiveness: 'all', churnRisk: 'all', agentId: 'all', dncOnly: false };
+const DEFAULT_FILTERS: CustomerFiltersState = {
+	search: '',
+	segment: 'all',
+	status: 'all',
+	receptiveness: 'all',
+	churnRisk: 'all',
+	agentId: 'all',
+	dncOnly: false,
+};
 
 export default function CustomersPage() {
 	const { t } = useTranslation('qa.customers');
@@ -26,20 +41,32 @@ export default function CustomersPage() {
 
 	const rows = useMemo(() => {
 		const allRows = Object.values(profiles).map(toCustomerRow);
-		return applyCustomerFilters(visibleForRole(allRows, role), profiles, filters);
+		return applyCustomerFilters(
+			visibleForRole(allRows, role),
+			profiles,
+			filters
+		);
 	}, [profiles, role, filters]);
-	const columns = useCustomerColumns(profiles, t);
+	const columns = useCustomerColumns(t);
 
 	return (
 		<ContentContainer
 			contentWidth='full'
 			title={t('list.title')}
-			description={t(role === 'qa-manager' ? 'list.descriptionQaManager' : 'list.description')}
+			description={t(
+				role === 'qa-manager' ? 'list.descriptionQaManager' : 'list.description'
+			)}
 		>
 			<Stack gap='lg'>
 				<CustomerKpiStrip kpis={customerKpis(rows)} />
 				<CustomerFilters role={role} value={filters} onChange={setFilters} />
-				<SectionCard headerActions={<Text size='sm' c='dimmed'>{t('list.rowsCount', { count: rows.length })}</Text>}>
+				<SectionCard
+					headerActions={
+						<Text size='sm' c='dimmed'>
+							{t('list.rowsCount', { count: rows.length })}
+						</Text>
+					}
+				>
 					<BaseTable<CustomerTableRow>
 						data={rows}
 						columns={columns}
@@ -50,7 +77,6 @@ export default function CustomersPage() {
 						density='compact'
 						emptyMessage={t('list.empty')}
 						onRowClick={(r) => navigate(`${customersBasePath(role)}/${r.id}`)}
-						getRowClassName={(row) => (row.original.doNotCall ? styles.dncRow : undefined)}
 					/>
 				</SectionCard>
 			</Stack>
