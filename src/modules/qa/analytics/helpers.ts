@@ -22,8 +22,17 @@ import {
 	TEAM_SUPERVISORS,
 } from '~/modules/qa/team/mockData';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
+import { useSettingsStore } from '~/stores/qa/settingsStore';
 import {
-	BURNOUT_DRIVER_RULES,
+	burnoutLevelFor,
+	isNegativeEmotionIn,
+} from '~/modules/qa/settings/helpers';
+import type {
+	BurnoutPattern,
+	BurnoutSettings,
+} from '~/modules/qa/settings/types';
+import { TEAM_CALLS } from './mockData';
+import {
 	DEFAULT_FILTERS,
 	MAX_SEGMENT_SERIES,
 	OTHER_SEGMENT_KEY,
@@ -41,6 +50,7 @@ import type {
 	BusinessSignalKind,
 	BusinessSummary,
 	CallDirection,
+	CallEmotion,
 	CampaignType,
 	ComparisonSeriesPoint,
 	FilterChip,
@@ -83,12 +93,12 @@ const POSITIVE_EMOTIONS: ReadonlySet<string> = new Set([
 	'Trust',
 	'Anticipation',
 ]);
-const NEGATIVE_EMOTIONS: ReadonlySet<string> = new Set([
-	'Anger',
-	'Fear',
-	'Sadness',
-	'Disgust',
-]);
+/** Emotions counted as negative are configured in Settings. */
+const isNegativeCallEmotion = (emotion: CallEmotion) =>
+	isNegativeEmotionIn(
+		emotion,
+		useSettingsStore.getState().thresholds.sentiment.negativeEmotions
+	);
 /** PERCENT metrics whose per-call value is 1/0 → aggregated as 100 × mean. */
 export const SHARE_METRIC_IDS: ReadonlySet<TriggerMetricId> =
 	new Set<TriggerMetricId>([
@@ -363,7 +373,7 @@ export function metricOf(
 		case 'POSITIVE_EMOTION_CALL_SHARE':
 			return toBool(POSITIVE_EMOTIONS.has(call.predominantEmotion));
 		case 'NEGATIVE_EMOTION_CALL_SHARE':
-			return toBool(NEGATIVE_EMOTIONS.has(call.predominantEmotion));
+			return toBool(isNegativeCallEmotion(call.predominantEmotion));
 		case 'SENTIMENT_RECOVERY_COUNT':
 			return toBool(call.sentimentRecovered);
 		case 'BI_EARLY_OBJECTION_RATE':
@@ -655,7 +665,10 @@ export function computeKpis(calls: TeamCallMetric[]): TeamKpis {
 // ---------- Finder ----------
 export const burnoutLevelsByAgent = (): Record<string, BurnoutRiskLevel> =>
 	Object.fromEntries(
-		Object.values(TEAM_PROFILES).map((p) => [p.agent.id, p.risk.burnout.level])
+		Object.values(TEAM_PROFILES).map((p) => [
+			p.agent.id,
+			assessBurnout(p.agent.id).level,
+		])
 	);
 
 function dateBounds(calls: TeamCallMetric[]): { from: string; to: string } {
@@ -858,20 +871,17 @@ const LEVEL_ORDER: Record<BurnoutRiskLevel, number> = {
 	[BurnoutRiskLevel.LOW]: 2,
 };
 
-/** Scoped agents whose TEAM_PROFILES burnout level is not LOW; HIGH first, then by percentage. */
+/** Scoped agents whose computed burnout level is not LOW; HIGH first, then by percentage. */
 export function burnoutCandidates(role: TeamRole): RosterAgent[] {
 	return scopeAgents(role)
-		.filter(
-			(a) => TEAM_PROFILES[a.id]?.risk.burnout.level !== BurnoutRiskLevel.LOW
+		.map((agent) => ({ agent, assessment: assessBurnout(agent.id) }))
+		.filter(({ assessment }) => assessment.level !== BurnoutRiskLevel.LOW)
+		.sort(
+			(a, b) =>
+				LEVEL_ORDER[a.assessment.level] - LEVEL_ORDER[b.assessment.level] ||
+				b.assessment.percentage - a.assessment.percentage
 		)
-		.sort((a, b) => {
-			const ra = TEAM_PROFILES[a.id].risk.burnout,
-				rb = TEAM_PROFILES[b.id].risk.burnout;
-			return (
-				LEVEL_ORDER[ra.level] - LEVEL_ORDER[rb.level] ||
-				rb.percentage - ra.percentage
-			);
-		});
+		.map(({ agent }) => agent);
 }
 
 export interface TeamBurnoutRiskEntry {
@@ -886,13 +896,13 @@ export interface TeamBurnoutRiskEntry {
 /** Dashboard-facing summary of burnoutCandidates: name + risk data per at-risk team member. */
 export const teamBurnoutRisk = (role: TeamRole): TeamBurnoutRiskEntry[] =>
 	burnoutCandidates(role).map((agent) => {
-		const risk = TEAM_PROFILES[agent.id].risk.burnout;
+		const assessment = assessBurnout(agent.id);
 		return {
 			agentId: agent.id,
 			agentName: agent.name,
-			level: risk.level,
-			percentage: risk.percentage,
-			trend: risk.trend,
+			level: assessment.level,
+			percentage: assessment.percentage,
+			trend: TEAM_PROFILES[agent.id].risk.burnout.trend,
 		};
 	});
 
@@ -933,11 +943,38 @@ const statusOf = (
 	return near ? 'NEAR' : 'OK';
 };
 
+/** Per call-day (oldest first): was the agent's predominant emotion that day a negative one? */
+const negativeDayFlags = (calls: TeamCallMetric[]): boolean[] => {
+	const byDay = new Map<string, Map<CallEmotion, number>>();
+	for (const call of calls) {
+		const day = dayOf(call.date);
+		const counts = byDay.get(day) ?? new Map<CallEmotion, number>();
+		counts.set(call.agentEmotion, (counts.get(call.agentEmotion) ?? 0) + 1);
+		byDay.set(day, counts);
+	}
+	return [...byDay.entries()]
+		.sort(([a], [b]) => a.localeCompare(b))
+		.map(([, counts]) => {
+			const [predominant] = [...counts.entries()].sort(
+				(a, b) => b[1] - a[1]
+			)[0];
+			return isNegativeCallEmotion(predominant);
+		});
+};
+
+/** Length of the run of `true` at the end of the list. */
+const trailingStreak = (flags: boolean[]): number => {
+	let streak = 0;
+	for (let i = flags.length - 1; i >= 0 && flags[i]; i--) streak++;
+	return streak;
+};
+
 /** `calls` = all 90-day scoped calls (unfiltered); `teamCalls` = the agent's team calls (same 90 days). */
 export function computeBurnoutDrivers(
 	agentId: string,
 	calls: TeamCallMetric[],
-	teamCalls: TeamCallMetric[]
+	teamCalls: TeamCallMetric[],
+	patterns: BurnoutPattern[] = useSettingsStore.getState().burnout.patterns
 ): BurnoutDriver[] {
 	const agentCalls = calls.filter((c) => c.agentId === agentId);
 	const last7 = daysWindow(0, 7),
@@ -955,108 +992,119 @@ export function computeBurnoutDrivers(
 				f({ from: addDays(w.from, i * 10), to: addDays(w.from, i * 10 + 9) }) ??
 				0
 		);
-	return BURNOUT_DRIVER_RULES.map((rule) => {
-		let currentValue: number | null = null,
-			delta: number | null = null,
-			series: number[] = [];
-		switch (rule.id) {
-			case 'AGENT_SENTIMENT_TREND': {
-				currentValue = aggregateMetric(
-					within(agentCalls, last14),
-					'AGENT_SENTIMENT_SCORE'
-				);
-				delta = diff(
-					currentValue,
-					aggregateMetric(within(agentCalls, prior14), 'AGENT_SENTIMENT_SCORE')
-				);
-				series = sparklineFor(
-					agentCalls,
-					'AGENT_SENTIMENT_SCORE',
-					prior14.from,
-					last14.to,
-					8
-				);
-				break;
-			}
-			case 'NEGATIVE_EMOTION_7D': {
-				currentValue = aggregateMetric(
-					within(agentCalls, last7),
-					'NEGATIVE_EMOTION_CALL_SHARE'
-				);
-				delta = diff(
-					currentValue,
-					aggregateMetric(
-						within(agentCalls, prior7),
+	return patterns
+		.filter((pattern) => pattern.enabled)
+		.map((rule) => {
+			let currentValue: number | null = null,
+				delta: number | null = null,
+				series: number[] = [];
+			switch (rule.id) {
+				case 'AGENT_SENTIMENT_TREND': {
+					currentValue = aggregateMetric(
+						within(agentCalls, last14),
+						'AGENT_SENTIMENT_SCORE'
+					);
+					delta = diff(
+						currentValue,
+						aggregateMetric(
+							within(agentCalls, prior14),
+							'AGENT_SENTIMENT_SCORE'
+						)
+					);
+					series = sparklineFor(
+						agentCalls,
+						'AGENT_SENTIMENT_SCORE',
+						prior14.from,
+						last14.to,
+						8
+					);
+					break;
+				}
+				case 'NEGATIVE_EMOTION_7D': {
+					currentValue = aggregateMetric(
+						within(agentCalls, last7),
 						'NEGATIVE_EMOTION_CALL_SHARE'
-					)
-				);
-				series = sparklineFor(
-					agentCalls,
-					'NEGATIVE_EMOTION_CALL_SHARE',
-					prior14.from,
-					last14.to,
-					8
-				);
-				break;
+					);
+					delta = diff(
+						currentValue,
+						aggregateMetric(
+							within(agentCalls, prior7),
+							'NEGATIVE_EMOTION_CALL_SHARE'
+						)
+					);
+					series = sparklineFor(
+						agentCalls,
+						'NEGATIVE_EMOTION_CALL_SHARE',
+						prior14.from,
+						last14.to,
+						8
+					);
+					break;
+				}
+				case 'QA_TREND_14D': {
+					currentValue = aggregateMetric(
+						within(agentCalls, last14),
+						'QA_OVERALL_SCORE'
+					);
+					delta = diff(
+						currentValue,
+						aggregateMetric(within(agentCalls, prior14), 'QA_OVERALL_SCORE')
+					);
+					series = sparklineFor(
+						agentCalls,
+						'QA_OVERALL_SCORE',
+						prior14.from,
+						last14.to,
+						8
+					);
+					break;
+				}
+				case 'AFTER_HOURS_30D': {
+					currentValue = afterHoursShare(within(agentCalls, last30));
+					delta = diff(
+						currentValue,
+						afterHoursShare(within(agentCalls, prior30))
+					);
+					series = [prior30, last30].flatMap((w) =>
+						tenDaySeries(w, (sub) => afterHoursShare(within(agentCalls, sub)))
+					);
+					break;
+				}
+				case 'NEGATIVE_EMOTION_STREAK': {
+					const flags = negativeDayFlags(within(agentCalls, last30));
+					currentValue = flags.length ? trailingStreak(flags) : null;
+					series = flags.slice(-10).map(toBool);
+					break;
+				}
+				case 'AHT_VS_TEAM_30D': {
+					currentValue = ahtVsTeam(
+						within(agentCalls, last30),
+						within(teamCalls, last30)
+					);
+					delta = diff(
+						currentValue,
+						ahtVsTeam(within(agentCalls, prior30), within(teamCalls, prior30))
+					);
+					series = [prior30, last30].flatMap((w) =>
+						tenDaySeries(w, (sub) =>
+							ahtVsTeam(within(agentCalls, sub), within(teamCalls, sub))
+						)
+					);
+					break;
+				}
 			}
-			case 'QA_TREND_14D': {
-				currentValue = aggregateMetric(
-					within(agentCalls, last14),
-					'QA_OVERALL_SCORE'
-				);
-				delta = diff(
-					currentValue,
-					aggregateMetric(within(agentCalls, prior14), 'QA_OVERALL_SCORE')
-				);
-				series = sparklineFor(
-					agentCalls,
-					'QA_OVERALL_SCORE',
-					prior14.from,
-					last14.to,
-					8
-				);
-				break;
-			}
-			case 'AFTER_HOURS_30D': {
-				currentValue = afterHoursShare(within(agentCalls, last30));
-				delta = diff(
-					currentValue,
-					afterHoursShare(within(agentCalls, prior30))
-				);
-				series = [prior30, last30].flatMap((w) =>
-					tenDaySeries(w, (sub) => afterHoursShare(within(agentCalls, sub)))
-				);
-				break;
-			}
-			case 'AHT_VS_TEAM_30D': {
-				currentValue = ahtVsTeam(
-					within(agentCalls, last30),
-					within(teamCalls, last30)
-				);
-				delta = diff(
-					currentValue,
-					ahtVsTeam(within(agentCalls, prior30), within(teamCalls, prior30))
-				);
-				series = [prior30, last30].flatMap((w) =>
-					tenDaySeries(w, (sub) =>
-						ahtVsTeam(within(agentCalls, sub), within(teamCalls, sub))
-					)
-				);
-				break;
-			}
-		}
-		const compared = rule.evaluate === 'DELTA' ? delta : currentValue;
-		return {
-			id: rule.id,
-			metricId: rule.metricId,
-			currentValue,
-			conditionLabelKey: rule.conditionLabelKey,
-			threshold: rule.threshold,
-			status: statusOf(rule, compared),
-			delta,
-			series,
-		};
-	});
+			const compared = rule.evaluate === 'DELTA' ? delta : currentValue;
+			return {
+				id: rule.id,
+				metricId: rule.metricId,
+				currentValue,
+				conditionLabelKey: rule.conditionLabelKey,
+				threshold: rule.threshold,
+				status: statusOf(rule, compared),
+				delta,
+				series,
+			};
+		});
 }
 
 export const formatDriverValue = (
@@ -1070,6 +1118,71 @@ export const formatDriverValue = (
 			: d.metricId === 'AHT_VS_TEAM'
 				? `${value > 0 ? '+' : ''}${Math.round(value)}%`
 				: formatMetricValue(d.metricId, value);
+
+export interface BurnoutAssessment {
+	level: BurnoutRiskLevel;
+	/** 5-95; breached patterns count fully, near ones half. */
+	percentage: number;
+	breached: number;
+	near: number;
+	enabledCount: number;
+	drivers: BurnoutDriver[];
+}
+
+/** Per settings object; entries also remember the negative-emotion list they were computed with. */
+const assessmentCache = new WeakMap<
+	BurnoutSettings,
+	Map<string, { emotions: CallEmotion[]; assessment: BurnoutAssessment }>
+>();
+
+/**
+ * Burnout level of one agent under the QA Manager's Settings: how many of the enabled
+ * patterns are breached over the agent's trailing windows, mapped to Low/Medium/High.
+ */
+export function assessBurnout(
+	agentId: string,
+	settings: BurnoutSettings = useSettingsStore.getState().burnout
+): BurnoutAssessment {
+	let cache = assessmentCache.get(settings);
+	if (!cache) {
+		cache = new Map();
+		assessmentCache.set(settings, cache);
+	}
+	const emotions =
+		useSettingsStore.getState().thresholds.sentiment.negativeEmotions;
+	const cached = cache.get(agentId);
+	if (cached && cached.emotions === emotions) return cached.assessment;
+
+	const team = TEAM_AGENTS.find((a) => a.id === agentId)?.team;
+	const teamCalls = TEAM_CALLS.filter((c) => c.team === team);
+	const drivers = computeBurnoutDrivers(
+		agentId,
+		TEAM_CALLS,
+		teamCalls,
+		settings.patterns
+	);
+	const breached = drivers.filter((d) => d.status === 'BREACHED').length;
+	const near = drivers.filter((d) => d.status === 'NEAR').length;
+	const enabledCount = drivers.length;
+	const assessment: BurnoutAssessment = {
+		level: burnoutLevelFor(breached, settings.level),
+		percentage: enabledCount
+			? Math.min(
+					95,
+					Math.max(
+						5,
+						Math.round((100 * (breached + 0.5 * near)) / enabledCount)
+					)
+				)
+			: 5,
+		breached,
+		near,
+		enabledCount,
+		drivers,
+	};
+	cache.set(agentId, { emotions, assessment });
+	return assessment;
+}
 
 export function computeWorkload(
 	agentId: string,

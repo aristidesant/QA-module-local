@@ -17,6 +17,7 @@ import type {
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import {
 	alignedComparisonSeries,
+	assessBurnout,
 	buildSegments,
 	burnoutCandidates,
 	computeKpis,
@@ -290,7 +291,7 @@ export const buildReportData = (
 				return {
 					key,
 					rows: burnoutCandidates(role).map((agent) => {
-						const risk = TEAM_PROFILES[agent.id].risk.burnout;
+						const risk = assessBurnout(agent.id);
 						return {
 							agentName: nameOf(agent.id, agent.name),
 							level: risk.level,

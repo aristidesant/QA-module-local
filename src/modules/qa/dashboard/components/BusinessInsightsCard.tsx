@@ -5,6 +5,7 @@ import {
 	Stack,
 	Group,
 	Text,
+	Badge,
 	Divider,
 	ThemeIcon,
 	Tooltip,
@@ -14,8 +15,13 @@ import {
 	IconTrendingDown,
 	IconMinus,
 	IconChartHistogram,
+	IconAlertTriangle,
 } from '@tabler/icons-react';
 import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
+import { bandFor, bandsFor } from '~/modules/qa/settings/helpers';
+import type { BusinessSignalKey } from '~/modules/qa/settings/types';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
+import { SCORE_BAND_COLOR } from '~/modules/qa/constants/badgeColors';
 import type { BusinessInsight, WeeklyMetrics } from '../mockData';
 import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
@@ -35,6 +41,14 @@ const SIGNAL_KEY: Record<BusinessInsight['type'], string> = {
 	'Unhandled objection': 'UNHANDLED_OBJECTION',
 	'Competitor plus cost': 'COMPETITOR_PLUS_COST',
 	'Mis-targeted offer': 'MISTARGETED_OFFER',
+};
+
+/** Maps a signal to the key its alert threshold is stored under in Settings. */
+const SIGNAL_SETTING_KEY: Record<BusinessInsight['type'], BusinessSignalKey> = {
+	'Early Objection': 'earlyObjection',
+	'Unhandled objection': 'unhandledObjection',
+	'Competitor plus cost': 'competitorPlusCost',
+	'Mis-targeted offer': 'mistargetedOffer',
 };
 
 /** Every signal counts against the call, so a rising share is bad news. */
@@ -61,6 +75,11 @@ export const BusinessInsightsCard: React.FC<BusinessInsightsCardProps> = ({
 	conversionTrend,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
+	const thresholds = useSettingsStore(selectThresholds);
+	const conversionBand = bandFor(
+		outcome.conversionRate,
+		bandsFor(thresholds, 'business', 'conversionRate')
+	);
 
 	return (
 		<Card
@@ -96,6 +115,19 @@ export const BusinessInsightsCard: React.FC<BusinessInsightsCardProps> = ({
 						<Text size='sm' c='dimmed'>
 							{t('businessInsights.conversionRate')}
 						</Text>
+						<Badge
+							size='xs'
+							variant='light'
+							color={SCORE_BAND_COLOR[conversionBand]}
+						>
+							{t(
+								conversionBand === 'good'
+									? 'bands.onTarget'
+									: conversionBand === 'warning'
+										? 'bands.watch'
+										: 'bands.atRisk'
+							)}
+						</Badge>
 					</Group>
 					<Text size='xs' c='dimmed'>
 						{t('businessInsights.offers', {
@@ -112,6 +144,11 @@ export const BusinessInsightsCard: React.FC<BusinessInsightsCardProps> = ({
 					{insights.map((insight) => {
 						const meta = TREND_META[insight.trend];
 						const TrendIcon = meta.icon;
+						const alerting =
+							insight.percentage >=
+							thresholds.business.signalAlertShare[
+								SIGNAL_SETTING_KEY[insight.type]
+							];
 						return (
 							<Tooltip
 								key={insight.type}
@@ -125,7 +162,17 @@ export const BusinessInsightsCard: React.FC<BusinessInsightsCardProps> = ({
 										{t(`businessInsights.signals.${SIGNAL_KEY[insight.type]}`)}
 									</Text>
 									<Group gap={6} wrap='nowrap'>
-										<Text size='sm' fw={600}>
+										{alerting && (
+											<Tooltip
+												label={t('businessInsights.signalAlert')}
+												withArrow
+											>
+												<ThemeIcon size='xs' variant='transparent' color='red'>
+													<IconAlertTriangle size={12} />
+												</ThemeIcon>
+											</Tooltip>
+										)}
+										<Text size='sm' fw={600} c={alerting ? 'red' : undefined}>
 											{t('businessInsights.signalCalls', {
 												count: insight.count,
 											})}

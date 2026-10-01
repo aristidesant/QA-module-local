@@ -91,6 +91,9 @@ export function getMediaTypeColor(mediaType?: ConversationMediaType | null) {
 
 export type ScoreBand = 'good' | 'warning' | 'critical';
 
+/** Cut points used when a caller doesn't pass the QA Manager's configured bands. */
+const DEFAULT_SCORE_BANDS = { onTarget: 90, watch: 70 };
+
 export const SCORE_BAND_COLOR: Record<ScoreBand, string> = {
 	good: 'green',
 	warning: 'yellow',
@@ -98,8 +101,17 @@ export const SCORE_BAND_COLOR: Record<ScoreBand, string> = {
 };
 
 /** `score` is 0-100. Callers on a different scale (e.g. sentiment 0-5) normalize first: `(value / 5) * 100`. */
-export const getScoreBand = (score: number): ScoreBand =>
-	score >= 90 ? 'good' : score >= 70 ? 'warning' : 'critical';
+export const getScoreBand = (
+	score: number,
+	bands: { onTarget: number; watch: number } = DEFAULT_SCORE_BANDS
+): ScoreBand =>
+	score >= bands.onTarget
+		? 'good'
+		: score >= bands.watch
+			? 'warning'
+			: 'critical';
 
-export const getScoreBandColor = (score: number): string =>
-	SCORE_BAND_COLOR[getScoreBand(score)];
+export const getScoreBandColor = (
+	score: number,
+	bands?: { onTarget: number; watch: number }
+): string => SCORE_BAND_COLOR[getScoreBand(score, bands)];

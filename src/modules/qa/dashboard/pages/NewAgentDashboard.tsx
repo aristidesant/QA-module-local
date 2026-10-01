@@ -19,6 +19,7 @@ import { useDashboardCopy } from '../useDashboardCopy';
 import { AGENT_PERSONA_ID } from '~/modules/qa/team/constants';
 import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 import { buildAgentDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import {
 	DEFAULT_PERFORMANCE_SCORE_PERIOD,
 	performanceScoreDays,
@@ -82,9 +83,10 @@ export const NewAgentDashboard: React.FC = () => {
 		DEFAULT_PERFORMANCE_SCORE_PERIOD
 	);
 	const days = performanceScoreDays(period);
+	const thresholds = useSettingsStore(selectThresholds);
 	const metrics = useMemo(
-		() => buildAgentDashboardMetrics(AGENT_PERSONA_ID, days),
-		[days]
+		() => buildAgentDashboardMetrics(AGENT_PERSONA_ID, days, thresholds),
+		[days, thresholds]
 	);
 
 	const allSessions = useCoachingStore(selectSessions);

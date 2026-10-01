@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import {
 	Card,
 	Stack,
@@ -17,6 +18,10 @@ import {
 	IconMoodHappy,
 	IconSparkles,
 } from '@tabler/icons-react';
+import { sentimentBandIndex } from '~/modules/qa/settings/helpers';
+import { DEFAULT_SETTINGS } from '~/modules/qa/settings/constants';
+import type { SentimentCutPoints } from '~/modules/qa/settings/types';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import styles from '../Dashboard.module.css';
 
 interface SentimentEmotionCardProps {
@@ -29,25 +34,39 @@ interface SentimentEmotionCardProps {
 }
 
 /**
- * Sentiment bands on the 0-5 scale.
+ * Sentiment bands on the 0-5 scale. Where one band ends and the next begins is
+ * configured in Settings; `labelKey` resolves in `qa.dashboard`.
  */
 const SENTIMENT_BANDS = [
-	{ max: 1.5, label: 'Very Negative', color: 'red', icon: IconMoodCry },
-	{ max: 2.5, label: 'Negative', color: 'red', icon: IconMoodEmpty },
-	{ max: 3.5, label: 'Neutral', color: 'gray', icon: IconMoodNeutral },
-	{ max: 4.5, label: 'Positive', color: 'green', icon: IconMoodSmile },
 	{
-		max: Infinity,
-		label: 'Very Positive',
+		labelKey: 'sentimentBands.veryNegative',
+		color: 'red',
+		icon: IconMoodCry,
+	},
+	{ labelKey: 'sentimentBands.negative', color: 'red', icon: IconMoodEmpty },
+	{
+		labelKey: 'sentimentBands.neutral',
+		color: 'gray',
+		icon: IconMoodNeutral,
+	},
+	{
+		labelKey: 'sentimentBands.positive',
+		color: 'green',
+		icon: IconMoodSmile,
+	},
+	{
+		labelKey: 'sentimentBands.veryPositive',
 		color: 'green',
 		icon: IconMoodHappy,
 	},
 ] as const;
 
 /** Resolves the predominant sentiment band for a 0-5 score */
-export const getSentimentBand = (score: number) =>
-	SENTIMENT_BANDS.find((band) => score < band.max) ??
-	SENTIMENT_BANDS[SENTIMENT_BANDS.length - 1];
+export const getSentimentBand = (
+	score: number,
+	cutPoints: SentimentCutPoints = DEFAULT_SETTINGS.thresholds.sentiment
+		.cutPoints
+) => SENTIMENT_BANDS[sentimentBandIndex(score, cutPoints)];
 
 /**
  * SentimentEmotionCard
@@ -63,7 +82,9 @@ export const SentimentEmotionCard: React.FC<SentimentEmotionCardProps> = ({
 	predominantEmotion,
 	subtitle,
 }) => {
-	const band = getSentimentBand(score);
+	const { t } = useTranslation('qa.dashboard');
+	const { cutPoints } = useSettingsStore(selectThresholds).sentiment;
+	const band = getSentimentBand(score, cutPoints);
 	const BandIcon = band.icon;
 
 	return (
@@ -115,7 +136,7 @@ export const SentimentEmotionCard: React.FC<SentimentEmotionCardProps> = ({
 							Predominant sentiment
 						</Text>
 						<Badge color={band.color} variant='light' size='lg'>
-							{band.label}
+							{t(band.labelKey)}
 						</Badge>
 					</Group>
 

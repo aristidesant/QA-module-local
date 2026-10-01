@@ -189,7 +189,7 @@ const AgentProfilePage = React.lazy(
 	() => import('./modules/qa/team/AgentProfilePage')
 );
 const QAManagerSettingsPage = React.lazy(
-	() => import('./modules/qa/qamanager/pages/SettingsPage')
+	() => import('./modules/qa/settings/SettingsPage/SettingsPage')
 );
 
 // Phase 4-5: New QA Admin Components

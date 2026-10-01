@@ -26,6 +26,7 @@ import {
 	type NeedsAttentionItem,
 } from '../components';
 import { useDashboardCopy } from '../useDashboardCopy';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import { TODAY } from '~/modules/qa/analytics/constants';
 import {
 	buildTeamDashboardMetrics,
@@ -229,9 +230,6 @@ const disputeAgeDays = (createdDate: string) =>
 		Math.floor((Date.parse(TODAY) - Date.parse(createdDate)) / DAY_MS)
 	);
 
-/** Below this QA score a campaign counts as under target (the "critical" score band). */
-const CAMPAIGN_QA_TARGET = 70;
-
 /** Team-wide drill-down target: no platform calls list exists yet, so rows open Team Analytics. */
 const ANALYTICS_PATH = '/qa/qa-manager/analytics';
 
@@ -292,9 +290,11 @@ export const NewQAManagerDashboard: React.FC = () => {
 	const days = performanceScoreDays(period);
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
+	const thresholds = useSettingsStore(selectThresholds);
 	const metrics = useMemo(
-		() => buildTeamDashboardMetrics('qa-manager', days, lineOfBusiness),
-		[days, lineOfBusiness]
+		() =>
+			buildTeamDashboardMetrics('qa-manager', days, lineOfBusiness, thresholds),
+		[days, lineOfBusiness, thresholds]
 	);
 	const {
 		insights: businessInsights,
@@ -314,7 +314,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 		? disputeAgeDays(openDisputes[0].createdDate)
 		: 0;
 	const campaignsBelowTarget = ACTIVE_CAMPAIGNS.filter(
-		(c) => c.status === 'active' && c.qaScore < CAMPAIGN_QA_TARGET
+		(c) => c.status === 'active' && c.qaScore < thresholds.qa.bands.watch
 	).length;
 
 	const openAnalytics = () => navigate(ANALYTICS_PATH);

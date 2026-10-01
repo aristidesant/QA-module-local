@@ -1,0 +1,150 @@
+{
+	"page": {
+		"eyebrow": "Gerente de QA · Todos los equipos",
+		"title": "Configuración",
+		"description": "Los umbrales detrás de cada etiqueta y nivel de riesgo de los dashboards",
+		"tabs": {
+			"qa": "Aseguramiento de calidad",
+			"compliance": "Cumplimiento",
+			"sentiment": "Sentimiento y emoción",
+			"business": "Insights de negocio",
+			"burnout": "Riesgo de burnout"
+		}
+	},
+	"actions": {
+		"save": "Guardar cambios",
+		"discard": "Descartar",
+		"reset": "Restablecer valores"
+	},
+	"saved": "Configuración guardada",
+	"bands": {
+		"onTarget": "En objetivo desde",
+		"watch": "En observación desde",
+		"onTargetRange": "En objetivo ≥ {{value}}",
+		"watchRange": "En observación {{from}}–{{to}}",
+		"atRiskRange": "En riesgo < {{value}}",
+		"atRiskHint": "Todo lo que esté por debajo de {{value}} está en riesgo."
+	},
+	"overrides": {
+		"title": "Valores por métrica",
+		"description": "Cada métrica sigue los rangos de arriba hasta que actives Personalizado.",
+		"columns": {
+			"metric": "Métrica",
+			"values": "En objetivo ≥ / Observación ≥",
+			"custom": "Personalizado"
+		},
+		"inherits": "Usa los rangos generales ({{onTarget}} / {{watch}})",
+		"custom": "Rangos personalizados para {{metric}}"
+	},
+	"metrics": {
+		"qa": {
+			"overall": "Puntaje de QA",
+			"ecn": "ECN",
+			"enc": "ENC",
+			"ecc": "ECC",
+			"ecuf": "ECUF"
+		},
+		"compliance": {
+			"overall": "Promedio de cumplimiento",
+			"security": "Seguridad",
+			"regulatory": "Regulatorio",
+			"legal": "Legal"
+		},
+		"business": {
+			"conversionRate": "Tasa de conversión"
+		}
+	},
+	"qa": {
+		"bandsTitle": "Rangos de puntaje",
+		"bandsDescription": "Aplica al puntaje de QA y a cada categoría de error, salvo que lo cambies abajo.",
+		"incidentsTitle": "Incidentes",
+		"incidentsDescription": "Qué cuenta como incidente de QA al listar llamadas.",
+		"lowScoreIncident": "Una llamada es un incidente cuando su puntaje de QA es menor a"
+	},
+	"compliance": {
+		"bandsTitle": "Cumple / Advertencia / Violación",
+		"bandsDescription": "Cumple en o sobre En objetivo, Advertencia en o sobre Observación y Violación por debajo. Aplica al porcentaje de llamadas que pasan en cada área.",
+		"targetTitle": "Meta por llamada",
+		"targetDescription": "El porcentaje de la tarjeta cuenta las llamadas que alcanzan esta meta.",
+		"areaTargetPerCall": "Un área pasa en una llamada cuando su puntaje es igual o mayor a"
+	},
+	"sentiment": {
+		"scaleTitle": "Escala de sentimiento",
+		"scaleDescription": "Dónde termina cada rango en la escala de 1 a 5.",
+		"cutPoints": {
+			"veryNegative": "Muy negativo por debajo de",
+			"negative": "Negativo por debajo de",
+			"neutral": "Neutral por debajo de",
+			"positive": "Positivo por debajo de"
+		},
+		"bands": {
+			"veryNegative": "Muy negativo",
+			"negative": "Negativo",
+			"neutral": "Neutral",
+			"positive": "Positivo",
+			"veryPositive": "Muy positivo"
+		},
+		"scaleHint": "Desde {{value}} es Muy positivo.",
+		"incidentsTitle": "Incidentes y emociones",
+		"incidentsDescription": "Qué cuenta como incidente de sentimiento al listar llamadas.",
+		"lowSentimentIncident": "Una llamada es un incidente cuando su sentimiento es menor a",
+		"negativeEmotions": "Emociones que cuentan como negativas",
+		"negativeEmotionsHint": "Se usan en los conteos de emoción negativa y en los patrones de burnout."
+	},
+	"business": {
+		"bandsTitle": "Rangos de la tasa de conversión",
+		"bandsDescription": "Se muestra como etiqueta junto a la tasa de conversión.",
+		"signalsTitle": "Alertas de señales",
+		"signalsDescription": "Una señal se marca en la tarjeta cuando su porcentaje de llamadas alcanza este valor.",
+		"columns": {
+			"signal": "Señal",
+			"alertShare": "Alertar cuando el porcentaje ≥"
+		},
+		"signals": {
+			"earlyObjection": "Objeciones tempranas",
+			"unhandledObjection": "Objeciones sin manejar",
+			"competitorPlusCost": "Competidor + precio",
+			"mistargetedOffer": "Ofertas mal dirigidas"
+		}
+	},
+	"burnout": {
+		"patternsTitle": "Patrones",
+		"patternsDescription": "Cada patrón compara el comportamiento reciente del agente con su umbral. Desactiva los que no quieras contar.",
+		"columns": {
+			"pattern": "Patrón",
+			"condition": "Condición",
+			"threshold": "Umbral",
+			"nearBand": "Margen cercano",
+			"enabled": "Activo"
+		},
+		"windows": {
+			"AGENT_SENTIMENT_TREND": "Últimos 14 días vs. los 14 anteriores",
+			"NEGATIVE_EMOTION_7D": "Últimos 7 días",
+			"QA_TREND_14D": "Últimos 14 días vs. los 14 anteriores",
+			"AFTER_HOURS_30D": "Últimos 30 días",
+			"AHT_VS_TEAM_30D": "Últimos 30 días",
+			"NEGATIVE_EMOTION_STREAK": "Últimos días con llamadas"
+		},
+		"units": {
+			"pts": "pts",
+			"days": "días",
+			"%": "%"
+		},
+		"enable": "Contar {{pattern}}",
+		"levelTitle": "Nivel de riesgo",
+		"levelDescription": "El nivel de un agente depende de cuántos patrones activos se cumplen.",
+		"mediumAt": "Medio cuando se cumplen al menos",
+		"highAt": "Alto cuando se cumplen al menos",
+		"previewLead": "Con estas reglas, de {{total}} agentes:",
+		"previewHigh": "{{count}} en nivel alto",
+		"previewMedium": "{{count}} en nivel medio"
+	},
+	"validation": {
+		"bandsOrder": "En objetivo debe ser mayor que Observación",
+		"bandsRange": "Usa valores entre 0 y 100",
+		"cutPointsOrder": "Cada rango debe terminar más arriba que el anterior",
+		"cutPointsRange": "Usa valores entre 1 y 5",
+		"levelOrder": "Alto debe ser mayor que Medio",
+		"levelAboveEnabled": "Alto no puede superar los {{count}} patrones activos"
+	}
+}

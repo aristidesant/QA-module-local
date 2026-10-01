@@ -1,0 +1,150 @@
+{
+	"page": {
+		"eyebrow": "QA Manager · All teams",
+		"title": "Settings",
+		"description": "Thresholds behind every label and risk level on the dashboards",
+		"tabs": {
+			"qa": "Quality Assurance",
+			"compliance": "Compliance",
+			"sentiment": "Sentiment & Emotion",
+			"business": "Business Insights",
+			"burnout": "Burnout Risk"
+		}
+	},
+	"actions": {
+		"save": "Save changes",
+		"discard": "Discard",
+		"reset": "Reset to defaults"
+	},
+	"saved": "Settings saved",
+	"bands": {
+		"onTarget": "On target when ≥",
+		"watch": "Watch when ≥",
+		"onTargetRange": "On target ≥ {{value}}",
+		"watchRange": "Watch {{from}}–{{to}}",
+		"atRiskRange": "At risk < {{value}}",
+		"atRiskHint": "Anything below {{value}} is At risk."
+	},
+	"overrides": {
+		"title": "Per-metric values",
+		"description": "Each metric follows the bands above until you switch on Custom.",
+		"columns": {
+			"metric": "Metric",
+			"values": "On target ≥ / Watch ≥",
+			"custom": "Custom"
+		},
+		"inherits": "Uses the general bands ({{onTarget}} / {{watch}})",
+		"custom": "Custom bands for {{metric}}"
+	},
+	"metrics": {
+		"qa": {
+			"overall": "QA score",
+			"ecn": "ECN",
+			"enc": "ENC",
+			"ecc": "ECC",
+			"ecuf": "ECUF"
+		},
+		"compliance": {
+			"overall": "Compliance average",
+			"security": "Security",
+			"regulatory": "Regulatory",
+			"legal": "Legal"
+		},
+		"business": {
+			"conversionRate": "Conversion rate"
+		}
+	},
+	"qa": {
+		"bandsTitle": "Score bands",
+		"bandsDescription": "Applies to the QA score and each error category unless overridden below.",
+		"incidentsTitle": "Incidents",
+		"incidentsDescription": "What counts as a QA incident when listing calls.",
+		"lowScoreIncident": "A call is an incident when its QA score is below"
+	},
+	"compliance": {
+		"bandsTitle": "Compliant / Warning / Violation",
+		"bandsDescription": "Compliant at or above On target, Warning at or above Watch, Violation below it. Applies to each area's percentage of passing calls.",
+		"targetTitle": "Per-call target",
+		"targetDescription": "The card's percentage counts the calls that pass this target.",
+		"areaTargetPerCall": "An area passes on a call when its score is at or above"
+	},
+	"sentiment": {
+		"scaleTitle": "Sentiment scale",
+		"scaleDescription": "Where each band ends on the 1–5 scale.",
+		"cutPoints": {
+			"veryNegative": "Very negative below",
+			"negative": "Negative below",
+			"neutral": "Neutral below",
+			"positive": "Positive below"
+		},
+		"bands": {
+			"veryNegative": "Very negative",
+			"negative": "Negative",
+			"neutral": "Neutral",
+			"positive": "Positive",
+			"veryPositive": "Very positive"
+		},
+		"scaleHint": "From {{value}} up is Very positive.",
+		"incidentsTitle": "Incidents and emotions",
+		"incidentsDescription": "What counts as a sentiment incident when listing calls.",
+		"lowSentimentIncident": "A call is an incident when its sentiment is below",
+		"negativeEmotions": "Emotions counted as negative",
+		"negativeEmotionsHint": "Used for negative-emotion counts and burnout patterns."
+	},
+	"business": {
+		"bandsTitle": "Conversion rate bands",
+		"bandsDescription": "Shown as a label next to the conversion rate.",
+		"signalsTitle": "Signal alerts",
+		"signalsDescription": "A signal is flagged on the card when its share of calls reaches this value.",
+		"columns": {
+			"signal": "Signal",
+			"alertShare": "Alert when share ≥"
+		},
+		"signals": {
+			"earlyObjection": "Early objections",
+			"unhandledObjection": "Unhandled objections",
+			"competitorPlusCost": "Competitor + price",
+			"mistargetedOffer": "Mis-targeted offers"
+		}
+	},
+	"burnout": {
+		"patternsTitle": "Patterns",
+		"patternsDescription": "Each pattern compares an agent's recent behaviour with its threshold. Switch off the ones you don't want to count.",
+		"columns": {
+			"pattern": "Pattern",
+			"condition": "Condition",
+			"threshold": "Threshold",
+			"nearBand": "Near band",
+			"enabled": "Enabled"
+		},
+		"windows": {
+			"AGENT_SENTIMENT_TREND": "Last 14 days vs the previous 14",
+			"NEGATIVE_EMOTION_7D": "Last 7 days",
+			"QA_TREND_14D": "Last 14 days vs the previous 14",
+			"AFTER_HOURS_30D": "Last 30 days",
+			"AHT_VS_TEAM_30D": "Last 30 days",
+			"NEGATIVE_EMOTION_STREAK": "Latest call days"
+		},
+		"units": {
+			"pts": "pts",
+			"days": "days",
+			"%": "%"
+		},
+		"enable": "Count {{pattern}}",
+		"levelTitle": "Risk level",
+		"levelDescription": "An agent's level depends on how many enabled patterns are met.",
+		"mediumAt": "Medium when at least this many are met",
+		"highAt": "High when at least this many are met",
+		"previewLead": "With these rules, of {{total}} agents:",
+		"previewHigh": "{{count}} High",
+		"previewMedium": "{{count}} Medium"
+	},
+	"validation": {
+		"bandsOrder": "On target must be higher than Watch",
+		"bandsRange": "Use values between 0 and 100",
+		"cutPointsOrder": "Each band must end higher than the one before",
+		"cutPointsRange": "Use values between 1 and 5",
+		"levelOrder": "High must be higher than Medium",
+		"levelAboveEnabled": "High can't exceed the {{count}} enabled patterns"
+	}
+}

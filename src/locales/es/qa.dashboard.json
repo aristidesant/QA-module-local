@@ -42,7 +42,8 @@
 			"MISTARGETED_OFFER": "Ofertas mal dirigidas"
 		},
 		"signalCalls_one": "{{count}} llamada",
-		"signalCalls_other": "{{count}} llamadas"
+		"signalCalls_other": "{{count}} llamadas",
+		"signalAlert": "Por encima del umbral de alerta definido en Configuración"
 	},
 	"description": "Métricas de calidad en vivo calculadas a partir de evaluaciones, disputas y salud de proveedores de IA.",
 	"drill": {
@@ -232,6 +233,25 @@
 		"sales": {
 			"label": "Tarjetas de crédito vendidas",
 			"offered": "{{sold}} de {{offered}} ofrecidas"
+		}
+	},
+	"bands": {
+		"onTarget": "En objetivo",
+		"watch": "En observación",
+		"atRisk": "En riesgo"
+	},
+	"sentimentBands": {
+		"veryNegative": "Muy negativo",
+		"negative": "Negativo",
+		"neutral": "Neutral",
+		"positive": "Positivo",
+		"veryPositive": "Muy positivo"
+	},
+	"compliance": {
+		"status": {
+			"compliant": "Cumple",
+			"warning": "Advertencia",
+			"violation": "Violación"
 		}
 	}
 }

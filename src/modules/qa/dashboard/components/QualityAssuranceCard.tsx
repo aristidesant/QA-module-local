@@ -10,10 +10,9 @@ import {
 	Badge,
 } from '@mantine/core';
 import { IconChevronRight, IconClipboardCheck } from '@tabler/icons-react';
-import {
-	getScoreBand,
-	SCORE_BAND_COLOR,
-} from '~/modules/qa/constants/badgeColors';
+import { SCORE_BAND_COLOR } from '~/modules/qa/constants/badgeColors';
+import { bandFor, bandsFor } from '~/modules/qa/settings/helpers';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import DrillRow from './DrillRow';
 import { TrendIndicator } from './TrendIndicator';
@@ -71,6 +70,7 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 	trend,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
+	const thresholds = useSettingsStore(selectThresholds);
 
 	return (
 		<Card
@@ -103,13 +103,17 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 					{QA_CATEGORIES.map((category) => {
 						const count = issueCounts?.[category.key];
 						const clickable = Boolean(onCategoryClick) && (count ?? 0) > 0;
-						const band = getScoreBand(score[category.key]);
-						const bandLabel =
+						const band = bandFor(
+							score[category.key],
+							bandsFor(thresholds, 'qa', category.key)
+						);
+						const bandLabel = t(
 							band === 'good'
-								? 'On target'
+								? 'bands.onTarget'
 								: band === 'warning'
-									? 'Watch'
-									: 'At risk';
+									? 'bands.watch'
+									: 'bands.atRisk'
+						);
 						const bandColor = SCORE_BAND_COLOR[band];
 						return (
 							<DrillRow

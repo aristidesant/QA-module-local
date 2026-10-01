@@ -2,6 +2,7 @@ import {
 	IconLayoutDashboard,
 	IconPhone,
 	IconBell,
+	IconSettings,
 	IconFolders,
 	IconChartLine,
 	IconFileText,
@@ -293,6 +294,13 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.rankings',
 	},
 	{
+		key: 'qamanager-settings',
+		label: 'sidebar.qamanager.settings',
+		icon: <IconSettings size={20} className={styles.menuIcon} />,
+		to: '/qa/qa-manager/settings',
+		i18nNamespace: 'qa.settings',
+	},
+	{
 		key: 'qamanager-campaigns',
 		label: 'sidebar.qamanager.campaigns',
 		icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
@@ -352,7 +360,11 @@ export const getQAManagerNavigationGrouped = (): (
 		{
 			key: 'qamanager-configuration',
 			label: 'sidebar.qamanager.groupConfiguration',
-			items: pick('qamanager-triggers', 'qamanager-rankings'),
+			items: pick(
+				'qamanager-triggers',
+				'qamanager-rankings',
+				'qamanager-settings'
+			),
 			collapsible: true,
 			defaultExpanded: false,
 		},

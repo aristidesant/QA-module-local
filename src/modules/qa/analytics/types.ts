@@ -295,7 +295,8 @@ export type BurnoutDriverId =
 	| 'NEGATIVE_EMOTION_7D'
 	| 'QA_TREND_14D'
 	| 'AFTER_HOURS_30D'
-	| 'AHT_VS_TEAM_30D';
+	| 'AHT_VS_TEAM_30D'
+	| 'NEGATIVE_EMOTION_STREAK';
 export type BurnoutDriverMetricId =
 	| TriggerMetricId
 	| 'AFTER_HOURS_SHARE'

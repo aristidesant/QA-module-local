@@ -5,6 +5,7 @@ import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import { agentProfilePath } from '~/modules/qa/team/helpers';
 import type { RosterAgent } from '~/modules/qa/team/types';
 import type { PreviewRole } from '~/constants/previewRole';
+import { useSettingsStore } from '~/stores/qa/settingsStore';
 import {
 	CAMPAIGN_ROSTER_MAP,
 	QA_FORM_BY_CAMPAIGN_TYPE,
@@ -89,7 +90,8 @@ export const buildCampaignCalls = (
 			isAutoFailed: c.autoFail,
 			isDisputed: c.qaScore < 60 && i % 4 === 0,
 			qaForm,
-			qaFormPassed: c.qaScore >= 70,
+			qaFormPassed:
+				c.qaScore >= useSettingsStore.getState().thresholds.qa.lowScoreIncident,
 			disputeRequested: c.qaScore < 65 && i % 3 === 0,
 		}))
 		.sort((a, b) => b.date.localeCompare(a.date));

@@ -20,6 +20,7 @@ import {
 } from '@tabler/icons-react';
 import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import { getSentimentBand } from './SentimentEmotionCard';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
 
@@ -48,7 +49,8 @@ const SideColumn: React.FC<{
 	side: SentimentSide;
 }> = ({ title, icon, side }) => {
 	const { t } = useTranslation('qa.dashboard');
-	const band = getSentimentBand(side.score);
+	const { cutPoints } = useSettingsStore(selectThresholds).sentiment;
+	const band = getSentimentBand(side.score, cutPoints);
 	return (
 		<Stack gap='xs' className={styles.splitColumn}>
 			<Group gap={6}>
@@ -67,7 +69,7 @@ const SideColumn: React.FC<{
 			</Group>
 			<Progress value={(side.score / 5) * 100} size='sm' color={band.color} />
 			<Badge color={band.color} variant='light' size='sm'>
-				{band.label}
+				{t(band.labelKey)}
 			</Badge>
 			<Badge
 				color='gray'
@@ -90,7 +92,8 @@ export const SentimentEmotionSplitCard: React.FC<
 	SentimentEmotionSplitCardProps
 > = ({ agent, customer, subtitle, onReviewClick }) => {
 	const { t } = useTranslation('qa.dashboard');
-	const headerBand = getSentimentBand(customer.score);
+	const { cutPoints } = useSettingsStore(selectThresholds).sentiment;
+	const headerBand = getSentimentBand(customer.score, cutPoints);
 	const HeaderIcon = headerBand.icon;
 
 	const reviewRow = (

@@ -1,32 +1,65 @@
 {
 	"page": {
-		"eyebrow": { "supervisor": "Supervisor · Team 1", "qa-manager": "QA Manager · All teams" },
+		"eyebrow": {
+			"supervisor": "Supervisor · Team 1",
+			"qa-manager": "QA Manager · All teams"
+		},
 		"title": "Team Analytics",
 		"description": {
 			"supervisor": "Explore your team's QA, Compliance, Sentiment and Business results with filters, grouping and period comparison.",
 			"qa-manager": "Explore every team's QA, Compliance, Sentiment and Business results with filters, grouping and period comparison."
 		},
-		"views": { "qa": "QA", "sentiment": "Sentiment & Emotion", "compliance": "Compliance", "business": "Business Insights", "finder": "Agent Finder", "burnout": "Burnout Risk" }
+		"views": {
+			"qa": "QA",
+			"sentiment": "Sentiment & Emotion",
+			"compliance": "Compliance",
+			"business": "Business Insights",
+			"finder": "Agent Finder",
+			"burnout": "Burnout Risk"
+		}
 	},
 	"filters": {
 		"title": "Filters",
 		"activeCount_one": "{{count}} filter active",
 		"activeCount_other": "{{count}} filters active",
-		"quickRange": { "7d": "7 days", "30d": "30 days", "90d": "90 days", "custom": "Custom" },
+		"quickRange": {
+			"7d": "7 days",
+			"30d": "30 days",
+			"90d": "90 days",
+			"custom": "Custom"
+		},
 		"from": "From",
 		"to": "To",
 		"granularity": "Granularity",
-		"granularityOptions": { "per-call": "Per call", "daily": "Daily", "weekly": "Weekly", "monthly": "Monthly" },
+		"granularityOptions": {
+			"per-call": "Per call",
+			"daily": "Daily",
+			"weekly": "Weekly",
+			"monthly": "Monthly"
+		},
 		"compare": "Compare with previous period",
 		"groupBy": "Group by",
 		"groupByOptions": {
-			"none": "No grouping", "team": "Team", "supervisor": "Supervisor", "agent": "Agent", "campaign": "Campaign",
-			"lineOfBusiness": "Line of business", "campaignType": "Campaign type", "callDirection": "Call direction",
-			"shift": "Shift", "tenure": "Tenure", "timeOfDay": "Time of day", "weekday": "Weekday"
+			"none": "No grouping",
+			"team": "Team",
+			"supervisor": "Supervisor",
+			"agent": "Agent",
+			"campaign": "Campaign",
+			"lineOfBusiness": "Line of business",
+			"campaignType": "Campaign type",
+			"callDirection": "Call direction",
+			"shift": "Shift",
+			"tenure": "Tenure",
+			"timeOfDay": "Time of day",
+			"weekday": "Weekday"
 		},
 		"moreFilters": "More filters",
 		"lessFilters": "Fewer filters",
-		"sections": { "scope": "Scope", "calls": "Call attributes", "evaluation": "Evaluation" },
+		"sections": {
+			"scope": "Scope",
+			"calls": "Call attributes",
+			"evaluation": "Evaluation"
+		},
 		"supervisors": "Supervisors / teams",
 		"agents": "Agents",
 		"campaigns": "Campaigns",
@@ -46,19 +79,66 @@
 			"offeredOnly": "Only calls with an offer",
 			"convertedOnly": "Only converted calls"
 		},
-		"scoreRange": { "label": "Score range", "metric": "Metric", "min": "Min", "max": "Max", "any": "Any metric" },
+		"scoreRange": {
+			"label": "Score range",
+			"metric": "Metric",
+			"min": "Min",
+			"max": "Max",
+			"any": "Any metric"
+		},
 		"minCalls": "Min. calls per agent",
 		"apply": "Apply",
 		"reset": "Reset",
-		"chips": { "clearAll": "Clear all", "more": "+{{count}}", "period": "Period" },
-		"validation": { "range": "\"To\" must be on or after \"From\"", "scoreRange": "Max must be greater than min" },
-		"campaignTypeLabels": { "INBOUND": "Inbound", "OUTBOUND": "Outbound", "BLENDED": "Blended" },
+		"chips": {
+			"clearAll": "Clear all",
+			"more": "+{{count}}",
+			"period": "Period"
+		},
+		"validation": {
+			"range": "\"To\" must be on or after \"From\"",
+			"scoreRange": "Max must be greater than min"
+		},
+		"campaignTypeLabels": {
+			"INBOUND": "Inbound",
+			"OUTBOUND": "Outbound",
+			"BLENDED": "Blended"
+		},
 		"directionLabels": { "INBOUND": "Inbound", "OUTBOUND": "Outbound" },
-		"shiftLabels": { "morning": "Morning", "afternoon": "Afternoon", "night": "Night" },
-		"statusLabels": { "active": "Active", "on-leave": "On leave", "training": "Training" },
-		"tenureLabels": { "lt6m": "< 6 months", "6to12m": "6–12 months", "1to2y": "1–2 years", "gt2y": "> 2 years" },
-		"weekdayLabels": { "0": "Sunday", "1": "Monday", "2": "Tuesday", "3": "Wednesday", "4": "Thursday", "5": "Friday", "6": "Saturday" },
-		"emotionLabels": { "Joy": "Joy", "Trust": "Trust", "Anticipation": "Anticipation", "Surprise": "Surprise", "Anger": "Anger", "Fear": "Fear", "Sadness": "Sadness", "Disgust": "Disgust" }
+		"shiftLabels": {
+			"morning": "Morning",
+			"afternoon": "Afternoon",
+			"night": "Night"
+		},
+		"statusLabels": {
+			"active": "Active",
+			"on-leave": "On leave",
+			"training": "Training"
+		},
+		"tenureLabels": {
+			"lt6m": "< 6 months",
+			"6to12m": "6–12 months",
+			"1to2y": "1–2 years",
+			"gt2y": "> 2 years"
+		},
+		"weekdayLabels": {
+			"0": "Sunday",
+			"1": "Monday",
+			"2": "Tuesday",
+			"3": "Wednesday",
+			"4": "Thursday",
+			"5": "Friday",
+			"6": "Saturday"
+		},
+		"emotionLabels": {
+			"Joy": "Joy",
+			"Trust": "Trust",
+			"Anticipation": "Anticipation",
+			"Surprise": "Surprise",
+			"Anger": "Anger",
+			"Fear": "Fear",
+			"Sadness": "Sadness",
+			"Disgust": "Disgust"
+		}
 	},
 	"presets": {
 		"button": "Saved views",
@@ -95,7 +175,12 @@
 		"agents_other": "{{count}} agents in scope",
 		"vsPrevious": "vs previous period"
 	},
-	"areas": { "QUALITY_ASSURANCE": "Quality Assurance", "COMPLIANCE": "Compliance", "SENTIMENT_EMOTION": "Sentiment & Emotion", "BUSINESS_INSIGHTS": "Business Insights" },
+	"areas": {
+		"QUALITY_ASSURANCE": "Quality Assurance",
+		"COMPLIANCE": "Compliance",
+		"SENTIMENT_EMOTION": "Sentiment & Emotion",
+		"BUSINESS_INSIGHTS": "Business Insights"
+	},
 	"metrics": {
 		"QA_OVERALL_SCORE": "QA score",
 		"QA_ECN_COUNT": "Critical business errors",
@@ -126,7 +211,12 @@
 		"metric": "Metric",
 		"trendTitle": "Trend by segment",
 		"tableTitle": "Segment comparison",
-		"columns": { "segment": "Segment", "calls": "Calls", "trend": "Trend", "actions": "" },
+		"columns": {
+			"segment": "Segment",
+			"calls": "Calls",
+			"trend": "Trend",
+			"actions": ""
+		},
 		"other": "Other ({{count}})",
 		"drillInto": "Drill into {{label}}",
 		"drilled": "Showing {{label}}",
@@ -172,9 +262,17 @@
 		"mentions": "Mentions",
 		"competitorShare": "Mentioned in {{share}}% of calls",
 		"columns": {
-			"product": "Product", "offered": "Offered", "converted": "Converted", "rate": "Rate",
-			"agent": "Agent", "calls": "Calls", "early": "Early obj.", "unhandled": "Unhandled obj.",
-			"competitor": "Competitor + price", "mistargeted": "Mis-targeted", "conversion": "Conversion"
+			"product": "Product",
+			"offered": "Offered",
+			"converted": "Converted",
+			"rate": "Rate",
+			"agent": "Agent",
+			"calls": "Calls",
+			"early": "Early obj.",
+			"unhandled": "Unhandled obj.",
+			"competitor": "Competitor + price",
+			"mistargeted": "Mis-targeted",
+			"conversion": "Conversion"
 		},
 		"byAgentTitle": "Signals by agent",
 		"byAgentDescription": "Objection and conversion signals per agent in the selected range",
@@ -188,12 +286,30 @@
 		"deletePreset": "Delete preset",
 		"confirmDelete": "Delete this preset?",
 		"liveHint": "Results update as you change the query or the filters.",
-		"fields": { "area": "Evaluation type", "metric": "Metric", "operator": "Condition", "value": "Value", "from": "From", "to": "To", "minCalls": "Min. calls evaluated" },
+		"fields": {
+			"area": "Evaluation type",
+			"metric": "Metric",
+			"operator": "Condition",
+			"value": "Value",
+			"from": "From",
+			"to": "To",
+			"minCalls": "Min. calls evaluated"
+		},
 		"operators": { "BELOW": "Below", "ABOVE": "Above", "BETWEEN": "Between" },
 		"summary_one": "{{count}} agent matches",
 		"summary_other": "{{count}} agents match",
 		"summaryDetail": "{{metric}} {{condition}} · {{from}} → {{to}}",
-		"columns": { "agent": "Agent", "team": "Team", "supervisor": "Supervisor", "value": "Value", "previous": "Previous", "calls": "Calls", "trend": "Trend", "burnout": "Burnout", "actions": "" },
+		"columns": {
+			"agent": "Agent",
+			"team": "Team",
+			"supervisor": "Supervisor",
+			"value": "Value",
+			"previous": "Previous",
+			"calls": "Calls",
+			"trend": "Trend",
+			"burnout": "Burnout",
+			"actions": ""
+		},
 		"empty": "No agents match this query",
 		"emptyDescription": "Widen the range, lower the minimum calls, or change the metric.",
 		"validation": { "rangeInvalid": "\"To\" must be greater than \"From\"" },
@@ -210,13 +326,22 @@
 			"validation": "Name is required"
 		},
 		"cohortCreated": "Cohort \"{{name}}\" created — opening Coaching › Cohorts",
-		"presetModal": { "title": "Save finder preset", "name": "Preset name", "hint": "Saves the metric, condition and minimum calls.", "submit": "Save", "validation": "Name is required" },
+		"presetModal": {
+			"title": "Save finder preset",
+			"name": "Preset name",
+			"hint": "Saves the metric, condition and minimum calls.",
+			"submit": "Save",
+			"validation": "Name is required"
+		},
 		"presetSaved": "Preset saved",
 		"presetDeleted": "Preset deleted"
 	},
 	"burnout": {
 		"title": "Burnout Risk",
-		"listDescription": { "supervisor": "Agents on your team flagged by burnout rules", "qa-manager": "Agents flagged by burnout rules across all teams" },
+		"listDescription": {
+			"supervisor": "Agents on your team flagged by burnout rules",
+			"qa-manager": "Agents flagged by burnout rules across all teams"
+		},
 		"selectAgent": "Select an agent to see why they were flagged",
 		"selectAgentDescription": "The detail shows the driving metrics, the risk timeline, workload against the team and the actions you can take.",
 		"back": "All flagged agents",
@@ -225,25 +350,39 @@
 		"breachedSummary": "Drivers",
 		"breachedCount_one": "{{count}} condition met",
 		"breachedCount_other": "{{count}} conditions met",
-		"columns": { "agent": "Agent", "supervisor": "Supervisor", "level": "Level", "risk": "Risk", "trend": "Trend", "drivers": "Drivers", "lastAction": "Last action" },
+		"columns": {
+			"agent": "Agent",
+			"supervisor": "Supervisor",
+			"level": "Level",
+			"risk": "Risk",
+			"trend": "Trend",
+			"drivers": "Drivers",
+			"lastAction": "Last action"
+		},
 		"levelHigh": "High",
 		"levelMedium": "Medium",
 		"driversTitle": "Why this agent was flagged",
 		"driversDescription": "Each driver compares the agent's recent behaviour with the rule threshold",
-		"driverStatus": { "BREACHED": "Condition met", "NEAR": "Close to threshold", "OK": "Within range" },
+		"driverStatus": {
+			"BREACHED": "Condition met",
+			"NEAR": "Close to threshold",
+			"OK": "Within range"
+		},
 		"drivers": {
 			"agentSentimentTrend": "Agent sentiment (14 d)",
 			"negativeEmotionShare": "Negative-emotion calls (7 d)",
 			"qaScoreTrend": "QA score (14 d)",
 			"afterHoursShare": "After-hours calls (30 d)",
-			"ahtVsTeam": "Handle time vs team (30 d)"
+			"ahtVsTeam": "Handle time vs team (30 d)",
+			"negativeEmotionStreak": "Negative-emotion streak"
 		},
 		"driverConditions": {
 			"declinePts": "drops ≥ {{threshold}} points vs the previous 14 days",
 			"declinePct": "declines ≥ {{threshold}}% vs the previous 14 days",
 			"aboveShare": "> {{threshold}}% of calls",
 			"aboveTeam": "> {{threshold}}% above the team average",
-			"afterHours": "> {{threshold}}% of calls after 18:00"
+			"afterHours": "> {{threshold}}% of calls after 18:00",
+			"streakDays": "≥ {{threshold}} consecutive days with a negative predominant emotion"
 		},
 		"timelineTitle": "Risk timeline",
 		"timelineDescription": "Burnout risk over the last months · badges list the actions taken",
@@ -261,15 +400,34 @@
 		"actionsTitle": "Help this agent",
 		"actionsDescription": "Every action is logged in the history below and, where it applies, in Coaching, LMS and the agent's inbox",
 		"actions": {
-			"ASSIGN_LMS": { "label": "Assign LMS content", "hint": "Videos, documents, quizzes and scenarios from the library" },
-			"SCHEDULE_COACHING": { "label": "Schedule coaching", "hint": "1:1 session with you or the QA Manager" },
-			"SEND_CHECK_IN": { "label": "Send check-in message", "hint": "Lands in the agent's inbox" },
-			"ADJUST_WORKLOAD": { "label": "Adjust workload", "hint": "Pause a campaign or cap daily calls" },
-			"ASSIGN_MENTOR": { "label": "Assign mentor", "hint": "Pair with a high performer from the team" }
+			"ASSIGN_LMS": {
+				"label": "Assign LMS content",
+				"hint": "Videos, documents, quizzes and scenarios from the library"
+			},
+			"SCHEDULE_COACHING": {
+				"label": "Schedule coaching",
+				"hint": "1:1 session with you or the QA Manager"
+			},
+			"SEND_CHECK_IN": {
+				"label": "Send check-in message",
+				"hint": "Lands in the agent's inbox"
+			},
+			"ADJUST_WORKLOAD": {
+				"label": "Adjust workload",
+				"hint": "Pause a campaign or cap daily calls"
+			},
+			"ASSIGN_MENTOR": {
+				"label": "Assign mentor",
+				"hint": "Pair with a high performer from the team"
+			}
 		},
 		"historyTitle": "Action history",
 		"historyEmpty": "No actions yet",
-		"status": { "PLANNED": "Planned", "IN_PROGRESS": "In progress", "DONE": "Done" },
+		"status": {
+			"PLANNED": "Planned",
+			"IN_PROGRESS": "In progress",
+			"DONE": "Done"
+		},
 		"markDone": "Mark as done",
 		"by": "by {{name}}",
 		"due": "due {{date}}",
@@ -294,7 +452,11 @@
 			"checkIn": {
 				"title": "Send check-in message",
 				"template": "Template",
-				"templates": { "QUICK_CHECK_IN": "Quick check-in", "OFFER_SUPPORT": "Offer support", "RECOGNIZE_EFFORT": "Recognize effort" },
+				"templates": {
+					"QUICK_CHECK_IN": "Quick check-in",
+					"OFFER_SUPPORT": "Offer support",
+					"RECOGNIZE_EFFORT": "Recognize effort"
+				},
 				"message": "Message",
 				"notifySupervisor": "Also notify the supervisor",
 				"submit": "Send",
@@ -308,7 +470,11 @@
 			"workload": {
 				"title": "Adjust workload",
 				"action": "Action",
-				"actions": { "PAUSE_CAMPAIGN": "Pause campaign assignment", "REDUCE_DAILY_CAP": "Reduce daily call cap", "INBOUND_ONLY": "Move to inbound only" },
+				"actions": {
+					"PAUSE_CAMPAIGN": "Pause campaign assignment",
+					"REDUCE_DAILY_CAP": "Reduce daily call cap",
+					"INBOUND_ONLY": "Move to inbound only"
+				},
 				"campaign": "Campaign",
 				"cap": "Daily call cap",
 				"days": "For (days)",
@@ -340,5 +506,12 @@
 		"cohortFromSelected": "Create cohort from {{count}} selected",
 		"drillDown": "Drill down"
 	},
-	"common": { "cancel": "Cancel", "close": "Close", "save": "Save", "back": "Back", "na": "—", "comingSoon": "Coming soon" }
+	"common": {
+		"cancel": "Cancel",
+		"close": "Close",
+		"save": "Save",
+		"back": "Back",
+		"na": "—",
+		"comingSoon": "Coming soon"
+	}
 }

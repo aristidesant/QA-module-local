@@ -42,7 +42,8 @@
 			"MISTARGETED_OFFER": "Mis-targeted offers"
 		},
 		"signalCalls_one": "{{count}} call",
-		"signalCalls_other": "{{count}} calls"
+		"signalCalls_other": "{{count}} calls",
+		"signalAlert": "Above the alert threshold set in Settings"
 	},
 	"description": "Live quality metrics computed from evaluations, disputes, and AI provider health.",
 	"drill": {
@@ -232,6 +233,25 @@
 		"sales": {
 			"label": "Credit cards sold",
 			"offered": "{{sold}} of {{offered}} offered"
+		}
+	},
+	"bands": {
+		"onTarget": "On target",
+		"watch": "Watch",
+		"atRisk": "At risk"
+	},
+	"sentimentBands": {
+		"veryNegative": "Very Negative",
+		"negative": "Negative",
+		"neutral": "Neutral",
+		"positive": "Positive",
+		"veryPositive": "Very Positive"
+	},
+	"compliance": {
+		"status": {
+			"compliant": "Compliant",
+			"warning": "Warning",
+			"violation": "Violation"
 		}
 	}
 }

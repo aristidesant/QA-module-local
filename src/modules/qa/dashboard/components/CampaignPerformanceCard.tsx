@@ -4,6 +4,9 @@ import { Badge, Text } from '@mantine/core';
 import SectionCard from '~/components/SectionCard';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import { getScoreBandColor } from '~/modules/qa/constants/badgeColors';
+import { bandsFor } from '~/modules/qa/settings/helpers';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
+import type { ScoreBands } from '~/modules/qa/settings/types';
 
 export interface CampaignPerformanceEntry {
 	id: string;
@@ -24,8 +27,11 @@ interface CampaignPerformanceCardProps {
 /** Only the active campaigns are shown, capped so the widget stays scannable. */
 const MAX_CAMPAIGNS = 5;
 
-const ScoreBadge: React.FC<{ score: number }> = ({ score }) => (
-	<Badge size='sm' color={getScoreBandColor(score)} variant='light'>
+const ScoreBadge: React.FC<{ score: number; bands: ScoreBands }> = ({
+	score,
+	bands,
+}) => (
+	<Badge size='sm' color={getScoreBandColor(score, bands)} variant='light'>
 		{score}
 	</Badge>
 );
@@ -35,6 +41,10 @@ export const CampaignPerformanceCard: React.FC<
 	CampaignPerformanceCardProps
 > = ({ entries, subtitle }) => {
 	const { t } = useTranslation('qa.dashboard');
+	const thresholds = useSettingsStore(selectThresholds);
+	// Campaign scores are all 0-100 scores: QA and Compliance follow their own bands, Sentiment and Business reuse the QA bands.
+	const qaBands = bandsFor(thresholds, 'qa', 'overall');
+	const complianceBands = bandsFor(thresholds, 'compliance', 'overall');
 	const active = entries
 		.filter((entry) => entry.status === 'active')
 		.slice(0, MAX_CAMPAIGNS);
@@ -52,22 +62,33 @@ export const CampaignPerformanceCard: React.FC<
 		{
 			accessorKey: 'qaScore',
 			header: t('campaignPerformance.columns.qa', 'QA'),
-			cell: ({ row }) => <ScoreBadge score={row.original.qaScore} />,
+			cell: ({ row }) => (
+				<ScoreBadge score={row.original.qaScore} bands={qaBands} />
+			),
 		},
 		{
 			accessorKey: 'complianceScore',
 			header: t('campaignPerformance.columns.compliance', 'Compliance'),
-			cell: ({ row }) => <ScoreBadge score={row.original.complianceScore} />,
+			cell: ({ row }) => (
+				<ScoreBadge
+					score={row.original.complianceScore}
+					bands={complianceBands}
+				/>
+			),
 		},
 		{
 			accessorKey: 'sentimentScore',
 			header: t('campaignPerformance.columns.sentiment', 'Sentiment'),
-			cell: ({ row }) => <ScoreBadge score={row.original.sentimentScore} />,
+			cell: ({ row }) => (
+				<ScoreBadge score={row.original.sentimentScore} bands={qaBands} />
+			),
 		},
 		{
 			accessorKey: 'businessScore',
 			header: t('campaignPerformance.columns.business', 'Business'),
-			cell: ({ row }) => <ScoreBadge score={row.original.businessScore} />,
+			cell: ({ row }) => (
+				<ScoreBadge score={row.original.businessScore} bands={qaBands} />
+			),
 		},
 		{
 			accessorKey: 'callsScored',

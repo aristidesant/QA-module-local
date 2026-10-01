@@ -16,7 +16,10 @@ import {
 	type DashboardLineOfBusiness,
 } from '~/modules/qa/dashboard/lineOfBusiness';
 import type { TeamRole } from '~/modules/qa/team/types';
-import { COMPLIANCE_TARGET, isNegativeEmotion } from './issues';
+import { isNegativeEmotion } from './issues';
+import { useSettingsStore } from '~/stores/qa/settingsStore';
+import { bandsFor, complianceStatusFor } from '~/modules/qa/settings/helpers';
+import type { ThresholdSettings } from '~/modules/qa/settings/types';
 
 /** Window the agent dashboard cards summarise — agents see weekly data. My Calls' `7d` period matches it. */
 export const AGENT_DASHBOARD_DAYS = 7;
@@ -101,8 +104,6 @@ const avg1 = (values: number[]) =>
 	values.length === 0
 		? 0
 		: Math.round((values.reduce((s, v) => s + v, 0) / values.length) * 10) / 10;
-const statusFor = (score: number): ComplianceCategory['status'] =>
-	score >= 90 ? 'compliant' : score >= 80 ? 'warning' : 'violation';
 
 /** Most frequent value; null when there are no calls. */
 export const predominantEmotion = (
@@ -165,7 +166,8 @@ export const teamCallsInWindow = (
  * manager dashboards, so both read the same category thresholds.
  */
 export const aggregateDashboardMetrics = (
-	calls: TeamCallMetric[]
+	calls: TeamCallMetric[],
+	thresholds: ThresholdSettings = useSettingsStore.getState().thresholds
 ): AgentDashboardMetrics => {
 	const n = calls.length;
 	const qaKeys: QaCategoryKey[] = ['ecn', 'enc', 'ecc', 'ecuf'];
@@ -176,8 +178,11 @@ export const aggregateDashboardMetrics = (
 	const complianceIssueCounts = Object.fromEntries(
 		COMPLIANCE_AREAS.map((a) => [
 			a.name,
-			calls.filter((c) => c.complianceByArea[a.key].score < COMPLIANCE_TARGET)
-				.length,
+			calls.filter(
+				(c) =>
+					c.complianceByArea[a.key].score <
+					thresholds.compliance.areaTargetPerCall
+			).length,
 		])
 	) as Record<ComplianceAreaName, number>;
 
@@ -201,7 +206,15 @@ export const aggregateDashboardMetrics = (
 		qaIssueCounts,
 		complianceCategories: COMPLIANCE_AREAS.map((a) => {
 			const score = pct(n - complianceIssueCounts[a.name], n);
-			return { name: a.name, items: a.items, status: statusFor(score), score };
+			return {
+				name: a.name,
+				items: a.items,
+				status: complianceStatusFor(
+					score,
+					bandsFor(thresholds, 'compliance', a.name)
+				),
+				score,
+			};
 		}),
 		complianceIssueCounts,
 		sentiment: {
@@ -211,10 +224,14 @@ export const aggregateDashboardMetrics = (
 			customerEmotion: predominantEmotion(
 				calls.map((c) => c.predominantEmotion)
 			),
-			agentNegativeCount: calls.filter((c) => isNegativeEmotion(c.agentEmotion))
-				.length,
+			agentNegativeCount: calls.filter((c) =>
+				isNegativeEmotion(c.agentEmotion, thresholds.sentiment.negativeEmotions)
+			).length,
 			customerNegativeCount: calls.filter((c) =>
-				isNegativeEmotion(c.predominantEmotion)
+				isNegativeEmotion(
+					c.predominantEmotion,
+					thresholds.sentiment.negativeEmotions
+				)
 			).length,
 		},
 		sales: {
@@ -296,11 +313,16 @@ const buildTrends = (
 
 export const buildAgentDashboardMetrics = (
 	agentId: string,
-	days = AGENT_DASHBOARD_DAYS
+	days = AGENT_DASHBOARD_DAYS,
+	thresholds?: ThresholdSettings
 ): AgentDashboardMetrics => {
-	const current = aggregateDashboardMetrics(agentCallsInWindow(agentId, days));
+	const current = aggregateDashboardMetrics(
+		agentCallsInWindow(agentId, days),
+		thresholds
+	);
 	const previous = aggregateDashboardMetrics(
-		agentCallsInWindow(agentId, days, days)
+		agentCallsInWindow(agentId, days, days),
+		thresholds
 	);
 	return { ...current, trends: buildTrends(current, previous) };
 };
@@ -309,13 +331,16 @@ export const buildAgentDashboardMetrics = (
 export const buildTeamDashboardMetrics = (
 	role: TeamRole,
 	days: number,
-	lineOfBusiness?: DashboardLineOfBusiness | null
+	lineOfBusiness?: DashboardLineOfBusiness | null,
+	thresholds?: ThresholdSettings
 ): AgentDashboardMetrics => {
 	const current = aggregateDashboardMetrics(
-		teamCallsInWindow(role, days, lineOfBusiness)
+		teamCallsInWindow(role, days, lineOfBusiness),
+		thresholds
 	);
 	const previous = aggregateDashboardMetrics(
-		teamCallsInWindow(role, days, lineOfBusiness, days)
+		teamCallsInWindow(role, days, lineOfBusiness, days),
+		thresholds
 	);
 	return { ...current, trends: buildTrends(current, previous) };
 };

@@ -1,4 +1,6 @@
 import type { CallEmotion, TeamCallMetric } from '~/modules/qa/analytics/types';
+import { DEFAULT_SETTINGS } from '~/modules/qa/settings/constants';
+import { useSettingsStore } from '~/stores/qa/settingsStore';
 
 /** Evaluation aspect an issue belongs to — drives filter grouping and badge colours. */
 export type CallIssueAspect = 'qa' | 'compliance' | 'sentiment' | 'operational';
@@ -25,19 +27,22 @@ export type CallIssueKey =
 	| 'low-agent-sentiment'
 	| 'non-effective-contact';
 
-/** Thresholds shared by the dashboard cards and the My Calls list so both agree on what an incident is. */
-export const LOW_QA_SCORE = 70; // qaScore below this is an incident
-export const COMPLIANCE_TARGET = 85; // an area score below this fails the area on that call
-export const LOW_SENTIMENT = 2.5; // 1-5 scale
-export const NEGATIVE_EMOTIONS: CallEmotion[] = [
-	'Anger',
-	'Fear',
-	'Sadness',
-	'Disgust',
-];
+/** Defaults — the live values are configured in Settings and read from the settings store. */
+export const LOW_QA_SCORE = DEFAULT_SETTINGS.thresholds.qa.lowScoreIncident;
+export const COMPLIANCE_TARGET =
+	DEFAULT_SETTINGS.thresholds.compliance.areaTargetPerCall;
+export const LOW_SENTIMENT =
+	DEFAULT_SETTINGS.thresholds.sentiment.lowSentimentIncident;
+export const NEGATIVE_EMOTIONS: CallEmotion[] =
+	DEFAULT_SETTINGS.thresholds.sentiment.negativeEmotions;
 
-export const isNegativeEmotion = (emotion: CallEmotion) =>
-	NEGATIVE_EMOTIONS.includes(emotion);
+/** Thresholds shared by the dashboard cards and the My Calls list so both agree on what an incident is. */
+const live = () => useSettingsStore.getState().thresholds;
+
+export const isNegativeEmotion = (
+	emotion: CallEmotion,
+	negativeEmotions: CallEmotion[] = live().sentiment.negativeEmotions
+) => negativeEmotions.includes(emotion);
 
 export interface CallIssueMeta {
 	key: CallIssueKey;
@@ -78,25 +83,28 @@ export const CALL_ISSUES: CallIssueMeta[] = [
 		key: 'low-qa-score',
 		aspect: 'qa',
 		color: 'orange',
-		test: (c) => c.qaScore < LOW_QA_SCORE,
+		test: (c) => c.qaScore < live().qa.lowScoreIncident,
 	},
 	{
 		key: 'compliance-security',
 		aspect: 'compliance',
 		color: 'blue',
-		test: (c) => c.complianceByArea.security.score < COMPLIANCE_TARGET,
+		test: (c) =>
+			c.complianceByArea.security.score < live().compliance.areaTargetPerCall,
 	},
 	{
 		key: 'compliance-regulatory',
 		aspect: 'compliance',
 		color: 'orange',
-		test: (c) => c.complianceByArea.regulatory.score < COMPLIANCE_TARGET,
+		test: (c) =>
+			c.complianceByArea.regulatory.score < live().compliance.areaTargetPerCall,
 	},
 	{
 		key: 'compliance-legal',
 		aspect: 'compliance',
 		color: 'red',
-		test: (c) => c.complianceByArea.legal.score < COMPLIANCE_TARGET,
+		test: (c) =>
+			c.complianceByArea.legal.score < live().compliance.areaTargetPerCall,
 	},
 	{
 		key: 'negative-customer-emotion',
@@ -114,13 +122,13 @@ export const CALL_ISSUES: CallIssueMeta[] = [
 		key: 'low-customer-sentiment',
 		aspect: 'sentiment',
 		color: 'pink',
-		test: (c) => c.customerSentiment < LOW_SENTIMENT,
+		test: (c) => c.customerSentiment < live().sentiment.lowSentimentIncident,
 	},
 	{
 		key: 'low-agent-sentiment',
 		aspect: 'sentiment',
 		color: 'pink',
-		test: (c) => c.agentSentiment < LOW_SENTIMENT,
+		test: (c) => c.agentSentiment < live().sentiment.lowSentimentIncident,
 	},
 	{
 		key: 'non-effective-contact',

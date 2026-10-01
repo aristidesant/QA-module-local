@@ -121,8 +121,7 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 											color={getComplianceColor(category.status)}
 											variant='light'
 										>
-											{category.status.charAt(0).toUpperCase() +
-												category.status.slice(1)}
+											{t(`compliance.status.${category.status}`)}
 										</Badge>
 									</Group>
 									<Group gap={6} wrap='nowrap'>

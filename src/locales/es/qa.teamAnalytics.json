@@ -1,32 +1,65 @@
 {
 	"page": {
-		"eyebrow": { "supervisor": "Supervisor · Equipo 1", "qa-manager": "QA Manager · Todos los equipos" },
+		"eyebrow": {
+			"supervisor": "Supervisor · Equipo 1",
+			"qa-manager": "QA Manager · Todos los equipos"
+		},
 		"title": "Analítica del equipo",
 		"description": {
 			"supervisor": "Explora los resultados de QA, Cumplimiento, Sentimiento y Negocio de tu equipo con filtros, agrupación y comparación de periodos.",
 			"qa-manager": "Explora los resultados de QA, Cumplimiento, Sentimiento y Negocio de todos los equipos con filtros, agrupación y comparación de periodos."
 		},
-		"views": { "qa": "QA", "sentiment": "Sentimiento y emoción", "compliance": "Cumplimiento", "business": "Insights de negocio", "finder": "Buscador de agentes", "burnout": "Riesgo de burnout" }
+		"views": {
+			"qa": "QA",
+			"sentiment": "Sentimiento y emoción",
+			"compliance": "Cumplimiento",
+			"business": "Insights de negocio",
+			"finder": "Buscador de agentes",
+			"burnout": "Riesgo de burnout"
+		}
 	},
 	"filters": {
 		"title": "Filtros",
 		"activeCount_one": "{{count}} filtro activo",
 		"activeCount_other": "{{count}} filtros activos",
-		"quickRange": { "7d": "7 días", "30d": "30 días", "90d": "90 días", "custom": "Personalizado" },
+		"quickRange": {
+			"7d": "7 días",
+			"30d": "30 días",
+			"90d": "90 días",
+			"custom": "Personalizado"
+		},
 		"from": "Desde",
 		"to": "Hasta",
 		"granularity": "Granularidad",
-		"granularityOptions": { "per-call": "Por llamada", "daily": "Diaria", "weekly": "Semanal", "monthly": "Mensual" },
+		"granularityOptions": {
+			"per-call": "Por llamada",
+			"daily": "Diaria",
+			"weekly": "Semanal",
+			"monthly": "Mensual"
+		},
 		"compare": "Comparar con el periodo anterior",
 		"groupBy": "Agrupar por",
 		"groupByOptions": {
-			"none": "Sin agrupar", "team": "Equipo", "supervisor": "Supervisor", "agent": "Agente", "campaign": "Campaña",
-			"lineOfBusiness": "Línea de negocio", "campaignType": "Tipo de campaña", "callDirection": "Dirección de la llamada",
-			"shift": "Turno", "tenure": "Antigüedad", "timeOfDay": "Franja horaria", "weekday": "Día de la semana"
+			"none": "Sin agrupar",
+			"team": "Equipo",
+			"supervisor": "Supervisor",
+			"agent": "Agente",
+			"campaign": "Campaña",
+			"lineOfBusiness": "Línea de negocio",
+			"campaignType": "Tipo de campaña",
+			"callDirection": "Dirección de la llamada",
+			"shift": "Turno",
+			"tenure": "Antigüedad",
+			"timeOfDay": "Franja horaria",
+			"weekday": "Día de la semana"
 		},
 		"moreFilters": "Más filtros",
 		"lessFilters": "Menos filtros",
-		"sections": { "scope": "Alcance", "calls": "Atributos de la llamada", "evaluation": "Evaluación" },
+		"sections": {
+			"scope": "Alcance",
+			"calls": "Atributos de la llamada",
+			"evaluation": "Evaluación"
+		},
 		"supervisors": "Supervisores / equipos",
 		"agents": "Agentes",
 		"campaigns": "Campañas",
@@ -46,19 +79,66 @@
 			"offeredOnly": "Solo llamadas con oferta",
 			"convertedOnly": "Solo llamadas convertidas"
 		},
-		"scoreRange": { "label": "Rango de puntuación", "metric": "Métrica", "min": "Mín.", "max": "Máx.", "any": "Cualquier métrica" },
+		"scoreRange": {
+			"label": "Rango de puntuación",
+			"metric": "Métrica",
+			"min": "Mín.",
+			"max": "Máx.",
+			"any": "Cualquier métrica"
+		},
 		"minCalls": "Mín. de llamadas por agente",
 		"apply": "Aplicar",
 		"reset": "Restablecer",
-		"chips": { "clearAll": "Limpiar todo", "more": "+{{count}}", "period": "Periodo" },
-		"validation": { "range": "\"Hasta\" debe ser igual o posterior a \"Desde\"", "scoreRange": "El máximo debe ser mayor que el mínimo" },
-		"campaignTypeLabels": { "INBOUND": "Entrante", "OUTBOUND": "Saliente", "BLENDED": "Mixta" },
+		"chips": {
+			"clearAll": "Limpiar todo",
+			"more": "+{{count}}",
+			"period": "Periodo"
+		},
+		"validation": {
+			"range": "\"Hasta\" debe ser igual o posterior a \"Desde\"",
+			"scoreRange": "El máximo debe ser mayor que el mínimo"
+		},
+		"campaignTypeLabels": {
+			"INBOUND": "Entrante",
+			"OUTBOUND": "Saliente",
+			"BLENDED": "Mixta"
+		},
 		"directionLabels": { "INBOUND": "Entrante", "OUTBOUND": "Saliente" },
-		"shiftLabels": { "morning": "Mañana", "afternoon": "Tarde", "night": "Noche" },
-		"statusLabels": { "active": "Activo", "on-leave": "De baja", "training": "En formación" },
-		"tenureLabels": { "lt6m": "< 6 meses", "6to12m": "6–12 meses", "1to2y": "1–2 años", "gt2y": "> 2 años" },
-		"weekdayLabels": { "0": "Domingo", "1": "Lunes", "2": "Martes", "3": "Miércoles", "4": "Jueves", "5": "Viernes", "6": "Sábado" },
-		"emotionLabels": { "Joy": "Alegría", "Trust": "Confianza", "Anticipation": "Anticipación", "Surprise": "Sorpresa", "Anger": "Enfado", "Fear": "Miedo", "Sadness": "Tristeza", "Disgust": "Disgusto" }
+		"shiftLabels": {
+			"morning": "Mañana",
+			"afternoon": "Tarde",
+			"night": "Noche"
+		},
+		"statusLabels": {
+			"active": "Activo",
+			"on-leave": "De baja",
+			"training": "En formación"
+		},
+		"tenureLabels": {
+			"lt6m": "< 6 meses",
+			"6to12m": "6–12 meses",
+			"1to2y": "1–2 años",
+			"gt2y": "> 2 años"
+		},
+		"weekdayLabels": {
+			"0": "Domingo",
+			"1": "Lunes",
+			"2": "Martes",
+			"3": "Miércoles",
+			"4": "Jueves",
+			"5": "Viernes",
+			"6": "Sábado"
+		},
+		"emotionLabels": {
+			"Joy": "Alegría",
+			"Trust": "Confianza",
+			"Anticipation": "Anticipación",
+			"Surprise": "Sorpresa",
+			"Anger": "Enfado",
+			"Fear": "Miedo",
+			"Sadness": "Tristeza",
+			"Disgust": "Disgusto"
+		}
 	},
 	"presets": {
 		"button": "Vistas guardadas",
@@ -95,7 +175,12 @@
 		"agents_other": "{{count}} agentes en el alcance",
 		"vsPrevious": "vs periodo anterior"
 	},
-	"areas": { "QUALITY_ASSURANCE": "Calidad (QA)", "COMPLIANCE": "Cumplimiento", "SENTIMENT_EMOTION": "Sentimiento y emoción", "BUSINESS_INSIGHTS": "Insights de negocio" },
+	"areas": {
+		"QUALITY_ASSURANCE": "Calidad (QA)",
+		"COMPLIANCE": "Cumplimiento",
+		"SENTIMENT_EMOTION": "Sentimiento y emoción",
+		"BUSINESS_INSIGHTS": "Insights de negocio"
+	},
 	"metrics": {
 		"QA_OVERALL_SCORE": "Puntuación QA",
 		"QA_ECN_COUNT": "Errores críticos de negocio",
@@ -126,7 +211,12 @@
 		"metric": "Métrica",
 		"trendTitle": "Tendencia por segmento",
 		"tableTitle": "Comparación de segmentos",
-		"columns": { "segment": "Segmento", "calls": "Llamadas", "trend": "Tendencia", "actions": "" },
+		"columns": {
+			"segment": "Segmento",
+			"calls": "Llamadas",
+			"trend": "Tendencia",
+			"actions": ""
+		},
 		"other": "Otros ({{count}})",
 		"drillInto": "Profundizar en {{label}}",
 		"drilled": "Mostrando {{label}}",
@@ -172,9 +262,17 @@
 		"mentions": "Menciones",
 		"competitorShare": "Mencionada en el {{share}}% de las llamadas",
 		"columns": {
-			"product": "Producto", "offered": "Ofrecido", "converted": "Convertido", "rate": "Tasa",
-			"agent": "Agente", "calls": "Llamadas", "early": "Obj. temprana", "unhandled": "Obj. no gestionada",
-			"competitor": "Competencia + precio", "mistargeted": "Mal dirigida", "conversion": "Conversión"
+			"product": "Producto",
+			"offered": "Ofrecido",
+			"converted": "Convertido",
+			"rate": "Tasa",
+			"agent": "Agente",
+			"calls": "Llamadas",
+			"early": "Obj. temprana",
+			"unhandled": "Obj. no gestionada",
+			"competitor": "Competencia + precio",
+			"mistargeted": "Mal dirigida",
+			"conversion": "Conversión"
 		},
 		"byAgentTitle": "Señales por agente",
 		"byAgentDescription": "Señales de objeción y conversión por agente en el rango seleccionado",
@@ -188,12 +286,34 @@
 		"deletePreset": "Eliminar preset",
 		"confirmDelete": "¿Eliminar este preset?",
 		"liveHint": "Los resultados se actualizan al cambiar la consulta o los filtros.",
-		"fields": { "area": "Tipo de evaluación", "metric": "Métrica", "operator": "Condición", "value": "Valor", "from": "Desde", "to": "Hasta", "minCalls": "Mín. de llamadas evaluadas" },
-		"operators": { "BELOW": "Por debajo de", "ABOVE": "Por encima de", "BETWEEN": "Entre" },
+		"fields": {
+			"area": "Tipo de evaluación",
+			"metric": "Métrica",
+			"operator": "Condición",
+			"value": "Valor",
+			"from": "Desde",
+			"to": "Hasta",
+			"minCalls": "Mín. de llamadas evaluadas"
+		},
+		"operators": {
+			"BELOW": "Por debajo de",
+			"ABOVE": "Por encima de",
+			"BETWEEN": "Entre"
+		},
 		"summary_one": "{{count}} agente coincide",
 		"summary_other": "{{count}} agentes coinciden",
 		"summaryDetail": "{{metric}} {{condition}} · {{from}} → {{to}}",
-		"columns": { "agent": "Agente", "team": "Equipo", "supervisor": "Supervisor", "value": "Valor", "previous": "Anterior", "calls": "Llamadas", "trend": "Tendencia", "burnout": "Burnout", "actions": "" },
+		"columns": {
+			"agent": "Agente",
+			"team": "Equipo",
+			"supervisor": "Supervisor",
+			"value": "Valor",
+			"previous": "Anterior",
+			"calls": "Llamadas",
+			"trend": "Tendencia",
+			"burnout": "Burnout",
+			"actions": ""
+		},
 		"empty": "Ningún agente coincide con esta consulta",
 		"emptyDescription": "Amplía el rango, baja el mínimo de llamadas o cambia la métrica.",
 		"validation": { "rangeInvalid": "\"Hasta\" debe ser mayor que \"Desde\"" },
@@ -210,13 +330,22 @@
 			"validation": "El nombre es obligatorio"
 		},
 		"cohortCreated": "Cohorte \"{{name}}\" creada — abriendo Coaching › Cohortes",
-		"presetModal": { "title": "Guardar preset del buscador", "name": "Nombre del preset", "hint": "Guarda la métrica, la condición y el mínimo de llamadas.", "submit": "Guardar", "validation": "El nombre es obligatorio" },
+		"presetModal": {
+			"title": "Guardar preset del buscador",
+			"name": "Nombre del preset",
+			"hint": "Guarda la métrica, la condición y el mínimo de llamadas.",
+			"submit": "Guardar",
+			"validation": "El nombre es obligatorio"
+		},
 		"presetSaved": "Preset guardado",
 		"presetDeleted": "Preset eliminado"
 	},
 	"burnout": {
 		"title": "Riesgo de burnout",
-		"listDescription": { "supervisor": "Agentes de tu equipo marcados por las reglas de burnout", "qa-manager": "Agentes marcados por las reglas de burnout en todos los equipos" },
+		"listDescription": {
+			"supervisor": "Agentes de tu equipo marcados por las reglas de burnout",
+			"qa-manager": "Agentes marcados por las reglas de burnout en todos los equipos"
+		},
 		"selectAgent": "Selecciona un agente para ver por qué fue marcado",
 		"selectAgentDescription": "El detalle muestra las métricas que lo explican, la línea de tiempo del riesgo, la carga de trabajo frente al equipo y las acciones disponibles.",
 		"back": "Todos los agentes marcados",
@@ -225,25 +354,39 @@
 		"breachedSummary": "Factores",
 		"breachedCount_one": "{{count}} condición cumplida",
 		"breachedCount_other": "{{count}} condiciones cumplidas",
-		"columns": { "agent": "Agente", "supervisor": "Supervisor", "level": "Nivel", "risk": "Riesgo", "trend": "Tendencia", "drivers": "Factores", "lastAction": "Última acción" },
+		"columns": {
+			"agent": "Agente",
+			"supervisor": "Supervisor",
+			"level": "Nivel",
+			"risk": "Riesgo",
+			"trend": "Tendencia",
+			"drivers": "Factores",
+			"lastAction": "Última acción"
+		},
 		"levelHigh": "Alto",
 		"levelMedium": "Medio",
 		"driversTitle": "Por qué se marcó a este agente",
 		"driversDescription": "Cada factor compara el comportamiento reciente del agente con el umbral de la regla",
-		"driverStatus": { "BREACHED": "Condición cumplida", "NEAR": "Cerca del umbral", "OK": "Dentro del rango" },
+		"driverStatus": {
+			"BREACHED": "Condición cumplida",
+			"NEAR": "Cerca del umbral",
+			"OK": "Dentro del rango"
+		},
 		"drivers": {
 			"agentSentimentTrend": "Sentimiento del agente (14 d)",
 			"negativeEmotionShare": "Llamadas con emoción negativa (7 d)",
 			"qaScoreTrend": "Puntuación QA (14 d)",
 			"afterHoursShare": "Llamadas fuera de horario (30 d)",
-			"ahtVsTeam": "Tiempo de gestión vs equipo (30 d)"
+			"ahtVsTeam": "Tiempo de gestión vs equipo (30 d)",
+			"negativeEmotionStreak": "Racha de emoción negativa"
 		},
 		"driverConditions": {
 			"declinePts": "cae ≥ {{threshold}} puntos respecto a los 14 días anteriores",
 			"declinePct": "cae ≥ {{threshold}}% respecto a los 14 días anteriores",
 			"aboveShare": "> {{threshold}}% de las llamadas",
 			"aboveTeam": "> {{threshold}}% por encima de la media del equipo",
-			"afterHours": "> {{threshold}}% de las llamadas después de las 18:00"
+			"afterHours": "> {{threshold}}% de las llamadas después de las 18:00",
+			"streakDays": "≥ {{threshold}} días seguidos con emoción predominante negativa"
 		},
 		"timelineTitle": "Línea de tiempo del riesgo",
 		"timelineDescription": "Riesgo de burnout en los últimos meses · las etiquetas listan las acciones tomadas",
@@ -261,15 +404,34 @@
 		"actionsTitle": "Ayudar a este agente",
 		"actionsDescription": "Cada acción queda registrada en el historial y, cuando aplica, en Coaching, LMS y la bandeja del agente",
 		"actions": {
-			"ASSIGN_LMS": { "label": "Asignar contenido LMS", "hint": "Vídeos, documentos, quizzes y escenarios de la biblioteca" },
-			"SCHEDULE_COACHING": { "label": "Programar coaching", "hint": "Sesión 1:1 contigo o con el QA Manager" },
-			"SEND_CHECK_IN": { "label": "Enviar mensaje de seguimiento", "hint": "Llega a la bandeja del agente" },
-			"ADJUST_WORKLOAD": { "label": "Ajustar carga de trabajo", "hint": "Pausar una campaña o limitar las llamadas diarias" },
-			"ASSIGN_MENTOR": { "label": "Asignar mentor", "hint": "Emparejar con un agente destacado del equipo" }
+			"ASSIGN_LMS": {
+				"label": "Asignar contenido LMS",
+				"hint": "Vídeos, documentos, quizzes y escenarios de la biblioteca"
+			},
+			"SCHEDULE_COACHING": {
+				"label": "Programar coaching",
+				"hint": "Sesión 1:1 contigo o con el QA Manager"
+			},
+			"SEND_CHECK_IN": {
+				"label": "Enviar mensaje de seguimiento",
+				"hint": "Llega a la bandeja del agente"
+			},
+			"ADJUST_WORKLOAD": {
+				"label": "Ajustar carga de trabajo",
+				"hint": "Pausar una campaña o limitar las llamadas diarias"
+			},
+			"ASSIGN_MENTOR": {
+				"label": "Asignar mentor",
+				"hint": "Emparejar con un agente destacado del equipo"
+			}
 		},
 		"historyTitle": "Historial de acciones",
 		"historyEmpty": "Aún no hay acciones",
-		"status": { "PLANNED": "Planificada", "IN_PROGRESS": "En curso", "DONE": "Completada" },
+		"status": {
+			"PLANNED": "Planificada",
+			"IN_PROGRESS": "En curso",
+			"DONE": "Completada"
+		},
 		"markDone": "Marcar como completada",
 		"by": "por {{name}}",
 		"due": "vence {{date}}",
@@ -294,7 +456,11 @@
 			"checkIn": {
 				"title": "Enviar mensaje de seguimiento",
 				"template": "Plantilla",
-				"templates": { "QUICK_CHECK_IN": "Seguimiento rápido", "OFFER_SUPPORT": "Ofrecer apoyo", "RECOGNIZE_EFFORT": "Reconocer el esfuerzo" },
+				"templates": {
+					"QUICK_CHECK_IN": "Seguimiento rápido",
+					"OFFER_SUPPORT": "Ofrecer apoyo",
+					"RECOGNIZE_EFFORT": "Reconocer el esfuerzo"
+				},
 				"message": "Mensaje",
 				"notifySupervisor": "Notificar también al supervisor",
 				"submit": "Enviar",
@@ -308,7 +474,11 @@
 			"workload": {
 				"title": "Ajustar carga de trabajo",
 				"action": "Acción",
-				"actions": { "PAUSE_CAMPAIGN": "Pausar la asignación a la campaña", "REDUCE_DAILY_CAP": "Reducir el límite diario de llamadas", "INBOUND_ONLY": "Pasar solo a entrantes" },
+				"actions": {
+					"PAUSE_CAMPAIGN": "Pausar la asignación a la campaña",
+					"REDUCE_DAILY_CAP": "Reducir el límite diario de llamadas",
+					"INBOUND_ONLY": "Pasar solo a entrantes"
+				},
 				"campaign": "Campaña",
 				"cap": "Límite diario de llamadas",
 				"days": "Durante (días)",
@@ -340,5 +510,12 @@
 		"cohortFromSelected": "Crear cohorte con {{count}} seleccionados",
 		"drillDown": "Profundizar"
 	},
-	"common": { "cancel": "Cancelar", "close": "Cerrar", "save": "Guardar", "back": "Atrás", "na": "—", "comingSoon": "Próximamente" }
+	"common": {
+		"cancel": "Cancelar",
+		"close": "Cerrar",
+		"save": "Guardar",
+		"back": "Atrás",
+		"na": "—",
+		"comingSoon": "Próximamente"
+	}
 }

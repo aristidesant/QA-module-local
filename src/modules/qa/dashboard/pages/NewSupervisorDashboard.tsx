@@ -27,6 +27,11 @@ import {
 	type NeedsAttentionItem,
 } from '../components';
 import { useDashboardCopy } from '../useDashboardCopy';
+import {
+	useSettingsStore,
+	selectBurnout,
+	selectThresholds,
+} from '~/stores/qa/settingsStore';
 import { coachingBasePath } from '~/modules/qa/coaching/constants';
 import { useActiveRankingByTeam } from '~/modules/qa/rankings/hooks/useActiveRanking';
 import {
@@ -84,9 +89,11 @@ export const NewSupervisorDashboard: React.FC = () => {
 	const rankingsDays = performanceScoreDays(rankingsPeriod);
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
+	const thresholds = useSettingsStore(selectThresholds);
 	const metrics = useMemo(
-		() => buildTeamDashboardMetrics('supervisor', days, lineOfBusiness),
-		[days, lineOfBusiness]
+		() =>
+			buildTeamDashboardMetrics('supervisor', days, lineOfBusiness, thresholds),
+		[days, lineOfBusiness, thresholds]
 	);
 	const {
 		insights: businessInsights,
@@ -96,7 +103,11 @@ export const NewSupervisorDashboard: React.FC = () => {
 		() => buildTeamBusinessInsights('supervisor', days, lineOfBusiness),
 		[days, lineOfBusiness]
 	);
-	const burnoutRisk = teamBurnoutRisk('supervisor');
+	const burnoutSettings = useSettingsStore(selectBurnout);
+	const burnoutRisk = useMemo(
+		() => teamBurnoutRisk('supervisor'),
+		[burnoutSettings]
+	);
 
 	const standings = useMemo(
 		() =>

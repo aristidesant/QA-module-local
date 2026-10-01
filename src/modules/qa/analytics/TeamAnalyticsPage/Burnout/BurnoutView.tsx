@@ -10,14 +10,15 @@ import {
 	Tooltip,
 } from '@mantine/core';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
-import { TEAM_PROFILES } from '~/modules/qa/team/mockData';
-import { burnoutCandidates, computeBurnoutDrivers } from '../../helpers';
+import { useSettingsStore, selectBurnout } from '~/stores/qa/settingsStore';
+import { assessBurnout, burnoutCandidates } from '../../helpers';
 import type { BurnoutDriver } from '../../types';
 import { useTeamAnalyticsData } from '../TeamAnalyticsContext';
 import styles from '../TeamAnalyticsPage.module.css';
 
 /** Driver rule ids carry their own label keys under `burnout.drivers`. */
 const DRIVER_LABEL_KEY: Record<string, string> = {
+	NEGATIVE_EMOTION_STREAK: 'negativeEmotionStreak',
 	AGENT_SENTIMENT_TREND: 'agentSentimentTrend',
 	NEGATIVE_EMOTION_7D: 'negativeEmotionShare',
 	QA_TREND_14D: 'qaScoreTrend',
@@ -29,20 +30,20 @@ const MAX_VISIBLE_DRIVERS = 2;
 
 const BurnoutView = () => {
 	const { t } = useTranslation('qa.teamAnalytics');
-	const { role, scopedCalls } = useTeamAnalyticsData();
+	const { role } = useTeamAnalyticsData();
+	const burnoutSettings = useSettingsStore(selectBurnout);
 
 	const candidates = useMemo(() => {
 		return burnoutCandidates(role).map((agent) => {
-			const teamCalls = scopedCalls.filter((c) => c.team === agent.team);
-			const drivers = computeBurnoutDrivers(agent.id, scopedCalls, teamCalls);
+			const assessment = assessBurnout(agent.id, burnoutSettings);
 			return {
 				agent,
-				risk: TEAM_PROFILES[agent.id].risk.burnout,
-				breached: drivers.filter((d) => d.status === 'BREACHED'),
-				near: drivers.filter((d) => d.status === 'NEAR'),
+				risk: assessment,
+				breached: assessment.drivers.filter((d) => d.status === 'BREACHED'),
+				near: assessment.drivers.filter((d) => d.status === 'NEAR'),
 			};
 		});
-	}, [role, scopedCalls]);
+	}, [role, burnoutSettings]);
 
 	const driverLabel = (driver: BurnoutDriver) =>
 		t(`burnout.drivers.${DRIVER_LABEL_KEY[driver.id]}`);
