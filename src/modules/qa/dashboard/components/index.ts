@@ -81,7 +81,5 @@ export { CommitLearningModal } from './CommitLearningModal';
 export { default as BurnoutRiskWidget } from './BurnoutRiskWidget';
 export type { BurnoutRiskData, BurnoutRiskLevel } from '../types/burnoutRisk';
 
-// Role dashboards: shared filter bar and needs-attention list
+// Role dashboards: shared filter bar
 export { PerformanceScoreControls } from './PerformanceScoreControls';
-export { NeedsAttentionStrip } from './NeedsAttentionStrip';
-export type { NeedsAttentionItem } from './NeedsAttentionStrip';

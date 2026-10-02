@@ -96,26 +96,3 @@
 		var(--mantine-color-dark-6)
 	);
 }
-
-/* Needs-attention tile: a whole-tile button that opens the place where the item is handled. */
-.attentionTile {
-	display: block;
-	width: 100%;
-	padding: var(--mantine-spacing-md);
-	border: 1px solid
-		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
-	border-radius: var(--mantine-radius-md);
-	background-color: light-dark(
-		var(--mantine-color-white),
-		var(--mantine-color-dark-6)
-	);
-	transition: background-color 0.15s ease;
-}
-
-.attentionTile:hover,
-.attentionTile:focus-visible {
-	background-color: light-dark(
-		var(--mantine-color-gray-0),
-		var(--mantine-color-dark-5)
-	);
-}
