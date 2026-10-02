@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import { useTranslation } from 'react-i18next';
 import {
 	Stack,
 	Title,
@@ -21,9 +20,7 @@ import {
 	OperationalCard,
 	CampaignPerformanceCard,
 	PerformanceScoreControls,
-	NeedsAttentionStrip,
 	type CampaignPerformanceEntry,
-	type NeedsAttentionItem,
 } from '../components';
 import { useDashboardCopy } from '../useDashboardCopy';
 import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
@@ -282,7 +279,6 @@ const disputeColumns: BaseTableColumnDef<DisputeRow>[] = [
 
 export const NewQAManagerDashboard: React.FC = () => {
 	const navigate = useNavigate();
-	const { t } = useTranslation('qa.dashboard');
 	const copy = useDashboardCopy('qaManager');
 	const [period, setPeriod] = useState<PerformanceScorePeriod>(
 		DEFAULT_PERFORMANCE_SCORE_PERIOD
@@ -310,40 +306,8 @@ export const NewQAManagerDashboard: React.FC = () => {
 		(d) => d.status === 'open' || d.status === 'pending'
 	).sort((a, b) => a.createdDate.localeCompare(b.createdDate));
 	const openDisputeCount = openDisputes.length;
-	const oldestDisputeDays = openDisputes.length
-		? disputeAgeDays(openDisputes[0].createdDate)
-		: 0;
-	const campaignsBelowTarget = ACTIVE_CAMPAIGNS.filter(
-		(c) => c.status === 'active' && c.qaScore < thresholds.qa.scoreBands.watch
-	).length;
 
 	const openAnalytics = () => navigate(ANALYTICS_PATH);
-
-	const attentionItems: NeedsAttentionItem[] = [
-		{
-			id: 'disputes',
-			label: t('roleDashboard.attention.disputes.label'),
-			value: openDisputeCount,
-			hint: t('roleDashboard.attention.disputes.hint', {
-				days: oldestDisputeDays,
-			}),
-			onOpen: () => navigate('/qa/qa-manager/disputes'),
-		},
-		{
-			id: 'campaigns',
-			label: t('roleDashboard.attention.campaigns.label'),
-			value: campaignsBelowTarget,
-			hint: t('roleDashboard.attention.campaigns.hint'),
-			onOpen: () => navigate('/qa/qa-manager/campaigns'),
-		},
-		{
-			id: 'autoFails',
-			label: t('roleDashboard.attention.autoFails.label'),
-			value: metrics.autoFails,
-			hint: t('roleDashboard.attention.autoFails.hint'),
-			onOpen: openAnalytics,
-		},
-	];
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -354,8 +318,6 @@ export const NewQAManagerDashboard: React.FC = () => {
 						{copy.subtitle}
 					</Text>
 				</div>
-
-				<NeedsAttentionStrip items={attentionItems} />
 
 				<SectionCard
 					title='Performance Score'

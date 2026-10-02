@@ -23,8 +23,6 @@ import {
 	OperationalCard,
 	TeamBurnoutRiskCard,
 	PerformanceScoreControls,
-	NeedsAttentionStrip,
-	type NeedsAttentionItem,
 } from '../components';
 import { useDashboardCopy } from '../useDashboardCopy';
 import {
@@ -32,7 +30,6 @@ import {
 	selectBurnout,
 	selectThresholds,
 } from '~/stores/qa/settingsStore';
-import { coachingBasePath } from '~/modules/qa/coaching/constants';
 import { useActiveRankingByTeam } from '~/modules/qa/rankings/hooks/useActiveRanking';
 import {
 	computeStandings,
@@ -125,30 +122,6 @@ export const NewSupervisorDashboard: React.FC = () => {
 
 	const openAnalytics = () => navigate(ANALYTICS_PATH);
 
-	const attentionItems: NeedsAttentionItem[] = [
-		{
-			id: 'burnout',
-			label: tDashboard('roleDashboard.attention.burnout.label'),
-			value: burnoutRisk.length,
-			hint: tDashboard('roleDashboard.attention.burnout.hint'),
-			onOpen: () => navigate(coachingBasePath('supervisor')),
-		},
-		{
-			id: 'autoFails',
-			label: tDashboard('roleDashboard.attention.autoFails.label'),
-			value: metrics.autoFails,
-			hint: tDashboard('roleDashboard.attention.autoFails.hint'),
-			onOpen: openAnalytics,
-		},
-		{
-			id: 'negativeCustomer',
-			label: tDashboard('roleDashboard.attention.negativeCustomer.label'),
-			value: metrics.sentiment.customerNegativeCount,
-			hint: tDashboard('roleDashboard.attention.negativeCustomer.hint'),
-			onOpen: openAnalytics,
-		},
-	];
-
 	const renderScore = useCallback(
 		(score: number) =>
 			program ? formatRankingScore(program, score) : String(score),
@@ -164,8 +137,6 @@ export const NewSupervisorDashboard: React.FC = () => {
 						{copy.subtitle}
 					</Text>
 				</div>
-
-				<NeedsAttentionStrip items={attentionItems} />
 
 				<SectionCard
 					title='Performance Score'
