@@ -21,7 +21,7 @@ let idCounter = 100;
 export const nextId = (prefix: string) =>
 	`${prefix}-${String(++idCounter).padStart(3, '0')}`;
 
-interface TriggerRulesState {
+export interface TriggerRulesState {
 	rules: TriggerRule[];
 	badges: BadgeDefinition[];
 	templates: MessageTemplate[];
@@ -169,3 +169,6 @@ export const useTriggerRulesStore = create<TriggerRulesState>((set, get) => ({
 		}));
 	},
 }));
+
+/** Raw slice — derive with useMemo (Zustand v5 selector warning). */
+export const selectTriggerRules = (s: TriggerRulesState) => s.rules;

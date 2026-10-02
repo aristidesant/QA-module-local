@@ -1,6 +1,6 @@
 import type { CallMetric } from '~/modules/qa/dashboard/mockData';
 import type { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
-import type { TriggerMetricId } from '~/models/qa';
+import type { RuleCondition, TriggerMetricId } from '~/models/qa';
 import type {
 	AgentStatus,
 	BusinessSignalType,
@@ -290,48 +290,19 @@ export interface SignalsByAgentRow {
 }
 
 // ---------- Burnout ----------
-/** Built-in patterns keep a stable id; patterns the QA Manager creates get a generated one. */
-export type BurnoutDriverId = string;
-/** Any catalogue metric, plus two burnout-only ones computed from the agent's own calls. */
-export type BurnoutDriverMetricId =
-	| TriggerMetricId
-	| 'AHT_VS_TEAM'
-	| 'AGENT_NEGATIVE_EMOTION_SHARE';
 export type BurnoutDriverStatus = 'BREACHED' | 'NEAR' | 'OK';
 
-/**
- * How a pattern reads its metric:
- * - VALUE: the metric over the last `windowDays` days.
- * - DELTA: its change versus the previous `windowDays` days.
- * - STREAK: how many call-days in a row the day's value is above/below `dayLevel`.
- */
-export type BurnoutPatternMode = 'VALUE' | 'DELTA' | 'STREAK';
-
-export interface BurnoutDriverRule {
-	id: BurnoutDriverId;
-	metricId: BurnoutDriverMetricId;
-	mode: BurnoutPatternMode;
-	/** Trailing window for VALUE and DELTA. Streaks look back 30 days. */
-	windowDays: number;
-	/** ABOVE/BELOW applies to the metric (STREAK: to each day's value). */
-	direction: 'ABOVE' | 'BELOW';
-	/** VALUE: the level. DELTA: the signed change. STREAK: the number of days. */
-	threshold: number;
-	/** STREAK only: the level a day's value must cross to count towards the streak. */
-	dayLevel?: number;
-	/** Distance from the threshold that counts as NEAR. */
-	nearBand: number;
-}
-
+/** One condition of an active BURNOUT_RISK rule (Triggers & Recognition), evaluated for one agent. */
 export interface BurnoutDriver {
-	id: BurnoutDriverId;
-	metricId: BurnoutDriverMetricId;
-	mode: BurnoutPatternMode;
+	/** `${ruleId}:${condition.id}` */
+	id: string;
+	ruleId: string;
+	ruleName: string;
+	/** The condition as configured in the rule; label it with `describeCondition`. */
+	condition: RuleCondition;
+	/** THRESHOLD: metric over the window. PERCENT_CHANGE: % change vs the previous window. CONSECUTIVE: current run of calls. */
 	currentValue: number | null;
-	threshold: number;
 	status: BurnoutDriverStatus;
-	delta: number | null;
-	series: number[];
 }
 
 export interface BurnoutWorkload {

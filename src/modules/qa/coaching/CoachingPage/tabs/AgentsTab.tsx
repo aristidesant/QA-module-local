@@ -27,13 +27,18 @@ import { AreaBadge, ImpactBadge } from '~/modules/qa/lms/components/Badges';
 import { DIMENSION_TO_AREA, LMS_AREA_META } from '~/modules/qa/lms/constants';
 import { daysUntil, isOverdue } from '~/modules/qa/lms/helpers';
 import { getScoreColor } from '~/modules/qa/team/helpers';
-import { TEAM_PROFILES, TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
+import { TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
 import type {
 	AgentProfile,
 	DimensionKey,
 	TeamRole,
 } from '~/modules/qa/team/types';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
+import { assessBurnout } from '~/modules/qa/analytics/helpers';
+import {
+	useTriggerRulesStore,
+	selectTriggerRules,
+} from '~/stores/qa/triggerRulesStore';
 
 /** Not a real EvaluationArea — a synthetic filter value for the "Weakest" dropdown. */
 const BURNOUT_RISK_FILTER = 'BURNOUT_RISK';
@@ -132,6 +137,7 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 	const [team, setTeam] = useState<string | null>(null);
 	const [area, setArea] = useState<string | null>(null);
 	const [state, setState] = useState<string | null>(null);
+	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 
 	const filtered = useMemo(() => {
 		const q = search.trim().toLowerCase();
@@ -144,13 +150,13 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 				return false;
 			if (team && r.supervisorId !== team) return false;
 			if (area === BURNOUT_RISK_FILTER) {
-				const level = TEAM_PROFILES[r.id]?.risk.burnout.level;
-				if (!level || level === BurnoutRiskLevel.LOW) return false;
+				if (assessBurnout(r.id, triggerRules).level === BurnoutRiskLevel.LOW)
+					return false;
 			} else if (area && r.weakestArea !== area) return false;
 			if (state && r.state !== state) return false;
 			return true;
 		});
-	}, [rows, search, team, area, state]);
+	}, [rows, search, team, area, state, triggerRules]);
 
 	const byTeam = useMemo(() => {
 		const map = new Map<string, AgentCoachingRow[]>();

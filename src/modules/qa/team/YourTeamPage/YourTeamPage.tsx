@@ -6,6 +6,11 @@ import { ContentContainer } from '~/components/ContentContainer';
 import { SectionCard } from '~/components/SectionCard';
 import BaseTable from '~/components/BaseTable/BaseTable';
 import { useTeamStore } from '~/stores/qa/teamStore';
+import {
+	useTriggerRulesStore,
+	selectTriggerRules,
+} from '~/stores/qa/triggerRulesStore';
+import { withRuleBurnout } from '~/modules/qa/analytics/helpers';
 import { SUPERVISOR_PERSONA } from '../constants';
 import type { TeamFilters as TeamFiltersState, TeamTableRow } from '../types';
 import {
@@ -33,6 +38,7 @@ export default function YourTeamPage() {
 	const location = useLocation();
 	const role = roleFromPath(location.pathname);
 	const profilesById = useTeamStore((s) => s.profiles);
+	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	const [filters, setFilters] = useState<TeamFiltersState>(DEFAULT_FILTERS);
 
 	const rows = useMemo(() => {
@@ -40,8 +46,12 @@ export default function YourTeamPage() {
 			(p) =>
 				role === 'qa-manager' || p.agent.supervisorId === SUPERVISOR_PERSONA.id
 		);
-		return applyTeamFilters(visible.map(toTableRow), profilesById, filters);
-	}, [profilesById, role, filters]);
+		return applyTeamFilters(
+			visible.map((p) => toTableRow(withRuleBurnout(p, triggerRules))),
+			profilesById,
+			filters
+		);
+	}, [profilesById, role, filters, triggerRules]);
 	const columns = useTeamColumns(role, profilesById, t);
 
 	return (

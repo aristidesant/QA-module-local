@@ -1,7 +1,5 @@
 import type { ScoreBand } from '~/modules/qa/constants/badgeColors';
-import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
 import type {
-	BurnoutSettings,
 	ScoreBands,
 	SentimentCutPoints,
 	SentimentThresholds,
@@ -95,16 +93,6 @@ export const isNegativeEmotionIn = (
 	negativeEmotions: string[]
 ) => negativeEmotions.includes(emotion);
 
-export const burnoutLevelFor = (
-	breachedCount: number,
-	level: BurnoutSettings['level']
-): BurnoutRiskLevel =>
-	breachedCount >= level.highAt
-		? BurnoutRiskLevel.HIGH
-		: breachedCount >= level.mediumAt
-			? BurnoutRiskLevel.MEDIUM
-			: BurnoutRiskLevel.LOW;
-
 /** Validation messages are i18n keys under `qa.settings`; null means valid. */
 export const validateBands = (bands: ScoreBands): string | null => {
 	if (bands.onTarget <= bands.watch) return 'validation.bandsOrder';
@@ -122,14 +110,5 @@ export const validateCutPoints = (c: SentimentCutPoints): string | null => {
 	)
 		return 'validation.cutPointsOrder';
 	if (c.veryNegative < 1 || c.positive > 5) return 'validation.cutPointsRange';
-	return null;
-};
-
-export const validateLevelRule = (
-	level: BurnoutSettings['level'],
-	enabledCount: number
-): string | null => {
-	if (level.highAt <= level.mediumAt) return 'validation.levelOrder';
-	if (level.highAt > enabledCount) return 'validation.levelAboveEnabled';
 	return null;
 };

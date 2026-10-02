@@ -370,8 +370,8 @@
 			"celebrationEmoji": "Celebration"
 		},
 		"burnoutNotice": {
-			"title": "Feeds the dashboard",
-			"description": "Agents matching this rule appear in the Burnout Risk widget with the level selected above."
+			"title": "Sets the agent's burnout level",
+			"description": "While this rule is active, agents in its scope who meet the conditions get the level selected above everywhere burnout risk is shown: dashboard, Team Analytics, agent profile, team tables and coaching. If several rules match, the highest level wins."
 		},
 		"validation": {
 			"nameRequired": "Name is required",

@@ -5,6 +5,11 @@ import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer';
 import { useTeamStore, selectSupervisors } from '~/stores/qa/teamStore';
 import { TEAM_CAMPAIGNS } from '../mockData';
+import {
+	useTriggerRulesStore,
+	selectTriggerRules,
+} from '~/stores/qa/triggerRulesStore';
+import { withRuleBurnout } from '~/modules/qa/analytics/helpers';
 import { UNASSIGNED_SUPERVISOR, UNASSIGNED_SUPERVISOR_ID } from '../constants';
 import { teamCardStats } from '../helpers';
 import { TeamCard } from './TeamCard';
@@ -15,6 +20,18 @@ export default function TeamsListPage() {
 	const supervisors = useTeamStore(selectSupervisors);
 	const teamCampaignIds = useTeamStore((s) => s.teamCampaignIds);
 	const profiles = useTeamStore((s) => s.profiles);
+	const triggerRules = useTriggerRulesStore(selectTriggerRules);
+	// At-risk counts follow the burnout rules in Triggers.
+	const liveProfiles = useMemo(
+		() =>
+			Object.fromEntries(
+				Object.entries(profiles).map(([id, p]) => [
+					id,
+					withRuleBurnout(p, triggerRules),
+				])
+			),
+		[profiles, triggerRules]
+	);
 	const unassignedAgents = useMemo(
 		() =>
 			Object.values(profiles)
@@ -36,7 +53,7 @@ export default function TeamsListPage() {
 		>
 			<SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing='md'>
 				{Object.values(supervisors).map((supervisor) => {
-					const stats = teamCardStats(supervisor.id, profiles);
+					const stats = teamCardStats(supervisor.id, liveProfiles);
 					return (
 						<TeamCard
 							key={supervisor.id}

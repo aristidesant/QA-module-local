@@ -25,6 +25,11 @@ import {
 	selectTeamCampaignIds,
 } from '~/stores/qa/teamStore';
 import { TEAM_CAMPAIGNS } from '../mockData';
+import {
+	useTriggerRulesStore,
+	selectTriggerRules,
+} from '~/stores/qa/triggerRulesStore';
+import { withRuleBurnout } from '~/modules/qa/analytics/helpers';
 import { UNASSIGNED_SUPERVISOR, UNASSIGNED_SUPERVISOR_ID } from '../constants';
 import type { TeamTableRow } from '../types';
 import {
@@ -51,6 +56,7 @@ export default function TeamDetailPage() {
 			: storeSupervisor;
 	const campaignIds = useTeamStore(selectTeamCampaignIds(supervisorId ?? ''));
 	const profiles = useTeamStore((s) => s.profiles);
+	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	const removeMemberAction = useTeamStore((s) => s.removeMember);
 	const setTeamCampaigns = useTeamStore((s) => s.setTeamCampaigns);
 
@@ -69,9 +75,9 @@ export default function TeamDetailPage() {
 	const rows = useMemo(
 		() =>
 			agents
-				.map((a) => toTableRow(profiles[a.id]))
+				.map((a) => toTableRow(withRuleBurnout(profiles[a.id], triggerRules)))
 				.filter((r): r is TeamTableRow => Boolean(r)),
-		[agents, profiles]
+		[agents, profiles, triggerRules]
 	);
 	const kpis = teamKpis(rows);
 

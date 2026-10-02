@@ -1,8 +1,22 @@
-import { Grid, SegmentedControl, Select, Stack, Text, Textarea, TextInput, ThemeIcon, Paper } from '@mantine/core';
+import {
+	Grid,
+	SegmentedControl,
+	Select,
+	Stack,
+	Text,
+	Textarea,
+	TextInput,
+	ThemeIcon,
+	Paper,
+} from '@mantine/core';
 import { IconFlame } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { UseFormReturnType } from '@mantine/form';
-import { buildRuleFormValues, ruleTypesForKind, type RuleFormValues } from '~/modules/qa/triggers/helpers';
+import {
+	buildRuleFormValues,
+	ruleTypesForKind,
+	type RuleFormValues,
+} from '~/modules/qa/triggers/helpers';
 import { SectionCard } from '~/components/SectionCard';
 import type { RuleType, MessageTemplate } from '~/models/qa';
 
@@ -73,7 +87,9 @@ export function BasicsSection({
 				{kind === 'ALERT' && (
 					<Grid.Col span={{ base: 12, md: 6 }}>
 						<Stack gap='xs'>
-							<Text size='sm' fw={500}>{t('editor.fields.severity')}</Text>
+							<Text size='sm' fw={500}>
+								{t('editor.fields.severity')}
+							</Text>
 							<SegmentedControl
 								data={severityOptions.map((s) => ({
 									label: t(`severity.${s}`),
@@ -99,15 +115,30 @@ export function BasicsSection({
 						value={form.values.burnoutLevel}
 						onChange={(v) => v && form.setFieldValue('burnoutLevel', v as any)}
 					/>
-					<Paper withBorder p='sm' radius='md' bg='red.0'>
+					<Paper
+						withBorder
+						p='sm'
+						radius='md'
+						bg='var(--mantine-color-red-light)'
+					>
 						<Stack gap='xs'>
-							<div style={{ display: 'flex', gap: 'var(--mantine-spacing-xs)', alignItems: 'flex-start' }}>
+							<div
+								style={{
+									display: 'flex',
+									gap: 'var(--mantine-spacing-xs)',
+									alignItems: 'flex-start',
+								}}
+							>
 								<ThemeIcon size='md' color='red' variant='light' radius='md'>
 									<IconFlame size={14} />
 								</ThemeIcon>
 								<Stack gap={0}>
-									<Text size='sm' fw={600}>{t('editor.burnoutNotice.title')}</Text>
-									<Text size='xs' c='dimmed'>{t('editor.burnoutNotice.description')}</Text>
+									<Text size='sm' fw={600}>
+										{t('editor.burnoutNotice.title')}
+									</Text>
+									<Text size='xs' c='dimmed'>
+										{t('editor.burnoutNotice.description')}
+									</Text>
 								</Stack>
 							</div>
 						</Stack>

@@ -29,7 +29,10 @@ import { StatCard } from '~/components/StatCard';
 import PeerComparisonSection from '~/modules/role-preview/AgentDetailPage/components/PeerComparisonSection';
 import BurnoutRiskWidget from '~/modules/qa/dashboard/components/BurnoutRiskWidget';
 import { useTeamStore } from '~/stores/qa/teamStore';
-import { useSettingsStore, selectBurnout } from '~/stores/qa/settingsStore';
+import {
+	useTriggerRulesStore,
+	selectTriggerRules,
+} from '~/stores/qa/triggerRulesStore';
 import { assessBurnout } from '~/modules/qa/analytics/helpers';
 import type {
 	AgentProfile,
@@ -67,15 +70,12 @@ export function OverviewTab({ profile, points }: OverviewTabProps) {
 	const dir = periodDirection(points, 'overall');
 	const DirIcon = DIRECTION_ICON[dir.trend];
 	const acknowledgeAlert = useTeamStore((s) => s.acknowledgeAlert);
-	const burnoutSettings = useSettingsStore(selectBurnout);
-	// Level and percentage follow the QA Manager's burnout patterns; the trend and history stay on the profile.
+	const triggerRules = useTriggerRulesStore(selectTriggerRules);
+	// Level and percentage follow the burnout rules in Triggers; the trend and history stay on the profile.
 	const burnout = useMemo(() => {
-		const { level, percentage } = assessBurnout(
-			profile.agent.id,
-			burnoutSettings
-		);
+		const { level, percentage } = assessBurnout(profile.agent.id, triggerRules);
 		return { ...profile.risk.burnout, level, percentage };
-	}, [profile.agent.id, profile.risk.burnout, burnoutSettings]);
+	}, [profile.agent.id, profile.risk.burnout, triggerRules]);
 
 	const totalCriticalErrors = profile.risk.criticalErrorsTrend.reduce(
 		(sum, e) => sum + e.criticalErrors,

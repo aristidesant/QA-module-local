@@ -25,11 +25,11 @@ import {
 	PerformanceScoreControls,
 } from '../components';
 import { useDashboardCopy } from '../useDashboardCopy';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import {
-	useSettingsStore,
-	selectBurnout,
-	selectThresholds,
-} from '~/stores/qa/settingsStore';
+	useTriggerRulesStore,
+	selectTriggerRules,
+} from '~/stores/qa/triggerRulesStore';
 import { useActiveRankingByTeam } from '~/modules/qa/rankings/hooks/useActiveRanking';
 import {
 	computeStandings,
@@ -100,10 +100,10 @@ export const NewSupervisorDashboard: React.FC = () => {
 		() => buildTeamBusinessInsights('supervisor', days, lineOfBusiness),
 		[days, lineOfBusiness]
 	);
-	const burnoutSettings = useSettingsStore(selectBurnout);
+	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	const burnoutRisk = useMemo(
-		() => teamBurnoutRisk('supervisor'),
-		[burnoutSettings]
+		() => teamBurnoutRisk('supervisor', triggerRules),
+		[triggerRules]
 	);
 
 	const standings = useMemo(

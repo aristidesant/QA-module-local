@@ -1,5 +1,3 @@
-import type { BurnoutDriverRule } from '~/modules/qa/analytics/types';
-
 export type SettingsAspect = 'qa' | 'compliance' | 'sentiment' | 'business';
 
 /** score >= onTarget → good; >= watch → warning; otherwise critical. `onTarget` must exceed `watch`. */
@@ -76,21 +74,6 @@ export interface ThresholdSettings {
 	business: BusinessThresholds;
 }
 
-/** A burnout rule plus how Settings presents it. Built-ins can be switched off but not removed. */
-export interface BurnoutPattern extends BurnoutDriverRule {
-	/** Name of a pattern the QA Manager created; built-ins are named from i18n. */
-	name?: string;
-	builtIn: boolean;
-	enabled: boolean;
-}
-
-export interface BurnoutSettings {
-	patterns: BurnoutPattern[];
-	/** Risk level by number of breached, enabled patterns. `highAt` must exceed `mediumAt`. */
-	level: { mediumAt: number; highAt: number };
-}
-
 export interface QaSettings {
 	thresholds: ThresholdSettings;
-	burnout: BurnoutSettings;
 }

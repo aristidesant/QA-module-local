@@ -170,6 +170,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.team',
 		'qa.lms',
 		'qa.coaching',
+		'qa.triggers',
 	],
 	'qa.qa-manager.analytics': [
 		'qa.teamAnalytics',
@@ -178,5 +179,6 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.team',
 		'qa.lms',
 		'qa.coaching',
+		'qa.triggers',
 	],
 };

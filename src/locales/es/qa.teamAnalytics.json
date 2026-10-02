@@ -342,6 +342,8 @@
 	},
 	"burnout": {
 		"title": "Riesgo de burnout",
+		"manageRules": "Gestionar reglas de burnout",
+		"empty": "Ningún agente está marcado por las reglas de burnout activas.",
 		"listDescription": {
 			"supervisor": "Agentes de tu equipo marcados por las reglas de burnout",
 			"qa-manager": "Agentes marcados por las reglas de burnout en todos los equipos"

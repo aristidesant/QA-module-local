@@ -2,13 +2,12 @@
 	"page": {
 		"eyebrow": "Gerente de QA · Todos los equipos",
 		"title": "Configuración",
-		"description": "Los umbrales detrás de cada etiqueta y nivel de riesgo de los dashboards",
+		"description": "Los umbrales detrás de cada etiqueta de los dashboards",
 		"tabs": {
 			"qa": "Aseguramiento de calidad",
 			"compliance": "Cumplimiento",
 			"sentiment": "Sentimiento y emoción",
-			"business": "Insights de negocio",
-			"burnout": "Riesgo de burnout"
+			"business": "Insights de negocio"
 		}
 	},
 	"actions": {
@@ -112,120 +111,11 @@
 			"mistargetedOffer": "Ofertas mal dirigidas"
 		}
 	},
-	"burnout": {
-		"patternsTitle": "Patrones",
-		"patternsDescription": "Cada patrón compara el comportamiento reciente del agente con su umbral. Desactiva los que no quieras contar.",
-		"columns": {
-			"pattern": "Patrón",
-			"condition": "Condición",
-			"threshold": "Umbral",
-			"nearBand": "Margen cercano",
-			"enabled": "Activo"
-		},
-		"units": {
-			"pts": "pts",
-			"days": "días",
-			"%": "%"
-		},
-		"enable": "Contar {{pattern}}",
-		"levelTitle": "Nivel de riesgo",
-		"levelDescription": "El nivel de un agente depende de cuántos patrones activos se cumplen.",
-		"mediumAt": "Medio cuando se cumplen al menos",
-		"highAt": "Alto cuando se cumplen al menos",
-		"previewLead": "Con estas reglas, de {{total}} agentes:",
-		"previewHigh": "{{count}} en nivel alto",
-		"previewMedium": "{{count}} en nivel medio",
-		"custom": "Personalizado",
-		"edit": "Editar patrón",
-		"delete": "Eliminar patrón",
-		"addPattern": "Agregar patrón",
-		"metrics": {
-			"AHT_VS_TEAM": "Tiempo de gestión vs. equipo",
-			"AGENT_NEGATIVE_EMOTION_SHARE": "Llamadas con emoción negativa del agente"
-		},
-		"areas": {
-			"QUALITY_ASSURANCE": "Aseguramiento de calidad",
-			"COMPLIANCE": "Cumplimiento",
-			"SENTIMENT_EMOTION": "Sentimiento y emoción",
-			"BUSINESS_INSIGHTS": "Insights de negocio",
-			"OTHER": "Otras señales"
-		},
-		"condition": {
-			"VALUE": {
-				"ABOVE": "{{metric}} está en {{threshold}}{{unit}} o más en los últimos {{days}} días",
-				"BELOW": "{{metric}} está en {{threshold}}{{unit}} o menos en los últimos {{days}} días"
-			},
-			"DELTA": {
-				"ABOVE": "{{metric}} sube {{threshold}}{{unit}} o más frente a los {{days}} días anteriores",
-				"BELOW": "{{metric}} baja {{threshold}}{{unit}} o más frente a los {{days}} días anteriores"
-			},
-			"STREAK": {
-				"ABOVE": "{{threshold}}+ días seguidos con {{metric}} en {{dayLevel}}{{unit}} o más",
-				"BELOW": "{{threshold}}+ días seguidos con {{metric}} en {{dayLevel}}{{unit}} o menos"
-			}
-		},
-		"modeSummary": {
-			"VALUE": "Valor · últimos {{days}} días",
-			"DELTA": "Cambio vs. los {{days}} días anteriores",
-			"STREAK": "Racha · últimos 30 días"
-		},
-		"mode": {
-			"VALUE": "Valor",
-			"DELTA": "Cambio",
-			"STREAK": "Racha"
-		},
-		"modeHint": {
-			"VALUE": "Lee la métrica en una ventana reciente.",
-			"DELTA": "Lee cuánto se movió la métrica frente a la ventana anterior.",
-			"STREAK": "Cuenta los días seguidos en que el valor del día cruza un nivel."
-		},
-		"direction": {
-			"VALUE": {
-				"ABOVE": "En o por encima de",
-				"BELOW": "En o por debajo de"
-			},
-			"DELTA": {
-				"ABOVE": "Sube",
-				"BELOW": "Baja"
-			},
-			"STREAK": {
-				"ABOVE": "Por encima de",
-				"BELOW": "Por debajo de"
-			}
-		},
-		"thresholdLabel": {
-			"VALUE": "Umbral",
-			"DELTA": "Tamaño del cambio",
-			"STREAK": "Días seguidos",
-			"dayLevel": "Nivel diario"
-		},
-		"drawer": {
-			"addTitle": "Agregar patrón de burnout",
-			"editTitle": "Editar patrón de burnout",
-			"description": "Un patrón marca a un agente cuando su métrica cumple la condición. La regla de nivel decide cuántos patrones hacen Medio o Alto.",
-			"name": "Nombre",
-			"namePlaceholder": "p. ej. Tiempo de gestión en aumento",
-			"nameRequired": "Ponle un nombre al patrón",
-			"metric": "Métrica",
-			"conditionType": "Tipo de condición",
-			"direction": "Dirección",
-			"window": "Ventana",
-			"windowOption": "{{count}} días",
-			"nearBand": "Margen cercano",
-			"nearBandHint": "Qué tan cerca del umbral sigue apareciendo como Cercano en la vista de Burnout.",
-			"summary": "Este patrón marca a un agente cuando",
-			"preview": "Hoy marcaría a {{count}} de {{total}} agentes.",
-			"add": "Agregar patrón",
-			"save": "Guardar patrón"
-		}
-	},
 	"validation": {
 		"bandsOrder": "En objetivo debe ser mayor que Observación",
 		"bandsRange": "Usa valores entre 0 y 100",
 		"cutPointsOrder": "Cada rango debe terminar más arriba que el anterior",
-		"cutPointsRange": "Usa valores entre 1 y 5",
-		"levelOrder": "Alto debe ser mayor que Medio",
-		"levelAboveEnabled": "Alto no puede superar los {{count}} patrones activos"
+		"cutPointsRange": "Usa valores entre 1 y 5"
 	},
 	"copc": {
 		"title": "Categorías COPC",

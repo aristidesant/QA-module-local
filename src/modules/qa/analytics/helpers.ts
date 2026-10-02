@@ -3,14 +3,19 @@ import type {
 	MetricTrend,
 } from '~/models/AnalyticsDashboard';
 import type {
+	BurnoutRiskLevelValue,
 	CoachingSessionRecord,
+	EvaluationWindow,
 	LmsAssignment,
+	RuleCondition,
 	TriggerMetricId,
+	TriggerRule,
 } from '~/models/qa';
 import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
-import { formatMetricValue } from '~/modules/qa/triggers/helpers';
+import { compare, formatMetricValue } from '~/modules/qa/triggers/helpers';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
 import type {
+	AgentProfile,
 	NonConversionReasonKey,
 	RosterAgent,
 	Shift,
@@ -18,26 +23,19 @@ import type {
 } from '~/modules/qa/team/types';
 import {
 	TEAM_AGENTS,
+	TEAM_CAMPAIGNS,
 	TEAM_PROFILES,
 	TEAM_SUPERVISORS,
 } from '~/modules/qa/team/mockData';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import { useSettingsStore } from '~/stores/qa/settingsStore';
+import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
 import {
-	burnoutLevelFor,
 	isNegativeEmotionIn,
 	negativeEmotionsOf,
 	positiveEmotionsOf,
 } from '~/modules/qa/settings/helpers';
-import type {
-	BurnoutPattern,
-	BurnoutSettings,
-} from '~/modules/qa/settings/types';
 import { TEAM_CALLS } from './mockData';
-import {
-	patternMetricInfo,
-	toDayPercent,
-} from '~/modules/qa/settings/burnoutPatterns';
 import {
 	DEFAULT_FILTERS,
 	MAX_SEGMENT_SERIES,
@@ -50,7 +48,6 @@ import {
 import type {
 	BurnoutAction,
 	BurnoutDriver,
-	BurnoutDriverRule,
 	BurnoutDriverStatus,
 	BurnoutWorkload,
 	BusinessSignalKind,
@@ -668,11 +665,13 @@ export function computeKpis(calls: TeamCallMetric[]): TeamKpis {
 }
 
 // ---------- Finder ----------
-export const burnoutLevelsByAgent = (): Record<string, BurnoutRiskLevel> =>
+export const burnoutLevelsByAgent = (
+	rules?: TriggerRule[]
+): Record<string, BurnoutRiskLevel> =>
 	Object.fromEntries(
 		Object.values(TEAM_PROFILES).map((p) => [
 			p.agent.id,
-			assessBurnout(p.agent.id).level,
+			assessBurnout(p.agent.id, rules).level,
 		])
 	);
 
@@ -877,9 +876,12 @@ const LEVEL_ORDER: Record<BurnoutRiskLevel, number> = {
 };
 
 /** Scoped agents whose computed burnout level is not LOW; HIGH first, then by percentage. */
-export function burnoutCandidates(role: TeamRole): RosterAgent[] {
+export function burnoutCandidates(
+	role: TeamRole,
+	rules?: TriggerRule[]
+): RosterAgent[] {
 	return scopeAgents(role)
-		.map((agent) => ({ agent, assessment: assessBurnout(agent.id) }))
+		.map((agent) => ({ agent, assessment: assessBurnout(agent.id, rules) }))
 		.filter(({ assessment }) => assessment.level !== BurnoutRiskLevel.LOW)
 		.sort(
 			(a, b) =>
@@ -899,9 +901,12 @@ export interface TeamBurnoutRiskEntry {
 }
 
 /** Dashboard-facing summary of burnoutCandidates: name + risk data per at-risk team member. */
-export const teamBurnoutRisk = (role: TeamRole): TeamBurnoutRiskEntry[] =>
-	burnoutCandidates(role).map((agent) => {
-		const assessment = assessBurnout(agent.id);
+export const teamBurnoutRisk = (
+	role: TeamRole,
+	rules?: TriggerRule[]
+): TeamBurnoutRiskEntry[] =>
+	burnoutCandidates(role, rules).map((agent) => {
+		const assessment = assessBurnout(agent.id, rules);
 		return {
 			agentId: agent.id,
 			agentName: agent.name,
@@ -921,211 +926,168 @@ const afterHoursShare = (calls: TeamCallMetric[]) =>
 	calls.length
 		? pct(calls.filter((c) => c.afterHours).length, calls.length)
 		: null;
-const ahtVsTeam = (
-	agentCalls: TeamCallMetric[],
-	teamCalls: TeamCallMetric[]
-): number | null => {
-	const a = mean(agentCalls.map((c) => c.handleTimeSeconds)),
-		t = mean(teamCalls.map((c) => c.handleTimeSeconds));
-	return a === null || t === null || t === 0
-		? null
-		: round1((a / t) * 100 - 100);
+/** Trailing-day length of each day-based evaluation window. */
+const WINDOW_DAYS: Partial<Record<EvaluationWindow, number>> = {
+	LAST_7_DAYS: 7,
+	LAST_14_DAYS: 14,
+	LAST_30_DAYS: 30,
 };
-const diff = (a: number | null, b: number | null) =>
-	a === null || b === null ? null : round1(a - b);
-/** A streak counts days, so it always trips when the count reaches the threshold. */
-const effectiveDirection = (rule: BurnoutDriverRule) =>
-	rule.mode === 'STREAK' ? 'ABOVE' : rule.direction;
-
-const statusOf = (
-	rule: BurnoutDriverRule,
-	v: number | null
-): BurnoutDriverStatus => {
-	if (v === null) return 'OK';
-	const above = effectiveDirection(rule) === 'ABOVE';
-	const breached = above ? v >= rule.threshold : v <= rule.threshold;
-	if (breached) return 'BREACHED';
-	const near = above
-		? v >= rule.threshold - rule.nearBand
-		: v <= rule.threshold + rule.nearBand;
-	return near ? 'NEAR' : 'OK';
+/** Rules have no near band: a threshold is NEAR within 10% of its target value. */
+const NEAR_BAND_RATIO = 0.1;
+/** A % change is NEAR once it reaches half of the required change. */
+const NEAR_CHANGE_RATIO = 0.5;
+const RULE_LEVEL: Record<BurnoutRiskLevelValue, BurnoutRiskLevel> = {
+	LOW: BurnoutRiskLevel.LOW,
+	MEDIUM: BurnoutRiskLevel.MEDIUM,
+	HIGH: BurnoutRiskLevel.HIGH,
+};
+/** Risk meter band per level, so the percentage always agrees with the level. */
+const PERCENT_BAND: Record<BurnoutRiskLevel, { base: number; span: number }> = {
+	[BurnoutRiskLevel.LOW]: { base: 5, span: 30 },
+	[BurnoutRiskLevel.MEDIUM]: { base: 40, span: 29 },
+	[BurnoutRiskLevel.HIGH]: { base: 70, span: 25 },
 };
 
-/** A pattern's metric over one set of calls; `teamCalls` is only read by handle time vs team. */
-const burnoutMetricValue = (
-	metricId: BurnoutDriverRule['metricId'],
-	agentCalls: TeamCallMetric[],
-	teamCalls: TeamCallMetric[]
-): number | null => {
-	if (metricId === 'AHT_VS_TEAM') return ahtVsTeam(agentCalls, teamCalls);
-	if (metricId === 'AGENT_NEGATIVE_EMOTION_SHARE')
-		return agentCalls.length
-			? pct(
-					agentCalls.filter((c) => isNegativeCallEmotion(c.agentEmotion))
-						.length,
-					agentCalls.length
-				)
-			: null;
-	return aggregateMetric(agentCalls, metricId);
+/** Burnout risk is configured only here: the ACTIVE alert rules of type BURNOUT_RISK. */
+export const activeBurnoutRules = (rules: TriggerRule[]): TriggerRule[] =>
+	rules.filter(
+		(r) =>
+			r.type === 'BURNOUT_RISK' &&
+			r.status === 'ACTIVE' &&
+			r.burnoutLevel !== null
+	);
+
+/** Roster version of the triggers `agentInScope`: empty lists mean "everyone". */
+const inBurnoutRuleScope = (rule: TriggerRule, agent: RosterAgent): boolean => {
+	const {
+		agentIds,
+		supervisorIds,
+		campaignIds,
+		linesOfBusiness,
+		campaignTypes,
+	} = rule.scope;
+	const campaigns = TEAM_CAMPAIGNS.filter((c) =>
+		agent.campaignIds.includes(c.id)
+	);
+	if (agentIds.length && !agentIds.includes(agent.id)) return false;
+	if (supervisorIds.length && !supervisorIds.includes(agent.supervisorId))
+		return false;
+	if (
+		campaignIds.length &&
+		!agent.campaignIds.some((id) => campaignIds.includes(id))
+	)
+		return false;
+	if (
+		linesOfBusiness.length &&
+		!campaigns.some((c) => linesOfBusiness.includes(c.lineOfBusiness))
+	)
+		return false;
+	if (
+		campaignTypes.length &&
+		!campaigns.some((c) => campaignTypes.includes(c.campaignType))
+	)
+		return false;
+	return true;
 };
 
-/** Metric per equal slice of `[from, to]`, carrying the last value over empty slices. */
-const seriesOver = (
-	valueIn: (w: { from: string; to: string }) => number | null,
-	from: string,
-	to: string,
-	points = 8
-): number[] => {
-	const totalDays = daysBetween(from, to) + 1;
-	const size = Math.max(1, Math.ceil(totalDays / points));
-	const out: number[] = [];
-	let last = 0;
-	for (let i = 0; i < points; i++) {
-		const bFrom = addDays(from, i * size);
-		const bTo = addDays(from, Math.min(totalDays - 1, (i + 1) * size - 1));
-		if (bFrom <= to) {
-			const v = valueIn({ from: bFrom, to: bTo });
-			if (v !== null) last = v;
+/** The agent's calls for a condition window and for the window right before it. `agentCalls` is date-ascending. */
+const conditionWindows = (agentCalls: TeamCallMetric[], c: RuleCondition) => {
+	const days = WINDOW_DAYS[c.window];
+	if (days)
+		return {
+			current: within(agentCalls, daysWindow(0, days)),
+			previous: within(agentCalls, daysWindow(days, days)),
+		};
+	const n = c.window === 'PER_CALL' ? 1 : Math.max(1, c.windowSize);
+	return {
+		current: agentCalls.slice(-n),
+		previous: agentCalls.slice(-2 * n, -n),
+	};
+};
+
+/** Evaluates one rule condition on the agent's real calls. Sub-items are ignored, as in the rule preview. */
+const evaluateBurnoutCondition = (
+	c: RuleCondition,
+	agentCalls: TeamCallMetric[]
+): Pick<BurnoutDriver, 'currentValue' | 'status'> => {
+	if (c.mode === 'CONSECUTIVE') {
+		let streak = 0;
+		for (let i = agentCalls.length - 1; i >= 0; i--) {
+			const v = aggregateMetric([agentCalls[i]], c.metricId);
+			if (v === null || !compare(v, c.operator, c.value)) break;
+			streak += 1;
 		}
-		out.push(last);
+		const status: BurnoutDriverStatus =
+			streak >= c.consecutiveCount
+				? 'BREACHED'
+				: streak > 0 && streak === c.consecutiveCount - 1
+					? 'NEAR'
+					: 'OK';
+		return { currentValue: streak, status };
 	}
-	return out;
+
+	const { current, previous } = conditionWindows(agentCalls, c);
+	const value = aggregateMetric(current, c.metricId);
+
+	if (c.mode === 'PERCENT_CHANGE') {
+		const before = aggregateMetric(previous, c.metricId);
+		if (value === null || before === null || before === 0)
+			return { currentValue: null, status: 'OK' };
+		const change = round1(((value - before) / Math.abs(before)) * 100);
+		const moved = c.changeDirection === 'DECREASE' ? -change : change;
+		const status: BurnoutDriverStatus =
+			moved >= c.changePercent
+				? 'BREACHED'
+				: moved >= c.changePercent * NEAR_CHANGE_RATIO
+					? 'NEAR'
+					: 'OK';
+		return { currentValue: change, status };
+	}
+
+	if (value === null) return { currentValue: null, status: 'OK' };
+	if (c.mode === 'RANGE') {
+		const inside = value >= c.value && value <= (c.value2 ?? c.value);
+		return { currentValue: value, status: inside ? 'BREACHED' : 'OK' };
+	}
+	if (compare(value, c.operator, c.value))
+		return { currentValue: value, status: 'BREACHED' };
+	const band = Math.abs(c.value) * NEAR_BAND_RATIO;
+	const below = c.operator === 'LT' || c.operator === 'LTE';
+	const near = below ? value <= c.value + band : value >= c.value - band;
+	return { currentValue: value, status: near ? 'NEAR' : 'OK' };
 };
-
-/** Days a streak looks back over. */
-const STREAK_LOOKBACK_DAYS = 30;
-
-/** Length of the run of `true` at the end of the list. */
-const trailingStreak = (flags: boolean[]): number => {
-	let streak = 0;
-	for (let i = flags.length - 1; i >= 0 && flags[i]; i--) streak++;
-	return streak;
-};
-
-/**
- * Evaluates every enabled pattern for one agent. `calls` = all scoped calls (unfiltered);
- * `teamCalls` = the agent's team calls (same range).
- */
-export function computeBurnoutDrivers(
-	agentId: string,
-	calls: TeamCallMetric[],
-	teamCalls: TeamCallMetric[],
-	patterns: BurnoutPattern[] = useSettingsStore.getState().burnout.patterns
-): BurnoutDriver[] {
-	const agentCalls = calls.filter((c) => c.agentId === agentId);
-
-	return patterns
-		.filter((pattern) => pattern.enabled)
-		.map((rule) => {
-			const valueIn = (w: { from: string; to: string }) =>
-				burnoutMetricValue(
-					rule.metricId,
-					within(agentCalls, w),
-					within(teamCalls, w)
-				);
-			let currentValue: number | null = null;
-			let delta: number | null = null;
-			let series: number[] = [];
-
-			if (rule.mode === 'STREAK') {
-				const lookback = daysWindow(0, STREAK_LOOKBACK_DAYS);
-				const level = rule.dayLevel ?? 0;
-				const metricInfo = patternMetricInfo(rule.metricId);
-				const days = [
-					...new Set(within(agentCalls, lookback).map((c) => dayOf(c.date))),
-				].sort();
-				const flags = days.map((day) => {
-					const raw = valueIn({ from: day, to: day });
-					// The daily level is a percentage; 1-5 scores compare by their share of the scale.
-					const v = raw === null ? null : toDayPercent(metricInfo, raw);
-					return (
-						v !== null && (rule.direction === 'ABOVE' ? v >= level : v <= level)
-					);
-				});
-				currentValue = flags.length ? trailingStreak(flags) : null;
-				series = flags.slice(-10).map(toBool);
-			} else {
-				const window = daysWindow(0, rule.windowDays);
-				const prior = daysWindow(rule.windowDays, rule.windowDays);
-				currentValue = valueIn(window);
-				delta = diff(currentValue, valueIn(prior));
-				series = seriesOver(valueIn, prior.from, window.to);
-				if (rule.mode === 'DELTA') currentValue = delta;
-			}
-
-			return {
-				id: rule.id,
-				metricId: rule.metricId,
-				mode: rule.mode,
-				currentValue,
-				threshold: rule.threshold,
-				status: statusOf(rule, currentValue),
-				delta,
-				series,
-			};
-		});
-}
-
-/** How many agents currently meet a pattern; powers the "would flag N agents" preview. */
-export function countAgentsMeetingPattern(pattern: BurnoutPattern): number {
-	const rule = { ...pattern, enabled: true };
-	const teamCalls = new Map<string, TeamCallMetric[]>();
-	return TEAM_AGENTS.filter((agent) => {
-		if (!teamCalls.has(agent.team))
-			teamCalls.set(
-				agent.team,
-				TEAM_CALLS.filter((c) => c.team === agent.team)
-			);
-		const [driver] = computeBurnoutDrivers(
-			agent.id,
-			TEAM_CALLS,
-			teamCalls.get(agent.team)!,
-			[rule]
-		);
-		return driver?.status === 'BREACHED';
-	}).length;
-}
-
-export const formatDriverValue = (
-	d: Pick<BurnoutDriver, 'metricId'>,
-	value: number | null
-): string =>
-	value === null
-		? '—'
-		: d.metricId === 'AHT_VS_TEAM'
-			? `${value > 0 ? '+' : ''}${Math.round(value)}%`
-			: d.metricId === 'AGENT_NEGATIVE_EMOTION_SHARE'
-				? `${Math.round(value)}%`
-				: formatMetricValue(d.metricId, value);
 
 export interface BurnoutAssessment {
 	level: BurnoutRiskLevel;
-	/** 5-95; breached patterns count fully, near ones half. */
+	/** Risk meter inside the level's band: low 5-35, medium 40-69, high 70-95. */
 	percentage: number;
 	breached: number;
 	near: number;
+	/** Conditions evaluated: every condition of the active rules that cover the agent. */
 	enabledCount: number;
 	drivers: BurnoutDriver[];
+	/** Rules whose conditions the agent meets. */
+	matchedRuleIds: string[];
 }
 
-/** Per settings object; entries also remember the negative-emotion list they were computed with. */
+/** Per rules array (the store replaces it on every change); entries also remember the negative-emotion list they were computed with. */
 const assessmentCache = new WeakMap<
-	BurnoutSettings,
+	TriggerRule[],
 	Map<string, { emotions: string[]; assessment: BurnoutAssessment }>
 >();
 
 /**
- * Burnout level of one agent under the QA Manager's Settings: how many of the enabled
- * patterns are breached over the agent's trailing windows, mapped to Low/Medium/High.
+ * Burnout level of one agent. The ACTIVE BURNOUT_RISK rules of Triggers & Recognition are the
+ * source of truth: the level is the highest `burnoutLevel` among the rules the agent meets, else Low.
  */
 export function assessBurnout(
 	agentId: string,
-	settings: BurnoutSettings = useSettingsStore.getState().burnout
+	rules: TriggerRule[] = useTriggerRulesStore.getState().rules
 ): BurnoutAssessment {
-	let cache = assessmentCache.get(settings);
+	let cache = assessmentCache.get(rules);
 	if (!cache) {
 		cache = new Map();
-		assessmentCache.set(settings, cache);
+		assessmentCache.set(rules, cache);
 	}
 	const emotions = negativeEmotionsOf(
 		useSettingsStore.getState().thresholds.sentiment
@@ -1133,36 +1095,67 @@ export function assessBurnout(
 	const cached = cache.get(agentId);
 	if (cached && cached.emotions === emotions) return cached.assessment;
 
-	const team = TEAM_AGENTS.find((a) => a.id === agentId)?.team;
-	const teamCalls = TEAM_CALLS.filter((c) => c.team === team);
-	const drivers = computeBurnoutDrivers(
-		agentId,
-		TEAM_CALLS,
-		teamCalls,
-		settings.patterns
-	);
+	const agent = TEAM_AGENTS.find((a) => a.id === agentId);
+	const agentCalls = TEAM_CALLS.filter((c) => c.agentId === agentId);
+	let level = BurnoutRiskLevel.LOW;
+	const drivers: BurnoutDriver[] = [];
+	const matchedRuleIds: string[] = [];
+
+	if (agent)
+		for (const rule of activeBurnoutRules(rules)) {
+			if (!inBurnoutRuleScope(rule, agent)) continue;
+			const ruleDrivers: BurnoutDriver[] = rule.conditions.map((condition) => ({
+				id: `${rule.id}:${condition.id}`,
+				ruleId: rule.id,
+				ruleName: rule.name,
+				condition,
+				...evaluateBurnoutCondition(condition, agentCalls),
+			}));
+			drivers.push(...ruleDrivers);
+			const met = ruleDrivers.map((d) => d.status === 'BREACHED');
+			const matched =
+				met.length > 0 &&
+				(rule.conditionLogic === 'ALL'
+					? met.every(Boolean)
+					: met.some(Boolean));
+			if (!matched) continue;
+			matchedRuleIds.push(rule.id);
+			const ruleLevel = RULE_LEVEL[rule.burnoutLevel ?? 'LOW'];
+			if (LEVEL_ORDER[ruleLevel] < LEVEL_ORDER[level]) level = ruleLevel;
+		}
+
 	const breached = drivers.filter((d) => d.status === 'BREACHED').length;
 	const near = drivers.filter((d) => d.status === 'NEAR').length;
 	const enabledCount = drivers.length;
+	const band = PERCENT_BAND[level];
 	const assessment: BurnoutAssessment = {
-		level: burnoutLevelFor(breached, settings.level),
-		percentage: enabledCount
-			? Math.min(
-					95,
-					Math.max(
-						5,
-						Math.round((100 * (breached + 0.5 * near)) / enabledCount)
-					)
-				)
-			: 5,
+		level,
+		percentage:
+			band.base +
+			(enabledCount
+				? Math.round((band.span * (breached + 0.5 * near)) / enabledCount)
+				: 0),
 		breached,
 		near,
 		enabledCount,
 		drivers,
+		matchedRuleIds,
 	};
 	cache.set(agentId, { emotions, assessment });
 	return assessment;
 }
+
+/** Profile copy whose burnout level and percentage follow the BURNOUT_RISK rules (trend and history stay on the profile). */
+export const withRuleBurnout = (
+	p: AgentProfile,
+	rules?: TriggerRule[]
+): AgentProfile => {
+	const { level, percentage } = assessBurnout(p.agent.id, rules);
+	return {
+		...p,
+		risk: { ...p.risk, burnout: { ...p.risk.burnout, level, percentage } },
+	};
+};
 
 export function computeWorkload(
 	agentId: string,

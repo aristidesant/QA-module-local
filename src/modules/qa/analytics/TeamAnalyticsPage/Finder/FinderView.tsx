@@ -32,6 +32,10 @@ import {
 	burnoutLevelsByAgent,
 } from '../../helpers';
 import type { FinderOperator, MetricView, SegmentMetricId } from '../../types';
+import {
+	useTriggerRulesStore,
+	selectTriggerRules,
+} from '~/stores/qa/triggerRulesStore';
 import { useTeamAnalyticsData } from '../TeamAnalyticsContext';
 import styles from '../TeamAnalyticsPage.module.css';
 
@@ -58,7 +62,11 @@ const FinderView = () => {
 	const presets = useTeamAnalyticsStore(selectFinderPresets);
 	const { setFinderQuery } = useTeamAnalyticsStore();
 
-	const burnoutByAgent = useMemo(() => burnoutLevelsByAgent(), []);
+	const triggerRules = useTriggerRulesStore(selectTriggerRules);
+	const burnoutByAgent = useMemo(
+		() => burnoutLevelsByAgent(triggerRules),
+		[triggerRules]
+	);
 	const rows = useMemo(
 		() =>
 			runFinderQuery(calls, previousCalls, scopedAgents, query, burnoutByAgent),

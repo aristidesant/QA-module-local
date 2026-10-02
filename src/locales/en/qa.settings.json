@@ -2,13 +2,12 @@
 	"page": {
 		"eyebrow": "QA Manager · All teams",
 		"title": "Settings",
-		"description": "Thresholds behind every label and risk level on the dashboards",
+		"description": "Thresholds behind every label on the dashboards",
 		"tabs": {
 			"qa": "Quality Assurance",
 			"compliance": "Compliance",
 			"sentiment": "Sentiment & Emotion",
-			"business": "Business Insights",
-			"burnout": "Burnout Risk"
+			"business": "Business Insights"
 		}
 	},
 	"actions": {
@@ -112,120 +111,11 @@
 			"mistargetedOffer": "Mis-targeted offers"
 		}
 	},
-	"burnout": {
-		"patternsTitle": "Patterns",
-		"patternsDescription": "Each pattern compares an agent's recent behaviour with its threshold. Switch off the ones you don't want to count.",
-		"columns": {
-			"pattern": "Pattern",
-			"condition": "Condition",
-			"threshold": "Threshold",
-			"nearBand": "Near band",
-			"enabled": "Enabled"
-		},
-		"units": {
-			"pts": "pts",
-			"days": "days",
-			"%": "%"
-		},
-		"enable": "Count {{pattern}}",
-		"levelTitle": "Risk level",
-		"levelDescription": "An agent's level depends on how many enabled patterns are met.",
-		"mediumAt": "Medium when at least this many are met",
-		"highAt": "High when at least this many are met",
-		"previewLead": "With these rules, of {{total}} agents:",
-		"previewHigh": "{{count}} High",
-		"previewMedium": "{{count}} Medium",
-		"custom": "Custom",
-		"edit": "Edit pattern",
-		"delete": "Delete pattern",
-		"addPattern": "Add pattern",
-		"metrics": {
-			"AHT_VS_TEAM": "Handle time vs team",
-			"AGENT_NEGATIVE_EMOTION_SHARE": "Agent negative-emotion calls"
-		},
-		"areas": {
-			"QUALITY_ASSURANCE": "Quality Assurance",
-			"COMPLIANCE": "Compliance",
-			"SENTIMENT_EMOTION": "Sentiment & Emotion",
-			"BUSINESS_INSIGHTS": "Business Insights",
-			"OTHER": "Other signals"
-		},
-		"condition": {
-			"VALUE": {
-				"ABOVE": "{{metric}} is at or above {{threshold}}{{unit}} over the last {{days}} days",
-				"BELOW": "{{metric}} is at or below {{threshold}}{{unit}} over the last {{days}} days"
-			},
-			"DELTA": {
-				"ABOVE": "{{metric}} rises {{threshold}}{{unit}} or more vs the previous {{days}} days",
-				"BELOW": "{{metric}} drops {{threshold}}{{unit}} or more vs the previous {{days}} days"
-			},
-			"STREAK": {
-				"ABOVE": "{{threshold}}+ days in a row with {{metric}} at or above {{dayLevel}}{{unit}}",
-				"BELOW": "{{threshold}}+ days in a row with {{metric}} at or below {{dayLevel}}{{unit}}"
-			}
-		},
-		"modeSummary": {
-			"VALUE": "Value · last {{days}} days",
-			"DELTA": "Change vs previous {{days}} days",
-			"STREAK": "Streak · last 30 days"
-		},
-		"mode": {
-			"VALUE": "Value",
-			"DELTA": "Change",
-			"STREAK": "Streak"
-		},
-		"modeHint": {
-			"VALUE": "Reads the metric over a recent window.",
-			"DELTA": "Reads how much the metric moved versus the previous window.",
-			"STREAK": "Counts the days in a row where the day's value crosses a level."
-		},
-		"direction": {
-			"VALUE": {
-				"ABOVE": "At or above",
-				"BELOW": "At or below"
-			},
-			"DELTA": {
-				"ABOVE": "Rises by",
-				"BELOW": "Drops by"
-			},
-			"STREAK": {
-				"ABOVE": "Above",
-				"BELOW": "Below"
-			}
-		},
-		"thresholdLabel": {
-			"VALUE": "Threshold",
-			"DELTA": "Size of the change",
-			"STREAK": "Days in a row",
-			"dayLevel": "Daily level"
-		},
-		"drawer": {
-			"addTitle": "Add burnout pattern",
-			"editTitle": "Edit burnout pattern",
-			"description": "A pattern flags an agent when its metric meets the condition. The level rule decides how many patterns make Medium or High.",
-			"name": "Name",
-			"namePlaceholder": "e.g. Rising handle time",
-			"nameRequired": "Give the pattern a name",
-			"metric": "Metric",
-			"conditionType": "Condition type",
-			"direction": "Direction",
-			"window": "Window",
-			"windowOption": "{{count}} days",
-			"nearBand": "Near band",
-			"nearBandHint": "How close to the threshold still shows as Near on the Burnout view.",
-			"summary": "This pattern flags an agent when",
-			"preview": "Today it would flag {{count}} of {{total}} agents.",
-			"add": "Add pattern",
-			"save": "Save pattern"
-		}
-	},
 	"validation": {
 		"bandsOrder": "On target must be higher than Watch",
 		"bandsRange": "Use values between 0 and 100",
 		"cutPointsOrder": "Each band must end higher than the one before",
-		"cutPointsRange": "Use values between 1 and 5",
-		"levelOrder": "High must be higher than Medium",
-		"levelAboveEnabled": "High can't exceed the {{count}} enabled patterns"
+		"cutPointsRange": "Use values between 1 and 5"
 	},
 	"copc": {
 		"title": "COPC categories",

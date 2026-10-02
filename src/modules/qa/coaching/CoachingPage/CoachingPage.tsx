@@ -37,6 +37,11 @@ import {
 } from '~/stores/qa/coachingStore';
 import { useTeamStore } from '~/stores/qa/teamStore';
 import {
+	useTriggerRulesStore,
+	selectTriggerRules,
+} from '~/stores/qa/triggerRulesStore';
+import { withRuleBurnout } from '~/modules/qa/analytics/helpers';
+import {
 	daysUntil,
 	isOverdue,
 	managerPersona,
@@ -85,6 +90,7 @@ export default function CoachingPage() {
 	const assignments = useLmsStore(selectAssignments);
 	const enrollments = useLmsStore(selectEnrollments);
 	const rules = useCoachingStore(selectRules);
+	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	const sessions = useCoachingStore(selectSessions);
 	const cohorts = useCoachingStore(selectCohorts);
 	const snoozed = useCoachingStore(selectSnoozed);
@@ -113,14 +119,17 @@ export default function CoachingPage() {
 	const [sessionId, setSessionId] = useState<string | null>(null);
 	const [cohortModal, setCohortModal] = useState(false);
 
+	// Burnout level follows the burnout rules in Triggers.
 	const scopeProfiles = useMemo(
 		() =>
-			Object.values(profilesMap).filter(
-				(p) =>
-					role === 'qa-manager' ||
-					p.agent.supervisorId === SUPERVISOR_PERSONA.id
-			),
-		[profilesMap, role]
+			Object.values(profilesMap)
+				.filter(
+					(p) =>
+						role === 'qa-manager' ||
+						p.agent.supervisorId === SUPERVISOR_PERSONA.id
+				)
+				.map((p) => withRuleBurnout(p, triggerRules)),
+		[profilesMap, role, triggerRules]
 	);
 
 	const contentById = useMemo(

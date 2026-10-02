@@ -384,8 +384,8 @@
 			"celebrationEmoji": "Celebración"
 		},
 		"burnoutNotice": {
-			"title": "Alimenta el panel",
-			"description": "Los agentes que coinciden con esta regla aparecen en el widget de riesgo de burnout con el nivel seleccionado arriba."
+			"title": "Define el nivel de burnout del agente",
+			"description": "Mientras esta regla esté activa, los agentes de su alcance que cumplan las condiciones reciben el nivel seleccionado arriba en todos los lugares donde se muestra el riesgo de burnout: dashboard, Analítica de equipo, perfil del agente, tablas de equipo y coaching. Si coinciden varias reglas, gana el nivel más alto."
 		},
 		"validation": {
 			"nameRequired": "El nombre es obligatorio",

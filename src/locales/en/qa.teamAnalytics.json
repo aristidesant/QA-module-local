@@ -338,6 +338,8 @@
 	},
 	"burnout": {
 		"title": "Burnout Risk",
+		"manageRules": "Manage burnout rules",
+		"empty": "No agents are flagged by the active burnout rules.",
 		"listDescription": {
 			"supervisor": "Agents on your team flagged by burnout rules",
 			"qa-manager": "Agents flagged by burnout rules across all teams"

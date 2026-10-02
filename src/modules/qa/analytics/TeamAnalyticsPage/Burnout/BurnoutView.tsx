@@ -1,7 +1,9 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import {
 	Badge,
+	Button,
 	Group,
 	Progress,
 	Stack,
@@ -9,9 +11,13 @@ import {
 	Text,
 	Tooltip,
 } from '@mantine/core';
+import { IconSettings } from '@tabler/icons-react';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
-import { useSettingsStore, selectBurnout } from '~/stores/qa/settingsStore';
-import { usePatternText } from '~/modules/qa/settings/usePatternText';
+import {
+	useTriggerRulesStore,
+	selectTriggerRules,
+} from '~/stores/qa/triggerRulesStore';
+import { describeCondition } from '~/modules/qa/triggers/helpers';
 import { assessBurnout, burnoutCandidates } from '../../helpers';
 import type { BurnoutDriver } from '../../types';
 import { useTeamAnalyticsData } from '../TeamAnalyticsContext';
@@ -21,12 +27,14 @@ const MAX_VISIBLE_DRIVERS = 2;
 
 const BurnoutView = () => {
 	const { t } = useTranslation('qa.teamAnalytics');
+	const { t: tTriggers } = useTranslation('qa.triggers');
+	const navigate = useNavigate();
 	const { role } = useTeamAnalyticsData();
-	const burnoutSettings = useSettingsStore(selectBurnout);
+	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 
 	const candidates = useMemo(() => {
-		return burnoutCandidates(role).map((agent) => {
-			const assessment = assessBurnout(agent.id, burnoutSettings);
+		return burnoutCandidates(role, triggerRules).map((agent) => {
+			const assessment = assessBurnout(agent.id, triggerRules);
 			return {
 				agent,
 				risk: assessment,
@@ -34,23 +42,45 @@ const BurnoutView = () => {
 				near: assessment.drivers.filter((d) => d.status === 'NEAR'),
 			};
 		});
-	}, [role, burnoutSettings]);
+	}, [role, triggerRules]);
 
-	const patternText = usePatternText();
-	/** Built-ins are named from i18n, custom patterns by the name the QA Manager gave them. */
-	const driverLabel = (driver: BurnoutDriver) => {
-		const pattern = burnoutSettings.patterns.find((p) => p.id === driver.id);
-		return pattern ? patternText.patternName(pattern) : driver.id;
-	};
+	/** Drivers are the conditions of the burnout rules, labelled as in the rule editor. */
+	const driverLabel = (driver: BurnoutDriver) =>
+		describeCondition(tTriggers, driver.condition);
+
+	const header = (
+		<Group justify='space-between' align='flex-start' wrap='nowrap'>
+			<div>
+				<Text fw={600} size='sm'>
+					{t('burnout.title')}
+				</Text>
+				<Text size='sm' c='dimmed'>
+					{t(`burnout.listDescription.${role}`)}
+				</Text>
+			</div>
+			<Button
+				variant='subtle'
+				size='xs'
+				leftSection={<IconSettings size={14} />}
+				onClick={() =>
+					navigate(
+						role === 'qa-manager'
+							? '/qa/qa-manager/triggers'
+							: '/qa/supervisor/triggers'
+					)
+				}
+			>
+				{t('burnout.manageRules')}
+			</Button>
+		</Group>
+	);
 
 	if (candidates.length === 0) {
 		return (
 			<Stack gap='md'>
-				<Text fw={600} size='sm'>
-					{t('burnout.title')}
-				</Text>
+				{header}
 				<Text size='sm' c='dimmed' py='xl' ta='center'>
-					{t('burnout.historyEmpty')}
+					{t('burnout.empty')}
 				</Text>
 			</Stack>
 		);
@@ -98,15 +128,11 @@ const BurnoutView = () => {
 				<Table.Td>
 					<Group gap={4} wrap='wrap'>
 						{visible.map((driver) => (
-							<Badge
-								key={driver.id}
-								variant='outline'
-								size='sm'
-								color='red'
-								tt='none'
-							>
-								{driverLabel(driver)}
-							</Badge>
+							<Tooltip key={driver.id} label={driver.ruleName} withArrow>
+								<Badge variant='outline' size='sm' color='red' tt='none'>
+									{driverLabel(driver)}
+								</Badge>
+							</Tooltip>
 						))}
 						{hidden.length > 0 && (
 							<Tooltip label={hidden.map(driverLabel).join(', ')} withArrow>
@@ -135,14 +161,7 @@ const BurnoutView = () => {
 
 	return (
 		<Stack gap='md'>
-			<div>
-				<Text fw={600} size='sm'>
-					{t('burnout.title')}
-				</Text>
-				<Text size='sm' c='dimmed'>
-					{t(`burnout.listDescription.${role}`)}
-				</Text>
-			</div>
+			{header}
 
 			<div className={styles.tableSurface}>
 				<Table striped highlightOnHover verticalSpacing='sm' miw={860}>
