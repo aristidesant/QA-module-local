@@ -192,11 +192,16 @@
 			"updated": "Actualizada"
 		},
 		"status": { "ACTIVE": "Activa", "PAUSED": "Pausada", "DRAFT": "Borrador" },
+		"cadence": {
+			"ON_MATCH": "Cuando se cumplan las condiciones",
+			"WEEKLY": "Revisión semanal"
+		},
 		"actionSummary": {
 			"content_one": "Asignar {{count}} elemento · vence en {{days}} d",
 			"content_other": "Asignar {{count}} elementos · vence en {{days}} d",
 			"path": "Inscribir en {{path}} · vence en {{days}} d",
-			"withSession": "+ sesión"
+			"withSession": "+ sesión",
+			"withAiMessage": "+ mensaje IA"
 		},
 		"scopeSummary": {
 			"all": "Todos",
@@ -256,6 +261,8 @@
 				"notifySupervisor": "Notificar al supervisor",
 				"cooldown": "Espera (días)",
 				"cooldownHint": "Días antes de que esta regla pueda dispararse otra vez para el mismo agente",
+				"cadence": "Cadencia",
+				"sessionType": "Tipo de sesión",
 				"windowDays": "Ventana de medición (días)",
 				"checkpoints": "Puntos de control",
 				"successThreshold": "Umbral de éxito (puntos)",
@@ -264,6 +271,11 @@
 				"logic": "Lógica",
 				"showAllContent": "Mostrar material de todos los aspectos"
 			},
+			"cadenceHint": {
+				"ON_MATCH": "Se dispara por agente en cuanto se cumplen las condiciones.",
+				"WEEKLY": "Corre cada lunes sobre los últimos 7 días para todos los agentes del alcance."
+			},
+			"aiMessageHint": "El agente recibe en su inbox un resumen de su semana escrito por IA, con el material adjunto.",
 			"actionKinds": {
 				"ASSIGN_CONTENT": "Asignar material",
 				"ASSIGN_PATH": "Inscribir en una ruta"
@@ -320,7 +332,7 @@
 	},
 	"sessions": {
 		"title": "Sesiones de coaching",
-		"description": "Sesiones 1:1, lado a lado, micro y grupales.",
+		"description": "Sesiones 1:1, lado a lado, micro, grupales y mensajes IA.",
 		"filters": {
 			"status": "Estado",
 			"type": "Tipo",
@@ -328,7 +340,8 @@
 			"team": "Equipo",
 			"all": "Todos",
 			"upcoming": "Próximas",
-			"past": "Pasadas"
+			"past": "Pasadas",
+			"modality": "Modalidad"
 		},
 		"columns": {
 			"date": "Fecha",
@@ -345,8 +358,10 @@
 			"ONE_ON_ONE": "1:1",
 			"SIDE_BY_SIDE": "Lado a lado",
 			"GROUP": "Grupal",
-			"MICRO": "Micro (10 min)"
+			"MICRO": "Micro (10 min)",
+			"AI_MESSAGE": "Mensaje IA"
 		},
+		"modality": { "IN_PERSON": "Presencial", "REMOTE": "Remota" },
 		"status": {
 			"SCHEDULED": "Agendada",
 			"COMPLETED": "Completada",
@@ -409,6 +424,7 @@
 			"linked": "Material relacionado",
 			"openCall": "Abrir llamada",
 			"impactAfter": "Puntaje desde la sesión",
+			"aiMessage": "Mensaje IA",
 			"noEvidence": "No hay llamadas de evidencia.",
 			"noPoints": "Todavía no hay puntos a tratar.",
 			"noItems": "Todavía no hay acciones acordadas."

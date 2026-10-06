@@ -2,10 +2,24 @@
  * Coaching domain model: rules that turn low scores into learning, sessions,
  * cohorts and the queue that prioritises who needs attention. Mock-only.
  */
-import type { ConditionLogic, EvaluationArea, RuleCondition, RuleScope, RuleStatus } from './triggerRules';
+import type {
+	ConditionLogic,
+	EvaluationArea,
+	RuleCondition,
+	RuleScope,
+	RuleStatus,
+} from './triggerRules';
 
 export type CoachingActionKind = 'ASSIGN_CONTENT' | 'ASSIGN_PATH';
 export type CoachRole = 'SUPERVISOR' | 'QA_MANAGER';
+/** ON_MATCH fires when the conditions match ("Run now" today); WEEKLY reviews every agent each Monday over the last 7 days. */
+export type CoachingRuleCadence = 'ON_MATCH' | 'WEEKLY';
+export type CoachingSessionType =
+	| 'ONE_ON_ONE'
+	| 'SIDE_BY_SIDE'
+	| 'GROUP'
+	| 'MICRO'
+	| 'AI_MESSAGE';
 
 export interface CoachingRuleAction {
 	kind: CoachingActionKind;
@@ -15,6 +29,8 @@ export interface CoachingRuleAction {
 	dueInDays: number;
 	requireAcceptance: boolean;
 	scheduleSession: boolean;
+	/** What `scheduleSession` creates: a coach-led session or an AI-written message. */
+	sessionType: CoachingSessionType;
 	sessionTopic: string;
 	sessionCoach: CoachRole;
 	notifySupervisor: boolean;
@@ -49,6 +65,7 @@ export interface CoachingRule {
 	followUp: CoachingFollowUp;
 	/** Days before the same rule can fire again for the same agent. */
 	cooldownDays: number;
+	cadence: CoachingRuleCadence;
 	stats: CoachingRuleStats;
 	createdBy: string;
 	createdByRole: CoachRole;
@@ -56,8 +73,12 @@ export interface CoachingRule {
 	updatedAt: string;
 }
 
-export type CoachingSessionType = 'ONE_ON_ONE' | 'SIDE_BY_SIDE' | 'GROUP' | 'MICRO';
-export type CoachingSessionStatus = 'SCHEDULED' | 'COMPLETED' | 'MISSED' | 'CANCELLED';
+export type CoachingSessionStatus =
+	| 'SCHEDULED'
+	| 'COMPLETED'
+	| 'MISSED'
+	| 'CANCELLED';
+export type CoachingSessionModality = 'IN_PERSON' | 'REMOTE';
 
 export interface CoachingActionItem {
 	id: string;
@@ -76,6 +97,8 @@ export interface CoachingSessionRecord {
 	coachName: string;
 	coachRole: CoachRole;
 	type: CoachingSessionType;
+	/** null for AI_MESSAGE and MICRO. */
+	modality: CoachingSessionModality | null;
 	/** ISO datetime */
 	date: string;
 	durationMin: number;
@@ -86,8 +109,14 @@ export interface CoachingSessionRecord {
 	evidenceCallIds: string[];
 	talkingPoints: string[];
 	notes: string;
+	/** Generated text of an AI_MESSAGE session; null otherwise. */
+	aiMessage: string | null;
 	actionItems: CoachingActionItem[];
-	agentCommitment: { acknowledged: boolean; acknowledgedAt: string | null; comment: string | null };
+	agentCommitment: {
+		acknowledged: boolean;
+		acknowledgedAt: string | null;
+		comment: string | null;
+	};
 	status: CoachingSessionStatus;
 	outcome: string | null;
 	followUpDate: string | null;

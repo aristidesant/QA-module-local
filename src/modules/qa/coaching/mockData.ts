@@ -14,7 +14,8 @@ import type {
 } from '~/models/qa';
 import { TEAM_PROFILES } from '~/modules/qa/team/mockData';
 import { DIMENSION_TO_AREA } from '~/modules/qa/lms/constants';
-import { day, seeded } from '~/modules/qa/lms/mockData';
+import { day, seeded, LMS_CONTENT } from '~/modules/qa/lms/mockData';
+import { buildAiCoachingMessage } from './helpers';
 import { DEFAULT_FOLLOW_UP } from './constants';
 
 const CREATED_AT = '2026-07-01T09:00:00Z';
@@ -48,6 +49,51 @@ const condition = (
 
 export const COACHING_RULE_SEEDS: CoachingRule[] = [
 	{
+		id: 'cr-000',
+		name: 'Weekly QA review',
+		description:
+			'Every Monday, each agent under 90% QA over the last 7 days receives an AI-written review of their week with the critical-errors video attached.',
+		status: 'ACTIVE',
+		area: 'QUALITY_ASSURANCE',
+		conditions: [
+			condition({
+				id: 'cr-000-c1',
+				metricId: 'QA_OVERALL_SCORE',
+				operator: 'LT',
+				value: 90,
+				window: 'LAST_7_DAYS',
+			}),
+		],
+		conditionLogic: 'ALL',
+		scope: emptyScope(),
+		action: {
+			kind: 'ASSIGN_CONTENT',
+			contentIds: ['lms-c07'],
+			pathId: null,
+			mandatory: false,
+			dueInDays: 7,
+			requireAcceptance: false,
+			scheduleSession: true,
+			sessionType: 'AI_MESSAGE',
+			sessionTopic: 'Weekly QA review',
+			sessionCoach: 'QA_MANAGER',
+			notifySupervisor: true,
+		},
+		followUp: { ...DEFAULT_FOLLOW_UP, windowDays: 7, checkpointDays: [7] },
+		cooldownDays: 7,
+		cadence: 'WEEKLY',
+		stats: {
+			triggeredLast30Days: 14,
+			agentsAffected: 9,
+			improvedRate: 55,
+			lastTriggeredAt: '2026-09-07T08:00:00Z',
+		},
+		createdBy: 'Elena Ruiz',
+		createdByRole: 'QA_MANAGER',
+		createdAt: CREATED_AT,
+		updatedAt: UPDATED_AT,
+	},
+	{
 		id: 'cr-001',
 		name: 'Compliance below 85 → certification',
 		description:
@@ -73,12 +119,14 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 			dueInDays: 14,
 			requireAcceptance: true,
 			scheduleSession: false,
+			sessionType: 'ONE_ON_ONE',
 			sessionTopic: 'Mandatory disclosures',
 			sessionCoach: 'QA_MANAGER',
 			notifySupervisor: true,
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 30,
+		cadence: 'ON_MATCH',
 		stats: {
 			triggeredLast30Days: 6,
 			agentsAffected: 5,
@@ -116,12 +164,14 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 			dueInDays: 10,
 			requireAcceptance: true,
 			scheduleSession: true,
+			sessionType: 'ONE_ON_ONE',
 			sessionTopic: 'Handling frustrated customers',
 			sessionCoach: 'SUPERVISOR',
 			notifySupervisor: true,
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 21,
+		cadence: 'ON_MATCH',
 		stats: {
 			triggeredLast30Days: 3,
 			agentsAffected: 3,
@@ -162,12 +212,14 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 			dueInDays: 7,
 			requireAcceptance: true,
 			scheduleSession: false,
+			sessionType: 'ONE_ON_ONE',
 			sessionTopic: 'Needs assessment',
 			sessionCoach: 'SUPERVISOR',
 			notifySupervisor: false,
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 14,
+		cadence: 'ON_MATCH',
 		stats: {
 			triggeredLast30Days: 2,
 			agentsAffected: 2,
@@ -205,12 +257,14 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 			dueInDays: 21,
 			requireAcceptance: false,
 			scheduleSession: false,
+			sessionType: 'ONE_ON_ONE',
 			sessionTopic: 'Objection handling',
 			sessionCoach: 'SUPERVISOR',
 			notifySupervisor: true,
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 45,
+		cadence: 'ON_MATCH',
 		stats: {
 			triggeredLast30Days: 4,
 			agentsAffected: 4,
@@ -249,12 +303,14 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 			dueInDays: 3,
 			requireAcceptance: true,
 			scheduleSession: true,
+			sessionType: 'ONE_ON_ONE',
 			sessionTopic: 'Mandatory disclosures',
 			sessionCoach: 'QA_MANAGER',
 			notifySupervisor: true,
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP, checkpointDays: [7, 30] },
 		cooldownDays: 7,
+		cadence: 'ON_MATCH',
 		stats: {
 			triggeredLast30Days: 1,
 			agentsAffected: 1,
@@ -293,12 +349,14 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 			dueInDays: 30,
 			requireAcceptance: true,
 			scheduleSession: false,
+			sessionType: 'ONE_ON_ONE',
 			sessionTopic: 'Needs assessment',
 			sessionCoach: 'SUPERVISOR',
 			notifySupervisor: true,
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 30,
+		cadence: 'ON_MATCH',
 		stats: {
 			triggeredLast30Days: 0,
 			agentsAffected: 0,
@@ -336,12 +394,14 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 			dueInDays: 5,
 			requireAcceptance: true,
 			scheduleSession: false,
+			sessionType: 'ONE_ON_ONE',
 			sessionTopic: 'Auto-fail prevention',
 			sessionCoach: 'SUPERVISOR',
 			notifySupervisor: true,
 		},
 		followUp: { ...DEFAULT_FOLLOW_UP },
 		cooldownDays: 14,
+		cadence: 'ON_MATCH',
 		stats: {
 			triggeredLast30Days: 0,
 			agentsAffected: 0,
@@ -386,6 +446,7 @@ function buildRosterSessions(): CoachingSessionRecord[] {
 				coachName: legacy.coachName,
 				coachRole: legacy.coachRole,
 				type: 'ONE_ON_ONE',
+				modality: rand() < 0.6 ? 'IN_PERSON' : 'REMOTE',
 				date: legacy.date,
 				durationMin: 30,
 				topic: legacy.topic,
@@ -399,6 +460,7 @@ function buildRosterSessions(): CoachingSessionRecord[] {
 					'Agree one behaviour to practise',
 				],
 				notes: '',
+				aiMessage: null,
 				actionItems:
 					status === 'COMPLETED'
 						? [
@@ -515,6 +577,7 @@ function buildAgentHistoryAGT004(): CoachingSessionRecord[] {
 			coachName: isQaManager ? 'Elena Ruiz' : 'Maria García',
 			coachRole: meta.coachRole,
 			type: 'ONE_ON_ONE',
+			modality: 'IN_PERSON',
 			date: `${date}T${10 + Math.floor(rand() * 6)}:00:00Z`,
 			durationMin: 30,
 			topic: meta.topic,
@@ -526,6 +589,7 @@ function buildAgentHistoryAGT004(): CoachingSessionRecord[] {
 				'Agree one behaviour to practise before the next session',
 			],
 			notes: '',
+			aiMessage: null,
 			actionItems: missed
 				? []
 				: [
@@ -560,8 +624,57 @@ function buildAgentHistoryAGT004(): CoachingSessionRecord[] {
 	return out;
 }
 
+const WEEKLY_RUN_AT = '2026-09-07T08:00:00Z';
+
+/** Last Monday's run of the weekly rule: one AI-written message per agent. */
+const weeklyAiMessage = (
+	agentId: string,
+	id: string
+): CoachingSessionRecord => {
+	const profile = TEAM_PROFILES[agentId];
+	const title = LMS_CONTENT.find((c) => c.id === 'lms-c07')?.title;
+	return {
+		id,
+		agentId,
+		agentName: profile.agent.name,
+		coachId: 'QAM-001',
+		coachName: 'Elena Ruiz',
+		coachRole: 'QA_MANAGER',
+		type: 'AI_MESSAGE',
+		modality: null,
+		date: WEEKLY_RUN_AT,
+		durationMin: 0,
+		topic: 'Weekly QA review',
+		area: 'QUALITY_ASSURANCE',
+		subItem: null,
+		evidenceCallIds: [],
+		talkingPoints: [],
+		notes: '',
+		aiMessage: buildAiCoachingMessage(
+			profile,
+			'Weekly QA review',
+			title ? [title] : []
+		),
+		actionItems: [],
+		agentCommitment: {
+			acknowledged: false,
+			acknowledgedAt: null,
+			comment: null,
+		},
+		status: 'COMPLETED',
+		outcome: null,
+		followUpDate: null,
+		linkedAssignmentIds: [],
+		ruleId: 'cr-000',
+		cohortId: null,
+	};
+};
+
 const CURATED_SESSIONS: CoachingSessionRecord[] = [
 	...buildAgentHistoryAGT004(),
+	weeklyAiMessage('AGT-004', 'coa-a04-weekly'),
+	weeklyAiMessage('AGT-006', 'coa-a06-weekly'),
+	weeklyAiMessage('AGT-013', 'coa-a13-weekly'),
 	{
 		id: 'coa-a04-rule',
 		agentId: 'AGT-004',
@@ -570,6 +683,7 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 		coachName: 'Maria García',
 		coachRole: 'SUPERVISOR',
 		type: 'ONE_ON_ONE',
+		modality: 'IN_PERSON',
 		date: '2026-09-16T14:00:00Z',
 		durationMin: 30,
 		topic: 'Handling frustrated customers',
@@ -582,6 +696,7 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 			'Agree the de-escalation phrases to use',
 		],
 		notes: '',
+		aiMessage: null,
 		actionItems: [],
 		agentCommitment: {
 			acknowledged: false,
@@ -603,6 +718,7 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 		coachName: 'Maria García',
 		coachRole: 'SUPERVISOR',
 		type: 'SIDE_BY_SIDE',
+		modality: 'IN_PERSON',
 		date: '2026-09-15T09:30:00Z',
 		durationMin: 45,
 		topic: 'Stress management',
@@ -614,6 +730,7 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 			'Agree a micro-break routine',
 		],
 		notes: '',
+		aiMessage: null,
 		actionItems: [],
 		agentCommitment: {
 			acknowledged: false,
@@ -635,6 +752,7 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 		coachName: 'Elena Ruiz',
 		coachRole: 'QA_MANAGER',
 		type: 'ONE_ON_ONE',
+		modality: 'REMOTE',
 		date: '2026-09-04T11:00:00Z',
 		durationMin: 30,
 		topic: 'Mandatory disclosures',
@@ -646,6 +764,7 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 			'Review the flagged call',
 		],
 		notes: 'Agent was receptive; the miss came from a rushed queue.',
+		aiMessage: null,
 		actionItems: [
 			{
 				id: 'coa-a17-1-ai1',
@@ -685,6 +804,7 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 		coachName: 'Maria García',
 		coachRole: 'SUPERVISOR',
 		type: 'GROUP',
+		modality: 'REMOTE',
 		date: '2026-09-19T16:00:00Z',
 		durationMin: 60,
 		topic: 'Empathy & tone',
@@ -696,6 +816,7 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 			'Practise empathy statements in pairs',
 		],
 		notes: '',
+		aiMessage: null,
 		actionItems: [],
 		agentCommitment: {
 			acknowledged: false,
@@ -761,6 +882,17 @@ export const COACHING_COHORT_SEEDS: CoachingCohort[] = [
 // ── Activity ──────────────────────────────────────────────────────────────────
 
 export const COACHING_ACTIVITY_SEEDS: CoachingActivityEntry[] = [
+	{
+		id: 'cact-weekly',
+		type: 'RULE_FIRED',
+		agentId: null,
+		agentName: null,
+		title: 'Weekly QA review',
+		description: 'QA_OVERALL_SCORE < 90 over the last 7 days · 3 agents',
+		date: WEEKLY_RUN_AT,
+		area: 'QUALITY_ASSURANCE',
+		link: '?tab=rules',
+	},
 	{
 		id: 'cact-012',
 		type: 'RULE_FIRED',

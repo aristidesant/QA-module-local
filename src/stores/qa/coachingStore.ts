@@ -7,9 +7,12 @@ import type {
 	CoachingRule,
 	CoachingSessionRecord,
 	CoachRole,
+	CoachingSessionModality,
 	RuleStatus,
 } from '~/models/qa';
 import { useLmsStore } from '~/stores/qa/lmsStore';
+import { useTeamStore } from '~/stores/qa/teamStore';
+import { buildAiCoachingMessage } from '~/modules/qa/coaching/helpers';
 import { buildNotification } from '~/modules/qa/inbox/helpers';
 import { useNotificationStore } from '~/stores/qa/notificationStore';
 import {
@@ -37,12 +40,14 @@ export interface ScheduleSessionInput {
 	date: string;
 	durationMin: number;
 	type: CoachingSessionRecord['type'];
+	modality: CoachingSessionModality | null;
 	topic: string;
 	area: CoachingSessionRecord['area'];
 	subItem: string | null;
 	evidenceCallIds: string[];
 	talkingPoints: string[];
 	notes: string;
+	aiMessage?: string | null;
 	linkedAssignmentIds: string[];
 	ruleId?: string | null;
 	cohortId?: string | null;
@@ -240,19 +245,35 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 
 			if (rule.action.scheduleSession) {
 				const agent = TEAM_AGENTS.find((a) => a.id === agentId);
+				const isAi = rule.action.sessionType === 'AI_MESSAGE';
+				const profile = useTeamStore.getState().profiles[agentId];
+				const currentLms = useLmsStore.getState();
+				const titles = createdIds
+					.map((id) => currentLms.assignments.find((a) => a.id === id))
+					.map((a) =>
+						a
+							? currentLms.content.find((c) => c.id === a.contentId)?.title
+							: undefined
+					)
+					.filter((title): title is string => Boolean(title));
 				get().scheduleSession(
 					{
 						agentId,
 						agentName: agent?.name ?? agentId,
-						date: `${day(today(), 3)}T10:00:00Z`,
-						durationMin: 30,
-						type: 'ONE_ON_ONE',
+						date: isAi ? NOW_ISO : `${day(today(), 3)}T10:00:00Z`,
+						durationMin: isAi ? 0 : 30,
+						type: rule.action.sessionType,
+						modality: isAi ? null : 'REMOTE',
 						topic: rule.action.sessionTopic,
 						area: rule.area,
 						subItem: null,
 						evidenceCallIds: [],
 						talkingPoints: [],
 						notes: '',
+						aiMessage:
+							isAi && profile
+								? buildAiCoachingMessage(profile, rule.name, titles)
+								: null,
 						linkedAssignmentIds: createdIds,
 						ruleId: rule.id,
 					},
@@ -307,6 +328,7 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 			coachName: by.name,
 			coachRole: by.role,
 			type: input.type,
+			modality: input.modality,
 			date: input.date,
 			durationMin: input.durationMin,
 			topic: input.topic,
@@ -315,13 +337,14 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 			evidenceCallIds: input.evidenceCallIds,
 			talkingPoints: input.talkingPoints,
 			notes: input.notes,
+			aiMessage: input.aiMessage ?? null,
 			actionItems: [],
 			agentCommitment: {
 				acknowledged: false,
 				acknowledgedAt: null,
 				comment: null,
 			},
-			status: 'SCHEDULED',
+			status: input.type === 'AI_MESSAGE' ? 'COMPLETED' : 'SCHEDULED',
 			outcome: null,
 			followUpDate: null,
 			linkedAssignmentIds: input.linkedAssignmentIds,
@@ -331,21 +354,37 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 
 		set((s) => ({ sessions: [session, ...s.sessions] }));
 
-		get().logActivity({
-			type: 'SESSION_SCHEDULED',
-			agentId: session.agentId,
-			agentName: session.agentName,
-			title: `Coaching scheduled: ${session.topic}`,
-			description: `${session.coachName} · ${new Date(session.date).toLocaleString()}`,
-			area: session.area,
-			link: '?tab=sessions',
-		});
-
-		notifySession(
-			session,
-			`Coaching session scheduled: ${session.topic}`,
-			`${session.coachName} scheduled a coaching session for ${new Date(session.date).toLocaleString()}.`
-		);
+		if (session.type === 'AI_MESSAGE') {
+			get().logActivity({
+				type: 'SESSION_COMPLETED',
+				agentId: session.agentId,
+				agentName: session.agentName,
+				title: `Coaching message sent: ${session.topic}`,
+				description: `${session.coachName} · AI message`,
+				area: session.area,
+				link: '?tab=sessions',
+			});
+			notifySession(
+				session,
+				`Weekly coaching message: ${session.topic}`,
+				session.aiMessage ?? ''
+			);
+		} else {
+			get().logActivity({
+				type: 'SESSION_SCHEDULED',
+				agentId: session.agentId,
+				agentName: session.agentName,
+				title: `Coaching scheduled: ${session.topic}`,
+				description: `${session.coachName} · ${new Date(session.date).toLocaleString()}`,
+				area: session.area,
+				link: '?tab=sessions',
+			});
+			notifySession(
+				session,
+				`Coaching session scheduled: ${session.topic}`,
+				`${session.coachName} scheduled a coaching session for ${new Date(session.date).toLocaleString()}.`
+			);
+		}
 
 		return session;
 	},

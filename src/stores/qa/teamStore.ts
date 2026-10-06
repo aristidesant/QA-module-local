@@ -136,6 +136,7 @@ export const useTeamStore = create<TeamState>((set, get) => ({
 				date: input.date,
 				durationMin: 30,
 				type: 'ONE_ON_ONE',
+				modality: 'IN_PERSON',
 				topic: input.topic,
 				area: input.linkedDimension
 					? DIMENSION_TO_AREA[input.linkedDimension]

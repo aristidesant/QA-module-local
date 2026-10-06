@@ -192,11 +192,16 @@
 			"updated": "Updated"
 		},
 		"status": { "ACTIVE": "Active", "PAUSED": "Paused", "DRAFT": "Draft" },
+		"cadence": {
+			"ON_MATCH": "When conditions match",
+			"WEEKLY": "Weekly review"
+		},
 		"actionSummary": {
 			"content_one": "Assign {{count}} item · due in {{days}} d",
 			"content_other": "Assign {{count}} items · due in {{days}} d",
 			"path": "Enrol in {{path}} · due in {{days}} d",
-			"withSession": "+ session"
+			"withSession": "+ session",
+			"withAiMessage": "+ AI message"
 		},
 		"scopeSummary": {
 			"all": "Everyone",
@@ -256,6 +261,8 @@
 				"notifySupervisor": "Notify the supervisor",
 				"cooldown": "Cooldown (days)",
 				"cooldownHint": "Days before this rule can fire again for the same agent",
+				"cadence": "Cadence",
+				"sessionType": "Session kind",
 				"windowDays": "Measurement window (days)",
 				"checkpoints": "Checkpoints",
 				"successThreshold": "Success threshold (points)",
@@ -264,6 +271,11 @@
 				"logic": "Logic",
 				"showAllContent": "Show material from every aspect"
 			},
+			"cadenceHint": {
+				"ON_MATCH": "Fires for each agent as soon as the conditions match.",
+				"WEEKLY": "Runs every Monday over the last 7 days for every agent in scope."
+			},
+			"aiMessageHint": "The agent receives an AI-written summary of their week with the material attached, in their inbox.",
 			"actionKinds": {
 				"ASSIGN_CONTENT": "Assign material",
 				"ASSIGN_PATH": "Enrol in a learning path"
@@ -320,7 +332,7 @@
 	},
 	"sessions": {
 		"title": "Coaching sessions",
-		"description": "1:1, side-by-side, micro and group sessions.",
+		"description": "1:1, side-by-side, micro, group sessions and AI messages.",
 		"filters": {
 			"status": "Status",
 			"type": "Type",
@@ -328,7 +340,8 @@
 			"team": "Team",
 			"all": "All",
 			"upcoming": "Upcoming",
-			"past": "Past"
+			"past": "Past",
+			"modality": "Modality"
 		},
 		"columns": {
 			"date": "Date",
@@ -345,8 +358,10 @@
 			"ONE_ON_ONE": "1:1",
 			"SIDE_BY_SIDE": "Side-by-side",
 			"GROUP": "Group",
-			"MICRO": "Micro (10 min)"
+			"MICRO": "Micro (10 min)",
+			"AI_MESSAGE": "AI message"
 		},
+		"modality": { "IN_PERSON": "In person", "REMOTE": "Remote" },
 		"status": {
 			"SCHEDULED": "Scheduled",
 			"COMPLETED": "Completed",
@@ -409,6 +424,7 @@
 			"linked": "Linked material",
 			"openCall": "Open call",
 			"impactAfter": "Score since session",
+			"aiMessage": "AI message",
 			"noEvidence": "No evidence calls pinned.",
 			"noPoints": "No talking points yet.",
 			"noItems": "No action items yet."

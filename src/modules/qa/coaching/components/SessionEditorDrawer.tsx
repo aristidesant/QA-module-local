@@ -18,14 +18,31 @@ import { IconCalendarEvent, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { AppDrawer } from '~/components/AppDrawer';
 import { SectionCard } from '~/components/SectionCard';
-import type { CoachingCohort, CoachingSessionType, EvaluationArea, LmsAssignment, LmsContent } from '~/models/qa';
+import type {
+	CoachingCohort,
+	CoachingSessionModality,
+	CoachingSessionType,
+	EvaluationArea,
+	LmsAssignment,
+	LmsContent,
+} from '~/models/qa';
 import { notifySuccess, notifyWarning } from '~/modules/qa/utils/notifications';
 import { useCoachingStore } from '~/stores/qa/coachingStore';
 import { LMS_AREA_META, SUB_ITEMS_BY_AREA } from '~/modules/qa/lms/constants';
-import { managerScopeAgents, type ManagerPersona } from '~/modules/qa/lms/helpers';
+import {
+	managerScopeAgents,
+	type ManagerPersona,
+} from '~/modules/qa/lms/helpers';
 import { EVALUATION_AREAS } from '~/modules/qa/triggers/constants';
 import type { TeamRole } from '~/modules/qa/team/types';
-import { COACHING_TOPICS, SESSION_DURATIONS, SESSION_TYPES } from '../constants';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
+import {
+	COACHING_TOPICS,
+	MODALITY_FREE_TYPES,
+	SESSION_DURATIONS,
+	SESSION_MODALITIES,
+	SESSION_TYPES,
+} from '../constants';
 
 export interface SessionPreset {
 	agentId?: string;
@@ -53,6 +70,7 @@ interface FormValues {
 	date: string | null;
 	durationMin: number;
 	type: CoachingSessionType;
+	modality: CoachingSessionModality;
 	topic: string | null;
 	area: string | null;
 	subItem: string | null;
@@ -90,6 +108,7 @@ export function SessionEditorDrawer({
 			date: tomorrowAt10(),
 			durationMin: 30,
 			type: 'ONE_ON_ONE',
+			modality: 'IN_PERSON',
 			topic: COACHING_TOPICS[0],
 			area: null,
 			subItem: null,
@@ -107,6 +126,7 @@ export function SessionEditorDrawer({
 			date: tomorrowAt10(),
 			durationMin: 30,
 			type: preset?.type ?? (preset?.cohortId ? 'GROUP' : 'ONE_ON_ONE'),
+			modality: 'IN_PERSON',
 			topic: preset?.topic ?? COACHING_TOPICS[0],
 			area: preset?.area ?? null,
 			subItem: null,
@@ -124,17 +144,21 @@ export function SessionEditorDrawer({
 	const agentAssignments = useMemo(
 		() =>
 			form.values.agentId
-				? assignments.filter((a) => a.agentId === form.values.agentId && a.status !== 'COMPLETED')
+				? assignments.filter(
+						(a) => a.agentId === form.values.agentId && a.status !== 'COMPLETED'
+					)
 				: [],
 		[assignments, form.values.agentId]
 	);
 
 	const subItemOptions = useMemo(() => {
 		if (!form.values.area) return [];
-		return (SUB_ITEMS_BY_AREA[form.values.area as EvaluationArea] ?? []).map((key) => ({
-			value: key,
-			label: t(`subItems.${key}`, { ns: 'qa.lms' }),
-		}));
+		return (SUB_ITEMS_BY_AREA[form.values.area as EvaluationArea] ?? []).map(
+			(key) => ({
+				value: key,
+				label: t(`subItems.${key}`, { ns: 'qa.lms' }),
+			})
+		);
 	}, [form.values.area, t]);
 
 	const addPoint = () => {
@@ -159,7 +183,9 @@ export function SessionEditorDrawer({
 
 		const cohort = cohorts.find((c) => c.id === form.values.cohortId);
 		const agent = scopeAgents.find((a) => a.id === form.values.agentId);
-		const agentId = isGroup ? (cohort?.agentIds[0] ?? '') : (form.values.agentId as string);
+		const agentId = isGroup
+			? (cohort?.agentIds[0] ?? '')
+			: (form.values.agentId as string);
 		const agentName = isGroup
 			? `${cohort?.name ?? ''} (${cohort?.agentIds.length ?? 0} agents)`
 			: (agent?.name ?? '');
@@ -171,6 +197,9 @@ export function SessionEditorDrawer({
 				date: new Date(form.values.date).toISOString(),
 				durationMin: form.values.durationMin,
 				type: form.values.type,
+				modality: MODALITY_FREE_TYPES.includes(form.values.type)
+					? null
+					: form.values.modality,
 				topic: form.values.topic,
 				area: (form.values.area as EvaluationArea) ?? null,
 				subItem: form.values.subItem,
@@ -201,21 +230,45 @@ export function SessionEditorDrawer({
 					<Stack gap='sm'>
 						<Select
 							label={t('sessions.editor.type')}
-							data={SESSION_TYPES.map((s) => ({ value: s, label: t(`sessions.types.${s}`) }))}
+							data={SESSION_TYPES.map((s) => ({
+								value: s,
+								label: t(`sessions.types.${s}`),
+							}))}
 							value={form.values.type}
-							onChange={(v) => v && form.setFieldValue('type', v as CoachingSessionType)}
+							onChange={(v) =>
+								v && form.setFieldValue('type', v as CoachingSessionType)
+							}
 						/>
+						{!MODALITY_FREE_TYPES.includes(form.values.type) && (
+							<AppSegmentedControl
+								size='sm'
+								value={form.values.modality}
+								onChange={(v) =>
+									form.setFieldValue('modality', v as CoachingSessionModality)
+								}
+								data={SESSION_MODALITIES.map((m) => ({
+									value: m,
+									label: t(`sessions.modality.${m}`),
+								}))}
+							/>
+						)}
 						{isGroup ? (
 							<Select
 								label={t('sessions.editor.cohort')}
-								data={cohorts.map((c) => ({ value: c.id, label: `${c.name} · ${c.agentIds.length}` }))}
+								data={cohorts.map((c) => ({
+									value: c.id,
+									label: `${c.name} · ${c.agentIds.length}`,
+								}))}
 								value={form.values.cohortId}
 								onChange={(v) => form.setFieldValue('cohortId', v)}
 							/>
 						) : (
 							<Select
 								label={t('sessions.editor.agent')}
-								data={scopeAgents.map((a) => ({ value: a.id, label: `${a.name} · ${a.team}` }))}
+								data={scopeAgents.map((a) => ({
+									value: a.id,
+									label: `${a.name} · ${a.team}`,
+								}))}
 								value={form.values.agentId}
 								onChange={(v) => form.setFieldValue('agentId', v)}
 								searchable
@@ -239,7 +292,12 @@ export function SessionEditorDrawer({
 							max={120}
 							step={5}
 							value={form.values.durationMin}
-							onChange={(v) => form.setFieldValue('durationMin', typeof v === 'number' ? v : 30)}
+							onChange={(v) =>
+								form.setFieldValue(
+									'durationMin',
+									typeof v === 'number' ? v : 30
+								)
+							}
 						/>
 					</Group>
 					<Group gap='xs' mt='xs'>
@@ -305,7 +363,11 @@ export function SessionEditorDrawer({
 									onChange={(e) => setPointDraft(e.currentTarget.value)}
 									flex={1}
 								/>
-								<Button variant='light' leftSection={<IconPlus size={14} />} onClick={addPoint}>
+								<Button
+									variant='light'
+									leftSection={<IconPlus size={14} />}
+									onClick={addPoint}
+								>
 									{t('sessions.editor.addPoint')}
 								</Button>
 							</Group>
@@ -316,7 +378,11 @@ export function SessionEditorDrawer({
 										size='sm'
 										variant='subtle'
 										color='red'
-										onClick={() => setTalkingPoints((prev) => prev.filter((_, idx) => idx !== i))}
+										onClick={() =>
+											setTalkingPoints((prev) =>
+												prev.filter((_, idx) => idx !== i)
+											)
+										}
 									>
 										<IconTrash size={14} />
 									</ActionIcon>
@@ -341,7 +407,9 @@ export function SessionEditorDrawer({
 							autosize
 							minRows={2}
 							value={form.values.notes}
-							onChange={(e) => form.setFieldValue('notes', e.currentTarget.value)}
+							onChange={(e) =>
+								form.setFieldValue('notes', e.currentTarget.value)
+							}
 						/>
 					</Stack>
 				</SectionCard>

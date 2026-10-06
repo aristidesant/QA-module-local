@@ -15,6 +15,8 @@ import {
 import type {
 	CoachingPriority,
 	CoachingQueueReasonKind,
+	CoachingRuleCadence,
+	CoachingSessionModality,
 	CoachingSessionStatus,
 	CoachingSessionType,
 	CoachingSuggestedAction,
@@ -75,6 +77,21 @@ export const SESSION_TYPES: CoachingSessionType[] = [
 	'SIDE_BY_SIDE',
 	'GROUP',
 	'MICRO',
+];
+/** Types a rule can produce; the manual editor never creates AI messages. */
+export const RULE_SESSION_TYPES: CoachingSessionType[] = [
+	'ONE_ON_ONE',
+	'AI_MESSAGE',
+];
+export const SESSION_MODALITIES: CoachingSessionModality[] = [
+	'IN_PERSON',
+	'REMOTE',
+];
+export const RULE_CADENCES: CoachingRuleCadence[] = ['ON_MATCH', 'WEEKLY'];
+/** Types that have no physical/remote modality. */
+export const MODALITY_FREE_TYPES: CoachingSessionType[] = [
+	'MICRO',
+	'AI_MESSAGE',
 ];
 export const SESSION_DURATIONS = [15, 30, 45, 60];
 export const SESSION_STATUSES: CoachingSessionStatus[] = [

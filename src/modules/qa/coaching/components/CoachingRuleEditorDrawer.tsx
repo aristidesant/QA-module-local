@@ -8,6 +8,7 @@ import {
 	Select,
 	Stack,
 	Switch,
+	Text,
 	Textarea,
 	TextInput,
 } from '@mantine/core';
@@ -23,6 +24,7 @@ import type {
 	CoachingFollowUp,
 	CoachingRule,
 	CoachingRuleAction,
+	CoachingRuleCadence,
 	CoachRole,
 	ConditionLogic,
 	EvaluationArea,
@@ -44,10 +46,19 @@ import { TRIGGER_CAMPAIGNS } from '~/modules/qa/triggers/mockData';
 import { useLmsStore, selectContent, selectPaths } from '~/stores/qa/lmsStore';
 import { useCoachingStore, nextCoachingId } from '~/stores/qa/coachingStore';
 import { LMS_AREA_META } from '~/modules/qa/lms/constants';
-import { managerScopeAgents, type ManagerPersona } from '~/modules/qa/lms/helpers';
+import {
+	managerScopeAgents,
+	type ManagerPersona,
+} from '~/modules/qa/lms/helpers';
 import type { TeamRole } from '~/modules/qa/team/types';
 import { NOW_ISO } from '~/modules/qa/team/constants';
-import { COACHING_TOPICS, DEFAULT_FOLLOW_UP, MAX_RULE_CONDITIONS } from '../constants';
+import {
+	COACHING_TOPICS,
+	DEFAULT_FOLLOW_UP,
+	MAX_RULE_CONDITIONS,
+	RULE_CADENCES,
+	RULE_SESSION_TYPES,
+} from '../constants';
 
 interface CoachingRuleFormValues {
 	name: string;
@@ -60,6 +71,7 @@ interface CoachingRuleFormValues {
 	action: CoachingRuleAction;
 	followUp: CoachingFollowUp;
 	cooldownDays: number;
+	cadence: CoachingRuleCadence;
 	showAllContent: boolean;
 }
 
@@ -74,7 +86,8 @@ interface CoachingRuleEditorDrawerProps {
 }
 
 const firstMetricOf = (area: EvaluationArea) =>
-	TRIGGER_METRIC_CATALOG.find((m) => m.area === area) ?? TRIGGER_METRIC_CATALOG[0];
+	TRIGGER_METRIC_CATALOG.find((m) => m.area === area) ??
+	TRIGGER_METRIC_CATALOG[0];
 
 const buildCondition = (area: EvaluationArea): RuleCondition => {
 	const metric = firstMetricOf(area);
@@ -133,12 +146,14 @@ export function CoachingRuleEditorDrawer({
 				dueInDays: 14,
 				requireAcceptance: true,
 				scheduleSession: false,
+				sessionType: 'ONE_ON_ONE',
 				sessionTopic: COACHING_TOPICS[0],
 				sessionCoach: role === 'qa-manager' ? 'QA_MANAGER' : 'SUPERVISOR',
 				notifySupervisor: true,
 			},
 			followUp: { ...DEFAULT_FOLLOW_UP },
 			cooldownDays: 30,
+			cadence: 'ON_MATCH',
 			showAllContent: false,
 		},
 	});
@@ -161,6 +176,7 @@ export function CoachingRuleEditorDrawer({
 				action: rule.action,
 				followUp: rule.followUp,
 				cooldownDays: rule.cooldownDays,
+				cadence: rule.cadence,
 				showAllContent: false,
 			});
 		} else {
@@ -181,12 +197,14 @@ export function CoachingRuleEditorDrawer({
 					dueInDays: 14,
 					requireAcceptance: true,
 					scheduleSession: false,
+					sessionType: 'ONE_ON_ONE',
 					sessionTopic: COACHING_TOPICS[0],
 					sessionCoach: role === 'qa-manager' ? 'QA_MANAGER' : 'SUPERVISOR',
 					notifySupervisor: true,
 				},
 				followUp: { ...DEFAULT_FOLLOW_UP },
 				cooldownDays: 30,
+				cadence: 'ON_MATCH',
 				showAllContent: false,
 			});
 		}
@@ -196,7 +214,9 @@ export function CoachingRuleEditorDrawer({
 
 	const contentOptions = useMemo(() => {
 		const pool = content.filter(
-			(c) => c.status === 'PUBLISHED' && (form.values.showAllContent || c.area === form.values.area)
+			(c) =>
+				c.status === 'PUBLISHED' &&
+				(form.values.showAllContent || c.area === form.values.area)
 		);
 		return pool.map((c) => ({
 			value: c.id,
@@ -212,11 +232,18 @@ export function CoachingRuleEditorDrawer({
 
 	const validate = (): string | null => {
 		if (!form.values.name.trim()) return t('rules.editor.validation.name');
-		if (form.values.conditions.length === 0) return t('rules.editor.validation.condition');
-		if (form.values.action.kind === 'ASSIGN_CONTENT' && form.values.action.contentIds.length === 0) {
+		if (form.values.conditions.length === 0)
+			return t('rules.editor.validation.condition');
+		if (
+			form.values.action.kind === 'ASSIGN_CONTENT' &&
+			form.values.action.contentIds.length === 0
+		) {
 			return t('rules.editor.validation.content');
 		}
-		if (form.values.action.kind === 'ASSIGN_PATH' && !form.values.action.pathId) {
+		if (
+			form.values.action.kind === 'ASSIGN_PATH' &&
+			!form.values.action.pathId
+		) {
 			return t('rules.editor.validation.path');
 		}
 		if (form.values.action.dueInDays < 1 || form.values.action.dueInDays > 90) {
@@ -228,7 +255,8 @@ export function CoachingRuleEditorDrawer({
 	const buildRule = (status: RuleStatus): CoachingRule => {
 		const scope: RuleScope = {
 			...form.values.scope,
-			agentIds: form.values.scopeMode === 'agents' ? form.values.scope.agentIds : [],
+			agentIds:
+				form.values.scopeMode === 'agents' ? form.values.scope.agentIds : [],
 			supervisorIds:
 				form.values.scopeMode === 'teams'
 					? form.values.scope.supervisorIds
@@ -242,13 +270,26 @@ export function CoachingRuleEditorDrawer({
 			description: form.values.description.trim(),
 			status,
 			area: form.values.area,
-			conditions: form.values.conditions,
+			// Weekly rules always read the last 7 days, whatever the conditions were set to.
+			conditions:
+				form.values.cadence === 'WEEKLY'
+					? form.values.conditions.map((c) => ({
+							...c,
+							window: 'LAST_7_DAYS' as const,
+						}))
+					: form.values.conditions,
 			conditionLogic: form.values.conditionLogic,
 			scope,
 			action: form.values.action,
 			followUp: form.values.followUp,
 			cooldownDays: form.values.cooldownDays,
-			stats: rule?.stats ?? { triggeredLast30Days: 0, agentsAffected: 0, improvedRate: null, lastTriggeredAt: null },
+			cadence: form.values.cadence,
+			stats: rule?.stats ?? {
+				triggeredLast30Days: 0,
+				agentsAffected: 0,
+				improvedRate: null,
+				lastTriggeredAt: null,
+			},
 			createdBy: rule?.createdBy ?? persona.name,
 			createdByRole: (rule?.createdByRole ?? persona.role) as CoachRole,
 			createdAt: rule?.createdAt ?? NOW_ISO,
@@ -296,7 +337,11 @@ export function CoachingRuleEditorDrawer({
 			opened={opened}
 			onClose={handleClose}
 			size='xl'
-			title={mode === 'create' ? t('rules.editor.createTitle') : t('rules.editor.editTitle')}
+			title={
+				mode === 'create'
+					? t('rules.editor.createTitle')
+					: t('rules.editor.editTitle')
+			}
 			icon={<IconRoute size={18} />}
 			iconColor='blue'
 		>
@@ -315,14 +360,18 @@ export function CoachingRuleEditorDrawer({
 						<TextInput
 							label={t('rules.editor.fields.name')}
 							value={form.values.name}
-							onChange={(e) => form.setFieldValue('name', e.currentTarget.value)}
+							onChange={(e) =>
+								form.setFieldValue('name', e.currentTarget.value)
+							}
 						/>
 						<Textarea
 							label={t('rules.editor.fields.description')}
 							autosize
 							minRows={2}
 							value={form.values.description}
-							onChange={(e) => form.setFieldValue('description', e.currentTarget.value)}
+							onChange={(e) =>
+								form.setFieldValue('description', e.currentTarget.value)
+							}
 						/>
 						<Select
 							label={t('rules.editor.fields.area')}
@@ -332,6 +381,18 @@ export function CoachingRuleEditorDrawer({
 							}))}
 							value={form.values.area}
 							onChange={(v) => v && handleAreaChange(v as EvaluationArea)}
+						/>
+						<Select
+							label={t('rules.editor.fields.cadence')}
+							description={t(`rules.editor.cadenceHint.${form.values.cadence}`)}
+							data={RULE_CADENCES.map((c) => ({
+								value: c,
+								label: t(`rules.cadence.${c}`),
+							}))}
+							value={form.values.cadence}
+							onChange={(v) =>
+								v && form.setFieldValue('cadence', v as CoachingRuleCadence)
+							}
 						/>
 					</Stack>
 				</SectionCard>
@@ -346,7 +407,9 @@ export function CoachingRuleEditorDrawer({
 							<AppSegmentedControl
 								size='xs'
 								value={form.values.conditionLogic}
-								onChange={(v) => form.setFieldValue('conditionLogic', v as ConditionLogic)}
+								onChange={(v) =>
+									form.setFieldValue('conditionLogic', v as ConditionLogic)
+								}
 								data={[
 									{ label: 'ALL', value: 'ALL' },
 									{ label: 'ANY', value: 'ANY' },
@@ -357,8 +420,15 @@ export function CoachingRuleEditorDrawer({
 							<ConditionRow
 								key={condition.id}
 								condition={condition}
-								allowedModes={['THRESHOLD', 'RANGE', 'PERCENT_CHANGE', 'CONSECUTIVE']}
-								onChange={(updated) => form.setFieldValue(`conditions.${index}`, updated)}
+								allowedModes={[
+									'THRESHOLD',
+									'RANGE',
+									'PERCENT_CHANGE',
+									'CONSECUTIVE',
+								]}
+								onChange={(updated) =>
+									form.setFieldValue(`conditions.${index}`, updated)
+								}
 								onRemove={() => form.removeListItem('conditions', index)}
 								canRemove={form.values.conditions.length > 1}
 							/>
@@ -384,10 +454,18 @@ export function CoachingRuleEditorDrawer({
 						<AppSegmentedControl
 							size='sm'
 							value={form.values.action.kind}
-							onChange={(v) => form.setFieldValue('action.kind', v as CoachingActionKind)}
+							onChange={(v) =>
+								form.setFieldValue('action.kind', v as CoachingActionKind)
+							}
 							data={[
-								{ label: t('rules.editor.actionKinds.ASSIGN_CONTENT'), value: 'ASSIGN_CONTENT' },
-								{ label: t('rules.editor.actionKinds.ASSIGN_PATH'), value: 'ASSIGN_PATH' },
+								{
+									label: t('rules.editor.actionKinds.ASSIGN_CONTENT'),
+									value: 'ASSIGN_CONTENT',
+								},
+								{
+									label: t('rules.editor.actionKinds.ASSIGN_PATH'),
+									value: 'ASSIGN_PATH',
+								},
 							]}
 						/>
 
@@ -405,7 +483,12 @@ export function CoachingRuleEditorDrawer({
 									size='xs'
 									label={t('rules.editor.fields.showAllContent')}
 									checked={form.values.showAllContent}
-									onChange={(e) => form.setFieldValue('showAllContent', e.currentTarget.checked)}
+									onChange={(e) =>
+										form.setFieldValue(
+											'showAllContent',
+											e.currentTarget.checked
+										)
+									}
 								/>
 							</>
 						) : (
@@ -425,7 +508,12 @@ export function CoachingRuleEditorDrawer({
 								min={1}
 								max={90}
 								value={form.values.action.dueInDays}
-								onChange={(v) => form.setFieldValue('action.dueInDays', typeof v === 'number' ? v : 14)}
+								onChange={(v) =>
+									form.setFieldValue(
+										'action.dueInDays',
+										typeof v === 'number' ? v : 14
+									)
+								}
 							/>
 							<NumberInput
 								label={t('rules.editor.fields.cooldown')}
@@ -433,51 +521,107 @@ export function CoachingRuleEditorDrawer({
 								min={0}
 								max={180}
 								value={form.values.cooldownDays}
-								onChange={(v) => form.setFieldValue('cooldownDays', typeof v === 'number' ? v : 30)}
+								onChange={(v) =>
+									form.setFieldValue(
+										'cooldownDays',
+										typeof v === 'number' ? v : 30
+									)
+								}
 							/>
 						</Group>
 
 						<Switch
 							label={t('rules.editor.fields.mandatory')}
 							checked={form.values.action.mandatory}
-							onChange={(e) => form.setFieldValue('action.mandatory', e.currentTarget.checked)}
+							onChange={(e) =>
+								form.setFieldValue('action.mandatory', e.currentTarget.checked)
+							}
 						/>
 						<Switch
 							label={t('rules.editor.fields.requireAcceptance')}
 							checked={form.values.action.requireAcceptance}
-							onChange={(e) => form.setFieldValue('action.requireAcceptance', e.currentTarget.checked)}
+							onChange={(e) =>
+								form.setFieldValue(
+									'action.requireAcceptance',
+									e.currentTarget.checked
+								)
+							}
 						/>
 						<Switch
 							label={t('rules.editor.fields.scheduleSession')}
 							checked={form.values.action.scheduleSession}
-							onChange={(e) => form.setFieldValue('action.scheduleSession', e.currentTarget.checked)}
+							onChange={(e) =>
+								form.setFieldValue(
+									'action.scheduleSession',
+									e.currentTarget.checked
+								)
+							}
 						/>
 
 						{form.values.action.scheduleSession && (
-							<Group grow>
+							<Stack gap='sm'>
 								<Select
-									label={t('rules.editor.fields.sessionTopic')}
-									data={COACHING_TOPICS}
-									value={form.values.action.sessionTopic}
-									onChange={(v) => v && form.setFieldValue('action.sessionTopic', v)}
-									searchable
+									label={t('rules.editor.fields.sessionType')}
+									data={RULE_SESSION_TYPES.map((type) => ({
+										value: type,
+										label: t(`sessions.types.${type}`),
+									}))}
+									value={form.values.action.sessionType}
+									onChange={(v) =>
+										v &&
+										form.setFieldValue(
+											'action.sessionType',
+											v as CoachingRuleAction['sessionType']
+										)
+									}
+									allowDeselect={false}
 								/>
-								<Select
-									label={t('rules.editor.fields.sessionCoach')}
-									data={[
-										{ value: 'SUPERVISOR', label: t('rules.editor.coach.SUPERVISOR') },
-										{ value: 'QA_MANAGER', label: t('rules.editor.coach.QA_MANAGER') },
-									]}
-									value={form.values.action.sessionCoach}
-									onChange={(v) => v && form.setFieldValue('action.sessionCoach', v as CoachRole)}
-								/>
-							</Group>
+								<Group grow>
+									<Select
+										label={t('rules.editor.fields.sessionTopic')}
+										data={COACHING_TOPICS}
+										value={form.values.action.sessionTopic}
+										onChange={(v) =>
+											v && form.setFieldValue('action.sessionTopic', v)
+										}
+										searchable
+									/>
+									<Select
+										label={t('rules.editor.fields.sessionCoach')}
+										data={[
+											{
+												value: 'SUPERVISOR',
+												label: t('rules.editor.coach.SUPERVISOR'),
+											},
+											{
+												value: 'QA_MANAGER',
+												label: t('rules.editor.coach.QA_MANAGER'),
+											},
+										]}
+										value={form.values.action.sessionCoach}
+										onChange={(v) =>
+											v &&
+											form.setFieldValue('action.sessionCoach', v as CoachRole)
+										}
+									/>
+								</Group>
+								{form.values.action.sessionType === 'AI_MESSAGE' && (
+									<Text size='xs' c='dimmed'>
+										{t('rules.editor.aiMessageHint')}
+									</Text>
+								)}
+							</Stack>
 						)}
 
 						<Switch
 							label={t('rules.editor.fields.notifySupervisor')}
 							checked={form.values.action.notifySupervisor}
-							onChange={(e) => form.setFieldValue('action.notifySupervisor', e.currentTarget.checked)}
+							onChange={(e) =>
+								form.setFieldValue(
+									'action.notifySupervisor',
+									e.currentTarget.checked
+								)
+							}
 						/>
 					</Stack>
 				</SectionCard>
@@ -487,7 +631,12 @@ export function CoachingRuleEditorDrawer({
 						<AppSegmentedControl
 							size='sm'
 							value={form.values.scopeMode}
-							onChange={(v) => form.setFieldValue('scopeMode', v as CoachingRuleFormValues['scopeMode'])}
+							onChange={(v) =>
+								form.setFieldValue(
+									'scopeMode',
+									v as CoachingRuleFormValues['scopeMode']
+								)
+							}
 							data={[
 								{ label: t('rules.editor.scope.everyone'), value: 'everyone' },
 								{ label: t('rules.editor.scope.teams'), value: 'teams' },
@@ -515,7 +664,10 @@ export function CoachingRuleEditorDrawer({
 						{form.values.scopeMode === 'agents' && (
 							<MultiSelect
 								label={t('rules.editor.scope.agents')}
-								data={scopeAgents.map((a) => ({ value: a.id, label: `${a.name} · ${a.team}` }))}
+								data={scopeAgents.map((a) => ({
+									value: a.id,
+									label: `${a.name} · ${a.team}`,
+								}))}
 								value={form.values.scope.agentIds}
 								onChange={(v) => form.setFieldValue('scope.agentIds', v)}
 								searchable
@@ -524,7 +676,10 @@ export function CoachingRuleEditorDrawer({
 
 						<MultiSelect
 							label={t('rules.editor.scope.campaigns')}
-							data={TRIGGER_CAMPAIGNS.map((c) => ({ value: c.value, label: c.label }))}
+							data={TRIGGER_CAMPAIGNS.map((c) => ({
+								value: c.value,
+								label: c.label,
+							}))}
 							value={form.values.scope.campaignIds}
 							onChange={(v) => form.setFieldValue('scope.campaignIds', v)}
 							clearable
@@ -540,7 +695,12 @@ export function CoachingRuleEditorDrawer({
 							label='Campaign type'
 							data={CAMPAIGN_TYPES}
 							value={form.values.scope.campaignTypes}
-							onChange={(v) => form.setFieldValue('scope.campaignTypes', v as RuleScope['campaignTypes'])}
+							onChange={(v) =>
+								form.setFieldValue(
+									'scope.campaignTypes',
+									v as RuleScope['campaignTypes']
+								)
+							}
 							clearable
 						/>
 					</Stack>
@@ -558,14 +718,24 @@ export function CoachingRuleEditorDrawer({
 								min={7}
 								max={90}
 								value={form.values.followUp.windowDays}
-								onChange={(v) => form.setFieldValue('followUp.windowDays', typeof v === 'number' ? v : 30)}
+								onChange={(v) =>
+									form.setFieldValue(
+										'followUp.windowDays',
+										typeof v === 'number' ? v : 30
+									)
+								}
 							/>
 							<NumberInput
 								label={t('rules.editor.fields.successThreshold')}
 								min={1}
 								max={20}
 								value={form.values.followUp.successThreshold}
-								onChange={(v) => form.setFieldValue('followUp.successThreshold', typeof v === 'number' ? v : 3)}
+								onChange={(v) =>
+									form.setFieldValue(
+										'followUp.successThreshold',
+										typeof v === 'number' ? v : 3
+									)
+								}
 							/>
 						</Group>
 						<Chip.Group
@@ -589,7 +759,12 @@ export function CoachingRuleEditorDrawer({
 						<Switch
 							label={t('rules.editor.fields.reassignOnDecline')}
 							checked={form.values.followUp.reassignOnDecline}
-							onChange={(e) => form.setFieldValue('followUp.reassignOnDecline', e.currentTarget.checked)}
+							onChange={(e) =>
+								form.setFieldValue(
+									'followUp.reassignOnDecline',
+									e.currentTarget.checked
+								)
+							}
 						/>
 					</Stack>
 				</SectionCard>
@@ -603,10 +778,14 @@ export function CoachingRuleEditorDrawer({
 							<Button variant='light' onClick={() => handleSave('DRAFT')}>
 								{t('rules.editor.footer.saveDraft')}
 							</Button>
-							<Button onClick={() => handleSave('ACTIVE')}>{t('rules.editor.footer.saveActivate')}</Button>
+							<Button onClick={() => handleSave('ACTIVE')}>
+								{t('rules.editor.footer.saveActivate')}
+							</Button>
 						</>
 					) : (
-						<Button onClick={() => handleSave(rule?.status ?? 'ACTIVE')}>{t('rules.editor.footer.save')}</Button>
+						<Button onClick={() => handleSave(rule?.status ?? 'ACTIVE')}>
+							{t('rules.editor.footer.save')}
+						</Button>
 					)}
 				</Group>
 			</Stack>
@@ -614,4 +793,5 @@ export function CoachingRuleEditorDrawer({
 	);
 }
 
-export const metricLabelOf = (metricId: RuleCondition['metricId']) => METRIC_BY_ID[metricId];
+export const metricLabelOf = (metricId: RuleCondition['metricId']) =>
+	METRIC_BY_ID[metricId];

@@ -1,11 +1,32 @@
 ﻿import { useMemo, useState } from 'react';
-import { ActionIcon, Badge, Button, Group, Menu, Select, Stack, Switch, Text, TextInput } from '@mantine/core';
+import {
+	ActionIcon,
+	Badge,
+	Button,
+	Group,
+	Menu,
+	Select,
+	Stack,
+	Switch,
+	Text,
+	TextInput,
+} from '@mantine/core';
 import { createColumnHelper } from '@tanstack/react-table';
 import { modals } from '@mantine/modals';
-import { IconBolt, IconCopy, IconDots, IconPencil, IconPlus, IconSearch, IconTrash } from '@tabler/icons-react';
+import {
+	IconBolt,
+	IconCopy,
+	IconDots,
+	IconPencil,
+	IconPlus,
+	IconSearch,
+	IconTrash,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
-import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable/BaseTable';
+import BaseTable, {
+	type BaseTableColumnDef,
+} from '~/components/BaseTable/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import type { CoachingRule, RuleStatus } from '~/models/qa';
 import { describeCondition } from '~/modules/qa/triggers/helpers';
@@ -15,8 +36,16 @@ import { LMS_AREA_META } from '~/modules/qa/lms/constants';
 
 const helper = createColumnHelper<CoachingRule>();
 
-const STATUS_COLOR: Record<RuleStatus, string> = { ACTIVE: 'green', PAUSED: 'gray', DRAFT: 'yellow' };
-const STATUS_ORDER: Record<RuleStatus, number> = { ACTIVE: 0, DRAFT: 1, PAUSED: 2 };
+const STATUS_COLOR: Record<RuleStatus, string> = {
+	ACTIVE: 'green',
+	PAUSED: 'gray',
+	DRAFT: 'yellow',
+};
+const STATUS_ORDER: Record<RuleStatus, number> = {
+	ACTIVE: 0,
+	DRAFT: 1,
+	PAUSED: 2,
+};
 
 interface RulesTabProps {
 	rules: CoachingRule[];
@@ -52,7 +81,12 @@ export function RulesTab({
 		const q = search.trim().toLowerCase();
 		return rules
 			.filter((r) => {
-				if (q && !r.name.toLowerCase().includes(q) && !r.description.toLowerCase().includes(q)) return false;
+				if (
+					q &&
+					!r.name.toLowerCase().includes(q) &&
+					!r.description.toLowerCase().includes(q)
+				)
+					return false;
 				if (area && r.area !== area) return false;
 				if (status && r.status !== status) return false;
 				return true;
@@ -66,8 +100,15 @@ export function RulesTab({
 	const confirmDelete = (rule: CoachingRule) =>
 		modals.openConfirmModal({
 			title: t('rules.confirmDelete.title'),
-			children: <Text size='sm'>{t('rules.confirmDelete.message', { name: rule.name })}</Text>,
-			labels: { confirm: t('rules.confirmDelete.confirm'), cancel: t('rules.confirmDelete.cancel') },
+			children: (
+				<Text size='sm'>
+					{t('rules.confirmDelete.message', { name: rule.name })}
+				</Text>
+			),
+			labels: {
+				confirm: t('rules.confirmDelete.confirm'),
+				cancel: t('rules.confirmDelete.cancel'),
+			},
 			confirmProps: { color: 'red' },
 			onConfirm: () => onDelete(rule),
 		});
@@ -75,7 +116,9 @@ export function RulesTab({
 	const scopeSummary = (rule: CoachingRule) => {
 		if (rule.scope.agentIds.length) return t('rules.scopeSummary.custom');
 		if (rule.scope.supervisorIds.length) {
-			return t('rules.scopeSummary.team', { team: rule.scope.supervisorIds.length });
+			return t('rules.scopeSummary.team', {
+				team: rule.scope.supervisorIds.length,
+			});
 		}
 		if (rule.scope.linesOfBusiness.length || rule.scope.campaignIds.length) {
 			return t('rules.scopeSummary.custom');
@@ -91,7 +134,14 @@ export function RulesTab({
 					<Text size='sm' fw={500}>
 						{info.getValue()}
 					</Text>
-					<AreaBadge area={info.row.original.area} size='xs' />
+					<Group gap={4}>
+						<AreaBadge area={info.row.original.area} size='xs' />
+						{info.row.original.cadence === 'WEEKLY' && (
+							<Badge size='xs' variant='light' color='blue'>
+								{t('rules.cadence.WEEKLY')}
+							</Badge>
+						)}
+					</Group>
 				</Stack>
 			),
 		}) as BaseTableColumnDef<CoachingRule>,
@@ -100,7 +150,9 @@ export function RulesTab({
 			header: t('rules.columns.condition'),
 			cell: (info) => {
 				const rule = info.row.original;
-				const first = rule.conditions[0] ? describeCondition(tTriggers, rule.conditions[0]) : '—';
+				const first = rule.conditions[0]
+					? describeCondition(tTriggers, rule.conditions[0])
+					: '—';
 				return (
 					<Stack gap={0}>
 						<Text size='xs'>{first}</Text>
@@ -122,12 +174,22 @@ export function RulesTab({
 					<Stack gap={2}>
 						<Text size='xs'>
 							{action.kind === 'ASSIGN_CONTENT'
-								? t('rules.actionSummary.content', { count: action.contentIds.length, days: action.dueInDays })
-								: t('rules.actionSummary.path', { path: pathTitle(action.pathId), days: action.dueInDays })}
+								? t('rules.actionSummary.content', {
+										count: action.contentIds.length,
+										days: action.dueInDays,
+									})
+								: t('rules.actionSummary.path', {
+										path: pathTitle(action.pathId),
+										days: action.dueInDays,
+									})}
 						</Text>
 						{action.scheduleSession && (
 							<Badge size='xs' variant='light' color='blue'>
-								{t('rules.actionSummary.withSession')}
+								{t(
+									action.sessionType === 'AI_MESSAGE'
+										? 'rules.actionSummary.withAiMessage'
+										: 'rules.actionSummary.withSession'
+								)}
 							</Badge>
 						)}
 					</Stack>
@@ -152,7 +214,15 @@ export function RulesTab({
 			id: 'improved',
 			header: t('rules.columns.improved'),
 			cell: (info) => (
-				<Text size='sm' c={typeof info.getValue() === 'number' && (info.getValue() as number) >= 60 ? 'green' : undefined}>
+				<Text
+					size='sm'
+					c={
+						typeof info.getValue() === 'number' &&
+						(info.getValue() as number) >= 60
+							? 'green'
+							: undefined
+					}
+				>
 					{info.getValue() === null ? '—' : `${info.getValue()}%`}
 				</Text>
 			),
@@ -161,7 +231,11 @@ export function RulesTab({
 			header: t('rules.columns.status'),
 			cell: (info) => (
 				<Group gap='xs' wrap='nowrap' onClick={(e) => e.stopPropagation()}>
-					<Badge size='xs' color={STATUS_COLOR[info.getValue()]} variant='light'>
+					<Badge
+						size='xs'
+						color={STATUS_COLOR[info.getValue()]}
+						variant='light'
+					>
 						{t(`rules.status.${info.getValue()}`)}
 					</Badge>
 					<Switch
@@ -175,7 +249,11 @@ export function RulesTab({
 		}) as BaseTableColumnDef<CoachingRule>,
 		helper.accessor('updatedAt', {
 			header: t('rules.columns.updated'),
-			cell: (info) => <Text size='xs' c='dimmed'>{info.getValue().slice(0, 10)}</Text>,
+			cell: (info) => (
+				<Text size='xs' c='dimmed'>
+					{info.getValue().slice(0, 10)}
+				</Text>
+			),
 		}) as BaseTableColumnDef<CoachingRule>,
 		helper.display({
 			id: 'actions',
@@ -189,13 +267,22 @@ export function RulesTab({
 							</ActionIcon>
 						</Menu.Target>
 						<Menu.Dropdown>
-							<Menu.Item leftSection={<IconPencil size={14} />} onClick={() => onEdit(info.row.original)}>
+							<Menu.Item
+								leftSection={<IconPencil size={14} />}
+								onClick={() => onEdit(info.row.original)}
+							>
 								{t('rules.menu.edit')}
 							</Menu.Item>
-							<Menu.Item leftSection={<IconCopy size={14} />} onClick={() => onDuplicate(info.row.original)}>
+							<Menu.Item
+								leftSection={<IconCopy size={14} />}
+								onClick={() => onDuplicate(info.row.original)}
+							>
 								{t('rules.menu.duplicate')}
 							</Menu.Item>
-							<Menu.Item leftSection={<IconBolt size={14} />} onClick={() => onRunNow(info.row.original)}>
+							<Menu.Item
+								leftSection={<IconBolt size={14} />}
+								onClick={() => onRunNow(info.row.original)}
+							>
 								{t('rules.menu.runNow')}
 							</Menu.Item>
 							<Menu.Divider />
@@ -232,7 +319,11 @@ export function RulesTab({
 			title={t('rules.title')}
 			description={t('rules.description')}
 			headerActions={
-				<Button size='sm' leftSection={<IconPlus size={16} />} onClick={onCreate}>
+				<Button
+					size='sm'
+					leftSection={<IconPlus size={16} />}
+					onClick={onCreate}
+				>
 					{t('newRule')}
 				</Button>
 			}
@@ -250,7 +341,10 @@ export function RulesTab({
 					<Select
 						size='sm'
 						placeholder={t('rules.filters.area')}
-						data={EVALUATION_AREAS.map((a) => ({ value: a, label: t(LMS_AREA_META[a].labelKey, { ns: 'qa.lms' }) }))}
+						data={EVALUATION_AREAS.map((a) => ({
+							value: a,
+							label: t(LMS_AREA_META[a].labelKey, { ns: 'qa.lms' }),
+						}))}
 						value={area}
 						onChange={setArea}
 						clearable

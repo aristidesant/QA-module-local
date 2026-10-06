@@ -12,9 +12,44 @@ import type {
 import type { AgentProfile, DimensionKey } from '~/modules/qa/team/types';
 import { DIMENSION_TO_AREA } from '~/modules/qa/lms/constants';
 import { daysUntil, isOverdue } from '~/modules/qa/lms/helpers';
+import { DIMENSION_META } from '~/modules/qa/team/constants';
 import { DECLINE_DELTA, LOW_SCORE_THRESHOLD } from './constants';
 
-const pct = (key: DimensionKey, v: number) => (key === 'sentiment' ? Math.round(((v - 1) / 4) * 100) : v);
+const DIMENSION_LABEL: Record<DimensionKey, string> = {
+	qa: 'QA',
+	sentiment: 'Customer sentiment',
+	compliance: 'Compliance',
+	business: 'Business',
+};
+
+/**
+ * The text of an AI_MESSAGE session: last week's scores per dimension, the
+ * weakest one, and the material the rule attached. Mock-only wording.
+ */
+export const buildAiCoachingMessage = (
+	profile: AgentProfile,
+	ruleName: string,
+	contentTitles: string[]
+): string => {
+	const lines = profile.dimensions.map((d) => {
+		const unit = DIMENSION_META[d.key].unit;
+		const delta =
+			d.delta === 0 ? 'stable' : `${d.delta > 0 ? '+' : ''}${d.delta}${unit}`;
+		return `• ${DIMENSION_LABEL[d.key]}: ${d.score}${unit} (${delta} vs last week)`;
+	});
+	const weakest = [...profile.dimensions].sort(
+		(a, b) =>
+			a.score / DIMENSION_META[a.key].max - b.score / DIMENSION_META[b.key].max
+	)[0];
+	const focus = weakest ? DIMENSION_LABEL[weakest.key] : 'quality';
+	const material = contentTitles.length
+		? `\n\nTo work on it this week I attached: ${contentTitles.join(', ')}.`
+		: '';
+	return `Hi ${profile.agent.name.split(' ')[0]}, here is your weekly review (${ruleName}).\n\n${lines.join('\n')}\n\nYour focus for the week is ${focus}. Pick one call from last week where it slipped and note what you would do differently.${material}`;
+};
+
+const pct = (key: DimensionKey, v: number) =>
+	key === 'sentiment' ? Math.round(((v - 1) / 4) * 100) : v;
 
 /**
  * Builds the prioritised coaching queue. Rule-triggered reasons come from
@@ -34,7 +69,9 @@ export function buildQueue(
 		const reasons: CoachingQueueReason[] = [];
 		let score = 0;
 
-		const weakest = [...p.dimensions].sort((a, b) => pct(a.key, a.score) - pct(b.key, b.score))[0];
+		const weakest = [...p.dimensions].sort(
+			(a, b) => pct(a.key, a.score) - pct(b.key, b.score)
+		)[0];
 		const weakestArea = DIMENSION_TO_AREA[weakest.key];
 		/** Every dimension is compared on the same 0-100 scale, so sentiment (1-5) is converted. */
 		const weakestPct = pct(weakest.key, weakest.score);
@@ -67,7 +104,11 @@ export function buildQueue(
 		}
 
 		for (const alert of p.risk.alerts.filter((x) => !x.acknowledged)) {
-			reasons.push({ kind: 'RULE_TRIGGERED', area: null, detail: alert.ruleName });
+			reasons.push({
+				kind: 'RULE_TRIGGERED',
+				area: null,
+				detail: alert.ruleName,
+			});
 			score += 20;
 		}
 
@@ -81,7 +122,9 @@ export function buildQueue(
 			score += 15 * overdue.length;
 		}
 
-		const noResponse = mine.filter((a) => a.acceptance.status === 'NO_RESPONSE');
+		const noResponse = mine.filter(
+			(a) => a.acceptance.status === 'NO_RESPONSE'
+		);
 		if (noResponse.length) {
 			reasons.push({
 				kind: 'NO_RESPONSE',
@@ -96,17 +139,23 @@ export function buildQueue(
 			reasons.push({
 				kind: 'PENDING_ACCEPTANCE',
 				area: null,
-				detail: t('queue.reasons.PENDING_ACCEPTANCE', { count: pending.length }),
+				detail: t('queue.reasons.PENDING_ACCEPTANCE', {
+					count: pending.length,
+				}),
 			});
 			score += 5;
 		}
 
-		const rescheduled = mine.filter((a) => a.acceptance.status === 'RESCHEDULE_REQUESTED');
+		const rescheduled = mine.filter(
+			(a) => a.acceptance.status === 'RESCHEDULE_REQUESTED'
+		);
 		if (rescheduled.length) {
 			reasons.push({
 				kind: 'RESCHEDULE_REQUESTED',
 				area: null,
-				detail: t('queue.reasons.RESCHEDULE_REQUESTED', { count: rescheduled.length }),
+				detail: t('queue.reasons.RESCHEDULE_REQUESTED', {
+					count: rescheduled.length,
+				}),
 			});
 			score += 20;
 		}
@@ -116,13 +165,19 @@ export function buildQueue(
 			reasons.push({
 				kind: 'DECLINED_AFTER_TRAINING',
 				area: null,
-				detail: t('queue.reasons.DECLINED_AFTER_TRAINING', { count: declined.length }),
+				detail: t('queue.reasons.DECLINED_AFTER_TRAINING', {
+					count: declined.length,
+				}),
 			});
 			score += 20;
 		}
 
 		const followUps = sessions.filter(
-			(s) => s.agentId === p.agent.id && s.status === 'COMPLETED' && s.followUpDate && daysUntil(s.followUpDate) <= 3
+			(s) =>
+				s.agentId === p.agent.id &&
+				s.status === 'COMPLETED' &&
+				s.followUpDate &&
+				daysUntil(s.followUpDate) <= 3
 		);
 		if (followUps.length) {
 			reasons.push({
@@ -137,7 +192,9 @@ export function buildQueue(
 			reasons.push({
 				kind: 'BURNOUT_HIGH',
 				area: null,
-				detail: t('queue.reasons.BURNOUT_HIGH', { value: p.risk.burnout.percentage }),
+				detail: t('queue.reasons.BURNOUT_HIGH', {
+					value: p.risk.burnout.percentage,
+				}),
 			});
 			score += 25;
 		}
@@ -151,7 +208,9 @@ export function buildQueue(
 				? 'SEND_REMINDER'
 				: p.risk.burnout.level === 'high'
 					? 'CHECK_IN'
-					: reasons.some((r) => r.kind === 'LOW_SCORE' || r.kind === 'DECLINING_TREND') && !hasOpenTraining
+					: reasons.some(
+								(r) => r.kind === 'LOW_SCORE' || r.kind === 'DECLINING_TREND'
+						  ) && !hasOpenTraining
 						? 'ASSIGN_CONTENT'
 						: 'SCHEDULE_SESSION';
 
@@ -185,28 +244,50 @@ export function buildQueue(
 }
 
 export const areaHealth = (profiles: AgentProfile[]) =>
-	(['qa', 'sentiment', 'compliance', 'business'] as DimensionKey[]).map((key) => {
-		const values = profiles.map((p) => pct(key, p.dimensions.find((d) => d.key === key)!.score));
-		return {
-			area: DIMENSION_TO_AREA[key],
-			average: values.length ? Math.round(values.reduce((s, v) => s + v, 0) / values.length) : 0,
-			below: values.filter((v) => v < LOW_SCORE_THRESHOLD).length,
-			total: values.length,
-		};
-	});
+	(['qa', 'sentiment', 'compliance', 'business'] as DimensionKey[]).map(
+		(key) => {
+			const values = profiles.map((p) =>
+				pct(key, p.dimensions.find((d) => d.key === key)!.score)
+			);
+			return {
+				area: DIMENSION_TO_AREA[key],
+				average: values.length
+					? Math.round(values.reduce((s, v) => s + v, 0) / values.length)
+					: 0,
+				below: values.filter((v) => v < LOW_SCORE_THRESHOLD).length,
+				total: values.length,
+			};
+		}
+	);
 
-export const impactByArea = (assignments: LmsAssignment[], contentById: Record<string, LmsContent>) =>
-	(['QUALITY_ASSURANCE', 'COMPLIANCE', 'SENTIMENT_EMOTION', 'BUSINESS_INSIGHTS'] as EvaluationArea[]).map((area) => {
+export const impactByArea = (
+	assignments: LmsAssignment[],
+	contentById: Record<string, LmsContent>
+) =>
+	(
+		[
+			'QUALITY_ASSURANCE',
+			'COMPLIANCE',
+			'SENTIMENT_EMOTION',
+			'BUSINESS_INSIGHTS',
+		] as EvaluationArea[]
+	).map((area) => {
 		const rows = assignments.filter(
-			(a) => a.impact && a.impact.verdict !== 'PENDING' && contentById[a.contentId]?.area === area
+			(a) =>
+				a.impact &&
+				a.impact.verdict !== 'PENDING' &&
+				contentById[a.contentId]?.area === area
 		);
-		const count = (v: LmsImpactVerdict) => rows.filter((a) => a.impact?.verdict === v).length;
+		const count = (v: LmsImpactVerdict) =>
+			rows.filter((a) => a.impact?.verdict === v).length;
 		return {
 			area,
 			measured: rows.length,
 			improved: count('IMPROVED'),
 			same: count('SAME'),
 			declined: count('DECLINED'),
-			improvedRate: rows.length ? Math.round((count('IMPROVED') / rows.length) * 100) : 0,
+			improvedRate: rows.length
+				? Math.round((count('IMPROVED') / rows.length) * 100)
+				: 0,
 		};
 	});
