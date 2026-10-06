@@ -3,15 +3,28 @@
 }
 
 .priorityBar[data-priority='HIGH'] {
-	border-left-color: light-dark(var(--mantine-color-red-6), var(--mantine-color-red-5));
+	border-left-color: light-dark(
+		var(--mantine-color-red-6),
+		var(--mantine-color-red-5)
+	);
 }
 
 .priorityBar[data-priority='MEDIUM'] {
-	border-left-color: light-dark(var(--mantine-color-orange-6), var(--mantine-color-orange-4));
+	border-left-color: light-dark(
+		var(--mantine-color-orange-6),
+		var(--mantine-color-orange-4)
+	);
 }
 
 .priorityBar[data-priority='LOW'] {
-	border-left-color: light-dark(var(--mantine-color-blue-6), var(--mantine-color-blue-4));
+	border-left-color: light-dark(
+		var(--mantine-color-blue-6),
+		var(--mantine-color-blue-4)
+	);
+}
+
+.preWrap {
+	white-space: pre-wrap;
 }
 
 .healthCard {
@@ -20,9 +33,15 @@
 }
 
 .healthCard:hover {
-	border-color: light-dark(var(--mantine-color-gray-5), var(--mantine-color-dark-3));
+	border-color: light-dark(
+		var(--mantine-color-gray-5),
+		var(--mantine-color-dark-3)
+	);
 }
 
 .healthCard[data-active='true'] {
-	border-color: light-dark(var(--mantine-color-blue-5), var(--mantine-color-blue-4));
+	border-color: light-dark(
+		var(--mantine-color-blue-5),
+		var(--mantine-color-blue-4)
+	);
 }

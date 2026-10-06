@@ -13,6 +13,7 @@ import { SectionCard } from '~/components/SectionCard';
 import type { CoachingSessionRecord } from '~/models/qa';
 import { AreaBadge } from '~/modules/qa/lms/components/Badges';
 import pointerStyles from '~/modules/qa/lms/components/Cards.module.css';
+import queueStyles from './Queue.module.css';
 import { SESSION_STATUS_COLOR } from '../constants';
 
 interface AgentSessionDetailDrawerProps {
@@ -37,6 +38,8 @@ export function AgentSessionDetailDrawer({
 
 	if (!session) return null;
 
+	const isAi = session.type === 'AI_MESSAGE';
+
 	return (
 		<AppDrawer
 			opened={opened}
@@ -59,6 +62,11 @@ export function AgentSessionDetailDrawer({
 					<Badge size='xs' variant='outline'>
 						{session.coachRole}
 					</Badge>
+					{session.modality && (
+						<Badge size='xs' variant='light' color='gray'>
+							{t(`agent.coaching.modality.${session.modality}`)}
+						</Badge>
+					)}
 					{session.area && (
 						<AreaBadge
 							area={session.area}
@@ -68,105 +76,130 @@ export function AgentSessionDetailDrawer({
 					)}
 				</Group>
 
-				<SectionCard
-					title={t('agent.coaching.detail.talkingPoints')}
-					padding='md'
-				>
-					{session.talkingPoints.length === 0 ? (
-						<Text size='sm' c='dimmed'>
-							{t('agent.coaching.detail.noPoints')}
+				{isAi ? (
+					<SectionCard
+						title={t('agent.coaching.detail.aiMessage')}
+						padding='md'
+					>
+						<Text size='sm' className={queueStyles.preWrap}>
+							{session.aiMessage}
 						</Text>
-					) : (
-						<Stack gap={4}>
-							{session.talkingPoints.map((point, i) => (
-								<Text key={`${point}-${i}`} size='sm'>
-									• {point}
-								</Text>
-							))}
-						</Stack>
-					)}
-				</SectionCard>
-
-				{session.evidenceCallIds.length > 0 && (
-					<SectionCard title={t('agent.coaching.detail.evidence')} padding='md'>
-						<Group gap='xs'>
-							{session.evidenceCallIds.map((callId) => (
-								<Badge
-									key={callId}
-									variant='light'
-									leftSection={<IconPhone size={12} />}
-									className={pointerStyles.pointer}
-									onClick={() => navigate(`/qa/campaigns/2/calls/${callId}`)}
-								>
-									{callId}
-								</Badge>
-							))}
-						</Group>
 					</SectionCard>
-				)}
-
-				<SectionCard
-					title={t('agent.coaching.detail.actionItems')}
-					padding='md'
-				>
-					{session.actionItems.length === 0 ? (
-						<Text size='sm' c='dimmed'>
-							{t('agent.coaching.detail.noItems')}
-						</Text>
-					) : (
-						<Stack gap='xs'>
-							{session.actionItems.map((item) => (
-								<Paper key={item.id} withBorder p='xs' radius='sm'>
-									<Group justify='space-between' wrap='nowrap'>
-										<Stack gap={0} flex={1} miw={0}>
-											<Text size='sm'>{item.text}</Text>
-											<Text size='xs' c='dimmed'>
-												{t('due.date', { date: item.dueDate })}
-											</Text>
-										</Stack>
-										<ThemeIcon
-											size='sm'
-											radius='xl'
-											variant='light'
-											color={item.acknowledgedByAgent ? 'green' : 'gray'}
-										>
-											{item.acknowledgedByAgent ? (
-												<IconCheck size={12} />
-											) : (
-												<IconClock size={12} />
-											)}
-										</ThemeIcon>
-									</Group>
-								</Paper>
-							))}
-						</Stack>
-					)}
-				</SectionCard>
-
-				{session.outcome && (
-					<SectionCard title={t('agent.coaching.detail.outcome')} padding='md'>
-						<Text size='sm'>{session.outcome}</Text>
-					</SectionCard>
-				)}
-
-				<SectionCard title={t('agent.coaching.detail.commitment')} padding='md'>
-					{session.agentCommitment.acknowledged ? (
-						<Badge
-							color='green'
-							variant='light'
-							leftSection={<IconCheck size={12} />}
+				) : (
+					<>
+						<SectionCard
+							title={t('agent.coaching.detail.talkingPoints')}
+							padding='md'
 						>
-							{t('agent.coaching.acknowledged', {
-								date:
-									session.agentCommitment.acknowledgedAt?.slice(0, 10) ?? '',
-							})}
-						</Badge>
-					) : (
-						<Text size='sm' c='dimmed'>
-							{t('agent.coaching.detail.notCommitted')}
-						</Text>
-					)}
-				</SectionCard>
+							{session.talkingPoints.length === 0 ? (
+								<Text size='sm' c='dimmed'>
+									{t('agent.coaching.detail.noPoints')}
+								</Text>
+							) : (
+								<Stack gap={4}>
+									{session.talkingPoints.map((point, i) => (
+										<Text key={`${point}-${i}`} size='sm'>
+											• {point}
+										</Text>
+									))}
+								</Stack>
+							)}
+						</SectionCard>
+
+						{session.evidenceCallIds.length > 0 && (
+							<SectionCard
+								title={t('agent.coaching.detail.evidence')}
+								padding='md'
+							>
+								<Group gap='xs'>
+									{session.evidenceCallIds.map((callId) => (
+										<Badge
+											key={callId}
+											variant='light'
+											leftSection={<IconPhone size={12} />}
+											className={pointerStyles.pointer}
+											onClick={() =>
+												navigate(`/qa/campaigns/2/calls/${callId}`)
+											}
+										>
+											{callId}
+										</Badge>
+									))}
+								</Group>
+							</SectionCard>
+						)}
+
+						<SectionCard
+							title={t('agent.coaching.detail.actionItems')}
+							padding='md'
+						>
+							{session.actionItems.length === 0 ? (
+								<Text size='sm' c='dimmed'>
+									{t('agent.coaching.detail.noItems')}
+								</Text>
+							) : (
+								<Stack gap='xs'>
+									{session.actionItems.map((item) => (
+										<Paper key={item.id} withBorder p='xs' radius='sm'>
+											<Group justify='space-between' wrap='nowrap'>
+												<Stack gap={0} flex={1} miw={0}>
+													<Text size='sm'>{item.text}</Text>
+													<Text size='xs' c='dimmed'>
+														{t('due.date', { date: item.dueDate })}
+													</Text>
+												</Stack>
+												<ThemeIcon
+													size='sm'
+													radius='xl'
+													variant='light'
+													color={item.acknowledgedByAgent ? 'green' : 'gray'}
+												>
+													{item.acknowledgedByAgent ? (
+														<IconCheck size={12} />
+													) : (
+														<IconClock size={12} />
+													)}
+												</ThemeIcon>
+											</Group>
+										</Paper>
+									))}
+								</Stack>
+							)}
+						</SectionCard>
+
+						{session.outcome && (
+							<SectionCard
+								title={t('agent.coaching.detail.outcome')}
+								padding='md'
+							>
+								<Text size='sm'>{session.outcome}</Text>
+							</SectionCard>
+						)}
+
+						<SectionCard
+							title={t('agent.coaching.detail.commitment')}
+							padding='md'
+						>
+							{session.agentCommitment.acknowledged ? (
+								<Badge
+									color='green'
+									variant='light'
+									leftSection={<IconCheck size={12} />}
+								>
+									{t('agent.coaching.acknowledged', {
+										date:
+											session.agentCommitment.acknowledgedAt?.slice(0, 10) ??
+											'',
+									})}
+								</Badge>
+							) : (
+								<Text size='sm' c='dimmed'>
+									{t('agent.coaching.detail.notCommitted')}
+								</Text>
+							)}
+						</SectionCard>
+					</>
+				)}
 			</Stack>
 		</AppDrawer>
 	);

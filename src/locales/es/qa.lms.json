@@ -202,6 +202,7 @@
 			"columns": {
 				"date": "Fecha",
 				"topic": "Tema",
+				"type": "Tipo",
 				"coach": "Coach",
 				"area": "Aspecto",
 				"status": "Estado",
@@ -216,10 +217,21 @@
 			"acknowledge": "Me comprometo",
 			"acknowledged": "Comprometido el {{date}}",
 			"linkedMaterial": "Material relacionado",
+			"latestMessage": "Tu revisión semanal",
+			"latestMessageDescription": "Escrita a partir de tus resultados por el asistente de QA. Ábrela para leer el mensaje completo.",
+			"types": {
+				"ONE_ON_ONE": "1:1",
+				"SIDE_BY_SIDE": "Lado a lado",
+				"GROUP": "Grupal",
+				"MICRO": "Micro",
+				"AI_MESSAGE": "Mensaje IA"
+			},
+			"modality": { "IN_PERSON": "Presencial", "REMOTE": "Remota" },
 			"empty": "Todavía no tienes sesiones de coaching.",
 			"noCommitments": "No tienes compromisos abiertos.",
 			"detail": {
 				"talkingPoints": "Puntos a tratar",
+				"aiMessage": "Mensaje",
 				"noPoints": "No hay puntos a tratar registrados.",
 				"evidence": "Evidencia",
 				"actionItems": "Acciones a seguir",

@@ -202,6 +202,7 @@
 			"columns": {
 				"date": "Date",
 				"topic": "Topic",
+				"type": "Type",
 				"coach": "Coach",
 				"area": "Aspect",
 				"status": "Status",
@@ -216,10 +217,21 @@
 			"acknowledge": "I commit to this",
 			"acknowledged": "Committed on {{date}}",
 			"linkedMaterial": "Linked material",
+			"latestMessage": "Your weekly review",
+			"latestMessageDescription": "Written from your results by the QA assistant. Open it to read the full message.",
+			"types": {
+				"ONE_ON_ONE": "1:1",
+				"SIDE_BY_SIDE": "Side-by-side",
+				"GROUP": "Group",
+				"MICRO": "Micro",
+				"AI_MESSAGE": "AI message"
+			},
+			"modality": { "IN_PERSON": "In person", "REMOTE": "Remote" },
 			"empty": "No coaching sessions yet.",
 			"noCommitments": "No open commitments.",
 			"detail": {
 				"talkingPoints": "Talking points",
+				"aiMessage": "Message",
 				"noPoints": "No talking points recorded.",
 				"evidence": "Evidence",
 				"actionItems": "Action items",

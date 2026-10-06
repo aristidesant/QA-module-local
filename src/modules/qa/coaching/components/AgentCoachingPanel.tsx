@@ -235,6 +235,9 @@ export function AgentCoachingPanel({
 											<Text size='xs' c='dimmed'>
 												{dayjs(s.date).format('D MMM YYYY HH:mm')} ·{' '}
 												{s.coachName} · {t(`sessions.types.${s.type}`)}
+												{s.modality
+													? ` · ${t(`sessions.modality.${s.modality}`)}`
+													: ''}
 											</Text>
 										</Stack>
 										<Badge

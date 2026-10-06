@@ -13,6 +13,7 @@ import {
 	IconCalendarEvent,
 	IconCheck,
 	IconHistory,
+	IconSparkles,
 	IconTargetArrow,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
@@ -120,6 +121,14 @@ export function AgentCoachingTab() {
 				.sort((a, b) => b.date.localeCompare(a.date)),
 		[sessions]
 	);
+	// The last AI-written weekly review, so it reads like a message from the QA assistant.
+	const latestAi = useMemo(
+		() =>
+			sessions
+				.filter((s) => s.type === 'AI_MESSAGE')
+				.sort((a, b) => b.date.localeCompare(a.date))[0] ?? null,
+		[sessions]
+	);
 	// Two kinds of commitment: behavioral action items agreed during a session,
 	// and educational material assigned because of coaching (COACHING_RULE).
 	// Merged into one list, still-open ones first, then most recent.
@@ -182,6 +191,14 @@ export function AgentCoachingTab() {
 		helper.accessor('topic', {
 			header: t('agent.coaching.columns.topic'),
 		}) as BaseTableColumnDef<CoachingSessionRecord>,
+		helper.accessor('type', {
+			header: t('agent.coaching.columns.type'),
+			cell: (info) => (
+				<Badge size='xs' variant='outline'>
+					{t(`agent.coaching.types.${info.getValue()}`)}
+				</Badge>
+			),
+		}) as BaseTableColumnDef<CoachingSessionRecord>,
 		helper.accessor('coachName', {
 			header: t('agent.coaching.columns.coach'),
 			cell: (info) => (
@@ -230,6 +247,24 @@ export function AgentCoachingTab() {
 
 	return (
 		<Stack gap='md'>
+			{latestAi && (
+				<SectionCard
+					title={t('agent.coaching.latestMessage')}
+					description={t('agent.coaching.latestMessageDescription')}
+					icon={IconSparkles}
+				>
+					<Stack
+						gap={4}
+						className={cardStyles.clickable}
+						onClick={() => setDetailSession(latestAi)}
+					>
+						<Text size='xs' c='dimmed'>
+							{dayjs(latestAi.date).format('D MMM YYYY')} · {latestAi.coachName}
+						</Text>
+						<Text size='sm'>{(latestAi.aiMessage ?? '').slice(0, 280)}…</Text>
+					</Stack>
+				</SectionCard>
+			)}
 			<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
 				<SectionCard
 					title={t('agent.coaching.upcoming')}
