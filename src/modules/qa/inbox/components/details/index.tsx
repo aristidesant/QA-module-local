@@ -310,9 +310,11 @@ export const PayloadDetail: React.FC<PayloadDetailProps> = ({ payload }) => {
 			const statusColor =
 				payload.status === 'accepted'
 					? 'green'
-					: payload.status === 'rejected'
-						? 'red'
-						: 'blue';
+					: payload.status === 'partially-accepted'
+						? 'yellow'
+						: payload.status === 'rejected'
+							? 'red'
+							: 'blue';
 			const typeMeta = CALL_EVALUATION_TABS.find(
 				(tab) => tab.key === payload.evaluationType
 			);

@@ -145,7 +145,8 @@
 			"status": {
 				"open": "Abierta",
 				"accepted": "Aceptada",
-				"rejected": "Rechazada"
+				"rejected": "Rechazada",
+				"partially-accepted": "Aceptada parcialmente"
 			},
 			"call": "Llamada",
 			"score": "Puntuación",

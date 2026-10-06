@@ -145,7 +145,8 @@
 			"status": {
 				"open": "Open",
 				"accepted": "Accepted",
-				"rejected": "Rejected"
+				"rejected": "Rejected",
+				"partially-accepted": "Partially accepted"
 			},
 			"call": "Call",
 			"score": "Score",
