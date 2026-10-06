@@ -50,12 +50,6 @@ const QATestEditor = (_props: {
 	readyButtonText?: string;
 }) => <div>QA Test Editor placeholder</div>;
 
-const mockQAForms = [
-	'Sales Call Quality Standards',
-	'Customer Service Excellence',
-	'Compliance Check',
-];
-
 export default function CampaignDetail() {
 	const navigate = useNavigate();
 	const { id } = useParams();
@@ -152,9 +146,6 @@ export default function CampaignDetail() {
 	const [callsTableAutoFailedOnly, setCallsTableAutoFailedOnly] =
 		useState(false);
 	const [callsTableDisputedOnly, setCallsTableDisputedOnly] = useState(false);
-	const [callsTableQAFormFilter, setCallsTableQAFormFilter] = useState<
-		string | null
-	>(null);
 	const [callsTableScoreMin, setCallsTableScoreMin] = useState<number | null>(
 		null
 	);
@@ -465,19 +456,6 @@ export default function CampaignDetail() {
 														size='sm'
 													/>
 													<Select
-														label='QA Form'
-														placeholder='All forms'
-														data={mockQAForms.map((name) => ({
-															value: name,
-															label: name,
-														}))}
-														value={callsTableQAFormFilter}
-														onChange={setCallsTableQAFormFilter}
-														clearable
-														searchable
-														size='sm'
-													/>
-													<Select
 														label='QA Form Result'
 														placeholder='All results'
 														data={[
@@ -658,12 +636,6 @@ export default function CampaignDetail() {
 											if (callsTableAgentFilter) {
 												filteredCalls = filteredCalls.filter(
 													(c) => c.agentId === callsTableAgentFilter
-												);
-											}
-
-											if (callsTableQAFormFilter) {
-												filteredCalls = filteredCalls.filter(
-													(c) => c.qaForm === callsTableQAFormFilter
 												);
 											}
 
