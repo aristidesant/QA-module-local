@@ -1,5 +1,6 @@
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
+import { OFFER_CATALOG } from '~/modules/qa/customers/constants';
 import type {
 	Emotion,
 	SentimentCategory,
@@ -386,6 +387,15 @@ export const TEAM_AGENTS: RosterAgent[] = PERSONAS.map((p, i) => {
 		avatarColor: AVATAR_COLORS[i % AVATAR_COLORS.length],
 	};
 });
+/** Share of an agent's offers and relative conversion of each OFFER_CATALOG product, in catalog order. */
+const PRODUCT_MIX = [
+	{ share: 0.3, factor: 0.9 },
+	{ share: 0.25, factor: 1.15 },
+	{ share: 0.15, factor: 0.75 },
+	{ share: 0.2, factor: 1.3 },
+	{ share: 0.1, factor: 0.6 },
+];
+
 function seeded(seed: number) {
 	let s = seed;
 	return () => {
@@ -706,15 +716,13 @@ export function buildAgentProfile(p: Persona, rank: RankContext): AgentProfile {
 		customerEmotions: emotionsFor(customerAvg),
 		recoveryRate: clamp(Math.round(30 + p.base.sentiment * 55), 0, 100),
 		empathyPhrasesPerCall: round1(1 + p.base.sentiment * 2.5),
-		trend: performance
-			.slice(-12)
-			.map((pt) => ({
-				label: pt.label,
-				agent: round1(1 + (pt.sentiment / 100) * 4),
-				customer: round1(
-					clamp(1 + (pt.sentiment / 100) * 4 - 0.6 + rand() * 0.4, 1, 5)
-				),
-			})),
+		trend: performance.slice(-12).map((pt) => ({
+			label: pt.label,
+			agent: round1(1 + (pt.sentiment / 100) * 4),
+			customer: round1(
+				clamp(1 + (pt.sentiment / 100) * 4 - 0.6 + rand() * 0.4, 1, 5)
+			),
+		})),
 	};
 
 	// --- Compliance history ---
@@ -732,13 +740,11 @@ export function buildAgentProfile(p: Persona, rank: RankContext): AgentProfile {
 			warnings: Math.round(totalEvals * [0.02, 0.06, 0.015][i] * compWeak),
 			delta: Math.round((rand() - 0.5) * 6),
 		})),
-		timeline: performance
-			.slice(-12)
-			.map((pt) => ({
-				label: pt.label,
-				violations: Math.round(pt.callsEvaluated * 0.03 * compWeak * rand()),
-				warnings: Math.round(pt.callsEvaluated * 0.1 * compWeak * rand()),
-			})),
+		timeline: performance.slice(-12).map((pt) => ({
+			label: pt.label,
+			violations: Math.round(pt.callsEvaluated * 0.03 * compWeak * rand()),
+			warnings: Math.round(pt.callsEvaluated * 0.1 * compWeak * rand()),
+		})),
 		flaggedItems: [
 			{
 				item: 'Transparency',
@@ -765,6 +771,8 @@ export function buildAgentProfile(p: Persona, rank: RankContext): AgentProfile {
 	const offers = Math.round(totalEvals * 0.6);
 	const converted = Math.round(offers * (last.business / 100));
 	const bizWeak = 1.3 - p.base.business;
+	// Own generator so adding products does not shift the values drawn after it.
+	const productRand = seeded(Number(p.id.replace(/\D/g, '')) * 104729);
 	const signalRates: Record<string, number> = {
 		EARLY_OBJECTION: 0.22,
 		UNHANDLED_OBJECTION: 0.14,
@@ -772,6 +780,10 @@ export function buildAgentProfile(p: Persona, rank: RankContext): AgentProfile {
 		MISTARGETED_OFFER: 0.08,
 		BEST_TIME_FRAME: 0.18,
 	};
+	const lostOffers = offers - converted;
+	const negativeShare = 0.1 + (1 - p.base.sentiment) * 0.5;
+	const lostNegative = Math.round(lostOffers * negativeShare);
+	const lostNeutral = Math.round(lostOffers * 0.35);
 	const business = {
 		conversionRate: last.business,
 		offersPresented: offers,
@@ -789,39 +801,32 @@ export function buildAgentProfile(p: Persona, rank: RankContext): AgentProfile {
 		}),
 		nonConversionReasons: [
 			{
-				key: 'priceTooHigh' as const,
-				count: Math.round((offers - converted) * 0.38),
+				key: 'badObjectionHandling' as const,
+				count: lostOffers - lostNeutral - lostNegative,
 			},
-			{
-				key: 'noNeed' as const,
-				count: Math.round((offers - converted) * 0.22),
-			},
-			{
-				key: 'thirdPartyDecision' as const,
-				count: Math.round((offers - converted) * 0.16),
-			},
-			{
-				key: 'distrustQuality' as const,
-				count: Math.round((offers - converted) * 0.1),
-			},
-			{
-				key: 'installationRequirements' as const,
-				count: Math.round((offers - converted) * 0.08),
-			},
-			{ key: 'other' as const, count: Math.round((offers - converted) * 0.06) },
+			{ key: 'neutralSentiment' as const, count: lostNeutral },
+			{ key: 'negativeSentiment' as const, count: lostNegative },
 		],
-		competitorMentions: [
-			{ name: 'Claro', count: Math.round(offers * 0.09 * bizWeak) },
-			{ name: 'Tigo', count: Math.round(offers * 0.05 * bizWeak) },
-			{ name: 'Altice', count: Math.round(offers * 0.03 * bizWeak) },
-		],
-		conversionTrend: performance
-			.slice(-12)
-			.map((pt) => ({
-				label: pt.label,
-				conversionRate: pt.business,
-				offers: Math.round(pt.callsEvaluated * 0.6),
-			})),
+		products: PRODUCT_MIX.map((mix, i) => {
+			const offered = Math.max(1, Math.round(offers * mix.share));
+			const rate = Math.min(
+				90,
+				Math.max(8, last.business * mix.factor + (productRand() - 0.5) * 24)
+			);
+			const sold = Math.round((offered * rate) / 100);
+			return {
+				name: OFFER_CATALOG[i].name,
+				price: OFFER_CATALOG[i].price,
+				offered,
+				sold,
+				conversionRate: round1((sold / offered) * 100),
+			};
+		}),
+		conversionTrend: performance.slice(-12).map((pt) => ({
+			label: pt.label,
+			conversionRate: pt.business,
+			offers: Math.round(pt.callsEvaluated * 0.6),
+		})),
 	};
 
 	// --- Risk history ---
@@ -890,18 +895,14 @@ export function buildAgentProfile(p: Persona, rank: RankContext): AgentProfile {
 						: ('stable' as const),
 			lastUpdated: NOW_ISO,
 		},
-		burnoutTrend: performance
-			.slice(-6)
-			.map((pt, i, arr) => ({
-				label: pt.label,
-				percentage: clamp(
-					Math.round(
-						burnoutPct - (arr.length - 1 - i) * (p.slope < 0 ? -4 : 3)
-					),
-					5,
-					95
-				),
-			})),
+		burnoutTrend: performance.slice(-6).map((pt, i, arr) => ({
+			label: pt.label,
+			percentage: clamp(
+				Math.round(burnoutPct - (arr.length - 1 - i) * (p.slope < 0 ? -4 : 3)),
+				5,
+				95
+			),
+		})),
 	};
 
 	// --- Coaching & LMS (seed; the store appends new ones) ---
@@ -1081,18 +1082,16 @@ export function buildAgentProfile(p: Persona, rank: RankContext): AgentProfile {
 			achievedAt: last.business >= 35 ? last.date : undefined,
 		},
 	];
-	const rankingHistory = performance
-		.slice(-12)
-		.map((pt) => ({
-			label: pt.label,
-			position: clamp(
-				Math.round(rank.rankInTeam + (rand() - 0.5) * 2),
-				1,
-				rank.teamSize
-			),
-			score: pt.overall,
-			teamSize: rank.teamSize,
-		}));
+	const rankingHistory = performance.slice(-12).map((pt) => ({
+		label: pt.label,
+		position: clamp(
+			Math.round(rank.rankInTeam + (rand() - 0.5) * 2),
+			1,
+			rank.teamSize
+		),
+		score: pt.overall,
+		teamSize: rank.teamSize,
+	}));
 	rankingHistory[rankingHistory.length - 1].position = rank.rankInTeam;
 
 	// --- Evaluations table (last 12) — call-001 always exists so the link works ---
@@ -1173,16 +1172,14 @@ export function buildAgentProfile(p: Persona, rank: RankContext): AgentProfile {
 			description: `Call ${d.callId}`,
 			link: `/qa/campaigns/1/calls/${d.callId}`,
 		})),
-		...evaluations
-			.slice(0, 4)
-			.map((e) => ({
-				id: `act-${e.id}`,
-				type: 'evaluation' as const,
-				date: e.date,
-				title: `Call evaluated · QA ${e.qaScore}%`,
-				description: `${e.campaignName} · sentiment ${e.customerSentiment}/5 · compliance ${e.complianceScore}%`,
-				link: `/qa/campaigns/1/calls/${e.callId}`,
-			})),
+		...evaluations.slice(0, 4).map((e) => ({
+			id: `act-${e.id}`,
+			type: 'evaluation' as const,
+			date: e.date,
+			title: `Call evaluated · QA ${e.qaScore}%`,
+			description: `${e.campaignName} · sentiment ${e.customerSentiment}/5 · compliance ${e.complianceScore}%`,
+			link: `/qa/campaigns/1/calls/${e.callId}`,
+		})),
 		{
 			id: `act-rank-${p.id}`,
 			type: 'rank' as const,

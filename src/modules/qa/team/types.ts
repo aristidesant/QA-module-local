@@ -173,6 +173,21 @@ export type NonConversionReasonKey =
 	| 'installationRequirements'
 	| 'other';
 
+/** Why an offer did not convert, attributed to how the call went rather than to the customer's stated reason. */
+export type NonConversionCause =
+	| 'badObjectionHandling'
+	| 'neutralSentiment'
+	| 'negativeSentiment';
+
+/** Offers of one company product made by the agent in the period. */
+export interface ProductPerformance {
+	name: string;
+	price: number; // USD per month
+	offered: number;
+	sold: number;
+	conversionRate: number; // %
+}
+
 export interface BusinessHistory {
 	conversionRate: number;
 	offersPresented: number;
@@ -184,8 +199,8 @@ export interface BusinessHistory {
 		ratePerCall: number;
 		delta: number;
 	}[];
-	nonConversionReasons: { key: NonConversionReasonKey; count: number }[];
-	competitorMentions: { name: string; count: number }[];
+	nonConversionReasons: { key: NonConversionCause; count: number }[];
+	products: ProductPerformance[];
 	conversionTrend: { label: string; conversionRate: number; offers: number }[];
 }
 

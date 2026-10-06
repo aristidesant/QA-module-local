@@ -33,6 +33,28 @@ export const getScoreColor = (score: number): string =>
 export const sentimentColor = (score: number) =>
 	getScoreColor(Math.round(((score - 1) / 4) * 100));
 
+/** Score colour only when the score signals a problem (below 70); healthy scores stay neutral. */
+export const alertScoreColor = (score: number): string | undefined =>
+	score >= 70 ? undefined : getScoreColor(score);
+export const alertSentimentColor = (score: number): string | undefined =>
+	alertScoreColor(Math.round(((score - 1) / 4) * 100));
+
+/** Neutral line-chart strokes: one strong tone first, then greys, each with its own dash so series read without hue. */
+export const NEUTRAL_LINE_SERIES = [
+	{ color: 'var(--mantine-color-text)' },
+	{ color: 'gray.6', strokeDasharray: '6 4' },
+	{ color: 'gray.5', strokeDasharray: '2 3' },
+	{ color: 'gray.6', strokeDasharray: '12 4 2 4' },
+	{ color: 'gray.4', strokeDasharray: '1 5' },
+] as const;
+/** Neutral bar-chart fills, from strongest to lightest. */
+export const NEUTRAL_BAR_SERIES = [
+	'var(--mantine-color-text)',
+	'gray.6',
+	'gray.5',
+	'gray.4',
+] as const;
+
 export const formatSeconds = (s: number) =>
 	`${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, '0')}`;
 export const formatDate = (iso: string) =>

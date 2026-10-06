@@ -26,7 +26,7 @@ import { BusinessTab } from './tabs/BusinessTab';
 import { OperationsTab } from './tabs/OperationsTab';
 import { CoachingLmsTab } from './tabs/CoachingLmsTab';
 import { AchievementsTab } from './tabs/AchievementsTab';
-import { ActivityTab } from './tabs/ActivityTab';
+import { NotesTab } from './tabs/NotesTab';
 import { SessionEditorDrawer } from '~/modules/qa/coaching/components/SessionEditorDrawer';
 import { AssignContentDrawer } from '~/modules/qa/lms/components/AssignContentDrawer';
 import { managerPersona } from '~/modules/qa/lms/helpers';
@@ -180,8 +180,8 @@ export default function AgentProfilePage() {
 					<Tabs.Panel value='achievements' pt='md'>
 						<AchievementsTab profile={profile} />
 					</Tabs.Panel>
-					<Tabs.Panel value='activity' pt='md'>
-						<ActivityTab profile={profile} role={role} />
+					<Tabs.Panel value='notes' pt='md'>
+						<NotesTab profile={profile} role={role} />
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>

@@ -1,6 +1,20 @@
 import { useState } from 'react';
-import { ActionIcon, Badge, Button, Group, Paper, Stack, Text, Textarea } from '@mantine/core';
-import { IconNote, IconPin, IconPinnedOff, IconPlus } from '@tabler/icons-react';
+import {
+	ActionIcon,
+	Badge,
+	Button,
+	Group,
+	Paper,
+	Stack,
+	Text,
+	Textarea,
+} from '@mantine/core';
+import {
+	IconNote,
+	IconPin,
+	IconPinnedOff,
+	IconPlus,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import type { SupervisorNote } from '../types';
@@ -28,31 +42,61 @@ export function NotesPanel({ notes, onAdd, onTogglePin }: NotesPanelProps) {
 	};
 
 	return (
-		<SectionCard title={t('activity.notes')} description={t('activity.notesDescription')} icon={IconNote}>
+		<SectionCard
+			title={t('notes.title')}
+			description={t('notes.description')}
+			icon={IconNote}
+		>
 			<Stack gap='sm'>
 				<Textarea
 					autosize
 					minRows={2}
-					placeholder={t('activity.notePlaceholder')}
+					placeholder={t('notes.placeholder')}
 					value={text}
 					onChange={(e) => setText(e.currentTarget.value)}
 				/>
 				<Group justify='flex-end'>
-					<Button size='xs' leftSection={<IconPlus size={14} />} onClick={handleAdd} disabled={!text.trim()}>
-						{t('activity.save')}
+					<Button
+						size='xs'
+						leftSection={<IconPlus size={14} />}
+						onClick={handleAdd}
+						disabled={!text.trim()}
+					>
+						{t('notes.save')}
 					</Button>
 				</Group>
 				<Stack gap='xs'>
 					{sorted.map((note) => (
-						<Paper key={note.id} withBorder p='sm' bg={note.pinned ? 'var(--mantine-color-yellow-light)' : undefined}>
+						<Paper
+							key={note.id}
+							withBorder
+							p='sm'
+							bg={
+								note.pinned ? 'var(--mantine-color-default-hover)' : undefined
+							}
+						>
 							<Group justify='space-between' mb={4}>
 								<Group gap={6}>
-									<Text size='xs' fw={600}>{note.authorName}</Text>
-									<Badge size='xs' variant='outline'>{note.authorRole}</Badge>
-									<Text size='xs' c='dimmed'>{formatDateTime(note.createdAt)}</Text>
+									<Text size='xs' fw={600}>
+										{note.authorName}
+									</Text>
+									<Badge size='xs' variant='outline'>
+										{note.authorRole}
+									</Badge>
+									<Text size='xs' c='dimmed'>
+										{formatDateTime(note.createdAt)}
+									</Text>
 								</Group>
-								<ActionIcon variant='subtle' size='sm' onClick={() => onTogglePin(note.id)}>
-									{note.pinned ? <IconPinnedOff size={14} /> : <IconPin size={14} />}
+								<ActionIcon
+									variant='subtle'
+									size='sm'
+									onClick={() => onTogglePin(note.id)}
+								>
+									{note.pinned ? (
+										<IconPinnedOff size={14} />
+									) : (
+										<IconPin size={14} />
+									)}
 								</ActionIcon>
 							</Group>
 							<Text size='sm'>{note.text}</Text>

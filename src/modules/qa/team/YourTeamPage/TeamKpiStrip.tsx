@@ -27,13 +27,12 @@ export function TeamKpiStrip({ kpis }: TeamKpiStripProps) {
 			<StatCard
 				title={t('team.kpi.overdueLms')}
 				value={kpis.overdueLms}
-				color={kpis.overdueLms > 0 ? 'orange' : undefined}
+				color={kpis.overdueLms > 0 ? 'red' : undefined}
 				icon={<IconSchool size={18} />}
 			/>
 			<StatCard
 				title={t('team.kpi.openCoaching')}
 				value={kpis.openCoaching}
-				color='blue'
 				icon={<IconCalendarEvent size={18} />}
 			/>
 		</SimpleGrid>

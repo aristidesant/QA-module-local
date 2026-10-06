@@ -55,7 +55,6 @@ const DIRECTION_ICON = {
 	down: IconTrendingDown,
 	flat: IconMinus,
 } as const;
-const DIRECTION_COLOR = { up: 'teal', down: 'red', flat: 'gray' } as const;
 
 export function OverviewTab({ profile, points }: OverviewTabProps) {
 	const { t } = useTranslation('qa.team');
@@ -106,7 +105,7 @@ export function OverviewTab({ profile, points }: OverviewTabProps) {
 				icon={IconChartLine}
 				headerActions={
 					<Badge
-						color={DIRECTION_COLOR[dir.trend]}
+						color='gray'
 						variant='light'
 						leftSection={<DirIcon size={12} />}
 					>
@@ -125,11 +124,7 @@ export function OverviewTab({ profile, points }: OverviewTabProps) {
 			</SectionCard>
 
 			<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-				<SectionCard
-					title={t('overview.strengths')}
-					icon={IconThumbUp}
-					headerAccent='green'
-				>
+				<SectionCard title={t('overview.strengths')} icon={IconThumbUp}>
 					{profile.strengths.length === 0 ? (
 						<Text c='dimmed' size='sm'>
 							{t('overview.noStrengths')}
@@ -149,11 +144,7 @@ export function OverviewTab({ profile, points }: OverviewTabProps) {
 						</Stack>
 					)}
 				</SectionCard>
-				<SectionCard
-					title={t('overview.weaknesses')}
-					icon={IconAlertTriangle}
-					headerAccent='yellow'
-				>
+				<SectionCard title={t('overview.weaknesses')} icon={IconAlertTriangle}>
 					{profile.weaknesses.length === 0 ? (
 						<Text c='dimmed' size='sm'>
 							{t('overview.noWeaknesses')}
@@ -202,7 +193,7 @@ export function OverviewTab({ profile, points }: OverviewTabProps) {
 							h={120}
 							data={profile.risk.burnoutTrend}
 							dataKey='label'
-							series={[{ name: 'percentage', color: 'red.6' }]}
+							series={[{ name: 'percentage', color: 'gray.6' }]}
 							withXAxis={false}
 							withYAxis={false}
 							withTooltip
@@ -224,7 +215,7 @@ export function OverviewTab({ profile, points }: OverviewTabProps) {
 						<StatCard
 							title={t('overview.riskTiles.criticalErrors')}
 							value={totalCriticalErrors}
-							color={totalCriticalErrors > 0 ? 'orange' : undefined}
+							color={totalCriticalErrors > 0 ? 'red' : undefined}
 							variant='compact'
 						/>
 						<StatCard
@@ -236,7 +227,7 @@ export function OverviewTab({ profile, points }: OverviewTabProps) {
 						<StatCard
 							title={t('overview.riskTiles.openDisputes')}
 							value={openDisputes}
-							color={openDisputes > 0 ? 'orange' : undefined}
+							color={openDisputes > 0 ? 'red' : undefined}
 							variant='compact'
 						/>
 					</SimpleGrid>
@@ -273,13 +264,13 @@ export function OverviewTab({ profile, points }: OverviewTabProps) {
 												</Text>
 											</Stack>
 											{alert.acknowledged ? (
-												<Badge variant='light' color='green'>
+												<Badge variant='light' color='gray'>
 													{t('overview.acknowledged')}
 												</Badge>
 											) : (
 												<Button
 													size='xs'
-													variant='light'
+													variant='default'
 													onClick={() =>
 														acknowledgeAlert(profile.agent.id, alert.id)
 													}
@@ -306,9 +297,9 @@ export function OverviewTab({ profile, points }: OverviewTabProps) {
 												<Badge
 													color={
 														dispute.status === 'open'
-															? 'orange'
+															? 'yellow'
 															: dispute.status === 'won'
-																? 'green'
+																? 'gray'
 																: dispute.status === 'lost'
 																	? 'red'
 																	: 'gray'

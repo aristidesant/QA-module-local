@@ -1,15 +1,66 @@
-import { Badge, Group, Paper, Progress, SimpleGrid, Stack, Text, ThemeIcon } from '@mantine/core';
+import {
+	Badge,
+	Group,
+	Paper,
+	Progress,
+	SimpleGrid,
+	Stack,
+	Text,
+	ThemeIcon,
+} from '@mantine/core';
 import { DonutChart, LineChart } from '@mantine/charts';
-import { IconAlertCircle, IconBuildingStore, IconBulb, IconSparkles } from '@tabler/icons-react';
+import {
+	IconAlertCircle,
+	IconBulb,
+	IconSparkles,
+	IconThumbDown,
+	IconThumbUp,
+} from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import { StatCard } from '~/components/StatCard';
-import type { AgentProfile } from '../../types';
-import { BUSINESS_SIGNAL_META, BUSINESS_SIGNAL_ORDER, NON_CONVERSION_REASON_LABELS } from '../../constants';
-import { getScoreColor } from '../../helpers';
+import { EmptyState } from '~/components/EmptyState/EmptyState';
+import type { AgentProfile, ProductPerformance } from '../../types';
+import { BUSINESS_SIGNAL_META, BUSINESS_SIGNAL_ORDER } from '../../constants';
+import { alertScoreColor } from '../../helpers';
 import { TrendDelta } from '../../components/TrendDelta';
 
-const REASON_COLORS = ['red.6', 'orange.6', 'yellow.6', 'grape.6', 'blue.6', 'gray.6'];
+const REASON_COLORS = ['var(--mantine-color-text)', 'gray.6', 'gray.4'];
+
+function ProductCard({
+	title,
+	icon,
+	product,
+}: {
+	title: string;
+	icon: typeof IconThumbUp;
+	product: ProductPerformance;
+}) {
+	const { t } = useTranslation('qa.team');
+	return (
+		<SectionCard title={title} icon={icon}>
+			<Stack gap={4}>
+				<Text fw={700} size='lg'>
+					{product.name}
+				</Text>
+				<Text size='sm' c='dimmed'>
+					{t('business.products.price', { value: product.price })}
+				</Text>
+				<Group gap='xs' mt='xs'>
+					<Badge variant='light' color='gray'>
+						{t('business.products.sold', {
+							sold: product.sold,
+							offered: product.offered,
+						})}
+					</Badge>
+					<Badge variant='light' color='gray'>
+						{t('business.products.rate', { value: product.conversionRate })}
+					</Badge>
+				</Group>
+			</Stack>
+		</SectionCard>
+	);
+}
 
 interface BusinessTabProps {
 	profile: AgentProfile;
@@ -18,17 +69,61 @@ interface BusinessTabProps {
 export function BusinessTab({ profile }: BusinessTabProps) {
 	const { t } = useTranslation('qa.team');
 	const { business } = profile;
+	// Best and worst by units sold; conversion rate breaks ties.
+	const ranked = [...business.products].sort(
+		(a, b) => b.sold - a.sold || b.conversionRate - a.conversionRate
+	);
+	const best = ranked[0];
+	const worst = ranked.length > 1 ? ranked[ranked.length - 1] : undefined;
 
 	return (
 		<Stack gap='md'>
 			<SimpleGrid cols={{ base: 2, md: 4 }} spacing='md'>
-				<StatCard title={t('business.kpi.conversion')} value={`${business.conversionRate}%`} color={getScoreColor(Math.min(100, business.conversionRate * 2.5))} />
-				<StatCard title={t('business.kpi.offers')} value={business.offersPresented} />
-				<StatCard title={t('business.kpi.converted')} value={business.converted} color='green' />
-				<StatCard title={t('business.kpi.followUps')} value={business.followUpsScheduled} />
+				<StatCard
+					title={t('business.kpi.conversion')}
+					value={`${business.conversionRate}%`}
+					color={alertScoreColor(Math.min(100, business.conversionRate * 2.5))}
+				/>
+				<StatCard
+					title={t('business.kpi.offers')}
+					value={business.offersPresented}
+				/>
+				<StatCard
+					title={t('business.kpi.converted')}
+					value={business.converted}
+				/>
+				<StatCard
+					title={t('business.kpi.followUps')}
+					value={business.followUpsScheduled}
+				/>
 			</SimpleGrid>
 
-			<SectionCard title={t('business.signals')} description={t('business.signalsDescription')} icon={IconSparkles}>
+			{best ? (
+				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
+					<ProductCard
+						title={t('business.products.best')}
+						icon={IconThumbUp}
+						product={best}
+					/>
+					{worst && (
+						<ProductCard
+							title={t('business.products.worst')}
+							icon={IconThumbDown}
+							product={worst}
+						/>
+					)}
+				</SimpleGrid>
+			) : (
+				<SectionCard title={t('business.products.best')} icon={IconThumbUp}>
+					<EmptyState message={t('business.products.empty')} />
+				</SectionCard>
+			)}
+
+			<SectionCard
+				title={t('business.signals')}
+				description={t('business.signalsDescription')}
+				icon={IconSparkles}
+			>
 				<Stack gap='xs'>
 					{BUSINESS_SIGNAL_ORDER.map((type) => {
 						const meta = BUSINESS_SIGNAL_META[type];
@@ -37,19 +132,51 @@ export function BusinessTab({ profile }: BusinessTabProps) {
 							<Paper key={type} withBorder p='sm' radius='sm'>
 								<Group justify='space-between'>
 									<Group gap='xs'>
-										<ThemeIcon size='sm' radius='xl' variant='light' color={meta.tone === 'risk' ? 'orange' : 'teal'}>
-											{meta.tone === 'risk' ? <IconAlertCircle size={12} /> : <IconBulb size={12} />}
+										<ThemeIcon
+											size='sm'
+											radius='xl'
+											variant='light'
+											color={meta.tone === 'risk' ? 'orange' : 'gray'}
+										>
+											{meta.tone === 'risk' ? (
+												<IconAlertCircle size={12} />
+											) : (
+												<IconBulb size={12} />
+											)}
 										</ThemeIcon>
-										<Text fw={600} size='sm'>{meta.label}</Text>
-										<Badge size='xs' variant='outline'>{t(`business.tone.${meta.tone}`)}</Badge>
+										<Text fw={600} size='sm'>
+											{meta.label}
+										</Text>
+										<Badge size='xs' variant='outline'>
+											{t(`business.tone.${meta.tone}`)}
+										</Badge>
 									</Group>
 									<Group gap='sm'>
-										<Text fw={600} size='sm'>{signal.count}</Text>
-										<Text size='xs' c='dimmed'>{t('qa.perCall', { value: signal.ratePerCall })}</Text>
-										<TrendDelta delta={signal.delta} trend={signal.delta > 0 ? 'up' : signal.delta < 0 ? 'down' : 'flat'} unit='' betterWhen={meta.tone === 'risk' ? 'lower' : 'higher'} />
+										<Text fw={600} size='sm'>
+											{signal.count}
+										</Text>
+										<Text size='xs' c='dimmed'>
+											{t('qa.perCall', { value: signal.ratePerCall })}
+										</Text>
+										<TrendDelta
+											delta={signal.delta}
+											trend={
+												signal.delta > 0
+													? 'up'
+													: signal.delta < 0
+														? 'down'
+														: 'flat'
+											}
+											unit=''
+										/>
 									</Group>
 								</Group>
-								<Progress value={signal.ratePerCall} color={meta.tone === 'risk' ? 'orange' : 'teal'} size='xs' mt='xs' />
+								<Progress
+									value={signal.ratePerCall}
+									color={meta.tone === 'risk' ? 'orange' : 'gray'}
+									size='xs'
+									mt='xs'
+								/>
 							</Paper>
 						);
 					})}
@@ -62,7 +189,7 @@ export function BusinessTab({ profile }: BusinessTabProps) {
 						h={240}
 						data={business.conversionTrend}
 						dataKey='label'
-						series={[{ name: 'conversionRate', color: 'blue.6' }]}
+						series={[{ name: 'conversionRate', color: 'gray.6' }]}
 						yAxisProps={{ domain: [0, 100] }}
 						withDots
 					/>
@@ -74,23 +201,13 @@ export function BusinessTab({ profile }: BusinessTabProps) {
 						withLabelsLine
 						withLabels
 						data={business.nonConversionReasons.map((r, i) => ({
-							name: NON_CONVERSION_REASON_LABELS[r.key],
+							name: t(`business.causes.${r.key}`),
 							value: r.count,
 							color: REASON_COLORS[i % REASON_COLORS.length],
 						}))}
 					/>
 				</SectionCard>
 			</SimpleGrid>
-
-			<SectionCard title={t('business.competitors')}>
-				<Group gap='sm'>
-					{business.competitorMentions.map((c) => (
-						<Badge key={c.name} size='lg' variant='light' color='orange' leftSection={<IconBuildingStore size={14} />}>
-							{c.name} · {t('business.mentions', { count: c.count })}
-						</Badge>
-					))}
-				</Group>
-			</SectionCard>
 		</Stack>
 	);
 }

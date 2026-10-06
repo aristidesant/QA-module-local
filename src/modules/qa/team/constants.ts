@@ -4,8 +4,8 @@ import {
 	IconBriefcase,
 	IconClipboardList,
 	IconHeadset,
-	IconHistory,
 	IconMoodSmile,
+	IconNote,
 	IconSchool,
 	IconShieldCheck,
 	IconTrendingUp,
@@ -18,7 +18,6 @@ import type {
 import { LMS_CONTENT } from '~/modules/qa/lms/catalog';
 import { AREA_TO_DIMENSION } from '~/modules/qa/lms/constants';
 import type {
-	ActivityType,
 	BusinessSignalType,
 	ComplianceAreaKey,
 	DimensionKey,
@@ -65,7 +64,7 @@ export type ProfileTab =
 	| 'operations'
 	| 'coaching'
 	| 'achievements'
-	| 'activity';
+	| 'notes';
 export const PROFILE_TABS: {
 	value: ProfileTab;
 	labelKey: string;
@@ -79,7 +78,7 @@ export const PROFILE_TABS: {
 	{ value: 'operations', labelKey: 'tabs.operations', icon: IconHeadset },
 	{ value: 'coaching', labelKey: 'tabs.coaching', icon: IconSchool },
 	{ value: 'achievements', labelKey: 'tabs.achievements', icon: IconAward },
-	{ value: 'activity', labelKey: 'tabs.activity', icon: IconHistory },
+	{ value: 'notes', labelKey: 'tabs.notes', icon: IconNote },
 ];
 
 export const DIMENSION_META: Record<
@@ -341,21 +340,6 @@ export const OPERATIONAL_ORDER: OperationalMetricKey[] = [
 	'adherence',
 	'occupancy',
 ];
-
-export const ACTIVITY_META: Record<
-	ActivityType,
-	{ color: string; labelKey: string }
-> = {
-	evaluation: { color: 'gray', labelKey: 'activity.types.evaluation' },
-	badge: { color: 'yellow', labelKey: 'activity.types.badge' },
-	milestone: { color: 'grape', labelKey: 'activity.types.milestone' },
-	coaching: { color: 'blue', labelKey: 'activity.types.coaching' },
-	lms: { color: 'teal', labelKey: 'activity.types.lms' },
-	alert: { color: 'red', labelKey: 'activity.types.alert' },
-	dispute: { color: 'orange', labelKey: 'activity.types.dispute' },
-	note: { color: 'indigo', labelKey: 'activity.types.note' },
-	rank: { color: 'green', labelKey: 'activity.types.rank' },
-};
 
 /** Legacy view of the LMS catalogue, derived from `~/modules/qa/lms/catalog`. */
 const LEGACY_LMS_TYPE: Record<LmsFormat, LmsMaterialType> = {

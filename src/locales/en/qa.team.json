@@ -111,7 +111,7 @@
 		"operations": "Operations",
 		"coaching": "Coaching & LMS",
 		"achievements": "Achievements",
-		"activity": "Activity"
+		"notes": "Notes"
 	},
 	"dimension": {
 		"qa": "QA score",
@@ -242,6 +242,14 @@
 		"noFlagged": "No flagged compliance items."
 	},
 	"business": {
+		"products": {
+			"best": "Best-selling product",
+			"worst": "Worst-selling product",
+			"price": "${{value}}/mo",
+			"sold": "{{sold}} sold of {{offered}} offered",
+			"rate": "{{value}}% conversion",
+			"empty": "No product offers in this period."
+		},
 		"kpi": {
 			"conversion": "Conversion rate",
 			"offers": "Offers presented",
@@ -253,8 +261,11 @@
 		"tone": { "risk": "Risk", "opportunity": "Opportunity" },
 		"conversionTrend": "Conversion over time",
 		"reasons": "Non-conversion reasons",
-		"competitors": "Competitors mentioned",
-		"mentions": "{{count}} mentions"
+		"causes": {
+			"badObjectionHandling": "Bad objection handling",
+			"neutralSentiment": "Neutral sentiment",
+			"negativeSentiment": "Negative sentiment"
+		}
 	},
 	"ops": {
 		"title": "Operational KPIs",
@@ -331,30 +342,13 @@
 		"currentRank": "Current rank"
 	},
 	"activity": {
-		"title": "Activity timeline",
-		"filterAll": "All",
-		"types": {
-			"evaluation": "Evaluation",
-			"badge": "Badge",
-			"milestone": "Milestone",
-			"coaching": "Coaching",
-			"lms": "LMS",
-			"alert": "Alert",
-			"dispute": "Dispute",
-			"note": "Note",
-			"rank": "Ranking"
-		},
-		"open": "Open",
-		"empty": "No activity of this type.",
-		"notes": "Supervisor notes",
-		"notesDescription": "Private to supervisors and QA managers",
-		"addNote": "Add note",
-		"notePlaceholder": "Write a note about this agent…",
-		"save": "Save note",
-		"pin": "Pin",
-		"unpin": "Unpin",
-		"pinned": "Pinned",
-		"showMore": "Show more"
+		"open": "Open"
+	},
+	"notes": {
+		"title": "Supervisor notes",
+		"description": "Private to supervisors and QA managers",
+		"placeholder": "Write a note about this agent…",
+		"save": "Save note"
 	},
 	"modals": {
 		"coaching": {

@@ -6,7 +6,7 @@ import { SectionCard } from '~/components/SectionCard';
 import { StatCard } from '~/components/StatCard';
 import type { AgentProfile } from '../../types';
 import { QA_ERROR_TYPE_META, QA_ERROR_TYPE_ORDER } from '../../constants';
-import { getScoreColor } from '../../helpers';
+import { NEUTRAL_BAR_SERIES, alertScoreColor } from '../../helpers';
 import { TrendDelta } from '../../components/TrendDelta';
 import { EvaluationHistoryTable } from '../../components/EvaluationHistoryTable';
 
@@ -21,24 +21,50 @@ export function QATab({ profile }: QATabProps) {
 	return (
 		<Stack gap='md'>
 			<SimpleGrid cols={{ base: 2, md: 4 }} spacing='md'>
-				<StatCard title={t('qa.kpi.average')} value={`${qa.averageScore}%`} color={getScoreColor(qa.averageScore)} />
+				<StatCard
+					title={t('qa.kpi.average')}
+					value={`${qa.averageScore}%`}
+					color={alertScoreColor(qa.averageScore)}
+				/>
 				<StatCard title={t('qa.kpi.passRate')} value={`${qa.passRate}%`} />
 				<StatCard title={t('qa.kpi.evaluations')} value={qa.evaluations} />
-				<StatCard title={t('qa.kpi.autoFails')} value={qa.autoFails} color={qa.autoFails > 0 ? 'red' : undefined} />
+				<StatCard
+					title={t('qa.kpi.autoFails')}
+					value={qa.autoFails}
+					color={qa.autoFails > 0 ? 'red' : undefined}
+				/>
 			</SimpleGrid>
 
-			<SectionCard title={t('qa.errorTypes')} description={t('qa.errorTypesDescription')} icon={IconClipboardList}>
+			<SectionCard
+				title={t('qa.errorTypes')}
+				description={t('qa.errorTypesDescription')}
+				icon={IconClipboardList}
+			>
 				<SimpleGrid cols={{ base: 2, md: 4 }} spacing='sm'>
 					{QA_ERROR_TYPE_ORDER.map((code) => {
 						const meta = QA_ERROR_TYPE_META[code];
 						const entry = qa.errorTypes.find((e) => e.code === code)!;
 						return (
 							<Paper key={code} withBorder p='md' radius='md'>
-								<Badge color={meta.color} variant='filled'>{code}</Badge>
-								<Text size='xs' c='dimmed' mt={4}>{meta.shortLabel}</Text>
-								<Text fw={700} size='xl'>{entry.count}</Text>
-								<Text size='xs' c='dimmed'>{t('qa.perCall', { value: entry.ratePerCall })}</Text>
-								<TrendDelta delta={entry.delta} trend={entry.delta > 0 ? 'up' : entry.delta < 0 ? 'down' : 'flat'} unit='' betterWhen='lower' />
+								<Badge color='gray' variant='light'>
+									{code}
+								</Badge>
+								<Text size='xs' c='dimmed' mt={4}>
+									{meta.shortLabel}
+								</Text>
+								<Text fw={700} size='xl'>
+									{entry.count}
+								</Text>
+								<Text size='xs' c='dimmed'>
+									{t('qa.perCall', { value: entry.ratePerCall })}
+								</Text>
+								<TrendDelta
+									delta={entry.delta}
+									trend={
+										entry.delta > 0 ? 'up' : entry.delta < 0 ? 'down' : 'flat'
+									}
+									unit=''
+								/>
 							</Paper>
 						);
 					})}
@@ -52,10 +78,10 @@ export function QATab({ profile }: QATabProps) {
 					dataKey='label'
 					type='stacked'
 					series={[
-						{ name: 'ECN', color: 'red.6' },
-						{ name: 'ENC', color: 'orange.6' },
-						{ name: 'ECC', color: 'grape.6' },
-						{ name: 'ECUF', color: 'yellow.6' },
+						{ name: 'ECN', color: NEUTRAL_BAR_SERIES[0] },
+						{ name: 'ENC', color: NEUTRAL_BAR_SERIES[1] },
+						{ name: 'ECC', color: NEUTRAL_BAR_SERIES[2] },
+						{ name: 'ECUF', color: NEUTRAL_BAR_SERIES[3] },
 					]}
 					withLegend
 				/>
@@ -76,7 +102,11 @@ export function QATab({ profile }: QATabProps) {
 							<Table.Tr key={item.item}>
 								<Table.Td>{item.item}</Table.Td>
 								<Table.Td>{item.aspect}</Table.Td>
-								<Table.Td><Badge color={QA_ERROR_TYPE_META[item.errorType].color} size='sm'>{item.errorType}</Badge></Table.Td>
+								<Table.Td>
+									<Badge color='gray' variant='light' size='sm'>
+										{item.errorType}
+									</Badge>
+								</Table.Td>
 								<Table.Td>{item.count}</Table.Td>
 							</Table.Tr>
 						))}
@@ -84,7 +114,10 @@ export function QATab({ profile }: QATabProps) {
 				</Table>
 			</SectionCard>
 
-			<SectionCard title={t('qa.history')} description={t('qa.historyDescription')}>
+			<SectionCard
+				title={t('qa.history')}
+				description={t('qa.historyDescription')}
+			>
 				<EvaluationHistoryTable rows={profile.evaluations} />
 			</SectionCard>
 		</Stack>

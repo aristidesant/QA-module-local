@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import type { AgentProfile } from '../../types';
 import { OPERATIONAL_ORDER } from '../../constants';
-import { formatSeconds } from '../../helpers';
+import { formatSeconds, NEUTRAL_BAR_SERIES } from '../../helpers';
 import { OperationalMetricCard } from '../../components/OperationalMetricCard';
 
 interface OperationsTabProps {
@@ -18,10 +18,17 @@ export function OperationsTab({ profile }: OperationsTabProps) {
 
 	return (
 		<Stack gap='md'>
-			<SectionCard title={t('ops.title')} description={t('ops.description')} icon={IconHeadset}>
+			<SectionCard
+				title={t('ops.title')}
+				description={t('ops.description')}
+				icon={IconHeadset}
+			>
 				<SimpleGrid cols={{ base: 2, md: 5 }} spacing='md'>
 					{OPERATIONAL_ORDER.map((key) => (
-						<OperationalMetricCard key={key} metric={operational.find((m) => m.key === key)!} />
+						<OperationalMetricCard
+							key={key}
+							metric={operational.find((m) => m.key === key)!}
+						/>
 					))}
 				</SimpleGrid>
 			</SectionCard>
@@ -32,7 +39,7 @@ export function OperationsTab({ profile }: OperationsTabProps) {
 						h={240}
 						data={operationalTrend}
 						dataKey='label'
-						series={[{ name: 'aht', color: 'blue.6' }]}
+						series={[{ name: 'aht', color: 'gray.6' }]}
 						withDots
 						valueFormatter={formatSeconds}
 					/>
@@ -44,9 +51,21 @@ export function OperationsTab({ profile }: OperationsTabProps) {
 						dataKey='label'
 						type='stacked'
 						series={[
-							{ name: 'talk', label: t('ops.breakdownSeries.talk'), color: 'blue.6' },
-							{ name: 'hold', label: t('ops.breakdownSeries.hold'), color: 'orange.6' },
-							{ name: 'wrapUp', label: t('ops.breakdownSeries.wrapUp'), color: 'gray.6' },
+							{
+								name: 'talk',
+								label: t('ops.breakdownSeries.talk'),
+								color: NEUTRAL_BAR_SERIES[0],
+							},
+							{
+								name: 'hold',
+								label: t('ops.breakdownSeries.hold'),
+								color: NEUTRAL_BAR_SERIES[1],
+							},
+							{
+								name: 'wrapUp',
+								label: t('ops.breakdownSeries.wrapUp'),
+								color: NEUTRAL_BAR_SERIES[3],
+							},
 						]}
 						withLegend
 						valueFormatter={formatSeconds}

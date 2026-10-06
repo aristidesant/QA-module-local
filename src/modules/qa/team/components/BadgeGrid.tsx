@@ -1,4 +1,11 @@
-import { Paper, SimpleGrid, Stack, Text, ThemeIcon, Tooltip } from '@mantine/core';
+import {
+	Paper,
+	SimpleGrid,
+	Stack,
+	Text,
+	ThemeIcon,
+	Tooltip,
+} from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { EmptyState } from '~/components/EmptyState/EmptyState';
 import type { EarnedBadge } from '../types';
@@ -22,11 +29,15 @@ export function BadgeGrid({ badges }: BadgeGridProps) {
 					<Paper withBorder p='md' radius='md' ta='center'>
 						<Stack align='center' gap={4}>
 							{/* inline-style-allow: emoji glyph sizing inside a fixed icon circle */}
-							<ThemeIcon size={48} radius='xl' variant='light' color='yellow'>
+							<ThemeIcon size={48} radius='xl' variant='light' color='gray'>
 								<span style={{ fontSize: 24 }}>{badge.icon}</span>
 							</ThemeIcon>
-							<Text fw={600} size='sm'>{badge.name}</Text>
-							<Text size='xs' c='dimmed'>{formatDate(badge.earnedAt)}</Text>
+							<Text fw={600} size='sm'>
+								{badge.name}
+							</Text>
+							<Text size='xs' c='dimmed'>
+								{formatDate(badge.earnedAt)}
+							</Text>
 						</Stack>
 					</Paper>
 				</Tooltip>

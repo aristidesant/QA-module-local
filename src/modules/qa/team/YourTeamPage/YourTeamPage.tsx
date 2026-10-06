@@ -52,7 +52,7 @@ export default function YourTeamPage() {
 			filters
 		);
 	}, [profilesById, role, filters, triggerRules]);
-	const columns = useTeamColumns(role, profilesById, t);
+	const columns = useTeamColumns(role, t);
 
 	return (
 		<ContentContainer
@@ -78,6 +78,7 @@ export default function YourTeamPage() {
 						getRowId={(r) => r.id}
 						initialSort={[{ id: 'overall', desc: true }]}
 						enablePagination
+						showPaginationControls
 						pageSize={10}
 						density='compact'
 						emptyMessage={t('team.empty')}

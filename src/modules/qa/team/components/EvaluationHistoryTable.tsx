@@ -6,7 +6,12 @@ import { useTranslation } from 'react-i18next';
 import BaseTable from '~/components/BaseTable/BaseTable';
 import type { BaseTableColumnDef } from '~/components/BaseTable/BaseTable';
 import type { EvaluationHistoryRow } from '../types';
-import { formatDateTime, formatSeconds, getScoreColor, sentimentColor } from '../helpers';
+import {
+	alertScoreColor,
+	alertSentimentColor,
+	formatDateTime,
+	formatSeconds,
+} from '../helpers';
 
 const helper = createColumnHelper<EvaluationHistoryRow>();
 
@@ -37,25 +42,45 @@ export function EvaluationHistoryTable({ rows }: EvaluationHistoryTableProps) {
 				const row = info.row.original;
 				return (
 					<Group gap={6} wrap='nowrap'>
-						<Badge color={getScoreColor(info.getValue())} variant='light'>{info.getValue()}%</Badge>
-						{row.autoFail && <Badge color='red' variant='filled'>{t('qa.autoFail')}</Badge>}
+						<Badge
+							color={alertScoreColor(info.getValue()) ?? 'gray'}
+							variant='light'
+						>
+							{info.getValue()}%
+						</Badge>
+						{row.autoFail && (
+							<Badge color='red' variant='filled'>
+								{t('qa.autoFail')}
+							</Badge>
+						)}
 					</Group>
 				);
 			},
 		}) as BaseTableColumnDef<EvaluationHistoryRow>,
 		helper.accessor('customerSentiment', {
 			header: t('qa.historyColumns.sentiment'),
-			cell: (info) => <Text size='sm' c={sentimentColor(info.getValue())}>{info.getValue().toFixed(1)}/5</Text>,
+			cell: (info) => (
+				<Text size='sm' c={alertSentimentColor(info.getValue())}>
+					{info.getValue().toFixed(1)}/5
+				</Text>
+			),
 		}) as BaseTableColumnDef<EvaluationHistoryRow>,
 		helper.accessor('complianceScore', {
 			header: t('qa.historyColumns.compliance'),
-			cell: (info) => <Text size='sm' c={getScoreColor(info.getValue())}>{info.getValue()}%</Text>,
+			cell: (info) => (
+				<Text size='sm' c={alertScoreColor(info.getValue())}>
+					{info.getValue()}%
+				</Text>
+			),
 		}) as BaseTableColumnDef<EvaluationHistoryRow>,
 		helper.accessor('converted', {
 			header: t('qa.historyColumns.converted'),
-			cell: (info) => (info.getValue()
-				? <IconCheck size={16} color='var(--mantine-color-green-6)' />
-				: <IconX size={16} color='var(--mantine-color-gray-5)' />),
+			cell: (info) =>
+				info.getValue() ? (
+					<IconCheck size={16} color='var(--mantine-color-text)' />
+				) : (
+					<IconX size={16} color='var(--mantine-color-gray-5)' />
+				),
 		}) as BaseTableColumnDef<EvaluationHistoryRow>,
 		helper.accessor('evaluatedBy', {
 			header: t('qa.historyColumns.evaluatedBy'),
@@ -65,7 +90,12 @@ export function EvaluationHistoryTable({ rows }: EvaluationHistoryTableProps) {
 			id: 'open',
 			header: t('qa.historyColumns.open'),
 			cell: (info) => (
-				<ActionIcon variant='subtle' onClick={() => navigate(`/qa/campaigns/1/calls/${info.row.original.callId}`)}>
+				<ActionIcon
+					variant='subtle'
+					onClick={() =>
+						navigate(`/qa/campaigns/1/calls/${info.row.original.callId}`)
+					}
+				>
 					<IconExternalLink size={16} />
 				</ActionIcon>
 			),

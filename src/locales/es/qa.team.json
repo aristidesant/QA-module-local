@@ -111,7 +111,7 @@
 		"operations": "Operaciones",
 		"coaching": "Coaching y LMS",
 		"achievements": "Logros",
-		"activity": "Actividad"
+		"notes": "Notas"
 	},
 	"dimension": {
 		"qa": "Puntuación QA",
@@ -246,6 +246,14 @@
 		"noFlagged": "Sin ítems de cumplimiento marcados."
 	},
 	"business": {
+		"products": {
+			"best": "Producto más vendido",
+			"worst": "Producto menos vendido",
+			"price": "${{value}}/mes",
+			"sold": "{{sold}} vendidos de {{offered}} ofrecidos",
+			"rate": "{{value}}% de conversión",
+			"empty": "Sin ofertas de productos en este periodo."
+		},
 		"kpi": {
 			"conversion": "Tasa de conversión",
 			"offers": "Ofertas presentadas",
@@ -257,8 +265,11 @@
 		"tone": { "risk": "Riesgo", "opportunity": "Oportunidad" },
 		"conversionTrend": "Conversión a través del tiempo",
 		"reasons": "Razones de no conversión",
-		"competitors": "Competidores mencionados",
-		"mentions": "{{count}} menciones"
+		"causes": {
+			"badObjectionHandling": "Mal manejo de objeciones",
+			"neutralSentiment": "Sentimiento neutral",
+			"negativeSentiment": "Sentimiento negativo"
+		}
 	},
 	"ops": {
 		"title": "KPIs operativos",
@@ -339,30 +350,13 @@
 		"currentRank": "Posición actual"
 	},
 	"activity": {
-		"title": "Línea de tiempo de actividad",
-		"filterAll": "Todos",
-		"types": {
-			"evaluation": "Evaluación",
-			"badge": "Insignia",
-			"milestone": "Hito",
-			"coaching": "Coaching",
-			"lms": "LMS",
-			"alert": "Alerta",
-			"dispute": "Disputa",
-			"note": "Nota",
-			"rank": "Ranking"
-		},
-		"open": "Abrir",
-		"empty": "Sin actividad de este tipo.",
-		"notes": "Notas del supervisor",
-		"notesDescription": "Privadas para supervisores y QA managers",
-		"addNote": "Agregar nota",
-		"notePlaceholder": "Escribe una nota sobre este agente…",
-		"save": "Guardar nota",
-		"pin": "Fijar",
-		"unpin": "Desfijar",
-		"pinned": "Fijada",
-		"showMore": "Ver más"
+		"open": "Abrir"
+	},
+	"notes": {
+		"title": "Notas del supervisor",
+		"description": "Privadas para supervisores y QA managers",
+		"placeholder": "Escribe una nota sobre este agente…",
+		"save": "Guardar nota"
 	},
 	"modals": {
 		"coaching": {

@@ -26,16 +26,12 @@ import {
 import type { AgentProfile, ProfilePeriod, TeamRole } from '../types';
 import { PROFILE_PERIODS } from '../constants';
 import { TEAM_CAMPAIGNS } from '../mockData';
-import { formatDate, formatTenure, getScoreColor } from '../helpers';
+import { alertScoreColor, formatDate, formatTenure } from '../helpers';
 import { ScoreRing } from '../components/ScoreRing';
 import { TrendDelta } from '../components/TrendDelta';
 
-const STATUS_COLOR = {
-	active: 'green',
-	'on-leave': 'gray',
-	training: 'blue',
-} as const;
-const BURNOUT_COLOR = { low: 'green', medium: 'yellow', high: 'red' } as const;
+/** Burnout is the only status that earns colour, and only when it is a concern. */
+const BURNOUT_COLOR = { low: 'gray', medium: 'yellow', high: 'red' } as const;
 
 interface ProfileHeaderProps {
 	profile: AgentProfile;
@@ -71,16 +67,11 @@ export function ProfileHeader({
 		<SectionCard padding='lg'>
 			<Group justify='space-between' align='flex-start' wrap='wrap'>
 				<Group gap='md' align='flex-start'>
-					<Avatar
-						size={72}
-						radius='md'
-						color={agent.avatarColor}
-						name={agent.name}
-					/>
+					<Avatar size={72} radius='md' color='gray' name={agent.name} />
 					<Stack gap={4}>
 						<Group gap='xs'>
 							<Title order={2}>{agent.name}</Title>
-							<Badge variant='light' color={STATUS_COLOR[agent.status]}>
+							<Badge variant='light' color='gray'>
 								{t(`status.${agent.status}`)}
 							</Badge>
 							<Badge variant='dot' color={BURNOUT_COLOR[burnoutLevel]}>
@@ -93,7 +84,7 @@ export function ProfileHeader({
 						</Text>
 						<Group gap={6}>
 							{campaignNames.map((name) => (
-								<Badge key={name} variant='outline' size='xs'>
+								<Badge key={name} variant='outline' color='gray' size='xs'>
 									{name}
 								</Badge>
 							))}
@@ -114,7 +105,11 @@ export function ProfileHeader({
 				</Group>
 
 				<Group gap='xl' align='center'>
-					<ScoreRing value={overall.score} size={112} />
+					<ScoreRing
+						value={overall.score}
+						size={112}
+						color={alertScoreColor(overall.score) ?? 'gray.6'}
+					/>
 					<Stack gap={2}>
 						<Text size='xs' c='dimmed' tt='uppercase'>
 							{t('header.overall')}
@@ -122,15 +117,15 @@ export function ProfileHeader({
 						<Group gap='xs'>
 							<Badge
 								size='lg'
-								variant='filled'
-								color={getScoreColor(overall.score)}
+								variant='light'
+								color={alertScoreColor(overall.score) ?? 'gray'}
 							>
 								{t('header.rank', {
 									rank: overall.rankInTeam,
 									size: overall.teamSize,
 								})}
 							</Badge>
-							<Badge variant='light'>
+							<Badge variant='light' color='gray'>
 								{t('header.percentile', { value: overall.percentile })}
 							</Badge>
 							<Tooltip
@@ -165,14 +160,14 @@ export function ProfileHeader({
 				/>
 				<Group gap='xs'>
 					<Button
-						variant='light'
+						variant='default'
 						leftSection={<IconCalendarEvent size={16} />}
 						onClick={onScheduleCoaching}
 					>
 						{t('header.actions.scheduleCoaching')}
 					</Button>
 					<Button
-						variant='light'
+						variant='default'
 						leftSection={<IconBook size={16} />}
 						onClick={onAssignLms}
 					>
