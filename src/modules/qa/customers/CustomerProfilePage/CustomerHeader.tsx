@@ -15,7 +15,7 @@ import type { TeamRole } from '~/modules/qa/team/types';
 import type { CustomerProfile } from '../types';
 import { CHANNEL_META, SEGMENT_META, STATUS_META } from '../constants';
 import { ReceptivenessGauge } from '../components/ReceptivenessGauge';
-import { windowLabel } from '../helpers';
+import { npsBand, windowLabel } from '../helpers';
 
 interface CustomerHeaderProps {
 	profile: CustomerProfile;
@@ -35,6 +35,7 @@ export function CustomerHeader({
 	const { t } = useTranslation('qa.customers');
 	const { customer, kpis, bestWindows } = profile;
 	const highChurn = kpis.churnRisk === 'high';
+	const nps = kpis.npsLatest !== undefined ? npsBand(kpis.npsLatest) : null;
 
 	// Plan, value, channel, language and tags read as one quiet line instead of six coloured chips.
 	const facts = [
@@ -108,6 +109,18 @@ export function CustomerHeader({
 							>
 								{t(`churn.${kpis.churnRisk}`)}
 							</Text>
+						</Group>
+						<Group gap='xs'>
+							<Text size='xs' c='dimmed' tt='uppercase'>
+								{t('header.nps')}
+							</Text>
+							{nps ? (
+								<Badge variant='light' color={nps.color} size='sm'>
+									{kpis.npsLatest} · {t(`surveys.band.${nps.label}`)}
+								</Badge>
+							) : (
+								<Text size='sm'>—</Text>
+							)}
 						</Group>
 						<Group gap='xs'>
 							<Text size='xs' c='dimmed' tt='uppercase'>

@@ -108,6 +108,7 @@
 		"receptiveness": "Receptiveness",
 		"churn": "Churn risk",
 		"bestWindow": "Best window",
+		"nps": "NPS",
 		"actions": {
 			"addNote": "Add note",
 			"flagDnc": "Flag Do-Not-Call",
