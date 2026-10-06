@@ -18,6 +18,7 @@
 	},
 	"burnout": {
 		"title": "Burnout Risk",
+		"viewEvidence": "See the evidence behind this score",
 		"level": {
 			"low": "Low",
 			"medium": "Medium",

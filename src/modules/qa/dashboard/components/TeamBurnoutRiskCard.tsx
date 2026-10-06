@@ -2,6 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import {
+	Anchor,
 	Card,
 	Stack,
 	Group,
@@ -10,6 +11,7 @@ import {
 	Button,
 	ThemeIcon,
 	Progress,
+	Tooltip,
 } from '@mantine/core';
 import {
 	IconCalendarEvent,
@@ -19,6 +21,8 @@ import {
 	IconTrendingUp,
 } from '@tabler/icons-react';
 import { coachingBasePath } from '~/modules/qa/coaching/constants';
+import { agentProfilePath } from '~/modules/qa/team/helpers';
+import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 import type { TeamRole } from '~/modules/qa/team/types';
 import { BurnoutRiskLevel } from '../types/burnoutRisk';
 import type { TeamBurnoutRiskEntry } from '~/modules/qa/analytics/helpers';
@@ -46,7 +50,7 @@ const TREND_META: Record<
 	declining: { icon: IconTrendingUp, color: 'red' },
 };
 
-/** Card listing team members currently at burnout risk (MEDIUM/HIGH), read-only. */
+/** Card listing team members currently at burnout risk (MEDIUM/HIGH). The agent name opens the Burnout tab of their profile, where the evidence is. */
 export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 	entries,
 	role,
@@ -54,6 +58,11 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const navigate = useNavigate();
+
+	const openEvidence = (agentId: string) => {
+		const agent = TEAM_AGENTS.find((a) => a.id === agentId);
+		if (agent) navigate(`${agentProfilePath(role, agent)}?tab=burnout`);
+	};
 
 	return (
 		<Card
@@ -92,9 +101,16 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 								<div key={entry.agentId}>
 									<Group justify='space-between' align='center' mb={4}>
 										<Group gap='xs' wrap='nowrap'>
-											<Text size='sm' fw={500}>
-												{entry.agentName}
-											</Text>
+											<Tooltip label={t('burnout.viewEvidence')} withArrow>
+												<Anchor
+													size='sm'
+													fw={500}
+													c='inherit'
+													onClick={() => openEvidence(entry.agentId)}
+												>
+													{entry.agentName}
+												</Anchor>
+											</Tooltip>
 											<Badge
 												size='xs'
 												color={LEVEL_COLOR[entry.level]}

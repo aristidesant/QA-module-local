@@ -17,7 +17,8 @@
 		"none": "Sin incidencias"
 	},
 	"burnout": {
-		"title": "Riesgo de Agotamiento",
+		"title": "Riesgo de burnout",
+		"viewEvidence": "Ver la evidencia detrás de este puntaje",
 		"level": {
 			"low": "Bajo",
 			"medium": "Medio",
