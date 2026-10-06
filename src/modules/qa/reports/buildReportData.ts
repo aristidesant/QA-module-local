@@ -305,14 +305,16 @@ export const buildReportData = (
 					key,
 					rows: stores.programs
 						.filter(
-							(program) => program.startDate <= to && program.endDate >= from
+							(program) =>
+								program.startDate <= to &&
+								(program.endDate ?? '9999-12-31') >= from
 						)
 						.map((program) => {
 							const top = leader(computeStandings(program, TEAM_CALLS));
 							return {
 								name: program.name,
 								status: program.status,
-								period: `${program.startDate} → ${program.endDate}`,
+								period: `${program.startDate} → ${program.endDate ?? 'ongoing'}`,
 								leader: top ? nameOf(top.agentId, top.agentName) : null,
 								winner: program.winnerName,
 							};

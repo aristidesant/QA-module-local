@@ -244,7 +244,7 @@ export const aggregateDashboardMetrics = (
 };
 
 /** `current`/`previous` differ by less than `epsilon` → 'stable'; otherwise the sign of the (rounded) delta. */
-const metricTrend = (
+export const metricTrend = (
 	current: number,
 	previous: number,
 	epsilon: number
