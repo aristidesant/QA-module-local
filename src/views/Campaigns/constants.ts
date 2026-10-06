@@ -10,10 +10,11 @@ import type {
 	CallEvaluationResult,
 	QATest,
 	Aspect,
-	CallEvaluationTab,
+	CallDetailTab,
 	CallEvaluationDetail,
 	QAErrorTypeCode,
 	ComplianceAreaKey,
+	EsgPillarKey,
 	BusinessSignalType,
 	NonConversionReasonKey,
 } from './types';
@@ -28,6 +29,9 @@ import {
 	IconMoodAngry,
 	IconShieldCheck,
 	IconTrendingUp,
+	IconLeaf,
+	IconUsersGroup,
+	IconBuildingBank,
 } from '@tabler/icons-react';
 import type {
 	Emotion,
@@ -331,7 +335,7 @@ export const mockQATests: QATest[] = [
 // ---------- Call detail: tab catalog ----------
 
 export interface CallEvaluationTabMeta {
-	key: CallEvaluationTab;
+	key: CallDetailTab;
 	label: string;
 	description: string;
 	icon: TablerIcon;
@@ -368,6 +372,15 @@ export const CALL_EVALUATION_TABS: CallEvaluationTabMeta[] = [
 		color: 'blue',
 	},
 ];
+
+/** Shown after the dispute-able tabs for Supervisor / QA Manager only; the agent role never sees it. */
+export const ESG_TAB: CallEvaluationTabMeta = {
+	key: 'esg',
+	label: 'ESG',
+	description: 'Environmental, Social and Governance practices on the call',
+	icon: IconLeaf,
+	color: 'teal',
+};
 
 // ---------- QA error types (COPC) ----------
 
@@ -544,6 +557,58 @@ export const COMPLIANCE_AREA_ORDER: ComplianceAreaKey[] = [
 	'security',
 	'regulatory',
 	'legal',
+];
+
+// ---------- ESG pillars ----------
+
+export interface EsgPillarMeta {
+	key: EsgPillarKey;
+	label: string;
+	description: string;
+	icon: TablerIcon;
+	items: { key: string; label: string }[];
+}
+
+export const ESG_PILLARS: Record<EsgPillarKey, EsgPillarMeta> = {
+	environmental: {
+		key: 'environmental',
+		label: 'Environmental',
+		description: 'Paperless options and responsible equipment handling',
+		icon: IconLeaf,
+		items: [
+			{ key: 'paperlessBilling', label: 'Paperless Billing Offered' },
+			{ key: 'equipmentRecycling', label: 'Equipment Return & Recycling' },
+			{ key: 'sustainableOption', label: 'Sustainable Option Mentioned' },
+		],
+	},
+	social: {
+		key: 'social',
+		label: 'Social',
+		description: 'Inclusive, accessible and fair treatment of the customer',
+		icon: IconUsersGroup,
+		items: [
+			{ key: 'inclusiveLanguage', label: 'Inclusive & Respectful Language' },
+			{ key: 'accessibility', label: 'Accessibility Accommodations' },
+			{ key: 'vulnerableCustomer', label: 'Vulnerable Customer Handling' },
+		],
+	},
+	governance: {
+		key: 'governance',
+		label: 'Governance',
+		description: 'Transparent terms, consent and escalation paths',
+		icon: IconBuildingBank,
+		items: [
+			{ key: 'transparentTerms', label: 'Transparent Pricing & Terms' },
+			{ key: 'dataConsent', label: 'Data Consent & Privacy' },
+			{ key: 'escalationPath', label: 'Complaint & Escalation Path' },
+		],
+	},
+};
+
+export const ESG_PILLAR_ORDER: EsgPillarKey[] = [
+	'environmental',
+	'social',
+	'governance',
 ];
 
 // ---------- Business signals ----------
@@ -979,12 +1044,55 @@ export const mockCallEvaluationDetail: CallEvaluationDetail = {
 			interruptions: { byAgent: 1, byCustomer: 1 },
 			agentWordsPerMinute: 148,
 		},
+		burnout: {
+			level: 'medium',
+			score: 46,
+			signals: [
+				{
+					key: 'toneFatigue',
+					label: 'Flat, tired tone',
+					detected: true,
+					note: 'Energy drops after the customer objection and stays low until the close',
+					evidence: {
+						timestamp: '1:58',
+						speaker: 'agent',
+						quote: 'I hear you. Let me note that down.',
+					},
+				},
+				{
+					key: 'longSilences',
+					label: 'Long silences',
+					detected: true,
+					note: 'Longest silence of 7 s right after the price-after-promo question',
+				},
+				{
+					key: 'emotionalStrain',
+					label: 'Negative emotion in the agent',
+					detected: false,
+					note: 'No frustration or irritation detected in the agent voice',
+				},
+				{
+					key: 'interruptions',
+					label: 'Interrupting the customer',
+					detected: false,
+					note: 'One interruption, within the usual range',
+				},
+				{
+					key: 'speechPace',
+					label: 'Rushed or erratic pace',
+					detected: false,
+					note: '148 words per minute, steady through the call',
+				},
+			],
+			recommendation:
+				'2 of 5 signals on this call. One call is not a pattern: check the agent burnout trend before acting.',
+		},
 	},
 	compliance: {
-		overallScore: 95,
-		status: 'warning',
-		violationCount: 0,
-		warningCount: 1,
+		overallScore: 90,
+		status: 'violation',
+		violationCount: 1,
+		warningCount: 0,
 		areas: [
 			{
 				key: 'security',
@@ -1008,7 +1116,7 @@ export const mockCallEvaluationDetail: CallEvaluationDetail = {
 			},
 			{
 				key: 'regulatory',
-				score: 85,
+				score: 70,
 				items: [
 					{
 						key: 'cobranzaRegulada',
@@ -1020,8 +1128,8 @@ export const mockCallEvaluationDetail: CallEvaluationDetail = {
 					{
 						key: 'transparenciaConsentimiento',
 						label: 'Transparency',
-						status: 'warning',
-						score: 70,
+						status: 'violation',
+						score: 40,
 						note: 'Promotional price quoted without stating the regular price after month six',
 						evidence: {
 							timestamp: '1:15',
@@ -1119,5 +1227,109 @@ export const mockCallEvaluationDetail: CallEvaluationDetail = {
 			bestTimeFrame: 'After the 15th (current contract ends)',
 			followUpRecommended: true,
 		},
+	},
+	esg: {
+		overallScore: 81,
+		status: 'warning',
+		violationCount: 0,
+		warningCount: 3,
+		pillars: [
+			{
+				key: 'environmental',
+				score: 67,
+				items: [
+					{
+						key: 'paperlessBilling',
+						label: 'Paperless Billing Offered',
+						status: 'warning',
+						score: 50,
+						note: 'Digital billing was never offered while discussing the new bundle',
+					},
+					{
+						key: 'equipmentRecycling',
+						label: 'Equipment Return & Recycling',
+						status: 'compliant',
+						score: 100,
+						note: 'Old router return explained correctly',
+						evidence: {
+							timestamp: '1:32',
+							speaker: 'agent',
+							quote:
+								'We pick up your current router at installation so it gets recycled.',
+						},
+					},
+					{
+						key: 'sustainableOption',
+						label: 'Sustainable Option Mentioned',
+						status: 'warning',
+						score: 50,
+						note: 'Energy-saving modem option not mentioned',
+					},
+				],
+			},
+			{
+				key: 'social',
+				score: 92,
+				items: [
+					{
+						key: 'inclusiveLanguage',
+						label: 'Inclusive & Respectful Language',
+						status: 'compliant',
+						score: 100,
+					},
+					{
+						key: 'accessibility',
+						label: 'Accessibility Accommodations',
+						status: 'compliant',
+						score: 100,
+						note: 'Agent offered to send the summary in writing',
+					},
+					{
+						key: 'vulnerableCustomer',
+						label: 'Vulnerable Customer Handling',
+						status: 'compliant',
+						score: 75,
+						note: 'Budget concern acknowledged, no pressure applied',
+						evidence: {
+							timestamp: '0:50',
+							speaker: 'agent',
+							quote: 'I completely understand, nobody wants a bigger bill.',
+						},
+					},
+				],
+			},
+			{
+				key: 'governance',
+				score: 83,
+				items: [
+					{
+						key: 'transparentTerms',
+						label: 'Transparent Pricing & Terms',
+						status: 'warning',
+						score: 50,
+						note: 'Regular price after the promotional period was not stated',
+						evidence: {
+							timestamp: '1:15',
+							speaker: 'agent',
+							quote:
+								'For the first six months it would be $49.99, and it includes the TV package.',
+						},
+					},
+					{
+						key: 'dataConsent',
+						label: 'Data Consent & Privacy',
+						status: 'compliant',
+						score: 100,
+						note: 'Recording disclosure and follow-up consent captured',
+					},
+					{
+						key: 'escalationPath',
+						label: 'Complaint & Escalation Path',
+						status: 'compliant',
+						score: 100,
+					},
+				],
+			},
+		],
 	},
 };

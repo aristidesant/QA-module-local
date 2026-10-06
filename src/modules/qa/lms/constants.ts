@@ -274,3 +274,12 @@ export const AGENT_LMS_TABS: AgentLmsTab[] = [
 export const AGENT_LMS_PATH = '/qa/agent/lms';
 export const agentContentPath = (contentId: string) =>
 	`${AGENT_LMS_PATH}/${contentId}`;
+
+/** Learning center of a Supervisor or QA Manager. */
+export const managerLmsPath = (role: 'supervisor' | 'qa-manager') =>
+	`/qa/${role}/lms`;
+/** Where a manager previews a material as an agent would see it, without leaving their own section. */
+export const managerContentPath = (
+	role: 'supervisor' | 'qa-manager',
+	contentId: string
+) => `${managerLmsPath(role)}/${contentId}`;

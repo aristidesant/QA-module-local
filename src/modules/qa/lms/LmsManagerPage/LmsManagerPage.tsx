@@ -34,7 +34,7 @@ import {
 	selectPaths,
 } from '~/stores/qa/lmsStore';
 import { useCoachingStore, selectRules } from '~/stores/qa/coachingStore';
-import { agentContentPath } from '../constants';
+import { managerContentPath } from '../constants';
 import {
 	managerKpis,
 	managerPersona,
@@ -256,7 +256,7 @@ export default function LmsManagerPage() {
 							role={role}
 							onOpenContent={setContentId}
 							onAssign={(id) => openAssign({ contentIds: [id] })}
-							onPreview={(id) => navigate(agentContentPath(id))}
+							onPreview={(id) => navigate(managerContentPath(role, id))}
 						/>
 					</Tabs.Panel>
 
@@ -301,7 +301,9 @@ export default function LmsManagerPage() {
 					if (contentId) openAssign({ contentIds: [contentId] });
 					setContentId(null);
 				}}
-				onPreview={() => contentId && navigate(agentContentPath(contentId))}
+				onPreview={() =>
+					contentId && navigate(managerContentPath(role, contentId))
+				}
 				onOpenPath={(id) => {
 					setContentId(null);
 					setPathId(id);

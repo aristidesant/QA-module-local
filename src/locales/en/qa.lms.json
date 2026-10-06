@@ -355,9 +355,6 @@
 				"duration": "Duration",
 				"level": "Level",
 				"assigned": "Assigned",
-				"completed": "Completed",
-				"avgScore": "Avg. score",
-				"rating": "Rating",
 				"status": "Status",
 				"updated": "Updated"
 			},

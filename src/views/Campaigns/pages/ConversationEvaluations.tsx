@@ -25,15 +25,18 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
 import { useState } from 'react';
-import type { CallEvaluationTab } from '../types';
+import type { CallDetailTab } from '../types';
+import type { DisputeEvaluationType } from '~/models/qa/disputeCases';
 import {
 	CALL_EVALUATION_TABS,
+	ESG_TAB,
 	mockCampaignNames,
 	mockCallEvaluationDetail,
 } from '../constants';
 import { QAEvaluationPanel } from '../components/call-evaluation/QAEvaluationPanel';
 import { SentimentEmotionPanel } from '../components/call-evaluation/SentimentEmotionPanel';
 import { CompliancePanel } from '../components/call-evaluation/CompliancePanel';
+import { EsgPanel } from '../components/call-evaluation/EsgPanel';
 import { BusinessInsightsPanel } from '../components/call-evaluation/BusinessInsightsPanel';
 import { formatDuration } from '../components/call-evaluation/scoreColor';
 import { useTranslation } from 'react-i18next';
@@ -62,7 +65,7 @@ function renderBreadcrumbLink(key: string, label: string, onClick: () => void) {
 export default function ConversationEvaluations() {
 	const navigate = useNavigate();
 	const { campaignId, callId } = useParams();
-	const [selectedTab, setSelectedTab] = useState<CallEvaluationTab>('qa');
+	const [selectedTab, setSelectedTab] = useState<CallDetailTab>('qa');
 	const [isPlaying, setIsPlaying] = useState(false);
 	const [disputeOpen, setDisputeOpen] = useState(false);
 	const { t } = useTranslation('qa.disputes');
@@ -71,18 +74,21 @@ export default function ConversationEvaluations() {
 
 	const call = mockCallEvaluationDetail;
 	const campaignName = mockCampaignNames[campaignId || ''] || 'Campaign';
-	const selectedMeta = CALL_EVALUATION_TABS.find(
+	const selectedMeta = [...CALL_EVALUATION_TABS, ESG_TAB].find(
 		(tab) => tab.key === selectedTab
 	)!;
-	// Business Insights carries commercial/outcome data the agent shouldn't see.
+	// Business Insights and ESG carry brand-level data the agent shouldn't see.
 	const visibleTabs =
 		previewRole === 'agent'
 			? CALL_EVALUATION_TABS.filter((tab) => tab.key !== 'business-insights')
-			: CALL_EVALUATION_TABS;
+			: [...CALL_EVALUATION_TABS, ESG_TAB];
+	// Disputes only exist for the agent role, who never reaches the ESG tab.
+	const disputeType: DisputeEvaluationType =
+		selectedTab === 'esg' ? 'qa' : selectedTab;
 	const alreadyDisputed = hasOpenDispute(
 		disputeCases,
 		call.callId,
-		selectedTab
+		disputeType
 	);
 
 	// Calculate badge scores per tab
@@ -94,6 +100,8 @@ export default function ConversationEvaluations() {
 				return `${call.sentiment.customer.overallScore.toFixed(1)}/5`;
 			case 'compliance':
 				return `${call.compliance.overallScore}%`;
+			case 'esg':
+				return `${call.esg.overallScore}%`;
 			case 'business-insights':
 				return `${call.business.signals.filter((s) => s.detected).length}/${call.business.signals.length}`;
 			default:
@@ -375,10 +383,16 @@ export default function ConversationEvaluations() {
 						<Stack gap='md'>
 							{selectedTab === 'qa' && <QAEvaluationPanel qa={call.qa} />}
 							{selectedTab === 'sentiment-emotion' && (
-								<SentimentEmotionPanel sentiment={call.sentiment} />
+								<SentimentEmotionPanel
+									sentiment={call.sentiment}
+									showBurnout={previewRole !== 'agent'}
+								/>
 							)}
 							{selectedTab === 'compliance' && (
 								<CompliancePanel compliance={call.compliance} />
+							)}
+							{selectedTab === 'esg' && previewRole !== 'agent' && (
+								<EsgPanel esg={call.esg} />
 							)}
 							{selectedTab === 'business-insights' &&
 								previewRole !== 'agent' && (
@@ -395,7 +409,7 @@ export default function ConversationEvaluations() {
 				call={call}
 				campaignId={campaignId || ''}
 				campaignName={campaignName}
-				initialType={selectedTab}
+				initialType={disputeType}
 			/>
 		</Container>
 	);

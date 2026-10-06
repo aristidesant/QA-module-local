@@ -355,9 +355,6 @@
 				"duration": "Duración",
 				"level": "Nivel",
 				"assigned": "Asignado",
-				"completed": "Completado",
-				"avgScore": "Nota media",
-				"rating": "Valoración",
 				"status": "Estado",
 				"updated": "Actualizado"
 			},

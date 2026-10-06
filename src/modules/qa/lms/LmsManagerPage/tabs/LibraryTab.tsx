@@ -1,5 +1,15 @@
 ﻿import { useMemo, useState } from 'react';
-import { ActionIcon, Badge, Button, Group, Menu, Progress, Rating, Select, Stack, Text, TextInput } from '@mantine/core';
+import {
+	ActionIcon,
+	Badge,
+	Button,
+	Group,
+	Menu,
+	Select,
+	Stack,
+	Text,
+	TextInput,
+} from '@mantine/core';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
 	IconArchive,
@@ -12,13 +22,20 @@ import {
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
-import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable/BaseTable';
+import BaseTable, {
+	type BaseTableColumnDef,
+} from '~/components/BaseTable/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import type { LmsContent, LmsContentStatus } from '~/models/qa';
 import type { TeamRole } from '~/modules/qa/team/types';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { useLmsStore } from '~/stores/qa/lmsStore';
-import { LMS_AREAS, LMS_AREA_META, LMS_FORMATS, LMS_LEVELS } from '../../constants';
+import {
+	LMS_AREAS,
+	LMS_AREA_META,
+	LMS_FORMATS,
+	LMS_LEVELS,
+} from '../../constants';
 import { AreaBadge, FormatBadge } from '../../components/Badges';
 
 const helper = createColumnHelper<LmsContent>();
@@ -37,7 +54,13 @@ interface LibraryTabProps {
 	onPreview: (contentId: string) => void;
 }
 
-export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }: LibraryTabProps) {
+export function LibraryTab({
+	content,
+	role,
+	onOpenContent,
+	onAssign,
+	onPreview,
+}: LibraryTabProps) {
 	const { t } = useTranslation('qa.lms');
 	const isQaManager = role === 'qa-manager';
 
@@ -48,14 +71,20 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 	const [level, setLevel] = useState<string | null>(null);
 
 	const visible = useMemo(
-		() => (isQaManager ? content : content.filter((c) => c.status === 'PUBLISHED')),
+		() =>
+			isQaManager ? content : content.filter((c) => c.status === 'PUBLISHED'),
 		[content, isQaManager]
 	);
 
 	const rows = useMemo(() => {
 		const q = search.trim().toLowerCase();
 		return visible.filter((c) => {
-			if (q && !c.title.toLowerCase().includes(q) && !c.tags.some((tag) => tag.includes(q))) return false;
+			if (
+				q &&
+				!c.title.toLowerCase().includes(q) &&
+				!c.tags.some((tag) => tag.includes(q))
+			)
+				return false;
 			if (format && c.format !== format) return false;
 			if (area && c.area !== area) return false;
 			if (status && c.status !== status) return false;
@@ -67,7 +96,9 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 	const handleStatus = (contentId: string, next: LmsContentStatus) => {
 		useLmsStore.getState().setContentStatus(contentId, next);
 		notifySuccess(
-			next === 'PUBLISHED' ? t('manager.library.notifications.published') : t('manager.library.notifications.archived')
+			next === 'PUBLISHED'
+				? t('manager.library.notifications.published')
+				: t('manager.library.notifications.archived')
 		);
 	};
 
@@ -94,16 +125,20 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 		helper.display({
 			id: 'format',
 			header: t('manager.library.columns.format'),
-			cell: (info) => <FormatBadge format={info.row.original.format} size='xs' />,
+			cell: (info) => (
+				<FormatBadge format={info.row.original.format} size='xs' />
+			),
 		}) as BaseTableColumnDef<LmsContent>,
 		helper.display({
 			id: 'area',
 			header: t('manager.library.columns.area'),
-			cell: (info) => <AreaBadge area={info.row.original.area} subItem={info.row.original.subItem} size='xs' />,
+			cell: (info) => <AreaBadge area={info.row.original.area} size='xs' />,
 		}) as BaseTableColumnDef<LmsContent>,
 		helper.accessor('durationMin', {
 			header: t('manager.library.columns.duration'),
-			cell: (info) => <Text size='sm'>{t('common.minutes', { count: info.getValue() })}</Text>,
+			cell: (info) => (
+				<Text size='sm'>{t('common.minutes', { count: info.getValue() })}</Text>
+			),
 		}) as BaseTableColumnDef<LmsContent>,
 		helper.accessor('level', {
 			header: t('manager.library.columns.level'),
@@ -118,32 +153,6 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 			header: t('manager.library.columns.assigned'),
 			cell: (info) => <Text size='sm'>{info.getValue()}</Text>,
 		}) as BaseTableColumnDef<LmsContent>,
-		helper.display({
-			id: 'completed',
-			header: t('manager.library.columns.completed'),
-			cell: (info) => {
-				const { assigned, completed } = info.row.original.stats;
-				const pct = assigned ? Math.round((completed / assigned) * 100) : 0;
-				return (
-					<Stack gap={2} w={110}>
-						<Text size='xs'>
-							{completed} / {assigned}
-						</Text>
-						<Progress value={pct} size='xs' radius='xl' />
-					</Stack>
-				);
-			},
-		}) as BaseTableColumnDef<LmsContent>,
-		helper.accessor((c) => c.stats.avgScore, {
-			id: 'avgScore',
-			header: t('manager.library.columns.avgScore'),
-			cell: (info) => <Text size='sm'>{info.getValue() === null ? '—' : `${info.getValue()}%`}</Text>,
-		}) as BaseTableColumnDef<LmsContent>,
-		helper.display({
-			id: 'rating',
-			header: t('manager.library.columns.rating'),
-			cell: (info) => <Rating readOnly size='xs' fractions={2} value={info.row.original.stats.avgRating} />,
-		}) as BaseTableColumnDef<LmsContent>,
 	];
 
 	if (isQaManager) {
@@ -151,7 +160,11 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 			helper.accessor('status', {
 				header: t('manager.library.columns.status'),
 				cell: (info) => (
-					<Badge size='sm' color={STATUS_COLOR[info.getValue()]} variant='light'>
+					<Badge
+						size='sm'
+						color={STATUS_COLOR[info.getValue()]}
+						variant='light'
+					>
 						{t(`manager.library.contentStatus.${info.getValue()}`)}
 					</Badge>
 				),
@@ -166,8 +179,17 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 			cell: (info) => {
 				const c = info.row.original;
 				return (
-					<Group gap={4} justify='flex-end' onClick={(e) => e.stopPropagation()}>
-						<Button size='compact-xs' variant='light' onClick={() => onAssign(c.id)} disabled={c.status !== 'PUBLISHED'}>
+					<Group
+						gap={4}
+						justify='flex-end'
+						onClick={(e) => e.stopPropagation()}
+					>
+						<Button
+							size='compact-xs'
+							variant='light'
+							onClick={() => onAssign(c.id)}
+							disabled={c.status !== 'PUBLISHED'}
+						>
 							{t('manager.library.actions.assign')}
 						</Button>
 						<Menu withinPortal position='bottom-end'>
@@ -177,11 +199,17 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 								</ActionIcon>
 							</Menu.Target>
 							<Menu.Dropdown>
-								<Menu.Item leftSection={<IconEye size={14} />} onClick={() => onPreview(c.id)}>
+								<Menu.Item
+									leftSection={<IconEye size={14} />}
+									onClick={() => onPreview(c.id)}
+								>
 									{t('manager.library.actions.preview')}
 								</Menu.Item>
 								{isQaManager && c.status !== 'PUBLISHED' && (
-									<Menu.Item leftSection={<IconUpload size={14} />} onClick={() => handleStatus(c.id, 'PUBLISHED')}>
+									<Menu.Item
+										leftSection={<IconUpload size={14} />}
+										onClick={() => handleStatus(c.id, 'PUBLISHED')}
+									>
 										{c.status === 'ARCHIVED'
 											? t('manager.library.actions.restore')
 											: t('manager.library.actions.publish')}
@@ -197,7 +225,10 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 									</Menu.Item>
 								)}
 								{isQaManager && c.status === 'ARCHIVED' && (
-									<Menu.Item leftSection={<IconRestore size={14} />} onClick={() => handleStatus(c.id, 'PUBLISHED')}>
+									<Menu.Item
+										leftSection={<IconRestore size={14} />}
+										onClick={() => handleStatus(c.id, 'PUBLISHED')}
+									>
 										{t('manager.library.actions.restore')}
 									</Menu.Item>
 								)}
@@ -241,7 +272,10 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 					<Select
 						size='sm'
 						placeholder={t('manager.library.filters.format')}
-						data={LMS_FORMATS.map((f) => ({ value: f, label: t(`formats.${f}`) }))}
+						data={LMS_FORMATS.map((f) => ({
+							value: f,
+							label: t(`formats.${f}`),
+						}))}
 						value={format}
 						onChange={setFormat}
 						clearable
@@ -250,7 +284,10 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 					<Select
 						size='sm'
 						placeholder={t('manager.library.filters.area')}
-						data={LMS_AREAS.map((a) => ({ value: a, label: t(LMS_AREA_META[a].labelKey) }))}
+						data={LMS_AREAS.map((a) => ({
+							value: a,
+							label: t(LMS_AREA_META[a].labelKey),
+						}))}
 						value={area}
 						onChange={setArea}
 						clearable
@@ -259,7 +296,10 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 					<Select
 						size='sm'
 						placeholder={t('manager.library.filters.level')}
-						data={LMS_LEVELS.map((l) => ({ value: l, label: t(`levels.${l}`) }))}
+						data={LMS_LEVELS.map((l) => ({
+							value: l,
+							label: t(`levels.${l}`),
+						}))}
 						value={level}
 						onChange={setLevel}
 						clearable
@@ -269,7 +309,9 @@ export function LibraryTab({ content, role, onOpenContent, onAssign, onPreview }
 						<Select
 							size='sm'
 							placeholder={t('manager.library.filters.status')}
-							data={(['PUBLISHED', 'DRAFT', 'ARCHIVED'] as LmsContentStatus[]).map((s) => ({
+							data={(
+								['PUBLISHED', 'DRAFT', 'ARCHIVED'] as LmsContentStatus[]
+							).map((s) => ({
 								value: s,
 								label: t(`manager.library.contentStatus.${s}`),
 							}))}

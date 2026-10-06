@@ -11,6 +11,7 @@ import {
 } from '@mantine/core';
 import {
 	IconArrowRight,
+	IconFlame,
 	IconHeadset,
 	IconMicrophone2,
 	IconTrendingDown,
@@ -21,16 +22,30 @@ import {
 } from '@tabler/icons-react';
 import { SectionCard } from '~/components/SectionCard';
 import { EMOTION_LABELS, SENTIMENT_CATEGORIES } from '../../constants';
-import type { CallSentimentEvaluation } from '../../types';
+import { SCORE_BAND_COLOR } from '~/modules/qa/constants/badgeColors';
+import type { BurnoutLevel, CallSentimentEvaluation } from '../../types';
 import { formatDuration, getScoreColor } from './scoreColor';
 import { EvidenceQuote } from './EvidenceQuote';
 
 interface SentimentEmotionPanelProps {
 	sentiment: CallSentimentEvaluation;
+	/** The agent role does not see the burnout read of their own call. */
+	showBurnout?: boolean;
 }
+
+/** Same green / amber / red scale as the score bands. */
+const BURNOUT_LEVEL_META: Record<
+	BurnoutLevel,
+	{ label: string; color: string }
+> = {
+	low: { label: 'Low risk', color: SCORE_BAND_COLOR.good },
+	medium: { label: 'Medium risk', color: SCORE_BAND_COLOR.warning },
+	high: { label: 'High risk', color: SCORE_BAND_COLOR.critical },
+};
 
 export function SentimentEmotionPanel({
 	sentiment,
+	showBurnout = true,
 }: SentimentEmotionPanelProps) {
 	const renderSpeakerCard = (speaker: 'agent' | 'customer') => {
 		const data = speaker === 'agent' ? sentiment.agent : sentiment.customer;
@@ -74,6 +89,69 @@ export function SentimentEmotionPanel({
 				{renderSpeakerCard('agent')}
 				{renderSpeakerCard('customer')}
 			</SimpleGrid>
+
+			{/* Agent burnout risk (hidden from the agent role) */}
+			{showBurnout && (
+				<SectionCard
+					title='Agent burnout risk'
+					description='Fatigue and strain signals in the agent on this call'
+					icon={IconFlame}
+					headerActions={
+						<Badge
+							color={BURNOUT_LEVEL_META[sentiment.burnout.level].color}
+							variant='light'
+							size='lg'
+						>
+							{BURNOUT_LEVEL_META[sentiment.burnout.level].label}
+						</Badge>
+					}
+				>
+					<Stack gap='sm'>
+						<Progress
+							value={sentiment.burnout.score}
+							color={BURNOUT_LEVEL_META[sentiment.burnout.level].color}
+							size='sm'
+						/>
+						{sentiment.burnout.signals.map((signal) => (
+							<div key={signal.key}>
+								<Paper
+									withBorder
+									p='sm'
+									radius='sm'
+									mb={signal.evidence ? 'xs' : 0}
+								>
+									<Group
+										justify='space-between'
+										align='flex-start'
+										wrap='nowrap'
+									>
+										<Stack gap={2}>
+											<Text size='sm' fw={500}>
+												{signal.label}
+											</Text>
+											<Text size='xs' c='dimmed'>
+												{signal.note}
+											</Text>
+										</Stack>
+										<Badge
+											variant='light'
+											color={signal.detected ? 'yellow' : 'gray'}
+										>
+											{signal.detected ? 'Detected' : 'Not detected'}
+										</Badge>
+									</Group>
+								</Paper>
+								{signal.evidence && (
+									<EvidenceQuote evidence={signal.evidence} />
+								)}
+							</div>
+						))}
+						<Text size='xs' c='dimmed'>
+							{sentiment.burnout.recommendation}
+						</Text>
+					</Stack>
+				</SectionCard>
+			)}
 
 			{/* Recovery & Empathy */}
 			<SectionCard

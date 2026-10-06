@@ -1,6 +1,16 @@
 import { useMemo, useState } from 'react';
-import { useNavigate, useParams } from 'react-router';
-import { Alert, Anchor, Breadcrumbs, Button, Grid, Group, Stack, Text, Title } from '@mantine/core';
+import { useLocation, useNavigate, useParams } from 'react-router';
+import {
+	Alert,
+	Anchor,
+	Breadcrumbs,
+	Button,
+	Grid,
+	Group,
+	Stack,
+	Text,
+	Title,
+} from '@mantine/core';
 import { IconCircleCheck } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
@@ -15,7 +25,14 @@ import {
 	selectEnrollments,
 	selectPaths,
 } from '~/stores/qa/lmsStore';
-import { AGENT_LMS_PATH, AGENT_PERSONA, agentContentPath } from '../constants';
+import {
+	AGENT_LMS_PATH,
+	AGENT_PERSONA,
+	agentContentPath,
+	managerContentPath,
+	managerLmsPath,
+} from '../constants';
+import { roleFromPath } from '~/modules/qa/team/helpers';
 import { ContentSidebar } from './ContentSidebar';
 import { DocumentReader } from './players/DocumentReader';
 import { QuizPlayer } from './players/QuizPlayer';
@@ -25,7 +42,17 @@ import { VideoPlayerMock } from './players/VideoPlayerMock';
 export default function LmsContentPage() {
 	const { t } = useTranslation(['qa.lms', 'qa.triggers']);
 	const navigate = useNavigate();
+	const location = useLocation();
 	const { contentId } = useParams<{ contentId: string }>();
+
+	// A Supervisor or QA Manager previewing a material stays inside their own Learning section.
+	const isManager =
+		location.pathname.startsWith('/qa/supervisor') ||
+		location.pathname.startsWith('/qa/qa-manager');
+	const managerRole = roleFromPath(location.pathname);
+	const listPath = isManager ? managerLmsPath(managerRole) : AGENT_LMS_PATH;
+	const contentPath = (id: string) =>
+		isManager ? managerContentPath(managerRole, id) : agentContentPath(id);
 
 	const content = useLmsStore(selectContent);
 	const assignments = useLmsStore(selectAssignments);
@@ -35,7 +62,11 @@ export default function LmsContentPage() {
 	const [justCompleted, setJustCompleted] = useState(false);
 
 	const contentById = useMemo(
-		() => Object.fromEntries(content.map((c) => [c.id, c])) as Record<string, LmsContent>,
+		() =>
+			Object.fromEntries(content.map((c) => [c.id, c])) as Record<
+				string,
+				LmsContent
+			>,
 		[content]
 	);
 	const item = contentId ? contentById[contentId] : undefined;
@@ -43,20 +74,36 @@ export default function LmsContentPage() {
 	const assignment = useMemo(
 		() =>
 			assignments.find(
-				(a) => a.agentId === AGENT_PERSONA.id && a.contentId === contentId && a.status !== 'COMPLETED'
-			) ?? assignments.find((a) => a.agentId === AGENT_PERSONA.id && a.contentId === contentId),
+				(a) =>
+					a.agentId === AGENT_PERSONA.id &&
+					a.contentId === contentId &&
+					a.status !== 'COMPLETED'
+			) ??
+			assignments.find(
+				(a) => a.agentId === AGENT_PERSONA.id && a.contentId === contentId
+			),
 		[assignments, contentId]
 	);
 
 	const path = useMemo(() => {
 		if (!contentId) return undefined;
-		if (assignment?.pathId) return paths.find((p) => p.id === assignment.pathId);
-		const enrolled = enrollments.filter((e) => e.agentId === AGENT_PERSONA.id).map((e) => e.pathId);
-		return paths.find((p) => enrolled.includes(p.id) && p.modules.some((m) => m.contentId === contentId));
+		if (assignment?.pathId)
+			return paths.find((p) => p.id === assignment.pathId);
+		const enrolled = enrollments
+			.filter((e) => e.agentId === AGENT_PERSONA.id)
+			.map((e) => e.pathId);
+		return paths.find(
+			(p) =>
+				enrolled.includes(p.id) &&
+				p.modules.some((m) => m.contentId === contentId)
+		);
 	}, [assignment, contentId, enrollments, paths]);
 
 	const enrollment = useMemo(
-		() => enrollments.find((e) => e.agentId === AGENT_PERSONA.id && e.pathId === path?.id),
+		() =>
+			enrollments.find(
+				(e) => e.agentId === AGENT_PERSONA.id && e.pathId === path?.id
+			),
 		[enrollments, path]
 	);
 
@@ -66,7 +113,11 @@ export default function LmsContentPage() {
 				<EmptyState
 					message={t('common.notFound')}
 					description={t('common.notFoundDescription', { id: contentId })}
-					action={<Button onClick={() => navigate(AGENT_LMS_PATH)}>{t('player.back')}</Button>}
+					action={
+						<Button onClick={() => navigate(listPath)}>
+							{t('player.back')}
+						</Button>
+					}
 				/>
 			</ContentContainer>
 		);
@@ -75,7 +126,8 @@ export default function LmsContentPage() {
 	const readOnly = !assignment || assignment.status === 'COMPLETED';
 
 	const handleProgress = (percent: number) => {
-		if (assignment) useLmsStore.getState().updateProgress(assignment.id, percent);
+		if (assignment)
+			useLmsStore.getState().updateProgress(assignment.id, percent);
 	};
 
 	const handleComplete = (score: number | null = null) => {
@@ -91,14 +143,20 @@ export default function LmsContentPage() {
 
 	const openModule = (id: string) => {
 		setJustCompleted(false);
-		navigate(agentContentPath(id));
+		navigate(contentPath(id));
 	};
 
 	return (
-		<ContentContainer contentWidth='full' showBackButton onBackClick={() => navigate(AGENT_LMS_PATH)}>
+		<ContentContainer
+			contentWidth='full'
+			showBackButton
+			onBackClick={() => navigate(listPath)}
+		>
 			<Stack gap='lg'>
 				<Breadcrumbs>
-					<Anchor onClick={() => navigate(AGENT_LMS_PATH)}>{t('agent.title')}</Anchor>
+					<Anchor onClick={() => navigate(listPath)}>
+						{t(isManager ? 'manager.title' : 'agent.title')}
+					</Anchor>
 					<Text c='dimmed'>{item.title}</Text>
 				</Breadcrumbs>
 
@@ -113,7 +171,12 @@ export default function LmsContentPage() {
 							</Stack>
 
 							{justCompleted && (
-								<Alert color='green' variant='light' icon={<IconCircleCheck size={18} />} title={t('player.completed.title')}>
+								<Alert
+									color='green'
+									variant='light'
+									icon={<IconCircleCheck size={18} />}
+									title={t('player.completed.title')}
+								>
 									<Stack gap='sm'>
 										<Text size='sm'>
 											{metricName
@@ -121,7 +184,17 @@ export default function LmsContentPage() {
 												: t('player.completed.noImpact')}
 										</Text>
 										<Group gap='xs'>
-											<Button size='xs' variant='light' onClick={() => navigate(`${AGENT_LMS_PATH}?tab=assignments`)}>
+											<Button
+												size='xs'
+												variant='light'
+												onClick={() =>
+													navigate(
+														isManager
+															? listPath
+															: `${AGENT_LMS_PATH}?tab=assignments`
+													)
+												}
+											>
 												{t('player.completed.backToList')}
 											</Button>
 										</Group>
