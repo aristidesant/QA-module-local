@@ -157,6 +157,9 @@ const LmsManagerPage = React.lazy(
 const CoachingPage = React.lazy(
 	() => import('./modules/qa/coaching/CoachingPage')
 );
+const CoachingRulePage = React.lazy(
+	() => import('./modules/qa/coaching/CoachingRulePage')
+);
 const CoachingAgentPage = React.lazy(
 	() => import('./modules/qa/coaching/CoachingAgentPage')
 );
@@ -1259,6 +1262,28 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'qa-manager/coaching/rules/new',
+										id: 'qa.qa-manager.coaching.rule-new',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingRulePage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/coaching/rules/:ruleId/edit',
+										id: 'qa.qa-manager.coaching.rule-edit',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingRulePage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'supervisor/coaching',
 										id: 'qa.supervisor.coaching',
 										element: (
@@ -1276,6 +1301,28 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<CoachingAgentPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/coaching/rules/new',
+										id: 'qa.supervisor.coaching.rule-new',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingRulePage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/coaching/rules/:ruleId/edit',
+										id: 'qa.supervisor.coaching.rule-edit',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingRulePage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -1314,12 +1361,34 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'qa-manager/lms/:contentId',
+										id: 'qa.qa-manager.lms.content',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<LmsContentPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'supervisor/lms',
 										id: 'qa.supervisor.lms',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<LmsManagerPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/lms/:contentId',
+										id: 'qa.supervisor.lms.content',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<LmsContentPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

@@ -134,5 +134,11 @@ export const MAX_RULE_CONDITIONS = 5;
 export const coachingBasePath = (role: TeamRole) =>
 	role === 'qa-manager' ? '/qa/qa-manager/coaching' : '/qa/supervisor/coaching';
 
+export const coachingRuleNewPath = (role: TeamRole) =>
+	`${coachingBasePath(role)}/rules/new`;
+
+export const coachingRuleEditPath = (role: TeamRole, ruleId: string) =>
+	`${coachingBasePath(role)}/rules/${ruleId}/edit`;
+
 export const coachingAgentPath = (role: TeamRole, agentId: string) =>
 	`${coachingBasePath(role)}/agents/${agentId}`;

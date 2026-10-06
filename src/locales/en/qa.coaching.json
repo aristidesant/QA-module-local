@@ -192,6 +192,7 @@
 			"updated": "Updated"
 		},
 		"status": { "ACTIVE": "Active", "PAUSED": "Paused", "DRAFT": "Draft" },
+		"page": { "notFound": "Rule not found." },
 		"cadence": {
 			"ON_MATCH": "When conditions match",
 			"WEEKLY": "Weekly review"

@@ -58,6 +58,8 @@ import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import {
 	COACHING_TABS,
 	coachingAgentPath,
+	coachingRuleEditPath,
+	coachingRuleNewPath,
 	type CoachingTab,
 } from '../constants';
 import { buildQueue } from '../helpers';
@@ -68,7 +70,6 @@ import { SessionsTab } from './tabs/SessionsTab';
 import { ImpactTab } from './tabs/ImpactTab';
 import { CohortDrawer } from '../components/CohortDrawer';
 import { CreateCohortModal } from '../components/CreateCohortModal';
-import { CoachingRuleEditorDrawer } from '../components/CoachingRuleEditorDrawer';
 import { CoachingRuleDetailDrawer } from '../components/CoachingRuleDetailDrawer';
 import {
 	SessionEditorDrawer,
@@ -105,15 +106,6 @@ export default function CoachingPage() {
 		opened: boolean;
 		preset?: SessionPreset;
 	}>({ opened: false });
-	const [ruleEditor, setRuleEditor] = useState<{
-		opened: boolean;
-		mode: 'create' | 'edit';
-		rule: CoachingRule | null;
-	}>({
-		opened: false,
-		mode: 'create',
-		rule: null,
-	});
 	const [cohortId, setCohortId] = useState<string | null>(null);
 	const [ruleId, setRuleId] = useState<string | null>(null);
 	const [sessionId, setSessionId] = useState<string | null>(null);
@@ -302,9 +294,7 @@ export default function CoachingPage() {
 						</Button>
 						<Button
 							leftSection={<IconPlus size={16} />}
-							onClick={() =>
-								setRuleEditor({ opened: true, mode: 'create', rule: null })
-							}
+							onClick={() => navigate(coachingRuleNewPath(role))}
 						>
 							{t('newRule')}
 						</Button>
@@ -409,18 +399,14 @@ export default function CoachingPage() {
 						<RulesTab
 							rules={scopeRules}
 							pathTitle={pathTitle}
-							onCreate={() =>
-								setRuleEditor({ opened: true, mode: 'create', rule: null })
-							}
-							onEdit={(rule) =>
-								setRuleEditor({ opened: true, mode: 'edit', rule })
-							}
+							onCreate={() => navigate(coachingRuleNewPath(role))}
+							onEdit={(rule) => navigate(coachingRuleEditPath(role, rule.id))}
 							onOpen={setRuleId}
 							onDuplicate={(rule) => {
 								const copy = useCoachingStore.getState().duplicateRule(rule.id);
 								if (copy) {
 									notifySuccess(t('rules.notifications.duplicated'));
-									setRuleEditor({ opened: true, mode: 'edit', rule: copy });
+									navigate(coachingRuleEditPath(role, copy.id));
 								}
 							}}
 							onDelete={(rule) => {
@@ -486,20 +472,6 @@ export default function CoachingPage() {
 				contentById={contentById}
 			/>
 
-			<CoachingRuleEditorDrawer
-				opened={ruleEditor.opened}
-				mode={ruleEditor.mode}
-				rule={ruleEditor.rule}
-				role={role}
-				persona={persona}
-				onClose={() =>
-					setRuleEditor({ opened: false, mode: 'create', rule: null })
-				}
-				onSaved={() =>
-					setRuleEditor({ opened: false, mode: 'create', rule: null })
-				}
-			/>
-
 			<CoachingRuleDetailDrawer
 				rule={ruleId ? (scopeRules.find((r) => r.id === ruleId) ?? null) : null}
 				rows={rows}
@@ -509,7 +481,7 @@ export default function CoachingPage() {
 				onClose={() => setRuleId(null)}
 				onEdit={(rule) => {
 					setRuleId(null);
-					setRuleEditor({ opened: true, mode: 'edit', rule });
+					navigate(coachingRuleEditPath(role, rule.id));
 				}}
 				onRunNow={handleRunNow}
 			/>

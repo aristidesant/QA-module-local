@@ -192,6 +192,7 @@
 			"updated": "Actualizada"
 		},
 		"status": { "ACTIVE": "Activa", "PAUSED": "Pausada", "DRAFT": "Borrador" },
+		"page": { "notFound": "Regla no encontrada." },
 		"cadence": {
 			"ON_MATCH": "Cuando se cumplan las condiciones",
 			"WEEKLY": "Revisión semanal"
