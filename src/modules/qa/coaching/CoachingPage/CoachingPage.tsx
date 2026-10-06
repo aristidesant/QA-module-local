@@ -53,17 +53,19 @@ import {
 	AssignContentDrawer,
 	type AssignPreset,
 } from '~/modules/qa/lms/components/AssignContentDrawer';
-import { agentProfilePath, roleFromPath } from '~/modules/qa/team/helpers';
-import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
+import { roleFromPath } from '~/modules/qa/team/helpers';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
-import { COACHING_TABS, type CoachingTab } from '../constants';
+import {
+	COACHING_TABS,
+	coachingAgentPath,
+	type CoachingTab,
+} from '../constants';
 import { buildQueue } from '../helpers';
 import { AgentsTab, buildAgentRows } from './tabs/AgentsTab';
 import { CohortsTab } from './tabs/CohortsTab';
 import { RulesTab } from './tabs/RulesTab';
 import { SessionsTab } from './tabs/SessionsTab';
 import { ImpactTab } from './tabs/ImpactTab';
-import { AgentCoachingDrawer } from '../components/AgentCoachingDrawer';
 import { CohortDrawer } from '../components/CohortDrawer';
 import { CreateCohortModal } from '../components/CreateCohortModal';
 import { CoachingRuleEditorDrawer } from '../components/CoachingRuleEditorDrawer';
@@ -112,8 +114,6 @@ export default function CoachingPage() {
 		mode: 'create',
 		rule: null,
 	});
-	const [agentDrawerId, setAgentDrawerId] = useState<string | null>(null);
-	const [agentDrawerTab, setAgentDrawerTab] = useState('timeline');
 	const [cohortId, setCohortId] = useState<string | null>(null);
 	const [ruleId, setRuleId] = useState<string | null>(null);
 	const [sessionId, setSessionId] = useState<string | null>(null);
@@ -391,10 +391,7 @@ export default function CoachingPage() {
 							rows={agentRows}
 							assignments={scopeAssignments}
 							role={role}
-							onOpen={(agentId) => {
-								setAgentDrawerTab('timeline');
-								setAgentDrawerId(agentId);
-							}}
+							onOpen={(agentId) => navigate(coachingAgentPath(role, agentId))}
 						/>
 					</Tabs.Panel>
 
@@ -462,10 +459,9 @@ export default function CoachingPage() {
 							rules={scopeRules}
 							contentById={contentById}
 							role={role}
-							onOpenAgent={(agentId) => {
-								setAgentDrawerTab('impact');
-								setAgentDrawerId(agentId);
-							}}
+							onOpenAgent={(agentId) =>
+								navigate(`${coachingAgentPath(role, agentId)}?tab=impact`)
+							}
 						/>
 					</Tabs.Panel>
 				</Tabs>
@@ -516,40 +512,6 @@ export default function CoachingPage() {
 					setRuleEditor({ opened: true, mode: 'edit', rule });
 				}}
 				onRunNow={handleRunNow}
-			/>
-
-			<AgentCoachingDrawer
-				profile={agentDrawerId ? (profilesMap[agentDrawerId] ?? null) : null}
-				assignments={assignments}
-				sessions={sessions}
-				contentById={contentById}
-				opened={agentDrawerId !== null}
-				initialTab={agentDrawerTab}
-				onClose={() => setAgentDrawerId(null)}
-				onAssign={() => {
-					if (agentDrawerId)
-						setAssignState({
-							opened: true,
-							preset: { agentIds: [agentDrawerId] },
-						});
-				}}
-				onSchedule={() => {
-					if (agentDrawerId)
-						setSessionEditor({
-							opened: true,
-							preset: { agentId: agentDrawerId },
-						});
-				}}
-				onProfile={() => {
-					const agent = agentDrawerId
-						? TEAM_AGENTS.find((a) => a.id === agentDrawerId)
-						: undefined;
-					if (agent) navigate(`${agentProfilePath(role, agent)}?tab=coaching`);
-				}}
-				onOpenSession={(id) => {
-					setAgentDrawerId(null);
-					setSessionId(id);
-				}}
 			/>
 
 			<CohortDrawer

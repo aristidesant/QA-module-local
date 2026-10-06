@@ -146,6 +146,18 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.qa-manager.lms': ['qa.lms', 'qa.team', 'qa.triggers'],
 	'qa.supervisor.coaching': ['qa.coaching', 'qa.lms', 'qa.triggers', 'qa.team'],
 	'qa.qa-manager.coaching': ['qa.coaching', 'qa.lms', 'qa.triggers', 'qa.team'],
+	'qa.supervisor.coaching.agent': [
+		'qa.coaching',
+		'qa.lms',
+		'qa.triggers',
+		'qa.team',
+	],
+	'qa.qa-manager.coaching.agent': [
+		'qa.coaching',
+		'qa.lms',
+		'qa.triggers',
+		'qa.team',
+	],
 	'qa.supervisor.your-team': ['qa.team', 'qa.dashboard'],
 	'qa.supervisor.your-team.profile': ['qa.team', 'qa.dashboard'],
 	'qa.qa-manager.teams': ['qa.team', 'qa.dashboard'],

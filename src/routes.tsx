@@ -157,6 +157,9 @@ const LmsManagerPage = React.lazy(
 const CoachingPage = React.lazy(
 	() => import('./modules/qa/coaching/CoachingPage')
 );
+const CoachingAgentPage = React.lazy(
+	() => import('./modules/qa/coaching/CoachingAgentPage')
+);
 const CustomersPage = React.lazy(
 	() => import('./modules/qa/customers/CustomersPage')
 );
@@ -1245,12 +1248,34 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'qa-manager/coaching/agents/:agentId',
+										id: 'qa.qa-manager.coaching.agent',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingAgentPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'supervisor/coaching',
 										id: 'qa.supervisor.coaching',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<CoachingPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/coaching/agents/:agentId',
+										id: 'qa.supervisor.coaching.agent',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingAgentPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

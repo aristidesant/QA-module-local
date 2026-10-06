@@ -107,6 +107,7 @@
 		},
 		"teamCard": "{{team}} · {{supervisor}}",
 		"empty": "No agents match these filters.",
+		"page": { "notFound": "Agent not found in your scope." },
 		"drawer": {
 			"tabs": {
 				"timeline": "Timeline",

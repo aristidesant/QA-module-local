@@ -107,6 +107,7 @@
 		},
 		"teamCard": "{{team}} · {{supervisor}}",
 		"empty": "Ningún agente coincide con estos filtros.",
+		"page": { "notFound": "Agente fuera de tu alcance." },
 		"drawer": {
 			"tabs": {
 				"timeline": "Cronología",
