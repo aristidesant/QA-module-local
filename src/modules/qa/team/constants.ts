@@ -3,6 +3,7 @@ import {
 	IconAward,
 	IconBriefcase,
 	IconClipboardList,
+	IconFlame,
 	IconHeadset,
 	IconMoodSmile,
 	IconNote,
@@ -62,6 +63,7 @@ export type ProfileTab =
 	| 'compliance'
 	| 'business'
 	| 'operations'
+	| 'burnout'
 	| 'coaching'
 	| 'achievements'
 	| 'notes';
@@ -76,6 +78,7 @@ export const PROFILE_TABS: {
 	{ value: 'compliance', labelKey: 'tabs.compliance', icon: IconShieldCheck },
 	{ value: 'business', labelKey: 'tabs.business', icon: IconBriefcase },
 	{ value: 'operations', labelKey: 'tabs.operations', icon: IconHeadset },
+	{ value: 'burnout', labelKey: 'tabs.burnout', icon: IconFlame },
 	{ value: 'coaching', labelKey: 'tabs.coaching', icon: IconSchool },
 	{ value: 'achievements', labelKey: 'tabs.achievements', icon: IconAward },
 	{ value: 'notes', labelKey: 'tabs.notes', icon: IconNote },

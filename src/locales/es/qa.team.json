@@ -102,6 +102,76 @@
 		"12m": "12 meses",
 		"all": "Todo el historial"
 	},
+	"burnoutTab": {
+		"title": "Riesgo de burnout",
+		"summary": "{{breached}} superadas · {{near}} cerca, de {{total}} condiciones en las reglas de burnout activas",
+		"scheduleCoaching": "Agendar coaching",
+		"drivers": {
+			"title": "Por qué este puntaje",
+			"description": "Cada condición de las reglas de burnout activas que cubren a este agente, y dónde está el agente en cada una.",
+			"manageRules": "Gestionar reglas de burnout",
+			"matched": "Regla cumplida",
+			"empty": "Ninguna regla de burnout activa cubre a este agente.",
+			"columns": {
+				"rule": "Regla",
+				"condition": "Condición",
+				"value": "Valor actual",
+				"status": "Estado"
+			}
+		},
+		"driverStatus": {
+			"BREACHED": "Superada",
+			"NEAR": "Cerca",
+			"OK": "OK"
+		},
+		"workload": {
+			"title": "Carga de trabajo vs equipo",
+			"description": "Últimos 30 días. En rojo, claramente por encima del promedio del equipo.",
+			"callsPerDay": "Llamadas por día",
+			"aht": "Tiempo medio de atención",
+			"afterHours": "Llamadas fuera de horario",
+			"consecutiveDays": "Días laborales consecutivos",
+			"negativeEmotion": "Llamadas con emoción negativa",
+			"recovery": "Tasa de recuperación del sentimiento",
+			"team": "Equipo: {{value}}"
+		},
+		"calls": {
+			"title": "Llamadas detrás de la señal",
+			"description": "Llamadas recientes con una señal de fatiga o tensión en el agente. Abre una para leer su evaluación.",
+			"empty": "Sin llamadas con señales de burnout en los últimos 30 días.",
+			"open": "Abrir evaluación de la llamada",
+			"columns": {
+				"date": "Fecha",
+				"call": "Llamada",
+				"reasons": "Señales"
+			}
+		},
+		"callReason": {
+			"afterHours": "Fuera de horario",
+			"negativeEmotion": "Emoción negativa",
+			"longHandle": "Atención larga",
+			"lowSentiment": "Sentimiento bajo"
+		},
+		"trend": "Riesgo de burnout en el tiempo",
+		"history": {
+			"title": "Acciones tomadas",
+			"description": "Acciones de coaching, aprendizaje y carga en los últimos 90 días.",
+			"empty": "Todavía no se han tomado acciones.",
+			"coaching": "Sesión de coaching",
+			"lms": "Aprendizaje asignado",
+			"columns": {
+				"date": "Fecha",
+				"action": "Acción",
+				"by": "Por",
+				"status": "Estado"
+			},
+			"status": {
+				"PLANNED": "Planificada",
+				"IN_PROGRESS": "En curso",
+				"DONE": "Hecha"
+			}
+		}
+	},
 	"tabs": {
 		"overview": "Resumen",
 		"qa": "QA",
@@ -109,6 +179,7 @@
 		"compliance": "Cumplimiento",
 		"business": "Oportunidades de negocio",
 		"operations": "Operaciones",
+		"burnout": "Burnout",
 		"coaching": "Coaching y LMS",
 		"achievements": "Logros",
 		"notes": "Notas"

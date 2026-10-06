@@ -1202,6 +1202,40 @@ export function computeWorkload(
 	};
 }
 
+export interface BurnoutEvidenceCall {
+	call: TeamCallMetric;
+	/** Why the call counts: keys of `burnoutTab.callReason.*` in qa.team. */
+	reasons: ('afterHours' | 'negativeEmotion' | 'longHandle' | 'lowSentiment')[];
+}
+
+/** Recent calls (last 30 days) of one agent that carry a fatigue or strain signal, newest first. */
+export function burnoutEvidenceCalls(
+	agentId: string,
+	limit = 8
+): BurnoutEvidenceCall[] {
+	const last30 = daysWindow(0, 30);
+	const mine = within(
+		TEAM_CALLS.filter((c) => c.agentId === agentId),
+		last30
+	);
+	const teamAht =
+		mean(within(TEAM_CALLS, last30).map((c) => c.handleTimeSeconds)) ?? 0;
+	return mine
+		.map((call) => {
+			const reasons: BurnoutEvidenceCall['reasons'] = [];
+			if (call.afterHours) reasons.push('afterHours');
+			if (isNegativeCallEmotion(call.agentEmotion))
+				reasons.push('negativeEmotion');
+			if (teamAht > 0 && call.handleTimeSeconds > teamAht * 1.3)
+				reasons.push('longHandle');
+			if (call.agentSentiment < 3) reasons.push('lowSentiment');
+			return { call, reasons };
+		})
+		.filter((e) => e.reasons.length > 0)
+		.sort((a, b) => b.call.date.localeCompare(a.call.date))
+		.slice(0, limit);
+}
+
 export function buildActionHistory(
 	actions: BurnoutAction[],
 	sessions: CoachingSessionRecord[],

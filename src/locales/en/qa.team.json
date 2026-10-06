@@ -102,6 +102,76 @@
 		"12m": "12 months",
 		"all": "All time"
 	},
+	"burnoutTab": {
+		"title": "Burnout risk",
+		"summary": "{{breached}} breached · {{near}} near, out of {{total}} conditions in the active burnout rules",
+		"scheduleCoaching": "Schedule coaching",
+		"drivers": {
+			"title": "Why this score",
+			"description": "Every condition of the active burnout rules that cover this agent, and where the agent stands on each.",
+			"manageRules": "Manage burnout rules",
+			"matched": "Rule met",
+			"empty": "No active burnout rule covers this agent.",
+			"columns": {
+				"rule": "Rule",
+				"condition": "Condition",
+				"value": "Current value",
+				"status": "Status"
+			}
+		},
+		"driverStatus": {
+			"BREACHED": "Breached",
+			"NEAR": "Near",
+			"OK": "OK"
+		},
+		"workload": {
+			"title": "Workload vs team",
+			"description": "Last 30 days. Red means clearly above the team average.",
+			"callsPerDay": "Calls per day",
+			"aht": "Average handle time",
+			"afterHours": "After-hours calls",
+			"consecutiveDays": "Consecutive working days",
+			"negativeEmotion": "Calls with negative emotion",
+			"recovery": "Sentiment recovery rate",
+			"team": "Team: {{value}}"
+		},
+		"calls": {
+			"title": "Calls behind the signal",
+			"description": "Recent calls with a fatigue or strain signal in the agent. Open one to read its evaluation.",
+			"empty": "No calls with burnout signals in the last 30 days.",
+			"open": "Open call evaluation",
+			"columns": {
+				"date": "Date",
+				"call": "Call",
+				"reasons": "Signals"
+			}
+		},
+		"callReason": {
+			"afterHours": "After hours",
+			"negativeEmotion": "Negative emotion",
+			"longHandle": "Long handle time",
+			"lowSentiment": "Low sentiment"
+		},
+		"trend": "Burnout risk over time",
+		"history": {
+			"title": "Actions taken",
+			"description": "Coaching, learning and workload actions in the last 90 days.",
+			"empty": "No actions taken yet.",
+			"coaching": "Coaching session",
+			"lms": "Learning assigned",
+			"columns": {
+				"date": "Date",
+				"action": "Action",
+				"by": "By",
+				"status": "Status"
+			},
+			"status": {
+				"PLANNED": "Planned",
+				"IN_PROGRESS": "In progress",
+				"DONE": "Done"
+			}
+		}
+	},
 	"tabs": {
 		"overview": "Overview",
 		"qa": "QA",
@@ -109,6 +179,7 @@
 		"compliance": "Compliance",
 		"business": "Business Insights",
 		"operations": "Operations",
+		"burnout": "Burnout",
 		"coaching": "Coaching & LMS",
 		"achievements": "Achievements",
 		"notes": "Notes"

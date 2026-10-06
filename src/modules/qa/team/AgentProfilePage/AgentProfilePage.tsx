@@ -24,6 +24,7 @@ import { SentimentTab } from './tabs/SentimentTab';
 import { ComplianceTab } from './tabs/ComplianceTab';
 import { BusinessTab } from './tabs/BusinessTab';
 import { OperationsTab } from './tabs/OperationsTab';
+import { BurnoutTab } from './tabs/BurnoutTab';
 import { CoachingLmsTab } from './tabs/CoachingLmsTab';
 import { AchievementsTab } from './tabs/AchievementsTab';
 import { NotesTab } from './tabs/NotesTab';
@@ -169,6 +170,13 @@ export default function AgentProfilePage() {
 					</Tabs.Panel>
 					<Tabs.Panel value='operations' pt='md'>
 						<OperationsTab profile={profile} />
+					</Tabs.Panel>
+					<Tabs.Panel value='burnout' pt='md'>
+						<BurnoutTab
+							profile={profile}
+							role={role}
+							onScheduleCoaching={() => setCoachingOpen(true)}
+						/>
 					</Tabs.Panel>
 					<Tabs.Panel value='coaching' pt='md'>
 						<CoachingLmsTab
