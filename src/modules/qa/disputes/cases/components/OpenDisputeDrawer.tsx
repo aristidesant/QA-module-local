@@ -93,7 +93,9 @@ export const OpenDisputeDrawer: React.FC<OpenDisputeDrawerProps> = ({
 			<Stack gap='lg'>
 				<Select
 					label={t('cases.open.type')}
-					data={CALL_EVALUATION_TABS.map((tab) => ({
+					data={CALL_EVALUATION_TABS.filter(
+						(tab) => tab.key !== 'business-insights'
+					).map((tab) => ({
 						value: tab.key,
 						label: t(`cases.types.${tab.key}`),
 					}))}

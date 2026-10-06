@@ -1,11 +1,19 @@
 import { create } from 'zustand';
-import type { DisputeCase, OpenDisputeInput } from '~/models/qa/disputeCases';
+import type {
+	DisputeCase,
+	DisputeItemDecision,
+	OpenDisputeInput,
+} from '~/models/qa/disputeCases';
 import { DISPUTE_CASES_SEED } from '~/modules/qa/disputes/cases/mockData';
 import {
 	applyCorrections,
 	headlineScore,
+	listDisputableItems,
 } from '~/modules/qa/disputes/cases/recalc';
-import { getDisputeCall } from '~/modules/qa/disputes/cases/helpers';
+import {
+	getDisputeCall,
+	resolutionStatus,
+} from '~/modules/qa/disputes/cases/helpers';
 import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 import {
 	NOW_ISO,
@@ -21,7 +29,7 @@ interface DisputesState {
 	openDispute: (input: OpenDisputeInput) => DisputeCase;
 	acceptDispute: (
 		id: string,
-		correctedItemIds: string[],
+		decisions: DisputeItemDecision[],
 		managerComment: string
 	) => void;
 	rejectDispute: (id: string, managerComment: string) => void;
@@ -65,7 +73,7 @@ export const useDisputesStore = create<DisputesState>((set, get) => ({
 			resolvedAt: null,
 			resolvedBy: null,
 			managerComment: null,
-			correctedItemIds: [],
+			decisions: [],
 		};
 		const dispute: DisputeCase = {
 			...draft,
@@ -116,29 +124,32 @@ export const useDisputesStore = create<DisputesState>((set, get) => ({
 		return dispute;
 	},
 
-	acceptDispute: (id, correctedItemIds, managerComment) => {
+	acceptDispute: (id, decisions, managerComment) => {
 		const dispute = get().cases.find((c) => c.id === id);
 		if (!dispute || dispute.status !== 'open') return;
 
 		const call = getDisputeCall(dispute);
-		const corrected = applyCorrections(
-			call,
-			dispute.evaluationType,
-			correctedItemIds
-		);
+		const items = listDisputableItems(call, dispute.evaluationType);
+		const corrected = applyCorrections(call, dispute.evaluationType, decisions);
 		const after = headlineScore(corrected, dispute.evaluationType);
+		const status = resolutionStatus(dispute, items, decisions);
+		const correctedCount = decisions.filter(
+			(d) => d.outcome === 'correct'
+		).length;
+		const keptCount = decisions.length - correctedCount;
+		const partial = status === 'partially-accepted';
 
 		set((s) => ({
 			cases: s.cases.map((c) =>
 				c.id === id
 					? {
 							...c,
-							status: 'accepted',
+							status,
 							scoreAfter: after,
 							resolvedAt: NOW_ISO,
 							resolvedBy: QA_MANAGER_PERSONA.name,
 							managerComment,
-							correctedItemIds,
+							decisions,
 						}
 					: c
 			),
@@ -147,7 +158,7 @@ export const useDisputesStore = create<DisputesState>((set, get) => ({
 		const payload = {
 			kind: 'DISPUTE_UPDATE' as const,
 			disputeId: dispute.id,
-			status: 'accepted' as const,
+			status,
 			evaluationType: dispute.evaluationType,
 			callId: dispute.callId,
 			agentName: dispute.agentName,
@@ -163,10 +174,12 @@ export const useDisputesStore = create<DisputesState>((set, get) => ({
 			agentId: dispute.agentId,
 			recipientRole: 'AGENT',
 			recipientId: dispute.agentId,
-			category: 'POSITIVE_RECOGNITION',
+			category: partial ? 'DIRECT_MESSAGE' : 'POSITIVE_RECOGNITION',
 			priority: 'NORMAL',
-			title: 'Your dispute was accepted',
-			message: `${correctedItemIds.length} item(s) were scored wrongly on call ${dispute.callId}.${scoreLine}`,
+			title: partial
+				? 'Your dispute was partially accepted'
+				: 'Your dispute was accepted',
+			message: `${correctedCount} item(s) corrected and ${keptCount} kept on call ${dispute.callId}.${scoreLine}`,
 			icon: 'flag',
 			sourceRole: 'QA_MANAGER',
 			sourceId: QA_MANAGER_PERSONA.id,
@@ -178,8 +191,8 @@ export const useDisputesStore = create<DisputesState>((set, get) => ({
 			recipientId: dispute.supervisorId,
 			category: 'DIRECT_MESSAGE',
 			priority: 'NORMAL',
-			title: `Dispute accepted · ${dispute.agentName}`,
-			message: `The ${typeLabel(dispute.evaluationType)} evaluation of call ${dispute.callId} was corrected.${scoreLine}`,
+			title: `Dispute ${partial ? 'partially accepted' : 'accepted'} · ${dispute.agentName}`,
+			message: `The ${typeLabel(dispute.evaluationType)} evaluation of call ${dispute.callId} was corrected (${correctedCount} item(s), ${keptCount} kept).${scoreLine}`,
 			icon: 'flag',
 			sourceRole: 'QA_MANAGER',
 			sourceId: QA_MANAGER_PERSONA.id,

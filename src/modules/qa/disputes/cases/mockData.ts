@@ -1,6 +1,7 @@
 import type {
 	DisputeCase,
 	DisputeEvaluationType,
+	DisputeItemDecision,
 } from '~/models/qa/disputeCases';
 import { mockCallEvaluationDetail } from '~/views/Campaigns/constants';
 import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
@@ -38,12 +39,26 @@ const SCORE_BEFORE: Record<DisputeEvaluationType, number | null> = {
 	'business-insights': null,
 };
 
-/** Score after the given corrections, so accepted seeds stay consistent. */
-const scoreAfter = (type: DisputeEvaluationType, itemIds: string[]) =>
+/** Score after the given decisions, so resolved seeds stay consistent. */
+const scoreAfter = (
+	type: DisputeEvaluationType,
+	decisions: DisputeItemDecision[]
+) =>
 	headlineScore(
-		applyCorrections(mockCallEvaluationDetail, type, itemIds),
+		applyCorrections(mockCallEvaluationDetail, type, decisions),
 		type
 	);
+
+const correct = (
+	itemId: string,
+	value: string,
+	note?: string
+): DisputeItemDecision => ({ itemId, outcome: 'correct', value, note });
+const keep = (itemId: string, note?: string): DisputeItemDecision => ({
+	itemId,
+	outcome: 'keep',
+	note,
+});
 
 interface Seed {
 	n: number;
@@ -53,7 +68,7 @@ interface Seed {
 	createdAt: string;
 	resolvedAt?: string;
 	flagged?: string[];
-	corrected?: string[];
+	decisions?: DisputeItemDecision[];
 	agentComment: string;
 	managerComment?: string;
 }
@@ -87,7 +102,7 @@ const SEEDS: Seed[] = [
 		createdAt: '2026-09-03T11:00:00Z',
 		resolvedAt: '2026-09-05T13:45:00Z',
 		flagged: QA_ITEMS.slice(0, 2),
-		corrected: QA_ITEMS.slice(0, 2),
+		decisions: QA_ITEMS.slice(0, 2).map((id) => correct(id, 'yes')),
 		agentComment:
 			'Two items were marked as missed but both are clearly in the transcript.',
 		managerComment:
@@ -123,10 +138,16 @@ const SEEDS: Seed[] = [
 		createdAt: '2026-08-28T08:40:00Z',
 		resolvedAt: '2026-08-30T15:10:00Z',
 		flagged: COMPLIANCE_ITEMS,
-		corrected: COMPLIANCE_ITEMS,
+		decisions: COMPLIANCE_ITEMS.map((id) =>
+			correct(
+				id,
+				'compliant',
+				'Consent wording matches the approved July script, read in full at 0:20.'
+			)
+		),
 		agentComment:
 			'The consent wording was read verbatim from the approved script.',
-		managerComment: 'Confirmed against the script. Score corrected.',
+		managerComment: 'Confirmed against the script. Finding dismissed.',
 	},
 	{
 		n: 7,
@@ -145,10 +166,10 @@ const SEEDS: Seed[] = [
 		createdAt: '2026-08-25T09:30:00Z',
 		resolvedAt: '2026-08-27T11:20:00Z',
 		flagged: ['customer-category'],
-		corrected: ['customer-category'],
+		decisions: [correct('customer-category', 'neutral')],
 		agentComment:
 			'The customer thanked me at the end — the negative reading does not match how the call closed.',
-		managerComment: 'Agreed, the closing minute was misread. Moved to neutral.',
+		managerComment: 'Agreed, the closing minute was misread. Set to neutral.',
 	},
 	{
 		n: 9,
@@ -169,7 +190,9 @@ const SEEDS: Seed[] = [
 		createdAt: '2026-08-20T13:10:00Z',
 		resolvedAt: '2026-08-21T16:30:00Z',
 		flagged: BUSINESS_ITEMS.slice(2, 3),
-		corrected: BUSINESS_ITEMS.slice(2, 3),
+		decisions: BUSINESS_ITEMS.slice(2, 3).map((id) =>
+			correct(id, 'not-detected')
+		),
 		agentComment:
 			'The customer mentioned a competitor but never tied it to price.',
 		managerComment: 'Correct, the signal was over-detected.',
@@ -208,21 +231,39 @@ const SEEDS: Seed[] = [
 		n: 14,
 		agentId: 'AGT-020',
 		type: 'qa',
-		status: 'accepted',
+		status: 'partially-accepted',
 		createdAt: '2026-08-15T10:05:00Z',
 		resolvedAt: '2026-08-16T12:40:00Z',
 		flagged: QA_ITEMS,
-		corrected: QA_ITEMS,
+		decisions: [
+			...QA_ITEMS.slice(0, 2).map((id) => correct(id, 'yes')),
+			...QA_ITEMS.slice(2).map((id) =>
+				keep(id, 'The recap never stated the price; the original stands.')
+			),
+		],
 		agentComment:
 			'Three items were scored against me on a call where I followed the full flow.',
-		managerComment: 'Reviewed with the evaluator — all three were misjudged.',
+		managerComment:
+			'Two of the three were misjudged and are corrected. The recap item stands — see the note.',
+	},
+	{
+		n: 15,
+		agentId: 'AGT-008',
+		type: 'sentiment-emotion',
+		status: 'open',
+		createdAt: '2026-09-11T15:40:00Z',
+		flagged: ['customer-emotion'],
+		agentComment:
+			'The customer was disappointed about the delay, not angry — the tone never escalated and we closed on good terms.',
 	},
 ];
 
 export const DISPUTE_CASES_SEED: DisputeCase[] = SEEDS.map((seed) => {
 	const agent = TEAM_AGENTS.find((a) => a.id === seed.agentId);
 	const campaign = CAMPAIGNS[(seed.n - 1) % CAMPAIGNS.length];
-	const corrected = seed.corrected ?? [];
+	const decisions = seed.decisions ?? [];
+	const corrected =
+		seed.status === 'accepted' || seed.status === 'partially-accepted';
 
 	return {
 		id: `DSP-${1000 + seed.n}`,
@@ -236,8 +277,7 @@ export const DISPUTE_CASES_SEED: DisputeCase[] = SEEDS.map((seed) => {
 		team: agent?.team ?? 'Team 1',
 		evaluationType: seed.type,
 		scoreBefore: SCORE_BEFORE[seed.type],
-		scoreAfter:
-			seed.status === 'accepted' ? scoreAfter(seed.type, corrected) : null,
+		scoreAfter: corrected ? scoreAfter(seed.type, decisions) : null,
 		agentComment: seed.agentComment,
 		flaggedItemIds: seed.flagged ?? [],
 		status: seed.status,
@@ -245,6 +285,6 @@ export const DISPUTE_CASES_SEED: DisputeCase[] = SEEDS.map((seed) => {
 		resolvedAt: seed.resolvedAt ?? null,
 		resolvedBy: seed.resolvedAt ? QA_MANAGER_PERSONA.name : null,
 		managerComment: seed.managerComment ?? null,
-		correctedItemIds: corrected,
+		decisions,
 	};
 });

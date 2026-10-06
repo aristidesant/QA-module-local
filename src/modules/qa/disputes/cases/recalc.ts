@@ -1,45 +1,46 @@
 import type {
 	DisputeEvaluationType,
+	DisputeItemDecision,
 	DisputeItemRef,
 } from '~/models/qa/disputeCases';
 import type {
 	CallEvaluationDetail,
 	ComplianceItemStatus,
 	QAAspectResult,
+	SpeakerSentiment,
 } from '~/views/Campaigns/types';
-import type { SentimentCategory } from '~/modules/qa/emotion-sentiment/types';
+import type {
+	Emotion,
+	SentimentCategory,
+} from '~/modules/qa/emotion-sentiment/types';
+import { EMOTION_SENTIMENT_MAP } from '~/modules/qa/emotion-sentiment/types';
 import {
 	BUSINESS_SIGNALS,
 	COMPLIANCE_AREAS,
+	EMOTION_LABELS,
+	SENTIMENT_CATEGORIES,
 	SENTIMENT_CATEGORY_ORDER,
 } from '~/views/Campaigns/constants';
+import {
+	CATEGORY_MIDPOINT,
+	COMPLIANCE_WARNING_SCORE,
+	DEFAULT_EMOTION_BY_CATEGORY,
+} from './constants';
 
 const round = (n: number) => Math.round(n);
 const mean = (values: number[]) =>
 	values.length === 0 ? 0 : values.reduce((s, v) => s + v, 0) / values.length;
-
-/**
- * Sentiment runs 0-5 over five equal bands. The mock's category and score can
- * disagree (a "negative" call scored 2.6), so a correction lifts the score by a
- * full band and the category is re-derived from the new score — never the other
- * way round, which would let a correction lower the reading.
- */
-const BAND = 1;
-const categoryOfScore = (score: number): SentimentCategory =>
-	SENTIMENT_CATEGORY_ORDER[
-		Math.min(
-			SENTIMENT_CATEGORY_ORDER.length - 1,
-			Math.max(0, Math.floor(score / BAND))
-		)
-	];
-const liftScore = (score: number) =>
-	Math.round(Math.min(5, score + BAND) * 10) / 10;
 
 const COMPLIANCE_STATUS_LABEL: Record<ComplianceItemStatus, string> = {
 	compliant: 'Compliant',
 	warning: 'Warning',
 	violation: 'Violation',
 };
+
+const isCategory = (value: string): value is SentimentCategory =>
+	(SENTIMENT_CATEGORY_ORDER as string[]).includes(value);
+const isEmotion = (value: string): value is Emotion =>
+	value in EMOTION_SENTIMENT_MAP;
 
 /** Every sub-item the agent can contest for one evaluation type. */
 export function listDisputableItems(
@@ -55,6 +56,8 @@ export function listDisputableItems(
 						id: item.id,
 						label: item.name,
 						group: aspect.name,
+						kind: 'binary' as const,
+						value: 'no',
 						original: `No · 0/${item.valuation}`,
 					}))
 			);
@@ -67,33 +70,62 @@ export function listDisputableItems(
 						id: item.key,
 						label: item.label,
 						group: COMPLIANCE_AREAS[area.key].label,
+						kind: 'compliance' as const,
+						value: item.status,
 						original: COMPLIANCE_STATUS_LABEL[item.status],
+						analysis: {
+							note: item.note,
+							evidenceTimestamp: item.evidence?.timestamp,
+							evidenceQuote: item.evidence?.quote,
+						},
 					}))
 			);
 
-		case 'sentiment-emotion':
+		case 'sentiment-emotion': {
+			const { customer, agent, recovery } = call.sentiment;
 			return [
 				{
 					id: 'customer-category',
-					label: 'Customer sentiment category',
-					group: 'Sentiment',
-					original: call.sentiment.customer.overallCategory,
+					label: 'Customer sentiment',
+					group: 'Customer',
+					kind: 'sentiment-category' as const,
+					value: customer.overallCategory,
+					original: SENTIMENT_CATEGORIES[customer.overallCategory].label,
+				},
+				{
+					id: 'customer-emotion',
+					label: 'Customer dominant emotion',
+					group: 'Customer',
+					kind: 'emotion' as const,
+					value: customer.dominantEmotion,
+					original: EMOTION_LABELS[customer.dominantEmotion],
 				},
 				{
 					id: 'agent-category',
-					label: 'Agent sentiment category',
-					group: 'Sentiment',
-					original: call.sentiment.agent.overallCategory,
+					label: 'Agent sentiment',
+					group: 'Agent',
+					kind: 'sentiment-category' as const,
+					value: agent.overallCategory,
+					original: SENTIMENT_CATEGORIES[agent.overallCategory].label,
+				},
+				{
+					id: 'agent-emotion',
+					label: 'Agent dominant emotion',
+					group: 'Agent',
+					kind: 'emotion' as const,
+					value: agent.dominantEmotion,
+					original: EMOTION_LABELS[agent.dominantEmotion],
 				},
 				{
 					id: 'recovery',
 					label: 'Sentiment recovery',
-					group: 'Sentiment',
-					original: call.sentiment.recovery.recovered
-						? 'Recovered'
-						: 'Not recovered',
+					group: 'Recovery',
+					kind: 'recovery' as const,
+					value: recovery.recovered ? 'recovered' : 'not-recovered',
+					original: recovery.recovered ? 'Recovered' : 'Not recovered',
 				},
 			];
+		}
 
 		case 'business-insights':
 			return [
@@ -105,6 +137,8 @@ export function listDisputableItems(
 						id: signal.type,
 						label: BUSINESS_SIGNALS[signal.type].label,
 						group: 'Signals',
+						kind: 'binary' as const,
+						value: 'detected',
 						original: 'Detected',
 					})),
 				...(call.business.outcome.converted
@@ -114,6 +148,8 @@ export function listDisputableItems(
 								id: 'outcome-converted',
 								label: 'Converted',
 								group: 'Outcome',
+								kind: 'binary' as const,
+								value: 'not-converted',
 								original: 'Not converted',
 							},
 						]),
@@ -124,14 +160,16 @@ export function listDisputableItems(
 	}
 }
 
+type Corrections = Map<string, DisputeItemDecision>;
+
 /** Recomputes the QA aspect totals, error types and overall score after corrections. */
 function recalcQa(
 	call: CallEvaluationDetail,
-	itemIds: Set<string>
+	corrections: Corrections
 ): CallEvaluationDetail {
 	const aspects: QAAspectResult[] = call.qa.aspects.map((aspect) => {
 		const items = aspect.items.map((item) =>
-			itemIds.has(item.id)
+			corrections.has(item.id)
 				? { ...item, answer: 'yes' as const, awarded: item.valuation }
 				: item
 		);
@@ -188,21 +226,44 @@ function recalcQa(
 	};
 }
 
+/**
+ * A finding can be dismissed (compliant, 100) or downgraded to a warning, which
+ * keeps the note and evidence so the audit trail survives the correction.
+ */
 function recalcCompliance(
 	call: CallEvaluationDetail,
-	itemIds: Set<string>
+	corrections: Corrections
 ): CallEvaluationDetail {
 	const areas = call.compliance.areas.map((area) => {
-		const items = area.items.map((item) =>
-			itemIds.has(item.key)
+		const items = area.items.map((item) => {
+			const decision = corrections.get(item.key);
+			if (!decision) return item;
+			const status: ComplianceItemStatus =
+				decision.value === 'warning' || decision.value === 'compliant'
+					? decision.value
+					: item.status;
+			const edits = decision.edits;
+			const evidence = edits?.evidenceQuote
 				? {
-						...item,
-						status: 'compliant' as const,
-						score: 100,
-						note: undefined,
+						timestamp:
+							edits.evidenceTimestamp ?? item.evidence?.timestamp ?? '0:00',
+						speaker: item.evidence?.speaker ?? ('agent' as const),
+						quote: edits.evidenceQuote,
 					}
-				: item
-		);
+				: item.evidence;
+			return {
+				...item,
+				status,
+				score:
+					status === item.status
+						? item.score
+						: status === 'warning'
+							? COMPLIANCE_WARNING_SCORE
+							: 100,
+				note: edits?.note ?? (status === 'compliant' ? undefined : item.note),
+				evidence,
+			};
+		});
 		return { ...area, items, score: round(mean(items.map((i) => i.score))) };
 	});
 
@@ -232,29 +293,88 @@ function recalcCompliance(
 	};
 }
 
+/** The chosen category becomes the largest share (at least half); the others scale down to fill 100. */
+function rebalanceShares(
+	shares: Record<SentimentCategory, number>,
+	category: SentimentCategory
+): Record<SentimentCategory, number> {
+	const target = Math.max(shares[category], 50);
+	const othersTotal = SENTIMENT_CATEGORY_ORDER.filter(
+		(k) => k !== category
+	).reduce((sum, k) => sum + shares[k], 0);
+	const scale = othersTotal === 0 ? 0 : (100 - target) / othersTotal;
+	const next = { ...shares };
+	SENTIMENT_CATEGORY_ORDER.forEach((k) => {
+		if (k !== category) next[k] = round(shares[k] * scale);
+	});
+	next[category] =
+		100 -
+		SENTIMENT_CATEGORY_ORDER.filter((k) => k !== category).reduce(
+			(sum, k) => sum + next[k],
+			0
+		);
+	return next;
+}
+
+/** Sets the category the QA Manager chose and keeps score, shares and dominant emotion consistent with it. */
+function setSpeakerCategory(
+	speaker: SpeakerSentiment,
+	category: SentimentCategory
+): SpeakerSentiment {
+	const dominantEmotion =
+		EMOTION_SENTIMENT_MAP[speaker.dominantEmotion] === category
+			? speaker.dominantEmotion
+			: ([...speaker.emotions]
+					.sort((a, b) => b.percentage - a.percentage)
+					.find((e) => EMOTION_SENTIMENT_MAP[e.emotion] === category)
+					?.emotion ?? DEFAULT_EMOTION_BY_CATEGORY[category]);
+	return {
+		...speaker,
+		overallCategory: category,
+		overallScore: CATEGORY_MIDPOINT[category],
+		dominantEmotion,
+		categories: rebalanceShares(speaker.categories, category),
+	};
+}
+
+/** Sets the dominant emotion; the category follows when the emotion belongs to another one. */
+function setSpeakerEmotion(
+	speaker: SpeakerSentiment,
+	emotion: Emotion
+): SpeakerSentiment {
+	const top = Math.max(0, ...speaker.emotions.map((e) => e.percentage));
+	const current = speaker.emotions.find((e) => e.emotion === emotion);
+	const emotions = [
+		{ emotion, percentage: Math.max(current?.percentage ?? 0, top) },
+		...speaker.emotions.filter((e) => e.emotion !== emotion),
+	];
+	const next = { ...speaker, dominantEmotion: emotion, emotions };
+	const category = EMOTION_SENTIMENT_MAP[emotion];
+	return category === speaker.overallCategory
+		? next
+		: setSpeakerCategory(next, category);
+}
+
 function recalcSentiment(
 	call: CallEvaluationDetail,
-	itemIds: Set<string>
+	corrections: Corrections
 ): CallEvaluationDetail {
 	const sentiment = { ...call.sentiment };
 
-	if (itemIds.has('customer-category')) {
-		const overallScore = liftScore(sentiment.customer.overallScore);
-		sentiment.customer = {
-			...sentiment.customer,
-			overallScore,
-			overallCategory: categoryOfScore(overallScore),
-		};
-	}
-	if (itemIds.has('agent-category')) {
-		const overallScore = liftScore(sentiment.agent.overallScore);
-		sentiment.agent = {
-			...sentiment.agent,
-			overallScore,
-			overallCategory: categoryOfScore(overallScore),
-		};
-	}
-	if (itemIds.has('recovery')) {
+	// Emotion first, then the explicit category wins when both were set.
+	(['customer', 'agent'] as const).forEach((speaker) => {
+		const emotion = corrections.get(`${speaker}-emotion`)?.value;
+		if (emotion && isEmotion(emotion)) {
+			sentiment[speaker] = setSpeakerEmotion(sentiment[speaker], emotion);
+		}
+		const category = corrections.get(`${speaker}-category`)?.value;
+		if (category && isCategory(category)) {
+			sentiment[speaker] = setSpeakerCategory(sentiment[speaker], category);
+		}
+	});
+
+	const recovery = corrections.get('recovery')?.value;
+	if (recovery === 'recovered') {
 		sentiment.recovery = {
 			...sentiment.recovery,
 			recovered: true,
@@ -264,6 +384,8 @@ function recalcSentiment(
 					: sentiment.recovery.endCategory,
 			endScore: Math.max(sentiment.recovery.endScore, 3.5),
 		};
+	} else if (recovery === 'not-recovered') {
+		sentiment.recovery = { ...sentiment.recovery, recovered: false };
 	}
 
 	return { ...call, sentiment };
@@ -271,14 +393,14 @@ function recalcSentiment(
 
 function recalcBusiness(
 	call: CallEvaluationDetail,
-	itemIds: Set<string>
+	corrections: Corrections
 ): CallEvaluationDetail {
 	const signals = call.business.signals.map((signal) =>
-		itemIds.has(signal.type)
+		corrections.has(signal.type)
 			? { ...signal, detected: false, evidence: undefined }
 			: signal
 	);
-	const outcome = itemIds.has('outcome-converted')
+	const outcome = corrections.has('outcome-converted')
 		? {
 				...call.business.outcome,
 				converted: true,
@@ -290,26 +412,31 @@ function recalcBusiness(
 }
 
 /**
- * Returns a copy of the call with the ticked items scored as correct. Never
- * mutates the source, so the original evaluation stays available side by side.
+ * Returns a copy of the call with the corrected decisions applied ("keep"
+ * decisions change nothing). Never mutates the source, so the original
+ * evaluation stays available side by side.
  */
 export function applyCorrections(
 	call: CallEvaluationDetail,
 	type: DisputeEvaluationType,
-	itemIds: string[]
+	decisions: DisputeItemDecision[]
 ): CallEvaluationDetail {
-	if (itemIds.length === 0) return call;
-	const ids = new Set(itemIds);
+	const corrections: Corrections = new Map(
+		decisions
+			.filter((decision) => decision.outcome === 'correct')
+			.map((decision) => [decision.itemId, decision])
+	);
+	if (corrections.size === 0) return call;
 
 	switch (type) {
 		case 'qa':
-			return recalcQa(call, ids);
+			return recalcQa(call, corrections);
 		case 'compliance':
-			return recalcCompliance(call, ids);
+			return recalcCompliance(call, corrections);
 		case 'sentiment-emotion':
-			return recalcSentiment(call, ids);
+			return recalcSentiment(call, corrections);
 		case 'business-insights':
-			return recalcBusiness(call, ids);
+			return recalcBusiness(call, corrections);
 		default:
 			return call;
 	}
@@ -335,3 +462,9 @@ export function headlineScore(
 /** Business Insights is judged by how many signals were detected, not by a score. */
 export const detectedSignalCount = (call: CallEvaluationDetail): number =>
 	call.business.signals.filter((signal) => signal.detected).length;
+
+/** Compliance is also judged by its findings, which a downgrade changes without moving the score much. */
+export const complianceCounts = (call: CallEvaluationDetail) => ({
+	violations: call.compliance.violationCount,
+	warnings: call.compliance.warningCount,
+});

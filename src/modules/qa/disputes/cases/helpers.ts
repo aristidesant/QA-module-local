@@ -2,6 +2,9 @@ import dayjs from 'dayjs';
 import type {
 	DisputeCase,
 	DisputeEvaluationType,
+	DisputeItemDecision,
+	DisputeItemRef,
+	DisputeStatus,
 } from '~/models/qa/disputeCases';
 import type { DemoTranscriptTurn } from '~/modules/evaluations-demo/mockData';
 import type {
@@ -71,9 +74,41 @@ export const daysOpen = (dispute: DisputeCase): number =>
 export const fromMockNow = (iso: string): string =>
 	dayjs(iso).from(dayjs(NOW_ISO));
 
-/** Share of resolved disputes that were accepted; null when none are resolved. */
+/** Ids the QA Manager corrected (as opposed to kept) on a resolved dispute. */
+export const correctedIds = (dispute: DisputeCase): string[] =>
+	dispute.decisions
+		.filter((decision) => decision.outcome === 'correct')
+		.map((decision) => decision.itemId);
+
+/**
+ * Accepted when every item under review was corrected, partially accepted when
+ * some were kept. The items under review are the ones the agent flagged, or
+ * every disputable item when they flagged none.
+ */
+export const resolutionStatus = (
+	dispute: DisputeCase,
+	items: DisputeItemRef[],
+	decisions: DisputeItemDecision[]
+): Extract<DisputeStatus, 'accepted' | 'partially-accepted'> => {
+	const underReview =
+		dispute.flaggedItemIds.length > 0
+			? dispute.flaggedItemIds.filter((id) =>
+					items.some((item) => item.id === id)
+				)
+			: items.map((item) => item.id);
+	const corrected = new Set(
+		decisions.filter((d) => d.outcome === 'correct').map((d) => d.itemId)
+	);
+	return underReview.length > 0 && underReview.every((id) => corrected.has(id))
+		? 'accepted'
+		: 'partially-accepted';
+};
+
+/** Share of resolved disputes that were accepted (fully or partially); null when none are resolved. */
 export const acceptanceRate = (cases: DisputeCase[]): number | null => {
-	const accepted = cases.filter((c) => c.status === 'accepted').length;
+	const accepted = cases.filter(
+		(c) => c.status === 'accepted' || c.status === 'partially-accepted'
+	).length;
 	const rejected = cases.filter((c) => c.status === 'rejected').length;
 	const resolved = accepted + rejected;
 	return resolved === 0 ? null : Math.round((accepted / resolved) * 100);

@@ -143,14 +143,16 @@
 			"open": "Abiertas",
 			"accepted": "Aceptadas",
 			"rejected": "Rechazadas",
-			"acceptanceRate": "Tasa de aceptación"
+			"acceptanceRate": "Tasa de aceptación",
+			"partialHint": "{{count}} parciales"
 		},
 		"filters": {
 			"status": {
 				"all": "Todas",
 				"open": "Abiertas",
 				"accepted": "Aceptadas",
-				"rejected": "Rechazadas"
+				"rejected": "Rechazadas",
+				"partially-accepted": "Parciales"
 			},
 			"type": "Tipo de evaluación",
 			"allTypes": "Todos los tipos",
@@ -176,7 +178,8 @@
 		"status": {
 			"open": "Abierta",
 			"accepted": "Aceptada",
-			"rejected": "Rechazada"
+			"rejected": "Rechazada",
+			"partially-accepted": "Aceptada parcialmente"
 		},
 		"types": {
 			"qa": "QA",
@@ -213,18 +216,23 @@
 			},
 			"resolution": {
 				"title": "Resolución",
-				"corrections": "Ítems corregidos",
+				"corrections": "Decisión por ítem",
 				"before": "Antes",
 				"after": "Después",
 				"managerComment": "Comentario del QA Manager",
-				"none": "No se corrigió ningún ítem"
+				"none": "No se corrigió ningún ítem",
+				"kept": "Se mantiene",
+				"aiSource": "Reevaluación de la IA",
+				"updatedNote": "Nota",
+				"updatedEvidence": "Evidencia",
+				"analysisEdited": "Análisis editado"
 			},
 			"waiting": "Esperando la revisión del QA Manager.",
 			"notFound": "Esta disputa no existe o está fuera de tu alcance"
 		},
 		"review": {
 			"title": "Revisión",
-			"description": "Marca los ítems que se calificaron mal. La puntuación se recalcula al instante.",
+			"description": "Decide cada ítem: mantén el original o indica el valor correcto. La puntuación se recalcula al instante.",
 			"items": "Ítems disputados",
 			"preview": "Puntuación recalculada",
 			"comment": "Comentario",
@@ -238,8 +246,43 @@
 			},
 			"acceptedToast": "Disputa aceptada — la puntuación corregida ya está en la llamada",
 			"rejectedToast": "Disputa rechazada",
-			"needItems": "Marca al menos un ítem para aceptar",
-			"needComment": "Escribe un comentario para rechazar"
+			"needItems": "Corrige al menos un ítem para aceptar",
+			"needComment": "Escribe un comentario para rechazar",
+			"keep": "Mantener",
+			"markMet": "Marcar como cumplido",
+			"notDetected": "No detectada",
+			"converted": "Convertida",
+			"warning": "Advertencia",
+			"compliant": "Cumple",
+			"recovered": "Recuperada",
+			"notRecovered": "No recuperada",
+			"flagged": "Señalado por el agente",
+			"note": "Justificación",
+			"notePlaceholder": "¿Por qué cambia este hallazgo? Cita el guion o el momento de la llamada…",
+			"noteMin": "Al menos {{count}} caracteres",
+			"needNote": "Añade una justificación a cada cambio de cumplimiento",
+			"acceptPartial": "Aceptar parcialmente",
+			"previewFindings": "Hallazgos",
+			"previewCompliance": "{{violations}} violaciones · {{warnings}} advertencias",
+			"previewCategory": "Sentimiento del cliente",
+			"rerun": "Reejecutar evaluación de IA",
+			"rerunHint": "La IA vuelve a leer la llamada y propone valores nuevos. Tú decides qué adoptar.",
+			"rerunning": "Reevaluando la llamada…",
+			"rerunDone": "Reevaluación terminada: {{count}} ítem(s) difieren del original.",
+			"rerunNone": "Reevaluación terminada: la IA confirmó todos los valores originales.",
+			"adoptAll": "Adoptar todo",
+			"discard": "Descartar reevaluación",
+			"adopt": "Adoptar",
+			"adopted": "Adoptado",
+			"proposalTitle": "Reevaluación de la IA",
+			"unchanged": "Sin cambios: la IA confirmó el original.",
+			"adoptedJustification": "Adoptado de la reevaluación de la IA.",
+			"editAnalysis": "Editar análisis de la IA",
+			"hideAnalysis": "Ocultar análisis",
+			"findingNote": "Nota del hallazgo",
+			"evidenceTime": "Momento de la evidencia",
+			"evidenceQuote": "Cita de la evidencia",
+			"violation": "Violación"
 		},
 		"open": {
 			"button": "Disputar esta evaluación",

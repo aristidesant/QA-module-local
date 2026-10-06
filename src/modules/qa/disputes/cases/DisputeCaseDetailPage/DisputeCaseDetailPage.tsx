@@ -52,6 +52,7 @@ import {
 } from '../helpers';
 import { STATUS_COLOR } from '../constants';
 import ReviewPanel from './components/ReviewPanel';
+import { correctedValueLabel } from './components/DecisionRow';
 import styles from '../Disputes.module.css';
 
 dayjs.extend(relativeTime);
@@ -82,11 +83,7 @@ export const DisputeCaseDetailPage: React.FC = () => {
 	const corrected = useMemo(
 		() =>
 			dispute && call
-				? applyCorrections(
-						call,
-						dispute.evaluationType,
-						dispute.correctedItemIds
-					)
+				? applyCorrections(call, dispute.evaluationType, dispute.decisions)
 				: null,
 		[dispute, call]
 	);
@@ -115,8 +112,9 @@ export const DisputeCaseDetailPage: React.FC = () => {
 		(tab) => tab.key === dispute.evaluationType
 	);
 	const isBusiness = dispute.evaluationType === 'business-insights';
-	const isAccepted = dispute.status === 'accepted';
-	const shown = isAccepted && view === 'corrected' ? corrected : call;
+	const hasCorrections =
+		dispute.status === 'accepted' || dispute.status === 'partially-accepted';
+	const shown = hasCorrections && view === 'corrected' ? corrected : call;
 	const flagged = items.filter((item) =>
 		dispute.flaggedItemIds.includes(item.id)
 	);
@@ -124,7 +122,7 @@ export const DisputeCaseDetailPage: React.FC = () => {
 	/** Business Insights has no score, so the strip counts detected signals instead. */
 	const before = isBusiness ? detectedSignalCount(call) : dispute.scoreBefore;
 	const after = isBusiness
-		? isAccepted
+		? hasCorrections
 			? detectedSignalCount(corrected)
 			: null
 		: dispute.scoreAfter;
@@ -297,7 +295,7 @@ export const DisputeCaseDetailPage: React.FC = () => {
 						<SectionCard
 							title={t('cases.detail.evaluation')}
 							headerActions={
-								isAccepted ? (
+								hasCorrections ? (
 									<SegmentedControl
 										size='xs'
 										value={view}
@@ -323,7 +321,13 @@ export const DisputeCaseDetailPage: React.FC = () => {
 
 						{dispute.status !== 'open' && (
 							<SectionCard
-								headerAccent={isAccepted ? 'green' : 'red'}
+								headerAccent={
+									dispute.status === 'accepted'
+										? 'green'
+										: dispute.status === 'partially-accepted'
+											? 'yellow'
+											: 'red'
+								}
 								title={t('cases.detail.resolution.title')}
 							>
 								<Stack gap='md'>
@@ -335,7 +339,7 @@ export const DisputeCaseDetailPage: React.FC = () => {
 											{dispute.managerComment}
 										</Text>
 									</div>
-									{dispute.correctedItemIds.length === 0 ? (
+									{dispute.decisions.length === 0 ? (
 										<Text size='sm' c='dimmed'>
 											{t('cases.detail.resolution.none')}
 										</Text>
@@ -347,25 +351,95 @@ export const DisputeCaseDetailPage: React.FC = () => {
 											<div className={styles.tableSurface}>
 												<Table verticalSpacing='xs'>
 													<Table.Tbody>
-														{items
-															.filter((item) =>
-																dispute.correctedItemIds.includes(item.id)
-															)
-															.map((item) => (
-																<Table.Tr key={item.id}>
+														{dispute.decisions.map((decision) => {
+															const item = items.find(
+																(i) => i.id === decision.itemId
+															);
+															if (!item) return null;
+															const changed = decision.outcome === 'correct';
+															const statusChanged =
+																item.kind !== 'compliance' ||
+																decision.value !== item.value;
+															return (
+																<Table.Tr key={decision.itemId}>
 																	<Table.Td>
-																		<Text size='sm'>{item.label}</Text>
+																		<Group gap={6} wrap='nowrap'>
+																			<Text size='sm'>{item.label}</Text>
+																			{decision.source ===
+																				'ai-reevaluation' && (
+																				<Badge
+																					size='xs'
+																					variant='light'
+																					color='gray'
+																				>
+																					{t(
+																						'cases.detail.resolution.aiSource'
+																					)}
+																				</Badge>
+																			)}
+																		</Group>
+																		{decision.edits?.note !== undefined && (
+																			<Text size='xs' c='dimmed'>
+																				{t(
+																					'cases.detail.resolution.updatedNote'
+																				)}
+																				: {decision.edits.note}
+																			</Text>
+																		)}
+																		{decision.edits?.evidenceQuote !==
+																			undefined && (
+																			<Text size='xs' c='dimmed'>
+																				{t(
+																					'cases.detail.resolution.updatedEvidence'
+																				)}
+																				{decision.edits.evidenceTimestamp
+																					? ` ${decision.edits.evidenceTimestamp}`
+																					: ''}
+																				: &ldquo;{decision.edits.evidenceQuote}
+																				&rdquo;
+																			</Text>
+																		)}
+																		{decision.note && (
+																			<Text size='xs' c='dimmed'>
+																				{decision.note}
+																			</Text>
+																		)}
 																	</Table.Td>
 																	<Table.Td
 																		align='right'
 																		className={styles.nowrapCell}
 																	>
-																		<Text size='sm' c='dimmed'>
-																			{item.original}
-																		</Text>
+																		{changed && statusChanged ? (
+																			<Group
+																				gap={6}
+																				justify='flex-end'
+																				wrap='nowrap'
+																			>
+																				<Text size='sm' c='dimmed'>
+																					{item.original}
+																				</Text>
+																				<Text size='sm'>→</Text>
+																				<Text size='sm' fw={600}>
+																					{correctedValueLabel(
+																						item,
+																						decision.value,
+																						t
+																					)}
+																				</Text>
+																			</Group>
+																		) : (
+																			<Text size='sm' c='dimmed'>
+																				{t(
+																					changed
+																						? 'cases.detail.resolution.analysisEdited'
+																						: 'cases.detail.resolution.kept'
+																				)}
+																			</Text>
+																		)}
 																	</Table.Td>
 																</Table.Tr>
-															))}
+															);
+														})}
 													</Table.Tbody>
 												</Table>
 											</div>

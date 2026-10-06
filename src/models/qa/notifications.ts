@@ -4,6 +4,7 @@ import type {
 	TriggerMetricId,
 } from './triggerRules';
 import type { CallEvaluationTab } from '~/views/Campaigns/types';
+import type { DisputeStatus } from '~/models/qa/disputeCases';
 
 /** Whose inbox a notification lands in. */
 export type NotificationRecipientRole = 'AGENT' | 'SUPERVISOR' | 'QA_MANAGER';
@@ -91,7 +92,7 @@ export type NotificationPayload =
 	| {
 			kind: 'DISPUTE_UPDATE';
 			disputeId: string;
-			status: 'open' | 'accepted' | 'rejected';
+			status: DisputeStatus;
 			evaluationType: CallEvaluationTab;
 			callId: string;
 			agentName: string;

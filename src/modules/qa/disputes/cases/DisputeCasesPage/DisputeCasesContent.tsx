@@ -58,6 +58,9 @@ export const DisputeCasesContent: React.FC = () => {
 			all: scoped.length,
 			open: scoped.filter((c) => c.status === 'open').length,
 			accepted: scoped.filter((c) => c.status === 'accepted').length,
+			'partially-accepted': scoped.filter(
+				(c) => c.status === 'partially-accepted'
+			).length,
 			rejected: scoped.filter((c) => c.status === 'rejected').length,
 		}),
 		[scoped]
@@ -230,7 +233,10 @@ export const DisputeCasesContent: React.FC = () => {
 				/>
 				<StatCard
 					title={t('cases.kpis.accepted')}
-					value={counts.accepted}
+					value={counts.accepted + counts['partially-accepted']}
+					subtitle={t('cases.kpis.partialHint', {
+						count: counts['partially-accepted'],
+					})}
 					icon={<IconCheck size={20} />}
 					color='green'
 				/>
@@ -258,7 +264,13 @@ export const DisputeCasesContent: React.FC = () => {
 							value={status}
 							onChange={(value) => setStatus(value as StatusFilter)}
 							data={(
-								['all', 'open', 'accepted', 'rejected'] as StatusFilter[]
+								[
+									'all',
+									'open',
+									'accepted',
+									'partially-accepted',
+									'rejected',
+								] as StatusFilter[]
 							).map((value) => ({
 								value,
 								label: `${t(`cases.filters.status.${value}`)} (${counts[value]})`,

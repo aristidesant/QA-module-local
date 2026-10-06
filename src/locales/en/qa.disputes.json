@@ -143,14 +143,16 @@
 			"open": "Open",
 			"accepted": "Accepted",
 			"rejected": "Rejected",
-			"acceptanceRate": "Acceptance rate"
+			"acceptanceRate": "Acceptance rate",
+			"partialHint": "{{count}} partial"
 		},
 		"filters": {
 			"status": {
 				"all": "All",
 				"open": "Open",
 				"accepted": "Accepted",
-				"rejected": "Rejected"
+				"rejected": "Rejected",
+				"partially-accepted": "Partial"
 			},
 			"type": "Evaluation type",
 			"allTypes": "All types",
@@ -176,7 +178,8 @@
 		"status": {
 			"open": "Open",
 			"accepted": "Accepted",
-			"rejected": "Rejected"
+			"rejected": "Rejected",
+			"partially-accepted": "Partially accepted"
 		},
 		"types": {
 			"qa": "QA",
@@ -213,18 +216,23 @@
 			},
 			"resolution": {
 				"title": "Resolution",
-				"corrections": "Corrected items",
+				"corrections": "Decision per item",
 				"before": "Before",
 				"after": "After",
 				"managerComment": "QA Manager comment",
-				"none": "No items were corrected"
+				"none": "No items were corrected",
+				"kept": "Kept",
+				"aiSource": "AI re-evaluation",
+				"updatedNote": "Note",
+				"updatedEvidence": "Evidence",
+				"analysisEdited": "Analysis edited"
 			},
 			"waiting": "Waiting for the QA Manager to review this dispute.",
 			"notFound": "This dispute does not exist or is outside your scope"
 		},
 		"review": {
 			"title": "Review",
-			"description": "Tick the items that were scored wrongly. The score recalculates as you go.",
+			"description": "Decide each item: keep the original or set the correct value. The score recalculates as you go.",
 			"items": "Disputed items",
 			"preview": "Recalculated score",
 			"comment": "Comment",
@@ -238,8 +246,43 @@
 			},
 			"acceptedToast": "Dispute accepted — the corrected score is now on the call",
 			"rejectedToast": "Dispute rejected",
-			"needItems": "Tick at least one item to accept",
-			"needComment": "Write a comment to reject"
+			"needItems": "Correct at least one item to accept",
+			"needComment": "Write a comment to reject",
+			"keep": "Keep",
+			"markMet": "Mark as met",
+			"notDetected": "Not detected",
+			"converted": "Converted",
+			"warning": "Warning",
+			"compliant": "Compliant",
+			"recovered": "Recovered",
+			"notRecovered": "Not recovered",
+			"flagged": "Flagged by agent",
+			"note": "Justification",
+			"notePlaceholder": "Why does this finding change? Reference the script or the moment in the call…",
+			"noteMin": "At least {{count}} characters",
+			"needNote": "Add a justification to every compliance change",
+			"acceptPartial": "Accept partially",
+			"previewFindings": "Findings",
+			"previewCompliance": "{{violations}} violations · {{warnings}} warnings",
+			"previewCategory": "Customer sentiment",
+			"rerun": "Re-run AI evaluation",
+			"rerunHint": "The AI re-reads the call and proposes new values. You decide what to adopt.",
+			"rerunning": "Re-evaluating the call…",
+			"rerunDone": "Re-evaluation finished — {{count}} item(s) differ from the original.",
+			"rerunNone": "Re-evaluation finished — the AI confirmed every original value.",
+			"adoptAll": "Adopt all",
+			"discard": "Discard re-evaluation",
+			"adopt": "Adopt",
+			"adopted": "Adopted",
+			"proposalTitle": "AI re-evaluation",
+			"unchanged": "Unchanged — the AI confirmed the original.",
+			"adoptedJustification": "Adopted from the AI re-evaluation.",
+			"editAnalysis": "Edit AI analysis",
+			"hideAnalysis": "Hide analysis",
+			"findingNote": "Finding note",
+			"evidenceTime": "Evidence time",
+			"evidenceQuote": "Evidence quote",
+			"violation": "Violation"
 		},
 		"open": {
 			"button": "Dispute this evaluation",
