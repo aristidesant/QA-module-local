@@ -5,39 +5,32 @@
 			"qa-manager": "QA Manager · Todos los equipos"
 		},
 		"title": "Rankings de equipo",
-		"description": "Crea rankings sobre cualquier aspecto de evaluación con periodo, objetivo, premio e insignias por hito",
+		"description": "Configura rankings que miden una métrica o mezclan varias, y elige cuál está activo para tu equipo",
 		"new": "Nuevo ranking"
 	},
 	"kpis": {
 		"active": "Activos",
-		"scheduled": "Programados",
 		"completed": "Finalizados",
-		"agents": "Agentes participando"
+		"agents": "Agentes participando",
+		"inactive": "Inactivos"
 	},
 	"tabs": {
 		"active": "Activos",
-		"scheduled": "Programados",
 		"completed": "Finalizados",
-		"drafts": "Borradores"
+		"drafts": "Borradores",
+		"inactive": "Inactivos"
 	},
 	"empty": {
-		"active": "No hay ningún ranking activo — lanza uno para motivar al equipo",
-		"scheduled": "Nada programado",
+		"active": "No hay ningún ranking activo — activa uno para motivar al equipo",
 		"completed": "Todavía no hay rankings finalizados",
-		"drafts": "No hay borradores"
+		"drafts": "No hay borradores",
+		"inactive": "No hay rankings inactivos"
 	},
 	"status": {
 		"draft": "Borrador",
-		"scheduled": "Programado",
 		"active": "Activo",
 		"completed": "Finalizado",
-		"cancelled": "Cancelado"
-	},
-	"types": {
-		"qa": "QA",
-		"sentiment-emotion": "Sentimiento y emoción",
-		"compliance": "Compliance",
-		"business-insights": "Business Insights"
+		"inactive": "Inactivo"
 	},
 	"prizeKinds": {
 		"BONUS": "Bono",
@@ -60,9 +53,20 @@
 		"edit": "Editar",
 		"duplicate": "Duplicar",
 		"end": "Finalizar ahora",
-		"cancel": "Cancelar",
 		"delete": "Eliminar borrador",
-		"teams": "Equipos"
+		"teams": "Equipos",
+		"activate": "Activar {{name}}",
+		"deactivate": "Desactivar {{name}}",
+		"default": "Predeterminado",
+		"setDefault": "Establecer como predeterminado",
+		"noEndDate": "Sin fecha de fin",
+		"since": "Desde el {{date}}",
+		"replaces": "Al guardar, reemplazará a {{name}} como ranking activo de {{teams}}.",
+		"activateConfirm": {
+			"title": "¿Cambiar el ranking activo?",
+			"body": "Activar {{name}} desactivará {{replaced}} en {{teams}}. Los agentes verán el nuevo ranking de inmediato.",
+			"confirm": "Activar"
+		}
 	},
 	"drawer": {
 		"participants": "Participantes",
@@ -95,14 +99,11 @@
 		"scope": "Alcance",
 		"teams": "Equipos",
 		"teamsLocked": "Los supervisores rankean a su propio equipo",
-		"evaluation": "Qué se rankea",
-		"type": "Tipo de evaluación",
 		"metric": "Métrica",
 		"target": "Puntuación objetivo",
 		"minCalls": "Mínimo de llamadas para clasificar",
 		"allowReactions": "Permitir reacciones entre compañeros",
 		"allowReactionsHint": "Los agentes pueden reaccionar a las posiciones de sus compañeros en la tabla de clasificación",
-		"period": "Periodo",
 		"start": "Inicio",
 		"end": "Fin",
 		"presets": {
@@ -125,24 +126,41 @@
 		"preview": "Vista previa",
 		"previewHint": "Clasificación de hoy con la configuración actual",
 		"previewEmpty": "Todavía no hay llamadas en este periodo",
-		"conflict": "{{name}} ya está en marcha para {{teams}} ({{from}} → {{to}}). Solo puede haber un ranking por equipo a la vez.",
-		"endConflict": "Finalizarlo ahora",
 		"saveDraft": "Guardar borrador",
-		"launch": "Iniciar ranking",
-		"schedule": "Programar",
 		"cancel": "Cancelar",
 		"validation": {
 			"name": "El nombre es obligatorio",
 			"teams": "Elige al menos un equipo",
 			"dates": "El fin debe ser posterior al inicio",
-			"target": "El objetivo debe ser mayor que 0"
+			"target": "El objetivo debe ser mayor que 0",
+			"metrics": "Elige al menos una métrica",
+			"weights": "Los pesos deben sumar 100 %"
 		},
 		"saved": "Ranking guardado",
 		"launched": "Ranking iniciado — se ha notificado a los agentes",
-		"scheduled": "Ranking programado",
-		"ended": "Ranking finalizado — gana {{winner}}",
-		"cancelled": "Ranking cancelado",
-		"duplicated": "Copia guardada como borrador"
+		"ended": "Ranking finalizado",
+		"duplicated": "Copia guardada como borrador",
+		"metrics": "Qué se mide",
+		"metricsHint": "Rankea por una métrica o combina varias en una sola puntuación",
+		"mode": {
+			"single": "Una métrica",
+			"combined": "Combinado"
+		},
+		"addMetric": "Añadir métrica",
+		"removeMetric": "Quitar métrica",
+		"weight": "Peso",
+		"weightsTotal": "Los pesos suman {{value}} % (deben sumar 100 %)",
+		"distribute": "Repartir por igual",
+		"duration": "Duración",
+		"permanent": "Sin fecha de fin (ranking permanente)",
+		"permanentHint": "El ranking sigue en marcha hasta que lo desactives",
+		"makeDefault": "Hacer de este el ranking predeterminado del equipo",
+		"makeDefaultHint": "Se activa automáticamente cuando termina un ranking con fecha de fin",
+		"save": "Guardar",
+		"saveActivate": "Guardar y activar",
+		"deactivated": "Ranking desactivado",
+		"defaultSet": "Ranking predeterminado actualizado",
+		"winnerBadgeDated": "Solo los rankings con fecha de fin eligen un ganador"
 	},
 	"agent": {
 		"leaderboard": "Clasificación",
@@ -153,7 +171,10 @@
 			"daysLeft_one": "Queda {{count}} día",
 			"daysLeft_other": "Quedan {{count}} días",
 			"completed": "Finalizado",
-			"setBy": "Definido por {{name}}"
+			"setBy": "Definido por {{name}}",
+			"noEndDate": "Sin fecha de fin",
+			"ongoing": "En curso",
+			"breakdown": "Cómo se calcula tu puntuación"
 		},
 		"podium": {
 			"title": "Podio",
@@ -166,10 +187,10 @@
 			"columns": {
 				"name": "Ranking",
 				"period": "Periodo",
-				"type": "Tipo",
 				"winner": "Ganador",
 				"prize": "Premio",
-				"myRank": "Tu puesto"
+				"myRank": "Tu puesto",
+				"metrics": "Métricas"
 			},
 			"empty": "Todavía no hay rankings anteriores",
 			"myRankValue": "#{{rank}} · {{score}}",
@@ -186,7 +207,7 @@
 	"table": {
 		"rank": "Posición",
 		"name": "Nombre",
-		"score": "Puntuación de scorecard",
+		"score": "Puntuación del ranking",
 		"achievements": "Insignias",
 		"reactions": "Reacciones"
 	},
@@ -213,5 +234,23 @@
 			"heart": "Corazón",
 			"fire": "Fuego"
 		}
+	},
+	"metrics": {
+		"OPS_AHT_SECONDS": "Tiempo medio de atención (AHT)",
+		"OPS_CALLS_HANDLED": "Llamadas atendidas",
+		"OPS_CALLS_INBOUND": "Llamadas tomadas (entrantes)",
+		"OPS_CALLS_OUTBOUND": "Llamadas realizadas (salientes)",
+		"OPS_POSITIVE_OUTCOME_COUNT": "Resultados positivos",
+		"OPS_POSITIVE_OUTCOME_RATE": "Tasa de resultados positivos"
+	},
+	"areas": {
+		"QUALITY_ASSURANCE": "QA",
+		"COMPLIANCE": "Compliance",
+		"SENTIMENT_EMOTION": "Sentimiento y emoción",
+		"BUSINESS_INSIGHTS": "Business Insights",
+		"OPERATIONAL": "Datos operativos"
+	},
+	"score": {
+		"pointsAdded": "+{{value}} pts"
 	}
 }

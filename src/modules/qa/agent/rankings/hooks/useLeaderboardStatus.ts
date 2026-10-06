@@ -27,7 +27,9 @@ export const useLeaderboardStatus = (): UseLeaderboardStatusResult => {
 			forTeam.find((candidate) => candidate.status === 'active') ??
 			forTeam
 				.filter((candidate) => candidate.status === 'completed')
-				.sort((a, b) => b.endDate.localeCompare(a.endDate))[0] ??
+				.sort((a, b) =>
+					(b.endDate ?? b.updatedAt).localeCompare(a.endDate ?? a.updatedAt)
+				)[0] ??
 			null;
 
 		return {

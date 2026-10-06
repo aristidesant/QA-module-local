@@ -14,8 +14,7 @@ import type { RankingProgram } from '~/models/qa/rankingPrograms';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 import type { AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
-import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
-import { formatScore } from '~/modules/qa/rankings/helpers';
+import { formatScore, higherIsBetterOf } from '~/modules/qa/rankings/helpers';
 import styles from './AchievementsTab.module.css';
 
 interface ResolvedBadge {
@@ -66,7 +65,7 @@ export const AchievementsTab: React.FC<AchievementsTabProps> = ({
 		[entry.achievements, entry.agentId, badges]
 	);
 
-	const higherIsBetter = METRIC_BY_ID[program.metricId]?.higherIsBetter ?? true;
+	const higherIsBetter = higherIsBetterOf(program);
 
 	/** Closest milestone whose badge the agent has not earned yet. */
 	const next = useMemo(() => {

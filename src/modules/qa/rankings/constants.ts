@@ -8,35 +8,12 @@ import {
 } from '@tabler/icons-react';
 import type {
 	PrizeKind,
-	RankingEvaluationType,
+	RankingMetricId,
 	RankingStatus,
 } from '~/models/qa/rankingPrograms';
-import type { TriggerMetricId } from '~/models/qa/triggerRules';
-import { VIEW_METRICS, PRIMARY_METRIC } from '~/modules/qa/analytics/constants';
 
-/** Each ranking type offers the metrics of its analytics view. */
-export const RANKING_METRICS: Record<RankingEvaluationType, TriggerMetricId[]> =
-	{
-		qa: VIEW_METRICS.qa,
-		'sentiment-emotion': VIEW_METRICS.sentiment,
-		compliance: VIEW_METRICS.compliance,
-		'business-insights': VIEW_METRICS.business,
-	};
-
-export const DEFAULT_METRIC: Record<RankingEvaluationType, TriggerMetricId> = {
-	qa: PRIMARY_METRIC.qa,
-	'sentiment-emotion': PRIMARY_METRIC.sentiment,
-	compliance: PRIMARY_METRIC.compliance,
-	'business-insights': PRIMARY_METRIC.business,
-};
-
-/** The evaluation area whose badges a ranking of this type can award. */
-export const AREA_OF_TYPE: Record<RankingEvaluationType, string> = {
-	qa: 'QUALITY_ASSURANCE',
-	'sentiment-emotion': 'SENTIMENT_EMOTION',
-	compliance: 'COMPLIANCE',
-	'business-insights': 'BUSINESS_INSIGHTS',
-};
+/** What a brand-new ranking measures until the manager changes it. */
+export const DEFAULT_METRIC: RankingMetricId = 'QA_OVERALL_SCORE';
 
 export const PRIZE_KINDS: PrizeKind[] = [
 	'BONUS',
@@ -58,10 +35,9 @@ export const PRIZE_EMOJI = ['🏆', '🎁', '💰', '🌴', '⭐', '🥇', '🎉
 
 export const STATUS_COLOR: Record<RankingStatus, string> = {
 	draft: 'gray',
-	scheduled: 'blue',
+	inactive: 'gray',
 	active: 'green',
 	completed: 'grape',
-	cancelled: 'red',
 };
 
 export const TEAMS = ['Team 1', 'Team 2', 'Team 3'];
@@ -71,7 +47,7 @@ export const PREVIOUS_RANK_DAYS = 7;
 
 export const RANKING_TABS = [
 	'active',
-	'scheduled',
+	'inactive',
 	'completed',
 	'drafts',
 ] as const;

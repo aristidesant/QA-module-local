@@ -5,39 +5,32 @@
 			"qa-manager": "QA Manager · All teams"
 		},
 		"title": "Team Rankings",
-		"description": "Run rankings on any evaluation aspect with a period, a target, a prize and milestone badges",
+		"description": "Set up rankings that measure one metric or mix several, and choose which one is live for your team",
 		"new": "New ranking"
 	},
 	"kpis": {
 		"active": "Active",
-		"scheduled": "Scheduled",
 		"completed": "Completed",
-		"agents": "Agents participating"
+		"agents": "Agents participating",
+		"inactive": "Inactive"
 	},
 	"tabs": {
 		"active": "Active",
-		"scheduled": "Scheduled",
 		"completed": "Completed",
-		"drafts": "Drafts"
+		"drafts": "Drafts",
+		"inactive": "Inactive"
 	},
 	"empty": {
-		"active": "No active ranking — launch one to motivate the team",
-		"scheduled": "Nothing scheduled",
+		"active": "No active ranking — switch one on to motivate the team",
 		"completed": "No completed rankings yet",
-		"drafts": "No drafts"
+		"drafts": "No drafts",
+		"inactive": "No inactive rankings"
 	},
 	"status": {
 		"draft": "Draft",
-		"scheduled": "Scheduled",
 		"active": "Active",
 		"completed": "Completed",
-		"cancelled": "Cancelled"
-	},
-	"types": {
-		"qa": "QA",
-		"sentiment-emotion": "Sentiment & Emotion",
-		"compliance": "Compliance",
-		"business-insights": "Business Insights"
+		"inactive": "Inactive"
 	},
 	"prizeKinds": {
 		"BONUS": "Bonus",
@@ -60,9 +53,20 @@
 		"edit": "Edit",
 		"duplicate": "Duplicate",
 		"end": "End now",
-		"cancel": "Cancel",
 		"delete": "Delete draft",
-		"teams": "Teams"
+		"teams": "Teams",
+		"activate": "Activate {{name}}",
+		"deactivate": "Deactivate {{name}}",
+		"default": "Default",
+		"setDefault": "Set as default",
+		"noEndDate": "No end date",
+		"since": "Since {{date}}",
+		"replaces": "Saving will replace {{name}} as the active ranking for {{teams}}.",
+		"activateConfirm": {
+			"title": "Switch the active ranking?",
+			"body": "Activating {{name}} will deactivate {{replaced}} for {{teams}}. Agents will see the new ranking right away.",
+			"confirm": "Activate"
+		}
 	},
 	"drawer": {
 		"participants": "Participants",
@@ -95,14 +99,11 @@
 		"scope": "Scope",
 		"teams": "Teams",
 		"teamsLocked": "Supervisors rank their own team",
-		"evaluation": "What is ranked",
-		"type": "Evaluation type",
 		"metric": "Metric",
 		"target": "Target score",
 		"minCalls": "Minimum calls to qualify",
 		"allowReactions": "Allow peer reactions",
 		"allowReactionsHint": "Agents can react to each other's standings on the leaderboard",
-		"period": "Period",
 		"start": "Start",
 		"end": "End",
 		"presets": {
@@ -125,24 +126,41 @@
 		"preview": "Preview",
 		"previewHint": "Standings as of today with the current settings",
 		"previewEmpty": "No calls in this period yet",
-		"conflict": "{{name}} is already running for {{teams}} ({{from}} → {{to}}). Only one ranking per team at a time.",
-		"endConflict": "End it now",
 		"saveDraft": "Save draft",
-		"launch": "Start ranking",
-		"schedule": "Schedule",
 		"cancel": "Cancel",
 		"validation": {
 			"name": "Name is required",
 			"teams": "Pick at least one team",
 			"dates": "End must be after start",
-			"target": "Target must be greater than 0"
+			"target": "Target must be greater than 0",
+			"metrics": "Pick at least one metric",
+			"weights": "Weights must add up to 100 %"
 		},
 		"saved": "Ranking saved",
 		"launched": "Ranking started — agents have been notified",
-		"scheduled": "Ranking scheduled",
-		"ended": "Ranking ended — {{winner}} wins",
-		"cancelled": "Ranking cancelled",
-		"duplicated": "Copy saved as a draft"
+		"ended": "Ranking ended",
+		"duplicated": "Copy saved as a draft",
+		"metrics": "What is measured",
+		"metricsHint": "Rank on one metric, or combine several into a single score",
+		"mode": {
+			"single": "Single metric",
+			"combined": "Combined"
+		},
+		"addMetric": "Add metric",
+		"removeMetric": "Remove metric",
+		"weight": "Weight",
+		"weightsTotal": "Weights add up to {{value}} % (must be 100 %)",
+		"distribute": "Distribute evenly",
+		"duration": "Duration",
+		"permanent": "No end date (permanent ranking)",
+		"permanentHint": "The ranking keeps running until you switch it off",
+		"makeDefault": "Make this the team's default ranking",
+		"makeDefaultHint": "It activates automatically when a ranking with an end date finishes",
+		"save": "Save",
+		"saveActivate": "Save & activate",
+		"deactivated": "Ranking deactivated",
+		"defaultSet": "Default ranking updated",
+		"winnerBadgeDated": "Only rankings with an end date pick a winner"
 	},
 	"agent": {
 		"leaderboard": "Leaderboard",
@@ -153,7 +171,10 @@
 			"daysLeft_one": "{{count}} day left",
 			"daysLeft_other": "{{count}} days left",
 			"completed": "Completed",
-			"setBy": "Set by {{name}}"
+			"setBy": "Set by {{name}}",
+			"noEndDate": "No end date",
+			"ongoing": "Ongoing",
+			"breakdown": "How your score is built"
 		},
 		"podium": {
 			"title": "Podium",
@@ -166,10 +187,10 @@
 			"columns": {
 				"name": "Ranking",
 				"period": "Period",
-				"type": "Type",
 				"winner": "Winner",
 				"prize": "Prize",
-				"myRank": "Your rank"
+				"myRank": "Your rank",
+				"metrics": "Metrics"
 			},
 			"empty": "No past rankings yet",
 			"myRankValue": "#{{rank}} · {{score}}",
@@ -186,7 +207,7 @@
 	"table": {
 		"rank": "Rank",
 		"name": "Name",
-		"score": "Scorecard score",
+		"score": "Ranking score",
 		"achievements": "Badges",
 		"reactions": "Reactions"
 	},
@@ -213,5 +234,23 @@
 			"heart": "Heart",
 			"fire": "Fire"
 		}
+	},
+	"metrics": {
+		"OPS_AHT_SECONDS": "Average handling time (AHT)",
+		"OPS_CALLS_HANDLED": "Calls handled",
+		"OPS_CALLS_INBOUND": "Calls taken (inbound)",
+		"OPS_CALLS_OUTBOUND": "Calls made (outbound)",
+		"OPS_POSITIVE_OUTCOME_COUNT": "Positive outcomes",
+		"OPS_POSITIVE_OUTCOME_RATE": "Positive outcome rate"
+	},
+	"areas": {
+		"QUALITY_ASSURANCE": "QA",
+		"COMPLIANCE": "Compliance",
+		"SENTIMENT_EMOTION": "Sentiment & Emotion",
+		"BUSINESS_INSIGHTS": "Business Insights",
+		"OPERATIONAL": "Operational data"
+	},
+	"score": {
+		"pointsAdded": "+{{value}} pts"
 	}
 }

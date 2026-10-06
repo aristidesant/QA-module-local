@@ -1,15 +1,28 @@
-import type { CallEvaluationTab } from '~/views/Campaigns/types';
 import type { TriggerMetricId } from './triggerRules';
 
-/** A ranking is built on one of the four evaluation aspects. */
-export type RankingEvaluationType = CallEvaluationTab;
+/** Operational data a ranking can use besides the four evaluation aspects. */
+export type OperationalMetricId =
+	| 'OPS_AHT_SECONDS'
+	| 'OPS_CALLS_HANDLED'
+	| 'OPS_CALLS_INBOUND'
+	| 'OPS_CALLS_OUTBOUND'
+	| 'OPS_POSITIVE_OUTCOME_COUNT'
+	| 'OPS_POSITIVE_OUTCOME_RATE';
 
-export type RankingStatus =
-	| 'draft'
-	| 'scheduled'
-	| 'active'
-	| 'completed'
-	| 'cancelled';
+/** Everything a ranking can be scored on: the evaluation metrics plus operational data. */
+export type RankingMetricId = TriggerMetricId | OperationalMetricId;
+
+/** One metric of a ranking and how much of the final score it carries (weights add up to 100). */
+export interface RankingMetricWeight {
+	metricId: RankingMetricId;
+	weight: number;
+}
+
+/**
+ * Only one ranking per team is `active` at a time; `inactive` ones are kept
+ * configured so the supervisor can switch back to them.
+ */
+export type RankingStatus = 'draft' | 'active' | 'inactive' | 'completed';
 
 export type PrizeKind =
 	| 'BONUS'
@@ -26,7 +39,7 @@ export interface RankingPrize {
 	icon: string;
 }
 
-/** Reaching `threshold` on the ranking metric awards `badgeId`. */
+/** Reaching `threshold` on the ranking score awards `badgeId`. */
 export interface RankingMilestone {
 	id: string;
 	label: string;
@@ -39,13 +52,20 @@ export interface RankingProgram {
 	name: string;
 	description: string;
 	teams: string[];
-	evaluationType: RankingEvaluationType;
-	metricId: TriggerMetricId;
+	/**
+	 * What is measured. One entry ranks on that metric alone; several entries
+	 * are combined into a 0-100 score using the weights.
+	 */
+	metrics: RankingMetricWeight[];
+	/** In the metric's own unit for a single metric, in points (0-100) for a combined ranking. */
 	targetScore: number;
 	/** Agents below this many calls are listed but unranked. */
 	minCalls: number;
 	startDate: string;
-	endDate: string;
+	/** null = permanent ranking with no expiry. */
+	endDate: string | null;
+	/** The permanent ranking a team falls back to when a dated one ends. */
+	isDefault: boolean;
 	prize: RankingPrize;
 	milestones: RankingMilestone[];
 	winnerBadgeId: string | null;
@@ -58,6 +78,17 @@ export interface RankingProgram {
 	createdByRole: 'SUPERVISOR' | 'QA_MANAGER';
 	createdAt: string;
 	updatedAt: string;
+}
+
+/** How one metric contributed to an agent's ranking score. */
+export interface MetricBreakdown {
+	metricId: RankingMetricId;
+	/** The agent's value in the metric's own unit. */
+	value: number | null;
+	/** The value on a 0-100 scale where higher is always better. */
+	normalized: number | null;
+	/** Points this metric adds to the final score. */
+	weighted: number | null;
 }
 
 export interface RankingStanding {
@@ -73,6 +104,7 @@ export interface RankingStanding {
 	delta: number | null;
 	milestoneIds: string[];
 	reachedTarget: boolean;
+	breakdown: MetricBreakdown[];
 }
 
 export type ProgramDraft = Omit<

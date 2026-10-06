@@ -8,7 +8,7 @@ import { computeStandings } from '../helpers';
 
 interface UseActiveRankingResult {
 	team: string;
-	/** The ranking currently running for the team, if any. */
+	/** The one ranking live for the team, if any. */
 	program: RankingProgram | null;
 	standings: ReturnType<typeof computeStandings>;
 	pastPrograms: RankingProgram[];
@@ -28,7 +28,9 @@ const buildResult = (
 		standings: program ? computeStandings(program, TEAM_CALLS) : [],
 		pastPrograms: forTeam
 			.filter((candidate) => candidate.status === 'completed')
-			.sort((a, b) => b.endDate.localeCompare(a.endDate)),
+			.sort((a, b) =>
+				(b.endDate ?? b.updatedAt).localeCompare(a.endDate ?? a.updatedAt)
+			),
 	};
 };
 

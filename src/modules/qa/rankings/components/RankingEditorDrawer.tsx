@@ -17,20 +17,18 @@ import {
 	Textarea,
 } from '@mantine/core';
 import { DateInput } from '@mantine/dates';
-import { IconAlertTriangle, IconPlus, IconTrash } from '@tabler/icons-react';
+import { IconInfoCircle, IconPlus, IconTrash } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { AppDrawer } from '~/components/AppDrawer';
 import SectionCard from '~/components/SectionCard';
 import { notifySuccess, notifyWarning } from '~/modules/qa/utils/notifications';
 import type {
 	ProgramDraft,
-	RankingEvaluationType,
+	RankingMetricId,
+	RankingMetricWeight,
 	RankingProgram,
 	PrizeKind,
 } from '~/models/qa/rankingPrograms';
-import type { TriggerMetricId } from '~/models/qa/triggerRules';
-import { CALL_EVALUATION_TABS } from '~/views/Campaigns/constants';
-import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
 import {
 	useRankingsStore,
@@ -44,15 +42,18 @@ import {
 	SUPERVISOR_PERSONA,
 } from '~/modules/qa/team/constants';
 import type { TeamRole } from '~/modules/qa/team/types';
-import { computeStandings, conflictingProgram, formatScore } from '../helpers';
 import {
-	AREA_OF_TYPE,
-	DEFAULT_METRIC,
-	PRIZE_EMOJI,
-	PRIZE_KINDS,
-	RANKING_METRICS,
-	TEAMS,
-} from '../constants';
+	computeStandings,
+	formatScore,
+	programsSharingTeams,
+} from '../helpers';
+import { DEFAULT_METRIC, PRIZE_EMOJI, PRIZE_KINDS, TEAMS } from '../constants';
+import {
+	RANKING_METRIC_BY_ID,
+	RANKING_METRIC_GROUPS,
+	type RankingMetricArea,
+} from '../metrics';
+import { useMetricLabel } from '../useMetricLabel';
 import styles from '../Rankings.module.css';
 
 interface RankingEditorDrawerProps {
@@ -70,12 +71,12 @@ const emptyDraft = (role: TeamRole): ProgramDraft => ({
 	name: '',
 	description: '',
 	teams: role === 'qa-manager' ? [] : ['Team 1'],
-	evaluationType: 'qa',
-	metricId: DEFAULT_METRIC.qa,
+	metrics: [{ metricId: DEFAULT_METRIC, weight: 100 }],
 	targetScore: 90,
 	minCalls: 10,
 	startDate: dayjs(TODAY).startOf('month').format('YYYY-MM-DD'),
-	endDate: dayjs(TODAY).endOf('month').format('YYYY-MM-DD'),
+	endDate: null,
+	isDefault: false,
 	prize: { kind: 'GIFT_CARD', title: '', description: '', icon: '🎁' },
 	milestones: [],
 	winnerBadgeId: null,
@@ -86,7 +87,21 @@ const emptyDraft = (role: TeamRole): ProgramDraft => ({
 	createdByRole: role === 'qa-manager' ? 'QA_MANAGER' : 'SUPERVISOR',
 });
 
-/** Create or edit a ranking program, with a live conflict check and preview. */
+/** Splits 100 % across the metrics, giving the remainder to the first ones. */
+const evenWeights = (metrics: RankingMetricWeight[]): RankingMetricWeight[] => {
+	const base = Math.floor(100 / metrics.length);
+	const extra = 100 - base * metrics.length;
+	return metrics.map((metric, index) => ({
+		...metric,
+		weight: base + (index < extra ? 1 : 0),
+	}));
+};
+
+/**
+ * Create or edit a ranking program. It can rank on one metric or combine
+ * several with weights, run for a period or without an end date, and be
+ * switched on once saved.
+ */
 export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 	opened,
 	onClose,
@@ -94,82 +109,143 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 	program,
 }) => {
 	const { t } = useTranslation('qa.rankings');
-	const { t: tMetrics } = useTranslation('qa.teamAnalytics');
+	const metricLabel = useMetricLabel();
 	const programs = useRankingsStore(selectPrograms);
 	const createProgram = useRankingsStore((s) => s.createProgram);
 	const updateProgram = useRankingsStore((s) => s.updateProgram);
-	const endProgram = useRankingsStore((s) => s.endProgram);
 	const badges = useTriggerRulesStore((s) => s.badges);
 
 	const [draft, setDraft] = useState<ProgramDraft>(emptyDraft(role));
+	const [combined, setCombined] = useState(false);
 
 	useEffect(() => {
 		if (!opened) return;
-		setDraft(program ? { ...program } : emptyDraft(role));
+		const next = program ? { ...program } : emptyDraft(role);
+		setDraft(next);
+		setCombined(next.metrics.length > 1);
 	}, [opened, program, role]);
 
 	const patch = (values: Partial<ProgramDraft>) =>
 		setDraft((current) => ({ ...current, ...values }));
 
-	/** Switching the evaluation type resets the metric to that view's primary. */
-	const setType = (type: RankingEvaluationType) =>
-		patch({ evaluationType: type, metricId: DEFAULT_METRIC[type] });
+	const permanent = draft.endDate === null;
 
-	const conflict = useMemo(
+	/** Business Insights stays QA Manager-only, so supervisors don't see it. */
+	const metricData = useMemo(
 		() =>
-			conflictingProgram(
-				programs,
-				draft.teams,
-				draft.startDate,
-				draft.endDate,
-				program?.id
-			),
-		[programs, draft.teams, draft.startDate, draft.endDate, program?.id]
+			RANKING_METRIC_GROUPS.filter(
+				(group) => role === 'qa-manager' || group.area !== 'BUSINESS_INSIGHTS'
+			).map((group) => ({
+				group: t(`areas.${group.area}`),
+				items: group.ids.map((id) => ({ value: id, label: metricLabel(id) })),
+			})),
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+		[role, t]
 	);
 
-	const previewStandings = useMemo(
+	const setMode = (value: string) => {
+		const wantsCombined = value === 'combined';
+		setCombined(wantsCombined);
+		if (!wantsCombined) {
+			patch({
+				metrics: [{ metricId: draft.metrics[0].metricId, weight: 100 }],
+			});
+			return;
+		}
+		if (draft.metrics.length < 2) {
+			const taken = new Set(draft.metrics.map((m) => m.metricId));
+			const next = (
+				[
+					'COMPLIANCE_OVERALL_SCORE',
+					'CUSTOMER_SENTIMENT_SCORE',
+					'OPS_AHT_SECONDS',
+				] as RankingMetricId[]
+			).find((id) => !taken.has(id));
+			patch({
+				metrics: evenWeights([
+					...draft.metrics,
+					{ metricId: next ?? 'OPS_CALLS_HANDLED', weight: 0 },
+				]),
+				targetScore: 75,
+			});
+		}
+	};
+
+	const patchMetric = (index: number, values: Partial<RankingMetricWeight>) =>
+		patch({
+			metrics: draft.metrics.map((metric, i) =>
+				i === index ? { ...metric, ...values } : metric
+			),
+		});
+
+	const weightTotal = draft.metrics.reduce((sum, m) => sum + m.weight, 0);
+
+	const previewProgram = useMemo(
 		() =>
-			draft.teams.length === 0
-				? []
-				: computeStandings(
-						{
-							...draft,
-							id: 'preview',
-							winnerId: null,
-							winnerName: null,
-							createdAt: TODAY,
-							updatedAt: TODAY,
-						},
-						TEAM_CALLS
-					).slice(0, 5),
+			({
+				...draft,
+				id: 'preview',
+				winnerId: null,
+				winnerName: null,
+				createdAt: TODAY,
+				updatedAt: TODAY,
+			}) as RankingProgram,
 		[draft]
 	);
-
-	const areaBadges = badges.filter(
-		(badge) =>
-			badge.status === 'ACTIVE' &&
-			(badge.area === AREA_OF_TYPE[draft.evaluationType] ||
-				badge.area === 'GENERAL')
+	const previewStandings = useMemo(
+		() =>
+			draft.teams.length === 0 || weightTotal !== 100
+				? []
+				: computeStandings(previewProgram, TEAM_CALLS).slice(0, 5),
+		[previewProgram, draft.teams.length, weightTotal]
 	);
-	const badgeOptions = areaBadges.map((badge) => ({
-		value: badge.id,
-		label: `${badge.icon} ${badge.name}`,
-	}));
 
-	/** Supervisors don't rank on Business Insights — that view stays QA Manager-only. */
-	const evaluationTypeOptions =
-		role === 'supervisor'
-			? CALL_EVALUATION_TABS.filter((tab) => tab.key !== 'business-insights')
-			: CALL_EVALUATION_TABS;
+	const metricAreas = new Set<RankingMetricArea>(
+		draft.metrics.map((m) => RANKING_METRIC_BY_ID[m.metricId].area)
+	);
+	const badgeOptions = badges
+		.filter(
+			(badge) =>
+				badge.status === 'ACTIVE' &&
+				(badge.area === 'GENERAL' ||
+					metricAreas.has(badge.area as RankingMetricArea))
+		)
+		.map((badge) => ({
+			value: badge.id,
+			label: `${badge.icon} ${badge.name}`,
+		}));
 
-	const unit = METRIC_BY_ID[draft.metricId]?.unit;
-	const suffix = unit === 'PERCENT' ? '%' : unit === 'SCORE_5' ? ' / 5' : '';
-	const scheduled = draft.startDate > TODAY;
+	const unit = RANKING_METRIC_BY_ID[draft.metrics[0].metricId]?.unit;
+	const suffix = combined
+		? ' pts'
+		: unit === 'PERCENT'
+			? '%'
+			: unit === 'SCORE_5'
+				? ' / 5'
+				: unit === 'SECONDS'
+					? ' s'
+					: '';
+
+	const isExisting = program !== null;
+	const alreadyOn = program?.status === 'active';
+	/** Saving as active takes over from the ranking now live for the same team. */
+	const replaced = useMemo(
+		() =>
+			alreadyOn
+				? null
+				: (programsSharingTeams(programs, draft.teams, program?.id).find(
+						(p) => p.status === 'active'
+					) ?? null),
+		[alreadyOn, programs, draft.teams, program?.id]
+	);
 
 	const validate = (): string | null => {
 		if (!draft.name.trim()) return t('editor.validation.name');
 		if (draft.teams.length === 0) return t('editor.validation.teams');
-		if (draft.endDate <= draft.startDate) return t('editor.validation.dates');
+		if (draft.metrics.length === 0) return t('editor.validation.metrics');
+		if (weightTotal !== 100) return t('editor.validation.weights');
+		if (draft.endDate !== null && draft.endDate <= draft.startDate)
+			return t('editor.validation.dates');
 		if (draft.targetScore <= 0) return t('editor.validation.target');
 		return null;
 	};
@@ -180,28 +256,14 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 			notifyWarning(error);
 			return;
 		}
-		const next = { ...draft, status };
-		const result = program
-			? updateProgram(program.id, next)
-			: createProgram(next);
+		const next = { ...draft, status, isDefault: draft.isDefault && permanent };
+		if (program) updateProgram(program.id, next);
+		else createProgram(next);
 
-		if (!result.ok) {
-			notifyWarning(
-				t('editor.conflict', {
-					name: result.conflict.name,
-					teams: result.conflict.teams.join(', '),
-					from: result.conflict.startDate,
-					to: result.conflict.endDate,
-				})
-			);
-			return;
-		}
 		notifySuccess(
-			status === 'draft'
-				? t('editor.saved')
-				: scheduled
-					? t('editor.scheduled')
-					: t('editor.launched')
+			status === 'active' && !alreadyOn
+				? t('editor.launched')
+				: t('editor.saved')
 		);
 		onClose();
 	};
@@ -264,30 +326,121 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 					/>
 				</SectionCard>
 
-				<SectionCard title={t('editor.evaluation')}>
+				<SectionCard
+					title={t('editor.metrics')}
+					description={t('editor.metricsHint')}
+				>
 					<Stack gap='sm'>
 						<SegmentedControl
 							fullWidth
-							value={draft.evaluationType}
-							onChange={(value) => setType(value as RankingEvaluationType)}
-							data={evaluationTypeOptions.map((tab) => ({
-								value: tab.key,
-								label: t(`types.${tab.key}`),
-							}))}
+							value={combined ? 'combined' : 'single'}
+							onChange={setMode}
+							data={[
+								{ value: 'single', label: t('editor.mode.single') },
+								{ value: 'combined', label: t('editor.mode.combined') },
+							]}
 						/>
-						<Select
-							label={t('editor.metric')}
-							data={RANKING_METRICS[draft.evaluationType].map((id) => ({
-								value: id,
-								label: tMetrics(`metrics.${id}`),
-							}))}
-							value={draft.metricId}
-							onChange={(value) =>
-								value && patch({ metricId: value as TriggerMetricId })
-							}
-							allowDeselect={false}
-							comboboxProps={{ withinPortal: true }}
-						/>
+
+						{combined ? (
+							<Stack gap='xs'>
+								{draft.metrics.map((metric, index) => (
+									<Group key={index} gap='xs' align='flex-end' wrap='nowrap'>
+										<Select
+											flex={1}
+											label={index === 0 ? t('editor.metric') : undefined}
+											data={metricData}
+											value={metric.metricId}
+											onChange={(value) =>
+												value &&
+												patchMetric(index, {
+													metricId: value as RankingMetricId,
+												})
+											}
+											allowDeselect={false}
+											searchable
+											comboboxProps={{ withinPortal: true }}
+										/>
+										<NumberInput
+											w={110}
+											label={index === 0 ? t('editor.weight') : undefined}
+											value={metric.weight}
+											onChange={(value) =>
+												patchMetric(index, { weight: Number(value) || 0 })
+											}
+											suffix=' %'
+											min={0}
+											max={100}
+										/>
+										<ActionIcon
+											variant='subtle'
+											color='red'
+											aria-label={t('editor.removeMetric')}
+											disabled={draft.metrics.length <= 2}
+											onClick={() =>
+												patch({
+													metrics: draft.metrics.filter((_, i) => i !== index),
+												})
+											}
+										>
+											<IconTrash size={16} />
+										</ActionIcon>
+									</Group>
+								))}
+								<Group justify='space-between'>
+									<Group gap='xs'>
+										<Button
+											size='xs'
+											variant='default'
+											leftSection={<IconPlus size={14} />}
+											onClick={() =>
+												patch({
+													metrics: [
+														...draft.metrics,
+														{ metricId: 'OPS_CALLS_HANDLED', weight: 0 },
+													],
+												})
+											}
+										>
+											{t('editor.addMetric')}
+										</Button>
+										<Button
+											size='xs'
+											variant='subtle'
+											onClick={() =>
+												patch({ metrics: evenWeights(draft.metrics) })
+											}
+										>
+											{t('editor.distribute')}
+										</Button>
+									</Group>
+									<Text
+										size='sm'
+										fw={600}
+										c={weightTotal === 100 ? undefined : 'red'}
+									>
+										{t('editor.weightsTotal', { value: weightTotal })}
+									</Text>
+								</Group>
+							</Stack>
+						) : (
+							<Select
+								label={t('editor.metric')}
+								data={metricData}
+								value={draft.metrics[0].metricId}
+								onChange={(value) =>
+									value &&
+									patch({
+										metrics: [
+											{ metricId: value as RankingMetricId, weight: 100 },
+										],
+									})
+								}
+								allowDeselect={false}
+								searchable
+								comboboxProps={{ withinPortal: true }}
+							/>
+						)}
+
 						<Group grow>
 							<NumberInput
 								label={t('editor.target')}
@@ -315,66 +468,92 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 					</Stack>
 				</SectionCard>
 
-				<SectionCard title={t('editor.period')}>
+				<SectionCard title={t('editor.duration')}>
 					<Stack gap='sm'>
-						<Group grow>
-							<DateInput
-								label={t('editor.start')}
-								value={new Date(draft.startDate)}
-								onChange={(value) =>
-									patch({ startDate: iso(value as Date | null) })
-								}
-								valueFormat='DD MMM YYYY'
-								popoverProps={{ withinPortal: true }}
+						<DateInput
+							label={t('editor.start')}
+							value={new Date(draft.startDate)}
+							onChange={(value) =>
+								patch({ startDate: iso(value as Date | null) })
+							}
+							valueFormat='DD MMM YYYY'
+							popoverProps={{ withinPortal: true }}
+						/>
+						<Switch
+							label={t('editor.permanent')}
+							description={t('editor.permanentHint')}
+							checked={permanent}
+							onChange={(e) =>
+								patch(
+									e.currentTarget.checked
+										? { endDate: null }
+										: {
+												endDate: dayjs(draft.startDate)
+													.endOf('month')
+													.format('YYYY-MM-DD'),
+												isDefault: false,
+											}
+								)
+							}
+						/>
+						{permanent ? (
+							<Switch
+								label={t('editor.makeDefault')}
+								description={t('editor.makeDefaultHint')}
+								checked={draft.isDefault}
+								onChange={(e) => patch({ isDefault: e.currentTarget.checked })}
 							/>
-							<DateInput
-								label={t('editor.end')}
-								value={new Date(draft.endDate)}
-								onChange={(value) =>
-									patch({ endDate: iso(value as Date | null) })
-								}
-								valueFormat='DD MMM YYYY'
-								popoverProps={{ withinPortal: true }}
-							/>
-						</Group>
-						<Group gap='xs'>
-							<Chip
-								size='sm'
-								checked={false}
-								onClick={() =>
-									period(
-										dayjs(TODAY).startOf('month'),
-										dayjs(TODAY).endOf('month')
-									)
-								}
-							>
-								{t('editor.presets.thisMonth')}
-							</Chip>
-							<Chip
-								size='sm'
-								checked={false}
-								onClick={() =>
-									period(
-										dayjs(TODAY).add(1, 'month').startOf('month'),
-										dayjs(TODAY).add(1, 'month').endOf('month')
-									)
-								}
-							>
-								{t('editor.presets.nextMonth')}
-							</Chip>
-							<Chip
-								size='sm'
-								checked={false}
-								onClick={() =>
-									period(
-										dayjs(TODAY).startOf('quarter' as never),
-										dayjs(TODAY).endOf('quarter' as never)
-									)
-								}
-							>
-								{t('editor.presets.quarter')}
-							</Chip>
-						</Group>
+						) : (
+							<>
+								<DateInput
+									label={t('editor.end')}
+									value={draft.endDate ? new Date(draft.endDate) : null}
+									onChange={(value) =>
+										patch({ endDate: iso(value as Date | null) })
+									}
+									valueFormat='DD MMM YYYY'
+									popoverProps={{ withinPortal: true }}
+								/>
+								<Group gap='xs'>
+									<Chip
+										size='sm'
+										checked={false}
+										onClick={() =>
+											period(
+												dayjs(TODAY).startOf('month'),
+												dayjs(TODAY).endOf('month')
+											)
+										}
+									>
+										{t('editor.presets.thisMonth')}
+									</Chip>
+									<Chip
+										size='sm'
+										checked={false}
+										onClick={() =>
+											period(
+												dayjs(TODAY).add(1, 'month').startOf('month'),
+												dayjs(TODAY).add(1, 'month').endOf('month')
+											)
+										}
+									>
+										{t('editor.presets.nextMonth')}
+									</Chip>
+									<Chip
+										size='sm'
+										checked={false}
+										onClick={() =>
+											period(
+												dayjs(TODAY).startOf('quarter' as never),
+												dayjs(TODAY).endOf('quarter' as never)
+											)
+										}
+									>
+										{t('editor.presets.quarter')}
+									</Chip>
+								</Group>
+							</>
+						)}
 					</Stack>
 				</SectionCard>
 
@@ -437,7 +616,7 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 					headerActions={
 						<Button
 							size='xs'
-							variant='light'
+							variant='default'
 							leftSection={<IconPlus size={14} />}
 							onClick={addMilestone}
 							disabled={badgeOptions.length === 0}
@@ -515,6 +694,8 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 							value={draft.winnerBadgeId}
 							onChange={(value) => patch({ winnerBadgeId: value })}
 							clearable
+							disabled={permanent}
+							description={permanent ? t('editor.winnerBadgeDated') : undefined}
 							comboboxProps={{ withinPortal: true }}
 						/>
 					</Stack>
@@ -524,29 +705,11 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 					title={t('editor.preview')}
 					description={t('editor.previewHint')}
 				>
-					{conflict ? (
-						<Alert
-							color='red'
-							icon={<IconAlertTriangle size={18} />}
-							title={t('editor.conflict', {
-								name: conflict.name,
-								teams: conflict.teams.join(', '),
-								from: conflict.startDate,
-								to: conflict.endDate,
-							})}
-						>
-							<Button
-								size='xs'
-								variant='light'
-								color='red'
-								onClick={() => endProgram(conflict.id)}
-							>
-								{t('editor.endConflict')}
-							</Button>
-						</Alert>
-					) : previewStandings.every((s) => s.rank === null) ? (
+					{previewStandings.every((s) => s.rank === null) ? (
 						<Text size='sm' c='dimmed'>
-							{t('editor.previewEmpty')}
+							{weightTotal !== 100
+								? t('editor.validation.weights')
+								: t('editor.previewEmpty')}
 						</Text>
 					) : (
 						<Stack gap='xs'>
@@ -557,10 +720,7 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 										{standing.agentName}
 									</Text>
 									<Text size='sm' fw={600}>
-										{formatScore(
-											{ ...draft, id: 'preview' } as RankingProgram,
-											standing.score
-										)}
+										{formatScore(previewProgram, standing.score)}
 									</Text>
 								</Group>
 							))}
@@ -568,16 +728,40 @@ export const RankingEditorDrawer: React.FC<RankingEditorDrawerProps> = ({
 					)}
 				</SectionCard>
 
+				{replaced && (
+					<Alert
+						variant='light'
+						color='gray'
+						icon={<IconInfoCircle size={18} />}
+					>
+						{t('card.replaces', {
+							name: replaced.name,
+							teams: replaced.teams.join(', '),
+						})}
+					</Alert>
+				)}
+
 				<Group justify='flex-end' gap='sm'>
 					<Button variant='subtle' onClick={onClose}>
 						{t('editor.cancel')}
 					</Button>
-					<Button variant='light' onClick={() => save('draft')}>
-						{t('editor.saveDraft')}
-					</Button>
-					<Button onClick={() => save('active')} disabled={Boolean(conflict)}>
-						{scheduled ? t('editor.schedule') : t('editor.launch')}
-					</Button>
+					{isExisting && program.status !== 'draft' ? (
+						<Button
+							variant={program.status === 'inactive' ? 'default' : 'filled'}
+							onClick={() => save(program.status)}
+						>
+							{t('editor.save')}
+						</Button>
+					) : (
+						<Button variant='default' onClick={() => save('draft')}>
+							{t('editor.saveDraft')}
+						</Button>
+					)}
+					{!alreadyOn && (
+						<Button onClick={() => save('active')}>
+							{t('editor.saveActivate')}
+						</Button>
+					)}
 				</Group>
 			</Stack>
 		</AppDrawer>

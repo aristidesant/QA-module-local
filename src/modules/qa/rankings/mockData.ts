@@ -8,9 +8,9 @@ import {
 } from '~/modules/qa/team/constants';
 
 /**
- * Seeded ranking programs. Periods never overlap for a shared team, which is
- * the rule the editor enforces — RP-001 (September) and RP-004 (October) both
- * target Team 1 without conflicting.
+ * Seeded ranking programs. Only one program per team is active at a time: Team 1
+ * has RP-001 running while RP-004 and the permanent default RP-006 wait, so
+ * ending RP-001 (or switching programs) shows the fallback in action.
  */
 export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 	{
@@ -19,12 +19,12 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 		description:
 			'Highest QA score of the month wins. Minimum ten evaluated calls to qualify.',
 		teams: ['Team 1'],
-		evaluationType: 'qa',
-		metricId: 'QA_OVERALL_SCORE',
+		metrics: [{ metricId: 'QA_OVERALL_SCORE', weight: 100 }],
 		targetScore: 90,
 		minCalls: 10,
 		startDate: '2026-09-01',
 		endDate: '2026-09-30',
+		isDefault: false,
 		prize: {
 			kind: 'GIFT_CARD',
 			title: '$100 gift card',
@@ -51,12 +51,12 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 		description:
 			'Cross-team compliance push for the quarter. Fifteen calls minimum.',
 		teams: ['Team 2', 'Team 3'],
-		evaluationType: 'compliance',
-		metricId: 'COMPLIANCE_OVERALL_SCORE',
+		metrics: [{ metricId: 'COMPLIANCE_OVERALL_SCORE', weight: 100 }],
 		targetScore: 95,
 		minCalls: 15,
 		startDate: '2026-07-01',
 		endDate: '2026-09-30',
+		isDefault: false,
 		prize: {
 			kind: 'RECOGNITION',
 			title: 'Wall of fame + lunch with leadership',
@@ -81,12 +81,12 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 		name: 'August Sentiment Cup',
 		description: 'Best customer sentiment across the month.',
 		teams: ['Team 1'],
-		evaluationType: 'sentiment-emotion',
-		metricId: 'CUSTOMER_SENTIMENT_SCORE',
+		metrics: [{ metricId: 'CUSTOMER_SENTIMENT_SCORE', weight: 100 }],
 		targetScore: 4.2,
 		minCalls: 10,
 		startDate: '2026-08-01',
 		endDate: '2026-08-31',
+		isDefault: false,
 		prize: {
 			kind: 'TIME_OFF',
 			title: 'One extra day off',
@@ -117,12 +117,12 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 		name: 'October Sales Push',
 		description: 'Lowest non-conversion rate of the month takes the bonus.',
 		teams: ['Team 1'],
-		evaluationType: 'business-insights',
-		metricId: 'BI_NON_CONVERSION_RATE',
+		metrics: [{ metricId: 'BI_NON_CONVERSION_RATE', weight: 100 }],
 		targetScore: 70,
 		minCalls: 10,
 		startDate: '2026-10-01',
 		endDate: '2026-10-31',
+		isDefault: false,
 		prize: {
 			kind: 'BONUS',
 			title: '$250 bonus',
@@ -134,7 +134,7 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 		],
 		winnerBadgeId: null,
 		allowReactions: true,
-		status: 'scheduled',
+		status: 'inactive',
 		winnerId: null,
 		winnerName: null,
 		createdBy: SUPERVISOR_PERSONA.name,
@@ -146,14 +146,18 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 		id: 'RP-005',
 		name: 'Q4 Compliance Marathon',
 		description:
-			'Draft for the quarter-long compliance ranking across all teams.',
+			'Draft for a quarter-long ranking across all teams that mixes compliance with AHT and call volume.',
 		teams: ['Team 1', 'Team 2', 'Team 3'],
-		evaluationType: 'compliance',
-		metricId: 'COMPLIANCE_OVERALL_SCORE',
-		targetScore: 95,
+		metrics: [
+			{ metricId: 'COMPLIANCE_OVERALL_SCORE', weight: 50 },
+			{ metricId: 'OPS_AHT_SECONDS', weight: 25 },
+			{ metricId: 'OPS_CALLS_HANDLED', weight: 25 },
+		],
+		targetScore: 80,
 		minCalls: 20,
 		startDate: '2026-10-01',
 		endDate: '2026-12-31',
+		isDefault: false,
 		prize: {
 			kind: 'GIFT_CARD',
 			title: 'Team dinner',
@@ -170,6 +174,48 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 		createdByRole: 'QA_MANAGER',
 		createdAt: NOW_ISO,
 		updatedAt: NOW_ISO,
+	},
+	{
+		id: 'RP-006',
+		name: 'Team 1 Performance Index',
+		description:
+			'Always-on ranking that blends quality, compliance, customer sentiment and positive outcomes. It takes over whenever a dated ranking ends.',
+		teams: ['Team 1'],
+		metrics: [
+			{ metricId: 'QA_OVERALL_SCORE', weight: 40 },
+			{ metricId: 'COMPLIANCE_OVERALL_SCORE', weight: 25 },
+			{ metricId: 'CUSTOMER_SENTIMENT_SCORE', weight: 20 },
+			{ metricId: 'OPS_POSITIVE_OUTCOME_RATE', weight: 15 },
+		],
+		targetScore: 75,
+		minCalls: 10,
+		startDate: '2026-06-01',
+		endDate: null,
+		isDefault: true,
+		prize: {
+			kind: 'RECOGNITION',
+			title: 'Monthly shout-out',
+			description: 'The leader of each month is featured in the team meeting.',
+			icon: '🌟',
+		},
+		milestones: [
+			{ id: 'RPM-006', label: 'Rising', threshold: 65, badgeId: 'BDG-006' },
+			{
+				id: 'RPM-007',
+				label: 'Top performer',
+				threshold: 75,
+				badgeId: 'BDG-009',
+			},
+		],
+		winnerBadgeId: null,
+		allowReactions: true,
+		status: 'inactive',
+		winnerId: null,
+		winnerName: null,
+		createdBy: SUPERVISOR_PERSONA.name,
+		createdByRole: 'SUPERVISOR',
+		createdAt: '2026-05-28T10:00:00Z',
+		updatedAt: '2026-05-28T10:00:00Z',
 	},
 ];
 

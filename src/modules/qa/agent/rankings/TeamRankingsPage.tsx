@@ -173,6 +173,9 @@ export const TeamRankingsPage: React.FC = () => {
 					entry={selectedEntry}
 					data={entries}
 					program={program}
+					standing={standings.find(
+						(standing) => standing.agentId === selectedEntry?.agentId
+					)}
 					opened={selectedEntry !== null}
 					onClose={() => setSelectedEntry(null)}
 				/>

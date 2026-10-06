@@ -4,12 +4,13 @@ import { Badge, Group, Progress, Stack, Text, Title } from '@mantine/core';
 import { IconCalendar, IconClock, IconTarget } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import type { RankingProgram } from '~/models/qa/rankingPrograms';
-import { CALL_EVALUATION_TABS } from '~/views/Campaigns/constants';
 import {
 	daysLeft,
 	elapsedPct,
 	formatTarget,
+	isPermanent,
 } from '~/modules/qa/rankings/helpers';
+import MetricChips from '~/modules/qa/rankings/components/MetricChips';
 import styles from '~/modules/qa/rankings/Rankings.module.css';
 
 interface LeaderboardHeaderProps {
@@ -21,10 +22,9 @@ export const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({
 	program,
 }) => {
 	const { t } = useTranslation('qa.rankings');
-	const typeMeta = CALL_EVALUATION_TABS.find(
-		(tab) => tab.key === program.evaluationType
-	);
 	const remaining = daysLeft(program);
+	const elapsed = elapsedPct(program);
+	const permanent = isPermanent(program);
 	const completed = program.status === 'completed';
 
 	return (
@@ -42,9 +42,6 @@ export const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({
 					</Text>
 				</div>
 				<Group gap='xs' align='flex-start'>
-					<Badge size='lg' variant='light' color={typeMeta?.color ?? 'gray'}>
-						{t(`types.${program.evaluationType}`)}
-					</Badge>
 					<Badge
 						size='lg'
 						variant='light'
@@ -56,6 +53,8 @@ export const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({
 					</Badge>
 				</Group>
 			</Group>
+
+			<MetricChips program={program} size='md' />
 
 			<Group gap='xl' wrap='wrap'>
 				<div>
@@ -76,7 +75,9 @@ export const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({
 					<Group gap={4} mt={4}>
 						<IconClock size={16} />
 						<Text size='sm'>
-							{dayjs(program.endDate).format('DD MMM YYYY')}
+							{program.endDate
+								? dayjs(program.endDate).format('DD MMM YYYY')
+								: t('agent.header.noEndDate')}
 						</Text>
 					</Group>
 				</div>
@@ -95,12 +96,14 @@ export const LeaderboardHeader: React.FC<LeaderboardHeaderProps> = ({
 					<Text size='xs' c='dimmed' tt='uppercase' fw={600}>
 						{completed
 							? t('agent.header.completed')
-							: t('agent.header.daysLeft', { count: remaining })}
+							: permanent
+								? t('agent.header.ongoing')
+								: t('agent.header.daysLeft', { count: remaining ?? 0 })}
 					</Text>
 				</div>
 			</Group>
 
-			<Progress value={elapsedPct(program)} radius='md' size='sm' />
+			{elapsed !== null && <Progress value={elapsed} radius='md' size='sm' />}
 		</Stack>
 	);
 };

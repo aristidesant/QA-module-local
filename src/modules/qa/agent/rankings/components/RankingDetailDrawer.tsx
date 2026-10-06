@@ -27,8 +27,16 @@ import {
 	getRankMovementTooltip,
 } from '../gamification';
 import { useTranslation } from 'react-i18next';
-import type { RankingProgram } from '~/models/qa/rankingPrograms';
-import { formatScore, formatTarget } from '~/modules/qa/rankings/helpers';
+import type {
+	RankingProgram,
+	RankingStanding,
+} from '~/models/qa/rankingPrograms';
+import {
+	formatScore,
+	formatTarget,
+	isComposite,
+} from '~/modules/qa/rankings/helpers';
+import ScoreBreakdown from '~/modules/qa/rankings/components/ScoreBreakdown';
 import AchievementsTab from './tabs/AchievementsTab';
 import ReactionsTab from './tabs/ReactionsTab';
 import LeaderboardReactions from './LeaderboardReactions';
@@ -42,6 +50,8 @@ export interface RankingDetailDrawerProps {
 	data: AgentRankingEntry[];
 	/** Ranking the row belongs to. */
 	program: RankingProgram;
+	/** The agent's standing, which carries the per-metric breakdown of a combined score. */
+	standing?: RankingStanding;
 	opened: boolean;
 	onClose: () => void;
 }
@@ -92,7 +102,7 @@ const SignalRow: React.FC<SignalRowProps> = ({
  */
 const DrawerBody: React.FC<
 	Omit<RankingDetailDrawerProps, 'entry'> & { entry: AgentRankingEntry }
-> = ({ entry, data, program, opened, onClose }) => {
+> = ({ entry, data, program, standing, opened, onClose }) => {
 	const { t } = useTranslation('qa.rankings');
 
 	const trend = entry.rankTrend ?? 0;
@@ -143,6 +153,18 @@ const DrawerBody: React.FC<
 							}
 						/>
 					</Group>
+
+					{standing && isComposite(program) && (
+						<>
+							<Divider my='sm' />
+							<Stack gap={6}>
+								<Text size='xs' c='dimmed' tt='uppercase' fw={600}>
+									{t('agent.header.breakdown')}
+								</Text>
+								<ScoreBreakdown program={program} standing={standing} />
+							</Stack>
+						</>
+					)}
 
 					<Divider my='sm' />
 

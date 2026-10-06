@@ -12,12 +12,13 @@ import {
 	Title,
 } from '@mantine/core';
 import {
-	IconCalendarEvent,
 	IconCheck,
+	IconPlayerPause,
 	IconPlus,
 	IconTrophy,
 	IconUsers,
 } from '@tabler/icons-react';
+import { modals } from '@mantine/modals';
 import ContentContainer from '~/components/ContentContainer';
 import EmptyState from '~/components/EmptyState';
 import { StatCard } from '~/components/StatCard';
@@ -30,6 +31,7 @@ import {
 	computeStandings,
 	participantCount,
 	programsForRole,
+	programsSharingTeams,
 } from '../helpers';
 import { RANKING_TABS, type RankingTab } from '../constants';
 import RankingProgramCard from '../components/RankingProgramCard';
@@ -44,7 +46,9 @@ export const ManagerRankingsPage: React.FC = () => {
 
 	const allPrograms = useRankingsStore(selectPrograms);
 	const endProgram = useRankingsStore((s) => s.endProgram);
-	const cancelProgram = useRankingsStore((s) => s.cancelProgram);
+	const activateProgram = useRankingsStore((s) => s.activateProgram);
+	const deactivateProgram = useRankingsStore((s) => s.deactivateProgram);
+	const setDefaultProgram = useRankingsStore((s) => s.setDefaultProgram);
 	const duplicateProgram = useRankingsStore((s) => s.duplicateProgram);
 	const deleteProgram = useRankingsStore((s) => s.deleteProgram);
 
@@ -61,7 +65,7 @@ export const ManagerRankingsPage: React.FC = () => {
 	const byTab = useMemo(
 		() => ({
 			active: programs.filter((p) => p.status === 'active'),
-			scheduled: programs.filter((p) => p.status === 'scheduled'),
+			inactive: programs.filter((p) => p.status === 'inactive'),
 			completed: programs.filter((p) => p.status === 'completed'),
 			drafts: programs.filter((p) => p.status === 'draft'),
 		}),
@@ -76,6 +80,46 @@ export const ManagerRankingsPage: React.FC = () => {
 		);
 		return map;
 	}, [programs]);
+
+	/** Turning a ranking on replaces the one live for the same team, so the manager confirms first. */
+	const toggleActive = (program: RankingProgram, active: boolean) => {
+		if (!active) {
+			deactivateProgram(program.id);
+			notifySuccess(t('editor.deactivated'));
+			return;
+		}
+		const replaced = programsSharingTeams(
+			allPrograms,
+			program.teams,
+			program.id
+		).find((p) => p.status === 'active');
+		const activate = () => {
+			activateProgram(program.id);
+			notifySuccess(t('editor.launched'));
+			setTab('active');
+		};
+		if (!replaced) {
+			activate();
+			return;
+		}
+		modals.openConfirmModal({
+			title: t('card.activateConfirm.title'),
+			children: (
+				<Text size='sm'>
+					{t('card.activateConfirm.body', {
+						name: program.name,
+						replaced: replaced.name,
+						teams: replaced.teams.join(', '),
+					})}
+				</Text>
+			),
+			labels: {
+				confirm: t('card.activateConfirm.confirm'),
+				cancel: t('editor.cancel'),
+			},
+			onConfirm: activate,
+		});
+	};
 
 	const openEditor = (program: RankingProgram | null) => {
 		setEditing(program);
@@ -113,16 +157,14 @@ export const ManagerRankingsPage: React.FC = () => {
 						color='green'
 					/>
 					<StatCard
-						title={t('kpis.scheduled')}
-						value={byTab.scheduled.length}
-						icon={<IconCalendarEvent size={20} />}
-						color='blue'
+						title={t('kpis.inactive')}
+						value={byTab.inactive.length}
+						icon={<IconPlayerPause size={20} />}
 					/>
 					<StatCard
 						title={t('kpis.completed')}
 						value={byTab.completed.length}
 						icon={<IconCheck size={20} />}
-						color='grape'
 					/>
 					<StatCard
 						title={t('kpis.agents')}
@@ -155,17 +197,6 @@ export const ManagerRankingsPage: React.FC = () => {
 					<EmptyState
 						icon={<IconTrophy size={32} />}
 						message={t(`empty.${tab}`)}
-						action={
-							tab === 'active' || tab === 'drafts' ? (
-								<Button
-									variant='light'
-									leftSection={<IconPlus size={16} />}
-									onClick={() => openEditor(null)}
-								>
-									{t('page.new')}
-								</Button>
-							) : undefined
-						}
 					/>
 				) : (
 					<SimpleGrid cols={{ base: 1, md: 2, xl: 3 }} spacing='lg'>
@@ -181,14 +212,15 @@ export const ManagerRankingsPage: React.FC = () => {
 									notifySuccess(t('editor.duplicated'));
 									setTab('drafts');
 								}}
+								onToggleActive={(active) => toggleActive(program, active)}
+								onSetDefault={() => {
+									setDefaultProgram(program.id);
+									notifySuccess(t('editor.defaultSet'));
+								}}
 								onEnd={() => {
 									endProgram(program.id);
-									notifySuccess(t('editor.ended', { winner: '' }).trim());
+									notifySuccess(t('editor.ended'));
 									setTab('completed');
-								}}
-								onCancel={() => {
-									cancelProgram(program.id);
-									notifySuccess(t('editor.cancelled'));
 								}}
 								onDelete={() => deleteProgram(program.id)}
 							/>

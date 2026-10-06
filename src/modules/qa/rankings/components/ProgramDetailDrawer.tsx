@@ -11,10 +11,10 @@ import type {
 } from '~/models/qa/rankingPrograms';
 import { useRankingsStore } from '~/stores/qa/rankingsStore';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
-import { CALL_EVALUATION_TABS } from '~/views/Campaigns/constants';
-import { formatScore, formatTarget, leader } from '../helpers';
+import { formatScore, formatTarget, isPermanent, leader } from '../helpers';
 import { STATUS_COLOR } from '../constants';
 import StandingsTable from './StandingsTable';
+import MetricChips from './MetricChips';
 
 interface ProgramDetailDrawerProps {
 	program: RankingProgram | null;
@@ -40,9 +40,6 @@ export const ProgramDetailDrawer: React.FC<ProgramDetailDrawerProps> = ({
 
 	if (!program) return null;
 
-	const typeMeta = CALL_EVALUATION_TABS.find(
-		(tab) => tab.key === program.evaluationType
-	);
 	const qualified = standings.filter((s) => s.rank !== null);
 	const top = leader(standings);
 	const notStarted = qualified.length === 0;
@@ -56,9 +53,6 @@ export const ProgramDetailDrawer: React.FC<ProgramDetailDrawerProps> = ({
 			description={program.description}
 			headerActions={
 				<Group gap='xs'>
-					<Badge variant='light' color={typeMeta?.color ?? 'gray'}>
-						{t(`types.${program.evaluationType}`)}
-					</Badge>
 					<Badge variant='light' color={STATUS_COLOR[program.status]}>
 						{t(`status.${program.status}`)}
 					</Badge>
@@ -66,6 +60,7 @@ export const ProgramDetailDrawer: React.FC<ProgramDetailDrawerProps> = ({
 			}
 		>
 			<Stack gap='lg'>
+				<MetricChips program={program} size='md' />
 				<SimpleGrid cols={{ base: 2, md: 4 }} spacing='md'>
 					<StatCard title={t('drawer.participants')} value={standings.length} />
 					<StatCard title={t('drawer.qualified')} value={qualified.length} />
@@ -90,7 +85,11 @@ export const ProgramDetailDrawer: React.FC<ProgramDetailDrawerProps> = ({
 
 				<SectionCard
 					title={t('drawer.standings')}
-					description={`${t('editor.target')}: ${formatTarget(program)} · ${dayjs(program.startDate).format('DD MMM')} → ${dayjs(program.endDate).format('DD MMM YYYY')}`}
+					description={`${t('editor.target')}: ${formatTarget(program)} · ${
+						isPermanent(program)
+							? `${t('card.since', { date: dayjs(program.startDate).format('DD MMM YYYY') })} · ${t('card.noEndDate')}`
+							: `${dayjs(program.startDate).format('DD MMM')} → ${dayjs(program.endDate).format('DD MMM YYYY')}`
+					}`}
 				>
 					{notStarted ? (
 						<Text size='sm' c='dimmed'>

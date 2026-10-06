@@ -7,8 +7,10 @@ import {
 } from '~/modules/qa/rankings/mockData';
 import {
 	computeStandings,
-	conflictingProgram,
+	defaultProgramFor,
+	isPermanent,
 	leader,
+	programsSharingTeams,
 } from '~/modules/qa/rankings/helpers';
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import { TODAY } from '~/modules/qa/analytics/constants';
@@ -18,19 +20,23 @@ import { buildNotification } from '~/modules/qa/inbox/helpers';
 import { useNotificationStore } from '~/stores/qa/notificationStore';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
 
-type SaveResult =
-	| { ok: true; program: RankingProgram }
-	| { ok: false; conflict: RankingProgram };
-
 interface RankingsState {
 	programs: RankingProgram[];
 	/** programId → agentId → the reaction the current user left. */
 	/** programId → target agent → reacting agent → emoji. */
 	reactions: Record<string, Record<string, Record<string, UserReactionType>>>;
-	createProgram: (draft: ProgramDraft) => SaveResult;
-	updateProgram: (id: string, patch: Partial<ProgramDraft>) => SaveResult;
+	createProgram: (draft: ProgramDraft) => RankingProgram;
+	updateProgram: (
+		id: string,
+		patch: Partial<ProgramDraft>
+	) => RankingProgram | null;
+	/** Makes the program the team's live ranking; the one it replaces goes inactive. */
+	activateProgram: (id: string) => void;
+	deactivateProgram: (id: string) => void;
+	/** Marks a permanent program as the one its teams fall back to. */
+	setDefaultProgram: (id: string) => void;
+	/** Finishes a dated ranking with a winner; the team's default one takes over. */
 	endProgram: (id: string) => void;
-	cancelProgram: (id: string) => void;
 	duplicateProgram: (id: string) => RankingProgram;
 	deleteProgram: (id: string) => void;
 	/** Awards the badges of every milestone reached; safe to call repeatedly. */
@@ -55,11 +61,39 @@ export const nextMilestoneId = () => `RPM-${++milestoneCounter}`;
 const notify = (input: Parameters<typeof buildNotification>[0]) =>
 	useNotificationStore.getState().addNotification(buildNotification(input));
 
-/** A scheduled start date keeps the program out of the active tab until it begins. */
-const normalizeStatus = (draft: ProgramDraft): RankingProgram['status'] =>
-	draft.status === 'active' && draft.startDate > TODAY
-		? 'scheduled'
-		: draft.status;
+/** At most one active program per team: activating one deactivates the others it shares a team with. */
+const withSingleActive = (
+	programs: RankingProgram[],
+	activeId: string
+): RankingProgram[] => {
+	const active = programs.find((p) => p.id === activeId);
+	if (!active) return programs;
+	const replaced = new Set(
+		programsSharingTeams(programs, active.teams, activeId)
+			.filter((p) => p.status === 'active')
+			.map((p) => p.id)
+	);
+	return programs.map((p) =>
+		replaced.has(p.id) ? { ...p, status: 'inactive', updatedAt: NOW_ISO } : p
+	);
+};
+
+/** One default per team: marking a program as default clears it from the others it shares a team with. */
+const withSingleDefault = (
+	programs: RankingProgram[],
+	defaultId: string
+): RankingProgram[] => {
+	const program = programs.find((p) => p.id === defaultId);
+	if (!program) return programs;
+	const cleared = new Set(
+		programsSharingTeams(programs, program.teams, defaultId)
+			.filter((p) => p.isDefault)
+			.map((p) => p.id)
+	);
+	return programs.map((p) =>
+		cleared.has(p.id) ? { ...p, isDefault: false } : p
+	);
+};
 
 const agentsOf = (program: RankingProgram) =>
 	TEAM_AGENTS.filter((agent) => program.teams.includes(agent.team));
@@ -68,7 +102,9 @@ const agentsOf = (program: RankingProgram) =>
 const resolveSeedWinners = (programs: RankingProgram[]): RankingProgram[] =>
 	programs.map((program) => {
 		if (program.status !== 'completed' || program.winnerId) return program;
-		const top = leader(computeStandings(program, TEAM_CALLS, program.endDate));
+		const top = leader(
+			computeStandings(program, TEAM_CALLS, program.endDate ?? TODAY)
+		);
 		return top
 			? { ...program, winnerId: top.agentId, winnerName: top.agentName }
 			: program;
@@ -79,84 +115,115 @@ export const useRankingsStore = create<RankingsState>((set, get) => ({
 	reactions: REACTIONS_SEED,
 
 	createProgram: (draft) => {
-		const status = normalizeStatus(draft);
-		if (status !== 'draft') {
-			const conflict = conflictingProgram(
-				get().programs,
-				draft.teams,
-				draft.startDate,
-				draft.endDate
-			);
-			if (conflict) return { ok: false, conflict };
-		}
-
 		const program: RankingProgram = {
 			...draft,
-			status,
+			status: draft.status === 'active' ? 'inactive' : draft.status,
+			isDefault: draft.isDefault && draft.endDate === null,
 			id: nextId(),
 			winnerId: null,
 			winnerName: null,
 			createdAt: NOW_ISO,
 			updatedAt: NOW_ISO,
 		};
-		set((s) => ({ programs: [program, ...s.programs] }));
-
-		if (status !== 'draft') {
-			agentsOf(program).forEach((agent) =>
-				notify({
-					agentId: agent.id,
-					recipientRole: 'AGENT',
-					recipientId: agent.id,
-					category: 'POSITIVE_RECOGNITION',
-					priority: 'NORMAL',
-					title: `New ranking: ${program.name}`,
-					message: `${program.description} Prize: ${program.prize.title}.`,
-					icon: 'trophy',
-					sourceRole:
-						program.createdByRole === 'QA_MANAGER'
-							? 'QA_MANAGER'
-							: 'SUPERVISOR',
-					payload: {
-						kind: 'RANKING_UPDATE',
-						rankingId: program.id,
-						rankingName: program.name,
-						event: 'STARTED',
-						prizeTitle: program.prize.title,
-					},
-				})
-			);
-		}
-
-		return { ok: true, program };
+		set((s) => ({
+			programs: program.isDefault
+				? withSingleDefault([program, ...s.programs], program.id)
+				: [program, ...s.programs],
+		}));
+		if (draft.status === 'active') get().activateProgram(program.id);
+		return get().programs.find((p) => p.id === program.id) ?? program;
 	},
 
 	updateProgram: (id, patch) => {
 		const current = get().programs.find((p) => p.id === id);
-		if (!current) return { ok: false, conflict: current as never };
+		if (!current) return null;
 
-		const merged = { ...current, ...patch };
-		const status = normalizeStatus(merged);
-		if (status !== 'draft') {
-			const conflict = conflictingProgram(
-				get().programs,
-				merged.teams,
-				merged.startDate,
-				merged.endDate,
-				id
-			);
-			if (conflict) return { ok: false, conflict };
-		}
+		const wantsActive =
+			patch.status === 'active' && current.status !== 'active';
+		const merged: RankingProgram = {
+			...current,
+			...patch,
+			status: wantsActive ? current.status : (patch.status ?? current.status),
+			updatedAt: NOW_ISO,
+		};
+		merged.isDefault = merged.isDefault && isPermanent(merged);
 
-		const program: RankingProgram = { ...merged, status, updatedAt: NOW_ISO };
-		set((s) => ({
-			programs: s.programs.map((p) => (p.id === id ? program : p)),
-		}));
-		return { ok: true, program };
+		set((s) => {
+			const next = s.programs.map((p) => (p.id === id ? merged : p));
+			let result = merged.isDefault ? withSingleDefault(next, id) : next;
+			if (merged.status === 'active') result = withSingleActive(result, id);
+			return { programs: result };
+		});
+		if (wantsActive) get().activateProgram(id);
+		return get().programs.find((p) => p.id === id) ?? merged;
 	},
+
+	activateProgram: (id) => {
+		const program = get().programs.find((p) => p.id === id);
+		if (
+			!program ||
+			program.status === 'active' ||
+			program.status === 'completed'
+		)
+			return;
+
+		set((s) => ({
+			programs: withSingleActive(
+				s.programs.map((p) =>
+					p.id === id ? { ...p, status: 'active', updatedAt: NOW_ISO } : p
+				),
+				id
+			),
+		}));
+
+		agentsOf(program).forEach((agent) =>
+			notify({
+				agentId: agent.id,
+				recipientRole: 'AGENT',
+				recipientId: agent.id,
+				category: 'POSITIVE_RECOGNITION',
+				priority: 'NORMAL',
+				title: `New ranking: ${program.name}`,
+				message: `${program.description} Prize: ${program.prize.title}.`,
+				icon: 'trophy',
+				sourceRole:
+					program.createdByRole === 'QA_MANAGER' ? 'QA_MANAGER' : 'SUPERVISOR',
+				payload: {
+					kind: 'RANKING_UPDATE',
+					rankingId: program.id,
+					rankingName: program.name,
+					event: 'STARTED',
+					prizeTitle: program.prize.title,
+				},
+			})
+		);
+	},
+
+	deactivateProgram: (id) =>
+		set((s) => ({
+			programs: s.programs.map((p) =>
+				p.id === id && p.status === 'active'
+					? { ...p, status: 'inactive', updatedAt: NOW_ISO }
+					: p
+			),
+		})),
+
+	setDefaultProgram: (id) =>
+		set((s) => {
+			const program = s.programs.find((p) => p.id === id);
+			if (!program || !isPermanent(program)) return s;
+			return {
+				programs: withSingleDefault(
+					s.programs.map((p) => (p.id === id ? { ...p, isDefault: true } : p)),
+					id
+				),
+			};
+		}),
 
 	endProgram: (id) => {
 		const program = get().programs.find((p) => p.id === id);
-		if (!program || program.status === 'completed') return;
+		if (!program || program.status === 'completed' || isPermanent(program))
+			return;
 
 		const standings = computeStandings(program, TEAM_CALLS);
 		const winner = leader(standings);
@@ -169,7 +236,7 @@ export const useRankingsStore = create<RankingsState>((set, get) => ({
 							status: 'completed',
 							winnerId: winner?.agentId ?? null,
 							winnerName: winner?.agentName ?? null,
-							endDate: p.endDate > TODAY ? TODAY : p.endDate,
+							endDate: p.endDate && p.endDate > TODAY ? TODAY : p.endDate,
 							updatedAt: NOW_ISO,
 						}
 					: p
@@ -230,14 +297,16 @@ export const useRankingsStore = create<RankingsState>((set, get) => ({
 				prizeTitle: program.prize.title,
 			},
 		});
-	},
 
-	cancelProgram: (id) =>
-		set((s) => ({
-			programs: s.programs.map((p) =>
-				p.id === id ? { ...p, status: 'cancelled', updatedAt: NOW_ISO } : p
-			),
-		})),
+		// The ranking ended, so each team falls back to its default one.
+		const fallbacks = new Set(
+			program.teams
+				.map((team) => defaultProgramFor(get().programs, team))
+				.filter((p): p is RankingProgram => p !== null && p.status !== 'active')
+				.map((p) => p.id)
+		);
+		fallbacks.forEach((fallbackId) => get().activateProgram(fallbackId));
+	},
 
 	deleteProgram: (id) =>
 		set((s) => ({ programs: s.programs.filter((p) => p.id !== id) })),
@@ -250,6 +319,7 @@ export const useRankingsStore = create<RankingsState>((set, get) => ({
 			id: nextId(),
 			name: `${source.name} (copy)`,
 			status: 'draft',
+			isDefault: false,
 			winnerId: null,
 			winnerName: null,
 			createdAt: NOW_ISO,

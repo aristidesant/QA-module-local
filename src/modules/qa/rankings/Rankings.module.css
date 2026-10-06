@@ -78,3 +78,7 @@
 		grid-template-columns: 1fr;
 	}
 }
+
+.helpCursor {
+	cursor: help;
+}

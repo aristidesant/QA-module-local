@@ -7,6 +7,7 @@ import {
 	Menu,
 	Progress,
 	Stack,
+	Switch,
 	Text,
 } from '@mantine/core';
 import {
@@ -14,23 +15,26 @@ import {
 	IconDotsVertical,
 	IconEdit,
 	IconPlayerStop,
+	IconStar,
 	IconTrash,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import SectionCard from '~/components/SectionCard';
+import { TODAY } from '~/modules/qa/analytics/constants';
 import type {
 	RankingProgram,
 	RankingStanding,
 } from '~/models/qa/rankingPrograms';
-import { CALL_EVALUATION_TABS } from '~/views/Campaigns/constants';
 import {
 	daysLeft,
 	elapsedPct,
 	formatScore,
 	formatTarget,
+	isPermanent,
 	leader,
 } from '../helpers';
 import { STATUS_COLOR } from '../constants';
+import MetricChips from './MetricChips';
 
 interface RankingProgramCardProps {
 	program: RankingProgram;
@@ -38,8 +42,9 @@ interface RankingProgramCardProps {
 	onView: () => void;
 	onEdit: () => void;
 	onDuplicate: () => void;
+	onToggleActive: (active: boolean) => void;
+	onSetDefault: () => void;
 	onEnd: () => void;
-	onCancel: () => void;
 	onDelete: () => void;
 }
 
@@ -49,18 +54,20 @@ export const RankingProgramCard: React.FC<RankingProgramCardProps> = ({
 	onView,
 	onEdit,
 	onDuplicate,
+	onToggleActive,
+	onSetDefault,
 	onEnd,
-	onCancel,
 	onDelete,
 }) => {
 	const { t } = useTranslation('qa.rankings');
-	const typeMeta = CALL_EVALUATION_TABS.find(
-		(tab) => tab.key === program.evaluationType
-	);
 	const top = leader(standings);
 	const isLive = program.status === 'active';
 	const isCompleted = program.status === 'completed';
-	const isScheduled = program.status === 'scheduled';
+	const canToggle = isLive || program.status === 'inactive';
+	const permanent = isPermanent(program);
+	const remaining = daysLeft(program);
+	const elapsed = elapsedPct(program);
+	const notStarted = program.startDate > TODAY;
 
 	return (
 		<SectionCard
@@ -68,13 +75,35 @@ export const RankingProgramCard: React.FC<RankingProgramCardProps> = ({
 			title={program.name}
 			description={program.description}
 			headerActions={
-				<Badge variant='light' color={STATUS_COLOR[program.status]}>
-					{t(`status.${program.status}`)}
-				</Badge>
+				<Group gap='xs' wrap='nowrap'>
+					{program.isDefault && (
+						<Badge
+							variant='outline'
+							color='gray'
+							leftSection={<IconStar size={12} />}
+						>
+							{t('card.default')}
+						</Badge>
+					)}
+					{canToggle ? (
+						<Switch
+							checked={isLive}
+							onChange={(e) => onToggleActive(e.currentTarget.checked)}
+							label={t(isLive ? 'status.active' : 'status.inactive')}
+							aria-label={t(isLive ? 'card.deactivate' : 'card.activate', {
+								name: program.name,
+							})}
+						/>
+					) : (
+						<Badge variant='light' color={STATUS_COLOR[program.status]}>
+							{t(`status.${program.status}`)}
+						</Badge>
+					)}
+				</Group>
 			}
 			footer={
 				<Group justify='space-between' w='100%'>
-					<Button size='xs' variant='light' onClick={onView}>
+					<Button size='xs' variant='default' onClick={onView}>
 						{t('card.view')}
 					</Button>
 					<Menu withArrow position='bottom-end'>
@@ -93,22 +122,21 @@ export const RankingProgramCard: React.FC<RankingProgramCardProps> = ({
 							>
 								{t('card.duplicate')}
 							</Menu.Item>
-							{isLive && (
+							{permanent && !program.isDefault && !isCompleted && (
+								<Menu.Item
+									leftSection={<IconStar size={14} />}
+									onClick={onSetDefault}
+								>
+									{t('card.setDefault')}
+								</Menu.Item>
+							)}
+							{isLive && !permanent && (
 								<Menu.Item
 									color='red'
 									leftSection={<IconPlayerStop size={14} />}
 									onClick={onEnd}
 								>
 									{t('card.end')}
-								</Menu.Item>
-							)}
-							{isScheduled && (
-								<Menu.Item
-									color='red'
-									leftSection={<IconPlayerStop size={14} />}
-									onClick={onCancel}
-								>
-									{t('card.cancel')}
 								</Menu.Item>
 							)}
 							{program.status === 'draft' && (
@@ -126,10 +154,8 @@ export const RankingProgramCard: React.FC<RankingProgramCardProps> = ({
 			}
 		>
 			<Stack gap='sm'>
+				<MetricChips program={program} />
 				<Group gap='xs' wrap='wrap'>
-					<Badge size='sm' variant='light' color={typeMeta?.color ?? 'gray'}>
-						{t(`types.${program.evaluationType}`)}
-					</Badge>
 					{program.teams.map((team) => (
 						<Badge key={team} size='sm' variant='outline' color='gray'>
 							{team}
@@ -144,30 +170,39 @@ export const RankingProgramCard: React.FC<RankingProgramCardProps> = ({
 					})}
 				</Text>
 
-				<div>
-					<Group justify='space-between' mb={4}>
-						<Text size='xs' c='dimmed'>
-							{t('card.period', {
-								from: dayjs(program.startDate).format('DD MMM'),
-								to: dayjs(program.endDate).format('DD MMM'),
-							})}
-						</Text>
-						<Text size='xs' c='dimmed'>
-							{isCompleted
-								? t('card.ended')
-								: isScheduled
-									? t('card.notStarted', {
-											date: dayjs(program.startDate).format('DD MMM'),
-										})
-									: t('card.daysLeft', { count: daysLeft(program) })}
-						</Text>
-					</Group>
-					<Progress
-						value={elapsedPct(program)}
-						size='sm'
-						color={isCompleted ? 'grape' : 'blue'}
-					/>
-				</div>
+				{permanent ? (
+					<Text size='xs' c='dimmed'>
+						{t('card.since', {
+							date: dayjs(program.startDate).format('DD MMM YYYY'),
+						})}{' '}
+						· {t('card.noEndDate')}
+					</Text>
+				) : (
+					<div>
+						<Group justify='space-between' mb={4}>
+							<Text size='xs' c='dimmed'>
+								{t('card.period', {
+									from: dayjs(program.startDate).format('DD MMM'),
+									to: dayjs(program.endDate).format('DD MMM'),
+								})}
+							</Text>
+							<Text size='xs' c='dimmed'>
+								{isCompleted
+									? t('card.ended')
+									: notStarted
+										? t('card.notStarted', {
+												date: dayjs(program.startDate).format('DD MMM'),
+											})
+										: t('card.daysLeft', { count: remaining ?? 0 })}
+							</Text>
+						</Group>
+						<Progress
+							value={elapsed ?? 0}
+							size='sm'
+							color={isCompleted ? 'gray' : 'blue'}
+						/>
+					</div>
+				)}
 
 				<Group gap='xs' wrap='nowrap'>
 					<Text size='lg'>{program.prize.icon}</Text>

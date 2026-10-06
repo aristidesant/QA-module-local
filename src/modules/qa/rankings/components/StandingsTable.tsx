@@ -18,7 +18,8 @@ import type {
 	RankingStanding,
 } from '~/models/qa/rankingPrograms';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
-import { formatScore } from '../helpers';
+import { formatScore, isComposite } from '../helpers';
+import ScoreBreakdown from './ScoreBreakdown';
 import styles from '../Rankings.module.css';
 
 interface StandingsTableProps {
@@ -99,9 +100,22 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 							size='sm'
 							className={styles.scoreBar}
 						/>
-						<Text size='sm' fw={600}>
-							{formatScore(program, standing.score)}
-						</Text>
+						{isComposite(program) && standing.score !== null ? (
+							<Tooltip
+								label={<ScoreBreakdown program={program} standing={standing} />}
+								withArrow
+								multiline
+								w={260}
+							>
+								<Text size='sm' fw={600} className={styles.helpCursor}>
+									{formatScore(program, standing.score)}
+								</Text>
+							</Tooltip>
+						) : (
+							<Text size='sm' fw={600}>
+								{formatScore(program, standing.score)}
+							</Text>
+						)}
 					</Group>
 				</Table.Td>
 				<Table.Td align='right'>
