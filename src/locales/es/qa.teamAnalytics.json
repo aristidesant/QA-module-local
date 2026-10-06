@@ -92,7 +92,8 @@
 		"chips": {
 			"clearAll": "Limpiar todo",
 			"more": "+{{count}}",
-			"period": "Periodo"
+			"period": "Periodo",
+			"remove": "Quitar filtro {{filter}}"
 		},
 		"validation": {
 			"range": "\"Hasta\" debe ser igual o posterior a \"Desde\"",
@@ -103,7 +104,10 @@
 			"OUTBOUND": "Saliente",
 			"BLENDED": "Mixta"
 		},
-		"directionLabels": { "INBOUND": "Entrante", "OUTBOUND": "Saliente" },
+		"directionLabels": {
+			"INBOUND": "Entrante",
+			"OUTBOUND": "Saliente"
+		},
 		"shiftLabels": {
 			"morning": "Mañana",
 			"afternoon": "Tarde",
@@ -138,7 +142,8 @@
 			"Fear": "Miedo",
 			"Sadness": "Tristeza",
 			"Disgust": "Disgusto"
-		}
+		},
+		"burnoutNotice": "Burnout usa ventanas fijas de 7 y 14 días, por lo que estos filtros no aplican aquí."
 	},
 	"presets": {
 		"button": "Vistas guardadas",
@@ -316,7 +321,9 @@
 		},
 		"empty": "Ningún agente coincide con esta consulta",
 		"emptyDescription": "Amplía el rango, baja el mínimo de llamadas o cambia la métrica.",
-		"validation": { "rangeInvalid": "\"Hasta\" debe ser mayor que \"Desde\"" },
+		"validation": {
+			"rangeInvalid": "\"Hasta\" debe ser mayor que \"Desde\""
+		},
 		"lmsReason": "Buscador de agentes: {{metric}} {{condition}}",
 		"coachingTopic": "Mejorar {{metric}}",
 		"cohort": {

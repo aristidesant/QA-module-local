@@ -119,6 +119,21 @@
 	white-space: nowrap;
 }
 
+/* Filters and KPIs on a tab they don't apply to (Burnout). */
+.dimmed {
+	opacity: 0.55;
+	pointer-events: none;
+}
+
+/* Keeps Apply / Reset reachable while the long filter form scrolls. */
+.drawerFooter {
+	position: sticky;
+	bottom: 0;
+	padding: var(--mantine-spacing-md) 0;
+	background-color: var(--mantine-color-body);
+	border-top: 1px solid var(--mantine-color-default-border);
+}
+
 .finderField {
 	width: 140px;
 }

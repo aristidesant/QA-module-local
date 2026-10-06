@@ -113,13 +113,31 @@ const emotionFor = (
 				? pick<CallEmotion>(['Surprise', 'Sadness'], rand)
 				: pick<CallEmotion>(['Anger', 'Fear', 'Disgust'], rand);
 
-/** Deterministic 180-day call history for every PERSONAS agent (ends on TODAY). */
-export function buildTeamCalls(): TeamCallMetric[] {
-	const rand = seeded(11);
+type Persona = (typeof PERSONAS)[number];
+
+interface GenerateOptions {
+	seed: number;
+	idPrefix: string;
+	personas: Persona[];
+	/** Only the last `days` days of the history are generated. */
+	days: number;
+	/** Added to every working day's call count, to thicken a window. */
+	extraCallsPerDay: number;
+}
+
+/** Deterministic call history ending on TODAY for the given personas. */
+function generateCalls({
+	seed,
+	idPrefix,
+	personas,
+	days,
+	extraCallsPerDay,
+}: GenerateOptions): TeamCallMetric[] {
+	const rand = seeded(seed);
 	const out: TeamCallMetric[] = [];
 	let seq = 0;
 
-	for (const persona of PERSONAS) {
+	for (const persona of personas) {
 		const agent = TEAM_AGENTS.find((a) => a.id === persona.id);
 		if (!agent) continue;
 		const campaigns = TEAM_CAMPAIGNS.filter((c) =>
@@ -137,7 +155,7 @@ export function buildTeamCalls(): TeamCallMetric[] {
 					: 0;
 		const bizWeak = 1 - base.business;
 
-		for (let dayIndex = 0; dayIndex < DAYS; dayIndex++) {
+		for (let dayIndex = DAYS - days; dayIndex < DAYS; dayIndex++) {
 			const isoDay = addDays(TODAY, dayIndex - (DAYS - 1));
 			const weekday = new Date(`${isoDay}T00:00:00Z`).getUTCDay();
 			if (weekday === 0) continue;
@@ -147,7 +165,8 @@ export function buildTeamCalls(): TeamCallMetric[] {
 			const progress =
 				Math.max(0, dayIndex - (DAYS - TREND_DAYS)) / (TREND_DAYS - 1) - 0.5; // -0.5 … +0.5 over the last TREND_DAYS
 			const callsToday =
-				weekday === 6 ? (rand() < 0.5 ? 0 : 1) : 1 + Math.floor(rand() * 3);
+				(weekday === 6 ? (rand() < 0.5 ? 0 : 1) : 1 + Math.floor(rand() * 3)) +
+				extraCallsPerDay;
 
 			for (let c = 0; c < callsToday; c++) {
 				const campaign = pick(campaigns, rand);
@@ -241,7 +260,7 @@ export function buildTeamCalls(): TeamCallMetric[] {
 
 				seq += 1;
 				out.push({
-					id: `TCALL-${String(seq).padStart(5, '0')}`,
+					id: `${idPrefix}-${String(seq).padStart(5, '0')}`,
 					date: `${isoDay}T${pad(hour)}:${pad(minute)}:00Z`,
 					qaScores: { ecn, enc, ecc, ecuf },
 					agentSentiment,
@@ -306,10 +325,83 @@ export function buildTeamCalls(): TeamCallMetric[] {
 			}
 		}
 	}
-	return out.sort((a, b) => a.date.localeCompare(b.date));
+	return out;
 }
 
-export const TEAM_CALLS: TeamCallMetric[] = buildTeamCalls();
+/** Baseline history: every persona over the full 180 days. */
+export const buildTeamCalls = (): TeamCallMetric[] =>
+	generateCalls({
+		seed: 11,
+		idPrefix: 'TCALL',
+		personas: PERSONAS,
+		days: DAYS,
+		extraCallsPerDay: 0,
+	}).sort((a, b) => a.date.localeCompare(b.date));
+
+/**
+ * Rough patches for selected agents over the last 45 days: the same generator
+ * with a weaker (or different) base on one or two dimensions. They thicken the
+ * history and spread every metric across agents, so Team Analytics filters and
+ * Finder queries (e.g. compliance 70-85%, sentiment below 3, QA below 75%)
+ * always find agents. The agent persona (AGT-004) and the top performers are
+ * left alone so their dashboards keep their story, and sentiment/QA patches
+ * only go to agents already at burnout risk so no one changes risk level.
+ */
+const ROUGH_PATCHES: Record<string, Partial<Persona['base']>> = {
+	'AGT-001': { business: 0.22 },
+	'AGT-002': { compliance: 0.45 },
+	'AGT-003': { qa: 0.5 },
+	'AGT-005': { compliance: 0.45 },
+	'AGT-006': { qa: 0.3, compliance: 0.4 },
+	'AGT-007': { compliance: 0.4, sentiment: 0.5 },
+	'AGT-008': { business: 0.2 },
+	'AGT-009': { qa: 0.4 },
+	'AGT-010': { compliance: 0.4 },
+	'AGT-012': { sentiment: 0.25, business: 0.3 },
+	'AGT-013': { qa: 0.5, compliance: 0.55 },
+	'AGT-016': { compliance: 0.4 },
+	'AGT-017': { qa: 0.3, sentiment: 0.4 },
+	'AGT-019': { business: 0.25 },
+	'AGT-021': { compliance: 0.45, business: 0.35 },
+};
+const ROUGH_PATCH_DAYS = 45;
+
+const buildRoughPatchCalls = (): TeamCallMetric[] =>
+	generateCalls({
+		seed: 29,
+		idPrefix: 'TXCALL',
+		personas: PERSONAS.filter((p) => p.id in ROUGH_PATCHES).map((p) => ({
+			...p,
+			base: { ...p.base, ...ROUGH_PATCHES[p.id] },
+		})),
+		days: ROUGH_PATCH_DAYS,
+		extraCallsPerDay: 1,
+	});
+
+/**
+ * The generator maps sentiment to emotion deterministically, which leaves each
+ * agent's positive/negative emotion share at 0% or 100%. One call in five
+ * reads a band off, so shares spread out the way real data does. The agent
+ * persona keeps its emotions: its alerts point at specific calls.
+ */
+const blurCustomerEmotions = (calls: TeamCallMetric[]): void => {
+	const rand = seeded(53);
+	for (const call of calls) {
+		if (call.agentId === AGENT_PERSONA_ID || rand() >= 0.2) continue;
+		const shifted = call.customerSentiment + (rand() < 0.5 ? -0.9 : 0.9);
+		call.predominantEmotion = emotionFor(clamp(shifted, 1, 5), rand);
+	}
+};
+
+const buildAllCalls = (): TeamCallMetric[] => {
+	const calls = [...buildTeamCalls(), ...buildRoughPatchCalls()].sort((a, b) =>
+		a.date.localeCompare(b.date)
+	);
+	blurCustomerEmotions(calls);
+	return calls;
+};
+
+export const TEAM_CALLS: TeamCallMetric[] = buildAllCalls();
 
 /**
  * Mock incident: John Smith's (AGT-004) 3 most recent calls get a real regulatory

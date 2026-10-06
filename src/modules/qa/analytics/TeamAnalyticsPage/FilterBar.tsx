@@ -1,16 +1,37 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Group, Button, Badge, Tooltip } from '@mantine/core';
+import { Group, Button, Badge, CloseButton, Tooltip } from '@mantine/core';
 import { IconAdjustments, IconX } from '@tabler/icons-react';
+import { TEAM_CAMPAIGNS, TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
 import { useTeamAnalyticsStore } from '~/stores/qa/teamAnalyticsStore';
 import { filterChips, activeFilterCount } from '../helpers';
+import type { FilterChipKey } from '../types';
+import { useTeamAnalyticsData } from './TeamAnalyticsContext';
 import FilterDrawer from './FilterDrawer';
 import styles from './TeamAnalyticsPage.module.css';
 
-export default function FilterBar() {
+/** Chips whose raw values are enum ids with a label list in `filters.*`. */
+const VALUE_LABEL_NAMESPACE: Partial<Record<FilterChipKey, string>> = {
+	granularity: 'filters.granularityOptions',
+	campaignTypes: 'filters.campaignTypeLabels',
+	directions: 'filters.directionLabels',
+	shifts: 'filters.shiftLabels',
+	statuses: 'filters.statusLabels',
+	tenureBands: 'filters.tenureLabels',
+	weekdays: 'filters.weekdayLabels',
+	emotions: 'filters.emotionLabels',
+};
+
+interface FilterBarProps {
+	/** The active tab ignores filters (Burnout), so the bar is shown dimmed and inert. */
+	disabled?: boolean;
+}
+
+export default function FilterBar({ disabled = false }: FilterBarProps) {
 	const { t } = useTranslation('qa.teamAnalytics');
 	const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
-	const { filters, resetFilters } = useTeamAnalyticsStore();
+	const { filters, resetFilters, commitFilters } = useTeamAnalyticsStore();
+	const { scopedAgents } = useTeamAnalyticsData();
 
 	const chips = filterChips(filters);
 	const activeCount = activeFilterCount(filters);
@@ -38,15 +59,47 @@ export default function FilterBar() {
 		minCalls: t('filters.minCalls'),
 	};
 
+	const nameOf = (key: FilterChipKey, value: string): string => {
+		switch (key) {
+			case 'supervisorIds':
+				return TEAM_SUPERVISORS.find((s) => s.id === value)?.name ?? value;
+			case 'agentIds':
+				return scopedAgents.find((a) => a.id === value)?.name ?? value;
+			case 'campaignIds':
+				return TEAM_CAMPAIGNS.find((c) => c.id === value)?.name ?? value;
+			default: {
+				const ns = VALUE_LABEL_NAMESPACE[key];
+				return ns ? t(`${ns}.${value}`, { defaultValue: value }) : value;
+			}
+		}
+	};
+
+	/** Score range reads "Metric: min – max"; other chips list their first values. */
+	const chipText = (key: FilterChipKey, values: string[]): string => {
+		if (key === 'scoreRange') {
+			const [metricId, min, max] = values;
+			const bounds = [min || '…', max || '…'].join(' – ');
+			return `${chipLabels.scoreRange}: ${t(`metrics.${metricId}`)} ${bounds}`;
+		}
+		if (values.length === 0) return chipLabels[key] || key;
+		const shown = values.slice(0, 2).map((v) => nameOf(key, v));
+		const more =
+			values.length > 2
+				? ` ${t('filters.chips.more', { count: values.length - 2 })}`
+				: '';
+		return `${chipLabels[key] || key}: ${shown.join(', ')}${more}`;
+	};
+
 	return (
 		<>
-			<div className={styles.filterBar}>
+			<div className={`${styles.filterBar} ${disabled ? styles.dimmed : ''}`}>
 				<Group gap='xs' wrap='wrap'>
 					<Tooltip label={t('filters.moreFilters')} withArrow>
 						<Button
 							leftSection={<IconAdjustments size={16} />}
 							variant='light'
 							size='sm'
+							disabled={disabled}
 							onClick={() => setFilterDrawerOpen(true)}
 						>
 							{t('filters.title')}
@@ -62,10 +115,24 @@ export default function FilterBar() {
 						<>
 							<Group gap={4}>
 								{chips.map((chip) => (
-									<Badge key={chip.key} variant='dot' size='lg'>
-										{chipLabels[chip.key] || chip.key}
-										{chip.values.length > 0 &&
-											`: ${chip.values.slice(0, 2).join(', ')}`}
+									<Badge
+										key={chip.key}
+										variant='dot'
+										size='lg'
+										tt='none'
+										rightSection={
+											<CloseButton
+												size='xs'
+												variant='transparent'
+												disabled={disabled}
+												aria-label={t('filters.chips.remove', {
+													filter: chipLabels[chip.key] || chip.key,
+												})}
+												onClick={() => commitFilters(chip.remove(filters))}
+											/>
+										}
+									>
+										{chipText(chip.key, chip.values)}
 									</Badge>
 								))}
 							</Group>
@@ -74,6 +141,7 @@ export default function FilterBar() {
 								<Button
 									variant='subtle'
 									size='xs'
+									disabled={disabled}
 									rightSection={<IconX size={14} />}
 									onClick={() => resetFilters()}
 								>

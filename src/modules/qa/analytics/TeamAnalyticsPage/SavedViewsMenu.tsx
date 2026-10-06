@@ -20,7 +20,14 @@ import { useTeamAnalyticsStore } from '~/stores/qa/teamAnalyticsStore';
 import { VIEW_PARAM, DEFAULT_VIEW } from '../constants';
 import type { TeamAnalyticsView } from '../types';
 
-export default function SavedViewsMenu() {
+interface SavedViewsMenuProps {
+	/** The active tab ignores filters (Burnout), so saved views can't apply. */
+	disabled?: boolean;
+}
+
+export default function SavedViewsMenu({
+	disabled = false,
+}: SavedViewsMenuProps) {
 	const { t } = useTranslation('qa.teamAnalytics');
 	const location = useLocation();
 	const params = new URLSearchParams(location.search);
@@ -64,6 +71,7 @@ export default function SavedViewsMenu() {
 						rightSection={<IconChevronDown size={14} />}
 						variant='light'
 						size='sm'
+						disabled={disabled}
 						leftSection={<IconBookmark size={16} />}
 					>
 						{t('presets.button')}

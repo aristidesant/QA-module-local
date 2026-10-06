@@ -25,6 +25,9 @@ function TeamAnalyticsPageContent() {
 	const currentView =
 		(params.get(VIEW_PARAM) as TeamAnalyticsView) || DEFAULT_VIEW;
 
+	/** Burnout reads fixed trailing windows, so it ignores the filters. */
+	const filtersApply = currentView !== 'burnout';
+
 	const eyebrow = t(`page.eyebrow.${role}`);
 
 	const renderContent = () => {
@@ -66,16 +69,23 @@ function TeamAnalyticsPageContent() {
 					</div>
 				</div>
 
-				<ViewSelector />
-
 				<div className={styles.controlsRow}>
-					<FilterBar />
+					<FilterBar disabled={!filtersApply} />
 					<div className={styles.controlsAside}>
-						<SavedViewsMenu />
+						<SavedViewsMenu disabled={!filtersApply} />
 					</div>
 				</div>
+				{!filtersApply && (
+					<Text size='xs' c='dimmed'>
+						{t('filters.burnoutNotice')}
+					</Text>
+				)}
 
-				<KPIStrip />
+				<ViewSelector />
+
+				<div className={filtersApply ? undefined : styles.dimmed}>
+					<KPIStrip />
+				</div>
 
 				<div className={styles.contentArea}>{renderContent()}</div>
 			</div>

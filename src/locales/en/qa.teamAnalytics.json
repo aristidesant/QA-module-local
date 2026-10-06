@@ -92,7 +92,8 @@
 		"chips": {
 			"clearAll": "Clear all",
 			"more": "+{{count}}",
-			"period": "Period"
+			"period": "Period",
+			"remove": "Remove filter {{filter}}"
 		},
 		"validation": {
 			"range": "\"To\" must be on or after \"From\"",
@@ -103,7 +104,10 @@
 			"OUTBOUND": "Outbound",
 			"BLENDED": "Blended"
 		},
-		"directionLabels": { "INBOUND": "Inbound", "OUTBOUND": "Outbound" },
+		"directionLabels": {
+			"INBOUND": "Inbound",
+			"OUTBOUND": "Outbound"
+		},
 		"shiftLabels": {
 			"morning": "Morning",
 			"afternoon": "Afternoon",
@@ -138,7 +142,8 @@
 			"Fear": "Fear",
 			"Sadness": "Sadness",
 			"Disgust": "Disgust"
-		}
+		},
+		"burnoutNotice": "Burnout uses fixed 7- and 14-day windows, so these filters don't apply here."
 	},
 	"presets": {
 		"button": "Saved views",
@@ -295,7 +300,11 @@
 			"to": "To",
 			"minCalls": "Min. calls evaluated"
 		},
-		"operators": { "BELOW": "Below", "ABOVE": "Above", "BETWEEN": "Between" },
+		"operators": {
+			"BELOW": "Below",
+			"ABOVE": "Above",
+			"BETWEEN": "Between"
+		},
 		"summary_one": "{{count}} agent matches",
 		"summary_other": "{{count}} agents match",
 		"summaryDetail": "{{metric}} {{condition}} · {{from}} → {{to}}",
@@ -312,7 +321,9 @@
 		},
 		"empty": "No agents match this query",
 		"emptyDescription": "Widen the range, lower the minimum calls, or change the metric.",
-		"validation": { "rangeInvalid": "\"To\" must be greater than \"From\"" },
+		"validation": {
+			"rangeInvalid": "\"To\" must be greater than \"From\""
+		},
 		"lmsReason": "Agent Finder: {{metric}} {{condition}}",
 		"coachingTopic": "Improve {{metric}}",
 		"cohort": {
