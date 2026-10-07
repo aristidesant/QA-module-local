@@ -41,6 +41,8 @@ export interface ScheduleSessionInput {
 	durationMin: number;
 	type: CoachingSessionRecord['type'];
 	modality: CoachingSessionModality | null;
+	meetingLink?: string | null;
+	agentIds?: string[];
 	topic: string;
 	area: CoachingSessionRecord['area'];
 	subItem: string | null;
@@ -329,6 +331,8 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 			coachRole: by.role,
 			type: input.type,
 			modality: input.modality,
+			meetingLink: input.meetingLink ?? null,
+			agentIds: input.agentIds,
 			date: input.date,
 			durationMin: input.durationMin,
 			topic: input.topic,
@@ -379,11 +383,12 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 				area: session.area,
 				link: '?tab=sessions',
 			});
-			notifySession(
-				session,
-				`Coaching session scheduled: ${session.topic}`,
-				`${session.coachName} scheduled a coaching session for ${new Date(session.date).toLocaleString()}.`
-			);
+			for (const participantId of session.agentIds ?? [session.agentId])
+				notifySession(
+					{ ...session, agentId: participantId },
+					`Coaching session scheduled: ${session.topic}`,
+					`${session.coachName} scheduled a coaching session for ${new Date(session.date).toLocaleString()}.`
+				);
 		}
 
 		return session;

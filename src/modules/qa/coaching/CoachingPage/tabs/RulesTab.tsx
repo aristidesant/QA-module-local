@@ -14,7 +14,6 @@ import {
 import { createColumnHelper } from '@tanstack/react-table';
 import { modals } from '@mantine/modals';
 import {
-	IconBolt,
 	IconCopy,
 	IconDots,
 	IconPencil,
@@ -56,7 +55,6 @@ interface RulesTabProps {
 	onDuplicate: (rule: CoachingRule) => void;
 	onDelete: (rule: CoachingRule) => void;
 	onToggle: (rule: CoachingRule) => void;
-	onRunNow: (rule: CoachingRule) => void;
 }
 
 export function RulesTab({
@@ -68,7 +66,6 @@ export function RulesTab({
 	onDuplicate,
 	onDelete,
 	onToggle,
-	onRunNow,
 }: RulesTabProps) {
 	const { t } = useTranslation(['qa.coaching', 'qa.triggers', 'qa.lms']);
 	const tTriggers = useTranslation('qa.triggers').t;
@@ -278,12 +275,6 @@ export function RulesTab({
 								onClick={() => onDuplicate(info.row.original)}
 							>
 								{t('rules.menu.duplicate')}
-							</Menu.Item>
-							<Menu.Item
-								leftSection={<IconBolt size={14} />}
-								onClick={() => onRunNow(info.row.original)}
-							>
-								{t('rules.menu.runNow')}
 							</Menu.Item>
 							<Menu.Divider />
 							<Menu.Item

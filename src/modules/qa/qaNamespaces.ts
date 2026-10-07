@@ -148,6 +148,18 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.qa-manager.lms.content': ['qa.lms', 'qa.team', 'qa.triggers'],
 	'qa.supervisor.coaching': ['qa.coaching', 'qa.lms', 'qa.triggers', 'qa.team'],
 	'qa.qa-manager.coaching': ['qa.coaching', 'qa.lms', 'qa.triggers', 'qa.team'],
+	'qa.supervisor.coaching.rule-detail': [
+		'qa.coaching',
+		'qa.lms',
+		'qa.triggers',
+		'qa.team',
+	],
+	'qa.qa-manager.coaching.rule-detail': [
+		'qa.coaching',
+		'qa.lms',
+		'qa.triggers',
+		'qa.team',
+	],
 	'qa.supervisor.coaching.rule-new': [
 		'qa.coaching',
 		'qa.lms',
@@ -179,6 +191,18 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.team',
 	],
 	'qa.qa-manager.coaching.group-new': [
+		'qa.coaching',
+		'qa.lms',
+		'qa.triggers',
+		'qa.team',
+	],
+	'qa.supervisor.coaching.session-new': [
+		'qa.coaching',
+		'qa.lms',
+		'qa.triggers',
+		'qa.team',
+	],
+	'qa.qa-manager.coaching.session-new': [
 		'qa.coaching',
 		'qa.lms',
 		'qa.triggers',

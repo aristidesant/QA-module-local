@@ -1,14 +1,12 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import {
 	Button,
-	Chip,
 	Group,
 	MultiSelect,
 	NumberInput,
 	Select,
 	Stack,
 	Switch,
-	Text,
 	Textarea,
 	TextInput,
 } from '@mantine/core';
@@ -33,10 +31,8 @@ import type {
 } from '~/models/qa';
 import { notifySuccess, notifyWarning } from '~/modules/qa/utils/notifications';
 import { ConditionRow } from '~/modules/qa/triggers/components/ConditionRow';
-import { PreviewPanel } from '~/modules/qa/triggers/components/PreviewPanel';
 import {
 	CAMPAIGN_TYPES,
-	EVALUATION_AREAS,
 	LINES_OF_BUSINESS,
 	METRIC_BY_ID,
 	TRIGGER_METRIC_CATALOG,
@@ -44,7 +40,6 @@ import {
 import { TRIGGER_CAMPAIGNS } from '~/modules/qa/triggers/mockData';
 import { useLmsStore, selectContent, selectPaths } from '~/stores/qa/lmsStore';
 import { useCoachingStore, nextCoachingId } from '~/stores/qa/coachingStore';
-import { LMS_AREA_META } from '~/modules/qa/lms/constants';
 import {
 	managerScopeAgents,
 	type ManagerPersona,
@@ -55,8 +50,6 @@ import {
 	COACHING_TOPICS,
 	DEFAULT_FOLLOW_UP,
 	MAX_RULE_CONDITIONS,
-	RULE_CADENCES,
-	RULE_SESSION_TYPES,
 } from '../constants';
 
 interface CoachingRuleFormValues {
@@ -153,7 +146,13 @@ export function CoachingRuleForm({
 		},
 	});
 
+	const previousArea = useRef<EvaluationArea | null>(null);
+
 	useEffect(() => {
+		// Loading a rule must not count as the user switching area.
+		previousArea.current = rule
+			? (METRIC_BY_ID[rule.conditions[0]?.metricId]?.area ?? rule.area)
+			: 'QUALITY_ASSURANCE';
 		if (rule) {
 			form.setValues({
 				name: rule.name,
@@ -200,23 +199,28 @@ export function CoachingRuleForm({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rule?.id]);
 
+	// The aspect is no longer asked for: it is the area of the first condition.
+	const area: EvaluationArea =
+		METRIC_BY_ID[form.values.conditions[0]?.metricId]?.area ?? form.values.area;
+
+	useEffect(() => {
+		if (previousArea.current === area) return;
+		previousArea.current = area;
+		form.setFieldValue('action.contentIds', []);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [area]);
+
 	const contentOptions = useMemo(() => {
 		const pool = content.filter(
 			(c) =>
 				c.status === 'PUBLISHED' &&
-				(form.values.showAllContent || c.area === form.values.area)
+				(form.values.showAllContent || c.area === area)
 		);
 		return pool.map((c) => ({
 			value: c.id,
 			label: `${c.title} · ${t(`formats.${c.format}`, { ns: 'qa.lms' })} · ${c.durationMin} min`,
 		}));
-	}, [content, form.values.showAllContent, form.values.area, t]);
-
-	const handleAreaChange = (next: EvaluationArea) => {
-		form.setFieldValue('area', next);
-		form.setFieldValue('conditions', [buildCondition(next)]);
-		form.setFieldValue('action.contentIds', []);
-	};
+	}, [content, form.values.showAllContent, area, t]);
 
 	const validate = (): string | null => {
 		if (!form.values.name.trim()) return t('rules.editor.validation.name');
@@ -252,7 +256,7 @@ export function CoachingRuleForm({
 			name: form.values.name.trim(),
 			description: form.values.description.trim(),
 			status,
-			area: form.values.area,
+			area,
 			// Weekly rules always read the last 7 days, whatever the conditions were set to.
 			conditions:
 				form.values.cadence === 'WEEKLY'
@@ -312,20 +316,11 @@ export function CoachingRuleForm({
 
 	const addCondition = () => {
 		if (form.values.conditions.length >= MAX_RULE_CONDITIONS) return;
-		form.insertListItem('conditions', buildCondition(form.values.area));
+		form.insertListItem('conditions', buildCondition(area));
 	};
 
 	return (
 		<Stack gap='md'>
-			<PreviewPanel
-				values={{
-					type: 'METRIC_ALERT',
-					conditions: form.values.conditions,
-					conditionLogic: form.values.conditionLogic,
-					scope: form.values.scope,
-				}}
-			/>
-
 			<SectionCard title={t('rules.editor.sections.basics')} padding='md'>
 				<Stack gap='sm'>
 					<TextInput
@@ -340,27 +335,6 @@ export function CoachingRuleForm({
 						value={form.values.description}
 						onChange={(e) =>
 							form.setFieldValue('description', e.currentTarget.value)
-						}
-					/>
-					<Select
-						label={t('rules.editor.fields.area')}
-						data={EVALUATION_AREAS.map((a) => ({
-							value: a,
-							label: t(LMS_AREA_META[a].labelKey, { ns: 'qa.lms' }),
-						}))}
-						value={form.values.area}
-						onChange={(v) => v && handleAreaChange(v as EvaluationArea)}
-					/>
-					<Select
-						label={t('rules.editor.fields.cadence')}
-						description={t(`rules.editor.cadenceHint.${form.values.cadence}`)}
-						data={RULE_CADENCES.map((c) => ({
-							value: c,
-							label: t(`rules.cadence.${c}`),
-						}))}
-						value={form.values.cadence}
-						onChange={(v) =>
-							v && form.setFieldValue('cadence', v as CoachingRuleCadence)
 						}
 					/>
 				</Stack>
@@ -389,6 +363,7 @@ export function CoachingRuleForm({
 						<ConditionRow
 							key={condition.id}
 							condition={condition}
+							scoreOnlyAreas={['SENTIMENT_EMOTION']}
 							allowedModes={[
 								'THRESHOLD',
 								'RANGE',
@@ -468,33 +443,18 @@ export function CoachingRuleForm({
 						/>
 					)}
 
-					<Group grow>
-						<NumberInput
-							label={t('rules.editor.fields.dueInDays')}
-							min={1}
-							max={90}
-							value={form.values.action.dueInDays}
-							onChange={(v) =>
-								form.setFieldValue(
-									'action.dueInDays',
-									typeof v === 'number' ? v : 14
-								)
-							}
-						/>
-						<NumberInput
-							label={t('rules.editor.fields.cooldown')}
-							description={t('rules.editor.fields.cooldownHint')}
-							min={0}
-							max={180}
-							value={form.values.cooldownDays}
-							onChange={(v) =>
-								form.setFieldValue(
-									'cooldownDays',
-									typeof v === 'number' ? v : 30
-								)
-							}
-						/>
-					</Group>
+					<NumberInput
+						label={t('rules.editor.fields.dueInDays')}
+						min={1}
+						max={90}
+						value={form.values.action.dueInDays}
+						onChange={(v) =>
+							form.setFieldValue(
+								'action.dueInDays',
+								typeof v === 'number' ? v : 14
+							)
+						}
+					/>
 
 					<Switch
 						label={t('rules.editor.fields.mandatory')}
@@ -513,72 +473,6 @@ export function CoachingRuleForm({
 							)
 						}
 					/>
-					<Switch
-						label={t('rules.editor.fields.scheduleSession')}
-						checked={form.values.action.scheduleSession}
-						onChange={(e) =>
-							form.setFieldValue(
-								'action.scheduleSession',
-								e.currentTarget.checked
-							)
-						}
-					/>
-
-					{form.values.action.scheduleSession && (
-						<Stack gap='sm'>
-							<Select
-								label={t('rules.editor.fields.sessionType')}
-								data={RULE_SESSION_TYPES.map((type) => ({
-									value: type,
-									label: t(`sessions.types.${type}`),
-								}))}
-								value={form.values.action.sessionType}
-								onChange={(v) =>
-									v &&
-									form.setFieldValue(
-										'action.sessionType',
-										v as CoachingRuleAction['sessionType']
-									)
-								}
-								allowDeselect={false}
-							/>
-							<Group grow>
-								<Select
-									label={t('rules.editor.fields.sessionTopic')}
-									data={COACHING_TOPICS}
-									value={form.values.action.sessionTopic}
-									onChange={(v) =>
-										v && form.setFieldValue('action.sessionTopic', v)
-									}
-									searchable
-								/>
-								<Select
-									label={t('rules.editor.fields.sessionCoach')}
-									data={[
-										{
-											value: 'SUPERVISOR',
-											label: t('rules.editor.coach.SUPERVISOR'),
-										},
-										{
-											value: 'QA_MANAGER',
-											label: t('rules.editor.coach.QA_MANAGER'),
-										},
-									]}
-									value={form.values.action.sessionCoach}
-									onChange={(v) =>
-										v &&
-										form.setFieldValue('action.sessionCoach', v as CoachRole)
-									}
-								/>
-							</Group>
-							{form.values.action.sessionType === 'AI_MESSAGE' && (
-								<Text size='xs' c='dimmed'>
-									{t('rules.editor.aiMessageHint')}
-								</Text>
-							)}
-						</Stack>
-					)}
-
 					<Switch
 						label={t('rules.editor.fields.notifySupervisor')}
 						checked={form.values.action.notifySupervisor}
@@ -637,69 +531,6 @@ export function CoachingRuleForm({
 						onChange={(v) => form.setFieldValue('scope.agentIds', v)}
 						searchable
 						clearable
-					/>
-				</Stack>
-			</SectionCard>
-
-			<SectionCard
-				title={t('rules.editor.sections.followUp')}
-				description={t('rules.editor.sections.followUpDescription')}
-				padding='md'
-			>
-				<Stack gap='sm'>
-					<Group grow>
-						<NumberInput
-							label={t('rules.editor.fields.windowDays')}
-							min={7}
-							max={90}
-							value={form.values.followUp.windowDays}
-							onChange={(v) =>
-								form.setFieldValue(
-									'followUp.windowDays',
-									typeof v === 'number' ? v : 30
-								)
-							}
-						/>
-						<NumberInput
-							label={t('rules.editor.fields.successThreshold')}
-							min={1}
-							max={20}
-							value={form.values.followUp.successThreshold}
-							onChange={(v) =>
-								form.setFieldValue(
-									'followUp.successThreshold',
-									typeof v === 'number' ? v : 3
-								)
-							}
-						/>
-					</Group>
-					<Chip.Group
-						multiple
-						value={form.values.followUp.checkpointDays.map(String)}
-						onChange={(v) =>
-							form.setFieldValue(
-								'followUp.checkpointDays',
-								(v as string[]).map(Number).sort((a, b) => a - b)
-							)
-						}
-					>
-						<Group gap='xs'>
-							{[7, 15, 30].map((d) => (
-								<Chip key={d} value={String(d)} size='xs' variant='outline'>
-									{d} d
-								</Chip>
-							))}
-						</Group>
-					</Chip.Group>
-					<Switch
-						label={t('rules.editor.fields.reassignOnDecline')}
-						checked={form.values.followUp.reassignOnDecline}
-						onChange={(e) =>
-							form.setFieldValue(
-								'followUp.reassignOnDecline',
-								e.currentTarget.checked
-							)
-						}
 					/>
 				</Stack>
 			</SectionCard>

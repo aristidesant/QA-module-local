@@ -28,16 +28,8 @@ import { BurnoutTab } from './tabs/BurnoutTab';
 import { CoachingLmsTab } from './tabs/CoachingLmsTab';
 import { AchievementsTab } from './tabs/AchievementsTab';
 import { NotesTab } from './tabs/NotesTab';
-import { SessionEditorDrawer } from '~/modules/qa/coaching/components/SessionEditorDrawer';
+import { coachingSessionNewPath } from '~/modules/qa/coaching/constants';
 import { AssignContentDrawer } from '~/modules/qa/lms/components/AssignContentDrawer';
-import { managerPersona } from '~/modules/qa/lms/helpers';
-import {
-	useLmsStore,
-	selectAssignments,
-	selectContent,
-} from '~/stores/qa/lmsStore';
-import { useCoachingStore, selectCohorts } from '~/stores/qa/coachingStore';
-import type { LmsContent } from '~/models/qa';
 import { SendMessageModal } from '../components/modals/SendMessageModal';
 
 export default function AgentProfilePage() {
@@ -49,7 +41,6 @@ export default function AgentProfilePage() {
 	const profile = useTeamStore(selectProfile(agentId));
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [period, setPeriod] = useState<ProfilePeriod>('12m');
-	const [coachingOpen, setCoachingOpen] = useState(false);
 	const [lmsOpen, setLmsOpen] = useState(false);
 	const [messageOpen, setMessageOpen] = useState(false);
 
@@ -75,21 +66,8 @@ export default function AgentProfilePage() {
 		[profile, period]
 	);
 
-	const allAssignments = useLmsStore(selectAssignments);
-	const allContent = useLmsStore(selectContent);
-	const cohorts = useCoachingStore(selectCohorts);
-	const agentAssignments = useMemo(
-		() => allAssignments.filter((a) => a.agentId === agentId),
-		[allAssignments, agentId]
-	);
-	const contentById = useMemo(
-		() =>
-			Object.fromEntries(allContent.map((c) => [c.id, c])) as Record<
-				string,
-				LmsContent
-			>,
-		[allContent]
-	);
+	const scheduleCoaching = () =>
+		navigate(coachingSessionNewPath(role, { agent: profile?.agent.id }));
 
 	if (!profile || notVisible) {
 		return (
@@ -135,7 +113,7 @@ export default function AgentProfilePage() {
 					role={role}
 					period={period}
 					onPeriodChange={setPeriod}
-					onScheduleCoaching={() => setCoachingOpen(true)}
+					onScheduleCoaching={scheduleCoaching}
 					onAssignLms={() => setLmsOpen(true)}
 					onSendMessage={() => setMessageOpen(true)}
 				/>
@@ -175,13 +153,13 @@ export default function AgentProfilePage() {
 						<BurnoutTab
 							profile={profile}
 							role={role}
-							onScheduleCoaching={() => setCoachingOpen(true)}
+							onScheduleCoaching={scheduleCoaching}
 						/>
 					</Tabs.Panel>
 					<Tabs.Panel value='coaching' pt='md'>
 						<CoachingLmsTab
 							profile={profile}
-							onScheduleCoaching={() => setCoachingOpen(true)}
+							onScheduleCoaching={scheduleCoaching}
 							onAssignLms={() => setLmsOpen(true)}
 						/>
 					</Tabs.Panel>
@@ -194,16 +172,6 @@ export default function AgentProfilePage() {
 				</Tabs>
 			</Stack>
 
-			<SessionEditorDrawer
-				opened={coachingOpen}
-				onClose={() => setCoachingOpen(false)}
-				role={role}
-				persona={managerPersona(role)}
-				preset={{ agentId: profile.agent.id }}
-				cohorts={cohorts}
-				assignments={agentAssignments}
-				contentById={contentById}
-			/>
 			<AssignContentDrawer
 				opened={lmsOpen}
 				onClose={() => setLmsOpen(false)}

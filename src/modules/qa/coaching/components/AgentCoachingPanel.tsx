@@ -58,7 +58,11 @@ export function AgentCoachingPanel({
 		() =>
 			profile
 				? sessions
-						.filter((s) => s.agentId === profile.agent.id)
+						.filter(
+							(s) =>
+								s.agentId === profile.agent.id ||
+								s.agentIds?.includes(profile.agent.id)
+						)
 						.sort((a, b) => b.date.localeCompare(a.date))
 				: [],
 		[sessions, profile]

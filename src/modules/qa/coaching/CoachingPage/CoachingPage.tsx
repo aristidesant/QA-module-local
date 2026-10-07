@@ -10,17 +10,12 @@ import {
 	Text,
 	Title,
 } from '@mantine/core';
-import {
-	IconAlertTriangle,
-	IconBook,
-	IconCalendarEvent,
-	IconPlus,
-} from '@tabler/icons-react';
+import { IconBook, IconCalendarEvent, IconPlus } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
 import { StatCard } from '~/components/StatCard';
-import type { CoachingRule, LmsContent } from '~/models/qa';
-import { notifySuccess, notifyWarning } from '~/modules/qa/utils/notifications';
+import type { LmsContent } from '~/models/qa';
+import { notifySuccess } from '~/modules/qa/utils/notifications';
 import {
 	useLmsStore,
 	selectAssignments,
@@ -33,7 +28,6 @@ import {
 	selectCohorts,
 	selectRules,
 	selectSessions,
-	selectSnoozed,
 } from '~/stores/qa/coachingStore';
 import { useTeamStore } from '~/stores/qa/teamStore';
 import {
@@ -44,10 +38,8 @@ import { withRuleBurnout } from '~/modules/qa/analytics/helpers';
 import {
 	daysUntil,
 	isOverdue,
-	managerPersona,
 	managerScopeAgents,
 	toAssignmentRows,
-	today,
 } from '~/modules/qa/lms/helpers';
 import {
 	AssignContentDrawer,
@@ -59,22 +51,18 @@ import {
 	COACHING_TABS,
 	coachingAgentPath,
 	coachingGroupNewPath,
+	coachingSessionNewPath,
 	coachingRuleEditPath,
 	coachingRuleNewPath,
+	coachingRulePath,
 	type CoachingTab,
 } from '../constants';
-import { buildQueue } from '../helpers';
 import { AgentsTab, buildAgentRows } from './tabs/AgentsTab';
 import { CohortsTab } from './tabs/CohortsTab';
 import { RulesTab } from './tabs/RulesTab';
 import { SessionsTab } from './tabs/SessionsTab';
 import { ImpactTab } from './tabs/ImpactTab';
 import { CohortDrawer } from '../components/CohortDrawer';
-import { CoachingRuleDetailDrawer } from '../components/CoachingRuleDetailDrawer';
-import {
-	SessionEditorDrawer,
-	type SessionPreset,
-} from '../components/SessionEditorDrawer';
 import { SessionDetailDrawer } from '../components/SessionDetailDrawer';
 
 export default function CoachingPage() {
@@ -84,7 +72,6 @@ export default function CoachingPage() {
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	const role = roleFromPath(location.pathname);
-	const persona = managerPersona(role);
 	const scopeAgents = useMemo(() => managerScopeAgents(role), [role]);
 
 	const profilesMap = useTeamStore((s) => s.profiles);
@@ -96,18 +83,12 @@ export default function CoachingPage() {
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	const sessions = useCoachingStore(selectSessions);
 	const cohorts = useCoachingStore(selectCohorts);
-	const snoozed = useCoachingStore(selectSnoozed);
 
 	const [assignState, setAssignState] = useState<{
 		opened: boolean;
 		preset?: AssignPreset;
 	}>({ opened: false });
-	const [sessionEditor, setSessionEditor] = useState<{
-		opened: boolean;
-		preset?: SessionPreset;
-	}>({ opened: false });
 	const [cohortId, setCohortId] = useState<string | null>(null);
-	const [ruleId, setRuleId] = useState<string | null>(null);
 	const [sessionId, setSessionId] = useState<string | null>(null);
 
 	// Burnout level follows the burnout rules in Triggers.
@@ -136,7 +117,12 @@ export default function CoachingPage() {
 		[assignments, contentById, scopeAgents]
 	);
 	const scopeSessions = useMemo(
-		() => sessions.filter((s) => scopeAgents.some((a) => a.id === s.agentId)),
+		() =>
+			sessions.filter((s) =>
+				(s.agentIds ?? [s.agentId]).some((id) =>
+					scopeAgents.some((a) => a.id === id)
+				)
+			),
 		[sessions, scopeAgents]
 	);
 	const scopeAssignments = useMemo(
@@ -163,19 +149,6 @@ export default function CoachingPage() {
 		[rules, role]
 	);
 
-	const queue = useMemo(
-		() =>
-			buildQueue(
-				scopeProfiles,
-				scopeAssignments,
-				scopeSessions,
-				content,
-				t
-			).filter(
-				(item) => !snoozed[item.agentId] || snoozed[item.agentId] < today()
-			),
-		[scopeProfiles, scopeAssignments, scopeSessions, content, t, snoozed]
-	);
 	const agentRows = useMemo(
 		() => buildAgentRows(scopeProfiles, scopeAssignments, scopeSessions),
 		[scopeProfiles, scopeAssignments, scopeSessions]
@@ -194,7 +167,6 @@ export default function CoachingPage() {
 		(a) => a.impact && a.impact.verdict !== 'PENDING'
 	);
 	const kpis = {
-		attention: queue.filter((q) => q.priority !== 'LOW').length,
 		activePlans: scopeAssignments.filter((a) => a.status !== 'COMPLETED')
 			.length,
 		pendingResponses: scopeAssignments.filter(
@@ -223,7 +195,10 @@ export default function CoachingPage() {
 	useEffect(() => {
 		const scheduleAgentId = searchParams.get('schedule');
 		if (!scheduleAgentId) return;
-		setSessionEditor({ opened: true, preset: { agentId: scheduleAgentId } });
+		navigate(coachingSessionNewPath(role, { agent: scheduleAgentId }), {
+			replace: true,
+		});
+		return;
 		setSearchParams(
 			(prev) => {
 				const next = new URLSearchParams(prev);
@@ -250,19 +225,6 @@ export default function CoachingPage() {
 	const pathTitle = (id: string | null) =>
 		paths.find((p) => p.id === id)?.title ?? '—';
 
-	const handleRunNow = (rule: CoachingRule, agentIds: string[]) => {
-		if (agentIds.length === 0) {
-			notifyWarning(t('rules.notifications.noMatches'));
-			return;
-		}
-		const count = useCoachingStore.getState().runRuleNow(rule.id, agentIds, {
-			name: persona.name,
-			role: persona.role,
-		});
-		notifySuccess(t('rules.notifications.ran', { count }));
-		setRuleId(null);
-	};
-
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
@@ -287,7 +249,7 @@ export default function CoachingPage() {
 						<Button
 							variant='default'
 							leftSection={<IconCalendarEvent size={16} />}
-							onClick={() => setSessionEditor({ opened: true })}
+							onClick={() => navigate(coachingSessionNewPath(role))}
 						>
 							{t('newSession')}
 						</Button>
@@ -300,16 +262,7 @@ export default function CoachingPage() {
 					</Group>
 				</Group>
 
-				<SimpleGrid cols={{ base: 2, md: 6 }} spacing='md'>
-					<StatCard
-						title={t('kpi.attention')}
-						value={kpis.attention}
-						color={
-							kpis.attention > 0 ? 'var(--mantine-color-red-7)' : undefined
-						}
-						icon={<IconAlertTriangle size={18} />}
-						variant='compact'
-					/>
+				<SimpleGrid cols={{ base: 2, md: 5 }} spacing='md'>
 					<StatCard
 						title={t('kpi.activePlans')}
 						value={kpis.activePlans}
@@ -400,7 +353,7 @@ export default function CoachingPage() {
 							pathTitle={pathTitle}
 							onCreate={() => navigate(coachingRuleNewPath(role))}
 							onEdit={(rule) => navigate(coachingRuleEditPath(role, rule.id))}
-							onOpen={setRuleId}
+							onOpen={(ruleId) => navigate(coachingRulePath(role, ruleId))}
 							onDuplicate={(rule) => {
 								const copy = useCoachingStore.getState().duplicateRule(rule.id);
 								if (copy) {
@@ -423,7 +376,6 @@ export default function CoachingPage() {
 									)
 								);
 							}}
-							onRunNow={(rule) => setRuleId(rule.id)}
 						/>
 					</Tabs.Panel>
 
@@ -434,7 +386,7 @@ export default function CoachingPage() {
 							agentSupervisor={agentSupervisor}
 							role={role}
 							onOpen={setSessionId}
-							onCreate={() => setSessionEditor({ opened: true })}
+							onCreate={() => navigate(coachingSessionNewPath(role))}
 						/>
 					</Tabs.Panel>
 
@@ -458,31 +410,6 @@ export default function CoachingPage() {
 				role={role}
 				preset={assignState.preset}
 				cohorts={scopeCohorts}
-			/>
-
-			<SessionEditorDrawer
-				opened={sessionEditor.opened}
-				onClose={() => setSessionEditor({ opened: false })}
-				role={role}
-				persona={persona}
-				preset={sessionEditor.preset}
-				cohorts={scopeCohorts}
-				assignments={scopeAssignments}
-				contentById={contentById}
-			/>
-
-			<CoachingRuleDetailDrawer
-				rule={ruleId ? (scopeRules.find((r) => r.id === ruleId) ?? null) : null}
-				rows={rows}
-				contentById={contentById}
-				pathTitle={pathTitle}
-				opened={ruleId !== null}
-				onClose={() => setRuleId(null)}
-				onEdit={(rule) => {
-					setRuleId(null);
-					navigate(coachingRuleEditPath(role, rule.id));
-				}}
-				onRunNow={handleRunNow}
 			/>
 
 			<CohortDrawer
@@ -518,10 +445,9 @@ export default function CoachingPage() {
 				}}
 				onScheduleGroup={() => {
 					if (cohortId) {
-						setSessionEditor({
-							opened: true,
-							preset: { cohortId, type: 'GROUP' },
-						});
+						navigate(
+							coachingSessionNewPath(role, { cohort: cohortId, type: 'GROUP' })
+						);
 						setCohortId(null);
 					}
 				}}
@@ -534,7 +460,7 @@ export default function CoachingPage() {
 				}}
 				onOpenRule={(id) => {
 					setCohortId(null);
-					setRuleId(id);
+					navigate(coachingRulePath(role, id));
 				}}
 			/>
 

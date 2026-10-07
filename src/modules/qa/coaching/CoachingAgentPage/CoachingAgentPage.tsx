@@ -35,13 +35,11 @@ import {
 	selectTriggerRules,
 } from '~/stores/qa/triggerRulesStore';
 import { withRuleBurnout } from '~/modules/qa/analytics/helpers';
-import { managerPersona } from '~/modules/qa/lms/helpers';
 import { AssignContentDrawer } from '~/modules/qa/lms/components/AssignContentDrawer';
 import { agentProfilePath, roleFromPath } from '~/modules/qa/team/helpers';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
-import { coachingBasePath } from '../constants';
+import { coachingBasePath, coachingSessionNewPath } from '../constants';
 import { AgentCoachingPanel } from '../components/AgentCoachingPanel';
-import { SessionEditorDrawer } from '../components/SessionEditorDrawer';
 import { SessionDetailDrawer } from '../components/SessionDetailDrawer';
 
 const AGENT_COACHING_TABS = ['assignments', 'sessions', 'impact'];
@@ -54,7 +52,6 @@ export default function CoachingAgentPage() {
 	const [searchParams, setSearchParams] = useSearchParams();
 
 	const role = roleFromPath(location.pathname);
-	const persona = managerPersona(role);
 
 	const profilesMap = useTeamStore((s) => s.profiles);
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
@@ -64,7 +61,6 @@ export default function CoachingAgentPage() {
 	const cohorts = useCoachingStore(selectCohorts);
 
 	const [assignOpen, setAssignOpen] = useState(false);
-	const [scheduleOpen, setScheduleOpen] = useState(false);
 	const [sessionId, setSessionId] = useState<string | null>(null);
 
 	const rawProfile = agentId ? profilesMap[agentId] : undefined;
@@ -96,7 +92,6 @@ export default function CoachingAgentPage() {
 		() => ({ agentIds: agentId ? [agentId] : [] }),
 		[agentId]
 	);
-	const schedulePreset = useMemo(() => ({ agentId }), [agentId]);
 
 	const requestedTab = searchParams.get('tab');
 	const tab = AGENT_COACHING_TABS.includes(requestedTab ?? '')
@@ -151,7 +146,9 @@ export default function CoachingAgentPage() {
 						<Button
 							variant='default'
 							leftSection={<IconCalendarEvent size={16} />}
-							onClick={() => setScheduleOpen(true)}
+							onClick={() =>
+								navigate(coachingSessionNewPath(role, { agent: agentId }))
+							}
 						>
 							{t('agents.drawer.schedule')}
 						</Button>
@@ -186,17 +183,6 @@ export default function CoachingAgentPage() {
 				role={role}
 				preset={assignPreset}
 				cohorts={agentCohorts}
-			/>
-
-			<SessionEditorDrawer
-				opened={scheduleOpen}
-				onClose={() => setScheduleOpen(false)}
-				role={role}
-				persona={persona}
-				preset={schedulePreset}
-				cohorts={agentCohorts}
-				assignments={assignments}
-				contentById={contentById}
 			/>
 
 			<SessionDetailDrawer

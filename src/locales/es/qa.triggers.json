@@ -348,6 +348,7 @@
 			"windowSize": "N",
 			"addCondition": "Agregar condición",
 			"removeCondition": "Eliminar condición",
+			"scoreScaleHint": "Sentimiento y emoción se mide de 0 a 5, no como porcentaje.",
 			"agents": "Agentes",
 			"agentsPlaceholder": "Todos los agentes",
 			"supervisors": "Supervisores",

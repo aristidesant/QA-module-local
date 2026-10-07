@@ -334,6 +334,7 @@
 			"windowSize": "N",
 			"addCondition": "Add condition",
 			"removeCondition": "Remove condition",
+			"scoreScaleHint": "Sentiment & emotion is scored from 0 to 5, not as a percentage.",
 			"agents": "Agents",
 			"agentsPlaceholder": "All agents",
 			"supervisors": "Supervisors",

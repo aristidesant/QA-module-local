@@ -12,6 +12,7 @@ import { IconTrash } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type {
 	ConditionMode,
+	EvaluationArea,
 	RuleCondition,
 	TriggerMetricId,
 } from '~/models/qa';
@@ -31,6 +32,8 @@ interface ConditionRowProps {
 	index?: number;
 	condition: RuleCondition;
 	allowedModes: ConditionMode[];
+	/** Areas measured on a 0-5 scale: their percentage and count metrics are not offered. */
+	scoreOnlyAreas?: EvaluationArea[];
 	onChange: (updated: RuleCondition) => void;
 	onRemove: () => void;
 	canRemove: boolean;
@@ -46,6 +49,7 @@ const DROPDOWN_PROPS = {
 export function ConditionRow({
 	condition,
 	allowedModes,
+	scoreOnlyAreas,
 	onChange,
 	onRemove,
 	canRemove,
@@ -59,8 +63,13 @@ export function ConditionRow({
 		value: area,
 	}));
 
+	// A metric already picked stays listed, so editing an older rule never loses its value.
 	const areaMetrics = TRIGGER_METRIC_CATALOG.filter(
-		(m) => m.area === metric.area
+		(m) =>
+			m.area === metric.area &&
+			(m.id === condition.metricId ||
+				!scoreOnlyAreas?.includes(m.area) ||
+				m.unit === 'SCORE_5')
 	);
 	const metricOptions = areaMetrics.map((m) => ({
 		label: t(`metrics.${m.id}`),
@@ -425,6 +434,11 @@ export function ConditionRow({
 				<Text size='xs' c='dimmed'>
 					{describeCondition(t, condition)}
 				</Text>
+				{metric.unit === 'SCORE_5' && (
+					<Text size='xs' c='dimmed'>
+						{t('editor.fields.scoreScaleHint')}
+					</Text>
+				)}
 				{error && (
 					<Text size='xs' c='red'>
 						{error}

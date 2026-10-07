@@ -134,8 +134,22 @@ export const MAX_RULE_CONDITIONS = 5;
 export const coachingBasePath = (role: TeamRole) =>
 	role === 'qa-manager' ? '/qa/qa-manager/coaching' : '/qa/supervisor/coaching';
 
+/** Presets travel as query params: `agent`, `cohort`, `type`, `topic`. */
+export const coachingSessionNewPath = (
+	role: TeamRole,
+	preset: { agent?: string; cohort?: string; type?: string } = {}
+) => {
+	const params = new URLSearchParams(
+		Object.entries(preset).filter(([, v]) => v) as [string, string][]
+	).toString();
+	return `${coachingBasePath(role)}/sessions/new${params ? `?${params}` : ''}`;
+};
+
 export const coachingRuleNewPath = (role: TeamRole) =>
 	`${coachingBasePath(role)}/rules/new`;
+
+export const coachingRulePath = (role: TeamRole, ruleId: string) =>
+	`${coachingBasePath(role)}/rules/${ruleId}`;
 
 export const coachingRuleEditPath = (role: TeamRole, ruleId: string) =>
 	`${coachingBasePath(role)}/rules/${ruleId}/edit`;

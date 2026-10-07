@@ -1,4 +1,12 @@
-import { Badge, Group, Paper, Stack, Text, ThemeIcon } from '@mantine/core';
+import {
+	Anchor,
+	Badge,
+	Group,
+	Paper,
+	Stack,
+	Text,
+	ThemeIcon,
+} from '@mantine/core';
 import {
 	IconCalendarEvent,
 	IconCheck,
@@ -75,6 +83,21 @@ export function AgentSessionDetailDrawer({
 						/>
 					)}
 				</Group>
+
+				{session.meetingLink && (
+					<Anchor
+						size='sm'
+						href={
+							/^https?:\/\//i.test(session.meetingLink)
+								? session.meetingLink
+								: `https://${session.meetingLink}`
+						}
+						target='_blank'
+						rel='noreferrer'
+					>
+						{t('agent.coaching.detail.meetingLink')}
+					</Anchor>
+				)}
 
 				{isAi ? (
 					<SectionCard

@@ -1,6 +1,7 @@
 ﻿import { useEffect, useState } from 'react';
 import {
 	ActionIcon,
+	Anchor,
 	Badge,
 	Button,
 	Checkbox,
@@ -164,6 +165,21 @@ export function SessionDetailDrawer({
 						{session.durationMin} min
 					</Text>
 				</Group>
+
+				{session.meetingLink && (
+					<Anchor
+						size='sm'
+						href={
+							/^https?:\/\//i.test(session.meetingLink)
+								? session.meetingLink
+								: `https://${session.meetingLink}`
+						}
+						target='_blank'
+						rel='noreferrer'
+					>
+						{t('sessions.detail.meetingLink')}
+					</Anchor>
+				)}
 
 				{isAi && (
 					<SectionCard title={t('sessions.detail.aiMessage')} padding='md'>

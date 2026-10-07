@@ -226,12 +226,13 @@
 				"MICRO": "Micro",
 				"AI_MESSAGE": "Mensaje IA"
 			},
-			"modality": { "IN_PERSON": "Presencial", "REMOTE": "Remota" },
+			"modality": { "IN_PERSON": "Presencial", "REMOTE": "Virtual" },
 			"empty": "Todavía no tienes sesiones de coaching.",
 			"noCommitments": "No tienes compromisos abiertos.",
 			"detail": {
 				"talkingPoints": "Puntos a tratar",
 				"aiMessage": "Mensaje",
+				"meetingLink": "Enlace de la reunión",
 				"noPoints": "No hay puntos a tratar registrados.",
 				"evidence": "Evidencia",
 				"actionItems": "Acciones a seguir",

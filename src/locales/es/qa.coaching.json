@@ -414,7 +414,7 @@
 			"MICRO": "Micro (10 min)",
 			"AI_MESSAGE": "Mensaje IA"
 		},
-		"modality": { "IN_PERSON": "Presencial", "REMOTE": "Remota" },
+		"modality": { "IN_PERSON": "Presencial", "REMOTE": "Virtual" },
 		"status": {
 			"SCHEDULED": "Agendada",
 			"COMPLETED": "Completada",
@@ -434,6 +434,7 @@
 		"later": "Más adelante",
 		"past": "Sesiones pasadas",
 		"editor": {
+			"modality": "Modalidad",
 			"createTitle": "Agendar sesión",
 			"editTitle": "Editar sesión",
 			"agent": "Agente",
@@ -445,7 +446,51 @@
 			"area": "Aspecto",
 			"subItem": "Subcriterio",
 			"evidence": "Llamadas de evidencia",
-			"evidencePlaceholder": "call-001, call-104",
+			"evidenceSelect": "Seleccionar llamadas",
+			"evidenceEmpty": "Todavía no hay llamadas de evidencia",
+			"evidenceModal": {
+				"title": "Seleccionar llamadas de evidencia",
+				"period": "Período",
+				"last7": "7 días",
+				"last30": "30 días",
+				"last90": "90 días",
+				"campaign": "Campaña",
+				"lineOfBusiness": "Línea de negocio",
+				"agent": "Agente",
+				"search": "Buscar por ID de llamada",
+				"clear": "Limpiar filtros",
+				"all": "Todas",
+				"allAgents": "Todos los agentes de tu alcance",
+				"found_one": "{{count}} llamada",
+				"found_other": "{{count}} llamadas",
+				"columns": {
+					"call": "Llamada",
+					"date": "Fecha",
+					"agent": "Agente",
+					"campaign": "Campaña",
+					"duration": "Duración",
+					"result": "Resultado"
+				},
+				"autoFail": "Auto-fail",
+				"empty": "Ninguna llamada coincide con estos filtros",
+				"cancel": "Cancelar",
+				"add_one": "Agregar {{count}} llamada",
+				"add_other": "Agregar {{count}} llamadas"
+			},
+			"participants": "Participantes",
+			"participantsHint": "Elige a todos los agentes que se unen. Mínimo dos.",
+			"addFromGroup": "Agregar miembros de un grupo de aprendizaje",
+			"addFromGroupPlaceholder": "Opcional: agrega un grupo de aprendizaje completo",
+			"format": "Formato de la sesión",
+			"formats": {
+				"ONE_ON_ONE": "1:1 (un agente)",
+				"GROUP": "Grupal (grupo de aprendizaje)"
+			},
+			"meetingLink": "Enlace de la reunión",
+			"meetingLinkPlaceholder": "Pega el enlace de Zoom, Meet o Teams",
+			"minutes": "{{count}} min",
+			"topicHint": "Elige uno de la lista o escribe el tuyo",
+			"topicPlaceholder": "Selecciona o escribe un tema",
 			"talkingPoints": "Puntos a tratar",
 			"talkingPointPlaceholder": "Lo que quieres cubrir",
 			"addPoint": "Añadir punto",
@@ -457,10 +502,12 @@
 			"validation": {
 				"agent": "Elige un agente",
 				"topic": "El tema es obligatorio",
-				"date": "Elige una fecha"
+				"date": "Elige una fecha",
+				"meetingLink": "Pega el enlace de la reunión"
 			}
 		},
 		"detail": {
+			"meetingLink": "Enlace de la reunión",
 			"evidence": "Evidencia",
 			"talkingPoints": "Puntos a tratar",
 			"actionItems": "Acciones acordadas",

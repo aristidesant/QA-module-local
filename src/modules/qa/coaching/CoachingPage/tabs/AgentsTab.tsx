@@ -100,7 +100,9 @@ export function buildAgentRows(
 			).length,
 			lastImpact,
 			pendingSession: sessions.some(
-				(s) => s.agentId === p.agent.id && s.status === 'SCHEDULED'
+				(s) =>
+					(s.agentId === p.agent.id || s.agentIds?.includes(p.agent.id)) &&
+					s.status === 'SCHEDULED'
 			),
 		};
 	});

@@ -99,6 +99,10 @@ export interface CoachingSessionRecord {
 	type: CoachingSessionType;
 	/** null for AI_MESSAGE and MICRO. */
 	modality: CoachingSessionModality | null;
+	/** Every participant of a group session (agentId is the first one). */
+	agentIds?: string[];
+	/** Link of the call when the session is virtual. */
+	meetingLink?: string | null;
 	/** ISO datetime */
 	date: string;
 	durationMin: number;

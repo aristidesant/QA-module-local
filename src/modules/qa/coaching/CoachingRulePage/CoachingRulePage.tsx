@@ -40,7 +40,7 @@ export default function CoachingRulePage() {
 
 	return (
 		<ContentContainer contentWidth='full'>
-			<Stack gap='lg'>
+			<Stack gap='lg' maw={960} mx='auto' px='md'>
 				<Breadcrumbs>
 					<Anchor size='sm' onClick={() => navigate(coachingBasePath(role))}>
 						{t('title')}

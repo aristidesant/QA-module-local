@@ -226,12 +226,13 @@
 				"MICRO": "Micro",
 				"AI_MESSAGE": "AI message"
 			},
-			"modality": { "IN_PERSON": "In person", "REMOTE": "Remote" },
+			"modality": { "IN_PERSON": "In person", "REMOTE": "Virtual" },
 			"empty": "No coaching sessions yet.",
 			"noCommitments": "No open commitments.",
 			"detail": {
 				"talkingPoints": "Talking points",
 				"aiMessage": "Message",
+				"meetingLink": "Meeting link",
 				"noPoints": "No talking points recorded.",
 				"evidence": "Evidence",
 				"actionItems": "Action items",
