@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import {
-	Anchor,
 	Card,
 	Stack,
 	Group,
@@ -99,40 +98,49 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 							const TrendIcon = trend.icon;
 							return (
 								<div key={entry.agentId}>
-									<Group justify='space-between' align='center' mb={4}>
-										<Group gap='xs' wrap='nowrap'>
-											<Tooltip label={t('burnout.viewEvidence')} withArrow>
-												<Anchor
-													size='sm'
-													fw={500}
-													c='inherit'
-													onClick={() => openEvidence(entry.agentId)}
-												>
-													{entry.agentName}
-												</Anchor>
-											</Tooltip>
-											<Badge
-												size='xs'
+									<Tooltip label={t('burnout.viewEvidence')} withArrow>
+										<div
+											className={styles.burnoutRow}
+											role='button'
+											tabIndex={0}
+											onClick={() => openEvidence(entry.agentId)}
+											onKeyDown={(e) => {
+												if (e.key === 'Enter') openEvidence(entry.agentId);
+											}}
+										>
+											<Group justify='space-between' align='center' mb={4}>
+												<Group gap='xs' wrap='nowrap'>
+													<Text size='sm' fw={500}>
+														{entry.agentName}
+													</Text>
+													<Badge
+														size='xs'
+														color={LEVEL_COLOR[entry.level]}
+														variant='light'
+													>
+														{t(`burnout.level.${entry.level}`, entry.level)}
+													</Badge>
+												</Group>
+												<Group gap={4} wrap='nowrap'>
+													<Text size='sm' fw={600}>
+														{entry.percentage}%
+													</Text>
+													<ThemeIcon
+														size='sm'
+														variant='light'
+														color={trend.color}
+													>
+														<TrendIcon size={12} />
+													</ThemeIcon>
+												</Group>
+											</Group>
+											<Progress
+												value={entry.percentage}
+												size='sm'
 												color={LEVEL_COLOR[entry.level]}
-												variant='light'
-											>
-												{t(`burnout.level.${entry.level}`, entry.level)}
-											</Badge>
-										</Group>
-										<Group gap={4} wrap='nowrap'>
-											<Text size='sm' fw={600}>
-												{entry.percentage}%
-											</Text>
-											<ThemeIcon size='sm' variant='light' color={trend.color}>
-												<TrendIcon size={12} />
-											</ThemeIcon>
-										</Group>
-									</Group>
-									<Progress
-										value={entry.percentage}
-										size='sm'
-										color={LEVEL_COLOR[entry.level]}
-									/>
+											/>
+										</div>
+									</Tooltip>
 									<Group justify='flex-end' mt={6}>
 										<Button
 											variant='subtle'

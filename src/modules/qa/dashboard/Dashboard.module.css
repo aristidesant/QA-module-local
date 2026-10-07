@@ -96,3 +96,20 @@
 		var(--mantine-color-dark-6)
 	);
 }
+
+/* Clickable agent row of the Burnout Risk card; opens the Burnout tab of their profile. */
+.burnoutRow {
+	cursor: pointer;
+	padding: var(--mantine-spacing-xs);
+	margin: calc(var(--mantine-spacing-xs) * -1);
+	border-radius: var(--mantine-radius-sm);
+}
+
+.burnoutRow:hover,
+.burnoutRow:focus-visible {
+	background-color: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+	outline: none;
+}
