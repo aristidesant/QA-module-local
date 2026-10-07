@@ -1,6 +1,5 @@
 import { useState, useMemo } from 'react';
 import {
-	Container,
 	Title,
 	Table,
 	Badge,
@@ -19,6 +18,7 @@ import {
 	Anchor,
 	Switch,
 } from '@mantine/core';
+import { ContentContainer } from '~/components/ContentContainer';
 import {
 	IconPlus,
 	IconFileText,
@@ -237,11 +237,7 @@ export default function CampaignsList() {
 	}
 
 	return (
-		<Container
-			size='xl'
-			px='lg'
-			style={{ paddingTop: '48px', paddingBottom: '32px' }}
-		>
+		<ContentContainer>
 			<Stack gap='lg'>
 				{/* Breadcrumb Navigation */}
 				<Breadcrumbs>
@@ -641,6 +637,6 @@ export default function CampaignsList() {
 					</Group>
 				</Stack>
 			</Modal>
-		</Container>
+		</ContentContainer>
 	);
 }

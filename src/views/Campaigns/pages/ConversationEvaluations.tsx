@@ -5,7 +5,6 @@ import {
 	Breadcrumbs,
 	Button,
 	Card,
-	Container,
 	Grid,
 	Group,
 	Paper,
@@ -15,6 +14,7 @@ import {
 	ThemeIcon,
 	Title,
 } from '@mantine/core';
+import { ContentContainer } from '~/components/ContentContainer';
 import {
 	IconArrowLeft,
 	IconHeadset,
@@ -110,11 +110,7 @@ export default function ConversationEvaluations() {
 	};
 
 	return (
-		<Container
-			size='xl'
-			px='lg'
-			style={{ paddingTop: '48px', paddingBottom: '32px' }}
-		>
+		<ContentContainer>
 			<Stack gap='lg' style={{ width: '100%' }}>
 				{/* Breadcrumbs */}
 				<Group align='center' gap='sm'>
@@ -411,6 +407,6 @@ export default function ConversationEvaluations() {
 				campaignName={campaignName}
 				initialType={disputeType}
 			/>
-		</Container>
+		</ContentContainer>
 	);
 }

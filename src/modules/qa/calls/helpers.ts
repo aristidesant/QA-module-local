@@ -83,6 +83,7 @@ export const buildCampaignCalls = (
 			agentId: c.agentId,
 			agentName: c.agentName,
 			date: c.date.slice(0, 10),
+			durationSeconds: c.handleTimeSeconds,
 			score: c.qaScore,
 			status: (i % 9 === 8
 				? 'pending'

@@ -1,6 +1,5 @@
 import { useMemo, useState } from 'react';
 import {
-	Container,
 	Title,
 	Stack,
 	Group,
@@ -23,13 +22,30 @@ import {
 	Pagination,
 	Tabs,
 	Radio,
+	SimpleGrid,
 } from '@mantine/core';
+import { ContentContainer } from '~/components/ContentContainer';
+import { formatDuration } from '../components/call-evaluation/scoreColor';
+import { LineChart } from '@mantine/charts';
+import { SectionCard } from '~/components/SectionCard';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
+import {
+	buildOverviewTrend,
+	OVERVIEW_PERIODS,
+	type OverviewPeriod,
+} from '../overviewTrend';
 import { IconArrowLeft, IconEdit, IconPlayerPlay } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../stores/useCampaignStore';
 import type { ContactList, Evaluation, QATest, Aspect } from '../types';
-import { mockContactLists, mockQATests } from '../constants';
+import {
+	mockContactLists,
+	mockQATests,
+	QA_ERROR_TYPE_ORDER,
+	QA_ERROR_TYPES,
+} from '../constants';
+import type { QAErrorTypeCode } from '../types';
 import { useRoleMockStore } from '~/stores/roleMockStore';
 import {
 	buildCampaignCalls,
@@ -43,6 +59,14 @@ import { CampaignRosterTab } from '../components/CampaignRosterTab';
 // import { QATestEditor } from '../components/QATestEditor';
 
 // Placeholder for QATestEditor - remove when real component available
+/** Share of calls without each error type, replacing a single QA score (87% overall). */
+const QA_CATEGORY_SCORES: Record<QAErrorTypeCode, number> = {
+	ECN: 90,
+	ENC: 85,
+	ECC: 88,
+	ECUF: 85,
+};
+
 const QATestEditor = (_props: {
 	aspects: Aspect[];
 	onChange: (aspects: Aspect[]) => void;
@@ -146,6 +170,11 @@ export default function CampaignDetail() {
 	const [callsTableAutoFailedOnly, setCallsTableAutoFailedOnly] =
 		useState(false);
 	const [callsTableDisputedOnly, setCallsTableDisputedOnly] = useState(false);
+	const [overviewPeriod, setOverviewPeriod] = useState<OverviewPeriod>('week');
+	const overviewTrend = useMemo(
+		() => buildOverviewTrend(overviewPeriod),
+		[overviewPeriod]
+	);
 	const [callsTableScoreMin, setCallsTableScoreMin] = useState<number | null>(
 		null
 	);
@@ -275,11 +304,7 @@ export default function CampaignDetail() {
 
 	return (
 		<>
-			<Container
-				size='xl'
-				px='lg'
-				style={{ paddingTop: '48px', paddingBottom: '32px' }}
-			>
+			<ContentContainer>
 				<Stack gap='lg'>
 					{/* Breadcrumb Navigation with Back Button */}
 					<Group align='center' gap='sm'>
@@ -340,13 +365,29 @@ export default function CampaignDetail() {
 												<Text fw={600} size='sm'>
 													QA Evaluation
 												</Text>
-												<Badge size='sm' color='green' variant='light'>
+												<Badge size='sm' color='gray' variant='light'>
 													Stable
 												</Badge>
 											</Group>
-											<Text size='lg' fw={700}>
-												87%
-											</Text>
+											<SimpleGrid cols={2} spacing='xs' verticalSpacing='xs'>
+												{QA_ERROR_TYPE_ORDER.map((code) => {
+													const score = QA_CATEGORY_SCORES[code];
+													return (
+														<Stack key={code} gap={0}>
+															<Text
+																size='xs'
+																c='dimmed'
+																title={QA_ERROR_TYPES[code].label}
+															>
+																{code}
+															</Text>
+															<Text size='lg' fw={700}>
+																{score}%
+															</Text>
+														</Stack>
+													);
+												})}
+											</SimpleGrid>
 											<Text size='xs' c='dimmed'>
 												245 calls analyzed
 											</Text>
@@ -358,7 +399,7 @@ export default function CampaignDetail() {
 												<Text fw={600} size='sm'>
 													Sentiment Analysis
 												</Text>
-												<Badge size='sm' color='yellow' variant='light'>
+												<Badge size='sm' color='gray' variant='light'>
 													Concerning
 												</Badge>
 											</Group>
@@ -376,7 +417,7 @@ export default function CampaignDetail() {
 												<Text fw={600} size='sm'>
 													Compliance
 												</Text>
-												<Badge size='sm' color='red' variant='light'>
+												<Badge size='sm' color='gray' variant='light'>
 													Critical
 												</Badge>
 											</Group>
@@ -394,7 +435,7 @@ export default function CampaignDetail() {
 												<Text fw={600} size='sm'>
 													Auto Fails
 												</Text>
-												<Badge size='sm' color='red' variant='light'>
+												<Badge size='sm' color='gray' variant='light'>
 													Warning
 												</Badge>
 											</Group>
@@ -412,7 +453,7 @@ export default function CampaignDetail() {
 												<Text fw={600} size='sm'>
 													Disputes
 												</Text>
-												<Badge size='sm' color='orange' variant='light'>
+												<Badge size='sm' color='gray' variant='light'>
 													Review
 												</Badge>
 											</Group>
@@ -429,6 +470,39 @@ export default function CampaignDetail() {
 										</Stack>
 									</Card>
 								</Group>
+								<SectionCard
+									title='Evaluation trend'
+									description='Score by evaluation type over the selected period'
+									headerActions={
+										<AppSegmentedControl
+											size='sm'
+											value={overviewPeriod}
+											onChange={(value) =>
+												setOverviewPeriod(value as OverviewPeriod)
+											}
+											data={OVERVIEW_PERIODS}
+										/>
+									}
+								>
+									<LineChart
+										h={300}
+										data={overviewTrend}
+										dataKey='label'
+										series={[
+											{ name: 'QA', color: 'var(--mantine-color-text)' },
+											{ name: 'Sentiment', color: 'gray.6' },
+											{
+												name: 'Compliance',
+												color: 'gray.5',
+												strokeDasharray: '4 4',
+											},
+										]}
+										yAxisProps={{ domain: [50, 100] }}
+										valueFormatter={(value) => `${value}%`}
+										curveType='monotone'
+										withLegend
+									/>
+								</SectionCard>
 							</Stack>
 						</Tabs.Panel>
 
@@ -724,9 +798,7 @@ export default function CampaignDetail() {
 																	<Table.Th>Call</Table.Th>
 																	<Table.Th>Agent</Table.Th>
 																	<Table.Th>Date</Table.Th>
-																	<Table.Th style={{ textAlign: 'center' }}>
-																		Score
-																	</Table.Th>
+																	<Table.Th>Duration</Table.Th>
 																	<Table.Th style={{ textAlign: 'center' }}>
 																		Status
 																	</Table.Th>
@@ -749,20 +821,10 @@ export default function CampaignDetail() {
 																		<Table.Td>
 																			<Text size='sm'>{call.date}</Text>
 																		</Table.Td>
-																		<Table.Td align='center'>
-																			<Badge
-																				size='sm'
-																				color={
-																					call.score >= 80
-																						? 'green'
-																						: call.score >= 60
-																							? 'yellow'
-																							: 'red'
-																				}
-																				variant='light'
-																			>
-																				{call.score}%
-																			</Badge>
+																		<Table.Td>
+																			<Text size='sm'>
+																				{formatDuration(call.durationSeconds)}
+																			</Text>
 																		</Table.Td>
 																		<Table.Td align='center'>
 																			<Badge
@@ -821,7 +883,7 @@ export default function CampaignDetail() {
 						</Tabs.Panel>
 					</Tabs>
 				</Stack>
-			</Container>
+			</ContentContainer>
 
 			{/* Modals */}
 

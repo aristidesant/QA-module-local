@@ -34,6 +34,7 @@ export interface CampaignCallRow {
 	agentId: string;
 	agentName: string;
 	date: string; // 'YYYY-MM-DD'
+	durationSeconds: number;
 	score: number;
 	status: 'completed' | 'pending';
 	isAutoFailed: boolean;
