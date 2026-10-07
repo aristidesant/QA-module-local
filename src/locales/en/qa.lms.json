@@ -540,12 +540,12 @@
 			"targetMode": {
 				"agents": "Agents",
 				"team": "Whole team",
-				"cohort": "Cohort"
+				"cohort": "Learning group"
 			},
 			"agents": "Agents",
 			"agentsPlaceholder": "Search agents",
 			"team": "Team",
-			"cohort": "Cohort",
+			"cohort": "Learning group",
 			"dueDate": "Deadline",
 			"dueQuick": {
 				"7": "In 7 days",

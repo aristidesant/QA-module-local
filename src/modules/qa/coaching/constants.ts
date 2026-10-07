@@ -140,5 +140,8 @@ export const coachingRuleNewPath = (role: TeamRole) =>
 export const coachingRuleEditPath = (role: TeamRole, ruleId: string) =>
 	`${coachingBasePath(role)}/rules/${ruleId}/edit`;
 
+export const coachingGroupNewPath = (role: TeamRole) =>
+	`${coachingBasePath(role)}/groups/new`;
+
 export const coachingAgentPath = (role: TeamRole, agentId: string) =>
 	`${coachingBasePath(role)}/agents/${agentId}`;

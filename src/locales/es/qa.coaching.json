@@ -7,7 +7,7 @@
 	"description": "Mira quién necesita atención, convierte los puntajes bajos en aprendizaje y comprueba si funcionó.",
 	"newRule": "Nueva regla",
 	"newSession": "Nueva sesión",
-	"newCohort": "Nueva cohorte",
+	"newCohort": "Nuevo grupo de aprendizaje",
 	"assign": "Asignar material",
 	"kpi": {
 		"attention": "Necesitan atención",
@@ -19,7 +19,7 @@
 	},
 	"tabs": {
 		"agents": "Agentes",
-		"cohorts": "Cohortes",
+		"cohorts": "Grupos de aprendizaje",
 		"rules": "Reglas",
 		"sessions": "Sesiones",
 		"impact": "Impacto"
@@ -83,15 +83,13 @@
 			"search": "Buscar agente",
 			"team": "Equipo",
 			"area": "Aspecto más débil",
-			"state": "Estado",
+			"pendingSession": "Sesión pendiente",
 			"all": "Todos",
 			"clear": "Limpiar"
 		},
-		"state": {
-			"attention": "Necesita atención",
-			"inTraining": "Capacitándose",
-			"measuring": "Midiendo impacto",
-			"onTrack": "En buen camino"
+		"pendingSession": {
+			"yes": "Sí",
+			"no": "No"
 		},
 		"columns": {
 			"agent": "Agente",
@@ -103,14 +101,20 @@
 			"overdue": "Vencidos",
 			"sessions": "Sesiones (30d)",
 			"lastImpact": "Último impacto",
-			"state": "Estado"
+			"pendingSession": "Sesión pendiente"
 		},
 		"teamCard": "{{team}} · {{supervisor}}",
 		"empty": "Ningún agente coincide con estos filtros.",
 		"page": { "notFound": "Agente fuera de tu alcance." },
+		"sessionsTable": {
+			"period": "Período",
+			"periodPlaceholder": "Elige un rango de fechas",
+			"topic": "Tema tratado",
+			"topicPlaceholder": "Todos los temas",
+			"noMatches": "Ninguna sesión coincide con estos filtros."
+		},
 		"drawer": {
 			"tabs": {
-				"timeline": "Cronología",
 				"assignments": "Asignaciones",
 				"sessions": "Sesiones",
 				"impact": "Impacto"
@@ -126,7 +130,7 @@
 		}
 	},
 	"cohorts": {
-		"title": "Cohortes",
+		"title": "Grupos de aprendizaje",
 		"description": "Grupos que sigues en conjunto: asigna una ruta o una regla a todos sus miembros a la vez.",
 		"members": "{{count}} miembros",
 		"path": "Ruta",
@@ -134,7 +138,41 @@
 		"completion": "Avance",
 		"improved": "Mejoraron",
 		"create": {
-			"title": "Nueva cohorte",
+			"criteria": {
+				"title": "Buscar por desempeño",
+				"description": "Elige un aspecto, una métrica y un período. Aplicar lista a todos los agentes de tu alcance que cumplen el criterio; agrégalos de una vez.",
+				"area": "Aspecto evaluado",
+				"metric": "Métrica",
+				"operator": "Condición",
+				"below": "Por debajo de",
+				"above": "Por encima de",
+				"value": "Valor",
+				"period": "Período",
+				"days": "Últimos {{count}} días",
+				"apply": "Aplicar",
+				"summary_one": "{{count}} agente cumple",
+				"summary_other": "{{count}} agentes cumplen",
+				"noMatches": "Ningún agente cumple este criterio en el período elegido.",
+				"columns": {
+					"agent": "Agente",
+					"value": "Valor",
+					"calls": "Llamadas evaluadas",
+					"status": "Estado"
+				},
+				"alreadyIn": "Ya es miembro",
+				"willAdd": "Se agregará",
+				"addMatches": "Agregar agentes que cumplen",
+				"added_one": "{{count}} agente agregado al grupo",
+				"added_other": "{{count}} agentes agregados al grupo",
+				"orManual": "o elige los miembros manualmente"
+			},
+			"sections": {
+				"basics": "Datos básicos",
+				"members": "Miembros",
+				"path": "Ruta de aprendizaje",
+				"membersHint": "Busca agentes por un criterio de desempeño, agrega un equipo completo o elígelos uno por uno."
+			},
+			"title": "Nuevo grupo de aprendizaje",
 			"name": "Nombre",
 			"namePlaceholder": "Lista de cumplimiento — septiembre",
 			"description": "Descripción",
@@ -143,9 +181,9 @@
 			"addTeam": "Añadir equipo",
 			"path": "Ruta de aprendizaje (opcional)",
 			"tags": "Etiquetas",
-			"submit": "Crear cohorte",
+			"submit": "Crear grupo de aprendizaje",
 			"cancel": "Cancelar",
-			"success": "Cohorte {{name}} creada",
+			"success": "Grupo de aprendizaje {{name}} creado",
 			"validation": {
 				"name": "El nombre es obligatorio",
 				"members": "Elige al menos dos agentes"
@@ -153,8 +191,8 @@
 		},
 		"drawer": {
 			"members": "Miembros",
-			"assignPath": "Asignar ruta a la cohorte",
-			"assignMaterial": "Asignar material a la cohorte",
+			"assignPath": "Asignar ruta al grupo de aprendizaje",
+			"assignMaterial": "Asignar material al grupo de aprendizaje",
 			"scheduleGroup": "Agendar sesión grupal",
 			"progress": "Avance",
 			"columns": {
@@ -166,10 +204,10 @@
 			},
 			"linkedRules": "Reglas vinculadas",
 			"noRules": "Sin reglas vinculadas.",
-			"delete": "Eliminar cohorte",
-			"deleted": "Cohorte eliminada"
+			"delete": "Eliminar grupo de aprendizaje",
+			"deleted": "Grupo de aprendizaje eliminado"
 		},
-		"empty": "Todavía no hay cohortes. Crea una desde un equipo o un filtro."
+		"empty": "Todavía no hay grupos de aprendizaje. Crea uno desde un equipo o un filtro."
 	},
 	"rules": {
 		"title": "Reglas de coaching",
@@ -334,7 +372,21 @@
 	"sessions": {
 		"title": "Sesiones de coaching",
 		"description": "Sesiones 1:1, lado a lado, micro, grupales y mensajes IA.",
+		"calendar": {
+			"title": "Calendario",
+			"description": "Todas las sesiones con los mismos filtros, por mes, semana o día.",
+			"today": "Hoy",
+			"previous": "Anterior",
+			"next": "Siguiente",
+			"month": "Mes",
+			"week": "Semana",
+			"day": "Día",
+			"more": "+{{count}} más"
+		},
 		"filters": {
+			"today": "Hoy",
+			"agent": "Agente",
+			"dateRange": "Rango de fechas",
 			"status": "Estado",
 			"type": "Tipo",
 			"coach": "Coach",
@@ -369,11 +421,15 @@
 			"MISSED": "Perdida",
 			"CANCELLED": "Cancelada"
 		},
+		"coach": {
+			"you": "Tú"
+		},
 		"commitment": {
 			"acknowledged": "Comprometido",
 			"pending": "Todavía no",
 			"none": "—"
 		},
+		"todayTitle": "Sesiones de hoy",
 		"thisWeek": "Esta semana",
 		"later": "Más adelante",
 		"past": "Sesiones pasadas",
@@ -381,7 +437,7 @@
 			"createTitle": "Agendar sesión",
 			"editTitle": "Editar sesión",
 			"agent": "Agente",
-			"cohort": "Cohorte (sesión grupal)",
+			"cohort": "Grupo de aprendizaje (sesión grupal)",
 			"date": "Fecha y hora",
 			"duration": "Duración",
 			"type": "Tipo",
@@ -490,7 +546,7 @@
 			"SESSION_COMPLETED": "Sesión completada",
 			"SESSION_MISSED": "Sesión perdida",
 			"IMPACT_MEASURED": "Impacto medido",
-			"COHORT_CREATED": "Cohorte creada",
+			"COHORT_CREATED": "Grupo de aprendizaje creado",
 			"REMINDER_SENT": "Recordatorio enviado"
 		}
 	},

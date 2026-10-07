@@ -378,11 +378,24 @@ export function SessionDetailDrawer({
 								</Stack>
 							</SectionCard>
 						) : (
-							session.outcome && (
-								<SectionCard title={t('sessions.detail.outcome')} padding='md'>
-									<Text size='sm'>{session.outcome}</Text>
-								</SectionCard>
-							)
+							<>
+								{session.outcome && (
+									<SectionCard
+										title={t('sessions.detail.outcome')}
+										padding='md'
+									>
+										<Text size='sm'>{session.outcome}</Text>
+									</SectionCard>
+								)}
+								{session.followUpDate && (
+									<SectionCard
+										title={t('sessions.detail.followUp')}
+										padding='md'
+									>
+										<Text size='sm'>{session.followUpDate}</Text>
+									</SectionCard>
+								)}
+							</>
 						)}
 
 						{session.status === 'COMPLETED' && sinceSession.length > 0 && (

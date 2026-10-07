@@ -1,23 +1,8 @@
 import { useMemo } from 'react';
-import {
-	Badge,
-	Group,
-	Paper,
-	SimpleGrid,
-	Stack,
-	Tabs,
-	Text,
-	Timeline,
-} from '@mantine/core';
+import { Group, SimpleGrid, Stack, Tabs, Text } from '@mantine/core';
 import { AreaChart } from '@mantine/charts';
 import { createColumnHelper } from '@tanstack/react-table';
-import {
-	IconBook,
-	IconChartBar,
-	IconHistory,
-	IconSchool,
-} from '@tabler/icons-react';
-import dayjs from 'dayjs';
+import { IconBook, IconChartBar, IconSchool } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import BaseTable, {
@@ -37,9 +22,8 @@ import {
 import { ImpactSparkline } from '~/modules/qa/lms/components/ImpactSparkline';
 import { dueLabel } from '~/modules/qa/lms/helpers';
 import { DimensionScoreCard } from '~/modules/qa/team/components/DimensionScoreCard';
-import type { AgentProfile } from '~/modules/qa/team/types';
-import { SESSION_STATUS_COLOR } from '../constants';
-import pointerStyles from '~/modules/qa/lms/components/Cards.module.css';
+import type { AgentProfile, TeamRole } from '~/modules/qa/team/types';
+import { AgentSessionsTable } from './AgentSessionsTable';
 
 const assignmentHelper = createColumnHelper<LmsAssignment>();
 
@@ -48,6 +32,7 @@ interface AgentCoachingPanelProps {
 	assignments: LmsAssignment[];
 	sessions: CoachingSessionRecord[];
 	contentById: Record<string, LmsContent>;
+	role: TeamRole;
 	tab: string;
 	onTabChange: (tab: string | null) => void;
 	onOpenSession: (sessionId: string) => void;
@@ -58,6 +43,7 @@ export function AgentCoachingPanel({
 	assignments,
 	sessions,
 	contentById,
+	role,
 	tab,
 	onTabChange,
 	onOpenSession,
@@ -78,29 +64,6 @@ export function AgentCoachingPanel({
 		[sessions, profile]
 	);
 	const measured = useMemo(() => mine.filter((a) => a.impact), [mine]);
-
-	const timeline = useMemo(() => {
-		const events = [
-			...mine.map((a) => ({
-				id: `a-${a.id}`,
-				date: a.completedAt ?? a.assignedAt,
-				icon: 'book' as const,
-				title:
-					a.status === 'COMPLETED'
-						? `${t('activity.types.COMPLETED')}: ${contentById[a.contentId]?.title ?? a.contentId}`
-						: `${t('activity.types.ASSIGNED')}: ${contentById[a.contentId]?.title ?? a.contentId}`,
-				description: a.reason,
-			})),
-			...mySessions.map((s) => ({
-				id: `s-${s.id}`,
-				date: s.date.slice(0, 10),
-				icon: 'school' as const,
-				title: `${t(`sessions.status.${s.status}`)}: ${s.topic}`,
-				description: `${s.coachName} · ${t(`sessions.types.${s.type}`)}`,
-			})),
-		];
-		return events.sort((a, b) => b.date.localeCompare(a.date)).slice(0, 12);
-	}, [mine, mySessions, contentById, t]);
 
 	const performance = profile.performance.slice(-6).map((p) => ({
 		label: p.label,
@@ -161,9 +124,6 @@ export function AgentCoachingPanel({
 
 			<Tabs value={tab} onChange={onTabChange} keepMounted={false}>
 				<Tabs.List>
-					<Tabs.Tab value='timeline' leftSection={<IconHistory size={14} />}>
-						{t('agents.drawer.tabs.timeline')}
-					</Tabs.Tab>
 					<Tabs.Tab value='assignments' leftSection={<IconBook size={14} />}>
 						{t('agents.drawer.tabs.assignments')}
 					</Tabs.Tab>
@@ -174,32 +134,6 @@ export function AgentCoachingPanel({
 						{t('agents.drawer.tabs.impact')}
 					</Tabs.Tab>
 				</Tabs.List>
-
-				<Tabs.Panel value='timeline' pt='md'>
-					<Timeline bulletSize={18} lineWidth={2} active={timeline.length}>
-						{timeline.map((e) => (
-							<Timeline.Item
-								key={e.id}
-								color={e.icon === 'school' ? 'blue' : 'teal'}
-								bullet={
-									e.icon === 'school' ? (
-										<IconSchool size={11} />
-									) : (
-										<IconBook size={11} />
-									)
-								}
-								title={<Text size='sm'>{e.title}</Text>}
-							>
-								<Text size='xs' c='dimmed'>
-									{e.description}
-								</Text>
-								<Text size='xs' c='dimmed' mt={2}>
-									{dayjs(e.date).format('D MMM YYYY')}
-								</Text>
-							</Timeline.Item>
-						))}
-					</Timeline>
-				</Tabs.Panel>
 
 				<Tabs.Panel value='assignments' pt='md'>
 					<BaseTable<LmsAssignment>
@@ -212,46 +146,11 @@ export function AgentCoachingPanel({
 				</Tabs.Panel>
 
 				<Tabs.Panel value='sessions' pt='md'>
-					{mySessions.length === 0 ? (
-						<Text size='sm' c='dimmed'>
-							{t('agents.drawer.noSessions')}
-						</Text>
-					) : (
-						<Stack gap='xs'>
-							{mySessions.map((s) => (
-								<Paper
-									key={s.id}
-									withBorder
-									p='sm'
-									radius='md'
-									className={pointerStyles.pointer}
-									onClick={() => onOpenSession(s.id)}
-								>
-									<Group justify='space-between' wrap='nowrap'>
-										<Stack gap={2}>
-											<Text size='sm' fw={500}>
-												{s.topic}
-											</Text>
-											<Text size='xs' c='dimmed'>
-												{dayjs(s.date).format('D MMM YYYY HH:mm')} ·{' '}
-												{s.coachName} · {t(`sessions.types.${s.type}`)}
-												{s.modality
-													? ` · ${t(`sessions.modality.${s.modality}`)}`
-													: ''}
-											</Text>
-										</Stack>
-										<Badge
-											size='xs'
-											color={SESSION_STATUS_COLOR[s.status]}
-											variant='light'
-										>
-											{t(`sessions.status.${s.status}`)}
-										</Badge>
-									</Group>
-								</Paper>
-							))}
-						</Stack>
-					)}
+					<AgentSessionsTable
+						sessions={mySessions}
+						role={role}
+						onOpenSession={onOpenSession}
+					/>
 				</Tabs.Panel>
 
 				<Tabs.Panel value='impact' pt='md'>

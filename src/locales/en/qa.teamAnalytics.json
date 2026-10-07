@@ -327,16 +327,16 @@
 		"lmsReason": "Agent Finder: {{metric}} {{condition}}",
 		"coachingTopic": "Improve {{metric}}",
 		"cohort": {
-			"title": "Create coaching cohort",
-			"name": "Cohort name",
+			"title": "Create learning group",
+			"name": "Learning group name",
 			"description": "Description",
 			"suggestedName": "{{metric}} {{condition}}",
 			"members_one": "{{count}} agent",
 			"members_other": "{{count}} agents",
-			"submit": "Create cohort",
+			"submit": "Create learning group",
 			"validation": "Name is required"
 		},
-		"cohortCreated": "Cohort \"{{name}}\" created — opening Coaching › Cohorts",
+		"cohortCreated": "Learning group \"{{name}}\" created — opening Coaching › Learning Groups",
 		"presetModal": {
 			"title": "Save finder preset",
 			"name": "Preset name",
@@ -507,9 +507,9 @@
 		"viewProfile": "View profile",
 		"scheduleCoaching": "Schedule coaching",
 		"assignLms": "Assign LMS",
-		"createCohort": "Create cohort",
+		"createCohort": "Create learning group",
 		"assignLmsToSelected": "Assign LMS to {{count}} selected",
-		"cohortFromSelected": "Create cohort from {{count}} selected",
+		"cohortFromSelected": "Create learning group from {{count}} selected",
 		"drillDown": "Drill down"
 	},
 	"common": {

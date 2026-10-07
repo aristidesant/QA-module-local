@@ -7,7 +7,7 @@
 	"description": "See who needs attention, turn low scores into learning, and check whether it worked.",
 	"newRule": "New rule",
 	"newSession": "New session",
-	"newCohort": "New cohort",
+	"newCohort": "New learning group",
 	"assign": "Assign material",
 	"kpi": {
 		"attention": "Need attention",
@@ -19,7 +19,7 @@
 	},
 	"tabs": {
 		"agents": "Agents",
-		"cohorts": "Cohorts",
+		"cohorts": "Learning Groups",
 		"rules": "Rules",
 		"sessions": "Sessions",
 		"impact": "Impact"
@@ -83,15 +83,13 @@
 			"search": "Search agent",
 			"team": "Team",
 			"area": "Weakest aspect",
-			"state": "State",
+			"pendingSession": "Pending session",
 			"all": "All",
 			"clear": "Clear"
 		},
-		"state": {
-			"attention": "Needs attention",
-			"inTraining": "In training",
-			"measuring": "Measuring impact",
-			"onTrack": "On track"
+		"pendingSession": {
+			"yes": "Yes",
+			"no": "No"
 		},
 		"columns": {
 			"agent": "Agent",
@@ -103,14 +101,20 @@
 			"overdue": "Overdue",
 			"sessions": "Sessions (30d)",
 			"lastImpact": "Last impact",
-			"state": "State"
+			"pendingSession": "Pending session"
 		},
 		"teamCard": "{{team}} · {{supervisor}}",
 		"empty": "No agents match these filters.",
 		"page": { "notFound": "Agent not found in your scope." },
+		"sessionsTable": {
+			"period": "Period",
+			"periodPlaceholder": "Pick a date range",
+			"topic": "Topic covered",
+			"topicPlaceholder": "All topics",
+			"noMatches": "No sessions match these filters."
+		},
 		"drawer": {
 			"tabs": {
-				"timeline": "Timeline",
 				"assignments": "Assignments",
 				"sessions": "Sessions",
 				"impact": "Impact"
@@ -126,7 +130,7 @@
 		}
 	},
 	"cohorts": {
-		"title": "Cohorts",
+		"title": "Learning Groups",
 		"description": "Groups you follow together — assign a path or a rule to all members at once.",
 		"members": "{{count}} members",
 		"path": "Path",
@@ -134,7 +138,41 @@
 		"completion": "Completion",
 		"improved": "Improved",
 		"create": {
-			"title": "New cohort",
+			"criteria": {
+				"title": "Find by performance",
+				"description": "Pick an aspect, a metric and a period. Apply lists every agent in your scope who matches; add them in one go.",
+				"area": "Evaluation aspect",
+				"metric": "Metric",
+				"operator": "Condition",
+				"below": "Below",
+				"above": "Above",
+				"value": "Value",
+				"period": "Period",
+				"days": "Last {{count}} days",
+				"apply": "Apply",
+				"summary_one": "{{count}} agent matches",
+				"summary_other": "{{count}} agents match",
+				"noMatches": "No agent matches this criteria in the selected period.",
+				"columns": {
+					"agent": "Agent",
+					"value": "Value",
+					"calls": "Calls evaluated",
+					"status": "Status"
+				},
+				"alreadyIn": "Already a member",
+				"willAdd": "Will be added",
+				"addMatches": "Add matching agents",
+				"added_one": "{{count}} agent added to the group",
+				"added_other": "{{count}} agents added to the group",
+				"orManual": "or pick members manually"
+			},
+			"sections": {
+				"basics": "Basics",
+				"members": "Members",
+				"path": "Learning path",
+				"membersHint": "Find agents by a performance criteria, add a whole team, or pick them one by one."
+			},
+			"title": "New learning group",
 			"name": "Name",
 			"namePlaceholder": "Compliance watchlist — September",
 			"description": "Description",
@@ -143,9 +181,9 @@
 			"addTeam": "Add team",
 			"path": "Learning path (optional)",
 			"tags": "Tags",
-			"submit": "Create cohort",
+			"submit": "Create learning group",
 			"cancel": "Cancel",
-			"success": "Cohort {{name}} created",
+			"success": "Learning group {{name}} created",
 			"validation": {
 				"name": "Name is required",
 				"members": "Pick at least two agents"
@@ -153,8 +191,8 @@
 		},
 		"drawer": {
 			"members": "Members",
-			"assignPath": "Assign path to cohort",
-			"assignMaterial": "Assign material to cohort",
+			"assignPath": "Assign path to learning group",
+			"assignMaterial": "Assign material to learning group",
 			"scheduleGroup": "Schedule group session",
 			"progress": "Progress",
 			"columns": {
@@ -166,10 +204,10 @@
 			},
 			"linkedRules": "Linked rules",
 			"noRules": "No rules linked.",
-			"delete": "Delete cohort",
-			"deleted": "Cohort deleted"
+			"delete": "Delete learning group",
+			"deleted": "Learning group deleted"
 		},
-		"empty": "No cohorts yet. Create one from a team or a filter."
+		"empty": "No learning groups yet. Create one from a team or a filter."
 	},
 	"rules": {
 		"title": "Coaching rules",
@@ -334,7 +372,21 @@
 	"sessions": {
 		"title": "Coaching sessions",
 		"description": "1:1, side-by-side, micro, group sessions and AI messages.",
+		"calendar": {
+			"title": "Calendar",
+			"description": "Every session in the same filters, by month, week or day.",
+			"today": "Today",
+			"previous": "Previous",
+			"next": "Next",
+			"month": "Month",
+			"week": "Week",
+			"day": "Day",
+			"more": "+{{count}} more"
+		},
 		"filters": {
+			"today": "Today",
+			"agent": "Agent",
+			"dateRange": "Date range",
 			"status": "Status",
 			"type": "Type",
 			"coach": "Coach",
@@ -369,11 +421,15 @@
 			"MISSED": "Missed",
 			"CANCELLED": "Cancelled"
 		},
+		"coach": {
+			"you": "You"
+		},
 		"commitment": {
 			"acknowledged": "Committed",
 			"pending": "Not yet",
 			"none": "—"
 		},
+		"todayTitle": "Today's sessions",
 		"thisWeek": "This week",
 		"later": "Later",
 		"past": "Past sessions",
@@ -381,7 +437,7 @@
 			"createTitle": "Schedule session",
 			"editTitle": "Edit session",
 			"agent": "Agent",
-			"cohort": "Cohort (group session)",
+			"cohort": "Learning group (group session)",
 			"date": "Date & time",
 			"duration": "Duration",
 			"type": "Type",
@@ -490,7 +546,7 @@
 			"SESSION_COMPLETED": "Session completed",
 			"SESSION_MISSED": "Session missed",
 			"IMPACT_MEASURED": "Impact measured",
-			"COHORT_CREATED": "Cohort created",
+			"COHORT_CREATED": "Learning group created",
 			"REMINDER_SENT": "Reminder sent"
 		}
 	},

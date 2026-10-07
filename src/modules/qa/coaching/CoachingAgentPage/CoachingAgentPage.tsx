@@ -44,6 +44,8 @@ import { AgentCoachingPanel } from '../components/AgentCoachingPanel';
 import { SessionEditorDrawer } from '../components/SessionEditorDrawer';
 import { SessionDetailDrawer } from '../components/SessionDetailDrawer';
 
+const AGENT_COACHING_TABS = ['assignments', 'sessions', 'impact'];
+
 export default function CoachingAgentPage() {
 	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
 	const location = useLocation();
@@ -96,7 +98,10 @@ export default function CoachingAgentPage() {
 	);
 	const schedulePreset = useMemo(() => ({ agentId }), [agentId]);
 
-	const tab = searchParams.get('tab') ?? 'timeline';
+	const requestedTab = searchParams.get('tab');
+	const tab = AGENT_COACHING_TABS.includes(requestedTab ?? '')
+		? (requestedTab as string)
+		: 'assignments';
 	const setTab = (value: string | null) => {
 		setSearchParams(
 			(prev) => {
@@ -168,6 +173,7 @@ export default function CoachingAgentPage() {
 					assignments={assignments}
 					sessions={sessions}
 					contentById={contentById}
+					role={role}
 					tab={tab}
 					onTabChange={setTab}
 					onOpenSession={setSessionId}

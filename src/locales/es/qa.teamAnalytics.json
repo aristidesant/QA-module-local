@@ -327,16 +327,16 @@
 		"lmsReason": "Buscador de agentes: {{metric}} {{condition}}",
 		"coachingTopic": "Mejorar {{metric}}",
 		"cohort": {
-			"title": "Crear cohorte de coaching",
-			"name": "Nombre de la cohorte",
+			"title": "Crear grupo de aprendizaje",
+			"name": "Nombre del grupo de aprendizaje",
 			"description": "Descripción",
 			"suggestedName": "{{metric}} {{condition}}",
 			"members_one": "{{count}} agente",
 			"members_other": "{{count}} agentes",
-			"submit": "Crear cohorte",
+			"submit": "Crear grupo de aprendizaje",
 			"validation": "El nombre es obligatorio"
 		},
-		"cohortCreated": "Cohorte \"{{name}}\" creada — abriendo Coaching › Cohortes",
+		"cohortCreated": "Grupo de aprendizaje \"{{name}}\" creado — abriendo Coaching › Grupos de aprendizaje",
 		"presetModal": {
 			"title": "Guardar preset del buscador",
 			"name": "Nombre del preset",
@@ -507,9 +507,9 @@
 		"viewProfile": "Ver perfil",
 		"scheduleCoaching": "Programar coaching",
 		"assignLms": "Asignar LMS",
-		"createCohort": "Crear cohorte",
+		"createCohort": "Crear grupo de aprendizaje",
 		"assignLmsToSelected": "Asignar LMS a {{count}} seleccionados",
-		"cohortFromSelected": "Crear cohorte con {{count}} seleccionados",
+		"cohortFromSelected": "Crear grupo de aprendizaje con {{count}} seleccionados",
 		"drillDown": "Profundizar"
 	},
 	"common": {

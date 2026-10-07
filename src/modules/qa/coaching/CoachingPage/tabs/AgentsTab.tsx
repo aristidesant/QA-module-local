@@ -17,7 +17,6 @@ import BaseTable, {
 } from '~/components/BaseTable/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import type {
-	CoachingQueueItem,
 	CoachingSessionRecord,
 	EvaluationArea,
 	LmsAssignment,
@@ -43,8 +42,6 @@ import {
 /** Not a real EvaluationArea — a synthetic filter value for the "Weakest" dropdown. */
 const BURNOUT_RISK_FILTER = 'BURNOUT_RISK';
 
-type AgentState = 'attention' | 'inTraining' | 'measuring' | 'onTrack';
-
 export interface AgentCoachingRow {
 	id: string;
 	name: string;
@@ -58,26 +55,17 @@ export interface AgentCoachingRow {
 	overdue: number;
 	sessions30d: number;
 	lastImpact: LmsImpactVerdict | null;
-	state: AgentState;
+	/** Has at least one coaching session still scheduled. */
+	pendingSession: boolean;
 }
 
 const helper = createColumnHelper<AgentCoachingRow>();
 
-const STATE_COLOR: Record<AgentState, string> = {
-	attention: 'red',
-	inTraining: 'blue',
-	measuring: 'teal',
-	onTrack: 'green',
-};
-
 export function buildAgentRows(
 	profiles: AgentProfile[],
 	assignments: LmsAssignment[],
-	sessions: CoachingSessionRecord[],
-	queue: CoachingQueueItem[]
+	sessions: CoachingSessionRecord[]
 ): AgentCoachingRow[] {
-	const inQueue = new Set(queue.map((q) => q.agentId));
-
 	return profiles.map((p) => {
 		const mine = assignments.filter((a) => a.agentId === p.agent.id);
 		const open = mine.filter((a) => a.status !== 'COMPLETED');
@@ -91,14 +79,6 @@ export function buildAgentRows(
 			(a, b) => toPct(a.key, a.score) - toPct(b.key, b.score)
 		)[0];
 		const lastImpact = measured[0]?.impact?.verdict ?? null;
-
-		const state: AgentState = inQueue.has(p.agent.id)
-			? 'attention'
-			: open.length > 0
-				? 'inTraining'
-				: lastImpact === 'PENDING'
-					? 'measuring'
-					: 'onTrack';
 
 		return {
 			id: p.agent.id,
@@ -119,7 +99,9 @@ export function buildAgentRows(
 				(s) => s.agentId === p.agent.id && daysUntil(s.date) >= -30
 			).length,
 			lastImpact,
-			state,
+			pendingSession: sessions.some(
+				(s) => s.agentId === p.agent.id && s.status === 'SCHEDULED'
+			),
 		};
 	});
 }
@@ -136,7 +118,7 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 	const [search, setSearch] = useState('');
 	const [team, setTeam] = useState<string | null>(null);
 	const [area, setArea] = useState<string | null>(null);
-	const [state, setState] = useState<string | null>(null);
+	const [pendingSession, setPendingSession] = useState<string | null>(null);
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 
 	const filtered = useMemo(() => {
@@ -153,10 +135,11 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 				if (assessBurnout(r.id, triggerRules).level === BurnoutRiskLevel.LOW)
 					return false;
 			} else if (area && r.weakestArea !== area) return false;
-			if (state && r.state !== state) return false;
+			if (pendingSession && r.pendingSession !== (pendingSession === 'yes'))
+				return false;
 			return true;
 		});
-	}, [rows, search, team, area, state, triggerRules]);
+	}, [rows, search, team, area, pendingSession, triggerRules]);
 
 	const byTeam = useMemo(() => {
 		const map = new Map<string, AgentCoachingRow[]>();
@@ -234,13 +217,18 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 				return <ImpactBadge impact={last?.impact ?? null} size='xs' />;
 			},
 		}) as BaseTableColumnDef<AgentCoachingRow>,
-		helper.accessor('state', {
-			header: t('agents.columns.state'),
-			cell: (info) => (
-				<Badge size='xs' color={STATE_COLOR[info.getValue()]} variant='light'>
-					{t(`agents.state.${info.getValue()}`)}
-				</Badge>
-			),
+		helper.accessor('pendingSession', {
+			header: t('agents.columns.pendingSession'),
+			cell: (info) =>
+				info.getValue() ? (
+					<Badge size='xs' variant='light'>
+						{t('agents.pendingSession.yes')}
+					</Badge>
+				) : (
+					<Text size='sm' c='dimmed'>
+						{t('agents.pendingSession.no')}
+					</Text>
+				),
 		}) as BaseTableColumnDef<AgentCoachingRow>,
 	];
 
@@ -248,7 +236,7 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 		setSearch('');
 		setTeam(null);
 		setArea(null);
-		setState(null);
+		setPendingSession(null);
 	};
 
 	return (
@@ -308,20 +296,13 @@ export function AgentsTab({ rows, assignments, role, onOpen }: AgentsTabProps) {
 					/>
 					<Select
 						size='sm'
-						placeholder={t('agents.filters.state')}
-						data={(
-							[
-								'attention',
-								'inTraining',
-								'measuring',
-								'onTrack',
-							] as AgentState[]
-						).map((s) => ({
-							value: s,
-							label: t(`agents.state.${s}`),
-						}))}
-						value={state}
-						onChange={setState}
+						placeholder={t('agents.filters.pendingSession')}
+						data={[
+							{ value: 'yes', label: t('agents.pendingSession.yes') },
+							{ value: 'no', label: t('agents.pendingSession.no') },
+						]}
+						value={pendingSession}
+						onChange={setPendingSession}
 						clearable
 						w={170}
 					/>

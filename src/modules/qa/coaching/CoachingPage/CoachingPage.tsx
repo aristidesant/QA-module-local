@@ -58,6 +58,7 @@ import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import {
 	COACHING_TABS,
 	coachingAgentPath,
+	coachingGroupNewPath,
 	coachingRuleEditPath,
 	coachingRuleNewPath,
 	type CoachingTab,
@@ -69,7 +70,6 @@ import { RulesTab } from './tabs/RulesTab';
 import { SessionsTab } from './tabs/SessionsTab';
 import { ImpactTab } from './tabs/ImpactTab';
 import { CohortDrawer } from '../components/CohortDrawer';
-import { CreateCohortModal } from '../components/CreateCohortModal';
 import { CoachingRuleDetailDrawer } from '../components/CoachingRuleDetailDrawer';
 import {
 	SessionEditorDrawer,
@@ -109,7 +109,6 @@ export default function CoachingPage() {
 	const [cohortId, setCohortId] = useState<string | null>(null);
 	const [ruleId, setRuleId] = useState<string | null>(null);
 	const [sessionId, setSessionId] = useState<string | null>(null);
-	const [cohortModal, setCohortModal] = useState(false);
 
 	// Burnout level follows the burnout rules in Triggers.
 	const scopeProfiles = useMemo(
@@ -178,8 +177,8 @@ export default function CoachingPage() {
 		[scopeProfiles, scopeAssignments, scopeSessions, content, t, snoozed]
 	);
 	const agentRows = useMemo(
-		() => buildAgentRows(scopeProfiles, scopeAssignments, scopeSessions, queue),
-		[scopeProfiles, scopeAssignments, scopeSessions, queue]
+		() => buildAgentRows(scopeProfiles, scopeAssignments, scopeSessions),
+		[scopeProfiles, scopeAssignments, scopeSessions]
 	);
 
 	const agentTeam = useMemo(
@@ -391,7 +390,7 @@ export default function CoachingPage() {
 							paths={paths}
 							assignments={assignments}
 							onOpen={setCohortId}
-							onCreate={() => setCohortModal(true)}
+							onCreate={() => navigate(coachingGroupNewPath(role))}
 						/>
 					</Tabs.Panel>
 
@@ -555,13 +554,6 @@ export default function CoachingPage() {
 				opened={sessionId !== null}
 				onClose={() => setSessionId(null)}
 				onOpenCall={(callId) => navigate(`/qa/campaigns/1/calls/${callId}`)}
-			/>
-
-			<CreateCohortModal
-				opened={cohortModal}
-				onClose={() => setCohortModal(false)}
-				role={role}
-				persona={persona}
 			/>
 		</ContentContainer>
 	);

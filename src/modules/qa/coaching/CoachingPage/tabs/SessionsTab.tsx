@@ -8,6 +8,7 @@ import {
 	Text,
 	ThemeIcon,
 } from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
 	IconCheck,
@@ -28,7 +29,8 @@ import type {
 	CoachingSessionType,
 } from '~/models/qa';
 import { AreaBadge } from '~/modules/qa/lms/components/Badges';
-import { daysUntil } from '~/modules/qa/lms/helpers';
+import { daysUntil, today } from '~/modules/qa/lms/helpers';
+import { SessionsCalendar } from './SessionsCalendar';
 import { TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
 import type { TeamRole } from '~/modules/qa/team/types';
 import {
@@ -58,23 +60,62 @@ export function SessionsTab({
 	onCreate,
 }: SessionsTabProps) {
 	const { t } = useTranslation('qa.coaching');
-	const [view, setView] = useState<'upcoming' | 'past'>('upcoming');
+	const [view, setView] = useState<'today' | 'upcoming' | 'past'>('upcoming');
 	const [status, setStatus] = useState<string | null>(null);
 	const [type, setType] = useState<string | null>(null);
 	const [modality, setModality] = useState<string | null>(null);
 	const [coach, setCoach] = useState<string | null>(null);
 	const [team, setTeam] = useState<string | null>(null);
+	const [agent, setAgent] = useState<string | null>(null);
+	const [range, setRange] = useState<[string | null, string | null]>([
+		null,
+		null,
+	]);
+
+	// One option per agent with their own sessions (group sessions belong to a learning group).
+	const agentOptions = useMemo(() => {
+		const byId = new Map<string, string>();
+		for (const s of sessions)
+			if (s.type !== 'GROUP') byId.set(s.agentId, s.agentName);
+		return [...byId.entries()]
+			.map(([value, label]) => ({ value, label }))
+			.sort((a, b) => a.label.localeCompare(b.label));
+	}, [sessions]);
 
 	const filtered = useMemo(
 		() =>
 			sessions.filter((s) => {
 				if (status && s.status !== status) return false;
 				if (type && s.type !== type) return false;
+				if (modality && s.modality !== modality) return false;
+				if (agent && (s.type === 'GROUP' || s.agentId !== agent)) return false;
+				const day = s.date.slice(0, 10);
+				if (range[0] && day < range[0]) return false;
+				if (range[1] && day > range[1]) return false;
 				if (coach && s.coachRole !== coach) return false;
 				if (team && agentSupervisor[s.agentId] !== team) return false;
 				return true;
 			}),
-		[sessions, status, type, modality, coach, team, agentSupervisor]
+		[
+			sessions,
+			status,
+			type,
+			modality,
+			agent,
+			range,
+			coach,
+			team,
+			agentSupervisor,
+		]
+	);
+
+	// Everything on today's calendar, whatever its status, in time order.
+	const todays = useMemo(
+		() =>
+			filtered
+				.filter((s) => s.date.slice(0, 10) === today())
+				.sort((a, b) => a.date.localeCompare(b.date)),
+		[filtered]
 	);
 
 	const upcoming = useMemo(
@@ -222,11 +263,31 @@ export function SessionsTab({
 			<AppSegmentedControl
 				size='sm'
 				value={view}
-				onChange={(v) => setView(v as 'upcoming' | 'past')}
+				onChange={(v) => setView(v as 'today' | 'upcoming' | 'past')}
 				data={[
+					{ label: t('sessions.filters.today'), value: 'today' },
 					{ label: t('sessions.filters.upcoming'), value: 'upcoming' },
 					{ label: t('sessions.filters.past'), value: 'past' },
 				]}
+			/>
+			<Select
+				size='sm'
+				placeholder={t('sessions.filters.agent')}
+				data={agentOptions}
+				value={agent}
+				onChange={setAgent}
+				clearable
+				searchable
+				w={200}
+			/>
+			<DatePickerInput
+				type='range'
+				size='sm'
+				placeholder={t('sessions.filters.dateRange')}
+				value={range}
+				onChange={(value) => setRange(value as [string | null, string | null])}
+				clearable
+				w={250}
 			/>
 			<Select
 				size='sm'
@@ -310,7 +371,18 @@ export function SessionsTab({
 				{filters}
 			</SectionCard>
 
-			{view === 'upcoming' ? (
+			{view === 'today' ? (
+				<SectionCard title={t('sessions.todayTitle')}>
+					<BaseTable<CoachingSessionRecord>
+						data={todays}
+						columns={columns}
+						getRowId={(r) => r.id}
+						density='compact'
+						emptyMessage={t('sessions.empty')}
+						onRowClick={(r) => onOpen(r.id)}
+					/>
+				</SectionCard>
+			) : view === 'upcoming' ? (
 				<>
 					<SectionCard title={t('sessions.thisWeek')}>
 						<BaseTable<CoachingSessionRecord>
@@ -348,6 +420,13 @@ export function SessionsTab({
 					/>
 				</SectionCard>
 			)}
+
+			<SectionCard
+				title={t('sessions.calendar.title')}
+				description={t('sessions.calendar.description')}
+			>
+				<SessionsCalendar sessions={filtered} onOpen={onOpen} />
+			</SectionCard>
 		</Stack>
 	);
 }

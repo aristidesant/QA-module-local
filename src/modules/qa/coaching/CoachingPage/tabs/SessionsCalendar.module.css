@@ -1,0 +1,221 @@
+.toolbar {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--mantine-spacing-sm);
+}
+
+.nav {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+}
+
+.title {
+	font-weight: 600;
+	min-width: 12rem;
+}
+
+.frame {
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	overflow: hidden;
+}
+
+.weekdays,
+.monthGrid {
+	display: grid;
+	grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.weekday {
+	padding: var(--mantine-spacing-xs);
+	text-align: center;
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	text-transform: uppercase;
+	color: var(--mantine-color-dimmed);
+	border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.cell {
+	min-height: 7.5rem;
+	padding: 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	border-right: 1px solid var(--mantine-color-default-border);
+	border-bottom: 1px solid var(--mantine-color-default-border);
+	min-width: 0;
+}
+
+.cell:nth-child(7n) {
+	border-right: none;
+}
+
+.outside {
+	background-color: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-8)
+	);
+}
+
+.outside .dayNumber {
+	color: var(--mantine-color-dimmed);
+}
+
+.dayNumber {
+	align-self: flex-start;
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	min-width: 1.6rem;
+	height: 1.6rem;
+	padding: 0 4px;
+	border-radius: 999px;
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 500;
+	border: none;
+	background: none;
+	color: inherit;
+	cursor: pointer;
+}
+
+.dayNumber:hover {
+	background-color: var(--mantine-color-default-hover);
+}
+
+.today {
+	background-color: var(--mantine-primary-color-filled);
+	color: var(--mantine-color-white);
+}
+
+.today:hover {
+	background-color: var(--mantine-primary-color-filled-hover);
+}
+
+.chip {
+	display: block;
+	width: 100%;
+	padding: 2px 6px;
+	border: none;
+	border-radius: var(--mantine-radius-sm);
+	font-size: var(--mantine-font-size-xs);
+	line-height: 1.35;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	cursor: pointer;
+	background-color: var(--mantine-color-gray-light);
+	color: var(--mantine-color-gray-light-color);
+}
+
+.chip:hover {
+	background-color: var(--mantine-color-gray-light-hover);
+}
+
+.chip[data-status='SCHEDULED'] {
+	background-color: var(--mantine-color-blue-light);
+	color: var(--mantine-color-blue-light-color);
+}
+
+.chip[data-status='SCHEDULED']:hover {
+	background-color: var(--mantine-color-blue-light-hover);
+}
+
+.chip[data-status='COMPLETED'] {
+	background-color: var(--mantine-color-green-light);
+	color: var(--mantine-color-green-light-color);
+}
+
+.chip[data-status='COMPLETED']:hover {
+	background-color: var(--mantine-color-green-light-hover);
+}
+
+.chip[data-status='MISSED'] {
+	background-color: var(--mantine-color-red-light);
+	color: var(--mantine-color-red-light-color);
+}
+
+.chip[data-status='MISSED']:hover {
+	background-color: var(--mantine-color-red-light-hover);
+}
+
+.chipTime {
+	font-weight: 600;
+	margin-right: 4px;
+}
+
+.more {
+	align-self: flex-start;
+	padding: 0 4px;
+	border: none;
+	background: none;
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	color: var(--mantine-color-dimmed);
+	cursor: pointer;
+}
+
+.more:hover {
+	text-decoration: underline;
+}
+
+.timeGrid {
+	display: grid;
+	grid-template-columns: 4rem minmax(0, 1fr);
+}
+
+.timeGridWeek {
+	grid-template-columns: 4rem repeat(7, minmax(0, 1fr));
+}
+
+.corner {
+	border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.columnHead {
+	padding: var(--mantine-spacing-xs);
+	text-align: center;
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-dimmed);
+	border-bottom: 1px solid var(--mantine-color-default-border);
+	border-left: 1px solid var(--mantine-color-default-border);
+}
+
+.columnHead strong {
+	display: block;
+	font-size: var(--mantine-font-size-md);
+	color: var(--mantine-color-text);
+}
+
+.hourLabel {
+	padding: 4px var(--mantine-spacing-xs);
+	text-align: right;
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-dimmed);
+	border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.hourCell {
+	min-height: 3.25rem;
+	padding: 2px 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+	border-left: 1px solid var(--mantine-color-default-border);
+	border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+.dayChip {
+	white-space: normal;
+}
+
+@media (max-width: 48em) {
+	.cell {
+		min-height: 5rem;
+	}
+}

@@ -540,12 +540,12 @@
 			"targetMode": {
 				"agents": "Agentes",
 				"team": "Equipo completo",
-				"cohort": "Cohorte"
+				"cohort": "Grupo de aprendizaje"
 			},
 			"agents": "Agentes",
 			"agentsPlaceholder": "Buscar agentes",
 			"team": "Equipo",
-			"cohort": "Cohorte",
+			"cohort": "Grupo de aprendizaje",
 			"dueDate": "Fecha límite",
 			"dueQuick": {
 				"7": "En 7 días",

@@ -65,7 +65,6 @@ interface CoachingRuleFormValues {
 	area: EvaluationArea;
 	conditions: RuleCondition[];
 	conditionLogic: ConditionLogic;
-	scopeMode: 'everyone' | 'teams' | 'agents';
 	scope: RuleScope;
 	action: CoachingRuleAction;
 	followUp: CoachingFollowUp;
@@ -133,7 +132,6 @@ export function CoachingRuleForm({
 			area: 'QUALITY_ASSURANCE',
 			conditions: [buildCondition('QUALITY_ASSURANCE')],
 			conditionLogic: 'ALL',
-			scopeMode: role === 'supervisor' ? 'teams' : 'everyone',
 			scope: emptyScope(role),
 			action: {
 				kind: 'ASSIGN_CONTENT',
@@ -163,11 +161,6 @@ export function CoachingRuleForm({
 				area: rule.area,
 				conditions: rule.conditions,
 				conditionLogic: rule.conditionLogic,
-				scopeMode: rule.scope.agentIds.length
-					? 'agents'
-					: rule.scope.supervisorIds.length
-						? 'teams'
-						: 'everyone',
 				scope: rule.scope,
 				action: rule.action,
 				followUp: rule.followUp,
@@ -183,7 +176,6 @@ export function CoachingRuleForm({
 				area: 'QUALITY_ASSURANCE',
 				conditions: [buildCondition('QUALITY_ASSURANCE')],
 				conditionLogic: 'ALL',
-				scopeMode: role === 'supervisor' ? 'teams' : 'everyone',
 				scope: emptyScope(role),
 				action: {
 					kind: 'ASSIGN_CONTENT',
@@ -249,16 +241,11 @@ export function CoachingRuleForm({
 	};
 
 	const buildRule = (status: RuleStatus): CoachingRule => {
+		// A supervisor always stays inside their own team; everything else comes from the Who filters.
 		const scope: RuleScope = {
 			...form.values.scope,
-			agentIds:
-				form.values.scopeMode === 'agents' ? form.values.scope.agentIds : [],
 			supervisorIds:
-				form.values.scopeMode === 'teams'
-					? form.values.scope.supervisorIds
-					: role === 'supervisor'
-						? ['SUP-001']
-						: [],
+				role === 'supervisor' ? ['SUP-001'] : form.values.scope.supervisorIds,
 		};
 		return {
 			id: mode === 'edit' && rule ? rule.id : nextCoachingId('cr'),
@@ -607,54 +594,30 @@ export function CoachingRuleForm({
 
 			<SectionCard title={t('rules.editor.sections.scope')} padding='md'>
 				<Stack gap='sm'>
-					<AppSegmentedControl
-						size='sm'
-						value={form.values.scopeMode}
+					<MultiSelect
+						label={t('rules.editor.scope.lob')}
+						placeholder={t('rules.editor.scope.everyone')}
+						data={LINES_OF_BUSINESS}
+						value={form.values.scope.linesOfBusiness}
+						onChange={(v) => form.setFieldValue('scope.linesOfBusiness', v)}
+						clearable
+					/>
+					<MultiSelect
+						label='Campaign type'
+						placeholder={t('rules.editor.scope.everyone')}
+						data={CAMPAIGN_TYPES}
+						value={form.values.scope.campaignTypes}
 						onChange={(v) =>
 							form.setFieldValue(
-								'scopeMode',
-								v as CoachingRuleFormValues['scopeMode']
+								'scope.campaignTypes',
+								v as RuleScope['campaignTypes']
 							)
 						}
-						data={[
-							{ label: t('rules.editor.scope.everyone'), value: 'everyone' },
-							{ label: t('rules.editor.scope.teams'), value: 'teams' },
-							{ label: t('rules.editor.scope.agents'), value: 'agents' },
-						]}
+						clearable
 					/>
-
-					{form.values.scopeMode === 'teams' && (
-						<MultiSelect
-							label={t('rules.editor.scope.teams')}
-							data={[
-								{ value: 'SUP-001', label: 'Team 1 · Maria García' },
-								...(role === 'qa-manager'
-									? [
-											{ value: 'SUP-002', label: 'Team 2 · Juan Pérez' },
-											{ value: 'SUP-003', label: 'Team 3 · Laura Gómez' },
-										]
-									: []),
-							]}
-							value={form.values.scope.supervisorIds}
-							onChange={(v) => form.setFieldValue('scope.supervisorIds', v)}
-						/>
-					)}
-
-					{form.values.scopeMode === 'agents' && (
-						<MultiSelect
-							label={t('rules.editor.scope.agents')}
-							data={scopeAgents.map((a) => ({
-								value: a.id,
-								label: `${a.name} · ${a.team}`,
-							}))}
-							value={form.values.scope.agentIds}
-							onChange={(v) => form.setFieldValue('scope.agentIds', v)}
-							searchable
-						/>
-					)}
-
 					<MultiSelect
 						label={t('rules.editor.scope.campaigns')}
+						placeholder={t('rules.editor.scope.everyone')}
 						data={TRIGGER_CAMPAIGNS.map((c) => ({
 							value: c.value,
 							label: c.label,
@@ -664,22 +627,15 @@ export function CoachingRuleForm({
 						clearable
 					/>
 					<MultiSelect
-						label={t('rules.editor.scope.lob')}
-						data={LINES_OF_BUSINESS}
-						value={form.values.scope.linesOfBusiness}
-						onChange={(v) => form.setFieldValue('scope.linesOfBusiness', v)}
-						clearable
-					/>
-					<MultiSelect
-						label='Campaign type'
-						data={CAMPAIGN_TYPES}
-						value={form.values.scope.campaignTypes}
-						onChange={(v) =>
-							form.setFieldValue(
-								'scope.campaignTypes',
-								v as RuleScope['campaignTypes']
-							)
-						}
+						label={t('rules.editor.scope.agents')}
+						placeholder={t('rules.editor.scope.everyone')}
+						data={scopeAgents.map((a) => ({
+							value: a.id,
+							label: `${a.name} · ${a.team}`,
+						}))}
+						value={form.values.scope.agentIds}
+						onChange={(v) => form.setFieldValue('scope.agentIds', v)}
+						searchable
 						clearable
 					/>
 				</Stack>
