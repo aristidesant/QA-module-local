@@ -87,6 +87,12 @@
 			"all": "Todos",
 			"clear": "Limpiar"
 		},
+		"evaluationPeriod": {
+			"label": "Período de evaluación",
+			"WEEKLY": "Semanal",
+			"MONTHLY": "Mensual",
+			"QUARTERLY": "Trimestral"
+		},
 		"pendingSession": {
 			"yes": "Sí",
 			"no": "No"
@@ -99,8 +105,9 @@
 			"active": "Elementos activos",
 			"pending": "Esperando",
 			"overdue": "Vencidos",
-			"sessions": "Sesiones (30d)",
+			"sessions": "Sesiones",
 			"lastImpact": "Último impacto",
+			"triggeredRules": "Reglas activadas",
 			"pendingSession": "Sesión pendiente"
 		},
 		"teamCard": "{{team}} · {{supervisor}}",
@@ -451,9 +458,12 @@
 			"evidenceModal": {
 				"title": "Seleccionar llamadas de evidencia",
 				"period": "Período",
-				"last7": "7 días",
-				"last30": "30 días",
-				"last90": "90 días",
+				"weekly": "Última semana",
+				"biweekly": "Últimas dos semanas",
+				"monthly": "Último mes",
+				"onlyTriggered": "Solo llamadas que activaron reglas",
+				"selectTriggered_one": "Seleccionar la {{count}} llamada que activó reglas",
+				"selectTriggered_other": "Seleccionar las {{count}} llamadas que activaron reglas",
 				"campaign": "Campaña",
 				"lineOfBusiness": "Línea de negocio",
 				"agent": "Agente",
@@ -469,6 +479,7 @@
 					"agent": "Agente",
 					"campaign": "Campaña",
 					"duration": "Duración",
+					"rules": "Reglas activadas",
 					"result": "Resultado"
 				},
 				"autoFail": "Auto-fail",

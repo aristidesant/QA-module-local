@@ -332,6 +332,7 @@ export default function CoachingPage() {
 						<AgentsTab
 							rows={agentRows}
 							assignments={scopeAssignments}
+							rules={scopeRules}
 							role={role}
 							onOpen={(agentId) => navigate(coachingAgentPath(role, agentId))}
 						/>

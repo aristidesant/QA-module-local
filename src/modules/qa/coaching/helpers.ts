@@ -1,6 +1,9 @@
 import type { TFunction } from 'i18next';
 import type {
 	CoachingQueueItem,
+	CoachingRule,
+	ComparisonOperator,
+	RuleCondition,
 	CoachingQueueReason,
 	CoachingSessionRecord,
 	CoachingSuggestedAction,
@@ -10,6 +13,8 @@ import type {
 	LmsImpactVerdict,
 } from '~/models/qa';
 import type { AgentProfile, DimensionKey } from '~/modules/qa/team/types';
+import { aggregateMetric } from '~/modules/qa/analytics/helpers';
+import type { TeamCallMetric } from '~/modules/qa/analytics/types';
 import { DIMENSION_TO_AREA } from '~/modules/qa/lms/constants';
 import { daysUntil, isOverdue } from '~/modules/qa/lms/helpers';
 import { DIMENSION_META } from '~/modules/qa/team/constants';
@@ -291,3 +296,62 @@ export const impactByArea = (
 				: 0,
 		};
 	});
+
+const compareValue = (value: number, op: ComparisonOperator, target: number) =>
+	op === 'LT'
+		? value < target
+		: op === 'LTE'
+			? value <= target
+			: op === 'GT'
+				? value > target
+				: value >= target;
+
+/** Only threshold and range conditions can be judged on a single call. */
+const conditionMatchesCall = (
+	condition: RuleCondition,
+	call: TeamCallMetric
+): boolean | null => {
+	if (condition.mode !== 'THRESHOLD' && condition.mode !== 'RANGE') return null;
+	const value = aggregateMetric([call], condition.metricId);
+	if (value === null) return false;
+	return condition.mode === 'THRESHOLD'
+		? compareValue(value, condition.operator, condition.value)
+		: value >= condition.value &&
+				value <= (condition.value2 ?? condition.value);
+};
+
+/** The active coaching rules whose conditions this call satisfies, within each rule's scope. */
+export function rulesTriggeredByCall(
+	call: TeamCallMetric,
+	rules: CoachingRule[]
+): CoachingRule[] {
+	return rules.filter((rule) => {
+		if (rule.status !== 'ACTIVE') return false;
+		const {
+			agentIds,
+			supervisorIds,
+			campaignIds,
+			linesOfBusiness,
+			campaignTypes,
+		} = rule.scope;
+		if (agentIds.length && !agentIds.includes(call.agentId)) return false;
+		if (supervisorIds.length && !supervisorIds.includes(call.supervisorId))
+			return false;
+		if (campaignIds.length && !campaignIds.includes(call.campaignId))
+			return false;
+		if (
+			linesOfBusiness.length &&
+			!linesOfBusiness.includes(call.lineOfBusiness)
+		)
+			return false;
+		if (campaignTypes.length && !campaignTypes.includes(call.campaignType))
+			return false;
+		const results = rule.conditions
+			.map((condition) => conditionMatchesCall(condition, call))
+			.filter((r): r is boolean => r !== null);
+		if (results.length === 0) return false;
+		return rule.conditionLogic === 'ALL'
+			? results.every(Boolean)
+			: results.some(Boolean);
+	});
+}
