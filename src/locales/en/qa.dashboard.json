@@ -47,6 +47,21 @@
 		"signalAlert": "Above the alert threshold set in Settings"
 	},
 	"description": "Live quality metrics computed from evaluations, disputes, and AI provider health.",
+	"coachingWeek": {
+		"title": "This week's coaching sessions",
+		"description": "Sessions you lead in the next 7 days",
+		"summary_one": "{{count}} session · {{agents}} agents",
+		"summary_other": "{{count}} sessions · {{agents}} agents",
+		"next": "Next: {{name}} · {{when}}",
+		"group_one": "Group · {{count}} agent",
+		"group_other": "Group · {{count}} agents",
+		"columns": {
+			"agent": "Agent",
+			"date": "Date & time"
+		},
+		"empty": "No coaching sessions scheduled this week",
+		"viewAll": "View all sessions"
+	},
 	"drill": {
 		"calls_one": "{{count}} call",
 		"calls_other": "{{count}} calls",

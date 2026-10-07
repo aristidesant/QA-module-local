@@ -2,15 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from '@mantine/hooks';
-import {
-	Stack,
-	Title,
-	Text,
-	SimpleGrid,
-	Badge,
-	Group,
-	SegmentedControl,
-} from '@mantine/core';
+import { Stack, Title, Text, Grid, SimpleGrid, Badge } from '@mantine/core';
 import { IconTrophy } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
@@ -22,6 +14,7 @@ import {
 	BusinessInsightsCard,
 	OperationalCard,
 	TeamBurnoutRiskCard,
+	WeekCoachingSessionsCard,
 	PerformanceScoreControls,
 } from '../components';
 import { useDashboardCopy } from '../useDashboardCopy';
@@ -45,9 +38,9 @@ import {
 import { teamBurnoutRisk } from '~/modules/qa/analytics/helpers';
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import { TODAY } from '~/modules/qa/analytics/constants';
+import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import type { DashboardLineOfBusiness } from '../lineOfBusiness';
 import {
-	PERFORMANCE_SCORE_PERIODS,
 	DEFAULT_PERFORMANCE_SCORE_PERIOD,
 	performanceScoreDays,
 	type PerformanceScorePeriod,
@@ -71,7 +64,6 @@ const ANALYTICS_PATH = '/qa/supervisor/analytics';
 
 export const NewSupervisorDashboard: React.FC = () => {
 	const { t } = useTranslation('qa.rankings');
-	const { t: tDashboard } = useTranslation('qa.dashboard');
 	const copy = useDashboardCopy('supervisor');
 	const navigate = useNavigate();
 	const isCompact = useMediaQuery(TABLE_BREAKPOINT);
@@ -80,10 +72,8 @@ export const NewSupervisorDashboard: React.FC = () => {
 		DEFAULT_PERFORMANCE_SCORE_PERIOD
 	);
 	const days = performanceScoreDays(period);
-	const [rankingsPeriod, setRankingsPeriod] = useState<PerformanceScorePeriod>(
-		DEFAULT_PERFORMANCE_SCORE_PERIOD
-	);
-	const rankingsDays = performanceScoreDays(rankingsPeriod);
+	// The leaderboard always ranks the current week.
+	const rankingsDays = performanceScoreDays('week');
 	const [lineOfBusiness, setLineOfBusiness] =
 		useState<DashboardLineOfBusiness | null>(null);
 	const thresholds = useSettingsStore(selectThresholds);
@@ -212,60 +202,56 @@ export const NewSupervisorDashboard: React.FC = () => {
 					</SimpleGrid>
 				</SectionCard>
 
-				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					{!program ? (
-						<SectionCard fullHeight>
-							<EmptyState
-								icon={<IconTrophy size={32} />}
-								message={t('agent.empty.noActive')}
-							/>
-						</SectionCard>
-					) : (
-						<SectionCard
-							title={t('agent.leaderboard')}
-							description={t('agent.leaderboardDescription')}
-							headerActions={
-								<Group gap='sm' wrap='nowrap'>
-									<SegmentedControl
-										size='sm'
-										aria-label={tDashboard('roleDashboard.filters.period')}
-										value={rankingsPeriod}
-										onChange={(v) =>
-											setRankingsPeriod(v as PerformanceScorePeriod)
-										}
-										data={PERFORMANCE_SCORE_PERIODS.map((p) => ({
-											value: p.value,
-											label: tDashboard(p.labelKey),
-										}))}
-									/>
+				<Grid gap='lg'>
+					<Grid.Col span={{ base: 12, lg: 4 }}>
+						{!program ? (
+							<SectionCard fullHeight>
+								<EmptyState
+									icon={<IconTrophy size={32} />}
+									message={t('agent.empty.noActive')}
+								/>
+							</SectionCard>
+						) : (
+							<SectionCard
+								title={t('agent.leaderboard')}
+								description={t('agent.leaderboardDescription')}
+								headerActions={
 									<Badge variant='light' size='sm'>
 										{standings.length}
 									</Badge>
-								</Group>
-							}
-						>
-							{isCompact ? (
-								<RankingCardGrid
-									data={entries}
-									formatScore={renderScore}
-									hideReactions
-								/>
-							) : (
-								<ExpandedRankingsTable
-									data={entries}
-									formatScore={renderScore}
-									hideReactions
-								/>
-							)}
-						</SectionCard>
-					)}
-
-					<TeamBurnoutRiskCard
-						entries={burnoutRisk}
-						role='supervisor'
-						subtitle="Your team's members showing signs of burnout"
-					/>
-				</SimpleGrid>
+								}
+							>
+								{isCompact ? (
+									<RankingCardGrid
+										data={entries}
+										formatScore={renderScore}
+										hideReactions
+									/>
+								) : (
+									<ExpandedRankingsTable
+										data={entries}
+										formatScore={renderScore}
+										hideReactions
+										hideAchievements
+									/>
+								)}
+							</SectionCard>
+						)}
+					</Grid.Col>
+					<Grid.Col span={{ base: 12, md: 6, lg: 3 }}>
+						<TeamBurnoutRiskCard
+							entries={burnoutRisk}
+							role='supervisor'
+							subtitle="Your team's members showing signs of burnout"
+						/>
+					</Grid.Col>
+					<Grid.Col span={{ base: 12, md: 6, lg: 5 }}>
+						<WeekCoachingSessionsCard
+							role='supervisor'
+							coachId={SUPERVISOR_PERSONA.id}
+						/>
+					</Grid.Col>
+				</Grid>
 			</Stack>
 		</ContentContainer>
 	);

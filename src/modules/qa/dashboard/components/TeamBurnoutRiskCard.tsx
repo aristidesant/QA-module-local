@@ -7,19 +7,16 @@ import {
 	Group,
 	Text,
 	Badge,
-	Button,
 	ThemeIcon,
 	Progress,
 	Tooltip,
 } from '@mantine/core';
 import {
-	IconCalendarEvent,
 	IconMinus,
 	IconMoodSad2,
 	IconTrendingDown,
 	IconTrendingUp,
 } from '@tabler/icons-react';
-import { coachingBasePath } from '~/modules/qa/coaching/constants';
 import { agentProfilePath } from '~/modules/qa/team/helpers';
 import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 import type { TeamRole } from '~/modules/qa/team/types';
@@ -29,7 +26,7 @@ import styles from '../Dashboard.module.css';
 
 interface TeamBurnoutRiskCardProps {
 	entries: TeamBurnoutRiskEntry[];
-	/** Scopes the "Schedule Coaching" links to the right coaching section. */
+	/** Scopes the evidence link to the right profile section. */
 	role: TeamRole;
 	subtitle?: string;
 }
@@ -141,20 +138,6 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 											/>
 										</div>
 									</Tooltip>
-									<Group justify='flex-end' mt={6}>
-										<Button
-											variant='subtle'
-											size='xs'
-											leftSection={<IconCalendarEvent size={14} />}
-											onClick={() =>
-												navigate(
-													`${coachingBasePath(role)}?schedule=${entry.agentId}`
-												)
-											}
-										>
-											{t('burnout.scheduleCoaching', 'Schedule Coaching')}
-										</Button>
-									</Group>
 								</div>
 							);
 						})}

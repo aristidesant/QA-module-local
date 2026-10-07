@@ -68,6 +68,8 @@ export interface ExpandedRankingsTableProps {
 	onRowClick?: (entry: AgentRankingEntry) => void;
 	/** Drops the peer-reactions column — for read-only views (e.g. a supervisor's dashboard). */
 	hideReactions?: boolean;
+	/** Drops the achievement badges column — for narrow placements such as a dashboard card. */
+	hideAchievements?: boolean;
 }
 
 /**
@@ -83,6 +85,7 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 	formatScore,
 	onRowClick,
 	hideReactions,
+	hideAchievements,
 }) => {
 	const [sorting, setSorting] = useState<SortingState>([
 		{ id: 'rank', desc: false },
@@ -205,10 +208,20 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 			},
 		];
 
-		return hideReactions
-			? allColumns.filter((column) => column.id !== 'reactions')
-			: allColumns;
-	}, [rankIndex, isCompleted, badges, formatScore, t, hideReactions]);
+		return allColumns.filter(
+			(column) =>
+				!(hideReactions && column.id === 'reactions') &&
+				!(hideAchievements && column.id === 'achievements')
+		);
+	}, [
+		rankIndex,
+		isCompleted,
+		badges,
+		formatScore,
+		t,
+		hideReactions,
+		hideAchievements,
+	]);
 
 	const table = useReactTable({
 		data,

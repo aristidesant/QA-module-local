@@ -47,6 +47,21 @@
 		"signalAlert": "Por encima del umbral de alerta definido en Configuración"
 	},
 	"description": "Métricas de calidad en vivo calculadas a partir de evaluaciones, disputas y salud de proveedores de IA.",
+	"coachingWeek": {
+		"title": "Sesiones de coaching de esta semana",
+		"description": "Sesiones que diriges en los próximos 7 días",
+		"summary_one": "{{count}} sesión · {{agents}} agentes",
+		"summary_other": "{{count}} sesiones · {{agents}} agentes",
+		"next": "Siguiente: {{name}} · {{when}}",
+		"group_one": "Grupal · {{count}} agente",
+		"group_other": "Grupal · {{count}} agentes",
+		"columns": {
+			"agent": "Agente",
+			"date": "Fecha y hora"
+		},
+		"empty": "No hay sesiones de coaching programadas esta semana",
+		"viewAll": "Ver todas las sesiones"
+	},
 	"drill": {
 		"calls_one": "{{count}} llamada",
 		"calls_other": "{{count}} llamadas",
