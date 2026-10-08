@@ -34,6 +34,7 @@ import {
 	useTriggerRulesStore,
 	selectTriggerRules,
 } from '~/stores/qa/triggerRulesStore';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import { withRuleBurnout } from '~/modules/qa/analytics/helpers';
 import {
 	daysUntil,
@@ -83,6 +84,7 @@ export default function CoachingPage() {
 	const enrollments = useLmsStore(selectEnrollments);
 	const rules = useCoachingStore(selectRules);
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
+	const tierCuts = useSettingsStore(selectThresholds).coaching.tierCuts;
 	const sessions = useCoachingStore(selectSessions);
 	const cohorts = useCoachingStore(selectCohorts);
 
@@ -152,7 +154,8 @@ export default function CoachingPage() {
 
 	const agentRows = useMemo(
 		() => buildAgentRows(scopeProfiles, scopeAssignments, scopeSessions),
-		[scopeProfiles, scopeAssignments, scopeSessions]
+		// tierCuts: rows are re-grouped when the cut-offs change in Settings.
+		[scopeProfiles, scopeAssignments, scopeSessions, tierCuts]
 	);
 
 	const agentTeam = useMemo(

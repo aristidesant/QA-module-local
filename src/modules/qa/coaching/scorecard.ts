@@ -1,3 +1,4 @@
+import type { TFunction } from 'i18next';
 import type { LmsImpactVerdict } from '~/models/qa';
 import type { TeamCallMetric } from '~/modules/qa/analytics/types';
 import {
@@ -5,7 +6,9 @@ import {
 	aggregateDashboardMetrics,
 } from '~/modules/qa/calls/agentMetrics';
 import { IMPACT_THRESHOLD } from '~/modules/qa/lms/constants';
+import type { CoachingTierCuts } from '~/modules/qa/settings/types';
 import { OPERATIONAL_META } from '~/modules/qa/team/constants';
+import { useSettingsStore } from '~/stores/qa/settingsStore';
 
 /** The four aspects that make up the weekly coaching scorecard. */
 export type ScorecardDimension =
@@ -78,55 +81,72 @@ export const TIER_ORDER: PerformanceTier[] = [
 	'CRITICAL',
 ];
 
-/** Lower bound (inclusive) of each tier on the 0-100 scorecard. CRITICAL is everything below NEEDS_IMPROVEMENT. */
-export const TIER_MIN_SCORE: Record<
-	Exclude<PerformanceTier, 'CRITICAL'>,
-	number
-> = {
-	EXCELLENT: 90,
-	GOOD: 80,
-	NEEDS_IMPROVEMENT: 70,
-};
+/** The cut-offs the QA Manager saved in Settings → Coaching. */
+export const liveTierCuts = (): CoachingTierCuts =>
+	useSettingsStore.getState().thresholds.coaching.tierCuts;
 
 /** `color` doubles as SectionCard.headerAccent (same four literals). */
 export const TIER_META: Record<
 	PerformanceTier,
 	{
 		labelKey: string;
-		rangeKey: string;
 		color: 'green' | 'blue' | 'yellow' | 'red';
 	}
 > = {
 	EXCELLENT: {
 		labelKey: 'agents.tiers.EXCELLENT.label',
-		rangeKey: 'agents.tiers.EXCELLENT.range',
 		color: 'green',
 	},
 	GOOD: {
 		labelKey: 'agents.tiers.GOOD.label',
-		rangeKey: 'agents.tiers.GOOD.range',
 		color: 'blue',
 	},
 	NEEDS_IMPROVEMENT: {
 		labelKey: 'agents.tiers.NEEDS_IMPROVEMENT.label',
-		rangeKey: 'agents.tiers.NEEDS_IMPROVEMENT.range',
 		color: 'yellow',
 	},
 	CRITICAL: {
 		labelKey: 'agents.tiers.CRITICAL.label',
-		rangeKey: 'agents.tiers.CRITICAL.range',
 		color: 'red',
 	},
 };
 
-export const tierFor = (score: number): PerformanceTier =>
-	score >= TIER_MIN_SCORE.EXCELLENT
+export const tierFor = (
+	score: number,
+	cuts: CoachingTierCuts = liveTierCuts()
+): PerformanceTier =>
+	score >= cuts.excellent
 		? 'EXCELLENT'
-		: score >= TIER_MIN_SCORE.GOOD
+		: score >= cuts.good
 			? 'GOOD'
-			: score >= TIER_MIN_SCORE.NEEDS_IMPROVEMENT
+			: score >= cuts.needsImprovement
 				? 'NEEDS_IMPROVEMENT'
 				: 'CRITICAL';
+
+/** i18n params of a group's score range: `{ from, to }` or, for Critical, `{ below }`. */
+export const tierRangeParams = (
+	tier: PerformanceTier,
+	cuts: CoachingTierCuts = liveTierCuts()
+): { from: number; to: number } | { below: number } =>
+	tier === 'EXCELLENT'
+		? { from: cuts.excellent, to: 100 }
+		: tier === 'GOOD'
+			? { from: cuts.good, to: cuts.excellent - 1 }
+			: tier === 'NEEDS_IMPROVEMENT'
+				? { from: cuts.needsImprovement, to: cuts.good - 1 }
+				: { below: cuts.needsImprovement };
+
+/** The translated range label of a group ("90–100", "Below 70"). */
+export const tierRangeLabel = (
+	t: TFunction,
+	tier: PerformanceTier,
+	cuts: CoachingTierCuts = liveTierCuts()
+): string => {
+	const params = tierRangeParams(tier, cuts);
+	return 'below' in params
+		? t('agents.tiers.rangeBelow', params)
+		: t('agents.tiers.rangeFrom', params);
+};
 
 export interface WeeklyScorecard {
 	/** Each aspect on a 0-100 scale. */

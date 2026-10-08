@@ -166,21 +166,19 @@
 			"emptyGroup": "Ningún agente está en este grupo esta semana.",
 			"more": "+{{count}} más en la página de detalle",
 			"description": "Scorecard {{range}}",
+			"rangeFrom": "{{from}}–{{to}}",
+			"rangeBelow": "Menos de {{below}}",
 			"EXCELLENT": {
-				"label": "Excelente",
-				"range": "90–100"
+				"label": "Excelente"
 			},
 			"GOOD": {
-				"label": "Bueno",
-				"range": "80–89"
+				"label": "Bueno"
 			},
 			"NEEDS_IMPROVEMENT": {
-				"label": "Necesita mejorar",
-				"range": "70–79"
+				"label": "Necesita mejorar"
 			},
 			"CRITICAL": {
-				"label": "Crítico",
-				"range": "Menos de 70"
+				"label": "Crítico"
 			},
 			"noData": {
 				"title": "Sin scorecard esta semana",

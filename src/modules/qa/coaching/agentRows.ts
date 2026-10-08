@@ -6,6 +6,7 @@ import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import type { AgentProfile, TeamRole } from '~/modules/qa/team/types';
 import { useCoachingStore, selectSessions } from '~/stores/qa/coachingStore';
 import { useLmsStore, selectAssignments } from '~/stores/qa/lmsStore';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import { useTeamStore } from '~/stores/qa/teamStore';
 import {
 	useTriggerRulesStore,
@@ -97,6 +98,7 @@ export function buildAgentRows(
 export function useAgentCoachingRows(role: TeamRole): AgentCoachingRow[] {
 	const profilesMap = useTeamStore((s) => s.profiles);
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
+	const tierCuts = useSettingsStore(selectThresholds).coaching.tierCuts;
 	const assignments = useLmsStore(selectAssignments);
 	const sessions = useCoachingStore(selectSessions);
 	const scopeAgents = useMemo(() => managerScopeAgents(role), [role]);
@@ -118,5 +120,14 @@ export function useAgentCoachingRows(role: TeamRole): AgentCoachingRow[] {
 			)
 		);
 		return buildAgentRows(scopeProfiles, scopeAssignments, scopeSessions);
-	}, [profilesMap, triggerRules, assignments, sessions, scopeAgents, role]);
+		// tierCuts: rows are re-grouped when the cut-offs change in Settings.
+	}, [
+		profilesMap,
+		triggerRules,
+		assignments,
+		sessions,
+		scopeAgents,
+		role,
+		tierCuts,
+	]);
 }

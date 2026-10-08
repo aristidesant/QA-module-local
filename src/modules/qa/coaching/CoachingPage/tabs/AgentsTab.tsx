@@ -21,7 +21,12 @@ import type { AgentCoachingRow } from '../../agentRows';
 import { ScorecardBadge } from '../../components/ScorecardBadges';
 import { TierTenureText } from '../../components/TierTenureText';
 import type { CoachingTierKey } from '../../constants';
-import { TIER_META, TIER_ORDER, type PerformanceTier } from '../../scorecard';
+import {
+	TIER_META,
+	TIER_ORDER,
+	tierRangeLabel,
+	type PerformanceTier,
+} from '../../scorecard';
 import styles from './AgentsTab.module.css';
 
 const helper = createColumnHelper<AgentCoachingRow>();
@@ -126,7 +131,7 @@ export function AgentsTab({ rows, onOpen, onShowDetails }: AgentsTabProps) {
 					key === 'NO_DATA'
 						? t('agents.tiers.noData.description')
 						: t('agents.tiers.description', {
-								range: t(TIER_META[key].rangeKey),
+								range: tierRangeLabel(t, key),
 							})
 				}
 				headerActions={
@@ -190,7 +195,7 @@ export function AgentsTab({ rows, onOpen, onShowDetails }: AgentsTabProps) {
 								value={count}
 								subtitle={
 									avg === null
-										? t(TIER_META[tier].rangeKey)
+										? tierRangeLabel(t, tier)
 										: t('agents.summary.avgScorecard', { value: avg })
 								}
 								badge={
@@ -199,7 +204,7 @@ export function AgentsTab({ rows, onOpen, onShowDetails }: AgentsTabProps) {
 										variant='light'
 										color={TIER_META[tier].color}
 									>
-										{t(TIER_META[tier].rangeKey)}
+										{tierRangeLabel(t, tier)}
 									</Badge>
 								}
 							/>

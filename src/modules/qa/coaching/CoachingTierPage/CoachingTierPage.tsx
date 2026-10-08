@@ -21,7 +21,7 @@ import {
 	coachingBasePath,
 	tierFromParam,
 } from '../constants';
-import { TIER_META } from '../scorecard';
+import { TIER_META, tierRangeLabel } from '../scorecard';
 
 /** One performance group of the Agents tab with every column, on its own page (route `tiers/:tier`). */
 export default function CoachingTierPage() {
@@ -58,7 +58,7 @@ export default function CoachingTierPage() {
 	const description =
 		tier === 'NO_DATA'
 			? t('agents.tiers.noData.description')
-			: t('agents.tiers.description', { range: t(TIER_META[tier].rangeKey) });
+			: t('agents.tiers.description', { range: tierRangeLabel(t, tier) });
 
 	return (
 		<ContentContainer contentWidth='full'>

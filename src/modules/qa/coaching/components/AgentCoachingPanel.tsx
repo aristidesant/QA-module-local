@@ -5,6 +5,7 @@ import { createColumnHelper } from '@tanstack/react-table';
 import { IconBook, IconChartBar, IconSchool } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import { SectionCard } from '~/components/SectionCard';
 import BaseTable, {
 	type BaseTableColumnDef,
@@ -83,13 +84,15 @@ export function AgentCoachingPanel({
 		() => rankMaterialImpact(mine, contentById),
 		[mine, contentById]
 	);
+	// tierCuts: the group and its streak are recomputed when the cut-offs change in Settings.
+	const tierCuts = useSettingsStore(selectThresholds).coaching.tierCuts;
 	const tenure = useMemo(
 		() => buildTierTenure(profile.agent.id),
-		[profile.agent.id]
+		[profile.agent.id, tierCuts]
 	);
 	const summary = useMemo(
 		() => buildPostCoachingSummary(profile.agent.id, sessions, assignments),
-		[profile, sessions, assignments]
+		[profile, sessions, assignments, tierCuts]
 	);
 
 	const performance = profile.performance.slice(-6).map((p) => ({
