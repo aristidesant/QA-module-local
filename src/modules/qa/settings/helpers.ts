@@ -1,9 +1,9 @@
 import type { ScoreBand } from '~/modules/qa/constants/badgeColors';
 import type {
+	CoachingTierCuts,
 	ScoreBands,
 	SentimentCutPoints,
 	SentimentThresholds,
-	SettingsAspect,
 	ThresholdSettings,
 } from './types';
 
@@ -15,7 +15,7 @@ export const bandFor = (score: number, bands: ScoreBands): ScoreBand =>
 			? 'warning'
 			: 'critical';
 
-type BandedAspect = Exclude<SettingsAspect, 'sentiment' | 'qa'>;
+type BandedAspect = 'compliance' | 'business';
 
 /** The metric's own bands when it overrides its aspect, otherwise the aspect's. */
 export const bandsFor = (
@@ -110,5 +110,14 @@ export const validateCutPoints = (c: SentimentCutPoints): string | null => {
 	)
 		return 'validation.cutPointsOrder';
 	if (c.veryNegative < 1 || c.positive > 5) return 'validation.cutPointsRange';
+	return null;
+};
+
+/** Excellent > Good > Needs improvement, all inside 0-100. Keys under `qa.settings`. */
+export const validateTierCuts = (c: CoachingTierCuts): string | null => {
+	if (!(c.excellent > c.good && c.good > c.needsImprovement))
+		return 'validation.tierCutsOrder';
+	if (c.needsImprovement < 0 || c.excellent > 100)
+		return 'validation.tierCutsRange';
 	return null;
 };

@@ -1,4 +1,9 @@
-export type SettingsAspect = 'qa' | 'compliance' | 'sentiment' | 'business';
+export type SettingsAspect =
+	| 'qa'
+	| 'compliance'
+	| 'sentiment'
+	| 'business'
+	| 'coaching';
 
 /** score >= onTarget → good; >= watch → warning; otherwise critical. `onTarget` must exceed `watch`. */
 export interface ScoreBands {
@@ -67,11 +72,23 @@ export interface BusinessThresholds {
 	signalAlertShare: Record<BusinessSignalKey, number>;
 }
 
+/** Lower bound (inclusive) of each coaching performance group on the 0-100 weekly scorecard. Critical is everything below `needsImprovement`. */
+export interface CoachingTierCuts {
+	excellent: number;
+	good: number;
+	needsImprovement: number;
+}
+
+export interface CoachingThresholds {
+	tierCuts: CoachingTierCuts;
+}
+
 export interface ThresholdSettings {
 	qa: QaThresholds;
 	compliance: ComplianceThresholds;
 	sentiment: SentimentThresholds;
 	business: BusinessThresholds;
+	coaching: CoachingThresholds;
 }
 
 export interface QaSettings {

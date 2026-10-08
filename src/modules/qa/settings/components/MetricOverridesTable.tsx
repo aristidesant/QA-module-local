@@ -5,9 +5,9 @@ import SectionCard from '~/components/SectionCard';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import { OVERRIDE_METRICS } from '../constants';
 import { validateBands } from '../helpers';
-import type { ScoreBands, SettingsAspect } from '../types';
+import type { ScoreBands } from '../types';
 
-type OverrideAspect = Exclude<SettingsAspect, 'sentiment' | 'qa'>;
+type OverrideAspect = 'compliance' | 'business';
 
 interface OverrideRow {
 	key: string;

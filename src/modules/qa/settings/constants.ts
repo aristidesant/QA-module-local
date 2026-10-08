@@ -1,10 +1,5 @@
 import type { CallEmotion } from '~/modules/qa/analytics/types';
-import type {
-	BusinessSignalKey,
-	QaSettings,
-	SentimentBandKey,
-	SettingsAspect,
-} from './types';
+import type { BusinessSignalKey, QaSettings, SentimentBandKey } from './types';
 
 /** Same split the dashboards used before it was configurable: negative = Anger, Fear, Sadness, Disgust; positive = Joy, Trust, Anticipation. */
 export const DEFAULT_EMOTIONS_BY_SENTIMENT: Record<SentimentBandKey, string[]> =
@@ -73,12 +68,15 @@ export const DEFAULT_SETTINGS: QaSettings = {
 				mistargetedOffer: 15,
 			},
 		},
+		coaching: {
+			tierCuts: { excellent: 90, good: 80, needsImprovement: 70 },
+		},
 	},
 };
 
 /** Metrics that can override their aspect's bands, in display order. `labelKey` lives in `qa.settings`. */
 export const OVERRIDE_METRICS: Record<
-	Exclude<SettingsAspect, 'sentiment' | 'qa'>,
+	'compliance' | 'business',
 	{ key: string; labelKey: string }[]
 > = {
 	compliance: [
