@@ -38,9 +38,12 @@ import { withRuleBurnout } from '~/modules/qa/analytics/helpers';
 import { AssignContentDrawer } from '~/modules/qa/lms/components/AssignContentDrawer';
 import { agentProfilePath, roleFromPath } from '~/modules/qa/team/helpers';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
-import { coachingBasePath, coachingSessionNewPath } from '../constants';
+import {
+	coachingBasePath,
+	coachingSessionNewPath,
+	coachingSessionPath,
+} from '../constants';
 import { AgentCoachingPanel } from '../components/AgentCoachingPanel';
-import { SessionDetailDrawer } from '../components/SessionDetailDrawer';
 
 const AGENT_COACHING_TABS = ['assignments', 'sessions', 'impact'];
 
@@ -61,7 +64,6 @@ export default function CoachingAgentPage() {
 	const cohorts = useCoachingStore(selectCohorts);
 
 	const [assignOpen, setAssignOpen] = useState(false);
-	const [sessionId, setSessionId] = useState<string | null>(null);
 
 	const rawProfile = agentId ? profilesMap[agentId] : undefined;
 	const visible =
@@ -173,7 +175,9 @@ export default function CoachingAgentPage() {
 					role={role}
 					tab={tab}
 					onTabChange={setTab}
-					onOpenSession={setSessionId}
+					onOpenSession={(sessionId) =>
+						navigate(coachingSessionPath(role, sessionId))
+					}
 				/>
 			</Stack>
 
@@ -183,19 +187,6 @@ export default function CoachingAgentPage() {
 				role={role}
 				preset={assignPreset}
 				cohorts={agentCohorts}
-			/>
-
-			<SessionDetailDrawer
-				session={
-					sessionId ? (sessions.find((s) => s.id === sessionId) ?? null) : null
-				}
-				profile={profile}
-				assignments={assignments}
-				contentById={contentById}
-				role={role}
-				opened={sessionId !== null}
-				onClose={() => setSessionId(null)}
-				onOpenCall={(callId) => navigate(`/qa/campaigns/1/calls/${callId}`)}
 			/>
 		</ContentContainer>
 	);

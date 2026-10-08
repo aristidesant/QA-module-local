@@ -62,6 +62,8 @@ interface CoachingRuleFormValues {
 	action: CoachingRuleAction;
 	followUp: CoachingFollowUp;
 	cooldownDays: number;
+	limitEnabled: boolean;
+	maxTriggersPerAgent: number;
 	cadence: CoachingRuleCadence;
 	showAllContent: boolean;
 }
@@ -141,6 +143,8 @@ export function CoachingRuleForm({
 			},
 			followUp: { ...DEFAULT_FOLLOW_UP },
 			cooldownDays: 30,
+			limitEnabled: false,
+			maxTriggersPerAgent: 3,
 			cadence: 'ON_MATCH',
 			showAllContent: false,
 		},
@@ -164,6 +168,8 @@ export function CoachingRuleForm({
 				action: rule.action,
 				followUp: rule.followUp,
 				cooldownDays: rule.cooldownDays,
+				limitEnabled: rule.maxTriggersPerAgent != null,
+				maxTriggersPerAgent: rule.maxTriggersPerAgent ?? 3,
 				cadence: rule.cadence,
 				showAllContent: false,
 			});
@@ -191,6 +197,8 @@ export function CoachingRuleForm({
 				},
 				followUp: { ...DEFAULT_FOLLOW_UP },
 				cooldownDays: 30,
+				limitEnabled: false,
+				maxTriggersPerAgent: 3,
 				cadence: 'ON_MATCH',
 				showAllContent: false,
 			});
@@ -270,6 +278,9 @@ export function CoachingRuleForm({
 			action: form.values.action,
 			followUp: form.values.followUp,
 			cooldownDays: form.values.cooldownDays,
+			maxTriggersPerAgent: form.values.limitEnabled
+				? form.values.maxTriggersPerAgent
+				: null,
 			cadence: form.values.cadence,
 			stats: rule?.stats ?? {
 				triggeredLast30Days: 0,
@@ -483,6 +494,47 @@ export function CoachingRuleForm({
 							)
 						}
 					/>
+				</Stack>
+			</SectionCard>
+
+			<SectionCard
+				title={t('rules.editor.sections.recurrence')}
+				description={t('rules.editor.sections.recurrenceDescription')}
+				padding='md'
+			>
+				<Stack gap='sm'>
+					<NumberInput
+						label={t('rules.editor.fields.cooldown')}
+						description={t('rules.editor.fields.cooldownHint')}
+						min={0}
+						max={365}
+						value={form.values.cooldownDays}
+						onChange={(v) =>
+							form.setFieldValue('cooldownDays', typeof v === 'number' ? v : 0)
+						}
+					/>
+					<Switch
+						label={t('rules.editor.fields.limitPerAgent')}
+						checked={form.values.limitEnabled}
+						onChange={(e) =>
+							form.setFieldValue('limitEnabled', e.currentTarget.checked)
+						}
+					/>
+					{form.values.limitEnabled && (
+						<NumberInput
+							label={t('rules.editor.fields.maxTriggers')}
+							description={t('rules.editor.fields.maxTriggersHint')}
+							min={1}
+							max={100}
+							value={form.values.maxTriggersPerAgent}
+							onChange={(v) =>
+								form.setFieldValue(
+									'maxTriggersPerAgent',
+									typeof v === 'number' ? v : 1
+								)
+							}
+						/>
+					)}
 				</Stack>
 			</SectionCard>
 

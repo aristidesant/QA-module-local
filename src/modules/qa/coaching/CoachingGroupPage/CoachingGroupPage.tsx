@@ -4,7 +4,6 @@ import {
 	Anchor,
 	Breadcrumbs,
 	Button,
-	Divider,
 	Group,
 	MultiSelect,
 	Select,
@@ -26,7 +25,6 @@ import { managerPersona, managerScopeAgents } from '~/modules/qa/lms/helpers';
 import { roleFromPath } from '~/modules/qa/team/helpers';
 import { TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
 import { coachingBasePath } from '../constants';
-import { GroupCriteriaFinder } from '../components/GroupCriteriaFinder';
 
 interface FormValues {
 	name: string;
@@ -156,27 +154,6 @@ export default function CoachingGroupPage() {
 					padding='md'
 				>
 					<Stack gap='sm'>
-						<Stack gap='xs'>
-							<Text size='sm' fw={600}>
-								{t('cohorts.create.criteria.title')}
-							</Text>
-							<Text size='xs' c='dimmed'>
-								{t('cohorts.create.criteria.description')}
-							</Text>
-							<GroupCriteriaFinder
-								role={role}
-								selectedAgentIds={form.values.agentIds}
-								onAdd={(ids) =>
-									form.setFieldValue('agentIds', [
-										...new Set([...form.values.agentIds, ...ids]),
-									])
-								}
-							/>
-						</Stack>
-						<Divider
-							label={t('cohorts.create.criteria.orManual')}
-							labelPosition='center'
-						/>
 						<MultiSelect
 							label={t('cohorts.create.members')}
 							description={t('cohorts.create.membersHint')}

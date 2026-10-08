@@ -8,7 +8,7 @@ import type { LmsContent } from '~/models/qa';
 import { getScoreBandColor } from '~/modules/qa/constants/badgeColors';
 import { ImpactBadge } from '~/modules/qa/lms/components/Badges';
 import { VERDICT_COLOR } from '~/modules/qa/lms/constants';
-import type { PostCoachingSummary } from '../postCoaching';
+import type { PostCoachingSummary, TierTenure } from '../postCoaching';
 import {
 	SCORECARD_DIMENSION_META,
 	TIER_META,
@@ -35,6 +35,7 @@ function DeltaBadge({
 
 interface PostCoachingCardsProps {
 	summary: PostCoachingSummary;
+	tenure: TierTenure;
 	contentById: Record<string, LmsContent>;
 }
 
@@ -45,6 +46,7 @@ interface PostCoachingCardsProps {
  */
 export function PostCoachingCards({
 	summary,
+	tenure,
 	contentById,
 }: PostCoachingCardsProps) {
 	const { t } = useTranslation('qa.coaching');
@@ -106,7 +108,7 @@ export function PostCoachingCards({
 				</Group>
 			}
 		>
-			<SimpleGrid cols={{ base: 2, md: 3, xl: 6 }} spacing='sm'>
+			<SimpleGrid cols={{ base: 2, md: 4, xl: 7 }} spacing='sm'>
 				<StatCard
 					variant='compact'
 					title={t('agents.postCoaching.cards.scorecard')}
@@ -131,6 +133,33 @@ export function PostCoachingCards({
 								verdict={trend?.verdict ?? null}
 							/>
 						</Group>
+					}
+				/>
+
+				<StatCard
+					variant='compact'
+					title={t('agents.tierTenure.title')}
+					value={
+						tenure.tier
+							? tenure.atLeast
+								? t('agents.tierTenure.weeksAtLeast', { count: tenure.weeks })
+								: t('agents.tierTenure.weeks', { count: tenure.weeks })
+							: '—'
+					}
+					badge={tenure.tier && <TierBadge tier={tenure.tier} size='xs' />}
+					subtitle={
+						<Text size='xs' c='dimmed' lineClamp={1}>
+							{!tenure.tier || !tenure.since
+								? t('agents.tierTenure.noData')
+								: tenure.previousTier
+									? t('agents.tierTenure.sinceFrom', {
+											date: dayjs(tenure.since).format('D MMM'),
+											tier: t(TIER_META[tenure.previousTier].labelKey),
+										})
+									: t('agents.tierTenure.since', {
+											date: dayjs(tenure.since).format('D MMM'),
+										})}
+						</Text>
 					}
 				/>
 

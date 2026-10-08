@@ -172,6 +172,12 @@ const CoachingRulePage = React.lazy(
 const CoachingAgentPage = React.lazy(
 	() => import('./modules/qa/coaching/CoachingAgentPage')
 );
+const CoachingTierPage = React.lazy(
+	() => import('./modules/qa/coaching/CoachingTierPage')
+);
+const CoachingSessionDetailPage = React.lazy(
+	() => import('./modules/qa/coaching/CoachingSessionDetailPage')
+);
 const CustomersPage = React.lazy(
 	() => import('./modules/qa/customers/CustomersPage')
 );
@@ -1271,6 +1277,28 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'qa-manager/coaching/tiers/:tier',
+										id: 'qa.qa-manager.coaching.tier',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingTierPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/coaching/sessions/:sessionId',
+										id: 'qa.qa-manager.coaching.session',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingSessionDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'qa-manager/coaching/rules/new',
 										id: 'qa.qa-manager.coaching.rule-new',
 										element: (
@@ -1343,6 +1371,28 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<CoachingAgentPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/coaching/tiers/:tier',
+										id: 'qa.supervisor.coaching.tier',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingTierPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/coaching/sessions/:sessionId',
+										id: 'qa.supervisor.coaching.session',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingSessionDetailPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

@@ -15,10 +15,6 @@ import type {
 	CoachingSessionRecord,
 	CoachingWeeklyBatch,
 } from '~/models/qa';
-import {
-	CALL_ISSUE_BY_KEY,
-	type CallIssueKey,
-} from '~/modules/qa/calls/issues';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import type { TeamRole } from '~/modules/qa/team/types';
 import {
@@ -26,10 +22,9 @@ import {
 	selectBatches,
 	selectCoachingDay,
 } from '~/stores/qa/coachingStore';
-import { SESSION_STATUS_COLOR, WEEKDAYS } from '../constants';
-import { TIER_META } from '../scorecard';
+import { sessionStatusBadge, WEEKDAYS } from '../constants';
 import { nextBatchAt } from '../weeklyBatch';
-import { ScorecardTrendBadge, TierBadge } from './ScorecardBadges';
+import { CRITICAL_ISSUES, ScoreTrendText, TierScore } from './QuietIndicators';
 
 interface BatchRow extends CoachingBatchItem {
 	session: CoachingSessionRecord | undefined;
@@ -106,22 +101,14 @@ export function WeeklyBatchPanel({
 			header: t('agents.columns.scorecard'),
 			cell: (info) => {
 				const brief = info.row.original.session?.brief;
-				return brief ? (
-					<Group gap={6} wrap='nowrap'>
-						<Badge
-							size='sm'
-							variant='filled'
-							color={TIER_META[brief.tier].color}
-						>
-							{brief.score}
-						</Badge>
-						<TierBadge tier={brief.tier} size='xs' />
-					</Group>
-				) : (
-					<Text size='sm' c='dimmed'>
-						—
-					</Text>
-				);
+				if (!brief) {
+					return (
+						<Text size='sm' c='dimmed'>
+							—
+						</Text>
+					);
+				}
+				return <TierScore score={brief.score} tier={brief.tier} />;
 			},
 		}) as BaseTableColumnDef<BatchRow>,
 		helper.display({
@@ -129,16 +116,13 @@ export function WeeklyBatchPanel({
 			header: t('agents.columns.lastImpact'),
 			cell: (info) => {
 				const brief = info.row.original.session?.brief;
-				const trend =
-					brief && brief.trend && brief.previousScore !== null
-						? {
-								verdict: brief.trend,
-								current: brief.score,
-								previous: brief.previousScore,
-								delta: brief.score - brief.previousScore,
-							}
-						: null;
-				return <ScorecardTrendBadge trend={trend} size='xs' />;
+				return (
+					<ScoreTrendText
+						verdict={brief?.trend ?? null}
+						current={brief?.score ?? 0}
+						previous={brief?.previousScore ?? null}
+					/>
+				);
 			},
 		}) as BaseTableColumnDef<BatchRow>,
 		helper.display({
@@ -152,57 +136,59 @@ export function WeeklyBatchPanel({
 					</Text>
 				) : (
 					<Group gap={4} wrap='wrap'>
-						{findings.map((f) => (
-							<Badge
-								key={f.issue}
-								size='xs'
-								variant='light'
-								color={CALL_ISSUE_BY_KEY[f.issue as CallIssueKey].color}
-							>
-								{t(`issues.${f.issue}`, { ns: 'qa.calls' })}
-							</Badge>
-						))}
+						{findings.map((f) => {
+							const critical = CRITICAL_ISSUES.has(f.issue);
+							return (
+								<Badge
+									key={f.issue}
+									size='xs'
+									variant={critical ? 'light' : 'outline'}
+									color={critical ? 'red' : 'gray'}
+								>
+									{t(`issues.${f.issue}`, { ns: 'qa.calls' })}
+								</Badge>
+							);
+						})}
 					</Group>
 				);
 			},
 		}) as BaseTableColumnDef<BatchRow>,
 		helper.accessor('decision', {
 			header: t('sessions.batch.columns.decision'),
-			cell: (info) => (
-				<Stack gap={2}>
-					<Badge
-						size='xs'
-						variant={info.getValue() === 'ONE_ON_ONE' ? 'filled' : 'light'}
-						color={info.getValue() === 'ONE_ON_ONE' ? 'blue' : 'gray'}
-						leftSection={
-							info.getValue() === 'ONE_ON_ONE' ? (
-								<IconUser size={10} />
-							) : (
-								<IconMessage size={10} />
-							)
-						}
-					>
-						{t(`sessions.batch.decision.${info.getValue()}`)}
-					</Badge>
-					<Text size='xs' c='dimmed'>
-						{t(`sessions.batch.reason.${info.row.original.reason}`)}
-					</Text>
-				</Stack>
-			),
+			cell: (info) => {
+				const oneOnOne = info.getValue() === 'ONE_ON_ONE';
+				return (
+					<Stack gap={2}>
+						<Group gap={4} wrap='nowrap' c={oneOnOne ? undefined : 'dimmed'}>
+							{oneOnOne ? <IconUser size={12} /> : <IconMessage size={12} />}
+							<Text size='sm' c='inherit' fw={oneOnOne ? 500 : 400}>
+								{t(`sessions.batch.decision.${info.getValue()}`)}
+							</Text>
+						</Group>
+						<Text size='xs' c='dimmed'>
+							{t(`sessions.batch.reason.${info.row.original.reason}`)}
+						</Text>
+					</Stack>
+				);
+			},
 		}) as BaseTableColumnDef<BatchRow>,
 		helper.accessor((r) => r.session?.status ?? '', {
 			id: 'status',
 			header: t('sessions.columns.status'),
 			cell: (info) => {
 				const status = info.row.original.session?.status;
-				return status ? (
-					<Badge size='xs' variant='light' color={SESSION_STATUS_COLOR[status]}>
+				if (!status) {
+					return (
+						<Text size='sm' c='dimmed'>
+							—
+						</Text>
+					);
+				}
+				const badge = sessionStatusBadge(status);
+				return (
+					<Badge size='xs' variant={badge.variant} color={badge.color}>
 						{t(`sessions.status.${status}`)}
 					</Badge>
-				) : (
-					<Text size='sm' c='dimmed'>
-						—
-					</Text>
 				);
 			},
 		}) as BaseTableColumnDef<BatchRow>,
@@ -284,7 +270,7 @@ export function WeeklyBatchPanel({
 				headerActions={
 					<Group gap='sm' align='flex-end'>
 						{coachingDaySelect}
-						<Badge size='sm' variant='light' color='violet'>
+						<Badge size='sm' variant='outline' color='gray'>
 							{t('sessions.batch.next', {
 								date: dayjs(next.generatedAt).format('ddd D MMM, HH:mm'),
 							})}
@@ -302,9 +288,6 @@ export function WeeklyBatchPanel({
 						variant='compact'
 						title={t('sessions.batch.kpi.proposed')}
 						value={kpi.proposed}
-						color={
-							kpi.proposed > 0 ? 'var(--mantine-color-violet-7)' : undefined
-						}
 					/>
 					<StatCard
 						variant='compact'

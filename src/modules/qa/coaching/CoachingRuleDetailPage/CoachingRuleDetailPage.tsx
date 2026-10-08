@@ -243,6 +243,25 @@ export default function CoachingRuleDetailPage() {
 					</Text>
 				</SectionCard>
 
+				<SectionCard title={t('rules.detail.recurrence')} padding='md'>
+					<Stack gap={4}>
+						<Text size='sm' c='dimmed'>
+							{rule.cooldownDays > 0
+								? t('rules.detail.cooldownSummary', {
+										count: rule.cooldownDays,
+									})
+								: t('rules.detail.noCooldown')}
+						</Text>
+						<Text size='sm' c='dimmed'>
+							{rule.maxTriggersPerAgent != null
+								? t('rules.detail.limitSummary', {
+										count: rule.maxTriggersPerAgent,
+									})
+								: t('rules.detail.noLimit')}
+						</Text>
+					</Stack>
+				</SectionCard>
+
 				<SectionCard title={t('rules.detail.stats')} padding='md'>
 					<SimpleGrid cols={{ base: 2, md: 4 }} spacing='sm'>
 						<StatCard

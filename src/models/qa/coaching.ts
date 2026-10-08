@@ -64,7 +64,10 @@ export interface CoachingRule {
 	action: CoachingRuleAction;
 	followUp: CoachingFollowUp;
 	/** Days before the same rule can fire again for the same agent. */
+	/** Days to wait before the rule can trigger again for the same agent; 0 = no wait. */
 	cooldownDays: number;
+	/** Most times the rule may trigger for one agent in total; null or undefined = no limit. */
+	maxTriggersPerAgent?: number | null;
 	cadence: CoachingRuleCadence;
 	stats: CoachingRuleStats;
 	createdBy: string;

@@ -163,6 +163,75 @@ export const buildPostCoachingSummary = (
 	};
 };
 
+export interface TierTenure {
+	/** The agent's group this week (same rule as the Agents tab); null without a scorecard. */
+	tier: PerformanceTier | null;
+	/** Consecutive weeks, counting this one, the agent has been in that group. */
+	weeks: number;
+	/** 'YYYY-MM-DD' first day of the oldest week of the streak. */
+	since: string | null;
+	/** True when the history ends before the group changed, so the real tenure may be longer. */
+	atLeast: boolean;
+	/** The group the agent was in right before this streak. */
+	previousTier: PerformanceTier | null;
+}
+
+/** Weekly windows of history available for the streak (TEAM_CALLS holds 180 days). */
+const TENURE_MAX_WEEKS = 25;
+
+/**
+ * How long the agent has been in the current performance group: steps back one
+ * 7-day window at a time from TODAY, with the same weekly scorecard and tier
+ * cut-offs as the Agents tab, until the group changes or the data runs out.
+ */
+export const buildTierTenure = (agentId: string): TierTenure => {
+	const weekAt = (weeksBack: number) => {
+		const to = addDays(TODAY, -7 * weeksBack);
+		const from = addDays(to, -(SCORECARD_WINDOW_DAYS - 1));
+		const scorecard = buildWeeklyScorecard(
+			agentCallsBetween(agentId, from, to)
+		);
+		return { from, tier: scorecard ? tierFor(scorecard.score) : null };
+	};
+
+	const now = weekAt(0);
+	if (!now.tier) {
+		return {
+			tier: null,
+			weeks: 0,
+			since: null,
+			atLeast: false,
+			previousTier: null,
+		};
+	}
+
+	let weeks = 1;
+	let since = now.from;
+	for (let back = 1; back < TENURE_MAX_WEEKS; back++) {
+		const week = weekAt(back);
+		if (!week.tier)
+			return {
+				tier: now.tier,
+				weeks,
+				since,
+				atLeast: true,
+				previousTier: null,
+			};
+		if (week.tier !== now.tier) {
+			return {
+				tier: now.tier,
+				weeks,
+				since,
+				atLeast: false,
+				previousTier: week.tier,
+			};
+		}
+		weeks += 1;
+		since = week.from;
+	}
+	return { tier: now.tier, weeks, since, atLeast: true, previousTier: null };
+};
+
 export interface MaterialImpactRow {
 	assignment: LmsAssignment;
 	content: LmsContent | undefined;

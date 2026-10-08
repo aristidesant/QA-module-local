@@ -22,7 +22,11 @@ import {
 } from '~/modules/qa/lms/components/Badges';
 import { dueLabel } from '~/modules/qa/lms/helpers';
 import type { AgentProfile, TeamRole } from '~/modules/qa/team/types';
-import { buildPostCoachingSummary, rankMaterialImpact } from '../postCoaching';
+import {
+	buildPostCoachingSummary,
+	buildTierTenure,
+	rankMaterialImpact,
+} from '../postCoaching';
 import { AgentSessionsTable } from './AgentSessionsTable';
 import { MaterialImpactRanking } from './MaterialImpactRanking';
 import { PostCoachingCards } from './PostCoachingCards';
@@ -51,6 +55,8 @@ export function AgentCoachingPanel({
 	onOpenSession,
 }: AgentCoachingPanelProps) {
 	const { t } = useTranslation(['qa.coaching', 'qa.lms', 'qa.triggers']);
+	// dueLabel reads the `due.*` keys, which live in qa.lms, not in the default qa.coaching.
+	const { t: tLms } = useTranslation('qa.lms');
 
 	const mine = useMemo(
 		() => assignments.filter((a) => a.agentId === profile.agent.id),
@@ -77,6 +83,10 @@ export function AgentCoachingPanel({
 		() => rankMaterialImpact(mine, contentById),
 		[mine, contentById]
 	);
+	const tenure = useMemo(
+		() => buildTierTenure(profile.agent.id),
+		[profile.agent.id]
+	);
 	const summary = useMemo(
 		() => buildPostCoachingSummary(profile.agent.id, sessions, assignments),
 		[profile, sessions, assignments]
@@ -89,6 +99,15 @@ export function AgentCoachingPanel({
 		sentiment: p.sentiment,
 		compliance: p.compliance,
 	}));
+
+	// Completions of the same material by this agent (reassignments count); quiz attempts win when higher.
+	const timesTaken = (a: LmsAssignment) =>
+		Math.max(
+			mine.filter(
+				(x) => x.contentId === a.contentId && x.status === 'COMPLETED'
+			).length,
+			a.attempts
+		);
 
 	const assignmentColumns: BaseTableColumnDef<LmsAssignment>[] = [
 		assignmentHelper.accessor('contentId', {
@@ -112,11 +131,13 @@ export function AgentCoachingPanel({
 		}) as BaseTableColumnDef<LmsAssignment>,
 		assignmentHelper.accessor('dueDate', {
 			header: t('columns.due', { ns: 'qa.lms', defaultValue: 'Due' }),
-			cell: (info) => <Text size='sm'>{dueLabel(t, info.row.original)}</Text>,
+			cell: (info) => (
+				<Text size='sm'>{dueLabel(tLms, info.row.original)}</Text>
+			),
 		}) as BaseTableColumnDef<LmsAssignment>,
 		assignmentHelper.display({
 			id: 'acceptance',
-			header: t('acceptance.PENDING', { ns: 'qa.lms' }),
+			header: t('agents.assignmentsHistory.agentResponse'),
 			cell: (info) => (
 				<AcceptanceBadge acceptance={info.row.original.acceptance} size='xs' />
 			),
@@ -136,6 +157,15 @@ export function AgentCoachingPanel({
 				</Text>
 			),
 		}) as BaseTableColumnDef<LmsAssignment>,
+		assignmentHelper.accessor((a) => timesTaken(a), {
+			id: 'timesTaken',
+			header: t('agents.assignmentsHistory.timesTaken'),
+			cell: (info) => (
+				<Text size='sm' c={info.getValue() === 0 ? 'dimmed' : undefined}>
+					{info.getValue() === 0 ? '—' : info.getValue()}
+				</Text>
+			),
+		}) as BaseTableColumnDef<LmsAssignment>,
 		assignmentHelper.display({
 			id: 'impact',
 			header: t('rules.detail.columns.impact'),
@@ -147,7 +177,11 @@ export function AgentCoachingPanel({
 
 	return (
 		<Stack gap='md'>
-			<PostCoachingCards summary={summary} contentById={contentById} />
+			<PostCoachingCards
+				summary={summary}
+				tenure={tenure}
+				contentById={contentById}
+			/>
 
 			<Tabs value={tab} onChange={onTabChange} keepMounted={false}>
 				<Tabs.List>

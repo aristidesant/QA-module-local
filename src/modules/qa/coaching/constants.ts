@@ -22,6 +22,7 @@ import type {
 	CoachingSuggestedAction,
 } from '~/models/qa';
 import type { TeamRole } from '~/modules/qa/team/types';
+import type { PerformanceTier } from './scorecard';
 
 export type CoachingTab =
 	| 'agents'
@@ -109,6 +110,20 @@ export const SESSION_STATUS_COLOR: Record<CoachingSessionStatus, string> = {
 	CANCELLED: 'gray',
 };
 
+/**
+ * Quiet status badges for the Sessions tab: a dot for everything routine,
+ * an outline for a proposal waiting on the supervisor, and color only for
+ * the one status that needs attention (a missed session).
+ */
+export const sessionStatusBadge = (
+	status: CoachingSessionStatus
+): { variant: 'light' | 'outline' | 'dot'; color: string } =>
+	status === 'MISSED'
+		? { variant: 'light', color: 'red' }
+		: status === 'PROPOSED'
+			? { variant: 'outline', color: 'gray' }
+			: { variant: 'dot', color: 'gray' };
+
 /** JS weekday (0 = Sunday) the supervisor holds coaching; the batch generates the day before at 08:00. */
 export const DEFAULT_COACHING_DAY = 2;
 export const BATCH_GENERATION_HOUR = '08:00:00Z';
@@ -152,6 +167,10 @@ export const coachingSessionNewPath = (
 	return `${coachingBasePath(role)}/sessions/new${params ? `?${params}` : ''}`;
 };
 
+/** The isolated page of one session (route `sessions/:sessionId`). */
+export const coachingSessionPath = (role: TeamRole, sessionId: string) =>
+	`${coachingBasePath(role)}/sessions/${sessionId}`;
+
 export const coachingRuleNewPath = (role: TeamRole) =>
 	`${coachingBasePath(role)}/rules/new`;
 
@@ -166,3 +185,25 @@ export const coachingGroupNewPath = (role: TeamRole) =>
 
 export const coachingAgentPath = (role: TeamRole, agentId: string) =>
 	`${coachingBasePath(role)}/agents/${agentId}`;
+
+/** A performance group on the Agents tab, or the agents with no scorecard this week. */
+export type CoachingTierKey = PerformanceTier | 'NO_DATA';
+
+const TIER_KEYS: CoachingTierKey[] = [
+	'EXCELLENT',
+	'GOOD',
+	'NEEDS_IMPROVEMENT',
+	'CRITICAL',
+	'NO_DATA',
+];
+
+/** The isolated page with the full table of one performance group. */
+export const coachingTierPath = (role: TeamRole, tier: CoachingTierKey) =>
+	`${coachingBasePath(role)}/tiers/${tier.toLowerCase().replace(/_/g, '-')}`;
+
+export const tierFromParam = (
+	param: string | undefined
+): CoachingTierKey | null => {
+	const key = (param ?? '').toUpperCase().replace(/-/g, '_');
+	return TIER_KEYS.find((k) => k === key) ?? null;
+};

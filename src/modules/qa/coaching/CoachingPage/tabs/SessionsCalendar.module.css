@@ -116,24 +116,6 @@
 	background-color: var(--mantine-color-gray-light-hover);
 }
 
-.chip[data-status='SCHEDULED'] {
-	background-color: var(--mantine-color-blue-light);
-	color: var(--mantine-color-blue-light-color);
-}
-
-.chip[data-status='SCHEDULED']:hover {
-	background-color: var(--mantine-color-blue-light-hover);
-}
-
-.chip[data-status='COMPLETED'] {
-	background-color: var(--mantine-color-green-light);
-	color: var(--mantine-color-green-light-color);
-}
-
-.chip[data-status='COMPLETED']:hover {
-	background-color: var(--mantine-color-green-light-hover);
-}
-
 .chip[data-status='MISSED'] {
 	background-color: var(--mantine-color-red-light);
 	color: var(--mantine-color-red-light-color);

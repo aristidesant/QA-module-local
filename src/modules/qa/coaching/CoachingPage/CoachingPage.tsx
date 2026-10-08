@@ -50,6 +50,8 @@ import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import {
 	COACHING_TABS,
 	coachingAgentPath,
+	coachingSessionPath,
+	coachingTierPath,
 	coachingGroupNewPath,
 	coachingSessionNewPath,
 	coachingRuleEditPath,
@@ -57,13 +59,13 @@ import {
 	coachingRulePath,
 	type CoachingTab,
 } from '../constants';
-import { AgentsTab, buildAgentRows } from './tabs/AgentsTab';
+import { AgentsTab } from './tabs/AgentsTab';
+import { buildAgentRows } from '../agentRows';
 import { CohortsTab } from './tabs/CohortsTab';
 import { RulesTab } from './tabs/RulesTab';
 import { SessionsTab } from './tabs/SessionsTab';
 import { ImpactTab } from './tabs/ImpactTab';
 import { CohortDrawer } from '../components/CohortDrawer';
-import { SessionDetailDrawer } from '../components/SessionDetailDrawer';
 
 export default function CoachingPage() {
 	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
@@ -89,7 +91,6 @@ export default function CoachingPage() {
 		preset?: AssignPreset;
 	}>({ opened: false });
 	const [cohortId, setCohortId] = useState<string | null>(null);
-	const [sessionId, setSessionId] = useState<string | null>(null);
 
 	// Burnout level follows the burnout rules in Triggers.
 	const scopeProfiles = useMemo(
@@ -331,8 +332,8 @@ export default function CoachingPage() {
 					<Tabs.Panel value='agents' pt='md'>
 						<AgentsTab
 							rows={agentRows}
-							role={role}
 							onOpen={(agentId) => navigate(coachingAgentPath(role, agentId))}
+							onShowDetails={(tier) => navigate(coachingTierPath(role, tier))}
 						/>
 					</Tabs.Panel>
 
@@ -384,7 +385,9 @@ export default function CoachingPage() {
 							agentTeam={agentTeam}
 							agentSupervisor={agentSupervisor}
 							role={role}
-							onOpen={setSessionId}
+							onOpen={(sessionId) =>
+								navigate(coachingSessionPath(role, sessionId))
+							}
 							onCreate={() => navigate(coachingSessionNewPath(role))}
 						/>
 					</Tabs.Panel>
@@ -461,25 +464,6 @@ export default function CoachingPage() {
 					setCohortId(null);
 					navigate(coachingRulePath(role, id));
 				}}
-			/>
-
-			<SessionDetailDrawer
-				session={
-					sessionId ? (sessions.find((s) => s.id === sessionId) ?? null) : null
-				}
-				profile={
-					sessionId
-						? profilesMap[
-								sessions.find((s) => s.id === sessionId)?.agentId ?? ''
-							]
-						: undefined
-				}
-				assignments={assignments}
-				contentById={contentById}
-				role={role}
-				opened={sessionId !== null}
-				onClose={() => setSessionId(null)}
-				onOpenCall={(callId) => navigate(`/qa/campaigns/1/calls/${callId}`)}
 			/>
 		</ContentContainer>
 	);

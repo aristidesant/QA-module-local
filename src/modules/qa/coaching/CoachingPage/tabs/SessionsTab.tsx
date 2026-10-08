@@ -28,8 +28,7 @@ import type {
 	CoachingSessionStatus,
 	CoachingSessionType,
 } from '~/models/qa';
-import { AreaBadge } from '~/modules/qa/lms/components/Badges';
-import { daysUntil, today } from '~/modules/qa/lms/helpers';
+import { LMS_AREA_META } from '~/modules/qa/lms/constants';
 import { WeeklyBatchPanel } from '../../components/WeeklyBatchPanel';
 import { SessionsCalendar } from './SessionsCalendar';
 import { TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
@@ -37,13 +36,13 @@ import type { TeamRole } from '~/modules/qa/team/types';
 import {
 	SESSION_MODALITIES,
 	SESSION_STATUSES,
-	SESSION_STATUS_COLOR,
+	sessionStatusBadge,
 	SESSION_TYPES,
 } from '../../constants';
 
 const helper = createColumnHelper<CoachingSessionRecord>();
 
-type SessionsView = 'batch' | 'agenda' | 'history';
+type SessionsView = 'batch' | 'history';
 
 interface SessionsTabProps {
 	sessions: CoachingSessionRecord[];
@@ -62,7 +61,7 @@ export function SessionsTab({
 	onOpen,
 	onCreate,
 }: SessionsTabProps) {
-	const { t } = useTranslation('qa.coaching');
+	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
 	const [view, setView] = useState<SessionsView>('batch');
 	const [status, setStatus] = useState<string | null>(null);
 	const [type, setType] = useState<string | null>(null);
@@ -126,24 +125,12 @@ export function SessionsTab({
 		[filtered]
 	);
 
-	// Everything on today's calendar, whatever its status, in time order.
-	const todays = useMemo(
-		() =>
-			visible
-				.filter((s) => s.date.slice(0, 10) === today())
-				.sort((a, b) => a.date.localeCompare(b.date)),
-		[visible]
+	// The calendar shows every confirmed session of the scope; proposals stay in the weekly batch.
+	const calendarSessions = useMemo(
+		() => sessions.filter((s) => s.status !== 'PROPOSED'),
+		[sessions]
 	);
 
-	const upcoming = useMemo(
-		() =>
-			visible
-				.filter((s) => s.status === 'SCHEDULED')
-				.sort((a, b) => a.date.localeCompare(b.date)),
-		[visible]
-	);
-	const thisWeek = upcoming.filter((s) => daysUntil(s.date) <= 7);
-	const later = upcoming.filter((s) => daysUntil(s.date) > 7);
 	const past = useMemo(
 		() =>
 			visible
@@ -166,7 +153,7 @@ export function SessionsTab({
 			cell: (info) => (
 				<Group gap={6} wrap='nowrap'>
 					{info.row.original.type === 'GROUP' && (
-						<ThemeIcon size='xs' variant='light' color='grape' radius='xl'>
+						<ThemeIcon size='xs' variant='light' color='gray' radius='xl'>
 							<IconUsersGroup size={10} />
 						</ThemeIcon>
 					)}
@@ -182,16 +169,14 @@ export function SessionsTab({
 		helper.accessor('type', {
 			header: t('sessions.columns.type'),
 			cell: (info) => (
-				<Group gap={4} wrap='nowrap'>
-					<Badge size='xs' variant='outline'>
-						{t(`sessions.types.${info.getValue()}`)}
-					</Badge>
+				<Stack gap={0}>
+					<Text size='sm'>{t(`sessions.types.${info.getValue()}`)}</Text>
 					{info.row.original.modality && (
-						<Badge size='xs' variant='light' color='gray'>
+						<Text size='xs' c='dimmed'>
 							{t(`sessions.modality.${info.row.original.modality}`)}
-						</Badge>
+						</Text>
 					)}
-				</Group>
+				</Stack>
 			),
 		}) as BaseTableColumnDef<CoachingSessionRecord>,
 		helper.accessor('topic', {
@@ -200,18 +185,25 @@ export function SessionsTab({
 		helper.display({
 			id: 'area',
 			header: t('sessions.columns.area'),
-			cell: (info) =>
-				info.row.original.area ? (
-					<AreaBadge
-						area={info.row.original.area}
-						subItem={info.row.original.subItem}
-						size='xs'
-					/>
+			cell: (info) => {
+				const { area, subItem } = info.row.original;
+				return area ? (
+					<Stack gap={0}>
+						<Text size='sm'>
+							{t(LMS_AREA_META[area].labelKey, { ns: 'qa.lms' })}
+						</Text>
+						{subItem && (
+							<Text size='xs' c='dimmed'>
+								{t(`subItems.${subItem}`, { ns: 'qa.lms' })}
+							</Text>
+						)}
+					</Stack>
 				) : (
 					<Text size='sm' c='dimmed'>
 						—
 					</Text>
-				),
+				);
+			},
 		}) as BaseTableColumnDef<CoachingSessionRecord>,
 		helper.accessor('coachName', {
 			header: t('sessions.columns.coach'),
@@ -226,15 +218,14 @@ export function SessionsTab({
 		}) as BaseTableColumnDef<CoachingSessionRecord>,
 		helper.accessor('status', {
 			header: t('sessions.columns.status'),
-			cell: (info) => (
-				<Badge
-					size='xs'
-					color={SESSION_STATUS_COLOR[info.getValue()]}
-					variant='light'
-				>
-					{t(`sessions.status.${info.getValue()}`)}
-				</Badge>
-			),
+			cell: (info) => {
+				const badge = sessionStatusBadge(info.getValue());
+				return (
+					<Badge size='xs' variant={badge.variant} color={badge.color}>
+						{t(`sessions.status.${info.getValue()}`)}
+					</Badge>
+				);
+			},
 		}) as BaseTableColumnDef<CoachingSessionRecord>,
 		helper.display({
 			id: 'commitment',
@@ -249,23 +240,15 @@ export function SessionsTab({
 					);
 				}
 				return s.agentCommitment.acknowledged ? (
-					<Badge
-						size='xs'
-						color='green'
-						variant='light'
-						leftSection={<IconCheck size={10} />}
-					>
-						{t('sessions.commitment.acknowledged')}
-					</Badge>
+					<Group gap={4} wrap='nowrap'>
+						<IconCheck size={12} />
+						<Text size='sm'>{t('sessions.commitment.acknowledged')}</Text>
+					</Group>
 				) : (
-					<Badge
-						size='xs'
-						color='gray'
-						variant='light'
-						leftSection={<IconClock size={10} />}
-					>
-						{t('sessions.commitment.pending')}
-					</Badge>
+					<Group gap={4} wrap='nowrap' c='dimmed'>
+						<IconClock size={12} />
+						<Text size='sm'>{t('sessions.commitment.pending')}</Text>
+					</Group>
 				);
 			},
 		}) as BaseTableColumnDef<CoachingSessionRecord>,
@@ -282,7 +265,6 @@ export function SessionsTab({
 			onChange={(v) => setView(v as SessionsView)}
 			data={[
 				{ label: t('sessions.filters.batch'), value: 'batch' },
-				{ label: t('sessions.filters.agenda'), value: 'agenda' },
 				{ label: t('sessions.filters.history'), value: 'history' },
 			]}
 		/>
@@ -403,49 +385,18 @@ export function SessionsTab({
 			</SectionCard>
 
 			{view === 'batch' ? (
-				<WeeklyBatchPanel
-					role={role}
-					sessions={sessions}
-					agentTeam={agentTeam}
-					onOpen={onOpen}
-				/>
-			) : view === 'agenda' ? (
 				<>
-					<SectionCard title={t('sessions.todayTitle')}>
-						<BaseTable<CoachingSessionRecord>
-							data={todays}
-							columns={columns}
-							getRowId={(r) => r.id}
-							density='compact'
-							emptyMessage={t('sessions.empty')}
-							onRowClick={(r) => onOpen(r.id)}
-						/>
-					</SectionCard>
-					<SectionCard title={t('sessions.thisWeek')}>
-						<BaseTable<CoachingSessionRecord>
-							data={thisWeek}
-							columns={columns}
-							getRowId={(r) => r.id}
-							density='compact'
-							emptyMessage={t('sessions.empty')}
-							onRowClick={(r) => onOpen(r.id)}
-						/>
-					</SectionCard>
-					<SectionCard title={t('sessions.later')}>
-						<BaseTable<CoachingSessionRecord>
-							data={later}
-							columns={columns}
-							getRowId={(r) => r.id}
-							density='compact'
-							emptyMessage={t('sessions.empty')}
-							onRowClick={(r) => onOpen(r.id)}
-						/>
-					</SectionCard>
+					<WeeklyBatchPanel
+						role={role}
+						sessions={sessions}
+						agentTeam={agentTeam}
+						onOpen={onOpen}
+					/>
 					<SectionCard
 						title={t('sessions.calendar.title')}
 						description={t('sessions.calendar.description')}
 					>
-						<SessionsCalendar sessions={visible} onOpen={onOpen} />
+						<SessionsCalendar sessions={calendarSessions} onOpen={onOpen} />
 					</SectionCard>
 				</>
 			) : (

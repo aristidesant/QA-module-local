@@ -113,6 +113,7 @@
 			"triggeredRules": "Triggered rules",
 			"pendingSession": "Pending session",
 			"scorecard": "Scorecard",
+			"tenure": "Time in group",
 			"qa": "QA",
 			"compliance": "Comp.",
 			"operational": "Ops",
@@ -161,6 +162,9 @@
 			"tooltipLine": "{{label}}: {{value}} · weight {{weight}}%"
 		},
 		"tiers": {
+			"showDetails": "Show details",
+			"emptyGroup": "No agents in this group this week.",
+			"more": "+{{count}} more in the details page",
 			"description": "Scorecard {{range}}",
 			"EXCELLENT": {
 				"label": "Excellent",
@@ -211,9 +215,20 @@
 			"latestMaterial": "Latest: {{title}}",
 			"noMaterials": "None completed since the session"
 		},
+		"tierTenure": {
+			"title": "Time in current group",
+			"weeks_one": "{{count}} week",
+			"weeks_other": "{{count}} weeks",
+			"weeksAtLeast": "{{count}}+ weeks",
+			"since": "Since {{date}}",
+			"sinceFrom": "Since {{date}} · was {{tier}}",
+			"noData": "No scorecard this week"
+		},
 		"assignmentsHistory": {
 			"assigned": "Assigned",
-			"completed": "Completed"
+			"completed": "Completed",
+			"agentResponse": "Agent response",
+			"timesTaken": "Times taken"
 		},
 		"impactRanking": {
 			"title": "Materials with the greatest impact",
@@ -240,39 +255,11 @@
 		"completion": "Completion",
 		"improved": "Improved",
 		"create": {
-			"criteria": {
-				"title": "Find by performance",
-				"description": "Pick an aspect, a metric and a period. Apply lists every agent in your scope who matches; add them in one go.",
-				"area": "Evaluation aspect",
-				"metric": "Metric",
-				"operator": "Condition",
-				"below": "Below",
-				"above": "Above",
-				"value": "Value",
-				"period": "Period",
-				"days": "Last {{count}} days",
-				"apply": "Apply",
-				"summary_one": "{{count}} agent matches",
-				"summary_other": "{{count}} agents match",
-				"noMatches": "No agent matches this criteria in the selected period.",
-				"columns": {
-					"agent": "Agent",
-					"value": "Value",
-					"calls": "Calls evaluated",
-					"status": "Status"
-				},
-				"alreadyIn": "Already a member",
-				"willAdd": "Will be added",
-				"addMatches": "Add matching agents",
-				"added_one": "{{count}} agent added to the group",
-				"added_other": "{{count}} agents added to the group",
-				"orManual": "or pick members manually"
-			},
 			"sections": {
 				"basics": "Basics",
 				"members": "Members",
 				"path": "Learning path",
-				"membersHint": "Find agents by a performance criteria, add a whole team, or pick them one by one."
+				"membersHint": "Add a whole team or pick agents one by one."
 			},
 			"title": "New learning group",
 			"name": "Name",
@@ -388,6 +375,8 @@
 				"conditionDescription": "Same metrics and windows as Triggers. All conditions must match unless you choose Any.",
 				"action": "Then",
 				"actionDescription": "What the agent receives and by when.",
+				"recurrence": "Recurrence and limits",
+				"recurrenceDescription": "How often the rule can trigger for the same agent and how many times in total.",
 				"scope": "Who",
 				"followUp": "Follow-up",
 				"followUpDescription": "How we decide whether the training worked."
@@ -406,8 +395,11 @@
 				"sessionTopic": "Session topic",
 				"sessionCoach": "Coach",
 				"notifySupervisor": "Notify the supervisor",
-				"cooldown": "Cooldown (days)",
-				"cooldownHint": "Days before this rule can fire again for the same agent",
+				"cooldown": "Wait between triggers (days)",
+				"cooldownHint": "Days the rule waits before it can trigger again for the same agent. 0 means no wait.",
+				"limitPerAgent": "Limit how many times it triggers per agent",
+				"maxTriggers": "Maximum triggers per agent",
+				"maxTriggersHint": "Once an agent reaches this number, the rule stops triggering for them.",
 				"cadence": "Cadence",
 				"sessionType": "Session kind",
 				"windowDays": "Measurement window (days)",
@@ -459,6 +451,13 @@
 			"scope": "Scope",
 			"followUp": "Follow-up",
 			"followUpSummary": "{{window}}-day window · checkpoints {{checkpoints}} · threshold {{threshold}} pts",
+			"recurrence": "Recurrence and limits",
+			"cooldownSummary_one": "Waits {{count}} day before triggering again for the same agent",
+			"cooldownSummary_other": "Waits {{count}} days before triggering again for the same agent",
+			"noCooldown": "No wait between triggers",
+			"limitSummary_one": "Triggers at most {{count}} time per agent",
+			"limitSummary_other": "Triggers at most {{count}} times per agent",
+			"noLimit": "No limit of triggers per agent",
 			"stats": "Statistics",
 			"fired30": "Fired (30 d)",
 			"agents": "Agents affected",
@@ -482,10 +481,10 @@
 	},
 	"sessions": {
 		"title": "Coaching sessions",
-		"description": "Weekly batch prepared by the platform, your agenda and the history of every session and AI message.",
+		"description": "Weekly batch prepared by the platform, the calendar of confirmed sessions, and the history of every session and AI message.",
 		"calendar": {
 			"title": "Calendar",
-			"description": "Every session in the same filters, by month, week or day.",
+			"description": "Every confirmed session, by month, week or day.",
 			"today": "Today",
 			"previous": "Previous",
 			"next": "Next",
@@ -630,6 +629,7 @@
 			}
 		},
 		"detail": {
+			"notFound": "This session is not available in your scope.",
 			"proposed": {
 				"title": "Pre-loaded by the weekly batch",
 				"hint": "Confirm a date to schedule the 1:1, send the coaching as an AI message instead, or dismiss it.",

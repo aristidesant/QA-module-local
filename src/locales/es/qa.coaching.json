@@ -113,6 +113,7 @@
 			"triggeredRules": "Reglas activadas",
 			"pendingSession": "Sesión pendiente",
 			"scorecard": "Scorecard",
+			"tenure": "Tiempo en el grupo",
 			"qa": "QA",
 			"compliance": "Comp.",
 			"operational": "Ops",
@@ -161,6 +162,9 @@
 			"tooltipLine": "{{label}}: {{value}} · peso {{weight}}%"
 		},
 		"tiers": {
+			"showDetails": "Ver detalle",
+			"emptyGroup": "Ningún agente está en este grupo esta semana.",
+			"more": "+{{count}} más en la página de detalle",
 			"description": "Scorecard {{range}}",
 			"EXCELLENT": {
 				"label": "Excelente",
@@ -211,9 +215,20 @@
 			"latestMaterial": "Último: {{title}}",
 			"noMaterials": "Ninguno completado desde la sesión"
 		},
+		"tierTenure": {
+			"title": "Tiempo en el grupo actual",
+			"weeks_one": "{{count}} semana",
+			"weeks_other": "{{count}} semanas",
+			"weeksAtLeast": "{{count}}+ semanas",
+			"since": "Desde el {{date}}",
+			"sinceFrom": "Desde el {{date}} · antes {{tier}}",
+			"noData": "Sin scorecard esta semana"
+		},
 		"assignmentsHistory": {
 			"assigned": "Asignado",
-			"completed": "Completado"
+			"completed": "Completado",
+			"agentResponse": "Respuesta del agente",
+			"timesTaken": "Veces tomado"
 		},
 		"impactRanking": {
 			"title": "Materiales con mayor impacto",
@@ -240,39 +255,11 @@
 		"completion": "Avance",
 		"improved": "Mejoraron",
 		"create": {
-			"criteria": {
-				"title": "Buscar por desempeño",
-				"description": "Elige un aspecto, una métrica y un período. Aplicar lista a todos los agentes de tu alcance que cumplen el criterio; agrégalos de una vez.",
-				"area": "Aspecto evaluado",
-				"metric": "Métrica",
-				"operator": "Condición",
-				"below": "Por debajo de",
-				"above": "Por encima de",
-				"value": "Valor",
-				"period": "Período",
-				"days": "Últimos {{count}} días",
-				"apply": "Aplicar",
-				"summary_one": "{{count}} agente cumple",
-				"summary_other": "{{count}} agentes cumplen",
-				"noMatches": "Ningún agente cumple este criterio en el período elegido.",
-				"columns": {
-					"agent": "Agente",
-					"value": "Valor",
-					"calls": "Llamadas evaluadas",
-					"status": "Estado"
-				},
-				"alreadyIn": "Ya es miembro",
-				"willAdd": "Se agregará",
-				"addMatches": "Agregar agentes que cumplen",
-				"added_one": "{{count}} agente agregado al grupo",
-				"added_other": "{{count}} agentes agregados al grupo",
-				"orManual": "o elige los miembros manualmente"
-			},
 			"sections": {
 				"basics": "Datos básicos",
 				"members": "Miembros",
 				"path": "Ruta de aprendizaje",
-				"membersHint": "Busca agentes por un criterio de desempeño, agrega un equipo completo o elígelos uno por uno."
+				"membersHint": "Agrega un equipo completo o elige los agentes uno por uno."
 			},
 			"title": "Nuevo grupo de aprendizaje",
 			"name": "Nombre",
@@ -388,6 +375,8 @@
 				"conditionDescription": "Las mismas métricas y ventanas que Disparadores. Todas las condiciones deben cumplirse salvo que elijas Cualquiera.",
 				"action": "Entonces",
 				"actionDescription": "Qué recibe el agente y para cuándo.",
+				"recurrence": "Recurrencia y límites",
+				"recurrenceDescription": "Cada cuánto puede dispararse la regla para el mismo agente y cuántas veces en total.",
 				"scope": "A quién",
 				"followUp": "Seguimiento",
 				"followUpDescription": "Cómo decidimos si la capacitación funcionó."
@@ -406,8 +395,11 @@
 				"sessionTopic": "Tema de la sesión",
 				"sessionCoach": "Coach",
 				"notifySupervisor": "Notificar al supervisor",
-				"cooldown": "Espera (días)",
-				"cooldownHint": "Días antes de que esta regla pueda dispararse otra vez para el mismo agente",
+				"cooldown": "Espera entre disparos (días)",
+				"cooldownHint": "Días que la regla espera antes de poder dispararse otra vez para el mismo agente. 0 significa sin espera.",
+				"limitPerAgent": "Limitar cuántas veces se dispara por agente",
+				"maxTriggers": "Máximo de disparos por agente",
+				"maxTriggersHint": "Cuando un agente llega a este número, la regla deja de dispararse para él.",
 				"cadence": "Cadencia",
 				"sessionType": "Tipo de sesión",
 				"windowDays": "Ventana de medición (días)",
@@ -459,6 +451,13 @@
 			"scope": "Alcance",
 			"followUp": "Seguimiento",
 			"followUpSummary": "Ventana de {{window}} días · puntos de control {{checkpoints}} · umbral {{threshold}} pts",
+			"recurrence": "Recurrencia y límites",
+			"cooldownSummary_one": "Espera {{count}} día antes de dispararse otra vez para el mismo agente",
+			"cooldownSummary_other": "Espera {{count}} días antes de dispararse otra vez para el mismo agente",
+			"noCooldown": "Sin espera entre disparos",
+			"limitSummary_one": "Se dispara como máximo {{count}} vez por agente",
+			"limitSummary_other": "Se dispara como máximo {{count}} veces por agente",
+			"noLimit": "Sin límite de disparos por agente",
 			"stats": "Estadísticas",
 			"fired30": "Disparos (30 d)",
 			"agents": "Agentes afectados",
@@ -482,10 +481,10 @@
 	},
 	"sessions": {
 		"title": "Sesiones de coaching",
-		"description": "Lote semanal preparado por la plataforma, tu agenda y el histórico de todas las sesiones y mensajes IA.",
+		"description": "Lote semanal preparado por la plataforma, el calendario de sesiones confirmadas y el histórico de todas las sesiones y mensajes IA.",
 		"calendar": {
 			"title": "Calendario",
-			"description": "Todas las sesiones con los mismos filtros, por mes, semana o día.",
+			"description": "Todas las sesiones confirmadas, por mes, semana o día.",
 			"today": "Hoy",
 			"previous": "Anterior",
 			"next": "Siguiente",
@@ -630,6 +629,7 @@
 			}
 		},
 		"detail": {
+			"notFound": "Esta sesión no está disponible en tu alcance.",
 			"proposed": {
 				"title": "Precargada por el lote semanal",
 				"hint": "Confirma una fecha para agendar el 1:1, envía el coaching como mensaje IA o descártala.",
