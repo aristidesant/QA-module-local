@@ -3,6 +3,7 @@ import { Group, Stack, Tabs, Text } from '@mantine/core';
 import { AreaChart } from '@mantine/charts';
 import { createColumnHelper } from '@tanstack/react-table';
 import { IconBook, IconChartBar, IconSchool } from '@tabler/icons-react';
+import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import BaseTable, {
@@ -19,11 +20,11 @@ import {
 	FormatBadge,
 	ImpactBadge,
 } from '~/modules/qa/lms/components/Badges';
-import { ImpactSparkline } from '~/modules/qa/lms/components/ImpactSparkline';
 import { dueLabel } from '~/modules/qa/lms/helpers';
 import type { AgentProfile, TeamRole } from '~/modules/qa/team/types';
-import { buildPostCoachingSummary } from '../postCoaching';
+import { buildPostCoachingSummary, rankMaterialImpact } from '../postCoaching';
 import { AgentSessionsTable } from './AgentSessionsTable';
+import { MaterialImpactRanking } from './MaterialImpactRanking';
 import { PostCoachingCards } from './PostCoachingCards';
 
 const assignmentHelper = createColumnHelper<LmsAssignment>();
@@ -68,7 +69,14 @@ export function AgentCoachingPanel({
 				: [],
 		[sessions, profile]
 	);
-	const measured = useMemo(() => mine.filter((a) => a.impact), [mine]);
+	const history = useMemo(
+		() => [...mine].sort((a, b) => b.assignedAt.localeCompare(a.assignedAt)),
+		[mine]
+	);
+	const ranked = useMemo(
+		() => rankMaterialImpact(mine, contentById),
+		[mine, contentById]
+	);
 	const summary = useMemo(
 		() => buildPostCoachingSummary(profile.agent.id, sessions, assignments),
 		[profile, sessions, assignments]
@@ -96,6 +104,12 @@ export function AgentCoachingPanel({
 				);
 			},
 		}) as BaseTableColumnDef<LmsAssignment>,
+		assignmentHelper.accessor('assignedAt', {
+			header: t('agents.assignmentsHistory.assigned'),
+			cell: (info) => (
+				<Text size='sm'>{dayjs(info.getValue()).format('D MMM YYYY')}</Text>
+			),
+		}) as BaseTableColumnDef<LmsAssignment>,
 		assignmentHelper.accessor('dueDate', {
 			header: t('columns.due', { ns: 'qa.lms', defaultValue: 'Due' }),
 			cell: (info) => <Text size='sm'>{dueLabel(t, info.row.original)}</Text>,
@@ -112,6 +126,14 @@ export function AgentCoachingPanel({
 			header: t('rules.detail.columns.status'),
 			cell: (info) => (
 				<AssignmentStatusBadge assignment={info.row.original} size='xs' />
+			),
+		}) as BaseTableColumnDef<LmsAssignment>,
+		assignmentHelper.accessor('completedAt', {
+			header: t('agents.assignmentsHistory.completed'),
+			cell: (info) => (
+				<Text size='sm'>
+					{info.getValue() ? dayjs(info.getValue()).format('D MMM YYYY') : '—'}
+				</Text>
 			),
 		}) as BaseTableColumnDef<LmsAssignment>,
 		assignmentHelper.display({
@@ -142,10 +164,13 @@ export function AgentCoachingPanel({
 
 				<Tabs.Panel value='assignments' pt='md'>
 					<BaseTable<LmsAssignment>
-						data={mine}
+						data={history}
 						columns={assignmentColumns}
 						getRowId={(r) => r.id}
 						density='compact'
+						enablePagination
+						pageSize={10}
+						showPaginationControls
 						emptyMessage={t('agents.drawer.noAssignments')}
 					/>
 				</Tabs.Panel>
@@ -177,34 +202,7 @@ export function AgentCoachingPanel({
 							/>
 						</SectionCard>
 
-						{measured.length === 0 ? (
-							<Text size='sm' c='dimmed'>
-								{t('agents.drawer.noImpact')}
-							</Text>
-						) : (
-							measured.map((a) => (
-								<SectionCard
-									key={a.id}
-									title={contentById[a.contentId]?.title ?? a.contentId}
-									padding='md'
-								>
-									<Stack gap='sm'>
-										<Group gap='xs'>
-											<ImpactBadge impact={a.impact} size='xs' />
-											<Text size='xs' c='dimmed'>
-												{a.impact &&
-													t(`metrics.${a.impact.metricId}`, {
-														ns: 'qa.triggers',
-													})}
-											</Text>
-										</Group>
-										{a.impact && (
-											<ImpactSparkline impact={a.impact} height={70} />
-										)}
-									</Stack>
-								</SectionCard>
-							))
-						)}
+						<MaterialImpactRanking rows={ranked} />
 					</Stack>
 				</Tabs.Panel>
 			</Tabs>

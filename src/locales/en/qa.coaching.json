@@ -210,6 +210,25 @@
 			"noBefore": "No calls before",
 			"latestMaterial": "Latest: {{title}}",
 			"noMaterials": "None completed since the session"
+		},
+		"assignmentsHistory": {
+			"assigned": "Assigned",
+			"completed": "Completed"
+		},
+		"impactRanking": {
+			"title": "Materials with the greatest impact",
+			"description": "Completed materials ranked by how much their metric moved 30 days after completion.",
+			"rank": "#{{rank}}",
+			"pending": "Still measuring",
+			"columns": {
+				"material": "Material",
+				"completed": "Completed",
+				"metric": "Metric",
+				"before": "Before",
+				"after": "After 30 days",
+				"delta": "Change",
+				"verdict": "Verdict"
+			}
 		}
 	},
 	"cohorts": {

@@ -210,6 +210,25 @@
 			"noBefore": "Sin llamadas antes",
 			"latestMaterial": "Último: {{title}}",
 			"noMaterials": "Ninguno completado desde la sesión"
+		},
+		"assignmentsHistory": {
+			"assigned": "Asignado",
+			"completed": "Completado"
+		},
+		"impactRanking": {
+			"title": "Materiales con mayor impacto",
+			"description": "Materiales completados ordenados por cuánto se movió su métrica 30 días después de completarlos.",
+			"rank": "#{{rank}}",
+			"pending": "Aún midiendo",
+			"columns": {
+				"material": "Material",
+				"completed": "Completado",
+				"metric": "Métrica",
+				"before": "Antes",
+				"after": "A los 30 días",
+				"delta": "Cambio",
+				"verdict": "Veredicto"
+			}
 		}
 	},
 	"cohorts": {
