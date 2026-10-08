@@ -70,6 +70,7 @@ type Commitment = SessionCommitment | MaterialCommitment;
 const helper = createColumnHelper<CoachingSessionRecord>();
 
 const STATUS_COLOR: Record<CoachingSessionRecord['status'], string> = {
+	PROPOSED: 'violet',
 	SCHEDULED: 'blue',
 	COMPLETED: 'green',
 	MISSED: 'red',

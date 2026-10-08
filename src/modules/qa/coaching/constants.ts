@@ -95,17 +95,24 @@ export const MODALITY_FREE_TYPES: CoachingSessionType[] = [
 ];
 export const SESSION_DURATIONS = [15, 30, 45, 60];
 export const SESSION_STATUSES: CoachingSessionStatus[] = [
+	'PROPOSED',
 	'SCHEDULED',
 	'COMPLETED',
 	'MISSED',
 	'CANCELLED',
 ];
 export const SESSION_STATUS_COLOR: Record<CoachingSessionStatus, string> = {
+	PROPOSED: 'violet',
 	SCHEDULED: 'blue',
 	COMPLETED: 'green',
 	MISSED: 'red',
 	CANCELLED: 'gray',
 };
+
+/** JS weekday (0 = Sunday) the supervisor holds coaching; the batch generates the day before at 08:00. */
+export const DEFAULT_COACHING_DAY = 2;
+export const BATCH_GENERATION_HOUR = '08:00:00Z';
+export const WEEKDAYS = [0, 1, 2, 3, 4, 5, 6] as const;
 
 export const COACHING_TOPICS = [
 	'Objection handling',

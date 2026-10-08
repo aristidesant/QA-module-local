@@ -73,12 +73,93 @@ export interface CoachingRule {
 	updatedAt: string;
 }
 
+/** PROPOSED = pre-loaded by the weekly batch, waiting for the supervisor to schedule it. */
 export type CoachingSessionStatus =
+	| 'PROPOSED'
 	| 'SCHEDULED'
 	| 'COMPLETED'
 	| 'MISSED'
 	| 'CANCELLED';
 export type CoachingSessionModality = 'IN_PERSON' | 'REMOTE';
+
+/** Why the weekly batch chose a 1:1 or an AI message for an agent. */
+export type CoachingBatchReason =
+	| 'TIER_CRITICAL'
+	| 'TIER_NEEDS_IMPROVEMENT'
+	| 'GOOD_DECLINED'
+	| 'WEAKEST_OF_WEEK'
+	| 'STABLE';
+
+export type CoachingBatchDecision = 'ONE_ON_ONE' | 'AI_MESSAGE';
+
+/** One weak aspect found in the agent's calls of the week. */
+export interface CoachingBriefFinding {
+	/** `CallIssueKey` from calls/issues.ts; label = qa.calls `issues.<key>`. */
+	issue: string;
+	aspect: 'qa' | 'compliance' | 'sentiment' | 'operational';
+	/** Calls of the week with this issue. */
+	calls: number;
+	/** Share of the week's calls, 0-100. */
+	share: number;
+	/** Up to 3 call ids that show it, worst QA score first. */
+	evidenceCallIds: string[];
+}
+
+/** How the aspect worked on in the previous coach-led session moved since then. */
+export interface CoachingBriefPrevious {
+	sessionId: string;
+	topic: string;
+	date: string;
+	/** Scorecard aspect of that session's area; null means the composite score. */
+	dimension: 'qa' | 'compliance' | 'operational' | 'business' | null;
+	before: number;
+	after: number;
+	verdict: 'IMPROVED' | 'SAME' | 'DECLINED';
+}
+
+/** Everything the platform pre-loads into a weekly session. Mock copy is English-only. */
+export interface CoachingBrief {
+	/** Analysed week, 'YYYY-MM-DD' inclusive. */
+	weekFrom: string;
+	weekTo: string;
+	calls: number;
+	/** Weekly composite scorecard 0-100 and the previous week's. */
+	score: number;
+	previousScore: number | null;
+	tier: 'EXCELLENT' | 'GOOD' | 'NEEDS_IMPROVEMENT' | 'CRITICAL';
+	trend: 'IMPROVED' | 'SAME' | 'DECLINED' | null;
+	reason: CoachingBatchReason;
+	findings: CoachingBriefFinding[];
+	/** How the supervisor should bring it up with the agent. */
+	approach: string;
+	/** Conceptual fix for the weak aspect. */
+	solution: string;
+	/** A concrete script or real example. */
+	example: string;
+	suggestedContentIds: string[];
+	previous: CoachingBriefPrevious | null;
+}
+
+export interface CoachingBatchItem {
+	agentId: string;
+	agentName: string;
+	decision: CoachingBatchDecision;
+	reason: CoachingBatchReason;
+	/** The proposed 1:1 or the AI message created (or reused) for the agent. */
+	sessionId: string;
+}
+
+/** One weekly run for one supervisor's team, generated the day before the coaching day. */
+export interface CoachingWeeklyBatch {
+	id: string;
+	supervisorId: string;
+	generatedAt: string;
+	/** 'YYYY-MM-DD' coaching day the batch was prepared for. */
+	coachingDate: string;
+	weekFrom: string;
+	weekTo: string;
+	items: CoachingBatchItem[];
+}
 
 export interface CoachingActionItem {
 	id: string;
@@ -127,6 +208,9 @@ export interface CoachingSessionRecord {
 	linkedAssignmentIds: string[];
 	ruleId: string | null;
 	cohortId: string | null;
+	/** Pre-loaded content when the session comes from a weekly batch. */
+	brief?: CoachingBrief | null;
+	batchId?: string | null;
 }
 
 export interface CoachingCohort {
