@@ -7,7 +7,8 @@
 			"qa": "Aseguramiento de calidad",
 			"compliance": "Cumplimiento",
 			"sentiment": "Sentimiento y emoción",
-			"business": "Insights de negocio"
+			"business": "Insights de negocio",
+			"coaching": "Coaching"
 		}
 	},
 	"actions": {
@@ -111,7 +112,28 @@
 			"mistargetedOffer": "Ofertas mal dirigidas"
 		}
 	},
+	"coaching": {
+		"groupsTitle": "Grupos de desempeño",
+		"groupsDescription": "Dónde se divide el scorecard semanal de coaching (0–100) en Excelente, Bueno, Necesita mejorar y Crítico.",
+		"excellent": "Excelente desde",
+		"good": "Bueno desde",
+		"needsImprovement": "Necesita mejorar desde",
+		"hint": "Todo lo que esté por debajo de {{value}} es Crítico.",
+		"preview": {
+			"critical": "Crítico < {{value}}",
+			"range": "{{from}}–{{to}}",
+			"excellent": "Excelente ≥ {{value}}"
+		},
+		"usedByTitle": "Dónde se usan estos grupos",
+		"usedBy": {
+			"agents": "Coaching → Agentes: los cuadros por grupo y sus páginas de detalle.",
+			"batch": "Lote semanal de coaching: Crítico y Necesita mejorar reciben un 1:1; también un Bueno que empeoró.",
+			"tenure": "Perfil de coaching del agente: el tiempo que lleva en su grupo actual."
+		}
+	},
 	"validation": {
+		"tierCutsOrder": "Excelente debe ser mayor que Bueno, y Bueno mayor que Necesita mejorar",
+		"tierCutsRange": "Usa valores entre 0 y 100",
 		"bandsOrder": "En objetivo debe ser mayor que Observación",
 		"bandsRange": "Usa valores entre 0 y 100",
 		"cutPointsOrder": "Cada rango debe terminar más arriba que el anterior",

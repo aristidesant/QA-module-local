@@ -7,7 +7,8 @@
 			"qa": "Quality Assurance",
 			"compliance": "Compliance",
 			"sentiment": "Sentiment & Emotion",
-			"business": "Business Insights"
+			"business": "Business Insights",
+			"coaching": "Coaching"
 		}
 	},
 	"actions": {
@@ -111,7 +112,28 @@
 			"mistargetedOffer": "Mis-targeted offers"
 		}
 	},
+	"coaching": {
+		"groupsTitle": "Performance groups",
+		"groupsDescription": "Where the weekly coaching scorecard (0–100) splits into Excellent, Good, Needs improvement and Critical.",
+		"excellent": "Excellent from",
+		"good": "Good from",
+		"needsImprovement": "Needs improvement from",
+		"hint": "Anything below {{value}} is Critical.",
+		"preview": {
+			"critical": "Critical < {{value}}",
+			"range": "{{from}}–{{to}}",
+			"excellent": "Excellent ≥ {{value}}"
+		},
+		"usedByTitle": "Where these groups are used",
+		"usedBy": {
+			"agents": "Coaching → Agents: the group squares and their detail pages.",
+			"batch": "Weekly coaching batch: Critical and Needs improvement get a 1:1; a Good agent who declined too.",
+			"tenure": "Agent coaching profile: the time an agent has spent in their current group."
+		}
+	},
 	"validation": {
+		"tierCutsOrder": "Excellent must be higher than Good, and Good higher than Needs improvement",
+		"tierCutsRange": "Use values between 0 and 100",
 		"bandsOrder": "On target must be higher than Watch",
 		"bandsRange": "Use values between 0 and 100",
 		"cutPointsOrder": "Each band must end higher than the one before",

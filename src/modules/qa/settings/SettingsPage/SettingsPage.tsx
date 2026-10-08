@@ -5,10 +5,12 @@ import {
 	IconChartHistogram,
 	IconClipboardCheck,
 	IconMoodSmile,
+	IconSchool,
 	IconShieldCheck,
 } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import { BusinessTab } from './tabs/BusinessTab';
+import { CoachingTab } from './tabs/CoachingTab';
 import { ComplianceTab } from './tabs/ComplianceTab';
 import { QualityAssuranceTab } from './tabs/QualityAssuranceTab';
 import { SentimentTab } from './tabs/SentimentTab';
@@ -57,6 +59,9 @@ export const SettingsPage: React.FC = () => {
 						>
 							{t('page.tabs.business')}
 						</Tabs.Tab>
+						<Tabs.Tab value='coaching' leftSection={<IconSchool size={16} />}>
+							{t('page.tabs.coaching')}
+						</Tabs.Tab>
 					</Tabs.List>
 
 					<Tabs.Panel value='qa' pt='lg'>
@@ -70,6 +75,9 @@ export const SettingsPage: React.FC = () => {
 					</Tabs.Panel>
 					<Tabs.Panel value='business' pt='lg'>
 						<BusinessTab />
+					</Tabs.Panel>
+					<Tabs.Panel value='coaching' pt='lg'>
+						<CoachingTab />
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>
