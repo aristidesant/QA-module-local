@@ -14,7 +14,7 @@ import {
 	ThemeIcon,
 } from '@mantine/core';
 import { AreaChart } from '@mantine/charts';
-import { DatePickerInput } from '@mantine/dates';
+import { DatePickerInput, DateTimePicker } from '@mantine/dates';
 import {
 	IconCalendarEvent,
 	IconCheck,
@@ -29,18 +29,26 @@ import { AppDrawer } from '~/components/AppDrawer';
 import { SectionCard } from '~/components/SectionCard';
 import type {
 	CoachingActionItem,
+	CoachingSessionModality,
 	CoachingSessionRecord,
 	LmsAssignment,
 	LmsContent,
 } from '~/models/qa';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
-import { useCoachingStore, nextCoachingId } from '~/stores/qa/coachingStore';
+import {
+	useCoachingStore,
+	nextCoachingId,
+	selectCoachingDay,
+} from '~/stores/qa/coachingStore';
 import { AreaBadge, FormatBadge } from '~/modules/qa/lms/components/Badges';
 import { AREA_TO_DIMENSION } from '~/modules/qa/lms/constants';
 import { day } from '~/modules/qa/lms/mockData';
 import { today } from '~/modules/qa/lms/helpers';
-import type { AgentProfile } from '~/modules/qa/team/types';
-import { SESSION_STATUS_COLOR } from '../constants';
+import type { AgentProfile, TeamRole } from '~/modules/qa/team/types';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
+import { SESSION_MODALITIES, SESSION_STATUS_COLOR } from '../constants';
+import { nextBatchAt } from '../weeklyBatch';
+import { SessionBrief } from './SessionBrief';
 import pointerStyles from '~/modules/qa/lms/components/Cards.module.css';
 import queueStyles from './Queue.module.css';
 
@@ -49,6 +57,7 @@ interface SessionDetailDrawerProps {
 	profile: AgentProfile | undefined;
 	assignments: LmsAssignment[];
 	contentById: Record<string, LmsContent>;
+	role: TeamRole;
 	opened: boolean;
 	onClose: () => void;
 	onOpenCall: (callId: string) => void;
@@ -59,6 +68,7 @@ export function SessionDetailDrawer({
 	profile,
 	assignments,
 	contentById,
+	role,
 	opened,
 	onClose,
 	onOpenCall,
@@ -68,6 +78,10 @@ export function SessionDetailDrawer({
 	const [followUp, setFollowUp] = useState<string | null>(null);
 	const [items, setItems] = useState<CoachingActionItem[]>([]);
 	const [draft, setDraft] = useState('');
+	const coachingDay = useCoachingStore(selectCoachingDay);
+	const [proposedDate, setProposedDate] = useState<string | null>(null);
+	const [proposedModality, setProposedModality] =
+		useState<CoachingSessionModality>('IN_PERSON');
 
 	useEffect(() => {
 		if (!opened || !session) return;
@@ -75,7 +89,9 @@ export function SessionDetailDrawer({
 		setFollowUp(session.followUpDate ?? day(today(), 14));
 		setItems(session.actionItems);
 		setDraft('');
-	}, [opened, session]);
+		setProposedDate(`${nextBatchAt(coachingDay).coachingDate}T10:00:00.000Z`);
+		setProposedModality(session.modality ?? 'IN_PERSON');
+	}, [opened, session, coachingDay]);
 
 	if (!session) return null;
 
@@ -124,6 +140,31 @@ export function SessionDetailDrawer({
 	const handleStatus = (status: CoachingSessionRecord['status']) => {
 		useCoachingStore.getState().setSessionStatus(session.id, status);
 		notifySuccess(t('sessions.detail.statusChanged'));
+		onClose();
+	};
+
+	const handleSchedule = () => {
+		if (!proposedDate) return;
+		useCoachingStore
+			.getState()
+			.scheduleProposed(
+				session.id,
+				new Date(proposedDate).toISOString(),
+				proposedModality
+			);
+		notifySuccess(t('sessions.detail.proposed.scheduled'));
+		onClose();
+	};
+
+	const handleSendAi = () => {
+		useCoachingStore.getState().sendProposedAsAiMessage(session.id);
+		notifySuccess(t('sessions.detail.proposed.sent'));
+		onClose();
+	};
+
+	const handleDismiss = () => {
+		useCoachingStore.getState().dismissProposed(session.id);
+		notifySuccess(t('sessions.detail.proposed.dismissed'));
 		onClose();
 	};
 
@@ -179,6 +220,17 @@ export function SessionDetailDrawer({
 					>
 						{t('sessions.detail.meetingLink')}
 					</Anchor>
+				)}
+
+				{session.brief && (
+					<SessionBrief
+						brief={session.brief}
+						agentId={session.agentId}
+						role={role}
+						assignments={assignments}
+						contentById={contentById}
+						onOpenCall={onOpenCall}
+					/>
 				)}
 
 				{isAi && (
@@ -352,7 +404,54 @@ export function SessionDetailDrawer({
 							)}
 						</SectionCard>
 
-						{session.status === 'SCHEDULED' ? (
+						{session.status === 'PROPOSED' ? (
+							<SectionCard
+								title={t('sessions.detail.proposed.title')}
+								description={t('sessions.detail.proposed.hint')}
+								headerAccent='blue'
+								padding='md'
+							>
+								<Stack gap='sm'>
+									<DateTimePicker
+										label={t('sessions.detail.proposed.date')}
+										value={proposedDate}
+										onChange={setProposedDate}
+										valueFormat='MMM D, YYYY HH:mm'
+									/>
+									<AppSegmentedControl
+										size='sm'
+										value={proposedModality}
+										onChange={(v) =>
+											setProposedModality(v as CoachingSessionModality)
+										}
+										data={SESSION_MODALITIES.map((m) => ({
+											value: m,
+											label: t(`sessions.modality.${m}`),
+										}))}
+									/>
+									<Group justify='flex-end' gap='xs'>
+										<Button
+											size='xs'
+											variant='subtle'
+											color='gray'
+											onClick={handleDismiss}
+										>
+											{t('sessions.detail.proposed.dismiss')}
+										</Button>
+										<Button size='xs' variant='default' onClick={handleSendAi}>
+											{t('sessions.detail.proposed.sendAi')}
+										</Button>
+										<Button
+											size='xs'
+											onClick={handleSchedule}
+											disabled={!proposedDate}
+										>
+											{t('sessions.detail.proposed.schedule')}
+										</Button>
+									</Group>
+								</Stack>
+							</SectionCard>
+						) : session.status === 'SCHEDULED' ? (
 							<SectionCard title={t('sessions.detail.outcome')} padding='md'>
 								<Stack gap='sm'>
 									<Textarea

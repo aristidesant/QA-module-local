@@ -530,6 +530,7 @@
 			"REMOTE": "Virtual"
 		},
 		"status": {
+			"PROPOSED": "Propuesta",
 			"SCHEDULED": "Agendada",
 			"COMPLETED": "Completada",
 			"MISSED": "Perdida",
@@ -625,6 +626,17 @@
 			}
 		},
 		"detail": {
+			"proposed": {
+				"title": "Precargada por el lote semanal",
+				"hint": "Confirma una fecha para agendar el 1:1, envía el coaching como mensaje IA o descártala.",
+				"date": "Fecha de la sesión",
+				"schedule": "Agendar 1:1",
+				"sendAi": "Enviar como mensaje IA",
+				"dismiss": "Descartar",
+				"scheduled": "Sesión agendada y agente notificado",
+				"sent": "Mensaje de coaching enviado al inbox del agente",
+				"dismissed": "Propuesta descartada"
+			},
 			"meetingLink": "Enlace de la reunión",
 			"evidence": "Evidencia",
 			"talkingPoints": "Puntos a tratar",
@@ -650,6 +662,36 @@
 			"noEvidence": "No hay llamadas de evidencia.",
 			"noPoints": "Todavía no hay puntos a tratar.",
 			"noItems": "Todavía no hay acciones acordadas."
+		},
+		"brief": {
+			"title": "Brief semanal",
+			"week": "Llamadas del {{from}} al {{to}} · {{count}} evaluadas",
+			"findings": "Aspectos débiles de la semana",
+			"noFindings": "Sin incidencias en las llamadas de la semana pasada.",
+			"findingCalls_one": "{{count}} llamada · {{share}}% de la semana",
+			"findingCalls_other": "{{count}} llamadas · {{share}}% de la semana",
+			"approach": "Cómo abordarlo con el agente",
+			"solution": "Solución conceptual",
+			"example": "Ejemplo real",
+			"suggested": "Material sugerido",
+			"noSuggested": "Nada que sugerir: el agente ya tiene material abierto para estos aspectos.",
+			"alreadyAssigned": "Ya asignado",
+			"assignSuggested_one": "Asignar {{count}} material",
+			"assignSuggested_other": "Asignar {{count}} materiales",
+			"assigned_one": "{{count}} material asignado",
+			"assigned_other": "{{count}} materiales asignados",
+			"previous": "Desde la sesión anterior",
+			"noPrevious": "No hay una sesión previa con coach para comparar.",
+			"composite": "Scorecard"
+		},
+		"batch": {
+			"reason": {
+				"TIER_CRITICAL": "Crítico esta semana",
+				"TIER_NEEDS_IMPROVEMENT": "Necesita mejorar",
+				"GOOD_DECLINED": "Bien pero empeorando",
+				"WEAKEST_OF_WEEK": "El más bajo de la semana",
+				"STABLE": "Estable: mensaje IA"
+			}
 		},
 		"empty": "Ninguna sesión coincide con estos filtros."
 	},

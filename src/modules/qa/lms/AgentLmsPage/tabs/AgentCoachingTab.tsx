@@ -102,9 +102,10 @@ export function AgentCoachingTab() {
 			.map((c) => c.id);
 		return allSessions.filter(
 			(s) =>
-				s.agentId === AGENT_PERSONA.id ||
-				s.agentIds?.includes(AGENT_PERSONA.id) ||
-				(s.cohortId && myCohortIds.includes(s.cohortId))
+				s.status !== 'PROPOSED' &&
+				(s.agentId === AGENT_PERSONA.id ||
+					s.agentIds?.includes(AGENT_PERSONA.id) ||
+					(s.cohortId && myCohortIds.includes(s.cohortId)))
 		);
 	}, [allSessions, cohorts]);
 

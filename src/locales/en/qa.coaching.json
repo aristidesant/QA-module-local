@@ -530,6 +530,7 @@
 			"REMOTE": "Virtual"
 		},
 		"status": {
+			"PROPOSED": "Proposed",
 			"SCHEDULED": "Scheduled",
 			"COMPLETED": "Completed",
 			"MISSED": "Missed",
@@ -625,6 +626,17 @@
 			}
 		},
 		"detail": {
+			"proposed": {
+				"title": "Pre-loaded by the weekly batch",
+				"hint": "Confirm a date to schedule the 1:1, send the coaching as an AI message instead, or dismiss it.",
+				"date": "Session date",
+				"schedule": "Schedule 1:1",
+				"sendAi": "Send as AI message",
+				"dismiss": "Dismiss",
+				"scheduled": "Session scheduled and the agent notified",
+				"sent": "Coaching message sent to the agent's inbox",
+				"dismissed": "Proposal dismissed"
+			},
 			"meetingLink": "Meeting link",
 			"evidence": "Evidence",
 			"talkingPoints": "Talking points",
@@ -650,6 +662,36 @@
 			"noEvidence": "No evidence calls pinned.",
 			"noPoints": "No talking points yet.",
 			"noItems": "No action items yet."
+		},
+		"brief": {
+			"title": "Weekly brief",
+			"week": "Calls from {{from}} to {{to}} · {{count}} evaluated",
+			"findings": "Weak aspects this week",
+			"noFindings": "No incident detected in last week's calls.",
+			"findingCalls_one": "{{count}} call · {{share}}% of the week",
+			"findingCalls_other": "{{count}} calls · {{share}}% of the week",
+			"approach": "How to approach it with the agent",
+			"solution": "Conceptual solution",
+			"example": "Real example",
+			"suggested": "Suggested material",
+			"noSuggested": "Nothing to suggest — the agent already has material open for these aspects.",
+			"alreadyAssigned": "Already assigned",
+			"assignSuggested_one": "Assign {{count}} material",
+			"assignSuggested_other": "Assign {{count}} materials",
+			"assigned_one": "{{count}} material assigned",
+			"assigned_other": "{{count}} materials assigned",
+			"previous": "Since the previous session",
+			"noPrevious": "No previous coach-led session to compare with.",
+			"composite": "Scorecard"
+		},
+		"batch": {
+			"reason": {
+				"TIER_CRITICAL": "Critical this week",
+				"TIER_NEEDS_IMPROVEMENT": "Needs improvement",
+				"GOOD_DECLINED": "Good but declining",
+				"WEAKEST_OF_WEEK": "Weakest of the week",
+				"STABLE": "Stable — AI message"
+			}
 		},
 		"empty": "No sessions match these filters."
 	},

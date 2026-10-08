@@ -192,6 +192,7 @@ export default function CoachingAgentPage() {
 				profile={profile}
 				assignments={assignments}
 				contentById={contentById}
+				role={role}
 				opened={sessionId !== null}
 				onClose={() => setSessionId(null)}
 				onOpenCall={(callId) => navigate(`/qa/campaigns/1/calls/${callId}`)}
