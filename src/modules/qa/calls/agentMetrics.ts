@@ -119,6 +119,19 @@ export const predominantEmotion = (
 	return [...counts.entries()].sort((a, b) => b[1] - a[1])[0][0];
 };
 
+/** Every call of one agent between two 'YYYY-MM-DD' days, both inclusive. */
+export const agentCallsBetween = (
+	agentId: string,
+	from: string,
+	to: string
+): TeamCallMetric[] =>
+	TEAM_CALLS.filter(
+		(c) =>
+			c.agentId === agentId &&
+			c.date.slice(0, 10) >= from &&
+			c.date.slice(0, 10) <= to
+	);
+
 /**
  * The agent's calls inside the `days`-day window ending `endOffsetDays` days
  * before TODAY (inclusive). `endOffsetDays = 0` (default) is the current
@@ -132,12 +145,7 @@ export const agentCallsInWindow = (
 ): TeamCallMetric[] => {
 	const to = addDays(TODAY, -endOffsetDays);
 	const from = addDays(to, -(days - 1));
-	return TEAM_CALLS.filter(
-		(c) =>
-			c.agentId === agentId &&
-			c.date.slice(0, 10) >= from &&
-			c.date.slice(0, 10) <= to
-	);
+	return agentCallsBetween(agentId, from, to);
 };
 
 /**
