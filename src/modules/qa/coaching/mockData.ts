@@ -7,16 +7,25 @@ import type {
 	CoachingCohort,
 	CoachingRule,
 	CoachingSessionRecord,
+	CoachingWeeklyBatch,
 	CoachRole,
 	EvaluationArea,
+	LmsContent,
 	RuleCondition,
 	RuleScope,
 } from '~/models/qa';
-import { TEAM_PROFILES } from '~/modules/qa/team/mockData';
+import { TEAM_AGENTS, TEAM_PROFILES } from '~/modules/qa/team/mockData';
+import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import { DIMENSION_TO_AREA } from '~/modules/qa/lms/constants';
-import { day, seeded, LMS_CONTENT } from '~/modules/qa/lms/mockData';
+import {
+	day,
+	seeded,
+	LMS_ASSIGNMENT_SEEDS,
+	LMS_CONTENT,
+} from '~/modules/qa/lms/mockData';
 import { buildAiCoachingMessage } from './helpers';
 import { DEFAULT_FOLLOW_UP } from './constants';
+import { buildWeeklyBatch } from './weeklyBatch';
 
 const CREATED_AT = '2026-07-01T09:00:00Z';
 const UPDATED_AT = '2026-09-01T09:00:00Z';
@@ -832,10 +841,59 @@ const CURATED_SESSIONS: CoachingSessionRecord[] = [
 	},
 ];
 
+const ROSTER_SESSIONS = buildRosterSessions();
+const CONTENT_BY_ID = Object.fromEntries(
+	LMS_CONTENT.map((c) => [c.id, c])
+) as Record<string, LmsContent>;
+const TEAM_1_IDS = new Set(
+	TEAM_AGENTS.filter((a) => a.supervisorId === SUPERVISOR_PERSONA.id).map(
+		(a) => a.id
+	)
+);
+
+/** Last Monday's weekly run for Team 1: proposed 1:1s + the AI messages of cr-000, all pre-loaded. */
+const WEEKLY_BATCH = buildWeeklyBatch({
+	id: 'cwb-2026-09-07',
+	supervisorId: SUPERVISOR_PERSONA.id,
+	supervisorName: SUPERVISOR_PERSONA.name,
+	generatedAt: WEEKLY_RUN_AT,
+	coachingDate: '2026-09-08',
+	agents: TEAM_AGENTS.filter((a) => TEAM_1_IDS.has(a.id)),
+	sessions: [...CURATED_SESSIONS, ...ROSTER_SESSIONS],
+	assignments: LMS_ASSIGNMENT_SEEDS,
+	profiles: TEAM_PROFILES,
+	contentById: CONTENT_BY_ID,
+});
+
+// Demo state on 12 Sep: the supervisor already scheduled the first proposal for the next coaching day.
+const FIRST_PROPOSAL = WEEKLY_BATCH.created.findIndex(
+	(s) => s.status === 'PROPOSED'
+);
+const BATCH_SESSIONS = WEEKLY_BATCH.created.map((s, i) =>
+	i === FIRST_PROPOSAL
+		? { ...s, status: 'SCHEDULED' as const, date: '2026-09-15T10:00:00Z' }
+		: s
+);
+const patchedById = new Map(WEEKLY_BATCH.patched.map((s) => [s.id, s]));
+// A Team 1 agent decided 1:1 this week no longer keeps the standalone seeded AI message of the same run.
+const CURATED_FOR_BATCH = CURATED_SESSIONS.filter(
+	(s) =>
+		!(
+			s.ruleId === 'cr-000' &&
+			s.type === 'AI_MESSAGE' &&
+			s.date === WEEKLY_RUN_AT &&
+			TEAM_1_IDS.has(s.agentId) &&
+			!patchedById.has(s.id)
+		)
+).map((s) => patchedById.get(s.id) ?? s);
+
 export const COACHING_SESSION_SEEDS: CoachingSessionRecord[] = [
-	...CURATED_SESSIONS,
-	...buildRosterSessions(),
+	...BATCH_SESSIONS,
+	...CURATED_FOR_BATCH,
+	...ROSTER_SESSIONS,
 ];
+
+export const COACHING_BATCH_SEEDS: CoachingWeeklyBatch[] = [WEEKLY_BATCH.batch];
 
 // ── Cohorts ───────────────────────────────────────────────────────────────────
 
@@ -887,11 +945,11 @@ export const COACHING_ACTIVITY_SEEDS: CoachingActivityEntry[] = [
 		type: 'RULE_FIRED',
 		agentId: null,
 		agentName: null,
-		title: 'Weekly QA review',
-		description: 'QA_OVERALL_SCORE < 90 over the last 7 days · 3 agents',
+		title: 'Weekly coaching batch generated',
+		description: `${WEEKLY_BATCH.batch.items.filter((i) => i.decision === 'ONE_ON_ONE').length} 1:1 proposed · ${WEEKLY_BATCH.batch.items.filter((i) => i.decision === 'AI_MESSAGE').length} AI messages · Team 1`,
 		date: WEEKLY_RUN_AT,
 		area: 'QUALITY_ASSURANCE',
-		link: '?tab=rules',
+		link: '?tab=sessions',
 	},
 	{
 		id: 'cact-012',

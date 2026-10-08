@@ -3,9 +3,11 @@ import i18n from '~/locales/i18n';
 import type {
 	CoachingActionItem,
 	CoachingActivityEntry,
+	CoachingBrief,
 	CoachingCohort,
 	CoachingRule,
 	CoachingSessionRecord,
+	CoachingWeeklyBatch,
 	CoachRole,
 	CoachingSessionModality,
 	RuleStatus,
@@ -15,8 +17,10 @@ import { useTeamStore } from '~/stores/qa/teamStore';
 import { buildAiCoachingMessage } from '~/modules/qa/coaching/helpers';
 import { buildNotification } from '~/modules/qa/inbox/helpers';
 import { useNotificationStore } from '~/stores/qa/notificationStore';
+import { DEFAULT_COACHING_DAY } from '~/modules/qa/coaching/constants';
 import {
 	COACHING_ACTIVITY_SEEDS,
+	COACHING_BATCH_SEEDS,
 	COACHING_COHORT_SEEDS,
 	COACHING_RULE_SEEDS,
 	COACHING_SESSION_SEEDS,
@@ -53,11 +57,15 @@ export interface ScheduleSessionInput {
 	linkedAssignmentIds: string[];
 	ruleId?: string | null;
 	cohortId?: string | null;
+	brief?: CoachingBrief | null;
+	batchId?: string | null;
 }
 
 interface CoachingState {
 	rules: CoachingRule[];
 	sessions: CoachingSessionRecord[];
+	batches: CoachingWeeklyBatch[];
+	coachingDay: number;
 	cohorts: CoachingCohort[];
 	activity: CoachingActivityEntry[];
 	/** agentId → ISO date the agent is hidden from the queue until. */
@@ -90,6 +98,17 @@ interface CoachingState {
 		id: string,
 		status: CoachingSessionRecord['status']
 	) => void;
+	/** JS weekday (0 = Sunday) the supervisor holds coaching; the batch generates the day before. */
+	setCoachingDay: (day: number) => void;
+	/** Supervisor confirms a PROPOSED 1:1: it becomes SCHEDULED and the agent is notified. */
+	scheduleProposed: (
+		id: string,
+		date: string,
+		modality: CoachingSessionModality
+	) => void;
+	/** Supervisor sends the proposal as an AI message instead of holding the 1:1. */
+	sendProposedAsAiMessage: (id: string) => void;
+	dismissProposed: (id: string) => void;
 	acknowledgeActionItem: (sessionId: string, itemId: string) => void;
 	acknowledgeCommitment: (sessionId: string, comment: string | null) => void;
 
@@ -141,6 +160,8 @@ const notifySession = (
 export const useCoachingStore = create<CoachingState>((set, get) => ({
 	rules: COACHING_RULE_SEEDS,
 	sessions: COACHING_SESSION_SEEDS,
+	batches: COACHING_BATCH_SEEDS,
+	coachingDay: DEFAULT_COACHING_DAY,
 	cohorts: COACHING_COHORT_SEEDS,
 	activity: COACHING_ACTIVITY_SEEDS,
 	snoozed: {},
@@ -354,6 +375,8 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 			linkedAssignmentIds: input.linkedAssignmentIds,
 			ruleId: input.ruleId ?? null,
 			cohortId: input.cohortId ?? null,
+			brief: input.brief ?? null,
+			batchId: input.batchId ?? null,
 		};
 
 		set((s) => ({ sessions: [session, ...s.sessions] }));
@@ -427,6 +450,80 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 	setSessionStatus: (id, status) =>
 		set((s) => ({
 			sessions: s.sessions.map((x) => (x.id === id ? { ...x, status } : x)),
+		})),
+
+	setCoachingDay: (coachingDay) => set({ coachingDay }),
+
+	scheduleProposed: (id, date, modality) => {
+		const session = get().sessions.find((s) => s.id === id);
+		if (!session || session.status !== 'PROPOSED') return;
+		const next: CoachingSessionRecord = {
+			...session,
+			status: 'SCHEDULED',
+			date,
+			modality,
+		};
+		set((s) => ({ sessions: s.sessions.map((x) => (x.id === id ? next : x)) }));
+		get().logActivity({
+			type: 'SESSION_SCHEDULED',
+			agentId: next.agentId,
+			agentName: next.agentName,
+			title: `Coaching scheduled: ${next.topic}`,
+			description: `${next.coachName} · ${new Date(next.date).toLocaleString()} · from the weekly batch`,
+			area: next.area,
+			link: '?tab=sessions',
+		});
+		notifySession(
+			next,
+			`Coaching session scheduled: ${next.topic}`,
+			`${next.coachName} scheduled a coaching session for ${new Date(next.date).toLocaleString()}.`
+		);
+	},
+
+	sendProposedAsAiMessage: (id) => {
+		const session = get().sessions.find((s) => s.id === id);
+		if (!session || session.status !== 'PROPOSED') return;
+		const profile = useTeamStore.getState().profiles[session.agentId];
+		const content = useLmsStore.getState().content;
+		const titles = (session.brief?.suggestedContentIds ?? [])
+			.map((cid) => content.find((c) => c.id === cid)?.title)
+			.filter((x): x is string => Boolean(x));
+		const next: CoachingSessionRecord = {
+			...session,
+			type: 'AI_MESSAGE',
+			modality: null,
+			durationMin: 0,
+			date: NOW_ISO,
+			status: 'COMPLETED',
+			talkingPoints: [],
+			aiMessage: profile
+				? buildAiCoachingMessage(profile, 'Weekly coaching review', titles)
+				: (session.brief?.approach ?? ''),
+		};
+		set((s) => ({ sessions: s.sessions.map((x) => (x.id === id ? next : x)) }));
+		get().logActivity({
+			type: 'SESSION_COMPLETED',
+			agentId: next.agentId,
+			agentName: next.agentName,
+			title: `Coaching message sent: ${next.topic}`,
+			description: `${next.coachName} · AI message instead of a 1:1`,
+			area: next.area,
+			link: '?tab=sessions',
+		});
+		notifySession(
+			next,
+			`Weekly coaching message: ${next.topic}`,
+			next.aiMessage ?? ''
+		);
+	},
+
+	dismissProposed: (id) =>
+		set((s) => ({
+			sessions: s.sessions.map((x) =>
+				x.id === id && x.status === 'PROPOSED'
+					? { ...x, status: 'CANCELLED' as const }
+					: x
+			),
 		})),
 
 	acknowledgeActionItem: (sessionId, itemId) =>
@@ -509,3 +606,5 @@ export const selectSessions = (s: CoachingState) => s.sessions;
 export const selectCohorts = (s: CoachingState) => s.cohorts;
 export const selectCoachingActivity = (s: CoachingState) => s.activity;
 export const selectSnoozed = (s: CoachingState) => s.snoozed;
+export const selectBatches = (s: CoachingState) => s.batches;
+export const selectCoachingDay = (s: CoachingState) => s.coachingDay;
