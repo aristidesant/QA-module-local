@@ -102,9 +102,12 @@ export function ScorecardDimensionBadge({
 export function ScorecardTrendBadge({
 	trend,
 	size = 'sm',
+	tooltipKey = 'agents.trend.tooltip',
 }: {
 	trend: ScorecardTrend | null;
 	size?: BadgeSize;
+	/** i18n key with {{previous}}, {{current}}, {{delta}} placeholders. */
+	tooltipKey?: string;
 }) {
 	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
 	if (!trend) {
@@ -126,7 +129,7 @@ export function ScorecardTrendBadge({
 	return (
 		<Tooltip
 			withArrow
-			label={t('agents.trend.tooltip', {
+			label={t(tooltipKey, {
 				previous: trend.previous,
 				current: trend.current,
 				delta: signed,

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Group, SimpleGrid, Stack, Tabs, Text } from '@mantine/core';
+import { Group, Stack, Tabs, Text } from '@mantine/core';
 import { AreaChart } from '@mantine/charts';
 import { createColumnHelper } from '@tanstack/react-table';
 import { IconBook, IconChartBar, IconSchool } from '@tabler/icons-react';
@@ -21,9 +21,10 @@ import {
 } from '~/modules/qa/lms/components/Badges';
 import { ImpactSparkline } from '~/modules/qa/lms/components/ImpactSparkline';
 import { dueLabel } from '~/modules/qa/lms/helpers';
-import { DimensionScoreCard } from '~/modules/qa/team/components/DimensionScoreCard';
 import type { AgentProfile, TeamRole } from '~/modules/qa/team/types';
+import { buildPostCoachingSummary } from '../postCoaching';
 import { AgentSessionsTable } from './AgentSessionsTable';
+import { PostCoachingCards } from './PostCoachingCards';
 
 const assignmentHelper = createColumnHelper<LmsAssignment>();
 
@@ -68,6 +69,10 @@ export function AgentCoachingPanel({
 		[sessions, profile]
 	);
 	const measured = useMemo(() => mine.filter((a) => a.impact), [mine]);
+	const summary = useMemo(
+		() => buildPostCoachingSummary(profile.agent.id, sessions, assignments),
+		[profile, sessions, assignments]
+	);
 
 	const performance = profile.performance.slice(-6).map((p) => ({
 		label: p.label,
@@ -120,11 +125,7 @@ export function AgentCoachingPanel({
 
 	return (
 		<Stack gap='md'>
-			<SimpleGrid cols={{ base: 2, md: 4 }} spacing='sm'>
-				{profile.dimensions.map((d) => (
-					<DimensionScoreCard key={d.key} dimension={d} />
-				))}
-			</SimpleGrid>
+			<PostCoachingCards summary={summary} contentById={contentById} />
 
 			<Tabs value={tab} onChange={onTabChange} keepMounted={false}>
 				<Tabs.List>

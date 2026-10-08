@@ -191,6 +191,25 @@
 		"trend": {
 			"tooltip": "Semana anterior {{previous}} → esta semana {{current}} ({{delta}})",
 			"noPrevious": "Sin scorecard de la semana anterior"
+		},
+		"postCoaching": {
+			"title": "Desde la última sesión de coaching",
+			"anchor": "{{topic}} · {{date}} · {{coach}}",
+			"daysAgo_one": "hace {{count}} día",
+			"daysAgo_other": "hace {{count}} días",
+			"windows": "{{after}} llamadas desde la sesión · {{before}} llamadas en los {{days}} días anteriores",
+			"noSession": "Todavía no hay una sesión de coaching completada: se muestran los últimos 7 días frente a los 7 anteriores.",
+			"trendTooltip": "Antes de la sesión {{previous}} → desde la sesión {{current}} ({{delta}})",
+			"calls_one": "{{count}} llamada",
+			"calls_other": "{{count}} llamadas",
+			"cards": {
+				"scorecard": "Scorecard de coaching",
+				"materials": "Materiales completados"
+			},
+			"before": "Antes {{value}}",
+			"noBefore": "Sin llamadas antes",
+			"latestMaterial": "Último: {{title}}",
+			"noMaterials": "Ninguno completado desde la sesión"
 		}
 	},
 	"cohorts": {
