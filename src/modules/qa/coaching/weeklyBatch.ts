@@ -207,7 +207,7 @@ export const buildCoachingBrief = ({
 		reason,
 		findings,
 		approach: secondary
-			? `${playbook.approach} ${secondary.approach}`
+			? `${playbook.approach}\n\n${secondary.approach}`
 			: playbook.approach,
 		solution: playbook.solution,
 		example: playbook.example,

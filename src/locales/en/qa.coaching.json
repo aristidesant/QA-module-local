@@ -670,12 +670,18 @@
 			"description": "Every completed, missed or cancelled session and every AI message of your agents. Filter by agent, topic or period."
 		},
 		"brief": {
+			"stats": {
+				"scorecard": "Scorecard",
+				"change": "Change",
+				"vsPrevious": "vs previous week",
+				"calls": "Calls evaluated",
+				"week": "Week"
+			},
+			"findingOf": "{{count}} of {{total}} calls",
+			"guide": "Coaching guide",
 			"title": "Weekly brief",
-			"week": "Calls from {{from}} to {{to}} · {{count}} evaluated",
 			"findings": "Weak aspects this week",
 			"noFindings": "No incident detected in last week's calls.",
-			"findingCalls_one": "{{count}} call · {{share}}% of the week",
-			"findingCalls_other": "{{count}} calls · {{share}}% of the week",
 			"approach": "How to approach it with the agent",
 			"solution": "Conceptual solution",
 			"example": "Real example",

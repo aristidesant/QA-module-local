@@ -57,6 +57,10 @@ import {
 } from '~/stores/qa/lmsStore';
 import { useTeamStore } from '~/stores/qa/teamStore';
 import { SessionBrief } from '../components/SessionBrief';
+import {
+	PreviousSessionCard,
+	SuggestedMaterialCard,
+} from '../components/SessionBriefAside';
 import queueStyles from '../components/Queue.module.css';
 import {
 	SESSION_MODALITIES,
@@ -151,6 +155,12 @@ export default function CoachingSessionDetailPage() {
 					.map((p) => ({ label: p.label, value: p[dimension] }))
 			: [];
 	const status = sessionStatusBadge(session.status);
+
+	// Each call once; the weak aspects that flagged it are shown beside it.
+	const aspectsByCall = new Map<string, string[]>();
+	for (const f of session.brief?.findings ?? [])
+		for (const id of f.evidenceCallIds)
+			aspectsByCall.set(id, [...(aspectsByCall.get(id) ?? []), f.issue]);
 
 	const addItem = () => {
 		if (!draft.trim()) return;
@@ -279,16 +289,7 @@ export default function CoachingSessionDetailPage() {
 				<Grid gap='md'>
 					<Grid.Col span={{ base: 12, md: 8 }}>
 						<Stack gap='md'>
-							{session.brief && (
-								<SessionBrief
-									brief={session.brief}
-									agentId={session.agentId}
-									role={role}
-									assignments={assignments}
-									contentById={contentById}
-									onOpenCall={openCall}
-								/>
-							)}
+							{session.brief && <SessionBrief brief={session.brief} />}
 
 							{isAi && (
 								<SectionCard
@@ -312,20 +313,34 @@ export default function CoachingSessionDetailPage() {
 												{t('sessions.detail.noEvidence')}
 											</Text>
 										) : (
-											<Group gap='xs'>
-												{session.evidenceCallIds.map((callId) => (
-													<Badge
-														key={callId}
-														variant='outline'
-														color='gray'
-														leftSection={<IconPhone size={12} />}
-														className={pointerStyles.pointer}
-														onClick={() => openCall(callId)}
-													>
-														{callId}
-													</Badge>
-												))}
-											</Group>
+											<Stack gap='xs'>
+												{session.evidenceCallIds.map((callId) => {
+													const aspects = aspectsByCall.get(callId) ?? [];
+													return (
+														<Group key={callId} gap='sm' wrap='nowrap'>
+															<Badge
+																size='sm'
+																variant='outline'
+																color='gray'
+																leftSection={<IconPhone size={12} />}
+																className={pointerStyles.pointer}
+																onClick={() => openCall(callId)}
+															>
+																{callId}
+															</Badge>
+															{aspects.length > 0 && (
+																<Text size='xs' c='dimmed'>
+																	{aspects
+																		.map((issue) =>
+																			t(`issues.${issue}`, { ns: 'qa.calls' })
+																		)
+																		.join(' · ')}
+																</Text>
+															)}
+														</Group>
+													);
+												})}
+											</Stack>
 										)}
 									</SectionCard>
 
@@ -559,7 +574,20 @@ export default function CoachingSessionDetailPage() {
 									</SectionCard>
 								)}
 
-							{!isAi && (
+							{session.brief && (
+								<>
+									<SuggestedMaterialCard
+										brief={session.brief}
+										agentId={session.agentId}
+										role={role}
+										assignments={assignments}
+										contentById={contentById}
+									/>
+									<PreviousSessionCard brief={session.brief} />
+								</>
+							)}
+
+							{!isAi && session.status === 'COMPLETED' && (
 								<SectionCard
 									title={t('sessions.detail.commitment')}
 									padding='md'

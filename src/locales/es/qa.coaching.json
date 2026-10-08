@@ -670,12 +670,18 @@
 			"description": "Todas las sesiones completadas, perdidas o canceladas y los mensajes IA de tus agentes. Filtra por agente, tema o periodo."
 		},
 		"brief": {
+			"stats": {
+				"scorecard": "Scorecard",
+				"change": "Cambio",
+				"vsPrevious": "vs semana anterior",
+				"calls": "Llamadas evaluadas",
+				"week": "Semana"
+			},
+			"findingOf": "{{count}} de {{total}} llamadas",
+			"guide": "Guía de coaching",
 			"title": "Brief semanal",
-			"week": "Llamadas del {{from}} al {{to}} · {{count}} evaluadas",
 			"findings": "Aspectos débiles de la semana",
 			"noFindings": "Sin incidencias en las llamadas de la semana pasada.",
-			"findingCalls_one": "{{count}} llamada · {{share}}% de la semana",
-			"findingCalls_other": "{{count}} llamadas · {{share}}% de la semana",
 			"approach": "Cómo abordarlo con el agente",
 			"solution": "Solución conceptual",
 			"example": "Ejemplo real",
