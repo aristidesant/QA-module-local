@@ -482,7 +482,7 @@
 	},
 	"sessions": {
 		"title": "Sesiones de coaching",
-		"description": "Sesiones 1:1, lado a lado, micro, grupales y mensajes IA.",
+		"description": "Lote semanal preparado por la plataforma, tu agenda y el histórico de todas las sesiones y mensajes IA.",
 		"calendar": {
 			"title": "Calendario",
 			"description": "Todas las sesiones con los mismos filtros, por mes, semana o día.",
@@ -495,6 +495,10 @@
 			"more": "+{{count}} más"
 		},
 		"filters": {
+			"batch": "Lote semanal",
+			"agenda": "Agenda",
+			"history": "Histórico",
+			"topic": "Tema",
 			"today": "Hoy",
 			"agent": "Agente",
 			"dateRange": "Rango de fechas",
@@ -663,6 +667,10 @@
 			"noPoints": "Todavía no hay puntos a tratar.",
 			"noItems": "Todavía no hay acciones acordadas."
 		},
+		"history": {
+			"title": "Sesiones y coaching pasados",
+			"description": "Todas las sesiones completadas, perdidas o canceladas y los mensajes IA de tus agentes. Filtra por agente, tema o periodo."
+		},
 		"brief": {
 			"title": "Brief semanal",
 			"week": "Llamadas del {{from}} al {{to}} · {{count}} evaluadas",
@@ -685,6 +693,40 @@
 			"composite": "Scorecard"
 		},
 		"batch": {
+			"title": "Lote semanal de coaching",
+			"description": "Generado {{generated}} a partir de las llamadas del {{from}} al {{to}} para el coaching del {{coaching}}. La plataforma decidió quién necesita un 1:1 y quién recibe el mensaje IA.",
+			"coachingDay": "Día de coaching",
+			"next": "Próximo lote {{date}}",
+			"empty": "Todavía no hay lote: el primero se genera {{date}}.",
+			"agents": "Agentes de este lote",
+			"agentsDescription": "Haz clic en una fila para abrir la sesión precargada: aspectos débiles, llamadas de evidencia, cómo abordarlo, material sugerido y qué cambió desde la sesión anterior.",
+			"clean": "Semana limpia",
+			"sentOn": "Enviado {{date}}",
+			"suggestedDate": "Sugerida {{date}}",
+			"kpi": {
+				"analysed": "Agentes analizados",
+				"proposed": "1:1 por revisar",
+				"scheduled": "1:1 agendados",
+				"ai": "Mensajes IA enviados"
+			},
+			"columns": {
+				"findings": "Aspectos débiles",
+				"decision": "Decisión",
+				"date": "Sesión"
+			},
+			"decision": {
+				"ONE_ON_ONE": "1:1 con supervisor",
+				"AI_MESSAGE": "Mensaje IA"
+			},
+			"weekdays": {
+				"0": "Domingo",
+				"1": "Lunes",
+				"2": "Martes",
+				"3": "Miércoles",
+				"4": "Jueves",
+				"5": "Viernes",
+				"6": "Sábado"
+			},
 			"reason": {
 				"TIER_CRITICAL": "Crítico esta semana",
 				"TIER_NEEDS_IMPROVEMENT": "Necesita mejorar",

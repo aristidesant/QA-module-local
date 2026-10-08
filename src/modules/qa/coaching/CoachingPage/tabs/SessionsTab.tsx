@@ -30,6 +30,7 @@ import type {
 } from '~/models/qa';
 import { AreaBadge } from '~/modules/qa/lms/components/Badges';
 import { daysUntil, today } from '~/modules/qa/lms/helpers';
+import { WeeklyBatchPanel } from '../../components/WeeklyBatchPanel';
 import { SessionsCalendar } from './SessionsCalendar';
 import { TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
 import type { TeamRole } from '~/modules/qa/team/types';
@@ -41,6 +42,8 @@ import {
 } from '../../constants';
 
 const helper = createColumnHelper<CoachingSessionRecord>();
+
+type SessionsView = 'batch' | 'agenda' | 'history';
 
 interface SessionsTabProps {
 	sessions: CoachingSessionRecord[];
@@ -60,13 +63,14 @@ export function SessionsTab({
 	onCreate,
 }: SessionsTabProps) {
 	const { t } = useTranslation('qa.coaching');
-	const [view, setView] = useState<'today' | 'upcoming' | 'past'>('upcoming');
+	const [view, setView] = useState<SessionsView>('batch');
 	const [status, setStatus] = useState<string | null>(null);
 	const [type, setType] = useState<string | null>(null);
 	const [modality, setModality] = useState<string | null>(null);
 	const [coach, setCoach] = useState<string | null>(null);
 	const [team, setTeam] = useState<string | null>(null);
 	const [agent, setAgent] = useState<string | null>(null);
+	const [topic, setTopic] = useState<string | null>(null);
 	const [range, setRange] = useState<[string | null, string | null]>([
 		null,
 		null,
@@ -82,6 +86,11 @@ export function SessionsTab({
 			.sort((a, b) => a.label.localeCompare(b.label));
 	}, [sessions]);
 
+	const topicOptions = useMemo(
+		() => [...new Set(sessions.map((s) => s.topic))].sort(),
+		[sessions]
+	);
+
 	const filtered = useMemo(
 		() =>
 			sessions.filter((s) => {
@@ -89,6 +98,7 @@ export function SessionsTab({
 				if (type && s.type !== type) return false;
 				if (modality && s.modality !== modality) return false;
 				if (agent && (s.type === 'GROUP' || s.agentId !== agent)) return false;
+				if (topic && s.topic !== topic) return false;
 				const day = s.date.slice(0, 10);
 				if (range[0] && day < range[0]) return false;
 				if (range[1] && day > range[1]) return false;
@@ -102,6 +112,7 @@ export function SessionsTab({
 			type,
 			modality,
 			agent,
+			topic,
 			range,
 			coach,
 			team,
@@ -109,30 +120,36 @@ export function SessionsTab({
 		]
 	);
 
+	// Proposed sessions live in the weekly batch view until the supervisor schedules them.
+	const visible = useMemo(
+		() => filtered.filter((s) => s.status !== 'PROPOSED'),
+		[filtered]
+	);
+
 	// Everything on today's calendar, whatever its status, in time order.
 	const todays = useMemo(
 		() =>
-			filtered
+			visible
 				.filter((s) => s.date.slice(0, 10) === today())
 				.sort((a, b) => a.date.localeCompare(b.date)),
-		[filtered]
+		[visible]
 	);
 
 	const upcoming = useMemo(
 		() =>
-			filtered
+			visible
 				.filter((s) => s.status === 'SCHEDULED')
 				.sort((a, b) => a.date.localeCompare(b.date)),
-		[filtered]
+		[visible]
 	);
 	const thisWeek = upcoming.filter((s) => daysUntil(s.date) <= 7);
 	const later = upcoming.filter((s) => daysUntil(s.date) > 7);
 	const past = useMemo(
 		() =>
-			filtered
+			visible
 				.filter((s) => s.status !== 'SCHEDULED')
 				.sort((a, b) => b.date.localeCompare(a.date)),
-		[filtered]
+		[visible]
 	);
 
 	const columns: BaseTableColumnDef<CoachingSessionRecord>[] = [
@@ -258,24 +275,38 @@ export function SessionsTab({
 		}) as BaseTableColumnDef<CoachingSessionRecord>,
 	];
 
+	const segmented = (
+		<AppSegmentedControl
+			size='sm'
+			value={view}
+			onChange={(v) => setView(v as SessionsView)}
+			data={[
+				{ label: t('sessions.filters.batch'), value: 'batch' },
+				{ label: t('sessions.filters.agenda'), value: 'agenda' },
+				{ label: t('sessions.filters.history'), value: 'history' },
+			]}
+		/>
+	);
+
 	const filters = (
 		<Group gap='sm' wrap='wrap'>
-			<AppSegmentedControl
-				size='sm'
-				value={view}
-				onChange={(v) => setView(v as 'today' | 'upcoming' | 'past')}
-				data={[
-					{ label: t('sessions.filters.today'), value: 'today' },
-					{ label: t('sessions.filters.upcoming'), value: 'upcoming' },
-					{ label: t('sessions.filters.past'), value: 'past' },
-				]}
-			/>
+			{segmented}
 			<Select
 				size='sm'
 				placeholder={t('sessions.filters.agent')}
 				data={agentOptions}
 				value={agent}
 				onChange={setAgent}
+				clearable
+				searchable
+				w={200}
+			/>
+			<Select
+				size='sm'
+				placeholder={t('sessions.filters.topic')}
+				data={topicOptions}
+				value={topic}
+				onChange={setTopic}
 				clearable
 				searchable
 				w={200}
@@ -368,22 +399,28 @@ export function SessionsTab({
 					</Button>
 				}
 			>
-				{filters}
+				{view === 'batch' ? segmented : filters}
 			</SectionCard>
 
-			{view === 'today' ? (
-				<SectionCard title={t('sessions.todayTitle')}>
-					<BaseTable<CoachingSessionRecord>
-						data={todays}
-						columns={columns}
-						getRowId={(r) => r.id}
-						density='compact'
-						emptyMessage={t('sessions.empty')}
-						onRowClick={(r) => onOpen(r.id)}
-					/>
-				</SectionCard>
-			) : view === 'upcoming' ? (
+			{view === 'batch' ? (
+				<WeeklyBatchPanel
+					role={role}
+					sessions={sessions}
+					agentTeam={agentTeam}
+					onOpen={onOpen}
+				/>
+			) : view === 'agenda' ? (
 				<>
+					<SectionCard title={t('sessions.todayTitle')}>
+						<BaseTable<CoachingSessionRecord>
+							data={todays}
+							columns={columns}
+							getRowId={(r) => r.id}
+							density='compact'
+							emptyMessage={t('sessions.empty')}
+							onRowClick={(r) => onOpen(r.id)}
+						/>
+					</SectionCard>
 					<SectionCard title={t('sessions.thisWeek')}>
 						<BaseTable<CoachingSessionRecord>
 							data={thisWeek}
@@ -404,9 +441,18 @@ export function SessionsTab({
 							onRowClick={(r) => onOpen(r.id)}
 						/>
 					</SectionCard>
+					<SectionCard
+						title={t('sessions.calendar.title')}
+						description={t('sessions.calendar.description')}
+					>
+						<SessionsCalendar sessions={visible} onOpen={onOpen} />
+					</SectionCard>
 				</>
 			) : (
-				<SectionCard title={t('sessions.past')}>
+				<SectionCard
+					title={t('sessions.history.title')}
+					description={t('sessions.history.description')}
+				>
 					<BaseTable<CoachingSessionRecord>
 						data={past}
 						columns={columns}
@@ -420,13 +466,6 @@ export function SessionsTab({
 					/>
 				</SectionCard>
 			)}
-
-			<SectionCard
-				title={t('sessions.calendar.title')}
-				description={t('sessions.calendar.description')}
-			>
-				<SessionsCalendar sessions={filtered} onOpen={onOpen} />
-			</SectionCard>
 		</Stack>
 	);
 }

@@ -482,7 +482,7 @@
 	},
 	"sessions": {
 		"title": "Coaching sessions",
-		"description": "1:1, side-by-side, micro, group sessions and AI messages.",
+		"description": "Weekly batch prepared by the platform, your agenda and the history of every session and AI message.",
 		"calendar": {
 			"title": "Calendar",
 			"description": "Every session in the same filters, by month, week or day.",
@@ -495,6 +495,10 @@
 			"more": "+{{count}} more"
 		},
 		"filters": {
+			"batch": "Weekly batch",
+			"agenda": "Agenda",
+			"history": "History",
+			"topic": "Topic",
 			"today": "Today",
 			"agent": "Agent",
 			"dateRange": "Date range",
@@ -663,6 +667,10 @@
 			"noPoints": "No talking points yet.",
 			"noItems": "No action items yet."
 		},
+		"history": {
+			"title": "Past sessions and coaching",
+			"description": "Every completed, missed or cancelled session and every AI message of your agents. Filter by agent, topic or period."
+		},
 		"brief": {
 			"title": "Weekly brief",
 			"week": "Calls from {{from}} to {{to}} · {{count}} evaluated",
@@ -685,6 +693,40 @@
 			"composite": "Scorecard"
 		},
 		"batch": {
+			"title": "Weekly coaching batch",
+			"description": "Generated {{generated}} from the calls of {{from}} – {{to}} for coaching on {{coaching}}. The platform decided who needs a 1:1 and who receives the AI message.",
+			"coachingDay": "Coaching day",
+			"next": "Next batch {{date}}",
+			"empty": "No batch yet — the first one generates {{date}}.",
+			"agents": "Agents in this batch",
+			"agentsDescription": "Click a row to open the pre-loaded session: weak aspects, evidence calls, how to approach it, suggested material and what changed since the previous session.",
+			"clean": "Clean week",
+			"sentOn": "Sent {{date}}",
+			"suggestedDate": "Suggested {{date}}",
+			"kpi": {
+				"analysed": "Agents analysed",
+				"proposed": "1:1 to review",
+				"scheduled": "1:1 scheduled",
+				"ai": "AI messages sent"
+			},
+			"columns": {
+				"findings": "Weak aspects",
+				"decision": "Decision",
+				"date": "Session"
+			},
+			"decision": {
+				"ONE_ON_ONE": "1:1 with supervisor",
+				"AI_MESSAGE": "AI message"
+			},
+			"weekdays": {
+				"0": "Sunday",
+				"1": "Monday",
+				"2": "Tuesday",
+				"3": "Wednesday",
+				"4": "Thursday",
+				"5": "Friday",
+				"6": "Saturday"
+			},
 			"reason": {
 				"TIER_CRITICAL": "Critical this week",
 				"TIER_NEEDS_IMPROVEMENT": "Needs improvement",
