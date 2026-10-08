@@ -1,45 +1,56 @@
-﻿import { useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
 	Badge,
 	Button,
 	Group,
 	Select,
+	SimpleGrid,
 	Stack,
 	Text,
 	TextInput,
-	Tooltip,
+	UnstyledButton,
 } from '@mantine/core';
 import { createColumnHelper } from '@tanstack/react-table';
 import { IconSearch, IconUsers } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
+import { StatCard } from '~/components/StatCard';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import BaseTable, {
 	type BaseTableColumnDef,
 } from '~/components/BaseTable/BaseTable';
 import EmptyState from '~/components/EmptyState';
-import type {
-	CoachingRule,
-	CoachingSessionRecord,
-	EvaluationArea,
-	LmsAssignment,
-	LmsImpactVerdict,
-} from '~/models/qa';
-import { AreaBadge, ImpactBadge } from '~/modules/qa/lms/components/Badges';
-import { DIMENSION_TO_AREA, LMS_AREA_META } from '~/modules/qa/lms/constants';
+import type { CoachingSessionRecord, LmsAssignment } from '~/models/qa';
+import { getScoreBandColor } from '~/modules/qa/constants/badgeColors';
 import { daysUntil, isOverdue } from '~/modules/qa/lms/helpers';
 import { TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
-import type {
-	AgentProfile,
-	DimensionKey,
-	TeamRole,
-} from '~/modules/qa/team/types';
+import type { AgentProfile, TeamRole } from '~/modules/qa/team/types';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
 import { assessBurnout } from '~/modules/qa/analytics/helpers';
 import {
 	useTriggerRulesStore,
 	selectTriggerRules,
 } from '~/stores/qa/triggerRulesStore';
+import {
+	ScorecardBadge,
+	ScorecardDimensionBadge,
+	ScorecardTrendBadge,
+} from '../../components/ScorecardBadges';
+import {
+	SCORECARD_DIMENSION_META,
+	SCORECARD_DIMENSION_ORDER,
+	TIER_META,
+	TIER_ORDER,
+	buildAgentScorecard,
+	type PerformanceTier,
+	type ScorecardDimension,
+	type ScorecardTrend,
+	type WeeklyScorecard,
+} from '../../scorecard';
+import styles from './AgentsTab.module.css';
+
+/** The period selector is hidden for now; the tab keeps working on the default (weekly). */
+const SHOW_PERIOD_SELECTOR = false;
 
 /** Evaluation periods and the days each one looks back over. */
 const EVALUATION_PERIODS = [
@@ -49,7 +60,7 @@ const EVALUATION_PERIODS = [
 ] as const;
 type EvaluationPeriod = (typeof EVALUATION_PERIODS)[number]['value'];
 
-/** Not a real EvaluationArea — a synthetic filter value for the "Weakest" dropdown. */
+/** Not a real scorecard aspect: a synthetic filter value for the "Weakest aspect" dropdown. */
 const BURNOUT_RISK_FILTER = 'BURNOUT_RISK';
 
 export interface AgentCoachingRow {
@@ -57,19 +68,20 @@ export interface AgentCoachingRow {
 	name: string;
 	team: string;
 	supervisorId: string;
-	overall: number;
-	weakestArea: EvaluationArea;
-	weakestValue: number;
-	active: number;
+	/** This week's scorecard; null when the agent has no evaluated calls in the last 7 days. */
+	scorecard: WeeklyScorecard | null;
+	tier: PerformanceTier | null;
+	/** This week's scorecard against the previous week's. */
+	trend: ScorecardTrend | null;
+	weakest: { dimension: ScorecardDimension; value: number } | null;
 	pending: number;
 	overdue: number;
 	/** Dates of the agent's coaching sessions; counted over the evaluation period. */
 	sessionDates: string[];
-	lastImpact: LmsImpactVerdict | null;
 	/** Has at least one coaching session still scheduled. */
 	pendingSession: boolean;
-	/** Coaching rules that fired for the agent (assigned content or created a session). */
-	triggeredRuleIds: string[];
+	/** Coaching rules that fired for the agent (assigned content or created a session), with the date. */
+	ruleEvents: { ruleId: string; date: string }[];
 }
 
 const helper = createColumnHelper<AgentCoachingRow>();
@@ -82,26 +94,17 @@ export function buildAgentRows(
 	return profiles.map((p) => {
 		const mine = assignments.filter((a) => a.agentId === p.agent.id);
 		const open = mine.filter((a) => a.status !== 'COMPLETED');
-		const measured = mine
-			.filter((a) => a.impact)
-			.sort((a, b) => (b.completedAt ?? '').localeCompare(a.completedAt ?? ''));
-		/** Sentiment is scored 1-5; every dimension is compared on the same 0-100 scale. */
-		const toPct = (k: DimensionKey, v: number) =>
-			k === 'sentiment' ? Math.round(((v - 1) / 4) * 100) : v;
-		const weakest = [...p.dimensions].sort(
-			(a, b) => toPct(a.key, a.score) - toPct(b.key, b.score)
-		)[0];
-		const lastImpact = measured[0]?.impact?.verdict ?? null;
+		const sc = buildAgentScorecard(p.agent.id);
 
 		return {
 			id: p.agent.id,
 			name: p.agent.name,
 			team: p.agent.team,
 			supervisorId: p.agent.supervisorId,
-			overall: p.overall.score,
-			weakestArea: DIMENSION_TO_AREA[weakest.key],
-			weakestValue: toPct(weakest.key, weakest.score),
-			active: open.length,
+			scorecard: sc.current,
+			tier: sc.tier,
+			trend: sc.trend,
+			weakest: sc.weakest,
 			pending: mine.filter(
 				(a) =>
 					a.acceptance.status === 'PENDING' ||
@@ -111,19 +114,17 @@ export function buildAgentRows(
 			sessionDates: sessions
 				.filter((s) => s.agentId === p.agent.id)
 				.map((s) => s.date),
-			lastImpact,
-			triggeredRuleIds: [
-				...new Set(
-					[
-						...mine.map((a) => a.ruleId),
-						...sessions
-							.filter(
-								(s) =>
-									s.agentId === p.agent.id || s.agentIds?.includes(p.agent.id)
-							)
-							.map((s) => s.ruleId),
-					].filter((id): id is string => Boolean(id))
+			ruleEvents: [
+				...mine.flatMap((a) =>
+					a.ruleId ? [{ ruleId: a.ruleId, date: a.assignedAt }] : []
 				),
+				...sessions
+					.filter(
+						(s) => s.agentId === p.agent.id || s.agentIds?.includes(p.agent.id)
+					)
+					.flatMap((s) =>
+						s.ruleId ? [{ ruleId: s.ruleId, date: s.date }] : []
+					),
 			],
 			pendingSession: sessions.some(
 				(s) =>
@@ -136,31 +137,24 @@ export function buildAgentRows(
 
 interface AgentsTabProps {
 	rows: AgentCoachingRow[];
-	assignments: LmsAssignment[];
-	/** Used to name the rules that fired for each agent. */
-	rules: CoachingRule[];
 	role: TeamRole;
 	onOpen: (agentId: string) => void;
 }
 
-export function AgentsTab({
-	rows,
-	assignments,
-	rules,
-	role,
-	onOpen,
-}: AgentsTabProps) {
+export function AgentsTab({ rows, role, onOpen }: AgentsTabProps) {
 	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
 	const [search, setSearch] = useState('');
 	const [team, setTeam] = useState<string | null>(null);
-	const [area, setArea] = useState<string | null>(null);
+	const [weakest, setWeakest] = useState<string | null>(null);
 	const [pendingSession, setPendingSession] = useState<string | null>(null);
+	const [tierFilter, setTierFilter] = useState<PerformanceTier | null>(null);
 	const [period, setPeriod] = useState<EvaluationPeriod>('WEEKLY');
 	const periodDays =
 		EVALUATION_PERIODS.find((p) => p.value === period)?.days ?? 7;
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 
-	const filtered = useMemo(() => {
+	/** Every filter except the tier one, so the summary strip always shows the full distribution. */
+	const baseFiltered = useMemo(() => {
 		const q = search.trim().toLowerCase();
 		return rows.filter((r) => {
 			if (
@@ -170,23 +164,68 @@ export function AgentsTab({
 			)
 				return false;
 			if (team && r.supervisorId !== team) return false;
-			if (area === BURNOUT_RISK_FILTER) {
+			if (weakest === BURNOUT_RISK_FILTER) {
 				if (assessBurnout(r.id, triggerRules).level === BurnoutRiskLevel.LOW)
 					return false;
-			} else if (area && r.weakestArea !== area) return false;
+			} else if (weakest && r.weakest?.dimension !== weakest) return false;
 			if (pendingSession && r.pendingSession !== (pendingSession === 'yes'))
 				return false;
 			return true;
 		});
-	}, [rows, search, team, area, pendingSession, triggerRules]);
+	}, [rows, search, team, weakest, pendingSession, triggerRules]);
 
-	const byTeam = useMemo(() => {
-		const map = new Map<string, AgentCoachingRow[]>();
+	const filtered = useMemo(
+		() =>
+			tierFilter
+				? baseFiltered.filter((r) => r.tier === tierFilter)
+				: baseFiltered,
+		[baseFiltered, tierFilter]
+	);
+
+	const tierSummary = useMemo(
+		() =>
+			Object.fromEntries(
+				TIER_ORDER.map((tier) => {
+					const inTier = baseFiltered.filter((r) => r.tier === tier);
+					const avg = inTier.length
+						? Math.round(
+								inTier.reduce((s, r) => s + (r.scorecard?.score ?? 0), 0) /
+									inTier.length
+							)
+						: null;
+					return [tier, { count: inTier.length, avg }];
+				})
+			) as Record<PerformanceTier, { count: number; avg: number | null }>,
+		[baseFiltered]
+	);
+
+	const byTier = useMemo(() => {
+		const groups = new Map<PerformanceTier, AgentCoachingRow[]>();
+		const noData: AgentCoachingRow[] = [];
 		for (const r of filtered) {
-			map.set(r.supervisorId, [...(map.get(r.supervisorId) ?? []), r]);
+			if (!r.tier) noData.push(r);
+			else groups.set(r.tier, [...(groups.get(r.tier) ?? []), r]);
 		}
-		return [...map.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+		return { groups, noData };
 	}, [filtered]);
+
+	const dimensionColumn = (dimension: ScorecardDimension) =>
+		helper.accessor((r) => r.scorecard?.dimensions[dimension] ?? -1, {
+			id: dimension,
+			header: t(SCORECARD_DIMENSION_META[dimension].shortLabelKey),
+			cell: (info) => {
+				const v = info.getValue();
+				return v < 0 ? (
+					<Text size='sm' c='dimmed'>
+						—
+					</Text>
+				) : (
+					<Text size='sm' fw={500} c={`${getScoreBandColor(v)}.7`}>
+						{v}
+					</Text>
+				);
+			},
+		}) as BaseTableColumnDef<AgentCoachingRow>;
 
 	const columns: BaseTableColumnDef<AgentCoachingRow>[] = [
 		helper.accessor('name', {
@@ -197,20 +236,62 @@ export function AgentsTab({
 				</Text>
 			),
 		}) as BaseTableColumnDef<AgentCoachingRow>,
+		helper.accessor('team', {
+			header: t('agents.columns.team'),
+			cell: (info) => (
+				<Text size='sm' c='dimmed'>
+					{info.getValue()}
+				</Text>
+			),
+		}) as BaseTableColumnDef<AgentCoachingRow>,
+		helper.accessor((r) => r.scorecard?.score ?? -1, {
+			id: 'scorecard',
+			header: t('agents.columns.scorecard'),
+			cell: (info) => (
+				<ScorecardBadge scorecard={info.row.original.scorecard} size='sm' />
+			),
+		}) as BaseTableColumnDef<AgentCoachingRow>,
+		...SCORECARD_DIMENSION_ORDER.map(dimensionColumn),
 		helper.display({
 			id: 'weakest',
 			header: t('agents.columns.weakest'),
+			cell: (info) => {
+				const w = info.row.original.weakest;
+				if (!w)
+					return (
+						<Text size='sm' c='dimmed'>
+							—
+						</Text>
+					);
+				return (
+					<Group gap={6} wrap='nowrap'>
+						<ScorecardDimensionBadge dimension={w.dimension} size='xs' />
+						<Text size='xs' c='dimmed'>
+							{w.value}
+						</Text>
+					</Group>
+				);
+			},
+		}) as BaseTableColumnDef<AgentCoachingRow>,
+		helper.display({
+			id: 'trend',
+			header: t('agents.columns.lastImpact'),
 			cell: (info) => (
-				<Group gap={6} wrap='nowrap'>
-					<AreaBadge area={info.row.original.weakestArea} size='xs' />
-					<Text size='xs' c='dimmed'>
-						{info.row.original.weakestValue}
-					</Text>
-				</Group>
+				<ScorecardTrendBadge trend={info.row.original.trend} size='xs' />
 			),
 		}) as BaseTableColumnDef<AgentCoachingRow>,
-		helper.accessor('active', {
-			header: t('agents.columns.active'),
+		helper.display({
+			id: 'sessions',
+			header: t('agents.columns.sessions'),
+			cell: (info) => (
+				<Text size='sm'>
+					{
+						info.row.original.sessionDates.filter(
+							(d) => daysUntil(d) >= -periodDays && daysUntil(d) <= 0
+						).length
+					}
+				</Text>
+			),
 		}) as BaseTableColumnDef<AgentCoachingRow>,
 		helper.accessor('pending', {
 			header: t('agents.columns.pending'),
@@ -233,60 +314,21 @@ export function AgentsTab({
 			),
 		}) as BaseTableColumnDef<AgentCoachingRow>,
 		helper.display({
-			id: 'sessions',
-			header: t('agents.columns.sessions'),
-			cell: (info) => (
-				<Text size='sm'>
-					{
-						info.row.original.sessionDates.filter(
-							(d) => daysUntil(d) >= -periodDays && daysUntil(d) <= 0
-						).length
-					}
-				</Text>
-			),
-		}) as BaseTableColumnDef<AgentCoachingRow>,
-		helper.display({
-			id: 'lastImpact',
-			header: t('agents.columns.lastImpact'),
-			cell: (info) => {
-				const agentId = info.row.original.id;
-				const last = assignments
-					.filter((a) => a.agentId === agentId && a.impact)
-					.sort((a, b) =>
-						(b.completedAt ?? '').localeCompare(a.completedAt ?? '')
-					)[0];
-				return <ImpactBadge impact={last?.impact ?? null} size='xs' />;
-			},
-		}) as BaseTableColumnDef<AgentCoachingRow>,
-		helper.accessor('triggeredRuleIds', {
+			id: 'triggeredRules',
 			header: t('agents.columns.triggeredRules'),
 			cell: (info) => {
-				const names = info
-					.getValue()
-					.map((id) => rules.find((r) => r.id === id)?.name ?? id);
-				if (names.length === 0)
-					return (
-						<Text size='sm' c='dimmed'>
-							—
-						</Text>
-					);
+				// Distinct rules that fired for the agent inside the evaluation period.
+				const count = new Set(
+					info.row.original.ruleEvents
+						.filter(
+							(e) => daysUntil(e.date) >= -periodDays && daysUntil(e.date) <= 0
+						)
+						.map((e) => e.ruleId)
+				).size;
 				return (
-					<Tooltip
-						label={names.join(' · ')}
-						withArrow
-						disabled={names.length < 2}
-					>
-						<Group gap={4} wrap='nowrap'>
-							<Badge size='xs' variant='light' maw={170}>
-								{names[0]}
-							</Badge>
-							{names.length > 1 && (
-								<Text size='xs' c='dimmed'>
-									+{names.length - 1}
-								</Text>
-							)}
-						</Group>
-					</Tooltip>
+					<Text size='sm' c={count === 0 ? 'dimmed' : undefined}>
+						{count}
+					</Text>
 				);
 			},
 		}) as BaseTableColumnDef<AgentCoachingRow>,
@@ -308,9 +350,35 @@ export function AgentsTab({
 	const clear = () => {
 		setSearch('');
 		setTeam(null);
-		setArea(null);
+		setWeakest(null);
 		setPendingSession(null);
+		setTierFilter(null);
 	};
+
+	const periodSelector = SHOW_PERIOD_SELECTOR && (
+		<AppSegmentedControl
+			size='xs'
+			aria-label={t('agents.evaluationPeriod.label')}
+			value={period}
+			onChange={(v) => setPeriod(v as EvaluationPeriod)}
+			data={EVALUATION_PERIODS.map((p) => ({
+				value: p.value,
+				label: t(`agents.evaluationPeriod.${p.value}`),
+			}))}
+		/>
+	);
+
+	const renderTable = (tableRows: AgentCoachingRow[]) => (
+		<BaseTable<AgentCoachingRow>
+			data={tableRows}
+			columns={columns}
+			getRowId={(r) => r.id}
+			initialSort={[{ id: 'scorecard', desc: true }]}
+			density='compact'
+			emptyMessage={t('agents.empty')}
+			onRowClick={(r) => onOpen(r.id)}
+		/>
+	);
 
 	return (
 		<Stack gap='md'>
@@ -320,20 +388,6 @@ export function AgentsTab({
 				icon={IconUsers}
 			>
 				<Stack gap='md'>
-					<Group gap='sm' wrap='wrap'>
-						<Text size='sm' fw={500}>
-							{t('agents.evaluationPeriod.label')}
-						</Text>
-						<AppSegmentedControl
-							size='xs'
-							value={period}
-							onChange={(v) => setPeriod(v as EvaluationPeriod)}
-							data={EVALUATION_PERIODS.map((p) => ({
-								value: p.value,
-								label: t(`agents.evaluationPeriod.${p.value}`),
-							}))}
-						/>
-					</Group>
 					<Group gap='sm' wrap='wrap'>
 						<TextInput
 							size='sm'
@@ -361,24 +415,17 @@ export function AgentsTab({
 							size='sm'
 							placeholder={t('agents.filters.area')}
 							data={[
-								...(
-									[
-										'QUALITY_ASSURANCE',
-										'COMPLIANCE',
-										'SENTIMENT_EMOTION',
-										'BUSINESS_INSIGHTS',
-									] as const
-								).map((a) => ({
-									value: a as string,
-									label: t(LMS_AREA_META[a].labelKey, { ns: 'qa.lms' }),
+								...SCORECARD_DIMENSION_ORDER.map((d) => ({
+									value: d as string,
+									label: t(SCORECARD_DIMENSION_META[d].labelKey),
 								})),
 								{
 									value: BURNOUT_RISK_FILTER,
-									label: t('agents.filters.burnoutRisk', 'Burnout Risk'),
+									label: t('agents.filters.burnoutRisk'),
 								},
 							]}
-							value={area}
-							onChange={setArea}
+							value={weakest}
+							onChange={setWeakest}
 							clearable
 							w={190}
 						/>
@@ -401,34 +448,89 @@ export function AgentsTab({
 				</Stack>
 			</SectionCard>
 
-			{byTeam.length === 0 ? (
+			<SimpleGrid cols={{ base: 2, md: 4 }} spacing='md'>
+				{TIER_ORDER.map((tier) => {
+					const { count, avg } = tierSummary[tier];
+					return (
+						<UnstyledButton
+							key={tier}
+							className={styles.tierCard}
+							data-active={tierFilter === tier || undefined}
+							aria-pressed={tierFilter === tier}
+							onClick={() =>
+								setTierFilter((cur) => (cur === tier ? null : tier))
+							}
+						>
+							<StatCard
+								variant='compact'
+								title={t(TIER_META[tier].labelKey)}
+								value={count}
+								subtitle={
+									avg === null
+										? t(TIER_META[tier].rangeKey)
+										: t('agents.summary.avgScorecard', { value: avg })
+								}
+								badge={
+									<Badge
+										size='xs'
+										variant='light'
+										color={TIER_META[tier].color}
+									>
+										{t(TIER_META[tier].rangeKey)}
+									</Badge>
+								}
+							/>
+						</UnstyledButton>
+					);
+				})}
+			</SimpleGrid>
+
+			{filtered.length === 0 ? (
 				<EmptyState message={t('agents.empty')} />
 			) : (
-				byTeam.map(([supervisorId, teamRows]) => {
-					const supervisor = TEAM_SUPERVISORS.find(
-						(s) => s.id === supervisorId
-					);
-					return (
+				<>
+					{TIER_ORDER.map((tier) => {
+						const tierRows = byTier.groups.get(tier) ?? [];
+						if (tierRows.length === 0) return null;
+						return (
+							<SectionCard
+								key={tier}
+								headerAccent={TIER_META[tier].color}
+								title={t(TIER_META[tier].labelKey)}
+								description={t('agents.tiers.description', {
+									range: t(TIER_META[tier].rangeKey),
+								})}
+								headerActions={
+									<Group gap='xs'>
+										{periodSelector}
+										<Badge
+											size='sm'
+											variant='light'
+											color={TIER_META[tier].color}
+										>
+											{t('agents.summary.agents', { count: tierRows.length })}
+										</Badge>
+									</Group>
+								}
+							>
+								{renderTable(tierRows)}
+							</SectionCard>
+						);
+					})}
+					{byTier.noData.length > 0 && (
 						<SectionCard
-							key={supervisorId}
-							title={supervisor?.team ?? supervisorId}
-							description={t('agents.teamCard', {
-								team: supervisor?.team ?? '',
-								supervisor: supervisor?.name ?? '',
-							})}
+							title={t('agents.tiers.noData.title')}
+							description={t('agents.tiers.noData.description')}
+							headerActions={
+								<Badge size='sm' variant='light' color='gray'>
+									{t('agents.summary.agents', { count: byTier.noData.length })}
+								</Badge>
+							}
 						>
-							<BaseTable<AgentCoachingRow>
-								data={teamRows}
-								columns={columns}
-								getRowId={(r) => r.id}
-								initialSort={[{ id: 'name', desc: false }]}
-								density='compact'
-								emptyMessage={t('agents.empty')}
-								onRowClick={(r) => onOpen(r.id)}
-							/>
+							{renderTable(byTier.noData)}
 						</SectionCard>
-					);
-				})
+					)}
+				</>
 			)}
 		</Stack>
 	);

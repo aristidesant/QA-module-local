@@ -24,7 +24,11 @@
 		"sessions": "Sesiones",
 		"impact": "Impacto"
 	},
-	"priority": { "HIGH": "Alta", "MEDIUM": "Media", "LOW": "Baja" },
+	"priority": {
+		"HIGH": "Alta",
+		"MEDIUM": "Media",
+		"LOW": "Baja"
+	},
 	"queue": {
 		"title": "Quién necesita atención",
 		"description": "Priorizado por reglas, puntajes, tendencias, capacitaciones vencidas y respuestas pendientes.",
@@ -85,7 +89,8 @@
 			"area": "Aspecto más débil",
 			"pendingSession": "Sesión pendiente",
 			"all": "Todos",
-			"clear": "Limpiar"
+			"clear": "Limpiar",
+			"burnoutRisk": "Riesgo de burnout"
 		},
 		"evaluationPeriod": {
 			"label": "Período de evaluación",
@@ -100,19 +105,23 @@
 		"columns": {
 			"agent": "Agente",
 			"team": "Equipo",
-			"overall": "General",
 			"weakest": "Aspecto más débil",
-			"active": "Elementos activos",
 			"pending": "Esperando",
 			"overdue": "Vencidos",
 			"sessions": "Sesiones",
 			"lastImpact": "Último impacto",
 			"triggeredRules": "Reglas activadas",
-			"pendingSession": "Sesión pendiente"
+			"pendingSession": "Sesión pendiente",
+			"scorecard": "Scorecard",
+			"qa": "QA",
+			"compliance": "Comp.",
+			"operational": "Ops",
+			"business": "BI"
 		},
-		"teamCard": "{{team}} · {{supervisor}}",
 		"empty": "Ningún agente coincide con estos filtros.",
-		"page": { "notFound": "Agente fuera de tu alcance." },
+		"page": {
+			"notFound": "Agente fuera de tu alcance."
+		},
 		"sessionsTable": {
 			"period": "Período",
 			"periodPlaceholder": "Elige un rango de fechas",
@@ -134,6 +143,54 @@
 			"noSessions": "Todavía no hay sesiones.",
 			"noImpact": "Todavía no hay mediciones.",
 			"performance": "Desempeño en el tiempo"
+		},
+		"scorecard": {
+			"dimensions": {
+				"qa": "Quality Assurance",
+				"compliance": "Compliance",
+				"operational": "Operacional",
+				"business": "Business Insights"
+			},
+			"short": {
+				"qa": "QA",
+				"compliance": "Comp.",
+				"operational": "Ops",
+				"business": "BI"
+			},
+			"tooltipTitle": "Scorecard semanal",
+			"tooltipLine": "{{label}}: {{value}} · peso {{weight}}%"
+		},
+		"tiers": {
+			"description": "Scorecard {{range}}",
+			"EXCELLENT": {
+				"label": "Excelente",
+				"range": "90–100"
+			},
+			"GOOD": {
+				"label": "Bueno",
+				"range": "80–89"
+			},
+			"NEEDS_IMPROVEMENT": {
+				"label": "Necesita mejorar",
+				"range": "70–79"
+			},
+			"CRITICAL": {
+				"label": "Crítico",
+				"range": "Menos de 70"
+			},
+			"noData": {
+				"title": "Sin scorecard esta semana",
+				"description": "Agentes sin llamadas evaluadas en los últimos 7 días."
+			}
+		},
+		"summary": {
+			"avgScorecard": "Scorecard promedio {{value}}",
+			"agents_one": "{{count}} agente",
+			"agents_other": "{{count}} agentes"
+		},
+		"trend": {
+			"tooltip": "Semana anterior {{previous}} → esta semana {{current}} ({{delta}})",
+			"noPrevious": "Sin scorecard de la semana anterior"
 		}
 	},
 	"cohorts": {
@@ -236,8 +293,14 @@
 			"status": "Estado",
 			"updated": "Actualizada"
 		},
-		"status": { "ACTIVE": "Activa", "PAUSED": "Pausada", "DRAFT": "Borrador" },
-		"page": { "notFound": "Regla no encontrada." },
+		"status": {
+			"ACTIVE": "Activa",
+			"PAUSED": "Pausada",
+			"DRAFT": "Borrador"
+		},
+		"page": {
+			"notFound": "Regla no encontrada."
+		},
 		"cadence": {
 			"ON_MATCH": "Cuando se cumplan las condiciones",
 			"WEEKLY": "Revisión semanal"
@@ -326,7 +389,10 @@
 				"ASSIGN_CONTENT": "Asignar material",
 				"ASSIGN_PATH": "Inscribir en una ruta"
 			},
-			"coach": { "SUPERVISOR": "Supervisor", "QA_MANAGER": "QA Manager" },
+			"coach": {
+				"SUPERVISOR": "Supervisor",
+				"QA_MANAGER": "QA Manager"
+			},
 			"scope": {
 				"everyone": "Todos en mi alcance",
 				"teams": "Equipos",
@@ -421,7 +487,10 @@
 			"MICRO": "Micro (10 min)",
 			"AI_MESSAGE": "Mensaje IA"
 		},
-		"modality": { "IN_PERSON": "Presencial", "REMOTE": "Virtual" },
+		"modality": {
+			"IN_PERSON": "Presencial",
+			"REMOTE": "Virtual"
+		},
 		"status": {
 			"SCHEDULED": "Agendada",
 			"COMPLETED": "Completada",

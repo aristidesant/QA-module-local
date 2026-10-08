@@ -1,0 +1,16 @@
+.tierCard {
+	display: block;
+	width: 100%;
+	text-align: left;
+	border-radius: var(--mantine-radius-md);
+}
+
+.tierCard:focus-visible {
+	outline: 2px solid var(--mantine-color-blue-5);
+	outline-offset: 2px;
+}
+
+/* The StatCard root is the direct child; only its border color changes, so nothing shifts. */
+.tierCard[data-active] > * {
+	border-color: var(--mantine-primary-color-filled);
+}

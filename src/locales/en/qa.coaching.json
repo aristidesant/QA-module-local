@@ -24,7 +24,11 @@
 		"sessions": "Sessions",
 		"impact": "Impact"
 	},
-	"priority": { "HIGH": "High", "MEDIUM": "Medium", "LOW": "Low" },
+	"priority": {
+		"HIGH": "High",
+		"MEDIUM": "Medium",
+		"LOW": "Low"
+	},
 	"queue": {
 		"title": "Who needs attention",
 		"description": "Prioritised from rules, scores, trends, overdue training and pending responses.",
@@ -85,7 +89,8 @@
 			"area": "Weakest aspect",
 			"pendingSession": "Pending session",
 			"all": "All",
-			"clear": "Clear"
+			"clear": "Clear",
+			"burnoutRisk": "Burnout risk"
 		},
 		"evaluationPeriod": {
 			"label": "Evaluation period",
@@ -100,19 +105,23 @@
 		"columns": {
 			"agent": "Agent",
 			"team": "Team",
-			"overall": "Overall",
 			"weakest": "Weakest aspect",
-			"active": "Active items",
 			"pending": "Awaiting",
 			"overdue": "Overdue",
 			"sessions": "Sessions",
 			"lastImpact": "Last impact",
 			"triggeredRules": "Triggered rules",
-			"pendingSession": "Pending session"
+			"pendingSession": "Pending session",
+			"scorecard": "Scorecard",
+			"qa": "QA",
+			"compliance": "Comp.",
+			"operational": "Ops",
+			"business": "BI"
 		},
-		"teamCard": "{{team}} · {{supervisor}}",
 		"empty": "No agents match these filters.",
-		"page": { "notFound": "Agent not found in your scope." },
+		"page": {
+			"notFound": "Agent not found in your scope."
+		},
 		"sessionsTable": {
 			"period": "Period",
 			"periodPlaceholder": "Pick a date range",
@@ -134,6 +143,54 @@
 			"noSessions": "No sessions yet.",
 			"noImpact": "Nothing measured yet.",
 			"performance": "Performance over time"
+		},
+		"scorecard": {
+			"dimensions": {
+				"qa": "Quality Assurance",
+				"compliance": "Compliance",
+				"operational": "Operational",
+				"business": "Business Insights"
+			},
+			"short": {
+				"qa": "QA",
+				"compliance": "Comp.",
+				"operational": "Ops",
+				"business": "BI"
+			},
+			"tooltipTitle": "Weekly scorecard",
+			"tooltipLine": "{{label}}: {{value}} · weight {{weight}}%"
+		},
+		"tiers": {
+			"description": "Scorecard {{range}}",
+			"EXCELLENT": {
+				"label": "Excellent",
+				"range": "90–100"
+			},
+			"GOOD": {
+				"label": "Good",
+				"range": "80–89"
+			},
+			"NEEDS_IMPROVEMENT": {
+				"label": "Needs improvement",
+				"range": "70–79"
+			},
+			"CRITICAL": {
+				"label": "Critical",
+				"range": "Below 70"
+			},
+			"noData": {
+				"title": "No scorecard this week",
+				"description": "Agents without evaluated calls in the last 7 days."
+			}
+		},
+		"summary": {
+			"avgScorecard": "Avg scorecard {{value}}",
+			"agents_one": "{{count}} agent",
+			"agents_other": "{{count}} agents"
+		},
+		"trend": {
+			"tooltip": "Previous week {{previous}} → this week {{current}} ({{delta}})",
+			"noPrevious": "No scorecard for the previous week"
 		}
 	},
 	"cohorts": {
@@ -236,8 +293,14 @@
 			"status": "Status",
 			"updated": "Updated"
 		},
-		"status": { "ACTIVE": "Active", "PAUSED": "Paused", "DRAFT": "Draft" },
-		"page": { "notFound": "Rule not found." },
+		"status": {
+			"ACTIVE": "Active",
+			"PAUSED": "Paused",
+			"DRAFT": "Draft"
+		},
+		"page": {
+			"notFound": "Rule not found."
+		},
 		"cadence": {
 			"ON_MATCH": "When conditions match",
 			"WEEKLY": "Weekly review"
@@ -326,7 +389,10 @@
 				"ASSIGN_CONTENT": "Assign material",
 				"ASSIGN_PATH": "Enrol in a learning path"
 			},
-			"coach": { "SUPERVISOR": "Supervisor", "QA_MANAGER": "QA Manager" },
+			"coach": {
+				"SUPERVISOR": "Supervisor",
+				"QA_MANAGER": "QA Manager"
+			},
 			"scope": {
 				"everyone": "Everyone in my scope",
 				"teams": "Teams",
@@ -421,7 +487,10 @@
 			"MICRO": "Micro (10 min)",
 			"AI_MESSAGE": "AI message"
 		},
-		"modality": { "IN_PERSON": "In person", "REMOTE": "Virtual" },
+		"modality": {
+			"IN_PERSON": "In person",
+			"REMOTE": "Virtual"
+		},
 		"status": {
 			"SCHEDULED": "Scheduled",
 			"COMPLETED": "Completed",

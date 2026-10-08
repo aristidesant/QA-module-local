@@ -331,8 +331,6 @@ export default function CoachingPage() {
 					<Tabs.Panel value='agents' pt='md'>
 						<AgentsTab
 							rows={agentRows}
-							assignments={scopeAssignments}
-							rules={scopeRules}
 							role={role}
 							onOpen={(agentId) => navigate(coachingAgentPath(role, agentId))}
 						/>
