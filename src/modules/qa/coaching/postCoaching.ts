@@ -13,7 +13,6 @@ import { IMPACT_THRESHOLD } from '~/modules/qa/lms/constants';
 import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
 import {
 	AREA_TO_SCORECARD,
-	SCORECARD_DIMENSION_ORDER,
 	SCORECARD_WINDOW_DAYS,
 	buildWeeklyScorecard,
 	scorecardTrend,
@@ -66,15 +65,6 @@ export interface PostCoachingAnchor {
 	daysAgo: number;
 }
 
-export interface AspectComparison {
-	dimension: ScorecardDimension;
-	after: number | null;
-	before: number | null;
-	/** after − before; null when either window has no calls. */
-	delta: number | null;
-	verdict: ScorecardTrendVerdict | null;
-}
-
 export interface PostCoachingSummary {
 	/** null → no completed coach-led session; the weekly scorecard is shown instead. */
 	anchor: PostCoachingAnchor | null;
@@ -86,7 +76,6 @@ export interface PostCoachingSummary {
 	before: WeeklyScorecard | null;
 	trend: ScorecardTrend | null;
 	tier: PerformanceTier | null;
-	aspects: AspectComparison[];
 	/** Completed on or after the anchor day, newest first. */
 	materialsCompleted: LmsAssignment[];
 	latestMaterial: LmsAssignment | null;
@@ -127,21 +116,6 @@ export const buildPostCoachingSummary = (
 		);
 	}
 
-	const aspects: AspectComparison[] = SCORECARD_DIMENSION_ORDER.map(
-		(dimension) => {
-			const a = after?.dimensions[dimension] ?? null;
-			const b = before?.dimensions[dimension] ?? null;
-			const delta = a !== null && b !== null ? a - b : null;
-			return {
-				dimension,
-				after: a,
-				before: b,
-				delta,
-				verdict: delta === null ? null : verdictForDelta(delta),
-			};
-		}
-	);
-
 	const materialsCompleted = assignments
 		.filter(
 			(x) =>
@@ -159,7 +133,6 @@ export const buildPostCoachingSummary = (
 		before,
 		trend: scorecardTrend(after, before),
 		tier: after ? tierFor(after.score) : null,
-		aspects,
 		materialsCompleted,
 		latestMaterial: materialsCompleted[0] ?? null,
 	};

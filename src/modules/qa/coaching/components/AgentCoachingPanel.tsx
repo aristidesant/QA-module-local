@@ -1,12 +1,10 @@
 import { useMemo } from 'react';
 import { Group, Stack, Tabs, Text } from '@mantine/core';
-import { AreaChart } from '@mantine/charts';
 import { createColumnHelper } from '@tanstack/react-table';
 import { IconBook, IconChartBar, IconSchool } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
-import { SectionCard } from '~/components/SectionCard';
 import BaseTable, {
 	type BaseTableColumnDef,
 } from '~/components/BaseTable/BaseTable';
@@ -94,14 +92,6 @@ export function AgentCoachingPanel({
 		() => buildPostCoachingSummary(profile.agent.id, sessions, assignments),
 		[profile, sessions, assignments, tierCuts]
 	);
-
-	const performance = profile.performance.slice(-6).map((p) => ({
-		label: p.label,
-		overall: p.overall,
-		qa: p.qa,
-		sentiment: p.sentiment,
-		compliance: p.compliance,
-	}));
 
 	// Completions of the same material by this agent (reassignments count); quiz attempts win when higher.
 	const timesTaken = (a: LmsAssignment) =>
@@ -221,26 +211,7 @@ export function AgentCoachingPanel({
 				</Tabs.Panel>
 
 				<Tabs.Panel value='impact' pt='md'>
-					<Stack gap='md'>
-						<SectionCard title={t('agents.drawer.performance')} padding='md'>
-							<AreaChart
-								h={180}
-								data={performance}
-								dataKey='label'
-								series={[
-									{ name: 'overall', color: 'blue.6' },
-									{ name: 'qa', color: 'orange.6' },
-									{ name: 'compliance', color: 'green.6' },
-									{ name: 'sentiment', color: 'violet.6' },
-								]}
-								curveType='monotone'
-								withDots={false}
-								withLegend
-							/>
-						</SectionCard>
-
-						<MaterialImpactRanking rows={ranked} />
-					</Stack>
+					<MaterialImpactRanking rows={ranked} />
 				</Tabs.Panel>
 			</Tabs>
 		</Stack>

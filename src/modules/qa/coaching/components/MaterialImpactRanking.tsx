@@ -1,18 +1,11 @@
-import { Badge, Group, Paper, SimpleGrid, Stack, Text } from '@mantine/core';
+import { Group, Text } from '@mantine/core';
 import { createColumnHelper } from '@tanstack/react-table';
-import { IconTrophy } from '@tabler/icons-react';
-import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import BaseTable, {
 	type BaseTableColumnDef,
 } from '~/components/BaseTable/BaseTable';
-import {
-	AreaBadge,
-	FormatBadge,
-	ImpactBadge,
-} from '~/modules/qa/lms/components/Badges';
-import { ImpactSparkline } from '~/modules/qa/lms/components/ImpactSparkline';
+import { FormatBadge, ImpactBadge } from '~/modules/qa/lms/components/Badges';
 import type { MaterialImpactRow } from '../postCoaching';
 
 const helper = createColumnHelper<MaterialImpactRow>();
@@ -25,10 +18,13 @@ interface MaterialImpactRankingProps {
 	rows: MaterialImpactRow[];
 }
 
-/** The agent's measured materials, best delta first: top 3 with sparklines, then every row. */
+/**
+ * Every material the agent has a measurement for, in one table: the greatest
+ * change first by default, the worst one click away on the Change header.
+ * Materials still being measured always sit last.
+ */
 export function MaterialImpactRanking({ rows }: MaterialImpactRankingProps) {
 	const { t } = useTranslation(['qa.coaching', 'qa.triggers']);
-	const top = rows.filter((r) => r.measured).slice(0, 3);
 
 	if (rows.length === 0) {
 		return (
@@ -49,15 +45,6 @@ export function MaterialImpactRanking({ rows }: MaterialImpactRankingProps) {
 						<FormatBadge format={info.row.original.content.format} size='xs' />
 					)}
 				</Group>
-			),
-		}) as BaseTableColumnDef<MaterialImpactRow>,
-		helper.accessor((r) => r.assignment.completedAt ?? '', {
-			id: 'completed',
-			header: t('agents.impactRanking.columns.completed'),
-			cell: (info) => (
-				<Text size='sm'>
-					{info.getValue() ? dayjs(info.getValue()).format('D MMM YYYY') : '—'}
-				</Text>
 			),
 		}) as BaseTableColumnDef<MaterialImpactRow>,
 		helper.display({
@@ -87,9 +74,12 @@ export function MaterialImpactRanking({ rows }: MaterialImpactRankingProps) {
 				</Text>
 			),
 		}) as BaseTableColumnDef<MaterialImpactRow>,
-		helper.accessor((r) => r.delta ?? Number.NEGATIVE_INFINITY, {
+		helper.accessor((r) => r.delta ?? undefined, {
 			id: 'delta',
 			header: t('agents.impactRanking.columns.delta'),
+			// A material still being measured has no change yet: it stays last in either direction.
+			sortUndefined: 'last',
+			sortDescFirst: true,
 			cell: (info) => {
 				const d = info.row.original.delta;
 				return d === null ? (
@@ -114,57 +104,17 @@ export function MaterialImpactRanking({ rows }: MaterialImpactRankingProps) {
 
 	return (
 		<SectionCard
-			icon={IconTrophy}
 			title={t('agents.impactRanking.title')}
 			description={t('agents.impactRanking.description')}
 		>
-			<Stack gap='md'>
-				{top.length > 0 && (
-					<SimpleGrid cols={{ base: 1, md: 3 }} spacing='sm'>
-						{top.map((r, i) => (
-							<Paper key={r.assignment.id} withBorder p='md' radius='md'>
-								<Stack gap='xs'>
-									<Group justify='space-between' wrap='nowrap'>
-										<Badge size='sm' variant='light' color='blue'>
-											{t('agents.impactRanking.rank', { rank: i + 1 })}
-										</Badge>
-										<ImpactBadge impact={r.assignment.impact} size='xs' />
-									</Group>
-									<Text size='sm' fw={600} lineClamp={2}>
-										{r.content?.title ?? r.assignment.contentId}
-									</Text>
-									{r.content && (
-										<Group gap={4}>
-											<FormatBadge format={r.content.format} size='xs' />
-											<AreaBadge area={r.content.area} size='xs' />
-										</Group>
-									)}
-									<Text size='xs' c='dimmed'>
-										{t(`metrics.${r.assignment.impact!.metricId}`, {
-											ns: 'qa.triggers',
-										})}
-									</Text>
-									<Text size='xl' fw={700} c={deltaColor(r.delta ?? 0)}>
-										{signed(r.delta ?? 0)}
-									</Text>
-									<ImpactSparkline
-										impact={r.assignment.impact!}
-										height={70}
-										withCheckpoints={false}
-									/>
-								</Stack>
-							</Paper>
-						))}
-					</SimpleGrid>
-				)}
-				<BaseTable<MaterialImpactRow>
-					data={rows}
-					columns={columns}
-					getRowId={(r) => r.assignment.id}
-					density='compact'
-					emptyMessage={t('agents.drawer.noImpact')}
-				/>
-			</Stack>
+			<BaseTable<MaterialImpactRow>
+				data={rows}
+				columns={columns}
+				getRowId={(r) => r.assignment.id}
+				initialSort={[{ id: 'delta', desc: true }]}
+				density='compact'
+				emptyMessage={t('agents.drawer.noImpact')}
+			/>
 		</SectionCard>
 	);
 }

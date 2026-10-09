@@ -142,8 +142,7 @@
 			"profile": "Abrir perfil",
 			"noAssignments": "Todavía no hay asignaciones.",
 			"noSessions": "Todavía no hay sesiones.",
-			"noImpact": "Todavía no hay mediciones.",
-			"performance": "Desempeño en el tiempo"
+			"noImpact": "Todavía no hay mediciones."
 		},
 		"scorecard": {
 			"dimensions": {
@@ -229,18 +228,16 @@
 			"timesTaken": "Veces tomado"
 		},
 		"impactRanking": {
-			"title": "Materiales con mayor impacto",
-			"description": "Materiales completados ordenados por cuánto se movió su métrica 30 días después de completarlos.",
-			"rank": "#{{rank}}",
+			"title": "Impacto de los materiales",
+			"description": "Materiales completados según cuánto se movió su métrica 30 días después. Ordena por Cambio para ver los más bajos primero.",
 			"pending": "Aún midiendo",
 			"columns": {
 				"material": "Material",
-				"completed": "Completado",
 				"metric": "Métrica",
 				"before": "Antes",
 				"after": "A los 30 días",
 				"delta": "Cambio",
-				"verdict": "Veredicto"
+				"verdict": "Resultado"
 			}
 		}
 	},

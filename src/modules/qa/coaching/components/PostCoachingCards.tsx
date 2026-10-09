@@ -5,15 +5,10 @@ import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import { StatCard } from '~/components/StatCard';
 import type { LmsContent } from '~/models/qa';
-import { getScoreBandColor } from '~/modules/qa/constants/badgeColors';
 import { ImpactBadge } from '~/modules/qa/lms/components/Badges';
 import { VERDICT_COLOR } from '~/modules/qa/lms/constants';
 import type { PostCoachingSummary, TierTenure } from '../postCoaching';
-import {
-	SCORECARD_DIMENSION_META,
-	TIER_META,
-	type ScorecardTrendVerdict,
-} from '../scorecard';
+import { TIER_META, type ScorecardTrendVerdict } from '../scorecard';
 import { ScorecardTrendBadge, TierBadge } from './ScorecardBadges';
 
 /** Signed change against the "before" window, coloured by the ±3 verdict band. */
@@ -40,9 +35,9 @@ interface PostCoachingCardsProps {
 }
 
 /**
- * Six cards: the coaching scorecard since the last completed coach-led
- * session, its four aspects, and the material completed since then — each
- * against the equal-length window before the session.
+ * Three tiles: the coaching scorecard since the last completed coach-led
+ * session (against the equal-length window before it), how long the agent has
+ * been in their current group, and the material completed since the session.
  */
 export function PostCoachingCards({
 	summary,
@@ -57,7 +52,6 @@ export function PostCoachingCards({
 		before,
 		trend,
 		tier,
-		aspects,
 		materialsCompleted,
 		latestMaterial,
 	} = summary;
@@ -108,7 +102,7 @@ export function PostCoachingCards({
 				</Group>
 			}
 		>
-			<SimpleGrid cols={{ base: 2, md: 4, xl: 7 }} spacing='sm'>
+			<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='sm'>
 				<StatCard
 					variant='compact'
 					title={t('agents.postCoaching.cards.scorecard')}
@@ -162,28 +156,6 @@ export function PostCoachingCards({
 						</Text>
 					}
 				/>
-
-				{aspects.map((a) => (
-					<StatCard
-						key={a.dimension}
-						variant='compact'
-						title={t(SCORECARD_DIMENSION_META[a.dimension].labelKey)}
-						value={a.after ?? '—'}
-						color={
-							a.after === null
-								? undefined
-								: `var(--mantine-color-${getScoreBandColor(a.after)}-7)`
-						}
-						subtitle={
-							<Group gap={6} wrap='nowrap'>
-								<Text size='xs' c='dimmed'>
-									{beforeText(a.before)}
-								</Text>
-								<DeltaBadge delta={a.delta} verdict={a.verdict} />
-							</Group>
-						}
-					/>
-				))}
 
 				<StatCard
 					variant='compact'
