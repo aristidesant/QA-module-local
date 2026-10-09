@@ -1,11 +1,27 @@
-﻿import { Avatar, Badge, Button, Group, Paper, Progress, SimpleGrid, Stack, Text } from '@mantine/core';
-import { IconPlus, IconRoute, IconUsersGroup } from '@tabler/icons-react';
+import {
+	Avatar,
+	Button,
+	Paper,
+	Progress,
+	SimpleGrid,
+	Stack,
+	Text,
+} from '@mantine/core';
+import { IconPlus, IconUsersGroup } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
-import type { CoachingCohort, LmsAssignment, LmsLearningPath } from '~/models/qa';
+import type {
+	CoachingCohort,
+	LmsAssignment,
+	LmsLearningPath,
+} from '~/models/qa';
+import { initials } from '~/modules/qa/team/helpers';
 import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
-import pointerStyles from '~/modules/qa/lms/components/Cards.module.css';
+import styles from './CohortsTab.module.css';
+
+/** How many members show as initials before the rest collapse into "+N". */
+const MAX_AVATARS = 4;
 
 interface CohortsTabProps {
 	cohorts: CoachingCohort[];
@@ -15,14 +31,13 @@ interface CohortsTabProps {
 	onCreate: () => void;
 }
 
-const initials = (name: string) =>
-	name
-		.split(' ')
-		.map((p) => p[0])
-		.join('')
-		.slice(0, 2);
-
-export function CohortsTab({ cohorts, paths, assignments, onOpen, onCreate }: CohortsTabProps) {
+export function CohortsTab({
+	cohorts,
+	paths,
+	assignments,
+	onOpen,
+	onCreate,
+}: CohortsTabProps) {
 	const { t } = useTranslation('qa.coaching');
 
 	if (cohorts.length === 0) {
@@ -44,21 +59,42 @@ export function CohortsTab({ cohorts, paths, assignments, onOpen, onCreate }: Co
 			description={t('cohorts.description')}
 			icon={IconUsersGroup}
 			headerActions={
-				<Button size='sm' leftSection={<IconPlus size={16} />} onClick={onCreate}>
+				<Button
+					size='sm'
+					leftSection={<IconPlus size={16} />}
+					onClick={onCreate}
+				>
 					{t('newCohort')}
 				</Button>
 			}
 		>
 			<SimpleGrid cols={{ base: 1, md: 2, lg: 3 }} spacing='md'>
 				{cohorts.map((cohort) => {
-					const members = TEAM_AGENTS.filter((a) => cohort.agentIds.includes(a.id));
+					const members = TEAM_AGENTS.filter((a) =>
+						cohort.agentIds.includes(a.id)
+					);
 					const path = paths.find((p) => p.id === cohort.pathId);
-					const cohortAssignments = assignments.filter((a) => cohort.agentIds.includes(a.agentId));
-					const completed = cohortAssignments.filter((a) => a.status === 'COMPLETED').length;
+					const cohortAssignments = assignments.filter((a) =>
+						cohort.agentIds.includes(a.agentId)
+					);
+					const completed = cohortAssignments.filter(
+						(a) => a.status === 'COMPLETED'
+					).length;
 					const completion = cohortAssignments.length
 						? Math.round((completed / cohortAssignments.length) * 100)
 						: 0;
-					const improved = cohortAssignments.filter((a) => a.impact?.verdict === 'IMPROVED').length;
+					const improved = cohortAssignments.filter(
+						(a) => a.impact?.verdict === 'IMPROVED'
+					).length;
+					const facts = [
+						t('cohorts.members', { count: members.length }),
+						path?.title,
+						cohort.ruleIds.length > 0
+							? t('cohorts.rulesCount', { count: cohort.ruleIds.length })
+							: null,
+					]
+						.filter(Boolean)
+						.join(' · ');
 
 					return (
 						<Paper
@@ -66,67 +102,68 @@ export function CohortsTab({ cohorts, paths, assignments, onOpen, onCreate }: Co
 							withBorder
 							p='md'
 							radius='md'
-							className={pointerStyles.pointer}
+							className={styles.card}
+							role='button'
+							tabIndex={0}
 							onClick={() => onOpen(cohort.id)}
+							onKeyDown={(e) => {
+								if (e.key === 'Enter' || e.key === ' ') {
+									e.preventDefault();
+									onOpen(cohort.id);
+								}
+							}}
 						>
 							<Stack gap='sm'>
 								<Stack gap={2}>
-									<Text fw={600}>{cohort.name}</Text>
-									<Text size='xs' c='dimmed' lineClamp={2}>
-										{cohort.description}
+									<Text size='sm' fw={600}>
+										{cohort.name}
+									</Text>
+									<Text size='xs' c='dimmed' lineClamp={1}>
+										{facts}
 									</Text>
 								</Stack>
 
-								<Group gap='xs'>
-									<Avatar.Group spacing='sm'>
-										{members.slice(0, 5).map((m) => (
-											<Avatar key={m.id} size={26} radius='xl' color={m.avatarColor}>
-												{initials(m.name)}
-											</Avatar>
-										))}
-										{members.length > 5 && (
-											<Avatar size={26} radius='xl'>
-												+{members.length - 5}
-											</Avatar>
-										)}
-									</Avatar.Group>
-									<Text size='xs' c='dimmed'>
-										{t('cohorts.members', { count: members.length })}
-									</Text>
-								</Group>
-
-								<Group gap='xs'>
-									{path && (
-										<Badge size='xs' variant='light' color='blue' leftSection={<IconRoute size={12} />}>
-											{path.title}
-										</Badge>
-									)}
-									{cohort.ruleIds.length > 0 && (
-										<Badge size='xs' variant='outline'>
-											{t('cohorts.rules')}: {cohort.ruleIds.length}
-										</Badge>
-									)}
-									{cohort.tags.map((tag) => (
-										<Badge key={tag} size='xs' variant='dot' color='gray'>
-											{tag}
-										</Badge>
+								<Avatar.Group spacing='xs'>
+									{members.slice(0, MAX_AVATARS).map((m) => (
+										<Avatar
+											key={m.id}
+											size={24}
+											radius='xl'
+											color='gray'
+											title={m.name}
+										>
+											{initials(m.name)}
+										</Avatar>
 									))}
-								</Group>
+									{members.length > MAX_AVATARS && (
+										<Avatar size={24} radius='xl' color='gray'>
+											+{members.length - MAX_AVATARS}
+										</Avatar>
+									)}
+								</Avatar.Group>
 
 								<Stack gap={4}>
-									<Group justify='space-between'>
-										<Text size='xs' c='dimmed'>
-											{t('cohorts.completion')}
-										</Text>
-										<Text size='xs' fw={600}>
-											{completion}%
-										</Text>
-									</Group>
-									<Progress value={completion} size='sm' radius='xl' />
+									<Progress
+										value={completion}
+										size='xs'
+										color='gray'
+										aria-label={t('cohorts.progressLabel', {
+											percent: completion,
+										})}
+									/>
 									<Text size='xs' c='dimmed'>
-										{t('cohorts.improved')}: {improved}
+										{t('cohorts.progressLine', {
+											percent: completion,
+											improved,
+										})}
 									</Text>
 								</Stack>
+
+								{cohort.tags.length > 0 && (
+									<Text size='xs' c='dimmed'>
+										{cohort.tags.join(' · ')}
+									</Text>
+								)}
 							</Stack>
 						</Paper>
 					);

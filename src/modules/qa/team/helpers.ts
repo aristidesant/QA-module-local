@@ -192,3 +192,11 @@ export const teamCardStats = (
 		atRisk: rows.filter(isAtRisk).length,
 	};
 };
+
+/** Up to two initials of a name, for avatars. */
+export const initials = (name: string): string =>
+	name
+		.split(' ')
+		.map((part) => part[0])
+		.join('')
+		.slice(0, 2);

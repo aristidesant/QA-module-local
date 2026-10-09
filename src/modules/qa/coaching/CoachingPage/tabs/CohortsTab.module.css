@@ -1,0 +1,23 @@
+/* A learning group card opens its drawer: pointer, quiet hover, visible focus. */
+.card {
+	cursor: pointer;
+	transition: border-color 120ms ease;
+}
+
+.card:hover {
+	border-color: light-dark(
+		var(--mantine-color-gray-5),
+		var(--mantine-color-dark-3)
+	);
+}
+
+.card:focus-visible {
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.card {
+		transition: none;
+	}
+}

@@ -222,6 +222,8 @@ export interface CoachingCohort {
 	description: string;
 	agentIds: string[];
 	pathId: string | null;
+	/** Materials every member is assigned when they join the group. */
+	contentIds: string[];
 	ruleIds: string[];
 	tags: string[];
 	createdBy: string;

@@ -247,52 +247,69 @@
 	"cohorts": {
 		"title": "Learning Groups",
 		"description": "Groups you follow together — assign a path or a rule to all members at once.",
-		"members": "{{count}} members",
-		"path": "Path",
-		"rules": "Rules",
-		"completion": "Completion",
-		"improved": "Improved",
-		"create": {
-			"sections": {
-				"basics": "Basics",
-				"members": "Members",
-				"path": "Learning path",
-				"membersHint": "Add a whole team or pick agents one by one."
-			},
-			"title": "New learning group",
-			"name": "Name",
-			"namePlaceholder": "Compliance watchlist — September",
-			"description": "Description",
-			"members": "Members",
-			"membersHint": "Pick agents or add a whole team",
-			"addTeam": "Add team",
-			"path": "Learning path (optional)",
-			"tags": "Tags",
-			"submit": "Create learning group",
-			"cancel": "Cancel",
-			"success": "Learning group {{name}} created",
-			"validation": {
-				"name": "Name is required",
-				"members": "Pick at least two agents"
-			}
+		"members_one": "{{count}} member",
+		"members_other": "{{count}} members",
+		"rulesCount_one": "{{count}} rule",
+		"rulesCount_other": "{{count}} rules",
+		"progressLabel": "{{percent}}% complete",
+		"progressLine": "{{percent}}% complete · {{improved}} improved",
+		"assignReason": "Learning group: {{name}}",
+		"page": {
+			"notFound": "This learning group is not available in your scope."
 		},
-		"drawer": {
-			"members": "Members",
-			"assignPath": "Assign path to learning group",
-			"assignMaterial": "Assign material to learning group",
+		"edit": {
+			"title": "Edit learning group",
+			"submit": "Save",
+			"success": "Learning group {{name}} updated",
+			"delete": "Delete learning group",
+			"deleted": "Learning group deleted"
+		},
+		"progress": {
+			"title": "Progress",
+			"summary": "{{percent}}% complete on average",
 			"scheduleGroup": "Schedule group session",
-			"progress": "Progress",
+			"empty": "No members yet.",
+			"linkedRules": "Linked rules",
 			"columns": {
 				"agent": "Agent",
 				"team": "Team",
 				"modules": "Modules",
 				"overdue": "Overdue",
 				"impact": "Impact"
+			}
+		},
+		"picker": {
+			"pathPlaceholder": "Browse and choose a learning path",
+			"contentPlaceholder": "Browse and choose material"
+		},
+		"create": {
+			"sections": {
+				"basics": "Basics",
+				"members": "Members",
+				"membersHint": "Add a whole team or pick agents one by one.",
+				"learning": "Learning",
+				"learningHint": "What every member is enrolled in and assigned when they join."
 			},
-			"linkedRules": "Linked rules",
-			"noRules": "No rules linked.",
-			"delete": "Delete learning group",
-			"deleted": "Learning group deleted"
+			"title": "New learning group",
+			"name": "Name",
+			"namePlaceholder": "Compliance watchlist — September",
+			"description": "Description",
+			"members": "Members",
+			"addTeam": "Add team",
+			"path": "Learning path (optional)",
+			"materials": "Material",
+			"dueInDays": "Due in (days)",
+			"pathClear": "Remove path",
+			"tags": "Tags",
+			"submit": "Create learning group",
+			"cancel": "Cancel",
+			"success": "Learning group {{name}} created",
+			"validation": {
+				"name": "Name is required",
+				"members": "Pick at least two agents",
+				"due": "Due must be between 1 and 90 days",
+				"fixFields": "Fix the highlighted fields"
+			}
 		},
 		"empty": "No learning groups yet. Create one from a team or a filter."
 	},

@@ -247,52 +247,69 @@
 	"cohorts": {
 		"title": "Grupos de aprendizaje",
 		"description": "Grupos que sigues en conjunto: asigna una ruta o una regla a todos sus miembros a la vez.",
-		"members": "{{count}} miembros",
-		"path": "Ruta",
-		"rules": "Reglas",
-		"completion": "Avance",
-		"improved": "Mejoraron",
-		"create": {
-			"sections": {
-				"basics": "Datos básicos",
-				"members": "Miembros",
-				"path": "Ruta de aprendizaje",
-				"membersHint": "Agrega un equipo completo o elige los agentes uno por uno."
-			},
-			"title": "Nuevo grupo de aprendizaje",
-			"name": "Nombre",
-			"namePlaceholder": "Lista de cumplimiento — septiembre",
-			"description": "Descripción",
-			"members": "Miembros",
-			"membersHint": "Elige agentes o añade un equipo completo",
-			"addTeam": "Añadir equipo",
-			"path": "Ruta de aprendizaje (opcional)",
-			"tags": "Etiquetas",
-			"submit": "Crear grupo de aprendizaje",
-			"cancel": "Cancelar",
-			"success": "Grupo de aprendizaje {{name}} creado",
-			"validation": {
-				"name": "El nombre es obligatorio",
-				"members": "Elige al menos dos agentes"
-			}
+		"members_one": "{{count}} miembro",
+		"members_other": "{{count}} miembros",
+		"rulesCount_one": "{{count}} regla",
+		"rulesCount_other": "{{count}} reglas",
+		"progressLabel": "{{percent}}% completado",
+		"progressLine": "{{percent}}% completado · {{improved}} mejoraron",
+		"assignReason": "Grupo de aprendizaje: {{name}}",
+		"page": {
+			"notFound": "Este grupo de aprendizaje no está disponible en tu alcance."
 		},
-		"drawer": {
-			"members": "Miembros",
-			"assignPath": "Asignar ruta al grupo de aprendizaje",
-			"assignMaterial": "Asignar material al grupo de aprendizaje",
+		"edit": {
+			"title": "Editar grupo de aprendizaje",
+			"submit": "Guardar",
+			"success": "Grupo de aprendizaje {{name}} actualizado",
+			"delete": "Eliminar grupo de aprendizaje",
+			"deleted": "Grupo de aprendizaje eliminado"
+		},
+		"progress": {
+			"title": "Progreso",
+			"summary": "{{percent}}% completado en promedio",
 			"scheduleGroup": "Agendar sesión grupal",
-			"progress": "Avance",
+			"empty": "Aún no hay miembros.",
+			"linkedRules": "Reglas vinculadas",
 			"columns": {
 				"agent": "Agente",
 				"team": "Equipo",
 				"modules": "Módulos",
 				"overdue": "Vencidos",
 				"impact": "Impacto"
+			}
+		},
+		"picker": {
+			"pathPlaceholder": "Explora y elige una ruta de aprendizaje",
+			"contentPlaceholder": "Explora y elige material"
+		},
+		"create": {
+			"sections": {
+				"basics": "Datos básicos",
+				"members": "Miembros",
+				"membersHint": "Agrega un equipo completo o elige los agentes uno por uno.",
+				"learning": "Aprendizaje",
+				"learningHint": "En qué se inscribe y qué se asigna a cada miembro al entrar."
 			},
-			"linkedRules": "Reglas vinculadas",
-			"noRules": "Sin reglas vinculadas.",
-			"delete": "Eliminar grupo de aprendizaje",
-			"deleted": "Grupo de aprendizaje eliminado"
+			"title": "Nuevo grupo de aprendizaje",
+			"name": "Nombre",
+			"namePlaceholder": "Lista de cumplimiento — septiembre",
+			"description": "Descripción",
+			"members": "Miembros",
+			"addTeam": "Añadir equipo",
+			"path": "Ruta de aprendizaje (opcional)",
+			"materials": "Material",
+			"dueInDays": "Vence en (días)",
+			"pathClear": "Quitar ruta",
+			"tags": "Etiquetas",
+			"submit": "Crear grupo de aprendizaje",
+			"cancel": "Cancelar",
+			"success": "Grupo de aprendizaje {{name}} creado",
+			"validation": {
+				"name": "El nombre es obligatorio",
+				"members": "Elige al menos dos agentes",
+				"due": "El vencimiento debe estar entre 1 y 90 días",
+				"fixFields": "Corrige los campos marcados"
+			}
 		},
 		"empty": "Todavía no hay grupos de aprendizaje. Crea uno desde un equipo o un filtro."
 	},

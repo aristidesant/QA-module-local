@@ -1343,6 +1343,17 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'qa-manager/coaching/groups/:cohortId/edit',
+										id: 'qa.qa-manager.coaching.group-edit',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingGroupPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'qa-manager/coaching/sessions/new',
 										id: 'qa.qa-manager.coaching.session-new',
 										element: (
@@ -1433,6 +1444,17 @@ const router = createBrowserRouter([
 									{
 										path: 'supervisor/coaching/groups/new',
 										id: 'qa.supervisor.coaching.group-new',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CoachingGroupPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/coaching/groups/:cohortId/edit',
+										id: 'qa.supervisor.coaching.group-edit',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>

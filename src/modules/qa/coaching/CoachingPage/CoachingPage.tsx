@@ -20,7 +20,6 @@ import {
 	useLmsStore,
 	selectAssignments,
 	selectContent,
-	selectEnrollments,
 	selectPaths,
 } from '~/stores/qa/lmsStore';
 import {
@@ -53,6 +52,7 @@ import {
 	coachingAgentPath,
 	coachingSessionPath,
 	coachingTierPath,
+	coachingGroupEditPath,
 	coachingGroupNewPath,
 	coachingSessionNewPath,
 	coachingRuleEditPath,
@@ -66,7 +66,6 @@ import { CohortsTab } from './tabs/CohortsTab';
 import { RulesTab } from './tabs/RulesTab';
 import { SessionsTab } from './tabs/SessionsTab';
 import { ImpactTab } from './tabs/ImpactTab';
-import { CohortDrawer } from '../components/CohortDrawer';
 
 export default function CoachingPage() {
 	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
@@ -81,7 +80,6 @@ export default function CoachingPage() {
 	const content = useLmsStore(selectContent);
 	const paths = useLmsStore(selectPaths);
 	const assignments = useLmsStore(selectAssignments);
-	const enrollments = useLmsStore(selectEnrollments);
 	const rules = useCoachingStore(selectRules);
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	const tierCuts = useSettingsStore(selectThresholds).coaching.tierCuts;
@@ -92,7 +90,6 @@ export default function CoachingPage() {
 		opened: boolean;
 		preset?: AssignPreset;
 	}>({ opened: false });
-	const [cohortId, setCohortId] = useState<string | null>(null);
 
 	// Burnout level follows the burnout rules in Triggers.
 	const scopeProfiles = useMemo(
@@ -345,7 +342,7 @@ export default function CoachingPage() {
 							cohorts={scopeCohorts}
 							paths={paths}
 							assignments={assignments}
-							onOpen={setCohortId}
+							onOpen={(id) => navigate(coachingGroupEditPath(role, id))}
 							onCreate={() => navigate(coachingGroupNewPath(role))}
 						/>
 					</Tabs.Panel>
@@ -416,58 +413,6 @@ export default function CoachingPage() {
 				role={role}
 				preset={assignState.preset}
 				cohorts={scopeCohorts}
-			/>
-
-			<CohortDrawer
-				cohort={
-					cohortId
-						? (scopeCohorts.find((c) => c.id === cohortId) ?? null)
-						: null
-				}
-				paths={paths}
-				enrollments={enrollments}
-				assignments={assignments}
-				rules={rules}
-				opened={cohortId !== null}
-				onClose={() => setCohortId(null)}
-				onAssignPath={() => {
-					const cohort = scopeCohorts.find((c) => c.id === cohortId);
-					if (cohort) {
-						setAssignState({
-							opened: true,
-							preset: {
-								cohortId: cohort.id,
-								pathId: cohort.pathId ?? undefined,
-							},
-						});
-						setCohortId(null);
-					}
-				}}
-				onAssignMaterial={() => {
-					if (cohortId) {
-						setAssignState({ opened: true, preset: { cohortId } });
-						setCohortId(null);
-					}
-				}}
-				onScheduleGroup={() => {
-					if (cohortId) {
-						navigate(
-							coachingSessionNewPath(role, { cohort: cohortId, type: 'GROUP' })
-						);
-						setCohortId(null);
-					}
-				}}
-				onDelete={() => {
-					if (cohortId) {
-						useCoachingStore.getState().deleteCohort(cohortId);
-						notifySuccess(t('cohorts.drawer.deleted'));
-						setCohortId(null);
-					}
-				}}
-				onOpenRule={(id) => {
-					setCohortId(null);
-					navigate(coachingRulePath(role, id));
-				}}
 			/>
 		</ContentContainer>
 	);
