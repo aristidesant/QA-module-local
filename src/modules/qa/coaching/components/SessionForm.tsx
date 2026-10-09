@@ -20,7 +20,9 @@ import { IconPhone, IconPlus, IconTrash } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import { SectionCard } from '~/components/SectionCard';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import { EvidenceCallsModal } from './EvidenceCallsModal';
+import { SessionPlaceFields } from './SessionPlaceFields';
 import type {
 	CoachingCohort,
 	CoachingSessionModality,
@@ -36,12 +38,10 @@ import {
 	type ManagerPersona,
 } from '~/modules/qa/lms/helpers';
 import type { TeamRole } from '~/modules/qa/team/types';
-import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import {
 	COACHING_TOPICS,
 	MODALITY_FREE_TYPES,
 	SESSION_DURATIONS,
-	SESSION_MODALITIES,
 } from '../constants';
 
 export interface SessionPreset {
@@ -74,6 +74,8 @@ interface FormValues {
 	type: CoachingSessionType;
 	modality: CoachingSessionModality;
 	meetingLink: string;
+	/** Where an in-person session takes place. */
+	location: string;
 	topic: string | null;
 	area: string | null;
 	subItem: string | null;
@@ -115,6 +117,7 @@ export function SessionForm({
 			type: 'ONE_ON_ONE',
 			modality: 'IN_PERSON',
 			meetingLink: '',
+			location: '',
 			topic: '',
 			area: null,
 			subItem: null,
@@ -136,6 +139,7 @@ export function SessionForm({
 			type: preset?.type ?? (preset?.cohortId ? 'GROUP' : 'ONE_ON_ONE'),
 			modality: 'IN_PERSON',
 			meetingLink: '',
+			location: '',
 			topic: preset?.topic ?? '',
 			area: preset?.area ?? null,
 			subItem: null,
@@ -152,6 +156,9 @@ export function SessionForm({
 	const isVirtual =
 		!MODALITY_FREE_TYPES.includes(form.values.type) &&
 		form.values.modality === 'REMOTE';
+	const isInPerson =
+		!MODALITY_FREE_TYPES.includes(form.values.type) &&
+		form.values.modality === 'IN_PERSON';
 
 	// The evidence filter starts on the session's agent, or on the group's participants.
 	const evidenceAgentIds = isGroup
@@ -189,8 +196,15 @@ export function SessionForm({
 			notifyWarning(t('sessions.editor.validation.date'));
 			return;
 		}
+		if (isInPerson && !form.values.location.trim()) {
+			form.setFieldError('location', t('sessions.place.required'));
+			return;
+		}
 		if (isVirtual && !form.values.meetingLink.trim()) {
-			notifyWarning(t('sessions.editor.validation.meetingLink'));
+			form.setFieldError(
+				'meetingLink',
+				t('sessions.editor.validation.meetingLink')
+			);
 			return;
 		}
 
@@ -226,6 +240,7 @@ export function SessionForm({
 					? null
 					: form.values.modality,
 				meetingLink: isVirtual ? form.values.meetingLink.trim() : null,
+				location: isInPerson ? form.values.location.trim() : null,
 				topic: form.values.topic.trim(),
 				area: null,
 				subItem: null,
@@ -272,28 +287,26 @@ export function SessionForm({
 							<Text size='sm' fw={500}>
 								{t('sessions.editor.modality')}
 							</Text>
-							<AppSegmentedControl
-								size='sm'
-								value={form.values.modality}
-								onChange={(v) =>
-									form.setFieldValue('modality', v as CoachingSessionModality)
-								}
-								data={SESSION_MODALITIES.map((m) => ({
-									value: m,
-									label: t(`sessions.modality.${m}`),
-								}))}
+							<SessionPlaceFields
+								modality={form.values.modality}
+								location={form.values.location}
+								meetingLink={form.values.meetingLink}
+								locationError={form.errors.location}
+								meetingLinkError={form.errors.meetingLink}
+								onModalityChange={(m) => {
+									form.setFieldValue('modality', m);
+									form.clearErrors();
+								}}
+								onLocationChange={(value) => {
+									form.setFieldValue('location', value);
+									form.clearFieldError('location');
+								}}
+								onMeetingLinkChange={(value) => {
+									form.setFieldValue('meetingLink', value);
+									form.clearFieldError('meetingLink');
+								}}
 							/>
 						</Stack>
-					)}
-					{isVirtual && (
-						<TextInput
-							label={t('sessions.editor.meetingLink')}
-							placeholder={t('sessions.editor.meetingLinkPlaceholder')}
-							value={form.values.meetingLink}
-							onChange={(e) =>
-								form.setFieldValue('meetingLink', e.currentTarget.value)
-							}
-						/>
 					)}
 					{isGroup ? (
 						<>

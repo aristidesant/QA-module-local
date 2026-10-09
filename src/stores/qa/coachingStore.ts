@@ -53,6 +53,7 @@ export interface ScheduleSessionInput {
 	type: CoachingSessionRecord['type'];
 	modality: CoachingSessionModality | null;
 	meetingLink?: string | null;
+	location?: string | null;
 	agentIds?: string[];
 	topic: string;
 	area: CoachingSessionRecord['area'];
@@ -111,11 +112,22 @@ interface CoachingState {
 	scheduleProposed: (
 		id: string,
 		date: string,
-		modality: CoachingSessionModality
+		modality: CoachingSessionModality,
+		/** Where it takes place (in person) or the call link (virtual); the other one is cleared. */
+		place?: { location?: string | null; meetingLink?: string | null }
 	) => void;
-	/** Supervisor sends the proposal as an AI message instead of holding the 1:1. */
-	sendProposedAsAiMessage: (id: string) => void;
-	dismissProposed: (id: string) => void;
+	/** Saves the date and place typed on a proposed 1:1; the session stays proposed. */
+	updateProposed: (
+		id: string,
+		changes: {
+			date?: string;
+			modality?: CoachingSessionModality;
+			location?: string | null;
+			meetingLink?: string | null;
+		}
+	) => void;
+	/** Replaces the materials suggested for a session; an AI message that has not gone out lists them in its text. */
+	setSuggestedMaterials: (sessionId: string, contentIds: string[]) => void;
 	/**
 	 * Supervisor overrides the batch's decision for one agent from the batch table.
 	 * A pending 1:1 becomes the AI message, sent on the coaching day; an AI message
@@ -164,13 +176,6 @@ const notifySession = (
 				coachName: session.coachName,
 				topic: session.topic,
 			},
-			actions: [
-				{
-					label: 'View coaching',
-					url: '/qa/agent/coaching',
-					icon: 'school',
-				},
-			],
 		})
 	);
 
@@ -435,6 +440,7 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 			type: input.type,
 			modality: input.modality,
 			meetingLink: input.meetingLink ?? null,
+			location: input.location ?? null,
 			agentIds: input.agentIds,
 			date: input.date,
 			durationMin: input.durationMin,
@@ -536,7 +542,7 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 
 	setCoachingDay: (coachingDay) => set({ coachingDay }),
 
-	scheduleProposed: (id, date, modality) => {
+	scheduleProposed: (id, date, modality, place) => {
 		const session = get().sessions.find((s) => s.id === id);
 		if (!session || session.status !== 'PROPOSED') return;
 		const next: CoachingSessionRecord = {
@@ -544,6 +550,8 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 			status: 'SCHEDULED',
 			date,
 			modality,
+			location: modality === 'IN_PERSON' ? (place?.location ?? null) : null,
+			meetingLink: modality === 'REMOTE' ? (place?.meetingLink ?? null) : null,
 		};
 		set((s) => ({
 			sessions: s.sessions.map((x) => (x.id === id ? next : x)),
@@ -565,37 +573,34 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 		);
 	},
 
-	// Immediate send, kept for callers outside the batch table; the table's own switch queues it for the coaching day.
-	sendProposedAsAiMessage: (id) => {
-		const session = get().sessions.find((s) => s.id === id);
-		if (!session || session.status !== 'PROPOSED') return;
-		const next = toAiMessage(session, NOW_ISO, 'COMPLETED');
+	setSuggestedMaterials: (sessionId, contentIds) =>
 		set((s) => ({
-			sessions: s.sessions.map((x) => (x.id === id ? next : x)),
-			batches: withItemDecision(s.batches, id, 'AI_MESSAGE'),
-		}));
-		get().logActivity({
-			type: 'SESSION_COMPLETED',
-			agentId: next.agentId,
-			agentName: next.agentName,
-			title: `Coaching message sent: ${next.topic}`,
-			description: `${next.coachName} · AI message instead of a 1:1`,
-			area: next.area,
-			link: '?tab=sessions',
-		});
-		notifySession(
-			next,
-			`Weekly coaching message: ${next.topic}`,
-			next.aiMessage ?? ''
-		);
-	},
+			sessions: s.sessions.map((x) => {
+				if (x.id !== sessionId || !x.brief) return x;
+				const next = {
+					...x,
+					brief: { ...x.brief, suggestedContentIds: contentIds },
+				};
+				const profile = useTeamStore.getState().profiles[x.agentId];
+				if (x.type !== 'AI_MESSAGE' || x.status === 'COMPLETED' || !profile) {
+					return next;
+				}
+				// The message still to be sent names the material it attaches.
+				const library = useLmsStore.getState().content;
+				const titles = contentIds
+					.map((cid) => library.find((c) => c.id === cid)?.title)
+					.filter((title): title is string => Boolean(title));
+				return {
+					...next,
+					aiMessage: buildAiCoachingMessage(profile, x.topic, titles),
+				};
+			}),
+		})),
 
-	dismissProposed: (id) =>
+	updateProposed: (id, changes) =>
 		set((s) => ({
 			sessions: s.sessions.map((x) =>
-				x.id === id && x.status === 'PROPOSED'
-					? { ...x, status: 'CANCELLED' as const }
-					: x
+				x.id === id && x.status === 'PROPOSED' ? { ...x, ...changes } : x
 			),
 		})),
 

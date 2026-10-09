@@ -34,7 +34,7 @@ import {
 } from './scorecard';
 
 export const WEEKLY_RULE_ID = 'cr-000';
-const MAX_FINDINGS = 2;
+const MAX_FINDINGS = 1;
 const MAX_EVIDENCE = 3;
 const MAX_SUGGESTED = 3;
 
@@ -85,7 +85,7 @@ export const decideBatchItem = (
 	return { decision: 'AI_MESSAGE', reason: 'STABLE' };
 };
 
-/** The two most frequent incidents of the week, with the worst calls as evidence. */
+/** The most frequent incident of the week, with the worst calls as evidence. */
 export const buildFindings = (
 	calls: TeamCallMetric[]
 ): CoachingBriefFinding[] => {

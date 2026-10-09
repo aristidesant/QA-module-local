@@ -419,7 +419,10 @@
 				"addCondition": "Add condition",
 				"options": "Options"
 			},
-			"logicWord": { "ALL": "and", "ANY": "or" },
+			"logicWord": {
+				"ALL": "and",
+				"ANY": "or"
+			},
 			"picker": {
 				"contentPlaceholder": "Browse and choose material",
 				"pathPlaceholder": "Browse and choose a learning path",
@@ -563,6 +566,15 @@
 			"pending": "Not yet",
 			"none": "—"
 		},
+		"place": {
+			"modalTitle": "Where will it take place?",
+			"modalHint": "The agent sees this in their session details.",
+			"locationLabel": "Location",
+			"locationPlaceholder": "e.g. 2nd floor meeting room",
+			"save": "Save location",
+			"where": "Where",
+			"required": "Add where the meeting takes place"
+		},
 		"editor": {
 			"modality": "Modality",
 			"createTitle": "Schedule session",
@@ -643,15 +655,7 @@
 		"detail": {
 			"notFound": "This session is not available in your scope.",
 			"proposed": {
-				"title": "Pre-loaded by the weekly batch",
-				"hint": "Confirm a date to schedule the 1:1, send the coaching as an AI message instead, or dismiss it.",
-				"date": "Session date",
-				"schedule": "Schedule 1:1",
-				"sendAi": "Switch to AI message",
-				"dismiss": "Dismiss",
-				"scheduled": "Session scheduled and the agent notified",
-				"sent": "Coaching message queued for the coaching day",
-				"dismissed": "Proposal dismissed"
+				"date": "Session date"
 			},
 			"meetingLink": "Meeting link",
 			"evidence": "Evidence",
@@ -693,40 +697,39 @@
 			"findingOf": "{{count}} of {{total}} calls",
 			"guide": "Coaching guide",
 			"title": "Weekly brief",
-			"findings": "Weak aspects this week",
+			"findings": "Weakest aspect this week",
 			"noFindings": "No incident detected in last week's calls.",
 			"approach": "How to approach it with the agent",
 			"solution": "Conceptual solution",
 			"example": "Real example",
 			"suggested": "Suggested material",
-			"noSuggested": "Nothing to suggest — the agent already has material open for these aspects.",
+			"noSuggested": "No material suggested for this session. Add some from Learning & Development.",
 			"alreadyAssigned": "Already assigned",
-			"assignSuggested_one": "Assign {{count}} material",
-			"assignSuggested_other": "Assign {{count}} materials",
-			"assigned_one": "{{count}} material assigned",
-			"assigned_other": "{{count}} materials assigned",
-			"previous": "Since the previous session",
 			"noPrevious": "No previous coach-led session to compare with.",
-			"composite": "Scorecard"
+			"composite": "Scorecard",
+			"addMaterial": "Add material",
+			"removeMaterial": "Remove from this session"
 		},
 		"batch": {
 			"title": "Weekly coaching batch",
 			"titleWeek": "Weekly batch · {{from}} – {{to}}",
 			"facts": "Generated {{generated}} · coaching {{coaching}} · next batch {{next}}",
 			"summary": "{{analysed}} agents analysed · {{oneOnOne}} get a 1:1 ({{toConfirm}} to confirm) · {{ai}} get the AI message",
-			"decisionShort": { "ONE_ON_ONE": "1:1", "AI_MESSAGE": "AI message" },
+			"decisionShort": {
+				"ONE_ON_ONE": "1:1",
+				"AI_MESSAGE": "AI message"
+			},
 			"locked": "Already held or sent: the decision can't change",
 			"sendsOn": "Sends {{date}}",
 			"queued": "Message queued for {{date}}",
 			"proposedAgain": "1:1 proposed again. Confirm the date from the session",
-			"more": "+{{count}}",
 			"coachingDay": "Coaching day",
 			"empty": "No batch yet — the first one generates {{date}}.",
 			"clean": "Clean week",
 			"sentOn": "Sent {{date}}",
 			"suggestedDate": "Suggested {{date}}",
 			"columns": {
-				"findings": "Weak aspects",
+				"findings": "Weakest aspect",
 				"decision": "Decision",
 				"date": "Session"
 			},
@@ -747,7 +750,32 @@
 				"STABLE": "Stable — AI message"
 			}
 		},
-		"empty": "No sessions match these filters."
+		"empty": "No sessions match these filters.",
+		"decision": {
+			"title": "Coaching decision",
+			"hint": "The platform analysed the week and chose. Keep it, or switch it.",
+			"reason": "Platform's call: {{reason}}",
+			"confirmedFor": "Confirmed for {{date}}",
+			"sendsOn": "Goes to the agent's inbox {{date}}"
+		},
+		"previous": {
+			"title": "Previous session",
+			"agreed": "What was agreed",
+			"noOutcome": "No outcome recorded.",
+			"commitments": "Commitments",
+			"noCommitments": "No action items were set.",
+			"agentResponse": "Agent's response",
+			"notes": "Supervisor notes",
+			"noNotes": "No private notes from that session."
+		},
+		"learning": {
+			"title": "Learning in progress",
+			"viewAll": "View all",
+			"modules": "{{done}} of {{total}} modules",
+			"more_one": "+{{count}} more material",
+			"more_other": "+{{count}} more materials",
+			"empty": "Nothing in progress."
+		}
 	},
 	"impact": {
 		"title": "Did it work?",

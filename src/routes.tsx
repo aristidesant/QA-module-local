@@ -145,6 +145,9 @@ const NewOperationManagerDashboard = React.lazy(
 const QaInboxPage = React.lazy(
 	() => import('./modules/qa/dashboard/pages/InboxPage')
 );
+const QaInboxDetailPage = React.lazy(
+	() => import('./modules/qa/inbox/NotificationDetailPage')
+);
 const AgentMyLearningPage = React.lazy(
 	() => import('./modules/qa/lms/AgentLmsPage')
 );
@@ -979,6 +982,17 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'agent/inbox/:notificationId',
+										id: 'qa.agent.inbox.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaInboxDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'agent/lms',
 										id: 'qa.agent.lms',
 										element: (
@@ -1074,12 +1088,34 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'supervisor/inbox/:notificationId',
+										id: 'qa.supervisor.inbox.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaInboxDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'qa-manager/inbox',
 										id: 'qa.qa-manager.inbox',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QaInboxPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/inbox/:notificationId',
+										id: 'qa.qa-manager.inbox.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaInboxDetailPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
@@ -1569,6 +1605,17 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QaInboxPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'operation-manager/inbox/:notificationId',
+										id: 'qa.operation-manager.inbox.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaInboxDetailPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

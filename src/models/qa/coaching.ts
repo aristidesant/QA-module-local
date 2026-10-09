@@ -187,6 +187,8 @@ export interface CoachingSessionRecord {
 	agentIds?: string[];
 	/** Link of the call when the session is virtual. */
 	meetingLink?: string | null;
+	/** Where an in-person session takes place, e.g. "2nd floor meeting room". */
+	location?: string | null;
 	/** ISO datetime */
 	date: string;
 	durationMin: number;

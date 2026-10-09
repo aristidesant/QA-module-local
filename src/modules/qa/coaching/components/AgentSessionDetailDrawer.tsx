@@ -84,6 +84,12 @@ export function AgentSessionDetailDrawer({
 					)}
 				</Group>
 
+				{session.modality === 'IN_PERSON' && session.location && (
+					<Text size='sm'>
+						{t('agent.coaching.detail.location', { place: session.location })}
+					</Text>
+				)}
+
 				{session.meetingLink && (
 					<Anchor
 						size='sm'

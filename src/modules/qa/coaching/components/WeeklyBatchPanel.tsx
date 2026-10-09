@@ -42,9 +42,6 @@ interface BatchRow extends CoachingBatchItem {
 
 const helper = createColumnHelper<BatchRow>();
 
-/** How many weak aspects a row names before the rest go behind a "+N". */
-const MAX_VISIBLE_FINDINGS = 3;
-
 /** A decision can only change while the session is still ahead: once held, missed or dismissed it stays as it is. */
 const isLocked = (session: CoachingSessionRecord | undefined): boolean =>
 	!session ||
@@ -156,43 +153,23 @@ export function WeeklyBatchPanel({
 			id: 'findings',
 			header: t('sessions.batch.columns.findings'),
 			cell: (info) => {
-				const findings = info.row.original.session?.brief?.findings ?? [];
-				if (findings.length === 0) {
+				const finding = info.row.original.session?.brief?.findings[0];
+				if (!finding) {
 					return (
 						<Text size='sm' c='dimmed'>
 							{t('sessions.batch.clean')}
 						</Text>
 					);
 				}
-				const label = (issue: string) =>
-					t(`issues.${issue}`, { ns: 'qa.calls' });
-				const rest = findings.slice(MAX_VISIBLE_FINDINGS);
+				const critical = CRITICAL_ISSUES.has(finding.issue);
 				return (
-					<Group gap={4} wrap='wrap'>
-						{findings.slice(0, MAX_VISIBLE_FINDINGS).map((f) => {
-							const critical = CRITICAL_ISSUES.has(f.issue);
-							return (
-								<Badge
-									key={f.issue}
-									size='xs'
-									variant={critical ? 'light' : 'outline'}
-									color={critical ? 'red' : 'gray'}
-								>
-									{label(f.issue)}
-								</Badge>
-							);
-						})}
-						{rest.length > 0 && (
-							<Tooltip
-								withArrow
-								label={rest.map((f) => label(f.issue)).join(', ')}
-							>
-								<Badge size='xs' variant='outline' color='gray'>
-									{t('sessions.batch.more', { count: rest.length })}
-								</Badge>
-							</Tooltip>
-						)}
-					</Group>
+					<Badge
+						size='xs'
+						variant={critical ? 'light' : 'outline'}
+						color={critical ? 'red' : 'gray'}
+					>
+						{t(`issues.${finding.issue}`, { ns: 'qa.calls' })}
+					</Badge>
 				);
 			},
 		}) as BaseTableColumnDef<BatchRow>,

@@ -127,7 +127,17 @@
 			"when": "Cuándo",
 			"coach": "Coach",
 			"topic": "Tema",
-			"cta": "Abrir coaching"
+			"sessionTitle": "Qué trata este coaching",
+			"problem": "El problema",
+			"problemOf": "{{count}} de {{total}} llamadas la semana pasada",
+			"approach": "Cómo abordarlo",
+			"solution": "La solución",
+			"example": "Por ejemplo",
+			"evidence": "Llamadas de evidencia",
+			"materialsTitle": "Material de aprendizaje",
+			"suggested": "Sugerido",
+			"mandatory": "Obligatorio",
+			"noMaterials": "No hay material adjunto a este coaching."
 		},
 		"lms": {
 			"content": "Contenido",
@@ -167,5 +177,9 @@
 			"prize": "Premio",
 			"cta": "Abrir ranking"
 		}
+	},
+	"detail": {
+		"back": "Bandeja de entrada",
+		"notFound": "Este mensaje no está disponible en tu bandeja."
 	}
 }

@@ -127,7 +127,17 @@
 			"when": "When",
 			"coach": "Coach",
 			"topic": "Topic",
-			"cta": "Open coaching"
+			"sessionTitle": "What this coaching covers",
+			"problem": "The problem",
+			"problemOf": "{{count}} of {{total}} calls last week",
+			"approach": "How to approach it",
+			"solution": "The fix",
+			"example": "For example",
+			"evidence": "Evidence calls",
+			"materialsTitle": "Learning material",
+			"suggested": "Suggested",
+			"mandatory": "Mandatory",
+			"noMaterials": "No material is attached to this coaching."
 		},
 		"lms": {
 			"content": "Content",
@@ -167,5 +177,9 @@
 			"prize": "Prize",
 			"cta": "Open ranking"
 		}
+	},
+	"detail": {
+		"back": "Inbox",
+		"notFound": "This message is not available in your inbox."
 	}
 }

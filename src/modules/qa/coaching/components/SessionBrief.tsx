@@ -60,6 +60,7 @@ interface SessionBriefProps {
  */
 export function SessionBrief({ brief }: SessionBriefProps) {
 	const { t } = useTranslation(['qa.coaching', 'qa.calls']);
+	const finding = brief.findings[0];
 
 	return (
 		<SectionCard
@@ -105,47 +106,39 @@ export function SessionBrief({ brief }: SessionBriefProps) {
 
 				<Stack gap='sm'>
 					<Caption>{t('sessions.brief.findings')}</Caption>
-					{brief.findings.length === 0 ? (
+					{!finding ? (
 						<Text size='sm' c='dimmed'>
 							{t('sessions.brief.noFindings')}
 						</Text>
 					) : (
-						brief.findings.map((f) => {
-							const critical = CRITICAL_ISSUES.has(f.issue);
-							return (
-								<Group
-									key={f.issue}
-									gap='md'
-									wrap='nowrap'
-									justify='space-between'
+						<Group gap='md' wrap='nowrap' justify='space-between'>
+							<Group gap='xs' wrap='nowrap' flex={1} miw={0}>
+								<Badge
+									size='sm'
+									variant={
+										CRITICAL_ISSUES.has(finding.issue) ? 'light' : 'outline'
+									}
+									color={CRITICAL_ISSUES.has(finding.issue) ? 'red' : 'gray'}
 								>
-									<Group gap='xs' wrap='nowrap' flex={1} miw={0}>
-										<Badge
-											size='sm'
-											variant={critical ? 'light' : 'outline'}
-											color={critical ? 'red' : 'gray'}
-										>
-											{t(`issues.${f.issue as CallIssueKey}`, {
-												ns: 'qa.calls',
-											})}
-										</Badge>
-									</Group>
-									<Text size='xs' c='dimmed' w={150} ta='right'>
-										{t('sessions.brief.findingOf', {
-											count: f.calls,
-											total: brief.calls,
-										})}
-									</Text>
-									<Progress
-										w={120}
-										size='sm'
-										value={f.share}
-										color={critical ? 'red' : 'gray'}
-										aria-label={`${f.share}%`}
-									/>
-								</Group>
-							);
-						})
+									{t(`issues.${finding.issue as CallIssueKey}`, {
+										ns: 'qa.calls',
+									})}
+								</Badge>
+							</Group>
+							<Text size='xs' c='dimmed' w={150} ta='right'>
+								{t('sessions.brief.findingOf', {
+									count: finding.calls,
+									total: brief.calls,
+								})}
+							</Text>
+							<Progress
+								w={120}
+								size='sm'
+								value={finding.share}
+								color={CRITICAL_ISSUES.has(finding.issue) ? 'red' : 'gray'}
+								aria-label={`${finding.share}%`}
+							/>
+						</Group>
 					)}
 				</Stack>
 

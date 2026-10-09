@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { Stack, Title, Text, Group, Button, Badge } from '@mantine/core';
 import { IconChecks } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
@@ -16,7 +16,6 @@ import {
 	inboxRoleFromPath,
 } from '~/modules/qa/inbox/constants';
 import { inboxFor } from '~/modules/qa/inbox/helpers';
-import NotificationDetailDrawer from '~/modules/qa/inbox/components/NotificationDetailDrawer';
 import type { AgentNotification } from '~/models/qa/notifications';
 
 /**
@@ -27,6 +26,7 @@ import type { AgentNotification } from '~/models/qa/notifications';
 export const InboxPage: React.FC = () => {
 	const { t } = useTranslation('qa.inbox');
 	const location = useLocation();
+	const navigate = useNavigate();
 	const role = inboxRoleFromPath(location.pathname);
 	const me = INBOX_IDENTITY[role];
 
@@ -38,7 +38,6 @@ export const InboxPage: React.FC = () => {
 	);
 	const markAllAsRead = useNotificationStore((s) => s.markAllAsRead);
 
-	const [selectedId, setSelectedId] = useState<string | null>(null);
 	const [statusFilter, setStatusFilter] = useState<'all' | 'read' | 'unread'>(
 		'all'
 	);
@@ -106,11 +105,6 @@ export const InboxPage: React.FC = () => {
 		searchQuery,
 	]);
 
-	const selected = useMemo(
-		() => mine.find((n) => n.id === selectedId) ?? null,
-		[mine, selectedId]
-	);
-
 	const handleClearFilters = () => {
 		setStatusFilter('all');
 		setTypeFilter([]);
@@ -122,7 +116,7 @@ export const InboxPage: React.FC = () => {
 	const handleViewDetails = (notificationId: string) => {
 		const notification = mine.find((n) => n.id === notificationId);
 		if (notification && !notification.read) markAsRead(notificationId);
-		setSelectedId(notificationId);
+		navigate(`${location.pathname}/${notificationId}`);
 	};
 
 	return (
@@ -189,13 +183,6 @@ export const InboxPage: React.FC = () => {
 					</Stack>
 				</SectionCard>
 			</Stack>
-
-			<NotificationDetailDrawer
-				notification={selected}
-				opened={selected !== null}
-				onClose={() => setSelectedId(null)}
-				viewer={role}
-			/>
 		</ContentContainer>
 	);
 };

@@ -419,7 +419,10 @@
 				"addCondition": "Añadir condición",
 				"options": "Opciones"
 			},
-			"logicWord": { "ALL": "y", "ANY": "o" },
+			"logicWord": {
+				"ALL": "y",
+				"ANY": "o"
+			},
 			"picker": {
 				"contentPlaceholder": "Explora y elige material",
 				"pathPlaceholder": "Explora y elige una ruta de aprendizaje",
@@ -563,6 +566,15 @@
 			"pending": "Todavía no",
 			"none": "—"
 		},
+		"place": {
+			"modalTitle": "¿Dónde será la reunión?",
+			"modalHint": "El agente verá el lugar en el detalle de su sesión.",
+			"locationLabel": "Lugar",
+			"locationPlaceholder": "Ej. Sala de reuniones del piso 2",
+			"save": "Guardar lugar",
+			"where": "Dónde",
+			"required": "Indica dónde será la reunión"
+		},
 		"editor": {
 			"modality": "Modalidad",
 			"createTitle": "Agendar sesión",
@@ -643,15 +655,7 @@
 		"detail": {
 			"notFound": "Esta sesión no está disponible en tu alcance.",
 			"proposed": {
-				"title": "Precargada por el lote semanal",
-				"hint": "Confirma una fecha para agendar el 1:1, envía el coaching como mensaje IA o descártala.",
-				"date": "Fecha de la sesión",
-				"schedule": "Agendar 1:1",
-				"sendAi": "Cambiar a mensaje IA",
-				"dismiss": "Descartar",
-				"scheduled": "Sesión agendada y agente notificado",
-				"sent": "Mensaje de coaching programado para el día de coaching",
-				"dismissed": "Propuesta descartada"
+				"date": "Fecha de la sesión"
 			},
 			"meetingLink": "Enlace de la reunión",
 			"evidence": "Evidencia",
@@ -693,40 +697,39 @@
 			"findingOf": "{{count}} de {{total}} llamadas",
 			"guide": "Guía de coaching",
 			"title": "Brief semanal",
-			"findings": "Aspectos débiles de la semana",
+			"findings": "Aspecto más débil de la semana",
 			"noFindings": "Sin incidencias en las llamadas de la semana pasada.",
 			"approach": "Cómo abordarlo con el agente",
 			"solution": "Solución conceptual",
 			"example": "Ejemplo real",
 			"suggested": "Material sugerido",
-			"noSuggested": "Nada que sugerir: el agente ya tiene material abierto para estos aspectos.",
+			"noSuggested": "No hay material sugerido para esta sesión. Añade alguno desde Aprendizaje y Desarrollo.",
 			"alreadyAssigned": "Ya asignado",
-			"assignSuggested_one": "Asignar {{count}} material",
-			"assignSuggested_other": "Asignar {{count}} materiales",
-			"assigned_one": "{{count}} material asignado",
-			"assigned_other": "{{count}} materiales asignados",
-			"previous": "Desde la sesión anterior",
 			"noPrevious": "No hay una sesión previa con coach para comparar.",
-			"composite": "Scorecard"
+			"composite": "Scorecard",
+			"addMaterial": "Añadir material",
+			"removeMaterial": "Quitar de esta sesión"
 		},
 		"batch": {
 			"title": "Lote semanal de coaching",
 			"titleWeek": "Lote semanal · {{from}} – {{to}}",
 			"facts": "Generado {{generated}} · coaching {{coaching}} · próximo lote {{next}}",
 			"summary": "{{analysed}} agentes analizados · {{oneOnOne}} tendrán 1:1 ({{toConfirm}} por confirmar) · {{ai}} reciben el mensaje IA",
-			"decisionShort": { "ONE_ON_ONE": "1:1", "AI_MESSAGE": "Mensaje IA" },
+			"decisionShort": {
+				"ONE_ON_ONE": "1:1",
+				"AI_MESSAGE": "Mensaje IA"
+			},
 			"locked": "Ya realizada o enviada: la decisión no puede cambiar",
 			"sendsOn": "Se envía {{date}}",
 			"queued": "Mensaje programado para el {{date}}",
 			"proposedAgain": "1:1 propuesto de nuevo: confirma la fecha desde la sesión",
-			"more": "+{{count}}",
 			"coachingDay": "Día de coaching",
 			"empty": "Todavía no hay lote: el primero se genera {{date}}.",
 			"clean": "Semana limpia",
 			"sentOn": "Enviado {{date}}",
 			"suggestedDate": "Sugerida {{date}}",
 			"columns": {
-				"findings": "Aspectos débiles",
+				"findings": "Aspecto más débil",
 				"decision": "Decisión",
 				"date": "Sesión"
 			},
@@ -747,7 +750,32 @@
 				"STABLE": "Estable: mensaje IA"
 			}
 		},
-		"empty": "Ninguna sesión coincide con estos filtros."
+		"empty": "Ninguna sesión coincide con estos filtros.",
+		"decision": {
+			"title": "Decisión de coaching",
+			"hint": "La plataforma analizó la semana y decidió. Mantenlo o cámbialo.",
+			"reason": "Criterio de la plataforma: {{reason}}",
+			"confirmedFor": "Confirmada para el {{date}}",
+			"sendsOn": "Llega a la bandeja del agente el {{date}}"
+		},
+		"previous": {
+			"title": "Sesión anterior",
+			"agreed": "Qué se acordó",
+			"noOutcome": "Sin resultado registrado.",
+			"commitments": "Compromisos",
+			"noCommitments": "No se fijaron acciones.",
+			"agentResponse": "Respuesta del agente",
+			"notes": "Notas del supervisor",
+			"noNotes": "Sin notas privadas de esa sesión."
+		},
+		"learning": {
+			"title": "Aprendizaje en curso",
+			"viewAll": "Ver todo",
+			"modules": "{{done}} de {{total}} módulos",
+			"more_one": "+{{count}} material más",
+			"more_other": "+{{count}} materiales más",
+			"empty": "Nada en curso."
+		}
 	},
 	"impact": {
 		"title": "¿Funcionó?",

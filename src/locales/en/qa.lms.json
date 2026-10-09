@@ -191,23 +191,6 @@
 		"coaching": {
 			"title": "Coaching",
 			"description": "Your scheduled sessions, past sessions and the commitments you've made.",
-			"upcoming": "Upcoming session",
-			"upcomingDescription": "Your next session with your supervisor or the QA manager.",
-			"talkingPoints": "Talking points",
-			"commitments": "My commitments",
-			"commitmentsDescription": "Action items from your sessions, and material assigned as a result of coaching. Keep both moving.",
-			"past": "Past sessions",
-			"pastDescription": "Every session you've had with your supervisor or the QA manager.",
-			"rowsCount": "{{count}} sessions",
-			"columns": {
-				"date": "Date",
-				"topic": "Topic",
-				"type": "Type",
-				"coach": "Coach",
-				"area": "Aspect",
-				"status": "Status",
-				"outcome": "Outcome"
-			},
 			"status": {
 				"scheduled": "Scheduled",
 				"completed": "Completed",
@@ -219,19 +202,15 @@
 			"linkedMaterial": "Linked material",
 			"latestMessage": "Your weekly review",
 			"latestMessageDescription": "Written from your results by the QA assistant. Open it to read the full message.",
-			"types": {
-				"ONE_ON_ONE": "1:1",
-				"SIDE_BY_SIDE": "Side-by-side",
-				"GROUP": "Group",
-				"MICRO": "Micro",
-				"AI_MESSAGE": "AI message"
+			"modality": {
+				"IN_PERSON": "In person",
+				"REMOTE": "Virtual"
 			},
-			"modality": { "IN_PERSON": "In person", "REMOTE": "Virtual" },
 			"empty": "No coaching sessions yet.",
-			"noCommitments": "No open commitments.",
 			"detail": {
 				"talkingPoints": "Talking points",
 				"aiMessage": "Message",
+				"location": "Location: {{place}}",
 				"meetingLink": "Meeting link",
 				"noPoints": "No talking points recorded.",
 				"evidence": "Evidence",
@@ -240,10 +219,6 @@
 				"outcome": "Outcome",
 				"commitment": "Your commitment",
 				"notCommitted": "Not committed yet."
-			},
-			"commitmentType": {
-				"session": "Coaching session",
-				"material": "Assigned material"
 			}
 		},
 		"rolePlay": {

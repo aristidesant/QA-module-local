@@ -568,6 +568,12 @@ function buildAgentHistoryAGT004(): CoachingSessionRecord[] {
 	];
 	const missedReasons =
 		'Agent was on an escalation call; rescheduled the same week.';
+	// The supervisor's private notes, one per held session.
+	const supervisorNotes = [
+		'Responds well to listening back to his own calls. Keep the next session hands-on.',
+		'Tends to agree quickly, then slip. Check the commitment mid-week.',
+		'Asked for the objection script in writing; sent after the session.',
+	];
 
 	const SESSION_COUNT = 12;
 	const out: CoachingSessionRecord[] = [];
@@ -601,7 +607,7 @@ function buildAgentHistoryAGT004(): CoachingSessionRecord[] {
 				`Review last week's ${meta.topic.toLowerCase()} calls`,
 				'Agree one behaviour to practise before the next session',
 			],
-			notes: '',
+			notes: missed ? '' : supervisorNotes[i % supervisorNotes.length],
 			aiMessage: null,
 			actionItems: missed
 				? []

@@ -30,9 +30,9 @@ import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer';
 import { EmptyState } from '~/components/EmptyState/EmptyState';
 import { SectionCard } from '~/components/SectionCard';
-import AppSegmentedControl from '~/components/ui/AppSegmentedControl';
 import type {
 	CoachingActionItem,
+	CoachingBatchDecision,
 	CoachingSessionModality,
 	CoachingSessionRecord,
 	LmsContent,
@@ -47,6 +47,7 @@ import { notifySuccess } from '~/modules/qa/utils/notifications';
 import {
 	useCoachingStore,
 	nextCoachingId,
+	selectBatches,
 	selectCoachingDay,
 	selectSessions,
 } from '~/stores/qa/coachingStore';
@@ -54,19 +55,25 @@ import {
 	useLmsStore,
 	selectAssignments,
 	selectContent,
+	selectEnrollments,
+	selectPaths,
 } from '~/stores/qa/lmsStore';
 import { useTeamStore } from '~/stores/qa/teamStore';
+import { AgentLearningCard } from '../components/AgentLearningCard';
 import { SessionBrief } from '../components/SessionBrief';
+import { SessionDecisionCard } from '../components/SessionDecisionCard';
+import { SessionPlaceFields } from '../components/SessionPlaceFields';
 import {
 	PreviousSessionCard,
 	SuggestedMaterialCard,
 } from '../components/SessionBriefAside';
 import queueStyles from '../components/Queue.module.css';
 import {
-	SESSION_MODALITIES,
+	coachingAgentPath,
 	coachingBasePath,
 	sessionStatusBadge,
 } from '../constants';
+import { lastCompletedSession } from '../postCoaching';
 import { nextBatchAt } from '../weeklyBatch';
 
 /**
@@ -87,6 +94,9 @@ export default function CoachingSessionDetailPage() {
 	const coachingDay = useCoachingStore(selectCoachingDay);
 	const assignments = useLmsStore(selectAssignments);
 	const content = useLmsStore(selectContent);
+	const paths = useLmsStore(selectPaths);
+	const enrollments = useLmsStore(selectEnrollments);
+	const batches = useCoachingStore(selectBatches);
 	const profilesMap = useTeamStore((s) => s.profiles);
 	const scopeAgents = useMemo(() => managerScopeAgents(role), [role]);
 
@@ -109,6 +119,28 @@ export default function CoachingSessionDetailPage() {
 				)
 		) ?? null;
 
+	// The weekly-batch row behind this session, when it came from one.
+	const batchItem = useMemo(
+		() =>
+			batches
+				.flatMap((b) => b.items)
+				.find((i) => i.sessionId === session?.id) ?? null,
+		[batches, session?.id]
+	);
+
+	// The agent's last completed coach-led session before this one, with or without a brief.
+	const previousSession = useMemo(() => {
+		if (!session) return null;
+		const fromBrief = session.brief?.previous;
+		if (fromBrief) {
+			return sessions.find((s) => s.id === fromBrief.sessionId) ?? null;
+		}
+		return lastCompletedSession(
+			sessions.filter((s) => s.id !== session.id && s.date < session.date),
+			session.agentId
+		);
+	}, [sessions, session]);
+
 	const [outcome, setOutcome] = useState('');
 	const [followUp, setFollowUp] = useState<string | null>(null);
 	const [items, setItems] = useState<CoachingActionItem[]>([]);
@@ -116,6 +148,8 @@ export default function CoachingSessionDetailPage() {
 	const [proposedDate, setProposedDate] = useState<string | null>(null);
 	const [proposedModality, setProposedModality] =
 		useState<CoachingSessionModality>('IN_PERSON');
+	const [proposedLocation, setProposedLocation] = useState('');
+	const [proposedLink, setProposedLink] = useState('');
 
 	useEffect(() => {
 		if (!session) return;
@@ -125,6 +159,8 @@ export default function CoachingSessionDetailPage() {
 		setDraft('');
 		setProposedDate(`${nextBatchAt(coachingDay).coachingDate}T10:00:00.000Z`);
 		setProposedModality(session.modality ?? 'IN_PERSON');
+		setProposedLocation(session.location ?? '');
+		setProposedLink(session.meetingLink ?? '');
 		// Reset only when another session loads, not on every store update of this one.
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [session?.id, coachingDay]);
@@ -197,34 +233,25 @@ export default function CoachingSessionDetailPage() {
 		backToSessions();
 	};
 
-	const handleSchedule = () => {
-		if (!proposedDate) return;
-		useCoachingStore
+	const saveProposed = (
+		changes: Parameters<
+			ReturnType<typeof useCoachingStore.getState>['updateProposed']
+		>[1]
+	) => useCoachingStore.getState().updateProposed(session.id, changes);
+
+	const handleDecision = (decision: CoachingBatchDecision) => {
+		if (!batchItem || batchItem.decision === decision) return;
+		useCoachingStore.getState().setBatchDecision(session.id, decision);
+		const updated = useCoachingStore
 			.getState()
-			.scheduleProposed(
-				session.id,
-				new Date(proposedDate).toISOString(),
-				proposedModality
-			);
-		notifySuccess(t('sessions.detail.proposed.scheduled'));
-		backToSessions();
-	};
-
-	const handleSendAi = () => {
-		// A batch proposal switches through the batch decision, so the message goes out on the coaching day.
-		if (session.batchId) {
-			useCoachingStore.getState().setBatchDecision(session.id, 'AI_MESSAGE');
-		} else {
-			useCoachingStore.getState().sendProposedAsAiMessage(session.id);
-		}
-		notifySuccess(t('sessions.detail.proposed.sent'));
-		backToSessions();
-	};
-
-	const handleDismiss = () => {
-		useCoachingStore.getState().dismissProposed(session.id);
-		notifySuccess(t('sessions.detail.proposed.dismissed'));
-		backToSessions();
+			.sessions.find((x) => x.id === session.id);
+		notifySuccess(
+			decision === 'AI_MESSAGE'
+				? t('sessions.batch.queued', {
+						date: dayjs(updated?.date).format('ddd D MMM'),
+					})
+				: t('sessions.batch.proposedAgain')
+		);
 	};
 
 	return (
@@ -259,6 +286,9 @@ export default function CoachingSessionDetailPage() {
 								<Text span c='dimmed'>
 									{' · '}
 									{t(`sessions.modality.${session.modality}`)}
+									{session.modality === 'IN_PERSON' &&
+										session.location &&
+										` (${session.location})`}
 								</Text>
 							)}
 							<Text span c='dimmed'>
@@ -307,48 +337,45 @@ export default function CoachingSessionDetailPage() {
 								</SectionCard>
 							)}
 
+							<SectionCard title={t('sessions.detail.evidence')} padding='md'>
+								{session.evidenceCallIds.length === 0 ? (
+									<Text size='sm' c='dimmed'>
+										{t('sessions.detail.noEvidence')}
+									</Text>
+								) : (
+									<Stack gap='xs'>
+										{session.evidenceCallIds.map((callId) => {
+											const aspects = aspectsByCall.get(callId) ?? [];
+											return (
+												<Group key={callId} gap='sm' wrap='nowrap'>
+													<Badge
+														size='sm'
+														variant='outline'
+														color='gray'
+														leftSection={<IconPhone size={12} />}
+														className={pointerStyles.pointer}
+														onClick={() => openCall(callId)}
+													>
+														{callId}
+													</Badge>
+													{aspects.length > 0 && (
+														<Text size='xs' c='dimmed'>
+															{aspects
+																.map((issue) =>
+																	t(`issues.${issue}`, { ns: 'qa.calls' })
+																)
+																.join(' · ')}
+														</Text>
+													)}
+												</Group>
+											);
+										})}
+									</Stack>
+								)}
+							</SectionCard>
+
 							{!isAi && (
 								<>
-									<SectionCard
-										title={t('sessions.detail.evidence')}
-										padding='md'
-									>
-										{session.evidenceCallIds.length === 0 ? (
-											<Text size='sm' c='dimmed'>
-												{t('sessions.detail.noEvidence')}
-											</Text>
-										) : (
-											<Stack gap='xs'>
-												{session.evidenceCallIds.map((callId) => {
-													const aspects = aspectsByCall.get(callId) ?? [];
-													return (
-														<Group key={callId} gap='sm' wrap='nowrap'>
-															<Badge
-																size='sm'
-																variant='outline'
-																color='gray'
-																leftSection={<IconPhone size={12} />}
-																className={pointerStyles.pointer}
-																onClick={() => openCall(callId)}
-															>
-																{callId}
-															</Badge>
-															{aspects.length > 0 && (
-																<Text size='xs' c='dimmed'>
-																	{aspects
-																		.map((issue) =>
-																			t(`issues.${issue}`, { ns: 'qa.calls' })
-																		)
-																		.join(' · ')}
-																</Text>
-															)}
-														</Group>
-													);
-												})}
-											</Stack>
-										)}
-									</SectionCard>
-
 									<SectionCard
 										title={t('sessions.detail.talkingPoints')}
 										padding='md'
@@ -460,56 +487,50 @@ export default function CoachingSessionDetailPage() {
 
 					<Grid.Col span={{ base: 12, md: 4 }}>
 						<Stack gap='md'>
-							{!isAi && session.status === 'PROPOSED' && (
-								<SectionCard
-									title={t('sessions.detail.proposed.title')}
-									description={t('sessions.detail.proposed.hint')}
-									padding='md'
+							{batchItem && (
+								<SessionDecisionCard
+									session={session}
+									item={batchItem}
+									onDecisionChange={handleDecision}
 								>
-									<Stack gap='sm'>
-										<DateTimePicker
-											label={t('sessions.detail.proposed.date')}
-											value={proposedDate}
-											onChange={setProposedDate}
-											valueFormat='MMM D, YYYY HH:mm'
-										/>
-										<AppSegmentedControl
-											size='sm'
-											value={proposedModality}
-											onChange={(v) =>
-												setProposedModality(v as CoachingSessionModality)
-											}
-											data={SESSION_MODALITIES.map((m) => ({
-												value: m,
-												label: t(`sessions.modality.${m}`),
-											}))}
-										/>
-										<Stack gap='xs'>
-											<Button
-												fullWidth
-												onClick={handleSchedule}
-												disabled={!proposedDate}
-											>
-												{t('sessions.detail.proposed.schedule')}
-											</Button>
-											<Button
-												fullWidth
-												variant='default'
-												onClick={handleSendAi}
-											>
-												{t('sessions.detail.proposed.sendAi')}
-											</Button>
-											<Button
-												fullWidth
-												variant='subtle'
-												color='gray'
-												onClick={handleDismiss}
-											>
-												{t('sessions.detail.proposed.dismiss')}
-											</Button>
+									{session.status === 'PROPOSED' ? (
+										<Stack gap='sm'>
+											<DateTimePicker
+												label={t('sessions.detail.proposed.date')}
+												value={proposedDate}
+												onChange={(v) => {
+													setProposedDate(v);
+													if (v)
+														saveProposed({ date: new Date(v).toISOString() });
+												}}
+												valueFormat='MMM D, YYYY HH:mm'
+											/>
+											<SessionPlaceFields
+												modality={proposedModality}
+												location={proposedLocation}
+												meetingLink={proposedLink}
+												onModalityChange={(m) => {
+													setProposedModality(m);
+													saveProposed({ modality: m });
+												}}
+												onLocationChange={(value) => {
+													setProposedLocation(value);
+													saveProposed({ location: value.trim() || null });
+												}}
+												onMeetingLinkChange={(value) => {
+													setProposedLink(value);
+													saveProposed({ meetingLink: value.trim() || null });
+												}}
+											/>
 										</Stack>
-									</Stack>
-								</SectionCard>
+									) : session.status === 'SCHEDULED' ? (
+										<Text size='sm'>
+											{t('sessions.decision.confirmedFor', {
+												date: dayjs(session.date).format('ddd D MMM, HH:mm'),
+											})}
+										</Text>
+									) : null}
+								</SessionDecisionCard>
 							)}
 
 							{!isAi && session.status === 'SCHEDULED' && (
@@ -579,17 +600,40 @@ export default function CoachingSessionDetailPage() {
 									</SectionCard>
 								)}
 
+							{!isAi && (
+								<PreviousSessionCard
+									previous={previousSession}
+									comparison={session.brief?.previous ?? null}
+								/>
+							)}
+
+							{session.type !== 'GROUP' && (
+								<AgentLearningCard
+									agentId={session.agentId}
+									assignments={assignments}
+									enrollments={enrollments}
+									paths={paths}
+									contentById={contentById}
+									onViewAll={() =>
+										navigate(
+											`${coachingAgentPath(role, session.agentId)}?tab=assignments`
+										)
+									}
+								/>
+							)}
+
 							{session.brief && (
-								<>
-									<SuggestedMaterialCard
-										brief={session.brief}
-										agentId={session.agentId}
-										role={role}
-										assignments={assignments}
-										contentById={contentById}
-									/>
-									<PreviousSessionCard brief={session.brief} />
-								</>
+								<SuggestedMaterialCard
+									sessionId={session.id}
+									brief={session.brief}
+									agentId={session.agentId}
+									assignments={assignments}
+									contentById={contentById}
+									editable={
+										session.status === 'PROPOSED' ||
+										session.status === 'SCHEDULED'
+									}
+								/>
 							)}
 
 							{!isAi && session.status === 'COMPLETED' && (

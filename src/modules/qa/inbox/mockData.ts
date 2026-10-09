@@ -166,6 +166,33 @@ const AGENT_INBOX: AgentNotification[] = [
 			topic: 'Objection handling',
 		},
 	}),
+	// The weekly AI coaching message, as the batch sends it when the decision is AI message.
+	buildNotification({
+		id: 'ntf-a14',
+		agentId: AGENT_PERSONA_ID,
+		category: 'DIRECT_MESSAGE',
+		priority: 'NORMAL',
+		title: 'Weekly coaching message: Weekly QA review',
+		message:
+			'Hi John, here is your weekly review (Weekly QA review).\n\n' +
+			'• QA: 78 (-4 vs last week)\n' +
+			'• Customer sentiment: 72 (stable vs last week)\n' +
+			'• Compliance: 91 (+2 vs last week)\n' +
+			'• Business: 74 (+1 vs last week)\n\n' +
+			'Your focus for the week is QA. Pick one call from last week where it slipped and note what you would do differently.\n\n' +
+			'To work on it this week I attached: Objection Handling Fundamentals, Closing the Call: recap & next steps.',
+		icon: 'school',
+		sourceRole: 'QA_MANAGER',
+		sourceId: QA_MANAGER_PERSONA.id,
+		createdAt: day(8, '09:00:00'),
+		payload: {
+			kind: 'COACHING_SESSION',
+			sessionId: 'coa-a04-weekly',
+			date: '2026-09-07T08:00:00Z',
+			coachName: QA_MANAGER_PERSONA.name,
+			topic: 'Weekly QA review',
+		},
+	}),
 	buildNotification({
 		id: 'ntf-a08',
 		agentId: AGENT_PERSONA_ID,

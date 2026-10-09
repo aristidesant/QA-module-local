@@ -191,23 +191,6 @@
 		"coaching": {
 			"title": "Coaching",
 			"description": "Tus sesiones agendadas, sesiones anteriores y los compromisos que has hecho.",
-			"upcoming": "Próxima sesión",
-			"upcomingDescription": "Tu próxima sesión con tu supervisor o el QA manager.",
-			"talkingPoints": "Puntos a tratar",
-			"commitments": "Mis compromisos",
-			"commitmentsDescription": "Acciones de tus sesiones y material asignado a raíz del coaching. Mantén ambos al día.",
-			"past": "Sesiones anteriores",
-			"pastDescription": "Todas las sesiones que has tenido con tu supervisor o el QA manager.",
-			"rowsCount": "{{count}} sesiones",
-			"columns": {
-				"date": "Fecha",
-				"topic": "Tema",
-				"type": "Tipo",
-				"coach": "Coach",
-				"area": "Aspecto",
-				"status": "Estado",
-				"outcome": "Resultado"
-			},
 			"status": {
 				"scheduled": "Agendada",
 				"completed": "Completada",
@@ -219,19 +202,15 @@
 			"linkedMaterial": "Material relacionado",
 			"latestMessage": "Tu revisión semanal",
 			"latestMessageDescription": "Escrita a partir de tus resultados por el asistente de QA. Ábrela para leer el mensaje completo.",
-			"types": {
-				"ONE_ON_ONE": "1:1",
-				"SIDE_BY_SIDE": "Lado a lado",
-				"GROUP": "Grupal",
-				"MICRO": "Micro",
-				"AI_MESSAGE": "Mensaje IA"
+			"modality": {
+				"IN_PERSON": "Presencial",
+				"REMOTE": "Virtual"
 			},
-			"modality": { "IN_PERSON": "Presencial", "REMOTE": "Virtual" },
 			"empty": "Todavía no tienes sesiones de coaching.",
-			"noCommitments": "No tienes compromisos abiertos.",
 			"detail": {
 				"talkingPoints": "Puntos a tratar",
 				"aiMessage": "Mensaje",
+				"location": "Lugar: {{place}}",
 				"meetingLink": "Enlace de la reunión",
 				"noPoints": "No hay puntos a tratar registrados.",
 				"evidence": "Evidencia",
@@ -240,10 +219,6 @@
 				"outcome": "Resultado",
 				"commitment": "Tu compromiso",
 				"notCommitted": "Todavía no te has comprometido."
-			},
-			"commitmentType": {
-				"session": "Sesión de coaching",
-				"material": "Material asignado"
 			}
 		},
 		"rolePlay": {
