@@ -743,14 +743,26 @@
 			"measured": "Medidos",
 			"improved": "Mejoraron",
 			"same": "Sin cambio",
-			"declined": "Empeoraron"
+			"declined": "Empeoraron",
+			"split": "{{materials}} materiales · {{sessions}} sesiones"
 		},
 		"byArea": "Por aspecto",
 		"byAreaDescription": "Proporción de materiales completados cuya métrica mejoró.",
 		"byContent": "Efectividad del contenido",
 		"byContentDescription": "Qué materiales mueven el puntaje.",
 		"byTeam": "Por equipo",
-		"byRule": "Por regla",
+		"byRule": "Efectividad de las reglas",
+		"byRuleDescription": "Cuántas veces se activó cada regla y cuántos de sus agentes mejoraron.",
+		"bySession": "Efectividad de las sesiones de coaching",
+		"bySessionDescription": "Cada 1:1 y mensaje IA completado, medido en el scorecard del agente: la semana posterior frente a la anterior.",
+		"sessionKind": {
+			"COACH_LED": "1:1 con supervisor",
+			"AI_MESSAGE": "Mensaje IA"
+		},
+		"pending_one": "{{count}} pendiente",
+		"pending_other": "{{count}} pendientes",
+		"composite": "Puntuación global",
+		"sessionTooltip": "Semana anterior {{previous}} → semana posterior {{current}} ({{delta}})",
 		"columns": {
 			"material": "Material",
 			"area": "Aspecto",
@@ -762,7 +774,12 @@
 			"rule": "Regla",
 			"fired": "Disparos",
 			"improvedRate": "Tasa de mejora",
-			"team": "Equipo"
+			"team": "Equipo",
+			"agents": "Agentes afectados",
+			"type": "Tipo",
+			"session": "Sesión",
+			"beforeAfter": "Antes → después",
+			"verdict": "Veredicto"
 		},
 		"series": {
 			"improved": "Mejoraron",

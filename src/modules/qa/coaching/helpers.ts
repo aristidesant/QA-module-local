@@ -297,6 +297,23 @@ export const impactByArea = (
 		};
 	});
 
+export interface VerdictCounts {
+	measured: number;
+	improved: number;
+	same: number;
+	declined: number;
+}
+
+/** Counts the three verdicts of anything already measured; the caller leaves PENDING out. */
+export const countVerdicts = (
+	verdicts: Array<'IMPROVED' | 'SAME' | 'DECLINED'>
+): VerdictCounts => ({
+	measured: verdicts.length,
+	improved: verdicts.filter((v) => v === 'IMPROVED').length,
+	same: verdicts.filter((v) => v === 'SAME').length,
+	declined: verdicts.filter((v) => v === 'DECLINED').length,
+});
+
 const compareValue = (value: number, op: ComparisonOperator, target: number) =>
 	op === 'LT'
 		? value < target

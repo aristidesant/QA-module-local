@@ -26,10 +26,10 @@ import { buildAiCoachingMessage } from './helpers';
 import { CLEAN_WEEK_PLAYBOOK, COACHING_PLAYBOOK } from './playbook';
 import { lastCompletedSession, verdictForDelta } from './postCoaching';
 import {
+	AREA_TO_SCORECARD,
 	buildWeeklyScorecard,
 	scorecardTrend,
 	tierFor,
-	type ScorecardDimension,
 	type WeeklyScorecard,
 } from './scorecard';
 
@@ -110,13 +110,6 @@ export const buildFindings = (
 				.slice(0, MAX_EVIDENCE)
 				.map((c) => c.id),
 		}));
-};
-
-const AREA_TO_SCORECARD: Record<EvaluationArea, ScorecardDimension | null> = {
-	QUALITY_ASSURANCE: 'qa',
-	COMPLIANCE: 'compliance',
-	BUSINESS_INSIGHTS: 'business',
-	SENTIMENT_EMOTION: null,
 };
 
 const buildPrevious = (

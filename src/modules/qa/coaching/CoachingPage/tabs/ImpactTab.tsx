@@ -1,4 +1,4 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import { Group, Progress, SimpleGrid, Stack, Text } from '@mantine/core';
 import { BarChart } from '@mantine/charts';
 import { createColumnHelper } from '@tanstack/react-table';
@@ -9,7 +9,11 @@ import BaseTable, {
 	type BaseTableColumnDef,
 } from '~/components/BaseTable/BaseTable';
 import EmptyState from '~/components/EmptyState';
-import type { CoachingRule, LmsContent } from '~/models/qa';
+import type {
+	CoachingRule,
+	CoachingSessionRecord,
+	LmsContent,
+} from '~/models/qa';
 import {
 	AreaBadge,
 	FormatBadge,
@@ -18,8 +22,22 @@ import {
 import { LMS_AREA_META } from '~/modules/qa/lms/constants';
 import type { AssignmentRow } from '~/modules/qa/lms/helpers';
 import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
-import type { TeamRole } from '~/modules/qa/team/types';
-import { impactByArea } from '../../helpers';
+import type { RosterAgent, TeamRole } from '~/modules/qa/team/types';
+import { ScorecardTrendBadge } from '../../components/ScorecardBadges';
+import { countVerdicts, impactByArea } from '../../helpers';
+import {
+	sessionImpacts,
+	summarizeSessionImpacts,
+	type SessionImpactRow,
+	type SessionImpactSummary,
+} from '../../postCoaching';
+
+/** An improved rate at or above this share is shown in green. */
+const IMPACT_RATE_GOOD = 60;
+/** How many recently measured sessions the sessions card lists. */
+const RECENT_SESSIONS = 8;
+
+type Verdict = 'IMPROVED' | 'SAME' | 'DECLINED';
 
 interface ContentEffectivenessRow {
 	contentId: string;
@@ -43,9 +61,14 @@ const contentHelper = createColumnHelper<ContentEffectivenessRow>();
 const recentHelper = createColumnHelper<AssignmentRow>();
 const ruleHelper = createColumnHelper<CoachingRule>();
 const teamHelper = createColumnHelper<TeamImpactRow>();
+const sessionSummaryHelper = createColumnHelper<SessionImpactSummary>();
+const sessionRecentHelper = createColumnHelper<SessionImpactRow>();
 
 interface ImpactTabProps {
 	rows: AssignmentRow[];
+	sessions: CoachingSessionRecord[];
+	/** Agents of the viewer's scope; sessions of anyone else are not measured. */
+	agents: Pick<RosterAgent, 'id' | 'name'>[];
 	rules: CoachingRule[];
 	contentById: Record<string, LmsContent>;
 	role: TeamRole;
@@ -54,6 +77,8 @@ interface ImpactTabProps {
 
 export function ImpactTab({
 	rows,
+	sessions,
+	agents,
 	rules,
 	contentById,
 	role,
@@ -66,14 +91,35 @@ export function ImpactTab({
 		[rows]
 	);
 
-	const kpis = {
-		measured: measuredRows.length,
-		improved: measuredRows.filter((r) => r.impact?.verdict === 'IMPROVED')
-			.length,
-		same: measuredRows.filter((r) => r.impact?.verdict === 'SAME').length,
-		declined: measuredRows.filter((r) => r.impact?.verdict === 'DECLINED')
-			.length,
-	};
+	const sessionRows = useMemo(
+		() => sessionImpacts(sessions, agents),
+		[sessions, agents]
+	);
+	const measuredSessions = useMemo(
+		() => sessionRows.filter((r) => r.verdict !== 'PENDING'),
+		[sessionRows]
+	);
+	const sessionSummaries = useMemo(
+		() => summarizeSessionImpacts(sessionRows),
+		[sessionRows]
+	);
+	const recentSessions = useMemo(
+		() =>
+			[...measuredSessions]
+				.sort((a, b) => b.day.localeCompare(a.day))
+				.slice(0, RECENT_SESSIONS),
+		[measuredSessions]
+	);
+
+	// Every measurement on the tab, materials and sessions together.
+	const kpis = useMemo(
+		() =>
+			countVerdicts([
+				...measuredRows.map((r) => r.impact!.verdict as Verdict),
+				...measuredSessions.map((r) => r.verdict as Verdict),
+			]),
+		[measuredRows, measuredSessions]
+	);
 
 	const areaRows = useMemo(
 		() => impactByArea(rows, contentById),
@@ -104,14 +150,17 @@ export function ImpactTab({
 				const rawAvg = deltas.length
 					? deltas.reduce((s, d) => s + d, 0) / deltas.length
 					: 0;
+				const counts = countVerdicts(
+					list.map((r) => r.impact!.verdict as Verdict)
+				);
 				return {
 					contentId,
 					title: content?.title ?? contentId,
 					content,
-					measured: list.length,
-					improved: list.filter((r) => r.impact?.verdict === 'IMPROVED').length,
-					same: list.filter((r) => r.impact?.verdict === 'SAME').length,
-					declined: list.filter((r) => r.impact?.verdict === 'DECLINED').length,
+					measured: counts.measured,
+					improved: counts.improved,
+					same: counts.same,
+					declined: counts.declined,
 					avgDelta: Math.round((higherIsBetter ? rawAvg : -rawAvg) * 10) / 10,
 				};
 			})
@@ -128,14 +177,14 @@ export function ImpactTab({
 			map.set(r.team, [...(map.get(r.team) ?? []), r]);
 		return [...map.entries()]
 			.map(([team, list]) => {
-				const improved = list.filter(
-					(r) => r.impact?.verdict === 'IMPROVED'
-				).length;
+				const counts = countVerdicts(
+					list.map((r) => r.impact!.verdict as Verdict)
+				);
 				return {
 					team,
-					measured: list.length,
-					improved,
-					rate: Math.round((improved / list.length) * 100),
+					measured: counts.measured,
+					improved: counts.improved,
+					rate: Math.round((counts.improved / counts.measured) * 100),
 				};
 			})
 			.sort((a, b) => a.team.localeCompare(b.team));
@@ -153,9 +202,33 @@ export function ImpactTab({
 
 	const firedRules = rules.filter((r) => r.stats.triggeredLast30Days > 0);
 
-	if (measuredRows.length === 0) {
+	if (measuredRows.length === 0 && measuredSessions.length === 0) {
 		return <EmptyState message={t('impact.empty')} />;
 	}
+
+	/** Signed change in the scorecard or metric, colored by direction. */
+	const signedDelta = (value: number | null) =>
+		value === null ? (
+			<Text size='sm' c='dimmed'>
+				—
+			</Text>
+		) : (
+			<Text size='sm' c={value > 0 ? 'green' : value < 0 ? 'red' : undefined}>
+				{value > 0 ? '+' : ''}
+				{value}
+			</Text>
+		);
+
+	const rateText = (rate: number | null) =>
+		rate === null ? (
+			<Text size='sm' c='dimmed'>
+				—
+			</Text>
+		) : (
+			<Text size='sm' c={rate >= IMPACT_RATE_GOOD ? 'green' : undefined}>
+				{rate}%
+			</Text>
+		);
 
 	const contentColumns: BaseTableColumnDef<ContentEffectivenessRow>[] = [
 		contentHelper.accessor('title', {
@@ -183,7 +256,7 @@ export function ImpactTab({
 		contentHelper.accessor('improved', {
 			header: t('impact.columns.improved'),
 			cell: (info) => (
-				<Text size='sm' c='green' fw={600}>
+				<Text size='sm' fw={600}>
 					{info.getValue()}
 				</Text>
 			),
@@ -201,21 +274,7 @@ export function ImpactTab({
 		}) as BaseTableColumnDef<ContentEffectivenessRow>,
 		contentHelper.accessor('avgDelta', {
 			header: t('impact.columns.avgDelta'),
-			cell: (info) => (
-				<Text
-					size='sm'
-					c={
-						info.getValue() > 0
-							? 'green'
-							: info.getValue() < 0
-								? 'red'
-								: undefined
-					}
-				>
-					{info.getValue() > 0 ? '+' : ''}
-					{info.getValue()}
-				</Text>
-			),
+			cell: (info) => signedDelta(info.getValue()),
 		}) as BaseTableColumnDef<ContentEffectivenessRow>,
 	];
 
@@ -277,26 +336,127 @@ export function ImpactTab({
 		}) as BaseTableColumnDef<CoachingRule>,
 		ruleHelper.accessor((r) => r.stats.agentsAffected, {
 			id: 'agents',
-			header: t('impact.columns.measured'),
+			header: t('impact.columns.agents'),
 			cell: (info) => <Text size='sm'>{info.getValue()}</Text>,
 		}) as BaseTableColumnDef<CoachingRule>,
 		ruleHelper.accessor((r) => r.stats.improvedRate, {
 			id: 'rate',
 			header: t('impact.columns.improvedRate'),
+			cell: (info) => rateText(info.getValue()),
+		}) as BaseTableColumnDef<CoachingRule>,
+	];
+
+	const sessionSummaryColumns: BaseTableColumnDef<SessionImpactSummary>[] = [
+		sessionSummaryHelper.accessor('kind', {
+			header: t('impact.columns.type'),
 			cell: (info) => (
-				<Text
-					size='sm'
-					c={
-						typeof info.getValue() === 'number' &&
-						(info.getValue() as number) >= 60
-							? 'green'
-							: undefined
-					}
-				>
-					{info.getValue() === null ? '—' : `${info.getValue()}%`}
+				<Stack gap={0}>
+					<Text size='sm'>{t(`impact.sessionKind.${info.getValue()}`)}</Text>
+					{info.row.original.pending > 0 && (
+						<Text size='xs' c='dimmed'>
+							{t('impact.pending', { count: info.row.original.pending })}
+						</Text>
+					)}
+				</Stack>
+			),
+		}) as BaseTableColumnDef<SessionImpactSummary>,
+		sessionSummaryHelper.accessor('measured', {
+			header: t('impact.columns.measured'),
+		}) as BaseTableColumnDef<SessionImpactSummary>,
+		sessionSummaryHelper.accessor('improved', {
+			header: t('impact.columns.improved'),
+			cell: (info) => (
+				<Text size='sm' fw={600}>
+					{info.getValue()}
 				</Text>
 			),
-		}) as BaseTableColumnDef<CoachingRule>,
+		}) as BaseTableColumnDef<SessionImpactSummary>,
+		sessionSummaryHelper.accessor('same', {
+			header: t('impact.columns.same'),
+		}) as BaseTableColumnDef<SessionImpactSummary>,
+		sessionSummaryHelper.accessor('declined', {
+			header: t('impact.columns.declined'),
+			cell: (info) => (
+				<Text size='sm' c={info.getValue() > 0 ? 'red' : undefined}>
+					{info.getValue()}
+				</Text>
+			),
+		}) as BaseTableColumnDef<SessionImpactSummary>,
+		sessionSummaryHelper.accessor('improvedRate', {
+			header: t('impact.columns.improvedRate'),
+			cell: (info) => rateText(info.getValue()),
+		}) as BaseTableColumnDef<SessionImpactSummary>,
+		sessionSummaryHelper.accessor('avgDelta', {
+			header: t('impact.columns.avgDelta'),
+			cell: (info) => signedDelta(info.getValue()),
+		}) as BaseTableColumnDef<SessionImpactSummary>,
+	];
+
+	const sessionRecentColumns: BaseTableColumnDef<SessionImpactRow>[] = [
+		sessionRecentHelper.accessor('agentName', {
+			header: t('impact.recentColumns.agent'),
+		}) as BaseTableColumnDef<SessionImpactRow>,
+		sessionRecentHelper.display({
+			id: 'session',
+			header: t('impact.columns.session'),
+			cell: (info) => (
+				<Stack gap={0}>
+					<Text size='sm'>{t(`sessions.types.${info.row.original.type}`)}</Text>
+					<Text size='xs' c='dimmed'>
+						{info.row.original.topic}
+					</Text>
+				</Stack>
+			),
+		}) as BaseTableColumnDef<SessionImpactRow>,
+		sessionRecentHelper.display({
+			id: 'aspect',
+			header: t('impact.columns.area'),
+			cell: (info) => {
+				const { area, dimension } = info.row.original;
+				return (
+					<Text size='xs' c='dimmed'>
+						{area && dimension
+							? t(LMS_AREA_META[area].labelKey, { ns: 'qa.lms' })
+							: t('impact.composite')}
+					</Text>
+				);
+			},
+		}) as BaseTableColumnDef<SessionImpactRow>,
+		sessionRecentHelper.display({
+			id: 'beforeAfter',
+			header: t('impact.columns.beforeAfter'),
+			cell: (info) => (
+				<Text size='sm'>
+					{info.row.original.before} → {info.row.original.after}
+				</Text>
+			),
+		}) as BaseTableColumnDef<SessionImpactRow>,
+		sessionRecentHelper.display({
+			id: 'verdict',
+			header: t('impact.columns.verdict'),
+			cell: (info) => {
+				const r = info.row.original;
+				if (r.verdict === 'PENDING' || r.before === null || r.after === null) {
+					return (
+						<Text size='sm' c='dimmed'>
+							—
+						</Text>
+					);
+				}
+				return (
+					<ScorecardTrendBadge
+						size='xs'
+						tooltipKey='impact.sessionTooltip'
+						trend={{
+							verdict: r.verdict,
+							current: r.after,
+							previous: r.before,
+							delta: r.after - r.before,
+						}}
+					/>
+				);
+			},
+		}) as BaseTableColumnDef<SessionImpactRow>,
 	];
 
 	const teamColumns: BaseTableColumnDef<TeamImpactRow>[] = [
@@ -325,24 +485,14 @@ export function ImpactTab({
 
 	return (
 		<Stack gap='md'>
-			<SectionCard
-				title={t('impact.recent')}
-				description={t('impact.recentDescription')}
-			>
-				<BaseTable<AssignmentRow>
-					data={recent}
-					columns={recentColumns}
-					getRowId={(r) => r.id}
-					density='compact'
-					emptyMessage={t('impact.empty')}
-					onRowClick={(r) => onOpenAgent(r.agentId)}
-				/>
-			</SectionCard>
-
 			<SimpleGrid cols={{ base: 2, md: 4 }} spacing='md'>
 				<StatCard
 					title={t('impact.kpi.measured')}
 					value={kpis.measured}
+					subtitle={t('impact.kpi.split', {
+						materials: measuredRows.length,
+						sessions: measuredSessions.length,
+					})}
 					variant='compact'
 				/>
 				<StatCard
@@ -364,69 +514,24 @@ export function ImpactTab({
 				/>
 			</SimpleGrid>
 
-			<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-				<SectionCard
-					title={t('impact.byArea')}
-					description={t('impact.byAreaDescription')}
-				>
-					<Stack gap='md'>
-						<BarChart
-							h={200}
-							data={chartData}
-							dataKey='area'
-							type='stacked'
-							series={[
-								{
-									name: 'improved',
-									label: t('impact.series.improved'),
-									color: 'green.6',
-								},
-								{
-									name: 'same',
-									label: t('impact.series.same'),
-									color: 'gray.5',
-								},
-								{
-									name: 'declined',
-									label: t('impact.series.declined'),
-									color: 'red.6',
-								},
-							]}
-							withLegend
-						/>
-						<SimpleGrid cols={4} spacing='xs'>
-							{areaRows.map((a) => (
-								<Stack key={a.area} gap={2}>
-									<Text size='xs' c='dimmed' lineClamp={1}>
-										{t(LMS_AREA_META[a.area].labelKey, { ns: 'qa.lms' })}
-									</Text>
-									<Text
-										size='lg'
-										fw={700}
-										c={a.improvedRate >= 60 ? 'green' : undefined}
-									>
-										{a.improvedRate}%
-									</Text>
-								</Stack>
-							))}
-						</SimpleGrid>
-					</Stack>
-				</SectionCard>
+			<SectionCard
+				title={t('impact.byRule')}
+				description={t('impact.byRuleDescription')}
+			>
+				<BaseTable<CoachingRule>
+					data={firedRules}
+					columns={ruleColumns}
+					getRowId={(r) => r.id}
+					density='compact'
+					emptyMessage={t('impact.empty')}
+				/>
+			</SectionCard>
 
-				<SectionCard title={t('impact.byRule')}>
-					<BaseTable<CoachingRule>
-						data={firedRules}
-						columns={ruleColumns}
-						getRowId={(r) => r.id}
-						density='compact'
-						emptyMessage={t('impact.empty')}
-					/>
-				</SectionCard>
-
-				<SectionCard
-					title={t('impact.byContent')}
-					description={t('impact.byContentDescription')}
-				>
+			<SectionCard
+				title={t('impact.byContent')}
+				description={t('impact.byContentDescription')}
+			>
+				<Stack gap='lg'>
 					<BaseTable<ContentEffectivenessRow>
 						data={contentRows}
 						columns={contentColumns}
@@ -434,20 +539,109 @@ export function ImpactTab({
 						density='compact'
 						emptyMessage={t('impact.empty')}
 					/>
-				</SectionCard>
-
-				{role === 'qa-manager' && (
-					<SectionCard title={t('impact.byTeam')}>
-						<BaseTable<TeamImpactRow>
-							data={teamRows}
-							columns={teamColumns}
-							getRowId={(r) => r.team}
+					<Stack gap='xs'>
+						<Stack gap={0}>
+							<Text size='sm' fw={600}>
+								{t('impact.recent')}
+							</Text>
+							<Text size='xs' c='dimmed'>
+								{t('impact.recentDescription')}
+							</Text>
+						</Stack>
+						<BaseTable<AssignmentRow>
+							data={recent}
+							columns={recentColumns}
+							getRowId={(r) => r.id}
 							density='compact'
 							emptyMessage={t('impact.empty')}
+							onRowClick={(r) => onOpenAgent(r.agentId)}
 						/>
-					</SectionCard>
-				)}
-			</SimpleGrid>
+					</Stack>
+				</Stack>
+			</SectionCard>
+
+			<SectionCard
+				title={t('impact.bySession')}
+				description={t('impact.bySessionDescription')}
+			>
+				<SimpleGrid cols={{ base: 1, lg: 2 }} spacing='md'>
+					<BaseTable<SessionImpactSummary>
+						data={sessionSummaries}
+						columns={sessionSummaryColumns}
+						getRowId={(r) => r.kind}
+						density='compact'
+						emptyMessage={t('impact.empty')}
+					/>
+					<BaseTable<SessionImpactRow>
+						data={recentSessions}
+						columns={sessionRecentColumns}
+						getRowId={(r) => `${r.sessionId}-${r.agentId}`}
+						density='compact'
+						emptyMessage={t('impact.empty')}
+						onRowClick={(r) => onOpenAgent(r.agentId)}
+					/>
+				</SimpleGrid>
+			</SectionCard>
+
+			{role === 'qa-manager' && (
+				<SectionCard title={t('impact.byTeam')}>
+					<BaseTable<TeamImpactRow>
+						data={teamRows}
+						columns={teamColumns}
+						getRowId={(r) => r.team}
+						density='compact'
+						emptyMessage={t('impact.empty')}
+					/>
+				</SectionCard>
+			)}
+
+			<SectionCard
+				title={t('impact.byArea')}
+				description={t('impact.byAreaDescription')}
+			>
+				<Stack gap='md'>
+					<BarChart
+						h={200}
+						data={chartData}
+						dataKey='area'
+						type='stacked'
+						series={[
+							{
+								name: 'improved',
+								label: t('impact.series.improved'),
+								color: 'green.6',
+							},
+							{
+								name: 'same',
+								label: t('impact.series.same'),
+								color: 'gray.5',
+							},
+							{
+								name: 'declined',
+								label: t('impact.series.declined'),
+								color: 'red.6',
+							},
+						]}
+						withLegend
+					/>
+					<SimpleGrid cols={4} spacing='xs'>
+						{areaRows.map((a) => (
+							<Stack key={a.area} gap={2}>
+								<Text size='xs' c='dimmed' lineClamp={1}>
+									{t(LMS_AREA_META[a.area].labelKey, { ns: 'qa.lms' })}
+								</Text>
+								<Text
+									size='lg'
+									fw={700}
+									c={a.improvedRate >= IMPACT_RATE_GOOD ? 'green' : undefined}
+								>
+									{a.improvedRate}%
+								</Text>
+							</Stack>
+						))}
+					</SimpleGrid>
+				</Stack>
+			</SectionCard>
 		</Stack>
 	);
 }

@@ -743,14 +743,26 @@
 			"measured": "Measured",
 			"improved": "Improved",
 			"same": "No change",
-			"declined": "Declined"
+			"declined": "Declined",
+			"split": "{{materials}} materials · {{sessions}} sessions"
 		},
 		"byArea": "By aspect",
 		"byAreaDescription": "Share of completed items whose metric improved.",
 		"byContent": "Content effectiveness",
 		"byContentDescription": "Which materials move the score.",
 		"byTeam": "By team",
-		"byRule": "By rule",
+		"byRule": "Rules effectiveness",
+		"byRuleDescription": "How often each rule fired and how many of its agents improved.",
+		"bySession": "Coaching sessions effectiveness",
+		"bySessionDescription": "Each completed 1:1 and AI message, measured on the agent's scorecard: the week after vs. the week before.",
+		"sessionKind": {
+			"COACH_LED": "1:1 with supervisor",
+			"AI_MESSAGE": "AI message"
+		},
+		"pending_one": "{{count}} pending",
+		"pending_other": "{{count}} pending",
+		"composite": "Overall score",
+		"sessionTooltip": "Week before {{previous}} → week after {{current}} ({{delta}})",
 		"columns": {
 			"material": "Material",
 			"area": "Aspect",
@@ -762,7 +774,12 @@
 			"rule": "Rule",
 			"fired": "Fired",
 			"improvedRate": "Improved rate",
-			"team": "Team"
+			"team": "Team",
+			"agents": "Agents affected",
+			"type": "Type",
+			"session": "Session",
+			"beforeAfter": "Before → after",
+			"verdict": "Verdict"
 		},
 		"series": {
 			"improved": "Improved",

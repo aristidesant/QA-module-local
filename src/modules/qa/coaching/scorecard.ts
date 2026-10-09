@@ -1,5 +1,5 @@
 import type { TFunction } from 'i18next';
-import type { LmsImpactVerdict } from '~/models/qa';
+import type { EvaluationArea, LmsImpactVerdict } from '~/models/qa';
 import type { TeamCallMetric } from '~/modules/qa/analytics/types';
 import {
 	agentCallsInWindow,
@@ -23,6 +23,17 @@ export const SCORECARD_DIMENSION_ORDER: ScorecardDimension[] = [
 	'operational',
 	'business',
 ];
+
+/** Scorecard aspect an evaluation area maps to; null means the composite score (there is no sentiment aspect). */
+export const AREA_TO_SCORECARD: Record<
+	EvaluationArea,
+	ScorecardDimension | null
+> = {
+	QUALITY_ASSURANCE: 'qa',
+	COMPLIANCE: 'compliance',
+	BUSINESS_INSIGHTS: 'business',
+	SENTIMENT_EMOTION: null,
+};
 
 /** Weights sum to 100. */
 export const SCORECARD_WEIGHTS: Record<ScorecardDimension, number> = {

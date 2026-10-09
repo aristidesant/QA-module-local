@@ -4,6 +4,7 @@ import type {
 	LmsContent,
 } from '~/models/qa';
 import { TODAY, addDays } from '~/modules/qa/analytics/constants';
+import type { RosterAgent } from '~/modules/qa/team/types';
 import {
 	agentCallsBetween,
 	agentCallsInWindow,
@@ -11,6 +12,7 @@ import {
 import { IMPACT_THRESHOLD } from '~/modules/qa/lms/constants';
 import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
 import {
+	AREA_TO_SCORECARD,
 	SCORECARD_DIMENSION_ORDER,
 	SCORECARD_WINDOW_DAYS,
 	buildWeeklyScorecard,
@@ -271,3 +273,146 @@ export const rankMaterialImpact = (
 				(y.delta ?? Number.NEGATIVE_INFINITY) -
 				(x.delta ?? Number.NEGATIVE_INFINITY)
 		);
+
+export type SessionImpactKind = 'COACH_LED' | 'AI_MESSAGE';
+
+/** One completed session measured on the agent's scorecard: the week after vs. the week before. */
+export interface SessionImpactRow {
+	sessionId: string;
+	agentId: string;
+	agentName: string;
+	type: CoachingSessionRecord['type'];
+	kind: SessionImpactKind;
+	topic: string;
+	area: CoachingSessionRecord['area'];
+	/** Scorecard aspect of the session's area; null means the overall score. */
+	dimension: ScorecardDimension | null;
+	/** 'YYYY-MM-DD' of the session, or of the message send. */
+	day: string;
+	before: number | null;
+	after: number | null;
+	delta: number | null;
+	/** PENDING while the week after has not produced calls yet. */
+	verdict: ScorecardTrendVerdict | 'PENDING';
+}
+
+/** Days of calls needed after a session before it counts as measured. */
+const MIN_DAYS_AFTER = 2;
+
+/**
+ * Every COMPLETED session of the agents in scope, measured on the scorecard:
+ * the week after the session against the week before it. A group session
+ * yields one row per participant, named from the roster. Sessions younger than
+ * MIN_DAYS_AFTER stay PENDING; older ones with no calls in either window have
+ * nothing to measure and are left out. The scorecard is higher-is-better on
+ * every aspect, so the delta needs no sign flip.
+ */
+export const sessionImpacts = (
+	sessions: CoachingSessionRecord[],
+	agents: Pick<RosterAgent, 'id' | 'name'>[]
+): SessionImpactRow[] => {
+	const nameById = new Map(agents.map((a) => [a.id, a.name]));
+	return sessions
+		.filter((s) => s.status === 'COMPLETED')
+		.flatMap((s) => {
+			const day = dayOf(s.date);
+			const young = daysBetween(day, TODAY) < MIN_DAYS_AFTER;
+			const dimension = s.area ? AREA_TO_SCORECARD[s.area] : null;
+			const kind: SessionImpactKind =
+				s.type === 'AI_MESSAGE' ? 'AI_MESSAGE' : 'COACH_LED';
+			const pick = (card: WeeklyScorecard | null) =>
+				card === null
+					? null
+					: dimension
+						? card.dimensions[dimension]
+						: card.score;
+			return (s.agentIds ?? [s.agentId])
+				.filter((agentId) => nameById.has(agentId))
+				.flatMap((agentId): SessionImpactRow[] => {
+					const base = {
+						sessionId: s.id,
+						agentId,
+						agentName: nameById.get(agentId) ?? s.agentName,
+						type: s.type,
+						kind,
+						topic: s.topic,
+						area: s.area,
+						dimension,
+						day,
+					};
+					if (young) {
+						return [
+							{
+								...base,
+								before: null,
+								after: null,
+								delta: null,
+								verdict: 'PENDING',
+							},
+						];
+					}
+					// The week after, cut at today while it is still running.
+					const weekEnd = addDays(day, SCORECARD_WINDOW_DAYS - 1);
+					const after = pick(
+						buildWeeklyScorecard(
+							agentCallsBetween(agentId, day, weekEnd < TODAY ? weekEnd : TODAY)
+						)
+					);
+					const before = pick(
+						buildWeeklyScorecard(
+							agentCallsBetween(
+								agentId,
+								addDays(day, -SCORECARD_WINDOW_DAYS),
+								addDays(day, -1)
+							)
+						)
+					);
+					// No calls in a window (before the call history starts): nothing to measure.
+					if (after === null || before === null) return [];
+					const delta = after - before;
+					return [
+						{ ...base, before, after, delta, verdict: verdictForDelta(delta) },
+					];
+				});
+		});
+};
+
+export interface SessionImpactSummary {
+	kind: SessionImpactKind;
+	measured: number;
+	improved: number;
+	same: number;
+	declined: number;
+	pending: number;
+	/** 0-100; null when nothing is measured. */
+	improvedRate: number | null;
+	/** Mean signed delta of the measured rows, one decimal; null when nothing is measured. */
+	avgDelta: number | null;
+}
+
+/** One summary per session kind, in the order the Impact tab lists them. */
+export const summarizeSessionImpacts = (
+	rows: SessionImpactRow[]
+): SessionImpactSummary[] =>
+	(['COACH_LED', 'AI_MESSAGE'] as const).map((kind) => {
+		const own = rows.filter((r) => r.kind === kind);
+		const measured = own.filter((r) => r.verdict !== 'PENDING');
+		const improved = measured.filter((r) => r.verdict === 'IMPROVED').length;
+		const deltas = measured.map((r) => r.delta as number);
+		return {
+			kind,
+			measured: measured.length,
+			improved,
+			same: measured.filter((r) => r.verdict === 'SAME').length,
+			declined: measured.filter((r) => r.verdict === 'DECLINED').length,
+			pending: own.length - measured.length,
+			improvedRate: measured.length
+				? Math.round((improved / measured.length) * 100)
+				: null,
+			avgDelta: deltas.length
+				? Math.round(
+						(deltas.reduce((sum, d) => sum + d, 0) / deltas.length) * 10
+					) / 10
+				: null,
+		};
+	});

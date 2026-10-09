@@ -397,6 +397,8 @@ export default function CoachingPage() {
 					<Tabs.Panel value='impact' pt='md'>
 						<ImpactTab
 							rows={rows}
+							sessions={scopeSessions}
+							agents={scopeAgents}
 							rules={scopeRules}
 							contentById={contentById}
 							role={role}
