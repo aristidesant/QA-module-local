@@ -10,7 +10,6 @@ import {
 	IconSchool,
 	IconTrendingDown,
 	IconUsers,
-	IconUsersGroup,
 } from '@tabler/icons-react';
 import type {
 	CoachingPriority,
@@ -24,12 +23,7 @@ import type {
 import type { TeamRole } from '~/modules/qa/team/types';
 import type { PerformanceTier } from './scorecard';
 
-export type CoachingTab =
-	| 'agents'
-	| 'cohorts'
-	| 'rules'
-	| 'sessions'
-	| 'impact';
+export type CoachingTab = 'agents' | 'rules' | 'sessions' | 'impact';
 
 export const COACHING_TABS: {
 	value: CoachingTab;
@@ -37,7 +31,6 @@ export const COACHING_TABS: {
 	icon: TablerIcon;
 }[] = [
 	{ value: 'agents', labelKey: 'tabs.agents', icon: IconUsers },
-	{ value: 'cohorts', labelKey: 'tabs.cohorts', icon: IconUsersGroup },
 	{ value: 'rules', labelKey: 'tabs.rules', icon: IconRoute },
 	{ value: 'sessions', labelKey: 'tabs.sessions', icon: IconCalendarEvent },
 	{ value: 'impact', labelKey: 'tabs.impact', icon: IconChartBar },
@@ -179,12 +172,6 @@ export const coachingRulePath = (role: TeamRole, ruleId: string) =>
 
 export const coachingRuleEditPath = (role: TeamRole, ruleId: string) =>
 	`${coachingBasePath(role)}/rules/${ruleId}/edit`;
-
-export const coachingGroupNewPath = (role: TeamRole) =>
-	`${coachingBasePath(role)}/groups/new`;
-
-export const coachingGroupEditPath = (role: TeamRole, cohortId: string) =>
-	`${coachingBasePath(role)}/groups/${cohortId}/edit`;
 
 export const coachingAgentPath = (role: TeamRole, agentId: string) =>
 	`${coachingBasePath(role)}/agents/${agentId}`;

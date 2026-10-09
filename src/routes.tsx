@@ -1332,8 +1332,8 @@ const router = createBrowserRouter([
 										),
 									},
 									{
-										path: 'qa-manager/coaching/groups/new',
-										id: 'qa.qa-manager.coaching.group-new',
+										path: 'qa-manager/lms/groups/new',
+										id: 'qa.qa-manager.lms.group-new',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
@@ -1343,8 +1343,8 @@ const router = createBrowserRouter([
 										),
 									},
 									{
-										path: 'qa-manager/coaching/groups/:cohortId/edit',
-										id: 'qa.qa-manager.coaching.group-edit',
+										path: 'qa-manager/lms/groups/:cohortId/edit',
+										id: 'qa.qa-manager.lms.group-edit',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
@@ -1442,8 +1442,8 @@ const router = createBrowserRouter([
 										),
 									},
 									{
-										path: 'supervisor/coaching/groups/new',
-										id: 'qa.supervisor.coaching.group-new',
+										path: 'supervisor/lms/groups/new',
+										id: 'qa.supervisor.lms.group-new',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
@@ -1453,8 +1453,8 @@ const router = createBrowserRouter([
 										),
 									},
 									{
-										path: 'supervisor/coaching/groups/:cohortId/edit',
-										id: 'qa.supervisor.coaching.group-edit',
+										path: 'supervisor/lms/groups/:cohortId/edit',
+										id: 'qa.supervisor.lms.group-edit',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>

@@ -3,15 +3,15 @@ import { Anchor, Breadcrumbs, Stack, Text, Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer';
 import { EmptyState } from '~/components/EmptyState/EmptyState';
+import { managerLmsPath } from '~/modules/qa/lms/constants';
 import { managerPersona } from '~/modules/qa/lms/helpers';
 import { roleFromPath } from '~/modules/qa/team/helpers';
 import { selectCohorts, useCoachingStore } from '~/stores/qa/coachingStore';
 import { CoachingGroupForm } from '../components/CoachingGroupForm';
-import { coachingBasePath } from '../constants';
 
 /** Create or edit one learning group on its own page (route `groups/new` or `groups/:cohortId/edit`). */
 export default function CoachingGroupPage() {
-	const { t } = useTranslation('qa.coaching');
+	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
 	const location = useLocation();
 	const navigate = useNavigate();
 	const { cohortId } = useParams<{ cohortId: string }>();
@@ -25,7 +25,7 @@ export default function CoachingGroupPage() {
 		? (cohorts.find((c) => c.id === cohortId) ?? null)
 		: null;
 
-	const backToGroups = () => navigate(`${coachingBasePath(role)}?tab=cohorts`);
+	const backToGroups = () => navigate(`${managerLmsPath(role)}?tab=groups`);
 
 	if (mode === 'edit' && !cohort) {
 		return (
@@ -42,11 +42,11 @@ export default function CoachingGroupPage() {
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg' maw={720} mx='auto' px='md'>
 				<Breadcrumbs>
-					<Anchor size='sm' onClick={() => navigate(coachingBasePath(role))}>
-						{t('title')}
+					<Anchor size='sm' onClick={() => navigate(managerLmsPath(role))}>
+						{t('manager.title', { ns: 'qa.lms' })}
 					</Anchor>
 					<Anchor size='sm' onClick={backToGroups}>
-						{t('tabs.cohorts')}
+						{t('manager.tabs.groups', { ns: 'qa.lms' })}
 					</Anchor>
 					<Text size='sm' c='dimmed'>
 						{mode === 'edit' && cohort ? cohort.name : title}

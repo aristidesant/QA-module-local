@@ -334,6 +334,7 @@
 		"tabs": {
 			"library": "Biblioteca",
 			"paths": "Rutas de aprendizaje",
+			"groups": "Grupos de aprendizaje",
 			"assignments": "Asignaciones",
 			"reports": "Reportes"
 		},

@@ -1,5 +1,10 @@
 ﻿import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate, useSearchParams } from 'react-router';
+import {
+	Navigate,
+	useLocation,
+	useNavigate,
+	useSearchParams,
+} from 'react-router';
 import {
 	Badge,
 	Button,
@@ -52,8 +57,6 @@ import {
 	coachingAgentPath,
 	coachingSessionPath,
 	coachingTierPath,
-	coachingGroupEditPath,
-	coachingGroupNewPath,
 	coachingSessionNewPath,
 	coachingRuleEditPath,
 	coachingRuleNewPath,
@@ -62,7 +65,7 @@ import {
 } from '../constants';
 import { AgentsTab } from './tabs/AgentsTab';
 import { buildAgentRows } from '../agentRows';
-import { CohortsTab } from './tabs/CohortsTab';
+import { managerLmsPath } from '~/modules/qa/lms/constants';
 import { RulesTab } from './tabs/RulesTab';
 import { SessionsTab } from './tabs/SessionsTab';
 import { ImpactTab } from './tabs/ImpactTab';
@@ -226,6 +229,11 @@ export default function CoachingPage() {
 	const pathTitle = (id: string | null) =>
 		paths.find((p) => p.id === id)?.title ?? '—';
 
+	// Learning groups moved to the Learning section; old links to their tab land there.
+	if (searchParams.get('tab') === 'cohorts') {
+		return <Navigate to={`${managerLmsPath(role)}?tab=groups`} replace />;
+	}
+
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
@@ -304,14 +312,12 @@ export default function CoachingPage() {
 							const count =
 								value === 'agents'
 									? agentRows.length
-									: value === 'cohorts'
-										? scopeCohorts.length
-										: value === 'rules'
-											? scopeRules.filter((r) => r.status === 'ACTIVE').length
-											: value === 'sessions'
-												? scopeSessions.filter((s) => s.status === 'SCHEDULED')
-														.length
-												: measured.length;
+									: value === 'rules'
+										? scopeRules.filter((r) => r.status === 'ACTIVE').length
+										: value === 'sessions'
+											? scopeSessions.filter((s) => s.status === 'SCHEDULED')
+													.length
+											: measured.length;
 							return (
 								<Tabs.Tab
 									key={value}
@@ -334,16 +340,6 @@ export default function CoachingPage() {
 							rows={agentRows}
 							onOpen={(agentId) => navigate(coachingAgentPath(role, agentId))}
 							onShowDetails={(tier) => navigate(coachingTierPath(role, tier))}
-						/>
-					</Tabs.Panel>
-
-					<Tabs.Panel value='cohorts' pt='md'>
-						<CohortsTab
-							cohorts={scopeCohorts}
-							paths={paths}
-							assignments={assignments}
-							onOpen={(id) => navigate(coachingGroupEditPath(role, id))}
-							onCreate={() => navigate(coachingGroupNewPath(role))}
 						/>
 					</Tabs.Panel>
 

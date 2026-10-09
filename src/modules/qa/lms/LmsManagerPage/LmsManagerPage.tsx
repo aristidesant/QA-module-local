@@ -19,6 +19,7 @@ import {
 	IconMailForward,
 	IconPlus,
 	IconRoute,
+	IconUsersGroup,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
@@ -33,8 +34,16 @@ import {
 	selectEnrollments,
 	selectPaths,
 } from '~/stores/qa/lmsStore';
-import { useCoachingStore, selectRules } from '~/stores/qa/coachingStore';
-import { managerContentPath } from '../constants';
+import {
+	useCoachingStore,
+	selectCohorts,
+	selectRules,
+} from '~/stores/qa/coachingStore';
+import {
+	managerContentPath,
+	managerGroupEditPath,
+	managerGroupNewPath,
+} from '../constants';
 import {
 	managerKpis,
 	managerPersona,
@@ -49,11 +58,12 @@ import { ContentDetailDrawer } from '../components/ContentDetailDrawer';
 import { PathDetailDrawer } from '../components/PathDetailDrawer';
 import { AssignmentDetailDrawer } from '../components/AssignmentDetailDrawer';
 import { LibraryTab } from './tabs/LibraryTab';
+import { CohortsTab } from './tabs/CohortsTab';
 import { ManagerPathsTab } from './tabs/ManagerPathsTab';
 import { ManagerAssignmentsTab } from './tabs/ManagerAssignmentsTab';
 import { ReportsTab } from './tabs/ReportsTab';
 
-type ManagerTab = 'library' | 'paths' | 'assignments' | 'reports';
+type ManagerTab = 'library' | 'paths' | 'groups' | 'assignments' | 'reports';
 
 export default function LmsManagerPage() {
 	const { t } = useTranslation('qa.lms');
@@ -70,6 +80,15 @@ export default function LmsManagerPage() {
 	const assignments = useLmsStore(selectAssignments);
 	const enrollments = useLmsStore(selectEnrollments);
 	const rules = useCoachingStore(selectRules);
+	const cohorts = useCoachingStore(selectCohorts);
+	// Learning groups with at least one member in the viewer's scope.
+	const scopeCohorts = useMemo(
+		() =>
+			cohorts.filter((c) =>
+				c.agentIds.some((id) => scopeAgents.some((a) => a.id === id))
+			),
+		[cohorts, scopeAgents]
+	);
 
 	const [assignState, setAssignState] = useState<{
 		opened: boolean;
@@ -231,6 +250,17 @@ export default function LmsManagerPage() {
 							{t('manager.tabs.paths')}
 						</Tabs.Tab>
 						<Tabs.Tab
+							value='groups'
+							leftSection={<IconUsersGroup size={16} />}
+							rightSection={
+								<Badge size='xs' variant='light'>
+									{scopeCohorts.length}
+								</Badge>
+							}
+						>
+							{t('manager.tabs.groups')}
+						</Tabs.Tab>
+						<Tabs.Tab
 							value='assignments'
 							leftSection={<IconListCheck size={16} />}
 							rightSection={
@@ -269,6 +299,16 @@ export default function LmsManagerPage() {
 						/>
 					</Tabs.Panel>
 
+					<Tabs.Panel value='groups' pt='md'>
+						<CohortsTab
+							cohorts={scopeCohorts}
+							paths={paths}
+							assignments={assignments}
+							onOpen={(id) => navigate(managerGroupEditPath(role, id))}
+							onCreate={() => navigate(managerGroupNewPath(role))}
+						/>
+					</Tabs.Panel>
+
 					<Tabs.Panel value='assignments' pt='md'>
 						<ManagerAssignmentsTab
 							rows={rows}
@@ -288,6 +328,7 @@ export default function LmsManagerPage() {
 				onClose={() => setAssignState({ opened: false })}
 				role={role}
 				preset={assignState.preset}
+				cohorts={scopeCohorts}
 			/>
 
 			<ContentDetailDrawer

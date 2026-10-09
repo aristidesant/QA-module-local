@@ -19,7 +19,6 @@
 	},
 	"tabs": {
 		"agents": "Agents",
-		"cohorts": "Learning Groups",
 		"rules": "Rules",
 		"sessions": "Sessions",
 		"impact": "Impact"

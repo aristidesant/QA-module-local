@@ -278,6 +278,14 @@ export const agentContentPath = (contentId: string) =>
 /** Learning center of a Supervisor or QA Manager. */
 export const managerLmsPath = (role: 'supervisor' | 'qa-manager') =>
 	`/qa/${role}/lms`;
+/** The isolated page that creates a learning group, under the Learning section. */
+export const managerGroupNewPath = (role: 'supervisor' | 'qa-manager') =>
+	`${managerLmsPath(role)}/groups/new`;
+/** The isolated page that opens and edits one learning group. */
+export const managerGroupEditPath = (
+	role: 'supervisor' | 'qa-manager',
+	cohortId: string
+) => `${managerLmsPath(role)}/groups/${cohortId}/edit`;
 /** Where a manager previews a material as an agent would see it, without leaving their own section. */
 export const managerContentPath = (
 	role: 'supervisor' | 'qa-manager',

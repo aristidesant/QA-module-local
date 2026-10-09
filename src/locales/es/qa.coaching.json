@@ -19,7 +19,6 @@
 	},
 	"tabs": {
 		"agents": "Agentes",
-		"cohorts": "Grupos de aprendizaje",
 		"rules": "Reglas",
 		"sessions": "Sesiones",
 		"impact": "Impacto"
