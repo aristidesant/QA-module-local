@@ -572,6 +572,38 @@
 			}
 		}
 	},
+	"picker": {
+		"titleContent": "Choose material",
+		"titlePath": "Choose a learning path",
+		"search": "Search by title or tag",
+		"filters": {
+			"format": "Type",
+			"area": "Aspect",
+			"subject": "Subject",
+			"allSubjects": "All subjects",
+			"level": "Level",
+			"tags": "Tags"
+		},
+		"groupBy": {
+			"label": "Group by",
+			"FORMAT": "Type",
+			"SUBJECT": "Subject",
+			"AREA": "Aspect",
+			"NONE": "None"
+		},
+		"noSubject": "General",
+		"count_one": "{{count}} item",
+		"count_other": "{{count}} items",
+		"pathsCount_one": "{{count}} path",
+		"pathsCount_other": "{{count}} paths",
+		"modules_one": "{{count}} module",
+		"modules_other": "{{count}} modules",
+		"empty": "No material matches these filters.",
+		"emptyPaths": "No learning path matches these filters.",
+		"clear": "Clear filters",
+		"add": "Add selected ({{count}})",
+		"usePath": "Use this path"
+	},
 	"common": {
 		"notFound": "Material not found",
 		"notFoundDescription": "No content with id {{id}}.",

@@ -370,7 +370,7 @@
 			"sections": {
 				"basics": "Basics",
 				"condition": "When",
-				"conditionDescription": "Same metrics and windows as Triggers. All conditions must match unless you choose Any.",
+				"conditionDescription": "Pick what to measure and when it should count. Add more conditions to combine them.",
 				"action": "Then",
 				"actionDescription": "What the agent receives and by when.",
 				"recurrence": "Recurrence and limits",
@@ -382,7 +382,6 @@
 			"fields": {
 				"name": "Name",
 				"description": "Description",
-				"area": "Aspect",
 				"actionKind": "Action",
 				"content": "Material",
 				"path": "Learning path",
@@ -405,9 +404,16 @@
 				"successThreshold": "Success threshold (points)",
 				"reassignOnDecline": "Re-assign if the score declines",
 				"addCondition": "Add condition",
-				"logic": "Logic",
-				"showAllContent": "Show material from every aspect"
+				"options": "Options"
 			},
+			"logicWord": { "ALL": "and", "ANY": "or" },
+			"picker": {
+				"contentPlaceholder": "Browse and choose material",
+				"pathPlaceholder": "Browse and choose a learning path",
+				"selected_one": "{{count}} item selected",
+				"selected_other": "{{count}} items selected"
+			},
+			"preview": "Fires when {{summary}}",
 			"cadenceHint": {
 				"ON_MATCH": "Fires for each agent as soon as the conditions match.",
 				"WEEKLY": "Runs every Monday over the last 7 days for every agent in scope."
@@ -426,14 +432,16 @@
 				"teams": "Teams",
 				"agents": "Specific agents",
 				"campaigns": "Campaigns",
-				"lob": "Line of business"
+				"lob": "Line of business",
+				"campaignType": "Campaign type"
 			},
 			"validation": {
 				"name": "Name is required",
 				"content": "Pick at least one item",
 				"path": "Pick a learning path",
 				"condition": "Add at least one condition",
-				"due": "Due must be between 1 and 90 days"
+				"due": "Due must be between 1 and 90 days",
+				"fixFields": "Fix the highlighted fields"
 			},
 			"footer": {
 				"cancel": "Cancel",
@@ -808,6 +816,7 @@
 		"close": "Close",
 		"save": "Save",
 		"delete": "Delete",
+		"remove": "Remove",
 		"team": "Team",
 		"agent": "Agent",
 		"notFound": "Not found"

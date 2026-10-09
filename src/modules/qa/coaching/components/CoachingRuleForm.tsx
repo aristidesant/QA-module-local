@@ -1,12 +1,15 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import {
+	Box,
 	Button,
 	Group,
 	MultiSelect,
 	NumberInput,
-	Select,
+	Pill,
+	SimpleGrid,
 	Stack,
 	Switch,
+	Text,
 	Textarea,
 	TextInput,
 } from '@mantine/core';
@@ -30,15 +33,17 @@ import type {
 	RuleStatus,
 } from '~/models/qa';
 import { notifySuccess, notifyWarning } from '~/modules/qa/utils/notifications';
-import { ConditionRow } from '~/modules/qa/triggers/components/ConditionRow';
+import { ConditionSentenceRow } from '~/modules/qa/triggers/components/ConditionSentenceRow';
 import {
 	CAMPAIGN_TYPES,
 	LINES_OF_BUSINESS,
 	METRIC_BY_ID,
 	TRIGGER_METRIC_CATALOG,
 } from '~/modules/qa/triggers/constants';
+import { describeCondition } from '~/modules/qa/triggers/helpers';
 import { TRIGGER_CAMPAIGNS } from '~/modules/qa/triggers/mockData';
 import { useLmsStore, selectContent, selectPaths } from '~/stores/qa/lmsStore';
+import { MaterialPickerModal } from '~/modules/qa/lms/components/MaterialPickerModal';
 import { useCoachingStore, nextCoachingId } from '~/stores/qa/coachingStore';
 import {
 	managerScopeAgents,
@@ -51,6 +56,8 @@ import {
 	DEFAULT_FOLLOW_UP,
 	MAX_RULE_CONDITIONS,
 } from '../constants';
+import { PickerField } from './PickerField';
+import styles from './CoachingRuleForm.module.css';
 
 interface CoachingRuleFormValues {
 	name: string;
@@ -65,7 +72,6 @@ interface CoachingRuleFormValues {
 	limitEnabled: boolean;
 	maxTriggersPerAgent: number;
 	cadence: CoachingRuleCadence;
-	showAllContent: boolean;
 }
 
 interface CoachingRuleFormProps {
@@ -116,6 +122,8 @@ export function CoachingRuleForm({
 	onSaved,
 }: CoachingRuleFormProps) {
 	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
+	// describeCondition and the row labels live in the Triggers namespace.
+	const { t: tTriggers } = useTranslation('qa.triggers');
 	const content = useLmsStore(selectContent);
 	const paths = useLmsStore(selectPaths);
 	const scopeAgents = useMemo(() => managerScopeAgents(role), [role]);
@@ -146,10 +154,10 @@ export function CoachingRuleForm({
 			limitEnabled: false,
 			maxTriggersPerAgent: 3,
 			cadence: 'ON_MATCH',
-			showAllContent: false,
 		},
 	});
 
+	const [pickerOpen, setPickerOpen] = useState(false);
 	const previousArea = useRef<EvaluationArea | null>(null);
 
 	useEffect(() => {
@@ -171,7 +179,6 @@ export function CoachingRuleForm({
 				limitEnabled: rule.maxTriggersPerAgent != null,
 				maxTriggersPerAgent: rule.maxTriggersPerAgent ?? 3,
 				cadence: rule.cadence,
-				showAllContent: false,
 			});
 		} else {
 			form.reset();
@@ -200,7 +207,6 @@ export function CoachingRuleForm({
 				limitEnabled: false,
 				maxTriggersPerAgent: 3,
 				cadence: 'ON_MATCH',
-				showAllContent: false,
 			});
 		}
 		form.resetDirty();
@@ -218,38 +224,39 @@ export function CoachingRuleForm({
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [area]);
 
-	const contentOptions = useMemo(() => {
-		const pool = content.filter(
-			(c) =>
-				c.status === 'PUBLISHED' &&
-				(form.values.showAllContent || c.area === area)
+	/** Marks each invalid field inline and reports whether the form can be saved. */
+	const validate = (): boolean => {
+		form.clearErrors();
+		const errors: Record<string, string> = {};
+		if (!form.values.name.trim()) {
+			errors.name = t('rules.editor.validation.name');
+		}
+		if (form.values.conditions.length === 0) {
+			errors.conditions = t('rules.editor.validation.condition');
+		}
+		const badRange = form.values.conditions.find(
+			(c) => c.mode === 'RANGE' && (c.value2 ?? c.value) <= c.value
 		);
-		return pool.map((c) => ({
-			value: c.id,
-			label: `${c.title} · ${t(`formats.${c.format}`, { ns: 'qa.lms' })} · ${c.durationMin} min`,
-		}));
-	}, [content, form.values.showAllContent, area, t]);
-
-	const validate = (): string | null => {
-		if (!form.values.name.trim()) return t('rules.editor.validation.name');
-		if (form.values.conditions.length === 0)
-			return t('rules.editor.validation.condition');
+		if (badRange) {
+			errors.conditions = tTriggers('editor.validation.rangeInvalid');
+		}
 		if (
 			form.values.action.kind === 'ASSIGN_CONTENT' &&
 			form.values.action.contentIds.length === 0
 		) {
-			return t('rules.editor.validation.content');
+			errors['action.contentIds'] = t('rules.editor.validation.content');
 		}
 		if (
 			form.values.action.kind === 'ASSIGN_PATH' &&
 			!form.values.action.pathId
 		) {
-			return t('rules.editor.validation.path');
+			errors['action.pathId'] = t('rules.editor.validation.path');
 		}
 		if (form.values.action.dueInDays < 1 || form.values.action.dueInDays > 90) {
-			return t('rules.editor.validation.due');
+			errors['action.dueInDays'] = t('rules.editor.validation.due');
 		}
-		return null;
+		form.setErrors(errors);
+		return Object.keys(errors).length === 0;
 	};
 
 	const buildRule = (status: RuleStatus): CoachingRule => {
@@ -296,9 +303,8 @@ export function CoachingRuleForm({
 	};
 
 	const handleSave = (status: RuleStatus) => {
-		const error = validate();
-		if (error) {
-			notifyWarning(error);
+		if (!validate()) {
+			notifyWarning(t('rules.editor.validation.fixFields'));
 			return;
 		}
 		const next = buildRule(status);
@@ -336,8 +342,13 @@ export function CoachingRuleForm({
 				<Stack gap='sm'>
 					<TextInput
 						label={t('rules.editor.fields.name')}
+						maw={480}
 						value={form.values.name}
-						onChange={(e) => form.setFieldValue('name', e.currentTarget.value)}
+						error={form.errors.name}
+						onChange={(e) => {
+							form.setFieldValue('name', e.currentTarget.value);
+							form.clearFieldError('name');
+						}}
 					/>
 					<Textarea
 						label={t('rules.editor.fields.description')}
@@ -351,195 +362,8 @@ export function CoachingRuleForm({
 				</Stack>
 			</SectionCard>
 
-			<SectionCard
-				title={t('rules.editor.sections.condition')}
-				description={t('rules.editor.sections.conditionDescription')}
-				padding='md'
-			>
-				<Stack gap='md'>
-					{form.values.conditions.length > 1 && (
-						<AppSegmentedControl
-							size='xs'
-							value={form.values.conditionLogic}
-							onChange={(v) =>
-								form.setFieldValue('conditionLogic', v as ConditionLogic)
-							}
-							data={[
-								{ label: 'ALL', value: 'ALL' },
-								{ label: 'ANY', value: 'ANY' },
-							]}
-						/>
-					)}
-					{form.values.conditions.map((condition, index) => (
-						<ConditionRow
-							key={condition.id}
-							condition={condition}
-							scoreOnlyAreas={['SENTIMENT_EMOTION']}
-							allowedModes={[
-								'THRESHOLD',
-								'RANGE',
-								'PERCENT_CHANGE',
-								'CONSECUTIVE',
-							]}
-							onChange={(updated) =>
-								form.setFieldValue(`conditions.${index}`, updated)
-							}
-							onRemove={() => form.removeListItem('conditions', index)}
-							canRemove={form.values.conditions.length > 1}
-						/>
-					))}
-					<Button
-						variant='light'
-						size='xs'
-						leftSection={<IconPlus size={14} />}
-						onClick={addCondition}
-						disabled={form.values.conditions.length >= MAX_RULE_CONDITIONS}
-					>
-						{t('rules.editor.fields.addCondition')}
-					</Button>
-				</Stack>
-			</SectionCard>
-
-			<SectionCard
-				title={t('rules.editor.sections.action')}
-				description={t('rules.editor.sections.actionDescription')}
-				padding='md'
-			>
-				<Stack gap='sm'>
-					<AppSegmentedControl
-						size='sm'
-						value={form.values.action.kind}
-						onChange={(v) =>
-							form.setFieldValue('action.kind', v as CoachingActionKind)
-						}
-						data={[
-							{
-								label: t('rules.editor.actionKinds.ASSIGN_CONTENT'),
-								value: 'ASSIGN_CONTENT',
-							},
-							{
-								label: t('rules.editor.actionKinds.ASSIGN_PATH'),
-								value: 'ASSIGN_PATH',
-							},
-						]}
-					/>
-
-					{form.values.action.kind === 'ASSIGN_CONTENT' ? (
-						<>
-							<MultiSelect
-								label={t('rules.editor.fields.content')}
-								data={contentOptions}
-								value={form.values.action.contentIds}
-								onChange={(v) => form.setFieldValue('action.contentIds', v)}
-								searchable
-								clearable
-							/>
-							<Switch
-								size='xs'
-								label={t('rules.editor.fields.showAllContent')}
-								checked={form.values.showAllContent}
-								onChange={(e) =>
-									form.setFieldValue('showAllContent', e.currentTarget.checked)
-								}
-							/>
-						</>
-					) : (
-						<Select
-							label={t('rules.editor.fields.path')}
-							data={paths
-								.filter((p) => p.status === 'PUBLISHED')
-								.map((p) => ({ value: p.id, label: p.title }))}
-							value={form.values.action.pathId}
-							onChange={(v) => form.setFieldValue('action.pathId', v)}
-						/>
-					)}
-
-					<NumberInput
-						label={t('rules.editor.fields.dueInDays')}
-						min={1}
-						max={90}
-						value={form.values.action.dueInDays}
-						onChange={(v) =>
-							form.setFieldValue(
-								'action.dueInDays',
-								typeof v === 'number' ? v : 14
-							)
-						}
-					/>
-
-					<Switch
-						label={t('rules.editor.fields.mandatory')}
-						checked={form.values.action.mandatory}
-						onChange={(e) =>
-							form.setFieldValue('action.mandatory', e.currentTarget.checked)
-						}
-					/>
-					<Switch
-						label={t('rules.editor.fields.requireAcceptance')}
-						checked={form.values.action.requireAcceptance}
-						onChange={(e) =>
-							form.setFieldValue(
-								'action.requireAcceptance',
-								e.currentTarget.checked
-							)
-						}
-					/>
-					<Switch
-						label={t('rules.editor.fields.notifySupervisor')}
-						checked={form.values.action.notifySupervisor}
-						onChange={(e) =>
-							form.setFieldValue(
-								'action.notifySupervisor',
-								e.currentTarget.checked
-							)
-						}
-					/>
-				</Stack>
-			</SectionCard>
-
-			<SectionCard
-				title={t('rules.editor.sections.recurrence')}
-				description={t('rules.editor.sections.recurrenceDescription')}
-				padding='md'
-			>
-				<Stack gap='sm'>
-					<NumberInput
-						label={t('rules.editor.fields.cooldown')}
-						description={t('rules.editor.fields.cooldownHint')}
-						min={0}
-						max={365}
-						value={form.values.cooldownDays}
-						onChange={(v) =>
-							form.setFieldValue('cooldownDays', typeof v === 'number' ? v : 0)
-						}
-					/>
-					<Switch
-						label={t('rules.editor.fields.limitPerAgent')}
-						checked={form.values.limitEnabled}
-						onChange={(e) =>
-							form.setFieldValue('limitEnabled', e.currentTarget.checked)
-						}
-					/>
-					{form.values.limitEnabled && (
-						<NumberInput
-							label={t('rules.editor.fields.maxTriggers')}
-							description={t('rules.editor.fields.maxTriggersHint')}
-							min={1}
-							max={100}
-							value={form.values.maxTriggersPerAgent}
-							onChange={(v) =>
-								form.setFieldValue(
-									'maxTriggersPerAgent',
-									typeof v === 'number' ? v : 1
-								)
-							}
-						/>
-					)}
-				</Stack>
-			</SectionCard>
-
 			<SectionCard title={t('rules.editor.sections.scope')} padding='md'>
-				<Stack gap='sm'>
+				<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='sm'>
 					<MultiSelect
 						label={t('rules.editor.scope.lob')}
 						placeholder={t('rules.editor.scope.everyone')}
@@ -549,7 +373,7 @@ export function CoachingRuleForm({
 						clearable
 					/>
 					<MultiSelect
-						label='Campaign type'
+						label={t('rules.editor.scope.campaignType')}
 						placeholder={t('rules.editor.scope.everyone')}
 						data={CAMPAIGN_TYPES}
 						value={form.values.scope.campaignTypes}
@@ -584,28 +408,303 @@ export function CoachingRuleForm({
 						searchable
 						clearable
 					/>
+				</SimpleGrid>
+			</SectionCard>
+
+			<SectionCard
+				title={t('rules.editor.sections.condition')}
+				description={t('rules.editor.sections.conditionDescription')}
+				padding='md'
+			>
+				<Stack gap='sm'>
+					{form.values.conditions.map((condition, index) => (
+						<Fragment key={condition.id}>
+							{index === 1 && (
+								<AppSegmentedControl
+									size='xs'
+									value={form.values.conditionLogic}
+									onChange={(v) =>
+										form.setFieldValue('conditionLogic', v as ConditionLogic)
+									}
+									data={[
+										{ label: t('rules.editor.logicWord.ALL'), value: 'ALL' },
+										{ label: t('rules.editor.logicWord.ANY'), value: 'ANY' },
+									]}
+								/>
+							)}
+							{index > 1 && (
+								<Text size='sm' c='dimmed' fw={500}>
+									{t(`rules.editor.logicWord.${form.values.conditionLogic}`)}
+								</Text>
+							)}
+							<ConditionSentenceRow
+								condition={condition}
+								scoreOnlyAreas={['SENTIMENT_EMOTION']}
+								onChange={(updated) => {
+									form.setFieldValue(`conditions.${index}`, updated);
+									form.clearFieldError('conditions');
+								}}
+								onRemove={() => form.removeListItem('conditions', index)}
+								canRemove={form.values.conditions.length > 1}
+							/>
+						</Fragment>
+					))}
+
+					<Group>
+						<Button
+							variant='light'
+							size='sm'
+							leftSection={<IconPlus size={14} />}
+							onClick={addCondition}
+							disabled={form.values.conditions.length >= MAX_RULE_CONDITIONS}
+						>
+							{t('rules.editor.fields.addCondition')}
+						</Button>
+					</Group>
+
+					{typeof form.errors.conditions === 'string' && (
+						<Text size='sm' c='danger.7'>
+							{form.errors.conditions}
+						</Text>
+					)}
+
+					<Text size='sm' c='dimmed'>
+						{t('rules.editor.preview', {
+							summary: form.values.conditions
+								.map((c) => describeCondition(tTriggers, c))
+								.join(
+									` ${t(`rules.editor.logicWord.${form.values.conditionLogic}`)} `
+								),
+						})}
+					</Text>
+					{form.values.conditions.some(
+						(c) => METRIC_BY_ID[c.metricId].unit === 'SCORE_5'
+					) && (
+						<Text size='xs' c='dimmed'>
+							{tTriggers('editor.fields.scoreScaleHint')}
+						</Text>
+					)}
 				</Stack>
 			</SectionCard>
 
-			<Group justify='flex-end'>
-				<Button variant='subtle' onClick={handleClose}>
-					{t('rules.editor.footer.cancel')}
-				</Button>
-				{mode === 'create' ? (
-					<>
-						<Button variant='light' onClick={() => handleSave('DRAFT')}>
-							{t('rules.editor.footer.saveDraft')}
-						</Button>
-						<Button onClick={() => handleSave('ACTIVE')}>
-							{t('rules.editor.footer.saveActivate')}
-						</Button>
-					</>
-				) : (
-					<Button onClick={() => handleSave(rule?.status ?? 'ACTIVE')}>
-						{t('rules.editor.footer.save')}
+			<SectionCard
+				title={t('rules.editor.sections.action')}
+				description={t('rules.editor.sections.actionDescription')}
+				padding='md'
+			>
+				<Stack gap='sm'>
+					<AppSegmentedControl
+						size='sm'
+						value={form.values.action.kind}
+						onChange={(v) =>
+							form.setFieldValue('action.kind', v as CoachingActionKind)
+						}
+						data={[
+							{
+								label: t('rules.editor.actionKinds.ASSIGN_CONTENT'),
+								value: 'ASSIGN_CONTENT',
+							},
+							{
+								label: t('rules.editor.actionKinds.ASSIGN_PATH'),
+								value: 'ASSIGN_PATH',
+							},
+						]}
+					/>
+
+					{/* What to assign sits beside its deadline, so the pair reads as one decision. */}
+					<Group align='flex-start' gap='md' wrap='nowrap'>
+						<Box flex={1} miw={0}>
+							{form.values.action.kind === 'ASSIGN_CONTENT' ? (
+								<PickerField
+									label={t('rules.editor.fields.content')}
+									placeholder={t('rules.editor.picker.contentPlaceholder')}
+									summary={
+										form.values.action.contentIds.length > 0
+											? t('rules.editor.picker.selected', {
+													count: form.values.action.contentIds.length,
+												})
+											: null
+									}
+									error={form.errors['action.contentIds']}
+									onOpen={() => setPickerOpen(true)}
+								/>
+							) : (
+								<PickerField
+									label={t('rules.editor.fields.path')}
+									placeholder={t('rules.editor.picker.pathPlaceholder')}
+									summary={
+										paths.find((p) => p.id === form.values.action.pathId)
+											?.title ?? null
+									}
+									error={form.errors['action.pathId']}
+									onOpen={() => setPickerOpen(true)}
+								/>
+							)}
+						</Box>
+						<NumberInput
+							w={140}
+							label={t('rules.editor.fields.dueInDays')}
+							min={1}
+							max={90}
+							value={form.values.action.dueInDays}
+							error={form.errors['action.dueInDays']}
+							onChange={(v) => {
+								form.setFieldValue(
+									'action.dueInDays',
+									typeof v === 'number' ? v : 14
+								);
+								form.clearFieldError('action.dueInDays');
+							}}
+						/>
+					</Group>
+					{form.values.action.kind === 'ASSIGN_CONTENT' &&
+						form.values.action.contentIds.length > 0 && (
+							<Group gap='xs'>
+								{form.values.action.contentIds.map((id) => (
+									<Pill
+										key={id}
+										size='md'
+										withRemoveButton
+										removeButtonProps={{ 'aria-label': t('common.remove') }}
+										onRemove={() =>
+											form.setFieldValue(
+												'action.contentIds',
+												form.values.action.contentIds.filter((x) => x !== id)
+											)
+										}
+									>
+										{content.find((c) => c.id === id)?.title ?? id}
+									</Pill>
+								))}
+							</Group>
+						)}
+
+					<Stack gap='xs'>
+						<Text size='sm' fw={500}>
+							{t('rules.editor.fields.options')}
+						</Text>
+						<Switch
+							size='sm'
+							label={t('rules.editor.fields.mandatory')}
+							checked={form.values.action.mandatory}
+							onChange={(e) =>
+								form.setFieldValue('action.mandatory', e.currentTarget.checked)
+							}
+						/>
+						<Switch
+							size='sm'
+							label={t('rules.editor.fields.requireAcceptance')}
+							checked={form.values.action.requireAcceptance}
+							onChange={(e) =>
+								form.setFieldValue(
+									'action.requireAcceptance',
+									e.currentTarget.checked
+								)
+							}
+						/>
+						<Switch
+							size='sm'
+							label={t('rules.editor.fields.notifySupervisor')}
+							checked={form.values.action.notifySupervisor}
+							onChange={(e) =>
+								form.setFieldValue(
+									'action.notifySupervisor',
+									e.currentTarget.checked
+								)
+							}
+						/>
+					</Stack>
+				</Stack>
+			</SectionCard>
+
+			<SectionCard
+				title={t('rules.editor.sections.recurrence')}
+				description={t('rules.editor.sections.recurrenceDescription')}
+				padding='md'
+			>
+				<Stack gap='sm'>
+					<NumberInput
+						w={160}
+						label={t('rules.editor.fields.cooldown')}
+						description={t('rules.editor.fields.cooldownHint')}
+						min={0}
+						max={365}
+						value={form.values.cooldownDays}
+						onChange={(v) =>
+							form.setFieldValue('cooldownDays', typeof v === 'number' ? v : 0)
+						}
+					/>
+					<Switch
+						label={t('rules.editor.fields.limitPerAgent')}
+						checked={form.values.limitEnabled}
+						onChange={(e) =>
+							form.setFieldValue('limitEnabled', e.currentTarget.checked)
+						}
+					/>
+					{form.values.limitEnabled && (
+						<NumberInput
+							w={160}
+							label={t('rules.editor.fields.maxTriggers')}
+							description={t('rules.editor.fields.maxTriggersHint')}
+							min={1}
+							max={100}
+							value={form.values.maxTriggersPerAgent}
+							onChange={(v) =>
+								form.setFieldValue(
+									'maxTriggersPerAgent',
+									typeof v === 'number' ? v : 1
+								)
+							}
+						/>
+					)}
+				</Stack>
+			</SectionCard>
+
+			{/* Pinned to the viewport so the actions stay in reach on this long form. */}
+			<Box className={styles.stickyActions}>
+				<Group justify='flex-end' gap='xs'>
+					<Button variant='subtle' onClick={handleClose}>
+						{t('rules.editor.footer.cancel')}
 					</Button>
-				)}
-			</Group>
+					{mode === 'create' ? (
+						<>
+							<Button variant='light' onClick={() => handleSave('DRAFT')}>
+								{t('rules.editor.footer.saveDraft')}
+							</Button>
+							<Button onClick={() => handleSave('ACTIVE')}>
+								{t('rules.editor.footer.saveActivate')}
+							</Button>
+						</>
+					) : (
+						<Button onClick={() => handleSave(rule?.status ?? 'ACTIVE')}>
+							{t('rules.editor.footer.save')}
+						</Button>
+					)}
+				</Group>
+			</Box>
+
+			<MaterialPickerModal
+				opened={pickerOpen}
+				onClose={() => setPickerOpen(false)}
+				mode={form.values.action.kind === 'ASSIGN_PATH' ? 'path' : 'content'}
+				selectedIds={
+					form.values.action.kind === 'ASSIGN_PATH'
+						? form.values.action.pathId
+							? [form.values.action.pathId]
+							: []
+						: form.values.action.contentIds
+				}
+				initialArea={form.values.action.kind === 'ASSIGN_PATH' ? null : area}
+				onConfirm={(ids) => {
+					if (form.values.action.kind === 'ASSIGN_PATH') {
+						form.setFieldValue('action.pathId', ids[0] ?? null);
+						form.clearFieldError('action.pathId');
+					} else {
+						form.setFieldValue('action.contentIds', ids);
+						form.clearFieldError('action.contentIds');
+					}
+				}}
+			/>
 		</Stack>
 	);
 }

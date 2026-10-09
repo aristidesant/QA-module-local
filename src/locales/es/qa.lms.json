@@ -572,6 +572,38 @@
 			}
 		}
 	},
+	"picker": {
+		"titleContent": "Elegir material",
+		"titlePath": "Elegir una ruta de aprendizaje",
+		"search": "Buscar por título o etiqueta",
+		"filters": {
+			"format": "Tipo",
+			"area": "Aspecto",
+			"subject": "Tema",
+			"allSubjects": "Todos los temas",
+			"level": "Nivel",
+			"tags": "Etiquetas"
+		},
+		"groupBy": {
+			"label": "Agrupar por",
+			"FORMAT": "Tipo",
+			"SUBJECT": "Tema",
+			"AREA": "Aspecto",
+			"NONE": "Ninguno"
+		},
+		"noSubject": "General",
+		"count_one": "{{count}} elemento",
+		"count_other": "{{count}} elementos",
+		"pathsCount_one": "{{count}} ruta",
+		"pathsCount_other": "{{count}} rutas",
+		"modules_one": "{{count}} módulo",
+		"modules_other": "{{count}} módulos",
+		"empty": "Ningún material coincide con estos filtros.",
+		"emptyPaths": "Ninguna ruta de aprendizaje coincide con estos filtros.",
+		"clear": "Limpiar filtros",
+		"add": "Añadir seleccionados ({{count}})",
+		"usePath": "Usar esta ruta"
+	},
 	"common": {
 		"notFound": "Material no encontrado",
 		"notFoundDescription": "No existe contenido con id {{id}}.",

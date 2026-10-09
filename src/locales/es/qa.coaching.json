@@ -370,7 +370,7 @@
 			"sections": {
 				"basics": "Básicos",
 				"condition": "Cuándo",
-				"conditionDescription": "Las mismas métricas y ventanas que Disparadores. Todas las condiciones deben cumplirse salvo que elijas Cualquiera.",
+				"conditionDescription": "Elige qué medir y cuándo debe contar. Añade más condiciones para combinarlas.",
 				"action": "Entonces",
 				"actionDescription": "Qué recibe el agente y para cuándo.",
 				"recurrence": "Recurrencia y límites",
@@ -382,7 +382,6 @@
 			"fields": {
 				"name": "Nombre",
 				"description": "Descripción",
-				"area": "Aspecto",
 				"actionKind": "Acción",
 				"content": "Material",
 				"path": "Ruta de aprendizaje",
@@ -405,9 +404,16 @@
 				"successThreshold": "Umbral de éxito (puntos)",
 				"reassignOnDecline": "Reasignar si el puntaje empeora",
 				"addCondition": "Añadir condición",
-				"logic": "Lógica",
-				"showAllContent": "Mostrar material de todos los aspectos"
+				"options": "Opciones"
 			},
+			"logicWord": { "ALL": "y", "ANY": "o" },
+			"picker": {
+				"contentPlaceholder": "Explora y elige material",
+				"pathPlaceholder": "Explora y elige una ruta de aprendizaje",
+				"selected_one": "{{count}} elemento seleccionado",
+				"selected_other": "{{count}} elementos seleccionados"
+			},
+			"preview": "Se activa cuando {{summary}}",
 			"cadenceHint": {
 				"ON_MATCH": "Se dispara por agente en cuanto se cumplen las condiciones.",
 				"WEEKLY": "Corre cada lunes sobre los últimos 7 días para todos los agentes del alcance."
@@ -426,14 +432,16 @@
 				"teams": "Equipos",
 				"agents": "Agentes específicos",
 				"campaigns": "Campañas",
-				"lob": "Línea de negocio"
+				"lob": "Línea de negocio",
+				"campaignType": "Tipo de campaña"
 			},
 			"validation": {
 				"name": "El nombre es obligatorio",
 				"content": "Elige al menos un elemento",
 				"path": "Elige una ruta de aprendizaje",
 				"condition": "Añade al menos una condición",
-				"due": "El vencimiento debe estar entre 1 y 90 días"
+				"due": "El vencimiento debe estar entre 1 y 90 días",
+				"fixFields": "Corrige los campos marcados"
 			},
 			"footer": {
 				"cancel": "Cancelar",
@@ -808,6 +816,7 @@
 		"close": "Cerrar",
 		"save": "Guardar",
 		"delete": "Eliminar",
+		"remove": "Quitar",
 		"team": "Equipo",
 		"agent": "Agente",
 		"notFound": "No encontrado"

@@ -1,0 +1,11 @@
+/* One condition as a wrapping sentence of compact controls. No box: rows are
+ * separated by the connector word the form renders between them. */
+.row {
+	padding: 2px 0;
+}
+
+.word {
+	color: var(--mantine-color-dimmed);
+	font-size: var(--mantine-font-size-sm);
+	white-space: nowrap;
+}

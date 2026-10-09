@@ -120,6 +120,30 @@
 		"ANGER": "Anger",
 		"RAGE": "Rage"
 	},
+	"comparisons": {
+		"LT": "is less than",
+		"LTE": "is at most",
+		"GT": "is greater than",
+		"GTE": "is at least",
+		"BETWEEN": "is between",
+		"DECREASE": "drops by at least",
+		"INCREASE": "rises by at least"
+	},
+	"sentenceWindows": {
+		"PER_CALL": "on each call",
+		"LAST_N_CALLS": "over the last N calls",
+		"LAST_7_DAYS": "over the last 7 days",
+		"LAST_14_DAYS": "over the last 14 days",
+		"LAST_30_DAYS": "over the last 30 days",
+		"CONSECUTIVE": "for N consecutive calls"
+	},
+	"sentence": {
+		"and": "and",
+		"for": "for",
+		"calls": "calls",
+		"comparison": "Comparison",
+		"window": "Window"
+	},
 	"modes": {
 		"THRESHOLD": "Nominal value",
 		"RANGE": "Within a range",
