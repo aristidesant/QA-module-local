@@ -141,6 +141,35 @@ export const theme = createTheme({
 			'#141a22', // 8  – cards / panels in dark mode
 			'#0b0f14', // 9  – body background dark
 		],
+		/*
+		 * Semantic status scales from the design-system tokens (--nt-warn / --nt-danger).
+		 * Registered under their own names so the dashboards can opt in without
+		 * changing the stock `yellow` / `red` used elsewhere in the app.
+		 */
+		amber: [
+			'#fffbeb', // 0
+			'#fef3c7', // 1  – DS --nt-warn-bg
+			'#fde68a', // 2
+			'#fcd34d', // 3
+			'#fbbf24', // 4  – dark-mode filled
+			'#f59e0b', // 5  – DS --nt-warn (PRIMARY SHADE)
+			'#d97706', // 6
+			'#b45309', // 7
+			'#92400e', // 8
+			'#78350f', // 9
+		],
+		danger: [
+			'#fef2f2', // 0
+			'#fee2e2', // 1  – DS --nt-danger-bg
+			'#fecaca', // 2
+			'#f99a9a', // 3
+			'#f06b6b', // 4  – dark-mode filled
+			'#e53935', // 5  – DS --nt-danger (PRIMARY SHADE)
+			'#c62828', // 6
+			'#b71c1c', // 7
+			'#8f1a1a', // 8
+			'#6b1414', // 9
+		],
 	},
 
 	components: {

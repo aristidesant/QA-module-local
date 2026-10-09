@@ -100,6 +100,20 @@ export const SCORE_BAND_COLOR: Record<ScoreBand, string> = {
 	critical: 'red',
 };
 
+/**
+ * Dashboard tone of a band: the Performance Score cards color exceptions only,
+ * so an on-target value reads as neutral ink while watch / at-risk keep their hue.
+ * `amber` and `danger` are the design-system status scales registered in theme.ts.
+ */
+export const SCORE_BAND_TONE: Record<ScoreBand, string> = {
+	good: 'gray',
+	warning: 'amber',
+	critical: 'danger',
+};
+
+/** True when a band deserves a visible status badge on a breakdown row. */
+export const isExceptionBand = (band: ScoreBand) => band !== 'good';
+
 /** `score` is 0-100. Callers on a different scale (e.g. sentiment 0-5) normalize first: `(value / 5) * 100`. */
 export const getScoreBand = (
 	score: number,

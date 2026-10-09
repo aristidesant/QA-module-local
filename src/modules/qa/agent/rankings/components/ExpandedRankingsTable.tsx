@@ -45,12 +45,6 @@ const DEFAULT_VIEWPORT_HEIGHT = 560;
 /** Max number of achievement badges rendered per row. */
 const MAX_VISIBLE_ACHIEVEMENTS = 3;
 
-const RANK_BADGE_COLORS: Record<number, string> = {
-	1: 'yellow',
-	2: 'gray',
-	3: 'orange',
-};
-
 const EmptyCell: React.FC = () => (
 	<Text size='sm' c='dimmed'>
 		—
@@ -115,11 +109,7 @@ export const ExpandedRankingsTable: React.FC<ExpandedRankingsTableProps> = ({
 					}
 					return (
 						<Group gap={4} wrap='nowrap'>
-							<Badge
-								color={RANK_BADGE_COLORS[rank] ?? 'gray'}
-								variant='light'
-								radius='sm'
-							>
+							<Badge variant='default' radius='sm' fw={rank <= 3 ? 700 : 500}>
 								#{rank}
 							</Badge>
 							<WinnerBadge isWinner={isCompleted && rank === 1} />

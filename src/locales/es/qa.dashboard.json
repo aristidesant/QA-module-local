@@ -62,6 +62,11 @@
 		"empty": "No hay sesiones de coaching programadas esta semana",
 		"viewAll": "Ver todas las sesiones"
 	},
+	"breakdown": {
+		"allOnTarget": "Todas las categorías en objetivo",
+		"showAll": "Ver las {{count}} categorías",
+		"showExceptions": "Ver solo excepciones"
+	},
 	"drill": {
 		"calls_one": "{{count}} llamada",
 		"calls_other": "{{count}} llamadas",

@@ -43,6 +43,17 @@ interface SentimentEmotionSplitCardProps {
 	onReviewClick?: (side: 'agent' | 'customer') => void;
 }
 
+/**
+ * Dashboard tone of a sentiment band. The shared band table (SentimentEmotionCard)
+ * names red / gray / green; here only the negative side keeps a hue, so a positive
+ * or neutral column reads as plain ink. Mapped locally to leave that table untouched.
+ */
+const SENTIMENT_TONE: Record<string, string> = {
+	red: 'danger',
+	gray: 'gray',
+	green: 'gray',
+};
+
 const SideColumn: React.FC<{
 	title: string;
 	icon: React.ReactNode;
@@ -51,10 +62,11 @@ const SideColumn: React.FC<{
 	const { t } = useTranslation('qa.dashboard');
 	const { cutPoints } = useSettingsStore(selectThresholds).sentiment;
 	const band = getSentimentBand(side.score, cutPoints);
+	const tone = SENTIMENT_TONE[band.color] ?? 'gray';
 	return (
 		<Stack gap='xs' className={styles.splitColumn}>
 			<Group gap={6}>
-				<ThemeIcon size='sm' variant='light' color={band.color} radius='md'>
+				<ThemeIcon size='sm' variant='light' color='gray' radius='md'>
 					{icon}
 				</ThemeIcon>
 				<Text size='sm' fw={600}>
@@ -67,10 +79,17 @@ const SideColumn: React.FC<{
 					{t('sentimentSplit.outOfFive')}
 				</Text>
 			</Group>
-			<Progress value={(side.score / 5) * 100} size='sm' color={band.color} />
-			<Badge color={band.color} variant='light' size='sm'>
-				{t(band.labelKey)}
-			</Badge>
+			<Progress
+				value={(side.score / 5) * 100}
+				size='xs'
+				color={tone}
+				aria-label={`${title} ${side.score.toFixed(1)}/5`}
+			/>
+			{band.color === 'red' && (
+				<Badge color='danger' variant='light' size='sm'>
+					{t(band.labelKey)}
+				</Badge>
+			)}
 			<Badge
 				color='gray'
 				variant='light'
@@ -108,7 +127,7 @@ export const SentimentEmotionSplitCard: React.FC<
 					{label}
 				</Text>
 				<Group gap={6} wrap='nowrap'>
-					<Text size='sm' fw={600} c={count > 0 ? 'red' : undefined}>
+					<Text size='sm' fw={600}>
 						{t('drill.calls', { count })}
 					</Text>
 					{clickable && <IconChevronRight size={14} />}
@@ -134,7 +153,7 @@ export const SentimentEmotionSplitCard: React.FC<
 			p='lg'
 			radius='md'
 			withBorder
-			shadow='sm'
+			shadow='none'
 			h='100%'
 		>
 			<Stack gap='md' h='100%'>
@@ -149,7 +168,7 @@ export const SentimentEmotionSplitCard: React.FC<
 							</Text>
 						)}
 					</div>
-					<ThemeIcon size='lg' color={headerBand.color} radius='md'>
+					<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
 						<HeaderIcon size={20} />
 					</ThemeIcon>
 				</Group>

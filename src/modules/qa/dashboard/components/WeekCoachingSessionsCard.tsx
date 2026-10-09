@@ -66,7 +66,7 @@ export const WeekCoachingSessionsCard: React.FC<
 						{info.getValue()}
 					</Text>
 					{info.row.original.type === 'GROUP' && (
-						<Badge size='xs' variant='outline'>
+						<Badge size='xs' variant='default'>
 							{t('coachingWeek.group', {
 								count: info.row.original.agentIds?.length ?? 0,
 							})}
@@ -89,7 +89,7 @@ export const WeekCoachingSessionsCard: React.FC<
 			title={t('coachingWeek.title')}
 			description={t('coachingWeek.description')}
 			headerActions={
-				<Badge variant='light' size='sm'>
+				<Badge variant='default' size='sm'>
 					{total}
 				</Badge>
 			}

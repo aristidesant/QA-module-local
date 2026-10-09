@@ -24,26 +24,30 @@ const ICON: Record<MetricTrend, typeof IconTrendingUp> = {
 
 /**
  * One line per Performance Score card: this period's percentage-point change
- * vs. the immediately-preceding period of equal length, colored by whether
- * that direction is good or bad for the metric it sits under.
+ * vs. the immediately-preceding period of equal length. The dashboard colors
+ * exceptions only, so the line is dimmed unless the direction is bad for the
+ * metric it sits under. Shade 7 keeps the 12px text at AA contrast.
  */
 export const TrendIndicator: React.FC<TrendIndicatorProps> = ({
 	trend,
 	upIsGood = true,
 }) => {
 	const Icon = ICON[trend.direction];
-	const isGood =
-		trend.direction === 'stable'
-			? null
-			: (trend.direction === 'up') === upIsGood;
-	const color =
-		trend.direction === 'stable' ? 'gray' : isGood ? 'green' : 'red';
+	const isBad =
+		trend.direction !== 'stable' && (trend.direction === 'up') !== upIsGood;
 	const sign = trend.deltaPct > 0 ? '+' : '';
 
 	return (
 		<Group gap={4} wrap='nowrap'>
-			<Icon size={14} color={`var(--mantine-color-${color}-6)`} />
-			<Text size='xs' c={color}>
+			<Icon
+				size={14}
+				color={
+					isBad
+						? 'var(--mantine-color-danger-7)'
+						: 'var(--mantine-color-dimmed)'
+				}
+			/>
+			<Text size='xs' c={isBad ? 'danger.7' : 'dimmed'}>
 				{sign}
 				{trend.deltaPct}%
 			</Text>

@@ -216,7 +216,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 								title={t('agent.leaderboard')}
 								description={t('agent.leaderboardDescription')}
 								headerActions={
-									<Badge variant='light' size='sm'>
+									<Badge variant='default' size='sm'>
 										{standings.length}
 									</Badge>
 								}

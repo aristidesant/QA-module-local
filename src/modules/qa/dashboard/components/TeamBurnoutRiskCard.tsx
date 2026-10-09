@@ -31,19 +31,27 @@ interface TeamBurnoutRiskCardProps {
 	subtitle?: string;
 }
 
+/** Exceptions only: LOW reads as neutral, MEDIUM / HIGH keep the design-system status hues. */
 const LEVEL_COLOR: Record<BurnoutRiskLevel, string> = {
-	[BurnoutRiskLevel.LOW]: 'green',
-	[BurnoutRiskLevel.MEDIUM]: 'yellow',
-	[BurnoutRiskLevel.HIGH]: 'red',
+	[BurnoutRiskLevel.LOW]: 'gray',
+	[BurnoutRiskLevel.MEDIUM]: 'amber',
+	[BurnoutRiskLevel.HIGH]: 'danger',
 };
 
+/** Trend arrow color: dimmed unless the agent is getting worse. */
 const TREND_META: Record<
 	TeamBurnoutRiskEntry['trend'],
-	{ icon: React.ComponentType<{ size?: number }>; color: string }
+	{
+		icon: React.ComponentType<{ size?: number; color?: string }>;
+		color: string;
+	}
 > = {
-	improving: { icon: IconTrendingDown, color: 'green' },
-	stable: { icon: IconMinus, color: 'gray' },
-	declining: { icon: IconTrendingUp, color: 'red' },
+	improving: { icon: IconTrendingDown, color: 'var(--mantine-color-dimmed)' },
+	stable: { icon: IconMinus, color: 'var(--mantine-color-dimmed)' },
+	declining: {
+		icon: IconTrendingUp,
+		color: 'var(--mantine-color-danger-7)',
+	},
 };
 
 /** Card listing team members currently at burnout risk (MEDIUM/HIGH). The agent name opens the Burnout tab of their profile, where the evidence is. */
@@ -66,7 +74,7 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 			p='lg'
 			radius='md'
 			withBorder
-			shadow='sm'
+			shadow='none'
 			h='100%'
 		>
 			<Stack gap='md' h='100%'>
@@ -79,7 +87,7 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 							{subtitle ?? 'Team members showing signs of burnout'}
 						</Text>
 					</div>
-					<ThemeIcon size='lg' color='gray' radius='md'>
+					<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
 						<IconMoodSad2 size={20} />
 					</ThemeIcon>
 				</Group>
@@ -102,7 +110,10 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 											tabIndex={0}
 											onClick={() => openEvidence(entry.agentId)}
 											onKeyDown={(e) => {
-												if (e.key === 'Enter') openEvidence(entry.agentId);
+												if (e.key === 'Enter' || e.key === ' ') {
+													e.preventDefault();
+													openEvidence(entry.agentId);
+												}
 											}}
 										>
 											<Group justify='space-between' align='center' mb={4}>
@@ -122,19 +133,14 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 													<Text size='sm' fw={600}>
 														{entry.percentage}%
 													</Text>
-													<ThemeIcon
-														size='sm'
-														variant='light'
-														color={trend.color}
-													>
-														<TrendIcon size={12} />
-													</ThemeIcon>
+													<TrendIcon size={12} color={trend.color} />
 												</Group>
 											</Group>
 											<Progress
 												value={entry.percentage}
-												size='sm'
+												size='xs'
 												color={LEVEL_COLOR[entry.level]}
+												aria-label={`${entry.agentName} ${entry.percentage}%`}
 											/>
 										</div>
 									</Tooltip>

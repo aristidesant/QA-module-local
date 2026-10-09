@@ -21,7 +21,7 @@ import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import { bandFor, bandsFor } from '~/modules/qa/settings/helpers';
 import type { BusinessSignalKey } from '~/modules/qa/settings/types';
 import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
-import { SCORE_BAND_COLOR } from '~/modules/qa/constants/badgeColors';
+import { SCORE_BAND_TONE } from '~/modules/qa/constants/badgeColors';
 import type { BusinessInsight, WeeklyMetrics } from '../mockData';
 import { TrendIndicator } from './TrendIndicator';
 import styles from '../Dashboard.module.css';
@@ -51,13 +51,13 @@ const SIGNAL_SETTING_KEY: Record<BusinessInsight['type'], BusinessSignalKey> = {
 	'Mis-targeted offer': 'mistargetedOffer',
 };
 
-/** Every signal counts against the call, so a rising share is bad news. */
+/** Every signal counts against the call, so a rising share is the one direction that gets a hue. */
 const TREND_META: Record<
 	BusinessInsight['trend'],
 	{ icon: typeof IconTrendingUp; color: string }
 > = {
-	up: { icon: IconTrendingUp, color: 'red' },
-	down: { icon: IconTrendingDown, color: 'green' },
+	up: { icon: IconTrendingUp, color: 'danger' },
+	down: { icon: IconTrendingDown, color: 'gray' },
 	stable: { icon: IconMinus, color: 'gray' },
 };
 
@@ -87,7 +87,7 @@ export const BusinessInsightsCard: React.FC<BusinessInsightsCardProps> = ({
 			p='lg'
 			radius='md'
 			withBorder
-			shadow='sm'
+			shadow='none'
 			h='100%'
 		>
 			<Stack gap='md' h='100%'>
@@ -102,23 +102,21 @@ export const BusinessInsightsCard: React.FC<BusinessInsightsCardProps> = ({
 							</Text>
 						)}
 					</div>
-					<ThemeIcon size='lg' color='teal' radius='md'>
+					<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
 						<IconChartHistogram size={20} />
 					</ThemeIcon>
 				</Group>
 
 				<div>
 					<Group gap='xs' align='baseline'>
-						<Text fw={700} size='xl'>
-							{outcome.conversionRate}%
-						</Text>
+						<Text className={styles.scoreValue}>{outcome.conversionRate}%</Text>
 						<Text size='sm' c='dimmed'>
 							{t('businessInsights.conversionRate')}
 						</Text>
 						<Badge
 							size='xs'
 							variant='light'
-							color={SCORE_BAND_COLOR[conversionBand]}
+							color={SCORE_BAND_TONE[conversionBand]}
 						>
 							{t(
 								conversionBand === 'good'
@@ -167,19 +165,28 @@ export const BusinessInsightsCard: React.FC<BusinessInsightsCardProps> = ({
 												label={t('businessInsights.signalAlert')}
 												withArrow
 											>
-												<ThemeIcon size='xs' variant='transparent' color='red'>
+												<ThemeIcon
+													size='xs'
+													variant='transparent'
+													color='danger'
+												>
 													<IconAlertTriangle size={12} />
 												</ThemeIcon>
 											</Tooltip>
 										)}
-										<Text size='sm' fw={600} c={alerting ? 'red' : undefined}>
+										<Text size='sm' fw={600}>
 											{t('businessInsights.signalCalls', {
 												count: insight.count,
 											})}
 										</Text>
-										<ThemeIcon size='xs' variant='light' color={meta.color}>
-											<TrendIcon size={12} />
-										</ThemeIcon>
+										<TrendIcon
+											size={12}
+											color={
+												meta.color === 'gray'
+													? 'var(--mantine-color-dimmed)'
+													: `var(--mantine-color-${meta.color}-7)`
+											}
+										/>
 									</Group>
 								</Group>
 							</Tooltip>

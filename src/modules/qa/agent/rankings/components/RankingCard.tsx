@@ -13,12 +13,6 @@ import styles from './RankingCard.module.css';
 /** Max number of achievement badges rendered inside a card. */
 const MAX_VISIBLE_ACHIEVEMENTS = 2;
 
-const RANK_BADGE_COLORS: Record<number, string> = {
-	1: 'yellow',
-	2: 'gray',
-	3: 'orange',
-};
-
 export interface RankingCardProps {
 	/** Leaderboard row rendered by this card. */
 	entry: AgentRankingEntry;
@@ -95,9 +89,9 @@ export const RankingCard: React.FC<RankingCardProps> = ({
 						) : (
 							<>
 								<Badge
-									color={RANK_BADGE_COLORS[entry.rank] ?? 'gray'}
-									variant='light'
+									variant='default'
 									radius='sm'
+									fw={entry.rank <= 3 ? 700 : 500}
 								>
 									#{entry.rank}
 								</Badge>

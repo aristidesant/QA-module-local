@@ -1,14 +1,14 @@
 /* Dashboard component styles */
 
-.metricCard {
-	transition:
-		transform 0.2s ease-in-out,
-		box-shadow 0.2s ease-in-out;
-}
-
+/*
+ * Performance Score tiles sit inside a SectionCard that already carries the
+ * elevation, so they stay flat: no shadow, no hover lift (cancels the global
+ * `.mantine-Card-root:hover` lift from global.css). Rows show their own hover.
+ */
+.metricCard,
 .metricCard:hover {
-	transform: translateY(-2px);
-	box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+	transform: none;
+	box-shadow: none;
 }
 
 .scoreValue {
@@ -58,7 +58,6 @@
 		var(--mantine-color-blue-0),
 		var(--mantine-color-blue-9)
 	);
-	box-shadow: inset 3px 0 0 var(--mantine-color-blue-5);
 }
 
 /* Clickable breakdown row on the Performance Score cards (agent drill-down). */
@@ -89,12 +88,7 @@
 
 /* Agent | Customer columns of SentimentEmotionSplitCard. */
 .splitColumn {
-	padding: var(--mantine-spacing-sm);
-	border-radius: var(--mantine-radius-md);
-	background-color: light-dark(
-		var(--mantine-color-gray-0),
-		var(--mantine-color-dark-6)
-	);
+	padding: var(--mantine-spacing-xs) 0;
 }
 
 /* Clickable agent row of the Burnout Risk card; opens the Burnout tab of their profile. */

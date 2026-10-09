@@ -8,19 +8,17 @@ interface DrillRowProps {
 	children: React.ReactNode;
 }
 
-/** Wraps a Performance Score breakdown row: a button when it can drill down, a plain box otherwise. */
+/**
+ * Wraps a Performance Score breakdown row: a button when it can drill down, a plain box otherwise.
+ * The hint is a `title` only, so the row's accessible name stays its own label and value.
+ */
 export const DrillRow: React.FC<DrillRowProps> = ({
 	onClick,
 	hint,
 	children,
 }) =>
 	onClick ? (
-		<UnstyledButton
-			className={styles.drillRow}
-			onClick={onClick}
-			aria-label={hint}
-			title={hint}
-		>
+		<UnstyledButton className={styles.drillRow} onClick={onClick} title={hint}>
 			{children}
 		</UnstyledButton>
 	) : (

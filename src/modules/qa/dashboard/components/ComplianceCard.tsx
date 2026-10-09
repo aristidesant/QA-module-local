@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+	Anchor,
 	Card,
 	Stack,
 	Group,
@@ -10,7 +11,7 @@ import {
 	Badge,
 } from '@mantine/core';
 import { IconChevronRight, IconShieldCheck } from '@tabler/icons-react';
-import { SCORE_BAND_COLOR } from '~/modules/qa/constants/badgeColors';
+import { SCORE_BAND_TONE } from '~/modules/qa/constants/badgeColors';
 import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import type { ComplianceCategory } from '../mockData';
 import DrillRow from './DrillRow';
@@ -27,19 +28,23 @@ interface ComplianceCardProps {
 	trend?: DashboardMetricTrend;
 }
 
-/** Maps a compliance category status to a theme-aware Mantine color token */
+/** Maps a compliance category status to its dashboard tone: neutral when compliant, amber / danger otherwise. */
 export const getComplianceColor = (status: ComplianceCategory['status']) => {
 	switch (status) {
 		case 'compliant':
-			return SCORE_BAND_COLOR.good;
+			return SCORE_BAND_TONE.good;
 		case 'warning':
-			return SCORE_BAND_COLOR.warning;
+			return SCORE_BAND_TONE.warning;
 		case 'violation':
-			return SCORE_BAND_COLOR.critical;
+			return SCORE_BAND_TONE.critical;
 		default:
 			return 'gray';
 	}
 };
+
+/** Only non-compliant categories carry a status badge; the dashboard colors exceptions only. */
+const isComplianceException = (status: ComplianceCategory['status']) =>
+	status !== 'compliant';
 
 /**
  * ComplianceCard
@@ -65,13 +70,21 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 			)
 		: 0;
 
+	// Exceptions first: compliant categories stay hidden until the reader asks for them.
+	const [showAll, setShowAll] = useState(false);
+	const exceptions = categories.filter((category) =>
+		isComplianceException(category.status)
+	);
+	const visibleRows = showAll ? categories : exceptions;
+	const hiddenCount = categories.length - visibleRows.length;
+
 	return (
 		<Card
 			className={styles.metricCard}
 			p='lg'
 			radius='md'
 			withBorder
-			shadow='sm'
+			shadow='none'
 			h='100%'
 		>
 			<Stack gap='md' h='100%'>
@@ -87,7 +100,7 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 						)}
 						{trend && <TrendIndicator trend={trend} />}
 					</div>
-					<ThemeIcon size='lg' color='gray' radius='md'>
+					<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
 						<IconShieldCheck size={20} />
 					</ThemeIcon>
 				</Group>
@@ -100,7 +113,7 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 				</Group>
 
 				<Stack gap='sm'>
-					{categories.map((category) => {
+					{visibleRows.map((category) => {
 						const count = issueCounts?.[category.name];
 						const clickable = Boolean(onCategoryClick) && (count ?? 0) > 0;
 						return (
@@ -116,13 +129,15 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 										<Text size='sm' fw={500}>
 											{category.name}
 										</Text>
-										<Badge
-											size='xs'
-											color={getComplianceColor(category.status)}
-											variant='light'
-										>
-											{t(`compliance.status.${category.status}`)}
-										</Badge>
+										{isComplianceException(category.status) && (
+											<Badge
+												size='xs'
+												color={getComplianceColor(category.status)}
+												variant='light'
+											>
+												{t(`compliance.status.${category.status}`)}
+											</Badge>
+										)}
 									</Group>
 									<Group gap={6} wrap='nowrap'>
 										<Text size='sm' fw={600}>
@@ -138,12 +153,41 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 								</Group>
 								<Progress
 									value={category.score}
-									size='sm'
+									size='xs'
 									color={getComplianceColor(category.status)}
+									aria-label={`${category.name} ${category.score}%`}
 								/>
 							</DrillRow>
 						);
 					})}
+
+					{!showAll && exceptions.length === 0 && (
+						<Text size='sm' c='dimmed'>
+							{t('breakdown.allOnTarget')}
+						</Text>
+					)}
+					{hiddenCount > 0 && (
+						<Anchor
+							component='button'
+							type='button'
+							size='xs'
+							c='dimmed'
+							onClick={() => setShowAll(true)}
+						>
+							{t('breakdown.showAll', { count: categories.length })}
+						</Anchor>
+					)}
+					{showAll && exceptions.length < categories.length && (
+						<Anchor
+							component='button'
+							type='button'
+							size='xs'
+							c='dimmed'
+							onClick={() => setShowAll(false)}
+						>
+							{t('breakdown.showExceptions')}
+						</Anchor>
+					)}
 				</Stack>
 			</Stack>
 		</Card>

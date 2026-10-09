@@ -57,7 +57,7 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 			p='lg'
 			radius='md'
 			withBorder
-			shadow='sm'
+			shadow='none'
 			h='100%'
 		>
 			<Stack gap='md' h='100%'>
@@ -73,7 +73,7 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 						)}
 						{trend && <TrendIndicator trend={trend} />}
 					</div>
-					<ThemeIcon size='lg' color='gray' radius='md'>
+					<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
 						<IconPhoneCall size={20} />
 					</ThemeIcon>
 				</Group>
@@ -100,7 +100,12 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 								</Text>
 							</Group>
 						</Group>
-						<Progress value={effectivePct} size='sm' color='green' />
+						<Progress
+							value={effectivePct}
+							size='xs'
+							color='gray'
+							aria-label={`Effective contacts ${effectivePct}%`}
+						/>
 					</DrillRow>
 
 					<DrillRow
@@ -121,7 +126,12 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 								{clickable && <IconChevronRight size={14} />}
 							</Group>
 						</Group>
-						<Progress value={nonEffectivePct} size='sm' color='gray' />
+						<Progress
+							value={nonEffectivePct}
+							size='xs'
+							color='gray'
+							aria-label={`Non-effective contacts ${nonEffectivePct}%`}
+						/>
 					</DrillRow>
 
 					{sales && (
@@ -144,7 +154,12 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 										</Text>
 									</Group>
 								</Group>
-								<Progress value={salesPct} size='sm' color='teal' />
+								<Progress
+									value={salesPct}
+									size='xs'
+									color='gray'
+									aria-label={`${t('operational.sales.label')} ${salesPct}%`}
+								/>
 							</DrillRow>
 						</>
 					)}

@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
+	Anchor,
 	Card,
 	Stack,
 	Group,
@@ -10,7 +11,10 @@ import {
 	Badge,
 } from '@mantine/core';
 import { IconChevronRight, IconClipboardCheck } from '@tabler/icons-react';
-import { SCORE_BAND_COLOR } from '~/modules/qa/constants/badgeColors';
+import {
+	SCORE_BAND_TONE,
+	isExceptionBand,
+} from '~/modules/qa/constants/badgeColors';
 import { bandFor } from '~/modules/qa/settings/helpers';
 import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
@@ -79,7 +83,20 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 	const { t } = useTranslation('qa.dashboard');
 	const thresholds = useSettingsStore(selectThresholds);
 	const totalBand = bandFor(score.total, thresholds.qa.scoreBands);
-	const totalBandColor = SCORE_BAND_COLOR[totalBand];
+	const totalBandColor = SCORE_BAND_TONE[totalBand];
+
+	// Exceptions first: on-target categories stay hidden until the reader asks for them.
+	const [showAll, setShowAll] = useState(false);
+	const rows = QA_CATEGORIES.map((category) => ({
+		...category,
+		band: bandFor(
+			score[category.key],
+			thresholds.qa.categoryBands[category.key]
+		),
+	}));
+	const exceptions = rows.filter((row) => isExceptionBand(row.band));
+	const visibleRows = showAll ? rows : exceptions;
+	const hiddenCount = rows.length - visibleRows.length;
 
 	return (
 		<Card
@@ -87,7 +104,7 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 			p='lg'
 			radius='md'
 			withBorder
-			shadow='sm'
+			shadow='none'
 			h='100%'
 		>
 			<Stack gap='md' h='100%'>
@@ -103,7 +120,7 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 						)}
 						{trend && <TrendIndicator trend={trend} />}
 					</div>
-					<ThemeIcon size='lg' color='gray' radius='md'>
+					<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
 						<IconClipboardCheck size={20} />
 					</ThemeIcon>
 				</Group>
@@ -119,15 +136,10 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 				</Group>
 
 				<Stack gap='sm'>
-					{QA_CATEGORIES.map((category) => {
+					{visibleRows.map((category) => {
 						const count = issueCounts?.[category.key];
 						const clickable = Boolean(onCategoryClick) && (count ?? 0) > 0;
-						const band = bandFor(
-							score[category.key],
-							thresholds.qa.categoryBands[category.key]
-						);
-						const bandLabel = t(BAND_LABEL_KEY[band]);
-						const bandColor = SCORE_BAND_COLOR[band];
+						const bandColor = SCORE_BAND_TONE[category.band];
 						return (
 							<DrillRow
 								key={category.key}
@@ -141,9 +153,11 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 										<Text size='sm' fw={500}>
 											{category.label}
 										</Text>
-										<Badge size='xs' variant='light' color={bandColor}>
-											{bandLabel}
-										</Badge>
+										{isExceptionBand(category.band) && (
+											<Badge size='xs' variant='light' color={bandColor}>
+												{t(BAND_LABEL_KEY[category.band])}
+											</Badge>
+										)}
 									</Group>
 									<Group gap={6} wrap='nowrap'>
 										<Text size='sm' fw={600}>
@@ -159,12 +173,41 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 								</Group>
 								<Progress
 									value={score[category.key]}
-									size='sm'
+									size='xs'
 									color={bandColor}
+									aria-label={`${category.label} ${score[category.key]}%`}
 								/>
 							</DrillRow>
 						);
 					})}
+
+					{!showAll && exceptions.length === 0 && (
+						<Text size='sm' c='dimmed'>
+							{t('breakdown.allOnTarget')}
+						</Text>
+					)}
+					{hiddenCount > 0 && (
+						<Anchor
+							component='button'
+							type='button'
+							size='xs'
+							c='dimmed'
+							onClick={() => setShowAll(true)}
+						>
+							{t('breakdown.showAll', { count: rows.length })}
+						</Anchor>
+					)}
+					{showAll && exceptions.length < rows.length && (
+						<Anchor
+							component='button'
+							type='button'
+							size='xs'
+							c='dimmed'
+							onClick={() => setShowAll(false)}
+						>
+							{t('breakdown.showExceptions')}
+						</Anchor>
+					)}
 
 					{autoFails !== undefined &&
 						(() => {
@@ -182,22 +225,14 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 											<Text size='sm' fw={500}>
 												{t('businessInsights.autoFails')}
 											</Text>
-											<Badge
-												size='xs'
-												variant='light'
-												color={autoFails > 0 ? 'red' : 'gray'}
-											>
-												{autoFails > 0
-													? t('autoFails.present')
-													: t('autoFails.none')}
-											</Badge>
+											{autoFails > 0 && (
+												<Badge size='xs' variant='light' color='danger'>
+													{t('autoFails.present')}
+												</Badge>
+											)}
 										</Group>
 										<Group gap={6} wrap='nowrap'>
-											<Text
-												size='sm'
-												fw={600}
-												c={autoFails > 0 ? 'red' : undefined}
-											>
+											<Text size='sm' fw={600}>
 												{autoFails}
 											</Text>
 											{clickable && <IconChevronRight size={14} />}
