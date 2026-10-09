@@ -487,7 +487,6 @@
 	},
 	"sessions": {
 		"title": "Sesiones de coaching",
-		"description": "Lote semanal preparado por la plataforma, el calendario de sesiones confirmadas y el histórico de todas las sesiones y mensajes IA.",
 		"calendar": {
 			"title": "Calendario",
 			"description": "Todas las sesiones confirmadas, por mes, semana o día.",
@@ -497,24 +496,22 @@
 			"month": "Mes",
 			"week": "Semana",
 			"day": "Día",
-			"more": "+{{count}} más"
+			"more": "+{{count}} más",
+			"open_one": "Calendario · {{count}} esta semana",
+			"open_other": "Calendario · {{count}} esta semana"
 		},
 		"filters": {
 			"batch": "Lote semanal",
-			"agenda": "Agenda",
 			"history": "Histórico",
-			"topic": "Tema",
-			"today": "Hoy",
-			"agent": "Agente",
 			"dateRange": "Rango de fechas",
 			"status": "Estado",
 			"type": "Tipo",
 			"coach": "Coach",
 			"team": "Equipo",
-			"all": "Todos",
-			"upcoming": "Próximas",
-			"past": "Pasadas",
-			"modality": "Modalidad"
+			"modality": "Modalidad",
+			"search": "Buscar agente o tema",
+			"more": "Más filtros",
+			"clear": "Limpiar"
 		},
 		"columns": {
 			"date": "Fecha",
@@ -553,10 +550,6 @@
 			"pending": "Todavía no",
 			"none": "—"
 		},
-		"todayTitle": "Sesiones de hoy",
-		"thisWeek": "Esta semana",
-		"later": "Más adelante",
-		"past": "Sesiones pasadas",
 		"editor": {
 			"modality": "Modalidad",
 			"createTitle": "Agendar sesión",
@@ -641,10 +634,10 @@
 				"hint": "Confirma una fecha para agendar el 1:1, envía el coaching como mensaje IA o descártala.",
 				"date": "Fecha de la sesión",
 				"schedule": "Agendar 1:1",
-				"sendAi": "Enviar como mensaje IA",
+				"sendAi": "Cambiar a mensaje IA",
 				"dismiss": "Descartar",
 				"scheduled": "Sesión agendada y agente notificado",
-				"sent": "Mensaje de coaching enviado al inbox del agente",
+				"sent": "Mensaje de coaching programado para el día de coaching",
 				"dismissed": "Propuesta descartada"
 			},
 			"meetingLink": "Enlace de la reunión",
@@ -674,8 +667,7 @@
 			"noItems": "Todavía no hay acciones acordadas."
 		},
 		"history": {
-			"title": "Sesiones y coaching pasados",
-			"description": "Todas las sesiones completadas, perdidas o canceladas y los mensajes IA de tus agentes. Filtra por agente, tema o periodo."
+			"title": "Sesiones y coaching pasados"
 		},
 		"brief": {
 			"stats": {
@@ -706,29 +698,24 @@
 		},
 		"batch": {
 			"title": "Lote semanal de coaching",
-			"description": "Generado {{generated}} a partir de las llamadas del {{from}} al {{to}} para el coaching del {{coaching}}. La plataforma decidió quién necesita un 1:1 y quién recibe el mensaje IA.",
+			"titleWeek": "Lote semanal · {{from}} – {{to}}",
+			"facts": "Generado {{generated}} · coaching {{coaching}} · próximo lote {{next}}",
+			"summary": "{{analysed}} agentes analizados · {{oneOnOne}} tendrán 1:1 ({{toConfirm}} por confirmar) · {{ai}} reciben el mensaje IA",
+			"decisionShort": { "ONE_ON_ONE": "1:1", "AI_MESSAGE": "Mensaje IA" },
+			"locked": "Ya realizada o enviada: la decisión no puede cambiar",
+			"sendsOn": "Se envía {{date}}",
+			"queued": "Mensaje programado para el {{date}}",
+			"proposedAgain": "1:1 propuesto de nuevo: confirma la fecha desde la sesión",
+			"more": "+{{count}}",
 			"coachingDay": "Día de coaching",
-			"next": "Próximo lote {{date}}",
 			"empty": "Todavía no hay lote: el primero se genera {{date}}.",
-			"agents": "Agentes de este lote",
-			"agentsDescription": "Haz clic en una fila para abrir la sesión precargada: aspectos débiles, llamadas de evidencia, cómo abordarlo, material sugerido y qué cambió desde la sesión anterior.",
 			"clean": "Semana limpia",
 			"sentOn": "Enviado {{date}}",
 			"suggestedDate": "Sugerida {{date}}",
-			"kpi": {
-				"analysed": "Agentes analizados",
-				"proposed": "1:1 por revisar",
-				"scheduled": "1:1 agendados",
-				"ai": "Mensajes IA enviados"
-			},
 			"columns": {
 				"findings": "Aspectos débiles",
 				"decision": "Decisión",
 				"date": "Sesión"
-			},
-			"decision": {
-				"ONE_ON_ONE": "1:1 con supervisor",
-				"AI_MESSAGE": "Mensaje IA"
 			},
 			"weekdays": {
 				"0": "Domingo",

@@ -58,6 +58,14 @@ export const nextBatchAt = (
 	};
 };
 
+/** The slot a proposed 1:1 is pre-loaded into: the coaching day at 10:00 (stored as UTC, like every seeded session). */
+export const proposedSlotAt = (coachingDate: string): string =>
+	`${coachingDate}T10:00:00Z`;
+
+/** The moment a batch's AI message goes out: the coaching day at 09:00, not when the batch is generated. */
+export const aiMessageSendAt = (coachingDate: string): string =>
+	`${coachingDate}T09:00:00Z`;
+
 /** Tier + trend rule: Critical / Needs improvement / declining Good → 1:1, everyone else → AI message. */
 export const decideBatchItem = (
 	current: WeeklyScorecard | null,
@@ -323,7 +331,7 @@ export const buildWeeklyBatch = (
 					coachRole: 'SUPERVISOR',
 					type: 'ONE_ON_ONE',
 					modality: 'IN_PERSON',
-					date: `${input.coachingDate}T10:00:00Z`,
+					date: proposedSlotAt(input.coachingDate),
 					durationMin: 30,
 					topic: built.topic,
 					area: built.area,
@@ -351,7 +359,7 @@ export const buildWeeklyBatch = (
 				(s) =>
 					s.type === 'AI_MESSAGE' &&
 					s.agentId === agent.id &&
-					s.date === input.generatedAt
+					(s.batchId === input.id || s.date === input.generatedAt)
 			);
 			if (existing) {
 				patched.push({ ...existing, brief, batchId: input.id });
@@ -371,7 +379,7 @@ export const buildWeeklyBatch = (
 				coachRole: 'QA_MANAGER',
 				type: 'AI_MESSAGE',
 				modality: null,
-				date: input.generatedAt,
+				date: aiMessageSendAt(input.coachingDate),
 				durationMin: 0,
 				topic: 'Weekly QA review',
 				area: built.area,
@@ -384,7 +392,8 @@ export const buildWeeklyBatch = (
 					: brief.approach,
 				actionItems: [],
 				agentCommitment: blankCommitment(),
-				status: 'COMPLETED',
+				// Goes out on the coaching day; the supervisor can still switch it to a 1:1 until then.
+				status: 'SCHEDULED',
 				outcome: null,
 				followUpDate: null,
 				linkedAssignmentIds: [],

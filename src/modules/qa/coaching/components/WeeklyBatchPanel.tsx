@@ -1,22 +1,32 @@
 import { useMemo } from 'react';
-import { Badge, Group, Select, SimpleGrid, Stack, Text } from '@mantine/core';
+import {
+	Badge,
+	Box,
+	Group,
+	SegmentedControl,
+	Select,
+	Stack,
+	Text,
+	Tooltip,
+} from '@mantine/core';
 import { createColumnHelper } from '@tanstack/react-table';
-import { IconMessage, IconSparkles, IconUser } from '@tabler/icons-react';
+import { IconSparkles } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
-import { StatCard } from '~/components/StatCard';
 import BaseTable, {
 	type BaseTableColumnDef,
 } from '~/components/BaseTable/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import type {
+	CoachingBatchDecision,
 	CoachingBatchItem,
 	CoachingSessionRecord,
 	CoachingWeeklyBatch,
 } from '~/models/qa';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import type { TeamRole } from '~/modules/qa/team/types';
+import { notifySuccess } from '~/modules/qa/utils/notifications';
 import {
 	useCoachingStore,
 	selectBatches,
@@ -31,6 +41,16 @@ interface BatchRow extends CoachingBatchItem {
 }
 
 const helper = createColumnHelper<BatchRow>();
+
+/** How many weak aspects a row names before the rest go behind a "+N". */
+const MAX_VISIBLE_FINDINGS = 3;
+
+/** A decision can only change while the session is still ahead: once held, missed or dismissed it stays as it is. */
+const isLocked = (session: CoachingSessionRecord | undefined): boolean =>
+	!session ||
+	session.status === 'COMPLETED' ||
+	session.status === 'MISSED' ||
+	session.status === 'CANCELLED';
 
 interface WeeklyBatchPanelProps {
 	role: TeamRole;
@@ -50,6 +70,7 @@ export function WeeklyBatchPanel({
 	const batches = useCoachingStore(selectBatches);
 	const coachingDay = useCoachingStore(selectCoachingDay);
 	const setCoachingDay = useCoachingStore((s) => s.setCoachingDay);
+	const setBatchDecision = useCoachingStore((s) => s.setBatchDecision);
 
 	const latest: CoachingWeeklyBatch | undefined = useMemo(
 		() =>
@@ -71,15 +92,26 @@ export function WeeklyBatchPanel({
 			})),
 		[latest, sessions]
 	);
-	const kpi = {
+	const summary = {
 		analysed: rows.length,
-		proposed: rows.filter((r) => r.session?.status === 'PROPOSED').length,
-		scheduled: rows.filter(
-			(r) =>
-				r.decision === 'ONE_ON_ONE' &&
-				(r.session?.status === 'SCHEDULED' || r.session?.status === 'COMPLETED')
-		).length,
-		ai: rows.filter((r) => r.session?.type === 'AI_MESSAGE').length,
+		oneOnOne: rows.filter((r) => r.decision === 'ONE_ON_ONE').length,
+		toConfirm: rows.filter((r) => r.session?.status === 'PROPOSED').length,
+		ai: rows.filter((r) => r.decision === 'AI_MESSAGE').length,
+	};
+
+	/** Flips the decision from the table and says what happens next. */
+	const changeDecision = (row: BatchRow, decision: CoachingBatchDecision) => {
+		setBatchDecision(row.sessionId, decision);
+		const updated = useCoachingStore
+			.getState()
+			.sessions.find((s) => s.id === row.sessionId);
+		notifySuccess(
+			decision === 'AI_MESSAGE'
+				? t('sessions.batch.queued', {
+						date: dayjs(updated?.date).format('ddd D MMM'),
+					})
+				: t('sessions.batch.proposedAgain')
+		);
 	};
 
 	const columns: BaseTableColumnDef<BatchRow>[] = [
@@ -108,20 +140,15 @@ export function WeeklyBatchPanel({
 						</Text>
 					);
 				}
-				return <TierScore score={brief.score} tier={brief.tier} />;
-			},
-		}) as BaseTableColumnDef<BatchRow>,
-		helper.display({
-			id: 'trend',
-			header: t('agents.columns.lastImpact'),
-			cell: (info) => {
-				const brief = info.row.original.session?.brief;
 				return (
-					<ScoreTrendText
-						verdict={brief?.trend ?? null}
-						current={brief?.score ?? 0}
-						previous={brief?.previousScore ?? null}
-					/>
+					<Stack gap={2}>
+						<TierScore score={brief.score} tier={brief.tier} />
+						<ScoreTrendText
+							verdict={brief.trend}
+							current={brief.score}
+							previous={brief.previousScore}
+						/>
+					</Stack>
 				);
 			},
 		}) as BaseTableColumnDef<BatchRow>,
@@ -130,13 +157,19 @@ export function WeeklyBatchPanel({
 			header: t('sessions.batch.columns.findings'),
 			cell: (info) => {
 				const findings = info.row.original.session?.brief?.findings ?? [];
-				return findings.length === 0 ? (
-					<Text size='sm' c='dimmed'>
-						{t('sessions.batch.clean')}
-					</Text>
-				) : (
+				if (findings.length === 0) {
+					return (
+						<Text size='sm' c='dimmed'>
+							{t('sessions.batch.clean')}
+						</Text>
+					);
+				}
+				const label = (issue: string) =>
+					t(`issues.${issue}`, { ns: 'qa.calls' });
+				const rest = findings.slice(MAX_VISIBLE_FINDINGS);
+				return (
 					<Group gap={4} wrap='wrap'>
-						{findings.map((f) => {
+						{findings.slice(0, MAX_VISIBLE_FINDINGS).map((f) => {
 							const critical = CRITICAL_ISSUES.has(f.issue);
 							return (
 								<Badge
@@ -145,10 +178,20 @@ export function WeeklyBatchPanel({
 									variant={critical ? 'light' : 'outline'}
 									color={critical ? 'red' : 'gray'}
 								>
-									{t(`issues.${f.issue}`, { ns: 'qa.calls' })}
+									{label(f.issue)}
 								</Badge>
 							);
 						})}
+						{rest.length > 0 && (
+							<Tooltip
+								withArrow
+								label={rest.map((f) => label(f.issue)).join(', ')}
+							>
+								<Badge size='xs' variant='outline' color='gray'>
+									{t('sessions.batch.more', { count: rest.length })}
+								</Badge>
+							</Tooltip>
+						)}
 					</Group>
 				);
 			},
@@ -156,45 +199,53 @@ export function WeeklyBatchPanel({
 		helper.accessor('decision', {
 			header: t('sessions.batch.columns.decision'),
 			cell: (info) => {
-				const oneOnOne = info.getValue() === 'ONE_ON_ONE';
+				const row = info.row.original;
+				const locked = isLocked(row.session);
+				const control = (
+					// The toggle is the row's own action: keep its clicks and keys from opening the session.
+					<Box
+						w='fit-content'
+						onClick={(e) => e.stopPropagation()}
+						onKeyDown={(e) => e.stopPropagation()}
+					>
+						<SegmentedControl
+							size='xs'
+							value={row.decision}
+							disabled={locked}
+							aria-label={t('sessions.batch.columns.decision')}
+							data={[
+								{
+									value: 'ONE_ON_ONE',
+									label: t('sessions.batch.decisionShort.ONE_ON_ONE'),
+								},
+								{
+									value: 'AI_MESSAGE',
+									label: t('sessions.batch.decisionShort.AI_MESSAGE'),
+								},
+							]}
+							onChange={(v) => changeDecision(row, v as CoachingBatchDecision)}
+						/>
+					</Box>
+				);
 				return (
-					<Stack gap={2}>
-						<Group gap={4} wrap='nowrap' c={oneOnOne ? undefined : 'dimmed'}>
-							{oneOnOne ? <IconUser size={12} /> : <IconMessage size={12} />}
-							<Text size='sm' c='inherit' fw={oneOnOne ? 500 : 400}>
-								{t(`sessions.batch.decision.${info.getValue()}`)}
-							</Text>
-						</Group>
+					<Group gap='xs' wrap='nowrap'>
+						{locked ? (
+							<Tooltip withArrow label={t('sessions.batch.locked')}>
+								{control}
+							</Tooltip>
+						) : (
+							control
+						)}
 						<Text size='xs' c='dimmed'>
-							{t(`sessions.batch.reason.${info.row.original.reason}`)}
+							{t(`sessions.batch.reason.${row.reason}`)}
 						</Text>
-					</Stack>
+					</Group>
 				);
 			},
 		}) as BaseTableColumnDef<BatchRow>,
 		helper.accessor((r) => r.session?.status ?? '', {
 			id: 'status',
 			header: t('sessions.columns.status'),
-			cell: (info) => {
-				const status = info.row.original.session?.status;
-				if (!status) {
-					return (
-						<Text size='sm' c='dimmed'>
-							—
-						</Text>
-					);
-				}
-				const badge = sessionStatusBadge(status);
-				return (
-					<Badge size='xs' variant={badge.variant} color={badge.color}>
-						{t(`sessions.status.${status}`)}
-					</Badge>
-				);
-			},
-		}) as BaseTableColumnDef<BatchRow>,
-		helper.accessor((r) => r.session?.date ?? '', {
-			id: 'date',
-			header: t('sessions.batch.columns.date'),
 			cell: (info) => {
 				const s = info.row.original.session;
 				if (!s) {
@@ -204,22 +255,31 @@ export function WeeklyBatchPanel({
 						</Text>
 					);
 				}
-				if (s.type === 'AI_MESSAGE') {
-					return (
-						<Text size='sm' c='dimmed'>
-							{t('sessions.batch.sentOn', {
-								date: dayjs(s.date).format('D MMM'),
-							})}
-						</Text>
-					);
-				}
-				const when = dayjs(s.date).format('ddd D MMM, HH:mm');
+				const badge = sessionStatusBadge(s.status);
+				const when = dayjs(s.date);
+				// Second line: when the message goes out or went out, or when the 1:1 takes place.
+				const line =
+					s.type === 'AI_MESSAGE'
+						? t(
+								s.status === 'COMPLETED'
+									? 'sessions.batch.sentOn'
+									: 'sessions.batch.sendsOn',
+								{ date: when.format('ddd D MMM') }
+							)
+						: s.status === 'PROPOSED'
+							? t('sessions.batch.suggestedDate', {
+									date: when.format('ddd D MMM, HH:mm'),
+								})
+							: when.format('ddd D MMM, HH:mm');
 				return (
-					<Text size='sm'>
-						{s.status === 'PROPOSED'
-							? t('sessions.batch.suggestedDate', { date: when })
-							: when}
-					</Text>
+					<Stack gap={2} align='flex-start'>
+						<Badge size='xs' variant={badge.variant} color={badge.color}>
+							{t(`sessions.status.${s.status}`)}
+						</Badge>
+						<Text size='xs' c='dimmed'>
+							{line}
+						</Text>
+					</Stack>
 				);
 			},
 		}) as BaseTableColumnDef<BatchRow>,
@@ -257,65 +317,37 @@ export function WeeklyBatchPanel({
 	}
 
 	return (
-		<Stack gap='md'>
-			<SectionCard
-				icon={IconSparkles}
-				title={t('sessions.batch.title')}
-				description={t('sessions.batch.description', {
-					generated: dayjs(latest.generatedAt).format('ddd D MMM, HH:mm'),
-					from: dayjs(latest.weekFrom).format('D MMM'),
-					to: dayjs(latest.weekTo).format('D MMM'),
-					coaching: dayjs(latest.coachingDate).format('ddd D MMM'),
-				})}
-				headerActions={
-					<Group gap='sm' align='flex-end'>
-						{coachingDaySelect}
-						<Badge size='sm' variant='outline' color='gray'>
-							{t('sessions.batch.next', {
-								date: dayjs(next.generatedAt).format('ddd D MMM, HH:mm'),
-							})}
-						</Badge>
-					</Group>
-				}
-			>
-				<SimpleGrid cols={{ base: 2, md: 4 }} spacing='sm'>
-					<StatCard
-						variant='compact'
-						title={t('sessions.batch.kpi.analysed')}
-						value={kpi.analysed}
-					/>
-					<StatCard
-						variant='compact'
-						title={t('sessions.batch.kpi.proposed')}
-						value={kpi.proposed}
-					/>
-					<StatCard
-						variant='compact'
-						title={t('sessions.batch.kpi.scheduled')}
-						value={kpi.scheduled}
-					/>
-					<StatCard
-						variant='compact'
-						title={t('sessions.batch.kpi.ai')}
-						value={kpi.ai}
-					/>
-				</SimpleGrid>
-			</SectionCard>
-
-			<SectionCard
-				title={t('sessions.batch.agents')}
-				description={t('sessions.batch.agentsDescription')}
-			>
-				<BaseTable<BatchRow>
-					data={rows}
-					columns={columns}
-					getRowId={(r) => r.agentId}
-					initialSort={[{ id: 'scorecard', desc: false }]}
-					density='compact'
-					emptyMessage={t('sessions.empty')}
-					onRowClick={(r) => onOpen(r.sessionId)}
-				/>
-			</SectionCard>
-		</Stack>
+		<SectionCard
+			icon={IconSparkles}
+			title={t('sessions.batch.titleWeek', {
+				from: dayjs(latest.weekFrom).format('D MMM'),
+				to: dayjs(latest.weekTo).format('D MMM'),
+			})}
+			description={
+				<>
+					<Text component='span' display='block' inherit>
+						{t('sessions.batch.facts', {
+							generated: dayjs(latest.generatedAt).format('ddd D MMM, HH:mm'),
+							coaching: dayjs(latest.coachingDate).format('ddd D MMM'),
+							next: dayjs(next.generatedAt).format('ddd D MMM'),
+						})}
+					</Text>
+					<Text component='span' display='block' inherit>
+						{t('sessions.batch.summary', summary)}
+					</Text>
+				</>
+			}
+			headerActions={coachingDaySelect}
+		>
+			<BaseTable<BatchRow>
+				data={rows}
+				columns={columns}
+				getRowId={(r) => r.agentId}
+				initialSort={[{ id: 'scorecard', desc: false }]}
+				density='compact'
+				emptyMessage={t('sessions.empty')}
+				onRowClick={(r) => onOpen(r.sessionId)}
+			/>
+		</SectionCard>
 	);
 }

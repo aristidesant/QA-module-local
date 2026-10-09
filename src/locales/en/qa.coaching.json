@@ -487,7 +487,6 @@
 	},
 	"sessions": {
 		"title": "Coaching sessions",
-		"description": "Weekly batch prepared by the platform, the calendar of confirmed sessions, and the history of every session and AI message.",
 		"calendar": {
 			"title": "Calendar",
 			"description": "Every confirmed session, by month, week or day.",
@@ -497,24 +496,22 @@
 			"month": "Month",
 			"week": "Week",
 			"day": "Day",
-			"more": "+{{count}} more"
+			"more": "+{{count}} more",
+			"open_one": "Calendar · {{count}} this week",
+			"open_other": "Calendar · {{count}} this week"
 		},
 		"filters": {
 			"batch": "Weekly batch",
-			"agenda": "Agenda",
 			"history": "History",
-			"topic": "Topic",
-			"today": "Today",
-			"agent": "Agent",
 			"dateRange": "Date range",
 			"status": "Status",
 			"type": "Type",
 			"coach": "Coach",
 			"team": "Team",
-			"all": "All",
-			"upcoming": "Upcoming",
-			"past": "Past",
-			"modality": "Modality"
+			"modality": "Modality",
+			"search": "Search agent or topic",
+			"more": "More filters",
+			"clear": "Clear"
 		},
 		"columns": {
 			"date": "Date",
@@ -553,10 +550,6 @@
 			"pending": "Not yet",
 			"none": "—"
 		},
-		"todayTitle": "Today's sessions",
-		"thisWeek": "This week",
-		"later": "Later",
-		"past": "Past sessions",
 		"editor": {
 			"modality": "Modality",
 			"createTitle": "Schedule session",
@@ -641,10 +634,10 @@
 				"hint": "Confirm a date to schedule the 1:1, send the coaching as an AI message instead, or dismiss it.",
 				"date": "Session date",
 				"schedule": "Schedule 1:1",
-				"sendAi": "Send as AI message",
+				"sendAi": "Switch to AI message",
 				"dismiss": "Dismiss",
 				"scheduled": "Session scheduled and the agent notified",
-				"sent": "Coaching message sent to the agent's inbox",
+				"sent": "Coaching message queued for the coaching day",
 				"dismissed": "Proposal dismissed"
 			},
 			"meetingLink": "Meeting link",
@@ -674,8 +667,7 @@
 			"noItems": "No action items yet."
 		},
 		"history": {
-			"title": "Past sessions and coaching",
-			"description": "Every completed, missed or cancelled session and every AI message of your agents. Filter by agent, topic or period."
+			"title": "Past sessions and coaching"
 		},
 		"brief": {
 			"stats": {
@@ -706,29 +698,24 @@
 		},
 		"batch": {
 			"title": "Weekly coaching batch",
-			"description": "Generated {{generated}} from the calls of {{from}} – {{to}} for coaching on {{coaching}}. The platform decided who needs a 1:1 and who receives the AI message.",
+			"titleWeek": "Weekly batch · {{from}} – {{to}}",
+			"facts": "Generated {{generated}} · coaching {{coaching}} · next batch {{next}}",
+			"summary": "{{analysed}} agents analysed · {{oneOnOne}} get a 1:1 ({{toConfirm}} to confirm) · {{ai}} get the AI message",
+			"decisionShort": { "ONE_ON_ONE": "1:1", "AI_MESSAGE": "AI message" },
+			"locked": "Already held or sent: the decision can't change",
+			"sendsOn": "Sends {{date}}",
+			"queued": "Message queued for {{date}}",
+			"proposedAgain": "1:1 proposed again. Confirm the date from the session",
+			"more": "+{{count}}",
 			"coachingDay": "Coaching day",
-			"next": "Next batch {{date}}",
 			"empty": "No batch yet — the first one generates {{date}}.",
-			"agents": "Agents in this batch",
-			"agentsDescription": "Click a row to open the pre-loaded session: weak aspects, evidence calls, how to approach it, suggested material and what changed since the previous session.",
 			"clean": "Clean week",
 			"sentOn": "Sent {{date}}",
 			"suggestedDate": "Suggested {{date}}",
-			"kpi": {
-				"analysed": "Agents analysed",
-				"proposed": "1:1 to review",
-				"scheduled": "1:1 scheduled",
-				"ai": "AI messages sent"
-			},
 			"columns": {
 				"findings": "Weak aspects",
 				"decision": "Decision",
 				"date": "Session"
-			},
-			"decision": {
-				"ONE_ON_ONE": "1:1 with supervisor",
-				"AI_MESSAGE": "AI message"
 			},
 			"weekdays": {
 				"0": "Sunday",

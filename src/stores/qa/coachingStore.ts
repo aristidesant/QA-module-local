@@ -3,6 +3,7 @@ import i18n from '~/locales/i18n';
 import type {
 	CoachingActionItem,
 	CoachingActivityEntry,
+	CoachingBatchDecision,
 	CoachingBrief,
 	CoachingCohort,
 	CoachingRule,
@@ -26,7 +27,13 @@ import {
 	COACHING_SESSION_SEEDS,
 } from '~/modules/qa/coaching/mockData';
 import { describeCondition } from '~/modules/qa/triggers/helpers';
-import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
+import { TEAM_AGENTS, TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
+import { TODAY } from '~/modules/qa/analytics/constants';
+import {
+	aiMessageSendAt,
+	nextBatchAt,
+	proposedSlotAt,
+} from '~/modules/qa/coaching/weeklyBatch';
 import {
 	NOW_ISO,
 	QA_MANAGER_PERSONA,
@@ -109,6 +116,16 @@ interface CoachingState {
 	/** Supervisor sends the proposal as an AI message instead of holding the 1:1. */
 	sendProposedAsAiMessage: (id: string) => void;
 	dismissProposed: (id: string) => void;
+	/**
+	 * Supervisor overrides the batch's decision for one agent from the batch table.
+	 * A pending 1:1 becomes the AI message, sent on the coaching day; an AI message
+	 * that has not gone out becomes a proposed 1:1 on that day again. No-op once
+	 * the session was held, sent, missed or dismissed.
+	 */
+	setBatchDecision: (
+		sessionId: string,
+		decision: CoachingBatchDecision
+	) => void;
 	acknowledgeActionItem: (sessionId: string, itemId: string) => void;
 	acknowledgeCommitment: (sessionId: string, comment: string | null) => void;
 
@@ -156,6 +173,71 @@ const notifySession = (
 			],
 		})
 	);
+
+/** `batches` with the item linked to `sessionId` carrying `decision`, so the batch table never drifts from its sessions. */
+const withItemDecision = (
+	batches: CoachingWeeklyBatch[],
+	sessionId: string,
+	decision: CoachingBatchDecision
+): CoachingWeeklyBatch[] =>
+	batches.map((b) =>
+		b.items.some((i) => i.sessionId === sessionId)
+			? {
+					...b,
+					items: b.items.map((i) =>
+						i.sessionId === sessionId ? { ...i, decision } : i
+					),
+				}
+			: b
+	);
+
+/** A coach-led session rewritten as the AI message that goes out on `sendAt`. The brief is kept. */
+const toAiMessage = (
+	session: CoachingSessionRecord,
+	sendAt: string,
+	status: 'SCHEDULED' | 'COMPLETED'
+): CoachingSessionRecord => {
+	const profile = useTeamStore.getState().profiles[session.agentId];
+	const content = useLmsStore.getState().content;
+	const titles = (session.brief?.suggestedContentIds ?? [])
+		.map((cid) => content.find((c) => c.id === cid)?.title)
+		.filter((x): x is string => Boolean(x));
+	return {
+		...session,
+		type: 'AI_MESSAGE',
+		modality: null,
+		durationMin: 0,
+		date: sendAt,
+		status,
+		talkingPoints: [],
+		aiMessage: profile
+			? buildAiCoachingMessage(profile, 'Weekly coaching review', titles)
+			: (session.brief?.approach ?? ''),
+	};
+};
+
+/** An AI message rewritten as the 1:1 the batch would have proposed: led by the batch's supervisor, coaching day at 10:00, waiting to be confirmed. */
+const toProposedOneOnOne = (
+	session: CoachingSessionRecord,
+	coachingDate: string,
+	batch: CoachingWeeklyBatch
+): CoachingSessionRecord => ({
+	...session,
+	coachId: batch.supervisorId,
+	coachName:
+		TEAM_SUPERVISORS.find((s) => s.id === batch.supervisorId)?.name ??
+		SUPERVISOR_PERSONA.name,
+	coachRole: 'SUPERVISOR',
+	type: 'ONE_ON_ONE',
+	modality: 'IN_PERSON',
+	date: proposedSlotAt(coachingDate),
+	durationMin: 30,
+	status: 'PROPOSED',
+	talkingPoints: session.brief?.approach ? [session.brief.approach] : [],
+	aiMessage: null,
+	outcome: null,
+	followUpDate: null,
+});
 
 export const useCoachingStore = create<CoachingState>((set, get) => ({
 	rules: COACHING_RULE_SEEDS,
@@ -463,7 +545,10 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 			date,
 			modality,
 		};
-		set((s) => ({ sessions: s.sessions.map((x) => (x.id === id ? next : x)) }));
+		set((s) => ({
+			sessions: s.sessions.map((x) => (x.id === id ? next : x)),
+			batches: withItemDecision(s.batches, id, 'ONE_ON_ONE'),
+		}));
 		get().logActivity({
 			type: 'SESSION_SCHEDULED',
 			agentId: next.agentId,
@@ -480,27 +565,15 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 		);
 	},
 
+	// Immediate send, kept for callers outside the batch table; the table's own switch queues it for the coaching day.
 	sendProposedAsAiMessage: (id) => {
 		const session = get().sessions.find((s) => s.id === id);
 		if (!session || session.status !== 'PROPOSED') return;
-		const profile = useTeamStore.getState().profiles[session.agentId];
-		const content = useLmsStore.getState().content;
-		const titles = (session.brief?.suggestedContentIds ?? [])
-			.map((cid) => content.find((c) => c.id === cid)?.title)
-			.filter((x): x is string => Boolean(x));
-		const next: CoachingSessionRecord = {
-			...session,
-			type: 'AI_MESSAGE',
-			modality: null,
-			durationMin: 0,
-			date: NOW_ISO,
-			status: 'COMPLETED',
-			talkingPoints: [],
-			aiMessage: profile
-				? buildAiCoachingMessage(profile, 'Weekly coaching review', titles)
-				: (session.brief?.approach ?? ''),
-		};
-		set((s) => ({ sessions: s.sessions.map((x) => (x.id === id ? next : x)) }));
+		const next = toAiMessage(session, NOW_ISO, 'COMPLETED');
+		set((s) => ({
+			sessions: s.sessions.map((x) => (x.id === id ? next : x)),
+			batches: withItemDecision(s.batches, id, 'AI_MESSAGE'),
+		}));
 		get().logActivity({
 			type: 'SESSION_COMPLETED',
 			agentId: next.agentId,
@@ -525,6 +598,48 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 					: x
 			),
 		})),
+
+	setBatchDecision: (sessionId, decision) => {
+		const batch = get().batches.find((b) =>
+			b.items.some((i) => i.sessionId === sessionId)
+		);
+		const item = batch?.items.find((i) => i.sessionId === sessionId);
+		const session = get().sessions.find((s) => s.id === sessionId);
+		if (!batch || !item || !session || item.decision === decision) return;
+		// Only a decision that has not happened yet can change.
+		if (
+			session.status === 'COMPLETED' ||
+			session.status === 'MISSED' ||
+			session.status === 'CANCELLED'
+		)
+			return;
+		// The batch's own coaching day, or the next one when that day has already passed.
+		const coachingDate =
+			batch.coachingDate > TODAY
+				? batch.coachingDate
+				: nextBatchAt(get().coachingDay).coachingDate;
+		const next =
+			decision === 'AI_MESSAGE'
+				? toAiMessage(session, aiMessageSendAt(coachingDate), 'SCHEDULED')
+				: toProposedOneOnOne(session, coachingDate, batch);
+		set((s) => ({
+			sessions: s.sessions.map((x) => (x.id === sessionId ? next : x)),
+			batches: withItemDecision(s.batches, sessionId, decision),
+		}));
+		// No notification yet: the agent hears about it when the message goes out or the 1:1 is confirmed.
+		get().logActivity({
+			type: 'SESSION_SCHEDULED',
+			agentId: next.agentId,
+			agentName: next.agentName,
+			title:
+				decision === 'AI_MESSAGE'
+					? `Coaching message queued: ${next.topic}`
+					: `Coaching 1:1 proposed: ${next.topic}`,
+			description: `${next.coachName} · ${new Date(next.date).toLocaleString()} · decision changed from the weekly batch`,
+			area: next.area,
+			link: '?tab=sessions',
+		});
+	},
 
 	acknowledgeActionItem: (sessionId, itemId) =>
 		set((s) => ({

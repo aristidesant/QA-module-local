@@ -391,7 +391,6 @@ export default function CoachingPage() {
 							onOpen={(sessionId) =>
 								navigate(coachingSessionPath(role, sessionId))
 							}
-							onCreate={() => navigate(coachingSessionNewPath(role))}
 						/>
 					</Tabs.Panel>
 

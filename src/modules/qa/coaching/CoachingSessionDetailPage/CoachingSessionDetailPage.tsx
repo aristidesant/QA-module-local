@@ -211,7 +211,12 @@ export default function CoachingSessionDetailPage() {
 	};
 
 	const handleSendAi = () => {
-		useCoachingStore.getState().sendProposedAsAiMessage(session.id);
+		// A batch proposal switches through the batch decision, so the message goes out on the coaching day.
+		if (session.batchId) {
+			useCoachingStore.getState().setBatchDecision(session.id, 'AI_MESSAGE');
+		} else {
+			useCoachingStore.getState().sendProposedAsAiMessage(session.id);
+		}
 		notifySuccess(t('sessions.detail.proposed.sent'));
 		backToSessions();
 	};

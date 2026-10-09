@@ -25,7 +25,11 @@ import {
 } from '~/modules/qa/lms/mockData';
 import { buildAiCoachingMessage } from './helpers';
 import { DEFAULT_FOLLOW_UP } from './constants';
-import { buildWeeklyBatch } from './weeklyBatch';
+import {
+	aiMessageSendAt,
+	buildWeeklyBatch,
+	proposedSlotAt,
+} from './weeklyBatch';
 
 const CREATED_AT = '2026-07-01T09:00:00Z';
 const UPDATED_AT = '2026-09-01T09:00:00Z';
@@ -865,15 +869,38 @@ const WEEKLY_BATCH = buildWeeklyBatch({
 	contentById: CONTENT_BY_ID,
 });
 
-// Demo state on 12 Sep: the supervisor already scheduled the first proposal for the next coaching day.
-const FIRST_PROPOSAL = WEEKLY_BATCH.created.findIndex(
-	(s) => s.status === 'PROPOSED'
-);
-const BATCH_SESSIONS = WEEKLY_BATCH.created.map((s, i) =>
-	i === FIRST_PROPOSAL
-		? { ...s, status: 'SCHEDULED' as const, date: '2026-09-15T10:00:00Z' }
-		: s
-);
+// Demo state on 12 Sep. The coaching day of this run (8 Sep) has passed, so its AI messages went out that
+// morning. The supervisor already scheduled the first proposal for the next coaching day and switched the
+// second one to an AI message that goes out on that day.
+const NEXT_COACHING_DAY = '2026-09-15';
+const PROPOSAL_IDS = WEEKLY_BATCH.created
+	.filter((s) => s.status === 'PROPOSED')
+	.map((s) => s.id);
+const BATCH_SESSIONS = WEEKLY_BATCH.created.map((s): CoachingSessionRecord => {
+	if (s.type === 'AI_MESSAGE') return { ...s, status: 'COMPLETED' };
+	if (s.id === PROPOSAL_IDS[0])
+		return {
+			...s,
+			status: 'SCHEDULED',
+			date: proposedSlotAt(NEXT_COACHING_DAY),
+		};
+	if (s.id === PROPOSAL_IDS[1]) {
+		const profile = TEAM_PROFILES[s.agentId];
+		return {
+			...s,
+			type: 'AI_MESSAGE',
+			modality: null,
+			durationMin: 0,
+			status: 'SCHEDULED',
+			date: aiMessageSendAt(NEXT_COACHING_DAY),
+			talkingPoints: [],
+			aiMessage: profile
+				? buildAiCoachingMessage(profile, 'Weekly coaching review', [])
+				: (s.brief?.approach ?? ''),
+		};
+	}
+	return s;
+});
 const patchedById = new Map(WEEKLY_BATCH.patched.map((s) => [s.id, s]));
 // A Team 1 agent decided 1:1 this week no longer keeps the standalone seeded AI message of the same run.
 const CURATED_FOR_BATCH = CURATED_SESSIONS.filter(
@@ -893,7 +920,17 @@ export const COACHING_SESSION_SEEDS: CoachingSessionRecord[] = [
 	...ROSTER_SESSIONS,
 ];
 
-export const COACHING_BATCH_SEEDS: CoachingWeeklyBatch[] = [WEEKLY_BATCH.batch];
+/** The batch item of the switched proposal reads AI message, like the store would leave it. */
+const SEED_BATCH: CoachingWeeklyBatch = {
+	...WEEKLY_BATCH.batch,
+	items: WEEKLY_BATCH.batch.items.map((item) =>
+		item.sessionId === PROPOSAL_IDS[1]
+			? { ...item, decision: 'AI_MESSAGE' as const }
+			: item
+	),
+};
+
+export const COACHING_BATCH_SEEDS: CoachingWeeklyBatch[] = [SEED_BATCH];
 
 // ── Cohorts ───────────────────────────────────────────────────────────────────
 

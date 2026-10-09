@@ -3,21 +3,27 @@ import {
 	Badge,
 	Button,
 	Group,
+	Popover,
 	Select,
 	Stack,
 	Text,
+	TextInput,
 	ThemeIcon,
 } from '@mantine/core';
 import { DatePickerInput } from '@mantine/dates';
+import { useMediaQuery } from '@mantine/hooks';
 import { createColumnHelper } from '@tanstack/react-table';
 import {
+	IconAdjustments,
+	IconCalendarEvent,
 	IconCheck,
 	IconClock,
-	IconPlus,
+	IconSearch,
 	IconUsersGroup,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { AppDrawer } from '~/components/AppDrawer';
 import { SectionCard } from '~/components/SectionCard';
 import BaseTable, {
 	type BaseTableColumnDef,
@@ -28,6 +34,7 @@ import type {
 	CoachingSessionStatus,
 	CoachingSessionType,
 } from '~/models/qa';
+import { TODAY } from '~/modules/qa/analytics/constants';
 import { LMS_AREA_META } from '~/modules/qa/lms/constants';
 import { WeeklyBatchPanel } from '../../components/WeeklyBatchPanel';
 import { SessionsCalendar } from './SessionsCalendar';
@@ -44,13 +51,17 @@ const helper = createColumnHelper<CoachingSessionRecord>();
 
 type SessionsView = 'batch' | 'history';
 
+/** Proposals live in the weekly batch until confirmed, so the history never lists them. */
+const HISTORY_STATUSES = SESSION_STATUSES.filter(
+	(s: CoachingSessionStatus) => s !== 'PROPOSED'
+);
+
 interface SessionsTabProps {
 	sessions: CoachingSessionRecord[];
 	agentTeam: Record<string, string>;
 	agentSupervisor: Record<string, string>;
 	role: TeamRole;
 	onOpen: (sessionId: string) => void;
-	onCreate: () => void;
 }
 
 export function SessionsTab({
@@ -59,69 +70,75 @@ export function SessionsTab({
 	agentSupervisor,
 	role,
 	onOpen,
-	onCreate,
 }: SessionsTabProps) {
 	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
+	const isNarrow = useMediaQuery('(max-width: 48em)');
 	const [view, setView] = useState<SessionsView>('batch');
+	const [calendarOpen, setCalendarOpen] = useState(false);
+	const [search, setSearch] = useState('');
 	const [status, setStatus] = useState<string | null>(null);
 	const [type, setType] = useState<string | null>(null);
 	const [modality, setModality] = useState<string | null>(null);
 	const [coach, setCoach] = useState<string | null>(null);
 	const [team, setTeam] = useState<string | null>(null);
-	const [agent, setAgent] = useState<string | null>(null);
-	const [topic, setTopic] = useState<string | null>(null);
 	const [range, setRange] = useState<[string | null, string | null]>([
 		null,
 		null,
 	]);
 
-	// One option per agent with their own sessions (group sessions belong to a learning group).
-	const agentOptions = useMemo(() => {
-		const byId = new Map<string, string>();
-		for (const s of sessions)
-			if (s.type !== 'GROUP') byId.set(s.agentId, s.agentName);
-		return [...byId.entries()]
-			.map(([value, label]) => ({ value, label }))
-			.sort((a, b) => a.label.localeCompare(b.label));
-	}, [sessions]);
+	const clearMoreFilters = () => {
+		setModality(null);
+		setCoach(null);
+		setTeam(null);
+	};
 
-	const topicOptions = useMemo(
-		() => [...new Set(sessions.map((s) => s.topic))].sort(),
-		[sessions]
-	);
+	/** History filters only make sense in the history view, so leaving it clears them. */
+	const changeView = (next: SessionsView) => {
+		setView(next);
+		if (next === 'batch') {
+			setSearch('');
+			setStatus(null);
+			setType(null);
+			setRange([null, null]);
+			clearMoreFilters();
+		}
+	};
 
-	const filtered = useMemo(
-		() =>
-			sessions.filter((s) => {
-				if (status && s.status !== status) return false;
-				if (type && s.type !== type) return false;
-				if (modality && s.modality !== modality) return false;
-				if (agent && (s.type === 'GROUP' || s.agentId !== agent)) return false;
-				if (topic && s.topic !== topic) return false;
-				const day = s.date.slice(0, 10);
-				if (range[0] && day < range[0]) return false;
-				if (range[1] && day > range[1]) return false;
-				if (coach && s.coachRole !== coach) return false;
-				if (team && agentSupervisor[s.agentId] !== team) return false;
-				return true;
-			}),
-		[
-			sessions,
-			status,
-			type,
-			modality,
-			agent,
-			topic,
-			range,
-			coach,
-			team,
-			agentSupervisor,
-		]
-	);
+	const filtered = useMemo(() => {
+		const query = search.trim().toLowerCase();
+		return sessions.filter((s) => {
+			if (s.status === 'PROPOSED') return false;
+			if (
+				query &&
+				!s.agentName.toLowerCase().includes(query) &&
+				!s.topic.toLowerCase().includes(query)
+			)
+				return false;
+			if (status && s.status !== status) return false;
+			if (type && s.type !== type) return false;
+			if (modality && s.modality !== modality) return false;
+			const day = s.date.slice(0, 10);
+			if (range[0] && day < range[0]) return false;
+			if (range[1] && day > range[1]) return false;
+			if (coach && s.coachRole !== coach) return false;
+			if (team && agentSupervisor[s.agentId] !== team) return false;
+			return true;
+		});
+	}, [
+		sessions,
+		search,
+		status,
+		type,
+		modality,
+		range,
+		coach,
+		team,
+		agentSupervisor,
+	]);
 
-	// Proposed sessions live in the weekly batch view until the supervisor schedules them.
-	const visible = useMemo(
-		() => filtered.filter((s) => s.status !== 'PROPOSED'),
+	// Every session that is not a proposal, newest first. Upcoming ones are here too.
+	const history = useMemo(
+		() => [...filtered].sort((a, b) => b.date.localeCompare(a.date)),
 		[filtered]
 	);
 
@@ -131,13 +148,22 @@ export function SessionsTab({
 		[sessions]
 	);
 
-	const past = useMemo(
-		() =>
-			visible
-				.filter((s) => s.status !== 'SCHEDULED')
-				.sort((a, b) => b.date.localeCompare(a.date)),
-		[visible]
-	);
+	// Upcoming meetings of the current week; AI messages are not meetings, so they are not counted.
+	const thisWeekCount = useMemo(() => {
+		const from = dayjs(TODAY).startOf('week').format('YYYY-MM-DD');
+		const to = dayjs(TODAY).endOf('week').format('YYYY-MM-DD');
+		return calendarSessions.filter((s) => {
+			const day = s.date.slice(0, 10);
+			return (
+				s.status === 'SCHEDULED' &&
+				s.type !== 'AI_MESSAGE' &&
+				day >= from &&
+				day <= to
+			);
+		}).length;
+	}, [calendarSessions]);
+
+	const activeMoreFilters = [modality, coach, team].filter(Boolean).length;
 
 	const columns: BaseTableColumnDef<CoachingSessionRecord>[] = [
 		helper.accessor('date', {
@@ -181,49 +207,55 @@ export function SessionsTab({
 		}) as BaseTableColumnDef<CoachingSessionRecord>,
 		helper.accessor('topic', {
 			header: t('sessions.columns.topic'),
-		}) as BaseTableColumnDef<CoachingSessionRecord>,
-		helper.display({
-			id: 'area',
-			header: t('sessions.columns.area'),
 			cell: (info) => {
 				const { area, subItem } = info.row.original;
-				return area ? (
+				return (
 					<Stack gap={0}>
-						<Text size='sm'>
-							{t(LMS_AREA_META[area].labelKey, { ns: 'qa.lms' })}
-						</Text>
-						{subItem && (
+						<Text size='sm'>{info.getValue()}</Text>
+						{area && (
 							<Text size='xs' c='dimmed'>
-								{t(`subItems.${subItem}`, { ns: 'qa.lms' })}
+								{t(LMS_AREA_META[area].labelKey, { ns: 'qa.lms' })}
+								{subItem
+									? ` · ${t(`subItems.${subItem}`, { ns: 'qa.lms' })}`
+									: ''}
 							</Text>
 						)}
 					</Stack>
-				) : (
-					<Text size='sm' c='dimmed'>
-						—
-					</Text>
 				);
 			},
 		}) as BaseTableColumnDef<CoachingSessionRecord>,
-		helper.accessor('coachName', {
-			header: t('sessions.columns.coach'),
-			cell: (info) => (
-				<Stack gap={0}>
-					<Text size='sm'>{info.getValue()}</Text>
-					<Text size='xs' c='dimmed'>
-						{info.row.original.coachRole}
-					</Text>
-				</Stack>
-			),
-		}) as BaseTableColumnDef<CoachingSessionRecord>,
+		...(role === 'qa-manager'
+			? [
+					helper.accessor('coachName', {
+						header: t('sessions.columns.coach'),
+						cell: (info) => (
+							<Stack gap={0}>
+								<Text size='sm'>{info.getValue()}</Text>
+								<Text size='xs' c='dimmed'>
+									{info.row.original.coachRole}
+								</Text>
+							</Stack>
+						),
+					}) as BaseTableColumnDef<CoachingSessionRecord>,
+				]
+			: []),
 		helper.accessor('status', {
 			header: t('sessions.columns.status'),
 			cell: (info) => {
 				const badge = sessionStatusBadge(info.getValue());
+				const { followUpDate } = info.row.original;
 				return (
-					<Badge size='xs' variant={badge.variant} color={badge.color}>
-						{t(`sessions.status.${info.getValue()}`)}
-					</Badge>
+					<Stack gap={2} align='flex-start'>
+						<Badge size='xs' variant={badge.variant} color={badge.color}>
+							{t(`sessions.status.${info.getValue()}`)}
+						</Badge>
+						{followUpDate && (
+							<Text size='xs' c='dimmed'>
+								{t('sessions.columns.followUp')}{' '}
+								{dayjs(followUpDate).format('D MMM')}
+							</Text>
+						)}
+					</Stack>
 				);
 			},
 		}) as BaseTableColumnDef<CoachingSessionRecord>,
@@ -252,171 +284,189 @@ export function SessionsTab({
 				);
 			},
 		}) as BaseTableColumnDef<CoachingSessionRecord>,
-		helper.accessor('followUpDate', {
-			header: t('sessions.columns.followUp'),
-			cell: (info) => <Text size='sm'>{info.getValue() ?? '—'}</Text>,
-		}) as BaseTableColumnDef<CoachingSessionRecord>,
 	];
-
-	const segmented = (
-		<AppSegmentedControl
-			size='sm'
-			value={view}
-			onChange={(v) => setView(v as SessionsView)}
-			data={[
-				{ label: t('sessions.filters.batch'), value: 'batch' },
-				{ label: t('sessions.filters.history'), value: 'history' },
-			]}
-		/>
-	);
-
-	const filters = (
-		<Group gap='sm' wrap='wrap'>
-			{segmented}
-			<Select
-				size='sm'
-				placeholder={t('sessions.filters.agent')}
-				data={agentOptions}
-				value={agent}
-				onChange={setAgent}
-				clearable
-				searchable
-				w={200}
-			/>
-			<Select
-				size='sm'
-				placeholder={t('sessions.filters.topic')}
-				data={topicOptions}
-				value={topic}
-				onChange={setTopic}
-				clearable
-				searchable
-				w={200}
-			/>
-			<DatePickerInput
-				type='range'
-				size='sm'
-				placeholder={t('sessions.filters.dateRange')}
-				value={range}
-				onChange={(value) => setRange(value as [string | null, string | null])}
-				clearable
-				w={250}
-			/>
-			<Select
-				size='sm'
-				placeholder={t('sessions.filters.status')}
-				data={SESSION_STATUSES.map((s: CoachingSessionStatus) => ({
-					value: s,
-					label: t(`sessions.status.${s}`),
-				}))}
-				value={status}
-				onChange={setStatus}
-				clearable
-				w={150}
-			/>
-			<Select
-				size='sm'
-				placeholder={t('sessions.filters.type')}
-				data={[...SESSION_TYPES, 'AI_MESSAGE' as const].map(
-					(s: CoachingSessionType) => ({
-						value: s,
-						label: t(`sessions.types.${s}`),
-					})
-				)}
-				value={type}
-				onChange={setType}
-				clearable
-				w={150}
-			/>
-			<Select
-				size='sm'
-				placeholder={t('sessions.filters.modality')}
-				data={SESSION_MODALITIES.map((m) => ({
-					value: m,
-					label: t(`sessions.modality.${m}`),
-				}))}
-				value={modality}
-				onChange={setModality}
-				clearable
-				w={150}
-			/>
-			<Select
-				size='sm'
-				placeholder={t('sessions.filters.coach')}
-				data={[
-					{ value: 'SUPERVISOR', label: t('rules.editor.coach.SUPERVISOR') },
-					{ value: 'QA_MANAGER', label: t('rules.editor.coach.QA_MANAGER') },
-				]}
-				value={coach}
-				onChange={setCoach}
-				clearable
-				w={150}
-			/>
-			{role === 'qa-manager' && (
-				<Select
-					size='sm'
-					placeholder={t('sessions.filters.team')}
-					data={TEAM_SUPERVISORS.map((s) => ({ value: s.id, label: s.team }))}
-					value={team}
-					onChange={setTeam}
-					clearable
-					w={140}
-				/>
-			)}
-		</Group>
-	);
 
 	return (
 		<Stack gap='md'>
-			<SectionCard
-				title={t('sessions.title')}
-				description={t('sessions.description')}
-				headerActions={
-					<Button
-						size='sm'
-						leftSection={<IconPlus size={16} />}
-						onClick={onCreate}
-					>
-						{t('newSession')}
-					</Button>
-				}
-			>
-				{view === 'batch' ? segmented : filters}
-			</SectionCard>
+			<Group justify='space-between' align='center' wrap='wrap' gap='sm'>
+				<AppSegmentedControl
+					size='sm'
+					value={view}
+					onChange={(v) => changeView(v as SessionsView)}
+					data={[
+						{ label: t('sessions.filters.batch'), value: 'batch' },
+						{ label: t('sessions.filters.history'), value: 'history' },
+					]}
+				/>
+				<Button
+					variant='default'
+					size='sm'
+					leftSection={<IconCalendarEvent size={16} />}
+					onClick={() => setCalendarOpen(true)}
+				>
+					{t('sessions.calendar.open', { count: thisWeekCount })}
+				</Button>
+			</Group>
 
 			{view === 'batch' ? (
-				<>
-					<WeeklyBatchPanel
-						role={role}
-						sessions={sessions}
-						agentTeam={agentTeam}
-						onOpen={onOpen}
-					/>
-					<SectionCard
-						title={t('sessions.calendar.title')}
-						description={t('sessions.calendar.description')}
-					>
-						<SessionsCalendar sessions={calendarSessions} onOpen={onOpen} />
-					</SectionCard>
-				</>
+				<WeeklyBatchPanel
+					role={role}
+					sessions={sessions}
+					agentTeam={agentTeam}
+					onOpen={onOpen}
+				/>
 			) : (
-				<SectionCard
-					title={t('sessions.history.title')}
-					description={t('sessions.history.description')}
-				>
-					<BaseTable<CoachingSessionRecord>
-						data={past}
-						columns={columns}
-						getRowId={(r) => r.id}
-						density='compact'
-						enablePagination
-						pageSize={12}
-						showPaginationControls
-						emptyMessage={t('sessions.empty')}
-						onRowClick={(r) => onOpen(r.id)}
-					/>
+				<SectionCard title={t('sessions.history.title')}>
+					<Stack gap='md'>
+						<Group gap='sm' wrap='wrap'>
+							<TextInput
+								size='sm'
+								w={240}
+								aria-label={t('sessions.filters.search')}
+								placeholder={t('sessions.filters.search')}
+								leftSection={<IconSearch size={16} />}
+								value={search}
+								onChange={(e) => setSearch(e.currentTarget.value)}
+							/>
+							<DatePickerInput
+								type='range'
+								size='sm'
+								placeholder={t('sessions.filters.dateRange')}
+								value={range}
+								onChange={(value) =>
+									setRange(value as [string | null, string | null])
+								}
+								clearable
+								w={250}
+							/>
+							<Select
+								size='sm'
+								placeholder={t('sessions.filters.status')}
+								data={HISTORY_STATUSES.map((s: CoachingSessionStatus) => ({
+									value: s,
+									label: t(`sessions.status.${s}`),
+								}))}
+								value={status}
+								onChange={setStatus}
+								clearable
+								w={150}
+							/>
+							<Select
+								size='sm'
+								placeholder={t('sessions.filters.type')}
+								data={[...SESSION_TYPES, 'AI_MESSAGE' as const].map(
+									(s: CoachingSessionType) => ({
+										value: s,
+										label: t(`sessions.types.${s}`),
+									})
+								)}
+								value={type}
+								onChange={setType}
+								clearable
+								w={150}
+							/>
+							<Popover position='bottom-start' shadow='md' withArrow>
+								<Popover.Target>
+									<Button
+										variant='default'
+										size='sm'
+										leftSection={<IconAdjustments size={16} />}
+									>
+										{t('sessions.filters.more')}
+										{activeMoreFilters > 0 ? ` (${activeMoreFilters})` : ''}
+									</Button>
+								</Popover.Target>
+								<Popover.Dropdown>
+									<Stack gap='sm' w={220}>
+										<Select
+											size='sm'
+											placeholder={t('sessions.filters.modality')}
+											data={SESSION_MODALITIES.map((m) => ({
+												value: m,
+												label: t(`sessions.modality.${m}`),
+											}))}
+											value={modality}
+											onChange={setModality}
+											clearable
+											comboboxProps={{ withinPortal: false }}
+										/>
+										<Select
+											size='sm'
+											placeholder={t('sessions.filters.coach')}
+											data={[
+												{
+													value: 'SUPERVISOR',
+													label: t('rules.editor.coach.SUPERVISOR'),
+												},
+												{
+													value: 'QA_MANAGER',
+													label: t('rules.editor.coach.QA_MANAGER'),
+												},
+											]}
+											value={coach}
+											onChange={setCoach}
+											clearable
+											comboboxProps={{ withinPortal: false }}
+										/>
+										{role === 'qa-manager' && (
+											<Select
+												size='sm'
+												placeholder={t('sessions.filters.team')}
+												data={TEAM_SUPERVISORS.map((s) => ({
+													value: s.id,
+													label: s.team,
+												}))}
+												value={team}
+												onChange={setTeam}
+												clearable
+												comboboxProps={{ withinPortal: false }}
+											/>
+										)}
+										{activeMoreFilters > 0 && (
+											<Button
+												size='compact-sm'
+												variant='subtle'
+												onClick={clearMoreFilters}
+											>
+												{t('sessions.filters.clear')}
+											</Button>
+										)}
+									</Stack>
+								</Popover.Dropdown>
+							</Popover>
+						</Group>
+
+						<BaseTable<CoachingSessionRecord>
+							data={history}
+							columns={columns}
+							getRowId={(r) => r.id}
+							density='compact'
+							enablePagination
+							pageSize={12}
+							showPaginationControls
+							emptyMessage={t('sessions.empty')}
+							onRowClick={(r) => onOpen(r.id)}
+						/>
+					</Stack>
 				</SectionCard>
 			)}
+
+			<AppDrawer
+				opened={calendarOpen}
+				onClose={() => setCalendarOpen(false)}
+				size={isNarrow ? '100%' : '75%'}
+				title={t('sessions.calendar.title')}
+				description={t('sessions.calendar.description')}
+				icon={<IconCalendarEvent size={18} />}
+			>
+				<SessionsCalendar
+					sessions={calendarSessions}
+					onOpen={(id) => {
+						setCalendarOpen(false);
+						onOpen(id);
+					}}
+				/>
+			</AppDrawer>
 		</Stack>
 	);
 }
