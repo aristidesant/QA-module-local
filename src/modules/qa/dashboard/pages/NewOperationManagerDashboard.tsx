@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import {
@@ -9,9 +9,11 @@ import {
 	Tabs,
 	Group,
 	Badge,
+	Button,
 } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
+import EmptyState from '~/components/EmptyState';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import {
 	DashboardMetricCard,
@@ -24,10 +26,13 @@ import {
 	CriticalIssuesTable,
 	BestWorstCallsTable,
 	QuickInsightsWidget,
-	RankingsTable,
 } from '../components';
 import type { Insight } from '../components/QuickInsightsWidget';
-import type { RankingEntry, RankingGoal } from '../components/RankingsTable';
+import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
+import StandingsTable from '~/modules/qa/rankings/components/StandingsTable';
+import { rankingPath } from '~/modules/qa/rankings/constants';
+import { computeStandings, sortPrograms } from '~/modules/qa/rankings/helpers';
+import { useRankingsStore, selectPrograms } from '~/stores/qa/rankingsStore';
 import {
 	OPERATION_MANAGER_WEEKLY_METRICS,
 	OPERATION_MANAGER_SENTIMENT_TREND,
@@ -322,82 +327,6 @@ const CRITICAL_ALERTS: CriticalAlertRow[] =
 		};
 	});
 
-/**
- * Ranking goal applied across the client portfolio. Client teams are ranked
- * on an operations-weighted mix rather than QA score alone.
- */
-const OPERATION_MANAGER_RANKING_GOAL: RankingGoal = {
-	metric: 'Sentiment & Emotion',
-	criteria: 'Cross-client sentiment and emotion performance',
-	target: 'All clients at 4.0 or above',
-	startDate: '2026-09-01',
-	dueDate: '2026-12-31',
-	setBy: 'You · Operation Manager',
-};
-
-/**
- * Client ranking entries for the "Team Rankings" tab, derived from the same
- * portfolio as the "Clients" tab so both views stay consistent.
- */
-const OPERATION_MANAGER_RANKINGS: RankingEntry[] = [
-	{
-		position: 1,
-		name: 'Client A - Retail Services',
-		score: 4.6,
-		reactions: { LIKE: 11, HELPFUL: 15, INSPIRING: 9, AMAZING: 6, LEADER: 3 },
-		trend: 'up',
-		trendValue: 2,
-	},
-	{
-		position: 2,
-		name: 'Client B - Telecom Support',
-		score: 4.4,
-		reactions: { LIKE: 8, HELPFUL: 12, INSPIRING: 7, AMAZING: 5, LEADER: 2 },
-		trend: 'up',
-		trendValue: 1,
-	},
-	{
-		position: 3,
-		name: 'Client C - Financial Services',
-		score: 4.2,
-		reactions: { LIKE: 6, HELPFUL: 9, INSPIRING: 6, AMAZING: 3, LEADER: 1 },
-		trend: 'stable',
-		trendValue: 0,
-	},
-	{
-		position: 4,
-		name: 'Client D - Healthcare Enrollment',
-		score: 4.0,
-		reactions: { LIKE: 4, HELPFUL: 7, INSPIRING: 4, AMAZING: 2, LEADER: 1 },
-		trend: 'down',
-		trendValue: 1,
-	},
-	{
-		position: 5,
-		name: 'Client E - Insurance Claims',
-		score: 3.7,
-		reactions: { LIKE: 3, HELPFUL: 5, INSPIRING: 2, AMAZING: 1, LEADER: 0 },
-		trend: 'down',
-		trendValue: 2,
-	},
-	{
-		position: 6,
-		name: 'Client G - Legacy Program',
-		score: 3.6,
-		reactions: { LIKE: 2, HELPFUL: 3, INSPIRING: 1, AMAZING: 1, LEADER: 0 },
-		trend: 'stable',
-		trendValue: 0,
-	},
-	{
-		position: 7,
-		name: 'Client F - Utilities',
-		score: 3.4,
-		reactions: { LIKE: 1, HELPFUL: 2, INSPIRING: 1, AMAZING: 0, LEADER: 0 },
-		trend: 'down',
-		trendValue: 3,
-	},
-];
-
 /** Maps a critical issue severity to a theme-aware Mantine color token (matches CriticalIssuesTable convention) */
 const getSeverityColor = (severity: CriticalIssue['severity']) => {
 	switch (severity) {
@@ -469,7 +398,18 @@ const criticalAlertColumns: BaseTableColumnDef<CriticalAlertRow>[] = [
 
 export const NewOperationManagerDashboard: React.FC = () => {
 	const navigate = useNavigate();
-	const { t } = useTranslation('qa.dashboard');
+	const { t } = useTranslation(['qa.dashboard', 'qa.rankings']);
+	const programs = useRankingsStore(selectPrograms);
+	// The ranking live now, read from the same store the managers configure.
+	const liveProgram = useMemo(
+		() =>
+			sortPrograms(programs.filter((p) => p.status === 'active'))[0] ?? null,
+		[programs]
+	);
+	const liveStandings = useMemo(
+		() => (liveProgram ? computeStandings(liveProgram, TEAM_CALLS) : []),
+		[liveProgram]
+	);
 	const {
 		qaScore,
 		sentiment,
@@ -578,21 +518,43 @@ export const NewOperationManagerDashboard: React.FC = () => {
 					>
 						<Tabs defaultValue='rankings'>
 							<Tabs.List>
-								<Tabs.Tab value='rankings'>Team Rankings</Tabs.Tab>
+								<Tabs.Tab value='rankings'>
+									{t('page.title', { ns: 'qa.rankings' })}
+								</Tabs.Tab>
 								<Tabs.Tab value='team-health'>Team Health</Tabs.Tab>
 								<Tabs.Tab value='clients'>{t('sections.clients')}</Tabs.Tab>
 								<Tabs.Tab value='critical-alerts'>Critical Alerts</Tabs.Tab>
 							</Tabs.List>
 
 							<Tabs.Panel value='rankings' pt='lg'>
-								<RankingsTable
-									entries={OPERATION_MANAGER_RANKINGS}
-									title='Client Rankings'
-									description='Client accounts ranked against the operational goal for this period'
-									goal={OPERATION_MANAGER_RANKING_GOAL}
-									maxDisplay={7}
-									onViewAll={() => navigate('/qa/qa-manager/rankings')}
-								/>
+								{liveProgram ? (
+									<Stack gap='sm'>
+										<Group justify='space-between' wrap='nowrap'>
+											<Text size='sm' fw={600} lineClamp={1}>
+												{liveProgram.name}
+											</Text>
+											<Button
+												size='xs'
+												variant='default'
+												onClick={() =>
+													navigate(rankingPath('qa-manager', liveProgram.id))
+												}
+											>
+												{t('card.view', { ns: 'qa.rankings' })}
+											</Button>
+										</Group>
+										<StandingsTable
+											program={liveProgram}
+											standings={liveStandings.slice(0, 7)}
+											showTeam={liveProgram.teams.length > 1}
+											dense
+										/>
+									</Stack>
+								) : (
+									<EmptyState
+										message={t('empty.none', { ns: 'qa.rankings' })}
+									/>
+								)}
 							</Tabs.Panel>
 
 							<Tabs.Panel value='team-health' pt='lg'>

@@ -106,9 +106,8 @@ const DrawerBody: React.FC<
 	const { t } = useTranslation('qa.rankings');
 
 	const trend = entry.rankTrend ?? 0;
-	const streak = entry.streak ?? 0;
 	const pointLead = getPointLeadFromRoster(entry, data);
-	const { totals } = useUserReaction(entry.agentId);
+	const { totals } = useUserReaction(program.id, entry.agentId);
 	// Peer reactions given on this ranking, the same number the row shows.
 	const reactionsTotal = Object.values(totals).reduce(
 		(sum, count) => sum + count,
@@ -122,14 +121,17 @@ const DrawerBody: React.FC<
 			position='right'
 			size='md'
 			title={`#${entry.rank} · ${entry.agentName}`}
-			description='Performance detail for the current period'
+			description={t('drawer.detailDescription')}
 		>
 			<Stack gap='lg'>
 				<Paper withBorder radius='md' p='md' className={styles.statsCard}>
 					<Group grow align='flex-start' wrap='nowrap'>
-						<QuickStat label='Rank' value={`#${entry.rank}`} />
 						<QuickStat
-							label='Scorecard'
+							label={t('drawer.stats.rank')}
+							value={`#${entry.rank}`}
+						/>
+						<QuickStat
+							label={t('drawer.columns.score')}
 							value={
 								<>
 									<div>{formatScore(program, entry.score)}</div>
@@ -137,17 +139,6 @@ const DrawerBody: React.FC<
 										{t('drawer.targetIs', {
 											value: formatTarget(program),
 										})}
-									</Text>
-								</>
-							}
-						/>
-						<QuickStat
-							label='Streak'
-							value={
-								<>
-									<div>{streak}</div>
-									<Text size='xs' c='dimmed' mt={4}>
-										weeks active
 									</Text>
 								</>
 							}
@@ -180,8 +171,10 @@ const DrawerBody: React.FC<
 							}
 							label={
 								trend === 0
-									? 'Held position since last week'
-									: `${trend > 0 ? 'Up' : 'Down'} ${Math.abs(trend)} position${Math.abs(trend) === 1 ? '' : 's'} since last week`
+									? t('drawer.signals.held')
+									: t(`drawer.signals.${trend > 0 ? 'up' : 'down'}`, {
+											count: Math.abs(trend),
+										})
 							}
 							tooltip={getRankMovementTooltip(entry)}
 							color={getRankMovementColor(trend)}
@@ -190,8 +183,8 @@ const DrawerBody: React.FC<
 							icon={IconBolt}
 							label={
 								pointLead.points === null
-									? 'Tied with next position'
-									: `${pointLead.points} point${pointLead.points === 1 ? '' : 's'} ahead of next`
+									? t('drawer.signals.tied')
+									: t('drawer.signals.lead', { count: pointLead.points })
 							}
 							tooltip={getPointLeadTooltip(pointLead)}
 							color={getPointLeadColor(pointLead.points)}
@@ -199,15 +192,19 @@ const DrawerBody: React.FC<
 						{program.allowReactions && (
 							<SignalRow
 								icon={IconHeartHandshake}
-								label={`${reactionsTotal} reaction${reactionsTotal === 1 ? '' : 's'} received`}
-								tooltip={`${reactionsTotal} peer reaction${reactionsTotal === 1 ? '' : 's'} received`}
+								label={t('drawer.signals.reactions', { count: reactionsTotal })}
+								tooltip={t('drawer.signals.reactions', {
+									count: reactionsTotal,
+								})}
 								color={reactionsTotal > 0 ? 'blue' : 'gray'}
 							/>
 						)}
 						<SignalRow
 							icon={IconAward}
-							label={`${entry.achievements?.length ?? 0} badge${(entry.achievements?.length ?? 0) === 1 ? '' : 's'} earned`}
-							tooltip='See the Achievements tab for detail'
+							label={t('drawer.signals.badges', {
+								count: entry.achievements?.length ?? 0,
+							})}
+							tooltip={t('drawer.columns.milestones')}
 							color={entry.achievements?.length ? 'blue' : 'gray'}
 						/>
 					</Stack>
@@ -218,6 +215,7 @@ const DrawerBody: React.FC<
 						<Divider />
 
 						<LeaderboardReactions
+							programId={program.id}
 							agentId={entry.agentId}
 							agentName={entry.agentName}
 							size='md'
@@ -236,14 +234,14 @@ const DrawerBody: React.FC<
 							value='achievements'
 							leftSection={<IconAward size={16} />}
 						>
-							Achievements
+							{t('drawer.columns.milestones')}
 						</Tabs.Tab>
 						{program.allowReactions && (
 							<Tabs.Tab
 								value='reactions'
 								leftSection={<IconHeartHandshake size={16} />}
 							>
-								Reactions
+								{t('drawer.columns.reactions')}
 							</Tabs.Tab>
 						)}
 					</Tabs.List>

@@ -17,10 +17,15 @@ import type {
 	RankingProgram,
 	RankingStanding,
 } from '~/models/qa/rankingPrograms';
+import LeaderboardReactions from '~/modules/qa/agent/rankings/components/LeaderboardReactions';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
 import { formatScore, isComposite } from '../helpers';
 import ScoreBreakdown from './ScoreBreakdown';
+import WinnerBadge from './WinnerBadge';
 import styles from '../Rankings.module.css';
+
+/** Who can see the reactions column and whether they can add one. */
+export type ReactionsMode = 'off' | 'readonly' | 'interactive';
 
 interface StandingsTableProps {
 	program: RankingProgram;
@@ -28,6 +33,10 @@ interface StandingsTableProps {
 	/** Highlights the row of the agent viewing their own leaderboard. */
 	currentAgentId?: string;
 	showTeam?: boolean;
+	onRowClick?: (standing: RankingStanding) => void;
+	reactions?: ReactionsMode;
+	/** Rank, agent and scorecard only, for narrow placements such as a dashboard card. */
+	dense?: boolean;
 }
 
 export const StandingsTable: React.FC<StandingsTableProps> = ({
@@ -35,9 +44,14 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 	standings,
 	currentAgentId,
 	showTeam = false,
+	onRowClick,
+	reactions = 'off',
+	dense = false,
 }) => {
 	const { t } = useTranslation('qa.rankings');
 	const badges = useTriggerRulesStore((s) => s.badges);
+	const completed = program.status === 'completed';
+	const showReactions = reactions !== 'off' && !dense;
 
 	const rows = standings.map((standing) => {
 		const delta = standing.delta;
@@ -49,13 +63,18 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 					: IconArrowDownRight;
 		const deltaColor =
 			delta === null || delta === 0 ? 'gray' : delta > 0 ? 'green' : 'red';
+		const rowClass = [
+			standing.agentId === currentAgentId ? styles.currentRow : '',
+			onRowClick ? styles.clickableRow : '',
+		]
+			.filter(Boolean)
+			.join(' ');
 
 		return (
 			<Table.Tr
 				key={standing.agentId}
-				className={
-					standing.agentId === currentAgentId ? styles.currentRow : undefined
-				}
+				className={rowClass || undefined}
+				onClick={onRowClick ? () => onRowClick(standing) : undefined}
 			>
 				<Table.Td className={styles.rankCell}>
 					{standing.rank === null ? (
@@ -63,9 +82,12 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 							—
 						</Text>
 					) : (
-						<Text size='sm' fw={700}>
-							{standing.rank}
-						</Text>
+						<Group gap={4} wrap='nowrap'>
+							<Text size='sm' fw={700}>
+								{standing.rank}
+							</Text>
+							<WinnerBadge isWinner={completed && standing.rank === 1} />
+						</Group>
 					)}
 				</Table.Td>
 				<Table.Td>
@@ -118,54 +140,75 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 						)}
 					</Group>
 				</Table.Td>
-				<Table.Td align='right'>
-					<Text size='sm' c='dimmed'>
-						{standing.calls}
-					</Text>
-				</Table.Td>
-				<Table.Td align='right' className={styles.deltaCell}>
-					{delta === null ? (
+				{!dense && (
+					<Table.Td align='right'>
 						<Text size='sm' c='dimmed'>
-							—
+							{standing.calls}
 						</Text>
-					) : (
-						<Group gap={4} justify='flex-end' wrap='nowrap'>
-							<Text size='sm'>{delta === 0 ? '0' : Math.abs(delta)}</Text>
-							<ThemeIcon size='xs' variant='light' color={deltaColor}>
-								<DeltaIcon size={12} />
-							</ThemeIcon>
+					</Table.Td>
+				)}
+				{!dense && (
+					<Table.Td align='right' className={styles.deltaCell}>
+						{delta === null ? (
+							<Text size='sm' c='dimmed'>
+								—
+							</Text>
+						) : (
+							<Group gap={4} justify='flex-end' wrap='nowrap'>
+								<Text size='sm'>{delta === 0 ? '0' : Math.abs(delta)}</Text>
+								<ThemeIcon size='xs' variant='light' color={deltaColor}>
+									<DeltaIcon size={12} />
+								</ThemeIcon>
+							</Group>
+						)}
+					</Table.Td>
+				)}
+				{!dense && (
+					<Table.Td>
+						<Group gap={4} wrap='wrap'>
+							{standing.milestoneIds.map((milestoneId) => {
+								const milestone = program.milestones.find(
+									(m) => m.id === milestoneId
+								);
+								const badge = badges.find((b) => b.id === milestone?.badgeId);
+								if (!badge) return null;
+								return (
+									<Tooltip
+										key={milestoneId}
+										label={`${badge.name} · ${milestone?.label}`}
+										withArrow
+									>
+										<Text size='lg' component='span'>
+											{badge.icon}
+										</Text>
+									</Tooltip>
+								);
+							})}
 						</Group>
-					)}
-				</Table.Td>
-				<Table.Td>
-					<Group gap={4} wrap='wrap'>
-						{standing.milestoneIds.map((milestoneId) => {
-							const milestone = program.milestones.find(
-								(m) => m.id === milestoneId
-							);
-							const badge = badges.find((b) => b.id === milestone?.badgeId);
-							if (!badge) return null;
-							return (
-								<Tooltip
-									key={milestoneId}
-									label={`${badge.name} · ${milestone?.label}`}
-									withArrow
-								>
-									<Text size='lg' component='span'>
-										{badge.icon}
-									</Text>
-								</Tooltip>
-							);
-						})}
-					</Group>
-				</Table.Td>
+					</Table.Td>
+				)}
+				{showReactions && (
+					<Table.Td>
+						<LeaderboardReactions
+							programId={program.id}
+							agentId={standing.agentId}
+							agentName={standing.agentName}
+							readOnly={reactions === 'readonly'}
+						/>
+					</Table.Td>
+				)}
 			</Table.Tr>
 		);
 	});
 
 	return (
 		<div className={styles.tableSurface}>
-			<Table striped highlightOnHover verticalSpacing='sm' miw={720}>
+			<Table
+				striped
+				highlightOnHover
+				verticalSpacing='sm'
+				miw={dense ? undefined : 720}
+			>
 				<Table.Thead>
 					<Table.Tr>
 						<Table.Th className={styles.rankCell}>
@@ -176,11 +219,18 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 						<Table.Th className={styles.scoreCell}>
 							{t('drawer.columns.score')}
 						</Table.Th>
-						<Table.Th align='right'>{t('drawer.columns.calls')}</Table.Th>
-						<Table.Th align='right' className={styles.deltaCell}>
-							{t('drawer.columns.delta')}
-						</Table.Th>
-						<Table.Th>{t('drawer.columns.milestones')}</Table.Th>
+						{!dense && (
+							<Table.Th align='right'>{t('drawer.columns.calls')}</Table.Th>
+						)}
+						{!dense && (
+							<Table.Th align='right' className={styles.deltaCell}>
+								{t('drawer.columns.delta')}
+							</Table.Th>
+						)}
+						{!dense && <Table.Th>{t('drawer.columns.milestones')}</Table.Th>}
+						{showReactions && (
+							<Table.Th>{t('drawer.columns.reactions')}</Table.Th>
+						)}
 					</Table.Tr>
 				</Table.Thead>
 				<Table.Tbody>{rows}</Table.Tbody>

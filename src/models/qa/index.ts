@@ -25,7 +25,6 @@ export * from './triggerRules';
 export * from './lms';
 export * from './coaching';
 export * from './rolePlay';
-export * from './reactions';
 export * from './inbox';
 export * from './client';
 export * from './triggerRules';

@@ -14,23 +14,61 @@ const REACTION_OPTIONS: { emoji: UserReactionType; key: string }[] = [
 ];
 
 interface LeaderboardReactionsProps {
+	programId: string;
 	agentId: string;
 	agentName: string;
 	size?: 'sm' | 'md';
+	/** Shows the counts without buttons, for roles that can see reactions but not give them. */
+	readOnly?: boolean;
 }
 
 /**
- * Peer recognition inline on the leaderboard: one toggle per emoji with the
- * number of teammates who picked it. Agents cannot react to their own row.
+ * Peer recognition inline on the standings: one toggle per emoji with the
+ * number of teammates who picked it. Agents cannot react to their own row, and
+ * managers only read the counts.
  */
 export const LeaderboardReactions: React.FC<LeaderboardReactionsProps> = ({
+	programId,
 	agentId,
 	agentName,
 	size = 'sm',
+	readOnly = false,
 }) => {
 	const { t } = useTranslation('qa.rankings');
-	const { currentReaction, totals, disabled, setReaction } =
-		useUserReaction(agentId);
+	const { currentReaction, totals, disabled, setReaction } = useUserReaction(
+		programId,
+		agentId
+	);
+
+	if (readOnly) {
+		const given = REACTION_OPTIONS.filter(
+			({ emoji }) => (totals[emoji] ?? 0) > 0
+		);
+		if (given.length === 0) {
+			return (
+				<Text size='xs' c='dimmed'>
+					—
+				</Text>
+			);
+		}
+		return (
+			<Group gap={8} wrap='nowrap'>
+				{given.map(({ emoji, key }) => {
+					const Icon = REACTION_ICON[emoji];
+					return (
+						<Tooltip key={emoji} label={t(`reactions.labels.${key}`)} withArrow>
+							<Group gap={4} wrap='nowrap' className={styles.readOnlyChip}>
+								<Icon size={14} stroke={2} />
+								<Text size='xs' fw={600}>
+									{totals[emoji]}
+								</Text>
+							</Group>
+						</Tooltip>
+					);
+				})}
+			</Group>
+		);
+	}
 
 	if (disabled) {
 		return (

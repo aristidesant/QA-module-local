@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Badge, Tooltip } from '@mantine/core';
 import { IconTrophy } from '@tabler/icons-react';
 
@@ -8,10 +9,11 @@ interface WinnerBadgeProps {
 
 /** Flags the #1 position once the ranking is complete — flat yellow, matching the podium's gold. */
 export const WinnerBadge: React.FC<WinnerBadgeProps> = ({ isWinner }) => {
+	const { t } = useTranslation('qa.rankings');
 	if (!isWinner) return null;
 
 	return (
-		<Tooltip label='Period winner' withArrow>
+		<Tooltip label={t('drawer.winnerHint')} withArrow>
 			<Badge
 				variant='light'
 				color='yellow'
@@ -19,7 +21,7 @@ export const WinnerBadge: React.FC<WinnerBadgeProps> = ({ isWinner }) => {
 				radius='sm'
 				leftSection={<IconTrophy size={14} />}
 			>
-				Winner
+				{t('drawer.winner')}
 			</Badge>
 		</Tooltip>
 	);

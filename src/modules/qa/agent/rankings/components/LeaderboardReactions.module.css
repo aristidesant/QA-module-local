@@ -55,3 +55,8 @@
 .chip[data-active] .count {
 	color: light-dark(var(--mantine-color-blue-7), var(--mantine-color-blue-1));
 }
+
+/* Read-only count of one reaction, for roles that cannot react. */
+.readOnlyChip {
+	color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+}

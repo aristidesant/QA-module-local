@@ -413,8 +413,8 @@ export const getOperationManagerNavigation = (): SidebarNavItem[] => [
 		key: 'operationmanager-rankings',
 		label: 'sidebar.operationmanager.supervisorRankings',
 		icon: <IconTarget size={20} className={styles.menuIcon} />,
-		to: '/qa/agent/rankings',
-		i18nNamespace: 'qa.operationmanager',
+		to: '/qa/qa-manager/rankings',
+		i18nNamespace: 'qa.rankings',
 	},
 	{
 		key: 'operationmanager-analytics',
@@ -478,7 +478,7 @@ export const getSuperAdminNavigation = (): SidebarNavItem[] => [
 		key: 'superadmin-rankings',
 		label: 'sidebar.superadmin.rankings',
 		icon: <IconTarget size={20} className={styles.menuIcon} />,
-		to: '/qa/agent/rankings',
+		to: '/qa/qa-manager/rankings',
 		i18nNamespace: 'qa.rankings',
 	},
 ];

@@ -76,21 +76,40 @@
 		"reachedTarget": "Alcanzaron el objetivo",
 		"leader": "Líder",
 		"standings": "Clasificación",
-		"milestones": "Hitos",
+		"milestones": "Insignias por hito",
 		"prize": "Premio",
 		"winner": "Ganador",
 		"pending": "La clasificación aparece cuando el ranking empieza",
 		"columns": {
-			"rank": "#",
+			"rank": "Posición",
 			"agent": "Agente",
 			"team": "Equipo",
 			"score": "Scorecard",
 			"calls": "Llamadas",
 			"delta": "7 días",
-			"milestones": "Insignias"
+			"milestones": "Insignias",
+			"reactions": "Reacciones"
 		},
 		"unranked": "Por debajo del mínimo de llamadas",
-		"targetIs": "Objetivo {{value}}"
+		"targetIs": "Objetivo {{value}}",
+		"winnerHint": "Ganador de este ranking",
+		"viewDetails": "Ver detalle",
+		"detailDescription": "Posición en el ranking actual",
+		"stats": { "rank": "Posición" },
+		"signals": {
+			"held": "Mantiene la posición desde la semana pasada",
+			"up_one": "Sube {{count}} posición desde la semana pasada",
+			"up_other": "Sube {{count}} posiciones desde la semana pasada",
+			"down_one": "Baja {{count}} posición desde la semana pasada",
+			"down_other": "Baja {{count}} posiciones desde la semana pasada",
+			"tied": "Empatado con la siguiente posición",
+			"lead_one": "{{count}} punto por delante del siguiente",
+			"lead_other": "{{count}} puntos por delante del siguiente",
+			"reactions_one": "{{count}} reacción recibida",
+			"reactions_other": "{{count}} reacciones recibidas",
+			"badges_one": "{{count}} insignia conseguida",
+			"badges_other": "{{count}} insignias conseguidas"
+		}
 	},
 	"editor": {
 		"titleNew": "Nuevo ranking",
@@ -169,8 +188,6 @@
 		"winnerBadgeDated": "Solo los rankings con fecha de fin eligen un ganador"
 	},
 	"agent": {
-		"leaderboard": "Clasificación",
-		"leaderboardDescription": "Todo el equipo ordenado por puntuación — selecciona una fila para ver el detalle",
 		"header": {
 			"target": "Objetivo {{value}}",
 			"prize": "Premio",
@@ -199,8 +216,7 @@
 				"metrics": "Métricas"
 			},
 			"empty": "Todavía no hay rankings anteriores",
-			"myRankValue": "#{{rank}} · {{score}}",
-			"unranked": "Sin clasificar"
+			"myRankValue": "#{{rank}} · {{score}}"
 		},
 		"empty": {
 			"noActive": "Tu equipo no tiene ningún ranking activo ahora mismo"
@@ -209,13 +225,6 @@
 			"current": "Ranking actual",
 			"past": "Rankings anteriores"
 		}
-	},
-	"table": {
-		"rank": "Posición",
-		"name": "Nombre",
-		"score": "Scorecard",
-		"achievements": "Insignias",
-		"reactions": "Reacciones"
 	},
 	"achievements": {
 		"empty": "Todavía no hay insignias",

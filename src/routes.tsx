@@ -217,11 +217,6 @@ const QAManagerSettingsPage = React.lazy(
 );
 
 // Phase 4-5: New QA Admin Components
-const SupervisorRankingsConfigPanel = React.lazy(() =>
-	import('./modules/qa/operationmanager/configuration/SupervisorRankingsConfigPanel').then(
-		(m) => ({ default: m.SupervisorRankingsConfigPanel })
-	)
-);
 const ManagerRankingsPage = React.lazy(() =>
 	import('./modules/qa/rankings/ManagerRankingsPage').then((m) => ({
 		default: m.default,
@@ -1875,18 +1870,6 @@ const router = createBrowserRouter([
 										path: 'qamanager/admin/triggers',
 										id: 'qa.qamanager.admin.triggers',
 										element: <Navigate to='/qa/qa-manager/triggers' replace />,
-									},
-									// Phase 4: Operation Manager Supervisor Rankings Configuration
-									{
-										path: 'operationmanager/rankings',
-										id: 'qa.operationmanager.rankings',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<SupervisorRankingsConfigPanel />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
 									},
 									// Phase 4: Disputes Management (used by Supervisor and QA Manager)
 									{

@@ -4,7 +4,6 @@ export { AlertsInbox } from './AlertsInbox';
 export { ProfileBadge } from './ProfileBadge';
 export { DisputesStats } from './DisputesStats';
 export { BadgeCollection } from './BadgeCollection';
-export { LeaderboardTable } from './LeaderboardTable';
 export { TranscriptWithMarkers } from './TranscriptWithMarkers';
 export { AudioPlayerWithClipping } from './AudioPlayerWithClipping';
 export { AutoTriggersManager } from './AutoTriggersManager';
@@ -20,15 +19,6 @@ export { COPCScoreCard } from './COPCScoreCard';
 export { SentimentScaleCard } from './SentimentScaleCard';
 export { BusinessInsightsCard } from './BusinessInsightsCard';
 export { AgentInbox } from './AgentInbox';
-
-// Phase 3: Agent & Supervisor features
-export { RankingsTable } from './RankingsTable';
-export type {
-	RankingEntry,
-	RankingGoal,
-	ReactionType,
-	ReactionCounts,
-} from './RankingsTable';
 
 // Phase 4: Performance Metrics
 export { PerformanceScoresSection } from './PerformanceScoresSection';

@@ -102,3 +102,8 @@
 		padding: var(--mantine-spacing-sm);
 	}
 }
+
+/* A standings row that opens the agent's detail. */
+.clickableRow {
+	cursor: pointer;
+}

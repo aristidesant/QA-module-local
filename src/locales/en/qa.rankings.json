@@ -72,21 +72,40 @@
 		"reachedTarget": "Reached target",
 		"leader": "Leader",
 		"standings": "Standings",
-		"milestones": "Milestones",
+		"milestones": "Milestone badges",
 		"prize": "Prize",
 		"winner": "Winner",
 		"pending": "Standings appear once the ranking starts",
 		"columns": {
-			"rank": "#",
+			"rank": "Rank",
 			"agent": "Agent",
 			"team": "Team",
 			"score": "Scorecard",
 			"calls": "Calls",
 			"delta": "7-day",
-			"milestones": "Badges"
+			"milestones": "Badges",
+			"reactions": "Reactions"
 		},
 		"unranked": "Below minimum calls",
-		"targetIs": "Target {{value}}"
+		"targetIs": "Target {{value}}",
+		"winnerHint": "Winner of this ranking",
+		"viewDetails": "View details",
+		"detailDescription": "Standing in the current ranking",
+		"stats": { "rank": "Rank" },
+		"signals": {
+			"held": "Held position since last week",
+			"up_one": "Up {{count}} position since last week",
+			"up_other": "Up {{count}} positions since last week",
+			"down_one": "Down {{count}} position since last week",
+			"down_other": "Down {{count}} positions since last week",
+			"tied": "Tied with next position",
+			"lead_one": "{{count}} point ahead of next",
+			"lead_other": "{{count}} points ahead of next",
+			"reactions_one": "{{count}} reaction received",
+			"reactions_other": "{{count}} reactions received",
+			"badges_one": "{{count}} badge earned",
+			"badges_other": "{{count}} badges earned"
+		}
 	},
 	"editor": {
 		"titleNew": "New ranking",
@@ -165,8 +184,6 @@
 		"winnerBadgeDated": "Only rankings with an end date pick a winner"
 	},
 	"agent": {
-		"leaderboard": "Leaderboard",
-		"leaderboardDescription": "Everyone on the team ranked by score — select a row for details",
 		"header": {
 			"target": "Target {{value}}",
 			"prize": "Prize",
@@ -195,23 +212,15 @@
 				"metrics": "Metrics"
 			},
 			"empty": "No past rankings yet",
-			"myRankValue": "#{{rank}} · {{score}}",
-			"unranked": "Unranked"
+			"myRankValue": "#{{rank}} · {{score}}"
 		},
 		"empty": {
 			"noActive": "No active ranking for your team right now"
 		},
 		"tabs": {
-			"current": "Current leaderboard",
-			"past": "Past leaderboards"
+			"current": "Current ranking",
+			"past": "Past rankings"
 		}
-	},
-	"table": {
-		"rank": "Rank",
-		"name": "Name",
-		"score": "Scorecard",
-		"achievements": "Badges",
-		"reactions": "Reactions"
 	},
 	"achievements": {
 		"empty": "No badges earned yet",
