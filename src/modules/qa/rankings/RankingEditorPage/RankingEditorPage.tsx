@@ -1,0 +1,65 @@
+import { useLocation, useNavigate, useParams } from 'react-router';
+import { Anchor, Breadcrumbs, Stack, Text, Title } from '@mantine/core';
+import { useTranslation } from 'react-i18next';
+import { ContentContainer } from '~/components/ContentContainer';
+import { EmptyState } from '~/components/EmptyState/EmptyState';
+import { roleFromPath } from '~/modules/qa/team/helpers';
+import { useRankingsStore, selectPrograms } from '~/stores/qa/rankingsStore';
+import { RankingForm } from '../components/RankingForm';
+import { rankingsBasePath, type RankingTab } from '../constants';
+
+/** Create or edit one ranking on its own page (route `rankings/new` or `rankings/:programId/edit`). */
+export default function RankingEditorPage() {
+	const { t } = useTranslation('qa.rankings');
+	const location = useLocation();
+	const navigate = useNavigate();
+	const { programId } = useParams<{ programId: string }>();
+
+	const role = roleFromPath(location.pathname);
+	const programs = useRankingsStore(selectPrograms);
+
+	const mode = programId ? 'edit' : 'create';
+	const program = programId
+		? (programs.find((p) => p.id === programId) ?? null)
+		: null;
+
+	const backToRankings = (tab?: RankingTab) =>
+		navigate(`${rankingsBasePath(role)}${tab ? `?tab=${tab}` : ''}`);
+
+	if (mode === 'edit' && !program) {
+		return (
+			<ContentContainer contentWidth='full'>
+				<EmptyState message={t('page.notFound')} />
+			</ContentContainer>
+		);
+	}
+
+	const title =
+		mode === 'create' ? t('editor.titleNew') : t('editor.titleEdit');
+
+	return (
+		<ContentContainer contentWidth='full'>
+			<Stack gap='lg' maw={720} mx='auto' px='md'>
+				<Breadcrumbs>
+					<Anchor size='sm' onClick={() => backToRankings()}>
+						{t('page.title')}
+					</Anchor>
+					<Text size='sm' c='dimmed'>
+						{mode === 'edit' && program ? program.name : title}
+					</Text>
+				</Breadcrumbs>
+
+				<Title order={1}>{title}</Title>
+
+				<RankingForm
+					// A fresh form per ranking, so switching rankings never keeps stale values.
+					key={program?.id ?? 'new'}
+					role={role}
+					program={program}
+					onClose={() => backToRankings()}
+					onSaved={backToRankings}
+				/>
+			</Stack>
+		</ContentContainer>
+	);
+}

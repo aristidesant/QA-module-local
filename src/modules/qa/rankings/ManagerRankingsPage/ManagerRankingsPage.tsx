@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import {
 	Badge,
 	Button,
@@ -33,15 +33,21 @@ import {
 	programsForRole,
 	programsSharingTeams,
 } from '../helpers';
-import { RANKING_TABS, type RankingTab } from '../constants';
+import {
+	RANKING_TABS,
+	rankingEditPath,
+	rankingNewPath,
+	type RankingTab,
+} from '../constants';
 import RankingProgramCard from '../components/RankingProgramCard';
 import ProgramDetailDrawer from '../components/ProgramDetailDrawer';
-import RankingEditorDrawer from '../components/RankingEditorDrawer';
 
 /** Supervisors run rankings for Team 1; the QA Manager for any teams. */
 export const ManagerRankingsPage: React.FC = () => {
 	const { t } = useTranslation('qa.rankings');
 	const location = useLocation();
+	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
 	const role = roleFromPath(location.pathname);
 
 	const allPrograms = useRankingsStore(selectPrograms);
@@ -52,10 +58,12 @@ export const ManagerRankingsPage: React.FC = () => {
 	const duplicateProgram = useRankingsStore((s) => s.duplicateProgram);
 	const deleteProgram = useRankingsStore((s) => s.deleteProgram);
 
-	const [tab, setTab] = useState<RankingTab>('active');
+	// Saving a ranking returns here with `?tab=` set to the tab that lists it.
+	const tabParam = searchParams.get('tab');
+	const [tab, setTab] = useState<RankingTab>(
+		RANKING_TABS.find((key) => key === tabParam) ?? 'active'
+	);
 	const [detail, setDetail] = useState<RankingProgram | null>(null);
-	const [editing, setEditing] = useState<RankingProgram | null>(null);
-	const [editorOpen, setEditorOpen] = useState(false);
 
 	const programs = useMemo(
 		() => programsForRole(allPrograms, role),
@@ -121,11 +129,6 @@ export const ManagerRankingsPage: React.FC = () => {
 		});
 	};
 
-	const openEditor = (program: RankingProgram | null) => {
-		setEditing(program);
-		setEditorOpen(true);
-	};
-
 	const visible = byTab[tab];
 
 	return (
@@ -143,7 +146,7 @@ export const ManagerRankingsPage: React.FC = () => {
 					</div>
 					<Button
 						leftSection={<IconPlus size={16} />}
-						onClick={() => openEditor(null)}
+						onClick={() => navigate(rankingNewPath(role))}
 					>
 						{t('page.new')}
 					</Button>
@@ -206,7 +209,7 @@ export const ManagerRankingsPage: React.FC = () => {
 								program={program}
 								standings={standingsOf.get(program.id) ?? []}
 								onView={() => setDetail(program)}
-								onEdit={() => openEditor(program)}
+								onEdit={() => navigate(rankingEditPath(role, program.id))}
 								onDuplicate={() => {
 									duplicateProgram(program.id);
 									notifySuccess(t('editor.duplicated'));
@@ -234,13 +237,6 @@ export const ManagerRankingsPage: React.FC = () => {
 				standings={detail ? (standingsOf.get(detail.id) ?? []) : []}
 				opened={detail !== null}
 				onClose={() => setDetail(null)}
-			/>
-
-			<RankingEditorDrawer
-				opened={editorOpen}
-				onClose={() => setEditorOpen(false)}
-				role={role}
-				program={editing}
 			/>
 		</ContentContainer>
 	);

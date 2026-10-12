@@ -22,6 +22,30 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.triggers',
 		'qa.team',
 	],
+	'qa.supervisor.rankings.new': [
+		'qa.rankings',
+		'qa.teamAnalytics',
+		'qa.triggers',
+		'qa.team',
+	],
+	'qa.supervisor.rankings.edit': [
+		'qa.rankings',
+		'qa.teamAnalytics',
+		'qa.triggers',
+		'qa.team',
+	],
+	'qa.qa-manager.rankings.new': [
+		'qa.rankings',
+		'qa.teamAnalytics',
+		'qa.triggers',
+		'qa.team',
+	],
+	'qa.qa-manager.rankings.edit': [
+		'qa.rankings',
+		'qa.teamAnalytics',
+		'qa.triggers',
+		'qa.team',
+	],
 	'qa.dashboards.agent': ['qa.dashboard', 'qa.rankings', 'qa.teamAnalytics'],
 	'qa.dashboards.supervisor': [
 		'qa.dashboard',

@@ -6,7 +6,8 @@
 		},
 		"title": "Team Rankings",
 		"description": "Set up rankings that measure one metric or mix several, and choose which one is live for your team",
-		"new": "New ranking"
+		"new": "New ranking",
+		"notFound": "This ranking is not available."
 	},
 	"kpis": {
 		"active": "Active",
@@ -134,8 +135,12 @@
 			"dates": "End must be after start",
 			"target": "Target must be greater than 0",
 			"metrics": "Pick at least one metric",
-			"weights": "Weights must add up to 100 %"
+			"weights": "Weights must add up to 100 %",
+			"fixFields": "Fix the highlighted fields"
 		},
+		"discard": "Discard changes?",
+		"discardConfirm": "Discard",
+		"keepEditing": "Keep editing",
 		"saved": "Ranking saved",
 		"launched": "Ranking started — agents have been notified",
 		"ended": "Ranking ended",
@@ -207,7 +212,7 @@
 	"table": {
 		"rank": "Rank",
 		"name": "Name",
-		"score": "Ranking score",
+		"score": "Scorecard",
 		"achievements": "Badges",
 		"reactions": "Reactions"
 	},

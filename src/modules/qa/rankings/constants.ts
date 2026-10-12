@@ -11,6 +11,7 @@ import type {
 	RankingMetricId,
 	RankingStatus,
 } from '~/models/qa/rankingPrograms';
+import type { TeamRole } from '~/modules/qa/team/types';
 
 /** What a brand-new ranking measures until the manager changes it. */
 export const DEFAULT_METRIC: RankingMetricId = 'QA_OVERALL_SCORE';
@@ -54,3 +55,12 @@ export const RANKING_TABS = [
 export type RankingTab = (typeof RANKING_TABS)[number];
 
 export const PODIUM_COLORS = ['yellow', 'gray', 'orange'];
+
+export const rankingsBasePath = (role: TeamRole) =>
+	role === 'qa-manager' ? '/qa/qa-manager/rankings' : '/qa/supervisor/rankings';
+
+export const rankingNewPath = (role: TeamRole) =>
+	`${rankingsBasePath(role)}/new`;
+
+export const rankingEditPath = (role: TeamRole, programId: string) =>
+	`${rankingsBasePath(role)}/${programId}/edit`;

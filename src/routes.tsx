@@ -227,6 +227,11 @@ const ManagerRankingsPage = React.lazy(() =>
 		default: m.default,
 	}))
 );
+const RankingEditorPage = React.lazy(() =>
+	import('./modules/qa/rankings/RankingEditorPage').then((m) => ({
+		default: m.default,
+	}))
+);
 const TriggersPage = React.lazy(
 	() => import('./modules/qa/triggers/TriggersPage')
 );
@@ -1072,6 +1077,50 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<ManagerRankingsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/rankings/new',
+										id: 'qa.supervisor.rankings.new',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<RankingEditorPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/rankings/:programId/edit',
+										id: 'qa.supervisor.rankings.edit',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<RankingEditorPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/rankings/new',
+										id: 'qa.qa-manager.rankings.new',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<RankingEditorPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/rankings/:programId/edit',
+										id: 'qa.qa-manager.rankings.edit',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<RankingEditorPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

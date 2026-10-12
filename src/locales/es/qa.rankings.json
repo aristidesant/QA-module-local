@@ -6,7 +6,8 @@
 		},
 		"title": "Rankings de equipo",
 		"description": "Configura rankings que miden una métrica o mezclan varias, y elige cuál está activo para tu equipo",
-		"new": "Nuevo ranking"
+		"new": "Nuevo ranking",
+		"notFound": "Este ranking no está disponible."
 	},
 	"kpis": {
 		"active": "Activos",
@@ -134,8 +135,12 @@
 			"dates": "El fin debe ser posterior al inicio",
 			"target": "El objetivo debe ser mayor que 0",
 			"metrics": "Elige al menos una métrica",
-			"weights": "Los pesos deben sumar 100 %"
+			"weights": "Los pesos deben sumar 100 %",
+			"fixFields": "Corrige los campos marcados"
 		},
+		"discard": "¿Descartar los cambios?",
+		"discardConfirm": "Descartar",
+		"keepEditing": "Seguir editando",
 		"saved": "Ranking guardado",
 		"launched": "Ranking iniciado — se ha notificado a los agentes",
 		"ended": "Ranking finalizado",
@@ -207,7 +212,7 @@
 	"table": {
 		"rank": "Posición",
 		"name": "Nombre",
-		"score": "Puntuación del ranking",
+		"score": "Scorecard",
 		"achievements": "Insignias",
 		"reactions": "Reacciones"
 	},
