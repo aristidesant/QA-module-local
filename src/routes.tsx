@@ -232,6 +232,11 @@ const RankingEditorPage = React.lazy(() =>
 		default: m.default,
 	}))
 );
+const RankingDetailPage = React.lazy(() =>
+	import('./modules/qa/rankings/RankingDetailPage').then((m) => ({
+		default: m.default,
+	}))
+);
 const TriggersPage = React.lazy(
 	() => import('./modules/qa/triggers/TriggersPage')
 );
@@ -1121,6 +1126,28 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<RankingEditorPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/rankings/:programId',
+										id: 'qa.supervisor.rankings.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<RankingDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/rankings/:programId',
+										id: 'qa.qa-manager.rankings.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<RankingDetailPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

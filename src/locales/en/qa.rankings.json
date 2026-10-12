@@ -9,23 +9,20 @@
 		"new": "New ranking",
 		"notFound": "This ranking is not available."
 	},
-	"kpis": {
-		"active": "Active",
-		"completed": "Completed",
-		"agents": "Agents participating",
-		"inactive": "Inactive"
-	},
-	"tabs": {
-		"active": "Active",
-		"completed": "Completed",
-		"drafts": "Drafts",
-		"inactive": "Inactive"
+	"filters": {
+		"search": "Search rankings",
+		"status": "Status",
+		"area": "Metric area",
+		"period": "Period",
+		"periods": { "live": "Live now", "upcoming": "Upcoming", "ended": "Ended" },
+		"team": "Team",
+		"clear": "Clear filters",
+		"summary_one": "{{count}} ranking · {{agents}} agents in live rankings",
+		"summary_other": "{{count}} rankings · {{agents}} agents in live rankings"
 	},
 	"empty": {
-		"active": "No active ranking — switch one on to motivate the team",
-		"completed": "No completed rankings yet",
-		"drafts": "No drafts",
-		"inactive": "No inactive rankings"
+		"noMatch": "No rankings match these filters",
+		"none": "No rankings yet — create one to motivate the team"
 	},
 	"status": {
 		"draft": "Draft",
@@ -83,7 +80,7 @@
 			"rank": "#",
 			"agent": "Agent",
 			"team": "Team",
-			"score": "Score",
+			"score": "Scorecard",
 			"calls": "Calls",
 			"delta": "7-day",
 			"milestones": "Badges"

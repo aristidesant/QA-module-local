@@ -6,7 +6,8 @@ import { EmptyState } from '~/components/EmptyState/EmptyState';
 import { roleFromPath } from '~/modules/qa/team/helpers';
 import { useRankingsStore, selectPrograms } from '~/stores/qa/rankingsStore';
 import { RankingForm } from '../components/RankingForm';
-import { rankingsBasePath, type RankingTab } from '../constants';
+import type { RankingStatus } from '~/models/qa/rankingPrograms';
+import { rankingsBasePath } from '../constants';
 
 /** Create or edit one ranking on its own page (route `rankings/new` or `rankings/:programId/edit`). */
 export default function RankingEditorPage() {
@@ -23,8 +24,17 @@ export default function RankingEditorPage() {
 		? (programs.find((p) => p.id === programId) ?? null)
 		: null;
 
-	const backToRankings = (tab?: RankingTab) =>
-		navigate(`${rankingsBasePath(role)}${tab ? `?tab=${tab}` : ''}`);
+	// Opened from a ranking's page, the editor brings the manager back there; otherwise to the list.
+	const origin = location.state as { returnTo?: string; from?: string } | null;
+	const toList = () =>
+		navigate(`${rankingsBasePath(role)}${origin?.from ?? ''}`);
+	const backToRankings = (status?: RankingStatus) => {
+		if (origin?.returnTo) {
+			navigate(origin.returnTo, { state: { from: origin.from } });
+			return;
+		}
+		navigate(`${rankingsBasePath(role)}${status ? `?status=${status}` : ''}`);
+	};
 
 	if (mode === 'edit' && !program) {
 		return (
@@ -41,7 +51,7 @@ export default function RankingEditorPage() {
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg' maw={720} mx='auto' px='md'>
 				<Breadcrumbs>
-					<Anchor size='sm' onClick={() => backToRankings()}>
+					<Anchor size='sm' onClick={toList}>
 						{t('page.title')}
 					</Anchor>
 					<Text size='sm' c='dimmed'>

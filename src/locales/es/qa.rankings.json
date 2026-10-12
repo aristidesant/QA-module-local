@@ -9,23 +9,24 @@
 		"new": "Nuevo ranking",
 		"notFound": "Este ranking no está disponible."
 	},
-	"kpis": {
-		"active": "Activos",
-		"completed": "Finalizados",
-		"agents": "Agentes participando",
-		"inactive": "Inactivos"
-	},
-	"tabs": {
-		"active": "Activos",
-		"completed": "Finalizados",
-		"drafts": "Borradores",
-		"inactive": "Inactivos"
+	"filters": {
+		"search": "Buscar rankings",
+		"status": "Estado",
+		"area": "Área de la métrica",
+		"period": "Período",
+		"periods": {
+			"live": "En curso",
+			"upcoming": "Próximos",
+			"ended": "Finalizados"
+		},
+		"team": "Equipo",
+		"clear": "Limpiar filtros",
+		"summary_one": "{{count}} ranking · {{agents}} agentes en rankings activos",
+		"summary_other": "{{count}} rankings · {{agents}} agentes en rankings activos"
 	},
 	"empty": {
-		"active": "No hay ningún ranking activo — activa uno para motivar al equipo",
-		"completed": "Todavía no hay rankings finalizados",
-		"drafts": "No hay borradores",
-		"inactive": "No hay rankings inactivos"
+		"noMatch": "Ningún ranking coincide con estos filtros",
+		"none": "Todavía no hay rankings — crea uno para motivar al equipo"
 	},
 	"status": {
 		"draft": "Borrador",
@@ -83,7 +84,7 @@
 			"rank": "#",
 			"agent": "Agente",
 			"team": "Equipo",
-			"score": "Puntuación",
+			"score": "Scorecard",
 			"calls": "Llamadas",
 			"delta": "7 días",
 			"milestones": "Insignias"

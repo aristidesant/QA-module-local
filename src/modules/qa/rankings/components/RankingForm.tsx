@@ -29,6 +29,7 @@ import type {
 	RankingMetricId,
 	RankingMetricWeight,
 	RankingProgram,
+	RankingStatus,
 	PrizeKind,
 } from '~/models/qa/rankingPrograms';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
@@ -49,13 +50,7 @@ import {
 	formatScore,
 	programsSharingTeams,
 } from '../helpers';
-import {
-	DEFAULT_METRIC,
-	PRIZE_EMOJI,
-	PRIZE_KINDS,
-	TEAMS,
-	type RankingTab,
-} from '../constants';
+import { DEFAULT_METRIC, PRIZE_EMOJI, PRIZE_KINDS, TEAMS } from '../constants';
 import {
 	RANKING_METRIC_BY_ID,
 	RANKING_METRIC_GROUPS,
@@ -69,8 +64,8 @@ interface RankingFormProps {
 	/** Editing an existing program, or null to create one. */
 	program: RankingProgram | null;
 	onClose: () => void;
-	/** Called after saving, with the list tab that shows the saved ranking. */
-	onSaved: (tab: RankingTab) => void;
+	/** Called after saving, with the status the ranking was saved as. */
+	onSaved: (status: RankingStatus) => void;
 }
 
 const iso = (date: Date | null) =>
@@ -284,7 +279,7 @@ export const RankingForm: React.FC<RankingFormProps> = ({
 				? t('editor.launched')
 				: t('editor.saved')
 		);
-		onSaved(status === 'draft' ? 'drafts' : status);
+		onSaved(status);
 	};
 
 	const handleClose = () => {

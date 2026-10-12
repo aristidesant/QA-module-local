@@ -316,7 +316,7 @@ export const RankingsTable: React.FC<RankingsTableProps> = ({
 							<Table.Th style={{ width: 60 }}>Rank</Table.Th>
 							<Table.Th>Name</Table.Th>
 							<Table.Th style={{ width: 90 }} ta='right'>
-								Score
+								Scorecard
 							</Table.Th>
 							<Table.Th style={{ width: 280 }}>Reactions</Table.Th>
 						</Table.Tr>

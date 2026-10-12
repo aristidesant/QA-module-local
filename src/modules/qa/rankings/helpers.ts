@@ -4,18 +4,24 @@ import type {
 	RankingMetricId,
 	RankingProgram,
 	RankingStanding,
+	RankingStatus,
 } from '~/models/qa/rankingPrograms';
 import type { AgentRankingEntry } from '~/modules/qa/dashboard/mockData';
 import type { TeamCallMetric } from '~/modules/qa/analytics/types';
 import { TODAY, addDays } from '~/modules/qa/analytics/constants';
 import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
 import type { TeamRole } from '~/modules/qa/team/types';
-import { PREVIOUS_RANK_DAYS } from './constants';
+import {
+	PREVIOUS_RANK_DAYS,
+	RANKING_STATUS_ORDER,
+	type RankingPeriod,
+} from './constants';
 import {
 	RANKING_METRIC_BY_ID,
 	aggregateRankingMetric,
 	formatRankingValue,
 	normalizeMetric,
+	type RankingMetricArea,
 } from './metrics';
 
 const dayOf = (iso: string) => iso.slice(0, 10);
@@ -84,6 +90,55 @@ export const programsForRole = (
 	role === 'qa-manager'
 		? programs
 		: programs.filter((program) => program.teams.includes('Team 1'));
+
+export interface RankingFilters {
+	q: string;
+	status: RankingStatus[];
+	team: string | null;
+	area: RankingMetricArea | null;
+	period: RankingPeriod | null;
+}
+
+export const periodOf = (program: RankingProgram): RankingPeriod =>
+	program.endDate !== null && program.endDate < TODAY
+		? 'ended'
+		: program.startDate > TODAY
+			? 'upcoming'
+			: 'live';
+
+export const programAreas = (program: RankingProgram): RankingMetricArea[] => [
+	...new Set(program.metrics.map((m) => RANKING_METRIC_BY_ID[m.metricId].area)),
+];
+
+/** Every filter except status; status is applied separately so its chip counts can reflect the rest. */
+export const matchesRankingFacets = (
+	program: RankingProgram,
+	f: Pick<RankingFilters, 'q' | 'team' | 'area' | 'period'>
+): boolean => {
+	const q = f.q.trim().toLowerCase();
+	if (q && !program.name.toLowerCase().includes(q)) return false;
+	if (f.team && !program.teams.includes(f.team)) return false;
+	if (f.area && !programAreas(program).includes(f.area)) return false;
+	if (f.period && periodOf(program) !== f.period) return false;
+	return true;
+};
+
+export const applyRankingFilters = (
+	programs: RankingProgram[],
+	f: RankingFilters
+): RankingProgram[] =>
+	programs.filter(
+		(p) => f.status.includes(p.status) && matchesRankingFacets(p, f)
+	);
+
+/** Live first, then drafts, inactive and completed; newest start date first inside each group. */
+export const sortPrograms = (programs: RankingProgram[]): RankingProgram[] =>
+	[...programs].sort(
+		(a, b) =>
+			RANKING_STATUS_ORDER.indexOf(a.status) -
+				RANKING_STATUS_ORDER.indexOf(b.status) ||
+			b.startDate.localeCompare(a.startDate)
+	);
 
 /** Whether a score meets the threshold, respecting the ranking's direction. */
 const reached = (

@@ -129,7 +129,7 @@ const DrawerBody: React.FC<
 					<Group grow align='flex-start' wrap='nowrap'>
 						<QuickStat label='Rank' value={`#${entry.rank}`} />
 						<QuickStat
-							label='Score'
+							label='Scorecard'
 							value={
 								<>
 									<div>{formatScore(program, entry.score)}</div>

@@ -46,18 +46,32 @@ export const TEAMS = ['Team 1', 'Team 2', 'Team 3'];
 /** Standings are compared against this many days ago to show movement. */
 export const PREVIOUS_RANK_DAYS = 7;
 
-export const RANKING_TABS = [
+/** Where a ranking sits in time, independent of its status. */
+export type RankingPeriod = 'live' | 'upcoming' | 'ended';
+export const RANKING_PERIODS: RankingPeriod[] = ['live', 'upcoming', 'ended'];
+
+/** Order of the status filter chips and of the cards: what can change first, what is over last. */
+export const RANKING_STATUS_ORDER: RankingStatus[] = [
 	'active',
+	'draft',
 	'inactive',
 	'completed',
-	'drafts',
-] as const;
-export type RankingTab = (typeof RANKING_TABS)[number];
+];
+/** What the list shows before any filter is touched: everything that can still change. */
+export const DEFAULT_RANKING_STATUSES: RankingStatus[] = [
+	'active',
+	'inactive',
+	'draft',
+];
 
 export const PODIUM_COLORS = ['yellow', 'gray', 'orange'];
 
 export const rankingsBasePath = (role: TeamRole) =>
 	role === 'qa-manager' ? '/qa/qa-manager/rankings' : '/qa/supervisor/rankings';
+
+/** The isolated page of one ranking (route `rankings/:programId`). */
+export const rankingPath = (role: TeamRole, programId: string) =>
+	`${rankingsBasePath(role)}/${programId}`;
 
 export const rankingNewPath = (role: TeamRole) =>
 	`${rankingsBasePath(role)}/new`;
