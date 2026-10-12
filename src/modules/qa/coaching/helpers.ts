@@ -1,5 +1,6 @@
 import type { TFunction } from 'i18next';
 import type {
+	CoachingBrief,
 	CoachingQueueItem,
 	CoachingRule,
 	ComparisonOperator,
@@ -15,10 +16,12 @@ import type {
 import type { AgentProfile, DimensionKey } from '~/modules/qa/team/types';
 import { aggregateMetric } from '~/modules/qa/analytics/helpers';
 import type { TeamCallMetric } from '~/modules/qa/analytics/types';
+import type { CallIssueKey } from '~/modules/qa/calls/issues';
 import { DIMENSION_TO_AREA } from '~/modules/qa/lms/constants';
 import { daysUntil, isOverdue } from '~/modules/qa/lms/helpers';
 import { DIMENSION_META } from '~/modules/qa/team/constants';
 import { DECLINE_DELTA, LOW_SCORE_THRESHOLD } from './constants';
+import { COACHING_PLAYBOOK } from './playbook';
 
 const DIMENSION_LABEL: Record<DimensionKey, string> = {
 	qa: 'QA',
@@ -37,13 +40,15 @@ export const weakestDimension = (
 	)[0];
 
 /**
- * The text of an AI_MESSAGE session: last week's scores per dimension, the
- * weakest one, and the material the rule attached. Mock-only wording.
+ * The text of an AI_MESSAGE session: last week's scores per dimension, and,
+ * when the session has a brief, the critical points, the weakest aspect, how
+ * to approach it and an example. Mock-only wording.
  */
 export const buildAiCoachingMessage = (
 	profile: AgentProfile,
 	ruleName: string,
-	contentTitles: string[]
+	contentTitles: string[],
+	brief?: CoachingBrief | null
 ): string => {
 	const lines = profile.dimensions.map((d) => {
 		const unit = DIMENSION_META[d.key].unit;
@@ -56,7 +61,32 @@ export const buildAiCoachingMessage = (
 	const material = contentTitles.length
 		? `\n\nTo work on it this week I attached: ${contentTitles.join(', ')}.`
 		: '';
-	return `Hi ${profile.agent.name.split(' ')[0]}, here is your weekly review (${ruleName}).\n\n${lines.join('\n')}\n\nYour focus for the week is ${focus}. Pick one call from last week where it slipped and note what you would do differently.${material}`;
+
+	const finding = brief?.findings[0];
+	const playbook = finding
+		? COACHING_PLAYBOOK[finding.issue as CallIssueKey]
+		: null;
+	const declines = profile.dimensions
+		.filter((d) => d.delta < 0)
+		.map(
+			(d) =>
+				`• ${DIMENSION_LABEL[d.key]} fell ${d.delta}${DIMENSION_META[d.key].unit} vs last week.`
+		);
+
+	const body =
+		brief && finding && playbook
+			? [
+					`Critical points this week:\n${[
+						`• ${playbook.topic}: flagged on ${finding.calls} of ${brief.calls} evaluated calls (${finding.share}% of the week).`,
+						...declines,
+					].join('\n')}`,
+					`Your weakest aspect this week was ${focus}.`,
+					`How to approach it: ${brief.approach}`,
+					`For example: ${brief.example}`,
+				].join('\n\n')
+			: `Your focus for the week is ${focus}. Pick one call from last week where it slipped and note what you would do differently.`;
+
+	return `Hi ${profile.agent.name.split(' ')[0]}, here is your weekly review (${ruleName}).\n\n${lines.join('\n')}\n\n${body}${material}`;
 };
 
 const pct = (key: DimensionKey, v: number) =>

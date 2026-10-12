@@ -129,7 +129,8 @@
 			"scores": "Puntuaciones de la semana pasada",
 			"vsLastWeek": "vs semana anterior",
 			"focusLabel": "Tu foco esta semana",
-			"focusTip": "Elige una llamada de la semana pasada en la que falló y anota qué harías diferente."
+			"focusTip": "Elige una llamada de la semana pasada en la que falló y anota qué harías diferente.",
+			"critical": "Qué requiere atención"
 		},
 		"coaching": {
 			"when": "Cuándo",

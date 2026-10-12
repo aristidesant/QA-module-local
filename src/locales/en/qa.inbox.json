@@ -129,7 +129,8 @@
 			"scores": "Last week's scores",
 			"vsLastWeek": "vs last week",
 			"focusLabel": "Your focus this week",
-			"focusTip": "Pick one call from last week where it slipped and note what you would do differently."
+			"focusTip": "Pick one call from last week where it slipped and note what you would do differently.",
+			"critical": "What needs attention"
 		},
 		"coaching": {
 			"when": "When",

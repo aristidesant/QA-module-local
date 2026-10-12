@@ -1,13 +1,16 @@
-import { Group, SimpleGrid, Stack, Text, ThemeIcon } from '@mantine/core';
+import { Badge, Group, SimpleGrid, Stack, Text } from '@mantine/core';
 import { IconSparkles } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import type { CoachingSessionRecord } from '~/models/qa';
+import type { CallIssueKey } from '~/modules/qa/calls/issues';
+import { CRITICAL_ISSUES } from '~/modules/qa/coaching/components/QuietIndicators';
+import queueStyles from '~/modules/qa/coaching/components/Queue.module.css';
 import { Caption } from '~/modules/qa/coaching/components/SessionBrief';
 import { weakestDimension } from '~/modules/qa/coaching/helpers';
 import { DIMENSION_META, DIMENSION_ORDER } from '~/modules/qa/team/constants';
+import { TrendDelta } from '~/modules/qa/team/components/TrendDelta';
 import type { AgentProfile } from '~/modules/qa/team/types';
-import { DeltaText } from './details';
 import styles from './AutomatedCoachingMessage.module.css';
 
 interface AutomatedCoachingMessageProps {
@@ -17,7 +20,7 @@ interface AutomatedCoachingMessageProps {
 
 /**
  * The weekly automated coaching message as scannable data: a greeting, last
- * week's score per dimension (tinted with the dimension's color) and the
+ * week's score per dimension (neutral tiles) and the
  * focus the agent should work on. The attached material is not repeated here;
  * the "Learning material" card below it already lists it.
  */
@@ -25,10 +28,12 @@ export function AutomatedCoachingMessage({
 	session,
 	profile,
 }: AutomatedCoachingMessageProps) {
-	const { t } = useTranslation(['qa.inbox', 'qa.team']);
+	const { t } = useTranslation(['qa.inbox', 'qa.team', 'qa.calls']);
 	const firstName = profile.agent.name.split(' ')[0];
 	const weakest = weakestDimension(profile);
 	const byKey = new Map(profile.dimensions.map((d) => [d.key, d]));
+	const brief = session.brief;
+	const finding = brief?.findings[0];
 
 	return (
 		<SectionCard
@@ -57,18 +62,14 @@ export function AutomatedCoachingMessage({
 									key={key}
 									gap={6}
 									className={styles.tile}
-									data-color={meta.color}
 									data-focus={key === weakest?.key ? '' : undefined}
 								>
 									<Group gap={6} wrap='nowrap'>
-										<ThemeIcon
-											size='sm'
-											variant='light'
-											color={meta.color}
-											radius='xl'
-										>
-											<Icon size={14} />
-										</ThemeIcon>
+										<Icon
+											size={14}
+											color='var(--mantine-color-dimmed)'
+											aria-hidden
+										/>
 										<Caption>{t(meta.labelKey, { ns: 'qa.team' })}</Caption>
 									</Group>
 									<Text size='xl' fw={700} lh={1.1}>
@@ -77,12 +78,12 @@ export function AutomatedCoachingMessage({
 											{meta.unit}
 										</Text>
 									</Text>
-									<Group gap={6} wrap='wrap'>
-										<DeltaText value={d.delta} suffix={meta.unit} />
-										<Text size='xs' c='dimmed'>
-											{t('details.automated.vsLastWeek')}
-										</Text>
-									</Group>
+									<TrendDelta
+										delta={d.delta}
+										trend={d.trend}
+										unit={meta.unit}
+										suffix={t('details.automated.vsLastWeek')}
+									/>
 								</Stack>
 							);
 						})}
@@ -101,6 +102,49 @@ export function AutomatedCoachingMessage({
 						</Text>
 						<Text size='sm' lh={1.6} maw='68ch'>
 							{t('details.automated.focusTip')}
+						</Text>
+					</Stack>
+				)}
+
+				{brief && finding && (
+					<Stack gap={6}>
+						<Caption>{t('details.automated.critical')}</Caption>
+						<Group gap='sm'>
+							<Badge
+								size='sm'
+								variant={
+									CRITICAL_ISSUES.has(finding.issue) ? 'light' : 'outline'
+								}
+								color={CRITICAL_ISSUES.has(finding.issue) ? 'red' : 'gray'}
+							>
+								{t(`issues.${finding.issue as CallIssueKey}`, {
+									ns: 'qa.calls',
+								})}
+							</Badge>
+							<Text size='xs' c='dimmed'>
+								{t('details.coaching.problemOf', {
+									count: finding.calls,
+									total: brief.calls,
+								})}
+							</Text>
+						</Group>
+					</Stack>
+				)}
+
+				{brief?.approach && (
+					<Stack gap={4}>
+						<Caption>{t('details.coaching.approach')}</Caption>
+						<Text size='sm' className={queueStyles.preWrap}>
+							{brief.approach}
+						</Text>
+					</Stack>
+				)}
+
+				{brief?.example && (
+					<Stack gap={4}>
+						<Caption>{t('details.coaching.example')}</Caption>
+						<Text size='sm' c='dimmed' className={queueStyles.preWrap}>
+							{brief.example}
 						</Text>
 					</Stack>
 				)}

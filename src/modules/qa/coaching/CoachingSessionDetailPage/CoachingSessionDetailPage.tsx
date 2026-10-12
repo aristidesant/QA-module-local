@@ -487,6 +487,13 @@ export default function CoachingSessionDetailPage() {
 
 					<Grid.Col span={{ base: 12, md: 4 }}>
 						<Stack gap='md'>
+							{!isAi && (
+								<PreviousSessionCard
+									previous={previousSession}
+									comparison={session.brief?.previous ?? null}
+								/>
+							)}
+
 							{batchItem && (
 								<SessionDecisionCard
 									session={session}
@@ -599,13 +606,6 @@ export default function CoachingSessionDetailPage() {
 										</Stack>
 									</SectionCard>
 								)}
-
-							{!isAi && (
-								<PreviousSessionCard
-									previous={previousSession}
-									comparison={session.brief?.previous ?? null}
-								/>
-							)}
 
 							{session.type !== 'GROUP' && (
 								<AgentLearningCard

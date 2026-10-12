@@ -381,7 +381,7 @@ export const buildWeeklyBatch = (
 				talkingPoints: [],
 				notes: '',
 				aiMessage: profile
-					? buildAiCoachingMessage(profile, 'Weekly QA review', titles)
+					? buildAiCoachingMessage(profile, 'Weekly QA review', titles, brief)
 					: brief.approach,
 				actionItems: [],
 				agentCommitment: blankCommitment(),

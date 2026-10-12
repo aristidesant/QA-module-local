@@ -29,6 +29,8 @@ interface CoachingSessionContextProps {
 	agentId: string;
 	/** Opens a material; leave out when the viewer cannot open it. */
 	onOpenMaterial?: (contentId: string) => void;
+	/** Skips the problem / approach / example card, for an automated message that already says it. */
+	materialsOnly?: boolean;
 }
 
 /**
@@ -40,6 +42,7 @@ export function CoachingSessionContext({
 	sessionId,
 	agentId,
 	onOpenMaterial,
+	materialsOnly = false,
 }: CoachingSessionContextProps) {
 	const { t } = useTranslation(['qa.inbox', 'qa.calls']);
 	const { t: tLms } = useTranslation('qa.lms');
@@ -96,78 +99,82 @@ export function CoachingSessionContext({
 
 	return (
 		<Stack gap='md'>
-			<SectionCard title={t('details.coaching.sessionTitle')} padding='md'>
-				<Stack gap='lg'>
-					{finding && (
-						<Stack gap={6}>
-							<Caption>{t('details.coaching.problem')}</Caption>
-							<Group gap='sm'>
-								<Badge
-									size='sm'
-									variant={critical ? 'light' : 'outline'}
-									color={critical ? 'red' : 'gray'}
-								>
-									{t(`issues.${finding.issue}`, { ns: 'qa.calls' })}
-								</Badge>
-								<Text size='xs' c='dimmed'>
-									{t('details.coaching.problemOf', {
-										count: finding.calls,
-										total: brief.calls,
-									})}
-								</Text>
-							</Group>
-						</Stack>
-					)}
-
-					{brief.approach && (
-						<Stack gap={4}>
-							<Caption>{t('details.coaching.approach')}</Caption>
-							<Text size='sm' className={queueStyles.preWrap}>
-								{brief.approach}
-							</Text>
-						</Stack>
-					)}
-
-					{brief.solution && (
-						<Stack gap={4}>
-							<Caption>{t('details.coaching.solution')}</Caption>
-							<Text size='sm' className={queueStyles.preWrap}>
-								{brief.solution}
-							</Text>
-						</Stack>
-					)}
-
-					{brief.example && (
-						<Stack gap={4}>
-							<Caption>{t('details.coaching.example')}</Caption>
-							<Text size='sm' c='dimmed' className={queueStyles.preWrap}>
-								{brief.example}
-							</Text>
-						</Stack>
-					)}
-
-					{evidence.length > 0 && (
-						<Stack gap={6}>
-							<Caption>{t('details.coaching.evidence')}</Caption>
-							<Group gap='xs'>
-								{evidence.map((callId) => (
+			{!materialsOnly && (
+				<SectionCard title={t('details.coaching.sessionTitle')} padding='md'>
+					<Stack gap='lg'>
+						{finding && (
+							<Stack gap={6}>
+								<Caption>{t('details.coaching.problem')}</Caption>
+								<Group gap='sm'>
 									<Badge
-										key={callId}
 										size='sm'
-										variant='outline'
-										color='gray'
-										leftSection={<IconPhone size={12} />}
-										className={pointerStyles.pointer}
-										onClick={() => navigate(`/qa/campaigns/1/calls/${callId}`)}
+										variant={critical ? 'light' : 'outline'}
+										color={critical ? 'red' : 'gray'}
 									>
-										{callId}
+										{t(`issues.${finding.issue}`, { ns: 'qa.calls' })}
 									</Badge>
-								))}
-							</Group>
-						</Stack>
-					)}
-				</Stack>
-			</SectionCard>
+									<Text size='xs' c='dimmed'>
+										{t('details.coaching.problemOf', {
+											count: finding.calls,
+											total: brief.calls,
+										})}
+									</Text>
+								</Group>
+							</Stack>
+						)}
+
+						{brief.approach && (
+							<Stack gap={4}>
+								<Caption>{t('details.coaching.approach')}</Caption>
+								<Text size='sm' className={queueStyles.preWrap}>
+									{brief.approach}
+								</Text>
+							</Stack>
+						)}
+
+						{brief.solution && (
+							<Stack gap={4}>
+								<Caption>{t('details.coaching.solution')}</Caption>
+								<Text size='sm' className={queueStyles.preWrap}>
+									{brief.solution}
+								</Text>
+							</Stack>
+						)}
+
+						{brief.example && (
+							<Stack gap={4}>
+								<Caption>{t('details.coaching.example')}</Caption>
+								<Text size='sm' c='dimmed' className={queueStyles.preWrap}>
+									{brief.example}
+								</Text>
+							</Stack>
+						)}
+
+						{evidence.length > 0 && (
+							<Stack gap={6}>
+								<Caption>{t('details.coaching.evidence')}</Caption>
+								<Group gap='xs'>
+									{evidence.map((callId) => (
+										<Badge
+											key={callId}
+											size='sm'
+											variant='outline'
+											color='gray'
+											leftSection={<IconPhone size={12} />}
+											className={pointerStyles.pointer}
+											onClick={() =>
+												navigate(`/qa/campaigns/1/calls/${callId}`)
+											}
+										>
+											{callId}
+										</Badge>
+									))}
+								</Group>
+							</Stack>
+						)}
+					</Stack>
+				</SectionCard>
+			)}
 
 			<SectionCard title={t('details.coaching.materialsTitle')} padding='md'>
 				{materials.length === 0 ? (

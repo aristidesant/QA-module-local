@@ -901,7 +901,7 @@ const BATCH_SESSIONS = WEEKLY_BATCH.created.map((s): CoachingSessionRecord => {
 			date: aiMessageSendAt(NEXT_COACHING_DAY),
 			talkingPoints: [],
 			aiMessage: profile
-				? buildAiCoachingMessage(profile, 'Weekly coaching review', [])
+				? buildAiCoachingMessage(profile, 'Weekly coaching review', [], s.brief)
 				: (s.brief?.approach ?? ''),
 		};
 	}

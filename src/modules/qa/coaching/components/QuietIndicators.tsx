@@ -19,22 +19,26 @@ export const CRITICAL_ISSUES = new Set([
 export function TierScore({
 	score,
 	tier,
+	size = 'sm',
 }: {
 	score: number;
 	tier: PerformanceTier;
+	/** 'xl' gives the number the weight of a headline figure. */
+	size?: 'sm' | 'xl';
 }) {
 	const { t } = useTranslation('qa.coaching');
+	const large = size === 'xl';
 	return (
-		<Group gap={8} wrap='nowrap'>
-			<Text size='sm' fw={600}>
+		<Group gap={8} wrap='nowrap' align={large ? 'baseline' : 'center'}>
+			<Text size={size} fw={large ? 700 : 600} lh={large ? 1.1 : undefined}>
 				{score}
 			</Text>
 			{tier === 'CRITICAL' ? (
-				<Badge size='xs' variant='light' color='red'>
+				<Badge size={large ? 'sm' : 'xs'} variant='light' color='red'>
 					{t(TIER_META.CRITICAL.labelKey)}
 				</Badge>
 			) : (
-				<Text size='xs' c='dimmed'>
+				<Text size={large ? 'sm' : 'xs'} c='dimmed'>
 					{t(TIER_META[tier].labelKey)}
 				</Text>
 			)}
@@ -47,15 +51,19 @@ export function ScoreTrendText({
 	verdict,
 	current,
 	previous,
+	size = 'sm',
 }: {
 	verdict: 'IMPROVED' | 'SAME' | 'DECLINED' | null;
 	current: number;
 	previous: number | null;
+	/** 'xl' gives the change the weight of a headline figure. */
+	size?: 'sm' | 'xl';
 }) {
 	const { t } = useTranslation('qa.coaching');
+	const large = size === 'xl';
 	if (!verdict || previous === null) {
 		return (
-			<Text size='sm' c='dimmed'>
+			<Text size={size} c='dimmed'>
 				—
 			</Text>
 		);
@@ -77,9 +85,18 @@ export function ScoreTrendText({
 				delta: `${delta > 0 ? '+' : ''}${delta}`,
 			})}
 		>
-			<Group gap={4} wrap='nowrap' c={declined ? 'red' : 'dimmed'}>
-				<Icon size={14} />
-				<Text size='sm' c='inherit' fw={declined ? 600 : 400}>
+			<Group
+				gap={4}
+				wrap='nowrap'
+				c={declined ? 'red' : large ? undefined : 'dimmed'}
+			>
+				<Icon size={large ? 20 : 14} />
+				<Text
+					size={size}
+					c='inherit'
+					fw={large ? 700 : declined ? 600 : 400}
+					lh={large ? 1.1 : undefined}
+				>
 					{delta > 0 ? '+' : ''}
 					{delta}
 				</Text>

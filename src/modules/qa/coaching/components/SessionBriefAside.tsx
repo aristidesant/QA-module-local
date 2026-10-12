@@ -155,7 +155,11 @@ export function PreviousSessionCard({
 	const declined = comparison?.verdict === 'DECLINED';
 
 	return (
-		<SectionCard title={t('sessions.previous.title')} padding='md'>
+		<SectionCard
+			title={t('sessions.previous.title')}
+			headerAccent='blue'
+			padding='md'
+		>
 			{!previous ? (
 				<Text size='sm' c='dimmed'>
 					{t('sessions.brief.noPrevious')}

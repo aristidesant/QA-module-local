@@ -16,6 +16,7 @@ import type { CoachingBrief } from '~/models/qa';
 import type { CallIssueKey } from '~/modules/qa/calls/issues';
 import { CRITICAL_ISSUES, ScoreTrendText, TierScore } from './QuietIndicators';
 import queueStyles from './Queue.module.css';
+import styles from './SessionBrief.module.css';
 
 /** Caption-style label: the small uppercase heading used for blocks and stat labels. */
 export function Caption({ children }: { children: ReactNode }) {
@@ -69,37 +70,51 @@ export function SessionBrief({ brief }: SessionBriefProps) {
 			padding='md'
 		>
 			<Stack gap='lg'>
-				<Group align='flex-start' gap='md' wrap='nowrap'>
-					<StripStat
-						label={t('sessions.brief.stats.scorecard')}
-						note={t(`sessions.batch.reason.${brief.reason}`)}
+				<Group align='stretch' gap='md' wrap='wrap'>
+					<Group
+						align='flex-start'
+						gap='xl'
+						wrap='nowrap'
+						className={styles.highlight}
+						data-declined={brief.trend === 'DECLINED' || undefined}
 					>
-						<TierScore score={brief.score} tier={brief.tier} />
-					</StripStat>
-					<Divider orientation='vertical' />
-					<StripStat
-						label={t('sessions.brief.stats.change')}
-						note={t('sessions.brief.stats.vsPrevious')}
-					>
-						<ScoreTrendText
-							verdict={brief.trend}
-							current={brief.score}
-							previous={brief.previousScore}
-						/>
-					</StripStat>
-					<Divider orientation='vertical' />
-					<StripStat label={t('sessions.brief.stats.calls')}>
-						<Text size='xl' fw={700}>
-							{brief.calls}
-						</Text>
-					</StripStat>
-					<Divider orientation='vertical' />
-					<StripStat label={t('sessions.brief.stats.week')}>
-						<Text size='sm' fw={600}>
-							{dayjs(brief.weekFrom).format('D MMM')} –{' '}
-							{dayjs(brief.weekTo).format('D MMM')}
-						</Text>
-					</StripStat>
+						<StripStat
+							label={t('sessions.brief.stats.scorecard')}
+							note={t(`sessions.batch.reason.${brief.reason}`)}
+						>
+							<TierScore size='xl' score={brief.score} tier={brief.tier} />
+						</StripStat>
+						<Divider orientation='vertical' />
+						<StripStat
+							label={t('sessions.brief.stats.change')}
+							note={
+								brief.previousScore === null
+									? t('sessions.brief.stats.vsPrevious')
+									: `${brief.previousScore} → ${brief.score} · ${t('sessions.brief.stats.vsPrevious')}`
+							}
+						>
+							<ScoreTrendText
+								size='xl'
+								verdict={brief.trend}
+								current={brief.score}
+								previous={brief.previousScore}
+							/>
+						</StripStat>
+					</Group>
+					<Group align='center' gap='md' wrap='nowrap' className={styles.rest}>
+						<StripStat label={t('sessions.brief.stats.calls')}>
+							<Text size='xl' fw={700}>
+								{brief.calls}
+							</Text>
+						</StripStat>
+						<Divider orientation='vertical' />
+						<StripStat label={t('sessions.brief.stats.week')}>
+							<Text size='sm' fw={600}>
+								{dayjs(brief.weekFrom).format('D MMM')} –{' '}
+								{dayjs(brief.weekTo).format('D MMM')}
+							</Text>
+						</StripStat>
+					</Group>
 				</Group>
 
 				<Divider />

@@ -660,8 +660,8 @@
 			"meetingLink": "Enlace de la reunión",
 			"evidence": "Evidencia",
 			"talkingPoints": "Puntos a tratar",
-			"actionItems": "Acciones acordadas",
-			"addItem": "Añadir acción",
+			"actionItems": "Notas",
+			"addItem": "Añadir nota",
 			"itemText": "Qué",
 			"itemDue": "Para cuándo",
 			"commitment": "Compromiso del agente",
@@ -681,7 +681,7 @@
 			"aiMessage": "Mensaje automático",
 			"noEvidence": "No hay llamadas de evidencia.",
 			"noPoints": "Todavía no hay puntos a tratar.",
-			"noItems": "Todavía no hay acciones acordadas."
+			"noItems": "Todavía no hay notas."
 		},
 		"history": {
 			"title": "Sesiones y coaching pasados"

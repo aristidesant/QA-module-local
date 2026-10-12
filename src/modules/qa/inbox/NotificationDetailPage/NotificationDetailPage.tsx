@@ -262,6 +262,7 @@ export default function NotificationDetailPage() {
 								<CoachingSessionContext
 									sessionId={payload.sessionId}
 									agentId={live.agentId}
+									materialsOnly={Boolean(automated)}
 									onOpenMaterial={
 										viewer === 'agent'
 											? (contentId) => navigate(agentContentPath(contentId))

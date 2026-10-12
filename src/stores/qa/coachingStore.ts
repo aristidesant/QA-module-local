@@ -216,7 +216,12 @@ const toAiMessage = (
 		status,
 		talkingPoints: [],
 		aiMessage: profile
-			? buildAiCoachingMessage(profile, 'Weekly coaching review', titles)
+			? buildAiCoachingMessage(
+					profile,
+					'Weekly coaching review',
+					titles,
+					session.brief
+				)
 			: (session.brief?.approach ?? ''),
 	};
 };
@@ -592,7 +597,12 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 					.filter((title): title is string => Boolean(title));
 				return {
 					...next,
-					aiMessage: buildAiCoachingMessage(profile, x.topic, titles),
+					aiMessage: buildAiCoachingMessage(
+						profile,
+						x.topic,
+						titles,
+						next.brief
+					),
 				};
 			}),
 		})),

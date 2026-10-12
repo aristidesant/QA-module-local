@@ -1,43 +1,45 @@
-.tile,
-.focus {
+/* Last week's score of one dimension: neutral, so only the numbers carry meaning. */
+.tile {
+	padding: var(--mantine-spacing-sm);
 	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--mantine-color-default-border);
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+}
+
+/* The weakest dimension of the week: a stronger border, still no color. */
+.tile[data-focus] {
+	border-color: light-dark(
+		var(--mantine-color-gray-6),
+		var(--mantine-color-dark-2)
+	);
+}
+
+.focus {
+	padding: var(--mantine-spacing-md);
+	border-radius: var(--mantine-radius-md);
+	border-left: 3px solid var(--accent);
 	background: var(--accent-bg);
 }
 
-.tile[data-color='orange'],
 .focus[data-color='orange'] {
 	--accent-bg: var(--mantine-color-orange-light);
 	--accent: var(--mantine-color-orange-filled);
 }
 
-.tile[data-color='violet'],
 .focus[data-color='violet'] {
 	--accent-bg: var(--mantine-color-violet-light);
 	--accent: var(--mantine-color-violet-filled);
 }
 
-.tile[data-color='green'],
 .focus[data-color='green'] {
 	--accent-bg: var(--mantine-color-green-light);
 	--accent: var(--mantine-color-green-filled);
 }
 
-.tile[data-color='blue'],
 .focus[data-color='blue'] {
 	--accent-bg: var(--mantine-color-blue-light);
 	--accent: var(--mantine-color-blue-filled);
-}
-
-.tile {
-	padding: var(--mantine-spacing-sm);
-	border: 1px solid var(--mantine-color-default-border);
-}
-
-.tile[data-focus] {
-	border-color: var(--accent);
-}
-
-.focus {
-	padding: var(--mantine-spacing-md);
-	border-left: 3px solid var(--accent);
 }

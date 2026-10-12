@@ -660,8 +660,8 @@
 			"meetingLink": "Meeting link",
 			"evidence": "Evidence",
 			"talkingPoints": "Talking points",
-			"actionItems": "Action items",
-			"addItem": "Add action item",
+			"actionItems": "Notes",
+			"addItem": "Add note",
 			"itemText": "What",
 			"itemDue": "By",
 			"commitment": "Agent commitment",
@@ -681,7 +681,7 @@
 			"aiMessage": "Automated message",
 			"noEvidence": "No evidence calls pinned.",
 			"noPoints": "No talking points yet.",
-			"noItems": "No action items yet."
+			"noItems": "No notes yet."
 		},
 		"history": {
 			"title": "Past sessions and coaching"

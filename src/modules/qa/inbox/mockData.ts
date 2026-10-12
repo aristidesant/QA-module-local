@@ -179,7 +179,12 @@ const AGENT_INBOX: AgentNotification[] = [
 			'• Customer sentiment: 72 (stable vs last week)\n' +
 			'• Compliance: 91 (+2 vs last week)\n' +
 			'• Business: 74 (+1 vs last week)\n\n' +
-			'Your focus for the week is QA. Pick one call from last week where it slipped and note what you would do differently.\n\n' +
+			'Critical points this week:\n' +
+			'• Critical business errors: flagged on 3 of 12 evaluated calls (25% of the week).\n' +
+			'• QA fell -4% vs last week.\n\n' +
+			'Your weakest aspect this week was QA.\n\n' +
+			'How to approach it: Show the agent the business consequence of the error (a wrong plan, a missed cancellation) rather than the scoring rule. Ask them to narrate the call back to you — most ECN errors come from assuming instead of confirming.\n\n' +
+			'For example: "So just to confirm: you want to move to the 50 GB plan from the 1st of next month and keep the same number — is that right?" Then wait for the yes.\n\n' +
 			'To work on it this week I attached: Objection Handling Fundamentals, Closing the Call: recap & next steps.',
 		icon: 'school',
 		sourceRole: 'QA_MANAGER',
