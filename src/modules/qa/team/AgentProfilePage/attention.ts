@@ -1,11 +1,13 @@
+import type { AttentionMap } from '~/modules/qa/components/ProfileShell';
 import type { AgentProfile } from '../types';
 import type { ProfileTab } from '../constants';
 import { dimensionPercent } from '../helpers';
 
-export type Attention = 'warning' | 'critical';
-export type AttentionMap = Partial<Record<ProfileTab, Attention>>;
+export type AgentAttentionMap = AttentionMap<ProfileTab>;
 
-const worse = (a: Attention | undefined, b: Attention): Attention =>
+type Level = AgentAttentionMap[ProfileTab];
+
+const worse = (a: Level, b: NonNullable<Level>): NonNullable<Level> =>
 	a === 'critical' || b === 'critical' ? 'critical' : 'warning';
 
 /**
@@ -15,8 +17,8 @@ const worse = (a: Attention | undefined, b: Attention): Attention =>
 export const profileAttention = (
 	profile: AgentProfile,
 	burnoutLevel: 'low' | 'medium' | 'high'
-): AttentionMap => {
-	const out: AttentionMap = {};
+): AgentAttentionMap => {
+	const out: AgentAttentionMap = {};
 	const open = profile.risk.alerts.filter((a) => !a.acknowledged);
 	if (open.length > 0) {
 		out.overview = open.some((a) => a.severity === 'critical')

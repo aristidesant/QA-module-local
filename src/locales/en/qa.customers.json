@@ -94,7 +94,12 @@
 		"sentiment": "Sentiment & Emotion",
 		"offers": "Offers & Signals",
 		"surveys": "Surveys",
-		"timeline": "Timeline"
+		"timeline": "Timeline",
+		"groups": {
+			"interactions": "Interactions",
+			"insights": "Insights"
+		},
+		"attention": "Needs attention"
 	},
 	"header": {
 		"back": "Back to customers",
@@ -107,6 +112,39 @@
 		"prefers": "Prefers {{channel}}",
 		"receptiveness": "Receptiveness",
 		"churn": "Churn risk",
+		"contacts": "{{count}} contacts",
+		"details": {
+			"open": "Customer details",
+			"id": "ID",
+			"email": "Email",
+			"city": "City",
+			"language": "Language",
+			"channel": "Preferred channel",
+			"plan": "Plan",
+			"value": "Monthly value",
+			"customerSince": "Customer since",
+			"trackedSince": "Tracked since",
+			"consent": "Consent",
+			"recording": "Recording",
+			"marketing": "Marketing",
+			"none": "None",
+			"tags": "Tags"
+		},
+		"strip": {
+			"sentiment": "Avg. sentiment",
+			"npsNone": "No survey yet",
+			"windowStats": "{{accepted}} accepted of {{contacts}}"
+		},
+		"verdict": {
+			"ok": "No signal needs attention.",
+			"attention": "Needs attention: {{items}}.",
+			"items": {
+				"resistant": "resistant to offers",
+				"churn": "high churn risk",
+				"nps": "detractor NPS",
+				"sentiment": "low sentiment"
+			}
+		},
 		"bestWindow": "Best window",
 		"nps": "NPS",
 		"actions": {
@@ -122,9 +160,7 @@
 			"avgDuration": "Avg. duration",
 			"agents": "Agents involved",
 			"offers": "Offers presented",
-			"acceptance": "Acceptance rate",
-			"sentiment": "Avg. sentiment",
-			"nps": "Latest NPS"
+			"acceptance": "Acceptance rate"
 		},
 		"sentimentTrend": "Customer sentiment over time",
 		"sentimentTrendDescription": "One point per answered contact (1–5)",
@@ -140,6 +176,9 @@
 		"worst": "Worst windows",
 		"windowStats": "{{answered}}/{{contacts}} answered · {{accepted}} accepted · {{rejected}} rejected",
 		"noWindows": "Not enough contacts yet.",
+		"activity": "Activity",
+		"activityDescription": "From {{first}} to {{last}}",
+		"noSentiment": "No answered contact yet.",
 		"signals": "Business signals"
 	},
 	"contacts": {

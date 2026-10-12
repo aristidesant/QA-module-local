@@ -90,7 +90,12 @@
 		"sentiment": "Sentimiento y emoción",
 		"offers": "Ofertas y señales",
 		"surveys": "Encuestas",
-		"timeline": "Línea de tiempo"
+		"timeline": "Línea de tiempo",
+		"groups": {
+			"interactions": "Interacciones",
+			"insights": "Análisis"
+		},
+		"attention": "Requiere atención"
 	},
 	"header": {
 		"back": "Volver a clientes",
@@ -103,6 +108,39 @@
 		"prefers": "Prefiere {{channel}}",
 		"receptiveness": "Receptividad",
 		"churn": "Riesgo de abandono",
+		"contacts": "{{count}} contactos",
+		"details": {
+			"open": "Detalles del cliente",
+			"id": "ID",
+			"email": "Correo",
+			"city": "Ciudad",
+			"language": "Idioma",
+			"channel": "Canal preferido",
+			"plan": "Plan",
+			"value": "Valor mensual",
+			"customerSince": "Cliente desde",
+			"trackedSince": "Monitoreado desde",
+			"consent": "Consentimiento",
+			"recording": "Grabación",
+			"marketing": "Marketing",
+			"none": "Ninguno",
+			"tags": "Etiquetas"
+		},
+		"strip": {
+			"sentiment": "Sentimiento prom.",
+			"npsNone": "Sin encuesta aún",
+			"windowStats": "{{accepted}} aceptadas de {{contacts}}"
+		},
+		"verdict": {
+			"ok": "Ninguna señal requiere atención.",
+			"attention": "Requiere atención: {{items}}.",
+			"items": {
+				"resistant": "reacio a las ofertas",
+				"churn": "riesgo de abandono alto",
+				"nps": "NPS detractor",
+				"sentiment": "sentimiento bajo"
+			}
+		},
 		"bestWindow": "Mejor ventana",
 		"nps": "NPS",
 		"actions": {
@@ -118,9 +156,7 @@
 			"avgDuration": "Duración prom.",
 			"agents": "Agentes involucrados",
 			"offers": "Ofertas presentadas",
-			"acceptance": "Tasa de aceptación",
-			"sentiment": "Sentimiento prom.",
-			"nps": "Último NPS"
+			"acceptance": "Tasa de aceptación"
 		},
 		"sentimentTrend": "Sentimiento del cliente a través del tiempo",
 		"sentimentTrendDescription": "Un punto por cada contacto contestado (1–5)",
@@ -136,6 +172,9 @@
 		"worst": "Peores ventanas",
 		"windowStats": "{{answered}}/{{contacts}} contestadas · {{accepted}} aceptadas · {{rejected}} rechazadas",
 		"noWindows": "Aún no hay suficientes contactos.",
+		"activity": "Actividad",
+		"activityDescription": "Del {{first}} al {{last}}",
+		"noSentiment": "Aún no hay contactos respondidos.",
 		"signals": "Señales de negocio"
 	},
 	"contacts": {

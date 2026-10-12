@@ -130,9 +130,6 @@ export const PROFILE_TAB_GROUPS: {
 	},
 ];
 
-export const profileGroupOf = (tab: ProfileTab) =>
-	PROFILE_TAB_GROUPS.find((g) => g.tabs.includes(tab)) ?? PROFILE_TAB_GROUPS[0];
-
 export const DIMENSION_META: Record<
 	DimensionKey,
 	{

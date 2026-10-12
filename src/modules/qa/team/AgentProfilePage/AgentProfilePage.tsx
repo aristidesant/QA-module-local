@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import {
 	useLocation,
 	useNavigate,
@@ -6,7 +6,15 @@ import {
 	useSearchParams,
 } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Anchor, Box, Breadcrumbs, Button, Stack, Text } from '@mantine/core';
+import {
+	Anchor,
+	Avatar,
+	Box,
+	Breadcrumbs,
+	Button,
+	Stack,
+	Text,
+} from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer';
 import { EmptyState } from '~/components/EmptyState/EmptyState';
 import { useTeamStore, selectProfile } from '~/stores/qa/teamStore';
@@ -16,14 +24,19 @@ import {
 } from '~/stores/qa/triggerRulesStore';
 import { assessBurnout } from '~/modules/qa/analytics/helpers';
 import {
+	CompactProfileBar,
+	ProfileNav,
+	useCompactBar,
+} from '~/modules/qa/components/ProfileShell';
+import {
+	PROFILE_TABS,
 	PROFILE_TAB_GROUPS,
 	SUPERVISOR_PERSONA,
 	type ProfileTab,
 } from '../constants';
 import { roleFromPath, teamBasePath } from '../helpers';
 import { ProfileHeader } from './ProfileHeader';
-import { ProfileNav } from './ProfileNav';
-import { CompactProfileBar } from './CompactProfileBar';
+import { ProfileActions } from './ProfileActions';
 import { profileAttention } from './attention';
 import { OverviewTab } from './tabs/OverviewTab';
 import { QATab } from './tabs/QATab';
@@ -55,18 +68,7 @@ export default function AgentProfilePage() {
 	const [messageOpen, setMessageOpen] = useState(false);
 
 	// The compact bar shows once the full header has scrolled out of the content area.
-	const headerRef = useRef<HTMLDivElement>(null);
-	const [headerVisible, setHeaderVisible] = useState(true);
-	useEffect(() => {
-		const el = headerRef.current;
-		if (!el) return;
-		const observer = new IntersectionObserver(
-			([entry]) => setHeaderVisible(entry.isIntersecting),
-			{ threshold: 0 }
-		);
-		observer.observe(el);
-		return () => observer.disconnect();
-	}, [profile?.agent.id]);
+	const { headerRef, compact } = useCompactBar(profile?.agent.id);
 
 	const rawTab = searchParams.get('tab');
 	const tab: ProfileTab = isProfileTab(rawTab) ? rawTab : 'overview';
@@ -95,6 +97,21 @@ export default function AgentProfilePage() {
 	const attention = useMemo(
 		() => (profile ? profileAttention(profile, burnoutLevel) : {}),
 		[profile, burnoutLevel]
+	);
+
+	const navGroups = useMemo(
+		() =>
+			PROFILE_TAB_GROUPS.map((g) => ({
+				value: g.value,
+				label: t(g.labelKey),
+				icon: g.icon,
+				tabs: g.tabs.map((value) => ({
+					value,
+					label: t(`tabs.${value}`),
+					icon: PROFILE_TABS.find((x) => x.value === value)?.icon,
+				})),
+			})),
+		[t]
 	);
 
 	const scheduleCoaching = () =>
@@ -166,10 +183,21 @@ export default function AgentProfilePage() {
 			onBackClick={() => navigate(teamBasePath(role))}
 		>
 			<CompactProfileBar
-				profile={profile}
-				visible={!headerVisible}
-				{...actions}
-			/>
+				visible={compact}
+				actions={<ProfileActions size='xs' {...actions} />}
+			>
+				<Avatar size={32} radius='md' color='gray' name={profile.agent.name} />
+				<Text fw={600} truncate>
+					{profile.agent.name}
+				</Text>
+				<Text fw={700}>{profile.overall.score}</Text>
+				<Text size='sm' c='dimmed' visibleFrom='sm'>
+					{t('header.rank', {
+						rank: profile.overall.rankInTeam,
+						size: profile.overall.teamSize,
+					})}
+				</Text>
+			</CompactProfileBar>
 			<Stack gap='lg'>
 				<Breadcrumbs>
 					<Anchor onClick={() => navigate(teamBasePath(role))}>
@@ -195,7 +223,13 @@ export default function AgentProfilePage() {
 					/>
 				</div>
 
-				<ProfileNav tab={tab} onChange={setTab} attention={attention} />
+				<ProfileNav
+					groups={navGroups}
+					tab={tab}
+					onChange={setTab}
+					attention={attention}
+					attentionLabel={t('tabs.attention')}
+				/>
 
 				<Box role='tabpanel' pt='md'>
 					{renderTab()}

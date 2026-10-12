@@ -1,12 +1,12 @@
 /* A zero-height anchor that sticks to the top of the scrolling content; the bar floats over the page. */
-.compactAnchor {
+.anchor {
 	position: sticky;
 	top: 0;
 	z-index: 20;
 	height: 0;
 }
 
-.compactBar {
+.bar {
 	position: absolute;
 	inset-inline: 0;
 	top: 0;
@@ -28,7 +28,7 @@
 		visibility 0s linear 150ms;
 }
 
-.compactBar[data-visible] {
+.bar[data-visible] {
 	opacity: 1;
 	visibility: visible;
 	transform: none;
@@ -36,7 +36,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-	.compactBar {
+	.bar {
 		transition: none;
 	}
 }

@@ -2,14 +2,13 @@ import { Group, SimpleGrid, Stack, Text } from '@mantine/core';
 import { LineChart } from '@mantine/charts';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
-import { StatCard } from '~/components/StatCard';
 import { EmptyState } from '~/components/EmptyState/EmptyState';
 import {
 	BUSINESS_SIGNAL_META,
 	BUSINESS_SIGNAL_ORDER,
 } from '~/modules/qa/team/constants';
-import { formatSeconds } from '~/modules/qa/team/helpers';
-import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
+import { Caption } from '~/modules/qa/coaching/components/SessionBrief';
+import { formatDate, formatSeconds } from '~/modules/qa/team/helpers';
 import type { CustomerProfile } from '../../types';
 import { ContactWindowTiles } from '../../components/ContactWindowTiles';
 
@@ -17,18 +16,20 @@ interface OverviewTabProps {
 	profile: CustomerProfile;
 }
 
-/** Red text is the only colour on this tab, and only for what needs attention. Adapts to light and dark. */
-const ALERT = 'var(--mantine-color-red-text)';
-/** Detractors (0-6) are the only NPS scores worth flagging. */
-const NPS_DETRACTOR_MAX = 6;
+/** The 1-5 sentiment scale and the dashboard band that names each step. */
+const SENTIMENT_SCALE = [
+	{ score: 1, band: 'veryNegative' },
+	{ score: 2, band: 'negative' },
+	{ score: 3, band: 'neutral' },
+	{ score: 4, band: 'positive' },
+	{ score: 5, band: 'veryPositive' },
+] as const;
 
 export function OverviewTab({ profile }: OverviewTabProps) {
-	const { t } = useTranslation('qa.customers');
+	const { t } = useTranslation(['qa.customers', 'qa.dashboard']);
 	const { kpis, sentimentSeries, bestWindows, worstWindows, signalCounts } =
 		profile;
 
-	const lowSentiment =
-		useSettingsStore(selectThresholds).sentiment.lowSentimentIncident;
 	const third = Math.max(1, Math.floor(sentimentSeries.length / 3));
 	const delta =
 		sentimentSeries.length >= 2
@@ -42,40 +43,50 @@ export function OverviewTab({ profile }: OverviewTabProps) {
 
 	return (
 		<Stack gap='md'>
-			<SimpleGrid cols={{ base: 2, md: 4 }} spacing='md'>
-				<StatCard
-					title={t('overview.kpi.contacts')}
-					value={kpis.totalContacts}
-					subtitle={`${kpis.answerRate}% ${t('overview.kpi.answerRate').toLowerCase()}`}
-				/>
-				<StatCard
-					title={t('overview.kpi.avgDuration')}
-					value={formatSeconds(kpis.avgDurationSeconds)}
-				/>
-				<StatCard
-					title={t('overview.kpi.agents')}
-					value={kpis.agentsInvolved}
-				/>
-				<StatCard
-					title={t('overview.kpi.offers')}
-					value={kpis.offersPresented}
-					subtitle={`${kpis.acceptanceRate}% ${t('overview.kpi.acceptance').toLowerCase()}`}
-				/>
-				<StatCard
-					title={t('overview.kpi.sentiment')}
-					value={`${kpis.avgCustomerSentiment.toFixed(1)}/5`}
-					color={kpis.avgCustomerSentiment < lowSentiment ? ALERT : undefined}
-				/>
-				<StatCard
-					title={t('overview.kpi.nps')}
-					value={kpis.npsLatest ?? '—'}
-					color={
-						kpis.npsLatest !== undefined && kpis.npsLatest <= NPS_DETRACTOR_MAX
-							? ALERT
-							: undefined
-					}
-				/>
-			</SimpleGrid>
+			<SectionCard
+				title={t('overview.activity')}
+				description={t('overview.activityDescription', {
+					first: formatDate(kpis.firstContactAt),
+					last: formatDate(kpis.lastContactAt),
+				})}
+				padding='md'
+			>
+				<SimpleGrid cols={{ base: 2, sm: 3, md: 6 }} spacing='md'>
+					{[
+						{
+							label: t('overview.kpi.contacts'),
+							value: String(kpis.totalContacts),
+						},
+						{
+							label: t('overview.kpi.answerRate'),
+							value: `${kpis.answerRate}%`,
+						},
+						{
+							label: t('overview.kpi.avgDuration'),
+							value: formatSeconds(kpis.avgDurationSeconds),
+						},
+						{
+							label: t('overview.kpi.agents'),
+							value: String(kpis.agentsInvolved),
+						},
+						{
+							label: t('overview.kpi.offers'),
+							value: String(kpis.offersPresented),
+						},
+						{
+							label: t('overview.kpi.acceptance'),
+							value: `${kpis.acceptanceRate}%`,
+						},
+					].map((item) => (
+						<Stack key={item.label} gap={2}>
+							<Caption>{item.label}</Caption>
+							<Text fw={700} size='lg' lh={1.1}>
+								{item.value}
+							</Text>
+						</Stack>
+					))}
+				</SimpleGrid>
+			</SectionCard>
 
 			<SectionCard
 				title={t('overview.sentimentTrend')}
@@ -87,7 +98,7 @@ export function OverviewTab({ profile }: OverviewTabProps) {
 				}
 			>
 				{sentimentSeries.length === 0 ? (
-					<EmptyState message={t('overview.windows')} />
+					<EmptyState message={t('overview.noSentiment')} />
 				) : (
 					<>
 						<LineChart
@@ -101,7 +112,17 @@ export function OverviewTab({ profile }: OverviewTabProps) {
 									color: 'gray.6',
 								},
 							]}
-							yAxisProps={{ domain: [1, 5] }}
+							yAxisProps={{
+								domain: [1, 5],
+								ticks: SENTIMENT_SCALE.map((s) => s.score),
+								tickFormatter: (value: number) => {
+									const step = SENTIMENT_SCALE.find((s) => s.score === value);
+									return step
+										? `${value} · ${t(`sentimentBands.${step.band}`, { ns: 'qa.dashboard' })}`
+										: String(value);
+								},
+								width: 130,
+							}}
 							withDots
 							curveType='monotone'
 						/>

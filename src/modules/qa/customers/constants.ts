@@ -42,6 +42,38 @@ export const CUSTOMER_TABS: {
 	{ value: 'timeline', labelKey: 'tabs.timeline', icon: IconHistory },
 ];
 
+export type CustomerGroup = 'overview' | 'interactions' | 'insights';
+
+/** Three groups on top; Interactions and Insights hold a pill sub-nav. */
+export const CUSTOMER_TAB_GROUPS: {
+	value: CustomerGroup;
+	labelKey: string;
+	icon: TablerIcon;
+	tabs: CustomerTab[];
+}[] = [
+	{
+		value: 'overview',
+		labelKey: 'tabs.overview',
+		icon: IconAddressBook,
+		tabs: ['overview'],
+	},
+	{
+		value: 'interactions',
+		labelKey: 'tabs.groups.interactions',
+		icon: IconPhone,
+		tabs: ['contacts', 'timeline'],
+	},
+	{
+		value: 'insights',
+		labelKey: 'tabs.groups.insights',
+		icon: IconMoodSmile,
+		tabs: ['sentiment', 'offers', 'surveys'],
+	},
+];
+
+/** Detractors (0-6) are the only NPS scores worth flagging. */
+export const NPS_DETRACTOR_MAX = 6;
+
 export const SEGMENT_META: Record<
 	CustomerSegment,
 	{ labelKey: string; color: string }
