@@ -11,22 +11,15 @@ import { Caption } from '~/modules/qa/coaching/components/SessionBrief';
 import { formatDate, formatSeconds } from '~/modules/qa/team/helpers';
 import type { CustomerProfile } from '../../types';
 import { ContactWindowTiles } from '../../components/ContactWindowTiles';
+import { useSentimentAxis } from '../../components/useSentimentAxis';
 
 interface OverviewTabProps {
 	profile: CustomerProfile;
 }
 
-/** The 1-5 sentiment scale and the dashboard band that names each step. */
-const SENTIMENT_SCALE = [
-	{ score: 1, band: 'veryNegative' },
-	{ score: 2, band: 'negative' },
-	{ score: 3, band: 'neutral' },
-	{ score: 4, band: 'positive' },
-	{ score: 5, band: 'veryPositive' },
-] as const;
-
 export function OverviewTab({ profile }: OverviewTabProps) {
-	const { t } = useTranslation(['qa.customers', 'qa.dashboard']);
+	const { t } = useTranslation('qa.customers');
+	const sentimentAxis = useSentimentAxis();
 	const { kpis, sentimentSeries, bestWindows, worstWindows, signalCounts } =
 		profile;
 
@@ -112,17 +105,7 @@ export function OverviewTab({ profile }: OverviewTabProps) {
 									color: 'gray.6',
 								},
 							]}
-							yAxisProps={{
-								domain: [1, 5],
-								ticks: SENTIMENT_SCALE.map((s) => s.score),
-								tickFormatter: (value: number) => {
-									const step = SENTIMENT_SCALE.find((s) => s.score === value);
-									return step
-										? `${value} · ${t(`sentimentBands.${step.band}`, { ns: 'qa.dashboard' })}`
-										: String(value);
-								},
-								width: 130,
-							}}
+							yAxisProps={sentimentAxis}
 							withDots
 							curveType='monotone'
 						/>
