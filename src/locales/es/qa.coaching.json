@@ -678,7 +678,7 @@
 			"linked": "Material relacionado",
 			"openCall": "Abrir llamada",
 			"impactAfter": "Puntaje desde la sesión",
-			"aiMessage": "Mensaje IA",
+			"aiMessage": "Mensaje automático",
 			"noEvidence": "No hay llamadas de evidencia.",
 			"noPoints": "Todavía no hay puntos a tratar.",
 			"noItems": "Todavía no hay acciones acordadas."
@@ -717,7 +717,7 @@
 			"summary": "{{analysed}} agentes analizados · {{oneOnOne}} tendrán 1:1 ({{toConfirm}} por confirmar) · {{ai}} reciben el mensaje IA",
 			"decisionShort": {
 				"ONE_ON_ONE": "1:1",
-				"AI_MESSAGE": "Mensaje IA"
+				"AI_MESSAGE": "Mensaje automático"
 			},
 			"locked": "Ya realizada o enviada: la decisión no puede cambiar",
 			"sendsOn": "Se envía {{date}}",
@@ -798,7 +798,10 @@
 		"bySessionDescription": "Cada 1:1 y mensaje IA completado, medido en el scorecard del agente: la semana posterior frente a la anterior.",
 		"sessionKind": {
 			"COACH_LED": "1:1 con supervisor",
-			"AI_MESSAGE": "Mensaje IA"
+			"AI_MESSAGE": "Mensaje automático"
+		},
+		"sessionKpi": {
+			"subtitle": "{{measured}} medidas · cambio prom. {{delta}}"
 		},
 		"pending_one": "{{count}} pendiente",
 		"pending_other": "{{count}} pendientes",

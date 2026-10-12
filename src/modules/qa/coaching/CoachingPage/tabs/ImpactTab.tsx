@@ -29,7 +29,6 @@ import {
 	sessionImpacts,
 	summarizeSessionImpacts,
 	type SessionImpactRow,
-	type SessionImpactSummary,
 } from '../../postCoaching';
 
 /** An improved rate at or above this share is shown in green. */
@@ -61,7 +60,6 @@ const contentHelper = createColumnHelper<ContentEffectivenessRow>();
 const recentHelper = createColumnHelper<AssignmentRow>();
 const ruleHelper = createColumnHelper<CoachingRule>();
 const teamHelper = createColumnHelper<TeamImpactRow>();
-const sessionSummaryHelper = createColumnHelper<SessionImpactSummary>();
 const sessionRecentHelper = createColumnHelper<SessionImpactRow>();
 
 interface ImpactTabProps {
@@ -346,52 +344,6 @@ export function ImpactTab({
 		}) as BaseTableColumnDef<CoachingRule>,
 	];
 
-	const sessionSummaryColumns: BaseTableColumnDef<SessionImpactSummary>[] = [
-		sessionSummaryHelper.accessor('kind', {
-			header: t('impact.columns.type'),
-			cell: (info) => (
-				<Stack gap={0}>
-					<Text size='sm'>{t(`impact.sessionKind.${info.getValue()}`)}</Text>
-					{info.row.original.pending > 0 && (
-						<Text size='xs' c='dimmed'>
-							{t('impact.pending', { count: info.row.original.pending })}
-						</Text>
-					)}
-				</Stack>
-			),
-		}) as BaseTableColumnDef<SessionImpactSummary>,
-		sessionSummaryHelper.accessor('measured', {
-			header: t('impact.columns.measured'),
-		}) as BaseTableColumnDef<SessionImpactSummary>,
-		sessionSummaryHelper.accessor('improved', {
-			header: t('impact.columns.improved'),
-			cell: (info) => (
-				<Text size='sm' fw={600}>
-					{info.getValue()}
-				</Text>
-			),
-		}) as BaseTableColumnDef<SessionImpactSummary>,
-		sessionSummaryHelper.accessor('same', {
-			header: t('impact.columns.same'),
-		}) as BaseTableColumnDef<SessionImpactSummary>,
-		sessionSummaryHelper.accessor('declined', {
-			header: t('impact.columns.declined'),
-			cell: (info) => (
-				<Text size='sm' c={info.getValue() > 0 ? 'red' : undefined}>
-					{info.getValue()}
-				</Text>
-			),
-		}) as BaseTableColumnDef<SessionImpactSummary>,
-		sessionSummaryHelper.accessor('improvedRate', {
-			header: t('impact.columns.improvedRate'),
-			cell: (info) => rateText(info.getValue()),
-		}) as BaseTableColumnDef<SessionImpactSummary>,
-		sessionSummaryHelper.accessor('avgDelta', {
-			header: t('impact.columns.avgDelta'),
-			cell: (info) => signedDelta(info.getValue()),
-		}) as BaseTableColumnDef<SessionImpactSummary>,
-	];
-
 	const sessionRecentColumns: BaseTableColumnDef<SessionImpactRow>[] = [
 		sessionRecentHelper.accessor('agentName', {
 			header: t('impact.recentColumns.agent'),
@@ -564,14 +516,34 @@ export function ImpactTab({
 				title={t('impact.bySession')}
 				description={t('impact.bySessionDescription')}
 			>
-				<SimpleGrid cols={{ base: 1, lg: 2 }} spacing='md'>
-					<BaseTable<SessionImpactSummary>
-						data={sessionSummaries}
-						columns={sessionSummaryColumns}
-						getRowId={(r) => r.kind}
-						density='compact'
-						emptyMessage={t('impact.empty')}
-					/>
+				<Stack gap='md'>
+					<SimpleGrid cols={{ base: 1, sm: 2 }} spacing='md'>
+						{sessionSummaries.map((summary) => (
+							<StatCard
+								key={summary.kind}
+								title={t(`impact.sessionKind.${summary.kind}`)}
+								value={
+									summary.improvedRate !== null
+										? `${summary.improvedRate}%`
+										: '—'
+								}
+								color={
+									summary.improvedRate !== null &&
+									summary.improvedRate >= IMPACT_RATE_GOOD
+										? 'var(--mantine-color-green-7)'
+										: undefined
+								}
+								subtitle={t('impact.sessionKpi.subtitle', {
+									measured: summary.measured,
+									delta:
+										summary.avgDelta !== null
+											? `${summary.avgDelta > 0 ? '+' : ''}${summary.avgDelta}`
+											: '—',
+								})}
+								variant='compact'
+							/>
+						))}
+					</SimpleGrid>
 					<BaseTable<SessionImpactRow>
 						data={recentSessions}
 						columns={sessionRecentColumns}
@@ -580,7 +552,7 @@ export function ImpactTab({
 						emptyMessage={t('impact.empty')}
 						onRowClick={(r) => onOpenAgent(r.agentId)}
 					/>
-				</SimpleGrid>
+				</Stack>
 			</SectionCard>
 
 			{role === 'qa-manager' && (

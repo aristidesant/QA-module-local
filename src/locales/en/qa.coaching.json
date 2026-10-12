@@ -678,7 +678,7 @@
 			"linked": "Linked material",
 			"openCall": "Open call",
 			"impactAfter": "Score since session",
-			"aiMessage": "AI message",
+			"aiMessage": "Automated message",
 			"noEvidence": "No evidence calls pinned.",
 			"noPoints": "No talking points yet.",
 			"noItems": "No action items yet."
@@ -717,7 +717,7 @@
 			"summary": "{{analysed}} agents analysed · {{oneOnOne}} get a 1:1 ({{toConfirm}} to confirm) · {{ai}} get the AI message",
 			"decisionShort": {
 				"ONE_ON_ONE": "1:1",
-				"AI_MESSAGE": "AI message"
+				"AI_MESSAGE": "Automated message"
 			},
 			"locked": "Already held or sent: the decision can't change",
 			"sendsOn": "Sends {{date}}",
@@ -798,7 +798,10 @@
 		"bySessionDescription": "Each completed 1:1 and AI message, measured on the agent's scorecard: the week after vs. the week before.",
 		"sessionKind": {
 			"COACH_LED": "1:1 with supervisor",
-			"AI_MESSAGE": "AI message"
+			"AI_MESSAGE": "Automated message"
+		},
+		"sessionKpi": {
+			"subtitle": "{{measured}} measured · avg {{delta}}"
 		},
 		"pending_one": "{{count}} pending",
 		"pending_other": "{{count}} pending",
