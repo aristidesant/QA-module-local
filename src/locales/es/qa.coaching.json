@@ -655,7 +655,10 @@
 		"detail": {
 			"notFound": "Esta sesión no está disponible en tu alcance.",
 			"proposed": {
-				"date": "Fecha de la sesión"
+				"date": "Fecha de la sesión",
+				"schedule": "Programar 1:1",
+				"scheduleHint": "Se avisa al agente de esta fecha y hora.",
+				"scheduled": "1:1 programada para el {{date}}"
 			},
 			"meetingLink": "Enlace de la reunión",
 			"evidence": "Evidencia",

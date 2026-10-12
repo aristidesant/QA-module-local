@@ -655,7 +655,10 @@
 		"detail": {
 			"notFound": "This session is not available in your scope.",
 			"proposed": {
-				"date": "Session date"
+				"date": "Session date",
+				"schedule": "Schedule 1:1",
+				"scheduleHint": "The agent is notified of this date and time.",
+				"scheduled": "1:1 scheduled for {{date}}"
 			},
 			"meetingLink": "Meeting link",
 			"evidence": "Evidence",

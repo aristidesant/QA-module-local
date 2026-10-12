@@ -19,6 +19,7 @@ import {
 import { AreaChart } from '@mantine/charts';
 import { DatePickerInput, DateTimePicker } from '@mantine/dates';
 import {
+	IconCalendarCheck,
 	IconCheck,
 	IconClock,
 	IconPhone,
@@ -238,6 +239,23 @@ export default function CoachingSessionDetailPage() {
 			ReturnType<typeof useCoachingStore.getState>['updateProposed']
 		>[1]
 	) => useCoachingStore.getState().updateProposed(session.id, changes);
+
+	/** Confirms the date, time and place on screen: the 1:1 is scheduled and the agent is told. */
+	const handleSchedule = () => {
+		if (!proposedDate) return;
+		const date = new Date(proposedDate).toISOString();
+		useCoachingStore
+			.getState()
+			.scheduleProposed(session.id, date, proposedModality, {
+				location: proposedLocation.trim() || null,
+				meetingLink: proposedLink.trim() || null,
+			});
+		notifySuccess(
+			t('sessions.detail.proposed.scheduled', {
+				date: dayjs(date).format('ddd D MMM, HH:mm'),
+			})
+		);
+	};
 
 	const handleDecision = (decision: CoachingBatchDecision) => {
 		if (!batchItem || batchItem.decision === decision) return;
@@ -529,6 +547,17 @@ export default function CoachingSessionDetailPage() {
 													saveProposed({ meetingLink: value.trim() || null });
 												}}
 											/>
+											<Button
+												fullWidth
+												leftSection={<IconCalendarCheck size={16} />}
+												disabled={!proposedDate}
+												onClick={handleSchedule}
+											>
+												{t('sessions.detail.proposed.schedule')}
+											</Button>
+											<Text size='xs' c='dimmed'>
+												{t('sessions.detail.proposed.scheduleHint')}
+											</Text>
 										</Stack>
 									) : session.status === 'SCHEDULED' ? (
 										<Text size='sm'>
