@@ -39,6 +39,15 @@ export function PerformanceTrendChart({
 		color: SERIES_STYLE[k].color,
 	}));
 
+	// Zoom the axis to where the data lives, in steps of 10, so the lines separate.
+	const shown = points.flatMap((p) =>
+		SERIES_ORDER.filter((k) => visible[k]).map((k) => p[k])
+	);
+	const domainMin =
+		shown.length > 0
+			? Math.max(0, Math.floor((Math.min(...shown) - 5) / 10) * 10)
+			: 0;
+
 	return (
 		<Stack gap='sm'>
 			<Group gap='xs'>
@@ -61,9 +70,8 @@ export function PerformanceTrendChart({
 				dataKey='label'
 				series={series}
 				curveType='monotone'
-				withLegend
 				withDots
-				yAxisProps={{ domain: [0, 100] }}
+				yAxisProps={{ domain: [domainMin, 100] }}
 				strokeWidth={2}
 			/>
 			<Text size='xs' c='dimmed'>

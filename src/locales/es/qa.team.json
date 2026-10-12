@@ -182,7 +182,13 @@
 		"burnout": "Burnout",
 		"coaching": "Coaching y LMS",
 		"achievements": "Logros",
-		"notes": "Notas"
+		"notes": "Notas",
+		"groups": {
+			"performance": "Desempeño",
+			"wellbeing": "Operaciones y bienestar",
+			"development": "Desarrollo"
+		},
+		"attention": "Requiere atención"
 	},
 	"dimension": {
 		"qa": "Puntuación QA",
@@ -197,7 +203,23 @@
 		"evaluations": "{{count}} evaluaciones",
 		"overall": "Puntuación general",
 		"rank": "#{{rank}} de {{size}}",
-		"percentile": "P{{value}}",
+		"burnoutRisk": "Riesgo de burnout: {{level}}",
+		"more": "Más",
+		"details": {
+			"open": "Detalles del agente",
+			"id": "ID",
+			"email": "Correo",
+			"hireDate": "Ingreso",
+			"trackedSince": "Monitoreado desde",
+			"campaigns": "Campañas",
+			"skills": "Habilidades"
+		},
+		"scorecard": {
+			"basedOn": "Basado en {{count}} evaluaciones de este período",
+			"evaluations": "{{count}} evaluaciones",
+			"percentileHint": "Percentil {{value}} del equipo"
+		},
+		"verdict": "Dimensión más baja: {{dimension}} con {{value}} ({{delta}} vs. anterior).",
 		"weights": "Ponderación: QA {{qa}}% · Sentimiento {{sentiment}}% · Cumplimiento {{compliance}}% · Negocio {{business}}%",
 		"vsPrevious": "vs. período anterior",
 		"actions": {
@@ -220,6 +242,7 @@
 			"flat": "Estable"
 		},
 		"directionHint": "{{delta}} puntos entre el inicio y el final del período",
+		"directionOver": "{{direction}} en el período",
 		"series": {
 			"overall": "General",
 			"qa": "QA",

@@ -182,7 +182,13 @@
 		"burnout": "Burnout",
 		"coaching": "Coaching & LMS",
 		"achievements": "Achievements",
-		"notes": "Notes"
+		"notes": "Notes",
+		"groups": {
+			"performance": "Performance",
+			"wellbeing": "Operations & wellbeing",
+			"development": "Development"
+		},
+		"attention": "Needs attention"
 	},
 	"dimension": {
 		"qa": "QA score",
@@ -197,7 +203,23 @@
 		"evaluations": "{{count}} evaluations",
 		"overall": "Overall score",
 		"rank": "#{{rank}} of {{size}}",
-		"percentile": "P{{value}}",
+		"burnoutRisk": "Burnout risk: {{level}}",
+		"more": "More",
+		"details": {
+			"open": "Agent details",
+			"id": "ID",
+			"email": "Email",
+			"hireDate": "Hired",
+			"trackedSince": "Tracked since",
+			"campaigns": "Campaigns",
+			"skills": "Skills"
+		},
+		"scorecard": {
+			"basedOn": "Based on {{count}} evaluations this period",
+			"evaluations": "{{count}} evaluations",
+			"percentileHint": "Percentile {{value}} in the team"
+		},
+		"verdict": "Lowest dimension: {{dimension}} at {{value}} ({{delta}} vs previous).",
 		"weights": "Weights: QA {{qa}}% · Sentiment {{sentiment}}% · Compliance {{compliance}}% · Business {{business}}%",
 		"vsPrevious": "vs previous period",
 		"actions": {
@@ -216,6 +238,7 @@
 		"performanceDescription": "Monthly average of the overall score and each evaluation dimension",
 		"direction": { "up": "Improving", "down": "Declining", "flat": "Stable" },
 		"directionHint": "{{delta}} points between the start and the end of the period",
+		"directionOver": "{{direction}} over the period",
 		"series": {
 			"overall": "Overall",
 			"qa": "QA",

@@ -84,6 +84,55 @@ export const PROFILE_TABS: {
 	{ value: 'notes', labelKey: 'tabs.notes', icon: IconNote },
 ];
 
+export type ProfileGroup =
+	| 'overview'
+	| 'performance'
+	| 'wellbeing'
+	| 'development'
+	| 'notes';
+
+/** The top-level navigation: one item per group; the group's tabs are its sub-nav. */
+export const PROFILE_TAB_GROUPS: {
+	value: ProfileGroup;
+	labelKey: string;
+	icon: TablerIcon;
+	tabs: ProfileTab[];
+}[] = [
+	{
+		value: 'overview',
+		labelKey: 'tabs.overview',
+		icon: IconTrendingUp,
+		tabs: ['overview'],
+	},
+	{
+		value: 'performance',
+		labelKey: 'tabs.groups.performance',
+		icon: IconClipboardList,
+		tabs: ['qa', 'sentiment', 'compliance', 'business'],
+	},
+	{
+		value: 'wellbeing',
+		labelKey: 'tabs.groups.wellbeing',
+		icon: IconHeadset,
+		tabs: ['operations', 'burnout'],
+	},
+	{
+		value: 'development',
+		labelKey: 'tabs.groups.development',
+		icon: IconSchool,
+		tabs: ['coaching', 'achievements'],
+	},
+	{
+		value: 'notes',
+		labelKey: 'tabs.notes',
+		icon: IconNote,
+		tabs: ['notes'],
+	},
+];
+
+export const profileGroupOf = (tab: ProfileTab) =>
+	PROFILE_TAB_GROUPS.find((g) => g.tabs.includes(tab)) ?? PROFILE_TAB_GROUPS[0];
+
 export const DIMENSION_META: Record<
 	DimensionKey,
 	{

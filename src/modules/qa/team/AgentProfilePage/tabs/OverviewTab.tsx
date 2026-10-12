@@ -5,6 +5,7 @@ import {
 	Button,
 	Group,
 	Paper,
+	SegmentedControl,
 	SimpleGrid,
 	Stack,
 	Text,
@@ -34,20 +35,13 @@ import {
 	selectTriggerRules,
 } from '~/stores/qa/triggerRulesStore';
 import { assessBurnout } from '~/modules/qa/analytics/helpers';
-import type {
-	AgentProfile,
-	PerformancePoint,
-	ProfilePeriod,
-} from '../../types';
-import { DIMENSION_ORDER } from '../../constants';
-import { formatDateTime, periodDirection } from '../../helpers';
-import { DimensionScoreCard } from '../../components/DimensionScoreCard';
+import type { AgentProfile, ProfilePeriod } from '../../types';
+import { PROFILE_PERIODS } from '../../constants';
+import { filterByPeriod, formatDateTime, periodDirection } from '../../helpers';
 import { PerformanceTrendChart } from '../../components/PerformanceTrendChart';
 
 interface OverviewTabProps {
 	profile: AgentProfile;
-	points: PerformancePoint[];
-	period: ProfilePeriod;
 }
 
 const DIRECTION_ICON = {
@@ -56,9 +50,15 @@ const DIRECTION_ICON = {
 	flat: IconMinus,
 } as const;
 
-export function OverviewTab({ profile, points }: OverviewTabProps) {
+export function OverviewTab({ profile }: OverviewTabProps) {
 	const { t } = useTranslation('qa.team');
 	const navigate = useNavigate();
+	// The period only drives the trend chart, so it lives here beside the chart.
+	const [period, setPeriod] = useState<ProfilePeriod>('12m');
+	const points = useMemo(
+		() => filterByPeriod(profile.performance, period),
+		[profile.performance, period]
+	);
 	const [visible, setVisible] = useState({
 		overall: true,
 		qa: true,
@@ -90,27 +90,31 @@ export function OverviewTab({ profile, points }: OverviewTabProps) {
 
 	return (
 		<Stack gap='md'>
-			<SimpleGrid cols={{ base: 2, md: 4 }} spacing='md'>
-				{DIMENSION_ORDER.map((key) => (
-					<DimensionScoreCard
-						key={key}
-						dimension={profile.dimensions.find((d) => d.key === key)!}
-					/>
-				))}
-			</SimpleGrid>
-
 			<SectionCard
 				title={t('overview.performance')}
 				description={t('overview.performanceDescription')}
 				icon={IconChartLine}
 				headerActions={
-					<Badge
-						color='gray'
-						variant='light'
-						leftSection={<DirIcon size={12} />}
-					>
-						{t(`overview.direction.${dir.trend}`)}
-					</Badge>
+					<Group gap='sm' wrap='wrap'>
+						<SegmentedControl
+							size='xs'
+							value={period}
+							onChange={(v) => setPeriod(v as ProfilePeriod)}
+							data={PROFILE_PERIODS.map((p) => ({
+								value: p.value,
+								label: t(p.labelKey),
+							}))}
+						/>
+						<Badge
+							color='gray'
+							variant='light'
+							leftSection={<DirIcon size={12} />}
+						>
+							{t('overview.directionOver', {
+								direction: t(`overview.direction.${dir.trend}`),
+							})}
+						</Badge>
+					</Group>
 				}
 			>
 				<PerformanceTrendChart

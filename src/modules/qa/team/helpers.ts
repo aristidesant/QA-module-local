@@ -1,5 +1,6 @@
 import type {
 	AgentProfile,
+	DimensionScore,
 	PerformancePoint,
 	ProfilePeriod,
 	RosterAgent,
@@ -8,7 +9,12 @@ import type {
 	TeamTableRow,
 	Trend,
 } from './types';
-import { NOW_ISO, PROFILE_PERIODS, SCORE_COLOR_STEPS } from './constants';
+import {
+	DIMENSION_META,
+	NOW_ISO,
+	PROFILE_PERIODS,
+	SCORE_COLOR_STEPS,
+} from './constants';
 
 export const roleFromPath = (pathname: string): TeamRole =>
 	pathname.startsWith('/qa/qa-manager') ? 'qa-manager' : 'supervisor';
@@ -38,6 +44,14 @@ export const alertScoreColor = (score: number): string | undefined =>
 	score >= 70 ? undefined : getScoreColor(score);
 export const alertSentimentColor = (score: number): string | undefined =>
 	alertScoreColor(Math.round(((score - 1) / 4) * 100));
+
+/** A dimension as a 0-100 share, so sentiment (1-5) and the others compare on one scale. */
+export const dimensionPercent = (d: DimensionScore): number =>
+	d.key === 'sentiment' ? ((d.score - 1) / 4) * 100 : d.score;
+
+/** The value as shown: sentiment keeps one decimal; every value carries its unit. */
+export const formatDimensionScore = (d: DimensionScore): string =>
+	`${d.key === 'sentiment' ? d.score.toFixed(1) : d.score}${DIMENSION_META[d.key].unit}`;
 
 /** Neutral line-chart strokes: one strong tone first, then greys, each with its own dash so series read without hue. */
 export const NEUTRAL_LINE_SERIES = [

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
 	useLocation,
 	useNavigate,
@@ -6,18 +6,25 @@ import {
 	useSearchParams,
 } from 'react-router';
 import { useTranslation } from 'react-i18next';
-import { Anchor, Breadcrumbs, Button, Stack, Tabs, Text } from '@mantine/core';
+import { Anchor, Box, Breadcrumbs, Button, Stack, Text } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer';
 import { EmptyState } from '~/components/EmptyState/EmptyState';
 import { useTeamStore, selectProfile } from '~/stores/qa/teamStore';
-import type { ProfilePeriod } from '../types';
 import {
-	PROFILE_TABS,
+	useTriggerRulesStore,
+	selectTriggerRules,
+} from '~/stores/qa/triggerRulesStore';
+import { assessBurnout } from '~/modules/qa/analytics/helpers';
+import {
+	PROFILE_TAB_GROUPS,
 	SUPERVISOR_PERSONA,
 	type ProfileTab,
 } from '../constants';
-import { filterByPeriod, roleFromPath, teamBasePath } from '../helpers';
+import { roleFromPath, teamBasePath } from '../helpers';
 import { ProfileHeader } from './ProfileHeader';
+import { ProfileNav } from './ProfileNav';
+import { CompactProfileBar } from './CompactProfileBar';
+import { profileAttention } from './attention';
 import { OverviewTab } from './tabs/OverviewTab';
 import { QATab } from './tabs/QATab';
 import { SentimentTab } from './tabs/SentimentTab';
@@ -32,6 +39,9 @@ import { coachingSessionNewPath } from '~/modules/qa/coaching/constants';
 import { AssignContentDrawer } from '~/modules/qa/lms/components/AssignContentDrawer';
 import { SendMessageModal } from '../components/modals/SendMessageModal';
 
+const isProfileTab = (value: string | null): value is ProfileTab =>
+	PROFILE_TAB_GROUPS.some((g) => g.tabs.includes(value as ProfileTab));
+
 export default function AgentProfilePage() {
 	const { t } = useTranslation('qa.team');
 	const navigate = useNavigate();
@@ -39,17 +49,32 @@ export default function AgentProfilePage() {
 	const { agentId } = useParams<{ agentId: string }>();
 	const role = roleFromPath(location.pathname);
 	const profile = useTeamStore(selectProfile(agentId));
+	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [period, setPeriod] = useState<ProfilePeriod>('12m');
 	const [lmsOpen, setLmsOpen] = useState(false);
 	const [messageOpen, setMessageOpen] = useState(false);
 
-	const tab = (searchParams.get('tab') as ProfileTab | null) ?? 'overview';
-	const setTab = (value: string | null) => {
+	// The compact bar shows once the full header has scrolled out of the content area.
+	const headerRef = useRef<HTMLDivElement>(null);
+	const [headerVisible, setHeaderVisible] = useState(true);
+	useEffect(() => {
+		const el = headerRef.current;
+		if (!el) return;
+		const observer = new IntersectionObserver(
+			([entry]) => setHeaderVisible(entry.isIntersecting),
+			{ threshold: 0 }
+		);
+		observer.observe(el);
+		return () => observer.disconnect();
+	}, [profile?.agent.id]);
+
+	const rawTab = searchParams.get('tab');
+	const tab: ProfileTab = isProfileTab(rawTab) ? rawTab : 'overview';
+	const setTab = (value: ProfileTab) => {
 		setSearchParams(
 			(prev) => {
 				const next = new URLSearchParams(prev);
-				if (value) next.set('tab', value);
+				next.set('tab', value);
 				return next;
 			},
 			{ replace: true }
@@ -61,9 +86,15 @@ export default function AgentProfilePage() {
 		role === 'supervisor' &&
 		profile.agent.supervisorId !== SUPERVISOR_PERSONA.id;
 
-	const points = useMemo(
-		() => (profile ? filterByPeriod(profile.performance, period) : []),
-		[profile, period]
+	// The level follows the burnout rules in Triggers.
+	const burnoutLevel = useMemo(
+		() =>
+			profile ? assessBurnout(profile.agent.id, triggerRules).level : 'low',
+		[profile, triggerRules]
+	);
+	const attention = useMemo(
+		() => (profile ? profileAttention(profile, burnoutLevel) : {}),
+		[profile, burnoutLevel]
 	);
 
 	const scheduleCoaching = () =>
@@ -85,12 +116,60 @@ export default function AgentProfilePage() {
 		);
 	}
 
+	const renderTab = () => {
+		switch (tab) {
+			case 'qa':
+				return <QATab profile={profile} />;
+			case 'sentiment':
+				return <SentimentTab profile={profile} />;
+			case 'compliance':
+				return <ComplianceTab profile={profile} />;
+			case 'business':
+				return <BusinessTab profile={profile} />;
+			case 'operations':
+				return <OperationsTab profile={profile} />;
+			case 'burnout':
+				return (
+					<BurnoutTab
+						profile={profile}
+						role={role}
+						onScheduleCoaching={scheduleCoaching}
+					/>
+				);
+			case 'coaching':
+				return (
+					<CoachingLmsTab
+						profile={profile}
+						onScheduleCoaching={scheduleCoaching}
+						onAssignLms={() => setLmsOpen(true)}
+					/>
+				);
+			case 'achievements':
+				return <AchievementsTab profile={profile} />;
+			case 'notes':
+				return <NotesTab profile={profile} role={role} />;
+			default:
+				return <OverviewTab profile={profile} />;
+		}
+	};
+
+	const actions = {
+		onScheduleCoaching: scheduleCoaching,
+		onAssignLms: () => setLmsOpen(true),
+		onSendMessage: () => setMessageOpen(true),
+	};
+
 	return (
 		<ContentContainer
 			contentWidth='full'
 			showBackButton
 			onBackClick={() => navigate(teamBasePath(role))}
 		>
+			<CompactProfileBar
+				profile={profile}
+				visible={!headerVisible}
+				{...actions}
+			/>
 			<Stack gap='lg'>
 				<Breadcrumbs>
 					<Anchor onClick={() => navigate(teamBasePath(role))}>
@@ -108,68 +187,19 @@ export default function AgentProfilePage() {
 					<Text c='dimmed'>{profile.agent.name}</Text>
 				</Breadcrumbs>
 
-				<ProfileHeader
-					profile={profile}
-					role={role}
-					period={period}
-					onPeriodChange={setPeriod}
-					onScheduleCoaching={scheduleCoaching}
-					onAssignLms={() => setLmsOpen(true)}
-					onSendMessage={() => setMessageOpen(true)}
-				/>
+				<div ref={headerRef}>
+					<ProfileHeader
+						profile={profile}
+						burnoutLevel={burnoutLevel}
+						{...actions}
+					/>
+				</div>
 
-				<Tabs value={tab} onChange={setTab} keepMounted={false}>
-					<Tabs.List>
-						{PROFILE_TABS.map(({ value, labelKey, icon: Icon }) => (
-							<Tabs.Tab
-								key={value}
-								value={value}
-								leftSection={<Icon size={16} />}
-							>
-								{t(labelKey)}
-							</Tabs.Tab>
-						))}
-					</Tabs.List>
+				<ProfileNav tab={tab} onChange={setTab} attention={attention} />
 
-					<Tabs.Panel value='overview' pt='md'>
-						<OverviewTab profile={profile} points={points} period={period} />
-					</Tabs.Panel>
-					<Tabs.Panel value='qa' pt='md'>
-						<QATab profile={profile} />
-					</Tabs.Panel>
-					<Tabs.Panel value='sentiment' pt='md'>
-						<SentimentTab profile={profile} />
-					</Tabs.Panel>
-					<Tabs.Panel value='compliance' pt='md'>
-						<ComplianceTab profile={profile} />
-					</Tabs.Panel>
-					<Tabs.Panel value='business' pt='md'>
-						<BusinessTab profile={profile} />
-					</Tabs.Panel>
-					<Tabs.Panel value='operations' pt='md'>
-						<OperationsTab profile={profile} />
-					</Tabs.Panel>
-					<Tabs.Panel value='burnout' pt='md'>
-						<BurnoutTab
-							profile={profile}
-							role={role}
-							onScheduleCoaching={scheduleCoaching}
-						/>
-					</Tabs.Panel>
-					<Tabs.Panel value='coaching' pt='md'>
-						<CoachingLmsTab
-							profile={profile}
-							onScheduleCoaching={scheduleCoaching}
-							onAssignLms={() => setLmsOpen(true)}
-						/>
-					</Tabs.Panel>
-					<Tabs.Panel value='achievements' pt='md'>
-						<AchievementsTab profile={profile} />
-					</Tabs.Panel>
-					<Tabs.Panel value='notes' pt='md'>
-						<NotesTab profile={profile} role={role} />
-					</Tabs.Panel>
-				</Tabs>
+				<Box role='tabpanel' pt='md'>
+					{renderTab()}
+				</Box>
 			</Stack>
 
 			<AssignContentDrawer
