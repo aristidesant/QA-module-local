@@ -15,6 +15,7 @@ import { CRITICAL_ISSUES } from '~/modules/qa/coaching/components/QuietIndicator
 import { Caption } from '~/modules/qa/coaching/components/SessionBrief';
 import queueStyles from '~/modules/qa/coaching/components/Queue.module.css';
 import { selectSessions, useCoachingStore } from '~/stores/qa/coachingStore';
+import { findCoachingSessionFor } from '../helpers';
 import {
 	selectAssignments,
 	selectContent,
@@ -47,13 +48,7 @@ export function CoachingSessionContext({
 	const assignments = useLmsStore(selectAssignments);
 	const library = useLmsStore(selectContent);
 
-	// The seeded weekly batch may have turned the week into a 1:1, so fall back to the agent's latest batch session.
-	const session =
-		sessions.find((s) => s.id === sessionId) ??
-		sessions
-			.filter((s) => s.agentId === agentId && s.batchId)
-			.sort((a, b) => b.date.localeCompare(a.date))[0] ??
-		null;
+	const session = findCoachingSessionFor(sessions, sessionId, agentId);
 	const brief = session?.brief;
 
 	// What the agent should study: the material this coaching suggests, anything linked to it, and what

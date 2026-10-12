@@ -1,3 +1,4 @@
+import type { CoachingSessionRecord } from '~/models/qa';
 import type {
 	AgentNotification,
 	NotificationPayload,
@@ -69,3 +70,15 @@ export function buildNotification(
 		...rest,
 	};
 }
+
+/** The session a coaching message points at; the seeded weekly batch may have replaced it, so fall back to the agent's latest batch session. */
+export const findCoachingSessionFor = (
+	sessions: CoachingSessionRecord[],
+	sessionId: string,
+	agentId: string
+): CoachingSessionRecord | null =>
+	sessions.find((s) => s.id === sessionId) ??
+	sessions
+		.filter((s) => s.agentId === agentId && s.batchId)
+		.sort((a, b) => b.date.localeCompare(a.date))[0] ??
+	null;

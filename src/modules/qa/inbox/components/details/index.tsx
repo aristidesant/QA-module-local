@@ -39,7 +39,7 @@ const Fact: React.FC<{ label: string; children: React.ReactNode }> = ({
 	</div>
 );
 
-const DeltaText: React.FC<{ value: number | null; suffix?: string }> = ({
+export const DeltaText: React.FC<{ value: number | null; suffix?: string }> = ({
 	value,
 	suffix = '',
 }) => {

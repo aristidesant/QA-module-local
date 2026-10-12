@@ -1,0 +1,43 @@
+.tile,
+.focus {
+	border-radius: var(--mantine-radius-md);
+	background: var(--accent-bg);
+}
+
+.tile[data-color='orange'],
+.focus[data-color='orange'] {
+	--accent-bg: var(--mantine-color-orange-light);
+	--accent: var(--mantine-color-orange-filled);
+}
+
+.tile[data-color='violet'],
+.focus[data-color='violet'] {
+	--accent-bg: var(--mantine-color-violet-light);
+	--accent: var(--mantine-color-violet-filled);
+}
+
+.tile[data-color='green'],
+.focus[data-color='green'] {
+	--accent-bg: var(--mantine-color-green-light);
+	--accent: var(--mantine-color-green-filled);
+}
+
+.tile[data-color='blue'],
+.focus[data-color='blue'] {
+	--accent-bg: var(--mantine-color-blue-light);
+	--accent: var(--mantine-color-blue-filled);
+}
+
+.tile {
+	padding: var(--mantine-spacing-sm);
+	border: 1px solid var(--mantine-color-default-border);
+}
+
+.tile[data-focus] {
+	border-color: var(--accent);
+}
+
+.focus {
+	padding: var(--mantine-spacing-md);
+	border-left: 3px solid var(--accent);
+}

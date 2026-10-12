@@ -123,6 +123,14 @@
 			"highlights": "Destacados",
 			"cta": "Abrir analytics"
 		},
+		"automated": {
+			"title": "Tu repaso semanal",
+			"greeting": "Hola {{name}}, así fue tu semana pasada ({{rule}}).",
+			"scores": "Puntuaciones de la semana pasada",
+			"vsLastWeek": "vs semana anterior",
+			"focusLabel": "Tu foco esta semana",
+			"focusTip": "Elige una llamada de la semana pasada en la que falló y anota qué harías diferente."
+		},
 		"coaching": {
 			"when": "Cuándo",
 			"coach": "Coach",
@@ -180,6 +188,7 @@
 	},
 	"detail": {
 		"back": "Bandeja de entrada",
+		"from": "De",
 		"notFound": "Este mensaje no está disponible en tu bandeja."
 	}
 }

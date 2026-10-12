@@ -27,6 +27,15 @@ const DIMENSION_LABEL: Record<DimensionKey, string> = {
 	business: 'Business',
 };
 
+/** The dimension furthest from its maximum: what a weekly coaching message asks the agent to focus on. */
+export const weakestDimension = (
+	profile: AgentProfile
+): AgentProfile['dimensions'][number] | undefined =>
+	[...profile.dimensions].sort(
+		(a, b) =>
+			a.score / DIMENSION_META[a.key].max - b.score / DIMENSION_META[b.key].max
+	)[0];
+
 /**
  * The text of an AI_MESSAGE session: last week's scores per dimension, the
  * weakest one, and the material the rule attached. Mock-only wording.
@@ -42,10 +51,7 @@ export const buildAiCoachingMessage = (
 			d.delta === 0 ? 'stable' : `${d.delta > 0 ? '+' : ''}${d.delta}${unit}`;
 		return `• ${DIMENSION_LABEL[d.key]}: ${d.score}${unit} (${delta} vs last week)`;
 	});
-	const weakest = [...profile.dimensions].sort(
-		(a, b) =>
-			a.score / DIMENSION_META[a.key].max - b.score / DIMENSION_META[b.key].max
-	)[0];
+	const weakest = weakestDimension(profile);
 	const focus = weakest ? DIMENSION_LABEL[weakest.key] : 'quality';
 	const material = contentTitles.length
 		? `\n\nTo work on it this week I attached: ${contentTitles.join(', ')}.`
