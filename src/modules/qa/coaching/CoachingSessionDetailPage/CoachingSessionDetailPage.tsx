@@ -25,6 +25,7 @@ import {
 	IconPhone,
 	IconPlus,
 	IconTrash,
+	IconUser,
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
@@ -43,7 +44,7 @@ import { AREA_TO_DIMENSION } from '~/modules/qa/lms/constants';
 import { managerScopeAgents, today } from '~/modules/qa/lms/helpers';
 import pointerStyles from '~/modules/qa/lms/components/Cards.module.css';
 import { day } from '~/modules/qa/lms/mockData';
-import { roleFromPath } from '~/modules/qa/team/helpers';
+import { agentProfilePath, roleFromPath } from '~/modules/qa/team/helpers';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import {
 	useCoachingStore,
@@ -287,57 +288,68 @@ export default function CoachingSessionDetailPage() {
 					</Text>
 				</Breadcrumbs>
 
-				<Stack gap={6}>
-					<Title order={1}>{session.topic}</Title>
-					<Text size='sm' c='dimmed'>
-						{session.agentName} ·{' '}
-						{dayjs(session.date).format('D MMM YYYY, HH:mm')} ·{' '}
-						{session.coachName}
-					</Text>
-					<Group gap='sm' mt={4}>
-						<Badge size='sm' variant={status.variant} color={status.color}>
-							{t(`sessions.status.${session.status}`)}
-						</Badge>
-						<Text size='sm'>
-							{t(`sessions.types.${session.type}`)}
-							{session.modality && (
-								<Text span c='dimmed'>
-									{' · '}
-									{t(`sessions.modality.${session.modality}`)}
-									{session.modality === 'IN_PERSON' &&
-										session.location &&
-										` (${session.location})`}
-								</Text>
-							)}
-							<Text span c='dimmed'>
-								{' · '}
-								{session.durationMin} min
-							</Text>
-							{session.area && (
-								<Text span c='dimmed'>
-									{' · '}
-									{t(LMS_AREA_META[session.area].labelKey, { ns: 'qa.lms' })}
-									{session.subItem &&
-										` (${t(`subItems.${session.subItem}`, { ns: 'qa.lms' })})`}
-								</Text>
-							)}
+				<Group justify='space-between' align='flex-start' wrap='wrap'>
+					<Stack gap={6}>
+						<Title order={1}>{session.topic}</Title>
+						<Text size='sm' c='dimmed'>
+							{session.agentName} ·{' '}
+							{dayjs(session.date).format('D MMM YYYY, HH:mm')} ·{' '}
+							{session.coachName}
 						</Text>
-						{session.meetingLink && (
-							<Anchor
-								size='sm'
-								href={
-									/^https?:\/\//i.test(session.meetingLink)
-										? session.meetingLink
-										: `https://${session.meetingLink}`
-								}
-								target='_blank'
-								rel='noreferrer'
-							>
-								{t('sessions.detail.meetingLink')}
-							</Anchor>
-						)}
-					</Group>
-				</Stack>
+						<Group gap='sm' mt={4}>
+							<Badge size='sm' variant={status.variant} color={status.color}>
+								{t(`sessions.status.${session.status}`)}
+							</Badge>
+							<Text size='sm'>
+								{t(`sessions.types.${session.type}`)}
+								{session.modality && (
+									<Text span c='dimmed'>
+										{' · '}
+										{t(`sessions.modality.${session.modality}`)}
+										{session.modality === 'IN_PERSON' &&
+											session.location &&
+											` (${session.location})`}
+									</Text>
+								)}
+								<Text span c='dimmed'>
+									{' · '}
+									{session.durationMin} min
+								</Text>
+								{session.area && (
+									<Text span c='dimmed'>
+										{' · '}
+										{t(LMS_AREA_META[session.area].labelKey, { ns: 'qa.lms' })}
+										{session.subItem &&
+											` (${t(`subItems.${session.subItem}`, { ns: 'qa.lms' })})`}
+									</Text>
+								)}
+							</Text>
+							{session.meetingLink && (
+								<Anchor
+									size='sm'
+									href={
+										/^https?:\/\//i.test(session.meetingLink)
+											? session.meetingLink
+											: `https://${session.meetingLink}`
+									}
+									target='_blank'
+									rel='noreferrer'
+								>
+									{t('sessions.detail.meetingLink')}
+								</Anchor>
+							)}
+						</Group>
+					</Stack>
+					{profile && session.type !== 'GROUP' && (
+						<Button
+							variant='default'
+							leftSection={<IconUser size={16} />}
+							onClick={() => navigate(agentProfilePath(role, profile.agent))}
+						>
+							{t('sessions.detail.openProfile')}
+						</Button>
+					)}
+				</Group>
 
 				<Grid gap='md'>
 					<Grid.Col span={{ base: 12, md: 8 }}>

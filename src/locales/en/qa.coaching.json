@@ -682,6 +682,7 @@
 			"openCall": "Open call",
 			"impactAfter": "Score since session",
 			"aiMessage": "Automated message",
+			"openProfile": "Open agent profile",
 			"noEvidence": "No evidence calls pinned.",
 			"noPoints": "No talking points yet.",
 			"noItems": "No notes yet."

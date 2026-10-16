@@ -682,6 +682,7 @@
 			"openCall": "Abrir llamada",
 			"impactAfter": "Puntaje desde la sesión",
 			"aiMessage": "Mensaje automático",
+			"openProfile": "Abrir perfil del agente",
 			"noEvidence": "No hay llamadas de evidencia.",
 			"noPoints": "Todavía no hay puntos a tratar.",
 			"noItems": "Todavía no hay notas."
