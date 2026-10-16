@@ -1,3 +1,48 @@
-.page {
-	min-height: 100%;
+.layout {
+	display: grid;
+	grid-template-columns: 320px minmax(0, 1fr);
+	gap: var(--mantine-spacing-md);
+	align-items: start;
+}
+
+.outline {
+	position: sticky;
+	top: var(--mantine-spacing-md);
+	max-height: calc(100vh - 180px);
+	overflow-y: auto;
+}
+
+.editor {
+	min-width: 0;
+}
+
+/* Keeps Cancel / Save in view while the long form scrolls. Same recipe as CoachingRuleForm. */
+.stickyActions {
+	position: sticky;
+	bottom: var(--mantine-spacing-xs);
+	margin-top: var(--mantine-spacing-md);
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	background: var(--surface-card);
+	border: 1px solid var(--surface-border);
+	border-radius: var(--mantine-radius-lg);
+	box-shadow: var(--mantine-shadow-sm);
+	z-index: 10;
+}
+
+@media (max-width: 62em) {
+	.layout {
+		grid-template-columns: 1fr;
+	}
+
+	.outline {
+		position: static;
+		max-height: none;
+	}
+}
+
+@media (max-width: 48em) {
+	.stickyActions {
+		bottom: 0;
+		padding: var(--mantine-spacing-sm);
+	}
 }

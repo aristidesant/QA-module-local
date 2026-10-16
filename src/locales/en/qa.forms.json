@@ -5,19 +5,53 @@
 		"create": "Create form",
 		"delete": "Delete",
 		"edit": "Edit",
-		"save": "Save"
+		"save": "Save",
+		"addQuestion": "Add question",
+		"addSection": "Add section",
+		"duplicate": "Duplicate",
+		"preview": "Preview",
+		"deleteQuestion": "Delete question",
+		"deleteSection": "Delete section",
+		"saveQuestion": "Save question",
+		"newQuestion": "New question"
 	},
 	"answerTypes": {
 		"choice": "Choice",
 		"text": "Text"
 	},
 	"builder": {
-		"description": "Configure the form header, sections, and scoring questions evaluators will use.",
-		"title": "Form builder"
+		"description": "Build the sections and questions evaluators and the AI will score.",
+		"title": "Form builder",
+		"outline": "Outline",
+		"outlineHint": "Drag to reorder sections and questions.",
+		"formDetails": "Form details",
+		"sections": "Sections",
+		"noSections": "No sections yet. Add one to start building this form.",
+		"noQuestions": "Drop or add a question here.",
+		"selectPrompt": "Select an item in the outline",
+		"selectPromptDescription": "Pick the form details, a section or a question to edit it here.",
+		"notFound": "This form no longer exists.",
+		"maxScore": "Max score {{score}}",
+		"questionNumber": "{{section}}.{{question}}",
+		"discard": {
+			"title": "Discard changes?",
+			"message": "You have unsaved changes in this form. Leaving now will lose them.",
+			"confirm": "Discard"
+		},
+		"validation": {
+			"fixFields": "Fix the highlighted fields before saving.",
+			"nameRequired": "Name is required",
+			"sectionNameRequired": "Section name is required",
+			"questionRequired": "Question text is required",
+			"optionsRequired": "Add at least one option with a label",
+			"errorTypeRequired": "Select an error type"
+		}
 	},
 	"create": {
 		"submit": "Create form",
-		"title": "Create QA form"
+		"title": "Create form",
+		"modality": "Modality",
+		"modalityHint": "The modality decides which fields each question has and cannot be changed later."
 	},
 	"description": "Create reusable QA templates with ordered sections, scored choices, and free-text annotations.",
 	"errorTypes": {
@@ -148,7 +182,10 @@
 		"questionDeleted": "Question deleted.",
 		"questionUpdated": "Question updated.",
 		"templateDownloaded": "Template downloaded.",
-		"templateImported": "Template imported."
+		"templateImported": "Template imported.",
+		"formDuplicated": "Form duplicated.",
+		"primaryUpdated": "Primary form updated.",
+		"questionSaved": "Question saved."
 	},
 	"questions": {
 		"add": "Add question",
@@ -186,7 +223,13 @@
 		"name": "Form",
 		"noCategory": "Uncategorized",
 		"noDescription": "No description",
-		"status": "Status"
+		"status": "Status",
+		"modality": "Modality",
+		"sections": "Sections",
+		"questions": "Questions",
+		"updatedAt": "Updated",
+		"primary": "Primary",
+		"primaryFor": "Primary for {{modality}}"
 	},
 	"template": {
 		"download": "Download template",
@@ -214,5 +257,100 @@
 		"templateObject": "Template must be a JSON object",
 		"templateRequired": "Paste or upload a template JSON",
 		"templateShape": "Template must include a name and groups array"
+	},
+	"duplicateSuffix": "(copy)",
+	"details": {
+		"title": "Form details",
+		"description": "Name, category, availability and the description evaluators see."
+	},
+	"modality": {
+		"label": "Modality",
+		"standard": "Standard",
+		"copc": "COPC",
+		"standardHint": "Weighted questions: multiple choice with a score per option, or open answers.",
+		"copcHint": "Yes/No questions classified by COPC error type."
+	},
+	"preview": {
+		"title": "Preview",
+		"description": "How evaluators will see this form. Inactive questions are hidden.",
+		"na": "N/A",
+		"favorable": "Favorable answer: {{answer}}",
+		"empty": "Add sections and questions to preview this form."
+	},
+	"primary": {
+		"title": "Primary forms",
+		"description": "The form each modality uses by default when a campaign does not pick one.",
+		"copc": "Primary COPC form",
+		"standard": "Primary Standard form",
+		"none": "No primary form",
+		"noneHint": "No {{modality}} forms yet."
+	},
+	"question": {
+		"title": "Question",
+		"text": "Question",
+		"textPlaceholder": "What should the evaluator check?",
+		"guidance": "Evaluator guidance",
+		"guidanceHelp": "Context the AI takes into account to answer this question.",
+		"autoFail": "Auto-fail",
+		"autoFailHelp": "What an unfavorable answer invalidates.",
+		"autoFailOptions": {
+			"NONE": "No auto-fail",
+			"SECTION": "Fail this section",
+			"EVALUATION": "Fail the whole evaluation"
+		},
+		"answerType": "Answer type",
+		"answerTypes": {
+			"MULTIPLE_CHOICE": "Multiple choice",
+			"OPEN": "Open answer"
+		},
+		"options": "Options and scores",
+		"optionLabel": "Option",
+		"optionScore": "Score",
+		"addOption": "Add option",
+		"derivedWeight": "Weight {{weight}}",
+		"openAnswerHint": "Open answers are not scored. The evaluator writes a free-text note.",
+		"favorableAnswer": "Favorable answer",
+		"favorableAnswerHelp": "Which answer means the criterion was met.",
+		"yes": "Yes",
+		"no": "No",
+		"errorType": "Error type",
+		"errorTypePlaceholder": "Select an error type",
+		"errorCodes": {
+			"ECN": "ECN — Critical business error",
+			"ENC": "ENC — Non-critical error",
+			"ECC": "ECC — Critical compliance error",
+			"ECUF": "ECUF — Critical end-user error"
+		},
+		"campaignType": "Campaign type",
+		"campaignTypeHelp": "Evaluations score the questions tagged with the campaign's type or with All.",
+		"campaignTypes": {
+			"ALL": "All",
+			"SALES": "Sales",
+			"SUPPORT": "Support",
+			"RETENTION": "Retention",
+			"COLLECTIONS": "Collections",
+			"ACTIVATION": "Activation"
+		},
+		"badges": {
+			"inactive": "Inactive",
+			"autoFail": "Auto-fail",
+			"na": "N/A",
+			"open": "Open"
+		}
+	},
+	"section": {
+		"title": "Section",
+		"name": "Section name",
+		"namePlaceholder": "Opening and identity",
+		"guidance": "Section guidance",
+		"guidanceHelp": "Shown to evaluators and the AI before the questions of this section.",
+		"questionCount_one": "{{count}} question",
+		"questionCount_other": "{{count}} questions",
+		"deleteConfirm": "Delete \"{{name}}\" and its {{count}} questions?",
+		"deleteConfirmEmpty": "Delete \"{{name}}\"?"
+	},
+	"category": {
+		"placeholder": "Select a category",
+		"empty": "No saved categories yet"
 	}
 }

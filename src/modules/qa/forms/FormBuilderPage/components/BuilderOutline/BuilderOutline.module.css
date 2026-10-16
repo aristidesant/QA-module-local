@@ -1,0 +1,95 @@
+.item,
+.sectionRow,
+.questionRow {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	padding: 6px var(--mantine-spacing-xs);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid transparent;
+	cursor: pointer;
+	background: var(--surface-card);
+}
+
+.item:hover,
+.sectionRow:hover,
+.questionRow:hover {
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+}
+
+.selected,
+.selected:hover {
+	border-color: var(--mantine-primary-color-filled);
+	background: light-dark(
+		var(--mantine-primary-color-0),
+		var(--mantine-color-dark-5)
+	);
+}
+
+.sectionBlock {
+	margin-top: var(--mantine-spacing-xs);
+	border-radius: var(--mantine-radius-md);
+}
+
+.questionList {
+	margin-left: var(--mantine-spacing-lg);
+	padding-left: var(--mantine-spacing-xs);
+	border-left: 2px solid var(--surface-border);
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-height: 28px;
+	padding-block: 2px;
+}
+
+.questionRow {
+	padding-block: 4px;
+}
+
+.inactive {
+	opacity: 0.55;
+}
+
+.grip {
+	color: var(--mantine-color-dimmed);
+	cursor: grab;
+	display: flex;
+	flex-shrink: 0;
+}
+
+.grip:active {
+	cursor: grabbing;
+}
+
+.number {
+	flex-shrink: 0;
+	min-width: 28px;
+}
+
+.grow {
+	flex: 1;
+	min-width: 0;
+}
+
+.dragging {
+	box-shadow: var(--mantine-shadow-md);
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-6)
+	);
+}
+
+.dropHint {
+	padding: 4px var(--mantine-spacing-xs);
+}
+
+.dropActive {
+	background: light-dark(
+		var(--mantine-primary-color-0),
+		var(--mantine-color-dark-5)
+	);
+	border-radius: var(--mantine-radius-md);
+}

@@ -1,6 +1,5 @@
 import {
 	ActionIcon,
-	Alert,
 	Badge,
 	Button,
 	Group,
@@ -9,17 +8,14 @@ import {
 	TextInput,
 	Tooltip,
 } from '@mantine/core';
-import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import {
-	IconAlertTriangle,
-	IconDownload,
+	IconCheck,
+	IconCopy,
 	IconEdit,
 	IconFileDescription,
-	IconFileImport,
 	IconPlus,
 	IconSearch,
-	IconTags,
 	IconTrash,
 } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
@@ -27,250 +23,88 @@ import { useTranslation } from 'react-i18next';
 import { Link as RouterLink, useNavigate } from 'react-router';
 
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
+import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
 import EmptyState from '~/components/EmptyState';
 import SectionCard from '~/components/SectionCard';
-import PaginationControls from '~/components/PaginationControls';
-import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import {
+	FORM_MODALITIES,
+	MODALITY_COLORS,
+	formBuilderPath,
+} from '~/modules/qa/forms/constants';
+import { countQuestions, createEmptyForm } from '~/modules/qa/forms/helpers';
+import type {
+	BuilderForm,
+	CreateFormValues,
+	FormModality,
+} from '~/modules/qa/forms/types';
 import { getActiveStatusColor } from '~/modules/qa/constants/badgeColors';
-import { useListPageState } from '~/modules/qa/hooks/useListPageState';
-import type { CreateFormPayload, QaForm } from '~/models/qa';
+import { notifySuccess } from '~/modules/qa/utils/notifications';
 import {
-	formsQueryKey,
-	useCreateFormMutation,
-	useDeleteFormMutation,
-	useFormTemplateQuery,
-	useFormsQuery,
-	useImportFormTemplateMutation,
-} from '~/queries/qa/formsQueries';
-import { queryClient } from '~/queries/queryClient';
-import { useQuestionErrorTypesQuery } from '~/queries/qa/questionErrorTypesQueries';
-import { getErrorMessage } from '~/utils/httpClient';
-import { notifyError, notifySuccess } from '~/modules/qa/utils/notifications';
-import {
-	getInvalidErrorTypeAssignment,
-	isFormTemplate,
-	isRecord,
-} from './FormsListPage.helpers';
-import type { ImportTemplateFormValues } from './FormsListPage.types';
+	selectForms,
+	selectPrimaryFormIds,
+	useFormsStore,
+} from '~/stores/qa/formsStore';
+import { MOCK_FORM_CATEGORIES } from '~/modules/qa/forms/mockData';
 import classes from './FormsListPage.module.css';
 import CreateFormModal from './components/CreateFormModal';
-import ImportTemplateModal from './components/ImportTemplateModal';
+import PrimaryFormsCard from './components/PrimaryFormsCard';
 
 export default function FormsListPage() {
-	const { t } = useTranslation('qa.forms');
+	const { t, i18n } = useTranslation('qa.forms');
 	const navigate = useNavigate();
-	const { page, setPage, setPageSize, limit, offset, getTotalPages } =
-		useListPageState();
-	const formsQuery = useFormsQuery({
-		pagination: true,
-		limit,
-		offset,
-	});
-	const createFormMutation = useCreateFormMutation();
-	const deleteFormMutation = useDeleteFormMutation();
-	const formTemplateQuery = useFormTemplateQuery();
-	const importFormTemplateMutation = useImportFormTemplateMutation();
-	const errorTypesQuery = useQuestionErrorTypesQuery({ pagination: false });
-	const [createOpen, setCreateOpen] = useState(false);
-	const [importOpen, setImportOpen] = useState(false);
+	const forms = useFormsStore(selectForms);
+	const primaryFormIds = useFormsStore(selectPrimaryFormIds);
 	const [search, setSearch] = useState('');
-	const activeErrorTypeIds = useMemo(
-		() =>
-			new Set(
-				(errorTypesQuery.data?.data ?? [])
-					.filter((errorType) => errorType.isActive)
-					.map((errorType) => errorType.id)
-			),
-		[errorTypesQuery.data]
-	);
-	const createFormForm = useForm<CreateFormPayload>({
-		initialValues: {
-			name: '',
-			description: '',
-			category: '',
-			isActive: true,
-		},
-		validate: {
-			name: (value) =>
-				value.trim().length === 0 ? t('validation.nameRequired') : null,
-		},
-	});
-	const importTemplateForm = useForm<ImportTemplateFormValues>({
-		initialValues: {
-			templateFile: null,
-			templateJson: '',
-		},
-		validate: {
-			templateJson: (value) => {
-				const trimmedValue = value.trim();
+	const [createOpen, setCreateOpen] = useState(false);
+	const [createModality, setCreateModality] =
+		useState<FormModality>('STANDARD');
 
-				if (!trimmedValue) {
-					return t('validation.templateRequired');
-				}
-
-				try {
-					const parsed: unknown = JSON.parse(trimmedValue);
-
-					if (!isRecord(parsed)) {
-						return t('validation.templateObject');
-					}
-
-					if (!isFormTemplate(parsed)) return t('validation.templateShape');
-					if (errorTypesQuery.isLoading) return null;
-
-					const invalidAssignment = getInvalidErrorTypeAssignment(
-						parsed,
-						activeErrorTypeIds
-					);
-
-					return invalidAssignment
-						? t('validation.templateErrorType', invalidAssignment)
-						: null;
-				} catch {
-					return t('validation.templateJson');
-				}
-			},
-		},
-	});
+	// Saved categories plus any already on a form, case-insensitive, alphabetical.
+	const categories = useMemo(() => {
+		const seen = new Map<string, string>();
+		const names = [...MOCK_FORM_CATEGORIES, ...forms.map((f) => f.category)];
+		for (const raw of names) {
+			const name = raw.trim();
+			if (name && !seen.has(name.toLowerCase()))
+				seen.set(name.toLowerCase(), name);
+		}
+		return [...seen.values()].sort((a, b) => a.localeCompare(b));
+	}, [forms]);
 
 	const filteredForms = useMemo(() => {
-		const forms = formsQuery.data?.data ?? [];
 		const query = search.trim().toLowerCase();
-
-		if (!query) {
-			return forms;
-		}
-
+		if (!query) return forms;
 		return forms.filter((form) =>
 			[form.name, form.description, form.category]
 				.filter(Boolean)
-				.some((value) => String(value).toLowerCase().includes(query))
+				.some((value) => value.toLowerCase().includes(query))
 		);
-	}, [formsQuery.data?.data, search]);
-	const total = formsQuery.data?.total ?? 0;
-	const totalPages = getTotalPages(total);
+	}, [forms, search]);
 
-	const closeCreateModal = () => {
-		createFormForm.reset();
+	const openCreate = (modality: FormModality) => {
+		setCreateModality(modality);
+		setCreateOpen(true);
+	};
+
+	const submitCreate = (values: CreateFormValues) => {
+		const form = createEmptyForm(values);
+		useFormsStore.getState().addForm(form);
+		notifySuccess(t('notifications.formCreated'));
 		setCreateOpen(false);
+		navigate(formBuilderPath(form.id));
 	};
 
-	const closeImportModal = () => {
-		importTemplateForm.reset();
-		setImportOpen(false);
+	const changePrimary = (modality: FormModality, formId: string | null) => {
+		useFormsStore.getState().setPrimaryForm(modality, formId);
+		notifySuccess(t('notifications.primaryUpdated'));
 	};
 
-	const readTemplateFile = async (file: File | null) => {
-		importTemplateForm.setFieldValue('templateFile', file);
-
-		if (!file) {
-			return;
-		}
-
-		try {
-			const fileContent = await file.text();
-			importTemplateForm.setFieldValue('templateJson', fileContent);
-			importTemplateForm.clearFieldError('templateJson');
-		} catch (error) {
-			notifyError(error);
-		}
+	const duplicate = (form: BuilderForm) => {
+		useFormsStore.getState().duplicateForm(form.id, t('duplicateSuffix'));
+		notifySuccess(t('notifications.formDuplicated'));
 	};
 
-	const downloadTemplate = async () => {
-		try {
-			const templateResult = await formTemplateQuery.refetch();
-
-			if (!templateResult.data) {
-				throw new Error(t('template.downloadEmpty'));
-			}
-
-			const blob = new Blob([JSON.stringify(templateResult.data, null, 2)], {
-				type: 'application/json',
-			});
-			const url = URL.createObjectURL(blob);
-			const anchor = document.createElement('a');
-
-			anchor.href = url;
-			anchor.download = 'qa-form-template.json';
-			anchor.click();
-			URL.revokeObjectURL(url);
-			notifySuccess(t('notifications.templateDownloaded'));
-		} catch (error) {
-			notifyError(error);
-		}
-	};
-
-	const submitCreateForm = createFormForm.onSubmit(async (values) => {
-		try {
-			await createFormMutation.mutateAsync({
-				name: values.name.trim(),
-				description: values.description?.trim() || undefined,
-				category: values.category?.trim() || undefined,
-				isActive: values.isActive,
-			});
-			await queryClient.invalidateQueries({ queryKey: formsQueryKey });
-			notifySuccess(t('notifications.formCreated'));
-			closeCreateModal();
-		} catch (error) {
-			notifyError(error);
-		}
-	});
-
-	const submitImportTemplate = importTemplateForm.onSubmit(async (values) => {
-		let parsedTemplate: unknown;
-
-		try {
-			parsedTemplate = JSON.parse(values.templateJson.trim());
-		} catch {
-			importTemplateForm.setFieldError(
-				'templateJson',
-				t('validation.templateJson')
-			);
-			return;
-		}
-
-		if (!isRecord(parsedTemplate)) {
-			importTemplateForm.setFieldError(
-				'templateJson',
-				t('validation.templateObject')
-			);
-			return;
-		}
-
-		if (!isFormTemplate(parsedTemplate)) {
-			importTemplateForm.setFieldError(
-				'templateJson',
-				t('validation.templateShape')
-			);
-			return;
-		}
-
-		const invalidAssignment = getInvalidErrorTypeAssignment(
-			parsedTemplate,
-			activeErrorTypeIds
-		);
-
-		if (invalidAssignment) {
-			importTemplateForm.setFieldError(
-				'templateJson',
-				t('validation.templateErrorType', invalidAssignment)
-			);
-			return;
-		}
-
-		try {
-			const response =
-				await importFormTemplateMutation.mutateAsync(parsedTemplate);
-			await queryClient.invalidateQueries({ queryKey: formsQueryKey });
-			notifySuccess(t('notifications.templateImported'));
-			closeImportModal();
-			navigate(`/qa/forms/${response.form.id}`);
-		} catch (error) {
-			notifyError(error);
-		}
-	});
-
-	const confirmDeleteForm = (form: QaForm) => {
+	const confirmDelete = (form: BuilderForm) => {
 		modals.openConfirmModal({
 			title: t('actions.delete'),
 			centered: true,
@@ -279,19 +113,14 @@ export default function FormsListPage() {
 			children: (
 				<Text size='sm'>{t('states.deleteConfirm', { name: form.name })}</Text>
 			),
-			onConfirm: async () => {
-				try {
-					await deleteFormMutation.mutateAsync(form.id);
-					await queryClient.invalidateQueries({ queryKey: formsQueryKey });
-					notifySuccess(t('notifications.formDeleted'));
-				} catch (error) {
-					notifyError(error);
-				}
+			onConfirm: () => {
+				useFormsStore.getState().deleteForm(form.id);
+				notifySuccess(t('notifications.formDeleted'));
 			},
 		});
 	};
 
-	const columns: BaseTableColumnDef<QaForm>[] = [
+	const columns: BaseTableColumnDef<BuilderForm>[] = [
 		{
 			id: 'name',
 			header: t('table.name'),
@@ -308,13 +137,58 @@ export default function FormsListPage() {
 			),
 		},
 		{
+			id: 'modality',
+			header: t('table.modality'),
+			enableSorting: false,
+			cell: ({ row: { original: form } }) => (
+				<Group gap={6} wrap='nowrap'>
+					<Badge color={MODALITY_COLORS[form.modality]} variant='light'>
+						{t(`modality.${form.modality.toLowerCase()}`)}
+					</Badge>
+					{/* A form can be the primary one of either category, whatever its own modality. */}
+					{FORM_MODALITIES.filter(
+						(slot) => primaryFormIds[slot] === form.id
+					).map((slot) => (
+						<Badge
+							color={MODALITY_COLORS[slot]}
+							key={slot}
+							leftSection={<IconCheck size={10} />}
+							variant='outline'
+						>
+							{slot === form.modality
+								? t('table.primary')
+								: t('table.primaryFor', {
+										modality: t(`modality.${slot.toLowerCase()}`),
+									})}
+						</Badge>
+					))}
+				</Group>
+			),
+		},
+		{
 			id: 'category',
 			header: t('table.category'),
 			enableSorting: false,
 			cell: ({ row: { original: form } }) => (
-				<Badge color='blue' variant='light'>
+				<Badge color='blue' variant='outline'>
 					{form.category || t('table.noCategory')}
 				</Badge>
+			),
+		},
+		{
+			id: 'sections',
+			header: t('table.sections'),
+			enableSorting: false,
+			cell: ({ row: { original: form } }) => (
+				<Text size='sm'>{form.sections.length}</Text>
+			),
+		},
+		{
+			id: 'questions',
+			header: t('table.questions'),
+			enableSorting: false,
+			cell: ({ row: { original: form } }) => (
+				<Text size='sm'>{countQuestions(form)}</Text>
 			),
 		},
 		{
@@ -325,6 +199,20 @@ export default function FormsListPage() {
 				<Badge color={getActiveStatusColor(form.isActive)} variant='light'>
 					{form.isActive ? t('status.active') : t('status.inactive')}
 				</Badge>
+			),
+		},
+		{
+			id: 'updatedAt',
+			header: t('table.updatedAt'),
+			enableSorting: false,
+			cell: ({ row: { original: form } }) => (
+				<Text c='dimmed' size='sm'>
+					{new Date(form.updatedAt).toLocaleDateString(i18n.language, {
+						day: 'numeric',
+						month: 'short',
+						year: 'numeric',
+					})}
+				</Text>
 			),
 		},
 		{
@@ -343,17 +231,27 @@ export default function FormsListPage() {
 							aria-label={t('actions.edit')}
 							component={RouterLink}
 							radius='md'
-							to={`/qa/forms/${form.id}`}
+							to={formBuilderPath(form.id)}
 							variant='light'
 						>
 							<IconEdit size={16} />
+						</ActionIcon>
+					</Tooltip>
+					<Tooltip label={t('actions.duplicate')}>
+						<ActionIcon
+							aria-label={t('actions.duplicate')}
+							onClick={() => duplicate(form)}
+							radius='md'
+							variant='subtle'
+						>
+							<IconCopy size={16} />
 						</ActionIcon>
 					</Tooltip>
 					<Tooltip label={t('actions.delete')}>
 						<ActionIcon
 							aria-label={t('actions.delete')}
 							color='red'
-							onClick={() => confirmDeleteForm(form)}
+							onClick={() => confirmDelete(form)}
 							radius='md'
 							variant='subtle'
 						>
@@ -368,24 +266,11 @@ export default function FormsListPage() {
 	return (
 		<>
 			<CreateFormModal
-				form={createFormForm}
-				onClose={closeCreateModal}
-				onSubmit={submitCreateForm}
+				categories={categories}
+				initialModality={createModality}
+				onClose={() => setCreateOpen(false)}
+				onSubmit={submitCreate}
 				opened={createOpen}
-				saving={createFormMutation.isPending}
-			/>
-
-			<ImportTemplateModal
-				errorTypesError={errorTypesQuery.isError}
-				errorTypesLoading={errorTypesQuery.isLoading}
-				form={importTemplateForm}
-				importing={importFormTemplateMutation.isPending}
-				onClose={closeImportModal}
-				onFileChange={(file) => {
-					void readTemplateFile(file);
-				}}
-				onSubmit={submitImportTemplate}
-				opened={importOpen}
 			/>
 
 			<ContentContainer
@@ -393,46 +278,22 @@ export default function FormsListPage() {
 				description={t('description')}
 				title={t('title')}
 				titleRight={
-					<>
-						<Button
-							component={RouterLink}
-							leftSection={<IconTags size={16} />}
-							size='sm'
-							to='/qa/forms/error-types'
-							variant='light'
-						>
-							{t('errorTypes.actions.manage')}
-						</Button>
-						<Button
-							leftSection={<IconDownload size={16} />}
-							loading={formTemplateQuery.isFetching}
-							onClick={() => {
-								void downloadTemplate();
-							}}
-							size='sm'
-							variant='light'
-						>
-							{t('template.download')}
-						</Button>
-						<Button
-							leftSection={<IconFileImport size={16} />}
-							onClick={() => setImportOpen(true)}
-							size='sm'
-							variant='light'
-						>
-							{t('template.import')}
-						</Button>
-						<Button
-							leftSection={<IconPlus size={16} />}
-							onClick={() => setCreateOpen(true)}
-							size='sm'
-						>
-							{t('actions.create')}
-						</Button>
-					</>
+					<Button
+						leftSection={<IconPlus size={16} />}
+						onClick={() => openCreate('STANDARD')}
+						size='sm'
+					>
+						{t('actions.create')}
+					</Button>
 				}
 			>
 				<Stack gap='md'>
+					<PrimaryFormsCard
+						forms={forms}
+						onChange={changePrimary}
+						primaryFormIds={primaryFormIds}
+					/>
+
 					<SectionCard>
 						<Stack gap='sm'>
 							<Group className={classes.toolbar} justify='space-between'>
@@ -444,63 +305,32 @@ export default function FormsListPage() {
 									value={search}
 								/>
 								<Text c='dimmed' size='sm'>
-									{t('search.count', { count: total })}
+									{t('search.count', { count: filteredForms.length })}
 								</Text>
 							</Group>
 
-							{formsQuery.isError ? (
-								<Alert
-									color='red'
-									icon={<IconAlertTriangle size={16} />}
-									title={t('states.errorTitle')}
-									variant='light'
-								>
-									{getErrorMessage(formsQuery.error)}
-								</Alert>
+							{filteredForms.length === 0 ? (
+								<EmptyState
+									action={
+										<Button
+											leftSection={<IconPlus size={16} />}
+											onClick={() => openCreate('STANDARD')}
+											size='sm'
+											variant='light'
+										>
+											{t('actions.create')}
+										</Button>
+									}
+									description={t('states.emptyDescription')}
+									icon={<IconFileDescription size={32} />}
+									message={t('states.emptyTitle')}
+								/>
 							) : (
-								<>
-									{!formsQuery.isLoading && filteredForms.length === 0 ? (
-										<EmptyState
-											action={
-												<Button
-													leftSection={<IconPlus size={16} />}
-													onClick={() => setCreateOpen(true)}
-													size='sm'
-													variant='light'
-												>
-													{t('actions.create')}
-												</Button>
-											}
-											description={t('states.emptyDescription')}
-											icon={<IconFileDescription size={32} />}
-											message={t('states.emptyTitle')}
-										/>
-									) : (
-										<>
-											<BaseTable<QaForm>
-												columns={columns}
-												data={filteredForms}
-												getRowId={(form) => String(form.id)}
-												isLoading={formsQuery.isLoading}
-												skeletonRowsCount={Math.min(limit, 10)}
-											/>
-											{!formsQuery.isLoading && total > 0 ? (
-												<PaginationControls
-													currentPage={page}
-													itemsPerPage={limit}
-													onItemsPerPageChange={(value) => {
-														if (value) {
-															setPageSize(value);
-														}
-													}}
-													onPageChange={setPage}
-													totalItems={total}
-													totalPages={totalPages}
-												/>
-											) : null}
-										</>
-									)}
-								</>
+								<BaseTable<BuilderForm>
+									columns={columns}
+									data={filteredForms}
+									getRowId={(form) => form.id}
+								/>
 							)}
 						</Stack>
 					</SectionCard>

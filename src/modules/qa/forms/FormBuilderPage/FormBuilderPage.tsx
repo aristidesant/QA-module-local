@@ -1,526 +1,296 @@
-import {
-	Alert,
-	Badge,
-	Button,
-	Group,
-	Loader,
-	Stack,
-	Text,
-} from '@mantine/core';
-import { useForm } from '@mantine/form';
+import { Badge, Box, Button, Group, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
-import {
-	IconAlertTriangle,
-	IconListCheck,
-	IconPlus,
-} from '@tabler/icons-react';
+import { IconDeviceFloppy, IconEye, IconListCheck } from '@tabler/icons-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams, useNavigate } from 'react-router';
+import { useNavigate, useParams } from 'react-router';
 
-import EmptyState from '~/components/EmptyState';
-import SectionCard from '~/components/SectionCard';
 import { ContentContainer } from '~/components/ContentContainer/ContentContainer';
+import EmptyState from '~/components/EmptyState';
 import { getActiveStatusColor } from '~/modules/qa/constants/badgeColors';
-import type {
-	CreateFormGroupPayload,
-	CreateFormQuestionPayload,
-	FormGroup,
-	FormQuestion,
-	UpdateFormPayload,
-	UpdateFormQuestionPayload,
-} from '~/models/qa';
+import { FORMS_LIST_PATH, MODALITY_COLORS } from '~/modules/qa/forms/constants';
 import {
-	formGroupsQueryKey,
-	formQueryKey,
-	formQuestionsQueryKey,
-	formsQueryKey,
-	useCreateFormGroupMutation,
-	useCreateFormQuestionMutation,
-	useDeleteFormGroupMutation,
-	useDeleteFormQuestionMutation,
-	useFormGroupsQuery,
-	useFormQuery,
-	useFormQuestionsQuery,
-	useUpdateFormGroupMutation,
-	useUpdateFormMutation,
-	useUpdateFormQuestionMutation,
-} from '~/queries/qa/formsQueries';
-import { queryClient } from '~/queries/queryClient';
-import { useQuestionErrorTypesQuery } from '~/queries/qa/questionErrorTypesQueries';
-import { getErrorMessage } from '~/utils/httpClient';
-import { notifyError, notifySuccess } from '~/modules/qa/utils/notifications';
-import { DEFAULT_QUESTION_OPTIONS } from './FormBuilderPage.constants';
-import type { QuestionFormValues } from './FormBuilderPage.types';
-import FormMetadataCard from './components/FormMetadataCard';
-import GroupFormModal from './components/GroupFormModal';
-import GroupPanel from './components/GroupPanel';
-import QuestionFormModal from './components/QuestionFormModal';
+	findQuestion,
+	findSection,
+	getFormMaxScore,
+	validateDraft,
+} from '~/modules/qa/forms/helpers';
+import type { BuilderSection } from '~/modules/qa/forms/types';
+import { notifySuccess, notifyWarning } from '~/modules/qa/utils/notifications';
+import { useFormsStore } from '~/stores/qa/formsStore';
+import styles from './FormBuilderPage.module.css';
+import BuilderOutline from './components/BuilderOutline';
+import FormDetailsEditor from './components/FormDetailsEditor';
+import PreviewDrawer from './components/PreviewDrawer';
+import QuestionEditor from './components/QuestionEditor';
+import SectionEditor from './components/SectionEditor';
+import { useFormDraft } from './useFormDraft';
 
+/** Remounts the editor per form id so every form starts from a fresh draft. */
 export default function FormBuilderPage() {
+	const { formId } = useParams();
+	return <FormBuilderContent formId={formId} key={formId} />;
+}
+
+function FormBuilderContent({ formId }: { formId: string | undefined }) {
 	const { t } = useTranslation('qa.forms');
 	const navigate = useNavigate();
-	const params = useParams();
-	const formId = Number(params.formId);
-	const unpaginated = useMemo(() => ({ pagination: false }), []);
-	const formQuery = useFormQuery(formId);
-	const groupsQuery = useFormGroupsQuery(formId, unpaginated);
-	const questionsQuery = useFormQuestionsQuery(formId, unpaginated);
-	const errorTypesQuery = useQuestionErrorTypesQuery({ pagination: false });
-	const updateFormMutation = useUpdateFormMutation(formId);
-	const createGroupMutation = useCreateFormGroupMutation(formId);
-	const updateGroupMutation = useUpdateFormGroupMutation(formId);
-	const deleteGroupMutation = useDeleteFormGroupMutation(formId);
-	const createQuestionMutation = useCreateFormQuestionMutation(formId);
-	const updateQuestionMutation = useUpdateFormQuestionMutation(formId);
-	const deleteQuestionMutation = useDeleteFormQuestionMutation(formId);
-	const [groupDrawerOpen, setGroupDrawerOpen] = useState(false);
-	const [editingGroup, setEditingGroup] = useState<FormGroup | null>(null);
-	const [questionDrawerOpen, setQuestionDrawerOpen] = useState(false);
-	const [editingQuestion, setEditingQuestion] = useState<FormQuestion | null>(
-		null
-	);
-	const [collapsedGroupIds, setCollapsedGroupIds] = useState<Set<number>>(
-		() => new Set()
-	);
+	const {
+		draft,
+		selection,
+		setSelection,
+		draftError,
+		setDraftError,
+		isDirty,
+		updateDetails,
+		addSection,
+		updateSection,
+		deleteSection,
+		addQuestion,
+		updateQuestion,
+		deleteQuestion,
+		reorderSections,
+		moveQuestion,
+	} = useFormDraft(formId);
+	const [previewOpen, setPreviewOpen] = useState(false);
 
-	const metadataForm = useForm<UpdateFormPayload>({
-		initialValues: {
-			name: '',
-			description: '',
-			category: '',
-			isActive: true,
-		},
-		validate: {
-			name: (value) =>
-				value?.trim().length ? null : t('validation.nameRequired'),
-		},
-	});
-	const groupForm = useForm<CreateFormGroupPayload>({
-		initialValues: {
-			name: '',
-			description: '',
-			sortOrder: 10,
-		},
-		validate: {
-			name: (value) =>
-				value.trim().length === 0 ? t('validation.groupRequired') : null,
-		},
-	});
-	const questionForm = useForm<QuestionFormValues>({
-		initialValues: {
-			groupId: '',
-			text: '',
-			description: '',
-			answerType: 'CHOICE',
-			options: DEFAULT_QUESTION_OPTIONS,
-			errorTypeId: null,
-			sortOrder: 10,
-		},
-		validate: {
-			groupId: (value) =>
-				value ? null : t('validation.groupSelectionRequired'),
-			text: (value) =>
-				value.trim().length === 0 ? t('validation.questionRequired') : null,
-			options: (value, values) => {
-				if (values.answerType === 'TEXT') {
-					return null;
-				}
+	const selected = useMemo(() => {
+		if (!draft || !selection) return null;
+		if (selection.kind === 'form') return { kind: 'form' as const };
+		if (selection.kind === 'section') {
+			const section = findSection(draft, selection.id);
+			return section
+				? {
+						kind: 'section' as const,
+						section,
+						index: draft.sections.indexOf(section),
+					}
+				: null;
+		}
+		const found = findQuestion(draft, selection.id);
+		if (!found) return null;
+		return {
+			kind: 'question' as const,
+			question: found.question,
+			section: found.section,
+			sectionIndex: draft.sections.indexOf(found.section),
+			questionIndex: found.section.questions.indexOf(found.question),
+		};
+	}, [draft, selection]);
 
-				return value.length === 0 ? t('validation.optionsRequired') : null;
-			},
-		},
-	});
+	const goToList = () => navigate(FORMS_LIST_PATH);
 
-	const groups = useMemo(
-		() =>
-			[...(groupsQuery.data?.data ?? [])].sort(
-				(a, b) => a.sortOrder - b.sortOrder
-			),
-		[groupsQuery.data]
-	);
-	const questions = useMemo(
-		() =>
-			[...(questionsQuery.data?.data ?? [])].sort(
-				(a, b) => a.groupId - b.groupId || a.sortOrder - b.sortOrder
-			),
-		[questionsQuery.data]
-	);
-	const errorTypes = useMemo(
-		() => errorTypesQuery.data?.data ?? [],
-		[errorTypesQuery.data]
-	);
-	const isLoading =
-		formQuery.isLoading || groupsQuery.isLoading || questionsQuery.isLoading;
-	const isError =
-		formQuery.isError || groupsQuery.isError || questionsQuery.isError;
-
-	if (formQuery.data && metadataForm.values.name === '') {
-		metadataForm.setValues({
-			name: formQuery.data.name,
-			description: formQuery.data.description ?? '',
-			category: formQuery.data.category ?? '',
-			isActive: formQuery.data.isActive,
-		});
+	if (!draft) {
+		return (
+			<ContentContainer
+				contentWidth='full'
+				onBackClick={goToList}
+				showBackButton
+				title={t('builder.title')}
+			>
+				<EmptyState
+					action={
+						<Button onClick={goToList} size='sm' variant='light'>
+							{t('actions.backToForms')}
+						</Button>
+					}
+					icon={<IconListCheck size={32} />}
+					message={t('builder.notFound')}
+				/>
+			</ContentContainer>
+		);
 	}
 
-	const invalidateFormDetail = async () => {
-		await Promise.all([
-			queryClient.invalidateQueries({ queryKey: formsQueryKey }),
-			queryClient.invalidateQueries({ queryKey: formQueryKey(formId) }),
-			queryClient.invalidateQueries({
-				queryKey: formGroupsQueryKey(formId, unpaginated),
-			}),
-			queryClient.invalidateQueries({
-				queryKey: formQuestionsQueryKey(formId, unpaginated),
-			}),
-		]);
-	};
-
-	const submitMetadata = metadataForm.onSubmit(async (values) => {
-		try {
-			await updateFormMutation.mutateAsync({
-				name: values.name?.trim(),
-				description: values.description?.trim() || undefined,
-				category: values.category?.trim() || undefined,
-				isActive: values.isActive,
-			});
-			await invalidateFormDetail();
-			notifySuccess(t('notifications.formUpdated'));
-		} catch (error) {
-			notifyError(error);
+	const handleLeave = () => {
+		if (!isDirty) {
+			goToList();
+			return;
 		}
-	});
-
-	const openCreateGroup = () => {
-		setEditingGroup(null);
-		groupForm.setValues({
-			name: '',
-			description: '',
-			sortOrder: (groups.at(-1)?.sortOrder ?? 0) + 10,
+		modals.openConfirmModal({
+			title: t('builder.discard.title'),
+			centered: true,
+			children: <Text size='sm'>{t('builder.discard.message')}</Text>,
+			labels: {
+				confirm: t('builder.discard.confirm'),
+				cancel: t('actions.cancel'),
+			},
+			confirmProps: { color: 'red' },
+			onConfirm: goToList,
 		});
-		setGroupDrawerOpen(true);
 	};
 
-	const openEditGroup = (group: FormGroup) => {
-		setEditingGroup(group);
-		groupForm.setValues({
-			name: group.name,
-			description: group.description ?? '',
-			sortOrder: group.sortOrder,
-		});
-		setGroupDrawerOpen(true);
-	};
-
-	const submitGroup = groupForm.onSubmit(async (values) => {
-		try {
-			const payload = {
-				name: values.name.trim(),
-				description: values.description?.trim() || undefined,
-				sortOrder: values.sortOrder,
-			};
-
-			if (editingGroup) {
-				await updateGroupMutation.mutateAsync({
-					groupId: editingGroup.id,
-					payload,
-				});
-			} else {
-				await createGroupMutation.mutateAsync(payload);
-			}
-
-			await invalidateFormDetail();
-			notifySuccess(
-				editingGroup
-					? t('notifications.groupUpdated')
-					: t('notifications.groupCreated')
-			);
-			setGroupDrawerOpen(false);
-		} catch (error) {
-			notifyError(error);
+	const saveDraft = (successMessage: string) => {
+		const error = validateDraft(draft);
+		if (error) {
+			setDraftError(error);
+			setSelection(error.selection);
+			notifyWarning(t('builder.validation.fixFields'));
+			return;
 		}
-	});
+		useFormsStore.getState().updateForm(draft);
+		notifySuccess(successMessage);
+	};
 
-	const confirmDeleteGroup = (group: FormGroup) => {
+	const handleSave = () => saveDraft(t('notifications.formUpdated'));
+
+	const handleSaveQuestion = () => saveDraft(t('notifications.questionSaved'));
+
+	const confirmDeleteSection = (section: BuilderSection) => {
+		const count = section.questions.length;
 		modals.openConfirmModal({
 			title: t('groups.deleteTitle'),
 			centered: true,
+			children: (
+				<Text size='sm'>
+					{count > 0
+						? t('section.deleteConfirm', { name: section.name, count })
+						: t('section.deleteConfirmEmpty', { name: section.name })}
+				</Text>
+			),
 			labels: { confirm: t('actions.delete'), cancel: t('actions.cancel') },
 			confirmProps: { color: 'red' },
-			children: (
-				<Text size='sm'>{t('groups.deleteConfirm', { name: group.name })}</Text>
-			),
-			onConfirm: async () => {
-				try {
-					await deleteGroupMutation.mutateAsync(group.id);
-					await invalidateFormDetail();
-					notifySuccess(t('notifications.groupDeleted'));
-				} catch (error) {
-					notifyError(error);
-				}
-			},
+			onConfirm: () => deleteSection(section.id),
 		});
 	};
 
-	const openCreateQuestion = (groupId?: number) => {
-		setEditingQuestion(null);
-		questionForm.setValues({
-			groupId: groupId ? String(groupId) : '',
-			text: '',
-			description: '',
-			answerType: 'CHOICE',
-			options: DEFAULT_QUESTION_OPTIONS,
-			errorTypeId: null,
-			sortOrder: 10,
-		});
-		setQuestionDrawerOpen(true);
-	};
-
-	const openEditQuestion = (question: FormQuestion) => {
-		setEditingQuestion(question);
-		questionForm.setValues({
-			groupId: String(question.groupId),
-			text: question.text,
-			description: question.description ?? '',
-			answerType: question.answerType,
-			options: question.options?.length
-				? question.options
-				: DEFAULT_QUESTION_OPTIONS,
-			errorTypeId:
-				question.errorTypeId == null ? null : String(question.errorTypeId),
-			sortOrder: question.sortOrder,
-		});
-		setQuestionDrawerOpen(true);
-	};
-
-	const submitQuestion = questionForm.onSubmit(async (values) => {
-		try {
-			const selectedErrorTypeId = values.errorTypeId
-				? Number(values.errorTypeId)
-				: null;
-			const payload: CreateFormQuestionPayload = {
-				groupId: Number(values.groupId),
-				text: values.text.trim(),
-				description: values.description.trim() || undefined,
-				answerType: values.answerType,
-				options: values.answerType === 'CHOICE' ? values.options : undefined,
-				errorTypeId: selectedErrorTypeId ?? undefined,
-				sortOrder: values.sortOrder,
-			};
-
-			if (editingQuestion) {
-				const updatePayload: UpdateFormQuestionPayload = {
-					text: payload.text,
-					description: payload.description,
-					answerType: payload.answerType,
-					options: payload.options,
-					sortOrder: payload.sortOrder,
-				};
-
-				if (selectedErrorTypeId !== (editingQuestion.errorTypeId ?? null)) {
-					updatePayload.errorTypeId = selectedErrorTypeId;
-				}
-
-				await updateQuestionMutation.mutateAsync({
-					questionId: editingQuestion.id,
-					payload: updatePayload,
-				});
-			} else {
-				await createQuestionMutation.mutateAsync(payload);
-			}
-
-			await invalidateFormDetail();
-			notifySuccess(
-				editingQuestion
-					? t('notifications.questionUpdated')
-					: t('notifications.questionCreated')
-			);
-			setQuestionDrawerOpen(false);
-		} catch (error) {
-			notifyError(error);
-		}
-	});
-
-	const confirmDeleteQuestion = (question: FormQuestion) => {
+	const confirmDeleteQuestion = (id: string, text: string) => {
 		modals.openConfirmModal({
 			title: t('questions.deleteTitle'),
 			centered: true,
+			children: <Text size='sm'>{t('questions.deleteConfirm', { text })}</Text>,
 			labels: { confirm: t('actions.delete'), cancel: t('actions.cancel') },
 			confirmProps: { color: 'red' },
-			children: (
-				<Text size='sm'>
-					{t('questions.deleteConfirm', { text: question.text })}
-				</Text>
-			),
-			onConfirm: async () => {
-				try {
-					await deleteQuestionMutation.mutateAsync(question.id);
-					await invalidateFormDetail();
-					notifySuccess(t('notifications.questionDeleted'));
-				} catch (error) {
-					notifyError(error);
-				}
-			},
+			onConfirm: () => deleteQuestion(id),
 		});
 	};
 
-	const addOption = () => {
-		questionForm.insertListItem('options', { label: '', score: 0 });
-	};
-
-	const toggleGroupCollapsed = (groupId: number) => {
-		setCollapsedGroupIds((currentGroupIds) => {
-			const nextGroupIds = new Set(currentGroupIds);
-
-			if (nextGroupIds.has(groupId)) {
-				nextGroupIds.delete(groupId);
-			} else {
-				nextGroupIds.add(groupId);
-			}
-
-			return nextGroupIds;
-		});
-	};
+	const modalityKey = draft.modality.toLowerCase();
 
 	return (
 		<>
-			<GroupFormModal
-				form={groupForm}
-				onClose={() => setGroupDrawerOpen(false)}
-				onSubmit={submitGroup}
-				opened={groupDrawerOpen}
-				saving={createGroupMutation.isPending || updateGroupMutation.isPending}
-				title={editingGroup ? t('groups.editTitle') : t('groups.createTitle')}
-			/>
-
-			<QuestionFormModal
-				editing={Boolean(editingQuestion)}
-				form={questionForm}
-				groups={groups}
-				onAddOption={addOption}
-				onClose={() => setQuestionDrawerOpen(false)}
-				onSubmit={submitQuestion}
-				opened={questionDrawerOpen}
-				saving={
-					createQuestionMutation.isPending || updateQuestionMutation.isPending
-				}
-			/>
-
 			<ContentContainer
 				contentWidth='full'
 				description={t('builder.description')}
-				onBackClick={() => navigate('/qa/forms')}
+				onBackClick={handleLeave}
 				showBackButton
-				title={formQuery.data?.name ?? t('builder.title')}
+				title={draft.name || t('builder.title')}
 				titleRight={
-					formQuery.data ? (
-						<Badge
-							color={getActiveStatusColor(formQuery.data.isActive)}
+					<Group gap='xs'>
+						<Badge color={MODALITY_COLORS[draft.modality]} variant='light'>
+							{t(`modality.${modalityKey}`)}
+						</Badge>
+						<Badge color={getActiveStatusColor(draft.isActive)} variant='light'>
+							{draft.isActive ? t('status.active') : t('status.inactive')}
+						</Badge>
+						{draft.modality === 'STANDARD' ? (
+							<Badge color='gray' variant='outline'>
+								{t('builder.maxScore', { score: getFormMaxScore(draft) })}
+							</Badge>
+						) : null}
+						<Button
+							leftSection={<IconEye size={16} />}
+							onClick={() => setPreviewOpen(true)}
+							size='sm'
 							variant='light'
 						>
-							{formQuery.data.isActive
-								? t('status.active')
-								: t('status.inactive')}
-						</Badge>
-					) : undefined
+							{t('actions.preview')}
+						</Button>
+					</Group>
 				}
 			>
-				<Stack gap='md'>
-					{isLoading ? (
-						<Group justify='center' py='xl'>
-							<Loader size='sm' />
-						</Group>
-					) : null}
+				<div className={styles.layout}>
+					<aside className={styles.outline}>
+						<BuilderOutline
+							draft={draft}
+							onAddQuestion={addQuestion}
+							onAddSection={addSection}
+							onMoveQuestion={moveQuestion}
+							onReorderSections={reorderSections}
+							onSelect={setSelection}
+							selection={selection}
+						/>
+					</aside>
 
-					{isError ? (
-						<Alert
-							color='red'
-							icon={<IconAlertTriangle size={16} />}
-							title={t('states.errorTitle')}
-							variant='light'
-						>
-							{getErrorMessage(
-								formQuery.error ?? groupsQuery.error ?? questionsQuery.error
-							)}
-						</Alert>
-					) : null}
-
-					{!isLoading && !isError ? (
-						<>
-							<FormMetadataCard
-								form={metadataForm}
-								onSubmit={submitMetadata}
-								saving={updateFormMutation.isPending}
+					<section className={styles.editor}>
+						{selected?.kind === 'form' ? (
+							<FormDetailsEditor
+								error={draftError}
+								form={draft}
+								onChange={updateDetails}
 							/>
+						) : null}
 
-							<SectionCard
-								description={t('groups.description')}
-								headerActions={
-									<>
-										<Button
-											leftSection={<IconPlus size={16} />}
-											onClick={openCreateGroup}
-											size='sm'
-											variant='light'
-										>
-											{t('groups.add')}
-										</Button>
-										<Button
-											disabled={groups.length === 0}
-											leftSection={<IconPlus size={16} />}
-											onClick={() => openCreateQuestion()}
-											size='sm'
-										>
-											{t('questions.add')}
-										</Button>
-									</>
+						{selected?.kind === 'section' ? (
+							<SectionEditor
+								error={draftError}
+								index={selected.index}
+								key={selected.section.id}
+								onAddQuestion={() => addQuestion(selected.section.id)}
+								onChange={(changes) =>
+									updateSection(selected.section.id, changes)
 								}
-								icon={IconListCheck}
-								title={t('groups.title')}
-							>
-								<Stack gap='md'>
-									{groups.length === 0 ? (
-										<EmptyState
-											action={
-												<Button
-													leftSection={<IconPlus size={16} />}
-													onClick={openCreateGroup}
-													size='sm'
-													variant='light'
-												>
-													{t('groups.add')}
-												</Button>
-											}
-											icon={<IconListCheck size={32} />}
-											message={t('groups.empty')}
-										/>
-									) : null}
+								onDelete={() => confirmDeleteSection(selected.section)}
+								section={selected.section}
+							/>
+						) : null}
 
-									{groups.map((group) => (
-										<GroupPanel
-											collapsed={collapsedGroupIds.has(group.id)}
-											errorTypes={errorTypes}
-											group={group}
-											key={group.id}
-											onAddQuestion={() => openCreateQuestion(group.id)}
-											onDeleteGroup={() => confirmDeleteGroup(group)}
-											onDeleteQuestion={(question) =>
-												confirmDeleteQuestion(question)
-											}
-											onEditGroup={() => openEditGroup(group)}
-											onEditQuestion={(question) => openEditQuestion(question)}
-											onToggle={() => toggleGroupCollapsed(group.id)}
-											questions={questions.filter(
-												(question) => question.groupId === group.id
-											)}
-										/>
-									))}
-								</Stack>
-							</SectionCard>
-						</>
-					) : null}
-				</Stack>
+						{selected?.kind === 'question' ? (
+							<QuestionEditor
+								error={draftError}
+								key={selected.question.id}
+								number={t('builder.questionNumber', {
+									section: selected.sectionIndex + 1,
+									question: selected.questionIndex + 1,
+								})}
+								onChange={(changes) =>
+									updateQuestion(selected.question.id, changes)
+								}
+								onDelete={() =>
+									confirmDeleteQuestion(
+										selected.question.id,
+										selected.question.text
+									)
+								}
+								onAddQuestion={() => addQuestion(selected.section.id)}
+								onSave={handleSaveQuestion}
+								question={selected.question}
+								saveDisabled={!isDirty}
+								sectionName={selected.section.name}
+							/>
+						) : null}
+
+						{!selected ? (
+							<EmptyState
+								description={t('builder.selectPromptDescription')}
+								icon={<IconListCheck size={32} />}
+								message={t('builder.selectPrompt')}
+							/>
+						) : null}
+					</section>
+				</div>
+
+				{/* Pinned to the viewport so the actions stay in reach on this long form. */}
+				<Box className={styles.stickyActions}>
+					<Group gap='xs' justify='flex-end'>
+						<Button onClick={handleLeave} variant='subtle'>
+							{t('actions.cancel')}
+						</Button>
+						<Button
+							disabled={!isDirty}
+							leftSection={<IconDeviceFloppy size={16} />}
+							onClick={handleSave}
+						>
+							{t('actions.save')}
+						</Button>
+					</Group>
+				</Box>
 			</ContentContainer>
+
+			<PreviewDrawer
+				form={draft}
+				onClose={() => setPreviewOpen(false)}
+				opened={previewOpen}
+			/>
 		</>
 	);
 }

@@ -5,19 +5,53 @@
 		"create": "Crear formulario",
 		"delete": "Eliminar",
 		"edit": "Editar",
-		"save": "Guardar"
+		"save": "Guardar",
+		"addQuestion": "Agregar pregunta",
+		"addSection": "Agregar sección",
+		"duplicate": "Duplicar",
+		"preview": "Vista previa",
+		"deleteQuestion": "Eliminar pregunta",
+		"deleteSection": "Eliminar sección",
+		"saveQuestion": "Guardar pregunta",
+		"newQuestion": "Nueva pregunta"
 	},
 	"answerTypes": {
 		"choice": "Opción múltiple",
 		"text": "Texto"
 	},
 	"builder": {
-		"description": "Configura el encabezado, las secciones y las preguntas puntuadas que usarán los evaluadores.",
-		"title": "Constructor de formulario"
+		"description": "Construye las secciones y preguntas que los evaluadores y la IA van a calificar.",
+		"title": "Editor de formulario",
+		"outline": "Estructura",
+		"outlineHint": "Arrastra para reordenar secciones y preguntas.",
+		"formDetails": "Datos del formulario",
+		"sections": "Secciones",
+		"noSections": "Aún no hay secciones. Agrega una para empezar a construir este formulario.",
+		"noQuestions": "Suelta o agrega una pregunta aquí.",
+		"selectPrompt": "Selecciona un elemento de la estructura",
+		"selectPromptDescription": "Elige los datos del formulario, una sección o una pregunta para editarla aquí.",
+		"notFound": "Este formulario ya no existe.",
+		"maxScore": "Puntaje máximo {{score}}",
+		"questionNumber": "{{section}}.{{question}}",
+		"discard": {
+			"title": "¿Descartar cambios?",
+			"message": "Tienes cambios sin guardar en este formulario. Si sales ahora se perderán.",
+			"confirm": "Descartar"
+		},
+		"validation": {
+			"fixFields": "Corrige los campos marcados antes de guardar.",
+			"nameRequired": "El nombre es obligatorio",
+			"sectionNameRequired": "El nombre de la sección es obligatorio",
+			"questionRequired": "El texto de la pregunta es obligatorio",
+			"optionsRequired": "Agrega al menos una opción con etiqueta",
+			"errorTypeRequired": "Selecciona un tipo de error"
+		}
 	},
 	"create": {
 		"submit": "Crear formulario",
-		"title": "Crear formulario QA"
+		"title": "Crear formulario",
+		"modality": "Modalidad",
+		"modalityHint": "La modalidad define qué campos tiene cada pregunta y no se puede cambiar después."
 	},
 	"description": "Crea plantillas QA reutilizables con secciones ordenadas, opciones puntuadas y anotaciones de texto.",
 	"errorTypes": {
@@ -148,7 +182,10 @@
 		"questionDeleted": "Pregunta eliminada.",
 		"questionUpdated": "Pregunta actualizada.",
 		"templateDownloaded": "Plantilla descargada.",
-		"templateImported": "Plantilla importada."
+		"templateImported": "Plantilla importada.",
+		"formDuplicated": "Formulario duplicado.",
+		"primaryUpdated": "Formulario principal actualizado.",
+		"questionSaved": "Pregunta guardada."
 	},
 	"questions": {
 		"add": "Agregar pregunta",
@@ -186,7 +223,13 @@
 		"name": "Formulario",
 		"noCategory": "Sin categoría",
 		"noDescription": "Sin descripción",
-		"status": "Estado"
+		"status": "Estado",
+		"modality": "Modalidad",
+		"sections": "Secciones",
+		"questions": "Preguntas",
+		"updatedAt": "Actualizado",
+		"primary": "Principal",
+		"primaryFor": "Principal para {{modality}}"
 	},
 	"template": {
 		"download": "Descargar plantilla",
@@ -214,5 +257,100 @@
 		"templateObject": "La plantilla debe ser un objeto JSON",
 		"templateRequired": "Pega o carga un JSON de plantilla",
 		"templateShape": "La plantilla debe incluir nombre y arreglo de grupos"
+	},
+	"duplicateSuffix": "(copia)",
+	"details": {
+		"title": "Datos del formulario",
+		"description": "Nombre, categoría, disponibilidad y la descripción que ven los evaluadores."
+	},
+	"modality": {
+		"label": "Modalidad",
+		"standard": "Estándar",
+		"copc": "COPC",
+		"standardHint": "Preguntas con peso: opción múltiple con puntaje por opción, o respuesta abierta.",
+		"copcHint": "Preguntas Sí/No clasificadas por tipo de error COPC."
+	},
+	"preview": {
+		"title": "Vista previa",
+		"description": "Así verán este formulario los evaluadores. Las preguntas inactivas no se muestran.",
+		"na": "N/A",
+		"favorable": "Respuesta favorable: {{answer}}",
+		"empty": "Agrega secciones y preguntas para previsualizar este formulario."
+	},
+	"primary": {
+		"title": "Formularios principales",
+		"description": "El formulario que usa cada modalidad por defecto cuando una campaña no elige uno.",
+		"copc": "Formulario principal COPC",
+		"standard": "Formulario principal Estándar",
+		"none": "Sin formulario principal",
+		"noneHint": "Aún no hay formularios {{modality}}."
+	},
+	"question": {
+		"title": "Pregunta",
+		"text": "Pregunta",
+		"textPlaceholder": "¿Qué debe verificar el evaluador?",
+		"guidance": "Guía para el evaluador",
+		"guidanceHelp": "Contexto que la IA tiene en cuenta para responder esta pregunta.",
+		"autoFail": "Fallo automático",
+		"autoFailHelp": "Qué invalida una respuesta desfavorable.",
+		"autoFailOptions": {
+			"NONE": "Sin fallo automático",
+			"SECTION": "Reprobar esta sección",
+			"EVALUATION": "Reprobar toda la evaluación"
+		},
+		"answerType": "Tipo de respuesta",
+		"answerTypes": {
+			"MULTIPLE_CHOICE": "Opción múltiple",
+			"OPEN": "Respuesta abierta"
+		},
+		"options": "Opciones y puntajes",
+		"optionLabel": "Opción",
+		"optionScore": "Puntaje",
+		"addOption": "Agregar opción",
+		"derivedWeight": "Peso {{weight}}",
+		"openAnswerHint": "Las respuestas abiertas no puntúan. El evaluador escribe una nota de texto libre.",
+		"favorableAnswer": "Respuesta favorable",
+		"favorableAnswerHelp": "Qué respuesta representa cumplimiento para este criterio.",
+		"yes": "Sí",
+		"no": "No",
+		"errorType": "Tipo de error",
+		"errorTypePlaceholder": "Selecciona un tipo de error",
+		"errorCodes": {
+			"ECN": "ECN — Error crítico de negocio",
+			"ENC": "ENC — Error no crítico",
+			"ECC": "ECC — Error crítico de cumplimiento",
+			"ECUF": "ECUF — Error crítico de usuario final"
+		},
+		"campaignType": "Tipo de campaña",
+		"campaignTypeHelp": "Las evaluaciones califican las preguntas etiquetadas con el tipo de la campaña o con Todos.",
+		"campaignTypes": {
+			"ALL": "Todos",
+			"SALES": "Ventas",
+			"SUPPORT": "Soporte",
+			"RETENTION": "Retención",
+			"COLLECTIONS": "Cobranzas",
+			"ACTIVATION": "Activación"
+		},
+		"badges": {
+			"inactive": "Inactiva",
+			"autoFail": "Fallo automático",
+			"na": "N/A",
+			"open": "Abierta"
+		}
+	},
+	"section": {
+		"title": "Sección",
+		"name": "Nombre de la sección",
+		"namePlaceholder": "Apertura e identificación",
+		"guidance": "Guía de la sección",
+		"guidanceHelp": "Se muestra a los evaluadores y a la IA antes de las preguntas de esta sección.",
+		"questionCount_one": "{{count}} pregunta",
+		"questionCount_other": "{{count}} preguntas",
+		"deleteConfirm": "¿Eliminar \"{{name}}\" y sus {{count}} preguntas?",
+		"deleteConfirmEmpty": "¿Eliminar \"{{name}}\"?"
+	},
+	"category": {
+		"placeholder": "Selecciona una categoría",
+		"empty": "Aún no hay categorías guardadas"
 	}
 }
