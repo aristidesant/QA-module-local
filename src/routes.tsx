@@ -361,6 +361,9 @@ const QaDisputeDetailPage = React.lazy(
 const CampaignsList = React.lazy(
 	() => import('./views/Campaigns/pages/CampaignsList')
 );
+const QaNewCampaignPage = React.lazy(
+	() => import('./modules/qa/campaigns/NewCampaignPage')
+);
 const CampaignDetail = React.lazy(
 	() => import('./views/Campaigns/pages/CampaignDetail')
 );
@@ -1805,6 +1808,18 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<CampaignsList />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										// Declared before campaigns/:id so "new" is not read as a campaign id.
+										path: 'campaigns/new',
+										id: 'qa.campaigns.new',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaNewCampaignPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

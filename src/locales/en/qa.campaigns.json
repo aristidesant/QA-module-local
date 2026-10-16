@@ -186,5 +186,99 @@
 		"metadataJson": "Enter valid JSON metadata",
 		"metadataObject": "Metadata must be a JSON object",
 		"nameRequired": "Campaign name is required"
+	},
+	"newCampaign": {
+		"title": "New campaign",
+		"fields": {
+			"type": "Campaign type",
+			"typePlaceholder": "Select a campaign type",
+			"modality": "Evaluation modality",
+			"form": "Evaluation form",
+			"formPlaceholder": "Select the form",
+			"formDisabled": "Select a modality first"
+		},
+		"modalities": {
+			"STANDARD": "Standard",
+			"COPC": "COPC"
+		},
+		"default": "default",
+		"formHint": "The default {{modality}} form is selected. You can switch to any {{type}} form.",
+		"formHintNoType": "Select a campaign type to see more forms.",
+		"validation": {
+			"typeRequired": "Select a campaign type",
+			"modalityRequired": "Select an evaluation modality",
+			"formRequired": "Select an evaluation form"
+		},
+		"description": "Set up the campaign and how its calls will be evaluated.",
+		"sections": {
+			"details": {
+				"title": "Campaign details",
+				"description": "Name, type and whether the campaign starts active."
+			},
+			"evaluation": {
+				"title": "Evaluation",
+				"description": "The modality and form used to score the calls."
+			}
+		},
+		"discard": {
+			"title": "Discard this campaign?",
+			"message": "You have unsaved changes. Leaving now will lose them.",
+			"confirm": "Discard"
+		},
+		"notifications": {
+			"created": "\"{{name}}\" created"
+		}
+	},
+	"callSource": {
+		"ftp": {
+			"label": "FTP server",
+			"hint": "Servers set up by your administrator. This campaign will pull its calls from the one you choose.",
+			"empty": "No FTP servers are configured yet. Ask an administrator to add one in the admin configuration.",
+			"required": "Select an FTP server"
+		},
+		"upload": {
+			"dropTitle": "Drag recordings here or click to browse",
+			"dropSubtitle": "MP3, WAV, or a ZIP with several calls · up to {{size}} MB each",
+			"zipHint": "ZIP contents are extracted and counted when the campaign is created.",
+			"summary": "{{files}} files · {{calls}} calls",
+			"columns": {
+				"callId": "Call ID",
+				"agent": "Agent",
+				"duration": "Call duration"
+			},
+			"rejected_one": "{{count}} file was skipped: only MP3, WAV and ZIP up to {{size}} MB are accepted.",
+			"rejected_other": "{{count}} files were skipped: only MP3, WAV and ZIP up to {{size}} MB are accepted.",
+			"uploading_one": "Uploading {{count}} file…",
+			"uploading_other": "Uploading {{count}} files…",
+			"itemLabel": "calls",
+			"tabs": {
+				"review": "Ready to upload",
+				"uploaded": "Uploaded"
+			},
+			"reviewEmpty": "Load files to review their calls here, then confirm the upload.",
+			"reviewSummary": "{{files}} files · {{calls}} calls ready to upload",
+			"confirmHint": "Calls are only added to the campaign once you confirm.",
+			"clear": "Clear",
+			"confirm": "Confirm upload",
+			"confirmed_one": "{{count}} file sent for upload.",
+			"confirmed_other": "{{count}} files sent for upload.",
+			"uploadedEmpty": "Nothing uploaded yet."
+		},
+		"tab": "Call source",
+		"title": "Call source",
+		"description": "The FTP server this campaign pulls its calls from.",
+		"status": {
+			"configured": "Configured",
+			"notConfigured": "Not configured"
+		},
+		"save": "Save call source",
+		"saved": "Call source saved.",
+		"discard": "Discard changes",
+		"fixFields": "Fix the highlighted fields before saving.",
+		"manual": {
+			"button": "Manual upload",
+			"title": "Manual upload",
+			"description": "Send single audio files or ZIPs with several calls straight to this campaign."
+		}
 	}
 }

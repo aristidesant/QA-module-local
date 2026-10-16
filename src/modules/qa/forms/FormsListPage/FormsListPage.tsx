@@ -31,7 +31,11 @@ import {
 	MODALITY_COLORS,
 	formBuilderPath,
 } from '~/modules/qa/forms/constants';
-import { countQuestions, createEmptyForm } from '~/modules/qa/forms/helpers';
+import {
+	countQuestions,
+	createEmptyForm,
+	getFormCategories,
+} from '~/modules/qa/forms/helpers';
 import type {
 	BuilderForm,
 	CreateFormValues,
@@ -59,17 +63,10 @@ export default function FormsListPage() {
 	const [createModality, setCreateModality] =
 		useState<FormModality>('STANDARD');
 
-	// Saved categories plus any already on a form, case-insensitive, alphabetical.
-	const categories = useMemo(() => {
-		const seen = new Map<string, string>();
-		const names = [...MOCK_FORM_CATEGORIES, ...forms.map((f) => f.category)];
-		for (const raw of names) {
-			const name = raw.trim();
-			if (name && !seen.has(name.toLowerCase()))
-				seen.set(name.toLowerCase(), name);
-		}
-		return [...seen.values()].sort((a, b) => a.localeCompare(b));
-	}, [forms]);
+	const categories = useMemo(
+		() => getFormCategories(forms, MOCK_FORM_CATEGORIES),
+		[forms]
+	);
 
 	const filteredForms = useMemo(() => {
 		const query = search.trim().toLowerCase();

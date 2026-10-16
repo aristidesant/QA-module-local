@@ -138,6 +138,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.inbox',
 	],
 	'qa.campaigns': 'qa.campaigns',
+	'qa.campaigns.new': 'qa.campaigns',
 	'qa.campaigns.detail': ['qa.campaigns', 'qa.calls', 'qa.team'],
 	'qa.campaigns.conversation': ['qa.disputes', 'qa.calls'],
 	'qa.forms': 'qa.forms',

@@ -1,3 +1,5 @@
+import type { FormModality } from '~/modules/qa/forms/types';
+
 // Extracted from burnout-risk-widget campaigns pages
 // Unified types for the Campaigns feature
 
@@ -12,6 +14,11 @@ export interface Campaign {
 	evaluationType: 'manual' | 'automatic' | 'mixed';
 	createdAt: string;
 	type: 'external' | 'cmx';
+	/** Set for campaigns created in-app: sales, retention, ... (matches a form category). */
+	campaignType?: string;
+	/** Evaluation modality and the form the campaign is scored with. */
+	modality?: FormModality;
+	formId?: string;
 }
 
 export interface CampaignDetail {

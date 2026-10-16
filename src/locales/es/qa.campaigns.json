@@ -186,5 +186,99 @@
 		"metadataJson": "Ingresa metadata JSON valida",
 		"metadataObject": "La metadata debe ser un objeto JSON",
 		"nameRequired": "El nombre de la campaña es obligatorio"
+	},
+	"newCampaign": {
+		"title": "Nueva campaña",
+		"fields": {
+			"type": "Tipo de campaña",
+			"typePlaceholder": "Selecciona un tipo de campaña",
+			"modality": "Modalidad de evaluación",
+			"form": "Formulario de evaluación",
+			"formPlaceholder": "Selecciona el formulario",
+			"formDisabled": "Selecciona primero una modalidad"
+		},
+		"modalities": {
+			"STANDARD": "Estándar",
+			"COPC": "COPC"
+		},
+		"default": "predeterminado",
+		"formHint": "Se selecciona el formulario {{modality}} predeterminado. Puedes cambiarlo por cualquier formulario de {{type}}.",
+		"formHintNoType": "Selecciona un tipo de campaña para ver más formularios.",
+		"validation": {
+			"typeRequired": "Selecciona un tipo de campaña",
+			"modalityRequired": "Selecciona una modalidad de evaluación",
+			"formRequired": "Selecciona un formulario de evaluación"
+		},
+		"description": "Configura la campaña y cómo se evaluarán sus llamadas.",
+		"sections": {
+			"details": {
+				"title": "Datos de la campaña",
+				"description": "Nombre, tipo y si la campaña empieza activa."
+			},
+			"evaluation": {
+				"title": "Evaluación",
+				"description": "La modalidad y el formulario con que se califican las llamadas."
+			}
+		},
+		"discard": {
+			"title": "¿Descartar esta campaña?",
+			"message": "Tienes cambios sin guardar. Si sales ahora se perderán.",
+			"confirm": "Descartar"
+		},
+		"notifications": {
+			"created": "\"{{name}}\" creada"
+		}
+	},
+	"callSource": {
+		"ftp": {
+			"label": "Servidor FTP",
+			"hint": "Servidores configurados por tu administrador. Esta campaña tomará sus llamadas del que elijas.",
+			"empty": "Aún no hay servidores FTP configurados. Pide a un administrador que agregue uno en la configuración de administración.",
+			"required": "Selecciona un servidor FTP"
+		},
+		"upload": {
+			"dropTitle": "Arrastra las grabaciones aquí o haz clic para buscarlas",
+			"dropSubtitle": "MP3, WAV o un ZIP con varias llamadas · hasta {{size}} MB cada uno",
+			"zipHint": "El contenido de los ZIP se extrae y se cuenta al crear la campaña.",
+			"summary": "{{files}} archivos · {{calls}} llamadas",
+			"columns": {
+				"callId": "ID de llamada",
+				"agent": "Agente",
+				"duration": "Duración de la llamada"
+			},
+			"rejected_one": "Se omitió {{count}} archivo: solo se aceptan MP3, WAV y ZIP de hasta {{size}} MB.",
+			"rejected_other": "Se omitieron {{count}} archivos: solo se aceptan MP3, WAV y ZIP de hasta {{size}} MB.",
+			"uploading_one": "Subiendo {{count}} archivo…",
+			"uploading_other": "Subiendo {{count}} archivos…",
+			"itemLabel": "llamadas",
+			"tabs": {
+				"review": "Listas para subir",
+				"uploaded": "Subidas"
+			},
+			"reviewEmpty": "Carga archivos para revisar sus llamadas aquí y luego confirma la subida.",
+			"reviewSummary": "{{files}} archivos · {{calls}} llamadas listas para subir",
+			"confirmHint": "Las llamadas solo se agregan a la campaña cuando confirmas.",
+			"clear": "Descartar",
+			"confirm": "Confirmar subida",
+			"confirmed_one": "{{count}} archivo enviado a subir.",
+			"confirmed_other": "{{count}} archivos enviados a subir.",
+			"uploadedEmpty": "Aún no se ha subido nada."
+		},
+		"tab": "Fuente de llamadas",
+		"title": "Fuente de llamadas",
+		"description": "El servidor FTP del que esta campaña toma sus llamadas.",
+		"status": {
+			"configured": "Configurada",
+			"notConfigured": "Sin configurar"
+		},
+		"save": "Guardar fuente de llamadas",
+		"saved": "Fuente de llamadas guardada.",
+		"discard": "Descartar cambios",
+		"fixFields": "Corrige los campos marcados antes de guardar.",
+		"manual": {
+			"button": "Carga manual",
+			"title": "Carga manual",
+			"description": "Envía audios sueltos o ZIP con varias llamadas directamente a esta campaña."
+		}
 	}
 }

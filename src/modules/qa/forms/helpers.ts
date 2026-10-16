@@ -239,3 +239,17 @@ export const errorTargetId = (error: DraftError | null) =>
 	error?.selection && error.selection.kind !== 'form'
 		? error.selection.id
 		: null;
+
+/** Saved categories plus any already on a form, case-insensitive, alphabetical. */
+export const getFormCategories = (
+	forms: BuilderForm[],
+	saved: string[]
+): string[] => {
+	const seen = new Map<string, string>();
+	for (const raw of [...saved, ...forms.map((f) => f.category)]) {
+		const name = raw.trim();
+		if (name && !seen.has(name.toLowerCase()))
+			seen.set(name.toLowerCase(), name);
+	}
+	return [...seen.values()].sort((a, b) => a.localeCompare(b));
+};

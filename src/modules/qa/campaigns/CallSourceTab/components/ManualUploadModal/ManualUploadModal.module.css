@@ -1,0 +1,31 @@
+.hiddenInput {
+	display: none;
+}
+
+.dropzone {
+	border: 1.5px dashed var(--mantine-color-gray-4);
+	border-radius: var(--mantine-radius-md);
+	padding: 2rem 1.5rem;
+	cursor: pointer;
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+	transition:
+		border-color 120ms ease,
+		background 120ms ease;
+}
+
+/* Once files are listed the drop area shrinks so the result stays in view. */
+.dropzoneCompact {
+	padding: 1rem 1.5rem;
+}
+
+.dropzone:hover,
+.dropzoneDragOver {
+	border-color: var(--mantine-primary-color-filled);
+	background: light-dark(
+		var(--mantine-primary-color-0),
+		var(--mantine-color-dark-5)
+	);
+}

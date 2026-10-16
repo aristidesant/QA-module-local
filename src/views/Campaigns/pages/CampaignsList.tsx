@@ -31,11 +31,15 @@ import { notifySuccess, notifyError } from '~/modules/qa/utils/notifications';
 import { useRoleMockStore } from '~/stores/roleMockStore';
 import type { Campaign } from '../types';
 import { mockCampaigns } from '../constants';
+import { useCampaignsStore } from '~/stores/qa/campaignsStore';
 
 export default function CampaignsList() {
 	const navigate = useNavigate();
 	const previewRole = useRoleMockStore((s) => s.previewRole);
-	const [campaigns, setCampaigns] = useState<Campaign[]>(mockCampaigns);
+	const [campaigns, setCampaigns] = useState<Campaign[]>(() => [
+		...useCampaignsStore.getState().created,
+		...mockCampaigns,
+	]);
 	const [completeConfirm, setCompleteConfirm] = useState<string | null>(null);
 	const [evaluationSettingsId, setEvaluationSettingsId] = useState<
 		string | null
@@ -263,10 +267,10 @@ export default function CampaignsList() {
 					<Group gap='sm'>
 						<Button
 							leftSection={<IconPlus size={18} />}
-							color='brand'
+							color='green'
 							onClick={() => navigate('/qa/campaigns/new')}
 						>
-							New external campaign
+							New campaign
 						</Button>
 					</Group>
 				</Group>
@@ -508,7 +512,7 @@ export default function CampaignsList() {
 											sentimentAnalysis: e.currentTarget.checked,
 										})
 									}
-									color='brand'
+									color='green'
 								/>
 							</Group>
 
@@ -534,7 +538,7 @@ export default function CampaignsList() {
 											businessInsights: e.currentTarget.checked,
 										})
 									}
-									color='brand'
+									color='green'
 								/>
 							</Group>
 
@@ -560,7 +564,7 @@ export default function CampaignsList() {
 											compliance: e.currentTarget.checked,
 										})
 									}
-									color='brand'
+									color='green'
 								/>
 							</Group>
 
@@ -586,7 +590,7 @@ export default function CampaignsList() {
 											liveListen: e.currentTarget.checked,
 										})
 									}
-									color='brand'
+									color='green'
 								/>
 							</Group>
 
@@ -612,7 +616,7 @@ export default function CampaignsList() {
 											liveCoaching: e.currentTarget.checked,
 										})
 									}
-									color='brand'
+									color='green'
 								/>
 							</Group>
 						</Stack>
@@ -626,7 +630,7 @@ export default function CampaignsList() {
 							Cancel
 						</Button>
 						<Button
-							color='brand'
+							color='green'
 							onClick={() => {
 								notifySuccess('Evaluation settings saved');
 								setEvaluationSettingsId(null);

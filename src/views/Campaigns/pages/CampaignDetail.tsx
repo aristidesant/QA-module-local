@@ -38,6 +38,8 @@ import { IconArrowLeft, IconEdit, IconPlayerPlay } from '@tabler/icons-react';
 import { useNavigate, useParams } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { useCampaignStore } from '../stores/useCampaignStore';
+import CallSourceTab from '~/modules/qa/campaigns/CallSourceTab';
+import { useCampaignsStore } from '~/stores/qa/campaignsStore';
 import type { ContactList, Evaluation, QATest, Aspect } from '../types';
 import {
 	mockContactLists,
@@ -78,8 +80,13 @@ export default function CampaignDetail() {
 	const navigate = useNavigate();
 	const { id } = useParams();
 	const { t } = useTranslation('qa.calls');
+	const { t: tCampaigns } = useTranslation('qa.campaigns');
 	const previewRole = useRoleMockStore((s) => s.previewRole);
 	const getCampaign = useCampaignStore((state) => state.getCampaign);
+	// Campaigns created from the New campaign page are not in the mock names.
+	const createdCampaign = useCampaignsStore((state) =>
+		state.created.find((campaign) => campaign.id === id)
+	);
 	const campaignCalls = useMemo<CampaignCallRow[]>(
 		() => buildCampaignCalls(id),
 		[id]
@@ -103,7 +110,10 @@ export default function CampaignDetail() {
 	// Get campaign config from store
 	const campaignConfig = id ? getCampaign(id) : undefined;
 	const campaignName =
-		campaignConfig?.name || mockCampaignNames[id || ''] || 'Campaign';
+		campaignConfig?.name ||
+		createdCampaign?.name ||
+		mockCampaignNames[id || ''] ||
+		'Campaign';
 
 	// Add Conversations Modal State
 	const [showAddConversationsModal, setShowAddConversationsModal] =
@@ -347,12 +357,13 @@ export default function CampaignDetail() {
 						</Text>
 					</div>
 
-					{/* Campaign Tabs - Overview, Conversations and Roster */}
+					{/* Campaign Tabs - Overview, Conversations, Roster and Call source */}
 					<Tabs defaultValue='overview' keepMounted={false}>
 						<Tabs.List>
 							<Tabs.Tab value='overview'>Overview</Tabs.Tab>
 							<Tabs.Tab value='conversations'>Conversations</Tabs.Tab>
 							<Tabs.Tab value='roster'>{t('roster.tab')}</Tabs.Tab>
+							<Tabs.Tab value='source'>{tCampaigns('callSource.tab')}</Tabs.Tab>
 						</Tabs.List>
 
 						<Tabs.Panel value='overview' pt='md'>
@@ -880,6 +891,10 @@ export default function CampaignDetail() {
 
 						<Tabs.Panel value='roster' pt='md'>
 							<CampaignRosterTab campaignId={id} />
+						</Tabs.Panel>
+
+						<Tabs.Panel value='source' pt='md'>
+							{id ? <CallSourceTab campaignId={id} /> : null}
 						</Tabs.Panel>
 					</Tabs>
 				</Stack>
