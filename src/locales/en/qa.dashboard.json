@@ -248,6 +248,22 @@
 			"age": "Age",
 			"ageDays": "{{count}}d"
 		},
+		"disputesSummary": {
+			"title": "Disputes",
+			"description": "Evaluations contested across the platform",
+			"manage": "Manage",
+			"openNow": "open now",
+			"noneOpen": "No open disputes",
+			"managedThisWeek": "Managed this week",
+			"vsLastWeek": "{{delta}} vs last week",
+			"sameAsLastWeek": "Same as last week",
+			"accepted": "Accepted {{count}}",
+			"rejected": "Rejected {{count}}",
+			"acceptance": "{{rate}}% acceptance",
+			"partial_one": "incl. {{count}} partially accepted",
+			"partial_other": "incl. {{count}} partially accepted",
+			"noneManaged": "Nothing managed yet this week"
+		},
 		"bestWorst": {
 			"description": "Your top and bottom performing calls over the last 7 days"
 		},

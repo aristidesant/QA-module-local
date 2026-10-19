@@ -201,7 +201,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 								standings={standings}
 								title={t('drawer.yourTeam')}
 								dense
-								footer={
+								headerActions={
 									<Anchor
 										component='button'
 										type='button'

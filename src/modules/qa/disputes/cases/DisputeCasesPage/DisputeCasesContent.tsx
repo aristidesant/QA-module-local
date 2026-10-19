@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation, useNavigate } from 'react-router';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import {
 	Badge,
 	Group,
@@ -35,6 +35,18 @@ dayjs.extend(relativeTime);
 
 type StatusFilter = DisputeStatus | 'all';
 
+const STATUS_FILTERS: StatusFilter[] = [
+	'all',
+	'open',
+	'accepted',
+	'partially-accepted',
+	'rejected',
+];
+
+/** Lets a link such as `?status=open` open the list already filtered. */
+const isStatusFilter = (value: string | null): value is StatusFilter =>
+	STATUS_FILTERS.includes(value as StatusFilter);
+
 /**
  * Role-aware dispute list body: KPIs + filters + table. Extracted from
  * DisputeCasesPage so the agent role can render it as a My Calls tab.
@@ -48,7 +60,11 @@ export const DisputeCasesContent: React.FC = () => {
 
 	const scoped = useMemo(() => casesForRole(allCases, role), [allCases, role]);
 
-	const [status, setStatus] = useState<StatusFilter>('all');
+	const [searchParams] = useSearchParams();
+	const initialStatus = searchParams.get('status');
+	const [status, setStatus] = useState<StatusFilter>(
+		isStatusFilter(initialStatus) ? initialStatus : 'all'
+	);
 	const [type, setType] = useState<string | null>(null);
 	const [team, setTeam] = useState<string | null>(null);
 	const [search, setSearch] = useState('');
@@ -263,15 +279,7 @@ export const DisputeCasesContent: React.FC = () => {
 						<SegmentedControl
 							value={status}
 							onChange={(value) => setStatus(value as StatusFilter)}
-							data={(
-								[
-									'all',
-									'open',
-									'accepted',
-									'partially-accepted',
-									'rejected',
-								] as StatusFilter[]
-							).map((value) => ({
+							data={STATUS_FILTERS.map((value) => ({
 								value,
 								label: `${t(`cases.filters.status.${value}`)} (${counts[value]})`,
 							}))}

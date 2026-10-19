@@ -100,7 +100,7 @@ const SEEDS: Seed[] = [
 		type: 'qa',
 		status: 'accepted',
 		createdAt: '2026-09-03T11:00:00Z',
-		resolvedAt: '2026-09-05T13:45:00Z',
+		resolvedAt: '2026-09-08T10:30:00Z',
 		flagged: QA_ITEMS.slice(0, 2),
 		decisions: QA_ITEMS.slice(0, 2).map((id) => correct(id, 'yes')),
 		agentComment:
@@ -114,7 +114,7 @@ const SEEDS: Seed[] = [
 		type: 'sentiment-emotion',
 		status: 'rejected',
 		createdAt: '2026-09-02T10:15:00Z',
-		resolvedAt: '2026-09-04T09:00:00Z',
+		resolvedAt: '2026-09-09T09:00:00Z',
 		agentComment:
 			'The customer sounded calm to me, I do not think the call was negative.',
 		managerComment:
@@ -135,8 +135,8 @@ const SEEDS: Seed[] = [
 		agentId: 'AGT-011',
 		type: 'compliance',
 		status: 'accepted',
-		createdAt: '2026-08-28T08:40:00Z',
-		resolvedAt: '2026-08-30T15:10:00Z',
+		createdAt: '2026-09-04T08:40:00Z',
+		resolvedAt: '2026-09-10T15:10:00Z',
 		flagged: COMPLIANCE_ITEMS,
 		decisions: COMPLIANCE_ITEMS.map((id) =>
 			correct(
@@ -163,8 +163,8 @@ const SEEDS: Seed[] = [
 		agentId: 'AGT-005',
 		type: 'sentiment-emotion',
 		status: 'accepted',
-		createdAt: '2026-08-25T09:30:00Z',
-		resolvedAt: '2026-08-27T11:20:00Z',
+		createdAt: '2026-08-31T09:30:00Z',
+		resolvedAt: '2026-09-02T11:20:00Z',
 		flagged: ['customer-category'],
 		decisions: [correct('customer-category', 'neutral')],
 		agentComment:
@@ -176,8 +176,8 @@ const SEEDS: Seed[] = [
 		agentId: 'AGT-009',
 		type: 'qa',
 		status: 'rejected',
-		createdAt: '2026-08-22T15:45:00Z',
-		resolvedAt: '2026-08-24T10:00:00Z',
+		createdAt: '2026-09-01T15:45:00Z',
+		resolvedAt: '2026-09-03T10:00:00Z',
 		agentComment: 'I believe the score should be higher.',
 		managerComment:
 			'No specific item was contested and the evaluation matches the rubric.',
@@ -187,8 +187,8 @@ const SEEDS: Seed[] = [
 		agentId: 'AGT-017',
 		type: 'business-insights',
 		status: 'accepted',
-		createdAt: '2026-08-20T13:10:00Z',
-		resolvedAt: '2026-08-21T16:30:00Z',
+		createdAt: '2026-09-03T13:10:00Z',
+		resolvedAt: '2026-09-05T16:30:00Z',
 		flagged: BUSINESS_ITEMS.slice(2, 3),
 		decisions: BUSINESS_ITEMS.slice(2, 3).map((id) =>
 			correct(id, 'not-detected')
@@ -232,8 +232,8 @@ const SEEDS: Seed[] = [
 		agentId: 'AGT-020',
 		type: 'qa',
 		status: 'partially-accepted',
-		createdAt: '2026-08-15T10:05:00Z',
-		resolvedAt: '2026-08-16T12:40:00Z',
+		createdAt: '2026-09-05T10:05:00Z',
+		resolvedAt: '2026-09-11T12:40:00Z',
 		flagged: QA_ITEMS,
 		decisions: [
 			...QA_ITEMS.slice(0, 2).map((id) => correct(id, 'yes')),

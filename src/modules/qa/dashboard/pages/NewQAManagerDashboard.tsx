@@ -6,18 +6,9 @@ import {
 	teamConversationsPath,
 } from '~/modules/qa/calls/constants';
 import type { CallIssueKey } from '~/modules/qa/calls/issues';
-import {
-	Stack,
-	Title,
-	Text,
-	SimpleGrid,
-	Badge,
-	Group,
-	Button,
-} from '@mantine/core';
+import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
-import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import {
 	QualityAssuranceCard,
 	ComplianceCard,
@@ -25,12 +16,12 @@ import {
 	BusinessInsightsCard,
 	OperationalCard,
 	CampaignPerformanceCard,
+	DisputesSummaryCard,
 	PerformanceScoreControls,
 	type CampaignPerformanceEntry,
 } from '../components';
 import { useDashboardCopy } from '../useDashboardCopy';
 import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
-import { TODAY } from '~/modules/qa/analytics/constants';
 import {
 	buildTeamDashboardMetrics,
 	buildTeamBusinessInsights,
@@ -51,115 +42,6 @@ const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
 	quarter: 'over the last 3 months',
 	sixMonths: 'over the last 6 months',
 };
-
-interface DisputeRow {
-	id: string;
-	agentName: string;
-	type: string;
-	status: 'open' | 'pending' | 'approved' | 'rejected';
-	createdDate: string;
-}
-
-const ALL_DISPUTES: DisputeRow[] = [
-	{
-		id: 'DSP-1042',
-		agentName: 'David Brown',
-		type: 'Score Dispute',
-		status: 'open',
-		createdDate: '2026-09-06T09:15:00Z',
-	},
-	{
-		id: 'DSP-1041',
-		agentName: 'Lisa Wong',
-		type: 'Auto-Fail Dispute',
-		status: 'pending',
-		createdDate: '2026-09-05T14:30:00Z',
-	},
-	{
-		id: 'DSP-1038',
-		agentName: 'Jessica Martinez',
-		type: 'Compliance Dispute',
-		status: 'approved',
-		createdDate: '2026-09-04T11:00:00Z',
-	},
-	{
-		id: 'DSP-1035',
-		agentName: 'John Smith',
-		type: 'Score Dispute',
-		status: 'rejected',
-		createdDate: '2026-09-03T16:45:00Z',
-	},
-	{
-		id: 'DSP-1030',
-		agentName: 'Sarah Johnson',
-		type: 'Evaluation Error',
-		status: 'approved',
-		createdDate: '2026-09-01T10:20:00Z',
-	},
-	{
-		id: 'DSP-1027',
-		agentName: 'Robert Kim',
-		type: 'Score Dispute',
-		status: 'pending',
-		createdDate: '2026-08-31T13:10:00Z',
-	},
-	{
-		id: 'DSP-1022',
-		agentName: 'Patricia Lopez',
-		type: 'Auto-Fail Dispute',
-		status: 'open',
-		createdDate: '2026-08-30T08:40:00Z',
-	},
-	{
-		id: 'DSP-1019',
-		agentName: 'Thomas Anderson',
-		type: 'Compliance Dispute',
-		status: 'rejected',
-		createdDate: '2026-08-29T15:55:00Z',
-	},
-	{
-		id: 'DSP-1016',
-		agentName: 'Maria Gonzalez',
-		type: 'Score Dispute',
-		status: 'open',
-		createdDate: '2026-08-28T12:05:00Z',
-	},
-	{
-		id: 'DSP-1013',
-		agentName: 'Kevin Park',
-		type: 'Evaluation Error',
-		status: 'pending',
-		createdDate: '2026-08-27T09:40:00Z',
-	},
-	{
-		id: 'DSP-1010',
-		agentName: 'Angela Torres',
-		type: 'Auto-Fail Dispute',
-		status: 'open',
-		createdDate: '2026-08-26T17:20:00Z',
-	},
-	{
-		id: 'DSP-1007',
-		agentName: 'Brian Walsh',
-		type: 'Compliance Dispute',
-		status: 'approved',
-		createdDate: '2026-08-25T10:15:00Z',
-	},
-	{
-		id: 'DSP-1004',
-		agentName: 'Nicole Foster',
-		type: 'Score Dispute',
-		status: 'open',
-		createdDate: '2026-08-24T14:50:00Z',
-	},
-	{
-		id: 'DSP-1001',
-		agentName: 'Daniel Reyes',
-		type: 'Evaluation Error',
-		status: 'rejected',
-		createdDate: '2026-08-22T08:30:00Z',
-	},
-];
 
 const ACTIVE_CAMPAIGNS: CampaignPerformanceEntry[] = [
 	{
@@ -224,62 +106,6 @@ const ACTIVE_CAMPAIGNS: CampaignPerformanceEntry[] = [
 	},
 ];
 
-const DAY_MS = 24 * 60 * 60 * 1000;
-
-/** Whole days a dispute has been waiting, measured from the dashboard's reference "today". */
-const disputeAgeDays = (createdDate: string) =>
-	Math.max(
-		0,
-		Math.floor((Date.parse(TODAY) - Date.parse(createdDate)) / DAY_MS)
-	);
-
-const DISPUTE_STATUS_COLORS: Record<DisputeRow['status'], string> = {
-	open: 'blue',
-	pending: 'yellow',
-	approved: 'green',
-	rejected: 'red',
-};
-
-const disputeColumns: BaseTableColumnDef<DisputeRow>[] = [
-	{
-		accessorKey: 'agentName',
-		header: 'Agent Name',
-		cell: ({ row }) => (
-			<Text fw={500} size='sm'>
-				{row.original.agentName}
-			</Text>
-		),
-	},
-	{
-		accessorKey: 'type',
-		header: 'Type',
-		cell: ({ row }) => <Text size='sm'>{row.original.type}</Text>,
-	},
-	{
-		accessorKey: 'status',
-		header: 'Status',
-		cell: ({ row }) => (
-			<Badge color={DISPUTE_STATUS_COLORS[row.original.status]} variant='light'>
-				{row.original.status.charAt(0).toUpperCase() +
-					row.original.status.slice(1)}
-			</Badge>
-		),
-	},
-	{
-		accessorKey: 'createdDate',
-		header: 'Age',
-		cell: ({ row }) => (
-			<Text
-				c='dimmed'
-				size='sm'
-				title={new Date(row.original.createdDate).toLocaleDateString()}
-			>
-				{disputeAgeDays(row.original.createdDate)}d
-			</Text>
-		),
-	},
-];
-
 export const NewQAManagerDashboard: React.FC = () => {
 	const navigate = useNavigate();
 	const copy = useDashboardCopy('qaManager');
@@ -303,12 +129,6 @@ export const NewQAManagerDashboard: React.FC = () => {
 		() => buildTeamBusinessInsights('qa-manager', days, lineOfBusiness),
 		[days, lineOfBusiness]
 	);
-
-	// Open and pending both still wait on a decision; oldest first so the longest wait leads.
-	const openDisputes = ALL_DISPUTES.filter(
-		(d) => d.status === 'open' || d.status === 'pending'
-	).sort((a, b) => a.createdDate.localeCompare(b.createdDate));
-	const openDisputeCount = openDisputes.length;
 
 	/** Card rows open the team's Conversations list, pre-filtered to the row's issue and this widget's period. */
 	const openConversations = (issue?: CallIssueKey) =>
@@ -412,35 +232,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 				</SectionCard>
 
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					<SectionCard
-						title='Open Disputes'
-						description='Evaluations being contested across the platform right now'
-						fullHeight
-						headerActions={
-							<Group gap='xs'>
-								<Badge size='lg' color='blue' variant='light'>
-									{openDisputeCount}
-								</Badge>
-								<Button
-									variant='subtle'
-									size='xs'
-									onClick={() => navigate('/qa/qa-manager/disputes')}
-								>
-									Manage →
-								</Button>
-							</Group>
-						}
-					>
-						<BaseTable<DisputeRow>
-							columns={disputeColumns}
-							data={openDisputes}
-							getRowId={(dispute) => dispute.id}
-							onRowClick={(dispute) =>
-								navigate(`/qa/qa-manager/disputes/${dispute.id}`)
-							}
-							emptyMessage='No open disputes'
-						/>
-					</SectionCard>
+					<DisputesSummaryCard role='qa-manager' />
 
 					<CampaignPerformanceCard entries={ACTIVE_CAMPAIGNS} />
 				</SimpleGrid>

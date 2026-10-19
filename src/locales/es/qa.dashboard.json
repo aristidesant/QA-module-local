@@ -248,6 +248,22 @@
 			"age": "Antigüedad",
 			"ageDays": "{{count}} d"
 		},
+		"disputesSummary": {
+			"title": "Disputas",
+			"description": "Evaluaciones impugnadas en toda la plataforma",
+			"manage": "Gestionar",
+			"openNow": "abiertas ahora",
+			"noneOpen": "Sin disputas abiertas",
+			"managedThisWeek": "Gestionadas esta semana",
+			"vsLastWeek": "{{delta}} vs la semana pasada",
+			"sameAsLastWeek": "Igual que la semana pasada",
+			"accepted": "Aceptadas {{count}}",
+			"rejected": "Rechazadas {{count}}",
+			"acceptance": "{{rate}} % de aceptación",
+			"partial_one": "incl. {{count}} aceptada parcialmente",
+			"partial_other": "incl. {{count}} aceptadas parcialmente",
+			"noneManaged": "Nada gestionado todavía esta semana"
+		},
 		"bestWorst": {
 			"description": "Tus mejores y peores llamadas de los últimos 7 días"
 		},

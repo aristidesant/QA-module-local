@@ -81,3 +81,6 @@ export { PlatformBurnoutCard } from './PlatformBurnoutCard';
 export { EsgScoreCard } from './EsgScoreCard';
 export { HumanVsAiCard } from './HumanVsAiCard';
 export { CampaignPerformanceTable } from './CampaignPerformanceTable';
+
+// QA Manager: general disputes view
+export { DisputesSummaryCard } from './DisputesSummaryCard';
