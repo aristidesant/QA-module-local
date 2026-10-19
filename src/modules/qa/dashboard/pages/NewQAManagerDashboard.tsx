@@ -1,6 +1,12 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
+	COMPLIANCE_ISSUE,
+	QA_ISSUE,
+	teamConversationsPath,
+} from '~/modules/qa/calls/constants';
+import type { CallIssueKey } from '~/modules/qa/calls/issues';
+import {
 	Stack,
 	Title,
 	Text,
@@ -227,9 +233,6 @@ const disputeAgeDays = (createdDate: string) =>
 		Math.floor((Date.parse(TODAY) - Date.parse(createdDate)) / DAY_MS)
 	);
 
-/** Team-wide drill-down target: no platform calls list exists yet, so rows open Team Analytics. */
-const ANALYTICS_PATH = '/qa/qa-manager/analytics';
-
 const DISPUTE_STATUS_COLORS: Record<DisputeRow['status'], string> = {
 	open: 'blue',
 	pending: 'yellow',
@@ -307,7 +310,11 @@ export const NewQAManagerDashboard: React.FC = () => {
 	).sort((a, b) => a.createdDate.localeCompare(b.createdDate));
 	const openDisputeCount = openDisputes.length;
 
-	const openAnalytics = () => navigate(ANALYTICS_PATH);
+	/** Card rows open the team's Conversations list, pre-filtered to the row's issue and this widget's period. */
+	const openConversations = (issue?: CallIssueKey) =>
+		navigate(
+			teamConversationsPath('qa-manager', { issue, period, lineOfBusiness })
+		);
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -338,7 +345,10 @@ export const NewQAManagerDashboard: React.FC = () => {
 								effectiveContacts={metrics.effectiveContacts}
 								nonEffectiveContacts={metrics.nonEffectiveContacts}
 								subtitle={copy.cardSubtitle('operational')}
-								onNonEffectiveClick={openAnalytics}
+								onCallsClick={() => openConversations()}
+								onNonEffectiveClick={() =>
+									openConversations('non-effective-contact')
+								}
 								trend={metrics.trends?.effectiveContacts}
 							/>
 						</div>
@@ -346,7 +356,7 @@ export const NewQAManagerDashboard: React.FC = () => {
 							<QualityAssuranceCard
 								score={metrics.qa}
 								subtitle={copy.cardSubtitle('qa')}
-								onCategoryClick={openAnalytics}
+								onCategoryClick={(key) => openConversations(QA_ISSUE[key])}
 								autoFails={metrics.autoFails}
 								issueCounts={{
 									...metrics.qaIssueCounts,
@@ -359,7 +369,9 @@ export const NewQAManagerDashboard: React.FC = () => {
 							<ComplianceCard
 								categories={metrics.complianceCategories}
 								subtitle={copy.cardSubtitle('compliance')}
-								onCategoryClick={openAnalytics}
+								onCategoryClick={(name) =>
+									openConversations(COMPLIANCE_ISSUE[name])
+								}
 								issueCounts={metrics.complianceIssueCounts}
 								trend={metrics.trends?.compliance}
 							/>
@@ -379,7 +391,13 @@ export const NewQAManagerDashboard: React.FC = () => {
 									trend: metrics.trends?.customerSentiment,
 								}}
 								subtitle={copy.cardSubtitle('sentiment')}
-								onReviewClick={openAnalytics}
+								onReviewClick={(side) =>
+									openConversations(
+										side === 'agent'
+											? 'negative-agent-emotion'
+											: 'negative-customer-emotion'
+									)
+								}
 							/>
 						</div>
 						<div className={styles.gridCard}>

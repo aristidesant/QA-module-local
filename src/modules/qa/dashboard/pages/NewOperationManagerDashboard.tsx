@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
 import {
@@ -20,7 +20,9 @@ import {
 	ProfileBadge,
 	QualityAssuranceCard,
 	ComplianceCard,
-	SentimentEmotionCard,
+	SentimentEmotionSplitCard,
+	OperationalCard,
+	PerformanceScoreControls,
 	BusinessInsightsCard,
 	SentimentTrendChart,
 	CriticalIssuesTable,
@@ -34,16 +36,36 @@ import { rankingPath } from '~/modules/qa/rankings/constants';
 import { computeStandings, sortPrograms } from '~/modules/qa/rankings/helpers';
 import { useRankingsStore, selectPrograms } from '~/stores/qa/rankingsStore';
 import {
-	OPERATION_MANAGER_WEEKLY_METRICS,
 	OPERATION_MANAGER_SENTIMENT_TREND,
 	OPERATION_MANAGER_CALLS,
 	CRITICAL_ISSUES_OPERATION_MANAGER,
 } from '../mockData';
 import type { CriticalIssue } from '../mockData';
+import { useDashboardCopy } from '../useDashboardCopy';
+import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
+import {
+	buildTeamDashboardMetrics,
+	buildTeamBusinessInsights,
+} from '~/modules/qa/calls/agentMetrics';
+import type { DashboardLineOfBusiness } from '../lineOfBusiness';
+import {
+	DEFAULT_PERFORMANCE_SCORE_PERIOD,
+	performanceScoreDays,
+	type PerformanceScorePeriod,
+} from '../constants';
 import styles from '../Dashboard.module.css';
 
 /** Inbox this dashboard's critical issues drill into */
 const OPERATION_MANAGER_INBOX_PATH = '/qa/operation-manager/inbox';
+
+/** Time-window clause per period, used in the Performance Score description. */
+const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
+	today: 'today',
+	week: 'this week',
+	month: 'this month',
+	quarter: 'over the last 3 months',
+	sixMonths: 'over the last 6 months',
+};
 
 /**
  * Default insights for the Operation Manager dashboard (operations-level recommendations)
@@ -410,60 +432,105 @@ export const NewOperationManagerDashboard: React.FC = () => {
 		() => (liveProgram ? computeStandings(liveProgram, TEAM_CALLS) : []),
 		[liveProgram]
 	);
+	const copy = useDashboardCopy('operationManager');
+	const [period, setPeriod] = useState<PerformanceScorePeriod>(
+		DEFAULT_PERFORMANCE_SCORE_PERIOD
+	);
+	const days = performanceScoreDays(period);
+	const [lineOfBusiness, setLineOfBusiness] =
+		useState<DashboardLineOfBusiness | null>(null);
+	const thresholds = useSettingsStore(selectThresholds);
+	// Portfolio view: every team, over the same window and thresholds the QA manager sees.
+	const metrics = useMemo(
+		() =>
+			buildTeamDashboardMetrics('qa-manager', days, lineOfBusiness, thresholds),
+		[days, lineOfBusiness, thresholds]
+	);
 	const {
-		qaScore,
-		sentiment,
-		complianceCategories,
-		autoFailsCount,
-		businessInsights,
-		businessOutcome,
-	} = OPERATION_MANAGER_WEEKLY_METRICS;
-
-	/** Overall sentiment on the 0-5 scale, averaging agent and customer readings */
-	const overallSentiment = (sentiment.agentAvg + sentiment.customerAvg) / 2;
+		insights: businessInsights,
+		outcome: businessOutcome,
+		conversionTrend,
+	} = useMemo(
+		() => buildTeamBusinessInsights('qa-manager', days, lineOfBusiness),
+		[days, lineOfBusiness]
+	);
 
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
 				{/* 1. Header Section */}
 				<div>
-					<Title order={1}>Operation Manager Dashboard</Title>
+					<Title order={1}>{copy.title}</Title>
 					<Text c='dimmed' mt='xs'>
-						Client portfolio and team health overview
+						{copy.subtitle}
 					</Text>
 				</div>
 
-				{/* 2. Performance Score: the four evaluation aspects */}
+				{/* 2. Performance Score: the five evaluation aspects, portfolio-wide and compact */}
 				<SectionCard
 					title='Performance Score'
-					description='Cross-client quality assurance, compliance, sentiment and business results this week'
+					description={`Cross-client quality assurance, compliance, sentiment and business results ${WINDOW_PHRASE[period]}${lineOfBusiness ? ` · ${lineOfBusiness}` : ''}`}
+					headerActions={
+						<PerformanceScoreControls
+							period={period}
+							onPeriodChange={setPeriod}
+							lineOfBusiness={lineOfBusiness}
+							onLineOfBusinessChange={setLineOfBusiness}
+						/>
+					}
 				>
-					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
+					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
+						<div className={styles.gridCard}>
+							<OperationalCard
+								calls={metrics.calls}
+								effectiveContacts={metrics.effectiveContacts}
+								nonEffectiveContacts={metrics.nonEffectiveContacts}
+								subtitle={copy.cardSubtitle('operational')}
+								trend={metrics.trends?.effectiveContacts}
+								compact
+							/>
+						</div>
 						<div className={styles.gridCard}>
 							<QualityAssuranceCard
-								score={qaScore}
-								subtitle='Cross-client category breakdown'
-								autoFails={autoFailsCount}
+								score={metrics.qa}
+								subtitle={copy.cardSubtitle('qa')}
+								autoFails={metrics.autoFails}
+								trend={metrics.trends?.qa}
+								compact
 							/>
 						</div>
 						<div className={styles.gridCard}>
 							<ComplianceCard
-								categories={complianceCategories}
-								subtitle='Cross-client category overview'
+								categories={metrics.complianceCategories}
+								subtitle={copy.cardSubtitle('compliance')}
+								trend={metrics.trends?.compliance}
+								compact
 							/>
 						</div>
 						<div className={styles.gridCard}>
-							<SentimentEmotionCard
-								score={overallSentiment}
-								predominantEmotion={sentiment.predominantEmotion}
-								subtitle='0-5 scale assessment'
+							<SentimentEmotionSplitCard
+								agent={{
+									score: metrics.sentiment.agentAvg,
+									emotion: metrics.sentiment.agentEmotion,
+									negativeCount: metrics.sentiment.agentNegativeCount,
+									trend: metrics.trends?.agentSentiment,
+								}}
+								customer={{
+									score: metrics.sentiment.customerAvg,
+									emotion: metrics.sentiment.customerEmotion,
+									negativeCount: metrics.sentiment.customerNegativeCount,
+									trend: metrics.trends?.customerSentiment,
+								}}
+								subtitle={copy.cardSubtitle('sentiment')}
+								compact
 							/>
 						</div>
 						<div className={styles.gridCard}>
 							<BusinessInsightsCard
 								insights={businessInsights}
 								outcome={businessOutcome}
-								subtitle='Cross-client conversion and signals'
+								subtitle={copy.cardSubtitle('business')}
+								conversionTrend={conversionTrend}
 							/>
 						</div>
 					</SimpleGrid>

@@ -192,17 +192,20 @@
 	"roleDashboard": {
 		"title": {
 			"supervisor": "Supervisor Dashboard",
-			"qaManager": "QA Manager Dashboard"
+			"qaManager": "QA Manager Dashboard",
+			"operationManager": "Operation Manager Dashboard"
 		},
 		"subtitle": {
 			"agent": "Your personal performance overview",
 			"supervisor": "Your team's performance overview",
-			"qaManager": "Platform performance overview"
+			"qaManager": "Platform performance overview",
+			"operationManager": "Client portfolio and team health overview"
 		},
 		"scope": {
 			"agent": "Your calls",
 			"supervisor": "Your team",
-			"qaManager": "Platform"
+			"qaManager": "Platform",
+			"operationManager": "Cross-client"
 		},
 		"measure": {
 			"operational": "Contact effectiveness",

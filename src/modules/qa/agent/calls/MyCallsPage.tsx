@@ -23,6 +23,7 @@ import type { BaseTableColumnDef } from '~/components/BaseTable/BaseTable';
 import { AGENT_PERSONA_ID, NOW_ISO } from '~/modules/qa/team/constants';
 import { formatDateTime, formatSeconds } from '~/modules/qa/team/helpers';
 import { buildAgentIssueCalls } from '~/modules/qa/calls/helpers';
+import IssueBadges from '~/modules/qa/calls/components/IssueBadges';
 import {
 	MY_CALLS_EVALUATION_TYPES,
 	MY_CALLS_PERIODS,
@@ -48,7 +49,6 @@ import styles from './MyCallsPage.module.css';
 
 const helper = createColumnHelper<AgentCallRow>();
 type MyCallsTab = 'calls' | 'disputes';
-const MAX_ISSUE_BADGES = 3;
 
 interface FiltersState {
 	period: MyCallsPeriod;
@@ -218,34 +218,12 @@ export default function MyCallsPage() {
 		helper.accessor('issues', {
 			header: t('myCalls.columns.issues'),
 			enableSorting: false,
-			cell: (info) => {
-				const row = info.row.original;
-				const issues = info.getValue();
-				const shown = issues.slice(0, MAX_ISSUE_BADGES);
-				return (
-					<div className={styles.issueCell}>
-						{shown.map((key) => (
-							<Badge
-								key={key}
-								size='sm'
-								variant={key === 'auto-fail' ? 'filled' : 'light'}
-								color={CALL_ISSUE_BY_KEY[key].color}
-							>
-								{key === 'auto-fail'
-									? t('myCalls.autoFailCount', { count: row.autoFailCount })
-									: t(`issues.${key}`)}
-							</Badge>
-						))}
-						{issues.length > MAX_ISSUE_BADGES && (
-							<Badge size='sm' variant='outline' color='gray'>
-								{t('myCalls.moreIssues', {
-									count: issues.length - MAX_ISSUE_BADGES,
-								})}
-							</Badge>
-						)}
-					</div>
-				);
-			},
+			cell: (info) => (
+				<IssueBadges
+					autoFailCount={info.row.original.autoFailCount}
+					issues={info.getValue()}
+				/>
+			),
 		}) as BaseTableColumnDef<AgentCallRow>,
 	];
 

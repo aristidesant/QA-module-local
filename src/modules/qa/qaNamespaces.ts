@@ -130,6 +130,8 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	],
 	'qa.agents': 'qa.agents',
 	'qa.agents.detail': 'qa.agents',
+	'qa.supervisor.conversations': ['qa.calls', 'qa.dashboard', 'qa.team'],
+	'qa.qa-manager.conversations': ['qa.calls', 'qa.dashboard', 'qa.team'],
 	'qa.agent.calls': [
 		'qa.calls',
 		'qa.team',

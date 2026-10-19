@@ -11,8 +11,19 @@ import {
 	QA_FORM_BY_CAMPAIGN_TYPE,
 	ROSTER_TO_MOCK_CAMPAIGN,
 } from './constants';
+import {
+	dashboardLineOfBusinessFor,
+	type DashboardLineOfBusiness,
+} from '~/modules/qa/dashboard/lineOfBusiness';
+import type { TeamRole } from '~/modules/qa/team/types';
+import { teamCallsInWindow } from './agentMetrics';
 import { callIssues } from './issues';
-import type { AgentCallRow, CampaignCallRow, CampaignRosterRow } from './types';
+import type {
+	AgentCallRow,
+	CampaignCallRow,
+	CampaignRosterRow,
+	TeamCallRow,
+} from './types';
 
 export const rosterCampaignIdFor = (
 	mockCampaignId: string | undefined
@@ -31,25 +42,51 @@ const complianceScoreFor = (c: TeamCallMetric) =>
 			3
 	);
 
+const toAgentCallRow = (c: TeamCallMetric): AgentCallRow => ({
+	id: c.id,
+	callId: c.id,
+	mockCampaignId: ROSTER_TO_MOCK_CAMPAIGN[c.campaignId] ?? '1',
+	campaignName: c.campaignName,
+	date: c.date,
+	durationSeconds: c.handleTimeSeconds,
+	autoFail: c.autoFail,
+	autoFailCount: c.autoFail ? criticalErrors(c) : 0,
+	qaScore: c.qaScore,
+	sentimentScore: c.customerSentiment,
+	complianceScore: complianceScoreFor(c),
+	customerEmotion: c.predominantEmotion,
+	agentEmotion: c.agentEmotion,
+	issues: callIssues(c),
+});
+
 /** The agent's own calls, newest first. */
 export const buildAgentCalls = (agentId: string): AgentCallRow[] =>
 	TEAM_CALLS.filter((c) => c.agentId === agentId)
-		.map((c) => ({
-			id: c.id,
-			callId: c.id,
-			mockCampaignId: ROSTER_TO_MOCK_CAMPAIGN[c.campaignId] ?? '1',
-			campaignName: c.campaignName,
-			date: c.date,
-			durationSeconds: c.handleTimeSeconds,
-			autoFail: c.autoFail,
-			autoFailCount: c.autoFail ? criticalErrors(c) : 0,
-			qaScore: c.qaScore,
-			sentimentScore: c.customerSentiment,
-			complianceScore: complianceScoreFor(c),
-			customerEmotion: c.predominantEmotion,
-			agentEmotion: c.agentEmotion,
-			issues: callIssues(c),
-		}))
+		.map(toAgentCallRow)
+		.sort((a, b) => b.date.localeCompare(a.date));
+
+export const toTeamCallRow = (c: TeamCallMetric): TeamCallRow => ({
+	...toAgentCallRow(c),
+	agentId: c.agentId,
+	agentName: c.agentName,
+	team: c.team,
+	supervisorName: c.supervisorName,
+	rosterCampaignId: c.campaignId,
+	lineOfBusiness: dashboardLineOfBusinessFor(c.campaignId),
+});
+
+/**
+ * Scoped team calls in the same window the dashboard cards count, newest
+ * first. Built on `teamCallsInWindow` so a drill-down shows exactly the calls
+ * behind the card's number.
+ */
+export const buildTeamCalls = (
+	role: TeamRole,
+	days: number,
+	lineOfBusiness?: DashboardLineOfBusiness | null
+): TeamCallRow[] =>
+	teamCallsInWindow(role, days, lineOfBusiness)
+		.map(toTeamCallRow)
 		.sort((a, b) => b.date.localeCompare(a.date));
 
 /** My Calls only lists calls that need attention — the agent never scrolls through clean calls here. */

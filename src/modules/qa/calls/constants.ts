@@ -1,3 +1,7 @@
+import type { PerformanceScorePeriod } from '~/modules/qa/dashboard/constants';
+import type { DashboardLineOfBusiness } from '~/modules/qa/dashboard/lineOfBusiness';
+import type { TeamRole } from '~/modules/qa/team/types';
+import type { CallIssueKey } from './issues';
 import type { MyCallsEvaluationType } from './types';
 
 /** Campaigns routes use mockCampaigns ids ('1'..'5'); the roster/TEAM_CALLS use camp-00N. */
@@ -82,3 +86,41 @@ export const MY_CALLS_EVALUATION_TYPES: {
 		step: 1,
 	},
 ];
+
+/** Card rows → the issue they open, shared by the agent, supervisor and QA manager dashboards. */
+export const QA_ISSUE: Record<
+	'ecn' | 'enc' | 'ecc' | 'ecuf' | 'autoFails',
+	CallIssueKey
+> = {
+	ecn: 'qa-ecn',
+	enc: 'qa-enc',
+	ecc: 'qa-ecc',
+	ecuf: 'qa-ecuf',
+	autoFails: 'auto-fail',
+};
+export const COMPLIANCE_ISSUE: Record<
+	'Security' | 'Regulatory' | 'Legal',
+	CallIssueKey
+> = {
+	Security: 'compliance-security',
+	Regulatory: 'compliance-regulatory',
+	Legal: 'compliance-legal',
+};
+
+export interface TeamConversationsParams {
+	issue?: CallIssueKey;
+	period: PerformanceScorePeriod;
+	lineOfBusiness: DashboardLineOfBusiness | null;
+}
+
+/** Drill-down target of the team dashboards: the role's Conversations list, pre-filtered. */
+export const teamConversationsPath = (
+	role: TeamRole,
+	{ issue, period, lineOfBusiness }: TeamConversationsParams
+): string => {
+	// URLSearchParams encodes the space in 'Accounts Receivable'.
+	const params = new URLSearchParams({ period });
+	if (issue) params.set('issue', issue);
+	if (lineOfBusiness) params.set('lob', lineOfBusiness);
+	return `/qa/${role}/conversations?${params.toString()}`;
+};

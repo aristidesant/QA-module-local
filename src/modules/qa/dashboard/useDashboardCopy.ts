@@ -1,6 +1,10 @@
 import { useTranslation } from 'react-i18next';
 
-export type DashboardCopyRole = 'agent' | 'supervisor' | 'qaManager';
+export type DashboardCopyRole =
+	| 'agent'
+	| 'supervisor'
+	| 'qaManager'
+	| 'operationManager';
 export type DashboardMeasure =
 	| 'operational'
 	| 'qa'

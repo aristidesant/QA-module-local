@@ -96,6 +96,9 @@ const AgentEvaluationsPage = React.lazy(
 const MyCallsPage = React.lazy(
 	() => import('./modules/qa/agent/calls/MyCallsPage')
 );
+const QaConversationsPage = React.lazy(
+	() => import('./modules/qa/conversations/ConversationsPage')
+);
 const AgentEvaluationDetailPage = React.lazy(
 	() =>
 		import('./modules/evaluations-demo/AgentDashboard/pages/AgentEvaluationDetailPage/AgentEvaluationDetailPage')
@@ -1224,6 +1227,28 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<TeamAnalyticsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/conversations',
+										id: 'qa.supervisor.conversations',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaConversationsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/conversations',
+										id: 'qa.qa-manager.conversations',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<QaConversationsPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

@@ -1,5 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import {
+	COMPLIANCE_ISSUE,
+	QA_ISSUE,
+	teamConversationsPath,
+} from '~/modules/qa/calls/constants';
+import type { CallIssueKey } from '~/modules/qa/calls/issues';
 import { useTranslation } from 'react-i18next';
 import { Stack, Title, Text, Grid, SimpleGrid } from '@mantine/core';
 import { IconTrophy } from '@tabler/icons-react';
@@ -47,9 +53,6 @@ const WINDOW_PHRASE: Record<PerformanceScorePeriod, string> = {
 	sixMonths: 'over the last 6 months',
 };
 
-/** Team-wide drill-down target: no team calls list exists yet, so rows open Team Analytics. */
-const ANALYTICS_PATH = '/qa/supervisor/analytics';
-
 export const NewSupervisorDashboard: React.FC = () => {
 	const { t } = useTranslation('qa.rankings');
 	const copy = useDashboardCopy('supervisor');
@@ -81,7 +84,11 @@ export const NewSupervisorDashboard: React.FC = () => {
 		[triggerRules]
 	);
 
-	const openAnalytics = () => navigate(ANALYTICS_PATH);
+	/** Card rows open the team's Conversations list, pre-filtered to the row's issue and this widget's period. */
+	const openConversations = (issue?: CallIssueKey) =>
+		navigate(
+			teamConversationsPath('supervisor', { issue, period, lineOfBusiness })
+		);
 
 	return (
 		<ContentContainer contentWidth='full'>
@@ -112,7 +119,10 @@ export const NewSupervisorDashboard: React.FC = () => {
 								effectiveContacts={metrics.effectiveContacts}
 								nonEffectiveContacts={metrics.nonEffectiveContacts}
 								subtitle={copy.cardSubtitle('operational')}
-								onNonEffectiveClick={openAnalytics}
+								onCallsClick={() => openConversations()}
+								onNonEffectiveClick={() =>
+									openConversations('non-effective-contact')
+								}
 								trend={metrics.trends?.effectiveContacts}
 							/>
 						</div>
@@ -120,7 +130,7 @@ export const NewSupervisorDashboard: React.FC = () => {
 							<QualityAssuranceCard
 								score={metrics.qa}
 								subtitle={copy.cardSubtitle('qa')}
-								onCategoryClick={openAnalytics}
+								onCategoryClick={(key) => openConversations(QA_ISSUE[key])}
 								autoFails={metrics.autoFails}
 								issueCounts={{
 									...metrics.qaIssueCounts,
@@ -133,7 +143,9 @@ export const NewSupervisorDashboard: React.FC = () => {
 							<ComplianceCard
 								categories={metrics.complianceCategories}
 								subtitle={copy.cardSubtitle('compliance')}
-								onCategoryClick={openAnalytics}
+								onCategoryClick={(name) =>
+									openConversations(COMPLIANCE_ISSUE[name])
+								}
 								issueCounts={metrics.complianceIssueCounts}
 								trend={metrics.trends?.compliance}
 							/>
@@ -153,7 +165,13 @@ export const NewSupervisorDashboard: React.FC = () => {
 									trend: metrics.trends?.customerSentiment,
 								}}
 								subtitle={copy.cardSubtitle('sentiment')}
-								onReviewClick={openAnalytics}
+								onReviewClick={(side) =>
+									openConversations(
+										side === 'agent'
+											? 'negative-agent-emotion'
+											: 'negative-customer-emotion'
+									)
+								}
 							/>
 						</div>
 						<div className={styles.gridCard}>

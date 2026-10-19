@@ -41,6 +41,8 @@ interface SentimentEmotionSplitCardProps {
 	subtitle?: string;
 	/** Drill-down into the calls with a negative emotion on that side */
 	onReviewClick?: (side: 'agent' | 'customer') => void;
+	/** Portfolio view (Operation Manager): keeps the rows but drops progress bars, call counts and drill-down. */
+	compact?: boolean;
 }
 
 /**
@@ -58,7 +60,8 @@ const SideColumn: React.FC<{
 	title: string;
 	icon: React.ReactNode;
 	side: SentimentSide;
-}> = ({ title, icon, side }) => {
+	compact?: boolean;
+}> = ({ title, icon, side, compact = false }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const { cutPoints } = useSettingsStore(selectThresholds).sentiment;
 	const band = getSentimentBand(side.score, cutPoints);
@@ -79,12 +82,14 @@ const SideColumn: React.FC<{
 					{t('sentimentSplit.outOfFive')}
 				</Text>
 			</Group>
-			<Progress
-				value={(side.score / 5) * 100}
-				size='xs'
-				color={tone}
-				aria-label={`${title} ${side.score.toFixed(1)}/5`}
-			/>
+			{!compact && (
+				<Progress
+					value={(side.score / 5) * 100}
+					size='xs'
+					color={tone}
+					aria-label={`${title} ${side.score.toFixed(1)}/5`}
+				/>
+			)}
 			{band.color === 'red' && (
 				<Badge color='danger' variant='light' size='sm'>
 					{t(band.labelKey)}
@@ -109,7 +114,7 @@ const SideColumn: React.FC<{
  */
 export const SentimentEmotionSplitCard: React.FC<
 	SentimentEmotionSplitCardProps
-> = ({ agent, customer, subtitle, onReviewClick }) => {
+> = ({ agent, customer, subtitle, onReviewClick, compact = false }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const { cutPoints } = useSettingsStore(selectThresholds).sentiment;
 	const headerBand = getSentimentBand(customer.score, cutPoints);
@@ -178,28 +183,34 @@ export const SentimentEmotionSplitCard: React.FC<
 						title={t('sentimentSplit.agent')}
 						icon={<IconHeadset size={14} />}
 						side={agent}
+						compact={compact}
 					/>
 					<SideColumn
 						title={t('sentimentSplit.customer')}
 						icon={<IconUser size={14} />}
 						side={customer}
+						compact={compact}
 					/>
 				</SimpleGrid>
 
-				<Divider />
+				{!compact && (
+					<>
+						<Divider />
 
-				<Stack gap={4}>
-					{reviewRow(
-						'customer',
-						t('sentimentSplit.negativeCustomer'),
-						customer.negativeCount
-					)}
-					{reviewRow(
-						'agent',
-						t('sentimentSplit.negativeAgent'),
-						agent.negativeCount
-					)}
-				</Stack>
+						<Stack gap={4}>
+							{reviewRow(
+								'customer',
+								t('sentimentSplit.negativeCustomer'),
+								customer.negativeCount
+							)}
+							{reviewRow(
+								'agent',
+								t('sentimentSplit.negativeAgent'),
+								agent.negativeCount
+							)}
+						</Stack>
+					</>
+				)}
 			</Stack>
 		</Card>
 	);

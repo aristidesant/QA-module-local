@@ -25,6 +25,7 @@ import {
 	performanceScoreDays,
 	type PerformanceScorePeriod,
 } from '../constants';
+import { COMPLIANCE_ISSUE, QA_ISSUE } from '~/modules/qa/calls/constants';
 import type { CallIssueKey } from '~/modules/qa/calls/issues';
 import {
 	useCoachingStore,
@@ -43,25 +44,6 @@ import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { BEST_WORST_CALLS } from '../mockData';
 import styles from '../Dashboard.module.css';
 
-/** Card rows → the My Calls issue they open. */
-const QA_ISSUE: Record<
-	'ecn' | 'enc' | 'ecc' | 'ecuf' | 'autoFails',
-	CallIssueKey
-> = {
-	ecn: 'qa-ecn',
-	enc: 'qa-enc',
-	ecc: 'qa-ecc',
-	ecuf: 'qa-ecuf',
-	autoFails: 'auto-fail',
-};
-const COMPLIANCE_ISSUE: Record<
-	'Security' | 'Regulatory' | 'Legal',
-	CallIssueKey
-> = {
-	Security: 'compliance-security',
-	Regulatory: 'compliance-regulatory',
-	Legal: 'compliance-legal',
-};
 const MY_CALLS_PATH = '/qa/agent/calls';
 
 /** Time-window clause per period, in this page's existing "over the last N days" voice. */

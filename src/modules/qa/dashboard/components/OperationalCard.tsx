@@ -26,10 +26,14 @@ interface OperationalCardProps {
 	sales?: { offered: number; sold: number };
 	/** Short line under the card title, used to scope the card per role */
 	subtitle?: string;
+	/** Opens every call in the window, when there are any. */
+	onCallsClick?: () => void;
 	/** Opens the non-effective calls behind the number, when there are any. */
 	onNonEffectiveClick?: () => void;
 	/** Effective-contacts trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
 	trend?: DashboardMetricTrend;
+	/** Portfolio view (Operation Manager): keeps the rows but drops progress bars, call counts and drill-down. */
+	compact?: boolean;
 }
 
 const pct = (part: number, total: number) =>
@@ -42,13 +46,16 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 	nonEffectiveContacts,
 	sales,
 	subtitle,
+	onCallsClick,
 	onNonEffectiveClick,
 	trend,
+	compact = false,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const effectivePct = pct(effectiveContacts, calls);
 	const nonEffectivePct = pct(nonEffectiveContacts, calls);
 	const clickable = Boolean(onNonEffectiveClick) && nonEffectiveContacts > 0;
+	const callsClickable = Boolean(onCallsClick) && calls > 0;
 	const salesPct = sales ? pct(sales.sold, sales.offered) : 0;
 
 	return (
@@ -78,16 +85,29 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 					</ThemeIcon>
 				</Group>
 
-				<Group gap='xs' align='baseline'>
-					<Text className={styles.scoreValue}>{calls}</Text>
-					<Text size='sm' c='dimmed'>
-						calls taken or made
-					</Text>
-				</Group>
+				<DrillRow
+					onClick={callsClickable ? onCallsClick : undefined}
+					hint={t('drill.hint')}
+				>
+					<Group
+						gap='xs'
+						align='baseline'
+						justify='space-between'
+						wrap='nowrap'
+					>
+						<Group gap='xs' align='baseline'>
+							<Text className={styles.scoreValue}>{calls}</Text>
+							<Text size='sm' c='dimmed'>
+								calls taken or made
+							</Text>
+						</Group>
+						{callsClickable && <IconChevronRight size={14} />}
+					</Group>
+				</DrillRow>
 
 				<Stack gap='sm'>
 					<DrillRow hint={t('drill.hint')}>
-						<Group justify='space-between' mb={4}>
+						<Group justify='space-between' mb={compact ? 0 : 4}>
 							<Text size='sm' fw={500}>
 								Effective contacts
 							</Text>
@@ -95,24 +115,28 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 								<Text size='sm' fw={600}>
 									{effectivePct}%
 								</Text>
-								<Text size='xs' c='dimmed'>
-									{t('drill.calls', { count: effectiveContacts })}
-								</Text>
+								{!compact && (
+									<Text size='xs' c='dimmed'>
+										{t('drill.calls', { count: effectiveContacts })}
+									</Text>
+								)}
 							</Group>
 						</Group>
-						<Progress
-							value={effectivePct}
-							size='xs'
-							color='gray'
-							aria-label={`Effective contacts ${effectivePct}%`}
-						/>
+						{!compact && (
+							<Progress
+								value={effectivePct}
+								size='xs'
+								color='gray'
+								aria-label={`Effective contacts ${effectivePct}%`}
+							/>
+						)}
 					</DrillRow>
 
 					<DrillRow
 						onClick={clickable ? onNonEffectiveClick : undefined}
 						hint={t('drill.hint')}
 					>
-						<Group justify='space-between' mb={4}>
+						<Group justify='space-between' mb={compact ? 0 : 4}>
 							<Text size='sm' fw={500}>
 								Non-effective contacts
 							</Text>
@@ -120,18 +144,22 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 								<Text size='sm' fw={600}>
 									{nonEffectivePct}%
 								</Text>
-								<Text size='xs' c='dimmed'>
-									{t('drill.calls', { count: nonEffectiveContacts })}
-								</Text>
+								{!compact && (
+									<Text size='xs' c='dimmed'>
+										{t('drill.calls', { count: nonEffectiveContacts })}
+									</Text>
+								)}
 								{clickable && <IconChevronRight size={14} />}
 							</Group>
 						</Group>
-						<Progress
-							value={nonEffectivePct}
-							size='xs'
-							color='gray'
-							aria-label={`Non-effective contacts ${nonEffectivePct}%`}
-						/>
+						{!compact && (
+							<Progress
+								value={nonEffectivePct}
+								size='xs'
+								color='gray'
+								aria-label={`Non-effective contacts ${nonEffectivePct}%`}
+							/>
+						)}
 					</DrillRow>
 
 					{sales && (

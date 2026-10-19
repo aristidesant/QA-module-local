@@ -26,6 +26,8 @@ interface ComplianceCardProps {
 	onCategoryClick?: (name: ComplianceCategory['name']) => void;
 	/** Overall compliance average's trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
 	trend?: DashboardMetricTrend;
+	/** Portfolio view (Operation Manager): keeps the rows but drops progress bars, call counts and drill-down. */
+	compact?: boolean;
 }
 
 /** Maps a compliance category status to its dashboard tone: neutral when compliant, amber / danger otherwise. */
@@ -61,6 +63,7 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 	issueCounts,
 	onCategoryClick,
 	trend,
+	compact = false,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const averageScore = categories.length
@@ -124,7 +127,7 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 								}
 								hint={t('drill.hint')}
 							>
-								<Group justify='space-between' mb={4}>
+								<Group justify='space-between' mb={compact ? 0 : 4}>
 									<Group gap='xs' align='center'>
 										<Text size='sm' fw={500}>
 											{category.name}
@@ -151,12 +154,14 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 										{clickable && <IconChevronRight size={14} />}
 									</Group>
 								</Group>
-								<Progress
-									value={category.score}
-									size='xs'
-									color={getComplianceColor(category.status)}
-									aria-label={`${category.name} ${category.score}%`}
-								/>
+								{!compact && (
+									<Progress
+										value={category.score}
+										size='xs'
+										color={getComplianceColor(category.status)}
+										aria-label={`${category.name} ${category.score}%`}
+									/>
+								)}
 							</DrillRow>
 						);
 					})}

@@ -84,5 +84,32 @@
 		"low-customer-sentiment": "Low customer sentiment",
 		"low-agent-sentiment": "Low agent sentiment",
 		"non-effective-contact": "Non-effective contact"
+	},
+	"teamConversations": {
+		"title": "Conversations",
+		"description": "Every call your team handled, across campaigns. Filter by period, agent, campaign or issue, and open a call to review its evaluation.",
+		"descriptionQaManager": "Every call handled on the platform, across teams and campaigns.",
+		"filters": {
+			"dateFrom": "Date from",
+			"dateTo": "Date to",
+			"campaign": "Campaign",
+			"allCampaigns": "All campaigns",
+			"lineOfBusiness": "Line of business",
+			"aspect": "Aspect",
+			"issues": "Issue type",
+			"issuesPlaceholder": "Any issue",
+			"clear": "Clear",
+			"drilldown": "Showing the calls behind the dashboard card. Change or clear the filters to see more."
+		},
+		"columns": {
+			"date": "Date",
+			"agent": "Agent",
+			"duration": "Duration",
+			"qaScore": "QA score",
+			"issues": "Issues"
+		},
+		"rowsCount_one": "{{count}} call",
+		"rowsCount_other": "{{count}} calls",
+		"empty": "No calls match these filters."
 	}
 }

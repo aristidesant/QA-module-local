@@ -167,7 +167,8 @@
 			"reports": "Reportes",
 			"groupOperations": "Operaciones",
 			"groupInsights": "Perspectivas",
-			"inbox": "Bandeja de entrada"
+			"inbox": "Bandeja de entrada",
+			"conversations": "Conversaciones"
 		},
 		"agent": {
 			"dashboard": "Panel de control",
@@ -200,7 +201,8 @@
 			"groupOperations": "Operaciones",
 			"groupConfiguration": "Configuración",
 			"groupInsights": "Perspectivas",
-			"inbox": "Bandeja de entrada"
+			"inbox": "Bandeja de entrada",
+			"conversations": "Conversaciones"
 		},
 		"operationmanager": {
 			"dashboard": "Panel de control",

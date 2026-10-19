@@ -192,17 +192,20 @@
 	"roleDashboard": {
 		"title": {
 			"supervisor": "Panel del supervisor",
-			"qaManager": "Panel del gerente de QA"
+			"qaManager": "Panel del gerente de QA",
+			"operationManager": "Panel del gerente de operaciones"
 		},
 		"subtitle": {
 			"agent": "Resumen de tu desempeño personal",
 			"supervisor": "Resumen del desempeño de tu equipo",
-			"qaManager": "Resumen del desempeño de la plataforma"
+			"qaManager": "Resumen del desempeño de la plataforma",
+			"operationManager": "Resumen de la cartera de clientes y la salud de los equipos"
 		},
 		"scope": {
 			"agent": "Tus llamadas",
 			"supervisor": "Tu equipo",
-			"qaManager": "Plataforma"
+			"qaManager": "Plataforma",
+			"operationManager": "Entre clientes"
 		},
 		"measure": {
 			"operational": "Efectividad de contacto",

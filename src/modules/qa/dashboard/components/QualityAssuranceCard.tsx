@@ -44,6 +44,8 @@ interface QualityAssuranceCardProps {
 	onCategoryClick?: (key: QaCategoryKey | 'autoFails') => void;
 	/** Overall QA score's trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
 	trend?: DashboardMetricTrend;
+	/** Portfolio view (Operation Manager): keeps the rows but drops progress bars, call counts and drill-down. */
+	compact?: boolean;
 }
 
 /** Label of each score band, in `qa.dashboard`. */
@@ -79,6 +81,7 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 	issueCounts,
 	onCategoryClick,
 	trend,
+	compact = false,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const thresholds = useSettingsStore(selectThresholds);
@@ -148,7 +151,7 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 								}
 								hint={t('drill.hint')}
 							>
-								<Group justify='space-between' mb={4}>
+								<Group justify='space-between' mb={compact ? 0 : 4}>
 									<Group gap='xs' align='center'>
 										<Text size='sm' fw={500}>
 											{category.label}
@@ -171,12 +174,14 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 										{clickable && <IconChevronRight size={14} />}
 									</Group>
 								</Group>
-								<Progress
-									value={score[category.key]}
-									size='xs'
-									color={bandColor}
-									aria-label={`${category.label} ${score[category.key]}%`}
-								/>
+								{!compact && (
+									<Progress
+										value={score[category.key]}
+										size='xs'
+										color={bandColor}
+										aria-label={`${category.label} ${score[category.key]}%`}
+									/>
+								)}
 							</DrillRow>
 						);
 					})}

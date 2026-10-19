@@ -14,6 +14,7 @@ import {
 	IconSpeakerphone,
 	IconAddressBook,
 	IconForms,
+	IconMessages,
 } from '@tabler/icons-react';
 import type { SidebarNavItem } from './Sidebar';
 import styles from './Sidebar.module.css';
@@ -110,6 +111,13 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.team',
 	},
 	{
+		key: 'supervisor-conversations',
+		label: 'sidebar.supervisor.conversations',
+		icon: <IconMessages size={20} className={styles.menuIcon} />,
+		to: '/qa/supervisor/conversations',
+		i18nNamespace: 'qa.calls',
+	},
+	{
 		key: 'supervisor-customers',
 		label: 'sidebar.supervisor.customers',
 		icon: <IconAddressBook size={20} className={styles.menuIcon} />,
@@ -191,6 +199,7 @@ export const getSupervisorNavigationGrouped = (): (
 			'supervisor-dashboard',
 			'supervisor-inbox',
 			'supervisor-team',
+			'supervisor-conversations',
 			'supervisor-customers',
 			'supervisor-campaigns',
 			'supervisor-coaching',
@@ -242,6 +251,13 @@ export const getQAManagerNavigation = (): SidebarNavItem[] => [
 		icon: <IconUsers size={20} className={styles.menuIcon} />,
 		to: '/qa/qa-manager/teams',
 		i18nNamespace: 'qa.team',
+	},
+	{
+		key: 'qamanager-conversations',
+		label: 'sidebar.qamanager.conversations',
+		icon: <IconMessages size={20} className={styles.menuIcon} />,
+		to: '/qa/qa-manager/conversations',
+		i18nNamespace: 'qa.calls',
 	},
 	{
 		key: 'qamanager-forms',
@@ -340,6 +356,7 @@ export const getQAManagerNavigationGrouped = (): (
 			'qamanager-dashboard',
 			'qamanager-inbox',
 			'qamanager-teams',
+			'qamanager-conversations',
 			'qamanager-forms',
 			'qamanager-coaching',
 			'qamanager-lms'

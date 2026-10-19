@@ -84,5 +84,32 @@
 		"low-customer-sentiment": "Sentimiento del cliente bajo",
 		"low-agent-sentiment": "Sentimiento del agente bajo",
 		"non-effective-contact": "Contacto no efectivo"
+	},
+	"teamConversations": {
+		"title": "Conversaciones",
+		"description": "Todas las llamadas de tu equipo, en todas las campañas. Filtra por periodo, agente, campaña o incidencia y abre una llamada para revisar su evaluación.",
+		"descriptionQaManager": "Todas las llamadas gestionadas en la plataforma, en todos los equipos y campañas.",
+		"filters": {
+			"dateFrom": "Fecha desde",
+			"dateTo": "Fecha hasta",
+			"campaign": "Campaña",
+			"allCampaigns": "Todas las campañas",
+			"lineOfBusiness": "Línea de negocio",
+			"aspect": "Aspecto",
+			"issues": "Tipo de incidencia",
+			"issuesPlaceholder": "Cualquier incidencia",
+			"clear": "Limpiar",
+			"drilldown": "Mostrando las llamadas detrás de la tarjeta del dashboard. Cambia o limpia los filtros para ver más."
+		},
+		"columns": {
+			"date": "Fecha",
+			"agent": "Agente",
+			"duration": "Duración",
+			"qaScore": "Puntuación QA",
+			"issues": "Incidencias"
+		},
+		"rowsCount_one": "{{count}} llamada",
+		"rowsCount_other": "{{count}} llamadas",
+		"empty": "Ninguna llamada coincide con estos filtros."
 	}
 }

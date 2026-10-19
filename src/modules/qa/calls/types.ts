@@ -1,4 +1,5 @@
 import type { CallEmotion } from '~/modules/qa/analytics/types';
+import type { DashboardLineOfBusiness } from '~/modules/qa/dashboard/lineOfBusiness';
 import type { RosterAgent } from '~/modules/qa/team/types';
 import type { CallIssueKey } from './issues';
 
@@ -25,6 +26,17 @@ export interface AgentCallRow {
 	customerEmotion: CallEmotion;
 	agentEmotion: CallEmotion;
 	issues: CallIssueKey[];
+}
+
+/** One scoped team call (Conversations page): the agent row plus who took it and where. */
+export interface TeamCallRow extends AgentCallRow {
+	agentId: string;
+	agentName: string;
+	team: string;
+	supervisorName: string;
+	/** 'camp-00N' — the id TEAM_CAMPAIGNS and the line-of-business lookup use. */
+	rosterCampaignId: string;
+	lineOfBusiness: DashboardLineOfBusiness | null;
 }
 
 /** Row of the campaign Conversations table — same shape CampaignDetail already filters on. */
