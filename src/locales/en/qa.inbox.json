@@ -250,6 +250,7 @@
 		"undo": "Undo",
 		"restored": "Message restored",
 		"markedUnread": "Marked as unread",
-		"replySent": "Reply sent"
+		"replySent": "Reply sent",
+		"markedRead": "Marked as read"
 	}
 }

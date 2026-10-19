@@ -4,7 +4,8 @@ import {
 	Badge,
 	Group,
 	List,
-	Progress,
+	Paper,
+	RingProgress,
 	SimpleGrid,
 	Stack,
 	Text,
@@ -148,21 +149,33 @@ export const PayloadDetail: React.FC<PayloadDetailProps> = ({ payload }) => {
 			);
 
 		case 'BURNOUT_RISK': {
-			const color = payload.level === 'high' ? 'red' : 'orange';
+			const tone = payload.level === 'high' ? 'danger' : 'amber';
 			return (
-				<Stack gap='md'>
-					<Group justify='space-between'>
-						<Fact label={t('details.burnout.level')}>
-							<Badge color={color} variant='light'>
+				<Group align='flex-start' gap='lg' wrap='wrap'>
+					<Paper withBorder radius='md' p='xs' className={styles.riskTile}>
+						<Stack align='center' justify='center' gap={6} h='100%'>
+							<Text size='xs' c='dimmed'>
+								{t('details.burnout.level')}
+							</Text>
+							<RingProgress
+								size={76}
+								thickness={9}
+								roundCaps
+								sections={[{ value: payload.percentage, color: tone }]}
+								role='img'
+								aria-label={`${t('details.burnout.level')}: ${payload.percentage}%`}
+								label={
+									<Text ta='center' fw={700} size='sm'>
+										{payload.percentage}%
+									</Text>
+								}
+							/>
+							<Badge color={tone} variant='light' size='sm'>
 								{t(`details.burnout.levels.${payload.level}`)}
 							</Badge>
-						</Fact>
-						<Text fw={700} size='lg'>
-							{payload.percentage}%
-						</Text>
-					</Group>
-					<Progress value={payload.percentage} color={color} />
-					<div>
+						</Stack>
+					</Paper>
+					<div className={styles.riskDrivers}>
 						<Text size='xs' c='dimmed' mb={6}>
 							{t('details.burnout.drivers')}
 						</Text>
@@ -174,10 +187,9 @@ export const PayloadDetail: React.FC<PayloadDetailProps> = ({ payload }) => {
 							))}
 						</Group>
 					</div>
-				</Stack>
+				</Group>
 			);
 		}
-
 		case 'RECOGNITION':
 			return (
 				<Group gap='md' wrap='nowrap'>

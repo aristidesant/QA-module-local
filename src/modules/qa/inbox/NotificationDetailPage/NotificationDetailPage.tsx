@@ -1,17 +1,23 @@
 import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import {
-	Anchor,
+	Avatar,
 	Badge,
-	Breadcrumbs,
 	Button,
-	Grid,
+	Divider,
 	Group,
+	Paper,
 	Stack,
 	Text,
 	Title,
 } from '@mantine/core';
-import { IconArchive, IconMailOpened } from '@tabler/icons-react';
+import {
+	IconArchive,
+	IconArrowLeft,
+	IconArrowRight,
+	IconMail,
+	IconMailOpened,
+} from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer';
@@ -226,154 +232,174 @@ export default function NotificationDetailPage() {
 		notifySuccess(t('toast.replySent'));
 	};
 
+	const handleToggleRead = () => {
+		if (live.read) {
+			markAsUnread(live.id);
+			notifySuccess(t('toast.markedUnread'));
+		} else {
+			markAsRead(live.id);
+			notifySuccess(t('toast.markedRead'));
+		}
+	};
+
+	const handleArchive = () => {
+		archiveNotification(live.id);
+		notifyWithUndo(t('toast.archived'), t('toast.undo'), () =>
+			unarchiveNotification(live.id)
+		);
+		navigate(inboxListPath);
+	};
+
 	return (
 		<ContentContainer contentWidth='full'>
-			<Stack gap='lg'>
-				<Breadcrumbs>
-					<Anchor
-						component='button'
-						type='button'
-						size='sm'
-						onClick={() => navigate(inboxListPath)}
-					>
-						{t('detail.back')}
-					</Anchor>
-					<Text size='sm' c='dimmed'>
-						{live.title}
-					</Text>
-				</Breadcrumbs>
-
-				<Stack gap={6}>
-					<Group gap='xs'>
-						<Badge
-							size='sm'
+			<Stack gap='md' maw={960} mx='auto'>
+				<Paper withBorder radius='md' className={styles.reader}>
+					<Group gap='xs' wrap='wrap' className={styles.toolbar}>
+						<Button
+							variant='subtle'
 							color='gray'
-							variant='light'
-							leftSection={<KindIcon size={12} />}
-						>
-							{t(`kinds.${kind}`)}
-						</Badge>
-						<Badge
 							size='sm'
-							color={PRIORITY_TONE[live.priority] ?? 'gray'}
-							variant='light'
+							leftSection={<IconArrowLeft size={16} />}
+							onClick={() => navigate(inboxListPath)}
 						>
-							{t(`priorities.${live.priority}`)}
-						</Badge>
+							{t('detail.back')}
+						</Button>
+						<Divider orientation='vertical' />
+						<Button
+							variant='subtle'
+							color='gray'
+							size='sm'
+							leftSection={
+								live.read ? (
+									<IconMail size={16} />
+								) : (
+									<IconMailOpened size={16} />
+								)
+							}
+							onClick={handleToggleRead}
+						>
+							{t(
+								live.read
+									? 'table.actions.markUnread'
+									: 'table.actions.markRead'
+							)}
+						</Button>
+						<Button
+							variant='subtle'
+							color='gray'
+							size='sm'
+							leftSection={<IconArchive size={16} />}
+							onClick={handleArchive}
+						>
+							{t('drawer.archive')}
+						</Button>
+						<Group gap='xs' wrap='wrap' ml='auto'>
+							{live.actions?.map((action) => (
+								<Button
+									key={action.label}
+									variant='default'
+									size='sm'
+									onClick={() => navigate(action.url)}
+								>
+									{action.label}
+								</Button>
+							))}
+							{cta && (
+								<Button
+									variant='light'
+									size='sm'
+									rightSection={<IconArrowRight size={16} />}
+									onClick={() => navigate(cta.to)}
+								>
+									{cta.label}
+								</Button>
+							)}
+						</Group>
 					</Group>
-					<Title order={1}>{live.title}</Title>
-					<Text size='sm' c='dimmed'>
-						{t('detail.from')}{' '}
-						<Text span fw={600} c='bright'>
-							{sender}
-						</Text>{' '}
-						· {t(`sources.${live.sourceRole}`)} ·{' '}
-						{dayjs(live.createdAt).format('DD MMM YYYY · HH:mm')}
-					</Text>
-				</Stack>
 
-				{payload.kind !== 'MESSAGE' && (
-					<div className={styles.factsStrip}>
-						<PayloadDetail payload={payload} />
+					<div className={styles.readerHeader}>
+						<Stack gap='sm'>
+							<Group gap='xs'>
+								<Badge
+									size='sm'
+									color='gray'
+									variant='light'
+									leftSection={<KindIcon size={12} />}
+								>
+									{t(`kinds.${kind}`)}
+								</Badge>
+								<Badge
+									size='sm'
+									color={PRIORITY_TONE[live.priority] ?? 'gray'}
+									variant='light'
+								>
+									{t(`priorities.${live.priority}`)}
+								</Badge>
+							</Group>
+							<Title order={1} size='h2'>
+								{live.title}
+							</Title>
+							<Group gap='sm' wrap='nowrap' align='center'>
+								<Avatar name={sender} color='gray' radius='xl' size='md' />
+								<div>
+									<Text size='sm' fw={600}>
+										{sender}
+									</Text>
+									<Text size='xs' c='dimmed'>
+										{t(`sources.${live.sourceRole}`)}
+									</Text>
+								</div>
+								<Text size='xs' c='dimmed' ml='auto'>
+									{dayjs(live.createdAt).format('DD MMM YYYY · HH:mm')}
+								</Text>
+							</Group>
+						</Stack>
 					</div>
+
+					{!automated && (
+						<div className={styles.readerBody}>
+							<Text size='md' lh={1.6} maw='72ch' className={styles.message}>
+								{live.message}
+							</Text>
+						</div>
+					)}
+
+					{payload.kind !== 'MESSAGE' && (
+						<div className={styles.readerFacts}>
+							<PayloadDetail payload={payload} />
+						</div>
+					)}
+				</Paper>
+
+				{automated && (
+					<AutomatedCoachingMessage
+						session={automated.session}
+						profile={automated.profile}
+					/>
 				)}
 
-				<Grid gap='md'>
-					<Grid.Col span={{ base: 12, md: 8 }} order={{ base: 2, md: 1 }}>
-						<Stack gap='md'>
-							{automated ? (
-								<AutomatedCoachingMessage
-									session={automated.session}
-									profile={automated.profile}
-								/>
-							) : (
-								<SectionCard padding='md'>
-									<Text size='sm' className={styles.message}>
-										{live.message}
-									</Text>
-								</SectionCard>
-							)}
+				{payload.kind === 'COACHING_SESSION' && (
+					<CoachingSessionContext
+						sessionId={payload.sessionId}
+						agentId={live.agentId}
+						materialsOnly={Boolean(automated)}
+						onOpenMaterial={
+							viewer === 'agent'
+								? (contentId) => navigate(agentContentPath(contentId))
+								: undefined
+						}
+					/>
+				)}
 
-							{payload.kind === 'COACHING_SESSION' && (
-								<CoachingSessionContext
-									sessionId={payload.sessionId}
-									agentId={live.agentId}
-									materialsOnly={Boolean(automated)}
-									onOpenMaterial={
-										viewer === 'agent'
-											? (contentId) => navigate(agentContentPath(contentId))
-											: undefined
-									}
-								/>
-							)}
-
-							{showThread && (
-								<SectionCard padding='md'>
-									<MessageThread
-										replies={replies}
-										viewerRole={me.role}
-										onSend={handleSend}
-									/>
-								</SectionCard>
-							)}
-						</Stack>
-					</Grid.Col>
-
-					<Grid.Col span={{ base: 12, md: 4 }} order={{ base: 1, md: 2 }}>
-						<Stack gap='md'>
-							<SectionCard padding='md'>
-								<Stack gap='xs'>
-									{cta && (
-										<Button
-											fullWidth
-											variant='light'
-											onClick={() => navigate(cta.to)}
-										>
-											{cta.label}
-										</Button>
-									)}
-									{live.actions?.map((action) => (
-										<Button
-											key={action.label}
-											fullWidth
-											variant='default'
-											onClick={() => navigate(action.url)}
-										>
-											{action.label}
-										</Button>
-									))}
-									<Button
-										fullWidth
-										variant='subtle'
-										color='gray'
-										leftSection={<IconMailOpened size={16} />}
-										onClick={() => {
-											markAsUnread(live.id);
-											notifySuccess(t('toast.markedUnread'));
-										}}
-									>
-										{t('drawer.markUnread')}
-									</Button>
-									<Button
-										fullWidth
-										variant='subtle'
-										color='red'
-										leftSection={<IconArchive size={16} />}
-										onClick={() => {
-											archiveNotification(live.id);
-											notifyWithUndo(t('toast.archived'), t('toast.undo'), () =>
-												unarchiveNotification(live.id)
-											);
-											navigate(inboxListPath);
-										}}
-									>
-										{t('drawer.archive')}
-									</Button>
-								</Stack>
-							</SectionCard>
-						</Stack>
-					</Grid.Col>
-				</Grid>
+				{showThread && (
+					<SectionCard padding='md'>
+						<MessageThread
+							replies={replies}
+							viewerRole={me.role}
+							onSend={handleSend}
+						/>
+					</SectionCard>
+				)}
 			</Stack>
 		</ContentContainer>
 	);

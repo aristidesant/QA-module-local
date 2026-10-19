@@ -250,6 +250,7 @@
 		"undo": "Deshacer",
 		"restored": "Mensaje restaurado",
 		"markedUnread": "Marcado como sin leer",
-		"replySent": "Respuesta enviada"
+		"replySent": "Respuesta enviada",
+		"markedRead": "Marcado como leído"
 	}
 }

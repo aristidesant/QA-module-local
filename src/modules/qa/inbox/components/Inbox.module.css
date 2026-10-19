@@ -35,11 +35,42 @@
 	background-color: var(--mantine-color-blue-light);
 }
 
-.factsStrip {
-	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-	border-radius: var(--mantine-radius-md);
+/* Message detail as a reading pane: toolbar, header, body and facts in one bordered surface. */
+.reader {
+	overflow: hidden;
+}
+
+.toolbar {
+	padding: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+	border-bottom: 1px solid var(--mantine-color-default-border);
 	background: light-dark(
 		var(--mantine-color-gray-0),
 		var(--mantine-color-dark-6)
 	);
+}
+
+.readerHeader {
+	padding: var(--mantine-spacing-lg) var(--mantine-spacing-lg)
+		var(--mantine-spacing-md);
+}
+
+.readerBody {
+	padding: 0 var(--mantine-spacing-lg) var(--mantine-spacing-lg);
+}
+
+.readerFacts {
+	padding: var(--mantine-spacing-md) var(--mantine-spacing-lg);
+	border-top: 1px solid var(--mantine-color-default-border);
+}
+
+/* Burnout risk level: a small square tile, not a bar across the page. */
+.riskTile {
+	width: 152px;
+	aspect-ratio: 1 / 1;
+	flex: none;
+}
+
+.riskDrivers {
+	flex: 1;
+	min-width: 200px;
 }
