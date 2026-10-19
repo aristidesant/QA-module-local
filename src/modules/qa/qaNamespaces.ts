@@ -74,6 +74,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.supervisor.inbox': ['qa.inbox', 'qa.teamAnalytics', 'qa.team'],
 	'qa.qa-manager.inbox': ['qa.inbox', 'qa.teamAnalytics', 'qa.team'],
 	'qa.operation-manager.inbox': ['qa.inbox', 'qa.teamAnalytics', 'qa.team'],
+	'qa.operation-manager.team-config': ['qa.team'],
 	'qa.agent.inbox.detail': [
 		'qa.inbox',
 		'qa.teamAnalytics',

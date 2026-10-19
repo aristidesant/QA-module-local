@@ -215,7 +215,8 @@
 			"groupOrganization": "Organización",
 			"groupConfiguration": "Configuración",
 			"groupInsights": "Perspectivas",
-			"inbox": "Bandeja de entrada"
+			"inbox": "Bandeja de entrada",
+			"teamConfig": "Configuración de equipos"
 		},
 		"rolePreview": {
 			"items": {

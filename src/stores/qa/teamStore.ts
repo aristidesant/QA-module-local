@@ -55,6 +55,14 @@ export interface SendMessageInput {
 	priority: AgentNotification['priority'];
 }
 
+export interface CreateTeamInput {
+	teamName: string;
+	supervisorName: string;
+	supervisorEmail: string;
+	/** Agents who move into the new team right away. */
+	memberIds?: string[];
+}
+
 interface TeamState {
 	profiles: Record<string, AgentProfile>;
 	supervisors: Record<string, RosterSupervisor>;
@@ -75,6 +83,12 @@ interface TeamState {
 	setTeamCampaigns: (supervisorId: string, campaignIds: string[]) => void;
 	removeMember: (agentId: string) => void;
 	addMembers: (agentIds: string[], supervisorId: string) => void;
+	/** Creates a supervisor with their team and, optionally, moves the first members in. Returns the new supervisor. */
+	createTeam: (input: CreateTeamInput) => RosterSupervisor;
+	/** Renames the team and relabels every member. */
+	renameTeam: (supervisorId: string, teamName: string) => void;
+	/** Removes the team: members go to Unassigned, the supervisor and their campaign list go away. */
+	dissolveTeam: (supervisorId: string) => void;
 }
 
 const author = (role: TeamRole) =>
@@ -356,6 +370,85 @@ export const useTeamStore = create<TeamState>((set, get) => ({
 			}
 			return { profiles };
 		}),
+
+	createTeam: (input) => {
+		const supervisor: RosterSupervisor = {
+			id: nextId('SUP'),
+			name: input.supervisorName.trim(),
+			team: input.teamName.trim(),
+			email: input.supervisorEmail.trim(),
+		};
+		set((s) => {
+			const profiles = { ...s.profiles };
+			for (const agentId of input.memberIds ?? []) {
+				const p = profiles[agentId];
+				if (!p) continue;
+				profiles[agentId] = {
+					...p,
+					agent: {
+						...p.agent,
+						supervisorId: supervisor.id,
+						supervisorName: supervisor.name,
+						team: supervisor.team,
+					},
+				};
+			}
+			return {
+				supervisors: { ...s.supervisors, [supervisor.id]: supervisor },
+				teamCampaignIds: { ...s.teamCampaignIds, [supervisor.id]: [] },
+				profiles,
+			};
+		});
+		return supervisor;
+	},
+
+	renameTeam: (supervisorId, teamName) =>
+		set((s) => {
+			const supervisor = s.supervisors[supervisorId];
+			if (!supervisor) return {};
+			const profiles = { ...s.profiles };
+			for (const [agentId, p] of Object.entries(profiles)) {
+				if (p.agent.supervisorId === supervisorId) {
+					profiles[agentId] = { ...p, agent: { ...p.agent, team: teamName } };
+				}
+			}
+			return {
+				supervisors: {
+					...s.supervisors,
+					[supervisorId]: { ...supervisor, team: teamName },
+				},
+				profiles,
+			};
+		}),
+
+	dissolveTeam: (supervisorId) =>
+		set((s) => {
+			const profiles = { ...s.profiles };
+			for (const [agentId, p] of Object.entries(profiles)) {
+				if (p.agent.supervisorId === supervisorId) {
+					profiles[agentId] = {
+						...p,
+						agent: {
+							...p.agent,
+							supervisorId: UNASSIGNED_SUPERVISOR_ID,
+							supervisorName: UNASSIGNED_SUPERVISOR.name,
+							team: UNASSIGNED_SUPERVISOR.team,
+						},
+					};
+				}
+			}
+			return {
+				profiles,
+				supervisors: Object.fromEntries(
+					Object.entries(s.supervisors).filter(([id]) => id !== supervisorId)
+				),
+				teamCampaignIds: Object.fromEntries(
+					Object.entries(s.teamCampaignIds).filter(
+						([id]) => id !== supervisorId
+					)
+				),
+			};
+		}),
 }));
 
 export const selectProfile = (agentId: string | undefined) => (s: TeamState) =>
@@ -367,6 +460,7 @@ export const selectVisibleProfiles = (role: TeamRole) => (s: TeamState) =>
 	);
 
 export const selectSupervisors = (s: TeamState) => s.supervisors;
+export const selectProfiles = (s: TeamState) => s.profiles;
 export const selectSupervisor = (id: string) => (s: TeamState) =>
 	s.supervisors[id];
 export const selectTeamCampaignIds = (supervisorId: string) => (s: TeamState) =>

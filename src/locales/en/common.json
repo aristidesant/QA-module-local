@@ -217,7 +217,8 @@
 			"groupOrganization": "Organization",
 			"groupConfiguration": "Configuration",
 			"groupInsights": "Insights",
-			"inbox": "Inbox"
+			"inbox": "Inbox",
+			"teamConfig": "Team configuration"
 		},
 		"rolePreview": {
 			"items": {

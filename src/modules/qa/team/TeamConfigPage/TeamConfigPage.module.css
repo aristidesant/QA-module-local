@@ -1,0 +1,91 @@
+/* The board: one column per team, scrolling sideways when there are many. */
+.board {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--mantine-spacing-md);
+	overflow-x: auto;
+	padding-bottom: var(--mantine-spacing-sm);
+}
+
+.column {
+	width: 280px;
+	flex: none;
+}
+
+/* The pool of agents without a team reads as a holding area, not a team. */
+.columnUnassigned {
+	border-style: dashed;
+}
+
+.columnHeader {
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-sm)
+		var(--mantine-spacing-xs);
+	border-bottom: 1px solid var(--mantine-color-default-border);
+}
+
+/* Lists keep a minimum height so an empty team can still receive a drop. */
+.list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-xs);
+	min-height: 96px;
+	padding: var(--mantine-spacing-xs);
+	border-radius: var(--mantine-radius-md);
+}
+
+.dropActive {
+	background: light-dark(
+		var(--mantine-primary-color-0),
+		var(--mantine-color-dark-5)
+	);
+}
+
+.dropHint {
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	padding: var(--mantine-spacing-md);
+	text-align: center;
+}
+
+.card {
+	display: flex;
+	align-items: center;
+	gap: var(--mantine-spacing-xs);
+	padding: 6px var(--mantine-spacing-xs);
+	border-radius: var(--mantine-radius-md);
+	border: 1px solid var(--surface-border);
+	background: var(--surface-card);
+}
+
+.card:hover {
+	background: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+}
+
+.cardBody {
+	flex: 1;
+	min-width: 0;
+}
+
+.grip {
+	display: flex;
+	flex-shrink: 0;
+	color: var(--mantine-color-dimmed);
+	cursor: grab;
+}
+
+.grip:active {
+	cursor: grabbing;
+}
+
+.dragging {
+	box-shadow: var(--mantine-shadow-md);
+	background: light-dark(
+		var(--mantine-color-white),
+		var(--mantine-color-dark-6)
+	);
+}

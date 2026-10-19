@@ -95,7 +95,11 @@
 		"on-leave": "De licencia",
 		"training": "En formación"
 	},
-	"burnout": { "low": "Bajo", "medium": "Medio", "high": "Alto" },
+	"burnout": {
+		"low": "Bajo",
+		"medium": "Medio",
+		"high": "Alto"
+	},
 	"period": {
 		"30d": "30 días",
 		"90d": "90 días",
@@ -356,7 +360,10 @@
 		},
 		"signals": "Señales de negocio",
 		"signalsDescription": "Frecuencia de cada señal predefinida en las llamadas de este agente",
-		"tone": { "risk": "Riesgo", "opportunity": "Oportunidad" },
+		"tone": {
+			"risk": "Riesgo",
+			"opportunity": "Oportunidad"
+		},
 		"conversionTrend": "Conversión a través del tiempo",
 		"reasons": "Razones de no conversión",
 		"causes": {
@@ -484,5 +491,86 @@
 		"vsPrevious": "vs. anterior",
 		"notFound": "Agente no encontrado",
 		"notFoundDescription": "El agente {{id}} no forma parte de tu equipo."
+	},
+	"shift": {
+		"morning": "Mañana",
+		"afternoon": "Tarde",
+		"night": "Noche"
+	},
+	"teamConfig": {
+		"title": "Configuración de equipos",
+		"description": "Crea equipos, asigna un supervisor a cada uno y mueve agentes entre ellos.",
+		"newTeam": "Nuevo equipo",
+		"kpis": {
+			"teams": "Equipos",
+			"agents": "Agentes asignados",
+			"unassigned": "Sin asignar",
+			"avgSize": "Tamaño medio"
+		},
+		"search": "Buscar agentes…",
+		"clearSearch": "Borrar búsqueda",
+		"board": {
+			"unassigned": "Sin asignar",
+			"unassignedHint": "Agentes sin equipo. Suelta uno aquí para desasignarlo.",
+			"dropHint": "Suelta agentes aquí"
+		},
+		"empty": {
+			"title": "Aún no hay equipos",
+			"description": "Crea el primer equipo y su supervisor, y luego arrastra agentes."
+		},
+		"column": {
+			"members_one": "{{count}} agente",
+			"members_other": "{{count}} agentes",
+			"menu": {
+				"label": "Acciones del equipo",
+				"editSupervisor": "Editar supervisor",
+				"renameTeam": "Renombrar equipo",
+				"dissolveTeam": "Disolver equipo"
+			}
+		},
+		"card": {
+			"dragHandle": "Arrastra para mover",
+			"moveTo": "Mover a…"
+		},
+		"drawer": {
+			"title": "Nuevo equipo",
+			"description": "Cada equipo lo dirige un supervisor. Puedes añadir miembros ahora o arrastrarlos después.",
+			"teamSection": "Equipo",
+			"supervisorSection": "Supervisor",
+			"teamName": "Nombre del equipo",
+			"supervisorName": "Nombre del supervisor",
+			"supervisorEmail": "Correo del supervisor",
+			"members": "Primeros miembros",
+			"membersHint": "Los agentes elegidos aquí salen de su equipo actual.",
+			"create": "Crear equipo",
+			"validation": {
+				"teamName": "Ponle un nombre al equipo",
+				"teamNameTaken": "Ya existe un equipo con ese nombre",
+				"supervisorName": "Ponle un nombre al supervisor",
+				"email": "Introduce un correo válido"
+			}
+		},
+		"rename": {
+			"title": "Renombrar equipo",
+			"label": "Nombre del equipo",
+			"save": "Guardar"
+		},
+		"dissolve": {
+			"title": "¿Disolver {{team}}?",
+			"body_one": "Su {{count}} agente pasa a Sin asignar. El supervisor se elimina.",
+			"body_other": "Sus {{count}} agentes pasan a Sin asignar. El supervisor se elimina.",
+			"confirm": "Disolver"
+		},
+		"discard": {
+			"title": "¿Descartar este equipo?",
+			"body": "Se perderá lo que escribiste.",
+			"confirm": "Descartar"
+		},
+		"toast": {
+			"moved": "{{name}} movido a {{team}}",
+			"created": "Equipo {{team}} creado",
+			"renamed": "Equipo renombrado a {{team}}",
+			"dissolved": "Equipo {{team}} disuelto"
+		}
 	}
 }

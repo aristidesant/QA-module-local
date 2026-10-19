@@ -95,7 +95,11 @@
 		"on-leave": "On leave",
 		"training": "Training"
 	},
-	"burnout": { "low": "Low", "medium": "Medium", "high": "High" },
+	"burnout": {
+		"low": "Low",
+		"medium": "Medium",
+		"high": "High"
+	},
 	"period": {
 		"30d": "30 days",
 		"90d": "90 days",
@@ -236,7 +240,11 @@
 	"overview": {
 		"performance": "Performance over time",
 		"performanceDescription": "Monthly average of the overall score and each evaluation dimension",
-		"direction": { "up": "Improving", "down": "Declining", "flat": "Stable" },
+		"direction": {
+			"up": "Improving",
+			"down": "Declining",
+			"flat": "Stable"
+		},
 		"directionHint": "{{delta}} points between the start and the end of the period",
 		"directionOver": "{{direction}} over the period",
 		"series": {
@@ -352,7 +360,10 @@
 		},
 		"signals": "Business signals",
 		"signalsDescription": "How often each predefined signal appears in this agent's calls",
-		"tone": { "risk": "Risk", "opportunity": "Opportunity" },
+		"tone": {
+			"risk": "Risk",
+			"opportunity": "Opportunity"
+		},
 		"conversionTrend": "Conversion over time",
 		"reasons": "Non-conversion reasons",
 		"causes": {
@@ -377,7 +388,11 @@
 		"teamAverage": "Team avg {{value}}",
 		"ahtTrend": "AHT over time",
 		"breakdown": "Handling time breakdown",
-		"breakdownSeries": { "talk": "Talk", "hold": "Hold", "wrapUp": "Wrap-up" }
+		"breakdownSeries": {
+			"talk": "Talk",
+			"hold": "Hold",
+			"wrapUp": "Wrap-up"
+		}
 	},
 	"coaching": {
 		"summary": {
@@ -476,5 +491,86 @@
 		"vsPrevious": "vs previous",
 		"notFound": "Agent not found",
 		"notFoundDescription": "The agent {{id}} is not part of your team."
+	},
+	"shift": {
+		"morning": "Morning",
+		"afternoon": "Afternoon",
+		"night": "Night"
+	},
+	"teamConfig": {
+		"title": "Team configuration",
+		"description": "Create teams, assign a supervisor to each one and move agents between them.",
+		"newTeam": "New team",
+		"kpis": {
+			"teams": "Teams",
+			"agents": "Assigned agents",
+			"unassigned": "Unassigned",
+			"avgSize": "Avg. team size"
+		},
+		"search": "Search agents…",
+		"clearSearch": "Clear search",
+		"board": {
+			"unassigned": "Unassigned",
+			"unassignedHint": "Agents without a team. Drop one here to unassign it.",
+			"dropHint": "Drop agents here"
+		},
+		"empty": {
+			"title": "No teams yet",
+			"description": "Create the first team and its supervisor, then drag agents in."
+		},
+		"column": {
+			"members_one": "{{count}} agent",
+			"members_other": "{{count}} agents",
+			"menu": {
+				"label": "Team actions",
+				"editSupervisor": "Edit supervisor",
+				"renameTeam": "Rename team",
+				"dissolveTeam": "Dissolve team"
+			}
+		},
+		"card": {
+			"dragHandle": "Drag to move",
+			"moveTo": "Move to…"
+		},
+		"drawer": {
+			"title": "New team",
+			"description": "A team is led by one supervisor. You can add members now or drag them in later.",
+			"teamSection": "Team",
+			"supervisorSection": "Supervisor",
+			"teamName": "Team name",
+			"supervisorName": "Supervisor name",
+			"supervisorEmail": "Supervisor email",
+			"members": "First members",
+			"membersHint": "Agents picked here move from their current team.",
+			"create": "Create team",
+			"validation": {
+				"teamName": "Give the team a name",
+				"teamNameTaken": "A team with this name already exists",
+				"supervisorName": "Give the supervisor a name",
+				"email": "Enter a valid email"
+			}
+		},
+		"rename": {
+			"title": "Rename team",
+			"label": "Team name",
+			"save": "Save"
+		},
+		"dissolve": {
+			"title": "Dissolve {{team}}?",
+			"body_one": "Its {{count}} agent moves to Unassigned. The supervisor is removed.",
+			"body_other": "Its {{count}} agents move to Unassigned. The supervisor is removed.",
+			"confirm": "Dissolve"
+		},
+		"discard": {
+			"title": "Discard this team?",
+			"body": "The details you typed will be lost.",
+			"confirm": "Discard"
+		},
+		"toast": {
+			"moved": "{{name}} moved to {{team}}",
+			"created": "Team {{team}} created",
+			"renamed": "Team renamed to {{team}}",
+			"dissolved": "Team {{team}} dissolved"
+		}
 	}
 }

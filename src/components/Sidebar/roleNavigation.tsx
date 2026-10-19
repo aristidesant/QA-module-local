@@ -7,6 +7,7 @@ import {
 	IconChartLine,
 	IconFileText,
 	IconUsers,
+	IconUsersGroup,
 	IconTarget,
 	IconTargetArrow,
 	IconHeartHandshake,
@@ -414,11 +415,11 @@ export const getOperationManagerNavigation = (): SidebarNavItem[] => [
 		badge: 'inbox',
 	},
 	{
-		key: 'operationmanager-supervisors',
-		label: 'sidebar.operationmanager.supervisors',
-		icon: <IconUsers size={20} className={styles.menuIcon} />,
-		to: '/workspace/qa/operationmanager/supervisors',
-		i18nNamespace: 'qa.operationmanager',
+		key: 'operationmanager-team-config',
+		label: 'sidebar.operationmanager.teamConfig',
+		icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
+		to: '/qa/operation-manager/team-config',
+		i18nNamespace: 'qa.team',
 	},
 	{
 		key: 'operationmanager-team-health',
@@ -478,7 +479,7 @@ export const getOperationManagerNavigationGrouped = (): NavGroup[] => {
 			key: 'operationmanager-organization',
 			label: 'sidebar.operationmanager.groupOrganization',
 			items: [
-				byKey('operationmanager-supervisors'),
+				byKey('operationmanager-team-config'),
 				byKey('operationmanager-team-health'),
 				byKey('operationmanager-clients'),
 			], // Supervisors, Team Health, Clients

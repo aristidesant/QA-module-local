@@ -208,6 +208,9 @@ const QAManagerTeamsListPage = React.lazy(
 const QAManagerTeamDetailPage = React.lazy(
 	() => import('./modules/qa/team/TeamDetailPage')
 );
+const OperationManagerTeamConfigPage = React.lazy(
+	() => import('./modules/qa/team/TeamConfigPage')
+);
 const QAManagerCampaignsPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/CampaignsPage')
 );
@@ -1715,6 +1718,17 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<QaInboxDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'operation-manager/team-config',
+										id: 'qa.operation-manager.team-config',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<OperationManagerTeamConfigPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),
