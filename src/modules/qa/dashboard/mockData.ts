@@ -9,6 +9,7 @@ import type {
 } from '~/models/qa/notifications';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
 import { BurnoutRiskLevel, BurnoutRiskData } from './types/burnoutRisk';
+import type { EsgPillarKey } from '~/views/Campaigns/types';
 
 // ============================================================================
 // TypeScript Interfaces
@@ -2916,3 +2917,53 @@ export const AGENT_BURNOUT_RISK: BurnoutRiskData = {
 	trend: 'stable',
 	lastUpdated: '2026-09-10T10:00:00Z',
 };
+
+// ============================================================================
+// Operation Manager strategic widgets
+// ============================================================================
+
+export interface EsgPillarScore {
+	key: EsgPillarKey;
+	score: number;
+}
+
+export interface OperationManagerEsg {
+	overall: number;
+	status: 'good' | 'watch' | 'atRisk';
+	pillars: EsgPillarScore[];
+}
+
+/** ESG score for the client. Illustrative: ESG is only evaluated per call today. */
+export const OPERATION_MANAGER_ESG: OperationManagerEsg = {
+	overall: 81,
+	status: 'good',
+	pillars: [
+		{ key: 'environmental', score: 74 },
+		{ key: 'social', score: 86 },
+		{ key: 'governance', score: 83 },
+	],
+};
+
+export type HumanVsAiMetricKey =
+	| 'qa'
+	| 'compliance'
+	| 'customerSentiment'
+	| 'effectiveContacts'
+	| 'conversion';
+
+export interface HumanVsAiPoint {
+	metric: HumanVsAiMetricKey;
+	human: number;
+	ai: number;
+	/** Top of the metric's own scale, used to normalise every pair to 0-100. */
+	max: number;
+}
+
+/** Illustrative: nothing in the call data marks an AI agent yet. Scores are 0-100 except sentiment (1-5). */
+export const HUMAN_VS_AI_PERFORMANCE: HumanVsAiPoint[] = [
+	{ metric: 'qa', human: 84, ai: 79, max: 100 },
+	{ metric: 'compliance', human: 91, ai: 96, max: 100 },
+	{ metric: 'customerSentiment', human: 3.8, ai: 3.4, max: 5 },
+	{ metric: 'effectiveContacts', human: 71, ai: 64, max: 100 },
+	{ metric: 'conversion', human: 34, ai: 27, max: 100 },
+];

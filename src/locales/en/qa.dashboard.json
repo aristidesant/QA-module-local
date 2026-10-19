@@ -291,5 +291,70 @@
 			"worstRule": "QA score below {{incident}}, or any auto-fail.",
 			"footer": "Both thresholds are set in Settings › Quality Assurance."
 		}
+	},
+	"operationManager": {
+		"controls": {
+			"hint": "Filters every section below"
+		},
+		"teams": {
+			"title": "Teams performance",
+			"description": "How each team is trending {{window}}",
+			"metric": {
+				"qa": "QA score",
+				"compliance": "Compliance",
+				"customerSentiment": "Customer sentiment"
+			},
+			"needLongerPeriod": "Pick a longer period to see the trend"
+		},
+		"burnout": {
+			"title": "Burnout risk",
+			"description": "Current level from the trigger rules; the lines follow the selected period",
+			"atRisk": "{{atRisk}} of {{total}} agents at risk · {{high}} high",
+			"chartCaption": "Share of calls with a negative agent emotion, per team"
+		},
+		"esg": {
+			"title": "ESG score",
+			"description": "Environmental, social and governance practices on the client's calls",
+			"score": "ESG score",
+			"status": {
+				"good": "Good",
+				"watch": "Watch",
+				"atRisk": "At risk"
+			},
+			"pillar": {
+				"environmental": "Environmental",
+				"social": "Social",
+				"governance": "Governance"
+			}
+		},
+		"humanVsAi": {
+			"title": "Human vs AI agents",
+			"description": "Same metrics, both kinds of agent",
+			"human": "Human",
+			"ai": "AI agent",
+			"metric": {
+				"qa": "QA",
+				"compliance": "Compliance",
+				"customerSentiment": "Cust. sentiment",
+				"effectiveContacts": "Effective contacts",
+				"conversion": "Conversion"
+			},
+			"illustrative": "Illustrative data: AI agents are not tracked in call records yet"
+		},
+		"campaigns": {
+			"title": "Campaigns performance",
+			"description": "Every campaign with calls {{window}}",
+			"column": {
+				"campaign": "Campaign",
+				"lineOfBusiness": "Line of business",
+				"calls": "Calls",
+				"qa": "QA score",
+				"compliance": "Compliance",
+				"customerSentiment": "Cust. sentiment",
+				"autoFails": "Auto-fails",
+				"conversion": "Conversion"
+			},
+			"empty": "No calls in this period"
+		}
 	}
 }

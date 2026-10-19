@@ -18,7 +18,11 @@ interface PerformanceScoreControlsProps {
 	onLineOfBusinessChange?: (value: DashboardLineOfBusiness | null) => void;
 }
 
-/** Period (and Line of Business) controls, rendered in the Performance Score header so it is clear they only filter that section. */
+/**
+ * Period (and Line of Business) controls. Rendered in the Performance Score header on the team dashboards,
+ * where they only filter that section, and in the page header on the Operation Manager dashboard,
+ * where they filter every section.
+ */
 export const PerformanceScoreControls: React.FC<
 	PerformanceScoreControlsProps
 > = ({ period, onPeriodChange, lineOfBusiness, onLineOfBusinessChange }) => {

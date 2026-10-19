@@ -96,7 +96,7 @@ const isPositiveCallEmotion = (emotion: string) =>
 	positiveEmotionsOf(useSettingsStore.getState().thresholds.sentiment).includes(
 		emotion
 	);
-const isNegativeCallEmotion = (emotion: CallEmotion) =>
+export const isNegativeCallEmotion = (emotion: CallEmotion) =>
 	isNegativeEmotionIn(
 		emotion,
 		negativeEmotionsOf(useSettingsStore.getState().thresholds.sentiment)

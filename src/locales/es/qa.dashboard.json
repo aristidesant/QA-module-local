@@ -291,5 +291,70 @@
 			"worstRule": "Puntaje de QA menor a {{incident}}, o cualquier fallo automático.",
 			"footer": "Ambos umbrales se definen en Configuración › Aseguramiento de calidad."
 		}
+	},
+	"operationManager": {
+		"controls": {
+			"hint": "Filtra todas las secciones"
+		},
+		"teams": {
+			"title": "Desempeño de los equipos",
+			"description": "Tendencia de cada equipo {{window}}",
+			"metric": {
+				"qa": "Puntaje QA",
+				"compliance": "Cumplimiento",
+				"customerSentiment": "Sentimiento del cliente"
+			},
+			"needLongerPeriod": "Elige un período más largo para ver la tendencia"
+		},
+		"burnout": {
+			"title": "Riesgo de burnout",
+			"description": "Nivel actual según las reglas de alertas; las líneas siguen el período seleccionado",
+			"atRisk": "{{atRisk}} de {{total}} agentes en riesgo · {{high}} alto",
+			"chartCaption": "Porcentaje de llamadas con emoción negativa del agente, por equipo"
+		},
+		"esg": {
+			"title": "Puntaje ESG",
+			"description": "Prácticas ambientales, sociales y de gobernanza en las llamadas del cliente",
+			"score": "Puntaje ESG",
+			"status": {
+				"good": "Bien",
+				"watch": "Atención",
+				"atRisk": "En riesgo"
+			},
+			"pillar": {
+				"environmental": "Ambiental",
+				"social": "Social",
+				"governance": "Gobernanza"
+			}
+		},
+		"humanVsAi": {
+			"title": "Agentes humanos vs IA",
+			"description": "Las mismas métricas para ambos tipos de agente",
+			"human": "Humano",
+			"ai": "Agente IA",
+			"metric": {
+				"qa": "QA",
+				"compliance": "Cumplimiento",
+				"customerSentiment": "Sentimiento cliente",
+				"effectiveContacts": "Contactos efectivos",
+				"conversion": "Conversión"
+			},
+			"illustrative": "Datos ilustrativos: las llamadas aún no registran agentes IA"
+		},
+		"campaigns": {
+			"title": "Desempeño de las campañas",
+			"description": "Todas las campañas con llamadas {{window}}",
+			"column": {
+				"campaign": "Campaña",
+				"lineOfBusiness": "Línea de negocio",
+				"calls": "Llamadas",
+				"qa": "Puntaje QA",
+				"compliance": "Cumplimiento",
+				"customerSentiment": "Sentimiento cliente",
+				"autoFails": "Auto-fails",
+				"conversion": "Conversión"
+			},
+			"empty": "No hay llamadas en este período"
+		}
 	}
 }

@@ -74,3 +74,10 @@ export type { BurnoutRiskData, BurnoutRiskLevel } from '../types/burnoutRisk';
 
 // Role dashboards: shared filter bar
 export { PerformanceScoreControls } from './PerformanceScoreControls';
+
+// Operation Manager: strategic widgets
+export { TeamPerformanceTrendCard } from './TeamPerformanceTrendCard';
+export { PlatformBurnoutCard } from './PlatformBurnoutCard';
+export { EsgScoreCard } from './EsgScoreCard';
+export { HumanVsAiCard } from './HumanVsAiCard';
+export { CampaignPerformanceTable } from './CampaignPerformanceTable';
