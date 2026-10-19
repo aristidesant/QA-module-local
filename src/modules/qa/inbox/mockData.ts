@@ -1,6 +1,7 @@
 import type { AgentNotification } from '~/models/qa/notifications';
 import {
 	AGENT_PERSONA_ID,
+	OPERATION_MANAGER_PERSONA,
 	QA_MANAGER_PERSONA,
 	SUPERVISOR_PERSONA,
 } from '~/modules/qa/team/constants';
@@ -635,9 +636,151 @@ const QA_MANAGER_INBOX: AgentNotification[] = [
 	}),
 ];
 
+/** Sofía Navarro's inbox: portfolio-level signals across lines of business and teams. */
+const OPERATION_MANAGER_INBOX: AgentNotification[] = [
+	buildNotification({
+		id: 'ntf-o01',
+		agentId: OPERATION_MANAGER_PERSONA.id,
+		recipientRole: 'OPERATION_MANAGER',
+		recipientId: OPERATION_MANAGER_PERSONA.id,
+		category: 'TREND_WARNING',
+		priority: 'HIGH',
+		title: 'Compliance is slipping on Collections',
+		message:
+			'Compliance on the Collections line fell from 92% to 87% over the last month, driven by consent wording on outbound calls.',
+		icon: 'trending-down',
+		sourceRole: 'SYSTEM',
+		metric: 'COMPLIANCE',
+		createdAt: day(12, '06:45:00'),
+		payload: {
+			kind: 'TREND_WARNING',
+			area: 'COMPLIANCE',
+			metricId: 'COMPLIANCE_OVERALL_SCORE',
+			from: 92,
+			to: 87,
+			deltaPct: -5,
+			periodLabel: 'Last 30 days',
+			sparkline: [92, 91, 90, 89, 88, 88, 87],
+			ruleName: 'Line of business compliance trend',
+		},
+	}),
+	buildNotification({
+		id: 'ntf-o02',
+		agentId: OPERATION_MANAGER_PERSONA.id,
+		recipientRole: 'OPERATION_MANAGER',
+		recipientId: OPERATION_MANAGER_PERSONA.id,
+		category: 'TREND_WARNING',
+		priority: 'CRITICAL',
+		title: 'Burnout risk is rising across Team 2',
+		message:
+			'Four of the five burnout conditions are met for a growing share of Team 2. Workload and after-hours calls are the main drivers.',
+		icon: 'flame',
+		sourceRole: 'SYSTEM',
+		createdAt: day(12, '07:20:00'),
+		payload: {
+			kind: 'BURNOUT_RISK',
+			level: 'high',
+			percentage: 72,
+			drivers: ['negativeEmotionShare', 'ahtVsTeam', 'afterHoursShare'],
+		},
+	}),
+	buildNotification({
+		id: 'ntf-o03',
+		agentId: OPERATION_MANAGER_PERSONA.id,
+		recipientRole: 'OPERATION_MANAGER',
+		recipientId: OPERATION_MANAGER_PERSONA.id,
+		category: 'METRIC_ALERT',
+		priority: 'HIGH',
+		title: 'QA score is under target on Tech Support',
+		message:
+			'The Tech Support line is at 74% QA over the last 7 days, under the 78% floor set for the portfolio.',
+		icon: 'alert-triangle',
+		sourceRole: 'SYSTEM',
+		metric: 'QUALITY_ASSURANCE',
+		createdAt: day(11, '09:10:00'),
+		payload: {
+			kind: 'METRIC_ALERT',
+			area: 'QUALITY_ASSURANCE',
+			metricId: 'QA_OVERALL_SCORE',
+			value: 74,
+			threshold: 78,
+			direction: 'BELOW',
+			windowLabel: 'Last 7 days',
+			sparkline: [80, 79, 78, 77, 76, 75, 74],
+			ruleName: 'Line of business QA floor',
+		},
+	}),
+	buildNotification({
+		id: 'ntf-o04',
+		agentId: OPERATION_MANAGER_PERSONA.id,
+		recipientRole: 'OPERATION_MANAGER',
+		recipientId: OPERATION_MANAGER_PERSONA.id,
+		category: 'WEEKLY_SUMMARY',
+		priority: 'LOW',
+		title: 'Portfolio week: 1–7 September',
+		message:
+			'1,284 calls across all teams, QA steady at 84% and compliance at 89%.',
+		icon: 'calendar-stats',
+		sourceRole: 'SYSTEM',
+		createdAt: day(8, '07:00:00'),
+		payload: {
+			kind: 'WEEKLY_SUMMARY',
+			weekLabel: '1–7 September',
+			kpis: [
+				{ label: 'QA score', value: '84%', delta: 1 },
+				{ label: 'Compliance', value: '89%', delta: -1 },
+				{ label: 'Sentiment', value: '3.8', delta: 0 },
+				{ label: 'Calls', value: '1,284', delta: 64 },
+			],
+			highlights: [
+				'Customer Service is the strongest line this week.',
+				'Collections compliance is the main drag on the portfolio.',
+			],
+		},
+	}),
+	buildNotification({
+		id: 'ntf-o05',
+		agentId: OPERATION_MANAGER_PERSONA.id,
+		recipientRole: 'OPERATION_MANAGER',
+		recipientId: OPERATION_MANAGER_PERSONA.id,
+		category: 'DIRECT_MESSAGE',
+		priority: 'NORMAL',
+		title: 'Disputes backlog: seven open, none older than a week',
+		message:
+			'Operations update: seven disputes are waiting on a decision and the oldest was raised six days ago. I expect to clear most of them this week.',
+		icon: 'message',
+		sourceRole: 'QA_MANAGER',
+		sourceId: QA_MANAGER_PERSONA.id,
+		createdAt: day(10, '14:20:00'),
+		payload: { kind: 'MESSAGE' },
+	}),
+	buildNotification({
+		id: 'ntf-o06',
+		agentId: OPERATION_MANAGER_PERSONA.id,
+		recipientRole: 'OPERATION_MANAGER',
+		recipientId: OPERATION_MANAGER_PERSONA.id,
+		category: 'POSITIVE_RECOGNITION',
+		priority: 'LOW',
+		title: 'Q3 Customer Service Sprint closed',
+		message: 'The sprint ranking ended with all three teams above target.',
+		icon: 'trophy',
+		sourceRole: 'SYSTEM',
+		read: true,
+		createdAt: day(3, '09:00:00'),
+		payload: {
+			kind: 'RANKING_UPDATE',
+			rankingId: 'RP-003',
+			rankingName: 'Q3 Customer Service Sprint',
+			event: 'ENDED',
+			prizeTitle: 'Team lunch',
+		},
+	}),
+];
+
 /** Everything the notification store is seeded with, newest first. */
 export const INBOX_SEED: AgentNotification[] = [
 	...AGENT_INBOX,
 	...SUPERVISOR_INBOX,
 	...QA_MANAGER_INBOX,
+	...OPERATION_MANAGER_INBOX,
 ].sort((a, b) => b.createdAt.localeCompare(a.createdAt));

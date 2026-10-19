@@ -34,6 +34,10 @@ import type {
 export const NOW_ISO = '2026-09-12T15:00:00Z';
 export const SUPERVISOR_PERSONA = { id: 'SUP-001', name: 'Maria García' };
 export const QA_MANAGER_PERSONA = { id: 'QAM-001', name: 'Elena Ruiz' };
+export const OPERATION_MANAGER_PERSONA = {
+	id: 'OPM-001',
+	name: 'Sofía Navarro',
+};
 /** Pseudo-team for agents removed from a real team; not part of TEAM_SUPERVISORS. */
 export const UNASSIGNED_SUPERVISOR_ID = 'UNASSIGNED';
 export const UNASSIGNED_SUPERVISOR: RosterSupervisor = {

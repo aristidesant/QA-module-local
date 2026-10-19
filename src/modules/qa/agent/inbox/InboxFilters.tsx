@@ -1,81 +1,81 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
-	Group,
-	TextInput,
-	SegmentedControl,
-	MultiSelect,
-	Button,
 	ActionIcon,
+	Button,
+	Group,
+	MultiSelect,
+	Select,
+	Switch,
+	TextInput,
 } from '@mantine/core';
-import { DateInput } from '@mantine/dates';
+import { DatePickerInput } from '@mantine/dates';
 import { IconSearch, IconX } from '@tabler/icons-react';
 import type { AgentNotification } from '~/models/qa/notifications';
-import styles from './InboxFilters.module.css';
+import type { InboxKind } from '~/modules/qa/inbox/constants';
+
+type Priority = AgentNotification['priority'];
+
+const PRIORITIES: Priority[] = ['CRITICAL', 'HIGH', 'NORMAL', 'LOW'];
 
 export interface InboxFiltersProps {
-	status: 'all' | 'read' | 'unread';
-	onStatusChange: (status: 'all' | 'read' | 'unread') => void;
-	selectedTypes: AgentNotification['category'][];
-	onTypesChange: (types: AgentNotification['category'][]) => void;
-	dateFrom?: Date | null;
-	dateTo?: Date | null;
-	onDateChange: (from?: Date | null, to?: Date | null) => void;
-	searchQuery: string;
-	onSearchChange: (query: string) => void;
-	onClearFilters: () => void;
+	search: string;
+	onSearchChange: (value: string) => void;
+	unreadOnly: boolean;
+	onUnreadOnlyChange: (value: boolean) => void;
+	/** Kinds present in this inbox, in display order. */
+	kindOptions: InboxKind[];
+	kinds: InboxKind[];
+	onKindsChange: (kinds: InboxKind[]) => void;
+	priorities: Priority[];
+	onPrioritiesChange: (priorities: Priority[]) => void;
+	/** Managers only: the agents the items are about. Omitted or empty hides the control. */
+	agentOptions?: { value: string; label: string }[];
+	agent: string | null;
+	onAgentChange: (agent: string | null) => void;
+	range: [string | null, string | null];
+	onRangeChange: (range: [string | null, string | null]) => void;
+	hasActiveFilters: boolean;
+	onClear: () => void;
 }
 
-const NOTIFICATION_TYPES: Array<{
-	label: string;
-	value: AgentNotification['category'];
-}> = [
-	{ label: 'Direct Message', value: 'DIRECT_MESSAGE' },
-	{ label: 'Metric Alert', value: 'METRIC_ALERT' },
-	{ label: 'Trend Warning', value: 'TREND_WARNING' },
-	{ label: 'Recognition', value: 'POSITIVE_RECOGNITION' },
-	{ label: 'Weekly Summary', value: 'WEEKLY_SUMMARY' },
-];
-
+/** Search and narrowing controls of the inbox, one wrapped row like the other QA lists. */
 export const InboxFilters: React.FC<InboxFiltersProps> = ({
-	status,
-	onStatusChange,
-	selectedTypes,
-	onTypesChange,
-	dateFrom,
-	dateTo,
-	onDateChange,
-	searchQuery,
+	search,
 	onSearchChange,
-	onClearFilters,
+	unreadOnly,
+	onUnreadOnlyChange,
+	kindOptions,
+	kinds,
+	onKindsChange,
+	priorities,
+	onPrioritiesChange,
+	agentOptions,
+	agent,
+	onAgentChange,
+	range,
+	onRangeChange,
+	hasActiveFilters,
+	onClear,
 }) => {
 	const { t } = useTranslation('qa.inbox');
 
-	const hasActiveFilters =
-		status !== 'all' ||
-		selectedTypes.length > 0 ||
-		dateFrom != null ||
-		dateTo != null ||
-		searchQuery.trim() !== '';
-
 	return (
-		<Group
-			align='flex-end'
-			gap='md'
-			wrap='wrap'
-			className={styles.filtersContainer}
-		>
+		<Group gap='sm' wrap='wrap' align='flex-end'>
 			<TextInput
+				size='sm'
 				placeholder={t('filters.search')}
+				aria-label={t('filters.search')}
 				leftSection={<IconSearch size={16} />}
-				value={searchQuery}
-				onChange={(e) => onSearchChange(e.currentTarget.value)}
+				value={search}
+				onChange={(event) => onSearchChange(event.currentTarget.value)}
 				rightSection={
-					searchQuery && (
+					search && (
 						<ActionIcon
-							size='xs'
+							size='sm'
 							color='gray'
 							variant='transparent'
+							aria-label={t('filters.clearSearch')}
 							onClick={() => onSearchChange('')}
 						>
 							<IconX size={14} />
@@ -85,59 +85,74 @@ export const InboxFilters: React.FC<InboxFiltersProps> = ({
 				w={260}
 			/>
 
-			<SegmentedControl
-				value={status}
-				onChange={(value: string) =>
-					onStatusChange(value as 'all' | 'read' | 'unread')
-				}
-				data={[
-					{ label: t('filters.status.all'), value: 'all' },
-					{ label: t('filters.status.unread'), value: 'unread' },
-					{ label: t('filters.status.read'), value: 'read' },
-				]}
-			/>
-
 			<MultiSelect
-				placeholder={t('filters.types')}
-				data={NOTIFICATION_TYPES}
-				value={selectedTypes}
-				onChange={(value: string[]) =>
-					onTypesChange(value as AgentNotification['category'][])
-				}
+				size='sm'
+				placeholder={t('filters.kinds')}
+				aria-label={t('filters.kinds')}
+				data={kindOptions.map((kind) => ({
+					value: kind,
+					label: t(`kinds.${kind}`),
+				}))}
+				value={kinds}
+				onChange={(value) => onKindsChange(value as InboxKind[])}
 				clearable
-				searchable
 				w={200}
 			/>
 
-			<DateInput
-				label={t('filters.dateFrom')}
-				placeholder={t('filters.dateFrom')}
-				value={dateFrom}
-				onChange={(value: string | null) => {
-					const date = value ? new Date(value) : null;
-					onDateChange(date, dateTo);
-				}}
+			<MultiSelect
+				size='sm'
+				placeholder={t('filters.priority')}
+				aria-label={t('filters.priority')}
+				data={PRIORITIES.map((priority) => ({
+					value: priority,
+					label: t(`priorities.${priority}`),
+				}))}
+				value={priorities}
+				onChange={(value) => onPrioritiesChange(value as Priority[])}
 				clearable
-				w={140}
+				w={170}
 			/>
 
-			<DateInput
-				label={t('filters.dateTo')}
-				placeholder={t('filters.dateTo')}
-				value={dateTo}
-				onChange={(value: string | null) => {
-					const date = value ? new Date(value) : null;
-					onDateChange(dateFrom, date);
-				}}
+			{agentOptions && agentOptions.length > 0 && (
+				<Select
+					size='sm'
+					placeholder={t('filters.allAgents')}
+					aria-label={t('filters.agent')}
+					data={agentOptions}
+					value={agent}
+					onChange={onAgentChange}
+					clearable
+					searchable
+					w={190}
+				/>
+			)}
+
+			<DatePickerInput
+				type='range'
+				size='sm'
+				placeholder={t('filters.dateRange')}
+				aria-label={t('filters.dateRange')}
+				value={range}
+				onChange={(value) =>
+					onRangeChange(value as [string | null, string | null])
+				}
 				clearable
-				w={140}
+				w={250}
+			/>
+
+			<Switch
+				size='sm'
+				label={t('filters.unreadOnly')}
+				checked={unreadOnly}
+				onChange={(event) => onUnreadOnlyChange(event.currentTarget.checked)}
 			/>
 
 			{hasActiveFilters && (
 				<Button
-					variant='light'
+					size='sm'
+					variant='subtle'
 					leftSection={<IconX size={16} />}
-					onClick={onClearFilters}
+					onClick={onClear}
 				>
 					{t('filters.clear')}
 				</Button>

@@ -214,7 +214,8 @@
 			"reports": "Reportes",
 			"groupOrganization": "Organización",
 			"groupConfiguration": "Configuración",
-			"groupInsights": "Perspectivas"
+			"groupInsights": "Perspectivas",
+			"inbox": "Bandeja de entrada"
 		},
 		"rolePreview": {
 			"items": {
@@ -255,7 +256,9 @@
 				"agents": "Agentes",
 				"settings": "Configuración"
 			}
-		}
+		},
+		"inboxUnread_one": "{{count}} sin leer",
+		"inboxUnread_other": "{{count}} sin leer"
 	},
 	"rolePreview": {
 		"placeholder": {

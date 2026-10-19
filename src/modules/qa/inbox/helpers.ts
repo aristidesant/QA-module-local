@@ -28,6 +28,24 @@ export const unreadCountFor = (
 	id: string
 ): number => all.filter((n) => isForInbox(n, role, id) && !n.read).length;
 
+/** Archived items of one inbox: the same recipient rule as `isForInbox`, but archived. */
+export const archivedFor = (
+	all: AgentNotification[],
+	role: NotificationRecipientRole,
+	id: string
+): AgentNotification[] =>
+	all.filter(
+		(n) =>
+			n.archived &&
+			(n.recipientRole ?? 'AGENT') === role &&
+			(n.recipientId ?? n.agentId) === id
+	);
+
+/** Unread High / Critical items, plus follow-ups nobody has acted on. Opening an alert acknowledges it. */
+export const needsAction = (n: AgentNotification): boolean =>
+	(!n.read && (n.priority === 'CRITICAL' || n.priority === 'HIGH')) ||
+	(n.payload?.kind === 'FOLLOW_UP' && !n.actioned);
+
 let counter = 5000;
 export const nextNotificationId = () => `ntf-${++counter}`;
 

@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime';
 import type {
 	DisputeCase,
 	DisputeEvaluationType,
@@ -18,6 +19,9 @@ import {
 	SUPERVISOR_PERSONA,
 } from '~/modules/qa/team/constants';
 import type { InboxRole } from '~/modules/qa/inbox/constants';
+
+// `fromMockNow` needs the plugin wherever it is used, not only on the disputes pages.
+dayjs.extend(relativeTime);
 
 /**
  * Every dispute renders the one evaluated call the mock provides, personalised

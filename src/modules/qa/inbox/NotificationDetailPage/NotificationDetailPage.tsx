@@ -24,13 +24,16 @@ import {
 } from '~/stores/qa/notificationStore';
 import { useTeamStore } from '~/stores/qa/teamStore';
 import {
-	CATEGORY_META,
-	INBOX_IDENTITY,
-	PRIORITY_COLOR,
+	INBOX_KIND_META,
+	INBOX_VIEWER_IDENTITY,
+	PRIORITY_TONE,
 	analyticsPath,
+	coachingPath,
 	customersPath,
 	disputesBasePath,
-	inboxRoleFromPath,
+	inboxRouteRole,
+	inboxViewerFromPath,
+	kindOf,
 	lmsPath,
 	personNameOf,
 	rankingsBasePath,
@@ -46,6 +49,8 @@ import { CoachingSessionContext } from '../components/CoachingSessionContext';
 import PayloadDetail from '../components/details';
 import styles from '../components/Inbox.module.css';
 import MessageThread from '../components/MessageThread';
+import { notifyWithUndo } from '../inboxToasts';
+import { notifySuccess } from '~/modules/qa/utils/notifications';
 
 /**
  * One inbox message on its own page (route `inbox/:notificationId`): who sent
@@ -58,13 +63,18 @@ export default function NotificationDetailPage() {
 	const navigate = useNavigate();
 	const { notificationId } = useParams<{ notificationId: string }>();
 
-	const viewer = inboxRoleFromPath(location.pathname);
-	const me = INBOX_IDENTITY[viewer];
+	const viewer = inboxViewerFromPath(location.pathname);
+	const me = INBOX_VIEWER_IDENTITY[viewer];
+	// The Operation Manager reuses the QA Manager's routes.
+	const routeRole = inboxRouteRole(viewer);
 	const notifications = useNotificationStore(selectNotifications);
 	const markAsRead = useNotificationStore((s) => s.markAsRead);
 	const markAsUnread = useNotificationStore((s) => s.markAsUnread);
 	const archiveNotification = useNotificationStore(
 		(s) => s.archiveNotification
+	);
+	const unarchiveNotification = useNotificationStore(
+		(s) => s.unarchiveNotification
 	);
 	const addReply = useNotificationStore((s) => s.addReply);
 	const addNotification = useNotificationStore((s) => s.addNotification);
@@ -87,13 +97,20 @@ export default function NotificationDetailPage() {
 	if (!live) {
 		return (
 			<ContentContainer contentWidth='full'>
-				<EmptyState message={t('detail.notFound')} />
+				<EmptyState
+					message={t('detail.notFound')}
+					action={
+						<Button variant='default' onClick={() => navigate(inboxListPath)}>
+							{t('detail.notFoundAction')}
+						</Button>
+					}
+				/>
 			</ContentContainer>
 		);
 	}
 
-	const meta = CATEGORY_META[live.category];
-	const CategoryIcon = meta.icon;
+	const kind = kindOf(live);
+	const KindIcon = INBOX_KIND_META[kind].icon;
 	const payload = live.payload ?? { kind: 'MESSAGE' as const };
 	const sender = personNameOf(live.sourceId) ?? t(`sources.${live.sourceRole}`);
 
@@ -118,42 +135,50 @@ export default function NotificationDetailPage() {
 			case 'METRIC_ALERT':
 				return {
 					label: t('details.metricAlert.cta'),
-					to: analyticsPath(viewer),
+					to: analyticsPath(routeRole),
 				};
 			case 'TREND_WARNING':
 				return {
 					label: t('details.trendWarning.cta'),
-					to: analyticsPath(viewer),
+					to: analyticsPath(routeRole),
 				};
 			case 'BURNOUT_RISK':
 				return viewer === 'agent'
 					? null
 					: {
 							label: t('details.burnout.ctaManager'),
-							to: `${analyticsPath(viewer)}?view=burnout`,
+							to: `${analyticsPath(routeRole)}?view=burnout`,
 						};
 			case 'BADGE_EARNED':
-				return { label: t('details.badge.cta'), to: rankingsBasePath(viewer) };
+				return {
+					label: t('details.badge.cta'),
+					to: rankingsBasePath(routeRole),
+				};
 			case 'WEEKLY_SUMMARY':
-				return { label: t('details.weekly.cta'), to: analyticsPath(viewer) };
+				return { label: t('details.weekly.cta'), to: analyticsPath(routeRole) };
+			case 'COACHING_SESSION':
+				return {
+					label: t('details.coaching.cta'),
+					to: coachingPath(routeRole),
+				};
 			case 'LMS_ASSIGNMENT':
-				return { label: t('details.lms.cta'), to: lmsPath(viewer) };
+				return { label: t('details.lms.cta'), to: lmsPath(routeRole) };
 			case 'FOLLOW_UP':
 				return viewer === 'agent'
 					? null
 					: {
 							label: t('details.followUp.cta'),
-							to: `${customersPath(viewer)}/${payload.customerId}`,
+							to: `${customersPath(routeRole)}/${payload.customerId}`,
 						};
 			case 'DISPUTE_UPDATE':
 				return {
 					label: t('details.dispute.cta'),
-					to: `${disputesBasePath(viewer)}/${payload.disputeId}`,
+					to: `${disputesBasePath(routeRole)}/${payload.disputeId}`,
 				};
 			case 'RANKING_UPDATE':
 				return {
 					label: t('details.ranking.cta'),
-					to: rankingsBasePath(viewer),
+					to: rankingsBasePath(routeRole),
 				};
 			default:
 				return null;
@@ -162,9 +187,14 @@ export default function NotificationDetailPage() {
 
 	const cta = primaryAction();
 	const replies = live.replies ?? [];
-	const showThread = live.sourceRole !== 'SYSTEM' || replies.length > 0;
+	const showThread =
+		viewer !== 'operation-manager' &&
+		(live.sourceRole !== 'SYSTEM' || replies.length > 0);
 
 	const handleSend = (message: string) => {
+		// The Operation Manager has no reply thread.
+		if (me.role === 'OPERATION_MANAGER') return;
+
 		addReply(live.id, {
 			fromRole: me.role,
 			fromId: me.id,
@@ -193,13 +223,19 @@ export default function NotificationDetailPage() {
 				payload: { kind: 'MESSAGE' },
 			})
 		);
+		notifySuccess(t('toast.replySent'));
 	};
 
 	return (
 		<ContentContainer contentWidth='full'>
 			<Stack gap='lg'>
 				<Breadcrumbs>
-					<Anchor size='sm' onClick={() => navigate(inboxListPath)}>
+					<Anchor
+						component='button'
+						type='button'
+						size='sm'
+						onClick={() => navigate(inboxListPath)}
+					>
 						{t('detail.back')}
 					</Anchor>
 					<Text size='sm' c='dimmed'>
@@ -211,16 +247,16 @@ export default function NotificationDetailPage() {
 					<Group gap='xs'>
 						<Badge
 							size='sm'
-							color={meta.color}
+							color='gray'
 							variant='light'
-							leftSection={<CategoryIcon size={12} />}
+							leftSection={<KindIcon size={12} />}
 						>
-							{t(`categories.${live.category}`)}
+							{t(`kinds.${kind}`)}
 						</Badge>
 						<Badge
 							size='sm'
-							color={PRIORITY_COLOR[live.priority]}
-							variant='outline'
+							color={PRIORITY_TONE[live.priority] ?? 'gray'}
+							variant='light'
 						>
 							{t(`priorities.${live.priority}`)}
 						</Badge>
@@ -243,7 +279,7 @@ export default function NotificationDetailPage() {
 				)}
 
 				<Grid gap='md'>
-					<Grid.Col span={{ base: 12, md: 8 }}>
+					<Grid.Col span={{ base: 12, md: 8 }} order={{ base: 2, md: 1 }}>
 						<Stack gap='md'>
 							{automated ? (
 								<AutomatedCoachingMessage
@@ -283,7 +319,7 @@ export default function NotificationDetailPage() {
 						</Stack>
 					</Grid.Col>
 
-					<Grid.Col span={{ base: 12, md: 4 }}>
+					<Grid.Col span={{ base: 12, md: 4 }} order={{ base: 1, md: 2 }}>
 						<Stack gap='md'>
 							<SectionCard padding='md'>
 								<Stack gap='xs'>
@@ -313,7 +349,7 @@ export default function NotificationDetailPage() {
 										leftSection={<IconMailOpened size={16} />}
 										onClick={() => {
 											markAsUnread(live.id);
-											navigate(inboxListPath);
+											notifySuccess(t('toast.markedUnread'));
 										}}
 									>
 										{t('drawer.markUnread')}
@@ -325,6 +361,9 @@ export default function NotificationDetailPage() {
 										leftSection={<IconArchive size={16} />}
 										onClick={() => {
 											archiveNotification(live.id);
+											notifyWithUndo(t('toast.archived'), t('toast.undo'), () =>
+												unarchiveNotification(live.id)
+											);
 											navigate(inboxListPath);
 										}}
 									>

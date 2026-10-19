@@ -3,7 +3,8 @@
 		"eyebrow": {
 			"agent": "Agente · John Smith",
 			"supervisor": "Supervisor · Equipo 1",
-			"qa-manager": "QA Manager · Todos los equipos"
+			"qa-manager": "QA Manager · Todos los equipos",
+			"operation-manager": "Gerente de operaciones · Cartera"
 		},
 		"title": "Bandeja de entrada",
 		"description": "Alertas, reconocimientos, mensajes y novedades dirigidos a ti",
@@ -11,7 +12,9 @@
 		"unread_other": "{{count}} sin leer",
 		"markAllRead": "Marcar todo como leído",
 		"sectionTitle": "Notificaciones",
-		"sectionDescription": "Todo lo que te llegó en este periodo"
+		"sectionDescription": "Todo lo que te llegó en este periodo",
+		"markedRead_one": "{{count}} mensaje marcado como leído",
+		"markedRead_other": "{{count}} mensajes marcados como leídos"
 	},
 	"table": {
 		"columns": {
@@ -20,15 +23,19 @@
 			"priority": "Prioridad",
 			"source": "De",
 			"about": "Agente",
-			"date": "Fecha"
+			"date": "Fecha",
+			"message": "Mensaje"
 		},
 		"actions": {
 			"view": "Ver detalle",
 			"markRead": "Marcar como leído",
 			"markUnread": "Marcar como no leído",
-			"archive": "Archivar"
+			"archive": "Archivar",
+			"restore": "Restaurar"
 		},
-		"empty": "Ninguna notificación coincide con los filtros"
+		"empty": "Ninguna notificación coincide con los filtros",
+		"read": "Leído",
+		"unread": "Sin leer"
 	},
 	"categories": {
 		"DIRECT_MESSAGE": "Mensaje",
@@ -58,8 +65,15 @@
 		"types": "Tipos",
 		"dateFrom": "Desde",
 		"dateTo": "Hasta",
-		"search": "Buscar en título o mensaje",
-		"clear": "Limpiar filtros"
+		"search": "Buscar por título, mensaje, remitente o agente",
+		"clear": "Limpiar filtros",
+		"clearSearch": "Borrar búsqueda",
+		"unreadOnly": "Solo sin leer",
+		"kinds": "Tipo",
+		"priority": "Prioridad",
+		"agent": "Agente",
+		"allAgents": "Todos los agentes",
+		"dateRange": "Rango de fechas"
 	},
 	"drawer": {
 		"from": "De {{name}} · {{role}}",
@@ -146,7 +160,8 @@
 			"materialsTitle": "Material de aprendizaje",
 			"suggested": "Sugerido",
 			"mandatory": "Obligatorio",
-			"noMaterials": "No hay material adjunto a este coaching."
+			"noMaterials": "No hay material adjunto a este coaching.",
+			"cta": "Abrir coaching"
 		},
 		"lms": {
 			"content": "Contenido",
@@ -190,6 +205,51 @@
 	"detail": {
 		"back": "Bandeja de entrada",
 		"from": "De",
-		"notFound": "Este mensaje no está disponible en tu bandeja."
+		"notFound": "Este mensaje no está disponible en tu bandeja.",
+		"notFoundAction": "Volver a la bandeja"
+	},
+	"tabs": {
+		"needsAction": "Requiere acción",
+		"all": "Todos",
+		"archived": "Archivados"
+	},
+	"kinds": {
+		"message": "Mensaje",
+		"metricAlert": "Alerta de métrica",
+		"trendWarning": "Alerta de tendencia",
+		"burnout": "Riesgo de burnout",
+		"recognition": "Reconocimiento",
+		"badge": "Insignia",
+		"weeklySummary": "Resumen semanal",
+		"coaching": "Coaching",
+		"learning": "Aprendizaje",
+		"followUp": "Seguimiento",
+		"dispute": "Disputa",
+		"ranking": "Ranking"
+	},
+	"empty": {
+		"needsAction": {
+			"title": "Estás al día",
+			"description": "Nada requiere tu atención ahora."
+		},
+		"all": {
+			"title": "Tu bandeja está vacía",
+			"description": "Aquí aparecerán nuevas alertas, mensajes y novedades."
+		},
+		"archived": {
+			"title": "Nada archivado",
+			"description": "Los mensajes archivados aparecen aquí para poder restaurarlos."
+		},
+		"filtered": {
+			"title": "Ningún mensaje coincide con estos filtros",
+			"description": "Quita un filtro o busca otra cosa."
+		}
+	},
+	"toast": {
+		"archived": "Mensaje archivado",
+		"undo": "Deshacer",
+		"restored": "Mensaje restaurado",
+		"markedUnread": "Marcado como sin leer",
+		"replySent": "Respuesta enviada"
 	}
 }

@@ -216,7 +216,8 @@
 			"reports": "Reports",
 			"groupOrganization": "Organization",
 			"groupConfiguration": "Configuration",
-			"groupInsights": "Insights"
+			"groupInsights": "Insights",
+			"inbox": "Inbox"
 		},
 		"rolePreview": {
 			"items": {
@@ -257,7 +258,9 @@
 				"agents": "Agents",
 				"settings": "Settings"
 			}
-		}
+		},
+		"inboxUnread_one": "{{count}} unread",
+		"inboxUnread_other": "{{count}} unread"
 	},
 	"rolePreview": {
 		"placeholder": {

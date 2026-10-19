@@ -7,7 +7,11 @@ import type { CallEvaluationTab } from '~/views/Campaigns/types';
 import type { DisputeStatus } from '~/models/qa/disputeCases';
 
 /** Whose inbox a notification lands in. */
-export type NotificationRecipientRole = 'AGENT' | 'SUPERVISOR' | 'QA_MANAGER';
+export type NotificationRecipientRole =
+	| 'AGENT'
+	| 'SUPERVISOR'
+	| 'QA_MANAGER'
+	| 'OPERATION_MANAGER';
 
 /**
  * Typed body of a notification. The inbox drawer switches on `kind` to render a

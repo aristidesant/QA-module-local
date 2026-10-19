@@ -11,6 +11,7 @@ import {
 	Collapse,
 	Divider,
 	Group,
+	Indicator,
 	Menu,
 	Stack,
 	Text,
@@ -77,8 +78,9 @@ import {
 	selectNotifications,
 } from '~/stores/qa/notificationStore';
 import {
-	INBOX_IDENTITY,
+	INBOX_VIEWER_IDENTITY,
 	inboxRoleFromPath,
+	inboxViewerFromPath,
 } from '~/modules/qa/inbox/constants';
 import { unreadCountFor } from '~/modules/qa/inbox/helpers';
 import { useDisputesStore, selectCases } from '~/stores/qa/disputesStore';
@@ -1111,7 +1113,7 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 	/** Unread count of the inbox this link points at (agent / supervisor / QA manager). */
 	const inboxUnread = useMemo(() => {
 		if (item.badge !== 'inbox') return 0;
-		const me = INBOX_IDENTITY[inboxRoleFromPath(item.to)];
+		const me = INBOX_VIEWER_IDENTITY[inboxViewerFromPath(item.to)];
 		return unreadCountFor(notifications, me.role, me.id);
 	}, [item.badge, item.to, notifications]);
 	const badgeCount =
@@ -1178,12 +1180,31 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 				item.i18nNamespace && prefetchNamespace(item.i18nNamespace)
 			}
 		>
-			{item.icon}
+			{collapsed && badgeCount > 0 ? (
+				<Indicator
+					inline
+					size={8}
+					offset={3}
+					color='var(--mantine-primary-color-filled)'
+				>
+					{item.icon}
+				</Indicator>
+			) : (
+				item.icon
+			)}
 			{!collapsed && (
 				<Group gap={8} justify='space-between' flex={1}>
 					<span className={styles.menuText}>{t(item.label)}</span>
 					{badgeCount > 0 && (
-						<Badge size='sm' variant='filled'>
+						<Badge
+							size='sm'
+							variant='filled'
+							aria-label={
+								item.badge === 'inbox'
+									? t('sidebar.inboxUnread', { count: badgeCount })
+									: undefined
+							}
+						>
 							{badgeCount}
 						</Badge>
 					)}

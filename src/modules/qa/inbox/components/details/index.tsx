@@ -77,7 +77,7 @@ export const PayloadDetail: React.FC<PayloadDetailProps> = ({ payload }) => {
 		case 'METRIC_ALERT':
 			return (
 				<Stack gap='md'>
-					<SimpleGrid cols={3} spacing='md'>
+					<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='md'>
 						<Fact label={t('details.metricAlert.current')}>
 							<Text span c='red' fw={700}>
 								{formatMetricValue(payload.metricId, payload.value)}

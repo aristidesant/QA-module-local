@@ -3,7 +3,8 @@
 		"eyebrow": {
 			"agent": "Agent · John Smith",
 			"supervisor": "Supervisor · Team 1",
-			"qa-manager": "QA Manager · All teams"
+			"qa-manager": "QA Manager · All teams",
+			"operation-manager": "Operation Manager · Portfolio"
 		},
 		"title": "Inbox",
 		"description": "Alerts, recognitions, messages and updates routed to you",
@@ -11,7 +12,9 @@
 		"unread_other": "{{count}} unread",
 		"markAllRead": "Mark all as read",
 		"sectionTitle": "Notifications",
-		"sectionDescription": "Everything routed to you this period"
+		"sectionDescription": "Everything routed to you this period",
+		"markedRead_one": "{{count}} message marked as read",
+		"markedRead_other": "{{count}} messages marked as read"
 	},
 	"table": {
 		"columns": {
@@ -20,15 +23,19 @@
 			"priority": "Priority",
 			"source": "From",
 			"about": "Agent",
-			"date": "Date"
+			"date": "Date",
+			"message": "Message"
 		},
 		"actions": {
 			"view": "View details",
 			"markRead": "Mark as read",
 			"markUnread": "Mark as unread",
-			"archive": "Archive"
+			"archive": "Archive",
+			"restore": "Restore"
 		},
-		"empty": "No notifications match the current filters"
+		"empty": "No notifications match the current filters",
+		"read": "Read",
+		"unread": "Unread"
 	},
 	"categories": {
 		"DIRECT_MESSAGE": "Message",
@@ -58,8 +65,15 @@
 		"types": "Types",
 		"dateFrom": "From",
 		"dateTo": "To",
-		"search": "Search title or message",
-		"clear": "Clear filters"
+		"search": "Search title, message, sender or agent",
+		"clear": "Clear filters",
+		"clearSearch": "Clear search",
+		"unreadOnly": "Unread only",
+		"kinds": "Type",
+		"priority": "Priority",
+		"agent": "Agent",
+		"allAgents": "All agents",
+		"dateRange": "Date range"
 	},
 	"drawer": {
 		"from": "From {{name}} · {{role}}",
@@ -146,7 +160,8 @@
 			"materialsTitle": "Learning material",
 			"suggested": "Suggested",
 			"mandatory": "Mandatory",
-			"noMaterials": "No material is attached to this coaching."
+			"noMaterials": "No material is attached to this coaching.",
+			"cta": "Open coaching"
 		},
 		"lms": {
 			"content": "Content",
@@ -190,6 +205,51 @@
 	"detail": {
 		"back": "Inbox",
 		"from": "From",
-		"notFound": "This message is not available in your inbox."
+		"notFound": "This message is not available in your inbox.",
+		"notFoundAction": "Back to inbox"
+	},
+	"tabs": {
+		"needsAction": "Needs action",
+		"all": "All",
+		"archived": "Archived"
+	},
+	"kinds": {
+		"message": "Message",
+		"metricAlert": "Metric alert",
+		"trendWarning": "Trend warning",
+		"burnout": "Burnout risk",
+		"recognition": "Recognition",
+		"badge": "Badge",
+		"weeklySummary": "Weekly summary",
+		"coaching": "Coaching",
+		"learning": "Learning",
+		"followUp": "Follow-up",
+		"dispute": "Dispute",
+		"ranking": "Ranking"
+	},
+	"empty": {
+		"needsAction": {
+			"title": "You are all caught up",
+			"description": "Nothing needs your attention right now."
+		},
+		"all": {
+			"title": "Your inbox is empty",
+			"description": "New alerts, messages and updates will show up here."
+		},
+		"archived": {
+			"title": "Nothing archived",
+			"description": "Archived messages show up here so you can restore them."
+		},
+		"filtered": {
+			"title": "No messages match these filters",
+			"description": "Remove a filter or search for something else."
+		}
+	},
+	"toast": {
+		"archived": "Message archived",
+		"undo": "Undo",
+		"restored": "Message restored",
+		"markedUnread": "Marked as unread",
+		"replySent": "Reply sent"
 	}
 }

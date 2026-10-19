@@ -406,6 +406,14 @@ export const getOperationManagerNavigation = (): SidebarNavItem[] => [
 		i18nNamespace: 'qa.operationmanager',
 	},
 	{
+		key: 'operationmanager-inbox',
+		label: 'sidebar.operationmanager.inbox',
+		icon: <IconBell size={20} className={styles.menuIcon} />,
+		to: '/qa/operation-manager/inbox',
+		i18nNamespace: 'qa.inbox',
+		badge: 'inbox',
+	},
+	{
 		key: 'operationmanager-supervisors',
 		label: 'sidebar.operationmanager.supervisors',
 		icon: <IconUsers size={20} className={styles.menuIcon} />,
@@ -452,13 +460,16 @@ export const getOperationManagerNavigation = (): SidebarNavItem[] => [
 // OPERATION MANAGER NAVIGATION (organized by functional groups)
 export const getOperationManagerNavigationGrouped = (): NavGroup[] => {
 	const items = getOperationManagerNavigation();
+	const byKey = (key: string) =>
+		items.find((item) => item.key === key) as SidebarNavItem;
+	const dashboard = byKey('operationmanager-dashboard');
 
 	return [
-		// Primary: Dashboard (always visible, non-collapsible)
+		// Primary: Dashboard and Inbox (always visible, non-collapsible)
 		{
 			key: 'operationmanager-primary',
-			label: items[0].label, // 'sidebar.operationmanager.dashboard'
-			items: [items[0]],
+			label: dashboard.label, // 'sidebar.operationmanager.dashboard'
+			items: [dashboard, byKey('operationmanager-inbox')],
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -466,7 +477,11 @@ export const getOperationManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'operationmanager-organization',
 			label: 'sidebar.operationmanager.groupOrganization',
-			items: items.slice(1, 4), // Supervisors, Team Health, Clients
+			items: [
+				byKey('operationmanager-supervisors'),
+				byKey('operationmanager-team-health'),
+				byKey('operationmanager-clients'),
+			], // Supervisors, Team Health, Clients
 			collapsible: false,
 			defaultExpanded: true,
 		},
@@ -474,7 +489,7 @@ export const getOperationManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'operationmanager-configuration',
 			label: 'sidebar.operationmanager.groupConfiguration',
-			items: [items[4]], // Rankings
+			items: [byKey('operationmanager-rankings')], // Rankings
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -482,7 +497,10 @@ export const getOperationManagerNavigationGrouped = (): NavGroup[] => {
 		{
 			key: 'operationmanager-insights',
 			label: 'sidebar.operationmanager.groupInsights',
-			items: [items[5], items[6]], // Analytics, Reports
+			items: [
+				byKey('operationmanager-analytics'),
+				byKey('operationmanager-reports'),
+			], // Analytics, Reports
 			collapsible: true,
 			defaultExpanded: false,
 		},
