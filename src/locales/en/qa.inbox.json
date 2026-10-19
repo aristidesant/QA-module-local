@@ -83,7 +83,10 @@
 		"send": "Send",
 		"markUnread": "Mark as unread",
 		"archive": "Archive",
-		"actions": "Actions"
+		"actions": "Actions",
+		"you": "You",
+		"replyTo": "Reply to {{name}}…",
+		"sendHint": "Ctrl + Enter to send"
 	},
 	"reply": {
 		"title": "Reply from {{name}}"
@@ -98,14 +101,21 @@
 				"ABOVE": "above"
 			},
 			"rule": "Rule: {{name}}",
-			"cta": "Open analytics"
+			"cta": "Open analytics",
+			"gapBelow": "{{gap}} below",
+			"gapAbove": "{{gap}} above",
+			"gap": "Gap",
+			"thresholdLine": "Threshold {{value}}",
+			"caption": "{{metric}} · {{window}}",
+			"reviewCalls": "Review the calls"
 		},
 		"trendWarning": {
 			"from": "Was",
 			"to": "Now",
 			"change": "Change",
 			"period": "Period",
-			"cta": "Open analytics"
+			"cta": "Open analytics",
+			"fromLine": "Was {{value}}"
 		},
 		"burnout": {
 			"level": "Risk level",
@@ -115,13 +125,24 @@
 			},
 			"drivers": "Drivers",
 			"cta": "Reply to your supervisor",
-			"ctaManager": "Open burnout analytics"
+			"ctaManager": "Open burnout analytics",
+			"whyYou": "Why you were flagged",
+			"whyAgent": "Why {{name}} was flagged",
+			"ctaProfile": "Open {{name}}'s burnout tab",
+			"columns": {
+				"condition": "Condition",
+				"current": "Current",
+				"status": "Status"
+			}
 		},
 		"recognition": {
 			"MILESTONE": "Milestone reached",
 			"STREAK": "{{count}}-week streak",
 			"IMPROVEMENT": "Improved {{delta}}%",
-			"value": "Value"
+			"value": "Value",
+			"keepItUp": "Keep it up — this is the kind of consistency the team notices.",
+			"week": "W{{n}}",
+			"cta": "Open rankings"
 		},
 		"badge": {
 			"earned": "Badge earned",
@@ -130,7 +151,11 @@
 				"SILVER": "Silver",
 				"GOLD": "Gold"
 			},
-			"cta": "View my badges"
+			"cta": "View my badges",
+			"earnedOn": "Earned {{date}}",
+			"holders_one": "{{count}} agent holds this badge",
+			"holders_other": "{{count}} agents hold this badge",
+			"ctaProfile": "Open {{name}}'s achievements"
 		},
 		"weekly": {
 			"week": "Week {{label}}",

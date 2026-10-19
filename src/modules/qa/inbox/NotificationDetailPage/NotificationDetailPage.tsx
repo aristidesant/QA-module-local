@@ -45,6 +45,10 @@ import {
 	rankingsBasePath,
 } from '../constants';
 import { agentContentPath } from '~/modules/qa/lms/constants';
+import { agentProfilePath } from '~/modules/qa/team/helpers';
+import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
+import type { TeamRole } from '~/modules/qa/team/types';
+import { METRIC_ISSUE, callsPathFor, windowDays } from '../detailHelpers';
 import {
 	buildNotification,
 	findCoachingSessionFor,
@@ -135,31 +139,62 @@ export default function NotificationDetailPage() {
 			? { session: coachSession, profile: agentProfile }
 			: null;
 
+	/** The roster agent the message is about, when it is about one. */
+	const subjectAgent = TEAM_AGENTS.find((agent) => agent.id === live.agentId);
+	const subjectFirstName = subjectAgent?.name.split(' ')[0] ?? '';
+	/** Profile links exist for managers only; the agent has no profile page of their own. */
+	const profileRole: TeamRole | null = routeRole === 'agent' ? null : routeRole;
+
 	/** Where the kind's primary call to action leads. */
 	const primaryAction = (): { label: string; to: string } | null => {
 		switch (payload.kind) {
 			case 'METRIC_ALERT':
-				return {
-					label: t('details.metricAlert.cta'),
-					to: analyticsPath(routeRole),
-				};
-			case 'TREND_WARNING':
-				return {
-					label: t('details.trendWarning.cta'),
-					to: analyticsPath(routeRole),
-				};
+			case 'TREND_WARNING': {
+				// The calls behind the metric, when one issue maps to it; the analytics otherwise.
+				const issue = METRIC_ISSUE[payload.metricId];
+				const days = windowDays(
+					payload.kind === 'METRIC_ALERT'
+						? payload.windowLabel
+						: payload.periodLabel
+				);
+				return issue
+					? {
+							label: t('details.metricAlert.reviewCalls'),
+							to: callsPathFor(viewer, issue, days),
+						}
+					: {
+							label: t('details.metricAlert.cta'),
+							to: analyticsPath(routeRole),
+						};
+			}
 			case 'BURNOUT_RISK':
-				return viewer === 'agent'
-					? null
+				if (viewer === 'agent') return null;
+				return subjectAgent && profileRole
+					? {
+							label: t('details.burnout.ctaProfile', {
+								name: subjectFirstName,
+							}),
+							to: `${agentProfilePath(profileRole, subjectAgent)}?tab=burnout`,
+						}
 					: {
 							label: t('details.burnout.ctaManager'),
 							to: `${analyticsPath(routeRole)}?view=burnout`,
 						};
-			case 'BADGE_EARNED':
+			case 'RECOGNITION':
 				return {
-					label: t('details.badge.cta'),
+					label: t('details.recognition.cta'),
 					to: rankingsBasePath(routeRole),
 				};
+			case 'BADGE_EARNED':
+				return profileRole && subjectAgent
+					? {
+							label: t('details.badge.ctaProfile', { name: subjectFirstName }),
+							to: `${agentProfilePath(profileRole, subjectAgent)}?tab=achievements`,
+						}
+					: {
+							label: t('details.badge.cta'),
+							to: rankingsBasePath(routeRole),
+						};
 			case 'WEEKLY_SUMMARY':
 				return { label: t('details.weekly.cta'), to: analyticsPath(routeRole) };
 			case 'COACHING_SESSION':
@@ -192,10 +227,15 @@ export default function NotificationDetailPage() {
 	};
 
 	const cta = primaryAction();
+	const extraActions = (live.actions ?? []).filter(
+		(action) => !cta || (action.url !== cta.to && action.label !== cta.label)
+	);
 	const replies = live.replies ?? [];
 	const showThread =
 		viewer !== 'operation-manager' &&
 		(live.sourceRole !== 'SYSTEM' || replies.length > 0);
+	// A direct message is the conversation itself, so it reads as a chat inside the reader.
+	const inlineThread = payload.kind === 'MESSAGE' && showThread;
 
 	const handleSend = (message: string) => {
 		// The Operation Manager has no reply thread.
@@ -294,7 +334,7 @@ export default function NotificationDetailPage() {
 							{t('drawer.archive')}
 						</Button>
 						<Group gap='xs' wrap='wrap' ml='auto'>
-							{live.actions?.map((action) => (
+							{extraActions.map((action) => (
 								<Button
 									key={action.label}
 									variant='default'
@@ -356,17 +396,40 @@ export default function NotificationDetailPage() {
 						</Stack>
 					</div>
 
-					{!automated && (
+					{inlineThread ? (
 						<div className={styles.readerBody}>
-							<Text size='md' lh={1.6} maw='72ch' className={styles.message}>
-								{live.message}
-							</Text>
+							<MessageThread
+								original={{
+									fromId: live.sourceId,
+									fromRole: live.sourceRole,
+									message: live.message,
+									createdAt: live.createdAt,
+								}}
+								replies={replies}
+								viewerRole={me.role}
+								viewerId={me.id}
+								replyTo={sender}
+								onSend={handleSend}
+							/>
 						</div>
+					) : (
+						!automated && (
+							<div className={styles.readerBody}>
+								<Text size='md' lh={1.6} maw='72ch' className={styles.message}>
+									{live.message}
+								</Text>
+							</div>
+						)
 					)}
 
 					{payload.kind !== 'MESSAGE' && (
 						<div className={styles.readerFacts}>
-							<PayloadDetail payload={payload} />
+							<PayloadDetail
+								payload={payload}
+								agentId={live.agentId}
+								createdAt={live.createdAt}
+								viewer={viewer}
+							/>
 						</div>
 					)}
 				</Paper>
@@ -391,11 +454,13 @@ export default function NotificationDetailPage() {
 					/>
 				)}
 
-				{showThread && (
+				{showThread && !inlineThread && (
 					<SectionCard padding='md'>
 						<MessageThread
 							replies={replies}
 							viewerRole={me.role}
+							viewerId={me.id}
+							replyTo={sender}
 							onSend={handleSend}
 						/>
 					</SectionCard>

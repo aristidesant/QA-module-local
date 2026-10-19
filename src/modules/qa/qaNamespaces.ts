@@ -77,6 +77,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.agent.inbox.detail': [
 		'qa.inbox',
 		'qa.teamAnalytics',
+		'qa.triggers',
 		'qa.team',
 		'qa.calls',
 		'qa.coaching',
@@ -85,6 +86,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.supervisor.inbox.detail': [
 		'qa.inbox',
 		'qa.teamAnalytics',
+		'qa.triggers',
 		'qa.team',
 		'qa.calls',
 		'qa.coaching',
@@ -93,6 +95,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.qa-manager.inbox.detail': [
 		'qa.inbox',
 		'qa.teamAnalytics',
+		'qa.triggers',
 		'qa.team',
 		'qa.calls',
 		'qa.coaching',
@@ -101,6 +104,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.operation-manager.inbox.detail': [
 		'qa.inbox',
 		'qa.teamAnalytics',
+		'qa.triggers',
 		'qa.team',
 		'qa.calls',
 		'qa.coaching',

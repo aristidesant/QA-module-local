@@ -1,244 +1,69 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Badge,
-	Group,
-	List,
-	Paper,
-	RingProgress,
-	SimpleGrid,
-	Stack,
-	Text,
-	ThemeIcon,
-} from '@mantine/core';
-import { Sparkline } from '@mantine/charts';
-import {
-	IconArrowDownRight,
-	IconArrowUpRight,
-	IconMinus,
-	IconTrophy,
-} from '@tabler/icons-react';
+import { Badge, Group, List, SimpleGrid, Stack, Text } from '@mantine/core';
 import dayjs from 'dayjs';
 import type { NotificationPayload } from '~/models/qa/notifications';
-import { formatMetricValue } from '~/modules/qa/triggers/helpers';
 import { TODAY } from '~/modules/qa/analytics/constants';
 import { CALL_EVALUATION_TABS } from '~/views/Campaigns/constants';
+import type { InboxViewer } from '../../constants';
+import { DeltaText, Fact } from './Fact';
+import { MetricAlertDetail } from './MetricAlertDetail';
+import { TrendWarningDetail } from './TrendWarningDetail';
+import { BurnoutRiskDetail } from './BurnoutRiskDetail';
+import { RecognitionDetail } from './RecognitionDetail';
+import { BadgeEarnedDetail } from './BadgeEarnedDetail';
 import styles from '../Inbox.module.css';
 
-/** Small label/value pair used by most detail bodies. */
-const Fact: React.FC<{ label: string; children: React.ReactNode }> = ({
-	label,
-	children,
-}) => (
-	<div>
-		<Text size='xs' c='dimmed'>
-			{label}
-		</Text>
-		<Text fw={600} size='sm'>
-			{children}
-		</Text>
-	</div>
-);
-
-export const DeltaText: React.FC<{ value: number | null; suffix?: string }> = ({
-	value,
-	suffix = '',
-}) => {
-	if (value === null) return <Text size='sm'>—</Text>;
-	const Icon =
-		value > 0 ? IconArrowUpRight : value < 0 ? IconArrowDownRight : IconMinus;
-	const color = value > 0 ? 'green' : value < 0 ? 'red' : 'gray';
-	return (
-		<Group gap={4} wrap='nowrap'>
-			<Text fw={600} size='sm' c={color}>
-				{value > 0 ? '+' : ''}
-				{value}
-				{suffix}
-			</Text>
-			<ThemeIcon size='xs' variant='light' color={color}>
-				<Icon size={12} />
-			</ThemeIcon>
-		</Group>
-	);
-};
+export { DeltaText, Fact } from './Fact';
 
 interface PayloadDetailProps {
 	payload: NotificationPayload;
+	/** The agent the notification is about. */
+	agentId: string;
+	/** When the notification was raised. */
+	createdAt: string;
+	viewer: InboxViewer;
 }
 
 /**
- * Renders the body that fits the notification kind. Metric labels come from the
- * analytics namespace so a QA alert reads the same here and on the dashboards.
+ * Renders the body that fits the notification kind. Alerts, burnout, recognitions
+ * and badges have their own components; the rest are short fact grids.
  */
-export const PayloadDetail: React.FC<PayloadDetailProps> = ({ payload }) => {
+export const PayloadDetail: React.FC<PayloadDetailProps> = ({
+	payload,
+	agentId,
+	createdAt,
+	viewer,
+}) => {
 	const { t } = useTranslation('qa.inbox');
-	const { t: tAnalytics } = useTranslation('qa.teamAnalytics');
 
 	switch (payload.kind) {
 		case 'METRIC_ALERT':
-			return (
-				<Stack gap='md'>
-					<SimpleGrid cols={{ base: 1, sm: 3 }} spacing='md'>
-						<Fact label={t('details.metricAlert.current')}>
-							<Text span c='red' fw={700}>
-								{formatMetricValue(payload.metricId, payload.value)}
-							</Text>
-						</Fact>
-						<Fact label={t('details.metricAlert.threshold')}>
-							{formatMetricValue(payload.metricId, payload.threshold)}
-						</Fact>
-						<Fact label={t('details.metricAlert.window')}>
-							{payload.windowLabel}
-						</Fact>
-					</SimpleGrid>
-					<div>
-						<Text size='xs' c='dimmed' mb={4}>
-							{tAnalytics(`metrics.${payload.metricId}`)}
-						</Text>
-						<Sparkline
-							h={48}
-							data={payload.sparkline}
-							color='red'
-							fillOpacity={0.2}
-							strokeWidth={2}
-						/>
-					</div>
-					{payload.ruleName && (
-						<Badge variant='light' color='gray' tt='none'>
-							{t('details.metricAlert.rule', { name: payload.ruleName })}
-						</Badge>
-					)}
-				</Stack>
-			);
+			return <MetricAlertDetail payload={payload} />;
 
 		case 'TREND_WARNING':
+			return <TrendWarningDetail payload={payload} />;
+
+		case 'BURNOUT_RISK':
 			return (
-				<Stack gap='md'>
-					<SimpleGrid cols={{ base: 2, sm: 4 }} spacing='md'>
-						<Fact label={t('details.trendWarning.from')}>
-							{formatMetricValue(payload.metricId, payload.from)}
-						</Fact>
-						<Fact label={t('details.trendWarning.to')}>
-							{formatMetricValue(payload.metricId, payload.to)}
-						</Fact>
-						<Fact label={t('details.trendWarning.change')}>
-							<DeltaText value={payload.deltaPct} suffix='%' />
-						</Fact>
-						<Fact label={t('details.trendWarning.period')}>
-							{payload.periodLabel}
-						</Fact>
-					</SimpleGrid>
-					<div>
-						<Text size='xs' c='dimmed' mb={4}>
-							{tAnalytics(`metrics.${payload.metricId}`)}
-						</Text>
-						<Sparkline
-							h={48}
-							data={payload.sparkline}
-							color='orange'
-							fillOpacity={0.2}
-							strokeWidth={2}
-						/>
-					</div>
-					{payload.ruleName && (
-						<Badge variant='light' color='gray' tt='none'>
-							{t('details.metricAlert.rule', { name: payload.ruleName })}
-						</Badge>
-					)}
-				</Stack>
+				<BurnoutRiskDetail
+					payload={payload}
+					agentId={agentId}
+					viewer={viewer}
+				/>
 			);
 
-		case 'BURNOUT_RISK': {
-			const tone = payload.level === 'high' ? 'danger' : 'amber';
-			return (
-				<Group align='flex-start' gap='lg' wrap='wrap'>
-					<Paper withBorder radius='md' p='xs' className={styles.riskTile}>
-						<Stack align='center' justify='center' gap={6} h='100%'>
-							<Text size='xs' c='dimmed'>
-								{t('details.burnout.level')}
-							</Text>
-							<RingProgress
-								size={76}
-								thickness={9}
-								roundCaps
-								sections={[{ value: payload.percentage, color: tone }]}
-								role='img'
-								aria-label={`${t('details.burnout.level')}: ${payload.percentage}%`}
-								label={
-									<Text ta='center' fw={700} size='sm'>
-										{payload.percentage}%
-									</Text>
-								}
-							/>
-							<Badge color={tone} variant='light' size='sm'>
-								{t(`details.burnout.levels.${payload.level}`)}
-							</Badge>
-						</Stack>
-					</Paper>
-					<div className={styles.riskDrivers}>
-						<Text size='xs' c='dimmed' mb={6}>
-							{t('details.burnout.drivers')}
-						</Text>
-						<Group gap={6} wrap='wrap'>
-							{payload.drivers.map((driver) => (
-								<Badge key={driver} variant='outline' color='gray' tt='none'>
-									{tAnalytics(`burnout.drivers.${driver}`)}
-								</Badge>
-							))}
-						</Group>
-					</div>
-				</Group>
-			);
-		}
 		case 'RECOGNITION':
-			return (
-				<Group gap='md' wrap='nowrap'>
-					<ThemeIcon size='xl' radius='md' variant='light' color='green'>
-						<IconTrophy size={26} />
-					</ThemeIcon>
-					<Stack gap={2}>
-						<Text fw={600}>
-							{payload.type === 'STREAK'
-								? t('details.recognition.STREAK', {
-										count: payload.streakWeeks ?? 0,
-									})
-								: payload.type === 'IMPROVEMENT'
-									? t('details.recognition.IMPROVEMENT', {
-											delta: payload.deltaPct ?? 0,
-										})
-									: t('details.recognition.MILESTONE')}
-						</Text>
-						{payload.metricId && payload.value !== undefined && (
-							<Text size='sm' c='dimmed'>
-								{tAnalytics(`metrics.${payload.metricId}`)}:{' '}
-								{formatMetricValue(payload.metricId, payload.value)}
-							</Text>
-						)}
-					</Stack>
-				</Group>
-			);
+			return <RecognitionDetail payload={payload} />;
 
 		case 'BADGE_EARNED':
 			return (
-				<Group gap='md' wrap='nowrap'>
-					<div
-						className={styles.badgeCircle}
-						data-badge-color={payload.badgeColor}
-					>
-						<Text size='xl'>{payload.badgeIcon}</Text>
-					</div>
-					<Stack gap={4}>
-						<Group gap='xs'>
-							<Text fw={600}>{payload.badgeName}</Text>
-							<Badge size='sm' variant='light' color={payload.badgeColor}>
-								{t(`details.badge.tier.${payload.tier}`)}
-							</Badge>
-						</Group>
-						<Text size='sm' c='dimmed'>
-							{payload.reason}
-						</Text>
-					</Stack>
-				</Group>
+				<BadgeEarnedDetail
+					payload={payload}
+					agentId={agentId}
+					earnedAt={createdAt}
+					viewer={viewer}
+				/>
 			);
 
 		case 'WEEKLY_SUMMARY':

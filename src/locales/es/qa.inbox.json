@@ -83,7 +83,10 @@
 		"send": "Enviar",
 		"markUnread": "Marcar como no leído",
 		"archive": "Archivar",
-		"actions": "Acciones"
+		"actions": "Acciones",
+		"you": "Tú",
+		"replyTo": "Responder a {{name}}…",
+		"sendHint": "Ctrl + Enter para enviar"
 	},
 	"reply": {
 		"title": "Respuesta de {{name}}"
@@ -98,14 +101,21 @@
 				"ABOVE": "por encima de"
 			},
 			"rule": "Regla: {{name}}",
-			"cta": "Abrir analytics"
+			"cta": "Abrir analytics",
+			"gapBelow": "{{gap}} por debajo",
+			"gapAbove": "{{gap}} por encima",
+			"gap": "Diferencia",
+			"thresholdLine": "Umbral {{value}}",
+			"caption": "{{metric}} · {{window}}",
+			"reviewCalls": "Revisar las llamadas"
 		},
 		"trendWarning": {
 			"from": "Antes",
 			"to": "Ahora",
 			"change": "Cambio",
 			"period": "Periodo",
-			"cta": "Abrir analytics"
+			"cta": "Abrir analytics",
+			"fromLine": "Antes {{value}}"
 		},
 		"burnout": {
 			"level": "Nivel de riesgo",
@@ -115,13 +125,24 @@
 			},
 			"drivers": "Factores",
 			"cta": "Responder a tu supervisor",
-			"ctaManager": "Abrir analytics de burnout"
+			"ctaManager": "Abrir analytics de burnout",
+			"whyYou": "Por qué se te marcó",
+			"whyAgent": "Por qué se marcó a {{name}}",
+			"ctaProfile": "Abrir el burnout de {{name}}",
+			"columns": {
+				"condition": "Condición",
+				"current": "Actual",
+				"status": "Estado"
+			}
 		},
 		"recognition": {
 			"MILESTONE": "Hito alcanzado",
 			"STREAK": "Racha de {{count}} semanas",
 			"IMPROVEMENT": "Mejora del {{delta}}%",
-			"value": "Valor"
+			"value": "Valor",
+			"keepItUp": "Sigue así: esta constancia es la que nota el equipo.",
+			"week": "S{{n}}",
+			"cta": "Abrir rankings"
 		},
 		"badge": {
 			"earned": "Insignia obtenida",
@@ -130,7 +151,11 @@
 				"SILVER": "Plata",
 				"GOLD": "Oro"
 			},
-			"cta": "Ver mis insignias"
+			"cta": "Ver mis insignias",
+			"earnedOn": "Obtenida el {{date}}",
+			"holders_one": "{{count}} agente tiene esta insignia",
+			"holders_other": "{{count}} agentes tienen esta insignia",
+			"ctaProfile": "Abrir los logros de {{name}}"
 		},
 		"weekly": {
 			"week": "Semana {{label}}",
