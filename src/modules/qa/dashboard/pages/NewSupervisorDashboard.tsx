@@ -7,8 +7,8 @@ import {
 } from '~/modules/qa/calls/constants';
 import type { CallIssueKey } from '~/modules/qa/calls/issues';
 import { useTranslation } from 'react-i18next';
-import { Stack, Title, Text, Grid, SimpleGrid } from '@mantine/core';
-import { IconTrophy } from '@tabler/icons-react';
+import { Anchor, Stack, Title, Text, Grid, SimpleGrid } from '@mantine/core';
+import { IconArrowRight, IconTrophy } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
@@ -30,6 +30,7 @@ import {
 } from '~/stores/qa/triggerRulesStore';
 import { useActiveRankingByTeam } from '~/modules/qa/rankings/hooks/useActiveRanking';
 import RankingStandings from '~/modules/qa/rankings/components/RankingStandings';
+import { rankingPath } from '~/modules/qa/rankings/constants';
 import {
 	buildTeamDashboardMetrics,
 	buildTeamBusinessInsights,
@@ -195,7 +196,24 @@ export const NewSupervisorDashboard: React.FC = () => {
 								/>
 							</SectionCard>
 						) : (
-							<RankingStandings program={program} standings={standings} dense />
+							<RankingStandings
+								program={program}
+								standings={standings}
+								title={t('drawer.yourTeam')}
+								dense
+								footer={
+									<Anchor
+										component='button'
+										type='button'
+										size='sm'
+										onClick={() =>
+											navigate(rankingPath('supervisor', program.id))
+										}
+									>
+										{t('drawer.viewFullRanking')} <IconArrowRight size={14} />
+									</Anchor>
+								}
+							/>
 						)}
 					</Grid.Col>
 					<Grid.Col span={{ base: 12, md: 6, lg: 3 }}>

@@ -109,19 +109,22 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 				)}
 				<Table.Td className={styles.scoreCell}>
 					<Group gap='xs' wrap='nowrap'>
-						<Progress
-							value={
-								standing.score === null
-									? 0
-									: Math.min(
-											100,
-											(standing.score / Math.max(program.targetScore, 1)) * 100
-										)
-							}
-							color={standing.reachedTarget ? 'green' : 'blue'}
-							size='sm'
-							className={styles.scoreBar}
-						/>
+						{!dense && (
+							<Progress
+								value={
+									standing.score === null
+										? 0
+										: Math.min(
+												100,
+												(standing.score / Math.max(program.targetScore, 1)) *
+													100
+											)
+								}
+								color={standing.reachedTarget ? 'green' : 'blue'}
+								size='sm'
+								className={styles.scoreBar}
+							/>
+						)}
 						{isComposite(program) && standing.score !== null ? (
 							<Tooltip
 								label={<ScoreBreakdown program={program} standing={standing} />}

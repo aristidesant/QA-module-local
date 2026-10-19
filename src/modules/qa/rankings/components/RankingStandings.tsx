@@ -24,6 +24,10 @@ interface RankingStandingsProps {
 	/** Rank, agent and scorecard only, for a narrow placement such as a dashboard card. */
 	dense?: boolean;
 	headerActions?: ReactNode;
+	/** Replaces the default "Standings" title. */
+	title?: string;
+	/** Rendered under the standings, e.g. a link to the full ranking. */
+	footer?: ReactNode;
 }
 
 /** The standings card: table on wide screens, cards below 1024px, the same columns for every role. */
@@ -35,6 +39,8 @@ export function RankingStandings({
 	reactions = 'off',
 	dense = false,
 	headerActions,
+	title,
+	footer,
 }: RankingStandingsProps) {
 	const { t } = useTranslation('qa.rankings');
 	const isCompact = useMediaQuery(TABLE_BREAKPOINT);
@@ -42,8 +48,9 @@ export function RankingStandings({
 
 	return (
 		<SectionCard
-			title={t('drawer.standings')}
+			title={title ?? t('drawer.standings')}
 			description={`${t('editor.target')}: ${formatTarget(program)}`}
+			footer={footer}
 			headerActions={
 				<Group gap='sm' wrap='nowrap'>
 					{headerActions}
@@ -64,6 +71,7 @@ export function RankingStandings({
 					currentAgentId={currentAgentId}
 					onRowClick={onRowClick}
 					reactions={reactions}
+					dense={dense}
 				/>
 			) : (
 				<StandingsTable
