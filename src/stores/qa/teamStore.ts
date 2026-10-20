@@ -19,6 +19,7 @@ import {
 	initialTeamCampaignIds,
 } from '~/modules/qa/team/mockData';
 import {
+	DEFAULT_TEAM_TARGET_SIZE,
 	NOW_ISO,
 	QA_MANAGER_PERSONA,
 	SUPERVISOR_PERSONA,
@@ -26,6 +27,11 @@ import {
 	UNASSIGNED_SUPERVISOR_ID,
 } from '~/modules/qa/team/constants';
 import type { RosterSupervisor } from '~/modules/qa/team/types';
+import {
+	TEAM_CONFIG_EXTRA_CAMPAIGN_IDS,
+	TEAM_CONFIG_EXTRA_PROFILES,
+	TEAM_CONFIG_EXTRA_SUPERVISORS,
+} from '~/modules/qa/team/teamConfigSeed';
 
 let counter = 500;
 const nextId = (prefix: string) => `${prefix}-${++counter}`;
@@ -59,6 +65,8 @@ export interface CreateTeamInput {
 	teamName: string;
 	supervisorName: string;
 	supervisorEmail: string;
+	/** How many agents the team should have; defaults to DEFAULT_TEAM_TARGET_SIZE. */
+	targetSize?: number;
 	/** Agents who move into the new team right away. */
 	memberIds?: string[];
 }
@@ -85,8 +93,11 @@ interface TeamState {
 	addMembers: (agentIds: string[], supervisorId: string) => void;
 	/** Creates a supervisor with their team and, optionally, moves the first members in. Returns the new supervisor. */
 	createTeam: (input: CreateTeamInput) => RosterSupervisor;
-	/** Renames the team and relabels every member. */
-	renameTeam: (supervisorId: string, teamName: string) => void;
+	/** Renames the team (relabelling every member) and/or changes its target size. */
+	updateTeam: (
+		supervisorId: string,
+		patch: Partial<Pick<RosterSupervisor, 'team' | 'targetSize'>>
+	) => void;
 	/** Removes the team: members go to Unassigned, the supervisor and their campaign list go away. */
 	dissolveTeam: (supervisorId: string) => void;
 }
@@ -123,9 +134,17 @@ const prepend = (
 ): AgentProfile => ({ ...profile, activity: [event, ...profile.activity] });
 
 export const useTeamStore = create<TeamState>((set, get) => ({
-	profiles: TEAM_PROFILES,
-	supervisors: Object.fromEntries(TEAM_SUPERVISORS.map((s) => [s.id, s])),
-	teamCampaignIds: initialTeamCampaignIds(),
+	profiles: { ...TEAM_PROFILES, ...TEAM_CONFIG_EXTRA_PROFILES },
+	supervisors: Object.fromEntries(
+		[...TEAM_SUPERVISORS, ...TEAM_CONFIG_EXTRA_SUPERVISORS].map((s) => [
+			s.id,
+			s,
+		])
+	),
+	teamCampaignIds: {
+		...initialTeamCampaignIds(),
+		...TEAM_CONFIG_EXTRA_CAMPAIGN_IDS,
+	},
 
 	/**
 	 * Creates the real session in the coaching store (which notifies the agent) and
@@ -377,6 +396,7 @@ export const useTeamStore = create<TeamState>((set, get) => ({
 			name: input.supervisorName.trim(),
 			team: input.teamName.trim(),
 			email: input.supervisorEmail.trim(),
+			targetSize: input.targetSize ?? DEFAULT_TEAM_TARGET_SIZE,
 		};
 		set((s) => {
 			const profiles = { ...s.profiles };
@@ -402,23 +422,21 @@ export const useTeamStore = create<TeamState>((set, get) => ({
 		return supervisor;
 	},
 
-	renameTeam: (supervisorId, teamName) =>
+	updateTeam: (supervisorId, patch) =>
 		set((s) => {
 			const supervisor = s.supervisors[supervisorId];
 			if (!supervisor) return {};
+			const next = { ...supervisor, ...patch };
+			const supervisors = { ...s.supervisors, [supervisorId]: next };
+			if (patch.team === undefined || patch.team === supervisor.team)
+				return { supervisors };
 			const profiles = { ...s.profiles };
 			for (const [agentId, p] of Object.entries(profiles)) {
 				if (p.agent.supervisorId === supervisorId) {
-					profiles[agentId] = { ...p, agent: { ...p.agent, team: teamName } };
+					profiles[agentId] = { ...p, agent: { ...p.agent, team: next.team } };
 				}
 			}
-			return {
-				supervisors: {
-					...s.supervisors,
-					[supervisorId]: { ...supervisor, team: teamName },
-				},
-				profiles,
-			};
+			return { supervisors, profiles };
 		}),
 
 	dissolveTeam: (supervisorId) =>

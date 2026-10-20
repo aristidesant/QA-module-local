@@ -39,18 +39,21 @@ export const TEAM_SUPERVISORS: RosterSupervisor[] = [
 		name: 'Maria García',
 		team: 'Team 1',
 		email: 'maria.garcia@newtech.com',
+		targetSize: 12,
 	},
 	{
 		id: 'SUP-002',
 		name: 'Juan Pérez',
 		team: 'Team 2',
 		email: 'juan.perez@newtech.com',
+		targetSize: 20,
 	},
 	{
 		id: 'SUP-003',
 		name: 'Laura Gómez',
 		team: 'Team 3',
 		email: 'laura.gomez@newtech.com',
+		targetSize: 12,
 	},
 ];
 
@@ -82,7 +85,7 @@ export const TEAM_CAMPAIGNS: RosterCampaign[] = [
 ];
 
 /** Persona knobs: base level per dimension (0-1 = weak..strong) and a monthly slope (-1..1). */
-interface Persona {
+export interface Persona {
 	id: string;
 	name: string;
 	supervisorId: string;
@@ -97,7 +100,7 @@ interface Persona {
 	skills: string[];
 }
 
-const AVATAR_COLORS = [
+export const AVATAR_COLORS = [
 	'blue',
 	'teal',
 	'grape',
@@ -458,14 +461,18 @@ function dimensionAt(
 
 const toPct = (key: DimensionKey, v: number) =>
 	key === 'sentiment' ? Math.round(((v - 1) / 4) * 100) : v;
-interface RankContext {
+export interface RankContext {
 	rankInTeam: number;
 	teamSize: number;
 	percentile: number;
 }
 
-export function buildAgentProfile(p: Persona, rank: RankContext): AgentProfile {
-	const agent = TEAM_AGENTS.find((a) => a.id === p.id)!;
+export function buildAgentProfile(
+	p: Persona,
+	rank: RankContext,
+	agentOverride?: RosterAgent
+): AgentProfile {
+	const agent = agentOverride ?? TEAM_AGENTS.find((a) => a.id === p.id)!;
 	const rand = seeded(Number(p.id.replace(/\D/g, '')) * 7919);
 	const months = monthsSince(p.trackedSince);
 	const n = months.length;

@@ -501,43 +501,82 @@
 		"title": "Team configuration",
 		"description": "Create teams, assign a supervisor to each one and move agents between them.",
 		"newTeam": "New team",
+		"clearSearch": "Clear search",
 		"kpis": {
 			"teams": "Teams",
 			"agents": "Assigned agents",
 			"unassigned": "Unassigned",
 			"avgSize": "Avg. team size"
 		},
-		"search": "Search agents…",
-		"clearSearch": "Clear search",
-		"board": {
+		"rail": {
+			"title": "Teams",
+			"search": "Search teams or agents…",
 			"unassigned": "Unassigned",
-			"unassignedHint": "Agents without a team. Drop one here to unassign it.",
-			"dropHint": "Drop agents here"
+			"unassignedHint": "Agents without a team",
+			"capacity": "{{count}} / {{target}}",
+			"matches_one": "{{count}} agent matches",
+			"matches_other": "{{count}} agents match",
+			"empty": "No teams or agents match"
 		},
-		"empty": {
-			"title": "No teams yet",
-			"description": "Create the first team and its supervisor, then drag agents in."
-		},
-		"column": {
-			"members_one": "{{count}} agent",
-			"members_other": "{{count}} agents",
+		"header": {
+			"agents_one": "{{count}} agent",
+			"agents_other": "{{count}} agents",
+			"target": "target {{target}}",
+			"overBy_one": "{{count}} over target",
+			"overBy_other": "{{count}} over target",
+			"atTarget": "At target",
+			"openSeats_one": "{{count}} open seat",
+			"openSeats_other": "{{count}} open seats",
+			"unassignedHint": "Agents without a team. Move them into a team from the list below.",
 			"menu": {
 				"label": "Team actions",
 				"editSupervisor": "Edit supervisor",
-				"renameTeam": "Rename team",
+				"editTeam": "Edit team",
 				"dissolveTeam": "Dissolve team"
 			}
 		},
-		"card": {
-			"dragHandle": "Drag to move",
+		"members": {
+			"title": "Members",
+			"addAgents": "Add agents",
+			"search": "Search by name, ID or email…",
+			"shift": "Shift",
+			"status": "Status",
+			"all": "All",
+			"clear": "Clear filters",
+			"count_one": "{{count}} agent",
+			"count_other": "{{count}} agents",
+			"filteredCount": "{{count}} of {{total}} agents",
+			"empty": "No agents in this team yet. Add agents or move them here from another team.",
+			"emptyFiltered": "No agents match these filters.",
+			"emptyUnassigned": "Everyone has a team."
+		},
+		"columns": {
+			"agent": "Agent",
+			"shift": "Shift",
+			"status": "Status"
+		},
+		"row": {
 			"moveTo": "Move to…"
+		},
+		"selection": {
+			"count_one": "{{count}} selected",
+			"count_other": "{{count}} selected",
+			"moveTo": "Move to…",
+			"unassign": "Unassign",
+			"clear": "Clear"
+		},
+		"empty": {
+			"title": "No teams yet",
+			"description": "Create the first team and its supervisor, then add agents to it."
 		},
 		"drawer": {
 			"title": "New team",
-			"description": "A team is led by one supervisor. You can add members now or drag them in later.",
+			"description": "A team is led by one supervisor. You can add members now or later from the team page.",
 			"teamSection": "Team",
 			"supervisorSection": "Supervisor",
 			"teamName": "Team name",
+			"targetSize": "Target size",
+			"targetSizeHint": "How many agents this team should have. Drives the capacity indicator.",
 			"supervisorName": "Supervisor name",
 			"supervisorEmail": "Supervisor email",
 			"members": "First members",
@@ -546,13 +585,15 @@
 			"validation": {
 				"teamName": "Give the team a name",
 				"teamNameTaken": "A team with this name already exists",
+				"targetSize": "Enter a target of at least 1",
 				"supervisorName": "Give the supervisor a name",
 				"email": "Enter a valid email"
 			}
 		},
-		"rename": {
-			"title": "Rename team",
-			"label": "Team name",
+		"editTeam": {
+			"title": "Edit team",
+			"name": "Team name",
+			"targetSize": "Target size",
 			"save": "Save"
 		},
 		"dissolve": {
@@ -568,8 +609,9 @@
 		},
 		"toast": {
 			"moved": "{{name}} moved to {{team}}",
+			"movedMany": "{{count}} agents moved to {{team}}",
 			"created": "Team {{team}} created",
-			"renamed": "Team renamed to {{team}}",
+			"updated": "Team {{team}} updated",
 			"dissolved": "Team {{team}} dissolved"
 		}
 	}

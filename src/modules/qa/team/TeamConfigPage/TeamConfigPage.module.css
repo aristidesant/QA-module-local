@@ -1,91 +1,84 @@
-/* The board: one column per team, scrolling sideways when there are many. */
-.board {
-	display: flex;
-	align-items: flex-start;
+/* Master-detail: teams rail on the left, the selected team on the right. */
+.layout {
+	display: grid;
+	grid-template-columns: 300px minmax(0, 1fr);
 	gap: var(--mantine-spacing-md);
-	overflow-x: auto;
-	padding-bottom: var(--mantine-spacing-sm);
+	align-items: start;
 }
 
-.column {
-	width: 280px;
-	flex: none;
+@media (max-width: 62em) {
+	.layout {
+		grid-template-columns: 1fr;
+	}
+
+	.rail {
+		position: static;
+	}
 }
 
-/* The pool of agents without a team reads as a holding area, not a team. */
-.columnUnassigned {
-	border-style: dashed;
+.rail {
+	position: sticky;
+	top: var(--mantine-spacing-md);
 }
 
-.columnHeader {
-	padding: var(--mantine-spacing-sm) var(--mantine-spacing-sm)
-		var(--mantine-spacing-xs);
-	border-bottom: 1px solid var(--mantine-color-default-border);
+.detail {
+	min-width: 0;
 }
 
-/* Lists keep a minimum height so an empty team can still receive a drop. */
-.list {
-	display: flex;
-	flex-direction: column;
-	gap: var(--mantine-spacing-xs);
-	min-height: 96px;
-	padding: var(--mantine-spacing-xs);
+.railItem {
+	display: block;
+	width: 100%;
+	padding: var(--mantine-spacing-sm);
 	border-radius: var(--mantine-radius-md);
+	border-left: 3px solid transparent;
+	transition: background-color 120ms ease;
 }
 
-.dropActive {
-	background: light-dark(
-		var(--mantine-primary-color-0),
-		var(--mantine-color-dark-5)
-	);
-}
-
-.dropHint {
-	display: flex;
-	flex: 1;
-	align-items: center;
-	justify-content: center;
-	padding: var(--mantine-spacing-md);
-	text-align: center;
-}
-
-.card {
-	display: flex;
-	align-items: center;
-	gap: var(--mantine-spacing-xs);
-	padding: 6px var(--mantine-spacing-xs);
-	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--surface-border);
-	background: var(--surface-card);
-}
-
-.card:hover {
+.railItem:hover {
 	background: light-dark(
 		var(--mantine-color-gray-0),
 		var(--mantine-color-dark-6)
 	);
 }
 
-.cardBody {
-	flex: 1;
-	min-width: 0;
+.railItem:focus-visible {
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: -2px;
 }
 
-.grip {
-	display: flex;
-	flex-shrink: 0;
-	color: var(--mantine-color-dimmed);
-	cursor: grab;
-}
-
-.grip:active {
-	cursor: grabbing;
-}
-
-.dragging {
-	box-shadow: var(--mantine-shadow-md);
+.railItemSelected,
+.railItemSelected:hover {
 	background: light-dark(
-		var(--mantine-color-white),
-		var(--mantine-color-dark-6)
+		var(--mantine-primary-color-0),
+		var(--mantine-color-dark-5)
 	);
+	border-left-color: var(--mantine-primary-color-filled);
+}
+
+/* The pool of agents without a team reads as a holding area, not a team. */
+.railItemUnassigned {
+	margin-bottom: var(--mantine-spacing-xs);
+	border-bottom: 1px dashed var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md) var(--mantine-radius-md) 0 0;
+}
+
+.selectionBar {
+	background: light-dark(
+		var(--mantine-primary-color-0),
+		var(--mantine-color-dark-5)
+	);
+	border: 1px solid
+		light-dark(var(--mantine-primary-color-2), var(--mantine-color-dark-4));
+}
+
+/* Row actions stay in the DOM for keyboard users and show on hover, focus or while the menu is open. */
+.rowActions {
+	opacity: 0;
+	transition: opacity 120ms ease;
+}
+
+.memberRow:hover .rowActions,
+.memberRow:focus-within .rowActions,
+.memberRow:has([aria-expanded='true']) .rowActions {
+	opacity: 1;
 }

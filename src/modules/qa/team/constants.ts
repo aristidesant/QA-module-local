@@ -46,6 +46,8 @@ export const UNASSIGNED_SUPERVISOR: RosterSupervisor = {
 	team: 'Unassigned',
 	email: '',
 };
+/** Target size a team gets when none is given (New team drawer default, seed fallback). */
+export const DEFAULT_TEAM_TARGET_SIZE = 12;
 /** The agent whose own screens (inbox, rankings, disputes, LMS) the demo shows. */
 export const AGENT_PERSONA_ID = 'AGT-004';
 

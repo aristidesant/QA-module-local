@@ -501,43 +501,82 @@
 		"title": "Configuración de equipos",
 		"description": "Crea equipos, asigna un supervisor a cada uno y mueve agentes entre ellos.",
 		"newTeam": "Nuevo equipo",
+		"clearSearch": "Borrar búsqueda",
 		"kpis": {
 			"teams": "Equipos",
 			"agents": "Agentes asignados",
 			"unassigned": "Sin asignar",
 			"avgSize": "Tamaño medio"
 		},
-		"search": "Buscar agentes…",
-		"clearSearch": "Borrar búsqueda",
-		"board": {
+		"rail": {
+			"title": "Equipos",
+			"search": "Buscar equipos o agentes…",
 			"unassigned": "Sin asignar",
-			"unassignedHint": "Agentes sin equipo. Suelta uno aquí para desasignarlo.",
-			"dropHint": "Suelta agentes aquí"
+			"unassignedHint": "Agentes sin equipo",
+			"capacity": "{{count}} / {{target}}",
+			"matches_one": "{{count}} agente coincide",
+			"matches_other": "{{count}} agentes coinciden",
+			"empty": "Ningún equipo ni agente coincide"
 		},
-		"empty": {
-			"title": "Aún no hay equipos",
-			"description": "Crea el primer equipo y su supervisor, y luego arrastra agentes."
-		},
-		"column": {
-			"members_one": "{{count}} agente",
-			"members_other": "{{count}} agentes",
+		"header": {
+			"agents_one": "{{count}} agente",
+			"agents_other": "{{count}} agentes",
+			"target": "objetivo {{target}}",
+			"overBy_one": "{{count}} por encima del objetivo",
+			"overBy_other": "{{count}} por encima del objetivo",
+			"atTarget": "En el objetivo",
+			"openSeats_one": "{{count}} plaza libre",
+			"openSeats_other": "{{count}} plazas libres",
+			"unassignedHint": "Agentes sin equipo. Muévelos a un equipo desde la lista de abajo.",
 			"menu": {
 				"label": "Acciones del equipo",
 				"editSupervisor": "Editar supervisor",
-				"renameTeam": "Renombrar equipo",
+				"editTeam": "Editar equipo",
 				"dissolveTeam": "Disolver equipo"
 			}
 		},
-		"card": {
-			"dragHandle": "Arrastra para mover",
+		"members": {
+			"title": "Miembros",
+			"addAgents": "Añadir agentes",
+			"search": "Buscar por nombre, ID o correo…",
+			"shift": "Turno",
+			"status": "Estado",
+			"all": "Todos",
+			"clear": "Limpiar filtros",
+			"count_one": "{{count}} agente",
+			"count_other": "{{count}} agentes",
+			"filteredCount": "{{count}} de {{total}} agentes",
+			"empty": "Este equipo aún no tiene agentes. Añádelos o muévelos aquí desde otro equipo.",
+			"emptyFiltered": "Ningún agente coincide con estos filtros.",
+			"emptyUnassigned": "Todos tienen equipo."
+		},
+		"columns": {
+			"agent": "Agente",
+			"shift": "Turno",
+			"status": "Estado"
+		},
+		"row": {
 			"moveTo": "Mover a…"
+		},
+		"selection": {
+			"count_one": "{{count}} seleccionado",
+			"count_other": "{{count}} seleccionados",
+			"moveTo": "Mover a…",
+			"unassign": "Desasignar",
+			"clear": "Limpiar"
+		},
+		"empty": {
+			"title": "Aún no hay equipos",
+			"description": "Crea el primer equipo y su supervisor, y luego añádele agentes."
 		},
 		"drawer": {
 			"title": "Nuevo equipo",
-			"description": "Cada equipo lo dirige un supervisor. Puedes añadir miembros ahora o arrastrarlos después.",
+			"description": "Cada equipo lo dirige un supervisor. Puedes añadir miembros ahora o después desde la página del equipo.",
 			"teamSection": "Equipo",
 			"supervisorSection": "Supervisor",
 			"teamName": "Nombre del equipo",
+			"targetSize": "Tamaño objetivo",
+			"targetSizeHint": "Cuántos agentes debería tener este equipo. Alimenta el indicador de capacidad.",
 			"supervisorName": "Nombre del supervisor",
 			"supervisorEmail": "Correo del supervisor",
 			"members": "Primeros miembros",
@@ -546,13 +585,15 @@
 			"validation": {
 				"teamName": "Ponle un nombre al equipo",
 				"teamNameTaken": "Ya existe un equipo con ese nombre",
+				"targetSize": "Introduce un objetivo de al menos 1",
 				"supervisorName": "Ponle un nombre al supervisor",
 				"email": "Introduce un correo válido"
 			}
 		},
-		"rename": {
-			"title": "Renombrar equipo",
-			"label": "Nombre del equipo",
+		"editTeam": {
+			"title": "Editar equipo",
+			"name": "Nombre del equipo",
+			"targetSize": "Tamaño objetivo",
 			"save": "Guardar"
 		},
 		"dissolve": {
@@ -568,8 +609,9 @@
 		},
 		"toast": {
 			"moved": "{{name}} movido a {{team}}",
+			"movedMany": "{{count}} agentes movidos a {{team}}",
 			"created": "Equipo {{team}} creado",
-			"renamed": "Equipo renombrado a {{team}}",
+			"updated": "Equipo {{team}} actualizado",
 			"dissolved": "Equipo {{team}} disuelto"
 		}
 	}

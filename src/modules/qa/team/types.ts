@@ -16,6 +16,8 @@ export interface RosterSupervisor {
 	name: string;
 	team: string;
 	email: string;
+	/** How many agents the team should have; drives the capacity indicator on Team configuration. */
+	targetSize?: number;
 }
 export interface RosterCampaign {
 	id: string;

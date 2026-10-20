@@ -1,27 +1,18 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { DragDropContext, type DropResult } from '@hello-pangea/dnd';
-import {
-	ActionIcon,
-	Button,
-	Group,
-	SimpleGrid,
-	Stack,
-	Text,
-	TextInput,
-} from '@mantine/core';
+import { Button, SimpleGrid, Stack, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
 import {
 	IconChartBar,
 	IconPlus,
-	IconSearch,
 	IconUserOff,
 	IconUsers,
 	IconUsersGroup,
-	IconX,
 } from '@tabler/icons-react';
+import BaseTable from '~/components/BaseTable/BaseTable';
 import { ContentContainer } from '~/components/ContentContainer';
 import EmptyState from '~/components/EmptyState';
+import SectionCard from '~/components/SectionCard';
 import StatCard from '~/components/StatCard';
 import {
 	selectProfiles,
@@ -31,17 +22,26 @@ import {
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { UNASSIGNED_SUPERVISOR, UNASSIGNED_SUPERVISOR_ID } from '../constants';
 import type { RosterAgent } from '../types';
+import { AddMembersDrawer } from '../TeamDetailPage/AddMembersDrawer';
 import { EditSupervisorModal } from '../TeamDetailPage/EditSupervisorModal';
-import type { MoveTarget } from './components/AgentCard';
+import { EditTeamModal } from './components/EditTeamModal';
+import {
+	DEFAULT_MEMBER_FILTERS,
+	MembersToolbar,
+	type MemberFilters,
+} from './components/MembersToolbar';
+import type { MoveTarget } from './components/MoveToMenu';
 import { NewTeamDrawer } from './components/NewTeamDrawer';
-import { RenameTeamModal } from './components/RenameTeamModal';
-import { TeamColumn } from './components/TeamColumn';
+import { SelectionBar } from './components/SelectionBar';
+import { TeamHeader } from './components/TeamHeader';
+import { TeamRail } from './components/TeamRail';
+import { useMemberColumns } from './components/useMemberColumns';
 import styles from './TeamConfigPage.module.css';
 
 /**
- * Team configuration for the Operation Manager: create teams with their supervisor,
- * rename or dissolve them, and move agents between teams and the Unassigned pool
- * by dragging (or from each card's menu).
+ * Team configuration for the Operation Manager: a teams rail on the left and, for the
+ * selected team, its header and a filterable members table. Agents move between teams
+ * from each row's menu or in bulk from the selection bar.
  */
 export default function TeamConfigPage() {
 	const { t } = useTranslation('qa.team');
@@ -50,11 +50,6 @@ export default function TeamConfigPage() {
 	const addMembers = useTeamStore((s) => s.addMembers);
 	const removeMember = useTeamStore((s) => s.removeMember);
 	const dissolveTeam = useTeamStore((s) => s.dissolveTeam);
-
-	const [search, setSearch] = useState('');
-	const [newTeamOpened, setNewTeamOpened] = useState(false);
-	const [editingId, setEditingId] = useState<string | null>(null);
-	const [renamingId, setRenamingId] = useState<string | null>(null);
 
 	const supervisorList = useMemo(
 		() => Object.values(supervisors),
@@ -67,59 +62,94 @@ export default function TeamConfigPage() {
 				.sort((a, b) => a.name.localeCompare(b.name)),
 		[profiles]
 	);
-
-	/** Every agent by team (including the Unassigned pool), the total and the search-filtered view. */
-	const { totals, visible } = useMemo(() => {
-		const query = search.trim().toLowerCase();
-		const totals: Record<string, number> = {};
-		const visible: Record<string, RosterAgent[]> = {};
+	const totals = useMemo(() => {
+		const counts: Record<string, number> = {};
 		for (const agent of agents) {
-			totals[agent.supervisorId] = (totals[agent.supervisorId] ?? 0) + 1;
-			const matches =
-				!query ||
-				agent.name.toLowerCase().includes(query) ||
-				agent.id.toLowerCase().includes(query);
-			if (matches) {
-				visible[agent.supervisorId] = [
-					...(visible[agent.supervisorId] ?? []),
-					agent,
-				];
-			}
+			counts[agent.supervisorId] = (counts[agent.supervisorId] ?? 0) + 1;
 		}
-		return { totals, visible };
-	}, [agents, search]);
+		return counts;
+	}, [agents]);
+
+	const [selectedTeamId, setSelectedTeamId] = useState<string>(
+		supervisorList[0]?.id ?? UNASSIGNED_SUPERVISOR_ID
+	);
+	const [filters, setFilters] = useState<MemberFilters>(DEFAULT_MEMBER_FILTERS);
+	const [selectedIds, setSelectedIds] = useState<string[]>([]);
+	const [newTeamOpened, setNewTeamOpened] = useState(false);
+	const [addAgentsOpened, setAddAgentsOpened] = useState(false);
+	const [editingId, setEditingId] = useState<string | null>(null);
+	const [editingTeamId, setEditingTeamId] = useState<string | null>(null);
+
+	// A dissolved team's agents land in Unassigned, so follow them there.
+	useEffect(() => {
+		if (
+			selectedTeamId !== UNASSIGNED_SUPERVISOR_ID &&
+			!supervisors[selectedTeamId]
+		) {
+			setSelectedTeamId(UNASSIGNED_SUPERVISOR_ID);
+		}
+	}, [supervisors, selectedTeamId]);
+
+	const isUnassignedSelected = selectedTeamId === UNASSIGNED_SUPERVISOR_ID;
+	const selectedTeam = isUnassignedSelected
+		? UNASSIGNED_SUPERVISOR
+		: supervisors[selectedTeamId];
 
 	const unassignedCount = totals[UNASSIGNED_SUPERVISOR_ID] ?? 0;
 	const assignedCount = agents.length - unassignedCount;
 	const teamCount = supervisorList.length;
 
+	const selectTeam = (id: string) => {
+		setSelectedTeamId(id);
+		setSelectedIds([]);
+		setFilters(DEFAULT_MEMBER_FILTERS);
+	};
+
+	const members = useMemo(
+		() => agents.filter((a) => a.supervisorId === selectedTeamId),
+		[agents, selectedTeamId]
+	);
+	const visibleMembers = useMemo(() => {
+		const query = filters.search.trim().toLowerCase();
+		return members.filter(
+			(a) =>
+				(!query ||
+					a.name.toLowerCase().includes(query) ||
+					a.id.toLowerCase().includes(query) ||
+					a.email.toLowerCase().includes(query)) &&
+				(filters.shift === 'all' || a.shift === filters.shift) &&
+				(filters.status === 'all' || a.status === filters.status)
+		);
+	}, [members, filters]);
+
 	const targets: MoveTarget[] = useMemo(
 		() => [
-			{ id: UNASSIGNED_SUPERVISOR_ID, label: t('teamConfig.board.unassigned') },
+			{ id: UNASSIGNED_SUPERVISOR_ID, label: t('teamConfig.rail.unassigned') },
 			...supervisorList.map((s) => ({ id: s.id, label: s.team })),
 		],
 		[supervisorList, t]
 	);
 
-	const moveAgent = (agentId: string, targetId: string) => {
-		const agent = profiles[agentId]?.agent;
-		if (!agent) return;
-		if (targetId === UNASSIGNED_SUPERVISOR_ID) removeMember(agentId);
-		else addMembers([agentId], targetId);
-		const teamLabel =
-			targets.find((target) => target.id === targetId)?.label ?? '';
+	const moveAgents = (agentIds: string[], targetId: string) => {
+		if (agentIds.length === 0) return;
+		if (targetId === UNASSIGNED_SUPERVISOR_ID) agentIds.forEach(removeMember);
+		else addMembers(agentIds, targetId);
+		const team = targets.find((target) => target.id === targetId)?.label ?? '';
+		const name = profiles[agentIds[0]]?.agent.name ?? '';
 		notifySuccess(
-			t('teamConfig.toast.moved', { name: agent.name, team: teamLabel })
+			agentIds.length === 1
+				? t('teamConfig.toast.moved', { name, team })
+				: t('teamConfig.toast.movedMany', { count: agentIds.length, team })
 		);
+		setSelectedIds([]);
 	};
 
-	const handleDragEnd = ({ draggableId, source, destination }: DropResult) => {
-		if (!destination || destination.droppableId === source.droppableId) return;
-		moveAgent(
-			draggableId.replace('agent:', ''),
-			destination.droppableId.replace('team:', '')
-		);
-	};
+	const columns = useMemberColumns(
+		t,
+		targets,
+		selectedTeamId,
+		(agentId, targetId) => moveAgents([agentId], targetId)
+	);
 
 	const confirmDissolve = (supervisorId: string) => {
 		const supervisor = supervisors[supervisorId];
@@ -145,7 +175,18 @@ export default function TeamConfigPage() {
 	};
 
 	const editing = editingId ? supervisors[editingId] : undefined;
-	const renaming = renamingId ? (supervisors[renamingId] ?? null) : null;
+	const editingTeam = editingTeamId
+		? (supervisors[editingTeamId] ?? null)
+		: null;
+
+	const emptyMessage =
+		members.length === 0
+			? t(
+					isUnassignedSelected
+						? 'teamConfig.members.emptyUnassigned'
+						: 'teamConfig.members.empty'
+				)
+			: t('teamConfig.members.emptyFiltered');
 
 	return (
 		<ContentContainer
@@ -193,31 +234,6 @@ export default function TeamConfigPage() {
 					/>
 				</SimpleGrid>
 
-				<Group justify='flex-end'>
-					<TextInput
-						size='sm'
-						w={260}
-						placeholder={t('teamConfig.search')}
-						aria-label={t('teamConfig.search')}
-						leftSection={<IconSearch size={16} />}
-						value={search}
-						onChange={(event) => setSearch(event.currentTarget.value)}
-						rightSection={
-							search && (
-								<ActionIcon
-									size='sm'
-									color='gray'
-									variant='transparent'
-									aria-label={t('teamConfig.clearSearch')}
-									onClick={() => setSearch('')}
-								>
-									<IconX size={14} />
-								</ActionIcon>
-							)
-						}
-					/>
-				</Group>
-
 				{teamCount === 0 && unassignedCount === 0 ? (
 					<EmptyState
 						icon={<IconUsersGroup size={40} />}
@@ -234,38 +250,89 @@ export default function TeamConfigPage() {
 						}
 					/>
 				) : (
-					<DragDropContext onDragEnd={handleDragEnd}>
-						<div className={styles.board}>
-							<TeamColumn
-								supervisor={UNASSIGNED_SUPERVISOR}
-								variant='unassigned'
-								agents={visible[UNASSIGNED_SUPERVISOR_ID] ?? []}
-								memberCount={unassignedCount}
-								targets={targets}
-								onMove={moveAgent}
-							/>
-							{supervisorList.map((supervisor) => (
-								<TeamColumn
-									key={supervisor.id}
-									supervisor={supervisor}
-									agents={visible[supervisor.id] ?? []}
-									memberCount={totals[supervisor.id] ?? 0}
-									targets={targets}
-									onMove={moveAgent}
-									onEditSupervisor={() => setEditingId(supervisor.id)}
-									onRename={() => setRenamingId(supervisor.id)}
-									onDissolve={() => confirmDissolve(supervisor.id)}
+					<div className={styles.layout}>
+						<TeamRail
+							supervisors={supervisorList}
+							totals={totals}
+							agents={agents}
+							selectedId={selectedTeamId}
+							onSelect={selectTeam}
+						/>
+						<Stack gap='md' className={styles.detail}>
+							{selectedTeam && (
+								<TeamHeader
+									supervisor={selectedTeam}
+									count={totals[selectedTeamId] ?? 0}
+									variant={isUnassignedSelected ? 'unassigned' : 'team'}
+									onEditSupervisor={() => setEditingId(selectedTeamId)}
+									onEditTeam={() => setEditingTeamId(selectedTeamId)}
+									onDissolve={() => confirmDissolve(selectedTeamId)}
 								/>
-							))}
-						</div>
-					</DragDropContext>
+							)}
+							<SectionCard
+								title={t('teamConfig.members.title')}
+								headerActions={
+									!isUnassignedSelected && (
+										<Button
+											size='xs'
+											variant='light'
+											leftSection={<IconPlus size={14} />}
+											onClick={() => setAddAgentsOpened(true)}
+										>
+											{t('teamConfig.members.addAgents')}
+										</Button>
+									)
+								}
+							>
+								<Stack gap='sm'>
+									<MembersToolbar
+										value={filters}
+										onChange={setFilters}
+										shown={visibleMembers.length}
+										total={members.length}
+									/>
+									<SelectionBar
+										count={selectedIds.length}
+										targets={targets}
+										currentTargetId={selectedTeamId}
+										onMove={(targetId) => moveAgents(selectedIds, targetId)}
+										onClear={() => setSelectedIds([])}
+									/>
+									<BaseTable<RosterAgent>
+										data={visibleMembers}
+										columns={columns}
+										getRowId={(agent) => agent.id}
+										initialSort={[{ id: 'name', desc: false }]}
+										enableRowSelection
+										selectedRowIds={selectedIds}
+										onSelectedRowIdsChange={setSelectedIds}
+										enablePagination
+										showPaginationControls
+										pageSize={25}
+										density='compact'
+										emptyMessage={emptyMessage}
+										getRowClassName={() => styles.memberRow}
+									/>
+								</Stack>
+							</SectionCard>
+						</Stack>
+					</div>
 				)}
 			</Stack>
 
 			<NewTeamDrawer
 				opened={newTeamOpened}
 				onClose={() => setNewTeamOpened(false)}
+				onCreated={(supervisor) => selectTeam(supervisor.id)}
 			/>
+			{!isUnassignedSelected && selectedTeam && (
+				<AddMembersDrawer
+					opened={addAgentsOpened}
+					onClose={() => setAddAgentsOpened(false)}
+					supervisorId={selectedTeamId}
+					teamName={selectedTeam.team}
+				/>
+			)}
 			{editing && (
 				<EditSupervisorModal
 					opened
@@ -273,9 +340,9 @@ export default function TeamConfigPage() {
 					supervisor={editing}
 				/>
 			)}
-			<RenameTeamModal
-				supervisor={renaming}
-				onClose={() => setRenamingId(null)}
+			<EditTeamModal
+				supervisor={editingTeam}
+				onClose={() => setEditingTeamId(null)}
 			/>
 		</ContentContainer>
 	);
