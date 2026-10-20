@@ -2,12 +2,14 @@
 	"page": {
 		"eyebrow": {
 			"supervisor": "Supervisor · Team 1",
-			"qa-manager": "QA Manager · All teams"
+			"qa-manager": "QA Manager · All teams",
+			"operation-manager": "Operation Manager · All teams"
 		},
 		"title": "Team Analytics",
 		"description": {
 			"supervisor": "Explore your team's QA, Compliance, Sentiment and Business results with filters, grouping and period comparison.",
-			"qa-manager": "Explore every team's QA, Compliance, Sentiment and Business results with filters, grouping and period comparison."
+			"qa-manager": "Explore every team's QA, Compliance, Sentiment and Business results with filters, grouping and period comparison.",
+			"operation-manager": "Compare every team's operations, quality, compliance, sentiment, business results, AI agents and disputes over time."
 		},
 		"views": {
 			"qa": "QA",
@@ -15,7 +17,11 @@
 			"compliance": "Compliance",
 			"business": "Business Insights",
 			"finder": "Agent Finder",
-			"burnout": "Burnout Risk"
+			"burnout": "Burnout Risk",
+			"overview": "Overview",
+			"operational": "Operational",
+			"humanVsAi": "Human vs AI",
+			"disputes": "Disputes"
 		}
 	},
 	"filters": {
@@ -26,7 +32,8 @@
 			"7d": "7 days",
 			"30d": "30 days",
 			"90d": "90 days",
-			"custom": "Custom"
+			"custom": "Custom",
+			"12m": "12 months"
 		},
 		"from": "From",
 		"to": "To",
@@ -51,7 +58,8 @@
 			"shift": "Shift",
 			"tenure": "Tenure",
 			"timeOfDay": "Time of day",
-			"weekday": "Weekday"
+			"weekday": "Weekday",
+			"agentType": "Agent type"
 		},
 		"moreFilters": "More filters",
 		"lessFilters": "Fewer filters",
@@ -142,7 +150,13 @@
 			"Sadness": "Sadness",
 			"Disgust": "Disgust"
 		},
-		"burnoutNotice": "Burnout uses fixed 7- and 14-day windows, so these filters don't apply here."
+		"burnoutNotice": "Burnout uses fixed 7- and 14-day windows, so these filters don't apply here.",
+		"compareUnavailable": "No earlier data to compare with for periods over 6 months",
+		"agentTypes": "Agent type",
+		"agentTypeLabels": {
+			"HUMAN": "Human",
+			"AI_BOT": "AI agent"
+		}
 	},
 	"presets": {
 		"button": "Saved views",
@@ -183,7 +197,9 @@
 		"QUALITY_ASSURANCE": "Quality Assurance",
 		"COMPLIANCE": "Compliance",
 		"SENTIMENT_EMOTION": "Sentiment & Emotion",
-		"BUSINESS_INSIGHTS": "Business Insights"
+		"BUSINESS_INSIGHTS": "Business Insights",
+		"OPERATIONAL": "Operational",
+		"DISPUTES": "Disputes"
 	},
 	"metrics": {
 		"QA_OVERALL_SCORE": "QA score",
@@ -207,7 +223,21 @@
 		"BI_COMPETITOR_PLUS_COST_RATE": "Competitor + price rate",
 		"BI_MISTARGETED_OFFER_RATE": "Mis-targeted offer rate",
 		"BI_NON_CONVERSION_RATE": "Non-conversion rate",
-		"CONVERSION_RATE": "Conversion rate"
+		"CONVERSION_RATE": "Conversion rate",
+		"OPS_CALLS_HANDLED": "Calls handled",
+		"OPS_EFFECTIVE_CONTACT_RATE": "Effective contact rate",
+		"OPS_AHT_SECONDS": "Average handle time",
+		"OPS_HOLD_SECONDS": "Average hold time",
+		"OPS_WRAP_UP_SECONDS": "Average wrap-up time",
+		"OPS_TRANSFER_RATE": "Transfer rate",
+		"OPS_FCR_RATE": "First-contact resolution",
+		"OPS_AFTER_HOURS_SHARE": "After-hours calls",
+		"AGENT_NEGATIVE_EMOTION_CALL_SHARE": "Negative-emotion calls (agent)",
+		"AGENT_POSITIVE_EMOTION_CALL_SHARE": "Positive-emotion calls (agent)",
+		"SENTIMENT_RECOVERY_RATE": "Recovery rate",
+		"BI_CONVERSION_RATE": "Conversion rate",
+		"DISPUTE_COUNT": "Disputes",
+		"DISPUTE_RATE": "Dispute rate"
 	},
 	"segments": {
 		"title": "Compare by {{dimension}}",
@@ -276,7 +306,8 @@
 			"unhandled": "Unhandled obj.",
 			"competitor": "Competitor + price",
 			"mistargeted": "Mis-targeted",
-			"conversion": "Conversion"
+			"conversion": "Conversion",
+			"team": "Team"
 		},
 		"byAgentTitle": "Signals by agent",
 		"byAgentDescription": "Objection and conversion signals per agent in the selected range",
@@ -352,7 +383,8 @@
 		"empty": "No agents are flagged by the active burnout rules.",
 		"listDescription": {
 			"supervisor": "Agents on your team flagged by burnout rules",
-			"qa-manager": "Agents flagged by burnout rules across all teams"
+			"qa-manager": "Agents flagged by burnout rules across all teams",
+			"operation-manager": "Agents flagged by burnout rules across every team"
 		},
 		"selectAgent": "Select an agent to see why they were flagged",
 		"selectAgentDescription": "The detail shows the driving metrics, the risk timeline, workload against the team and the actions you can take.",
@@ -500,7 +532,15 @@
 				"notifyTitle": "You have a new mentor",
 				"notifyBody": "{{mentor}} will support you for the next {{weeks}} weeks. Focus: {{focus}}."
 			}
-		}
+		},
+		"tiles": {
+			"high": "High risk",
+			"medium": "Medium risk",
+			"low": "Low risk",
+			"rules": "Active rules"
+		},
+		"distributionTitle": "Risk distribution",
+		"byTeamTitle": "At-risk agents by team"
 	},
 	"actions": {
 		"viewProfile": "View profile",
@@ -518,5 +558,171 @@
 		"back": "Back",
 		"na": "—",
 		"comingSoon": "Coming soon"
+	},
+	"charts": {
+		"empty": "No data for the current filters",
+		"target": "Target",
+		"current": "Current period",
+		"previous": "Previous period",
+		"callsInPeriod_one": "{{count}} call in the period",
+		"callsInPeriod_other": "{{count}} calls in the period",
+		"trendTitle": "{{metric}} · trend",
+		"metric": "Metric",
+		"smallMultiplesHint": "More than {{count}} segments: one chart per segment",
+		"vsPrevious": "vs previous",
+		"points": "pts",
+		"share": "Share",
+		"calls": "Calls",
+		"heatmapCell": "{{row}} · {{col}} · {{value}} · {{count}} calls",
+		"lowSampleHint": "Faded cells are built from fewer than {{count}} calls: read them with care."
+	},
+	"overviewView": {
+		"calls": "Calls",
+		"effective": "Effective contact",
+		"openDisputes": "Open disputes",
+		"atRisk": "Agents at risk",
+		"burnoutHint": "Burnout ignores the period filter",
+		"volumeTitle": "Calls volume",
+		"attentionTitle": "Needs attention",
+		"attentionDescription": "Segments below target or worse than the previous period, worst first.",
+		"columns": {
+			"area": "Area",
+			"segment": "Segment",
+			"value": "Value",
+			"why": "Why"
+		},
+		"belowTarget": "Below target ({{target}})",
+		"worsened": "Worse than the previous period ({{previous}})",
+		"none": "Nothing needs attention with the current filters."
+	},
+	"operational": {
+		"heatmapTitle": "Volume by weekday and time",
+		"heatmapDescription": "Number of calls per weekday and 2-hour time slot. Darker means more calls.",
+		"outcomeTitle": "Contact outcome",
+		"effective": "Effective",
+		"nonEffective": "Non-effective",
+		"direction": "Direction",
+		"inbound": "Inbound",
+		"outbound": "Outbound",
+		"fcrHint": "First-contact resolution counts effective contacts only."
+	},
+	"qaView": {
+		"errorMixTitle": "Error mix",
+		"errorMixDescription": "Share of each error type per period.",
+		"distributionTitle": "QA score distribution",
+		"bands": {
+			"lt60": "Under 60",
+			"60to69": "60–69",
+			"70to79": "70–79",
+			"80to89": "80–89",
+			"90plus": "90 and over"
+		},
+		"errors": {
+			"ecn": "Critical business",
+			"enc": "Non-critical",
+			"ecc": "Critical compliance",
+			"ecuf": "Critical end-user"
+		}
+	},
+	"complianceView": {
+		"byAreaTitle": "By area",
+		"itemsTitle": "Items below target",
+		"itemsDescription": "Share of calls where the item scored under the target.",
+		"items": {
+			"dataProtection": "Data protection",
+			"disclosureCompliance": "Disclosure compliance",
+			"cobranzaRegulada": "Regulated collections",
+			"transparenciaConsentimiento": "Transparency & consent",
+			"amenazasTradicionales": "Threats",
+			"rrss": "Social media",
+			"superintendenciaBancos": "Banking superintendence",
+			"noLlamarList": "Do-not-call list"
+		}
+	},
+	"sentimentView": {
+		"customer": "Customer",
+		"agent": "Agent",
+		"sidesTitle": "Customer vs agent sentiment",
+		"trendHint": "Average sentiment per period on both sides of the call.",
+		"typeTitle": "Sentiment type",
+		"typeDescription": "Share of calls per sentiment band.",
+		"bands": {
+			"very-negative": "Very negative",
+			"negative": "Negative",
+			"neutral": "Neutral",
+			"positive": "Positive",
+			"very-positive": "Very positive"
+		},
+		"emotionTitle": "Emotion type",
+		"emotionDescription": "Share of calls by predominant emotion.",
+		"heatmapTitle": "Negative customer emotion by weekday and time",
+		"negativeCustomer": "Negative-emotion calls (customer)",
+		"negativeAgent": "Negative-emotion calls (agent)",
+		"heatmapDescription": "Share of calls where the customer's main emotion was negative, per weekday and 2-hour time slot. Darker means a higher share."
+	},
+	"businessView": {
+		"offered": "Offers presented",
+		"converted": "Converted",
+		"reasonsTitle": "Why offers do not convert",
+		"productsTitle": "Products",
+		"competitorsTitle": "Competitors mentioned"
+	},
+	"humanVsAi": {
+		"aiShare": "Calls handled by AI",
+		"humanCalls": "Human calls",
+		"aiCalls": "AI calls",
+		"aiAgents": "AI agents",
+		"comparisonTitle": "Human vs AI",
+		"comparisonDescription": "Each metric indexed to 0–100 so they share one axis.",
+		"indexHint": "Handle time is inverted: shorter scores higher. Raw values on the right.",
+		"human": "Human",
+		"ai": "AI",
+		"rawTitle": "Raw values",
+		"shareTrendTitle": "AI share of volume",
+		"agentsTitle": "AI agents",
+		"columns": {
+			"agent": "Agent",
+			"team": "Team",
+			"calls": "Calls",
+			"qa": "QA",
+			"compliance": "Compliance",
+			"sentiment": "Customer sentiment",
+			"effective": "Effective contact"
+		}
+	},
+	"disputes": {
+		"filed": "Filed",
+		"open": "Open",
+		"acceptanceRate": "Acceptance rate",
+		"resolutionDays": "Avg. resolution",
+		"days": "{{count}} d",
+		"ratePer100": "per 100 calls",
+		"trendTitle": "Filed vs resolved",
+		"resolved": "Resolved",
+		"byTypeTitle": "By evaluation type",
+		"types": {
+			"qa": "QA",
+			"compliance": "Compliance",
+			"sentiment-emotion": "Sentiment & Emotion",
+			"business-insights": "Business Insights"
+		},
+		"outcomeTitle": "Outcome",
+		"statuses": {
+			"accepted": "Accepted",
+			"partially-accepted": "Partially accepted",
+			"rejected": "Rejected",
+			"open": "Open"
+		},
+		"byAgentTitle": "By agent",
+		"columns": {
+			"agent": "Agent",
+			"team": "Team",
+			"calls": "Calls",
+			"filed": "Filed",
+			"open": "Open",
+			"accepted": "Accepted",
+			"rejected": "Rejected",
+			"acceptanceRate": "Acceptance"
+		}
 	}
 }

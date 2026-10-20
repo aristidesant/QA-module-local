@@ -16,7 +16,6 @@ import {
 	IconMinus,
 } from '@tabler/icons-react';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
-import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
 import {
 	useTeamAnalyticsStore,
 	selectFinderQuery,
@@ -28,6 +27,7 @@ import {
 	describeFinderQuery,
 	formatMetric,
 	isImprovement,
+	metricMeta,
 	runFinderQuery,
 	burnoutLevelsByAgent,
 } from '../../helpers';
@@ -47,6 +47,8 @@ const AREA_OF_VIEW: Record<MetricView, string> = {
 	sentiment: 'SENTIMENT_EMOTION',
 	compliance: 'COMPLIANCE',
 	business: 'BUSINESS_INSIGHTS',
+	operational: 'OPERATIONAL',
+	disputes: 'DISPUTES',
 };
 
 const BURNOUT_COLOR: Record<BurnoutRiskLevel, string> = {
@@ -84,7 +86,7 @@ const FinderView = () => {
 	);
 
 	const metricLabel = t(`metrics.${query.metricId}`);
-	const higherIsBetter = METRIC_BY_ID[query.metricId].higherIsBetter;
+	const higherIsBetter = metricMeta(query.metricId).higherIsBetter;
 	const isManager = role === 'qa-manager';
 	const na = t('common.na');
 

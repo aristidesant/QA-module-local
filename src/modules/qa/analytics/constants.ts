@@ -1,6 +1,10 @@
 import type { Shift } from '~/modules/qa/team/types';
 import { NOW_ISO } from '~/modules/qa/team/constants';
 import type {
+	DisputeEvaluationType,
+	DisputeStatus,
+} from '~/models/qa/disputeCases';
+import type {
 	AnalyticsPreset,
 	BurnoutActionKind,
 	CallDirection,
@@ -9,7 +13,9 @@ import type {
 	FinderQuery,
 	GroupByDimension,
 	MetricView,
+	QuickRange,
 	SegmentMetricId,
+	SentimentBand,
 	TeamAnalyticsFilters,
 	TeamAnalyticsView,
 	TenureBand,
@@ -18,7 +24,7 @@ import type {
 
 export const VIEW_PARAM = 'view';
 export const AGENT_PARAM = 'agentId';
-export const DEFAULT_VIEW: TeamAnalyticsView = 'qa';
+export const DEFAULT_VIEW: TeamAnalyticsView = 'overview';
 
 /** 'YYYY-MM-DD' of NOW_ISO — the last day with data. */
 export const TODAY = NOW_ISO.slice(0, 10);
@@ -29,13 +35,34 @@ export const addDays = (isoDay: string, delta: number): string => {
 };
 
 export const TEAM_ANALYTICS_VIEWS: TeamAnalyticsView[] = [
+	'overview',
+	'operational',
 	'qa',
-	'sentiment',
 	'compliance',
 	'business',
-	'finder',
+	'sentiment',
+	'humanVsAi',
 	'burnout',
+	'disputes',
+	'finder',
 ];
+
+/** Days of call history the mock generator produces (ends on TODAY). */
+export const HISTORY_DAYS = 365;
+export const QUICK_RANGES: Exclude<QuickRange, 'custom'>[] = [
+	'7d',
+	'30d',
+	'90d',
+	'12m',
+];
+export const QUICK_RANGE_DAYS: Record<Exclude<QuickRange, 'custom'>, number> = {
+	'7d': 7,
+	'30d': 30,
+	'90d': 90,
+	'12m': 365,
+};
+/** The previous period must fit inside the history, so comparison is off beyond this many days. */
+export const MAX_COMPARE_DAYS = Math.floor(HISTORY_DAYS / 2);
 
 /** `managerOnly` dimensions are hidden for the supervisor (single team / single supervisor). Labels: filters.groupByOptions.<value>. */
 export const GROUP_BY_OPTIONS: {
@@ -46,6 +73,7 @@ export const GROUP_BY_OPTIONS: {
 	{ value: 'team', managerOnly: true },
 	{ value: 'supervisor', managerOnly: true },
 	{ value: 'agent', managerOnly: false },
+	{ value: 'agentType', managerOnly: false },
 	{ value: 'campaign', managerOnly: false },
 	{ value: 'lineOfBusiness', managerOnly: false },
 	{ value: 'campaignType', managerOnly: false },
@@ -59,6 +87,7 @@ export const GROUP_BY_OPTIONS: {
 export const DRILL_NEXT: Partial<Record<GroupByDimension, GroupByDimension>> = {
 	team: 'supervisor',
 	supervisor: 'agent',
+	agentType: 'agent',
 	campaign: 'agent',
 	lineOfBusiness: 'campaign',
 	campaignType: 'campaign',
@@ -69,6 +98,17 @@ export const DRILL_NEXT: Partial<Record<GroupByDimension, GroupByDimension>> = {
 };
 
 export const VIEW_METRICS: Record<MetricView, SegmentMetricId[]> = {
+	operational: [
+		'OPS_CALLS_HANDLED',
+		'OPS_EFFECTIVE_CONTACT_RATE',
+		'OPS_AHT_SECONDS',
+		'OPS_FCR_RATE',
+		'OPS_TRANSFER_RATE',
+		'OPS_HOLD_SECONDS',
+		'OPS_WRAP_UP_SECONDS',
+		'OPS_AFTER_HOURS_SHARE',
+	],
+	disputes: ['DISPUTE_RATE', 'DISPUTE_COUNT'],
 	qa: [
 		'QA_OVERALL_SCORE',
 		'QA_ECN_COUNT',
@@ -82,6 +122,8 @@ export const VIEW_METRICS: Record<MetricView, SegmentMetricId[]> = {
 		'AGENT_SENTIMENT_SCORE',
 		'POSITIVE_EMOTION_CALL_SHARE',
 		'NEGATIVE_EMOTION_CALL_SHARE',
+		'AGENT_NEGATIVE_EMOTION_CALL_SHARE',
+		'SENTIMENT_RECOVERY_RATE',
 		'SENTIMENT_RECOVERY_COUNT',
 	],
 	compliance: [
@@ -92,6 +134,7 @@ export const VIEW_METRICS: Record<MetricView, SegmentMetricId[]> = {
 		'COMPLIANCE_VIOLATION_COUNT',
 	],
 	business: [
+		'BI_CONVERSION_RATE',
 		'BI_NON_CONVERSION_RATE',
 		'BI_EARLY_OBJECTION_RATE',
 		'BI_UNHANDLED_OBJECTION_RATE',
@@ -101,10 +144,12 @@ export const VIEW_METRICS: Record<MetricView, SegmentMetricId[]> = {
 };
 
 export const PRIMARY_METRIC: Record<MetricView, SegmentMetricId> = {
+	operational: 'OPS_CALLS_HANDLED',
+	disputes: 'DISPUTE_RATE',
 	qa: 'QA_OVERALL_SCORE',
 	sentiment: 'CUSTOMER_SENTIMENT_SCORE',
 	compliance: 'COMPLIANCE_OVERALL_SCORE',
-	business: 'BI_NON_CONVERSION_RATE',
+	business: 'BI_CONVERSION_RATE',
 };
 
 export const TIME_SLOTS: TimeSlot[] = [
@@ -140,17 +185,17 @@ export const WEEKDAYS: { value: number }[] = [
 export const WEEKDAY_SHORT = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
 export const MAX_SEGMENT_SERIES = 8;
+/** Beyond this many segments a trend switches from one multi-line chart to small multiples. */
+export const MAX_LINE_SERIES = 4;
 export const OTHER_SEGMENT_KEY = '__other';
-/** Mantine color keys for series/swatches; index = segment order (last one is reserved for "Other"). */
+/** Mantine color keys (legacy consumers: the dashboard burnout and team trend cards). */
 export const SEGMENT_COLORS = [
 	'blue.6',
 	'teal.6',
 	'grape.6',
 	'orange.6',
-	'cyan.6',
 	'indigo.6',
 	'pink.6',
-	'lime.6',
 	'gray.5',
 ];
 
@@ -172,6 +217,7 @@ export const DEFAULT_FILTERS: TeamAnalyticsFilters = {
 	timeSlots: [],
 	weekdays: [],
 	emotions: [],
+	agentTypes: [],
 	autoFailOnly: false,
 	recoveredOnly: false,
 	offeredOnly: false,
@@ -296,3 +342,56 @@ export const BURNOUT_ACTION_KINDS: BurnoutActionKind[] = [
 	'ADJUST_WORKLOAD',
 	'ASSIGN_MENTOR',
 ];
+
+/** Upper bound (exclusive) of each customer/agent sentiment band on the 1-5 scale. */
+export const SENTIMENT_BANDS: { key: SentimentBand; max: number }[] = [
+	{ key: 'very-negative', max: 1.8 },
+	{ key: 'negative', max: 2.6 },
+	{ key: 'neutral', max: 3.4 },
+	{ key: 'positive', max: 4.2 },
+	{ key: 'very-positive', max: 5.01 },
+];
+export const QA_SCORE_BANDS: { key: string; min: number; max: number }[] = [
+	{ key: 'lt60', min: 0, max: 59.99 },
+	{ key: '60to69', min: 60, max: 69.99 },
+	{ key: '70to79', min: 70, max: 79.99 },
+	{ key: '80to89', min: 80, max: 89.99 },
+	{ key: '90plus', min: 90, max: 100 },
+];
+export const COMPLIANCE_ITEMS: {
+	area: 'security' | 'regulatory' | 'legal';
+	item: string;
+}[] = [
+	{ area: 'security', item: 'dataProtection' },
+	{ area: 'security', item: 'disclosureCompliance' },
+	{ area: 'regulatory', item: 'cobranzaRegulada' },
+	{ area: 'regulatory', item: 'transparenciaConsentimiento' },
+	{ area: 'legal', item: 'amenazasTradicionales' },
+	{ area: 'legal', item: 'rrss' },
+	{ area: 'legal', item: 'superintendenciaBancos' },
+	{ area: 'legal', item: 'noLlamarList' },
+];
+export const DISPUTE_TYPES: DisputeEvaluationType[] = [
+	'qa',
+	'compliance',
+	'sentiment-emotion',
+	'business-insights',
+];
+export const DISPUTE_STATUSES: DisputeStatus[] = [
+	'accepted',
+	'partially-accepted',
+	'rejected',
+	'open',
+];
+export const HUMAN_VS_AI_METRICS: SegmentMetricId[] = [
+	'QA_OVERALL_SCORE',
+	'COMPLIANCE_OVERALL_SCORE',
+	'CUSTOMER_SENTIMENT_SCORE',
+	'OPS_EFFECTIVE_CONTACT_RATE',
+	'OPS_FCR_RATE',
+	'BI_CONVERSION_RATE',
+	'OPS_AHT_SECONDS',
+];
+
+/** Heatmap cells built from fewer calls than this are faded: too few to read a pattern. */
+export const HEATMAP_MIN_CALLS = 5;

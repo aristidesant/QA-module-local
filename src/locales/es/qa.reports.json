@@ -46,6 +46,7 @@
 			"7d": "7 días",
 			"30d": "30 días",
 			"90d": "90 días",
+			"12m": "12 meses",
 			"custom": "Personalizado"
 		},
 		"from": "Desde",
@@ -225,6 +226,13 @@
 			"accepted": "Aceptadas",
 			"rejected": "Rechazadas",
 			"acceptanceRate": "Tasa de aceptación"
+		},
+		"pagination": {
+			"pageOf": "Página {{page}} de {{total}}",
+			"prev": "Página anterior",
+			"next": "Página siguiente",
+			"continued": "{{section}} · continuación",
+			"pageLabel": "Página {{page}}"
 		}
 	},
 	"saved": {
@@ -254,8 +262,14 @@
 			"size": "Tamaño",
 			"status": "Estado"
 		},
-		"triggers": { "MANUAL": "Manual", "SCHEDULED": "Programado" },
-		"statuses": { "READY": "Listo", "SENT": "Enviado" },
+		"triggers": {
+			"MANUAL": "Manual",
+			"SCHEDULED": "Programado"
+		},
+		"statuses": {
+			"READY": "Listo",
+			"SENT": "Enviado"
+		},
 		"download": "Descargar",
 		"print": "Abrir vista de impresión",
 		"mockXlsx": "XLSX generado (simulado) — míralo en la pestaña Generados",

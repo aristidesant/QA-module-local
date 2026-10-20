@@ -46,6 +46,7 @@ import {
 	roleFromPath,
 } from '~/modules/qa/team/helpers';
 import { selectThresholds, useSettingsStore } from '~/stores/qa/settingsStore';
+import { HISTORY_DAYS } from '~/modules/qa/analytics/constants';
 import styles from './ConversationsPage.module.css';
 
 const helper = createColumnHelper<TeamCallRow>();
@@ -74,8 +75,8 @@ const DEFAULT_FILTERS: FiltersState = {
 	issues: [],
 };
 
-/** TEAM_CALLS spans 180 days; a custom date range is cut from that history. */
-const FULL_HISTORY_DAYS = 180;
+/** TEAM_CALLS spans the analytics history; a custom date range is cut from it. */
+const FULL_HISTORY_DAYS = HISTORY_DAYS;
 
 const isPerformancePeriod = (
 	value: string | null

@@ -1,70 +1,65 @@
+import type { ComponentType } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router';
-import { Title, Text, Group, Stack, Loader } from '@mantine/core';
+import { Title, Text } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
-import { roleFromPath } from '~/modules/qa/team/helpers';
+import { analyticsRoleFromPath } from '../helpers';
 import { TeamAnalyticsProvider } from './TeamAnalyticsContext';
 import ViewSelector from './ViewSelector';
 import FilterBar from './FilterBar';
-import KPIStrip from './KPIStrip';
 import SavedViewsMenu from './SavedViewsMenu';
-import { SegmentationView } from './Segmentation';
 import { BusinessView } from './Business';
-import { FinderView } from './Finder';
 import { BurnoutView } from './Burnout';
+import ComplianceView from './Compliance/ComplianceView';
+import DisputesView from './Disputes/DisputesView';
+import { FinderView } from './Finder';
+import HumanVsAiView from './HumanVsAi/HumanVsAiView';
+import OperationalView from './Operational/OperationalView';
+import OverviewView from './Overview/OverviewView';
+import QaView from './Quality/QaView';
+import SentimentView from './Sentiment/SentimentView';
 import { DEFAULT_VIEW, VIEW_PARAM } from '../constants';
 import type { TeamAnalyticsView } from '../types';
 import styles from './TeamAnalyticsPage.module.css';
 
+const VIEWS: Record<TeamAnalyticsView, ComponentType> = {
+	overview: OverviewView,
+	operational: OperationalView,
+	qa: QaView,
+	compliance: ComplianceView,
+	business: BusinessView,
+	sentiment: SentimentView,
+	humanVsAi: HumanVsAiView,
+	burnout: BurnoutView,
+	disputes: DisputesView,
+	finder: FinderView,
+};
+
 function TeamAnalyticsPageContent() {
 	const { t } = useTranslation('qa.teamAnalytics');
 	const location = useLocation();
-	const role = roleFromPath(location.pathname);
+	const analyticsRole = analyticsRoleFromPath(location.pathname);
 
 	const params = new URLSearchParams(location.search);
-	const currentView =
-		(params.get(VIEW_PARAM) as TeamAnalyticsView) || DEFAULT_VIEW;
+	const requested = params.get(VIEW_PARAM) as TeamAnalyticsView | null;
+	const currentView: TeamAnalyticsView =
+		requested && requested in VIEWS ? requested : DEFAULT_VIEW;
+	const View = VIEWS[currentView];
 
 	/** Burnout reads fixed trailing windows, so it ignores the filters. */
 	const filtersApply = currentView !== 'burnout';
-
-	const eyebrow = t(`page.eyebrow.${role}`);
-
-	const renderContent = () => {
-		switch (currentView) {
-			case 'qa':
-			case 'sentiment':
-			case 'compliance':
-				return <SegmentationView viewType={currentView} />;
-			case 'business':
-				return <BusinessView />;
-			case 'finder':
-				return <FinderView />;
-			case 'burnout':
-				return <BurnoutView />;
-			default:
-				return (
-					<Group justify='center' py='xl'>
-						<Stack align='center' gap='xs'>
-							<Loader type='dots' />
-							<Text size='sm' c='dimmed'>
-								Loading analytics view...
-							</Text>
-						</Stack>
-					</Group>
-				);
-		}
-	};
 
 	return (
 		<ContentContainer contentWidth='full'>
 			<div className={styles.pageContainer}>
 				<div className={styles.header}>
-					<div className={styles.eyebrow}>{eyebrow}</div>
+					<div className={styles.eyebrow}>
+						{t(`page.eyebrow.${analyticsRole}`)}
+					</div>
 					<div className={styles.titleGroup}>
 						<Title order={1}>{t('page.title')}</Title>
 						<Text size='sm' c='dimmed'>
-							{t(`page.description.${role}`)}
+							{t(`page.description.${analyticsRole}`)}
 						</Text>
 					</div>
 				</div>
@@ -83,11 +78,9 @@ function TeamAnalyticsPageContent() {
 
 				<ViewSelector />
 
-				<div className={filtersApply ? undefined : styles.dimmed}>
-					<KPIStrip />
+				<div className={styles.contentArea}>
+					<View />
 				</div>
-
-				<div className={styles.contentArea}>{renderContent()}</div>
 			</div>
 		</ContentContainer>
 	);

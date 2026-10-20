@@ -23,8 +23,8 @@ export default function GroupBySelector({ role }: GroupBySelectorProps) {
 			<Menu.Target>
 				<Button
 					rightSection={<IconChevronDown size={14} />}
-					variant='light'
-					size='sm'
+					variant='default'
+					size='xs'
 				>
 					{t('filters.groupBy')}: {currentLabel}
 				</Button>

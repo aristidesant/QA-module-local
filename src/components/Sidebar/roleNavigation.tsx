@@ -446,7 +446,7 @@ export const getOperationManagerNavigation = (): SidebarNavItem[] => [
 		key: 'operationmanager-analytics',
 		label: 'sidebar.operationmanager.analytics',
 		icon: <IconChartLine size={20} className={styles.menuIcon} />,
-		to: '/qa/qa-manager/analytics',
+		to: '/qa/operation-manager/analytics',
 		i18nNamespace: 'qa.teamAnalytics',
 	},
 	{

@@ -379,4 +379,13 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.coaching',
 		'qa.triggers',
 	],
+	'qa.operation-manager.analytics': [
+		'qa.teamAnalytics',
+		'qa.agent.analytics',
+		'qa.dashboard',
+		'qa.team',
+		'qa.lms',
+		'qa.coaching',
+		'qa.triggers',
+	],
 };

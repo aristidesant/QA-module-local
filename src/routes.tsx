@@ -1235,6 +1235,17 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'operation-manager/analytics',
+										id: 'qa.operation-manager.analytics',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TeamAnalyticsPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'supervisor/conversations',
 										id: 'qa.supervisor.conversations',
 										element: (

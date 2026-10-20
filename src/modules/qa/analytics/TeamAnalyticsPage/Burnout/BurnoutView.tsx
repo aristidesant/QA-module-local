@@ -18,9 +18,22 @@ import {
 	selectTriggerRules,
 } from '~/stores/qa/triggerRulesStore';
 import { describeCondition } from '~/modules/qa/triggers/helpers';
-import { assessBurnout, burnoutCandidates } from '../../helpers';
+import {
+	activeBurnoutRules,
+	assessBurnout,
+	burnoutCandidates,
+	burnoutSummary,
+} from '../../helpers';
 import type { BurnoutDriver } from '../../types';
 import { useTeamAnalyticsData } from '../TeamAnalyticsContext';
+import {
+	BreakdownBars,
+	ChartCard,
+	MetricTileRow,
+	Pair,
+	STATUS,
+	ShareBar,
+} from '../charts';
 import styles from '../TeamAnalyticsPage.module.css';
 
 const MAX_VISIBLE_DRIVERS = 2;
@@ -29,7 +42,7 @@ const BurnoutView = () => {
 	const { t } = useTranslation('qa.teamAnalytics');
 	const { t: tTriggers } = useTranslation('qa.triggers');
 	const navigate = useNavigate();
-	const { role } = useTeamAnalyticsData();
+	const { role, analyticsRole } = useTeamAnalyticsData();
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 
 	const candidates = useMemo(() => {
@@ -48,6 +61,78 @@ const BurnoutView = () => {
 	const driverLabel = (driver: BurnoutDriver) =>
 		describeCondition(tTriggers, driver.condition);
 
+	const summary = useMemo(
+		() => burnoutSummary(role, triggerRules),
+		[role, triggerRules]
+	);
+	const count = (label: string, value: number) => ({
+		label,
+		metricId: 'OPS_CALLS_HANDLED' as const,
+		value: String(value),
+		current: value,
+		previous: null,
+		neutral: true,
+		compare: false,
+	});
+	const overview = (
+		<>
+			<MetricTileRow
+				columns={4}
+				tiles={[
+					count(t('burnout.tiles.high'), summary.high),
+					count(t('burnout.tiles.medium'), summary.medium),
+					count(t('burnout.tiles.low'), summary.low),
+					count(
+						t('burnout.tiles.rules'),
+						activeBurnoutRules(triggerRules).length
+					),
+				]}
+			/>
+			<Pair>
+				<ChartCard title={t('burnout.distributionTitle')}>
+					<ShareBar
+						segments={[
+							{
+								key: 'high',
+								label: t('burnout.levelHigh'),
+								value: summary.high,
+								color: STATUS.high,
+							},
+							{
+								key: 'medium',
+								label: t('burnout.levelMedium'),
+								value: summary.medium,
+								color: STATUS.medium,
+							},
+							{
+								key: 'low',
+								label: t('burnout.tiles.low'),
+								value: summary.low,
+								color: STATUS.low,
+							},
+						]}
+					/>
+				</ChartCard>
+				{role === 'qa-manager' && (
+					<ChartCard
+						title={t('burnout.byTeamTitle')}
+						empty={summary.byTeam.length === 0}
+					>
+						<BreakdownBars
+							unit='COUNT'
+							valueLabel={t('burnout.tiles.high')}
+							rows={summary.byTeam.map((row) => ({
+								key: row.team,
+								label: row.team,
+								value: row.atRisk,
+							}))}
+						/>
+					</ChartCard>
+				)}
+			</Pair>
+		</>
+	);
+
 	const header = (
 		<Group justify='space-between' align='flex-start' wrap='nowrap'>
 			<div>
@@ -55,7 +140,7 @@ const BurnoutView = () => {
 					{t('burnout.title')}
 				</Text>
 				<Text size='sm' c='dimmed'>
-					{t(`burnout.listDescription.${role}`)}
+					{t(`burnout.listDescription.${analyticsRole}`)}
 				</Text>
 			</div>
 			<Button
@@ -79,6 +164,7 @@ const BurnoutView = () => {
 		return (
 			<Stack gap='md'>
 				{header}
+				{overview}
 				<Text size='sm' c='dimmed' py='xl' ta='center'>
 					{t('burnout.empty')}
 				</Text>
@@ -89,7 +175,8 @@ const BurnoutView = () => {
 	const rows = candidates.map(({ agent, risk, breached, near }) => {
 		const visible = breached.slice(0, MAX_VISIBLE_DRIVERS);
 		const hidden = breached.slice(MAX_VISIBLE_DRIVERS);
-		const riskColor = risk.level === BurnoutRiskLevel.HIGH ? 'red' : 'orange';
+		// Level is the one colour device of a row (status palette); everything else stays gray.
+		const riskColor = risk.level === BurnoutRiskLevel.HIGH ? 'danger' : 'amber';
 
 		return (
 			<Table.Tr key={agent.id}>
@@ -129,21 +216,21 @@ const BurnoutView = () => {
 					<Group gap={4} wrap='wrap'>
 						{visible.map((driver) => (
 							<Tooltip key={driver.id} label={driver.ruleName} withArrow>
-								<Badge variant='outline' size='sm' color='red' tt='none'>
+								<Badge variant='outline' size='sm' color='gray' tt='none'>
 									{driverLabel(driver)}
 								</Badge>
 							</Tooltip>
 						))}
 						{hidden.length > 0 && (
 							<Tooltip label={hidden.map(driverLabel).join(', ')} withArrow>
-								<Badge variant='light' size='sm' color='red'>
+								<Badge variant='light' size='sm' color='gray'>
 									{t('filters.chips.more', { count: hidden.length })}
 								</Badge>
 							</Tooltip>
 						)}
 						{near.length > 0 && (
 							<Tooltip label={near.map(driverLabel).join(', ')} withArrow>
-								<Badge variant='light' size='sm' color='yellow' tt='none'>
+								<Badge variant='light' size='sm' color='gray' tt='none'>
 									{t('burnout.driverStatus.NEAR')} ({near.length})
 								</Badge>
 							</Tooltip>
@@ -162,6 +249,8 @@ const BurnoutView = () => {
 	return (
 		<Stack gap='md'>
 			{header}
+
+			{overview}
 
 			<div className={styles.tableSurface}>
 				<Table striped highlightOnHover verticalSpacing='sm' miw={860}>

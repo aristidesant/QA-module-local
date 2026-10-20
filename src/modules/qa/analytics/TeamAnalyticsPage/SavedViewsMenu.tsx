@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import {
 	ActionIcon,
 	Button,
@@ -30,6 +30,7 @@ export default function SavedViewsMenu({
 }: SavedViewsMenuProps) {
 	const { t } = useTranslation('qa.teamAnalytics');
 	const location = useLocation();
+	const navigate = useNavigate();
 	const params = new URLSearchParams(location.search);
 	const currentView =
 		(params.get(VIEW_PARAM) as TeamAnalyticsView) || DEFAULT_VIEW;
@@ -38,6 +39,15 @@ export default function SavedViewsMenu({
 		useTeamAnalyticsStore();
 	const [saveModalOpen, setSaveModalOpen] = useState(false);
 	const [newPresetName, setNewPresetName] = useState('');
+
+	/** Applies the preset's filters and group-by, then opens the tab it was saved on. */
+	const handleApply = (id: string) => {
+		const preset = applyPreset(id);
+		if (!preset) return;
+		const next = new URLSearchParams(location.search);
+		next.set(VIEW_PARAM, preset.view);
+		navigate(`${location.pathname}?${next.toString()}`);
+	};
 
 	const handleSavePreset = () => {
 		if (newPresetName.trim()) {
@@ -83,7 +93,7 @@ export default function SavedViewsMenu({
 					{builtInPresets.map((preset) => (
 						<Menu.Item
 							key={`builtin-${preset.id}`}
-							onClick={() => applyPreset(preset.id)}
+							onClick={() => handleApply(preset.id)}
 						>
 							{preset.name}
 						</Menu.Item>
@@ -99,7 +109,7 @@ export default function SavedViewsMenu({
 							<Menu.Item
 								key={`custom-${preset.id}`}
 								component='div'
-								onClick={() => applyPreset(preset.id)}
+								onClick={() => handleApply(preset.id)}
 								rightSection={
 									<ActionIcon
 										size='sm'

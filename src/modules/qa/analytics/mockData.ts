@@ -3,26 +3,45 @@ import {
 	PERSONAS,
 	TEAM_AGENTS,
 	TEAM_CAMPAIGNS,
+	TEAM_SUPERVISORS,
+	type Persona,
 } from '~/modules/qa/team/mockData';
 import {
 	AGENT_PERSONA_ID,
+	NOW_ISO,
 	SUPERVISOR_PERSONA,
+	UNASSIGNED_SUPERVISOR,
 } from '~/modules/qa/team/constants';
 import { monthsBetween } from '~/modules/qa/team/helpers';
-import type { NonConversionReasonKey, Shift } from '~/modules/qa/team/types';
-import { TODAY, addDays } from './constants';
+import type {
+	NonConversionReasonKey,
+	RosterAgent,
+	RosterSupervisor,
+	Shift,
+} from '~/modules/qa/team/types';
+import type { AgentType } from '~/models/qa/agents';
+import type {
+	DisputeEvaluationType,
+	DisputeStatus,
+} from '~/models/qa/disputeCases';
+import { HISTORY_DAYS, TODAY, addDays } from './constants';
 import type {
 	BurnoutAction,
 	CallDirection,
 	CallEmotion,
 	ContactOutcome,
 	TeamCallMetric,
+	TeamDispute,
 	TenureBand,
 	TimeSlot,
 } from './types';
 
-/** History length. The agent Analytics 6M preset needs 180 days. */
-const DAYS = 180;
+/**
+ * The recent window keeps its original seeds and draw order (so every existing number is
+ * unchanged); an older pass extends the history to HISTORY_DAYS.
+ */
+const RECENT_DAYS = 180;
+const OLDER_DAYS = HISTORY_DAYS - RECENT_DAYS;
 /** Personas' slope plays out over the last 90 days; older days sit at the starting level. */
 const TREND_DAYS = 90;
 const PRODUCTS = [
@@ -113,14 +132,60 @@ const emotionFor = (
 				? pick<CallEmotion>(['Surprise', 'Sadness'], rand)
 				: pick<CallEmotion>(['Anger', 'Fear', 'Disgust'], rand);
 
-type Persona = (typeof PERSONAS)[number];
+/** What differs per agent type when a call is generated. Humans keep the original numbers. */
+interface CallShape {
+	agentType: AgentType;
+	worksSunday: boolean;
+	callsPerDay: (weekday: number, rand: () => number) => number;
+	hourFor: (shift: Shift, rand: () => number) => number;
+	handleTime: (rand: () => number, burnout: BurnoutRiskLevel) => number;
+	holdTime: (rand: () => number) => number;
+	wrapUp: (rand: () => number) => number;
+	transferRate: number;
+	/** P(first-contact resolution | effective contact), scaled by the persona's QA level. */
+	fcrRate: number;
+}
+
+const HUMAN_SHAPE: CallShape = {
+	agentType: 'HUMAN',
+	worksSunday: false,
+	callsPerDay: (weekday, rand) =>
+		weekday === 6 ? (rand() < 0.5 ? 0 : 1) : 1 + Math.floor(rand() * 3),
+	hourFor,
+	handleTime: (rand, burnout) =>
+		Math.round(
+			240 + rand() * 480 + (burnout === BurnoutRiskLevel.HIGH ? 180 : 0)
+		),
+	holdTime: (rand) => (rand() < 0.6 ? 0 : Math.round(15 + rand() * 105)),
+	wrapUp: (rand) => Math.round(30 + rand() * 120),
+	transferRate: 0.08,
+	fcrRate: 0.72,
+};
+
+/** AI agents work every day, all day: shorter calls, no hold, almost no wrap-up, twice the transfers. */
+const AI_SHAPE: CallShape = {
+	agentType: 'AI_BOT',
+	worksSunday: true,
+	callsPerDay: (_weekday, rand) => 3 + Math.floor(rand() * 3),
+	hourFor: (_shift, rand) => 8 + Math.floor(rand() * 12),
+	handleTime: (rand) => Math.round((240 + rand() * 480) * 0.6),
+	holdTime: () => 0,
+	wrapUp: (rand) => Math.round(rand() * 5),
+	transferRate: 0.16,
+	fcrRate: 0.55,
+};
 
 interface GenerateOptions {
 	seed: number;
 	idPrefix: string;
 	personas: Persona[];
-	/** Only the last `days` days of the history are generated. */
+	/** Roster the personas resolve against (TEAM_AGENTS or AI_AGENTS). */
+	roster: RosterAgent[];
+	shape: CallShape;
+	/** Number of days generated. */
 	days: number;
+	/** 0 = the window ends on TODAY; RECENT_DAYS = it ends the day before the recent window starts. */
+	endOffsetDays: number;
 	/** Added to every working day's call count, to thicken a window. */
 	extraCallsPerDay: number;
 }
@@ -130,15 +195,20 @@ function generateCalls({
 	seed,
 	idPrefix,
 	personas,
+	roster,
+	shape,
 	days,
+	endOffsetDays,
 	extraCallsPerDay,
 }: GenerateOptions): TeamCallMetric[] {
 	const rand = seeded(seed);
+	/** Own stream for the operational fields, so the original draws are never shifted. */
+	const extra = seeded(seed * 31 + 7);
 	const out: TeamCallMetric[] = [];
 	let seq = 0;
 
 	for (const persona of personas) {
-		const agent = TEAM_AGENTS.find((a) => a.id === persona.id);
+		const agent = roster.find((a) => a.id === persona.id);
 		if (!agent) continue;
 		const campaigns = TEAM_CAMPAIGNS.filter((c) =>
 			agent.campaignIds.includes(c.id)
@@ -155,21 +225,22 @@ function generateCalls({
 					: 0;
 		const bizWeak = 1 - base.business;
 
-		for (let dayIndex = DAYS - days; dayIndex < DAYS; dayIndex++) {
-			const isoDay = addDays(TODAY, dayIndex - (DAYS - 1));
+		// Oldest day first, so the draw order matches the original generator.
+		for (let age = endOffsetDays + days - 1; age >= endOffsetDays; age--) {
+			const isoDay = addDays(TODAY, -age);
+			if (isoDay < agent.hireDate) continue;
 			const weekday = new Date(`${isoDay}T00:00:00Z`).getUTCDay();
-			if (weekday === 0) continue;
-			if (agent.status === 'inactive' && dayIndex >= DAYS - 20) continue;
+			if (weekday === 0 && !shape.worksSunday) continue;
+			if (agent.status === 'inactive' && age < 20) continue;
 
+			// -0.5 … +0.5 over the last TREND_DAYS; older days sit at the starting level.
 			const progress =
-				Math.max(0, dayIndex - (DAYS - TREND_DAYS)) / (TREND_DAYS - 1) - 0.5; // -0.5 … +0.5 over the last TREND_DAYS
-			const callsToday =
-				(weekday === 6 ? (rand() < 0.5 ? 0 : 1) : 1 + Math.floor(rand() * 3)) +
-				extraCallsPerDay;
+				Math.max(0, TREND_DAYS - 1 - age) / (TREND_DAYS - 1) - 0.5;
+			const callsToday = shape.callsPerDay(weekday, rand) + extraCallsPerDay;
 
 			for (let c = 0; c < callsToday; c++) {
 				const campaign = pick(campaigns, rand);
-				const hour = hourFor(agent.shift, rand);
+				const hour = shape.hourFor(agent.shift, rand);
 				const minute = Math.floor(rand() * 60);
 				const direction: CallDirection =
 					campaign.campaignType === 'BLENDED'
@@ -306,9 +377,7 @@ function generateCalls({
 					hour,
 					weekday,
 					timeSlot: timeSlotFor(hour),
-					handleTimeSeconds: Math.round(
-						240 + rand() * 480 + (burnout === BurnoutRiskLevel.HIGH ? 180 : 0)
-					),
+					handleTimeSeconds: shape.handleTime(rand, burnout),
 					afterHours: hour >= 18,
 					qaScore,
 					autoFail,
@@ -320,6 +389,13 @@ function generateCalls({
 					sentimentRecovered,
 					agentEmotion,
 					contactOutcome,
+					agentType: shape.agentType,
+					holdTimeSeconds: shape.holdTime(extra),
+					wrapUpSeconds: shape.wrapUp(extra),
+					transferred: extra() < shape.transferRate,
+					firstContactResolved:
+						contactOutcome === 'EFFECTIVE' &&
+						extra() < shape.fcrRate * (0.7 + 0.3 * base.qa),
 				});
 			}
 		}
@@ -327,13 +403,29 @@ function generateCalls({
 	return out;
 }
 
-/** Baseline history: every persona over the full 180 days. */
+/** Baseline history of the recent window: every persona over the last 180 days. */
 export const buildTeamCalls = (): TeamCallMetric[] =>
 	generateCalls({
 		seed: 11,
 		idPrefix: 'TCALL',
 		personas: PERSONAS,
-		days: DAYS,
+		roster: TEAM_AGENTS,
+		shape: HUMAN_SHAPE,
+		days: RECENT_DAYS,
+		endOffsetDays: 0,
+		extraCallsPerDay: 0,
+	}).sort((a, b) => a.date.localeCompare(b.date));
+
+/** The history before the recent window, so 12-month periods have data. */
+const buildOlderTeamCalls = (): TeamCallMetric[] =>
+	generateCalls({
+		seed: 17,
+		idPrefix: 'TOCALL',
+		personas: PERSONAS,
+		roster: TEAM_AGENTS,
+		shape: HUMAN_SHAPE,
+		days: OLDER_DAYS,
+		endOffsetDays: RECENT_DAYS,
 		extraCallsPerDay: 0,
 	}).sort((a, b) => a.date.localeCompare(b.date));
 
@@ -373,7 +465,10 @@ const buildRoughPatchCalls = (): TeamCallMetric[] =>
 			...p,
 			base: { ...p.base, ...ROUGH_PATCHES[p.id] },
 		})),
+		roster: TEAM_AGENTS,
+		shape: HUMAN_SHAPE,
 		days: ROUGH_PATCH_DAYS,
+		endOffsetDays: 0,
 		extraCallsPerDay: 1,
 	});
 
@@ -383,8 +478,8 @@ const buildRoughPatchCalls = (): TeamCallMetric[] =>
  * reads a band off, so shares spread out the way real data does. The agent
  * persona keeps its emotions: its alerts point at specific calls.
  */
-const blurCustomerEmotions = (calls: TeamCallMetric[]): void => {
-	const rand = seeded(53);
+const blurCustomerEmotions = (calls: TeamCallMetric[], seed: number): void => {
+	const rand = seeded(seed);
 	for (const call of calls) {
 		if (call.agentId === AGENT_PERSONA_ID || rand() >= 0.2) continue;
 		const shifted = call.customerSentiment + (rand() < 0.5 ? -0.9 : 0.9);
@@ -392,12 +487,36 @@ const blurCustomerEmotions = (calls: TeamCallMetric[]): void => {
 	}
 };
 
+/**
+ * Agents mostly work their own shift, which left whole weekday x time-slot cells with calls
+ * from agents of a single profile (a slot could read 0% negative on every day). One call in
+ * three is moved to another working hour of the same day, as cover and overtime do, so every
+ * slot has calls from several agents. After-hours calls and the agent persona are left alone.
+ */
+const spreadWorkingHours = (calls: TeamCallMetric[], seed: number): void => {
+	const rand = seeded(seed);
+	for (const call of calls) {
+		if (call.agentId === AGENT_PERSONA_ID || call.afterHours) continue;
+		if (rand() >= 0.34) continue;
+		const hour = 8 + Math.floor(rand() * 10); // 8-17
+		call.hour = hour;
+		call.timeSlot = timeSlotFor(hour);
+		call.date = `${call.date.slice(0, 11)}${pad(hour)}${call.date.slice(13)}`;
+	}
+	calls.sort((a, b) => a.date.localeCompare(b.date));
+};
+
 const buildAllCalls = (): TeamCallMetric[] => {
-	const calls = [...buildTeamCalls(), ...buildRoughPatchCalls()].sort((a, b) =>
+	// The recent window is blurred on its own (seed 53) so its numbers never change.
+	const recent = [...buildTeamCalls(), ...buildRoughPatchCalls()].sort((a, b) =>
 		a.date.localeCompare(b.date)
 	);
-	blurCustomerEmotions(calls);
-	return calls;
+	blurCustomerEmotions(recent, 53);
+	spreadWorkingHours(recent, 61);
+	const older = buildOlderTeamCalls();
+	blurCustomerEmotions(older, 59);
+	spreadWorkingHours(older, 67);
+	return [...older, ...recent];
 };
 
 export const TEAM_CALLS: TeamCallMetric[] = buildAllCalls();
@@ -461,6 +580,192 @@ TEAM_CALLS.filter((c) => c.agentId === AGENT_PERSONA_ID)
 		call.agentSentiment = dip.agentSentiment;
 		call.agentEmotion = dip.agentEmotion;
 	});
+
+// ---------- AI agents (analytics only) ----------
+const aiPersona = (
+	n: number,
+	name: string,
+	supervisorId: string,
+	campaignIds: string[],
+	hireDate: string,
+	shift: Shift,
+	base: Persona['base']
+): Persona => ({
+	id: `AIB-${String(n).padStart(3, '0')}`,
+	name,
+	supervisorId,
+	campaignIds,
+	hireDate,
+	trackedSince: hireDate,
+	shift,
+	base,
+	slope: 0,
+	burnout: BurnoutRiskLevel.LOW,
+	skills: ['Voice bot'],
+});
+
+/** Two AI agents per team, deployed in waves so the tenure bands differ. */
+export const AI_PERSONAS: Persona[] = [
+	aiPersona(1, 'Aria (AI)', 'SUP-001', ['camp-001'], '2025-11-03', 'morning', {
+		qa: 0.86,
+		sentiment: 0.66,
+		compliance: 0.96,
+		business: 0.44,
+	}),
+	aiPersona(
+		2,
+		'Nova (AI)',
+		'SUP-001',
+		['camp-004'],
+		'2025-11-03',
+		'afternoon',
+		{ qa: 0.84, sentiment: 0.63, compliance: 0.95, business: 0.47 }
+	),
+	aiPersona(3, 'Echo (AI)', 'SUP-002', ['camp-002'], '2026-02-16', 'night', {
+		qa: 0.88,
+		sentiment: 0.68,
+		compliance: 0.97,
+		business: 0.42,
+	}),
+	aiPersona(
+		4,
+		'Iris (AI)',
+		'SUP-002',
+		['camp-001', 'camp-003'],
+		'2026-02-16',
+		'morning',
+		{ qa: 0.83, sentiment: 0.62, compliance: 0.94, business: 0.46 }
+	),
+	aiPersona(5, 'Sol (AI)', 'SUP-003', ['camp-003'], '2026-05-04', 'afternoon', {
+		qa: 0.87,
+		sentiment: 0.67,
+		compliance: 0.96,
+		business: 0.43,
+	}),
+	aiPersona(
+		6,
+		'Luna (AI)',
+		'SUP-003',
+		['camp-004', 'camp-002'],
+		'2026-05-04',
+		'night',
+		{ qa: 0.85, sentiment: 0.64, compliance: 0.95, business: 0.45 }
+	),
+];
+
+export const AI_AGENTS: RosterAgent[] = AI_PERSONAS.map((p) => {
+	const sup: RosterSupervisor =
+		TEAM_SUPERVISORS.find((s) => s.id === p.supervisorId) ??
+		UNASSIGNED_SUPERVISOR;
+	return {
+		id: p.id,
+		name: p.name,
+		email: `${p.id.toLowerCase()}@newtech.ai`,
+		supervisorId: sup.id,
+		supervisorName: sup.name,
+		team: sup.team,
+		campaignIds: p.campaignIds,
+		status: 'active',
+		shift: p.shift ?? 'morning',
+		hireDate: p.hireDate,
+		trackedSince: p.trackedSince,
+		skills: p.skills,
+		avatarColor: 'gray',
+	};
+});
+export const AI_AGENT_IDS: ReadonlySet<string> = new Set(
+	AI_AGENTS.map((a) => a.id)
+);
+export const isAiAgentId = (id: string): boolean => AI_AGENT_IDS.has(id);
+
+export const AI_TEAM_CALLS: TeamCallMetric[] = generateCalls({
+	seed: 71,
+	idPrefix: 'AICALL',
+	personas: AI_PERSONAS,
+	roster: AI_AGENTS,
+	shape: AI_SHAPE,
+	days: HISTORY_DAYS,
+	endOffsetDays: 0,
+	extraCallsPerDay: 0,
+}).sort((a, b) => a.date.localeCompare(b.date));
+
+/**
+ * Human + AI calls, date-ascending. Only Team Analytics reads this; every other
+ * consumer keeps the human-only TEAM_CALLS.
+ */
+export const ANALYTICS_CALLS: TeamCallMetric[] = [
+	...TEAM_CALLS,
+	...AI_TEAM_CALLS,
+].sort((a, b) => a.date.localeCompare(b.date));
+
+// ---------- Disputes (derived from the human calls) ----------
+const DISPUTE_TYPE_WEIGHTS: { key: DisputeEvaluationType; weight: number }[] = [
+	{ key: 'qa', weight: 45 },
+	{ key: 'compliance', weight: 20 },
+	{ key: 'sentiment-emotion', weight: 25 },
+	{ key: 'business-insights', weight: 10 },
+];
+const DISPUTE_STATUS_WEIGHTS: { key: DisputeStatus; weight: number }[] = [
+	{ key: 'accepted', weight: 35 },
+	{ key: 'partially-accepted', weight: 20 },
+	{ key: 'rejected', weight: 25 },
+	{ key: 'open', weight: 20 },
+];
+
+/** About 3-4% of human calls are disputed, weighted toward weak evaluations. */
+function buildDisputes(calls: TeamCallMetric[]): TeamDispute[] {
+	const rand = seeded(97);
+	const out: TeamDispute[] = [];
+	let seq = 0;
+	for (const call of calls) {
+		if (call.agentType !== 'HUMAN') continue;
+		const weak =
+			call.qaScore < 70 ||
+			call.autoFail ||
+			call.complianceByArea.regulatory.score < 75 ||
+			call.customerSentiment < 2.6;
+		if (rand() >= (weak ? 0.12 : 0.015)) continue;
+
+		const filedDay = addDays(
+			call.date.slice(0, 10),
+			1 + Math.floor(rand() * 3)
+		);
+		const createdAt = `${filedDay}T12:00:00Z`;
+		if (createdAt > NOW_ISO) continue;
+
+		let status = pickWeighted(DISPUTE_STATUS_WEIGHTS, rand);
+		const resolvedDay = addDays(filedDay, 1 + Math.floor(rand() * 9));
+		const resolvedAt = `${resolvedDay}T15:00:00Z`;
+		if (status !== 'open' && resolvedAt > NOW_ISO) status = 'open';
+
+		seq += 1;
+		out.push({
+			id: `TDSP-${String(seq).padStart(4, '0')}`,
+			callId: call.id,
+			agentId: call.agentId,
+			agentName: call.agentName,
+			supervisorId: call.supervisorId,
+			team: call.team,
+			campaignId: call.campaignId,
+			evaluationType: pickWeighted(DISPUTE_TYPE_WEIGHTS, rand),
+			status,
+			createdAt,
+			resolvedAt: status === 'open' ? null : resolvedAt,
+			scoreDelta:
+				status === 'accepted'
+					? 4 + Math.round(rand() * 8)
+					: status === 'partially-accepted'
+						? 1 + Math.round(rand() * 4)
+						: 0,
+		});
+	}
+	return out;
+}
+
+export const TEAM_DISPUTES: TeamDispute[] = buildDisputes(TEAM_CALLS);
+export const DISPUTE_BY_CALL_ID: ReadonlyMap<string, TeamDispute> = new Map(
+	TEAM_DISPUTES.map((d) => [d.callId, d])
+);
 
 export const BURNOUT_ACTIONS_SEED: BurnoutAction[] = [
 	{

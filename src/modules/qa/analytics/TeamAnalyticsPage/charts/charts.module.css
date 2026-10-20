@@ -1,0 +1,150 @@
+/* Metric tile: label, value, delta and a sparkline on one quiet surface. */
+.tile {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	width: 100%;
+	min-width: 0;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
+	background-color: var(--mantine-color-body);
+	border: 1px solid var(--mantine-color-default-border);
+	border-radius: var(--mantine-radius-md);
+	text-align: left;
+}
+
+.tileInteractive {
+	cursor: pointer;
+	transition: border-color 120ms ease;
+}
+
+.tileInteractive:hover,
+.tileInteractive:focus-visible {
+	border-color: var(--mantine-color-dimmed);
+}
+
+.tileLabel {
+	font-size: var(--mantine-font-size-xs);
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	line-height: 1.2;
+	text-transform: uppercase;
+	color: var(--mantine-color-dimmed);
+}
+
+.tileValue {
+	font-size: 26px;
+	font-weight: 700;
+	line-height: 1.1;
+}
+
+.tileDelta {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-dimmed);
+}
+
+/* Colour means exception: only a change for the worse earns a hue. */
+.tileDeltaBad {
+	color: light-dark(
+		var(--mantine-color-danger-7),
+		var(--mantine-color-danger-4)
+	);
+}
+
+.tileSpark {
+	margin-top: 4px;
+}
+
+.chartPlaceholder {
+	width: 100%;
+	border-radius: var(--mantine-radius-md);
+	background-color: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+}
+
+/* Share bar: segments separated by a 2px gap, rounded at the ends. */
+.shareBar {
+	display: flex;
+	gap: 2px;
+	width: 100%;
+}
+
+.shareSegment {
+	min-width: 2px;
+	border-radius: 4px;
+}
+
+.legendRow {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--mantine-spacing-xs) var(--mantine-spacing-md);
+	margin-top: var(--mantine-spacing-xs);
+}
+
+.legendItem {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: var(--mantine-font-size-xs);
+}
+
+.swatch {
+	flex: none;
+	border-radius: 3px;
+}
+
+/* Heatmap */
+.heatCell {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 32px;
+	border-radius: 4px;
+	font-size: var(--mantine-font-size-xs);
+}
+
+.heatEmpty {
+	color: var(--mantine-color-dimmed);
+	background-color: light-dark(
+		var(--mantine-color-gray-1),
+		var(--mantine-color-dark-6)
+	);
+}
+
+.heatLabel {
+	display: flex;
+	align-items: center;
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-dimmed);
+}
+
+.heatLegend {
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 4px;
+	margin-top: var(--mantine-spacing-sm);
+}
+
+.heatHead {
+	text-align: center;
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-dimmed);
+}
+
+/* Two cards side by side on wide screens, stacked below. */
+.pair {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: var(--mantine-spacing-md);
+}
+
+@media (max-width: 62em) {
+	.pair {
+		grid-template-columns: 1fr;
+	}
+}

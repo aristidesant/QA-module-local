@@ -14,10 +14,14 @@ import {
 	IconMinus,
 	IconChevronRight,
 } from '@tabler/icons-react';
-import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
 import { useTeamAnalyticsStore } from '~/stores/qa/teamAnalyticsStore';
 import { DRILL_NEXT, OTHER_SEGMENT_KEY } from '../../constants';
-import { comparison, formatMetric, isImprovement } from '../../helpers';
+import {
+	comparison,
+	formatMetric,
+	isImprovement,
+	metricMeta,
+} from '../../helpers';
 import type {
 	GroupByDimension,
 	SegmentMetricId,
@@ -32,6 +36,8 @@ interface SegmentationTableProps {
 	metricLabel: string;
 	/** Resolves raw segment keys (shift, tenure, …) to translated labels. */
 	labelOf: (row: SegmentRow) => string;
+	/** Rows open the next level of the drill-down (off when the dimension is fixed by the view). */
+	drillable?: boolean;
 }
 
 export default function SegmentationTable({
@@ -40,12 +46,14 @@ export default function SegmentationTable({
 	metricId,
 	metricLabel,
 	labelOf,
+	drillable = true,
 }: SegmentationTableProps) {
 	const { t } = useTranslation('qa.teamAnalytics');
 	const { drillInto } = useTeamAnalyticsStore();
 
-	const higherIsBetter = METRIC_BY_ID[metricId].higherIsBetter;
-	const canDrill = dimension !== 'none' && Boolean(DRILL_NEXT[dimension]);
+	const higherIsBetter = metricMeta(metricId).higherIsBetter;
+	const canDrill =
+		drillable && dimension !== 'none' && Boolean(DRILL_NEXT[dimension]);
 
 	const handleDrill = (row: SegmentRow) => {
 		const nextDimension = DRILL_NEXT[dimension];
@@ -63,7 +71,8 @@ export default function SegmentationTable({
 		const previous = row.previous[metricId] ?? null;
 		const cmp = comparison(current, previous);
 		const improved = isImprovement(cmp, higherIsBetter);
-		const trendColor = improved === null ? 'gray' : improved ? 'green' : 'red';
+		// Colour means exception: only a change for the worse earns a hue.
+		const trendColor = improved === false ? 'danger' : 'gray';
 		const TrendIcon =
 			cmp.trend === 'UP'
 				? IconTrendingUp

@@ -25,6 +25,8 @@ import {
 	DEFAULT_FILTERS,
 	DIRECTIONS,
 	EMOTIONS,
+	QUICK_RANGES,
+	QUICK_RANGE_DAYS,
 	SHIFTS,
 	TENURE_BANDS,
 	TIME_SLOTS,
@@ -39,6 +41,7 @@ import type {
 	QuickRange,
 	TeamAnalyticsFilters,
 } from '../types';
+import { autoGranularity } from '../helpers';
 import { useTeamAnalyticsData } from './TeamAnalyticsContext';
 import styles from './TeamAnalyticsPage.module.css';
 
@@ -47,8 +50,7 @@ interface FilterDrawerProps {
 	onClose: () => void;
 }
 
-const QUICK_RANGES: Exclude<QuickRange, 'custom'>[] = ['7d', '30d', '90d'];
-const QUICK_RANGE_DAYS = { '7d': 7, '30d': 30, '90d': 90 } as const;
+const AGENT_TYPES = ['HUMAN', 'AI_BOT'] as const;
 const GRANULARITIES: Granularity[] = ['per-call', 'daily', 'weekly', 'monthly'];
 const CAMPAIGN_TYPES: CampaignType[] = ['INBOUND', 'OUTBOUND', 'BLENDED'];
 const STATUSES = ['active', 'inactive'] as const;
@@ -114,10 +116,12 @@ export default function FilterDrawer({ open, onClose }: FilterDrawerProps) {
 			return;
 		}
 		const range = value as Exclude<QuickRange, 'custom'>;
+		const from = addDays(TODAY, -(QUICK_RANGE_DAYS[range] - 1));
 		patch({
 			quickRange: range,
-			from: addDays(TODAY, -(QUICK_RANGE_DAYS[range] - 1)),
+			from,
 			to: TODAY,
+			granularity: autoGranularity(from, TODAY),
 		});
 	};
 
@@ -228,6 +232,17 @@ export default function FilterDrawer({ open, onClose }: FilterDrawerProps) {
 							data={options.lines}
 							value={draft.linesOfBusiness}
 							onChange={(linesOfBusiness) => patch({ linesOfBusiness })}
+							clearable
+							comboboxProps={{ withinPortal: true }}
+						/>
+						<MultiSelect
+							label={t('filters.agentTypes')}
+							placeholder={t('filters.all')}
+							data={labelled([...AGENT_TYPES], 'filters.agentTypeLabels')}
+							value={draft.agentTypes}
+							onChange={(agentTypes) =>
+								patch({ agentTypes: agentTypes as typeof draft.agentTypes })
+							}
 							clearable
 							comboboxProps={{ withinPortal: true }}
 						/>

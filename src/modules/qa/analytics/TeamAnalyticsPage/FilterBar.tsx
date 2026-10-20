@@ -1,6 +1,13 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Group, Button, Badge, CloseButton, Tooltip } from '@mantine/core';
+import {
+	Group,
+	Button,
+	Badge,
+	CloseButton,
+	Switch,
+	Tooltip,
+} from '@mantine/core';
 import { IconAdjustments, IconX } from '@tabler/icons-react';
 import { TEAM_CAMPAIGNS, TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
 import { useTeamAnalyticsStore } from '~/stores/qa/teamAnalyticsStore';
@@ -20,6 +27,7 @@ const VALUE_LABEL_NAMESPACE: Partial<Record<FilterChipKey, string>> = {
 	tenureBands: 'filters.tenureLabels',
 	weekdays: 'filters.weekdayLabels',
 	emotions: 'filters.emotionLabels',
+	agentTypes: 'filters.agentTypeLabels',
 };
 
 interface FilterBarProps {
@@ -30,8 +38,9 @@ interface FilterBarProps {
 export default function FilterBar({ disabled = false }: FilterBarProps) {
 	const { t } = useTranslation('qa.teamAnalytics');
 	const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
-	const { filters, resetFilters, commitFilters } = useTeamAnalyticsStore();
-	const { scopedAgents } = useTeamAnalyticsData();
+	const { filters, resetFilters, commitFilters, setFilters } =
+		useTeamAnalyticsStore();
+	const { scopedAgents, compareAvailable } = useTeamAnalyticsData();
 
 	const chips = filterChips(filters);
 	const activeCount = activeFilterCount(filters);
@@ -51,6 +60,7 @@ export default function FilterBar({ disabled = false }: FilterBarProps) {
 		timeSlots: t('filters.timeSlots'),
 		weekdays: t('filters.weekdays'),
 		emotions: t('filters.emotions'),
+		agentTypes: t('filters.agentTypes'),
 		autoFailOnly: t('filters.flags.autoFailOnly'),
 		recoveredOnly: t('filters.flags.recoveredOnly'),
 		offeredOnly: t('filters.flags.offeredOnly'),
@@ -150,6 +160,26 @@ export default function FilterBar({ disabled = false }: FilterBarProps) {
 							</Tooltip>
 						</>
 					)}
+					<Tooltip
+						label={t('filters.compareUnavailable')}
+						withArrow
+						disabled={compareAvailable}
+					>
+						<span>
+							<Switch
+								size='sm'
+								ml='auto'
+								label={t('filters.compare')}
+								checked={filters.compareWithPrevious && compareAvailable}
+								disabled={disabled || !compareAvailable}
+								onChange={(event) =>
+									setFilters({
+										compareWithPrevious: event.currentTarget.checked,
+									})
+								}
+							/>
+						</span>
+					</Tooltip>
 				</Group>
 			</div>
 

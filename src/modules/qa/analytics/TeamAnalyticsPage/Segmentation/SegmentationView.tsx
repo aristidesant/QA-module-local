@@ -1,47 +1,44 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Group, Select, Stack, Text } from '@mantine/core';
-import {
-	useTeamAnalyticsStore,
-	selectDrill,
-} from '~/stores/qa/teamAnalyticsStore';
-import {
-	MAX_SEGMENT_SERIES,
-	OTHER_SEGMENT_KEY,
-	PRIMARY_METRIC,
-	VIEW_METRICS,
-} from '../../constants';
+import { Group, Select } from '@mantine/core';
+import { MAX_SEGMENT_SERIES } from '../../constants';
 import { buildSegments } from '../../helpers';
-import type { MetricView, SegmentMetricId, SegmentRow } from '../../types';
+import type { GroupByDimension, SegmentMetricId } from '../../types';
 import { useTeamAnalyticsData } from '../TeamAnalyticsContext';
-import BreadcrumbNav from './BreadcrumbNav';
+import { ChartCard } from '../charts';
 import GroupBySelector from './GroupBySelector';
 import SegmentationTable from './SegmentationTable';
+import { useSegmentLabel } from './segmentLabels';
 
 interface SegmentationViewProps {
-	viewType: Extract<MetricView, 'qa' | 'sentiment' | 'compliance'>;
+	metricIds: SegmentMetricId[];
+	primary: SegmentMetricId;
+	/** Offer the group-by here too (tabs without a trend section). */
+	showGroupBy?: boolean;
+	/** Fix the dimension instead of following the page's group-by (no drill-down then). */
+	fixedGroupBy?: GroupByDimension;
 }
 
-/** Dimensions whose segment key is a raw enum value needing a translated label. */
-const KEY_LABEL_NAMESPACE: Partial<Record<string, string>> = {
-	campaignType: 'filters.campaignTypeLabels',
-	callDirection: 'filters.directionLabels',
-	shift: 'filters.shiftLabels',
-	tenure: 'filters.tenureLabels',
-};
-
-export default function SegmentationView({ viewType }: SegmentationViewProps) {
+/** The comparison table every area tab ends with: one row per segment, current vs previous period. */
+export default function SegmentationView({
+	metricIds,
+	primary,
+	showGroupBy = false,
+	fixedGroupBy,
+}: SegmentationViewProps) {
 	const { t } = useTranslation('qa.teamAnalytics');
-	const { role, filters, groupBy, calls, previousCalls } =
-		useTeamAnalyticsData();
-	const drill = useTeamAnalyticsStore(selectDrill);
+	const {
+		role,
+		filters,
+		groupBy: pageGroupBy,
+		calls,
+		previousCalls,
+	} = useTeamAnalyticsData();
+	const groupBy = fixedGroupBy ?? pageGroupBy;
 
-	const metricIds = VIEW_METRICS[viewType];
-	const [metricId, setMetricId] = useState<SegmentMetricId>(
-		PRIMARY_METRIC[viewType]
-	);
-	// Each view offers its own metric list, so the choice resets when the tab changes.
-	useEffect(() => setMetricId(PRIMARY_METRIC[viewType]), [viewType]);
+	const [metricId, setMetricId] = useState<SegmentMetricId>(primary);
+	// Each tab offers its own metric list, so the choice resets when the tab changes.
+	useEffect(() => setMetricId(primary), [primary]);
 
 	const rows = useMemo(
 		() =>
@@ -64,37 +61,23 @@ export default function SegmentationView({ viewType }: SegmentationViewProps) {
 			filters.minCalls,
 		]
 	);
-
-	const labelOf = (row: SegmentRow) => {
-		if (row.key === OTHER_SEGMENT_KEY) {
-			return t('segments.other', { count: row.calls });
-		}
-		const ns = KEY_LABEL_NAMESPACE[groupBy];
-		return ns ? t(`${ns}.${row.key}`, { defaultValue: row.label }) : row.label;
-	};
-
+	const labelOf = useSegmentLabel(groupBy);
 	const groupByLabel = t(`filters.groupByOptions.${groupBy}`);
-	const metricLabel = t(`metrics.${metricId}`);
-	const truncated = rows.some((r) => r.key === OTHER_SEGMENT_KEY);
+	const truncated = rows.some((r) => r.key === '__other');
 
 	return (
-		<Stack gap='md'>
-			{drill && <BreadcrumbNav />}
-
-			<Group justify='space-between' align='flex-end' wrap='wrap'>
-				<div>
-					<Text fw={600} size='sm'>
-						{groupBy === 'none'
-							? t('segments.tableTitle')
-							: t('segments.title', { dimension: groupByLabel.toLowerCase() })}
-					</Text>
-					<Text size='sm' c='dimmed'>
-						{t('segments.description')}
-					</Text>
-				</div>
+		<ChartCard
+			title={
+				groupBy === 'none'
+					? t('segments.tableTitle')
+					: t('segments.title', { dimension: groupByLabel.toLowerCase() })
+			}
+			description={t('segments.description')}
+			empty={rows.length === 0}
+			controls={
 				<Group gap='sm'>
 					<Select
-						size='sm'
+						size='xs'
 						aria-label={t('segments.metric')}
 						data={metricIds.map((id) => ({
 							value: id,
@@ -105,30 +88,23 @@ export default function SegmentationView({ viewType }: SegmentationViewProps) {
 						allowDeselect={false}
 						comboboxProps={{ withinPortal: true }}
 					/>
-					<GroupBySelector role={role} />
+					{showGroupBy && !fixedGroupBy && <GroupBySelector role={role} />}
 				</Group>
-			</Group>
-
-			{rows.length === 0 ? (
-				<Text size='sm' c='dimmed' py='xl' ta='center'>
-					{t('segments.empty')}
-				</Text>
-			) : (
-				<>
-					<SegmentationTable
-						rows={rows}
-						dimension={groupBy}
-						metricId={metricId}
-						metricLabel={metricLabel}
-						labelOf={labelOf}
-					/>
-					{truncated && (
-						<Text size='xs' c='dimmed'>
-							{t('segments.hiddenSeries', { count: MAX_SEGMENT_SERIES - 1 })}
-						</Text>
-					)}
-				</>
-			)}
-		</Stack>
+			}
+			footer={
+				truncated
+					? t('segments.hiddenSeries', { count: MAX_SEGMENT_SERIES - 1 })
+					: undefined
+			}
+		>
+			<SegmentationTable
+				rows={rows}
+				dimension={groupBy}
+				metricId={metricId}
+				metricLabel={t(`metrics.${metricId}`)}
+				labelOf={labelOf}
+				drillable={!fixedGroupBy}
+			/>
+		</ChartCard>
 	);
 }

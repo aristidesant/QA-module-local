@@ -8,9 +8,13 @@ import type {
 	EvaluationWindow,
 	LmsAssignment,
 	RuleCondition,
-	TriggerMetricId,
 	TriggerRule,
 } from '~/models/qa';
+import type { AgentType } from '~/models/qa/agents';
+import type {
+	DisputeEvaluationType,
+	DisputeStatus,
+} from '~/models/qa/disputeCases';
 import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
 import { compare, formatMetricValue } from '~/modules/qa/triggers/helpers';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
@@ -28,6 +32,7 @@ import {
 	TEAM_SUPERVISORS,
 } from '~/modules/qa/team/mockData';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
+import { formatSeconds } from '~/modules/qa/team/helpers';
 import { useSettingsStore } from '~/stores/qa/settingsStore';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
 import {
@@ -35,20 +40,36 @@ import {
 	negativeEmotionsOf,
 	positiveEmotionsOf,
 } from '~/modules/qa/settings/helpers';
-import { TEAM_CALLS } from './mockData';
 import {
+	AI_AGENTS,
+	DISPUTE_BY_CALL_ID,
+	TEAM_CALLS,
+	TEAM_DISPUTES,
+} from './mockData';
+import {
+	COMPLIANCE_ITEMS,
 	DEFAULT_FILTERS,
+	DISPUTE_TYPES,
+	EMOTIONS,
+	HUMAN_VS_AI_METRICS,
+	MAX_COMPARE_DAYS,
 	MAX_SEGMENT_SERIES,
 	OTHER_SEGMENT_KEY,
+	QA_SCORE_BANDS,
+	SENTIMENT_BANDS,
 	TIME_SLOTS,
 	TODAY,
 	WEEKDAY_SHORT,
 	addDays,
 } from './constants';
 import type {
+	AnalyticsMetricId,
+	AnalyticsMetricMeta,
+	AnalyticsOnlyMetricId,
 	BurnoutAction,
 	BurnoutDriver,
 	BurnoutDriverStatus,
+	BurnoutSummary,
 	BurnoutWorkload,
 	BusinessSignalKind,
 	BusinessSummary,
@@ -56,18 +77,30 @@ import type {
 	CallEmotion,
 	CampaignType,
 	ComparisonSeriesPoint,
+	ComplianceItemShare,
+	DisputeSeriesPoint,
+	DisputeSummary,
+	DisputesByAgentRow,
+	DistributionRow,
+	ErrorMixPoint,
 	FilterChip,
 	FinderQuery,
 	FinderResultRow,
 	Granularity,
 	GroupByDimension,
+	HeatmapData,
 	HistoryEntry,
+	HumanVsAiAgentRow,
+	HumanVsAiSummary,
+	OverviewException,
 	SegmentMetricId,
 	SegmentRow,
 	SegmentSeriesPoint,
+	SentimentBand,
 	TeamAnalyticsFilters,
 	TeamCallMetric,
 	TeamCallSignals,
+	TeamDispute,
 	TeamKpis,
 	TenureBand,
 	TimeSlot,
@@ -102,8 +135,8 @@ export const isNegativeCallEmotion = (emotion: CallEmotion) =>
 		negativeEmotionsOf(useSettingsStore.getState().thresholds.sentiment)
 	);
 /** PERCENT metrics whose per-call value is 1/0 → aggregated as 100 × mean. */
-export const SHARE_METRIC_IDS: ReadonlySet<TriggerMetricId> =
-	new Set<TriggerMetricId>([
+export const SHARE_METRIC_IDS: ReadonlySet<AnalyticsMetricId> =
+	new Set<AnalyticsMetricId>([
 		'POSITIVE_EMOTION_CALL_SHARE',
 		'NEGATIVE_EMOTION_CALL_SHARE',
 		'BI_EARLY_OBJECTION_RATE',
@@ -111,7 +144,89 @@ export const SHARE_METRIC_IDS: ReadonlySet<TriggerMetricId> =
 		'BI_COMPETITOR_PLUS_COST_RATE',
 		'BI_MISTARGETED_OFFER_RATE',
 		'BI_NON_CONVERSION_RATE',
+		'OPS_EFFECTIVE_CONTACT_RATE',
+		'OPS_TRANSFER_RATE',
+		'OPS_FCR_RATE',
+		'OPS_AFTER_HOURS_SHARE',
+		'AGENT_NEGATIVE_EMOTION_CALL_SHARE',
+		'AGENT_POSITIVE_EMOTION_CALL_SHARE',
+		'SENTIMENT_RECOVERY_RATE',
+		'BI_CONVERSION_RATE',
+		'DISPUTE_RATE',
 	]);
+/** Metrics that are not in the triggers catalog (operational, agent emotion, conversion, disputes). */
+export const ANALYTICS_METRIC_META: Record<
+	AnalyticsOnlyMetricId,
+	AnalyticsMetricMeta
+> = {
+	OPS_CALLS_HANDLED: {
+		unit: 'COUNT',
+		higherIsBetter: true,
+		area: 'OPERATIONAL',
+	},
+	OPS_EFFECTIVE_CONTACT_RATE: {
+		unit: 'PERCENT',
+		higherIsBetter: true,
+		area: 'OPERATIONAL',
+	},
+	OPS_AHT_SECONDS: {
+		unit: 'SECONDS',
+		higherIsBetter: false,
+		area: 'OPERATIONAL',
+	},
+	OPS_HOLD_SECONDS: {
+		unit: 'SECONDS',
+		higherIsBetter: false,
+		area: 'OPERATIONAL',
+	},
+	OPS_WRAP_UP_SECONDS: {
+		unit: 'SECONDS',
+		higherIsBetter: false,
+		area: 'OPERATIONAL',
+	},
+	OPS_TRANSFER_RATE: {
+		unit: 'PERCENT',
+		higherIsBetter: false,
+		area: 'OPERATIONAL',
+	},
+	OPS_FCR_RATE: { unit: 'PERCENT', higherIsBetter: true, area: 'OPERATIONAL' },
+	OPS_AFTER_HOURS_SHARE: {
+		unit: 'PERCENT',
+		higherIsBetter: false,
+		area: 'OPERATIONAL',
+	},
+	AGENT_NEGATIVE_EMOTION_CALL_SHARE: {
+		unit: 'PERCENT',
+		higherIsBetter: false,
+		area: 'SENTIMENT_EMOTION',
+	},
+	AGENT_POSITIVE_EMOTION_CALL_SHARE: {
+		unit: 'PERCENT',
+		higherIsBetter: true,
+		area: 'SENTIMENT_EMOTION',
+	},
+	SENTIMENT_RECOVERY_RATE: {
+		unit: 'PERCENT',
+		higherIsBetter: true,
+		area: 'SENTIMENT_EMOTION',
+	},
+	BI_CONVERSION_RATE: {
+		unit: 'PERCENT',
+		higherIsBetter: true,
+		area: 'BUSINESS_INSIGHTS',
+	},
+	DISPUTE_COUNT: { unit: 'COUNT', higherIsBetter: false, area: 'DISPUTES' },
+	DISPUTE_RATE: { unit: 'PERCENT', higherIsBetter: false, area: 'DISPUTES' },
+};
+export const isAnalyticsOnlyMetric = (
+	id: AnalyticsMetricId
+): id is AnalyticsOnlyMetricId => id in ANALYTICS_METRIC_META;
+/** Unit, direction and area of any metric; the triggers catalog is consulted for its own ids. */
+export const metricMeta = (id: AnalyticsMetricId): AnalyticsMetricMeta =>
+	isAnalyticsOnlyMetric(id)
+		? ANALYTICS_METRIC_META[id]
+		: (METRIC_BY_ID[id] as AnalyticsMetricMeta);
+
 const SIGNAL_FIELD: Record<BusinessSignalKind, keyof TeamCallSignals> = {
 	EARLY_OBJECTION: 'earlyObjection',
 	UNHANDLED_OBJECTION: 'unhandledObjection',
@@ -132,6 +247,60 @@ export const scopeAgents = (role: TeamRole): RosterAgent[] =>
 		(a) => role === 'qa-manager' || a.supervisorId === SUPERVISOR_PERSONA.id
 	);
 
+/** AI agents of the role's scope (analytics only; never part of the human roster). */
+export const scopeAiAgents = (role: TeamRole): RosterAgent[] =>
+	AI_AGENTS.filter(
+		(a) => role === 'qa-manager' || a.supervisorId === SUPERVISOR_PERSONA.id
+	);
+/** Humans and AI agents, for the analytics filters and tables. */
+export const scopeAnalyticsAgents = (role: TeamRole): RosterAgent[] => [
+	...scopeAgents(role),
+	...scopeAiAgents(role),
+];
+
+/** The analytics page tells the Operation Manager apart for copy; its data scope is the QA Manager's. */
+export type AnalyticsRole = TeamRole | 'operation-manager';
+export const analyticsRoleFromPath = (pathname: string): AnalyticsRole =>
+	pathname.startsWith('/qa/operation-manager')
+		? 'operation-manager'
+		: pathname.startsWith('/qa/qa-manager')
+			? 'qa-manager'
+			: 'supervisor';
+export const scopeRoleOf = (role: AnalyticsRole): TeamRole =>
+	role === 'operation-manager' ? 'qa-manager' : role;
+
+/** Calls of a date-ascending list between two days (inclusive), found by binary search. */
+export function sliceByDay(
+	sorted: TeamCallMetric[],
+	from: string,
+	to: string
+): TeamCallMetric[] {
+	const lowerBound = (key: string) => {
+		let lo = 0;
+		let hi = sorted.length;
+		while (lo < hi) {
+			const mid = (lo + hi) >> 1;
+			if (sorted[mid].date < key) lo = mid + 1;
+			else hi = mid;
+		}
+		return lo;
+	};
+	return sorted.slice(
+		lowerBound(`${from}T00:00:00Z`),
+		lowerBound(`${addDays(to, 1)}T00:00:00Z`)
+	);
+}
+
+/** Daily up to a month, weekly up to four months, monthly beyond. */
+export const autoGranularity = (from: string, to: string): Granularity => {
+	const days = daysBetween(from, to) + 1;
+	return days <= 31 ? 'daily' : days <= 120 ? 'weekly' : 'monthly';
+};
+/** The previous period must fit inside the generated history. */
+export const canCompare = (
+	f: Pick<TeamAnalyticsFilters, 'from' | 'to'>
+): boolean => daysBetween(f.from, f.to) + 1 <= MAX_COMPARE_DAYS;
+
 /** ISO bounds for aggregateMetricsByDateRange (inclusive day range). */
 export const toRangeISO = (f: Pick<TeamAnalyticsFilters, 'from' | 'to'>) => ({
 	start: `${f.from}T00:00:00Z`,
@@ -148,6 +317,7 @@ export function filterCalls(
 		if (role === 'supervisor' && c.supervisorId !== SUPERVISOR_PERSONA.id)
 			return false;
 		if (!inRange(c, f.from, f.to)) return false;
+		if (!has(f.agentTypes, c.agentType)) return false;
 		if (
 			!has(f.supervisorIds, c.supervisorId) ||
 			!has(f.agentIds, c.agentId) ||
@@ -218,6 +388,7 @@ const ARRAY_KEYS = [
 	'timeSlots',
 	'weekdays',
 	'emotions',
+	'agentTypes',
 ] as const;
 const FLAG_KEYS = [
 	'autoFailOnly',
@@ -313,6 +484,8 @@ export function narrowFilters(
 			return { ...f, supervisorIds: [key] };
 		case 'agent':
 			return { ...f, agentIds: [key] };
+		case 'agentType':
+			return { ...f, agentTypes: [key as AgentType] };
 		case 'campaign':
 			return { ...f, campaignIds: [key] };
 		case 'lineOfBusiness':
@@ -337,7 +510,7 @@ export function narrowFilters(
 // ---------- per-call metric & aggregation ----------
 export function metricOf(
 	call: TeamCallMetric,
-	id: TriggerMetricId
+	id: AnalyticsMetricId
 ): number | null {
 	switch (id) {
 		case 'QA_OVERALL_SCORE':
@@ -388,6 +561,35 @@ export function metricOf(
 			return toBool(call.signals.mistargetedOffer);
 		case 'BI_NON_CONVERSION_RATE':
 			return call.offeredProduct === null ? null : toBool(!call.converted);
+		case 'BI_CONVERSION_RATE':
+			return call.offeredProduct === null ? null : toBool(call.converted);
+		case 'OPS_CALLS_HANDLED':
+			return 1;
+		case 'OPS_EFFECTIVE_CONTACT_RATE':
+			return toBool(call.contactOutcome === 'EFFECTIVE');
+		case 'OPS_AHT_SECONDS':
+			return call.handleTimeSeconds;
+		case 'OPS_HOLD_SECONDS':
+			return call.holdTimeSeconds;
+		case 'OPS_WRAP_UP_SECONDS':
+			return call.wrapUpSeconds;
+		case 'OPS_TRANSFER_RATE':
+			return toBool(call.transferred);
+		case 'OPS_FCR_RATE':
+			return call.contactOutcome === 'EFFECTIVE'
+				? toBool(call.firstContactResolved)
+				: null;
+		case 'OPS_AFTER_HOURS_SHARE':
+			return toBool(call.afterHours);
+		case 'AGENT_NEGATIVE_EMOTION_CALL_SHARE':
+			return toBool(isNegativeCallEmotion(call.agentEmotion));
+		case 'AGENT_POSITIVE_EMOTION_CALL_SHARE':
+			return toBool(isPositiveCallEmotion(call.agentEmotion));
+		case 'SENTIMENT_RECOVERY_RATE':
+			return toBool(call.sentimentRecovered);
+		case 'DISPUTE_COUNT':
+		case 'DISPUTE_RATE':
+			return toBool(DISPUTE_BY_CALL_ID.has(call.id));
 		default:
 			return null;
 	}
@@ -396,7 +598,7 @@ export function metricOf(
 /** COUNT → sum; share ids → 100 × mean of 1/0; scores → mean. 1 decimal. null when no data. */
 export function aggregateMetric(
 	calls: TeamCallMetric[],
-	id: TriggerMetricId
+	id: AnalyticsMetricId
 ): number | null {
 	const values: number[] = [];
 	for (const c of calls) {
@@ -405,8 +607,10 @@ export function aggregateMetric(
 	}
 	if (values.length === 0) return null;
 	const sum = values.reduce((s, v) => s + v, 0);
-	if (METRIC_BY_ID[id].unit === 'COUNT') return sum;
+	const { unit } = metricMeta(id);
+	if (unit === 'COUNT') return sum;
 	const avg = sum / values.length;
+	if (unit === 'SECONDS') return Math.round(avg);
 	return round1(SHARE_METRIC_IDS.has(id) ? avg * 100 : avg);
 }
 
@@ -443,21 +647,38 @@ export const isImprovement = (
 		: (cmp.trend === 'UP') === higherIsBetter;
 
 export const formatMetric = (
-	id: TriggerMetricId,
+	id: AnalyticsMetricId,
 	value: number | null
-): string => (value === null ? '—' : formatMetricValue(id, value));
+): string => {
+	if (value === null) return '—';
+	if (!isAnalyticsOnlyMetric(id)) return formatMetricValue(id, value);
+	const { unit } = ANALYTICS_METRIC_META[id];
+	if (unit === 'SECONDS')
+		return `${value < 0 ? '-' : ''}${formatSeconds(Math.abs(value))}`;
+	if (unit === 'PERCENT') return `${Math.round(value)}%`;
+	return String(Math.round(value));
+};
 
 // ---------- periods & segments ----------
-/** Mirrors the bucketing of aggregateMetricsByDateRange (dashboard/mockData.ts:2631-2645). */
+/**
+ * Day and month keys are UTC. Weekly keys are UTC ISO weeks (Monday first, year of the Thursday),
+ * unlike the dashboard's local Jan-1-based weeks, so a year boundary never splits a week.
+ */
+export function isoWeekKey(iso: string): string {
+	const d = new Date(iso);
+	const u = new Date(
+		Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate())
+	);
+	const day = u.getUTCDay() || 7;
+	u.setUTCDate(u.getUTCDate() + 4 - day);
+	const week = Math.ceil(
+		((u.getTime() - Date.UTC(u.getUTCFullYear(), 0, 1)) / 86_400_000 + 1) / 7
+	);
+	return `${u.getUTCFullYear()}-W${String(week).padStart(2, '0')}`;
+}
 export function periodKeyOf(iso: string, granularity: Granularity): string {
 	const d = new Date(iso);
-	if (granularity === 'weekly') {
-		const startOfYear = new Date(d.getFullYear(), 0, 1);
-		const week = Math.floor(
-			(d.getTime() - startOfYear.getTime()) / (7 * 24 * 60 * 60 * 1000)
-		);
-		return `${d.getFullYear()}-W${String(week + 1).padStart(2, '0')}`;
-	}
+	if (granularity === 'weekly') return isoWeekKey(iso);
 	if (granularity === 'monthly') return d.toISOString().substring(0, 7);
 	return d.toISOString().split('T')[0];
 }
@@ -473,6 +694,8 @@ export function segmentKeyOf(
 			return { key: call.supervisorId, label: call.supervisorName };
 		case 'agent':
 			return { key: call.agentId, label: call.agentName };
+		case 'agentType':
+			return { key: call.agentType, label: call.agentType };
 		case 'campaign':
 			return { key: call.campaignId, label: call.campaignName };
 		case 'lineOfBusiness':
@@ -518,7 +741,7 @@ const metricsOf = (
 /** `points` equal day-buckets across [from,to]; empty buckets repeat the last known value. */
 export function sparklineFor(
 	calls: TeamCallMetric[],
-	metricId: TriggerMetricId,
+	metricId: AnalyticsMetricId,
 	from: string,
 	to: string,
 	points = 7
@@ -552,7 +775,7 @@ export function buildSegments(
 	to: string,
 	minCalls: number
 ): SegmentRow[] {
-	const primary: TriggerMetricId = metricIds[0] ?? 'QA_OVERALL_SCORE';
+	const primary: AnalyticsMetricId = metricIds[0] ?? 'QA_OVERALL_SCORE';
 	const groups = groupByDim(calls, dim);
 	const prevGroups = groupByDim(previousCalls, dim);
 	let rows: SegmentRow[] = [...groups.entries()].map(([key, g]) => ({
@@ -592,7 +815,7 @@ export function buildSegments(
 export function buildSegmentSeries(
 	calls: TeamCallMetric[],
 	dim: GroupByDimension,
-	metricId: TriggerMetricId,
+	metricId: AnalyticsMetricId,
 	from: string,
 	to: string,
 	granularity: Granularity,
@@ -628,7 +851,7 @@ export function buildSegmentSeries(
 export function alignedComparisonSeries(
 	current: TeamCallMetric[],
 	previous: TeamCallMetric[],
-	metricId: TriggerMetricId,
+	metricId: AnalyticsMetricId,
 	f: TeamAnalyticsFilters
 ): ComparisonSeriesPoint[] {
 	const g = f.granularity === 'per-call' ? 'daily' : f.granularity;
@@ -735,8 +958,8 @@ export const describeFinderQuery = (
 	operatorLabel: string
 ): string =>
 	query.operator === 'BETWEEN'
-		? `${metricLabel} ${operatorLabel} ${formatMetricValue(query.metricId, query.value)} – ${formatMetricValue(query.metricId, query.value2 ?? query.value)}`
-		: `${metricLabel} ${operatorLabel} ${formatMetricValue(query.metricId, query.value)}`;
+		? `${metricLabel} ${operatorLabel} ${formatMetric(query.metricId, query.value)} – ${formatMetric(query.metricId, query.value2 ?? query.value)}`
+		: `${metricLabel} ${operatorLabel} ${formatMetric(query.metricId, query.value)}`;
 
 // ---------- Business ----------
 export function aggregateBusiness(
@@ -1285,4 +1508,471 @@ export function buildActionHistory(
 			source: 'lms',
 		}));
 	return [...own, ...coaching, ...lms].sort((a, b) => b.at.localeCompare(a.at));
+}
+
+// ---------- chart data ----------
+const bucketGranularity = (g: Granularity): Exclude<Granularity, 'per-call'> =>
+	g === 'per-call' ? 'daily' : g;
+
+/** One value per period for a single metric, oldest first. */
+export function bucketSeries(
+	calls: TeamCallMetric[],
+	metricId: AnalyticsMetricId,
+	granularity: Granularity
+): { period: string; value: number | null }[] {
+	const g = bucketGranularity(granularity);
+	const buckets = new Map<string, TeamCallMetric[]>();
+	for (const c of calls) {
+		const key = periodKeyOf(c.date, g);
+		const list = buckets.get(key);
+		if (list) list.push(c);
+		else buckets.set(key, [c]);
+	}
+	return [...buckets.keys()].sort().map((period) => ({
+		period,
+		value: aggregateMetric(buckets.get(period)!, metricId),
+	}));
+}
+
+/** Count and share per key (ignoring nulls and keys outside `keys`), in the order of `keys`. */
+export function distribution(
+	items: (string | null)[],
+	keys: string[]
+): DistributionRow[] {
+	const counts = new Map(keys.map((k) => [k, 0]));
+	let total = 0;
+	for (const key of items) {
+		if (key === null || !counts.has(key)) continue;
+		counts.set(key, counts.get(key)! + 1);
+		total += 1;
+	}
+	return keys.map((key) => ({
+		key,
+		count: counts.get(key)!,
+		share: pct(counts.get(key)!, total),
+	}));
+}
+
+export const sentimentBandOf = (score: number): SentimentBand =>
+	(
+		SENTIMENT_BANDS.find((b) => score < b.max) ??
+		SENTIMENT_BANDS[SENTIMENT_BANDS.length - 1]
+	).key;
+
+export const sentimentBands = (
+	calls: TeamCallMetric[],
+	side: 'customer' | 'agent'
+): DistributionRow[] =>
+	distribution(
+		calls.map((c) =>
+			sentimentBandOf(
+				side === 'customer' ? c.customerSentiment : c.agentSentiment
+			)
+		),
+		SENTIMENT_BANDS.map((b) => b.key)
+	);
+
+/** Share of calls per predominant emotion, customer and agent side, biggest customer share first. */
+export function emotionShares(
+	calls: TeamCallMetric[]
+): { emotion: CallEmotion; customer: number; agent: number }[] {
+	const customer = distribution(
+		calls.map((c) => c.predominantEmotion),
+		EMOTIONS
+	);
+	const agent = distribution(
+		calls.map((c) => c.agentEmotion),
+		EMOTIONS
+	);
+	return EMOTIONS.map((emotion, i) => ({
+		emotion,
+		customer: customer[i].share,
+		agent: agent[i].share,
+	})).sort((a, b) => b.customer - a.customer);
+}
+
+/** Weekday × time-slot grid of one metric; null where there are no calls. */
+export function heatmap(
+	calls: TeamCallMetric[],
+	metricId: AnalyticsMetricId,
+	includeSunday: boolean
+): HeatmapData {
+	const weekdays = includeSunday ? [1, 2, 3, 4, 5, 6, 0] : [1, 2, 3, 4, 5, 6];
+	const buckets = new Map<string, TeamCallMetric[]>();
+	for (const c of calls) {
+		const key = `${c.weekday}|${c.timeSlot}`;
+		const list = buckets.get(key);
+		if (list) list.push(c);
+		else buckets.set(key, [c]);
+	}
+	return {
+		rows: weekdays.map((w) => ({ key: String(w), label: WEEKDAY_SHORT[w] })),
+		cols: [...TIME_SLOTS],
+		counts: weekdays.map((w) =>
+			TIME_SLOTS.map((slot) => buckets.get(`${w}|${slot}`)?.length ?? 0)
+		),
+		cells: weekdays.map((w) =>
+			TIME_SLOTS.map((slot) => {
+				const list = buckets.get(`${w}|${slot}`);
+				return list ? aggregateMetric(list, metricId) : null;
+			})
+		),
+	};
+}
+
+export const qaScoreBands = (calls: TeamCallMetric[]): DistributionRow[] =>
+	distribution(
+		calls.map(
+			(c) =>
+				QA_SCORE_BANDS.find((b) => c.qaScore >= b.min && c.qaScore <= b.max)
+					?.key ?? null
+		),
+		QA_SCORE_BANDS.map((b) => b.key)
+	);
+
+/** QA error counts per period, ready for a 100% stacked bar. */
+export function errorMixSeries(
+	calls: TeamCallMetric[],
+	granularity: Granularity
+): ErrorMixPoint[] {
+	const g = bucketGranularity(granularity);
+	const buckets = new Map<string, ErrorMixPoint>();
+	for (const c of calls) {
+		const key = periodKeyOf(c.date, g);
+		let point = buckets.get(key);
+		if (!point) {
+			point = { period: key, ecn: 0, enc: 0, ecc: 0, ecuf: 0 };
+			buckets.set(key, point);
+		}
+		point.ecn += c.qaScores.ecn;
+		point.enc += c.qaScores.enc;
+		point.ecc += c.qaScores.ecc;
+		point.ecuf += c.qaScores.ecuf;
+	}
+	return [...buckets.values()].sort((a, b) => a.period.localeCompare(b.period));
+}
+
+/** Share of calls where each compliance item scored under the target, worst first. */
+export function complianceItemShares(
+	calls: TeamCallMetric[],
+	target: number
+): ComplianceItemShare[] {
+	return COMPLIANCE_ITEMS.map(({ area, item }) => ({
+		area,
+		item,
+		share: pct(
+			calls.filter(
+				(c) => (c.complianceByArea[area].items[item] ?? 100) < target
+			).length,
+			calls.length
+		),
+	})).sort((a, b) => b.share - a.share);
+}
+
+/** Burnout level counts for the role's human agents, and the at-risk count per team. */
+export function burnoutSummary(
+	role: TeamRole,
+	rules?: TriggerRule[]
+): BurnoutSummary {
+	let high = 0;
+	let medium = 0;
+	let low = 0;
+	const byTeam = new Map<string, number>();
+	for (const agent of scopeAgents(role)) {
+		const { level } = assessBurnout(agent.id, rules);
+		if (level === BurnoutRiskLevel.HIGH) high += 1;
+		else if (level === BurnoutRiskLevel.MEDIUM) medium += 1;
+		else low += 1;
+		if (level !== BurnoutRiskLevel.LOW)
+			byTeam.set(agent.team, (byTeam.get(agent.team) ?? 0) + 1);
+	}
+	return {
+		high,
+		medium,
+		low,
+		byTeam: [...byTeam.entries()]
+			.map(([team, atRisk]) => ({ team, atRisk }))
+			.sort((a, b) => b.atRisk - a.atRisk),
+	};
+}
+
+// ---------- disputes ----------
+/** The derived disputes that belong to the given (already filtered) calls. */
+export function disputesOf(calls: TeamCallMetric[]): TeamDispute[] {
+	const ids = new Set(calls.map((c) => c.id));
+	return TEAM_DISPUTES.filter((d) => ids.has(d.callId));
+}
+
+export function aggregateDisputes(
+	calls: TeamCallMetric[],
+	disputes: TeamDispute[]
+): DisputeSummary {
+	const count = (status: DisputeStatus) =>
+		disputes.filter((d) => d.status === status).length;
+	const accepted = count('accepted');
+	const partiallyAccepted = count('partially-accepted');
+	const rejected = count('rejected');
+	const open = count('open');
+	const resolved = disputes.filter((d) => d.resolvedAt !== null);
+	const resolutionDays = mean(
+		resolved.map((d) => daysBetween(dayOf(d.createdAt), dayOf(d.resolvedAt!)))
+	);
+	const types = distribution(
+		disputes.map((d) => d.evaluationType),
+		DISPUTE_TYPES
+	);
+	return {
+		total: disputes.length,
+		open,
+		accepted,
+		partiallyAccepted,
+		rejected,
+		acceptanceRate: resolved.length
+			? pct(accepted + partiallyAccepted, resolved.length)
+			: null,
+		avgResolutionDays: resolutionDays === null ? null : round1(resolutionDays),
+		ratePer100Calls: calls.length ? pct(disputes.length, calls.length) : null,
+		byType: types.map((row) => ({
+			type: row.key as DisputeEvaluationType,
+			count: row.count,
+			share: row.share,
+		})),
+	};
+}
+
+/** Disputes filed and resolved per period. */
+export function disputeSeries(
+	disputes: TeamDispute[],
+	granularity: Granularity
+): DisputeSeriesPoint[] {
+	const g = bucketGranularity(granularity);
+	const buckets = new Map<string, DisputeSeriesPoint>();
+	const at = (period: string) => {
+		let point = buckets.get(period);
+		if (!point) {
+			point = { period, filed: 0, resolved: 0 };
+			buckets.set(period, point);
+		}
+		return point;
+	};
+	for (const d of disputes) {
+		at(periodKeyOf(d.createdAt, g)).filed += 1;
+		if (d.resolvedAt) at(periodKeyOf(d.resolvedAt, g)).resolved += 1;
+	}
+	return [...buckets.values()].sort((a, b) => a.period.localeCompare(b.period));
+}
+
+export function disputesByAgent(
+	calls: TeamCallMetric[],
+	disputes: TeamDispute[]
+): DisputesByAgentRow[] {
+	const callsByAgent = new Map<
+		string,
+		{ name: string; team: string; count: number }
+	>();
+	for (const c of calls) {
+		if (c.agentType !== 'HUMAN') continue;
+		const row = callsByAgent.get(c.agentId);
+		if (row) row.count += 1;
+		else
+			callsByAgent.set(c.agentId, {
+				name: c.agentName,
+				team: c.team,
+				count: 1,
+			});
+	}
+	const byAgent = new Map<string, TeamDispute[]>();
+	for (const d of disputes) {
+		const list = byAgent.get(d.agentId);
+		if (list) list.push(d);
+		else byAgent.set(d.agentId, [d]);
+	}
+	return [...callsByAgent.entries()]
+		.map(([agentId, info]) => {
+			const list = byAgent.get(agentId) ?? [];
+			const accepted = list.filter(
+				(d) => d.status === 'accepted' || d.status === 'partially-accepted'
+			).length;
+			const rejected = list.filter((d) => d.status === 'rejected').length;
+			return {
+				agentId,
+				agentName: info.name,
+				team: info.team,
+				calls: info.count,
+				filed: list.length,
+				open: list.filter((d) => d.status === 'open').length,
+				accepted,
+				rejected,
+				acceptanceRate:
+					accepted + rejected ? pct(accepted, accepted + rejected) : null,
+			};
+		})
+		.filter((row) => row.filed > 0)
+		.sort((a, b) => b.filed - a.filed);
+}
+
+// ---------- human vs AI ----------
+/** Human vs AI on one 0-100 axis: percents as is, 1-5 scores x20, handle time inverted (shorter scores higher). */
+function indexValue(
+	unit: 'PERCENT' | 'SCORE_5' | 'COUNT' | 'SECONDS',
+	value: number | null,
+	other: number | null
+): number {
+	if (value === null) return 0;
+	if (unit === 'SCORE_5') return Math.round(value * 20);
+	if (unit === 'SECONDS')
+		return value === 0 || other === null
+			? 0
+			: Math.round((100 * Math.min(value, other)) / value);
+	return Math.round(value);
+}
+
+export function humanVsAi(calls: TeamCallMetric[]): HumanVsAiSummary {
+	const human = calls.filter((c) => c.agentType === 'HUMAN');
+	const ai = calls.filter((c) => c.agentType === 'AI_BOT');
+	const metrics = HUMAN_VS_AI_METRICS.map((id) => {
+		const h = aggregateMetric(human, id);
+		const a = aggregateMetric(ai, id);
+		const { unit } = metricMeta(id);
+		return {
+			id,
+			human: h,
+			ai: a,
+			index: { human: indexValue(unit, h, a), ai: indexValue(unit, a, h) },
+		};
+	});
+	const byAgent: HumanVsAiAgentRow[] = [...groupByDim(ai, 'agent').entries()]
+		.map(([agentId, grp]) => ({
+			agentId,
+			agentName: grp.label,
+			team: grp.calls[0].team,
+			calls: grp.calls.length,
+			qa: aggregateMetric(grp.calls, 'QA_OVERALL_SCORE'),
+			compliance: aggregateMetric(grp.calls, 'COMPLIANCE_OVERALL_SCORE'),
+			sentiment: aggregateMetric(grp.calls, 'CUSTOMER_SENTIMENT_SCORE'),
+			effective: aggregateMetric(grp.calls, 'OPS_EFFECTIVE_CONTACT_RATE'),
+		}))
+		.sort((a, b) => b.calls - a.calls);
+	return {
+		humanCalls: human.length,
+		aiCalls: ai.length,
+		aiShare: calls.length ? pct(ai.length, calls.length) : null,
+		aiAgents: byAgent.length,
+		metrics,
+		byAgent,
+	};
+}
+
+/** Share of calls handled by AI per period. */
+export function aiShareSeries(
+	calls: TeamCallMetric[],
+	granularity: Granularity
+): { period: string; value: number | null }[] {
+	const g = bucketGranularity(granularity);
+	const buckets = new Map<string, { ai: number; total: number }>();
+	for (const c of calls) {
+		const key = periodKeyOf(c.date, g);
+		const row = buckets.get(key) ?? { ai: 0, total: 0 };
+		row.total += 1;
+		if (c.agentType === 'AI_BOT') row.ai += 1;
+		buckets.set(key, row);
+	}
+	return [...buckets.keys()].sort().map((period) => {
+		const row = buckets.get(period)!;
+		return { period, value: pct(row.ai, row.total) };
+	});
+}
+
+// ---------- overview: what needs attention ----------
+interface ExceptionSpec {
+	view: OverviewException['view'];
+	metricId: AnalyticsMetricId;
+	/** null = no target: only a worsening against the previous period counts. */
+	target: number | null;
+}
+
+/**
+ * Segments (agents or teams) below the configured target, or clearly worse than the
+ * previous period, for each area's headline metric. Worst first, at most 8.
+ */
+export function overviewExceptions(
+	calls: TeamCallMetric[],
+	previousCalls: TeamCallMetric[],
+	dimension: 'agent' | 'team',
+	minCalls: number,
+	compare: boolean
+): OverviewException[] {
+	const thresholds = useSettingsStore.getState().thresholds;
+	const specs: ExceptionSpec[] = [
+		{
+			view: 'qa',
+			metricId: 'QA_OVERALL_SCORE',
+			target: thresholds.qa.lowScoreIncident,
+		},
+		{
+			view: 'compliance',
+			metricId: 'COMPLIANCE_OVERALL_SCORE',
+			target: thresholds.compliance.areaTargetPerCall,
+		},
+		{
+			view: 'sentiment',
+			metricId: 'CUSTOMER_SENTIMENT_SCORE',
+			target: thresholds.sentiment.lowSentimentIncident,
+		},
+		{
+			view: 'operational',
+			metricId: 'OPS_EFFECTIVE_CONTACT_RATE',
+			target: null,
+		},
+		{ view: 'business', metricId: 'BI_CONVERSION_RATE', target: null },
+		{ view: 'disputes', metricId: 'DISPUTE_RATE', target: null },
+	];
+	const groups = groupByDim(calls, dimension);
+	const previousGroups = groupByDim(previousCalls, dimension);
+	const found: { item: OverviewException; severity: number }[] = [];
+
+	for (const spec of specs) {
+		const meta = metricMeta(spec.metricId);
+		for (const [key, group] of groups) {
+			if (group.calls.length < minCalls) continue;
+			const value = aggregateMetric(group.calls, spec.metricId);
+			if (value === null) continue;
+			const previous = compare
+				? aggregateMetric(previousGroups.get(key)?.calls ?? [], spec.metricId)
+				: null;
+			const base = {
+				area: meta.area,
+				view: spec.view,
+				metricId: spec.metricId,
+				segmentKey: key,
+				segmentLabel: group.label,
+				dimension,
+				value,
+				previous,
+				target: spec.target,
+			};
+			if (
+				spec.target !== null &&
+				(meta.higherIsBetter ? value < spec.target : value > spec.target)
+			) {
+				found.push({
+					item: { ...base, reason: 'BELOW_TARGET' },
+					severity:
+						2 + Math.abs(value - spec.target) / Math.max(1, spec.target),
+				});
+			} else if (previous !== null && previous !== 0) {
+				const worse = meta.higherIsBetter ? previous - value : value - previous;
+				const relative = worse / Math.abs(previous);
+				if (relative > 0.05)
+					found.push({
+						item: { ...base, reason: 'WORSENED' },
+						severity: relative,
+					});
+			}
+		}
+	}
+	return found
+		.sort((a, b) => b.severity - a.severity)
+		.slice(0, 8)
+		.map((f) => f.item);
 }

@@ -19,7 +19,7 @@ import { scopeAgents } from '~/modules/qa/analytics/helpers';
 import type { TeamRole } from '~/modules/qa/team/types';
 import { TEAMS } from '~/modules/qa/rankings/constants';
 
-const PRESETS: QuickRange[] = ['7d', '30d', '90d', 'custom'];
+const PRESETS: QuickRange[] = ['7d', '30d', '90d', '12m', 'custom'];
 const GROUP_BY: ReportGroupBy[] = [
 	'none',
 	'team',
@@ -33,6 +33,7 @@ const PRESET_DAYS: Partial<Record<QuickRange, number>> = {
 	'7d': 7,
 	'30d': 30,
 	'90d': 90,
+	'12m': 365,
 };
 
 const toDay = (value: string | null): string | undefined =>

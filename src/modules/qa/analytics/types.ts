@@ -1,6 +1,16 @@
 import type { CallMetric } from '~/modules/qa/dashboard/mockData';
 import type { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
-import type { RuleCondition, TriggerMetricId } from '~/models/qa';
+import type {
+	EvaluationArea,
+	MetricUnit,
+	RuleCondition,
+	TriggerMetricId,
+} from '~/models/qa';
+import type { AgentType } from '~/models/qa/agents';
+import type {
+	DisputeEvaluationType,
+	DisputeStatus,
+} from '~/models/qa/disputeCases';
 import type {
 	AgentStatus,
 	BusinessSignalType,
@@ -9,20 +19,28 @@ import type {
 } from '~/modules/qa/team/types';
 
 export type TeamAnalyticsView =
+	| 'overview'
+	| 'operational'
 	| 'qa'
-	| 'sentiment'
 	| 'compliance'
 	| 'business'
-	| 'finder'
-	| 'burnout';
-/** Views that render metric segments/charts (finder & burnout have their own data flows). */
-export type MetricView = Exclude<TeamAnalyticsView, 'finder' | 'burnout'>;
+	| 'sentiment'
+	| 'humanVsAi'
+	| 'burnout'
+	| 'disputes'
+	| 'finder';
+/** Views whose segmentation table runs on VIEW_METRICS (the rest have their own data flows). */
+export type MetricView = Exclude<
+	TeamAnalyticsView,
+	'overview' | 'finder' | 'burnout' | 'humanVsAi'
+>;
 
 export type GroupByDimension =
 	| 'none'
 	| 'team'
 	| 'supervisor'
 	| 'agent'
+	| 'agentType'
 	| 'campaign'
 	| 'lineOfBusiness'
 	| 'campaignType'
@@ -36,7 +54,7 @@ export type CallDirection = 'INBOUND' | 'OUTBOUND';
 export type CampaignType = 'INBOUND' | 'OUTBOUND' | 'BLENDED';
 export type TenureBand = 'lt6m' | '6to12m' | '1to2y' | 'gt2y';
 export type TimeSlot = '08-10' | '10-12' | '12-14' | '14-16' | '16-18';
-export type QuickRange = '7d' | '30d' | '90d' | 'custom';
+export type QuickRange = '7d' | '30d' | '90d' | '12m' | 'custom';
 export type Granularity = 'per-call' | 'daily' | 'weekly' | 'monthly';
 /** The 8 emotions of CallMetric (NOT the 13-value Emotion type of emotion-sentiment). */
 export type CallEmotion = CallMetric['predominantEmotion'];
@@ -83,10 +101,16 @@ export interface TeamCallMetric extends CallMetric {
 	/** Predominant emotion of the AGENT on the call (`predominantEmotion` is the customer's). */
 	agentEmotion: CallEmotion;
 	contactOutcome: ContactOutcome;
+	agentType: AgentType;
+	holdTimeSeconds: number;
+	wrapUpSeconds: number;
+	transferred: boolean;
+	/** Only meaningful when contactOutcome === 'EFFECTIVE'. */
+	firstContactResolved: boolean;
 }
 
 export interface ScoreRangeFilter {
-	metricId: TriggerMetricId | null;
+	metricId: AnalyticsMetricId | null;
 	min: number | null;
 	max: number | null;
 }
@@ -109,6 +133,7 @@ export interface TeamAnalyticsFilters {
 	timeSlots: TimeSlot[];
 	weekdays: number[];
 	emotions: CallEmotion[];
+	agentTypes: AgentType[];
 	autoFailOnly: boolean;
 	recoveredOnly: boolean;
 	offeredOnly: boolean;
@@ -135,6 +160,7 @@ export type FilterChipKey =
 	| 'timeSlots'
 	| 'weekdays'
 	| 'emotions'
+	| 'agentTypes'
 	| 'autoFailOnly'
 	| 'recoveredOnly'
 	| 'offeredOnly'
@@ -171,7 +197,7 @@ export interface DrillState {
 export type FinderOperator = 'BELOW' | 'ABOVE' | 'BETWEEN';
 
 export interface FinderQuery {
-	metricId: TriggerMetricId;
+	metricId: AnalyticsMetricId;
 	operator: FinderOperator;
 	value: number;
 	value2: number | null; // BETWEEN upper bound
@@ -198,30 +224,32 @@ export interface FinderResultRow {
 }
 
 // ---------- Segments ----------
-export type SegmentMetricId = Extract<
-	TriggerMetricId,
-	| 'QA_OVERALL_SCORE'
-	| 'QA_ECN_COUNT'
-	| 'QA_ENC_COUNT'
-	| 'QA_ECC_COUNT'
-	| 'QA_ECUF_COUNT'
-	| 'QA_AUTO_FAIL_COUNT'
-	| 'CUSTOMER_SENTIMENT_SCORE'
-	| 'AGENT_SENTIMENT_SCORE'
-	| 'POSITIVE_EMOTION_CALL_SHARE'
-	| 'NEGATIVE_EMOTION_CALL_SHARE'
-	| 'SENTIMENT_RECOVERY_COUNT'
-	| 'COMPLIANCE_OVERALL_SCORE'
-	| 'COMPLIANCE_SECURITY_SCORE'
-	| 'COMPLIANCE_REGULATORY_SCORE'
-	| 'COMPLIANCE_LEGAL_SCORE'
-	| 'COMPLIANCE_VIOLATION_COUNT'
-	| 'BI_NON_CONVERSION_RATE'
-	| 'BI_EARLY_OBJECTION_RATE'
-	| 'BI_UNHANDLED_OBJECTION_RATE'
-	| 'BI_COMPETITOR_PLUS_COST_RATE'
-	| 'BI_MISTARGETED_OFFER_RATE'
->;
+export type SegmentMetricId =
+	| AnalyticsOnlyMetricId
+	| Extract<
+			TriggerMetricId,
+			| 'QA_OVERALL_SCORE'
+			| 'QA_ECN_COUNT'
+			| 'QA_ENC_COUNT'
+			| 'QA_ECC_COUNT'
+			| 'QA_ECUF_COUNT'
+			| 'QA_AUTO_FAIL_COUNT'
+			| 'CUSTOMER_SENTIMENT_SCORE'
+			| 'AGENT_SENTIMENT_SCORE'
+			| 'POSITIVE_EMOTION_CALL_SHARE'
+			| 'NEGATIVE_EMOTION_CALL_SHARE'
+			| 'SENTIMENT_RECOVERY_COUNT'
+			| 'COMPLIANCE_OVERALL_SCORE'
+			| 'COMPLIANCE_SECURITY_SCORE'
+			| 'COMPLIANCE_REGULATORY_SCORE'
+			| 'COMPLIANCE_LEGAL_SCORE'
+			| 'COMPLIANCE_VIOLATION_COUNT'
+			| 'BI_NON_CONVERSION_RATE'
+			| 'BI_EARLY_OBJECTION_RATE'
+			| 'BI_UNHANDLED_OBJECTION_RATE'
+			| 'BI_COMPETITOR_PLUS_COST_RATE'
+			| 'BI_MISTARGETED_OFFER_RATE'
+	  >;
 
 export interface SegmentRow {
 	key: string;
@@ -347,4 +375,147 @@ export interface HistoryEntry {
 	dueAt: string | null;
 	status: BurnoutActionStatus;
 	source: 'analytics' | 'coaching' | 'lms';
+}
+
+// ---------- Analytics-only metrics (not in the triggers catalog) ----------
+export type AnalyticsOnlyMetricId =
+	| 'OPS_CALLS_HANDLED'
+	| 'OPS_EFFECTIVE_CONTACT_RATE'
+	| 'OPS_AHT_SECONDS'
+	| 'OPS_HOLD_SECONDS'
+	| 'OPS_WRAP_UP_SECONDS'
+	| 'OPS_TRANSFER_RATE'
+	| 'OPS_FCR_RATE'
+	| 'OPS_AFTER_HOURS_SHARE'
+	| 'AGENT_NEGATIVE_EMOTION_CALL_SHARE'
+	| 'AGENT_POSITIVE_EMOTION_CALL_SHARE'
+	| 'SENTIMENT_RECOVERY_RATE'
+	| 'BI_CONVERSION_RATE'
+	| 'DISPUTE_COUNT'
+	| 'DISPUTE_RATE';
+export type AnalyticsMetricId = TriggerMetricId | AnalyticsOnlyMetricId;
+export type AnalyticsMetricUnit = MetricUnit | 'SECONDS';
+export type AnalyticsMetricArea = EvaluationArea | 'OPERATIONAL' | 'DISPUTES';
+export interface AnalyticsMetricMeta {
+	unit: AnalyticsMetricUnit;
+	higherIsBetter: boolean;
+	area: AnalyticsMetricArea;
+}
+
+// ---------- Disputes ----------
+/** A dispute derived from an analytics call (the seeded disputesStore cases never match analytics call ids). */
+export interface TeamDispute {
+	id: string;
+	callId: string;
+	agentId: string;
+	agentName: string;
+	supervisorId: string;
+	team: string;
+	campaignId: string;
+	evaluationType: DisputeEvaluationType;
+	status: DisputeStatus;
+	createdAt: string;
+	resolvedAt: string | null;
+	scoreDelta: number;
+}
+export interface DisputeSummary {
+	total: number;
+	open: number;
+	accepted: number;
+	partiallyAccepted: number;
+	rejected: number;
+	acceptanceRate: number | null;
+	avgResolutionDays: number | null;
+	ratePer100Calls: number | null;
+	byType: { type: DisputeEvaluationType; count: number; share: number }[];
+}
+export interface DisputeSeriesPoint {
+	period: string;
+	filed: number;
+	resolved: number;
+}
+export interface DisputesByAgentRow {
+	agentId: string;
+	agentName: string;
+	team: string;
+	calls: number;
+	filed: number;
+	open: number;
+	accepted: number;
+	rejected: number;
+	acceptanceRate: number | null;
+}
+
+// ---------- Chart data ----------
+export type SentimentBand =
+	| 'very-negative'
+	| 'negative'
+	| 'neutral'
+	| 'positive'
+	| 'very-positive';
+export interface DistributionRow {
+	key: string;
+	count: number;
+	share: number;
+}
+export interface HeatmapData {
+	rows: { key: string; label: string }[];
+	cols: string[];
+	cells: (number | null)[][];
+	/** Calls behind each cell, same shape as `cells`. */
+	counts: number[][];
+}
+export interface ErrorMixPoint {
+	period: string;
+	ecn: number;
+	enc: number;
+	ecc: number;
+	ecuf: number;
+}
+export interface ComplianceItemShare {
+	area: 'security' | 'regulatory' | 'legal';
+	item: string;
+	share: number;
+}
+export interface BurnoutSummary {
+	high: number;
+	medium: number;
+	low: number;
+	byTeam: { team: string; atRisk: number }[];
+}
+export interface HumanVsAiMetricRow {
+	id: AnalyticsMetricId;
+	human: number | null;
+	ai: number | null;
+	index: { human: number; ai: number };
+}
+export interface HumanVsAiAgentRow {
+	agentId: string;
+	agentName: string;
+	team: string;
+	calls: number;
+	qa: number | null;
+	compliance: number | null;
+	sentiment: number | null;
+	effective: number | null;
+}
+export interface HumanVsAiSummary {
+	humanCalls: number;
+	aiCalls: number;
+	aiShare: number | null;
+	aiAgents: number;
+	metrics: HumanVsAiMetricRow[];
+	byAgent: HumanVsAiAgentRow[];
+}
+export interface OverviewException {
+	area: AnalyticsMetricArea;
+	view: TeamAnalyticsView;
+	metricId: AnalyticsMetricId;
+	segmentKey: string;
+	segmentLabel: string;
+	dimension: GroupByDimension;
+	value: number;
+	previous: number | null;
+	target: number | null;
+	reason: 'BELOW_TARGET' | 'WORSENED';
 }

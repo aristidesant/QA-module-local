@@ -1,4 +1,4 @@
-import type { TriggerMetricId } from './triggerRules';
+import type { SegmentMetricId } from '~/modules/qa/analytics/types';
 import type {
 	GroupByDimension,
 	QuickRange,
@@ -70,7 +70,7 @@ export interface ReportDefinition {
 	/** Ordered — the preview renders them in this order. */
 	sections: ReportSectionKey[];
 	/** Columns of the section tables; empty means each section's defaults. */
-	metrics: TriggerMetricId[];
+	metrics: SegmentMetricId[];
 	formats: ReportFormat[];
 	schedule: ReportSchedule | null;
 	builtIn: boolean;
