@@ -1,10 +1,9 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Badge, Group, Progress, Text, UnstyledButton } from '@mantine/core';
+import { Badge, Group, Text, UnstyledButton } from '@mantine/core';
 import { IconUserOff } from '@tabler/icons-react';
 import clsx from 'clsx';
 import type { RosterSupervisor } from '../../types';
-import { teamCapacity } from '../capacity';
 import styles from '../TeamConfigPage.module.css';
 
 interface TeamRailItemProps {
@@ -17,7 +16,7 @@ interface TeamRailItemProps {
 	onSelect: () => void;
 }
 
-/** One entry of the teams rail: team name, supervisor and a capacity bar (or the Unassigned pool). */
+/** One entry of the teams rail: team name, supervisor and agent count (or the Unassigned pool). */
 export const TeamRailItem: React.FC<TeamRailItemProps> = ({
 	supervisor,
 	count,
@@ -28,7 +27,6 @@ export const TeamRailItem: React.FC<TeamRailItemProps> = ({
 }) => {
 	const { t } = useTranslation('qa.team');
 	const isUnassigned = variant === 'unassigned';
-	const cap = teamCapacity(count, supervisor.targetSize);
 
 	return (
 		<UnstyledButton
@@ -49,11 +47,7 @@ export const TeamRailItem: React.FC<TeamRailItemProps> = ({
 								{t('teamConfig.rail.unassigned')}
 							</Text>
 						</Group>
-						<Badge
-							size='sm'
-							variant='light'
-							color={count > 0 ? 'amber' : 'gray'}
-						>
+						<Badge size='sm' variant='light' color='gray'>
 							{count}
 						</Badge>
 					</Group>
@@ -67,28 +61,20 @@ export const TeamRailItem: React.FC<TeamRailItemProps> = ({
 						<Text size='sm' fw={600} lineClamp={1}>
 							{supervisor.team}
 						</Text>
-						<Text
-							size='xs'
-							fw={600}
-							c={cap.state === 'over' ? 'amber.8' : 'dimmed'}
-						>
-							{t('teamConfig.rail.capacity', { count, target: cap.target })}
+						<Text size='xs' c='dimmed'>
+							{count}
 						</Text>
 					</Group>
 					<Text size='xs' c='dimmed' lineClamp={1}>
-						{supervisor.name}
+						{t('teamConfig.rail.supervisor', { name: supervisor.name })}
+						{supervisor.status &&
+							supervisor.status !== 'active' &&
+							` · ${t(`status.${supervisor.status}`)}`}
 					</Text>
-					<Progress
-						size='xs'
-						radius='xl'
-						value={cap.percent}
-						color={cap.color}
-						mt={6}
-					/>
 				</>
 			)}
 			{matchCount !== undefined && (
-				<Text size='xs' c='blue'>
+				<Text size='xs' c='dimmed'>
 					{t('teamConfig.rail.matches', { count: matchCount })}
 				</Text>
 			)}

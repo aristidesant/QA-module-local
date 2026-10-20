@@ -26,8 +26,7 @@ import {
 
 const STATUS_COLOR: Record<TeamTableRow['status'], string> = {
 	active: 'green',
-	'on-leave': 'gray',
-	training: 'blue',
+	inactive: 'gray',
 };
 const BURNOUT_COLOR: Record<TeamTableRow['burnoutLevel'], string> = {
 	low: 'green',

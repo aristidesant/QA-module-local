@@ -51,7 +51,7 @@ const QUICK_RANGES: Exclude<QuickRange, 'custom'>[] = ['7d', '30d', '90d'];
 const QUICK_RANGE_DAYS = { '7d': 7, '30d': 30, '90d': 90 } as const;
 const GRANULARITIES: Granularity[] = ['per-call', 'daily', 'weekly', 'monthly'];
 const CAMPAIGN_TYPES: CampaignType[] = ['INBOUND', 'OUTBOUND', 'BLENDED'];
-const STATUSES = ['active', 'on-leave', 'training'] as const;
+const STATUSES = ['active', 'inactive'] as const;
 const SCORE_METRICS = Object.values(VIEW_METRICS).flat();
 
 const day = (value: string | Date | null) =>

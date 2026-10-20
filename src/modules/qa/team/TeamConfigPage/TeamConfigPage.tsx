@@ -21,7 +21,7 @@ import {
 } from '~/stores/qa/teamStore';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { UNASSIGNED_SUPERVISOR, UNASSIGNED_SUPERVISOR_ID } from '../constants';
-import type { RosterAgent } from '../types';
+import type { AgentStatus, RosterAgent } from '../types';
 import { AddMembersDrawer } from '../TeamDetailPage/AddMembersDrawer';
 import { EditSupervisorModal } from '../TeamDetailPage/EditSupervisorModal';
 import { EditTeamModal } from './components/EditTeamModal';
@@ -50,6 +50,8 @@ export default function TeamConfigPage() {
 	const addMembers = useTeamStore((s) => s.addMembers);
 	const removeMember = useTeamStore((s) => s.removeMember);
 	const dissolveTeam = useTeamStore((s) => s.dissolveTeam);
+	const setAgentStatus = useTeamStore((s) => s.setAgentStatus);
+	const setSupervisorStatus = useTeamStore((s) => s.setSupervisorStatus);
 
 	const supervisorList = useMemo(
 		() => Object.values(supervisors),
@@ -117,7 +119,6 @@ export default function TeamConfigPage() {
 					a.name.toLowerCase().includes(query) ||
 					a.id.toLowerCase().includes(query) ||
 					a.email.toLowerCase().includes(query)) &&
-				(filters.shift === 'all' || a.shift === filters.shift) &&
 				(filters.status === 'all' || a.status === filters.status)
 		);
 	}, [members, filters]);
@@ -144,11 +145,35 @@ export default function TeamConfigPage() {
 		setSelectedIds([]);
 	};
 
+	const changeAgentStatus = (agentId: string, status: AgentStatus) => {
+		setAgentStatus(agentId, status);
+		notifySuccess(
+			t('teamConfig.toast.statusChanged', {
+				name: profiles[agentId]?.agent.name ?? '',
+				status: t(`status.${status}`),
+			})
+		);
+	};
+
+	const changeSupervisorStatus = (
+		supervisorId: string,
+		status: AgentStatus
+	) => {
+		setSupervisorStatus(supervisorId, status);
+		notifySuccess(
+			t('teamConfig.toast.statusChanged', {
+				name: supervisors[supervisorId]?.name ?? '',
+				status: t(`status.${status}`),
+			})
+		);
+	};
+
 	const columns = useMemberColumns(
 		t,
 		targets,
 		selectedTeamId,
-		(agentId, targetId) => moveAgents([agentId], targetId)
+		(agentId, targetId) => moveAgents([agentId], targetId),
+		changeAgentStatus
 	);
 
 	const confirmDissolve = (supervisorId: string) => {
@@ -262,9 +287,11 @@ export default function TeamConfigPage() {
 							{selectedTeam && (
 								<TeamHeader
 									supervisor={selectedTeam}
-									count={totals[selectedTeamId] ?? 0}
 									variant={isUnassignedSelected ? 'unassigned' : 'team'}
 									onEditSupervisor={() => setEditingId(selectedTeamId)}
+									onSupervisorStatusChange={(status) =>
+										changeSupervisorStatus(selectedTeamId, status)
+									}
 									onEditTeam={() => setEditingTeamId(selectedTeamId)}
 									onDissolve={() => confirmDissolve(selectedTeamId)}
 								/>
@@ -275,7 +302,7 @@ export default function TeamConfigPage() {
 									!isUnassignedSelected && (
 										<Button
 											size='xs'
-											variant='light'
+											variant='default'
 											leftSection={<IconPlus size={14} />}
 											onClick={() => setAddAgentsOpened(true)}
 										>
@@ -302,7 +329,6 @@ export default function TeamConfigPage() {
 										data={visibleMembers}
 										columns={columns}
 										getRowId={(agent) => agent.id}
-										initialSort={[{ id: 'name', desc: false }]}
 										enableRowSelection
 										selectedRowIds={selectedIds}
 										onSelectedRowIdsChange={setSelectedIds}

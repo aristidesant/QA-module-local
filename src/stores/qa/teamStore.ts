@@ -8,6 +8,7 @@ import { DIMENSION_TO_AREA } from '~/modules/qa/lms/constants';
 import type {
 	ActivityEvent,
 	AgentProfile,
+	AgentStatus,
 	CoachingSession,
 	LmsAssignment,
 	SupervisorNote,
@@ -19,7 +20,6 @@ import {
 	initialTeamCampaignIds,
 } from '~/modules/qa/team/mockData';
 import {
-	DEFAULT_TEAM_TARGET_SIZE,
 	NOW_ISO,
 	QA_MANAGER_PERSONA,
 	SUPERVISOR_PERSONA,
@@ -65,8 +65,6 @@ export interface CreateTeamInput {
 	teamName: string;
 	supervisorName: string;
 	supervisorEmail: string;
-	/** How many agents the team should have; defaults to DEFAULT_TEAM_TARGET_SIZE. */
-	targetSize?: number;
 	/** Agents who move into the new team right away. */
 	memberIds?: string[];
 }
@@ -89,14 +87,16 @@ interface TeamState {
 		patch: Partial<Pick<RosterSupervisor, 'name' | 'email'>>
 	) => void;
 	setTeamCampaigns: (supervisorId: string, campaignIds: string[]) => void;
+	setAgentStatus: (agentId: string, status: AgentStatus) => void;
+	setSupervisorStatus: (supervisorId: string, status: AgentStatus) => void;
 	removeMember: (agentId: string) => void;
 	addMembers: (agentIds: string[], supervisorId: string) => void;
 	/** Creates a supervisor with their team and, optionally, moves the first members in. Returns the new supervisor. */
 	createTeam: (input: CreateTeamInput) => RosterSupervisor;
-	/** Renames the team (relabelling every member) and/or changes its target size. */
+	/** Renames the team and relabels every member. */
 	updateTeam: (
 		supervisorId: string,
-		patch: Partial<Pick<RosterSupervisor, 'team' | 'targetSize'>>
+		patch: Partial<Pick<RosterSupervisor, 'team'>>
 	) => void;
 	/** Removes the team: members go to Unassigned, the supervisor and their campaign list go away. */
 	dissolveTeam: (supervisorId: string) => void;
@@ -350,6 +350,30 @@ export const useTeamStore = create<TeamState>((set, get) => ({
 			teamCampaignIds: { ...s.teamCampaignIds, [supervisorId]: campaignIds },
 		})),
 
+	setAgentStatus: (agentId, status) =>
+		set((s) => {
+			const p = s.profiles[agentId];
+			if (!p) return {};
+			return {
+				profiles: {
+					...s.profiles,
+					[agentId]: { ...p, agent: { ...p.agent, status } },
+				},
+			};
+		}),
+
+	setSupervisorStatus: (supervisorId, status) =>
+		set((s) => {
+			const supervisor = s.supervisors[supervisorId];
+			if (!supervisor) return {};
+			return {
+				supervisors: {
+					...s.supervisors,
+					[supervisorId]: { ...supervisor, status },
+				},
+			};
+		}),
+
 	/** Moves the agent to the Unassigned pool; keeps their profile and history intact. */
 	removeMember: (agentId) =>
 		set((s) => {
@@ -396,7 +420,6 @@ export const useTeamStore = create<TeamState>((set, get) => ({
 			name: input.supervisorName.trim(),
 			team: input.teamName.trim(),
 			email: input.supervisorEmail.trim(),
-			targetSize: input.targetSize ?? DEFAULT_TEAM_TARGET_SIZE,
 		};
 		set((s) => {
 			const profiles = { ...s.profiles };

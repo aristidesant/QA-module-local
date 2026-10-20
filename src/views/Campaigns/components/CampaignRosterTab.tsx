@@ -16,8 +16,7 @@ import type { CampaignRosterRow } from '~/modules/qa/calls/types';
 
 const STATUS_COLOR = {
 	active: 'green',
-	'on-leave': 'gray',
-	training: 'blue',
+	inactive: 'gray',
 } as const;
 const helper = createColumnHelper<CampaignRosterRow>();
 

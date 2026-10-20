@@ -159,8 +159,7 @@ function generateCalls({
 			const isoDay = addDays(TODAY, dayIndex - (DAYS - 1));
 			const weekday = new Date(`${isoDay}T00:00:00Z`).getUTCDay();
 			if (weekday === 0) continue;
-			if (agent.status === 'on-leave' && dayIndex >= DAYS - 20) continue;
-			if (agent.status === 'training' && dayIndex < DAYS - 45) continue;
+			if (agent.status === 'inactive' && dayIndex >= DAYS - 20) continue;
 
 			const progress =
 				Math.max(0, dayIndex - (DAYS - TREND_DAYS)) / (TREND_DAYS - 1) - 0.5; // -0.5 … +0.5 over the last TREND_DAYS

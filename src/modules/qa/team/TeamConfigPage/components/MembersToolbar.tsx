@@ -9,17 +9,15 @@ import {
 	TextInput,
 } from '@mantine/core';
 import { IconSearch, IconX } from '@tabler/icons-react';
-import type { AgentStatus, Shift } from '../../types';
+import type { AgentStatus } from '../../types';
 
 export interface MemberFilters {
 	search: string;
-	shift: Shift | 'all';
 	status: AgentStatus | 'all';
 }
 
 export const DEFAULT_MEMBER_FILTERS: MemberFilters = {
 	search: '',
-	shift: 'all',
 	status: 'all',
 };
 
@@ -30,7 +28,7 @@ interface MembersToolbarProps {
 	total: number;
 }
 
-/** Search plus Shift and Status filters for the members table. */
+/** Search plus a Status filter for the members table. */
 export const MembersToolbar: React.FC<MembersToolbarProps> = ({
 	value,
 	onChange,
@@ -41,7 +39,6 @@ export const MembersToolbar: React.FC<MembersToolbarProps> = ({
 
 	const isDefault =
 		value.search === DEFAULT_MEMBER_FILTERS.search &&
-		value.shift === DEFAULT_MEMBER_FILTERS.shift &&
 		value.status === DEFAULT_MEMBER_FILTERS.status;
 
 	const all = { value: 'all', label: t('teamConfig.members.all') };
@@ -77,23 +74,6 @@ export const MembersToolbar: React.FC<MembersToolbarProps> = ({
 					size='sm'
 					w={150}
 					allowDeselect={false}
-					aria-label={t('teamConfig.members.shift')}
-					placeholder={t('teamConfig.members.shift')}
-					value={value.shift}
-					onChange={(v) =>
-						onChange({ ...value, shift: (v as Shift | 'all') ?? 'all' })
-					}
-					data={[
-						all,
-						{ value: 'morning', label: t('shift.morning') },
-						{ value: 'afternoon', label: t('shift.afternoon') },
-						{ value: 'night', label: t('shift.night') },
-					]}
-				/>
-				<Select
-					size='sm'
-					w={150}
-					allowDeselect={false}
 					aria-label={t('teamConfig.members.status')}
 					placeholder={t('teamConfig.members.status')}
 					value={value.status}
@@ -103,8 +83,7 @@ export const MembersToolbar: React.FC<MembersToolbarProps> = ({
 					data={[
 						all,
 						{ value: 'active', label: t('status.active') },
-						{ value: 'on-leave', label: t('status.on-leave') },
-						{ value: 'training', label: t('status.training') },
+						{ value: 'inactive', label: t('status.inactive') },
 					]}
 				/>
 				{!isDefault && (

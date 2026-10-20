@@ -1,13 +1,6 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Button,
-	Group,
-	MultiSelect,
-	NumberInput,
-	Stack,
-	TextInput,
-} from '@mantine/core';
+import { Button, Group, MultiSelect, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { modals } from '@mantine/modals';
 import { IconUsersGroup } from '@tabler/icons-react';
@@ -19,12 +12,10 @@ import {
 	useTeamStore,
 } from '~/stores/qa/teamStore';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
-import { DEFAULT_TEAM_TARGET_SIZE } from '../../constants';
 import type { RosterSupervisor } from '../../types';
 
 interface NewTeamValues {
 	teamName: string;
-	targetSize: number;
 	supervisorName: string;
 	supervisorEmail: string;
 	memberIds: string[];
@@ -32,7 +23,6 @@ interface NewTeamValues {
 
 const EMPTY: NewTeamValues = {
 	teamName: '',
-	targetSize: DEFAULT_TEAM_TARGET_SIZE,
 	supervisorName: '',
 	supervisorEmail: '',
 	memberIds: [],
@@ -70,10 +60,6 @@ export const NewTeamDrawer: React.FC<NewTeamDrawerProps> = ({
 					: nameTaken(value)
 						? t('teamConfig.drawer.validation.teamNameTaken')
 						: null,
-			targetSize: (value) =>
-				Number.isInteger(value) && value >= 1
-					? null
-					: t('teamConfig.drawer.validation.targetSize'),
 			supervisorName: (value) =>
 				value.trim() ? null : t('teamConfig.drawer.validation.supervisorName'),
 			supervisorEmail: (value) =>
@@ -118,7 +104,6 @@ export const NewTeamDrawer: React.FC<NewTeamDrawerProps> = ({
 	const handleSubmit = (values: NewTeamValues) => {
 		const supervisor = createTeam({
 			teamName: values.teamName,
-			targetSize: values.targetSize,
 			supervisorName: values.supervisorName,
 			supervisorEmail: values.supervisorEmail,
 			memberIds: values.memberIds,
@@ -146,14 +131,6 @@ export const NewTeamDrawer: React.FC<NewTeamDrawerProps> = ({
 								data-autofocus
 								withAsterisk
 								{...form.getInputProps('teamName')}
-							/>
-							<NumberInput
-								label={t('teamConfig.drawer.targetSize')}
-								description={t('teamConfig.drawer.targetSizeHint')}
-								min={1}
-								max={200}
-								allowDecimal={false}
-								{...form.getInputProps('targetSize')}
 							/>
 						</Stack>
 					</SectionCard>

@@ -92,8 +92,7 @@
 	},
 	"status": {
 		"active": "Activo",
-		"on-leave": "De licencia",
-		"training": "En formación"
+		"inactive": "Inactivo"
 	},
 	"burnout": {
 		"low": "Bajo",
@@ -513,24 +512,16 @@
 			"search": "Buscar equipos o agentes…",
 			"unassigned": "Sin asignar",
 			"unassignedHint": "Agentes sin equipo",
-			"capacity": "{{count}} / {{target}}",
+			"supervisor": "Supervisor: {{name}}",
 			"matches_one": "{{count}} agente coincide",
 			"matches_other": "{{count}} agentes coinciden",
 			"empty": "Ningún equipo ni agente coincide"
 		},
 		"header": {
-			"agents_one": "{{count}} agente",
-			"agents_other": "{{count}} agentes",
-			"target": "objetivo {{target}}",
-			"overBy_one": "{{count}} por encima del objetivo",
-			"overBy_other": "{{count}} por encima del objetivo",
-			"atTarget": "En el objetivo",
-			"openSeats_one": "{{count}} plaza libre",
-			"openSeats_other": "{{count}} plazas libres",
 			"unassignedHint": "Agentes sin equipo. Muévelos a un equipo desde la lista de abajo.",
+			"changeSupervisor": "Cambiar supervisor",
 			"menu": {
 				"label": "Acciones del equipo",
-				"editSupervisor": "Editar supervisor",
 				"editTeam": "Editar equipo",
 				"dissolveTeam": "Disolver equipo"
 			}
@@ -539,7 +530,6 @@
 			"title": "Miembros",
 			"addAgents": "Añadir agentes",
 			"search": "Buscar por nombre, ID o correo…",
-			"shift": "Turno",
 			"status": "Estado",
 			"all": "Todos",
 			"clear": "Limpiar filtros",
@@ -552,7 +542,6 @@
 		},
 		"columns": {
 			"agent": "Agente",
-			"shift": "Turno",
 			"status": "Estado"
 		},
 		"row": {
@@ -575,8 +564,6 @@
 			"teamSection": "Equipo",
 			"supervisorSection": "Supervisor",
 			"teamName": "Nombre del equipo",
-			"targetSize": "Tamaño objetivo",
-			"targetSizeHint": "Cuántos agentes debería tener este equipo. Alimenta el indicador de capacidad.",
 			"supervisorName": "Nombre del supervisor",
 			"supervisorEmail": "Correo del supervisor",
 			"members": "Primeros miembros",
@@ -585,7 +572,6 @@
 			"validation": {
 				"teamName": "Ponle un nombre al equipo",
 				"teamNameTaken": "Ya existe un equipo con ese nombre",
-				"targetSize": "Introduce un objetivo de al menos 1",
 				"supervisorName": "Ponle un nombre al supervisor",
 				"email": "Introduce un correo válido"
 			}
@@ -593,7 +579,6 @@
 		"editTeam": {
 			"title": "Editar equipo",
 			"name": "Nombre del equipo",
-			"targetSize": "Tamaño objetivo",
 			"save": "Guardar"
 		},
 		"dissolve": {
@@ -612,7 +597,11 @@
 			"movedMany": "{{count}} agentes movidos a {{team}}",
 			"created": "Equipo {{team}} creado",
 			"updated": "Equipo {{team}} actualizado",
-			"dissolved": "Equipo {{team}} disuelto"
+			"dissolved": "Equipo {{team}} disuelto",
+			"statusChanged": "{{name}}: estado cambiado a {{status}}"
+		},
+		"statusMenu": {
+			"change": "Cambiar estado"
 		}
 	}
 }

@@ -115,8 +115,7 @@
 		},
 		"statusLabels": {
 			"active": "Activo",
-			"on-leave": "De baja",
-			"training": "En formación"
+			"inactive": "Inactivo"
 		},
 		"tenureLabels": {
 			"lt6m": "< 6 meses",

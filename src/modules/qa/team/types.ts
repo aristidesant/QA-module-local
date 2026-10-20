@@ -8,7 +8,7 @@ export type TeamRole = 'supervisor' | 'qa-manager';
 export type ProfilePeriod = '30d' | '90d' | '12m' | 'all';
 export type Trend = 'up' | 'down' | 'flat';
 export type DimensionKey = 'qa' | 'sentiment' | 'compliance' | 'business';
-export type AgentStatus = 'active' | 'on-leave' | 'training';
+export type AgentStatus = 'active' | 'inactive';
 export type Shift = 'morning' | 'afternoon' | 'night';
 
 export interface RosterSupervisor {
@@ -16,8 +16,8 @@ export interface RosterSupervisor {
 	name: string;
 	team: string;
 	email: string;
-	/** How many agents the team should have; drives the capacity indicator on Team configuration. */
-	targetSize?: number;
+	/** Employment status; missing means active. */
+	status?: AgentStatus;
 }
 export interface RosterCampaign {
 	id: string;

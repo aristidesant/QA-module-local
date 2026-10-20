@@ -1,17 +1,9 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Button,
-	Group,
-	Modal,
-	NumberInput,
-	Stack,
-	TextInput,
-} from '@mantine/core';
+import { Button, Group, Modal, Stack, TextInput } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { selectSupervisors, useTeamStore } from '~/stores/qa/teamStore';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
-import { DEFAULT_TEAM_TARGET_SIZE } from '../../constants';
 import type { RosterSupervisor } from '../../types';
 
 interface EditTeamModalProps {
@@ -22,10 +14,9 @@ interface EditTeamModalProps {
 
 interface EditTeamValues {
 	teamName: string;
-	targetSize: number;
 }
 
-/** Edits a team's name (relabels every member) and its target size. */
+/** Renames a team; the new name relabels every member. */
 export const EditTeamModal: React.FC<EditTeamModalProps> = ({
 	supervisor,
 	onClose,
@@ -35,7 +26,7 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
 	const updateTeam = useTeamStore((s) => s.updateTeam);
 
 	const form = useForm<EditTeamValues>({
-		initialValues: { teamName: '', targetSize: DEFAULT_TEAM_TARGET_SIZE },
+		initialValues: { teamName: '' },
 		validate: {
 			teamName: (value) => {
 				if (!value.trim()) return t('teamConfig.drawer.validation.teamName');
@@ -46,10 +37,6 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
 				);
 				return taken ? t('teamConfig.drawer.validation.teamNameTaken') : null;
 			},
-			targetSize: (value) =>
-				Number.isInteger(value) && value >= 1
-					? null
-					: t('teamConfig.drawer.validation.targetSize'),
 		},
 	});
 
@@ -57,7 +44,6 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
 		if (supervisor) {
 			const values = {
 				teamName: supervisor.team,
-				targetSize: supervisor.targetSize ?? DEFAULT_TEAM_TARGET_SIZE,
 			};
 			form.setValues(values);
 			form.resetDirty(values);
@@ -69,10 +55,7 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
 	const handleSubmit = (values: EditTeamValues) => {
 		if (!supervisor) return;
 		const teamName = values.teamName.trim();
-		updateTeam(supervisor.id, {
-			team: teamName,
-			targetSize: values.targetSize,
-		});
+		updateTeam(supervisor.id, { team: teamName });
 		notifySuccess(t('teamConfig.toast.updated', { team: teamName }));
 		onClose();
 	};
@@ -91,14 +74,6 @@ export const EditTeamModal: React.FC<EditTeamModalProps> = ({
 						label={t('teamConfig.editTeam.name')}
 						data-autofocus
 						{...form.getInputProps('teamName')}
-					/>
-					<NumberInput
-						label={t('teamConfig.editTeam.targetSize')}
-						description={t('teamConfig.drawer.targetSizeHint')}
-						min={1}
-						max={200}
-						allowDecimal={false}
-						{...form.getInputProps('targetSize')}
 					/>
 					<Group justify='flex-end'>
 						<Button variant='default' onClick={onClose}>
