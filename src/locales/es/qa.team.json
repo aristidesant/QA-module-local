@@ -545,7 +545,8 @@
 			"status": "Estado"
 		},
 		"row": {
-			"moveTo": "Mover a…"
+			"moveTo": "Mover a…",
+			"viewProfile": "Ver el perfil de {{name}}"
 		},
 		"selection": {
 			"count_one": "{{count}} seleccionado",

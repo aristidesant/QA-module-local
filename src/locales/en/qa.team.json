@@ -545,7 +545,8 @@
 			"status": "Status"
 		},
 		"row": {
-			"moveTo": "Move to…"
+			"moveTo": "Move to…",
+			"viewProfile": "View {{name}}'s profile"
 		},
 		"selection": {
 			"count_one": "{{count}} selected",

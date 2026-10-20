@@ -61,6 +61,12 @@ export default function AgentProfilePage() {
 	const location = useLocation();
 	const { agentId } = useParams<{ agentId: string }>();
 	const role = roleFromPath(location.pathname);
+	/** Opened from the Operation Manager's Team configuration: go back there. */
+	const fromTeamConfig =
+		(location.state as { from?: string } | null)?.from === 'team-config';
+	const backPath = fromTeamConfig
+		? '/qa/operation-manager/team-config'
+		: teamBasePath(role);
 	const profile = useTeamStore(selectProfile(agentId));
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	const [searchParams, setSearchParams] = useSearchParams();
@@ -180,7 +186,7 @@ export default function AgentProfilePage() {
 		<ContentContainer
 			contentWidth='full'
 			showBackButton
-			onBackClick={() => navigate(teamBasePath(role))}
+			onBackClick={() => navigate(backPath)}
 		>
 			<CompactProfileBar
 				visible={compact}
@@ -200,8 +206,10 @@ export default function AgentProfilePage() {
 			</CompactProfileBar>
 			<Stack gap='lg'>
 				<Breadcrumbs>
-					<Anchor onClick={() => navigate(teamBasePath(role))}>
-						{t(role === 'qa-manager' ? 'teams.list.title' : 'team.title')}
+					<Anchor onClick={() => navigate(backPath)}>
+						{fromTeamConfig
+							? t('teamConfig.title')
+							: t(role === 'qa-manager' ? 'teams.list.title' : 'team.title')}
 					</Anchor>
 					{role === 'qa-manager' && (
 						<Anchor

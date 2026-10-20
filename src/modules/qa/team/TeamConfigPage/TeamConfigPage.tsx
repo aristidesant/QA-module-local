@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Button, SimpleGrid, Stack, Text } from '@mantine/core';
 import { modals } from '@mantine/modals';
@@ -21,6 +22,7 @@ import {
 } from '~/stores/qa/teamStore';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { UNASSIGNED_SUPERVISOR, UNASSIGNED_SUPERVISOR_ID } from '../constants';
+import { agentProfilePath } from '../helpers';
 import type { AgentStatus, RosterAgent } from '../types';
 import { AddMembersDrawer } from '../TeamDetailPage/AddMembersDrawer';
 import { EditSupervisorModal } from '../TeamDetailPage/EditSupervisorModal';
@@ -45,6 +47,7 @@ import styles from './TeamConfigPage.module.css';
  */
 export default function TeamConfigPage() {
 	const { t } = useTranslation('qa.team');
+	const navigate = useNavigate();
 	const supervisors = useTeamStore(selectSupervisors);
 	const profiles = useTeamStore(selectProfiles);
 	const addMembers = useTeamStore((s) => s.addMembers);
@@ -168,12 +171,10 @@ export default function TeamConfigPage() {
 		);
 	};
 
-	const columns = useMemberColumns(
-		t,
-		targets,
-		selectedTeamId,
-		(agentId, targetId) => moveAgents([agentId], targetId),
-		changeAgentStatus
+	const columns = useMemberColumns(t, changeAgentStatus, (agent) =>
+		navigate(agentProfilePath('qa-manager', agent), {
+			state: { from: 'team-config' },
+		})
 	);
 
 	const confirmDissolve = (supervisorId: string) => {
@@ -337,7 +338,6 @@ export default function TeamConfigPage() {
 										pageSize={25}
 										density='compact'
 										emptyMessage={emptyMessage}
-										getRowClassName={() => styles.memberRow}
 									/>
 								</Stack>
 							</SectionCard>

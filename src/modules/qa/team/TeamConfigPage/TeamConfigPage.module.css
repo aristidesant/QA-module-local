@@ -74,19 +74,18 @@
 		light-dark(var(--mantine-color-gray-3), var(--mantine-color-dark-4));
 }
 
-/* Row actions stay in the DOM for keyboard users and show on hover, focus or while the menu is open. */
-.rowActions {
-	opacity: 0;
-	transition: opacity 120ms ease;
-}
-
-.memberRow:hover .rowActions,
-.memberRow:focus-within .rowActions,
-.memberRow:has([aria-expanded='true']) .rowActions {
-	opacity: 1;
-}
-
 /* The status badge is a button that opens the status menu. */
 .statusBadge {
 	cursor: pointer;
+}
+
+/* The agent cell opens the agent profile. */
+.agentLink {
+	display: block;
+	text-align: left;
+}
+
+.agentLink:hover .agentName,
+.agentLink:focus-visible .agentName {
+	text-decoration: underline;
 }
