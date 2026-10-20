@@ -33,11 +33,10 @@ import { PREVIEW_ROLES } from '~/constants/previewRole';
 import type { PreviewRole } from '~/constants/previewRole';
 import { useCurrentApp } from '~/hooks/useCurrentApp';
 import type { AppKey } from '~/hooks/useCurrentApp';
-import { useAccessibleApps } from '~/hooks/useAccessibleApps';
 import { useAppTransitionStore } from '~/stores/appTransitionStore';
 import { useColorSchemeStore } from '~/stores/colorSchemeStore';
 import { getClientDisplayLabel } from '~/utils/clientDisplay';
-import { appLandingPath } from '~/utils/computeAccessibleApps';
+import { appLandingPath, SWITCHABLE_APPS } from '~/utils/computeAccessibleApps';
 import logout from '~/utils/logout';
 import { APP_VERSION } from '~/version';
 import LanguagePicker from '../LanguagePicker';
@@ -64,7 +63,6 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 	const previewRole = useRoleMockStore((s) => s.previewRole);
 	const setPreviewRole = useRoleMockStore((s) => s.setPreviewRole);
 	const currentApp = useCurrentApp();
-	const accessibleApps = useAccessibleApps();
 	const preference = useColorSchemeStore((s) => s.preference);
 	const setPreference = useColorSchemeStore((s) => s.setPreference);
 	const navigate = useNavigate();
@@ -146,7 +144,8 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 		setPreviewRole(null);
 	};
 
-	const canSwitchApps = accessibleApps.length >= 2;
+	// The mock always offers the same three workspaces, whatever the session's permissions.
+	const canSwitchApps = true;
 
 	const menuDropdown = (
 		<Menu.Dropdown className={styles.menuDropdown}>
@@ -449,7 +448,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 				opened={chooserOpened}
 				onClose={closeChooser}
 				onChoose={handleAppChoose}
-				apps={accessibleApps}
+				apps={SWITCHABLE_APPS}
 			/>
 		</>
 	);

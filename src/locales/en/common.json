@@ -450,8 +450,8 @@
 				"description": "Learning resources and training content."
 			},
 			"emotion-sentiment": {
-				"label": "Emotion & Sentiment",
-				"description": "Emotion and sentiment analysis for quality assurance."
+				"label": "Live",
+				"description": "Real-time emotion and sentiment monitoring."
 			}
 		},
 		"switchApp": "Switch app",
@@ -461,7 +461,7 @@
 			"kicker": "Unified CXM",
 			"ucxm": "Loading Campaign Management…",
 			"qa": "Loading Quality Assurance…",
-			"emotion-sentiment": "Loading Emotion & Sentiment…",
+			"emotion-sentiment": "Loading Live…",
 			"backoffice": "Loading Backoffice…",
 			"coaching": "Loading Coaching…",
 			"lms": "Loading Learning Management…"

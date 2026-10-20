@@ -448,8 +448,8 @@
 				"description": "Recursos de aprendizaje y contenido de capacitación."
 			},
 			"emotion-sentiment": {
-				"label": "Emoción y Sentimiento",
-				"description": "Análisis de emoción y sentimiento para garantía de calidad."
+				"label": "Live",
+				"description": "Monitoreo en tiempo real de emoción y sentimiento."
 			}
 		},
 		"switchApp": "Cambiar de aplicación",
@@ -459,7 +459,7 @@
 			"kicker": "Unified CXM",
 			"ucxm": "Cargando Gestión de campañas…",
 			"qa": "Cargando Control de calidad…",
-			"emotion-sentiment": "Cargando Emoción y Sentimiento…",
+			"emotion-sentiment": "Cargando Live…",
 			"backoffice": "Cargando Backoffice…",
 			"coaching": "Cargando Coaching…",
 			"lms": "Cargando Gestión de Aprendizaje…"

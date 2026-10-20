@@ -39,9 +39,11 @@ export const computeAccessibleApps = ({
 	if (hasQa) apps.push('qa');
 	if (hasEmotionSentiment) apps.push('emotion-sentiment');
 	if (hasBackoffice) apps.push('backoffice');
-	apps.push('coaching', 'lms');
 	return apps.length ? apps : ['ucxm'];
 };
+
+/** The workspaces the user-menu switcher always offers, in card order. */
+export const SWITCHABLE_APPS: AppKey[] = ['ucxm', 'qa', 'emotion-sentiment'];
 
 /** Default entry path for an app (Backoffice then splits admin vs agent). */
 export const appLandingPath = (app: AppKey): string => {
