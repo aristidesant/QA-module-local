@@ -1,46 +1,34 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Divider, Stack, Text } from '@mantine/core';
 import type { ReportData } from '../../buildReportData';
-import ReportCover from './ReportCover';
-import ReportSection from './ReportSection';
-import styles from '../../Reports.module.css';
+import PaginatedReport from './PaginatedReport';
+import { buildReportFlow } from './reportFlow';
 
 interface ReportPreviewProps {
 	data: ReportData;
 }
 
 /**
- * The document itself. `id='report-preview'` is what the print stylesheet
- * keeps visible when the user generates a PDF.
+ * The document itself, as US Letter pages. `id='report-preview'` is what the print
+ * stylesheet keeps visible when the user generates a PDF: every page prints, one per sheet.
  */
 export const ReportPreview: React.FC<ReportPreviewProps> = ({ data }) => {
 	const { t } = useTranslation('qa.reports');
+	const { t: tMetrics } = useTranslation('qa.teamAnalytics');
 	const compare = data.definition.period.compareWithPrevious;
 
-	return (
-		<div className={styles.previewScroll}>
-			<div id='report-preview' className={styles.paper}>
-				<Stack gap='lg'>
-					<ReportCover
-						definition={data.definition}
-						generatedAt={data.generatedAt}
-					/>
+	const items = useMemo(
+		() =>
+			buildReportFlow(data, { t, tMetrics, compare }, t('preview.noSections')),
+		[data, t, tMetrics, compare]
+	);
 
-					{data.sections.length === 0 ? (
-						<Text size='sm' c='dimmed'>
-							{t('preview.noSections')}
-						</Text>
-					) : (
-						data.sections.map((section, index) => (
-							<React.Fragment key={section.key}>
-								{index > 0 && <Divider />}
-								<ReportSection section={section} compare={compare} />
-							</React.Fragment>
-						))
-					)}
-				</Stack>
-			</div>
+	return (
+		<div id='report-preview'>
+			<PaginatedReport
+				items={items}
+				reportName={data.definition.name || t('preview.untitled')}
+			/>
 		</div>
 	);
 };

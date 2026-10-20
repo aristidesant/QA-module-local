@@ -68,7 +68,7 @@ export const KpiTiles: React.FC<KpiTilesProps> = ({
 	];
 
 	return (
-		<SimpleGrid cols={{ base: 2, sm: 4 }} spacing='sm'>
+		<SimpleGrid cols={4} spacing='sm'>
 			{tiles.map((tile) => {
 				const cmp = comparison(tile.current, tile.previous);
 				const delta = cmp.absoluteChange;

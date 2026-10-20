@@ -9,20 +9,90 @@
 	justify-content: center;
 }
 
-/* --- Preview document ---------------------------------------------------- */
+/* --- Preview document: US Letter pages ------------------------------------ */
 
-.previewScroll {
-	max-height: 72vh;
-	overflow: auto;
+.document {
+	display: flex;
+	flex-direction: column;
+	gap: var(--mantine-spacing-sm);
 }
 
-.paper {
-	max-width: 880px;
-	margin: 0 auto;
+/* The gray canvas the sheet sits on; arrow keys turn pages while it has focus. */
+.viewport {
+	padding: var(--mantine-spacing-sm);
+	border-radius: var(--mantine-radius-md);
+	background: light-dark(
+		var(--mantine-color-gray-1),
+		var(--mantine-color-dark-8)
+	);
+	outline: none;
+}
+
+.viewport:focus-visible {
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: 2px;
+}
+
+/* Sized to the scaled page; the sheets inside are 816 x 1056 and scaled with --page-scale. */
+.stage {
+	position: relative;
+}
+
+/* Every item is laid out here at the content width so its height can be read. */
+.measure {
+	position: absolute;
+	top: 0;
+	left: -10000px;
+	width: 672px;
+	visibility: hidden;
+	pointer-events: none;
+}
+
+.sheet {
+	position: absolute;
+	top: 0;
+	left: 0;
+	box-sizing: border-box;
+	width: 816px;
+	height: 1056px;
+	transform: scale(var(--page-scale, 1));
+	transform-origin: top left;
 	background: light-dark(#ffffff, var(--mantine-color-dark-6));
 	border: 1px solid var(--mantine-color-default-border);
-	border-radius: var(--mantine-radius-md);
-	padding: var(--mantine-spacing-xl);
+	box-shadow: var(--mantine-shadow-md);
+	visibility: hidden;
+}
+
+/* All pages stay mounted (charts keep their layout, print gets every page); only one is seen. */
+.sheet[data-current] {
+	visibility: visible;
+}
+
+.sheetContent {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+	box-sizing: border-box;
+	height: 100%;
+	padding: 72px;
+	overflow: hidden;
+}
+
+.sheetContent > * {
+	flex: none;
+}
+
+.sheetFooter {
+	position: absolute;
+	right: 72px;
+	bottom: 28px;
+	left: 72px;
+	display: flex;
+	justify-content: space-between;
+	padding-top: 6px;
+	font-size: var(--mantine-font-size-xs);
+	color: var(--mantine-color-dimmed);
+	border-top: 1px solid var(--mantine-color-default-border);
 }
 
 .coverMark {
@@ -54,12 +124,34 @@
 	font-style: italic;
 }
 
-.section {
-	break-inside: avoid;
+.sectionTitle {
+	padding-bottom: 4px;
+	border-bottom: 1px solid var(--mantine-color-default-border);
 }
 
-.tableScroll {
-	overflow-x: auto;
+/* Shown above the repeated header of a table that carries over from the previous page. */
+.continued {
+	height: 22px;
+	font-size: var(--mantine-font-size-xs);
+	font-style: italic;
+	color: var(--mantine-color-dimmed);
+}
+
+/* Fixed layout so many metric columns share the page width instead of scrolling. */
+.pageTable {
+	width: 100%;
+	table-layout: fixed;
+	font-size: 11px;
+}
+
+.pageTable th,
+.pageTable td {
+	overflow-wrap: anywhere;
+}
+
+.pageTable th:first-child,
+.pageTable td:first-child {
+	width: 28%;
 }
 
 .numeric {
@@ -95,6 +187,11 @@
 
 /* --- Print --------------------------------------------------------------- */
 
+@page {
+	size: letter;
+	margin: 0;
+}
+
 @media print {
 	body * {
 		visibility: hidden;
@@ -109,17 +206,39 @@
 		position: absolute;
 		inset: 0;
 		margin: 0;
-		padding: 16mm;
-		max-width: none;
-		width: 100%;
+		padding: 0;
 		background: #ffffff;
 		color: #000000;
-		border: 0;
-		box-shadow: none;
 	}
 
-	.previewScroll {
-		max-height: none;
-		overflow: visible;
+	.toolbar,
+	.measure {
+		display: none !important;
+	}
+
+	.viewport {
+		padding: 0;
+		background: none;
+	}
+
+	.stage {
+		width: auto !important;
+		height: auto !important;
+	}
+
+	/* Every page prints, one per sheet. */
+	.sheet {
+		position: relative !important;
+		width: 8.5in;
+		height: 11in;
+		transform: none;
+		border: 0;
+		box-shadow: none;
+		break-after: page;
+		visibility: visible;
+	}
+
+	.sheet:last-child {
+		break-after: auto;
 	}
 }

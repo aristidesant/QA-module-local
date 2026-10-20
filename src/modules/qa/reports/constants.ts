@@ -137,3 +137,18 @@ export const defaultDraft = (role: TeamRole): ReportDraft => ({
 		role === 'supervisor' ? SUPERVISOR_PERSONA.name : QA_MANAGER_PERSONA.name,
 	createdByRole: role === 'supervisor' ? 'SUPERVISOR' : 'QA_MANAGER',
 });
+
+/** US Letter at 96 dpi, portrait. The preview lays out at this size and scales the whole page to fit. */
+export const LETTER = {
+	width: 816,
+	height: 1056,
+	margin: 72,
+	/** width - 2 * margin */
+	contentWidth: 672,
+	/** height - 2 * margin */
+	contentHeight: 912,
+	/** Space between flow items on a page. */
+	gap: 20,
+	/** Height of the "continued" caption above a table that carries over from the previous page. */
+	continuedExtra: 22,
+} as const;
