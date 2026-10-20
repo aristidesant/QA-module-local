@@ -13,17 +13,13 @@
 		var(--mantine-color-gray-3) 76%,
 		var(--sidebar-surface)
 	);
-	--sidebar-active-bg: color-mix(
-		in srgb,
-		var(--mantine-primary-color-filled) 12%,
-		var(--sidebar-surface)
-	);
+	--sidebar-active-bg: var(--mantine-color-gray-1);
 	--sidebar-active-border: color-mix(
 		in srgb,
 		var(--mantine-primary-color-filled) 28%,
 		transparent
 	);
-	--sidebar-active-text: var(--mantine-primary-color-filled);
+	--sidebar-active-text: var(--mantine-color-text);
 	--sidebar-footer-surface: color-mix(
 		in srgb,
 		var(--mantine-color-gray-0) 76%,
@@ -44,20 +40,21 @@
 		0 12px 36px rgba(15, 23, 42, 0.12), 0 3px 10px rgba(15, 23, 42, 0.07),
 		0 0 0 1px rgba(15, 23, 42, 0.03);
 
+	/* Density tokens: the compact override below swaps them on short desktop screens. */
+	--sb-item-h: 36px;
+	--sb-gap: 2px;
+	--sb-icon: 18px;
+	--sb-radius: 10px;
+	--sb-font: 0.8125rem;
+	--sb-header-h: 34px;
+
 	height: 100%;
 	width: 100%;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
-	background: linear-gradient(
-		180deg,
-		color-mix(in srgb, var(--sidebar-surface) 94%, var(--mantine-color-white))
-			0%,
-		var(--sidebar-surface) 22%,
-		color-mix(in srgb, var(--sidebar-surface) 88%, var(--mantine-color-gray-1))
-			100%
-	);
-	padding: 0.875rem 0.875rem 1rem;
+	background: var(--sidebar-surface);
+	padding: 0.75rem 0.75rem 0.75rem;
 	position: relative;
 	isolation: isolate;
 	box-shadow: inset -1px 0 0 var(--sidebar-border);
@@ -81,21 +78,13 @@
 		var(--mantine-color-dark-4) 76%,
 		transparent
 	);
-	--sidebar-active-bg: color-mix(
-		in srgb,
-		var(--mantine-primary-color-filled) 16%,
-		var(--mantine-color-dark-6)
-	);
+	--sidebar-active-bg: var(--mantine-color-dark-5);
 	--sidebar-active-border: color-mix(
 		in srgb,
 		var(--mantine-primary-color-filled) 32%,
 		transparent
 	);
-	--sidebar-active-text: color-mix(
-		in srgb,
-		var(--mantine-primary-color-filled) 84%,
-		var(--mantine-color-white)
-	);
+	--sidebar-active-text: var(--mantine-color-text);
 	--sidebar-footer-surface: var(--mantine-color-dark-6);
 	--sidebar-footer-border: var(--mantine-color-dark-4);
 	--sidebar-flyout-surface: var(--mantine-color-dark-8);
@@ -196,31 +185,36 @@
 	scrollbar-gutter: stable both-edges;
 }
 
-.topBar {
+.brandRow {
 	display: flex;
 	align-items: center;
-	justify-content: center;
-	min-height: 2.25rem;
+	justify-content: space-between;
+	gap: 0.5rem;
+	width: 100%;
+	min-height: 2.5rem;
 }
 
-.sidebarCollapsed .topBar {
+.sidebarCollapsed .brandRow {
+	flex-direction: column;
 	justify-content: center;
+	min-height: 0;
+	gap: 0.25rem;
 }
 
 .brandControls {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	min-height: 1rem;
+	flex-shrink: 0;
 }
 
 .logoWrapper {
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	justify-content: flex-start;
 	min-height: 2rem;
 	min-width: 0;
-	width: 100%;
+	flex: 1;
 	padding: 0.125rem 0;
 	box-sizing: border-box;
 	border-radius: 0;
@@ -231,6 +225,7 @@
 
 .sidebarCollapsed .logoWrapper {
 	justify-content: center;
+	flex: none;
 	width: 100%;
 	padding: 0.125rem 0;
 }
@@ -255,7 +250,33 @@
 .sectionsList {
 	display: flex;
 	flex-direction: column;
-	gap: 0.25rem;
+	gap: var(--sb-gap);
+}
+
+/* Mantine's Stack sets its own gap; the extra class keeps the density token in charge. */
+.sidebar .primaryLinks,
+.sidebar .sectionsList,
+.sidebar .sectionItems {
+	gap: var(--sb-gap);
+}
+
+/* Header-less run of links; hairline between neighbouring runs. */
+.cluster {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sb-gap);
+}
+
+.cluster + .cluster,
+.cluster + .sectionGroup,
+.sectionGroup + .cluster {
+	margin-top: 6px;
+	padding-top: 6px;
+	border-top: 1px solid var(--sidebar-divider);
+}
+
+.sidebarCollapsed .cluster {
+	align-items: center;
 }
 
 .primaryLinks {
@@ -268,7 +289,7 @@
 }
 
 .divider {
-	margin: 0.375rem 0;
+	margin: 0.25rem 0;
 	border-color: var(--sidebar-divider);
 }
 
@@ -277,7 +298,7 @@
 }
 
 .brandDivider {
-	margin: 0 0 0.5rem;
+	margin: 0.25rem 0 0.5rem;
 	border-color: var(--sidebar-divider);
 }
 
@@ -288,15 +309,16 @@
 .menuItem {
 	display: flex;
 	align-items: center;
-	gap: 0.75rem;
-	min-height: 44px;
-	padding: 0.6875rem 0.875rem;
-	border-radius: 14px;
+	gap: 0.625rem;
+	position: relative;
+	min-height: var(--sb-item-h);
+	padding: 0 0.75rem;
+	border-radius: var(--sb-radius);
 	border: 0;
 	color: var(--mantine-color-text);
 	text-decoration: none;
 	font-weight: 500;
-	font-size: 0.875rem;
+	font-size: var(--sb-font);
 	line-height: 1.15;
 	scroll-margin-block: 0.75rem;
 	box-sizing: border-box;
@@ -313,7 +335,6 @@
 	background: var(--sidebar-hover-bg);
 	color: var(--mantine-color-text);
 	text-decoration: none;
-	transform: translateY(-1px);
 	box-shadow: none;
 }
 
@@ -335,7 +356,23 @@
 .menuItemSelected:hover {
 	background: var(--sidebar-active-bg);
 	color: var(--sidebar-active-text);
-	transform: translateY(-1px);
+}
+
+/* Colour is reserved for this thin marker; the pill itself stays neutral. */
+.menuItemSelected::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 50%;
+	width: 3px;
+	height: 16px;
+	transform: translateY(-50%);
+	border-radius: 0 3px 3px 0;
+	background: var(--mantine-primary-color-filled);
+}
+
+.sidebarCollapsed .menuItemSelected::before {
+	display: none;
 }
 
 .menuItemCollapsed {
@@ -362,8 +399,8 @@
 	display: inline-flex;
 	align-items: center;
 	justify-content: center;
-	width: 1.25rem;
-	height: 1.25rem;
+	width: var(--sb-icon);
+	height: var(--sb-icon);
 }
 
 .menuText {
@@ -379,7 +416,7 @@
 .sectionGroup {
 	display: flex;
 	flex-direction: column;
-	gap: 0.25rem;
+	gap: var(--sb-gap);
 }
 
 .sectionHeader {
@@ -388,9 +425,9 @@
 	justify-content: space-between;
 	gap: 0.75rem;
 	width: 100%;
-	min-height: 40px;
-	padding: 0.625rem 0.875rem;
-	border-radius: 12px;
+	min-height: var(--sb-header-h);
+	padding: 0 0.75rem;
+	border-radius: var(--sb-radius);
 	border: 0;
 	color: var(--mantine-color-text);
 	background: transparent;
@@ -406,7 +443,6 @@
 .sectionHeader:hover {
 	background: var(--sidebar-hover-bg);
 	color: var(--mantine-color-text);
-	transform: translateY(-1px);
 	box-shadow: none;
 }
 
@@ -568,19 +604,12 @@
 	gap: 0.15rem;
 }
 
-.versionText {
-	font-size: 0.6875rem;
-	letter-spacing: 0.02em;
-	line-height: 1.2;
-	text-align: center;
-}
-
 .bottomSection {
 	flex-shrink: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 0.375rem;
-	padding-top: 0.125rem;
+	gap: 0.25rem;
+	padding-top: 0;
 }
 
 .sidebarCollapsed .bottomSection {
@@ -625,7 +654,6 @@
 	.menuItem,
 	.sectionHeader {
 		min-height: 42px;
-		padding-block: 0.5rem;
 	}
 
 	.menuItemCollapsed,
@@ -635,6 +663,15 @@
 
 	.logoWrapper {
 		padding-inline: 0.75rem;
+	}
+}
+
+/* Short desktop screens: tighter rows so the longest role navigation still fits. */
+@media (max-height: 760px) and (min-width: 769px) and (hover: hover) {
+	.sidebar {
+		--sb-item-h: 32px;
+		--sb-gap: 1px;
+		--sb-header-h: 31px;
 	}
 }
 

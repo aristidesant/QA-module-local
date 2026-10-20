@@ -35,7 +35,19 @@ export interface NavGroup {
 	items: SidebarNavItem[];
 	collapsible?: boolean;
 	defaultExpanded?: boolean;
+	/** Renders the items with no header row, separated from its neighbours by a hairline. */
+	unlabeled?: boolean;
 }
+
+/** A header-less, always-open run of links. */
+const cluster = (key: string, items: SidebarNavItem[]): NavGroup => ({
+	key,
+	label: '',
+	items,
+	collapsible: false,
+	defaultExpanded: true,
+	unlabeled: true,
+});
 
 // AGENT NAVIGATION — flat by design (no group headers)
 export const getAgentNavigation = (): SidebarNavItem[] => [
@@ -185,8 +197,8 @@ export const getSupervisorNavigation = (): SidebarNavItem[] => [
 ];
 
 // SUPERVISOR NAVIGATION (organized by functional groups)
-// Dashboard / Your Team / Development render as flat links, no section
-// header — only Operations and Insights keep their collapsible groups.
+// Daily destinations sit in header-less clusters split by hairlines so nothing is
+// hidden behind a group row; only the rarely used setup pages are collapsed.
 export const getSupervisorNavigationGrouped = (): (
 	| SidebarNavItem
 	| NavGroup
@@ -196,33 +208,32 @@ export const getSupervisorNavigationGrouped = (): (
 	const pick = (...keys: string[]) => keys.map((k) => byKey[k]);
 
 	return [
-		...pick(
-			'supervisor-dashboard',
-			'supervisor-inbox',
-			'supervisor-team',
-			'supervisor-conversations',
-			'supervisor-customers',
-			'supervisor-campaigns',
-			'supervisor-coaching',
-			'supervisor-lms'
+		cluster(
+			'supervisor-main',
+			pick('supervisor-dashboard', 'supervisor-inbox')
 		),
-		// Secondary: Operations (collapsible, collapsed by default)
+		cluster(
+			'supervisor-team-work',
+			pick(
+				'supervisor-team',
+				'supervisor-conversations',
+				'supervisor-customers',
+				'supervisor-campaigns'
+			)
+		),
+		cluster(
+			'supervisor-development',
+			pick('supervisor-coaching', 'supervisor-lms', 'supervisor-disputes')
+		),
+		cluster(
+			'supervisor-insights',
+			pick('supervisor-analytics', 'supervisor-reports')
+		),
+		// Secondary: Configuration (collapsible, collapsed by default)
 		{
-			key: 'supervisor-operations',
-			label: 'sidebar.supervisor.groupOperations',
-			items: pick('supervisor-disputes', 'supervisor-triggers'),
-			collapsible: true,
-			defaultExpanded: false,
-		},
-		// Secondary: Insights (collapsible, collapsed by default)
-		{
-			key: 'supervisor-insights',
-			label: 'sidebar.supervisor.groupInsights',
-			items: pick(
-				'supervisor-analytics',
-				'supervisor-reports',
-				'supervisor-rankings'
-			),
+			key: 'supervisor-configuration',
+			label: 'sidebar.supervisor.groupConfiguration',
+			items: pick('supervisor-triggers', 'supervisor-rankings'),
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -353,27 +364,29 @@ export const getQAManagerNavigationGrouped = (): (
 	const pick = (...keys: string[]) => keys.map((k) => byKey[k]);
 
 	return [
-		...pick(
-			'qamanager-dashboard',
-			'qamanager-inbox',
-			'qamanager-teams',
-			'qamanager-conversations',
-			'qamanager-forms',
-			'qamanager-coaching',
-			'qamanager-lms'
-		),
-		// Primary: Operations (always visible, non-collapsible)
-		{
-			key: 'qamanager-operations',
-			label: 'sidebar.qamanager.groupOperations',
-			items: pick(
+		cluster('qamanager-main', pick('qamanager-dashboard', 'qamanager-inbox')),
+		cluster(
+			'qamanager-operation',
+			pick(
+				'qamanager-teams',
+				'qamanager-conversations',
 				'qamanager-customers',
-				'qamanager-disputes',
 				'qamanager-campaigns'
-			),
-			collapsible: false,
-			defaultExpanded: true,
-		},
+			)
+		),
+		cluster(
+			'qamanager-quality',
+			pick(
+				'qamanager-coaching',
+				'qamanager-lms',
+				'qamanager-forms',
+				'qamanager-disputes'
+			)
+		),
+		cluster(
+			'qamanager-insights',
+			pick('qamanager-analytics', 'qamanager-reports')
+		),
 		// Secondary: Configuration (collapsible, collapsed by default)
 		{
 			key: 'qamanager-configuration',
@@ -383,14 +396,6 @@ export const getQAManagerNavigationGrouped = (): (
 				'qamanager-rankings',
 				'qamanager-settings'
 			),
-			collapsible: true,
-			defaultExpanded: false,
-		},
-		// Secondary: Insights (collapsible, collapsed by default)
-		{
-			key: 'qamanager-insights',
-			label: 'sidebar.qamanager.groupInsights',
-			items: pick('qamanager-analytics', 'qamanager-reports'),
 			collapsible: true,
 			defaultExpanded: false,
 		},
@@ -463,48 +468,23 @@ export const getOperationManagerNavigationGrouped = (): NavGroup[] => {
 	const items = getOperationManagerNavigation();
 	const byKey = (key: string) =>
 		items.find((item) => item.key === key) as SidebarNavItem;
-	const dashboard = byKey('operationmanager-dashboard');
 
+	// Every destination is used daily, so nothing is collapsed.
 	return [
-		// Primary: Dashboard and Inbox (always visible, non-collapsible)
-		{
-			key: 'operationmanager-primary',
-			label: dashboard.label, // 'sidebar.operationmanager.dashboard'
-			items: [dashboard, byKey('operationmanager-inbox')],
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Primary: Organization (always visible, non-collapsible)
-		{
-			key: 'operationmanager-organization',
-			label: 'sidebar.operationmanager.groupOrganization',
-			items: [
-				byKey('operationmanager-team-config'),
-				byKey('operationmanager-team-health'),
-				byKey('operationmanager-clients'),
-			], // Supervisors, Team Health, Clients
-			collapsible: false,
-			defaultExpanded: true,
-		},
-		// Secondary: Configuration (collapsible, collapsed by default)
-		{
-			key: 'operationmanager-configuration',
-			label: 'sidebar.operationmanager.groupConfiguration',
-			items: [byKey('operationmanager-rankings')], // Rankings
-			collapsible: true,
-			defaultExpanded: false,
-		},
-		// Secondary: Insights (collapsible, collapsed by default)
-		{
-			key: 'operationmanager-insights',
-			label: 'sidebar.operationmanager.groupInsights',
-			items: [
-				byKey('operationmanager-analytics'),
-				byKey('operationmanager-reports'),
-			], // Analytics, Reports
-			collapsible: true,
-			defaultExpanded: false,
-		},
+		cluster('operationmanager-main', [
+			byKey('operationmanager-dashboard'),
+			byKey('operationmanager-inbox'),
+		]),
+		cluster('operationmanager-organization', [
+			byKey('operationmanager-team-config'),
+			byKey('operationmanager-team-health'),
+			byKey('operationmanager-clients'),
+			byKey('operationmanager-rankings'),
+		]),
+		cluster('operationmanager-insights', [
+			byKey('operationmanager-analytics'),
+			byKey('operationmanager-reports'),
+		]),
 	];
 };
 

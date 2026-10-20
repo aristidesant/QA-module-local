@@ -39,6 +39,7 @@ import { useColorSchemeStore } from '~/stores/colorSchemeStore';
 import { getClientDisplayLabel } from '~/utils/clientDisplay';
 import { appLandingPath } from '~/utils/computeAccessibleApps';
 import logout from '~/utils/logout';
+import { APP_VERSION } from '~/version';
 import LanguagePicker from '../LanguagePicker';
 import ClientSwitcherModal from '../ClientSwitcherModal';
 import AppChooserModal from '../AppChooserModal';
@@ -275,6 +276,9 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 			>
 				{t('sidebar.account.logout')}
 			</Menu.Item>
+			<Menu.Label className={styles.versionLabel}>
+				{t('sidebar.version')} {APP_VERSION}
+			</Menu.Label>
 		</Menu.Dropdown>
 	);
 

@@ -55,7 +55,6 @@ import { useTranslation } from 'react-i18next';
 import styles from './Sidebar.module.css';
 import { prefetchNamespace } from '~/utils/i18nHelpers';
 import Logo from '../Logo';
-import { APP_VERSION } from '~/version';
 import { usePermissions } from '~/hooks/usePermissions';
 import { useIsMasterClient } from '~/hooks/useIsMasterClient';
 import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
@@ -459,6 +458,47 @@ const qaPrimaryItems: SidebarNavItem[] = [
 	},
 ];
 
+const qaPick = (...keys: string[]): SidebarNavItem[] =>
+	keys.map((key) => qaPrimaryItems.find((item) => item.key === key)!);
+
+// Seven everyday destinations stay flat; the role dashboards and the advanced
+// pages are collapsed so the list fits without scrolling.
+const qaPrimaryNav: (SidebarNavItem | NavGroup)[] = [
+	...qaPick(
+		'qa-dashboard',
+		'qa-evaluations',
+		'qa-campaigns',
+		'qa-forms',
+		'qa-disputes',
+		'qa-agents',
+		'qa-evaluator-agents'
+	),
+	{
+		key: 'qa-role-dashboards',
+		label: 'sidebar.groups.qaRoleDashboards',
+		items: qaPick(
+			'qa-dashboards-agent',
+			'qa-dashboards-supervisor',
+			'qa-dashboards-qa-manager',
+			'qa-dashboards-operation-manager'
+		),
+		collapsible: true,
+		defaultExpanded: false,
+	},
+	{
+		key: 'qa-advanced',
+		label: 'sidebar.groups.qaAdvanced',
+		items: qaPick(
+			'qa-disputes-list',
+			'qa-auto-triggers',
+			'qa-reporting',
+			'qa-agent-rankings'
+		),
+		collapsible: true,
+		defaultExpanded: false,
+	},
+];
+
 // Backoffice is its own app mode, not a section in the Campaign-management
 // sidebar. These render as the entire sidebar when the user is inside
 // /backoffice/*. Per-item roleCodes keep an agent from seeing the supervisor
@@ -744,7 +784,7 @@ export const Sidebar: React.FC = () => {
 		: previewRole
 			? rolePreviewNav[previewRole]
 			: inQaApp
-				? qaPrimaryItems
+				? qaPrimaryNav
 				: inBackofficeApp
 					? visibleBackofficeItems
 					: visiblePrimaryItems;
@@ -905,34 +945,34 @@ export const Sidebar: React.FC = () => {
 			aria-label={t('sidebar.ariaLabel')}
 		>
 			<div className={styles.brandSection}>
-				<div className={styles.topBar}>
+				<div className={styles.brandRow}>
 					<div className={styles.logoWrapper}>
 						<Logo compact={collapsed} />
 					</div>
-				</div>
-				<div className={styles.brandControls}>
-					<Tooltip
-						label={collapsed ? t('sidebar.expand') : t('sidebar.collapse')}
-						position='right'
-						withArrow
-					>
-						<ActionIcon
-							variant='subtle'
-							color='gray'
-							size='sm'
-							className={styles.collapseButton}
-							onClick={toggleCollapsed}
-							aria-label={
-								collapsed ? t('sidebar.expand') : t('sidebar.collapse')
-							}
+					<div className={styles.brandControls}>
+						<Tooltip
+							label={collapsed ? t('sidebar.expand') : t('sidebar.collapse')}
+							position='right'
+							withArrow
 						>
-							{collapsed ? (
-								<IconChevronRight size={16} />
-							) : (
-								<IconChevronLeft size={16} />
-							)}
-						</ActionIcon>
-					</Tooltip>
+							<ActionIcon
+								variant='subtle'
+								color='gray'
+								size='sm'
+								className={styles.collapseButton}
+								onClick={toggleCollapsed}
+								aria-label={
+									collapsed ? t('sidebar.expand') : t('sidebar.collapse')
+								}
+							>
+								{collapsed ? (
+									<IconChevronRight size={16} />
+								) : (
+									<IconChevronLeft size={16} />
+								)}
+							</ActionIcon>
+						</Tooltip>
+					</div>
 				</div>
 				<Divider className={styles.brandDivider} />
 			</div>
@@ -949,6 +989,21 @@ export const Sidebar: React.FC = () => {
 					if (isNavGroup(navItem)) {
 						// Render as group (collapsible or not)
 						const group = navItem as NavGroup;
+						// Header-less runs of links; the rail shows every group this way.
+						if (group.unlabeled || collapsed) {
+							return (
+								<div key={group.key} className={styles.cluster}>
+									{group.items.map((item) => (
+										<SidebarLinkItem
+											key={item.key}
+											item={item}
+											collapsed={collapsed}
+											isActive={activeItem?.key === item.key}
+										/>
+									))}
+								</div>
+							);
+						}
 						const isCollapsible = group.collapsible !== false;
 						const isOpen =
 							!isCollapsible ||
@@ -1023,7 +1078,7 @@ export const Sidebar: React.FC = () => {
 				})}
 			</Stack>
 
-			<Divider className={styles.divider} />
+			{sectionNav.length > 0 && <Divider className={styles.divider} />}
 
 			<div
 				className={
@@ -1072,11 +1127,6 @@ export const Sidebar: React.FC = () => {
 			<div className={styles.bottomSection}>
 				<Divider className={styles.divider} />
 				<UserMenu collapsed={collapsed} />
-				{!collapsed && (
-					<Text size='xs' c='dimmed' className={styles.versionText}>
-						{t('sidebar.version')} {APP_VERSION}
-					</Text>
-				)}
 			</div>
 		</nav>
 	);
@@ -1197,7 +1247,7 @@ const SidebarLinkItem: React.FC<SidebarLinkItemProps> = ({
 					<span className={styles.menuText}>{t(item.label)}</span>
 					{badgeCount > 0 && (
 						<Badge
-							size='sm'
+							size='xs'
 							variant='filled'
 							aria-label={
 								item.badge === 'inbox'

@@ -89,6 +89,10 @@
 		"noModules": "No modules available",
 		"requestAccess": "Request access to see navigation options.",
 		"version": "Version",
+		"groups": {
+			"qaRoleDashboards": "Role dashboards",
+			"qaAdvanced": "Advanced"
+		},
 		"categories": {
 			"operation": "Operation",
 			"backoffice": "Backoffice",
@@ -168,6 +172,7 @@
 			"analytics": "Analytics",
 			"reports": "Reports",
 			"groupOperations": "Operations",
+			"groupConfiguration": "Configuration",
 			"groupInsights": "Insights",
 			"inbox": "Inbox",
 			"conversations": "Conversations"
