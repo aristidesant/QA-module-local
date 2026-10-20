@@ -12,6 +12,10 @@ export interface IssueBadgesProps {
 	max?: number;
 }
 
+/** Only the severe issues (red in the issue config) keep their colour; the rest stay neutral so the column reads quietly. */
+const issueBadgeColor = (key: CallIssueKey) =>
+	CALL_ISSUE_BY_KEY[key].color === 'red' ? 'red' : 'gray';
+
 /** The incidents of a call as badges; auto-fail is filled and carries its count. Labels: qa.calls. */
 export default function IssueBadges({
 	issues,
@@ -25,7 +29,7 @@ export default function IssueBadges({
 		<div className={classes.issueCell}>
 			{shown.map((key) => (
 				<Badge
-					color={CALL_ISSUE_BY_KEY[key].color}
+					color={issueBadgeColor(key)}
 					key={key}
 					size='sm'
 					variant={key === 'auto-fail' ? 'filled' : 'light'}
