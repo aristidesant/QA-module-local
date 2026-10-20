@@ -1,0 +1,364 @@
+{
+	"page": {
+		"eyebrow": "Super admin",
+		"title": "Configuración global",
+		"description": "Configura los valores predeterminados del cliente para el espacio de trabajo de QA activo.",
+		"descriptionShared": "Configura el analizador de sentimiento compartido por todos los clientes.",
+		"tabs": {
+			"callAnalysis": "Análisis de llamadas",
+			"evaluation": "Evaluación",
+			"contextRules": "Reglas de contexto",
+			"campaignTypes": "Tipos de campaña",
+			"namingConvention": "Convención de nombres",
+			"scoreScales": "Escalas de puntaje",
+			"sentiment": "Análisis de sentimiento"
+		}
+	},
+	"common": {
+		"configured": "Configurado",
+		"notConfigured": "Sin configurar",
+		"active": "Activa",
+		"inactive": "Inactiva",
+		"allStatuses": "Todos los estados",
+		"save": "Guardar",
+		"cancel": "Cancelar",
+		"search": "Buscar",
+		"status": "Estado",
+		"actionsHeader": "Acciones",
+		"notAvailable": "No disponible",
+		"updated": "Actualizada",
+		"version": "Versión {{n}}",
+		"currentVersion": "Versión actual {{n}}",
+		"actions": {
+			"edit": "Editar",
+			"duplicate": "Duplicar",
+			"delete": "Eliminar",
+			"activate": "Activar",
+			"deactivate": "Desactivar"
+		}
+	},
+	"callAnalysis": {
+		"title": "Valores predeterminados del análisis de llamadas",
+		"description": "Cómo se transcriben las llamadas importadas y qué análisis se ejecutan sobre ellas.",
+		"banner": {
+			"title": "Configuración del cliente activo",
+			"description": "Estos valores aplican a cada llamada importada para el cliente seleccionado en tu sesión actual de QA."
+		},
+		"language": {
+			"label": "Idioma de transcripción",
+			"help": "La detección automática elige el idioma por llamada.",
+			"options": {
+				"AUTO": "Detección automática",
+				"es": "Español",
+				"en": "Inglés"
+			}
+		},
+		"retention": {
+			"label": "Retención de audio",
+			"help": "Los archivos de audio se eliminan tras este periodo; las transcripciones y puntajes se conservan.",
+			"days": "{{count}} días"
+		},
+		"diarization": {
+			"label": "Diarización de hablantes",
+			"help": "Divide la transcripción en turnos de agente y cliente."
+		},
+		"redact": {
+			"label": "Ocultar datos personales",
+			"help": "Enmascara los campos seleccionados antes de guardar la transcripción."
+		},
+		"piiFields": {
+			"label": "Campos a ocultar",
+			"options": {
+				"phone": "Números de teléfono",
+				"card": "Números de tarjeta",
+				"nationalId": "Documentos de identidad",
+				"email": "Correos electrónicos"
+			}
+		},
+		"analyses": {
+			"label": "Análisis a ejecutar",
+			"help": "Cada llamada importada pasa automáticamente por los análisis seleccionados.",
+			"required": "Selecciona al menos un análisis.",
+			"options": {
+				"QA": "Evaluación de QA",
+				"COMPLIANCE": "Cumplimiento",
+				"SENTIMENT": "Sentimiento y emoción",
+				"BUSINESS": "Business insights"
+			}
+		},
+		"minDuration": {
+			"label": "Duración mínima de llamada",
+			"help": "Las llamadas más cortas se importan pero no se analizan."
+		}
+	},
+	"evaluation": {
+		"title": "Configuración de evaluación del cliente",
+		"description": "Elige el formulario y los agentes evaluadores que se usarán automáticamente para este cliente.",
+		"banner": {
+			"title": "Configuración del cliente activo",
+			"description": "Esta configuración aplica únicamente al cliente seleccionado en tu sesión actual de QA."
+		},
+		"requirement": "Se requiere un formulario predeterminado, un evaluador principal y uno alternativo para que las campañas de QA puedan importar conversaciones de UCXM y ejecutar evaluaciones automáticamente.",
+		"format": {
+			"label": "Formato de evaluación",
+			"standard": "Estándar",
+			"copc": "COPC",
+			"hint": "Solo un formato puede estar activo para las evaluaciones automáticas de campañas."
+		},
+		"form": {
+			"label": "Formulario de evaluación predeterminado",
+			"description": "Se aplica automáticamente a las conversaciones importadas.",
+			"placeholder": "Selecciona un formulario",
+			"none": "No hay formularios para este formato"
+		},
+		"primary": {
+			"label": "Evaluador principal",
+			"description": "Se usa primero para las evaluaciones automáticas."
+		},
+		"fallback": {
+			"label": "Evaluador alternativo",
+			"description": "Se usa cuando el evaluador principal no está disponible."
+		},
+		"save": "Guardar configuración de evaluación",
+		"history": {
+			"title": "Historial de versiones",
+			"description": "Cada configuración de evaluación guardada, de la más reciente a la más antigua.",
+			"savedBy": "{{who}} · {{when}}",
+			"summary": {
+				"format": "Formato de evaluación cambiado a {{format}}",
+				"form": "Formulario predeterminado cambiado a {{form}}",
+				"evaluators": "Agentes evaluadores actualizados"
+			}
+		}
+	},
+	"contextRules": {
+		"title": "Reglas de contexto del evaluador",
+		"description": "Gestiona reglas manuales por tema y alcance, o adjunta protocolos Word versionados a una línea de negocio.",
+		"preview": "Vista previa",
+		"add": "Agregar regla",
+		"allCampaigns": "Todas las campañas",
+		"searchPlaceholder": "Buscar por tema, destino o contexto",
+		"empty": "Ninguna regla coincide con los filtros actuales",
+		"overriddenBy": "Reemplazada por: {{scope}}",
+		"howRules": {
+			"summary": "Cada regla cubre un tema. En cada tema gana el nivel más específico: campaña, luego tipo de campaña y luego cliente ({{client}}).",
+			"link": "Cómo se combinan las reglas",
+			"bullets": {
+				"one": "Las reglas de cliente son el valor predeterminado para todas las campañas.",
+				"two": "Una regla de tipo de campaña sobre el mismo tema reemplaza la regla de cliente en las campañas de ese tipo.",
+				"three": "Una regla de campaña sobre el mismo tema reemplaza a ambas solo en esa campaña."
+			}
+		},
+		"scope": {
+			"CLIENT": "Cliente",
+			"CAMPAIGN_TYPE": "Tipo de campaña",
+			"CAMPAIGN": "Campaña"
+		},
+		"agentType": {
+			"ALL": "Todos los tipos de agente",
+			"HUMAN": "Agentes humanos",
+			"AI": "Agentes IA"
+		},
+		"filters": {
+			"all": "Todas",
+			"client": "Cliente",
+			"campaignTypes": "Tipos de campaña",
+			"campaigns": "Campañas"
+		},
+		"columns": {
+			"topic": "Tema",
+			"appliesTo": "Aplica a",
+			"context": "Contexto",
+			"actions": "Acciones de la regla"
+		},
+		"drawer": {
+			"createTitle": "Agregar regla",
+			"editTitle": "Editar regla",
+			"description": "Un tema, un nivel. El evaluador recibe el texto de contexto cuando califica una llamada dentro del alcance.",
+			"topic": "Tema",
+			"topicHelp": "Identificador con puntos, p. ej. glosario.polaridad-si-no",
+			"scope": "Nivel",
+			"target": "Aplica a",
+			"agentType": "Tipo de agente",
+			"context": "Contexto",
+			"contextHelp": "Escrito para el evaluador: qué buscar y cómo calificarlo."
+		},
+		"docs": {
+			"title": "Documentos de protocolo",
+			"description": "Protocolos Word versionados adjuntos a una línea de negocio.",
+			"columns": {
+				"document": "Documento",
+				"lineOfBusiness": "Línea de negocio",
+				"version": "Versión",
+				"uploaded": "Cargado"
+			}
+		},
+		"previewDrawer": {
+			"title": "Contexto efectivo",
+			"description": "Las reglas que recibe un evaluador para una campaña una vez combinados todos los niveles.",
+			"campaign": "Campaña",
+			"empty": "Ninguna regla activa aplica a esta campaña."
+		}
+	},
+	"campaignTypes": {
+		"title": "Tipos de campaña",
+		"description": "Administra el catálogo de tipos de campaña del cliente utilizado por las asignaciones de campañas y las etiquetas de preguntas COPC.",
+		"create": "Crear tipo de campaña",
+		"searchCode": "Buscar por código",
+		"count_one": "{{count}} tipo de campaña",
+		"count_other": "{{count}} tipos de campaña",
+		"empty": "Ningún tipo de campaña coincide con los filtros actuales",
+		"lockedHint": "Tipo integrado, no se puede editar ni eliminar",
+		"columns": {
+			"code": "Código",
+			"name": "Nombre"
+		},
+		"drawer": {
+			"createTitle": "Crear tipo de campaña",
+			"editTitle": "Editar tipo de campaña",
+			"description": "El código es la referencia que usan las campañas y los formularios COPC; no cambia una vez creado.",
+			"code": "Código",
+			"codeHelp": "Letras mayúsculas, números y guiones bajos.",
+			"duplicate": "Ya existe un tipo de campaña con este código.",
+			"name": "Nombre",
+			"descriptionField": "Descripción"
+		},
+		"delete": {
+			"title": "Eliminar tipo de campaña",
+			"message": "¿Eliminar {{code}}? Las campañas asignadas conservan su historial pero pierden el tipo."
+		}
+	},
+	"naming": {
+		"title": "Convención de nombres para importación de audio",
+		"description": "Describe cómo los nombres de archivo exportados por el call center de este cliente se relacionan con los datos que guardamos en cada conversación.",
+		"banner": {
+			"title": "Configuración del cliente activo",
+			"configured": "Las importaciones se procesan con la convención de abajo.",
+			"missing": "No existe un analizador predeterminado. Hasta que se guarde una convención, todas las importaciones de audio de este cliente se rechazan."
+		},
+		"note": "Guardar reemplaza el documento completo de la convención de nombres y solo afecta las importaciones futuras. Las conversaciones existentes no se modifican.",
+		"preview": {
+			"title": "Vista previa en vivo del nombre de archivo",
+			"description": "Edita o pega un nombre de archivo real para probar las reglas de extracción actuales. No se guarda nada.",
+			"useExample": "Usar ejemplo generado",
+			"sample": {
+				"label": "Nombre de archivo de ejemplo",
+				"help": "Usa el ejemplo generado o pega un nombre de archivo, incluido un sufijo -CODE opcional."
+			}
+		},
+		"columns": {
+			"field": "Campo",
+			"raw": "Sin procesar",
+			"transformed": "Tras transformaciones",
+			"status": "Estado"
+		},
+		"status": {
+			"ok": "Procesado",
+			"error": "Faltante o inválido"
+		},
+		"tokens": {
+			"source-campaign-id": "source-campaign-id",
+			"date-time": "date-time",
+			"source-agent-id": "source-agent-id",
+			"dialed-number": "dialed-number",
+			"direction": "direction",
+			"customer-name": "Nombre del cliente",
+			"customer-id": "ID del cliente"
+		},
+		"convention": {
+			"title": "Convención",
+			"description": "El separador, el orden de los segmentos y cómo se lee la fecha.",
+			"separator": "Separador",
+			"dateFormat": "Formato de fecha y hora",
+			"order": "Orden de los segmentos",
+			"moveUp": "Subir",
+			"moveDown": "Bajar",
+			"duplicate": "Cada campo solo puede aparecer una vez."
+		}
+	},
+	"scoreScales": {
+		"title": "Escalas de puntaje",
+		"description": "Define rangos con nombre, como Baja o Excelente, y úsalos en las reglas de alerta.",
+		"create": "Crear escala",
+		"filters": {
+			"sortBy": "Ordenar por",
+			"direction": "Dirección",
+			"refresh": "Actualizar"
+		},
+		"sort": {
+			"updated": "Actualización",
+			"name": "Nombre",
+			"type": "Tipo"
+		},
+		"direction": {
+			"asc": "Ascendente",
+			"desc": "Descendente"
+		},
+		"types": {
+			"QA": "Calidad",
+			"COMPLIANCE": "Cumplimiento",
+			"SENTIMENT": "Sentimiento",
+			"BUSINESS": "Business insights",
+			"COACHING": "Coaching"
+		},
+		"columns": {
+			"name": "Nombre",
+			"type": "Tipo",
+			"bands": "Bandas",
+			"actions": "Más acciones"
+		},
+		"empty": {
+			"title": "No se encontraron escalas de puntaje",
+			"description": "Crea una escala o cambia los filtros para ver resultados."
+		},
+		"drawer": {
+			"createTitle": "Crear escala",
+			"editTitle": "Editar escala",
+			"description": "Las bandas se leen de abajo hacia arriba: cada una empieza en su piso y termina donde empieza la siguiente.",
+			"bands": "Bandas",
+			"bandsHelp": "La primera banda siempre empieza en 0; los pisos deben ir en aumento.",
+			"addBand": "Agregar banda",
+			"label": "Etiqueta",
+			"from": "Desde",
+			"invalidBands": "Cada banda necesita una etiqueta y un piso mayor que el anterior."
+		}
+	},
+	"sentiment": {
+		"notice": "Al guardar se crea y activa inmediatamente una versión inmutable para los nuevos análisis de sentimiento.",
+		"instructions": {
+			"title": "Instrucciones del analizador",
+			"description": "Define el contexto del modelo y las reglas para seleccionar una emoción configurada para cada participante."
+		},
+		"systemPrompt": {
+			"label": "Prompt de sistema del LLM",
+			"help": "Establece el rol y los límites operativos del analizador."
+		},
+		"classification": {
+			"label": "Instrucciones de clasificación",
+			"help": "Explica cómo debe elegir una emoción el modelo. La aplicación deriva el sentimiento y no debe solicitarse al modelo."
+		},
+		"counter": "{{count}} / {{max}} caracteres",
+		"catalog": {
+			"title": "Catálogo de emociones",
+			"description": "Administra los identificadores canónicos de emociones y asigna cada uno a un único nivel fijo de sentimiento.",
+			"add": "Agregar emoción"
+		},
+		"levels": {
+			"VERY_POSITIVE": "Muy positivo",
+			"POSITIVE": "Positivo",
+			"NEUTRAL": "Neutral",
+			"NEGATIVE": "Negativo",
+			"VERY_NEGATIVE": "Muy negativo"
+		},
+		"columns": {
+			"label": "Etiqueta de emoción",
+			"description": "Descripción",
+			"level": "Nivel de sentimiento",
+			"actions": "Acciones"
+		},
+		"errors": {
+			"empty": "Obligatorio",
+			"duplicate": "Etiqueta duplicada"
+		}
+	}
+}

@@ -3,7 +3,6 @@ import {
 	IconBell,
 	IconSchool,
 	IconSearch,
-	IconSettings,
 	IconTargetArrow,
 	IconUsersGroup,
 	IconClipboardCheck,
@@ -46,10 +45,5 @@ export const ROLE_PREVIEW_PLACEHOLDERS: Record<string, RolePreviewPlaceholder> =
 			slug: 'finder',
 			titleKey: 'sidebar.rolePreview.items.finder',
 			icon: IconSearch,
-		},
-		'global-settings': {
-			slug: 'global-settings',
-			titleKey: 'sidebar.rolePreview.items.globalSettings',
-			icon: IconSettings,
 		},
 	};

@@ -1,0 +1,364 @@
+{
+	"page": {
+		"eyebrow": "Super admin",
+		"title": "Global configuration",
+		"description": "Configure the client defaults for the active QA workspace.",
+		"descriptionShared": "Configure the sentiment analyzer shared by all clients.",
+		"tabs": {
+			"callAnalysis": "Call analysis",
+			"evaluation": "Evaluation",
+			"contextRules": "Context rules",
+			"campaignTypes": "Campaign types",
+			"namingConvention": "Naming convention",
+			"scoreScales": "Score scales",
+			"sentiment": "Sentiment analysis"
+		}
+	},
+	"common": {
+		"configured": "Configured",
+		"notConfigured": "Not configured",
+		"active": "Active",
+		"inactive": "Inactive",
+		"allStatuses": "All statuses",
+		"save": "Save",
+		"cancel": "Cancel",
+		"search": "Search",
+		"status": "Status",
+		"actionsHeader": "Actions",
+		"notAvailable": "Not available",
+		"updated": "Updated",
+		"version": "Version {{n}}",
+		"currentVersion": "Current version {{n}}",
+		"actions": {
+			"edit": "Edit",
+			"duplicate": "Duplicate",
+			"delete": "Delete",
+			"activate": "Activate",
+			"deactivate": "Deactivate"
+		}
+	},
+	"callAnalysis": {
+		"title": "Call analysis defaults",
+		"description": "How imported calls are transcribed and which analyses run on them.",
+		"banner": {
+			"title": "Active client configuration",
+			"description": "These defaults apply to every call imported for the client selected in your current QA session."
+		},
+		"language": {
+			"label": "Transcription language",
+			"help": "Auto-detect picks the language per call.",
+			"options": {
+				"AUTO": "Auto-detect",
+				"es": "Spanish",
+				"en": "English"
+			}
+		},
+		"retention": {
+			"label": "Audio retention",
+			"help": "Audio files are deleted after this period; transcripts and scores stay.",
+			"days": "{{count}} days"
+		},
+		"diarization": {
+			"label": "Speaker diarization",
+			"help": "Split the transcript into agent and customer turns."
+		},
+		"redact": {
+			"label": "Redact personal data",
+			"help": "Mask the selected fields before the transcript is stored."
+		},
+		"piiFields": {
+			"label": "Fields to redact",
+			"options": {
+				"phone": "Phone numbers",
+				"card": "Card numbers",
+				"nationalId": "National IDs",
+				"email": "Email addresses"
+			}
+		},
+		"analyses": {
+			"label": "Analyses to run",
+			"help": "Every imported call goes through the selected analyses automatically.",
+			"required": "Select at least one analysis.",
+			"options": {
+				"QA": "QA evaluation",
+				"COMPLIANCE": "Compliance",
+				"SENTIMENT": "Sentiment & emotion",
+				"BUSINESS": "Business insights"
+			}
+		},
+		"minDuration": {
+			"label": "Minimum call duration",
+			"help": "Shorter calls are imported but not analysed."
+		}
+	},
+	"evaluation": {
+		"title": "Client evaluation configuration",
+		"description": "Choose the form and the evaluator agents used automatically for this client.",
+		"banner": {
+			"title": "Active client configuration",
+			"description": "This configuration applies only to the client selected in your current QA session."
+		},
+		"requirement": "A default form, a primary evaluator and a fallback evaluator are required for QA campaigns to import UCXM conversations and run evaluations automatically.",
+		"format": {
+			"label": "Evaluation format",
+			"standard": "Standard",
+			"copc": "COPC",
+			"hint": "Only one format can be active for automatic campaign evaluations."
+		},
+		"form": {
+			"label": "Default evaluation form",
+			"description": "Applied automatically to imported conversations.",
+			"placeholder": "Select a form",
+			"none": "No forms for this format"
+		},
+		"primary": {
+			"label": "Primary evaluator",
+			"description": "Used first for automatic evaluations."
+		},
+		"fallback": {
+			"label": "Fallback evaluator",
+			"description": "Used when the primary evaluator is not available."
+		},
+		"save": "Save evaluation configuration",
+		"history": {
+			"title": "Version history",
+			"description": "Every saved evaluation configuration, newest first.",
+			"savedBy": "{{who}} · {{when}}",
+			"summary": {
+				"format": "Evaluation format changed to {{format}}",
+				"form": "Default form switched to {{form}}",
+				"evaluators": "Evaluator agents updated"
+			}
+		}
+	},
+	"contextRules": {
+		"title": "Evaluator context rules",
+		"description": "Manage manual rules by topic and scope, or attach versioned Word protocols to a line of business.",
+		"preview": "Preview",
+		"add": "Add rule",
+		"allCampaigns": "All campaigns",
+		"searchPlaceholder": "Search by topic, target or context",
+		"empty": "No rules match the current filters",
+		"overriddenBy": "Overridden by: {{scope}}",
+		"howRules": {
+			"summary": "Each rule covers one topic. In each topic the most specific level wins: campaign, then campaign type, then client ({{client}}).",
+			"link": "How rules combine",
+			"bullets": {
+				"one": "Client rules are the default for every campaign.",
+				"two": "A campaign-type rule on the same topic replaces the client rule for campaigns of that type.",
+				"three": "A campaign rule on the same topic replaces both for that campaign only."
+			}
+		},
+		"scope": {
+			"CLIENT": "Client",
+			"CAMPAIGN_TYPE": "Campaign type",
+			"CAMPAIGN": "Campaign"
+		},
+		"agentType": {
+			"ALL": "All agent types",
+			"HUMAN": "Human agents",
+			"AI": "AI agents"
+		},
+		"filters": {
+			"all": "All",
+			"client": "Client",
+			"campaignTypes": "Campaign types",
+			"campaigns": "Campaigns"
+		},
+		"columns": {
+			"topic": "Topic",
+			"appliesTo": "Applies to",
+			"context": "Context",
+			"actions": "Rule actions"
+		},
+		"drawer": {
+			"createTitle": "Add rule",
+			"editTitle": "Edit rule",
+			"description": "One topic, one level. The evaluator receives the context text when it scores a call in scope.",
+			"topic": "Topic",
+			"topicHelp": "Dotted identifier, e.g. glosario.polaridad-si-no",
+			"scope": "Level",
+			"target": "Applies to",
+			"agentType": "Agent type",
+			"context": "Context",
+			"contextHelp": "Written for the evaluator: what to look for and how to score it."
+		},
+		"docs": {
+			"title": "Protocol documents",
+			"description": "Versioned Word protocols attached to a line of business.",
+			"columns": {
+				"document": "Document",
+				"lineOfBusiness": "Line of business",
+				"version": "Version",
+				"uploaded": "Uploaded"
+			}
+		},
+		"previewDrawer": {
+			"title": "Effective context",
+			"description": "The rules an evaluator receives for one campaign after every level has been merged.",
+			"campaign": "Campaign",
+			"empty": "No active rules apply to this campaign."
+		}
+	},
+	"campaignTypes": {
+		"title": "Campaign types",
+		"description": "Manage the client's campaign type catalogue used by campaign assignments and COPC question tags.",
+		"create": "Create campaign type",
+		"searchCode": "Search by code",
+		"count_one": "{{count}} campaign type",
+		"count_other": "{{count}} campaign types",
+		"empty": "No campaign types match the current filters",
+		"lockedHint": "Built-in type, cannot be edited or deleted",
+		"columns": {
+			"code": "Code",
+			"name": "Name"
+		},
+		"drawer": {
+			"createTitle": "Create campaign type",
+			"editTitle": "Edit campaign type",
+			"description": "The code is what campaigns and COPC forms refer to; it cannot change once created.",
+			"code": "Code",
+			"codeHelp": "Uppercase letters, numbers and underscores.",
+			"duplicate": "A campaign type with this code already exists.",
+			"name": "Name",
+			"descriptionField": "Description"
+		},
+		"delete": {
+			"title": "Delete campaign type",
+			"message": "Delete {{code}}? Campaigns assigned to it keep their history but lose the type."
+		}
+	},
+	"naming": {
+		"title": "Audio import naming convention",
+		"description": "Describe how the filenames exported by this client's call center map onto the data we store on each conversation.",
+		"banner": {
+			"title": "Active client configuration",
+			"configured": "Imports are parsed with the convention below.",
+			"missing": "No default parser exists. Until a convention is saved, every audio import for this client is rejected."
+		},
+		"note": "Saving replaces the full naming convention document and only affects future imports. Existing conversations are not modified.",
+		"preview": {
+			"title": "Live filename preview",
+			"description": "Edit or paste a real filename to test the current extraction rules. Nothing is saved.",
+			"useExample": "Use generated example",
+			"sample": {
+				"label": "Example filename",
+				"help": "Use the generated example or paste a filename, including an optional -CODE suffix."
+			}
+		},
+		"columns": {
+			"field": "Field",
+			"raw": "Raw",
+			"transformed": "After transformations",
+			"status": "Status"
+		},
+		"status": {
+			"ok": "Parsed",
+			"error": "Missing or invalid"
+		},
+		"tokens": {
+			"source-campaign-id": "source-campaign-id",
+			"date-time": "date-time",
+			"source-agent-id": "source-agent-id",
+			"dialed-number": "dialed-number",
+			"direction": "direction",
+			"customer-name": "Customer name",
+			"customer-id": "Customer ID"
+		},
+		"convention": {
+			"title": "Convention",
+			"description": "The separator, the order of the segments and how the date is read.",
+			"separator": "Separator",
+			"dateFormat": "Date-time format",
+			"order": "Segment order",
+			"moveUp": "Move up",
+			"moveDown": "Move down",
+			"duplicate": "Each field can appear only once."
+		}
+	},
+	"scoreScales": {
+		"title": "Score scales",
+		"description": "Define named ranges, such as Low or Excellent, and use them in alert rules.",
+		"create": "Create scale",
+		"filters": {
+			"sortBy": "Sort by",
+			"direction": "Direction",
+			"refresh": "Refresh"
+		},
+		"sort": {
+			"updated": "Updated",
+			"name": "Name",
+			"type": "Type"
+		},
+		"direction": {
+			"asc": "Ascending",
+			"desc": "Descending"
+		},
+		"types": {
+			"QA": "Quality assurance",
+			"COMPLIANCE": "Compliance",
+			"SENTIMENT": "Sentiment",
+			"BUSINESS": "Business insights",
+			"COACHING": "Coaching"
+		},
+		"columns": {
+			"name": "Name",
+			"type": "Type",
+			"bands": "Bands",
+			"actions": "More actions"
+		},
+		"empty": {
+			"title": "No score scales found",
+			"description": "Create a scale or change the filters to see results."
+		},
+		"drawer": {
+			"createTitle": "Create scale",
+			"editTitle": "Edit scale",
+			"description": "Bands are read from the bottom up: each one starts at its floor and ends where the next begins.",
+			"bands": "Bands",
+			"bandsHelp": "The first band always starts at 0; floors must climb.",
+			"addBand": "Add band",
+			"label": "Label",
+			"from": "From",
+			"invalidBands": "Every band needs a label and a floor higher than the previous one."
+		}
+	},
+	"sentiment": {
+		"notice": "Saving creates and immediately activates an immutable version for new sentiment analyses.",
+		"instructions": {
+			"title": "Analyzer instructions",
+			"description": "Define the model context and the rules for selecting a configured emotion for each participant."
+		},
+		"systemPrompt": {
+			"label": "LLM system prompt",
+			"help": "Sets the analyzer's role and operating limits."
+		},
+		"classification": {
+			"label": "Classification instructions",
+			"help": "Explains how the model should choose an emotion. The application derives the sentiment and must not ask the model for it."
+		},
+		"counter": "{{count}} / {{max}} characters",
+		"catalog": {
+			"title": "Emotion catalogue",
+			"description": "Manage the canonical emotion identifiers and map each one to a single fixed sentiment level.",
+			"add": "Add emotion"
+		},
+		"levels": {
+			"VERY_POSITIVE": "Very positive",
+			"POSITIVE": "Positive",
+			"NEUTRAL": "Neutral",
+			"NEGATIVE": "Negative",
+			"VERY_NEGATIVE": "Very negative"
+		},
+		"columns": {
+			"label": "Emotion label",
+			"description": "Description",
+			"level": "Sentiment level",
+			"actions": "Actions"
+		},
+		"errors": {
+			"empty": "Required",
+			"duplicate": "Duplicate label"
+		}
+	}
+}

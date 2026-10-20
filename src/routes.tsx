@@ -83,6 +83,9 @@ const ProfilePage = React.lazy(() => import('./modules/profile/ProfilePage'));
 const RolePreviewPlaceholderPage = React.lazy(
 	() => import('./modules/role-preview/RolePreviewPlaceholderPage')
 );
+const GlobalConfigPage = React.lazy(
+	() => import('./modules/qa/global-config/GlobalConfigPage')
+);
 const AgentsRosterPage = React.lazy(
 	() => import('./modules/role-preview/AgentsRosterPage/AgentsRosterPage')
 );
@@ -2416,6 +2419,17 @@ const router = createBrowserRouter([
 								path: 'role-preview/qa-manager-analytics',
 								id: 'role-preview.qa-manager-analytics',
 								element: <Suspense fallback={<SuspenseFallback />}></Suspense>,
+							},
+							{
+								path: 'role-preview/global-settings',
+								id: 'role-preview.global-settings',
+								element: (
+									<I18nNamespaceLoader>
+										<Suspense fallback={<SuspenseFallback />}>
+											<GlobalConfigPage />
+										</Suspense>
+									</I18nNamespaceLoader>
+								),
 							},
 							{
 								path: 'role-preview/:section',

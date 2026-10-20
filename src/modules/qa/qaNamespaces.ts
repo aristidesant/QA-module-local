@@ -4,6 +4,8 @@
  */
 export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.dashboard': 'qa.dashboard',
+	// Super admin "Global configuration" (role preview), reuses the settings footer strings.
+	'role-preview.global-settings': ['qa.globalConfig', 'qa.settings'],
 	'qa.agent.rankings': [
 		'qa.rankings',
 		'qa.teamAnalytics',
