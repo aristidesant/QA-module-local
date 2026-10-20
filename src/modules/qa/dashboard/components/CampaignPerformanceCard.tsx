@@ -3,7 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { Badge, Text } from '@mantine/core';
 import SectionCard from '~/components/SectionCard';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
-import { getScoreBandColor } from '~/modules/qa/constants/badgeColors';
+import {
+	SCORE_BAND_TONE,
+	getScoreBand,
+	isExceptionBand,
+} from '~/modules/qa/constants/badgeColors';
 import { bandsFor } from '~/modules/qa/settings/helpers';
 import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import type { ScoreBands } from '~/modules/qa/settings/types';
@@ -27,14 +31,30 @@ interface CampaignPerformanceCardProps {
 /** Only the active campaigns are shown, capped so the widget stays scannable. */
 const MAX_CAMPAIGNS = 5;
 
+/**
+ * Colour means exception: an on-target score reads as plain ink (a transparent badge keeps the
+ * columns aligned), while watch and at-risk scores keep their status hue.
+ */
 const ScoreBadge: React.FC<{ score: number; bands: ScoreBands }> = ({
 	score,
 	bands,
-}) => (
-	<Badge size='sm' color={getScoreBandColor(score, bands)} variant='light'>
-		{score}
-	</Badge>
-);
+}) => {
+	const band = getScoreBand(score, bands);
+	return isExceptionBand(band) ? (
+		<Badge size='sm' color={SCORE_BAND_TONE[band]} variant='light'>
+			{score}
+		</Badge>
+	) : (
+		<Badge
+			size='sm'
+			variant='transparent'
+			color='gray'
+			c='var(--mantine-color-text)'
+		>
+			{score}
+		</Badge>
+	);
+};
 
 /** Snapshot of every running campaign's score across QA, Compliance, Sentiment and Business. */
 export const CampaignPerformanceCard: React.FC<
@@ -113,7 +133,7 @@ export const CampaignPerformanceCard: React.FC<
 			}
 			fullHeight
 			headerActions={
-				<Badge size='lg' color='blue' variant='light'>
+				<Badge size='lg' color='gray' variant='light'>
 					{active.length}
 				</Badge>
 			}
