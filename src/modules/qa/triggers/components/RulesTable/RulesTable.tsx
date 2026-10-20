@@ -20,15 +20,42 @@ import {
 import { useTranslation } from 'react-i18next';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useMemo } from 'react';
-import type { TriggerRule, RuleKind } from '~/models/qa';
+import type { TriggerRule, RuleKind, RuleSeverity } from '~/models/qa';
 import BaseTable from '~/components/BaseTable';
 import { useDateFormatter } from '~/modules/qa/hooks/useFormatters';
-import {
-	RULE_TYPE_META,
-	SEVERITY_COLORS,
-} from '~/modules/qa/triggers/constants';
+import { RULE_TYPE_META } from '~/modules/qa/triggers/constants';
 import { describeRule, getRuleArea } from '~/modules/qa/triggers/helpers';
 import classes from './RulesTable.module.css';
+
+/**
+ * Colour means exception: only critical alerts keep a tinted pill; warnings get a dot beside
+ * plain text and info stays dimmed, so the severity column no longer shouts on every row.
+ */
+const SeverityTag = ({ severity }: { severity: RuleSeverity }) => {
+	const { t } = useTranslation('qa.triggers');
+	if (severity === 'CRITICAL') {
+		return (
+			<Badge variant='light' color='red' size='sm'>
+				{t(`severity.${severity}`)}
+			</Badge>
+		);
+	}
+	if (severity === 'WARNING') {
+		return (
+			<Group gap={6} wrap='nowrap'>
+				<span className={classes.warningDot} aria-hidden />
+				<Text size='xs' fw={500}>
+					{t(`severity.${severity}`)}
+				</Text>
+			</Group>
+		);
+	}
+	return (
+		<Text size='xs' c='dimmed'>
+			{t(`severity.${severity}`)}
+		</Text>
+	);
+};
 
 interface RulesTableProps {
 	kind: RuleKind;
@@ -66,10 +93,9 @@ export default function RulesTable({
 					return (
 						<Group gap='sm' wrap='nowrap' className={classes.nameCell}>
 							<ThemeIcon
-								variant='light'
-								color={meta.color}
+								variant='transparent'
+								color='gray'
 								size='md'
-								radius='md'
 								flex='0 0 auto'
 							>
 								<meta.icon size={16} />
@@ -93,9 +119,9 @@ export default function RulesTable({
 				cell: (info) => {
 					const type = info.getValue() as TriggerRule['type'];
 					return (
-						<Badge variant='outline' color='gray' size='sm'>
+						<Text size='xs' c='dimmed'>
 							{t(`types.${type}.label`)}
-						</Badge>
+						</Text>
 					);
 				},
 			},
@@ -107,9 +133,9 @@ export default function RulesTable({
 					const rule = info.row.original;
 					const area = getRuleArea(rule);
 					return (
-						<Badge variant='outline' color='gray' size='sm'>
+						<Text size='xs' c='dimmed'>
 							{t(`areas.${area}`)}
-						</Badge>
+						</Text>
 					);
 				},
 			},
@@ -123,11 +149,7 @@ export default function RulesTable({
 				size: 110,
 				cell: (info) => {
 					const severity = info.getValue() as TriggerRule['severity'];
-					return (
-						<Badge variant='filled' color={SEVERITY_COLORS[severity]} size='sm'>
-							{t(`severity.${severity}`)}
-						</Badge>
-					);
+					return <SeverityTag severity={severity} />;
 				},
 			});
 		}
@@ -159,7 +181,13 @@ export default function RulesTable({
 			size: 120,
 			cell: (info) => {
 				const date = info.getValue() as string | null;
-				if (!date) return <Text size='sm'>{t('rules.never')}</Text>;
+				if (!date) {
+					return (
+						<Text size='sm' c='dimmed' aria-label={t('rules.never')}>
+							—
+						</Text>
+					);
+				}
 				return <Text size='sm'>{dateFormatter.format(new Date(date))}</Text>;
 			},
 		});
@@ -181,6 +209,7 @@ export default function RulesTable({
 				return (
 					<Switch
 						size='sm'
+						color='gray'
 						checked={rule.status === 'ACTIVE'}
 						onChange={() => onToggle(rule)}
 						onClick={(e) => e.stopPropagation()}
@@ -275,6 +304,7 @@ export default function RulesTable({
 			getRowId={(rule: TriggerRule) => rule.id}
 			onRowClick={onRowClick}
 			density='compact'
+			className={classes.table}
 		/>
 	);
 }

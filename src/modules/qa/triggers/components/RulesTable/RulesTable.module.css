@@ -6,3 +6,16 @@
 .nameText {
 	min-width: 0;
 }
+
+/* Plain rows separated by the table's hairlines instead of zebra striping. */
+.table tbody tr {
+	--table-striped-color: transparent;
+}
+
+.warningDot {
+	flex-shrink: 0;
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background: var(--mantine-color-yellow-6);
+}

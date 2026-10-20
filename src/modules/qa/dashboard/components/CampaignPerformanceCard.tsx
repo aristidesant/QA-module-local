@@ -123,7 +123,7 @@ export const CampaignPerformanceCard: React.FC<
 
 	return (
 		<SectionCard
-			title={t('campaignPerformance.title', 'Campaign Performance')}
+			title={t('campaignPerformance.title', 'Campaigns Performance')}
 			description={
 				subtitle ??
 				t(
