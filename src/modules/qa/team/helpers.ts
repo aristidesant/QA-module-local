@@ -4,7 +4,9 @@ import type {
 	PerformancePoint,
 	ProfilePeriod,
 	RosterAgent,
+	RosterSupervisor,
 	TeamFilters,
+	TeamListRow,
 	TeamRole,
 	TeamTableRow,
 	Trend,
@@ -14,6 +16,8 @@ import {
 	NOW_ISO,
 	PROFILE_PERIODS,
 	SCORE_COLOR_STEPS,
+	UNASSIGNED_SUPERVISOR,
+	UNASSIGNED_SUPERVISOR_ID,
 } from './constants';
 
 export const roleFromPath = (pathname: string): TeamRole =>
@@ -190,7 +194,7 @@ export const teamKpis = (rows: TeamTableRow[]) => ({
 	declining: rows.filter((r) => r.overallTrend === 'down').length,
 });
 
-/** Summary numbers for one Teams-list card: member count, average overall score, at-risk count. */
+/** Summary numbers for one team: member count, average overall score, at-risk count. */
 export const teamCardStats = (
 	supervisorId: string,
 	profiles: Record<string, AgentProfile>
@@ -204,6 +208,53 @@ export const teamCardStats = (
 			? Math.round(rows.reduce((s, r) => s + r.overall, 0) / rows.length)
 			: 0,
 		atRisk: rows.filter(isAtRisk).length,
+	};
+};
+
+/** Rows for the Teams list: one per supervisor, plus Unassigned last when it has agents. */
+export const teamListRows = (
+	supervisors: RosterSupervisor[],
+	profiles: Record<string, AgentProfile>,
+	campaignNamesFor: (supervisorId: string) => string[]
+): TeamListRow[] => {
+	const rows = supervisors.map<TeamListRow>((s) => ({
+		id: s.id,
+		team: s.team,
+		supervisorName: s.name,
+		...teamCardStats(s.id, profiles),
+		campaignNames: campaignNamesFor(s.id),
+		unassigned: false,
+	}));
+	const unassigned = teamCardStats(UNASSIGNED_SUPERVISOR_ID, profiles);
+	if (unassigned.memberCount > 0) {
+		rows.push({
+			id: UNASSIGNED_SUPERVISOR.id,
+			team: UNASSIGNED_SUPERVISOR.team,
+			supervisorName: '',
+			memberCount: unassigned.memberCount,
+			averageOverall: 0,
+			atRisk: unassigned.atRisk,
+			campaignNames: [],
+			unassigned: true,
+		});
+	}
+	return rows;
+};
+
+/** KPI strip numbers for the Teams list, computed over every agent. */
+export const teamsListKpis = (
+	rows: TeamListRow[],
+	profiles: Record<string, AgentProfile>
+) => {
+	const agents = Object.values(profiles).map(toTableRow);
+	return {
+		teams: rows.filter((r) => !r.unassigned).length,
+		agents: agents.length,
+		averageOverall: agents.length
+			? Math.round(agents.reduce((s, r) => s + r.overall, 0) / agents.length)
+			: 0,
+		atRisk: agents.filter(isAtRisk).length,
+		unassigned: rows.find((r) => r.unassigned)?.memberCount ?? 0,
 	};
 };
 

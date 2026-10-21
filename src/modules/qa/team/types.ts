@@ -398,6 +398,19 @@ export interface TeamTableRow {
 	lastEvaluationAt: string;
 }
 
+/** One row of the QA Manager Teams list: a supervisor's team summarised. */
+export interface TeamListRow {
+	id: string;
+	team: string;
+	supervisorName: string;
+	memberCount: number;
+	averageOverall: number;
+	atRisk: number;
+	campaignNames: string[];
+	/** The Unassigned pseudo-team: no supervisor, no score. */
+	unassigned: boolean;
+}
+
 export interface TeamFilters {
 	search: string;
 	supervisorId: string | 'all'; // QA Manager only

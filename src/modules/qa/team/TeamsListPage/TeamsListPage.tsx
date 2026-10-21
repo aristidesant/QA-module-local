@@ -1,8 +1,10 @@
 import { useMemo } from 'react';
-import { SimpleGrid } from '@mantine/core';
+import { Stack, Text } from '@mantine/core';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { ContentContainer } from '~/components/ContentContainer';
+import { SectionCard } from '~/components/SectionCard';
+import BaseTable from '~/components/BaseTable/BaseTable';
 import { useTeamStore, selectSupervisors } from '~/stores/qa/teamStore';
 import { TEAM_CAMPAIGNS } from '../mockData';
 import {
@@ -10,9 +12,10 @@ import {
 	selectTriggerRules,
 } from '~/stores/qa/triggerRulesStore';
 import { withRuleBurnout } from '~/modules/qa/analytics/helpers';
-import { UNASSIGNED_SUPERVISOR, UNASSIGNED_SUPERVISOR_ID } from '../constants';
-import { teamCardStats } from '../helpers';
-import { TeamCard } from './TeamCard';
+import type { TeamListRow } from '../types';
+import { teamBasePath, teamListRows, teamsListKpis } from '../helpers';
+import { TeamsKpiStrip } from './TeamsKpiStrip';
+import { useTeamsColumns } from './useTeamsColumns';
 
 export default function TeamsListPage() {
 	const { t } = useTranslation('qa.team');
@@ -32,18 +35,23 @@ export default function TeamsListPage() {
 			),
 		[profiles, triggerRules]
 	);
-	const unassignedAgents = useMemo(
-		() =>
-			Object.values(profiles)
-				.map((p) => p.agent)
-				.filter((a) => a.supervisorId === UNASSIGNED_SUPERVISOR_ID),
-		[profiles]
-	);
 
-	const campaignNamesFor = (supervisorId: string) =>
-		(teamCampaignIds[supervisorId] ?? [])
-			.map((id) => TEAM_CAMPAIGNS.find((c) => c.id === id)?.name)
-			.filter((n): n is string => Boolean(n));
+	const rows = useMemo(() => {
+		const campaignNamesFor = (supervisorId: string) =>
+			(teamCampaignIds[supervisorId] ?? [])
+				.map((id) => TEAM_CAMPAIGNS.find((c) => c.id === id)?.name)
+				.filter((n): n is string => Boolean(n));
+		return teamListRows(
+			Object.values(supervisors),
+			liveProfiles,
+			campaignNamesFor
+		);
+	}, [supervisors, liveProfiles, teamCampaignIds]);
+	const kpis = useMemo(
+		() => teamsListKpis(rows, liveProfiles),
+		[rows, liveProfiles]
+	);
+	const columns = useTeamsColumns(t);
 
 	return (
 		<ContentContainer
@@ -51,35 +59,28 @@ export default function TeamsListPage() {
 			title={t('teams.list.title')}
 			description={t('teams.list.description')}
 		>
-			<SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }} spacing='md'>
-				{Object.values(supervisors).map((supervisor) => {
-					const stats = teamCardStats(supervisor.id, liveProfiles);
-					return (
-						<TeamCard
-							key={supervisor.id}
-							supervisor={supervisor}
-							memberCount={stats.memberCount}
-							averageOverall={stats.averageOverall}
-							atRisk={stats.atRisk}
-							campaignNames={campaignNamesFor(supervisor.id)}
-							onClick={() => navigate(`/qa/qa-manager/teams/${supervisor.id}`)}
-						/>
-					);
-				})}
-				{unassignedAgents.length > 0 && (
-					<TeamCard
-						supervisor={UNASSIGNED_SUPERVISOR}
-						memberCount={unassignedAgents.length}
-						averageOverall={0}
-						atRisk={0}
-						campaignNames={[]}
-						showScore={false}
-						onClick={() =>
-							navigate(`/qa/qa-manager/teams/${UNASSIGNED_SUPERVISOR.id}`)
+			<Stack gap='lg'>
+				<TeamsKpiStrip kpis={kpis} />
+				<SectionCard
+					headerActions={
+						<Text size='sm' c='dimmed'>
+							{t('teams.list.rowsCount', { count: kpis.teams })}
+						</Text>
+					}
+				>
+					<BaseTable<TeamListRow>
+						data={rows}
+						columns={columns}
+						getRowId={(r) => r.id}
+						initialSort={[{ id: 'averageOverall', desc: true }]}
+						density='compact'
+						emptyMessage={t('teams.list.empty')}
+						onRowClick={(r) =>
+							navigate(`${teamBasePath('qa-manager')}/${r.id}`)
 						}
 					/>
-				)}
-			</SimpleGrid>
+				</SectionCard>
+			</Stack>
 		</ContentContainer>
 	);
 }

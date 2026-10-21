@@ -46,8 +46,23 @@
 		"list": {
 			"title": "Equipos",
 			"description": "Supervisores, sus agentes y las campañas que ejecuta cada equipo.",
-			"membersCount": "{{count}} miembros",
-			"atRisk": "{{count}} en riesgo"
+			"rowsCount": "{{count}} equipos",
+			"empty": "Todavía no hay equipos.",
+			"noSupervisor": "Sin supervisor",
+			"kpi": {
+				"teams": "Equipos",
+				"agents": "Agentes",
+				"averageOverall": "Puntuación general media",
+				"atRisk": "Agentes en riesgo",
+				"unassigned": "Agentes sin asignar"
+			},
+			"columns": {
+				"team": "Equipo",
+				"members": "Miembros",
+				"averageOverall": "General media",
+				"atRisk": "En riesgo",
+				"campaigns": "Campañas"
+			}
 		},
 		"detail": {
 			"back": "Volver a equipos",

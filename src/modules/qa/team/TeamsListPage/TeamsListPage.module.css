@@ -1,6 +1,0 @@
-.clickableCard {
-	cursor: pointer;
-}
-.clickableCard:hover {
-	border-color: var(--mantine-color-blue-5);
-}

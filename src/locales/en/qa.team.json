@@ -46,8 +46,23 @@
 		"list": {
 			"title": "Teams",
 			"description": "Supervisors, their agents and the campaigns each team runs.",
-			"membersCount": "{{count}} members",
-			"atRisk": "{{count}} at risk"
+			"rowsCount": "{{count}} teams",
+			"empty": "No teams yet.",
+			"noSupervisor": "No supervisor",
+			"kpi": {
+				"teams": "Teams",
+				"agents": "Agents",
+				"averageOverall": "Average overall score",
+				"atRisk": "Agents at risk",
+				"unassigned": "Unassigned agents"
+			},
+			"columns": {
+				"team": "Team",
+				"members": "Members",
+				"averageOverall": "Avg. overall",
+				"atRisk": "At risk",
+				"campaigns": "Campaigns"
+			}
 		},
 		"detail": {
 			"back": "Back to teams",
