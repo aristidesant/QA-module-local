@@ -166,6 +166,29 @@
 		"negativeAgent": "Negative agent emotion",
 		"none": "—"
 	},
+	"sentimentSide": {
+		"agentTitle": "Your Sentiment & Emotion",
+		"customerTitle": "Customer Sentiment & Emotion",
+		"outOfFive": "/ 5.0",
+		"predominantEmotion": "Predominant emotion",
+		"negativeCalls": "Calls with negative emotion",
+		"none": "—"
+	},
+	"emotions": {
+		"ELATION": "Elation",
+		"GRATITUDE": "Gratitude",
+		"JOY": "Joy",
+		"RELIEF": "Relief",
+		"SATISFACTION": "Satisfaction",
+		"NEUTRAL": "Neutral",
+		"SURPRISE": "Surprise",
+		"FRUSTRATION": "Frustration",
+		"SADNESS": "Sadness",
+		"FEAR": "Fear",
+		"DISAPPOINTMENT": "Disappointment",
+		"ANGER": "Anger",
+		"RAGE": "Rage"
+	},
 	"status": {
 		"completed": "Completed",
 		"draft": "Draft"
@@ -212,6 +235,8 @@
 			"qa": "Score by error category",
 			"compliance": "Score by compliance area",
 			"sentiment": "Agent vs customer sentiment",
+			"agentSentiment": "Your sentiment and emotion",
+			"customerSentiment": "Customer sentiment and emotion",
 			"business": "Conversion and signals"
 		},
 		"scoped": "{{scope}} · {{measure}}",

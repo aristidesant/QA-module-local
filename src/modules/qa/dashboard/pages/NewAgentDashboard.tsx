@@ -2,12 +2,13 @@ import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
 import { useTranslation } from 'react-i18next';
 import { Stack, Title, Text, SimpleGrid } from '@mantine/core';
+import { IconHeadset, IconUser } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
 import {
 	QualityAssuranceCard,
 	ComplianceCard,
-	SentimentEmotionSplitCard,
+	SentimentSideCard,
 	OperationalCard,
 	BestWorstCallsTable,
 	CoachingLearningWidget,
@@ -42,6 +43,7 @@ import { agentContentPath } from '~/modules/qa/lms/constants';
 import { coachingPath } from '~/modules/qa/inbox/constants';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { BEST_WORST_CALLS } from '../mockData';
+import { toPlatformEmotion } from '../emotionLabels';
 import styles from '../Dashboard.module.css';
 
 const MY_CALLS_PATH = '/qa/agent/calls';
@@ -136,7 +138,7 @@ export const NewAgentDashboard: React.FC = () => {
 					</Text>
 				</div>
 
-				{/* 2. Performance Score: QA, Compliance, Sentiment & Emotion — each row opens the calls behind it */}
+				{/* 2. Performance Score: Operational, QA, Compliance, your sentiment, customer sentiment — each row opens the calls behind it */}
 				<SectionCard
 					title='Performance Score'
 					description={`Your quality assurance, compliance and sentiment results ${WINDOW_PHRASE[period]} · ${metrics.calls} calls evaluated`}
@@ -147,7 +149,7 @@ export const NewAgentDashboard: React.FC = () => {
 						/>
 					}
 				>
-					<SimpleGrid cols={{ base: 1, sm: 2, lg: 4 }} spacing='md'>
+					<SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 5 }} spacing='md'>
 						<div className={styles.gridCard}>
 							<OperationalCard
 								calls={metrics.calls}
@@ -182,27 +184,33 @@ export const NewAgentDashboard: React.FC = () => {
 							/>
 						</div>
 						<div className={styles.gridCard}>
-							<SentimentEmotionSplitCard
-								agent={{
+							<SentimentSideCard
+								title={t('sentimentSide.agentTitle')}
+								subtitle={copy.cardSubtitle('agentSentiment')}
+								icon={<IconHeadset size={20} />}
+								side={{
 									score: metrics.sentiment.agentAvg,
 									emotion: metrics.sentiment.agentEmotion,
 									negativeCount: metrics.sentiment.agentNegativeCount,
 									trend: metrics.trends?.agentSentiment,
 								}}
-								customer={{
+								emotion={toPlatformEmotion(metrics.sentiment.agentEmotion)}
+								onReviewClick={() => openIssue('negative-agent-emotion')}
+							/>
+						</div>
+						<div className={styles.gridCard}>
+							<SentimentSideCard
+								title={t('sentimentSide.customerTitle')}
+								subtitle={copy.cardSubtitle('customerSentiment')}
+								icon={<IconUser size={20} />}
+								side={{
 									score: metrics.sentiment.customerAvg,
 									emotion: metrics.sentiment.customerEmotion,
 									negativeCount: metrics.sentiment.customerNegativeCount,
 									trend: metrics.trends?.customerSentiment,
 								}}
-								subtitle={copy.cardSubtitle('sentiment')}
-								onReviewClick={(side) =>
-									openIssue(
-										side === 'agent'
-											? 'negative-agent-emotion'
-											: 'negative-customer-emotion'
-									)
-								}
+								emotion={toPlatformEmotion(metrics.sentiment.customerEmotion)}
+								onReviewClick={() => openIssue('negative-customer-emotion')}
 							/>
 						</div>
 					</SimpleGrid>

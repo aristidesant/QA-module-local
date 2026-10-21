@@ -10,6 +10,8 @@ export type DashboardMeasure =
 	| 'qa'
 	| 'compliance'
 	| 'sentiment'
+	| 'agentSentiment'
+	| 'customerSentiment'
 	| 'business';
 
 /** Page title, subtitle and "{scope} · {measure}" card subtitles, so every role words the same metric the same way. */
