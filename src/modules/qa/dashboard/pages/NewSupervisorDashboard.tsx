@@ -7,7 +7,15 @@ import {
 } from '~/modules/qa/calls/constants';
 import type { CallIssueKey } from '~/modules/qa/calls/issues';
 import { useTranslation } from 'react-i18next';
-import { Anchor, Stack, Title, Text, Grid, SimpleGrid } from '@mantine/core';
+import {
+	Anchor,
+	Group,
+	Stack,
+	Title,
+	Text,
+	Grid,
+	SimpleGrid,
+} from '@mantine/core';
 import { IconArrowRight, IconTrophy } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
 import SectionCard from '~/components/SectionCard';
@@ -21,6 +29,7 @@ import {
 	TeamBurnoutRiskCard,
 	WeekCoachingSessionsCard,
 	PerformanceScoreControls,
+	LastWeekLabel,
 } from '../components';
 import { useDashboardCopy } from '../useDashboardCopy';
 import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
@@ -202,16 +211,19 @@ export const NewSupervisorDashboard: React.FC = () => {
 								title={t('drawer.yourTeam')}
 								dense
 								headerActions={
-									<Anchor
-										component='button'
-										type='button'
-										size='sm'
-										onClick={() =>
-											navigate(rankingPath('supervisor', program.id))
-										}
-									>
-										{t('drawer.viewFullRanking')} <IconArrowRight size={14} />
-									</Anchor>
+									<Group gap='sm' wrap='nowrap'>
+										<LastWeekLabel />
+										<Anchor
+											component='button'
+											type='button'
+											size='sm'
+											onClick={() =>
+												navigate(rankingPath('supervisor', program.id))
+											}
+										>
+											{t('drawer.viewFullRanking')} <IconArrowRight size={14} />
+										</Anchor>
+									</Group>
 								}
 							/>
 						)}
@@ -221,12 +233,14 @@ export const NewSupervisorDashboard: React.FC = () => {
 							entries={burnoutRisk}
 							role='supervisor'
 							subtitle="Your team's members showing signs of burnout"
+							headerLabel={<LastWeekLabel />}
 						/>
 					</Grid.Col>
 					<Grid.Col span={{ base: 12, md: 6, lg: 5 }}>
 						<WeekCoachingSessionsCard
 							role='supervisor'
 							coachId={SUPERVISOR_PERSONA.id}
+							headerLabel={<LastWeekLabel />}
 						/>
 					</Grid.Col>
 				</Grid>

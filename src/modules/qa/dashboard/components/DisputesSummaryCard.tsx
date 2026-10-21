@@ -21,6 +21,8 @@ import styles from '../Dashboard.module.css';
 interface DisputesSummaryCardProps {
 	/** Scopes the disputes counted and where the links lead. */
 	role: InboxRole;
+	/** Rendered in the header before the manage link, e.g. the data window the card reflects. */
+	headerLabel?: React.ReactNode;
 }
 
 /** Plain-text signed count: "+2", "−1". */
@@ -30,6 +32,7 @@ const signed = (value: number) =>
 /** General view of disputes for a manager: how many are open, how many were decided this week and how, against last week. */
 export const DisputesSummaryCard: React.FC<DisputesSummaryCardProps> = ({
 	role,
+	headerLabel,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const navigate = useNavigate();
@@ -49,14 +52,17 @@ export const DisputesSummaryCard: React.FC<DisputesSummaryCardProps> = ({
 			description={t('roleDashboard.disputesSummary.description')}
 			fullHeight
 			headerActions={
-				<Button
-					variant='subtle'
-					size='xs'
-					rightSection={<IconArrowRight size={14} />}
-					onClick={() => navigate(listPath)}
-				>
-					{t('roleDashboard.disputesSummary.manage')}
-				</Button>
+				<Group gap='sm' wrap='nowrap'>
+					{headerLabel}
+					<Button
+						variant='subtle'
+						size='xs'
+						rightSection={<IconArrowRight size={14} />}
+						onClick={() => navigate(listPath)}
+					>
+						{t('roleDashboard.disputesSummary.manage')}
+					</Button>
+				</Group>
 			}
 		>
 			<Stack gap='md'>

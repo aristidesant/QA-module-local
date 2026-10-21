@@ -25,12 +25,14 @@ interface WeekCoachingSessionsCardProps {
 	role: TeamRole;
 	/** Only the sessions this coach leads are listed. */
 	coachId: string;
+	/** Rendered in the header before the count, e.g. the data window the card reflects. */
+	headerLabel?: React.ReactNode;
 }
 
 /** The coaching sessions a supervisor leads over the next 7 days: summary, total and a list by agent. */
 export const WeekCoachingSessionsCard: React.FC<
 	WeekCoachingSessionsCardProps
-> = ({ role, coachId }) => {
+> = ({ role, coachId, headerLabel }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const navigate = useNavigate();
 	const sessions = useCoachingStore(selectSessions);
@@ -89,9 +91,12 @@ export const WeekCoachingSessionsCard: React.FC<
 			title={t('coachingWeek.title')}
 			description={t('coachingWeek.description')}
 			headerActions={
-				<Badge variant='default' size='sm'>
-					{total}
-				</Badge>
+				<Group gap='sm' wrap='nowrap'>
+					{headerLabel}
+					<Badge variant='default' size='sm'>
+						{total}
+					</Badge>
+				</Group>
 			}
 		>
 			<Stack gap='md'>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { Badge, Text } from '@mantine/core';
+import { Badge, Group, Text } from '@mantine/core';
 import SectionCard from '~/components/SectionCard';
 import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable';
 import {
@@ -26,6 +26,8 @@ export interface CampaignPerformanceEntry {
 interface CampaignPerformanceCardProps {
 	entries: CampaignPerformanceEntry[];
 	subtitle?: string;
+	/** Rendered in the header before the count, e.g. the data window the card reflects. */
+	headerLabel?: React.ReactNode;
 }
 
 /** Only the active campaigns are shown, capped so the widget stays scannable. */
@@ -59,7 +61,7 @@ const ScoreBadge: React.FC<{ score: number; bands: ScoreBands }> = ({
 /** Snapshot of every running campaign's score across QA, Compliance, Sentiment and Business. */
 export const CampaignPerformanceCard: React.FC<
 	CampaignPerformanceCardProps
-> = ({ entries, subtitle }) => {
+> = ({ entries, subtitle, headerLabel }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const thresholds = useSettingsStore(selectThresholds);
 	// Campaign scores are all 0-100 scores: QA and Compliance follow their own bands, Sentiment and Business reuse the QA bands.
@@ -133,9 +135,12 @@ export const CampaignPerformanceCard: React.FC<
 			}
 			fullHeight
 			headerActions={
-				<Badge size='lg' color='gray' variant='light'>
-					{active.length}
-				</Badge>
+				<Group gap='sm' wrap='nowrap'>
+					{headerLabel}
+					<Badge size='lg' color='gray' variant='light'>
+						{active.length}
+					</Badge>
+				</Group>
 			}
 		>
 			<BaseTable<CampaignPerformanceEntry>

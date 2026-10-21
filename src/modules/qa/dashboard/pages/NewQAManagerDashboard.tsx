@@ -18,6 +18,7 @@ import {
 	CampaignPerformanceCard,
 	DisputesSummaryCard,
 	PerformanceScoreControls,
+	LastWeekLabel,
 	type CampaignPerformanceEntry,
 } from '../components';
 import { useDashboardCopy } from '../useDashboardCopy';
@@ -232,9 +233,15 @@ export const NewQAManagerDashboard: React.FC = () => {
 				</SectionCard>
 
 				<SimpleGrid cols={{ base: 1, md: 2 }} spacing='lg'>
-					<DisputesSummaryCard role='qa-manager' />
+					<DisputesSummaryCard
+						role='qa-manager'
+						headerLabel={<LastWeekLabel />}
+					/>
 
-					<CampaignPerformanceCard entries={ACTIVE_CAMPAIGNS} />
+					<CampaignPerformanceCard
+						entries={ACTIVE_CAMPAIGNS}
+						headerLabel={<LastWeekLabel />}
+					/>
 				</SimpleGrid>
 			</Stack>
 		</ContentContainer>

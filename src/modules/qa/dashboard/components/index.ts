@@ -52,6 +52,7 @@ export type {
 export { ComplianceCard, getComplianceColor } from './ComplianceCard';
 export { OperationalCard } from './OperationalCard';
 export { TeamBurnoutRiskCard } from './TeamBurnoutRiskCard';
+export { LastWeekLabel } from './LastWeekLabel';
 export { WeekCoachingSessionsCard } from './WeekCoachingSessionsCard';
 export { CampaignPerformanceCard } from './CampaignPerformanceCard';
 export type { CampaignPerformanceEntry } from './CampaignPerformanceCard';

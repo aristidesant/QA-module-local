@@ -29,6 +29,8 @@ interface TeamBurnoutRiskCardProps {
 	/** Scopes the evidence link to the right profile section. */
 	role: TeamRole;
 	subtitle?: string;
+	/** Rendered in the header before the icon, e.g. the data window the card reflects. */
+	headerLabel?: React.ReactNode;
 }
 
 /** Exceptions only: LOW reads as neutral, MEDIUM / HIGH keep the design-system status hues. */
@@ -59,6 +61,7 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 	entries,
 	role,
 	subtitle,
+	headerLabel,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const navigate = useNavigate();
@@ -87,9 +90,12 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 							{subtitle ?? 'Team members showing signs of burnout'}
 						</Text>
 					</div>
-					<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
-						<IconMoodSad2 size={20} />
-					</ThemeIcon>
+					<Group gap='sm' wrap='nowrap'>
+						{headerLabel}
+						<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
+							<IconMoodSad2 size={20} />
+						</ThemeIcon>
+					</Group>
 				</Group>
 
 				{entries.length === 0 ? (
