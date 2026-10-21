@@ -13,6 +13,7 @@ import {
 	BestWorstCallsTable,
 	CoachingLearningWidget,
 	CommitLearningModal,
+	MetricTrendModal,
 	PerformanceScoreControls,
 	type PendingLearningItem,
 } from '../components';
@@ -44,6 +45,10 @@ import { coachingPath } from '~/modules/qa/inbox/constants';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { BEST_WORST_CALLS } from '../mockData';
 import { toPlatformEmotion } from '../emotionLabels';
+import {
+	TREND_PERIOD_FOR_SCORE_PERIOD,
+	type TrendMetricKey,
+} from '../trend/constants';
 import styles from '../Dashboard.module.css';
 
 const MY_CALLS_PATH = '/qa/agent/calls';
@@ -80,6 +85,7 @@ export const NewAgentDashboard: React.FC = () => {
 	const [commitTarget, setCommitTarget] = useState<PendingLearningItem | null>(
 		null
 	);
+	const [trendMetric, setTrendMetric] = useState<TrendMetricKey | null>(null);
 
 	const lastCoachingSession = useMemo(() => {
 		const myCohortIds = cohorts
@@ -159,6 +165,7 @@ export const NewAgentDashboard: React.FC = () => {
 								subtitle={copy.cardSubtitle('operational')}
 								onNonEffectiveClick={() => openIssue('non-effective-contact')}
 								trend={metrics.trends?.effectiveContacts}
+								onTrendClick={() => setTrendMetric('operational')}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -172,6 +179,7 @@ export const NewAgentDashboard: React.FC = () => {
 								}}
 								onCategoryClick={(key) => openIssue(QA_ISSUE[key])}
 								trend={metrics.trends?.qa}
+								onTrendClick={() => setTrendMetric('qa')}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -181,6 +189,7 @@ export const NewAgentDashboard: React.FC = () => {
 								issueCounts={metrics.complianceIssueCounts}
 								onCategoryClick={(name) => openIssue(COMPLIANCE_ISSUE[name])}
 								trend={metrics.trends?.compliance}
+								onTrendClick={() => setTrendMetric('compliance')}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -196,6 +205,7 @@ export const NewAgentDashboard: React.FC = () => {
 								}}
 								emotion={toPlatformEmotion(metrics.sentiment.agentEmotion)}
 								onReviewClick={() => openIssue('negative-agent-emotion')}
+								onTrendClick={() => setTrendMetric('agentSentiment')}
 							/>
 						</div>
 						<div className={styles.gridCard}>
@@ -211,6 +221,7 @@ export const NewAgentDashboard: React.FC = () => {
 								}}
 								emotion={toPlatformEmotion(metrics.sentiment.customerEmotion)}
 								onReviewClick={() => openIssue('negative-customer-emotion')}
+								onTrendClick={() => setTrendMetric('customerSentiment')}
 							/>
 						</div>
 					</SimpleGrid>
@@ -245,6 +256,12 @@ export const NewAgentDashboard: React.FC = () => {
 				opened={commitTarget !== null}
 				onClose={() => setCommitTarget(null)}
 				onCommit={handleCommitLearning}
+			/>
+			<MetricTrendModal
+				metric={trendMetric}
+				agentId={AGENT_PERSONA_ID}
+				initialPeriod={TREND_PERIOD_FOR_SCORE_PERIOD[period]}
+				onClose={() => setTrendMetric(null)}
 			/>
 		</ContentContainer>
 	);

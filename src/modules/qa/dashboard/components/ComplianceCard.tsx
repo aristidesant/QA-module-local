@@ -16,6 +16,7 @@ import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import type { ComplianceCategory } from '../mockData';
 import DrillRow from './DrillRow';
 import { TrendIndicator } from './TrendIndicator';
+import TrendTrigger from './TrendTrigger';
 import styles from '../Dashboard.module.css';
 
 interface ComplianceCardProps {
@@ -28,6 +29,8 @@ interface ComplianceCardProps {
 	trend?: DashboardMetricTrend;
 	/** Portfolio view (Operation Manager): keeps the rows but drops progress bars, call counts and drill-down. */
 	compact?: boolean;
+	/** Opens this aspect's trend modal from the header icon. Omitted on dashboards without the trend modal. */
+	onTrendClick?: () => void;
 }
 
 /** Maps a compliance category status to its dashboard tone: neutral when compliant, amber / danger otherwise. */
@@ -64,6 +67,7 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 	onCategoryClick,
 	trend,
 	compact = false,
+	onTrendClick,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const averageScore = categories.length
@@ -103,9 +107,12 @@ export const ComplianceCard: React.FC<ComplianceCardProps> = ({
 						)}
 						{trend && <TrendIndicator trend={trend} />}
 					</div>
-					<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
-						<IconShieldCheck size={20} />
-					</ThemeIcon>
+					<Group gap={4} wrap='nowrap'>
+						{onTrendClick && <TrendTrigger onClick={onTrendClick} />}
+						<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
+							<IconShieldCheck size={20} />
+						</ThemeIcon>
+					</Group>
 				</Group>
 
 				<Group gap='xs' align='baseline'>

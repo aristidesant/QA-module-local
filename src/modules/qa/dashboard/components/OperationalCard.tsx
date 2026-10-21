@@ -13,6 +13,7 @@ import { IconChevronRight, IconPhoneCall } from '@tabler/icons-react';
 import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import DrillRow from './DrillRow';
 import { TrendIndicator } from './TrendIndicator';
+import TrendTrigger from './TrendTrigger';
 import styles from '../Dashboard.module.css';
 
 interface OperationalCardProps {
@@ -34,6 +35,8 @@ interface OperationalCardProps {
 	trend?: DashboardMetricTrend;
 	/** Portfolio view (Operation Manager): keeps the rows but drops progress bars, call counts and drill-down. */
 	compact?: boolean;
+	/** Opens this aspect's trend modal from the header icon. Omitted on dashboards without the trend modal. */
+	onTrendClick?: () => void;
 }
 
 const pct = (part: number, total: number) =>
@@ -50,6 +53,7 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 	onNonEffectiveClick,
 	trend,
 	compact = false,
+	onTrendClick,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const effectivePct = pct(effectiveContacts, calls);
@@ -80,9 +84,12 @@ export const OperationalCard: React.FC<OperationalCardProps> = ({
 						)}
 						{trend && <TrendIndicator trend={trend} />}
 					</div>
-					<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
-						<IconPhoneCall size={20} />
-					</ThemeIcon>
+					<Group gap={4} wrap='nowrap'>
+						{onTrendClick && <TrendTrigger onClick={onTrendClick} />}
+						<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
+							<IconPhoneCall size={20} />
+						</ThemeIcon>
+					</Group>
 				</Group>
 
 				<DrillRow

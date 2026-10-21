@@ -189,6 +189,36 @@
 		"ANGER": "Ira",
 		"RAGE": "Furia"
 	},
+	"metricTrend": {
+		"view": "Ver tendencia",
+		"title": "{{metric}} · Tendencia",
+		"description": "Cómo evolucionó este aspecto en el período seleccionado, frente al período anterior de igual duración",
+		"period": {
+			"1w": "1 semana",
+			"2w": "2 semanas",
+			"1m": "1 mes",
+			"3m": "3 meses",
+			"6m": "6 meses"
+		},
+		"metric": {
+			"operational": "Tasa de contacto efectivo",
+			"qa": "Puntaje de Quality Assurance",
+			"compliance": "Puntaje de cumplimiento",
+			"agentSentiment": "Tu sentimiento",
+			"customerSentiment": "Sentimiento del cliente"
+		},
+		"series": {
+			"current": "Período seleccionado",
+			"previous": "Período anterior"
+		},
+		"summary": {
+			"current": "Este período",
+			"previous": "Período anterior",
+			"delta": "Variación"
+		},
+		"empty": "No hay llamadas evaluadas en este período.",
+		"noPrevious": "—"
+	},
 	"status": {
 		"completed": "Completada",
 		"draft": "Borrador"

@@ -17,6 +17,7 @@ import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import type { SentimentSide } from './SentimentEmotionSplitCard';
 import { getSentimentBand } from './SentimentEmotionCard';
 import { TrendIndicator } from './TrendIndicator';
+import TrendTrigger from './TrendTrigger';
 import styles from '../Dashboard.module.css';
 
 interface SentimentSideCardProps {
@@ -30,6 +31,8 @@ interface SentimentSideCardProps {
 	emotion: Emotion | null;
 	/** Drill-down into the calls with a negative emotion on this side. */
 	onReviewClick?: () => void;
+	/** Opens this aspect's trend modal from the header icon. Omitted on dashboards without the trend modal. */
+	onTrendClick?: () => void;
 }
 
 /** Only the negative side keeps a hue; positive or neutral reads as plain ink. */
@@ -47,6 +50,7 @@ export const SentimentSideCard: React.FC<SentimentSideCardProps> = ({
 	side,
 	emotion,
 	onReviewClick,
+	onTrendClick,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const { cutPoints } = useSettingsStore(selectThresholds).sentiment;
@@ -89,9 +93,12 @@ export const SentimentSideCard: React.FC<SentimentSideCardProps> = ({
 							</Text>
 						)}
 					</div>
-					<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
-						{icon}
-					</ThemeIcon>
+					<Group gap={4} wrap='nowrap'>
+						{onTrendClick && <TrendTrigger onClick={onTrendClick} />}
+						<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
+							{icon}
+						</ThemeIcon>
+					</Group>
 				</Group>
 
 				<div>

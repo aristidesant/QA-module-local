@@ -20,6 +20,7 @@ import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
 import DrillRow from './DrillRow';
 import { TrendIndicator } from './TrendIndicator';
+import TrendTrigger from './TrendTrigger';
 import styles from '../Dashboard.module.css';
 
 /** QA score breakdown shape shared by every role's weekly metrics */
@@ -46,6 +47,8 @@ interface QualityAssuranceCardProps {
 	trend?: DashboardMetricTrend;
 	/** Portfolio view (Operation Manager): keeps the rows but drops progress bars, call counts and drill-down. */
 	compact?: boolean;
+	/** Opens this aspect's trend modal from the header icon. Omitted on dashboards without the trend modal. */
+	onTrendClick?: () => void;
 }
 
 /** Label of each score band, in `qa.dashboard`. */
@@ -82,6 +85,7 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 	onCategoryClick,
 	trend,
 	compact = false,
+	onTrendClick,
 }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const thresholds = useSettingsStore(selectThresholds);
@@ -123,9 +127,12 @@ export const QualityAssuranceCard: React.FC<QualityAssuranceCardProps> = ({
 						)}
 						{trend && <TrendIndicator trend={trend} />}
 					</div>
-					<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
-						<IconClipboardCheck size={20} />
-					</ThemeIcon>
+					<Group gap={4} wrap='nowrap'>
+						{onTrendClick && <TrendTrigger onClick={onTrendClick} />}
+						<ThemeIcon size='lg' variant='light' color='gray' radius='md'>
+							<IconClipboardCheck size={20} />
+						</ThemeIcon>
+					</Group>
 				</Group>
 
 				<Group gap='xs' align='baseline'>

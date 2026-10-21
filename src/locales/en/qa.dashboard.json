@@ -189,6 +189,36 @@
 		"ANGER": "Anger",
 		"RAGE": "Rage"
 	},
+	"metricTrend": {
+		"view": "View trend",
+		"title": "{{metric}} · Trend",
+		"description": "How this aspect evolved over the selected window, against the equal-length window before it",
+		"period": {
+			"1w": "1 week",
+			"2w": "2 weeks",
+			"1m": "1 month",
+			"3m": "3 months",
+			"6m": "6 months"
+		},
+		"metric": {
+			"operational": "Effective contact rate",
+			"qa": "Quality Assurance score",
+			"compliance": "Compliance score",
+			"agentSentiment": "Your sentiment",
+			"customerSentiment": "Customer sentiment"
+		},
+		"series": {
+			"current": "Selected period",
+			"previous": "Previous period"
+		},
+		"summary": {
+			"current": "This period",
+			"previous": "Previous period",
+			"delta": "Change"
+		},
+		"empty": "No evaluated calls in this window.",
+		"noPrevious": "—"
+	},
 	"status": {
 		"completed": "Completed",
 		"draft": "Draft"
