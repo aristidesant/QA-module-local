@@ -25,8 +25,8 @@ import {
 } from '~/modules/qa/burnout/constants';
 import type {
 	BurnoutScore,
+	BurnoutSignalKey,
 	BurnoutThresholds,
-	VoiceSignalKey,
 } from '~/modules/qa/burnout/types';
 import type {
 	AgentProfile,
@@ -1148,7 +1148,12 @@ export interface TeamBurnoutRiskEntry {
 	percentage: number;
 	trend: 'improving' | 'stable' | 'declining';
 	/** The active voice signal that deviates most from the agent's usual level. */
-	mainSignal: { key: VoiceSignalKey; deviationPct: number } | null;
+	mainSignal: {
+		key: BurnoutSignalKey;
+		deviationPct: number;
+		/** Set when the main signal is a streak: the days in a row. */
+		streak?: number;
+	} | null;
 	/** Days in a row with enough signals active. */
 	days: number;
 }
@@ -1170,6 +1175,7 @@ export const teamBurnoutRisk = (
 				? {
 						key: assessment.voice.primary.key,
 						deviationPct: assessment.voice.primary.deviationPct ?? 0,
+						streak: assessment.voice.primary.streak?.days,
 					}
 				: null,
 			days: assessment.voice.persistenceDays,

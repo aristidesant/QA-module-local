@@ -18,9 +18,9 @@ export const VOICE_DETERIORATION: Record<
 	'AGT-017': { acoustic: 0.7, tempo: 0.55, lexical: 0.2 },
 	// Medium risk
 	'AGT-005': { cognitive: 0.85 },
-	'AGT-007': { acoustic: 0.45 },
+	'AGT-007': { acoustic: 0.52 },
 	'AGT-010': { lexical: 0.6 },
-	'AGT-012': { tempo: 0.45 },
+	'AGT-012': { tempo: 0.28 },
 	'AGT-021': { acoustic: 0.44, cognitive: 0.44 },
 };
 

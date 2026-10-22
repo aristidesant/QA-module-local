@@ -21,6 +21,8 @@
 		"viewEvidence": "See the evidence behind this score",
 		"signalLine_one": "{{signal}} {{change}}% off their usual · {{count}} day",
 		"signalLine_other": "{{signal}} {{change}}% off their usual · {{count}} days",
+		"signalLineStreak_one": "{{signal}} · {{count}} day in a row",
+		"signalLineStreak_other": "{{signal}} · {{count}} days in a row",
 		"level": {
 			"low": "Low",
 			"medium": "Medium",

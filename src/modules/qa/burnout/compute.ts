@@ -2,13 +2,25 @@ import { TODAY } from '~/modules/qa/analytics/constants';
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import type { TeamCallMetric } from '~/modules/qa/analytics/types';
 import { useSettingsStore } from '~/stores/qa/settingsStore';
-import { VOICE_SIGNAL_BY_KEY, VOICE_SIGNAL_KEYS } from './constants';
+import {
+	CONTEXT_SIGNAL_KEYS,
+	VOICE_SIGNAL_BY_KEY,
+	VOICE_SIGNAL_KEYS,
+} from './constants';
+import {
+	isNegativeEmotionIn,
+	negativeEmotionsOf,
+} from '~/modules/qa/settings/helpers';
 import type {
+	BurnoutFamily,
 	BurnoutScore,
+	BurnoutSignalKey,
 	BurnoutSignalResult,
 	BurnoutSignalStatus,
 	BurnoutThresholds,
 	CallVoiceSignals,
+	ContextSignalConfig,
+	ContextSignalKey,
 	VoiceFamily,
 	VoiceSignalKey,
 } from './types';
@@ -165,10 +177,131 @@ const trendOf = (calls: AgentCall[], key: VoiceSignalKey) =>
 		return median_ === null ? null : Math.round(median_ * 100) / 100;
 	});
 
-const activeFamiliesOf = (signals: { family: VoiceFamily; status: string }[]) =>
+/** Voice families with an active signal. The day-based context backs them up but is not a family of its own. */
+const activeFamiliesOf = (
+	signals: { family: BurnoutFamily; status: string }[]
+): VoiceFamily[] =>
 	Array.from(
-		new Set(signals.filter((s) => s.status === 'ACTIVE').map((s) => s.family))
+		new Set(
+			signals
+				.filter((s) => s.status === 'ACTIVE' && s.family !== 'context')
+				.map((s) => s.family as VoiceFamily)
+		)
 	);
+
+const weightOf = (key: BurnoutSignalKey, settings: BurnoutThresholds) =>
+	key in settings.context
+		? settings.context[key as ContextSignalKey].weight
+		: settings.signals[key as VoiceSignalKey].weight;
+
+// ---------- context: days in a row with negative sentiment or emotion ----------
+/** A day with fewer calls than this says too little about the agent's mood. */
+const MIN_CALLS_PER_DAY = 3;
+const CONTEXT_LOOKBACK_DAYS = 60;
+
+interface DayStats {
+	/** Days before today. */
+	age: number;
+	agentSentiment: number;
+	/** % of the day's calls whose agent emotion is negative. */
+	negativeShare: number;
+	customerSentiment: number;
+}
+
+const mean = (values: number[]) =>
+	values.reduce((sum, v) => sum + v, 0) / values.length;
+
+/** One entry per working day with enough calls, newest first. */
+const dayStatsOf = (
+	calls: AgentCall[],
+	negativeEmotions: string[]
+): DayStats[] => {
+	const byAge = new Map<number, AgentCall[]>();
+	for (const c of calls)
+		if (c.age >= 0 && c.age < CONTEXT_LOOKBACK_DAYS)
+			byAge.set(c.age, [...(byAge.get(c.age) ?? []), c]);
+	return [...byAge.entries()]
+		.filter(([, day]) => day.length >= MIN_CALLS_PER_DAY)
+		.sort(([a], [b]) => a - b)
+		.map(([age, day]) => ({
+			age,
+			agentSentiment: mean(day.map((c) => c.call.agentSentiment)),
+			negativeShare:
+				(100 *
+					day.filter((c) =>
+						isNegativeEmotionIn(c.call.agentEmotion, negativeEmotions)
+					).length) /
+				day.length,
+			customerSentiment: mean(day.map((c) => c.call.customerSentiment)),
+		}));
+};
+
+/**
+ * Working days in a row, up to the latest one, on which the agent stayed negative. Days without
+ * calls are not days; days when customers were hostile are left out without breaking the streak.
+ */
+const streakOf = (
+	days: DayStats[],
+	key: ContextSignalKey,
+	config: ContextSignalConfig
+) => {
+	let streak = 0;
+	for (const day of days) {
+		if (day.customerSentiment < config.customerFloor) continue;
+		const qualifies =
+			key === 'lowSentimentDays'
+				? day.agentSentiment < config.dayLimit
+				: day.negativeShare > config.dayLimit;
+		if (!qualifies) break;
+		streak += 1;
+	}
+	return streak;
+};
+
+const evaluateContext = (
+	calls: AgentCall[],
+	settings: BurnoutThresholds,
+	negativeEmotions: string[]
+): BurnoutSignalResult[] => {
+	const days = dayStatsOf(calls, negativeEmotions);
+	return CONTEXT_SIGNAL_KEYS.filter((k) => settings.context[k].enabled).map(
+		(key) => {
+			const config = settings.context[key];
+			const streak = streakOf(days, key, config);
+			const status: BurnoutSignalStatus =
+				days.length === 0
+					? 'NO_DATA'
+					: streak >= config.minDays
+						? 'ACTIVE'
+						: streak >= Math.max(2, Math.ceil(config.minDays / 2))
+							? 'NEAR'
+							: 'OK';
+			return {
+				key,
+				family: 'context',
+				status,
+				value: days.length === 0 ? null : streak,
+				baseline: null,
+				deviationPct: null,
+				beyondThreshold: status === 'ACTIVE',
+				calls: days.length,
+				// The daily value behind each day, oldest first.
+				trend: Array.from({ length: TREND_DAYS }, (_, i) => {
+					const day = days.find((d) => d.age === TREND_DAYS - 1 - i);
+					if (!day) return null;
+					const value =
+						key === 'lowSentimentDays' ? day.agentSentiment : day.negativeShare;
+					return Math.round(value * 10) / 10;
+				}),
+				streak: {
+					days: streak,
+					minDays: config.minDays,
+					dayLimit: config.dayLimit,
+				},
+			};
+		}
+	);
+};
 
 const scoreOf = (
 	signals: Omit<BurnoutSignalResult, 'trend'>[],
@@ -178,7 +311,7 @@ const scoreOf = (
 	let total = 0;
 	let reached = 0;
 	for (const s of signals) {
-		const weight = settings.signals[s.key].weight;
+		const weight = weightOf(s.key, settings);
 		total += weight;
 		if (s.status === 'ACTIVE') reached += weight;
 		else if (s.status === 'NEAR') reached += weight * NEAR_RATIO;
@@ -195,7 +328,10 @@ const scoreOf = (
 	return Math.max(0, Math.min(100, Math.round(base * persistence + bonus)));
 };
 
-const cache = new WeakMap<BurnoutThresholds, Map<string, BurnoutScore>>();
+const cache = new WeakMap<
+	BurnoutThresholds,
+	Map<string, { emotions: string[]; result: BurnoutScore }>
+>();
 
 /**
  * Burnout score of one agent from the voice signals of their calls: each signal is read over the
@@ -211,8 +347,11 @@ export function computeBurnoutScore(
 		perAgent = new Map();
 		cache.set(settings, perAgent);
 	}
+	const emotions = negativeEmotionsOf(
+		useSettingsStore.getState().thresholds.sentiment
+	);
 	const cached = perAgent.get(agentId);
-	if (cached) return cached;
+	if (cached && cached.emotions === emotions) return cached.result;
 
 	const calls = callsOf(agentId);
 	const baselineSet = baselineCalls(calls, settings);
@@ -225,7 +364,8 @@ export function computeBurnoutScore(
 		])
 	) as Record<VoiceSignalKey, number | null>;
 
-	const now = evaluateAt(calls, baselines, settings, 0);
+	const voiceNow = evaluateAt(calls, baselines, settings, 0);
+	const now = [...voiceNow, ...evaluateContext(calls, settings, emotions)];
 	const activeCount = now.filter((s) => s.status === 'ACTIVE').length;
 	const nearCount = now.filter((s) => s.status === 'NEAR').length;
 
@@ -249,14 +389,19 @@ export function computeBurnoutScore(
 					? 'medium'
 					: 'low';
 
-	const signals: BurnoutSignalResult[] = now.map((s) => ({
-		...s,
-		trend: trendOf(calls, s.key),
-	}));
+	const signals: BurnoutSignalResult[] = now.map((s) =>
+		'trend' in s
+			? (s as BurnoutSignalResult)
+			: { ...s, trend: trendOf(calls, s.key as VoiceSignalKey) }
+	);
+	// The voice signal that drifts most; a streak leads only when no voice signal is active.
+	const active = signals.filter((s) => s.status === 'ACTIVE');
 	const primary =
-		[...signals]
-			.filter((s) => s.status === 'ACTIVE')
-			.sort((a, b) => (b.deviationPct ?? 0) - (a.deviationPct ?? 0))[0] ?? null;
+		[...active]
+			.filter((s) => s.family !== 'context')
+			.sort((a, b) => (b.deviationPct ?? 0) - (a.deviationPct ?? 0))[0] ??
+		[...active].sort((a, b) => (b.value ?? 0) - (a.value ?? 0))[0] ??
+		null;
 
 	const result: BurnoutScore = {
 		// A low level never reads like a medium one, even when the score alone would.
@@ -270,7 +415,7 @@ export function computeBurnoutScore(
 		signals,
 		primary,
 	};
-	perAgent.set(agentId, result);
+	perAgent.set(agentId, { emotions, result });
 	return result;
 }
 
@@ -283,11 +428,17 @@ export function evaluateCallVoice(
 	voice: CallVoiceSignals,
 	settings: BurnoutThresholds = useSettingsStore.getState().thresholds.burnout
 ): BurnoutSignalResult[] {
-	return computeBurnoutScore(agentId, settings).signals.map((s) => ({
-		...s,
-		...classify(s.key, voice[s.key], s.baseline, settings),
-		value: voice[s.key],
-		calls: 1,
-		trend: [],
-	}));
+	return computeBurnoutScore(agentId, settings).signals.flatMap((s) => {
+		if (s.family === 'context') return [];
+		const key = s.key as VoiceSignalKey;
+		return [
+			{
+				...s,
+				...classify(key, voice[key], s.baseline, settings),
+				value: voice[key],
+				calls: 1,
+				trend: [],
+			},
+		];
+	});
 }

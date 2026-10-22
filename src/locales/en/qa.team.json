@@ -122,7 +122,7 @@
 	},
 	"burnoutTab": {
 		"title": "Burnout risk",
-		"summary": "Voice signals: {{active}} active · {{near}} near · {{days}} d in a row",
+		"summary": "Signals: {{active}} active · {{near}} near · {{days}} d in a row",
 		"scheduleCoaching": "Schedule coaching",
 		"review": {
 			"confirm": "Confirm risk",

@@ -1,7 +1,10 @@
 import type { TriggerMetricId } from '~/models/qa';
 import type {
+	BurnoutFamily,
 	BurnoutThresholds,
 	CallVoiceSignals,
+	ContextSignalDef,
+	ContextSignalKey,
 	VoiceFamily,
 	VoiceSignalDef,
 	VoiceSignalKey,
@@ -13,6 +16,39 @@ export const VOICE_FAMILIES: VoiceFamily[] = [
 	'lexical',
 	'cognitive',
 ];
+
+/** The four voice families, then the day-based context. */
+export const BURNOUT_FAMILIES: BurnoutFamily[] = [...VOICE_FAMILIES, 'context'];
+
+/** Days in a row with negative sentiment or emotion: they back the voice signals up with a second source. */
+export const CONTEXT_SIGNALS: ContextSignalDef[] = [
+	{
+		key: 'lowSentimentDays',
+		limitUnit: '/ 5',
+		limitDecimals: 1,
+		defaultWeight: 2,
+		defaultMinDays: 4,
+		defaultDayLimit: 3,
+		defaultCustomerFloor: 2.5,
+	},
+	{
+		key: 'negativeEmotionDays',
+		limitUnit: '%',
+		limitDecimals: 0,
+		defaultWeight: 2,
+		defaultMinDays: 4,
+		defaultDayLimit: 35,
+		defaultCustomerFloor: 2.5,
+	},
+];
+
+export const CONTEXT_SIGNAL_BY_KEY = Object.fromEntries(
+	CONTEXT_SIGNALS.map((s) => [s.key, s])
+) as Record<ContextSignalKey, ContextSignalDef>;
+
+export const CONTEXT_SIGNAL_KEYS: ContextSignalKey[] = CONTEXT_SIGNALS.map(
+	(s) => s.key
+);
 
 /**
  * The signals the voice analysis reads from the agent's side of every call.
@@ -245,6 +281,18 @@ export const DEFAULT_BURNOUT_SETTINGS: BurnoutThresholds = {
 			},
 		])
 	) as BurnoutThresholds['signals'],
+	context: Object.fromEntries(
+		CONTEXT_SIGNALS.map((s) => [
+			s.key,
+			{
+				enabled: true,
+				weight: s.defaultWeight,
+				minDays: s.defaultMinDays,
+				dayLimit: s.defaultDayLimit,
+				customerFloor: s.defaultCustomerFloor,
+			},
+		])
+	) as BurnoutThresholds['context'],
 	windowDays: 14,
 	baseline: { method: 'FIRST_WEEKS', minCalls: 40 },
 	minCallsInWindow: 15,

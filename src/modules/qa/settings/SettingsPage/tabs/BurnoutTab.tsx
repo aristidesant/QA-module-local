@@ -99,6 +99,8 @@ export const BurnoutTab: React.FC = () => {
 				<BurnoutSignalsTable
 					value={draft.signals}
 					onChange={(signals) => patch({ signals })}
+					context={draft.context}
+					onContextChange={(context) => patch({ context })}
 				/>
 			</SectionCard>
 

@@ -3,13 +3,15 @@
 		"acoustic": "Voz",
 		"tempo": "Tempo",
 		"lexical": "Elección de palabras",
-		"cognitive": "Concentración"
+		"cognitive": "Concentración",
+		"context": "Ánimo reciente"
 	},
 	"familyHints": {
 		"acoustic": "Cómo suena la voz: energía, tono y voz aspirada",
 		"tempo": "El ritmo del habla, las pausas y qué tan rápido responde el agente",
 		"lexical": "Palabras negativas, indiferencia y respuestas cortas o de guion",
-		"cognitive": "Señales de niebla mental: pedir que repitan, perder el hilo"
+		"cognitive": "Señales de niebla mental: pedir que repitan, perder el hilo",
+		"context": "Días seguidos con sentimiento o emoción negativos en el agente"
 	},
 	"dimensions": {
 		"exhaustion": "Agotamiento",
@@ -87,6 +89,14 @@
 		"lostThread": {
 			"label": "Pierde el hilo",
 			"description": "Veces que el agente pregunta algo que el cliente ya respondió."
+		},
+		"lowSentimentDays": {
+			"label": "Días seguidos con sentimiento bajo",
+			"description": "Días laborables seguidos en que el sentimiento medio del agente queda por debajo del límite."
+		},
+		"negativeEmotionDays": {
+			"label": "Días seguidos con emoción negativa",
+			"description": "Días laborables seguidos con muchas llamadas en que la emoción predominante del agente es negativa."
 		}
 	},
 	"ui": {
@@ -95,6 +105,13 @@
 		"noUsual": "Aún sin base",
 		"none": "Ninguna señal de voz está activa ahora mismo.",
 		"changeHint": "Cambio frente al nivel habitual del propio agente, en el sentido que empeora",
-		"activeOf": "{{active}} de {{total}} activas"
+		"activeOf": "{{active}} de {{total}} activas",
+		"days": "{{count}} días",
+		"ofDays": "de {{count}}",
+		"streakHint": "Días seguidos necesarios para que la señal cuente como activa",
+		"streakRule": {
+			"lowSentimentDays": "Sentimiento medio por debajo de {{limit}} · se dejan fuera los días con clientes hostiles",
+			"negativeEmotionDays": "Más del {{limit}}% de llamadas con emoción negativa · se dejan fuera los días con clientes hostiles"
+		}
 	}
 }

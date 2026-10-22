@@ -28,6 +28,38 @@ export type VoiceSignalKey =
 /** What the voice analysis measures on one call, for the agent's voice only. */
 export type CallVoiceSignals = Record<VoiceSignalKey, number>;
 
+/**
+ * Signals that are not read from one call but from the days: how many working days in a row the
+ * agent's sentiment or emotion stayed negative. They are context for the voice signals.
+ */
+export type ContextSignalKey = 'lowSentimentDays' | 'negativeEmotionDays';
+
+export type BurnoutSignalKey = VoiceSignalKey | ContextSignalKey;
+export type BurnoutFamily = VoiceFamily | 'context';
+
+export interface ContextSignalDef {
+	key: ContextSignalKey;
+	/** Unit of `dayLimit`: "/ 5" for sentiment, "%" for the share of negative-emotion calls. */
+	limitUnit: string;
+	limitDecimals: number;
+	defaultWeight: number;
+	defaultMinDays: number;
+	defaultDayLimit: number;
+	defaultCustomerFloor: number;
+}
+
+export interface ContextSignalConfig {
+	enabled: boolean;
+	/** 1-5: how much an active signal adds to the score. */
+	weight: number;
+	/** Working days in a row that make the signal active. */
+	minDays: number;
+	/** A day counts when the agent's average sentiment is below this, or the share of their calls with negative emotion is above it. */
+	dayLimit: number;
+	/** Days on which customers were hostile (average customer sentiment below this) are left out, so a hard day does not count against the agent. */
+	customerFloor: number;
+}
+
 export interface VoiceSignalDef {
 	key: VoiceSignalKey;
 	family: VoiceFamily;
@@ -62,6 +94,8 @@ export type BurnoutWindowDays = 7 | 14 | 30;
 /** Configuration of the burnout detection, saved from Settings. */
 export interface BurnoutThresholds {
 	signals: Record<VoiceSignalKey, BurnoutSignalConfig>;
+	/** The streak signals: days in a row with negative sentiment or emotion. */
+	context: Record<ContextSignalKey, ContextSignalConfig>;
 	/** Days of calls each signal is aggregated over. */
 	windowDays: BurnoutWindowDays;
 	baseline: { method: BurnoutBaselineMethod; minCalls: number };
@@ -81,8 +115,8 @@ export type BurnoutSignalStatus = 'ACTIVE' | 'NEAR' | 'OK' | 'NO_DATA';
 
 /** One signal for one agent: where it stands now against their own baseline. */
 export interface BurnoutSignalResult {
-	key: VoiceSignalKey;
-	family: VoiceFamily;
+	key: BurnoutSignalKey;
+	family: BurnoutFamily;
 	status: BurnoutSignalStatus;
 	/** Median over the window; null without enough calls. */
 	value: number | null;
@@ -94,6 +128,8 @@ export interface BurnoutSignalResult {
 	calls: number;
 	/** Daily medians of the last 30 days, oldest first; null on days without calls. */
 	trend: (number | null)[];
+	/** Context signals only: the streak behind `value`, with the rule that counts a day. */
+	streak?: { days: number; minDays: number; dayLimit: number };
 }
 
 export interface BurnoutScore {

@@ -168,8 +168,8 @@ export function SentimentEmotionPanel({
 						<Text size='xs' c='dimmed'>
 							Risk score {burnoutAssessment.percentage}% ·{' '}
 							{BURNOUT_LEVEL_META[burnoutAssessment.level].band} ·{' '}
-							{burnoutAssessment.voice.activeCount} voice signals active over
-							the last {burnoutSettings.windowDays} days
+							{burnoutAssessment.voice.activeCount} signals active over the last{' '}
+							{burnoutSettings.windowDays} days
 						</Text>
 						<Text size='sm' fw={500}>
 							{offUsual} of {callSignals.length} signals in this call are off

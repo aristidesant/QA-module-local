@@ -153,12 +153,16 @@
 		"signalsTitle": "Señales de voz",
 		"signalsDescription": "Lo que el análisis de voz lee en cada llamada. Una señal está activa cuando pasa su límite o se aleja de la base del propio agente más que la desviación.",
 		"familyWeight": "Peso total {{value}}",
+		"contextNote": "Días laborables seguidos con sentimiento o emoción negativos en el agente. Los días con clientes hostiles se dejan fuera, para que un mal día no cuente contra el agente.",
 		"columns": {
 			"signal": "Señal",
 			"weight": "Peso",
 			"limit": "Límite",
 			"deviation": "Desviación",
-			"confidence": "Confianza"
+			"confidence": "Confianza",
+			"days": "Días seguidos",
+			"dayLimit": "Un día cuenta cuando",
+			"customerFloor": "Omitir si el promedio de clientes es menor que"
 		},
 		"confidence": {
 			"high": "Alta",

@@ -144,13 +144,28 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 											</Group>
 											{entry.mainSignal && (
 												<Text size='xs' c='dimmed' mb={4}>
-													{t('burnout.signalLine', {
-														signal: t(`signals.${entry.mainSignal.key}.label`, {
-															ns: 'qa.burnout',
-														}),
-														change: Math.round(entry.mainSignal.deviationPct),
-														count: entry.days,
-													})}
+													{entry.mainSignal.streak !== undefined
+														? t('burnout.signalLineStreak', {
+																signal: t(
+																	`signals.${entry.mainSignal.key}.label`,
+																	{
+																		ns: 'qa.burnout',
+																	}
+																),
+																count: entry.mainSignal.streak,
+															})
+														: t('burnout.signalLine', {
+																signal: t(
+																	`signals.${entry.mainSignal.key}.label`,
+																	{
+																		ns: 'qa.burnout',
+																	}
+																),
+																change: Math.round(
+																	entry.mainSignal.deviationPct
+																),
+																count: entry.days,
+															})}
 												</Text>
 											)}
 											<Progress

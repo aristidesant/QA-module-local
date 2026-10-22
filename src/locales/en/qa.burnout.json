@@ -3,13 +3,15 @@
 		"acoustic": "Voice",
 		"tempo": "Tempo",
 		"lexical": "Word choice",
-		"cognitive": "Focus"
+		"cognitive": "Focus",
+		"context": "Recent mood"
 	},
 	"familyHints": {
 		"acoustic": "How the voice sounds: energy, pitch and breathiness",
 		"tempo": "The pace of speech, pauses and how fast the agent answers",
 		"lexical": "Negative words, indifference and short, scripted replies",
-		"cognitive": "Signs of mental fog: asking to repeat, losing the thread"
+		"cognitive": "Signs of mental fog: asking to repeat, losing the thread",
+		"context": "Days in a row with negative sentiment or emotion in the agent"
 	},
 	"dimensions": {
 		"exhaustion": "Exhaustion",
@@ -87,6 +89,14 @@
 		"lostThread": {
 			"label": "Loses the thread",
 			"description": "Times the agent asks something the customer already answered."
+		},
+		"lowSentimentDays": {
+			"label": "Days in a row with low sentiment",
+			"description": "Consecutive working days on which the agent's average sentiment stays below the limit."
+		},
+		"negativeEmotionDays": {
+			"label": "Days in a row with negative emotion",
+			"description": "Consecutive working days with many calls where the agent's predominant emotion is negative."
 		}
 	},
 	"ui": {
@@ -95,6 +105,13 @@
 		"noUsual": "No baseline yet",
 		"none": "No voice signal is active right now.",
 		"changeHint": "Change against the agent's own usual level, in the worse direction",
-		"activeOf": "{{active}} of {{total}} active"
+		"activeOf": "{{active}} of {{total}} active",
+		"days": "{{count}} days",
+		"ofDays": "of {{count}}",
+		"streakHint": "Days in a row needed for the signal to count as active",
+		"streakRule": {
+			"lowSentimentDays": "Average sentiment below {{limit}} · hostile-customer days left out",
+			"negativeEmotionDays": "More than {{limit}}% of calls with negative emotion · hostile-customer days left out"
+		}
 	}
 }

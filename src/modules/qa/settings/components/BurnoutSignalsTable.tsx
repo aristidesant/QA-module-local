@@ -1,16 +1,24 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Badge, NumberInput, Stack, Switch, Table, Text } from '@mantine/core';
-import { VOICE_FAMILIES, VOICE_SIGNALS } from '~/modules/qa/burnout/constants';
+import {
+	CONTEXT_SIGNALS,
+	VOICE_FAMILIES,
+	VOICE_SIGNALS,
+} from '~/modules/qa/burnout/constants';
 import type {
 	BurnoutSignalConfig,
 	BurnoutThresholds,
+	ContextSignalConfig,
+	ContextSignalKey,
 	VoiceSignalKey,
 } from '~/modules/qa/burnout/types';
 
 interface BurnoutSignalsTableProps {
 	value: BurnoutThresholds['signals'];
 	onChange: (value: BurnoutThresholds['signals']) => void;
+	context: BurnoutThresholds['context'];
+	onContextChange: (value: BurnoutThresholds['context']) => void;
 }
 
 const toNumber = (value: string | number, fallback: number) =>
@@ -20,11 +28,18 @@ const toNumber = (value: string | number, fallback: number) =>
 export const BurnoutSignalsTable: React.FC<BurnoutSignalsTableProps> = ({
 	value,
 	onChange,
+	context,
+	onContextChange,
 }) => {
 	const { t } = useTranslation(['qa.settings', 'qa.burnout']);
 
 	const update = (key: VoiceSignalKey, patch: Partial<BurnoutSignalConfig>) =>
 		onChange({ ...value, [key]: { ...value[key], ...patch } });
+
+	const updateContext = (
+		key: ContextSignalKey,
+		patch: Partial<ContextSignalConfig>
+	) => onContextChange({ ...context, [key]: { ...context[key], ...patch } });
 
 	return (
 		<Stack gap='xl'>
@@ -153,6 +168,135 @@ export const BurnoutSignalsTable: React.FC<BurnoutSignalsTableProps> = ({
 					</Stack>
 				);
 			})}
+			<Stack gap='xs'>
+				<Stack gap={0}>
+					<Text fw={600}>{t('families.context', { ns: 'qa.burnout' })}</Text>
+					<Text size='xs' c='dimmed'>
+						{t('burnout.contextNote')}
+					</Text>
+				</Stack>
+				<Table verticalSpacing='xs' withRowBorders>
+					<Table.Thead>
+						<Table.Tr>
+							<Table.Th>{t('burnout.columns.signal')}</Table.Th>
+							<Table.Th w={100}>{t('burnout.columns.weight')}</Table.Th>
+							<Table.Th w={110}>{t('burnout.columns.days')}</Table.Th>
+							<Table.Th w={150}>{t('burnout.columns.dayLimit')}</Table.Th>
+							<Table.Th w={150}>{t('burnout.columns.customerFloor')}</Table.Th>
+						</Table.Tr>
+					</Table.Thead>
+					<Table.Tbody>
+						{CONTEXT_SIGNALS.map((signal) => {
+							const config = context[signal.key];
+							return (
+								<Table.Tr key={signal.key}>
+									<Table.Td>
+										<Switch
+											checked={config.enabled}
+											onChange={(e) =>
+												updateContext(signal.key, {
+													enabled: e.currentTarget.checked,
+												})
+											}
+											label={t(`signals.${signal.key}.label`, {
+												ns: 'qa.burnout',
+											})}
+											description={t(`signals.${signal.key}.description`, {
+												ns: 'qa.burnout',
+											})}
+										/>
+									</Table.Td>
+									<Table.Td>
+										<NumberInput
+											size='xs'
+											value={config.weight}
+											onChange={(v) =>
+												updateContext(signal.key, {
+													weight: toNumber(v, config.weight),
+												})
+											}
+											min={1}
+											max={5}
+											disabled={!config.enabled}
+											aria-label={t('burnout.columns.weight')}
+										/>
+									</Table.Td>
+									<Table.Td>
+										<NumberInput
+											size='xs'
+											value={config.minDays}
+											onChange={(v) =>
+												updateContext(signal.key, {
+													minDays: toNumber(v, config.minDays),
+												})
+											}
+											min={2}
+											max={20}
+											disabled={!config.enabled}
+											aria-label={t('burnout.columns.days')}
+										/>
+									</Table.Td>
+									<Table.Td>
+										<NumberInput
+											size='xs'
+											value={config.dayLimit}
+											onChange={(v) =>
+												updateContext(signal.key, {
+													dayLimit: toNumber(v, config.dayLimit),
+												})
+											}
+											min={0}
+											decimalScale={signal.limitDecimals}
+											step={signal.limitDecimals ? 0.1 : 1}
+											leftSection={
+												<Text size='xs' c='dimmed'>
+													{signal.key === 'lowSentimentDays' ? '<' : '>'}
+												</Text>
+											}
+											rightSection={
+												<Text size='xs' c='dimmed'>
+													{signal.limitUnit}
+												</Text>
+											}
+											rightSectionWidth={40}
+											disabled={!config.enabled}
+											aria-label={t('burnout.columns.dayLimit')}
+										/>
+									</Table.Td>
+									<Table.Td>
+										<NumberInput
+											size='xs'
+											value={config.customerFloor}
+											onChange={(v) =>
+												updateContext(signal.key, {
+													customerFloor: toNumber(v, config.customerFloor),
+												})
+											}
+											min={1}
+											max={5}
+											decimalScale={1}
+											step={0.1}
+											leftSection={
+												<Text size='xs' c='dimmed'>
+													{'<'}
+												</Text>
+											}
+											rightSection={
+												<Text size='xs' c='dimmed'>
+													/ 5
+												</Text>
+											}
+											rightSectionWidth={40}
+											disabled={!config.enabled}
+											aria-label={t('burnout.columns.customerFloor')}
+										/>
+									</Table.Td>
+								</Table.Tr>
+							);
+						})}
+					</Table.Tbody>
+				</Table>
+			</Stack>
 		</Stack>
 	);
 };

@@ -2,12 +2,13 @@ import { Badge, Group, Paper, Stack, Text, Tooltip } from '@mantine/core';
 import { Sparkline } from '@mantine/charts';
 import { useTranslation } from 'react-i18next';
 import {
-	VOICE_FAMILIES,
+	BURNOUT_FAMILIES,
 	VOICE_SIGNAL_BY_KEY,
 } from '~/modules/qa/burnout/constants';
 import type {
 	BurnoutSignalResult,
 	BurnoutSignalStatus,
+	VoiceSignalKey,
 } from '~/modules/qa/burnout/types';
 import styles from './BurnoutSignals.module.css';
 
@@ -39,7 +40,8 @@ export function BurnoutSignals({
 
 	const format = (signal: BurnoutSignalResult, value: number | null) => {
 		if (value === null) return '—';
-		const def = VOICE_SIGNAL_BY_KEY[signal.key];
+		if (signal.family === 'context') return t('ui.days', { count: value });
+		const def = VOICE_SIGNAL_BY_KEY[signal.key as VoiceSignalKey];
 		return `${value.toFixed(def.decimals)} ${def.unit}`;
 	};
 
@@ -61,9 +63,13 @@ export function BurnoutSignals({
 						{t(`signals.${signal.key}.label`)}
 					</Text>
 					<Text size='xs' c='dimmed'>
-						{signal.baseline === null
-							? t('ui.noUsual')
-							: t('ui.usual', { value: format(signal, signal.baseline) })}
+						{signal.streak
+							? t(`ui.streakRule.${signal.key}`, {
+									limit: signal.streak.dayLimit,
+								})
+							: signal.baseline === null
+								? t('ui.noUsual')
+								: t('ui.usual', { value: format(signal, signal.baseline) })}
 					</Text>
 				</Stack>
 				{!compact && (
@@ -86,11 +92,16 @@ export function BurnoutSignals({
 						{format(signal, signal.value)}
 					</Text>
 				</Stack>
-				<Tooltip label={t('ui.changeHint')} withArrow>
+				<Tooltip
+					label={signal.streak ? t('ui.streakHint') : t('ui.changeHint')}
+					withArrow
+				>
 					<Text size='sm' w={56} ta='right' c={active ? ALERT : 'dimmed'}>
-						{deviation === null
-							? '—'
-							: `${deviation > 0 ? '+' : ''}${deviation}%`}
+						{signal.streak
+							? t('ui.ofDays', { count: signal.streak.minDays })
+							: deviation === null
+								? '—'
+								: `${deviation > 0 ? '+' : ''}${deviation}%`}
 					</Text>
 				</Tooltip>
 				<Badge size='xs' variant='light' color={STATUS_COLOR[signal.status]}>
@@ -120,7 +131,7 @@ export function BurnoutSignals({
 
 	return (
 		<Stack gap='md'>
-			{VOICE_FAMILIES.map((family) => {
+			{BURNOUT_FAMILIES.map((family) => {
 				const inFamily = signals.filter((s) => s.family === family);
 				if (inFamily.length === 0) return null;
 				const activeCount = inFamily.filter(
