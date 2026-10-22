@@ -256,7 +256,11 @@ export default function RulesTab({
 				rule={selectedRule || null}
 				opened={selectedRuleId !== null}
 				onClose={() => setSelectedRuleId(null)}
-				onEdit={onEdit}
+				onEdit={(rule) => {
+					// Close the detail drawer first: two drawers share one z-index, so the later-mounted detail one would cover the editor.
+					setSelectedRuleId(null);
+					onEdit(rule);
+				}}
 				onDuplicate={handleDuplicate}
 				onToggle={handleToggle}
 				onDelete={handleDelete}
