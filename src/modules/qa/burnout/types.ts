@@ -96,6 +96,8 @@ export interface BurnoutThresholds {
 	signals: Record<VoiceSignalKey, BurnoutSignalConfig>;
 	/** The streak signals: days in a row with negative sentiment or emotion. */
 	context: Record<ContextSignalKey, ContextSignalConfig>;
+	/** The word lists behind the word-choice signals. */
+	lexicon: BurnoutLexicon;
 	/** Days of calls each signal is aggregated over. */
 	windowDays: BurnoutWindowDays;
 	baseline: { method: BurnoutBaselineMethod; minCalls: number };
@@ -145,4 +147,23 @@ export interface BurnoutScore {
 	signals: BurnoutSignalResult[];
 	/** The active signal that deviates most, null when none is active. */
 	primary: BurnoutSignalResult | null;
+}
+
+export type LexiconLanguage = 'es' | 'en';
+
+/** The word-choice signals that are a list of phrases to find in what the agent says. */
+export type LexiconCategory =
+	| 'negativeLanguage'
+	| 'apathyPhrases'
+	| 'empathyPhrases';
+
+/** What counts as negative, apathetic or empathetic, per language, plus what a short reply is. */
+export interface BurnoutLexicon {
+	lists: Record<LexiconCategory, Record<LexiconLanguage, string[]>>;
+	shortReplies: {
+		/** A turn of this many words or fewer is a short reply. */
+		maxWords: number;
+		/** Replies that never count as short: greetings, thanks and mandatory legal notices. */
+		exceptions: Record<LexiconLanguage, string[]>;
+	};
 }

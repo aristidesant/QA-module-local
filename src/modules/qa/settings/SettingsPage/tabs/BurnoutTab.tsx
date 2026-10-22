@@ -25,6 +25,7 @@ import { validateBurnout } from '../../helpers';
 import { useSettingsDraft } from '../../useSettingsDraft';
 import { SettingsActions } from '../../components/SettingsActions';
 import { BurnoutSignalsTable } from '../../components/BurnoutSignalsTable';
+import { BurnoutLexicon } from '../../components/BurnoutLexicon';
 import {
 	BandPreview,
 	SCORE_SEGMENT_COLORS,
@@ -101,6 +102,16 @@ export const BurnoutTab: React.FC = () => {
 					onChange={(signals) => patch({ signals })}
 					context={draft.context}
 					onContextChange={(context) => patch({ context })}
+				/>
+			</SectionCard>
+
+			<SectionCard
+				title={t('burnout.lexicon.title')}
+				description={t('burnout.lexicon.description')}
+			>
+				<BurnoutLexicon
+					value={draft.lexicon}
+					onChange={(lexicon) => patch({ lexicon })}
 				/>
 			</SectionCard>
 
