@@ -40,6 +40,68 @@
 		"sentiment": "Sentimiento y Emoción",
 		"compliance": "Compliance"
 	},
+	"moments": {
+		"title": "Momentos clave",
+		"description": "Dónde encontró la IA cada incidencia en la llamada. Confírmalos o descártalos y envía la llamada a coaching.",
+		"count_one": "{{count}} momento",
+		"count_other": "{{count}} momentos",
+		"reviewed": "{{confirmed}} confirmados · {{dismissed}} descartados",
+		"empty": "No hay momentos marcados en esta llamada.",
+		"jumpTo": "Ir a {{time}}",
+		"playFrom": "Reproducir desde aquí",
+		"flagTurn": "Marcar este momento",
+		"status": {
+			"pending": "Pendiente de revisión",
+			"confirmed": "Confirmado",
+			"dismissed": "Descartado"
+		},
+		"source": {
+			"ai": "IA",
+			"reviewer": "Revisor"
+		},
+		"confirm": "Confirmar",
+		"dismiss": "Descartar",
+		"undo": "Deshacer",
+		"dismissReason": "¿Por qué no es una incidencia?",
+		"dismissReasonPlaceholder": "p. ej. El agente hizo una pregunta de descubrimiento en 0:50.",
+		"dismissSubmit": "Descartar momento",
+		"noItem": "Momento marcado por el revisor",
+		"add": {
+			"button": "Añadir momento",
+			"title": "Marcar un momento",
+			"description": "Elige el momento de la transcripción y describe qué ocurrió.",
+			"turn": "Momento de la transcripción",
+			"item": "Ítem de QA",
+			"itemNone": "Sin ítem de QA asociado",
+			"errorType": "Tipo de error",
+			"note": "Qué ocurrió",
+			"notePlaceholder": "Describe la incidencia o la oportunidad perdida (mínimo 10 caracteres).",
+			"cancel": "Cancelar",
+			"save": "Guardar momento",
+			"success": "Momento añadido en {{time}}"
+		},
+		"coaching": {
+			"button": "Enviar a coaching",
+			"schedule": "Programar sesión de coaching",
+			"assign": "Asignar material de formación",
+			"topic": "Revisión de llamada {{callId}}",
+			"reason": "De la llamada {{callId}}: {{moments}}",
+			"talkingPoint": "{{time}} · {{item}} — \"{{quote}}\""
+		},
+		"player": {
+			"title": "Grabación de la llamada",
+			"play": "Reproducir",
+			"pause": "Pausar",
+			"marker": "{{time}} · {{item}}"
+		},
+		"transcript": {
+			"title": "Transcripción de la conversación",
+			"turns_one": "{{count}} turno",
+			"turns_other": "{{count}} turnos",
+			"agent": "Agente",
+			"customer": "Cliente"
+		}
+	},
 	"roster": {
 		"tab": "Roster",
 		"description": "Agentes que participan en esta campaña",

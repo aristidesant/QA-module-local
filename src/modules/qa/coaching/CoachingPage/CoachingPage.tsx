@@ -56,7 +56,6 @@ import {
 	COACHING_TABS,
 	coachingAgentPath,
 	coachingSessionPath,
-	coachingTierPath,
 	coachingSessionNewPath,
 	coachingRuleEditPath,
 	coachingRuleNewPath,
@@ -339,7 +338,6 @@ export default function CoachingPage() {
 						<AgentsTab
 							rows={agentRows}
 							onOpen={(agentId) => navigate(coachingAgentPath(role, agentId))}
-							onShowDetails={(tier) => navigate(coachingTierPath(role, tier))}
 						/>
 					</Tabs.Panel>
 

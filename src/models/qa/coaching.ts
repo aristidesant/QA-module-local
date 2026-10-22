@@ -173,6 +173,16 @@ export interface CoachingActionItem {
 	acknowledgedAt: string | null;
 }
 
+/** A moment of a call pinned as evidence: opens the call at that second. */
+export interface CoachingEvidenceMoment {
+	callId: string;
+	momentId: string;
+	timestamp: string;
+	seconds: number;
+	itemName: string;
+	quote: string;
+}
+
 export interface CoachingSessionRecord {
 	id: string;
 	agentId: string;
@@ -197,6 +207,8 @@ export interface CoachingSessionRecord {
 	subItem: string | null;
 	/** Call ids pinned as evidence (link `/qa/campaigns/1/calls/<id>`) */
 	evidenceCallIds: string[];
+	/** Moments inside the evidence calls, when the session was started from a call review. */
+	evidenceMoments?: CoachingEvidenceMoment[];
 	talkingPoints: string[];
 	notes: string;
 	/** Generated text of an AI_MESSAGE session; null otherwise. */

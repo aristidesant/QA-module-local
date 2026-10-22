@@ -40,6 +40,68 @@
 		"sentiment": "Sentiment & Emotion",
 		"compliance": "Compliance"
 	},
+	"moments": {
+		"title": "Key moments",
+		"description": "Where the AI found each issue in the call. Confirm or dismiss them, then send the call to coaching.",
+		"count_one": "{{count}} moment",
+		"count_other": "{{count}} moments",
+		"reviewed": "{{confirmed}} confirmed · {{dismissed}} dismissed",
+		"empty": "No moments flagged in this call.",
+		"jumpTo": "Jump to {{time}}",
+		"playFrom": "Play from here",
+		"flagTurn": "Flag this moment",
+		"status": {
+			"pending": "Pending review",
+			"confirmed": "Confirmed",
+			"dismissed": "Dismissed"
+		},
+		"source": {
+			"ai": "AI",
+			"reviewer": "Reviewer"
+		},
+		"confirm": "Confirm",
+		"dismiss": "Dismiss",
+		"undo": "Undo",
+		"dismissReason": "Why is this not an issue?",
+		"dismissReasonPlaceholder": "e.g. The agent asked a discovery question at 0:50.",
+		"dismissSubmit": "Dismiss moment",
+		"noItem": "Reviewer-flagged moment",
+		"add": {
+			"button": "Add moment",
+			"title": "Flag a moment",
+			"description": "Pick the transcript moment and describe what happened.",
+			"turn": "Transcript moment",
+			"item": "QA item",
+			"itemNone": "Not tied to a QA item",
+			"errorType": "Error type",
+			"note": "What happened",
+			"notePlaceholder": "Describe the issue or the missed opportunity (at least 10 characters).",
+			"cancel": "Cancel",
+			"save": "Save moment",
+			"success": "Moment added at {{time}}"
+		},
+		"coaching": {
+			"button": "Send to coaching",
+			"schedule": "Schedule coaching session",
+			"assign": "Assign training material",
+			"topic": "Call review {{callId}}",
+			"reason": "From call {{callId}}: {{moments}}",
+			"talkingPoint": "{{time}} · {{item}} — \"{{quote}}\""
+		},
+		"player": {
+			"title": "Call Recording",
+			"play": "Play",
+			"pause": "Pause",
+			"marker": "{{time}} · {{item}}"
+		},
+		"transcript": {
+			"title": "Conversation Transcript",
+			"turns_one": "{{count}} turn",
+			"turns_other": "{{count}} turns",
+			"agent": "Agent",
+			"customer": "Customer"
+		}
+	},
 	"roster": {
 		"tab": "Roster",
 		"description": "Agents participating in this campaign",

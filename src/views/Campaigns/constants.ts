@@ -680,6 +680,7 @@ export const mockCallEvaluationDetail: CallEvaluationDetail = {
 	callId: 'call-001',
 	fileName: 'call_001_2026-07-20.mp3',
 	agentName: 'Sarah Johnson',
+	agentId: 'AGT-001',
 	customerName: 'Mr. Doe',
 	customerId: 'CUST-001',
 	date: '2026-07-20 14:32',

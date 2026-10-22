@@ -5,11 +5,12 @@ import BaseTable, {
 	type BaseTableColumnDef,
 } from '~/components/BaseTable/BaseTable';
 import { getScoreBandColor } from '~/modules/qa/constants/badgeColors';
-import { daysUntil } from '~/modules/qa/lms/helpers';
 import type { AgentCoachingRow } from '../agentRows';
 import {
 	SCORECARD_DIMENSION_META,
 	SCORECARD_DIMENSION_ORDER,
+	TIER_META,
+	TIER_ORDER,
 	type ScorecardDimension,
 } from '../scorecard';
 import {
@@ -21,15 +22,12 @@ import { TierTenureText } from './TierTenureText';
 
 const helper = createColumnHelper<AgentCoachingRow>();
 
-/** Sessions and fired rules are counted over the weekly evaluation period. */
-const EVALUATION_PERIOD_DAYS = 7;
-
 interface AgentsTierTableProps {
 	rows: AgentCoachingRow[];
 	onOpen: (agentId: string) => void;
 }
 
-/** Every column of the Agents tab for one set of agents: scorecard, aspects, time in group, sessions and rules. */
+/** The Agents tab table: group, scorecard, aspects, time in group and pending session for every agent passed in. */
 export function AgentsTierTable({ rows, onOpen }: AgentsTierTableProps) {
 	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
 
@@ -60,14 +58,25 @@ export function AgentsTierTable({ rows, onOpen }: AgentsTierTableProps) {
 				</Text>
 			),
 		}) as BaseTableColumnDef<AgentCoachingRow>,
-		helper.accessor('team', {
-			header: t('agents.columns.team'),
-			cell: (info) => (
-				<Text size='sm' c='dimmed'>
-					{info.getValue()}
-				</Text>
-			),
-		}) as BaseTableColumnDef<AgentCoachingRow>,
+		helper.accessor(
+			(r) => (r.tier ? TIER_ORDER.indexOf(r.tier) : TIER_ORDER.length),
+			{
+				id: 'tier',
+				header: t('agents.columns.tier'),
+				cell: (info) => {
+					const tier = info.row.original.tier;
+					return tier ? (
+						<Badge size='xs' variant='light' color={TIER_META[tier].color}>
+							{t(TIER_META[tier].labelKey)}
+						</Badge>
+					) : (
+						<Badge size='xs' variant='light' color='gray'>
+							{t('agents.tiers.noData.title')}
+						</Badge>
+					);
+				},
+			}
+		) as BaseTableColumnDef<AgentCoachingRow>,
 		helper.accessor((r) => r.scorecard?.score ?? -1, {
 			id: 'scorecard',
 			header: t('agents.columns.scorecard'),
@@ -109,61 +118,6 @@ export function AgentsTierTable({ rows, onOpen }: AgentsTierTableProps) {
 				<ScorecardTrendBadge trend={info.row.original.trend} size='xs' />
 			),
 		}) as BaseTableColumnDef<AgentCoachingRow>,
-		helper.display({
-			id: 'sessions',
-			header: t('agents.columns.sessions'),
-			cell: (info) => (
-				<Text size='sm'>
-					{
-						info.row.original.sessionDates.filter(
-							(d) =>
-								daysUntil(d) >= -EVALUATION_PERIOD_DAYS && daysUntil(d) <= 0
-						).length
-					}
-				</Text>
-			),
-		}) as BaseTableColumnDef<AgentCoachingRow>,
-		helper.accessor('pending', {
-			header: t('agents.columns.pending'),
-			cell: (info) => (
-				<Text size='sm' c={info.getValue() > 0 ? 'yellow.7' : undefined}>
-					{info.getValue()}
-				</Text>
-			),
-		}) as BaseTableColumnDef<AgentCoachingRow>,
-		helper.accessor('overdue', {
-			header: t('agents.columns.overdue'),
-			cell: (info) => (
-				<Text
-					size='sm'
-					c={info.getValue() > 0 ? 'red' : undefined}
-					fw={info.getValue() > 0 ? 600 : 400}
-				>
-					{info.getValue()}
-				</Text>
-			),
-		}) as BaseTableColumnDef<AgentCoachingRow>,
-		helper.display({
-			id: 'triggeredRules',
-			header: t('agents.columns.triggeredRules'),
-			cell: (info) => {
-				// Distinct rules that fired for the agent inside the evaluation period.
-				const count = new Set(
-					info.row.original.ruleEvents
-						.filter(
-							(e) =>
-								daysUntil(e.date) >= -EVALUATION_PERIOD_DAYS &&
-								daysUntil(e.date) <= 0
-						)
-						.map((e) => e.ruleId)
-				).size;
-				return (
-					<Text size='sm' c={count === 0 ? 'dimmed' : undefined}>
-						{count}
-					</Text>
-				);
-			},
-		}) as BaseTableColumnDef<AgentCoachingRow>,
 		helper.accessor('pendingSession', {
 			header: t('agents.columns.pendingSession'),
 			cell: (info) =>
@@ -186,6 +140,9 @@ export function AgentsTierTable({ rows, onOpen }: AgentsTierTableProps) {
 			getRowId={(r) => r.id}
 			initialSort={[{ id: 'scorecard', desc: true }]}
 			density='compact'
+			enablePagination
+			pageSize={12}
+			showPaginationControls
 			emptyMessage={t('agents.empty')}
 			onRowClick={(r) => onOpen(r.id)}
 		/>

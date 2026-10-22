@@ -21,7 +21,6 @@ import type {
 	CoachingSuggestedAction,
 } from '~/models/qa';
 import type { TeamRole } from '~/modules/qa/team/types';
-import type { PerformanceTier } from './scorecard';
 
 export type CoachingTab = 'agents' | 'rules' | 'sessions' | 'impact';
 
@@ -149,10 +148,16 @@ export const MAX_RULE_CONDITIONS = 5;
 export const coachingBasePath = (role: TeamRole) =>
 	role === 'qa-manager' ? '/qa/qa-manager/coaching' : '/qa/supervisor/coaching';
 
-/** Presets travel as query params: `agent`, `cohort`, `type`, `topic`. */
+/** Presets travel as query params: `agent`, `cohort`, `type`, `topic`, `call` (a call id pinned as evidence). */
 export const coachingSessionNewPath = (
 	role: TeamRole,
-	preset: { agent?: string; cohort?: string; type?: string } = {}
+	preset: {
+		agent?: string;
+		cohort?: string;
+		type?: string;
+		topic?: string;
+		call?: string;
+	} = {}
 ) => {
 	const params = new URLSearchParams(
 		Object.entries(preset).filter(([, v]) => v) as [string, string][]
@@ -175,25 +180,3 @@ export const coachingRuleEditPath = (role: TeamRole, ruleId: string) =>
 
 export const coachingAgentPath = (role: TeamRole, agentId: string) =>
 	`${coachingBasePath(role)}/agents/${agentId}`;
-
-/** A performance group on the Agents tab, or the agents with no scorecard this week. */
-export type CoachingTierKey = PerformanceTier | 'NO_DATA';
-
-const TIER_KEYS: CoachingTierKey[] = [
-	'EXCELLENT',
-	'GOOD',
-	'NEEDS_IMPROVEMENT',
-	'CRITICAL',
-	'NO_DATA',
-];
-
-/** The isolated page with the full table of one performance group. */
-export const coachingTierPath = (role: TeamRole, tier: CoachingTierKey) =>
-	`${coachingBasePath(role)}/tiers/${tier.toLowerCase().replace(/_/g, '-')}`;
-
-export const tierFromParam = (
-	param: string | undefined
-): CoachingTierKey | null => {
-	const key = (param ?? '').toUpperCase().replace(/-/g, '_');
-	return TIER_KEYS.find((k) => k === key) ?? null;
-};

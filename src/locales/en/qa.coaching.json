@@ -84,6 +84,7 @@
 		"description": "Every agent in your scope with their coaching state.",
 		"filters": {
 			"search": "Search agent",
+			"tier": "Group",
 			"team": "Team",
 			"area": "Weakest aspect",
 			"pendingSession": "Pending session",
@@ -104,6 +105,7 @@
 		"columns": {
 			"agent": "Agent",
 			"team": "Team",
+			"tier": "Group",
 			"weakest": "Weakest aspect",
 			"pending": "Awaiting",
 			"overdue": "Overdue",
@@ -160,10 +162,6 @@
 			"tooltipLine": "{{label}}: {{value}} · weight {{weight}}%"
 		},
 		"tiers": {
-			"showDetails": "Show details",
-			"emptyGroup": "No agents in this group this week.",
-			"more": "+{{count}} more in the details page",
-			"description": "Scorecard {{range}}",
 			"rangeFrom": "{{from}}–{{to}}",
 			"rangeBelow": "Below {{below}}",
 			"EXCELLENT": {
@@ -179,8 +177,7 @@
 				"label": "Critical"
 			},
 			"noData": {
-				"title": "No scorecard this week",
-				"description": "Agents without evaluated calls in the last 7 days."
+				"title": "No scorecard this week"
 			}
 		},
 		"summary": {
@@ -590,6 +587,7 @@
 			"evidence": "Evidence calls",
 			"evidenceSelect": "Select calls",
 			"evidenceEmpty": "No evidence calls selected yet",
+			"evidenceMoments": "Moments from the call",
 			"evidenceModal": {
 				"title": "Select evidence calls",
 				"period": "Period",
@@ -684,6 +682,9 @@
 			"aiMessage": "Automated message",
 			"openProfile": "Open agent profile",
 			"noEvidence": "No evidence calls pinned.",
+			"openMoment": "Open call at {{time}}",
+			"momentsPinned_one": "{{count}} moment pinned",
+			"momentsPinned_other": "{{count}} moments pinned",
 			"noPoints": "No talking points yet.",
 			"noItems": "No notes yet."
 		},

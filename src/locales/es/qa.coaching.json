@@ -84,6 +84,7 @@
 		"description": "Todos los agentes de tu alcance con su estado de coaching.",
 		"filters": {
 			"search": "Buscar agente",
+			"tier": "Grupo",
 			"team": "Equipo",
 			"area": "Aspecto más débil",
 			"pendingSession": "Sesión pendiente",
@@ -104,6 +105,7 @@
 		"columns": {
 			"agent": "Agente",
 			"team": "Equipo",
+			"tier": "Grupo",
 			"weakest": "Aspecto más débil",
 			"pending": "Esperando",
 			"overdue": "Vencidos",
@@ -160,10 +162,6 @@
 			"tooltipLine": "{{label}}: {{value}} · peso {{weight}}%"
 		},
 		"tiers": {
-			"showDetails": "Ver detalle",
-			"emptyGroup": "Ningún agente está en este grupo esta semana.",
-			"more": "+{{count}} más en la página de detalle",
-			"description": "Scorecard {{range}}",
 			"rangeFrom": "{{from}}–{{to}}",
 			"rangeBelow": "Menos de {{below}}",
 			"EXCELLENT": {
@@ -179,8 +177,7 @@
 				"label": "Crítico"
 			},
 			"noData": {
-				"title": "Sin scorecard esta semana",
-				"description": "Agentes sin llamadas evaluadas en los últimos 7 días."
+				"title": "Sin scorecard esta semana"
 			}
 		},
 		"summary": {
@@ -590,6 +587,7 @@
 			"evidence": "Llamadas de evidencia",
 			"evidenceSelect": "Seleccionar llamadas",
 			"evidenceEmpty": "Todavía no hay llamadas de evidencia",
+			"evidenceMoments": "Momentos de la llamada",
 			"evidenceModal": {
 				"title": "Seleccionar llamadas de evidencia",
 				"period": "Período",
@@ -684,6 +682,9 @@
 			"aiMessage": "Mensaje automático",
 			"openProfile": "Abrir perfil del agente",
 			"noEvidence": "No hay llamadas de evidencia.",
+			"openMoment": "Abrir llamada en {{time}}",
+			"momentsPinned_one": "{{count}} momento fijado",
+			"momentsPinned_other": "{{count}} momentos fijados",
 			"noPoints": "Todavía no hay puntos a tratar.",
 			"noItems": "Todavía no hay notas."
 		},

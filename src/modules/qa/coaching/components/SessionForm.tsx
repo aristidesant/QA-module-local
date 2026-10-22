@@ -25,6 +25,7 @@ import { EvidenceCallsModal } from './EvidenceCallsModal';
 import { SessionPlaceFields } from './SessionPlaceFields';
 import type {
 	CoachingCohort,
+	CoachingEvidenceMoment,
 	CoachingSessionModality,
 	CoachingSessionType,
 	EvaluationArea,
@@ -51,6 +52,10 @@ export interface SessionPreset {
 	type?: CoachingSessionType;
 	linkedAssignmentIds?: string[];
 	topic?: string;
+	/** Call pinned as evidence, with the moments that motivated the session. */
+	evidenceCallIds?: string[];
+	evidenceMoments?: CoachingEvidenceMoment[];
+	talkingPoints?: string[];
 }
 
 interface SessionFormProps {
@@ -143,11 +148,11 @@ export function SessionForm({
 			topic: preset?.topic ?? '',
 			area: preset?.area ?? null,
 			subItem: null,
-			evidenceCallIds: [],
+			evidenceCallIds: preset?.evidenceCallIds ?? [],
 			notes: '',
 			linkedAssignmentIds: preset?.linkedAssignmentIds ?? [],
 		});
-		setTalkingPoints([]);
+		setTalkingPoints(preset?.talkingPoints ?? []);
 		setPointDraft('');
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [preset]);
@@ -245,6 +250,9 @@ export function SessionForm({
 				area: null,
 				subItem: null,
 				evidenceCallIds: form.values.evidenceCallIds,
+				evidenceMoments: (preset?.evidenceMoments ?? []).filter((m) =>
+					form.values.evidenceCallIds.includes(m.callId)
+				),
 				talkingPoints,
 				notes: form.values.notes,
 				linkedAssignmentIds: form.values.linkedAssignmentIds,
@@ -449,6 +457,22 @@ export function SessionForm({
 									);
 								})}
 							</Group>
+						)}
+						{(preset?.evidenceMoments ?? []).filter((m) =>
+							form.values.evidenceCallIds.includes(m.callId)
+						).length > 0 && (
+							<Stack gap={4}>
+								<Text size='xs' fw={500}>
+									{t('sessions.editor.evidenceMoments')}
+								</Text>
+								{(preset?.evidenceMoments ?? [])
+									.filter((m) => form.values.evidenceCallIds.includes(m.callId))
+									.map((m) => (
+										<Text key={m.momentId} size='xs' c='dimmed'>
+											• {m.timestamp} · {m.itemName}
+										</Text>
+									))}
+							</Stack>
 						)}
 					</Stack>
 

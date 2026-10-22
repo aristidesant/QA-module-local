@@ -12,6 +12,11 @@ import {
 } from '~/stores/qa/lmsStore';
 import { managerPersona, managerScopeAgents } from '~/modules/qa/lms/helpers';
 import { roleFromPath } from '~/modules/qa/team/helpers';
+import {
+	selectMoments,
+	useCallMomentsStore,
+} from '~/stores/qa/callMomentsStore';
+import { coachableMoments } from '~/views/Campaigns/components/call-evaluation/callMoments';
 import { coachingBasePath, SESSION_TYPES } from '../constants';
 import { SessionForm, type SessionPreset } from '../components/SessionForm';
 
@@ -21,7 +26,7 @@ import { SessionForm, type SessionPreset } from '../components/SessionForm';
  * `type` and `topic` query params.
  */
 export default function CoachingSessionPage() {
-	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
+	const { t } = useTranslation(['qa.coaching', 'qa.lms', 'qa.calls']);
 	const location = useLocation();
 	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
@@ -53,6 +58,34 @@ export default function CoachingSessionPage() {
 	const cohort = searchParams.get('cohort');
 	const type = searchParams.get('type');
 	const topic = searchParams.get('topic');
+	const callParam = searchParams.get('call');
+	const allMoments = useCallMomentsStore(selectMoments);
+	// A call sent from its review pins the call and its non-dismissed moments.
+	const callPreset = useMemo<Partial<SessionPreset>>(() => {
+		if (!callParam) return {};
+		const moments = coachableMoments(
+			allMoments.filter((m) => m.callId === callParam)
+		);
+		return {
+			evidenceCallIds: [callParam],
+			evidenceMoments: moments.map((m) => ({
+				callId: m.callId,
+				momentId: m.id,
+				timestamp: m.timestamp,
+				seconds: m.seconds,
+				itemName: m.itemName,
+				quote: m.quote,
+			})),
+			talkingPoints: moments.map((m) =>
+				t('moments.coaching.talkingPoint', {
+					ns: 'qa.calls',
+					time: m.timestamp,
+					item: m.itemName,
+					quote: m.quote,
+				})
+			),
+		};
+	}, [callParam, allMoments, t]);
 	// Stable identity: the form resets itself whenever the preset changes.
 	const preset = useMemo<SessionPreset>(
 		() => ({
@@ -62,8 +95,9 @@ export default function CoachingSessionPage() {
 				? (type as CoachingSessionType)
 				: undefined,
 			topic: topic ?? undefined,
+			...callPreset,
 		}),
-		[agent, cohort, type, topic]
+		[agent, cohort, type, topic, callPreset]
 	);
 
 	const backToSessions = () =>

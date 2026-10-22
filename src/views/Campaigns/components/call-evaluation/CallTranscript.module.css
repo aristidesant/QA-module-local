@@ -1,0 +1,14 @@
+.turn {
+	border-left: 3px solid transparent;
+	background: var(--mantine-color-gray-light);
+	transition: border-color 120ms ease;
+}
+
+.turn[data-speaker='agent'] {
+	background: var(--mantine-color-blue-light);
+}
+
+.turn[data-active] {
+	border-left-color: var(--mantine-primary-color-filled);
+	box-shadow: inset 0 0 0 1px var(--mantine-primary-color-light-hover);
+}

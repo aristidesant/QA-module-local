@@ -181,9 +181,6 @@ const CoachingRulePage = React.lazy(
 const CoachingAgentPage = React.lazy(
 	() => import('./modules/qa/coaching/CoachingAgentPage')
 );
-const CoachingTierPage = React.lazy(
-	() => import('./modules/qa/coaching/CoachingTierPage')
-);
 const CoachingSessionDetailPage = React.lazy(
 	() => import('./modules/qa/coaching/CoachingSessionDetailPage')
 );
@@ -1429,17 +1426,6 @@ const router = createBrowserRouter([
 										),
 									},
 									{
-										path: 'qa-manager/coaching/tiers/:tier',
-										id: 'qa.qa-manager.coaching.tier',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<CoachingTierPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
 										path: 'qa-manager/coaching/sessions/:sessionId',
 										id: 'qa.qa-manager.coaching.session',
 										element: (
@@ -1534,17 +1520,6 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<CoachingAgentPage />
-												</Suspense>
-											</I18nNamespaceLoader>
-										),
-									},
-									{
-										path: 'supervisor/coaching/tiers/:tier',
-										id: 'qa.supervisor.coaching.tier',
-										element: (
-											<I18nNamespaceLoader>
-												<Suspense fallback={<SuspenseFallback />}>
-													<CoachingTierPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

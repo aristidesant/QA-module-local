@@ -1,0 +1,13 @@
+.card {
+	background: var(--mantine-color-gray-light);
+	scroll-margin-top: 96px;
+}
+
+.card[data-status='dismissed'] {
+	opacity: 0.6;
+}
+
+.card[data-active] {
+	border-color: var(--mantine-primary-color-filled);
+	box-shadow: 0 0 0 1px var(--mantine-primary-color-filled);
+}

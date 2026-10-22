@@ -155,6 +155,28 @@ export function AgentSessionDetailDrawer({
 										</Badge>
 									))}
 								</Group>
+								{(session.evidenceMoments ?? []).length > 0 && (
+									<Stack gap={4} mt='xs'>
+										{(session.evidenceMoments ?? []).map((m) => (
+											<Group key={m.momentId} gap='xs' wrap='nowrap'>
+												<Badge
+													size='xs'
+													variant='light'
+													leftSection={<IconClock size={10} />}
+													className={pointerStyles.pointer}
+													onClick={() =>
+														navigate(
+															`/qa/campaigns/2/calls/${m.callId}?t=${m.seconds}`
+														)
+													}
+												>
+													{m.timestamp}
+												</Badge>
+												<Text size='xs'>{m.itemName}</Text>
+											</Group>
+										))}
+									</Stack>
+								)}
 							</SectionCard>
 						)}
 

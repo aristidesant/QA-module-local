@@ -6,6 +6,7 @@ import type {
 	CoachingBatchDecision,
 	CoachingBrief,
 	CoachingCohort,
+	CoachingEvidenceMoment,
 	CoachingRule,
 	CoachingSessionRecord,
 	CoachingWeeklyBatch,
@@ -59,6 +60,7 @@ export interface ScheduleSessionInput {
 	area: CoachingSessionRecord['area'];
 	subItem: string | null;
 	evidenceCallIds: string[];
+	evidenceMoments?: CoachingEvidenceMoment[];
 	talkingPoints: string[];
 	notes: string;
 	aiMessage?: string | null;
@@ -453,6 +455,7 @@ export const useCoachingStore = create<CoachingState>((set, get) => ({
 			area: input.area,
 			subItem: input.subItem,
 			evidenceCallIds: input.evidenceCallIds,
+			evidenceMoments: input.evidenceMoments ?? [],
 			talkingPoints: input.talkingPoints,
 			notes: input.notes,
 			aiMessage: input.aiMessage ?? null,

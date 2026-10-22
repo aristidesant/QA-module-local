@@ -167,6 +167,32 @@ export interface Evidence {
 	quote: string;
 }
 
+// ---------- Call moments (QA findings anchored to the call) ----------
+
+export type CallMomentSource = 'ai' | 'reviewer';
+export type CallMomentStatus = 'pending' | 'confirmed' | 'dismissed';
+
+/** A QA finding pinned to the transcript turn where it happens. */
+export interface CallMoment {
+	id: string;
+	callId: string;
+	/** QA item the moment supports; null when the reviewer flagged a moment with no item. */
+	itemId: string | null;
+	/** Display name: the QA item name, or a generic label for reviewer-flagged moments. */
+	itemName: string;
+	errorType: QAErrorTypeCode;
+	turnId: string;
+	/** m:ss, same format as `TranscriptTurn.timestamp`. */
+	timestamp: string;
+	seconds: number;
+	speaker: Speaker;
+	quote: string;
+	source: CallMomentSource;
+	status: CallMomentStatus;
+	/** Dismiss reason or reviewer note. */
+	note: string;
+}
+
 // ---------- QA (COPC error types) ----------
 
 export type QAErrorTypeCode = 'ECN' | 'ENC' | 'ECC' | 'ECUF';
@@ -380,6 +406,8 @@ export interface CallEvaluationDetail {
 	callId: string;
 	fileName: string;
 	agentName: string;
+	/** Roster id of the agent, used to pre-fill coaching flows. */
+	agentId: string;
 	customerName: string;
 	customerId: string;
 	date: string;

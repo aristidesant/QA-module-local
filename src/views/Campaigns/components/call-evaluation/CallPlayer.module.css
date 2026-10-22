@@ -1,0 +1,68 @@
+.timeline {
+	position: relative;
+	flex: 1;
+	padding-top: 14px;
+}
+
+.markerRail {
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	height: 12px;
+}
+
+.marker {
+	position: absolute;
+	top: 0;
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	transform: translateX(-50%);
+	border: 2px solid var(--mantine-color-body);
+	background: var(--mantine-color-yellow-6);
+	cursor: pointer;
+}
+
+.marker[data-status='confirmed'] {
+	background: var(--mantine-color-red-6);
+}
+
+.marker[data-status='dismissed'] {
+	background: var(--mantine-color-gray-5);
+	opacity: 0.6;
+}
+
+.marker[data-active] {
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: 1px;
+}
+
+.marker:focus-visible {
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: 2px;
+}
+
+.time {
+	white-space: nowrap;
+}
+
+.controls {
+	padding: 16px;
+	border-radius: 8px;
+	background: var(--mantine-color-gray-light);
+}
+
+.volumeTrack {
+	flex: 1;
+	height: 4px;
+	border-radius: 2px;
+	background: var(--mantine-color-default-border);
+}
+
+.volumeFill {
+	width: 70%;
+	height: 100%;
+	border-radius: 2px;
+	background: var(--mantine-primary-color-filled);
+}

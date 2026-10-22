@@ -376,28 +376,67 @@ export default function CoachingSessionDetailPage() {
 									<Stack gap='xs'>
 										{session.evidenceCallIds.map((callId) => {
 											const aspects = aspectsByCall.get(callId) ?? [];
+											const callMoments = (
+												session.evidenceMoments ?? []
+											).filter((m) => m.callId === callId);
 											return (
-												<Group key={callId} gap='sm' wrap='nowrap'>
-													<Badge
-														size='sm'
-														variant='outline'
-														color='gray'
-														leftSection={<IconPhone size={12} />}
-														className={pointerStyles.pointer}
-														onClick={() => openCall(callId)}
-													>
-														{callId}
-													</Badge>
-													{aspects.length > 0 && (
-														<Text size='xs' c='dimmed'>
-															{aspects
-																.map((issue) =>
-																	t(`issues.${issue}`, { ns: 'qa.calls' })
-																)
-																.join(' · ')}
-														</Text>
-													)}
-												</Group>
+												<Stack key={callId} gap={4}>
+													<Group gap='sm' wrap='nowrap'>
+														<Badge
+															size='sm'
+															variant='outline'
+															color='gray'
+															leftSection={<IconPhone size={12} />}
+															className={pointerStyles.pointer}
+															onClick={() => openCall(callId)}
+														>
+															{callId}
+														</Badge>
+														{aspects.length > 0 && (
+															<Text size='xs' c='dimmed'>
+																{aspects
+																	.map((issue) =>
+																		t(`issues.${issue}`, { ns: 'qa.calls' })
+																	)
+																	.join(' · ')}
+															</Text>
+														)}
+													</Group>
+													{callMoments.map((m) => (
+														<Group
+															key={m.momentId}
+															gap='xs'
+															wrap='nowrap'
+															pl='md'
+														>
+															<Badge
+																size='xs'
+																variant='light'
+																leftSection={<IconClock size={10} />}
+																className={pointerStyles.pointer}
+																title={t('sessions.detail.openMoment', {
+																	time: m.timestamp,
+																})}
+																onClick={() =>
+																	navigate(
+																		`/qa/campaigns/1/calls/${callId}?t=${m.seconds}`
+																	)
+																}
+															>
+																{m.timestamp}
+															</Badge>
+															<Text size='xs'>{m.itemName}</Text>
+															<Text
+																size='xs'
+																c='dimmed'
+																lineClamp={1}
+																fs='italic'
+															>
+																"{m.quote}"
+															</Text>
+														</Group>
+													))}
+												</Stack>
 											);
 										})}
 									</Stack>
