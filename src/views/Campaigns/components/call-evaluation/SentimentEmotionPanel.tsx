@@ -22,9 +22,15 @@ import {
 } from '@tabler/icons-react';
 import { SectionCard } from '~/components/SectionCard';
 import { EMOTION_LABELS, SENTIMENT_CATEGORIES } from '../../constants';
-import { SCORE_BAND_COLOR } from '~/modules/qa/constants/badgeColors';
 import type { BurnoutLevel, CallSentimentEvaluation } from '../../types';
-import { formatDuration, getScoreColor } from './scoreColor';
+import { formatDuration } from './scoreColor';
+import {
+	ALERT,
+	NEUTRAL,
+	flagTone,
+	scoreTone,
+	sentimentCategoryTone,
+} from './tone';
 import { EvidenceQuote } from './EvidenceQuote';
 
 interface SentimentEmotionPanelProps {
@@ -33,14 +39,14 @@ interface SentimentEmotionPanelProps {
 	showBurnout?: boolean;
 }
 
-/** Same green / amber / red scale as the score bands. */
+/** Neutral unless the risk is high; red is the only hue on the page. */
 const BURNOUT_LEVEL_META: Record<
 	BurnoutLevel,
 	{ label: string; color: string }
 > = {
-	low: { label: 'Low risk', color: SCORE_BAND_COLOR.good },
-	medium: { label: 'Medium risk', color: SCORE_BAND_COLOR.warning },
-	high: { label: 'High risk', color: SCORE_BAND_COLOR.critical },
+	low: { label: 'Low risk', color: NEUTRAL },
+	medium: { label: 'Medium risk', color: NEUTRAL },
+	high: { label: 'High risk', color: ALERT },
 };
 
 export function SentimentEmotionPanel({
@@ -64,7 +70,7 @@ export function SentimentEmotionPanel({
 						size={48}
 						radius='md'
 						variant='light'
-						color={categoryMeta.color}
+						color={sentimentCategoryTone(data.overallCategory)}
 					>
 						<Icon size={28} />
 					</ThemeIcon>
@@ -133,10 +139,7 @@ export function SentimentEmotionPanel({
 												{signal.note}
 											</Text>
 										</Stack>
-										<Badge
-											variant='light'
-											color={signal.detected ? 'yellow' : 'gray'}
-										>
+										<Badge {...flagTone(signal.detected)}>
 											{signal.detected ? 'Detected' : 'Not detected'}
 										</Badge>
 									</Group>
@@ -171,9 +174,9 @@ export function SentimentEmotionPanel({
 									Start
 								</Text>
 								<Badge
-									color={
-										SENTIMENT_CATEGORIES[sentiment.recovery.startCategory].color
-									}
+									color={sentimentCategoryTone(
+										sentiment.recovery.startCategory
+									)}
 									variant='light'
 									mb={4}
 								>
@@ -194,10 +197,9 @@ export function SentimentEmotionPanel({
 									Lowest at {sentiment.recovery.lowestAt}
 								</Text>
 								<Badge
-									color={
-										SENTIMENT_CATEGORIES[sentiment.recovery.lowestCategory]
-											.color
-									}
+									color={sentimentCategoryTone(
+										sentiment.recovery.lowestCategory
+									)}
 									variant='light'
 									mb={4}
 								>
@@ -223,9 +225,7 @@ export function SentimentEmotionPanel({
 									End
 								</Text>
 								<Badge
-									color={
-										SENTIMENT_CATEGORIES[sentiment.recovery.endCategory].color
-									}
+									color={sentimentCategoryTone(sentiment.recovery.endCategory)}
 									variant='light'
 									mb={4}
 								>
@@ -238,8 +238,8 @@ export function SentimentEmotionPanel({
 						{/* Recovery stats */}
 						<Group gap='xs' mt='sm' wrap='wrap'>
 							<Badge
-								color={sentiment.recovery.recovered ? 'green' : 'red'}
-								variant='filled'
+								color={sentiment.recovery.recovered ? 'gray' : 'red'}
+								variant='light'
 								leftSection={
 									sentiment.recovery.recovered ? (
 										<IconTrendingUp size={12} />
@@ -254,12 +254,7 @@ export function SentimentEmotionPanel({
 								Recovery time{' '}
 								{formatDuration(sentiment.recovery.recoveryTimeSeconds)}
 							</Badge>
-							<Badge
-								variant='light'
-								color={
-									sentiment.recovery.improvementDelta >= 0 ? 'green' : 'red'
-								}
-							>
+							<Badge {...flagTone(sentiment.recovery.improvementDelta < 0)}>
 								{sentiment.recovery.improvementDelta >= 0 ? '+' : ''}
 								{sentiment.recovery.improvementDelta.toFixed(1)} pts
 							</Badge>
@@ -314,7 +309,7 @@ export function SentimentEmotionPanel({
 								</Text>
 								<Progress
 									value={value}
-									color={getScoreColor(value)}
+									color={scoreTone(value)}
 									size='sm'
 									mt={4}
 								/>
@@ -337,17 +332,19 @@ export function SentimentEmotionPanel({
 				<Progress.Root size='xl' mb='md'>
 					<Progress.Section
 						value={sentiment.speech.talkTimeRatio.agent}
-						color='blue'
+						color='gray.7'
 					>
-						<Progress.Label c='blue'>
+						{' '}
+						<Progress.Label c='white'>
 							Agent {sentiment.speech.talkTimeRatio.agent}%
 						</Progress.Label>
 					</Progress.Section>
 					<Progress.Section
 						value={sentiment.speech.talkTimeRatio.customer}
-						color='gray'
+						color='gray.3'
 					>
-						<Progress.Label c='gray'>
+						{' '}
+						<Progress.Label c='dark'>
 							Customer {sentiment.speech.talkTimeRatio.customer}%
 						</Progress.Label>
 					</Progress.Section>

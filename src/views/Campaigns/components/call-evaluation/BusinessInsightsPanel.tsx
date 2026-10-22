@@ -39,30 +39,22 @@ export function BusinessInsightsPanel({
 			{/* Summary */}
 			<SectionCard padding='lg'>
 				<Group gap='xl' align='center' wrap='nowrap'>
-					<ThemeIcon
-						size={56}
-						radius='md'
-						variant='light'
-						color={business.outcome.converted ? 'green' : 'yellow'}
-					>
+					<ThemeIcon size={56} radius='md' variant='light' color='gray'>
 						<IconTargetArrow size={30} />
 					</ThemeIcon>
 					<Stack gap={2} style={{ flex: 1 }}>
 						<Text fw={600}>Call outcome</Text>
 						<Group gap='xs' wrap='wrap'>
-							<Badge
-								variant='filled'
-								color={business.outcome.converted ? 'green' : 'yellow'}
-							>
+							<Badge variant='light' color='gray'>
 								{business.outcome.converted ? 'Converted' : 'Not converted'}
 							</Badge>
-							<Badge variant='light' color='blue'>
+							<Badge variant='light' color='gray'>
 								{detectedCount} of {totalCount} signals detected
 							</Badge>
 							{business.outcome.followUpRecommended && (
 								<Badge
 									variant='light'
-									color='blue'
+									color='gray'
 									leftSection={<IconCalendarEvent size={12} />}
 								>
 									Follow-up recommended
@@ -108,10 +100,8 @@ export function BusinessInsightsPanel({
 													radius='xl'
 													variant={signal.detected ? 'filled' : 'light'}
 													color={
-														signal.detected
-															? meta.tone === 'risk'
-																? 'yellow'
-																: 'green'
+														signal.detected && meta.tone === 'risk'
+															? 'red'
 															: 'gray'
 													}
 												>
@@ -127,7 +117,7 @@ export function BusinessInsightsPanel({
 												<Badge
 													size='xs'
 													variant='outline'
-													color={meta.tone === 'risk' ? 'yellow' : 'green'}
+													color={meta.tone === 'risk' ? 'red' : 'gray'}
 												>
 													{meta.tone === 'risk' ? 'Risk' : 'Opportunity'}
 												</Badge>
@@ -147,8 +137,8 @@ export function BusinessInsightsPanel({
 											)}
 										</Stack>
 										<Badge
-											variant='light'
-											color={signal.detected ? 'blue' : 'gray'}
+											color='gray'
+											variant={signal.detected ? 'light' : 'outline'}
 										>
 											{signal.detected ? 'Detected' : 'Not detected'}
 										</Badge>

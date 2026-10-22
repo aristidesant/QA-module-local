@@ -57,10 +57,21 @@ export const buildAiMoments = (call: CallEvaluationDetail): CallMoment[] =>
 		})
 	);
 
+/** Red is the only hue: a confirmed moment is the thing the reviewer acts on. */
 export const MOMENT_STATUS_COLOR: Record<CallMomentStatus, string> = {
-	pending: 'yellow',
+	pending: 'gray',
 	confirmed: 'red',
 	dismissed: 'gray',
+};
+
+/** Pending moments are outlined, so status reads without hue. */
+export const MOMENT_STATUS_VARIANT: Record<
+	CallMomentStatus,
+	'outline' | 'light'
+> = {
+	pending: 'outline',
+	confirmed: 'light',
+	dismissed: 'light',
 };
 
 /** Moments worth coaching on: everything the reviewer did not dismiss, in call order. */

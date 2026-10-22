@@ -30,9 +30,9 @@ import type {
 	CallMomentStatus,
 	CallQAEvaluation,
 } from '../../types';
-import { getScoreColor } from './scoreColor';
+import { flagTone, scoreTone } from './tone';
 import { EvidenceQuote } from './EvidenceQuote';
-import { MOMENT_STATUS_COLOR } from './callMoments';
+import { MOMENT_STATUS_COLOR, MOMENT_STATUS_VARIANT } from './callMoments';
 import { MomentCard } from './MomentCard';
 
 interface QAEvaluationPanelProps {
@@ -96,24 +96,11 @@ export function QAEvaluationPanel({
 	}, [activeMomentId]);
 
 	const statusIconMap = {
-		good: (
-			<IconCircleCheck
-				size={16}
-				style={{ color: 'var(--mantine-color-green-6)' }}
-			/>
-		),
+		good: <IconCircleCheck size={16} color='var(--mantine-color-dimmed)' />,
 		warning: (
-			<IconAlertTriangle
-				size={16}
-				style={{ color: 'var(--mantine-color-yellow-6)' }}
-			/>
+			<IconAlertTriangle size={16} color='var(--mantine-color-dimmed)' />
 		),
-		critical: (
-			<IconAlertOctagon
-				size={16}
-				style={{ color: 'var(--mantine-color-red-6)' }}
-			/>
-		),
+		critical: <IconAlertOctagon size={16} color='var(--mantine-color-red-6)' />,
 	};
 
 	return (
@@ -126,7 +113,7 @@ export function QAEvaluationPanel({
 							sections={[
 								{
 									value: qa.overallScore,
-									color: getScoreColor(qa.overallScore),
+									color: scoreTone(qa.overallScore),
 								},
 							]}
 							label={
@@ -142,13 +129,13 @@ export function QAEvaluationPanel({
 					<Stack gap={4} style={{ flex: 1 }}>
 						<Text fw={600}>QA Score</Text>
 						<Group gap='xs' wrap='wrap'>
-							<Badge color={qa.passed ? 'green' : 'red'} variant='filled'>
+							<Badge {...flagTone(!qa.passed)}>
 								{qa.passed ? 'Passed' : 'Failed'}
 							</Badge>
 							<Badge variant='light' color='gray'>
 								Threshold {qa.passThreshold}%
 							</Badge>
-							<Badge variant='light' color={qa.autoFailCount ? 'red' : 'green'}>
+							<Badge {...flagTone(qa.autoFailCount > 0)}>
 								{qa.autoFailCount} auto-fails
 							</Badge>
 						</Group>
@@ -195,8 +182,16 @@ export function QAEvaluationPanel({
 											key={m.id}
 											size='lg'
 											tt='none'
-											variant={m.id === activeMomentId ? 'filled' : 'light'}
-											color={MOMENT_STATUS_COLOR[m.status]}
+											variant={
+												m.id === activeMomentId
+													? 'filled'
+													: MOMENT_STATUS_VARIANT[m.status]
+											}
+											color={
+												m.id === activeMomentId
+													? 'gray'
+													: MOMENT_STATUS_COLOR[m.status]
+											}
 											leftSection={<IconPlayerPlay size={12} />}
 											className={pointerStyles.pointer}
 											onClick={() => onJump(m)}
@@ -255,7 +250,7 @@ export function QAEvaluationPanel({
 								</Text>
 								<Progress
 									value={errorType.score}
-									color={getScoreColor(errorType.score)}
+									color={scoreTone(errorType.score)}
 									size='sm'
 									mt='xs'
 								/>
@@ -295,7 +290,7 @@ export function QAEvaluationPanel({
 											<Text size='sm' c='dimmed'>
 												{aspect.score}/{aspect.maxScore} pts
 											</Text>
-											<Badge color={getScoreColor(pct)} variant='light'>
+											<Badge color={scoreTone(pct)} variant='light'>
 												{pct}%
 											</Badge>
 										</Group>
@@ -339,14 +334,10 @@ export function QAEvaluationPanel({
 															</Stack>
 															<Box ta='right'>
 																<Badge
-																	variant='filled'
-																	color={
-																		item.answer === 'yes'
-																			? 'green'
-																			: item.answer === 'no'
-																				? 'red'
-																				: 'gray'
+																	variant={
+																		item.answer === 'no' ? 'light' : 'outline'
 																	}
+																	color={item.answer === 'no' ? 'red' : 'gray'}
 																>
 																	{item.answer === 'yes'
 																		? 'Yes'

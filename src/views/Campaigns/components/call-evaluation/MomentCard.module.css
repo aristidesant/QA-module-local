@@ -8,6 +8,10 @@
 }
 
 .card[data-active] {
-	border-color: var(--mantine-primary-color-filled);
-	box-shadow: 0 0 0 1px var(--mantine-primary-color-filled);
+	border-color: light-dark(
+		var(--mantine-color-gray-7),
+		var(--mantine-color-gray-4)
+	);
+	box-shadow: 0 0 0 1px
+		light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
 }

@@ -65,7 +65,7 @@ const PLAYBACK_TICK_MS = 250;
 /** Shared style for a clickable breadcrumb Anchor, matching the pre-existing anchors in this file. */
 const breadcrumbLinkStyle = {
 	cursor: 'pointer',
-	color: 'var(--mantine-color-blue-6)',
+	color: 'var(--mantine-color-dimmed)',
 };
 
 function renderBreadcrumbLink(key: string, label: string, onClick: () => void) {
@@ -257,6 +257,8 @@ export default function ConversationEvaluations() {
 						{call.fileName} · {call.agentName} ·{' '}
 						<Anchor
 							size='sm'
+							c='dimmed'
+							underline='always'
 							onClick={() =>
 								navigate(`/qa/supervisor/customers/${call.customerId}`)
 							}
@@ -282,19 +284,16 @@ export default function ConversationEvaluations() {
 									const isSelected = selectedTab === meta.key;
 									const Icon = meta.icon;
 									const badge = (
-										<Badge
-											variant={isSelected ? 'white' : 'light'}
-											color={isSelected ? undefined : 'gray'}
-											size='sm'
-										>
+										<Badge variant='light' color='gray' size='sm'>
 											{getTabBadge()}
 										</Badge>
 									);
 									return (
 										<Button
 											key={meta.key}
-											variant={isSelected ? 'filled' : 'light'}
-											color={isSelected ? 'green' : 'gray'}
+											variant={isSelected ? 'default' : 'subtle'}
+											color='gray'
+											fw={isSelected ? 600 : 500}
 											onClick={() => setSelectedTab(meta.key)}
 											leftSection={<Icon size={18} />}
 											rightSection={badge}
@@ -308,7 +307,7 @@ export default function ConversationEvaluations() {
 								<Menu position='bottom-end' withinPortal>
 									<Menu.Target>
 										<Button
-											variant='light'
+											variant='default'
 											leftSection={<IconSchool size={16} />}
 											rightSection={<IconChevronDown size={14} />}
 										>
@@ -338,8 +337,7 @@ export default function ConversationEvaluations() {
 									withArrow
 								>
 									<Button
-										variant='light'
-										color='red'
+										variant='default'
 										leftSection={<IconFlag size={16} />}
 										disabled={alreadyDisputed}
 										onClick={() => setDisputeOpen(true)}

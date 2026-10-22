@@ -20,7 +20,7 @@ import type {
 	CallComplianceEvaluation,
 	ComplianceItemStatus,
 } from '../../types';
-import { getScoreColor } from './scoreColor';
+import { flagTone, scoreTone } from './tone';
 import { EvidenceQuote } from './EvidenceQuote';
 
 interface CompliancePanelProps {
@@ -32,34 +32,19 @@ const statusMeta: Record<
 	{ color: string; label: string; icon: ReactNode }
 > = {
 	compliant: {
-		color: 'green',
+		color: 'gray',
 		label: 'Compliant',
-		icon: (
-			<IconCircleCheck
-				size={16}
-				style={{ color: 'var(--mantine-color-green-6)' }}
-			/>
-		),
+		icon: <IconCircleCheck size={16} color='var(--mantine-color-dimmed)' />,
 	},
 	warning: {
-		color: 'yellow',
+		color: 'gray',
 		label: 'Warning',
-		icon: (
-			<IconAlertTriangle
-				size={16}
-				style={{ color: 'var(--mantine-color-yellow-6)' }}
-			/>
-		),
+		icon: <IconAlertTriangle size={16} color='var(--mantine-color-dimmed)' />,
 	},
 	violation: {
 		color: 'red',
 		label: 'Violation',
-		icon: (
-			<IconAlertOctagon
-				size={16}
-				style={{ color: 'var(--mantine-color-red-6)' }}
-			/>
-		),
+		icon: <IconAlertOctagon size={16} color='var(--mantine-color-red-6)' />,
 	},
 };
 
@@ -74,7 +59,7 @@ export function CompliancePanel({ compliance }: CompliancePanelProps) {
 							sections={[
 								{
 									value: compliance.overallScore,
-									color: getScoreColor(compliance.overallScore),
+									color: scoreTone(compliance.overallScore),
 								},
 							]}
 							label={
@@ -91,21 +76,15 @@ export function CompliancePanel({ compliance }: CompliancePanelProps) {
 						<Text fw={600}>Compliance Score</Text>
 						<Group gap='xs' wrap='wrap'>
 							<Badge
-								variant='filled'
+								variant='light'
 								color={statusMeta[compliance.status].color}
 							>
 								{statusMeta[compliance.status].label}
 							</Badge>
-							<Badge
-								variant='light'
-								color={compliance.violationCount ? 'red' : 'gray'}
-							>
+							<Badge {...flagTone(compliance.violationCount > 0)}>
 								{compliance.violationCount} violations
 							</Badge>
-							<Badge
-								variant='light'
-								color={compliance.warningCount ? 'yellow' : 'gray'}
-							>
+							<Badge variant='light' color='gray'>
 								{compliance.warningCount} warnings
 							</Badge>
 						</Group>
@@ -129,18 +108,14 @@ export function CompliancePanel({ compliance }: CompliancePanelProps) {
 							description={areaMeta.description}
 							icon={IconShieldCheck}
 							headerActions={
-								<Badge
-									color={getScoreColor(area.score)}
-									variant='light'
-									size='lg'
-								>
+								<Badge color={scoreTone(area.score)} variant='light' size='lg'>
 									{area.score}%
 								</Badge>
 							}
 						>
 							<Progress
 								value={area.score}
-								color={getScoreColor(area.score)}
+								color={scoreTone(area.score)}
 								size='sm'
 								mb='sm'
 							/>
@@ -174,7 +149,14 @@ export function CompliancePanel({ compliance }: CompliancePanelProps) {
 														)}
 													</Stack>
 													<Group gap='xs'>
-														<Badge variant='light' color={itemStatus.color}>
+														<Badge
+															variant={
+																item.status === 'violation'
+																	? 'light'
+																	: 'outline'
+															}
+															color={itemStatus.color}
+														>
 															{itemStatus.label}
 														</Badge>
 														<Text size='sm' fw={600}>

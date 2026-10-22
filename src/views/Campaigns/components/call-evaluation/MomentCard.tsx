@@ -13,11 +13,12 @@ import {
 	IconCheck,
 	IconClock,
 	IconPlayerPlay,
+	IconTrash,
 	IconX,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { CallMoment, CallMomentStatus } from '../../types';
-import { MOMENT_STATUS_COLOR } from './callMoments';
+import { MOMENT_STATUS_COLOR, MOMENT_STATUS_VARIANT } from './callMoments';
 import styles from './MomentCard.module.css';
 
 const MIN_DISMISS_REASON = 5;
@@ -63,11 +64,7 @@ export function MomentCard({
 		>
 			<Group justify='space-between' gap='xs' wrap='wrap' mb='xs'>
 				<Group gap='xs'>
-					<Badge
-						size='xs'
-						variant='light'
-						color={moment.speaker === 'agent' ? 'blue' : 'gray'}
-					>
+					<Badge size='xs' variant='outline' color='gray'>
 						{moment.speaker === 'agent'
 							? t('moments.transcript.agent')
 							: t('moments.transcript.customer')}
@@ -84,7 +81,7 @@ export function MomentCard({
 				</Group>
 				<Badge
 					size='xs'
-					variant='light'
+					variant={MOMENT_STATUS_VARIANT[moment.status]}
 					color={MOMENT_STATUS_COLOR[moment.status]}
 				>
 					{t(`moments.status.${moment.status}`)}
@@ -120,7 +117,7 @@ export function MomentCard({
 						<Button
 							size='xs'
 							variant='subtle'
-							color='green'
+							color='gray'
 							leftSection={<IconCheck size={12} />}
 							onClick={() => onSetStatus(moment.id, 'confirmed')}
 						>
@@ -185,7 +182,8 @@ export function MomentCard({
 					<Button
 						size='xs'
 						variant='subtle'
-						color='red'
+						color='gray'
+						leftSection={<IconTrash size={12} />}
 						onClick={() => onRemove(moment.id)}
 					>
 						{t('moments.undo')}

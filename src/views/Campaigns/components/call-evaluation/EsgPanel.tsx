@@ -16,7 +16,7 @@ import type { ReactNode } from 'react';
 import { SectionCard } from '~/components/SectionCard';
 import { ESG_PILLARS, ESG_PILLAR_ORDER } from '../../constants';
 import type { CallEsgEvaluation, ComplianceItemStatus } from '../../types';
-import { getScoreColor } from './scoreColor';
+import { flagTone, scoreTone } from './tone';
 import { EvidenceQuote } from './EvidenceQuote';
 
 interface EsgPanelProps {
@@ -28,14 +28,14 @@ const statusMeta: Record<
 	{ color: string; label: string; icon: ReactNode }
 > = {
 	compliant: {
-		color: 'green',
+		color: 'gray',
 		label: 'Compliant',
-		icon: <IconCircleCheck size={16} color='var(--mantine-color-green-6)' />,
+		icon: <IconCircleCheck size={16} color='var(--mantine-color-dimmed)' />,
 	},
 	warning: {
-		color: 'yellow',
+		color: 'gray',
 		label: 'Warning',
-		icon: <IconAlertTriangle size={16} color='var(--mantine-color-yellow-6)' />,
+		icon: <IconAlertTriangle size={16} color='var(--mantine-color-dimmed)' />,
 	},
 	violation: {
 		color: 'red',
@@ -55,7 +55,7 @@ export function EsgPanel({ esg }: EsgPanelProps) {
 							sections={[
 								{
 									value: esg.overallScore,
-									color: getScoreColor(esg.overallScore),
+									color: scoreTone(esg.overallScore),
 								},
 							]}
 							label={
@@ -71,19 +71,13 @@ export function EsgPanel({ esg }: EsgPanelProps) {
 					<Stack gap={4} flex={1}>
 						<Text fw={600}>ESG Score</Text>
 						<Group gap='xs' wrap='wrap'>
-							<Badge variant='filled' color={statusMeta[esg.status].color}>
+							<Badge variant='light' color={statusMeta[esg.status].color}>
 								{statusMeta[esg.status].label}
 							</Badge>
-							<Badge
-								variant='light'
-								color={esg.violationCount ? 'red' : 'gray'}
-							>
+							<Badge {...flagTone(esg.violationCount > 0)}>
 								{esg.violationCount} violations
 							</Badge>
-							<Badge
-								variant='light'
-								color={esg.warningCount ? 'yellow' : 'gray'}
-							>
+							<Badge variant='light' color='gray'>
 								{esg.warningCount} warnings
 							</Badge>
 						</Group>
@@ -108,7 +102,7 @@ export function EsgPanel({ esg }: EsgPanelProps) {
 							icon={meta.icon}
 							headerActions={
 								<Badge
-									color={getScoreColor(pillar.score)}
+									color={scoreTone(pillar.score)}
 									variant='light'
 									size='lg'
 								>
@@ -118,7 +112,7 @@ export function EsgPanel({ esg }: EsgPanelProps) {
 						>
 							<Progress
 								value={pillar.score}
-								color={getScoreColor(pillar.score)}
+								color={scoreTone(pillar.score)}
 								size='sm'
 								mb='sm'
 							/>
@@ -152,7 +146,14 @@ export function EsgPanel({ esg }: EsgPanelProps) {
 														)}
 													</Stack>
 													<Group gap='xs'>
-														<Badge variant='light' color={itemStatus.color}>
+														<Badge
+															variant={
+																item.status === 'violation'
+																	? 'light'
+																	: 'outline'
+															}
+															color={itemStatus.color}
+														>
 															{itemStatus.label}
 														</Badge>
 														<Text size='sm' fw={600}>

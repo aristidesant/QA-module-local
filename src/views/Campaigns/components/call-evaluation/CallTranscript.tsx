@@ -20,7 +20,11 @@ import {
 import { useTranslation } from 'react-i18next';
 import pointerStyles from '~/modules/qa/lms/components/Cards.module.css';
 import type { CallMoment, TranscriptTurn } from '../../types';
-import { MOMENT_STATUS_COLOR, turnSeconds } from './callMoments';
+import {
+	MOMENT_STATUS_COLOR,
+	MOMENT_STATUS_VARIANT,
+	turnSeconds,
+} from './callMoments';
 import styles from './CallTranscript.module.css';
 
 interface CallTranscriptProps {
@@ -119,8 +123,16 @@ export function CallTranscript({
 												<Badge
 													key={m.id}
 													size='xs'
-													variant={m.id === activeMomentId ? 'filled' : 'light'}
-													color={MOMENT_STATUS_COLOR[m.status]}
+													variant={
+														m.id === activeMomentId
+															? 'filled'
+															: MOMENT_STATUS_VARIANT[m.status]
+													}
+													color={
+														m.id === activeMomentId
+															? 'gray'
+															: MOMENT_STATUS_COLOR[m.status]
+													}
 													className={pointerStyles.pointer}
 													onClick={() => onMomentClick(m)}
 												>
