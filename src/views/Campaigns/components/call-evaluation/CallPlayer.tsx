@@ -15,7 +15,8 @@ import {
 	IconVolume2,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import type { CallMoment } from '../../types';
+import type { TimelineAnchor } from '../../types';
+import { groupBySecond } from './anchors';
 import { formatDuration } from './scoreColor';
 import styles from './CallPlayer.module.css';
 
@@ -25,21 +26,21 @@ interface CallPlayerProps {
 	isPlaying: boolean;
 	onTogglePlay: () => void;
 	onSeek: (seconds: number) => void;
-	moments: CallMoment[];
-	activeMomentId: string | null;
-	onMomentClick: (moment: CallMoment) => void;
+	anchors: TimelineAnchor[];
+	activeAnchorId: string | null;
+	onAnchorClick: (anchor: TimelineAnchor) => void;
 }
 
-/** Simulated recording player: a playhead, and one marker per QA moment on the timeline. */
+/** Simulated recording player: a playhead, and one marker per anchored moment of the open tab on the timeline. */
 export function CallPlayer({
 	durationSeconds,
 	currentTime,
 	isPlaying,
 	onTogglePlay,
 	onSeek,
-	moments,
-	activeMomentId,
-	onMomentClick,
+	anchors,
+	activeAnchorId,
+	onAnchorClick,
 }: CallPlayerProps) {
 	const { t } = useTranslation('qa.calls');
 
@@ -72,28 +73,59 @@ export function CallPlayer({
 					</Button>
 					<div className={styles.timeline}>
 						<div className={styles.markerRail}>
-							{moments.map((m) => (
-								<Tooltip
-									key={m.id}
-									label={t('moments.player.marker', {
-										time: m.timestamp,
-										item: m.itemName,
-									})}
-									withArrow
-								>
-									<UnstyledButton
-										className={styles.marker}
-										data-status={m.status}
-										data-active={m.id === activeMomentId || undefined}
-										// inline-style-allow: the marker position is a runtime percentage of the call length
-										style={{
-											left: `${(m.seconds / durationSeconds) * 100}%`,
-										}}
-										onClick={() => onMomentClick(m)}
-										aria-label={t('moments.jumpTo', { time: m.timestamp })}
-									/>
-								</Tooltip>
-							))}
+							{groupBySecond(anchors).map(({ seconds, items }) => {
+								const first = items[0];
+								const needsAttention = items.some(
+									(a) => a.status === 'alert' || a.status === 'confirmed'
+								);
+								const allDismissed = items.every(
+									(a) => a.status === 'dismissed'
+								);
+								return (
+									<Tooltip
+										key={seconds}
+										label={
+											<Stack gap={2}>
+												{items.map((a) => (
+													<Text key={a.id} size='xs'>
+														{t('moments.player.marker', {
+															time: a.timestamp,
+															item: a.label,
+														})}
+													</Text>
+												))}
+											</Stack>
+										}
+										withArrow
+									>
+										<UnstyledButton
+											className={styles.marker}
+											data-status={
+												needsAttention
+													? 'alert'
+													: allDismissed
+														? 'dismissed'
+														: 'pending'
+											}
+											data-active={
+												items.some((a) => a.id === activeAnchorId) || undefined
+											}
+											// inline-style-allow: the marker position is a runtime percentage of the call length
+											style={{
+												left: `${(seconds / durationSeconds) * 100}%`,
+											}}
+											onClick={() =>
+												onAnchorClick(
+													items.find((a) => a.id === activeAnchorId) ?? first
+												)
+											}
+											aria-label={t('moments.jumpTo', {
+												time: first.timestamp,
+											})}
+										/>
+									</Tooltip>
+								);
+							})}
 						</div>
 						<Slider
 							size='sm'

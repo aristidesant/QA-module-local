@@ -19,34 +19,50 @@ import {
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import pointerStyles from '~/modules/qa/lms/components/Cards.module.css';
-import type { CallMoment, TranscriptTurn } from '../../types';
-import {
-	MOMENT_STATUS_COLOR,
-	MOMENT_STATUS_VARIANT,
-	turnSeconds,
-} from './callMoments';
+import type { TimelineAnchor, TranscriptTurn } from '../../types';
+import { turnSeconds } from './callMoments';
+import { ANCHOR_STATUS_COLOR, ANCHOR_STATUS_VARIANT } from './anchors';
 import styles from './CallTranscript.module.css';
 
 interface CallTranscriptProps {
 	turns: TranscriptTurn[];
 	activeTurnId: string | null;
-	moments: CallMoment[];
-	activeMomentId: string | null;
+	anchors: TimelineAnchor[];
+	activeAnchorId: string | null;
 	canReview: boolean;
 	onSeek: (seconds: number) => void;
-	onMomentClick: (moment: CallMoment) => void;
+	onAnchorClick: (anchor: TimelineAnchor) => void;
 	onFlagTurn: (turn: TranscriptTurn) => void;
 }
 
-/** Transcript that follows the playhead, shows the QA moments of each turn and lets a reviewer flag a new one. */
+/** Words of a turn, split so the ones an anchor points at can be underlined. */
+const segmentsOf = (text: string, anchors: TimelineAnchor[]) => {
+	const marks = anchors
+		.map((a) => ({ a, start: a.highlight ? text.indexOf(a.highlight) : -1 }))
+		.filter(({ a, start }) => a.highlight && start >= 0)
+		.sort((x, y) => x.start - y.start);
+	const out: { text: string; anchor?: TimelineAnchor }[] = [];
+	let cursor = 0;
+	for (const { a, start } of marks) {
+		if (start < cursor) continue;
+		if (start > cursor) out.push({ text: text.slice(cursor, start) });
+		const end = start + (a.highlight?.length ?? 0);
+		out.push({ text: text.slice(start, end), anchor: a });
+		cursor = end;
+	}
+	if (cursor < text.length) out.push({ text: text.slice(cursor) });
+	return out;
+};
+
+/** Transcript that follows the playhead, tags each turn with the findings of the open tab and lets a reviewer flag a new one. */
 export function CallTranscript({
 	turns,
 	activeTurnId,
-	moments,
-	activeMomentId,
+	anchors,
+	activeAnchorId,
 	canReview,
 	onSeek,
-	onMomentClick,
+	onAnchorClick,
 	onFlagTurn,
 }: CallTranscriptProps) {
 	const { t } = useTranslation('qa.calls');
@@ -88,7 +104,7 @@ export function CallTranscript({
 				<ScrollArea h={420} viewportRef={viewportRef}>
 					<Stack gap='xs' pr='md'>
 						{turns.map((turn) => {
-							const turnMoments = moments.filter((m) => m.turnId === turn.id);
+							const turnAnchors = anchors.filter((a) => a.turnId === turn.id);
 							return (
 								<Paper
 									key={turn.id}
@@ -119,24 +135,25 @@ export function CallTranscript({
 											</Text>
 										</Group>
 										<Group gap={4} wrap='nowrap'>
-											{turnMoments.map((m) => (
+											{turnAnchors.map((a) => (
 												<Badge
-													key={m.id}
+													key={a.id}
 													size='xs'
+													tt='none'
 													variant={
-														m.id === activeMomentId
+														a.id === activeAnchorId
 															? 'filled'
-															: MOMENT_STATUS_VARIANT[m.status]
+															: ANCHOR_STATUS_VARIANT[a.status]
 													}
 													color={
-														m.id === activeMomentId
+														a.id === activeAnchorId
 															? 'gray'
-															: MOMENT_STATUS_COLOR[m.status]
+															: ANCHOR_STATUS_COLOR[a.status]
 													}
 													className={pointerStyles.pointer}
-													onClick={() => onMomentClick(m)}
+													onClick={() => onAnchorClick(a)}
 												>
-													{m.errorType}
+													{a.tag}
 												</Badge>
 											))}
 											<Tooltip label={t('moments.playFrom')} withArrow>
@@ -164,7 +181,22 @@ export function CallTranscript({
 											)}
 										</Group>
 									</Group>
-									<Text size='sm'>{turn.text}</Text>
+									<Text size='sm'>
+										{segmentsOf(turn.text, turnAnchors).map((segment, i) =>
+											segment.anchor ? (
+												<mark
+													key={i}
+													className={styles.mark}
+													data-tone={ANCHOR_STATUS_COLOR[segment.anchor.status]}
+													onClick={() => onAnchorClick(segment.anchor!)}
+												>
+													{segment.text}
+												</mark>
+											) : (
+												segment.text
+											)
+										)}
+									</Text>
 								</Paper>
 							);
 						})}

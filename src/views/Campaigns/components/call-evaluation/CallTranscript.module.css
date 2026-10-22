@@ -15,3 +15,21 @@
 		var(--mantine-color-gray-4)
 	);
 }
+
+/* The words an anchor points at: underlined, red only when the anchor needs attention. */
+.mark {
+	background: transparent;
+	color: inherit;
+	cursor: pointer;
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 3px;
+	text-decoration-color: light-dark(
+		var(--mantine-color-gray-6),
+		var(--mantine-color-gray-5)
+	);
+}
+
+.mark[data-tone='red'] {
+	text-decoration-color: var(--mantine-color-red-6);
+}

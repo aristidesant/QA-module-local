@@ -194,6 +194,35 @@ export interface CallMoment {
 	note: string;
 }
 
+// ---------- Timeline anchors (any tab) ----------
+
+/** Tabs whose findings are pinned to the transcript and the player. */
+export type AnchorTab = 'qa' | 'sentiment-emotion' | 'compliance';
+
+/** Moments carry their review status; the other tabs only say whether the anchor needs attention. */
+export type AnchorStatus = CallMomentStatus | 'neutral' | 'alert';
+
+/** Anything pinned to a transcript turn and to the player timeline, whichever tab it belongs to. */
+export interface TimelineAnchor {
+	id: string;
+	tab: AnchorTab;
+	turnId: string;
+	/** m:ss, same format as `TranscriptTurn.timestamp`. */
+	timestamp: string;
+	seconds: number;
+	speaker: Speaker;
+	/** Short tag shown on the transcript turn. */
+	tag: string;
+	/** Full description for tooltips and lists. */
+	label: string;
+	quote: string;
+	/** The exact words inside the turn to underline. */
+	highlight?: string;
+	status: AnchorStatus;
+	/** Compliance item the anchor belongs to, so the panel can find it. */
+	refKey?: string;
+}
+
 // ---------- QA (COPC error types) ----------
 
 export type QAErrorTypeCode = 'ECN' | 'ENC' | 'ECC' | 'ECUF';
@@ -312,11 +341,34 @@ export interface AgentBurnoutRisk {
 	recommendation: string;
 }
 
+export type SentimentAnchorKind =
+	| 'emotion'
+	| 'negativeLanguage'
+	| 'hostileTone'
+	| 'empathy';
+
+/** Where the voice and text analysis found an emotion, negative wording or a hostile tone. */
+export interface SentimentAnchor {
+	kind: SentimentAnchorKind;
+	/** m:ss of the transcript turn it happens in. */
+	timestamp: string;
+	speaker: Speaker;
+	/** What was detected, e.g. "Frustration" or "Hostile tone". */
+	label: string;
+	/** How the analysis read it, e.g. "Raised voice, clipped delivery". */
+	note?: string;
+	/** The exact words inside the turn that carry it. */
+	highlight?: string;
+	emotion?: Emotion;
+}
+
 export interface CallSentimentEvaluation {
 	agent: SpeakerSentiment;
 	customer: SpeakerSentiment;
 	recovery: SentimentRecovery;
 	empathyIndicators: EmpathyIndicator[];
+	/** Emotions, negative wording and hostile tone, pinned to the transcript. */
+	anchors: SentimentAnchor[];
 	tone: AgentTone;
 	speech: SpeechPatterns;
 	burnout: AgentBurnoutRisk;

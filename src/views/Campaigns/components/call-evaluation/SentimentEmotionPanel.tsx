@@ -31,7 +31,7 @@ import {
 	useTriggerRulesStore,
 } from '~/stores/qa/triggerRulesStore';
 import { EMOTION_LABELS, SENTIMENT_CATEGORIES } from '../../constants';
-import type { CallSentimentEvaluation } from '../../types';
+import type { CallSentimentEvaluation, TimelineAnchor } from '../../types';
 import type { CallVoiceSignals } from '~/modules/qa/burnout/types';
 import { selectThresholds, useSettingsStore } from '~/stores/qa/settingsStore';
 import { formatDuration } from './scoreColor';
@@ -43,6 +43,7 @@ import {
 	sentimentCategoryTone,
 } from './tone';
 import { EvidenceQuote } from './EvidenceQuote';
+import { AnchorMoments } from './AnchorMoments';
 
 interface SentimentEmotionPanelProps {
 	sentiment: CallSentimentEvaluation;
@@ -52,6 +53,10 @@ interface SentimentEmotionPanelProps {
 	agentId?: string;
 	/** What the voice analysis read on this call; compared with the agent's own usual level. */
 	voice?: CallVoiceSignals;
+	/** Emotions, negative language and hostile tone pinned to the call. Omit them where there is no player. */
+	anchors?: TimelineAnchor[];
+	activeAnchorId?: string | null;
+	onJump?: (anchor: TimelineAnchor) => void;
 }
 
 /** Neutral unless the risk is high; red is the only hue on the page. */
@@ -80,6 +85,9 @@ export function SentimentEmotionPanel({
 	showBurnout = true,
 	agentId,
 	voice,
+	anchors,
+	activeAnchorId = null,
+	onJump,
 }: SentimentEmotionPanelProps) {
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	const burnoutSettings = useSettingsStore(selectThresholds).burnout;
@@ -141,6 +149,18 @@ export function SentimentEmotionPanel({
 				{renderSpeakerCard('agent')}
 				{renderSpeakerCard('customer')}
 			</SimpleGrid>
+
+			{/* Where the analysis found them in the call */}
+			{anchors && onJump && (
+				<AnchorMoments
+					title='Moments in the call'
+					description='Emotions, negative language and hostile tone, pinned to the transcript and the recording'
+					anchors={anchors}
+					activeAnchorId={activeAnchorId}
+					onJump={onJump}
+					emptyLabel='No emotion, negative wording or hostile tone detected in this call.'
+				/>
+			)}
 
 			{/* Agent burnout risk (hidden from the agent role) */}
 			{showBurnout && burnoutAssessment && (

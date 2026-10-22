@@ -1,0 +1,9 @@
+/* The quote the player is on gets the same outline as the active moment card. */
+.quote[data-active] {
+	border-color: light-dark(
+		var(--mantine-color-gray-7),
+		var(--mantine-color-gray-4)
+	);
+	box-shadow: 0 0 0 1px
+		light-dark(var(--mantine-color-gray-7), var(--mantine-color-gray-4));
+}

@@ -22,7 +22,12 @@ import {
 } from '@tabler/icons-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { useEffect, useMemo, useState } from 'react';
-import type { CallDetailTab, CallMoment, TranscriptTurn } from '../types';
+import type {
+	CallDetailTab,
+	CallMoment,
+	TimelineAnchor,
+	TranscriptTurn,
+} from '../types';
 import type { DisputeEvaluationType } from '~/models/qa/disputeCases';
 import {
 	CALL_EVALUATION_TABS,
@@ -43,6 +48,11 @@ import {
 	activeTurnAt,
 	coachableMoments,
 } from '../components/call-evaluation/callMoments';
+import {
+	buildComplianceAnchors,
+	buildSentimentAnchors,
+	momentToAnchor,
+} from '../components/call-evaluation/anchors';
 import { useTranslation } from 'react-i18next';
 import { Tooltip } from '@mantine/core';
 import { IconFlag } from '@tabler/icons-react';
@@ -106,6 +116,18 @@ export default function ConversationEvaluations() {
 		() => allMoments.filter((m) => m.callId === call.callId),
 		[allMoments, call.callId]
 	);
+	const sentimentAnchors = useMemo(() => buildSentimentAnchors(call), [call]);
+	const complianceAnchors = useMemo(() => buildComplianceAnchors(call), [call]);
+	// The transcript and the player show the findings of the tab that is open.
+	const anchors = useMemo(
+		() =>
+			selectedTab === 'sentiment-emotion'
+				? sentimentAnchors
+				: selectedTab === 'compliance'
+					? complianceAnchors
+					: moments.map(momentToAnchor),
+		[selectedTab, sentimentAnchors, complianceAnchors, moments]
+	);
 	const activeTurn = useMemo(
 		() => activeTurnAt(call.transcript, currentTime),
 		[call.transcript, currentTime]
@@ -163,6 +185,11 @@ export default function ConversationEvaluations() {
 		setCurrentTime(moment.seconds);
 		setActiveMomentId(moment.id);
 		if (selectedTab !== 'qa') setSelectedTab('qa');
+	};
+	const jumpToAnchor = (anchor: TimelineAnchor) => {
+		setCurrentTime(anchor.seconds);
+		setActiveMomentId(anchor.id);
+		if (selectedTab !== anchor.tab) setSelectedTab(anchor.tab);
 	};
 	const flagTurn = (turn: TranscriptTurn) => {
 		setAddMomentTurnId(turn.id);
@@ -365,19 +392,19 @@ export default function ConversationEvaluations() {
 									isPlaying={isPlaying}
 									onTogglePlay={() => setIsPlaying((playing) => !playing)}
 									onSeek={seek}
-									moments={moments}
-									activeMomentId={activeMomentId}
-									onMomentClick={jumpToMoment}
+									anchors={anchors}
+									activeAnchorId={activeMomentId}
+									onAnchorClick={jumpToAnchor}
 								/>
 
 								<CallTranscript
 									turns={call.transcript}
 									activeTurnId={activeTurn?.id ?? null}
-									moments={moments}
-									activeMomentId={activeMomentId}
+									anchors={anchors}
+									activeAnchorId={activeMomentId}
 									canReview={canReview}
 									onSeek={seek}
-									onMomentClick={jumpToMoment}
+									onAnchorClick={jumpToAnchor}
 									onFlagTurn={flagTurn}
 								/>
 							</Stack>
@@ -405,10 +432,18 @@ export default function ConversationEvaluations() {
 									agentId={call.agentId}
 									voice={call.agentVoice}
 									showBurnout={previewRole !== 'agent'}
+									anchors={sentimentAnchors}
+									activeAnchorId={activeMomentId}
+									onJump={jumpToAnchor}
 								/>
 							)}
 							{selectedTab === 'compliance' && (
-								<CompliancePanel compliance={call.compliance} />
+								<CompliancePanel
+									compliance={call.compliance}
+									anchors={complianceAnchors}
+									activeAnchorId={activeMomentId}
+									onJump={jumpToAnchor}
+								/>
 							)}
 							{selectedTab === 'esg' && previewRole !== 'agent' && (
 								<EsgPanel esg={call.esg} />

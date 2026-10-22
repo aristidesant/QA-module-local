@@ -25,7 +25,8 @@
 	cursor: pointer;
 }
 
-.marker[data-status='confirmed'] {
+.marker[data-status='confirmed'],
+.marker[data-status='alert'] {
 	background: var(--mantine-color-red-6);
 	border-color: var(--mantine-color-red-6);
 }

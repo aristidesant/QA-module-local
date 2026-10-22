@@ -19,12 +19,17 @@ import { COMPLIANCE_AREAS, COMPLIANCE_AREA_ORDER } from '../../constants';
 import type {
 	CallComplianceEvaluation,
 	ComplianceItemStatus,
+	TimelineAnchor,
 } from '../../types';
 import { flagTone, scoreTone } from './tone';
 import { EvidenceQuote } from './EvidenceQuote';
 
 interface CompliancePanelProps {
 	compliance: CallComplianceEvaluation;
+	/** Where each item happens in the call. Omit them where there is no player. */
+	anchors?: TimelineAnchor[];
+	activeAnchorId?: string | null;
+	onJump?: (anchor: TimelineAnchor) => void;
 }
 
 const statusMeta: Record<
@@ -48,7 +53,12 @@ const statusMeta: Record<
 	},
 };
 
-export function CompliancePanel({ compliance }: CompliancePanelProps) {
+export function CompliancePanel({
+	compliance,
+	anchors = [],
+	activeAnchorId = null,
+	onJump,
+}: CompliancePanelProps) {
 	return (
 		<Stack gap='md'>
 			{/* Header with ring */}
@@ -122,6 +132,7 @@ export function CompliancePanel({ compliance }: CompliancePanelProps) {
 							<Stack gap='xs'>
 								{area.items.map((item) => {
 									const itemStatus = statusMeta[item.status];
+									const anchor = anchors.find((a) => a.refKey === item.key);
 									return (
 										<div key={item.key}>
 											<Paper
@@ -166,7 +177,13 @@ export function CompliancePanel({ compliance }: CompliancePanelProps) {
 												</Group>
 											</Paper>
 											{item.evidence && (
-												<EvidenceQuote evidence={item.evidence} />
+												<EvidenceQuote
+													evidence={item.evidence}
+													onPlay={
+														anchor && onJump ? () => onJump(anchor) : undefined
+													}
+													active={!!anchor && anchor.id === activeAnchorId}
+												/>
 											)}
 										</div>
 									);
