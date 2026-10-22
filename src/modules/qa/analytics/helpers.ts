@@ -3,11 +3,11 @@ import type {
 	MetricTrend,
 } from '~/models/AnalyticsDashboard';
 import type {
-	BurnoutRiskLevelValue,
 	CoachingSessionRecord,
 	EvaluationWindow,
 	LmsAssignment,
 	RuleCondition,
+	TriggerMetricId,
 	TriggerRule,
 } from '~/models/qa';
 import type { AgentType } from '~/models/qa/agents';
@@ -18,6 +18,16 @@ import type {
 import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
 import { compare, formatMetricValue } from '~/modules/qa/triggers/helpers';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
+import { computeBurnoutScore } from '~/modules/qa/burnout/compute';
+import {
+	VOICE_KEY_BY_METRIC,
+	VOICE_SIGNAL_BY_KEY,
+} from '~/modules/qa/burnout/constants';
+import type {
+	BurnoutScore,
+	BurnoutThresholds,
+	VoiceSignalKey,
+} from '~/modules/qa/burnout/types';
 import type {
 	AgentProfile,
 	NonConversionReasonKey,
@@ -34,6 +44,10 @@ import {
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import { formatSeconds } from '~/modules/qa/team/helpers';
 import { useSettingsStore } from '~/stores/qa/settingsStore';
+import {
+	isBurnoutSilenced,
+	useBurnoutReviewStore,
+} from '~/stores/qa/burnoutReviewStore';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
 import {
 	isNegativeEmotionIn,
@@ -512,6 +526,10 @@ export function metricOf(
 	call: TeamCallMetric,
 	id: AnalyticsMetricId
 ): number | null {
+	// Voice signals are read from the call; the burnout score belongs to the agent, not to one call.
+	const voiceKey = VOICE_KEY_BY_METRIC[id as TriggerMetricId];
+	if (voiceKey) return call.voice[voiceKey];
+	if (id === 'BURNOUT_SCORE') return null;
 	switch (id) {
 		case 'QA_OVERALL_SCORE':
 			return call.qaScore;
@@ -610,6 +628,7 @@ export function aggregateMetric(
 	const { unit } = metricMeta(id);
 	if (unit === 'COUNT') return sum;
 	const avg = sum / values.length;
+	if (unit === 'VOICE') return Math.round(avg * 100) / 100;
 	if (unit === 'SECONDS') return Math.round(avg);
 	return round1(SHARE_METRIC_IDS.has(id) ? avg * 100 : avg);
 }
@@ -1103,15 +1122,22 @@ export function burnoutCandidates(
 	role: TeamRole,
 	rules?: TriggerRule[]
 ): RosterAgent[] {
-	return scopeAgents(role)
-		.map((agent) => ({ agent, assessment: assessBurnout(agent.id, rules) }))
-		.filter(({ assessment }) => assessment.level !== BurnoutRiskLevel.LOW)
-		.sort(
-			(a, b) =>
-				LEVEL_ORDER[a.assessment.level] - LEVEL_ORDER[b.assessment.level] ||
-				b.assessment.percentage - a.assessment.percentage
-		)
-		.map(({ agent }) => agent);
+	return (
+		scopeAgents(role)
+			.map((agent) => ({ agent, assessment: assessBurnout(agent.id, rules) }))
+			.filter(({ assessment }) => assessment.level !== BurnoutRiskLevel.LOW)
+			// A risk dismissed by a supervisor stays out of the lists until the silence ends.
+			.filter(
+				({ agent }) =>
+					!isBurnoutSilenced(useBurnoutReviewStore.getState().reviews, agent.id)
+			)
+			.sort(
+				(a, b) =>
+					LEVEL_ORDER[a.assessment.level] - LEVEL_ORDER[b.assessment.level] ||
+					b.assessment.percentage - a.assessment.percentage
+			)
+			.map(({ agent }) => agent)
+	);
 }
 
 export interface TeamBurnoutRiskEntry {
@@ -1121,6 +1147,10 @@ export interface TeamBurnoutRiskEntry {
 	level: BurnoutRiskLevel;
 	percentage: number;
 	trend: 'improving' | 'stable' | 'declining';
+	/** The active voice signal that deviates most from the agent's usual level. */
+	mainSignal: { key: VoiceSignalKey; deviationPct: number } | null;
+	/** Days in a row with enough signals active. */
+	days: number;
 }
 
 /** Dashboard-facing summary of burnoutCandidates: name + risk data per at-risk team member. */
@@ -1136,6 +1166,13 @@ export const teamBurnoutRisk = (
 			level: assessment.level,
 			percentage: assessment.percentage,
 			trend: TEAM_PROFILES[agent.id].risk.burnout.trend,
+			mainSignal: assessment.voice.primary
+				? {
+						key: assessment.voice.primary.key,
+						deviationPct: assessment.voice.primary.deviationPct ?? 0,
+					}
+				: null,
+			days: assessment.voice.persistenceDays,
 		};
 	});
 
@@ -1159,16 +1196,10 @@ const WINDOW_DAYS: Partial<Record<EvaluationWindow, number>> = {
 const NEAR_BAND_RATIO = 0.1;
 /** A % change is NEAR once it reaches half of the required change. */
 const NEAR_CHANGE_RATIO = 0.5;
-const RULE_LEVEL: Record<BurnoutRiskLevelValue, BurnoutRiskLevel> = {
-	LOW: BurnoutRiskLevel.LOW,
-	MEDIUM: BurnoutRiskLevel.MEDIUM,
-	HIGH: BurnoutRiskLevel.HIGH,
-};
-/** Risk meter band per level, so the percentage always agrees with the level. */
-const PERCENT_BAND: Record<BurnoutRiskLevel, { base: number; span: number }> = {
-	[BurnoutRiskLevel.LOW]: { base: 5, span: 30 },
-	[BurnoutRiskLevel.MEDIUM]: { base: 40, span: 29 },
-	[BurnoutRiskLevel.HIGH]: { base: 70, span: 25 },
+const SCORE_LEVEL: Record<BurnoutScore['level'], BurnoutRiskLevel> = {
+	low: BurnoutRiskLevel.LOW,
+	medium: BurnoutRiskLevel.MEDIUM,
+	high: BurnoutRiskLevel.HIGH,
 };
 
 /** Burnout risk is configured only here: the ACTIVE alert rules of type BURNOUT_RISK. */
@@ -1250,7 +1281,37 @@ const evaluateBurnoutCondition = (
 	}
 
 	const { current, previous } = conditionWindows(agentCalls, c);
-	const value = aggregateMetric(current, c.metricId);
+	const agentId = agentCalls[0]?.agentId;
+	// The burnout score is the agent's, read over no window; every other metric comes from the calls.
+	const value =
+		c.metricId === 'BURNOUT_SCORE'
+			? agentId
+				? computeBurnoutScore(agentId).score
+				: null
+			: aggregateMetric(current, c.metricId);
+
+	if (c.mode === 'BASELINE_DEVIATION') {
+		const key = VOICE_KEY_BY_METRIC[c.metricId];
+		const baseline =
+			key && agentId
+				? (computeBurnoutScore(agentId).signals.find((s) => s.key === key)
+						?.baseline ?? null)
+				: null;
+		if (!key || value === null || baseline === null || baseline === 0)
+			return { currentValue: null, status: 'OK' };
+		const worse =
+			VOICE_SIGNAL_BY_KEY[key].worse === 'lower'
+				? baseline - value
+				: value - baseline;
+		const deviation = round1((worse / baseline) * 100);
+		const status: BurnoutDriverStatus =
+			deviation >= c.changePercent
+				? 'BREACHED'
+				: deviation >= c.changePercent * NEAR_CHANGE_RATIO
+					? 'NEAR'
+					: 'OK';
+		return { currentValue: deviation, status };
+	}
 
 	if (c.mode === 'PERCENT_CHANGE') {
 		const before = aggregateMetric(previous, c.metricId);
@@ -1281,9 +1342,12 @@ const evaluateBurnoutCondition = (
 };
 
 export interface BurnoutAssessment {
+	/** From the voice signals of the agent's calls (`voice`), not from the alert rules. */
 	level: BurnoutRiskLevel;
-	/** Risk meter inside the level's band: low 5-35, medium 40-69, high 70-95. */
+	/** The 0-100 burnout score of `voice`. */
 	percentage: number;
+	/** The voice-signal read behind the level: every signal against the agent's baseline. */
+	voice: BurnoutScore;
 	breached: number;
 	near: number;
 	/** Conditions evaluated: every condition of the active rules that cover the agent. */
@@ -1296,7 +1360,14 @@ export interface BurnoutAssessment {
 /** Per rules array (the store replaces it on every change); entries also remember the negative-emotion list they were computed with. */
 const assessmentCache = new WeakMap<
 	TriggerRule[],
-	Map<string, { emotions: string[]; assessment: BurnoutAssessment }>
+	Map<
+		string,
+		{
+			emotions: string[];
+			burnout: BurnoutThresholds;
+			assessment: BurnoutAssessment;
+		}
+	>
 >();
 
 /**
@@ -1315,12 +1386,18 @@ export function assessBurnout(
 	const emotions = negativeEmotionsOf(
 		useSettingsStore.getState().thresholds.sentiment
 	);
+	const burnoutSettings = useSettingsStore.getState().thresholds.burnout;
 	const cached = cache.get(agentId);
-	if (cached && cached.emotions === emotions) return cached.assessment;
+	if (
+		cached &&
+		cached.emotions === emotions &&
+		cached.burnout === burnoutSettings
+	)
+		return cached.assessment;
 
 	const agent = TEAM_AGENTS.find((a) => a.id === agentId);
 	const agentCalls = TEAM_CALLS.filter((c) => c.agentId === agentId);
-	let level = BurnoutRiskLevel.LOW;
+
 	const drivers: BurnoutDriver[] = [];
 	const matchedRuleIds: string[] = [];
 
@@ -1343,28 +1420,23 @@ export function assessBurnout(
 					: met.some(Boolean));
 			if (!matched) continue;
 			matchedRuleIds.push(rule.id);
-			const ruleLevel = RULE_LEVEL[rule.burnoutLevel ?? 'LOW'];
-			if (LEVEL_ORDER[ruleLevel] < LEVEL_ORDER[level]) level = ruleLevel;
 		}
 
 	const breached = drivers.filter((d) => d.status === 'BREACHED').length;
 	const near = drivers.filter((d) => d.status === 'NEAR').length;
 	const enabledCount = drivers.length;
-	const band = PERCENT_BAND[level];
+	const voice = computeBurnoutScore(agentId, burnoutSettings);
 	const assessment: BurnoutAssessment = {
-		level,
-		percentage:
-			band.base +
-			(enabledCount
-				? Math.round((band.span * (breached + 0.5 * near)) / enabledCount)
-				: 0),
+		level: SCORE_LEVEL[voice.level],
+		percentage: voice.score,
+		voice,
 		breached,
 		near,
 		enabledCount,
 		drivers,
 		matchedRuleIds,
 	};
-	cache.set(agentId, { emotions, assessment });
+	cache.set(agentId, { emotions, burnout: burnoutSettings, assessment });
 	return assessment;
 }
 
@@ -1814,7 +1886,7 @@ export function disputesByAgent(
 // ---------- human vs AI ----------
 /** Human vs AI on one 0-100 axis: percents as is, 1-5 scores x20, handle time inverted (shorter scores higher). */
 function indexValue(
-	unit: 'PERCENT' | 'SCORE_5' | 'COUNT' | 'SECONDS',
+	unit: 'PERCENT' | 'SCORE_5' | 'COUNT' | 'SECONDS' | 'VOICE',
 	value: number | null,
 	other: number | null
 ): number {

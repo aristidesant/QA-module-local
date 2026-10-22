@@ -241,6 +241,9 @@ const RankingDetailPage = React.lazy(() =>
 const TriggersPage = React.lazy(
 	() => import('./modules/qa/triggers/TriggersPage')
 );
+const TriggerRuleDetailPage = React.lazy(
+	() => import('./modules/qa/triggers/TriggerRuleDetailPage')
+);
 const DisputeCaseDetailPage = React.lazy(() =>
 	import('./modules/qa/disputes/cases/DisputeCaseDetailPage').then((m) => ({
 		default: m.default,
@@ -1613,12 +1616,34 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'qa-manager/triggers/rules/:ruleId',
+										id: 'qa.qa-manager.triggers.rule-detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TriggerRuleDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'supervisor/triggers',
 										id: 'qa.supervisor.triggers',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<TriggersPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/triggers/rules/:ruleId',
+										id: 'qa.supervisor.triggers.rule-detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TriggerRuleDetailPage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

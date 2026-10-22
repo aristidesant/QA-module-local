@@ -1,3 +1,5 @@
+import { VOICE_METRIC_ID, VOICE_SIGNALS } from '~/modules/qa/burnout/constants';
+import type { VoiceSignalKey } from '~/modules/qa/burnout/types';
 import type {
 	BadgeDefinition,
 	MessageTemplate,
@@ -55,8 +57,15 @@ function seeded(seed: number) {
 	};
 }
 
+/** A steady voice for every agent: the typical value of each voice signal. */
+const VOICE_HEALTHY = Object.fromEntries(
+	VOICE_SIGNALS.map((s) => [VOICE_METRIC_ID[s.key], s.typical])
+) as Record<(typeof VOICE_METRIC_ID)[VoiceSignalKey], number>;
+
 /** Default healthy baseline profile for all agents. */
 const HEALTHY_DEFAULTS: Record<TriggerMetricId, number> = {
+	BURNOUT_SCORE: 6,
+	...VOICE_HEALTHY,
 	QA_OVERALL_SCORE: 88,
 	QA_ECN_COUNT: 0,
 	QA_ENC_COUNT: 2,
@@ -595,15 +604,9 @@ export const MOCK_RULES: TriggerRule[] = [
 		status: 'ACTIVE',
 		conditions: [
 			condition({
-				metricId: 'AGENT_SENTIMENT_SCORE',
-				operator: 'LT',
-				value: 3.5,
-				window: 'LAST_14_DAYS',
-			}),
-			condition({
-				metricId: 'QA_OVERALL_SCORE',
-				operator: 'LT',
-				value: 78,
+				metricId: 'BURNOUT_SCORE',
+				operator: 'GTE',
+				value: 70,
 				window: 'LAST_14_DAYS',
 			}),
 		],
@@ -638,16 +641,16 @@ export const MOCK_RULES: TriggerRule[] = [
 		status: 'ACTIVE',
 		conditions: [
 			condition({
-				metricId: 'AGENT_SENTIMENT_SCORE',
-				operator: 'LT',
-				value: 3,
-				window: 'LAST_7_DAYS',
+				metricId: 'BURNOUT_SCORE',
+				operator: 'GTE',
+				value: 40,
+				window: 'LAST_14_DAYS',
 			}),
 			condition({
-				metricId: 'NEGATIVE_EMOTION_CALL_SHARE',
-				operator: 'GT',
-				value: 30,
-				window: 'LAST_7_DAYS',
+				metricId: 'VOICE_VOCAL_ENERGY',
+				mode: 'BASELINE_DEVIATION',
+				changePercent: 25,
+				window: 'LAST_14_DAYS',
 			}),
 		],
 		conditionLogic: 'ANY',

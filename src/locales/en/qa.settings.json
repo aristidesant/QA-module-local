@@ -8,7 +8,8 @@
 			"compliance": "Compliance",
 			"sentiment": "Sentiment & Emotion",
 			"business": "Business Insights",
-			"coaching": "Coaching"
+			"coaching": "Coaching",
+			"burnout": "Burnout"
 		}
 	},
 	"actions": {
@@ -137,7 +138,8 @@
 		"bandsOrder": "On target must be higher than Watch",
 		"bandsRange": "Use values between 0 and 100",
 		"cutPointsOrder": "Each band must end higher than the one before",
-		"cutPointsRange": "Use values between 1 and 5"
+		"cutPointsRange": "Use values between 1 and 5",
+		"burnoutCuts": "Medium must start below High"
 	},
 	"copc": {
 		"title": "COPC categories",
@@ -145,6 +147,57 @@
 		"columns": {
 			"category": "Category",
 			"values": "On target ≥ / Watch ≥"
+		}
+	},
+	"burnout": {
+		"signalsTitle": "Voice signals",
+		"signalsDescription": "What the voice analysis reads on each call. A signal is active when it passes its limit or drifts from the agent's own baseline by more than the deviation.",
+		"familyWeight": "Total weight {{value}}",
+		"columns": {
+			"signal": "Signal",
+			"weight": "Weight",
+			"limit": "Limit",
+			"deviation": "Deviation",
+			"confidence": "Confidence"
+		},
+		"confidence": {
+			"high": "High",
+			"medium": "Medium"
+		},
+		"baselineTitle": "Baseline and window",
+		"baselineDescription": "Each agent is compared with their own usual level, so someone who always speaks slowly is not flagged. The window sets how many recent days each signal is read over.",
+		"baselineMethod": "Baseline",
+		"methods": {
+			"FIRST_WEEKS": "First 4 weeks",
+			"ROLLING": "Rolling 90 days"
+		},
+		"baselineMinCalls": "Calls to set the baseline",
+		"window": "Window",
+		"windowDays": "{{count}} days",
+		"minCallsInWindow": "Calls needed in the window",
+		"scoreTitle": "Score and levels",
+		"scoreDescription": "Active signals add their weight to the score. Sustained days raise it, and active signals in three families add a bonus.",
+		"mediumFrom": "Medium from",
+		"highFrom": "High from",
+		"minActive": "Active signals needed",
+		"persistence": "Days for full effect",
+		"bonus": "Convergence bonus",
+		"bands": {
+			"low": "Low below {{value}}",
+			"medium": "Medium {{from}}–{{to}}",
+			"high": "High from {{value}}"
+		},
+		"scoreHint": "An agent with fewer than {{count}} active signals stays Low whatever the score.",
+		"preview": {
+			"title": "What this would look like",
+			"description": "The team scored with the values above, before you save.",
+			"agents_one": "{{count}} agent",
+			"agents_other": "{{count}} agents",
+			"none": "No agent would be at risk with this configuration.",
+			"agent": "Agent",
+			"level": "Level",
+			"score": "Score",
+			"signal": "Main signal"
 		}
 	}
 }

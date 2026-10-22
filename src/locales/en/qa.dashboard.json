@@ -19,6 +19,8 @@
 	"burnout": {
 		"title": "Burnout Risk",
 		"viewEvidence": "See the evidence behind this score",
+		"signalLine_one": "{{signal}} {{change}}% off their usual · {{count}} day",
+		"signalLine_other": "{{signal}} {{change}}% off their usual · {{count}} days",
 		"level": {
 			"low": "Low",
 			"medium": "Medium",

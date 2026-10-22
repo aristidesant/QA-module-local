@@ -1,9 +1,12 @@
+import type { BurnoutThresholds } from '~/modules/qa/burnout/types';
+
 export type SettingsAspect =
 	| 'qa'
 	| 'compliance'
 	| 'sentiment'
 	| 'business'
-	| 'coaching';
+	| 'coaching'
+	| 'burnout';
 
 /** score >= onTarget → good; >= watch → warning; otherwise critical. `onTarget` must exceed `watch`. */
 export interface ScoreBands {
@@ -89,6 +92,7 @@ export interface ThresholdSettings {
 	sentiment: SentimentThresholds;
 	business: BusinessThresholds;
 	coaching: CoachingThresholds;
+	burnout: BurnoutThresholds;
 }
 
 export interface QaSettings {

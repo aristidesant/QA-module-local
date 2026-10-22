@@ -19,6 +19,7 @@ import {
 	IconExternalLink,
 	IconFlame,
 	IconHistory,
+	IconMicrophone2,
 	IconMinus,
 	IconPhone,
 	IconTrendingDown,
@@ -60,6 +61,12 @@ import type { AgentProfile, TeamRole } from '../../types';
 import { NOW_ISO } from '../../constants';
 import { formatDate, formatSeconds } from '../../helpers';
 import { BurnoutDrivers } from '../../components/BurnoutDrivers';
+import { BurnoutSignals } from '../../components/BurnoutSignals';
+import {
+	BurnoutReviewActions,
+	BurnoutReviewBanner,
+} from '../../components/BurnoutReview';
+import { managerPersona } from '~/modules/qa/lms/helpers';
 
 interface BurnoutTabProps {
 	profile: AgentProfile;
@@ -234,23 +241,32 @@ export function BurnoutTab({
 			<SectionCard
 				title={t('burnoutTab.title')}
 				description={t('burnoutTab.summary', {
-					breached: assessment.breached,
-					near: assessment.near,
-					total: assessment.enabledCount,
+					active: assessment.voice.activeCount,
+					near: assessment.voice.nearCount,
+					days: assessment.voice.persistenceDays,
 				})}
 				icon={IconFlame}
 				headerActions={
-					<Button
-						variant='default'
-						size='xs'
-						leftSection={<IconCalendarEvent size={14} />}
-						onClick={onScheduleCoaching}
-					>
-						{t('burnoutTab.scheduleCoaching')}
-					</Button>
+					<Group gap='xs' wrap='nowrap'>
+						{assessment.level !== BurnoutRiskLevel.LOW && (
+							<BurnoutReviewActions
+								agentId={agentId}
+								reviewer={managerPersona(role).name}
+							/>
+						)}
+						<Button
+							variant='default'
+							size='xs'
+							leftSection={<IconCalendarEvent size={14} />}
+							onClick={onScheduleCoaching}
+						>
+							{t('burnoutTab.scheduleCoaching')}
+						</Button>
+					</Group>
 				}
 			>
 				<Stack gap='xs'>
+					<BurnoutReviewBanner agentId={agentId} />
 					<Group justify='space-between'>
 						<Badge color={color} variant='light'>
 							{t(`burnout.${assessment.level}`)}
@@ -269,6 +285,14 @@ export function BurnoutTab({
 						radius='md'
 					/>
 				</Stack>
+			</SectionCard>
+
+			<SectionCard
+				title={t('burnoutTab.signals.title')}
+				description={t('burnoutTab.signals.description')}
+				icon={IconMicrophone2}
+			>
+				<BurnoutSignals signals={assessment.voice.signals} />
 			</SectionCard>
 
 			<SectionCard

@@ -39,7 +39,7 @@ import type { AgentProfile, ProfilePeriod } from '../../types';
 import { PROFILE_PERIODS } from '../../constants';
 import { filterByPeriod, formatDateTime, periodDirection } from '../../helpers';
 import { PerformanceTrendChart } from '../../components/PerformanceTrendChart';
-import { BurnoutDrivers } from '../../components/BurnoutDrivers';
+import { BurnoutSignals } from '../../components/BurnoutSignals';
 
 interface OverviewTabProps {
 	profile: AgentProfile;
@@ -212,11 +212,7 @@ export function OverviewTab({ profile }: OverviewTabProps) {
 							withTooltip
 							curveType='monotone'
 						/>
-						<BurnoutDrivers
-							assessment={burnoutAssessment}
-							rules={triggerRules}
-							compact
-						/>
+						<BurnoutSignals signals={burnoutAssessment.voice.signals} compact />
 						<Anchor
 							size='xs'
 							onClick={() => navigate({ search: '?tab=burnout' })}

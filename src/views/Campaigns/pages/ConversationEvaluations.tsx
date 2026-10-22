@@ -403,6 +403,7 @@ export default function ConversationEvaluations() {
 								<SentimentEmotionPanel
 									sentiment={call.sentiment}
 									agentId={call.agentId}
+									voice={call.agentVoice}
 									showBurnout={previewRole !== 'agent'}
 								/>
 							)}

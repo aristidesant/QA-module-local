@@ -1,3 +1,4 @@
+import type { CallVoiceSignals } from '~/modules/qa/burnout/types';
 import type { CallMetric } from '~/modules/qa/dashboard/mockData';
 import type { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
 import type {
@@ -107,6 +108,8 @@ export interface TeamCallMetric extends CallMetric {
 	transferred: boolean;
 	/** Only meaningful when contactOutcome === 'EFFECTIVE'. */
 	firstContactResolved: boolean;
+	/** What the voice analysis reads from the agent's side of the call. */
+	voice: CallVoiceSignals;
 }
 
 export interface ScoreRangeFilter {

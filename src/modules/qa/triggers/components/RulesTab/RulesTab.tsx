@@ -2,26 +2,26 @@ import { Button, Stack } from '@mantine/core';
 import { IconPlus } from '@tabler/icons-react';
 import { modals } from '@mantine/modals';
 import { useTranslation } from 'react-i18next';
-import { useMemo, useState, useEffect, useCallback } from 'react';
-import type { RuleKind, TriggerRule, TriggerActivityEntry } from '~/models/qa';
+import { useMemo, useState, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router';
+import type { RuleKind, TriggerRule } from '~/models/qa';
 import { SectionCard } from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { SEVERITY_ORDER, STATUS_ORDER } from '~/modules/qa/triggers/helpers';
 import { getRuleArea } from '~/modules/qa/triggers/helpers';
+import {
+	triggerRulePath,
+	triggersRoleFromPath,
+} from '~/modules/qa/triggers/constants';
 import RulesFilters, { type RulesFilterValues } from '../RulesFilters';
 import RulesTable from '../RulesTable';
-import RuleDetailDrawer from '../RuleDetailDrawer';
 
 interface RulesTabProps {
 	kind: RuleKind;
 	onCreate: (kind: RuleKind) => void;
 	onEdit: (rule: TriggerRule) => void;
-	onOpenActivity?: (entry: TriggerActivityEntry) => void;
-	onAcknowledgeActivity?: (entryId: string) => void;
-	detailRuleId?: string | null;
-	onDetailRuleHandled?: () => void;
 }
 
 const defaultFilters: RulesFilterValues = {
@@ -32,34 +32,18 @@ const defaultFilters: RulesFilterValues = {
 	recipient: null,
 };
 
-export default function RulesTab({
-	kind,
-	onCreate,
-	onEdit,
-	onOpenActivity,
-	onAcknowledgeActivity,
-	detailRuleId,
-	onDetailRuleHandled,
-}: RulesTabProps) {
+export default function RulesTab({ kind, onCreate, onEdit }: RulesTabProps) {
 	const { t } = useTranslation('qa.triggers');
 	const { rules, deleteRule, setRuleStatus, duplicateRule } =
 		useTriggerRulesStore();
 
 	const [filters, setFilters] = useState<RulesFilterValues>(defaultFilters);
-	const [selectedRuleId, setSelectedRuleId] = useState<string | null>(null);
+	const navigate = useNavigate();
+	const role = triggersRoleFromPath(useLocation().pathname);
 
 	const handleClearFilters = useCallback(() => {
 		setFilters(defaultFilters);
 	}, []);
-
-	useEffect(() => {
-		if (detailRuleId) {
-			setSelectedRuleId(detailRuleId);
-			if (onDetailRuleHandled) {
-				onDetailRuleHandled();
-			}
-		}
-	}, [detailRuleId]);
 
 	const kindRules = useMemo(
 		() => rules.filter((r) => r.kind === kind),
@@ -113,10 +97,6 @@ export default function RulesTab({
 		return result;
 	}, [kindRules, filters]);
 
-	const selectedRule = selectedRuleId
-		? filteredRules.find((r) => r.id === selectedRuleId)
-		: null;
-
 	const handleToggle = (rule: TriggerRule) => {
 		const newStatus = rule.status === 'ACTIVE' ? 'PAUSED' : 'ACTIVE';
 		setRuleStatus(rule.id, newStatus);
@@ -152,7 +132,6 @@ export default function RulesTab({
 			onConfirm: () => {
 				deleteRule(rule.id);
 				notifySuccess(t('rules.notifications.deleted'));
-				setSelectedRuleId(null);
 			},
 		});
 	};
@@ -240,7 +219,7 @@ export default function RulesTab({
 							<RulesTable
 								kind={kind}
 								rules={filteredRules}
-								onRowClick={(rule) => setSelectedRuleId(rule.id)}
+								onRowClick={(rule) => navigate(triggerRulePath(role, rule.id))}
 								onEdit={onEdit}
 								onDuplicate={handleDuplicate}
 								onDelete={handleDelete}
@@ -251,29 +230,6 @@ export default function RulesTab({
 					</Stack>
 				</SectionCard>
 			)}
-
-			<RuleDetailDrawer
-				rule={selectedRule || null}
-				opened={selectedRuleId !== null}
-				onClose={() => setSelectedRuleId(null)}
-				onEdit={(rule) => {
-					// Close the detail drawer first: two drawers share one z-index, so the later-mounted detail one would cover the editor.
-					setSelectedRuleId(null);
-					onEdit(rule);
-				}}
-				onDuplicate={handleDuplicate}
-				onToggle={handleToggle}
-				onDelete={handleDelete}
-				onSendTest={handleSendTest}
-				onOpenActivity={
-					onOpenActivity ? (entry) => onOpenActivity(entry) : () => {}
-				}
-				onAcknowledgeActivity={
-					onAcknowledgeActivity
-						? (entryId) => onAcknowledgeActivity(entryId)
-						: () => {}
-				}
-			/>
 		</>
 	);
 }

@@ -19,6 +19,8 @@
 	"burnout": {
 		"title": "Riesgo de burnout",
 		"viewEvidence": "Ver la evidencia detrás de este puntaje",
+		"signalLine_one": "{{signal}} {{change}}% fuera de lo habitual · {{count}} día",
+		"signalLine_other": "{{signal}} {{change}}% fuera de lo habitual · {{count}} días",
 		"level": {
 			"low": "Bajo",
 			"medium": "Medio",

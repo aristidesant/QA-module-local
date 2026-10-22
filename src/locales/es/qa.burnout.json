@@ -1,0 +1,100 @@
+{
+	"families": {
+		"acoustic": "Voz",
+		"tempo": "Tempo",
+		"lexical": "Elección de palabras",
+		"cognitive": "Concentración"
+	},
+	"familyHints": {
+		"acoustic": "Cómo suena la voz: energía, tono y voz aspirada",
+		"tempo": "El ritmo del habla, las pausas y qué tan rápido responde el agente",
+		"lexical": "Palabras negativas, indiferencia y respuestas cortas o de guion",
+		"cognitive": "Señales de niebla mental: pedir que repitan, perder el hilo"
+	},
+	"dimensions": {
+		"exhaustion": "Agotamiento",
+		"cynicism": "Desapego",
+		"efficacy": "Eficacia"
+	},
+	"status": {
+		"ACTIVE": "Activa",
+		"NEAR": "Cerca",
+		"OK": "Normal",
+		"NO_DATA": "Pocas llamadas"
+	},
+	"levels": {
+		"low": "Bajo",
+		"medium": "Medio",
+		"high": "Alto"
+	},
+	"signals": {
+		"pitchVariability": {
+			"label": "Variación de tono",
+			"description": "Cuánto sube y baja la voz. Una voz plana y monótona es señal de agotamiento."
+		},
+		"vocalEnergy": {
+			"label": "Energía vocal",
+			"description": "Volumen e impulso de la voz. Baja cuando el agente está agotado."
+		},
+		"breathiness": {
+			"label": "Voz aspirada",
+			"description": "Proporción del habla que suena aspirada o apagada."
+		},
+		"sighs": {
+			"label": "Suspiros audibles",
+			"description": "Suspiros y respiraciones pesadas por minuto de habla."
+		},
+		"speechRate": {
+			"label": "Ritmo de habla",
+			"description": "Palabras por minuto. Se hace más lento con la fatiga."
+		},
+		"longPauses": {
+			"label": "Pausas largas",
+			"description": "Silencios del agente de más de 3 segundos, por llamada."
+		},
+		"responseLatency": {
+			"label": "Demora en responder",
+			"description": "Segundos entre que el cliente termina y el agente responde."
+		},
+		"fillers": {
+			"label": "Muletillas",
+			"description": "\"Eh\", \"mmm\" y similares por minuto."
+		},
+		"negativeLanguage": {
+			"label": "Lenguaje negativo",
+			"description": "Palabras y expresiones negativas por cada 100 palabras del agente."
+		},
+		"apathyPhrases": {
+			"label": "Frases de apatía",
+			"description": "Frases de rendición o indiferencia, como \"lo que usted diga\" o \"no puedo hacer nada\"."
+		},
+		"shortTurns": {
+			"label": "Respuestas cortas o de guion",
+			"description": "Proporción de turnos del agente con cuatro palabras o menos."
+		},
+		"empathyPhrases": {
+			"label": "Frases de empatía",
+			"description": "Frases que reconocen al cliente. La señal de alerta es que haya menos."
+		},
+		"repeatRequests": {
+			"label": "Pide que repitan",
+			"description": "Veces que el agente pide al cliente que repita algo."
+		},
+		"selfCorrections": {
+			"label": "Autocorrecciones",
+			"description": "Veces que el agente reinicia o corrige su propia frase."
+		},
+		"lostThread": {
+			"label": "Pierde el hilo",
+			"description": "Veces que el agente pregunta algo que el cliente ya respondió."
+		}
+	},
+	"ui": {
+		"now": "Ahora",
+		"usual": "Habitual {{value}}",
+		"noUsual": "Aún sin base",
+		"none": "Ninguna señal de voz está activa ahora mismo.",
+		"changeHint": "Cambio frente al nivel habitual del propio agente, en el sentido que empeora",
+		"activeOf": "{{active}} de {{total}} activas"
+	}
+}

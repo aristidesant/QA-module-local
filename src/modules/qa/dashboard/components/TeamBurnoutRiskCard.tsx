@@ -63,7 +63,7 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 	subtitle,
 	headerLabel,
 }) => {
-	const { t } = useTranslation('qa.dashboard');
+	const { t } = useTranslation(['qa.dashboard', 'qa.burnout']);
 	const navigate = useNavigate();
 
 	const openEvidence = (agentId: string) => {
@@ -142,6 +142,17 @@ export const TeamBurnoutRiskCard: React.FC<TeamBurnoutRiskCardProps> = ({
 													<TrendIcon size={12} color={trend.color} />
 												</Group>
 											</Group>
+											{entry.mainSignal && (
+												<Text size='xs' c='dimmed' mb={4}>
+													{t('burnout.signalLine', {
+														signal: t(`signals.${entry.mainSignal.key}.label`, {
+															ns: 'qa.burnout',
+														}),
+														change: Math.round(entry.mainSignal.deviationPct),
+														count: entry.days,
+													})}
+												</Text>
+											)}
 											<Progress
 												value={entry.percentage}
 												size='xs'

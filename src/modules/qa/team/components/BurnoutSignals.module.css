@@ -1,0 +1,17 @@
+.row {
+	padding: 8px 12px;
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-gray-light);
+}
+
+.row[data-status='ACTIVE'] {
+	background: var(--mantine-color-red-light);
+}
+
+.row[data-status='NEAR'] {
+	background: var(--mantine-color-yellow-light);
+}
+
+.sparkline {
+	flex-shrink: 0;
+}

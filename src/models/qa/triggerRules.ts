@@ -34,9 +34,26 @@ export type TriggerMetricId =
 	| 'BI_UNHANDLED_OBJECTION_RATE'
 	| 'BI_COMPETITOR_PLUS_COST_RATE'
 	| 'BI_MISTARGETED_OFFER_RATE'
-	| 'BI_NON_CONVERSION_RATE';
+	| 'BI_NON_CONVERSION_RATE'
+	// Burnout: the score and the voice signals
+	| 'BURNOUT_SCORE'
+	| 'VOICE_PITCH_VARIABILITY'
+	| 'VOICE_VOCAL_ENERGY'
+	| 'VOICE_BREATHINESS'
+	| 'VOICE_SIGHS'
+	| 'VOICE_SPEECH_RATE'
+	| 'VOICE_LONG_PAUSES'
+	| 'VOICE_RESPONSE_LATENCY'
+	| 'VOICE_FILLERS'
+	| 'VOICE_NEGATIVE_LANGUAGE'
+	| 'VOICE_APATHY_PHRASES'
+	| 'VOICE_SHORT_TURNS'
+	| 'VOICE_EMPATHY_PHRASES'
+	| 'VOICE_REPEAT_REQUESTS'
+	| 'VOICE_SELF_CORRECTIONS'
+	| 'VOICE_LOST_THREAD';
 
-export type MetricUnit = 'PERCENT' | 'SCORE_5' | 'COUNT';
+export type MetricUnit = 'PERCENT' | 'SCORE_5' | 'COUNT' | 'VOICE';
 export type MetricSubItemGroup = 'COMPLIANCE_ITEMS' | 'EMOTIONS';
 
 export interface TriggerMetricDefinition {
@@ -49,6 +66,10 @@ export interface TriggerMetricDefinition {
 	defaultThreshold: number;
 	/** true → low values are bad (scores); false → high values are bad (error counts, negative shares) */
 	higherIsBetter: boolean;
+	/** VOICE metrics: the unit shown after a value, e.g. "wpm". */
+	unitLabel?: string;
+	/** VOICE metrics: decimals shown. */
+	decimals?: number;
 	/** When set, the condition can be narrowed to one sub-item (compliance item or emotion). */
 	subItemGroup?: MetricSubItemGroup;
 }
@@ -69,7 +90,13 @@ export type RuleType = AlertRuleType | RecognitionRuleType;
 export type RuleSeverity = 'INFO' | 'WARNING' | 'CRITICAL';
 export type RuleStatus = 'ACTIVE' | 'PAUSED' | 'DRAFT';
 
-export type ConditionMode = 'THRESHOLD' | 'RANGE' | 'PERCENT_CHANGE' | 'CONSECUTIVE';
+export type ConditionMode =
+	| 'THRESHOLD'
+	| 'RANGE'
+	| 'PERCENT_CHANGE'
+	| 'CONSECUTIVE'
+	/** Drift in the worse direction from the agent's own usual level (`changePercent`). */
+	| 'BASELINE_DEVIATION';
 export type ComparisonOperator = 'LT' | 'LTE' | 'GT' | 'GTE';
 export type ChangeDirection = 'INCREASE' | 'DECREASE';
 export type EvaluationWindow =
@@ -244,7 +271,11 @@ export interface MessageTemplate {
 	updatedAt: string;
 }
 
-export type ActivityStatus = 'SENT' | 'ACKNOWLEDGED' | 'ESCALATED' | 'SUPPRESSED';
+export type ActivityStatus =
+	| 'SENT'
+	| 'ACKNOWLEDGED'
+	| 'ESCALATED'
+	| 'SUPPRESSED';
 
 export interface TriggerActivityEntry {
 	id: string;

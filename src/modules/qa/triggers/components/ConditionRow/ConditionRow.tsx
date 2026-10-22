@@ -317,6 +317,26 @@ export function ConditionRow({
 						</>
 					)}
 
+					{condition.mode === 'BASELINE_DEVIATION' && (
+						<Grid.Col span={{ base: 6, md: 1.5 }}>
+							<NumberInput
+								size='xs'
+								label={t('editor.fields.percentWorse')}
+								value={condition.changePercent}
+								onChange={(v) =>
+									onChange({
+										...condition,
+										changePercent: typeof v === 'number' ? v : Number(v) || 25,
+									})
+								}
+								min={5}
+								max={300}
+								step={5}
+								suffix=' %'
+							/>
+						</Grid.Col>
+					)}
+
 					{condition.mode === 'CONSECUTIVE' && (
 						<>
 							<Grid.Col span={{ base: 4, md: 1 }}>

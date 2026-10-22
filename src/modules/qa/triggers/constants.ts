@@ -1,3 +1,4 @@
+import { VOICE_METRIC_ID, VOICE_SIGNALS } from '~/modules/qa/burnout/constants';
 import {
 	IconAlertTriangle,
 	IconAward,
@@ -46,6 +47,32 @@ export const AREA_COLORS: Record<EvaluationArea | 'GENERAL', string> = {
 };
 
 export const TRIGGER_METRIC_CATALOG: TriggerMetricDefinition[] = [
+	// Burnout: the score and the voice signals live under Sentiment & Emotion.
+	{
+		id: 'BURNOUT_SCORE',
+		area: 'SENTIMENT_EMOTION',
+		unit: 'VOICE',
+		min: 0,
+		max: 100,
+		step: 1,
+		defaultThreshold: 70,
+		higherIsBetter: false,
+		decimals: 0,
+	},
+	...VOICE_SIGNALS.map(
+		(s): TriggerMetricDefinition => ({
+			id: VOICE_METRIC_ID[s.key],
+			area: 'SENTIMENT_EMOTION',
+			unit: 'VOICE',
+			min: 0,
+			max: Math.ceil(Math.max(s.defaultThreshold * 3, s.typical * 4)),
+			step: s.decimals ? 0.1 : 1,
+			defaultThreshold: s.defaultThreshold,
+			higherIsBetter: s.worse === 'lower',
+			unitLabel: s.unit,
+			decimals: s.decimals,
+		})
+	),
 	{
 		id: 'QA_OVERALL_SCORE',
 		area: 'QUALITY_ASSURANCE',
@@ -334,7 +361,12 @@ export const RULE_TYPE_META: Record<RuleType, RuleTypeMeta> = {
 		kind: 'ALERT',
 		icon: IconFlame,
 		color: 'red',
-		allowedModes: ['THRESHOLD', 'PERCENT_CHANGE', 'CONSECUTIVE'],
+		allowedModes: [
+			'THRESHOLD',
+			'BASELINE_DEVIATION',
+			'PERCENT_CHANGE',
+			'CONSECUTIVE',
+		],
 		hasConditions: true,
 	},
 	MILESTONE: {
@@ -522,3 +554,15 @@ export const SAMPLE_TEMPLATE_VALUES: Record<TemplateVariable, string> = {
 	badge_name: 'Compliance Master',
 	streak_count: '3',
 };
+
+export type TriggersRole = 'supervisor' | 'qa-manager';
+
+export const triggersBasePath = (role: TriggersRole) =>
+	role === 'supervisor' ? '/qa/supervisor/triggers' : '/qa/qa-manager/triggers';
+
+/** The isolated page of one rule (route `triggers/rules/:ruleId`). */
+export const triggerRulePath = (role: TriggersRole, ruleId: string) =>
+	`${triggersBasePath(role)}/rules/${ruleId}`;
+
+export const triggersRoleFromPath = (pathname: string): TriggersRole =>
+	pathname.startsWith('/qa/supervisor/') ? 'supervisor' : 'qa-manager';

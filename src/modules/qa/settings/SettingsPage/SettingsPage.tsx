@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Stack, Tabs, Text, Title } from '@mantine/core';
 import {
+	IconBattery2,
 	IconChartHistogram,
 	IconClipboardCheck,
 	IconMoodSmile,
@@ -9,6 +10,7 @@ import {
 	IconShieldCheck,
 } from '@tabler/icons-react';
 import ContentContainer from '~/components/ContentContainer';
+import { BurnoutTab } from './tabs/BurnoutTab';
 import { BusinessTab } from './tabs/BusinessTab';
 import { CoachingTab } from './tabs/CoachingTab';
 import { ComplianceTab } from './tabs/ComplianceTab';
@@ -62,6 +64,9 @@ export const SettingsPage: React.FC = () => {
 						<Tabs.Tab value='coaching' leftSection={<IconSchool size={16} />}>
 							{t('page.tabs.coaching')}
 						</Tabs.Tab>
+						<Tabs.Tab value='burnout' leftSection={<IconBattery2 size={16} />}>
+							{t('page.tabs.burnout')}
+						</Tabs.Tab>
 					</Tabs.List>
 
 					<Tabs.Panel value='qa' pt='lg'>
@@ -78,6 +83,9 @@ export const SettingsPage: React.FC = () => {
 					</Tabs.Panel>
 					<Tabs.Panel value='coaching' pt='lg'>
 						<CoachingTab />
+					</Tabs.Panel>
+					<Tabs.Panel value='burnout' pt='lg'>
+						<BurnoutTab />
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>

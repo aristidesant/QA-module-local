@@ -1,0 +1,100 @@
+{
+	"families": {
+		"acoustic": "Voice",
+		"tempo": "Tempo",
+		"lexical": "Word choice",
+		"cognitive": "Focus"
+	},
+	"familyHints": {
+		"acoustic": "How the voice sounds: energy, pitch and breathiness",
+		"tempo": "The pace of speech, pauses and how fast the agent answers",
+		"lexical": "Negative words, indifference and short, scripted replies",
+		"cognitive": "Signs of mental fog: asking to repeat, losing the thread"
+	},
+	"dimensions": {
+		"exhaustion": "Exhaustion",
+		"cynicism": "Detachment",
+		"efficacy": "Effectiveness"
+	},
+	"status": {
+		"ACTIVE": "Active",
+		"NEAR": "Near",
+		"OK": "Normal",
+		"NO_DATA": "Not enough calls"
+	},
+	"levels": {
+		"low": "Low",
+		"medium": "Medium",
+		"high": "High"
+	},
+	"signals": {
+		"pitchVariability": {
+			"label": "Pitch variability",
+			"description": "How much the voice rises and falls. A flat, monotone voice is a sign of exhaustion."
+		},
+		"vocalEnergy": {
+			"label": "Vocal energy",
+			"description": "Loudness and drive of the voice. It drops when the agent is drained."
+		},
+		"breathiness": {
+			"label": "Breathy voice",
+			"description": "Share of speech that sounds breathy or faint."
+		},
+		"sighs": {
+			"label": "Audible sighs",
+			"description": "Sighs and heavy breaths per minute of speech."
+		},
+		"speechRate": {
+			"label": "Speech rate",
+			"description": "Words per minute. It slows down with fatigue."
+		},
+		"longPauses": {
+			"label": "Long pauses",
+			"description": "Silences from the agent of more than 3 seconds, per call."
+		},
+		"responseLatency": {
+			"label": "Response delay",
+			"description": "Seconds between the customer finishing and the agent answering."
+		},
+		"fillers": {
+			"label": "Filler words",
+			"description": "\"Uh\", \"um\" and similar fillers per minute."
+		},
+		"negativeLanguage": {
+			"label": "Negative language",
+			"description": "Negative words and expressions per 100 words the agent says."
+		},
+		"apathyPhrases": {
+			"label": "Apathy phrases",
+			"description": "Phrases of giving up or indifference, such as \"whatever you say\" or \"nothing I can do\"."
+		},
+		"shortTurns": {
+			"label": "Short, scripted replies",
+			"description": "Share of the agent's turns with four words or fewer."
+		},
+		"empathyPhrases": {
+			"label": "Empathy phrases",
+			"description": "Phrases that acknowledge the customer. Fewer of them is the warning."
+		},
+		"repeatRequests": {
+			"label": "Asks to repeat",
+			"description": "Times the agent asks the customer to say something again."
+		},
+		"selfCorrections": {
+			"label": "Self-corrections",
+			"description": "Times the agent restarts or corrects their own sentence."
+		},
+		"lostThread": {
+			"label": "Loses the thread",
+			"description": "Times the agent asks something the customer already answered."
+		}
+	},
+	"ui": {
+		"now": "Now",
+		"usual": "Usual {{value}}",
+		"noUsual": "No baseline yet",
+		"none": "No voice signal is active right now.",
+		"changeHint": "Change against the agent's own usual level, in the worse direction",
+		"activeOf": "{{active}} of {{total}} active"
+	}
+}

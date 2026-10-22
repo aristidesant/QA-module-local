@@ -5,7 +5,7 @@ import {
 	useState,
 	useCallback,
 } from 'react';
-import { useLocation } from 'react-router';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { Stack, Title, Text, Tabs, Badge } from '@mantine/core';
 import {
 	IconAlertTriangle,
@@ -26,6 +26,7 @@ import { RuleEditorDrawer } from '../components/RuleEditorDrawer';
 import ActivityTab from '../components/ActivityTab';
 import ActivityDetailDrawer from '../components/ActivityDetailDrawer';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
+import { triggerRulePath, triggersRoleFromPath } from '../constants';
 import type {
 	RuleKind,
 	RuleType,
@@ -52,6 +53,8 @@ export const useTriggersPageContext = (): TriggersPageContextType => {
 export default function TriggersPage() {
 	const { t } = useTranslation('qa.triggers');
 	const location = useLocation();
+	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
 	const { rules, badges, templates, activity } = useTriggerRulesStore();
 
 	// Determine role from path
@@ -63,7 +66,9 @@ export default function TriggersPage() {
 	const defaultSupervisorIds = role === 'supervisor' ? ['SUP-001'] : [];
 
 	// State management
-	const [tab, setTab] = useState<string | null>('alerts');
+	const [tab, setTab] = useState<string | null>(
+		searchParams.get('tab') ?? 'alerts'
+	);
 	const [pickerOpened, setPickerOpened] = useState(false);
 	const [pickerKind, setPickerKind] = useState<RuleKind>('ALERT');
 	const [editorState, setEditorState] = useState<{
@@ -73,7 +78,7 @@ export default function TriggersPage() {
 		rule: TriggerRule | null;
 		badgePreset?: Partial<any>;
 	}>({ opened: false, mode: 'create', type: 'METRIC_ALERT', rule: null });
-	const [detailRuleId, setDetailRuleId] = useState<string | null>(null);
+
 	const [detailActivityEntry, setDetailActivityEntry] =
 		useState<TriggerActivityEntry | null>(null);
 
@@ -117,18 +122,6 @@ export default function TriggersPage() {
 	const handleEditRule = useCallback((rule: TriggerRule) => {
 		setEditorState({ opened: true, mode: 'edit', type: rule.type, rule });
 	}, []);
-
-	const handleDetailRuleHandled = useCallback(() => {
-		setDetailRuleId(null);
-	}, []);
-
-	const handleAcknowledgeActivity = useCallback(
-		(entryId: string) => {
-			useTriggerRulesStore.getState().acknowledgeActivity(entryId);
-			notifySuccess(t('activity.notifications.acknowledged'));
-		},
-		[t]
-	);
 
 	return (
 		<TriggersPageContext.Provider
@@ -218,10 +211,6 @@ export default function TriggersPage() {
 								kind='ALERT'
 								onCreate={handleCreateRule}
 								onEdit={handleEditRule}
-								onOpenActivity={setDetailActivityEntry}
-								onAcknowledgeActivity={handleAcknowledgeActivity}
-								detailRuleId={detailRuleId}
-								onDetailRuleHandled={handleDetailRuleHandled}
 							/>
 						</Tabs.Panel>
 
@@ -230,27 +219,19 @@ export default function TriggersPage() {
 								kind='RECOGNITION'
 								onCreate={handleCreateRule}
 								onEdit={handleEditRule}
-								onOpenActivity={setDetailActivityEntry}
-								onAcknowledgeActivity={handleAcknowledgeActivity}
-								detailRuleId={detailRuleId}
-								onDetailRuleHandled={handleDetailRuleHandled}
 							/>
 						</Tabs.Panel>
 
 						<Tabs.Panel value='badges' pt='md'>
 							<BadgesTab
-								onOpenRule={(ruleId) => {
-									const rule = rules.find((r) => r.id === ruleId);
-									if (rule) {
-										setTab('recognition');
-										setEditorState({
-											opened: false,
-											mode: 'edit',
-											type: rule.type,
-											rule,
-										});
-									}
-								}}
+								onOpenRule={(ruleId) =>
+									navigate(
+										triggerRulePath(
+											triggersRoleFromPath(location.pathname),
+											ruleId
+										)
+									)
+								}
 								onCreateRuleForBadge={(badge) => {
 									setTab('recognition');
 									setEditorState({
@@ -331,11 +312,9 @@ export default function TriggersPage() {
 				}}
 				onOpenRule={(ruleId) => {
 					setDetailActivityEntry(null);
-					const rule = rules.find((r) => r.id === ruleId);
-					if (rule) {
-						setTab(rule.kind === 'ALERT' ? 'alerts' : 'recognition');
-						setDetailRuleId(ruleId);
-					}
+					navigate(
+						triggerRulePath(triggersRoleFromPath(location.pathname), ruleId)
+					);
 				}}
 				inboxPath={inboxPath}
 				role={role}

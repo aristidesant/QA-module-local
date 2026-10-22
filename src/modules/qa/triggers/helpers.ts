@@ -26,6 +26,10 @@ export function formatMetricValue(
 	value: number
 ): string {
 	const unit = METRIC_BY_ID[metricId].unit;
+	if (unit === 'VOICE') {
+		const def = METRIC_BY_ID[metricId];
+		return `${value.toFixed(def.decimals ?? 0)}${def.unitLabel ? ` ${def.unitLabel}` : ''}`;
+	}
 	if (unit === 'PERCENT') return `${Math.round(value)}%`;
 	if (unit === 'SCORE_5') return value.toFixed(1);
 	return String(Math.round(value));
@@ -53,6 +57,8 @@ export function describeCondition(t: TFunction, c: RuleCondition): string {
 			return `${metric}${sub} ${t('conditions.between', { from: formatMetricValue(c.metricId, c.value), to: formatMetricValue(c.metricId, c.value2 ?? c.value) })} · ${w}`;
 		case 'PERCENT_CHANGE':
 			return `${metric}${sub} ${t(`conditions.change.${c.changeDirection}`, { percent: c.changePercent })} · ${w}`;
+		case 'BASELINE_DEVIATION':
+			return `${metric}${sub} ${t('conditions.baselineDeviation', { percent: c.changePercent })} · ${w}`;
 		case 'CONSECUTIVE':
 			return t('conditions.consecutive', {
 				count: c.consecutiveCount,
@@ -117,6 +123,13 @@ export function conditionMatches(
 		case 'PERCENT_CHANGE': {
 			const change = s.changes[c.metricId] ?? 0;
 			return c.changeDirection === 'DECREASE'
+				? change <= -c.changePercent
+				: change >= c.changePercent;
+		}
+		case 'BASELINE_DEVIATION': {
+			// `changes` is the % change against the agent's usual level; worse is down for scores, up for counts.
+			const change = s.changes[c.metricId] ?? 0;
+			return METRIC_BY_ID[c.metricId].higherIsBetter
 				? change <= -c.changePercent
 				: change >= c.changePercent;
 		}
@@ -288,9 +301,7 @@ const nextConditionId = (() => {
 	return () => `cond-${++c}`;
 })();
 
-function buildDefaultCondition(
-	mode: 'THRESHOLD' | 'RANGE' | 'PERCENT_CHANGE' | 'CONSECUTIVE'
-): RuleCondition {
+function buildDefaultCondition(mode: RuleCondition['mode']): RuleCondition {
 	return {
 		id: nextConditionId(),
 		metricId: 'QA_OVERALL_SCORE',

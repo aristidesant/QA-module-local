@@ -59,12 +59,15 @@ const OPERATIONAL_METRICS: RankingMetricDefinition[] = [
 
 /** Every evaluation metric of the Triggers catalogue, plus the operational ones. */
 export const RANKING_METRIC_CATALOG: RankingMetricDefinition[] = [
-	...TRIGGER_METRIC_CATALOG.map((metric) => ({
-		id: metric.id,
-		area: metric.area,
-		unit: metric.unit,
-		higherIsBetter: metric.higherIsBetter,
-	})),
+	// Voice signals and the burnout score are about wellbeing, not a performance to rank.
+	...TRIGGER_METRIC_CATALOG.filter((metric) => metric.unit !== 'VOICE').map(
+		(metric) => ({
+			id: metric.id,
+			area: metric.area,
+			unit: metric.unit as RankingMetricDefinition['unit'],
+			higherIsBetter: metric.higherIsBetter,
+		})
+	),
 	...OPERATIONAL_METRICS,
 ];
 

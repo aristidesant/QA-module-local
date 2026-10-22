@@ -8,7 +8,8 @@
 			"compliance": "Cumplimiento",
 			"sentiment": "Sentimiento y emoción",
 			"business": "Insights de negocio",
-			"coaching": "Coaching"
+			"coaching": "Coaching",
+			"burnout": "Burnout"
 		}
 	},
 	"actions": {
@@ -137,7 +138,8 @@
 		"bandsOrder": "En objetivo debe ser mayor que Observación",
 		"bandsRange": "Usa valores entre 0 y 100",
 		"cutPointsOrder": "Cada rango debe terminar más arriba que el anterior",
-		"cutPointsRange": "Usa valores entre 1 y 5"
+		"cutPointsRange": "Usa valores entre 1 y 5",
+		"burnoutCuts": "Medio debe empezar por debajo de Alto"
 	},
 	"copc": {
 		"title": "Categorías COPC",
@@ -145,6 +147,57 @@
 		"columns": {
 			"category": "Categoría",
 			"values": "En objetivo ≥ / Observación ≥"
+		}
+	},
+	"burnout": {
+		"signalsTitle": "Señales de voz",
+		"signalsDescription": "Lo que el análisis de voz lee en cada llamada. Una señal está activa cuando pasa su límite o se aleja de la base del propio agente más que la desviación.",
+		"familyWeight": "Peso total {{value}}",
+		"columns": {
+			"signal": "Señal",
+			"weight": "Peso",
+			"limit": "Límite",
+			"deviation": "Desviación",
+			"confidence": "Confianza"
+		},
+		"confidence": {
+			"high": "Alta",
+			"medium": "Media"
+		},
+		"baselineTitle": "Base y ventana",
+		"baselineDescription": "Cada agente se compara con su propio nivel habitual, así que quien siempre habla despacio no se marca. La ventana define cuántos días recientes se leen en cada señal.",
+		"baselineMethod": "Base",
+		"methods": {
+			"FIRST_WEEKS": "Primeras 4 semanas",
+			"ROLLING": "Móvil de 90 días"
+		},
+		"baselineMinCalls": "Llamadas para fijar la base",
+		"window": "Ventana",
+		"windowDays": "{{count}} días",
+		"minCallsInWindow": "Llamadas necesarias en la ventana",
+		"scoreTitle": "Score y niveles",
+		"scoreDescription": "Las señales activas suman su peso al score. Los días sostenidos lo suben, y señales activas en tres familias suman un bono.",
+		"mediumFrom": "Medio desde",
+		"highFrom": "Alto desde",
+		"minActive": "Señales activas necesarias",
+		"persistence": "Días para el efecto completo",
+		"bonus": "Bono por convergencia",
+		"bands": {
+			"low": "Bajo menos de {{value}}",
+			"medium": "Medio {{from}}–{{to}}",
+			"high": "Alto desde {{value}}"
+		},
+		"scoreHint": "Un agente con menos de {{count}} señales activas se queda en Bajo sea cual sea el score.",
+		"preview": {
+			"title": "Cómo quedaría",
+			"description": "El equipo calculado con los valores de arriba, antes de guardar.",
+			"agents_one": "{{count}} agente",
+			"agents_other": "{{count}} agentes",
+			"none": "Ningún agente estaría en riesgo con esta configuración.",
+			"agent": "Agente",
+			"level": "Nivel",
+			"score": "Score",
+			"signal": "Señal principal"
 		}
 	}
 }

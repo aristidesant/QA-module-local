@@ -13,6 +13,8 @@ import {
 	UNASSIGNED_SUPERVISOR,
 } from '~/modules/qa/team/constants';
 import { monthsBetween } from '~/modules/qa/team/helpers';
+import { TYPICAL_VOICE } from '~/modules/qa/burnout/constants';
+import { applyVoiceSignals } from '~/modules/qa/burnout/mockVoice';
 import type {
 	NonConversionReasonKey,
 	RosterAgent,
@@ -396,6 +398,8 @@ function generateCalls({
 					firstContactResolved:
 						contactOutcome === 'EFFECTIVE' &&
 						extra() < shape.fcrRate * (0.7 + 0.3 * base.qa),
+					// Placeholder: the voice pass below fills the human agents' calls.
+					voice: TYPICAL_VOICE,
 				});
 			}
 		}
@@ -516,7 +520,9 @@ const buildAllCalls = (): TeamCallMetric[] => {
 	const older = buildOlderTeamCalls();
 	blurCustomerEmotions(older, 59);
 	spreadWorkingHours(older, 67);
-	return [...older, ...recent];
+	const all = [...older, ...recent];
+	applyVoiceSignals(all);
+	return all;
 };
 
 export const TEAM_CALLS: TeamCallMetric[] = buildAllCalls();

@@ -1,3 +1,4 @@
+import type { BurnoutThresholds } from '~/modules/qa/burnout/types';
 import type { ScoreBand } from '~/modules/qa/constants/badgeColors';
 import type {
 	CoachingTierCuts,
@@ -121,3 +122,7 @@ export const validateTierCuts = (c: CoachingTierCuts): string | null => {
 		return 'validation.tierCutsRange';
 	return null;
 };
+
+/** Medium must start below High. Keys under `qa.settings`. */
+export const validateBurnout = (b: BurnoutThresholds): string | null =>
+	b.levelCuts.medium >= b.levelCuts.high ? 'validation.burnoutCuts' : null;

@@ -74,6 +74,22 @@
 		"ALL": "All areas"
 	},
 	"metrics": {
+		"BURNOUT_SCORE": "Burnout score",
+		"VOICE_PITCH_VARIABILITY": "Pitch variability",
+		"VOICE_VOCAL_ENERGY": "Vocal energy",
+		"VOICE_BREATHINESS": "Breathy voice",
+		"VOICE_SIGHS": "Audible sighs",
+		"VOICE_SPEECH_RATE": "Speech rate",
+		"VOICE_LONG_PAUSES": "Long pauses",
+		"VOICE_RESPONSE_LATENCY": "Response delay",
+		"VOICE_FILLERS": "Filler words",
+		"VOICE_NEGATIVE_LANGUAGE": "Negative language",
+		"VOICE_APATHY_PHRASES": "Apathy phrases",
+		"VOICE_SHORT_TURNS": "Short, scripted replies",
+		"VOICE_EMPATHY_PHRASES": "Empathy phrases",
+		"VOICE_REPEAT_REQUESTS": "Asks to repeat",
+		"VOICE_SELF_CORRECTIONS": "Self-corrections",
+		"VOICE_LOST_THREAD": "Loses the thread",
 		"QA_OVERALL_SCORE": "QA score",
 		"QA_ECN_COUNT": "Critical business errors",
 		"QA_ENC_COUNT": "Non-critical errors",
@@ -148,6 +164,7 @@
 		"THRESHOLD": "Nominal value",
 		"RANGE": "Within a range",
 		"PERCENT_CHANGE": "Percentage change",
+		"BASELINE_DEVIATION": "Drift from their usual level",
 		"CONSECUTIVE": "Consecutive calls"
 	},
 	"operators": {
@@ -170,6 +187,7 @@
 	},
 	"logic": { "ALL": "Match ALL conditions", "ANY": "Match ANY condition" },
 	"conditions": {
+		"baselineDeviation": "is ≥ {{percent}}% worse than their usual",
 		"between": "between {{from}} and {{to}}",
 		"change": {
 			"DECREASE": "declines ≥ {{percent}}%",
@@ -283,6 +301,7 @@
 		}
 	},
 	"detail": {
+		"notFound": "Rule not found.",
 		"tabs": { "overview": "Overview", "activity": "Activity" },
 		"condition": "Condition",
 		"scope": "Scope",
@@ -353,6 +372,7 @@
 			"to": "To",
 			"direction": "Direction",
 			"percent": "Percent",
+			"percentWorse": "Worse by",
 			"consecutiveCount": "Consecutive calls",
 			"window": "Evaluation window",
 			"windowSize": "N",

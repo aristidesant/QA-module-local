@@ -1,3 +1,4 @@
+import type { CallVoiceSignals } from '~/modules/qa/burnout/types';
 import type { FormModality } from '~/modules/qa/forms/types';
 
 // Extracted from burnout-risk-widget campaigns pages
@@ -414,6 +415,8 @@ export interface CallEvaluationDetail {
 	agentName: string;
 	/** Roster id of the agent, used to pre-fill coaching flows. */
 	agentId: string;
+	/** What the voice analysis read from the agent's side of this call. */
+	agentVoice: CallVoiceSignals;
 	customerName: string;
 	customerId: string;
 	date: string;

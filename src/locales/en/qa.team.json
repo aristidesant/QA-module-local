@@ -122,11 +122,31 @@
 	},
 	"burnoutTab": {
 		"title": "Burnout risk",
-		"summary": "{{breached}} breached · {{near}} near, out of {{total}} conditions in the active burnout rules",
+		"summary": "Voice signals: {{active}} active · {{near}} near · {{days}} d in a row",
 		"scheduleCoaching": "Schedule coaching",
+		"review": {
+			"confirm": "Confirm risk",
+			"dismiss": "Dismiss",
+			"reason": "Why is this not burnout?",
+			"reasonPlaceholder": "e.g. Back from leave, the drop is expected.",
+			"silence": "Keep out of the lists for",
+			"days": "{{count}} days",
+			"submit": "Dismiss risk",
+			"undo": "Undo",
+			"confirmedNotice": "Risk confirmed",
+			"dismissedNotice": "Risk dismissed",
+			"confirmedTitle": "Risk confirmed",
+			"dismissedTitle": "Risk dismissed",
+			"confirmedBanner": "Confirmed by {{by}} on {{date}}.",
+			"dismissedBanner": "Dismissed by {{by}}. Out of the lists until {{date}}. Reason: {{reason}}"
+		},
+		"signals": {
+			"title": "What explains it",
+			"description": "Each voice signal the analysis reads on the agent's calls, against their own usual level."
+		},
 		"drivers": {
-			"title": "Why this score",
-			"description": "The conditions configured in the burnout rules, and which ones this agent matches right now.",
+			"title": "Alerts",
+			"description": "Alert rules in Triggers that notify the team about this agent.",
 			"manageRules": "Manage burnout rules",
 			"matched": "Rule met",
 			"notMet": "Rule not met",
@@ -134,16 +154,16 @@
 			"now": "Now",
 			"streak": "{{count}} in a row",
 			"why": {
-				"at_one": "{{level}} risk because the rule \"{{rules}}\" is met.",
-				"at_other": "{{level}} risk because these rules are met: {{rules}}.",
-				"none": "No burnout rule is met right now.",
+				"at_one": "The alert rule \"{{rules}}\" is met.",
+				"at_other": "These alert rules are met: {{rules}}.",
+				"none": "No alert rule is met right now.",
 				"near_one": "{{count}} condition is close to matching.",
 				"near_other": "{{count}} conditions are close to matching."
 			},
 			"rule": {
 				"logicALL": "Met when all conditions match",
 				"logicANY": "Met when any condition matches",
-				"sets": "Sets {{level}} risk",
+				"sets": "Alerts at {{level}} risk",
 				"progress": "{{matching}} of {{total}} conditions matching"
 			}
 		},

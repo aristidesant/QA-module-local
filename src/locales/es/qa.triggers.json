@@ -74,6 +74,22 @@
 		"ALL": "Todas las áreas"
 	},
 	"metrics": {
+		"BURNOUT_SCORE": "Score de burnout",
+		"VOICE_PITCH_VARIABILITY": "Variación de tono",
+		"VOICE_VOCAL_ENERGY": "Energía vocal",
+		"VOICE_BREATHINESS": "Voz aspirada",
+		"VOICE_SIGHS": "Suspiros audibles",
+		"VOICE_SPEECH_RATE": "Ritmo de habla",
+		"VOICE_LONG_PAUSES": "Pausas largas",
+		"VOICE_RESPONSE_LATENCY": "Demora en responder",
+		"VOICE_FILLERS": "Muletillas",
+		"VOICE_NEGATIVE_LANGUAGE": "Lenguaje negativo",
+		"VOICE_APATHY_PHRASES": "Frases de apatía",
+		"VOICE_SHORT_TURNS": "Respuestas cortas o de guion",
+		"VOICE_EMPATHY_PHRASES": "Frases de empatía",
+		"VOICE_REPEAT_REQUESTS": "Pide que repitan",
+		"VOICE_SELF_CORRECTIONS": "Autocorrecciones",
+		"VOICE_LOST_THREAD": "Pierde el hilo",
 		"QA_OVERALL_SCORE": "Puntuación QA",
 		"QA_ECN_COUNT": "Errores críticos de negocio",
 		"QA_ENC_COUNT": "Errores no críticos",
@@ -148,6 +164,7 @@
 		"THRESHOLD": "Valor nominal",
 		"RANGE": "Dentro de un rango",
 		"PERCENT_CHANGE": "Cambio porcentual",
+		"BASELINE_DEVIATION": "Desviación de su nivel habitual",
 		"CONSECUTIVE": "Llamadas consecutivas"
 	},
 	"operators": {
@@ -173,6 +190,7 @@
 		"ANY": "Coincidir con CUALQUIER condición"
 	},
 	"conditions": {
+		"baselineDeviation": "es ≥ {{percent}}% peor que su nivel habitual",
 		"between": "entre {{from}} y {{to}}",
 		"change": {
 			"DECREASE": "disminuye ≥ {{percent}}%",
@@ -297,6 +315,7 @@
 		}
 	},
 	"detail": {
+		"notFound": "Regla no encontrada.",
 		"tabs": { "overview": "Descripción general", "activity": "Actividad" },
 		"condition": "Condición",
 		"scope": "Ámbito",
@@ -367,6 +386,7 @@
 			"to": "A",
 			"direction": "Dirección",
 			"percent": "Porcentaje",
+			"percentWorse": "Peor en",
 			"consecutiveCount": "Llamadas consecutivas",
 			"window": "Ventana de evaluación",
 			"windowSize": "N",

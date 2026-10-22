@@ -44,7 +44,7 @@ export function BurnoutDrivers({
 	const driverValue = (d: BurnoutDriver): string => {
 		if (d.currentValue === null) return '—';
 		const c = d.condition;
-		if (c.mode === 'PERCENT_CHANGE')
+		if (c.mode === 'PERCENT_CHANGE' || c.mode === 'BASELINE_DEVIATION')
 			return `${d.currentValue > 0 ? '+' : ''}${d.currentValue}%`;
 		if (c.mode === 'CONSECUTIVE')
 			return t('burnoutTab.drivers.streak', { count: d.currentValue });

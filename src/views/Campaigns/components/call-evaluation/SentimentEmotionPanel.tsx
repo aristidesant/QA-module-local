@@ -23,7 +23,8 @@ import {
 import { useMemo } from 'react';
 import { SectionCard } from '~/components/SectionCard';
 import { assessBurnout } from '~/modules/qa/analytics/helpers';
-import { BurnoutDrivers } from '~/modules/qa/team/components/BurnoutDrivers';
+import { BurnoutSignals } from '~/modules/qa/team/components/BurnoutSignals';
+import { evaluateCallVoice } from '~/modules/qa/burnout/compute';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
 import {
 	selectTriggerRules,
@@ -31,6 +32,8 @@ import {
 } from '~/stores/qa/triggerRulesStore';
 import { EMOTION_LABELS, SENTIMENT_CATEGORIES } from '../../constants';
 import type { CallSentimentEvaluation } from '../../types';
+import type { CallVoiceSignals } from '~/modules/qa/burnout/types';
+import { selectThresholds, useSettingsStore } from '~/stores/qa/settingsStore';
 import { formatDuration } from './scoreColor';
 import {
 	ALERT,
@@ -47,6 +50,8 @@ interface SentimentEmotionPanelProps {
 	showBurnout?: boolean;
 	/** Agent of the call: their burnout level comes from the active burnout rules. */
 	agentId?: string;
+	/** What the voice analysis read on this call; compared with the agent's own usual level. */
+	voice?: CallVoiceSignals;
 }
 
 /** Neutral unless the risk is high; red is the only hue on the page. */
@@ -75,12 +80,25 @@ export function SentimentEmotionPanel({
 	sentiment,
 	showBurnout = true,
 	agentId,
+	voice,
 }: SentimentEmotionPanelProps) {
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
+	const burnoutSettings = useSettingsStore(selectThresholds).burnout;
 	const burnoutAssessment = useMemo(
 		() => (agentId ? assessBurnout(agentId, triggerRules) : null),
-		[agentId, triggerRules]
+		[agentId, triggerRules, burnoutSettings]
 	);
+	// This call's signals against the agent's own baseline.
+	const callSignals = useMemo(
+		() =>
+			agentId && voice
+				? evaluateCallVoice(agentId, voice, burnoutSettings)
+				: [],
+		[agentId, voice, burnoutSettings]
+	);
+	const offUsual = callSignals.filter(
+		(s) => s.status === 'ACTIVE' || s.status === 'NEAR'
+	).length;
 
 	const renderSpeakerCard = (speaker: 'agent' | 'customer') => {
 		const data = speaker === 'agent' ? sentiment.agent : sentiment.customer;
@@ -129,7 +147,7 @@ export function SentimentEmotionPanel({
 			{showBurnout && burnoutAssessment && (
 				<SectionCard
 					title='Agent burnout risk'
-					description='Why the burnout rules rate this agent at this level right now'
+					description="How the agent's voice in this call compares with their own usual level"
 					icon={IconFlame}
 					headerActions={
 						<Badge
@@ -150,13 +168,17 @@ export function SentimentEmotionPanel({
 						<Text size='xs' c='dimmed'>
 							Risk score {burnoutAssessment.percentage}% ·{' '}
 							{BURNOUT_LEVEL_META[burnoutAssessment.level].band} ·{' '}
-							{burnoutAssessment.breached} of {burnoutAssessment.enabledCount}{' '}
-							conditions matching
+							{burnoutAssessment.voice.activeCount} voice signals active over
+							the last {burnoutSettings.windowDays} days
 						</Text>
-						<BurnoutDrivers
-							assessment={burnoutAssessment}
-							rules={triggerRules}
+						<Text size='sm' fw={500}>
+							{offUsual} of {callSignals.length} signals in this call are off
+							their usual level
+						</Text>
+						<BurnoutSignals
+							signals={callSignals}
 							compact
+							emptyLabel='No voice signal stands out in this call.'
 						/>
 					</Stack>
 				</SectionCard>

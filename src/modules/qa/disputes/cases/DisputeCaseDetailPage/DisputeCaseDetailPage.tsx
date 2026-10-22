@@ -140,6 +140,7 @@ export const DisputeCaseDetailPage: React.FC = () => {
 					<SentimentEmotionPanel
 						sentiment={shown.sentiment}
 						agentId={dispute.agentId}
+						voice={shown.agentVoice}
 					/>
 				);
 			case 'compliance':

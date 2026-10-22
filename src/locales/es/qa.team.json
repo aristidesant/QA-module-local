@@ -122,11 +122,31 @@
 	},
 	"burnoutTab": {
 		"title": "Riesgo de burnout",
-		"summary": "{{breached}} superadas · {{near}} cerca, de {{total}} condiciones en las reglas de burnout activas",
+		"summary": "Señales de voz: {{active}} activas · {{near}} cerca · {{days}} d seguidos",
 		"scheduleCoaching": "Agendar coaching",
+		"review": {
+			"confirm": "Confirmar riesgo",
+			"dismiss": "Descartar",
+			"reason": "¿Por qué no es burnout?",
+			"reasonPlaceholder": "p. ej. Vuelve de una licencia, la caída es esperada.",
+			"silence": "Mantener fuera de las listas durante",
+			"days": "{{count}} días",
+			"submit": "Descartar riesgo",
+			"undo": "Deshacer",
+			"confirmedNotice": "Riesgo confirmado",
+			"dismissedNotice": "Riesgo descartado",
+			"confirmedTitle": "Riesgo confirmado",
+			"dismissedTitle": "Riesgo descartado",
+			"confirmedBanner": "Confirmado por {{by}} el {{date}}.",
+			"dismissedBanner": "Descartado por {{by}}. Fuera de las listas hasta el {{date}}. Motivo: {{reason}}"
+		},
+		"signals": {
+			"title": "Qué lo explica",
+			"description": "Cada señal de voz que el análisis lee en las llamadas del agente, frente a su nivel habitual."
+		},
 		"drivers": {
-			"title": "Por qué este puntaje",
-			"description": "Las condiciones configuradas en las reglas de burnout y cuáles cumple este agente ahora mismo.",
+			"title": "Avisos",
+			"description": "Reglas de aviso de Triggers que notifican al equipo sobre este agente.",
 			"manageRules": "Gestionar reglas de burnout",
 			"matched": "Regla cumplida",
 			"notMet": "Regla no cumplida",
@@ -134,16 +154,16 @@
 			"now": "Ahora",
 			"streak": "{{count}} seguidas",
 			"why": {
-				"at_one": "Riesgo {{level}} porque se cumple la regla \"{{rules}}\".",
-				"at_other": "Riesgo {{level}} porque se cumplen estas reglas: {{rules}}.",
-				"none": "Ninguna regla de burnout se cumple ahora mismo.",
+				"at_one": "Se cumple la regla de aviso \"{{rules}}\".",
+				"at_other": "Se cumplen estas reglas de aviso: {{rules}}.",
+				"none": "Ninguna regla de aviso se cumple ahora mismo.",
 				"near_one": "{{count}} condición está cerca de cumplirse.",
 				"near_other": "{{count}} condiciones están cerca de cumplirse."
 			},
 			"rule": {
 				"logicALL": "Se cumple cuando todas las condiciones coinciden",
 				"logicANY": "Se cumple cuando coincide alguna condición",
-				"sets": "Define riesgo {{level}}",
+				"sets": "Avisa con riesgo {{level}}",
 				"progress": "{{matching}} de {{total}} condiciones se cumplen"
 			}
 		},

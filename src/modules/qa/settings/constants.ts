@@ -1,3 +1,4 @@
+import { DEFAULT_BURNOUT_SETTINGS } from '~/modules/qa/burnout/constants';
 import type { CallEmotion } from '~/modules/qa/analytics/types';
 import type { BusinessSignalKey, QaSettings, SentimentBandKey } from './types';
 
@@ -71,6 +72,7 @@ export const DEFAULT_SETTINGS: QaSettings = {
 		coaching: {
 			tierCuts: { excellent: 90, good: 80, needsImprovement: 70 },
 		},
+		burnout: DEFAULT_BURNOUT_SETTINGS,
 	},
 };
 
