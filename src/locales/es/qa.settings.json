@@ -151,8 +151,7 @@
 	},
 	"burnout": {
 		"signalsTitle": "Señales de voz",
-		"signalsDescription": "Lo que el análisis de voz lee en cada llamada. Una señal está activa cuando pasa su límite o se aleja de la base del propio agente más que la desviación.",
-		"familyWeight": "Peso total {{value}}",
+		"signalsDescription": "Lo que el análisis de voz lee en cada llamada. Una señal está activa cuando pasa su límite o se aleja de la base del propio agente más que la desviación. La importancia de cada señal la fija el sistema, según su confianza.",
 		"contextNote": "Días laborables seguidos con sentimiento o emoción negativos en el agente. Los días con clientes hostiles se dejan fuera, para que un mal día no cuente contra el agente.",
 		"lexicon": {
 			"title": "Listas de palabras",
@@ -185,7 +184,6 @@
 		},
 		"columns": {
 			"signal": "Señal",
-			"weight": "Peso",
 			"limit": "Límite",
 			"deviation": "Desviación",
 			"confidence": "Confianza",

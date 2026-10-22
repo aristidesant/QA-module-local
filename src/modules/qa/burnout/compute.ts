@@ -3,6 +3,7 @@ import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import type { TeamCallMetric } from '~/modules/qa/analytics/types';
 import { useSettingsStore } from '~/stores/qa/settingsStore';
 import {
+	CONTEXT_SIGNAL_BY_KEY,
 	CONTEXT_SIGNAL_KEYS,
 	VOICE_SIGNAL_BY_KEY,
 	VOICE_SIGNAL_KEYS,
@@ -189,10 +190,11 @@ const activeFamiliesOf = (
 		)
 	);
 
-const weightOf = (key: BurnoutSignalKey, settings: BurnoutThresholds) =>
-	key in settings.context
-		? settings.context[key as ContextSignalKey].weight
-		: settings.signals[key as VoiceSignalKey].weight;
+/** How much a signal counts is fixed by the system, not configured. */
+const weightOf = (key: BurnoutSignalKey) =>
+	key in CONTEXT_SIGNAL_BY_KEY
+		? CONTEXT_SIGNAL_BY_KEY[key as ContextSignalKey].weight
+		: VOICE_SIGNAL_BY_KEY[key as VoiceSignalKey].weight;
 
 // ---------- context: days in a row with negative sentiment or emotion ----------
 /** A day with fewer calls than this says too little about the agent's mood. */
@@ -311,7 +313,7 @@ const scoreOf = (
 	let total = 0;
 	let reached = 0;
 	for (const s of signals) {
-		const weight = weightOf(s.key, settings);
+		const weight = weightOf(s.key);
 		total += weight;
 		if (s.status === 'ACTIVE') reached += weight;
 		else if (s.status === 'NEAR') reached += weight * NEAR_RATIO;

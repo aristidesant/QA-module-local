@@ -151,8 +151,7 @@
 	},
 	"burnout": {
 		"signalsTitle": "Voice signals",
-		"signalsDescription": "What the voice analysis reads on each call. A signal is active when it passes its limit or drifts from the agent's own baseline by more than the deviation.",
-		"familyWeight": "Total weight {{value}}",
+		"signalsDescription": "What the voice analysis reads on each call. A signal is active when it passes its limit or drifts from the agent's own baseline by more than the deviation. How much each signal counts is set by the system, in line with its confidence.",
 		"contextNote": "Consecutive working days with negative sentiment or emotion in the agent. Days when customers were hostile are left out, so a hard day does not count against the agent.",
 		"lexicon": {
 			"title": "Word lists",
@@ -185,7 +184,6 @@
 		},
 		"columns": {
 			"signal": "Signal",
-			"weight": "Weight",
 			"limit": "Limit",
 			"deviation": "Deviation",
 			"confidence": "Confidence",

@@ -42,7 +42,8 @@ export interface ContextSignalDef {
 	/** Unit of `dayLimit`: "/ 5" for sentiment, "%" for the share of negative-emotion calls. */
 	limitUnit: string;
 	limitDecimals: number;
-	defaultWeight: number;
+	/** How much an active signal adds to the score. Fixed by the system, in line with the confidence of the signal. */
+	weight: number;
 	defaultMinDays: number;
 	defaultDayLimit: number;
 	defaultCustomerFloor: number;
@@ -50,8 +51,6 @@ export interface ContextSignalDef {
 
 export interface ContextSignalConfig {
 	enabled: boolean;
-	/** 1-5: how much an active signal adds to the score. */
-	weight: number;
 	/** Working days in a row that make the signal active. */
 	minDays: number;
 	/** A day counts when the agent's average sentiment is below this, or the share of their calls with negative emotion is above it. */
@@ -73,7 +72,8 @@ export interface VoiceSignalDef {
 	confidence: 'high' | 'medium';
 	/** A typical healthy value, used by the mock data. */
 	typical: number;
-	defaultWeight: number;
+	/** How much an active signal adds to the score. Fixed by the system, in line with the confidence of the signal. */
+	weight: number;
 	/** Absolute limit: beyond it the signal is active whatever the agent's own baseline is. */
 	defaultThreshold: number;
 	/** Active when the signal moves this % from the agent's own baseline in the worse direction. */
@@ -82,8 +82,6 @@ export interface VoiceSignalDef {
 
 export interface BurnoutSignalConfig {
 	enabled: boolean;
-	/** 1-5: how much an active signal adds to the score. */
-	weight: number;
 	threshold: number;
 	deviationPct: number;
 }

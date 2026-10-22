@@ -45,9 +45,6 @@ export const BurnoutSignalsTable: React.FC<BurnoutSignalsTableProps> = ({
 		<Stack gap='xl'>
 			{VOICE_FAMILIES.map((family) => {
 				const signals = VOICE_SIGNALS.filter((s) => s.family === family);
-				const totalWeight = signals
-					.filter((s) => value[s.key].enabled)
-					.reduce((sum, s) => sum + value[s.key].weight, 0);
 				return (
 					<Stack key={family} gap='xs'>
 						<Stack gap={0}>
@@ -55,15 +52,13 @@ export const BurnoutSignalsTable: React.FC<BurnoutSignalsTableProps> = ({
 								{t(`families.${family}`, { ns: 'qa.burnout' })}
 							</Text>
 							<Text size='xs' c='dimmed'>
-								{t(`familyHints.${family}`, { ns: 'qa.burnout' })} ·{' '}
-								{t('burnout.familyWeight', { value: totalWeight })}
+								{t(`familyHints.${family}`, { ns: 'qa.burnout' })}
 							</Text>
 						</Stack>
 						<Table verticalSpacing='xs' withRowBorders>
 							<Table.Thead>
 								<Table.Tr>
 									<Table.Th>{t('burnout.columns.signal')}</Table.Th>
-									<Table.Th w={100}>{t('burnout.columns.weight')}</Table.Th>
 									<Table.Th w={150}>{t('burnout.columns.limit')}</Table.Th>
 									<Table.Th w={130}>{t('burnout.columns.deviation')}</Table.Th>
 									<Table.Th w={110}>{t('burnout.columns.confidence')}</Table.Th>
@@ -88,21 +83,6 @@ export const BurnoutSignalsTable: React.FC<BurnoutSignalsTableProps> = ({
 													description={t(`signals.${signal.key}.description`, {
 														ns: 'qa.burnout',
 													})}
-												/>
-											</Table.Td>
-											<Table.Td>
-												<NumberInput
-													size='xs'
-													value={config.weight}
-													onChange={(v) =>
-														update(signal.key, {
-															weight: toNumber(v, config.weight),
-														})
-													}
-													min={1}
-													max={5}
-													disabled={!config.enabled}
-													aria-label={t('burnout.columns.weight')}
 												/>
 											</Table.Td>
 											<Table.Td>
@@ -179,7 +159,6 @@ export const BurnoutSignalsTable: React.FC<BurnoutSignalsTableProps> = ({
 					<Table.Thead>
 						<Table.Tr>
 							<Table.Th>{t('burnout.columns.signal')}</Table.Th>
-							<Table.Th w={100}>{t('burnout.columns.weight')}</Table.Th>
 							<Table.Th w={110}>{t('burnout.columns.days')}</Table.Th>
 							<Table.Th w={150}>{t('burnout.columns.dayLimit')}</Table.Th>
 							<Table.Th w={150}>{t('burnout.columns.customerFloor')}</Table.Th>
@@ -204,21 +183,6 @@ export const BurnoutSignalsTable: React.FC<BurnoutSignalsTableProps> = ({
 											description={t(`signals.${signal.key}.description`, {
 												ns: 'qa.burnout',
 											})}
-										/>
-									</Table.Td>
-									<Table.Td>
-										<NumberInput
-											size='xs'
-											value={config.weight}
-											onChange={(v) =>
-												updateContext(signal.key, {
-													weight: toNumber(v, config.weight),
-												})
-											}
-											min={1}
-											max={5}
-											disabled={!config.enabled}
-											aria-label={t('burnout.columns.weight')}
 										/>
 									</Table.Td>
 									<Table.Td>
