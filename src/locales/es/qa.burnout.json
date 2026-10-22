@@ -104,7 +104,7 @@
 		"usual": "Habitual {{value}}",
 		"noUsual": "Aún sin base",
 		"none": "Ninguna señal de voz está activa ahora mismo.",
-		"changeHint": "Cambio frente al nivel habitual del propio agente, en el sentido que empeora",
+		"changeHint": "Cambio frente al nivel habitual del propio agente",
 		"activeOf": "{{active}} de {{total}} activas",
 		"days": "{{count}} días",
 		"ofDays": "de {{count}}",
@@ -112,6 +112,12 @@
 		"streakRule": {
 			"lowSentimentDays": "Sentimiento medio por debajo de {{limit}} · se dejan fuera los días con clientes hostiles",
 			"negativeEmotionDays": "Más del {{limit}}% de llamadas con emoción negativa · se dejan fuera los días con clientes hostiles"
+		},
+		"callStatus": {
+			"ACTIVE": "Fuera de lo habitual",
+			"NEAR": "Algo fuera",
+			"OK": "Habitual",
+			"NO_DATA": "Sin datos"
 		}
 	}
 }

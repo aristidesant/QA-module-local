@@ -57,24 +57,23 @@ interface SentimentEmotionPanelProps {
 /** Neutral unless the risk is high; red is the only hue on the page. */
 const BURNOUT_LEVEL_META: Record<
 	BurnoutRiskLevel,
-	{ label: string; color: string; band: string }
+	{ label: string; color: string }
 > = {
-	[BurnoutRiskLevel.LOW]: {
-		label: 'Low risk',
-		color: NEUTRAL,
-		band: 'Low band (5-35)',
-	},
-	[BurnoutRiskLevel.MEDIUM]: {
-		label: 'Medium risk',
-		color: NEUTRAL,
-		band: 'Medium band (40-69)',
-	},
-	[BurnoutRiskLevel.HIGH]: {
-		label: 'High risk',
-		color: ALERT,
-		band: 'High band (70-95)',
-	},
+	[BurnoutRiskLevel.LOW]: { label: 'Low risk', color: NEUTRAL },
+	[BurnoutRiskLevel.MEDIUM]: { label: 'Medium risk', color: NEUTRAL },
+	[BurnoutRiskLevel.HIGH]: { label: 'High risk', color: ALERT },
 };
+
+/** The score range of a level, from the cut-offs saved in Settings. */
+const bandText = (
+	level: BurnoutRiskLevel,
+	cuts: { medium: number; high: number }
+) =>
+	level === BurnoutRiskLevel.LOW
+		? `Low: below ${cuts.medium}`
+		: level === BurnoutRiskLevel.MEDIUM
+			? `Medium: ${cuts.medium} to ${cuts.high - 1}`
+			: `High: ${cuts.high} or more`;
 
 export function SentimentEmotionPanel({
 	sentiment,
@@ -166,17 +165,21 @@ export function SentimentEmotionPanel({
 							size='sm'
 						/>
 						<Text size='xs' c='dimmed'>
-							Risk score {burnoutAssessment.percentage}% ·{' '}
-							{BURNOUT_LEVEL_META[burnoutAssessment.level].band} ·{' '}
+							Agent risk score {burnoutAssessment.percentage}% ·{' '}
+							{bandText(burnoutAssessment.level, burnoutSettings.levelCuts)} ·{' '}
 							{burnoutAssessment.voice.activeCount} signals active over the last{' '}
 							{burnoutSettings.windowDays} days
 						</Text>
 						<Text size='sm' fw={500}>
 							{offUsual} of {callSignals.length} signals in this call are off
-							their usual level
+							their usual level.
+							{burnoutAssessment.voice.activeCount === 0 &&
+								offUsual > 0 &&
+								` One call is not a pattern: over the last ${burnoutSettings.windowDays} days the agent stays within their usual range.`}
 						</Text>
 						<BurnoutSignals
 							signals={callSignals}
+							scope='call'
 							compact
 							emptyLabel='No voice signal stands out in this call.'
 						/>

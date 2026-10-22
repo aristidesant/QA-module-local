@@ -28,6 +28,8 @@ interface BurnoutSignalsProps {
 	compact?: boolean;
 	/** Text when no signal is active or near, in compact mode. */
 	emptyLabel?: string;
+	/** `call`: one call against the agent's usual level, so a signal is "off usual" rather than "active". */
+	scope?: 'agent' | 'call';
 }
 
 /** Why the agent is at their burnout level: every voice signal now, against the agent's own usual level. */
@@ -35,19 +37,28 @@ export function BurnoutSignals({
 	signals,
 	compact = false,
 	emptyLabel,
+	scope = 'agent',
 }: BurnoutSignalsProps) {
 	const { t } = useTranslation('qa.burnout');
 
-	const format = (signal: BurnoutSignalResult, value: number | null) => {
+	const format = (
+		signal: BurnoutSignalResult,
+		value: number | null,
+		extraDecimals = 0
+	) => {
 		if (value === null) return '—';
 		if (signal.family === 'context') return t('ui.days', { count: value });
 		const def = VOICE_SIGNAL_BY_KEY[signal.key as VoiceSignalKey];
-		return `${value.toFixed(def.decimals)} ${def.unit}`;
+		return `${value.toFixed(def.decimals + extraDecimals)} ${def.unit}`;
 	};
 
 	const renderRow = (signal: BurnoutSignalResult) => {
 		const active = signal.status === 'ACTIVE';
-		const deviation = signal.deviationPct;
+		// The change as it happened, up or down, whatever direction is the worse one.
+		const change =
+			signal.value !== null && signal.baseline
+				? ((signal.value - signal.baseline) / signal.baseline) * 100
+				: null;
 		return (
 			<Group
 				key={signal.key}
@@ -69,7 +80,7 @@ export function BurnoutSignals({
 								})
 							: signal.baseline === null
 								? t('ui.noUsual')
-								: t('ui.usual', { value: format(signal, signal.baseline) })}
+								: t('ui.usual', { value: format(signal, signal.baseline, 1) })}
 					</Text>
 				</Stack>
 				{!compact && (
@@ -99,13 +110,15 @@ export function BurnoutSignals({
 					<Text size='sm' w={56} ta='right' c={active ? ALERT : 'dimmed'}>
 						{signal.streak
 							? t('ui.ofDays', { count: signal.streak.minDays })
-							: deviation === null
+							: change === null
 								? '—'
-								: `${deviation > 0 ? '+' : ''}${deviation}%`}
+								: `${change > 0 ? '↑' : change < 0 ? '↓' : ''} ${Math.abs(Math.round(change))}%`.trim()}
 					</Text>
 				</Tooltip>
 				<Badge size='xs' variant='light' color={STATUS_COLOR[signal.status]}>
-					{t(`status.${signal.status}`)}
+					{scope === 'call'
+						? t(`ui.callStatus.${signal.status}`)
+						: t(`status.${signal.status}`)}
 				</Badge>
 			</Group>
 		);
