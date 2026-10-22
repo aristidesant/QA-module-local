@@ -39,14 +39,9 @@ import {
 	type BurnoutEvidenceCall,
 } from '~/modules/qa/analytics/helpers';
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
-import type {
-	BurnoutDriver,
-	BurnoutDriverStatus,
-	HistoryEntry,
-} from '~/modules/qa/analytics/types';
+import type { HistoryEntry } from '~/modules/qa/analytics/types';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
 import { day } from '~/modules/qa/lms/mockData';
-import { describeCondition } from '~/modules/qa/triggers/helpers';
 import {
 	useTriggerRulesStore,
 	selectTriggerRules,
@@ -64,6 +59,7 @@ import {
 import type { AgentProfile, TeamRole } from '../../types';
 import { NOW_ISO } from '../../constants';
 import { formatDate, formatSeconds } from '../../helpers';
+import { BurnoutDrivers } from '../../components/BurnoutDrivers';
 
 interface BurnoutTabProps {
 	profile: AgentProfile;
@@ -83,12 +79,6 @@ const TREND_META = {
 	declining: { icon: IconTrendingUp, color: 'red' },
 } as const;
 
-const DRIVER_COLOR: Record<BurnoutDriverStatus, string> = {
-	BREACHED: 'red',
-	NEAR: 'yellow',
-	OK: 'gray',
-};
-
 const ACTION_STATUS_COLOR = {
 	PLANNED: 'blue',
 	IN_PROGRESS: 'yellow',
@@ -99,7 +89,6 @@ const ACTION_STATUS_COLOR = {
 const ALERT = 'var(--mantine-color-red-text)';
 const WORSE_THAN_TEAM = 1.2;
 
-const driverHelper = createColumnHelper<BurnoutDriver>();
 const callHelper = createColumnHelper<BurnoutEvidenceCall>();
 const historyHelper = createColumnHelper<HistoryEntry>();
 
@@ -110,7 +99,6 @@ export function BurnoutTab({
 	onScheduleCoaching,
 }: BurnoutTabProps) {
 	const { t } = useTranslation('qa.team');
-	const { t: tTriggers } = useTranslation('qa.triggers');
 	const navigate = useNavigate();
 	const agentId = profile.agent.id;
 
@@ -155,47 +143,6 @@ export function BurnoutTab({
 	const TrendIcon = trend.icon;
 	const worse = (value: number, team: number) =>
 		team > 0 && value > team * WORSE_THAN_TEAM;
-
-	const driverColumns: BaseTableColumnDef<BurnoutDriver>[] = [
-		driverHelper.accessor('ruleName', {
-			header: t('burnoutTab.drivers.columns.rule'),
-			cell: (info) => (
-				<Group gap='xs' wrap='nowrap'>
-					<Text size='sm'>{info.getValue()}</Text>
-					{assessment.matchedRuleIds.includes(info.row.original.ruleId) && (
-						<Badge size='xs' variant='light' color='red'>
-							{t('burnoutTab.drivers.matched')}
-						</Badge>
-					)}
-				</Group>
-			),
-		}) as BaseTableColumnDef<BurnoutDriver>,
-		driverHelper.display({
-			id: 'condition',
-			header: t('burnoutTab.drivers.columns.condition'),
-			cell: (info) => (
-				<Text size='sm'>
-					{describeCondition(tTriggers, info.row.original.condition)}
-				</Text>
-			),
-		}) as BaseTableColumnDef<BurnoutDriver>,
-		driverHelper.accessor('currentValue', {
-			header: t('burnoutTab.drivers.columns.value'),
-			cell: (info) => (
-				<Text size='sm' fw={600}>
-					{info.getValue() ?? '—'}
-				</Text>
-			),
-		}) as BaseTableColumnDef<BurnoutDriver>,
-		driverHelper.accessor('status', {
-			header: t('burnoutTab.drivers.columns.status'),
-			cell: (info) => (
-				<Badge size='xs' variant='light' color={DRIVER_COLOR[info.getValue()]}>
-					{t(`burnoutTab.driverStatus.${info.getValue()}`)}
-				</Badge>
-			),
-		}) as BaseTableColumnDef<BurnoutDriver>,
-	];
 
 	const callColumns: BaseTableColumnDef<BurnoutEvidenceCall>[] = [
 		callHelper.display({
@@ -333,13 +280,7 @@ export function BurnoutTab({
 					</Anchor>
 				}
 			>
-				<BaseTable<BurnoutDriver>
-					data={assessment.drivers}
-					columns={driverColumns}
-					getRowId={(r) => r.id}
-					density='compact'
-					emptyMessage={t('burnoutTab.drivers.empty')}
-				/>
+				<BurnoutDrivers assessment={assessment} rules={rules} />
 			</SectionCard>
 
 			<SectionCard

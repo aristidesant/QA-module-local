@@ -145,7 +145,13 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.campaigns': 'qa.campaigns',
 	'qa.campaigns.new': 'qa.campaigns',
 	'qa.campaigns.detail': ['qa.campaigns', 'qa.calls', 'qa.team'],
-	'qa.campaigns.conversation': ['qa.disputes', 'qa.calls', 'qa.lms'],
+	'qa.campaigns.conversation': [
+		'qa.disputes',
+		'qa.calls',
+		'qa.lms',
+		'qa.team',
+		'qa.triggers',
+	],
 	'qa.forms': 'qa.forms',
 	'qa.forms.error-types': 'qa.forms',
 	'qa.forms.detail': 'qa.forms',
@@ -166,6 +172,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.team',
 		'qa.teamAnalytics',
 		'qa.inbox',
+		'qa.triggers',
 	],
 	'qa.supervisor.disputes': [
 		'qa.disputes',
@@ -178,6 +185,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.team',
 		'qa.teamAnalytics',
 		'qa.inbox',
+		'qa.triggers',
 	],
 	'qa.qa-manager.disputes': [
 		'qa.disputes',
@@ -190,6 +198,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.team',
 		'qa.teamAnalytics',
 		'qa.inbox',
+		'qa.triggers',
 	],
 	'qa.qamanager.disputes': [
 		'qa.disputes',
@@ -202,6 +211,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.team',
 		'qa.teamAnalytics',
 		'qa.inbox',
+		'qa.triggers',
 	],
 	'qa.disputes.detail': 'qa.disputes',
 	'qa.evaluator-agents': 'qa.evaluatorAgents',

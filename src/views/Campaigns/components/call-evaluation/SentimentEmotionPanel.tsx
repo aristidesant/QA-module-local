@@ -20,9 +20,17 @@ import {
 	IconWaveSine,
 	IconHeartHandshake,
 } from '@tabler/icons-react';
+import { useMemo } from 'react';
 import { SectionCard } from '~/components/SectionCard';
+import { assessBurnout } from '~/modules/qa/analytics/helpers';
+import { BurnoutDrivers } from '~/modules/qa/team/components/BurnoutDrivers';
+import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
+import {
+	selectTriggerRules,
+	useTriggerRulesStore,
+} from '~/stores/qa/triggerRulesStore';
 import { EMOTION_LABELS, SENTIMENT_CATEGORIES } from '../../constants';
-import type { BurnoutLevel, CallSentimentEvaluation } from '../../types';
+import type { CallSentimentEvaluation } from '../../types';
 import { formatDuration } from './scoreColor';
 import {
 	ALERT,
@@ -37,22 +45,43 @@ interface SentimentEmotionPanelProps {
 	sentiment: CallSentimentEvaluation;
 	/** The agent role does not see the burnout read of their own call. */
 	showBurnout?: boolean;
+	/** Agent of the call: their burnout level comes from the active burnout rules. */
+	agentId?: string;
 }
 
 /** Neutral unless the risk is high; red is the only hue on the page. */
 const BURNOUT_LEVEL_META: Record<
-	BurnoutLevel,
-	{ label: string; color: string }
+	BurnoutRiskLevel,
+	{ label: string; color: string; band: string }
 > = {
-	low: { label: 'Low risk', color: NEUTRAL },
-	medium: { label: 'Medium risk', color: NEUTRAL },
-	high: { label: 'High risk', color: ALERT },
+	[BurnoutRiskLevel.LOW]: {
+		label: 'Low risk',
+		color: NEUTRAL,
+		band: 'Low band (5-35)',
+	},
+	[BurnoutRiskLevel.MEDIUM]: {
+		label: 'Medium risk',
+		color: NEUTRAL,
+		band: 'Medium band (40-69)',
+	},
+	[BurnoutRiskLevel.HIGH]: {
+		label: 'High risk',
+		color: ALERT,
+		band: 'High band (70-95)',
+	},
 };
 
 export function SentimentEmotionPanel({
 	sentiment,
 	showBurnout = true,
+	agentId,
 }: SentimentEmotionPanelProps) {
+	const triggerRules = useTriggerRulesStore(selectTriggerRules);
+	const burnoutAssessment = useMemo(
+		() => (agentId ? assessBurnout(agentId, triggerRules) : null),
+		[agentId, triggerRules]
+	);
+
 	const renderSpeakerCard = (speaker: 'agent' | 'customer') => {
 		const data = speaker === 'agent' ? sentiment.agent : sentiment.customer;
 		const categoryMeta = SENTIMENT_CATEGORIES[data.overallCategory];
@@ -97,61 +126,38 @@ export function SentimentEmotionPanel({
 			</SimpleGrid>
 
 			{/* Agent burnout risk (hidden from the agent role) */}
-			{showBurnout && (
+			{showBurnout && burnoutAssessment && (
 				<SectionCard
 					title='Agent burnout risk'
-					description='Fatigue and strain signals in the agent on this call'
+					description='Why the burnout rules rate this agent at this level right now'
 					icon={IconFlame}
 					headerActions={
 						<Badge
-							color={BURNOUT_LEVEL_META[sentiment.burnout.level].color}
+							color={BURNOUT_LEVEL_META[burnoutAssessment.level].color}
 							variant='light'
 							size='lg'
 						>
-							{BURNOUT_LEVEL_META[sentiment.burnout.level].label}
+							{BURNOUT_LEVEL_META[burnoutAssessment.level].label}
 						</Badge>
 					}
 				>
 					<Stack gap='sm'>
 						<Progress
-							value={sentiment.burnout.score}
-							color={BURNOUT_LEVEL_META[sentiment.burnout.level].color}
+							value={burnoutAssessment.percentage}
+							color={BURNOUT_LEVEL_META[burnoutAssessment.level].color}
 							size='sm'
 						/>
-						{sentiment.burnout.signals.map((signal) => (
-							<div key={signal.key}>
-								<Paper
-									withBorder
-									p='sm'
-									radius='sm'
-									mb={signal.evidence ? 'xs' : 0}
-								>
-									<Group
-										justify='space-between'
-										align='flex-start'
-										wrap='nowrap'
-									>
-										<Stack gap={2}>
-											<Text size='sm' fw={500}>
-												{signal.label}
-											</Text>
-											<Text size='xs' c='dimmed'>
-												{signal.note}
-											</Text>
-										</Stack>
-										<Badge {...flagTone(signal.detected)}>
-											{signal.detected ? 'Detected' : 'Not detected'}
-										</Badge>
-									</Group>
-								</Paper>
-								{signal.evidence && (
-									<EvidenceQuote evidence={signal.evidence} />
-								)}
-							</div>
-						))}
 						<Text size='xs' c='dimmed'>
-							{sentiment.burnout.recommendation}
+							Risk score {burnoutAssessment.percentage}% ·{' '}
+							{BURNOUT_LEVEL_META[burnoutAssessment.level].band} ·{' '}
+							{burnoutAssessment.breached} of {burnoutAssessment.enabledCount}{' '}
+							conditions matching
 						</Text>
+						<BurnoutDrivers
+							assessment={burnoutAssessment}
+							rules={triggerRules}
+							compact
+						/>
 					</Stack>
 				</SectionCard>
 			)}

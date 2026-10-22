@@ -39,6 +39,7 @@ import type { AgentProfile, ProfilePeriod } from '../../types';
 import { PROFILE_PERIODS } from '../../constants';
 import { filterByPeriod, formatDateTime, periodDirection } from '../../helpers';
 import { PerformanceTrendChart } from '../../components/PerformanceTrendChart';
+import { BurnoutDrivers } from '../../components/BurnoutDrivers';
 
 interface OverviewTabProps {
 	profile: AgentProfile;
@@ -71,10 +72,18 @@ export function OverviewTab({ profile }: OverviewTabProps) {
 	const acknowledgeAlert = useTeamStore((s) => s.acknowledgeAlert);
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	// Level and percentage follow the burnout rules in Triggers; the trend and history stay on the profile.
-	const burnout = useMemo(() => {
-		const { level, percentage } = assessBurnout(profile.agent.id, triggerRules);
-		return { ...profile.risk.burnout, level, percentage };
-	}, [profile.agent.id, profile.risk.burnout, triggerRules]);
+	const burnoutAssessment = useMemo(
+		() => assessBurnout(profile.agent.id, triggerRules),
+		[profile.agent.id, triggerRules]
+	);
+	const burnout = useMemo(
+		() => ({
+			...profile.risk.burnout,
+			level: burnoutAssessment.level,
+			percentage: burnoutAssessment.percentage,
+		}),
+		[profile.risk.burnout, burnoutAssessment]
+	);
 
 	const totalCriticalErrors = profile.risk.criticalErrorsTrend.reduce(
 		(sum, e) => sum + e.criticalErrors,
@@ -203,6 +212,17 @@ export function OverviewTab({ profile }: OverviewTabProps) {
 							withTooltip
 							curveType='monotone'
 						/>
+						<BurnoutDrivers
+							assessment={burnoutAssessment}
+							rules={triggerRules}
+							compact
+						/>
+						<Anchor
+							size='xs'
+							onClick={() => navigate({ search: '?tab=burnout' })}
+						>
+							{t('overview.burnoutSeeAll')}
+						</Anchor>
 					</Stack>
 				</SectionCard>
 			</SimpleGrid>

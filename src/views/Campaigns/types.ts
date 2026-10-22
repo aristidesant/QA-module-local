@@ -290,10 +290,16 @@ export type BurnoutLevel = 'low' | 'medium' | 'high';
 
 export interface BurnoutSignal {
 	key: string;
+	/** The variable measured on this call, e.g. "Longest silence". */
 	label: string;
+	/** Whether the measured value crossed the limit that flags it. */
 	detected: boolean;
-	note: string;
-	evidence?: Evidence;
+	/** What was measured on this call. */
+	value: number;
+	/** Unit shown after the value: "s", "wpm", "times", "%" or "/ 100". */
+	unit: string;
+	/** The condition that flags the variable, e.g. "above 5 s". */
+	rule: string;
 }
 
 /** Burnout indicators read from the agent's voice and behaviour on this one call. */

@@ -402,6 +402,7 @@ export default function ConversationEvaluations() {
 							{selectedTab === 'sentiment-emotion' && (
 								<SentimentEmotionPanel
 									sentiment={call.sentiment}
+									agentId={call.agentId}
 									showBurnout={previewRole !== 'agent'}
 								/>
 							)}

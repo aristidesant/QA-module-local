@@ -1,0 +1,13 @@
+.driver {
+	padding: 8px 12px;
+	border-radius: var(--mantine-radius-sm);
+	background: var(--mantine-color-gray-light);
+}
+
+.driver[data-status='BREACHED'] {
+	background: var(--mantine-color-red-light);
+}
+
+.driver[data-status='NEAR'] {
+	background: var(--mantine-color-yellow-light);
+}

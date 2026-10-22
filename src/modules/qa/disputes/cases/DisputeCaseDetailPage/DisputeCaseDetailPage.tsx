@@ -136,7 +136,12 @@ export const DisputeCaseDetailPage: React.FC = () => {
 			case 'qa':
 				return <QAEvaluationPanel qa={shown.qa} />;
 			case 'sentiment-emotion':
-				return <SentimentEmotionPanel sentiment={shown.sentiment} />;
+				return (
+					<SentimentEmotionPanel
+						sentiment={shown.sentiment}
+						agentId={dispute.agentId}
+					/>
+				);
 			case 'compliance':
 				return <CompliancePanel compliance={shown.compliance} />;
 			case 'business-insights':

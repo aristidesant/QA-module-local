@@ -126,21 +126,31 @@
 		"scheduleCoaching": "Agendar coaching",
 		"drivers": {
 			"title": "Por qué este puntaje",
-			"description": "Cada condición de las reglas de burnout activas que cubren a este agente, y dónde está el agente en cada una.",
+			"description": "Las condiciones configuradas en las reglas de burnout y cuáles cumple este agente ahora mismo.",
 			"manageRules": "Gestionar reglas de burnout",
 			"matched": "Regla cumplida",
+			"notMet": "Regla no cumplida",
 			"empty": "Ninguna regla de burnout activa cubre a este agente.",
-			"columns": {
-				"rule": "Regla",
-				"condition": "Condición",
-				"value": "Valor actual",
-				"status": "Estado"
+			"now": "Ahora",
+			"streak": "{{count}} seguidas",
+			"why": {
+				"at_one": "Riesgo {{level}} porque se cumple la regla \"{{rules}}\".",
+				"at_other": "Riesgo {{level}} porque se cumplen estas reglas: {{rules}}.",
+				"none": "Ninguna regla de burnout se cumple ahora mismo.",
+				"near_one": "{{count}} condición está cerca de cumplirse.",
+				"near_other": "{{count}} condiciones están cerca de cumplirse."
+			},
+			"rule": {
+				"logicALL": "Se cumple cuando todas las condiciones coinciden",
+				"logicANY": "Se cumple cuando coincide alguna condición",
+				"sets": "Define riesgo {{level}}",
+				"progress": "{{matching}} de {{total}} condiciones se cumplen"
 			}
 		},
 		"driverStatus": {
-			"BREACHED": "Superada",
+			"BREACHED": "Se cumple",
 			"NEAR": "Cerca",
-			"OK": "OK"
+			"OK": "No se cumple"
 		},
 		"workload": {
 			"title": "Carga de trabajo vs equipo",
@@ -276,6 +286,7 @@
 		"peer": "Comparación con el equipo",
 		"peerDescription": "Valor del agente vs. promedio de {{team}}",
 		"burnout": "Riesgo de burnout",
+		"burnoutSeeAll": "Ver todas las condiciones",
 		"risk": "Resumen de riesgo",
 		"riskTiles": {
 			"autoFails": "Auto-fallas",

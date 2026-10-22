@@ -126,21 +126,31 @@
 		"scheduleCoaching": "Schedule coaching",
 		"drivers": {
 			"title": "Why this score",
-			"description": "Every condition of the active burnout rules that cover this agent, and where the agent stands on each.",
+			"description": "The conditions configured in the burnout rules, and which ones this agent matches right now.",
 			"manageRules": "Manage burnout rules",
 			"matched": "Rule met",
+			"notMet": "Rule not met",
 			"empty": "No active burnout rule covers this agent.",
-			"columns": {
-				"rule": "Rule",
-				"condition": "Condition",
-				"value": "Current value",
-				"status": "Status"
+			"now": "Now",
+			"streak": "{{count}} in a row",
+			"why": {
+				"at_one": "{{level}} risk because the rule \"{{rules}}\" is met.",
+				"at_other": "{{level}} risk because these rules are met: {{rules}}.",
+				"none": "No burnout rule is met right now.",
+				"near_one": "{{count}} condition is close to matching.",
+				"near_other": "{{count}} conditions are close to matching."
+			},
+			"rule": {
+				"logicALL": "Met when all conditions match",
+				"logicANY": "Met when any condition matches",
+				"sets": "Sets {{level}} risk",
+				"progress": "{{matching}} of {{total}} conditions matching"
 			}
 		},
 		"driverStatus": {
-			"BREACHED": "Breached",
+			"BREACHED": "Matching",
 			"NEAR": "Near",
-			"OK": "OK"
+			"OK": "Not matching"
 		},
 		"workload": {
 			"title": "Workload vs team",
@@ -276,6 +286,7 @@
 		"peer": "Comparison with team",
 		"peerDescription": "Agent value vs {{team}} average",
 		"burnout": "Burnout risk",
+		"burnoutSeeAll": "See all conditions",
 		"risk": "Risk summary",
 		"riskTiles": {
 			"autoFails": "Auto-fails",
