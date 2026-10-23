@@ -317,5 +317,12 @@
 		"windowNote": "Ranked over the last {{days}} days. The official standing is the whole period.",
 		"deltaWindow": "vs previous {{days}}d",
 		"empty": "Nobody has enough calls in this window yet."
+	},
+	"published": {
+		"title": "Your team has a new ranking",
+		"line": "That's what leaders do: give people something to reach for.",
+		"detail_one": "{{name}} is on for 1 team.",
+		"detail_other": "{{name}} is on for {{count}} teams.",
+		"cta": "See the ranking"
 	}
 }

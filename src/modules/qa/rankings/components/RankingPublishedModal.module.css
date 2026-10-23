@@ -1,0 +1,138 @@
+/* The card rises once; the flower opens once; the hands clap twice. Nothing loops. */
+.body {
+	text-align: center;
+	animation: rise-in 300ms ease-out;
+}
+
+.art {
+	display: block;
+	margin: 0 auto var(--mantine-spacing-md);
+	overflow: visible;
+}
+
+.line,
+.leaf,
+.petal,
+.hand,
+.core {
+	fill: var(--mantine-primary-color-light);
+	stroke: var(--mantine-primary-color-filled);
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.line {
+	fill: none;
+}
+
+.core {
+	fill: var(--mantine-primary-color-filled);
+}
+
+/* Each petal grows out of the centre, one after the other. The rotation lives on a wrapper, so the animation does not undo it. */
+.petal {
+	transform-box: fill-box;
+	transform-origin: 50% 100%;
+	animation: petal-open 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.petalSlot:nth-child(1) .petal {
+	animation-delay: 80ms;
+}
+
+.petalSlot:nth-child(2) .petal {
+	animation-delay: 140ms;
+}
+
+.petalSlot:nth-child(3) .petal {
+	animation-delay: 200ms;
+}
+
+.petalSlot:nth-child(4) .petal {
+	animation-delay: 260ms;
+}
+
+.petalSlot:nth-child(5) .petal {
+	animation-delay: 320ms;
+}
+
+.petalSlot:nth-child(6) .petal {
+	animation-delay: 380ms;
+}
+
+/* The hands pivot at the wrist and meet twice after the flower has opened. */
+.handLeft,
+.handRight {
+	transform-box: fill-box;
+	transform-origin: 50% 100%;
+}
+
+.handLeft {
+	animation: clap-left 600ms ease-in-out 700ms both;
+}
+
+.handRight {
+	animation: clap-right 600ms ease-in-out 700ms both;
+}
+
+@keyframes rise-in {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes petal-open {
+	from {
+		transform: scale(0.2);
+		opacity: 0;
+	}
+
+	to {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+@keyframes clap-left {
+	0%,
+	50%,
+	100% {
+		transform: rotate(-18deg);
+	}
+
+	25%,
+	75% {
+		transform: rotate(6deg);
+	}
+}
+
+@keyframes clap-right {
+	0%,
+	50%,
+	100% {
+		transform: rotate(18deg);
+	}
+
+	25%,
+	75% {
+		transform: rotate(-6deg);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.body,
+	.petal,
+	.handLeft,
+	.handRight {
+		animation: none;
+		transform: none;
+		opacity: 1;
+	}
+}

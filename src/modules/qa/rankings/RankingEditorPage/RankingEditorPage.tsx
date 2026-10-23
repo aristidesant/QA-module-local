@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { Anchor, Breadcrumbs, Stack, Text, Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
@@ -6,8 +7,12 @@ import { EmptyState } from '~/components/EmptyState/EmptyState';
 import { roleFromPath } from '~/modules/qa/team/helpers';
 import { useRankingsStore, selectPrograms } from '~/stores/qa/rankingsStore';
 import { RankingForm } from '../components/RankingForm';
-import type { RankingStatus } from '~/models/qa/rankingPrograms';
-import { rankingsBasePath } from '../constants';
+import { RankingPublishedModal } from '../components/RankingPublishedModal';
+import type {
+	RankingProgram,
+	RankingStatus,
+} from '~/models/qa/rankingPrograms';
+import { rankingPath, rankingsBasePath } from '../constants';
 import { tabOf } from '../helpers';
 
 /** Create or edit one ranking on its own page (route `rankings/new` or `rankings/:programId/edit`). */
@@ -19,6 +24,8 @@ export default function RankingEditorPage() {
 
 	const role = roleFromPath(location.pathname);
 	const programs = useRankingsStore(selectPrograms);
+	// A brand-new ranking that just went live, while its celebration is open.
+	const [published, setPublished] = useState<RankingProgram | null>(null);
 
 	const mode = programId ? 'edit' : 'create';
 	const program = programId
@@ -74,9 +81,21 @@ export default function RankingEditorPage() {
 					role={role}
 					program={program}
 					onClose={() => backToRankings()}
-					onSaved={backToRankings}
+					onSaved={(status, saved) => {
+						if (mode === 'create' && status === 'active') setPublished(saved);
+						else backToRankings(status);
+					}}
 				/>
 			</Stack>
+
+			<RankingPublishedModal
+				program={published}
+				onClose={() => {
+					const target = published;
+					setPublished(null);
+					if (target) navigate(rankingPath(role, target.id));
+				}}
+			/>
 		</ContentContainer>
 	);
 }

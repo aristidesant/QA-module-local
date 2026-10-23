@@ -317,5 +317,12 @@
 		"windowNote": "Clasificado sobre los últimos {{days}} días. La posición oficial es la del periodo completo.",
 		"deltaWindow": "vs {{days}} d anteriores",
 		"empty": "Nadie tiene aún suficientes llamadas en esta ventana."
+	},
+	"published": {
+		"title": "Tu equipo tiene un nuevo ranking",
+		"line": "Eso hacen los líderes: dar a la gente algo por lo que esforzarse.",
+		"detail_one": "{{name}} está activo para 1 equipo.",
+		"detail_other": "{{name}} está activo para {{count}} equipos.",
+		"cta": "Ver el ranking"
 	}
 }

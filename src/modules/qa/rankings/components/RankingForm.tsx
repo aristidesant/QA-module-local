@@ -60,8 +60,8 @@ interface RankingFormProps {
 	/** Editing an existing program, or null to create one. */
 	program: RankingProgram | null;
 	onClose: () => void;
-	/** Called after saving, with the status the ranking was saved as. */
-	onSaved: (status: RankingStatus) => void;
+	/** Called after saving, with the status the ranking was saved as and the saved ranking. */
+	onSaved: (status: RankingStatus, saved: RankingProgram) => void;
 }
 
 const iso = (date: Date | null) =>
@@ -278,15 +278,21 @@ export const RankingForm: React.FC<RankingFormProps> = ({
 			return;
 		}
 		const next = { ...draft, status, isDefault: draft.isDefault && permanent };
-		if (program) updateProgram(program.id, next);
-		else createProgram(next);
+		const saved = program
+			? updateProgram(program.id, next)
+			: createProgram(next);
+		if (!saved) return;
 
-		notifySuccess(
-			status === 'active' && !isPublished
-				? t('editor.launched')
-				: t('editor.saved')
-		);
-		onSaved(status);
+		// A new ranking going live is celebrated by the editor page instead of a toast.
+		const celebrated = !program && status === 'active';
+		if (!celebrated) {
+			notifySuccess(
+				status === 'active' && !isPublished
+					? t('editor.launched')
+					: t('editor.saved')
+			);
+		}
+		onSaved(status, saved);
 	};
 
 	const handleClose = () => {
