@@ -5,15 +5,11 @@ import {
 	IconTrendingUp,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
+import { CRITICAL_ISSUE_KEYS } from '~/modules/qa/calls/issues';
 import { TIER_META, type PerformanceTier } from '../scorecard';
 
 /** The only weak aspects flagged in color: the ones the evaluation itself calls critical. */
-export const CRITICAL_ISSUES = new Set([
-	'auto-fail',
-	'qa-ecn',
-	'qa-ecc',
-	'qa-ecuf',
-]);
+export const CRITICAL_ISSUES = CRITICAL_ISSUE_KEYS;
 
 /** The scorecard as a plain number with its group in words; only the Critical group is colored. */
 export function TierScore({

@@ -693,17 +693,26 @@
 		},
 		"brief": {
 			"stats": {
-				"scorecard": "Scorecard",
-				"change": "Change",
-				"vsPrevious": "vs previous week",
 				"calls": "Calls evaluated",
 				"week": "Week"
 			},
 			"findingOf": "{{count}} of {{total}} calls",
 			"guide": "Coaching guide",
 			"title": "Weekly brief",
-			"findings": "Weakest aspect this week",
+			"findings": "Aspects to improve this week",
 			"noFindings": "No incident detected in last week's calls.",
+			"evaluationType": "Evaluation type",
+			"thisWeek": "This week",
+			"lastWeeks": "Last {{count}} weeks",
+			"cleanTrend": "{{from}}% → {{to}}% of calls free of it",
+			"cleanNow": "{{value}}% of calls free of it",
+			"noTrend": "First week with calls: no trend yet.",
+			"whyFlagged": "Why it was flagged",
+			"why": {
+				"CRITICAL": "A critical error type: one occurrence in the week is enough to flag it.",
+				"RISING": "Getting worse: calls free of it fell from {{from}}% to {{to}}% in a week.",
+				"FREQUENT": "The most frequent incident in the week's calls."
+			},
 			"approach": "How to approach it with the agent",
 			"solution": "Conceptual solution",
 			"example": "Real example",
@@ -734,8 +743,7 @@
 			"sentOn": "Sent {{date}}",
 			"suggestedDate": "Suggested {{date}}",
 			"columns": {
-				"findings": "Weakest aspect",
-				"decision": "Decision",
+				"findings": "Aspects to improve",
 				"date": "Session"
 			},
 			"weekdays": {

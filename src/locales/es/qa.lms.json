@@ -221,9 +221,7 @@
 				"title": "Próxima sesión",
 				"empty": "No hay sesión programada. Tu coach agendará una cuando haga falta.",
 				"material": "El material de esta sesión está en Mi aprendizaje",
-				"open": "Abrir sesión",
-				"morePoints_one": "+{{count}} punto más",
-				"morePoints_other": "+{{count}} puntos más"
+				"open": "Abrir sesión"
 			},
 			"commitments": {
 				"title": "Compromisos abiertos",

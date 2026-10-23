@@ -221,9 +221,7 @@
 				"title": "Next session",
 				"empty": "No session scheduled. Your coach will book one when needed.",
 				"material": "Material for this session is in My Learning",
-				"open": "Open session",
-				"morePoints_one": "+{{count}} more point",
-				"morePoints_other": "+{{count}} more points"
+				"open": "Open session"
 			},
 			"commitments": {
 				"title": "Open commitments",

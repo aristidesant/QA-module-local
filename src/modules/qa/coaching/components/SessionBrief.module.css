@@ -1,21 +1,19 @@
-/* The scorecard and its change, set apart from the quieter figures beside them. */
-.highlight {
-	flex: 2 1 320px;
-	padding: var(--mantine-spacing-sm) var(--mantine-spacing-md);
-	border-radius: var(--mantine-radius-md);
-	border: 1px solid var(--mantine-color-default-border);
+/* The week and its calls: a quiet strip above the aspects. */
+.strip {
+	max-width: 360px;
+}
+
+/* One aspect to improve, set slightly apart from the card it sits in. */
+.finding {
 	background: light-dark(
 		var(--mantine-color-gray-0),
 		var(--mantine-color-dark-6)
 	);
 }
 
-/* Color only when the scorecard fell. */
-.highlight[data-declined] {
-	border-color: var(--mantine-color-red-outline);
-	background: var(--mantine-color-red-light);
-}
-
-.rest {
-	flex: 1 1 200px;
+/* The facts of one aspect: this week, the trend and why it was flagged, side by side when there is room. */
+.facts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+	gap: var(--mantine-spacing-md);
 }

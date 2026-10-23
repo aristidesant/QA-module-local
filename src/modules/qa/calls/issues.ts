@@ -140,6 +140,14 @@ export const CALL_ISSUES: CallIssueMeta[] = [
 	},
 ];
 
+/** The only weak aspects flagged in color: the ones the evaluation itself calls critical. */
+export const CRITICAL_ISSUE_KEYS: ReadonlySet<string> = new Set<CallIssueKey>([
+	'auto-fail',
+	'qa-ecn',
+	'qa-ecc',
+	'qa-ecuf',
+]);
+
 export const CALL_ISSUE_BY_KEY: Record<CallIssueKey, CallIssueMeta> =
 	Object.fromEntries(CALL_ISSUES.map((issue) => [issue.key, issue])) as Record<
 		CallIssueKey,

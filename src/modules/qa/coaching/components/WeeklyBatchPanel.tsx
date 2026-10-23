@@ -1,14 +1,5 @@
 import { useMemo } from 'react';
-import {
-	Badge,
-	Box,
-	Group,
-	SegmentedControl,
-	Select,
-	Stack,
-	Text,
-	Tooltip,
-} from '@mantine/core';
+import { Badge, Group, Select, Stack, Text } from '@mantine/core';
 import { createColumnHelper } from '@tanstack/react-table';
 import { IconSparkles } from '@tabler/icons-react';
 import dayjs from 'dayjs';
@@ -19,14 +10,12 @@ import BaseTable, {
 } from '~/components/BaseTable/BaseTable';
 import EmptyState from '~/components/EmptyState';
 import type {
-	CoachingBatchDecision,
 	CoachingBatchItem,
 	CoachingSessionRecord,
 	CoachingWeeklyBatch,
 } from '~/models/qa';
 import { SUPERVISOR_PERSONA } from '~/modules/qa/team/constants';
 import type { TeamRole } from '~/modules/qa/team/types';
-import { notifySuccess } from '~/modules/qa/utils/notifications';
 import {
 	useCoachingStore,
 	selectBatches,
@@ -42,13 +31,6 @@ interface BatchRow extends CoachingBatchItem {
 
 const helper = createColumnHelper<BatchRow>();
 
-/** A decision can only change while the session is still ahead: once held, missed or dismissed it stays as it is. */
-const isLocked = (session: CoachingSessionRecord | undefined): boolean =>
-	!session ||
-	session.status === 'COMPLETED' ||
-	session.status === 'MISSED' ||
-	session.status === 'CANCELLED';
-
 interface WeeklyBatchPanelProps {
 	role: TeamRole;
 	sessions: CoachingSessionRecord[];
@@ -56,7 +38,7 @@ interface WeeklyBatchPanelProps {
 	onOpen: (sessionId: string) => void;
 }
 
-/** The latest weekly run for the viewer's scope: who gets a 1:1, who gets the AI message, and where each stands. */
+/** The latest weekly run for the viewer's scope: each agent's aspects to improve and where their session stands. The 1:1 vs message decision is taken inside the session. */
 export function WeeklyBatchPanel({
 	role,
 	sessions,
@@ -67,7 +49,6 @@ export function WeeklyBatchPanel({
 	const batches = useCoachingStore(selectBatches);
 	const coachingDay = useCoachingStore(selectCoachingDay);
 	const setCoachingDay = useCoachingStore((s) => s.setCoachingDay);
-	const setBatchDecision = useCoachingStore((s) => s.setBatchDecision);
 
 	const latest: CoachingWeeklyBatch | undefined = useMemo(
 		() =>
@@ -94,21 +75,6 @@ export function WeeklyBatchPanel({
 		oneOnOne: rows.filter((r) => r.decision === 'ONE_ON_ONE').length,
 		toConfirm: rows.filter((r) => r.session?.status === 'PROPOSED').length,
 		ai: rows.filter((r) => r.decision === 'AI_MESSAGE').length,
-	};
-
-	/** Flips the decision from the table and says what happens next. */
-	const changeDecision = (row: BatchRow, decision: CoachingBatchDecision) => {
-		setBatchDecision(row.sessionId, decision);
-		const updated = useCoachingStore
-			.getState()
-			.sessions.find((s) => s.id === row.sessionId);
-		notifySuccess(
-			decision === 'AI_MESSAGE'
-				? t('sessions.batch.queued', {
-						date: dayjs(updated?.date).format('ddd D MMM'),
-					})
-				: t('sessions.batch.proposedAgain')
-		);
 	};
 
 	const columns: BaseTableColumnDef<BatchRow>[] = [
@@ -153,69 +119,29 @@ export function WeeklyBatchPanel({
 			id: 'findings',
 			header: t('sessions.batch.columns.findings'),
 			cell: (info) => {
-				const finding = info.row.original.session?.brief?.findings[0];
-				if (!finding) {
+				const findings = info.row.original.session?.brief?.findings ?? [];
+				if (findings.length === 0) {
 					return (
 						<Text size='sm' c='dimmed'>
 							{t('sessions.batch.clean')}
 						</Text>
 					);
 				}
-				const critical = CRITICAL_ISSUES.has(finding.issue);
 				return (
-					<Badge
-						size='xs'
-						variant={critical ? 'light' : 'outline'}
-						color={critical ? 'red' : 'gray'}
-					>
-						{t(`issues.${finding.issue}`, { ns: 'qa.calls' })}
-					</Badge>
-				);
-			},
-		}) as BaseTableColumnDef<BatchRow>,
-		helper.accessor('decision', {
-			header: t('sessions.batch.columns.decision'),
-			cell: (info) => {
-				const row = info.row.original;
-				const locked = isLocked(row.session);
-				const control = (
-					// The toggle is the row's own action: keep its clicks and keys from opening the session.
-					<Box
-						w='fit-content'
-						onClick={(e) => e.stopPropagation()}
-						onKeyDown={(e) => e.stopPropagation()}
-					>
-						<SegmentedControl
-							size='xs'
-							value={row.decision}
-							disabled={locked}
-							aria-label={t('sessions.batch.columns.decision')}
-							data={[
-								{
-									value: 'ONE_ON_ONE',
-									label: t('sessions.batch.decisionShort.ONE_ON_ONE'),
-								},
-								{
-									value: 'AI_MESSAGE',
-									label: t('sessions.batch.decisionShort.AI_MESSAGE'),
-								},
-							]}
-							onChange={(v) => changeDecision(row, v as CoachingBatchDecision)}
-						/>
-					</Box>
-				);
-				return (
-					<Group gap='xs' wrap='nowrap'>
-						{locked ? (
-							<Tooltip withArrow label={t('sessions.batch.locked')}>
-								{control}
-							</Tooltip>
-						) : (
-							control
-						)}
-						<Text size='xs' c='dimmed'>
-							{t(`sessions.batch.reason.${row.reason}`)}
-						</Text>
+					<Group gap={4} wrap='wrap'>
+						{findings.map((finding) => {
+							const critical = CRITICAL_ISSUES.has(finding.issue);
+							return (
+								<Badge
+									key={finding.issue}
+									size='xs'
+									variant={critical ? 'light' : 'outline'}
+									color={critical ? 'red' : 'gray'}
+								>
+									{t(`issues.${finding.issue}`, { ns: 'qa.calls' })}
+								</Badge>
+							);
+						})}
 					</Group>
 				);
 			},

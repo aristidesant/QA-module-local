@@ -355,7 +355,10 @@ export default function CoachingSessionDetailPage() {
 				<Grid gap='md'>
 					<Grid.Col span={{ base: 12, md: 8 }}>
 						<Stack gap='md'>
-							{session.brief && <SessionBrief brief={session.brief} />}
+							{/* A 1:1 gets the coaching guide; an automated message shows its own text below instead. */}
+							{session.brief && (
+								<SessionBrief brief={session.brief} showGuide={!isAi} />
+							)}
 
 							{isAi && (
 								<SectionCard

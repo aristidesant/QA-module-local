@@ -95,6 +95,18 @@ export type CoachingBatchReason =
 
 export type CoachingBatchDecision = 'ONE_ON_ONE' | 'AI_MESSAGE';
 
+/** Why the platform flagged a weak aspect: a critical error type, a worsening one, or simply the most frequent. */
+export type CoachingFindingSignal = 'CRITICAL' | 'RISING' | 'FREQUENT';
+
+/** One week of an aspect's history: how many calls were free of the issue. */
+export interface CoachingFindingWeek {
+	/** Monday of the week, 'YYYY-MM-DD'. */
+	weekFrom: string;
+	calls: number;
+	/** Calls without the issue, 0-100. */
+	cleanRate: number;
+}
+
 /** One weak aspect found in the agent's calls of the week. */
 export interface CoachingBriefFinding {
 	/** `CallIssueKey` from calls/issues.ts; label = qa.calls `issues.<key>`. */
@@ -106,6 +118,10 @@ export interface CoachingBriefFinding {
 	share: number;
 	/** Up to 3 call ids that show it, worst QA score first. */
 	evidenceCallIds: string[];
+	/** Why it made the list. */
+	signal: CoachingFindingSignal;
+	/** The last weeks that had calls, oldest first, ending with the analysed week. */
+	history: CoachingFindingWeek[];
 }
 
 /** How the aspect worked on in the previous coach-led session moved since then. */

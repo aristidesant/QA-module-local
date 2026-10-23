@@ -693,17 +693,26 @@
 		},
 		"brief": {
 			"stats": {
-				"scorecard": "Scorecard",
-				"change": "Cambio",
-				"vsPrevious": "vs semana anterior",
 				"calls": "Llamadas evaluadas",
 				"week": "Semana"
 			},
 			"findingOf": "{{count}} de {{total}} llamadas",
 			"guide": "Guía de coaching",
 			"title": "Brief semanal",
-			"findings": "Aspecto más débil de la semana",
+			"findings": "Aspectos a mejorar esta semana",
 			"noFindings": "Sin incidencias en las llamadas de la semana pasada.",
+			"evaluationType": "Tipo de evaluación",
+			"thisWeek": "Esta semana",
+			"lastWeeks": "Últimas {{count}} semanas",
+			"cleanTrend": "{{from}}% → {{to}}% de llamadas sin la incidencia",
+			"cleanNow": "{{value}}% de llamadas sin la incidencia",
+			"noTrend": "Primera semana con llamadas: aún sin tendencia.",
+			"whyFlagged": "Por qué se marcó",
+			"why": {
+				"CRITICAL": "Error de tipo crítico: basta una ocurrencia en la semana para marcarlo.",
+				"RISING": "Va a peor: las llamadas sin la incidencia bajaron del {{from}}% al {{to}}% en una semana.",
+				"FREQUENT": "La incidencia más frecuente en las llamadas de la semana."
+			},
 			"approach": "Cómo abordarlo con el agente",
 			"solution": "Solución conceptual",
 			"example": "Ejemplo real",
@@ -734,8 +743,7 @@
 			"sentOn": "Enviado {{date}}",
 			"suggestedDate": "Sugerida {{date}}",
 			"columns": {
-				"findings": "Aspecto más débil",
-				"decision": "Decisión",
+				"findings": "Aspectos a mejorar",
 				"date": "Sesión"
 			},
 			"weekdays": {

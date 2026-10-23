@@ -17,6 +17,7 @@ import { agentCallsBetween } from '~/modules/qa/calls/agentMetrics';
 import {
 	CALL_ISSUE_ASPECTS,
 	CALL_ISSUE_BY_KEY,
+	CRITICAL_ISSUE_KEYS,
 	callIssues,
 	type CallIssueKey,
 } from '~/modules/qa/calls/issues';
@@ -34,9 +35,16 @@ import {
 } from './scorecard';
 
 export const WEEKLY_RULE_ID = 'cr-000';
-const MAX_FINDINGS = 1;
+/** A session can work on more than one aspect, but never on a long list. */
+const MAX_FINDINGS = 3;
+/** Beyond the first, an aspect makes the list only when it is critical or repeats. */
+const MIN_FINDING_CALLS = 2;
 const MAX_EVIDENCE = 3;
 const MAX_SUGGESTED = 3;
+/** Weeks of history each finding carries, the analysed week included. */
+export const FINDING_HISTORY_WEEKS = 4;
+/** Drop in clean calls (points, week over week) that counts as getting worse. */
+const RISING_DROP_POINTS = 10;
 
 /** Monday of the week that contains `day` ('YYYY-MM-DD'). */
 export const mondayOf = (day: string): string => {
@@ -85,9 +93,23 @@ export const decideBatchItem = (
 	return { decision: 'AI_MESSAGE', reason: 'STABLE' };
 };
 
-/** The most frequent incident of the week, with the worst calls as evidence. */
+/** Share of `calls` free of `issue`, 0-100. */
+const cleanRateOf = (issue: CallIssueKey, calls: TeamCallMetric[]): number =>
+	Math.round(
+		(calls.filter((c) => !CALL_ISSUE_BY_KEY[issue].test(c)).length /
+			calls.length) *
+			100
+	);
+
+/**
+ * The most frequent incidents of the week, worst calls as evidence, each with
+ * its last weeks of history and why it made the list. `priorWeeks` are the
+ * weeks before the analysed one, most recent first.
+ */
 export const buildFindings = (
-	calls: TeamCallMetric[]
+	calls: TeamCallMetric[],
+	weekFrom: string,
+	priorWeeks: TeamCallMetric[][] = []
 ): CoachingBriefFinding[] => {
 	const byIssue = new Map<CallIssueKey, TeamCallMetric[]>();
 	for (const call of calls)
@@ -99,17 +121,48 @@ export const buildFindings = (
 		.sort(
 			(a, b) => b[1].length - a[1].length || aspectRank(a[0]) - aspectRank(b[0])
 		)
+		.filter(
+			([issue, list], index) =>
+				index === 0 ||
+				CRITICAL_ISSUE_KEYS.has(issue) ||
+				list.length >= MIN_FINDING_CALLS
+		)
 		.slice(0, MAX_FINDINGS)
-		.map(([issue, list]) => ({
-			issue,
-			aspect: CALL_ISSUE_BY_KEY[issue].aspect,
-			calls: list.length,
-			share: Math.round((list.length / calls.length) * 100),
-			evidenceCallIds: [...list]
-				.sort((x, y) => x.qaScore - y.qaScore)
-				.slice(0, MAX_EVIDENCE)
-				.map((c) => c.id),
-		}));
+		.map(([issue, list]) => {
+			const history = [...priorWeeks]
+				.map((weekCalls, i) => ({
+					weekFrom: addDays(weekFrom, -7 * (i + 1)),
+					calls: weekCalls.length,
+					cleanRate: weekCalls.length ? cleanRateOf(issue, weekCalls) : 0,
+				}))
+				.filter((w) => w.calls > 0)
+				.reverse();
+			history.push({
+				weekFrom,
+				calls: calls.length,
+				cleanRate: cleanRateOf(issue, calls),
+			});
+			const previous = history.at(-2);
+			const current = history.at(-1)!;
+			const signal = CRITICAL_ISSUE_KEYS.has(issue)
+				? 'CRITICAL'
+				: previous &&
+					  previous.cleanRate - current.cleanRate >= RISING_DROP_POINTS
+					? 'RISING'
+					: 'FREQUENT';
+			return {
+				issue,
+				aspect: CALL_ISSUE_BY_KEY[issue].aspect,
+				calls: list.length,
+				share: Math.round((list.length / calls.length) * 100),
+				evidenceCallIds: [...list]
+					.sort((x, y) => x.qaScore - y.qaScore)
+					.slice(0, MAX_EVIDENCE)
+					.map((c) => c.id),
+				signal,
+				history,
+			};
+		});
 };
 
 const buildPrevious = (
@@ -175,7 +228,15 @@ export const buildCoachingBrief = ({
 		agentCallsBetween(agentId, addDays(weekFrom, -7), addDays(weekFrom, -1))
 	);
 	const { reason } = decideBatchItem(current, previous);
-	const findings = buildFindings(calls);
+	// The weeks before the analysed one, most recent first, for each finding's history.
+	const priorWeeks = Array.from({ length: FINDING_HISTORY_WEEKS - 1 }, (_, i) =>
+		agentCallsBetween(
+			agentId,
+			addDays(weekFrom, -7 * (i + 1)),
+			addDays(weekTo, -7 * (i + 1))
+		)
+	);
+	const findings = buildFindings(calls, weekFrom, priorWeeks);
 	const playbook = playbookFor(findings);
 	const secondary = findings[1]
 		? COACHING_PLAYBOOK[findings[1].issue as CallIssueKey]
