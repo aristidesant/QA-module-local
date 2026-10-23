@@ -10,8 +10,8 @@ import { IconX } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type {
 	ComparisonOperator,
-	EvaluationArea,
 	EvaluationWindow,
+	MetricUnit,
 	RuleCondition,
 	TriggerMetricId,
 } from '~/models/qa';
@@ -109,8 +109,8 @@ const SELECT_PROPS = {
 
 interface ConditionSentenceRowProps {
 	condition: RuleCondition;
-	/** Areas measured on a 0-5 scale: their percentage and count metrics are not offered. */
-	scoreOnlyAreas?: EvaluationArea[];
+	/** Kinds of metric the list leaves out, for a place that cannot act on them. */
+	hiddenUnits?: MetricUnit[];
 	onChange: (updated: RuleCondition) => void;
 	onRemove: () => void;
 	canRemove: boolean;
@@ -124,7 +124,7 @@ interface ConditionSentenceRowProps {
  */
 export function ConditionSentenceRow({
 	condition,
-	scoreOnlyAreas,
+	hiddenUnits,
 	onChange,
 	onRemove,
 	canRemove,
@@ -142,9 +142,7 @@ export function ConditionSentenceRow({
 			items: TRIGGER_METRIC_CATALOG.filter(
 				(m) =>
 					m.area === area &&
-					(m.id === condition.metricId ||
-						!scoreOnlyAreas?.includes(m.area) ||
-						m.unit === 'SCORE_5')
+					(m.id === condition.metricId || !hiddenUnits?.includes(m.unit))
 			).map((m) => ({ value: m.id, label: t(`metrics.${m.id}`) })),
 		})
 	).filter((group) => group.items.length > 0);

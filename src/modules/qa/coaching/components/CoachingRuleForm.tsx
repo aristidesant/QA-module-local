@@ -439,7 +439,7 @@ export function CoachingRuleForm({
 							)}
 							<ConditionSentenceRow
 								condition={condition}
-								scoreOnlyAreas={['SENTIMENT_EMOTION']}
+								hiddenUnits={['VOICE']}
 								onChange={(updated) => {
 									form.setFieldValue(`conditions.${index}`, updated);
 									form.clearFieldError('conditions');
