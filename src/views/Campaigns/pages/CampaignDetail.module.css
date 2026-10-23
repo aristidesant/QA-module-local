@@ -1,0 +1,14 @@
+/* Conversations table: whole row opens the call, the re-run action shows on hover */
+.callRow {
+	cursor: pointer;
+}
+
+.rowAction {
+	opacity: 0;
+	transition: opacity 120ms ease;
+}
+
+.callRow:hover .rowAction,
+.callRow:focus-within .rowAction {
+	opacity: 1;
+}

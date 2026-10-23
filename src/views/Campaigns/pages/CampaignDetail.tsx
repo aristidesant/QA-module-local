@@ -56,6 +56,16 @@ import {
 } from '~/modules/qa/calls/helpers';
 import type { CampaignCallRow } from '~/modules/qa/calls/types';
 import { CampaignRosterTab } from '../components/CampaignRosterTab';
+import { notifications } from '@mantine/notifications';
+import classes from './CampaignDetail.module.css';
+
+/** Evaluation types the score range filter applies to. */
+const SCORE_EVALUATION_TYPES = [
+	{ value: 'qa', label: 'QA' },
+	{ value: 'sentiment', label: 'Sentiment & Emotion' },
+	{ value: 'compliance', label: 'Compliance' },
+	{ value: 'business', label: 'Business insight' },
+];
 
 // TODO: Import QATestEditor from common components when available
 // import { QATestEditor } from '../components/QATestEditor';
@@ -82,6 +92,8 @@ export default function CampaignDetail() {
 	const { t } = useTranslation('qa.calls');
 	const { t: tCampaigns } = useTranslation('qa.campaigns');
 	const previewRole = useRoleMockStore((s) => s.previewRole);
+	// Supervisors do not manage where calls come from; hide the Call source tab.
+	const showCallSource = previewRole !== 'supervisor';
 	const getCampaign = useCampaignStore((state) => state.getCampaign);
 	// Campaigns created from the New campaign page are not in the mock names.
 	const createdCampaign = useCampaignsStore((state) =>
@@ -191,9 +203,7 @@ export default function CampaignDetail() {
 	const [callsTableScoreMax, setCallsTableScoreMax] = useState<number | null>(
 		null
 	);
-	const [callsTableQAFormStatus, setCallsTableQAFormStatus] = useState<
-		'all' | 'passed' | 'failed'
-	>('all');
+	const [callsTableScoreType, setCallsTableScoreType] = useState<string>('qa');
 	const [callsTableDisputeRequested, setCallsTableDisputeRequested] = useState<
 		'all' | 'yes' | 'no'
 	>('all');
@@ -357,13 +367,17 @@ export default function CampaignDetail() {
 						</Text>
 					</div>
 
-					{/* Campaign Tabs - Overview, Conversations, Roster and Call source */}
+					{/* Campaign Tabs - Overview, Conversations, Roster and Call source (Call source hidden for supervisors) */}
 					<Tabs defaultValue='overview' keepMounted={false}>
 						<Tabs.List>
 							<Tabs.Tab value='overview'>Overview</Tabs.Tab>
 							<Tabs.Tab value='conversations'>Conversations</Tabs.Tab>
 							<Tabs.Tab value='roster'>{t('roster.tab')}</Tabs.Tab>
-							<Tabs.Tab value='source'>{tCampaigns('callSource.tab')}</Tabs.Tab>
+							{showCallSource ? (
+								<Tabs.Tab value='source'>
+									{tCampaigns('callSource.tab')}
+								</Tabs.Tab>
+							) : null}
 						</Tabs.List>
 
 						<Tabs.Panel value='overview' pt='md'>
@@ -540,28 +554,6 @@ export default function CampaignDetail() {
 														searchable
 														size='sm'
 													/>
-													<Select
-														label='QA Form Result'
-														placeholder='All results'
-														data={[
-															{ value: 'all', label: 'All' },
-															{ value: 'passed', label: 'Passed' },
-															{ value: 'failed', label: 'Failed' },
-														]}
-														value={callsTableQAFormStatus}
-														onChange={(value) => {
-															setCallsTableQAFormStatus(
-																(value as 'all' | 'passed' | 'failed') || 'all'
-															);
-															setCallsTableCurrentPage(1);
-														}}
-														clearable={false}
-														searchable={false}
-														size='sm'
-													/>
-												</Group>
-
-												<Group grow>
 													<TextInput
 														label='Date from'
 														type='date'
@@ -594,6 +586,21 @@ export default function CampaignDetail() {
 															);
 															setCallsTableCurrentPage(1);
 														}}
+														size='sm'
+													/>
+												</Group>
+
+												<Group grow>
+													<Select
+														label='Evaluation type'
+														data={SCORE_EVALUATION_TYPES}
+														value={callsTableScoreType}
+														onChange={(value) => {
+															setCallsTableScoreType(value || 'qa');
+															setCallsTableCurrentPage(1);
+														}}
+														allowDeselect={false}
+														searchable={false}
 														size='sm'
 													/>
 													<TextInput
@@ -724,14 +731,6 @@ export default function CampaignDetail() {
 												);
 											}
 
-											if (callsTableQAFormStatus !== 'all') {
-												filteredCalls = filteredCalls.filter((c) =>
-													callsTableQAFormStatus === 'passed'
-														? c.qaFormPassed
-														: !c.qaFormPassed
-												);
-											}
-
 											if (callsTableDateFrom) {
 												filteredCalls = filteredCalls.filter(
 													(c) => new Date(c.date) >= callsTableDateFrom
@@ -820,7 +819,15 @@ export default function CampaignDetail() {
 															</Table.Thead>
 															<Table.Tbody>
 																{paginatedCalls.map((call) => (
-																	<Table.Tr key={call.id}>
+																	<Table.Tr
+																		key={call.id}
+																		className={classes.callRow}
+																		onClick={() =>
+																			navigate(
+																				`/qa/campaigns/${id}/calls/${call.id}`
+																			)
+																		}
+																	>
 																		<Table.Td>
 																			<Text size='sm' fw={600}>
 																				{call.filename}
@@ -854,14 +861,18 @@ export default function CampaignDetail() {
 																		</Table.Td>
 																		<Table.Td align='right'>
 																			<ActionIcon
+																				className={classes.rowAction}
 																				color='brand'
 																				variant='light'
-																				onClick={() =>
-																					navigate(
-																						`/qa/campaigns/${id}/calls/${call.id}`
-																					)
-																				}
-																				title='View call evaluation'
+																				onClick={(event) => {
+																					event.stopPropagation();
+																					notifications.show({
+																						title: 'Re-running evaluation',
+																						message: call.filename,
+																					});
+																				}}
+																				title='Re-run evaluation'
+																				aria-label='Re-run evaluation'
 																			>
 																				<IconPlayerPlay size={16} />
 																			</ActionIcon>
@@ -893,9 +904,11 @@ export default function CampaignDetail() {
 							<CampaignRosterTab campaignId={id} />
 						</Tabs.Panel>
 
-						<Tabs.Panel value='source' pt='md'>
-							{id ? <CallSourceTab campaignId={id} /> : null}
-						</Tabs.Panel>
+						{showCallSource ? (
+							<Tabs.Panel value='source' pt='md'>
+								{id ? <CallSourceTab campaignId={id} /> : null}
+							</Tabs.Panel>
+						) : null}
 					</Tabs>
 				</Stack>
 			</ContentContainer>
