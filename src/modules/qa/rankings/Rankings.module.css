@@ -60,19 +60,6 @@
 	padding-bottom: 4px;
 }
 
-.milestoneRow {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) 110px minmax(0, 1.2fr) 36px;
-	gap: var(--mantine-spacing-xs);
-	align-items: flex-end;
-}
-
-@media (max-width: 48em) {
-	.milestoneRow {
-		grid-template-columns: 1fr;
-	}
-}
-
 .helpCursor {
 	cursor: help;
 }

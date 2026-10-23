@@ -1,4 +1,5 @@
 import type { RankingProgram } from '~/models/qa/rankingPrograms';
+import { DEFAULT_TOP3_MESSAGES } from './constants';
 import type { UserReactionType } from '~/modules/qa/agent/rankings/types/leaderboard';
 import { UserReactionType as Reaction } from '~/modules/qa/agent/rankings/types/leaderboard';
 import {
@@ -35,6 +36,7 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 			{ id: 'RPM-001', label: 'Solid', threshold: 85, badgeId: 'BDG-006' },
 			{ id: 'RPM-002', label: 'Excellent', threshold: 90, badgeId: 'BDG-009' },
 		],
+		messages: DEFAULT_TOP3_MESSAGES,
 		winnerBadgeId: 'BDG-001',
 		allowReactions: true,
 		status: 'active',
@@ -66,6 +68,7 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 		milestones: [
 			{ id: 'RPM-003', label: 'Guardian', threshold: 92, badgeId: 'BDG-010' },
 		],
+		messages: DEFAULT_TOP3_MESSAGES,
 		winnerBadgeId: 'BDG-002',
 		allowReactions: true,
 		status: 'active',
@@ -101,6 +104,7 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 				badgeId: 'BDG-004',
 			},
 		],
+		messages: DEFAULT_TOP3_MESSAGES,
 		winnerBadgeId: 'BDG-003',
 		allowReactions: true,
 		status: 'completed',
@@ -132,6 +136,7 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 		milestones: [
 			{ id: 'RPM-005', label: 'Closer', threshold: 75, badgeId: 'BDG-005' },
 		],
+		messages: DEFAULT_TOP3_MESSAGES,
 		winnerBadgeId: null,
 		allowReactions: true,
 		status: 'scheduled',
@@ -165,6 +170,7 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 			icon: '🎉',
 		},
 		milestones: [],
+		messages: DEFAULT_TOP3_MESSAGES,
 		winnerBadgeId: null,
 		allowReactions: true,
 		status: 'draft',
@@ -207,6 +213,7 @@ export const RANKING_PROGRAMS_SEED: RankingProgram[] = [
 				badgeId: 'BDG-009',
 			},
 		],
+		messages: DEFAULT_TOP3_MESSAGES,
 		winnerBadgeId: null,
 		allowReactions: true,
 		status: 'active',

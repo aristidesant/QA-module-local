@@ -133,11 +133,6 @@
 		"prizeTitle": "Título",
 		"prizeDescription": "Descripción",
 		"prizeIcon": "Icono",
-		"milestones": "Insignias por hito",
-		"milestoneLabel": "Etiqueta",
-		"milestoneThreshold": "Al llegar a",
-		"milestoneBadge": "Insignia",
-		"addMilestone": "Añadir hito",
 		"winnerBadge": "Insignia del ganador",
 		"noBadge": "Sin insignia",
 		"preview": "Vista previa",
@@ -181,7 +176,12 @@
 		"deactivated": "Ranking desactivado",
 		"defaultSet": "Ranking predeterminado actualizado",
 		"winnerBadgeDated": "Solo los rankings con fecha de fin eligen un ganador",
-		"publish": "Publicar"
+		"publish": "Publicar",
+		"messages": "Mensajes",
+		"messagesHint": "Lo que lee un agente cuando cambia su lugar en el top 3. Deja uno vacío para no enviar nada.",
+		"joinedTop3": "Cuando un agente entra al top 3",
+		"leftTop3": "Cuando un agente sale del top 3",
+		"messagesVariables": "Usa {name} para el agente y {ranking} para este ranking."
 	},
 	"agent": {
 		"header": {

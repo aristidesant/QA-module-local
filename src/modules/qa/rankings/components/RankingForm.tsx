@@ -33,11 +33,7 @@ import type {
 	PrizeKind,
 } from '~/models/qa/rankingPrograms';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
-import {
-	useRankingsStore,
-	selectPrograms,
-	nextMilestoneId,
-} from '~/stores/qa/rankingsStore';
+import { useRankingsStore, selectPrograms } from '~/stores/qa/rankingsStore';
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import { TODAY } from '~/modules/qa/analytics/constants';
 import {
@@ -46,7 +42,14 @@ import {
 } from '~/modules/qa/team/constants';
 import type { TeamRole } from '~/modules/qa/team/types';
 import { computeStandings, formatScore, overlappingDated } from '../helpers';
-import { DEFAULT_METRIC, PRIZE_EMOJI, PRIZE_KINDS, TEAMS } from '../constants';
+import {
+	DEFAULT_METRIC,
+	DEFAULT_TOP3_MESSAGES,
+	PRIZE_EMOJI,
+	PRIZE_KINDS,
+	TEAMS,
+	TOP3_MESSAGE_MAX,
+} from '../constants';
 import {
 	RANKING_METRIC_BY_ID,
 	RANKING_METRIC_GROUPS,
@@ -79,6 +82,7 @@ const emptyDraft = (role: TeamRole): ProgramDraft => ({
 	isDefault: false,
 	prize: { kind: 'GIFT_CARD', title: '', description: '', icon: '🎁' },
 	milestones: [],
+	messages: DEFAULT_TOP3_MESSAGES,
 	winnerBadgeId: null,
 	allowReactions: true,
 	status: 'draft',
@@ -310,19 +314,6 @@ export const RankingForm: React.FC<RankingFormProps> = ({
 		}
 		onClose();
 	};
-
-	const addMilestone = () =>
-		patch({
-			milestones: [
-				...draft.milestones,
-				{
-					id: nextMilestoneId(),
-					label: '',
-					threshold: draft.targetScore,
-					badgeId: badgeOptions[0]?.value ?? '',
-				},
-			],
-		});
 
 	const period = (from: dayjs.Dayjs, to: dayjs.Dayjs) =>
 		patch({
@@ -653,82 +644,6 @@ export const RankingForm: React.FC<RankingFormProps> = ({
 							})
 						}
 					/>
-				</Stack>
-			</SectionCard>
-
-			<SectionCard
-				title={t('editor.milestones')}
-				padding='md'
-				headerActions={
-					<Button
-						size='xs'
-						variant='default'
-						leftSection={<IconPlus size={14} />}
-						onClick={addMilestone}
-						disabled={badgeOptions.length === 0}
-					>
-						{t('editor.addMilestone')}
-					</Button>
-				}
-			>
-				<Stack gap='sm'>
-					{draft.milestones.map((milestone, index) => (
-						<div key={milestone.id} className={styles.milestoneRow}>
-							<TextInput
-								label={index === 0 ? t('editor.milestoneLabel') : undefined}
-								value={milestone.label}
-								onChange={(e) =>
-									patch({
-										milestones: draft.milestones.map((m) =>
-											m.id === milestone.id
-												? { ...m, label: e.currentTarget.value }
-												: m
-										),
-									})
-								}
-							/>
-							<NumberInput
-								label={index === 0 ? t('editor.milestoneThreshold') : undefined}
-								value={milestone.threshold}
-								onChange={(value) =>
-									patch({
-										milestones: draft.milestones.map((m) =>
-											m.id === milestone.id
-												? { ...m, threshold: Number(value) || 0 }
-												: m
-										),
-									})
-								}
-								decimalScale={1}
-							/>
-							<Select
-								label={index === 0 ? t('editor.milestoneBadge') : undefined}
-								data={badgeOptions}
-								value={milestone.badgeId}
-								onChange={(value) =>
-									patch({
-										milestones: draft.milestones.map((m) =>
-											m.id === milestone.id ? { ...m, badgeId: value ?? '' } : m
-										),
-									})
-								}
-								comboboxProps={{ withinPortal: true }}
-							/>
-							<ActionIcon
-								variant='subtle'
-								color='red'
-								onClick={() =>
-									patch({
-										milestones: draft.milestones.filter(
-											(m) => m.id !== milestone.id
-										),
-									})
-								}
-							>
-								<IconTrash size={16} />
-							</ActionIcon>
-						</div>
-					))}
 					<Select
 						label={t('editor.winnerBadge')}
 						placeholder={t('editor.noBadge')}
@@ -740,6 +655,48 @@ export const RankingForm: React.FC<RankingFormProps> = ({
 						description={permanent ? t('editor.winnerBadgeDated') : undefined}
 						comboboxProps={{ withinPortal: true }}
 					/>
+				</Stack>
+			</SectionCard>
+
+			<SectionCard
+				title={t('editor.messages')}
+				description={t('editor.messagesHint')}
+				padding='md'
+			>
+				<Stack gap='sm'>
+					<Textarea
+						label={t('editor.joinedTop3')}
+						value={draft.messages.joinedTop3}
+						onChange={(e) =>
+							patch({
+								messages: {
+									...draft.messages,
+									joinedTop3: e.currentTarget.value,
+								},
+							})
+						}
+						maxLength={TOP3_MESSAGE_MAX}
+						autosize
+						minRows={2}
+					/>
+					<Textarea
+						label={t('editor.leftTop3')}
+						value={draft.messages.leftTop3}
+						onChange={(e) =>
+							patch({
+								messages: {
+									...draft.messages,
+									leftTop3: e.currentTarget.value,
+								},
+							})
+						}
+						maxLength={TOP3_MESSAGE_MAX}
+						autosize
+						minRows={2}
+					/>
+					<Text size='xs' c='dimmed'>
+						{t('editor.messagesVariables')}
+					</Text>
 				</Stack>
 			</SectionCard>
 

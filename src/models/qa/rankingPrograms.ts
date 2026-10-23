@@ -53,6 +53,12 @@ export interface RankingMilestone {
 	badgeId: string;
 }
 
+/** What an agent is told when their place in the top 3 changes. `{name}` and `{ranking}` are filled in; an empty text sends nothing. */
+export interface RankingMessages {
+	joinedTop3: string;
+	leftTop3: string;
+}
+
 export interface RankingProgram {
 	id: string;
 	name: string;
@@ -74,6 +80,7 @@ export interface RankingProgram {
 	isDefault: boolean;
 	prize: RankingPrize;
 	milestones: RankingMilestone[];
+	messages: RankingMessages;
 	winnerBadgeId: string | null;
 	/** Whether agents can give each other peer reactions on this ranking's leaderboard. */
 	allowReactions: boolean;

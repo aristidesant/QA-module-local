@@ -8,6 +8,7 @@ import {
 } from '@tabler/icons-react';
 import type {
 	PrizeKind,
+	RankingMessages,
 	RankingMetricId,
 	RankingStatus,
 } from '~/models/qa/rankingPrograms';
@@ -76,3 +77,13 @@ export const rankingNewPath = (role: TeamRole) =>
 
 export const rankingEditPath = (role: TeamRole, programId: string) =>
 	`${rankingsBasePath(role)}/${programId}/edit`;
+
+/** The texts a new ranking starts with for the top 3. */
+export const DEFAULT_TOP3_MESSAGES: RankingMessages = {
+	joinedTop3:
+		'Congratulations, {name}! You are in the top 3 of {ranking}. Keep it up.',
+	leftTop3:
+		'You have left the top 3 of {ranking}, but there is still time to climb back. Keep going, {name}.',
+};
+
+export const TOP3_MESSAGE_MAX = 160;

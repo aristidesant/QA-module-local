@@ -57,8 +57,6 @@ export const selectReactions = (s: RankingsState) => s.reactions;
 
 let counter = RANKING_PROGRAMS_SEED.length;
 const nextId = () => `RP-${String(++counter).padStart(3, '0')}`;
-let milestoneCounter = 100;
-export const nextMilestoneId = () => `RPM-${++milestoneCounter}`;
 
 const notify = (input: Parameters<typeof buildNotification>[0]) =>
 	useNotificationStore.getState().addNotification(buildNotification(input));

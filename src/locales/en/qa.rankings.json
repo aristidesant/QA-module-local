@@ -133,11 +133,6 @@
 		"prizeTitle": "Title",
 		"prizeDescription": "Description",
 		"prizeIcon": "Icon",
-		"milestones": "Milestone badges",
-		"milestoneLabel": "Label",
-		"milestoneThreshold": "At score",
-		"milestoneBadge": "Badge",
-		"addMilestone": "Add milestone",
 		"winnerBadge": "Winner badge",
 		"noBadge": "No badge",
 		"preview": "Preview",
@@ -181,7 +176,12 @@
 		"deactivated": "Ranking deactivated",
 		"defaultSet": "Default ranking updated",
 		"winnerBadgeDated": "Only rankings with an end date pick a winner",
-		"publish": "Publish"
+		"publish": "Publish",
+		"messages": "Messages",
+		"messagesHint": "What an agent reads when their place in the top 3 changes. Leave one empty to send nothing.",
+		"joinedTop3": "When an agent joins the top 3",
+		"leftTop3": "When an agent leaves the top 3",
+		"messagesVariables": "Use {name} for the agent and {ranking} for this ranking."
 	},
 	"agent": {
 		"header": {
