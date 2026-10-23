@@ -71,7 +71,6 @@ export function RankingStandings({
 					currentAgentId={currentAgentId}
 					onRowClick={onRowClick}
 					reactions={reactions}
-					dense={dense}
 				/>
 			) : (
 				<StandingsTable

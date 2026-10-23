@@ -40,6 +40,8 @@
 
 .icon {
 	color: var(--mantine-color-dimmed);
+	transform-origin: center;
+	transition: color 120ms ease;
 }
 
 .chip[data-active] .icon {
@@ -59,4 +61,63 @@
 /* Read-only count of one reaction, for roles that cannot react. */
 .readOnlyChip {
 	color: light-dark(var(--mantine-color-gray-7), var(--mantine-color-dark-1));
+}
+
+/* The moving part: icon and count squash together while the button (the hit area) stays put. */
+.inner {
+	display: inline-flex;
+	align-items: center;
+	gap: 4px;
+	transition: transform 80ms ease;
+}
+
+.chip:active .inner {
+	transform: scale(0.92);
+}
+
+/* Give: the icon pops once, then settles. */
+@keyframes reaction-pop {
+	0% {
+		transform: scale(1);
+	}
+	40% {
+		transform: scale(1.35);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+.chip[data-pop] .icon {
+	animation: reaction-pop 260ms cubic-bezier(0.2, 0.8, 0.2, 1.2);
+}
+
+/* Count: a new number slides up into place. */
+@keyframes count-in {
+	from {
+		opacity: 0;
+		transform: translateY(5px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+.count {
+	display: inline-block;
+}
+
+.chip[data-bump] .count {
+	animation: count-in 180ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.inner,
+	.chip[data-pop] .icon,
+	.chip[data-bump] .count {
+		animation: none;
+		transition: none;
+		transform: none;
+	}
 }

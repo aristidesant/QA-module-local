@@ -1,14 +1,6 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Badge,
-	Group,
-	Paper,
-	Progress,
-	Stack,
-	Text,
-	ThemeIcon,
-} from '@mantine/core';
+import { Badge, Group, Paper, Stack, Text, ThemeIcon } from '@mantine/core';
 import { IconAward, IconTargetArrow } from '@tabler/icons-react';
 import type { RankingProgram } from '~/models/qa/rankingPrograms';
 import { PREDEFINED_BADGE_CATALOGS } from '~/models/qa/badges';
@@ -169,13 +161,6 @@ export const AchievementsTab: React.FC<AchievementsTabProps> = ({
 								{next.progress}%
 							</Text>
 						</Group>
-
-						<Progress
-							value={next.progress}
-							color='blue'
-							radius='xl'
-							size='md'
-						/>
 
 						<Text size='xs' c='dimmed'>
 							{t('achievements.nextHint', {

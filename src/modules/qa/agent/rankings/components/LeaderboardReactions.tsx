@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Group, Text, Tooltip, UnstyledButton } from '@mantine/core';
 import { UserReactionType } from '../types/leaderboard';
@@ -39,6 +39,10 @@ export const LeaderboardReactions: React.FC<LeaderboardReactionsProps> = ({
 		programId,
 		agentId
 	);
+	// The reaction just given, so only that icon pops (taking one back plays nothing).
+	const [popped, setPopped] = useState<UserReactionType | null>(null);
+	// The count that just changed because of the agent's click; counts do not animate on load.
+	const [bumped, setBumped] = useState<UserReactionType | null>(null);
 
 	if (readOnly) {
 		const given = REACTION_OPTIONS.filter(
@@ -99,14 +103,31 @@ export const LeaderboardReactions: React.FC<LeaderboardReactionsProps> = ({
 							data-size={size}
 							data-active={mine || undefined}
 							aria-pressed={mine}
-							onClick={() => setReaction(mine ? null : emoji)}
+							data-pop={popped === emoji || undefined}
+							data-bump={bumped === emoji || undefined}
+							onClick={() => {
+								setPopped(mine ? null : emoji);
+								setBumped(emoji);
+								setReaction(mine ? null : emoji);
+							}}
 						>
-							<Icon
-								size={size === 'md' ? 16 : 14}
-								className={styles.icon}
-								stroke={2}
-							/>
-							{count > 0 && <span className={styles.count}>{count}</span>}
+							<span className={styles.inner}>
+								<Icon
+									size={size === 'md' ? 16 : 14}
+									className={styles.icon}
+									stroke={2}
+									onAnimationEnd={() => setPopped(null)}
+								/>
+								{count > 0 && (
+									<span
+										key={count}
+										className={styles.count}
+										onAnimationEnd={() => setBumped(null)}
+									>
+										{count}
+									</span>
+								)}
+							</span>
 						</UnstyledButton>
 					</Tooltip>
 				);

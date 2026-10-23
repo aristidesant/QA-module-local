@@ -1,13 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import {
-	Group,
-	Progress,
-	SimpleGrid,
-	Stack,
-	Text,
-	ThemeIcon,
-} from '@mantine/core';
+import { Group, SimpleGrid, Stack, Text, ThemeIcon } from '@mantine/core';
 import {
 	IconArrowDownRight,
 	IconArrowUpRight,
@@ -21,7 +14,6 @@ import type {
 import {
 	formatScore,
 	formatTarget,
-	higherIsBetterOf,
 	ownStanding,
 } from '~/modules/qa/rankings/helpers';
 
@@ -35,12 +27,10 @@ function Cell({
 	label,
 	value,
 	hint,
-	extra,
 }: {
 	label: string;
 	value: React.ReactNode;
 	hint?: React.ReactNode;
-	extra?: React.ReactNode;
 }) {
 	return (
 		<Stack gap={2}>
@@ -50,7 +40,6 @@ function Cell({
 			<Text size='xl' fw={700} lh={1.2}>
 				{value}
 			</Text>
-			{extra}
 			{hint && (
 				<Text size='xs' c='dimmed'>
 					{hint}
@@ -88,11 +77,6 @@ export const YourStandingStrip: React.FC<YourStandingStripProps> = ({
 				? t('agent.you.up', { count: delta })
 				: t('agent.you.down', { count: Math.abs(delta) });
 
-	const progress =
-		ranked && mine?.score != null && higherIsBetterOf(program)
-			? Math.min(100, (mine.score / program.targetScore) * 100)
-			: null;
-
 	return (
 		<SectionCard padding='lg'>
 			<SimpleGrid cols={{ base: 2, md: 4 }} spacing='lg'>
@@ -108,11 +92,6 @@ export const YourStandingStrip: React.FC<YourStandingStripProps> = ({
 				<Cell
 					label={t('agent.you.score')}
 					value={ranked ? formatScore(program, mine!.score) : '—'}
-					extra={
-						progress !== null ? (
-							<Progress value={progress} size='xs' color='gray' />
-						) : undefined
-					}
 					hint={
 						!ranked
 							? t('agent.you.noScore')

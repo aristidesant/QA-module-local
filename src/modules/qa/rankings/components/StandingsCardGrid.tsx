@@ -13,7 +13,6 @@ interface StandingsCardGridProps {
 	currentAgentId?: string;
 	onRowClick?: (standing: RankingStanding) => void;
 	reactions?: ReactionsMode;
-	dense?: boolean;
 }
 
 /**
@@ -26,7 +25,6 @@ export const StandingsCardGrid: React.FC<StandingsCardGridProps> = ({
 	currentAgentId,
 	onRowClick,
 	reactions,
-	dense,
 }) => (
 	<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
 		{standings.map((standing) => (
@@ -37,7 +35,6 @@ export const StandingsCardGrid: React.FC<StandingsCardGridProps> = ({
 				isCurrentAgent={standing.agentId === currentAgentId}
 				onRowClick={onRowClick}
 				reactions={reactions}
-				dense={dense}
 			/>
 		))}
 	</SimpleGrid>

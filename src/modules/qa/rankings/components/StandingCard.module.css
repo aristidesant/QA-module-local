@@ -50,7 +50,7 @@
 }
 
 .score {
-	color: light-dark(var(--mantine-color-blue-7), var(--mantine-color-blue-4));
+	color: inherit;
 	line-height: 1.1;
 }
 

@@ -10,13 +10,8 @@
 }
 
 .scoreCell {
-	width: 190px;
+	width: 120px;
 	white-space: nowrap;
-}
-
-.scoreBar {
-	width: 80px;
-	flex: none;
 }
 
 .deltaCell {

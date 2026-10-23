@@ -5,7 +5,6 @@ import {
 	Card,
 	Divider,
 	Group,
-	Progress,
 	Stack,
 	Text,
 	ThemeIcon,
@@ -36,8 +35,6 @@ interface StandingCardProps {
 	isCurrentAgent?: boolean;
 	onRowClick?: (standing: RankingStanding) => void;
 	reactions?: ReactionsMode;
-	/** Drops the progress bar, for a compact dashboard placement. */
-	dense?: boolean;
 }
 
 /** One agent's standing as a card: the same facts as a table row, stacked for narrow screens. */
@@ -47,7 +44,6 @@ export const StandingCard: React.FC<StandingCardProps> = ({
 	isCurrentAgent,
 	onRowClick,
 	reactions = 'off',
-	dense = false,
 }) => {
 	const { t } = useTranslation('qa.rankings');
 	const badges = useTriggerRulesStore((s) => s.badges);
@@ -138,20 +134,6 @@ export const StandingCard: React.FC<StandingCardProps> = ({
 					>
 						{formatScore(program, standing.score)}
 					</Text>
-					{!dense && (
-						<Progress
-							value={
-								standing.score === null
-									? 0
-									: Math.min(
-											100,
-											(standing.score / Math.max(program.targetScore, 1)) * 100
-										)
-							}
-							color={standing.reachedTarget ? 'green' : 'blue'}
-							size='sm'
-						/>
-					)}
 				</Stack>
 
 				<Group gap='md' wrap='wrap'>
