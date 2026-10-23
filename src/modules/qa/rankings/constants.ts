@@ -36,9 +36,10 @@ export const PRIZE_EMOJI = ['🏆', '🎁', '💰', '🌴', '⭐', '🥇', '🎉
 
 export const STATUS_COLOR: Record<RankingStatus, string> = {
 	draft: 'gray',
+	scheduled: 'gray',
 	inactive: 'gray',
 	active: 'green',
-	completed: 'grape',
+	completed: 'gray',
 };
 
 export const TEAMS = ['Team 1', 'Team 2', 'Team 3'];
@@ -46,25 +47,18 @@ export const TEAMS = ['Team 1', 'Team 2', 'Team 3'];
 /** Standings are compared against this many days ago to show movement. */
 export const PREVIOUS_RANK_DAYS = 7;
 
-/** Where a ranking sits in time, independent of its status. */
-export type RankingPeriod = 'live' | 'upcoming' | 'ended';
-export const RANKING_PERIODS: RankingPeriod[] = ['live', 'upcoming', 'ended'];
-
-/** Order of the status filter chips and of the cards: what can change first, what is over last. */
+/** Order of the cards inside a tab: what is running first, what is over last. */
 export const RANKING_STATUS_ORDER: RankingStatus[] = [
 	'active',
+	'scheduled',
 	'draft',
 	'inactive',
 	'completed',
 ];
-/** What the list shows before any filter is touched: everything that can still change. */
-export const DEFAULT_RANKING_STATUSES: RankingStatus[] = [
-	'active',
-	'inactive',
-	'draft',
-];
 
-export const PODIUM_COLORS = ['yellow', 'gray', 'orange'];
+/** Where a ranking is shown on the supervisor page. */
+export type RankingTab = 'current' | 'upcoming' | 'past';
+export const RANKING_TABS: RankingTab[] = ['current', 'upcoming', 'past'];
 
 export const rankingsBasePath = (role: TeamRole) =>
 	role === 'qa-manager' ? '/qa/qa-manager/rankings' : '/qa/supervisor/rankings';

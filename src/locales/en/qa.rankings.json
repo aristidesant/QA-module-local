@@ -5,30 +5,21 @@
 			"qa-manager": "QA Manager · All teams"
 		},
 		"title": "Team Rankings",
-		"description": "Set up rankings that measure one metric or mix several, and choose which one is live for your team",
+		"description": "The default ranking is always on; run a dated ranking beside it when you want to push one thing.",
 		"new": "New ranking",
 		"notFound": "This ranking is not available."
 	},
-	"filters": {
-		"search": "Search rankings",
-		"status": "Status",
-		"area": "Metric area",
-		"period": "Period",
-		"periods": { "live": "Live now", "upcoming": "Upcoming", "ended": "Ended" },
-		"team": "Team",
-		"clear": "Clear filters",
-		"summary_one": "{{count}} ranking · {{agents}} agents in live rankings",
-		"summary_other": "{{count}} rankings · {{agents}} agents in live rankings"
-	},
 	"empty": {
-		"noMatch": "No rankings match these filters",
-		"none": "No rankings yet — create one to motivate the team"
+		"current": "No ranking is running. Enable the default or publish one.",
+		"upcoming": "Nothing scheduled and no drafts.",
+		"past": "No finished rankings yet."
 	},
 	"status": {
 		"draft": "Draft",
 		"active": "Active",
 		"completed": "Completed",
-		"inactive": "Inactive"
+		"inactive": "Inactive",
+		"scheduled": "Scheduled"
 	},
 	"prizeKinds": {
 		"BONUS": "Bonus",
@@ -38,33 +29,38 @@
 		"OTHER": "Other"
 	},
 	"card": {
-		"target": "Target {{value}} · min. {{calls}} calls",
-		"period": "{{from}} → {{to}}",
 		"daysLeft_one": "{{count}} day left",
 		"daysLeft_other": "{{count}} days left",
-		"ended": "Ended",
-		"notStarted": "Starts {{date}}",
 		"leader": "Leader",
 		"winner": "Winner",
-		"prize": "Prize",
 		"view": "View standings",
 		"edit": "Edit",
 		"duplicate": "Duplicate",
 		"end": "End now",
 		"delete": "Delete draft",
-		"teams": "Teams",
-		"activate": "Activate {{name}}",
-		"deactivate": "Deactivate {{name}}",
 		"default": "Default",
-		"setDefault": "Set as default",
-		"noEndDate": "No end date",
-		"since": "Since {{date}}",
-		"replaces": "Saving will replace {{name}} as the active ranking for {{teams}}.",
+		"replaces": "Publishing will end {{name}} for {{teams}}.",
 		"activateConfirm": {
 			"title": "Switch the active ranking?",
-			"body": "Activating {{name}} will deactivate {{replaced}} for {{teams}}. Agents will see the new ranking right away.",
+			"body": "Publishing {{name}} will end {{replaced}} for {{teams}}. Agents will see the new ranking right away.",
 			"confirm": "Activate"
-		}
+		},
+		"defaultStatus": {
+			"on": "Default · On",
+			"off": "Default · Off"
+		},
+		"alwaysOn": "Always on",
+		"startsOn": "Starts {{date}}",
+		"endsOn": "ends {{date}}",
+		"endedOn": "Ended {{date}}",
+		"draftDates": "{{from}} → {{to}}",
+		"participants_one": "{{count}} agent",
+		"participants_other": "{{count}} agents",
+		"publish": "Publish",
+		"enable": "Enable default",
+		"disable": "Disable default",
+		"reuse": "Reuse",
+		"more": "More actions"
 	},
 	"drawer": {
 		"participants": "Participants",
@@ -93,7 +89,9 @@
 		"winnerHint": "Winner of this ranking",
 		"viewDetails": "View details",
 		"detailDescription": "Standing in the current ranking",
-		"stats": { "rank": "Rank" },
+		"stats": {
+			"rank": "Rank"
+		},
 		"signals": {
 			"held": "Held position since last week",
 			"up_one": "Up {{count}} position since last week",
@@ -180,10 +178,10 @@
 		"makeDefault": "Make this the team's default ranking",
 		"makeDefaultHint": "It activates automatically when a ranking with an end date finishes",
 		"save": "Save",
-		"saveActivate": "Save & activate",
 		"deactivated": "Ranking deactivated",
 		"defaultSet": "Default ranking updated",
-		"winnerBadgeDated": "Only rankings with an end date pick a winner"
+		"winnerBadgeDated": "Only rankings with an end date pick a winner",
+		"publish": "Publish"
 	},
 	"agent": {
 		"header": {
@@ -217,12 +215,41 @@
 			"myRankValue": "#{{rank}} · {{score}}"
 		},
 		"empty": {
-			"noActive": "No active ranking for your team right now"
+			"noActive": "Your team has no ranking on right now"
 		},
 		"tabs": {
 			"current": "Current ranking",
 			"past": "Past rankings"
-		}
+		},
+		"title": "Team ranking",
+		"description": "Where you stand in the rankings your supervisor runs, and what it takes to move up.",
+		"switch": {
+			"default": "Team index"
+		},
+		"standingsTitle": "Team standings",
+		"you": {
+			"place": "Your place",
+			"ofRanked": "of {{count}} ranked",
+			"callsToQualify_one": "{{count}} more call to qualify",
+			"callsToQualify_other": "{{count}} more calls to qualify",
+			"score": "Score",
+			"target": "Target {{value}}",
+			"targetReached": "Target reached",
+			"noScore": "No score yet",
+			"sinceWeek": "Since last week",
+			"held": "Held position",
+			"up_one": "Up {{count}} place",
+			"up_other": "Up {{count}} places",
+			"down_one": "Down {{count}} place",
+			"down_other": "Down {{count}} places",
+			"next": "Next place",
+			"leading": "Leading by {{points}}",
+			"behind": "{{points}} behind #{{rank}}"
+		},
+		"milestones": {
+			"reached": "Reached"
+		},
+		"meta": "Set by {{name}} · Target {{target}}"
 	},
 	"achievements": {
 		"empty": "No badges earned yet",
@@ -265,5 +292,20 @@
 	},
 	"score": {
 		"pointsAdded": "+{{value}} pts"
+	},
+	"tabs": {
+		"current": "Current",
+		"upcoming": "Upcoming & drafts",
+		"past": "Past",
+		"team": "Team"
+	},
+	"past": {
+		"columns": {
+			"name": "Ranking",
+			"period": "Period",
+			"teams": "Teams",
+			"winner": "Winner",
+			"participants": "Agents"
+		}
 	}
 }

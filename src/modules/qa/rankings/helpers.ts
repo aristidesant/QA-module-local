@@ -14,14 +14,13 @@ import type { TeamRole } from '~/modules/qa/team/types';
 import {
 	PREVIOUS_RANK_DAYS,
 	RANKING_STATUS_ORDER,
-	type RankingPeriod,
+	type RankingTab,
 } from './constants';
 import {
 	RANKING_METRIC_BY_ID,
 	aggregateRankingMetric,
 	formatRankingValue,
 	normalizeMetric,
-	type RankingMetricArea,
 } from './metrics';
 
 const dayOf = (iso: string) => iso.slice(0, 10);
@@ -59,13 +58,13 @@ export const programsSharingTeams = (
 		(program) => program.id !== excludeId && sharesTeam(program, teams)
 	);
 
-/** The ranking currently live for a team; there is never more than one. */
-export const activeProgramFor = (
+/** The dated ranking running for a team right now, beside the default. */
+export const liveDatedFor = (
 	programs: RankingProgram[],
 	team: string
 ): RankingProgram | null =>
 	programs.find(
-		(program) => program.status === 'active' && program.teams.includes(team)
+		(p) => p.status === 'active' && !p.isDefault && p.teams.includes(team)
 	) ?? null;
 
 /** The permanent ranking a team falls back to when a dated one ends. */
@@ -91,54 +90,52 @@ export const programsForRole = (
 		? programs
 		: programs.filter((program) => program.teams.includes('Team 1'));
 
-export interface RankingFilters {
-	q: string;
-	status: RankingStatus[];
-	team: string | null;
-	area: RankingMetricArea | null;
-	period: RankingPeriod | null;
-}
-
-export const periodOf = (program: RankingProgram): RankingPeriod =>
-	program.endDate !== null && program.endDate < TODAY
-		? 'ended'
-		: program.startDate > TODAY
-			? 'upcoming'
-			: 'live';
-
-export const programAreas = (program: RankingProgram): RankingMetricArea[] => [
-	...new Set(program.metrics.map((m) => RANKING_METRIC_BY_ID[m.metricId].area)),
-];
-
-/** Every filter except status; status is applied separately so its chip counts can reflect the rest. */
-export const matchesRankingFacets = (
+/** The status a published program has on `today`; drafts and finished ones keep theirs. */
+export const statusOn = (
 	program: RankingProgram,
-	f: Pick<RankingFilters, 'q' | 'team' | 'area' | 'period'>
-): boolean => {
-	const q = f.q.trim().toLowerCase();
-	if (q && !program.name.toLowerCase().includes(q)) return false;
-	if (f.team && !program.teams.includes(f.team)) return false;
-	if (f.area && !programAreas(program).includes(f.area)) return false;
-	if (f.period && periodOf(program) !== f.period) return false;
-	return true;
+	today = TODAY
+): RankingStatus => {
+	if (program.status === 'draft' || program.status === 'completed')
+		return program.status;
+	if (isPermanent(program))
+		return program.status === 'inactive' ? 'inactive' : 'active';
+	if (program.endDate !== null && program.endDate < today) return 'completed';
+	if (program.startDate > today) return 'scheduled';
+	return 'active';
 };
 
-export const applyRankingFilters = (
-	programs: RankingProgram[],
-	f: RankingFilters
-): RankingProgram[] =>
-	programs.filter(
-		(p) => f.status.includes(p.status) && matchesRankingFacets(p, f)
-	);
+/** Which supervisor tab a ranking belongs to. */
+export const tabOf = (program: RankingProgram): RankingTab =>
+	program.status === 'completed'
+		? 'past'
+		: program.status === 'scheduled' || program.status === 'draft'
+			? 'upcoming'
+			: 'current';
 
-/** Live first, then drafts, inactive and completed; newest start date first inside each group. */
+/** Default first, then by status order; newest start date first inside each group. */
 export const sortPrograms = (programs: RankingProgram[]): RankingProgram[] =>
 	[...programs].sort(
 		(a, b) =>
+			Number(b.isDefault) - Number(a.isDefault) ||
 			RANKING_STATUS_ORDER.indexOf(a.status) -
 				RANKING_STATUS_ORDER.indexOf(b.status) ||
 			b.startDate.localeCompare(a.startDate)
 	);
+
+/** Two dated rankings of the same team cannot run at once; finds the one a ranking would collide with. */
+export const overlappingDated = (
+	programs: RankingProgram[],
+	candidate: Pick<RankingProgram, 'id' | 'teams' | 'startDate' | 'endDate'>
+): RankingProgram | null =>
+	programsSharingTeams(programs, candidate.teams, candidate.id).find(
+		(p) =>
+			!p.isDefault &&
+			(p.status === 'active' || p.status === 'scheduled') &&
+			p.endDate !== null &&
+			candidate.endDate !== null &&
+			p.startDate <= candidate.endDate &&
+			candidate.startDate <= p.endDate
+	) ?? null;
 
 /** Whether a score meets the threshold, respecting the ranking's direction. */
 const reached = (
@@ -372,4 +369,41 @@ export const formatScore = (
 export const participantCount = (programs: RankingProgram[]): number => {
 	const teams = new Set(programs.flatMap((program) => program.teams));
 	return TEAM_AGENTS.filter((agent) => teams.has(agent.team)).length;
+};
+
+export interface OwnStanding {
+	standing: RankingStanding | null;
+	rankedCount: number;
+	/** Calls still needed to qualify; 0 once ranked. */
+	callsToQualify: number;
+	/** Points between the agent and the place above (null for the leader or unranked). */
+	gapToNext: number | null;
+	/** Points between the agent and the place below (null when last or unranked). */
+	leadOverNext: number | null;
+}
+
+/** Where one agent stands: rank, what it takes to qualify, and the distance to the places around them. */
+export const ownStanding = (
+	program: RankingProgram,
+	standings: RankingStanding[],
+	agentId: string
+): OwnStanding => {
+	const ranked = standings.filter((s) => s.rank !== null);
+	const mine = standings.find((s) => s.agentId === agentId) ?? null;
+	const rank = mine?.rank ?? null;
+	const above = rank ? ranked.find((s) => s.rank === rank - 1) : undefined;
+	const below = rank ? ranked.find((s) => s.rank === rank + 1) : undefined;
+	const distance = (other: RankingStanding | undefined) =>
+		other?.score != null && mine?.score != null
+			? round1(Math.abs(other.score - mine.score))
+			: null;
+	return {
+		standing: mine,
+		rankedCount: ranked.length,
+		callsToQualify: mine
+			? Math.max(0, program.minCalls - mine.calls)
+			: program.minCalls,
+		gapToNext: distance(above),
+		leadOverNext: distance(below),
+	};
 };

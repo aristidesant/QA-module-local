@@ -45,11 +45,7 @@ import {
 	SUPERVISOR_PERSONA,
 } from '~/modules/qa/team/constants';
 import type { TeamRole } from '~/modules/qa/team/types';
-import {
-	computeStandings,
-	formatScore,
-	programsSharingTeams,
-} from '../helpers';
+import { computeStandings, formatScore, overlappingDated } from '../helpers';
 import { DEFAULT_METRIC, PRIZE_EMOJI, PRIZE_KINDS, TEAMS } from '../constants';
 import {
 	RANKING_METRIC_BY_ID,
@@ -232,16 +228,27 @@ export const RankingForm: React.FC<RankingFormProps> = ({
 					: '';
 
 	const isExisting = program !== null;
-	const alreadyOn = program?.status === 'active';
-	/** Saving as active takes over from the ranking now live for the same team. */
+	const isPublished = isExisting && program.status !== 'draft';
+	/** Publishing a dated ranking ends the dated one it overlaps for the same team. */
 	const replaced = useMemo(
 		() =>
-			alreadyOn
+			isPublished || permanent
 				? null
-				: (programsSharingTeams(programs, draft.teams, program?.id).find(
-						(p) => p.status === 'active'
-					) ?? null),
-		[alreadyOn, programs, draft.teams, program?.id]
+				: overlappingDated(programs, {
+						id: program?.id ?? '',
+						teams: draft.teams,
+						startDate: draft.startDate,
+						endDate: draft.endDate,
+					}),
+		[
+			isPublished,
+			permanent,
+			programs,
+			draft.teams,
+			draft.startDate,
+			draft.endDate,
+			program?.id,
+		]
 	);
 
 	/** Marks each invalid field inline and reports whether the form can be saved. */
@@ -275,7 +282,7 @@ export const RankingForm: React.FC<RankingFormProps> = ({
 		else createProgram(next);
 
 		notifySuccess(
-			status === 'active' && !alreadyOn
+			status === 'active' && !isPublished
 				? t('editor.launched')
 				: t('editor.saved')
 		);
@@ -773,7 +780,7 @@ export const RankingForm: React.FC<RankingFormProps> = ({
 					<Button variant='subtle' onClick={handleClose}>
 						{t('editor.cancel')}
 					</Button>
-					{isExisting && program.status !== 'draft' ? (
+					{isPublished ? (
 						<Button
 							variant={program.status === 'inactive' ? 'default' : 'filled'}
 							onClick={() => handleSave(program.status)}
@@ -785,9 +792,10 @@ export const RankingForm: React.FC<RankingFormProps> = ({
 							{t('editor.saveDraft')}
 						</Button>
 					)}
-					{!alreadyOn && (
+					{!isPublished && (
 						<Button onClick={() => handleSave('active')}>
-							{t('editor.saveActivate')}
+							{' '}
+							{t('editor.publish')}
 						</Button>
 					)}
 				</Group>

@@ -9,7 +9,7 @@ import {
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
 import type { RankingProgram } from '~/models/qa/rankingPrograms';
-import { STATUS_COLOR } from '../constants';
+import { PRIZE_ICON, STATUS_COLOR } from '../constants';
 import { daysLeft, elapsedPct, formatTarget, isPermanent } from '../helpers';
 import MetricChips from './MetricChips';
 import styles from '../Rankings.module.css';
@@ -51,6 +51,7 @@ export function RankingHeader({ program, actions }: RankingHeaderProps) {
 	const elapsed = elapsedPct(program);
 	const permanent = isPermanent(program);
 	const completed = program.status === 'completed';
+	const PrizeIcon = PRIZE_ICON[program.prize.kind];
 
 	return (
 		<Stack gap='md'>
@@ -80,10 +81,10 @@ export function RankingHeader({ program, actions }: RankingHeaderProps) {
 						)}
 						<Badge
 							size='lg'
-							variant='light'
-							color='yellow'
+							variant='outline'
+							color='gray'
 							className={styles.prizeChip}
-							leftSection={program.prize.icon}
+							leftSection={<PrizeIcon size={14} />}
 						>
 							{program.prize.title}
 						</Badge>

@@ -7,7 +7,6 @@ import type {
 	RankingStanding,
 } from '~/models/qa/rankingPrograms';
 import { formatScore } from '../helpers';
-import { PODIUM_COLORS } from '../constants';
 import styles from '../Rankings.module.css';
 
 interface PodiumStripProps {
@@ -47,17 +46,13 @@ export const PodiumStrip: React.FC<PodiumStripProps> = ({
 						<Avatar
 							size={index === 0 ? 'xl' : 'lg'}
 							radius='xl'
-							color={PODIUM_COLORS[index]}
+							color='gray'
 							className={styles.podiumAvatar}
 						>
 							{initials(standing.agentName)}
 						</Avatar>
 						<Stack gap={0} align='center'>
-							<Text
-								size={index === 0 ? 'sm' : 'xs'}
-								fw={700}
-								c={PODIUM_COLORS[index]}
-							>
+							<Text size={index === 0 ? 'sm' : 'xs'} fw={700} c='dimmed'>
 								{places[index]}
 							</Text>
 							<Text

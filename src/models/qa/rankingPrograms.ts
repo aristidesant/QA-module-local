@@ -19,10 +19,16 @@ export interface RankingMetricWeight {
 }
 
 /**
- * Only one ranking per team is `active` at a time; `inactive` ones are kept
- * configured so the supervisor can switch back to them.
+ * Dated rankings derive `scheduled | active | completed` from their dates once
+ * published. The default ranking is `active` unless the supervisor disables it
+ * (`inactive`). `draft` is anything not published yet.
  */
-export type RankingStatus = 'draft' | 'active' | 'inactive' | 'completed';
+export type RankingStatus =
+	| 'draft'
+	| 'scheduled'
+	| 'active'
+	| 'inactive'
+	| 'completed';
 
 export type PrizeKind =
 	| 'BONUS'

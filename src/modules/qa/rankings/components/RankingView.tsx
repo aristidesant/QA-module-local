@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
-import { Badge, Grid, Group, Stack, Text } from '@mantine/core';
+import { Badge, Grid, Group, Stack, Text, ThemeIcon } from '@mantine/core';
+import { IconAward } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
 import type {
@@ -7,6 +8,7 @@ import type {
 	RankingStanding,
 } from '~/models/qa/rankingPrograms';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
+import { PRIZE_ICON } from '../constants';
 import { formatScore } from '../helpers';
 import PodiumStrip from './PodiumStrip';
 import RankingHeader from './RankingHeader';
@@ -37,6 +39,7 @@ export function RankingView({
 }: RankingViewProps) {
 	const { t } = useTranslation('qa.rankings');
 	const badges = useTriggerRulesStore((s) => s.badges);
+	const PrizeIcon = PRIZE_ICON[program.prize.kind];
 	const reactions: ReactionsMode = !program.allowReactions
 		? 'off'
 		: viewer.canReact
@@ -64,7 +67,9 @@ export function RankingView({
 					<Stack gap='md'>
 						<SectionCard title={t('drawer.prize')}>
 							<Group gap='md' wrap='nowrap' align='flex-start'>
-								<Text size='32px'>{program.prize.icon}</Text>
+								<ThemeIcon size='lg' variant='light' color='gray'>
+									<PrizeIcon size={20} />
+								</ThemeIcon>
 								<div>
 									<Text size='sm' fw={600}>
 										{program.prize.title}
@@ -93,7 +98,9 @@ export function RankingView({
 										return (
 											<Group key={milestone.id} justify='space-between'>
 												<Group gap='xs'>
-													<Text size='lg'>{badge?.icon ?? '🏅'}</Text>
+													<ThemeIcon size='sm' variant='light' color='gray'>
+														<IconAward size={14} />
+													</ThemeIcon>
 													<div>
 														<Text size='sm' fw={500}>
 															{milestone.label || badge?.name}

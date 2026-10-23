@@ -26,7 +26,6 @@ export function RankingStats({ program, standings }: RankingStatsProps) {
 			<StatCard
 				title={t('drawer.reachedTarget')}
 				value={standings.filter((s) => s.reachedTarget).length}
-				color='green'
 			/>
 			<StatCard
 				title={completed ? t('drawer.winner') : t('drawer.leader')}

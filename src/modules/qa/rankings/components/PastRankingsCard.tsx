@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Table, Text } from '@mantine/core';
+import { Group, Table, Text } from '@mantine/core';
+import { IconTrophy } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import SectionCard from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
 import type { RankingProgram } from '~/models/qa/rankingPrograms';
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
+import { PRIZE_ICON } from '../constants';
 import { computeStandings, formatScore } from '../helpers';
 import MetricChips from './MetricChips';
 import styles from '../Rankings.module.css';
@@ -76,16 +78,15 @@ export const PastRankingsCard: React.FC<PastRankingsCardProps> = ({
 										</Table.Td>
 										<Table.Td>
 											{mine?.rank ? (
-												<Text
-													size='sm'
-													fw={wasWinner ? 700 : 500}
-													c={wasWinner ? 'yellow.8' : undefined}
-												>
-													{t('agent.past.myRankValue', {
-														rank: mine.rank,
-														score: formatScore(program, mine.score ?? 0),
-													})}
-												</Text>
+												<Group gap={4} wrap='nowrap'>
+													{wasWinner && <IconTrophy size={14} />}
+													<Text size='sm' fw={wasWinner ? 700 : 500}>
+														{t('agent.past.myRankValue', {
+															rank: mine.rank,
+															score: formatScore(program, mine.score ?? 0),
+														})}
+													</Text>
+												</Group>
 											) : (
 												<Text size='sm' c='dimmed'>
 													{t('agent.past.unranked')}
@@ -96,9 +97,14 @@ export const PastRankingsCard: React.FC<PastRankingsCardProps> = ({
 											<Text size='sm'>{program.winnerName ?? '—'}</Text>
 										</Table.Td>
 										<Table.Td>
-											<Text size='sm' c='dimmed'>
-												{program.prize.icon} {program.prize.title}
-											</Text>
+											<Group gap={6} wrap='nowrap'>
+												{React.createElement(PRIZE_ICON[program.prize.kind], {
+													size: 14,
+												})}
+												<Text size='sm' c='dimmed'>
+													{program.prize.title}
+												</Text>
+											</Group>
 										</Table.Td>
 									</Table.Tr>
 								);

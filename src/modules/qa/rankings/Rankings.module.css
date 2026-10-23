@@ -26,7 +26,7 @@
 
 /* The row of the agent looking at their own leaderboard. */
 .currentRow td {
-	background-color: var(--mantine-color-blue-light);
+	background-color: var(--mantine-primary-color-light);
 	font-weight: 600;
 }
 
@@ -50,8 +50,7 @@
 .podiumStep[data-place='1'] .podiumAvatar {
 	box-shadow:
 		0 0 0 3px var(--mantine-color-body),
-		0 0 0 4px
-			light-dark(var(--mantine-color-yellow-5), var(--mantine-color-yellow-6));
+		0 0 0 5px var(--mantine-color-default-border);
 }
 
 .podiumName {

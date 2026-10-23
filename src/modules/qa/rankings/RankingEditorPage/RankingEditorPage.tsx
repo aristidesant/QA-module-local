@@ -8,6 +8,7 @@ import { useRankingsStore, selectPrograms } from '~/stores/qa/rankingsStore';
 import { RankingForm } from '../components/RankingForm';
 import type { RankingStatus } from '~/models/qa/rankingPrograms';
 import { rankingsBasePath } from '../constants';
+import { tabOf } from '../helpers';
 
 /** Create or edit one ranking on its own page (route `rankings/new` or `rankings/:programId/edit`). */
 export default function RankingEditorPage() {
@@ -33,7 +34,13 @@ export default function RankingEditorPage() {
 			navigate(origin.returnTo, { state: { from: origin.from } });
 			return;
 		}
-		navigate(`${rankingsBasePath(role)}${status ? `?status=${status}` : ''}`);
+		// Land on the tab where the saved ranking now lives (the store has already reconciled its status).
+		const list = useRankingsStore.getState().programs;
+		const saved = programId ? list.find((p) => p.id === programId) : list[0];
+		const tab = status && saved ? tabOf(saved) : 'current';
+		navigate(
+			`${rankingsBasePath(role)}${tab === 'current' ? '' : `?tab=${tab}`}`
+		);
 	};
 
 	if (mode === 'edit' && !program) {

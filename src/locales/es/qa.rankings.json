@@ -5,34 +5,21 @@
 			"qa-manager": "QA Manager · Todos los equipos"
 		},
 		"title": "Rankings de equipo",
-		"description": "Configura rankings que miden una métrica o mezclan varias, y elige cuál está activo para tu equipo",
+		"description": "El ranking predeterminado siempre está activo; corre uno con fechas a su lado cuando quieras impulsar algo.",
 		"new": "Nuevo ranking",
 		"notFound": "Este ranking no está disponible."
 	},
-	"filters": {
-		"search": "Buscar rankings",
-		"status": "Estado",
-		"area": "Área de la métrica",
-		"period": "Período",
-		"periods": {
-			"live": "En curso",
-			"upcoming": "Próximos",
-			"ended": "Finalizados"
-		},
-		"team": "Equipo",
-		"clear": "Limpiar filtros",
-		"summary_one": "{{count}} ranking · {{agents}} agentes en rankings activos",
-		"summary_other": "{{count}} rankings · {{agents}} agentes en rankings activos"
-	},
 	"empty": {
-		"noMatch": "Ningún ranking coincide con estos filtros",
-		"none": "Todavía no hay rankings — crea uno para motivar al equipo"
+		"current": "No hay ningún ranking en curso. Activa el predeterminado o publica uno.",
+		"upcoming": "Nada programado y sin borradores.",
+		"past": "Aún no hay rankings terminados."
 	},
 	"status": {
 		"draft": "Borrador",
 		"active": "Activo",
 		"completed": "Finalizado",
-		"inactive": "Inactivo"
+		"inactive": "Inactivo",
+		"scheduled": "Programado"
 	},
 	"prizeKinds": {
 		"BONUS": "Bono",
@@ -42,33 +29,38 @@
 		"OTHER": "Otro"
 	},
 	"card": {
-		"target": "Objetivo {{value}} · mín. {{calls}} llamadas",
-		"period": "{{from}} → {{to}}",
 		"daysLeft_one": "Queda {{count}} día",
 		"daysLeft_other": "Quedan {{count}} días",
-		"ended": "Finalizado",
-		"notStarted": "Empieza el {{date}}",
 		"leader": "Líder",
 		"winner": "Ganador",
-		"prize": "Premio",
 		"view": "Ver clasificación",
 		"edit": "Editar",
 		"duplicate": "Duplicar",
 		"end": "Finalizar ahora",
 		"delete": "Eliminar borrador",
-		"teams": "Equipos",
-		"activate": "Activar {{name}}",
-		"deactivate": "Desactivar {{name}}",
 		"default": "Predeterminado",
-		"setDefault": "Establecer como predeterminado",
-		"noEndDate": "Sin fecha de fin",
-		"since": "Desde el {{date}}",
-		"replaces": "Al guardar, reemplazará a {{name}} como ranking activo de {{teams}}.",
+		"replaces": "Al publicar terminará {{name}} para {{teams}}.",
 		"activateConfirm": {
 			"title": "¿Cambiar el ranking activo?",
-			"body": "Activar {{name}} desactivará {{replaced}} en {{teams}}. Los agentes verán el nuevo ranking de inmediato.",
+			"body": "Publicar {{name}} terminará {{replaced}} para {{teams}}. Los agentes verán el nuevo ranking de inmediato.",
 			"confirm": "Activar"
-		}
+		},
+		"defaultStatus": {
+			"on": "Predeterminado · Activo",
+			"off": "Predeterminado · Apagado"
+		},
+		"alwaysOn": "Siempre activo",
+		"startsOn": "Empieza el {{date}}",
+		"endsOn": "termina el {{date}}",
+		"endedOn": "Terminó el {{date}}",
+		"draftDates": "{{from}} → {{to}}",
+		"participants_one": "{{count}} agente",
+		"participants_other": "{{count}} agentes",
+		"publish": "Publicar",
+		"enable": "Activar predeterminado",
+		"disable": "Desactivar predeterminado",
+		"reuse": "Reutilizar",
+		"more": "Más acciones"
 	},
 	"drawer": {
 		"participants": "Participantes",
@@ -97,7 +89,9 @@
 		"winnerHint": "Ganador de este ranking",
 		"viewDetails": "Ver detalle",
 		"detailDescription": "Posición en el ranking actual",
-		"stats": { "rank": "Posición" },
+		"stats": {
+			"rank": "Posición"
+		},
 		"signals": {
 			"held": "Mantiene la posición desde la semana pasada",
 			"up_one": "Sube {{count}} posición desde la semana pasada",
@@ -184,10 +178,10 @@
 		"makeDefault": "Hacer de este el ranking predeterminado del equipo",
 		"makeDefaultHint": "Se activa automáticamente cuando termina un ranking con fecha de fin",
 		"save": "Guardar",
-		"saveActivate": "Guardar y activar",
 		"deactivated": "Ranking desactivado",
 		"defaultSet": "Ranking predeterminado actualizado",
-		"winnerBadgeDated": "Solo los rankings con fecha de fin eligen un ganador"
+		"winnerBadgeDated": "Solo los rankings con fecha de fin eligen un ganador",
+		"publish": "Publicar"
 	},
 	"agent": {
 		"header": {
@@ -221,12 +215,41 @@
 			"myRankValue": "#{{rank}} · {{score}}"
 		},
 		"empty": {
-			"noActive": "Tu equipo no tiene ningún ranking activo ahora mismo"
+			"noActive": "Tu equipo no tiene ningún ranking activo ahora"
 		},
 		"tabs": {
 			"current": "Ranking actual",
 			"past": "Rankings anteriores"
-		}
+		},
+		"title": "Ranking del equipo",
+		"description": "Dónde estás en los rankings que corre tu supervisor y qué necesitas para subir.",
+		"switch": {
+			"default": "Índice del equipo"
+		},
+		"standingsTitle": "Posiciones del equipo",
+		"you": {
+			"place": "Tu posición",
+			"ofRanked": "de {{count}} clasificados",
+			"callsToQualify_one": "{{count}} llamada más para clasificar",
+			"callsToQualify_other": "{{count}} llamadas más para clasificar",
+			"score": "Puntaje",
+			"target": "Meta {{value}}",
+			"targetReached": "Meta alcanzada",
+			"noScore": "Sin puntaje aún",
+			"sinceWeek": "Desde la semana pasada",
+			"held": "Misma posición",
+			"up_one": "Subes {{count}} lugar",
+			"up_other": "Subes {{count}} lugares",
+			"down_one": "Bajas {{count}} lugar",
+			"down_other": "Bajas {{count}} lugares",
+			"next": "Siguiente lugar",
+			"leading": "Lideras por {{points}}",
+			"behind": "{{points}} detrás del #{{rank}}"
+		},
+		"milestones": {
+			"reached": "Logrado"
+		},
+		"meta": "Definido por {{name}} · Meta {{target}}"
 	},
 	"achievements": {
 		"empty": "Todavía no hay insignias",
@@ -269,5 +292,20 @@
 	},
 	"score": {
 		"pointsAdded": "+{{value}} pts"
+	},
+	"tabs": {
+		"current": "Actuales",
+		"upcoming": "Próximos y borradores",
+		"past": "Pasados",
+		"team": "Equipo"
+	},
+	"past": {
+		"columns": {
+			"name": "Ranking",
+			"period": "Periodo",
+			"teams": "Equipos",
+			"winner": "Ganador",
+			"participants": "Agentes"
+		}
 	}
 }

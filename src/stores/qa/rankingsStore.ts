@@ -7,10 +7,11 @@ import {
 } from '~/modules/qa/rankings/mockData';
 import {
 	computeStandings,
-	defaultProgramFor,
+	overlappingDated,
 	isPermanent,
 	leader,
 	programsSharingTeams,
+	statusOn,
 } from '~/modules/qa/rankings/helpers';
 import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import { TODAY } from '~/modules/qa/analytics/constants';
@@ -30,9 +31,10 @@ interface RankingsState {
 		id: string,
 		patch: Partial<ProgramDraft>
 	) => RankingProgram | null;
-	/** Makes the program the team's live ranking; the one it replaces goes inactive. */
-	activateProgram: (id: string) => void;
-	deactivateProgram: (id: string) => void;
+	/** Publishes a draft (or turns the default back on); a dated ranking that overlaps it for the same team ends. */
+	publishProgram: (id: string) => void;
+	/** Turns the team's default ranking off. Dated rankings are ended, not disabled. */
+	disableDefault: (id: string) => void;
 	/** Marks a permanent program as the one its teams fall back to. */
 	setDefaultProgram: (id: string) => void;
 	/** Finishes a dated ranking with a winner; the team's default one takes over. */
@@ -61,22 +63,12 @@ export const nextMilestoneId = () => `RPM-${++milestoneCounter}`;
 const notify = (input: Parameters<typeof buildNotification>[0]) =>
 	useNotificationStore.getState().addNotification(buildNotification(input));
 
-/** At most one active program per team: activating one deactivates the others it shares a team with. */
-const withSingleActive = (
-	programs: RankingProgram[],
-	activeId: string
-): RankingProgram[] => {
-	const active = programs.find((p) => p.id === activeId);
-	if (!active) return programs;
-	const replaced = new Set(
-		programsSharingTeams(programs, active.teams, activeId)
-			.filter((p) => p.status === 'active')
-			.map((p) => p.id)
-	);
-	return programs.map((p) =>
-		replaced.has(p.id) ? { ...p, status: 'inactive', updatedAt: NOW_ISO } : p
-	);
-};
+/** Published dated rankings follow their dates; drafts, the default and finished ones keep their status. */
+const reconcile = (programs: RankingProgram[]): RankingProgram[] =>
+	programs.map((program) => {
+		const status = statusOn(program);
+		return status === program.status ? program : { ...program, status };
+	});
 
 /** One default per team: marking a program as default clears it from the others it shares a team with. */
 const withSingleDefault = (
@@ -111,13 +103,13 @@ const resolveSeedWinners = (programs: RankingProgram[]): RankingProgram[] =>
 	});
 
 export const useRankingsStore = create<RankingsState>((set, get) => ({
-	programs: resolveSeedWinners(RANKING_PROGRAMS_SEED),
+	programs: reconcile(resolveSeedWinners(RANKING_PROGRAMS_SEED)),
 	reactions: REACTIONS_SEED,
 
 	createProgram: (draft) => {
 		const program: RankingProgram = {
 			...draft,
-			status: draft.status === 'active' ? 'inactive' : draft.status,
+			status: draft.status === 'active' ? 'draft' : draft.status,
 			isDefault: draft.isDefault && draft.endDate === null,
 			id: nextId(),
 			winnerId: null,
@@ -130,7 +122,7 @@ export const useRankingsStore = create<RankingsState>((set, get) => ({
 				? withSingleDefault([program, ...s.programs], program.id)
 				: [program, ...s.programs],
 		}));
-		if (draft.status === 'active') get().activateProgram(program.id);
+		if (draft.status === 'active') get().publishProgram(program.id);
 		return get().programs.find((p) => p.id === program.id) ?? program;
 	},
 
@@ -138,43 +130,59 @@ export const useRankingsStore = create<RankingsState>((set, get) => ({
 		const current = get().programs.find((p) => p.id === id);
 		if (!current) return null;
 
-		const wantsActive =
-			patch.status === 'active' && current.status !== 'active';
+		const wantsPublish =
+			patch.status === 'active' && current.status === 'draft';
 		const merged: RankingProgram = {
 			...current,
 			...patch,
-			status: wantsActive ? current.status : (patch.status ?? current.status),
+			status: wantsPublish ? current.status : (patch.status ?? current.status),
 			updatedAt: NOW_ISO,
 		};
 		merged.isDefault = merged.isDefault && isPermanent(merged);
 
 		set((s) => {
 			const next = s.programs.map((p) => (p.id === id ? merged : p));
-			let result = merged.isDefault ? withSingleDefault(next, id) : next;
-			if (merged.status === 'active') result = withSingleActive(result, id);
-			return { programs: result };
+			const result = merged.isDefault ? withSingleDefault(next, id) : next;
+			return { programs: reconcile(result) };
 		});
-		if (wantsActive) get().activateProgram(id);
+		if (wantsPublish) get().publishProgram(id);
 		return get().programs.find((p) => p.id === id) ?? merged;
 	},
 
-	activateProgram: (id) => {
+	publishProgram: (id) => {
 		const program = get().programs.find((p) => p.id === id);
 		if (
 			!program ||
-			program.status === 'active' ||
-			program.status === 'completed'
+			!(
+				program.status === 'draft' ||
+				(program.isDefault && program.status === 'inactive')
+			)
 		)
 			return;
 
+		// A dated ranking replaces the one it overlaps: a live one ends, a scheduled one goes back to draft.
+		const clash = program.isDefault
+			? null
+			: overlappingDated(get().programs, program);
+		if (clash?.status === 'scheduled') {
+			set((s) => ({
+				programs: s.programs.map((p) =>
+					p.id === clash.id ? { ...p, status: 'draft', updatedAt: NOW_ISO } : p
+				),
+			}));
+		} else if (clash) {
+			get().endProgram(clash.id);
+		}
+
 		set((s) => ({
-			programs: withSingleActive(
+			programs: reconcile(
 				s.programs.map((p) =>
 					p.id === id ? { ...p, status: 'active', updatedAt: NOW_ISO } : p
-				),
-				id
+				)
 			),
 		}));
+		// A ranking that starts later tells the agents when it starts, not now.
+		if (get().programs.find((p) => p.id === id)?.status !== 'active') return;
 
 		agentsOf(program).forEach((agent) =>
 			notify({
@@ -199,10 +207,10 @@ export const useRankingsStore = create<RankingsState>((set, get) => ({
 		);
 	},
 
-	deactivateProgram: (id) =>
+	disableDefault: (id) =>
 		set((s) => ({
 			programs: s.programs.map((p) =>
-				p.id === id && p.status === 'active'
+				p.id === id && p.isDefault && p.status === 'active'
 					? { ...p, status: 'inactive', updatedAt: NOW_ISO }
 					: p
 			),
@@ -297,15 +305,6 @@ export const useRankingsStore = create<RankingsState>((set, get) => ({
 				prizeTitle: program.prize.title,
 			},
 		});
-
-		// The ranking ended, so each team falls back to its default one.
-		const fallbacks = new Set(
-			program.teams
-				.map((team) => defaultProgramFor(get().programs, team))
-				.filter((p): p is RankingProgram => p !== null && p.status !== 'active')
-				.map((p) => p.id)
-		);
-		fallbacks.forEach((fallbackId) => get().activateProgram(fallbackId));
 	},
 
 	deleteProgram: (id) =>

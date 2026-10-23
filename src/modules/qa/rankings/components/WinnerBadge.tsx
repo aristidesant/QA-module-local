@@ -7,7 +7,7 @@ interface WinnerBadgeProps {
 	isWinner: boolean;
 }
 
-/** Flags the #1 position once the ranking is complete — flat yellow, matching the podium's gold. */
+/** Flags the #1 position once the ranking is complete. */
 export const WinnerBadge: React.FC<WinnerBadgeProps> = ({ isWinner }) => {
 	const { t } = useTranslation('qa.rankings');
 	if (!isWinner) return null;
@@ -16,7 +16,7 @@ export const WinnerBadge: React.FC<WinnerBadgeProps> = ({ isWinner }) => {
 		<Tooltip label={t('drawer.winnerHint')} withArrow>
 			<Badge
 				variant='light'
-				color='yellow'
+				color='gray'
 				size='lg'
 				radius='sm'
 				leftSection={<IconTrophy size={14} />}
