@@ -75,7 +75,6 @@ export const CALL_ANALYSIS_KINDS: CallAnalysisKind[] = [
 	'SENTIMENT',
 	'BUSINESS',
 ];
-export const PII_FIELDS = ['phone', 'card', 'nationalId', 'email'] as const;
 export const AUDIO_RETENTION_DAYS = [30, 90, 180, 365] as const;
 
 export const PROMPT_MAX = 20000;

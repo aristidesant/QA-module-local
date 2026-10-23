@@ -715,13 +715,13 @@ export const mockCallEvaluationDetail: CallEvaluationDetail = {
 			id: 't2',
 			speaker: 'customer',
 			timestamp: '0:09',
-			text: "Yes, that's me.",
+			text: "Yes, that's me. Do you need to verify? My ID is 402-1234567-8 and my date of birth is 03/03/1984.",
 		},
 		{
 			id: 't3',
 			speaker: 'agent',
 			timestamp: '0:14',
-			text: "Great. I see you've been with us on the 200 Mbps plan for two years, thank you for that. I'm calling because we have a new Premium Fiber 500 bundle with TV included.",
+			text: "Thank you, that matches what I have, along with the email j.doe84@gmail.com. Great. I see you've been with us on the 200 Mbps plan for two years, thank you for that. I'm calling because we have a new Premium Fiber 500 bundle with TV included.",
 		},
 		{
 			id: 't4',
@@ -763,7 +763,19 @@ export const mockCallEvaluationDetail: CallEvaluationDetail = {
 			id: 't10',
 			speaker: 'customer',
 			timestamp: '2:10',
-			text: 'Call me back after the 15th, when my current contract ends.',
+			text: 'Call me back after the 15th, when my current contract ends. Use my cell, 829-555-0193, not the home number.',
+		},
+		{
+			id: 't10b',
+			speaker: 'agent',
+			timestamp: '2:15',
+			text: 'Noted. And to keep the promo price locked until then, could you confirm the card we have on file?',
+		},
+		{
+			id: 't10c',
+			speaker: 'customer',
+			timestamp: '2:18',
+			text: "It's the Visa, 4512 3456 7890 1234, expires 09/28.",
 		},
 		{
 			id: 't11',
@@ -1184,7 +1196,12 @@ export const mockCallEvaluationDetail: CallEvaluationDetail = {
 						label: 'Data Protection',
 						status: 'compliant',
 						score: 100,
-						note: 'No sensitive data requested or read aloud',
+						note: 'ID, date of birth, email, phone and a card number were spoken. All are masked in the transcript and muted in the recording; the agent did not read any of them back.',
+						evidence: {
+							timestamp: '2:18',
+							speaker: 'customer',
+							quote: "It's the Visa, 4512 3456 7890 1234, expires 09/28.",
+						},
 					},
 					{
 						key: 'disclosureCompliance',

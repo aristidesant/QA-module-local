@@ -6,8 +6,6 @@ export type CallAnalysisKind = 'QA' | 'COMPLIANCE' | 'SENTIMENT' | 'BUSINESS';
 export interface CallAnalysisConfig {
 	language: CallAnalysisLanguage;
 	diarization: boolean;
-	redactPii: boolean;
-	piiFields: string[];
 	analyses: CallAnalysisKind[];
 	minDurationSeconds: number;
 	audioRetentionDays: number;

@@ -62,19 +62,6 @@
 			"label": "Speaker diarization",
 			"help": "Split the transcript into agent and customer turns."
 		},
-		"redact": {
-			"label": "Redact personal data",
-			"help": "Mask the selected fields before the transcript is stored."
-		},
-		"piiFields": {
-			"label": "Fields to redact",
-			"options": {
-				"phone": "Phone numbers",
-				"card": "Card numbers",
-				"nationalId": "National IDs",
-				"email": "Email addresses"
-			}
-		},
 		"analyses": {
 			"label": "Analyses to run",
 			"help": "Every imported call goes through the selected analyses automatically.",
@@ -89,6 +76,10 @@
 		"minDuration": {
 			"label": "Minimum call duration",
 			"help": "Shorter calls are imported but not analysed."
+		},
+		"masking": {
+			"title": "Sensitive data masking",
+			"description": "What is masked, for how long it can be revealed and the reveal log live in QA Manager → Settings → Privacy."
 		}
 	},
 	"evaluation": {

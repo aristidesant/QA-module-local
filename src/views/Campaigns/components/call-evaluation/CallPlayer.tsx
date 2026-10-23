@@ -13,6 +13,7 @@ import {
 	IconPlayerPause,
 	IconPlayerPlay,
 	IconVolume2,
+	IconVolumeOff,
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { TimelineAnchor } from '../../types';
@@ -29,6 +30,8 @@ interface CallPlayerProps {
 	anchors: TimelineAnchor[];
 	activeAnchorId: string | null;
 	onAnchorClick: (anchor: TimelineAnchor) => void;
+	/** Stretches of the recording muted because sensitive data is said there. */
+	mutedSpans?: { seconds: number; label: string }[];
 }
 
 /** Simulated recording player: a playhead, and one marker per anchored moment of the open tab on the timeline. */
@@ -41,6 +44,7 @@ export function CallPlayer({
 	anchors,
 	activeAnchorId,
 	onAnchorClick,
+	mutedSpans = [],
 }: CallPlayerProps) {
 	const { t } = useTranslation('qa.calls');
 
@@ -51,9 +55,21 @@ export function CallPlayer({
 					<Text fw={600} size='sm'>
 						{t('moments.player.title')}
 					</Text>
-					<Badge size='sm' variant='light'>
-						{formatDuration(durationSeconds)}
-					</Badge>
+					<Group gap='xs'>
+						{mutedSpans.length > 0 && (
+							<Badge
+								size='sm'
+								variant='light'
+								color='gray'
+								leftSection={<IconVolumeOff size={12} />}
+							>
+								{t('privacy.muted', { count: mutedSpans.length })}
+							</Badge>
+						)}
+						<Badge size='sm' variant='light'>
+							{formatDuration(durationSeconds)}
+						</Badge>
+					</Group>
 				</Group>
 
 				<Group gap='sm' wrap='nowrap' className={styles.controls}>
@@ -126,6 +142,21 @@ export function CallPlayer({
 									</Tooltip>
 								);
 							})}
+							{mutedSpans.map((span) => (
+								<Tooltip
+									key={span.seconds}
+									label={t('privacy.mutedAt', { label: span.label })}
+									withArrow
+								>
+									<span
+										className={styles.mute}
+										// inline-style-allow: the muted block position is a runtime percentage of the call length
+										style={{
+											left: `${(span.seconds / durationSeconds) * 100}%`,
+										}}
+									/>
+								</Tooltip>
+							))}
 						</div>
 						<Slider
 							size='sm'

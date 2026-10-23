@@ -1,0 +1,14 @@
+/* A masked span reads as a chip, not as text; grey because masking is the normal state. */
+.chip {
+	vertical-align: baseline;
+	cursor: help;
+}
+
+/* Revealed data is the only red on the page: it is the state that needs care. */
+.revealed {
+	background: transparent;
+	color: inherit;
+	text-decoration: underline dotted var(--mantine-color-red-6);
+	text-decoration-thickness: 2px;
+	text-underline-offset: 3px;
+}

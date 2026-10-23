@@ -5,6 +5,7 @@ import {
 	IconBattery2,
 	IconChartHistogram,
 	IconClipboardCheck,
+	IconLock,
 	IconMoodSmile,
 	IconSchool,
 	IconShieldCheck,
@@ -13,6 +14,7 @@ import ContentContainer from '~/components/ContentContainer';
 import { BurnoutTab } from './tabs/BurnoutTab';
 import { BusinessTab } from './tabs/BusinessTab';
 import { CoachingTab } from './tabs/CoachingTab';
+import { PrivacyTab } from './tabs/PrivacyTab';
 import { ComplianceTab } from './tabs/ComplianceTab';
 import { QualityAssuranceTab } from './tabs/QualityAssuranceTab';
 import { SentimentTab } from './tabs/SentimentTab';
@@ -67,6 +69,9 @@ export const SettingsPage: React.FC = () => {
 						<Tabs.Tab value='burnout' leftSection={<IconBattery2 size={16} />}>
 							{t('page.tabs.burnout')}
 						</Tabs.Tab>
+						<Tabs.Tab value='privacy' leftSection={<IconLock size={16} />}>
+							{t('page.tabs.privacy')}
+						</Tabs.Tab>
 					</Tabs.List>
 
 					<Tabs.Panel value='qa' pt='lg'>
@@ -86,6 +91,9 @@ export const SettingsPage: React.FC = () => {
 					</Tabs.Panel>
 					<Tabs.Panel value='burnout' pt='lg'>
 						<BurnoutTab />
+					</Tabs.Panel>
+					<Tabs.Panel value='privacy' pt='lg'>
+						<PrivacyTab />
 					</Tabs.Panel>
 				</Tabs>
 			</Stack>

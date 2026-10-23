@@ -35,12 +35,15 @@ export const getDisputeCall = (dispute: DisputeCase): CallEvaluationDetail => ({
 });
 
 /** The demo transcript component keys the speaker as `role`, the call as `speaker`. */
-export const toDemoTurns = (turns: TranscriptTurn[]): DemoTranscriptTurn[] =>
+export const toDemoTurns = (
+	turns: TranscriptTurn[],
+	mask: (text: string) => string = (text) => text
+): DemoTranscriptTurn[] =>
 	turns.map((turn) => ({
 		id: turn.id,
 		role: turn.speaker,
 		timestamp: turn.timestamp,
-		text: turn.text,
+		text: mask(turn.text),
 	}));
 
 /** One open dispute per call and evaluation type; the button blocks a second. */

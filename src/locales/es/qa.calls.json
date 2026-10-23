@@ -173,5 +173,50 @@
 		"rowsCount_one": "{{count}} llamada",
 		"rowsCount_other": "{{count}} llamadas",
 		"empty": "Ninguna llamada coincide con estos filtros."
+	},
+	"privacy": {
+		"muted_one": "{{count}} silenciado",
+		"muted_other": "{{count}} silenciados",
+		"mutedAt": "Audio silenciado · {{label}}",
+		"off": {
+			"title": "El enmascarado de datos sensibles está apagado",
+			"description": "Todos los números, documentos y datos de contacto de esta llamada son visibles. Un QA manager puede activar el enmascarado en Settings → Privacidad."
+		},
+		"none": {
+			"title": "No se detectaron datos sensibles",
+			"description": "Nada en esta llamada coincide con las reglas de enmascarado."
+		},
+		"masked": {
+			"title": "Datos sensibles enmascarados",
+			"description_one": "{{count}} dato está oculto en la transcripción y las evidencias: {{kinds}}.",
+			"description_other": "{{count}} datos están ocultos en la transcripción y las evidencias: {{kinds}}.",
+			"audio": "La grabación se silencia mientras se dicen.",
+			"onlyManager": "Solo un QA manager o super admin puede revelarlos."
+		},
+		"revealed": {
+			"title": "Datos sensibles visibles",
+			"description": "Revelado por {{by}} a las {{time}} · {{reason}} · se oculta automáticamente a las {{expires}}.",
+			"hide": "Ocultar ahora",
+			"hidden": "Datos sensibles ocultos de nuevo"
+		},
+		"reveal": {
+			"button": "Revelar por {{minutes}} min",
+			"title": "Revelar datos sensibles",
+			"description": "Los valores reales se verán en esta página durante {{minutes}} minutos. El revelado queda registrado.",
+			"reason": "Motivo",
+			"note": "Nota",
+			"notePlaceholder": "¿Qué estás verificando? (mínimo 10 caracteres)",
+			"logged": "Visible durante {{minutes}} minutos. Registrado a nombre de {{by}}.",
+			"cancel": "Cancelar",
+			"confirm": "Revelar",
+			"success": "Datos sensibles visibles durante {{minutes}} minutos"
+		},
+		"reasons": {
+			"disputeReview": "Revisión de disputa",
+			"complianceInvestigation": "Investigación de cumplimiento",
+			"customerRequest": "Solicitud del cliente",
+			"fraudCheck": "Verificación de fraude",
+			"other": "Otro"
+		}
 	}
 }

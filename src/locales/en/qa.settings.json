@@ -9,7 +9,8 @@
 			"sentiment": "Sentiment & Emotion",
 			"business": "Business Insights",
 			"coaching": "Coaching",
-			"burnout": "Burnout"
+			"burnout": "Burnout",
+			"privacy": "Privacy"
 		}
 	},
 	"actions": {
@@ -229,6 +230,78 @@
 			"level": "Level",
 			"score": "Score",
 			"signal": "Main signal"
+		}
+	},
+	"privacy": {
+		"masking": {
+			"title": "Masking",
+			"description": "Sensitive data is hidden wherever a call is shown: transcripts, evidence quotes, moments, coaching and disputes. The analysis still runs on the full text.",
+			"enabled": "Mask sensitive data",
+			"columns": {
+				"category": "Data",
+				"matches": "What it matches",
+				"showLast": "Show last digits"
+			}
+		},
+		"categories": {
+			"payment": {
+				"label": "Cards and bank accounts",
+				"description": "Card numbers, CVV, expiry dates, IBAN and account numbers."
+			},
+			"identity": {
+				"label": "Identity documents",
+				"description": "National IDs, social security numbers and passports."
+			},
+			"contact": {
+				"label": "Contact and location",
+				"description": "Phone numbers, email addresses and street addresses."
+			},
+			"credentials": {
+				"label": "Credentials and personal data",
+				"description": "PINs, passwords, one-time codes and dates of birth."
+			}
+		},
+		"recording": {
+			"title": "Recording",
+			"description": "What happens to the audio while the data is said.",
+			"muteAudio": "Mute the recording while sensitive data is said",
+			"screen": "Screen recordings follow the same rule: the field is blurred while the data is on screen."
+		},
+		"reveal": {
+			"title": "Reveal",
+			"description": "A QA manager or super admin can see the real data on the call detail for a short time, with a reason that is logged.",
+			"allowed": "Allow revealing on the call detail",
+			"minutes": "Visible for",
+			"requireNote": "Require a note besides the reason",
+			"who": "Supervisors and agents never see the real data. Coaching and disputes always show it masked."
+		},
+		"test": {
+			"title": "Try a sentence",
+			"placeholder": "e.g. My card is 4512 3456 7890 1234 and my ID is 402-1234567-8",
+			"found_one": "{{count}} item would be masked.",
+			"found_other": "{{count}} items would be masked.",
+			"none": "Nothing in this sentence would be masked."
+		},
+		"log": {
+			"title": "Reveal log",
+			"description": "Every time the real data was shown, by whom and why.",
+			"columns": {
+				"when": "When",
+				"who": "Who",
+				"call": "Call",
+				"reason": "Reason",
+				"note": "Note",
+				"status": "Status"
+			},
+			"status": {
+				"visible": "Visible",
+				"expired": "Expired",
+				"hiddenEarly": "Hidden early"
+			}
+		},
+		"errors": {
+			"revealMinutes": "The reveal time must be between 5 and 120 minutes.",
+			"showLast": "Visible digits must be between 0 and 4."
 		}
 	}
 }

@@ -1,4 +1,6 @@
 import type { BurnoutThresholds } from '~/modules/qa/burnout/types';
+import { REVEAL_MINUTES } from '~/modules/qa/privacy/constants';
+import type { PrivacySettings } from '~/modules/qa/privacy/types';
 import type { ScoreBand } from '~/modules/qa/constants/badgeColors';
 import type {
 	CoachingTierCuts,
@@ -126,3 +128,15 @@ export const validateTierCuts = (c: CoachingTierCuts): string | null => {
 /** Medium must start below High. Keys under `qa.settings`. */
 export const validateBurnout = (b: BurnoutThresholds): string | null =>
 	b.levelCuts.medium >= b.levelCuts.high ? 'validation.burnoutCuts' : null;
+
+/** Error key under `qa.settings`, or null. */
+export const validatePrivacy = (p: PrivacySettings): string | null => {
+	if (
+		p.reveal.minutes < REVEAL_MINUTES.min ||
+		p.reveal.minutes > REVEAL_MINUTES.max
+	)
+		return 'privacy.errors.revealMinutes';
+	if (Object.values(p.categories).some((c) => c.showLast < 0 || c.showLast > 4))
+		return 'privacy.errors.showLast';
+	return null;
+};

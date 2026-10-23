@@ -2,14 +2,14 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Checkbox,
-	MultiSelect,
 	NumberInput,
 	Select,
 	SimpleGrid,
 	Stack,
 	Switch,
 } from '@mantine/core';
-import { IconWaveSine } from '@tabler/icons-react';
+import { IconLock, IconWaveSine } from '@tabler/icons-react';
+import InlineNotice from '~/components/InlineNotice/InlineNotice';
 import SectionCard from '~/components/SectionCard';
 import { useSettingsDraft } from '~/modules/qa/settings/useSettingsDraft';
 import { SettingsActions } from '~/modules/qa/settings/components/SettingsActions';
@@ -18,11 +18,7 @@ import {
 	useGlobalConfigStore,
 } from '~/stores/qa/globalConfigStore';
 import { ActiveClientBanner } from '../components/ActiveClientBanner';
-import {
-	AUDIO_RETENTION_DAYS,
-	CALL_ANALYSIS_KINDS,
-	PII_FIELDS,
-} from '../constants';
+import { AUDIO_RETENTION_DAYS, CALL_ANALYSIS_KINDS } from '../constants';
 import { SEED_CALL_ANALYSIS } from '../seed';
 import type { CallAnalysisKind, CallAnalysisLanguage } from '../types';
 
@@ -102,25 +98,11 @@ export const CallAnalysisTab: React.FC = () => {
 								setDraft({ ...draft, diarization: event.currentTarget.checked })
 							}
 						/>
-						<Switch
+						<InlineNotice
 							color='gray'
-							label={t('callAnalysis.redact.label')}
-							description={t('callAnalysis.redact.help')}
-							checked={draft.redactPii}
-							onChange={(event) =>
-								setDraft({ ...draft, redactPii: event.currentTarget.checked })
-							}
-						/>
-						<MultiSelect
-							label={t('callAnalysis.piiFields.label')}
-							data={PII_FIELDS.map((field) => ({
-								value: field,
-								label: t(`callAnalysis.piiFields.options.${field}`),
-							}))}
-							value={draft.piiFields}
-							onChange={(piiFields) => setDraft({ ...draft, piiFields })}
-							disabled={!draft.redactPii}
-							comboboxProps={{ withinPortal: true }}
+							icon={<IconLock size={16} />}
+							title={t('callAnalysis.masking.title')}
+							description={t('callAnalysis.masking.description')}
 						/>
 					</Stack>
 

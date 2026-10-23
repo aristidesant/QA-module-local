@@ -1,5 +1,6 @@
 import { ActionIcon, Badge, Group, Paper, Text, Tooltip } from '@mantine/core';
 import { IconClock, IconPlayerPlay } from '@tabler/icons-react';
+import { MaskedText } from '~/modules/qa/privacy/components/MaskedText';
 import type { Evidence } from '../../types';
 import styles from './EvidenceQuote.module.css';
 
@@ -9,12 +10,15 @@ interface EvidenceQuoteProps {
 	onPlay?: () => void;
 	/** The quote the player is on. */
 	active?: boolean;
+	/** Call detail only: a reveal shows the real data there. */
+	callId?: string;
 }
 
 export function EvidenceQuote({
 	evidence,
 	onPlay,
 	active,
+	callId,
 }: EvidenceQuoteProps) {
 	return (
 		<Paper
@@ -49,7 +53,7 @@ export function EvidenceQuote({
 				)}
 			</Group>
 			<Text size='sm' fs='italic'>
-				"{evidence.quote}"
+				"<MaskedText text={evidence.quote} callId={callId} />"
 			</Text>
 		</Paper>
 	);

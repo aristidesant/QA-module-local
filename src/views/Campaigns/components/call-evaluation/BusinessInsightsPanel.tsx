@@ -26,10 +26,13 @@ import { EvidenceQuote } from './EvidenceQuote';
 
 interface BusinessInsightsPanelProps {
 	business: CallBusinessEvaluation;
+	/** Call detail only: a reveal shows the real data there. */
+	callId?: string;
 }
 
 export function BusinessInsightsPanel({
 	business,
+	callId,
 }: BusinessInsightsPanelProps) {
 	const detectedCount = business.signals.filter((s) => s.detected).length;
 	const totalCount = business.signals.length;
@@ -145,7 +148,7 @@ export function BusinessInsightsPanel({
 									</Group>
 								</Paper>
 								{signal.evidence && (
-									<EvidenceQuote evidence={signal.evidence} />
+									<EvidenceQuote evidence={signal.evidence} callId={callId} />
 								)}
 							</div>
 						);

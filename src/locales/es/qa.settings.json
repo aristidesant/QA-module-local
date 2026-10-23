@@ -9,7 +9,8 @@
 			"sentiment": "Sentimiento y emoción",
 			"business": "Insights de negocio",
 			"coaching": "Coaching",
-			"burnout": "Burnout"
+			"burnout": "Burnout",
+			"privacy": "Privacidad"
 		}
 	},
 	"actions": {
@@ -229,6 +230,78 @@
 			"level": "Nivel",
 			"score": "Score",
 			"signal": "Señal principal"
+		}
+	},
+	"privacy": {
+		"masking": {
+			"title": "Enmascarado",
+			"description": "Los datos sensibles se ocultan en cualquier pantalla que muestre una llamada: transcripciones, citas de evidencia, momentos, coaching y disputas. El análisis sigue usando el texto completo.",
+			"enabled": "Enmascarar datos sensibles",
+			"columns": {
+				"category": "Datos",
+				"matches": "Qué detecta",
+				"showLast": "Mostrar últimos dígitos"
+			}
+		},
+		"categories": {
+			"payment": {
+				"label": "Tarjetas y cuentas bancarias",
+				"description": "Números de tarjeta, CVV, fechas de vencimiento, IBAN y números de cuenta."
+			},
+			"identity": {
+				"label": "Documentos de identidad",
+				"description": "Cédulas, números de seguro social y pasaportes."
+			},
+			"contact": {
+				"label": "Contacto y ubicación",
+				"description": "Teléfonos, correos electrónicos y direcciones."
+			},
+			"credentials": {
+				"label": "Credenciales y datos personales",
+				"description": "PIN, contraseñas, códigos de un solo uso y fechas de nacimiento."
+			}
+		},
+		"recording": {
+			"title": "Grabación",
+			"description": "Qué pasa con el audio mientras se dice el dato.",
+			"muteAudio": "Silenciar la grabación mientras se dicen datos sensibles",
+			"screen": "Las grabaciones de pantalla siguen la misma regla: el campo se difumina mientras el dato está en pantalla."
+		},
+		"reveal": {
+			"title": "Revelar",
+			"description": "Un QA manager o super admin puede ver el dato real en el detalle de la llamada por un tiempo corto, con un motivo que queda registrado.",
+			"allowed": "Permitir revelar en el detalle de la llamada",
+			"minutes": "Visible durante",
+			"requireNote": "Exigir una nota además del motivo",
+			"who": "Los supervisores y agentes nunca ven el dato real. Coaching y disputas siempre lo muestran enmascarado."
+		},
+		"test": {
+			"title": "Probar una frase",
+			"placeholder": "p. ej. Mi tarjeta es 4512 3456 7890 1234 y mi cédula es 402-1234567-8",
+			"found_one": "{{count}} dato se enmascararía.",
+			"found_other": "{{count}} datos se enmascararían.",
+			"none": "Nada de esta frase se enmascararía."
+		},
+		"log": {
+			"title": "Registro de revelados",
+			"description": "Cada vez que se mostró el dato real, quién y por qué.",
+			"columns": {
+				"when": "Cuándo",
+				"who": "Quién",
+				"call": "Llamada",
+				"reason": "Motivo",
+				"note": "Nota",
+				"status": "Estado"
+			},
+			"status": {
+				"visible": "Visible",
+				"expired": "Vencido",
+				"hiddenEarly": "Ocultado antes"
+			}
+		},
+		"errors": {
+			"revealMinutes": "El tiempo de revelado debe estar entre 5 y 120 minutos.",
+			"showLast": "Los dígitos visibles deben estar entre 0 y 4."
 		}
 	}
 }

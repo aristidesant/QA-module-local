@@ -71,3 +71,20 @@
 	border-radius: 2px;
 	background: var(--mantine-color-gray-6);
 }
+
+/* A muted stretch of the recording: a small hatched block under the anchors, never a colour. */
+.mute {
+	position: absolute;
+	top: 2px;
+	width: 8px;
+	height: 8px;
+	transform: translateX(-50%);
+	border-radius: 2px;
+	background: repeating-linear-gradient(
+		45deg,
+		var(--mantine-color-gray-5) 0 2px,
+		transparent 2px 4px
+	);
+	pointer-events: auto;
+	cursor: help;
+}

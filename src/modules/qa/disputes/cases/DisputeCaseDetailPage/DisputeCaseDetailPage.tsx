@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useMasking } from '~/modules/qa/privacy/useMasking';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import {
 	Alert,
@@ -63,6 +64,8 @@ dayjs.extend(relativeTime);
  */
 export const DisputeCaseDetailPage: React.FC = () => {
 	const { t } = useTranslation('qa.disputes');
+	// Sensitive data stays masked here: a reveal only exists on the call detail.
+	const { mask } = useMasking();
 	const { disputeId } = useParams();
 	const location = useLocation();
 	const navigate = useNavigate();
@@ -256,7 +259,7 @@ export const DisputeCaseDetailPage: React.FC = () => {
 							}
 						>
 							<ScrollArea h={420}>
-								<DemoTranscript turns={toDemoTurns(call.transcript)} />
+								<DemoTranscript turns={toDemoTurns(call.transcript, mask)} />
 							</ScrollArea>
 						</SectionCard>
 					</Stack>
@@ -269,7 +272,7 @@ export const DisputeCaseDetailPage: React.FC = () => {
 							<Stack gap='md'>
 								<Blockquote color={typeMeta?.color ?? 'blue'} p='md'>
 									<Text size='sm' className={styles.statement}>
-										{dispute.agentComment}
+										{mask(dispute.agentComment)}
 									</Text>
 								</Blockquote>
 								<div>
@@ -342,7 +345,7 @@ export const DisputeCaseDetailPage: React.FC = () => {
 											{t('cases.detail.resolution.managerComment')}
 										</Text>
 										<Text size='sm' className={styles.statement}>
-											{dispute.managerComment}
+											{mask(dispute.managerComment ?? '')}
 										</Text>
 									</div>
 									{dispute.decisions.length === 0 ? (
@@ -401,7 +404,8 @@ export const DisputeCaseDetailPage: React.FC = () => {
 																				{decision.edits.evidenceTimestamp
 																					? ` ${decision.edits.evidenceTimestamp}`
 																					: ''}
-																				: &ldquo;{decision.edits.evidenceQuote}
+																				: &ldquo;
+																				{mask(decision.edits.evidenceQuote)}
 																				&rdquo;
 																			</Text>
 																		)}

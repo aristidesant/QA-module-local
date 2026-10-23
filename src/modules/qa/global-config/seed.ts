@@ -26,8 +26,6 @@ const day = (daysAgo: number, hour = 10) =>
 export const SEED_CALL_ANALYSIS: CallAnalysisConfig = {
 	language: 'AUTO',
 	diarization: true,
-	redactPii: true,
-	piiFields: ['card', 'nationalId'],
 	analyses: ['QA', 'COMPLIANCE', 'SENTIMENT', 'BUSINESS'],
 	minDurationSeconds: 30,
 	audioRetentionDays: 90,

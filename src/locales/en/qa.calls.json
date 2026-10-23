@@ -173,5 +173,50 @@
 		"rowsCount_one": "{{count}} call",
 		"rowsCount_other": "{{count}} calls",
 		"empty": "No calls match these filters."
+	},
+	"privacy": {
+		"muted_one": "{{count}} muted",
+		"muted_other": "{{count}} muted",
+		"mutedAt": "Audio muted · {{label}}",
+		"off": {
+			"title": "Sensitive data masking is off",
+			"description": "Every number, ID and contact detail in this call is visible. A QA manager can turn masking on in Settings → Privacy."
+		},
+		"none": {
+			"title": "No sensitive data detected",
+			"description": "Nothing in this call matches the masking rules."
+		},
+		"masked": {
+			"title": "Sensitive data is masked",
+			"description_one": "{{count}} item is hidden in the transcript and the evidence: {{kinds}}.",
+			"description_other": "{{count}} items are hidden in the transcript and the evidence: {{kinds}}.",
+			"audio": "The recording is muted while they are said.",
+			"onlyManager": "Only a QA manager or super admin can reveal them."
+		},
+		"revealed": {
+			"title": "Sensitive data is visible",
+			"description": "Revealed by {{by}} at {{time}} · {{reason}} · hides automatically at {{expires}}.",
+			"hide": "Hide now",
+			"hidden": "Sensitive data hidden again"
+		},
+		"reveal": {
+			"button": "Reveal for {{minutes}} min",
+			"title": "Reveal sensitive data",
+			"description": "The real values will be visible on this page for {{minutes}} minutes. The reveal is logged.",
+			"reason": "Reason",
+			"note": "Note",
+			"notePlaceholder": "What are you checking? (at least 10 characters)",
+			"logged": "Visible for {{minutes}} minutes. Logged under {{by}}.",
+			"cancel": "Cancel",
+			"confirm": "Reveal",
+			"success": "Sensitive data visible for {{minutes}} minutes"
+		},
+		"reasons": {
+			"disputeReview": "Dispute review",
+			"complianceInvestigation": "Compliance investigation",
+			"customerRequest": "Customer request",
+			"fraudCheck": "Fraud check",
+			"other": "Other"
+		}
 	}
 }

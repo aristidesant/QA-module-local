@@ -57,6 +57,8 @@ interface SentimentEmotionPanelProps {
 	anchors?: TimelineAnchor[];
 	activeAnchorId?: string | null;
 	onJump?: (anchor: TimelineAnchor) => void;
+	/** Call detail only: a reveal shows the real data there. */
+	callId?: string;
 }
 
 /** Neutral unless the risk is high; red is the only hue on the page. */
@@ -88,6 +90,7 @@ export function SentimentEmotionPanel({
 	anchors,
 	activeAnchorId = null,
 	onJump,
+	callId,
 }: SentimentEmotionPanelProps) {
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	const burnoutSettings = useSettingsStore(selectThresholds).burnout;
@@ -158,6 +161,7 @@ export function SentimentEmotionPanel({
 					anchors={anchors}
 					activeAnchorId={activeAnchorId}
 					onJump={onJump}
+					callId={callId}
 					emptyLabel='No emotion, negative wording or hostile tone detected in this call.'
 				/>
 			)}
@@ -320,6 +324,7 @@ export function SentimentEmotionPanel({
 							{sentiment.empathyIndicators.map((indicator, idx) => (
 								<div key={idx}>
 									<EvidenceQuote
+										callId={callId}
 										evidence={{
 											timestamp: indicator.timestamp,
 											speaker: 'agent',

@@ -45,6 +45,8 @@ interface QAEvaluationPanelProps {
 	onSetStatus?: (id: string, status: CallMomentStatus, note?: string) => void;
 	onRemoveMoment?: (id: string) => void;
 	onAddMoment?: () => void;
+	/** Call detail only: a reveal shows the real data there. */
+	callId?: string;
 }
 
 const noop = () => {};
@@ -61,6 +63,7 @@ export function QAEvaluationPanel({
 	onSetStatus = noop,
 	onRemoveMoment = noop,
 	onAddMoment = noop,
+	callId,
 }: QAEvaluationPanelProps) {
 	const momentsEnabled = momentsProp !== undefined;
 	const moments = useMemo(() => momentsProp ?? [], [momentsProp]);
@@ -212,6 +215,7 @@ export function QAEvaluationPanel({
 							<MomentCard
 								key={m.id}
 								moment={m}
+								callId={callId}
 								active={m.id === activeMomentId}
 								canReview={canReview}
 								onJump={onJump}
@@ -357,6 +361,7 @@ export function QAEvaluationPanel({
 																<MomentCard
 																	key={m.id}
 																	moment={m}
+																	callId={callId}
 																	active={m.id === activeMomentId}
 																	canReview={canReview}
 																	onJump={onJump}
@@ -371,7 +376,10 @@ export function QAEvaluationPanel({
 														</Stack>
 													) : (
 														item.evidence && (
-															<EvidenceQuote evidence={item.evidence} />
+															<EvidenceQuote
+																evidence={item.evidence}
+																callId={callId}
+															/>
 														)
 													)}
 												</div>

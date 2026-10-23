@@ -29,6 +29,7 @@ import {
 } from '@tabler/icons-react';
 import dayjs from 'dayjs';
 import { useTranslation } from 'react-i18next';
+import { MaskedText } from '~/modules/qa/privacy/components/MaskedText';
 import { ContentContainer } from '~/components/ContentContainer';
 import { EmptyState } from '~/components/EmptyState/EmptyState';
 import { SectionCard } from '~/components/SectionCard';
@@ -432,7 +433,7 @@ export default function CoachingSessionDetailPage() {
 																lineClamp={1}
 																fs='italic'
 															>
-																"{m.quote}"
+																"<MaskedText text={m.quote} />"
 															</Text>
 														</Group>
 													))}

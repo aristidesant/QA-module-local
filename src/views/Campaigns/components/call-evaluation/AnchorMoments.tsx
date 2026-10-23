@@ -15,6 +15,7 @@ import {
 } from '@tabler/icons-react';
 import pointerStyles from '~/modules/qa/lms/components/Cards.module.css';
 import { SectionCard } from '~/components/SectionCard';
+import { MaskedText } from '~/modules/qa/privacy/components/MaskedText';
 import type { TimelineAnchor } from '../../types';
 import { ANCHOR_STATUS_COLOR, ANCHOR_STATUS_VARIANT } from './anchors';
 import cardStyles from './MomentCard.module.css';
@@ -26,6 +27,8 @@ interface AnchorMomentsProps {
 	activeAnchorId: string | null;
 	onJump: (anchor: TimelineAnchor) => void;
 	emptyLabel: string;
+	/** Call detail only: a reveal shows the real data there. */
+	callId?: string;
 }
 
 /** The findings of a tab in call order: click one to play the recording from there. */
@@ -36,6 +39,7 @@ export function AnchorMoments({
 	activeAnchorId,
 	onJump,
 	emptyLabel,
+	callId,
 }: AnchorMomentsProps) {
 	const attention = anchors.filter((a) => a.status === 'alert').length;
 	return (
@@ -99,7 +103,12 @@ export function AnchorMoments({
 										{anchor.label}
 									</Text>
 									<Text size='sm' fs='italic'>
-										"{anchor.highlight ?? anchor.quote}"
+										"
+										<MaskedText
+											text={anchor.highlight ?? anchor.quote}
+											callId={callId}
+										/>
+										"
 									</Text>
 								</Stack>
 								<Tooltip label='Play from here' withArrow>

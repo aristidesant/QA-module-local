@@ -21,6 +21,8 @@ import { EvidenceQuote } from './EvidenceQuote';
 
 interface EsgPanelProps {
 	esg: CallEsgEvaluation;
+	/** Call detail only: a reveal shows the real data there. */
+	callId?: string;
 }
 
 const statusMeta: Record<
@@ -44,7 +46,7 @@ const statusMeta: Record<
 	},
 };
 
-export function EsgPanel({ esg }: EsgPanelProps) {
+export function EsgPanel({ esg, callId }: EsgPanelProps) {
 	return (
 		<Stack gap='md'>
 			{/* Header with ring */}
@@ -163,7 +165,10 @@ export function EsgPanel({ esg }: EsgPanelProps) {
 												</Group>
 											</Paper>
 											{item.evidence && (
-												<EvidenceQuote evidence={item.evidence} />
+												<EvidenceQuote
+													evidence={item.evidence}
+													callId={callId}
+												/>
 											)}
 										</div>
 									);

@@ -30,6 +30,8 @@ interface CompliancePanelProps {
 	anchors?: TimelineAnchor[];
 	activeAnchorId?: string | null;
 	onJump?: (anchor: TimelineAnchor) => void;
+	/** Call detail only: a reveal shows the real data there. */
+	callId?: string;
 }
 
 const statusMeta: Record<
@@ -58,6 +60,7 @@ export function CompliancePanel({
 	anchors = [],
 	activeAnchorId = null,
 	onJump,
+	callId,
 }: CompliancePanelProps) {
 	return (
 		<Stack gap='md'>
@@ -179,6 +182,7 @@ export function CompliancePanel({
 											{item.evidence && (
 												<EvidenceQuote
 													evidence={item.evidence}
+													callId={callId}
 													onPlay={
 														anchor && onJump ? () => onJump(anchor) : undefined
 													}

@@ -62,19 +62,6 @@
 			"label": "Diarización de hablantes",
 			"help": "Divide la transcripción en turnos de agente y cliente."
 		},
-		"redact": {
-			"label": "Ocultar datos personales",
-			"help": "Enmascara los campos seleccionados antes de guardar la transcripción."
-		},
-		"piiFields": {
-			"label": "Campos a ocultar",
-			"options": {
-				"phone": "Números de teléfono",
-				"card": "Números de tarjeta",
-				"nationalId": "Documentos de identidad",
-				"email": "Correos electrónicos"
-			}
-		},
 		"analyses": {
 			"label": "Análisis a ejecutar",
 			"help": "Cada llamada importada pasa automáticamente por los análisis seleccionados.",
@@ -89,6 +76,10 @@
 		"minDuration": {
 			"label": "Duración mínima de llamada",
 			"help": "Las llamadas más cortas se importan pero no se analizan."
+		},
+		"masking": {
+			"title": "Enmascarado de datos sensibles",
+			"description": "Qué se enmascara, por cuánto tiempo se puede revelar y el registro de revelados están en QA Manager → Settings → Privacidad."
 		}
 	},
 	"evaluation": {

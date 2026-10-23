@@ -44,9 +44,15 @@ import { formatDuration } from '../components/call-evaluation/scoreColor';
 import { CallPlayer } from '../components/call-evaluation/CallPlayer';
 import { CallTranscript } from '../components/call-evaluation/CallTranscript';
 import { AddMomentDrawer } from '../components/call-evaluation/AddMomentDrawer';
+import { PrivacyBanner } from '../components/call-evaluation/PrivacyBanner';
+import { RevealDrawer } from '../components/call-evaluation/RevealDrawer';
+import { findSensitive } from '~/modules/qa/privacy/mask';
+import { KIND_LABEL } from '~/modules/qa/privacy/constants';
+import { useMasking } from '~/modules/qa/privacy/useMasking';
 import {
 	activeTurnAt,
 	coachableMoments,
+	turnSeconds,
 } from '../components/call-evaluation/callMoments';
 import {
 	buildComplianceAnchors,
@@ -102,6 +108,7 @@ export default function ConversationEvaluations() {
 	const [addMomentTurnId, setAddMomentTurnId] = useState<string | null>(null);
 	const [addMomentOpen, setAddMomentOpen] = useState(false);
 	const [assignOpen, setAssignOpen] = useState(false);
+	const [revealOpen, setRevealOpen] = useState(false);
 	const { t } = useTranslation('qa.disputes');
 	const { t: tCalls } = useTranslation('qa.calls');
 	const previewRole = useRoleMockStore((s) => s.previewRole);
@@ -116,6 +123,28 @@ export default function ConversationEvaluations() {
 		() => allMoments.filter((m) => m.callId === call.callId),
 		[allMoments, call.callId]
 	);
+	const { settings: privacy } = useMasking(call.callId);
+	// Where sensitive data is said: the recording is muted there and the transcript shows a chip.
+	const sensitive = useMemo(() => {
+		const spans: { seconds: number; label: string }[] = [];
+		const kinds = new Set<string>();
+		let count = 0;
+		for (const turn of call.transcript) {
+			const hits = findSensitive(turn.text, privacy);
+			if (hits.length === 0) continue;
+			count += hits.length;
+			hits.forEach((h) => kinds.add(KIND_LABEL[h.kind]));
+			spans.push({
+				seconds: turnSeconds(turn) + 1,
+				label: hits.map((h) => KIND_LABEL[h.kind]).join(', '),
+			});
+		}
+		return {
+			count,
+			kinds: [...kinds],
+			mutedSpans: privacy.muteAudio ? spans : [],
+		};
+	}, [call.transcript, privacy]);
 	const sentimentAnchors = useMemo(() => buildSentimentAnchors(call), [call]);
 	const complianceAnchors = useMemo(() => buildComplianceAnchors(call), [call]);
 	// The transcript and the player show the findings of the tab that is open.
@@ -297,6 +326,17 @@ export default function ConversationEvaluations() {
 					</Text>
 				</div>
 
+				{/* Sensitive data masking */}
+				<PrivacyBanner
+					callId={call.callId}
+					count={sensitive.count}
+					kinds={sensitive.kinds}
+					canReveal={
+						previewRole === 'qaManager' || previewRole === 'superAdmin'
+					}
+					onReveal={() => setRevealOpen(true)}
+				/>
+
 				{/* Tab buttons */}
 				<Card padding='lg' radius='md' withBorder>
 					<Stack gap='sm'>
@@ -395,9 +435,10 @@ export default function ConversationEvaluations() {
 									anchors={anchors}
 									activeAnchorId={activeMomentId}
 									onAnchorClick={jumpToAnchor}
-								/>
-
+									mutedSpans={sensitive.mutedSpans}
+								/>{' '}
 								<CallTranscript
+									callId={call.callId}
 									turns={call.transcript}
 									activeTurnId={activeTurn?.id ?? null}
 									anchors={anchors}
@@ -417,6 +458,7 @@ export default function ConversationEvaluations() {
 							{selectedTab === 'qa' && (
 								<QAEvaluationPanel
 									qa={call.qa}
+									callId={call.callId}
 									moments={moments}
 									activeMomentId={activeMomentId}
 									canReview={canReview}
@@ -429,6 +471,7 @@ export default function ConversationEvaluations() {
 							{selectedTab === 'sentiment-emotion' && (
 								<SentimentEmotionPanel
 									sentiment={call.sentiment}
+									callId={call.callId}
 									agentId={call.agentId}
 									voice={call.agentVoice}
 									showBurnout={previewRole !== 'agent'}
@@ -440,17 +483,21 @@ export default function ConversationEvaluations() {
 							{selectedTab === 'compliance' && (
 								<CompliancePanel
 									compliance={call.compliance}
+									callId={call.callId}
 									anchors={complianceAnchors}
 									activeAnchorId={activeMomentId}
 									onJump={jumpToAnchor}
 								/>
 							)}
 							{selectedTab === 'esg' && previewRole !== 'agent' && (
-								<EsgPanel esg={call.esg} />
+								<EsgPanel esg={call.esg} callId={call.callId} />
 							)}
 							{selectedTab === 'business-insights' &&
 								previewRole !== 'agent' && (
-									<BusinessInsightsPanel business={call.business} />
+									<BusinessInsightsPanel
+										business={call.business}
+										callId={call.callId}
+									/>
 								)}
 						</Stack>
 					</Grid.Col>
@@ -487,6 +534,12 @@ export default function ConversationEvaluations() {
 					setActiveMomentId(moment.id);
 					setCurrentTime(moment.seconds);
 				}}
+			/>
+
+			<RevealDrawer
+				opened={revealOpen}
+				onClose={() => setRevealOpen(false)}
+				callId={call.callId}
 			/>
 
 			<AssignContentDrawer

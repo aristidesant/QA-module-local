@@ -4,6 +4,7 @@ import { useForm } from '@mantine/form';
 import { IconFlag } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { AppDrawer } from '~/components/AppDrawer';
+import { useMasking } from '~/modules/qa/privacy/useMasking';
 import { QA_ERROR_TYPES, QA_ERROR_TYPE_ORDER } from '../../constants';
 import type { QAErrorTypeCode, TranscriptTurn } from '../../types';
 
@@ -50,6 +51,7 @@ export function AddMomentDrawer({
 	onSave,
 }: AddMomentDrawerProps) {
 	const { t } = useTranslation('qa.calls');
+	const { mask } = useMasking();
 
 	const form = useForm<FormValues>({
 		initialValues: { turnId: null, itemId: null, errorType: null, note: '' },
@@ -79,9 +81,7 @@ export function AddMomentDrawer({
 			turn.speaker === 'agent'
 				? t('moments.transcript.agent')
 				: t('moments.transcript.customer')
-		} · ${turn.text.slice(0, TURN_PREVIEW_CHARS)}${
-			turn.text.length > TURN_PREVIEW_CHARS ? '…' : ''
-		}`,
+		} · ${mask(turn.text).slice(0, TURN_PREVIEW_CHARS)}${mask(turn.text).length > TURN_PREVIEW_CHARS ? '…' : ''}`,
 	}));
 
 	const aspects = Array.from(new Set(items.map((i) => i.aspectName)));

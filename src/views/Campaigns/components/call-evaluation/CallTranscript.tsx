@@ -19,12 +19,14 @@ import {
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import pointerStyles from '~/modules/qa/lms/components/Cards.module.css';
+import { MaskedText } from '~/modules/qa/privacy/components/MaskedText';
 import type { TimelineAnchor, TranscriptTurn } from '../../types';
 import { turnSeconds } from './callMoments';
 import { ANCHOR_STATUS_COLOR, ANCHOR_STATUS_VARIANT } from './anchors';
 import styles from './CallTranscript.module.css';
 
 interface CallTranscriptProps {
+	callId: string;
 	turns: TranscriptTurn[];
 	activeTurnId: string | null;
 	anchors: TimelineAnchor[];
@@ -56,6 +58,7 @@ const segmentsOf = (text: string, anchors: TimelineAnchor[]) => {
 
 /** Transcript that follows the playhead, tags each turn with the findings of the open tab and lets a reviewer flag a new one. */
 export function CallTranscript({
+	callId,
 	turns,
 	activeTurnId,
 	anchors,
@@ -190,10 +193,14 @@ export function CallTranscript({
 													data-tone={ANCHOR_STATUS_COLOR[segment.anchor.status]}
 													onClick={() => onAnchorClick(segment.anchor!)}
 												>
-													{segment.text}
+													<MaskedText text={segment.text} callId={callId} />
 												</mark>
 											) : (
-												segment.text
+												<MaskedText
+													key={i}
+													text={segment.text}
+													callId={callId}
+												/>
 											)
 										)}
 									</Text>

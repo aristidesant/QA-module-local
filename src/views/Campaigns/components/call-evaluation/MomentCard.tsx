@@ -18,6 +18,7 @@ import {
 } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { CallMoment, CallMomentStatus } from '../../types';
+import { MaskedText } from '~/modules/qa/privacy/components/MaskedText';
 import { MOMENT_STATUS_COLOR, MOMENT_STATUS_VARIANT } from './callMoments';
 import styles from './MomentCard.module.css';
 
@@ -25,6 +26,8 @@ const MIN_DISMISS_REASON = 5;
 
 interface MomentCardProps {
 	moment: CallMoment;
+	/** Call detail only: a reveal shows the real data there. */
+	callId?: string;
 	active: boolean;
 	canReview: boolean;
 	onJump: (moment: CallMoment) => void;
@@ -36,6 +39,7 @@ interface MomentCardProps {
 /** One QA finding anchored to a call moment: the quote, a jump button and the reviewer's confirm / dismiss. */
 export function MomentCard({
 	moment,
+	callId,
 	active,
 	canReview,
 	onJump,
@@ -94,11 +98,11 @@ export function MomentCard({
 				</Text>
 			)}
 			<Text size='sm' fs='italic'>
-				"{moment.quote}"
+				"<MaskedText text={moment.quote} callId={callId} />"
 			</Text>
 			{moment.note && (
 				<Text size='xs' c='dimmed' mt={4}>
-					{moment.note}
+					<MaskedText text={moment.note} callId={callId} />
 				</Text>
 			)}
 

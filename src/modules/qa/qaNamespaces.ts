@@ -231,6 +231,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.teamAnalytics',
 		'qa.triggers',
 		'qa.burnout',
+		'qa.calls',
 	],
 	'qa.agent.lms': ['qa.lms', 'qa.team', 'qa.triggers'],
 	'qa.agent.lms.content': ['qa.lms', 'qa.team', 'qa.triggers'],

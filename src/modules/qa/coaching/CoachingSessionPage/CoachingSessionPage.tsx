@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { Anchor, Breadcrumbs, Stack, Text, Title } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
+import { useMasking } from '~/modules/qa/privacy/useMasking';
 import { ContentContainer } from '~/components/ContentContainer';
 import type { CoachingSessionType, LmsContent } from '~/models/qa';
 import { useCoachingStore, selectCohorts } from '~/stores/qa/coachingStore';
@@ -27,6 +28,8 @@ import { SessionForm, type SessionPreset } from '../components/SessionForm';
  */
 export default function CoachingSessionPage() {
 	const { t } = useTranslation(['qa.coaching', 'qa.lms', 'qa.calls']);
+	// Quotes leave the call detail masked: a coaching session is read by more people.
+	const { mask } = useMasking();
 	const location = useLocation();
 	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
@@ -74,18 +77,18 @@ export default function CoachingSessionPage() {
 				timestamp: m.timestamp,
 				seconds: m.seconds,
 				itemName: m.itemName,
-				quote: m.quote,
+				quote: mask(m.quote),
 			})),
 			talkingPoints: moments.map((m) =>
 				t('moments.coaching.talkingPoint', {
 					ns: 'qa.calls',
 					time: m.timestamp,
 					item: m.itemName,
-					quote: m.quote,
+					quote: mask(m.quote),
 				})
 			),
 		};
-	}, [callParam, allMoments, t]);
+	}, [callParam, allMoments, t, mask]);
 	// Stable identity: the form resets itself whenever the preset changes.
 	const preset = useMemo<SessionPreset>(
 		() => ({
