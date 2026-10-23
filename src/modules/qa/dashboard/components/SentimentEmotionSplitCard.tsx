@@ -18,7 +18,9 @@ import {
 	IconSparkles,
 	IconUser,
 } from '@tabler/icons-react';
+import type { CallEmotion } from '~/modules/qa/analytics/types';
 import type { DashboardMetricTrend } from '~/modules/qa/calls/agentMetrics';
+import { toPlatformEmotion } from '../emotionLabels';
 import { getSentimentBand } from './SentimentEmotionCard';
 import { useSettingsStore, selectThresholds } from '~/stores/qa/settingsStore';
 import { TrendIndicator } from './TrendIndicator';
@@ -27,8 +29,8 @@ import styles from '../Dashboard.module.css';
 export interface SentimentSide {
 	/** Average sentiment on the 1-5 scale */
 	score: number;
-	/** Predominant emotion label, null when there are no calls */
-	emotion: string | null;
+	/** Predominant emotion of the calls, null when there are none; shown in the platform's emotion vocabulary. */
+	emotion: CallEmotion | null;
 	/** Calls whose predominant emotion was negative */
 	negativeCount: number;
 	/** This side's sentiment trend vs. the prior period of equal length. Omitted when the caller has no period concept. */
@@ -66,6 +68,8 @@ const SideColumn: React.FC<{
 	const { cutPoints } = useSettingsStore(selectThresholds).sentiment;
 	const band = getSentimentBand(side.score, cutPoints);
 	const tone = SENTIMENT_TONE[band.color] ?? 'gray';
+	// The calls carry a Plutchik-style emotion; the card speaks the platform's list.
+	const emotion = toPlatformEmotion(side.emotion);
 	return (
 		<Stack gap='xs' className={styles.splitColumn}>
 			<Group gap={6}>
@@ -101,7 +105,7 @@ const SideColumn: React.FC<{
 				size='sm'
 				leftSection={<IconSparkles size={12} />}
 			>
-				{side.emotion ?? t('sentimentSplit.none')}
+				{emotion ? t(`emotions.${emotion}`) : t('sentimentSplit.none')}
 			</Badge>
 			{side.trend && <TrendIndicator trend={side.trend} />}
 		</Stack>
@@ -109,8 +113,8 @@ const SideColumn: React.FC<{
 };
 
 /**
- * Card 3 of the agent Performance Score row: the agent's own sentiment/emotion
- * beside the customers' they contacted, plus the drill-down into negative calls.
+ * Sentiment & Emotion for the manager dashboards: the agents' side beside the
+ * customers' they contacted, plus the drill-down into negative calls.
  */
 export const SentimentEmotionSplitCard: React.FC<
 	SentimentEmotionSplitCardProps

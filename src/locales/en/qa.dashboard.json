@@ -161,7 +161,7 @@
 	},
 	"sentimentSplit": {
 		"title": "Sentiment & Emotion",
-		"agent": "You",
+		"agent": "Agent",
 		"customer": "Customers",
 		"outOfFive": "/ 5.0",
 		"predominantSentiment": "Predominant sentiment",
