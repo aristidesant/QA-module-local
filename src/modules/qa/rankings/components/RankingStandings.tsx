@@ -1,13 +1,17 @@
-import type { ReactNode } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import { Badge, Group, Text } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
+import AppSegmentedControl from '~/components/ui/AppSegmentedControl/AppSegmentedControl';
+import { TODAY } from '~/modules/qa/analytics/constants';
+import { TEAM_CALLS } from '~/modules/qa/analytics/mockData';
 import type {
 	RankingProgram,
 	RankingStanding,
 } from '~/models/qa/rankingPrograms';
-import { formatTarget } from '../helpers';
+import { STANDINGS_PERIODS, type StandingsPeriod } from '../constants';
+import { computeStandings, formatTarget } from '../helpers';
 import StandingsCardGrid from './StandingsCardGrid';
 import StandingsTable, { type ReactionsMode } from './StandingsTable';
 
@@ -44,30 +48,57 @@ export function RankingStandings({
 }: RankingStandingsProps) {
 	const { t } = useTranslation('qa.rankings');
 	const isCompact = useMediaQuery(TABLE_BREAKPOINT);
-	const qualified = standings.filter((s) => s.rank !== null);
+	const [period, setPeriod] = useState<StandingsPeriod>('all');
+	const qualifiedAll = standings.filter((s) => s.rank !== null).length;
+	// The whole-period standings come from the parent (they are the official ones);
+	// a trailing window is ranked here so every page gets the same control.
+	const shown = useMemo(
+		() =>
+			period === 'all'
+				? standings
+				: computeStandings(program, TEAM_CALLS, TODAY, Number(period)),
+		[period, standings, program]
+	);
+	const qualified = shown.filter((s) => s.rank !== null);
 
 	return (
 		<SectionCard
 			title={title ?? t('drawer.standings')}
-			description={`${t('editor.target')}: ${formatTarget(program)}`}
+			description={
+				period === 'all'
+					? `${t('editor.target')}: ${formatTarget(program)}`
+					: t('standings.windowNote', { days: period })
+			}
 			footer={footer}
 			headerActions={
 				<Group gap='sm' wrap='nowrap'>
 					{headerActions}
+					{!dense && qualifiedAll > 0 && (
+						<AppSegmentedControl
+							size='xs'
+							value={period}
+							onChange={(value) => setPeriod(value as StandingsPeriod)}
+							data={STANDINGS_PERIODS.map((value) => ({
+								value,
+								label: t(`standings.window.${value}`),
+							}))}
+						/>
+					)}
 					<Badge variant='light' size='sm'>
-						{standings.length}
+						{shown.length}
 					</Badge>
 				</Group>
 			}
 		>
 			{qualified.length === 0 ? (
 				<Text size='sm' c='dimmed'>
-					{t('drawer.pending')}
+					{qualifiedAll === 0 ? t('drawer.pending') : t('standings.empty')}
 				</Text>
 			) : isCompact ? (
 				<StandingsCardGrid
 					program={program}
-					standings={standings}
+					standings={shown}
+					period={period}
 					currentAgentId={currentAgentId}
 					onRowClick={onRowClick}
 					reactions={reactions}
@@ -75,7 +106,8 @@ export function RankingStandings({
 			) : (
 				<StandingsTable
 					program={program}
-					standings={standings}
+					standings={shown}
+					period={period}
 					currentAgentId={currentAgentId}
 					onRowClick={onRowClick}
 					reactions={reactions}

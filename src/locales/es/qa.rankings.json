@@ -307,5 +307,15 @@
 			"winner": "Ganador",
 			"participants": "Agentes"
 		}
+	},
+	"standings": {
+		"window": {
+			"7": "7 días",
+			"30": "30 días",
+			"all": "Periodo completo"
+		},
+		"windowNote": "Clasificado sobre los últimos {{days}} días. La posición oficial es la del periodo completo.",
+		"deltaWindow": "vs {{days}} d anteriores",
+		"empty": "Nadie tiene aún suficientes llamadas en esta ventana."
 	}
 }

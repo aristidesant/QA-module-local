@@ -5,6 +5,7 @@ import type {
 	RankingStanding,
 } from '~/models/qa/rankingPrograms';
 import StandingCard from './StandingCard';
+import type { StandingsPeriod } from '../constants';
 import type { ReactionsMode } from './StandingsTable';
 
 interface StandingsCardGridProps {
@@ -13,6 +14,7 @@ interface StandingsCardGridProps {
 	currentAgentId?: string;
 	onRowClick?: (standing: RankingStanding) => void;
 	reactions?: ReactionsMode;
+	period?: StandingsPeriod;
 }
 
 /**
@@ -25,6 +27,7 @@ export const StandingsCardGrid: React.FC<StandingsCardGridProps> = ({
 	currentAgentId,
 	onRowClick,
 	reactions,
+	period,
 }) => (
 	<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
 		{standings.map((standing) => (
@@ -35,6 +38,7 @@ export const StandingsCardGrid: React.FC<StandingsCardGridProps> = ({
 				isCurrentAgent={standing.agentId === currentAgentId}
 				onRowClick={onRowClick}
 				reactions={reactions}
+				period={period}
 			/>
 		))}
 	</SimpleGrid>

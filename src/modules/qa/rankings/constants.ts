@@ -56,6 +56,10 @@ export const RANKING_STATUS_ORDER: RankingStatus[] = [
 	'completed',
 ];
 
+/** Trailing windows the standings can be re-ranked over; `all` is the ranking's own period. */
+export type StandingsPeriod = '7' | '30' | 'all';
+export const STANDINGS_PERIODS: StandingsPeriod[] = ['7', '30', 'all'];
+
 /** Where a ranking is shown on the supervisor page. */
 export type RankingTab = 'current' | 'upcoming' | 'past';
 export const RANKING_TABS: RankingTab[] = ['current', 'upcoming', 'past'];

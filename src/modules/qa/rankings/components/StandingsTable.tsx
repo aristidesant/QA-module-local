@@ -15,6 +15,7 @@ import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
 import { formatScore, isComposite } from '../helpers';
 import ScoreBreakdown from './ScoreBreakdown';
 import WinnerBadge from './WinnerBadge';
+import type { StandingsPeriod } from '../constants';
 import styles from '../Rankings.module.css';
 
 /** Who can see the reactions column and whether they can add one. */
@@ -30,6 +31,8 @@ interface StandingsTableProps {
 	reactions?: ReactionsMode;
 	/** Rank, agent and scorecard only, for narrow placements such as a dashboard card. */
 	dense?: boolean;
+	/** Window the standings were ranked over; names the movement column. */
+	period?: StandingsPeriod;
 }
 
 export const StandingsTable: React.FC<StandingsTableProps> = ({
@@ -40,6 +43,7 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 	onRowClick,
 	reactions = 'off',
 	dense = false,
+	period = 'all',
 }) => {
 	const { t } = useTranslation('qa.rankings');
 	const badges = useTriggerRulesStore((s) => s.badges);
@@ -204,7 +208,9 @@ export const StandingsTable: React.FC<StandingsTableProps> = ({
 						)}
 						{!dense && (
 							<Table.Th align='right' className={styles.deltaCell}>
-								{t('drawer.columns.delta')}
+								{period === 'all'
+									? t('drawer.columns.delta')
+									: t('standings.deltaWindow', { days: period })}
 							</Table.Th>
 						)}
 						{!dense && <Table.Th>{t('drawer.columns.milestones')}</Table.Th>}

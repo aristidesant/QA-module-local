@@ -23,6 +23,7 @@ import LeaderboardReactions from '~/modules/qa/agent/rankings/components/Leaderb
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
 import { formatScore } from '../helpers';
 import WinnerBadge from './WinnerBadge';
+import type { StandingsPeriod } from '../constants';
 import type { ReactionsMode } from './StandingsTable';
 import styles from './StandingCard.module.css';
 
@@ -35,6 +36,7 @@ interface StandingCardProps {
 	isCurrentAgent?: boolean;
 	onRowClick?: (standing: RankingStanding) => void;
 	reactions?: ReactionsMode;
+	period?: StandingsPeriod;
 }
 
 /** One agent's standing as a card: the same facts as a table row, stacked for narrow screens. */
@@ -44,6 +46,7 @@ export const StandingCard: React.FC<StandingCardProps> = ({
 	isCurrentAgent,
 	onRowClick,
 	reactions = 'off',
+	period = 'all',
 }) => {
 	const { t } = useTranslation('qa.rankings');
 	const badges = useTriggerRulesStore((s) => s.badges);
@@ -142,7 +145,10 @@ export const StandingCard: React.FC<StandingCardProps> = ({
 					</Text>
 					<Group gap={4} wrap='nowrap'>
 						<Text size='xs' c='dimmed'>
-							{t('drawer.columns.delta')}:
+							{period === 'all'
+								? t('drawer.columns.delta')
+								: t('standings.deltaWindow', { days: period })}
+							:
 						</Text>
 						{delta === null ? (
 							<Text size='xs' c='dimmed'>

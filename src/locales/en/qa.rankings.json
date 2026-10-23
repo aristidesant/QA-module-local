@@ -307,5 +307,15 @@
 			"winner": "Winner",
 			"participants": "Agents"
 		}
+	},
+	"standings": {
+		"window": {
+			"7": "7 days",
+			"30": "30 days",
+			"all": "Whole period"
+		},
+		"windowNote": "Ranked over the last {{days}} days. The official standing is the whole period.",
+		"deltaWindow": "vs previous {{days}}d",
+		"empty": "Nobody has enough calls in this window yet."
 	}
 }
