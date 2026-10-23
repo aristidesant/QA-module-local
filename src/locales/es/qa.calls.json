@@ -81,11 +81,6 @@
 			"success": "Momento añadido en {{time}}"
 		},
 		"coaching": {
-			"button": "Enviar a coaching",
-			"schedule": "Programar sesión de coaching",
-			"assign": "Asignar material de formación",
-			"topic": "Revisión de llamada {{callId}}",
-			"reason": "De la llamada {{callId}}: {{moments}}",
 			"talkingPoint": "{{time}} · {{item}} — \"{{quote}}\""
 		},
 		"player": {

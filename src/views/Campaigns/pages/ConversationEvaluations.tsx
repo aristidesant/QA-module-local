@@ -7,19 +7,12 @@ import {
 	Card,
 	Grid,
 	Group,
-	Menu,
 	Stack,
 	Text,
 	Title,
 } from '@mantine/core';
 import { ContentContainer } from '~/components/ContentContainer';
-import {
-	IconArrowLeft,
-	IconBook,
-	IconCalendarEvent,
-	IconChevronDown,
-	IconSchool,
-} from '@tabler/icons-react';
+import { IconArrowLeft } from '@tabler/icons-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router';
 import { useEffect, useMemo, useState } from 'react';
 import type {
@@ -51,7 +44,6 @@ import { KIND_LABEL } from '~/modules/qa/privacy/constants';
 import { useMasking } from '~/modules/qa/privacy/useMasking';
 import {
 	activeTurnAt,
-	coachableMoments,
 	turnSeconds,
 } from '../components/call-evaluation/callMoments';
 import {
@@ -66,10 +58,7 @@ import { useRoleMockStore } from '~/stores/roleMockStore';
 import { useDisputesStore, selectCases } from '~/stores/qa/disputesStore';
 import { hasOpenDispute } from '~/modules/qa/disputes/cases/helpers';
 import OpenDisputeDrawer from '~/modules/qa/disputes/cases/components/OpenDisputeDrawer';
-import { AssignContentDrawer } from '~/modules/qa/lms/components/AssignContentDrawer';
-import { coachingSessionNewPath } from '~/modules/qa/coaching/constants';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
-import type { TeamRole } from '~/modules/qa/team/types';
 import {
 	selectMoments,
 	useCallMomentsStore,
@@ -107,7 +96,6 @@ export default function ConversationEvaluations() {
 	const [activeMomentId, setActiveMomentId] = useState<string | null>(null);
 	const [addMomentTurnId, setAddMomentTurnId] = useState<string | null>(null);
 	const [addMomentOpen, setAddMomentOpen] = useState(false);
-	const [assignOpen, setAssignOpen] = useState(false);
 	const [revealOpen, setRevealOpen] = useState(false);
 	const { t } = useTranslation('qa.disputes');
 	const { t: tCalls } = useTranslation('qa.calls');
@@ -161,10 +149,8 @@ export default function ConversationEvaluations() {
 		() => activeTurnAt(call.transcript, currentTime),
 		[call.transcript, currentTime]
 	);
-	// Agents see the moments and can jump to them; only reviewers edit them or send the call to coaching.
+	// Agents see the moments and can jump to them; only reviewers edit them.
 	const canReview = previewRole !== 'agent';
-	const coachingRole: TeamRole =
-		previewRole === 'qaManager' ? 'qa-manager' : 'supervisor';
 	const campaignName = mockCampaignNames[campaignId || ''] || 'Campaign';
 	const selectedMeta = [...CALL_EVALUATION_TABS, ESG_TAB].find(
 		(tab) => tab.key === selectedTab
@@ -228,21 +214,6 @@ export default function ConversationEvaluations() {
 		setAddMomentTurnId(activeTurn?.id ?? null);
 		setAddMomentOpen(true);
 	};
-
-	const scheduleFromCall = () =>
-		navigate(
-			coachingSessionNewPath(coachingRole, {
-				agent: call.agentId,
-				call: call.callId,
-				topic: tCalls('moments.coaching.topic', { callId: call.callId }),
-			})
-		);
-	const assignReason = tCalls('moments.coaching.reason', {
-		callId: call.callId,
-		moments: coachableMoments(moments)
-			.map((m) => `${m.timestamp} ${m.itemName}`)
-			.join('; '),
-	});
 
 	// Calculate badge scores per tab
 	const getTabBadge = () => {
@@ -370,33 +341,6 @@ export default function ConversationEvaluations() {
 									);
 								})}
 							</Group>
-							{canReview && (
-								<Menu position='bottom-end' withinPortal>
-									<Menu.Target>
-										<Button
-											variant='default'
-											leftSection={<IconSchool size={16} />}
-											rightSection={<IconChevronDown size={14} />}
-										>
-											{tCalls('moments.coaching.button')}
-										</Button>
-									</Menu.Target>
-									<Menu.Dropdown>
-										<Menu.Item
-											leftSection={<IconCalendarEvent size={14} />}
-											onClick={scheduleFromCall}
-										>
-											{tCalls('moments.coaching.schedule')}
-										</Menu.Item>
-										<Menu.Item
-											leftSection={<IconBook size={14} />}
-											onClick={() => setAssignOpen(true)}
-										>
-											{tCalls('moments.coaching.assign')}
-										</Menu.Item>
-									</Menu.Dropdown>
-								</Menu>
-							)}
 							{previewRole === 'agent' && (
 								<Tooltip
 									label={t('cases.open.alreadyOpen')}
@@ -540,13 +484,6 @@ export default function ConversationEvaluations() {
 				opened={revealOpen}
 				onClose={() => setRevealOpen(false)}
 				callId={call.callId}
-			/>
-
-			<AssignContentDrawer
-				opened={assignOpen}
-				onClose={() => setAssignOpen(false)}
-				role={coachingRole}
-				preset={{ agentIds: [call.agentId], reason: assignReason }}
 			/>
 		</ContentContainer>
 	);

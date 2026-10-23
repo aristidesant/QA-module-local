@@ -306,19 +306,7 @@ export function RulesTab({
 	}
 
 	return (
-		<SectionCard
-			title={t('rules.title')}
-			description={t('rules.description')}
-			headerActions={
-				<Button
-					size='sm'
-					leftSection={<IconPlus size={16} />}
-					onClick={onCreate}
-				>
-					{t('newRule')}
-				</Button>
-			}
-		>
+		<SectionCard title={t('rules.title')} description={t('rules.description')}>
 			<Stack gap='md'>
 				<Group gap='sm' wrap='wrap'>
 					<TextInput
