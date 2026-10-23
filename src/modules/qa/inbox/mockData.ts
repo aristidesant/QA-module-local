@@ -5,6 +5,10 @@ import {
 	QA_MANAGER_PERSONA,
 	SUPERVISOR_PERSONA,
 } from '~/modules/qa/team/constants';
+import {
+	DEFAULT_TOP3_MESSAGES,
+	fillTop3Message,
+} from '~/modules/qa/rankings/constants';
 import { buildNotification } from './helpers';
 
 const day = (d: number, time = '09:00:00') =>
@@ -197,6 +201,49 @@ const AGENT_INBOX: AgentNotification[] = [
 			date: '2026-09-07T08:00:00Z',
 			coachName: QA_MANAGER_PERSONA.name,
 			topic: 'Weekly QA review',
+		},
+	}),
+	// The top 3 message the ranking's owner configured, as the agent receives it on joining.
+	buildNotification({
+		id: 'ntf-a15',
+		agentId: AGENT_PERSONA_ID,
+		category: 'POSITIVE_RECOGNITION',
+		priority: 'NORMAL',
+		title: 'You are in the top 3 of Team 1 Performance Index',
+		message: fillTop3Message(DEFAULT_TOP3_MESSAGES.joinedTop3, {
+			name: 'John',
+			ranking: 'Team 1 Performance Index',
+		}),
+		icon: 'trophy',
+		sourceRole: 'SYSTEM',
+		createdAt: day(12, '11:20:00'),
+		payload: {
+			kind: 'RANKING_UPDATE',
+			rankingId: 'RP-006',
+			rankingName: 'Team 1 Performance Index',
+			event: 'JOINED_TOP3',
+			rank: 3,
+			previousRank: 4,
+		},
+	}),
+	// An automatic coaching message sent the moment a coaching rule fired, not by the weekly batch.
+	buildNotification({
+		id: 'ntf-a16',
+		agentId: AGENT_PERSONA_ID,
+		category: 'DIRECT_MESSAGE',
+		priority: 'NORMAL',
+		title: 'Automatic coaching message: Handling frustrated customers',
+		message:
+			'Hi John, a coaching rule noticed that more than 30% of your calls this week carried negative customer emotion (Handling frustrated customers).\n\n• Name the feeling before you offer a solution: "I can see why that is frustrating."\n• Slow down for the first ten seconds after a complaint.\n• Close by asking if the fix works for them.',
+		icon: 'school',
+		sourceRole: 'SYSTEM',
+		createdAt: day(12, '08:00:00'),
+		payload: {
+			kind: 'COACHING_SESSION',
+			sessionId: 'coa-a04-sentiment-tip',
+			date: '2026-09-12T08:00:00Z',
+			coachName: QA_MANAGER_PERSONA.name,
+			topic: 'Handling frustrated customers',
 		},
 	}),
 	buildNotification({

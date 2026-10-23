@@ -87,3 +87,14 @@ export const DEFAULT_TOP3_MESSAGES: RankingMessages = {
 };
 
 export const TOP3_MESSAGE_MAX = 160;
+
+/** Fills `{name}` and `{ranking}` in one of the top 3 messages. */
+export const fillTop3Message = (
+	text: string,
+	values: { name: string; ranking: string }
+): string =>
+	text
+		.split('{name}')
+		.join(values.name)
+		.split('{ranking}')
+		.join(values.ranking);

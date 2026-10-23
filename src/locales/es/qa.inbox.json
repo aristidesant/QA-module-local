@@ -169,7 +169,14 @@
 			"vsLastWeek": "vs semana anterior",
 			"focusLabel": "Tu foco esta semana",
 			"focusTip": "Elige una llamada de la semana pasada en la que falló y anota qué harías diferente.",
-			"critical": "Qué requiere atención"
+			"critical": "Qué requiere atención",
+			"triggered": {
+				"title": "Un mensaje de coaching para ti",
+				"greeting": "Hola {{name}}, una regla de coaching detectó algo en tus últimas llamadas ({{rule}}).",
+				"scores": "Cómo están tus puntuaciones",
+				"focusLabel": "En qué trabajar ahora",
+				"focusTip": "Elige una de tus últimas llamadas en la que falló y anota qué harías diferente."
+			}
 		},
 		"coaching": {
 			"when": "Cuándo",
@@ -217,6 +224,7 @@
 			"events": {
 				"STARTED": "Ranking iniciado",
 				"POSITION_CHANGED": "Cambio de posición",
+				"JOINED_TOP3": "Entraste al top 3",
 				"MILESTONE": "Hito alcanzado",
 				"ENDED": "Ranking finalizado",
 				"WON": "¡Ganaste!"

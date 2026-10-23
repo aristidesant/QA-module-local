@@ -107,7 +107,13 @@ export type NotificationPayload =
 			kind: 'RANKING_UPDATE';
 			rankingId: string;
 			rankingName: string;
-			event: 'STARTED' | 'POSITION_CHANGED' | 'MILESTONE' | 'ENDED' | 'WON';
+			event:
+				| 'STARTED'
+				| 'POSITION_CHANGED'
+				| 'JOINED_TOP3'
+				| 'MILESTONE'
+				| 'ENDED'
+				| 'WON';
 			rank?: number;
 			previousRank?: number;
 			prizeTitle?: string;

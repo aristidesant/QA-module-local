@@ -426,6 +426,51 @@ export const COACHING_RULE_SEEDS: CoachingRule[] = [
 		createdAt: CREATED_AT,
 		updatedAt: UPDATED_AT,
 	},
+	{
+		id: 'cr-008',
+		name: 'Negative emotion above 30% → automatic coaching message',
+		description:
+			'When more than 30% of an agent calls carry negative customer emotion over a week, an AI-written message with a plan to handle it goes out right away.',
+		status: 'ACTIVE',
+		area: 'SENTIMENT_EMOTION',
+		conditions: [
+			condition({
+				id: 'cr-008-c1',
+				metricId: 'NEGATIVE_EMOTION_CALL_SHARE',
+				operator: 'GT',
+				value: 30,
+				window: 'LAST_7_DAYS',
+			}),
+		],
+		conditionLogic: 'ALL',
+		scope: emptyScope(),
+		action: {
+			kind: 'ASSIGN_CONTENT',
+			contentIds: ['lms-c15'],
+			pathId: null,
+			mandatory: false,
+			dueInDays: 7,
+			requireAcceptance: false,
+			scheduleSession: true,
+			sessionType: 'AI_MESSAGE',
+			sessionTopic: 'Handling frustrated customers',
+			sessionCoach: 'QA_MANAGER',
+			notifySupervisor: true,
+		},
+		followUp: { ...DEFAULT_FOLLOW_UP, windowDays: 7, checkpointDays: [7] },
+		cooldownDays: 14,
+		cadence: 'ON_MATCH',
+		stats: {
+			triggeredLast30Days: 2,
+			agentsAffected: 2,
+			improvedRate: 50,
+			lastTriggeredAt: '2026-09-12T08:00:00Z',
+		},
+		createdBy: 'Elena Ruiz',
+		createdByRole: 'QA_MANAGER',
+		createdAt: CREATED_AT,
+		updatedAt: UPDATED_AT,
+	},
 ];
 
 // ── Sessions ──────────────────────────────────────────────────────────────────
@@ -689,11 +734,52 @@ const weeklyAiMessage = (
 	};
 };
 
+/** A rule that fired on its own: the AI message goes out right away, outside the weekly batch. */
+const triggeredAiMessage = (
+	agentId: string,
+	id: string
+): CoachingSessionRecord => {
+	const profile = TEAM_PROFILES[agentId];
+	return {
+		id,
+		agentId,
+		agentName: profile.agent.name,
+		coachId: 'QAM-001',
+		coachName: 'Elena Ruiz',
+		coachRole: 'QA_MANAGER',
+		type: 'AI_MESSAGE',
+		modality: null,
+		date: '2026-09-12T08:00:00Z',
+		durationMin: 0,
+		topic: 'Handling frustrated customers',
+		area: 'SENTIMENT_EMOTION',
+		subItem: null,
+		evidenceCallIds: [],
+		talkingPoints: [],
+		notes: '',
+		aiMessage:
+			'Hi John, a coaching rule noticed that more than 30% of your calls this week carried negative customer emotion (Handling frustrated customers).\n\n• Name the feeling before you offer a solution: "I can see why that is frustrating."\n• Slow down for the first ten seconds after a complaint.\n• Close by asking if the fix works for them.',
+		actionItems: [],
+		agentCommitment: {
+			acknowledged: false,
+			acknowledgedAt: null,
+			comment: null,
+		},
+		status: 'COMPLETED',
+		outcome: null,
+		followUpDate: null,
+		linkedAssignmentIds: [],
+		ruleId: 'cr-008',
+		cohortId: null,
+	};
+};
+
 const CURATED_SESSIONS: CoachingSessionRecord[] = [
 	...buildAgentHistoryAGT004(),
 	weeklyAiMessage('AGT-004', 'coa-a04-weekly'),
 	weeklyAiMessage('AGT-006', 'coa-a06-weekly'),
 	weeklyAiMessage('AGT-013', 'coa-a13-weekly'),
+	triggeredAiMessage('AGT-004', 'coa-a04-sentiment-tip'),
 	{
 		id: 'coa-a04-rule',
 		agentId: 'AGT-004',

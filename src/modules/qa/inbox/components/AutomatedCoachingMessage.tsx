@@ -8,6 +8,7 @@ import { CRITICAL_ISSUES } from '~/modules/qa/coaching/components/QuietIndicator
 import queueStyles from '~/modules/qa/coaching/components/Queue.module.css';
 import { Caption } from '~/modules/qa/coaching/components/SessionBrief';
 import { weakestDimension } from '~/modules/qa/coaching/helpers';
+import { WEEKLY_RULE_ID } from '~/modules/qa/coaching/weeklyBatch';
 import { DIMENSION_META, DIMENSION_ORDER } from '~/modules/qa/team/constants';
 import { TrendDelta } from '~/modules/qa/team/components/TrendDelta';
 import type { AgentProfile } from '~/modules/qa/team/types';
@@ -34,23 +35,25 @@ export function AutomatedCoachingMessage({
 	const byKey = new Map(profile.dimensions.map((d) => [d.key, d]));
 	const brief = session.brief;
 	const finding = brief?.findings[0];
+	// A rule that fired on its own reads differently from the Monday review.
+	const triggered = session.ruleId !== WEEKLY_RULE_ID;
+	const copy = (key: string) =>
+		triggered
+			? `details.automated.triggered.${key}`
+			: `details.automated.${key}`;
 
 	return (
-		<SectionCard
-			icon={IconSparkles}
-			title={t('details.automated.title')}
-			padding='md'
-		>
+		<SectionCard icon={IconSparkles} title={t(copy('title'))} padding='md'>
 			<Stack gap='md'>
 				<Text size='sm'>
-					{t('details.automated.greeting', {
+					{t(copy('greeting'), {
 						name: firstName,
 						rule: session.topic,
 					})}
 				</Text>
 
 				<Stack gap='xs'>
-					<Caption>{t('details.automated.scores')}</Caption>
+					<Caption>{t(copy('scores'))}</Caption>
 					<SimpleGrid cols={{ base: 2, sm: 4 }} spacing='xs'>
 						{DIMENSION_ORDER.map((key) => {
 							const meta = DIMENSION_META[key];
@@ -96,12 +99,12 @@ export function AutomatedCoachingMessage({
 						className={styles.focus}
 						data-color={DIMENSION_META[weakest.key].color}
 					>
-						<Caption>{t('details.automated.focusLabel')}</Caption>
+						<Caption>{t(copy('focusLabel'))}</Caption>
 						<Text size='md' fw={600}>
 							{t(DIMENSION_META[weakest.key].labelKey, { ns: 'qa.team' })}
 						</Text>
 						<Text size='sm' lh={1.6} maw='68ch'>
-							{t('details.automated.focusTip')}
+							{t(copy('focusTip'))}
 						</Text>
 					</Stack>
 				)}

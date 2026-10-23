@@ -169,7 +169,14 @@
 			"vsLastWeek": "vs last week",
 			"focusLabel": "Your focus this week",
 			"focusTip": "Pick one call from last week where it slipped and note what you would do differently.",
-			"critical": "What needs attention"
+			"critical": "What needs attention",
+			"triggered": {
+				"title": "A coaching message for you",
+				"greeting": "Hi {{name}}, a coaching rule picked up something in your latest calls ({{rule}}).",
+				"scores": "Where your scores stand",
+				"focusLabel": "What to work on now",
+				"focusTip": "Pick one of your latest calls where it slipped and note what you would do differently."
+			}
 		},
 		"coaching": {
 			"when": "When",
@@ -217,6 +224,7 @@
 			"events": {
 				"STARTED": "Ranking started",
 				"POSITION_CHANGED": "Position changed",
+				"JOINED_TOP3": "Joined the top 3",
 				"MILESTONE": "Milestone reached",
 				"ENDED": "Ranking ended",
 				"WON": "You won!"
