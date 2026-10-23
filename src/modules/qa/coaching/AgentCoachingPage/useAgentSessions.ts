@@ -1,0 +1,84 @@
+import { useMemo } from 'react';
+import type { CoachingActionItem, CoachingSessionRecord } from '~/models/qa';
+import { TODAY } from '~/modules/qa/analytics/constants';
+import { AGENT_PERSONA } from '~/modules/qa/lms/constants';
+import { TEAM_AGENTS } from '~/modules/qa/team/mockData';
+import {
+	selectCohorts,
+	selectSessions,
+	useCoachingStore,
+} from '~/stores/qa/coachingStore';
+import { sessionImpacts, type SessionImpactRow } from '../postCoaching';
+
+export interface OpenActionItem {
+	session: CoachingSessionRecord;
+	item: CoachingActionItem;
+}
+
+export interface AgentSessions {
+	/** Every session the agent is part of (own, group, cohort), newest first, PROPOSED excluded. */
+	all: CoachingSessionRecord[];
+	/** The soonest SCHEDULED session from today on, or null. */
+	next: CoachingSessionRecord | null;
+	/** Action items not yet acknowledged, with their session, oldest due first. */
+	openItems: OpenActionItem[];
+	/** Completed coach-led sessions whose commitment is not acknowledged yet. */
+	openCommitments: CoachingSessionRecord[];
+	/** Impact rows of the agent's completed coach-led sessions, newest first. */
+	impacts: SessionImpactRow[];
+	/** Coach-led sessions that happened or were missed, newest first (the table). */
+	history: CoachingSessionRecord[];
+}
+
+const HISTORY_STATUSES: CoachingSessionRecord['status'][] = [
+	'COMPLETED',
+	'MISSED',
+	'CANCELLED',
+];
+
+/** Everything the agent's Coaching page shows, derived from the coaching store. */
+export const useAgentSessions = (agentId = AGENT_PERSONA.id): AgentSessions => {
+	const sessions = useCoachingStore(selectSessions);
+	const cohorts = useCoachingStore(selectCohorts);
+
+	return useMemo(() => {
+		const myCohortIds = cohorts
+			.filter((c) => c.agentIds.includes(agentId))
+			.map((c) => c.id);
+		const all = sessions
+			.filter(
+				(s) =>
+					s.status !== 'PROPOSED' &&
+					(s.agentId === agentId ||
+						s.agentIds?.includes(agentId) ||
+						(s.cohortId && myCohortIds.includes(s.cohortId)))
+			)
+			.sort((a, b) => b.date.localeCompare(a.date));
+
+		const next =
+			all
+				.filter((s) => s.status === 'SCHEDULED' && s.date.slice(0, 10) >= TODAY)
+				.sort((a, b) => a.date.localeCompare(b.date))[0] ?? null;
+
+		const completed = all.filter((s) => s.status === 'COMPLETED');
+		const openItems = completed
+			.flatMap((session) =>
+				session.actionItems
+					.filter((item) => !item.acknowledgedByAgent)
+					.map((item) => ({ session, item }))
+			)
+			.sort((a, b) => a.item.dueDate.localeCompare(b.item.dueDate));
+		const openCommitments = completed.filter(
+			(s) => s.type !== 'AI_MESSAGE' && !s.agentCommitment.acknowledged
+		);
+
+		const impacts = sessionImpacts(all, TEAM_AGENTS)
+			.filter((r) => r.agentId === agentId && r.kind === 'COACH_LED')
+			.sort((a, b) => b.day.localeCompare(a.day));
+		const history = all.filter(
+			(s) => s.type !== 'AI_MESSAGE' && HISTORY_STATUSES.includes(s.status)
+		);
+
+		return { all, next, openItems, openCommitments, impacts, history };
+	}, [sessions, cohorts, agentId]);
+};

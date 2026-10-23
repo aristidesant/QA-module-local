@@ -190,7 +190,7 @@
 		},
 		"coaching": {
 			"title": "Coaching",
-			"description": "Tus sesiones agendadas, sesiones anteriores y los compromisos que has hecho.",
+			"description": "Tus sesiones con tu coach, lo que te comprometiste a hacer y qué cambió después de cada una.",
 			"status": {
 				"scheduled": "Agendada",
 				"completed": "Completada",
@@ -199,9 +199,6 @@
 			},
 			"acknowledge": "Me comprometo",
 			"acknowledged": "Comprometido el {{date}}",
-			"linkedMaterial": "Material relacionado",
-			"latestMessage": "Tu revisión semanal",
-			"latestMessageDescription": "Escrita a partir de tus resultados por el asistente de QA. Ábrela para leer el mensaje completo.",
 			"modality": {
 				"IN_PERSON": "Presencial",
 				"REMOTE": "Virtual"
@@ -219,6 +216,55 @@
 				"outcome": "Resultado",
 				"commitment": "Tu compromiso",
 				"notCommitted": "Todavía no te has comprometido."
+			},
+			"next": {
+				"title": "Próxima sesión",
+				"empty": "No hay sesión programada. Tu coach agendará una cuando haga falta.",
+				"material": "El material de esta sesión está en Mi aprendizaje",
+				"open": "Abrir sesión",
+				"morePoints_one": "+{{count}} punto más",
+				"morePoints_other": "+{{count}} puntos más"
+			},
+			"commitments": {
+				"title": "Compromisos abiertos",
+				"empty": "Nada pendiente. Todo lo que acordaste está confirmado.",
+				"from": "De {{topic}} · vence {{date}}",
+				"commitTo": "Confirma lo acordado en {{topic}}"
+			},
+			"committed": "Compromiso guardado",
+			"itemAcknowledged": "Acción confirmada",
+			"impact": {
+				"title": "Impacto de tus sesiones",
+				"description": "Tu puntaje en el aspecto de la sesión, la semana siguiente frente a la anterior.",
+				"summary": "{{improved}} mejoraron · {{same}} se mantuvieron · {{declined}} bajaron",
+				"measured_one": "de {{count}} medida",
+				"measured_other": "de {{count}} medidas",
+				"empty": "Aún no hay una sesión completada que medir.",
+				"overall": "General",
+				"verdict": {
+					"IMPROVED": "Mejoró",
+					"SAME": "Se mantuvo",
+					"DECLINED": "Bajó",
+					"PENDING": "Muy pronto"
+				}
+			},
+			"history": {
+				"title": "Historial",
+				"columns": {
+					"date": "Fecha",
+					"topic": "Tema",
+					"type": "Tipo",
+					"coach": "Coach",
+					"status": "Estado",
+					"outcome": "Resultado",
+					"impact": "Impacto"
+				}
+			},
+			"type": {
+				"ONE_ON_ONE": "1:1",
+				"SIDE_BY_SIDE": "Lado a lado",
+				"GROUP": "Grupal",
+				"MICRO": "Micro"
 			}
 		},
 		"rolePlay": {

@@ -1,6 +1,8 @@
 import {
 	Anchor,
 	Badge,
+	Button,
+	Checkbox,
 	Group,
 	Paper,
 	Stack,
@@ -20,6 +22,7 @@ import { AppDrawer } from '~/components/AppDrawer';
 import { SectionCard } from '~/components/SectionCard';
 import type { CoachingSessionRecord } from '~/models/qa';
 import { AreaBadge } from '~/modules/qa/lms/components/Badges';
+import { AGENT_LMS_PATH } from '~/modules/qa/lms/constants';
 import pointerStyles from '~/modules/qa/lms/components/Cards.module.css';
 import queueStyles from './Queue.module.css';
 import { SESSION_STATUS_COLOR } from '../constants';
@@ -28,18 +31,25 @@ interface AgentSessionDetailDrawerProps {
 	session: CoachingSessionRecord | null;
 	opened: boolean;
 	onClose: () => void;
+	/** When given, an unacknowledged action item shows a checkbox that calls this. */
+	onAcknowledgeItem?: (itemId: string) => void;
+	/** When given, an unacknowledged commitment shows a button that calls this. */
+	onCommit?: () => void;
 }
 
 /**
  * Read-only view of one coaching session for the agent — what they can review
  * after the fact (or ahead of an upcoming one). No edit, complete or status
  * controls: that belongs to the coach's own drawer (`SessionDetailDrawer`),
- * which this deliberately does not reuse.
+ * which this deliberately does not reuse. The agent can only acknowledge
+ * action items and their commitment.
  */
 export function AgentSessionDetailDrawer({
 	session,
 	opened,
 	onClose,
+	onAcknowledgeItem,
+	onCommit,
 }: AgentSessionDetailDrawerProps) {
 	const { t } = useTranslation('qa.lms');
 	const navigate = useNavigate();
@@ -180,6 +190,12 @@ export function AgentSessionDetailDrawer({
 							</SectionCard>
 						)}
 
+						{session.linkedAssignmentIds.length > 0 && (
+							<Anchor size='sm' onClick={() => navigate(AGENT_LMS_PATH)}>
+								{t('agent.coaching.next.material')}
+							</Anchor>
+						)}
+
 						<SectionCard
 							title={t('agent.coaching.detail.actionItems')}
 							padding='md'
@@ -199,18 +215,27 @@ export function AgentSessionDetailDrawer({
 														{t('due.date', { date: item.dueDate })}
 													</Text>
 												</Stack>
-												<ThemeIcon
-													size='sm'
-													radius='xl'
-													variant='light'
-													color={item.acknowledgedByAgent ? 'green' : 'gray'}
-												>
-													{item.acknowledgedByAgent ? (
-														<IconCheck size={12} />
-													) : (
-														<IconClock size={12} />
-													)}
-												</ThemeIcon>
+												{!item.acknowledgedByAgent && onAcknowledgeItem ? (
+													<Checkbox
+														size='sm'
+														checked={false}
+														onChange={() => onAcknowledgeItem(item.id)}
+														aria-label={item.text}
+													/>
+												) : (
+													<ThemeIcon
+														size='sm'
+														radius='xl'
+														variant='light'
+														color={item.acknowledgedByAgent ? 'green' : 'gray'}
+													>
+														{item.acknowledgedByAgent ? (
+															<IconCheck size={12} />
+														) : (
+															<IconClock size={12} />
+														)}
+													</ThemeIcon>
+												)}
 											</Group>
 										</Paper>
 									))}
@@ -243,6 +268,10 @@ export function AgentSessionDetailDrawer({
 											'',
 									})}
 								</Badge>
+							) : onCommit ? (
+								<Button size='xs' variant='light' onClick={onCommit}>
+									{t('agent.coaching.acknowledge')}
+								</Button>
 							) : (
 								<Text size='sm' c='dimmed'>
 									{t('agent.coaching.detail.notCommitted')}

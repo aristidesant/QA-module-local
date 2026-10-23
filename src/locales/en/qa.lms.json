@@ -190,7 +190,7 @@
 		},
 		"coaching": {
 			"title": "Coaching",
-			"description": "Your scheduled sessions, past sessions and the commitments you've made.",
+			"description": "Your sessions with your coach, what you committed to, and what changed after each one.",
 			"status": {
 				"scheduled": "Scheduled",
 				"completed": "Completed",
@@ -199,9 +199,6 @@
 			},
 			"acknowledge": "I commit to this",
 			"acknowledged": "Committed on {{date}}",
-			"linkedMaterial": "Linked material",
-			"latestMessage": "Your weekly review",
-			"latestMessageDescription": "Written from your results by the QA assistant. Open it to read the full message.",
 			"modality": {
 				"IN_PERSON": "In person",
 				"REMOTE": "Virtual"
@@ -219,6 +216,55 @@
 				"outcome": "Outcome",
 				"commitment": "Your commitment",
 				"notCommitted": "Not committed yet."
+			},
+			"next": {
+				"title": "Next session",
+				"empty": "No session scheduled. Your coach will book one when needed.",
+				"material": "Material for this session is in My Learning",
+				"open": "Open session",
+				"morePoints_one": "+{{count}} more point",
+				"morePoints_other": "+{{count}} more points"
+			},
+			"commitments": {
+				"title": "Open commitments",
+				"empty": "Nothing open. Everything you agreed to is acknowledged.",
+				"from": "From {{topic}} · due {{date}}",
+				"commitTo": "Commit to what you agreed in {{topic}}"
+			},
+			"committed": "Commitment saved",
+			"itemAcknowledged": "Action item acknowledged",
+			"impact": {
+				"title": "Impact of your sessions",
+				"description": "Your score on the session's aspect, the week after against the week before.",
+				"summary": "{{improved}} improved · {{same}} held · {{declined}} declined",
+				"measured_one": "of {{count}} measured",
+				"measured_other": "of {{count}} measured",
+				"empty": "No completed session to measure yet.",
+				"overall": "Overall",
+				"verdict": {
+					"IMPROVED": "Improved",
+					"SAME": "Held",
+					"DECLINED": "Declined",
+					"PENDING": "Too soon"
+				}
+			},
+			"history": {
+				"title": "History",
+				"columns": {
+					"date": "Date",
+					"topic": "Topic",
+					"type": "Type",
+					"coach": "Coach",
+					"status": "Status",
+					"outcome": "Outcome",
+					"impact": "Impact"
+				}
+			},
+			"type": {
+				"ONE_ON_ONE": "1:1",
+				"SIDE_BY_SIDE": "Side by side",
+				"GROUP": "Group",
+				"MICRO": "Micro"
 			}
 		},
 		"rolePlay": {
