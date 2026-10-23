@@ -430,6 +430,86 @@
 				"conversion": "Conversión"
 			},
 			"empty": "No hay llamadas en este período"
+		},
+		"insights": {
+			"view": {
+				"insights": "Insights",
+				"classic": "Clásico"
+			},
+			"glance": {
+				"title": "La operación de un vistazo",
+				"subtitle": "Cifras clave del periodo elegido frente al anterior"
+			},
+			"kpis": {
+				"calls": "Llamadas",
+				"effective": "Contactos efectivos",
+				"qa": "Puntaje QA",
+				"compliance": "Cumplimiento",
+				"sentiment": "Sentimiento del cliente",
+				"conversion": "Conversión"
+			},
+			"pts": "pts",
+			"vsPrevious": "vs periodo anterior",
+			"teamTrend": {
+				"title": "Tendencia por equipo",
+				"subtitle": "Haz clic en una línea para enfocar un equipo"
+			},
+			"gauges": {
+				"title": "Calidad ahora",
+				"subtitle": "QA, cumplimiento y sentimiento del cliente"
+			},
+			"treemap": {
+				"title": "Campañas por volumen y calidad",
+				"subtitle": "El área son las llamadas, el color es el QA. Haz clic en una campaña para filtrar.",
+				"tip": "{{calls}} llamadas · QA {{qa}}"
+			},
+			"flow": {
+				"title": "Flujo de llamadas",
+				"subtitle": "Equipo, resultado del contacto y resultado de la oferta",
+				"node": {
+					"EFFECTIVE": "Contactado",
+					"NOT_EFFECTIVE": "No contactado",
+					"SALE": "Venta",
+					"NO_SALE": "Sin venta",
+					"NO_OFFER": "Sin oferta"
+				}
+			},
+			"heatmap": {
+				"title": "Cuándo ocurren las llamadas",
+				"subtitle": "Día de la semana y hora (UTC)",
+				"calls_one": "{{count}} llamada",
+				"calls_other": "{{count}} llamadas",
+				"qa": "QA {{value}}",
+				"mode": {
+					"volume": "Volumen",
+					"qa": "QA"
+				}
+			},
+			"humanVsAi": {
+				"title": "Agentes humanos vs IA",
+				"subtitle": "Las mismas métricas, cada una en su escala"
+			},
+			"burnout": {
+				"title": "Riesgo de burnout",
+				"subtitle": "Agentes en riesgo hoy y emoción negativa por equipo",
+				"ofTotal": "en riesgo de {{total}}"
+			},
+			"esg": {
+				"title": "ESG",
+				"subtitle": "Ambiental, social y gobernanza"
+			},
+			"campaigns": {
+				"title": "Campañas",
+				"subtitle": "Haz clic en una fila para filtrar el tablero"
+			},
+			"filters": {
+				"team": "Equipo: {{name}}",
+				"campaign": "Campaña: {{name}}",
+				"clear": "Quitar todo"
+			},
+			"empty": "Ninguna llamada coincide con estos filtros.",
+			"hint": "Haz clic en un equipo o una campaña en cualquier visual para filtrar el resto; vuelve a hacer clic para quitar el filtro.",
+			"weekdays": ["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"]
 		}
 	}
 }

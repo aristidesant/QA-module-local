@@ -38,7 +38,7 @@ export interface TeamSeriesPoint {
 const round1 = (value: number) => Math.round(value * 10) / 10;
 
 /** `2026-W30` → `W30`; `2026-09-12` → `12 Sep`. */
-const periodLabel = (period: string): string => {
+export const periodLabel = (period: string): string => {
 	const week = period.match(/-W(\d{2})$/);
 	if (week) return `W${week[1]}`;
 	return new Date(`${period}T00:00:00Z`).toLocaleDateString('en', {

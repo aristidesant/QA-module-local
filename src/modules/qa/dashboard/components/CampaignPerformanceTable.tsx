@@ -12,6 +12,9 @@ import type { CampaignPerformanceRow } from '../operationManagerMetrics';
 
 interface CampaignPerformanceTableProps {
 	rows: CampaignPerformanceRow[];
+	/** The campaign the dashboard is filtered to, highlighted in the table. */
+	activeId?: string | null;
+	onRowClick?: (row: CampaignPerformanceRow) => void;
 }
 
 /** Label of each score band, in `qa.dashboard`. */
@@ -24,7 +27,7 @@ const BAND_LABEL_KEY = {
 /** Every campaign with calls in the window, with its quality, compliance, sentiment and conversion. */
 export const CampaignPerformanceTable: React.FC<
 	CampaignPerformanceTableProps
-> = ({ rows }) => {
+> = ({ rows, activeId = null, onRowClick }) => {
 	const { t } = useTranslation('qa.dashboard');
 	const thresholds = useSettingsStore(selectThresholds);
 
@@ -117,6 +120,8 @@ export const CampaignPerformanceTable: React.FC<
 			columns={columns}
 			data={rows}
 			getRowId={(row) => row.id}
+			selectedRowId={activeId}
+			onRowClick={onRowClick}
 			emptyMessage={t('operationManager.campaigns.empty')}
 		/>
 	);

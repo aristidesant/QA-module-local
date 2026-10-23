@@ -430,6 +430,86 @@
 				"conversion": "Conversion"
 			},
 			"empty": "No calls in this period"
+		},
+		"insights": {
+			"view": {
+				"insights": "Insights",
+				"classic": "Classic"
+			},
+			"glance": {
+				"title": "Operation at a glance",
+				"subtitle": "Headline numbers of the selected period against the one before"
+			},
+			"kpis": {
+				"calls": "Calls",
+				"effective": "Effective contacts",
+				"qa": "QA score",
+				"compliance": "Compliance",
+				"sentiment": "Customer sentiment",
+				"conversion": "Conversion"
+			},
+			"pts": "pts",
+			"vsPrevious": "vs previous period",
+			"teamTrend": {
+				"title": "Team trend",
+				"subtitle": "Click a line to focus a team"
+			},
+			"gauges": {
+				"title": "Quality now",
+				"subtitle": "QA, compliance and customer sentiment"
+			},
+			"treemap": {
+				"title": "Campaigns by volume and quality",
+				"subtitle": "Area is calls, colour is QA. Click a campaign to filter.",
+				"tip": "{{calls}} calls · QA {{qa}}"
+			},
+			"flow": {
+				"title": "Call flow",
+				"subtitle": "Team, contact outcome and result of the offer",
+				"node": {
+					"EFFECTIVE": "Reached",
+					"NOT_EFFECTIVE": "Not reached",
+					"SALE": "Sale",
+					"NO_SALE": "No sale",
+					"NO_OFFER": "No offer"
+				}
+			},
+			"heatmap": {
+				"title": "When calls happen",
+				"subtitle": "Weekday and hour (UTC)",
+				"calls_one": "{{count}} call",
+				"calls_other": "{{count}} calls",
+				"qa": "QA {{value}}",
+				"mode": {
+					"volume": "Volume",
+					"qa": "QA"
+				}
+			},
+			"humanVsAi": {
+				"title": "Human vs AI agents",
+				"subtitle": "Same metrics, each on its own scale"
+			},
+			"burnout": {
+				"title": "Burnout risk",
+				"subtitle": "Agents at risk today and negative emotion by team",
+				"ofTotal": "at risk of {{total}}"
+			},
+			"esg": {
+				"title": "ESG",
+				"subtitle": "Environmental, social and governance"
+			},
+			"campaigns": {
+				"title": "Campaigns",
+				"subtitle": "Click a row to filter the dashboard"
+			},
+			"filters": {
+				"team": "Team: {{name}}",
+				"campaign": "Campaign: {{name}}",
+				"clear": "Clear all"
+			},
+			"empty": "No calls match these filters.",
+			"hint": "Click a team or a campaign in any visual to filter the rest; click it again to clear.",
+			"weekdays": ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
 		}
 	}
 }
