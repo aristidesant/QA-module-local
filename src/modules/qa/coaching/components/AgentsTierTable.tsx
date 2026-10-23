@@ -4,15 +4,8 @@ import { useTranslation } from 'react-i18next';
 import BaseTable, {
 	type BaseTableColumnDef,
 } from '~/components/BaseTable/BaseTable';
-import { getScoreBandColor } from '~/modules/qa/constants/badgeColors';
 import type { AgentCoachingRow } from '../agentRows';
-import {
-	SCORECARD_DIMENSION_META,
-	SCORECARD_DIMENSION_ORDER,
-	TIER_META,
-	TIER_ORDER,
-	type ScorecardDimension,
-} from '../scorecard';
+import { TIER_META, TIER_ORDER } from '../scorecard';
 import {
 	ScorecardBadge,
 	ScorecardDimensionBadge,
@@ -27,27 +20,9 @@ interface AgentsTierTableProps {
 	onOpen: (agentId: string) => void;
 }
 
-/** The Agents tab table: group, scorecard, aspects, time in group and pending session for every agent passed in. */
+/** The Agents tab table: group, scorecard, time in group, weakest aspect and pending session for every agent passed in. */
 export function AgentsTierTable({ rows, onOpen }: AgentsTierTableProps) {
 	const { t } = useTranslation(['qa.coaching', 'qa.lms']);
-
-	const dimensionColumn = (dimension: ScorecardDimension) =>
-		helper.accessor((r) => r.scorecard?.dimensions[dimension] ?? -1, {
-			id: dimension,
-			header: t(SCORECARD_DIMENSION_META[dimension].shortLabelKey),
-			cell: (info) => {
-				const v = info.getValue();
-				return v < 0 ? (
-					<Text size='sm' c='dimmed'>
-						—
-					</Text>
-				) : (
-					<Text size='sm' fw={500} c={`${getScoreBandColor(v)}.7`}>
-						{v}
-					</Text>
-				);
-			},
-		}) as BaseTableColumnDef<AgentCoachingRow>;
 
 	const columns: BaseTableColumnDef<AgentCoachingRow>[] = [
 		helper.accessor('name', {
@@ -66,11 +41,11 @@ export function AgentsTierTable({ rows, onOpen }: AgentsTierTableProps) {
 				cell: (info) => {
 					const tier = info.row.original.tier;
 					return tier ? (
-						<Badge size='xs' variant='light' color={TIER_META[tier].color}>
+						<Badge size='xs' variant='light' color='gray'>
 							{t(TIER_META[tier].labelKey)}
 						</Badge>
 					) : (
-						<Badge size='xs' variant='light' color='gray'>
+						<Badge size='xs' variant='outline' color='gray'>
 							{t('agents.tiers.noData.title')}
 						</Badge>
 					);
@@ -89,7 +64,6 @@ export function AgentsTierTable({ rows, onOpen }: AgentsTierTableProps) {
 			header: t('agents.columns.tenure'),
 			cell: (info) => <TierTenureText tenure={info.row.original.tenure} />,
 		}) as BaseTableColumnDef<AgentCoachingRow>,
-		...SCORECARD_DIMENSION_ORDER.map(dimensionColumn),
 		helper.display({
 			id: 'weakest',
 			header: t('agents.columns.weakest'),
@@ -103,7 +77,11 @@ export function AgentsTierTable({ rows, onOpen }: AgentsTierTableProps) {
 					);
 				return (
 					<Group gap={6} wrap='nowrap'>
-						<ScorecardDimensionBadge dimension={w.dimension} size='xs' />
+						<ScorecardDimensionBadge
+							dimension={w.dimension}
+							size='xs'
+							neutral
+						/>
 						<Text size='xs' c='dimmed'>
 							{w.value}
 						</Text>
@@ -122,7 +100,7 @@ export function AgentsTierTable({ rows, onOpen }: AgentsTierTableProps) {
 			header: t('agents.columns.pendingSession'),
 			cell: (info) =>
 				info.getValue() ? (
-					<Badge size='xs' variant='light'>
+					<Badge size='xs' variant='light' color='gray'>
 						{t('agents.pendingSession.yes')}
 					</Badge>
 				) : (

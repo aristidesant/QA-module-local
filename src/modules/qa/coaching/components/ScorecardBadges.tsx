@@ -85,14 +85,17 @@ export function ScorecardBadge({
 export function ScorecardDimensionBadge({
 	dimension,
 	size = 'sm',
+	neutral = false,
 }: {
 	dimension: ScorecardDimension;
 	size?: BadgeSize;
+	/** Grey instead of the aspect's own color, where color is kept for the scores. */
+	neutral?: boolean;
 }) {
 	const { t } = useTranslation('qa.coaching');
 	const meta = SCORECARD_DIMENSION_META[dimension];
 	return (
-		<Badge size={size} variant='light' color={meta.color}>
+		<Badge size={size} variant='light' color={neutral ? 'gray' : meta.color}>
 			{t(meta.labelKey)}
 		</Badge>
 	);
