@@ -209,24 +209,30 @@
 				"title": "Next session",
 				"empty": "No session scheduled. Your coach will book one when needed.",
 				"material": "Material for this session is in My Learning",
-				"open": "Open session"
+				"relative": {
+					"today": "Today",
+					"tomorrow": "Tomorrow",
+					"inDays_one": "In {{count}} day",
+					"inDays_other": "In {{count}} days"
+				},
+				"with": "with {{name}}",
+				"inPerson": "In person, {{place}}",
+				"inPersonNoPlace": "In person",
+				"remote": "Virtual",
+				"join": "Join call",
+				"view": "View session",
+				"points_one": "{{count}} talking point to review",
+				"points_other": "{{count}} talking points to review",
+				"noPoints": "No talking points yet",
+				"duration": "{{count}} min"
 			},
 			"commitments": {
-				"title": "Open commitments",
 				"empty": "Nothing open. Everything you agreed to is acknowledged.",
-				"from": "From {{topic}} · due {{date}}",
 				"commitTo": "Commit to what you agreed in {{topic}}"
 			},
 			"committed": "Commitment saved",
 			"itemAcknowledged": "Action item acknowledged",
 			"impact": {
-				"title": "Impact of your sessions",
-				"description": "Your score on the session's aspect, the week after against the week before.",
-				"summary": "{{improved}} improved · {{same}} held · {{declined}} declined",
-				"measured_one": "of {{count}} measured",
-				"measured_other": "of {{count}} measured",
-				"empty": "No completed session to measure yet.",
-				"overall": "Overall",
 				"verdict": {
 					"IMPROVED": "Improved",
 					"SAME": "Held",
@@ -244,13 +250,54 @@
 					"status": "Status",
 					"outcome": "Outcome",
 					"impact": "Impact"
-				}
+				},
+				"period": "Period",
+				"periodPlaceholder": "Filter by period",
+				"noMatches": "No sessions in this period.",
+				"impactSummary": "Scores improved after {{improved}} of {{measured}} sessions",
+				"impactSummaryNone": "No session measured yet."
 			},
 			"type": {
 				"ONE_ON_ONE": "1:1",
 				"SIDE_BY_SIDE": "Side by side",
 				"GROUP": "Group",
 				"MICRO": "Micro"
+			},
+			"headline": {
+				"withNext": "Next session {{when}}. {{count}} pending for you.",
+				"noNext": "No session scheduled. {{count}} pending for you.",
+				"clear": "Next session {{when}}. Nothing pending.",
+				"clearNoNext": "No session scheduled. Nothing pending.",
+				"when": {
+					"today": "today",
+					"tomorrow": "tomorrow",
+					"inDays_one": "in {{count}} day",
+					"inDays_other": "in {{count}} days"
+				}
+			},
+			"pending": {
+				"title": "Pending for you",
+				"summaryNoOverdue": "{{count}} pending",
+				"overdueBy_one": "Overdue by {{count}} day",
+				"overdueBy_other": "Overdue by {{count}} days",
+				"dueToday": "Due today",
+				"dueIn_one": "Due in {{count}} day",
+				"dueIn_other": "Due in {{count}} days",
+				"dueOn": "Due {{date}}",
+				"needsCommitment": "Needs your commitment",
+				"from": "From {{topic}}, {{date}}",
+				"acknowledge": "Acknowledge",
+				"overdueCount": "{{count}} overdue"
+			},
+			"recent": {
+				"title": "Your last sessions",
+				"empty": "No completed session yet.",
+				"progress": "{{done}} of {{total}} items acknowledged",
+				"noItems": "No action items from this session.",
+				"committed": "Committed on {{date}}",
+				"commitmentPending": "Commitment pending",
+				"itemDue": "Due {{date}}",
+				"itemAcknowledged": "Acknowledged"
 			}
 		},
 		"rolePlay": {

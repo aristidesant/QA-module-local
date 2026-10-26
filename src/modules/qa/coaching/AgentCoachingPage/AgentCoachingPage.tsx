@@ -8,19 +8,20 @@ import { notifySuccess } from '~/modules/qa/utils/notifications';
 import { useCoachingStore } from '~/stores/qa/coachingStore';
 import { AgentSessionDetailDrawer } from '../components/AgentSessionDetailDrawer';
 import { NextSessionCard } from './NextSessionCard';
-import { OpenCommitmentsCard } from './OpenCommitmentsCard';
+import { PendingCard } from './PendingCard';
+import { RecentSessionsCard } from './RecentSessionsCard';
 import { SessionHistoryTable } from './SessionHistoryTable';
-import { SessionImpactCard } from './SessionImpactCard';
 import { useAgentSessions } from './useAgentSessions';
+import { whenPhrase } from './relativeDay';
 
 /**
- * The agent's own Coaching page: the next session, what they still have to
- * acknowledge, what changed after past sessions and the full history. Learning
- * material stays in My Learning; this page only tracks sessions and commitments.
+ * The agent's own Coaching page, ordered by urgency: the next session, what is
+ * still pending, what the last sessions assigned, then the full history.
+ * Learning material stays in My Learning; this page only tracks sessions and commitments.
  */
 export default function AgentCoachingPage() {
 	const { t } = useTranslation('qa.lms');
-	const { all, next, openItems, openCommitments, impacts, history } =
+	const { all, next, pending, overdueCount, recent, impacts, history } =
 		useAgentSessions();
 	const acknowledgeActionItem = useCoachingStore(
 		(s) => s.acknowledgeActionItem
@@ -43,33 +44,43 @@ export default function AgentCoachingPage() {
 		notifySuccess(t('agent.coaching.itemAcknowledged'));
 	};
 
+	// One sentence that answers "when is it and what do I owe".
+	const when = next ? whenPhrase(t, next.date) : '';
+	const headline = next
+		? pending.length > 0
+			? t('agent.coaching.headline.withNext', { when, count: pending.length })
+			: t('agent.coaching.headline.clear', { when })
+		: pending.length > 0
+			? t('agent.coaching.headline.noNext', { count: pending.length })
+			: t('agent.coaching.headline.clearNoNext');
+
 	return (
 		<ContentContainer
 			contentWidth='full'
 			title={t('agent.coaching.title')}
-			description={t('agent.coaching.description')}
+			description={headline}
 		>
 			{all.length === 0 ? (
 				<EmptyState message={t('agent.coaching.empty')} />
 			) : (
 				<Stack gap='md'>
+					<NextSessionCard session={next} onOpen={(s) => setDetailId(s.id)} />
 					<Grid>
 						<Grid.Col span={{ base: 12, md: 7 }}>
-							<NextSessionCard
-								session={next}
-								onOpen={(s) => setDetailId(s.id)}
-							/>
-						</Grid.Col>
-						<Grid.Col span={{ base: 12, md: 5 }}>
-							<OpenCommitmentsCard
-								items={openItems}
-								commitments={openCommitments}
+							<PendingCard
+								pending={pending}
+								overdueCount={overdueCount}
 								onAcknowledgeItem={acknowledgeItem}
 								onCommit={commit}
 							/>
 						</Grid.Col>
+						<Grid.Col span={{ base: 12, md: 5 }}>
+							<RecentSessionsCard
+								sessions={recent}
+								onOpen={(s) => setDetailId(s.id)}
+							/>
+						</Grid.Col>
 					</Grid>
-					<SessionImpactCard rows={impacts} onOpen={setDetailId} />
 					<SessionHistoryTable
 						sessions={history}
 						impacts={impacts}

@@ -1,0 +1,27 @@
+/* The hero: when on the left, what and where on the right, split by a hairline. */
+.grid {
+	display: grid;
+	grid-template-columns: minmax(0, 240px) minmax(0, 1fr);
+	gap: var(--mantine-spacing-xl);
+	align-items: start;
+}
+
+.detail {
+	padding-left: var(--mantine-spacing-xl);
+	border-left: 1px solid var(--surface-border);
+	min-width: 0;
+}
+
+@media (max-width: 62em) {
+	.grid {
+		grid-template-columns: 1fr;
+		gap: var(--mantine-spacing-md);
+	}
+
+	.detail {
+		padding-left: 0;
+		padding-top: var(--mantine-spacing-md);
+		border-left: none;
+		border-top: 1px solid var(--surface-border);
+	}
+}

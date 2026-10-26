@@ -1,4 +1,6 @@
+import { useMemo, useState } from 'react';
 import { Badge, Group, Text } from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
 import { IconHistory } from '@tabler/icons-react';
 import { createColumnHelper } from '@tanstack/react-table';
 import dayjs from 'dayjs';
@@ -8,12 +10,18 @@ import BaseTable, {
 } from '~/components/BaseTable/BaseTable';
 import { SectionCard } from '~/components/SectionCard';
 import type { CoachingSessionRecord } from '~/models/qa';
-import { AreaBadge } from '~/modules/qa/lms/components/Badges';
+import { TODAY } from '~/modules/qa/analytics/constants';
+import { AreaMark } from '~/modules/qa/lms/components/AreaMark';
 import { ImpactBadge } from '../components/ImpactBadge';
 import { SESSION_STATUS_COLOR } from '../constants';
-import type { SessionImpactRow } from '../postCoaching';
+import {
+	summarizeSessionImpacts,
+	type SessionImpactRow,
+} from '../postCoaching';
 
 const helper = createColumnHelper<CoachingSessionRecord>();
+
+type DateRange = [string | null, string | null];
 
 interface SessionHistoryTableProps {
 	sessions: CoachingSessionRecord[];
@@ -21,13 +29,33 @@ interface SessionHistoryTableProps {
 	onOpen: (session: CoachingSessionRecord) => void;
 }
 
-/** Every coach-led session that already happened (or was missed), newest first. */
+/** Every coach-led session that already happened (or was missed), newest first, filterable by period. */
 export function SessionHistoryTable({
 	sessions,
 	impacts,
 	onOpen,
 }: SessionHistoryTableProps) {
 	const { t } = useTranslation('qa.lms');
+	const [range, setRange] = useState<DateRange>([null, null]);
+
+	const summary = summarizeSessionImpacts(impacts)[0];
+	const impactSummary =
+		summary.measured === 0
+			? t('agent.coaching.history.impactSummaryNone')
+			: t('agent.coaching.history.impactSummary', {
+					improved: summary.improved,
+					measured: summary.measured,
+				});
+
+	const filtered = useMemo(() => {
+		const [from, to] = range;
+		return sessions.filter((s) => {
+			const day = s.date.slice(0, 10);
+			if (from && day < from) return false;
+			if (to && day > to) return false;
+			return true;
+		});
+	}, [sessions, range]);
 
 	const columns: BaseTableColumnDef<CoachingSessionRecord>[] = [
 		helper.accessor('date', {
@@ -44,7 +72,7 @@ export function SessionHistoryTable({
 						{info.getValue()}
 					</Text>
 					{info.row.original.area && (
-						<AreaBadge
+						<AreaMark
 							area={info.row.original.area}
 							subItem={info.row.original.subItem}
 							size='xs'
@@ -89,7 +117,14 @@ export function SessionHistoryTable({
 			cell: (info) => {
 				const row = impacts.find((r) => r.sessionId === info.row.original.id);
 				return row ? (
-					<ImpactBadge verdict={row.verdict} />
+					<Group gap='xs' wrap='nowrap'>
+						{row.before !== null && row.after !== null && (
+							<Text size='xs' c='dimmed'>
+								{row.before} → {row.after}
+							</Text>
+						)}
+						<ImpactBadge verdict={row.verdict} />
+					</Group>
 				) : (
 					<Text size='sm' c='dimmed'>
 						—
@@ -100,16 +135,38 @@ export function SessionHistoryTable({
 	];
 
 	return (
-		<SectionCard title={t('agent.coaching.history.title')} icon={IconHistory}>
+		<SectionCard
+			title={t('agent.coaching.history.title')}
+			icon={IconHistory}
+			description={impactSummary}
+			headerActions={
+				<DatePickerInput
+					type='range'
+					size='sm'
+					aria-label={t('agent.coaching.history.period')}
+					placeholder={t('agent.coaching.history.periodPlaceholder')}
+					value={range}
+					onChange={(value) => setRange(value as DateRange)}
+					defaultDate={TODAY}
+					valueFormat='D MMM YYYY'
+					clearable
+					w={260}
+				/>
+			}
+		>
 			<BaseTable<CoachingSessionRecord>
-				data={sessions}
+				data={filtered}
 				columns={columns}
 				getRowId={(r) => r.id}
 				density='compact'
 				enablePagination
 				pageSize={8}
 				showPaginationControls
-				emptyMessage={t('agent.coaching.empty')}
+				emptyMessage={
+					sessions.length === 0
+						? t('agent.coaching.empty')
+						: t('agent.coaching.history.noMatches')
+				}
 				onRowClick={onOpen}
 			/>
 		</SectionCard>

@@ -1,0 +1,30 @@
+/* One recent session: a real button so it opens from the keyboard too. */
+.session {
+	display: block;
+	width: 100%;
+	text-align: left;
+	padding: var(--mantine-spacing-sm) var(--mantine-spacing-xs);
+	border-radius: var(--mantine-radius-sm);
+}
+
+.session + .session {
+	border-top: 1px solid var(--surface-border);
+	border-top-left-radius: 0;
+	border-top-right-radius: 0;
+}
+
+.session:hover {
+	background-color: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-6)
+	);
+}
+
+.session:focus-visible {
+	outline: 2px solid var(--mantine-primary-color-filled);
+	outline-offset: -2px;
+}
+
+.item {
+	min-width: 0;
+}

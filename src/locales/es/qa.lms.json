@@ -209,24 +209,30 @@
 				"title": "Próxima sesión",
 				"empty": "No hay sesión programada. Tu coach agendará una cuando haga falta.",
 				"material": "El material de esta sesión está en Mi aprendizaje",
-				"open": "Abrir sesión"
+				"relative": {
+					"today": "Hoy",
+					"tomorrow": "Mañana",
+					"inDays_one": "En {{count}} día",
+					"inDays_other": "En {{count}} días"
+				},
+				"with": "con {{name}}",
+				"inPerson": "Presencial, {{place}}",
+				"inPersonNoPlace": "Presencial",
+				"remote": "Virtual",
+				"join": "Unirme a la llamada",
+				"view": "Ver sesión",
+				"points_one": "{{count}} punto para revisar",
+				"points_other": "{{count}} puntos para revisar",
+				"noPoints": "Aún no hay puntos a tratar",
+				"duration": "{{count}} min"
 			},
 			"commitments": {
-				"title": "Compromisos abiertos",
 				"empty": "Nada pendiente. Todo lo que acordaste está confirmado.",
-				"from": "De {{topic}} · vence {{date}}",
 				"commitTo": "Confirma lo acordado en {{topic}}"
 			},
 			"committed": "Compromiso guardado",
 			"itemAcknowledged": "Acción confirmada",
 			"impact": {
-				"title": "Impacto de tus sesiones",
-				"description": "Tu puntaje en el aspecto de la sesión, la semana siguiente frente a la anterior.",
-				"summary": "{{improved}} mejoraron · {{same}} se mantuvieron · {{declined}} bajaron",
-				"measured_one": "de {{count}} medida",
-				"measured_other": "de {{count}} medidas",
-				"empty": "Aún no hay una sesión completada que medir.",
-				"overall": "General",
 				"verdict": {
 					"IMPROVED": "Mejoró",
 					"SAME": "Se mantuvo",
@@ -244,13 +250,54 @@
 					"status": "Estado",
 					"outcome": "Resultado",
 					"impact": "Impacto"
-				}
+				},
+				"period": "Periodo",
+				"periodPlaceholder": "Filtrar por periodo",
+				"noMatches": "No hay sesiones en este periodo.",
+				"impactSummary": "El puntaje mejoró tras {{improved}} de {{measured}} sesiones",
+				"impactSummaryNone": "Aún no hay sesiones medidas."
 			},
 			"type": {
 				"ONE_ON_ONE": "1:1",
 				"SIDE_BY_SIDE": "Lado a lado",
 				"GROUP": "Grupal",
 				"MICRO": "Micro"
+			},
+			"headline": {
+				"withNext": "Próxima sesión {{when}}. {{count}} pendientes para ti.",
+				"noNext": "No hay sesión programada. {{count}} pendientes para ti.",
+				"clear": "Próxima sesión {{when}}. Nada pendiente.",
+				"clearNoNext": "No hay sesión programada. Nada pendiente.",
+				"when": {
+					"today": "hoy",
+					"tomorrow": "mañana",
+					"inDays_one": "en {{count}} día",
+					"inDays_other": "en {{count}} días"
+				}
+			},
+			"pending": {
+				"title": "Pendiente para ti",
+				"summaryNoOverdue": "{{count}} pendientes",
+				"overdueBy_one": "Vencido hace {{count}} día",
+				"overdueBy_other": "Vencido hace {{count}} días",
+				"dueToday": "Vence hoy",
+				"dueIn_one": "Vence en {{count}} día",
+				"dueIn_other": "Vence en {{count}} días",
+				"dueOn": "Vence el {{date}}",
+				"needsCommitment": "Falta tu compromiso",
+				"from": "De {{topic}}, {{date}}",
+				"acknowledge": "Confirmar",
+				"overdueCount": "{{count}} vencidos"
+			},
+			"recent": {
+				"title": "Tus últimas sesiones",
+				"empty": "Todavía no hay sesiones completadas.",
+				"progress": "{{done}} de {{total}} tareas confirmadas",
+				"noItems": "Esta sesión no dejó tareas.",
+				"committed": "Comprometido el {{date}}",
+				"commitmentPending": "Compromiso pendiente",
+				"itemDue": "Vence el {{date}}",
+				"itemAcknowledged": "Confirmada"
 			}
 		},
 		"rolePlay": {
