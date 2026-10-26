@@ -22,11 +22,15 @@ import RuleTypePickerModal from '../components/RuleTypePickerModal';
 import RulesTab from '../components/RulesTab';
 import BadgesTab from '../components/BadgesTab';
 import { TemplatesTab } from '../components/TemplatesTab';
-import { RuleEditorDrawer } from '../components/RuleEditorDrawer';
 import ActivityTab from '../components/ActivityTab';
 import ActivityDetailDrawer from '../components/ActivityDetailDrawer';
 import { useTriggerRulesStore } from '~/stores/qa/triggerRulesStore';
-import { triggerRulePath, triggersRoleFromPath } from '../constants';
+import {
+	triggerRuleEditPath,
+	triggerRuleNewPath,
+	triggerRulePath,
+	triggersRoleFromPath,
+} from '../constants';
 import type {
 	RuleKind,
 	RuleType,
@@ -61,6 +65,7 @@ export default function TriggersPage() {
 	const role = location.pathname.includes('/qa/supervisor/')
 		? 'supervisor'
 		: 'qaManager';
+	const triggersRole = triggersRoleFromPath(location.pathname);
 	const inboxPath =
 		role === 'supervisor' ? '/qa/supervisor/inbox' : '/qa/qa-manager/inbox';
 	const defaultSupervisorIds = role === 'supervisor' ? ['SUP-001'] : [];
@@ -71,13 +76,6 @@ export default function TriggersPage() {
 	);
 	const [pickerOpened, setPickerOpened] = useState(false);
 	const [pickerKind, setPickerKind] = useState<RuleKind>('ALERT');
-	const [editorState, setEditorState] = useState<{
-		opened: boolean;
-		mode: 'create' | 'edit';
-		type: RuleType;
-		rule: TriggerRule | null;
-		badgePreset?: Partial<any>;
-	}>({ opened: false, mode: 'create', type: 'METRIC_ALERT', rule: null });
 
 	const [detailActivityEntry, setDetailActivityEntry] =
 		useState<TriggerActivityEntry | null>(null);
@@ -95,33 +93,24 @@ export default function TriggersPage() {
 	}, [rules, badges, activity]);
 
 	// Memoized callbacks to prevent unnecessary re-renders of child components
-	const handlePickerSelect = useCallback((type: RuleType) => {
-		// Note: editorState will be used in Task 6 for RuleEditorDrawer
-		setEditorState({
-			opened: true,
-			mode: 'create',
-			type,
-			rule: null,
-		});
-		// Switch tab to matching kind
-		const kind =
-			type === 'METRIC_ALERT' ||
-			type === 'TREND_WARNING' ||
-			type === 'WEEKLY_SUMMARY' ||
-			type === 'BURNOUT_RISK'
-				? 'alerts'
-				: 'recognition';
-		setTab(kind);
-	}, []);
+	const handlePickerSelect = useCallback(
+		(type: RuleType) => {
+			navigate(triggerRuleNewPath(triggersRole, type));
+		},
+		[navigate, triggersRole]
+	);
 
 	const handleCreateRule = useCallback((kind: RuleKind) => {
 		setPickerKind(kind);
 		setPickerOpened(true);
 	}, []);
 
-	const handleEditRule = useCallback((rule: TriggerRule) => {
-		setEditorState({ opened: true, mode: 'edit', type: rule.type, rule });
-	}, []);
+	const handleEditRule = useCallback(
+		(rule: TriggerRule) => {
+			navigate(triggerRuleEditPath(triggersRole, rule.id));
+		},
+		[navigate, triggersRole]
+	);
 
 	return (
 		<TriggersPageContext.Provider
@@ -232,20 +221,17 @@ export default function TriggersPage() {
 										)
 									)
 								}
-								onCreateRuleForBadge={(badge) => {
-									setTab('recognition');
-									setEditorState({
-										opened: true,
-										mode: 'create',
-										type: 'BADGE_AWARD',
-										rule: null,
-										badgePreset: {
-											badgeId: badge.id,
-											conditions: badge.conditions,
-											conditionLogic: badge.conditionLogic,
+								onCreateRuleForBadge={(badge) =>
+									navigate(triggerRuleNewPath(triggersRole, 'BADGE_AWARD'), {
+										state: {
+											preset: {
+												badgeId: badge.id,
+												conditions: badge.conditions,
+												conditionLogic: badge.conditionLogic,
+											},
 										},
-									});
-								}}
+									})
+								}
 							/>
 						</Tabs.Panel>
 
@@ -269,35 +255,6 @@ export default function TriggersPage() {
 				onClose={() => setPickerOpened(false)}
 				kinds={[pickerKind]}
 				onSelect={handlePickerSelect}
-			/>
-
-			{/* Rule Editor Drawer */}
-			<RuleEditorDrawer
-				opened={editorState.opened}
-				mode={editorState.mode}
-				type={editorState.type}
-				rule={editorState.rule}
-				onClose={() =>
-					setEditorState({
-						opened: false,
-						mode: 'create',
-						type: 'METRIC_ALERT',
-						rule: null,
-					})
-				}
-				onSaved={(rule) => {
-					setEditorState({
-						opened: false,
-						mode: 'create',
-						type: 'METRIC_ALERT',
-						rule: null,
-					});
-					if (editorState.mode === 'create') {
-						const kind = rule.kind === 'ALERT' ? 'alerts' : 'recognition';
-						setTab(kind);
-					}
-				}}
-				role={role}
 			/>
 
 			{/* Activity Detail Drawer */}

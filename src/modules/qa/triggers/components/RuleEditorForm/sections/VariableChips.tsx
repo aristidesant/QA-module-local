@@ -6,7 +6,6 @@ interface VariableChipsProps {
 }
 
 export function VariableChips({ onInsert }: VariableChipsProps) {
-
 	return (
 		<Group gap={4}>
 			{TEMPLATE_VARIABLES.map((variable) => (

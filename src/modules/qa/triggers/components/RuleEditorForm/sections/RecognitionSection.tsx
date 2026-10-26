@@ -30,9 +30,7 @@ export function RecognitionSection({ form }: RecognitionSectionProps) {
 						placeholder={t('editor.fields.badgePlaceholder')}
 						data={badgeOptions}
 						value={form.values.badgeId}
-						onChange={(v) =>
-							form.setFieldValue('badgeId', v)
-						}
+						onChange={(v) => form.setFieldValue('badgeId', v)}
 						searchable
 						clearable
 					/>
@@ -40,16 +38,16 @@ export function RecognitionSection({ form }: RecognitionSectionProps) {
 
 				<Grid.Col span={{ base: 12, md: 6 }}>
 					<Stack gap='xs'>
-						<Text size='sm' fw={500}>{t('editor.fields.visibility')}</Text>
+						<Text size='sm' fw={500}>
+							{t('editor.fields.visibility')}
+						</Text>
 						<SegmentedControl
 							data={[
 								{ label: t('visibility.PRIVATE'), value: 'PRIVATE' },
 								{ label: t('visibility.TEAM_FEED'), value: 'TEAM_FEED' },
 							]}
 							value={form.values.visibility}
-							onChange={(v) =>
-								form.setFieldValue('visibility', v as any)
-							}
+							onChange={(v) => form.setFieldValue('visibility', v as any)}
 							fullWidth
 						/>
 					</Stack>
@@ -64,34 +62,25 @@ export function RecognitionSection({ form }: RecognitionSectionProps) {
 					<div
 						style={{
 							display: 'grid',
-							gridTemplateColumns:
-								'repeat(auto-fill, minmax(44px, 1fr))',
+							gridTemplateColumns: 'repeat(auto-fill, minmax(44px, 1fr))',
 							gap: 'var(--mantine-spacing-xs)',
 						}}
 					>
 						{CELEBRATION_EMOJIS.map((emoji) => (
 							<button
 								key={emoji}
-								onClick={() =>
-									form.setFieldValue(
-										'celebrationEmoji',
-										emoji
-									)
-								}
+								onClick={() => form.setFieldValue('celebrationEmoji', emoji)}
 								style={{
 									border:
-										form.values.celebrationEmoji ===
-										emoji
+										form.values.celebrationEmoji === emoji
 											? '2px solid var(--mantine-color-blue-5)'
 											: '1px solid var(--mantine-color-gray-3)',
-									borderRadius:
-										'var(--mantine-radius-sm)',
+									borderRadius: 'var(--mantine-radius-sm)',
 									padding: '8px',
 									fontSize: '24px',
 									cursor: 'pointer',
 									backgroundColor:
-										form.values.celebrationEmoji ===
-										emoji
+										form.values.celebrationEmoji === emoji
 											? 'light-dark(var(--mantine-color-blue-0), var(--mantine-color-blue-9))'
 											: 'transparent',
 									transition: 'all 200ms ease',

@@ -1,7 +1,10 @@
 import { Grid, MultiSelect } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import type { UseFormReturnType } from '@mantine/form';
-import { CAMPAIGN_TYPES, LINES_OF_BUSINESS } from '~/modules/qa/triggers/constants';
+import {
+	CAMPAIGN_TYPES,
+	LINES_OF_BUSINESS,
+} from '~/modules/qa/triggers/constants';
 import {
 	TRIGGER_AGENT_OPTIONS,
 	TRIGGER_CAMPAIGNS,
@@ -42,9 +45,7 @@ export function ScopeSection({ form, role }: ScopeSectionProps) {
 						placeholder={t('editor.fields.agentsPlaceholder')}
 						data={TRIGGER_AGENT_OPTIONS}
 						value={form.values.scope.agentIds}
-						onChange={(v) =>
-							form.setFieldValue('scope.agentIds', v)
-						}
+						onChange={(v) => form.setFieldValue('scope.agentIds', v)}
 					/>
 				</Grid.Col>
 
@@ -57,9 +58,7 @@ export function ScopeSection({ form, role }: ScopeSectionProps) {
 							placeholder={t('editor.fields.supervisorsPlaceholder')}
 							data={TRIGGER_SUPERVISORS}
 							value={form.values.scope.supervisorIds}
-							onChange={(v) =>
-								form.setFieldValue('scope.supervisorIds', v)
-							}
+							onChange={(v) => form.setFieldValue('scope.supervisorIds', v)}
 						/>
 					</Grid.Col>
 				)}
@@ -72,9 +71,7 @@ export function ScopeSection({ form, role }: ScopeSectionProps) {
 						placeholder={t('editor.fields.campaignsPlaceholder')}
 						data={TRIGGER_CAMPAIGNS}
 						value={form.values.scope.campaignIds}
-						onChange={(v) =>
-							form.setFieldValue('scope.campaignIds', v)
-						}
+						onChange={(v) => form.setFieldValue('scope.campaignIds', v)}
 					/>
 				</Grid.Col>
 
@@ -86,9 +83,7 @@ export function ScopeSection({ form, role }: ScopeSectionProps) {
 						placeholder={t('editor.fields.linesOfBusinessPlaceholder')}
 						data={lineOfBusinessOptions}
 						value={form.values.scope.linesOfBusiness}
-						onChange={(v) =>
-							form.setFieldValue('scope.linesOfBusiness', v)
-						}
+						onChange={(v) => form.setFieldValue('scope.linesOfBusiness', v)}
 					/>
 				</Grid.Col>
 

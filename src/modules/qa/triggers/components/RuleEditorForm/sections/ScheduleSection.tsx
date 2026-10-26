@@ -2,7 +2,11 @@ import { Checkbox, Grid, Group, Select, Stack, Switch } from '@mantine/core';
 import { TimeInput } from '@mantine/dates';
 import { useTranslation } from 'react-i18next';
 import type { UseFormReturnType } from '@mantine/form';
-import { DAYS_OF_WEEK, EVALUATION_AREAS, TIMEZONES } from '~/modules/qa/triggers/constants';
+import {
+	DAYS_OF_WEEK,
+	EVALUATION_AREAS,
+	TIMEZONES,
+} from '~/modules/qa/triggers/constants';
 import { type RuleFormValues } from '~/modules/qa/triggers/helpers';
 import { SectionCard } from '~/components/SectionCard';
 
@@ -32,8 +36,7 @@ export function ScheduleSection({ form }: ScheduleSectionProps) {
 						data={dayOptions}
 						value={form.values.schedule.dayOfWeek}
 						onChange={(v) =>
-							v &&
-							form.setFieldValue('schedule.dayOfWeek', v as any)
+							v && form.setFieldValue('schedule.dayOfWeek', v as any)
 						}
 						searchable
 					/>
@@ -57,10 +60,7 @@ export function ScheduleSection({ form }: ScheduleSectionProps) {
 						label={t('editor.fields.timezone')}
 						data={tzOptions}
 						value={form.values.schedule.timezone}
-						onChange={(v) =>
-							v &&
-							form.setFieldValue('schedule.timezone', v)
-						}
+						onChange={(v) => v && form.setFieldValue('schedule.timezone', v)}
 						searchable
 					/>
 				</Grid.Col>
@@ -68,7 +68,9 @@ export function ScheduleSection({ form }: ScheduleSectionProps) {
 
 			<Stack gap='xs' mt='md'>
 				<div>
-					<label style={{ fontSize: 'var(--mantine-font-size-sm)', fontWeight: 500 }}>
+					<label
+						style={{ fontSize: 'var(--mantine-font-size-sm)', fontWeight: 500 }}
+					>
 						{t('editor.fields.includedAreas')}
 					</label>
 					<Group mt={8}>
@@ -76,19 +78,13 @@ export function ScheduleSection({ form }: ScheduleSectionProps) {
 							<Checkbox
 								key={area}
 								label={t(`areas.${area}`)}
-								checked={form.values.schedule.includedAreas.includes(
-									area
-								)}
+								checked={form.values.schedule.includedAreas.includes(area)}
 								onChange={(e) => {
-									const current =
-										form.values.schedule.includedAreas;
+									const current = form.values.schedule.includedAreas;
 									const next = e.currentTarget.checked
 										? [...current, area]
 										: current.filter((a) => a !== area);
-									form.setFieldValue(
-										'schedule.includedAreas',
-										next
-									);
+									form.setFieldValue('schedule.includedAreas', next);
 								}}
 							/>
 						))}

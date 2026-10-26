@@ -265,7 +265,7 @@ export interface RuleFormValues {
 		campaignTypes: ('INBOUND' | 'OUTBOUND' | 'BLENDED')[];
 	};
 	recipients: ('AGENT' | 'SUPERVISOR' | 'QA_MANAGER')[];
-	channels: ('INBOX' | 'EMAIL' | 'DASHBOARD')[];
+	channels: ('INBOX' | 'EMAIL')[];
 	escalationEnabled: boolean;
 	escalationAfterHours: number;
 	templateId: string | null;

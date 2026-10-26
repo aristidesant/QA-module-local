@@ -225,6 +225,10 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.qa-manager.triggers': 'qa.triggers',
 	'qa.supervisor.triggers.rule-detail': 'qa.triggers',
 	'qa.qa-manager.triggers.rule-detail': 'qa.triggers',
+	'qa.supervisor.triggers.rule-new': 'qa.triggers',
+	'qa.qa-manager.triggers.rule-new': 'qa.triggers',
+	'qa.supervisor.triggers.rule-edit': 'qa.triggers',
+	'qa.qa-manager.triggers.rule-edit': 'qa.triggers',
 	'qa.qa-manager.settings': [
 		'qa.settings',
 		'qa.dashboard',

@@ -444,7 +444,7 @@ export const RECIPIENTS: RuleRecipient[] = [
 	'SUPERVISOR',
 	'QA_MANAGER',
 ];
-export const CHANNELS: RuleChannel[] = ['INBOX', 'EMAIL', 'DASHBOARD'];
+export const CHANNELS: RuleChannel[] = ['INBOX', 'EMAIL'];
 export const OPERATORS: ComparisonOperator[] = ['LT', 'LTE', 'GT', 'GTE'];
 export const OPERATOR_SYMBOLS: Record<ComparisonOperator, string> = {
 	LT: '<',
@@ -563,6 +563,14 @@ export const triggersBasePath = (role: TriggersRole) =>
 /** The isolated page of one rule (route `triggers/rules/:ruleId`). */
 export const triggerRulePath = (role: TriggersRole, ruleId: string) =>
 	`${triggersBasePath(role)}/rules/${ruleId}`;
+
+/** The isolated page that creates a rule of one type (route `triggers/rules/new`). */
+export const triggerRuleNewPath = (role: TriggersRole, type: RuleType) =>
+	`${triggersBasePath(role)}/rules/new?type=${type}`;
+
+/** The isolated page that edits one rule (route `triggers/rules/:ruleId/edit`). */
+export const triggerRuleEditPath = (role: TriggersRole, ruleId: string) =>
+	`${triggersBasePath(role)}/rules/${ruleId}/edit`;
 
 export const triggersRoleFromPath = (pathname: string): TriggersRole =>
 	pathname.startsWith('/qa/supervisor/') ? 'supervisor' : 'qa-manager';

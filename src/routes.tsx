@@ -244,6 +244,9 @@ const TriggersPage = React.lazy(
 const TriggerRuleDetailPage = React.lazy(
 	() => import('./modules/qa/triggers/TriggerRuleDetailPage')
 );
+const TriggerRulePage = React.lazy(
+	() => import('./modules/qa/triggers/TriggerRulePage')
+);
 const DisputeCaseDetailPage = React.lazy(() =>
 	import('./modules/qa/disputes/cases/DisputeCaseDetailPage').then((m) => ({
 		default: m.default,
@@ -1616,6 +1619,28 @@ const router = createBrowserRouter([
 										),
 									},
 									{
+										path: 'qa-manager/triggers/rules/new',
+										id: 'qa.qa-manager.triggers.rule-new',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TriggerRulePage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'qa-manager/triggers/rules/:ruleId/edit',
+										id: 'qa.qa-manager.triggers.rule-edit',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TriggerRulePage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
 										path: 'qa-manager/triggers/rules/:ruleId',
 										id: 'qa.qa-manager.triggers.rule-detail',
 										element: (
@@ -1633,6 +1658,28 @@ const router = createBrowserRouter([
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
 													<TriggersPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/triggers/rules/new',
+										id: 'qa.supervisor.triggers.rule-new',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TriggerRulePage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'supervisor/triggers/rules/:ruleId/edit',
+										id: 'qa.supervisor.triggers.rule-edit',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<TriggerRulePage />
 												</Suspense>
 											</I18nNamespaceLoader>
 										),

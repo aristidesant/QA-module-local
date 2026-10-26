@@ -26,7 +26,10 @@ export function FrequencySection({ form }: FrequencySectionProps) {
 						step={1}
 						value={form.values.cooldownDays}
 						onChange={(v) =>
-							form.setFieldValue('cooldownDays', typeof v === 'number' ? v : (Number(v) || 0))
+							form.setFieldValue(
+								'cooldownDays',
+								typeof v === 'number' ? v : Number(v) || 0
+							)
 						}
 					/>
 				</Grid.Col>
@@ -53,7 +56,7 @@ export function FrequencySection({ form }: FrequencySectionProps) {
 								onChange={(v) =>
 									form.setFieldValue(
 										'maxPerWeek',
-										typeof v === 'number' ? v : (Number(v) || 2)
+										typeof v === 'number' ? v : Number(v) || 2
 									)
 								}
 								mt='sm'
@@ -68,10 +71,7 @@ export function FrequencySection({ form }: FrequencySectionProps) {
 					label={t('editor.fields.quietHours')}
 					checked={form.values.quietHoursEnabled}
 					onChange={(e) =>
-						form.setFieldValue(
-							'quietHoursEnabled',
-							e.currentTarget.checked
-						)
+						form.setFieldValue('quietHoursEnabled', e.currentTarget.checked)
 					}
 				/>
 
@@ -82,10 +82,7 @@ export function FrequencySection({ form }: FrequencySectionProps) {
 								label={t('editor.fields.quietFrom')}
 								value={form.values.quietHoursFrom}
 								onChange={(v) =>
-									form.setFieldValue(
-										'quietHoursFrom',
-										v.target.value
-									)
+									form.setFieldValue('quietHoursFrom', v.target.value)
 								}
 							/>
 						</Grid.Col>
@@ -94,10 +91,7 @@ export function FrequencySection({ form }: FrequencySectionProps) {
 								label={t('editor.fields.quietTo')}
 								value={form.values.quietHoursTo}
 								onChange={(v) =>
-									form.setFieldValue(
-										'quietHoursTo',
-										v.target.value
-									)
+									form.setFieldValue('quietHoursTo', v.target.value)
 								}
 							/>
 						</Grid.Col>

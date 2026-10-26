@@ -130,7 +130,7 @@ export interface RuleCondition {
 }
 
 export type RuleRecipient = 'AGENT' | 'SUPERVISOR' | 'QA_MANAGER';
-export type RuleChannel = 'INBOX' | 'EMAIL' | 'DASHBOARD';
+export type RuleChannel = 'INBOX' | 'EMAIL';
 export type CampaignType = 'INBOUND' | 'OUTBOUND' | 'BLENDED';
 
 export interface RuleScope {

@@ -414,7 +414,7 @@ export const MOCK_RULES: TriggerRule[] = [
 		],
 		delivery: {
 			recipients: ['SUPERVISOR', 'QA_MANAGER'],
-			channels: ['INBOX', 'DASHBOARD'],
+			channels: ['INBOX'],
 			escalationEnabled: false,
 			escalationAfterHours: 24,
 		},
@@ -613,7 +613,7 @@ export const MOCK_RULES: TriggerRule[] = [
 		conditionLogic: 'ALL',
 		delivery: {
 			recipients: ['SUPERVISOR', 'QA_MANAGER'],
-			channels: ['INBOX', 'DASHBOARD'],
+			channels: ['INBOX'],
 			escalationEnabled: false,
 			escalationAfterHours: 24,
 		},

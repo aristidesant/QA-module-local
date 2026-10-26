@@ -38,6 +38,7 @@ import {
 	RULE_TYPE_META,
 	SEVERITY_COLORS,
 	STATUS_COLORS,
+	triggerRuleEditPath,
 	triggerRulePath,
 	triggersBasePath,
 	triggersRoleFromPath,
@@ -49,7 +50,6 @@ import {
 import ConditionSummaryList from '../components/ConditionSummaryList';
 import ActivityTable from '../components/ActivityTable';
 import ActivityDetailDrawer from '../components/ActivityDetailDrawer';
-import { RuleEditorDrawer } from '../components/RuleEditorDrawer';
 import classes from './TriggerRuleDetailPage.module.css';
 
 /** One trigger rule on its own page (route `triggers/rules/:ruleId`): condition, scope, delivery, message, frequency and activity. */
@@ -69,7 +69,6 @@ export default function TriggerRuleDetailPage() {
 	const setRuleStatus = useTriggerRulesStore((s) => s.setRuleStatus);
 	const duplicateRule = useTriggerRulesStore((s) => s.duplicateRule);
 
-	const [editing, setEditing] = useState(false);
 	const [activityEntry, setActivityEntry] =
 		useState<TriggerActivityEntry | null>(null);
 
@@ -223,7 +222,7 @@ export default function TriggerRuleDetailPage() {
 							size='sm'
 							variant='default'
 							leftSection={<IconEdit size={14} />}
-							onClick={() => setEditing(true)}
+							onClick={() => navigate(triggerRuleEditPath(role, rule.id))}
 						>
 							{t('rules.actions.edit')}
 						</Button>
@@ -486,16 +485,6 @@ export default function TriggerRuleDetailPage() {
 					</Stack>
 				</SimpleGrid>
 			</Stack>
-
-			<RuleEditorDrawer
-				opened={editing}
-				mode='edit'
-				type={rule.type}
-				rule={rule}
-				onClose={() => setEditing(false)}
-				onSaved={() => setEditing(false)}
-				role={editorRole}
-			/>
 
 			<ActivityDetailDrawer
 				entry={activityEntry}

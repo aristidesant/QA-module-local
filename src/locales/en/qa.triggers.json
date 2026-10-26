@@ -214,7 +214,7 @@
 		"SUPERVISOR": "Supervisor",
 		"QA_MANAGER": "QA Manager"
 	},
-	"channels": { "INBOX": "Inbox", "EMAIL": "Email", "DASHBOARD": "Dashboard" },
+	"channels": { "INBOX": "Inbox", "EMAIL": "Email" },
 	"tiers": { "BRONZE": "Bronze", "SILVER": "Silver", "GOLD": "Gold" },
 	"visibility": { "PRIVATE": "Private to the agent", "TEAM_FEED": "Team feed" },
 	"burnoutLevels": { "LOW": "Low", "MEDIUM": "Medium", "HIGH": "High" },
@@ -342,6 +342,9 @@
 	"editor": {
 		"createTitle": "New {{type}}",
 		"editTitle": "Edit rule",
+		"discard": "Discard changes?",
+		"discardDescription": "Your edits to this rule will be lost.",
+		"discardConfirm": "Discard",
 		"sections": {
 			"basics": "Basics",
 			"condition": "Condition",

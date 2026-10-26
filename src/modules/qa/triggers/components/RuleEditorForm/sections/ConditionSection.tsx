@@ -3,7 +3,10 @@ import { IconPlus } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { UseFormReturnType } from '@mantine/form';
 import type { RuleType, RuleCondition } from '~/models/qa';
-import { MAX_CONDITIONS, RULE_TYPE_META } from '~/modules/qa/triggers/constants';
+import {
+	MAX_CONDITIONS,
+	RULE_TYPE_META,
+} from '~/modules/qa/triggers/constants';
 import { type RuleFormValues } from '~/modules/qa/triggers/helpers';
 import { ConditionRow } from '~/modules/qa/triggers/components/ConditionRow';
 import { SectionCard } from '~/components/SectionCard';
@@ -46,7 +49,9 @@ export function ConditionSection({ form, type }: ConditionSectionProps) {
 		>
 			{form.values.conditions.length > 1 && (
 				<Group mb='md' justify='space-between'>
-					<Text size='sm' fw={500}>{t('logic.ALL')}</Text>
+					<Text size='sm' fw={500}>
+						{t('logic.ALL')}
+					</Text>
 					<SegmentedControl
 						size='xs'
 						data={[
@@ -65,7 +70,9 @@ export function ConditionSection({ form, type }: ConditionSectionProps) {
 						key={condition.id}
 						condition={condition}
 						allowedModes={meta.allowedModes}
-						onChange={(updated) => form.setFieldValue(`conditions.${index}`, updated)}
+						onChange={(updated) =>
+							form.setFieldValue(`conditions.${index}`, updated)
+						}
 						onRemove={() => form.removeListItem('conditions', index)}
 						canRemove={form.values.conditions.length > 1}
 					/>

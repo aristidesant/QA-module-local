@@ -223,8 +223,7 @@
 	},
 	"channels": {
 		"INBOX": "Bandeja de entrada",
-		"EMAIL": "Correo",
-		"DASHBOARD": "Panel"
+		"EMAIL": "Correo"
 	},
 	"tiers": { "BRONZE": "Bronce", "SILVER": "Plata", "GOLD": "Oro" },
 	"visibility": {
@@ -356,6 +355,9 @@
 	"editor": {
 		"createTitle": "Nuevo {{type}}",
 		"editTitle": "Editar regla",
+		"discard": "¿Descartar los cambios?",
+		"discardDescription": "Se perderán los cambios de esta regla.",
+		"discardConfirm": "Descartar",
 		"sections": {
 			"basics": "Básicos",
 			"condition": "Condición",

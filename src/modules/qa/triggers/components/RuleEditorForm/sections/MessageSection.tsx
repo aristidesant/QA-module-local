@@ -18,11 +18,12 @@ export function MessageSection({ form, type }: MessageSectionProps) {
 	const { t } = useTranslation('qa.triggers');
 	const templates = useTriggerRulesStore((s) => s.templates);
 
-	const category = type === 'WEEKLY_SUMMARY'
-		? 'SUMMARY'
-		: type.startsWith('RECOGNITION')
-			? 'RECOGNITION'
-			: 'ALERT';
+	const category =
+		type === 'WEEKLY_SUMMARY'
+			? 'SUMMARY'
+			: type.startsWith('RECOGNITION')
+				? 'RECOGNITION'
+				: 'ALERT';
 
 	const templateOptions = templates
 		.filter((tpl) => tpl.category === category)
@@ -48,7 +49,8 @@ export function MessageSection({ form, type }: MessageSectionProps) {
 	const handleVariableInsert = (variable: string) => {
 		const current = form.values.body;
 		const updated =
-			current + (current.endsWith(' ') || !current ? '' : ' ') +
+			current +
+			(current.endsWith(' ') || !current ? '' : ' ') +
 			`{{${variable}}}`;
 		form.setFieldValue('body', updated);
 	};
