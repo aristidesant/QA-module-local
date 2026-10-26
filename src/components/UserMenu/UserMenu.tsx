@@ -130,7 +130,7 @@ export const UserMenu: React.FC<UserMenuProps> = ({ collapsed = false }) => {
 		qaManager: '/qa/dashboards/qa-manager',
 		operationManager: '/qa/dashboards/operation-manager',
 		supervisor: '/qa/dashboards/supervisor',
-		superAdmin: '/qa/dashboards/qa-manager',
+		superAdmin: '/role-preview/global-settings',
 	};
 
 	const handleSelectPreviewRole = (role: PreviewRole) => {

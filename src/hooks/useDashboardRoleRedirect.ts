@@ -8,12 +8,12 @@ import { useRoleMockStore } from '~/stores/roleMockStore';
  * - agent → /qa/dashboards/agent
  * - supervisor → /qa/dashboards/supervisor
  * - operationManager → /qa/dashboards/operation-manager
- * - superAdmin → /qa/dashboards/qa-manager (default to QA Manager)
+ * - superAdmin → /role-preview/global-settings (the only section the role keeps)
  */
 export const useDashboardRoleRedirect = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
-	const previewRole = useRoleMockStore(s => s.previewRole);
+	const previewRole = useRoleMockStore((s) => s.previewRole);
 
 	useEffect(() => {
 		// Map role to target dashboard
@@ -28,7 +28,7 @@ export const useDashboardRoleRedirect = () => {
 				case 'operationManager':
 					return '/qa/dashboards/operation-manager';
 				case 'superAdmin':
-					return '/qa/dashboards/qa-manager';
+					return '/role-preview/global-settings';
 				default:
 					return null;
 			}
