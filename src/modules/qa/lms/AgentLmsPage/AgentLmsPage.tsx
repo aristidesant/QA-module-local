@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import { Badge, Stack, Tabs } from '@mantine/core';
+import { Stack, Tabs } from '@mantine/core';
 import {
 	IconHistory,
 	IconListCheck,
@@ -9,6 +9,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
 import type { LmsAssignment, LmsContent } from '~/models/qa';
+import { TEAM_PROFILES } from '~/modules/qa/team/mockData';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
 import {
 	useLmsStore,
@@ -22,7 +23,6 @@ import {
 } from '../constants';
 import { ROLE_PLAY_MODEL_SEEDS } from '../rolePlayMockData';
 import { RescheduleModal } from '../components/RescheduleModal';
-import { LearningHeader } from './LearningHeader';
 import { AssignmentsTab } from './tabs/AssignmentsTab';
 import { RolePlayTab } from './tabs/RolePlayTab';
 import { HistoryTab } from './tabs/HistoryTab';
@@ -43,6 +43,8 @@ export default function AgentLmsPage() {
 
 	const [rescheduleTarget, setRescheduleTarget] =
 		useState<LmsAssignment | null>(null);
+
+	const profile = TEAM_PROFILES[AGENT_PERSONA.id];
 
 	const mine = useMemo(
 		() => assignments.filter((a) => a.agentId === AGENT_PERSONA.id),
@@ -72,14 +74,6 @@ export default function AgentLmsPage() {
 	const openContent = (contentId: string) =>
 		navigate(agentContentPath(contentId));
 
-	const counts = {
-		assignments: mine.filter((a) => a.status !== 'COMPLETED').length,
-		rolePlay: ROLE_PLAY_MODEL_SEEDS.filter((m) =>
-			m.unlockedForAgentIds.includes(AGENT_PERSONA.id)
-		).length,
-		history: mine.filter((a) => a.status === 'COMPLETED').length,
-	};
-
 	const handleAccept = (assignmentId: string) => {
 		useLmsStore.getState().accept(assignmentId);
 		notifySuccess(t('agent.assignments.acceptSuccess'));
@@ -94,50 +88,29 @@ export default function AgentLmsPage() {
 	};
 
 	return (
-		<ContentContainer contentWidth='full'>
+		<ContentContainer
+			contentWidth='full'
+			title={t('agent.title')}
+			description={t('agent.description')}
+		>
 			<Stack gap='lg'>
-				<LearningHeader assignments={mine} />
-
 				<Tabs value={tab} onChange={setTab} keepMounted={false}>
 					<Tabs.List>
 						<Tabs.Tab
 							value='assignments'
 							leftSection={<TAB_ICONS.assignments size={16} />}
-							rightSection={
-								<Badge
-									size='xs'
-									variant='light'
-									color={counts.assignments > 0 ? 'blue' : 'gray'}
-								>
-									{counts.assignments}
-								</Badge>
-							}
 						>
 							{t('agent.tabs.assignments')}
 						</Tabs.Tab>
 						<Tabs.Tab
 							value='rolePlay'
 							leftSection={<TAB_ICONS.rolePlay size={16} />}
-							rightSection={
-								<Badge
-									size='xs'
-									variant='light'
-									color={counts.rolePlay > 0 ? 'blue' : 'gray'}
-								>
-									{counts.rolePlay}
-								</Badge>
-							}
 						>
 							{t('agent.tabs.rolePlay')}
 						</Tabs.Tab>
 						<Tabs.Tab
 							value='history'
 							leftSection={<TAB_ICONS.history size={16} />}
-							rightSection={
-								<Badge size='xs' variant='light'>
-									{counts.history}
-								</Badge>
-							}
 						>
 							{t('agent.tabs.history')}
 						</Tabs.Tab>
@@ -147,6 +120,7 @@ export default function AgentLmsPage() {
 						<AssignmentsTab
 							assignments={mine}
 							contentById={contentById}
+							profile={profile}
 							onOpen={openContent}
 							onAccept={handleAccept}
 							onPropose={setRescheduleTarget}

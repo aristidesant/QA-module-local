@@ -1,0 +1,20 @@
+/* Put `.area` + `data-area` on any element; descendants read var(--lms-area). */
+.area {
+	--lms-area: var(--area-general);
+}
+
+.area[data-area='QUALITY_ASSURANCE'] {
+	--lms-area: var(--area-qa);
+}
+
+.area[data-area='SENTIMENT_EMOTION'] {
+	--lms-area: var(--area-sentiment);
+}
+
+.area[data-area='COMPLIANCE'] {
+	--lms-area: var(--area-compliance);
+}
+
+.area[data-area='BUSINESS_INSIGHTS'] {
+	--lms-area: var(--area-business);
+}

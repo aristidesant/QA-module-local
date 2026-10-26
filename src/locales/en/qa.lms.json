@@ -95,38 +95,31 @@
 		"WELLBEING": "Wellbeing"
 	},
 	"agent": {
-		"eyebrow": "Agent",
 		"title": "My Learning",
-		"description": "Your assignments, learning paths and coaching commitments — tied to the aspects you are evaluated on.",
-		"kpi": {
-			"needsResponse": "Needs your response",
-			"dueThisWeek": "Due this week",
-			"overdue": "Overdue",
-			"completedThisMonth": "Completed this month",
-			"quizAverage": "Quiz average"
-		},
+		"description": "What you've been asked to learn, why it was assigned, and whether it moved your scores.",
 		"tabs": {
-			"assignments": "My assignments",
-			"history": "History",
-			"rolePlay": "Role Play"
+			"assignments": "Assignments",
+			"rolePlay": "Practice",
+			"history": "Results"
 		},
 		"assignments": {
-			"needsResponse": "Needs your response",
-			"needsResponseDescription": "Your supervisor assigned this with a deadline. Accept it or propose another date.",
-			"mandatory": "Mandatory with deadline",
-			"mandatoryDescription": "Sorted by due date. Overdue items are highlighted.",
-			"empty": "Nothing assigned right now.",
+			"needsResponse": "Needs your answer",
+			"needsResponseDescription": "Accept the deadline or propose another date. After 48 hours without an answer your supervisor is notified.",
+			"empty": "Nothing assigned right now",
 			"assignedBy": "Assigned by {{name}}",
-			"why": "Why this was assigned",
 			"accept": "I accept this deadline",
 			"proposeDate": "Propose another date",
 			"accepted": "Accepted on {{date}}",
 			"rescheduleSent": "New date proposed: {{date}} — waiting for {{name}}",
 			"noResponse": "No response for {{count}} hours — your supervisor has been notified",
 			"mandatoryBadge": "Mandatory",
-			"progress": "{{value}}% complete",
+			"progress": "{{value}}% done",
 			"score": "Score {{value}}%",
-			"acceptSuccess": "Deadline accepted"
+			"acceptSuccess": "Deadline accepted",
+			"emptyDescription": "When your supervisor or a coaching rule assigns material, it shows up here with the reason.",
+			"assignedOn": "{{name}} assigned this on {{date}}",
+			"dueOn": "Due {{date}}",
+			"optional": "Optional"
 		},
 		"reschedule": {
 			"title": "Propose another date",
@@ -168,25 +161,20 @@
 			"count": "{{count}} items"
 		},
 		"history": {
-			"title": "Completed material",
-			"description": "What you finished and how your scores moved afterwards.",
-			"kpi": {
-				"completed": "Completed",
-				"averageScore": "Average score",
-				"improved": "Improved",
-				"declined": "Declined"
-			},
+			"title": "What changed after you finished",
+			"description": "Your score on each material's metric, 30 days before against 30 days after.",
+			"summary": "{{count}} finished. Scores improved after {{improved}}, held after {{same}}, declined after {{declined}}.",
+			"summaryNone": "Nothing finished yet. Results appear 30 days after you complete something.",
 			"columns": {
 				"material": "Material",
-				"completed": "Completed",
+				"area": "Area",
+				"completed": "Finished",
 				"score": "Score",
-				"impact": "Impact",
-				"metric": "Metric",
-				"before": "Before",
-				"after": "After"
+				"change": "Before and after",
+				"impact": "Impact"
 			},
 			"impactHint": "30 days before vs 30 days after completion",
-			"empty": "Nothing completed yet."
+			"empty": "Nothing finished yet."
 		},
 		"coaching": {
 			"title": "Coaching",
@@ -266,14 +254,40 @@
 			}
 		},
 		"rolePlay": {
-			"available": "Available to practice",
-			"availableDescription": "Client models your supervisor has unlocked for you.",
+			"available": "Clients you can practise with",
+			"availableDescription": "Your supervisor unlocked these. Each one targets an area you're scored on.",
 			"noneAvailable": "Nothing unlocked yet. Ask your supervisor for access.",
 			"objectives": "What to practice",
 			"startPractice": "Start practice",
 			"practiceStarted": "Practice session started with {{name}} (mock).",
 			"mockDisclaimer": "This is a mock session for the prototype — no real call will be placed.",
-			"empty": "No role play models configured yet."
+			"empty": "No role play models configured yet.",
+			"practice": "Practise"
+		},
+		"nextUp": {
+			"caption": "Start here",
+			"yourScore": "Your {{area}} score",
+			"notScored": "Not scored",
+			"start": "Start",
+			"continue": "Continue"
+		},
+		"areas": {
+			"title": "By evaluation area",
+			"description": "What you've been assigned for each area you're scored on, next to your current score. Weakest area first.",
+			"nothingHere": "Nothing assigned for this area right now.",
+			"evidenceNone": "Nothing finished yet",
+			"evidence_one": "{{count}} finished, improved after {{improved}}",
+			"evidence_other": "{{count}} finished, improved after {{improved}}",
+			"evidenceUnmeasured_one": "{{count}} finished",
+			"evidenceUnmeasured_other": "{{count}} finished",
+			"vsPrevious": "vs previous period",
+			"columns": {
+				"area": "Area",
+				"score": "Your score",
+				"material": "Material",
+				"due": "Due",
+				"progress": "Progress"
+			}
 		}
 	},
 	"player": {
@@ -311,18 +325,23 @@
 			"continue": "Continue"
 		},
 		"completed": {
-			"title": "Completed!",
-			"message": "We will measure your {{metric}} over the next 30 days and show the result here.",
-			"noImpact": "This material is informational — no score is tracked.",
-			"backToList": "Back to my assignments"
+			"title": "Done",
+			"message": "We'll measure your {{metric}} for the next 30 days and show the result in Results.",
+			"noImpact": "This material is informational, so no score is tracked.",
+			"backToList": "Back to My Learning",
+			"next": "Next: {{title}}"
 		},
 		"meta": {
 			"duration": "{{count}} min",
-			"level": "Level",
 			"assigned": "Assigned {{date}}",
-			"due": "Due {{date}}",
-			"by": "By {{name}}",
-			"author": "Author"
+			"due": "Due {{date}}"
+		},
+		"watched": "{{value}}% watched",
+		"facts": "{{format}}, {{minutes}} min",
+		"assignment": {
+			"title": "Why you're here",
+			"assignedOn": "{{name}} assigned this on {{date}}",
+			"due": "Due {{date}}"
 		}
 	},
 	"impact": {

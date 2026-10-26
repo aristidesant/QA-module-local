@@ -1,15 +1,19 @@
 import { useMemo, useState } from 'react';
-import { Button, Group, SimpleGrid, Stack, Text } from '@mantine/core';
+import { Button, Group, Stack, Text } from '@mantine/core';
 import { createColumnHelper } from '@tanstack/react-table';
-import { IconHistory } from '@tabler/icons-react';
+import { IconArrowRight, IconHistory } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
-import { StatCard } from '~/components/StatCard';
 import { AppDrawer } from '~/components/AppDrawer';
-import BaseTable, { type BaseTableColumnDef } from '~/components/BaseTable/BaseTable';
+import BaseTable, {
+	type BaseTableColumnDef,
+} from '~/components/BaseTable/BaseTable';
 import type { LmsAssignment, LmsContent } from '~/models/qa';
-import { FormatBadge, ImpactBadge } from '../../components/Badges';
+import { AreaMark } from '../../components/AreaMark';
+import { FormatIcon } from '../../components/FormatIcon';
+import { ImpactBadge } from '../../components/Badges';
 import { ImpactSparkline } from '../../components/ImpactSparkline';
+import { formatDay } from '../../helpers';
 
 const helper = createColumnHelper<LmsAssignment>();
 
@@ -19,7 +23,11 @@ interface HistoryTabProps {
 	onReview: (contentId: string) => void;
 }
 
-export function HistoryTab({ assignments, contentById, onReview }: HistoryTabProps) {
+export function HistoryTab({
+	assignments,
+	contentById,
+	onReview,
+}: HistoryTabProps) {
 	const { t } = useTranslation(['qa.lms', 'qa.triggers']);
 	const [selectedId, setSelectedId] = useState<string | null>(null);
 
@@ -27,15 +35,23 @@ export function HistoryTab({ assignments, contentById, onReview }: HistoryTabPro
 		() =>
 			assignments
 				.filter((a) => a.status === 'COMPLETED')
-				.sort((a, b) => (b.completedAt ?? '').localeCompare(a.completedAt ?? '')),
+				.sort((a, b) =>
+					(b.completedAt ?? '').localeCompare(a.completedAt ?? '')
+				),
 		[assignments]
 	);
 
-	const scored = completed.filter((a) => a.score !== null);
-	const improved = completed.filter((a) => a.impact?.verdict === 'IMPROVED').length;
-	const declined = completed.filter((a) => a.impact?.verdict === 'DECLINED').length;
-	const selected = selectedId ? completed.find((a) => a.id === selectedId) : undefined;
-	const selectedContent = selected ? contentById[selected.contentId] : undefined;
+	const verdictCount = (verdict: string) =>
+		completed.filter((a) => a.impact?.verdict === verdict).length;
+	const improved = verdictCount('IMPROVED');
+	const same = verdictCount('SAME');
+	const declined = verdictCount('DECLINED');
+	const selected = selectedId
+		? completed.find((a) => a.id === selectedId)
+		: undefined;
+	const selectedContent = selected
+		? contentById[selected.contentId]
+		: undefined;
 
 	const metricLabel = (a: LmsAssignment) =>
 		a.impact ? t(`metrics.${a.impact.metricId}`, { ns: 'qa.triggers' }) : '—';
@@ -48,75 +64,85 @@ export function HistoryTab({ assignments, contentById, onReview }: HistoryTabPro
 				const c = contentById[info.getValue()];
 				return (
 					<Group gap='xs' wrap='nowrap'>
+						{c && <FormatIcon format={c.format} size={14} />}
 						<Text size='sm'>{c?.title ?? info.getValue()}</Text>
-						{c && <FormatBadge format={c.format} size='xs' />}
 					</Group>
 				);
+			},
+		}) as BaseTableColumnDef<LmsAssignment>,
+		helper.display({
+			id: 'area',
+			header: t('agent.history.columns.area'),
+			cell: (info) => {
+				const c = contentById[info.row.original.contentId];
+				return c ? <AreaMark area={c.area} /> : null;
 			},
 		}) as BaseTableColumnDef<LmsAssignment>,
 		helper.accessor('completedAt', {
 			id: 'completed',
 			header: t('agent.history.columns.completed'),
-			cell: (info) => <Text size='sm'>{info.getValue() ?? '—'}</Text>,
+			cell: (info) => (
+				<Text size='sm'>
+					{info.getValue() ? formatDay(info.getValue() as string) : '—'}
+				</Text>
+			),
 		}) as BaseTableColumnDef<LmsAssignment>,
 		helper.accessor('score', {
 			id: 'score',
 			header: t('agent.history.columns.score'),
-			cell: (info) => <Text size='sm'>{info.getValue() === null ? '—' : `${info.getValue()}%`}</Text>,
-		}) as BaseTableColumnDef<LmsAssignment>,
-		helper.display({
-			id: 'metric',
-			header: t('agent.history.columns.metric'),
 			cell: (info) => (
-				<Text size='sm' c='dimmed'>
-					{metricLabel(info.row.original)}
+				<Text size='sm'>
+					{info.getValue() === null ? '—' : `${info.getValue()}%`}
 				</Text>
 			),
 		}) as BaseTableColumnDef<LmsAssignment>,
 		helper.display({
-			id: 'before',
-			header: t('agent.history.columns.before'),
-			cell: (info) => <Text size='sm'>{info.row.original.impact?.baseline ?? '—'}</Text>,
-		}) as BaseTableColumnDef<LmsAssignment>,
-		helper.display({
-			id: 'after',
-			header: t('agent.history.columns.after'),
-			cell: (info) => <Text size='sm'>{info.row.original.impact?.checkpoint30 ?? '—'}</Text>,
+			id: 'change',
+			header: t('agent.history.columns.change'),
+			cell: (info) => {
+				const impact = info.row.original.impact;
+				if (!impact)
+					return (
+						<Text size='sm' c='dimmed'>
+							—
+						</Text>
+					);
+				return (
+					<Group gap={4} wrap='nowrap'>
+						<Text size='sm'>{impact.baseline}</Text>
+						<IconArrowRight size={12} color='var(--mantine-color-dimmed)' />
+						<Text size='sm' fw={600}>
+							{impact.checkpoint30 ?? '—'}
+						</Text>
+						<Text size='xs' c='dimmed'>
+							{metricLabel(info.row.original)}
+						</Text>
+					</Group>
+				);
+			},
 		}) as BaseTableColumnDef<LmsAssignment>,
 		helper.display({
 			id: 'impact',
 			header: t('agent.history.columns.impact'),
-			cell: (info) => <ImpactBadge impact={info.row.original.impact} size='xs' />,
+			cell: (info) => (
+				<ImpactBadge impact={info.row.original.impact} size='xs' />
+			),
 		}) as BaseTableColumnDef<LmsAssignment>,
 	];
 
 	return (
 		<>
 			<Stack gap='md'>
-				<SimpleGrid cols={{ base: 2, md: 4 }} spacing='md'>
-					<StatCard title={t('agent.history.kpi.completed')} value={completed.length} variant='compact' />
-					<StatCard
-						title={t('agent.history.kpi.averageScore')}
-						value={
-							scored.length
-								? `${Math.round(scored.reduce((s, a) => s + (a.score ?? 0), 0) / scored.length)}%`
-								: '—'
-						}
-						variant='compact'
-					/>
-					<StatCard
-						title={t('agent.history.kpi.improved')}
-						value={improved}
-						color={improved > 0 ? 'var(--mantine-color-green-7)' : undefined}
-						variant='compact'
-					/>
-					<StatCard
-						title={t('agent.history.kpi.declined')}
-						value={declined}
-						color={declined > 0 ? 'var(--mantine-color-red-7)' : undefined}
-						variant='compact'
-					/>
-				</SimpleGrid>
+				<Text size='sm'>
+					{completed.length === 0
+						? t('agent.history.summaryNone')
+						: t('agent.history.summary', {
+								count: completed.length,
+								improved,
+								same,
+								declined,
+							})}
+				</Text>
 
 				<SectionCard
 					title={t('agent.history.title')}
@@ -144,7 +170,11 @@ export function HistoryTab({ assignments, contentById, onReview }: HistoryTabPro
 				onClose={() => setSelectedId(null)}
 				size='md'
 				title={selectedContent?.title ?? ''}
-				description={selected?.completedAt ? t('agent.history.columns.completed') + ': ' + selected.completedAt : undefined}
+				description={
+					selected?.completedAt
+						? `${t('agent.history.columns.completed')}: ${formatDay(selected.completedAt)}`
+						: undefined
+				}
 			>
 				{selected && (
 					<Stack gap='md'>
@@ -163,7 +193,10 @@ export function HistoryTab({ assignments, contentById, onReview }: HistoryTabPro
 								{t('player.completed.noImpact')}
 							</Text>
 						)}
-						<Button variant='light' onClick={() => onReview(selected.contentId)}>
+						<Button
+							variant='light'
+							onClick={() => onReview(selected.contentId)}
+						>
 							{t('cta.review')}
 						</Button>
 					</Stack>

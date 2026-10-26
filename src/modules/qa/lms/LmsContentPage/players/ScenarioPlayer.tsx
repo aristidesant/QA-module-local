@@ -1,5 +1,14 @@
 import { useState } from 'react';
-import { Blockquote, Button, Group, Paper, Stack, Text, Textarea, Timeline } from '@mantine/core';
+import {
+	Blockquote,
+	Button,
+	Group,
+	Paper,
+	Stack,
+	Text,
+	Textarea,
+	Timeline,
+} from '@mantine/core';
 import { IconMasksTheater, IconMessage, IconSchool } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { LmsContent } from '~/models/qa';
@@ -12,7 +21,11 @@ interface ScenarioPlayerProps {
 	onComplete: (score: number) => void;
 }
 
-export function ScenarioPlayer({ content, readOnly, onComplete }: ScenarioPlayerProps) {
+export function ScenarioPlayer({
+	content,
+	readOnly,
+	onComplete,
+}: ScenarioPlayerProps) {
 	const { t } = useTranslation('qa.lms');
 	const scenario = content.scenario;
 	const [step, setStep] = useState(0);
@@ -48,8 +61,8 @@ export function ScenarioPlayer({ content, readOnly, onComplete }: ScenarioPlayer
 
 	return (
 		<Stack gap='md'>
-			<Blockquote color='pink' icon={<IconMasksTheater size={20} />} p='md'>
-				<Text size='xs' c='dimmed' tt='uppercase' fw={600} mb={4}>
+			<Blockquote color='gray' icon={<IconMasksTheater size={20} />} p='md'>
+				<Text size='sm' fw={600} mb={4}>
 					{t('player.scenario.situation')}
 				</Text>
 				<Text size='sm'>{scenario.situation}</Text>
@@ -59,17 +72,29 @@ export function ScenarioPlayer({ content, readOnly, onComplete }: ScenarioPlayer
 				{visibleSteps.map((s, i) => (
 					<Timeline.Item
 						key={`${s.speaker}-${i}`}
-						bullet={s.speaker === 'CUSTOMER' ? <IconMessage size={12} /> : <IconSchool size={12} />}
+						bullet={
+							s.speaker === 'CUSTOMER' ? (
+								<IconMessage size={12} />
+							) : (
+								<IconSchool size={12} />
+							)
+						}
 						title={
-							<Text size='xs' c='dimmed' tt='uppercase' fw={600}>
-								{s.speaker === 'CUSTOMER' ? t('player.scenario.customerSays') : t('player.scenario.coachAsks')}
+							<Text size='xs' fw={600}>
+								{s.speaker === 'CUSTOMER'
+									? t('player.scenario.customerSays')
+									: t('player.scenario.coachAsks')}
 							</Text>
 						}
 					>
 						<Paper
 							p='sm'
 							radius='md'
-							className={s.speaker === 'CUSTOMER' ? classes.bubbleCustomer : classes.bubbleCoach}
+							className={
+								s.speaker === 'CUSTOMER'
+									? classes.bubbleCustomer
+									: classes.bubbleCoach
+							}
 						>
 							<Text size='sm'>{s.text}</Text>
 						</Paper>
@@ -82,7 +107,12 @@ export function ScenarioPlayer({ content, readOnly, onComplete }: ScenarioPlayer
 								autosize
 								minRows={2}
 								value={answers[i] ?? ''}
-								onChange={(e) => setAnswers((prev) => ({ ...prev, [i]: e.currentTarget.value }))}
+								onChange={(e) =>
+									setAnswers((prev) => ({
+										...prev,
+										[i]: e.currentTarget.value,
+									}))
+								}
 							/>
 						)}
 					</Timeline.Item>

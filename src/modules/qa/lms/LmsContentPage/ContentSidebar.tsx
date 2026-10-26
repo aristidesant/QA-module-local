@@ -1,12 +1,21 @@
-import { Button, Divider, Group, Stack, Text } from '@mantine/core';
-import { IconClock, IconRoute, IconUser } from '@tabler/icons-react';
+import { Button, Group, Stack, Text } from '@mantine/core';
+import { IconRoute } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { SectionCard } from '~/components/SectionCard';
-import type { LmsAssignment, LmsContent, LmsLearningPath, LmsPathEnrollment } from '~/models/qa';
-import { AcceptanceBadge, AreaBadge, AssignmentStatusBadge, FormatBadge, ImpactBadge } from '../components/Badges';
+import type {
+	LmsAssignment,
+	LmsContent,
+	LmsLearningPath,
+	LmsPathEnrollment,
+} from '~/models/qa';
+import {
+	AcceptanceBadge,
+	AssignmentStatusBadge,
+	ImpactBadge,
+} from '../components/Badges';
 import { ImpactSparkline } from '../components/ImpactSparkline';
 import { PathStepper } from '../components/PathStepper';
-import { nextModule } from '../helpers';
+import { formatDay, nextModule } from '../helpers';
 
 interface ContentSidebarProps {
 	content: LmsContent;
@@ -30,52 +39,30 @@ export function ContentSidebar({
 
 	return (
 		<Stack gap='md'>
-			<SectionCard title={content.title} padding='md'>
-				<Stack gap='sm'>
-					<Group gap='xs'>
-						<FormatBadge format={content.format} size='xs' />
-						<AreaBadge area={content.area} subItem={content.subItem} size='xs' />
-					</Group>
-
-					<Group gap='lg'>
-						<Group gap={4}>
-							<IconClock size={14} />
+			{assignment && (
+				<SectionCard title={t('player.assignment.title')} padding='md'>
+					<Stack gap='sm'>
+						<Text size='sm'>{assignment.reason}</Text>
+						<Stack gap={4}>
 							<Text size='xs' c='dimmed'>
-								{t('common.minutes', { count: content.durationMin })}
+								{t('player.assignment.assignedOn', {
+									name: assignment.assignedBy,
+									date: formatDay(assignment.assignedAt),
+								})}
 							</Text>
+							<Text size='xs' fw={600}>
+								{t('player.assignment.due', {
+									date: formatDay(assignment.dueDate),
+								})}
+							</Text>
+						</Stack>
+						<Group gap='xs'>
+							<AssignmentStatusBadge assignment={assignment} size='xs' />
+							<AcceptanceBadge acceptance={assignment.acceptance} size='xs' />
 						</Group>
-						<Text size='xs' c='dimmed'>
-							{t('player.meta.level')}: {t(`levels.${content.level}`)}
-						</Text>
-					</Group>
-
-					<Group gap={4}>
-						<IconUser size={14} />
-						<Text size='xs' c='dimmed'>
-							{t('player.meta.by', { name: content.author })}
-						</Text>
-					</Group>
-
-					{assignment && (
-						<>
-							<Divider />
-							<Stack gap={6}>
-								<Group gap='xs'>
-									<AssignmentStatusBadge assignment={assignment} size='xs' />
-									<AcceptanceBadge acceptance={assignment.acceptance} size='xs' />
-								</Group>
-								<Text size='xs' c='dimmed'>
-									{t('player.meta.assigned', { date: assignment.assignedAt })}
-								</Text>
-								<Text size='xs' c='dimmed'>
-									{t('player.meta.due', { date: assignment.dueDate })}
-								</Text>
-								<Text size='xs'>{assignment.reason}</Text>
-							</Stack>
-						</>
-					)}
-				</Stack>
-			</SectionCard>
+					</Stack>
+				</SectionCard>
+			)}
 
 			{assignment?.impact && (
 				<SectionCard title={t('impact.title')} padding='md'>
@@ -83,7 +70,9 @@ export function ContentSidebar({
 						<Group gap='xs'>
 							<ImpactBadge impact={assignment.impact} size='xs' />
 							<Text size='xs' c='dimmed'>
-								{t(`metrics.${assignment.impact.metricId}`, { ns: 'qa.triggers' })}
+								{t(`metrics.${assignment.impact.metricId}`, {
+									ns: 'qa.triggers',
+								})}
 							</Text>
 						</Group>
 						<ImpactSparkline impact={assignment.impact} height={70} />
@@ -92,7 +81,11 @@ export function ContentSidebar({
 			)}
 
 			{path && (
-				<SectionCard title={t('player.partOfPath', { path: path.title })} icon={IconRoute} padding='md'>
+				<SectionCard
+					title={t('player.partOfPath', { path: path.title })}
+					icon={IconRoute}
+					padding='md'
+				>
 					<Stack gap='sm'>
 						<PathStepper
 							path={path}
@@ -101,8 +94,12 @@ export function ContentSidebar({
 							onOpenModule={onOpenModule}
 						/>
 						{next && next.id !== content.id && (
-							<Button size='xs' variant='light' onClick={() => onOpenModule(next.id)}>
-								{t('player.nextModule')}: {next.title}
+							<Button
+								size='xs'
+								variant='light'
+								onClick={() => onOpenModule(next.id)}
+							>
+								{t('player.completed.next', { title: next.title })}
 							</Button>
 						)}
 					</Stack>

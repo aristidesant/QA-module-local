@@ -1,0 +1,82 @@
+/* Chart colors shared by Team Analytics and the dashboards. Six categorical slots
+   validated for color-vision safety in both modes; the order is fixed (blue beside
+   grape fails for deutan). Current = ink, previous period = gray. */
+:root {
+	--series-current: var(--mantine-color-text);
+	--series-previous: var(--mantine-color-gray-5);
+	--series-other: var(--mantine-color-gray-5);
+	--series-1: light-dark(
+		var(--mantine-color-blue-6),
+		var(--mantine-color-blue-5)
+	);
+	--series-2: light-dark(
+		var(--mantine-color-teal-6),
+		var(--mantine-color-teal-7)
+	);
+	--series-3: var(--mantine-color-grape-6);
+	--series-4: light-dark(
+		var(--mantine-color-orange-6),
+		var(--mantine-color-orange-8)
+	);
+	--series-5: light-dark(
+		var(--mantine-color-indigo-6),
+		var(--mantine-color-indigo-5)
+	);
+	--series-6: var(--mantine-color-pink-6);
+
+	/* One hue, light to dark: heatmaps and ordered outcomes. */
+	--heat-1: light-dark(
+		var(--mantine-color-blue-0),
+		var(--mantine-color-blue-9)
+	);
+	--heat-2: light-dark(
+		var(--mantine-color-blue-2),
+		var(--mantine-color-blue-7)
+	);
+	--heat-3: light-dark(
+		var(--mantine-color-blue-4),
+		var(--mantine-color-blue-5)
+	);
+	--heat-4: light-dark(
+		var(--mantine-color-blue-6),
+		var(--mantine-color-blue-4)
+	);
+	--heat-5: light-dark(
+		var(--mantine-color-blue-8),
+		var(--mantine-color-blue-3)
+	);
+
+	/* Two hues around a neutral middle: ordered scales such as sentiment. */
+	--div-neg-2: light-dark(
+		var(--mantine-color-orange-7),
+		var(--mantine-color-orange-5)
+	);
+	--div-neg-1: light-dark(
+		var(--mantine-color-orange-3),
+		var(--mantine-color-orange-8)
+	);
+	--div-mid: light-dark(
+		var(--mantine-color-gray-4),
+		var(--mantine-color-dark-3)
+	);
+	--div-pos-1: light-dark(
+		var(--mantine-color-blue-3),
+		var(--mantine-color-blue-8)
+	);
+	--div-pos-2: light-dark(
+		var(--mantine-color-blue-7),
+		var(--mantine-color-blue-4)
+	);
+
+	/* Status colors only where the value means a state (burnout level). */
+	--status-high: var(--mantine-color-danger-6);
+	--status-medium: var(--mantine-color-amber-6);
+	--status-low: var(--mantine-color-gray-5);
+
+	/* Evaluation-area identity. Learning (and later analytics) read these; never a status colour. */
+	--area-qa: var(--series-1);
+	--area-sentiment: var(--series-2);
+	--area-compliance: var(--series-3);
+	--area-business: var(--series-4);
+	--area-general: var(--series-other);
+}

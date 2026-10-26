@@ -1,16 +1,19 @@
-import { SimpleGrid, Stack } from '@mantine/core';
-import { IconCalendarDue, IconMailForward } from '@tabler/icons-react';
+import { Stack } from '@mantine/core';
+import { IconMailForward, IconSchool } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
-import { SectionCard } from '~/components/SectionCard';
 import EmptyState from '~/components/EmptyState';
+import { SectionCard } from '~/components/SectionCard';
 import type { LmsAssignment, LmsContent } from '~/models/qa';
+import type { AgentProfile } from '~/modules/qa/team/types';
 import { AcceptanceCard } from '../../components/AcceptanceCard';
-import { AssignmentCard } from '../../components/AssignmentCard';
-import { groupAssignments } from '../../helpers';
+import { groupAssignments, pickNextUp } from '../../helpers';
+import { AreaLedger } from '../AreaLedger';
+import { NextUpCard } from '../NextUpCard';
 
 interface AssignmentsTabProps {
 	assignments: LmsAssignment[];
 	contentById: Record<string, LmsContent>;
+	profile: AgentProfile | undefined;
 	onOpen: (contentId: string) => void;
 	onAccept: (assignmentId: string) => void;
 	onPropose: (assignment: LmsAssignment) => void;
@@ -19,59 +22,69 @@ interface AssignmentsTabProps {
 export function AssignmentsTab({
 	assignments,
 	contentById,
+	profile,
 	onOpen,
 	onAccept,
 	onPropose,
 }: AssignmentsTabProps) {
 	const { t } = useTranslation('qa.lms');
 	const groups = groupAssignments(assignments);
-	const isEmpty = !groups.needsResponse.length && !groups.mandatory.length;
+	const nextUp = pickNextUp(assignments);
+	const nextContent = nextUp ? contentById[nextUp.contentId] : undefined;
+	const rest = [
+		...groups.mandatory.filter((a) => a.id !== nextUp?.id),
+		...groups.optional,
+	];
+	const isEmpty = !groups.needsResponse.length && !nextUp && !rest.length;
 
 	if (isEmpty) {
-		return <EmptyState message={t('agent.assignments.empty')} />;
+		return (
+			<EmptyState
+				icon={<IconSchool size={28} />}
+				message={t('agent.assignments.empty')}
+				description={t('agent.assignments.emptyDescription')}
+			/>
+		);
 	}
 
 	return (
-		<Stack gap='md'>
+		<Stack gap='lg'>
 			{groups.needsResponse.length > 0 && (
 				<SectionCard
 					title={t('agent.assignments.needsResponse')}
 					description={t('agent.assignments.needsResponseDescription')}
 					icon={IconMailForward}
 					headerAccent='yellow'
+					contentSpacing={0}
 				>
-					<SimpleGrid cols={{ base: 1, md: 2 }} spacing='md'>
-						{groups.needsResponse.map((a) => (
-							<AcceptanceCard
-								key={a.id}
-								assignment={a}
-								content={contentById[a.contentId]}
-								onAccept={() => onAccept(a.id)}
-								onPropose={() => onPropose(a)}
-							/>
-						))}
-					</SimpleGrid>
+					{groups.needsResponse.map((a) => (
+						<AcceptanceCard
+							key={a.id}
+							assignment={a}
+							content={contentById[a.contentId]}
+							onAccept={() => onAccept(a.id)}
+							onPropose={() => onPropose(a)}
+						/>
+					))}
 				</SectionCard>
 			)}
 
-			{groups.mandatory.length > 0 && (
-				<SectionCard
-					title={t('agent.assignments.mandatory')}
-					description={t('agent.assignments.mandatoryDescription')}
-					icon={IconCalendarDue}
-				>
-					<Stack gap='sm'>
-						{groups.mandatory.map((a) => (
-							<AssignmentCard
-								key={a.id}
-								assignment={a}
-								content={contentById[a.contentId]}
-								onOpen={() => onOpen(a.contentId)}
-							/>
-						))}
-					</Stack>
-				</SectionCard>
+			{nextUp && nextContent && (
+				<NextUpCard
+					assignment={nextUp}
+					content={nextContent}
+					profile={profile}
+					onOpen={() => onOpen(nextContent.id)}
+				/>
 			)}
+
+			<AreaLedger
+				open={rest}
+				completed={groups.completed}
+				contentById={contentById}
+				profile={profile}
+				onOpen={onOpen}
+			/>
 		</Stack>
 	);
 }

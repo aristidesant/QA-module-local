@@ -95,38 +95,31 @@
 		"WELLBEING": "Bienestar"
 	},
 	"agent": {
-		"eyebrow": "Agente",
 		"title": "Mi aprendizaje",
-		"description": "Tus asignaciones, rutas de aprendizaje y compromisos de coaching, ligados a los aspectos en los que te evalúan.",
-		"kpi": {
-			"needsResponse": "Requiere tu respuesta",
-			"dueThisWeek": "Vence esta semana",
-			"overdue": "Vencidos",
-			"completedThisMonth": "Completados este mes",
-			"quizAverage": "Promedio de cuestionarios"
-		},
+		"description": "Lo que te han pedido aprender, por qué te lo asignaron y si movió tus puntajes.",
 		"tabs": {
-			"assignments": "Mis asignaciones",
-			"history": "Historial",
-			"rolePlay": "Juego de roles"
+			"assignments": "Asignaciones",
+			"rolePlay": "Práctica",
+			"history": "Resultados"
 		},
 		"assignments": {
 			"needsResponse": "Requiere tu respuesta",
-			"needsResponseDescription": "Tu supervisor asignó esto con una fecha límite. Acéptala o propón otra fecha.",
-			"mandatory": "Obligatorios con fecha límite",
-			"mandatoryDescription": "Ordenados por fecha de vencimiento. Los vencidos se destacan.",
-			"empty": "No tienes nada asignado ahora mismo.",
+			"needsResponseDescription": "Acepta la fecha límite o propón otra. Tras 48 horas sin respuesta se avisa a tu supervisor.",
+			"empty": "No tienes nada asignado ahora mismo",
 			"assignedBy": "Asignado por {{name}}",
-			"why": "Por qué te lo asignaron",
 			"accept": "Acepto esta fecha límite",
 			"proposeDate": "Proponer otra fecha",
 			"accepted": "Aceptado el {{date}}",
 			"rescheduleSent": "Nueva fecha propuesta: {{date}} — esperando a {{name}}",
 			"noResponse": "Sin respuesta durante {{count}} horas: se notificó a tu supervisor",
 			"mandatoryBadge": "Obligatorio",
-			"progress": "{{value}}% completado",
+			"progress": "{{value}}% hecho",
 			"score": "Nota {{value}}%",
-			"acceptSuccess": "Fecha límite aceptada"
+			"acceptSuccess": "Fecha límite aceptada",
+			"emptyDescription": "Cuando tu supervisor o una regla de coaching te asigne material, aparecerá aquí con el motivo.",
+			"assignedOn": "{{name}} te lo asignó el {{date}}",
+			"dueOn": "Vence el {{date}}",
+			"optional": "Opcional"
 		},
 		"reschedule": {
 			"title": "Proponer otra fecha",
@@ -168,25 +161,20 @@
 			"count": "{{count}} elementos"
 		},
 		"history": {
-			"title": "Material completado",
-			"description": "Lo que terminaste y cómo se movieron tus puntajes después.",
-			"kpi": {
-				"completed": "Completados",
-				"averageScore": "Nota promedio",
-				"improved": "Mejoraron",
-				"declined": "Empeoraron"
-			},
+			"title": "Qué cambió después de terminar",
+			"description": "Tu puntaje en la métrica de cada material, 30 días antes frente a 30 días después.",
+			"summary": "{{count}} terminados. El puntaje mejoró en {{improved}}, se mantuvo en {{same}} y bajó en {{declined}}.",
+			"summaryNone": "Nada terminado todavía. Los resultados aparecen 30 días después de completar algo.",
 			"columns": {
 				"material": "Material",
-				"completed": "Completado",
+				"area": "Área",
+				"completed": "Terminado",
 				"score": "Nota",
-				"impact": "Impacto",
-				"metric": "Métrica",
-				"before": "Antes",
-				"after": "Después"
+				"change": "Antes y después",
+				"impact": "Impacto"
 			},
-			"impactHint": "30 días antes vs 30 días después de completarlo",
-			"empty": "Todavía no has completado nada."
+			"impactHint": "30 días antes vs 30 días después de completar",
+			"empty": "Nada terminado todavía."
 		},
 		"coaching": {
 			"title": "Coaching",
@@ -266,14 +254,40 @@
 			}
 		},
 		"rolePlay": {
-			"available": "Disponibles para practicar",
-			"availableDescription": "Modelos de cliente que tu supervisor te ha desbloqueado.",
+			"available": "Clientes con los que puedes practicar",
+			"availableDescription": "Tu supervisor los desbloqueó. Cada uno apunta a un área en la que te evalúan.",
 			"noneAvailable": "Todavía no tienes ninguno desbloqueado. Pídele acceso a tu supervisor.",
 			"objectives": "Qué practicar",
 			"startPractice": "Iniciar práctica",
 			"practiceStarted": "Sesión de práctica iniciada con {{name}} (simulada).",
 			"mockDisclaimer": "Esta es una sesión simulada para el prototipo: no se realizará ninguna llamada real.",
-			"empty": "Todavía no hay modelos de juego de roles configurados."
+			"empty": "Todavía no hay modelos de juego de roles configurados.",
+			"practice": "Practicar"
+		},
+		"nextUp": {
+			"caption": "Empieza por aquí",
+			"yourScore": "Tu puntaje de {{area}}",
+			"notScored": "Sin puntaje",
+			"start": "Empezar",
+			"continue": "Continuar"
+		},
+		"areas": {
+			"title": "Por área de evaluación",
+			"description": "Lo que tienes asignado para cada área en la que te evalúan, junto a tu puntaje actual. Primero el área más débil.",
+			"nothingHere": "Nada asignado en esta área ahora mismo.",
+			"evidenceNone": "Nada terminado todavía",
+			"evidence_one": "{{count}} terminado, mejoró en {{improved}}",
+			"evidence_other": "{{count}} terminados, mejoraron en {{improved}}",
+			"evidenceUnmeasured_one": "{{count}} terminado",
+			"evidenceUnmeasured_other": "{{count}} terminados",
+			"vsPrevious": "vs periodo anterior",
+			"columns": {
+				"area": "Área",
+				"score": "Tu puntaje",
+				"material": "Material",
+				"due": "Vence",
+				"progress": "Avance"
+			}
 		}
 	},
 	"player": {
@@ -311,18 +325,23 @@
 			"continue": "Continuar"
 		},
 		"completed": {
-			"title": "¡Completado!",
-			"message": "Mediremos tu {{metric}} durante los próximos 30 días y mostraremos el resultado aquí.",
-			"noImpact": "Este material es informativo: no se mide ningún puntaje.",
-			"backToList": "Volver a mis asignaciones"
+			"title": "Hecho",
+			"message": "Mediremos tu {{metric}} durante los próximos 30 días y mostraremos el resultado en Resultados.",
+			"noImpact": "Este material es informativo, así que no se mide ningún puntaje.",
+			"backToList": "Volver a Mi aprendizaje",
+			"next": "Siguiente: {{title}}"
 		},
 		"meta": {
 			"duration": "{{count}} min",
-			"level": "Nivel",
 			"assigned": "Asignado el {{date}}",
-			"due": "Vence el {{date}}",
-			"by": "Por {{name}}",
-			"author": "Autor"
+			"due": "Vence el {{date}}"
+		},
+		"watched": "{{value}}% visto",
+		"facts": "{{format}}, {{minutes}} min",
+		"assignment": {
+			"title": "Por qué estás aquí",
+			"assignedOn": "{{name}} te lo asignó el {{date}}",
+			"due": "Vence el {{date}}"
 		}
 	},
 	"impact": {

@@ -1,14 +1,10 @@
-import { Badge, Button, Group, List, Stack, Text } from '@mantine/core';
+import { Button, Group, List, Stack, Text } from '@mantine/core';
 import { IconMasksTheater } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import { AppDrawer } from '~/components/AppDrawer';
-import { SectionCard } from '~/components/SectionCard';
 import type { RolePlayModel } from '~/models/qa';
-import {
-	ROLE_PLAY_DIFFICULTY_META,
-	ROLE_PLAY_PERSONA_META,
-} from '../constants';
-import { AreaBadge } from './Badges';
+import { AreaMark } from './AreaMark';
+import { DifficultyDots } from './DifficultyDots';
 
 interface RolePlayDetailDrawerProps {
 	model: RolePlayModel | null;
@@ -25,8 +21,6 @@ export function RolePlayDetailDrawer({
 }: RolePlayDetailDrawerProps) {
 	const { t } = useTranslation('qa.lms');
 	if (!model) return null;
-	const personaMeta = ROLE_PLAY_PERSONA_META[model.persona];
-	const PersonaIcon = personaMeta.icon;
 
 	return (
 		<AppDrawer
@@ -39,28 +33,21 @@ export function RolePlayDetailDrawer({
 			iconColor='gray'
 		>
 			<Stack gap='md'>
-				<Group gap='xs'>
-					<AreaBadge area={model.area} subItem={model.subItem} size='xs' />
-					<Badge
-						size='xs'
-						variant='outline'
-						color='gray'
-						leftSection={<PersonaIcon size={12} />}
-					>
-						{t(personaMeta.labelKey)}
-					</Badge>
-					<Badge size='xs' variant='outline' color='gray'>
-						{t(ROLE_PLAY_DIFFICULTY_META[model.difficulty].labelKey)}
-					</Badge>
+				<Group gap='md'>
+					<AreaMark area={model.area} subItem={model.subItem} size='sm' />
+					<DifficultyDots difficulty={model.difficulty} />
 				</Group>
 
-				<SectionCard title={t('agent.rolePlay.objectives')} padding='md'>
+				<Stack gap='xs'>
+					<Text size='sm' fw={600}>
+						{t('agent.rolePlay.objectives')}
+					</Text>
 					<List size='sm' spacing='xs'>
 						{model.objectives.map((objective, i) => (
 							<List.Item key={i}>{objective}</List.Item>
 						))}
 					</List>
-				</SectionCard>
+				</Stack>
 
 				<Text size='xs' c='dimmed'>
 					{t('agent.rolePlay.mockDisclaimer')}

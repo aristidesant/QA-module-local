@@ -11,7 +11,6 @@ import {
 	Text,
 	Title,
 } from '@mantine/core';
-import { IconCircleCheck } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import ContentContainer from '~/components/ContentContainer';
 import EmptyState from '~/components/EmptyState';
@@ -33,6 +32,9 @@ import {
 	managerLmsPath,
 } from '../constants';
 import { roleFromPath } from '~/modules/qa/team/helpers';
+import { AreaMark } from '../components/AreaMark';
+import { nextModule } from '../helpers';
+import { CompletionPanel } from './CompletionPanel';
 import { ContentSidebar } from './ContentSidebar';
 import { DocumentReader } from './players/DocumentReader';
 import { QuizPlayer } from './players/QuizPlayer';
@@ -107,6 +109,8 @@ export default function LmsContentPage() {
 		[enrollments, path]
 	);
 
+	const next = path ? nextModule(path, enrollment, contentById) : undefined;
+
 	if (!item) {
 		return (
 			<ContentContainer contentWidth='full'>
@@ -163,86 +167,76 @@ export default function LmsContentPage() {
 				<Grid gap='lg'>
 					<Grid.Col span={{ base: 12, lg: 8 }}>
 						<Stack gap='md'>
-							<Stack gap={4}>
+							<Stack gap={6}>
 								<Title order={2}>{item.title}</Title>
-								<Text c='dimmed' size='sm'>
-									{item.summary}
-								</Text>
+								<Group gap='md' wrap='wrap'>
+									<AreaMark area={item.area} subItem={item.subItem} size='sm' />
+									<Text size='sm' c='dimmed'>
+										{t('player.facts', {
+											format: t(`formats.${item.format}`),
+											minutes: item.durationMin,
+										})}
+									</Text>
+								</Group>
+								<Text size='sm'>{item.summary}</Text>
 							</Stack>
 
-							{justCompleted && (
-								<Alert
-									color='green'
-									variant='light'
-									icon={<IconCircleCheck size={18} />}
-									title={t('player.completed.title')}
-								>
-									<Stack gap='sm'>
-										<Text size='sm'>
-											{metricName
-												? t('player.completed.message', { metric: metricName })
-												: t('player.completed.noImpact')}
-										</Text>
-										<Group gap='xs'>
-											<Button
-												size='xs'
-												variant='light'
-												onClick={() =>
-													navigate(
-														isManager
-															? listPath
-															: `${AGENT_LMS_PATH}?tab=assignments`
-													)
-												}
-											>
-												{t('player.completed.backToList')}
-											</Button>
-										</Group>
-									</Stack>
-								</Alert>
-							)}
-
 							{!assignment && (
-								<Alert color='blue' variant='light'>
+								<Alert color='gray' variant='light'>
 									<Text size='sm'>{t('player.notAssigned')}</Text>
 								</Alert>
 							)}
 
-							<SectionCard padding='md'>
-								{item.format === 'VIDEO' && (
-									<VideoPlayerMock
-										content={item}
-										initialProgress={assignment?.progress ?? 0}
-										readOnly={readOnly}
-										onProgress={handleProgress}
-										onComplete={() => handleComplete(null)}
-									/>
-								)}
-								{item.format === 'DOCUMENT' && (
-									<DocumentReader
-										content={item}
-										initialProgress={assignment?.progress ?? 0}
-										readOnly={readOnly}
-										onProgress={handleProgress}
-										onComplete={() => handleComplete(null)}
-									/>
-								)}
-								{item.format === 'QUIZ' && item.questions && (
-									<QuizPlayer
-										questions={item.questions}
-										passScore={item.passScore ?? 80}
-										readOnly={readOnly}
-										onComplete={(score) => handleComplete(score)}
-									/>
-								)}
-								{item.format === 'SCENARIO' && (
-									<ScenarioPlayer
-										content={item}
-										readOnly={readOnly}
-										onComplete={(score) => handleComplete(score)}
-									/>
-								)}
-							</SectionCard>
+							{justCompleted ? (
+								<CompletionPanel
+									metricName={metricName}
+									nextTitle={
+										next && next.id !== item.id ? next.title : undefined
+									}
+									onBack={() =>
+										navigate(
+											isManager ? listPath : `${AGENT_LMS_PATH}?tab=assignments`
+										)
+									}
+									onNext={next ? () => openModule(next.id) : undefined}
+								/>
+							) : (
+								<SectionCard padding='md'>
+									{item.format === 'VIDEO' && (
+										<VideoPlayerMock
+											content={item}
+											initialProgress={assignment?.progress ?? 0}
+											readOnly={readOnly}
+											onProgress={handleProgress}
+											onComplete={() => handleComplete(null)}
+										/>
+									)}
+									{item.format === 'DOCUMENT' && (
+										<DocumentReader
+											content={item}
+											initialProgress={assignment?.progress ?? 0}
+											readOnly={readOnly}
+											onProgress={handleProgress}
+											onComplete={() => handleComplete(null)}
+										/>
+									)}
+									{item.format === 'QUIZ' && item.questions && (
+										<QuizPlayer
+											questions={item.questions}
+											passScore={item.passScore ?? 80}
+											readOnly={readOnly}
+											onComplete={(score) => handleComplete(score)}
+										/>
+									)}
+									{item.format === 'SCENARIO' && (
+										<ScenarioPlayer
+											content={item}
+											readOnly={readOnly}
+											onComplete={(score) => handleComplete(score)}
+										/>
+									)}
+								</SectionCard>
+							)}
 						</Stack>
 					</Grid.Col>
 

@@ -1,0 +1,16 @@
+/* Keeps the sparkline short inside its table cell. */
+.score {
+	max-width: 132px;
+}
+
+.progress {
+	min-width: 96px;
+}
+
+.due {
+	color: light-dark(
+		var(--mantine-color-danger-7),
+		var(--mantine-color-danger-4)
+	);
+	font-weight: 600;
+}

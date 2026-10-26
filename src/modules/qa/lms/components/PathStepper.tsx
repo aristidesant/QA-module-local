@@ -1,6 +1,10 @@
-﻿import { Badge, Group, Stepper, Text } from '@mantine/core';
+﻿import { Stepper, Text } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
-import type { LmsContent, LmsLearningPath, LmsPathEnrollment } from '~/models/qa';
+import type {
+	LmsContent,
+	LmsLearningPath,
+	LmsPathEnrollment,
+} from '~/models/qa';
 import { LMS_FORMAT_META } from '../constants';
 import pointerStyles from './Cards.module.css';
 
@@ -11,10 +15,17 @@ interface PathStepperProps {
 	onOpenModule?: (contentId: string) => void;
 }
 
-export function PathStepper({ path, enrollment, contentById, onOpenModule }: PathStepperProps) {
+export function PathStepper({
+	path,
+	enrollment,
+	contentById,
+	onOpenModule,
+}: PathStepperProps) {
 	const { t } = useTranslation('qa.lms');
 	const completed = enrollment?.completedContentIds ?? [];
-	const activeIndex = path.modules.findIndex((m) => !completed.includes(m.contentId));
+	const activeIndex = path.modules.findIndex(
+		(m) => !completed.includes(m.contentId)
+	);
 
 	return (
 		<Stepper
@@ -38,20 +49,25 @@ export function PathStepper({ path, enrollment, contentById, onOpenModule }: Pat
 								size='sm'
 								fw={500}
 								className={onOpenModule ? pointerStyles.pointer : undefined}
-								onClick={onOpenModule ? () => onOpenModule(module.contentId) : undefined}
+								onClick={
+									onOpenModule
+										? () => onOpenModule(module.contentId)
+										: undefined
+								}
 							>
 								{content.title}
 							</Text>
 						}
 						description={
-							<Group gap='xs'>
-								<Text size='xs' c='dimmed'>
-									{t(`formats.${content.format}`)} · {t('common.minutes', { count: content.durationMin })}
-								</Text>
-								<Badge size='xs' variant='outline' color={module.required ? 'red' : 'gray'}>
-									{module.required ? t('agent.paths.required') : t('agent.paths.optional')}
-								</Badge>
-							</Group>
+							<Text size='xs' c='dimmed'>
+								{t('player.facts', {
+									format: t(`formats.${content.format}`),
+									minutes: content.durationMin,
+								})}
+								{module.required
+									? ''
+									: ` (${t('agent.assignments.optional').toLowerCase()})`}
+							</Text>
 						}
 					/>
 				);

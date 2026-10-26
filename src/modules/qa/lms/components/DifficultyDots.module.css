@@ -1,0 +1,16 @@
+.dots {
+	display: inline-flex;
+	gap: 3px;
+	align-items: center;
+}
+
+.dot {
+	width: 6px;
+	height: 6px;
+	border-radius: 50%;
+	background-color: var(--surface-border-strong);
+}
+
+.on {
+	background-color: var(--mantine-color-text);
+}

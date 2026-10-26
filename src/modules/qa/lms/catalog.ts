@@ -7,10 +7,6 @@
  */
 import type { LmsContent, LmsLearningPath } from '~/models/qa';
 
-const AUTHOR = 'Elena Ruiz';
-const PUBLISHED_AT = '2026-06-01';
-const UPDATED_AT = '2026-08-20';
-
 export const LMS_CONTENT: LmsContent[] = [
 	// ── Quality Assurance ───────────────────────────────────────────────────────
 	{
@@ -26,9 +22,9 @@ export const LMS_CONTENT: LmsContent[] = [
 		level: 'BEGINNER',
 		status: 'PUBLISHED',
 		tags: ['opening', 'verification'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Elena Ruiz',
+		publishedAt: '2026-03-02',
+		updatedAt: '2026-08-20',
 		chapters: [
 			{ title: 'Why the first 30 seconds decide the call', startSec: 0 },
 			{ title: 'The four elements of a compliant greeting', startSec: 180 },
@@ -50,9 +46,9 @@ export const LMS_CONTENT: LmsContent[] = [
 		level: 'BEGINNER',
 		status: 'PUBLISHED',
 		tags: ['discovery', 'questions'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Maria García',
+		publishedAt: '2026-04-14',
+		updatedAt: '2026-07-01',
 		body: `## Why discovery questions matter
 Agents who ask two open questions before presenting an offer score 11 points higher on QA and convert 8% more.
 
@@ -82,9 +78,9 @@ Agents who ask two open questions before presenting an offer score 11 points hig
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['objections', 'structure'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Elena Ruiz',
+		publishedAt: '2026-03-02',
+		updatedAt: '2026-08-20',
 		chapters: [
 			{ title: 'What an objection actually signals', startSec: 0 },
 			{ title: 'Step 1-2: acknowledge and isolate', startSec: 300 },
@@ -96,7 +92,8 @@ Agents who ask two open questions before presenting an offer score 11 points hig
 	{
 		id: 'lms-c04',
 		title: 'Closing the Call: recap & next steps',
-		summary: 'The recap that prevents repeat calls and the two sentences that close every call cleanly.',
+		summary:
+			'The recap that prevents repeat calls and the two sentences that close every call cleanly.',
 		format: 'DOCUMENT',
 		area: 'QUALITY_ASSURANCE',
 		subItem: 'closing',
@@ -105,9 +102,9 @@ Agents who ask two open questions before presenting an offer score 11 points hig
 		level: 'BEGINNER',
 		status: 'PUBLISHED',
 		tags: ['closing', 'recap'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Maria García',
+		publishedAt: '2026-04-14',
+		updatedAt: '2026-07-01',
 		body: `## The close is part of the resolution
 Half of our repeat calls come from a customer who did not know what would happen next. The recap is not a formality.
 
@@ -127,7 +124,8 @@ Half of our repeat calls come from a customer who did not know what would happen
 	{
 		id: 'lms-c05',
 		title: 'QA Fundamentals check',
-		summary: 'Four questions on the evaluation form: what is scored, what is critical and what is an auto-fail.',
+		summary:
+			'Four questions on the evaluation form: what is scored, what is critical and what is an auto-fail.',
 		format: 'QUIZ',
 		area: 'QUALITY_ASSURANCE',
 		subItem: null,
@@ -136,9 +134,9 @@ Half of our repeat calls come from a customer who did not know what would happen
 		level: 'BEGINNER',
 		status: 'PUBLISHED',
 		tags: ['assessment'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Quality team',
+		publishedAt: '2026-05-05',
+		updatedAt: '2026-09-01',
 		passScore: 80,
 		questions: [
 			{
@@ -151,7 +149,8 @@ Half of our repeat calls come from a customer who did not know what would happen
 					'A critical end-user error',
 				],
 				correctIndex: 1,
-				explanation: 'ECN is the critical business error: it costs the company money or the sale.',
+				explanation:
+					'ECN is the critical business error: it costs the company money or the sale.',
 			},
 			{
 				id: 'q2',
@@ -163,14 +162,22 @@ Half of our repeat calls come from a customer who did not know what would happen
 					'When the customer asks for a supervisor',
 				],
 				correctIndex: 1,
-				explanation: 'A single critical error fails the whole call regardless of the total score.',
+				explanation:
+					'A single critical error fails the whole call regardless of the total score.',
 			},
 			{
 				id: 'q3',
-				prompt: 'How many open questions should you ask before presenting an offer?',
-				options: ['None, present first', 'At least two', 'Exactly five', 'As many as the script lists'],
+				prompt:
+					'How many open questions should you ask before presenting an offer?',
+				options: [
+					'None, present first',
+					'At least two',
+					'Exactly five',
+					'As many as the script lists',
+				],
 				correctIndex: 1,
-				explanation: 'Two open questions are the minimum for a complete needs assessment.',
+				explanation:
+					'Two open questions are the minimum for a complete needs assessment.',
 			},
 			{
 				id: 'q4',
@@ -182,7 +189,8 @@ Half of our repeat calls come from a customer who did not know what would happen
 					'The internal ticket queue name',
 				],
 				correctIndex: 1,
-				explanation: 'The next step with an owner and a date is what prevents repeat calls.',
+				explanation:
+					'The next step with an owner and a date is what prevents repeat calls.',
 			},
 		],
 		stats: { assigned: 19, completed: 16, avgScore: 84, avgRating: 4.1 },
@@ -200,9 +208,9 @@ Half of our repeat calls come from a customer who did not know what would happen
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['role-play', 'discovery'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Maria García',
+		publishedAt: '2026-04-14',
+		updatedAt: '2026-07-01',
 		scenario: {
 			situation:
 				'A customer calls saying only that "the service is not working properly" and cannot describe what happens. They are in a hurry and have called once before.',
@@ -235,11 +243,13 @@ Half of our repeat calls come from a customer who did not know what would happen
 						'Apologise and schedule a callback',
 					],
 					correctIndex: 1,
-					explanation: 'Without a symptom you cannot resolve, and a guessed fix causes the repeat call.',
+					explanation:
+						'Without a symptom you cannot resolve, and a guessed fix causes the repeat call.',
 				},
 				{
 					id: 's2',
-					prompt: 'The customer says they already called last week. What do you do with that?',
+					prompt:
+						'The customer says they already called last week. What do you do with that?',
 					options: [
 						'Ignore it, it is a new case',
 						'Ask what was tried so you do not repeat it',
@@ -247,7 +257,8 @@ Half of our repeat calls come from a customer who did not know what would happen
 						'Escalate immediately',
 					],
 					correctIndex: 1,
-					explanation: 'Asking what was already tried avoids repeating a failed step and shows you listened.',
+					explanation:
+						'Asking what was already tried avoids repeating a failed step and shows you listened.',
 				},
 				{
 					id: 's3',
@@ -259,7 +270,8 @@ Half of our repeat calls come from a customer who did not know what would happen
 						'Summarise the terms and conditions',
 					],
 					correctIndex: 0,
-					explanation: 'Repeating the goal back is what the evaluation form scores as a complete needs assessment.',
+					explanation:
+						'Repeating the goal back is what the evaluation form scores as a complete needs assessment.',
 				},
 			],
 		},
@@ -268,7 +280,8 @@ Half of our repeat calls come from a customer who did not know what would happen
 	{
 		id: 'lms-c07',
 		title: 'Auto-fail prevention: critical errors explained',
-		summary: 'The four COPC error types, what triggers each one and how to catch yourself before it happens.',
+		summary:
+			'The four COPC error types, what triggers each one and how to catch yourself before it happens.',
 		format: 'VIDEO',
 		area: 'QUALITY_ASSURANCE',
 		subItem: 'ECN',
@@ -277,9 +290,9 @@ Half of our repeat calls come from a customer who did not know what would happen
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['copc', 'critical-errors'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Elena Ruiz',
+		publishedAt: '2026-03-02',
+		updatedAt: '2026-08-20',
 		chapters: [
 			{ title: 'ECN, ENC, ECC, ECUF in one minute', startSec: 0 },
 			{ title: 'The three most common auto-fails', startSec: 240 },
@@ -293,7 +306,8 @@ Half of our repeat calls come from a customer who did not know what would happen
 	{
 		id: 'lms-c08',
 		title: 'Regulatory Disclosures 2026',
-		summary: 'The disclosures you must read, when each one applies and the wording that keeps them valid.',
+		summary:
+			'The disclosures you must read, when each one applies and the wording that keeps them valid.',
 		format: 'DOCUMENT',
 		area: 'COMPLIANCE',
 		subItem: 'disclosureCompliance',
@@ -302,9 +316,9 @@ Half of our repeat calls come from a customer who did not know what would happen
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['disclosures', '2026'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Compliance office',
+		publishedAt: '2026-01-12',
+		updatedAt: '2026-08-28',
 		body: `## What changed in 2026
 The recording disclosure now has to be given **before** any account data is discussed, not merely within the first minute. Two disclosures were merged and one was added for digital channels.
 
@@ -324,7 +338,8 @@ The recording disclosure now has to be given **before** any account data is disc
 	{
 		id: 'lms-c09',
 		title: 'Data Protection on Calls',
-		summary: 'What you may read back, what you must never repeat out loud, and how to verify identity safely.',
+		summary:
+			'What you may read back, what you must never repeat out loud, and how to verify identity safely.',
 		format: 'VIDEO',
 		area: 'COMPLIANCE',
 		subItem: 'dataProtection',
@@ -333,9 +348,9 @@ The recording disclosure now has to be given **before** any account data is disc
 		level: 'BEGINNER',
 		status: 'PUBLISHED',
 		tags: ['data-protection', 'verification'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Compliance office',
+		publishedAt: '2026-01-12',
+		updatedAt: '2026-08-28',
 		chapters: [
 			{ title: 'What counts as personal data', startSec: 0 },
 			{ title: 'Safe identity verification', startSec: 360 },
@@ -347,7 +362,8 @@ The recording disclosure now has to be given **before** any account data is disc
 	{
 		id: 'lms-c10',
 		title: 'Transparency & consent in billing conversations',
-		summary: 'How to explain a charge, capture consent and handle a dispute without a compliance finding.',
+		summary:
+			'How to explain a charge, capture consent and handle a dispute without a compliance finding.',
 		format: 'DOCUMENT',
 		area: 'COMPLIANCE',
 		subItem: 'transparenciaConsentimiento',
@@ -356,9 +372,9 @@ The recording disclosure now has to be given **before** any account data is disc
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['billing', 'consent'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Compliance office',
+		publishedAt: '2026-01-12',
+		updatedAt: '2026-08-28',
 		body: `## Transparency is a scored behaviour
 Regulatory findings in billing calls almost never come from the amount. They come from how the charge was explained and whether consent was captured.
 
@@ -378,7 +394,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 	{
 		id: 'lms-c11',
 		title: 'Compliance certification quiz',
-		summary: 'The annual certification: disclosures, do-not-call, identity verification and billing transparency.',
+		summary:
+			'The annual certification: disclosures, do-not-call, identity verification and billing transparency.',
 		format: 'QUIZ',
 		area: 'COMPLIANCE',
 		subItem: null,
@@ -387,9 +404,9 @@ Regulatory findings in billing calls almost never come from the amount. They com
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['certification', 'annual'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Quality team',
+		publishedAt: '2026-05-05',
+		updatedAt: '2026-09-01',
 		passScore: 90,
 		questions: [
 			{
@@ -446,7 +463,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 	{
 		id: 'lms-c12',
 		title: 'Practice: the customer asks you to skip the disclosure',
-		summary: 'A rushed customer pushes back on the legal wording. Practise staying compliant without friction.',
+		summary:
+			'A rushed customer pushes back on the legal wording. Practise staying compliant without friction.',
 		format: 'SCENARIO',
 		area: 'COMPLIANCE',
 		subItem: 'disclosureCompliance',
@@ -455,9 +473,9 @@ Regulatory findings in billing calls almost never come from the amount. They com
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['role-play', 'disclosures'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Compliance office',
+		publishedAt: '2026-01-12',
+		updatedAt: '2026-08-28',
 		scenario: {
 			situation:
 				'You are halfway through the mandatory cancellation-rights disclosure on a sale. The customer interrupts, says they have heard it before and asks you to skip to the end.',
@@ -482,7 +500,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 			selfCheck: [
 				{
 					id: 's1',
-					prompt: 'Can you shorten a mandatory disclosure when the customer asks?',
+					prompt:
+						'Can you shorten a mandatory disclosure when the customer asks?',
 					options: [
 						'Yes, if they confirm they know it',
 						'No, the wording must be given in full',
@@ -490,11 +509,13 @@ Regulatory findings in billing calls almost never come from the amount. They com
 						'Only for existing customers',
 					],
 					correctIndex: 1,
-					explanation: 'The disclosure wording is fixed; only your framing around it can change.',
+					explanation:
+						'The disclosure wording is fixed; only your framing around it can change.',
 				},
 				{
 					id: 's2',
-					prompt: 'The customer refuses to be recorded. What happens to the sale?',
+					prompt:
+						'The customer refuses to be recorded. What happens to the sale?',
 					options: [
 						'Complete it and note the refusal',
 						'It cannot be completed on this channel',
@@ -502,7 +523,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 						'Ask a colleague to take over',
 					],
 					correctIndex: 1,
-					explanation: 'Without the recorded consent the transaction cannot be completed on the call.',
+					explanation:
+						'Without the recorded consent the transaction cannot be completed on the call.',
 				},
 				{
 					id: 's3',
@@ -514,7 +536,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 						'Send it by email instead',
 					],
 					correctIndex: 0,
-					explanation: 'Naming the time cost up front gets you the 20 seconds without an argument.',
+					explanation:
+						'Naming the time cost up front gets you the 20 seconds without an argument.',
 				},
 			],
 		},
@@ -523,7 +546,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 	{
 		id: 'lms-c13',
 		title: 'Do-Not-Call list: what you must check',
-		summary: 'Where the DNC flag lives, when to check it and what to do when a listed number reaches you.',
+		summary:
+			'Where the DNC flag lives, when to check it and what to do when a listed number reaches you.',
 		format: 'VIDEO',
 		area: 'COMPLIANCE',
 		subItem: 'noLlamarList',
@@ -532,9 +556,9 @@ Regulatory findings in billing calls almost never come from the amount. They com
 		level: 'BEGINNER',
 		status: 'PUBLISHED',
 		tags: ['dnc', 'outbound'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Compliance office',
+		publishedAt: '2026-01-12',
+		updatedAt: '2026-08-28',
 		chapters: [
 			{ title: 'What the Do-Not-Call list is', startSec: 0 },
 			{ title: 'The pre-call check', startSec: 200 },
@@ -547,7 +571,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 	{
 		id: 'lms-c14',
 		title: 'Active Listening & Empathy',
-		summary: 'Hearing the emotion under the words, and the three responses that make a customer feel heard.',
+		summary:
+			'Hearing the emotion under the words, and the three responses that make a customer feel heard.',
 		format: 'VIDEO',
 		area: 'SENTIMENT_EMOTION',
 		subItem: 'FRUSTRATION',
@@ -556,9 +581,9 @@ Regulatory findings in billing calls almost never come from the amount. They com
 		level: 'BEGINNER',
 		status: 'PUBLISHED',
 		tags: ['empathy', 'listening'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Lucía Fernández',
+		publishedAt: '2026-02-23',
+		updatedAt: '2026-06-10',
 		chapters: [
 			{ title: 'Listening for the emotion, not the words', startSec: 0 },
 			{ title: 'Acknowledge, name, validate', startSec: 380 },
@@ -580,9 +605,9 @@ Regulatory findings in billing calls almost never come from the amount. They com
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['de-escalation', 'anger'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Lucía Fernández',
+		publishedAt: '2026-02-23',
+		updatedAt: '2026-06-10',
 		chapters: [
 			{ title: 'Spotting the escalation curve', startSec: 0 },
 			{ title: 'Tone, pace and silence', startSec: 320 },
@@ -594,7 +619,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 	{
 		id: 'lms-c16',
 		title: 'Empathy statements that work',
-		summary: 'A short list of phrases that land, and the well-meant ones that make customers angrier.',
+		summary:
+			'A short list of phrases that land, and the well-meant ones that make customers angrier.',
 		format: 'DOCUMENT',
 		area: 'SENTIMENT_EMOTION',
 		subItem: null,
@@ -603,9 +629,9 @@ Regulatory findings in billing calls almost never come from the amount. They com
 		level: 'BEGINNER',
 		status: 'PUBLISHED',
 		tags: ['empathy', 'phrases'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Lucía Fernández',
+		publishedAt: '2026-02-23',
+		updatedAt: '2026-06-10',
 		body: `## Empathy is specific or it is noise
 "I understand how you feel" scores nothing when it is not attached to what the customer just said. The evaluation looks for a statement that names the situation.
 
@@ -625,7 +651,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 	{
 		id: 'lms-c17',
 		title: 'Practice: turning a negative call around',
-		summary: 'A disappointed customer ready to cancel. Practise recovering the call to a neutral or positive close.',
+		summary:
+			'A disappointed customer ready to cancel. Practise recovering the call to a neutral or positive close.',
 		format: 'SCENARIO',
 		area: 'SENTIMENT_EMOTION',
 		subItem: 'DISAPPOINTMENT',
@@ -634,9 +661,9 @@ Regulatory findings in billing calls almost never come from the amount. They com
 		level: 'ADVANCED',
 		status: 'PUBLISHED',
 		tags: ['role-play', 'recovery'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Lucía Fernández',
+		publishedAt: '2026-02-23',
+		updatedAt: '2026-06-10',
 		scenario: {
 			situation:
 				'A customer of six years calls after a second failed installation appointment. They are not shouting, they are disappointed and have already mentioned the competitor.',
@@ -669,7 +696,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 						'Explaining the internal process failure',
 					],
 					correctIndex: 1,
-					explanation: 'Disappointment comes from broken promises, so only a concrete new promise repairs it.',
+					explanation:
+						'Disappointment comes from broken promises, so only a concrete new promise repairs it.',
 				},
 				{
 					id: 's2',
@@ -681,7 +709,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 						'Transfer to retention immediately',
 					],
 					correctIndex: 2,
-					explanation: 'Acknowledging without arguing keeps the conversation on your commitment.',
+					explanation:
+						'Acknowledging without arguing keeps the conversation on your commitment.',
 				},
 				{
 					id: 's3',
@@ -693,7 +722,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 						'The call lasted under five minutes',
 					],
 					correctIndex: 1,
-					explanation: 'Recovery is measured by the closing sentiment plus an agreed next step.',
+					explanation:
+						'Recovery is measured by the closing sentiment plus an agreed next step.',
 				},
 			],
 		},
@@ -702,7 +732,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 	{
 		id: 'lms-c18',
 		title: 'Emotion recognition check',
-		summary: 'Four questions on reading customer emotion and choosing the right response.',
+		summary:
+			'Four questions on reading customer emotion and choosing the right response.',
 		format: 'QUIZ',
 		area: 'SENTIMENT_EMOTION',
 		subItem: null,
@@ -711,17 +742,24 @@ Regulatory findings in billing calls almost never come from the amount. They com
 		level: 'BEGINNER',
 		status: 'PUBLISHED',
 		tags: ['assessment', 'emotion'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Quality team',
+		publishedAt: '2026-05-05',
+		updatedAt: '2026-09-01',
 		passScore: 75,
 		questions: [
 			{
 				id: 'q1',
-				prompt: 'A customer goes quiet and answers in single words. This usually signals…',
-				options: ['Satisfaction', 'Disappointment or resignation', 'A bad line', 'Agreement'],
+				prompt:
+					'A customer goes quiet and answers in single words. This usually signals…',
+				options: [
+					'Satisfaction',
+					'Disappointment or resignation',
+					'A bad line',
+					'Agreement',
+				],
 				correctIndex: 1,
-				explanation: 'Withdrawal is the most missed negative signal on evaluated calls.',
+				explanation:
+					'Withdrawal is the most missed negative signal on evaluated calls.',
 			},
 			{
 				id: 'q2',
@@ -733,11 +771,13 @@ Regulatory findings in billing calls almost never come from the amount. They com
 					'Putting them on hold to check',
 				],
 				correctIndex: 1,
-				explanation: 'Naming the impact plus a commitment moves the call from emotion to action.',
+				explanation:
+					'Naming the impact plus a commitment moves the call from emotion to action.',
 			},
 			{
 				id: 'q3',
-				prompt: 'Your own tone drops flat on a difficult call. What does the evaluation record?',
+				prompt:
+					'Your own tone drops flat on a difficult call. What does the evaluation record?',
 				options: [
 					'Nothing, only the customer is scored',
 					'A lower agent sentiment score',
@@ -745,14 +785,21 @@ Regulatory findings in billing calls almost never come from the amount. They com
 					'A compliance finding',
 				],
 				correctIndex: 1,
-				explanation: 'Agent sentiment is scored separately from customer sentiment.',
+				explanation:
+					'Agent sentiment is scored separately from customer sentiment.',
 			},
 			{
 				id: 'q4',
 				prompt: 'A call that starts negative and ends positive is counted as…',
-				options: ['A recovered call', 'A neutral call', 'An escalation', 'A repeat call'],
+				options: [
+					'A recovered call',
+					'A neutral call',
+					'An escalation',
+					'A repeat call',
+				],
 				correctIndex: 0,
-				explanation: 'Recovery is tracked as its own metric and is one of the strongest quality signals.',
+				explanation:
+					'Recovery is tracked as its own metric and is one of the strongest quality signals.',
 			},
 		],
 		stats: { assigned: 14, completed: 12, avgScore: 81, avgRating: 4.0 },
@@ -760,7 +807,8 @@ Regulatory findings in billing calls almost never come from the amount. They com
 	{
 		id: 'lms-c19',
 		title: 'Managing your own stress on high-volume days',
-		summary: 'Micro-recovery habits between calls that keep your tone steady when the queue does not stop.',
+		summary:
+			'Micro-recovery habits between calls that keep your tone steady when the queue does not stop.',
 		format: 'DOCUMENT',
 		area: 'SENTIMENT_EMOTION',
 		subItem: 'WELLBEING',
@@ -769,9 +817,9 @@ Regulatory findings in billing calls almost never come from the amount. They com
 		level: 'BEGINNER',
 		status: 'DRAFT',
 		tags: ['wellbeing', 'burnout'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Lucía Fernández',
+		publishedAt: '2026-02-23',
+		updatedAt: '2026-06-10',
 		body: `## Your tone is the first thing to go
 On high-volume days agent sentiment drops before quality does. The customer hears it two calls before an evaluator sees it.
 
@@ -793,7 +841,8 @@ On high-volume days agent sentiment drops before quality does. The customer hear
 	{
 		id: 'lms-c20',
 		title: 'Handling Competitor Comparisons',
-		summary: 'What to do when the customer quotes a cheaper competitor, without discounting or arguing.',
+		summary:
+			'What to do when the customer quotes a cheaper competitor, without discounting or arguing.',
 		format: 'VIDEO',
 		area: 'BUSINESS_INSIGHTS',
 		subItem: 'COMPETITOR_PLUS_COST',
@@ -802,12 +851,15 @@ On high-volume days agent sentiment drops before quality does. The customer hear
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['competitors', 'value'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Sales enablement',
+		publishedAt: '2026-06-01',
+		updatedAt: '2026-09-05',
 		chapters: [
 			{ title: 'Why price comparisons are rarely about price', startSec: 0 },
-			{ title: 'Comparing total value, not the headline number', startSec: 360 },
+			{
+				title: 'Comparing total value, not the headline number',
+				startSec: 360,
+			},
 			{ title: 'What you must never say about a competitor', startSec: 700 },
 			{ title: 'Live call breakdown', startSec: 900 },
 		],
@@ -816,7 +868,8 @@ On high-volume days agent sentiment drops before quality does. The customer hear
 	{
 		id: 'lms-c21',
 		title: 'Objection handling playbook: price',
-		summary: 'The five price objections we actually hear and a tested response for each one.',
+		summary:
+			'The five price objections we actually hear and a tested response for each one.',
 		format: 'DOCUMENT',
 		area: 'BUSINESS_INSIGHTS',
 		subItem: 'UNHANDLED_OBJECTION',
@@ -825,9 +878,9 @@ On high-volume days agent sentiment drops before quality does. The customer hear
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['objections', 'price'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Sales enablement',
+		publishedAt: '2026-06-01',
+		updatedAt: '2026-09-05',
 		body: `## An unhandled objection is a lost call
 Our data shows that 38% of non-conversions are recorded as "price too high", but most of those calls never contained a real answer to the objection.
 
@@ -847,7 +900,8 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 	{
 		id: 'lms-c22',
 		title: 'Practice: the early objection',
-		summary: 'The customer objects before you have presented anything. Practise not defending too early.',
+		summary:
+			'The customer objects before you have presented anything. Practise not defending too early.',
 		format: 'SCENARIO',
 		area: 'BUSINESS_INSIGHTS',
 		subItem: 'EARLY_OBJECTION',
@@ -856,9 +910,9 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['role-play', 'objections'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Sales enablement',
+		publishedAt: '2026-06-01',
+		updatedAt: '2026-09-05',
 		scenario: {
 			situation:
 				'Thirty seconds into an outbound call, before you have described anything, the customer says they are not interested and that it is too expensive.',
@@ -891,7 +945,8 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 						'The call should be ended',
 					],
 					correctIndex: 1,
-					explanation: 'Early objections are reflexes; answering them as if final is what loses the call.',
+					explanation:
+						'Early objections are reflexes; answering them as if final is what loses the call.',
 				},
 				{
 					id: 's2',
@@ -903,7 +958,8 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 						'Naming the goal of the call in one sentence',
 					],
 					correctIndex: 1,
-					explanation: 'Defending a price you never stated confirms the customer assumption.',
+					explanation:
+						'Defending a price you never stated confirms the customer assumption.',
 				},
 				{
 					id: 's3',
@@ -915,7 +971,8 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 						'Escalate to a supervisor',
 					],
 					correctIndex: 1,
-					explanation: 'Their number becomes the frame; presenting against it is what converts.',
+					explanation:
+						'Their number becomes the frame; presenting against it is what converts.',
 				},
 			],
 		},
@@ -924,7 +981,8 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 	{
 		id: 'lms-c23',
 		title: 'Offer targeting check',
-		summary: 'Four questions on matching the offer to the customer profile and the need you uncovered.',
+		summary:
+			'Four questions on matching the offer to the customer profile and the need you uncovered.',
 		format: 'QUIZ',
 		area: 'BUSINESS_INSIGHTS',
 		subItem: 'MISTARGETED_OFFER',
@@ -933,9 +991,9 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 		level: 'INTERMEDIATE',
 		status: 'PUBLISHED',
 		tags: ['assessment', 'offers'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Quality team',
+		publishedAt: '2026-05-05',
+		updatedAt: '2026-09-01',
 		passScore: 80,
 		questions: [
 			{
@@ -948,7 +1006,8 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 					'It is presented twice',
 				],
 				correctIndex: 1,
-				explanation: 'Mis-targeting is about fit, not about the outcome of the call.',
+				explanation:
+					'Mis-targeting is about fit, not about the outcome of the call.',
 			},
 			{
 				id: 'q2',
@@ -960,11 +1019,13 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 					'The competitor price list',
 				],
 				correctIndex: 1,
-				explanation: 'Need plus constraint plus fit is the minimum before any presentation.',
+				explanation:
+					'Need plus constraint plus fit is the minimum before any presentation.',
 			},
 			{
 				id: 'q3',
-				prompt: 'The customer says the decision depends on someone else. The best next step is…',
+				prompt:
+					'The customer says the decision depends on someone else. The best next step is…',
 				options: [
 					'Close anyway',
 					'Give them a one-line summary they can take to that person',
@@ -972,7 +1033,8 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 					'Offer a discount to decide now',
 				],
 				correctIndex: 1,
-				explanation: 'Equipping the customer for the internal conversation is what recovers these calls.',
+				explanation:
+					'Equipping the customer for the internal conversation is what recovers these calls.',
 			},
 			{
 				id: 'q4',
@@ -984,7 +1046,8 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 					'It removes the call from QA sampling',
 				],
 				correctIndex: 1,
-				explanation: 'The non-conversion reason is the signal the business uses to fix the offer mix.',
+				explanation:
+					'The non-conversion reason is the signal the business uses to fix the offer mix.',
 			},
 		],
 		stats: { assigned: 9, completed: 7, avgScore: 86, avgRating: 4.0 },
@@ -994,7 +1057,8 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 	{
 		id: 'lms-c24',
 		title: 'Welcome to Quality at NewTech: how you are evaluated',
-		summary: 'The four aspects we evaluate, who evaluates them and what happens with the result.',
+		summary:
+			'The four aspects we evaluate, who evaluates them and what happens with the result.',
 		format: 'VIDEO',
 		area: 'GENERAL',
 		subItem: null,
@@ -1003,9 +1067,9 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 		level: 'BEGINNER',
 		status: 'PUBLISHED',
 		tags: ['onboarding'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Elena Ruiz',
+		publishedAt: '2026-03-02',
+		updatedAt: '2026-08-20',
 		chapters: [
 			{ title: 'The four aspects we evaluate', startSec: 0 },
 			{ title: 'AI evaluation and manual calibration', startSec: 300 },
@@ -1017,7 +1081,8 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 	{
 		id: 'lms-c25',
 		title: 'Reading your evaluation report',
-		summary: 'How to read your scorecard, what each error type means and how to file a dispute.',
+		summary:
+			'How to read your scorecard, what each error type means and how to file a dispute.',
 		format: 'DOCUMENT',
 		area: 'GENERAL',
 		subItem: null,
@@ -1026,9 +1091,9 @@ Our data shows that 38% of non-conversions are recorded as "price too high", but
 		level: 'BEGINNER',
 		status: 'PUBLISHED',
 		tags: ['onboarding', 'evaluations'],
-		author: AUTHOR,
-		publishedAt: PUBLISHED_AT,
-		updatedAt: UPDATED_AT,
+		author: 'Elena Ruiz',
+		publishedAt: '2026-03-02',
+		updatedAt: '2026-08-20',
 		body: `## Your scorecard in one page
 Every evaluated call produces a score on four aspects. Your profile shows the monthly average of each one plus a weighted overall.
 
@@ -1048,7 +1113,8 @@ Every evaluated call produces a score on four aspects. Your profile shows the mo
 	{
 		id: 'lms-c26',
 		title: 'Regulatory Disclosures 2025 (superseded)',
-		summary: 'Archived: replaced by Regulatory Disclosures 2026. Kept for reference on calls audited before June.',
+		summary:
+			'Archived: replaced by Regulatory Disclosures 2026. Kept for reference on calls audited before June.',
 		format: 'DOCUMENT',
 		area: 'COMPLIANCE',
 		subItem: 'disclosureCompliance',
@@ -1057,7 +1123,7 @@ Every evaluated call produces a score on four aspects. Your profile shows the mo
 		level: 'INTERMEDIATE',
 		status: 'ARCHIVED',
 		tags: ['disclosures', '2025', 'superseded'],
-		author: AUTHOR,
+		author: 'Compliance office',
 		publishedAt: '2025-01-15',
 		updatedAt: '2026-06-01',
 		body: `> **Superseded.** This document describes the 2025 rules. Use *Regulatory Disclosures 2026* for any call after 1 June 2026.
@@ -1083,7 +1149,8 @@ export const LMS_PATHS: LmsLearningPath[] = [
 	{
 		id: 'path-qa',
 		title: 'QA Essentials',
-		description: 'The four behaviours the evaluation form scores on every call, from the opening to the close.',
+		description:
+			'The four behaviours the evaluation form scores on every call, from the opening to the close.',
 		area: 'QUALITY_ASSURANCE',
 		level: 'BEGINNER',
 		modules: [
@@ -1102,7 +1169,8 @@ export const LMS_PATHS: LmsLearningPath[] = [
 	{
 		id: 'path-compliance',
 		title: 'Compliance Certification 2026',
-		description: 'Disclosures, data protection, billing transparency and do-not-call, closing with the annual quiz.',
+		description:
+			'Disclosures, data protection, billing transparency and do-not-call, closing with the annual quiz.',
 		area: 'COMPLIANCE',
 		level: 'INTERMEDIATE',
 		modules: [
@@ -1122,7 +1190,8 @@ export const LMS_PATHS: LmsLearningPath[] = [
 	{
 		id: 'path-sentiment',
 		title: 'Emotional Intelligence on Calls',
-		description: 'Listening, empathy and de-escalation for agents whose customer sentiment needs work.',
+		description:
+			'Listening, empathy and de-escalation for agents whose customer sentiment needs work.',
 		area: 'SENTIMENT_EMOTION',
 		level: 'INTERMEDIATE',
 		modules: [
@@ -1141,7 +1210,8 @@ export const LMS_PATHS: LmsLearningPath[] = [
 	{
 		id: 'path-business',
 		title: 'Sales Conversations that Convert',
-		description: 'Objections, competitor comparisons and offer targeting for agents on sales campaigns.',
+		description:
+			'Objections, competitor comparisons and offer targeting for agents on sales campaigns.',
 		area: 'BUSINESS_INSIGHTS',
 		level: 'INTERMEDIATE',
 		modules: [
@@ -1159,7 +1229,8 @@ export const LMS_PATHS: LmsLearningPath[] = [
 	{
 		id: 'path-onboarding',
 		title: 'New Agent Onboarding',
-		description: 'How quality works here, how to read your scorecard and the first behaviours to master.',
+		description:
+			'How quality works here, how to read your scorecard and the first behaviours to master.',
 		area: 'GENERAL',
 		level: 'BEGINNER',
 		modules: [

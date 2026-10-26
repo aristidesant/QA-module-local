@@ -1,0 +1,39 @@
+/* The one memorable element: a 3px bar in the area hue, the reason at body size, the score beside it. */
+/* A pseudo-element, not box-shadow: SectionCard rewrites box-shadow on hover and in dark mode. */
+.hero {
+	position: relative;
+}
+
+.hero::before {
+	content: '';
+	position: absolute;
+	inset-block: 0;
+	inset-inline-start: 0;
+	width: 3px;
+	background-color: var(--lms-area);
+}
+
+.grid {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) 220px;
+	gap: var(--mantine-spacing-xl);
+	align-items: start;
+}
+
+.score {
+	padding-left: var(--mantine-spacing-lg);
+	border-left: 1px solid var(--surface-border);
+}
+
+@media (max-width: 62em) {
+	.grid {
+		grid-template-columns: 1fr;
+	}
+
+	.score {
+		padding-left: 0;
+		padding-top: var(--mantine-spacing-md);
+		border-left: none;
+		border-top: 1px solid var(--surface-border);
+	}
+}

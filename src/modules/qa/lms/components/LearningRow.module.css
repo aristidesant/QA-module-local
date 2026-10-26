@@ -1,0 +1,44 @@
+/* Row layout shared by the answer-needed list and the practice list: icon, text, one action. Hairlines, no boxes. */
+.row {
+	position: relative;
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	gap: var(--mantine-spacing-sm);
+	align-items: start;
+	padding: var(--mantine-spacing-sm) 0;
+}
+
+.row + .row {
+	border-top: 1px solid var(--surface-border);
+}
+
+.icon {
+	display: flex;
+	padding-top: 2px;
+}
+
+.main {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	min-width: 0;
+}
+
+.due {
+	color: light-dark(
+		var(--mantine-color-danger-7),
+		var(--mantine-color-danger-4)
+	);
+	font-weight: 600;
+}
+
+@media (max-width: 48em) {
+	.row {
+		grid-template-columns: auto minmax(0, 1fr);
+	}
+
+	.row > :nth-child(3) {
+		grid-column: 2;
+		justify-self: start;
+	}
+}

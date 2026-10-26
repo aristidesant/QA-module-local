@@ -1,8 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
-import { ActionIcon, Button, Group, NavLink, Paper, Progress, Stack, Text } from '@mantine/core';
+import {
+	ActionIcon,
+	Button,
+	Group,
+	NavLink,
+	Paper,
+	Progress,
+	Stack,
+	Text,
+} from '@mantine/core';
 import { IconPlayerPause, IconPlayerPlay } from '@tabler/icons-react';
 import { useTranslation } from 'react-i18next';
 import type { LmsContent } from '~/models/qa';
+import areaClasses from '../../components/area.module.css';
 import classes from './Players.module.css';
 
 interface VideoPlayerMockProps {
@@ -13,9 +23,16 @@ interface VideoPlayerMockProps {
 	onComplete: () => void;
 }
 
-const formatTime = (sec: number) => `${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
+const formatTime = (sec: number) =>
+	`${Math.floor(sec / 60)}:${String(Math.floor(sec % 60)).padStart(2, '0')}`;
 
-export function VideoPlayerMock({ content, initialProgress, readOnly, onProgress, onComplete }: VideoPlayerMockProps) {
+export function VideoPlayerMock({
+	content,
+	initialProgress,
+	readOnly,
+	onProgress,
+	onComplete,
+}: VideoPlayerMockProps) {
 	const { t } = useTranslation('qa.lms');
 	const totalSec = content.durationMin * 60;
 	const [elapsed, setElapsed] = useState((initialProgress / 100) * totalSec);
@@ -52,7 +69,10 @@ export function VideoPlayerMock({ content, initialProgress, readOnly, onProgress
 
 	return (
 		<Stack gap='md'>
-			<div className={classes.poster} data-area={content.area}>
+			<div
+				className={`${areaClasses.area} ${classes.poster}`}
+				data-area={content.area}
+			>
 				<ActionIcon
 					size={72}
 					radius='xl'
@@ -61,7 +81,11 @@ export function VideoPlayerMock({ content, initialProgress, readOnly, onProgress
 					onClick={() => setPlaying((p) => !p)}
 					aria-label={playing ? t('player.paused') : t('player.playing')}
 				>
-					{playing ? <IconPlayerPause size={32} /> : <IconPlayerPlay size={32} />}
+					{playing ? (
+						<IconPlayerPause size={32} />
+					) : (
+						<IconPlayerPlay size={32} />
+					)}
 				</ActionIcon>
 			</div>
 
@@ -72,14 +96,14 @@ export function VideoPlayerMock({ content, initialProgress, readOnly, onProgress
 						{formatTime(elapsed)} / {formatTime(totalSec)}
 					</Text>
 					<Text size='xs' c='dimmed'>
-						{playing ? t('player.playing') : t('player.paused')} · {percent}%
+						{t('player.watched', { value: percent })}
 					</Text>
 				</Group>
 			</Stack>
 
 			{content.chapters && content.chapters.length > 0 && (
 				<Paper withBorder radius='md' p='xs'>
-					<Text size='xs' c='dimmed' fw={600} tt='uppercase' mb={4}>
+					<Text size='sm' fw={600} mb={4}>
 						{t('player.chapters')}
 					</Text>
 					<Stack gap={2}>
@@ -89,7 +113,9 @@ export function VideoPlayerMock({ content, initialProgress, readOnly, onProgress
 								label={ch.title}
 								description={formatTime(ch.startSec)}
 								active={i === activeChapter}
-								className={i === activeChapter ? classes.chapterActive : undefined}
+								className={
+									i === activeChapter ? classes.chapterActive : undefined
+								}
 								onClick={() => setElapsed(ch.startSec)}
 							/>
 						))}
