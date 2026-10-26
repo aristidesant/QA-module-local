@@ -5,7 +5,6 @@ import { Stack, Title, Text, SimpleGrid, Grid, Group } from '@mantine/core';
 import ContentContainer from '~/components/ContentContainer';
 import AppSegmentedControl from '~/components/ui/AppSegmentedControl/AppSegmentedControl';
 import { OperationManagerInsights } from '../insights/OperationManagerInsights';
-import insightsStyles from '../insights/Insights.module.css';
 import SectionCard from '~/components/SectionCard';
 import {
 	QualityAssuranceCard,
@@ -157,13 +156,10 @@ export const NewOperationManagerDashboard: React.FC = () => {
 				</Group>
 
 				{view === 'insights' ? (
-					<div className={insightsStyles.page}>
-						<OperationManagerInsights
-							days={days}
-							lineOfBusiness={lineOfBusiness}
-							onLineOfBusinessChange={setLineOfBusiness}
-						/>
-					</div>
+					<OperationManagerInsights
+						days={days}
+						lineOfBusiness={lineOfBusiness}
+					/>
 				) : (
 					<>
 						{/* 2. Performance Score: the five evaluation aspects, portfolio-wide and compact */}

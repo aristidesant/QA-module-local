@@ -450,6 +450,7 @@
 			},
 			"pts": "pts",
 			"vsPrevious": "vs periodo anterior",
+			"noPrevious": "Sin periodo anterior para comparar",
 			"teamTrend": {
 				"title": "Tendencia por equipo",
 				"subtitle": "Haz clic en una línea para enfocar un equipo"
@@ -466,6 +467,7 @@
 			"flow": {
 				"title": "Flujo de llamadas",
 				"subtitle": "Equipo, resultado del contacto y resultado de la oferta",
+				"ofReached": "De las llamadas contactadas",
 				"node": {
 					"EFFECTIVE": "Contactado",
 					"NOT_EFFECTIVE": "No contactado",

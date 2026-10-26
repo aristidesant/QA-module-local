@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Group, Stack, Text } from '@mantine/core';
 import { BarChart } from '@mantine/charts';
+import { HEAT } from '~/modules/qa/analytics/TeamAnalyticsPage/charts';
 import type { HumanVsAiPoint } from '../mockData';
 
 interface HumanVsAiCardProps {
@@ -32,12 +33,12 @@ export const HumanVsAiCard: React.FC<HumanVsAiCardProps> = ({ data }) => {
 					{
 						name: 'human',
 						label: t('operationManager.humanVsAi.human'),
-						color: 'var(--mantine-color-text)',
+						color: HEAT[4],
 					},
 					{
 						name: 'ai',
 						label: t('operationManager.humanVsAi.ai'),
-						color: 'violet.6',
+						color: HEAT[2],
 					},
 				]}
 				withLegend

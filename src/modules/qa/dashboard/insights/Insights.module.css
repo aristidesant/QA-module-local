@@ -1,159 +1,52 @@
-/* A deep control-centre canvas in dark mode, a clean one in light mode. Every color resolves through light-dark(). */
-.page {
-	--ins-bg: light-dark(var(--mantine-color-gray-0), #070b14);
-	--ins-tile: light-dark(var(--mantine-color-white), rgba(15, 23, 42, 0.62));
-	--ins-line: light-dark(
-		var(--mantine-color-gray-3),
-		rgba(148, 163, 184, 0.14)
-	);
-
-	background: var(--ins-bg);
-	border-radius: var(--mantine-radius-lg);
-	padding: var(--mantine-spacing-md);
-}
-
+/* The Insights grid: twelve columns on wide screens, six on tablets, one on phones. */
 .grid {
 	display: grid;
 	grid-template-columns: repeat(12, minmax(0, 1fr));
-	gap: 16px;
+	gap: var(--mantine-spacing-md);
 }
 
-.tile {
+.cell {
 	grid-column: span var(--span, 12);
-	position: relative;
 	min-width: 0;
-	background: var(--ins-tile);
-	border: 1px solid var(--ins-line);
-	border-radius: var(--mantine-radius-lg);
-	padding: 16px 18px;
-	backdrop-filter: blur(8px);
-	box-shadow: light-dark(var(--mantine-shadow-xs), none);
-	animation: tile-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-	animation-delay: calc(var(--i, 0) * 40ms);
 }
 
-/* A faint highlight along the top edge, dark mode only. */
-.tile::before {
-	content: '';
-	position: absolute;
-	inset: 0;
-	border-radius: inherit;
-	pointer-events: none;
-	background: light-dark(
-		transparent,
-		linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 40%)
+/* Team chips above the trend chart: the swatch carries the series color, the text stays ink. */
+.swatch {
+	width: 10px;
+	height: 10px;
+	border-radius: 3px;
+	flex: none;
+}
+
+/* One team's outcome rows. */
+.outcomeRow + .outcomeRow {
+	margin-top: var(--mantine-spacing-sm);
+	padding-top: var(--mantine-spacing-sm);
+	border-top: 1px solid var(--mantine-color-default-border);
+}
+
+.teamButton {
+	font-weight: 600;
+	font-size: var(--mantine-font-size-sm);
+	border-radius: var(--mantine-radius-sm);
+	padding: 2px 6px;
+	margin-left: -6px;
+}
+
+.teamButton:hover,
+.teamButton:focus-visible {
+	background-color: light-dark(
+		var(--mantine-color-gray-0),
+		var(--mantine-color-dark-5)
 	);
 }
 
-/* Header and body ride above the backdrop. */
-.tileHeader {
-	position: relative;
-	z-index: 1;
-	display: flex;
-	align-items: flex-start;
-	justify-content: space-between;
-	gap: 12px;
-	margin-bottom: 12px;
-}
-
-.tileTitle {
-	font-size: 12px;
-	letter-spacing: 0.08em;
-	text-transform: uppercase;
-	font-weight: 600;
-	color: var(--mantine-color-dimmed);
-}
-
-.tileSubtitle {
-	margin-top: 2px;
-	font-size: 12px;
-	color: var(--mantine-color-dimmed);
-}
-
-.tileBody {
-	position: relative;
-	z-index: 1;
-}
-
-.hero {
-	overflow: hidden;
-}
-
-.kpiGrid {
-	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-	gap: 16px;
-}
-
-.kpi {
-	min-width: 0;
-}
-
-.kpiLabel {
-	font-size: 12px;
-	letter-spacing: 0.06em;
-	text-transform: uppercase;
-	color: var(--mantine-color-dimmed);
-	font-weight: 600;
-}
-
-.kpiValue {
-	font-size: 30px;
-	font-weight: 600;
-	line-height: 1.1;
-	font-variant-numeric: tabular-nums;
-}
-
-.kpiUnit {
-	margin-left: 2px;
-	font-size: 14px;
-	font-weight: 500;
-	color: var(--mantine-color-dimmed);
-}
-
-.delta {
-	display: inline-flex;
-	align-items: center;
-	gap: 2px;
-	font-size: 12px;
-	font-weight: 600;
-	font-variant-numeric: tabular-nums;
-	color: var(--mantine-color-dimmed);
-}
-
-.deltaUp {
-	color: light-dark(var(--mantine-color-cyan-7), var(--mantine-color-cyan-3));
-}
-
-.deltaDown {
-	color: light-dark(var(--mantine-color-red-7), var(--mantine-color-red-4));
-}
-
-.centerOverlay {
-	position: absolute;
-	inset: 0;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	pointer-events: none;
-	text-align: center;
-}
-
-@keyframes tile-in {
-	from {
-		opacity: 0;
-		transform: translateY(8px);
-	}
-
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+.teamButton[data-active='true'] {
+	background-color: var(--mantine-primary-color-light);
 }
 
 @media (max-width: 75em) {
-	.tile {
+	.cell {
 		grid-column: span min(var(--span, 12), 6);
 	}
 
@@ -163,41 +56,7 @@
 }
 
 @media (max-width: 48em) {
-	.tile {
+	.cell {
 		grid-column: span 12;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	.tile {
-		animation: none;
-	}
-}
-
-.donutHost {
-	position: relative;
-}
-
-.burnoutGrid {
-	display: grid;
-	grid-template-columns: minmax(0, 220px) minmax(0, 1fr);
-	gap: 16px;
-	align-items: center;
-}
-
-.miniLine {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-}
-
-.miniLineChart {
-	flex: 1;
-	min-width: 0;
-}
-
-@media (max-width: 48em) {
-	.burnoutGrid {
-		grid-template-columns: minmax(0, 1fr);
 	}
 }

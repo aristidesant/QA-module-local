@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
-import { Button, Group, Pill, Text } from '@mantine/core';
+import { useMemo, useState, type CSSProperties, type ReactNode } from 'react';
+import { Button, Group, Pill } from '@mantine/core';
 import { useTranslation } from 'react-i18next';
 import EmptyState from '~/components/EmptyState';
+import { SectionCard } from '~/components/SectionCard';
 import { teamCallsInWindow } from '~/modules/qa/calls/agentMetrics';
 import { selectThresholds, useSettingsStore } from '~/stores/qa/settingsStore';
 import {
@@ -9,11 +10,10 @@ import {
 	useTriggerRulesStore,
 } from '~/stores/qa/triggerRulesStore';
 import { CampaignPerformanceTable } from '../components/CampaignPerformanceTable';
-import {
-	DASHBOARD_LINES_OF_BUSINESS,
-	type DashboardLineOfBusiness,
-} from '../lineOfBusiness';
-import { OPERATION_MANAGER_ESG } from '../mockData';
+import { EsgScoreCard } from '../components/EsgScoreCard';
+import { HumanVsAiCard } from '../components/HumanVsAiCard';
+import type { DashboardLineOfBusiness } from '../lineOfBusiness';
+import { HUMAN_VS_AI_PERFORMANCE, OPERATION_MANAGER_ESG } from '../mockData';
 import {
 	OPERATION_MANAGER_TEAMS,
 	buildCampaignPerformanceRows,
@@ -22,15 +22,11 @@ import {
 	platformBurnoutSummary,
 	type TeamTrendMetric,
 } from '../operationManagerMetrics';
-import { ActivityHeatmap } from './charts/ActivityHeatmap';
-import { BurnoutPanel } from './charts/BurnoutPanel';
-import { CallFlowSankey } from './charts/CallFlowSankey';
-import { CampaignTreemap } from './charts/CampaignTreemap';
-import { EsgPolar } from './charts/EsgPolar';
-import { HumanVsAiRadar } from './charts/HumanVsAiRadar';
-import { KpiStrip } from './charts/KpiStrip';
-import { QualityGauges } from './charts/QualityGauges';
-import { TeamTrendChart } from './charts/TeamTrendChart';
+import { ActivityHeatmapCard } from './charts/ActivityHeatmapCard';
+import { BurnoutCard } from './charts/BurnoutCard';
+import { CallOutcomesCard } from './charts/CallOutcomesCard';
+import { HeadlineTiles } from './charts/HeadlineTiles';
+import { TeamTrendCard } from './charts/TeamTrendCard';
 import {
 	EMPTY_FILTER,
 	applyCrossFilter,
@@ -38,12 +34,10 @@ import {
 	toggleFilter,
 	type CrossFilter,
 } from './crossFilter';
-import { InsightsTile } from './InsightsTile';
 import {
-	activityMatrix,
-	buildKpis,
-	callFlow,
-	campaignTreemap,
+	activityHeatmap,
+	buildHeadlineKpis,
+	teamOutcomes,
 	type ActivityMode,
 } from './insightsMetrics';
 import styles from './Insights.module.css';
@@ -51,19 +45,39 @@ import styles from './Insights.module.css';
 interface OperationManagerInsightsProps {
 	days: number;
 	lineOfBusiness: DashboardLineOfBusiness | null;
-	onLineOfBusinessChange: (value: DashboardLineOfBusiness | null) => void;
+}
+
+/** One grid cell: `span` columns out of 12 on a wide screen; `wide` takes the full row on tablets. */
+function Cell({
+	span,
+	wide = false,
+	children,
+}: {
+	span: number;
+	wide?: boolean;
+	children: ReactNode;
+}) {
+	return (
+		<div
+			className={[styles.cell, wide ? styles.wide : '']
+				.filter(Boolean)
+				.join(' ')}
+			// inline-style-allow: the grid placement of each cell is a runtime value
+			style={{ '--span': span } as CSSProperties}
+		>
+			{children}
+		</div>
+	);
 }
 
 /**
- * The same operation data as the classic dashboard, laid out like a BI report:
- * a hero band of headline numbers, then linked visuals. A click on a team or a
- * campaign in any visual filters the rest; the visual that shows that dimension
- * keeps all of its items and highlights the chosen one instead.
+ * The operation's data as linked cards: headline numbers, then visuals that
+ * share one filter. Picking a team (chips, outcome rows) or a campaign (table
+ * row) narrows every other card; picking it again clears it.
  */
 export function OperationManagerInsights({
 	days,
 	lineOfBusiness,
-	onLineOfBusinessChange,
 }: OperationManagerInsightsProps) {
 	const { t } = useTranslation('qa.dashboard');
 	const thresholds = useSettingsStore(selectThresholds);
@@ -72,6 +86,9 @@ export function OperationManagerInsights({
 	const [teamMetric, setTeamMetric] =
 		useState<TeamTrendMetric>('QA_OVERALL_SCORE');
 	const [heatMode, setHeatMode] = useState<ActivityMode>('volume');
+	const weekdays = t('operationManager.insights.weekdays', {
+		returnObjects: true,
+	}) as unknown as string[];
 
 	const windowCalls = useMemo(
 		() => teamCallsInWindow('qa-manager', days, lineOfBusiness),
@@ -95,7 +112,7 @@ export function OperationManagerInsights({
 		[rawFilter, windowCalls]
 	);
 
-	// Every visual honours the whole filter except the dimension it already shows.
+	// Every card honours the whole filter except the dimension it already shows.
 	const calls = useMemo(
 		() => applyCrossFilter(windowCalls, filter),
 		[windowCalls, filter]
@@ -114,11 +131,9 @@ export function OperationManagerInsights({
 	);
 
 	const kpis = useMemo(
-		() => buildKpis(calls, previous, days, thresholds),
+		() => buildHeadlineKpis(calls, previous, days, thresholds),
 		[calls, previous, days, thresholds]
 	);
-	const kpiValue = (key: string) =>
-		kpis.find((kpi) => kpi.key === key)?.value ?? 0;
 	const teamSeries = useMemo(
 		() => buildTeamPerformanceSeries(allTeams, days, teamMetric),
 		[allTeams, days, teamMetric]
@@ -131,11 +146,13 @@ export function OperationManagerInsights({
 		() => platformBurnoutSummary(triggerRules),
 		[triggerRules]
 	);
-	const treemap = useMemo(() => campaignTreemap(allCampaigns), [allCampaigns]);
-	const flow = useMemo(() => callFlow(allTeams), [allTeams]);
-	const matrix = useMemo(
-		() => activityMatrix(calls, heatMode),
-		[calls, heatMode]
+	const outcomes = useMemo(
+		() => teamOutcomes(allTeams, OPERATION_MANAGER_TEAMS),
+		[allTeams]
+	);
+	const heatmap = useMemo(
+		() => activityHeatmap(calls, heatMode, weekdays),
+		[calls, heatMode, weekdays]
 	);
 	const campaignRows = useMemo(
 		() => buildCampaignPerformanceRows(allCampaigns, thresholds),
@@ -146,13 +163,6 @@ export function OperationManagerInsights({
 		setRawFilter((current) => toggleFilter(current, 'team', team));
 	const pickCampaign = (campaignId: string) =>
 		setRawFilter((current) => toggleFilter(current, 'campaignId', campaignId));
-	const pickLine = (line: string) => {
-		if (!DASHBOARD_LINES_OF_BUSINESS.includes(line as DashboardLineOfBusiness))
-			return;
-		onLineOfBusinessChange(
-			lineOfBusiness === line ? null : (line as DashboardLineOfBusiness)
-		);
-	};
 	const campaignName = (id: string) =>
 		windowCalls.find((call) => call.campaignId === id)?.campaignName ?? id;
 
@@ -195,70 +205,74 @@ export function OperationManagerInsights({
 			)}
 
 			<div className={styles.grid}>
-				<KpiStrip kpis={kpis} index={0} />
-				<TeamTrendChart
-					index={1}
-					data={teamSeries}
-					teams={OPERATION_MANAGER_TEAMS}
-					metric={teamMetric}
-					onMetricChange={setTeamMetric}
-					selectedTeam={filter.team}
-					onTeamClick={pickTeam}
-				/>
-				<QualityGauges
-					index={2}
-					qa={kpiValue('qa')}
-					compliance={kpiValue('compliance')}
-					sentiment={kpiValue('sentiment')}
-				/>
-				<CampaignTreemap
-					index={3}
-					nodes={treemap}
-					selectedCampaign={filter.campaignId}
-					selectedLine={lineOfBusiness}
-					onCampaignClick={pickCampaign}
-					onLineClick={pickLine}
-				/>
-				<CallFlowSankey
-					index={4}
-					flow={flow}
-					teams={OPERATION_MANAGER_TEAMS}
-					selectedTeam={filter.team}
-					onTeamClick={pickTeam}
-				/>
-				<ActivityHeatmap
-					index={5}
-					matrix={matrix}
-					mode={heatMode}
-					onModeChange={setHeatMode}
-				/>
-				<HumanVsAiRadar index={6} />
-				<BurnoutPanel
-					index={7}
-					summary={burnoutSummary}
-					series={burnoutSeries}
-					teams={OPERATION_MANAGER_TEAMS}
-					selectedTeam={filter.team}
-					onTeamClick={pickTeam}
-				/>
-				<EsgPolar index={8} esg={OPERATION_MANAGER_ESG} />
-				<InsightsTile
-					span={12}
-					index={9}
-					title={t('operationManager.insights.campaigns.title')}
-					subtitle={t('operationManager.insights.campaigns.subtitle')}
-				>
-					<CampaignPerformanceTable
-						rows={campaignRows}
-						activeId={filter.campaignId}
-						onRowClick={(row) => pickCampaign(row.id)}
+				<Cell span={12}>
+					<HeadlineTiles kpis={kpis} />
+				</Cell>
+				<Cell span={8} wide>
+					<TeamTrendCard
+						data={teamSeries}
+						teams={OPERATION_MANAGER_TEAMS}
+						metric={teamMetric}
+						onMetricChange={setTeamMetric}
+						selectedTeam={filter.team}
+						onTeamClick={pickTeam}
 					/>
-				</InsightsTile>
+				</Cell>
+				<Cell span={4}>
+					<CallOutcomesCard
+						rows={outcomes}
+						selectedTeam={filter.team}
+						onTeamClick={pickTeam}
+					/>
+				</Cell>
+				<Cell span={7} wide>
+					<ActivityHeatmapCard
+						data={heatmap}
+						mode={heatMode}
+						onModeChange={setHeatMode}
+					/>
+				</Cell>
+				<Cell span={5}>
+					<SectionCard
+						padding='md'
+						fullHeight
+						title={t('operationManager.insights.humanVsAi.title')}
+						description={t('operationManager.insights.humanVsAi.subtitle')}
+					>
+						<HumanVsAiCard data={HUMAN_VS_AI_PERFORMANCE} />
+					</SectionCard>
+				</Cell>
+				<Cell span={6}>
+					<BurnoutCard
+						summary={burnoutSummary}
+						series={burnoutSeries}
+						teams={OPERATION_MANAGER_TEAMS}
+					/>
+				</Cell>
+				<Cell span={6}>
+					<SectionCard
+						padding='md'
+						fullHeight
+						title={t('operationManager.insights.esg.title')}
+						description={t('operationManager.insights.esg.subtitle')}
+					>
+						<EsgScoreCard esg={OPERATION_MANAGER_ESG} />
+					</SectionCard>
+				</Cell>
+				<Cell span={12}>
+					<SectionCard
+						padding='md'
+						title={t('operationManager.insights.campaigns.title')}
+						description={t('operationManager.insights.campaigns.subtitle')}
+					>
+						<CampaignPerformanceTable
+							rows={campaignRows}
+							activeId={filter.campaignId}
+							onRowClick={(row) => pickCampaign(row.id)}
+						/>
+					</SectionCard>
+				</Cell>
 			</div>
-
-			<Text size='xs' c='dimmed' mt='md'>
-				{t('operationManager.insights.hint')}
-			</Text>
 		</div>
 	);
 }

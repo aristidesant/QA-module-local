@@ -450,6 +450,7 @@
 			},
 			"pts": "pts",
 			"vsPrevious": "vs previous period",
+			"noPrevious": "No previous period to compare",
 			"teamTrend": {
 				"title": "Team trend",
 				"subtitle": "Click a line to focus a team"
@@ -466,6 +467,7 @@
 			"flow": {
 				"title": "Call flow",
 				"subtitle": "Team, contact outcome and result of the offer",
+				"ofReached": "Of the reached calls",
 				"node": {
 					"EFFECTIVE": "Reached",
 					"NOT_EFFECTIVE": "Not reached",

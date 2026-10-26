@@ -1,13 +1,12 @@
-import type { TeamCallMetric } from '~/modules/qa/analytics/types';
+import type {
+	AnalyticsMetricId,
+	HeatmapData,
+	TeamCallMetric,
+} from '~/modules/qa/analytics/types';
 import { periodKeyOf } from '~/modules/qa/analytics/helpers';
 import { aggregateDashboardMetrics } from '~/modules/qa/calls/agentMetrics';
 import type { ThresholdSettings } from '~/modules/qa/settings/types';
-import { dashboardLineOfBusinessFor } from '../lineOfBusiness';
-import {
-	OPERATION_MANAGER_TEAMS,
-	chartGranularity,
-	periodLabel,
-} from '../operationManagerMetrics';
+import { chartGranularity } from '../operationManagerMetrics';
 
 export type KpiKey =
 	| 'calls'
@@ -26,19 +25,24 @@ export const KPI_KEYS: KpiKey[] = [
 	'conversion',
 ];
 
-export interface KpiPoint {
-	label: string;
-	value: number;
-}
+/** The analytics metric each headline number is, so MetricTile formats and judges it. */
+export const KPI_METRIC: Record<KpiKey, AnalyticsMetricId> = {
+	calls: 'OPS_CALLS_HANDLED',
+	effective: 'OPS_EFFECTIVE_CONTACT_RATE',
+	qa: 'QA_OVERALL_SCORE',
+	compliance: 'COMPLIANCE_OVERALL_SCORE',
+	sentiment: 'CUSTOMER_SENTIMENT_SCORE',
+	conversion: 'BI_CONVERSION_RATE',
+};
 
-export interface Kpi {
+export interface HeadlineKpi {
 	key: KpiKey;
-	value: number;
-	unit: '' | '%' | '/5';
-	/** Change against the previous window of the same length: percent for calls, points for the rest. */
-	delta: number | null;
-	deltaUnit: '%' | 'pts' | '';
-	spark: KpiPoint[];
+	metricId: AnalyticsMetricId;
+	current: number;
+	/** null when the previous window had no calls. */
+	previous: number | null;
+	/** One value per day (short windows) or per ISO week. */
+	sparkline: number[];
 }
 
 type Snapshot = Record<KpiKey, number>;
@@ -64,225 +68,124 @@ const snapshotOf = (
 						categories.length
 				)
 			: 0,
-		sentiment: metrics.sentiment.customerAvg,
+		sentiment: round1(metrics.sentiment.customerAvg),
 		conversion: metrics.sales.offered
 			? Math.round((100 * metrics.sales.sold) / metrics.sales.offered)
 			: 0,
 	};
 };
 
-/** One value per day (short windows) or per ISO week, for the sparklines. */
-const sparksOf = (
-	calls: TeamCallMetric[],
-	days: number,
-	thresholds: ThresholdSettings
-): Record<KpiKey, KpiPoint[]> => {
-	const granularity = chartGranularity(days);
-	const buckets = new Map<string, TeamCallMetric[]>();
-	for (const call of calls) {
-		const key = periodKeyOf(call.date, granularity);
-		buckets.set(key, [...(buckets.get(key) ?? []), call]);
-	}
-	const sparks = Object.fromEntries(
-		KPI_KEYS.map((key) => [key, []])
-	) as unknown as Record<KpiKey, KpiPoint[]>;
-	[...buckets.keys()].sort().forEach((period) => {
-		const snapshot = snapshotOf(buckets.get(period) ?? [], thresholds);
-		for (const key of KPI_KEYS) {
-			sparks[key].push({ label: periodLabel(period), value: snapshot[key] });
-		}
-	});
-	return sparks;
-};
-
-const UNIT: Record<KpiKey, Kpi['unit']> = {
-	calls: '',
-	effective: '%',
-	qa: '',
-	compliance: '%',
-	sentiment: '/5',
-	conversion: '%',
-};
-
-const DELTA_UNIT: Record<KpiKey, Kpi['deltaUnit']> = {
-	calls: '%',
-	effective: 'pts',
-	qa: 'pts',
-	compliance: 'pts',
-	sentiment: '',
-	conversion: 'pts',
-};
-
-/** The headline numbers with their change against the previous window and a sparkline each. */
-export const buildKpis = (
+/** Headline numbers with the previous window and a sparkline each. */
+export const buildHeadlineKpis = (
 	current: TeamCallMetric[],
 	previous: TeamCallMetric[],
 	days: number,
 	thresholds: ThresholdSettings
-): Kpi[] => {
+): HeadlineKpi[] => {
 	const now = snapshotOf(current, thresholds);
-	const before = snapshotOf(previous, thresholds);
-	const sparks = sparksOf(current, days, thresholds);
-	return KPI_KEYS.map((key) => {
-		let delta: number | null = null;
-		if (previous.length > 0) {
-			delta =
-				key === 'calls'
-					? before.calls === 0
-						? null
-						: Math.round(((now.calls - before.calls) / before.calls) * 100)
-					: round1(now[key] - before[key]);
-		}
-		return {
-			key,
-			value: now[key],
-			unit: UNIT[key],
-			delta,
-			deltaUnit: DELTA_UNIT[key],
-			spark: sparks[key],
-		};
-	});
-};
-
-export interface TreemapNode {
-	name: string;
-	/** Campaign id on a leaf, the line of business name on a parent. */
-	id: string;
-	calls: number;
-	qa: number;
-	children?: TreemapNode[];
-}
-
-const meanQa = (calls: TeamCallMetric[]) =>
-	calls.length
-		? round1(calls.reduce((sum, call) => sum + call.qaScore, 0) / calls.length)
-		: 0;
-
-/** Line of business, then campaign: size is the number of calls, colour is the mean QA. */
-export const campaignTreemap = (calls: TeamCallMetric[]): TreemapNode[] => {
-	const byLine = new Map<string, Map<string, TeamCallMetric[]>>();
-	for (const call of calls) {
-		const line = dashboardLineOfBusinessFor(call.campaignId) ?? 'Other';
-		const campaigns = byLine.get(line) ?? new Map<string, TeamCallMetric[]>();
-		campaigns.set(call.campaignId, [
-			...(campaigns.get(call.campaignId) ?? []),
-			call,
-		]);
-		byLine.set(line, campaigns);
+	const before = previous.length > 0 ? snapshotOf(previous, thresholds) : null;
+	const granularity = chartGranularity(days);
+	const buckets = new Map<string, TeamCallMetric[]>();
+	for (const call of current) {
+		const key = periodKeyOf(call.date, granularity);
+		buckets.set(key, [...(buckets.get(key) ?? []), call]);
 	}
-	return [...byLine.entries()].map(([line, campaigns]) => {
-		const lineCalls = [...campaigns.values()].flat();
-		return {
-			name: line,
-			id: line,
-			calls: lineCalls.length,
-			qa: meanQa(lineCalls),
-			children: [...campaigns.entries()].map(([id, group]) => ({
-				name: group[0].campaignName,
-				id,
-				calls: group.length,
-				qa: meanQa(group),
-			})),
-		};
-	});
-};
-
-export type FlowNodeId =
-	| 'EFFECTIVE'
-	| 'NOT_EFFECTIVE'
-	| 'SALE'
-	| 'NO_SALE'
-	| 'NO_OFFER';
-
-export interface CallFlow {
-	nodes: string[];
-	links: { source: string; target: string; value: number }[];
-}
-
-/** Team, then whether the customer was reached, then what happened with the offer. */
-export const callFlow = (calls: TeamCallMetric[]): CallFlow => {
-	const teams = OPERATION_MANAGER_TEAMS.filter((team) =>
-		calls.some((call) => call.team === team)
+	const periods = [...buckets.keys()].sort();
+	const snapshots = periods.map((period) =>
+		snapshotOf(buckets.get(period) ?? [], thresholds)
 	);
-	const links: CallFlow['links'] = [];
-	for (const team of teams) {
-		const teamCalls = calls.filter((call) => call.team === team);
-		const effective = teamCalls.filter(
-			(call) => call.contactOutcome === 'EFFECTIVE'
-		).length;
-		if (effective > 0)
-			links.push({ source: team, target: 'EFFECTIVE', value: effective });
-		if (teamCalls.length - effective > 0)
-			links.push({
-				source: team,
-				target: 'NOT_EFFECTIVE',
-				value: teamCalls.length - effective,
-			});
-	}
-	const reached = calls.filter((call) => call.contactOutcome === 'EFFECTIVE');
-	const sold = reached.filter(
-		(call) => call.offeredProduct !== null && call.converted
-	).length;
-	const declined = reached.filter(
-		(call) => call.offeredProduct !== null && !call.converted
-	).length;
-	const noOffer = reached.length - sold - declined;
-	if (sold > 0)
-		links.push({ source: 'EFFECTIVE', target: 'SALE', value: sold });
-	if (declined > 0)
-		links.push({ source: 'EFFECTIVE', target: 'NO_SALE', value: declined });
-	if (noOffer > 0)
-		links.push({ source: 'EFFECTIVE', target: 'NO_OFFER', value: noOffer });
-	const used = new Set(links.flatMap((link) => [link.source, link.target]));
-	return {
-		nodes: [
-			...teams,
-			'EFFECTIVE',
-			'NOT_EFFECTIVE',
-			'SALE',
-			'NO_SALE',
-			'NO_OFFER',
-		].filter((node) => used.has(node)),
-		links,
-	};
+	return KPI_KEYS.map((key) => ({
+		key,
+		metricId: KPI_METRIC[key],
+		current: now[key],
+		previous: before ? before[key] : null,
+		sparkline: snapshots.map((snapshot) => snapshot[key]),
+	}));
 };
+
+export type OutcomeKey = 'EFFECTIVE' | 'NOT_EFFECTIVE';
+export type OfferKey = 'SALE' | 'NO_SALE' | 'NO_OFFER';
+
+export interface TeamOutcomes {
+	team: string;
+	calls: number;
+	reached: Record<OutcomeKey, number>;
+	/** Of the reached calls only. */
+	offer: Record<OfferKey, number>;
+}
+
+/** Per team: reached or not, and what happened with the offer on the reached calls. */
+export const teamOutcomes = (
+	calls: TeamCallMetric[],
+	teams: string[]
+): TeamOutcomes[] =>
+	teams
+		.map((team) => {
+			const own = calls.filter((call) => call.team === team);
+			const reached = own.filter((call) => call.contactOutcome === 'EFFECTIVE');
+			const sale = reached.filter(
+				(call) => call.offeredProduct !== null && call.converted
+			).length;
+			const noSale = reached.filter(
+				(call) => call.offeredProduct !== null && !call.converted
+			).length;
+			return {
+				team,
+				calls: own.length,
+				reached: {
+					EFFECTIVE: reached.length,
+					NOT_EFFECTIVE: own.length - reached.length,
+				},
+				offer: {
+					SALE: sale,
+					NO_SALE: noSale,
+					NO_OFFER: reached.length - sale - noSale,
+				},
+			};
+		})
+		.filter((row) => row.calls > 0);
 
 export type ActivityMode = 'volume' | 'qa';
 
-export interface ActivityMatrix {
-	/** Hours shown on the X axis, from the first to the last hour that has calls. */
-	hours: number[];
-	/** [hour index, weekday index (Monday first), value]. */
-	cells: [number, number, number][];
-	max: number;
-}
-
-/** Calls (or mean QA) by weekday and hour, Monday first. */
-export const activityMatrix = (
+/**
+ * Weekday (Monday first) by hour, as the analytics Heatmap wants it: a value per
+ * cell (calls, or mean QA; null without calls) and the call count behind each cell.
+ * Hours run from the first to the last hour that has calls.
+ */
+export const activityHeatmap = (
 	calls: TeamCallMetric[],
-	mode: ActivityMode
-): ActivityMatrix => {
-	if (calls.length === 0) return { hours: [], cells: [], max: 0 };
+	mode: ActivityMode,
+	weekdayLabels: string[]
+): HeatmapData => {
+	if (calls.length === 0) return { rows: [], cols: [], cells: [], counts: [] };
 	const first = Math.min(...calls.map((call) => call.hour));
 	const last = Math.max(...calls.map((call) => call.hour));
 	const hours = Array.from({ length: last - first + 1 }, (_, i) => first + i);
 	const groups = new Map<string, TeamCallMetric[]>();
 	for (const call of calls) {
 		const weekday = (call.weekday + 6) % 7;
-		const key = `${call.hour - first}:${weekday}`;
+		const key = `${weekday}:${call.hour}`;
 		groups.set(key, [...(groups.get(key) ?? []), call]);
 	}
-	const cells = [...groups.entries()].map(([key, group]) => {
-		const [hour, weekday] = key.split(':').map(Number);
-		return [
-			hour,
-			weekday,
-			mode === 'volume' ? group.length : meanQa(group),
-		] as [number, number, number];
-	});
+	const rows = weekdayLabels.map((label, i) => ({ key: String(i), label }));
+	const cells = rows.map((_, weekday) =>
+		hours.map((hour) => {
+			const group = groups.get(`${weekday}:${hour}`);
+			if (!group) return null;
+			return mode === 'volume'
+				? group.length
+				: round1(
+						group.reduce((sum, call) => sum + call.qaScore, 0) / group.length
+					);
+		})
+	);
+	const counts = rows.map((_, weekday) =>
+		hours.map((hour) => groups.get(`${weekday}:${hour}`)?.length ?? 0)
+	);
 	return {
-		hours,
+		rows,
+		cols: hours.map((hour) => `${String(hour).padStart(2, '0')}:00`),
 		cells,
-		max: mode === 'volume' ? Math.max(...cells.map((cell) => cell[2])) : 100,
+		counts,
 	};
 };
