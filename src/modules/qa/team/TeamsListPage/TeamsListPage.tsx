@@ -6,7 +6,7 @@ import { ContentContainer } from '~/components/ContentContainer';
 import { SectionCard } from '~/components/SectionCard';
 import BaseTable from '~/components/BaseTable/BaseTable';
 import { useTeamStore, selectSupervisors } from '~/stores/qa/teamStore';
-import { TEAM_CAMPAIGNS } from '../mockData';
+import { clientCampaignById } from '../campaignCatalog';
 import {
 	useTriggerRulesStore,
 	selectTriggerRules,
@@ -39,7 +39,7 @@ export default function TeamsListPage() {
 	const rows = useMemo(() => {
 		const campaignNamesFor = (supervisorId: string) =>
 			(teamCampaignIds[supervisorId] ?? [])
-				.map((id) => TEAM_CAMPAIGNS.find((c) => c.id === id)?.name)
+				.map((id) => clientCampaignById(id)?.name)
 				.filter((n): n is string => Boolean(n));
 		return teamListRows(
 			Object.values(supervisors),

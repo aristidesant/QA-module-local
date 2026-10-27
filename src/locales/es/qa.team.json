@@ -542,113 +542,110 @@
 		"afternoon": "Tarde",
 		"night": "Noche"
 	},
-	"teamConfig": {
-		"title": "Configuración de equipos",
-		"description": "Crea equipos, asigna un supervisor a cada uno y mueve agentes entre ellos.",
-		"newTeam": "Nuevo equipo",
-		"clearSearch": "Borrar búsqueda",
-		"kpis": {
-			"teams": "Equipos",
-			"agents": "Agentes asignados",
-			"unassigned": "Sin asignar",
-			"avgSize": "Tamaño medio"
+	"campaignAssignment": {
+		"title": "Asignación de campañas",
+		"description": "Qué campañas puede ver cada supervisor. Los agentes entran en una campaña a medida que se ingestan sus llamadas.",
+		"managedElsewhere": "Los supervisores los crea el superadministrador.",
+		"list": {
+			"columns": {
+				"supervisor": "Supervisor",
+				"team": "Equipo",
+				"status": "Estado",
+				"campaigns": "Campañas",
+				"agents": "Agentes"
+			},
+			"noCampaigns": "Sin campañas todavía",
+			"more": "+{{count}}",
+			"rowsCount_one": "{{count}} supervisor",
+			"rowsCount_other": "{{count}} supervisores",
+			"empty": "Todavía no hay supervisores. Los crea el superadministrador.",
+			"viewSupervisors": "Supervisores ({{count}})",
+			"viewUnassigned": "Campañas sin asignar ({{count}})",
+			"unassignedHint": "Campañas que ningún supervisor puede ver todavía. Abre un supervisor y usa Asignar campañas para darles uno.",
+			"unassignedEmpty": "Todas las campañas tienen supervisor."
 		},
-		"rail": {
-			"title": "Equipos",
-			"search": "Buscar equipos o agentes…",
-			"unassigned": "Sin asignar",
-			"unassignedHint": "Agentes sin equipo",
-			"supervisor": "Supervisor: {{name}}",
-			"matches_one": "{{count}} agente coincide",
-			"matches_other": "{{count}} agentes coinciden",
-			"empty": "Ningún equipo ni agente coincide"
-		},
-		"header": {
-			"unassignedHint": "Agentes sin equipo. Muévelos a un equipo desde la lista de abajo.",
-			"changeSupervisor": "Cambiar supervisor",
-			"menu": {
-				"label": "Acciones del equipo",
-				"editTeam": "Editar equipo",
-				"dissolveTeam": "Disolver equipo"
+		"detail": {
+			"assign": "Asignar campañas",
+			"summary": "{{campaigns}} y {{agents}} trabajando en ellas",
+			"campaigns_one": "{{count}} campaña",
+			"campaigns_other": "{{count}} campañas",
+			"agents_one": "{{count}} agente",
+			"agents_other": "{{count}} agentes",
+			"onlyHere": "Solo este supervisor",
+			"remove": "Quitar campaña",
+			"removeTitle": "¿Quitar {{campaign}}?",
+			"removeBody": "{{name}} dejará de ver esta campaña. Sus agentes y llamadas no cambian.",
+			"removeConfirm": "Quitar",
+			"removed": "{{campaign}} quitada de {{name}}",
+			"emptyTitle": "Sin campañas asignadas",
+			"emptyDescription": "Asigna las campañas que {{name}} debe ver. Los agentes que trabajan en ellas aparecerán aquí.",
+			"noAgents": "Todavía no hay agentes. Aparecen cuando se ingestan llamadas de esta campaña.",
+			"columns": {
+				"agent": "Agente",
+				"team": "Equipo",
+				"status": "Estado",
+				"calls": "Llamadas",
+				"lastCall": "Última llamada"
+			},
+			"notFound": "Supervisor no encontrado.",
+			"back": "Volver a Asignación de campañas",
+			"tableTitle": "Campañas asignadas",
+			"expandHint": "Abre una fila para ver los agentes que trabajan en ella.",
+			"agentsHeading": "Agentes que trabajan en {{campaign}}",
+			"campaignColumns": {
+				"campaign": "Campaña",
+				"client": "Cliente",
+				"type": "Tipo",
+				"state": "Estado",
+				"started": "Inicio",
+				"agents": "Agentes",
+				"assignedTo": "Asignada a"
 			}
 		},
-		"members": {
-			"title": "Miembros",
-			"addAgents": "Añadir agentes",
-			"search": "Buscar por nombre, ID o correo…",
-			"status": "Estado",
-			"all": "Todos",
-			"clear": "Limpiar filtros",
-			"count_one": "{{count}} agente",
-			"count_other": "{{count}} agentes",
-			"filteredCount": "{{count}} de {{total}} agentes",
-			"empty": "Este equipo aún no tiene agentes. Añádelos o muévelos aquí desde otro equipo.",
-			"emptyFiltered": "Ningún agente coincide con estos filtros.",
-			"emptyUnassigned": "Todos tienen equipo."
+		"campaignType": {
+			"INBOUND": "entrante",
+			"OUTBOUND": "saliente",
+			"BLENDED": "mixta"
 		},
-		"columns": {
-			"agent": "Agente",
-			"status": "Estado"
+		"campaignTypeTitle": {
+			"INBOUND": "Entrante",
+			"OUTBOUND": "Saliente",
+			"BLENDED": "Mixta"
 		},
-		"row": {
-			"moveTo": "Mover a…",
-			"viewProfile": "Ver el perfil de {{name}}"
+		"picker": {
+			"title": "Asignar campañas a {{name}}",
+			"description": "Busca campañas de cualquier cliente y marca las que {{name}} debe ver.",
+			"search": "Buscar campañas o clientes…",
+			"line": "Línea de negocio",
+			"allLines": "Todas las líneas de negocio",
+			"type": "Tipo",
+			"allTypes": "Todos los tipos",
+			"state": "Estado",
+			"allStates": "Todos los estados",
+			"started": "Inicio",
+			"startedPlaceholder": "Cualquier fecha de inicio",
+			"clearFilters": "Borrar filtros",
+			"columns": {
+				"campaign": "Campaña",
+				"client": "Cliente",
+				"type": "Tipo",
+				"state": "Estado",
+				"started": "Inicio",
+				"agents": "Agentes",
+				"assigned": "Asignada a"
+			},
+			"noSupervisor": "Sin supervisor todavía",
+			"empty": "Ninguna campaña coincide con estos filtros.",
+			"summary": "{{selected}} de {{total}} campañas seleccionadas",
+			"changes": "{{added}} añadidas, {{removed}} quitadas",
+			"noChanges": "Sin cambios todavía",
+			"save": "Guardar campañas",
+			"saved": "Campañas actualizadas para {{name}}"
 		},
-		"selection": {
-			"count_one": "{{count}} seleccionado",
-			"count_other": "{{count}} seleccionados",
-			"moveTo": "Mover a…",
-			"unassign": "Desasignar",
-			"clear": "Limpiar"
-		},
-		"empty": {
-			"title": "Aún no hay equipos",
-			"description": "Crea el primer equipo y su supervisor, y luego añádele agentes."
-		},
-		"drawer": {
-			"title": "Nuevo equipo",
-			"description": "Cada equipo lo dirige un supervisor. Puedes añadir miembros ahora o después desde la página del equipo.",
-			"teamSection": "Equipo",
-			"supervisorSection": "Supervisor",
-			"teamName": "Nombre del equipo",
-			"supervisorName": "Nombre del supervisor",
-			"supervisorEmail": "Correo del supervisor",
-			"members": "Primeros miembros",
-			"membersHint": "Los agentes elegidos aquí salen de su equipo actual.",
-			"create": "Crear equipo",
-			"validation": {
-				"teamName": "Ponle un nombre al equipo",
-				"teamNameTaken": "Ya existe un equipo con ese nombre",
-				"supervisorName": "Ponle un nombre al supervisor",
-				"email": "Introduce un correo válido"
-			}
-		},
-		"editTeam": {
-			"title": "Editar equipo",
-			"name": "Nombre del equipo",
-			"save": "Guardar"
-		},
-		"dissolve": {
-			"title": "¿Disolver {{team}}?",
-			"body_one": "Su {{count}} agente pasa a Sin asignar. El supervisor se elimina.",
-			"body_other": "Sus {{count}} agentes pasan a Sin asignar. El supervisor se elimina.",
-			"confirm": "Disolver"
-		},
-		"discard": {
-			"title": "¿Descartar este equipo?",
-			"body": "Se perderá lo que escribiste.",
-			"confirm": "Descartar"
-		},
-		"toast": {
-			"moved": "{{name}} movido a {{team}}",
-			"movedMany": "{{count}} agentes movidos a {{team}}",
-			"created": "Equipo {{team}} creado",
-			"updated": "Equipo {{team}} actualizado",
-			"dissolved": "Equipo {{team}} disuelto",
-			"statusChanged": "{{name}}: estado cambiado a {{status}}"
-		},
-		"statusMenu": {
-			"change": "Cambiar estado"
+		"campaignState": {
+			"active": "Activa",
+			"paused": "En pausa",
+			"pending": "Pendiente"
 		}
 	}
 }

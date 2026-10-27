@@ -7,7 +7,6 @@ import {
 	IconChartLine,
 	IconFileText,
 	IconUsers,
-	IconUsersGroup,
 	IconTarget,
 	IconTargetArrow,
 	IconHeartHandshake,
@@ -420,10 +419,10 @@ export const getOperationManagerNavigation = (): SidebarNavItem[] => [
 		badge: 'inbox',
 	},
 	{
-		key: 'operationmanager-team-config',
-		label: 'sidebar.operationmanager.teamConfig',
-		icon: <IconUsersGroup size={20} className={styles.menuIcon} />,
-		to: '/qa/operation-manager/team-config',
+		key: 'operationmanager-campaign-assignment',
+		label: 'sidebar.operationmanager.campaignAssignment',
+		icon: <IconSpeakerphone size={20} className={styles.menuIcon} />,
+		to: '/qa/operation-manager/campaign-assignment',
 		i18nNamespace: 'qa.team',
 	},
 	{
@@ -476,7 +475,7 @@ export const getOperationManagerNavigationGrouped = (): NavGroup[] => {
 			byKey('operationmanager-inbox'),
 		]),
 		cluster('operationmanager-organization', [
-			byKey('operationmanager-team-config'),
+			byKey('operationmanager-campaign-assignment'),
 			byKey('operationmanager-team-health'),
 			byKey('operationmanager-clients'),
 			byKey('operationmanager-rankings'),

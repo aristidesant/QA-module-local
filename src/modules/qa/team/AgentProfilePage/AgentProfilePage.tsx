@@ -34,7 +34,7 @@ import {
 	SUPERVISOR_PERSONA,
 	type ProfileTab,
 } from '../constants';
-import { roleFromPath, teamBasePath } from '../helpers';
+import { campaignAssignmentPath, roleFromPath, teamBasePath } from '../helpers';
 import { ProfileHeader } from './ProfileHeader';
 import { ProfileActions } from './ProfileActions';
 import { profileAttention } from './attention';
@@ -61,11 +61,12 @@ export default function AgentProfilePage() {
 	const location = useLocation();
 	const { agentId } = useParams<{ agentId: string }>();
 	const role = roleFromPath(location.pathname);
-	/** Opened from the Operation Manager's Team configuration: go back there. */
-	const fromTeamConfig =
-		(location.state as { from?: string } | null)?.from === 'team-config';
-	const backPath = fromTeamConfig
-		? '/qa/operation-manager/team-config'
+	/** Opened from the Operation Manager's Campaign Assignment: go back there. */
+	const fromCampaignAssignment =
+		(location.state as { from?: string } | null)?.from ===
+		'campaign-assignment';
+	const backPath = fromCampaignAssignment
+		? campaignAssignmentPath
 		: teamBasePath(role);
 	const profile = useTeamStore(selectProfile(agentId));
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
@@ -207,8 +208,8 @@ export default function AgentProfilePage() {
 			<Stack gap='lg'>
 				<Breadcrumbs>
 					<Anchor onClick={() => navigate(backPath)}>
-						{fromTeamConfig
-							? t('teamConfig.title')
+						{fromCampaignAssignment
+							? t('campaignAssignment.title')
 							: t(role === 'qa-manager' ? 'teams.list.title' : 'team.title')}
 					</Anchor>
 					{role === 'qa-manager' && (

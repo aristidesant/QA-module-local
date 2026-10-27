@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { AppDrawer } from '~/components/AppDrawer';
 import { useTeamStore } from '~/stores/qa/teamStore';
 import { notifySuccess } from '~/modules/qa/utils/notifications';
-import { TEAM_CAMPAIGNS } from '../mockData';
+import { ALL_CAMPAIGNS } from '../campaignCatalog';
 
 interface AssignCampaignsDrawerProps {
 	opened: boolean;
@@ -45,9 +45,9 @@ export function AssignCampaignsDrawer({
 			<Stack gap='md'>
 				<MultiSelect
 					label={t('teams.assignCampaigns.campaigns')}
-					data={TEAM_CAMPAIGNS.map((c) => ({
+					data={ALL_CAMPAIGNS.map((c) => ({
 						value: c.id,
-						label: `${c.name} (${c.campaignType})`,
+						label: `${c.clientName}: ${c.name} (${c.campaignType})`,
 					}))}
 					value={selected}
 					onChange={setSelected}

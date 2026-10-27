@@ -208,8 +208,12 @@ const QAManagerTeamsListPage = React.lazy(
 const QAManagerTeamDetailPage = React.lazy(
 	() => import('./modules/qa/team/TeamDetailPage')
 );
-const OperationManagerTeamConfigPage = React.lazy(
-	() => import('./modules/qa/team/TeamConfigPage')
+const CampaignAssignmentPage = React.lazy(
+	() => import('./modules/qa/team/CampaignAssignmentPage')
+);
+const CampaignAssignmentDetailPage = React.lazy(
+	() =>
+		import('./modules/qa/team/CampaignAssignmentPage/CampaignAssignmentDetailPage')
 );
 const QAManagerCampaignsPage = React.lazy(
 	() => import('./modules/qa/qamanager/pages/CampaignsPage')
@@ -1784,14 +1788,35 @@ const router = createBrowserRouter([
 										),
 									},
 									{
-										path: 'operation-manager/team-config',
-										id: 'qa.operation-manager.team-config',
+										path: 'operation-manager/campaign-assignment',
+										id: 'qa.operation-manager.campaign-assignment',
 										element: (
 											<I18nNamespaceLoader>
 												<Suspense fallback={<SuspenseFallback />}>
-													<OperationManagerTeamConfigPage />
+													<CampaignAssignmentPage />
 												</Suspense>
 											</I18nNamespaceLoader>
+										),
+									},
+									{
+										path: 'operation-manager/campaign-assignment/:supervisorId',
+										id: 'qa.operation-manager.campaign-assignment.detail',
+										element: (
+											<I18nNamespaceLoader>
+												<Suspense fallback={<SuspenseFallback />}>
+													<CampaignAssignmentDetailPage />
+												</Suspense>
+											</I18nNamespaceLoader>
+										),
+									},
+									{
+										// The page was renamed; keep old links working.
+										path: 'operation-manager/team-config',
+										element: (
+											<Navigate
+												to='/qa/operation-manager/campaign-assignment'
+												replace
+											/>
 										),
 									},
 									{

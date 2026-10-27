@@ -24,7 +24,7 @@ import {
 	selectSupervisor,
 	selectTeamCampaignIds,
 } from '~/stores/qa/teamStore';
-import { TEAM_CAMPAIGNS } from '../mockData';
+import { clientCampaignById } from '../campaignCatalog';
 import {
 	useTriggerRulesStore,
 	selectTriggerRules,
@@ -214,7 +214,7 @@ export default function TeamDetailPage() {
 					) : (
 						<Group gap='xs'>
 							{campaignIds.map((id) => {
-								const campaign = TEAM_CAMPAIGNS.find((c) => c.id === id);
+								const campaign = clientCampaignById(id);
 								if (!campaign) return null;
 								return (
 									<Badge

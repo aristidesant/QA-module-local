@@ -25,6 +25,11 @@ export const roleFromPath = (pathname: string): TeamRole =>
 /** Where "back" goes: the Teams list for QA Manager (agents no longer have a standalone list), Your Team for Supervisor. */
 export const teamBasePath = (role: TeamRole) =>
 	role === 'qa-manager' ? '/qa/qa-manager/teams' : '/qa/supervisor/your-team';
+/** The Operation Manager's Campaign Assignment list, and one supervisor's detail under it. */
+export const campaignAssignmentPath =
+	'/qa/operation-manager/campaign-assignment';
+export const campaignAssignmentDetailPath = (supervisorId: string) =>
+	`${campaignAssignmentPath}/${supervisorId}`;
 /** The agent-profile URL for a given role. QA Manager profiles are nested under their team. */
 export const agentProfilePath = (
 	role: TeamRole,

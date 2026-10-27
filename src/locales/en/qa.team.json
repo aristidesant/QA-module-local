@@ -542,113 +542,110 @@
 		"afternoon": "Afternoon",
 		"night": "Night"
 	},
-	"teamConfig": {
-		"title": "Team configuration",
-		"description": "Create teams, assign a supervisor to each one and move agents between them.",
-		"newTeam": "New team",
-		"clearSearch": "Clear search",
-		"kpis": {
-			"teams": "Teams",
-			"agents": "Assigned agents",
-			"unassigned": "Unassigned",
-			"avgSize": "Avg. team size"
+	"campaignAssignment": {
+		"title": "Campaign Assignment",
+		"description": "Which campaigns each supervisor can see. Agents join a campaign as its calls are ingested.",
+		"managedElsewhere": "Supervisors are created by the super admin.",
+		"list": {
+			"columns": {
+				"supervisor": "Supervisor",
+				"team": "Team",
+				"status": "Status",
+				"campaigns": "Campaigns",
+				"agents": "Agents"
+			},
+			"noCampaigns": "No campaigns yet",
+			"more": "+{{count}}",
+			"rowsCount_one": "{{count}} supervisor",
+			"rowsCount_other": "{{count}} supervisors",
+			"empty": "No supervisors yet. They are created by the super admin.",
+			"viewSupervisors": "Supervisors ({{count}})",
+			"viewUnassigned": "Unassigned campaigns ({{count}})",
+			"unassignedHint": "Campaigns no supervisor can see yet. Open a supervisor and use Assign campaigns to give them one.",
+			"unassignedEmpty": "Every campaign has a supervisor."
 		},
-		"rail": {
-			"title": "Teams",
-			"search": "Search teams or agents…",
-			"unassigned": "Unassigned",
-			"unassignedHint": "Agents without a team",
-			"supervisor": "Supervisor: {{name}}",
-			"matches_one": "{{count}} agent matches",
-			"matches_other": "{{count}} agents match",
-			"empty": "No teams or agents match"
-		},
-		"header": {
-			"unassignedHint": "Agents without a team. Move them into a team from the list below.",
-			"changeSupervisor": "Change supervisor",
-			"menu": {
-				"label": "Team actions",
-				"editTeam": "Edit team",
-				"dissolveTeam": "Dissolve team"
+		"detail": {
+			"assign": "Assign campaigns",
+			"summary": "{{campaigns}} and {{agents}} working on them",
+			"campaigns_one": "{{count}} campaign",
+			"campaigns_other": "{{count}} campaigns",
+			"agents_one": "{{count}} agent",
+			"agents_other": "{{count}} agents",
+			"onlyHere": "Only this supervisor",
+			"remove": "Remove campaign",
+			"removeTitle": "Remove {{campaign}}?",
+			"removeBody": "{{name}} will stop seeing this campaign. Its agents and calls are not affected.",
+			"removeConfirm": "Remove",
+			"removed": "{{campaign}} removed from {{name}}",
+			"emptyTitle": "No campaigns assigned",
+			"emptyDescription": "Assign the campaigns {{name}} should see. The agents working on them appear here.",
+			"noAgents": "No agents yet. They appear once calls for this campaign are ingested.",
+			"columns": {
+				"agent": "Agent",
+				"team": "Team",
+				"status": "Status",
+				"calls": "Calls",
+				"lastCall": "Last call"
+			},
+			"notFound": "Supervisor not found.",
+			"back": "Back to Campaign Assignment",
+			"tableTitle": "Assigned campaigns",
+			"expandHint": "Open a row to see the agents working on it.",
+			"agentsHeading": "Agents working on {{campaign}}",
+			"campaignColumns": {
+				"campaign": "Campaign",
+				"client": "Client",
+				"type": "Type",
+				"state": "State",
+				"started": "Started",
+				"agents": "Agents",
+				"assignedTo": "Assigned to"
 			}
 		},
-		"members": {
-			"title": "Members",
-			"addAgents": "Add agents",
-			"search": "Search by name, ID or email…",
-			"status": "Status",
-			"all": "All",
-			"clear": "Clear filters",
-			"count_one": "{{count}} agent",
-			"count_other": "{{count}} agents",
-			"filteredCount": "{{count}} of {{total}} agents",
-			"empty": "No agents in this team yet. Add agents or move them here from another team.",
-			"emptyFiltered": "No agents match these filters.",
-			"emptyUnassigned": "Everyone has a team."
+		"campaignType": {
+			"INBOUND": "inbound",
+			"OUTBOUND": "outbound",
+			"BLENDED": "blended"
 		},
-		"columns": {
-			"agent": "Agent",
-			"status": "Status"
+		"campaignTypeTitle": {
+			"INBOUND": "Inbound",
+			"OUTBOUND": "Outbound",
+			"BLENDED": "Blended"
 		},
-		"row": {
-			"moveTo": "Move to…",
-			"viewProfile": "View {{name}}'s profile"
+		"picker": {
+			"title": "Assign campaigns to {{name}}",
+			"description": "Find campaigns of any client and tick the ones {{name}} should see.",
+			"search": "Search campaigns or clients…",
+			"line": "Line of business",
+			"allLines": "All lines of business",
+			"type": "Type",
+			"allTypes": "All types",
+			"state": "State",
+			"allStates": "All states",
+			"started": "Started",
+			"startedPlaceholder": "Any start date",
+			"clearFilters": "Clear filters",
+			"columns": {
+				"campaign": "Campaign",
+				"client": "Client",
+				"type": "Type",
+				"state": "State",
+				"started": "Started",
+				"agents": "Agents",
+				"assigned": "Assigned to"
+			},
+			"noSupervisor": "No supervisor yet",
+			"empty": "No campaigns match these filters.",
+			"summary": "{{selected}} of {{total}} campaigns selected",
+			"changes": "{{added}} added, {{removed}} removed",
+			"noChanges": "No changes yet",
+			"save": "Save campaigns",
+			"saved": "Campaigns updated for {{name}}"
 		},
-		"selection": {
-			"count_one": "{{count}} selected",
-			"count_other": "{{count}} selected",
-			"moveTo": "Move to…",
-			"unassign": "Unassign",
-			"clear": "Clear"
-		},
-		"empty": {
-			"title": "No teams yet",
-			"description": "Create the first team and its supervisor, then add agents to it."
-		},
-		"drawer": {
-			"title": "New team",
-			"description": "A team is led by one supervisor. You can add members now or later from the team page.",
-			"teamSection": "Team",
-			"supervisorSection": "Supervisor",
-			"teamName": "Team name",
-			"supervisorName": "Supervisor name",
-			"supervisorEmail": "Supervisor email",
-			"members": "First members",
-			"membersHint": "Agents picked here move from their current team.",
-			"create": "Create team",
-			"validation": {
-				"teamName": "Give the team a name",
-				"teamNameTaken": "A team with this name already exists",
-				"supervisorName": "Give the supervisor a name",
-				"email": "Enter a valid email"
-			}
-		},
-		"editTeam": {
-			"title": "Edit team",
-			"name": "Team name",
-			"save": "Save"
-		},
-		"dissolve": {
-			"title": "Dissolve {{team}}?",
-			"body_one": "Its {{count}} agent moves to Unassigned. The supervisor is removed.",
-			"body_other": "Its {{count}} agents move to Unassigned. The supervisor is removed.",
-			"confirm": "Dissolve"
-		},
-		"discard": {
-			"title": "Discard this team?",
-			"body": "The details you typed will be lost.",
-			"confirm": "Discard"
-		},
-		"toast": {
-			"moved": "{{name}} moved to {{team}}",
-			"movedMany": "{{count}} agents moved to {{team}}",
-			"created": "Team {{team}} created",
-			"updated": "Team {{team}} updated",
-			"dissolved": "Team {{team}} dissolved",
-			"statusChanged": "{{name}} set to {{status}}"
-		},
-		"statusMenu": {
-			"change": "Change status"
+		"campaignState": {
+			"active": "Active",
+			"paused": "Paused",
+			"pending": "Pending"
 		}
 	}
 }
