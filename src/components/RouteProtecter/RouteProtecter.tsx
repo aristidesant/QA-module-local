@@ -11,6 +11,7 @@ import { logout } from '~/utils/logout';
 import { LoadingOverlay } from '@mantine/core';
 import classes from './RouteProtecter.module.css';
 import { useSessionExpirationWatcher } from '~/hooks/useSessionExpirationWatcher';
+import { isDemoMode } from '~/utils/demoMode';
 
 type LoaderData = {
 	token: string | null;
@@ -22,13 +23,13 @@ const ACCESS_TOKEN_KEY = 'accessToken';
 // Client loader to check session from sessionStorage (token only)
 export async function clientLoader(): Promise<LoaderData> {
 	// Development mode: return mock dev token for prototype
-	const isDev = typeof window !== 'undefined' && (
-		window.location.hostname === 'localhost' ||
-		window.location.hostname === '127.0.0.1' ||
-		window.location.hostname.includes('localhost:')
-	);
+	const isDev =
+		typeof window !== 'undefined' &&
+		(window.location.hostname === 'localhost' ||
+			window.location.hostname === '127.0.0.1' ||
+			window.location.hostname.includes('localhost:'));
 
-	if (isDev && typeof window !== 'undefined') {
+	if ((isDev || isDemoMode) && typeof window !== 'undefined') {
 		// Check if we have a mock dev token set
 		let token = window.sessionStorage.getItem(ACCESS_TOKEN_KEY);
 		if (!token) {
@@ -37,7 +38,7 @@ export async function clientLoader(): Promise<LoaderData> {
 				sub: '1',
 				email: 'aristides.02@gmail.com',
 				username: 'asantana',
-				exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60),
+				exp: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
 				iat: Math.floor(Date.now() / 1000),
 				roles: ['SUPERADMIN'],
 			};
@@ -114,16 +115,18 @@ export const RouteProtecter = () => {
 	}, [queryClient, setToken, setUser, storeToken, loaderToken]);
 
 	// Development mode: set mock user and token for QA routes without auth
-	const isDev = import.meta.env.DEV && (
+	const isDev =
+		import.meta.env.DEV &&
 		typeof window !== 'undefined' &&
 		(window.location.hostname === 'localhost' ||
-		 window.location.hostname === '127.0.0.1' ||
-		 window.location.hostname.includes('localhost:'))
-	);
+			window.location.hostname === '127.0.0.1' ||
+			window.location.hostname.includes('localhost:'));
 	const isQaPath = path.startsWith('/qa');
+	// Demo mode behaves like dev on every path, on any host.
+	const allowMockSession = isDemoMode || (isDev && isQaPath);
 
 	useEffect(() => {
-		if (isDev && isQaPath && !storeToken && !user) {
+		if (allowMockSession && !storeToken && !user) {
 			// Set mock dev token for QA route access
 			const mockToken = 'dev-mock-token';
 			setToken(mockToken);
@@ -144,7 +147,7 @@ export const RouteProtecter = () => {
 			} as UserModel;
 			setUser(mockUser);
 		}
-	}, [isDev, isQaPath, storeToken, user, setToken, setUser]);
+	}, [allowMockSession, storeToken, user, setToken, setUser]);
 
 	// Use store token as primary, fallback to loader token for initial render
 	const authToken = storeToken ?? loaderToken;
@@ -153,7 +156,7 @@ export const RouteProtecter = () => {
 		queryKey: ['currentUser'],
 		queryFn: async () => {
 			// In dev mode, return mock user without API call
-			if (isDev) {
+			if (isDev || isDemoMode) {
 				return {
 					id: 1,
 					username: 'asantana',
@@ -209,7 +212,7 @@ export const RouteProtecter = () => {
 		}
 	}, [authToken, meQuery.error, meQuery.isError]);
 
-	if (!authToken && path !== '/login' && !(isDev && isQaPath)) {
+	if (!authToken && path !== '/login' && !allowMockSession) {
 		return <Navigate to='/login' replace />;
 	}
 

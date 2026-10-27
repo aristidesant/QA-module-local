@@ -4,6 +4,7 @@ import type { UserModel } from '~/models/UserModels';
 import { useSessionStore } from '~/stores/sessionStore';
 import { useIsSuperAdmin } from '~/hooks/useIsSuperAdmin';
 import { useRoleMockStore } from '~/stores/roleMockStore';
+import { isDemoMode } from '~/utils/demoMode';
 
 interface TokenRolePayload {
 	roles?: string[];
@@ -54,13 +55,23 @@ export const useIsQaAdmin = (): boolean => {
 		targetClient?.id ?? user?.clientId ?? user?.client?.id ?? null;
 
 	return useMemo(() => {
+		// Demo mode: the deployed mockup has no real roles to check.
+		if (isDemoMode) {
+			return true;
+		}
+
 		// Development mode bypass: allow access if running in dev/localhost
 		if (import.meta.env.DEV) {
-			const isDev = typeof window !== 'undefined' &&
+			const isDev =
+				typeof window !== 'undefined' &&
 				(window.location.hostname === 'localhost' ||
-				 window.location.hostname === '127.0.0.1' ||
-				 window.location.hostname.includes('localhost:'));
-			if (isDev && (user?.email === 'aristides.02@gmail.com' || user?.username === 'asantana')) {
+					window.location.hostname === '127.0.0.1' ||
+					window.location.hostname.includes('localhost:'));
+			if (
+				isDev &&
+				(user?.email === 'aristides.02@gmail.com' ||
+					user?.username === 'asantana')
+			) {
 				return true;
 			}
 			// Also allow if no user but in dev mode (development access)

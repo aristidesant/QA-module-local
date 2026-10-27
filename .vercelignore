@@ -1,0 +1,20 @@
+# Replaces .gitignore for `vercel deploy`, so list everything private or local here.
+.env
+.env.*
+.git
+.claude
+.agents
+.scratch
+.superpowers
+.worktrees
+.opencode
+.vscode
+.idea
+.vercel
+node_modules
+dist
+coverage
+DESIGN_ROLE.md
+package-lock.json
+*.log
+.DS_Store
