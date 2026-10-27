@@ -11,7 +11,7 @@ import { logout } from '~/utils/logout';
 import { LoadingOverlay } from '@mantine/core';
 import classes from './RouteProtecter.module.css';
 import { useSessionExpirationWatcher } from '~/hooks/useSessionExpirationWatcher';
-import { isDemoMode } from '~/utils/demoMode';
+import { DEMO_USER, isDemoMode } from '~/utils/demoMode';
 
 type LoaderData = {
 	token: string | null;
@@ -29,7 +29,7 @@ export async function clientLoader(): Promise<LoaderData> {
 			window.location.hostname === '127.0.0.1' ||
 			window.location.hostname.includes('localhost:'));
 
-	if ((isDev || isDemoMode) && typeof window !== 'undefined') {
+	if (isDev && typeof window !== 'undefined') {
 		// Check if we have a mock dev token set
 		let token = window.sessionStorage.getItem(ACCESS_TOKEN_KEY);
 		if (!token) {
@@ -122,11 +122,9 @@ export const RouteProtecter = () => {
 			window.location.hostname === '127.0.0.1' ||
 			window.location.hostname.includes('localhost:'));
 	const isQaPath = path.startsWith('/qa');
-	// Demo mode behaves like dev on every path, on any host.
-	const allowMockSession = isDemoMode || (isDev && isQaPath);
 
 	useEffect(() => {
-		if (allowMockSession && !storeToken && !user) {
+		if (isDev && isQaPath && !storeToken && !user) {
 			// Set mock dev token for QA route access
 			const mockToken = 'dev-mock-token';
 			setToken(mockToken);
@@ -147,7 +145,7 @@ export const RouteProtecter = () => {
 			} as UserModel;
 			setUser(mockUser);
 		}
-	}, [allowMockSession, storeToken, user, setToken, setUser]);
+	}, [isDev, isQaPath, storeToken, user, setToken, setUser]);
 
 	// Use store token as primary, fallback to loader token for initial render
 	const authToken = storeToken ?? loaderToken;
@@ -156,7 +154,9 @@ export const RouteProtecter = () => {
 		queryKey: ['currentUser'],
 		queryFn: async () => {
 			// In dev mode, return mock user without API call
-			if (isDev || isDemoMode) {
+			// Demo mode signs in without a backend, so the current user is the mock one
+			if (isDemoMode) return DEMO_USER;
+			if (isDev) {
 				return {
 					id: 1,
 					username: 'asantana',
@@ -212,7 +212,7 @@ export const RouteProtecter = () => {
 		}
 	}, [authToken, meQuery.error, meQuery.isError]);
 
-	if (!authToken && path !== '/login' && !allowMockSession) {
+	if (!authToken && path !== '/login' && !(isDev && isQaPath)) {
 		return <Navigate to='/login' replace />;
 	}
 

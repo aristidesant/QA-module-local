@@ -1,6 +1,7 @@
 import axios from 'axios';
 import type { UserModel } from '~/models/UserModels';
 import { DEFAULT_API_URL } from './config';
+import { createDemoLoginResponse, isDemoMode } from '~/utils/demoMode';
 
 export type AuthRequest = {
 	username: string;
@@ -120,6 +121,9 @@ export async function authenticate(
 	credentials: AuthRequest,
 	apiUrl: string = DEFAULT_API_URL
 ): Promise<MFALoginResponse> {
+	// Demo mode accepts any credentials and never calls the backend.
+	if (isDemoMode) return createDemoLoginResponse();
+
 	const response = await axios.post<MFALoginResponse>(
 		`${apiUrl}/auth/login`,
 		credentials
