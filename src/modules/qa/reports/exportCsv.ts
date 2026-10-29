@@ -71,21 +71,22 @@ const blockFor = (section: ReportSectionData, labels: CsvLabels): string[] => {
 		case 'compliance':
 		case 'sentiment':
 		case 'business':
+		case 'surveys':
 		case 'campaigns':
 		case 'agents':
 			rows.push(
 				line([
 					labels.column('segment'),
 					labels.column('calls'),
-					...section.metricIds.map(labels.metricLabel),
+					...section.table.metricIds.map(labels.metricLabel),
 				])
 			);
-			for (const row of section.rows) {
+			for (const row of section.table.rows) {
 				rows.push(
 					line([
 						row.label,
 						row.calls,
-						...section.metricIds.map((metricId) =>
+						...section.table.metricIds.map((metricId) =>
 							formatMetric(metricId, row.metrics[metricId] ?? null)
 						),
 					])

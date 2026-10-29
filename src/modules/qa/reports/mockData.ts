@@ -42,7 +42,7 @@ export const REPORT_DEFINITIONS_SEED: ReportDefinition[] = [
 		scope: { ...emptyScope, campaignIds: ['camp-001', 'camp-004'] },
 		groupBy: 'campaign',
 		sections: ['overview', 'qa', 'compliance', 'sentiment', 'business'],
-		metrics: [],
+		subsections: { qa: ['overall', 'ecn', 'ecc'] },
 		formats: ['PDF', 'CSV'],
 		schedule: {
 			enabled: true,
@@ -80,7 +80,6 @@ export const REPORT_DEFINITIONS_SEED: ReportDefinition[] = [
 			'coaching',
 			'rankings',
 		],
-		metrics: [],
 		formats: ['PDF', 'XLSX'],
 		schedule: {
 			enabled: true,
@@ -109,7 +108,6 @@ export const REPORT_DEFINITIONS_SEED: ReportDefinition[] = [
 		scope: { ...emptyScope, linesOfBusiness: ['Collections'] },
 		groupBy: 'lineOfBusiness',
 		sections: ['overview', 'compliance', 'campaigns'],
-		metrics: [],
 		formats: ['PDF'],
 		schedule: null,
 		builtIn: true,
@@ -131,7 +129,6 @@ export const REPORT_DEFINITIONS_SEED: ReportDefinition[] = [
 		scope: emptyScope,
 		groupBy: 'supervisor',
 		sections: ['overview', 'coaching', 'burnout', 'disputes'],
-		metrics: [],
 		formats: ['PDF', 'CSV'],
 		schedule: {
 			enabled: true,

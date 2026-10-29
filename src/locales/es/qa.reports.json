@@ -32,13 +32,18 @@
 		"name": "Nombre del informe",
 		"namePlaceholder": "Informe semanal de calidad",
 		"description": "Descripción",
-		"descriptionPlaceholder": "Qué cubre este informe y quién lo lee"
+		"descriptionPlaceholder": "Qué cubre este informe y quién lo lee",
+		"removedInternal_one": "Se quitó {{count}} sección interna para el cliente",
+		"removedInternal_other": "Se quitaron {{count}} secciones internas para el cliente"
 	},
 	"steps": {
 		"audience": "Destinatario y datos básicos",
-		"period": "Periodo y alcance",
+		"period": "Alcance y periodo",
 		"sections": "Secciones y métricas",
-		"output": "Salida y envío"
+		"output": "Salida y envío",
+		"summaries": {
+			"noSchedule": "Sin programación"
+		}
 	},
 	"period": {
 		"label": "Periodo",
@@ -68,14 +73,21 @@
 			"agent": "Agente",
 			"campaign": "Campaña",
 			"lineOfBusiness": "Línea de negocio"
-		}
+		},
+		"agentCount_one": "{{count}} de {{total}} agente en el alcance",
+		"agentCount_other": "{{count}} de {{total}} agentes en el alcance",
+		"agentsHint": "Déjalo vacío para incluir a todos los agentes que cumplan los filtros de abajo",
+		"addFrom": "Agregar todos los agentes de",
+		"addFromTeam": "Equipo",
+		"addFromSupervisor": "Supervisor",
+		"addFromCampaign": "Campaña",
+		"clearAgents": "Limpiar selección",
+		"narrowLabel": "Acotar la lista de agentes"
 	},
 	"sections": {
 		"label": "Secciones",
 		"selected_one": "{{count}} sección",
 		"selected_other": "{{count}} secciones",
-		"metrics": "Métricas",
-		"metricsHint": "Déjalo vacío para usar las métricas por defecto de cada sección",
 		"internalOnly": "Solo uso interno — no disponible en informes de cliente",
 		"moveUp": "Subir",
 		"moveDown": "Bajar",
@@ -123,8 +135,75 @@
 			"rankings": {
 				"label": "Rankings de equipo",
 				"description": "Programas, líderes y ganadores"
+			},
+			"surveys": {
+				"label": "Encuestas de clientes",
+				"description": "NPS, CSAT y tasa de respuesta por segmento"
 			}
-		}
+		},
+		"views": {
+			"table": "Valores",
+			"bar": "Gráfica de barras",
+			"line": "Gráfica de líneas",
+			"mixed": "Mixtas"
+		},
+		"viewLabel": "Vista de {{section}}",
+		"viewHint": "Cada sección es una tabla con una columna por subsección seleccionada. Cambia una subsección a barras o líneas para agregar su gráfica sobre la tabla; con más de cuatro segmentos, las líneas pasan a un panel pequeño por segmento.",
+		"subsectionViewLabel": "Vista de {{subsection}}",
+		"subsections": {
+			"qa": {
+				"overall": "Puntaje general",
+				"ecn": "ECN",
+				"enc": "ENC",
+				"ecc": "ECC",
+				"ecuf": "ECUF",
+				"autoFail": "Falla automática"
+			},
+			"compliance": {
+				"overall": "Puntaje general",
+				"security": "Seguridad",
+				"regulatory": "Regulatorio",
+				"legal": "Legal",
+				"violations": "Violaciones"
+			},
+			"sentiment": {
+				"customerSentiment": "Sentimiento del cliente",
+				"agentSentiment": "Sentimiento del agente",
+				"customerEmotions": "Emociones del cliente",
+				"agentEmotions": "Emociones del agente",
+				"recovery": "Recuperación del sentimiento",
+				"drops": "Caídas de sentimiento"
+			},
+			"business": {
+				"conversion": "Conversión",
+				"objections": "Objeciones",
+				"competitorCost": "Competidor + precio",
+				"mistargetedOffer": "Ofertas mal dirigidas"
+			},
+			"campaigns": {
+				"quality": "Calidad",
+				"compliance": "Cumplimiento",
+				"sentiment": "Sentimiento",
+				"business": "Negocio"
+			},
+			"agents": {
+				"quality": "Calidad",
+				"compliance": "Cumplimiento",
+				"sentiment": "Sentimiento",
+				"business": "Negocio"
+			},
+			"surveys": {
+				"nps": "NPS",
+				"csat": "CSAT",
+				"responseRate": "Tasa de respuesta",
+				"detractors": "Detractores"
+			}
+		},
+		"subsectionSummary_one": "{{count}} de {{total}} subsección",
+		"subsectionSummary_other": "{{count}} de {{total}} subsecciones",
+		"keepOne": "Conserva al menos una subsección",
+		"showSubsections": "Mostrar subsecciones",
+		"hideSubsections": "Ocultar subsecciones"
 	},
 	"output": {
 		"formats": "Formatos",
@@ -166,8 +245,13 @@
 			"client": "El nombre del cliente es obligatorio",
 			"sections": "Selecciona al menos una sección",
 			"formats": "Selecciona al menos un formato",
-			"dates": "La fecha final debe ser posterior a la inicial"
-		}
+			"dates": "La fecha final debe ser posterior a la inicial",
+			"scope": "El alcance no tiene agentes"
+		},
+		"discardTitle": "¿Descartar cambios?",
+		"discardBody": "El reporte que editas tiene cambios sin guardar.",
+		"discard": "Descartar",
+		"keepEditing": "Seguir editando"
 	},
 	"preview": {
 		"title": "Vista previa",
@@ -233,7 +317,10 @@
 			"next": "Página siguiente",
 			"continued": "{{section}} · continuación",
 			"pageLabel": "Página {{page}}"
-		}
+		},
+		"linesOf": "{{metric}} por periodo, principales {{count}} segmentos",
+		"trendOf": "{{metric}}, periodo actual vs anterior",
+		"multiplesOf": "{{metric}} por periodo, un panel por segmento"
 	},
 	"saved": {
 		"columns": {

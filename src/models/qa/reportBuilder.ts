@@ -1,4 +1,3 @@
-import type { SegmentMetricId } from '~/modules/qa/analytics/types';
 import type {
 	GroupByDimension,
 	QuickRange,
@@ -13,12 +12,30 @@ export type ReportSectionKey =
 	| 'compliance'
 	| 'sentiment'
 	| 'business'
+	| 'surveys'
 	| 'campaigns'
 	| 'agents'
 	| 'coaching'
 	| 'disputes'
 	| 'burnout'
 	| 'rankings';
+
+/** How a section shows its data: the values table alone, or a chart with the table below it. */
+export type ReportSectionView = 'table' | 'bar' | 'line';
+
+/** Sections whose look the builder can change; the rest have a fixed layout. */
+export type ChartableSectionKey =
+	| 'overview'
+	| 'qa'
+	| 'compliance'
+	| 'sentiment'
+	| 'business'
+	| 'surveys'
+	| 'campaigns'
+	| 'agents';
+
+/** Sections broken into subsections (the overview is a single block). */
+export type SubsectionedSectionKey = Exclude<ChartableSectionKey, 'overview'>;
 
 export type ReportFormat = 'PDF' | 'CSV' | 'XLSX';
 export type ReportFrequency = 'WEEKLY' | 'BIWEEKLY' | 'MONTHLY';
@@ -69,8 +86,12 @@ export interface ReportDefinition {
 	groupBy: ReportGroupBy;
 	/** Ordered — the preview renders them in this order. */
 	sections: ReportSectionKey[];
-	/** Columns of the section tables; empty means each section's defaults. */
-	metrics: SegmentMetricId[];
+	/** Selected subsection keys per section, in catalogue order; a missing entry means all of them. */
+	subsections?: Partial<Record<SubsectionedSectionKey, string[]>>;
+	/** Per-section view; a missing entry uses the section's default (see DEFAULT_SECTION_VIEW). */
+	sectionViews?: Partial<Record<ChartableSectionKey, ReportSectionView>>;
+	/** View of one subsection, keyed `<section>.<subsection>`; a missing entry inherits the section's view. */
+	subsectionViews?: Partial<Record<string, ReportSectionView>>;
 	formats: ReportFormat[];
 	schedule: ReportSchedule | null;
 	builtIn: boolean;

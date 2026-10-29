@@ -1,17 +1,29 @@
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
+import type { TFunction } from 'i18next';
 import type {
+	ChartableSectionKey,
 	ReportDefinition,
+	ReportDraft,
 	ReportFrequency,
 	ReportSchedule,
+	ReportScope,
 	ReportSectionKey,
+	ReportSectionView,
+	SubsectionedSectionKey,
 } from '~/models/qa/reportBuilder';
+import { scopeAgents } from '~/modules/qa/analytics/helpers';
 import type { TeamAnalyticsFilters } from '~/modules/qa/analytics/types';
 import { DEFAULT_FILTERS } from '~/modules/qa/analytics/constants';
 import { NOW_ISO } from '~/modules/qa/team/constants';
-import { TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
-import type { TeamRole } from '~/modules/qa/team/types';
-import { CLIENT_SECTIONS } from './constants';
+import { TEAM_CAMPAIGNS, TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
+import type { RosterAgent, TeamRole } from '~/modules/qa/team/types';
+import {
+	CLIENT_SECTIONS,
+	DEFAULT_SECTION_VIEW,
+	SUBSECTIONS,
+	type ReportSubsection,
+} from './constants';
 
 dayjs.extend(relativeTime);
 
@@ -42,6 +54,117 @@ export const toAnalyticsFilters = (
 		agentIds: scope.agentIds,
 		campaignIds: scope.campaignIds,
 		linesOfBusiness: scope.linesOfBusiness,
+	};
+};
+
+/**
+ * Agents a report covers: the ones picked by hand, else everyone in the role's
+ * roster narrowed by team, supervisor, campaign and line of business. An
+ * explicit pick wins over the narrowing filters.
+ */
+export const agentsInScope = (
+	role: TeamRole,
+	scope: ReportScope
+): RosterAgent[] => {
+	const roster = scopeAgents(role);
+	if (scope.agentIds.length > 0)
+		return roster.filter((agent) => scope.agentIds.includes(agent.id));
+
+	return roster.filter((agent) => {
+		if (scope.teams.length > 0 && !scope.teams.includes(agent.team))
+			return false;
+		if (
+			scope.supervisorIds.length > 0 &&
+			!scope.supervisorIds.includes(agent.supervisorId)
+		)
+			return false;
+		if (
+			scope.campaignIds.length > 0 &&
+			!agent.campaignIds.some((id) => scope.campaignIds.includes(id))
+		)
+			return false;
+		if (
+			scope.linesOfBusiness.length > 0 &&
+			!TEAM_CAMPAIGNS.some(
+				(campaign) =>
+					agent.campaignIds.includes(campaign.id) &&
+					scope.linesOfBusiness.includes(campaign.lineOfBusiness)
+			)
+		)
+			return false;
+		return true;
+	});
+};
+
+/** The view a definition asks for a section, falling back to the section's default. */
+export const sectionViewOf = (
+	definition: Pick<ReportDefinition, 'sectionViews'>,
+	key: ChartableSectionKey
+): ReportSectionView =>
+	definition.sectionViews?.[key] ?? DEFAULT_SECTION_VIEW[key];
+
+/** Subsections a definition asks for in a section, in catalogue order; none picked means all of them. */
+export const selectedSubsections = (
+	definition: Pick<ReportDefinition, 'subsections'>,
+	section: SubsectionedSectionKey
+): ReportSubsection[] => {
+	const picked = definition.subsections?.[section];
+	const all = SUBSECTIONS[section];
+	if (!picked || picked.length === 0) return all;
+	const chosen = all.filter((sub) => picked.includes(sub.key));
+	return chosen.length > 0 ? chosen : all;
+};
+
+/** The view of one subsection: its own choice, else the section's. */
+export const subsectionViewOf = (
+	definition: Pick<ReportDefinition, 'sectionViews' | 'subsectionViews'>,
+	section: SubsectionedSectionKey,
+	subsection: string
+): ReportSectionView =>
+	definition.subsectionViews?.[`${section}.${subsection}`] ??
+	sectionViewOf(definition, section);
+
+/** The view shared by a section's selected subsections, or 'mixed' when they differ. */
+export const effectiveSectionView = (
+	definition: Pick<
+		ReportDefinition,
+		'sectionViews' | 'subsectionViews' | 'subsections'
+	>,
+	section: ChartableSectionKey
+): ReportSectionView | 'mixed' => {
+	if (section === 'overview') return sectionViewOf(definition, section);
+	const views = new Set(
+		selectedSubsections(definition, section).map((sub) =>
+			subsectionViewOf(definition, section, sub.key)
+		)
+	);
+	return views.size === 1 ? [...views][0] : 'mixed';
+};
+
+export type BuilderStep = 'audience' | 'sections' | 'period' | 'output';
+
+/** One line per builder step, shown in its header so progress reads without opening it. */
+export const stepSummaries = (
+	draft: ReportDraft,
+	role: TeamRole,
+	t: TFunction<'qa.reports'>
+): Record<BuilderStep, string> => {
+	const period =
+		draft.period.preset === 'custom'
+			? t('preview.period', { from: draft.period.from, to: draft.period.to })
+			: t(`period.presets.${draft.period.preset}`);
+	const agents = t('scope.agentCount', {
+		count: agentsInScope(role, draft.scope).length,
+		total: scopeAgents(role).length,
+	});
+	const schedule = draft.schedule?.enabled
+		? t(`output.frequencies.${draft.schedule.frequency}`)
+		: t('steps.summaries.noSchedule');
+	return {
+		audience: `${t(`audience.${draft.audience}`)} · ${draft.name.trim() || t('preview.untitled')}`,
+		sections: t('sections.selected', { count: draft.sections.length }),
+		period: `${agents} · ${period}`,
+		output: `${draft.formats.join(', ') || '—'} · ${schedule}`,
 	};
 };
 

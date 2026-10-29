@@ -32,13 +32,18 @@
 		"name": "Report name",
 		"namePlaceholder": "Weekly Quality Report",
 		"description": "Description",
-		"descriptionPlaceholder": "What this report covers and who reads it"
+		"descriptionPlaceholder": "What this report covers and who reads it",
+		"removedInternal_one": "{{count}} internal section was removed for the client",
+		"removedInternal_other": "{{count}} internal sections were removed for the client"
 	},
 	"steps": {
 		"audience": "Audience & basics",
-		"period": "Period & scope",
+		"period": "Scope & period",
 		"sections": "Sections & metrics",
-		"output": "Output & delivery"
+		"output": "Output & delivery",
+		"summaries": {
+			"noSchedule": "No schedule"
+		}
 	},
 	"period": {
 		"label": "Period",
@@ -68,14 +73,21 @@
 			"agent": "Agent",
 			"campaign": "Campaign",
 			"lineOfBusiness": "Line of business"
-		}
+		},
+		"agentCount_one": "{{count}} of {{total}} agent in scope",
+		"agentCount_other": "{{count}} of {{total}} agents in scope",
+		"agentsHint": "Leave empty to include every agent that matches the filters below",
+		"addFrom": "Add all agents from",
+		"addFromTeam": "Team",
+		"addFromSupervisor": "Supervisor",
+		"addFromCampaign": "Campaign",
+		"clearAgents": "Clear selection",
+		"narrowLabel": "Narrow the agent list"
 	},
 	"sections": {
 		"label": "Sections",
 		"selected_one": "{{count}} section",
 		"selected_other": "{{count}} sections",
-		"metrics": "Metrics",
-		"metricsHint": "Leave empty to use each section's defaults",
 		"internalOnly": "Internal only — not available in client reports",
 		"moveUp": "Move up",
 		"moveDown": "Move down",
@@ -123,8 +135,75 @@
 			"rankings": {
 				"label": "Team rankings",
 				"description": "Programs, leaders and winners"
+			},
+			"surveys": {
+				"label": "Customer surveys",
+				"description": "NPS, CSAT and response rate per segment"
 			}
-		}
+		},
+		"views": {
+			"table": "Values",
+			"bar": "Bar chart",
+			"line": "Line chart",
+			"mixed": "Mixed"
+		},
+		"viewLabel": "View of {{section}}",
+		"viewHint": "Each section is one table with a column per selected subsection. Switch a subsection to bars or lines to add its chart above the table; with more than four segments, lines become one small panel per segment.",
+		"subsectionViewLabel": "View of {{subsection}}",
+		"subsections": {
+			"qa": {
+				"overall": "Overall score",
+				"ecn": "ECN",
+				"enc": "ENC",
+				"ecc": "ECC",
+				"ecuf": "ECUF",
+				"autoFail": "Auto-fail"
+			},
+			"compliance": {
+				"overall": "Overall score",
+				"security": "Security",
+				"regulatory": "Regulatory",
+				"legal": "Legal",
+				"violations": "Violations"
+			},
+			"sentiment": {
+				"customerSentiment": "Customer sentiment",
+				"agentSentiment": "Agent sentiment",
+				"customerEmotions": "Customer emotions",
+				"agentEmotions": "Agent emotions",
+				"recovery": "Sentiment recovery",
+				"drops": "Sentiment drops"
+			},
+			"business": {
+				"conversion": "Conversion",
+				"objections": "Objections",
+				"competitorCost": "Competitor + cost",
+				"mistargetedOffer": "Mistargeted offers"
+			},
+			"campaigns": {
+				"quality": "Quality",
+				"compliance": "Compliance",
+				"sentiment": "Sentiment",
+				"business": "Business"
+			},
+			"agents": {
+				"quality": "Quality",
+				"compliance": "Compliance",
+				"sentiment": "Sentiment",
+				"business": "Business"
+			},
+			"surveys": {
+				"nps": "NPS",
+				"csat": "CSAT",
+				"responseRate": "Response rate",
+				"detractors": "Detractors"
+			}
+		},
+		"subsectionSummary_one": "{{count}} of {{total}} subsection",
+		"subsectionSummary_other": "{{count}} of {{total}} subsections",
+		"keepOne": "Keep at least one subsection",
+		"showSubsections": "Show subsections",
+		"hideSubsections": "Hide subsections"
 	},
 	"output": {
 		"formats": "Formats",
@@ -166,8 +245,13 @@
 			"client": "Client name is required",
 			"sections": "Pick at least one section",
 			"formats": "Pick at least one format",
-			"dates": "End must be after start"
-		}
+			"dates": "End must be after start",
+			"scope": "The scope has no agents"
+		},
+		"discardTitle": "Discard changes?",
+		"discardBody": "The report you are editing has unsaved changes.",
+		"discard": "Discard",
+		"keepEditing": "Keep editing"
 	},
 	"preview": {
 		"title": "Preview",
@@ -233,7 +317,10 @@
 			"next": "Next page",
 			"continued": "{{section}} · continued",
 			"pageLabel": "Page {{page}}"
-		}
+		},
+		"linesOf": "{{metric}} per period, top {{count}} segments",
+		"trendOf": "{{metric}}, current vs previous period",
+		"multiplesOf": "{{metric}} per period, one panel per segment"
 	},
 	"saved": {
 		"columns": {

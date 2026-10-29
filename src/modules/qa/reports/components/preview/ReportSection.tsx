@@ -10,25 +10,50 @@ import {
 	ThemeIcon,
 	Title,
 } from '@mantine/core';
-import { AreaChart, BarChart } from '@mantine/charts';
+import { AreaChart, BarChart, LineChart } from '@mantine/charts';
 import {
 	IconArrowDownRight,
 	IconArrowUpRight,
 	IconMinus,
 } from '@tabler/icons-react';
 import type { SegmentMetricId, SegmentRow } from '~/modules/qa/analytics/types';
+import { MAX_LINE_SERIES } from '~/modules/qa/analytics/constants';
 import {
 	comparison,
 	formatMetric,
 	isImprovement,
 	metricMeta,
 } from '~/modules/qa/analytics/helpers';
-import type { ReportSectionData } from '../../buildReportData';
+import { formatPeriod } from '~/modules/qa/analytics/TeamAnalyticsPage/charts/format';
+import type {
+	ReportSectionData,
+	SectionTable,
+	SubsectionBlock,
+} from '../../buildReportData';
+import { REPORT_LINE_COLORS } from '../../constants';
 import KpiTiles from './KpiTiles';
 import type { FlowItem, FlowRow } from './pagination';
 import styles from '../../Reports.module.css';
 
-const MAX_CHART_BARS = 8;
+/** Horizontal bars per flow block, so a long ranking can break between pages. */
+const BARS_PER_BLOCK = 15;
+/** Small-multiple panels per row at the Letter content width. */
+const PANELS_PER_ROW = 3;
+const SERIES_BLUE = 'blue.6';
+
+/** Y domain of a metric so panels and bars of one subsection share a scale. */
+const domainOf = (
+	metricId: SegmentMetricId
+): [number | 'auto', number | 'auto'] => {
+	const { unit } = metricMeta(metricId);
+	return unit === 'PERCENT'
+		? [0, 100]
+		: unit === 'SCORE_5'
+			? [1, 5]
+			: unit === 'NPS'
+				? [-100, 100]
+				: [0, 'auto'];
+};
 
 /** What the section builders need to produce the flow of one section. */
 export interface FlowContext {
@@ -52,6 +77,43 @@ const Tile: React.FC<{ label: string; value: React.ReactNode }> = ({
 		</Text>
 	</Paper>
 );
+
+/** Arrow and absolute change of a value against the previous period; a dash when either side is missing. */
+const ChangeArrow: React.FC<{
+	current: number | null;
+	previous: number | null;
+	metricId: SegmentMetricId;
+}> = ({ current, previous, metricId }) => {
+	const cmp = comparison(current, previous);
+	if (cmp.trend === 'UNAVAILABLE') {
+		return (
+			<Text size='xs' c='dimmed'>
+				—
+			</Text>
+		);
+	}
+	const good = isImprovement(cmp, metricMeta(metricId).higherIsBetter);
+	const Icon =
+		cmp.trend === 'UP'
+			? IconArrowUpRight
+			: cmp.trend === 'DOWN'
+				? IconArrowDownRight
+				: IconMinus;
+	return (
+		<Group gap={4} wrap='nowrap'>
+			<ThemeIcon
+				size='xs'
+				variant='light'
+				color={good === null ? 'gray' : good ? 'green' : 'red'}
+			>
+				<Icon size={12} />
+			</ThemeIcon>
+			<Text size='xs' c='dimmed'>
+				{Math.abs(cmp.absoluteChange ?? 0)}
+			</Text>
+		</Group>
+	);
+};
 
 /** Period-over-period arrow for the primary metric of a segment row. */
 const ChangeCell: React.FC<{
@@ -118,8 +180,13 @@ export function sectionFlowItems(
 			),
 		},
 	];
-	const block = (part: string, node: React.ReactNode) =>
-		items.push({ kind: 'block', id: `${section.key}:${part}`, node });
+	const block = (part: string, node: React.ReactNode, keepWithNext = false) =>
+		items.push({
+			kind: 'block',
+			id: `${section.key}:${part}`,
+			node,
+			...(keepWithNext ? { keepWithNext: true } : {}),
+		});
 	const table = (part: string, head: React.ReactNode, rows: FlowRow[]) =>
 		items.push({
 			kind: 'table',
@@ -128,9 +195,9 @@ export function sectionFlowItems(
 			head,
 			rows,
 		});
-	const empty = () =>
+	const empty = (part = 'empty') =>
 		block(
-			'empty',
+			part,
 			<Text size='sm' c='dimmed'>
 				{t('preview.noData')}
 			</Text>
@@ -139,14 +206,15 @@ export function sectionFlowItems(
 	const segmentTable = (
 		rows: SegmentRow[],
 		metricIds: SegmentMetricId[],
-		primary: SegmentMetricId
+		primary: SegmentMetricId,
+		part = 'table'
 	) => {
 		if (rows.length === 0) {
-			empty();
+			empty(`${part}:empty`);
 			return;
 		}
 		table(
-			'table',
+			part,
 			<Table.Tr>
 				<Table.Th>{t('preview.columns.segment')}</Table.Th>
 				<Table.Th className={styles.numeric}>
@@ -189,6 +257,171 @@ export function sectionFlowItems(
 		);
 	};
 
+	/** The chart of one subsection, when its view asks for one. The values table always follows. */
+	const segmentChart = (blk: SubsectionBlock, rows: SegmentRow[]) => {
+		if (rows.length === 0) return;
+		const metric = metricLabel(blk.primary);
+		const domain = domainOf(blk.primary);
+
+		if (blk.view === 'bar') {
+			// Horizontal, every segment, in chunks so a long ranking can break between pages.
+			for (let i = 0; i < rows.length; i += BARS_PER_BLOCK) {
+				const chunk = rows.slice(i, i + BARS_PER_BLOCK);
+				block(
+					`${blk.sub}:chart:${i}`,
+					<BarChart
+						h={chunk.length * 28 + 32}
+						data={chunk.map((row) => ({
+							label: row.label,
+							value: row.metrics[blk.primary] ?? 0,
+						}))}
+						dataKey='label'
+						orientation='vertical'
+						series={[{ name: 'value', label: metric, color: SERIES_BLUE }]}
+						withBarValueLabel
+						valueFormatter={(value) => formatMetric(blk.primary, value)}
+						barProps={{ radius: 4 }}
+						gridAxis='x'
+						tickLine='none'
+						yAxisProps={{ width: 140 }}
+						xAxisProps={{ domain }}
+					/>
+				);
+			}
+			return;
+		}
+
+		const lines = blk.lines;
+
+		// Many segments: one small panel each, three per row, on the same scale.
+		if (lines && lines.keys.length > MAX_LINE_SERIES) {
+			for (let i = 0; i < lines.keys.length; i += PANELS_PER_ROW) {
+				const keys = lines.keys.slice(i, i + PANELS_PER_ROW);
+				block(
+					`${blk.sub}:multiples:${i}`,
+					<div>
+						{i === 0 && (
+							<Text size='xs' c='dimmed' mb={6}>
+								{t('preview.multiplesOf', { metric })}
+							</Text>
+						)}
+						<SimpleGrid cols={PANELS_PER_ROW} spacing='sm'>
+							{keys.map((entry) => (
+								<Paper key={entry.key} withBorder p='xs' radius='md'>
+									<Group justify='space-between' wrap='nowrap' gap='xs'>
+										<Text size='xs' fw={600} lineClamp={1}>
+											{entry.label}
+										</Text>
+										<Text size='xs' fw={600}>
+											{formatMetric(blk.primary, entry.current)}
+										</Text>
+									</Group>
+									{compare && (
+										<ChangeArrow
+											current={entry.current}
+											previous={entry.previous}
+											metricId={blk.primary}
+										/>
+									)}
+									<LineChart
+										h={80}
+										data={lines.points.map((point) => ({
+											period: point.period,
+											value:
+												typeof point[entry.key] === 'number'
+													? (point[entry.key] as number)
+													: null,
+										}))}
+										dataKey='period'
+										series={[
+											{ name: 'value', label: entry.label, color: SERIES_BLUE },
+										]}
+										curveType='monotone'
+										withDots={false}
+										withXAxis={false}
+										withYAxis={false}
+										withTooltip={false}
+										gridAxis='none'
+										connectNulls
+										yAxisProps={{ domain }}
+									/>
+								</Paper>
+							))}
+						</SimpleGrid>
+					</div>
+				);
+			}
+			return;
+		}
+
+		// Few segments: one line each; ungrouped: current against the previous period.
+		const series = lines
+			? lines.keys.map((entry, index) => ({
+					name: entry.key,
+					label: entry.label,
+					color: REPORT_LINE_COLORS[index % REPORT_LINE_COLORS.length],
+				}))
+			: [
+					{ name: 'current', label: t('preview.current'), color: SERIES_BLUE },
+					...(compare
+						? [
+								{
+									name: 'previous',
+									label: t('preview.previous'),
+									color: 'gray.5',
+								},
+							]
+						: []),
+				];
+		const data = lines ? lines.points : (blk.series ?? []);
+		if (data.length === 0 || series.length === 0) return;
+
+		block(
+			`${blk.sub}:chart`,
+			<div>
+				<Text size='xs' c='dimmed' mb={6}>
+					{lines
+						? t('preview.linesOf', { metric, count: series.length })
+						: t('preview.trendOf', { metric })}
+				</Text>
+				<LineChart
+					h={200}
+					data={data}
+					dataKey='period'
+					series={series}
+					curveType='monotone'
+					withDots={false}
+					connectNulls
+					gridAxis='y'
+					tickLine='none'
+					withLegend={series.length > 1}
+					valueFormatter={(value) => formatMetric(blk.primary, value)}
+					yAxisProps={{ domain, width: 48 }}
+					xAxisProps={{ tickFormatter: formatPeriod, minTickGap: 24 }}
+				/>
+			</div>
+		);
+	};
+
+	/** The charts of the subsections that asked for one, each under its subtitle, then the section's one table. */
+	const subsectionBlocks = (
+		key: Extract<ReportSectionData, { blocks: SubsectionBlock[] }>['key'],
+		blocks: SubsectionBlock[],
+		tbl: SectionTable
+	) => {
+		for (const blk of blocks) {
+			block(
+				`${blk.sub}:title`,
+				<Text fw={600} size='sm'>
+					{t(`sections.subsections.${key}.${blk.sub}`)}
+				</Text>,
+				true
+			);
+			segmentChart(blk, tbl.rows);
+		}
+		segmentTable(tbl.rows, tbl.metricIds, tbl.primary);
+	};
+
 	switch (section.key) {
 		case 'overview':
 			block(
@@ -199,7 +432,7 @@ export function sectionFlowItems(
 					compare={compare}
 				/>
 			);
-			if (section.series.length > 0) {
+			if (section.view === 'line' && section.series.length > 0) {
 				block(
 					'trend',
 					<div>
@@ -236,35 +469,11 @@ export function sectionFlowItems(
 		case 'qa':
 		case 'compliance':
 		case 'sentiment':
-		case 'business': {
-			const bars = section.rows.slice(0, MAX_CHART_BARS).map((row) => ({
-				segment: row.label,
-				value: row.metrics[section.primary] ?? 0,
-			}));
-			if (bars.length > 0) {
-				block(
-					'chart',
-					<BarChart
-						h={200}
-						data={bars}
-						dataKey='segment'
-						series={[
-							{
-								name: 'value',
-								label: metricLabel(section.primary),
-								color: 'blue.6',
-							},
-						]}
-					/>
-				);
-			}
-			segmentTable(section.rows, section.metricIds, section.primary);
-			break;
-		}
-
+		case 'business':
+		case 'surveys':
 		case 'campaigns':
 		case 'agents':
-			segmentTable(section.rows, section.metricIds, section.primary);
+			subsectionBlocks(section.key, section.blocks, section.table);
 			break;
 
 		case 'coaching':

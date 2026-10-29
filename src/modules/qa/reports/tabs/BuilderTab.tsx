@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
 	Accordion,
+	ActionIcon,
 	Badge,
 	Button,
 	Grid,
@@ -9,10 +10,23 @@ import {
 	Menu,
 	Modal,
 	Stack,
+	Text,
 	TextInput,
+	ThemeIcon,
 } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
-import { IconDeviceFloppy, IconDownload, IconPlus } from '@tabler/icons-react';
+import {
+	IconAlertCircle,
+	IconCalendarEvent,
+	IconChevronDown,
+	IconDeviceFloppy,
+	IconDownload,
+	IconFileText,
+	IconListCheck,
+	IconPlus,
+	IconSend,
+	type Icon,
+} from '@tabler/icons-react';
 import SectionCard from '~/components/SectionCard';
 import { downloadBlob } from '~/utils/fileUtils';
 import type {
@@ -29,15 +43,32 @@ import { useRankingsStore, selectPrograms } from '~/stores/qa/rankingsStore';
 import { useCoachingStore, selectSessions } from '~/stores/qa/coachingStore';
 import { useLmsStore, selectAssignments } from '~/stores/qa/lmsStore';
 import { buildReportData } from '../buildReportData';
+import { agentsInScope, stepSummaries, type BuilderStep } from '../helpers';
 import { approximateSizeKb, csvFilename, toCsv } from '../exportCsv';
 import AudienceStep from '../components/composer/AudienceStep';
 import PeriodScopeStep from '../components/composer/PeriodScopeStep';
 import SectionsStep from '../components/composer/SectionsStep';
 import OutputStep from '../components/composer/OutputStep';
 import ReportPreview from '../components/preview/ReportPreview';
+import styles from '../Reports.module.css';
 
 const PREVIEW_DEBOUNCE_MS = 300;
-const STEPS = ['audience', 'period', 'sections', 'output'] as const;
+const STEPS: BuilderStep[] = ['audience', 'sections', 'period', 'output'];
+
+const STEP_ICON: Record<BuilderStep, Icon> = {
+	audience: IconFileText,
+	sections: IconListCheck,
+	period: IconCalendarEvent,
+	output: IconSend,
+};
+
+/** Which validation errors belong to which step, so its header can flag them. */
+const STEP_ERRORS: Record<BuilderStep, string[]> = {
+	audience: ['name', 'client'],
+	sections: ['sections'],
+	period: ['dates', 'scope'],
+	output: ['formats'],
+};
 
 interface BuilderTabProps {
 	role: TeamRole;
@@ -69,6 +100,7 @@ export const BuilderTab: React.FC<BuilderTabProps> = ({
 	const assignments = useLmsStore(selectAssignments);
 
 	const [saveOpen, setSaveOpen] = useState(false);
+	const [discardOpen, setDiscardOpen] = useState(false);
 	const [saveName, setSaveName] = useState('');
 	const [touched, setTouched] = useState(false);
 
@@ -95,11 +127,21 @@ export const BuilderTab: React.FC<BuilderTabProps> = ({
 		if (draft.period.to < draft.period.from) {
 			list.dates = t('builder.validation.dates');
 		}
+		if (agentsInScope(role, draft.scope).length === 0) {
+			list.scope = t('builder.validation.scope');
+		}
 		return list;
-	}, [draft, t]);
+	}, [draft, role, t]);
 
 	const shown = touched ? errors : {};
 	const invalid = Object.keys(errors).length > 0;
+	const summaries = useMemo(
+		() => stepSummaries(draft, role, t),
+		[draft, role, t]
+	);
+	/** First shown error of a step, if any, for its header. */
+	const stepError = (step: BuilderStep): string | undefined =>
+		STEP_ERRORS[step].map((key) => shown[key]).find(Boolean);
 
 	// Rebuilding the whole document on every keystroke is wasteful.
 	const [debounced] = useDebouncedValue(draft, PREVIEW_DEBOUNCE_MS);
@@ -138,6 +180,17 @@ export const BuilderTab: React.FC<BuilderTabProps> = ({
 		onSaved(saved);
 		setSaveOpen(false);
 		notifySuccess(t('builder.saved'));
+	};
+
+	/** Unsaved edits ask before they are thrown away. */
+	const handleReset = () => {
+		if (touched) setDiscardOpen(true);
+		else onReset();
+	};
+	const confirmDiscard = () => {
+		setDiscardOpen(false);
+		setTouched(false);
+		onReset();
 	};
 
 	const generateWith = (format: ReportFormat) => {
@@ -187,12 +240,47 @@ export const BuilderTab: React.FC<BuilderTabProps> = ({
 		notifySuccess(t('generated.mockXlsx'));
 	};
 
+	const [firstFormat, ...otherFormats] = draft.formats;
+
+	/** Number, icon, title, live summary and, once touched, the step's first error. */
+	const stepControl = (step: BuilderStep) => {
+		const StepIcon = STEP_ICON[step];
+		const error = stepError(step);
+		return (
+			<Accordion.Control>
+				<Group gap='sm' wrap='nowrap'>
+					<Badge circle size='lg' variant='light' color='gray'>
+						{STEPS.indexOf(step) + 1}
+					</Badge>
+					<ThemeIcon variant='light' color='gray' size='sm'>
+						<StepIcon size={14} />
+					</ThemeIcon>
+					<div className={styles.stepSummary}>
+						<Text size='sm' fw={500}>
+							{t(`steps.${step}`)}
+						</Text>
+						<Text size='xs' c={error ? 'red' : 'dimmed'} lineClamp={1}>
+							{error ?? summaries[step]}
+						</Text>
+					</div>
+					{error && (
+						<ThemeIcon variant='light' color='red' size='sm' aria-label={error}>
+							<IconAlertCircle size={14} />
+						</ThemeIcon>
+					)}
+				</Group>
+			</Accordion.Control>
+		);
+	};
+
 	return (
 		<>
 			<Grid gap='lg'>
 				<Grid.Col span={{ base: 12, xl: 5 }}>
 					<SectionCard
 						fullHeight
+						className={styles.builderCard}
+						contentClassName={styles.builderScroll}
 						title={t('tabs.builder')}
 						headerActions={
 							editingId ? (
@@ -206,7 +294,7 @@ export const BuilderTab: React.FC<BuilderTabProps> = ({
 								<Button
 									variant='subtle'
 									leftSection={<IconPlus size={16} />}
-									onClick={onReset}
+									onClick={handleReset}
 								>
 									{t('builder.reset')}
 								</Button>
@@ -218,30 +306,49 @@ export const BuilderTab: React.FC<BuilderTabProps> = ({
 									>
 										{t('builder.save')}
 									</Button>
-									<Menu position='top-end' withinPortal>
-										<Menu.Target>
-											<Button leftSection={<IconDownload size={16} />}>
-												{t('builder.generate')}
-											</Button>
-										</Menu.Target>
-										<Menu.Dropdown>
-											{draft.formats.map((format) => (
-												<Menu.Item
-													key={format}
-													onClick={() => generateWith(format)}
-												>
-													{t('builder.generateAs', { format })}
-												</Menu.Item>
-											))}
-										</Menu.Dropdown>
-									</Menu>
+									{/* Split button: the first chosen format runs directly, the rest sit in the menu. */}
+									<Button.Group>
+										<Button
+											leftSection={<IconDownload size={16} />}
+											onClick={() =>
+												firstFormat ? generateWith(firstFormat) : handleSave()
+											}
+										>
+											{firstFormat
+												? t('builder.generateAs', { format: firstFormat })
+												: t('builder.generate')}
+										</Button>
+										{otherFormats.length > 0 && (
+											<Menu position='top-end' withinPortal>
+												<Menu.Target>
+													<ActionIcon
+														variant='filled'
+														size={36}
+														aria-label={t('builder.generate')}
+													>
+														<IconChevronDown size={16} />
+													</ActionIcon>
+												</Menu.Target>
+												<Menu.Dropdown>
+													{otherFormats.map((format) => (
+														<Menu.Item
+															key={format}
+															onClick={() => generateWith(format)}
+														>
+															{t('builder.generateAs', { format })}
+														</Menu.Item>
+													))}
+												</Menu.Dropdown>
+											</Menu>
+										)}
+									</Button.Group>
 								</Group>
 							</Group>
 						}
 					>
 						<Accordion multiple defaultValue={[...STEPS]} variant='separated'>
 							<Accordion.Item value='audience'>
-								<Accordion.Control>{t('steps.audience')}</Accordion.Control>
+								{stepControl('audience')}
 								<Accordion.Panel>
 									<AudienceStep
 										draft={draft}
@@ -252,20 +359,8 @@ export const BuilderTab: React.FC<BuilderTabProps> = ({
 								</Accordion.Panel>
 							</Accordion.Item>
 
-							<Accordion.Item value='period'>
-								<Accordion.Control>{t('steps.period')}</Accordion.Control>
-								<Accordion.Panel>
-									<PeriodScopeStep
-										role={role}
-										draft={draft}
-										onChange={patch}
-										datesError={shown.dates}
-									/>
-								</Accordion.Panel>
-							</Accordion.Item>
-
 							<Accordion.Item value='sections'>
-								<Accordion.Control>{t('steps.sections')}</Accordion.Control>
+								{stepControl('sections')}
 								<Accordion.Panel>
 									<SectionsStep
 										draft={draft}
@@ -275,8 +370,21 @@ export const BuilderTab: React.FC<BuilderTabProps> = ({
 								</Accordion.Panel>
 							</Accordion.Item>
 
+							<Accordion.Item value='period'>
+								{stepControl('period')}
+								<Accordion.Panel>
+									<PeriodScopeStep
+										role={role}
+										draft={draft}
+										onChange={patch}
+										datesError={shown.dates}
+										scopeError={shown.scope}
+									/>
+								</Accordion.Panel>
+							</Accordion.Item>
+
 							<Accordion.Item value='output'>
-								<Accordion.Control>{t('steps.output')}</Accordion.Control>
+								{stepControl('output')}
 								<Accordion.Panel>
 									<OutputStep
 										draft={draft}
@@ -315,9 +423,28 @@ export const BuilderTab: React.FC<BuilderTabProps> = ({
 					/>
 					<Group justify='flex-end'>
 						<Button variant='subtle' onClick={() => setSaveOpen(false)}>
-							{t('builder.reset')}
+							{t('builder.keepEditing')}
 						</Button>
 						<Button onClick={confirmSave}>{t('builder.save')}</Button>
+					</Group>
+				</Stack>
+			</Modal>
+
+			<Modal
+				opened={discardOpen}
+				onClose={() => setDiscardOpen(false)}
+				title={t('builder.discardTitle')}
+				centered
+			>
+				<Stack gap='md'>
+					<Text size='sm'>{t('builder.discardBody')}</Text>
+					<Group justify='flex-end'>
+						<Button variant='subtle' onClick={() => setDiscardOpen(false)}>
+							{t('builder.keepEditing')}
+						</Button>
+						<Button color='red' onClick={confirmDiscard}>
+							{t('builder.discard')}
+						</Button>
 					</Group>
 				</Stack>
 			</Modal>

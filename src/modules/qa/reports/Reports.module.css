@@ -149,6 +149,14 @@
 	overflow-wrap: anywhere;
 }
 
+/* Headers wrap onto several lines: in a fixed layout a long label would otherwise run into its neighbour. */
+.pageTable th {
+	white-space: normal;
+	overflow-wrap: break-word;
+	vertical-align: bottom;
+	line-height: 1.25;
+}
+
 .pageTable th:first-child,
 .pageTable td:first-child {
 	width: 28%;
@@ -241,4 +249,25 @@
 	.sheet:last-child {
 		break-after: auto;
 	}
+}
+
+/* --- Builder: the configuration card stays beside the preview at wide widths ---- */
+
+@media (min-width: 88em) {
+	.builderCard {
+		position: sticky;
+		top: var(--mantine-spacing-md);
+		max-height: calc(100vh - 2 * var(--mantine-spacing-md));
+	}
+}
+
+/* Only the steps scroll; the card header and its Save / Generate footer stay put. */
+.builderScroll {
+	min-height: 0;
+	overflow-y: auto;
+}
+
+.stepSummary {
+	flex: 1;
+	min-width: 0;
 }
