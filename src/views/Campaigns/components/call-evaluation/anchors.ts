@@ -145,3 +145,26 @@ export const groupBySecond = (anchors: TimelineAnchor[]) => {
 		.sort(([a], [b]) => a - b)
 		.map(([seconds, items]) => ({ seconds, items }));
 };
+
+/** The turn the root cause points at, as a jumpable anchor (not listed with the other moments). */
+export const buildCauseAnchor = (
+	call: CallEvaluationDetail
+): TimelineAnchor | null => {
+	const cause = call.sentiment.cause;
+	if (!cause?.evidence) return null;
+	const turn = turnAt(call.transcript, cause.evidence.timestamp);
+	if (!turn) return null;
+	return {
+		id: `sc-${call.callId}`,
+		tab: 'sentiment-emotion',
+		turnId: turn.id,
+		timestamp: cause.evidence.timestamp,
+		seconds: parseTimestamp(cause.evidence.timestamp),
+		speaker: cause.evidence.speaker,
+		tag: 'Root cause',
+		label: cause.primary,
+		quote: turn.text,
+		highlight: partOf(turn, cause.evidence.quote),
+		status: 'alert',
+	};
+};

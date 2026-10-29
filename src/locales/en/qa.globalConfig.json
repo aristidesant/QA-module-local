@@ -350,6 +350,27 @@
 		"errors": {
 			"empty": "Required",
 			"duplicate": "Duplicate label"
+		},
+		"causes": {
+			"title": "Root cause catalogue",
+			"description": "The causes of sentiment drops the analyzer can assign, with what the AI looks for in each. Saving creates a new version together with the prompts and emotions above.",
+			"hint": "Added causes cannot be deleted, only switched off per operation in Settings.",
+			"add": "Add cause",
+			"columns": {
+				"cause": "Cause",
+				"family": "Family",
+				"description": "What the AI looks for",
+				"actions": "Actions"
+			},
+			"default": "Default",
+			"restoreDefault": "Restore default",
+			"namePlaceholder": "Cause name",
+			"descriptionPlaceholder": "Describe what in a call tells the AI this is the cause, with example situations or phrases",
+			"errors": {
+				"emptyName": "Required",
+				"duplicateName": "Duplicate name",
+				"emptyDescription": "Required"
+			}
 		}
 	}
 }

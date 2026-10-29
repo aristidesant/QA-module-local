@@ -96,7 +96,20 @@
 		"emotionsFor": "Emociones de {{band}}",
 		"noEmotions": "Sin emociones asignadas",
 		"unassigned": "Sin asignar a ningún tipo: {{emotions}}.",
-		"placeholderAdd": "Escribe para agregar una emoción"
+		"placeholderAdd": "Escribe para agregar una emoción",
+		"causes": {
+			"title": "Causas raíz de la caída de sentimiento",
+			"description": "Elige qué causas raíz usa tu operación y cómo se llaman, y define cuándo una caída se considera fuerte. Las descripciones para la IA y las causas nuevas las administra el administrador.",
+			"strongDrop": "Una caída es fuerte cuando pierde al menos",
+			"strongDropHint": "Desde este valor la etiqueta de caída se muestra en rojo en el detalle de la llamada.",
+			"points": "pts",
+			"active": "Activar {{cause}}",
+			"nameOf": "Nombre de {{cause}}",
+			"offHint": "Una causa apagada deja de ofrecerse al corregir una llamada y en los filtros. Las llamadas que ya la tienen la conservan. Si dejas el nombre vacío se usa el nombre original.",
+			"custom": "Propia",
+			"invalid": "Deja al menos una causa activa.",
+			"restoreName": "Restaurar nombre"
+		}
 	},
 	"business": {
 		"bandsTitle": "Rangos de la tasa de conversión",

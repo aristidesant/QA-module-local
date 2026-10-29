@@ -1,3 +1,4 @@
+import { DEFAULT_SENTIMENT_CAUSE_CATALOGUE } from '~/modules/qa/sentimentCauses/constants';
 import { DEFAULT_SETTINGS } from '~/modules/qa/settings/constants';
 import {
 	EMOTION_SENTIMENT_MAP,
@@ -428,5 +429,6 @@ export const SEED_SENTIMENT_ANALYZER: SentimentAnalyzerConfig = {
 	classificationInstructions:
 		"Classify the AGENT and CUSTOMER independently while considering the full chronological conversation. Select exactly one dominant textual emotion for each participant. Use the most specific configured definition supported by the participant's language and conversational context. Prefer NEUTRAL when no emotion is clearly expressed. Treat SURPRISE as neutral unless the language supports a stronger positive or negative emotion.",
 	emotions: SEED_EMOTIONS,
+	causes: DEFAULT_SENTIMENT_CAUSE_CATALOGUE,
 	updatedAt: day(13),
 };

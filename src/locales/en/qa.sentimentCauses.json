@@ -1,0 +1,65 @@
+{
+	"causes": {
+		"none": "No sentiment drop",
+		"WAIT_TIME": "Wait time",
+		"PRICING_BILLING": "Pricing & billing",
+		"TECHNICAL_FAILURE": "Technical failure",
+		"PROCESS_POLICY": "Process & policy",
+		"BROKEN_PROMISE": "Broken promise",
+		"AGENT_TONE": "Agent tone",
+		"LACK_OF_EMPATHY": "Lack of empathy",
+		"INTERRUPTIONS": "Interruptions",
+		"WRONG_INFORMATION": "Wrong information"
+	},
+	"families": {
+		"BUSINESS": "Business",
+		"AGENT": "Agent"
+	},
+	"review": {
+		"pending": "Pending review",
+		"confirmed": "Confirmed",
+		"corrected": "Corrected",
+		"correctedFrom": "The AI read it as {{cause}}",
+		"confirm": "Confirm cause",
+		"correct": "Change cause",
+		"reset": "Undo review"
+	},
+	"callPanel": {
+		"title": "Root cause of the sentiment drop",
+		"description": "Why the customer's sentiment fell, as read by the AI. Confirm it or pick the right cause.",
+		"primary": "Primary cause",
+		"secondary": "Contributing causes",
+		"drop": "Sentiment drop",
+		"dropValue": "−{{value}} pts",
+		"evidence": "Evidence",
+		"noCause": "No sentiment drop was detected on this call."
+	},
+	"analytics": {
+		"rankingTitle": "Root causes of sentiment drops",
+		"rankingDescription": "Calls whose customer sentiment dropped, by primary cause, compared with the previous period.",
+		"trendTitle": "Causes over time",
+		"trendDescription": "Calls with a sentiment drop per period, for the most frequent causes.",
+		"familyTitle": "Business vs agent causes",
+		"familyDescription": "Share of sentiment drops caused by the business versus by the agent.",
+		"dropSummary": "{{count}} of {{total}} calls had a sentiment drop",
+		"columns": {
+			"cause": "Cause",
+			"calls": "Calls",
+			"share": "Share",
+			"meanDrop": "Avg. drop",
+			"previous": "Previous",
+			"delta": "Change"
+		}
+	},
+	"causeDescriptions": {
+		"WAIT_TIME": "The customer complains about waiting, long holds, being put on hold repeatedly or being transferred before getting help.",
+		"PRICING_BILLING": "The customer reacts to a price, a charge, a bill or a comparison with a cheaper competitor offer.",
+		"TECHNICAL_FAILURE": "Something fails during the call or in the service: the system is down, a tool does not work or the problem keeps happening.",
+		"PROCESS_POLICY": "A rule or procedure blocks the customer, such as required verification, a policy that denies the request or unnecessary extra steps.",
+		"BROKEN_PROMISE": "The customer says something promised before was not delivered, such as a callback, a credit, a visit or a fix.",
+		"AGENT_TONE": "The agent sounds dismissive, impatient, cold, rushed or defensive, even if the information is correct.",
+		"LACK_OF_EMPATHY": "The customer shares a concern or frustration and the agent does not acknowledge it or answers with a script.",
+		"INTERRUPTIONS": "The agent talks over the customer or cuts them off before they finish.",
+		"WRONG_INFORMATION": "The agent gives incorrect or contradictory information that the customer notices or challenges."
+	}
+}

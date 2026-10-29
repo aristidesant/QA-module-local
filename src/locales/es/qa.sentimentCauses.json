@@ -1,0 +1,65 @@
+{
+	"causes": {
+		"none": "Sin caída de sentimiento",
+		"WAIT_TIME": "Tiempo de espera",
+		"PRICING_BILLING": "Precio y facturación",
+		"TECHNICAL_FAILURE": "Falla técnica",
+		"PROCESS_POLICY": "Proceso y políticas",
+		"BROKEN_PROMISE": "Promesa incumplida",
+		"AGENT_TONE": "Tono del agente",
+		"LACK_OF_EMPATHY": "Falta de empatía",
+		"INTERRUPTIONS": "Interrupciones",
+		"WRONG_INFORMATION": "Información incorrecta"
+	},
+	"families": {
+		"BUSINESS": "Negocio",
+		"AGENT": "Agente"
+	},
+	"review": {
+		"pending": "Pendiente de revisión",
+		"confirmed": "Confirmada",
+		"corrected": "Corregida",
+		"correctedFrom": "La IA la leyó como {{cause}}",
+		"confirm": "Confirmar causa",
+		"correct": "Cambiar causa",
+		"reset": "Deshacer revisión"
+	},
+	"callPanel": {
+		"title": "Causa raíz de la caída de sentimiento",
+		"description": "Por qué cayó el sentimiento del cliente, según la lectura de la IA. Confírmala o elige la causa correcta.",
+		"primary": "Causa principal",
+		"secondary": "Causas secundarias",
+		"drop": "Caída de sentimiento",
+		"dropValue": "−{{value}} pts",
+		"evidence": "Evidencia",
+		"noCause": "No se detectó una caída de sentimiento en esta llamada."
+	},
+	"analytics": {
+		"rankingTitle": "Causas raíz de las caídas de sentimiento",
+		"rankingDescription": "Llamadas en las que cayó el sentimiento del cliente, por causa principal, comparadas con el período anterior.",
+		"trendTitle": "Causas a lo largo del tiempo",
+		"trendDescription": "Llamadas con caída de sentimiento por período, para las causas más frecuentes.",
+		"familyTitle": "Causas del negocio vs del agente",
+		"familyDescription": "Proporción de caídas de sentimiento causadas por el negocio frente a las causadas por el agente.",
+		"dropSummary": "{{count}} de {{total}} llamadas tuvieron una caída de sentimiento",
+		"columns": {
+			"cause": "Causa",
+			"calls": "Llamadas",
+			"share": "Proporción",
+			"meanDrop": "Caída promedio",
+			"previous": "Anterior",
+			"delta": "Variación"
+		}
+	},
+	"causeDescriptions": {
+		"WAIT_TIME": "El cliente se queja de esperar, de largas esperas en línea, de que lo pasen a espera varias veces o de que lo transfieran antes de recibir ayuda.",
+		"PRICING_BILLING": "El cliente reacciona a un precio, un cobro, una factura o a la comparación con una oferta más barata de la competencia.",
+		"TECHNICAL_FAILURE": "Algo falla durante la llamada o en el servicio: el sistema está caído, una herramienta no funciona o el problema se repite.",
+		"PROCESS_POLICY": "Una regla o procedimiento bloquea al cliente, como una verificación obligatoria, una política que niega su solicitud o pasos adicionales innecesarios.",
+		"BROKEN_PROMISE": "El cliente dice que algo prometido antes no se cumplió, como una devolución de llamada, un crédito, una visita o una reparación.",
+		"AGENT_TONE": "El agente suena despectivo, impaciente, frío, apurado o a la defensiva, aunque la información sea correcta.",
+		"LACK_OF_EMPATHY": "El cliente expresa una preocupación o frustración y el agente no la reconoce o responde con un guion.",
+		"INTERRUPTIONS": "El agente habla encima del cliente o lo corta antes de que termine.",
+		"WRONG_INFORMATION": "El agente da información incorrecta o contradictoria que el cliente nota o cuestiona."
+	}
+}

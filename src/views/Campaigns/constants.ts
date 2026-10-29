@@ -1037,8 +1037,8 @@ export const mockCallEvaluationDetail: CallEvaluationDetail = {
 			],
 		},
 		recovery: {
-			startCategory: 'negative',
-			startScore: 2.0,
+			startCategory: 'neutral',
+			startScore: 3.2,
 			lowestCategory: 'negative',
 			lowestScore: 1.8,
 			lowestAt: '1:48',
@@ -1046,7 +1046,19 @@ export const mockCallEvaluationDetail: CallEvaluationDetail = {
 			endScore: 3.6,
 			recovered: true,
 			recoveryTimeSeconds: 57,
-			improvementDelta: 1.6,
+			improvementDelta: 0.4,
+		},
+		// 1.4 = startScore 3.2 to lowestScore 1.8 at 1:48, right after the price comparison.
+		cause: {
+			primary: 'PRICING_BILLING',
+			secondary: ['AGENT_TONE'],
+			sentimentDrop: 1.4,
+			evidence: {
+				timestamp: '1:48',
+				speaker: 'customer',
+				quote:
+					"Claro offers the same speed for less, and I don't know what this costs after six months.",
+			},
 		},
 		empathyIndicators: [
 			{

@@ -44,6 +44,8 @@ import {
 } from './tone';
 import { EvidenceQuote } from './EvidenceQuote';
 import { AnchorMoments } from './AnchorMoments';
+import type { CallSentimentCause } from '~/modules/qa/sentimentCauses/types';
+import { SentimentCausePanel } from './SentimentCausePanel';
 
 interface SentimentEmotionPanelProps {
 	sentiment: CallSentimentEvaluation;
@@ -59,6 +61,11 @@ interface SentimentEmotionPanelProps {
 	onJump?: (anchor: TimelineAnchor) => void;
 	/** Call detail only: a reveal shows the real data there. */
 	callId?: string;
+	/** Root cause of the drop; omit it where the viewer must not see it (agent role). */
+	cause?: CallSentimentCause | null;
+	causeAnchor?: TimelineAnchor | null;
+	/** Reviewers confirm or change the cause. */
+	canReview?: boolean;
 }
 
 /** Neutral unless the risk is high; red is the only hue on the page. */
@@ -91,6 +98,9 @@ export function SentimentEmotionPanel({
 	activeAnchorId = null,
 	onJump,
 	callId,
+	cause,
+	causeAnchor = null,
+	canReview = false,
 }: SentimentEmotionPanelProps) {
 	const triggerRules = useTriggerRulesStore(selectTriggerRules);
 	const burnoutSettings = useSettingsStore(selectThresholds).burnout;
@@ -152,6 +162,18 @@ export function SentimentEmotionPanel({
 				{renderSpeakerCard('agent')}
 				{renderSpeakerCard('customer')}
 			</SimpleGrid>
+
+			{/* Why the customer's sentiment dropped (reviewers only) */}
+			{cause !== undefined && callId && (
+				<SentimentCausePanel
+					cause={cause}
+					callId={callId}
+					anchor={causeAnchor}
+					activeAnchorId={activeAnchorId}
+					onJump={onJump}
+					canReview={canReview}
+				/>
+			)}
 
 			{/* Where the analysis found them in the call */}
 			{anchors && onJump && (

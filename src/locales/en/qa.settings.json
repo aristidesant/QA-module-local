@@ -96,7 +96,20 @@
 		"emotionsFor": "Emotions for {{band}}",
 		"noEmotions": "No emotions assigned",
 		"unassigned": "Not assigned to any type: {{emotions}}.",
-		"placeholderAdd": "Type to add an emotion"
+		"placeholderAdd": "Type to add an emotion",
+		"causes": {
+			"title": "Root causes of sentiment drops",
+			"description": "Choose which root causes your operation uses and what it calls them, and set when a drop counts as strong. Descriptions for the AI and new causes are managed by the administrator.",
+			"strongDrop": "A drop is strong when it loses at least",
+			"strongDropHint": "From this value the drop badge turns red on the call detail.",
+			"points": "pts",
+			"active": "Turn on {{cause}}",
+			"nameOf": "Name of {{cause}}",
+			"offHint": "A cause that is switched off is no longer offered when correcting a call or in the filters. Calls that already have it keep it. An empty name falls back to the original name.",
+			"custom": "Custom",
+			"invalid": "Keep at least one cause on.",
+			"restoreName": "Restore name"
+		}
 	},
 	"business": {
 		"bandsTitle": "Conversion rate bands",

@@ -1,5 +1,6 @@
 import type { BurnoutThresholds } from '~/modules/qa/burnout/types';
 import type { PrivacySettings } from '~/modules/qa/privacy/types';
+import type { SentimentCauseSettings } from '~/modules/qa/sentimentCauses/types';
 
 export type SettingsAspect =
 	| 'qa'
@@ -67,6 +68,8 @@ export interface SentimentThresholds {
 	lowSentimentIncident: number;
 	/** Which emotions belong to each sentiment type. Very negative + Negative are the "negative" emotions. */
 	emotionsBySentiment: Record<SentimentBandKey, string[]>;
+	/** Root causes of sentiment drops: names, which are on, and the strong-drop threshold. */
+	causes: SentimentCauseSettings;
 }
 
 export interface BusinessThresholds {

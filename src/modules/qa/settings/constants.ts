@@ -1,6 +1,7 @@
 import { DEFAULT_BURNOUT_SETTINGS } from '~/modules/qa/burnout/constants';
 import { DEFAULT_PRIVACY_SETTINGS } from '~/modules/qa/privacy/constants';
 import type { CallEmotion } from '~/modules/qa/analytics/types';
+import { DEFAULT_SENTIMENT_CAUSE_SETTINGS } from '~/modules/qa/sentimentCauses/constants';
 import type { BusinessSignalKey, QaSettings, SentimentBandKey } from './types';
 
 /** Same split the dashboards used before it was configurable: negative = Anger, Fear, Sadness, Disgust; positive = Joy, Trust, Anticipation. */
@@ -59,6 +60,7 @@ export const DEFAULT_SETTINGS: QaSettings = {
 			},
 			lowSentimentIncident: 2.5,
 			emotionsBySentiment: DEFAULT_EMOTIONS_BY_SENTIMENT,
+			causes: DEFAULT_SENTIMENT_CAUSE_SETTINGS,
 		},
 		business: {
 			bands: { onTarget: 30, watch: 20 },

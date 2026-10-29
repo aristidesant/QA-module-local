@@ -97,6 +97,40 @@
 			"customer": "Cliente"
 		}
 	},
+	"notes": {
+		"title": "Notas",
+		"description": "Compartidas entre supervisores y QA Managers. Los agentes no ven estas notas.",
+		"count_one": "{{count}} nota",
+		"count_other": "{{count}} notas",
+		"field": "Escribe una nota sobre esta llamada",
+		"placeholder": "Escribe una nota para el equipo de revisión…",
+		"tooLong": "Una nota puede tener hasta {{max}} caracteres.",
+		"linkTime": "Ligar al minuto actual ({{time}})",
+		"add": "Agregar nota",
+		"added": "Nota agregada",
+		"saved": "Nota actualizada",
+		"deleted": "Nota eliminada",
+		"empty": "Aún no hay notas. Deja la primera para el equipo de revisión.",
+		"edited": "Editada {{date}}",
+		"edit": "Editar nota",
+		"delete": "Eliminar nota",
+		"save": "Guardar",
+		"cancel": "Cancelar",
+		"jumpTo": "Ir al minuto {{time}}",
+		"showMore_one": "Mostrar {{count}} nota más",
+		"showMore_other": "Mostrar {{count}} notas más",
+		"roles": {
+			"supervisor": "Supervisor",
+			"qaManager": "QA Manager",
+			"superAdmin": "Super Admin"
+		},
+		"confirmDelete": {
+			"title": "Eliminar nota",
+			"message": "Esta nota se eliminará para todos y no se puede deshacer.",
+			"confirm": "Eliminar",
+			"cancel": "Cancelar"
+		}
+	},
 	"roster": {
 		"tab": "Roster",
 		"description": "Agentes que participan en esta campaña",

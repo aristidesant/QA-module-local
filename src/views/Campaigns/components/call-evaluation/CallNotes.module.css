@@ -1,0 +1,18 @@
+/* Same neutral surface as the transcript turns, so notes read as part of the call and not as alerts. */
+.note {
+	background: var(--mantine-color-gray-light);
+}
+
+.timeLink {
+	text-decoration: underline;
+	text-decoration-color: light-dark(
+		var(--mantine-color-gray-6),
+		var(--mantine-color-gray-5)
+	);
+	text-underline-offset: 3px;
+}
+
+.text {
+	white-space: pre-wrap;
+	overflow-wrap: anywhere;
+}

@@ -21,6 +21,11 @@ import {
 	SENTIMENT_SEGMENT_COLORS,
 	type BandPreviewSegment,
 } from '../../components/BandPreview';
+import {
+	SentimentCausesSettings,
+	isCauseSettingsValid,
+} from '../../components/SentimentCausesSettings';
+import { useCauseCatalogue } from '~/modules/qa/sentimentCauses/useCauseSettings';
 import { SettingsActions } from '../../components/SettingsActions';
 import type {
 	SentimentBandKey,
@@ -69,6 +74,7 @@ export const SentimentTab: React.FC = () => {
 	const { t } = useTranslation('qa.settings');
 	const stored = useSettingsStore(selectThresholds).sentiment;
 	const saveThresholds = useSettingsStore((s) => s.saveThresholds);
+	const catalogue = useCauseCatalogue();
 	const { draft, setDraft, dirty, discard, fillWith } =
 		useSettingsDraft<SentimentThresholds>(stored);
 
@@ -228,9 +234,24 @@ export const SentimentTab: React.FC = () => {
 					/>
 				</Stack>
 			</SectionCard>
+			<SectionCard
+				title={t('sentiment.causes.title')}
+				description={t('sentiment.causes.description')}
+			>
+				<SentimentCausesSettings
+					value={draft.causes}
+					onChange={(causes) => setDraft({ ...draft, causes })}
+				/>
+			</SectionCard>
 			<SettingsActions
 				dirty={dirty}
-				invalid={errorKey !== null}
+				invalid={
+					errorKey !== null ||
+					!isCauseSettingsValid(
+						draft.causes,
+						catalogue.custom.map((c) => c.key)
+					)
+				}
 				onSave={() => {
 					saveThresholds('sentiment', draft);
 					notifySuccess(t('saved'));

@@ -141,6 +141,7 @@ import type {
 	Emotion,
 	SentimentCategory,
 } from '~/modules/qa/emotion-sentiment/types';
+import type { CallSentimentCause } from '~/modules/qa/sentimentCauses/types';
 
 // ---------- Call detail: evaluation tabs ----------
 
@@ -372,6 +373,8 @@ export interface CallSentimentEvaluation {
 	tone: AgentTone;
 	speech: SpeechPatterns;
 	burnout: AgentBurnoutRisk;
+	/** Why the customer's sentiment dropped; null when it never did. Hidden from the agent role. */
+	cause: CallSentimentCause | null;
 }
 
 // ---------- Compliance ----------

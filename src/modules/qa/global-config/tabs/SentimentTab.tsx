@@ -17,6 +17,7 @@ import {
 	IconInfoCircle,
 	IconMoodSearch,
 	IconPlus,
+	IconTargetArrow,
 	IconTrash,
 } from '@tabler/icons-react';
 import SectionCard from '~/components/SectionCard';
@@ -26,6 +27,10 @@ import {
 	selectSentimentAnalyzer,
 	useGlobalConfigStore,
 } from '~/stores/qa/globalConfigStore';
+import {
+	CauseCatalogueEditor,
+	useCauseCatalogueValid,
+} from '../components/CauseCatalogueEditor';
 import { PROMPT_MAX, SENTIMENT_LEVELS } from '../constants';
 import { emotionCountsByLevel } from '../helpers';
 import { SEED_SENTIMENT_ANALYZER } from '../seed';
@@ -61,12 +66,15 @@ export const SentimentTab: React.FC = () => {
 		return undefined;
 	};
 
+	const causesValid = useCauseCatalogueValid(draft.causes);
+
 	const invalid =
 		draft.systemPrompt.trim() === '' ||
 		draft.classificationInstructions.trim() === '' ||
 		draft.systemPrompt.length > PROMPT_MAX ||
 		draft.classificationInstructions.length > PROMPT_MAX ||
-		draft.emotions.some((emotion) => labelError(emotion) !== undefined);
+		draft.emotions.some((emotion) => labelError(emotion) !== undefined) ||
+		!causesValid;
 
 	const setEmotion = (index: number, patch: Partial<EmotionEntry>) =>
 		setDraft({
@@ -161,15 +169,6 @@ export const SentimentTab: React.FC = () => {
 						{t('sentiment.catalog.add')}
 					</Button>
 				}
-				footer={
-					<SettingsActions
-						dirty={dirty}
-						invalid={invalid}
-						onSave={() => save(draft)}
-						onDiscard={discard}
-						onReset={() => fillWith(SEED_SENTIMENT_ANALYZER)}
-					/>
-				}
 			>
 				<Stack gap='md'>
 					<Group gap={6}>
@@ -260,6 +259,26 @@ export const SentimentTab: React.FC = () => {
 						</Table.Tbody>
 					</Table>
 				</Stack>
+			</SectionCard>
+
+			<SectionCard
+				icon={IconTargetArrow}
+				title={t('sentiment.causes.title')}
+				description={t('sentiment.causes.description')}
+				footer={
+					<SettingsActions
+						dirty={dirty}
+						invalid={invalid}
+						onSave={() => save(draft)}
+						onDiscard={discard}
+						onReset={() => fillWith(SEED_SENTIMENT_ANALYZER)}
+					/>
+				}
+			>
+				<CauseCatalogueEditor
+					value={draft.causes}
+					onChange={(causes) => setDraft({ ...draft, causes })}
+				/>
 			</SectionCard>
 		</Stack>
 	);

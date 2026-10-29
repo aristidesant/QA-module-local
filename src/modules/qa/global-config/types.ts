@@ -1,3 +1,5 @@
+import type { SentimentCauseCatalogue } from '~/modules/qa/sentimentCauses/types';
+
 export type ConfigStatus = 'ACTIVE' | 'INACTIVE';
 
 export type CallAnalysisLanguage = 'AUTO' | 'es' | 'en';
@@ -143,6 +145,8 @@ export interface SentimentAnalyzerConfig {
 	systemPrompt: string;
 	classificationInstructions: string;
 	emotions: EmotionEntry[];
+	/** Root causes of sentiment drops: AI guidance per cause and the causes added on top of the built-in nine. */
+	causes: SentimentCauseCatalogue;
 	updatedAt: string;
 }
 

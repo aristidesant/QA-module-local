@@ -350,6 +350,27 @@
 		"errors": {
 			"empty": "Obligatorio",
 			"duplicate": "Etiqueta duplicada"
+		},
+		"causes": {
+			"title": "Catálogo de causas raíz",
+			"description": "Las causas de caída de sentimiento que el analizador puede asignar, con lo que la IA busca en cada una. Al guardar se crea una nueva versión junto con los prompts y las emociones de arriba.",
+			"hint": "Las causas agregadas no se pueden eliminar, solo apagar por operación en Settings.",
+			"add": "Agregar causa",
+			"columns": {
+				"cause": "Causa",
+				"family": "Familia",
+				"description": "Qué busca la IA",
+				"actions": "Acciones"
+			},
+			"default": "Predeterminada",
+			"restoreDefault": "Restaurar original",
+			"namePlaceholder": "Nombre de la causa",
+			"descriptionPlaceholder": "Describe qué en una llamada le indica a la IA que esta es la causa, con ejemplos de situaciones o frases",
+			"errors": {
+				"emptyName": "Obligatorio",
+				"duplicateName": "Nombre duplicado",
+				"emptyDescription": "Obligatorio"
+			}
 		}
 	}
 }

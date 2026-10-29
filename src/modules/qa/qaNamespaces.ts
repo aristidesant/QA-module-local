@@ -5,7 +5,11 @@
 export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 	'qa.dashboard': 'qa.dashboard',
 	// Super admin "Global configuration" (role preview), reuses the settings footer strings.
-	'role-preview.global-settings': ['qa.globalConfig', 'qa.settings'],
+	'role-preview.global-settings': [
+		'qa.globalConfig',
+		'qa.settings',
+		'qa.sentimentCauses',
+	],
 	'qa.agent.rankings': [
 		'qa.rankings',
 		'qa.teamAnalytics',
@@ -154,6 +158,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.team',
 		'qa.triggers',
 		'qa.burnout',
+		'qa.sentimentCauses',
 	],
 	'qa.forms': 'qa.forms',
 	'qa.forms.error-types': 'qa.forms',
@@ -237,6 +242,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.triggers',
 		'qa.burnout',
 		'qa.calls',
+		'qa.sentimentCauses',
 	],
 	'qa.agent.lms': ['qa.lms', 'qa.team', 'qa.triggers'],
 	'qa.agent.lms.content': ['qa.lms', 'qa.team', 'qa.triggers'],
@@ -408,6 +414,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.lms',
 		'qa.coaching',
 		'qa.triggers',
+		'qa.sentimentCauses',
 	],
 	'qa.qa-manager.analytics': [
 		'qa.teamAnalytics',
@@ -417,6 +424,7 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.lms',
 		'qa.coaching',
 		'qa.triggers',
+		'qa.sentimentCauses',
 	],
 	'qa.operation-manager.analytics': [
 		'qa.teamAnalytics',
@@ -426,5 +434,6 @@ export const qaRouteNamespaces: Record<string, string | readonly string[]> = {
 		'qa.lms',
 		'qa.coaching',
 		'qa.triggers',
+		'qa.sentimentCauses',
 	],
 };

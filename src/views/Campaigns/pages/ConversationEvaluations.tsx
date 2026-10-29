@@ -37,6 +37,7 @@ import { formatDuration } from '../components/call-evaluation/scoreColor';
 import { CallPlayer } from '../components/call-evaluation/CallPlayer';
 import { CallTranscript } from '../components/call-evaluation/CallTranscript';
 import { AddMomentDrawer } from '../components/call-evaluation/AddMomentDrawer';
+import { CallNotes } from '../components/call-evaluation/CallNotes';
 import { PrivacyBanner } from '../components/call-evaluation/PrivacyBanner';
 import { RevealDrawer } from '../components/call-evaluation/RevealDrawer';
 import { findSensitive } from '~/modules/qa/privacy/mask';
@@ -47,6 +48,7 @@ import {
 	turnSeconds,
 } from '../components/call-evaluation/callMoments';
 import {
+	buildCauseAnchor,
 	buildComplianceAnchors,
 	buildSentimentAnchors,
 	momentToAnchor,
@@ -135,6 +137,7 @@ export default function ConversationEvaluations() {
 	}, [call.transcript, privacy]);
 	const sentimentAnchors = useMemo(() => buildSentimentAnchors(call), [call]);
 	const complianceAnchors = useMemo(() => buildComplianceAnchors(call), [call]);
+	const causeAnchor = useMemo(() => buildCauseAnchor(call), [call]);
 	// The transcript and the player show the findings of the tab that is open.
 	const anchors = useMemo(
 		() =>
@@ -422,6 +425,11 @@ export default function ConversationEvaluations() {
 									anchors={sentimentAnchors}
 									activeAnchorId={activeMomentId}
 									onJump={jumpToAnchor}
+									cause={
+										previewRole !== 'agent' ? call.sentiment.cause : undefined
+									}
+									causeAnchor={causeAnchor}
+									canReview={canReview}
 								/>
 							)}
 							{selectedTab === 'compliance' && (
@@ -446,6 +454,15 @@ export default function ConversationEvaluations() {
 						</Stack>
 					</Grid.Col>
 				</Grid>
+
+				{/* Notes shared by the review team; agents never see them. */}
+				{canReview && (
+					<CallNotes
+						callId={call.callId}
+						currentTime={currentTime}
+						onJump={seek}
+					/>
+				)}
 			</Stack>
 
 			<OpenDisputeDrawer

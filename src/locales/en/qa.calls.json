@@ -97,6 +97,40 @@
 			"customer": "Customer"
 		}
 	},
+	"notes": {
+		"title": "Notes",
+		"description": "Shared by supervisors and QA managers. Agents do not see these notes.",
+		"count_one": "{{count}} note",
+		"count_other": "{{count}} notes",
+		"field": "Write a note about this call",
+		"placeholder": "Write a note for the review team…",
+		"tooLong": "A note can have up to {{max}} characters.",
+		"linkTime": "Link to current time ({{time}})",
+		"add": "Add note",
+		"added": "Note added",
+		"saved": "Note updated",
+		"deleted": "Note deleted",
+		"empty": "No notes yet. Leave the first one for the review team.",
+		"edited": "Edited {{date}}",
+		"edit": "Edit note",
+		"delete": "Delete note",
+		"save": "Save",
+		"cancel": "Cancel",
+		"jumpTo": "Go to {{time}}",
+		"showMore_one": "Show {{count}} more note",
+		"showMore_other": "Show {{count}} more notes",
+		"roles": {
+			"supervisor": "Supervisor",
+			"qaManager": "QA Manager",
+			"superAdmin": "Super Admin"
+		},
+		"confirmDelete": {
+			"title": "Delete note",
+			"message": "This note will be deleted for everyone and it cannot be undone.",
+			"confirm": "Delete",
+			"cancel": "Cancel"
+		}
+	},
 	"roster": {
 		"tab": "Roster",
 		"description": "Agents participating in this campaign",
