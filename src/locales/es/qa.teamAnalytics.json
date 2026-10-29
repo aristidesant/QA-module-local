@@ -21,7 +21,8 @@
 			"overview": "Resumen",
 			"operational": "Operación",
 			"humanVsAi": "Humanos vs IA",
-			"disputes": "Disputas"
+			"disputes": "Disputas",
+			"surveys": "Encuestas de clientes"
 		}
 	},
 	"filters": {
@@ -59,7 +60,8 @@
 			"tenure": "Antigüedad",
 			"timeOfDay": "Franja horaria",
 			"weekday": "Día de la semana",
-			"agentType": "Tipo de agente"
+			"agentType": "Tipo de agente",
+			"sentimentCause": "Causa de la caída de sentimiento"
 		},
 		"moreFilters": "Más filtros",
 		"lessFilters": "Menos filtros",
@@ -80,6 +82,7 @@
 		"timeSlots": "Franja horaria",
 		"weekdays": "Día de la semana",
 		"emotions": "Emoción predominante",
+		"sentimentCauses": "Causas de caída de sentimiento",
 		"all": "Todos",
 		"flags": {
 			"autoFailOnly": "Solo llamadas con auto-fail",
@@ -156,6 +159,11 @@
 		"agentTypeLabels": {
 			"HUMAN": "Humano",
 			"AI_BOT": "Agente de IA"
+		},
+		"surveyThemes": "Temas de comentarios",
+		"surveyThemeGroups": {
+			"causes": "Causas raíz",
+			"strengths": "Fortalezas"
 		}
 	},
 	"presets": {
@@ -235,9 +243,16 @@
 		"AGENT_NEGATIVE_EMOTION_CALL_SHARE": "Llamadas con emoción negativa (agente)",
 		"AGENT_POSITIVE_EMOTION_CALL_SHARE": "Llamadas con emoción positiva (agente)",
 		"SENTIMENT_RECOVERY_RATE": "Tasa de recuperación",
+		"SENTIMENT_DROP_CALL_COUNT": "Llamadas con caída de sentimiento",
+		"SENTIMENT_DROP_CALL_SHARE": "Tasa de caídas de sentimiento",
 		"BI_CONVERSION_RATE": "Tasa de conversión",
 		"DISPUTE_COUNT": "Disputas",
-		"DISPUTE_RATE": "Tasa de disputas"
+		"DISPUTE_RATE": "Tasa de disputas",
+		"SURVEY_NPS": "NPS",
+		"SURVEY_CSAT_AVG": "CSAT (promedio)",
+		"SURVEY_RESPONSE_RATE": "Tasa de respuesta a encuestas",
+		"SURVEY_DETRACTOR_SHARE": "Proporción de detractores",
+		"SURVEY_RESPONSE_COUNT": "Respuestas a encuestas"
 	},
 	"segments": {
 		"title": "Comparar por {{dimension}}",
@@ -723,6 +738,55 @@
 			"accepted": "Aceptadas",
 			"rejected": "Rechazadas",
 			"acceptanceRate": "Aceptación"
+		}
+	},
+	"surveysView": {
+		"bandsTitle": "NPS por banda de puntaje de QA",
+		"bandsDescription": "¿Los clientes califican mejor las llamadas con mayor puntaje de QA? Las respuestas de cada banda cierran su etiqueta.",
+		"bands": {
+			"low": "QA bajo {{watch}}",
+			"mid": "QA de {{watch}} a {{top}}",
+			"high": "QA {{onTarget}} o más"
+		},
+		"scatterTitle": "Puntaje de QA contra NPS por agente",
+		"scatterDescription": "Un punto por agente. Los agentes arriba a la derecha van bien en ambos.",
+		"scatterX": "Puntaje de QA",
+		"scatterY": "NPS",
+		"responses": "Respuestas",
+		"minResponses": "Los agentes con menos de {{count}} respuestas NPS no aparecen.",
+		"commentsTitle": "Comentarios recientes",
+		"commentsDescription": "Los últimos comentarios de encuestas dentro de los filtros.",
+		"columns": {
+			"date": "Fecha",
+			"agent": "Agente",
+			"response": "Respuesta",
+			"comment": "Comentario"
+		},
+		"strengths": {
+			"QUICK_RESOLUTION": "Resolución rápida",
+			"CLEAR_EXPLANATION": "Explicación clara",
+			"PATIENT_AGENT": "Agente paciente",
+			"FIRST_CALL_FIX": "Resuelto en la primera llamada"
+		},
+		"commentary": {
+			"rankingTitle": "Causas raíz detrás de los comentarios de detractores",
+			"rankingDescription": "Sobre qué escriben los detractores, leído con el catálogo de causas raíz. Las proporciones son sobre los comentarios de detractores dentro de los filtros.",
+			"familyTitle": "Negocio contra agente",
+			"familyDescription": "Si los detractores apuntan a la operación o al agente.",
+			"classified": "{{count}} de {{total}} respuestas de detractores dejaron comentario y se clasificaron",
+			"strengthsTitle": "Qué elogian los promotores",
+			"strengthsDescription": "Fortalezas que nombran los comentarios de promotores.",
+			"trendTitle": "Causas a lo largo del tiempo",
+			"trendDescription": "Comentarios de detractores por periodo para las causas más frecuentes.",
+			"columns": {
+				"cause": "Causa",
+				"comments": "Comentarios",
+				"share": "Proporción",
+				"previous": "Anterior",
+				"delta": "Variación"
+			},
+			"themeColumn": "Tema",
+			"noTheme": "—"
 		}
 	}
 }

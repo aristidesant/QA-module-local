@@ -41,6 +41,7 @@ export const TEAM_ANALYTICS_VIEWS: TeamAnalyticsView[] = [
 	'compliance',
 	'business',
 	'sentiment',
+	'surveys',
 	'humanVsAi',
 	'burnout',
 	'disputes',
@@ -82,6 +83,7 @@ export const GROUP_BY_OPTIONS: {
 	{ value: 'tenure', managerOnly: false },
 	{ value: 'timeOfDay', managerOnly: false },
 	{ value: 'weekday', managerOnly: false },
+	{ value: 'sentimentCause', managerOnly: false },
 ];
 
 export const DRILL_NEXT: Partial<Record<GroupByDimension, GroupByDimension>> = {
@@ -95,6 +97,7 @@ export const DRILL_NEXT: Partial<Record<GroupByDimension, GroupByDimension>> = {
 	tenure: 'agent',
 	timeOfDay: 'agent',
 	weekday: 'agent',
+	sentimentCause: 'agent',
 };
 
 export const VIEW_METRICS: Record<MetricView, SegmentMetricId[]> = {
@@ -125,6 +128,8 @@ export const VIEW_METRICS: Record<MetricView, SegmentMetricId[]> = {
 		'AGENT_NEGATIVE_EMOTION_CALL_SHARE',
 		'SENTIMENT_RECOVERY_RATE',
 		'SENTIMENT_RECOVERY_COUNT',
+		'SENTIMENT_DROP_CALL_SHARE',
+		'SENTIMENT_DROP_CALL_COUNT',
 	],
 	compliance: [
 		'COMPLIANCE_OVERALL_SCORE',
@@ -132,6 +137,13 @@ export const VIEW_METRICS: Record<MetricView, SegmentMetricId[]> = {
 		'COMPLIANCE_REGULATORY_SCORE',
 		'COMPLIANCE_LEGAL_SCORE',
 		'COMPLIANCE_VIOLATION_COUNT',
+	],
+	surveys: [
+		'SURVEY_NPS',
+		'SURVEY_CSAT_AVG',
+		'SURVEY_RESPONSE_RATE',
+		'SURVEY_DETRACTOR_SHARE',
+		'SURVEY_RESPONSE_COUNT',
 	],
 	business: [
 		'BI_CONVERSION_RATE',
@@ -150,6 +162,7 @@ export const PRIMARY_METRIC: Record<MetricView, SegmentMetricId> = {
 	sentiment: 'CUSTOMER_SENTIMENT_SCORE',
 	compliance: 'COMPLIANCE_OVERALL_SCORE',
 	business: 'BI_CONVERSION_RATE',
+	surveys: 'SURVEY_NPS',
 };
 
 export const TIME_SLOTS: TimeSlot[] = [
@@ -217,6 +230,8 @@ export const DEFAULT_FILTERS: TeamAnalyticsFilters = {
 	timeSlots: [],
 	weekdays: [],
 	emotions: [],
+	sentimentCauses: [],
+	surveyThemes: [],
 	agentTypes: [],
 	autoFailOnly: false,
 	recoveredOnly: false,

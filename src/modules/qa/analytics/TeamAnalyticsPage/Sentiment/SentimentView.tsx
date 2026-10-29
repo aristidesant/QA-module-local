@@ -15,6 +15,7 @@ import {
 	sentimentBands,
 } from '../../helpers';
 import SegmentationView from '../Segmentation/SegmentationView';
+import CausesSection from './CausesSection';
 import { useTeamAnalyticsData } from '../TeamAnalyticsContext';
 import {
 	AreaLayout,
@@ -96,6 +97,7 @@ export default function SentimentView() {
 						label: t('sentimentView.negativeAgent'),
 					}),
 					tile('SENTIMENT_RECOVERY_RATE'),
+					tile('SENTIMENT_DROP_CALL_SHARE'),
 				]}
 			/>
 			<TrendSection
@@ -171,6 +173,7 @@ export default function SentimentView() {
 					<Heatmap data={grid} metricId='NEGATIVE_EMOTION_CALL_SHARE' />
 				</ChartCard>
 			</Pair>
+			<CausesSection />
 			<SegmentationView
 				metricIds={VIEW_METRICS.sentiment}
 				primary={PRIMARY_METRIC.sentiment}

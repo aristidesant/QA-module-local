@@ -38,7 +38,13 @@ export default function TrendChart({
 	const ready = useChartReady();
 	const { unit } = metricMeta(metricId);
 	const domain: [number | 'auto', number | 'auto'] =
-		unit === 'PERCENT' ? [0, 100] : unit === 'SCORE_5' ? [1, 5] : [0, 'auto'];
+		unit === 'PERCENT'
+			? [0, 100]
+			: unit === 'SCORE_5'
+				? [1, 5]
+				: unit === 'NPS'
+					? [-100, 100]
+					: [0, 'auto'];
 
 	if (!ready) return <Box h={h} className={classes.chartPlaceholder} />;
 

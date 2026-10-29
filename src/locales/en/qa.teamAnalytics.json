@@ -21,7 +21,8 @@
 			"overview": "Overview",
 			"operational": "Operational",
 			"humanVsAi": "Human vs AI",
-			"disputes": "Disputes"
+			"disputes": "Disputes",
+			"surveys": "Customer surveys"
 		}
 	},
 	"filters": {
@@ -59,7 +60,8 @@
 			"tenure": "Tenure",
 			"timeOfDay": "Time of day",
 			"weekday": "Weekday",
-			"agentType": "Agent type"
+			"agentType": "Agent type",
+			"sentimentCause": "Sentiment drop cause"
 		},
 		"moreFilters": "More filters",
 		"lessFilters": "Fewer filters",
@@ -80,6 +82,7 @@
 		"timeSlots": "Time of day",
 		"weekdays": "Weekday",
 		"emotions": "Predominant emotion",
+		"sentimentCauses": "Sentiment drop causes",
 		"all": "All",
 		"flags": {
 			"autoFailOnly": "Only calls with an auto-fail",
@@ -156,6 +159,11 @@
 		"agentTypeLabels": {
 			"HUMAN": "Human",
 			"AI_BOT": "AI agent"
+		},
+		"surveyThemes": "Comment themes",
+		"surveyThemeGroups": {
+			"causes": "Root causes",
+			"strengths": "Strengths"
 		}
 	},
 	"presets": {
@@ -235,9 +243,16 @@
 		"AGENT_NEGATIVE_EMOTION_CALL_SHARE": "Negative-emotion calls (agent)",
 		"AGENT_POSITIVE_EMOTION_CALL_SHARE": "Positive-emotion calls (agent)",
 		"SENTIMENT_RECOVERY_RATE": "Recovery rate",
+		"SENTIMENT_DROP_CALL_COUNT": "Sentiment-drop calls",
+		"SENTIMENT_DROP_CALL_SHARE": "Sentiment-drop rate",
 		"BI_CONVERSION_RATE": "Conversion rate",
 		"DISPUTE_COUNT": "Disputes",
-		"DISPUTE_RATE": "Dispute rate"
+		"DISPUTE_RATE": "Dispute rate",
+		"SURVEY_NPS": "NPS",
+		"SURVEY_CSAT_AVG": "CSAT (average)",
+		"SURVEY_RESPONSE_RATE": "Survey response rate",
+		"SURVEY_DETRACTOR_SHARE": "Detractor share",
+		"SURVEY_RESPONSE_COUNT": "Survey responses"
 	},
 	"segments": {
 		"title": "Compare by {{dimension}}",
@@ -723,6 +738,55 @@
 			"accepted": "Accepted",
 			"rejected": "Rejected",
 			"acceptanceRate": "Acceptance"
+		}
+	},
+	"surveysView": {
+		"bandsTitle": "NPS by QA score band",
+		"bandsDescription": "Do customers rate calls with a better QA score higher? The responses per band close each label.",
+		"bands": {
+			"low": "QA below {{watch}}",
+			"mid": "QA {{watch}} to {{top}}",
+			"high": "QA {{onTarget}} or more"
+		},
+		"scatterTitle": "QA score vs NPS by agent",
+		"scatterDescription": "One point per agent. Agents at the top right do well on both.",
+		"scatterX": "QA score",
+		"scatterY": "NPS",
+		"responses": "Responses",
+		"minResponses": "Agents with fewer than {{count}} NPS responses are left out.",
+		"commentsTitle": "Recent comments",
+		"commentsDescription": "The latest survey comments within the filters.",
+		"columns": {
+			"date": "Date",
+			"agent": "Agent",
+			"response": "Response",
+			"comment": "Comment"
+		},
+		"strengths": {
+			"QUICK_RESOLUTION": "Quick resolution",
+			"CLEAR_EXPLANATION": "Clear explanation",
+			"PATIENT_AGENT": "Patient agent",
+			"FIRST_CALL_FIX": "Solved on the first call"
+		},
+		"commentary": {
+			"rankingTitle": "Root causes behind detractor comments",
+			"rankingDescription": "What detractors write about, read against the root-cause catalogue. Shares are over the detractor comments within the filters.",
+			"familyTitle": "Business vs agent",
+			"familyDescription": "Whether detractors point at the operation or at the agent.",
+			"classified": "{{count}} of {{total}} detractor responses left a comment and were classified",
+			"strengthsTitle": "What promoters praise",
+			"strengthsDescription": "Strengths named in promoter comments.",
+			"trendTitle": "Causes over time",
+			"trendDescription": "Detractor comments per period for the most frequent causes.",
+			"columns": {
+				"cause": "Cause",
+				"comments": "Comments",
+				"share": "Share",
+				"previous": "Previous",
+				"delta": "Change"
+			},
+			"themeColumn": "Theme",
+			"noTheme": "—"
 		}
 	}
 }

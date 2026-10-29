@@ -15,6 +15,8 @@ import {
 import { monthsBetween } from '~/modules/qa/team/helpers';
 import { TYPICAL_VOICE } from '~/modules/qa/burnout/constants';
 import { applyVoiceSignals } from '~/modules/qa/burnout/mockVoice';
+import { applySentimentCauses } from '~/modules/qa/sentimentCauses/mockCauses';
+import { applySurveys } from '~/modules/qa/surveys/mockSurveys';
 import type {
 	NonConversionReasonKey,
 	RosterAgent,
@@ -400,6 +402,10 @@ function generateCalls({
 						extra() < shape.fcrRate * (0.7 + 0.3 * base.qa),
 					// Placeholder: the voice pass below fills the human agents' calls.
 					voice: TYPICAL_VOICE,
+					// Placeholder: applySentimentCauses fills it once every sentiment mutation has run.
+					sentimentCause: null,
+					// Placeholder: applySurveys fills it after the sentiment mutations.
+					survey: null,
 				});
 			}
 		}
@@ -587,6 +593,10 @@ TEAM_CALLS.filter((c) => c.agentId === AGENT_PERSONA_ID)
 		call.agentEmotion = dip.agentEmotion;
 	});
 
+/** Last, so the two SENTIMENT_DIP calls (2.1 Anger, 1.9 Sadness) are classified on their dipped values and get a cause. */
+applySentimentCauses(TEAM_CALLS);
+applySurveys(TEAM_CALLS);
+
 // ---------- AI agents (analytics only) ----------
 const aiPersona = (
 	n: number,
@@ -694,6 +704,8 @@ export const AI_TEAM_CALLS: TeamCallMetric[] = generateCalls({
 	endOffsetDays: 0,
 	extraCallsPerDay: 0,
 }).sort((a, b) => a.date.localeCompare(b.date));
+applySentimentCauses(AI_TEAM_CALLS);
+applySurveys(AI_TEAM_CALLS);
 
 /**
  * Human + AI calls, date-ascending. Only Team Analytics reads this; every other

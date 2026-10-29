@@ -1,4 +1,9 @@
+import type { SurveyThemeKey, SurveyTheme } from '~/modules/qa/surveys/types';
 import type { CallVoiceSignals } from '~/modules/qa/burnout/types';
+import type {
+	CallSentimentCause,
+	SentimentCauseSegmentKey,
+} from '~/modules/qa/sentimentCauses/types';
 import type { CallMetric } from '~/modules/qa/dashboard/mockData';
 import type { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
 import type {
@@ -26,6 +31,7 @@ export type TeamAnalyticsView =
 	| 'compliance'
 	| 'business'
 	| 'sentiment'
+	| 'surveys'
 	| 'humanVsAi'
 	| 'burnout'
 	| 'disputes'
@@ -49,7 +55,8 @@ export type GroupByDimension =
 	| 'shift'
 	| 'tenure'
 	| 'timeOfDay'
-	| 'weekday';
+	| 'weekday'
+	| 'sentimentCause';
 
 export type CallDirection = 'INBOUND' | 'OUTBOUND';
 export type CampaignType = 'INBOUND' | 'OUTBOUND' | 'BLENDED';
@@ -68,6 +75,15 @@ export interface TeamCallSignals {
 	unhandledObjection: boolean;
 	competitorPlusCost: boolean;
 	mistargetedOffer: boolean;
+}
+
+/** The customer's answer to the post-call survey, when they gave one. `score` is 0-10 for NPS and 1-5 for CSAT. */
+export interface CallSurvey {
+	type: 'NPS' | 'CSAT';
+	score: number;
+	verbatim: string | null;
+	/** What the comment is about; null when there is no comment. */
+	theme: SurveyTheme | null;
 }
 
 /**
@@ -110,6 +126,10 @@ export interface TeamCallMetric extends CallMetric {
 	firstContactResolved: boolean;
 	/** What the voice analysis reads from the agent's side of the call. */
 	voice: CallVoiceSignals;
+	/** Root cause of the customer's sentiment drop; null when sentiment never dropped. Evidence is null here (no transcript). */
+	sentimentCause: CallSentimentCause | null;
+	/** Survey response of the customer; null when none was given. Only effective contacts can answer. */
+	survey: CallSurvey | null;
 }
 
 export interface ScoreRangeFilter {
@@ -136,6 +156,10 @@ export interface TeamAnalyticsFilters {
 	timeSlots: TimeSlot[];
 	weekdays: number[];
 	emotions: CallEmotion[];
+	/** Primary cause keys, or 'none' for calls without a drop. */
+	sentimentCauses: SentimentCauseSegmentKey[];
+	/** Survey comment themes (a root cause or a strength); calls whose comment has another theme, or none, are left out. */
+	surveyThemes: SurveyThemeKey[];
 	agentTypes: AgentType[];
 	autoFailOnly: boolean;
 	recoveredOnly: boolean;
@@ -163,6 +187,8 @@ export type FilterChipKey =
 	| 'timeSlots'
 	| 'weekdays'
 	| 'emotions'
+	| 'sentimentCauses'
+	| 'surveyThemes'
 	| 'agentTypes'
 	| 'autoFailOnly'
 	| 'recoveredOnly'
@@ -393,12 +419,24 @@ export type AnalyticsOnlyMetricId =
 	| 'AGENT_NEGATIVE_EMOTION_CALL_SHARE'
 	| 'AGENT_POSITIVE_EMOTION_CALL_SHARE'
 	| 'SENTIMENT_RECOVERY_RATE'
+	| 'SENTIMENT_DROP_CALL_COUNT'
+	| 'SENTIMENT_DROP_CALL_SHARE'
 	| 'BI_CONVERSION_RATE'
 	| 'DISPUTE_COUNT'
-	| 'DISPUTE_RATE';
+	| 'DISPUTE_RATE'
+	| 'SURVEY_RESPONSE_RATE'
+	| 'SURVEY_RESPONSE_COUNT'
+	| 'SURVEY_NPS'
+	| 'SURVEY_CSAT_AVG'
+	| 'SURVEY_DETRACTOR_SHARE';
 export type AnalyticsMetricId = TriggerMetricId | AnalyticsOnlyMetricId;
-export type AnalyticsMetricUnit = MetricUnit | 'SECONDS';
-export type AnalyticsMetricArea = EvaluationArea | 'OPERATIONAL' | 'DISPUTES';
+/** NPS runs from -100 to 100 and reads as a signed integer. */
+export type AnalyticsMetricUnit = MetricUnit | 'SECONDS' | 'NPS';
+export type AnalyticsMetricArea =
+	| EvaluationArea
+	| 'OPERATIONAL'
+	| 'DISPUTES'
+	| 'SURVEYS';
 export interface AnalyticsMetricMeta {
 	unit: AnalyticsMetricUnit;
 	higherIsBetter: boolean;

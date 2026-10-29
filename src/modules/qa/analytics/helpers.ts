@@ -15,6 +15,8 @@ import type {
 	DisputeEvaluationType,
 	DisputeStatus,
 } from '~/models/qa/disputeCases';
+import { SENTIMENT_CAUSE_NONE_KEY } from '~/modules/qa/sentimentCauses/constants';
+import type { SentimentCauseSegmentKey } from '~/modules/qa/sentimentCauses/types';
 import { METRIC_BY_ID } from '~/modules/qa/triggers/constants';
 import { compare, formatMetricValue } from '~/modules/qa/triggers/helpers';
 import { BurnoutRiskLevel } from '~/modules/qa/dashboard/types/burnoutRisk';
@@ -165,8 +167,11 @@ export const SHARE_METRIC_IDS: ReadonlySet<AnalyticsMetricId> =
 		'AGENT_NEGATIVE_EMOTION_CALL_SHARE',
 		'AGENT_POSITIVE_EMOTION_CALL_SHARE',
 		'SENTIMENT_RECOVERY_RATE',
+		'SENTIMENT_DROP_CALL_SHARE',
 		'BI_CONVERSION_RATE',
 		'DISPUTE_RATE',
+		'SURVEY_RESPONSE_RATE',
+		'SURVEY_DETRACTOR_SHARE',
 	]);
 /** Metrics that are not in the triggers catalog (operational, agent emotion, conversion, disputes). */
 export const ANALYTICS_METRIC_META: Record<
@@ -224,6 +229,16 @@ export const ANALYTICS_METRIC_META: Record<
 		higherIsBetter: true,
 		area: 'SENTIMENT_EMOTION',
 	},
+	SENTIMENT_DROP_CALL_COUNT: {
+		unit: 'COUNT',
+		higherIsBetter: false,
+		area: 'SENTIMENT_EMOTION',
+	},
+	SENTIMENT_DROP_CALL_SHARE: {
+		unit: 'PERCENT',
+		higherIsBetter: false,
+		area: 'SENTIMENT_EMOTION',
+	},
 	BI_CONVERSION_RATE: {
 		unit: 'PERCENT',
 		higherIsBetter: true,
@@ -231,6 +246,23 @@ export const ANALYTICS_METRIC_META: Record<
 	},
 	DISPUTE_COUNT: { unit: 'COUNT', higherIsBetter: false, area: 'DISPUTES' },
 	DISPUTE_RATE: { unit: 'PERCENT', higherIsBetter: false, area: 'DISPUTES' },
+	SURVEY_RESPONSE_RATE: {
+		unit: 'PERCENT',
+		higherIsBetter: true,
+		area: 'SURVEYS',
+	},
+	SURVEY_RESPONSE_COUNT: {
+		unit: 'COUNT',
+		higherIsBetter: true,
+		area: 'SURVEYS',
+	},
+	SURVEY_NPS: { unit: 'NPS', higherIsBetter: true, area: 'SURVEYS' },
+	SURVEY_CSAT_AVG: { unit: 'SCORE_5', higherIsBetter: true, area: 'SURVEYS' },
+	SURVEY_DETRACTOR_SHARE: {
+		unit: 'PERCENT',
+		higherIsBetter: false,
+		area: 'SURVEYS',
+	},
 };
 export const isAnalyticsOnlyMetric = (
 	id: AnalyticsMetricId
@@ -356,6 +388,14 @@ export function filterCalls(
 			!has(f.emotions, c.predominantEmotion)
 		)
 			return false;
+		if (
+			!has<string>(
+				f.sentimentCauses,
+				c.sentimentCause?.primary ?? SENTIMENT_CAUSE_NONE_KEY
+			)
+		)
+			return false;
+		if (!has<string>(f.surveyThemes, c.survey?.theme?.key ?? '')) return false;
 		if (f.autoFailOnly && !c.autoFail) return false;
 		if (f.recoveredOnly && !c.sentimentRecovered) return false;
 		if (f.offeredOnly && c.offeredProduct === null) return false;
@@ -402,6 +442,8 @@ const ARRAY_KEYS = [
 	'timeSlots',
 	'weekdays',
 	'emotions',
+	'sentimentCauses',
+	'surveyThemes',
 	'agentTypes',
 ] as const;
 const FLAG_KEYS = [
@@ -516,6 +558,8 @@ export function narrowFilters(
 			return { ...f, timeSlots: [key as TimeSlot] };
 		case 'weekday':
 			return { ...f, weekdays: [Number(key)] };
+		case 'sentimentCause':
+			return { ...f, sentimentCauses: [key as SentimentCauseSegmentKey] };
 		default:
 			return f;
 	}
@@ -605,9 +649,34 @@ export function metricOf(
 			return toBool(isPositiveCallEmotion(call.agentEmotion));
 		case 'SENTIMENT_RECOVERY_RATE':
 			return toBool(call.sentimentRecovered);
+		case 'SENTIMENT_DROP_CALL_COUNT':
+		case 'SENTIMENT_DROP_CALL_SHARE':
+			return toBool(call.sentimentCause !== null);
 		case 'DISPUTE_COUNT':
 		case 'DISPUTE_RATE':
 			return toBool(DISPUTE_BY_CALL_ID.has(call.id));
+		// Response rate is over effective contacts: nobody else can answer the survey.
+		case 'SURVEY_RESPONSE_RATE':
+			return call.contactOutcome === 'EFFECTIVE'
+				? toBool(call.survey !== null)
+				: null;
+		case 'SURVEY_RESPONSE_COUNT':
+			return toBool(call.survey !== null);
+		// Per response: promoter +100, passive 0, detractor -100, so the mean is the NPS.
+		case 'SURVEY_NPS':
+			return call.survey?.type === 'NPS'
+				? call.survey.score >= 9
+					? 100
+					: call.survey.score >= 7
+						? 0
+						: -100
+				: null;
+		case 'SURVEY_CSAT_AVG':
+			return call.survey?.type === 'CSAT' ? call.survey.score : null;
+		case 'SURVEY_DETRACTOR_SHARE':
+			return call.survey?.type === 'NPS'
+				? toBool(call.survey.score <= 6)
+				: null;
 		default:
 			return null;
 	}
@@ -629,7 +698,7 @@ export function aggregateMetric(
 	if (unit === 'COUNT') return sum;
 	const avg = sum / values.length;
 	if (unit === 'VOICE') return Math.round(avg * 100) / 100;
-	if (unit === 'SECONDS') return Math.round(avg);
+	if (unit === 'SECONDS' || unit === 'NPS') return Math.round(avg);
 	return round1(SHARE_METRIC_IDS.has(id) ? avg * 100 : avg);
 }
 
@@ -675,6 +744,11 @@ export const formatMetric = (
 	if (unit === 'SECONDS')
 		return `${value < 0 ? '-' : ''}${formatSeconds(Math.abs(value))}`;
 	if (unit === 'PERCENT') return `${Math.round(value)}%`;
+	if (unit === 'SCORE_5') return value.toFixed(1);
+	if (unit === 'NPS') {
+		const n = Math.round(value);
+		return `${n > 0 ? '+' : n < 0 ? '−' : ''}${Math.abs(n)}`;
+	}
 	return String(Math.round(value));
 };
 
@@ -731,6 +805,10 @@ export function segmentKeyOf(
 			return { key: call.timeSlot, label: call.timeSlot };
 		case 'weekday':
 			return { key: String(call.weekday), label: WEEKDAY_SHORT[call.weekday] };
+		case 'sentimentCause': {
+			const key = call.sentimentCause?.primary ?? SENTIMENT_CAUSE_NONE_KEY;
+			return { key, label: key };
+		}
 		default:
 			return { key: 'all', label: 'All' };
 	}
@@ -784,7 +862,7 @@ export function sparklineFor(
 	return out;
 }
 
-/** Rows sorted by calls desc; agent rows below `minCalls` dropped; beyond MAX_SEGMENT_SERIES the tail collapses into OTHER_SEGMENT_KEY. */
+/** Rows sorted by calls desc; agent rows below `minCalls` dropped; beyond `maxSegments` the tail collapses into OTHER_SEGMENT_KEY (Infinity keeps every row). */
 export function buildSegments(
 	calls: TeamCallMetric[],
 	previousCalls: TeamCallMetric[],
@@ -792,7 +870,8 @@ export function buildSegments(
 	metricIds: SegmentMetricId[],
 	from: string,
 	to: string,
-	minCalls: number
+	minCalls: number,
+	maxSegments: number = MAX_SEGMENT_SERIES
 ): SegmentRow[] {
 	const primary: AnalyticsMetricId = metricIds[0] ?? 'QA_OVERALL_SCORE';
 	const groups = groupByDim(calls, dim);
@@ -807,12 +886,10 @@ export function buildSegments(
 	}));
 	if (dim === 'agent') rows = rows.filter((r) => r.calls >= minCalls);
 	rows.sort((a, b) => b.calls - a.calls);
-	if (rows.length <= MAX_SEGMENT_SERIES) return rows;
+	if (rows.length <= maxSegments) return rows;
 
-	const head = rows.slice(0, MAX_SEGMENT_SERIES - 1);
-	const tailKeys = new Set(
-		rows.slice(MAX_SEGMENT_SERIES - 1).map((r) => r.key)
-	);
+	const head = rows.slice(0, maxSegments - 1);
+	const tailKeys = new Set(rows.slice(maxSegments - 1).map((r) => r.key));
 	const otherCalls = calls.filter((c) =>
 		tailKeys.has(segmentKeyOf(c, dim).key)
 	);
@@ -1892,7 +1969,7 @@ export function disputesByAgent(
 // ---------- human vs AI ----------
 /** Human vs AI on one 0-100 axis: percents as is, 1-5 scores x20, handle time inverted (shorter scores higher). */
 function indexValue(
-	unit: 'PERCENT' | 'SCORE_5' | 'COUNT' | 'SECONDS' | 'VOICE',
+	unit: 'PERCENT' | 'SCORE_5' | 'COUNT' | 'SECONDS' | 'VOICE' | 'NPS',
 	value: number | null,
 	other: number | null
 ): number {

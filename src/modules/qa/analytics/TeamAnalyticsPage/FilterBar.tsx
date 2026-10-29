@@ -9,6 +9,10 @@ import {
 	Tooltip,
 } from '@mantine/core';
 import { IconAdjustments, IconX } from '@tabler/icons-react';
+import type { SentimentCauseSegmentKey } from '~/modules/qa/sentimentCauses/types';
+import { isStrengthKey } from '~/modules/qa/surveys/constants';
+import type { SurveyThemeKey } from '~/modules/qa/surveys/types';
+import { useCauseLabel } from '~/modules/qa/sentimentCauses/useCauseSettings';
 import { TEAM_CAMPAIGNS, TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
 import { useTeamAnalyticsStore } from '~/stores/qa/teamAnalyticsStore';
 import { filterChips, activeFilterCount } from '../helpers';
@@ -37,6 +41,7 @@ interface FilterBarProps {
 
 export default function FilterBar({ disabled = false }: FilterBarProps) {
 	const { t } = useTranslation('qa.teamAnalytics');
+	const causeLabel = useCauseLabel();
 	const [filterDrawerOpen, setFilterDrawerOpen] = useState(false);
 	const { filters, resetFilters, commitFilters, setFilters } =
 		useTeamAnalyticsStore();
@@ -60,6 +65,8 @@ export default function FilterBar({ disabled = false }: FilterBarProps) {
 		timeSlots: t('filters.timeSlots'),
 		weekdays: t('filters.weekdays'),
 		emotions: t('filters.emotions'),
+		sentimentCauses: t('filters.sentimentCauses'),
+		surveyThemes: t('filters.surveyThemes'),
 		agentTypes: t('filters.agentTypes'),
 		autoFailOnly: t('filters.flags.autoFailOnly'),
 		recoveredOnly: t('filters.flags.recoveredOnly'),
@@ -77,6 +84,14 @@ export default function FilterBar({ disabled = false }: FilterBarProps) {
 				return scopedAgents.find((a) => a.id === value)?.name ?? value;
 			case 'campaignIds':
 				return TEAM_CAMPAIGNS.find((c) => c.id === value)?.name ?? value;
+			case 'surveyThemes':
+				// A strength has its own label; a root cause is renamable in Settings.
+				return isStrengthKey(value as SurveyThemeKey)
+					? t(`surveysView.strengths.${value}`)
+					: causeLabel(value as SentimentCauseSegmentKey);
+			case 'sentimentCauses':
+				// Renamable in Settings, so it does not come from a locale prefix.
+				return causeLabel(value as SentimentCauseSegmentKey);
 			default: {
 				const ns = VALUE_LABEL_NAMESPACE[key];
 				return ns ? t(`${ns}.${value}`, { defaultValue: value }) : value;

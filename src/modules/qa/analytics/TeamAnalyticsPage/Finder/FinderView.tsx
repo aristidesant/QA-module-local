@@ -45,6 +45,7 @@ const OPERATORS: FinderOperator[] = ['BELOW', 'ABOVE', 'BETWEEN'];
 const AREA_OF_VIEW: Record<MetricView, string> = {
 	qa: 'QUALITY_ASSURANCE',
 	sentiment: 'SENTIMENT_EMOTION',
+	surveys: 'SURVEYS',
 	compliance: 'COMPLIANCE',
 	business: 'BUSINESS_INSIGHTS',
 	operational: 'OPERATIONAL',

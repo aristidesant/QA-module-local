@@ -43,6 +43,8 @@ function deltaText(
 			return `${sign(abs)}${Math.abs(abs).toFixed(1)}`;
 		case 'SECONDS':
 			return `${sign(abs)}${formatSeconds(Math.abs(abs))}`;
+		case 'NPS':
+			return `${sign(abs)}${Math.abs(abs)}`;
 		default:
 			return cmp.percentageChange === null
 				? `${sign(abs)}${Math.abs(abs)}`

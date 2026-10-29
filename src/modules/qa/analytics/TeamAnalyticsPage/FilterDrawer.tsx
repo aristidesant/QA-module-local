@@ -15,6 +15,16 @@ import { DateInput } from '@mantine/dates';
 import dayjs from 'dayjs';
 import { AppDrawer } from '~/components/AppDrawer';
 import SectionCard from '~/components/SectionCard';
+import {
+	SENTIMENT_CAUSE_NONE_KEY,
+	SENTIMENT_CAUSE_ORDER,
+} from '~/modules/qa/sentimentCauses/constants';
+import type { SentimentCauseSegmentKey } from '~/modules/qa/sentimentCauses/types';
+import { SURVEY_STRENGTHS } from '~/modules/qa/surveys/constants';
+import {
+	useCauseLabel,
+	useEnabledCauseKeys,
+} from '~/modules/qa/sentimentCauses/useCauseSettings';
 import { LINES_OF_BUSINESS } from '~/modules/qa/triggers/constants';
 import { TEAM_CAMPAIGNS, TEAM_SUPERVISORS } from '~/modules/qa/team/mockData';
 import {
@@ -66,6 +76,8 @@ const day = (value: string | Date | null) =>
 export default function FilterDrawer({ open, onClose }: FilterDrawerProps) {
 	const { t } = useTranslation('qa.teamAnalytics');
 	const { role, scopedAgents } = useTeamAnalyticsData();
+	const causeLabel = useCauseLabel();
+	const enabledCauseKeys = useEnabledCauseKeys();
 	const filters = useTeamAnalyticsStore(selectFilters);
 	const commitFilters = useTeamAnalyticsStore((s) => s.commitFilters);
 
@@ -97,6 +109,33 @@ export default function FilterDrawer({ open, onClose }: FilterDrawerProps) {
 			value: String(value),
 			label: t(`${ns}.${value}`),
 		}));
+
+	// Causes switched off in Settings are not offered, unless the draft already picked one.
+	const causeOptions = [
+		SENTIMENT_CAUSE_NONE_KEY as SentimentCauseSegmentKey,
+		...SENTIMENT_CAUSE_ORDER.filter(
+			(key) =>
+				enabledCauseKeys.includes(key) || draft.sentimentCauses.includes(key)
+		),
+	].map((key) => ({ value: key, label: causeLabel(key) }));
+
+	// Comment themes: root causes still switched on (or already picked) and the fixed strengths.
+	const themeOptions = [
+		{
+			group: t('filters.surveyThemeGroups.causes'),
+			items: SENTIMENT_CAUSE_ORDER.filter(
+				(key) =>
+					enabledCauseKeys.includes(key) || draft.surveyThemes.includes(key)
+			).map((key) => ({ value: key, label: causeLabel(key) })),
+		},
+		{
+			group: t('filters.surveyThemeGroups.strengths'),
+			items: SURVEY_STRENGTHS.map((key) => ({
+				value: key,
+				label: t(`surveysView.strengths.${key}`),
+			})),
+		},
+	];
 
 	const rangeError =
 		draft.quickRange === 'custom' && draft.to < draft.from
@@ -340,6 +379,34 @@ export default function FilterDrawer({ open, onClose }: FilterDrawerProps) {
 								patch({ emotions: emotions as typeof draft.emotions })
 							}
 							clearable
+							comboboxProps={{ withinPortal: true }}
+						/>
+						<MultiSelect
+							label={t('filters.sentimentCauses')}
+							placeholder={t('filters.all')}
+							data={causeOptions}
+							value={draft.sentimentCauses}
+							onChange={(sentimentCauses) =>
+								patch({
+									sentimentCauses:
+										sentimentCauses as typeof draft.sentimentCauses,
+								})
+							}
+							clearable
+							comboboxProps={{ withinPortal: true }}
+						/>
+						<MultiSelect
+							label={t('filters.surveyThemes')}
+							placeholder={t('filters.all')}
+							data={themeOptions}
+							value={draft.surveyThemes}
+							onChange={(surveyThemes) =>
+								patch({
+									surveyThemes: surveyThemes as typeof draft.surveyThemes,
+								})
+							}
+							clearable
+							searchable
 							comboboxProps={{ withinPortal: true }}
 						/>
 					</Stack>

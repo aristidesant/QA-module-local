@@ -9,6 +9,7 @@ import ViewSelector from './ViewSelector';
 import FilterBar from './FilterBar';
 import SavedViewsMenu from './SavedViewsMenu';
 import { BusinessView } from './Business';
+import { SurveysView } from './Surveys';
 import { BurnoutView } from './Burnout';
 import ComplianceView from './Compliance/ComplianceView';
 import DisputesView from './Disputes/DisputesView';
@@ -29,6 +30,7 @@ const VIEWS: Record<TeamAnalyticsView, ComponentType> = {
 	compliance: ComplianceView,
 	business: BusinessView,
 	sentiment: SentimentView,
+	surveys: SurveysView,
 	humanVsAi: HumanVsAiView,
 	burnout: BurnoutView,
 	disputes: DisputesView,
